@@ -1,936 +1,1753 @@
-Return-Path: <linux-kernel+bounces-318936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EA5496F55B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:30:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A572496F56A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B81E2282373
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:30:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B480AB21645
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1978F1CCEDC;
-	Fri,  6 Sep 2024 13:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00731CEAD2;
+	Fri,  6 Sep 2024 13:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B+MZUrRW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WQ+GHws+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1104827452
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 13:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D7427452;
+	Fri,  6 Sep 2024 13:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725629427; cv=none; b=TqILGU1wsGGWCpAxEhBJdTtaGDaHj3J5xPdNASBERC0/VnHyJ5W5rNTvkO16UZhKgnjsc7yN/OeR6SrmKCaFoC2QZoo5estcWEnG9vQKLDzNxdmZLA7xweukWAIyqku7Zf47pLLqRy1f5A7lGI96yQpWKPbQSkc36Suy2/TSh18=
+	t=1725629518; cv=none; b=I1Kbahtb2GhXMETxKUz6Z6KJRWRzWzhzYfguUihoB0A+1t44T4OidWnkZrYOYD4tY0H4UKEmfBL9e1fqB7QH9CfywPFNzDXtersoMfKSZvyaZwfbQVoEla0h+he+oSHoN1jZvF75Cow2EXtdrsRy8YX/ERRNWDPUnWFjhVnZiFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725629427; c=relaxed/simple;
-	bh=FedVqIxcJdJe6q0+Ov0foEGRNgWCuLn+aN+bi+wlCfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RuZDRjh0tNZOWZirpCzACDRF1EYp0hmtk0/JhPD9tCDp+EYMrmvbyI5fLYuEDkb+qjZ2oZUvxUyknWnJW6sc3n1TPn1yy7chroRlT0tKJtvOr/mzJMmdOyDABx6Uo3xdQxnis2earFzkM2/9lNrtp9GMjP47PXwX1FTa3itTFjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B+MZUrRW; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725629424; x=1757165424;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FedVqIxcJdJe6q0+Ov0foEGRNgWCuLn+aN+bi+wlCfM=;
-  b=B+MZUrRWKYeZIjVeEWJjgTVCxgcmrFRzhm5tNMqGfuyv01o9fgP7o1XE
-   DBQ2nMP0R3p1Hm9Q5SKcSoDFsbV31vCUBsqviboZjHM/ilD6dwgdMrPEY
-   47pKkKvzuL8vO0CSRk8MJREWX633pANN5rMlNxT9Fs2snv4WMzVd3/cap
-   RVMXtE+DQ1dent7glEu7NwbKse/Hn0tEZfDEtbWbY85BRokWXuM3HVRiq
-   02zW54JQNyW6lofZCG3kum7MGLEOVJVyLKejrxbhbq0oedo+jhFk0Xx4F
-   bEXDkqZaGSGk9g1eGoHQ2EGFktah9/upMdsR65nf/WaqGkJwW/bLi0x0m
-   g==;
-X-CSE-ConnectionGUID: iFfRbewdRQmmuS5vDRWfJg==
-X-CSE-MsgGUID: 19hj0pSzQnG9FUSjIeF/ng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="28175521"
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="28175521"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 06:30:24 -0700
-X-CSE-ConnectionGUID: ATQWyoeuQ5qf2SbOG1AoXw==
-X-CSE-MsgGUID: FN8pcpVUTcy6oEwz5KYSxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="70754969"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 06 Sep 2024 06:30:21 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1smZ2Y-000BIN-2x;
-	Fri, 06 Sep 2024 13:30:18 +0000
-Date: Fri, 6 Sep 2024 21:30:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Uros Bizjak <ubizjak@gmail.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [PATCH 17/18] random: Do not include <linux/prandom.h>
-Message-ID: <202409062005.ue7L87dN-lkp@intel.com>
-References: <20240905122020.872466-18-ubizjak@gmail.com>
+	s=arc-20240116; t=1725629518; c=relaxed/simple;
+	bh=X77cKnMn2AucOzmKqePPRw5tASXZOhcwqUnxryuHO9I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ek+cJVZY5Z6q8WSjFZyiLn3rxZgZCTSZfoduHAgImaILA9VZTo84BPR8vTOxSyg/n026T8BMzCh3UsiYbFjDIT0aQz2mDURLX98neH+5m93ksue5sYxgsepy65LNZr19kYOVgaTF7mEnMoYLhaK7ITKmhp1u97lEc+FBFHAoZTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WQ+GHws+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 486A4phM018213;
+	Fri, 6 Sep 2024 13:31:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	L4p2wH7ASnRPtWhE7gfCb3htqjP5T4RyXWkyaEpJO8I=; b=WQ+GHws+UE5ZxTE2
+	WutImcekcDuAmu60h88GqU0mcB7O+n57Wb7iP7+PnKmbmWLwK0p3Pfnq/RYl3QWv
+	30hDs4sryXQvJocdaHDBpKd1n6qz42CnI89At080XkiBC6xSLmhCMszRKq2qFXHS
+	3WTIDQuZrbdiEkVX+5zZEkV5gqAwQjZwu1xvIAX8LL93SmPOoSaY3pqo2aHZWus5
+	GZS80al6W/p9lWiGV+fD0uEtCCEyTbzO6+BPEXDshqa/gs0vwmLpqmGjAsKynQbX
+	/Jen8b2vn6e/WiyNOCcb41P2wRFLfglD+qdLZfzJf+qplWC5Lkd13H79BCMvsvxa
+	PX2kbQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fj09tcks-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Sep 2024 13:31:29 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 486DVSWe009298
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Sep 2024 13:31:28 GMT
+Received: from [10.206.101.41] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Sep 2024
+ 06:31:23 -0700
+Message-ID: <203dcee5-72e3-063b-2a38-1cbca96d4f9d@quicinc.com>
+Date: Fri, 6 Sep 2024 19:01:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905122020.872466-18-ubizjak@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 09/29] media: iris: introduce Host firmware interface
+ with necessary hooks
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <quic_dikshita@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
+ <20240827-iris_v3-v3-9-c5fdbbe65e70@quicinc.com>
+ <bdd09198-d15e-4212-942c-92b19208d7cc@linaro.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <bdd09198-d15e-4212-942c-92b19208d7cc@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: f7LvyVuu94-QRfPQbWag0gW_EBK1kgbF
+X-Proofpoint-ORIG-GUID: f7LvyVuu94-QRfPQbWag0gW_EBK1kgbF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_03,2024-09-05_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 malwarescore=0 mlxscore=0 bulkscore=0 spamscore=0
+ suspectscore=0 lowpriorityscore=0 clxscore=1015 adultscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409060099
 
-Hi Uros,
+Hi Bryan,
 
-kernel test robot noticed the following build errors:
+On 9/5/2024 6:40 PM, Bryan O'Donoghue wrote:
+> On 27/08/2024 11:05, Dikshita Agarwal via B4 Relay wrote:
+>> From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>>
+>> Host firmware interface (HFI) is well defined set of interfaces
+>> for communication between host driver and firmware.
+>> The command and responses are exchanged in form of packets.
+>> One or multiple packets are grouped under packet header.
+>> Each packet has packet type which describes the specific HFI
+>> and payload which holds the corresponding value for that HFI.
+>>
+>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>> ---
+>>   drivers/media/platform/qcom/iris/Makefile          |   5 +
+>>   drivers/media/platform/qcom/iris/iris_core.c       |  26 ++-
+>>   drivers/media/platform/qcom/iris/iris_core.h       |  20 ++
+>>   drivers/media/platform/qcom/iris/iris_hfi_common.c |  56 +++++
+>>   drivers/media/platform/qcom/iris/iris_hfi_common.h |  60 ++++++
+>>   drivers/media/platform/qcom/iris/iris_hfi_gen1.h   |   3 +
+>>   .../platform/qcom/iris/iris_hfi_gen1_command.c     |  61 ++++++
+>>   .../platform/qcom/iris/iris_hfi_gen1_defines.h     |  94 +++++++++
+>>   .../platform/qcom/iris/iris_hfi_gen1_response.c    | 174 ++++++++++++++++
+>>   drivers/media/platform/qcom/iris/iris_hfi_gen2.h   |   4 +
+>>   .../platform/qcom/iris/iris_hfi_gen2_command.c     |  72 +++++++
+>>   .../platform/qcom/iris/iris_hfi_gen2_defines.h     |  46 +++++
+>>   .../platform/qcom/iris/iris_hfi_gen2_packet.c      | 164 +++++++++++++++
+>>   .../platform/qcom/iris/iris_hfi_gen2_packet.h      |  69 +++++++
+>>   .../platform/qcom/iris/iris_hfi_gen2_response.c    | 229 +++++++++++++++++++++
+>>   drivers/media/platform/qcom/iris/iris_hfi_queue.c  | 201 ++++++++++++++++++
+>>   drivers/media/platform/qcom/iris/iris_hfi_queue.h  |   5 +
+>>   .../platform/qcom/iris/iris_platform_common.h      |  15 ++
+>>   .../platform/qcom/iris/iris_platform_sm8250.c      |   3 +
+>>   .../platform/qcom/iris/iris_platform_sm8550.c      |  14 ++
+>>   drivers/media/platform/qcom/iris/iris_probe.c      |  40 ++++
+>>   drivers/media/platform/qcom/iris/iris_state.c      |  15 ++
+>>   drivers/media/platform/qcom/iris/iris_state.h      |   4 +
+>>   drivers/media/platform/qcom/iris/iris_vpu_common.c |  42 ++++
+>>   drivers/media/platform/qcom/iris/iris_vpu_common.h |   3 +
+>>   25 files changed, 1424 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/qcom/iris/Makefile
+>> b/drivers/media/platform/qcom/iris/Makefile
+>> index 95f4e92fe085..d1f0b933df3d 100644
+>> --- a/drivers/media/platform/qcom/iris/Makefile
+>> +++ b/drivers/media/platform/qcom/iris/Makefile
+>> @@ -1,12 +1,17 @@
+>>   iris-objs += iris_core.o \
+>>                iris_firmware.o \
+>> +             iris_hfi_common.o \
+>>                iris_hfi_gen1_command.o \
+>> +             iris_hfi_gen1_response.o \
+>>                iris_hfi_gen2_command.o \
+>> +             iris_hfi_gen2_packet.o \
+>> +             iris_hfi_gen2_response.o \
+>>                iris_hfi_queue.o \
+>>                iris_platform_sm8250.o \
+>>                iris_platform_sm8550.o \
+>>                iris_probe.o \
+>>                iris_resources.o \
+>> +             iris_state.o \
+>>                iris_vidc.o \
+>>                iris_vpu_common.o \
+>>   diff --git a/drivers/media/platform/qcom/iris/iris_core.c
+>> b/drivers/media/platform/qcom/iris/iris_core.c
+>> index 5ad66ac113ae..92458d7f1e36 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_core.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_core.c
+>> @@ -17,6 +17,26 @@ void iris_core_deinit(struct iris_core *core)
+>>       mutex_unlock(&core->lock);
+>>   }
+>>   +static int iris_wait_for_system_response(struct iris_core *core)
+>> +{
+>> +    u32 hw_response_timeout_val;
+>> +    int ret;
+>> +
+>> +    if (core->state == IRIS_CORE_ERROR)
+>> +        return -EIO;
+>> +
+>> +    hw_response_timeout_val = core->iris_platform_data->hw_response_timeout;
+>> +
+>> +    ret = wait_for_completion_timeout(&core->core_init_done,
+>> +                      msecs_to_jiffies(hw_response_timeout_val));
+>> +    if (!ret) {
+>> +        iris_change_core_state(core, IRIS_CORE_ERROR);
+>> +        return -ETIMEDOUT;
+>> +    }
+>> +
+>> +    return 0;
+>> +}
+>> +
+>>   int iris_core_init(struct iris_core *core)
+>>   {
+>>       int ret;
+>> @@ -44,9 +64,13 @@ int iris_core_init(struct iris_core *core)
+>>       if (ret)
+>>           goto error_unload_fw;
+>>   +    ret = iris_hfi_core_init(core);
+>> +    if (ret)
+>> +        goto error_unload_fw;
+>> +
+>>       mutex_unlock(&core->lock);
+>>   -    return 0;
+>> +    return iris_wait_for_system_response(core);
+>>     error_unload_fw:
+>>       iris_fw_unload(core);
+>> diff --git a/drivers/media/platform/qcom/iris/iris_core.h
+>> b/drivers/media/platform/qcom/iris/iris_core.h
+>> index 13c5932f9110..409f9822807d 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_core.h
+>> +++ b/drivers/media/platform/qcom/iris/iris_core.h
+>> @@ -9,11 +9,15 @@
+>>   #include <linux/types.h>
+>>   #include <media/v4l2-device.h>
+>>   +#include "iris_hfi_common.h"
+>>   #include "iris_hfi_queue.h"
+>>   #include "iris_platform_common.h"
+>>   #include "iris_resources.h"
+>>   #include "iris_state.h"
+>>   +#define IRIS_FW_VERSION_LENGTH        128
+>> +#define IFACEQ_CORE_PKT_SIZE        (1024 * 4)
+>> +
+>>   /**
+>>    * struct iris_core - holds core parameters valid for all instances
+>>    *
+>> @@ -40,6 +44,14 @@
+>>    * @message_queue: shared interface queue to receive responses from firmware
+>>    * @debug_queue: shared interface queue to receive debug info from firmware
+>>    * @lock: a lock for this strucure
+>> + * @response_packet: a pointer to response packet from fw to driver
+>> + * @header_id: id of packet header
+>> + * @packet_id: id of packet
+>> + * @hfi_ops: iris hfi command ops
+>> + * @hfi_response_ops: iris hfi response ops
+>> + * @core_init_done: structure of signal completion for system response
+>> + * @intr_status: interrupt status
+>> + * @sys_error_handler: a delayed work for handling system fatal error
+>>    */
+>>     struct iris_core {
+>> @@ -66,6 +78,14 @@ struct iris_core {
+>>       struct iris_iface_q_info        message_queue;
+>>       struct iris_iface_q_info        debug_queue;
+>>       struct mutex                lock; /* lock for core related operations */
+>> +    u8                    *response_packet;
+>> +    u32                    header_id;
+>> +    u32                    packet_id;
+>> +    const struct iris_hfi_command_ops    *hfi_ops;
+>> +    const struct iris_hfi_response_ops    *hfi_response_ops;
+>> +    struct completion            core_init_done;
+>> +    u32                    intr_status;
+>> +    struct delayed_work            sys_error_handler;
+>>   };
+>>     int iris_core_init(struct iris_core *core);
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_common.c
+>> b/drivers/media/platform/qcom/iris/iris_hfi_common.c
+>> new file mode 100644
+>> index 000000000000..a5a28029d8d1
+>> --- /dev/null
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_common.c
+>> @@ -0,0 +1,56 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include "iris_core.h"
+>> +#include "iris_hfi_common.h"
+>> +#include "iris_vpu_common.h"
+>> +
+>> +int iris_hfi_core_init(struct iris_core *core)
+>> +{
+>> +    const struct iris_hfi_command_ops *hfi_ops = core->hfi_ops;
+>> +    int ret;
+>> +
+>> +    ret = hfi_ops->sys_init(core);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = hfi_ops->sys_image_version(core);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    return hfi_ops->sys_interframe_powercollapse(core);
+>> +}
+>> +
+>> +irqreturn_t iris_hfi_isr(int irq, void *data)
+>> +{
+>> +    disable_irq_nosync(irq);
+>> +
+>> +    return IRQ_WAKE_THREAD;
+>> +}
+>> +
+>> +irqreturn_t iris_hfi_isr_handler(int irq, void *data)
+>> +{
+>> +    struct iris_core *core = data;
+>> +
+>> +    if (!core)
+>> +        return IRQ_NONE;
+>> +
+>> +    mutex_lock(&core->lock);
+>> +    if (core->state != IRIS_CORE_INIT) {
+>> +        mutex_unlock(&core->lock);
+>> +        goto exit;
+>> +    }
+>> +
+>> +    iris_vpu_clear_interrupt(core);
+>> +    mutex_unlock(&core->lock);
+>> +
+>> +    core->hfi_response_ops->hfi_response_handler(core);
+>> +
+>> +exit:
+>> +    if (!iris_vpu_watchdog(core, core->intr_status))
+>> +        enable_irq(irq);
+>> +
+>> +    return IRQ_HANDLED;
+>> +}
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_common.h
+>> b/drivers/media/platform/qcom/iris/iris_hfi_common.h
+>> new file mode 100644
+>> index 000000000000..c3d5b899cf60
+>> --- /dev/null
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_common.h
+>> @@ -0,0 +1,60 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _IRIS_HFI_COMMON_H_
+>> +#define _IRIS_HFI_COMMON_H_
+>> +
+>> +#include <linux/types.h>
+>> +#include <media/v4l2-device.h>
+>> +
+>> +struct iris_core;
+>> +
+>> +enum hfi_packet_port_type {
+>> +    HFI_PORT_NONE        = 0x00000000,
+>> +    HFI_PORT_BITSTREAM    = 0x00000001,
+>> +    HFI_PORT_RAW        = 0x00000002,
+>> +};
+>> +
+>> +enum hfi_packet_payload_info {
+>> +    HFI_PAYLOAD_NONE    = 0x00000000,
+>> +    HFI_PAYLOAD_U32        = 0x00000001,
+>> +    HFI_PAYLOAD_S32        = 0x00000002,
+>> +    HFI_PAYLOAD_U64        = 0x00000003,
+>> +    HFI_PAYLOAD_S64        = 0x00000004,
+>> +    HFI_PAYLOAD_STRUCTURE    = 0x00000005,
+>> +    HFI_PAYLOAD_BLOB    = 0x00000006,
+>> +    HFI_PAYLOAD_STRING    = 0x00000007,
+>> +    HFI_PAYLOAD_Q16        = 0x00000008,
+>> +    HFI_PAYLOAD_U32_ENUM    = 0x00000009,
+>> +    HFI_PAYLOAD_32_PACKED    = 0x0000000a,
+>> +    HFI_PAYLOAD_U32_ARRAY    = 0x0000000b,
+>> +    HFI_PAYLOAD_S32_ARRAY    = 0x0000000c,
+>> +    HFI_PAYLOAD_64_PACKED    = 0x0000000d,
+>> +};
+>> +
+>> +enum hfi_packet_host_flags {
+>> +    HFI_HOST_FLAGS_NONE            = 0x00000000,
+>> +    HFI_HOST_FLAGS_INTR_REQUIRED        = 0x00000001,
+>> +    HFI_HOST_FLAGS_RESPONSE_REQUIRED    = 0x00000002,
+>> +    HFI_HOST_FLAGS_NON_DISCARDABLE        = 0x00000004,
+>> +    HFI_HOST_FLAGS_GET_PROPERTY        = 0x00000008,
+>> +};
+>> +
+>> +struct iris_hfi_command_ops {
+>> +    int (*sys_init)(struct iris_core *core);
+>> +    int (*sys_image_version)(struct iris_core *core);
+>> +    int (*sys_interframe_powercollapse)(struct iris_core *core);
+>> +};
+>> +
+>> +struct iris_hfi_response_ops {
+>> +    void (*hfi_response_handler)(struct iris_core *core);
+>> +};
+>> +
+>> +int iris_hfi_core_init(struct iris_core *core);
+>> +
+>> +irqreturn_t iris_hfi_isr(int irq, void *data);
+>> +irqreturn_t iris_hfi_isr_handler(int irq, void *data);
+>> +
+>> +#endif
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1.h
+>> b/drivers/media/platform/qcom/iris/iris_hfi_gen1.h
+>> index b02f629a9cdc..15edbb359c71 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1.h
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1.h
+>> @@ -6,8 +6,11 @@
+>>   #ifndef _IRIS_HFI_GEN1_H_
+>>   #define _IRIS_HFI_GEN1_H_
+>>   +struct iris_core;
+>>   struct iris_inst;
+>>   +void iris_hfi_gen1_command_ops_init(struct iris_core *core);
+>> +void iris_hfi_gen1_response_ops_init(struct iris_core *core);
+>>   struct iris_inst *iris_hfi_gen1_get_instance(void);
+>>     #endif
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+>> b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+>> index 20c68f4ffb72..8f045ef56163 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+>> @@ -4,8 +4,69 @@
+>>    */
+>>     #include "iris_hfi_gen1.h"
+>> +#include "iris_hfi_gen1_defines.h"
+>>   #include "iris_instance.h"
+>>   +static int iris_hfi_gen1_sys_init(struct iris_core *core)
+>> +{
+>> +    struct hfi_sys_init_pkt sys_init_pkt;
+>> +
+>> +    sys_init_pkt.hdr.size = sizeof(sys_init_pkt);
+>> +    sys_init_pkt.hdr.pkt_type = HFI_CMD_SYS_INIT;
+>> +    sys_init_pkt.arch_type = HFI_VIDEO_ARCH_OX;
+>> +
+>> +    return iris_hfi_queue_cmd_write_locked(core, &sys_init_pkt,
+>> sys_init_pkt.hdr.size);
+>> +}
+>> +
+>> +static int iris_hfi_gen1_sys_image_version(struct iris_core *core)
+>> +{
+>> +    struct hfi_sys_get_property_pkt packet;
+>> +
+>> +    packet.hdr.size = sizeof(packet);
+>> +    packet.hdr.pkt_type = HFI_CMD_SYS_GET_PROPERTY;
+>> +    packet.num_properties = 1;
+>> +    packet.data = HFI_PROPERTY_SYS_IMAGE_VERSION;
+>> +
+>> +    return iris_hfi_queue_cmd_write_locked(core, &packet, packet.hdr.size);
+>> +}
+>> +
+>> +static int iris_hfi_gen1_sys_interframe_powercollapse(struct iris_core *core)
+>> +{
+>> +    struct hfi_sys_set_property_pkt *pkt;
+>> +    struct hfi_enable *hfi;
+>> +    u32 packet_size;
+>> +    u32 ret;
+>> +
+>> +    packet_size = struct_size(pkt, data, 1) + sizeof(*hfi);
+>> +    pkt = kzalloc(packet_size, GFP_KERNEL);
+>> +    if (!pkt)
+>> +        return -ENOMEM;
+>> +
+>> +    hfi = (struct hfi_enable *)&pkt->data[1];
+>> +
+>> +    pkt->hdr.size = packet_size;
+>> +    pkt->hdr.pkt_type = HFI_CMD_SYS_SET_PROPERTY;
+>> +    pkt->num_properties = 1;
+>> +    pkt->data[0] = HFI_PROPERTY_SYS_CODEC_POWER_PLANE_CTRL;
+>> +    hfi->enable = true;
+>> +
+>> +    ret = iris_hfi_queue_cmd_write_locked(core, pkt, pkt->hdr.size);
+>> +    kfree(pkt);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static const struct iris_hfi_command_ops iris_hfi_gen1_command_ops = {
+>> +    .sys_init = iris_hfi_gen1_sys_init,
+>> +    .sys_image_version = iris_hfi_gen1_sys_image_version,
+>> +    .sys_interframe_powercollapse = iris_hfi_gen1_sys_interframe_powercollapse,
+>> +};
+>> +
+>> +void iris_hfi_gen1_command_ops_init(struct iris_core *core)
+>> +{
+>> +    core->hfi_ops = &iris_hfi_gen1_command_ops;
+>> +}
+>> +
+>>   struct iris_inst *iris_hfi_gen1_get_instance(void)
+>>   {
+>>       return kzalloc(sizeof(struct iris_inst), GFP_KERNEL);
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h
+>> b/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h
+>> new file mode 100644
+>> index 000000000000..5c07d6a29863
+>> --- /dev/null
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h
+>> @@ -0,0 +1,94 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _IRIS_HFI_GEN1_DEFINES_H_
+>> +#define _IRIS_HFI_GEN1_DEFINES_H_
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +#define HFI_VIDEO_ARCH_OX                0x1
+>> +#define HFI_ERR_NONE                    0x0
+>> +
+>> +#define HFI_CMD_SYS_INIT                0x10001
+>> +#define HFI_CMD_SYS_SET_PROPERTY            0x10005
+>> +#define HFI_CMD_SYS_GET_PROPERTY            0x10006
+>> +
+>> +#define HFI_PROPERTY_SYS_CODEC_POWER_PLANE_CTRL        0x5
+>> +#define HFI_PROPERTY_SYS_IMAGE_VERSION            0x6
+>> +
+>> +#define HFI_EVENT_SYS_ERROR                0x1
+>> +
+>> +#define HFI_MSG_SYS_INIT                0x20001
+>> +#define HFI_MSG_SYS_COV                    0x20009
+>> +#define HFI_MSG_SYS_PROPERTY_INFO            0x2000a
+>> +
+>> +#define HFI_MSG_EVENT_NOTIFY                0x21001
+>> +
+>> +struct hfi_pkt_hdr {
+>> +    u32 size;
+>> +    u32 pkt_type;
+>> +};
+>> +
+>> +struct hfi_sys_init_pkt {
+>> +    struct hfi_pkt_hdr hdr;
+>> +    u32 arch_type;
+>> +};
+>> +
+>> +struct hfi_sys_set_property_pkt {
+>> +    struct hfi_pkt_hdr hdr;
+>> +    u32 num_properties;
+>> +    u32 data[];
+>> +};
+>> +
+>> +struct hfi_sys_get_property_pkt {
+>> +    struct hfi_pkt_hdr hdr;
+>> +    u32 num_properties;
+>> +    u32 data;
+>> +};
+>> +
+>> +struct hfi_msg_event_notify_pkt {
+>> +    struct hfi_pkt_hdr hdr;
+>> +    u32 event_id;
+>> +    u32 event_data1;
+>> +    u32 event_data2;
+>> +    u32 ext_event_data[];
+>> +};
+>> +
+>> +struct hfi_msg_sys_init_done_pkt {
+>> +    struct hfi_pkt_hdr hdr;
+>> +    u32 error_type;
+>> +    u32 num_properties;
+>> +    u32 data[];
+>> +};
+>> +
+>> +struct hfi_msg_sys_property_info_pkt {
+>> +    struct hfi_pkt_hdr hdr;
+>> +    u32 num_properties;
+>> +    u32 property;
+>> +    u8 data[];
+>> +};
+>> +
+>> +struct hfi_enable {
+>> +    u32 enable;
+>> +};
+>> +
+>> +struct hfi_msg_sys_debug_pkt {
+>> +    struct hfi_pkt_hdr hdr;
+>> +    u32 msg_type;
+>> +    u32 msg_size;
+>> +    u32 time_stamp_hi;
+>> +    u32 time_stamp_lo;
+>> +    u8 msg_data[];
+>> +};
+>> +
+>> +struct hfi_msg_sys_coverage_pkt {
+>> +    struct hfi_pkt_hdr hdr;
+>> +    u32 msg_size;
+>> +    u32 time_stamp_hi;
+>> +    u32 time_stamp_lo;
+>> +    u8 msg_data[];
+>> +};
+>> +
+>> +#endif
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
+>> b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
+>> new file mode 100644
+>> index 000000000000..3eb2ce99c614
+>> --- /dev/null
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
+>> @@ -0,0 +1,174 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include "iris_hfi_gen1.h"
+>> +#include "iris_hfi_gen1_defines.h"
+>> +#include "iris_instance.h"
+>> +
+>> +static void
+>> +iris_hfi_gen1_sys_event_notify(struct iris_core *core, void *packet)
+>> +{
+>> +    struct hfi_msg_event_notify_pkt *pkt = packet;
+>> +
+>> +    if (pkt->event_id == HFI_EVENT_SYS_ERROR)
+>> +        dev_err(core->dev, "sys error (type: %x, data1:%x, data2:%x)\n",
+>> +            pkt->event_id, pkt->event_data1, pkt->event_data2);
+>> +
+>> +    iris_change_core_state(core, IRIS_CORE_ERROR);
+>> +    schedule_delayed_work(&core->sys_error_handler, msecs_to_jiffies(10));
+>> +}
+>> +
+>> +static void iris_hfi_gen1_sys_init_done(struct iris_core *core, void *packet)
+>> +{
+>> +    struct hfi_msg_sys_init_done_pkt *pkt = packet;
+>> +
+>> +    if (pkt->error_type != HFI_ERR_NONE) {
+>> +        iris_change_core_state(core, IRIS_CORE_ERROR);
+>> +        return;
+>> +    }
+>> +
+>> +    complete(&core->core_init_done);
+>> +}
+>> +
+>> +static void
+>> +iris_hfi_gen1_sys_get_prop_image_version(struct iris_core *core,
+>> +                     struct hfi_msg_sys_property_info_pkt *pkt)
+>> +{
+>> +    char fw_version[IRIS_FW_VERSION_LENGTH];
+>> +    u8 *str_image_version;
+>> +    int req_bytes;
+>> +    u32 i;
+>> +
+>> +    req_bytes = pkt->hdr.size - sizeof(*pkt);
+>> +
+>> +    if (req_bytes < IRIS_FW_VERSION_LENGTH - 1 || !pkt->data[0] ||
+>> pkt->num_properties > 1)
+>> +        /* bad packet */
+>> +        return;
+>> +
+>> +    str_image_version = pkt->data;
+>> +    if (!str_image_version)
+>> +        return;
+>> +
+>> +    for (i = 0; i < IRIS_FW_VERSION_LENGTH - 1; i++) {
+>> +        if (str_image_version[i] != '\0')
+>> +            fw_version[i] = str_image_version[i];
+>> +        else
+>> +            fw_version[i] = ' ';
+>> +    }
+>> +    fw_version[i] = '\0';
+>> +
+>> +    dev_dbg(core->dev, "firmware version: %s\n", fw_version);
+>> +}
+> 
+> You silently fail here alot in this function i.e. it returns void if it works or
+> it doesn't work.
+> 
+> Either make this an integer returning a pass/fail state or make the failure path
+> visible with a jump to a dev_dbg or a dev_err or any other sort of printout that
+> is either always an error or an error visible in debug mode so that such a
+> failure can be found and fixed.
+Ok, sounds good.
+> 
+>> +
+>> +static void iris_hfi_gen1_sys_property_info(struct iris_core *core, void
+>> *packet)
+>> +{
+>> +    struct hfi_msg_sys_property_info_pkt *pkt = packet;
+>> +
+>> +    if (!pkt->num_properties) {
+>> +        dev_dbg(core->dev, "no properties\n");
+>> +        return;
+>> +    }
+>> +
+>> +    switch (pkt->property) {
+>> +    case HFI_PROPERTY_SYS_IMAGE_VERSION:
+>> +        iris_hfi_gen1_sys_get_prop_image_version(core, pkt);
+>> +        break;
+>> +    default:
+>> +        dev_dbg(core->dev, "unknown property data\n");
+>> +        break;
+>> +    }
+>> +}
+>> +
+>> +struct iris_hfi_gen1_response_pkt_info {
+>> +    u32 pkt;
+>> +    u32 pkt_sz;
+>> +};
+>> +
+>> +static const struct iris_hfi_gen1_response_pkt_info pkt_infos[] = {
+>> +    {
+>> +     .pkt = HFI_MSG_EVENT_NOTIFY,
+>> +     .pkt_sz = sizeof(struct hfi_msg_event_notify_pkt),
+>> +    },
+>> +    {
+>> +     .pkt = HFI_MSG_SYS_INIT,
+>> +     .pkt_sz = sizeof(struct hfi_msg_sys_init_done_pkt),
+>> +    },
+>> +    {
+>> +     .pkt = HFI_MSG_SYS_PROPERTY_INFO,
+>> +     .pkt_sz = sizeof(struct hfi_msg_sys_property_info_pkt),
+>> +    },
+>> +};
+>> +
+>> +static void iris_hfi_gen1_handle_response(struct iris_core *core, void
+>> *response)
+>> +{
+>> +    const struct iris_hfi_gen1_response_pkt_info *pkt_info;
+>> +    struct device *dev = core->dev;
+>> +    struct hfi_pkt_hdr *hdr;
+>> +    bool found = false;
+>> +    unsigned int i;
+>> +
+>> +    hdr = (struct hfi_pkt_hdr *)response;
+>> +
+>> +    for (i = 0; i < ARRAY_SIZE(pkt_infos); i++) {
+>> +        pkt_info = &pkt_infos[i];
+>> +        if (pkt_info->pkt != hdr->pkt_type)
+>> +            continue;
+>> +        found = true;
+>> +        break;
+>> +    }
+>> +
+>> +    if (!found || hdr->size < pkt_info->pkt_sz) {
+>> +        dev_err(dev, "bad packet size (%d should be %d, pkt type:%x, found
+>> %d)\n",
+>> +            hdr->size, pkt_info->pkt_sz, hdr->pkt_type, found);
+>> +
+>> +        return;
+>> +    }
+>> +
+>> +    if (hdr->pkt_type == HFI_MSG_SYS_INIT)
+>> +        iris_hfi_gen1_sys_init_done(core, hdr);
+>> +    else if (hdr->pkt_type == HFI_MSG_SYS_PROPERTY_INFO)
+>> +        iris_hfi_gen1_sys_property_info(core, hdr);
+>> +    else if (hdr->pkt_type == HFI_MSG_EVENT_NOTIFY)
+>> +        iris_hfi_gen1_sys_event_notify(core, hdr);
+>> +}
+>> +
+>> +static void iris_hfi_gen1_flush_debug_queue(struct iris_core *core, u8 *packet)
+>> +{
+>> +    struct hfi_msg_sys_coverage_pkt *pkt;
+>> +
+>> +    while (!iris_hfi_queue_dbg_read(core, packet)) {
+>> +        pkt = (struct hfi_msg_sys_coverage_pkt *)packet;
+>> +
+>> +        if (pkt->hdr.pkt_type != HFI_MSG_SYS_COV) {
+>> +            struct hfi_msg_sys_debug_pkt *pkt =
+>> +                (struct hfi_msg_sys_debug_pkt *)packet;
+>> +
+>> +            dev_dbg(core->dev, "%s", pkt->msg_data);
+>> +        }
+>> +    }
+> 
+> This loop looks funny. What's the intention here, to execute this loop so long
+> as iris_hfi_queue_read() is empty, basically ?
+Yes, thats correct.
+> 
+> Loads of questions like how to you guarantee that happens ? Why return -ENODATA
+> if the queue is not empty.
+For debug queue, video firmware would write the debug packets while driver would
+read them. When the read and write indices are same, loop would break and
+indicates no data to read.
 
-[auto build test ERROR on akpm-mm/mm-nonmm-unstable]
-[also build test ERROR on mtd/mtd/next mtd/mtd/fixes linus/master v6.11-rc6 next-20240906]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> But mostly I'd like to know how you know this loop will break ?
+> 
+> Same question for the other usage of iris_hfi_queue_dbg_read().
+Same logic as explained above.
+> 
+>> +}
+>> +
+>> +static void iris_hfi_gen1_response_handler(struct iris_core *core)
+>> +{
+>> +    memset(core->response_packet, 0, sizeof(struct hfi_pkt_hdr));
+>> +    while (!iris_hfi_queue_msg_read(core, core->response_packet)) {
+>> +        iris_hfi_gen1_handle_response(core, core->response_packet);
+>> +        if (core->state != IRIS_CORE_INIT)
+>> +            break;
+>> +
+>> +        memset(core->response_packet, 0, sizeof(struct hfi_pkt_hdr));
+>> +    }
+>> +
+>> +    iris_hfi_gen1_flush_debug_queue(core, core->response_packet);
+>> +}
+>> +
+>> +static const struct iris_hfi_response_ops iris_hfi_gen1_response_ops = {
+>> +    .hfi_response_handler = iris_hfi_gen1_response_handler,
+>> +};
+>> +
+>> +void iris_hfi_gen1_response_ops_init(struct iris_core *core)
+>> +{
+>> +    core->hfi_response_ops = &iris_hfi_gen1_response_ops;
+>> +}
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2.h
+>> b/drivers/media/platform/qcom/iris/iris_hfi_gen2.h
+>> index 4f9748cbe0e3..6ec83984fda9 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2.h
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2.h
+>> @@ -8,6 +8,8 @@
+>>     #include "iris_instance.h"
+>>   +struct iris_core;
+>> +
+>>   /**
+>>    * struct iris_inst_hfi_gen2 - holds per video instance parameters for hfi_gen2
+>>    *
+>> @@ -17,6 +19,8 @@ struct iris_inst_hfi_gen2 {
+>>       struct iris_inst        inst;
+>>   };
+>>   +void iris_hfi_gen2_command_ops_init(struct iris_core *core);
+>> +void iris_hfi_gen2_response_ops_init(struct iris_core *core);
+>>   struct iris_inst *iris_hfi_gen2_get_instance(void);
+>>     #endif
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+>> b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+>> index 3ee33c8befae..807266858d93 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+>> @@ -4,6 +4,78 @@
+>>    */
+>>     #include "iris_hfi_gen2.h"
+>> +#include "iris_hfi_gen2_packet.h"
+>> +
+>> +#define NUM_SYS_INIT_PACKETS 8
+>> +
+>> +static int iris_hfi_gen2_sys_init(struct iris_core *core)
+>> +{
+>> +    struct iris_hfi_header *hdr;
+>> +    u32 packet_size;
+>> +    int ret;
+>> +
+>> +    packet_size = sizeof(*hdr) +
+>> +        NUM_SYS_INIT_PACKETS * (sizeof(struct iris_hfi_packet) + sizeof(u32));
+> 
+> You can just make that into a define
+> 
+> sizeof(*hdr) == sizeof (struct iris_hfi_header) - fixed
+> NUM_SYS_INIT_PACKETS = define already and is fixed
+> (sizeof(struct iris_hfi_packet) + sizeof(u32) also fixed
+> 
+> There's nothing to calculate here - you can just bung it into a define at the
+> top of the file and use the resulting HFI_PACKET_SIZE directly.
+Looks good.
+> 
+>> +    hdr = kzalloc(packet_size, GFP_KERNEL);
+>> +    if (!hdr)
+>> +        return -ENOMEM;
+>> +
+>> +    iris_hfi_gen2_packet_sys_init(core, hdr);
+>> +    ret = iris_hfi_queue_cmd_write_locked(core, hdr, hdr->size);
+>> +
+>> +    kfree(hdr);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static int iris_hfi_gen2_sys_image_version(struct iris_core *core)
+>> +{
+>> +    struct iris_hfi_header *hdr;
+>> +    u32 packet_size;
+>> +    int ret;
+>> +
+>> +    packet_size = sizeof(*hdr) + sizeof(struct iris_hfi_packet);
+> 
+> ditto
+> 
+>> +    hdr = kzalloc(packet_size, GFP_KERNEL);
+>> +    if (!hdr)
+>> +        return -ENOMEM;
+>> +
+>> +    iris_hfi_gen2_packet_image_version(core, hdr);
+>> +    ret = iris_hfi_queue_cmd_write_locked(core, hdr, hdr->size);
+>> +
+>> +    kfree(hdr);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static int iris_hfi_gen2_sys_interframe_powercollapse(struct iris_core *core)
+>> +{
+>> +    struct iris_hfi_header *hdr;
+>> +    u32 packet_size;
+>> +    int ret;
+>> +
+>> +    packet_size = sizeof(*hdr) + sizeof(struct iris_hfi_packet) + sizeof(u32);
+>> +    hdr = kzalloc(packet_size, GFP_KERNEL);
+>> +    if (!hdr)
+>> +        return -ENOMEM;
+>> +
+>> +    iris_hfi_gen2_packet_sys_interframe_powercollapse(core, hdr);
+>> +    ret = iris_hfi_queue_cmd_write_locked(core, hdr, hdr->size);
+>> +
+>> +    kfree(hdr);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static const struct iris_hfi_command_ops iris_hfi_gen2_command_ops = {
+>> +    .sys_init = iris_hfi_gen2_sys_init,
+>> +    .sys_image_version = iris_hfi_gen2_sys_image_version,
+>> +    .sys_interframe_powercollapse = iris_hfi_gen2_sys_interframe_powercollapse,
+>> +};
+>> +
+>> +void iris_hfi_gen2_command_ops_init(struct iris_core *core)
+>> +{
+>> +    core->hfi_ops = &iris_hfi_gen2_command_ops;
+>> +}
+>>     struct iris_inst *iris_hfi_gen2_get_instance(void)
+>>   {
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+>> b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+>> new file mode 100644
+>> index 000000000000..3e3e4ddfe21f
+>> --- /dev/null
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+>> @@ -0,0 +1,46 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _IRIS_HFI_GEN2_DEFINES_H_
+>> +#define _IRIS_HFI_GEN2_DEFINES_H_
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +#define HFI_VIDEO_ARCH_LX            0x1
+>> +
+>> +#define HFI_CMD_BEGIN                0x01000000
+>> +#define HFI_CMD_INIT                0x01000001
+>> +#define HFI_CMD_END                0x01FFFFFF
+>> +
+>> +#define HFI_PROP_BEGIN                0x03000000
+>> +#define HFI_PROP_IMAGE_VERSION            0x03000001
+>> +#define HFI_PROP_INTRA_FRAME_POWER_COLLAPSE    0x03000002
+>> +#define HFI_PROP_UBWC_MAX_CHANNELS        0x03000003
+>> +#define HFI_PROP_UBWC_MAL_LENGTH        0x03000004
+>> +#define HFI_PROP_UBWC_HBB            0x03000005
+>> +#define HFI_PROP_UBWC_BANK_SWZL_LEVEL1        0x03000006
+>> +#define HFI_PROP_UBWC_BANK_SWZL_LEVEL2        0x03000007
+>> +#define HFI_PROP_UBWC_BANK_SWZL_LEVEL3        0x03000008
+>> +#define HFI_PROP_UBWC_BANK_SPREADING        0x03000009
+>> +#define HFI_PROP_END                0x03FFFFFF
+>> +
+>> +#define HFI_SYSTEM_ERROR_BEGIN            0x05000000
+>> +#define HFI_SYS_ERROR_WD_TIMEOUT        0x05000001
+>> +#define HFI_SYSTEM_ERROR_END            0x05FFFFFF
+>> +
+>> +enum hfi_packet_firmware_flags {
+>> +    HFI_FW_FLAGS_SUCCESS            = 0x00000001,
+>> +    HFI_FW_FLAGS_INFORMATION        = 0x00000002,
+>> +    HFI_FW_FLAGS_SESSION_ERROR        = 0x00000004,
+>> +    HFI_FW_FLAGS_SYSTEM_ERROR        = 0x00000008,
+>> +};
+>> +
+>> +struct hfi_debug_header {
+>> +    u32 size;
+>> +    u32 debug_level;
+>> +    u32 reserved[2];
+>> +};
+>> +
+>> +#endif
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_packet.c
+>> b/drivers/media/platform/qcom/iris/iris_hfi_gen2_packet.c
+>> new file mode 100644
+>> index 000000000000..8266eae5ff94
+>> --- /dev/null
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_packet.c
+>> @@ -0,0 +1,164 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include "iris_hfi_common.h"
+>> +#include "iris_hfi_gen2.h"
+>> +#include "iris_hfi_gen2_packet.h"
+>> +
+>> +static void iris_hfi_gen2_create_header(struct iris_hfi_header *hdr,
+>> +                    u32 session_id, u32 header_id)
+>> +{
+>> +    memset(hdr, 0, sizeof(*hdr));
+>> +
+>> +    hdr->size = sizeof(*hdr);
+>> +    hdr->session_id = session_id;
+>> +    hdr->header_id = header_id;
+>> +    hdr->num_packets = 0;
+>> +}
+>> +
+>> +static void iris_hfi_gen2_create_packet(struct iris_hfi_header *hdr, u32
+>> pkt_type,
+>> +                    u32 pkt_flags, u32 payload_type, u32 port,
+>> +                    u32 packet_id, void *payload, u32 payload_size)
+>> +{
+>> +    struct iris_hfi_packet *pkt;
+>> +    u32 pkt_size;
+>> +
+>> +    pkt = (struct iris_hfi_packet *)((u8 *)hdr + hdr->size);
+>> +    pkt_size = sizeof(*pkt) + payload_size;
+>> +
+>> +    memset(pkt, 0, pkt_size);
+>> +    pkt->size = pkt_size;
+>> +    pkt->type = pkt_type;
+>> +    pkt->flags = pkt_flags;
+>> +    pkt->payload_info = payload_type;
+>> +    pkt->port = port;
+>> +    pkt->packet_id = packet_id;
+>> +    if (payload_size)
+>> +        memcpy(&pkt->payload[0], payload, payload_size);
+> 
+> Do you know that the bounds here are always correct => sizeof(pkt->payload) >=
+> payload_size always ?
+payload_size would be either of sizeof(u32) or sizeof(iris_hfi_buffer). We can
+safely consider it as less than size of pkt->payload.
+> 
+>> +
+>> +    hdr->num_packets++;
+>> +    hdr->size += pkt->size;
+>> +}
+>> +
+>> +void iris_hfi_gen2_packet_sys_init(struct iris_core *core, struct
+>> iris_hfi_header *hdr)
+>> +{
+>> +    u32 payload = 0;
+>> +
+>> +    iris_hfi_gen2_create_header(hdr, 0, core->header_id++);
+>> +
+>> +    payload = HFI_VIDEO_ARCH_LX;
+>> +    iris_hfi_gen2_create_packet(hdr,
+>> +                    HFI_CMD_INIT,
+>> +                    (HFI_HOST_FLAGS_RESPONSE_REQUIRED |
+>> +                    HFI_HOST_FLAGS_INTR_REQUIRED |
+>> +                    HFI_HOST_FLAGS_NON_DISCARDABLE),
+>> +                    HFI_PAYLOAD_U32,
+>> +                    HFI_PORT_NONE,
+>> +                    core->packet_id++,
+>> +                    &payload,
+>> +                    sizeof(u32));
+>> +
+>> +    payload = core->iris_platform_data->ubwc_config->max_channels;
+>> +    iris_hfi_gen2_create_packet(hdr,
+>> +                    HFI_PROP_UBWC_MAX_CHANNELS,
+>> +                    HFI_HOST_FLAGS_NONE,
+>> +                    HFI_PAYLOAD_U32,
+>> +                    HFI_PORT_NONE,
+>> +                    core->packet_id++,
+>> +                    &payload,
+>> +                    sizeof(u32));
+>> +
+>> +    payload = core->iris_platform_data->ubwc_config->mal_length;
+>> +    iris_hfi_gen2_create_packet(hdr,
+>> +                    HFI_PROP_UBWC_MAL_LENGTH,
+>> +                    HFI_HOST_FLAGS_NONE,
+>> +                    HFI_PAYLOAD_U32,
+>> +                    HFI_PORT_NONE,
+>> +                    core->packet_id++,
+>> +                    &payload,
+>> +                    sizeof(u32));
+>> +
+>> +    payload = core->iris_platform_data->ubwc_config->highest_bank_bit;
+>> +    iris_hfi_gen2_create_packet(hdr,
+>> +                    HFI_PROP_UBWC_HBB,
+>> +                    HFI_HOST_FLAGS_NONE,
+>> +                    HFI_PAYLOAD_U32,
+>> +                    HFI_PORT_NONE,
+>> +                    core->packet_id++,
+>> +                    &payload,
+>> +                    sizeof(u32));
+>> +
+>> +    payload = core->iris_platform_data->ubwc_config->bank_swzl_level;
+>> +    iris_hfi_gen2_create_packet(hdr,
+>> +                    HFI_PROP_UBWC_BANK_SWZL_LEVEL1,
+>> +                    HFI_HOST_FLAGS_NONE,
+>> +                    HFI_PAYLOAD_U32,
+>> +                    HFI_PORT_NONE,
+>> +                    core->packet_id++,
+>> +                    &payload,
+>> +                    sizeof(u32));
+>> +
+>> +    payload = core->iris_platform_data->ubwc_config->bank_swz2_level;
+>> +    iris_hfi_gen2_create_packet(hdr,
+>> +                    HFI_PROP_UBWC_BANK_SWZL_LEVEL2,
+>> +                    HFI_HOST_FLAGS_NONE,
+>> +                    HFI_PAYLOAD_U32,
+>> +                    HFI_PORT_NONE,
+>> +                    core->packet_id++,
+>> +                    &payload,
+>> +                    sizeof(u32));
+>> +
+>> +    payload = core->iris_platform_data->ubwc_config->bank_swz3_level;
+>> +    iris_hfi_gen2_create_packet(hdr,
+>> +                    HFI_PROP_UBWC_BANK_SWZL_LEVEL3,
+>> +                    HFI_HOST_FLAGS_NONE,
+>> +                    HFI_PAYLOAD_U32,
+>> +                    HFI_PORT_NONE,
+>> +                    core->packet_id++,
+>> +                    &payload,
+>> +                    sizeof(u32));
+>> +
+>> +    payload = core->iris_platform_data->ubwc_config->bank_spreading;
+>> +    iris_hfi_gen2_create_packet(hdr,
+>> +                    HFI_PROP_UBWC_BANK_SPREADING,
+>> +                    HFI_HOST_FLAGS_NONE,
+>> +                    HFI_PAYLOAD_U32,
+>> +                    HFI_PORT_NONE,
+>> +                    core->packet_id++,
+>> +                    &payload,
+>> +                    sizeof(u32));
+>> +}
+>> +
+>> +void iris_hfi_gen2_packet_image_version(struct iris_core *core, struct
+>> iris_hfi_header *hdr)
+>> +{
+>> +    iris_hfi_gen2_create_header(hdr, 0, core->header_id++);
+>> +
+>> +    iris_hfi_gen2_create_packet(hdr,
+>> +                    HFI_PROP_IMAGE_VERSION,
+>> +                    (HFI_HOST_FLAGS_RESPONSE_REQUIRED |
+>> +                    HFI_HOST_FLAGS_INTR_REQUIRED |
+>> +                    HFI_HOST_FLAGS_GET_PROPERTY),
+>> +                    HFI_PAYLOAD_NONE,
+>> +                    HFI_PORT_NONE,
+>> +                    core->packet_id++,
+>> +                    NULL, 0);
+>> +}
+>> +
+>> +void iris_hfi_gen2_packet_sys_interframe_powercollapse(struct iris_core *core,
+>> +                               struct iris_hfi_header *hdr)
+>> +{
+>> +    u32 payload = 1; /* HFI_TRUE */
+>> +
+>> +    iris_hfi_gen2_create_header(hdr, 0 /*session_id*/, core->header_id++);
+>> +
+>> +    iris_hfi_gen2_create_packet(hdr,
+>> +                    HFI_PROP_INTRA_FRAME_POWER_COLLAPSE,
+>> +                    HFI_HOST_FLAGS_NONE,
+>> +                    HFI_PAYLOAD_U32,
+>> +                    HFI_PORT_NONE,
+>> +                    core->packet_id++,
+>> +                    &payload,
+>> +                    sizeof(u32));
+>> +}
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_packet.h
+>> b/drivers/media/platform/qcom/iris/iris_hfi_gen2_packet.h
+>> new file mode 100644
+>> index 000000000000..eba109efeb76
+>> --- /dev/null
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_packet.h
+>> @@ -0,0 +1,69 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _IRIS_HFI_GEN2_PACKET_H_
+>> +#define _IRIS_HFI_GEN2_PACKET_H_
+>> +
+>> +#include "iris_hfi_gen2_defines.h"
+>> +
+>> +struct iris_core;
+>> +
+>> +/**
+>> + * struct iris_hfi_header
+>> + *
+>> + * @size: size of the total packet in bytes including hfi_header
+>> + * @session_id: For session level hfi_header session_id is non-zero.
+>> + *                For  system level hfi_header session_id is zero.
+>> + * @header_id: unique header id for each hfi_header
+>> + * @reserved: reserved for future use
+>> + * @num_packets: number of hfi_packet that are included with the hfi_header
+>> + */
+>> +struct iris_hfi_header {
+>> +    u32 size;
+>> +    u32 session_id;
+>> +    u32 header_id;
+>> +    u32 reserved[4];
+>> +    u32 num_packets;
+>> +};
+>> +
+>> +/**
+>> + * struct iris_hfi_packet
+>> + *
+>> + * @size: size of the hfi_packet in bytes including payload
+>> + * @type: one of the below hfi_packet types:
+>> + *        HFI_CMD_*,
+>> + *        HFI_PROP_*,
+>> + *        HFI_ERROR_*,
+>> + *        HFI_INFO_*,
+>> + *        HFI_SYS_ERROR_*
+>> + * @flags: hfi_packet flags. It is represented as bit masks.
+>> + *         host packet flags are "enum hfi_packet_host_flags"
+>> + *         firmware packet flags are "enum hfi_packet_firmware_flags"
+>> + * @payload_info: payload information indicated by "enum
+>> hfi_packet_payload_info"
+>> + * @port: hfi_packet port type indicated by "enum hfi_packet_port_type"
+>> + *        This is bitmask and may be applicable to multiple ports.
+>> + * @packet_id: host hfi_packet contains unique packet id.
+>> + *             firmware returns host packet id in response packet
+>> + *             wherever applicable. If not applicable firmware sets it to zero.
+>> + * @reserved: reserved for future use.
+>> + * @payload: flexible array of payload having additional packet information.
+>> + */
+>> +struct iris_hfi_packet {
+>> +    u32 size;
+>> +    u32 type;
+>> +    u32 flags;
+>> +    u32 payload_info;
+>> +    u32 port;
+>> +    u32 packet_id;
+>> +    u32 reserved[2];
+>> +    u32 payload[];
+>> +};
+>> +
+>> +void iris_hfi_gen2_packet_sys_init(struct iris_core *core, struct
+>> iris_hfi_header *hdr);
+>> +void iris_hfi_gen2_packet_image_version(struct iris_core *core, struct
+>> iris_hfi_header *hdr);
+>> +void iris_hfi_gen2_packet_sys_interframe_powercollapse(struct iris_core *core,
+>> +                               struct iris_hfi_header *hdr);
+>> +
+>> +#endif
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+>> b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+>> new file mode 100644
+>> index 000000000000..e208a5ae664a
+>> --- /dev/null
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+>> @@ -0,0 +1,229 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include "iris_hfi_gen2.h"
+>> +#include "iris_hfi_gen2_defines.h"
+>> +#include "iris_hfi_gen2_packet.h"
+>> +#include "iris_vpu_common.h"
+>> +
+>> +struct iris_hfi_gen2_core_hfi_range {
+>> +    u32 begin;
+>> +    u32 end;
+>> +    int (*handle)(struct iris_core *core, struct iris_hfi_packet *pkt);
+>> +};
+>> +
+>> +static int iris_hfi_gen2_validate_packet(u8 *response_pkt, u8 *core_resp_pkt)
+>> +{
+>> +    u32 response_pkt_size = 0;
+>> +    u8 *response_limit;
+>> +
+>> +    response_limit = core_resp_pkt + IFACEQ_CORE_PKT_SIZE;
+>> +
+>> +    response_pkt_size = *(u32 *)response_pkt;
+>> +    if (!response_pkt_size)
+>> +        return -EINVAL;
+>> +
+>> +    if (response_pkt_size < sizeof(struct iris_hfi_packet))
+>> +        return -EINVAL;
+>> +
+>> +    if (response_pkt + response_pkt_size > response_limit)
+>> +        return -EINVAL;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int iris_hfi_gen2_validate_hdr_packet(struct iris_core *core, struct
+>> iris_hfi_header *hdr)
+>> +{
+>> +    struct iris_hfi_packet *packet;
+>> +    int i, ret = 0;
+>> +    u8 *pkt;
+>> +
+>> +    if (hdr->size < sizeof(*hdr) + sizeof(*packet))
+>> +        return -EINVAL;
+>> +
+>> +    pkt = (u8 *)((u8 *)hdr + sizeof(*hdr));
+>> +
+>> +    for (i = 0; i < hdr->num_packets; i++) {
+>> +        packet = (struct iris_hfi_packet *)pkt;
+>> +        ret = iris_hfi_gen2_validate_packet(pkt, core->response_packet);
+>> +        if (ret)
+>> +            return ret;
+>> +
+>> +        pkt += packet->size;
+>> +    }
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static int iris_hfi_gen2_handle_system_error(struct iris_core *core,
+>> +                         struct iris_hfi_packet *pkt)
+>> +{
+>> +    dev_err(core->dev, "received system error of type %#x\n", pkt->type);
+>> +
+>> +    iris_change_core_state(core, IRIS_CORE_ERROR);
+>> +    schedule_delayed_work(&core->sys_error_handler, msecs_to_jiffies(10));
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int iris_hfi_gen2_handle_system_init(struct iris_core *core,
+>> +                        struct iris_hfi_packet *pkt)
+>> +{
+>> +    if (!(pkt->flags & HFI_FW_FLAGS_SUCCESS)) {
+>> +        iris_change_core_state(core, IRIS_CORE_ERROR);
+>> +        return 0;
+>> +    }
+>> +
+>> +    complete(&core->core_init_done);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int iris_hfi_gen2_handle_image_version_property(struct iris_core *core,
+>> +                               struct iris_hfi_packet *pkt)
+>> +{
+>> +    char fw_version[IRIS_FW_VERSION_LENGTH];
+>> +    u8 *str_image_version;
+>> +    u32 req_bytes;
+>> +    u32 i = 0;
+>> +
+>> +    req_bytes = pkt->size - sizeof(*pkt);
+>> +    if (req_bytes < IRIS_FW_VERSION_LENGTH - 1)
+>> +        return -EINVAL;
+>> +
+>> +    str_image_version = (u8 *)pkt + sizeof(*pkt);
+>> +
+>> +    for (i = 0; i < IRIS_FW_VERSION_LENGTH - 1; i++) {
+>> +        if (str_image_version[i] != '\0')
+>> +            fw_version[i] = str_image_version[i];
+>> +        else
+>> +            fw_version[i] = ' ';
+>> +    }
+>> +    fw_version[i] = '\0';
+>> +
+>> +    dev_dbg(core->dev, "firmware version: %s\n", fw_version);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int iris_hfi_gen2_handle_system_property(struct iris_core *core,
+>> +                        struct iris_hfi_packet *pkt)
+>> +{
+>> +    int ret = 0;
+>> +
+>> +    switch (pkt->type) {
+>> +    case HFI_PROP_IMAGE_VERSION:
+>> +        ret = iris_hfi_gen2_handle_image_version_property(core, pkt);
+>> +        break;
+>> +    default:
+>> +        break;
+>> +    }
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static int iris_hfi_gen2_handle_system_response(struct iris_core *core,
+>> +                        struct iris_hfi_header *hdr)
+>> +{
+>> +    struct iris_hfi_packet *packet;
+>> +    u8 *pkt, *start_pkt;
+>> +    int ret = 0;
+>> +    int i, j;
+>> +    static const struct iris_hfi_gen2_core_hfi_range range[] = {
+>> +        {HFI_SYSTEM_ERROR_BEGIN, HFI_SYSTEM_ERROR_END,
+>> iris_hfi_gen2_handle_system_error },
+>> +        {HFI_PROP_BEGIN,         HFI_PROP_END,
+>> iris_hfi_gen2_handle_system_property },
+>> +        {HFI_CMD_BEGIN,          HFI_CMD_END,
+>> iris_hfi_gen2_handle_system_init },
+>> +    };
+>> +
+>> +    start_pkt = (u8 *)((u8 *)hdr + sizeof(*hdr));
+>> +    for (i = 0; i < ARRAY_SIZE(range); i++) {
+>> +        pkt = start_pkt;
+>> +        for (j = 0; j < hdr->num_packets; j++) {
+>> +            packet = (struct iris_hfi_packet *)pkt;
+>> +            if (packet->flags & HFI_FW_FLAGS_SYSTEM_ERROR) {
+>> +                ret = iris_hfi_gen2_handle_system_error(core, packet);
+>> +                return ret;
+>> +            }
+>> +
+>> +            if (packet->type > range[i].begin && packet->type < range[i].end) {
+>> +                ret = range[i].handle(core, packet);
+>> +                if (ret)
+>> +                    return ret;
+>> +
+>> +                if (packet->type >  HFI_SYSTEM_ERROR_BEGIN &&
+>> +                    packet->type < HFI_SYSTEM_ERROR_END)
+>> +                    return 0;
+>> +            }
+>> +            pkt += packet->size;
+>> +        }
+>> +    }
+> 
+> You step the pkt pointer on each iteration of the j loop but then reinitialise
+> it to the original start_pkt inside of each i loop.
+> 
+> So you'll always process the same packet in the i loop no ?
+> 
+> Is that the intention ?
+Yes, thats the idea. Driver should parse system error among all the packets,
+followed by properties associated then the command.
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static int iris_hfi_gen2_handle_response(struct iris_core *core, void *response)
+>> +{
+>> +    struct iris_hfi_header *hdr;
+>> +    int ret;
+>> +
+>> +    hdr = (struct iris_hfi_header *)response;
+>> +    ret = iris_hfi_gen2_validate_hdr_packet(core, hdr);
+>> +    if (ret)
+>> +        return iris_hfi_gen2_handle_system_error(core, NULL);
+>> +
+>> +    return iris_hfi_gen2_handle_system_response(core, hdr);
+>> +}
+>> +
+>> +static void iris_hfi_gen2_flush_debug_queue(struct iris_core *core, u8 *packet)
+>> +{
+>> +    struct hfi_debug_header *pkt;
+>> +    u8 *log;
+>> +
+>> +    while (!iris_hfi_queue_dbg_read(core, packet)) {
+>> +        pkt = (struct hfi_debug_header *)packet;
+>> +
+>> +        if (pkt->size < sizeof(*pkt))
+>> +            continue;
+>> +
+>> +        if (pkt->size >= IFACEQ_CORE_PKT_SIZE)
+>> +            continue;
+>> +
+>> +        packet[pkt->size] = '\0';
+>> +        log = (u8 *)packet + sizeof(*pkt) + 1;
+>> +        dev_dbg(core->dev, "%s", log);
+>> +    }
+>> +}
+> 
+> This more of a busy/wait than a flush. I asked previously how you know the other
+> usage of iris_hfi_queue_dbg_read() would break. Similar question here, also is
+> the "popping" of the log/stack/whatever-you-call-it that
+> iris_hfi_queue_dbg_read() consumes immediate or can it stall ?
+> 
+> Do you need to have some kind of delay between reads ?
+The idea is to read the debug packets while handling response from firmware.
+Lets say driver read till read index equals write index, and there are more
+debug packets written later, then the same would be popped in next response
+handling.
+> 
+> I really asking how you know this loop terminates, if it needs to be
+> error-checked to ensure it terminates and if we you need "inter-frame" delays -
+> to stop the CPU spinning while the data is delivered up ?
+> 
+> 
+>> +
+>> +static void iris_hfi_gen2_response_handler(struct iris_core *core)
+>> +{
+>> +    if (iris_vpu_watchdog(core, core->intr_status)) {
+>> +        struct iris_hfi_packet pkt = {.type = HFI_SYS_ERROR_WD_TIMEOUT};
+>> +
+>> +        dev_err(core->dev, "cpu watchdog error received\n");
+>> +        iris_change_core_state(core, IRIS_CORE_ERROR);
+>> +        iris_hfi_gen2_handle_system_error(core, &pkt);
+>> +
+>> +        return;
+>> +    }
+>> +
+>> +    memset(core->response_packet, 0, sizeof(struct iris_hfi_header));
+>> +    while (!iris_hfi_queue_msg_read(core, core->response_packet)) {
+>> +        iris_hfi_gen2_handle_response(core, core->response_packet);
+>> +        if (core->state != IRIS_CORE_INIT)
+>> +            break;
+>> +        memset(core->response_packet, 0, sizeof(struct iris_hfi_header));
+>> +    }
+>> +
+>> +    iris_hfi_gen2_flush_debug_queue(core, core->response_packet);
+>> +}
+>> +
+>> +static const struct iris_hfi_response_ops iris_hfi_gen2_response_ops = {
+>> +    .hfi_response_handler = iris_hfi_gen2_response_handler,
+>> +};
+>> +
+>> +void iris_hfi_gen2_response_ops_init(struct iris_core *core)
+>> +{
+>> +    core->hfi_response_ops = &iris_hfi_gen2_response_ops;
+>> +}
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_queue.c
+>> b/drivers/media/platform/qcom/iris/iris_hfi_queue.c
+>> index 11938880b8cd..b24d4640fea9 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_hfi_queue.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_queue.c
+>> @@ -5,6 +5,207 @@
+>>     #include "iris_core.h"
+>>   #include "iris_hfi_queue.h"
+>> +#include "iris_vpu_common.h"
+>> +
+>> +static int iris_hfi_queue_write(struct iris_iface_q_info *qinfo, void
+>> *packet, u32 packet_size)
+>> +{
+>> +    u32 empty_space, read_idx, write_idx, new_write_idx;
+>> +    struct iris_hfi_queue_header *queue;
+>> +    u32 *write_ptr;
+>> +    u32 residue;
+>> +
+>> +    queue = qinfo->qhdr;
+>> +
+>> +    read_idx = queue->read_idx * sizeof(u32);
+>> +    write_idx = queue->write_idx * sizeof(u32);
+>> +
+>> +    if (write_idx < read_idx)
+>> +        empty_space = read_idx - write_idx;
+>> +    else
+>> +        empty_space = IFACEQ_QUEUE_SIZE - (write_idx -  read_idx);
+>> +    if (empty_space < packet_size)
+>> +        return -ENOSPC;
+>> +
+>> +    queue->tx_req =  0;
+>> +
+>> +    new_write_idx = write_idx + packet_size;
+>> +    write_ptr = (u32 *)((u8 *)qinfo->kernel_vaddr + write_idx);
+>> +
+>> +    if (write_ptr < (u32 *)qinfo->kernel_vaddr ||
+>> +        write_ptr > (u32 *)(qinfo->kernel_vaddr +
+>> +        IFACEQ_QUEUE_SIZE))
+>> +        return -EINVAL;
+>> +
+>> +    if (new_write_idx < IFACEQ_QUEUE_SIZE) {
+>> +        memcpy(write_ptr, packet, packet_size);
+>> +    } else {
+>> +        residue = new_write_idx - IFACEQ_QUEUE_SIZE;
+>> +        memcpy(write_ptr, packet, (packet_size - residue));
+>> +        memcpy(qinfo->kernel_vaddr,
+>> +               packet + (packet_size - residue), residue);
+>> +        new_write_idx = residue;
+>> +    }
+>> +
+>> +    /* Make sure packet is written before updating the write index */
+>> +    mb();
+>> +    queue->write_idx = new_write_idx / sizeof(u32);
+>> +
+>> +    /* Make sure write index is updated before an interrupt is raised */
+>> +    mb();
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int iris_hfi_queue_read(struct iris_iface_q_info *qinfo, void *packet)
+>> +{
+>> +    u32 read_idx, write_idx, new_read_idx;
+>> +    struct iris_hfi_queue_header *queue;
+>> +    u32 packet_size, residue;
+>> +    u32 receive_request = 0;
+>> +    u32 *read_ptr;
+>> +    int ret = 0;
+>> +
+>> +    queue = qinfo->qhdr;
+>> +
+>> +    if (queue->queue_type == IFACEQ_MSGQ_ID)
+>> +        receive_request = 1;
+>> +
+>> +    read_idx = queue->read_idx * sizeof(u32);
+>> +    write_idx = queue->write_idx * sizeof(u32);
+>> +
+>> +    if (read_idx == write_idx) {
+>> +        queue->rx_req = receive_request;
+>> +        /* Ensure qhdr is updated in main memory */
+>> +        mb();
+>> +        return -ENODATA;
+>> +    }
+>> +
+>> +    read_ptr = qinfo->kernel_vaddr + read_idx;
+>> +    if (read_ptr < (u32 *)qinfo->kernel_vaddr ||
+>> +        read_ptr > (u32 *)(qinfo->kernel_vaddr +
+>> +        IFACEQ_QUEUE_SIZE - sizeof(*read_ptr)))
+>> +        return -ENODATA;
+>> +
+>> +    packet_size = *read_ptr;
+>> +    if (!packet_size)
+>> +        return -EINVAL;
+>> +
+>> +    new_read_idx = read_idx + packet_size;
+>> +    if (packet_size <= IFACEQ_CORE_PKT_SIZE) {
+>> +        if (new_read_idx < IFACEQ_QUEUE_SIZE) {
+>> +            memcpy(packet, read_ptr, packet_size);
+>> +        } else {
+>> +            residue = new_read_idx - IFACEQ_QUEUE_SIZE;
+>> +            memcpy(packet, read_ptr, (packet_size - residue));
+>> +            memcpy((packet + (packet_size - residue)),
+>> +                   qinfo->kernel_vaddr, residue);
+>> +            new_read_idx = residue;
+>> +        }
+>> +    } else {
+>> +        new_read_idx = write_idx;
+>> +        ret = -EBADMSG;
+>> +    }
+>> +
+>> +    queue->rx_req = receive_request;
+>> +
+>> +    queue->read_idx = new_read_idx / sizeof(u32);
+>> +    /* Ensure qhdr is updated in main memory */
+>> +    mb();
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +int iris_hfi_queue_cmd_write_locked(struct iris_core *core, void *pkt, u32
+>> pkt_size)
+>> +{
+>> +    struct iris_iface_q_info *q_info;
+>> +
+>> +    if (!mutex_is_locked(&core->lock))
+>> +        return -EINVAL;
+> 
+> Can this function be called without the mutex being locked ?
+> 
+> If not then you should have some kind of dev_err() with this no ? Otherwise
+> browsing the code here IDT this check is needed.
+This being driver implicit calls, and as the api suggest to be invoked from
+locked context, the check can be dropped.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Uros-Bizjak/x86-kaslr-Include-linux-prandom-h-instead-of-linux-random-h/20240905-202710
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
-patch link:    https://lore.kernel.org/r/20240905122020.872466-18-ubizjak%40gmail.com
-patch subject: [PATCH 17/18] random: Do not include <linux/prandom.h>
-config: arm-randconfig-002-20240906 (https://download.01.org/0day-ci/archive/20240906/202409062005.ue7L87dN-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240906/202409062005.ue7L87dN-lkp@intel.com/reproduce)
+> 
+> I'd suggest either drop or be more noisy about the bug you encountered.
+> 
+>> +
+>> +    if (core->state != IRIS_CORE_INIT)
+>> +        return -EINVAL;
+>> +
+>> +    q_info = &core->command_queue;
+>> +    if (!q_info || !q_info->kernel_vaddr || !pkt) {
+>> +        dev_err(core->dev, "cannot write to shared command queue\n");
+>> +        return -ENODATA;
+>> +    }
+>> +
+>> +    if (!iris_hfi_queue_write(q_info, pkt, pkt_size)) {
+>> +        iris_vpu_raise_interrupt(core);
+>> +    } else {
+>> +        dev_err(core->dev, "queue full\n");
+>> +        return -ENODATA;
+>> +    }
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +int iris_hfi_queue_cmd_write(struct iris_core *core, void *pkt, u32 pkt_size)
+>> +{
+>> +    int ret;
+>> +
+>> +    mutex_lock(&core->lock);
+>> +    ret = iris_hfi_queue_cmd_write_locked(core, pkt, pkt_size);
+>> +    if (ret)
+>> +        dev_err(core->dev, "iris_hfi_queue_cmd_write_locked failed with
+>> %d\n", ret);
+>> +
+>> +    mutex_unlock(&core->lock);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +int iris_hfi_queue_msg_read(struct iris_core *core, void *pkt)
+>> +{
+>> +    struct iris_iface_q_info *q_info;
+>> +    int ret = 0;
+>> +
+>> +    mutex_lock(&core->lock);
+>> +    if (core->state != IRIS_CORE_INIT) {
+>> +        ret = -EINVAL;
+>> +        goto unlock;
+>> +    }
+>> +
+>> +    q_info = &core->message_queue;
+>> +    if (iris_hfi_queue_read(q_info, pkt)) {
+>> +        ret = -ENODATA;
+> 
+> Its a very curious response code to return "ENODATA" when you actually have data..
+On a good working scenario, NODATA would indicate when all packets are read.
+> 
+> Why not return
+> 
+> < 0 err code
+> 0 no data
+>> 0 data
+> 
+> ?I do not see that info be useful to caller to make any informative decision. It
+just cares for data (then continue) or exit.
+> 
+>> +        goto unlock;
+>> +    }
+>> +
+>> +unlock:
+>> +    mutex_unlock(&core->lock);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +int iris_hfi_queue_dbg_read(struct iris_core *core, void *pkt)
+>> +{
+>> +    struct iris_iface_q_info *q_info;
+>> +    int ret = 0;
+>> +
+>> +    mutex_lock(&core->lock);
+>> +    if (core->state != IRIS_CORE_INIT) {
+>> +        ret = -EINVAL;
+>> +        goto unlock;
+>> +    }
+> 
+> I'm going to challenge this logic here. Can this function be called except when
+> state == IRIS_CORE_INIT ?
+> 
+> Surely you should get into the IRIS_CORE_INIT state before progressing this far
+> into your code's runtime ?
+> 
+> In which case a plethora of runtime checks for the validatity of your
+> state-machine are redundant.
+> 
+> Far better to make a concrete transition from one state to another than to have
+> a bunch of defensive coding checks which are redundant.
+> 
+> A blanket statement for this driver.
+> 
+> Please consider.
+Certainly. As you know, during the offline reviews, there were few more such
+checks and we have dropped them wherever not required. I do not see a possible
+case for response thread processing with core in non-init state. Let me revisit
+this part and update.
+> 
+>> +
+>> +    q_info = &core->debug_queue;
+>> +    if (!q_info || !q_info->kernel_vaddr || !pkt) {
+>> +        dev_err(core->dev, "cannot read from shared debug queue\n");
+>> +        ret = -ENODATA;
+>> +        goto unlock;
+>> +    }
+>> +
+>> +    if (iris_hfi_queue_read(q_info, pkt)) {
+> Should this really be returning an error and shoiuld it be the same error as
+> above ?
+This is explained earlier in this discussion. Same applies here about returning
+ENODATA.
+> 
+>> +        ret = -ENODATA;
+>> +        goto unlock;
+>> +    }
+>> +
+>> +unlock:
+>> +    mutex_unlock(&core->lock);
+>> +
+>> +    return ret;
+>> +}
+> 
+> [1]
+> Am I reading this function right. It returs -ENODATA to indicate both an error
+> state and to indicate termination to the calling function ?
+Yes, in both case, the caller would process the packets read so far and continue.
+> 
+> ---
+> bod
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409062005.ue7L87dN-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
->> crypto/testmgr.c:881:42: warning: 'struct rnd_state' declared inside parameter list will not be visible outside of this definition or declaration
-     881 | static inline void init_rnd_state(struct rnd_state *rng)
-         |                                          ^~~~~~~~~
-   crypto/testmgr.c: In function 'init_rnd_state':
->> crypto/testmgr.c:883:9: error: implicit declaration of function 'prandom_seed_state' [-Wimplicit-function-declaration]
-     883 |         prandom_seed_state(rng, get_random_u64());
-         |         ^~~~~~~~~~~~~~~~~~
-   crypto/testmgr.c: At top level:
-   crypto/testmgr.c:886:36: warning: 'struct rnd_state' declared inside parameter list will not be visible outside of this definition or declaration
-     886 | static inline u8 prandom_u8(struct rnd_state *rng)
-         |                                    ^~~~~~~~~
-   crypto/testmgr.c: In function 'prandom_u8':
->> crypto/testmgr.c:888:16: error: implicit declaration of function 'prandom_u32_state' [-Wimplicit-function-declaration]
-     888 |         return prandom_u32_state(rng);
-         |                ^~~~~~~~~~~~~~~~~
-   crypto/testmgr.c: At top level:
-   crypto/testmgr.c:891:44: warning: 'struct rnd_state' declared inside parameter list will not be visible outside of this definition or declaration
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                            ^~~~~~~~~
-   crypto/testmgr.c:900:40: warning: 'struct rnd_state' declared inside parameter list will not be visible outside of this definition or declaration
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                        ^~~~~~~~~
-   crypto/testmgr.c: In function 'prandom_bool':
->> crypto/testmgr.c:902:34: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-     902 |         return prandom_u32_below(rng, 2);
-         |                                  ^~~
-         |                                  |
-         |                                  struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c: At top level:
-   crypto/testmgr.c:905:48: warning: 'struct rnd_state' declared inside parameter list will not be visible outside of this definition or declaration
-     905 | static inline u32 prandom_u32_inclusive(struct rnd_state *rng,
-         |                                                ^~~~~~~~~
-   crypto/testmgr.c: In function 'prandom_u32_inclusive':
-   crypto/testmgr.c:908:42: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-     908 |         return floor + prandom_u32_below(rng, ceil - floor + 1);
-         |                                          ^~~
-         |                                          |
-         |                                          struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c: At top level:
-   crypto/testmgr.c:912:51: warning: 'struct rnd_state' declared inside parameter list will not be visible outside of this definition or declaration
-     912 | static unsigned int generate_random_length(struct rnd_state *rng,
-         |                                                   ^~~~~~~~~
-   crypto/testmgr.c: In function 'generate_random_length':
-   crypto/testmgr.c:915:46: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-     915 |         unsigned int len = prandom_u32_below(rng, max_len + 1);
-         |                                              ^~~
-         |                                              |
-         |                                              struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:917:35: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-     917 |         switch (prandom_u32_below(rng, 4)) {
-         |                                   ^~~
-         |                                   |
-         |                                   struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:930:38: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-     930 |         if (len && prandom_u32_below(rng, 4) == 0)
-         |                                      ^~~
-         |                                      |
-         |                                      struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c: At top level:
-   crypto/testmgr.c:936:36: warning: 'struct rnd_state' declared inside parameter list will not be visible outside of this definition or declaration
-     936 | static void flip_random_bit(struct rnd_state *rng, u8 *buf, size_t size)
-         |                                    ^~~~~~~~~
-   crypto/testmgr.c: In function 'flip_random_bit':
-   crypto/testmgr.c:940:36: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-     940 |         bitpos = prandom_u32_below(rng, size * 8);
-         |                                    ^~~
-         |                                    |
-         |                                    struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c: At top level:
-   crypto/testmgr.c:945:37: warning: 'struct rnd_state' declared inside parameter list will not be visible outside of this definition or declaration
-     945 | static void flip_random_byte(struct rnd_state *rng, u8 *buf, size_t size)
-         |                                     ^~~~~~~~~
-   crypto/testmgr.c: In function 'flip_random_byte':
-   crypto/testmgr.c:947:31: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-     947 |         buf[prandom_u32_below(rng, size)] ^= 0xff;
-         |                               ^~~
-         |                               |
-         |                               struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c: At top level:
-   crypto/testmgr.c:951:34: warning: 'struct rnd_state' declared inside parameter list will not be visible outside of this definition or declaration
-     951 | static void mutate_buffer(struct rnd_state *rng, u8 *buf, size_t size)
-         |                                  ^~~~~~~~~
-   crypto/testmgr.c: In function 'mutate_buffer':
-   crypto/testmgr.c:957:31: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-     957 |         if (prandom_u32_below(rng, 4) == 0) {
-         |                               ^~~
-         |                               |
-         |                               struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   In file included from include/linux/kernel.h:28,
-                    from include/linux/cpumask.h:11,
-                    from include/linux/smp.h:13,
-                    from include/linux/lockdep.h:14,
-                    from include/linux/spinlock.h:63,
-                    from include/linux/swait.h:7,
-                    from include/linux/completion.h:12,
-                    from include/linux/crypto.h:15,
-                    from include/crypto/aead.h:13,
-                    from crypto/testmgr.c:19:
-   crypto/testmgr.c:958:66: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-     958 |                 num_flips = min_t(size_t, 1 << prandom_u32_below(rng, 8),
-         |                                                                  ^~~
-         |                                                                  |
-         |                                                                  struct rnd_state *
-   include/linux/minmax.h:93:23: note: in definition of macro '__cmp_once_unique'
-      93 |         ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
-         |                       ^
-   include/linux/minmax.h:213:27: note: in expansion of macro '__cmp_once'
-     213 | #define min_t(type, x, y) __cmp_once(min, type, x, y)
-         |                           ^~~~~~~~~~
-   crypto/testmgr.c:958:29: note: in expansion of macro 'min_t'
-     958 |                 num_flips = min_t(size_t, 1 << prandom_u32_below(rng, 8),
-         |                             ^~~~~
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
->> crypto/testmgr.c:961:41: error: passing argument 1 of 'flip_random_bit' from incompatible pointer type [-Wincompatible-pointer-types]
-     961 |                         flip_random_bit(rng, buf, size);
-         |                                         ^~~
-         |                                         |
-         |                                         struct rnd_state *
-   crypto/testmgr.c:936:47: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     936 | static void flip_random_bit(struct rnd_state *rng, u8 *buf, size_t size)
-         |                             ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:965:31: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-     965 |         if (prandom_u32_below(rng, 4) == 0) {
-         |                               ^~~
-         |                               |
-         |                               struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:966:66: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-     966 |                 num_flips = min_t(size_t, 1 << prandom_u32_below(rng, 8), size);
-         |                                                                  ^~~
-         |                                                                  |
-         |                                                                  struct rnd_state *
-   include/linux/minmax.h:93:23: note: in definition of macro '__cmp_once_unique'
-      93 |         ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
-         |                       ^
-   include/linux/minmax.h:213:27: note: in expansion of macro '__cmp_once'
-     213 | #define min_t(type, x, y) __cmp_once(min, type, x, y)
-         |                           ^~~~~~~~~~
-   crypto/testmgr.c:966:29: note: in expansion of macro 'min_t'
-     966 |                 num_flips = min_t(size_t, 1 << prandom_u32_below(rng, 8), size);
-         |                             ^~~~~
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
->> crypto/testmgr.c:968:42: error: passing argument 1 of 'flip_random_byte' from incompatible pointer type [-Wincompatible-pointer-types]
-     968 |                         flip_random_byte(rng, buf, size);
-         |                                          ^~~
-         |                                          |
-         |                                          struct rnd_state *
-   crypto/testmgr.c:945:48: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     945 | static void flip_random_byte(struct rnd_state *rng, u8 *buf, size_t size)
-         |                              ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c: At top level:
-   crypto/testmgr.c:973:42: warning: 'struct rnd_state' declared inside parameter list will not be visible outside of this definition or declaration
-     973 | static void generate_random_bytes(struct rnd_state *rng, u8 *buf, size_t count)
-         |                                          ^~~~~~~~~
-   crypto/testmgr.c: In function 'generate_random_bytes':
-   crypto/testmgr.c:982:35: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-     982 |         switch (prandom_u32_below(rng, 8)) { /* Choose a generation strategy */
-         |                                   ^~~
-         |                                   |
-         |                                   struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:986:43: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-     986 |                 switch (prandom_u32_below(rng, 4)) {
-         |                                           ^~~
-         |                                           |
-         |                                           struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
->> crypto/testmgr.c:994:40: error: passing argument 1 of 'prandom_u8' from incompatible pointer type [-Wincompatible-pointer-types]
-     994 |                         b = prandom_u8(rng);
-         |                                        ^~~
-         |                                        |
-         |                                        struct rnd_state *
-   crypto/testmgr.c:886:47: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     886 | static inline u8 prandom_u8(struct rnd_state *rng)
-         |                             ~~~~~~~~~~~~~~~~~~^~~
->> crypto/testmgr.c:998:31: error: passing argument 1 of 'mutate_buffer' from incompatible pointer type [-Wincompatible-pointer-types]
-     998 |                 mutate_buffer(rng, buf, count);
-         |                               ^~~
-         |                               |
-         |                               struct rnd_state *
-   crypto/testmgr.c:951:45: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     951 | static void mutate_buffer(struct rnd_state *rng, u8 *buf, size_t size)
-         |                           ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1002:40: error: passing argument 1 of 'prandom_u8' from incompatible pointer type [-Wincompatible-pointer-types]
-    1002 |                 increment = prandom_u8(rng);
-         |                                        ^~~
-         |                                        |
-         |                                        struct rnd_state *
-   crypto/testmgr.c:886:47: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     886 | static inline u8 prandom_u8(struct rnd_state *rng)
-         |                             ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1003:32: error: passing argument 1 of 'prandom_u8' from incompatible pointer type [-Wincompatible-pointer-types]
-    1003 |                 b = prandom_u8(rng);
-         |                                ^~~
-         |                                |
-         |                                struct rnd_state *
-   crypto/testmgr.c:886:47: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     886 | static inline u8 prandom_u8(struct rnd_state *rng)
-         |                             ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1006:31: error: passing argument 1 of 'mutate_buffer' from incompatible pointer type [-Wincompatible-pointer-types]
-    1006 |                 mutate_buffer(rng, buf, count);
-         |                               ^~~
-         |                               |
-         |                               struct rnd_state *
-   crypto/testmgr.c:951:45: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     951 | static void mutate_buffer(struct rnd_state *rng, u8 *buf, size_t size)
-         |                           ~~~~~~~~~~~~~~~~~~^~~
->> crypto/testmgr.c:1010:17: error: implicit declaration of function 'prandom_bytes_state' [-Wimplicit-function-declaration]
-    1010 |                 prandom_bytes_state(rng, buf, count);
-         |                 ^~~~~~~~~~~~~~~~~~~
-   crypto/testmgr.c: At top level:
-   crypto/testmgr.c:1014:51: warning: 'struct rnd_state' declared inside parameter list will not be visible outside of this definition or declaration
-    1014 | static char *generate_random_sgl_divisions(struct rnd_state *rng,
-         |                                                   ^~~~~~~~~
-   crypto/testmgr.c: In function 'generate_random_sgl_divisions':
->> crypto/testmgr.c:1026:64: error: passing argument 1 of 'prandom_bool' from incompatible pointer type [-Wincompatible-pointer-types]
-    1026 |                 if (div == &divs[max_divs - 1] || prandom_bool(rng))
-         |                                                                ^~~
-         |                                                                |
-         |                                                                struct rnd_state *
-   crypto/testmgr.c:900:51: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                 ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1028:44: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-    1028 |                 else if (prandom_u32_below(rng, 4) == 0)
-         |                                            ^~~
-         |                                            |
-         |                                            struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
->> crypto/testmgr.c:1031:58: error: passing argument 1 of 'prandom_u32_inclusive' from incompatible pointer type [-Wincompatible-pointer-types]
-    1031 |                         this_len = prandom_u32_inclusive(rng, 1, remaining);
-         |                                                          ^~~
-         |                                                          |
-         |                                                          struct rnd_state *
-   crypto/testmgr.c:905:59: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     905 | static inline u32 prandom_u32_inclusive(struct rnd_state *rng,
-         |                                         ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1034:39: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-    1034 |                 if (prandom_u32_below(rng, 4) == 0)
-         |                                       ^~~
-         |                                       |
-         |                                       struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1035:61: error: passing argument 1 of 'prandom_u32_inclusive' from incompatible pointer type [-Wincompatible-pointer-types]
-    1035 |                         div->offset = prandom_u32_inclusive(rng,
-         |                                                             ^~~
-         |                                                             |
-         |                                                             struct rnd_state *
-   crypto/testmgr.c:905:59: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     905 | static inline u32 prandom_u32_inclusive(struct rnd_state *rng,
-         |                                         ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1038:39: error: passing argument 1 of 'prandom_bool' from incompatible pointer type [-Wincompatible-pointer-types]
-    1038 |                 else if (prandom_bool(rng))
-         |                                       ^~~
-         |                                       |
-         |                                       struct rnd_state *
-   crypto/testmgr.c:900:51: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                 ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1039:57: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-    1039 |                         div->offset = prandom_u32_below(rng, 32);
-         |                                                         ^~~
-         |                                                         |
-         |                                                         struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1041:57: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-    1041 |                         div->offset = prandom_u32_below(rng, PAGE_SIZE);
-         |                                                         ^~~
-         |                                                         |
-         |                                                         struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1042:39: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-    1042 |                 if (prandom_u32_below(rng, 8) == 0)
-         |                                       ^~~
-         |                                       |
-         |                                       struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1047:51: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-    1047 |                         switch (prandom_u32_below(rng, 4)) {
-         |                                                   ^~~
-         |                                                   |
-         |                                                   struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1059:34: error: passing argument 1 of 'prandom_bool' from incompatible pointer type [-Wincompatible-pointer-types]
-    1059 |                     prandom_bool(rng))
-         |                                  ^~~
-         |                                  |
-         |                                  struct rnd_state *
-   crypto/testmgr.c:900:51: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                 ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c: At top level:
-   crypto/testmgr.c:1094:51: warning: 'struct rnd_state' declared inside parameter list will not be visible outside of this definition or declaration
-    1094 | static void generate_random_testvec_config(struct rnd_state *rng,
-         |                                                   ^~~~~~~~~
-   crypto/testmgr.c: In function 'generate_random_testvec_config':
-   crypto/testmgr.c:1107:35: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-    1107 |         switch (prandom_u32_below(rng, 4)) {
-         |                                   ^~~
-         |                                   |
-         |                                   struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1122:26: error: passing argument 1 of 'prandom_bool' from incompatible pointer type [-Wincompatible-pointer-types]
-    1122 |         if (prandom_bool(rng)) {
-         |                          ^~~
-         |                          |
-         |                          struct rnd_state *
-   crypto/testmgr.c:900:51: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                 ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1127:35: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-    1127 |         switch (prandom_u32_below(rng, 4)) {
-         |                                   ^~~
-         |                                   |
-         |                                   struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1143:34: error: passing argument 1 of 'prandom_bool' from incompatible pointer type [-Wincompatible-pointer-types]
-    1143 |                 if (prandom_bool(rng)) {
-         |                                  ^~~
-         |                                  |
-         |                                  struct rnd_state *
-   crypto/testmgr.c:900:51: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                 ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1147:34: error: passing argument 1 of 'prandom_bool' from incompatible pointer type [-Wincompatible-pointer-types]
-    1147 |                 if (prandom_bool(rng)) {
-         |                                  ^~~
-         |                                  |
-         |                                  struct rnd_state *
-   crypto/testmgr.c:900:51: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                 ~~~~~~~~~~~~~~~~~~^~~
->> crypto/testmgr.c:1154:43: error: passing argument 1 of 'generate_random_sgl_divisions' from incompatible pointer type [-Wincompatible-pointer-types]
-    1154 |         p = generate_random_sgl_divisions(rng, cfg->src_divs,
-         |                                           ^~~
-         |                                           |
-         |                                           struct rnd_state *
-   crypto/testmgr.c:1014:62: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-    1014 | static char *generate_random_sgl_divisions(struct rnd_state *rng,
-         |                                            ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1161:63: error: passing argument 1 of 'prandom_bool' from incompatible pointer type [-Wincompatible-pointer-types]
-    1161 |         if (cfg->inplace_mode == OUT_OF_PLACE && prandom_bool(rng)) {
-         |                                                               ^~~
-         |                                                               |
-         |                                                               struct rnd_state *
-   crypto/testmgr.c:900:51: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                 ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1163:51: error: passing argument 1 of 'generate_random_sgl_divisions' from incompatible pointer type [-Wincompatible-pointer-types]
-    1163 |                 p = generate_random_sgl_divisions(rng, cfg->dst_divs,
-         |                                                   ^~~
-         |                                                   |
-         |                                                   struct rnd_state *
-   crypto/testmgr.c:1014:62: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-    1014 | static char *generate_random_sgl_divisions(struct rnd_state *rng,
-         |                                            ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1170:26: error: passing argument 1 of 'prandom_bool' from incompatible pointer type [-Wincompatible-pointer-types]
-    1170 |         if (prandom_bool(rng)) {
-         |                          ^~~
-         |                          |
-         |                          struct rnd_state *
-   crypto/testmgr.c:900:51: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                 ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1171:56: error: passing argument 1 of 'prandom_u32_inclusive' from incompatible pointer type [-Wincompatible-pointer-types]
-    1171 |                 cfg->iv_offset = prandom_u32_inclusive(rng, 1,
-         |                                                        ^~~
-         |                                                        |
-         |                                                        struct rnd_state *
-   crypto/testmgr.c:905:59: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     905 | static inline u32 prandom_u32_inclusive(struct rnd_state *rng,
-         |                                         ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1176:26: error: passing argument 1 of 'prandom_bool' from incompatible pointer type [-Wincompatible-pointer-types]
-    1176 |         if (prandom_bool(rng)) {
-         |                          ^~~
-         |                          |
-         |                          struct rnd_state *
-   crypto/testmgr.c:900:51: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                 ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1177:57: error: passing argument 1 of 'prandom_u32_inclusive' from incompatible pointer type [-Wincompatible-pointer-types]
-    1177 |                 cfg->key_offset = prandom_u32_inclusive(rng, 1,
-         |                                                         ^~~
-         |                                                         |
-         |                                                         struct rnd_state *
-   crypto/testmgr.c:905:59: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     905 | static inline u32 prandom_u32_inclusive(struct rnd_state *rng,
-         |                                         ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c: In function 'test_hash_vec':
->> crypto/testmgr.c:1689:34: error: storage size of 'rng' isn't known
-    1689 |                 struct rnd_state rng;
-         |                                  ^~~
->> crypto/testmgr.c:1689:34: warning: unused variable 'rng' [-Wunused-variable]
-   crypto/testmgr.c: At top level:
-   crypto/testmgr.c:1714:49: warning: 'struct rnd_state' declared inside parameter list will not be visible outside of this definition or declaration
-    1714 | static void generate_random_hash_testvec(struct rnd_state *rng,
-         |                                                 ^~~~~~~~~
-   crypto/testmgr.c: In function 'generate_random_hash_testvec':
->> crypto/testmgr.c:1722:45: error: passing argument 1 of 'generate_random_length' from incompatible pointer type [-Wincompatible-pointer-types]
-    1722 |         vec->psize = generate_random_length(rng, maxdatasize);
-         |                                             ^~~
-         |                                             |
-         |                                             struct rnd_state *
-   crypto/testmgr.c:912:62: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     912 | static unsigned int generate_random_length(struct rnd_state *rng,
-         |                                            ~~~~~~~~~~~~~~~~~~^~~
->> crypto/testmgr.c:1723:31: error: passing argument 1 of 'generate_random_bytes' from incompatible pointer type [-Wincompatible-pointer-types]
-    1723 |         generate_random_bytes(rng, (u8 *)vec->plaintext, vec->psize);
-         |                               ^~~
-         |                               |
-         |                               struct rnd_state *
-   crypto/testmgr.c:973:53: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     973 | static void generate_random_bytes(struct rnd_state *rng, u8 *buf, size_t count)
-         |                                   ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1733:39: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-    1733 |                 if (prandom_u32_below(rng, 4) == 0)
-         |                                       ^~~
-         |                                       |
-         |                                       struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1734:60: error: passing argument 1 of 'prandom_u32_inclusive' from incompatible pointer type [-Wincompatible-pointer-types]
-    1734 |                         vec->ksize = prandom_u32_inclusive(rng, 1, maxkeysize);
-         |                                                            ^~~
-         |                                                            |
-         |                                                            struct rnd_state *
-   crypto/testmgr.c:905:59: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     905 | static inline u32 prandom_u32_inclusive(struct rnd_state *rng,
-         |                                         ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:1735:39: error: passing argument 1 of 'generate_random_bytes' from incompatible pointer type [-Wincompatible-pointer-types]
-    1735 |                 generate_random_bytes(rng, (u8 *)vec->key, vec->ksize);
-         |                                       ^~~
-         |                                       |
-         |                                       struct rnd_state *
-   crypto/testmgr.c:973:53: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     973 | static void generate_random_bytes(struct rnd_state *rng, u8 *buf, size_t count)
-         |                                   ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c: In function 'test_hash_vs_generic_impl':
-   crypto/testmgr.c:1769:26: error: storage size of 'rng' isn't known
-    1769 |         struct rnd_state rng;
-         |                          ^~~
-   crypto/testmgr.c:1769:26: warning: unused variable 'rng' [-Wunused-variable]
-   crypto/testmgr.c: In function 'test_aead_vec':
-   crypto/testmgr.c:2259:34: error: storage size of 'rng' isn't known
-    2259 |                 struct rnd_state rng;
-         |                                  ^~~
-   crypto/testmgr.c:2259:34: warning: unused variable 'rng' [-Wunused-variable]
-   crypto/testmgr.c: At top level:
->> crypto/testmgr.c:2282:26: error: field 'rng' has incomplete type
-    2282 |         struct rnd_state rng;
-         |                          ^~~
-   crypto/testmgr.c: In function 'mutate_aead_message':
-   crypto/testmgr.c:2308:26: error: passing argument 1 of 'prandom_bool' from incompatible pointer type [-Wincompatible-pointer-types]
-    2308 |         if (prandom_bool(rng) && vec->alen > aad_tail_size) {
-         |                          ^~~
-         |                          |
-         |                          struct rnd_state *
-   crypto/testmgr.c:900:51: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                 ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:2310:33: error: passing argument 1 of 'flip_random_bit' from incompatible pointer type [-Wincompatible-pointer-types]
-    2310 |                 flip_random_bit(rng, (u8 *)vec->assoc,
-         |                                 ^~~
-         |                                 |
-         |                                 struct rnd_state *
-   crypto/testmgr.c:936:47: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     936 | static void flip_random_bit(struct rnd_state *rng, u8 *buf, size_t size)
-         |                             ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:2312:34: error: passing argument 1 of 'prandom_bool' from incompatible pointer type [-Wincompatible-pointer-types]
-    2312 |                 if (prandom_bool(rng))
-         |                                  ^~~
-         |                                  |
-         |                                  struct rnd_state *
-   crypto/testmgr.c:900:51: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                 ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:2315:26: error: passing argument 1 of 'prandom_bool' from incompatible pointer type [-Wincompatible-pointer-types]
-    2315 |         if (prandom_bool(rng)) {
-         |                          ^~~
-         |                          |
-         |                          struct rnd_state *
-   crypto/testmgr.c:900:51: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                 ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:2317:33: error: passing argument 1 of 'flip_random_bit' from incompatible pointer type [-Wincompatible-pointer-types]
-    2317 |                 flip_random_bit(rng, (u8 *)vec->ctext + vec->plen, authsize);
-         |                                 ^~~
-         |                                 |
-         |                                 struct rnd_state *
-   crypto/testmgr.c:936:47: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     936 | static void flip_random_bit(struct rnd_state *rng, u8 *buf, size_t size)
-         |                             ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:2320:33: error: passing argument 1 of 'flip_random_bit' from incompatible pointer type [-Wincompatible-pointer-types]
-    2320 |                 flip_random_bit(rng, (u8 *)vec->ctext, vec->clen);
-         |                                 ^~~
-         |                                 |
-         |                                 struct rnd_state *
-   crypto/testmgr.c:936:47: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     936 | static void flip_random_bit(struct rnd_state *rng, u8 *buf, size_t size)
-         |                             ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c: In function 'generate_aead_message':
-   crypto/testmgr.c:2342:53: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-    2342 |                                   prandom_u32_below(rng, 4) == 0);
-         |                                                     ^~~
-         |                                                     |
-         |                                                     struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-         |                                     ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:2345:31: error: passing argument 1 of 'generate_random_bytes' from incompatible pointer type [-Wincompatible-pointer-types]
-    2345 |         generate_random_bytes(rng, (u8 *)vec->assoc, vec->alen);
-         |                               ^~~
-         |                               |
-         |                               struct rnd_state *
-   crypto/testmgr.c:973:53: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     973 | static void generate_random_bytes(struct rnd_state *rng, u8 *buf, size_t count)
-         |                                   ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:2350:41: error: passing argument 1 of 'prandom_bool' from incompatible pointer type [-Wincompatible-pointer-types]
-    2350 |         if (inauthentic && prandom_bool(rng)) {
-         |                                         ^~~
-         |                                         |
-         |                                         struct rnd_state *
-   crypto/testmgr.c:900:51: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     900 | static inline bool prandom_bool(struct rnd_state *rng)
-         |                                 ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:2352:39: error: passing argument 1 of 'generate_random_bytes' from incompatible pointer type [-Wincompatible-pointer-types]
-    2352 |                 generate_random_bytes(rng, (u8 *)vec->ctext, vec->clen);
-         |                                       ^~~
-         |                                       |
-         |                                       struct rnd_state *
-   crypto/testmgr.c:973:53: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     973 | static void generate_random_bytes(struct rnd_state *rng, u8 *buf, size_t count)
-         |                                   ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c:2364:47: error: passing argument 1 of 'generate_random_bytes' from incompatible pointer type [-Wincompatible-pointer-types]
-    2364 |                         generate_random_bytes(rng, (u8 *)vec->ptext, vec->plen);
-         |                                               ^~~
-         |                                               |
-         |                                               struct rnd_state *
-   crypto/testmgr.c:973:53: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     973 | static void generate_random_bytes(struct rnd_state *rng, u8 *buf, size_t count)
-         |                                   ~~~~~~~~~~~~~~~~~~^~~
-   crypto/testmgr.c: In function 'generate_random_aead_testvec':
-   crypto/testmgr.c:2415:31: error: passing argument 1 of 'prandom_u32_below' from incompatible pointer type [-Wincompatible-pointer-types]
-    2415 |         if (prandom_u32_below(rng, 4) == 0)
-         |                               ^~~
-         |                               |
-         |                               struct rnd_state *
-   crypto/testmgr.c:891:55: note: expected 'struct rnd_state *' but argument is of type 'struct rnd_state *'
-     891 | static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-
-
-vim +/prandom_seed_state +883 crypto/testmgr.c
-
-f2bb770ae89641 Eric Biggers 2019-04-11   873  
-f900fde2888360 Eric Biggers 2023-02-27   874  /*
-f900fde2888360 Eric Biggers 2023-02-27   875   * The fuzz tests use prandom instead of the normal Linux RNG since they don't
-f900fde2888360 Eric Biggers 2023-02-27   876   * need cryptographically secure random numbers.  This greatly improves the
-f900fde2888360 Eric Biggers 2023-02-27   877   * performance of these tests, especially if they are run before the Linux RNG
-f900fde2888360 Eric Biggers 2023-02-27   878   * has been initialized or if they are run on a lockdep-enabled kernel.
-f900fde2888360 Eric Biggers 2023-02-27   879   */
-f900fde2888360 Eric Biggers 2023-02-27   880  
-f900fde2888360 Eric Biggers 2023-02-27  @881  static inline void init_rnd_state(struct rnd_state *rng)
-f900fde2888360 Eric Biggers 2023-02-27   882  {
-f900fde2888360 Eric Biggers 2023-02-27  @883  	prandom_seed_state(rng, get_random_u64());
-f900fde2888360 Eric Biggers 2023-02-27   884  }
-f900fde2888360 Eric Biggers 2023-02-27   885  
-f900fde2888360 Eric Biggers 2023-02-27   886  static inline u8 prandom_u8(struct rnd_state *rng)
-f900fde2888360 Eric Biggers 2023-02-27   887  {
-f900fde2888360 Eric Biggers 2023-02-27  @888  	return prandom_u32_state(rng);
-f900fde2888360 Eric Biggers 2023-02-27   889  }
-f900fde2888360 Eric Biggers 2023-02-27   890  
-f900fde2888360 Eric Biggers 2023-02-27  @891  static inline u32 prandom_u32_below(struct rnd_state *rng, u32 ceil)
-f900fde2888360 Eric Biggers 2023-02-27   892  {
-f900fde2888360 Eric Biggers 2023-02-27   893  	/*
-f900fde2888360 Eric Biggers 2023-02-27   894  	 * This is slightly biased for non-power-of-2 values of 'ceil', but this
-f900fde2888360 Eric Biggers 2023-02-27   895  	 * isn't important here.
-f900fde2888360 Eric Biggers 2023-02-27   896  	 */
-f900fde2888360 Eric Biggers 2023-02-27   897  	return prandom_u32_state(rng) % ceil;
-f900fde2888360 Eric Biggers 2023-02-27   898  }
-f900fde2888360 Eric Biggers 2023-02-27   899  
-f900fde2888360 Eric Biggers 2023-02-27   900  static inline bool prandom_bool(struct rnd_state *rng)
-f900fde2888360 Eric Biggers 2023-02-27   901  {
-f900fde2888360 Eric Biggers 2023-02-27  @902  	return prandom_u32_below(rng, 2);
-f900fde2888360 Eric Biggers 2023-02-27   903  }
-f900fde2888360 Eric Biggers 2023-02-27   904  
-f900fde2888360 Eric Biggers 2023-02-27  @905  static inline u32 prandom_u32_inclusive(struct rnd_state *rng,
-f900fde2888360 Eric Biggers 2023-02-27   906  					u32 floor, u32 ceil)
-f900fde2888360 Eric Biggers 2023-02-27   907  {
-f900fde2888360 Eric Biggers 2023-02-27   908  	return floor + prandom_u32_below(rng, ceil - floor + 1);
-f900fde2888360 Eric Biggers 2023-02-27   909  }
-f900fde2888360 Eric Biggers 2023-02-27   910  
-f2bb770ae89641 Eric Biggers 2019-04-11   911  /* Generate a random length in range [0, max_len], but prefer smaller values */
-f900fde2888360 Eric Biggers 2023-02-27   912  static unsigned int generate_random_length(struct rnd_state *rng,
-f900fde2888360 Eric Biggers 2023-02-27   913  					   unsigned int max_len)
-f2bb770ae89641 Eric Biggers 2019-04-11   914  {
-f900fde2888360 Eric Biggers 2023-02-27   915  	unsigned int len = prandom_u32_below(rng, max_len + 1);
-f2bb770ae89641 Eric Biggers 2019-04-11   916  
-f900fde2888360 Eric Biggers 2023-02-27   917  	switch (prandom_u32_below(rng, 4)) {
-f2bb770ae89641 Eric Biggers 2019-04-11   918  	case 0:
-101e99c23af946 Eric Biggers 2024-07-03   919  		len %= 64;
-101e99c23af946 Eric Biggers 2024-07-03   920  		break;
-f2bb770ae89641 Eric Biggers 2019-04-11   921  	case 1:
-101e99c23af946 Eric Biggers 2024-07-03   922  		len %= 256;
-101e99c23af946 Eric Biggers 2024-07-03   923  		break;
-f2bb770ae89641 Eric Biggers 2019-04-11   924  	case 2:
-101e99c23af946 Eric Biggers 2024-07-03   925  		len %= 1024;
-101e99c23af946 Eric Biggers 2024-07-03   926  		break;
-f2bb770ae89641 Eric Biggers 2019-04-11   927  	default:
-101e99c23af946 Eric Biggers 2024-07-03   928  		break;
-f2bb770ae89641 Eric Biggers 2019-04-11   929  	}
-101e99c23af946 Eric Biggers 2024-07-03   930  	if (len && prandom_u32_below(rng, 4) == 0)
-101e99c23af946 Eric Biggers 2024-07-03   931  		len = rounddown_pow_of_two(len);
-101e99c23af946 Eric Biggers 2024-07-03   932  	return len;
-f2bb770ae89641 Eric Biggers 2019-04-11   933  }
-f2bb770ae89641 Eric Biggers 2019-04-11   934  
-49763fc6b1af42 Eric Biggers 2019-12-01   935  /* Flip a random bit in the given nonempty data buffer */
-f900fde2888360 Eric Biggers 2023-02-27   936  static void flip_random_bit(struct rnd_state *rng, u8 *buf, size_t size)
-49763fc6b1af42 Eric Biggers 2019-12-01   937  {
-49763fc6b1af42 Eric Biggers 2019-12-01   938  	size_t bitpos;
-49763fc6b1af42 Eric Biggers 2019-12-01   939  
-f900fde2888360 Eric Biggers 2023-02-27   940  	bitpos = prandom_u32_below(rng, size * 8);
-49763fc6b1af42 Eric Biggers 2019-12-01   941  	buf[bitpos / 8] ^= 1 << (bitpos % 8);
-49763fc6b1af42 Eric Biggers 2019-12-01   942  }
-49763fc6b1af42 Eric Biggers 2019-12-01   943  
-49763fc6b1af42 Eric Biggers 2019-12-01   944  /* Flip a random byte in the given nonempty data buffer */
-f900fde2888360 Eric Biggers 2023-02-27   945  static void flip_random_byte(struct rnd_state *rng, u8 *buf, size_t size)
-49763fc6b1af42 Eric Biggers 2019-12-01   946  {
-f900fde2888360 Eric Biggers 2023-02-27   947  	buf[prandom_u32_below(rng, size)] ^= 0xff;
-49763fc6b1af42 Eric Biggers 2019-12-01   948  }
-49763fc6b1af42 Eric Biggers 2019-12-01   949  
-49763fc6b1af42 Eric Biggers 2019-12-01   950  /* Sometimes make some random changes to the given nonempty data buffer */
-f900fde2888360 Eric Biggers 2023-02-27   951  static void mutate_buffer(struct rnd_state *rng, u8 *buf, size_t size)
-f2bb770ae89641 Eric Biggers 2019-04-11   952  {
-f2bb770ae89641 Eric Biggers 2019-04-11   953  	size_t num_flips;
-f2bb770ae89641 Eric Biggers 2019-04-11   954  	size_t i;
-f2bb770ae89641 Eric Biggers 2019-04-11   955  
-f2bb770ae89641 Eric Biggers 2019-04-11   956  	/* Sometimes flip some bits */
-f900fde2888360 Eric Biggers 2023-02-27   957  	if (prandom_u32_below(rng, 4) == 0) {
-f900fde2888360 Eric Biggers 2023-02-27  @958  		num_flips = min_t(size_t, 1 << prandom_u32_below(rng, 8),
-f900fde2888360 Eric Biggers 2023-02-27   959  				  size * 8);
-49763fc6b1af42 Eric Biggers 2019-12-01   960  		for (i = 0; i < num_flips; i++)
-f900fde2888360 Eric Biggers 2023-02-27  @961  			flip_random_bit(rng, buf, size);
-f2bb770ae89641 Eric Biggers 2019-04-11   962  	}
-f2bb770ae89641 Eric Biggers 2019-04-11   963  
-f2bb770ae89641 Eric Biggers 2019-04-11   964  	/* Sometimes flip some bytes */
-f900fde2888360 Eric Biggers 2023-02-27   965  	if (prandom_u32_below(rng, 4) == 0) {
-f900fde2888360 Eric Biggers 2023-02-27  @966  		num_flips = min_t(size_t, 1 << prandom_u32_below(rng, 8), size);
-f2bb770ae89641 Eric Biggers 2019-04-11   967  		for (i = 0; i < num_flips; i++)
-f900fde2888360 Eric Biggers 2023-02-27  @968  			flip_random_byte(rng, buf, size);
-f2bb770ae89641 Eric Biggers 2019-04-11   969  	}
-f2bb770ae89641 Eric Biggers 2019-04-11   970  }
-f2bb770ae89641 Eric Biggers 2019-04-11   971  
-f2bb770ae89641 Eric Biggers 2019-04-11   972  /* Randomly generate 'count' bytes, but sometimes make them "interesting" */
-f900fde2888360 Eric Biggers 2023-02-27   973  static void generate_random_bytes(struct rnd_state *rng, u8 *buf, size_t count)
-f2bb770ae89641 Eric Biggers 2019-04-11   974  {
-f2bb770ae89641 Eric Biggers 2019-04-11   975  	u8 b;
-f2bb770ae89641 Eric Biggers 2019-04-11   976  	u8 increment;
-f2bb770ae89641 Eric Biggers 2019-04-11   977  	size_t i;
-f2bb770ae89641 Eric Biggers 2019-04-11   978  
-f2bb770ae89641 Eric Biggers 2019-04-11   979  	if (count == 0)
-f2bb770ae89641 Eric Biggers 2019-04-11   980  		return;
-f2bb770ae89641 Eric Biggers 2019-04-11   981  
-f900fde2888360 Eric Biggers 2023-02-27   982  	switch (prandom_u32_below(rng, 8)) { /* Choose a generation strategy */
-f2bb770ae89641 Eric Biggers 2019-04-11   983  	case 0:
-f2bb770ae89641 Eric Biggers 2019-04-11   984  	case 1:
-f2bb770ae89641 Eric Biggers 2019-04-11   985  		/* All the same byte, plus optional mutations */
-f900fde2888360 Eric Biggers 2023-02-27  @986  		switch (prandom_u32_below(rng, 4)) {
-f2bb770ae89641 Eric Biggers 2019-04-11   987  		case 0:
-f2bb770ae89641 Eric Biggers 2019-04-11   988  			b = 0x00;
-f2bb770ae89641 Eric Biggers 2019-04-11   989  			break;
-f2bb770ae89641 Eric Biggers 2019-04-11   990  		case 1:
-f2bb770ae89641 Eric Biggers 2019-04-11   991  			b = 0xff;
-f2bb770ae89641 Eric Biggers 2019-04-11   992  			break;
-f2bb770ae89641 Eric Biggers 2019-04-11   993  		default:
-f900fde2888360 Eric Biggers 2023-02-27  @994  			b = prandom_u8(rng);
-f2bb770ae89641 Eric Biggers 2019-04-11   995  			break;
-f2bb770ae89641 Eric Biggers 2019-04-11   996  		}
-f2bb770ae89641 Eric Biggers 2019-04-11   997  		memset(buf, b, count);
-f900fde2888360 Eric Biggers 2023-02-27  @998  		mutate_buffer(rng, buf, count);
-f2bb770ae89641 Eric Biggers 2019-04-11   999  		break;
-f2bb770ae89641 Eric Biggers 2019-04-11  1000  	case 2:
-f2bb770ae89641 Eric Biggers 2019-04-11  1001  		/* Ascending or descending bytes, plus optional mutations */
-f900fde2888360 Eric Biggers 2023-02-27  1002  		increment = prandom_u8(rng);
-f900fde2888360 Eric Biggers 2023-02-27  1003  		b = prandom_u8(rng);
-f2bb770ae89641 Eric Biggers 2019-04-11  1004  		for (i = 0; i < count; i++, b += increment)
-f2bb770ae89641 Eric Biggers 2019-04-11  1005  			buf[i] = b;
-f900fde2888360 Eric Biggers 2023-02-27 @1006  		mutate_buffer(rng, buf, count);
-f2bb770ae89641 Eric Biggers 2019-04-11  1007  		break;
-f2bb770ae89641 Eric Biggers 2019-04-11  1008  	default:
-f2bb770ae89641 Eric Biggers 2019-04-11  1009  		/* Fully random bytes */
-f900fde2888360 Eric Biggers 2023-02-27 @1010  		prandom_bytes_state(rng, buf, count);
-f2bb770ae89641 Eric Biggers 2019-04-11  1011  	}
-f2bb770ae89641 Eric Biggers 2019-04-11  1012  }
-f2bb770ae89641 Eric Biggers 2019-04-11  1013  
-f900fde2888360 Eric Biggers 2023-02-27  1014  static char *generate_random_sgl_divisions(struct rnd_state *rng,
-f900fde2888360 Eric Biggers 2023-02-27  1015  					   struct test_sg_division *divs,
-25f9dddb928aee Eric Biggers 2019-01-31  1016  					   size_t max_divs, char *p, char *end,
-6570737c7fa047 Eric Biggers 2019-03-12  1017  					   bool gen_flushes, u32 req_flags)
-25f9dddb928aee Eric Biggers 2019-01-31  1018  {
-25f9dddb928aee Eric Biggers 2019-01-31  1019  	struct test_sg_division *div = divs;
-25f9dddb928aee Eric Biggers 2019-01-31  1020  	unsigned int remaining = TEST_SG_TOTAL;
-25f9dddb928aee Eric Biggers 2019-01-31  1021  
-25f9dddb928aee Eric Biggers 2019-01-31  1022  	do {
-25f9dddb928aee Eric Biggers 2019-01-31  1023  		unsigned int this_len;
-6570737c7fa047 Eric Biggers 2019-03-12  1024  		const char *flushtype_str;
-25f9dddb928aee Eric Biggers 2019-01-31  1025  
-f900fde2888360 Eric Biggers 2023-02-27 @1026  		if (div == &divs[max_divs - 1] || prandom_bool(rng))
-25f9dddb928aee Eric Biggers 2019-01-31  1027  			this_len = remaining;
-101e99c23af946 Eric Biggers 2024-07-03 @1028  		else if (prandom_u32_below(rng, 4) == 0)
-101e99c23af946 Eric Biggers 2024-07-03  1029  			this_len = (remaining + 1) / 2;
-25f9dddb928aee Eric Biggers 2019-01-31  1030  		else
-f900fde2888360 Eric Biggers 2023-02-27 @1031  			this_len = prandom_u32_inclusive(rng, 1, remaining);
-25f9dddb928aee Eric Biggers 2019-01-31  1032  		div->proportion_of_total = this_len;
-25f9dddb928aee Eric Biggers 2019-01-31  1033  
-f900fde2888360 Eric Biggers 2023-02-27  1034  		if (prandom_u32_below(rng, 4) == 0)
-f900fde2888360 Eric Biggers 2023-02-27  1035  			div->offset = prandom_u32_inclusive(rng,
-f900fde2888360 Eric Biggers 2023-02-27  1036  							    PAGE_SIZE - 128,
-f900fde2888360 Eric Biggers 2023-02-27  1037  							    PAGE_SIZE - 1);
-f900fde2888360 Eric Biggers 2023-02-27  1038  		else if (prandom_bool(rng))
-f900fde2888360 Eric Biggers 2023-02-27  1039  			div->offset = prandom_u32_below(rng, 32);
-25f9dddb928aee Eric Biggers 2019-01-31  1040  		else
-f900fde2888360 Eric Biggers 2023-02-27  1041  			div->offset = prandom_u32_below(rng, PAGE_SIZE);
-f900fde2888360 Eric Biggers 2023-02-27  1042  		if (prandom_u32_below(rng, 8) == 0)
-25f9dddb928aee Eric Biggers 2019-01-31  1043  			div->offset_relative_to_alignmask = true;
-25f9dddb928aee Eric Biggers 2019-01-31  1044  
-25f9dddb928aee Eric Biggers 2019-01-31  1045  		div->flush_type = FLUSH_TYPE_NONE;
-25f9dddb928aee Eric Biggers 2019-01-31  1046  		if (gen_flushes) {
-f900fde2888360 Eric Biggers 2023-02-27  1047  			switch (prandom_u32_below(rng, 4)) {
-25f9dddb928aee Eric Biggers 2019-01-31  1048  			case 0:
-25f9dddb928aee Eric Biggers 2019-01-31  1049  				div->flush_type = FLUSH_TYPE_REIMPORT;
-25f9dddb928aee Eric Biggers 2019-01-31  1050  				break;
-25f9dddb928aee Eric Biggers 2019-01-31  1051  			case 1:
-25f9dddb928aee Eric Biggers 2019-01-31  1052  				div->flush_type = FLUSH_TYPE_FLUSH;
-25f9dddb928aee Eric Biggers 2019-01-31  1053  				break;
-25f9dddb928aee Eric Biggers 2019-01-31  1054  			}
-25f9dddb928aee Eric Biggers 2019-01-31  1055  		}
-25f9dddb928aee Eric Biggers 2019-01-31  1056  
-6570737c7fa047 Eric Biggers 2019-03-12  1057  		if (div->flush_type != FLUSH_TYPE_NONE &&
-6570737c7fa047 Eric Biggers 2019-03-12  1058  		    !(req_flags & CRYPTO_TFM_REQ_MAY_SLEEP) &&
-f900fde2888360 Eric Biggers 2023-02-27  1059  		    prandom_bool(rng))
-6570737c7fa047 Eric Biggers 2019-03-12  1060  			div->nosimd = true;
-6570737c7fa047 Eric Biggers 2019-03-12  1061  
-6570737c7fa047 Eric Biggers 2019-03-12  1062  		switch (div->flush_type) {
-6570737c7fa047 Eric Biggers 2019-03-12  1063  		case FLUSH_TYPE_FLUSH:
-6570737c7fa047 Eric Biggers 2019-03-12  1064  			if (div->nosimd)
-6570737c7fa047 Eric Biggers 2019-03-12  1065  				flushtype_str = "<flush,nosimd>";
-6570737c7fa047 Eric Biggers 2019-03-12  1066  			else
-6570737c7fa047 Eric Biggers 2019-03-12  1067  				flushtype_str = "<flush>";
-6570737c7fa047 Eric Biggers 2019-03-12  1068  			break;
-6570737c7fa047 Eric Biggers 2019-03-12  1069  		case FLUSH_TYPE_REIMPORT:
-6570737c7fa047 Eric Biggers 2019-03-12  1070  			if (div->nosimd)
-6570737c7fa047 Eric Biggers 2019-03-12  1071  				flushtype_str = "<reimport,nosimd>";
-6570737c7fa047 Eric Biggers 2019-03-12  1072  			else
-6570737c7fa047 Eric Biggers 2019-03-12  1073  				flushtype_str = "<reimport>";
-6570737c7fa047 Eric Biggers 2019-03-12  1074  			break;
-6570737c7fa047 Eric Biggers 2019-03-12  1075  		default:
-6570737c7fa047 Eric Biggers 2019-03-12  1076  			flushtype_str = "";
-6570737c7fa047 Eric Biggers 2019-03-12  1077  			break;
-6570737c7fa047 Eric Biggers 2019-03-12  1078  		}
-6570737c7fa047 Eric Biggers 2019-03-12  1079  
-25f9dddb928aee Eric Biggers 2019-01-31  1080  		BUILD_BUG_ON(TEST_SG_TOTAL != 10000); /* for "%u.%u%%" */
-6570737c7fa047 Eric Biggers 2019-03-12  1081  		p += scnprintf(p, end - p, "%s%u.%u%%@%s+%u%s", flushtype_str,
-25f9dddb928aee Eric Biggers 2019-01-31  1082  			       this_len / 100, this_len % 100,
-25f9dddb928aee Eric Biggers 2019-01-31  1083  			       div->offset_relative_to_alignmask ?
-25f9dddb928aee Eric Biggers 2019-01-31  1084  					"alignmask" : "",
-25f9dddb928aee Eric Biggers 2019-01-31  1085  			       div->offset, this_len == remaining ? "" : ", ");
-25f9dddb928aee Eric Biggers 2019-01-31  1086  		remaining -= this_len;
-25f9dddb928aee Eric Biggers 2019-01-31  1087  		div++;
-25f9dddb928aee Eric Biggers 2019-01-31  1088  	} while (remaining);
-25f9dddb928aee Eric Biggers 2019-01-31  1089  
-25f9dddb928aee Eric Biggers 2019-01-31  1090  	return p;
-25f9dddb928aee Eric Biggers 2019-01-31  1091  }
-25f9dddb928aee Eric Biggers 2019-01-31  1092  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Vikash
 
