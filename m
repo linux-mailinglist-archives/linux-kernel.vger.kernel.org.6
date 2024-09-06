@@ -1,154 +1,179 @@
-Return-Path: <linux-kernel+bounces-318024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F9C96E744
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:24:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EBC696E749
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F0D285E14
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:24:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 670AFB232B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3231B969;
-	Fri,  6 Sep 2024 01:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB69A1BDE6;
+	Fri,  6 Sep 2024 01:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7Z7Hnjk"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="I0z8MhFo"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444401CA94
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 01:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F50BE6C;
+	Fri,  6 Sep 2024 01:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725585845; cv=none; b=dUICFt73XR7ZTHeBih4ZWntBmqaMISF4bN3gN0QqrTiBev5ftmKzlDf9I4vzaGb7Q/chf9+0+u3c7inD3+XpZ8sQ656ttuwam82k8zLBzgj7e4OY/2glG6EM9kwUKrMFU2iOib9QXl7jKPIA0MfVpAml5M8RZ+mtQoAE9Iwxphw=
+	t=1725585953; cv=none; b=Mzh8C4xndMMT+c+dW96Zz9Wv1n6pxUsNJ+seuCeS6w2o45XpdrWPdo7cGC9YINU83bxjLy9F0HDg/4ggbN6AkMPMbKMmqAYSXj3HqKuVwZIHpidt3ul+gfxCnWhMShEgqBOrF3dO8bvajOGGxkoHFkEXjoCTmeSbTNo/L1qRMaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725585845; c=relaxed/simple;
-	bh=fuEix3DlvVeTuOrM1KkbRGOiFc9Wy3crOaLkMDjAa+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UzYmdgxrNJ3uua14zwIBJcnDY0x/tv8AuOmf3cZBUTDS1DGKj6qsGnul/cUr914csIam03PSw9QgkHVqo15jEpH+/QSmgZO+QHgiIzMIi4tD7sX51wi56FJeKi4eTg/zBaieme6DjVY/AfKmE1HcHF3gcLZNZsiKGGfUc8emHfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7Z7Hnjk; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d87f34a650so1022932a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 18:24:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725585842; x=1726190642; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dNUn9mXf5C6UNEuTt3eUfW8jIvalDCTepQKAUNKiQ+Q=;
-        b=V7Z7Hnjk5jXafU5uZedO5/Wf5ddL4xVl6bQjHAWyA0jTQ9IeotmPhIhCMp3Y8yld48
-         KueTSx/5xTXcn/AtKr6f9hBbIyuhMzHcP+sSaTBbI6yhTuI7PpXfm3tJLFHg1w/8xzAx
-         i7C3Kn0U57iNIn/q7332TbBlrI2qiXJ8fCBYRSjLO72YUZiKwm8XDKJgiPMQA4JnsUGH
-         S4AsDI2Cb9b98heOhSpXO/TsNnQ86sg4UNlyCSybrls2z5Oa4HGJmB4mAvAqg/ZJvMjc
-         ZCrFoF8LJx+PEOgMNozqgCi/RvEcqdSTjiCfK4GgFfqiiK2r1ofUIOnHGt6aMOvRIgUR
-         l26w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725585842; x=1726190642;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dNUn9mXf5C6UNEuTt3eUfW8jIvalDCTepQKAUNKiQ+Q=;
-        b=VjVFD4Q28NqAoHgbMdIhRJ9W+LNLskn7j9kfKiWF/X2xH8vUcVfgEEoMZkkladhtda
-         rYZMt5GK6ZNA4zmAql7uvPy8ftf7NEjYyYuj7XEHTDGgR3DbA/edakJJR3nD3ZT4GNGX
-         cTwblyqHmAmymVaWgE3XS1SEBM1vox6WhtKhIuBIxUNqlnz3x4cBavIA6S/6eggR4OC7
-         eotJd9OU3SvQ4rVKtZMHrr62U+D4EJnc02qfSH0y0WqEH9Ph80ll36LhOq5UE/+ISwOv
-         iZ1kuhnW6CydNR0cQGSbIJSO2qxghraJ7I+YoKek724cowdr7WEGMVLgXQD9nvjdnZ+h
-         OEFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWioeFAovaowZY9UwKASkIOaRcb7yt7M3VMqZh9Yy5jZr6T9G2m82gjVtSlCoJTJjj1ZE7myEcfSxxo5UI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1dP8TAGxhT9MCPjHXwmP46w3zQoIGwQ02J/WMpvytW8i77gbw
-	YSwl6lvERNH5/BTDaIbNp01BR2Y1HHtQp1vdl9kI/10gpXI5GIJZbKUo54F00IfjtLsF5EiZjgl
-	CH+OYJLPJfaL3+jaamovpJZ727GA=
-X-Google-Smtp-Source: AGHT+IEzidPjWUAxLPR+PLVPSNwJ7lIMn8k2LTrBVIUEZVpFdJ+OKRUvczF0LpmZQ/Y8yM7A1+ju97f0lISmBkyxGkU=
-X-Received: by 2002:a17:90a:a018:b0:2d8:719d:98a2 with SMTP id
- 98e67ed59e1d1-2dad50294d4mr1690680a91.7.1725585842408; Thu, 05 Sep 2024
- 18:24:02 -0700 (PDT)
+	s=arc-20240116; t=1725585953; c=relaxed/simple;
+	bh=twD2+guI6vGmeVSCxuwshV4bdnrlz1eKgsdVK6G0nz8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fnNWFeqNjtNU5IOzocUwFdktNR60PNt4vmyFECEnjCkWFPRiG0QhCMeD7+EVe8SI1oSDgtOZcKTzlAJE4e9DWL0xNG5XqMy5ZXQH2jrMZNjEjAvoIrBSnwSP/vbUyeaNrVfn/1+c2xgK0NqkVI+hlVn85/d4VX5D8KOvDzrOD9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=I0z8MhFo; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1725585949;
+	bh=twD2+guI6vGmeVSCxuwshV4bdnrlz1eKgsdVK6G0nz8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=I0z8MhFot0zBmV2E1zZE4VX6eHdN1ywxA7go0CGWS0kueNouEbeZyAX5hE4S4RRwy
+	 VHnrMk8pkVCJBWWcqh4HHkmujEfYaLP60JVpF4pBCTBl4w42FpMRpdVxlcWwmkeC1E
+	 sS0Klb/CKczuQqsfnlFk2KI+87zMeCCk97kAUzU0dROm+UjmZhMM5TOLgE8fy5+Nwx
+	 RlIIHyxnnS+jszl+f0krWB9vCk1ys3/RR8FGDEkb+bIZOKQSn3G1TFEhfpRt/Rym8g
+	 aNCmk5lGJQIVL4KwAlvNNMqmC1khf4uDATgN3bqDOxkZN1PRjBkvvGelHKzgu6sS6f
+	 xjYnqt815ISjQ==
+Received: from [192.168.1.90] (unknown [188.27.55.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9289417E0E95;
+	Fri,  6 Sep 2024 03:25:48 +0200 (CEST)
+Message-ID: <fa265088-5bf4-420f-9456-44051f913164@collabora.com>
+Date: Fri, 6 Sep 2024 04:25:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904083103.1257480-1-dominique.martinet@atmark-techno.com>
-In-Reply-To: <20240904083103.1257480-1-dominique.martinet@atmark-techno.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Thu, 5 Sep 2024 20:23:51 -0500
-Message-ID: <CAHCN7xLmZYZcHyPh3gy20vFKP7aTDKvWu+a_mbG6LN2gdEifTA@mail.gmail.com>
-Subject: Re: [PATCH] drm/bridge: imx8mp-hdmi-tx: allow 0.5% margin with
- selected clock
-To: Dominique Martinet <dominique.martinet@atmark-techno.com>
-Cc: Liu Ying <victor.liu@nxp.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, Frieder Schrempf <frieder.schrempf@kontron.de>, 
-	dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] drm/bridge: synopsys: Add DW HDMI QP TX Controller
+ support library
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
+ Luis de Arquer <ldearquer@gmail.com>, Algea Cao <algea.cao@rock-chips.com>
+References: <20240819-b4-rk3588-bridge-upstream-v4-0-6417c72a2749@collabora.com>
+ <20240819-b4-rk3588-bridge-upstream-v4-2-6417c72a2749@collabora.com>
+ <20240827-armored-magnificent-badger-ffb025@houat>
+ <34422b7a-ce70-445d-a574-60ac36322119@collabora.com>
+ <20240902-turtle-of-major-glory-efb4e8@houat>
+ <6e20410a-a24d-4454-8577-2cff65319a2a@collabora.com>
+ <20240903-archetypal-soft-wildebeest-b5ea68@houat>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240903-archetypal-soft-wildebeest-b5ea68@houat>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 4, 2024 at 3:31=E2=80=AFAM Dominique Martinet
-<dominique.martinet@atmark-techno.com> wrote:
->
-> This allows the hdmi driver to pick e.g. 64.8MHz instead of 65Mhz when we
-> cannot output the exact frequency, enabling the imx8mp HDMI output to
-> support more modes
->
-I went from 19 options on Modetest with my AOC 4K monitor to 31.  Of
-those 31, three did not appear to sync, but not all the frequencies in
-the LUT sync for me either, so I have no objection to moving forward
-with this, but I wonder if we should have a note in there about why we
-have a 5% tolerance.
+On 9/3/24 11:09 AM, Maxime Ripard wrote:
+> On Tue, Sep 03, 2024 at 12:12:02AM GMT, Cristian Ciocaltea wrote:
+>> On 9/2/24 10:36 AM, Maxime Ripard wrote:
+>>> On Sat, Aug 31, 2024 at 01:21:48AM GMT, Cristian Ciocaltea wrote:
+>>>> On 8/27/24 11:58 AM, Maxime Ripard wrote:
+>>>>> On Mon, Aug 19, 2024 at 01:29:29AM GMT, Cristian Ciocaltea wrote:
+>>>>>> +static irqreturn_t dw_hdmi_qp_main_hardirq(int irq, void *dev_id)
+>>>>>> +{
+>>>>>> +	struct dw_hdmi_qp *hdmi = dev_id;
+>>>>>> +	struct dw_hdmi_qp_i2c *i2c = hdmi->i2c;
+>>>>>> +	u32 stat;
+>>>>>> +
+>>>>>> +	stat = dw_hdmi_qp_read(hdmi, MAINUNIT_1_INT_STATUS);
+>>>>>> +
+>>>>>> +	i2c->stat = stat & (I2CM_OP_DONE_IRQ | I2CM_READ_REQUEST_IRQ |
+>>>>>> +			    I2CM_NACK_RCVD_IRQ);
+>>>>>> +
+>>>>>> +	if (i2c->stat) {
+>>>>>> +		dw_hdmi_qp_write(hdmi, i2c->stat, MAINUNIT_1_INT_CLEAR);
+>>>>>> +		complete(&i2c->cmp);
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	if (stat)
+>>>>>> +		return IRQ_HANDLED;
+>>>>>> +
+>>>>>> +	return IRQ_NONE;
+>>>>>> +}
+>>>>>
+>>>>> If the scrambler is enabled, you need to deal with hotplug. On hotplug,
+>>>>> the monitor will drop its TMDS ratio and scrambling status, but the
+>>>>> driver will keep assuming it's been programmed.
+>>>>>
+>>>>> If you don't have a way to deal with hotplug yet, then I'd suggest to
+>>>>> just drop the scrambler setup for now.
+>>>>
+>>>> Thanks for the heads up!
+>>>>
+>>>> HPD is partially handled by the RK platform driver, which makes use of
+>>>> drm_helper_hpd_irq_event(). Since the bridge sets DRM_BRIDGE_OP_DETECT
+>>>> flag, the dw_hdmi_qp_bridge_detect() callback gets executed, which in turn
+>>>> verifies the PHY status via ->read_hpd() implemented as
+>>>> dw_hdmi_qp_rk3588_read_hpd() in the platform driver.
+>>>
+>>> It's not only about hotplug detection, it's also about what happens
+>>> after you've detected a disconnection / reconnection.
+>>>
+>>> The framework expects to keep the current mode as is, despite the
+>>> monitor not being setup to use the scrambler anymore, and the display
+>>> remains black.
+>>
+>> AFAICS, the ->atomic_enable() callback is always invoked upon
+>> reconnection, hence the scrambler gets properly (re)enabled via
+>> dw_hdmi_qp_setup().
+> 
+> No, it's not.
+> 
+>>>> During my testing so far it worked reliably when switching displays with
+>>>> different capabilities.  I don't have a 4K@60Hz display at the moment, but
+>>>> used the HDMI RX port on the Rock 5B board in a loopback connection to
+>>>> verify this mode, which triggered the high TMDS clock ratio and scrambling
+>>>> setup as well.
+>>>
+>>> How did you test exactly?
+>>
+>> I initially tested with Sway/wlroots having an app running
+>> (eglgears_wayland) while unplugging/replugging the HDMI connectors in
+>> every possible sequence I could think of (e.g. several times per
+>> display, switching to a different one, repeating, switching again, etc).
+>>
+>> I've just retested the whole stuff with Weston and confirm it works as
+>> expected, i.e. no black screen (or bad capture stream for the 4K@60Hz
+>> case) after any of the reconnections.
+> 
+> Then I guess both sway and weston handle uevent and will change the
+> connector mode on reconnection.
+> 
+> It's not mandatory, and others will just not bother and still expect the
+> output to work.
+> 
+> I guess the easier you can test this with is modetest.
 
-> Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+Indeed, modetest doesn't trigger a mode change on reconnection.
+This is handled now in v6:
 
-Tested-by:  Adam Ford <aford173@gmail.com> #imx8mp-beacon
+https://lore.kernel.org/all/20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com/
 
-> ---
-> This completes the patch series sent by Adam Ford here:
-> https://lkml.kernel.org/r/20240904023310.163371-1-aford173@gmail.com
->
-> and makes the cheap screens we recommend work with our imx8mp board
-> without further kludging.
->
->
->  drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c b/drivers/gpu/dr=
-m/bridge/imx/imx8mp-hdmi-tx.c
-> index 13bc570c5473..9431cd5e06c3 100644
-> --- a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> +++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> @@ -23,6 +23,7 @@ imx8mp_hdmi_mode_valid(struct dw_hdmi *dw_hdmi, void *d=
-ata,
->                        const struct drm_display_mode *mode)
->  {
->         struct imx8mp_hdmi *hdmi =3D (struct imx8mp_hdmi *)data;
-> +       long round_rate;
->
->         if (mode->clock < 13500)
->                 return MODE_CLOCK_LOW;
-> @@ -30,8 +31,9 @@ imx8mp_hdmi_mode_valid(struct dw_hdmi *dw_hdmi, void *d=
-ata,
->         if (mode->clock > 297000)
->                 return MODE_CLOCK_HIGH;
->
-> -       if (clk_round_rate(hdmi->pixclk, mode->clock * 1000) !=3D
-> -           mode->clock * 1000)
-> +       round_rate =3D clk_round_rate(hdmi->pixclk, mode->clock * 1000);
-> +       /* accept 0.5% =3D 1/200 =3D 5/1000 tolerance */
-> +       if (abs(round_rate - mode->clock * 1000) > mode->clock * 5)
->                 return MODE_CLOCK_RANGE;
->
->         /* We don't support double-clocked and Interlaced modes */
-> --
-> 2.39.2
->
->
+Thanks,
+Cristian
 
