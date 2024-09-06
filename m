@@ -1,192 +1,125 @@
-Return-Path: <linux-kernel+bounces-319221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6593496F96E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:38:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4641696F974
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB3DE1F245F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:38:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 721B51C21CEE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8241D365D;
-	Fri,  6 Sep 2024 16:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48331D4162;
+	Fri,  6 Sep 2024 16:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="POH+XU6u"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2072.outbound.protection.outlook.com [40.107.223.72])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="igYUXDYw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WLS4Dywb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E968322A
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725640708; cv=fail; b=clCb17qiTddu/J4TU3ZYGHc3yJKc0kveIMRpaS71AlKdpeUN5EDSwtNQ4bcJ/3OsRFLjPWnKB5u9YR7GH1BTWHGUg27ZB678Rtl28fu48xSGKZORKU+ykvDijvUKMF3sZZuScY9EWLp3tSPXn8/FC1hVx+WaCCPaVk2fFm9qFu4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725640708; c=relaxed/simple;
-	bh=0utlssiF2+TZxkkQN9fOaTZKnTjmpo7sHTuAWGwZHEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=RQUIgY1DyE8EEXFU1qcMKj9mkOP0O2Q1c+Zfx+N5TOEwkLYNXEGtK+fagM1Tbli9UPc0uFQZlNfNxBB7v+rBNKRguaycnPV8JnahLWmum2/3VvkTdwkNhTY00DbqzTROjYHZQUSCIF86VDOn2vGwociCOYJLFeFp7cryinKVd+0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=POH+XU6u; arc=fail smtp.client-ip=40.107.223.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j8uU32NJ7ikon6WtYZPAfQ4eeP3jGI2PXyLzyyXm5E7Ps7uncE2+a9HLzt86EkMRwfXqWxm30DXEMNGBAGiAMmGnfqTeyVct+HTt1UipwHXZOuwhKnqvC0yzmiSx/Ot5ZxYehsoLkDJQbQXxwcBLWjCS+xABD1f5qmk1YWNfeWfXmdL3WvbHsVQDpjHQdgIpyib9UoLsnwckt4RGd8vX3KY1yjlB3BMCB04joQuWfhC0qNsycPVV78w/YcOC3NmySuLW9EiuczBziRuD2LMbFBMaJSg8mw4Jnqb8s2kCpWXpgTpJEw7LfKpNpvbg0tSaY24NFpohMMiXtR2T7qHs3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CNvP9reWkgp6qoNYWLWBf9DnPGkHv5bnterm6Snfp2I=;
- b=qvEWk1d2HdD7EKToe2ibHH+SHkvObHtCbx0QFdWSyiadPEpCfUD3VI/8wvw6tmEDiuy8HAbQdlJQLzreFPL/nk+cIEQ6nH55rZBe2rZ5iEqCYxesiB/oDeHTZntzJ1GP0QLDzYwLZVdpqxbidV5jT6+E2KWgW4uyrXrmCRwhUscimir2uCSyUtkaRFfR9iV3z8Ak3j9gRr6sfl3pv2pUBAkGzFyR0Gnk9W7oZfAEPKTFpMkdrFVtrkO/7ZhglnEK4PIl14XXOMmdICYhzpZ1/UDWvRW5AzMcHN+LTx8vaoZYcAz/fLBtkUFN8bn43OMs7yaQqO7/R7jjJ1KBERqRDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CNvP9reWkgp6qoNYWLWBf9DnPGkHv5bnterm6Snfp2I=;
- b=POH+XU6uecd0wp4ggrL+yzVwgrYyQI4GVfSuTSlrtSTP1IP0rc9fn8ttH+oqAWppAdswU7UlAUQIh11QuKL/DLaSAiTpb9zsB+8hSd4QawAocNYYGKl0OOsyw+K7sZDsPE+7j3vXQyV+BC0/aeRtDgnL0Xnhq59rlknR4+394qCkJlYt42GmT57FOIxrSkWkge2ttE7G4BS5ZEKOCeBkbir9Ud8OITJ2IBj420IUTDC2M69umPz5sSwOF2Xkkow5k5qulF5f1fAz+mMigM4PEMo5w+QcNDYw2h9SajP+8xq7XUCTlEtviEECwia4mseautx5TWQwgiSIiVD1iluI0w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
- by DM6PR12MB4338.namprd12.prod.outlook.com (2603:10b6:5:2a2::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Fri, 6 Sep
- 2024 16:38:19 +0000
-Received: from CH3PR12MB7763.namprd12.prod.outlook.com
- ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
- ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
- 16:38:19 +0000
-Date: Fri, 6 Sep 2024 13:38:18 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
-	robin.murphy@arm.com, vasant.hegde@amd.com, ubizjak@gmail.com,
-	jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
-	kumaranand@google.com
-Subject: Re: [PATCH v3 1/5] iommu/amd: Disable AMD IOMMU if CMPXCHG16B
- feature is not supported
-Message-ID: <20240906163818.GK1358970@nvidia.com>
-References: <20240906121308.5013-1-suravee.suthikulpanit@amd.com>
- <20240906121308.5013-2-suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906121308.5013-2-suravee.suthikulpanit@amd.com>
-X-ClientProxiedBy: MN2PR20CA0048.namprd20.prod.outlook.com
- (2603:10b6:208:235::17) To CH3PR12MB7763.namprd12.prod.outlook.com
- (2603:10b6:610:145::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF717322A;
+	Fri,  6 Sep 2024 16:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725640725; cv=none; b=kCoP8bTPOfsVOUAe+1mSVdjiV9bNTDd++r4zu9CmAtQl6H1hpPQ78TXRFBYQjxhHvasacVYmqdKgdAHJrOMCrEjv//uzpnnknx5f3HHb7lTF1lCk5oxCg8oYdYPDrfLmmk8qK9SAfTy9gzC7NOoa1HlhtvE0klIHRVUS9ozWMEI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725640725; c=relaxed/simple;
+	bh=EVXGKS/uxt51tIPPDnBiy6DdU2jtxhk4BVroQW+5DYg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ejA3uQQBhwXZeWYzCifOoRFOJotOruqQQ4TeX8ba6W3OBnF223GYf31Ob2lzCepg/DrvMUroRsqFNLB1kEdGLgACSVUCECLKXtrGgqOHrhTcPuu1djVrCQnxLc0fieRd6rn+ut19k71TDqVO2L5glNxlTou/7exAmWCBcIvmEsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=igYUXDYw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WLS4Dywb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725640721;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CGiT4D1DjJgDJ5qLla1WpeUu1+Lo0Y6C/CY5nSBo2fU=;
+	b=igYUXDYw3SubawcwO3B/0i+ObngZKPllAsHDzG5hzd44EKAZF4PPr9QbbCgKo61MEFZHVo
+	MjJnRkUimLXi1u7+utA6uS+snndQhro/Gt0dID/nO00k+HB4ckFrmAULNDUuRbBI1wANAl
+	0gte0UJ14sCet7dy+5mvfaLgXx/C+eaneJ87VWuOXR+NDzwCrZ8J272Lb6xkbPHOc9hrb5
+	mh7QOmK5aco6n9ejYkRW6d9QCPRsxREP920LmRCSzlyyhYr6QWy3iijhVQI844XbfG2/Ft
+	C2+wnCyyM+zE/43+Tf9ISQ22V/hBTKOE2VtFmqQaZF880tw4yGfsuUYbot/pYA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725640721;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CGiT4D1DjJgDJ5qLla1WpeUu1+Lo0Y6C/CY5nSBo2fU=;
+	b=WLS4DywbGrmj+3BtmzxTp9eqLlv60IlDdIsZo0uBjVTj0ZVB5NrBi/1JH0McT28I12/KhM
+	0g6BxowRDisnJaDQ==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner
+ <tglx@linutronix.de>, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Tony Lindgren <tony@atomide.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@pengutronix.de>, Ilpo =?utf-8?Q?J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, Serge Semin <fancer.lancer@gmail.com>,
+ Rengarajan S <rengarajan.s@microchip.com>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH next v1 1/2] serial: 8250: Switch to nbcon console
+In-Reply-To: <87mskkdhwd.fsf@jogness.linutronix.de>
+References: <20240905134719.142554-1-john.ogness@linutronix.de>
+ <20240905134719.142554-2-john.ogness@linutronix.de>
+ <Ztr3f8M2FaT2Rz1c@pathway.suse.cz> <87mskkdhwd.fsf@jogness.linutronix.de>
+Date: Fri, 06 Sep 2024 18:44:41 +0206
+Message-ID: <87jzfod9f2.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|DM6PR12MB4338:EE_
-X-MS-Office365-Filtering-Correlation-Id: ff1dd0c3-4a86-4933-e294-08dcce9250b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hEmhhHb2GSRAIVmyMe1do7DXMaW3vyAl/q45zddPbBeC8b+E8yNsqiswBaeb?=
- =?us-ascii?Q?3GYPJ8Got58/tpNKPrmxwFggFKhQP8PGBH26sWFe7uwQNYFhlnz82NXVUn02?=
- =?us-ascii?Q?Bg82Fki8Ti38jF5z7gutCggU5r/bSdEBQgy6ynTpF5a2ipWaKf+VMVeU4tpY?=
- =?us-ascii?Q?CSsJwWc1HBTipS/jtpNqTgWyUwnedmdiId61VrcJa+flzfw+gEc7O5RlTSYT?=
- =?us-ascii?Q?silnF8qtoIhbkfPGVtCm52/RlMDgT63LOQ+8y7xA7ebo52FCLWP/YJpAVV9x?=
- =?us-ascii?Q?yZGoGbUapxxR699FCoLM8dC9icUu8scSy2zGfDu7AZ5zpyZhrCl3OVy5eZW8?=
- =?us-ascii?Q?2Ck7X4AMJnJqn7Zzme5T3W4V/eaqmL/B9qnH0fT4B8Hlt5wQSAGKrNWLXSP0?=
- =?us-ascii?Q?z+HVBAqQr2/QxpOxC2Ezv/5/YBpgNjjEgvBudSb/omUuqbPby08KRz+1zsMm?=
- =?us-ascii?Q?dIbutPVDfYL7aNDt0nOtW8R9j9jsz+NgUFNZvSLFL/Y+JLfRHdOyxSm60sNX?=
- =?us-ascii?Q?5MNBbyfIlpp9GEo/gjGnyloJS4n+LILFcEeMNLCHOECHywFGqDh6wP1i+zaK?=
- =?us-ascii?Q?UsFP5xvx1lG5CSF9Gv8zdHAydhku+MWZuOxrJKw5Lp/xm/Kxdjxhcq9EQGbx?=
- =?us-ascii?Q?3k4iYcu7x794J9zILCbItN1iPtIMYy46XS1Fong5BI+sxgfQYZOhHPMmg8ha?=
- =?us-ascii?Q?v8Pw/jkHKTL1p7dwst2Kgl00thThpc3/imF70TKMIYE8PArt3AxjHdh7H1Et?=
- =?us-ascii?Q?8AnDNDEeyjHRyIdEwnF/gzOlmgs9Nwkr5RBnlz8564l7NAbSKCFkogTEdXFo?=
- =?us-ascii?Q?CGVeuIGH1Ubhe5xKd9WDq2aD0OL8frIsq5nMYDralnXg2RH5uRhiiLFnpM3N?=
- =?us-ascii?Q?tssLzdGT6nEPtq+8FJPjlFSEId1Ln0N+eVW3Hn87lCzSM30inUqpdq/dI5Ve?=
- =?us-ascii?Q?w3cA2ZRzv0amq/TH62NQm59mPbsCRb6q6V8+QyQhIyXPmedfO+LBhnPyD5C+?=
- =?us-ascii?Q?BNpRt8azQyY0WGmG8yvXJqd1n3izFeVLHwHhL1+ferN6ahZ7DoAiuglkhMDE?=
- =?us-ascii?Q?v7ivQqU3sniH+HzbcqpduAt640Mv/Nzi0+5owmIofenMls6iHbc6Ycf2fAyX?=
- =?us-ascii?Q?b8ZZs8IOKuG7rpFyKjIJ7P9BZ1yUd/fig1mHYXSh4t/eAlfmWgcoBdpVbsVS?=
- =?us-ascii?Q?2BHt0fcvGyx3Bx10s/mGHMXIeXMlpM2jwX4TPjZmAF/gM03FuDbdmxvmMIuY?=
- =?us-ascii?Q?N47md8tlJitgfvCvGqq+WEscfEIfMwpl+nTZ8B9AZ+Wq85q/SJQrc8aA0sHQ?=
- =?us-ascii?Q?qnENMriglgAF+9aRicYk9E3RvbhSHM9i+q+lS1aoryX4bA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HkO/Ze4tsfD7vO0X3QuA24d87HHymKuHyiBu8Ah/PkTKzPhOh4nC2dXvpVHn?=
- =?us-ascii?Q?8kkqJ4EolSVvGFkKLDSJTPUhwMQ9PA88ztmBSgI5KuHzCaiRRHUvaDJLXNgZ?=
- =?us-ascii?Q?KaZOdQnBsY0yd97fAGU/0XrC/+yvncR1C48YVNAWy+P5/rO171PeTnBelfDt?=
- =?us-ascii?Q?E0G7GjyhEGgn+4vUOZUhn1YHEqDyhhqQyt18w9Q1CjSON4CN8aaDD0IqO/ms?=
- =?us-ascii?Q?+PtrVJwuWyFAqtvVl37Lj94PYMYjhoHkXqcGF7ceq053ekdQQ8CnQm9CJAO+?=
- =?us-ascii?Q?hVdURV16bQEGXdqizl9arWrS1kYdADKQXCllGKsknNR0RPRX/XAr1/wpoXfI?=
- =?us-ascii?Q?a4ZYgyzVAGjfeV8IpbkmJnaEPpNh8ZkXUnXfIyNi9V2DpmNgwStxKyjzEfIT?=
- =?us-ascii?Q?2ASc5q2yMraLb6nupCsrDIdNJx4jMyzLjjPXozSGDzd5iJ/4u13Y2gMWVRlf?=
- =?us-ascii?Q?PMlsScsHZF3dZoGoIWYxJafaxjd9xFKwkTY9xugNJMqSuTMzjEolF3hN+TS/?=
- =?us-ascii?Q?BC/5fgIs+SB/BBSDROpkRranD5aEjdR+lcO9E3sMzr5mLlau4rJajr9373qz?=
- =?us-ascii?Q?Vb9uLMmcWkbsPg8cqiZEAD94I5anTmIRAo4yoSRxcuGqb41wGmrFwS3sa99k?=
- =?us-ascii?Q?LuIJA3ZPRQgWhA77d0AuycGTbMTibUmLkgFUuwzLZqsVoolmAG8G5WHLgCil?=
- =?us-ascii?Q?FNxj0r70TKm57X3EdeXta4PwDV91Phn9r+BYflUjpzfssKTs10iKpiwQSoef?=
- =?us-ascii?Q?Sax0wjWMiZddluxl4s9+HiyP+9Afn+XaAFzBR4XWr5RBbMIsUjt4JimdhKtr?=
- =?us-ascii?Q?BJhT1wrj8PEAeZLhjYLx8QgvLThWk/OsaqtLPkAydNwZwaVZO/kyHo2elCmH?=
- =?us-ascii?Q?vxk54LaPtq1GdqvSn1FmcQM4wBbm2Ad9b28kE4VfDCagrCzKYeH55+sUg8mZ?=
- =?us-ascii?Q?rck8tmAHlriW4T4ngDfwk8SVCj8WU0lTAV69YUF50KJSb9vwcuIlqf6GLAnD?=
- =?us-ascii?Q?d3y934sSHWyZvqoq6wh6oCAkJ+ZklWxGmXAcruegkk5ZX9ZvBtJPJxBaNCTj?=
- =?us-ascii?Q?S4B9CCwztI7lkl/ty6CKvAfZAbYs9aOOG19JzeD9PZXQptzAJ77bbwFx4Op4?=
- =?us-ascii?Q?P14YPO5gezxmaOpaMQnzxa8gT547Ev6YP/2t54p/ylUS9fOHm1BpGcya3E2I?=
- =?us-ascii?Q?e2xvAPFnQ/LR0kqjEvrQvb8sE5KFDeOqTZGoxfHBmym0tMDU3bVlRfbxnltp?=
- =?us-ascii?Q?53kpFNjq05e9jLQJuAic/aPAA7LdlOV/APqJIvyaOjn52Z4UN+bYZw+cwEh8?=
- =?us-ascii?Q?ShEMWVTeFsnWtBCMKkSsbn91xkQ94xVf6RY24Hf8bB35rPcJCFcAEKdhV0Wi?=
- =?us-ascii?Q?/a0t3jLOOsOdMmtAHjDJ+c705PFmwzlqjoYCt6naff4o4PRteMVi41yItenU?=
- =?us-ascii?Q?lTL8puNT0WJUEo/OYsZwJGNn7gqZAHSfmSlOEI1TNWBS2zia0RP/sfQtGGkE?=
- =?us-ascii?Q?cMQLHZsRxZobCkcsBcrVDMCiq6Cx+Leu0S2hAB8nBHvIezKlFFOo3GG0wEKQ?=
- =?us-ascii?Q?ZG8GiPuecDHYx2SAdutlbuRITR9TMqAdq8WR+G5T?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff1dd0c3-4a86-4933-e294-08dcce9250b5
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 16:38:19.6193
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iOX7+qu+d+WvOsxGOeVoliIY+mJPqQycbCTF55Q9g3Cc9q0OSKwY4uHtCnfvejXg
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4338
+Content-Type: text/plain
 
-On Fri, Sep 06, 2024 at 12:13:04PM +0000, Suravee Suthikulpanit wrote:
-> According to the AMD IOMMU spec, the IOMMU reads the entire DTE either
-> in two 128-bit transactions or a single 256-bit transaction. 
+On 2024-09-06, John Ogness <john.ogness@linutronix.de> wrote:
+>> Wait! This makes the rs485 consoles much less usable for debugging.
+>> They might have troubles to see the emergency and panic messages.
+>>
+>> Is this acceptable? Why?
+>
+> It is not acceptable. I am looking into making the atomic part work for
+> RS485 as well.
 
-.. if two 128-bit transaction on the read side is possible then you
-need flushing! :(
+So there are 2 things _not_ supported by the write_atomic() callback:
 
-For instance this:
+1. RS485 mode. This is due to the need to start up TX for the
+write, which can lead to:
 
-  IOMMU         CPU
-Read [0]    
-              Write [0]
-              Write [1]
-Read [1]
+up->rs485_start_tx()
+  serial8250_em485_start_tx()
+    serial8250_stop_rx()
+      serial8250_rpm_get()
+        pm_runtime_get_sync()
+          __pm_runtime_resume()
+            spin_lock_irqsave()
 
-Will result in the iommu seeing torn incorrect data - the Guest paging
-mode may not match the page table pointer, or the VIOMMU data may
-become mismatched to the host translation.
+Taking a spin lock is not safe from NMI and thus disqualifies this call
+chain for write_atomic().
 
-Avoiding flushing is only possible if the full 256 bits are read
-atomically.
+If UART_CAP_RPM is not set, the pm_runtime_get_sync() is avoided. So I
+could only disable atomic RS485 if UART_CAP_RPM is set. But the OMAP
+variant of the 8250 does set this capability.
 
-> It is recommended to update DTE using 128-bit operation followed by
-> an INVALIDATE_DEVTAB_ENTYRY command when the IV=1b or V=1b.
+2. Modem control. This is due to waiting for inputs, which can lead to:
 
-This advice only works when going from non-valid to valid.
+serial8250_modem_status()
+  wake_up_interruptible()
 
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-> ---
->  drivers/iommu/amd/init.c | 23 +++++++++--------------
->  1 file changed, 9 insertions(+), 14 deletions(-)
+Performing wakes is not safe from scheduler or NMI and thus disqualifies
+this call chain for write_atomic().
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+It would probably be acceptable to move serial8250_modem_status() into
+an irq_work.
 
-Jason
+I would be grateful for any insights on how best to handle these 2
+issues if we want full write_atomic() support for all 8250 variants.
+
+John
 
