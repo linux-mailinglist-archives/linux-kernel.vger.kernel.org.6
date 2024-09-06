@@ -1,110 +1,161 @@
-Return-Path: <linux-kernel+bounces-318511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E664E96EEFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:16:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8543296EF65
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E5091C23E18
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:16:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF56AB22163
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25EB1C7B8F;
-	Fri,  6 Sep 2024 09:16:24 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC3D1C86F8;
+	Fri,  6 Sep 2024 09:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TD/XxqRe"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D33159B71;
-	Fri,  6 Sep 2024 09:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2031F1C86F2
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725614184; cv=none; b=BvOWpgAFm/XQ/g2Kmn6km81PFai9ke4xvhneBDqWxIZ0fgHBjOHrU2QMVNblgiaVusnJYGQm4TwtQdbl0dLc1SZQ8dRRYoW2xVwYyJmFUhRzcXae/j65mTRVcqP9f0McDIdPYlcVpiAhwbWEclvHILgxJXrOSTS7W5zMi17asZA=
+	t=1725615395; cv=none; b=LD7tUy2AMrrYVaKMh90WNOCF+4+iFLcIFHKmnwma2Y3LtpYgxbAYI2rr31GMyTQUj3hFjs+GaQiFB7DuXCFD94WPpQlslFy8UPiytV+pzAKjJSw01QzS21NjfA02cnZo2LEL0c2WXtdxLfh2xILj12meLlMmvA+vxnSRgWrZsww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725614184; c=relaxed/simple;
-	bh=NB8dXfjkOd81Ya9XnGiaAE0RPFLChNFtR3CKBjUUFSo=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=WB72n0kEPki/OBjcos0kByKmDn0QNdZWYeNFeb1Xbcn/O7fEYivSRZNfFNtvcZ44JMxjtsKZhlV+b6tVqe/xIKQCr81mr2Em0h52JnGCNDu9wLNHRHY/ZNuA+B3dlmOzFbJqPLVdu6PUVrRQ2W/2SifXQSHV2GUjMLt+0pCuxdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E4DDB1A15E5;
-	Fri,  6 Sep 2024 11:16:14 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AB7B61A1909;
-	Fri,  6 Sep 2024 11:16:14 +0200 (CEST)
-Received: from mega.am.freescale.net (mega.ap.freescale.net [10.192.208.232])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DD8A4183AC0A;
-	Fri,  6 Sep 2024 17:16:12 +0800 (+08)
-From: Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	vladimir.oltean@nxp.com,
-	claudiu.manoil@nxp.com,
-	alexandre.belloni@bootlin.com,
-	UNGLinuxDriver@microchip.com,
-	andrew@lunn.ch,
-	f.fainelli@gmail.com,
-	michael@walle.cc,
-	linux-kernel@vger.kernel.org,
-	xiaoliang.yang_1@nxp.com
-Subject: [PATCH v2 net] net: dsa: felix: ignore pending status of TAS module when it's disabled
-Date: Fri,  6 Sep 2024 17:35:50 +0800
-Message-Id: <20240906093550.29985-1-xiaoliang.yang_1@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1725615395; c=relaxed/simple;
+	bh=p8TKYd9n7gZAwbCnrosjFG2oQ1QDhkATvk+6BeIB7G0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eMFd8svsDpJWjvYfIdZXGmjwxnSB1hb+CpD9L6Xwo4SwvJnb/bUnZNCxIjY0TcesHuT9LORdWtzGPcFPdAnn5YYiBgAj779q+oZOAj6ggIN7wsi5i4McbRykvBTZi5P9PmgT2bY6s9Ke0uy9m9RxbOD2dJkGHYmPw7TF2kXZ01A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TD/XxqRe; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6b747f2e2b7so16662417b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 02:36:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725615392; x=1726220192; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=t9RjLyHC8jLYAxkxwbHI+OlYMfMmm4fKIBxKkIZmylA=;
+        b=TD/XxqRevEegPir2KTkccOWjqLlL4N4JzawlLxDwXg+o9pN9FM5tA51NZW9MGu5yGY
+         pgMa5kjLAo2/3XSSgvdlGdV7qTOtrD2Y3vvpdjU/Hg6CH7B2prte0L0mOw+YChEPB7X0
+         NxSoCu7r6/TCoiJN/0AOFi8wNDCNHaeQl7I685g4YjclTFj10ZR6rWsx74+nfHceeMkl
+         zCU1ttY0x6T+Nxrd3ME6sLhV58QLYNzHadh/oeKihnIzEI3VWKwhPm4vvBLZ7I66f5cv
+         R94JdjaE7V7+7jMMJk+po0pheWso7tZUFnQX1Hf51ErivXsFlQKLY22HNo2xAg/Xr4QD
+         dXpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725615392; x=1726220192;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t9RjLyHC8jLYAxkxwbHI+OlYMfMmm4fKIBxKkIZmylA=;
+        b=KqS58er/KLuBd5zJVZ7cWm/ewHikXKZmCHzq6YtP7uc5EOeQVqCh/JRUcm9tEosrPi
+         G9149if9KDr8VmzoYQqJ9Lb83EpN1INXLtI70j5r80lLsxO0cnICDtMpZflpf05GmH4g
+         cA/uXGVk1DwIIOFk6hH0I75QGM9lmqUpAk1BFEHMpx/uEiTuY1Ux6ai7h7JVdzH6F+cv
+         HVnDPP0pU/8vS4MpkDfIkrJhczN7uprv0Kq8LB8uWn0F+j7dHXU8sgar0qYzny8Soqq2
+         WQk6i2+DQV6IjGnLeh2poEQvnrGpf/3XJPDmxgdqU0mCzlH7sdc9wqiSmFXUAGAc5JHP
+         PRQA==
+X-Forwarded-Encrypted: i=1; AJvYcCX696s7SmAg3FeUoqIgWMp1npZVvJ0oW4E1QOk3Wt2U6el5kAUaD+hJyrSfJ16nzKYGhVKHdzFDbrW04CI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv9Bc4dkbWY3hPgQMo44mnfU0XK8r9njLp36eQ5Cocda9QZ6Wj
+	EmixdPdXb77j9mBNXQkuF/CbUVd0+taFpRngHXq6atOR8iEojftzanigWzoHXYtovWv8qTVJFTP
+	ADbVh1v5DJoPd/4HDVHaez5U8zWYRwoTYKUgv9A==
+X-Google-Smtp-Source: AGHT+IEAXuLLtOrs6st8U8IFlSA7Hb1+mq58uwmSQKom7Bg9TkfvbOQJ9tJHSpVM8ugPgTF4bhcibOWF88qjBAWpuH0=
+X-Received: by 2002:a05:690c:ec6:b0:6db:31f6:a812 with SMTP id
+ 00721157ae682-6db44d6249amr27514547b3.4.1725615391941; Fri, 06 Sep 2024
+ 02:36:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
+ <20240904-qcs8300_initial_dtsi-v1-17-d0ea9afdc007@quicinc.com>
+ <851566fe-4802-41c7-bb35-d6d1e9cf9bdf@kernel.org> <d5b13f14-ce66-496c-8182-aad840e0d5cb@quicinc.com>
+ <wzjv6xvthoz3z4fimxfc6gzm6ptepkuwlzjm6xy3klmtpr3bvf@k7yxdc7hryju> <c674b8ff-6fdb-419d-86f4-69a940eccc2f@quicinc.com>
+In-Reply-To: <c674b8ff-6fdb-419d-86f4-69a940eccc2f@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 6 Sep 2024 12:36:20 +0300
+Message-ID: <CAA8EJpoxEZEZD3hhfpS6MeizqDVDDBjJOGo3X2BrLiEoZHDuoQ@mail.gmail.com>
+Subject: Re: [PATCH 17/19] arm64: defconfig: enable clock controller,
+ interconnect and pinctrl for QCS8300
+To: Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-The TAS module could not be configured when it's running in pending
-status. We need disable the module and configure it again. However, the
-pending status is not cleared after the module disabled. TC taprio set
-will always return busy even it's disabled.
+On Fri, 6 Sept 2024 at 09:15, Jingyi Wang <quic_jingyw@quicinc.com> wrote:
+>
+> Hi Dmitry,
+>
+> On 9/6/2024 11:18 AM, Dmitry Baryshkov wrote:
+> > On Thu, Sep 05, 2024 at 12:54:35PM GMT, Jingyi Wang wrote:
+> >>
+> >>
+> >> On 9/4/2024 5:39 PM, Krzysztof Kozlowski wrote:
+> >>> On 04/09/2024 10:33, Jingyi Wang wrote:
+> >>>> Enable clock controller, interrconnect and pinctrl for QCS8300.
+> >>>
+> >>> NXP QCS8300? What is QCS8300? Which products use it? That's a defconfig
+> >>> for entire kernel, not your Qualcomm one.
+> >>>
+> >> Will describe it in more detail.
+> >>>> It needs to be built-in for UART to provide a console.
+> >>>>
+> >>>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> >>>> ---
+> >>>>  arch/arm64/configs/defconfig | 3 +++
+> >>>>  1 file changed, 3 insertions(+)
+> >>>>
+> >>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> >>>> index 81ca46e3ab4b..a9ba6b25a0ed 100644
+> >>>> --- a/arch/arm64/configs/defconfig
+> >>>> +++ b/arch/arm64/configs/defconfig
+> >>>> @@ -606,6 +606,7 @@ CONFIG_PINCTRL_MSM8996=y
+> >>>>  CONFIG_PINCTRL_MSM8998=y
+> >>>>  CONFIG_PINCTRL_QCM2290=y
+> >>>>  CONFIG_PINCTRL_QCS404=y
+> >>>> +CONFIG_PINCTRL_QCS8300=y
+> >>>>  CONFIG_PINCTRL_QDF2XXX=y
+> >>>>  CONFIG_PINCTRL_QDU1000=y
+> >>>>  CONFIG_PINCTRL_SA8775P=y
+> >>>> @@ -1317,6 +1318,7 @@ CONFIG_MSM_MMCC_8998=m
+> >>>>  CONFIG_QCM_GCC_2290=y
+> >>>>  CONFIG_QCM_DISPCC_2290=m
+> >>>>  CONFIG_QCS_GCC_404=y
+> >>>> +CONFIG_QCS_GCC_8300=y
+> >>>>  CONFIG_QDU_GCC_1000=y
+> >>>>  CONFIG_SC_CAMCC_8280XP=m
+> >>>>  CONFIG_SC_DISPCC_7280=m
+> >>>> @@ -1618,6 +1620,7 @@ CONFIG_INTERCONNECT_QCOM_MSM8996=y
+> >>>>  CONFIG_INTERCONNECT_QCOM_OSM_L3=m
+> >>>>  CONFIG_INTERCONNECT_QCOM_QCM2290=y
+> >>>>  CONFIG_INTERCONNECT_QCOM_QCS404=m
+> >>>> +CONFIG_INTERCONNECT_QCOM_QCS8300=y
+> >>>
+> >>> Why this cannot be a module?
+> >>>
+> >>>
+> >> I think the commit-msg "It needs to be built-in for UART to provide a console." can
+> >> explain that, could you please help to share your insights on that?
+> >
+> > Unless loading these modules from initramfs doesn't work, please use =m.
+> > The drivers that are enabled here are going to be enabled for everybody
+> > using arm64 defconfig, taking up memory on their platforms, etc.
+> >
+> We had previous discussion here about why these drivers needs to be built-in to support
+> debug-uart:
+> https://lore.kernel.org/linux-arm-msm/c11fd3c2-770a-4d40-8cf3-d8bc81f7c480@kernel.org/
+> I will mention more details in the commit message of this patch.
 
-For example, a user uses tc-taprio to configure Qbv and a future
-basetime. The TAS module will run in a pending status. There is no way
-to reconfigure Qbv, it always returns busy.
+Yes, please. Explicitly mention that this is required to get UART to work.
 
-Actually the TAS module can be reconfigured when it's disabled. So it
-doesn't need to check the pending status if the TAS module is disabled.
-
-After the patch, user can delete the tc taprio configuration to disable
-Qbv and reconfigure it again.
-
-Fixes: de143c0e274b ("net: dsa: felix: Configure Time-Aware Scheduler via taprio offload")
-Signed-off-by: Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
----
- drivers/net/dsa/ocelot/felix_vsc9959.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/dsa/ocelot/felix_vsc9959.c b/drivers/net/dsa/ocelot/felix_vsc9959.c
-index ba37a566da39..ecfa73725d25 100644
---- a/drivers/net/dsa/ocelot/felix_vsc9959.c
-+++ b/drivers/net/dsa/ocelot/felix_vsc9959.c
-@@ -1474,10 +1474,13 @@ static int vsc9959_qos_port_tas_set(struct ocelot *ocelot, int port,
- 	/* Hardware errata -  Admin config could not be overwritten if
- 	 * config is pending, need reset the TAS module
- 	 */
--	val = ocelot_read(ocelot, QSYS_PARAM_STATUS_REG_8);
--	if (val & QSYS_PARAM_STATUS_REG_8_CONFIG_PENDING) {
--		ret = -EBUSY;
--		goto err_reset_tc;
-+	val = ocelot_read_rix(ocelot, QSYS_TAG_CONFIG, port);
-+	if (val & QSYS_TAG_CONFIG_ENABLE) {
-+		val = ocelot_read(ocelot, QSYS_PARAM_STATUS_REG_8);
-+		if (val & QSYS_PARAM_STATUS_REG_8_CONFIG_PENDING) {
-+			ret = -EBUSY;
-+			goto err_reset_tc;
-+		}
- 	}
- 
- 	ocelot_rmw_rix(ocelot,
 -- 
-2.17.1
-
+With best wishes
+Dmitry
 
