@@ -1,191 +1,623 @@
-Return-Path: <linux-kernel+bounces-318393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D0696ED1D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:06:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323AA96ED23
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8047B20BA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:06:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70411B23FF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B989C156880;
-	Fri,  6 Sep 2024 08:06:26 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE8A157476;
+	Fri,  6 Sep 2024 08:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WELOAWSb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2413915530C
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 08:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34579156F57;
+	Fri,  6 Sep 2024 08:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725609986; cv=none; b=qKKCyDHmanOM58Fri12lrG7BPI2kFRhWu65bsWWbSc48F4jgcIJuAGZsQECiujZztvRdtLeebfp2kBUylqlhmJR2K9/4ujnmYDluXvlQaOpud26T58G7R+6IWkKng79Zdt2I//uaGX1JgtdhoB8rRvsNxlSYJLw3XFbVCOw0tqs=
+	t=1725609993; cv=none; b=XZmJsMuPn1bwhSibL79Oa7cch+31yhXCe33bcmZ9pRDJMZW7aWpqAsoMRrLNwVt66CZoga4KlYpBBslaC+Etho6c76Mfz1bcTrwUC2Ftr1RuuBLiPvhIHFcN3AucvxR6hw7W1W9iHMDkNpdCCgrKMSnvomyD3m+PBg5IwhSukXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725609986; c=relaxed/simple;
-	bh=upTSyxk8hczRoOa1X/oKZx40HrQE6C6CeKbf5UHjejg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=V3zd9Kqdy5n92IDPZ3/KZGTpKe+glWCkXOex/ex+yx/gTnFKmqZG69A4arrMbxb64+4AXaFd3KcMXcwDNKXclVFTnUuyoVgfbWBncZ9yKTVuDk4RxNg0sjtCEduF9qjddusK0KvaMdCRihJ3ppStfKm8gknxlIKbBoBRchK0Obc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-322-Vdn20LnyNRa83Vnsely1sg-1; Fri, 06 Sep 2024 09:06:20 +0100
-X-MC-Unique: Vdn20LnyNRa83Vnsely1sg-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Sep
- 2024 09:05:36 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Fri, 6 Sep 2024 09:05:36 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Hans de Goede' <hdegoede@redhat.com>, Mauro Carvalho Chehab
-	<mchehab+huawei@kernel.org>, Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>
-CC: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus
-	<sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "linux-staging@lists.linux.dev"
-	<linux-staging@lists.linux.dev>
-Subject: RE: [PATCH] media: atomisp: Use clamp_t() in
- ia_css_eed1_8_vmem_encode()
-Thread-Topic: [PATCH] media: atomisp: Use clamp_t() in
- ia_css_eed1_8_vmem_encode()
-Thread-Index: AQHbADHFSZhym8822Um0O/Vp+JZzC7JKZYkQ
-Date: Fri, 6 Sep 2024 08:05:36 +0000
-Message-ID: <a9bc91f35f494fb1971229a2df419706@AcuMS.aculab.com>
-References: <155aba6ab759e98f66349e6bb4f69e2410486c09.1722084704.git.christophe.jaillet@wanadoo.fr>
- <20240906081542.5cb0c142@foz.lan>
- <b37a0c60-55aa-44ec-b96c-68cdaabdc110@redhat.com>
-In-Reply-To: <b37a0c60-55aa-44ec-b96c-68cdaabdc110@redhat.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1725609993; c=relaxed/simple;
+	bh=e1qRVJfYJ0bUH9SnRUn7e9mWBYLjb7ylhLAO2uLL3dk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=h6NusQrTii9Fh0PVGIHojwSajY4mRPCi8P41XgWu1PIvew1piWfn8n1UDOFQGLADzLSrSkQ6e5n2qslWKVEwY6ScKXdFIh33s8BZGiPZjKJWJ3CyIc+S2PyT4HdiSXQ6LdRfr7f/wu61sdBtDRSVM1gTR2D9Vj7yY5RnUxNmwbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WELOAWSb; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725609991; x=1757145991;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=e1qRVJfYJ0bUH9SnRUn7e9mWBYLjb7ylhLAO2uLL3dk=;
+  b=WELOAWSbp58KZCFAkOwKJgTm9wC32OLs4S3e5PJ6JLhnItpKZi/3zfUJ
+   fSW29wwnyMrx4lHXg60nwFb6oFCMosNEkaxwNmuN/4Hhf7oEF5Vl64RZp
+   AdtNa8Ch05N6GpaUOdsp6f6WqOmL0GSIgPrUkw7jwn6Y/iF99nXXFQyLC
+   mNfuQBknTJJcd1xd3w5ZOqeR/ApGmqFYrFUKbFNNrm7tssDGmmUhviWeS
+   TbNqeaBOv69LM+3AB/26ZQ5iPex9tt4Gm3GoEuw90nAlFJFHqSIe8kYWe
+   F3oplA1HAQDgIdrWb03auMLNsDSbzwGPv4tgcCP5nj/pDlMqxBehaoe5c
+   g==;
+X-CSE-ConnectionGUID: irTgZLuUSyqVopZVKT0/1Q==
+X-CSE-MsgGUID: Xmpp+xraQQeDOk95FhZbnA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="24234968"
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="24234968"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 01:06:29 -0700
+X-CSE-ConnectionGUID: GON+HEFgQiqISn/UYdhlOw==
+X-CSE-MsgGUID: A5xcp2Q6TEyb7Ha4KnLhwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="96599427"
+Received: from mklonows-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.27])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 01:06:19 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, zohar@linux.ibm.com,
+ dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, corbet@lwn.net,
+ akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, shuah@kernel.org, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com
+Cc: linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com,
+ pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
+ pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com,
+ jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com,
+ mzerqung@0pointer.de, kgold@linux.ibm.com, Roberto Sassu
+ <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v5 01/14] lib: Add TLV parser
+In-Reply-To: <f0b4867451dd5fe2ba59e2dad4274314aa0660f9.camel@huaweicloud.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240905150543.3766895-1-roberto.sassu@huaweicloud.com>
+ <20240905150543.3766895-2-roberto.sassu@huaweicloud.com>
+ <87ikvaovnf.fsf@intel.com>
+ <f0b4867451dd5fe2ba59e2dad4274314aa0660f9.camel@huaweicloud.com>
+Date: Fri, 06 Sep 2024 11:06:12 +0300
+Message-ID: <87le05nr4b.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 
-RnJvbTogSGFucyBkZSBHb2VkZQ0KPiBTZW50OiAwNiBTZXB0ZW1iZXIgMjAyNCAwODo1Mw0KPiAN
-Cj4gSGkgTWF1cm8sDQo+IA0KPiBPbiA5LzYvMjQgODoxNSBBTSwgTWF1cm8gQ2FydmFsaG8gQ2hl
-aGFiIHdyb3RlOg0KPiA+IEVtIFNhdCwgMjcgSnVsIDIwMjQgMTQ6NTE6NTYgKzAyMDANCj4gPiBD
-aHJpc3RvcGhlIEpBSUxMRVQgPGNocmlzdG9waGUuamFpbGxldEB3YW5hZG9vLmZyPiBlc2NyZXZl
-dToNCj4gPg0KPiA+PiBVc2luZyBjbGFtcF90KCkgaW5zdGVhZCBvZiBtaW5fdChtYXhfdCgpKSBp
-cyBlYXNpZXIgdG8gcmVhZC4NCj4gPj4NCj4gPj4gSXQgYWxzbyByZWR1Y2VzIHRoZSBzaXplIG9m
-IHRoZSBwcmVwcm9jZXNzZWQgZmlsZXMgYnkgfiAxOTMga28uDQo+ID4+IChzZWUgWzFdIGZvciBh
-IGRpc2N1c3Npb24gYWJvdXQgaXQpDQo+ID4+DQo+ID4+ICQgbHMgLWwgaWFfY3NzX2VlZDFfOC5o
-b3N0Ki5pDQo+ID4+ICA0ODI5OTkzIDI3IGp1aWwuIDE0OjM2IGlhX2Nzc19lZWQxXzguaG9zdC5v
-bGQuaQ0KPiA+PiAgNDYzNjY0OSAyNyBqdWlsLiAxNDo0MiBpYV9jc3NfZWVkMV84Lmhvc3QubmV3
-LmkNCj4gPj4NCj4gPj4gWzFdOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjNiZGI2ZmM4
-ZDg4NGNlZWJlYjZlOGI4NjUzYjhjZmVAQWN1TVMuYWN1bGFiLmNvbS8NCj4gPj4NCj4gPj4gU2ln
-bmVkLW9mZi1ieTogQ2hyaXN0b3BoZSBKQUlMTEVUIDxjaHJpc3RvcGhlLmphaWxsZXRAd2FuYWRv
-by5mcj4NCj4gPj4gLS0tDQo+ID4+ICAuLi4vaXNwL2tlcm5lbHMvZWVkMV84L2lhX2Nzc19lZWQx
-XzguaG9zdC5jICAgfCAyNCArKysrKysrKystLS0tLS0tLS0tDQo+ID4+ICAxIGZpbGUgY2hhbmdl
-ZCwgMTIgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pDQo+ID4+DQo+ID4+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL3N0YWdpbmcvbWVkaWEvYXRvbWlzcC9wY2kvaXNwL2tlcm5lbHMvZWVkMV84
-L2lhX2Nzc19lZWQxXzguaG9zdC5jDQo+IGIvZHJpdmVycy9zdGFnaW5nL21lZGlhL2F0b21pc3Av
-cGNpL2lzcC9rZXJuZWxzL2VlZDFfOC9pYV9jc3NfZWVkMV84Lmhvc3QuYw0KPiA+PiBpbmRleCBl
-NGZjOTBmODhlMjQuLjk2YzEzZWJjNDMzMSAxMDA2NDQNCj4gPj4gLS0tIGEvZHJpdmVycy9zdGFn
-aW5nL21lZGlhL2F0b21pc3AvcGNpL2lzcC9rZXJuZWxzL2VlZDFfOC9pYV9jc3NfZWVkMV84Lmhv
-c3QuYw0KPiA+PiArKysgYi9kcml2ZXJzL3N0YWdpbmcvbWVkaWEvYXRvbWlzcC9wY2kvaXNwL2tl
-cm5lbHMvZWVkMV84L2lhX2Nzc19lZWQxXzguaG9zdC5jDQo+ID4+IEBAIC0xNzIsMjUgKzE3Miwy
-NSBAQCBpYV9jc3NfZWVkMV84X3ZtZW1fZW5jb2RlKA0KPiA+PiAgCQliYXNlID0gc2h1ZmZsZV9i
-bG9jayAqIGk7DQo+ID4+DQo+ID4+ICAJCWZvciAoaiA9IDA7IGogPCBJQV9DU1NfTlVNQkVSX09G
-X0RFV19FTkhBTkNFX1NFR01FTlRTOyBqKyspIHsNCj4gPj4gLQkJCXRvLT5lX2Rld19lbmhfeFsw
-XVtiYXNlICsgal0gPSBtaW5fdChpbnQsIG1heF90KGludCwNCj4gPj4gLQkJCQkJCQkgICAgIGZy
-b20tPmRld19lbmhhbmNlX3NlZ194W2pdLCAwKSwNCj4gPj4gLQkJCQkJCQkgICAgIDgxOTEpOw0K
-PiA+PiAtCQkJdG8tPmVfZGV3X2VuaF95WzBdW2Jhc2UgKyBqXSA9IG1pbl90KGludCwgbWF4X3Qo
-aW50LA0KPiA+PiAtCQkJCQkJCSAgICAgZnJvbS0+ZGV3X2VuaGFuY2Vfc2VnX3lbal0sIC04MTky
-KSwNCj4gPj4gLQkJCQkJCQkgICAgIDgxOTEpOw0KPiA+PiArCQkJdG8tPmVfZGV3X2VuaF94WzBd
-W2Jhc2UgKyBqXSA9IGNsYW1wX3QoaW50LA0KPiA+PiArCQkJCQkJCSAgICAgICBmcm9tLT5kZXdf
-ZW5oYW5jZV9zZWdfeFtqXSwNCj4gPj4gKwkJCQkJCQkgICAgICAgMCwgODE5MSk7DQo+ID4+ICsJ
-CQl0by0+ZV9kZXdfZW5oX3lbMF1bYmFzZSArIGpdID0gY2xhbXBfdChpbnQsDQo+ID4+ICsJCQkJ
-CQkJICAgICAgIGZyb20tPmRld19lbmhhbmNlX3NlZ195W2pdLA0KPiA+PiArCQkJCQkJCSAgICAg
-ICAtODE5MiwgODE5MSk7DQo+ID4NCj4gPiBTdWNoIGNoYW5nZSBpbnRyb2R1Y2VzIHR3byB3YXJu
-aW5ncyBvbiBzbWF0Y2g6DQo+ID4NCj4gPiBkcml2ZXJzL3N0YWdpbmcvbWVkaWEvYXRvbWlzcC9w
-Y2kvaXNwL2tlcm5lbHMvZWVkMV84L2lhX2Nzc19lZWQxXzguaG9zdC5jOg0KPiBkcml2ZXJzL3N0
-YWdpbmcvbWVkaWEvYXRvbWlzcC9wY2kvaXNwL2tlcm5lbHMvZWVkMV84L2lhX2Nzc19lZWQxXzgu
-aG9zdC5jOjE3Nw0KPiBpYV9jc3NfZWVkMV84X3ZtZW1fZW5jb2RlKCkgd2FybjogYXNzaWduaW5n
-ICgtODE5MikgdG8gdW5zaWduZWQgdmFyaWFibGUgJ3RvLT5lX2Rld19lbmhfeVswXVtiYXNlICsN
-Cj4gal0nDQo+ID4gZHJpdmVycy9zdGFnaW5nL21lZGlhL2F0b21pc3AvcGNpL2lzcC9rZXJuZWxz
-L2VlZDFfOC9pYV9jc3NfZWVkMV84Lmhvc3QuYzoNCj4gZHJpdmVycy9zdGFnaW5nL21lZGlhL2F0
-b21pc3AvcGNpL2lzcC9rZXJuZWxzL2VlZDFfOC9pYV9jc3NfZWVkMV84Lmhvc3QuYzoxODINCj4g
-aWFfY3NzX2VlZDFfOF92bWVtX2VuY29kZSgpIHdhcm46IGFzc2lnbmluZyAoLTgxOTIpIHRvIHVu
-c2lnbmVkIHZhcmlhYmxlICd0by0+ZV9kZXdfZW5oX2FbMF1bYmFzZSArDQo+IGpdJw0KPiA+DQo+
-ID4gU2hvdWxkIGRld19lbmhhbmNlX3NlZ194IGFuZCBkZXdfZW5oYW5jZV9zZWdfeSBiZSBjb252
-ZXJ0ZWQgdG8gc2lnbmVkPw0KPiANCj4gVGhlc2UgYWxyZWFkeSBhcmUgczMyLCB0aGUgcHJvYmxl
-bSBpcyB0aGF0IGVfZGV3X2VuaF9hIGlzIG9mIHR5cGUgdF92bWVtX2VsZW0gd2hpY2ggaXM6DQo+
-IA0KPiB0eXBlZGVmIHUxNiB0X3ZtZW1fZWxlbTsNCg0KVWdnLi4uIDotKQ0KDQo+IA0KPiBBbmQg
-dGhhdCB0eXBlIGlzIHVzZWQgaW4gYSBsb3Qgb2YgcGxhY2VzLCBzbyB3ZSBjYW5ub3QNCj4ganVz
-dCBjaGFuZ2UgdGhhdC4NCj4gDQo+IEkgZ3Vlc3Mgd2UgY291bGQgYWRkIGEgdF9zaWduZWRfdm1l
-bV9lbGVtIChzMTYpIGFuZCB1c2UgdGhhdCBmb3IgdGhlc2Ugdm1lbS1hcnJheXMgPw0KPiANCj4g
-SSB0cmllZCBmaXhpbmcgaXQgbGlrZSB0aGlzOg0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-c3RhZ2luZy9tZWRpYS9hdG9taXNwL2kyYy9hdG9taXNwLXQ0a2EzLmMNCj4gYi9kcml2ZXJzL3N0
-YWdpbmcvbWVkaWEvYXRvbWlzcC9pMmMvYXRvbWlzcC10NGthMy5jDQo+IGluZGV4IDFlMDFkMzU0
-MTUyYi4uN2MwMTk1ZDE1ZjUzIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvbWVkaWEv
-YXRvbWlzcC9pMmMvYXRvbWlzcC10NGthMy5jDQo+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy9tZWRp
-YS9hdG9taXNwL2kyYy9hdG9taXNwLXQ0a2EzLmMNCj4gQEAgLTQyOCwxOCArNDI4LDEzIEBAIHN0
-YXRpYyBpbnQgdDRrYTNfc19zdHJlYW0oc3RydWN0IHY0bDJfc3ViZGV2ICpzZCwgaW50IGVuYWJs
-ZSkNCj4gIAkJCWdvdG8gZXJyb3JfdW5sb2NrOw0KPiAgCQl9DQo+IA0KPiAtCQlyZXQgPSBjY2lf
-bXVsdGlfcmVnX3dyaXRlKHNlbnNvci0+cmVnbWFwLCB0NGthM19pbml0X2NvbmZpZywNCj4gLQkJ
-CQkJICBBUlJBWV9TSVpFKHQ0a2EzX2luaXRfY29uZmlnKSwgTlVMTCk7DQo+IC0JCWlmIChyZXQp
-DQo+IC0JCQlnb3RvIGVycm9yX3Bvd2VyZG93bjsNCj4gLQ0KPiArCQljY2lfbXVsdGlfcmVnX3dy
-aXRlKHNlbnNvci0+cmVnbWFwLCB0NGthM19pbml0X2NvbmZpZywNCj4gKwkJCQkgICAgQVJSQVlf
-U0laRSh0NGthM19pbml0X2NvbmZpZyksICZyZXQpOw0KPiAgCQkvKiBlbmFibGUgZ3JvdXAgaG9s
-ZCAqLw0KPiAtCQlyZXQgPSBjY2lfbXVsdGlfcmVnX3dyaXRlKHNlbnNvci0+cmVnbWFwLCB0NGth
-M19wYXJhbV9ob2xkLA0KPiAtCQkJCQkgIEFSUkFZX1NJWkUodDRrYTNfcGFyYW1faG9sZCksIE5V
-TEwpOw0KPiAtCQlpZiAocmV0KQ0KPiAtCQkJZ290byBlcnJvcl9wb3dlcmRvd247DQo+IC0NCj4g
-LQkJcmV0ID0gY2NpX211bHRpX3JlZ193cml0ZShzZW5zb3ItPnJlZ21hcCwgc2Vuc29yLT5yZXMt
-PnJlZ3MsIHNlbnNvci0+cmVzLT5yZWdzX2xlbiwgTlVMTCk7DQo+ICsJCWNjaV9tdWx0aV9yZWdf
-d3JpdGUoc2Vuc29yLT5yZWdtYXAsIHQ0a2EzX3BhcmFtX2hvbGQsDQo+ICsJCQkJICAgIEFSUkFZ
-X1NJWkUodDRrYTNfcGFyYW1faG9sZCksICZyZXQpOw0KPiArCQljY2lfbXVsdGlfcmVnX3dyaXRl
-KHNlbnNvci0+cmVnbWFwLCBzZW5zb3ItPnJlcy0+cmVncywNCj4gKwkJCQkgICAgc2Vuc29yLT5y
-ZXMtPnJlZ3NfbGVuLCAmcmV0KTsNCj4gIAkJaWYgKHJldCkNCj4gIAkJCWdvdG8gZXJyb3JfcG93
-ZXJkb3duOw0KDQpJc24ndCB0aGF0IHVucmVsYXRlZD8NCg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9zdGFnaW5nL21lZGlhL2F0b21pc3AvcGNpL2lzcC9rZXJuZWxzL2VlZDFfOC9pYV9jc3NfZWVk
-MV84Lmhvc3QuYw0KPiBiL2RyaXZlcnMvc3RhZ2luZy9tZWRpYS9hdG9taXNwL3BjaS9pc3Ava2Vy
-bmVscy9lZWQxXzgvaWFfY3NzX2VlZDFfOC5ob3N0LmMNCj4gaW5kZXggYjc5ZDc4ZTViNzdmLi5j
-OTA0M2Q1MTYxOTIgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9tZWRpYS9hdG9taXNw
-L3BjaS9pc3Ava2VybmVscy9lZWQxXzgvaWFfY3NzX2VlZDFfOC5ob3N0LmMNCj4gKysrIGIvZHJp
-dmVycy9zdGFnaW5nL21lZGlhL2F0b21pc3AvcGNpL2lzcC9rZXJuZWxzL2VlZDFfOC9pYV9jc3Nf
-ZWVkMV84Lmhvc3QuYw0KPiBAQCAtMTcyLDIxICsxNzIsMjEgQEAgaWFfY3NzX2VlZDFfOF92bWVt
-X2VuY29kZSgNCj4gIAkJYmFzZSA9IHNodWZmbGVfYmxvY2sgKiBpOw0KPiANCj4gIAkJZm9yIChq
-ID0gMDsgaiA8IElBX0NTU19OVU1CRVJfT0ZfREVXX0VOSEFOQ0VfU0VHTUVOVFM7IGorKykgew0K
-PiAtCQkJdG8tPmVfZGV3X2VuaF94WzBdW2Jhc2UgKyBqXSA9IGNsYW1wKGZyb20tPmRld19lbmhh
-bmNlX3NlZ194W2pdLA0KPiAtCQkJCQkJCSAgICAgMCwgODE5MSk7DQo+IC0JCQl0by0+ZV9kZXdf
-ZW5oX3lbMF1bYmFzZSArIGpdID0gY2xhbXAoZnJvbS0+ZGV3X2VuaGFuY2Vfc2VnX3lbal0sDQo+
-IC0JCQkJCQkJICAgICAtODE5MiwgODE5MSk7DQo+ICsJCQl0by0+ZV9kZXdfZW5oX3hbMF1bYmFz
-ZSArIGpdID0gKHUxNiljbGFtcChmcm9tLT5kZXdfZW5oYW5jZV9zZWdfeFtqXSwNCj4gKwkJCQkJ
-CQkJICAwLCA4MTkxKTsNCj4gKwkJCXRvLT5lX2Rld19lbmhfeVswXVtiYXNlICsgal0gPSAodTE2
-KWNsYW1wKGZyb20tPmRld19lbmhhbmNlX3NlZ195W2pdLA0KPiArCQkJCQkJCQkgIC04MTkyLCA4
-MTkxKTsNCg0KSG93IGFib3V0IGFuIGV4cGxpY2l0IGNsYW1wKC4uLikgJiAweGZmZmZ1Pw0KDQo+
-IA0KPiAgCQlmb3IgKGogPSAwOyBqIDwgKElBX0NTU19OVU1CRVJfT0ZfREVXX0VOSEFOQ0VfU0VH
-TUVOVFMgLSAxKTsgaisrKSB7DQo+IC0JCQl0by0+ZV9kZXdfZW5oX2FbMF1bYmFzZSArIGpdID0g
-Y2xhbXAoZnJvbS0+ZGV3X2VuaGFuY2Vfc2VnX3Nsb3BlW2pdLA0KPiAtCQkJCQkJCSAgICAgLTgx
-OTIsIDgxOTEpOw0KPiArCQkJdG8tPmVfZGV3X2VuaF9hWzBdW2Jhc2UgKyBqXSA9ICh1MTYpY2xh
-bXAoZnJvbS0+ZGV3X2VuaGFuY2Vfc2VnX3Nsb3BlW2pdLA0KPiArCQkJCQkJCQkgIC04MTkyLCA4
-MTkxKTsNCj4gIAkJCS8qIENvbnZlcnQgZGV3X2VuaGFuY2Vfc2VnX2V4cCB0byBmbGFnOg0KPiAg
-CQkJICogMCAtPiAwDQo+ICAJCQkgKiAxLi4uMTMgLT4gMQ0KPiAgCQkJICovDQo+IC0JCQl0by0+
-ZV9kZXdfZW5oX2ZbMF1bYmFzZSArIGpdID0gY2xhbXAoZnJvbS0+ZGV3X2VuaGFuY2Vfc2VnX2V4
-cFtqXSwNCj4gLQkJCQkJCQkgICAgIDAsIDEzKSA+IDA7DQo+ICsJCQl0by0+ZV9kZXdfZW5oX2Zb
-MF1bYmFzZSArIGpdID0gKHUxNiljbGFtcChmcm9tLT5kZXdfZW5oYW5jZV9zZWdfZXhwW2pdLA0K
-PiArCQkJCQkJCQkgIDAsIDEzKSA+IDA7DQoNCklzbid0IHRoZSBSSFMganVzdCBmcm9tLT5kZXdf
-ZW5oYW5jZV9zZWdfZXhwW2pdID4gMCA/DQpUaGF0IHNob3VsZG4ndCBiZSBnZW5lcmF0aW5nIGFu
-eSBraW5kIG9mIHdhcm5pbmcgYW55d2F5Lg0KDQoJRGF2aWQNCg0KPiAgCQl9DQo+IA0KPiAgCQkv
-KiBIYXJkLWNvZGVkIHRvIDAsIGluIG9yZGVyIHRvIGJlIGFibGUgdG8gaGFuZGxlIG91dCBvZg0K
-PiANCj4gYnV0IHNtYXRjaCBzdGlsbCBjb21wbGFpbnMgYWZ0ZXIgdGhpcy4uLg0KPiANCj4gUmVn
-YXJkcywNCj4gDQo+IEhhbnMNCj4gDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwg
-QnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVn
-aXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On Fri, 06 Sep 2024, Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+> On Thu, 2024-09-05 at 20:30 +0300, Jani Nikula wrote:
+>> On Thu, 05 Sep 2024, Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+>> > From: Roberto Sassu <roberto.sassu@huawei.com>
+>> > 
+>> > Add a parser of a generic Type-Length-Value (TLV) format:
+>> > 
+>> > +-----------------+------------------+-----------------+
+>> > > data type (u64) | num fields (u64) | total len (u64) | # header
+>> > +--------------+--+---------+--------+---------+-------+
+>> > > field1 (u64) | len1 (u64) | value1 (u8 len1) |
+>> > +--------------+------------+------------------+
+>> > >     ...      |    ...     |        ...       |         # data
+>> > +--------------+------------+------------------+
+>> > > fieldN (u64) | lenN (u64) | valueN (u8 lenN) |
+>> > +--------------+------------+------------------+
+>> 
+>> Okay, take this with a grain of salt. I'm actually not interested in
+>> your use case, but the generic part here. But hear me out.
+>> 
+>> Why do you need to have num fields in the header? I'd think the generic
+>> TLV would have tag/length/value, where value may contain more TLV, or
+>> not, depending on the use case specific tag. The same parser can parse
+>> everything recursively, with no special handling for headers. To me,
+>> that's the great part about TLV.
+>
+> Hi Jani
+>
+> the purpose of the number of entries is that the kernel uses it to
+> correctly size the hash table, before adding digests to it.
+>
+> It also allows to group digests together and define attributes for all
+> of them (e.g. the hash algorithm).
+>
+> You can also have multiple data blocks in the same file, and the header
+> allows to go to the ones of interest.
 
+Or you could have a TLV entry to define how many fields follow. With no
+dedicated header entries. You can choose what tags mean.
+
+Oh, another angle is that you could have e.g. the lowest bit in the tag
+indicate whether the value is TLV too. So you can validate the TLV all
+the way down to the non-TLV values.
+
+>> Also, making generic TLV have u64 tag and length is huge waste in most
+>> use cases. Saving one byte requires 16 bytes of tag and length. You
+>> could encode tag and length with UTF-8. Sure, it's wasteful if you need
+>> an enormous amount of tags or huge lengths, but it's efficient for most
+>> use cases.
+>
+> You are right, it is a huge size. You can introduce new fields, but not
+> modify the tag and length size for retrocompatibility.
+>
+> Ok, I see your point for UTF-8. Let's see, I like how simple is the
+> parser now.
+
+If you like simplicity, you should not have a different header entry. ;)
+
+See utf8encode() and utf8decode() in fs/unicode/mkutf8data.c for an
+implementation. Of course, this severely limits the max length from u64,
+to put it mildly, max being 0x10ffff. Maybe that's a limitation you
+don't want. But fixing at u64 seems bad too.
+
+
+BR,
+Jani.
+
+>
+> Thanks
+>
+> Roberto
+>
+>> Anyway, just my thoughts.
+>> 
+>> 
+>> BR,
+>> Jani.
+>> 
+>> > 
+>> > [same as above, repeated N times]
+>> > 
+>> > Each adopter can define its own data types and fields. The TLV parser does
+>> > not need to be aware of those, but lets the adopter obtain the data and
+>> > decide how to continue.
+>> > 
+>> > After parsing each TLV header, call the header callback function with the
+>> > callback data provided by the adopter. The latter can return 0, to skip
+>> > processing of the TLV data, 1 to process the TLV data, or a negative value
+>> > to stop processing the TLV data.
+>> > 
+>> > After processing a TLV data entry, call the data callback function also
+>> > with the callback data provided by the adopter. The latter can decide how
+>> > to interpret the TLV data entry depending on the field ID.
+>> > 
+>> > Nesting TLVs is also possible, the data callback function can call
+>> > tlv_parse() to parse the inner structure.
+>> > 
+>> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> > ---
+>> >  MAINTAINERS                     |   8 ++
+>> >  include/linux/tlv_parser.h      |  48 +++++++
+>> >  include/uapi/linux/tlv_parser.h |  62 +++++++++
+>> >  lib/Kconfig                     |   3 +
+>> >  lib/Makefile                    |   2 +
+>> >  lib/tlv_parser.c                | 221 ++++++++++++++++++++++++++++++++
+>> >  lib/tlv_parser.h                |  17 +++
+>> >  7 files changed, 361 insertions(+)
+>> >  create mode 100644 include/linux/tlv_parser.h
+>> >  create mode 100644 include/uapi/linux/tlv_parser.h
+>> >  create mode 100644 lib/tlv_parser.c
+>> >  create mode 100644 lib/tlv_parser.h
+>> > 
+>> > diff --git a/MAINTAINERS b/MAINTAINERS
+>> > index 8766f3e5e87e..ba8d5c137bef 100644
+>> > --- a/MAINTAINERS
+>> > +++ b/MAINTAINERS
+>> > @@ -23055,6 +23055,14 @@ W:	http://sourceforge.net/projects/tlan/
+>> >  F:	Documentation/networking/device_drivers/ethernet/ti/tlan.rst
+>> >  F:	drivers/net/ethernet/ti/tlan.*
+>> >  
+>> > +TLV PARSER
+>> > +M:	Roberto Sassu <roberto.sassu@huawei.com>
+>> > +L:	linux-kernel@vger.kernel.org
+>> > +S:	Maintained
+>> > +F:	include/linux/tlv_parser.h
+>> > +F:	include/uapi/linux/tlv_parser.h
+>> > +F:	lib/tlv_parser.*
+>> > +
+>> >  TMIO/SDHI MMC DRIVER
+>> >  M:	Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> >  L:	linux-mmc@vger.kernel.org
+>> > diff --git a/include/linux/tlv_parser.h b/include/linux/tlv_parser.h
+>> > new file mode 100644
+>> > index 000000000000..6d9a655d9ec9
+>> > --- /dev/null
+>> > +++ b/include/linux/tlv_parser.h
+>> > @@ -0,0 +1,48 @@
+>> > +/* SPDX-License-Identifier: GPL-2.0 */
+>> > +/*
+>> > + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
+>> > + *
+>> > + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+>> > + *
+>> > + * Header file of TLV parser.
+>> > + */
+>> > +
+>> > +#ifndef _LINUX_TLV_PARSER_H
+>> > +#define _LINUX_TLV_PARSER_H
+>> > +
+>> > +#include <uapi/linux/tlv_parser.h>
+>> > +
+>> > +/**
+>> > + * typedef hdr_callback - Callback after parsing TLV header
+>> > + * @callback_data: Opaque data to supply to the header callback function
+>> > + * @data_type: TLV data type
+>> > + * @num_entries: Number of TLV data entries
+>> > + * @total_len: Total length of TLV data
+>> > + *
+>> > + * This callback is invoked after a TLV header is parsed.
+>> > + *
+>> > + * Return: 0 to skip processing, 1 to do processing, a negative value on error.
+>> > + */
+>> > +typedef int (*hdr_callback)(void *callback_data, __u64 data_type,
+>> > +			    __u64 num_entries, __u64 total_len);
+>> > +
+>> > +/**
+>> > + * typedef data_callback - Callback after parsing TLV data entry
+>> > + * @callback_data: Opaque data to supply to the data callback function
+>> > + * @field: TLV field ID
+>> > + * @field_data: Data of a TLV data field
+>> > + * @field_len: Length of @field_data
+>> > + *
+>> > + * This callback is invoked after a TLV data entry is parsed.
+>> > + *
+>> > + * Return: 0 on success, a negative value on error.
+>> > + */
+>> > +typedef int (*data_callback)(void *callback_data, __u64 field,
+>> > +			     const __u8 *field_data, __u64 field_len);
+>> > +
+>> > +int tlv_parse(hdr_callback hdr_callback, void *hdr_callback_data,
+>> > +	      data_callback data_callback, void *data_callback_data,
+>> > +	      const __u8 *data, size_t data_len, const char **data_types,
+>> > +	      __u64 num_data_types, const char **fields, __u64 num_fields);
+>> > +
+>> > +#endif /* _LINUX_TLV_PARSER_H */
+>> > diff --git a/include/uapi/linux/tlv_parser.h b/include/uapi/linux/tlv_parser.h
+>> > new file mode 100644
+>> > index 000000000000..fbd4fc403ac7
+>> > --- /dev/null
+>> > +++ b/include/uapi/linux/tlv_parser.h
+>> > @@ -0,0 +1,62 @@
+>> > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>> > +/*
+>> > + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
+>> > + *
+>> > + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+>> > + *
+>> > + * Implement the user space interface for the TLV parser.
+>> > + */
+>> > +
+>> > +#ifndef _UAPI_LINUX_TLV_PARSER_H
+>> > +#define _UAPI_LINUX_TLV_PARSER_H
+>> > +
+>> > +#include <linux/types.h>
+>> > +
+>> > +/*
+>> > + * TLV format:
+>> > + *
+>> > + * +-----------------+------------------+-----------------+
+>> > + * | data type (u64) | num fields (u64) | total len (u64) | # header
+>> > + * +--------------+--+---------+--------+---------+-------+
+>> > + * | field1 (u64) | len1 (u64) | value1 (u8 len1) |
+>> > + * +--------------+------------+------------------+
+>> > + * |     ...      |    ...     |        ...       |         # data
+>> > + * +--------------+------------+------------------+
+>> > + * | fieldN (u64) | lenN (u64) | valueN (u8 lenN) |
+>> > + * +--------------+------------+------------------+
+>> > + *
+>> > + * [same as above, repeated N times]
+>> > + *
+>> > + */
+>> > +
+>> > +/**
+>> > + * struct tlv_hdr - Header of TLV format
+>> > + * @data_type: Type of data to parse
+>> > + * @num_entries: Number of data entries provided
+>> > + * @_reserved: Reserved for future use (must be equal to zero)
+>> > + * @total_len: Total length of the data blob, excluding the header
+>> > + *
+>> > + * This structure represents the header of the TLV data format.
+>> > + */
+>> > +struct tlv_hdr {
+>> > +	__u64 data_type;
+>> > +	__u64 num_entries;
+>> > +	__u64 _reserved;
+>> > +	__u64 total_len;
+>> > +} __attribute__((packed));
+>> > +
+>> > +/**
+>> > + * struct tlv_data_entry - Data entry of TLV format
+>> > + * @field: Data field identifier
+>> > + * @length: Data length
+>> > + * @data: Data
+>> > + *
+>> > + * This structure represents a TLV data entry.
+>> > + */
+>> > +struct tlv_data_entry {
+>> > +	__u64 field;
+>> > +	__u64 length;
+>> > +	__u8 data[];
+>> > +} __attribute__((packed));
+>> > +
+>> > +#endif /* _UAPI_LINUX_TLV_PARSER_H */
+>> > diff --git a/lib/Kconfig b/lib/Kconfig
+>> > index b38849af6f13..9141dcfc1704 100644
+>> > --- a/lib/Kconfig
+>> > +++ b/lib/Kconfig
+>> > @@ -777,3 +777,6 @@ config POLYNOMIAL
+>> >  
+>> >  config FIRMWARE_TABLE
+>> >  	bool
+>> > +
+>> > +config TLV_PARSER
+>> > +	bool
+>> > diff --git a/lib/Makefile b/lib/Makefile
+>> > index 322bb127b4dc..c6c3614c4293 100644
+>> > --- a/lib/Makefile
+>> > +++ b/lib/Makefile
+>> > @@ -392,6 +392,8 @@ obj-$(CONFIG_USERCOPY_KUNIT_TEST) += usercopy_kunit.o
+>> >  obj-$(CONFIG_GENERIC_LIB_DEVMEM_IS_ALLOWED) += devmem_is_allowed.o
+>> >  
+>> >  obj-$(CONFIG_FIRMWARE_TABLE) += fw_table.o
+>> > +obj-$(CONFIG_TLV_PARSER) += tlv_parser.o
+>> > +CFLAGS_tlv_parser.o += -I lib
+>> >  
+>> >  # FORTIFY_SOURCE compile-time behavior tests
+>> >  TEST_FORTIFY_SRCS = $(wildcard $(src)/test_fortify/*-*.c)
+>> > diff --git a/lib/tlv_parser.c b/lib/tlv_parser.c
+>> > new file mode 100644
+>> > index 000000000000..5d54844ab8d7
+>> > --- /dev/null
+>> > +++ b/lib/tlv_parser.c
+>> > @@ -0,0 +1,221 @@
+>> > +// SPDX-License-Identifier: GPL-2.0
+>> > +/*
+>> > + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
+>> > + *
+>> > + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+>> > + *
+>> > + * Implement the TLV parser.
+>> > + */
+>> > +
+>> > +#define pr_fmt(fmt) "tlv_parser: "fmt
+>> > +#include <tlv_parser.h>
+>> > +
+>> > +/**
+>> > + * tlv_parse_hdr - Parse TLV header
+>> > + * @hdr_callback: Callback function to call after parsing header
+>> > + * @hdr_callback_data: Opaque data to supply to the header callback function
+>> > + * @data: Data to parse (updated)
+>> > + * @data_len: Length of @data (updated)
+>> > + * @parsed_num_entries: Parsed number of data entries (updated)
+>> > + * @parsed_total_len: Parsed length of TLV data, excluding the header (updated)
+>> > + * @data_types: Array of data type strings
+>> > + * @num_data_types: Number of elements of @data_types
+>> > + *
+>> > + * Parse the header of the TLV data format, move the data pointer to the TLV
+>> > + * data part, decrease the data length by the length of the header, and provide
+>> > + * the number of entries and the total data length extracted from the header.
+>> > + *
+>> > + * Before returning, call the header callback to let the callback supplier
+>> > + * decide whether or not to process the subsequent TLV data.
+>> > + *
+>> > + * Return: 1 to process the data entries, 0 to skip, a negative value on error.
+>> > + */
+>> > +static int tlv_parse_hdr(hdr_callback hdr_callback, void *hdr_callback_data,
+>> > +			 const __u8 **data, size_t *data_len,
+>> > +			 __u64 *parsed_num_entries, __u64 *parsed_total_len,
+>> > +			 const char **data_types, __u64 num_data_types)
+>> > +{
+>> > +	__u64 parsed_data_type;
+>> > +	struct tlv_hdr *hdr;
+>> > +
+>> > +	if (*data_len < sizeof(*hdr)) {
+>> > +		pr_debug("Data blob too short, %lu bytes, expected %lu\n",
+>> > +			 *data_len, sizeof(*hdr));
+>> > +		return -EBADMSG;
+>> > +	}
+>> > +
+>> > +	hdr = (struct tlv_hdr *)*data;
+>> > +
+>> > +	*data += sizeof(*hdr);
+>> > +	*data_len -= sizeof(*hdr);
+>> > +
+>> > +	parsed_data_type = __be64_to_cpu(hdr->data_type);
+>> > +	if (parsed_data_type >= num_data_types) {
+>> > +		pr_debug("Invalid data type %llu, max: %llu\n",
+>> > +			 parsed_data_type, num_data_types - 1);
+>> > +		return -EBADMSG;
+>> > +	}
+>> > +
+>> > +	*parsed_num_entries = __be64_to_cpu(hdr->num_entries);
+>> > +
+>> > +	if (hdr->_reserved != 0) {
+>> > +		pr_debug("_reserved must be zero\n");
+>> > +		return -EBADMSG;
+>> > +	}
+>> > +
+>> > +	*parsed_total_len = __be64_to_cpu(hdr->total_len);
+>> > +	if (*parsed_total_len > *data_len) {
+>> > +		pr_debug("Invalid total length %llu, expected: %lu\n",
+>> > +			 *parsed_total_len, *data_len);
+>> > +		return -EBADMSG;
+>> > +	}
+>> > +
+>> > +	pr_debug("Header: type: %s, num entries: %llu, total len: %lld\n",
+>> > +		 data_types[parsed_data_type], *parsed_num_entries,
+>> > +		 *parsed_total_len);
+>> > +
+>> > +	return hdr_callback(hdr_callback_data, parsed_data_type,
+>> > +			    *parsed_num_entries, *parsed_total_len);
+>> > +}
+>> > +
+>> > +/**
+>> > + * tlv_parse_data - Parse TLV data
+>> > + * @data_callback: Callback function to call to parse the data entries
+>> > + * @data_callback_data: Opaque data to supply to the data callback function
+>> > + * @num_entries: Number of data entries to parse
+>> > + * @data: Data to parse
+>> > + * @data_len: Length of @data
+>> > + * @fields: Array of field strings
+>> > + * @num_fields: Number of elements of @fields
+>> > + *
+>> > + * Parse the data part of the TLV data format and call the supplied callback
+>> > + * function for each data entry, passing also the opaque data pointer.
+>> > + *
+>> > + * The data callback function decides how to process data depending on the
+>> > + * field.
+>> > + *
+>> > + * Return: 0 on success, a negative value on error.
+>> > + */
+>> > +static int tlv_parse_data(data_callback data_callback, void *data_callback_data,
+>> > +			  __u64 num_entries, const __u8 *data, size_t data_len,
+>> > +			  const char **fields, __u64 num_fields)
+>> > +{
+>> > +	const __u8 *data_ptr = data;
+>> > +	struct tlv_data_entry *entry;
+>> > +	__u64 parsed_field, len, i, max_num_entries;
+>> > +	int ret;
+>> > +
+>> > +	max_num_entries = data_len / sizeof(*entry);
+>> > +
+>> > +	/* Possibly lower limit on num_entries loop. */
+>> > +	if (num_entries > max_num_entries)
+>> > +		return -EBADMSG;
+>> > +
+>> > +	for (i = 0; i < num_entries; i++) {
+>> > +		if (data_len < sizeof(*entry))
+>> > +			return -EBADMSG;
+>> > +
+>> > +		entry = (struct tlv_data_entry *)data_ptr;
+>> > +		data_ptr += sizeof(*entry);
+>> > +		data_len -= sizeof(*entry);
+>> > +
+>> > +		parsed_field = __be64_to_cpu(entry->field);
+>> > +		if (parsed_field >= num_fields) {
+>> > +			pr_debug("Invalid field %llu, max: %llu\n",
+>> > +				 parsed_field, num_fields - 1);
+>> > +			return -EBADMSG;
+>> > +		}
+>> > +
+>> > +		len = __be64_to_cpu(entry->length);
+>> > +
+>> > +		if (data_len < len)
+>> > +			return -EBADMSG;
+>> > +
+>> > +		pr_debug("Data: field: %s, len: %llu\n", fields[parsed_field],
+>> > +			 len);
+>> > +
+>> > +		if (!len)
+>> > +			continue;
+>> > +
+>> > +		ret = data_callback(data_callback_data, parsed_field, data_ptr,
+>> > +				    len);
+>> > +		if (ret < 0) {
+>> > +			pr_debug("Parsing of field %s failed, ret: %d\n",
+>> > +				 fields[parsed_field], ret);
+>> > +			return ret;
+>> > +		}
+>> > +
+>> > +		data_ptr += len;
+>> > +		data_len -= len;
+>> > +	}
+>> > +
+>> > +	if (data_len) {
+>> > +		pr_debug("Excess data: %lu bytes\n", data_len);
+>> > +		return -EBADMSG;
+>> > +	}
+>> > +
+>> > +	return 0;
+>> > +}
+>> > +
+>> > +/**
+>> > + * tlv_parse - Parse data in TLV format
+>> > + * @hdr_callback: Callback function to call after parsing header
+>> > + * @hdr_callback_data: Opaque data to supply to the header callback function
+>> > + * @data_callback: Callback function to call to parse the data entries
+>> > + * @data_callback_data: Opaque data to supply to the data callback function
+>> > + * @data: Data to parse
+>> > + * @data_len: Length of @data
+>> > + * @data_types: Array of data type strings
+>> > + * @num_data_types: Number of elements of @data_types
+>> > + * @fields: Array of field strings
+>> > + * @num_fields: Number of elements of @fields
+>> > + *
+>> > + * Parse data in TLV format and call tlv_parse_data() each time tlv_parse_hdr()
+>> > + * returns 1.
+>> > + *
+>> > + * Return: 0 on success, a negative value on error.
+>> > + */
+>> > +int tlv_parse(hdr_callback hdr_callback, void *hdr_callback_data,
+>> > +	      data_callback data_callback, void *data_callback_data,
+>> > +	      const __u8 *data, size_t data_len, const char **data_types,
+>> > +	      __u64 num_data_types, const char **fields, __u64 num_fields)
+>> > +{
+>> > +	__u64 parsed_num_entries, parsed_total_len;
+>> > +	const __u8 *data_ptr = data;
+>> > +	int ret = 0;
+>> > +
+>> > +	pr_debug("Start parsing data blob, size: %lu\n", data_len);
+>> > +
+>> > +	while (data_len) {
+>> > +		ret = tlv_parse_hdr(hdr_callback, hdr_callback_data, &data_ptr,
+>> > +				    &data_len, &parsed_num_entries,
+>> > +				    &parsed_total_len, data_types,
+>> > +				    num_data_types);
+>> > +		switch (ret) {
+>> > +		case 0:
+>> > +			/*
+>> > +			 * tlv_parse_hdr() already checked that
+>> > +			 * parsed_total_len <= data_len.
+>> > +			 */
+>> > +			data_ptr += parsed_total_len;
+>> > +			data_len -= parsed_total_len;
+>> > +			continue;
+>> > +		case 1:
+>> > +			break;
+>> > +		default:
+>> > +			goto out;
+>> > +		}
+>> > +
+>> > +		ret = tlv_parse_data(data_callback, data_callback_data,
+>> > +				     parsed_num_entries, data_ptr,
+>> > +				     parsed_total_len, fields, num_fields);
+>> > +		if (ret < 0)
+>> > +			goto out;
+>> > +
+>> > +		data_ptr += parsed_total_len;
+>> > +		data_len -= parsed_total_len;
+>> > +	}
+>> > +out:
+>> > +	pr_debug("End of parsing data blob, ret: %d\n", ret);
+>> > +	return ret;
+>> > +}
+>> > diff --git a/lib/tlv_parser.h b/lib/tlv_parser.h
+>> > new file mode 100644
+>> > index 000000000000..8fa8127bd13e
+>> > --- /dev/null
+>> > +++ b/lib/tlv_parser.h
+>> > @@ -0,0 +1,17 @@
+>> > +/* SPDX-License-Identifier: GPL-2.0 */
+>> > +/*
+>> > + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
+>> > + *
+>> > + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+>> > + *
+>> > + * Header file of TLV parser.
+>> > + */
+>> > +
+>> > +#ifndef _LIB_TLV_PARSER_H
+>> > +#define _LIB_TLV_PARSER_H
+>> > +
+>> > +#include <linux/kernel.h>
+>> > +#include <linux/err.h>
+>> > +#include <linux/tlv_parser.h>
+>> > +
+>> > +#endif /* _LIB_TLV_PARSER_H */
+>> 
+>
+
+-- 
+Jani Nikula, Intel
 
