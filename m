@@ -1,114 +1,160 @@
-Return-Path: <linux-kernel+bounces-319475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E8E96FD07
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:07:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C130B96FCF3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 682A0284D35
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74204289CC8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B991D6DDD;
-	Fri,  6 Sep 2024 21:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2582D155741;
+	Fri,  6 Sep 2024 21:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="YaCrrmHW"
-Received: from sonic313-20.consmr.mail.sg3.yahoo.com (sonic313-20.consmr.mail.sg3.yahoo.com [106.10.240.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TbeK9e8F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356951D3630
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 21:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.240.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D90335C7
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 21:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725656845; cv=none; b=KOTTM7u4kXMAXPTkuDrgiBTOer4BcoZSxTwxWJSd+t8cJcEjwBc3L8qOg+w+iUf9D4cABaDryxyTaqY7w86RH2qTKVFutcgoQ+mqqBM5QcICknF4oGOGsAJFNBl7mdANhRCuH5z4ThZ6/ghlXA+kTl6dPcIH8BiR5CiBRRh0VRk=
+	t=1725656523; cv=none; b=N8Lhhfd8KfZffaMJgYkbZUo/WoGO/dh7dt/scJfWN3WAfOb/PNL9Xbp746fQHJa6bheqcprgg5pjPgJ19XFWEqSLjVnOAAU9GPTcWHOS3HxZs9xfo+YU3MHk7l4Tw7TIXHiaQ8rlDHG6lPqWrWUyTsNIMOlwk8wzfj6XSjbcHII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725656845; c=relaxed/simple;
-	bh=9iLES3dkWmyBh4NwcYvdX7nP5e5csA5/64UXJbMhOBE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=l82LhDHmmY40OILRpxzPLtiNf3XFqhASYL7MngnaUbMjsEyQSR7+YIoLvtBM1UvbRWU1q092ixj83cnXlkMUUohDW4l6OQQI/84C2905c8Laay1UKTKDICGp30wGKMPl0+0qD+nicHCIPurpcURP0j6rKO63ZGTOZikcn4ogJvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=YaCrrmHW; arc=none smtp.client-ip=106.10.240.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1725656842; bh=awJ6MhJmZhkmmWzLZ7jdz51ALBXVdPkmU9GJhavpEv8=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=YaCrrmHWI34VSP0NxEIRLx1osmuH+AUl3RUFjco/HSt9y2w+R3jyswl4140xCS26WT9B6sF2KXColBwdmL3+WOwKkIaQeeDiZnQqHaY4faowL9jHUWtZM/YSdfHPRtmoCcyzItkMGJqBHdWMpmHe+jLKmQiqIf73V7xfpnwE8vaJ5DrYGCMBQGHvKM6CnWQpD+RMTjUGs7uY162ZTYD6WivX3IvSrZZdGMBlw5wvojVi+0eYQB7sqk03xJOws5w3mmPDhcKD4l+wuydxZA+YL4JZAnjyRBUN9BDqKuTzJXYd3UTx9mOmYMfn26u1kFP8Weg+VcBQ7A0kqo7Gl05Giw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725656842; bh=cEa4d0QOtJ+lGu8th+PsmYT5yMZRxgbyHDi4JHRblqN=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=hyp1DvxHuj7Mmn2YnpDfYQpnxmwXgIo2fB3JPTIcqKcQmymMwUbVAXgobToF91BomjB3gQgZI9glSMSJNQoIF6c39f0L2JLXNXQFE5K1uac+q7Cgk32EhKhEH0cmHVg9ndBk2TcDu0JD6NLAOBzQ0lB0PnqGwjOgOYb/sL4w9/NEO6xTdaaLZ8JSp26ShJPRdJboOJ6eB+AN165a0ZIc93bIYcYiTTG+qc770XgI3TwmgkMxfGfzZQqHs0pNwJJv+RC8/jnuvpnDI7xYy7bPmXqocWiBJYW090Pe9Rg0T3ooXIoLe/HZwNcltWJljQwPLipjHMNTo/UUxt8a3dum6Q==
-X-YMail-OSG: Z6W6wCsVM1nWQv0sVVX0tq2hYzmYBa2fdzOtVcQZwYBXj5XWepWaB3l4c6BivL7
- VZfujvgZKmJWmOlz1jgaQjPbzT2TUy8_6V5svWV3aldHdTKwmHJKieHswtiXn6ZsqnUXvhzD6G0r
- rU3SNHFed.JrN_xDnAuZPHr.b5fCXVTqUTChnPuXbbpPap95EUEsPduxKe7sj163WRWwiAy6vwbC
- OczADWC2bu6RbcT6V7h2vpvnNMcsD9RL8GtLt4IgTcDLQolJC7N3DgaFhbdyuIY8oJE06ukXOYYt
- FIINi1kNMdHLOBj8_CRvUVDsZ__kK97OVhFRQBikZyWRh5HvWoaus552SAGuiQTeQQgA72TQTUe2
- MK3rS1r9DK3p0S.hU0AQ8XvhI20qPW4ubpgSVzR8DIoGTMxLd3y0lCRNVrXusQJmIkJuYR5zzRDJ
- _UKkf8lx9hQGF8iKoCpm57KRNRNsbpRF8ynLHik0sMTW0SIN1tXuler9mOEhiusykC8lf9YeGByJ
- rkuWDwu5qT2hwCojlQnB8xZ6emlcHNjJK_0pTr8TUARvX1q4KkQ6L4vlLjy3upgTJQTry24s7C4E
- HvBwQVyT0NrYwi6n7s6ejJ374L82.upPx378xsDDuelK4lgPL7Way5B6M2kJeVg9OTUtZQs8vSiG
- 6JgxQ0THGxpdXNHvlXgY9sne_C0WU2r.U2_6CJVY7j1KD6XIAFSM2PhOBX8pRUKreFSCjFZwJyLh
- J0icuCz.SN7a6zFsjg21ztX5jpO3zqBv_N0.l0axDC_4R3IhkUNohr4heRBTFhsru6iScs95_4Ft
- TdseDYATdoaB_lW8OxnbdHM8g07eEZrXe2v8cd9KzlIXDzaop7NdRTpMY8tyZ4P0AXSFfDACekoM
- rdstcGKVE0amWPrxUlUNSj_zBUexiHceaQTEy8XSSwq3xi1_b1dij888BNLrsaae0btL_yS17JW8
- .SHQj9Tvv_cDgUqqtK7VQmJu13A7nmYwlJKP_loFPsmKnfniznnDfU3JIFYbSIV7tleuiunilc_3
- EW1vAIpLAKo7shxCK9m3IDHvW67xCTOOawBKHEGLGPpf0mz9tvl.N_TYvKgjE5NmTk6nf8x93sTz
- 6S0iGZXysM5TyWb_Y.moqqkM4P7hChSDcxRzDuhnT1EbqAKVzeE8vsdXDJdMWGNSQekO1G4RXiNh
- XfwGJ1jSmLqaRKEF0tVjLD5aBIX.6vJcAeNso2Wu8njZ.Q1WPI2gScgFDzkCHAMGVK62o6RO4yb_
- go_Es0LhFIQ5qlHAejFtplDbCD5nTgQmfwjo9MoroL3YK0Fg9BgL50s.4DVJgaZJ92CDDNcMW87V
- CYKK7HWV1jDFxumLazYidB0OxTD4d8W96vnDd_nA4W8GG.ani_x5jTjL5jITKlpLIuBP7zZjIMko
- ADndDIK33CIluOcCgmUFuvLmSkjwl1_yDXFTWl7pEEHe9TmE6Y9yEAFKdAHj4B8JLcQO.FymI0VB
- FJagnYEBENC0uvxvE05sj8nLl7DsdajUVJLR.FkruTfTVsELBQ4p9tDExHOuTv53oWeCwGE70ADk
- q3ng_3MewmcZpmP9QWZBIwNJOunGNNPSp.m1ReRduATaFrSkj9EyBhF6E9l782uXfvT4Juz2SH5o
- Ghmifc0F.9S03IKW8Diu5mVk3U7aRSqxAhXVVvCv3pinASxj6P0EoCnO6EVGDdh3qlDXMj9UqPff
- o4U5Nk9icZHP.l7mx4Ory1W7qEsAw41uyAXyNtszlJmQRGiSwi0jOpS3X6WkfTVef9eLbMDJ5_iY
- wUcOdDSzTGVXfHWVRMO_RMVhFT7MAAueBSXM6K8gESIfpQy8aCkG9E3oZBbI0R1aZ9_7.khx6q6i
- 8lVQWGKb0esLU6.oPA83VucVRHbm3sUHRhzWU8oDN4YpU2.hz0p9_pT3gILFpXm5hcSFiojkapbm
- KYbCRso2jQf5A29V_NbEe6fXt5sCaJj71gXF7DbUf0Xle9CJ_Rn7OuGU7V7TbCqTBr3JOvfgF0c6
- FuwGzYnrm_cyhfXmtwCuKryV.TxBHR8FIoF9D3xolW.L90PyNYnnKmjsTy79xdYYI2V24.P_FBoi
- id1q4KscEdhSaFSa0wPnPH72WxbFfnqUF5YqpX8s0uaW.25rhIfzrigVk9knZAGaVGlZww.YcLKm
- fGd3QycUcktvVXixTl0Fbu_3Y73c4qwx7MXbEizA3TiyQTyustdZ3Rs0SELZFcuzNmPSH9XLipgX
- BIOWPAj2ylzW4h3fbO6OFiQBrMhxVRqC__vihq.gzWh4aD49bChVLNJTwPmAQ1Q--
-X-Sonic-MF: <abdul.rahim@myyahoo.com>
-X-Sonic-ID: c09ad32f-2021-4edb-a6dc-1d43a6352aaa
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.sg3.yahoo.com with HTTP; Fri, 6 Sep 2024 21:07:22 +0000
-Received: by hermes--production-sg3-fc85cddf6-kdpzj (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 412f38eebffa696b3206e5fb186b72bc;
-          Fri, 06 Sep 2024 20:57:10 +0000 (UTC)
-From: Abdul Rahim <abdul.rahim@myyahoo.com>
-To: bhelgaas@google.com,
-	corbet@lwn.net
-Cc: helgaas@kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abdul Rahim <abdul.rahim@myyahoo.com>
-Subject: [PATCH] Documentation: PCI: fix typo in pci.rst
-Date: Sat,  7 Sep 2024 02:26:56 +0530
-Message-ID: <20240906205656.8261-1-abdul.rahim@myyahoo.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725656523; c=relaxed/simple;
+	bh=1PvbEcEkAycxEh+oFXQ+UkKWnaHOLZeIUL7vy6IJyTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aBZ1WRUdabt3TIVKAkAy7H4+pf0h/R+XFuGnacdyqK0dp+iJVt86u++sEUjYO7lMZI+ve65ia0LkbgMNrUxieY8dVR6MCOaCV35814kv+JAjB95GyWEc1zTjLcgkDJdY10hQq8C840jYBIODGpqKmlnxhOy3PewlpeM4pCGc6b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TbeK9e8F; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725656519;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Slsc/q4gmklmRH5a0YDj3ElXcBDJLSNXpvyO6xBWXgY=;
+	b=TbeK9e8FL6S4TzLlaGxWbHRjpDR2Xkx9LjMZzDeECdFZHPpAC7KLQ26J98xaru50djS+TD
+	n1l542mA44d1U9mqxeej5FF1rTYGm7w9c6+MbQjFqWTt6AQ6jCwM1acCR70dvkLjMZ6Mbs
+	CWJdsK2ljkFSB8ulPpgXi3Jq01Hdp6s=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-458-soR5ubLEOuiW-V7rOuoAbg-1; Fri,
+ 06 Sep 2024 17:01:58 -0400
+X-MC-Unique: soR5ubLEOuiW-V7rOuoAbg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 684CC194510E;
+	Fri,  6 Sep 2024 21:01:56 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.32.23])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BF75D1956048;
+	Fri,  6 Sep 2024 21:01:53 +0000 (UTC)
+Date: Fri, 6 Sep 2024 17:01:51 -0400
+From: Joe Lawrence <joe.lawrence@redhat.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
+Message-ID: <Ztttv0Eo/FHyxo78@redhat.com>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <ZtsJ9qIPcADVce2i@redhat.com>
+ <20240906170008.fc7h3vqdpwnkok3b@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-References: <20240906205656.8261-1-abdul.rahim.ref@myyahoo.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906170008.fc7h3vqdpwnkok3b@treble>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Fix typo: "follow" -> "following" in pci.rst
+On Fri, Sep 06, 2024 at 10:00:08AM -0700, Josh Poimboeuf wrote:
+> On Fri, Sep 06, 2024 at 09:56:06AM -0400, Joe Lawrence wrote:
+> > In the case of klp-diff.c, adding #include <string.h> will provide the
+> > memmem prototype.  For both files, I needed to #define _GNU_SOURCE for
+> > that prototype though.
+> > 
+> > For the other complaint, I just set struct instruction *dest_insn = NULL
+> > at the top of the for loop, but perhaps the code could be refactored to
+> > clarify the situation to the compiler if you prefer not to do that.
+> 
+> Thanks!  I'll get these fixed up.
+> 
 
-Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
----
- Documentation/PCI/pci.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Also, with the workarounds mentioned above, the two you sent to Song,
+and the same .config I attached in the first email, I get the following
+error when trying to build the canonical /proc/cmdline example:
 
-diff --git a/Documentation/PCI/pci.rst b/Documentation/PCI/pci.rst
-index dd7b1c0c21da..f4d2662871ab 100644
---- a/Documentation/PCI/pci.rst
-+++ b/Documentation/PCI/pci.rst
-@@ -52,7 +52,7 @@ driver generally needs to perform the following initialization:
-   - Enable DMA/processing engines
- 
- When done using the device, and perhaps the module needs to be unloaded,
--the driver needs to take the follow steps:
-+the driver needs to take the following steps:
- 
-   - Disable the device from generating IRQs
-   - Release the IRQ (free_irq())
--- 
-2.46.0
+  $ cat cmdline-string.patch 
+  diff --git a/fs/proc/cmdline.c b/fs/proc/cmdline.c
+  index a6f76121955f..2bcaf9ec6f78 100644
+  --- a/fs/proc/cmdline.c
+  +++ b/fs/proc/cmdline.c
+  @@ -7,8 +7,7 @@
+   
+   static int cmdline_proc_show(struct seq_file *m, void *v)
+   {
+  -       seq_puts(m, saved_command_line);
+  -       seq_putc(m, '\n');
+  +       seq_printf(m, "%s kpatch=1", saved_command_line);
+          return 0;
+   }
+
+
+  $ ./scripts/livepatch/klp-build ./cmdline-string.patch 2>&1 | tee build2.out
+  - klp-build: building original kernel
+  vmlinux.o: warning: objtool: init_espfix_bsp+0xab: unreachable instruction
+  vmlinux.o: warning: objtool: init_espfix_ap+0x50: unreachable instruction
+  vmlinux.o: warning: objtool: syscall_init+0xca: unreachable instruction
+  vmlinux.o: warning: objtool: sync_core_before_usermode+0xf: unreachable instruction
+  vmlinux.o: warning: objtool: sync_core_before_usermode+0xf: unreachable instruction
+  vmlinux.o: warning: objtool: tc_wrapper_init+0x16: unreachable instruction
+  vmlinux.o: warning: objtool: pvh_start_xen+0x50: relocation to !ENDBR: pvh_start_xen+0x57
+  - klp-build: building patched kernel
+  vmlinux.o: warning: objtool: init_espfix_bsp+0xab: unreachable instruction
+  vmlinux.o: warning: objtool: init_espfix_ap+0x50: unreachable instruction
+  vmlinux.o: warning: objtool: syscall_init+0xca: unreachable instruction
+  vmlinux.o: warning: objtool: sync_core_before_usermode+0xf: unreachable instruction
+  vmlinux.o: warning: objtool: sync_core_before_usermode+0xf: unreachable instruction
+  vmlinux.o: warning: objtool: tc_wrapper_init+0x16: unreachable instruction
+  vmlinux.o: warning: objtool: pvh_start_xen+0x50: relocation to !ENDBR: pvh_start_xen+0x57
+  - klp-build: diffing objects
+  kvm.o: added: __UNIQUE_ID_nop_644
+  kvm.o: added: __UNIQUE_ID_nop_645
+  kvm.o: added: __UNIQUE_ID_nop_646
+  kvm.o: added: __UNIQUE_ID_nop_647
+  kvm.o: added: __UNIQUE_ID_nop_648
+  kvm.o: added: __UNIQUE_ID_nop_649
+  kvm.o: added: __UNIQUE_ID_nop_650
+  kvm.o: added: __UNIQUE_ID_nop_651
+  kvm.o: added: __UNIQUE_ID_nop_652
+  vmlinux.o: changed: cmdline_proc_show
+  - klp-build: building patch module
+  make[2]: /bin/sh: Argument list too long
+  make[2]: *** [scripts/Makefile.build:253: /home/jolawren/src/linux/klp-tmp/out/livepatch.mod] Error 127
+  make[1]: *** [/home/jolawren/src/linux/Makefile:1943: /home/jolawren/src/linux/klp-tmp/out] Error 2
+  make: *** [Makefile:240: __sub-make] Error 2
+  klp-build: error: module build failed
+
+I'm guessing that this happens because of the huge dependency line in
+klp-tmp/out/Kbuild for livepatch-y, it includes over 2000 object files
+(that I'm pretty sure didn't change :)
+
+I can set this up on a live machine next week if you want to investigate
+further.
+
+--
+Joe
 
 
