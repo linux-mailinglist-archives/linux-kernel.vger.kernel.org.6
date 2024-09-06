@@ -1,82 +1,130 @@
-Return-Path: <linux-kernel+bounces-319514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C3796FDC3
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:02:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B314896FDC5
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8240E1C2175D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:02:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE3271F22064
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238E415A878;
-	Fri,  6 Sep 2024 22:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A882715A876;
+	Fri,  6 Sep 2024 22:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/rh9wNz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abcd050/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8E11B85DB;
-	Fri,  6 Sep 2024 22:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3461586C8;
+	Fri,  6 Sep 2024 22:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725660154; cv=none; b=bglzXqUZL55bS1EF005oz+Xe/kqZrWCOKy4Zx0M1b5MyGh1aHex+hbmkus2wg9QHOq+uAl003d7HBhWmoFjdSq3nJLUMXB9sd/Y2o7GZEEzw/8ItSftYtUqNpKdJJngj4neDFpCeD3xG13SyvrjeGkOVo4buEG5fWlNlR3if9z8=
+	t=1725660163; cv=none; b=T3/UgRLCP/i4LGTF+UxRDjGi6YYs5HJPUERqkQcS2s2vI8b6NmOngC6VOI/kmbHGbn5k8xMN9DFOPK9gu0sqF+zOO2jGOwKL/jMW+QknhZ4N98oeTDQfuQ89VGj3Wfr38cZzZvKHwW8RXPMbAI3dDsahcrwd7r0tKpiPs2HKz2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725660154; c=relaxed/simple;
-	bh=WGuwnNn1p6v9mY4G4k7o8PhCCfiaToFY4ymgit/+v1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NquRUKpu+DQmEaPvDXn7eOqD8n1BGO/idtQJT6vx3tbj8k4Nm5uXa5A4aVBq5/CYtXL7rl5JYpM5lEJKB5s91xj1TAgB4xLJHysc+F1Y1E7LmOWOei7SQqB5LeoddkCLUJ2mxL03cYo4638f92TKOG+aeOuJf0JA28S1WHjYy90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/rh9wNz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 848B6C4CEC4;
-	Fri,  6 Sep 2024 22:02:33 +0000 (UTC)
+	s=arc-20240116; t=1725660163; c=relaxed/simple;
+	bh=YTl5QZ9y0Zvq40MaW8h6EWZ0cXmGsDV90veaoywOHV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQvOTBILaUZIC+dFTMZdJEChiziFYIxVAMQJ0oG7GPVdGrffqiov9zHBl+8ghd9qY8HyA79oQVNF4kGtyR4k6j6k8vIAg8lgAc65oDLes64Ybr+bRRqFzFER216zS4srsFBZBmDej66ExQAtXXBdr9nCkUYyCNMwUvK7DRg46fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abcd050/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC81C4CEC4;
+	Fri,  6 Sep 2024 22:02:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725660153;
-	bh=WGuwnNn1p6v9mY4G4k7o8PhCCfiaToFY4ymgit/+v1c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=e/rh9wNz88GAK11h79VsQMcJb9paOgEoNmJsC2VkhXYWa0XCbXECxqrMuF4s8AGsB
-	 l67uND4qfkyoUjc/88dhBgf9xhArWyoYj0qV4alJ3BBXtAgVyb7qPeHe8eYFouYQzR
-	 eJFSOBRJwIyG+DO4/8RKScZkeII+GEo36Sra5zW75F4plgRwkbQuGYfY6dBWqr8gA+
-	 bbb173N4emVQ7f008wJPX27pZStC3uWOuexmyYa/EKgsRfNcxhVoY/T8OCbg1PN7Ax
-	 pBSgMVYS4tKI+ZP/pG0onPTz/kgJkUgJ0dsmm2GCNzLvLmesa0abAQXl70U+QXES+O
-	 LaCxtoVKAsEDQ==
-Date: Fri, 6 Sep 2024 15:02:32 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: Edward Adam Davis <eadavis@qq.com>, davem@davemloft.net,
- edumazet@google.com, geliang@kernel.org, linux-kernel@vger.kernel.org,
- martineau@kernel.org, mptcp@lists.linux.dev, netdev@vger.kernel.org,
- pabeni@redhat.com, syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH net v3] mptcp: pm: Fix uaf in __timer_delete_sync
-Message-ID: <20240906150232.31ba495c@kernel.org>
-In-Reply-To: <b2272b72-d207-4393-9245-31ad7628be09@kernel.org>
-References: <e4a13002-f471-4951-9180-14f0f8b30bd2@kernel.org>
-	<tencent_F85DEC5DED99554FB28DEF258F8DB8120D07@qq.com>
-	<b2272b72-d207-4393-9245-31ad7628be09@kernel.org>
+	s=k20201202; t=1725660162;
+	bh=YTl5QZ9y0Zvq40MaW8h6EWZ0cXmGsDV90veaoywOHV4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=abcd050/Os6wbiyVH7ZcZ+p8mdL+ZRq4TUnjHGxVY2ALdGUSucNQz5cZiPVzKIANm
+	 i2L2xEPfHbvPEWKejN6RWEuaAruzuxp6ghLx7K9k6pIaB9xwtSPMzZaqL1VH6Cdmd1
+	 /BZJiTa0XYk2/jXjZVNI6xI1Y8HhPvBOHoPE/k9CcfOhvCIzWguLerhDADcXqAxE/u
+	 z4622LEQAxhbc/ncjbt7hdTRRXCVHu/HFlshQMeJDn8j3O0+gCt0oSTCPoDvSx1Obp
+	 e8SLg3+KX9/xjbXaSoN9lXw6ImrkScjbpyX+WCqk2nq8RJ76sZ4kTW2IVHOk8o8iYS
+	 ItX5smY1IzX+g==
+Date: Fri, 6 Sep 2024 17:02:41 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Yu-Chun Lin <eleanor15x@gmail.com>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	laurent.pinchart@ideasonboard.com, linux-kernel@vger.kernel.org,
+	Matti Vaittinen <mazziesaccount@gmail.com>
+Subject: Re: [PATCH v5] dt-bindings: Fix various typos
+Message-ID: <172566015521.2278562.15089620078479163976.robh@kernel.org>
+References: <20240905151943.2792056-1-eleanor15x@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240905151943.2792056-1-eleanor15x@gmail.com>
 
-On Fri, 6 Sep 2024 20:55:20 +0200 Matthieu Baerts wrote:
-> > Fixes: 00cfd77b9063 ("mptcp: retransmit ADD_ADDR when timeout")
-> > Cc: stable@vger.kernel.org
-> > Reported-and-tested-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=f3a31fb909db9b2a5c4d
-> > Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>  
-> 
-> According to the doc [1], a 'Co-dev' tag is supposed to be added before
-> this SoB:
-> 
-> Co-developed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> 
-> But I'm sure that's fine without it.
 
-To be clear, would you like us to pick this up directly for net?
-Or you'll send it back to us with other MPTCP patches?
+On Thu, 05 Sep 2024 23:19:43 +0800, Yu-Chun Lin wrote:
+> Corrected several typos in Documentation/devicetree/bindings files.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> ---
+> v4->v5
+> Fixed one typo in commit messages.
+> 
+> v3->v4
+> I squashed all previous version commits.
+> 
+> v2->v3
+> Corrected "interlaved" to "interleaved"
+> 
+> v1->v2
+> Fixed more typos in dt-bindings files
+> 
+> I've dropped reviewed tags in v1 due to significant
+> changes in v2. So it would be helpful if Laurent Pinchart
+> and Kuan-Wei Chiu could review with the version.
+> 
+> v4
+> Link: https://lore.kernel.org/lkml/20240904160118.2773055-1-eleanor15x@gmail.com/
+> 
+> v3
+> Link: https://lore.kernel.org/lkml/20240904125812.2761993-1-eleanor15x@gmail.com/
+> 
+> v2
+> Link: https://lore.kernel.org/lkml/20240903164242.2188895-1-eleanor15x@gmail.com/
+> 
+> v1
+> Link: https://lore.kernel.org/lkml/20240901133046.962263-1-eleanor15x@gmail.com/
+> 
+>  .../devicetree/bindings/arm/arm,coresight-dummy-source.yaml   | 2 +-
+>  Documentation/devicetree/bindings/cpu/idle-states.yaml        | 2 +-
+>  Documentation/devicetree/bindings/display/lvds.yaml           | 2 +-
+>  Documentation/devicetree/bindings/dma/ti-dma-crossbar.txt     | 2 +-
+>  Documentation/devicetree/bindings/iio/accel/lis302.txt        | 2 +-
+>  .../devicetree/bindings/interrupt-controller/arm,gic-v3.yaml  | 2 +-
+>  Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml    | 2 +-
+>  .../devicetree/bindings/mailbox/brcm,iproc-flexrm-mbox.txt    | 2 +-
+>  .../devicetree/bindings/media/i2c/thine,thp7312.yaml          | 2 +-
+>  .../devicetree/bindings/media/samsung,exynos4210-fimc.yaml    | 2 +-
+>  Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml  | 2 +-
+>  Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml    | 2 +-
+>  Documentation/devicetree/bindings/mfd/twl6040.txt             | 2 +-
+>  .../devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml | 2 +-
+>  Documentation/devicetree/bindings/phy/apm-xgene-phy.txt       | 2 +-
+>  .../devicetree/bindings/phy/mediatek,mt7988-xfi-tphy.yaml     | 2 +-
+>  Documentation/devicetree/bindings/phy/mediatek,tphy.yaml      | 2 +-
+>  .../devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml     | 2 +-
+>  .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml         | 4 ++--
+>  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml     | 2 +-
+>  .../devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml     | 2 +-
+>  Documentation/devicetree/bindings/sound/everest,es8326.yaml   | 2 +-
+>  Documentation/devicetree/bindings/sound/st,sta350.txt         | 2 +-
+>  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml     | 2 +-
+>  24 files changed, 25 insertions(+), 25 deletions(-)
+> 
+
+Applied, thanks!
+
 
