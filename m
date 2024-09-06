@@ -1,49 +1,39 @@
-Return-Path: <linux-kernel+bounces-318717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5700E96F1F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:55:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A76896F1FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 834B81C23DC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:55:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F8F41C23F4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA771CB12A;
-	Fri,  6 Sep 2024 10:55:40 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39934158866;
-	Fri,  6 Sep 2024 10:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4871CB128;
+	Fri,  6 Sep 2024 10:56:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503C71CA6AA;
+	Fri,  6 Sep 2024 10:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725620140; cv=none; b=GEUiE8fP+WaQNiGyHTJ5WXIDKQh4pKy3FqvM0IgTByCGo9on/htRRRSvftWNDQ+fE0KN7c8iOBXpXtgG8KgBD4lhJt9wdqFgLtudpsNDiZb57Lu2sLLm+CyfWKR3QU1T4+zXrX6kEk7Tw4HaRa/Xv9KruuV2/ff8hZvpSugtjuI=
+	t=1725620166; cv=none; b=q75esVrPANhDV77+BzDU3SRrTydsg4M19HGKOYSL+0eNj4PaB0CA8FVgaZ90kkZkvXZDTZ3DCxxCIgoU5B6QjpgF6KW0hOyAHbLjwuLhWiruZy3VOdNakQaS5T1wdHnLMiYwzyXBMPI+KMSh6vKVwFb4qW0v+kbPAgMmd0NUkII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725620140; c=relaxed/simple;
-	bh=f5CVM95HAlNZ0W1E7w+xU0t7ZVGWHVxVJ9L8LEll9Vg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=pmyzLeCZ4K6zgU0vqR4UmVxI5yfKy0AZRiYpkCI18kPq+AIDLL6x+XVy8aUvee53rLNpRykQtSaDW5oM6U5ZJUFQizg3ULm5FjDDIj0qjD9ok4aEj8ugCwOZWNlzex2Nn+R0nUPuHSS8IlIKkyJb7Wida9dV8zdu6tQl7MGJXAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav315.sakura.ne.jp (fsav315.sakura.ne.jp [153.120.85.146])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 486AtUFp073718;
-	Fri, 6 Sep 2024 19:55:30 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav315.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav315.sakura.ne.jp);
- Fri, 06 Sep 2024 19:55:30 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav315.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 486AtUf9073715
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 6 Sep 2024 19:55:30 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <939e984a-8c5d-456d-a986-26e242e45488@I-love.SAKURA.ne.jp>
-Date: Fri, 6 Sep 2024 19:55:30 +0900
+	s=arc-20240116; t=1725620166; c=relaxed/simple;
+	bh=s65V3MJ9MtbfJfmv2YobiFjfN/XToUEbJVYOauK9bR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X24IxOj8LXofNaJSFEPG3765furcFUlmNyONnxEWdZesPKzA+FO88Glg1aq0GEP1NediFiaMdSwEs+NWT4MaJMbL+zLded7Ytdh0OkPHf698ZKkxeTsUQNCIzFVic7BR59zYHbkjzhdu25T/KfRXPwTp7y88hMRckVINdawmRkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82855FEC;
+	Fri,  6 Sep 2024 03:56:30 -0700 (PDT)
+Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6EC73F66E;
+	Fri,  6 Sep 2024 03:56:00 -0700 (PDT)
+Message-ID: <043e992f-487e-4102-9543-16da1f57b7bc@arm.com>
+Date: Fri, 6 Sep 2024 11:55:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,54 +41,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me,
-        tomoyo-users-en@lists.osdn.me,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
- <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
- <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
+Subject: Re: [PATCH 1/9] x86: vdso: Introduce asm/vdso/mman.h
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
+ <20240903151437.1002990-2-vincenzo.frascino@arm.com>
+ <710f9663-e99c-40e2-9c0e-2f5e6e854653@csgroup.eu>
 Content-Language: en-US
-In-Reply-To: <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+In-Reply-To: <710f9663-e99c-40e2-9c0e-2f5e6e854653@csgroup.eu>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024/09/06 16:43, Tetsuo Handa wrote:
-> On 2024/09/04 23:23, Paul Moore wrote:
->> Patches that add complexity to the LSM framework without any benefit
->> to the upstream, in-tree LSMs, or the upstream kernel in general, are
->> not good candidates for inclusion in the upstream kernel.
+Hi Christophe,
 
-This patch adds a clear value for Linux users that people get more chances to
-use LSM modules which match their needs.
+Thank you for your review.
 
-Quoting from [1]:
+On 04/09/2024 17:56, Christophe Leroy wrote:
+> 
+> 
+> Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
+...
 
-  Regarding CONFIG_MODULES=y,
-  "Vendor-A enables module-A" == "Vendor-A provides support for module-A" and
-  "Vendor-B enables module-B" == "Vendor-B provides support for module-B".
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#ifndef __ASM_VDSO_MMAN_H
+>> +#define __ASM_VDSO_MMAN_H
+>> +
+>> +#ifndef __ASSEMBLY__
+>> +
+>> +#include <uapi/linux/mman.h>
+>> +
+>> +#define VDSO_MMAP_PROT    PROT_READ | PROT_WRITE
+>> +#define VDSO_MMAP_FLAGS    MAP_DROPPABLE | MAP_ANONYMOUS
+> 
+> I still can't see the benefit of duplicating those two defines in every arch.
+> 
+> I understand your point that some arch might in the future want to use different
+> flags, but unless we already have one such architecture in mind we shouldn't
+> make things more complicated than needed.
+> 
+> In case such an architecture is already identified it should be said in the
+> commit message
+> 
 
-  Regarding CONFIG_SECURITY=y (namely in the RH world),
-  "Distributor-A enables LSM-A" == "Distributor-A provides support for LSM-A".
-  However, "Distributor-A does not enable LSM-B" == "Some vendor is impossible to
-  provide support for LSM-B".
+I do not have such an architecture in mind, hence I did not add it to the commit
+message.
 
-  "Distributor-A does not enable module-B" == "Distributor-A is not responsible for
-  providing support for module-B" and "Vendor-B enables LSM-B" == "Vendor-B provides
-  support for LSM-B" are what I expect.
+Apart being future proof the real problem here is to handle the mman.h header.
+As Arnd was saying [1] (and I agree), including it on some architectures might
+be problematic if they change it in a way that is incompatible with compat vdso.
 
-  Current LSM interface does not allow LSM-B to exist in Distributor-A's systems.
-  The "enable" == "support" model should be allowed for LSM interface as well.
-  What a strange asymmetry rule!
+In this way we make sure that the each architecture that decides to include it
+specifically validates it for this purpose. I am not a fan of complicating code
+either but this seems the lesser evil. I am open to any solution you can come up
+that is better then this one.
 
-Your "any benefit to in-tree LSMs" is completely ignoring Linux users.
-LSM is for all Linux users, LSM is not only for LSM developers.
+The other issue I see is that being these defines in a uapi header that is
+included directly by userspace splitting it requires some validation to make
+sure we do not break the status quo.
 
+[1]
+https://lore.kernel.org/lkml/cb66b582-ba63-4a5a-9df8-b07288f1f66d@app.fastmail.com/
 
+>> +
+>> +#endif /* !__ASSEMBLY__ */
+>> +
+>> +#endif /* __ASM_VDSO_MMAN_H */
 
-Link: https://lkml.kernel.org/r/c2a3279d-451d-23df-0911-e545d21492e6@I-love.SAKURA.ne.jp [1]
-
+-- 
+Regards,
+Vincenzo
 
