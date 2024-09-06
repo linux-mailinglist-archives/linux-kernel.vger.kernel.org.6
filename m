@@ -1,349 +1,562 @@
-Return-Path: <linux-kernel+bounces-318055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D13996E7B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:29:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0575296E7BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD8D2B23B33
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:29:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07B7B1C22FA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E4922064;
-	Fri,  6 Sep 2024 02:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461831F5FF;
+	Fri,  6 Sep 2024 02:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="F3FTkZXx"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfRVHBYE"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3CE2E62C
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 02:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D006DECF;
+	Fri,  6 Sep 2024 02:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725589733; cv=none; b=SCO31y67G2x1YSY51osc3OVdRusDO0/i2osDFXN4LuZFbQuZL1sRswHnDpHvyH/m5x59z+V/nFgHSM1OZigk7jtReuAFAOUwd9wIP2gIko5i1CUjuZkf1KFw8HCCEkUmYPjM7qhafUHicRyznMtVDi8VODOfdy+e2i5cf/Es3xU=
+	t=1725589874; cv=none; b=LEPp6uNzl+oDYErXm6UFS6Y7XONqW6XDjbQ3R8UWaBT+zFjFjllYxMg9zmGDvL70A5PxEqaJ5cV6FSnrnkCvH1QOiQyzi6TKjNQoJdRLJmgHRD+W52e4k9TyxnRVJ4IgFTiAPlFS1xqMdOTptnhBnIl+1iYy9V8WK7CEvAB+sBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725589733; c=relaxed/simple;
-	bh=OkuQP8GGUbsjpkJW7AUCQX3rxujXaiedJtgcoVUVLB0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hCO1BPernHYkWaeHXGVElO0QYYCEEP43/UqnKsb0SFFhUKhzFo/5slrpyg5obLt2mXDW+dcpseIRwe4FeG2luiQGfoSr6m0iSEqJ8ATCr3E5935m2uXIlM2mmTGCBm+HxDwYd8TDWTTthkicGV4ONEFogrfTu85vKczK+YpW74I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=F3FTkZXx; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com [209.85.208.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E5E4E3F1C0
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 02:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1725589725;
-	bh=D33DP173HQ3sM4JzkRWdQ29nFSy60oZoLXqXyU1a/Ys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=F3FTkZXxOUiQRcXwCfBAiGnvK2hJqW/LCHkKQ32+rI5UXp1NLL1EhLDnayTtHMS73
-	 AErtR7ekuekQtEaJUyqLk7ZZJgAxbmut3KyJf578X4DUL3UwQ9b20Q8CuNR48hNKpt
-	 jtRYZP1m/5slI41oQdHnCy7G6pDbukIvquwPcw4iiiooOjs3CT+8jfOxf4ejQ8QiAG
-	 i5fSF1J2TudLAxBY2CcrrgQAJ3xICSDZCRkEwEa8jFAPdvxLJ31MDJRfcTccUh5V17
-	 +LFdNguB8Lo+tDqXi9Pf97amiwZAmYWYX/qc1iGp28TidpUIlvXHIM6y72+RMbj3ho
-	 bOdyXBN4tXxXw==
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2f74d4423d2so10872781fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 19:28:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725589725; x=1726194525;
+	s=arc-20240116; t=1725589874; c=relaxed/simple;
+	bh=y4ZfommhHi7WGzHR4IJkk1SGPIdAHfI8admoEDsFvGg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Qkgyp0htyQEar0SGzMbG4/IocBucYcMoLp8uE5/DxPIMG4FTDxZNOSgMiEqto/1iZT0089hNGLX2fuSbKIFfYKIYwwwQWbBGDnxmNAj9Mw+DDihQp6YWAEvgO/IytN8zHKy/VmsvJMCYJNAPu+jcpYEr/8g3Dskakz0+hRqLs2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gfRVHBYE; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-501274e2c29so229326e0c.3;
+        Thu, 05 Sep 2024 19:31:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725589870; x=1726194670; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D33DP173HQ3sM4JzkRWdQ29nFSy60oZoLXqXyU1a/Ys=;
-        b=gy/RxPGf0Rcs0LUicjkzyPgQkYNHWmx27LpUPfymjYjLBQWhN/ksBASSB0gTvCSJlW
-         dJ2i5EcpqMvlIOI3gZwENqWpbWiKbNmLHqWzZxo7sW3i8zk8n2Xq/4+LUW8V4pEH49kG
-         XulEd5/G4Yd1upauFrKnmHJgbSmsx1w81/KBVIByK+cOJPMTUwUmnqz404giVZAbgN2O
-         9nUyTJlDdoUs+JX7QvYBjb1l15IVsBIgGkWXQZKULQ9DFCiEPFwngtX16UWg9Nm7ypdO
-         S9mKDhrG8tCyUV5YLqEu1hXiMpE/okiQenA10uIKyJBgpRfx+2YyZyi3ZCmiS1gHV79k
-         ix9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU6wWVxZMIycpc5MwmIjv9Sc5t9OVeKubX1qTh/qVu/BcW0gFeJinRAD8FTR6o/yhEG6/9c/UnIvSrIr84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVOC4gXJVeZtlEtZNFcU/yKxWo3A/y8KXHKlodj8j4JjsfZUqU
-	0Y9+Lh0LbjaOyOQ7wMfUje34bYRhJt1KlZqxmePNG3mW7ewU5ZCfxvTODM5GpOa2ggUb8oHWMUP
-	okE6+LlJTG5j9kyOxYV5Oi91mBBaxMa8Wa3FQl7YndUQPeCeSqeVaYubV94rg+mbAWcJvnsV8xp
-	MNVQlBfEjsyAbWldq5q09+zkeybNk25vbjlJTp/Lo+9/ua2rmGnjAs
-X-Received: by 2002:a2e:4c02:0:b0:2f6:4aed:9973 with SMTP id 38308e7fff4ca-2f7524a3509mr4708121fa.44.1725589724775;
-        Thu, 05 Sep 2024 19:28:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsJuR8zPgCf4lkerjcwSbQEX9fiFYVWJsPlZ1e01j7vn8MH5cH2SMuSKO+wh3rm8TmRkZuvU4OaRDetYMUxPk=
-X-Received: by 2002:a2e:4c02:0:b0:2f6:4aed:9973 with SMTP id
- 38308e7fff4ca-2f7524a3509mr4707991fa.44.1725589724093; Thu, 05 Sep 2024
- 19:28:44 -0700 (PDT)
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GnOa3AzH8kywjN33Op/921fFg8KnkrXiEDjpBp3ljKU=;
+        b=gfRVHBYEw4IS2OIn523+eKMqJzgPXSqBqwLZWOwgnKNuLF7ZmLuOayTZsejMLNyFKm
+         6wy97Kj9bxsJVY/0kjYFAMcFVzevmhpoTbK6G83PnvQ5twc1JMzVplZOeXBGuf0kyR8l
+         n6r0I3MpTV5s7WLm7jwU3wttJ5GsBJ71Zq4U686ZA7T/yhuYLRjOX7L7MTleOOqVHpAV
+         onolDyCSxKEHx+hU0E2dgUNHy0QwB5iwLH/lWqcCquJp1XhGopVHPKG4TRBqpj99XRCa
+         9uWmKI1jUWrzV5tNTqHMdlT0BdkIq6j7ug917R+u4VDrHfRpxj6RkU+yKKpeHAUKTjpY
+         u8yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725589870; x=1726194670;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GnOa3AzH8kywjN33Op/921fFg8KnkrXiEDjpBp3ljKU=;
+        b=HRQAJ9F/wEEyNlcM7u/TW3KjRTfwOf7o6qlJpxytFrw07nsvECYaW9OBeTKtZcfOt5
+         n1OzgHUIealibWqpiiLNBuVpi8UQ1Dy4g3pKgP4LIiLjU3bCi0pXOkFWsUFizTuwF5UZ
+         limXXxCB/0WGZDJvCcLv9IK1gM69ehIXTexeyLjolW/Dr7UOLtwxWB0tdQnpW2gFEUDE
+         ehDWrnxvh9zmPVah0PJ3YP3oPVN8I8/6WjchaPCCCR7pqnk0nlFwNT/VZNanxqvoGcfG
+         v4vY+xh5w8GU2AVxeX91UplIzrbG4VeKJkB6xFdS5hW1ID7djAlNZ6yQR48rU2wep3v2
+         KUhg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVQ4He29gyEqSe79ZaaanMpfXJoPYG2kdK4QNTZ1PLf6Fq2qzoU8M/90wAN6x4tZhLeGuWCGkCQiEl2tY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi6e1PktpQqK4mH0Z+QU/pmOCsMRVYjEWjoRehvOEJ3N43dYJS
+	3XoqhNulS12wmi/nXdFGfQq551dTaY24ue+aYI/qxYc3zEHS5JBbct/tEboXG/QDnRUuRbKRUCx
+	9p8EDVeeEtkEJ6JYStJiHPbB1xrXPLLRJQ3iVfA==
+X-Google-Smtp-Source: AGHT+IEvuuWHbHHl/8Yvdkq9fHBJ0IqcKo8jx4+7qsMDOd9qjrTjuOQ540bMruhjsM/kBRivmf5o/CqxbdQ8cuibKQ4=
+X-Received: by 2002:a05:6122:7c6:b0:4f5:cd00:e492 with SMTP id
+ 71dfb90a1353d-50214237825mr1406540e0c.7.1725589869955; Thu, 05 Sep 2024
+ 19:31:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905042447.418662-1-kai.heng.feng@canonical.com>
- <20240905042447.418662-2-kai.heng.feng@canonical.com> <5544d302-9480-4cca-9cfd-ed56cecf6bd3@redhat.com>
-In-Reply-To: <5544d302-9480-4cca-9cfd-ed56cecf6bd3@redhat.com>
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Date: Fri, 6 Sep 2024 10:28:32 +0800
-Message-ID: <CAAd53p51jtJywwK3rNwe2gy7qKSx823EeAJqEtTE-u3L2Ym0Hw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] platform/x86/hp: Avoid spurious wakeup on HP ProOne 440
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: ilpo.jarvinen@linux.intel.com, gregkh@linuxfoundation.org, 
-	jorge.lopez2@hp.com, acelan.kao@canonical.com, 
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org
+From: Hui Guo <guohui.study@gmail.com>
+Date: Fri, 6 Sep 2024 10:30:58 +0800
+Message-ID: <CAHOo4gL8UJnY=zZOHVioLsemBfA7eZSK+utxWLd7TBCz89X=3w@mail.gmail.com>
+Subject: kernel BUG in reiserfs_update_sd_size
+To: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
+	Chengming Zhou <zhouchengming@bytedance.com>
+Cc: syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 5, 2024 at 4:56=E2=80=AFPM Hans de Goede <hdegoede@redhat.com> =
-wrote:
->
-> Hi Kai-Heng Feng,
->
-> On 9/5/24 6:24 AM, Kai-Heng Feng wrote:
-> > The HP ProOne 440 has a power saving design that when the display is
-> > off, it also cuts the USB touchscreen device's power off.
-> >
-> > This can cause system early wakeup because cutting the power off the
-> > touchscreen device creates a disconnect event and prevent the system
-> > from suspending:
-> > [  445.814574] hub 2-0:1.0: hub_suspend
-> > [  445.814652] usb usb2: bus suspend, wakeup 0
-> > [  445.824629] xhci_hcd 0000:00:14.0: Port change event, 1-11, id 11, p=
-ortsc: 0x202a0
-> > [  445.824639] xhci_hcd 0000:00:14.0: resume root hub
-> > [  445.824651] xhci_hcd 0000:00:14.0: handle_port_status: starting usb1=
- port polling.
-> > [  445.844039] xhci_hcd 0000:00:14.0: PM: pci_pm_suspend(): hcd_pci_sus=
-pend+0x0/0x20 returns -16
-> > [  445.844058] xhci_hcd 0000:00:14.0: PM: dpm_run_callback(): pci_pm_su=
-spend+0x0/0x1c0 returns -16
-> > [  445.844072] xhci_hcd 0000:00:14.0: PM: failed to suspend async: erro=
-r -16
-> > [  446.276101] PM: Some devices failed to suspend, or early wake event =
-detected
-> >
-> > So add a quirk to make sure the following is happening:
-> > 1. Let the i915 driver suspend first, to ensure the display is off so
-> >    system also cuts the USB touchscreen's power.
-> > 2. If the touchscreen is present, wait a while to let the USB disconnec=
-t
-> >    event fire.
-> > 3. Since the disconnect event already happened, the xhci's suspend
-> >    routine won't be interrupted anymore.
->
-> You only set the suspend-handler from the dmi-quirk callback, so it
-> is only ever set on the affected laptop-model. So this can be simplified
-> by simply always doing the msleep(200) on suspend, instead of poking at
-> USB system internals to find out if the touchscreen is there on suspend.
->
-> I guess there may be versions of this specific laptop with/without
-> the touchscreen, but I'm not overly worried about adding a 200 ms delay
-> on just 1 model laptop for the versions which don't have a touchscreen.
+Hi Kernel Maintainers,
+we found a crash "kernel BUG in reiserfs_update_sd_size" in upstream,
+and reproduced it successfully:
+by this report "https://groups.google.com/g/syzkaller-bugs/c/3HUP6xnzjo0/m/=
+bP0j4x9rBAAJ",
+this bug have been triggered before and fixed, but it can still be
+triggered now, .
 
-My original idea is not to impose the delay for unaffected systems.
-But yes not poking at USB subsystem can make things much easier.
+HEAD Commit: 88fac17500f4ea49c7bac136cf1b27e7b9980075(Merge tag
+'fuse-fixes-6.11-rc7')
+kernel config: https://raw.githubusercontent.com/androidAppGuard/KernelBugs=
+/main/6.11.config
+console output:
+https://github.com/androidAppGuard/KernelBugs/blob/main/88fac17500f4ea49c7b=
+ac136cf1b27e7b9980075/331f477773da9111eed5fd0f8bb94f7655b2384c/log0
+repro report: https://raw.githubusercontent.com/androidAppGuard/KernelBugs/=
+main/88fac17500f4ea49c7bac136cf1b27e7b9980075/331f477773da9111eed5fd0f8bb94=
+f7655b2384c/repro.report
+syz reproducer:
+https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/88fac1750=
+0f4ea49c7bac136cf1b27e7b9980075/331f477773da9111eed5fd0f8bb94f7655b2384c/re=
+pro.prog
+C reproducer: https://raw.githubusercontent.com/androidAppGuard/KernelBugs/=
+main/88fac17500f4ea49c7bac136cf1b27e7b9980075/331f477773da9111eed5fd0f8bb94=
+f7655b2384c/repro.cprog
 
->
-> A bigger worry which I have is that we are going to see the same problem
-> on other vendor's laptops. So I think in the end we may need something
-> done in a more generic manner, in e.g. the drm subsystem (since this
-> is display related). For now lets go with this fix and when we hit simila=
-r
-> cases we can figure out what a generic fix will look like.
 
-Right now this is the only model I've seen that exhibit such behavior.
-So I am not overly worried about such problem.
+Please let me know if there is anything I can help.
+Best,
+Hui Guo
 
->
-> One more comment inline below.
->
->
-> >
-> > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> > ---
-> >  drivers/platform/x86/hp/hp-wmi.c | 104 ++++++++++++++++++++++++++++++-
-> >  1 file changed, 103 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp=
-/hp-wmi.c
-> > index 876e0a97cee1..80fc3ee4deaf 100644
-> > --- a/drivers/platform/x86/hp/hp-wmi.c
-> > +++ b/drivers/platform/x86/hp/hp-wmi.c
-> > @@ -30,6 +30,9 @@
-> >  #include <linux/rfkill.h>
-> >  #include <linux/string.h>
-> >  #include <linux/dmi.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/pci.h>
-> > +#include <linux/usb.h>
-> >
-> >  MODULE_AUTHOR("Matthew Garrett <mjg59@srcf.ucam.org>");
-> >  MODULE_DESCRIPTION("HP laptop WMI driver");
-> > @@ -1708,6 +1711,52 @@ static void __exit hp_wmi_bios_remove(struct pla=
-tform_device *device)
-> >               platform_profile_remove();
-> >  }
-> >
-> > +static int hp_wmi_suspend_handler(struct device *device)
-> > +{
-> > +     acpi_handle handle;
-> > +     struct acpi_device *adev;
-> > +     struct device *physdev;
-> > +     struct usb_port *port_dev;
-> > +     struct usb_device *udev;
-> > +     acpi_status status;
-> > +     bool found =3D false;
-> > +
-> > +     /* The USB touchscreen device always connects to HS11 */
-> > +     status =3D acpi_get_handle(NULL, "\\_SB.PC00.XHCI.RHUB.HS11", &ha=
-ndle);
-> > +     if (ACPI_FAILURE(status))
-> > +             return 0;
-> > +
-> > +     adev =3D acpi_fetch_acpi_dev(handle);
-> > +     if (!adev)
-> > +             return 0;
-> > +
-> > +     physdev =3D get_device(acpi_get_first_physical_node(adev));
-> > +     if (!physdev)
-> > +             return 0;
-> > +
-> > +     port_dev =3D to_usb_port(physdev);
-> > +     if (port_dev->state =3D=3D USB_STATE_NOTATTACHED)
-> > +             return 0;
-> > +
-> > +     udev =3D port_dev->child;
-> > +
-> > +     if (udev) {
->
-> This is racy. Often desktop environments will turn off the display
-> before doing a system-suspend, so the touchscreen is already disconnected
-> at this point but the USB subsystem may not have processed it yet.
->
-> What if the USB subsystem processes the disconnect exactly at this point?
->
-> Then your port_dev->child pointer is no longer valid and your passing
-> a pointer to free-ed mem to usb_get_dev()
->
-> As I said above since this code only runs on 1 model based on a DMI
-> match just simplify this entire function to a single "msleep(200)"
-> and be done with it.
+This is the crash log I got by reproducing the bug based on the above
+environment=EF=BC=8C
+I have piped this log through decode_stacktrace.sh for better
+understand the cause of the bug.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+2024/09/06 01:38:39 executed programs: 0
+[ 683.192926][ T8481] Bluetooth: hci1: unexpected cc 0x0c03 length: 249 > 1
+[ 683.195893][ T8481] Bluetooth: hci1: unexpected cc 0x1003 length: 249 > 9
+[ 683.198219][ T8481] Bluetooth: hci1: unexpected cc 0x1001 length: 249 > 9
+[ 683.201223][ T8481] Bluetooth: hci1: unexpected cc 0x0c23 length: 249 > 4
+[ 683.204054][ T8481] Bluetooth: hci1: unexpected cc 0x0c25 length: 249 > 3
+[ 683.205951][ T8481] Bluetooth: hci1: unexpected cc 0x0c38 length: 249 > 2
+[ 683.376251][T14942] chnl_net:caif_netlink_parms(): no params data found
+[ 683.462697][T14942] bridge0: port 1(bridge_slave_0) entered blocking stat=
+e
+[ 683.463612][T14942] bridge0: port 1(bridge_slave_0) entered disabled stat=
+e
+[ 683.464441][T14942] bridge_slave_0: entered allmulticast mode
+[ 683.465813][T14942] bridge_slave_0: entered promiscuous mode
+[ 683.468075][T14942] bridge0: port 2(bridge_slave_1) entered blocking stat=
+e
+[ 683.468929][T14942] bridge0: port 2(bridge_slave_1) entered disabled stat=
+e
+[ 683.469872][T14942] bridge_slave_1: entered allmulticast mode
+[ 683.471199][T14942] bridge_slave_1: entered promiscuous mode
+[ 683.520982][T14942] bond0: (slave bond_slave_0): Enslaving as an
+active interface with an up link
+[ 683.526567][T14942] bond0: (slave bond_slave_1): Enslaving as an
+active interface with an up link
+[ 683.580532][T14942] team0: Port device team_slave_0 added
+[ 683.585273][T14942] team0: Port device team_slave_1 added
+[ 683.629086][T14942] batman_adv: batadv0: Adding interface: batadv_slave_0
+[ 683.629913][T14942] batman_adv: batadv0: The MTU of interface
+batadv_slave_0 is too small (1500) to handle the transport of
+batman-adv packets. Packets going over this interface will be
+fragmented on layer2 which could impact the performance. Setting the
+MTU to 1560 would solve the problem.
+[ 683.633024][T14942] batman_adv: batadv0: Not using interface
+batadv_slave_0 (retrying later): interface not active
+[ 683.635746][T14942] batman_adv: batadv0: Adding interface: batadv_slave_1
+[ 683.636554][T14942] batman_adv: batadv0: The MTU of interface
+batadv_slave_1 is too small (1500) to handle the transport of
+batman-adv packets. Packets going over this interface will be
+fragmented on layer2 which could impact the performance. Setting the
+MTU to 1560 would solve the problem.
+[ 683.639365][T14942] batman_adv: batadv0: Not using interface
+batadv_slave_1 (retrying later): interface not active
+[ 683.642514][ T85] Bluetooth: hci0: command tx timeout
+[ 683.691138][T14942] hsr_slave_0: entered promiscuous mode
+[ 683.692989][T14942] hsr_slave_1: entered promiscuous mode
+[ 683.694372][T14942] debugfs: Directory 'hsr0' with parent 'hsr'
+already present!
+[ 683.695420][T14942] Cannot create hsr debugfs directory
+[ 684.271349][T14942] netdevsim netdevsim0 netdevsim0: renamed from eth0
+[ 684.276016][T14942] netdevsim netdevsim0 netdevsim1: renamed from eth1
+[ 684.280518][T14942] netdevsim netdevsim0 netdevsim2: renamed from eth2
+[ 684.284741][T14942] netdevsim netdevsim0 netdevsim3: renamed from eth3
+[ 684.356209][T14942] 8021q: adding VLAN 0 to HW filter on device bond0
+[ 684.370383][T14942] 8021q: adding VLAN 0 to HW filter on device team0
+[ 684.377190][T11305] bridge0: port 1(bridge_slave_0) entered blocking stat=
+e
+[ 684.378168][T11305] bridge0: port 1(bridge_slave_0) entered forwarding st=
+ate
+[ 684.385531][T11305] bridge0: port 2(bridge_slave_1) entered blocking stat=
+e
+[ 684.386565][T11305] bridge0: port 2(bridge_slave_1) entered forwarding st=
+ate
+[ 684.544722][T14942] 8021q: adding VLAN 0 to HW filter on device batadv0
+[ 684.581029][T14942] veth0_vlan: entered promiscuous mode
+[ 684.585972][T14942] veth1_vlan: entered promiscuous mode
+[ 684.604990][T14942] veth0_macvtap: entered promiscuous mode
+[ 684.608466][T14942] veth1_macvtap: entered promiscuous mode
+[ 684.616148][T14942] batman_adv: The newly added mac address
+(aa:aa:aa:aa:aa:3e) already exists on: batadv_slave_0
+[ 684.617444][T14942] batman_adv: It is strongly recommended to keep
+mac addresses unique to avoid problems!
+[ 684.619483][T14942] batman_adv: batadv0: Interface activated: batadv_slav=
+e_0
+[ 684.625191][T14942] batman_adv: The newly added mac address
+(aa:aa:aa:aa:aa:3f) already exists on: batadv_slave_1
+[ 684.626479][T14942] batman_adv: It is strongly recommended to keep
+mac addresses unique to avoid problems!
+[ 684.628458][T14942] batman_adv: batadv0: Interface activated: batadv_slav=
+e_1
+[ 684.632383][T14942] netdevsim netdevsim0 netdevsim0: set [1, 0] type
+2 family 0 port 6081 - 0
+[ 684.633521][T14942] netdevsim netdevsim0 netdevsim1: set [1, 0] type
+2 family 0 port 6081 - 0
+[ 684.634619][T14942] netdevsim netdevsim0 netdevsim2: set [1, 0] type
+2 family 0 port 6081 - 0
+[ 684.635713][T14942] netdevsim netdevsim0 netdevsim3: set [1, 0] type
+2 family 0 port 6081 - 0
+[ 684.669845][ T94] wlan0: Created IBSS using preconfigured BSSID
+50:50:50:50:50:50
+[ 684.671662][ T94] wlan0: Creating new IBSS network, BSSID 50:50:50:50:50:=
+50
+[ 684.685104][T11451] wlan1: Created IBSS using preconfigured BSSID
+50:50:50:50:50:50
+[ 684.686146][T11451] wlan1: Creating new IBSS network, BSSID 50:50:50:50:5=
+0:50
+[ 684.759342][T15978] loop0: detected capacity change from 0 to 8192
+[ 684.763131][T15978] REISERFS warning: read_super_block: reiserfs
+filesystem is deprecated and scheduled to be removed from the kernel
+in 2025
+[ 684.764879][T15978] REISERFS (device loop0): found reiserfs format
+"3.6" with non-standard journal
+[ 684.766145][T15978] REISERFS (device loop0): using ordered data mode
+[ 684.767026][T15978] reiserfs: using flush barriers
+[ 684.768944][T15978] REISERFS (device loop0): journal params: device
+loop0, size 512, journal first block 18, max trans len 256, max batch
+225, max commit age 30, max trans age 30
+[ 684.771427][T15978] REISERFS (device loop0): checking transaction log (lo=
+op0)
+[ 684.815148][T15978] REISERFS (device loop0): Using tea hash to sort names
+[ 684.817613][T15978] REISERFS panic (device loop0): vs-13065
+update_stat_data: key [1 2 0x0 SD], found item *3.5*[1 2 0(0) DIR],
+item_len 80, item_location 3972, free_space(entry_count) 3
+[ 684.822115][T15978] ------------[ cut here ]------------
+[ 684.823561][T15978] kernel BUG at fs/reiserfs/prints.c:390!
+[ 684.825009][T15978] Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOP=
+TI
+[ 684.827201][T15978] CPU: 1 UID: 0 PID: 15978 Comm: syz.0.15 Not
+tainted 6.11.0-rc6-00026-g88fac17500f4-dirty #1
+[ 684.830348][T15978] Hardware name: QEMU Standard PC (i440FX + PIIX,
+1996), BIOS 1.15.0-1 04/01/2014
+[684.833199][T15978] RIP: 0010:__reiserfs_panic
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/print=
+s.c:390)
+[ 684.834855][T15978] Code: 54 ff 4d 89 e8 4c 89 f1 4c 89 e2 48 8d b3
+68 06 00 00 49 c7 c1 60 7e 6b 94 48 c7 c7 00 0e 04 8b e8 b2 38 35 ff
+e8 ed 4e 54 ff <0f> 0b 49 c7 c6 a0 0c 04 8b 4d 89 f4 eb c5 e8 da 4e 54
+ff 4d 85 e4
+All code
+=3D=3D=3D=3D=3D=3D=3D=3D
+0: 54 push %rsp
+1: ff 4d 89 decl -0x77(%rbp)
+4: e8 4c 89 f1 4c call 0x4cf18955
+9: 89 e2 mov %esp,%edx
+b: 48 8d b3 68 06 00 00 lea 0x668(%rbx),%rsi
+12: 49 c7 c1 60 7e 6b 94 mov $0xffffffff946b7e60,%r9
+19: 48 c7 c7 00 0e 04 8b mov $0xffffffff8b040e00,%rdi
+20: e8 b2 38 35 ff call 0xffffffffff3538d7
+25: e8 ed 4e 54 ff call 0xffffffffff544f17
+2a:* 0f 0b ud2 <-- trapping instruction
+2c: 49 c7 c6 a0 0c 04 8b mov $0xffffffff8b040ca0,%r14
+33: 4d 89 f4 mov %r14,%r12
+36: eb c5 jmp 0xfffffffffffffffd
+38: e8 da 4e 54 ff call 0xffffffffff544f17
+3d: 4d 85 e4 test %r12,%r12
 
-OK, will scratch the poking part in next revision. Thanks for the review.
+Code starting with the faulting instruction
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+0: 0f 0b ud2
+2: 49 c7 c6 a0 0c 04 8b mov $0xffffffff8b040ca0,%r14
+9: 4d 89 f4 mov %r14,%r12
+c: eb c5 jmp 0xffffffffffffffd3
+e: e8 da 4e 54 ff call 0xffffffffff544eed
+13: 4d 85 e4 test %r12,%r12
+[ 684.840498][T15978] RSP: 0018:ffffc9000c05f650 EFLAGS: 00010293
+[ 684.842101][T15978] RAX: 0000000000000000 RBX: ffff88807daaa000 RCX:
+ffffffff816af049
+[ 684.844484][T15978] RDX: ffff88802f129cc0 RSI: ffffffff8235abd3 RDI:
+0000000000000005
+[ 684.846937][T15978] RBP: ffffc9000c05f720 R08: 0000000000000001 R09:
+ffffed1047785179
+[ 684.849278][T15978] R10: 0000000080000000 R11: 0000000000000001 R12:
+ffffffff8b039ee0
+[ 684.851698][T15978] R13: ffffffff8b03aba0 R14: ffffffff8b040c60 R15:
+ffff888073e536a8
+[ 684.854093][T15978] FS: 00007f8329000640(0000)
+GS:ffff88823bc00000(0000) knlGS:0000000000000000
+[ 684.856853][T15978] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 684.858846][T15978] CR2: 00007f8328367a8c CR3: 000000005b9f4000 CR4:
+00000000000006f0
+[ 684.861297][T15978] Call Trace:
+[ 684.862298][T15978] <TASK>
+[684.863253][T15978] ? show_regs
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/kernel/d=
+umpstack.c:479)
+[684.864580][T15978] ? die
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/kernel/d=
+umpstack.c:421
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/kernel/du=
+mpstack.c:434
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/kernel/du=
+mpstack.c:447)
+[684.865738][T15978] ? do_trap
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/kernel/t=
+raps.c:114
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/kernel/tr=
+aps.c:155)
+[684.867020][T15978] ? __reiserfs_panic
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/print=
+s.c:390)
+[684.868583][T15978] ? do_error_trap
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/./arch/x86/includ=
+e/asm/traps.h:58
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/kernel/tr=
+aps.c:176)
+[684.870074][T15978] ? __reiserfs_panic
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/print=
+s.c:390)
+[684.871617][T15978] ? __reiserfs_panic
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/print=
+s.c:390)
+[684.873167][T15978] ? handle_invalid_op
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/kernel/t=
+raps.c:214)
+[684.874679][T15978] ? __reiserfs_panic
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/print=
+s.c:390)
+[684.876222][T15978] ? exc_invalid_op
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/kernel/t=
+raps.c:267)
+[684.877685][T15978] ? asm_exc_invalid_op
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/./arch/x86/includ=
+e/asm/idtentry.h:621)
+[684.879259][T15978] ? __wake_up_klogd.part.0
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/kernel/printk/pri=
+ntk.c:4011)
+[684.880688][T15978] ? __reiserfs_panic
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/print=
+s.c:390)
+[684.881968][T15978] ? __reiserfs_panic
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/print=
+s.c:390)
+[684.883218][T15978] ? __pfx___reiserfs_panic
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/print=
+s.c:377)
+[684.884570][T15978] reiserfs_update_sd_size
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/reise=
+rfs.h:1487
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/reiser=
+fs.h:1484
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/reiser=
+fs.h:1556
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/reiser=
+fs.h:1577
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/inode.=
+c:1417
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/inode.=
+c:1491)
+[684.885910][T15978] ? __pfx_reiserfs_update_sd_size
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/inode=
+.c:1433)
+[684.887352][T15978] ? reiserfs_mkdir
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/namei=
+.c:870)
+[684.888568][T15978] reiserfs_mkdir
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/namei=
+.c:870)
+[684.889691][T15978] ? __pfx_reiserfs_mkdir
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/namei=
+.c:780)
+[684.890953][T15978] ? __pfx_down_write
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/kernel/locking/rw=
+sem.c:1577)
+[684.891730][T15978] reiserfs_xattr_init
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/xattr=
+.c:892
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/xattr.=
+c:1007)
+[684.892412][T15978] reiserfs_fill_super
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/super=
+.c:2173
+(discriminator 1))
+[684.893099][T15978] ? __pfx_reiserfs_fill_super
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/super=
+.c:1888)
+[684.893814][T15978] ? snprintf
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/lib/vsprintf.c:29=
+54)
+[684.894375][T15978] ? __pfx_snprintf
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/lib/vsprintf.c:29=
+54)
+[684.895014][T15978] ? do_raw_spin_lock
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/./arch/x86/includ=
+e/asm/atomic.h:107
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/./include/linux/at=
+omic/atomic-arch-fallback.h:2170
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/./include/linux/at=
+omic/atomic-instrumented.h:1302
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/./include/asm-gene=
+ric/qspinlock.h:111
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/kernel/locking/spi=
+nlock_debug.c:116)
+[684.895653][T15978] ? set_blocksize
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/block/bdev.c:175)
+[684.896273][T15978] ? setup_bdev_super
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/super.c:1595)
+[684.896935][T15978] mount_bdev
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/super.c:1680)
+[684.897496][T15978] ? __pfx_reiserfs_fill_super
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/super=
+.c:1888)
+[684.898260][T15978] ? __pfx_mount_bdev
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/super.c:1657)
+[684.898894][T15978] ? apparmor_capable
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/security/apparmor=
+/lsm.c:208)
+[684.899534][T15978] ? __pfx_get_super_block
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/super=
+.c:2599)
+[684.900220][T15978] legacy_get_tree
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/fs_context.c:6=
+64)
+[684.900852][T15978] vfs_get_tree
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/super.c:1801)
+[684.901421][T15978] path_mount
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/namespace.c:34=
+73
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/namespace.c:379=
+9)
+[684.901988][T15978] ? __pfx_path_mount
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/namespace.c:37=
+26)
+[684.902624][T15978] ? putname
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/namei.c:281)
+[684.903152][T15978] ? putname
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/namei.c:281)
+[684.903703][T15978] __x64_sys_mount
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/namespace.c:38=
+13
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/namespace.c:402=
+0
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/namespace.c:399=
+7
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/namespace.c:399=
+7)
+[684.904368][T15978] ? __pfx___x64_sys_mount
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/namespace.c:39=
+97)
+[684.905035][T15978] do_syscall_64
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/entry/co=
+mmon.c:52
+/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/entry/com=
+mon.c:83)
+[684.905630][T15978] entry_SYSCALL_64_after_hwframe
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/entry/en=
+try_64.S:130)
+[ 684.906398][T15978] RIP: 0033:0x7f832819e49e
+[ 684.906946][T15978] Code: 48 c7 c0 ff ff ff ff eb aa e8 5e 20 00 00
+66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 f3 0f 1e fa 49 89 ca b8 a5
+00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8
+64 89 01 48
+All code
+=3D=3D=3D=3D=3D=3D=3D=3D
+0: 48 c7 c0 ff ff ff ff mov $0xffffffffffffffff,%rax
+7: eb aa jmp 0xffffffffffffffb3
+9: e8 5e 20 00 00 call 0x206c
+e: 66 2e 0f 1f 84 00 00 cs nopw 0x0(%rax,%rax,1)
+15: 00 00 00
+18: 0f 1f 40 00 nopl 0x0(%rax)
+1c: f3 0f 1e fa endbr64
+20: 49 89 ca mov %rcx,%r10
+23: b8 a5 00 00 00 mov $0xa5,%eax
+28: 0f 05 syscall
+2a:* 48 3d 01 f0 ff ff cmp $0xfffffffffffff001,%rax <-- trapping instructio=
+n
+30: 73 01 jae 0x33
+32: c3 ret
+33: 48 c7 c1 a8 ff ff ff mov $0xffffffffffffffa8,%rcx
+3a: f7 d8 neg %eax
+3c: 64 89 01 mov %eax,%fs:(%rcx)
+3f: 48 rex.W
 
-Kai-Heng
+Code starting with the faulting instruction
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+0: 48 3d 01 f0 ff ff cmp $0xfffffffffffff001,%rax
+6: 73 01 jae 0x9
+8: c3 ret
+9: 48 c7 c1 a8 ff ff ff mov $0xffffffffffffffa8,%rcx
+10: f7 d8 neg %eax
+12: 64 89 01 mov %eax,%fs:(%rcx)
+15: 48 rex.W
+[ 684.909428][T15978] RSP: 002b:00007f8328fffda8 EFLAGS: 00000246
+ORIG_RAX: 00000000000000a5
+[ 684.910471][T15978] RAX: ffffffffffffffda RBX: 00000000000010f2 RCX:
+00007f832819e49e
+[ 684.911528][T15978] RDX: 0000000020001100 RSI: 0000000020001140 RDI:
+00007f8328fffe00
+[ 684.912521][T15978] RBP: 00007f8328fffe40 R08: 00007f8328fffe40 R09:
+0000000000000000
+[ 684.913548][T15978] R10: 0000000000000000 R11: 0000000000000246 R12:
+0000000020001100
+[ 684.914583][T15978] R13: 0000000020001140 R14: 00007f8328fffe00 R15:
+0000000020001180
+[ 684.915585][T15978] </TASK>
+[ 684.915988][T15978] Modules linked in:
+[ 684.916687][T15978] ---[ end trace 0000000000000000 ]---
+[684.917396][T15978] RIP: 0010:__reiserfs_panic
+(/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/reiserfs/print=
+s.c:390)
+[ 684.918146][T15978] Code: 54 ff 4d 89 e8 4c 89 f1 4c 89 e2 48 8d b3
+68 06 00 00 49 c7 c1 60 7e 6b 94 48 c7 c7 00 0e 04 8b e8 b2 38 35 ff
+e8 ed 4e 54 ff <0f> 0b 49 c7 c6 a0 0c 04 8b 4d 89 f4 eb c5 e8 da 4e 54
+ff 4d 85 e4
+All code
+=3D=3D=3D=3D=3D=3D=3D=3D
+0: 54 push %rsp
+1: ff 4d 89 decl -0x77(%rbp)
+4: e8 4c 89 f1 4c call 0x4cf18955
+9: 89 e2 mov %esp,%edx
+b: 48 8d b3 68 06 00 00 lea 0x668(%rbx),%rsi
+12: 49 c7 c1 60 7e 6b 94 mov $0xffffffff946b7e60,%r9
+19: 48 c7 c7 00 0e 04 8b mov $0xffffffff8b040e00,%rdi
+20: e8 b2 38 35 ff call 0xffffffffff3538d7
+25: e8 ed 4e 54 ff call 0xffffffffff544f17
+2a:* 0f 0b ud2 <-- trapping instruction
+2c: 49 c7 c6 a0 0c 04 8b mov $0xffffffff8b040ca0,%r14
+33: 4d 89 f4 mov %r14,%r12
+36: eb c5 jmp 0xfffffffffffffffd
+38: e8 da 4e 54 ff call 0xffffffffff544f17
+3d: 4d 85 e4 test %r12,%r12
 
->
-> Regards,
->
-> Hans
->
->
-> > +             usb_get_dev(udev);
-> > +             if (le16_to_cpu(udev->descriptor.idVendor) =3D=3D 0x1fd2 =
-&&
-> > +                 le16_to_cpu(udev->descriptor.idProduct) =3D=3D 0x8102=
-) {
-> > +                     dev_dbg(&hp_wmi_platform_dev->dev, "LG Melfas tou=
-chscreen found\n");
-> > +                     found =3D true;
-> > +             }
-> > +             usb_put_dev(udev);
-> > +
-> > +             /* Let the xhci have time to handle disconnect event */
-> > +             if (found)
-> > +                     msleep(200);
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >  static int hp_wmi_resume_handler(struct device *device)
-> >  {
-> >       /*
-> > @@ -1745,7 +1794,7 @@ static int hp_wmi_resume_handler(struct device *d=
-evice)
-> >       return 0;
-> >  }
-> >
-> > -static const struct dev_pm_ops hp_wmi_pm_ops =3D {
-> > +static struct dev_pm_ops hp_wmi_pm_ops =3D {
-> >       .resume  =3D hp_wmi_resume_handler,
-> >       .restore  =3D hp_wmi_resume_handler,
-> >  };
-> > @@ -1871,6 +1920,57 @@ static int hp_wmi_hwmon_init(void)
-> >       return 0;
-> >  }
-> >
-> > +static int lg_usb_touchscreen_quirk(const struct dmi_system_id *id)
-> > +{
-> > +     struct pci_dev *vga, *xhci;
-> > +     struct device_link *vga_link, *xhci_link;
-> > +
-> > +     vga =3D pci_get_class(PCI_CLASS_DISPLAY_VGA << 8, NULL);
-> > +
-> > +     xhci =3D pci_get_class(PCI_CLASS_SERIAL_USB_XHCI, NULL);
-> > +
-> > +     if (vga && xhci) {
-> > +             xhci_link =3D device_link_add(&hp_wmi_platform_dev->dev, =
-&xhci->dev,
-> > +                                   DL_FLAG_STATELESS);
-> > +             if (xhci_link)
-> > +                     dev_info(&hp_wmi_platform_dev->dev, "Suspend befo=
-re %s\n",
-> > +                              pci_name(xhci));
-> > +             else
-> > +                     return 1;
-> > +
-> > +             vga_link =3D device_link_add(&vga->dev, &hp_wmi_platform_=
-dev->dev,
-> > +                                        DL_FLAG_STATELESS);
-> > +             if (vga_link)
-> > +                     dev_info(&hp_wmi_platform_dev->dev, "Suspend afte=
-r %s\n",
-> > +                              pci_name(vga));
-> > +             else {
-> > +                     device_link_del(xhci_link);
-> > +                     return 1;
-> > +             }
-> > +     }
-> > +
-> > +
-> > +     /* During system bootup, the display and the USB touchscreen devi=
-ce can
-> > +      * be on and off several times, so the device may not be present =
-during
-> > +      * hp-wmi's probe routine. Try to find the device in suspend rout=
-ine
-> > +      * instead.
-> > +      */
-> > +     hp_wmi_pm_ops.suspend =3D hp_wmi_suspend_handler;
-> > +
-> > +     return 1;
-> > +}
-> > +
-> > +static const struct dmi_system_id hp_wmi_quirk_table[] =3D {
-> > +     {
-> > +             .callback =3D lg_usb_touchscreen_quirk,
-> > +             .matches =3D {
-> > +                     DMI_MATCH(DMI_SYS_VENDOR, "HP"),
-> > +                     DMI_MATCH(DMI_PRODUCT_NAME, "HP ProOne 440 23.8 i=
-nch G9 All-in-One Desktop PC"),
-> > +             },
-> > +     },
-> > +     {}
-> > +};
-> > +
-> >  static int __init hp_wmi_init(void)
-> >  {
-> >       int event_capable =3D wmi_has_guid(HPWMI_EVENT_GUID);
-> > @@ -1909,6 +2009,8 @@ static int __init hp_wmi_init(void)
-> >                       goto err_unregister_device;
-> >       }
-> >
-> > +     dmi_check_system(hp_wmi_quirk_table);
-> > +
-> >       return 0;
-> >
-> >  err_unregister_device:
->
+Code starting with the faulting instruction
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+0: 0f 0b ud2
+2: 49 c7 c6 a0 0c 04 8b mov $0xffffffff8b040ca0,%r14
+9: 4d 89 f4 mov %r14,%r12
+c: eb c5 jmp 0xffffffffffffffd3
+e: e8 da 4e 54 ff call 0xffffffffff544eed
+13: 4d 85 e4 test %r12,%r12
+[ 684.920604][T15978] RSP: 0018:ffffc9000c05f650 EFLAGS: 00010293
+[ 684.921405][T15978] RAX: 0000000000000000 RBX: ffff88807daaa000 RCX:
+ffffffff816af049
+[ 684.922419][T15978] RDX: ffff88802f129cc0 RSI: ffffffff8235abd3 RDI:
+0000000000000005
+[ 684.923460][T15978] RBP: ffffc9000c05f720 R08: 0000000000000001 R09:
+ffffed1047785179
+[ 684.924446][T15978] R10: 0000000080000000 R11: 0000000000000001 R12:
+ffffffff8b039ee0
+[ 684.925462][T15978] R13: ffffffff8b03aba0 R14: ffffffff8b040c60 R15:
+ffff888073e536a8
+[ 684.926492][T15978] FS: 00007f8329000640(0000)
+GS:ffff88823bc00000(0000) knlGS:0000000000000000
+[ 684.927600][T15978] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 684.928444][T15978] CR2: 00007f8328367a8c CR3: 000000005b9f4000 CR4:
+00000000000006f0
+[ 684.929474][T15978] Kernel panic - not syncing: Fatal exception
+[ 684.930460][T15978] Kernel Offset: disabled
+[  684.930979][T15978] Rebooting in 86400 seconds..
 
