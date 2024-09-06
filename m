@@ -1,117 +1,119 @@
-Return-Path: <linux-kernel+bounces-318789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C2196F364
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:44:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2F596F366
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 927CB2881E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:44:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F04FC2886B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FEC1CB50F;
-	Fri,  6 Sep 2024 11:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="PEDV3qIW"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682E51CBE9A;
+	Fri,  6 Sep 2024 11:44:36 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4521C1CB525;
-	Fri,  6 Sep 2024 11:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12321CB154;
+	Fri,  6 Sep 2024 11:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725623042; cv=none; b=Ivz+s0pwVTOQj5VTrVCjywfrczN7/adF257kuIHH+XPlBKZdJeHdMWUpv89cpui5vQZ+X8PV+1q48mjP1bdaHvBOr3X2wDgs//cOJUMY3oLNPrDu3i5dKEtOxY+ACsL1tPzTm+w8raOX2/5qtX0k+afcTSF5FZrNyn+e2SO01/E=
+	t=1725623076; cv=none; b=Cl53bsFUddDsDAq3tHdUuVUKJNG1oi7S3/y8UIDswmbRC/PQKJzrWwwnlOPhpU9l+f7vh+vljQF6dTSzR193DgGDG0k8/fun14USwElIKhVe8+I8Npkx7o1WItz3YSoXX+Jm45LSPxV0TPIk7YyTjCuD/ZrXYxowMDZ5sYmARZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725623042; c=relaxed/simple;
-	bh=l8aLiUfVudm/vd/SUVGzTAzBmw1eCXX8xhWSjKpyNoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XnTPXru2Nr2t03p6HXTg0G8qDnQNXHehCyS3vgxbt7aTjF7RO59DGFQaRIlgKy9czxz3uwa+hbji3d4AwnB0zhZTENcl0e6a31fVIqYXfIz7LpQ0ERIfttWyV2FNiVtqwaknzlasBznxdIes3e/Pl0K4+fpf+Fh5gL7VQ3N6nQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=PEDV3qIW; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a86883231b4so278962266b.3;
-        Fri, 06 Sep 2024 04:44:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1725623039; x=1726227839; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oZFH4n8uj7LbYUyljomrXbAE8uZuiKQjDhK2lQm2YzI=;
-        b=PEDV3qIWxI96C7JiOmKglZb96jMQSMe3uwTIdUYA5crXghX3o80kMvre2H99n2CLEE
-         k13An/FYy9+KXu+XQcI3ClF3ouCYFy/aBOcu60Z2o0229q3Am9FSbto3By59ihEyFEcb
-         7BKoQhEqp44PLKXIiRQyOCPNjrq8NL+P0fr1MBc7h6j/OYbbr0zRhixNwCLRLbyLBgbS
-         u3JeBSryQFIycTb4AHg9jRShk5LXaj6TjPbb0CVa7DTOzCUxaVAXMS1nlJrAxmi8Z2B+
-         rZUc29ARJuXsXtLuBQrblr7uzKR3eEAILP++qNOAB0wdzrM2/TCh6bA2a4wy68wE4+pA
-         byRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725623039; x=1726227839;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oZFH4n8uj7LbYUyljomrXbAE8uZuiKQjDhK2lQm2YzI=;
-        b=pEXsEAYfdy5yqBnLLjb/FzWObwZYV6bpY32l+3q5mcIkB+/YML4pwOtiVEJfYplOjY
-         VSYQZhdOR0+WIvQycqy6TDZ3mh4+EbZsOP6Hhl6MFZxnjRx9XmKccLq+oLoV/y/VJhZK
-         A8bgFX8g1DNFlrYzWBzJDlUvlcW9vtC64ttq5nYneMf/XCSYMbKISRuL6D40DwOapSR0
-         munDDGQ2Vx349yC6biLdGG8HWmRmTgEO1fiGG3IxXVJjN74ClKF6U1M3X9Mhh/ttoXl3
-         3GHmx/l9F4wX2qpB5nUWPfjV1x7I+BXCV8o8h89fNWFlPx/RBq6WlwTzHnCuzloPf6G/
-         qGgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUODFAFboY0W2NJiNbKgiWdosmiGeaQzQEVfv8qylivGGVOjRZvDgy7Nc5e8PANVv2O7IeW6o5/igh4rK0=@vger.kernel.org, AJvYcCXW5CdZey4SBcSp2AnYCTpy+UIJJXo2RamYmpZJXXdtNQhHZ86oLwxelj5GMGml58kzavr4j69+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb0YCWPka+OqZFNensF5ohbYRR4+cVN6jJFfNFBCVzIRHnnQLK
-	yYD8tRqrT0gmTy3vdfUQWQozwV0/c3pVfWE3VmEo2GQObm3zp7k=
-X-Google-Smtp-Source: AGHT+IFCw8zYSN000juj26FedmQuKiZajxfLCf0UF8fTvienYRXLIOxkWkuV3DS6cW+Fy2eAX6MWKg==
-X-Received: by 2002:a17:907:501d:b0:a8a:8d81:97ac with SMTP id a640c23a62f3a-a8a8d81a95fmr101434566b.4.1725623039218;
-        Fri, 06 Sep 2024 04:43:59 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b40f2.dip0.t-ipconnect.de. [91.43.64.242])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a7af8e46dsm174836966b.16.2024.09.06.04.43.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 04:43:58 -0700 (PDT)
-Message-ID: <6cdc4ef9-8eee-4691-89e7-4d9fc5d27564@googlemail.com>
-Date: Fri, 6 Sep 2024 13:43:56 +0200
+	s=arc-20240116; t=1725623076; c=relaxed/simple;
+	bh=pgHZ6pNns/zCb7OwBUYttF56SM01OMsasHc2ufiQzQ4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=aTktoDtRfzhDHx/YnTimBhC5eC9za4BSwuwAjjjM2zy9cDB9hyFZiEAOJGh4SRKAlCA0tU+D6mvcXK4pWd6PeN9RNAi/kOsZYvIgcnkZNwPrjRHyNHdbP5EO8xh5i3vKe4T1P+gYHlGIPVk7UemdO2+FEuyxbCmKMK68BQFERt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X0ZBn4qnhz4f3kKD;
+	Fri,  6 Sep 2024 19:44:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 14DF71A058E;
+	Fri,  6 Sep 2024 19:44:28 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAnXMga69pm74M6Ag--.57615S3;
+	Fri, 06 Sep 2024 19:44:27 +0800 (CST)
+Subject: Re: [PATCH -next] ext4: don't pass full mapping flags to
+ ext4_es_insert_extent()
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com
+References: <20240906061401.2980330-1-yi.zhang@huaweicloud.com>
+ <20240906103445.pwdlkivrlqh3redb@quack3>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <742ccba0-6a27-7694-2381-37a70c137ac5@huaweicloud.com>
+Date: Fri, 6 Sep 2024 19:44:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.1 000/101] 6.1.109-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240905093716.075835938@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240905093716.075835938@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240906103445.pwdlkivrlqh3redb@quack3>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAnXMga69pm74M6Ag--.57615S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tw15uw4DZw1DtF4xZw4UXFb_yoW8Jw4fpa
+	9rC3W8JF1rKa4xCFWxta17trW7Ka1UJ3y2vFykuw15ZFZ5Zr93Kr45G3WjgFyIkrWFyr1a
+	vFW8uwnxC3Wjg37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Am 05.09.2024 um 11:40 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.1.109 release.
-> There are 101 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2024/9/6 18:34, Jan Kara wrote:
+> On Fri 06-09-24 14:14:01, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> When converting a delalloc extent in ext4_es_insert_extent(), since we
+>> only want to pass the info of whether the quota has already been claimed
+>> if the allocation is a direct allocation from ext4_map_create_blocks(),
+>> there is no need to pass full mapping flags, so changes to just pass
+>> whether the EXT4_GET_BLOCKS_DELALLOC_RESERVE bit is set.
+>>
+>> Suggested-by: Jan Kara <jack@suse.cz>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Looks good. Feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+>> @@ -863,8 +863,8 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
+>>  	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
+>>  		return;
+>>  
+>> -	es_debug("add [%u/%u) %llu %x %x to extent status tree of inode %lu\n",
+>> -		 lblk, len, pblk, status, flags, inode->i_ino);
+>> +	es_debug("add [%u/%u) %llu %x %d to extent status tree of inode %lu\n",
+>> +		 lblk, len, pblk, status, delalloc_reserve_used, inode->i_ino);
+> 
+> Ah, I didn't know 'bool' gets automatically promoted to 'int' when passed
+> as variadic argument but it seems to be the case from what I've found. One
+> always learns :)
+> 
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+Yeah, I'm always learn too. ;)
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Thanks,
+Yi.
 
-
-Beste Grüße,
-Peter Schneider
-
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
