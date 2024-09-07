@@ -1,302 +1,175 @@
-Return-Path: <linux-kernel+bounces-319948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 245CF970416
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 22:37:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A9E970419
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 22:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A29291F225AC
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 20:36:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4467F283958
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 20:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2301684B9;
-	Sat,  7 Sep 2024 20:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B584C168499;
+	Sat,  7 Sep 2024 20:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="a49ZGUjP"
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DM7r0k9x";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EREHzoYV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA5915CD58;
-	Sat,  7 Sep 2024 20:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB544166F1B;
+	Sat,  7 Sep 2024 20:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725741406; cv=none; b=mybswkfWisHcNLJFiINaSbUgaSoRk5R/Je5ESHeP/JZj7fDePG1QRNSTfrLcSSe5erLf8ykYOc1tpxpT7xIIljTFdfCz+w59xKNmla26kaXIJPdsA+qN47QDnbcXi3SL6KFZEQc7Hlw0Wxr7kK0Fe63rP0dcEKchvjRbbNWaTUY=
+	t=1725741550; cv=none; b=OgVFz7VK7IUj5e42dYd6tUqq0u5dzN1s6VsfSwTKT8oc2bQL0pYffeGNY6w8imhsbDhQKBSr90e7oPhCm9vEyvd0VLF7YXiebh+jDm9lTBV8e27TKS24RJjCzq6vL0L1ksBqQ/lx9rSb/qviIIoFK6VkQiFUI0qrVeipxUpmgs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725741406; c=relaxed/simple;
-	bh=RR6yXN175BjtOXUBtar8RiCNkzkmikLpWth/FnTQHAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kFExgAF40NVH+mpjXheiPO4+zCZSPOo5aHU6g8ukqWXkkhyMs6fycHdPPupyBP4VJjbN+zE5vwIszeZ7uS++FGrrl3as0JJnqNT3lWqQXjvd7T4ZSSGtmBxHEm58axVAzniyvhdFKXTB3p3KezN7ERCqUfRromMgm7ZD+SLGpXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=a49ZGUjP; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id n2AhsUvywLYfJn2AisJqXe; Sat, 07 Sep 2024 22:36:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725741401;
-	bh=Lkr4PJeRYxJJnnG3uAkmlvx4P1pDfp4UMrKXLWox2bQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=a49ZGUjPA6VeW+gueUdc9glcAVZYXIC5HviSZxB1qvkX0XwrvYAKGPIzdBPsVh2mm
-	 9P6jByqmzzk5F+zvvyJUs11iMHcmr51IBD3ysGcCk+DykexTGbbrcRByh5CZty4cFO
-	 0YqL0bId5eK/VrlFo5yBZtkDrFFw5gIs+/JmVU4sCwF68+cLOTuKdteoGUADhke5IT
-	 Bw9yGGUDmKxFx6BQw98gYk784VkjDBo9TkyPULMQcSAZXGpPNhjLCPx3TCraVsTQAK
-	 iau3jTLKoPNSax8sOmPgI8mQKGud+OOuGGpv8RkK6yb2rJWJKNoNIcgvxdLLrAjyIh
-	 PUtkLgK2C3SfQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 07 Sep 2024 22:36:41 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Michael Krufky <mkrufky@linuxtv.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-media@vger.kernel.org
-Subject: [PATCH] media: dvb-usb: Constify struct i2c_algorithm
-Date: Sat,  7 Sep 2024 22:36:29 +0200
-Message-ID: <ff9883ee252207b74aa7bb76a150d8be2cca6c65.1725741366.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725741550; c=relaxed/simple;
+	bh=+N1+FUrRZa71sZafK5gbpc6Aa+Nz4p1MbssVaSaRgRY=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=cHKKwgT4pu/g1X15onuQ1IGlrgy1X/2TtCuH0ckZFrWbcFvSpMI+E5Gi0zCfJ3K60bCsDEqBUatKTQmp0XW9+c5swh0jVLzuU8umTOYAe3TKCbJlTno+S3eSkjLKurd8WoOcg3e7Efon25teQa2+Q7jkTkSQD2SWxySAb/tYj2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DM7r0k9x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EREHzoYV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725741540;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=Jxh1drwwzS4C1cbz9nF6aHf3luVAOBDNpQwoAG7I7c4=;
+	b=DM7r0k9x3tf8lSySlNhpsR7Z20SstxJQvsA1I8ztyyCtayKhwMpMVle3mfpx34vbk6l3I4
+	/pWMQq4EmfvZKkhePbDgxX//71JqjkelFgWX7SwUTqn0yCGm+h4Azj691o3VXgNYYq5Ftg
+	d8Nv3lU02j5B+tqvqbMABPIXT/ycgxdpZrPytglXSPgSa6R5TRbRYJFwDhf+n+T6GAT3ZO
+	T3hyQ7H4WQxPVv3mpBeSVgOajr0eCOrFfvFmMTyunOXFU4wVh4e4lIWjTWKtnBuHkYD28A
+	Axz2+9jdtwsmqmDf+qBlXts0m5NsnicmuiK/lj5jBi5bItw2a4EtZ5Kayk7/8w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725741540;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=Jxh1drwwzS4C1cbz9nF6aHf3luVAOBDNpQwoAG7I7c4=;
+	b=EREHzoYVqrp07ut5+fQlDAXm2PTjZqXGWlzV0fWSP9LrtqJDuJ23b3xeYt6XrT587jPMgM
+	r400dpNZj9YIHzAg==
+To: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Steven Rostedt <rostedt@goodmis.org>, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Tony Lindgren <tony@atomide.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@pengutronix.de>, Ilpo =?utf-8?Q?J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, Serge Semin <fancer.lancer@gmail.com>,
+ Rengarajan S <rengarajan.s@microchip.com>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>
+Subject: Re: [PATCH next v1 1/2] serial: 8250: Switch to nbcon console
+In-Reply-To: <87jzfod9f2.fsf@jogness.linutronix.de>
+Date: Sat, 07 Sep 2024 22:39:00 +0200
+Message-ID: <8734mbdwrf.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-'struct i2c_algorithm' are not modified in these drivers.
+On Fri, Sep 06 2024 at 18:44, John Ogness wrote:
+> So there are 2 things _not_ supported by the write_atomic() callback:
+>
+> 1. RS485 mode. This is due to the need to start up TX for the
+> write, which can lead to:
+>
+> up->rs485_start_tx()
+>   serial8250_em485_start_tx()
+>     serial8250_stop_rx()
+>       serial8250_rpm_get()
+>         pm_runtime_get_sync()
+>           __pm_runtime_resume()
+>             spin_lock_irqsave()
+>
+> Taking a spin lock is not safe from NMI and thus disqualifies this call
+> chain for write_atomic().
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security, especially when the structure holds some
-function pointers.
+Correct. __pm_runtime_resume() can sleep as well :)
 
-More over, dvb_usb_device_properties->i2c_algo seems to only be copied in
-i2c_adapter->algo, which is already a "const struct i2c_algorithm".
-This is done in dvb_usb_i2c_init()
+> If UART_CAP_RPM is not set, the pm_runtime_get_sync() is avoided. So I
+> could only disable atomic RS485 if UART_CAP_RPM is set. But the OMAP
+> variant of the 8250 does set this capability.
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  30571	   5916	     36	  36523	   8eab	drivers/media/usb/dvb-usb/af9005.o
+Sure, but none of this makes sense. What's so special about that em485
+muck that serial8250_stop_rx() needs to do that PM dance?
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  30667	   5852	     36	  36555	   8ecb	drivers/media/usb/dvb-usb/af9005.o
+It writes the IER register, which serial8250_console_write() just wrote
+to in serial8250_clear_IER() without doing this PM dance. So for the
+console write path this stop part is not required at all.  That said,
+serial8250_em485_stop_tx() doesn't have this PM dance either.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
---
-Compile tested only
----
- drivers/media/usb/dvb-usb/af9005.c         |  2 +-
- drivers/media/usb/dvb-usb/az6027.c         |  2 +-
- drivers/media/usb/dvb-usb/cxusb.c          |  2 +-
- drivers/media/usb/dvb-usb/digitv.c         |  2 +-
- drivers/media/usb/dvb-usb/dtv5100.c        |  2 +-
- drivers/media/usb/dvb-usb/dvb-usb.h        |  2 +-
- drivers/media/usb/dvb-usb/dw2102.c         | 14 +++++++-------
- drivers/media/usb/dvb-usb/m920x.c          |  2 +-
- drivers/media/usb/dvb-usb/opera1.c         |  2 +-
- drivers/media/usb/dvb-usb/pctv452e.c       |  2 +-
- drivers/media/usb/dvb-usb/technisat-usb2.c |  2 +-
- drivers/media/usb/dvb-usb/ttusb2.c         |  2 +-
- 12 files changed, 18 insertions(+), 18 deletions(-)
+I'm 100% that this is just a problem of blindly sharing this with the
+regular uart code and not because there is a requirement. See what
+serial8250_console_setup() does at the end:
 
-diff --git a/drivers/media/usb/dvb-usb/af9005.c b/drivers/media/usb/dvb-usb/af9005.c
-index 13604e6acdb8..30e615958293 100644
---- a/drivers/media/usb/dvb-usb/af9005.c
-+++ b/drivers/media/usb/dvb-usb/af9005.c
-@@ -445,7 +445,7 @@ static u32 af9005_i2c_func(struct i2c_adapter *adapter)
- 	return I2C_FUNC_I2C;
- }
- 
--static struct i2c_algorithm af9005_i2c_algo = {
-+static const struct i2c_algorithm af9005_i2c_algo = {
- 	.master_xfer = af9005_i2c_xfer,
- 	.functionality = af9005_i2c_func,
- };
-diff --git a/drivers/media/usb/dvb-usb/az6027.c b/drivers/media/usb/dvb-usb/az6027.c
-index 2bc27710427d..03dd40e3833e 100644
---- a/drivers/media/usb/dvb-usb/az6027.c
-+++ b/drivers/media/usb/dvb-usb/az6027.c
-@@ -1062,7 +1062,7 @@ static u32 az6027_i2c_func(struct i2c_adapter *adapter)
- 	return I2C_FUNC_I2C;
- }
- 
--static struct i2c_algorithm az6027_i2c_algo = {
-+static const struct i2c_algorithm az6027_i2c_algo = {
- 	.master_xfer   = az6027_i2c_xfer,
- 	.functionality = az6027_i2c_func,
- };
-diff --git a/drivers/media/usb/dvb-usb/cxusb.c b/drivers/media/usb/dvb-usb/cxusb.c
-index 1d98d3465e28..5b80320501f5 100644
---- a/drivers/media/usb/dvb-usb/cxusb.c
-+++ b/drivers/media/usb/dvb-usb/cxusb.c
-@@ -287,7 +287,7 @@ static u32 cxusb_i2c_func(struct i2c_adapter *adapter)
- 	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
- }
- 
--static struct i2c_algorithm cxusb_i2c_algo = {
-+static const struct i2c_algorithm cxusb_i2c_algo = {
- 	.master_xfer   = cxusb_i2c_xfer,
- 	.functionality = cxusb_i2c_func,
- };
-diff --git a/drivers/media/usb/dvb-usb/digitv.c b/drivers/media/usb/dvb-usb/digitv.c
-index 32134be16914..57df884931c4 100644
---- a/drivers/media/usb/dvb-usb/digitv.c
-+++ b/drivers/media/usb/dvb-usb/digitv.c
-@@ -88,7 +88,7 @@ static u32 digitv_i2c_func(struct i2c_adapter *adapter)
- 	return I2C_FUNC_I2C;
- }
- 
--static struct i2c_algorithm digitv_i2c_algo = {
-+static const struct i2c_algorithm digitv_i2c_algo = {
- 	.master_xfer   = digitv_i2c_xfer,
- 	.functionality = digitv_i2c_func,
- };
-diff --git a/drivers/media/usb/dvb-usb/dtv5100.c b/drivers/media/usb/dvb-usb/dtv5100.c
-index 56c9d521a34a..a960186479db 100644
---- a/drivers/media/usb/dvb-usb/dtv5100.c
-+++ b/drivers/media/usb/dvb-usb/dtv5100.c
-@@ -97,7 +97,7 @@ static u32 dtv5100_i2c_func(struct i2c_adapter *adapter)
- 	return I2C_FUNC_I2C;
- }
- 
--static struct i2c_algorithm dtv5100_i2c_algo = {
-+static const struct i2c_algorithm dtv5100_i2c_algo = {
- 	.master_xfer   = dtv5100_i2c_xfer,
- 	.functionality = dtv5100_i2c_func,
- };
-diff --git a/drivers/media/usb/dvb-usb/dvb-usb.h b/drivers/media/usb/dvb-usb/dvb-usb.h
-index cbb0541d4dc1..9f7a897b33ea 100644
---- a/drivers/media/usb/dvb-usb/dvb-usb.h
-+++ b/drivers/media/usb/dvb-usb/dvb-usb.h
-@@ -309,7 +309,7 @@ struct dvb_usb_device_properties {
- 		struct dvb_rc core;
- 	} rc;
- 
--	struct i2c_algorithm *i2c_algo;
-+	const struct i2c_algorithm *i2c_algo;
- 
- 	int generic_bulk_ctrl_endpoint;
- 	int generic_bulk_ctrl_endpoint_response;
-diff --git a/drivers/media/usb/dvb-usb/dw2102.c b/drivers/media/usb/dvb-usb/dw2102.c
-index 79e2ccf974c9..ec9e0cfaf581 100644
---- a/drivers/media/usb/dvb-usb/dw2102.c
-+++ b/drivers/media/usb/dvb-usb/dw2102.c
-@@ -839,37 +839,37 @@ static u32 dw210x_i2c_func(struct i2c_adapter *adapter)
- 	return I2C_FUNC_I2C;
- }
- 
--static struct i2c_algorithm dw2102_i2c_algo = {
-+static const struct i2c_algorithm dw2102_i2c_algo = {
- 	.master_xfer = dw2102_i2c_transfer,
- 	.functionality = dw210x_i2c_func,
- };
- 
--static struct i2c_algorithm dw2102_serit_i2c_algo = {
-+static const struct i2c_algorithm dw2102_serit_i2c_algo = {
- 	.master_xfer = dw2102_serit_i2c_transfer,
- 	.functionality = dw210x_i2c_func,
- };
- 
--static struct i2c_algorithm dw2102_earda_i2c_algo = {
-+static const struct i2c_algorithm dw2102_earda_i2c_algo = {
- 	.master_xfer = dw2102_earda_i2c_transfer,
- 	.functionality = dw210x_i2c_func,
- };
- 
--static struct i2c_algorithm dw2104_i2c_algo = {
-+static const struct i2c_algorithm dw2104_i2c_algo = {
- 	.master_xfer = dw2104_i2c_transfer,
- 	.functionality = dw210x_i2c_func,
- };
- 
--static struct i2c_algorithm dw3101_i2c_algo = {
-+static const struct i2c_algorithm dw3101_i2c_algo = {
- 	.master_xfer = dw3101_i2c_transfer,
- 	.functionality = dw210x_i2c_func,
- };
- 
--static struct i2c_algorithm s6x0_i2c_algo = {
-+static const struct i2c_algorithm s6x0_i2c_algo = {
- 	.master_xfer = s6x0_i2c_transfer,
- 	.functionality = dw210x_i2c_func,
- };
- 
--static struct i2c_algorithm su3000_i2c_algo = {
-+static const struct i2c_algorithm su3000_i2c_algo = {
- 	.master_xfer = su3000_i2c_transfer,
- 	.functionality = dw210x_i2c_func,
- };
-diff --git a/drivers/media/usb/dvb-usb/m920x.c b/drivers/media/usb/dvb-usb/m920x.c
-index c88a202daf5f..809f69e90975 100644
---- a/drivers/media/usb/dvb-usb/m920x.c
-+++ b/drivers/media/usb/dvb-usb/m920x.c
-@@ -319,7 +319,7 @@ static u32 m920x_i2c_func(struct i2c_adapter *adapter)
- 	return I2C_FUNC_I2C;
- }
- 
--static struct i2c_algorithm m920x_i2c_algo = {
-+static const struct i2c_algorithm m920x_i2c_algo = {
- 	.master_xfer   = m920x_i2c_xfer,
- 	.functionality = m920x_i2c_func,
- };
-diff --git a/drivers/media/usb/dvb-usb/opera1.c b/drivers/media/usb/dvb-usb/opera1.c
-index 268f05fc8691..301b16e33e5f 100644
---- a/drivers/media/usb/dvb-usb/opera1.c
-+++ b/drivers/media/usb/dvb-usb/opera1.c
-@@ -155,7 +155,7 @@ static u32 opera1_i2c_func(struct i2c_adapter *adapter)
- 	return I2C_FUNC_I2C;
- }
- 
--static struct i2c_algorithm opera1_i2c_algo = {
-+static const struct i2c_algorithm opera1_i2c_algo = {
- 	.master_xfer = opera1_i2c_xfer,
- 	.functionality = opera1_i2c_func,
- };
-diff --git a/drivers/media/usb/dvb-usb/pctv452e.c b/drivers/media/usb/dvb-usb/pctv452e.c
-index 2aab49003493..3ec1c9a14d93 100644
---- a/drivers/media/usb/dvb-usb/pctv452e.c
-+++ b/drivers/media/usb/dvb-usb/pctv452e.c
-@@ -906,7 +906,7 @@ static struct stb6100_config stb6100_config = {
- };
- 
- 
--static struct i2c_algorithm pctv452e_i2c_algo = {
-+static const struct i2c_algorithm pctv452e_i2c_algo = {
- 	.master_xfer   = pctv452e_i2c_xfer,
- 	.functionality = pctv452e_i2c_func
- };
-diff --git a/drivers/media/usb/dvb-usb/technisat-usb2.c b/drivers/media/usb/dvb-usb/technisat-usb2.c
-index df90c6c5f3b9..b36800870024 100644
---- a/drivers/media/usb/dvb-usb/technisat-usb2.c
-+++ b/drivers/media/usb/dvb-usb/technisat-usb2.c
-@@ -199,7 +199,7 @@ static u32 technisat_usb2_i2c_func(struct i2c_adapter *adapter)
- 	return I2C_FUNC_I2C;
- }
- 
--static struct i2c_algorithm technisat_usb2_i2c_algo = {
-+static const struct i2c_algorithm technisat_usb2_i2c_algo = {
- 	.master_xfer   = technisat_usb2_i2c_xfer,
- 	.functionality = technisat_usb2_i2c_func,
- };
-diff --git a/drivers/media/usb/dvb-usb/ttusb2.c b/drivers/media/usb/dvb-usb/ttusb2.c
-index 373ffa7f641e..af80e02b26ee 100644
---- a/drivers/media/usb/dvb-usb/ttusb2.c
-+++ b/drivers/media/usb/dvb-usb/ttusb2.c
-@@ -434,7 +434,7 @@ static u32 ttusb2_i2c_func(struct i2c_adapter *adapter)
- 	return I2C_FUNC_I2C;
- }
- 
--static struct i2c_algorithm ttusb2_i2c_algo = {
-+static const struct i2c_algorithm ttusb2_i2c_algo = {
- 	.master_xfer   = ttusb2_i2c_xfer,
- 	.functionality = ttusb2_i2c_func,
- };
--- 
-2.46.0
+        if (port->dev)
+                pm_runtime_get_sync(port->dev);
 
+The corresponding put() is in serial8250_console_exit(). So there is
+absolutely zero reason for power management in the console write
+functions. It's the usual voodoo programming which nobody noticed
+because it did not immediately blow up in their face.
+
+There is another minor issue in that em485 muck. One code path arms a
+hrtimer, which does not work from NMI like contexts, but that is only
+taken when the transmitter is not empty, so probably a non-issue
+because the console write code waits for it to be drained.
+
+There are also a few lockdep_assert_held_once(port->lock) in that code
+which will trigger when called from the nbcon write functions. They are
+already broken today when oops_in_progress is set and the trylock of
+port::lock fails...
+
+So splitting this up into a clean and lean set for the console write
+functions will make all these horrors just go away. The current sharing
+is just fragile as hell and makes no sense at all.
+
+> 2. Modem control. This is due to waiting for inputs, which can lead to:
+>
+> serial8250_modem_status()
+>   wake_up_interruptible()
+>
+> Performing wakes is not safe from scheduler or NMI and thus disqualifies
+> this call chain for write_atomic().
+>
+> It would probably be acceptable to move serial8250_modem_status() into
+> an irq_work.
+
+Yes, but serial8250_modem_status() has more problems than that:
+
+See uart_handle_dcd_change() and uart_handle_cts_change(). They call
+into the tty layer and do their own wakeups.
+
+So no, serial8250_modem_status() cannot be invoked there at all.
+
+You have to defer this whole status dance to irq work and this really
+needs to be done inside the write_atomic() callback. Otherwise a status
+change could get lost, which is bad in non-panic situations.
+
+That needs a bit of thought vs. port->msr_saved_flags, because in a
+hostile takeover situation that needs to take into account that the
+interrupted context might be fiddling with msr_saved_flags too, which
+might on resume overwrite the write_atomic() modifications due to RMW.
+Shouldn't be hard.
+
+That brings me to that USE_SERIAL_8250_LEGACY_CONSOLE #ifdeffery, which
+started this conversation.
+
+The nbcon conversion does not make things worse than they are today. Any
+problem which happens in the atomic_write() callback has existed before
+already. So just get rid of the legacy code and be done with it.
+
+At some point you have to bite the bullet and deal with the fallout when
+it's reported. Remember, perfect is the enemy of good and you will never
+reach perfect.
+
+Thanks,
+
+        tglx
 
