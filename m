@@ -1,94 +1,77 @@
-Return-Path: <linux-kernel+bounces-319669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF79A970057
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:36:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5848970050
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A79C71F23A43
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 06:36:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B2BB282A28
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 06:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54558146A96;
-	Sat,  7 Sep 2024 06:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FFF13A86A;
+	Sat,  7 Sep 2024 06:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tIVan0CG"
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gl6QjXw7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7928537F5;
-	Sat,  7 Sep 2024 06:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3872942A9D;
+	Sat,  7 Sep 2024 06:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725691000; cv=none; b=uLJwSuncSW0wmOZk5ueRWvzLbCPPxqqZ033IrxyLTF60GCAoSvwauECnjonVHwa6gWTnFmfbTYztSnGAzfOoiPxe0dOQqTYD0z5fw90fCqA9VAfM0Ek3+xZwkmGZR3h66UAUS51/StQMWJa6O1Cwr4YRfdFtObYORclAcFbPn24=
+	t=1725690508; cv=none; b=acHxdyhRAAFvK+Qa+RZJnJvDqAmNVXFcqT4BD0hhA7e+2YgrVpCo2Zp5/omNbjwXTljg9EgOcpVGAjg8IDaKHT39wWsXWu5NaQ4qNZOOhSMXuvAxdBEeJErHjQS/Er58+r5m07+/6pbzJwrq/h9TydiCpv2lVkobGHNuBnxOPbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725691000; c=relaxed/simple;
-	bh=S8uBneI7PpV05fm7xVEpV7bYxOY1zUNfKM8lVvwCKyw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cx7B1we06j5ztNupUh/wtOSVpjVeGsoPhQkLqIiF1KQAh7yTT7OfFRorW1xQx8mw3/RZTcAB/Rv/BQRG9m6XbB9KlmtcG7JdBBziDV64RgXPrvwgcjCUSY+1RQIyV6Q+cgVGdOJH6q1G0BDzK66d4MA9ygXIW0YEiIUOPdhd5Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tIVan0CG; arc=none smtp.client-ip=80.12.242.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id mouss9ADDJokxmousseWhW; Sat, 07 Sep 2024 08:27:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725690448;
-	bh=UXFZxJayFVmRBjL/YPnjN27oAjTntbi+iSfWBhiI8ug=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=tIVan0CGAvSAm6oQdCCvHTvobKSxinMOQ5ciJwly1/qJ1aO6rcgyzEOI3/0qg6aVC
-	 HMejnHSYGV+20xtw7WnnN6/02QMsU6m/7r5Ns7PslzvH6vJOUaNzn1HZhxm2ZXlxJ5
-	 PaVi0PoCMQ6baUq5jsq5SjZqDh1P91t1/idnIdfqp8dmHPPWCIlKeoI9yFPBXjcq5Y
-	 Sgs0ToJpwGptReAdqhbt1Xu/WKpG12Dohwd7N6YFANC1msStX2bQsd9qlbxTDtJ4nQ
-	 Nd9PhCgIk/5XO/jTcpiMhlWA5+Rd73WscZAyVNHHwG2hJ5PM9Y7qKyKcm7flYwqs2M
-	 eczI/V/b3TuMQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 07 Sep 2024 08:27:28 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH] scsi: scsi_debug: Remove a useless memset()
-Date: Sat,  7 Sep 2024 08:27:22 +0200
-Message-ID: <6296722174e39a51cac74b7fc68b0d75bd0db2a3.1725690433.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725690508; c=relaxed/simple;
+	bh=uBZ0X8gJsXD8UDVVejaD2DgB5/Xf1aicgnvPid2ISLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ap5gEy2WEtICE5fCrOcBHTaJklv1M5L1sI/wS0L6ZI6uwHzVyHZjK3snVhzQ8YIft+U2zWLBXXeIX7Wrs/ZG8GiuD7s/y/4c8syTcHkLlR6aziq7YqKdiqkMB4DUStbnj5bMVbJD+jUrOtmh2p3DEE+JF9wbXS/U7IOvS7FM6/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gl6QjXw7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F9DDC4CEC2;
+	Sat,  7 Sep 2024 06:28:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725690507;
+	bh=uBZ0X8gJsXD8UDVVejaD2DgB5/Xf1aicgnvPid2ISLc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gl6QjXw7Rxyq0dKBCPTdypppJeWtQ+rJy7tLNmVDLiszMkCAs35p5MZKqkb5ZzIXk
+	 QUADeYWIVdgeEkAwBOCX2mcL0OvWpm4HZXiKNU18udV9RBAMKw6qXlxW28Df7QMSHe
+	 OQWTvHbYuThOvJxOY/qTcatSrxswoCMKkexyf4EI+k8u4SLLURzc5ttQuVxjs0l4jh
+	 DeE4zTLdW0wNV6cTVog1P7k/9RzKo1bpz+gNuksfP8Z9vO4bjygOyOyZK8iOxCur28
+	 IvR+fp7HDg0rpsRTgbPwXLeK6pFrK5Op1gJqANHMo06sLF4VCtGmazyf5y+5tEGLII
+	 Q4B5pwoWtSjmw==
+Date: Fri, 6 Sep 2024 23:28:25 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Weinan Liu <wnliu@google.com>
+Cc: jikos@kernel.org, joe.lawrence@redhat.com, linux-kernel@vger.kernel.org,
+	live-patching@vger.kernel.org, mbenes@suse.cz, mpdesouza@suse.com,
+	peterz@infradead.org, pmladek@suse.com, song@kernel.org,
+	x86@kernel.org
+Subject: Re: [RFC 28/31] x86/alternative: Create symbols for special section
+ entrie
+Message-ID: <20240907062825.q2v5dfaeexmqgytv@treble>
+References: <7bc1bcb1cd875350948f43c77c9895173bd22012.1725334260.git.jpoimboe@kernel.org>
+ <20240906065132.35917-1-wnliu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240906065132.35917-1-wnliu@google.com>
 
-'arr' is kzalloc()'ed, so there is no need to call memset(.., 0, ...) on
-it. It is already cleared.
+On Fri, Sep 06, 2024 at 06:51:32AM +0000, Weinan Liu wrote:
+> I'm observing multiple compilation errors when using clang-16 after applying this particular patch.
+> 
+> # CC      init/main.o
+> <instantiation>:4:1: error: symbol '__bug_table_0' is already defined
+> __bug_table_0:
 
-This is a follow up of commit b952eb270df3 ("scsi: scsi_debug: Allocate the
-MODE SENSE response from the heap").
+Thanks for the report.  So far my tests have only been with gcc but I
+will try clang soon.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/scsi/scsi_debug.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index a9d8a9c62663..d95f417e24c0 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -2760,7 +2760,6 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
- 	else
- 		bd_len = 0;
- 	alloc_len = msense_6 ? cmd[4] : get_unaligned_be16(cmd + 7);
--	memset(arr, 0, SDEBUG_MAX_MSENSE_SZ);
- 	if (0x3 == pcontrol) {  /* Saving values not supported */
- 		mk_sense_buffer(scp, ILLEGAL_REQUEST, SAVING_PARAMS_UNSUP, 0);
- 		return check_condition_result;
 -- 
-2.46.0
-
+Josh
 
