@@ -1,108 +1,145 @@
-Return-Path: <linux-kernel+bounces-319777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A188970214
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:52:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD5C970216
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B54481F2135B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:52:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED094281EA8
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F68915ADA1;
-	Sat,  7 Sep 2024 11:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8B115AD9E;
+	Sat,  7 Sep 2024 11:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YrkLgYyJ"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="sOXmX+H6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VwEJTJgR"
+Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3329413C836;
-	Sat,  7 Sep 2024 11:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E14938F83;
+	Sat,  7 Sep 2024 11:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725709962; cv=none; b=WZVK806sNdkbiKZRPKV8JnfwF59HIc0CCHQcO/FnCthilUjHk2IAvTVUtlYFeVuhUXP4Ar1mcxOja5i3VCpi1IgYNnPKb9o9Ymf2JJhNyHH46KFdb1Ux6uMHDjWV4WN8n/XZ59fFQWZ7XekcbnIjHgqSqS7f5boEGmy8E01D8Wo=
+	t=1725710059; cv=none; b=pbAaoakIOWYxrXBzFTBDsfNNlZuPj2OMvg6OhxRScgN5r/Enl9mRLuhdKZWCMo0AcVaQM9CBzYIUFt0VlIHcBGzD66nXSqAC9Mz7Vseek9K1iw/IfgxQ2C66e7p0p+JNdsXcxvXwpUxXHgzOPYzocTnSLLIlnrzYXB7OlrIqmwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725709962; c=relaxed/simple;
-	bh=HFuhqy0gtb4Xan4YS+EvK4BM8+e2aLE5NLMGAJBRILw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=c15OPFcAmtVt+ahkbA92rI2pprHgPqNy7NiBDR0X4fDcys5Cc+F3SkidhjsMdM72QRzjlm4LH8p+SuKxYIpkKgyE7hKhCw5d2PorUeWl5lU/UIgf0xUrig6PT8crai3z52G+pUwRi+5Hbacq/MXeQi92fnosY0iI6hL1ijWCpPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YrkLgYyJ; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1725709952; x=1726314752; i=markus.elfring@web.de;
-	bh=Y7AIzcXVfL6c8QeOgxRyvPUNXsOrybDoX3YWh2FCfT0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=YrkLgYyJprAxivK/2sF5cNwGNjJ7n6MLYvgZEXuxPtVmv9x/cgiPe+5azq3VXgK/
-	 e3ZOTJwfzopf6LgnDv4PKXf4tw2KPr1TRH6k1ZI0C6/3H+HbpzgA946eHS2ObUCIC
-	 uTP+b8cUH4UU8+Xr4AdnVuM/E+BbRk+BtK6TzuI49C7HH+mR+tOKmQO4S6zLvs/Cz
-	 fTOYyUej5/m8BD7caiiteFyxCJPbwTFA1Khysf4dF8zJOtszcIXbxyx5XWeu9CJ9v
-	 l35h0njuVFkPSDAHpCQJeLSzXXRjSfMR3zaSZGTTazUwxaXqTHacUtP6aKh9Wk1ab
-	 sy40WVJxosRE//8g0g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N6sBp-1ryAfP1lol-00tYsQ; Sat, 07
- Sep 2024 13:52:32 +0200
-Message-ID: <c1e8c2f1-d123-4e72-a774-f15daa156afb@web.de>
-Date: Sat, 7 Sep 2024 13:52:22 +0200
+	s=arc-20240116; t=1725710059; c=relaxed/simple;
+	bh=74HYkxaTDCmYoIeFVfJvddkrcPJVvqrYYwPCdQE+Ev8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=eabH1LfigII9oZlzZcbnezy33VAbdc0OEvcg7Pt+oumyIbHyLH54K6DoYC2siSjnGnThAVSphK9BeiZ2Jq6JEo/TPzJKQI2wCBLl6/5ZbRejfFYGQdk0InTJwTIUeW4aSJyRF6koqxZEwZGPnsa4myWotNItZ5uHFEIwYok2XoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=sOXmX+H6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VwEJTJgR; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 534F611403A7;
+	Sat,  7 Sep 2024 07:54:17 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-09.internal (MEProxy); Sat, 07 Sep 2024 07:54:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1725710057;
+	 x=1725796457; bh=74HYkxaTDCmYoIeFVfJvddkrcPJVvqrYYwPCdQE+Ev8=; b=
+	sOXmX+H68LzyF2CMEDjTefmA6T8c0cb0NlHZeg80X/Iz+05Buxs8lm6559zsacCr
+	o8iT7ETuwODLsXj6YSGh5adFuMJNg/+k7b/r+S8/F1EmTcn2DumKk/CEk13eWRIF
+	yNpYfOPLtKIfzoIwHEZEQk6NpkMd9VS1FpT247Eew02JdY+gEZTg+MJoTIJ/VWOg
+	Af3gh1IRlV8l64UXp9vG19cya12zYpjThTk+wxnE4kcYT/18MGqtVy1IPGi5MZ2/
+	krKC7evTkcJQPpikyFkkxgG5UhDd09Nq/cfFTKmud4Dcb/iFMwBRZWrWHI+aa8IM
+	cy2FiU5ECS6W3Up4MjZeNg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725710057; x=
+	1725796457; bh=74HYkxaTDCmYoIeFVfJvddkrcPJVvqrYYwPCdQE+Ev8=; b=V
+	wEJTJgRTRU7M8CpmJp/d3sMc+P9+8u7LuWoRcSUdHqwjIjF4URm5LJBuo+6JwHGy
+	eYfAXIwaKyRY+4GpBZYH+g5AOjRi+z8ilUA2PVGax/OafX2V5aK0kkQ9IP8S7MCo
+	mZfDkiZTNjoF8ohx8e2j1JvjrkmBG/oIoZe6ade94AkhdyfzN8CFZHaB1fGOvi3P
+	x/L3TA647LQkysur2cWAvybFpowKjIf64I91dBo7ZJnV3YgTLpX+xJycJDbigEnD
+	3vTwyqYSTMqH4c5zotMiCd5mDTV1oqKtriMyjM+vD1kgFj48OhO098bx8bLE3ScC
+	weMfg6IcVgzT3T3WhOBdg==
+X-ME-Sender: <xms:6T7cZr8KBMreCVQty_PF0kraOZ9E19anT2KmZMB6OU98mmSpipwEUA>
+    <xme:6T7cZntJancvy46NDh2g7r5wON_b7EQ387S6p1P4PkMv86B4q_MXoh5fG3WCRmZ5k
+    cn9R4nZQZEoLJGBk_k>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeifedggeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
+    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
+    thdrtghomhdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthho
+    pegstghmqdhkvghrnhgvlhdqfhgvvggusggrtghkqdhlihhsthessghrohgruggtohhmrd
+    gtohhmpdhrtghpthhtohepfhhlohhrihgrnhdrfhgrihhnvghllhhisegsrhhorggutgho
+    mhdrtghomhdprhgtphhtthhopehfrghntggvrhdrlhgrnhgtvghrsehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtoheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehprghulhgsuhhrthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglh
+    igsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhiphhsse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:6T7cZpAjCrVpvHmduN844ws4Nd4vooy_p_SON2F0vsm7D8VW95-Rtw>
+    <xmx:6T7cZnfw5x6KPfCE91r94RYkJp3tnIO6r375d5pKtR7-PY_7UO7l-A>
+    <xmx:6T7cZgMRxKY8ic5pGtX4SYDxfsvOOovvMXMbrYe4LvRIZRbexgzF5A>
+    <xmx:6T7cZpmMbvIxDylkq0QVojsG5kZA5e1t803o1xc0IBnCADsM90vinA>
+    <xmx:6T7cZhgQyWD8ggtduc3SZXZ7wr4WEAPXcAOJ9Ljq2o-d7npQI5-vMYPe>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 234711C20066; Sat,  7 Sep 2024 07:54:17 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Riyan Dhiman <riyandhiman14@gmail.com>, linux-pm@vger.kernel.org,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240906084057.67680-1-riyandhiman14@gmail.com>
-Subject: Re: [PATCH] cpufreq: mediatek-hw: Fix resource management and error
- handling in mtk_cpu_resources_init()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240906084057.67680-1-riyandhiman14@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Date: Sat, 07 Sep 2024 12:53:55 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Florian Fainelli" <florian.fainelli@broadcom.com>,
+ "Broadcom internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Serge Semin" <fancer.lancer@gmail.com>,
+ "paulburton@kernel.org" <paulburton@kernel.org>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Message-Id: <a787d1dd-a99b-4fd0-9e9c-7e00f3a5e69b@app.fastmail.com>
+In-Reply-To: 
+ <20240907-b4-mips-ipi-improvements-v4-0-ac288f9aff0b@flygoat.com>
+References: <20240907-b4-mips-ipi-improvements-v4-0-ac288f9aff0b@flygoat.com>
+Subject: Re: [PATCH v4 00/10] MIPS: IPI Improvements
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UU+U/3+BocogIlcQAhIUeX4kyi7S2g/rb7v53Sr8w3Z5ADsQAsN
- XAzL0h17O8HFcISc6gfzS47Kf2FvHDrXcKeCnhWUCw2NbHQoWZ15VlzyT8AcB+DXaliItWc
- EAyYoAmbE5FM1DA73slecLbiSwBd7ZK+rPGU6BJ6m3fWozvQq3rRMmeAUk5frwUfm+iL1Wv
- uAtBxy72wJ4TYRd+qwlMg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:D/H1dsTR4QI=;y9MXG7aKqHUgsSLFBFCNRXq1l4I
- ClZpDBdcyKmRLStFlsJJ/mNidV/ee4timkcIJAylQFH+XeUhRx6Ze+w5r2vEwmCdZ+EicQZrJ
- Eeb2TbHCNgGis+TRKNrjLLRQP7WGFXMMixu25QRr/cG1HRYHD9APGZ33v+JT+fsLjHbDhBnTx
- 3dg/6YYXhIlRxAimpv3tUjtaH1EwLjaEFt3o8CafSBNXa2HQY6/qylIdO+2SBOOof1X3bzw7G
- pTTuvf5OwHRN+VdhQQWQiNI+T22DQu40DRtDt0RsZDOv2V5y7sx3ynvta2qIDI2E9FKsTuuls
- rDafgFCqJrDSLZTmIeOz2VteFKqU5AKNSZncR3OasG1GhG4IS2brR31OVl7r5/iKkFJvuNYRQ
- yjdjtGA9EAUN+xCozsZDwAnNljXWRSXCfcbj1L7jQLESFGjM7eiDoPXnCFyRFSVEq/q7DgVyu
- 7WAmVYMLdizCPM8yGSGNsBN4MoCVWjNhKJyM3lImYCHNDrAa8wkmnBYKkxbOxHSB9SBA5uNh/
- /KLZOBddWPk3F22f6jPE47xUfo8tXKMn2rRpUG/YEn3wxK/AyJxM1kn//AZY2YqP4Ba81ZHBg
- 5QvCnZiiTv+ksejzvJx0h+SIVSLNsFN8Lnuer82/uGlA7Nwjcr6NpyoAp08eOSyVZ4+ckrvQf
- BtAL4gvoDAwTFrLpbubD/qIMZM00rMEv4bTlOl+OPfhNPbH1Ny6c1Nb8Se/QFItoGaQhv6BO6
- hiq3lQeY4V6CghE049bQkBhZlMmUf3PWw8HJdIloxhqJ9zI55W+GcklOvPChICX/8LU9qzN3E
- 3tuOSNX0BJNhGi22K3/bGLOA==
-
-> Memory region and IO memory were not released if mtk_cpu_create_freq_tab=
-le() failed.
-> Added error handling to ensure that IO memory is unmapped and the memory=
- region is
-> released properly to prevent resource leaks and ensure all resources are=
- cleaned up on error.
-
-* Would you like to improve such a change description another bit
-  also according to other line length preferences?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.11-rc6#n94
-
-* How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and=
- =E2=80=9CCc=E2=80=9D) accordingly?
 
 
-Regards,
-Markus
+
+=E5=9C=A82024=E5=B9=B49=E6=9C=887=E6=97=A5=E4=B9=9D=E6=9C=88 =E4=B8=8B=E5=
+=8D=8812:48=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+> Hi all,
+>
+> This series improved general handling to MIPS IPI interrupts, made
+> IPI numbers scalable, and switch to IPI-MUX for all GERNERIC_IPI
+> users on mux.
+>
+> It is a prerequisite for enabling IRQ_WORK for MIPS.
+>
+> It has been tested on MIPS Boston I6500, malta CoreFPGA3 47K MT/
+> interAPtiv MPF, Loongson-2K, Cavium CN7130 (EdgeRouter 4), and an
+> unannounced interaptiv UP MT platform with EIC.
+>
+> I don't really know broadcom platforms and SGI platforms well so
+> changes to those platforms are kept minimal (no functional change).
+
+Oops please ignore this reversion, I made a mistake on local version man=
+agement.
+
+Will resend, sorry for the noise.
+
+Thanks
+--=20
+- Jiaxun
 
