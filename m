@@ -1,132 +1,125 @@
-Return-Path: <linux-kernel+bounces-319706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67ABF970103
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:47:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFEBF970106
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27766284ECF
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:47:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0863A1C21C91
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3143D14B95A;
-	Sat,  7 Sep 2024 08:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2F61547E4;
+	Sat,  7 Sep 2024 08:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="wQkj4bC+"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHlTNK0d"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A7917753
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 08:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F29E14A0A8;
+	Sat,  7 Sep 2024 08:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725698854; cv=none; b=AKhxJLc8EU7qVlnfTsYYEoSWrtTpk1mR5jEJC0bCeHQ9EjPLJQp8lbU1I7b23dtTMFreaUZSG8BljieLz1ns28E4tijcil3OrJ8f5jY8Q3re4jl02LOL9HOo7dD5h+o/Tarsdrcp6tpWykgN6EN7m9Zwh8Ddk7BOeX99bZ4+au8=
+	t=1725698947; cv=none; b=DrxR9I38/JenPnho4QK7gBhyp+Dr52Kfr7Ow53j9Omwm7ylxYlElEjy8zBgeASy2n1mBcMfFBZxhB9/0iU7nC31escs1amaZZZT0mhIgfeuSFgG7bPxV1cdNLk28AqB/QuNV9rX/EpHlpm4EfaGOwuiwpAgJy/IRozXHdNImLmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725698854; c=relaxed/simple;
-	bh=bFFKmA5dR8CDf/cqC4+a/CD6M/tAFzcrkNRMmQJPzSk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=oJVeG169q4mIx2mBwdEyFlpNFDefYWM+btmE9azGhZURKvRHAE0m2OEUxmsCCSVru4H3Pl7XWamTfL41ghYxqUMPrrJwAt3t8pgMmTWpPO/qg4GhFJkC4MOYtOwA7+fMQcTCKG0gGLkxzaawvG1N2SWjwHopiCMINLsIWRoD80Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=wQkj4bC+; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1725698947; c=relaxed/simple;
+	bh=GsoRJJo2DovteJwgux5pAslpP9M+k1P5bnIdIwLRxiY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=j2bH3Bjv8qtgNS8c34s5tYdsjIqiiPqsc9mRxK6KLWXj9yt9nWTQSlVHQ8tSj3TKARZ9bzzCU660BuMtvCIP/amb6ILPmcAdCA/khRUskjbNJgmmXqIyC1IbhxouU1du2KwXSwRcxX/UDAw39kgzFq8FRD/ssXZlNF7FbxjRLq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VHlTNK0d; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7d5119d6fedso1502679a12.0;
+        Sat, 07 Sep 2024 01:49:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725698945; x=1726303745; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=BH4+XkdgytSrJblSRrneWrEK0xYxzEsMEgsFyL/DakE=;
+        b=VHlTNK0d4Z0vZxgqSTtwBNsZE2yxbA0/hJjRCttIM14PPB8k3RpXrb3+ffh1IbfhVN
+         hJIsgt3DksqOqVbmor4OblEE+fyVPfKyktwQX1obbd4BTOe96LJsp8Wb2YWopo9e6k/J
+         Sr5HyW4IhCGNtOYbRn2dvhFjGmEPfLxsuU4VJnPMDwCB0vtcGX93RDjGIQWAXd3OsFUw
+         V4oaetLE/Z6WbDZMMI/T5w3vJ/ythZ4hPJIKhtb6L8ieO8XkHqeVELste33v5NPMZpzd
+         nRfKdi0f7OXP6CdKmvIBh1yB6sBPybCOxteX9EwEGnm1B/atsjR7LiC5DIfhv/VdVCtc
+         4GKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725698945; x=1726303745;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BH4+XkdgytSrJblSRrneWrEK0xYxzEsMEgsFyL/DakE=;
+        b=hevrcGl20ePA5UYLc83zlndU3hNaRCnIq6vrIsIfNFvOzI/seF36Xve0vXEx5fmqzz
+         XXKWiW7h41Kh452ODR8lKVeZ6M4Mp8enSDRJb/7kXjF9XX6Rn7syuBsr91Zz9qNcRE62
+         zxZdUXo9V/rwDEL9jGRd/Pn1tRUG2Fq3o8TEGFELgePacGVj9pIrdfcZyLCAD/ukZwMg
+         amOR0V0avv8VTHgHE8v280UhuyB9Tqnujy+HLorIqqXkp6+nYz5JTcxkfpEnRyBfHOMj
+         Rap9pEm3G9oJeZi3hGsTOIISXLw3y4mbAmS/sLs13PQ2z4VsCjZ293kDJ+nV2tQrFBl+
+         C3jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgc2xmfi2BDIpr/b9rPqM8e22eNFRRGCWpNVCJfxNpqLn35A5mkesyFVZ5XjcnXpo1tc9gRYxsBAfhfB4x@vger.kernel.org, AJvYcCWGVOA1XUKxni4t9THOJ91pQDZuUjglhEgZN1P1IcE8JqpgxBKlyVFVJ+EIjKmAPnSpEm0KyfPG3OkgXxbp6g==@vger.kernel.org, AJvYcCXS5z2eZeNo0wCQKY7NWLV2PCjOMqgMRgJV6kGT0vCGb+mS1NYsl8QyQ3yvW8geYkpjYQ6H2lRe/FVK@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQJYY773cVoOsx8sL8iHX1TiW2LBK8MahUKLtwUCllljRsh9cf
+	kkEIVmtY3+OervX9Gt9LZn40yx3e0kwXGhzVY31omajbOb11PMky
+X-Google-Smtp-Source: AGHT+IGCGj8ZHxZZBVZ5qtVU3o3i0MvF8PEs2OGGek2eT1vVe3uzcBcxT+hQr2L/GhZcLEwtMSq4tQ==
+X-Received: by 2002:a17:90b:4ac7:b0:2d8:3f7a:edf2 with SMTP id 98e67ed59e1d1-2da8ede7effmr18570786a91.12.1725698945158;
+        Sat, 07 Sep 2024 01:49:05 -0700 (PDT)
+Received: from ?IPV6:2601:644:8502:9460:d6be:d9ff:fe52:7e82? ([2601:644:8502:9460:d6be:d9ff:fe52:7e82])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d823cf3b60sm615133a12.28.2024.09.07.01.49.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 Sep 2024 01:49:04 -0700 (PDT)
+Message-ID: <68b0476f-dfa1-44cb-a01a-f4afbaaa98e5@gmail.com>
+Date: Sat, 7 Sep 2024 01:49:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1725698849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U/V4gJDEeseX5jQFeW0yYA0toqnpKY469k3mQ17ssiw=;
-	b=wQkj4bC+WErNtAEm8BxqIHn2dlwtM4UpfbVG4kVsVCFyPcyJn1hfJUAI3PAIatPtYMw6uh
-	0MUlu+Wy4C0/RtBqiSyAsTiqtu8ayeMonmgPbJaWaKFR9Wd65RyQK3Iu7j0zt1nJtV/y5A
-	VmmjmG8EsLLzjvL2O4YsHVzt6tVMvSV6sSmCC2QL0yHzHn3NZqnDA5FPGRpop315vUTMx6
-	2tGNMflQrIP6EzT/fbsSpBZH8+OS81BkYsYv+y7rd+fKvRSnBKvSUDpOtS95robjbLhpYk
-	xTf2LWG6bsf64yAHsqCtCbxFJuCOrfB4AqyVA45T0OF/EcnLtjaUNYNHbjAFNw==
-Content-Type: multipart/signed;
- boundary=ae02d6677900286bbc830f90aa3ab8aa0d85c0a15f3e902cf9eb68b94b65;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Sat, 07 Sep 2024 10:47:18 +0200
-Message-Id: <D3ZX6LZNLOYC.30CT6AX32VI2T@cknow.org>
-To: "Min-Hua Chen" <minhuadotchen@gmail.com>
-Cc: <airlied@gmail.com>, <andy.yan@rock-chips.com>, <andyshrk@163.com>,
- <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>, <heiko@sntech.de>,
- <hjc@rock-chips.com>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
- <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
- <tzimmermann@suse.de>
-Subject: Re: [PATCH] drm/rockchip: include rockchip_drm_drv.h
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-References: <D3Z5JMTKPQIS.2M5O5DY0S4U9G@cknow.org>
- <20240907030259.1243487-1-minhuadotchen@gmail.com>
-In-Reply-To: <20240907030259.1243487-1-minhuadotchen@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] firmware: qcom: scm: smc: switch to using the SCM
+ allocator
+From: Rudraksha Gupta <guptarud@gmail.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: regressions@lists.linux.dev, brgl@bgdev.pl, andersson@kernel.org,
+ konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, robimarko@gmail.com, quic_gurus@quicinc.com,
+ luzmaximilian@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+ srinivas.kandagatla@linaro.org, arnd@arndb.de, quic_eberman@quicinc.com,
+ elder@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kernel@quicinc.com, ahalaney@redhat.com, quic_djaggi@quicinc.com
+References: <692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com>
+ <CACMJSes4cnCNUHiZUr4CF-K2c8-1VYzuh=T8JDi_erqfShkuZA@mail.gmail.com>
+ <1f889bba-0c89-45db-b360-b21d6bba7772@gmail.com>
+Content-Language: en-US
+In-Reply-To: <1f889bba-0c89-45db-b360-b21d6bba7772@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---ae02d6677900286bbc830f90aa3ab8aa0d85c0a15f3e902cf9eb68b94b65
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+> Looks like qcom_scm_get_tzmem_pool() returns NULL. Not sure how this
+> happens. Can you confirm that the QCom SCM driver probed correctly?
 
-On Sat Sep 7, 2024 at 5:02 AM CEST, Min-Hua Chen wrote:
-> >FWIW: I didn't see it either, but I assumed I was missing the right
-> >context (i.e. patches) needed to trigger that warning.
->
-> I triggered the warning by the following step:
->
-> install 'sparse' first
->
-> ARCH=3Darm64 LLVM=3D1 make C=3D1 CF=3D'-fdiagnostic-prefix -D__CHECK_ENDI=
-AN__' mrproper defconfig all -j8
+Thanks for looking into this! Please let me know how I can help!
 
-This, especially the 'LLVM' part,  is important context information
-and should be part of the commit message.
 
-I had only just started when I saw a number of sparse warnings:
+I've been building the driver into the kernel I believe. Here's the 
+relevant line in the config:
 
-  DTC     arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-io.dtb
-  OVL     arch/arm64/boot/dts/ti/k3-j721e-evm.dtb
-  OVL     arch/arm64/boot/dts/ti/k3-j721s2-evm.dtb
-  OVL     arch/arm64/boot/dts/ti/k3-am654-idk.dtb
-  DTC     arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-kb.dtb
-  DTC     arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-wifi.dtbo
-  DTC     arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-lte.dtb
-  DTC     arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6b-io.dtb
-  DTC     arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dtb
-  DTC     arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9.dtb
-../init/main.c:192:12: sparse: warning: symbol 'envp_init' was not declared=
-. Should it be static?
-../init/main.c:290:16: sparse: warning: cast to restricted __le32
-../init/main.c:291:16: sparse: warning: cast to restricted __le32
-  CHECK   ../init/do_mounts.c
+$ rg -i "scm"
+samsung/expressatt/linux.defconfig
+1615:# CONFIG_ARM_SCMI_PROTOCOL is not set
+1627:CONFIG_QCOM_SCM=y
+1628:# CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT is not set
 
-And several followed, including in c-code files. So I stopped the build
-and assume you've identified a or several actual issues.
 
-I've seen several commits where changes were made because LLVM flagged
-potentially problematic code, where GCC did not, so it's quite possible
-you're on to something here.
+It seems like the scm driver is being probed:
 
-But it would be helpful if the commit message said what code was
-potentially problematic and why. And then the proper fix for that could
-indeed be to include `rockchip_drm_drv.h`.
+~ # dmesg | grep scm
+[    0.066438] qcom_scm: convention: smc legacy
+[    0.362543] bus: 'platform': add driver qcom_scm
 
-Cheers,
-  Diederik
 
---ae02d6677900286bbc830f90aa3ab8aa0d85c0a15f3e902cf9eb68b94b65
-Content-Type: application/pgp-signature; name="signature.asc"
+Also here is the complete dmesg output (Had to paste in pastebin as it 
+made the email bigger than 100 KB):
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZtwTGQAKCRDXblvOeH7b
-bjrVAP9sF01iIKgasYGx4OaHq+E2M92V0wabM3HMo2iTFErnoQEAkAD2CVBFzBtD
-wMom4q6z9MP5ClefkbqycuAelKYGkAU=
-=iQLh
------END PGP SIGNATURE-----
-
---ae02d6677900286bbc830f90aa3ab8aa0d85c0a15f3e902cf9eb68b94b65--
+https://pastebin.com/4iWKvZ8z
 
