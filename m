@@ -1,212 +1,122 @@
-Return-Path: <linux-kernel+bounces-319759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8B79701E1
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:15:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 080E69701CB
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF3261F22CC8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:15:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33B7F1C216C5
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE721158DB1;
-	Sat,  7 Sep 2024 11:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5B3158A3C;
+	Sat,  7 Sep 2024 11:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GRlDE477"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iayyeep4"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CA615ADBC;
-	Sat,  7 Sep 2024 11:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3A93A8F0;
+	Sat,  7 Sep 2024 11:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725707699; cv=none; b=KmQGgKDGSLD3DnrDaTn4f1AcM36KQtRPXqKVfwuQjpdvisomLT14MH3cDY9vM2dmFTlNUNadboD2PooCvx2eXPCefzBUoNtQtezSpEmenhYN3sRFN2rsPQQl0NzVs3r5QO58HUvdN5/xd6C7bd+8/pXF6z3Wgawy/eSiQtvCjFc=
+	t=1725707270; cv=none; b=jgA/hSbhWq7tvOr6ttsH+WA4nsd2whi7IavTpFjLJcGBby12pfeYtVXWLDZTuNzGwDWXmG1nyNm45l5yBqUrKouYXj1/+Wh+Zzz/skAVJZwhZmHTLn8LXVPc4pPcaW2Sot5jsjc5/qt2xFAX2UsLtAiUgS7A26S3uBQhNJ0GXWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725707699; c=relaxed/simple;
-	bh=T/HiXdl6hf6t3nEm9u4hdP2J3V4P7+GSLb5K6ND2DVM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QasnCJnw53Z0K06u7+xXcixcPy30UWYvvbWKVOOraKCzwayfmwenXez3G3OsjXPPQEORWdRwaV5seJT+ybqfzXvr+RlIDgHys9aDFZMev53yb3tPBdoCVgOueD/kd1xb1JyUaADEpk21a+a5y9pwWzNXnfgRM5/AUIIF52s3U3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GRlDE477; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1725707270; c=relaxed/simple;
+	bh=FpEIF7mSgDnmtGiiZjz4Ru5xyoFoTmh7WQiXbDIcEe8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=n6YvH/8R5BWHO/FLrmXCF2yrXh3SXNDwqUv3V6aNW0oZeFeV5g7T2oCM6tLnr6NpX3BBCd4GUQzjwxvUtabJt3wQuHHrllnEc6BYzE26LrQj9JIeNvG6NhUy8Ye6AzgszEd3fFDtbqtIhgTkAy0FVkaX//NYkZYS0HbkvWjZk4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iayyeep4; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-205659dc63aso29309665ad.1;
-        Sat, 07 Sep 2024 04:14:57 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so21931605e9.2;
+        Sat, 07 Sep 2024 04:07:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725707697; x=1726312497; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oPqQc9dU94cXkTKGKiNQsR30finHw6JtyQr2G35AmKs=;
-        b=GRlDE477eAC/fATLYUldgl7ns+2XfLDkGI/mUyuaSN+Y/cs+pVJc6E+czJloRdJVSD
-         DpTOvY2HHuTtfNbYPAF6qqcWelP3He0yEllTQr0MqlHFVrUkZl9vjg9UkBnOVtC0R1et
-         zF4N4i9ktS7JbQo/1TDll/2mebVqT/5r0zVEaFW/XHHsNSQIJEa2envpDcSClwZBJ6Dl
-         aahWDinPmbRXkGZ4N2CXs1+ErV+8QWBOQS0DMYFhhDhYt3JZLZmKQDp2DLnjjVcKx2O9
-         Oihdo98pYm8l8Bz9XEbwcbbyLoZjjn+V/ErzPVTov09h1MOl8C90FoxSlmVI77E8X2O7
-         CXHg==
+        d=gmail.com; s=20230601; t=1725707267; x=1726312067; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AAdj4+txngEBzraLv7siZVwgO3LNyZXhr3alHS/CCMM=;
+        b=iayyeep4seSNftz3+RdA9f3N9etzxkTtCsBSlg0BYIGN93uMV12mbaE51omVxjS0uW
+         OThNqp2DI1Qo5ynUKIeSZ7vlsKd6xFs6zhzLfKkTZh9D4grcR0scO6LPnEQO2nEfYEGF
+         0CXBDNvprC13uvGn2N3OqcXX08Fi+nzdCdCmI2eS1hIg239yO/L3Qn044ndC5o2U6W3p
+         3potCOnirav6osW+epmtsJnh3xT+PFVLaTRv6QDtSFghaDQcghkcYecDJmWTS7ylaHPN
+         f/x+ir9xkhpmEnhI/JwUAk+nHc2561zGfcnIp381/C2K6d7bXgdJqrjXFYzQiWg0T6Jh
+         XiMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725707697; x=1726312497;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oPqQc9dU94cXkTKGKiNQsR30finHw6JtyQr2G35AmKs=;
-        b=xE7abvW5vdxYpOqF3tqz0Sn294EFr/oggBVt+MRzDMa0gWT4u//XvPuHc8I0uS5PFh
-         lM+4vJI0Nz/2Qjru26NyuZXOA2zGLt+J9X8V/yqfQo8r7C29DWfKKbQFdEFz4VWnJwYq
-         Vez2zdClHUWcQj4vjrKJhYRCdEV2g7LVY8ZKmEQA4e5lZ0dhvCcFH3Cb53QvZ++YzSN9
-         e3J4X8lwN9K7rSrBnxBu4YHjfW56ccCnEx9K/CiBSBuxFFEoIbPl9CPyL/O9jaqbQR8r
-         CugHH9/aX4msHcOD6hxNzPPnsbiAYyET9vMCcMQeN2YXycQCwiRa+tcLoGtq+ZH7R1Uk
-         n3Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlVitMvS1Bb7vQfZM/U4EaOKz33De3CPPQZvOPPa2rG3uZmB11gglJaOnE93hEUZZtOw7sqfWH/Iulx64=@vger.kernel.org, AJvYcCW/KChGHbS1ZAWVHAD6NOjXd8Zx8hU5GUaWe8yyEaUx1bMlzpMne4O7wMkAmCzNiILouDioHLeXb7ICpItTCpoChWg=@vger.kernel.org, AJvYcCXCVt7un6//4SAL5/8gV7NfXe9CoCGfF2MWKREuScE0v9nY+/szTFzJ+TJjK8eK+kW/90E1ZxNxZ2zRuqd+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqnLO2aYUyA5ANdYJ1eRiALeDMAZqoXzXvUZ45BoJ4wzdlQVzK
-	luUoj2wM500iMpsPOdToZQlpOy0FGW4pLSCJYXa/ReORXHHH87pF
-X-Google-Smtp-Source: AGHT+IFhrmP7pZ9qtVgDWJs0N31YlCBvEBAjFbhWsJV2oKODyyLWeQ0Iz0TmzTN5qMflXxg6vEvsmA==
-X-Received: by 2002:a17:903:22c1:b0:1fd:5eab:8c76 with SMTP id d9443c01a7336-206f05e7881mr51873005ad.41.1725707696894;
-        Sat, 07 Sep 2024 04:14:56 -0700 (PDT)
-Received: from localhost.localdomain ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20710e1addbsm7186955ad.58.2024.09.07.04.14.54
+        d=1e100.net; s=20230601; t=1725707267; x=1726312067;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AAdj4+txngEBzraLv7siZVwgO3LNyZXhr3alHS/CCMM=;
+        b=BiqYQZlp9ZJgXGlE5Dtrw2LNUGmi06BV1j0PABiZ93JJW2DKBK3U9l2h7vg9sFHrGo
+         8i2d5SEEtjMN1cnt0Jc1M/7U7wva4xP6Wy6YSXVyeWQWRlfVj7rHiDSBVzQLhyOb8DvF
+         0TOtezvh8nam0B+YRbfCM/KIVYRbYXIsr049jO0xHU88YKxQgit+ZMjfG7MzyCvFco+X
+         DEvWr0fkCWFXqbERvMbr11VbBFpLvlzFJZIbDnp34gYb/KTQVn6/VxOqgfkQIXwZgFow
+         gvbTCkbe6h0Gew/XPYYRFnRFDpT8JqPnSRwVLR+0XwzqOoFwquD0OnNvuG4qFzK/1cvt
+         A7og==
+X-Forwarded-Encrypted: i=1; AJvYcCU9dwOBCiK6WKyhuVdjg3Q4xl9DLkXjz4mVXr3JZ0QlrINH+wFDIsa70WC+1GSwgk3FHdvHYA94seAhYvy0@vger.kernel.org, AJvYcCXxrkW8aCvsaU4BNY6uzgfZ6LSISmTWJrKe2+kWanHBgEGjH8qMJE+6ShGL5P9mlIL/npc+e5EYXuDM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+rOXytl7OqeWNFPneIFeyzKRd+2NHBjR1hYBdtdBX4RdkSHTr
+	UTWcVWBV/44VATKILWhpG6nawHzz8w8DjFH9X5OE+RNLX4MFonPwjCC+a4aC
+X-Google-Smtp-Source: AGHT+IGUkg0RAB9UCpVoVpQEJKyg0k0eVE9hU1xdyLNLFy0E7O8LBBS1exgBHAnOv3Ol1KyMpGpi2g==
+X-Received: by 2002:a05:600c:1c9c:b0:426:6688:2421 with SMTP id 5b1f17b1804b1-42c9f97de02mr37642775e9.11.1725707266689;
+        Sat, 07 Sep 2024 04:07:46 -0700 (PDT)
+Received: from [192.168.1.130] (51B6DC2A.dsl.pool.telekom.hu. [81.182.220.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb444b0sm13719415e9.21.2024.09.07.04.07.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 04:14:56 -0700 (PDT)
-From: Nick Chan <towinchenmi@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Cc: asahi@lists.linux.dev,
-	Nick Chan <towinchenmi@gmail.com>
-Subject: [PATCH 2/2] tty: serial: samsung: Fix serial rx on Apple A7-A9 SoCs
-Date: Sat,  7 Sep 2024 19:06:45 +0800
-Message-ID: <20240907111431.2970-3-towinchenmi@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240907111431.2970-1-towinchenmi@gmail.com>
-References: <20240907111431.2970-1-towinchenmi@gmail.com>
+        Sat, 07 Sep 2024 04:07:46 -0700 (PDT)
+From: "=?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?=" <trabarni@gmail.com>
+X-Google-Original-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH 0/2] Add omit-battery-class property for bq256xxx
+Date: Sat, 07 Sep 2024 13:07:44 +0200
+Message-Id: <20240907-bq256xx-omit-battery-class-v1-0-45f6d8dbd1e5@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAA03GYC/x3MTQ6CMBAG0KuQWTtJLYI/VzEs2voVJ1HQTkNKC
+ He3cfk2byNFEijdmo0SFlGZp4rjoaHwdNMIlkc1WWNP5mrO7L+260vh+S2ZvcsZaeXwcqoMG2L
+ sL74NANXgkxCl/PP7sO8/pXQ5ymwAAAA=
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725707265; l=963;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=FpEIF7mSgDnmtGiiZjz4Ru5xyoFoTmh7WQiXbDIcEe8=;
+ b=0D620IMUmvxI77KT2E2Xt6qEKqRKo2I7VJap2tM7jxKMbRnfxqpASPsIMJzVS7nluHvyAdiIL
+ /Nke/hOHF2ICKehMCFUFlpkYtIIU97OP/TxUv4PW/eY2awxPO7wTaPQ
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Apple's older A7-A9 SoCs seems to use bit 3 in UTRSTAT as RXTO, which is
-enabled by bit 11 in UCON.
+Add new omit-battery-class property for bq256xxx for avoid creating
+a battery device when a fuel gauge make one.
 
-Access these bits in addition to the original RXTO and RXTO enable bits,
-to allow serial rx to function on A7-A9 SoCs. This change does not
-appear to affect the A10 SoC and up.
+In my case i have a Redmi Note 5A with bq25601 charger and bq27426 fg
+and two battery device is created one for the charger and one for the fg
+It seems battery device created by fg would be enough.
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
- drivers/tty/serial/samsung_tty.c | 17 ++++++++++++-----
- include/linux/serial_s3c.h       | 18 +++++++++++-------
- 2 files changed, 23 insertions(+), 12 deletions(-)
+Barnabás Czémán (2):
+      dt-bindings: power: supply: bq256xx: Add omit-battery-class property
+      power: supply: bq256xx: Add ability to omit battery class
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 27b8a50bd3e7..f57c5664c098 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -550,6 +550,7 @@ static void s3c24xx_serial_stop_rx(struct uart_port *port)
- 		case TYPE_APPLE_S5L:
- 			s3c24xx_clear_bit(port, APPLE_S5L_UCON_RXTHRESH_ENA, S3C2410_UCON);
- 			s3c24xx_clear_bit(port, APPLE_S5L_UCON_RXTO_ENA, S3C2410_UCON);
-+			s3c24xx_clear_bit(port, APPLE_S5L_UCON_RXTO_LEGACY_ENA, S3C2410_UCON);
- 			break;
- 		default:
- 			disable_irq_nosync(ourport->rx_irq);
-@@ -963,9 +964,11 @@ static irqreturn_t apple_serial_handle_irq(int irq, void *id)
- 	u32 pend = rd_regl(port, S3C2410_UTRSTAT);
- 	irqreturn_t ret = IRQ_NONE;
- 
--	if (pend & (APPLE_S5L_UTRSTAT_RXTHRESH | APPLE_S5L_UTRSTAT_RXTO)) {
-+	if (pend & (APPLE_S5L_UTRSTAT_RXTHRESH | APPLE_S5L_UTRSTAT_RXTO |
-+		APPLE_S5L_UTRSTAT_RXTO_LEGACY)) {
- 		wr_regl(port, S3C2410_UTRSTAT,
--			APPLE_S5L_UTRSTAT_RXTHRESH | APPLE_S5L_UTRSTAT_RXTO);
-+			APPLE_S5L_UTRSTAT_RXTHRESH | APPLE_S5L_UTRSTAT_RXTO |
-+			APPLE_S5L_UTRSTAT_RXTO_LEGACY);
- 		ret = s3c24xx_serial_rx_irq(ourport);
- 	}
- 	if (pend & APPLE_S5L_UTRSTAT_TXTHRESH) {
-@@ -1190,7 +1193,8 @@ static void apple_s5l_serial_shutdown(struct uart_port *port)
- 	ucon = rd_regl(port, S3C2410_UCON);
- 	ucon &= ~(APPLE_S5L_UCON_TXTHRESH_ENA_MSK |
- 		  APPLE_S5L_UCON_RXTHRESH_ENA_MSK |
--		  APPLE_S5L_UCON_RXTO_ENA_MSK);
-+		  APPLE_S5L_UCON_RXTO_ENA_MSK |
-+		  APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK);
- 	wr_regl(port, S3C2410_UCON, ucon);
- 
- 	wr_regl(port, S3C2410_UTRSTAT, APPLE_S5L_UTRSTAT_ALL_FLAGS);
-@@ -1287,6 +1291,7 @@ static int apple_s5l_serial_startup(struct uart_port *port)
- 	/* Enable Rx Interrupt */
- 	s3c24xx_set_bit(port, APPLE_S5L_UCON_RXTHRESH_ENA, S3C2410_UCON);
- 	s3c24xx_set_bit(port, APPLE_S5L_UCON_RXTO_ENA, S3C2410_UCON);
-+	s3c24xx_set_bit(port, APPLE_S5L_UCON_RXTO_LEGACY_ENA, S3C2410_UCON);
- 
- 	return ret;
- }
-@@ -2143,13 +2148,15 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
- 
- 			ucon &= ~(APPLE_S5L_UCON_TXTHRESH_ENA_MSK |
- 				  APPLE_S5L_UCON_RXTHRESH_ENA_MSK |
--				  APPLE_S5L_UCON_RXTO_ENA_MSK);
-+				  APPLE_S5L_UCON_RXTO_ENA_MSK |
-+				  APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK);
- 
- 			if (ourport->tx_enabled)
- 				ucon |= APPLE_S5L_UCON_TXTHRESH_ENA_MSK;
- 			if (ourport->rx_enabled)
- 				ucon |= APPLE_S5L_UCON_RXTHRESH_ENA_MSK |
--					APPLE_S5L_UCON_RXTO_ENA_MSK;
-+					APPLE_S5L_UCON_RXTO_ENA_MSK |
-+					APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK;
- 
- 			wr_regl(port, S3C2410_UCON, ucon);
- 
-diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
-index 1672cf0810ef..849d502d348d 100644
---- a/include/linux/serial_s3c.h
-+++ b/include/linux/serial_s3c.h
-@@ -246,24 +246,28 @@
- 				 S5PV210_UFCON_TXTRIG4 |	\
- 				 S5PV210_UFCON_RXTRIG4)
- 
--#define APPLE_S5L_UCON_RXTO_ENA		9
--#define APPLE_S5L_UCON_RXTHRESH_ENA	12
--#define APPLE_S5L_UCON_TXTHRESH_ENA	13
--#define APPLE_S5L_UCON_RXTO_ENA_MSK	(1 << APPLE_S5L_UCON_RXTO_ENA)
--#define APPLE_S5L_UCON_RXTHRESH_ENA_MSK	(1 << APPLE_S5L_UCON_RXTHRESH_ENA)
--#define APPLE_S5L_UCON_TXTHRESH_ENA_MSK	(1 << APPLE_S5L_UCON_TXTHRESH_ENA)
-+#define APPLE_S5L_UCON_RXTO_ENA			9
-+#define APPLE_S5L_UCON_RXTO_LEGACY_ENA		11
-+#define APPLE_S5L_UCON_RXTHRESH_ENA		12
-+#define APPLE_S5L_UCON_TXTHRESH_ENA		13
-+#define APPLE_S5L_UCON_RXTO_ENA_MSK		(1 << APPLE_S5L_UCON_RXTO_ENA)
-+#define APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK	(1 << APPLE_S5L_UCON_RXTO_LEGACY_ENA)
-+#define APPLE_S5L_UCON_RXTHRESH_ENA_MSK		(1 << APPLE_S5L_UCON_RXTHRESH_ENA)
-+#define APPLE_S5L_UCON_TXTHRESH_ENA_MSK		(1 << APPLE_S5L_UCON_TXTHRESH_ENA)
- 
- #define APPLE_S5L_UCON_DEFAULT		(S3C2410_UCON_TXIRQMODE | \
- 					 S3C2410_UCON_RXIRQMODE | \
- 					 S3C2410_UCON_RXFIFO_TOI)
- #define APPLE_S5L_UCON_MASK		(APPLE_S5L_UCON_RXTO_ENA_MSK | \
-+					 APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK | \
- 					 APPLE_S5L_UCON_RXTHRESH_ENA_MSK | \
- 					 APPLE_S5L_UCON_TXTHRESH_ENA_MSK)
- 
-+#define APPLE_S5L_UTRSTAT_RXTO_LEGACY	(1<<3)
- #define APPLE_S5L_UTRSTAT_RXTHRESH	(1<<4)
- #define APPLE_S5L_UTRSTAT_TXTHRESH	(1<<5)
- #define APPLE_S5L_UTRSTAT_RXTO		(1<<9)
--#define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f0)
-+#define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f8)
- 
- #ifndef __ASSEMBLY__
- 
+ .../devicetree/bindings/power/supply/bq256xx.yaml          |  6 ++++++
+ drivers/power/supply/bq256xx_charger.c                     | 14 ++++++++------
+ 2 files changed, 14 insertions(+), 6 deletions(-)
+---
+base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
+change-id: 20240907-bq256xx-omit-battery-class-e2cff68b3cee
+
+Best regards,
 -- 
-2.46.0
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
 
