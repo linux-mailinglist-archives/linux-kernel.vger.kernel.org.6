@@ -1,245 +1,87 @@
-Return-Path: <linux-kernel+bounces-319874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DBFF97034D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:15:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4790597034E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17BA22831B6
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:15:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F30821F2249E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B28165EE4;
-	Sat,  7 Sep 2024 17:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsokSaVz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1633161914;
+	Sat,  7 Sep 2024 17:16:04 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F243115D5BB;
-	Sat,  7 Sep 2024 17:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AC840BE5
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 17:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725729313; cv=none; b=jLU+v1P/DvNt8EHueRyKEgkfL8cDqdV0pplSYNl72Hz5JLHsOMP4RZ6tMa5PAup78HH8GBmgUh7NWmrTjElKvxjIln/zPL3w8TXz6bdmEFWj3pRdTK1o2dXZnXD5apL3JhtrtKQe5RrfQwPSSfqXFjlHLIWRfxFo+jxI6SItV5E=
+	t=1725729364; cv=none; b=UiPXckmF4rsMXbqkty0TILrsVxxoiMvc3bKG3ZvWP60NOyYSjupUitBSOMsUNSPyJeX+aY7ifScIIOVygdCU+uKEWEQDBjht3vbEhP2ZNtTLpRXIijz97iatMonb19hzmHvN3Y2wisRt0qoy+OR8cBBad/IShx3aJtr9FTC0MY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725729313; c=relaxed/simple;
-	bh=tcjsLNQyJNWKbgceFHvvMiUd+8SAPr95G7SirxnFvyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nVRQdOGU/fWf1ovS94zwx8Bw8k5xzAlPwZrVEM4y/2nhXSCcCMjHRQB2lh9R4OAnUngIvRNCNNvUciAeYMTTDTRQClf2PTzG6a1pNSSErEBlTuIsBEGM27pZhz6U7FQchlia3tebnI7krhfCw5ht6+KKUrwqOf61RTVhRtn30Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HsokSaVz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0F83C4CEC2;
-	Sat,  7 Sep 2024 17:15:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725729312;
-	bh=tcjsLNQyJNWKbgceFHvvMiUd+8SAPr95G7SirxnFvyQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HsokSaVzpFt5vwQ3cyd0lZcxahqzecC6z/NlNokz3ietSnA5+TVLJNJll+GWhjWyy
-	 EsDG1R21gwh9vWLWu0rHEx6daVbYWvNP+qDhZzLo2eba8tjMep9/pxPjb7bVk7Bz5s
-	 Zi0lEPyu79aueh6A7d8KR9SgxFVjkBb0tUohhf6CttPRKuvFNcNxarhdPMHIiX2UkL
-	 AlwDfUdLX0I9nPpqXztUliu8ZmJl8KLrosblAb6AV06Z+VTknehqzsSkH2ypY6jDQM
-	 q5VAdQE0KLQ7tyUWprB2/31s72/Zp0DZfTn34s/dKOrsLc+6Q67LK/z28IPrzWQdEf
-	 kRwi12gy5iNdA==
-Date: Sat, 7 Sep 2024 18:14:49 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Mariel Tinaco <Mariel.Tinaco@analog.com>
-Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Michael Hennerich <Michael.Hennerich@analog.com>, Conor Dooley
- <conor+dt@kernel.org>, Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
- Dimitri Fedrau <dima.fedrau@gmail.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Subject: Re: [PATCH v3 2/2] iio: dac: support the ad8460 Waveform DAC
-Message-ID: <20240907181449.1453bd41@jic23-huawei>
-In-Reply-To: <20240904023040.23352-3-Mariel.Tinaco@analog.com>
-References: <20240904023040.23352-1-Mariel.Tinaco@analog.com>
-	<20240904023040.23352-3-Mariel.Tinaco@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725729364; c=relaxed/simple;
+	bh=ndywN073E0k6sTkM/ZVfC9q4Vcrw/JRDe+9SUhWR3o0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GXL6EDSnQ0HEY0ajO/QHcir64gmwREjnnbW/Fd86pf8pkU0/RyPXqLIHVmQgng9rvUHXGJReq8RF8Eq5YsoMkHpahAB+soLUrbOWN9Ez4d3hsInJf4zkpJBV3k12OkGSwQXrtE1C5eCOpv80qtxVVH4bBJmCw2jQQJokB5nDGhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a045bf5779so51048045ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 10:16:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725729362; x=1726334162;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9D65iIYDSawVBByvUh+jS9qZI3QDC5eYj5oMaDJiYY0=;
+        b=C9OrdwCI971lwfiR/FfwvLyvHv+UrSX+V9QQ0XIgDLWGFZTrLcJJreru10r0HfKHzi
+         9PU5EpPmZ4UV2m+n7QfSkd6XXbxeTJntL5gZQyJildyYEgEPXKINIrVmFdm0D58tXC1l
+         cIzmT08qYVugDDXWfad3Xw4Vehxhqx1WRwUY2d6KWV7so15PJWBVA1NYolqrfKqgSdjI
+         95VQlttIaDR4iwlL/mbhIBd3MvQu6J5Kh8pEpfvuonNL0FAsgFji4UNBzm9TqWdgQjet
+         Ncs/3lL7b5h4GcsAonxWnBPM+VUov3UiqQq/5JOjpnUQUAUPqSsQPdvw+q+jOB8VN1ph
+         8o1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXTZ03bjvQkXcAl1SNZ4j6kz8hl+COP1W7+Xp3sgdg5jBOLv6KF9V12vSQOMq583B+31nptSMtp43H5RWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSh7ebzQVVqcneE9t4URxnC1IAaZl9+vPUUYAFeffprw/3v0jC
+	TnYqQRW8VYZl9cONoLJvSgi1rcYxryiVa/Z/f0RpllJ5t99V9DOcl12hKWlmoPi3uYZZLT+2dVg
+	cx97Vrbyii4iZWPo6dbH4LziHPRU1efOGKWPgnLGsChEltm/8dQ6xVbM=
+X-Google-Smtp-Source: AGHT+IHny+ovz8OZCs5BdIhiyFQoXV6XCV4S0GtKSePQEZTOlCIaNQ6MzmB6yYxYTu/HOPIaFwdGizv9ck7ARvRYNkhkFY39DUUo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1ca8:b0:3a0:45c5:a358 with SMTP id
+ e9e14a558f8ab-3a04f07aa03mr1149985ab.2.1725729362453; Sat, 07 Sep 2024
+ 10:16:02 -0700 (PDT)
+Date: Sat, 07 Sep 2024 10:16:02 -0700
+In-Reply-To: <CAG-BmocVhraJ7Jp3Y6b05hW78-tDEnAXKh--1DOtJHkhLb7jQQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a0c6ca06218aad61@google.com>
+Subject: Re: [syzbot] [jfs?] kernel BUG in jfs_unlink
+From: syzbot <syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com>
+To: ghanshyam1898@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 4 Sep 2024 10:30:40 +0800
-Mariel Tinaco <Mariel.Tinaco@analog.com> wrote:
+Hello,
 
-> The AD8460 is a =E2=80=9Cbits in, power out=E2=80=9D high voltage, high-p=
-ower,
-> high-speed driver optimized for large output current (up to =C2=B11 A)
-> and high slew rate (up to =C2=B11800 V/=CE=BCs) at high voltage (up to =
-=C2=B140 V)
-> into capacitive loads.
->=20
-> A digital engine implements user-configurable features: modes for
-> digital input, programmable supply current, and fault monitoring
-> and programmable protection settings for output current,
-> output voltage, and junction temperature. The AD8460 operates on
-> high voltage dual supplies up to =C2=B155 V and a single low voltage
-> supply of 5 V.
->=20
-> Signed-off-by: Mariel Tinaco <Mariel.Tinaco@analog.com>
-A few comments inline.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Jonathan
+Reported-by: syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com
+Tested-by: syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com
 
+Tested on:
 
->  obj-$(CONFIG_ADI_AXI_DAC) +=3D adi-axi-dac.o
-> diff --git a/drivers/iio/dac/ad8460.c b/drivers/iio/dac/ad8460.c
-> new file mode 100644
-> index 000000000000..6428bfaf0bd7
-> --- /dev/null
-> +++ b/drivers/iio/dac/ad8460.c
-> @@ -0,0 +1,932 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * AD8460 Waveform generator DAC Driver
-> + *
-> + * Copyright (C) 2024 Analog Devices, Inc.
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/clk.h>
-> +#include <linux/debugfs.h>
-> +#include <linux/delay.h>
-> +#include <linux/dmaengine.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/iio/buffer.h>
-> +#include <linux/iio/buffer-dma.h>
-> +#include <linux/iio/buffer-dmaengine.h>
-> +#include <linux/iio/consumer.h>
-> +#include <linux/iio/events.h>
-> +#include <linux/iio/iio.h>
+commit:         b31c4492 Merge tag 'linux_kselftest-kunit-fixes-6.11-r..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=162e189f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc7fa3453562e8b
+dashboard link: https://syzkaller.appspot.com/bug?extid=41b43444de86db4c5ed1
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1116189f980000
 
-Given there are lots of IIO specific includes, probably a case
-where pulling them out as a separate block after the main
-includes makes sense.
-
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/spi/spi.h>
->
-...
-
-
-> +
-> +	state =3D iio_priv(indio_dev);
-> +	mutex_init(&state->lock);
-
-Trivial but there is no a devm_mutex_init() that deals with the obscure
-debug case where mutex uninit makes sense. Might as well use it here.
-
-> +
-> +	indio_dev->name =3D "ad8460";
-> +	indio_dev->info =3D &ad8460_info;
-> +
-> +	state->spi =3D spi;
-> +	dev =3D &spi->dev;
-> +
-> +	state->regmap =3D devm_regmap_init_spi(spi, &ad8460_regmap_config);
-> +	if (IS_ERR(state->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(state->regmap),
-> +				     "Failed to initialize regmap");
-> +
-> +	state->sync_clk =3D devm_clk_get_enabled(dev, NULL);
-> +	if (IS_ERR(state->sync_clk))
-> +		return dev_err_probe(dev, PTR_ERR(state->sync_clk),
-> +				     "Failed to get sync clk\n");
-> +
-> +	state->tmp_adc_channel =3D devm_iio_channel_get(dev, "ad8460-tmp");
-> +	if (IS_ERR_OR_NULL(state->tmp_adc_channel)) {
-> +		indio_dev->channels =3D ad8460_channels;
-> +		indio_dev->num_channels =3D ARRAY_SIZE(ad8460_channels);
-> +	} else {
-> +		indio_dev->channels =3D ad8460_channels_with_tmp_adc;
-> +		indio_dev->num_channels =3D ARRAY_SIZE(ad8460_channels_with_tmp_adc);
-> +	}
-> +
-Add and enable the various other supplies. They are probably always
-on in which case the regulator framework will work it's magic to avoid
-use having to care that they aren't in the dts.
-
-> +	ret =3D devm_regulator_get_enable_read_voltage(dev, "refio_1p2v");
-> +	if (ret =3D=3D -ENODEV)
-> +		state->refio_1p2v_mv =3D 1200;
-> +	else if (ret >=3D 0)
-> +		state->refio_1p2v_mv =3D ret / 1000;
-> +	else
-> +		return dev_err_probe(dev, ret, "Failed to get reference voltage\n");
-> +
-...
-
-> +	ret =3D device_property_read_u32_array(dev, "adi,range-microamp",
-> +					     tmp, ARRAY_SIZE(tmp));
-> +	if (!ret) {
-> +		if (in_range(tmp[1], 0, AD8460_ABS_MAX_OVERCURRENT_UA))
-> +			regmap_write(state->regmap, AD8460_CTRL_REG(0x08),
-> +				     FIELD_PREP(AD8460_FAULT_ARM_MSK, 1) |
-> +				     AD8460_CURRENT_LIMIT_CONV(tmp[1]));
-
-Your binding has a fixed set of values.  Yet this is anything in range.
-Which is correct?  Based on datasheet I think it is flexible but
-that you have listed the example values instead of the limits.
-
-
-> +
-> +		if (in_range(tmp[0], -AD8460_ABS_MAX_OVERCURRENT_UA, 0))
-> +			regmap_write(state->regmap, AD8460_CTRL_REG(0x09),
-> +				     FIELD_PREP(AD8460_FAULT_ARM_MSK, 1) |
-> +				     AD8460_CURRENT_LIMIT_CONV(abs(tmp[0])));
-> +	}
-> +
-> +	ret =3D device_property_read_u32_array(dev, "adi,range-microvolt",
-> +					     tmp, ARRAY_SIZE(tmp));
-> +	if (!ret) {
-> +		if (in_range(tmp[1], 0, AD8460_ABS_MAX_OVERVOLTAGE_UV))
-> +			regmap_write(state->regmap, AD8460_CTRL_REG(0x0A),
-> +				     FIELD_PREP(AD8460_FAULT_ARM_MSK, 1) |
-> +				     AD8460_VOLTAGE_LIMIT_CONV(tmp[1]));
-> +
-> +		if (in_range(tmp[0], -AD8460_ABS_MAX_OVERVOLTAGE_UV, 0))
-> +			regmap_write(state->regmap, AD8460_CTRL_REG(0x0B),
-> +				     FIELD_PREP(AD8460_FAULT_ARM_MSK, 1) |
-> +				     AD8460_VOLTAGE_LIMIT_CONV(abs(tmp[0])));
-> +	}
-> +
-> +	ret =3D device_property_read_u32(dev, "adi,max-millicelsius", &temp);
-> +	if (!ret) {
-> +		if (in_range(temp, AD8460_MIN_OVERTEMPERATURE_MC,
-> +			     AD8460_MAX_OVERTEMPERATURE_MC))
-> +			regmap_write(state->regmap, AD8460_CTRL_REG(0x0C),
-> +				     FIELD_PREP(AD8460_FAULT_ARM_MSK, 1) |
-> +				     AD8460_TEMP_LIMIT_CONV(abs(temp)));
-> +	}
-> +
-> +	ret =3D ad8460_reset(state);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Enables DAC by default */
-> +	ret =3D regmap_update_bits(state->regmap, AD8460_CTRL_REG(0x01),
-> +				 AD8460_HVDAC_SLEEP_MSK,
-> +				 FIELD_PREP(AD8460_HVDAC_SLEEP_MSK, 0));
-> +	if (ret)
-> +		return ret;
-> +
-> +	indio_dev->modes =3D INDIO_DIRECT_MODE;
-> +	indio_dev->setup_ops =3D &ad8460_buffer_setup_ops;
-> +
-> +	ret =3D devm_iio_dmaengine_buffer_setup_ext(dev, indio_dev, "tx",
-> +						  IIO_BUFFER_DIRECTION_OUT);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "Failed to get DMA buffer\n");
-> +
-> +	return devm_iio_device_register(dev, indio_dev);
-> +}
+Note: testing is done by a robot and is best-effort only.
 
