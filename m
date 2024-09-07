@@ -1,138 +1,87 @@
-Return-Path: <linux-kernel+bounces-319841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D54C9702F6
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D1C39702F7
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39C0C1C218E1
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:33:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 460391C218C7
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9528515FCE5;
-	Sat,  7 Sep 2024 15:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GGFUtIn/"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4B81B85DC;
+	Sat,  7 Sep 2024 15:33:10 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8741B85DC;
-	Sat,  7 Sep 2024 15:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD7C1607A4;
+	Sat,  7 Sep 2024 15:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725723187; cv=none; b=uWTz9Ha1A+uePxD1S3i35O/SunBs5oMtjglaaaRnrevdKm+4p4o4nAXZmqgyl8nLLVRv1QC5u8Zm2o2AmS9BctlfFZTuTQeIb/pGHFJBoxdYfn+y7Qd5H68FX/zU9r6fgX8XSsQmFE7EIAf0XD1nic6ZJjMwYJE9Jk+9O9Q7T+E=
+	t=1725723190; cv=none; b=Al4RcJYU6ssCgo+qKQmA+o7ickaYBcFBz9wOTKJFojHF8Y7nMJ634+qBR82iHWgEVi52DQI0XVJY3nDkQzb+eIynDlCvnRcwLkbD31iw1hpVrMZrwvdE2LKk6fo+QF4oQp4YYYpydQabZVuyRS+ZZKQe7gO5XLX5rGbYJ9F6I6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725723187; c=relaxed/simple;
-	bh=oHjQ7HgK8Yd87EvRVT1orABFAc/Um0D/a3v5RRH/Ioc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=CWQcxWqLtu3vHnQldC9a1DkB/e0kOFp1mdNXumrNPKzGc8Tftoa+tNw2ixWVxhp94frLhTith0YRdEKjARYESUrJmuUE0DK5j/0rIIEl+JoutnL9iB52VSUgf9BT18fRMn6fXflq2Z0qV17hg8CjqQO7/ChBSWcqFZidpArFmB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GGFUtIn/; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1725723061; x=1726327861; i=markus.elfring@web.de;
-	bh=wihuS6INkOIDRJLvPODF0HceZ7BB6DFVMS4BkKX4s0g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=GGFUtIn/x0Yjib7Y4e1yOKaA3LawIgwXzX4+GKFSTGPYUjXGu1bEp5Pk15O2AS4D
-	 hNSt0ZBKybXpdcw4wOc1oylU1eZEYWVRDBoAegl7RGmW3WZNvuAKsV1KB3RndXKlX
-	 UiTOOINChJQsj7EvLQaMrUjc1Iyg44nOWH7anByQrt2UEKJhZPXTwaS5GOs9d81Ft
-	 Ga9LCGrNGegL9Aow2/iieXG6w1UpTyiIMVC6vNMzt1kc4gupOROPPTggssKDBJnJz
-	 FMTROAglkrijureZi1maPvQedQtpa/n++HccI1BChPGuoKZvHxfHG/fPUBpOS7Mu6
-	 tmBfowHsaRnK4RshEQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mkmzl-1sKCU60TDL-00kWWt; Sat, 07
- Sep 2024 17:31:01 +0200
-Message-ID: <f60b0884-a7fa-4260-b9bb-ae680ff21150@web.de>
-Date: Sat, 7 Sep 2024 17:30:17 +0200
+	s=arc-20240116; t=1725723190; c=relaxed/simple;
+	bh=5Grk9i+ayskQeimGL1KQs0rbB/eta7cII/ijyKCM1fA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ffQ2u5SCkih/j/kNhnzGsdGdpy1tJpa8C1NfP91uaOG1PBY5JhC21IfM0jQHfCAjisfdXoxNu/WF3UFPjGecruwN9U16MpG7eT2+VZzg+ShIMSajgD748JMVzL00vncuBb5ephHftVajanrngNa/+ES4WI72YXkd5ewImyXeRZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 1CAA4161749;
+	Sat,  7 Sep 2024 15:33:06 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf10.hostedemail.com (Postfix) with ESMTPA id C84CA2F;
+	Sat,  7 Sep 2024 15:33:01 +0000 (UTC)
+Message-ID: <d13c59eb55ad4822878eac47dd2ad339a95f5cb9.camel@perches.com>
+Subject: Re: [PATCH 2/2] checkpatch: warn on known non-plural rust doc
+ headers
+From: Joe Perches <joe@perches.com>
+To: Patrick Miller <paddymills@proton.me>
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	apw@canonical.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, dwaipayanray1@gmail.com, gary@garyguo.net, 
+	linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com, ojeda@kernel.org, 
+	rust-for-linux@vger.kernel.org, tmgross@umich.edu, wedsonaf@gmail.com
+Date: Sat, 07 Sep 2024 08:33:00 -0700
+In-Reply-To: <M4qWISlO9z_OnOQGC5Gqb0ROgBLsxM35tR9HU_DMJKExPFpJrEYTuBa2mO5YQqvQK4h65hZrNB165qJlOnexLXaDscRuZcmAkOC0AH4SO04=@proton.me>
+References: <20240906180456.2302688-1-paddymills@proton.me>
+	 <db693ef6c064fa42eda323f067d4270baf68b1f5.camel@perches.com>
+	 <ct-Fmb-XUaJqIhpE1RlzXwIHxv2fWKgeiD4_j3xguKMCL4vwyYn8qzv_fKjulO9GmOW18h0jzPkiRgNfym5HyUhPVBAKHJnhAH5WhYAVKNg=@proton.me>
+	 <M4qWISlO9z_OnOQGC5Gqb0ROgBLsxM35tR9HU_DMJKExPFpJrEYTuBa2mO5YQqvQK4h65hZrNB165qJlOnexLXaDscRuZcmAkOC0AH4SO04=@proton.me>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: WangYuli <wangyuli@uniontech.com>, linux-input@vger.kernel.org,
- linux-omap@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mtd@lists.infradead.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- Aaro Koskinen <aaro.koskinen@iki.fi>, Abhinav Kumar
- <abhinavk@codeaurora.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Andreas Kemnade <andreas@kemnade.info>,
- Andrew Morton <akpm@linux-foundation.org>,
- Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
- Anil Ravindranath <anil_ravindranath@pmc-sierra.com>,
- Archit Taneja <architt@codeaurora.org>,
- Chandan Uddaraju <chandanu@codeaurora.org>, Daniel Vetter <daniel@ffwll.ch>,
- Dasaratharaman Chandramouli <dasaratharaman.chandramouli@intel.com>,
- David Airlie <airlied@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Dmitry Torokhov <dtor@mail.ru>,
- Don Hiatt <don.hiatt@intel.com>, Doug Ledford <dledford@redhat.com>,
- Eric Piel <eric.piel@tremplin-utc.net>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Ira Weiny <ira.weiny@intel.com>, James Bottomley <James.Bottomley@suse.de>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Jiri Kosina <jkosina@suse.cz>,
- Jeykumar Sankaran <jsanka@codeaurora.org>,
- Jordan Crouse <jcrouse@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>,
- Krishna Gudipati <kgudipat@brocade.com>, Leon Romanovsky <leon@kernel.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Masanari Iida <standby24x7@gmail.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>, Miloslav Trmac <mitr@volny.cz>,
- Richard Weinberger <richard@nod.at>, Rob Clark <robdclark@gmail.com>,
- Roger Quadros <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Rajesh Yadav <ryadav@codeaurora.org>, Sean Paul <sean@poorly.run>,
- Sean Paul <seanpaul@chromium.org>,
- Sravanthi Kollukuduru <skolluku@codeaurora.org>,
- Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>,
- Tony Lindgren <tony@atomide.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- "Vijay Kumar B." <vijaykumar@bravegnu.org>,
- Wentao Guan <guanwentao@uniontech.com>, zhanjun@uniontech.com
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <63D0F870EE8E87A0+20240906054008.390188-1-wangyuli@uniontech.com>
-Subject: Re: [PATCH] treewide: Correct the typo 'retun'
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <63D0F870EE8E87A0+20240906054008.390188-1-wangyuli@uniontech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0V/kSbOfOSES5ZSUPdgCZTIcGmmRZMm0Domxm/Q8KX7EnOO1CAN
- 00nVkeHP/BEhc1uiKtEI0+LLwINCEV1nSlgo1pINWJyZ22WHQIdvHMPhXX9Dibh9lp2E6i0
- v1vwafHYbTjBcj52zpJPNskLr5AxrCpCr2mgG1bc7EuYHcZ6DtYMYuIgT/B6+Q7EQLT5mR/
- k9m3SXUYG/qEkZWV6kXvg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eJQeW9UGGk0=;BIskQXK25THsuKgfSEMHNrqzAWD
- Y//x4rspd7L6DZ58YgNNTXjYwoWbQTnTYp1kc1vMll0u7cPyuTLy3xEP/ReuRFGA77lqQAibK
- /6uOnBeNuRrYH6ZgTxfXm3636B2h8/1HnqFUp73R/R1+Ao69JPmTyHFLi2sr4ElRqoF2AjIKu
- a1GCqrIr85L4vXpL0fSmKckM347JgzuW4ti8xbzaxVA7BtM6zATY3AkH+V/K0cwEf4Iu6Nc7Z
- Z+/81Xl/ApcMmB3mtmIzo0h4W8KrDqvOpWvQ2Dkm+/35DGoZb/Gg7tTi2nNrUxnh7UWb44rIc
- dltxjmgSXtVPHyFjzB2A9I1ucJA5Ouly8qh9iPQKkax/VcYVN2IRH7UUfFfp9hR2V6oMsYlrF
- 6UHnxTjH4RpjyLjc7g63Dvh423vvN5KPDOeQf/w8wE/v5jJVBkm64wwCUL01y86qFtZoC/70c
- k8AkUqYGI08xMCJPT5v/QG7r1nYmjvvDTuIOP6aGw/0/LCNwFw3pp8uJk8FHiSiISgyl1C05C
- IK48cI9L+YLFJurUPze13oKlNambZVI0leiIyEdP0IstQTq4bAZkQBXv+U+SOV/IjOYe4kw/D
- q3fprWkvsM+xfSlOdzc/9vwKNZwkRQuaapTrX+xDzD1iRouYTIq7CW37H8CmkPpbUXMLmtvlz
- lTi2cYFS9sXE4yvAPx4OEnqrFEZOCiuLHwEPYGUlooyixxKr7l5kNU3Fttn6NlWU9zNxVdZDJ
- CTYRNkCsFkoz33K1beAdoI45/v6GjCAD1+D1Ov+hll037p+F42neH8RIJPbxRlzudy6O6UO2z
- MGr//iuh+hhfAAdwERNY/svA==
+X-Rspamd-Queue-Id: C84CA2F
+X-Rspamd-Server: rspamout01
+X-Stat-Signature: ezwoojqkayc94o8h6ccag1jhhq4xggwa
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/Gr5L2r5k1cS4eHbqWttFDCQtwFLLuk1g=
+X-HE-Tag: 1725723181-989439
+X-HE-Meta: U2FsdGVkX1/ClEVVD2diQPqXXF39CldoVYAmD4008x9QIyw6pUp7yf62IKSICf9dUs6HG8ux6OZItW8i3ey8o8+LOQnDn1Q78B1CIRUby5W1PQmqUV1wlHQ2fQnGBjp50HCcofEhbVUuqjprNF2YGj2c6Sfs+G6MipYMfwdzKGYXsueJ0a7c2n/Jgn0Pw2HMBqWCoWXpHy2E2aLTszPHdxoSerDS+3fA85lEaKBPPzeyVMQXM1jGzFAPrIQlQ/dFHw4AtFXT2F2SdYn5d4aPed+vCHO424jUXE+V9ugzmX7HBFH3RM9nGHdyb8oyK5EC
 
-=E2=80=A6
-> should be instead of 'return'.
+On Sat, 2024-09-07 at 14:22 +0000, Patrick Miller wrote:
+> > > > +# check that document section headers are plural in rust files
+> > > > + if ($realfile =3D~ /\.rs$/
+> > > > + && $rawline =3D~ /^\+\s*\/\/\/\s+#+\s+(Example|Invariant|Guarante=
+e|Panic)\s*$/) {
+> > > > + WARN( "RUST_DOC_HEADER",
+> > > > + "Rust doc headers should be plural\n" . $herecurr );
+[]
+> > There is no autoformatter for checkpatch/perl/etc.
+> Can you elaborate on what you mean by this? I'm not following.
+> Is there documentation you can point me to that I need to review?
+> >=20
+>=20
 
-            =E2=80=9Creturn=E2=80=9D instead?
+[]
+> > Will fix this. Is there a code style document for the perl scripts?
 
-
-Can a corresponding imperative wording be preferred for a better change de=
-scription?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.11-rc6#n94
-
-Regards,
-Markus
+No.  It mostly follows the c style though.
 
