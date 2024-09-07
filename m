@@ -1,54 +1,62 @@
-Return-Path: <linux-kernel+bounces-319660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64FA6970037
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:36:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE9E970033
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D391C222AA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 05:36:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38E72B238BB
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 05:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC423132103;
-	Sat,  7 Sep 2024 05:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125966088F;
+	Sat,  7 Sep 2024 05:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Ov4MO2/E"
-Received: from msa.smtpout.orange.fr (smtp-83.smtpout.orange.fr [80.12.242.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QzXUdKU9"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1C832C8E;
-	Sat,  7 Sep 2024 05:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F04632C8E;
+	Sat,  7 Sep 2024 05:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725687370; cv=none; b=SpM3BSXHaRHpyJgRPqLOKMd2lRAxYDuSOvvWa4fPDHSiQvSdlsRg1q0SDjNbQ1EiNgJcS3n0Yuv8BmKb2SngBmJjYrfDnQcabIbigq75DLYeMhS3adOz30+2BwZQI6ftITcpSjp7hJnDe3AqdqAEc3MCJGo1GYlTmDxzjC9mzs8=
+	t=1725687315; cv=none; b=RfkrYUGA11oAta1CGUvZ9Szjn0wCXN8QXinp0InRwbl7SVLB0BdAguxfol4R2FK3wcxXC8Qi3g56iO0nZ6xZBoV4w9i0+w/5E8foDszpihEPlyHi+gGMpoiH/NNlVqVtYhvPg/eN5rEcSC2HN8EEWEIuqvtDqb858fi9imaQuQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725687370; c=relaxed/simple;
-	bh=bWdr1VYjmts1AtM3hv/151cs6BQWWh7DP6hLoyQaDLI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rR1i8N4/wb5ZGG6vYOrRzYIkVyLBNcUU6CwC+BZ3BmJDY9IQWnqk6Se37XfI190y8zIxB5WsdpgTkkcbHkMWvXz+LVPI/A/j5m3IgdJDJ8jY1ocqvQYAzbufydj3w+47JRV5uM4pjR3KsYYi1gikQAzwz66ru1p8SYZlhdm/o3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Ov4MO2/E; arc=none smtp.client-ip=80.12.242.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id mo5jsZENhQYYumo5jsI8EG; Sat, 07 Sep 2024 07:34:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725687289;
-	bh=zhb/fr3/ahbe9u0OOQ3I4zVqjQ6OdAdflP4aJvLzC4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Ov4MO2/EsHbrXOn9mC5X45wUoZIu5LI6TUyK0ggF1aC8TviLvfB2vCpHsKNXLYgO5
-	 vBaAVBW+bZ0l5ZTWIpIqG1k5s5ogB6GbmyJep53eZUBPf7UrWql6sNXCVJAV7qwJ/1
-	 IKAMTL4XPED5b32aaNhI45/3uOfPJ3CGw0qz15LWBCyr9YqZ3KUAXf9faq3OFP5C8r
-	 RcDhXSGvkEV2+CZzDd2oTGxqPwspFww7txYJdfKzDwGcoeUud15+vIoJ0S0x/fCqRZ
-	 1y+Kq0GAzZTDRh8RQOXn6s6TFr9lLo8cXOffoCQL4+J2ZW41amN0iv7I2iv+YmsbqH
-	 V9/TpYOhfBxiA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 07 Sep 2024 07:34:49 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <daf856a8-32ad-47ac-91b2-0aa2253636f8@wanadoo.fr>
-Date: Sat, 7 Sep 2024 07:34:35 +0200
+	s=arc-20240116; t=1725687315; c=relaxed/simple;
+	bh=scE/eAxwuT9GKAqGnFvKi5xLoCyNQ1N4mBsUb0aeNJY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PvmnUe/Kcq3K+Lw/MUl0zPfYxfRawJR++HvvpvpBk8R3uvdVME/mbKyKviPaGtEHPA9SEpZrj+VHk08JuBuTs+808Ll3fc8tg4VB50qWTIhV7yd+Wdt4xNppJT2cy5GAFQj9mEWqR/9dvr8rhHGILExXLrLeYszjtgM3Rlmrc5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QzXUdKU9; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4875YtvP012006;
+	Sat, 7 Sep 2024 00:34:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725687295;
+	bh=OdIuX3KeOmdjn4QebIIqolo/mrXvIypIqWU/sJBeMSk=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=QzXUdKU9moPejXNE9LDXEXcPv0HmRj8n2EB3nK7W04tyH6s39LyvZUl1cFItcr9Pu
+	 DJfmioSe6BnOFVyA8jDmiHKkzlqEic5cMSq+90Z4C3qJKGVNTlz3AZIPcCldQv1wYY
+	 5NBnTaUdtpTGOvovXO/ThH+zt7QwzSl2Jpa1Ec4s=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4875YtOp011908
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 7 Sep 2024 00:34:55 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 7
+ Sep 2024 00:34:55 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 7 Sep 2024 00:34:55 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4875YobU054763;
+	Sat, 7 Sep 2024 00:34:51 -0500
+Message-ID: <bd188c0d-9fa1-4350-8787-36af319c7930@ti.com>
+Date: Sat, 7 Sep 2024 11:04:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,109 +64,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 02/10] net: ethernet: Convert using
- devm_clk_get_enabled() in emac_probe()
-To: Li Zetao <lizetao1@huawei.com>, mchehab@kernel.org,
- florian.fainelli@broadcom.com, andrew@lunn.ch, olteanv@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, wens@csie.org, jernej.skrabec@gmail.com,
- samuel@sholland.org, heiko@sntech.de, yisen.zhuang@huawei.com,
- salil.mehta@huawei.com, hauke@hauke-m.de, alexandre.torgue@foss.st.com,
- joabreu@synopsys.com, mcoquelin.stm32@gmail.com, wellslutw@gmail.com,
- radhey.shyam.pandey@amd.com, michal.simek@amd.com, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com, ruanjinjie@huawei.com,
- hverkuil-cisco@xs4all.nl, u.kleine-koenig@pengutronix.de,
- jacky_chou@aspeedtech.com, jacob.e.keller@intel.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, platform-driver-x86@vger.kernel.org
-References: <20240907031926.3591353-1-lizetao1@huawei.com>
- <20240907031926.3591353-3-lizetao1@huawei.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240907031926.3591353-3-lizetao1@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH RFC/RFT 1/2] arm64: dts: ti: k3-j784s4-evm: Mark tps659413
+ and children as bootph-all
+To: Andrew Halaney <ahalaney@redhat.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Keerthy <j-keerthy@ti.com>, Neha Malcom Francis <n-francis@ti.com>,
+        Eric
+ Chanudet <echanude@redhat.com>,
+        Enric Balletbo <eballetb@redhat.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Manorit Chawdhry <m-chawdhry@ti.com>
+References: <20240906-j784s4-tps6594-bootph-v1-0-c5b58d43bf04@redhat.com>
+ <20240906-j784s4-tps6594-bootph-v1-1-c5b58d43bf04@redhat.com>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20240906-j784s4-tps6594-bootph-v1-1-c5b58d43bf04@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Le 07/09/2024 à 05:19, Li Zetao a écrit :
-> Use devm_clk_get_enabled() instead of devm_clk_get() +
-> clk_prepare_enable(), which can make the clk consistent with the device
-> life cycle and reduce the risk of unreleased clk resources. Since the
-> device framework has automatically released the clk resource, there is
-> no need to execute clk_disable_unprepare(clk) on the error path, drop
-> the out_clk_disable_unprepare label, and the original error process can
-> changed to the out_dispose_mapping error path.
-> 
-> Signed-off-by: Li Zetao <lizetao1@huawei.com>
-
-Hi,
-
-I think that the subject should be "net: ethernet: allwinner:", or maybe 
-even "net: allwinner:"
+Thanks for your patch Andrew
 
 
-clk can now be removed from struct emac_board_info I think.
-You should check for all patches, as asked in [1].
-
-I've not looked all patches, but lantiq_xrx200() looks also a good 
-candidate for removing clk from a structure.
-
-CJ
-
-[1]: https://lore.kernel.org/all/20240903151649.1b466145@kernel.org/
-
-CJ
-
+On 9/7/2024 2:51 AM, Andrew Halaney wrote:
+> In order for the MCU domain to access this PMIC and its children in
+> u-boot SPL, the nodes need to be marked appropriately otherwise they
+> are not seen by SPL.
+>
+> This is necessary if the MCU domain is to program the TPS6594 MCU ESM
+> state machine, which is required to wire up the watchdog in a manner
+> that will reset the board.
+>
+> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
 > ---
->   drivers/net/ethernet/allwinner/sun4i-emac.c | 13 ++-----------
->   1 file changed, 2 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/allwinner/sun4i-emac.c b/drivers/net/ethernet/allwinner/sun4i-emac.c
-> index d761c08fe5c1..8f42501729b7 100644
-> --- a/drivers/net/ethernet/allwinner/sun4i-emac.c
-> +++ b/drivers/net/ethernet/allwinner/sun4i-emac.c
-> @@ -1005,22 +1005,16 @@ static int emac_probe(struct platform_device *pdev)
->   	if (emac_configure_dma(db))
->   		netdev_info(ndev, "configure dma failed. disable dma.\n");
+>   arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
+> index 6695ebbcb4d0..044a428136df 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
+> @@ -642,6 +642,7 @@ eeprom@50 {
+>   	};
 >   
-> -	db->clk = devm_clk_get(&pdev->dev, NULL);
-> +	db->clk = devm_clk_get_enabled(&pdev->dev, NULL);
->   	if (IS_ERR(db->clk)) {
->   		ret = PTR_ERR(db->clk);
->   		goto out_dispose_mapping;
->   	}
+>   	tps659413: pmic@48 {
+> +		bootph-all;
+>   		compatible = "ti,tps6594-q1";
+>   		reg = <0x48>;
+>   		system-power-controller;
+> @@ -662,7 +663,10 @@ tps659413: pmic@48 {
+>   		ldo4-supply = <&vsys_3v3>;
 >   
-> -	ret = clk_prepare_enable(db->clk);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Error couldn't enable clock (%d)\n", ret);
-> -		goto out_dispose_mapping;
-> -	}
-> -
->   	ret = sunxi_sram_claim(&pdev->dev);
->   	if (ret) {
->   		dev_err(&pdev->dev, "Error couldn't map SRAM to device\n");
-> -		goto out_clk_disable_unprepare;
-> +		goto out_dispose_mapping;
->   	}
->   
->   	db->phy_node = of_parse_phandle(np, "phy-handle", 0);
-> @@ -1068,8 +1062,6 @@ static int emac_probe(struct platform_device *pdev)
->   
->   out_release_sram:
->   	sunxi_sram_release(&pdev->dev);
-> -out_clk_disable_unprepare:
-> -	clk_disable_unprepare(db->clk);
->   out_dispose_mapping:
->   	irq_dispose_mapping(ndev->irq);
->   	dma_release_channel(db->rx_chan);
-> @@ -1095,7 +1087,6 @@ static void emac_remove(struct platform_device *pdev)
->   
->   	unregister_netdev(ndev);
->   	sunxi_sram_release(&pdev->dev);
-> -	clk_disable_unprepare(db->clk);
->   	irq_dispose_mapping(ndev->irq);
->   	iounmap(db->membase);
->   	free_netdev(ndev);
+>   		regulators {
+> +			bootph-all;
+> +
+>   			bucka12: buck12 {
+> +				bootph-all;
 
+
+Add bootph in on regulator node should be enough,
+
+As I see SPL/u-boot does not need all nodes.
+
+
+FYI,
+
+Similar series in review
+
+https://lore.kernel.org/all/20240814-b4-upstream-bootph-all-v4-0-f2b462000f25@ti.com/ 
+
+
+>   				regulator-name = "vdd_ddr_1v1";
+>   				regulator-min-microvolt = <1100000>;
+>   				regulator-max-microvolt = <1100000>;
+> @@ -671,6 +675,7 @@ bucka12: buck12 {
+>   			};
+>   
+>   			bucka3: buck3 {
+> +				bootph-all;
+>   				regulator-name = "vdd_ram_0v85";
+>   				regulator-min-microvolt = <850000>;
+>   				regulator-max-microvolt = <850000>;
+> @@ -679,6 +684,7 @@ bucka3: buck3 {
+>   			};
+>   
+>   			bucka4: buck4 {
+> +				bootph-all;
+>   				regulator-name = "vdd_io_1v8";
+>   				regulator-min-microvolt = <1800000>;
+>   				regulator-max-microvolt = <1800000>;
+> @@ -687,6 +693,7 @@ bucka4: buck4 {
+>   			};
+>   
+>   			bucka5: buck5 {
+> +				bootph-all;
+>   				regulator-name = "vdd_mcu_0v85";
+>   				regulator-min-microvolt = <850000>;
+>   				regulator-max-microvolt = <850000>;
+> @@ -695,6 +702,7 @@ bucka5: buck5 {
+>   			};
+>   
+>   			ldoa1: ldo1 {
+> +				bootph-all;
+>   				regulator-name = "vdd_mcuio_1v8";
+>   				regulator-min-microvolt = <1800000>;
+>   				regulator-max-microvolt = <1800000>;
+> @@ -703,6 +711,7 @@ ldoa1: ldo1 {
+>   			};
+>   
+>   			ldoa2: ldo2 {
+> +				bootph-all;
+>   				regulator-name = "vdd_mcuio_3v3";
+>   				regulator-min-microvolt = <3300000>;
+>   				regulator-max-microvolt = <3300000>;
+> @@ -711,6 +720,7 @@ ldoa2: ldo2 {
+>   			};
+>   
+>   			ldoa3: ldo3 {
+> +				bootph-all;
+>   				regulator-name = "vds_dll_0v8";
+>   				regulator-min-microvolt = <800000>;
+>   				regulator-max-microvolt = <800000>;
+> @@ -719,6 +729,7 @@ ldoa3: ldo3 {
+>   			};
+>   
+>   			ldoa4: ldo4 {
+> +				bootph-all;
+>   				regulator-name = "vda_mcu_1v8";
+>   				regulator-min-microvolt = <1800000>;
+>   				regulator-max-microvolt = <1800000>;
+>
 
