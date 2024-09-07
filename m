@@ -1,134 +1,159 @@
-Return-Path: <linux-kernel+bounces-319791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F26970242
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:52:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF26970245
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2C03B228B5
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:52:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3A581C21D57
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298A715FCE6;
-	Sat,  7 Sep 2024 12:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB0A15B971;
+	Sat,  7 Sep 2024 12:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z7Cun+N/"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hMof9psU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B6E15B99D
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 12:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B3343AB7;
+	Sat,  7 Sep 2024 12:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725713495; cv=none; b=EolOxg7d7syEDEkYP3beGXxCq9uxYvNLkjoduslm0JdSsF1E3JMtFX+zqrKuwKjm7gaBDWVxdDVXgSJxijs9qLIlqDgpUvQJKwonnTPmwWRb15OovXM7GUAK1AeppTYoEpzv+VBTOqfPD1AJT99Zo/5Jh0trJMg0Yn23o2wzIIg=
+	t=1725713679; cv=none; b=KJfkT8ZLR/QKD/UbNifI65EANo4mBub7YmloaEA8DnN1n7HWBPxQJ1cmEJQXwUtwRP1jMgufYa4Y/lU89TpfVe9pdx60mrAtqDVUnmvGHavESmRBhAWYNenx8DQguj+CkaHrj/EAKHFPSElN3ljuVdT363etDTH0S4hjaNya914=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725713495; c=relaxed/simple;
-	bh=Om2AhE/49Do7xLXq7286Q52iN2U3h4+EcOngsQ+aodU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lNIyadLXhS4lxEBGHiK++GqEFo4bMH1GKSN4fjcsd2W3L4Epcce3Yw7uBxHTQPNcuR+bRkzm+x/mzUWltlgGXBIDI5LrpfLhFZHmnbJjTook+NcamsVkG+WbNsuhyYpcqddDfEN5zxzM10T3RiVPQ//W954dXrh1Kphi2+KnIDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z7Cun+N/; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53661ac5ba1so144923e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 05:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725713491; x=1726318291; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7sWs0Yh5GOl19xy1ip0mx+la4ukXR/+lSq5N8TyxyHg=;
-        b=z7Cun+N/vhAgrPA9E3dNohz1cVNYh3JKQgLJtn3NMSwvbaque2tuMMSEGUcUy6l4Ur
-         s6kb0qzGaLdUxLlcDL7WRm88/Ct1GAhpeXux0TLsHs4LdZHoMBXaoBqPIKIsb3LYxgET
-         tkt3CYG42alX0chPfOxD3akac9QIGlbwpTOonDusmaUgdWPEC50CjBTihAMNt2crktXl
-         CElyHndaxFsDo3XASklHaHnvNQeP2QKFjVVQ/xiqHWh7cRvyLEWZxsay84ZPZQWVWSOy
-         fGjo2ZkKrob8RfQ/Rs3jTatMpTuvYdaigYItd+nwwi6Gr2jUFU6jSbh1y+BYyWwpAJdZ
-         Knjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725713491; x=1726318291;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7sWs0Yh5GOl19xy1ip0mx+la4ukXR/+lSq5N8TyxyHg=;
-        b=R6iMpvtmQzrcGwlLBuEk8IFhSKc1eA8x6XJr17UeZr+USCaSKXIQhKuWcUFz/ITIfI
-         +wcK0oR+24IfWe01RKwH5AkUWaW6xgqEE9lSgi4oBoX/K72a/wWNGUNbyB26u4Qr1V5e
-         9ROQmtvxM0jAj71yk8Bk69tLzELB2TlGzHjFwcEipGunUirkSxEKNjEdLF9EuBC027PB
-         CkShXKB7DzOX7YfMRMpAnkL/3OnwFvoAgmg5MeMjI9oMI+Dhf10Kp07KiEfqzMw1IPVO
-         ow++nwAqPIWPy+lzF2lBYC6MG0zDMzdjKM5pRpT8X5Td/riLgQ9o/r/LJ49AfkLizEPr
-         xinw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2+PuvuU6Xtnhy/qkT7JWL3dQJ+pEOfsPuGBrmIbM+l1RyVuXxYnzPed0cnhkmr56hU9OB3yrfN5oD9F8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw14PvGohceGaf+MA4pKTX8EACijaTmH0cF5wKjj+Z4GDVXnq8w
-	6HL27FgHCuPBGBDxE0LiBg3ssnqWd0Y7DbE3YpDdq0KM3Zc17b/PDyC078Y7G0k=
-X-Google-Smtp-Source: AGHT+IGhqpckvhWmOG6EkU6IpaNRuD3yiEYQhHIW7VWjV1wlz4lF/h38bNZ5W5o8L+nGAnp6CZNHFg==
-X-Received: by 2002:a05:6512:3502:b0:52b:bf8e:ffea with SMTP id 2adb3069b0e04-536587fce54mr3016089e87.40.1725713490684;
-        Sat, 07 Sep 2024 05:51:30 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f8cb76fsm143273e87.177.2024.09.07.05.51.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 05:51:30 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 07 Sep 2024 15:51:27 +0300
-Subject: [PATCH 4/4] arm64: dts: qcom: qcm6490-rb3gen2: enable WiFi
+	s=arc-20240116; t=1725713679; c=relaxed/simple;
+	bh=WLQm6GMzc7zXEGBNwh3DO1Hpv+5L6uoCI396K2z90Ow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YsL/cadk+VSxL4bsv3ayQbx6fDGIuG4sxJ0sivUl88z3UW3cqFLn/075H1bmQizsB4p+/nI9uxnLAirnVJkSCpJJwN87juPtcLDmrN1ov3y1k9IDAVfIfFd2jcCXmrzfjGP41vOCZFJPYf3jDuUxXR228VA/kDYhJsanL045sIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hMof9psU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBDB6C4CEC2;
+	Sat,  7 Sep 2024 12:54:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725713678;
+	bh=WLQm6GMzc7zXEGBNwh3DO1Hpv+5L6uoCI396K2z90Ow=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hMof9psUQTAc+ZWNpYRDlXUpKyevrdtAxtY48NEGpI42DtcoOvKYgUUwPOYO/qxZz
+	 v03fgNrEWscoj6y4D/heqeh2cH1zeSNLOGc2KXTvhi4kG9cvU2zsnOa7fAJFQwnPik
+	 H5qPYM/fUlJhfk78up329DGmUxbDMwDraHlGMitQm2LAFzQVVGVrqNlYkITZjZTdSO
+	 7hkbSiAKjkErf93r5EnyEGMp9z4mvEIeIqJSADXym/Z+8xdg20znTY8bXGW+9wCpJo
+	 G47GssiJe7nn/58sXpudBJSu5JykOoUd58UEQ4rQflQM0Onp4sGDxSRbgR6THm077d
+	 xXdkNvB8gm/eg==
+Message-ID: <440be61d-b60e-4179-8481-b9a7a0dabae5@kernel.org>
+Date: Sat, 7 Sep 2024 14:54:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] tty: serial: samsung: Fix A7-A11 serial earlycon
+ SError
+To: Nick Chan <towinchenmi@gmail.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+Cc: asahi@lists.linux.dev
+References: <20240907111431.2970-1-towinchenmi@gmail.com>
+ <20240907111431.2970-2-towinchenmi@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240907111431.2970-2-towinchenmi@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240907-rb3g2-fixes-v1-4-eb9da98e9f80@linaro.org>
-References: <20240907-rb3g2-fixes-v1-0-eb9da98e9f80@linaro.org>
-In-Reply-To: <20240907-rb3g2-fixes-v1-0-eb9da98e9f80@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Komal Bajaj <quic_kbajaj@quicinc.com>, 
- cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, ath11k@lists.infradead.org, 
- Kalle Valo <kvalo@kernel.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=821;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=Om2AhE/49Do7xLXq7286Q52iN2U3h4+EcOngsQ+aodU=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBm3ExO0pHd0WKIcWTD7FOZykBxXIUyqiFeVUak+
- CufdfpCGtaJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZtxMTgAKCRCLPIo+Aiko
- 1T+qB/wMeJVn2ogUiKRQAvEC4RAi62kilDEcn4FSYr3YYKo70j0oT6VQC5P5VcMwNyzuhErRAso
- 3NzNTD+RKZ791SQO/GiwMR8By8cT+7O4a2zQP4XmerfLuiD9a9dbk39eO5PmmvNhBXUzJIMCZuE
- /fOwB1ha+Uxm/7FqsINkm1seiZUajN6vrGZOfa9H0Ii9l+LB7cwuFZAo3LdkL5TQel7DzBiRSQa
- BwOipQTaAjqrCvnwZxe/fmxRmxV5iNYAKWrOxO+ccZHmlGeuS4DXHhY4jo5pApmPqq8uAsN2ptT
- eLOuthF6TLV6EgbN8ekSIpWOTcYaGMD/NRFVuBhSGl4Spw0q
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Enable WiFi device and specify the calibration variant name on the
-RB3gen2 device.
+On 07/09/2024 13:06, Nick Chan wrote:
+> Apple's earlier SoCs, like A7-A11, requires 32-bit writes for the serial
+> port. Otherwise, a SError happens when writing to UTXH (+0x20). This only
+> manifested in earlycon as reg-io-width in the device tree is consulted
+> for normal serial writes.
+> 
+> Change the iotype of the port to UPIO_MEM32, to allow the serial port to
+> function on A7-A11 SoCs. This change does not appear to affect Apple M1 and
+> above.
+> 
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> ---
+>  drivers/tty/serial/samsung_tty.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> index c4f2ac9518aa..27b8a50bd3e7 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -2536,7 +2536,7 @@ static const struct s3c24xx_serial_drv_data s5l_serial_drv_data = {
+>  		.name		= "Apple S5L UART",
+>  		.type		= TYPE_APPLE_S5L,
+>  		.port_type	= PORT_8250,
+> -		.iotype		= UPIO_MEM,
+> +		.iotype		= UPIO_MEM32,
+>  		.fifosize	= 16,
+>  		.rx_fifomask	= S3C2410_UFSTAT_RXMASK,
+>  		.rx_fifoshift	= S3C2410_UFSTAT_RXSHIFT,
+> @@ -2825,8 +2825,10 @@ static int __init apple_s5l_early_console_setup(struct earlycon_device *device,
+>  	/* Close enough to S3C2410 for earlycon... */
+>  	device->port.private_data = &s3c2410_early_console_data;
+>  
+> +	/* ... however, we need to change the port iotype */
+> +	device->port.iotype = UPIO_MEM32;
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
-Cc: ath11k@lists.infradead.org
-Cc: Kalle Valo <kvalo@kernel.org>
----
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 3 +++
- 1 file changed, 3 insertions(+)
+If there is going to be resend, then this comment is redundant and can
+be dropped - repeats the code and does not provide any explanation why.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-index 00b755779608..41d800e09638 100644
---- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-@@ -800,6 +800,9 @@ &ufs_mem_phy {
- 
- &wifi {
- 	memory-region = <&wlan_fw_mem>;
-+	qcom,ath11k-calibration-variant = "Qualcomm_rb3gen2";
-+
-+	status = "okay";
- };
- 
- /* PINCTRL - ADDITIONS TO NODES IN PARENT DEVICE TREE FILES */
+Which would also make the patch smaller and easier to read. See GS101
+earlycon.
 
--- 
-2.39.2
+
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
 
 
