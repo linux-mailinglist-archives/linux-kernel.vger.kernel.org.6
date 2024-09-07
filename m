@@ -1,152 +1,135 @@
-Return-Path: <linux-kernel+bounces-319607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A484E96FF2D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 04:21:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4239D96FF29
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 04:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0954EB24103
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 02:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C55CB2843AB
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 02:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A0517758;
-	Sat,  7 Sep 2024 02:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="jKoPCrmm"
-Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A127B10A24;
+	Sat,  7 Sep 2024 02:14:23 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEC912B8B;
-	Sat,  7 Sep 2024 02:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA8379C4
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 02:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725675702; cv=none; b=btPEcD/fFJMurCqiW0xD7XjzBhaSTnW/WR7ton1c19k1M+Z+jUa3PsME1DWOeWvl9rbR81gGq1lYqoeJ+bBwnQRLWzfbHotRUmgbfAcxyjIGJMb+WY6PIQ93xn2DgJ2giNEuX6oXC6JGr3xfrbX5eJychfbv4X6kW39pkrqjBCo=
+	t=1725675263; cv=none; b=CwQXlmwP8STD8v3GXDQDSIUWPnWBPL/S8O9wHXEjcjezoqs9gNb5JHcb4Q0eHc72FyXibqaTmluQS7lb1exnCSd/vWERS2Zx/RhOhgGzUeSqRLzG58AsVbwskrFvO2QCKUU/wo86XrNOHUwltwZfq9B5GDHBhD5Hu/GOEx36uE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725675702; c=relaxed/simple;
-	bh=KVcgGbe0Puvlh9uvndA1cO+hW+yn7BeykjWh4EST4VY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=VIvwA8NmnpSDSljqueQ+qvYdFolPSrralw5WODS3ApEMNiDxhyfjl0Y47qEUDSkAUztQwD8gwfaZxKB9huVXOPzNUBOiUEmMDJfERAclB6jLpGQYjWs/E0GCEkK0bONkL27djfFbrNyotQ5sHc0HGpN9Gs6XyjEA53aMos0lQDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=jKoPCrmm; arc=none smtp.client-ip=203.205.221.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725675696; bh=Cs/wCkkTNRrnDJRzRsiiPM+4JJOLnstAMMJ0VZ91F4c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=jKoPCrmmcBackERXWDPFQbiLoYtB0afP4gAniqU3l42cROsWImnjH9aa1pgKzZT5k
-	 2D49uQddq9T6BLQ0iO2ZS63pG7hZRbhmiRiWwaffwY4o+qKBZpeXyIgXTestGWYJad
-	 PQK1HOpF+NpOjSKM7su6R/gzrYseIVYKa0fWZWwU=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
-	id 2389A6BC; Sat, 07 Sep 2024 10:08:56 +0800
-X-QQ-mid: xmsmtpt1725674936tu3i6opnr
-Message-ID: <tencent_F437644B027489769D66E43D51361E965A09@qq.com>
-X-QQ-XMAILINFO: MgQY1K25Ph0mgpImX9e1MHEKA5FoAxz0ZtgOTaMoTLFN4Tosn6+6jExf/HSbMC
-	 cJboQiC/8v7SGzowUNNCQbpop3N9bkFY6nF88oDsytf6oUUEyeaoAbyh3TO4nORLTdAx4b5moQ4q
-	 1YWjr0dzYRh9GfmS8HFlL6T9G+24t3zrI2oMFqAJpVy4QrHylKQC9HHISQ+mtXRRLx8a6TBsOtcy
-	 a/2UuKH5BRenk9PREr/J8zmVVO8T81xEDtFr/815H217V6i3QfhLNRabkfuJK/5hDbP/hekT3WYn
-	 rYlb5mRrMsvHPU2mq0VjgQ+ZDmXfNom8Nf6VZ6bdAsF0C2mVSYP2OxdUkyZtEFeAlcU6sCKXRU/M
-	 HWNhHVtmn/Xsyj19lbiVmKOPpDy0lNbOXzrNdDSysmllJhLCWaUspJpFU1LSnnlkESMrQ0CqQnAq
-	 guy50zBXyI07w2Ah7mK0aK6Gu3TUqiPnbENkKXLXdvWcjnaLITrIdmpa2YKUEwVolhvcwKs28aHW
-	 qwar/r2zwAz+2+MyMsXOsVsWAnk1Sbwod3+yrzLBuNmQC8y5UlJcm/P/HUVcPdl1Dbkndqt8awZV
-	 2l6+al2hZYIvj1SKcUn49CEycDPHSvA8GrQuCXXjL8oQlfonHDYrHIOVu6N3v2G4vAz6U9toqZOy
-	 GyWrRMKfvtUaqhz6DXalgGNFpKkYg+DFtoy+92ZhksZQubY+PlS+uCY/bJd0i4VVdSYKkU7qkBT5
-	 adXSd/afIJZMQnpMTMQRZ8Y03H0mtzerEx4jsL34i3PNeIN4JvGsTemhmOPHj1I7dkIWA7ezAsf7
-	 oRfgdKjyYyYcrKwkMSxw0SwwgT6NfMeXL4a3YcdMpLPxUtEBFExDnHNe3nCs/hgXzimtyKUJBhx0
-	 P9RSoBXCmwjyniS7kWi+GJUDLjpBFaGB+74kGoITG79t6cwLzg1TFTrJdLikqcxtTeacH2zPgSqy
-	 w0356afhFJNh7lx4HwEDv+QFsjfB8J
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: stern@rowland.harvard.edu
-Cc: eadavis@qq.com,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V2] USB: usbtmc: prevent kernel-usb-infoleak
-Date: Sat,  7 Sep 2024 10:08:57 +0800
-X-OQ-MSGID: <20240907020856.519704-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <25d5853a-7156-4892-a383-4547e9c95472@rowland.harvard.edu>
-References: <25d5853a-7156-4892-a383-4547e9c95472@rowland.harvard.edu>
+	s=arc-20240116; t=1725675263; c=relaxed/simple;
+	bh=Qgd4T5V1oPEnKn8aqh7wggst8XqjnqNKzW2g68FuuSE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LwoV2Eojbxu2iUoOAMFALwLg7D1ORJb/rJzq+n1Mm/6mUXW8FyzpFf0Zc8B2p5JvQMO1tcmoWopgTJ4vKLije9zzVR8V3bV8g1/qTSai0Wx1hu2PS3rC5HXmMu3AYtNs5cVXulHeuusNYOCE21/qOnyagi/CrDhiupVaZYeMYoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82aa467836eso47625839f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 19:14:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725675261; x=1726280061;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CPrtT89GWnAYj4eqiYYj81c5PFHSAOrrMkACYbXqjSY=;
+        b=E8pBIDJeI5K4uzEmsSNRYAHEBZYxTRDYaHJmbBQIkXGvknzlmGiVraKEMQweOXfo2b
+         PmCuhgFX96QwVCTKPysq0tXO67Cfepv2NyeEMD/wLLLqgFH4CqCJbJVRyGt3tpLFntzh
+         oBRZ2Z+pKnGYP+nU0nVPpNFM96CZ0XafPJ2YL1YjhMNKBEuh+qPo88+s4EL7PLpwQ384
+         Ou6CXsk+1x0sT4C1LjVvAh2VEBC8iNZd1nbQWiBIHMNKT4EkOySAY5HKzigkyCaVlFDN
+         3tAzaXbpWDCbGfm+XekrLnspS7XgFKodEZebNpuvwfT+F1oJofQDpIkvM9QChRKTYNw0
+         M4QQ==
+X-Gm-Message-State: AOJu0YwklDEJLi7yPhTfa+HnlPdzOWgV/rTW6bOvrUL60zQoSPbp/mYL
+	Cbr2SicRWmhYnrfWhrlkCtElKhIplwHVrk2oP6isoILO2+990U5EbW6jOg0/JF9QejWZ43Tq3sp
+	a7G8HkrGIKFJRKHlJnmzovQqGF/rBLiWIOvuzA/KcPF+eKK1pyrX9Qek=
+X-Google-Smtp-Source: AGHT+IHdgkgzAaJJ+VOyNfUwpjOmNPZcDF2aNtxLvHZaefAv0lvoC1449d3IzP8BOkD4B7mmpUtYZ84LfLKBAYbKI5FjXRRlTcmt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:1308:b0:4c0:9a3e:c259 with SMTP id
+ 8926c6da1cb9f-4d084ff3c43mr460905173.5.1725675260964; Fri, 06 Sep 2024
+ 19:14:20 -0700 (PDT)
+Date: Fri, 06 Sep 2024 19:14:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ed7d9406217e14f8@google.com>
+Subject: [syzbot] [kernel?] kernel panic: corrupted stack end in
+ lock_is_held_type (2)
+From: syzbot <syzbot+7386187dbd10f33cc0dc@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 6 Sep 2024 10:28:11 -0400, Alan Stern wrote:
-> On Fri, Sep 06, 2024 at 10:11:03PM +0800, Edward Adam Davis wrote:
-> > The syzbot reported a kernel-usb-infoleak in usbtmc_write.
-> > 
-> > The expression "aligned = (transfersize + (USBTMC_HEADER_SIZE + 3)) & ~3;"
-> > in usbtmcw_write() follows the following pattern:
-> > 
-> > aligned = (1 + 12 + 3) & ~3 = 16   // 3 bytes have not been initialized
-> > aligned = (2 + 12 + 3) & ~3 = 16   // 2 bytes have not been initialized
-> > aligned = (3 + 12 + 3) & ~3 = 16   // 1 byte has not been initialized
-> > aligned = (4 + 12 + 3) & ~3 = 16   // All bytes have been initialized
-> > aligned = (5 + 12 + 3) & ~3 = 20   // 3 bytes have not been initialized
-> > aligned = (6 + 12 + 3) & ~3 = 20   // 2 bytes have not been initialized
-> > aligned = (7 + 12 + 3) & ~3 = 20   // 1 byte has not been initialized
-> > aligned = (8 + 12 + 3) & ~3 = 20   // All bytes have been initialized
-> > aligned = (9 + 12 + 3) & ~3 = 24
-> > ...
-> 
-> What is the purpose of aligned?  Why doesn't the driver simply use
-> USBTMC_HEADER_SIZE + transfersize instead of rounding it up to a 
-> multiple of 4?
-I just found out that the logic of aligned calculation is like this. 
-As for why it is calculated like this, perhaps Guido Kiener can provide
-a clearer explanation.
-It was introduced by commit 4d5e18d9ed93 ("usb: usbtmc: Optimize usbtmc_write").
-> 
-> > Note: #define USBTMC_HEADER_SIZE      12
-> > 
-> > This results in the buffer[USBTMC_SEAD_SIZE+transfersize] and its
-> > subsequent memory not being initialized.
-> > 
-> > The condition aligned < buflen is used to avoid out of bounds access to
-> > the buffer[USBTMC_HEADER_SIZE + transfersize] when "transfersize = 
-> > buflen - USBTMC_HEADER_SIZE".
-> > 
-> > Fixes: 4ddc645f40e9 ("usb: usbtmc: Add ioctl for vendor specific write")
-> > Reported-and-tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
-> > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> > ---
-> >  drivers/usb/class/usbtmc.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
-> > index 6bd9fe565385..faf8c5508997 100644
-> > --- a/drivers/usb/class/usbtmc.c
-> > +++ b/drivers/usb/class/usbtmc.c
-> > @@ -1591,6 +1591,10 @@ static ssize_t usbtmc_write(struct file *filp, const char __user *buf,
-> >  		goto exit;
-> >  	}
-> >  
-> > +	if (aligned < buflen && (transfersize % 4))
-> 
-> Shouldn't this be
-> 
-> 	if (USBTMC_HEADER_SIZE + transfersize < aligned)
-Logically, it seems possible to write it this way.
-> 
-> ?
-> 
-> Alan Stern
-> 
-> > +		memset(&buffer[USBTMC_HEADER_SIZE + transfersize], 0,
-> > +			aligned - USBTMC_HEADER_SIZE - transfersize);
-> > +
-> >  	dev_dbg(&data->intf->dev, "%s(size:%u align:%u)\n", __func__,
-> >  		(unsigned int)transfersize, (unsigned int)aligned);
+Hello,
 
-BR,
-Edward
+syzbot found the following issue on:
 
+HEAD commit:    1ff95eb2bebd riscv: Fix RISCV_ALTERNATIVE_EARLY
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
+console output: https://syzkaller.appspot.com/x/log.txt?x=15316567980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c79e90d7b2f5b364
+dashboard link: https://syzkaller.appspot.com/bug?extid=7386187dbd10f33cc0dc
+compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: riscv64
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-1ff95eb2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1491182abe4e/vmlinux-1ff95eb2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/926302c5c645/Image-1ff95eb2.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7386187dbd10f33cc0dc@syzkaller.appspotmail.com
+
+Kernel panic - not syncing: corrupted stack end detected inside scheduler
+CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.11.0-rc2-syzkaller-g1ff95eb2bebd #0
+Hardware name: riscv-virtio,qemu (DT)
+Call Trace:
+[<ffffffff80010216>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stacktrace.c:130
+[<ffffffff85edbc4e>] show_stack+0x34/0x40 arch/riscv/kernel/stacktrace.c:136
+[<ffffffff85f3714c>] __dump_stack lib/dump_stack.c:93 [inline]
+[<ffffffff85f3714c>] dump_stack_lvl+0x108/0x196 lib/dump_stack.c:119
+[<ffffffff85f371f6>] dump_stack+0x1c/0x24 lib/dump_stack.c:128
+[<ffffffff85edc812>] panic+0x388/0x806 kernel/panic.c:348
+[<ffffffff85f4533a>] schedule_debug kernel/sched/core.c:5745 [inline]
+[<ffffffff85f4533a>] __schedule+0x3230/0x3288 kernel/sched/core.c:6411
+[<ffffffff85f45a4c>] preempt_schedule_notrace+0xe0/0x2be kernel/sched/core.c:6801
+[<ffffffff85f39cc0>] lockdep_enabled kernel/locking/lockdep.c:118 [inline]
+[<ffffffff85f39cc0>] lock_is_held_type+0x7a/0x1f2 kernel/locking/lockdep.c:5824
+[<ffffffff8017e84a>] lock_is_held include/linux/lockdep.h:249 [inline]
+[<ffffffff8017e84a>] __might_resched+0x2b4/0x5fc kernel/sched/core.c:8425
+[<ffffffff800e099c>] run_ksoftirqd kernel/softirq.c:930 [inline]
+[<ffffffff800e099c>] run_ksoftirqd+0xec/0x144 kernel/softirq.c:920
+[<ffffffff8016980e>] smpboot_thread_fn+0x654/0xb9c kernel/smpboot.c:164
+[<ffffffff801535f0>] kthread+0x28c/0x3a6 kernel/kthread.c:389
+[<ffffffff85f5b972>] ret_from_fork+0xe/0x1c arch/riscv/kernel/entry.S:239
+SMP: stopping secondary CPUs
+Rebooting in 86400 seconds..
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
