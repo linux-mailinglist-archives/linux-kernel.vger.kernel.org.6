@@ -1,128 +1,247 @@
-Return-Path: <linux-kernel+bounces-319725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470EB970161
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:31:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D21D5970166
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04FD628136C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:31:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8F21F25177
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D35214F119;
-	Sat,  7 Sep 2024 09:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06ED7266AB;
+	Sat,  7 Sep 2024 09:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G2DuyrRn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kruces-com.20230601.gappssmtp.com header.i=@kruces-com.20230601.gappssmtp.com header.b="Q0Y38i1z"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A951B85DC
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 09:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022D614B950
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 09:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725701480; cv=none; b=JjM/zWnRMwH/CeK6qYab/nHBFtUW3FiH2ZXitsT4G0vwF35yYnBvxNHWHn4GTlDdYe76ugFT4wYvo8ONlVMPJN/+bpsfEEoOiBJdLXQieI3EHQpR23sFV0IP88yrDivivUSrG/xtuMRON0G+nDoKTw29kL2ZxLHKPBHHE9Yc2UA=
+	t=1725701571; cv=none; b=Hv7wLJOE2LanVhYTDPH4TfCL4dvS5fHu0vn2WK5B/NGfkroYBqMisis1zhDv48Y2q8Kbq7DuW8IPLpgzUeomf7mphn9EEfhrTflqws/oj0CLM7y4hDN0LWDb2m9/VZO6ckOgUXx0uurxj6tB/kqpGTBabcc6nSKfO4nSGbXfj24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725701480; c=relaxed/simple;
-	bh=5rgiPfSgiSkQ2a20vad2k+7ksMwZjw8Ed0gNn4udwEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c/OqcmTm2sTSJqHGyK72SFzZK5S/KyGUU9weSEMGfE5fiHlSncFF0/GG40CDxV8jxNN8vaZ9aSKvAxw8/d78DAQMnWIviqWj7JDSJliTSfAKgdmnY7tn6xV7ZdOx2usu3buyuJS83mDZLUOdtmvQQILqkuovM9QkN9HCT+tZV+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G2DuyrRn; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725701478; x=1757237478;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5rgiPfSgiSkQ2a20vad2k+7ksMwZjw8Ed0gNn4udwEQ=;
-  b=G2DuyrRnYmGr8/Thz6Bt83ipxZsEgNJCd+Eb7p6PUHEnW3buto0kY2G4
-   EcQjyyCs0BLkPD/p3HJylY86T1MLKdsuOxvQCA+AWRkES0GtMLCSKohRn
-   Eh6mko7Ui2Uu+0RWIW54HBjtAfRKw2utNsjkC06PEg+J1OJENHCPcOL1H
-   aXnepHVGcYBjdt4oUgHN5W8KU1PpI+TSCSajX2m5j5R9NPYpWFdQ+1wNI
-   R/aBNwFfKxbciIw/g0rl3Y+VMPTut98frnLkIeOtyr+gXGHLSPq0Bvm09
-   7sxqfzDFFYgBWpG7mxmJoiUkpULj2LyO+y9/7jB80x8BPxOIxM+gVsz0e
-   w==;
-X-CSE-ConnectionGUID: sc8nRzB1Q8mC2BWxnLREPA==
-X-CSE-MsgGUID: W/3Gnt5FQEeN3kkfQRLqkQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="13420522"
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="13420522"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 02:31:18 -0700
-X-CSE-ConnectionGUID: AV1+//C3THmHFO36yo6i8Q==
-X-CSE-MsgGUID: C4FsPBRpTSmt2Sbvslxpiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="66510215"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 07 Sep 2024 02:31:14 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1smrmh-000COC-1S;
-	Sat, 07 Sep 2024 09:31:11 +0000
-Date: Sat, 7 Sep 2024 17:30:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] drm/imx: Add missing DRM_BRIDGE_CONNECTOR dependency
-Message-ID: <202409071746.fBgS0kyW-lkp@intel.com>
-References: <20240906063857.2223442-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1725701571; c=relaxed/simple;
+	bh=pLRCLThgiNm0DnTCnzf1SU7HK+Xdrn0HCAQw1/fv6eE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=paTYpZ5pVU4ZpcPPY81YO9rRvYHLLkrQUQ+xt4h8pg8D2Zx5lBRoDkGVJW2cCsQRqAOXzlCKvCoXmWuQ43+gF4WPbfhEdg9Z0RsY2p3A0lXy19rd8cRcD9UunF4yg6+t1oOBOfITj5hEkev6oMgmtf9GKUdMKXT8y4dbIpnXwH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kruces.com; spf=pass smtp.mailfrom=kruces.com; dkim=pass (2048-bit key) header.d=kruces-com.20230601.gappssmtp.com header.i=@kruces-com.20230601.gappssmtp.com header.b=Q0Y38i1z; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kruces.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kruces.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d24f98215so35276966b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 02:32:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kruces-com.20230601.gappssmtp.com; s=20230601; t=1725701567; x=1726306367; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TYAYDwYU9XEQd7B0n4GlUaSi+kByWiSIqgApWZK2k7Y=;
+        b=Q0Y38i1zmVilqk1yG+h0lMBTvNoXrstnG7FdvQT8ONLupqjAecalrZo0u+cE9rqkPY
+         nbPkTsjQ3X2RFPVhFq8ZfypcIzXf/hUceAGd3FIhNTU/YUO4v+ZNGJO/nyzqWusL2+V7
+         jULr/5wfpqPxho4ZxsOzJ5JHOVp5qeTxdk8ziOyPF1ZSx1IBJwfxiLP+xWEM1rzB3p6T
+         XcrmI/pvptqHprJFglWaeNVLadbC2GsBGBlGhfCmbCVkHIAbn3KMq9p9btBW/EsTVUQV
+         EU66u5jpoW4h6BfeNTp9HGGG6KaF4vGcP01qFBx36+A/e4eoIhfA/vhIHSrZNNofKAsB
+         GAhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725701567; x=1726306367;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TYAYDwYU9XEQd7B0n4GlUaSi+kByWiSIqgApWZK2k7Y=;
+        b=aL016eOmslGorS9kZt/OwXR24n+ZfsULFGh3x8Un3TrMiGpuwdJpBIYIKM63/PPZ5Q
+         DDBY14GxTLuemS5CqUlLkrhybKdNLNgVVTeUR+Lz6IsD/o0eu04wRW0Hi8wlX6JohH+S
+         Q9NUWH/nZ96hrpl4KFGOdokpfiCaYAcHtQf5/hpvovRQFwuHGvJKMVwejDR0g7MluMa2
+         6Gx/jy+CBfhbrHnYYGiBYIRQh06tyZhXli3OmGFUz0btpthp4vpUl0Ag6Ev5RA3o7xU8
+         do+ZSpBlFKF7KdCT9WOP9U3vUvkEoYEJ1ZJPnRWpPA07bqP0VMEkjWv0cFSVf68eYYcY
+         9/1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ8xqja4TujolIE2XzdxuRvY3AhoTQsEBzKXAV4K+I+rBqgyafJesjfjxYy46yLa4Yu2J/a6OQPRwodGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGtc9vTbUYw1dpiKGTaPzn+668dIpaHzqZ1yn7VuWmV4p5T63i
+	fNm38349oviHT9Pmg9NaC64ABxw9Lvwvtvo5VdElDENZK4s5DsIAE/9RQO5MbvymEdzrkPzw5Sn
+	WxcUCCDf/XkIHfsP4gHfi6z+foQmo7spEA3yX0A==
+X-Google-Smtp-Source: AGHT+IGWwhV1FppouK54v3V9A8eHwS6rbK0nonXkKqq2rXZ9hT6w4qHPiZkVwNteqV+2HfQ53hj21jvfFLgYyvqTkhg=
+X-Received: by 2002:a17:906:6a15:b0:a7a:9144:e23a with SMTP id
+ a640c23a62f3a-a8d248a6d5fmr79801166b.43.1725701567219; Sat, 07 Sep 2024
+ 02:32:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906063857.2223442-1-alexander.stein@ew.tq-group.com>
+References: <20240906-macos-build-support-v2-0-06beff418848@samsung.com>
+ <20240906-macos-build-support-v2-8-06beff418848@samsung.com> <CAK7LNASpWSXbjF_7n0MhosNism=BpvHOnKsa344RPM_wmC9dGA@mail.gmail.com>
+In-Reply-To: <CAK7LNASpWSXbjF_7n0MhosNism=BpvHOnKsa344RPM_wmC9dGA@mail.gmail.com>
+From: "Daniel Gomez (Samsung)" <d+samsung@kruces.com>
+Date: Sat, 7 Sep 2024 11:32:20 +0200
+Message-ID: <CABj0suBQCc8=0tLng=OWW=K1hjFuLFZWhbjsqHtz2FzZt4i0sw@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] Documentation: add howto build in macos
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: da.gomez@samsung.com, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Lucas De Marchi <lucas.demarchi@intel.com>, 
+	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
+	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
+	Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Simona Vetter <simona.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, 
+	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
+	Finn Behrens <me@kloenk.dev>, gost.dev@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alexander,
+On Sat, Sep 7, 2024 at 10:33=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> On Fri, Sep 6, 2024 at 8:01=E2=80=AFPM Daniel Gomez via B4 Relay
+> <devnull+da.gomez.samsung.com@kernel.org> wrote:
+> >
+> > From: Daniel Gomez <da.gomez@samsung.com>
+> >
+> > Add documentation under kbuild/llvm to inform about the experimental
+> > support for building the Linux kernel in macOS hosts environments.
+> >
+> > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+>
+>
+> Instead, you can add this instruction to:
+>
+> https://github.com/bee-headers/homebrew-bee-headers/blob/main/README.md
 
-kernel test robot noticed the following build warnings:
+Sure, that can be done as well. But the effort here is to have this
+integrated. So, I think documentation should be in-tree.
 
-[auto build test WARNING on next-20240905]
-[cannot apply to v6.11-rc6 v6.11-rc5 v6.11-rc4 linus/master v6.11-rc6]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Stein/drm-imx-Add-missing-DRM_BRIDGE_CONNECTOR-dependency/20240906-144116
-base:   next-20240905
-patch link:    https://lore.kernel.org/r/20240906063857.2223442-1-alexander.stein%40ew.tq-group.com
-patch subject: [PATCH 1/1] drm/imx: Add missing DRM_BRIDGE_CONNECTOR dependency
-config: alpha-kismet-CONFIG_DRM_BRIDGE_CONNECTOR-CONFIG_DRM_IMX_LDB-0-0 (https://download.01.org/0day-ci/archive/20240907/202409071746.fBgS0kyW-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20240907/202409071746.fBgS0kyW-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409071746.fBgS0kyW-lkp@intel.com/
-
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for DRM_BRIDGE_CONNECTOR when selected by DRM_IMX_LDB
-   WARNING: unmet direct dependencies detected for DRM_BRIDGE_CONNECTOR
-     Depends on [n]: HAS_IOMEM [=y] && DRM [=y] && DRM_DISPLAY_HELPER [=n]
-     Selected by [y]:
-     - DRM_IMX_LDB [=y] && HAS_IOMEM [=y] && DRM [=y] && DRM_IMX [=y] && COMMON_CLK [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+>
+>
+>
+>
+> > ---
+> >  Documentation/kbuild/llvm.rst | 78 +++++++++++++++++++++++++++++++++++=
+++++++++
+> >  1 file changed, 78 insertions(+)
+> >
+> > diff --git a/Documentation/kbuild/llvm.rst b/Documentation/kbuild/llvm.=
+rst
+> > index 6dc66b4f31a7..de3bde925793 100644
+> > --- a/Documentation/kbuild/llvm.rst
+> > +++ b/Documentation/kbuild/llvm.rst
+> > @@ -186,6 +186,84 @@ yet. Bug reports are always welcome at the issue t=
+racker below!
+> >       - Supported
+> >       - ``LLVM=3D1``
+> >
+> > +Experimental Build in macOS
+> > +---------------------------
+> > +
+> > +Building on macOS with LLVM is experimental. This section provides ste=
+ps to
+> > +install dependencies via Homebrew, set up the environment, and start t=
+he build
+> > +process.
+> > +
+> > +1. **Create a Case-Sensitive Volume**
+> > +
+> > +   For fetching and building the project, you need a case-sensitive vo=
+lume. Use the following
+> > +   command to create one:
+> > +
+> > +   .. code-block:: shell
+> > +
+> > +      diskutil apfs addVolume /dev/disk<N> "Case-sensitive APFS" linux
+> > +
+> > +   Replace `/dev/disk<N>` with the appropriate disk identifier.
+> > +
+> > +2. **Install Build Dependencies**
+> > +
+> > +Use Homebrew to install the required build dependencies.
+> > +
+> > +- **Core Utilities**: `coreutils`, `findutils`, `gnu-sed`, `gnu-tar`, =
+`grep`,
+> > +  `llvm`, `make`, and `pkg-config`.
+> > +
+> > +   .. code-block:: shell
+> > +
+> > +      brew install coreutils findutils gnu-sed gnu-tar grep llvm make =
+pkg-config
+> > +
+> > +- **Bee Headers**: Install byteswap, elf and endian headers using the
+> > +  `Bee Headers Project <https://github.com/bee-headers/headers>`_.
+> > +
+> > +   .. code-block:: shell
+> > +
+> > +      brew tap bee-headers/bee-headers
+> > +      brew install bee-headers/bee-headers/bee-headers
+> > +
+> > +   After installation, verify the `CFLAGS` with `pkg-config`:
+> > +
+> > +   .. code-block:: shell
+> > +
+> > +      pkg-config --cflags bee-headers
+> > +      -I/opt/homebrew/Cellar/bee-headers/0.1/include
+> > +
+> > +3. **Configure the PATH**
+> > +
+> > +   Include all the required GNU tools and LLVM in your `PATH`. This en=
+sures that
+> > +   the necessary tools are available during the build process.
+> > +
+> > +   .. code-block:: shell
+> > +
+> > +      PATH=3D"/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+> > +      PATH=3D"/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"
+> > +      PATH=3D"/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
+> > +      PATH=3D"/opt/homebrew/opt/gnu-tar/libexec/gnubin:$PATH"
+> > +      PATH=3D"/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
+> > +      PATH=3D"/opt/homebrew/opt/make/libexec/gnubin:$PATH"
+> > +      PATH=3D"/opt/homebrew/opt/llvm/bin:$PATH"
+> > +
+> > +Building the Project
+> > +--------------------
+> > +
+> > +Once the environment is set up, you can start the build process using =
+LLVM. Run
+> > +the following commands to initiate the build:
+> > +
+> > +.. code-block:: shell
+> > +
+> > +   make LLVM=3D1 allyesconfig
+> > +   make LLVM=3D1 -j$(nproc)
+> > +
+> > +Supported in macOS
+> > +~~~~~~~~~~~~~~~~~~
+> > +
+> > +At the moment, only arm64 is supported and tested with `allyesconfig` =
+Makefile
+> > +configuration target. Other Kconfig options not included in `allyescon=
+fig`
+> > +target and architectures may be supported as well as support in macOS =
+is based
+> > +on LLVM effort and maintenance.
+> > +
+> >  Getting Help
+> >  ------------
+> >
+> >
+> > --
+> > 2.46.0
+> >
+> >
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
 
