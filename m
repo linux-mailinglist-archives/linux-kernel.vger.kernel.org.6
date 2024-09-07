@@ -1,105 +1,111 @@
-Return-Path: <linux-kernel+bounces-319844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFFD69702FC
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:38:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B848D9702FD
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E87E81C216C0
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:38:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D40911C21781
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA4215F41B;
-	Sat,  7 Sep 2024 15:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7038D15F41B;
+	Sat,  7 Sep 2024 15:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPYuGfou"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hM43w0MD"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA551B85DC;
-	Sat,  7 Sep 2024 15:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9573A1591E0;
+	Sat,  7 Sep 2024 15:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725723481; cv=none; b=Vmle8trmBFJBv7BrMoYxFGOW9R+bNRiD6SBk3JyBikSj/CxK3IBVw3OiMHiru/qwZmcHkJA5AkS20A1HgzDs0Cktr5Z+1PUMiKYB5HpAlkHYrLavNC6NE+eZnzrxDkMimkpur8O+6zb7Hleg+n4FzsQSZg2QO5ii0PVJ8E5bybc=
+	t=1725723781; cv=none; b=CHxGTo7zOzbKvitecZg1Ka7/M+dPPkjegpjsmnfRE9tD9RIeTGmvoJuHUBUIwWmasblBwUvQGLICTP+98nir5MAg/amNtUjzQwg4Bywo21rfRegFRYSI/bx7W3LyPUGmPr5qEkRgvmSEIv2CVx+Kxemky///o9qK3cnLl5qH68E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725723481; c=relaxed/simple;
-	bh=+1PBS0rsaFakbdn65HASWoi1e+X/NQMiqYkoRsesY1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OAtZ/87fXxfZLG0PJbqPIEq0eVhEZTmnEndW/BjVR+WipRhFUbA6TofkK/SxDqdQdtAmItspCNzJ449Z94GHUBUMDDTedri+DH5lTPQSikFfoXKZkHuVjRJ7P6r9QgEd7jMdBoBdLY92I9Iji+mHhLr3JjOqi67quilR0KIIfXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kPYuGfou; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3B73C4CEC2;
-	Sat,  7 Sep 2024 15:37:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725723480;
-	bh=+1PBS0rsaFakbdn65HASWoi1e+X/NQMiqYkoRsesY1I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kPYuGfouKah82OISpuADTXAqIrlhixSPxphgguyBnKa5H1BLqx5Shp9IQUw92jTou
-	 izPk7HBGjwlHdHMHK13jNz0TuxT8AvBxnS24g7hjJIBVR9n3WxaAdTTroQT0dAgQ8g
-	 2TpvomPotN6ug/PiH0eCwtQbpDL+BlFQGXu2dlgxUauW6F/svG/NrT9m5JDBITCOog
-	 njteuiQKqoDq2WDhM4JFwXdLb1zquRozgmKkZSerE9J80UxYui2zAq7tCD33tjISY+
-	 BFSXD58z2eyDii4TEdJRxj/5S1ZIhINCxBxXKH6FeJfaXtFnnStjEjmHcMycSE23k3
-	 2TckZmcgxNAFA==
-Date: Sat, 7 Sep 2024 16:37:52 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>, Basavaraj Natikar
- <Basavaraj.Natikar@amd.com>, linux-input@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina
- <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Lorenzo Bianconi
- <lorenzo@kernel.org>
-Subject: Re: [PATCH v2 0/3] iio: Introduce and use aligned_s64 type
-Message-ID: <20240907163752.2eb3be6a@jic23-huawei>
-In-Reply-To: <20240903180218.3640501-1-andriy.shevchenko@linux.intel.com>
-References: <20240903180218.3640501-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725723781; c=relaxed/simple;
+	bh=Sm+rgyd9zv/hqvUe/8YRfKp1YDQm16uTNrMhxVvTFK4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZMmfPvLN2ZmGO4VVqsuYHqJYcOslpxkwcNzFtKEkgnrAAzuYa6T7wORFYT/4bvaGtHyo/OteN434MpY2G4wyv9+8X2JdplKromV1RPDvBKmMGTvxApoMK9k5gJzsRiYgnqyuqq0YH9a9wrgg6rAOFeM5ryehu429oaS4hKuVAG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hM43w0MD; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7d4f9e39c55so2133112a12.2;
+        Sat, 07 Sep 2024 08:43:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725723780; x=1726328580; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HHL61UNl0PE9rcFIUgRmEpCiRnTHikV3tbHNl+5vifI=;
+        b=hM43w0MDBe3b+/XMTzbMaB/gpksZ/YNLy8uRxKjUpz89hh4JaZKi8cHjaVqVq/6D3R
+         eKdhsBJHQm5sVgaU1LJ0qjDP/PQH6PfKhs80oSVS4Y8yDKKN8hwF1hawqJ4rEbtWbyqE
+         AaEmXVci2Gzuf5hQSapQVjfoct6m61BNcZYrWBw7suD9SrDOHvFAhRIS0zdDP/dN18cO
+         R+usxYn5PZFE2ahZvCURqCfz2U5FWZ5KPmUJhcVsrKNDIDLLXRRN9K/4obyCYotNlFY8
+         /TVSPRiFY1sLDKURgT8207J4SxoYCdLs6xezZwargHdOfmcwUiezHSfV2dNKsRAkKF01
+         zTQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725723780; x=1726328580;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HHL61UNl0PE9rcFIUgRmEpCiRnTHikV3tbHNl+5vifI=;
+        b=E6cwRnNpvVFAMUlOwFao21In/r39L9RCbnemcntDOR4J6U8GfvR9vDs/kIQgUTpFYW
+         OkU7hYID5GyW41F2StCvzZMf1zRF1WqWnoV3kZQDJPMs7YFGPt6vryIzidMyXAYNppiX
+         Ca1/ShJvzAQ9hWKFVtqP+C4alPnqkkVC4/dQDQsU4IUCBSO1J2i4dzO00ayaqB9WEaUs
+         Rm19PeDDIYo5jU6W4YuWz6ZGXNqPrnrEfKC/yDkBTCG1lRNRmWJ6ZJoVppHRmnr3eN7q
+         uJjrdwFnvnwaAdVErmk6jIPc9UjNqIdrorPxCU4hfyN45N2H4+/DdJUIjZCYT33z/pY/
+         cATA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqFRyxorv7C20yNu8QRdnaECsLYxfoBRTIkitQRKsiGms8Z+am5ZtefHsBH1X2X+RaZsdLyVbP6Jppkvg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr8hfd+Vk4sf80t0+eFknr0CKI9PJjD+9aGypt+eKznBurX90q
+	ZWra/siKpp+I1d6AyO8kVIRTHsDBYULC3v39xQ+1v5RxtTwwoPsM
+X-Google-Smtp-Source: AGHT+IGC+zwd/vodOVDir/lP0ykmfQaHbTnT7hfJAadEscELYS2F5RPd6K3fkIdrCP83hx1IBH+WLQ==
+X-Received: by 2002:a17:90b:3696:b0:2d3:dca0:89b7 with SMTP id 98e67ed59e1d1-2daffa3a9d4mr2972439a91.3.1725723779763;
+        Sat, 07 Sep 2024 08:42:59 -0700 (PDT)
+Received: from fedora.. ([106.219.163.133])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db033fea14sm1417024a91.0.2024.09.07.08.42.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Sep 2024 08:42:59 -0700 (PDT)
+From: Riyan Dhiman <riyandhiman14@gmail.com>
+To: Markus.Elfring@web.de,
+	rafael@kernel.org,
+	viresh.kumar@linaro.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: mediatek-hw: Fix resource management and error handling in mtk_cpu_resources_init()
+Date: Sat,  7 Sep 2024 21:12:49 +0530
+Message-ID: <20240907154254.4704-1-riyandhiman14@gmail.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <c1e8c2f1-d123-4e72-a774-f15daa156afb@web.de>
+References: <c1e8c2f1-d123-4e72-a774-f15daa156afb@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue,  3 Sep 2024 20:59:03 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+>> Memory region and IO memory were not released if mtk_cpu_create_freq_table() failed.
+>> Added error handling to ensure that IO memory is unmapped and the memory region is
+>> released properly to prevent resource leaks and ensure all resources are cleaned up on error.
+>
+> * Would you like to improve such a change description another bit
 
-> Instead of having open coded idea of aligned member, use
-> a newly defined type like it's done in, e.g., u64 case.
-> Update a few IIO drivers to show how to use it.
-> 
-> v2 (took only one year from v1, not bad!):
-:)
+Should I elaborate a little more on the issue and explain the fix I have created?
 
-Applied with that tweak for patch 2 that you called out.
+>  also according to other line length preferences?
 
-Will probably be next cycle though before these go upstream
-(so think of this as queuing them up very early for 6.13 :)
+Can you please help me a little bit about this? Is it the character lenght of subject?
+should I change it to: cpufreq: mediatek: Fix resource leaks on mtk_cpu_create_freq_table() 
+failure.
 
-> - avoided touching unrelated comments, code lines, etc. (Jonathan)
-> - used kernel internal type for the in-kernel code (Jonathan)
-> 
-> Andy Shevchenko (3):
->   types: Complement the aligned types with signed 64-bit one
->   iio: imu: st_lsm6dsx: Use aligned data type for timestamp
->   iio: hid-sensor: Use aligned data type for timestamp
-> 
->  drivers/iio/accel/hid-sensor-accel-3d.c              | 2 +-
->  drivers/iio/gyro/hid-sensor-gyro-3d.c                | 2 +-
->  drivers/iio/humidity/hid-sensor-humidity.c           | 2 +-
->  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h              | 3 +--
->  drivers/iio/light/hid-sensor-als.c                   | 2 +-
->  drivers/iio/orientation/hid-sensor-incl-3d.c         | 2 +-
->  drivers/iio/orientation/hid-sensor-rotation.c        | 2 +-
->  drivers/iio/position/hid-sensor-custom-intel-hinge.c | 2 +-
->  drivers/iio/pressure/hid-sensor-press.c              | 2 +-
->  drivers/iio/temperature/hid-sensor-temperature.c     | 2 +-
->  include/linux/types.h                                | 3 ++-
->  include/uapi/linux/types.h                           | 1 +
->  12 files changed, 13 insertions(+), 12 deletions(-)
-> 
+> * How do you think about to add any tags (like "Fixes" and "Cc") accordingly?
 
+Should I change "patch" in subject to "Fixes" or add commit id in the patch message with 
+fixes tag? Also, whom should add I in cc since I can't find any other email from get_maintainer 
+script.
+
+Regards,
+Riyan Dhiman
 
