@@ -1,107 +1,165 @@
-Return-Path: <linux-kernel+bounces-319892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA1997037B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 20:01:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECB7970387
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 20:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AEAF1F2138C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:01:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 548C11F2219C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08BC15B992;
-	Sat,  7 Sep 2024 18:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4905165F08;
+	Sat,  7 Sep 2024 18:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1UNP+ZT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mfA2s23R"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D1D2E634;
-	Sat,  7 Sep 2024 18:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9657715F323
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 18:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725732064; cv=none; b=mEiiC+1NpiCIHUuEy4megpraQG0losoLf+P22z4Wx7Ip9G6JtwlOkIXTIsY+5Mr7sW31FJlqdeTMqeL28k4RQaQwPCxDtLolUZMEg0OYU+H3Y0b9xCkGXt0gToTq0E9E2JuK04s26FS7yxi5rX3J/2/hqHFZS31lCqf3uJOuYAg=
+	t=1725732626; cv=none; b=ltlF6HCZ3nVcZg+oN5NgkxMm1lgvBPD21iU23VZjd/XS3HyXDXmmTWJodp44QuQWrXwbwJtUjZAHpzb3pK4jpwwJMczYlgWQA5euNipGeHTXsEAbVb9WeI19KTlAuSSbNLKhlQni1TPHtPXkvAUlCD77hxNmCdkdYwAnPXzwlXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725732064; c=relaxed/simple;
-	bh=Mv6kZrJv/bwLcYzdrAAeBS2GRlYFUpBzbrl5z92vyCI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SpHWwRKNGPNQMMWmVAc3YwewhHwd3cApm51EUTeVt/a02vFfN4n6QwMfN9UrJzdx5AjO/GCAZlPGxp8ntqzGoR6CIa7SpCOpzFoO5gqsaFx/N/Z4yaSuXh+kH2pcvmSDrdjF1jdfISUF/MBY/3OVolnSwt3+jKHaezntMTX3Ong=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1UNP+ZT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A0F6C4CEC2;
-	Sat,  7 Sep 2024 18:01:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725732063;
-	bh=Mv6kZrJv/bwLcYzdrAAeBS2GRlYFUpBzbrl5z92vyCI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=N1UNP+ZT/W0cRRK9h9TJ1sFXGw7CVe+SC6IIrJwU1X/PuMOkxDrzozGYfkV33GQ9R
-	 PjZ0/BUxcInEi1WPSw5LplbVgq0vqm7k35owy4ps8NDFyggnFheOHh67AMUpFC49/t
-	 r8EaFsfUqNx/7/Wqi9TGi06X0tilOOw13/5bgFhX7IXZo7cxZ4OBWewHU9iujf1wyB
-	 ydDHboQnilo2j6R4p+Xpttmqd596iYZi1dl/bZGkk/DsjOKzEoV9Ia7nWjQLeGoSaN
-	 ZlFaUWEm4Qg3BLQbMlOIyaWeXZ/FCF7S2uhqGhca5/C41lOEwPVclnZDhWg1p7KSNB
-	 oNDgorq+YdIPg==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH] ASoC: mediatek: mt8365: remove unused mt8365_i2s_hd_str
-Date: Sat,  7 Sep 2024 20:00:38 +0000
-Message-Id: <20240907200053.3027553-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1725732626; c=relaxed/simple;
+	bh=DF7M/JMqN3rhN1QP1dvYJQuX4WPqN8Hy79cHkWJFgR4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q0ks4I/IT4AUrA+/VC2YEE1gvZR5fcNGyNQYOYIz7ePRsN+caGgsfwxZMzMOt9LazLEE4Hx67GRVk7ngkSTXp/IEEsutHbig5nCmOig3Af5N65DfSPVEQCZpMa8GJ5AiEN47UFodzEvewx+biDd2K5pnIrkeFH7v/kqiWZR2yZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mfA2s23R; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5011af33774so907784e0c.3
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 11:10:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725732622; x=1726337422; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=64trEv5Ti+s4aL8hbBtOVKS0J0Gs2vDARM9xGEh0Vcg=;
+        b=mfA2s23RBT5qt8MkDraIMIDducEolroQHZ/AqsShKqGwmbl/c9MhVuNKw4ZJbrSGDB
+         psChrnTH25hZvriv6qUHtJu0kzJ/svGuKElMPXDuT2vGAj7YuK4XHyfqtOQFnz2VR5+j
+         59Y0RX952z3VbpDGiDDE5s1IoocZiCe7Lwc5HUvuvS3yiv7UaawFwxGLcjwmfb+DaFUO
+         vK7rrt9zCvcIQJvaTKRBF2i9JHwNa2vkmp4NMEWgDclrUW/lanfrhLwABz0mYW4nBAwe
+         k3UR9hQ15SyE69Xbf5sRrCrAM4AHH6x2qi2md7Ybub+17tE/fZEwZ0VhMQFfmQgG3vP3
+         S87w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725732622; x=1726337422;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=64trEv5Ti+s4aL8hbBtOVKS0J0Gs2vDARM9xGEh0Vcg=;
+        b=KW5VsK3LXQfEjv/F/FI0j1C1yVGcs22FCo3+Z1izhJsNKXBqIKPVZ0kUfUjyjhjd5y
+         1EsW4OgC6WpoGUXpfJH51pD5Ctig46qfbm3NooTX4Jivz58OsQA0imhHCZQ0HnHId2jA
+         4JaxIOMnDAa0Z5Q6ppftanUdDOyoBGejZN6SJpcu/EQLf6sv4EgcCUs4qb2nLVk0Hxja
+         zHEB//34IztRe/1msKA3d8qC2Xqu6t0cba7OwKmyeSpBLJTRpFYK/UkSWJewkkFcWihB
+         9ddskTag1uEgWn403mIHuwK5ao067DNpkS26orh8yLNz3WtrRgp+z/bfHDxoMN7EmZ+z
+         CI3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVTQM4hP5OOKDZ+LVULPuboaLt/xuXYmuaTmhDMkPGe+BFR3ozSvBFScPSLqGtw6m+Jx/1jAB12DwnjB9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfijL3EKamtqr3HZk9NR0oj5AHs3U6WckQNEfyUn33JZ79lIQM
+	LAq8dcJDfC2hZY6X30eOExlg+YSMLSPxyINFgUbe6oOYRhtZEpxEafw24P9Y6hydVc1xIpzc28q
+	AohJF89QrlyTGWIG7ocGjV4uBeBxIwD05vGjqPA==
+X-Google-Smtp-Source: AGHT+IFY/zJt5fHTmcetHeQotk1btjcPMr9+nAr73v3Ma456djVUd9TlTWfzO44m2X5Trmssaw9XcfcbOLUsI+EPgH4=
+X-Received: by 2002:a05:6122:7c6:b0:501:22e5:2bb9 with SMTP id
+ 71dfb90a1353d-5021327c609mr8799556e0c.5.1725732622416; Sat, 07 Sep 2024
+ 11:10:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240907065043.771364-1-aardelean@baylibre.com>
+ <20240907065043.771364-7-aardelean@baylibre.com> <20240907160356.3de047b0@jic23-huawei>
+In-Reply-To: <20240907160356.3de047b0@jic23-huawei>
+From: Alexandru Ardelean <aardelean@baylibre.com>
+Date: Sat, 7 Sep 2024 21:10:10 +0300
+Message-ID: <CA+GgBR99R=PEyTR_KZO6M_YiRepa5ZFhXcRRq=AtD65rn5MCZg@mail.gmail.com>
+Subject: Re: [PATCH v5 6/9] iio: adc: ad7606: rework available attributes for
+ SW channels
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
+	lars@metafoo.de, michael.hennerich@analog.com, gstols@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Sat, Sep 7, 2024 at 6:04=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+>
+> On Sat,  7 Sep 2024 09:50:39 +0300
+> Alexandru Ardelean <aardelean@baylibre.com> wrote:
+>
+> > For SW mode, the oversampling and scales attributes are always present.
+> > So, they can be implemented via a 'read_avail' hook in iio_info.
+> >
+> > For HW mode, it's a bit tricky, as these attributes get assigned based =
+on
+> > GPIO definitions.
+> >
+> > So, for SW mode, we define a separate AD7606_SW_CHANNEL() macro, and us=
+e
+> > that for the SW channels.
+> > And 'ad7606_info_os_range_and_debug' can be renamed to
+> > 'ad7606_info_sw_mode' as it is only used for SW mode.
+> >
+> > For the 'read_avail' hook, we'll need to allocate the SW scales, so tha=
+t
+> > they are just returned userspace without any extra processing.
+> > The allocation will happen when then ad7606_state struct is allocated.
+> > The oversampling available parameters don't need any extra processing; =
+they
+> > can just be passed back to userspace (as they are).
+> >
+> > Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
+>
+> One question inline.
+>
+> >
+> >  int ad7606_probe(struct device *dev, int irq, void __iomem *base_addre=
+ss,
+> > diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
+> > index 635407c2acc0..fa175cff256c 100644
+> > --- a/drivers/iio/adc/ad7606.h
+> > +++ b/drivers/iio/adc/ad7606.h
+>
+> >  #define AD7616_CHANNEL(num)  AD7606_SW_CHANNEL(num, 16)
+> >
+> >  /**
+> > @@ -65,11 +84,15 @@ struct ad7606_chip_info {
+> >  /**
+> >   * struct ad7606_chan_scale - channel scale configuration
+> >   * @scale_avail              pointer to the array which stores the ava=
+ilable scales
+> > + * @scale_avail_show a duplicate of 'scale_avail' which is readily for=
+matted
+> > + *                   such that it can be read via the 'read_avail' hoo=
+k
+> >   * @num_scales               number of elements stored in the scale_av=
+ail array
+> >   * @range            voltage range selection, selects which scale to a=
+pply
+> >   */
+> >  struct ad7606_chan_scale {
+> > +#define AD760X_MAX_SCALE_SHOW                (AD760X_MAX_CHANNELS * 2)
+>
+> Why is the number of scales dependent on the number of channels?
 
-The mt8365_i2s_enum and mt8365_i2s_hd_str variables are not
-used anywhere, but cause a warning when building with C=1
-or when enabling -Wunused-const-variable:
+Well, that was just a lazy implementation.
+I doubt there would be 16 scales (channel range values) for any newer part.
+A value for a channel-range is 4-bits (for 0 to 15).
 
-sound/soc/mediatek/mt8365/mt8365-dai-i2s.c:781:27: error: 'mt8365_i2s_hd_str' defined but not used [-Werror=unused-const-variable=]
-  781 | static const char * const mt8365_i2s_hd_str[] = {
-      |                           ^~~~~~~~~~~~~~~~~
+In IIO the current highest scale-count is 5; I guess I can update this
+to a macro, and use that.
 
-Remove these for the moment, they can be added back if a
-user comes up.
 
-Fixes: 402bbb13a195 ("ASoC: mediatek: mt8365: Add I2S DAI support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- sound/soc/mediatek/mt8365/mt8365-dai-i2s.c | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/sound/soc/mediatek/mt8365/mt8365-dai-i2s.c b/sound/soc/mediatek/mt8365/mt8365-dai-i2s.c
-index 6b4d8b7e24ca..3482d8f8b4e7 100644
---- a/sound/soc/mediatek/mt8365/mt8365-dai-i2s.c
-+++ b/sound/soc/mediatek/mt8365/mt8365-dai-i2s.c
-@@ -777,13 +777,6 @@ static struct snd_soc_dai_driver mtk_dai_i2s_driver[] = {
- 	}
- };
- 
--/* low jitter control */
--static const char * const mt8365_i2s_hd_str[] = {
--	"Normal", "Low_Jitter"
--};
--
--static SOC_ENUM_SINGLE_EXT_DECL(mt8365_i2s_enum, mt8365_i2s_hd_str);
--
- static const char * const fmi2sin_text[] = {
- 	"OPEN", "FM_2ND_I2S_IN"
- };
--- 
-2.39.2
-
+>
+> >       const unsigned int              *scale_avail;
+> > +     int                             scale_avail_show[AD760X_MAX_SCALE=
+_SHOW];
+> >       unsigned int                    num_scales;
+> >       unsigned int                    range;
+> >  };
+>
 
