@@ -1,74 +1,100 @@
-Return-Path: <linux-kernel+bounces-319592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F28196FEF9
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:29:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2240B96FEFD
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1981B229CF
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:29:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0A5FB22A80
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CF6DDA1;
-	Sat,  7 Sep 2024 01:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C947810A24;
+	Sat,  7 Sep 2024 01:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eCQ/TQKp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1VLqy9a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B33EDDA0;
-	Sat,  7 Sep 2024 01:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35848DDC5;
+	Sat,  7 Sep 2024 01:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725672545; cv=none; b=juX6sFirzWk5CE5GIFqVgnZFej9lIGBFP8aWeDbniIbph9dlfBK+AWA2UmUdr0I2Ny7y7vgISqQrwsmQfFjr1J5oi1C/HaLnzNjy0p7P46gYpHSFn6x0MkDwEQ8GWUJ8nJ2+RCcJmDGCT2djTfQJ5yv1OF4lBz0WQRZt32125UA=
+	t=1725672633; cv=none; b=Xc1ct5Qw9YleUSsy6K8pBQWixlSgEE4KbUJRcYAJ1Z9CWrvV4XRcXZQ5kJIudplrutIgLVBiqUrGax+XSPe37/SdWfpVrJTd1xA44OhOb4M09wgkaIPgD/ubjAhns2nFmq9BBnbuajiBXhg/HFFeZLmYzaIzq4hXg6MzpbN9j3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725672545; c=relaxed/simple;
-	bh=JAbDlUmnCm5RtGo2c4FkRbsaKSBfsmmuHbYiAOxdfkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O5OsEcm1xyGP98CmAsKcT727uYh2VAGzY6TznKOaDO9V0H1i52iE3qnGddxbEvgHqHOBPBAQgs9lGpYGfyi5F/hKe8Gj6JTMuVmMHgE/ZjB0IiP290P8bCoO2IRhXq9ziTCiabelk7QIIbq4iowwER1Fq31PbVF5v55MHfsjJaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eCQ/TQKp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70329C4CEC4;
-	Sat,  7 Sep 2024 01:29:04 +0000 (UTC)
+	s=arc-20240116; t=1725672633; c=relaxed/simple;
+	bh=5Jm73vgTEfnwIFsP+es+dH0SeFuU1K0dlq+7nGBgiVY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=uNFggMn4i0pCuMofS+PmCrjlb9dRCFpOKbW5eyK18Tk3RME2g4Qg8P7gR23YKapSWvpj88XfF5vFRxwQY0cDGw9FpmnYYLencM324Z0weZlyklWn32q/oNidxeqzDumKA6i6CqMFqrnmwNmuToDmOd7PGdjrBGDhWj8DJrXPPHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1VLqy9a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9948C4CEC4;
+	Sat,  7 Sep 2024 01:30:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725672545;
-	bh=JAbDlUmnCm5RtGo2c4FkRbsaKSBfsmmuHbYiAOxdfkY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eCQ/TQKpgeJJHzoMjiaCZ0Cl+ATS/UJ8B7IvsR/F0N/yY2oYcxhKee7qhViFky6lL
-	 Ql8y3wbcQLP83EL82toIrKesTujH9kiufMHJjn3hcaMNW1LWJMnMiuWPPX1WkHia0n
-	 /Jibn/UxbfRHXwBEp10h9QMfRKBVWBu8eC5Z8gX5o5DBq1QFGg5PtWB7U2lPlSSD5z
-	 9JuYNW7xmHnIXX2EyDsATm7QSx5UfSaXVwmMqr1pCnpJJpTik84JlxdPOeA0fFLF+Q
-	 Um3wvxOwT1rAbjTaj72TEVFZQyHES8XvlGc6gBhH90Oc0ygFl6Hd7A6HycRzb8O55L
-	 F7lMkzKX8/azw==
-Date: Fri, 6 Sep 2024 18:29:03 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Lee Trager <lee@trager.us>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan
- Corbet <corbet@lwn.net>, Alexander Duyck <alexanderduyck@fb.com>,
- kernel-team@meta.com, Shinas Rasheed <srasheed@marvell.com>, Tony Nguyen
- <anthony.l.nguyen@intel.com>, Phani Burra <phani.r.burra@intel.com>, Joshua
- Hay <joshua.a.hay@intel.com>, Sanman Pradhan <sanmanpradhan@meta.com>,
- Sridhar Samudrala <sridhar.samudrala@intel.com>, Alan Brady
- <alan.brady@intel.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] eth: fbnic: Add devlink firmware version info
-Message-ID: <20240906182903.55d0ccd1@kernel.org>
-In-Reply-To: <20240905233820.1713043-1-lee@trager.us>
-References: <20240905233820.1713043-1-lee@trager.us>
+	s=k20201202; t=1725672632;
+	bh=5Jm73vgTEfnwIFsP+es+dH0SeFuU1K0dlq+7nGBgiVY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Y1VLqy9aLyeyU3Rmn+kypiWegdDoEhzdbrWdxKTIYUGiIO7n1ikxsKcWnE/olm3Gq
+	 UasssgR0qYSwuCQjA9gsjmtmTQw5Nr5AZoVaJGPEj12Tg7jFMywYNJhE1PsrtkahLy
+	 7p3WDFZygHMh5G0TJNQoX6KFs0Njme4BCCRJG6lDozPJTvlYBf0LCNQBlJW6Z+KAEk
+	 gOazp1zXH8r1AQO3fFtN6JN9dhSc+DBOfsc+88y9R8lgqz++ph4jpFaM16d7bayu9R
+	 2p41ltfpIfHgPyWF0bam/p6M4qkGR/npNE8nFSeadpq5y/QmnoQiHeciyjM1rxJXd9
+	 GhRkQcjMjSXRw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADDE3805D82;
+	Sat,  7 Sep 2024 01:30:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 0/3] Use functionality of irq_get_trigger_type()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172567263374.2576623.4916481959837531063.git-patchwork-notify@kernel.org>
+Date: Sat, 07 Sep 2024 01:30:33 +0000
+References: <20240904151018.71967-1-vassilisamir@gmail.com>
+In-Reply-To: <20240904151018.71967-1-vassilisamir@gmail.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: linus.walleij@linaro.org, alsi@bang-olufsen.dk, andrew@lunn.ch,
+ f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, nico@fluxnic.net,
+ leitao@debian.org, u.kleine-koenig@pengutronix.de, thorsten.blum@toblux.com,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
-On Thu,  5 Sep 2024 16:37:51 -0700 Lee Trager wrote:
-> This adds support to show firmware version information for both stored and
-> running firmware versions. The version and commit is displayed separately
-> to aid monitoring tools which only care about the version.
+Hello:
 
-Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed,  4 Sep 2024 17:10:15 +0200 you wrote:
+> Changes in v2:
+> 	- Split the patches into subsystems.
+> 
+> v1: https://lore.kernel.org/netdev/20240902225534.130383-1-vassilisamir@gmail.com/
+> 
+> Vasileios Amoiridis (3):
+>   net: dsa: realtek: rtl8365mb: Make use of irq_get_trigger_type()
+>   net: dsa: realtek: rtl8366rb: Make use of irq_get_trigger_type()
+>   net: smc91x: Make use of irq_get_trigger_type()
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v2,1/3] net: dsa: realtek: rtl8365mb: Make use of irq_get_trigger_type()
+    https://git.kernel.org/netdev/net-next/c/517c29247557
+  - [net-next,v2,2/3] net: dsa: realtek: rtl8366rb: Make use of irq_get_trigger_type()
+    https://git.kernel.org/netdev/net-next/c/36a5faec5658
+  - [net-next,v2,3/3] net: smc91x: Make use of irq_get_trigger_type()
+    https://git.kernel.org/netdev/net-next/c/f4bbf496f5fd
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
