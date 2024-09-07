@@ -1,145 +1,121 @@
-Return-Path: <linux-kernel+bounces-319627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC1496FFE2
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 05:41:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227B496FFE4
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 05:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C8D1B235E4
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:41:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDBF81F230A2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5249C3B796;
-	Sat,  7 Sep 2024 03:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OWiTEwcr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12E73BBE3;
+	Sat,  7 Sep 2024 03:56:11 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231EE1B85DC;
-	Sat,  7 Sep 2024 03:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5C0139E;
+	Sat,  7 Sep 2024 03:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725680478; cv=none; b=jrrQw+/g9cqWrcrEoVnBUR0OFueZUYUDG4Fcw+9YHU1sVQpszePn7aPEeQThgNpZ1ebVNxF4kMpdW/5pHH+rBPVfByHdLXndYAtn3JG3hq8JCHSVx/2aaZdDHTb+ym8lJk/epuKLauzIS4yn7CL8XfTlWUGRUF+fAzx48mtuok0=
+	t=1725681371; cv=none; b=Vvuog8s3fwfcjJP6YcbVGpOugzom7dlj1P6oXy5tKzOcYldMdcCOWiwQz6wunwxiyycy/SnOoQPZQScjNFAJLgZCsq9oyRFH4A5E+LOsXoc5g40Pq1v9M0KrZjBpXSFuG4Rr/ijHiG/hYehSTpTm3jGyerA5L5sRT2Dg3Y3xhSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725680478; c=relaxed/simple;
-	bh=0LSYRiNjmglzvSSKKJd8bsXrxePN9geo+SOIsVqs/EM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKXnInKRg1dYDF8lnIr8XQk/QefRRxttGeifPu+KkkmAkNMNtvdcjG7jnXG+Ffgaek88r20n3e+Q0rPV3DIqTmbcXCzJjq1VQ97qR6+mKKkph6KSbtLII5mz26uLM3GMkqbbHiDpva8dMEsj6wiWSdAgZtpV6HUCZenPH3iKwjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OWiTEwcr; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725680477; x=1757216477;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0LSYRiNjmglzvSSKKJd8bsXrxePN9geo+SOIsVqs/EM=;
-  b=OWiTEwcr06jlVUHSl5uLs5mDBsUU7+T4jibGEPVR+uVr58KtMXOW0xOK
-   mtRc/983nWvI0MbMWObxgopSvcLs4SSzKFHflnqr/mhWVDDrDfNPAcH6i
-   EGOU78AHd5XXzAb3RhkTK0fAH5s7NQNGVMjSURpW4cmLwhgUlmC8Cp1ho
-   vzLFjWJIrQPkaMYAjrMP2Cp1PxT8CUJ5nF8gMWeW4At2dNaPsuf/m+5MI
-   PbVqvvmwhiGjQKzkxM8W/w+niuFSNIltpSaKD8oTyyWuMDpKapX0rd9er
-   PYeSMD5FDL2LywBmOea/sEvKdAl7vyyY5W55rz6meKl1xuK4tB0Jxc0yY
-   w==;
-X-CSE-ConnectionGUID: BCCRnhrhRNeqZOUPBcU1xw==
-X-CSE-MsgGUID: CgA0i0ciQf29WfRJ2iwtig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="13418138"
-X-IronPort-AV: E=Sophos;i="6.10,209,1719903600"; 
-   d="scan'208";a="13418138"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 20:41:16 -0700
-X-CSE-ConnectionGUID: XnhtZTm7SQyMqKvtjyblEA==
-X-CSE-MsgGUID: X8TlA47bShm85sIffjCqmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,209,1719903600"; 
-   d="scan'208";a="70717146"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 06 Sep 2024 20:41:13 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1smmJz-000C67-1v;
-	Sat, 07 Sep 2024 03:41:11 +0000
-Date: Sat, 7 Sep 2024 11:40:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Ville Syrjala <syrjala@sci.fi>,
-	Support Opensource <support.opensource@diasemi.com>,
-	Eddie James <eajames@linux.ibm.com>,
-	Andrey Moiseev <o2g.org.ru@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Jeff LaBundy <jeff@labundy.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 20/22] Input: regulator-haptic - use guard notation when
- acquiring mutex
-Message-ID: <202409071004.IhekZKbM-lkp@intel.com>
-References: <20240904044922.1049488-1-dmitry.torokhov@gmail.com>
+	s=arc-20240116; t=1725681371; c=relaxed/simple;
+	bh=bQftjdaMlhA6qFZr+FJArS4m+j3VfgzZxczTorDBJ6g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=smgfSDSRbBSWSz3ta7wN9rpCFbCKhLxR/Pu6LlJMzD1utOuiAJT39Yg8aaErTzCC4nMx8dqMIerg4H5tams+bIlbUIavMjRbrswAFPxShd4G6ONgmXqcRHHYCgIm/5aiXCKQJXOencNF6vFKoNbSX8tSyGXq1N05UFRV5xMp5qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X0zm41q5Gz69Wk;
+	Sat,  7 Sep 2024 11:56:04 +0800 (CST)
+Received: from kwepemm600016.china.huawei.com (unknown [7.193.23.20])
+	by mail.maildlp.com (Postfix) with ESMTPS id B83801400DD;
+	Sat,  7 Sep 2024 11:56:05 +0800 (CST)
+Received: from huawei.com (10.175.112.208) by kwepemm600016.china.huawei.com
+ (7.193.23.20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sat, 7 Sep
+ 2024 11:56:04 +0800
+From: Lin Ruifeng <linruifeng4@huawei.com>
+To: <b-liu@ti.com>, <gregkh@linuxfoundation.org>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+Subject: [PATCH -next] usb: musb: mediatek: Simplify code with dev_err_probe()
+Date: Sat, 7 Sep 2024 11:42:26 +0800
+Message-ID: <20240907034226.120159-1-linruifeng4@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904044922.1049488-1-dmitry.torokhov@gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemm600016.china.huawei.com (7.193.23.20)
 
-Hi Dmitry,
+The combination of dev_err() and the returned error code could be
+replaced by dev_err_probe() in driver's probe function. Let's,
+converting to dev_err_probe() to make code more simple.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Lin Ruifeng <linruifeng4@huawei.com>
+---
+ drivers/usb/musb/mediatek.c | 27 +++++++++++----------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
 
-[auto build test WARNING on dtor-input/next]
-[also build test WARNING on dtor-input/for-linus hid/for-next linus/master v6.11-rc6 next-20240906]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Torokhov/Input-ad714x-use-guard-notation-when-acquiring-mutex/20240905-085752
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
-patch link:    https://lore.kernel.org/r/20240904044922.1049488-1-dmitry.torokhov%40gmail.com
-patch subject: [PATCH 20/22] Input: regulator-haptic - use guard notation when acquiring mutex
-config: x86_64-buildonly-randconfig-001-20240907 (https://download.01.org/0day-ci/archive/20240907/202409071004.IhekZKbM-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240907/202409071004.IhekZKbM-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409071004.IhekZKbM-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/input/misc/regulator-haptic.c: In function 'regulator_haptic_suspend':
->> drivers/input/misc/regulator-haptic.c:206:13: warning: unused variable 'error' [-Wunused-variable]
-     206 |         int error;
-         |             ^~~~~
-
-
-vim +/error +206 drivers/input/misc/regulator-haptic.c
-
-d64cb71bede87d Jaewon Kim       2014-12-17  201  
-1a3e6c1ee47d00 Jonathan Cameron 2023-01-02  202  static int regulator_haptic_suspend(struct device *dev)
-d64cb71bede87d Jaewon Kim       2014-12-17  203  {
-d64cb71bede87d Jaewon Kim       2014-12-17  204  	struct platform_device *pdev = to_platform_device(dev);
-d64cb71bede87d Jaewon Kim       2014-12-17  205  	struct regulator_haptic *haptic = platform_get_drvdata(pdev);
-d64cb71bede87d Jaewon Kim       2014-12-17 @206  	int error;
-d64cb71bede87d Jaewon Kim       2014-12-17  207  
-aaa0758ff6b5c4 Dmitry Torokhov  2024-09-03  208  	scoped_guard(mutex_intr, &haptic->mutex) {
-d64cb71bede87d Jaewon Kim       2014-12-17  209  		regulator_haptic_set_voltage(haptic, 0);
-d64cb71bede87d Jaewon Kim       2014-12-17  210  		haptic->suspended = true;
-d64cb71bede87d Jaewon Kim       2014-12-17  211  
-d64cb71bede87d Jaewon Kim       2014-12-17  212  		return 0;
-d64cb71bede87d Jaewon Kim       2014-12-17  213  	}
-d64cb71bede87d Jaewon Kim       2014-12-17  214  
-aaa0758ff6b5c4 Dmitry Torokhov  2024-09-03  215  	return -EINTR;
-aaa0758ff6b5c4 Dmitry Torokhov  2024-09-03  216  }
-aaa0758ff6b5c4 Dmitry Torokhov  2024-09-03  217  
-
+diff --git a/drivers/usb/musb/mediatek.c b/drivers/usb/musb/mediatek.c
+index 0a35aab3ab81..393b909de238 100644
+--- a/drivers/usb/musb/mediatek.c
++++ b/drivers/usb/musb/mediatek.c
+@@ -416,10 +416,9 @@ static int mtk_musb_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	ret = of_platform_populate(np, NULL, NULL, dev);
+-	if (ret) {
+-		dev_err(dev, "failed to create child devices at %p\n", np);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(dev, ret,
++				"failed to create child devices at %p\n", np);
+ 
+ 	ret = mtk_musb_clks_get(glue);
+ 	if (ret)
+@@ -448,23 +447,19 @@ static int mtk_musb_probe(struct platform_device *pdev)
+ 		glue->role = USB_ROLE_NONE;
+ 		break;
+ 	default:
+-		dev_err(&pdev->dev, "Error 'dr_mode' property\n");
+-		return -EINVAL;
++		return dev_err_probe(&pdev->dev, -EINVAL,
++				"failed to create child devices at %p\n", np);
+ 	}
+ 
+ 	glue->phy = devm_of_phy_get_by_index(dev, np, 0);
+-	if (IS_ERR(glue->phy)) {
+-		dev_err(dev, "fail to getting phy %ld\n",
+-			PTR_ERR(glue->phy));
+-		return PTR_ERR(glue->phy);
+-	}
++	if (IS_ERR(glue->phy))
++		return dev_err_probe(dev, PTR_ERR(glue->phy),
++				"fail to getting phy\n");
+ 
+ 	glue->usb_phy = usb_phy_generic_register();
+-	if (IS_ERR(glue->usb_phy)) {
+-		dev_err(dev, "fail to registering usb-phy %ld\n",
+-			PTR_ERR(glue->usb_phy));
+-		return PTR_ERR(glue->usb_phy);
+-	}
++	if (IS_ERR(glue->usb_phy))
++		return dev_err_probe(dev, PTR_ERR(glue->usb_phy),
++				"fail to registering usb-phy\n");
+ 
+ 	glue->xceiv = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+ 	if (IS_ERR(glue->xceiv)) {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.17.1
+
 
