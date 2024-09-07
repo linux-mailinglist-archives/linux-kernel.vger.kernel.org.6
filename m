@@ -1,209 +1,182 @@
-Return-Path: <linux-kernel+bounces-319951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50EDE970425
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 23:09:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCE9B97042F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 23:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C0AE1C21271
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 21:09:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9231C21070
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 21:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA671684B9;
-	Sat,  7 Sep 2024 21:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF3815F3E2;
+	Sat,  7 Sep 2024 21:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zg9a0+87"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S4IeI0Di";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9Lij9/0M"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5F012FB34;
-	Sat,  7 Sep 2024 21:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BCB4D8CC
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 21:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725743379; cv=none; b=Yq0vFEKhxi4rxwCTBKJqgP/JzVcUjLydQepUDoau8i8oq2ixIJLkw/S8kalDTttB7dqaUi9f330bt6XFaV81gSLvEpxuMa2icBCc+QtmyjW+KJQfRnwqoKK0zV6x/7YzWlG8Nk/E4MrUdAJbNX1At+neHAehGyzGRTqHYxoJF4o=
+	t=1725745380; cv=none; b=D2p7po6jhN9oTFiGkHRAPcSqU7OBp8HNQSB6MU5efAsNontGTM0sgyH7c1+2mQOMlBKbR5ae1g72mqjVA3o1SGC8gYzsV9Zwz/GmG7xa/majD9+3miEUZY5WYVxl+nC+r+I/RNgJRFi3wr4B5jwsDzrcU35Mw20xV4rxyzPjXEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725743379; c=relaxed/simple;
-	bh=1uW+d9sdd9rkWbcIfoEFXdx2VuskJkACySH3FP3tVCM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UhH15rGoqJsdRAv9yRHMDrUG+cH/I9XptB1dIxq3BH1wfa9+bykcA3A4HPDy882wAxPbVRMFG/g0yuP6Qxl+qzEH5ixqygs1V3foUBfmB8xu2ytAhT7G80tzRO+23kKLyq3LE/UiwwwdHQGJiiIFd94r1eXF3jTcOH3NRxEKWms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zg9a0+87; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-501213e5ad4so1749267e0c.0;
-        Sat, 07 Sep 2024 14:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725743377; x=1726348177; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hpm7Wbd4ocOfdFXAT5w9pBvB6n52buALCd75XKBjrDk=;
-        b=Zg9a0+87depCbov2II9zwe7ukNaLh7JLgFjqQzKGZYvRCw4v0Jd9VE7CGo/80t92d+
-         R0Voj8aOdUB7eVZPhMbr8mzfrSJ+0sJk5f60mgnWmyLNP9gCW4WVsspw/zfCcrXKpffy
-         Kfv9TxNOFDM6XkvadF/3QKeMIWQb2Da8q7NbE9kdmloeIdzd7H6YNZSUxAIPbExU0ySq
-         CBPh4kYpyB8xYNpnmYOgotjzzdDzX+c/vZro1rp8NJT3zpTGtN7TL24CJr1/NRHdfPcv
-         DkX0Vc36LaG4ghCNHo0tOumq0zpvXbYJ7jsC/mYsmoxgw9xjUghXeyleQMVZgAUnisTH
-         GB0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725743377; x=1726348177;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hpm7Wbd4ocOfdFXAT5w9pBvB6n52buALCd75XKBjrDk=;
-        b=DaG7ucCpK3DQErDmpykSRqCZWpL+gHBPFvyEdfYjHhS463gZK343dRw5pvcjXRgxJ2
-         EKMgpRBYgeIBSBdEPY9vOu0ouTXdaTc9rO8J4gz2LpPZXDtewNsr75HJV/LXT1khy+Iu
-         VCfFe+U1XtmNK4100uojmn39z4E2+kfXoQUL6vc3LScLvBHmYXQX8M1ExqJR3zi8IR2F
-         0LiNQ7e9zBm/LCUXeVLRtLrihT1m6A6ep4JGCAioqWnBQTYne1DqGisnlTS86btmsLSe
-         LgboxxcMReLoHALhbxu3xCS3LSZpd1a4j+j2pDuYw9rPuxhh5rmIMWSlGSthQZQWk+IH
-         EpFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtUrWQPFfGNIj5OwwrILbDKAGXbguJgK2Z0VLSR3AXHRsihZvCK5SZvi4jUnZcHWnB0w9E16YfCpRqEj0=@vger.kernel.org, AJvYcCWTilKG1/xyPZPB8P2EhxRTqDhtFXtr5jJUr8QEO5BL/n0ll8bbOBSIfNr0VG+/8n7L6iDv1ID0We79+Es=@vger.kernel.org, AJvYcCXQKFE2HBMa+HlUfZz+GanOCoYl6aZjCYGzd4cHTTe61jfK2IkL9MP5nJ4FS68PCI7WdiYIW42WS/byAhOCTAZYRz0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+N3M+Z7Se3E3k/fYRNjsTGZE3ImRCfy67ygEdaKOUhsXIlHYm
-	jQZdkT/XSn55LL7/00EG6JW58LEHuiSLhMUQ548xhCNGSoNQQaYZoBqzYIVy8B4EZweJA6q/nkB
-	foTwHqfz4ON0FjrigqJxMrdtQY/I=
-X-Google-Smtp-Source: AGHT+IEhcuTzXRccMQGFpEATlEj14efd9tg5Xvp4VsfLp241dvgxYYTyuRZefVy7hzFsMIln7bsE+brQAq3I+qvAYBs=
-X-Received: by 2002:a05:6122:904:b0:4ef:58c8:4777 with SMTP id
- 71dfb90a1353d-5019d455718mr5666056e0c.4.1725743376525; Sat, 07 Sep 2024
- 14:09:36 -0700 (PDT)
+	s=arc-20240116; t=1725745380; c=relaxed/simple;
+	bh=bjbPCO68YLHhkgYfrDrDyRt0yZU0ge1MbX416yNBvuI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lRz1Z2sx6hkxMQZfoQkzQmjuHU4mpI4P5LzXJLbz5mEhg8nKkwJzJSCbkQh+WoTYP1015eImFu0P1I/vwAaim4FrA/4oebNhDE8P2SkB+7e88039N50tYP3APn1rw+PBDTJB+QyPS8GaHz6i5M9Q73ePSASpxZjIEGbdILE1PYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S4IeI0Di; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9Lij9/0M; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725745376;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CVupB2mbltBc0lxUjnNEmFbRfMK7S2DGGlQjSHZXftw=;
+	b=S4IeI0Dimi8IMv4y4HsEudazKLF0K9mwPnNq7JvDSnbSlmE4zgQ7vinZNVKRNnNlwKl13c
+	y8PiKYMP5gm91WIS7eqZMHgsFOkILwO05tqFiwaTx3YDisqBPZi4S4JV2DxONBWzfU/eET
+	kzaE5s4BftjtvEWlgqpA+wEeZ+7J/i/Zjc1p78rKoTGjeQC/LNh6TzHQiZzOzH29ugQWFk
+	w11ojcjXOymQFXwNSe3NHN9dUi1rIdlEusuRO9Hz5fO7GnX7FwTQMU9DOSKCMWpOeShzcR
+	MCaP3suot3pb2JIAPBADufL+gc94Yhf8LKZqtzYEC0m1Dvfy+o6bxZzMF9B6Fw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725745376;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CVupB2mbltBc0lxUjnNEmFbRfMK7S2DGGlQjSHZXftw=;
+	b=9Lij9/0MwiwSEiOOrL605TaeMFfMufgTDZonpfdLznsw0SgcRgRXdOAFafIBOqOXnOITBL
+	pwKfhw5gawzE3EAQ==
+To: Benjamin ROBIN <dev@benjarobin.fr>, jstultz@google.com
+Cc: sboyd@kernel.org, linux-kernel@vger.kernel.org, Benjamin ROBIN
+ <dev@benjarobin.fr>
+Subject: Re: [PATCH] ntp: Make sure RTC is synchronized when time goes
+ backwards
+In-Reply-To: <20240907190900.55421-1-dev@benjarobin.fr>
+References: <20240907190900.55421-1-dev@benjarobin.fr>
+Date: Sat, 07 Sep 2024 23:42:55 +0200
+Message-ID: <87zfojcf8g.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906173947.282402-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240906173947.282402-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240906231038.GC12915@pendragon.ideasonboard.com>
-In-Reply-To: <20240906231038.GC12915@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Sat, 7 Sep 2024 22:09:10 +0100
-Message-ID: <CA+V-a8vsmYSOWgoiHnO5xWdn-wo-eda6hdxGz5X_Hc5s-yVv6g@mail.gmail.com>
-Subject: Re: [PATCH 2/3] media: platform: rzg2l-cru: rzg2l-video: Retrieve
- virtual channel information
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Laurent,
+On Sat, Sep 07 2024 at 21:09, Benjamin ROBIN wrote:
+> The "sync_hw_clock" is normally called every 11 minutes when time is
 
-Thank you for the review.
+s/The "sync_hw_clock"/sync_hw_clock()/
 
-On Sat, Sep 7, 2024 at 12:10=E2=80=AFAM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patch.
->
-> On Fri, Sep 06, 2024 at 06:39:46PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > The RZ/G2L CRU needs to configure the ICnMC.VCSEL bits to specify which
-> > virtual channel should be processed from the four available VCs. To
-> > retrieve this information from the connected subdevice, the
-> > .get_frame_desc() function is called.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 29 +++++++++++++++++++
-> >  1 file changed, 29 insertions(+)
-> >
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/d=
-rivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > index bbf4674f888d..6101a070e785 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > @@ -433,12 +433,41 @@ void rzg2l_cru_stop_image_processing(struct rzg2l=
-_cru_dev *cru)
-> >       spin_unlock_irqrestore(&cru->qlock, flags);
-> >  }
-> >
-> > +static int rzg2l_cru_get_virtual_channel(struct rzg2l_cru_dev *cru)
-> > +{
-> > +     struct v4l2_mbus_frame_desc fd =3D { };
-> > +     struct media_pad *pad;
-> > +     int ret;
-> > +
-> > +     pad =3D media_pad_remote_pad_unique(&cru->ip.pads[1]);
->
-> It would be nice to use RZG2L_CRU_IP_SOURCE here instead of hardcoding
-> the pad number. That would require moving rzg2l_csi2_pads to the shared
-> header. You can do that on top.
->
-With the below comment we dont need to move rzg2l_csi2_pads into the
-shared header.
+See: https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#function-references-in-changelogs
 
-> An now that I've said that, is it really the source pad you need here ?
->
-Ouch you are right.
+> synchronized. This issue is that this periodic timer uses the REALTIME
+> clock, so when time moves backwards (the NTP server jumps into the past),
+> the next call to "sync_hw_clock" could be realized after a very long
 
-> > +     if (IS_ERR(pad))
-> > +             return PTR_ERR(pad);
->
-> Can this happen, or would the pipeline fail to validate ? I think you
-> can set the MUST_CONNECT flag on the sink pad, then you'll have a
-> guarantee something will be connected.
->
-After adding the MUST_CONNECT flag, I wouldn't need the  above
-media_pad_remote_pad_unique()...
+s/the next .../the timer expires late./
 
-> > +
-> > +     ret =3D v4l2_subdev_call(cru->ip.remote, pad, get_frame_desc,
-> > +                            pad->index, &fd);
-... and here I can use '0' instead or do you prefer RZG2L_CRU_IP_SINK
-(I say because we are calling into remote subdev of IP which is CSI so
-the RZG2L_CRU_IP_SINK wont make sense)?
+And then please explain what the consequence is when it expires
+late. See the changelog section of the above link.
 
-> > +     if (ret < 0 && ret !=3D -ENOIOCTLCMD)
->
-> Printing an error message would help debugging.
->
-OK, I will add.
+> period.
 
-> > +             return ret;
-> > +     /* If remote subdev does not implement .get_frame_desc default to=
- VC0. */
-> > +     if (ret =3D=3D -ENOIOCTLCMD)
-> > +             return 0;
-> > +
-> > +     if (fd.type !=3D V4L2_MBUS_FRAME_DESC_TYPE_CSI2)
->
-> An error message would help here too I think.
->
-OK, I will add.
+Cute.
 
-> > +             return -EINVAL;
-> > +
-> > +     return fd.num_entries ? fd.entry[0].bus.csi2.vc : 0;
+> A normal NTP server should not jump in the past like that, but it is
+> possible... Another way to reproduce this issue is using phc2sys to
+> synchronize the REALTIME clock with for example an IRIG timecode with
+> the source always starting at the same date (not synchronized).
 >
-> I think you should return an error if fd.num_entries is 0, that
-> shouldn't happen.
->
-OK, I will add.
+> This patch cancels the periodic timer on a time jump (ADJ_SETOFFSET).
 
-> > +}
-> > +
-> >  int rzg2l_cru_start_image_processing(struct rzg2l_cru_dev *cru)
-> >  {
-> >       struct v4l2_mbus_framefmt *fmt =3D rzg2l_cru_ip_get_src_fmt(cru);
-> >       unsigned long flags;
-> >       int ret;
-> >
-> > +     ret =3D rzg2l_cru_get_virtual_channel(cru);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +     cru->csi.channel =3D ret;
->
-> How about passing the value to the function that needs it, instead of
-> storing it in cru->csi.channel ? You can do that on top and drop the
-> csi.channel field.
->
-OK, let me check if this can be done.
+s/This patch cancels/Cancel/
 
-Cheers,
-Prabhakar
+For explanation:
+# git grep 'This patch' Documentation/process 
+
+> The timer will be relaunched at the end of "do_adjtimex" if NTP is still
+> considered synced. Otherwise the timer will be relaunched later when NTP
+> is synced. This way, when the time is synchronized again, the RTC is
+> updated after less than 2 seconds.
+>
+> Signed-off-by: Benjamin ROBIN <dev@benjarobin.fr>
+> ---
+>  kernel/time/ntp.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
+> index 8d2dd214ec68..5c8dd92cf012 100644
+> --- a/kernel/time/ntp.c
+> +++ b/kernel/time/ntp.c
+> @@ -751,6 +751,9 @@ static inline void process_adjtimex_modes(const struct __kernel_timex *txc,
+>  
+>  	if (txc->modes & (ADJ_TICK|ADJ_FREQUENCY|ADJ_OFFSET))
+>  		ntp_update_frequency();
+> +
+> +	if (txc->modes & ADJ_SETOFFSET)
+> +		hrtimer_cancel(&sync_hrtimer);
+
+Did you test this with lockdep enabled?
+
+The caller holds timekeeping_lock and has the time keeper sequence write
+held. There is an existing dependency chain which is invers. Assume the
+sync_hrtimer is queued on a different CPU, CPU1 in this example:
+
+CPU 0                                       CPU1
+
+lock(&timekeeper_lock);                     lock_hrtimer_base(CPU1);    
+
+write_seqcount_begin(&tk_core.seq); <- Makes tk_core.seq odd
+
+__do_adjtimex()
+  process_adjtimex_modes()                  base->get_time()
+    hrtimer_cancel()                          do {
+      hrtimer_try_to_cancel()                       seq = read_seqcount_begin(&tk_core.seq);
+        lock_hrtimer_base(CPU1);                          ^^^
+        ^^^ deadlock                                      Spin waits for tk_core.seq
+                                                          to become even
+
+You can do that cancel only outside of timekeeper_lock:
+
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -2426,6 +2426,7 @@ int do_adjtimex(struct __kernel_timex *t
+ {
+ 	struct timekeeper *tk = &tk_core.timekeeper;
+ 	struct audit_ntp_data ad;
++	bool offset_set = false;
+ 	bool clock_set = false;
+ 	struct timespec64 ts;
+ 	unsigned long flags;
+@@ -2448,6 +2449,7 @@ int do_adjtimex(struct __kernel_timex *t
+ 		if (ret)
+ 			return ret;
+ 
++		offset_set = delta.tv_sec < 0;
+ 		audit_tk_injoffset(delta);
+ 	}
+ 
+@@ -2481,7 +2483,7 @@ int do_adjtimex(struct __kernel_timex *t
+ 	if (clock_set)
+ 		clock_was_set(CLOCK_REALTIME);
+ 
+-	ntp_notify_cmos_timer();
++	ntp_notify_cmos_timer(offset_set);
+ 
+ 	return ret;
+ }
+
+Now you can fix that up in ntp_notify_cmos_timer() which is outside of
+the timekeeper_lock held region for the very same reason and it's the
+proper place to do that.
+
+Thanks,
+
+        tglx
 
