@@ -1,145 +1,190 @@
-Return-Path: <linux-kernel+bounces-319778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD5C970216
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:54:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9DB2970219
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED094281EA8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:54:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20161B220D0
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8B115AD9E;
-	Sat,  7 Sep 2024 11:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4777815A87B;
+	Sat,  7 Sep 2024 11:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="sOXmX+H6";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VwEJTJgR"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="KLheceuY"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E14938F83;
-	Sat,  7 Sep 2024 11:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D184D43179
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 11:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725710059; cv=none; b=pbAaoakIOWYxrXBzFTBDsfNNlZuPj2OMvg6OhxRScgN5r/Enl9mRLuhdKZWCMo0AcVaQM9CBzYIUFt0VlIHcBGzD66nXSqAC9Mz7Vseek9K1iw/IfgxQ2C66e7p0p+JNdsXcxvXwpUxXHgzOPYzocTnSLLIlnrzYXB7OlrIqmwc=
+	t=1725710234; cv=none; b=dtBAa7exXqICAk3AbZxqKjQl/YFAW55op+HjbvIxWYFqCV5Uf++NiH097GbSivOmWQO+ePjvu3GYEi7hIEHcMCeGXtVtsVcziBzrXEYWK1+lSqSSk85ywHovUL6N8bbV2QVCSfqk6m+NdGAkyfoTBL7LGsmbG/lRUrOcrEj41LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725710059; c=relaxed/simple;
-	bh=74HYkxaTDCmYoIeFVfJvddkrcPJVvqrYYwPCdQE+Ev8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=eabH1LfigII9oZlzZcbnezy33VAbdc0OEvcg7Pt+oumyIbHyLH54K6DoYC2siSjnGnThAVSphK9BeiZ2Jq6JEo/TPzJKQI2wCBLl6/5ZbRejfFYGQdk0InTJwTIUeW4aSJyRF6koqxZEwZGPnsa4myWotNItZ5uHFEIwYok2XoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=sOXmX+H6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VwEJTJgR; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 534F611403A7;
-	Sat,  7 Sep 2024 07:54:17 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-09.internal (MEProxy); Sat, 07 Sep 2024 07:54:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1725710057;
-	 x=1725796457; bh=74HYkxaTDCmYoIeFVfJvddkrcPJVvqrYYwPCdQE+Ev8=; b=
-	sOXmX+H68LzyF2CMEDjTefmA6T8c0cb0NlHZeg80X/Iz+05Buxs8lm6559zsacCr
-	o8iT7ETuwODLsXj6YSGh5adFuMJNg/+k7b/r+S8/F1EmTcn2DumKk/CEk13eWRIF
-	yNpYfOPLtKIfzoIwHEZEQk6NpkMd9VS1FpT247Eew02JdY+gEZTg+MJoTIJ/VWOg
-	Af3gh1IRlV8l64UXp9vG19cya12zYpjThTk+wxnE4kcYT/18MGqtVy1IPGi5MZ2/
-	krKC7evTkcJQPpikyFkkxgG5UhDd09Nq/cfFTKmud4Dcb/iFMwBRZWrWHI+aa8IM
-	cy2FiU5ECS6W3Up4MjZeNg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725710057; x=
-	1725796457; bh=74HYkxaTDCmYoIeFVfJvddkrcPJVvqrYYwPCdQE+Ev8=; b=V
-	wEJTJgRTRU7M8CpmJp/d3sMc+P9+8u7LuWoRcSUdHqwjIjF4URm5LJBuo+6JwHGy
-	eYfAXIwaKyRY+4GpBZYH+g5AOjRi+z8ilUA2PVGax/OafX2V5aK0kkQ9IP8S7MCo
-	mZfDkiZTNjoF8ohx8e2j1JvjrkmBG/oIoZe6ade94AkhdyfzN8CFZHaB1fGOvi3P
-	x/L3TA647LQkysur2cWAvybFpowKjIf64I91dBo7ZJnV3YgTLpX+xJycJDbigEnD
-	3vTwyqYSTMqH4c5zotMiCd5mDTV1oqKtriMyjM+vD1kgFj48OhO098bx8bLE3ScC
-	weMfg6IcVgzT3T3WhOBdg==
-X-ME-Sender: <xms:6T7cZr8KBMreCVQty_PF0kraOZ9E19anT2KmZMB6OU98mmSpipwEUA>
-    <xme:6T7cZntJancvy46NDh2g7r5wON_b7EQ387S6p1P4PkMv86B4q_MXoh5fG3WCRmZ5k
-    cn9R4nZQZEoLJGBk_k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeifedggeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
-    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
-    thdrtghomhdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthho
-    pegstghmqdhkvghrnhgvlhdqfhgvvggusggrtghkqdhlihhsthessghrohgruggtohhmrd
-    gtohhmpdhrtghpthhtohepfhhlohhrihgrnhdrfhgrihhnvghllhhisegsrhhorggutgho
-    mhdrtghomhdprhgtphhtthhopehfrghntggvrhdrlhgrnhgtvghrsehgmhgrihhlrdgtoh
-    hmpdhrtghpthhtoheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehprghulhgsuhhrthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglh
-    igsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhiphhsse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:6T7cZpAjCrVpvHmduN844ws4Nd4vooy_p_SON2F0vsm7D8VW95-Rtw>
-    <xmx:6T7cZnfw5x6KPfCE91r94RYkJp3tnIO6r375d5pKtR7-PY_7UO7l-A>
-    <xmx:6T7cZgMRxKY8ic5pGtX4SYDxfsvOOovvMXMbrYe4LvRIZRbexgzF5A>
-    <xmx:6T7cZpmMbvIxDylkq0QVojsG5kZA5e1t803o1xc0IBnCADsM90vinA>
-    <xmx:6T7cZhgQyWD8ggtduc3SZXZ7wr4WEAPXcAOJ9Ljq2o-d7npQI5-vMYPe>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 234711C20066; Sat,  7 Sep 2024 07:54:17 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725710234; c=relaxed/simple;
+	bh=Uf4proC+YOx9CyQkbPZT1xG3tF3zrbg5fNiG38DXiGc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IsGRfgRloeOHJ1BpoKExiAKi64JCfwP01Oct4yMGOHyooLaFEeKHtBAXUsG3MlsFAubtL/Ad7j6JQVWsqNttaJeFjzdtIvITlQWyKSfLYmycNkRv/nVqdJrgkKBzRLMKI8S8RGytut4XeqIZ6Py1UPUvH5iTazH+J24i5SBa2Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=KLheceuY; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1725710231; x=1725969431;
+	bh=Uf4proC+YOx9CyQkbPZT1xG3tF3zrbg5fNiG38DXiGc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=KLheceuYuqLlJOht4r0kZk9EZ4xMw9QfirDm5UUf7+Ee6a5kfZJratT1Lv9bR8WC5
+	 9n6pIHPL+b8wGtBr/X4ptXJiJZd5TD+IYjVQZNuq42euL0dihOvqtCCEUmFUa/hagI
+	 kyo0Bwdxr85qsSmPh+qbQXeZvgLY1B6MSNGlmDrV3aA9kA/qGLj6EDCFaY+9RrI/Ag
+	 SBkFZM46DwJ6JBzy/46SaEW4JqVVWIl4f3Yf9t+LVNdWA+C1AcUfn5FikB+Sg5yRB+
+	 6u0qa3KVe0vTxXKNOVY33dh6cBusoWMLpebKPzRKO7wuR70DHXwOfF8MORW/T2s+qS
+	 v258XMc84fpMg==
+Date: Sat, 07 Sep 2024 11:57:02 +0000
+To: Joe Perches <joe@perches.com>
+From: Patrick Miller <paddymills@proton.me>
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, apw@canonical.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dwaipayanray1@gmail.com, gary@garyguo.net, linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com, ojeda@kernel.org, rust-for-linux@vger.kernel.org, tmgross@umich.edu, wedsonaf@gmail.com
+Subject: Re: [PATCH 2/2] checkpatch: warn on known non-plural rust doc headers
+Message-ID: <ct-Fmb-XUaJqIhpE1RlzXwIHxv2fWKgeiD4_j3xguKMCL4vwyYn8qzv_fKjulO9GmOW18h0jzPkiRgNfym5HyUhPVBAKHJnhAH5WhYAVKNg=@proton.me>
+In-Reply-To: <db693ef6c064fa42eda323f067d4270baf68b1f5.camel@perches.com>
+References: <20240906180456.2302688-1-paddymills@proton.me> <db693ef6c064fa42eda323f067d4270baf68b1f5.camel@perches.com>
+Feedback-ID: 45271957:user:proton
+X-Pm-Message-ID: 64a4f188b6bacd40c1f7f0e21e04ea4d78695384
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 07 Sep 2024 12:53:55 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Florian Fainelli" <florian.fainelli@broadcom.com>,
- "Broadcom internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>,
- "Huacai Chen" <chenhuacai@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Serge Semin" <fancer.lancer@gmail.com>,
- "paulburton@kernel.org" <paulburton@kernel.org>
-Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Message-Id: <a787d1dd-a99b-4fd0-9e9c-7e00f3a5e69b@app.fastmail.com>
-In-Reply-To: 
- <20240907-b4-mips-ipi-improvements-v4-0-ac288f9aff0b@flygoat.com>
-References: <20240907-b4-mips-ipi-improvements-v4-0-ac288f9aff0b@flygoat.com>
-Subject: Re: [PATCH v4 00/10] MIPS: IPI Improvements
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha512; boundary="------c25aa81a236cb3efd22076370285a2ca0d870d6e96c31340e75228503c2d637e"; charset=utf-8
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------c25aa81a236cb3efd22076370285a2ca0d870d6e96c31340e75228503c2d637e
+Content-Type: multipart/mixed;boundary=---------------------6486fb8921cf390c01f25a6c9d911a1e
+
+-----------------------6486fb8921cf390c01f25a6c9d911a1e
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;charset=utf-8
 
 
 
-=E5=9C=A82024=E5=B9=B49=E6=9C=887=E6=97=A5=E4=B9=9D=E6=9C=88 =E4=B8=8B=E5=
-=8D=8812:48=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
-> Hi all,
->
-> This series improved general handling to MIPS IPI interrupts, made
-> IPI numbers scalable, and switch to IPI-MUX for all GERNERIC_IPI
-> users on mux.
->
-> It is a prerequisite for enabling IRQ_WORK for MIPS.
->
-> It has been tested on MIPS Boston I6500, malta CoreFPGA3 47K MT/
-> interAPtiv MPF, Loongson-2K, Cavium CN7130 (EdgeRouter 4), and an
-> unannounced interaptiv UP MT platform with EIC.
->
-> I don't really know broadcom platforms and SGI platforms well so
-> changes to those platforms are kept minimal (no functional change).
 
-Oops please ignore this reversion, I made a mistake on local version man=
-agement.
 
-Will resend, sorry for the noise.
 
-Thanks
---=20
-- Jiaxun
+On Saturday, September 7th, 2024 at 6:53 AM, Joe Perches <joe@perches.com>=
+ wrote:
+
+> =
+
+
+> =
+
+
+> On Fri, 2024-09-06 at 18:05 +0000, Patrick Miller wrote:
+> =
+
+
+> > Adds a check for documentation in rust file. Warns if certain known
+> > documentation headers are not plural. Even though some sections may
+> > be singular (i.e. only one example), the header should still be plural
+> > so that more examples can be added later without needing to change the
+> > header.
+> > =
+
+
+> > Fixed the whitespace issue on my previous patch.
+> =
+
+
+> =
+
+
+> Well, one of them.
+> =
+
+
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> =
+
+
+> []
+> =
+
+
+> > @@ -3900,6 +3900,13 @@ sub process {
+> > "Avoid using '.L' prefixed local symbol names for denoting a range of =
+code via 'SYM_*_START/END' annotations; see Documentation/core-api/asm-ann=
+otations.rst\n" . $herecurr);
+> > }
+> > =
+
+
+> > +# check that document section headers are plural in rust files
+> > + if ($realfile =3D~ /\.rs$/
+> > + && $rawline =3D~ /^\+\s*\/\/\/\s+#+\s+(Example|Invariant|Guarantee|P=
+anic)\s*$/) {
+> > + WARN( "RUST_DOC_HEADER",
+> > + "Rust doc headers should be plural\n" . $herecurr );
+> =
+
+
+> =
+
+
+> There is no autoformatter for checkpatch/perl/etc.
+> =
+
+
+> Continuation && on previous line
+Will fix this. Is there a code style document for the perl scripts?
+> No space after open paren
+> Align to open paren
+> No space before close paren
+I based my coding style off of the if statement directly above mine,
+although I did miss the continuation of &&
+
+> =
+
+
+> I think this is an overly trivial addition.
+I am responding to an issue that is part of rust-for-linux. Maybe
+Miguel Ojeda has something to add on this matter?
+-----------------------6486fb8921cf390c01f25a6c9d911a1e
+Content-Type: application/pgp-keys; filename="publickey - paddymills@proton.me - 0xDCA74891.asc"; name="publickey - paddymills@proton.me - 0xDCA74891.asc"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="publickey - paddymills@proton.me - 0xDCA74891.asc"; name="publickey - paddymills@proton.me - 0xDCA74891.asc"
+
+LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgp4ak1FWWs0UnNSWUpLd1lCQkFI
+YVJ3OEJBUWRBU1FhVy9FUmQ4dGZncXNNSHQweTY3ZFdRTEU3UnV2T3gKM2p6YWdhRWI0c0xOSzNC
+aFpHUjViV2xzYkhOQWNISnZkRzl1TG0xbElEeHdZV1JrZVcxcGJHeHpRSEJ5CmIzUnZiaTV0WlQ3
+Q2p3UVFGZ29BSUFVQ1lrNFJzUVlMQ1FjSUF3SUVGUWdLQWdRV0FnRUFBaGtCQWhzRApBaDRCQUNF
+SkVKdFJHcnN1cjU0UkZpRUUzS2RJa1N2VW5DdmU4MDFtbTFFYXV5NnZuaEZpcUFFQXQwVCsKcGdw
+MFJvV3dJZm1EUEZUbjNsbVRRcVA0dUEreDRnNXB2OG5SSHBJQS8xVU1YLzh3akZlK24wZUM0V0pq
+Cnk0bjUvTmVLcTF6LzhQSnRZYXVzZVZnT3pqZ0VZazRSc1JJS0t3WUJCQUdYVlFFRkFRRUhRRi9m
+TnBEZgpsbERSbkhIcmVIdlR0SXRGd3VETDNLWkFhaDhZd3dxV0FyNFJBd0VJQjhKNEJCZ1dDQUFK
+QlFKaVRoR3gKQWhzTUFDRUpFSnRSR3JzdXI1NFJGaUVFM0tkSWtTdlVuQ3ZlODAxbW0xRWF1eTZ2
+bmhHR2Z3RUFuWkFzCkdwb0w3UWk5VkNOT3Bja3IwdjhONUt4YnNsSUxmZVArMmNJU0hlY0Erd1Rx
+WDNsZ3dnNVJDN1lBT1MvUQowQ3NxMGNrT0kwSm5zTEtVWlNyOE5Sb0IKPVcxOG4KLS0tLS1FTkQg
+UEdQIFBVQkxJQyBLRVkgQkxPQ0stLS0tLQo=
+-----------------------6486fb8921cf390c01f25a6c9d911a1e--
+
+--------c25aa81a236cb3efd22076370285a2ca0d870d6e96c31340e75228503c2d637e
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: ProtonMail
+
+wnUEARYKACcFgmbcP4QJkJtRGrsur54RFiEE3KdIkSvUnCve801mm1Eauy6v
+nhEAANjSAP0R1y6G1QSPp2cntnwCBGd930ErjNDr+EI9Oli/tQGNMQEAhlYq
+Y5+u3eQVtDws6WjGuY9qPRHVMMzlj3qvDF3G9ww=
+=YzhF
+-----END PGP SIGNATURE-----
+
+
+--------c25aa81a236cb3efd22076370285a2ca0d870d6e96c31340e75228503c2d637e--
+
 
