@@ -1,160 +1,281 @@
-Return-Path: <linux-kernel+bounces-319946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F697970409
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 22:16:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A04970413
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 22:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56C141F2280D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 20:16:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F8BA2836B5
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 20:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E7C166F3B;
-	Sat,  7 Sep 2024 20:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0202168486;
+	Sat,  7 Sep 2024 20:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WeJ8XttG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="nRQl57fA"
+Received: from msa.smtpout.orange.fr (smtp-77.smtpout.orange.fr [80.12.242.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8034E49634;
-	Sat,  7 Sep 2024 20:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0723F9CC;
+	Sat,  7 Sep 2024 20:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725740199; cv=none; b=Yx6vb6+uu9Y7xfg3fcqcJAMECx+0crmGc888tHALhX+ze8UfZfLywSunEXhKiBb6CRmXYGzd8Pf8BS86NFx6Oq13gJeao4d5MfrpG+4uM1WWmGqv8kfPKrVcbgPdvSXuNQje4XFwYt5theWINBgCtiuJVfU3rSTuyfS3eYxj3so=
+	t=1725741141; cv=none; b=XSa+0XPL9gVa9XNhwQmoXe29/85swjtq4gtd07wCHhgMAIHcBhYVHj98nTkFOn4od8LJpnAIhd/WmT43AVJN/ntcUKXE4UZ9JdqGuEMJVINv9Y720Dz2GjVq6UNbG7iUIP0K0FDH5DQvxwzDChSSecudwnpXnltdUqMqWmeDXCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725740199; c=relaxed/simple;
-	bh=WMVQMzLE9Xqb8q7ZuUfOhRebecLvcZqfXpcB1wDdFrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NOPYMU21od6SV7iE4I07vWWgEnQrzcLWuzfkMKXMMrnqznFUg4C6Lci6axFv9dHKs2VHbiyoj3Q3h8HEnBT0+fkY7l9A9WjXrXH51YRiA4yT8bIOlabiSmgS3fWjr1C9TDzPUzmXFvh5QYZFIYGIkmQviOdM1guScJxvq7feI2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WeJ8XttG; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725740196; x=1757276196;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WMVQMzLE9Xqb8q7ZuUfOhRebecLvcZqfXpcB1wDdFrE=;
-  b=WeJ8XttGHQy+tkbuJ6/7M45+lm5PPBxFGU67O0E4/AmF87/2+p78ZWNt
-   YDXqv2IK906rJxSI1VVxsT49rELPyUDMGRtHrTDWgfJX2fTdPsOtCfWn1
-   4oPBCy69fpPJ+aFNjYJe1iKDT5uA9wWhNZ3NaDboo3vUeHdtS8iMwhiKR
-   uKFls7ftOBN4XbwzbpX/QX9Zc7HxH6+kDZ4gK2L99vzrE0xv2Us9hNABo
-   +tXnmT+iWrzmL4IuRF/EtBavt2afwHH242c2ewYwiyUzIAFKo6obBZnrw
-   RB8n9GAwxkHvcpKcJ1fJRg6RQg6T5whwqrrti4W7eij5LJa1wmWyq2MCl
-   A==;
-X-CSE-ConnectionGUID: TrvT7H8MQMiUlHdD/lLMfg==
-X-CSE-MsgGUID: t5KV7F/HSumSm8KSKME+rQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="13424235"
-X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
-   d="scan'208";a="13424235"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 13:16:35 -0700
-X-CSE-ConnectionGUID: sB+7M0u9T22JZWBAuo/AcQ==
-X-CSE-MsgGUID: PaXA9fJ2SUSKXdN51vEzzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
-   d="scan'208";a="71055438"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 07 Sep 2024 13:16:34 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sn1rD-000Cxv-0p;
-	Sat, 07 Sep 2024 20:16:31 +0000
-Date: Sun, 8 Sep 2024 04:16:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>, robh@kernel.org,
-	saravanak@google.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	andriy.shevchenko@linux.intel.com,
-	Vasileios Amoiridis <vassilisamir@gmail.com>
-Subject: Re: [PATCH v2 2/2] of/irq: Use helper to define resources
-Message-ID: <202409080407.JLfgI8Fr-lkp@intel.com>
-References: <20240904160239.121301-3-vassilisamir@gmail.com>
+	s=arc-20240116; t=1725741141; c=relaxed/simple;
+	bh=yLGqfgyzjqmRJqgzGXDIOUEE7fkWFRssNKvQottSDeE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NhDNHLvaic2wGoqlpAEF8UPqHil/J67EwWh3A2ViNysZz+H6A4ndHCYGIZfDaja6p5rohvshq5uHrLhcNMT+7zZ71YLUI9e/3t0oV+g/iiEzbGjfZ24vifHF7XXdHI91URyqMGj8gstEmGOPJ8hxx221Ep5eebqqVczWOvcnb1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=nRQl57fA; arc=none smtp.client-ip=80.12.242.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id n25BsU48FQaX2n25BsQW8P; Sat, 07 Sep 2024 22:30:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725741058;
+	bh=C0HZK5gX7EHpsfXjRldNuzd5k9/czrbSmOypVOt8t4c=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=nRQl57fAIj4iAyoix6Xd9h5lK4DROgDUevvVoCCMKfQ5UTP/igI0K5cejrQF0/k6G
+	 60BfNX6Ruph7bT2Y5yI9pFjebJ9sRHWGmFH4qfV7QddLLfcGPdC8WQWFqdHEcL0NZr
+	 yvGUlo9EnGjNul5VZIpNv6JPpqrr0h/E7pWQP2sCF5AK+YGtAHhGkpcwOybqSdxiUA
+	 bZEtTSwAKWOm9x8mMPO+WgAd551gmxtPvjHX5E+BPi8jE57QJNYN+nLZZOrLxzhOmy
+	 hJJfWsCYdrKMuCKVjlmJU03b3lzhafWgFrQQwiP44j0R3zup9wUvSjl2j8FR83zF9N
+	 HSuotU3NrP2ag==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 07 Sep 2024 22:30:57 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Malcolm Priestley <tvboxspy@gmail.com>,
+	Michael Krufky <mkrufky@linuxtv.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-media@vger.kernel.org
+Subject: [PATCH] media: dvb-usb-v2: Constify struct i2c_algorithm
+Date: Sat,  7 Sep 2024 22:30:42 +0200
+Message-ID: <d84110421a78dc6769435b2c7ff30c7e873f4cd0.1725741030.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904160239.121301-3-vassilisamir@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Vasileios,
+'struct i2c_algorithm' are not modified in these drivers.
 
-kernel test robot noticed the following build errors:
+Constifying this structure moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers.
 
-[auto build test ERROR on ecc768a84f0b8e631986f9ade3118fa37852fef0]
+More over, dvb_usb_device_properties->i2c_algo seems to only be copied in
+i2c_adapter->algo, which is already a "const struct i2c_algorithm".
+This is done in dvb_usbv2_i2c_init()
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vasileios-Amoiridis/of-irq-Make-use-of-irq_get_trigger_type/20240905-000607
-base:   ecc768a84f0b8e631986f9ade3118fa37852fef0
-patch link:    https://lore.kernel.org/r/20240904160239.121301-3-vassilisamir%40gmail.com
-patch subject: [PATCH v2 2/2] of/irq: Use helper to define resources
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240908/202409080407.JLfgI8Fr-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240908/202409080407.JLfgI8Fr-lkp@intel.com/reproduce)
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  35366	   5832	     36	  41234	   a112	drivers/media/usb/dvb-usb-v2/af9015.o
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409080407.JLfgI8Fr-lkp@intel.com/
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  35430	   5768	     36	  41234	   a112	drivers/media/usb/dvb-usb-v2/af9015.o
 
-All errors (new ones prefixed by >>):
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+--
+Compile tested only
+---
+ drivers/media/usb/dvb-usb-v2/af9015.c   | 2 +-
+ drivers/media/usb/dvb-usb-v2/af9035.c   | 2 +-
+ drivers/media/usb/dvb-usb-v2/anysee.c   | 2 +-
+ drivers/media/usb/dvb-usb-v2/au6610.c   | 2 +-
+ drivers/media/usb/dvb-usb-v2/az6007.c   | 2 +-
+ drivers/media/usb/dvb-usb-v2/ce6230.c   | 2 +-
+ drivers/media/usb/dvb-usb-v2/dvb_usb.h  | 2 +-
+ drivers/media/usb/dvb-usb-v2/dvbsky.c   | 2 +-
+ drivers/media/usb/dvb-usb-v2/ec168.c    | 2 +-
+ drivers/media/usb/dvb-usb-v2/gl861.c    | 2 +-
+ drivers/media/usb/dvb-usb-v2/lmedm04.c  | 2 +-
+ drivers/media/usb/dvb-usb-v2/mxl111sf.c | 2 +-
+ drivers/media/usb/dvb-usb-v2/rtl28xxu.c | 2 +-
+ 13 files changed, 13 insertions(+), 13 deletions(-)
 
->> drivers/of/irq.c:432:71: error: expected ';' after expression
-     432 |                 *r = DEFINE_RES_IRQ_NAMED(irq, name ? name : of_node_full_name(dev))
-         |                                                                                     ^
-         |                                                                                     ;
-   1 error generated.
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
-   Depends on [n]: MAILBOX [=y] && (ARCH_OMAP2PLUS || ARCH_K3)
-   Selected by [y]:
-   - TI_K3_M4_REMOTEPROC [=y] && REMOTEPROC [=y] && (ARCH_K3 || COMPILE_TEST [=y])
-
-
-vim +432 drivers/of/irq.c
-
-   405	
-   406	/**
-   407	 * of_irq_to_resource - Decode a node's IRQ and return it as a resource
-   408	 * @dev: pointer to device tree node
-   409	 * @index: zero-based index of the irq
-   410	 * @r: pointer to resource structure to return result into.
-   411	 */
-   412	int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
-   413	{
-   414		int irq = of_irq_get(dev, index);
-   415	
-   416		if (irq < 0)
-   417			return irq;
-   418	
-   419		/* Only dereference the resource if both the
-   420		 * resource and the irq are valid. */
-   421		if (r && irq) {
-   422			const char *name = NULL;
-   423	
-   424			memset(r, 0, sizeof(*r));
-   425			/*
-   426			 * Get optional "interrupt-names" property to add a name
-   427			 * to the resource.
-   428			 */
-   429			of_property_read_string_index(dev, "interrupt-names", index,
-   430						      &name);
-   431	
- > 432			*r = DEFINE_RES_IRQ_NAMED(irq, name ? name : of_node_full_name(dev))
-   433			r->flags |= irq_get_trigger_type(irq);
-   434		}
-   435	
-   436		return irq;
-   437	}
-   438	EXPORT_SYMBOL_GPL(of_irq_to_resource);
-   439	
-
+diff --git a/drivers/media/usb/dvb-usb-v2/af9015.c b/drivers/media/usb/dvb-usb-v2/af9015.c
+index 4014f7d07330..3eddc40377bf 100644
+--- a/drivers/media/usb/dvb-usb-v2/af9015.c
++++ b/drivers/media/usb/dvb-usb-v2/af9015.c
+@@ -260,7 +260,7 @@ static u32 af9015_i2c_func(struct i2c_adapter *adapter)
+ 	return I2C_FUNC_I2C;
+ }
+ 
+-static struct i2c_algorithm af9015_i2c_algo = {
++static const struct i2c_algorithm af9015_i2c_algo = {
+ 	.master_xfer = af9015_i2c_xfer,
+ 	.functionality = af9015_i2c_func,
+ };
+diff --git a/drivers/media/usb/dvb-usb-v2/af9035.c b/drivers/media/usb/dvb-usb-v2/af9035.c
+index 0d2c42819d39..04e8bdf0acf4 100644
+--- a/drivers/media/usb/dvb-usb-v2/af9035.c
++++ b/drivers/media/usb/dvb-usb-v2/af9035.c
+@@ -477,7 +477,7 @@ static u32 af9035_i2c_functionality(struct i2c_adapter *adapter)
+ 	return I2C_FUNC_I2C;
+ }
+ 
+-static struct i2c_algorithm af9035_i2c_algo = {
++static const struct i2c_algorithm af9035_i2c_algo = {
+ 	.master_xfer = af9035_i2c_master_xfer,
+ 	.functionality = af9035_i2c_functionality,
+ };
+diff --git a/drivers/media/usb/dvb-usb-v2/anysee.c b/drivers/media/usb/dvb-usb-v2/anysee.c
+index 8699846eb416..12b6d0ac9049 100644
+--- a/drivers/media/usb/dvb-usb-v2/anysee.c
++++ b/drivers/media/usb/dvb-usb-v2/anysee.c
+@@ -244,7 +244,7 @@ static u32 anysee_i2c_func(struct i2c_adapter *adapter)
+ 	return I2C_FUNC_I2C;
+ }
+ 
+-static struct i2c_algorithm anysee_i2c_algo = {
++static const struct i2c_algorithm anysee_i2c_algo = {
+ 	.master_xfer   = anysee_master_xfer,
+ 	.functionality = anysee_i2c_func,
+ };
+diff --git a/drivers/media/usb/dvb-usb-v2/au6610.c b/drivers/media/usb/dvb-usb-v2/au6610.c
+index be223fc8aa14..c20a9469f564 100644
+--- a/drivers/media/usb/dvb-usb-v2/au6610.c
++++ b/drivers/media/usb/dvb-usb-v2/au6610.c
+@@ -115,7 +115,7 @@ static u32 au6610_i2c_func(struct i2c_adapter *adapter)
+ 	return I2C_FUNC_I2C;
+ }
+ 
+-static struct i2c_algorithm au6610_i2c_algo = {
++static const struct i2c_algorithm au6610_i2c_algo = {
+ 	.master_xfer   = au6610_i2c_xfer,
+ 	.functionality = au6610_i2c_func,
+ };
+diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
+index 2410054ddb2c..65ef045b74ca 100644
+--- a/drivers/media/usb/dvb-usb-v2/az6007.c
++++ b/drivers/media/usb/dvb-usb-v2/az6007.c
+@@ -838,7 +838,7 @@ static u32 az6007_i2c_func(struct i2c_adapter *adapter)
+ 	return I2C_FUNC_I2C;
+ }
+ 
+-static struct i2c_algorithm az6007_i2c_algo = {
++static const struct i2c_algorithm az6007_i2c_algo = {
+ 	.master_xfer = az6007_i2c_xfer,
+ 	.functionality = az6007_i2c_func,
+ };
+diff --git a/drivers/media/usb/dvb-usb-v2/ce6230.c b/drivers/media/usb/dvb-usb-v2/ce6230.c
+index d3b5cb4a24da..7ebaf3ee4491 100644
+--- a/drivers/media/usb/dvb-usb-v2/ce6230.c
++++ b/drivers/media/usb/dvb-usb-v2/ce6230.c
+@@ -154,7 +154,7 @@ static u32 ce6230_i2c_functionality(struct i2c_adapter *adapter)
+ 	return I2C_FUNC_I2C;
+ }
+ 
+-static struct i2c_algorithm ce6230_i2c_algorithm = {
++static const struct i2c_algorithm ce6230_i2c_algorithm = {
+ 	.master_xfer   = ce6230_i2c_master_xfer,
+ 	.functionality = ce6230_i2c_functionality,
+ };
+diff --git a/drivers/media/usb/dvb-usb-v2/dvb_usb.h b/drivers/media/usb/dvb-usb-v2/dvb_usb.h
+index 288c15a7d72b..ecdc20d45132 100644
+--- a/drivers/media/usb/dvb-usb-v2/dvb_usb.h
++++ b/drivers/media/usb/dvb-usb-v2/dvb_usb.h
+@@ -243,7 +243,7 @@ struct dvb_usb_device_properties {
+ 	int (*download_firmware) (struct dvb_usb_device *,
+ 			const struct firmware *);
+ 
+-	struct i2c_algorithm *i2c_algo;
++	const struct i2c_algorithm *i2c_algo;
+ 
+ 	unsigned int num_adapters;
+ 	int (*get_adapter_count) (struct dvb_usb_device *);
+diff --git a/drivers/media/usb/dvb-usb-v2/dvbsky.c b/drivers/media/usb/dvb-usb-v2/dvbsky.c
+index 1221c924312a..ceac0ea21dab 100644
+--- a/drivers/media/usb/dvb-usb-v2/dvbsky.c
++++ b/drivers/media/usb/dvb-usb-v2/dvbsky.c
+@@ -169,7 +169,7 @@ static u32 dvbsky_i2c_func(struct i2c_adapter *adapter)
+ 	return I2C_FUNC_I2C;
+ }
+ 
+-static struct i2c_algorithm dvbsky_i2c_algo = {
++static const struct i2c_algorithm dvbsky_i2c_algo = {
+ 	.master_xfer   = dvbsky_i2c_xfer,
+ 	.functionality = dvbsky_i2c_func,
+ };
+diff --git a/drivers/media/usb/dvb-usb-v2/ec168.c b/drivers/media/usb/dvb-usb-v2/ec168.c
+index 0e4773fc025c..973b32356b17 100644
+--- a/drivers/media/usb/dvb-usb-v2/ec168.c
++++ b/drivers/media/usb/dvb-usb-v2/ec168.c
+@@ -176,7 +176,7 @@ static u32 ec168_i2c_func(struct i2c_adapter *adapter)
+ 	return I2C_FUNC_I2C;
+ }
+ 
+-static struct i2c_algorithm ec168_i2c_algo = {
++static const struct i2c_algorithm ec168_i2c_algo = {
+ 	.master_xfer   = ec168_i2c_xfer,
+ 	.functionality = ec168_i2c_func,
+ };
+diff --git a/drivers/media/usb/dvb-usb-v2/gl861.c b/drivers/media/usb/dvb-usb-v2/gl861.c
+index c71e7b93476d..0538170ccf29 100644
+--- a/drivers/media/usb/dvb-usb-v2/gl861.c
++++ b/drivers/media/usb/dvb-usb-v2/gl861.c
+@@ -162,7 +162,7 @@ static u32 gl861_i2c_functionality(struct i2c_adapter *adapter)
+ 	return I2C_FUNC_I2C;
+ }
+ 
+-static struct i2c_algorithm gl861_i2c_algo = {
++static const struct i2c_algorithm gl861_i2c_algo = {
+ 	.master_xfer   = gl861_i2c_master_xfer,
+ 	.functionality = gl861_i2c_functionality,
+ };
+diff --git a/drivers/media/usb/dvb-usb-v2/lmedm04.c b/drivers/media/usb/dvb-usb-v2/lmedm04.c
+index 8a34e6c0d6a6..c9aa77ff088f 100644
+--- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
++++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
+@@ -549,7 +549,7 @@ static u32 lme2510_i2c_func(struct i2c_adapter *adapter)
+ 	return I2C_FUNC_I2C;
+ }
+ 
+-static struct i2c_algorithm lme2510_i2c_algo = {
++static const struct i2c_algorithm lme2510_i2c_algo = {
+ 	.master_xfer   = lme2510_i2c_xfer,
+ 	.functionality = lme2510_i2c_func,
+ };
+diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf.c b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
+index cd5861a30b6f..870ac3c8b085 100644
+--- a/drivers/media/usb/dvb-usb-v2/mxl111sf.c
++++ b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
+@@ -911,7 +911,7 @@ static u32 mxl111sf_i2c_func(struct i2c_adapter *adapter)
+ 	return I2C_FUNC_I2C;
+ }
+ 
+-static struct i2c_algorithm mxl111sf_i2c_algo = {
++static const struct i2c_algorithm mxl111sf_i2c_algo = {
+ 	.master_xfer   = mxl111sf_i2c_xfer,
+ 	.functionality = mxl111sf_i2c_func,
+ #ifdef NEED_ALGO_CONTROL
+diff --git a/drivers/media/usb/dvb-usb-v2/rtl28xxu.c b/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
+index f7884bb56fcc..487c6ab784ab 100644
+--- a/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
++++ b/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
+@@ -290,7 +290,7 @@ static u32 rtl28xxu_i2c_func(struct i2c_adapter *adapter)
+ 	return I2C_FUNC_I2C;
+ }
+ 
+-static struct i2c_algorithm rtl28xxu_i2c_algo = {
++static const struct i2c_algorithm rtl28xxu_i2c_algo = {
+ 	.master_xfer   = rtl28xxu_i2c_xfer,
+ 	.functionality = rtl28xxu_i2c_func,
+ };
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.0
+
 
