@@ -1,119 +1,194 @@
-Return-Path: <linux-kernel+bounces-319796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCD9970252
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:10:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D17970254
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1857EB227DD
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:10:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B511F22B42
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2FE15C13C;
-	Sat,  7 Sep 2024 13:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F07F15C137;
+	Sat,  7 Sep 2024 13:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OYiwctEG"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ORXKqv2w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53E915ADA7;
-	Sat,  7 Sep 2024 13:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFE015ADA7;
+	Sat,  7 Sep 2024 13:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725714622; cv=none; b=F3NcsJkXZBYog6sK545gKPDJ0rET06Ozb6F3xyfg5Ch/7ppy4WoNpUyR+qFQFk9dyP7SRDkC8Fm6HTqS5y5xWjOtGz47vJky+AzDQqmDWsGGJhLsdQ1X2dCKZOpigc+mDyR831JUzghOtiw+zq6QrpwB0qsU5yCp5il79PgOKcI=
+	t=1725714781; cv=none; b=WprcGh/87Xm9Osyi7Ycwef2ibefU6N+bqOPFi4HxVeFucZP6ErsBmx7UUXLYW8d/k4b4W01EaAV+4ZP/Zx1G6QOMRIdhzC70tRikt2WboIbavvCz2OgChPwamCAV/vTqyuSBbRYrcJwHeQLv20A6VxfJLcxXwCsrKhqQn9Nv3aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725714622; c=relaxed/simple;
-	bh=CxPCxWvN8cI6T67bY/RNZ7fNp8GmAqt/ncYb97a2G1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uObm3oaEPElFx9MzUl6vK9YRo+vC0ELj32iaFqeN7wN7/wA+Xojvnp1T6ghu7MtrCsgWhEHAmJ7bFFA5oo9DAe+HAl54/B9cL+QbWIQ9qxrLHbTzScOI9Ynl2JCzhDdC1+x4lnhqhii2p6mJFwAdGGtAv6V2CATQ65WEsX1wYh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OYiwctEG; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso24160865e9.0;
-        Sat, 07 Sep 2024 06:10:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725714619; x=1726319419; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SnZ926g9psemexTKOW5FYwYvLAMVycIhWdzHzhBre4A=;
-        b=OYiwctEGeqWcDvyeb7inx8u3+UNbkOAuElMDS/rYzvXIz01dt5csYQ2KyPshK29g4k
-         iL3sjDFpU/xq4fE3OakPOerpqAVZVnimoNIRY7pw4vEGuB1bo7mwiPwNM2YSj8h7t+LB
-         V9/Q0h3uq/f5u9Unkm1V7O0FAVOBou8t33hgdWGyhLyO3++ZrYUG4CldaNZol2oJAeA/
-         j3TWxDL2GrHl2b9DfQcVVqzGtF9Bq7mLuwl1M8B9jwRlEajqrihqH3im/aMpuVjc4pDl
-         IegcyvhWhY6pdxBic3vU/AxgP2OwqkBG/CK0mH04tT6Kvjlg3gAFbL1V9B9VTdpI2nLa
-         +9JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725714619; x=1726319419;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SnZ926g9psemexTKOW5FYwYvLAMVycIhWdzHzhBre4A=;
-        b=SzLprqBSizCtb9sqBakCHa9r0HXvqwuI6lwN7S5AYkI/ofOXmWrfSi4Qdodz9JJXov
-         OYRk+HOla4aCh97gUHBJtQQHouRnIG4pelTmaJyUgtgsJJyIAVKCko3d0WaQnzo4kvsJ
-         iKlGt60kTLWzYV7IyYmj/axoG/sNmgp9NcXsqM/rW9qXy5JbhGmpESgKGo/j00JCVQnf
-         oMwFA7j5+UlcAENCKU1SSOsZCyFjyIe3M76m8TiLBar4O4QFCW/hH0h94bnDDH6ZrFMs
-         GyIMnGv1Dy/Q9DN4+mVP5AB6n72nLBMjl8jXnvV33wG1pF6IOJcZc/5hTJTMg1ceE3on
-         u2lg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcF7tZPeGWPjuH6uWlE7RU/Wz9pvCQopApPpYyvUHofyckRqyWUwoj+4D1vcMVkIsGg4wO47lvFFZEu/wL@vger.kernel.org, AJvYcCVkJwBLsldKl8/Ek0JtbD6jgGqww4AnerXGeRv0Di+aZN0jzM86L7ptMK6mmcdqwCXjke8NxRIgdoCoGacCYLbpDg==@vger.kernel.org, AJvYcCXHPLnvMAT2bxGrGKVxNVU4ManHyQSWylEtsP5/2xi0C/jiYoS8kfMVdPq+t6rCL0AzEioa4rVoAjlB6xMoz2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTXpsvteFVDpjKLgpWlmwxN5TvtOhuDTEVmNVyXkMBcvZOYXpj
-	CJMO62zU20dkeXlQOQf8imAWsyPvpbk8MOvc3MrS7czyM9X1liZG
-X-Google-Smtp-Source: AGHT+IH8sPoSI1MlkKkQgd88D2zs4MDzS00EQ3O94oBq2M4RIL+h/FbKuQgMGDgd6hTzGMt/mgH3sg==
-X-Received: by 2002:a05:600c:3483:b0:426:5440:854a with SMTP id 5b1f17b1804b1-42c9f97b8abmr41014505e9.1.1725714619042;
-        Sat, 07 Sep 2024 06:10:19 -0700 (PDT)
-Received: from void.void ([141.226.8.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d35c4sm1391535f8f.87.2024.09.07.06.10.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 06:10:18 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] perf tools: Fix a typo
-Date: Sat,  7 Sep 2024 16:10:01 +0300
-Message-ID: <20240907131006.18510-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725714781; c=relaxed/simple;
+	bh=5xcVFcC3lSy5078QzRE82HrNFUD+O2QbexTWLvWcD9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HuLnUUELbxLAXfvJwqvlw+i8zlmS+M0YmfO1Xk3WQ3WBRzaskdR3J49Kb7PjaQWeVgTIv+92cWf/Rm11ru50fXmTA1weIEQN45B61zCu/7FvU3vaMgv7uLEBTdAF+vX+bn2H70BiyBuzVhUMjYkd5r1zTtK5n0J+YLF2X4GrtU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ORXKqv2w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8DB4C4CEC2;
+	Sat,  7 Sep 2024 13:12:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725714781;
+	bh=5xcVFcC3lSy5078QzRE82HrNFUD+O2QbexTWLvWcD9A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ORXKqv2wNTUxArmAh0ldnGJjCkLb7QzNweO0N/OmbsskJIQyydxv5F3okI9Nw1UEi
+	 om+AFyNAV2yE/QBbSYxt3jHZU+Ry+BxYFi832H+JkmA53IHOQc07wS7tItmiWvgK4d
+	 BbkWS8z6u7MYuh0VVRywAXVtoMuTrspo3zOyO+Jpb9P/6ToLLizr0Y2lCMAysAAT3t
+	 wD/rB/rgrQxw01qaLVwhSZMJF+06fUlONvDypybm52KglqW3R4As5Qddrg2Rd1jZtg
+	 kLNfs7pu9HuDwnVvMDmsPZWcRTN59iHSdGcHfF2D86JYY8IiK+xD09brtacOqAKdkD
+	 Rhfyzm9OK9POg==
+Message-ID: <6bfc4c47-e29d-4141-8ba9-c5b0803ab756@kernel.org>
+Date: Sat, 7 Sep 2024 15:12:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] dt-bindings: memory-controllers: fsl,ifc: add
+ compatible string fsl,ifc-nand
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Michael Walle <mwalle@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ "open list:MEMORY CONTROLLER DRIVERS" <linux-kernel@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, imx@lists.linux.dev
+References: <20240830191144.1375849-1-Frank.Li@nxp.com>
+ <l2xjrs7txycf3uhhhyzypfzoem2fr4fsvbyg3bt4ktfpbzxz47@loiytha55oml>
+ <ZtX8k7UB/Txri5HF@lizhi-Precision-Tower-5810>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZtX8k7UB/Txri5HF@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Fix a typo in comments.
+On 02/09/2024 19:57, Frank Li wrote:
+> On Mon, Sep 02, 2024 at 09:11:05AM +0200, Krzysztof Kozlowski wrote:
+>> On Fri, Aug 30, 2024 at 03:11:43PM -0400, Frank Li wrote:
+>>> ifc can connect nor, nand and fpag. Add child node "nand@" under fsl,ifc
+>>> and compatible string "fsl,ifc-nand" when ifc connect to nand flash.
+>>>
+>>> Fix below warning:
+>>> arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dtb: /soc/memory-controller@1530000/nand@1,0:
+>>> 	failed to match any schema with compatible: ['fsl,ifc-nand']
+>>>
+>>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+>>> ---
+>>> Change from v2 to v3
+>>> - add partition child node for nand
+>>> - Only partition property is used at ppc
+>>> Change from v1 to v2
+>>> - add address-cells and size-cells
+>>> ---
+>>>  .../memory-controllers/fsl/fsl,ifc.yaml       | 26 +++++++++++++++++++
+>>>  1 file changed, 26 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml b/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml
+>>> index d1c3421bee107..5a11224da8914 100644
+>>> --- a/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml
+>>> +++ b/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml
+>>> @@ -58,6 +58,32 @@ properties:
+>>>        access window as configured.
+>>>
+>>>  patternProperties:
+>>> +  "^nand@[a-f0-9]+(,[a-f0-9]+)+$":
+>>> +    type: object
+>>> +    properties:
+>>> +      compatible:
+>>> +        const: fsl,ifc-nand
+>>> +
+>>> +      reg:
+>>> +        maxItems: 1
+>>> +
+>>> +      "#address-cells":
+>>> +        const: 1
+>>> +
+>>> +      "#size-cells":
+>>> +        const: 1
+>>> +
+>>> +    patternProperties:
+>>> +      "^partition@[0-9a-f]+":
+>>> +        $ref: /schemas/mtd/partitions/partition.yaml#
+>>> +        deprecated: true
+>>> +
+>>> +    required:
+>>> +      - compatible
+>>> +      - reg
+>>> +
+>>> +    additionalProperties: false
+>>> +
+>>>    "^.*@[a-f0-9]+(,[a-f0-9]+)+$":
+>>
+>> This pattern is for NAND already. I don't understand why you are
+>> duplicating it. If this part does not work, fix it.
+> 
+> It is old binding. It did not require compatible string. It should split
+> into nand\flash\fpga ...
+> 
+> The difference part require difference compatible string. NAND is only
+> 1st step to improve it.
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- tools/perf/builtin-help.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I understand. I would prefer to make it complete, which you are quite
+close to it. Just change the remaining pattern for example:
 
-diff --git a/tools/perf/builtin-help.c b/tools/perf/builtin-help.c
-index b2a368ae295a..0854d3cd9f6a 100644
---- a/tools/perf/builtin-help.c
-+++ b/tools/perf/builtin-help.c
-@@ -417,7 +417,7 @@ static void open_html(const char *path)
- static int show_html_page(const char *perf_cmd)
- {
- 	const char *page = cmd_to_page(perf_cmd);
--	char *page_path; /* it leaks but we exec bellow */
-+	char *page_path; /* it leaks but we exec below */
- 
- 	if (get_html_page_path(&page_path, page) < 0)
- 		return -1;
--- 
-2.46.0
+(flash|fpga)......:
+  type: object
+  oneOf:
+    - $ref: /schemas/board/fsl,fpga-qixis.yaml#
+    - $ref: /schemas/mtd/mtd-physmap.yaml#
+  unevaluatedProperties: false
+
+or something similar.
+
+
+Best regards,
+Krzysztof
 
 
