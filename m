@@ -1,257 +1,145 @@
-Return-Path: <linux-kernel+bounces-319688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FEE797009B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:43:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B30B99700AA
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB4501F22F60
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:43:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F861F217ED
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7434A14884C;
-	Sat,  7 Sep 2024 07:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6983B49634;
+	Sat,  7 Sep 2024 07:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WjmtYOgX"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B3ZF3tnH"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CAD13C81B
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 07:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75EA413A86A;
+	Sat,  7 Sep 2024 07:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725694975; cv=none; b=H0dEk3jM9U5b54bmb9vmZv+Ficer+MC3v/n6VCgBGBDbNKK1sb9d47W/tDLM5184se+oBhb8XxdESQiEBgUrXVPyIjpJ+UNwOnflYVCIUCy5zIMft31x68AOemB9yAOGCXC51lksZD5KS2CHdq7Q90/vA+gjB1pzdFQfF9kUug8=
+	t=1725695337; cv=none; b=hBj9IjfLbwjAdEX+Ndtb9QaV20chsCNvIOcINA+3s9sDwsez76+anl+f55vscpUC6IPU9hN2QpNDfvl5FOyUIuv8P9zt9Qcm9RuZS45thKJINigm75RoIJKa1bgSRjsDwUlMByYVtl3q9rPBAzDDnDqPDGJ8CchIUXL19X7LPzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725694975; c=relaxed/simple;
-	bh=bbNlLkhC7VjgRHgqNiosqA/8+auffYyQgDJoAhuNR9s=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=b+8vqksEGpV61xupSEvi4ZlXH2td6YgR1uEZISw+y3xbWcXKvgPA9IoHufMwNQlKD0U3Eq/427ge6mvcTd5NyQSX8w+AaYpUMAL1nwXmuafPGOWRBaGkM0bt7c2WlT3/hfYqN26Y2/IJbPsteuhreeFKi0QSyBs6Cd+P65VGKX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WjmtYOgX; arc=none smtp.client-ip=198.175.65.13
+	s=arc-20240116; t=1725695337; c=relaxed/simple;
+	bh=b/4GyXcDXtCVSLSUOBHkRWIG2CZQW6PLXuduJKLwb60=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gxFx70p5b9D2/5xTDP5h1EPt2VYFi1EpI0bqpWqBM0oz/jxt3G9f9VZ6W2qFACsXKEy80Ekqx1AG4b6SnUf083CYURiIBWEPE1fjKFwHjrR2Rr8KMreqFbEsYcPMW1991mAV64TblPdgU2EaXiyzJ0dR4m/bkTDDOIXIwl11y9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B3ZF3tnH; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725694974; x=1757230974;
-  h=date:from:to:cc:subject:message-id;
-  bh=bbNlLkhC7VjgRHgqNiosqA/8+auffYyQgDJoAhuNR9s=;
-  b=WjmtYOgX9Qz5f6BFHqp+Tk0BhJPVaaW+/2N1gp6jgtIM0bIxVrAclbvk
-   2VwenEhb11nQ7wJHLsBfA77kEjO2WdKgAtktET64vlBTplUec6HzrRurj
-   kpfXeQlDjn1NJWnQegYA8HdFUULit/vwf2WeS/uOwPYQlCviid+trtjid
-   W17Me3FMf5/gnvfC6N2QW89Jx7Pklv3Rb4l2KKID/upLYRGzZ1hzs0MMf
-   YbNyoN+B4dTuGyWmEiKJzU3nQg8uv8PcV/L5aKUtR3VXywkDtuM3tzMtn
-   EA/8O+LB0hL3KC7bm0dnHxVcsxhzTpNxUhqJoPzM7J34Lv3g73OgHVZkc
+  t=1725695336; x=1757231336;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=b/4GyXcDXtCVSLSUOBHkRWIG2CZQW6PLXuduJKLwb60=;
+  b=B3ZF3tnHhhTVhe/2Hc+8DQ08wPPGlyAHPf81H1PBT5GoHFw7wgw9OLtA
+   MCJwPjpSkVr8xwqw7I7rrJ4XtSusx8idiHAoiWdQkP742wtw2gtOQo5N3
+   pLsboSUBo9YOsw7c1YFuFF9hhgQuE3RA3AFKcfa/B3ycyXSABWmbgLIYd
+   cKAKuSsj3rUT2AYJtv1x2uZHhxJ5B/4n3SY/naP+PLpD0RFbVty7VknCc
+   pweaLGPwVZxHuJTTPX5n8/lpc/I3O8v/JrYZajpRvXguCPTJwUq6Bwxcl
+   u6Kkv591y/ckK6dWrqlrn9oKPPzaLHLlRDCEiIe5HtDNoT1rvsLISTAfG
    w==;
-X-CSE-ConnectionGUID: yotg2+FcRG2e1dZR75G4Ug==
-X-CSE-MsgGUID: fiu+FW1jTsuz7he8+pSunA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="35597666"
+X-CSE-ConnectionGUID: uatO1zrYT9e/1z5aUzPJdA==
+X-CSE-MsgGUID: feeS+9AxQ3Gw5HwA136qBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="35597747"
 X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="35597666"
+   d="scan'208";a="35597747"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 00:42:54 -0700
-X-CSE-ConnectionGUID: /tYurdn1TZCubq37aHlu0g==
-X-CSE-MsgGUID: /eBCE6exSn2jISuYqtZ7tQ==
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 00:48:55 -0700
+X-CSE-ConnectionGUID: lJ+wlFbpSdaetA1wI7+gig==
+X-CSE-MsgGUID: jpZCqYkVRRuTow0AGp+fTg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="70572410"
+   d="scan'208";a="70572985"
 Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 07 Sep 2024 00:42:52 -0700
+  by fmviesa005.fm.intel.com with ESMTP; 07 Sep 2024 00:48:52 -0700
 Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1smq5q-000CI7-08;
-	Sat, 07 Sep 2024 07:42:50 +0000
-Date: Sat, 07 Sep 2024 15:42:37 +0800
+	id 1smqBe-000CIb-0w;
+	Sat, 07 Sep 2024 07:48:50 +0000
+Date: Sat, 7 Sep 2024 15:47:57 +0800
 From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:perf/urgent] BUILD SUCCESS
- 2ab9d830262c132ab5db2f571003d80850d56b2a
-Message-ID: <202409071534.M9EIrFRe-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+To: Rohit Chavan <roheetchavan@gmail.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	Rohit Chavan <roheetchavan@gmail.com>
+Subject: Re: [PATCH] lib80211: Use ERR_CAST() to return
+Message-ID: <202409071405.Ze3koraa-lkp@intel.com>
+References: <20240906114455.730559-1-roheetchavan@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906114455.730559-1-roheetchavan@gmail.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/urgent
-branch HEAD: 2ab9d830262c132ab5db2f571003d80850d56b2a  perf/aux: Fix AUX buffer serialization
+Hi Rohit,
 
-elapsed time: 1352m
+kernel test robot noticed the following build errors:
 
-configs tested: 167
-configs skipped: 4
+[auto build test ERROR on wireless-next/main]
+[also build test ERROR on wireless/main linus/master v6.11-rc6 next-20240906]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+url:    https://github.com/intel-lab-lkp/linux/commits/Rohit-Chavan/lib80211-Use-ERR_CAST-to-return/20240906-194721
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
+patch link:    https://lore.kernel.org/r/20240906114455.730559-1-roheetchavan%40gmail.com
+patch subject: [PATCH] lib80211: Use ERR_CAST() to return
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240907/202409071405.Ze3koraa-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240907/202409071405.Ze3koraa-lkp@intel.com/reproduce)
 
-tested configs:
-alpha                             allnoconfig   gcc-14.1.0
-alpha                            allyesconfig   clang-20
-alpha                               defconfig   gcc-14.1.0
-arc                              allmodconfig   clang-20
-arc                               allnoconfig   gcc-14.1.0
-arc                              allyesconfig   clang-20
-arc                                 defconfig   gcc-14.1.0
-arc                 nsimosci_hs_smp_defconfig   gcc-14.1.0
-arc                        vdk_hs38_defconfig   gcc-14.1.0
-arm                              allmodconfig   clang-20
-arm                               allnoconfig   gcc-14.1.0
-arm                              allyesconfig   clang-20
-arm                                 defconfig   gcc-14.1.0
-arm                        neponset_defconfig   clang-15
-arm                          pxa168_defconfig   clang-15
-arm                       spear13xx_defconfig   gcc-14.1.0
-arm64                            allmodconfig   clang-20
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   gcc-14.1.0
-hexagon                          allyesconfig   clang-20
-hexagon                             defconfig   gcc-14.1.0
-i386                             allmodconfig   clang-18
-i386                              allnoconfig   clang-18
-i386                             allyesconfig   clang-18
-i386         buildonly-randconfig-001-20240906   clang-18
-i386         buildonly-randconfig-001-20240907   gcc-12
-i386         buildonly-randconfig-002-20240906   gcc-12
-i386         buildonly-randconfig-002-20240907   gcc-12
-i386         buildonly-randconfig-003-20240906   clang-18
-i386         buildonly-randconfig-003-20240907   gcc-12
-i386         buildonly-randconfig-004-20240906   gcc-12
-i386         buildonly-randconfig-004-20240907   gcc-12
-i386         buildonly-randconfig-005-20240906   clang-18
-i386         buildonly-randconfig-005-20240907   gcc-12
-i386         buildonly-randconfig-006-20240906   clang-18
-i386         buildonly-randconfig-006-20240907   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240906   gcc-12
-i386                  randconfig-001-20240907   gcc-12
-i386                  randconfig-002-20240906   clang-18
-i386                  randconfig-002-20240907   gcc-12
-i386                  randconfig-003-20240906   gcc-12
-i386                  randconfig-003-20240907   gcc-12
-i386                  randconfig-004-20240906   clang-18
-i386                  randconfig-004-20240907   gcc-12
-i386                  randconfig-005-20240906   clang-18
-i386                  randconfig-005-20240907   gcc-12
-i386                  randconfig-006-20240906   gcc-12
-i386                  randconfig-006-20240907   gcc-12
-i386                  randconfig-011-20240906   gcc-12
-i386                  randconfig-011-20240907   gcc-12
-i386                  randconfig-012-20240906   clang-18
-i386                  randconfig-012-20240907   gcc-12
-i386                  randconfig-013-20240906   gcc-12
-i386                  randconfig-013-20240907   gcc-12
-i386                  randconfig-014-20240906   gcc-12
-i386                  randconfig-014-20240907   gcc-12
-i386                  randconfig-015-20240906   gcc-12
-i386                  randconfig-015-20240907   gcc-12
-i386                  randconfig-016-20240906   gcc-12
-i386                  randconfig-016-20240907   gcc-12
-loongarch                        alldefconfig   clang-15
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                          atari_defconfig   clang-15
-m68k                                defconfig   gcc-14.1.0
-m68k                        m5307c3_defconfig   gcc-14.1.0
-m68k                        m5407c3_defconfig   clang-15
-m68k                       m5475evb_defconfig   clang-15
-m68k                          multi_defconfig   gcc-14.1.0
-m68k                        mvme147_defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                        vocore2_defconfig   clang-15
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-openrisc                          allnoconfig   clang-20
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-12
-openrisc                 simple_smp_defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   clang-20
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-12
-parisc64                            defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                      cm5200_defconfig   clang-15
-powerpc                       eiger_defconfig   clang-15
-powerpc                        fsp2_defconfig   gcc-14.1.0
-powerpc                  iss476-smp_defconfig   clang-15
-powerpc                     ksi8560_defconfig   gcc-14.1.0
-powerpc                      ppc6xx_defconfig   gcc-14.1.0
-powerpc                         ps3_defconfig   clang-15
-powerpc                     tqm8555_defconfig   clang-15
-powerpc                         wii_defconfig   gcc-14.1.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-12
-riscv             nommu_k210_sdcard_defconfig   clang-15
-s390                             allmodconfig   gcc-14.1.0
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-12
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-12
-sh                               j2_defconfig   clang-15
-sh                           se7206_defconfig   gcc-14.1.0
-sh                           se7724_defconfig   gcc-14.1.0
-sh                           se7750_defconfig   clang-15
-sh                   secureedge5410_defconfig   gcc-14.1.0
-sh                   sh7724_generic_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-12
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-20
-um                               allyesconfig   clang-20
-um                                  defconfig   gcc-12
-um                             i386_defconfig   clang-15
-um                             i386_defconfig   gcc-12
-um                           x86_64_defconfig   gcc-12
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240907   gcc-12
-x86_64       buildonly-randconfig-002-20240907   gcc-12
-x86_64       buildonly-randconfig-003-20240907   gcc-12
-x86_64       buildonly-randconfig-004-20240907   gcc-12
-x86_64       buildonly-randconfig-005-20240907   gcc-12
-x86_64       buildonly-randconfig-006-20240907   gcc-12
-x86_64                              defconfig   clang-18
-x86_64                                  kexec   gcc-12
-x86_64                randconfig-001-20240907   gcc-12
-x86_64                randconfig-002-20240907   gcc-12
-x86_64                randconfig-003-20240907   gcc-12
-x86_64                randconfig-004-20240907   gcc-12
-x86_64                randconfig-005-20240907   gcc-12
-x86_64                randconfig-006-20240907   gcc-12
-x86_64                randconfig-011-20240907   gcc-12
-x86_64                randconfig-012-20240907   gcc-12
-x86_64                randconfig-013-20240907   gcc-12
-x86_64                randconfig-014-20240907   gcc-12
-x86_64                randconfig-015-20240907   gcc-12
-x86_64                randconfig-016-20240907   gcc-12
-x86_64                randconfig-071-20240907   gcc-12
-x86_64                randconfig-072-20240907   gcc-12
-x86_64                randconfig-073-20240907   gcc-12
-x86_64                randconfig-074-20240907   gcc-12
-x86_64                randconfig-075-20240907   gcc-12
-x86_64                randconfig-076-20240907   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-x86_64                               rhel-8.3   gcc-12
-xtensa                            allnoconfig   gcc-14.1.0
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409071405.Ze3koraa-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   net/wireless/lib80211.c: In function 'lib80211_crypt_null_init':
+>> net/wireless/lib80211.c:230:25: error: passing argument 1 of 'ERR_CAST' makes pointer from integer without a cast [-Wint-conversion]
+     230 |         return ERR_CAST(1);
+         |                         ^
+         |                         |
+         |                         int
+   In file included from include/linux/string.h:10,
+                    from include/linux/bitmap.h:13,
+                    from include/linux/cpumask.h:12,
+                    from include/linux/smp.h:13,
+                    from include/linux/lockdep.h:14,
+                    from include/linux/spinlock.h:63,
+                    from include/linux/mmzone.h:8,
+                    from include/linux/gfp.h:7,
+                    from include/linux/umh.h:4,
+                    from include/linux/kmod.h:9,
+                    from include/linux/module.h:17,
+                    from net/wireless/lib80211.c:19:
+   include/linux/err.h:82:64: note: expected 'const void *' but argument is of type 'int'
+      82 | static inline void * __must_check ERR_CAST(__force const void *ptr)
+         |                                                    ~~~~~~~~~~~~^~~
+
+
+vim +/ERR_CAST +230 net/wireless/lib80211.c
+
+   227	
+   228	static void *lib80211_crypt_null_init(int keyidx)
+   229	{
+ > 230		return ERR_CAST(1);
+   231	}
+   232	
 
 -- 
 0-DAY CI Kernel Test Service
