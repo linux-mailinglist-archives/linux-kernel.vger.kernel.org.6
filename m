@@ -1,203 +1,150 @@
-Return-Path: <linux-kernel+bounces-319659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE9E970033
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:35:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82FC9970039
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38E72B238BB
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 05:35:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39A6E285B3E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 05:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125966088F;
-	Sat,  7 Sep 2024 05:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55A912FB34;
+	Sat,  7 Sep 2024 05:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QzXUdKU9"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="SvCOeNwP"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F04632C8E;
-	Sat,  7 Sep 2024 05:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9947042A9D;
+	Sat,  7 Sep 2024 05:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725687315; cv=none; b=RfkrYUGA11oAta1CGUvZ9Szjn0wCXN8QXinp0InRwbl7SVLB0BdAguxfol4R2FK3wcxXC8Qi3g56iO0nZ6xZBoV4w9i0+w/5E8foDszpihEPlyHi+gGMpoiH/NNlVqVtYhvPg/eN5rEcSC2HN8EEWEIuqvtDqb858fi9imaQuQI=
+	t=1725687609; cv=none; b=kecmn6VSStD7ZkslSC0HTIDFe+XVZEyaIguo4k4e5nOqGouo3o+2/TjxOB7Isb6SDjToeU5jRKmWXWfu4gfMGCus99OYqAdOzVP+F6f72G+FELHHMqCaVPgZvakq1syA/ci/p5OTHgzAuyfWDAfYFDTz2gohh50Wnc3vw/5xR4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725687315; c=relaxed/simple;
-	bh=scE/eAxwuT9GKAqGnFvKi5xLoCyNQ1N4mBsUb0aeNJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PvmnUe/Kcq3K+Lw/MUl0zPfYxfRawJR++HvvpvpBk8R3uvdVME/mbKyKviPaGtEHPA9SEpZrj+VHk08JuBuTs+808Ll3fc8tg4VB50qWTIhV7yd+Wdt4xNppJT2cy5GAFQj9mEWqR/9dvr8rhHGILExXLrLeYszjtgM3Rlmrc5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QzXUdKU9; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4875YtvP012006;
-	Sat, 7 Sep 2024 00:34:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725687295;
-	bh=OdIuX3KeOmdjn4QebIIqolo/mrXvIypIqWU/sJBeMSk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=QzXUdKU9moPejXNE9LDXEXcPv0HmRj8n2EB3nK7W04tyH6s39LyvZUl1cFItcr9Pu
-	 DJfmioSe6BnOFVyA8jDmiHKkzlqEic5cMSq+90Z4C3qJKGVNTlz3AZIPcCldQv1wYY
-	 5NBnTaUdtpTGOvovXO/ThH+zt7QwzSl2Jpa1Ec4s=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4875YtOp011908
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 7 Sep 2024 00:34:55 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 7
- Sep 2024 00:34:55 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 7 Sep 2024 00:34:55 -0500
-Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4875YobU054763;
-	Sat, 7 Sep 2024 00:34:51 -0500
-Message-ID: <bd188c0d-9fa1-4350-8787-36af319c7930@ti.com>
-Date: Sat, 7 Sep 2024 11:04:50 +0530
+	s=arc-20240116; t=1725687609; c=relaxed/simple;
+	bh=zOv4kk3/GWfBNo5nWcBcuX+02WHMxWYhahUqOM41r38=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=njkeH/ZqRjiaNg13IEP7Coz4E7CojJe0ZY8XWInGb8cHS/wwTO9Mf4cUwLVrkGH1pmOg8PYyyRK+1kqjo0o4qrK/JRmhRv0ISWwMfdTWgJFxdlBsspF9gg3+8q7a6sTi5JOkMI6L5zbpYZYDdx9MiT/ZmgkKsY8uNjtPtFP3UbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=SvCOeNwP; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1725687607; x=1757223607;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=V9SNpebcQe7ikkeP1XZfukxclx4L3BFjvRNWhNZfbzQ=;
+  b=SvCOeNwPaAHQ2QBKEOpQ6BSLjQc1Gk8LpKqV/P5XgZhQyb6egd9spyLL
+   sC1Yf6J0augsgHWDR5mw0lbG+WfdxFRFQhe3xJdsEj4Pcz6uDpNK1KOy4
+   4aTsbNsPf5NlQhFpPV8UvyX9rS2a4CnNPgPxPwanPzcWZ7AaJ+iIxYEsH
+   k=;
+X-IronPort-AV: E=Sophos;i="6.10,210,1719878400"; 
+   d="scan'208";a="123211391"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 05:40:06 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:2311]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.21.223:2525] with esmtp (Farcaster)
+ id fb74dccc-b930-4b81-b784-ae01b38705de; Sat, 7 Sep 2024 05:40:05 +0000 (UTC)
+X-Farcaster-Flow-ID: fb74dccc-b930-4b81-b784-ae01b38705de
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Sat, 7 Sep 2024 05:40:03 +0000
+Received: from 88665a182662.ant.amazon.com (10.94.49.188) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Sat, 7 Sep 2024 05:40:01 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <rao.shoaib@oracle.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in unix_stream_read_actor (2)
+Date: Fri, 6 Sep 2024 22:39:53 -0700
+Message-ID: <20240907053953.60412-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <2abf390b-91ff-4f37-a54d-0ceac3e0ee61@oracle.com>
+References: <2abf390b-91ff-4f37-a54d-0ceac3e0ee61@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC/RFT 1/2] arm64: dts: ti: k3-j784s4-evm: Mark tps659413
- and children as bootph-all
-To: Andrew Halaney <ahalaney@redhat.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Keerthy <j-keerthy@ti.com>, Neha Malcom Francis <n-francis@ti.com>,
-        Eric
- Chanudet <echanude@redhat.com>,
-        Enric Balletbo <eballetb@redhat.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Manorit Chawdhry <m-chawdhry@ti.com>
-References: <20240906-j784s4-tps6594-bootph-v1-0-c5b58d43bf04@redhat.com>
- <20240906-j784s4-tps6594-bootph-v1-1-c5b58d43bf04@redhat.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20240906-j784s4-tps6594-bootph-v1-1-c5b58d43bf04@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D038UWC004.ant.amazon.com (10.13.139.229) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Thanks for your patch Andrew
-
-
-On 9/7/2024 2:51 AM, Andrew Halaney wrote:
-> In order for the MCU domain to access this PMIC and its children in
-> u-boot SPL, the nodes need to be marked appropriately otherwise they
-> are not seen by SPL.
->
-> This is necessary if the MCU domain is to program the TPS6594 MCU ESM
-> state machine, which is required to wire up the watchdog in a manner
-> that will reset the board.
->
-> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
-> ---
->   arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 11 +++++++++++
->   1 file changed, 11 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-> index 6695ebbcb4d0..044a428136df 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-> @@ -642,6 +642,7 @@ eeprom@50 {
->   	};
->   
->   	tps659413: pmic@48 {
-> +		bootph-all;
->   		compatible = "ti,tps6594-q1";
->   		reg = <0x48>;
->   		system-power-controller;
-> @@ -662,7 +663,10 @@ tps659413: pmic@48 {
->   		ldo4-supply = <&vsys_3v3>;
->   
->   		regulators {
-> +			bootph-all;
+From: Shoaib Rao <rao.shoaib@oracle.com>
+Date: Fri, 6 Sep 2024 22:06:27 -0700
+> I have tried reproducing using the newly added tests but no luck. I will 
+> keep trying but if there is another occurrence please let me know. I am 
+> using an AMD system but that should not have any impact.
+[...]
+> +TEST_F(msg_oob, ex_oob_oob)
+> +{
+> +       sendpair("x", 1, MSG_OOB);
+> +       epollpair(true);
+> +       siocatmarkpair(true);
 > +
->   			bucka12: buck12 {
-> +				bootph-all;
+> +       recvpair("x", 1, 1, MSG_OOB);
+> +       epollpair(false);
+> +       siocatmarkpair(true);
+> +
+> +       sendpair("y", 1, MSG_OOB);
+> +       epollpair(true);
+> +       siocatmarkpair(true);
+
+The test fails on this line because SIOCATMARK has yet another bug
+triggered by the same pattern, and my patch also fixes that.
+
+If you remove this line, you'll see this failure on the following
+recvpair("", -EAGAIN, 1, 0).
+
+---8<---
+# msg_oob.c:234:ex_oob_oob:AF_UNIX :y
+# msg_oob.c:235:ex_oob_oob:Expected:Resource temporarily unavailable
+# msg_oob.c:237:ex_oob_oob:Expected ret[0] (1) == expected_len (-1)
+# ex_oob_oob: Test terminated by assertion
+#          FAIL  msg_oob.peek.ex_oob_oob
+not ok 31 msg_oob.peek.ex_oob_oob
+---8<---
+
+This failure means recv() without MSG_OOB expects -EAGAIN because
+no data has been sent on the normal stream, but actually the recv()
+returns 1 byte OOB data.
+
+This is the same result triggered by the syzbot's repro.
+
+I don't know why KASAN does not show a splat on your setup, but what
+we need to do is not run the syz repro blindly and just wait a splat,
+rather carefully analyse the sequence of syscalls and each consequence.
+
+Sometimes I fixes bugs from the syzkaller's strace log without repro.
+
+This time, the fact that recv() without MSG_OOB returns OOB data is
+the clear sign that something went wrong.
+
+You need not rely on KASAN.
 
 
-Add bootph in on regulator node should be enough,
-
-As I see SPL/u-boot does not need all nodes.
-
-
-FYI,
-
-Similar series in review
-
-https://lore.kernel.org/all/20240814-b4-upstream-bootph-all-v4-0-f2b462000f25@ti.com/ 
-
-
->   				regulator-name = "vdd_ddr_1v1";
->   				regulator-min-microvolt = <1100000>;
->   				regulator-max-microvolt = <1100000>;
-> @@ -671,6 +675,7 @@ bucka12: buck12 {
->   			};
->   
->   			bucka3: buck3 {
-> +				bootph-all;
->   				regulator-name = "vdd_ram_0v85";
->   				regulator-min-microvolt = <850000>;
->   				regulator-max-microvolt = <850000>;
-> @@ -679,6 +684,7 @@ bucka3: buck3 {
->   			};
->   
->   			bucka4: buck4 {
-> +				bootph-all;
->   				regulator-name = "vdd_io_1v8";
->   				regulator-min-microvolt = <1800000>;
->   				regulator-max-microvolt = <1800000>;
-> @@ -687,6 +693,7 @@ bucka4: buck4 {
->   			};
->   
->   			bucka5: buck5 {
-> +				bootph-all;
->   				regulator-name = "vdd_mcu_0v85";
->   				regulator-min-microvolt = <850000>;
->   				regulator-max-microvolt = <850000>;
-> @@ -695,6 +702,7 @@ bucka5: buck5 {
->   			};
->   
->   			ldoa1: ldo1 {
-> +				bootph-all;
->   				regulator-name = "vdd_mcuio_1v8";
->   				regulator-min-microvolt = <1800000>;
->   				regulator-max-microvolt = <1800000>;
-> @@ -703,6 +711,7 @@ ldoa1: ldo1 {
->   			};
->   
->   			ldoa2: ldo2 {
-> +				bootph-all;
->   				regulator-name = "vdd_mcuio_3v3";
->   				regulator-min-microvolt = <3300000>;
->   				regulator-max-microvolt = <3300000>;
-> @@ -711,6 +720,7 @@ ldoa2: ldo2 {
->   			};
->   
->   			ldoa3: ldo3 {
-> +				bootph-all;
->   				regulator-name = "vds_dll_0v8";
->   				regulator-min-microvolt = <800000>;
->   				regulator-max-microvolt = <800000>;
-> @@ -719,6 +729,7 @@ ldoa3: ldo3 {
->   			};
->   
->   			ldoa4: ldo4 {
-> +				bootph-all;
->   				regulator-name = "vda_mcu_1v8";
->   				regulator-min-microvolt = <1800000>;
->   				regulator-max-microvolt = <1800000>;
->
+> +
+> +       recvpair("", -EAGAIN, 1, 0);
+> +       epollpair(false);
+> +       siocatmarkpair(false);
+> +
+> +       recvpair("", -EINVAL, 1, MSG_OOB);
+> +       epollpair(false);
+> +       siocatmarkpair(false);
+> +}
+[...]
+> #  RUN           msg_oob.no_peek.ex_oob_oob ...
+> # msg_oob.c:305:ex_oob_oob:Expected answ[0] (0) == oob_head (1)
+> # ex_oob_oob: Test terminated by assertion
+> #          FAIL  msg_oob.no_peek.ex_oob_oob
 
