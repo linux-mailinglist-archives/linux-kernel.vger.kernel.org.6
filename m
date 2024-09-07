@@ -1,152 +1,130 @@
-Return-Path: <linux-kernel+bounces-319732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BFE6970181
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:02:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8D097017C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B936EB2125F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:02:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B21EF1C218C3
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62AB158D96;
-	Sat,  7 Sep 2024 10:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D22A1494A5;
+	Sat,  7 Sep 2024 10:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="icZ0i5RP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="QEfHz9QM"
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2104A158541;
-	Sat,  7 Sep 2024 10:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16173266AB
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 10:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725703347; cv=none; b=TFDQR+uDgHdChofvnT3If+Pj11dCSCAqXrRE7EAvdCz0TjFJqsgyJf9uGDReVTd28W8G+weZom2sId61Z/cAXbQmKPXw2YtZ5cgxO9gE/Rimo2aqg8+LNYFnJGXb4bm3S7FxvXv6OP+PLqg77goTPmunKiljn7IyR2PYFk/srwQ=
+	t=1725703341; cv=none; b=h3PNYC8TYWXg9tFHWKW3sR9Ca5Syy/MtGXgZCg2Kueq7ArxO4kWe2SfEtnrIOxF1NokuDCnRWw3ZXOPzRKyzX6qX81CnlROf5/Vo6LfjBX7ZHvdo/000Ril7LtWJuDCQUUgc5I5Vjz01QW053naynVbBg4DHnRy7C1zDHQATXes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725703347; c=relaxed/simple;
-	bh=+8ndftcpr710lyIszgV8c95AAh8cy/KDHvOC47Z5jY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IU2OViJOrjpv9T2agmo6zSN6hmP4+qAjhsl2x7tOkj7v6VXXU5a47gfvZRwzc7plZUQ+oAyyS74EWC7fCUMNqsM4h+8Gm/RwmBElefkaRPJYfZ4nMVNy76uwzia6wHWuP3vFi1rbSXCJwS7Ka9KLd5OMyEejjLIfObRDvhPC2m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=icZ0i5RP; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725703344; x=1757239344;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+8ndftcpr710lyIszgV8c95AAh8cy/KDHvOC47Z5jY8=;
-  b=icZ0i5RPJV4LsP52qy3QMQQ9V7YhiuECIuZ4w+i50Dbr9bZVtDbP2RAH
-   BSCqsPnT4AuBnM3Ud/+e8Rjg+e2NXQ0ORKZ4kwxbCjJ+JWu13RyEy7AgC
-   dZe3/zPeKMqBAa8XmlAmLbWvLfaVmaTw1/MH4Trazx/DZ19aD//IY+ZFd
-   7UEoJ6oD+Va3ZaJkBw01zbho9n0J2FskVFP3+E1vlGGtsYo8nGrHyWsuP
-   E0jkBvBrAYPtKjQWCXHKg+TPPFHg4lneqQ0wx9LvKW+M0ZF7zRnp1G5wb
-   6bBlf/039+FPFiP3ic4aN8e5jZBpX+mwTz96/3tWDVvfahv4RBC00TvLc
-   A==;
-X-CSE-ConnectionGUID: mOk0M4ySSimtUg4k2QUIxw==
-X-CSE-MsgGUID: d+0cU98WRxeBWCWoYxEjQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="24323050"
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="24323050"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 03:02:24 -0700
-X-CSE-ConnectionGUID: /y7E0xneQa+1lRbk+cY5dw==
-X-CSE-MsgGUID: 5pZQbW8lSiai6JaiI7i3Sg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="103648425"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 07 Sep 2024 03:02:20 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1smsGn-000CPb-2j;
-	Sat, 07 Sep 2024 10:02:17 +0000
-Date: Sat, 7 Sep 2024 18:01:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thippeswamy Havalige <thippesw@amd.com>,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	linux-pci@vger.kernel.org, bhelgaas@google.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, bharat.kumar.gogada@amd.com,
-	michal.simek@amd.com, lpieralisi@kernel.org, kw@linux.com,
-	Thippeswamy Havalige <thippesw@amd.com>
-Subject: Re: [PATCH 2/2] PCI: xilinx-cpm: Add support for Versal CPM5 Root
- Port controller-1
-Message-ID: <202409071713.wrAI0UuK-lkp@intel.com>
-References: <20240906093148.830452-3-thippesw@amd.com>
+	s=arc-20240116; t=1725703341; c=relaxed/simple;
+	bh=ygaw0iQ4if0wmh1A0SwqpkKterIPJAxl9O47aPadSIQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n0LY41Ts+8cyrkwa3X6sDhJmBUTTKfJVNw/+hEZvhuLPLyXfkAklsMZiqE6jogM04IH6IlM/Tk4JtSGQ+cv6hbb2h4mru5nqNfc3xCCmajGrZrpJwSCTM+L4IPsRqFBTd3ZsCH+OjmfGuPga0uaOhg1F8y06prtGdxsVW7YI0bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=QEfHz9QM; arc=none smtp.client-ip=185.136.64.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 2024090710021172baf84a4c86961e12
+        for <linux-kernel@vger.kernel.org>;
+        Sat, 07 Sep 2024 12:02:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=felix.moessbauer@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=j2hxCV9kxaihF+Ww53ZONcD+/QxZDY7mdYu0UHPKwF0=;
+ b=QEfHz9QMNiD7l4xIijjcV9SgTpO5UQ6olrY7RM9AHfSawPrGpaj6zbUsP/LP5z3XPPtvLJ
+ +H2f3NxFf3TD1cs0JHXcqrsxGRrMFTIu0fdvPnQmW6+grvWL2j6uZdGH6xjsCy0VGNHrPuyj
+ 66vthWheVhh8mMUrWVaBsmYdwxR/COpwAshIrPehiOA8a4DGdGKtLgzfV7HqnUr2jupsUyKl
+ BAnO3azFORybLfsacE7c38M0Bp9Keir4HHIeRck+ZDgbvz1/YgY+htgl84IRf9xiHMXfJNHa
+ 5i2Mr1lYNj40DLg8RQoedkFjwn1YJD7M57Kb3xxaJcNmUsAjkCp2N+5w==;
+From: Felix Moessbauer <felix.moessbauer@siemens.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	dqminh@cloudflare.com,
+	longman@redhat.com,
+	adriaan.schmidt@siemens.com,
+	florian.bezdeka@siemens.com,
+	stable@vger.kernel.org,
+	Felix Moessbauer <felix.moessbauer@siemens.com>
+Subject: [PATCH v3 1/1] io_uring/sqpoll: inherit cpumask of creating process
+Date: Sat,  7 Sep 2024 12:02:04 +0200
+Message-Id: <20240907100204.28609-1-felix.moessbauer@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906093148.830452-3-thippesw@amd.com>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1321639:519-21489:flowmailer
 
-Hi Thippeswamy,
+The submit queue polling threads are userland threads that just never
+exit to the userland. In case the creating task is part of a cgroup
+with the cpuset controller enabled, the poller should also stay within
+that cpuset. This also holds, as the poller belongs to the same cgroup
+as the task that started it.
 
-kernel test robot noticed the following build warnings:
+With the current implementation, a process can "break out" of the
+defined cpuset by creating sq pollers consuming CPU time on other CPUs,
+which is especially problematic for realtime applications.
 
-[auto build test WARNING on pci/next]
-[also build test WARNING on pci/for-linus mani-mhi/mhi-next robh/for-next linus/master v6.11-rc6 next-20240906]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Part of this problem was fixed in a5fc1441 by dropping the
+PF_NO_SETAFFINITY flag, but this only becomes effective after the first
+modification of the cpuset (i.e. the pollers cpuset is correct after the
+first update of the enclosing cgroups cpuset).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thippeswamy-Havalige/dt-bindings-PCI-xilinx-cpm-Add-compatible-string-for-CPM5-controller-1/20240906-173446
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20240906093148.830452-3-thippesw%40amd.com
-patch subject: [PATCH 2/2] PCI: xilinx-cpm: Add support for Versal CPM5 Root Port controller-1
-config: um-allyesconfig (https://download.01.org/0day-ci/archive/20240907/202409071713.wrAI0UuK-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240907/202409071713.wrAI0UuK-lkp@intel.com/reproduce)
+By inheriting the cpuset of the creating tasks, we ensure that the
+poller is created with a cpumask that is a subset of the cgroups mask.
+Inheriting the creators cpumask is reasonable, as other userland tasks
+also inherit the mask.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409071713.wrAI0UuK-lkp@intel.com/
+Fixes: 37d1e2e3642e ("io_uring: move SQPOLL thread io-wq forked worker")
+Cc: stable@vger.kernel.org # 6.1+
+Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+---
+Changes since v2:
 
-All warnings (new ones prefixed by >>):
+- in v2 I accidentally sent the backport of this patch for v6.1. Will
+  resend that once this one is accepted. Anyways, now we know that this
+  also works on a v6.1 kernel.
 
-   drivers/pci/controller/pcie-xilinx-cpm.c: In function 'xilinx_cpm_pcie_event_flow':
-   drivers/pci/controller/pcie-xilinx-cpm.c:292:44: error: 'CPM5_HOST1' undeclared (first use in this function)
-     292 |         else if (port->variant->version == CPM5_HOST1) {
-         |                                            ^~~~~~~~~~
-   drivers/pci/controller/pcie-xilinx-cpm.c:292:44: note: each undeclared identifier is reported only once for each function it appears in
-   drivers/pci/controller/pcie-xilinx-cpm.c: In function 'xilinx_cpm_pcie_init_port':
-   drivers/pci/controller/pcie-xilinx-cpm.c:504:44: error: 'CPM5_HOST1' undeclared (first use in this function)
-     504 |         else if (port->variant->version == CPM5_HOST1) {
-         |                                            ^~~~~~~~~~
-   drivers/pci/controller/pcie-xilinx-cpm.c: At top level:
-   drivers/pci/controller/pcie-xilinx-cpm.c:635:40: error: redefinition of 'cpm5_host'
-     635 | static const struct xilinx_cpm_variant cpm5_host = {
-         |                                        ^~~~~~~~~
-   drivers/pci/controller/pcie-xilinx-cpm.c:631:40: note: previous definition of 'cpm5_host' with type 'const struct xilinx_cpm_variant'
-     631 | static const struct xilinx_cpm_variant cpm5_host = {
-         |                                        ^~~~~~~~~
-   drivers/pci/controller/pcie-xilinx-cpm.c:636:20: error: 'CPM5_HOST1' undeclared here (not in a function)
-     636 |         .version = CPM5_HOST1,
-         |                    ^~~~~~~~~~
-   drivers/pci/controller/pcie-xilinx-cpm.c:650:26: error: 'cpm5_host1' undeclared here (not in a function); did you mean 'cpm5_host'?
-     650 |                 .data = &cpm5_host1,
-         |                          ^~~~~~~~~~
-         |                          cpm5_host
->> drivers/pci/controller/pcie-xilinx-cpm.c:631:40: warning: 'cpm5_host' defined but not used [-Wunused-const-variable=]
-     631 | static const struct xilinx_cpm_variant cpm5_host = {
-         |                                        ^~~~~~~~~
+Changes since v1:
 
+- do not set poller thread cpuset in non-pinning case, as the default is already
+  correct (the mask is inherited from the parent).
+- Remove incorrect term "kernel thread" from the commit message
 
-vim +/cpm5_host +631 drivers/pci/controller/pcie-xilinx-cpm.c
+I tested this without pinning, explicit pinning of the parent task and
+non-all cgroup cpusets (and all combinations).
 
-51f1ffc00d95e3 Bharat Kumar Gogada 2022-07-05  630  
-51f1ffc00d95e3 Bharat Kumar Gogada 2022-07-05 @631  static const struct xilinx_cpm_variant cpm5_host = {
-51f1ffc00d95e3 Bharat Kumar Gogada 2022-07-05  632  	.version = CPM5,
-51f1ffc00d95e3 Bharat Kumar Gogada 2022-07-05  633  };
-51f1ffc00d95e3 Bharat Kumar Gogada 2022-07-05  634  
+Best regards,
+Felix Moessbauer
+Siemens AG
 
+ io_uring/sqpoll.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index 3b50dc9586d1..713be7c29388 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -289,7 +289,6 @@ static int io_sq_thread(void *data)
+ 	if (sqd->sq_cpu != -1) {
+ 		set_cpus_allowed_ptr(current, cpumask_of(sqd->sq_cpu));
+ 	} else {
+-		set_cpus_allowed_ptr(current, cpu_online_mask);
+ 		sqd->sq_cpu = raw_smp_processor_id();
+ 	}
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.2
+
 
