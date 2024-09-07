@@ -1,153 +1,131 @@
-Return-Path: <linux-kernel+bounces-319695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E02D49700C6
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:17:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BBEC9700E1
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C707285752
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:17:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35DAE1F22B1E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E80214A619;
-	Sat,  7 Sep 2024 08:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NAXFqDdE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D1D13A863;
-	Sat,  7 Sep 2024 08:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0501914B950;
+	Sat,  7 Sep 2024 08:27:28 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265711B85DC;
+	Sat,  7 Sep 2024 08:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725697042; cv=none; b=dHhcFyJFGCgHEYXxPDgRANY6eQDM+wRf30PC6rYpWh3x9U+JjBUw9kWzvKAUw1ILHpA7dLWegFUuWhkRaZvW4krlFIAyOrJyxxjDNvkYpxEZ5S6bG8Kc4OLjgGIZdxkiir+BqzY3Rsw1FMU+qaU9vJskR6shMf3fZqycL2fUmAs=
+	t=1725697647; cv=none; b=ojW0QIwWTrMUi1gCB7tl5LVOcNMHf33ANyhgIqTFqUW+l6nvY7xpK3pEwec9HNn92ccih96CkMsqOAe3Wh9n3jAIk4YcpdCAOoNJA2ud8B2O1K9Pq6U7lju4WiudGhQVSX/xQmbkOn1lxvuyxkF5F1HoLDf8ID3ypqlGiGM/zlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725697042; c=relaxed/simple;
-	bh=huYN6+MlW4CvxdcII51CVqGSD+IQZTvKcJcE+Wu8Tpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pC94BoEUr+sTp7tAQ6a4k1D2wxTJSpkL2tGaOu0XDLVgPnB0RdHj8kyffQSn0kirmU0Jcod9fAcXi5WWUFkbC43yLlJFBZiHLyEdnycy36pL25Km9WXtyde2W3+t05mNmqsKBZgMUY6LfBckVCznR7Pf79GIXrzFTLpNUnnrud8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NAXFqDdE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84B7CC4CEC2;
-	Sat,  7 Sep 2024 08:17:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725697041;
-	bh=huYN6+MlW4CvxdcII51CVqGSD+IQZTvKcJcE+Wu8Tpk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NAXFqDdEXiYpfLW+ebN3NkO1UDKgBJyiF56peYQp+dxd6PzkZNmCKHFEd2siokpoX
-	 2oNAjQO6S2QVy89MuxCM5Lh3VZ3ZwxBXWGoZtoymEJQyzMy9AdP4EJWMQBL/2dNuDS
-	 z+/ClfuecoUhMLU0NrV4CImTbcbn+RFg4rOF337w=
-Date: Sat, 7 Sep 2024 10:17:16 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Lin Ruifeng <linruifeng4@huawei.com>
-Cc: b-liu@ti.com, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH -next] usb: musb: mediatek: Simplify code with
- dev_err_probe()
-Message-ID: <2024090704-jingle-playroom-7411@gregkh>
-References: <20240907075508.79889-1-linruifeng4@huawei.com>
+	s=arc-20240116; t=1725697647; c=relaxed/simple;
+	bh=i+dsDE/I0D1lKf66AAYYx0gu5rFBsU18yAz5QAfMXdc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SVKBLAd+b5sxWSK3F2nWv4ukRG6+Tue9HOkrWUYVwAOLjZ2JOBqsWEVcfTM+RIE56RhIWW88Tg+8D+arDqAYIz2OlZgpqFl0GnfNdaq1rLiv6QDjUMdKsvhOLpVIkuLm8hEuCdG5OgnjppNus+5WBtxg+Yokj9bn96UIDP7Nav0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8Bx++lpDtxmxxMBAA--.2755S3;
+	Sat, 07 Sep 2024 16:27:21 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowMDxcNZoDtxmd+0AAA--.5018S2;
+	Sat, 07 Sep 2024 16:27:21 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: Naveen N Rao <naveen@kernel.org>,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] smp: Mark smp_prepare_boot_cpu() __init
+Date: Sat,  7 Sep 2024 16:27:20 +0800
+Message-Id: <20240907082720.452148-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240907075508.79889-1-linruifeng4@huawei.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMDxcNZoDtxmd+0AAA--.5018S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-On Sat, Sep 07, 2024 at 03:55:08PM +0800, Lin Ruifeng wrote:
-> The combination of dev_err() and the returned error code could be
-> replaced by dev_err_probe() in driver's probe function. Let's,
-> converting to dev_err_probe() to make code more simple.
-> 
-> Signed-off-by: Lin Ruifeng <linruifeng4@huawei.com>
-> ---
->  drivers/usb/musb/mediatek.c | 27 +++++++++++----------------
->  1 file changed, 11 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/usb/musb/mediatek.c b/drivers/usb/musb/mediatek.c
-> index 0a35aab3ab81..63c86c046b98 100644
-> --- a/drivers/usb/musb/mediatek.c
-> +++ b/drivers/usb/musb/mediatek.c
-> @@ -416,10 +416,9 @@ static int mtk_musb_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	ret = of_platform_populate(np, NULL, NULL, dev);
-> -	if (ret) {
-> -		dev_err(dev, "failed to create child devices at %p\n", np);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				"failed to create child devices at %p\n", np);
->  
->  	ret = mtk_musb_clks_get(glue);
->  	if (ret)
-> @@ -448,23 +447,19 @@ static int mtk_musb_probe(struct platform_device *pdev)
->  		glue->role = USB_ROLE_NONE;
->  		break;
->  	default:
-> -		dev_err(&pdev->dev, "Error 'dr_mode' property\n");
-> -		return -EINVAL;
-> +		return dev_err_probe(&pdev->dev, -EINVAL,
-> +				"Error 'dr_mode' property\n");
->  	}
->  
->  	glue->phy = devm_of_phy_get_by_index(dev, np, 0);
-> -	if (IS_ERR(glue->phy)) {
-> -		dev_err(dev, "fail to getting phy %ld\n",
-> -			PTR_ERR(glue->phy));
-> -		return PTR_ERR(glue->phy);
-> -	}
-> +	if (IS_ERR(glue->phy))
-> +		return dev_err_probe(dev, PTR_ERR(glue->phy),
-> +				"fail to getting phy\n");
->  
->  	glue->usb_phy = usb_phy_generic_register();
-> -	if (IS_ERR(glue->usb_phy)) {
-> -		dev_err(dev, "fail to registering usb-phy %ld\n",
-> -			PTR_ERR(glue->usb_phy));
-> -		return PTR_ERR(glue->usb_phy);
-> -	}
-> +	if (IS_ERR(glue->usb_phy))
-> +		return dev_err_probe(dev, PTR_ERR(glue->usb_phy),
-> +				"fail to registering usb-phy\n");
->  
->  	glue->xceiv = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
->  	if (IS_ERR(glue->xceiv)) {
-> -- 
-> 2.17.1
-> 
-> 
+Function smp_prepare_boot_cpu() is only called at boot stage, here
+mark it as __init.
 
-Hi,
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+---
+ arch/loongarch/kernel/smp.c | 2 +-
+ arch/mips/kernel/smp.c      | 2 +-
+ arch/powerpc/kernel/smp.c   | 2 +-
+ include/linux/smp.h         | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+index ca405ab86aae..be2655c4c414 100644
+--- a/arch/loongarch/kernel/smp.c
++++ b/arch/loongarch/kernel/smp.c
+@@ -476,7 +476,7 @@ core_initcall(ipi_pm_init);
+ #endif
+ 
+ /* Preload SMP state for boot cpu */
+-void smp_prepare_boot_cpu(void)
++void __init smp_prepare_boot_cpu(void)
+ {
+ 	unsigned int cpu, node, rr_node;
+ 
+diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
+index 0362fc5df7b0..39e193cad2b9 100644
+--- a/arch/mips/kernel/smp.c
++++ b/arch/mips/kernel/smp.c
+@@ -439,7 +439,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
+ }
+ 
+ /* preload SMP state for boot cpu */
+-void smp_prepare_boot_cpu(void)
++void __init smp_prepare_boot_cpu(void)
+ {
+ 	if (mp_ops->prepare_boot_cpu)
+ 		mp_ops->prepare_boot_cpu();
+diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+index 46e6d2cd7a2d..4ab9b8cee77a 100644
+--- a/arch/powerpc/kernel/smp.c
++++ b/arch/powerpc/kernel/smp.c
+@@ -1166,7 +1166,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
+ 	cpu_smt_set_num_threads(num_threads, threads_per_core);
+ }
+ 
+-void smp_prepare_boot_cpu(void)
++void __init smp_prepare_boot_cpu(void)
+ {
+ 	BUG_ON(smp_processor_id() != boot_cpuid);
+ #ifdef CONFIG_PPC64
+diff --git a/include/linux/smp.h b/include/linux/smp.h
+index fcd61dfe2af3..6a0813c905d0 100644
+--- a/include/linux/smp.h
++++ b/include/linux/smp.h
+@@ -109,7 +109,7 @@ static inline void on_each_cpu_cond(smp_cond_func_t cond_func,
+  * Architecture specific boot CPU setup.  Defined as empty weak function in
+  * init/main.c. Architectures can override it.
+  */
+-void smp_prepare_boot_cpu(void);
++void __init smp_prepare_boot_cpu(void);
+ 
+ #ifdef CONFIG_SMP
+ 
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+base-commit: b31c4492884252a8360f312a0ac2049349ddf603
+-- 
+2.39.3
 
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
