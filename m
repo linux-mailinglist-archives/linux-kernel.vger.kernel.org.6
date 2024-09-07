@@ -1,154 +1,134 @@
-Return-Path: <linux-kernel+bounces-319799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6DD197025D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:22:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3818E97025F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90EE3283B17
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:22:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6882C1C21417
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC0915C144;
-	Sat,  7 Sep 2024 13:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EB515C15F;
+	Sat,  7 Sep 2024 13:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="karCzz34"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V07Huikd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A521B85EF;
-	Sat,  7 Sep 2024 13:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154D915ADA7;
+	Sat,  7 Sep 2024 13:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725715358; cv=none; b=EcVBCBaMvIdmNb49CfbQh2CggSI4bnYyffbh7fyoL87Alc2u5NKgXAy9qbKpCqto+nicYY/yy3wf4rxZQPJ/DkJ+QeuXzjWhtD5haechf3h9NAzsyoB/DVkPJk8Txb+Ycz+Ry0bsOT8I5cCCpF8TSjBPAGDnIYwTchyB1eJL21Q=
+	t=1725715372; cv=none; b=M4jm1WG0FLEjAz+6WYiWTjME7HhMaR828gblmP2T8wkh8rainNSVvmrJvjE5hxAoCR3rck+ZyGNTCQxVzkuvSFypPrAOKWqdOtCHbJB1yCMTltCMOQIhbYfrg1rGi4BIi29WVLdbSGD69tUndy1W3LQCvRajMHG89lrL/Ci6mXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725715358; c=relaxed/simple;
-	bh=hbSkz6bDI6cLFbwXFJV6dDhT57AZB9GSy+xISrmGrQE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nvMH7NZwFaSSIiYwjo8wSdIPnj/jg787tsDRKQC8dyO08JYMJrUVKLpAnuUPfrE4rE0JtDwq692hJCQzKCrRcUpuhZPIumgs5XcFGIChLi0JvgMw+R989Pvlu8QMDdspp4lwHphu6fAig5khd7laocukiw8zxieTBfwTwSHedFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=karCzz34; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d885019558so2202357a91.2;
-        Sat, 07 Sep 2024 06:22:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725715356; x=1726320156; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M0r0BvC0JYwjLynqTsK9rmwWO+bU4XTC1+gIg1Xr9eo=;
-        b=karCzz34L9eJXBQMsImaSY3DfQQQoWdfWVvXSFS0g2av0ysbaUcMbdHpWMxNSEqTZp
-         9wxtnoNWZXK3k16NOJ3nQh7T61QUZgSHRCKwmt2j94if32ef9VlqrRqQDmqKPzK3S3Vd
-         x7XQqQtVxftKrM3uLFpsBi54JTmrK35xJzeS6hhU46LsIRrWzn5yWoaLC9HGgUN1lkx5
-         cTy8bTZhwjaL7Wx4HGO/T7MRry3d/SApbwjQh/BfPtvZTbfr6NopKTa1aQQCrQ82yGUb
-         gMtBBzv9VEHok4tucqJu0dzSjNO1oLZ7OzALqFhSJ58m8Z2lYrtypjCDxsU+EYbaZguO
-         txiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725715356; x=1726320156;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M0r0BvC0JYwjLynqTsK9rmwWO+bU4XTC1+gIg1Xr9eo=;
-        b=rJC06pKAE1xRlJDmZYEMNqgDPrR7zy0kitVkHjE8NXl7dxPhpv00VGEz7lNN0OYkF8
-         yfEuXQsQyz7KIbluR/ojHb5yTY/FOBnE29mcxKe3XTO8x3oYgvfmg8MwsghCJg81gNqP
-         2crkDYCaFSobxnbarp9W83CizitX89VgV808hbuj5EVnipoVdYWPp46MkFyhOeP0RuFe
-         sEHr+r3PRBD7O/QE0KbIVMQ2dtzVQvJKTiOtizKepSQzoxKwTiOS2JVRm7RtABDoSefw
-         gZvBSuoMIsG3/GnwTjViSTlsCS+NprkhzPlfdG/oPxP7JbnZ2gyfN2oinG9ZWnm+fA8W
-         /F/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWGq8t7mDpGQ3MMYtllQhEfqa29+mCwUqsO0PdbavpsFrM1g4HZkas2Fb0L13FKN+xb63mKKcDfNDfprj4=@vger.kernel.org, AJvYcCXB92+NRQv5VFMmyNw8XKtWhMsc3Zrr35rkINkQx/fmT8TGzT9qsU9qW1GrI4r5RFDIqLiYCH2nGH/6O//8VCR/67Q=@vger.kernel.org, AJvYcCXi0I3L2g3H58B1XE+tAmusMB2JKZPGoMFZ8JDxZ8nRYeqXsOq+mzvztpaTh8JaH9Hdnz3gFUEP11nPrOsv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7+mao+SwRO+R+wYKSCfwHiLMJjnTRpsnmDm0hqYxsR7Hx+jq4
-	KXeqYx7EwbH31dHqQ/fgDUN646ZY+0HLi28E2Y9s+m3hOn8DS91xqf8y48U+O9k=
-X-Google-Smtp-Source: AGHT+IHdVHLUbDTTXz6BefBZHbxE7BD7z1FDmqLP55VkGFikFJgclg5egAWIQWqUu90Qh+mLNT47dQ==
-X-Received: by 2002:a17:90a:c08b:b0:2c9:359c:b0c with SMTP id 98e67ed59e1d1-2dad5181bc6mr5654503a91.28.1725715355933;
-        Sat, 07 Sep 2024 06:22:35 -0700 (PDT)
-Received: from [192.168.0.122] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadbfe46d4sm3370238a91.1.2024.09.07.06.22.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Sep 2024 06:22:35 -0700 (PDT)
-Message-ID: <378c9865-270f-4a36-8614-ecff6f0236ce@gmail.com>
-Date: Sat, 7 Sep 2024 21:22:31 +0800
+	s=arc-20240116; t=1725715372; c=relaxed/simple;
+	bh=y6YKFlhPCQu78jAO0iC8jYVC1hWLcBjxxOdZP1rzmYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qi5oiPL34saFwaKRZ3GO6PVyyjne/lv5tcwidtqEo4ffafdGU50Ar7V417GCS/PgadoX8+Po6l8vXDtBjYfTYVTTAOv34YLNSp2m3vGqCMc1Pvre1yNgxETk28jfimSw1PJ43VIMqopw54SX8/avoW13hZrcZFtMq9MQoXlYMek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V07Huikd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B322C4CEC2;
+	Sat,  7 Sep 2024 13:22:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725715371;
+	bh=y6YKFlhPCQu78jAO0iC8jYVC1hWLcBjxxOdZP1rzmYM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V07HuikdAcbrcGIzsucwlYA/+RGJuhvOlJngLr590qYs+K7Od4QTJSbzdbmFqaZ1u
+	 Hbu/Z0iFXjvhAa7suS3a6bXuUtI1RDpRHhVbaNXEgbD0rNbWoapbLHq6DwATbUbqkQ
+	 r4Sf4oz8uY8IuIlODGcRH0Qxqk9UFOBG+8oxdA5BIPM8D6+et/ojkXw9FVZJY633GY
+	 M7pOtT+qYVpibMb1d748GmL6WEs8THD8tc8wdHHZRsbQjVu8hHBlrszHSqCa6BkjgC
+	 +AkIEk/z39+7qjTmWdVkTt8bqZAQaIDb46qoaL3d0xO34fIrtDPhk6j1/bIwN46hSr
+	 nX/pUqZO9+r1A==
+Date: Sat, 7 Sep 2024 15:22:48 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, Daniel Xu <dxu@dxuuu.xyz>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	bpf@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 0/9] bpf: cpumap: enable GRO for XDP_PASS frames
+Message-ID: <ZtxTqNLZ2kbb-esH@lore-desk>
+References: <20240830162508.1009458-1-aleksander.lobakin@intel.com>
+ <20240903135158.7031a3ab@kernel.org>
+ <ZteAuB-QjYU6PIf7@lore-desk>
+ <Ztnj9ujDg4NLZFDm@lore-desk>
+ <20240905172029.5e9ca520@kernel.org>
+ <Ztq6KAWXwjBcGci0@lore-desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] tty: serial: samsung: Fix A7-A11 serial earlycon
- SError
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-Cc: asahi@lists.linux.dev
-References: <20240907111431.2970-1-towinchenmi@gmail.com>
- <20240907111431.2970-2-towinchenmi@gmail.com>
- <440be61d-b60e-4179-8481-b9a7a0dabae5@kernel.org>
-Content-Language: en-MW
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <440be61d-b60e-4179-8481-b9a7a0dabae5@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="z8728SGFsNxd48Un"
+Content-Disposition: inline
+In-Reply-To: <Ztq6KAWXwjBcGci0@lore-desk>
 
 
+--z8728SGFsNxd48Un
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 7/9/2024 20:54, Krzysztof Kozlowski wrote:
-> On 07/09/2024 13:06, Nick Chan wrote:
->> Apple's earlier SoCs, like A7-A11, requires 32-bit writes for the serial
->> port. Otherwise, a SError happens when writing to UTXH (+0x20). This only
->> manifested in earlycon as reg-io-width in the device tree is consulted
->> for normal serial writes.
->>
->> Change the iotype of the port to UPIO_MEM32, to allow the serial port to
->> function on A7-A11 SoCs. This change does not appear to affect Apple M1 and
->> above.
->>
->> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
->> ---
->>  drivers/tty/serial/samsung_tty.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
->> index c4f2ac9518aa..27b8a50bd3e7 100644
->> --- a/drivers/tty/serial/samsung_tty.c
->> +++ b/drivers/tty/serial/samsung_tty.c
->> @@ -2536,7 +2536,7 @@ static const struct s3c24xx_serial_drv_data s5l_serial_drv_data = {
->>  		.name		= "Apple S5L UART",
->>  		.type		= TYPE_APPLE_S5L,
->>  		.port_type	= PORT_8250,
->> -		.iotype		= UPIO_MEM,
->> +		.iotype		= UPIO_MEM32,
->>  		.fifosize	= 16,
->>  		.rx_fifomask	= S3C2410_UFSTAT_RXMASK,
->>  		.rx_fifoshift	= S3C2410_UFSTAT_RXSHIFT,
->> @@ -2825,8 +2825,10 @@ static int __init apple_s5l_early_console_setup(struct earlycon_device *device,
->>  	/* Close enough to S3C2410 for earlycon... */
->>  	device->port.private_data = &s3c2410_early_console_data;
->>  
->> +	/* ... however, we need to change the port iotype */
->> +	device->port.iotype = UPIO_MEM32;
-> 
-> If there is going to be resend, then this comment is redundant and can
-> be dropped - repeats the code and does not provide any explanation why.
-> 
-> Which would also make the patch smaller and easier to read. See GS101
-> earlycon.
-I agree that the comment is quite useless as-is. However, I think it is
-worthwhile to mention that A7-A11 expect MMIO32 register accesses here,
-as someone looking at this code is likely using one of the newer SoCs,
-which does not have this restriction.
+> > On Thu, 5 Sep 2024 19:01:42 +0200 Lorenzo Bianconi wrote:
+> > > In particular, the cpumap kthread pinned on cpu 'n' can schedule the
+> > > backlog NAPI associated to cpu 'n'. However according to my understan=
+ding
+> > > it seems the backlog NAPI APIs (in process_backlog()) do not support =
+GRO,
+> > > right? Am I missing something?
+> >=20
+> > I meant to use the struct directly, not to schedule it. All you need
+> > is GRO - feed it packets, flush it.=20
+>=20
+> ack, thx for pointing this out.
+>=20
+> > But maybe you can avoid the netdev allocation and patch 3 in other ways.
+> > Using backlog NAPI was just the first thing that came to mind.
+>=20
+> ack, I will look into it.
+>=20
+> Regards,
+> Lorenzo
 
-> 
-> 
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Best regards,
-> Krzysztof
-> 
+Hi all,
 
-Nick Chan
+I reworked my previous implementation to add GRO support to cpumap codebase=
+, removing
+the dummy netdev dependency and keeping most of the other logic. You can fi=
+nd
+the codebase here:
+- https://github.com/LorenzoBianconi/bpf-next/commit/e152cf8c212196fccece0b=
+516190827430c0f5f8
+I added to the two patches below in order to reuse some NAPI generic code:
+- https://github.com/LorenzoBianconi/bpf-next/commit/3c73e9c2f07486590749e9=
+b3bfb8a4b3df4cb5e0
+- https://github.com/LorenzoBianconi/bpf-next/commit/d435ce2e1b6a991a6264a5=
+aad4a0374a3ca86a51
+I have not run any performance test yet, just functional one.
+
+Regards,
+Lorenzo
+
+--z8728SGFsNxd48Un
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZtxTqAAKCRA6cBh0uS2t
+rA1HAQDexOv6I+cjqBzVYgUS+y0Xn1LJ6hmUxSvpTHYqX2R+DQD/R9oiZLSX4JOy
+XFYnQsY4J2O8rgDbMEquWg0l1Uq3qQ8=
+=poHJ
+-----END PGP SIGNATURE-----
+
+--z8728SGFsNxd48Un--
 
