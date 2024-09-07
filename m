@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-319754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6FE9701D1
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:08:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C83F9701D2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B4811C213F9
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:08:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F141C21332
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F9015B10A;
-	Sat,  7 Sep 2024 11:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y0BmB88D"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5DD15697A;
+	Sat,  7 Sep 2024 11:09:31 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52946158556;
-	Sat,  7 Sep 2024 11:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBBA208D7
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 11:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725707271; cv=none; b=ZFT1H7EZDlvUgyCC2jpn42EZlHH0RVfYIRGrMKOedEFI3CD88PDJOPnq0Gign/28RMQTgByY5Vt77cvilsDGRJzWfJFrnifEoTRLJZlKGYKznmcxjAk9rZbyWOZNgrhlSaYPkhgIqaYT1TtdpDaGiVqRT4d8ldRlvw473ZIpw0k=
+	t=1725707371; cv=none; b=C0EAbEmP0vY/sbL9DoGtC09GaO/V6BImU8ahsqyBnUCQaHF8iD6xib7JcLMsJzRXcM6uYV6xzWCp5+0C1CMeKoUc9yvmXOSxV/s6BHsdY/mt3+qzSDpw44Zbf6j84nMHZ45TsFpGZTa6rVTvneoFSt7q8SRekmuGFOaVPgzVBq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725707271; c=relaxed/simple;
-	bh=udRTh01PFdNwrz5h6uyHU1yEO3a3lSXrCIR5rWz7vCo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EQyVF7y7xG/JW5s3aTtNC0AjyVgTZr+eOblenAZ2ZlPUfcyma+r1TpE3VIc3Q6qVUHhn+0VmnYkQNX9zPDoBcD97kCgOck6AblbJAkYeCb7QywV4DUTohJYxYyauVGFhvDN1xeO7HKoIFbEHuQF7usDsGYpZ3xq12Pa+A31qDXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y0BmB88D; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so21931895e9.2;
-        Sat, 07 Sep 2024 04:07:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725707269; x=1726312069; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nn3W1kMigTVE8blchx+fEv/bpRlWtEY28Jz/T9i8iA4=;
-        b=Y0BmB88D9089fael/icln5NNlttYC8zBgNoezWyLZAO6wMMvaZwBYvAOutc17Lt9/X
-         gGKc51x0eBAHXokexw7poTbBhSidklpbaNNXGufU3fL8Y5c/EyLvoY11t8eJ2LfMojiD
-         S7yKZT2kzweKoB1Cjwj3iO1b+8BH8MhuaCv4EwNXf82lab6AK7yrgmlmGD7P7o7GlWcP
-         YQ1tuWV/U8J63G6TkUB9wRQThlFLgivpOAL7spk9fpKwn5Q99UNeBJ/qO/gaYkFGewnu
-         hu7atLyQ6N2qx/qYRLyUV0lho3GX/nWECNV9oXxcfT+O2CZzfubJ1nbYRhwqXdcPIT1q
-         6g4w==
+	s=arc-20240116; t=1725707371; c=relaxed/simple;
+	bh=BCueTk+p3HTkxSBE+HoDMy3bH6hAV50ewzaNywNVUGI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=kIRxmKs9g3uGd/IdTmEuemsIPXD0Z1ALibBEKGL+K7r8dEc+UwDdFdhdHEa0vytDvfluwgGDSNUcmEFVn5ohjdoQ+jBpZxz0O45Ydx94YsuXTwkkK9T6kL+pwhpbVbUB1rWpx/G4PvoZmvmnrsSj2nfbyxyZKx9Z7UhEqaCXmbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39f5605c674so60648615ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 04:09:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725707269; x=1726312069;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nn3W1kMigTVE8blchx+fEv/bpRlWtEY28Jz/T9i8iA4=;
-        b=eQvrr8BYf/E6M3rNGaAcS02QojhwoUdPAKp5wfUKufuNKPmn2vyTgdbBR415tMtusn
-         hjIQSDKJjTNcwiT11KT/5Jz8utcXhnniG7YAw5gVja6fVGIEywCrkEzuAV93cs79Fjtm
-         BP2Wp2KtE303Dg58f/IRU8itCQVpZlAXE1qvU2J2HpgcxrnviEjyC39tx4JSfVb/oEgo
-         4F2/M/LxF+/u4kywsK73eJFAvrsTWeDPOUu1ToShY42HTe1N3a0l/tUHznQZdhxAuGha
-         kF7Uu/hngjedqHC6J9aXocPhRRFn6WICEoh2zPaUP8eKAvnH4nunY562HvExUVW0OV9/
-         +v+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUQKG5mFnuv45z7YzDW9IG40EX6x2InwGKVjbuj5IOmfhWYak8A7gqqBlH0ryDt60zOP6fQw6DwOCE6eP3D@vger.kernel.org, AJvYcCWpjVR/yx3kZFTJRAHP68AQAC9E84hKIxM4pEdyvIaUmYHHLjxfY2laJbFMI7oC43NWMddx3fT2DQZf@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLbU5Eaef5dxvZSeycM3wRL2bTQVnef5nysHcvd7E/GRqxus/F
-	V2enZ3e/4LYxfTd6PVJOvHBTGfhy8gjaxOmp+bKJL4yKaDas++HW3lCLKc7N
-X-Google-Smtp-Source: AGHT+IHSy+MLOjb96dv5ua1bHQAoaTx9nS32PPhKOkrFsquf1+TmcibLteRqakdjbU+c4tDt8zltaw==
-X-Received: by 2002:a05:600c:4713:b0:426:689b:65b7 with SMTP id 5b1f17b1804b1-42c9f9d359dmr41212935e9.25.1725707268603;
-        Sat, 07 Sep 2024 04:07:48 -0700 (PDT)
-Received: from [192.168.1.130] (51B6DC2A.dsl.pool.telekom.hu. [81.182.220.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb444b0sm13719415e9.21.2024.09.07.04.07.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 04:07:48 -0700 (PDT)
-From: "=?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?=" <trabarni@gmail.com>
-X-Google-Original-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Sat, 07 Sep 2024 13:07:46 +0200
-Subject: [PATCH 2/2] power: supply: bq256xx: Add ability to omit battery
- class
+        d=1e100.net; s=20230601; t=1725707369; x=1726312169;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g1/UoRnDTtj5J8wWfUjGb7Zt43CcKepMak7hh1B2g98=;
+        b=u3//bLJCRC49kURjMo/1MiYEl4neu8JSm0CKYu0CmkPDWnmGdsPR2ychII+q8EdjFg
+         88RbE5ntvg1FywYrciiCdE8gfEwMjFwKe3gV+VsQOcbSM+bACtF6t1C+Jo29LakXfcNl
+         zGjHCzm5k7lLtfnvfPQ6fkfd8YiV0sXNtlchaSwyMQ10DoLHZzrigLpJbEfFkjd1l7U8
+         yO7Z+4ozVKb4JV4KNwTjrRaLpafuvDzR0+KQAlCQ7RlRcuzqzUekSjB31zJ19Me1Rsd3
+         YEDLBpl5TRdn+gNV6O4OlMLjqzEwjwxOk0dR/IR++nJAqbXvMzGxFA9bhlbf89NesOC7
+         rbVA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Xw7UwNSHk8fUSx9H32qLg6LwH6/wEq3smEeIWNjnDq/01ReK9QSj1y31HOCRuX8K5edrADLwq+SandQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9CncfwsH6t/e9EdM0ZOg3P4t5mp3pus8cGwxfdEvzc9eMJa2g
+	L84EvCfGSMrE4P6gHu7Et+s/QQrCkUrsPFIRsZ+f3lIj7Ni29l7tEDn6f0ng/qB6ndIc3LnYgXi
+	+ujMznn63aB+CwfmdIdJH+jVNa28FEhNC499VCjRXVPZTdkLRYKIuSe8=
+X-Google-Smtp-Source: AGHT+IHRBUm55l4CMd0Iomfht2mqyI7+fJk6TpiMPS3s+BFkIJbt3n16hYeBilhmK/qO6fExmFp3Avw940LCVm4ooVEjovdNB7NK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240907-bq256xx-omit-battery-class-v1-2-45f6d8dbd1e5@mainlining.org>
-References: <20240907-bq256xx-omit-battery-class-v1-0-45f6d8dbd1e5@mainlining.org>
-In-Reply-To: <20240907-bq256xx-omit-battery-class-v1-0-45f6d8dbd1e5@mainlining.org>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725707265; l=1218;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=udRTh01PFdNwrz5h6uyHU1yEO3a3lSXrCIR5rWz7vCo=;
- b=pBEi+vQWV1Tf+hFCfwy10ZgliSgqQx629lgUiySLwHV5X2JAURNICMyNzYM8EhcSLD3ytbXN1
- ttQNSUOD81SBWegIe7kmTGomM5mJopKkmAU6g7iZ4/+HTY/Yo+Hgvdo
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+X-Received: by 2002:a05:6e02:12e3:b0:3a0:4aa5:5235 with SMTP id
+ e9e14a558f8ab-3a04f10a955mr2078765ab.4.1725707369117; Sat, 07 Sep 2024
+ 04:09:29 -0700 (PDT)
+Date: Sat, 07 Sep 2024 04:09:29 -0700
+In-Reply-To: <CALiyAom35=FOaBTWuqT-vta9PFuQAshkq6CkSJirK62oxuo7VQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b90a470621858e8b@google.com>
+Subject: Re: KMSAN: uninit-value in mii_nway_restart
+From: syzbot <syzbot+1f53a30781af65d2c955@syzkaller.appspotmail.com>
+To: hridesh699@gmail.com
+Cc: hridesh699@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add omit-battery-class property to avoid make a battery device
-for charger when fg makes one.
+> #syz test
 
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- drivers/power/supply/bq256xx_charger.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+This bug is already marked as fixed. No point in testing.
 
-diff --git a/drivers/power/supply/bq256xx_charger.c b/drivers/power/supply/bq256xx_charger.c
-index 5514d1896bb8..62721d564b39 100644
---- a/drivers/power/supply/bq256xx_charger.c
-+++ b/drivers/power/supply/bq256xx_charger.c
-@@ -1547,12 +1547,14 @@ static int bq256xx_power_supply_init(struct bq256xx_device *bq,
- 		return PTR_ERR(bq->charger);
- 	}
- 
--	bq->battery = devm_power_supply_register(bq->dev,
--						      &bq256xx_battery_desc,
--						      psy_cfg);
--	if (IS_ERR(bq->battery)) {
--		dev_err(dev, "power supply register battery failed\n");
--		return PTR_ERR(bq->battery);
-+	if (!device_property_read_bool(dev, "omit-battery-class")) {
-+		bq->battery = devm_power_supply_register(bq->dev,
-+							 &bq256xx_battery_desc,
-+							 psy_cfg);
-+		if (IS_ERR(bq->battery)) {
-+			dev_err(dev, "power supply register battery failed\n");
-+			return PTR_ERR(bq->battery);
-+		}
- 	}
- 	return 0;
- }
-
--- 
-2.46.0
-
+> diff --git a/drivers/net/usb/dm9601.c b/drivers/net/usb/dm9601.c
+> index 48d7d278631e..2e2bb22e60ea 100644
+> --- a/drivers/net/usb/dm9601.c
+> +++ b/drivers/net/usb/dm9601.c
+> @@ -10,6 +10,7 @@
+>
+>  //#define DEBUG
+>
+> +#include "net/net_debug.h"
+>  #include <linux/module.h>
+>  #include <linux/sched.h>
+>  #include <linux/stddef.h>
+> @@ -222,13 +223,18 @@ static int dm9601_mdio_read(struct net_device
+> *netdev, int phy_id, int loc)
+>     struct usbnet *dev = netdev_priv(netdev);
+>
+>     __le16 res;
+> +   int err;
+>
+>     if (phy_id) {
+>         netdev_dbg(dev->net, "Only internal phy supported\n");
+>         return 0;
+>     }
+>
+> -   dm_read_shared_word(dev, 1, loc, &res);
+> +   err = dm_read_shared_word(dev, 1, loc, &res);
+> +   if (err < 0) {
+> +       netdev_err(dev->net, "MDIO read error: %d\n", err);
+> +       return err;
+> +   }
+>
+>     netdev_dbg(dev->net,
+>            "dm9601_mdio_read() phy_id=0x%02x, loc=0x%02x, returns=0x%04x\n",
 
