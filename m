@@ -1,131 +1,214 @@
-Return-Path: <linux-kernel+bounces-319962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C5E970467
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 00:23:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52D10970468
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 00:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3AE31F222AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 22:23:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86838B21955
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 22:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB9616A934;
-	Sat,  7 Sep 2024 22:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31DF1684A1;
+	Sat,  7 Sep 2024 22:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pv1NlDNp"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bKXWKffS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87849168C26;
-	Sat,  7 Sep 2024 22:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462B315CD58
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 22:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725747753; cv=none; b=ktjq7aPDkwKORSTFv+5hSC6xN7MO8JHWkAPKY5ZYiI0qN03D/az2cOK5SMXaH2R3BDh8qf0aSZqaLtnsf6mVueZbMYQcPnB8RgIftbO7EYxmrquPOaMVI1l7ym495EhZLC+dWz0a/MSbRxKiYSfrWX1KdLEw6vD+SMVLPy1Hsno=
+	t=1725748233; cv=none; b=HzO47iJYnUOpQeeRY4Sz2yTT2dixY1Qzv204wkqgwjHk+M+Q5t5vhc5kGCOxfQr1dlDNG+HWEqYvKLAVNPZDOWUhhSO30Oya12nNGOkFMrhtyqLgFWl3GroyC0KTV4esjKcvDowOLMcZQePKyTCwMoSwZMs4EeZd0FSWtOgb17c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725747753; c=relaxed/simple;
-	bh=5Ya+GrOx8iFM33Lbbtk9RoMuJPVWPdjs5LKsBxWWcko=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=c+e+LakJW5zHSzes+gBB/ZNDjnrqo0gdAUMoMCBuT2lcdK0loaq5KU0nKFjRueta/MBhral1HWH/hus0TrcIq5RfrloLEpCpbx0aF8RfxTwxYCm0HhbdnWuV94Wfy//eqmpETbsfV0lPc3hjzwRW9ShCkKvhAc+wV/8nIjvkccA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pv1NlDNp; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d889207d1aso2351954a91.3;
-        Sat, 07 Sep 2024 15:22:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725747752; x=1726352552; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Ya+GrOx8iFM33Lbbtk9RoMuJPVWPdjs5LKsBxWWcko=;
-        b=Pv1NlDNpJ7IDXsppcfvxxq4QTTuON/qAi6TUL2zZH/vtFJuOl073NfYdOy9feE1UOw
-         w18059c7lcB/nqI4p1vM3EAYTcd/ymv3uTGiOq7xgK7AMS8qeG9TxBLMcq2U17hZkhIx
-         2oT0Qmcos6Ng9afbCYw8dcU31i5UiwQka2ygHbVGfiUTbhVfXi+u8p9Gmtr/wbTUuCTo
-         tZzyc7KezxUvDXReQmawf+YQcf400gAnLRgBuV+1yPA7KsH+wcu/vYvgJd/ASrgUWbaC
-         ugU82WloBN0hHhoPzWEybqbz7BD5TpBpdY0P/PvrCqPsyy+1JNweQONzQfEbJyaBEPzx
-         Rlow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725747752; x=1726352552;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5Ya+GrOx8iFM33Lbbtk9RoMuJPVWPdjs5LKsBxWWcko=;
-        b=XB0gQtlsKgEV96zStKtMqiMa5Va+tg/HO89empTkcPvl2U3a4RaBLWk1HvRpMiqMlQ
-         YbHjaSKRwNZMbJvYBmeoBGUnBDoYw2sNGh8Ssli1Qtkok77xDnW3QKfMU/pzv1xtVQbn
-         KMj3S17ym8SPQSHqLUiJeLA3OH21Qkc2e1gg/tPULtfFGo1V6Hl0uaVuD3wC6EFzeqWn
-         ZmqctKgOPRREjtdIb8KFy0N01MuWOmYcxTWieYEUOQg283zaBULM30/sWJIxnryiQDWv
-         4lgdUl2kjV4phMSzuQ1ebQP+7gBvdz53yVFywruN3JfO069/yAZTOECWdpv8VguTUX0g
-         8g/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVSv5MMqyreCYjWW5USdCurML0LEhkaOwmDtHthxfivCg53H6jWFVb+ytR62OuyDxeHf0JdGYAnlezbazs=@vger.kernel.org, AJvYcCWrCyeUEdAc4lzLT6gZqej0JlcJeisSTDBtVYpIB05Q/3lQ03PSg71rmY34eqWR6hoSX3BqlMFQmDfioLgyjck=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz7WLb/tusqH3p2sv4OOaEM14Y7h4PIXLi9s4+0TPXXqhA/oH0
-	8z0p9mfEqsfE6v9isqM/dHkaOwPaUooDY15Ea0nYSEoPeN7g/zM4
-X-Google-Smtp-Source: AGHT+IG/HV5r+YZqFHMlZOHZKa+nFuVeg9UR3D8/72VNjiZ/5r4muwDJe42wWMrU28RnU1tIZRYyDg==
-X-Received: by 2002:a17:90b:4c84:b0:2d8:87d3:903b with SMTP id 98e67ed59e1d1-2dad5196fe1mr6549829a91.35.1725747751627;
-        Sat, 07 Sep 2024 15:22:31 -0700 (PDT)
-Received: from smtpclient.apple ([2601:647:4d82:420:7c04:afa9:dac3:3f3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db044f37dasm1732529a91.34.2024.09.07.15.22.29
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 07 Sep 2024 15:22:30 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1725748233; c=relaxed/simple;
+	bh=XGJqb6HC4iaeuEdA5n6cYu9SrUFHw61FrYM1LhbHtQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BplTsIwNZrtdonw6ug6DcU/Ouo/B35uDm/CAeYBzW/Kzx+wazFVArUHZ9z9U/BS4RRqaFa5N3bKJGvvroYP7ODoWGWpJxSIFU3CsbVN3Z7YwZoRQgGnTIsLwOdvmZshvfugRAGVujCnY2V8uAJDf2VJpWsES/L6Ytzb46dSJzPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bKXWKffS; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725748231; x=1757284231;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=XGJqb6HC4iaeuEdA5n6cYu9SrUFHw61FrYM1LhbHtQM=;
+  b=bKXWKffSvNuhQCnePf5pDFr824soX/5ms/xtR5mgj4nQVBOWgkZYT+Jg
+   tdN/NwgE6Pa6hJ7bPLaLy8QURW6CJ/gzuG3tx+jdhN+Gcv4pgde9h8sLV
+   IUBGf0E1reSWJrWlfZuu1f7n5qXbTiKCEqZcwqWb85wLpGRz+/WrK/CJd
+   i+Lo7pz2MfDsKT8UtyJFu38ajNaehf4ZNRYOGjkdSv6faIlHra+oY7RcD
+   5Sw9egJx+lliOawiLtgdA1pAUsyzg7J+6qKpPy6qH2jwJOTVP9qbGSDnY
+   9VR4um6hx9TW8l/blWynGRD4A9SFSyxu6UHces0ZpjpN5iESL3Kpng7XG
+   w==;
+X-CSE-ConnectionGUID: XqC6dQhcR2G5L3+SJGabbg==
+X-CSE-MsgGUID: Vx4kor/HQDKdrh08XQOPjQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="24620124"
+X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
+   d="scan'208";a="24620124"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 15:30:30 -0700
+X-CSE-ConnectionGUID: /nyVoW6aQZaxBbbhxFVMhA==
+X-CSE-MsgGUID: rrn40a26RDON9snzMjjswA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
+   d="scan'208";a="97000816"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 07 Sep 2024 15:30:29 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sn3wp-000D3v-0I;
+	Sat, 07 Sep 2024 22:30:27 +0000
+Date: Sun, 8 Sep 2024 06:30:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zack Rusin <zack.rusin@broadcom.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Martin Krastev <martin.krastev@broadcom.com>
+Subject: drivers/gpu/drm/vmwgfx/vmwgfx_blit.c:533:2-8: WARNING: NULL check
+ before some freeing functions is not needed.
+Message-ID: <202409080613.QLumunSL-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH 16/19] Documentation: rust: add coding guidelines on lints
-From: comex <comexk@gmail.com>
-In-Reply-To: <CANiq72ktnMSfMfGEhN1kO0F+C5O_KsUY1y_eb7ZL+qzzSkg9bw@mail.gmail.com>
-Date: Sat, 7 Sep 2024 15:22:18 -0700
-Cc: Alice Ryhl <aliceryhl@google.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Trevor Gross <tmgross@umich.edu>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <22A86237-4168-4D4A-8782-7A65AFAEC44C@gmail.com>
-References: <20240904204347.168520-1-ojeda@kernel.org>
- <20240904204347.168520-17-ojeda@kernel.org>
- <CAH5fLgg20kDCJfD_6+fTSogOnpqK0x3a6eKaTahgSvdgfFzSEw@mail.gmail.com>
- <CANiq72ktnMSfMfGEhN1kO0F+C5O_KsUY1y_eb7ZL+qzzSkg9bw@mail.gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   b31c4492884252a8360f312a0ac2049349ddf603
+commit: b32233accefff1338806f064fb9b62cf5bc0609f drm/vmwgfx: Fix prime import/export
+date:   5 months ago
+config: i386-randconfig-054-20240907 (https://download.01.org/0day-ci/archive/20240908/202409080613.QLumunSL-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409080613.QLumunSL-lkp@intel.com/
 
-> On Sep 5, 2024, at 2:45=E2=80=AFAM, Miguel Ojeda =
-<miguel.ojeda.sandonis@gmail.com> wrote:
->=20
-> On Thu, Sep 5, 2024 at 10:16=E2=80=AFAM Alice Ryhl =
-<aliceryhl@google.com> wrote:
->>=20
->> Wow, does C really not have an easier way to do it?
->=20
-> Yeah, it would be nice to get a similar system in C.
->=20
-> There are targeted attributes that can annotate certain things, like
-> `[[maybe_unused]]` in C23 (and vendor attributes too like our
-> `__maybe_unused` macro), so `-Wunused-function` is not really the best
-> example in that sense -- I will think of a better one (it was nice to
-> use the same as in the other examples I wrote for `expect` later on,
-> which is why I used it).
->=20
-> But, as far as I am aware, there is no way to handle lints (and levels
-> and so on) in a simple and consistent way like Rust does.
+cocci warnings: (new ones prefixed by >>)
+>> drivers/gpu/drm/vmwgfx/vmwgfx_blit.c:533:2-8: WARNING: NULL check before some freeing functions is not needed.
+   drivers/gpu/drm/vmwgfx/vmwgfx_blit.c:535:2-8: WARNING: NULL check before some freeing functions is not needed.
 
-You can always hide the pragmas behind a macro:
+vim +533 drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
 
-https://gcc.godbolt.org/z/WTEaYWW8c
+   422	
+   423	/**
+   424	 * vmw_bo_cpu_blit - in-kernel cpu blit.
+   425	 *
+   426	 * @dst: Destination buffer object.
+   427	 * @dst_offset: Destination offset of blit start in bytes.
+   428	 * @dst_stride: Destination stride in bytes.
+   429	 * @src: Source buffer object.
+   430	 * @src_offset: Source offset of blit start in bytes.
+   431	 * @src_stride: Source stride in bytes.
+   432	 * @w: Width of blit.
+   433	 * @h: Height of blit.
+   434	 * @diff: The struct vmw_diff_cpy used to track the modified bounding box.
+   435	 * return: Zero on success. Negative error value on failure. Will print out
+   436	 * kernel warnings on caller bugs.
+   437	 *
+   438	 * Performs a CPU blit from one buffer object to another avoiding a full
+   439	 * bo vmap which may exhaust- or fragment vmalloc space.
+   440	 * On supported architectures (x86), we're using kmap_atomic which avoids
+   441	 * cross-processor TLB- and cache flushes and may, on non-HIGHMEM systems
+   442	 * reference already set-up mappings.
+   443	 *
+   444	 * Neither of the buffer objects may be placed in PCI memory
+   445	 * (Fixed memory in TTM terminology) when using this function.
+   446	 */
+   447	int vmw_bo_cpu_blit(struct ttm_buffer_object *dst,
+   448			    u32 dst_offset, u32 dst_stride,
+   449			    struct ttm_buffer_object *src,
+   450			    u32 src_offset, u32 src_stride,
+   451			    u32 w, u32 h,
+   452			    struct vmw_diff_cpy *diff)
+   453	{
+   454		struct ttm_operation_ctx ctx = {
+   455			.interruptible = false,
+   456			.no_wait_gpu = false
+   457		};
+   458		u32 j, initial_line = dst_offset / dst_stride;
+   459		struct vmw_bo_blit_line_data d = {0};
+   460		int ret = 0;
+   461		struct page **dst_pages = NULL;
+   462		struct page **src_pages = NULL;
+   463	
+   464		/* Buffer objects need to be either pinned or reserved: */
+   465		if (!(dst->pin_count))
+   466			dma_resv_assert_held(dst->base.resv);
+   467		if (!(src->pin_count))
+   468			dma_resv_assert_held(src->base.resv);
+   469	
+   470		if (!ttm_tt_is_populated(dst->ttm)) {
+   471			ret = dst->bdev->funcs->ttm_tt_populate(dst->bdev, dst->ttm, &ctx);
+   472			if (ret)
+   473				return ret;
+   474		}
+   475	
+   476		if (!ttm_tt_is_populated(src->ttm)) {
+   477			ret = src->bdev->funcs->ttm_tt_populate(src->bdev, src->ttm, &ctx);
+   478			if (ret)
+   479				return ret;
+   480		}
+   481	
+   482		if (!src->ttm->pages && src->ttm->sg) {
+   483			src_pages = kvmalloc_array(src->ttm->num_pages,
+   484						   sizeof(struct page *), GFP_KERNEL);
+   485			if (!src_pages)
+   486				return -ENOMEM;
+   487			ret = drm_prime_sg_to_page_array(src->ttm->sg, src_pages,
+   488							 src->ttm->num_pages);
+   489			if (ret)
+   490				goto out;
+   491		}
+   492		if (!dst->ttm->pages && dst->ttm->sg) {
+   493			dst_pages = kvmalloc_array(dst->ttm->num_pages,
+   494						   sizeof(struct page *), GFP_KERNEL);
+   495			if (!dst_pages) {
+   496				ret = -ENOMEM;
+   497				goto out;
+   498			}
+   499			ret = drm_prime_sg_to_page_array(dst->ttm->sg, dst_pages,
+   500							 dst->ttm->num_pages);
+   501			if (ret)
+   502				goto out;
+   503		}
+   504	
+   505		d.mapped_dst = 0;
+   506		d.mapped_src = 0;
+   507		d.dst_addr = NULL;
+   508		d.src_addr = NULL;
+   509		d.dst_pages = dst->ttm->pages ? dst->ttm->pages : dst_pages;
+   510		d.src_pages = src->ttm->pages ? src->ttm->pages : src_pages;
+   511		d.dst_num_pages = PFN_UP(dst->resource->size);
+   512		d.src_num_pages = PFN_UP(src->resource->size);
+   513		d.dst_prot = ttm_io_prot(dst, dst->resource, PAGE_KERNEL);
+   514		d.src_prot = ttm_io_prot(src, src->resource, PAGE_KERNEL);
+   515		d.diff = diff;
+   516	
+   517		for (j = 0; j < h; ++j) {
+   518			diff->line = j + initial_line;
+   519			diff->line_offset = dst_offset % dst_stride;
+   520			ret = vmw_bo_cpu_blit_line(&d, dst_offset, src_offset, w);
+   521			if (ret)
+   522				goto out;
+   523	
+   524			dst_offset += dst_stride;
+   525			src_offset += src_stride;
+   526		}
+   527	out:
+   528		if (d.src_addr)
+   529			kunmap_atomic(d.src_addr);
+   530		if (d.dst_addr)
+   531			kunmap_atomic(d.dst_addr);
+   532		if (src_pages)
+ > 533			kvfree(src_pages);
 
-It=E2=80=99s not perfect, because warning names sometimes differ between =
-GCC and Clang, among other reasons.=
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
