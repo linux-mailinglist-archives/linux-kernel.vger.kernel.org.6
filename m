@@ -1,119 +1,147 @@
-Return-Path: <linux-kernel+bounces-319596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C87096FF05
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:37:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05FF996FF11
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E890AB22FD5
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:37:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3112D1C21F29
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BB3D512;
-	Sat,  7 Sep 2024 01:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA89FDDC5;
+	Sat,  7 Sep 2024 01:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hzGaCZpN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ShPejgy0"
+Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1EB79C4
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 01:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663681171C
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 01:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725673025; cv=none; b=WPu+oHgckMhPChD8BSYZEHECTi6i5Goh4XbEAuEb30SkN2kcHOaybo/RJfJnn+BUtaBzyjdIINVcCGCsZvjjUfQWvaOcYiCdg7mphukjUuqFSIbHzbweenr7Vfx5J9D5nkIFXtaxOPPo5ZGud0PSxO82Lc0XrxczW2/Gu55yQBk=
+	t=1725673751; cv=none; b=dqg+tXZlmTkaB+SFGm6nmopFHSx/+r9VWGFLGU+K/ilS3PbJ7ROZQiWKhlkd6NNwumhWTRGxZtCeJjoQt527g+KzcfAqaLbM/remp9TcSHaW6DUuVGVgjY+3tp6dcBnEmmqNgHQmBfILoqO1Qan+inc58L7WwMolAComTaNE38Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725673025; c=relaxed/simple;
-	bh=BtdkTeqwNyarNLUud1ny560jYA6MG9kqwt3/BoPR9L4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KhiF0P3sM3CDWl8XTi7mnja1bcR8wW5COxO3hMtHckXbZ9tfJ/EwukSsYoGq7BlR6cLbNlnePk5sqj3bV73BzaRdRr1EWjbhCJexx2AjhsJHmdASgqcYVL1awH8Ps9x2VxoP/PkXzMqcRiw78+TRFuJgnJMQ7Mz87oK6f/kItEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hzGaCZpN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725673021;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aUAh66u18yZqVcGU/SfKdY2rCCidwdXVDKvY/bEyf10=;
-	b=hzGaCZpNEhunw4EcyMTOazzZGx+mjQt3Hz4N8tk26M8H1DchShHCI/TT8zb+Tp9l4OQcL5
-	0rhCD5WEDJYcoJo6ODXRy5aS2gj+wLzxjKUzbqWiYO1bxRJEjSGJ5g6juQvMEc1Tf/nRef
-	dXiPbcmgifZm2RfTBFEMPgFXHp3Bjr0=
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
- [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-575-OZdkHiftPFGR0ze-pZXEBQ-1; Fri, 06 Sep 2024 21:36:57 -0400
-X-MC-Unique: OZdkHiftPFGR0ze-pZXEBQ-1
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-49be848125eso274915137.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 18:36:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725673017; x=1726277817;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aUAh66u18yZqVcGU/SfKdY2rCCidwdXVDKvY/bEyf10=;
-        b=hCM++yy0AD6/7eIT9ifjvT2VPZeo6iCq4nR1onrf+90RQ1vVT8ILjbcvtCqiSFlnyC
-         vq4kYfSC2aT7JZ0FwT1hL6gnkDU8LSrj1NRf1UHSQGLoZAANGyvFTVqo9WC7/h+2vWrZ
-         SkzCnjM54CSk0hXhX9xq1Rfy3H2uW+XoIEPM1/I/uvF0PgkwH03KNsv4kbA3CddrIXqI
-         fvwXNLB/efqWEE0wALUlvlqL2X9KlkTlEoORCQbEa6oTkCVe8kurmkqa0n9Pj3WN4bV4
-         Yb2NtvsrWdH3l3KlgcV0a+OtKvGsae7p5Ix9fzlPciWcMyvx5lf2C0ESkg0zhzhLkWhd
-         ld8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWcRcHZYl1LkRSGuRewaZg4xVl7RIFfOWYOXe3hWkWunSiOVG8xDn5/i9SiLx0C/Hq37kzbMucp0Kzspnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY2+i/uNJj4N8Wu4btL8FyEe1NyGbzvm5eO0VJ2dAx0n32HTWc
-	kEwb1yWr/rDaKdjm5q3R+TYHOra0mhuVm8kXVlPSxSPEywBC7pDWPxjB92TIKkZ2rBxh6E4zPLp
-	OhksCHABRpk2CJ7bFFwXIkdZLJRlEfKayDqhP6JRtYuPt8VGhUe9ucVKLpYfZ9tYt+cMttUa802
-	fSRWbXAKUQy/tqt641DAc3VirLheeHpEk6Zj2h
-X-Received: by 2002:a05:6102:3ec6:b0:493:effa:e721 with SMTP id ada2fe7eead31-49bde2eabf3mr5698686137.27.1725673017011;
-        Fri, 06 Sep 2024 18:36:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE+YqWeP+1a0zNpj9U4DtEaZ2NfnITUQpG1RUgzpmtbvOkDbAmqnJSxayXCQ5xY8mwozaogNP4TDnANrW8B4dQ=
-X-Received: by 2002:a05:6102:3ec6:b0:493:effa:e721 with SMTP id
- ada2fe7eead31-49bde2eabf3mr5698669137.27.1725673016557; Fri, 06 Sep 2024
- 18:36:56 -0700 (PDT)
+	s=arc-20240116; t=1725673751; c=relaxed/simple;
+	bh=eNt+p4t3mbxOaD2bqhmu3nNASkrt3YmWHvIyNhqNBlk=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ioIkv+V0iBImQHgG7GW0cGDKOlv9TaIkppkq5pqqmHa9bk/bLBTTt5pg/oBhWZJHGPWOYJnk4pPZzo7CENvCPaJ/0VynsMDDDdnAFQjsiYQ+ahXWIMbuhsHzAVj7a/8VcljiN4R5xh+8H9LE6IrNM3W81X1poQd905HJ0CoiP8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ShPejgy0; arc=none smtp.client-ip=203.205.221.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725673741; bh=8G3qj1qfuwE8Fg1/n2YYsrJOIhTbCUMPT2rjZDmi3H8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ShPejgy0CkrHc0jPotBu3DPZYPUgD4IX/j3VoIc3GE2KXRZTYoKlMITc4A1fpvClk
+	 a/TisDOiY3vS0fTst6ZNcT4s/KtpLl2zN1AxqU9PTf7z8jTJ2M7c04vmDIQSPChtzD
+	 i9grteLfzg5oqxsh2cthqY9J27cJHu5/u/t89I7U=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id AB9B209F; Sat, 07 Sep 2024 09:42:57 +0800
+X-QQ-mid: xmsmtpt1725673377twjjob309
+Message-ID: <tencent_70204B621B682561BA47BB81339A9E031B08@qq.com>
+X-QQ-XMAILINFO: MntsAqBg2ZZ5IG87yAobPGJfZFATKaIxgziRRP+pv9XsR2RJZzgrIOq9LCC7sH
+	 mN+UTfTSmOrvXRedgXERDd7vn2gGDebpkTm0x0hwg462BwgN+5U5rc2He1DvtzGpMu2nEj8SHYkj
+	 1YxVN51JxcfojXXinGPRR4wn8MkctQmSOu3ahxrnM79yg5B1reL0YSdu88rMqqoN657jnthFi6uG
+	 bMN0nFgNf3iNlWIwsASnGaZ/+YAF78qemUW+sBR/RkyUBug4bP+tdoC7O+wNe7y4d3/n3Bnc23/I
+	 PVAkO6+tuzr0Mz4Ev9DxlIpRQ1iWgKkxxkDfFRkMiOx2jpbEUyvA/JljnEVPi0NH6HmrtUDa4HpI
+	 b9rvxm+OcpcokXVucKCwaEXL6zkek8PyeiygAJAAJXt0906bhGR+o9Sv/mX6bf9rTAccUJn17I5V
+	 +d2tcvlVUZ75v9hHCQe0QnuS5gemH88JLfbc2tlE7d3ksIsd6Vi2LODUQTlRRXEYuHycR5hqat7M
+	 JCBkRbYs6XsjiVtUn2XJ/eAwfOkBcq+mcg+sIFsJsTCDI8uAW+peYyje8/TgNXysZRU0kjA+7IgN
+	 io/g/yDWWXo1d75ydg38l3owoSIm6TTNS5tM8n4bQK3M97428a9EqIVjKLdaRoZORgL8sTVbiJVF
+	 c9AGybvZXgNey+P9owFEUnLSabhCTeJn9N6K3WhVbTknBA3hlYpCXATd9hlSKweTmT1p56pIYjs8
+	 sWb43murbfHHUYKR4LBVPVm9mkV5hQcLzMmkojhJyzpLyxtXvJlMTJqtk+QyHpJowPqzVczI+qrh
+	 rvg+2ASSj/729hi64K8t1RpzqIeQ/kl3sknut7H0mCJfWizikI7eAVGSGZXv4jxWnBOuKR75xX7j
+	 tCg0Qe6u+xW9DF5YlE1yhGTeUlXy9VBgn+fi8ds0H0ZN54Y7g/IImpkMqxAVWfft86KF0n+MlP
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+3bfd2cc059ab93efcdb4@syzkaller.appspotmail.com
+Cc: almaz.alexandrovich@paragon-software.com,
+	linux-kernel@vger.kernel.org,
+	ntfs3@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] fs/ntfs3: Move condition bitmap.sb to before run_unpack
+Date: Sat,  7 Sep 2024 09:42:58 +0800
+X-OQ-MSGID: <20240907014257.499390-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <0000000000007a66c5062140e8f9@google.com>
+References: <0000000000007a66c5062140e8f9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906174941.1147197-2-costa.shul@redhat.com>
-In-Reply-To: <20240906174941.1147197-2-costa.shul@redhat.com>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Sat, 7 Sep 2024 09:36:45 +0800
-Message-ID: <CAFj5m9KbZyeM+0h_d=KqGC5B9Vj2OOuHvdhzLXexLkctWtzKhA@mail.gmail.com>
-Subject: Re: [PATCH] powerpc/xive: Use cpumask_intersects()
-To: Costa Shulyupin <costa.shul@redhat.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 7, 2024 at 1:50=E2=80=AFAM Costa Shulyupin <costa.shul@redhat.c=
-om> wrote:
->
-> Replace `cpumask_any_and(a, b) >=3D nr_cpu_ids`
-> with the more readable `!cpumask_intersects(a, b)`.
->
-> Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
-> ---
->  arch/powerpc/sysdev/xive/common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/powerpc/sysdev/xive/common.c b/arch/powerpc/sysdev/xive=
-/common.c
-> index fa01818c1972c..a6c388bdf5d08 100644
-> --- a/arch/powerpc/sysdev/xive/common.c
-> +++ b/arch/powerpc/sysdev/xive/common.c
-> @@ -726,7 +726,7 @@ static int xive_irq_set_affinity(struct irq_data *d,
->         pr_debug("%s: irq %d/0x%x\n", __func__, d->irq, hw_irq);
->
->         /* Is this valid ? */
-> -       if (cpumask_any_and(cpumask, cpu_online_mask) >=3D nr_cpu_ids)
-> +       if (!cpumask_intersects(cpumask, cpu_online_mask))
->                 return -EINVAL;
+[Syzbot reported]
+ntfs3: loop0: Different NTFS sector size (4096) and media sector size (512).
+INFO: trying to register non-static key.
+The code is fine but needs lockdep annotation, or maybe
+you didn't initialize this object before use?
+turning off the locking correctness validator.
+CPU: 0 UID: 0 PID: 5231 Comm: syz-executor253 Not tainted 6.11.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ assign_lock_key+0x238/0x270 kernel/locking/lockdep.c:975
+ register_lock_class+0x1cf/0x980 kernel/locking/lockdep.c:1288
+ __lock_acquire+0xf0/0x2040 kernel/locking/lockdep.c:5019
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+ down_write_nested+0xa2/0x220 kernel/locking/rwsem.c:1695
+ mark_as_free_ex+0x3e/0x390 fs/ntfs3/fsntfs.c:2484
+ run_unpack+0x7f3/0xda0 fs/ntfs3/run.c:1019
+ run_unpack_ex+0x14b/0x7f0 fs/ntfs3/run.c:1060
+ ni_delete_all+0x2d9/0x9a0 fs/ntfs3/frecord.c:1610
+ ni_clear+0x28e/0x4b0 fs/ntfs3/frecord.c:106
+ evict+0x534/0x950 fs/inode.c:704
+ ntfs_loadlog_and_replay+0x2e8/0x4f0 fs/ntfs3/fsntfs.c:326
+ ntfs_fill_super+0x2c38/0x4730 fs/ntfs3/super.c:1280
+ get_tree_bdev+0x3f9/0x570 fs/super.c:1635
+ vfs_get_tree+0x92/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+[Analysis]
+Before call this path, sbi->used.bitmap.sb has not been initialized in
+ntfs_fill_super.
+
+Reported-and-tested-by: syzbot+3bfd2cc059ab93efcdb4@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3bfd2cc059ab93efcdb4
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/ntfs3/run.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ntfs3/run.c b/fs/ntfs3/run.c
+index cb8cf0161177..8970101147c7 100644
+--- a/fs/ntfs3/run.c
++++ b/fs/ntfs3/run.c
+@@ -1057,11 +1057,14 @@ int run_unpack_ex(struct runs_tree *run, struct ntfs_sb_info *sbi, CLST ino,
+ 	bool ok;
+ 	struct wnd_bitmap *wnd;
+ 
++	if (!sbi->used.bitmap.sb)
++		return -EINVAL;
++
+ 	ret = run_unpack(run, sbi, ino, svcn, evcn, vcn, run_buf, run_buf_size);
+ 	if (ret <= 0)
+ 		return ret;
+ 
+-	if (!sbi->used.bitmap.sb || !run || run == RUN_DEALLOCATE)
++	if (!run || run == RUN_DEALLOCATE)
+ 		return ret;
+ 
+ 	if (ino == MFT_REC_BADCLUST)
+-- 
+2.43.0
 
 
