@@ -1,107 +1,145 @@
-Return-Path: <linux-kernel+bounces-319755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C83F9701D2
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:09:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE349701D7
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F141C21332
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:09:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148EE281B69
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5DD15697A;
-	Sat,  7 Sep 2024 11:09:31 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4569158D7F;
+	Sat,  7 Sep 2024 11:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ClD0CZFp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBBA208D7
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 11:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9B0208D7;
+	Sat,  7 Sep 2024 11:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725707371; cv=none; b=C0EAbEmP0vY/sbL9DoGtC09GaO/V6BImU8ahsqyBnUCQaHF8iD6xib7JcLMsJzRXcM6uYV6xzWCp5+0C1CMeKoUc9yvmXOSxV/s6BHsdY/mt3+qzSDpw44Zbf6j84nMHZ45TsFpGZTa6rVTvneoFSt7q8SRekmuGFOaVPgzVBq8=
+	t=1725707525; cv=none; b=FxJs74kHaOvG6s8IYiGjBuSCvmr+5nOY+v6fJeIZPu2Kpn0aaFH13elfEnExZTuHC6PnN0Lps8oQ9k8pxvTuwGzQ3y+LN86xKJvqfCr/XAhoQHluMsXSIl853iXz2nePf8LYBmNUQAik9KRDVjGs6KIXOR22ApNh39Nr++6AWDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725707371; c=relaxed/simple;
-	bh=BCueTk+p3HTkxSBE+HoDMy3bH6hAV50ewzaNywNVUGI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=kIRxmKs9g3uGd/IdTmEuemsIPXD0Z1ALibBEKGL+K7r8dEc+UwDdFdhdHEa0vytDvfluwgGDSNUcmEFVn5ohjdoQ+jBpZxz0O45Ydx94YsuXTwkkK9T6kL+pwhpbVbUB1rWpx/G4PvoZmvmnrsSj2nfbyxyZKx9Z7UhEqaCXmbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39f5605c674so60648615ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 04:09:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725707369; x=1726312169;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g1/UoRnDTtj5J8wWfUjGb7Zt43CcKepMak7hh1B2g98=;
-        b=u3//bLJCRC49kURjMo/1MiYEl4neu8JSm0CKYu0CmkPDWnmGdsPR2ychII+q8EdjFg
-         88RbE5ntvg1FywYrciiCdE8gfEwMjFwKe3gV+VsQOcbSM+bACtF6t1C+Jo29LakXfcNl
-         zGjHCzm5k7lLtfnvfPQ6fkfd8YiV0sXNtlchaSwyMQ10DoLHZzrigLpJbEfFkjd1l7U8
-         yO7Z+4ozVKb4JV4KNwTjrRaLpafuvDzR0+KQAlCQ7RlRcuzqzUekSjB31zJ19Me1Rsd3
-         YEDLBpl5TRdn+gNV6O4OlMLjqzEwjwxOk0dR/IR++nJAqbXvMzGxFA9bhlbf89NesOC7
-         rbVA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5Xw7UwNSHk8fUSx9H32qLg6LwH6/wEq3smEeIWNjnDq/01ReK9QSj1y31HOCRuX8K5edrADLwq+SandQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9CncfwsH6t/e9EdM0ZOg3P4t5mp3pus8cGwxfdEvzc9eMJa2g
-	L84EvCfGSMrE4P6gHu7Et+s/QQrCkUrsPFIRsZ+f3lIj7Ni29l7tEDn6f0ng/qB6ndIc3LnYgXi
-	+ujMznn63aB+CwfmdIdJH+jVNa28FEhNC499VCjRXVPZTdkLRYKIuSe8=
-X-Google-Smtp-Source: AGHT+IHRBUm55l4CMd0Iomfht2mqyI7+fJk6TpiMPS3s+BFkIJbt3n16hYeBilhmK/qO6fExmFp3Avw940LCVm4ooVEjovdNB7NK
+	s=arc-20240116; t=1725707525; c=relaxed/simple;
+	bh=QvBVFrKXGrUWJ16669Wg44zvoZ8Aj8CvQjlf9T/K/+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jlpHDi/d1mymvD7AhUP58r/sxzujLanoUm1y5utfEoGYTdtysRhmqRbdfDCg+bLmp/txftc6kcIDvLiwLe+3hg6i7yvdqgEqqkarlEVlFeDNQmp7y90wB73B63A9U00aE70zm1bTkvysEmIZr+CbfvG9cgs7I+hdWB5ZbSv7Ah0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ClD0CZFp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FEF8C4CEC2;
+	Sat,  7 Sep 2024 11:12:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725707524;
+	bh=QvBVFrKXGrUWJ16669Wg44zvoZ8Aj8CvQjlf9T/K/+g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ClD0CZFpr1AI59up6sEyV3PHD5L7RuaALUc8ijw1ufHawahobLEJx1IpitzzHbfX5
+	 1jf2rKsrvBA8thggMxMG2LVHYPtATrhC3YKVyFqvr8n6ioloJzW2RnK+x0kf+mSwZf
+	 vlcCXrkHwMJJnG0Awxuldk/S8FlO6Rq1OZdCx5FdZaN4HV38DtclA3B9hYNdftSV6S
+	 Ts91Wdu8wlLNcY8WIHclAQixtTVypRGARwwrQmSeuZAHZemIG2MGfvw8+gj/DFz/os
+	 spuc2GCn5GXO5O0GRBVUXtnRm7A67/ElJe6IrB9itDHrWvXHdT5RVS0hJzXZJpVWbq
+	 sEjZMtLx17FiQ==
+Message-ID: <5bf9a142-05d9-4e02-bca0-f988726e2873@kernel.org>
+Date: Sat, 7 Sep 2024 13:11:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e3:b0:3a0:4aa5:5235 with SMTP id
- e9e14a558f8ab-3a04f10a955mr2078765ab.4.1725707369117; Sat, 07 Sep 2024
- 04:09:29 -0700 (PDT)
-Date: Sat, 07 Sep 2024 04:09:29 -0700
-In-Reply-To: <CALiyAom35=FOaBTWuqT-vta9PFuQAshkq6CkSJirK62oxuo7VQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b90a470621858e8b@google.com>
-Subject: Re: KMSAN: uninit-value in mii_nway_restart
-From: syzbot <syzbot+1f53a30781af65d2c955@syzkaller.appspotmail.com>
-To: hridesh699@gmail.com
-Cc: hridesh699@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: power: supply: bq256xx: Add
+ omit-battery-class property
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
+ Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+References: <20240907-bq256xx-omit-battery-class-v1-0-45f6d8dbd1e5@mainlining.org>
+ <20240907-bq256xx-omit-battery-class-v1-1-45f6d8dbd1e5@mainlining.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240907-bq256xx-omit-battery-class-v1-1-45f6d8dbd1e5@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> #syz test
+On 07/09/2024 13:07, Barnabás Czémán wrote:
+> Add omit-battery-class property for avoid system create a battery device.
 
-This bug is already marked as fixed. No point in testing.
+This does not help much, basically repeats commit subject. You need to
+answer to "why?".
+> 
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
+>  Documentation/devicetree/bindings/power/supply/bq256xx.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/bq256xx.yaml b/Documentation/devicetree/bindings/power/supply/bq256xx.yaml
+> index a76afe3ca299..744f5782e8e7 100644
+> --- a/Documentation/devicetree/bindings/power/supply/bq256xx.yaml
+> +++ b/Documentation/devicetree/bindings/power/supply/bq256xx.yaml
+> @@ -62,6 +62,12 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/phandle
+>      description: phandle to the battery node being monitored
+>  
+> +  omit-battery-class:
+> +    type: boolean
+> +    description: |
+> +      If this property is set, the operating system does not try to create a
+> +      battery device.
 
-> diff --git a/drivers/net/usb/dm9601.c b/drivers/net/usb/dm9601.c
-> index 48d7d278631e..2e2bb22e60ea 100644
-> --- a/drivers/net/usb/dm9601.c
-> +++ b/drivers/net/usb/dm9601.c
-> @@ -10,6 +10,7 @@
->
->  //#define DEBUG
->
-> +#include "net/net_debug.h"
->  #include <linux/module.h>
->  #include <linux/sched.h>
->  #include <linux/stddef.h>
-> @@ -222,13 +223,18 @@ static int dm9601_mdio_read(struct net_device
-> *netdev, int phy_id, int loc)
->     struct usbnet *dev = netdev_priv(netdev);
->
->     __le16 res;
-> +   int err;
->
->     if (phy_id) {
->         netdev_dbg(dev->net, "Only internal phy supported\n");
->         return 0;
->     }
->
-> -   dm_read_shared_word(dev, 1, loc, &res);
-> +   err = dm_read_shared_word(dev, 1, loc, &res);
-> +   if (err < 0) {
-> +       netdev_err(dev->net, "MDIO read error: %d\n", err);
-> +       return err;
-> +   }
->
->     netdev_dbg(dev->net,
->            "dm9601_mdio_read() phy_id=0x%02x, loc=0x%02x, returns=0x%04x\n",
+You described the desired Linux feature or behavior, not the actual
+hardware. The bindings are about the latter, so instead you need to
+rephrase the property and its description to match actual hardware
+capabilities/features/configuration etc.
+
+Best regards,
+Krzysztof
+
 
