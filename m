@@ -1,56 +1,42 @@
-Return-Path: <linux-kernel+bounces-319820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C64797029E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:10:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF9C69702A0
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B45228454E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:10:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33AC7B23010
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A10F15D5DE;
-	Sat,  7 Sep 2024 14:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDfM3lFb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43E815D5C3;
+	Sat,  7 Sep 2024 14:12:10 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EDA47A62;
-	Sat,  7 Sep 2024 14:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6B115C149;
+	Sat,  7 Sep 2024 14:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725718247; cv=none; b=P6q4VFQLcNcuny/DrSLdUSOg2KL08mN7JVntR4sqL69lL5hVtRdBGvP1NMBkiJ4Pc4vpqF0EtXoETxREHiQrviUcziTJ1OYN/m5T0/ADrN4FPkXhESO1U35MZYFKK1clS+PDE230QlyGQ5/ci6neZsMHfyhvYbD6ktvHHyInFQ4=
+	t=1725718330; cv=none; b=Kx6xXU+CRyv12hDKZl2j2WZ1ZDXiUTmnWbtEDZUaaRP+Z9WROHV0YV4HZowzGpclnH66p5DDgwl3ZYkULIVlWIwuColkQmBA/2c8tkSvTWSYSh3kvCalxvbEoixyLdbJuWX4eeRQTdsHcAgUmYbI8ucurTP2iM2ebQIsi0xRb1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725718247; c=relaxed/simple;
-	bh=8iys38tPi7MwJeLg8WSSxN+QqGamS+XyKqS2AhSoISo=;
+	s=arc-20240116; t=1725718330; c=relaxed/simple;
+	bh=awKPhkA87HtcRwczj/ERJMQ3RXqPu+MbzuI1djyuUZI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UxNPcI2N1XdAEfJBbjkUTbZ4la6x/AYOnUckEdrndoF81DJ+Fn2RmWTcUx0/xt5o+zkZcgca5cAtIyB9ouX9jgk27pB1BhFN+gbazry37Im9oi1/r9P8snpdvnO6P9Y9uxQC8Z8g7yUmNgcr8HHiG7Ruu0X+gK0/fVW5SzGdv24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDfM3lFb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17C82C4CEC2;
-	Sat,  7 Sep 2024 14:10:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725718247;
-	bh=8iys38tPi7MwJeLg8WSSxN+QqGamS+XyKqS2AhSoISo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IDfM3lFbrGmRTb5Tdsqdtk5p6nCFPNb6bxouosBcq6ouzt3N0/qhH/sYm/h6hVlpQ
-	 sFZOO6IBKP7mUNB4ZYQWcgMZX+sgE+zM5lt+vyz0PUUOpDwBSttgBCz/02+NCVFA1d
-	 Td33Qe/r93XFGFYFEIcuEgm6Li3d2DRK35oiiz0KeHEcq2yAzOTRZ/nYO/zzzQEDtp
-	 MO9y356X47mslWNjf97rjBjJG1cGsmNyUD39wHYs8DVGIMdaCzM40NwxEOR+SOwHdl
-	 VPH+R+WMSAu5C97IeOTSghqZW2/IsF6beSJR1zsE/gVDnaU8Ey9YmvO3lkZjkIMHQB
-	 aMQkKhrNG1h5w==
-Date: Sat, 7 Sep 2024 15:10:42 +0100
-From: Simon Horman <horms@kernel.org>
-To: Danielle Ratson <danieller@nvidia.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, yuehaibing@huawei.com,
-	linux-kernel@vger.kernel.org, petrm@nvidia.com
-Subject: Re: [PATCH net-next 2/2] net: ethtool: Add support for writing
- firmware blocks using EPL payload
-Message-ID: <20240907141042.GR2097826@kernel.org>
-References: <20240906055700.2645281-1-danieller@nvidia.com>
- <20240906055700.2645281-3-danieller@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CFMPaKGzMZgi40xO4A2RB8P9qjicymd0fIbOEAmdAO6hTD9EI0u1IUmHeDmlPQgYMZSKYxnlDZW2klOYBBn0Xy61qXZ3d4pExNi30KM9SN6mWFRRx/0SCarbHNBtPlBYBuMVPAJ5g2YLa4rbYgq5KWizQ2uqdfE8OsBKq9VLA60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E214C4CEC2;
+	Sat,  7 Sep 2024 14:12:08 +0000 (UTC)
+Date: Sat, 7 Sep 2024 15:12:13 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: mcgrof@kernel.org, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH] module: Refine kmemleak scanned areas
+Message-ID: <ZtxenHsGPyDoYnzY@arm.com>
+References: <20240906153856.22204-1-vdonnefort@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,92 +45,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240906055700.2645281-3-danieller@nvidia.com>
+In-Reply-To: <20240906153856.22204-1-vdonnefort@google.com>
 
-On Fri, Sep 06, 2024 at 08:57:00AM +0300, Danielle Ratson wrote:
-> In the CMIS specification for pluggable modules, LPL (Low-Priority Payload)
-> and EPL (Extended Payload Length) are two types of data payloads used for
-> managing various functions and features of the module.
+On Fri, Sep 06, 2024 at 04:38:56PM +0100, Vincent Donnefort wrote:
+> commit ac3b43283923 ("module: replace module_layout with module_memory")
+> introduced a set of memory regions for the module layout sharing the
+> same attributes but didn't update the kmemleak scanned areas which
+> intended to limit kmemleak scan to sections containing writable data.
+> This means sections such as .text and .rodata are scanned by kmemleak.
 > 
-> EPL payloads are used for more complex and extensive management
-> functions that require a larger amount of data, so writing firmware
-> blocks using EPL is much more efficient.
+> Refine the scanned areas for modules by limiting it to MOD_TEXT and
+> MOD_INIT_TEXT mod_mem regions.
 > 
-> Currently, only LPL payload is supported for writing firmware blocks to
-> the module.
+> CC: Song Liu <song@kernel.org>
+> CC: Catalin Marinas <catalin.marinas@arm.com>
+> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
 > 
-> Add support for writing firmware block using EPL payload, both to
-> support modules that supports only EPL write mechanism, and to optimize
-> the flashing process of modules that support LPL and EPL.
-> 
-> Signed-off-by: Danielle Ratson <danieller@nvidia.com>
-> Reviewed-by: Petr Machata <petrm@nvidia.com>
-
-...
-
-> diff --git a/net/ethtool/cmis_cdb.c b/net/ethtool/cmis_cdb.c
-
-...
-
-> @@ -548,6 +555,49 @@ __ethtool_cmis_cdb_execute_cmd(struct net_device *dev,
->  	return err;
->  }
->  
-> +#define CMIS_CDB_EPL_PAGE_START			0xA0
-> +#define CMIS_CDB_EPL_PAGE_END			0xAF
-> +#define CMIS_CDB_EPL_FW_BLOCK_OFFSET_START	128
-> +#define CMIS_CDB_EPL_FW_BLOCK_OFFSET_END	255
-> +
-> +static int
-> +ethtool_cmis_cdb_execute_epl_cmd(struct net_device *dev,
-> +				 struct ethtool_cmis_cdb_cmd_args *args,
-> +				 struct ethtool_module_eeprom *page_data)
-> +{
-> +	u16 epl_len = be16_to_cpu(args->req.epl_len);
-> +	u32 bytes_written;
-> +	u8 page;
-> +	int err;
-
-Hi Danielle,
-
-A minor issue from my side:
-In the first iteration of the loop below bytes_written is used uninitialised.
-
-Flagged by W=1 builds using clang-18 and gcc-14.
-
-> +
-> +	for (page = CMIS_CDB_EPL_PAGE_START;
-> +	     page <= CMIS_CDB_EPL_PAGE_END && bytes_written < epl_len; page++) {
-> +		u16 offset = CMIS_CDB_EPL_FW_BLOCK_OFFSET_START;
-> +
-> +		while (offset <= CMIS_CDB_EPL_FW_BLOCK_OFFSET_END &&
-> +		       bytes_written < epl_len) {
-> +			u32 bytes_left = epl_len - bytes_written;
-> +			u16 space_left, bytes_to_write;
-> +
-> +			space_left = CMIS_CDB_EPL_FW_BLOCK_OFFSET_END - offset + 1;
-> +			bytes_to_write = min_t(u16, bytes_left,
-> +					       min_t(u16, space_left,
-> +						     args->read_write_len_ext));
-> +
-> +			err = __ethtool_cmis_cdb_execute_cmd(dev, page_data,
-> +							     page, offset,
-> +							     bytes_to_write,
-> +							     args->req.epl + bytes_written);
-> +			if (err < 0)
-> +				return err;
-> +
-> +			offset += bytes_to_write;
-> +			bytes_written += bytes_to_write;
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
->  static u8 cmis_cdb_calc_checksum(const void *data, size_t size)
+> diff --git a/kernel/module/debug_kmemleak.c b/kernel/module/debug_kmemleak.c
+> index 12a569d361e8..b4cc03842d70 100644
+> --- a/kernel/module/debug_kmemleak.c
+> +++ b/kernel/module/debug_kmemleak.c
+> @@ -12,19 +12,9 @@
+>  void kmemleak_load_module(const struct module *mod,
+>  			  const struct load_info *info)
 >  {
->  	const u8 *bytes = (const u8 *)data;
+> -	unsigned int i;
+> -
+> -	/* only scan the sections containing data */
+> -	kmemleak_scan_area(mod, sizeof(struct module), GFP_KERNEL);
+> -
+> -	for (i = 1; i < info->hdr->e_shnum; i++) {
+> -		/* Scan all writable sections that's not executable */
+> -		if (!(info->sechdrs[i].sh_flags & SHF_ALLOC) ||
+> -		    !(info->sechdrs[i].sh_flags & SHF_WRITE) ||
+> -		    (info->sechdrs[i].sh_flags & SHF_EXECINSTR))
+> -			continue;
+> -
+> -		kmemleak_scan_area((void *)info->sechdrs[i].sh_addr,
+> -				   info->sechdrs[i].sh_size, GFP_KERNEL);
+> +	/* only scan writable, non-executable sections */
+> +	for_each_mod_mem_type(type) {
+> +		if (type != MOD_DATA && type != MOD_INIT_DATA)
+> +			kmemleak_no_scan(mod->mem[type].base);
+>  	}
+>  }
+
+I lost track of how module memory allocation works. Is struct module
+still scanned after this change?
 
 -- 
-pw-bot: cr
+Catalin
 
