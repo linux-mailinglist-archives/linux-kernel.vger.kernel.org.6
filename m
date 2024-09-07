@@ -1,139 +1,282 @@
-Return-Path: <linux-kernel+bounces-319939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263459703FA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 21:55:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4CF79703FC
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 21:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C64131F223AC
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:55:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668881F220CC
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DA716630A;
-	Sat,  7 Sep 2024 19:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E47C166F1F;
+	Sat,  7 Sep 2024 19:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ioIxWxie"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P23sX4Od"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE44C1DDC9
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 19:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8AD1DDC9;
+	Sat,  7 Sep 2024 19:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725738936; cv=none; b=lu9zzuzCCTUwVcG08w+KR6vZ27yELTsT7tL2bWwkdX65ChPGU/Mu0p6Kjmi6WP6jQgLO6gWeksGBCEgTsxpQEh9bR/iIP7SulKv6S9ryEGuhVfGIuHXwkBv5JYwzWL7LEneEoU2y5K4sdBxVKuQeotWXVemr8z+HMwVY3nDj2VI=
+	t=1725739102; cv=none; b=lWJm7Zwomkjo4GidsiIM4J19cINUS153goildAvPfJnBuSmAzA4yBnXaWtaDVWz0ac4MDwwk2bSyxb/xHvbicGzBSzyrRzutQsd025caT+t9gvATe7wamJSnkJiHkj+uVqkXK+TkFFo4oWfuPEHVGX7Qi2D2KiDIFNJqENLXFEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725738936; c=relaxed/simple;
-	bh=twp/pUhMbTo4wZ7ZIYwfYnUEM90DFSvVqxXK5mQSBMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rkkmRZ3idgWRfTU0Ct2krWOSpTIfppgWRweaFLW22Znw41s42CjMZmQ9yiV9XD5OckfG38/v9XCmwzWpSfT/Q6kMhzY3cnd+vUGk6FGMUb0BGnume4+/IlT0W2dM6jLeePJwuvERkg7X2qboyraplbe/lIyH5f5OgK6V7NB9+aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ioIxWxie; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725738934; x=1757274934;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=twp/pUhMbTo4wZ7ZIYwfYnUEM90DFSvVqxXK5mQSBMk=;
-  b=ioIxWxieh1mrF6+HmUX/11Tdqoy2MiYIbSjV8mD5Bd/U4sWXDFEOemDg
-   ZyZ549ZQ1AkmXdT+EFJaFLRLsdLNG8UrMG6+AbVc1kuFpiWjLXAYjmT1+
-   PMj2hMTDWoF/abO+22uG5HoQp2wDRrTA0mxRtbG8IXtl5G1e25+lqHZ+4
-   8t+zGBu4WRnTx9+P60KA7KY66hlF2V08Ev927BOIBjQX8p29fTc8sRoE+
-   powkFcrQswmepcSN0fAS878tCBvjl7ucv4vGkaKhjg+rj7+k85SNkZw+m
-   IJXVtlf7QB3+8ObNJl9DGkcABvOBdsGbRAb7i+w5NcesbUWmQBsr4egOZ
-   g==;
-X-CSE-ConnectionGUID: Hh4dhWHNRuueDOa1lL9kGQ==
-X-CSE-MsgGUID: io0WuYVlRwWpdb0d+w0Lzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="27395236"
-X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
-   d="scan'208";a="27395236"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 12:55:33 -0700
-X-CSE-ConnectionGUID: p5jsQgcmSMCMAlgmc/meEg==
-X-CSE-MsgGUID: 5g5WcrjDTJioDkv/fC7JOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
-   d="scan'208";a="66996416"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 07 Sep 2024 12:55:30 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sn1Wp-000Cvj-0z;
-	Sat, 07 Sep 2024 19:55:27 +0000
-Date: Sun, 8 Sep 2024 03:55:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christoph Lameter via B4 Relay <devnull+cl.gentwo.org@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Yang Shi <shy828301@gmail.com>,
-	Christoph Lameter <cl@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Huang Shijie <shijie@os.amperecomputing.com>,
-	"Christoph Lameter (Ampere)" <cl@gentwo.org>
-Subject: Re: [PATCH v2] SLUB: Add support for per object memory policies
-Message-ID: <202409080304.haF25cFZ-lkp@intel.com>
-References: <20240906-strict_numa-v2-1-f104e6de6d1e@gentwo.org>
+	s=arc-20240116; t=1725739102; c=relaxed/simple;
+	bh=mXTWEosx6hmLysJk2H37TYGR4TQ/vmh6rRqJJ0ekdvA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QTXeerP7go6y1zYVyX6f52Qn+m+79QcMXu52POW62ZSchJbPyo4C3i4TEfI/QPzR1pbXuP33gsgMHsF2cmmRIqYGS+F9slsooDByBAo8gDASo2+ZiU4pkjzkcZKuTvWvtD5iD/1kveep9V/TBrFroa77HGSsbjU2zkLHQW+8UcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P23sX4Od; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6d9f65f9e3eso29372887b3.3;
+        Sat, 07 Sep 2024 12:58:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725739100; x=1726343900; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VOTCbq/sW0efKS+98vJ1rm+6hr2f1VMIv6gcYD7fw7E=;
+        b=P23sX4OdpaNJgsQq03gW6DJ+tHgwNvuH4Hpxzr/TmbqyBfoqFr/zDBo5oRrsHCvH8O
+         tmsM1T4DMwO29TDqrLKba3OFJ8XgCInc4eNDFohQU8BoPLPDZa+afVLEfW6w8aFYw/Y9
+         kLvvltIqjSLIgj3nu4bopJeLneI6GtyFNLT7PmZg0+jMJsUVbN3ZMQtxm7sUqUVxF3K3
+         cLER2xYSxnp46czA0UhhyofKDlvAjz9VEkdd5eyBEbGUeNmzpI7rCWKY6HtB5wpmzn7c
+         hKcRTNVj0ncOqvS69ROc3h39r/hW6ORly9ERtRdmaZkoWOJfjdCCBCFqFHqsVQpftjqH
+         dtWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725739100; x=1726343900;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VOTCbq/sW0efKS+98vJ1rm+6hr2f1VMIv6gcYD7fw7E=;
+        b=FAFZTQEHsoy91+fFMdMeKlOUQ9GJxSwrwKSNuIDlAopXOrvTXhXvzm7NJq3+y5BySp
+         L3r9n21F3YEImY9ONSZpASyBUnGgH6J8wzICb17KmwtcLCZoVsOPBKIWYcLsVicNRQKP
+         bmUbQsx1LJCU1gHDfQzkqygMMevYz6/AlG9NrfYSdmwP9gMmGUzFxjV345CMcY9Yoivy
+         rth7p6yz10r4xjgg6VX6QP0e7hSKeZVATLBXSQV7H1yifA+/sjMCOuNeGV8oCHMtovCw
+         +jBBDQDpS6xWBnYEvgfFVlM39df7YGmAHihfj3bxrdVU+ZgjouXJepF5bdpUeDGZ7Fr1
+         UPdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzy1fMkcedeElhgchhSyCeWK/K3LLrcf77/PrVHBwoiIH2Lz2hP9mnczCNmXaMkg0nrMJcLeLAH5nbyKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8PNOWnMGauS/nB60y665MfFDTCTJhH1HWOM0oEDjmxNZwIJxa
+	M99t1x26nKStq4ZtdN5dAry0Cjf9u8zy7np0+xmLh5AbataSUNSEt6bN/fC7eby7xcyUQCQGhvj
+	LX+hgxb9dlHu2cXPp7ar3WAW2qkI=
+X-Google-Smtp-Source: AGHT+IFBXczbNHb0Xp8PlFntEPArh9FxxfwJG8qNc4SPgCs2M8wr4I8xLPpUzL1i/QKBtwY8TWiLsOkLnWGeLFiceg0=
+X-Received: by 2002:a05:690c:2b0e:b0:64b:4a9f:540d with SMTP id
+ 00721157ae682-6db4516c22amr59648357b3.31.1725739099876; Sat, 07 Sep 2024
+ 12:58:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906-strict_numa-v2-1-f104e6de6d1e@gentwo.org>
+References: <20240905201506.12679-1-rosenp@gmail.com> <20240905201506.12679-7-rosenp@gmail.com>
+ <8f0413fc-42d6-4b26-81e7-affbea66868f@wanadoo.fr>
+In-Reply-To: <8f0413fc-42d6-4b26-81e7-affbea66868f@wanadoo.fr>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Sat, 7 Sep 2024 12:58:08 -0700
+Message-ID: <CAKxU2N-f=B2Kc4iLi_f4e1kyGgKEi5K2B8GfnzLi1=qLovJu+Q@mail.gmail.com>
+Subject: Re: [PATCHv3 net-next 6/9] net: ibm: emac: use netdev's phydev directly
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org, 
+	jacob.e.keller@intel.com, horms@kernel.org, sd@queasysnail.net, 
+	chunkeey@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Christoph,
+On Sat, Sep 7, 2024 at 12:32=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Le 05/09/2024 =C3=A0 22:15, Rosen Penev a =C3=A9crit :
+> > Avoids having to use own struct member.
+> >
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > ---
+> >   drivers/net/ethernet/ibm/emac/core.c | 47 +++++++++++++--------------=
+-
+> >   drivers/net/ethernet/ibm/emac/core.h |  3 --
+> >   2 files changed, 21 insertions(+), 29 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/ibm/emac/core.c b/drivers/net/etherne=
+t/ibm/emac/core.c
+> > index e2abda947a51..cda368701ae4 100644
+> > --- a/drivers/net/ethernet/ibm/emac/core.c
+> > +++ b/drivers/net/ethernet/ibm/emac/core.c
+> > @@ -2459,7 +2459,7 @@ static int emac_read_uint_prop(struct device_node=
+ *np, const char *name,
+> >   static void emac_adjust_link(struct net_device *ndev)
+> >   {
+> >       struct emac_instance *dev =3D netdev_priv(ndev);
+> > -     struct phy_device *phy =3D dev->phy_dev;
+> > +     struct phy_device *phy =3D ndev->phydev;
+> >
+> >       dev->phy.autoneg =3D phy->autoneg;
+> >       dev->phy.speed =3D phy->speed;
+> > @@ -2510,22 +2510,20 @@ static int emac_mdio_phy_start_aneg(struct mii_=
+phy *phy,
+> >   static int emac_mdio_setup_aneg(struct mii_phy *phy, u32 advertise)
+> >   {
+> >       struct net_device *ndev =3D phy->dev;
+> > -     struct emac_instance *dev =3D netdev_priv(ndev);
+> >
+> >       phy->autoneg =3D AUTONEG_ENABLE;
+> >       phy->advertising =3D advertise;
+> > -     return emac_mdio_phy_start_aneg(phy, dev->phy_dev);
+> > +     return emac_mdio_phy_start_aneg(phy, ndev->phydev);
+> >   }
+> >
+> >   static int emac_mdio_setup_forced(struct mii_phy *phy, int speed, int=
+ fd)
+> >   {
+> >       struct net_device *ndev =3D phy->dev;
+> > -     struct emac_instance *dev =3D netdev_priv(ndev);
+> >
+> >       phy->autoneg =3D AUTONEG_DISABLE;
+> >       phy->speed =3D speed;
+> >       phy->duplex =3D fd;
+> > -     return emac_mdio_phy_start_aneg(phy, dev->phy_dev);
+> > +     return emac_mdio_phy_start_aneg(phy, ndev->phydev);
+> >   }
+> >
+> >   static int emac_mdio_poll_link(struct mii_phy *phy)
+> > @@ -2534,20 +2532,19 @@ static int emac_mdio_poll_link(struct mii_phy *=
+phy)
+> >       struct emac_instance *dev =3D netdev_priv(ndev);
+> >       int res;
+> >
+> > -     res =3D phy_read_status(dev->phy_dev);
+> > +     res =3D phy_read_status(ndev->phydev);
+> >       if (res) {
+> >               dev_err(&dev->ofdev->dev, "link update failed (%d).", res=
+);
+> >               return ethtool_op_get_link(ndev);
+> >       }
+> >
+> > -     return dev->phy_dev->link;
+> > +     return ndev->phydev->link;
+> >   }
+> >
+> >   static int emac_mdio_read_link(struct mii_phy *phy)
+> >   {
+> >       struct net_device *ndev =3D phy->dev;
+> > -     struct emac_instance *dev =3D netdev_priv(ndev);
+> > -     struct phy_device *phy_dev =3D dev->phy_dev;
+> > +     struct phy_device *phy_dev =3D ndev->phydev;
+> >       int res;
+> >
+> >       res =3D phy_read_status(phy_dev);
+> > @@ -2564,10 +2561,9 @@ static int emac_mdio_read_link(struct mii_phy *p=
+hy)
+> >   static int emac_mdio_init_phy(struct mii_phy *phy)
+> >   {
+> >       struct net_device *ndev =3D phy->dev;
+> > -     struct emac_instance *dev =3D netdev_priv(ndev);
+> >
+> > -     phy_start(dev->phy_dev);
+> > -     return phy_init_hw(dev->phy_dev);
+> > +     phy_start(ndev->phydev);
+> > +     return phy_init_hw(ndev->phydev);
+> >   }
+> >
+> >   static const struct mii_phy_ops emac_dt_mdio_phy_ops =3D {
+> > @@ -2622,26 +2618,28 @@ static int emac_dt_mdio_probe(struct emac_insta=
+nce *dev)
+> >   static int emac_dt_phy_connect(struct emac_instance *dev,
+> >                              struct device_node *phy_handle)
+> >   {
+> > +     struct phy_device *phy_dev;
+> > +
+> >       dev->phy.def =3D devm_kzalloc(&dev->ofdev->dev, sizeof(*dev->phy.=
+def),
+> >                                   GFP_KERNEL);
+> >       if (!dev->phy.def)
+> >               return -ENOMEM;
+> >
+> > -     dev->phy_dev =3D of_phy_connect(dev->ndev, phy_handle, &emac_adju=
+st_link,
+> > +     phy_dev =3D of_phy_connect(dev->ndev, phy_handle, &emac_adjust_li=
+nk,
+> >                                     0, dev->phy_mode);
+> > -     if (!dev->phy_dev) {
+> > +     if (!phy_dev) {
+> >               dev_err(&dev->ofdev->dev, "failed to connect to PHY.\n");
+> >               return -ENODEV;
+> >       }
+> >
+> > -     dev->phy.def->phy_id =3D dev->phy_dev->drv->phy_id;
+> > -     dev->phy.def->phy_id_mask =3D dev->phy_dev->drv->phy_id_mask;
+> > -     dev->phy.def->name =3D dev->phy_dev->drv->name;
+> > +     dev->phy.def->phy_id =3D phy_dev->drv->phy_id;
+> > +     dev->phy.def->phy_id_mask =3D phy_dev->drv->phy_id_mask;
+> > +     dev->phy.def->name =3D phy_dev->drv->name;
+> >       dev->phy.def->ops =3D &emac_dt_mdio_phy_ops;
+> >       ethtool_convert_link_mode_to_legacy_u32(&dev->phy.features,
+> > -                                             dev->phy_dev->supported);
+> > -     dev->phy.address =3D dev->phy_dev->mdio.addr;
+> > -     dev->phy.mode =3D dev->phy_dev->interface;
+> > +                                             phy_dev->supported);
+> > +     dev->phy.address =3D phy_dev->mdio.addr;
+> > +     dev->phy.mode =3D phy_dev->interface;
+> >       return 0;
+> >   }
+> >
+> > @@ -2695,11 +2693,11 @@ static int emac_init_phy(struct emac_instance *=
+dev)
+> >                               return res;
+> >
+> >                       res =3D of_phy_register_fixed_link(np);
+> > -                     dev->phy_dev =3D of_phy_find_device(np);
+> > -                     if (res || !dev->phy_dev)
+> > +                     ndev->phydev =3D of_phy_find_device(np);
+> > +                     if (res || !ndev->phydev)
+> >                               return res ? res : -EINVAL;
+> >                       emac_adjust_link(dev->ndev);
+> > -                     put_device(&dev->phy_dev->mdio.dev);
+> > +                     put_device(&ndev->phydev->mdio.dev);
+> >               }
+> >               return 0;
+> >       }
+> > @@ -3254,9 +3252,6 @@ static void emac_remove(struct platform_device *o=
+fdev)
+> >       if (emac_has_feature(dev, EMAC_FTR_HAS_ZMII))
+> >               zmii_detach(dev->zmii_dev, dev->zmii_port);
+> >
+> > -     if (dev->phy_dev)
+> > -             phy_disconnect(dev->phy_dev);
+> > -
+>
+> Hi,
+>
+> I guess that this call was to balance the of_phy_connect() from
+> emac_dt_phy_connect().
+>
+> Is it ok to just remove this phy_disconnect()?
+I would think free or unregister_netdev handles it given that phydev
+is a member of netdev.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on b831f83e40a24f07c8dcba5be408d93beedc820f]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Christoph-Lameter-via-B4-Relay/SLUB-Add-support-for-per-object-memory-policies/20240907-000537
-base:   b831f83e40a24f07c8dcba5be408d93beedc820f
-patch link:    https://lore.kernel.org/r/20240906-strict_numa-v2-1-f104e6de6d1e%40gentwo.org
-patch subject: [PATCH v2] SLUB: Add support for per object memory policies
-config: sparc64-randconfig-r121-20240907 (https://download.01.org/0day-ci/archive/20240908/202409080304.haF25cFZ-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20240908/202409080304.haF25cFZ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409080304.haF25cFZ-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> mm/slub.c:222:1: sparse: sparse: symbol 'strict_numa' was not declared. Should it be static?
-   mm/slub.c: note: in included file (through include/linux/smp.h, include/linux/lockdep.h, include/linux/spinlock.h, ...):
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   mm/slub.c:3036:55: sparse: sparse: context imbalance in '__put_partials' - unexpected unlock
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   mm/slub.c:4327:47: sparse: sparse: context imbalance in '__slab_free' - unexpected unlock
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-
-vim +/strict_numa +222 mm/slub.c
-
-   220	
-   221	#ifdef CONFIG_NUMA
- > 222	DEFINE_STATIC_KEY_FALSE(strict_numa);
-   223	#endif
-   224	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On a separate note, A lot of drivers seem to do this in open/close as
+opposed to probe/remove.
+>
+> CJ
+>
+> >       busy_phy_map &=3D ~(1 << dev->phy.address);
+> >       DBG(dev, "busy_phy_map now %#x" NL, busy_phy_map);
+> >
+> > diff --git a/drivers/net/ethernet/ibm/emac/core.h b/drivers/net/etherne=
+t/ibm/emac/core.h
+> > index f4bd4cd8ac4a..b820a4f6e8c7 100644
+> > --- a/drivers/net/ethernet/ibm/emac/core.h
+> > +++ b/drivers/net/ethernet/ibm/emac/core.h
+> > @@ -188,9 +188,6 @@ struct emac_instance {
+> >       struct emac_instance            *mdio_instance;
+> >       struct mutex                    mdio_lock;
+> >
+> > -     /* Device-tree based phy configuration */
+> > -     struct phy_device               *phy_dev;
+> > -
+> >       /* ZMII infos if any */
+> >       u32                             zmii_ph;
+> >       u32                             zmii_port;
+>
 
