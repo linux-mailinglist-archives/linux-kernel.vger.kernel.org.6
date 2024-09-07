@@ -1,226 +1,172 @@
-Return-Path: <linux-kernel+bounces-319818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249EC970298
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:03:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2CE997029C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAD8B283166
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:03:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFA2F284615
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C52C15CD77;
-	Sat,  7 Sep 2024 14:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2755315CD41;
+	Sat,  7 Sep 2024 14:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I87eTDBV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bwUSC4cp"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35D74502F
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 14:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023B715B57C
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 14:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725717828; cv=none; b=q1359O0H2f/ho3351wT4Pj3bZyPrXo9UE31LCoxg4Ztktp9d7U9/0IxveYvnUl4s3M4cSkPjpgDRgvBHL//FDcOHEK52wFxuCTWi/wL3cFInJTlSS12aHqnato9kj+BSxE3xV695MuStRBUDst4v1ZbRQ8WisU+1i0K3XZwhy94=
+	t=1725718191; cv=none; b=Q0uMJURD98iivlqNHWmkq2Ya6gSpBN5nkMizE2XE/kXTRlQ+AEAeuAbbIOnimgWB9XGSI+pbmfw19i93ZOHv5MdhVfl7r1zqDVIfCQ6822E2MnHb+TeNWx1B6a/AaNY7kC2iNyPFmcvB55iJyDaNnDGY4ngetOf1NgX8DJfTADI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725717828; c=relaxed/simple;
-	bh=rE8L14V5eeU690zyshASLtDf1RjWXasJx1v5dge0ok8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=aRGKeqFnHFMFDsUsyhDQR9IAIU2lTy+8xVf9A/p9S3emepL0GbBY3ZQ7hxKOL2HVPO8f6s0dPjh1QOB88BsWztM5cUoFAFmCIlOiAemqo79RtpYS5gEDhJLmTNRmrkqOY87/qua46flZAiTGLTWXkake22E0Kb4xab2wawMax9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I87eTDBV; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725717826; x=1757253826;
-  h=date:from:to:cc:subject:message-id;
-  bh=rE8L14V5eeU690zyshASLtDf1RjWXasJx1v5dge0ok8=;
-  b=I87eTDBVdd8J7GoVaEu182I+k8ynqv6GUOiAhFLN+pOgcExuEyXSVeae
-   hJjOvIFt0zkWI+uI+JGwwkwTy+WyIpbCCOQCcxPEQ3PTr/VGQYDZ0isVY
-   uXaKuTQtvQoOhEThA6fymFdkAfeaJjK+KhH79JGrbmqtESvcCj4BRp8mi
-   bP+B/nlXHP5OtPv6nc06JP+PTT0OhPY3ss2lq2IzA7smR7WFIegdODFMI
-   exBQio2GiWYVnoHzqAXvdzG9ROfVM/HM2bbNCjhDCVl5Zr2ncu6CvnVKF
-   v8BgT+pOZG4YozzOjVXw8L0zoJRcjFcGRIQJPytuVIkYZxubnJ/T7cDEM
-   g==;
-X-CSE-ConnectionGUID: k60Ggl92Qv6EfcuqBFbF3w==
-X-CSE-MsgGUID: hbpuW12sR66faFevE1Ae2A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="49875644"
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="49875644"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 07:03:45 -0700
-X-CSE-ConnectionGUID: aWYxC8h7TpaDBSgh6iA1dA==
-X-CSE-MsgGUID: zDGaOfMjRFmbtYLu45BULA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="66205213"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 07 Sep 2024 07:03:44 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1smw2Q-000Cc7-2K;
-	Sat, 07 Sep 2024 14:03:42 +0000
-Date: Sat, 07 Sep 2024 22:03:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/core] BUILD SUCCESS
- 87b5a153b862b7d937fc1dd499368297a1feae87
-Message-ID: <202409072226.zYqP2Hcf-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1725718191; c=relaxed/simple;
+	bh=8RLIiF/EhNAkAd0B29n+wQKoPDxcgUv8bAEt4QMnu3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kgAlFkGVsKLgh1kRXjym26SmVmJkU1I3F8qAaGwOpPxSQkwynfRzzhq3XcgZRGTZvsbfmgDe+LqgEnqdBZnTyAd0tuGlKgIfrf9yCw4JBnIZuQeJ94XhIixnVc/eDe36EUeTbIiPFLbPd3NEt5XGzfNcod/abp8cWeb4Pv8Qb4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bwUSC4cp; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7091558067eso1361121a34.3
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 07:09:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725718188; x=1726322988; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5/QZJfBzCm4hUVLhVcDEOaWd70aOcgYhbhWmlTEpq24=;
+        b=bwUSC4cpwahP+d3QdqKDRufkwuAepUkwiIGkAurg9yotmKWeiDuWkcrHCAhTcxGdwb
+         9cu9ID37AgCNjGsUR3k+LWjZZsT06KcjyKie1H76WtvH9VkCiL69omXBNLua4+VBu+VR
+         kFy8HOjpcgpF8nmzWdkAgLq1Ig3YEo58mNeVGionRwTc7AkctZnuM7mAxrr2FjRCjgMC
+         Y0dRNYh0wIfHIpe2URZxjy6u8HD2ATaGUqfihzCl3+iSaUJ0mBHoA707cxboAmd3tEY2
+         rLZZkR2rA0XMiENxrZZoQ+GllYrJjUMLaaBoJECz04PCsDz7GipK51tqneNvNzwEXzKM
+         0+wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725718188; x=1726322988;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5/QZJfBzCm4hUVLhVcDEOaWd70aOcgYhbhWmlTEpq24=;
+        b=MZinG3Da0gVUkm8z6pHwOtLiC3qRcohX0Au19AceM0Cde8uSKRqgp4E/cg40WXlRkb
+         uMt/bDRJinX4/WAz80PPi+uDrvzJiMM/fo05bs2Fzxn2f+YmrspsGfg8AHOCvuNUln9W
+         FERTrZo4vtsVKVpGrMAqQgJMR/LVnQ6C+9C/anr9dqk96oJEm5oDNgzkVhcjwksPKpKf
+         WIV2E+wR7qND60JXr4POTCBH6wIhBtN0ZIpjOZT5XwScE9irhF0mLYShZ3cxBbMGQ+9N
+         nOoV0GcLuwdaefNZgHfbYGFqATeepRP1sjnfr5Zr+UNbaw8mF9JWAbzQrmmn9fHEI6D6
+         O8SA==
+X-Forwarded-Encrypted: i=1; AJvYcCVb/PMAQ0qVpVe/aG2bkiKopczl1q1B1198GW4GCltvu5PryXsZ1dDkT53NBWmW59eJVbWSgjr0JUfPn7A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhbYOcO3cz2V1keTBP2mxwk8ia617yViqmf8D8oHIYQTQgCeKe
+	hn1XOenlEGbDNqRURagfJeOA3XIawq5bzNusuaqjzA/fiaCbMGrBGIspSk5zVAA=
+X-Google-Smtp-Source: AGHT+IFa0weaOhpprxoRDMhLm3AUJZ57Prw0T3MVjqqdX9fJcBkI3nZJhm4xxSKCkeuVvC/uSGqV/Q==
+X-Received: by 2002:a05:6830:f88:b0:70f:593a:5a3 with SMTP id 46e09a7af769-710d6e298efmr2660793a34.15.1725718187951;
+        Sat, 07 Sep 2024 07:09:47 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-710d9de87afsm325238a34.80.2024.09.07.07.09.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 Sep 2024 07:09:47 -0700 (PDT)
+Message-ID: <a5472be7-26c6-486b-834c-2a5f6bfaf982@baylibre.com>
+Date: Sat, 7 Sep 2024 09:09:46 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 7/8] dt-bindings: iio: adc: add docs for
+ AD7606C-{16,18} parts
+To: Alexandru Ardelean <aardelean@baylibre.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org,
+ robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com,
+ gstols@baylibre.com
+References: <20240905082404.119022-1-aardelean@baylibre.com>
+ <20240905082404.119022-8-aardelean@baylibre.com>
+ <4f522d0c-7ed8-4dd4-83ae-f400d6958c6f@baylibre.com>
+ <CA+GgBR-H8W_YS3gPrrvxAWoQybjEb-p36pqxEatFbEAnuz2DvQ@mail.gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <CA+GgBR-H8W_YS3gPrrvxAWoQybjEb-p36pqxEatFbEAnuz2DvQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
-branch HEAD: 87b5a153b862b7d937fc1dd499368297a1feae87  genirq/cpuhotplug: Use cpumask_intersects()
+On 9/6/24 11:59 PM, Alexandru Ardelean wrote:
+> On Fri, Sep 6, 2024 at 12:54 AM David Lechner <dlechner@baylibre.com> wrote:
+>>
+>> On 9/5/24 3:24 AM, Alexandru Ardelean wrote:
 
-elapsed time: 1326m
+...
 
-configs tested: 134
-configs skipped: 3
+>>> +patternProperties:
+>>> +  "^channel@[1-8]$":
+>>> +    type: object
+>>> +    $ref: adc.yaml
+>>> +    unevaluatedProperties: false
+>>> +
+>>> +    properties:
+>>> +      reg:
+>>> +        description:
+>>> +          The channel number, as specified in the datasheet (from 1 to 8).
+>>> +        minimum: 1
+>>> +        maximum: 8
+>>> +
+>>> +      diff-channels:
+>>> +        description:
+>>> +          Each channel can be configured as a differential bipolar channel.
+>>> +          The ADC uses the same positive and negative inputs for this.
+>>> +          This property must be specified as 'reg' (or the channel number) for
+>>> +          both positive and negative inputs (i.e. diff-channels = <reg reg>).
+>>> +        items:
+>>> +          minimum: 1
+>>> +          maximum: 8
+>>> +
+>>> +      bipolar:
+>>> +        description:
+>>> +          Each channel can be configured as a unipolar or bipolar single-ended.
+>>> +          When this property is not specified, it's unipolar, so the ADC will
+>>> +          have only the positive input wired.
+>>> +          For this ADC the 'diff-channels' & 'bipolar' properties are mutually
+>>> +          exclusive.
+>>> +
+>>> +    required:
+>>> +      - reg
+>>> +
+>>> +    oneOf:
+>>> +      - required:
+>>> +          - diff-channels
+>>> +      - required:
+>>> +          - bipolar
+>>
+>> The datasheet (ad7606c-18.pdf) lists the following combinations:
+>>
+>> * Bipolar single-ended
+>> * Unipolar single-ended
+>> * Bipolar differential
+>>
+>> The logic in the oneOf: doesn't match this.
+>>
+>> This I think this would be sufficient:
+>>
+>> - if:
+>>     required: [diff-channels]
+>>   then:
+>>     required: [bipolar]
+> 
+> So here, I am a bit vague.
+> This makes 'bipolar' mandatory if 'diff-channels' is mandatory, right?
+> But then 'bipolar' (on its own) becomes optional?
+> The way I understood the oneOf case is that:
+> 1. if it's 'diff-channels' then it's specified 'bipolar differential'.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+diff-channels does not imply bipolar in DT, so we need both properties
+set to specify "bipolar differential".
 
-tested configs:
-alpha                             allnoconfig   gcc-14.1.0
-alpha                            allyesconfig   clang-20
-alpha                               defconfig   gcc-14.1.0
-arc                              allmodconfig   clang-20
-arc                               allnoconfig   gcc-14.1.0
-arc                              allyesconfig   clang-20
-arc                                 defconfig   gcc-14.1.0
-arm                              allmodconfig   clang-20
-arm                               allnoconfig   gcc-14.1.0
-arm                              allyesconfig   clang-20
-arm                                 defconfig   gcc-14.1.0
-arm                        neponset_defconfig   clang-15
-arm                          pxa168_defconfig   clang-15
-arm64                            allmodconfig   clang-20
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   gcc-14.1.0
-hexagon                          allyesconfig   clang-20
-hexagon                             defconfig   gcc-14.1.0
-i386                             allmodconfig   clang-18
-i386                              allnoconfig   clang-18
-i386                             allyesconfig   clang-18
-i386         buildonly-randconfig-001-20240907   gcc-12
-i386         buildonly-randconfig-002-20240907   gcc-12
-i386         buildonly-randconfig-003-20240907   gcc-12
-i386         buildonly-randconfig-004-20240907   gcc-12
-i386         buildonly-randconfig-005-20240907   gcc-12
-i386         buildonly-randconfig-006-20240907   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240907   gcc-12
-i386                  randconfig-002-20240907   gcc-12
-i386                  randconfig-003-20240907   gcc-12
-i386                  randconfig-004-20240907   gcc-12
-i386                  randconfig-005-20240907   gcc-12
-i386                  randconfig-006-20240907   gcc-12
-i386                  randconfig-011-20240907   gcc-12
-i386                  randconfig-012-20240907   gcc-12
-i386                  randconfig-013-20240907   gcc-12
-i386                  randconfig-014-20240907   gcc-12
-i386                  randconfig-015-20240907   gcc-12
-i386                  randconfig-016-20240907   gcc-12
-loongarch                        alldefconfig   clang-15
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                          atari_defconfig   clang-15
-m68k                                defconfig   gcc-14.1.0
-m68k                        m5407c3_defconfig   clang-15
-m68k                       m5475evb_defconfig   clang-15
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                        vocore2_defconfig   clang-15
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-openrisc                          allnoconfig   clang-20
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-12
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   clang-20
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-12
-parisc64                            defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                      cm5200_defconfig   clang-15
-powerpc                       eiger_defconfig   clang-15
-powerpc                  iss476-smp_defconfig   clang-15
-powerpc                         ps3_defconfig   clang-15
-powerpc                     tqm8555_defconfig   clang-15
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-12
-riscv             nommu_k210_sdcard_defconfig   clang-15
-s390                             allmodconfig   gcc-14.1.0
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-12
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-12
-sh                               j2_defconfig   clang-15
-sh                           se7750_defconfig   clang-15
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-12
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-20
-um                               allyesconfig   clang-20
-um                                  defconfig   gcc-12
-um                             i386_defconfig   clang-15
-um                             i386_defconfig   gcc-12
-um                           x86_64_defconfig   gcc-12
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240907   gcc-12
-x86_64       buildonly-randconfig-002-20240907   gcc-12
-x86_64       buildonly-randconfig-003-20240907   gcc-12
-x86_64       buildonly-randconfig-004-20240907   gcc-12
-x86_64       buildonly-randconfig-005-20240907   gcc-12
-x86_64       buildonly-randconfig-006-20240907   gcc-12
-x86_64                              defconfig   clang-18
-x86_64                                  kexec   gcc-12
-x86_64                randconfig-001-20240907   gcc-12
-x86_64                randconfig-002-20240907   gcc-12
-x86_64                randconfig-003-20240907   gcc-12
-x86_64                randconfig-004-20240907   gcc-12
-x86_64                randconfig-005-20240907   gcc-12
-x86_64                randconfig-006-20240907   gcc-12
-x86_64                randconfig-011-20240907   gcc-12
-x86_64                randconfig-012-20240907   gcc-12
-x86_64                randconfig-013-20240907   gcc-12
-x86_64                randconfig-014-20240907   gcc-12
-x86_64                randconfig-015-20240907   gcc-12
-x86_64                randconfig-016-20240907   gcc-12
-x86_64                randconfig-071-20240907   gcc-12
-x86_64                randconfig-072-20240907   gcc-12
-x86_64                randconfig-073-20240907   gcc-12
-x86_64                randconfig-074-20240907   gcc-12
-x86_64                randconfig-075-20240907   gcc-12
-x86_64                randconfig-076-20240907   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-x86_64                               rhel-8.3   gcc-12
-xtensa                            allnoconfig   gcc-14.1.0
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 2. if it's 'bipolar' then it's specified as 'bipolar single-ended'
+> 3. otherwise it's unipolar
+> 4. oneOf enforces that at least 'diff-channels' or 'bipolar' is
+> specified if there is a channel node
+> 
+> 
 
