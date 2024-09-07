@@ -1,134 +1,122 @@
-Return-Path: <linux-kernel+bounces-319800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3818E97025F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:23:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5ADD970262
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6882C1C21417
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:23:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BC751F22639
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EB515C15F;
-	Sat,  7 Sep 2024 13:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V07Huikd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC9115C13B;
+	Sat,  7 Sep 2024 13:26:18 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154D915ADA7;
-	Sat,  7 Sep 2024 13:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550E4A93D;
+	Sat,  7 Sep 2024 13:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725715372; cv=none; b=M4jm1WG0FLEjAz+6WYiWTjME7HhMaR828gblmP2T8wkh8rainNSVvmrJvjE5hxAoCR3rck+ZyGNTCQxVzkuvSFypPrAOKWqdOtCHbJB1yCMTltCMOQIhbYfrg1rGi4BIi29WVLdbSGD69tUndy1W3LQCvRajMHG89lrL/Ci6mXo=
+	t=1725715577; cv=none; b=T73e2NurBEfFvoQbeSVwDb8+XS0qMRJvpNvyWVe3MKAyPv4UWVJuLQXMIXcr0Y5Zx7JmYzYm21QeGRLIK/RUCZcUikZBv6cGU0LJt13Hcfos5k735sLlHExD6+KdOGpj5+xMjVHbVpgbV1mb2YmFrVnsyKUhDpthbRPkqcOil+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725715372; c=relaxed/simple;
-	bh=y6YKFlhPCQu78jAO0iC8jYVC1hWLcBjxxOdZP1rzmYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qi5oiPL34saFwaKRZ3GO6PVyyjne/lv5tcwidtqEo4ffafdGU50Ar7V417GCS/PgadoX8+Po6l8vXDtBjYfTYVTTAOv34YLNSp2m3vGqCMc1Pvre1yNgxETk28jfimSw1PJ43VIMqopw54SX8/avoW13hZrcZFtMq9MQoXlYMek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V07Huikd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B322C4CEC2;
-	Sat,  7 Sep 2024 13:22:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725715371;
-	bh=y6YKFlhPCQu78jAO0iC8jYVC1hWLcBjxxOdZP1rzmYM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V07HuikdAcbrcGIzsucwlYA/+RGJuhvOlJngLr590qYs+K7Od4QTJSbzdbmFqaZ1u
-	 Hbu/Z0iFXjvhAa7suS3a6bXuUtI1RDpRHhVbaNXEgbD0rNbWoapbLHq6DwATbUbqkQ
-	 r4Sf4oz8uY8IuIlODGcRH0Qxqk9UFOBG+8oxdA5BIPM8D6+et/ojkXw9FVZJY633GY
-	 M7pOtT+qYVpibMb1d748GmL6WEs8THD8tc8wdHHZRsbQjVu8hHBlrszHSqCa6BkjgC
-	 +AkIEk/z39+7qjTmWdVkTt8bqZAQaIDb46qoaL3d0xO34fIrtDPhk6j1/bIwN46hSr
-	 nX/pUqZO9+r1A==
-Date: Sat, 7 Sep 2024 15:22:48 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, Daniel Xu <dxu@dxuuu.xyz>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	bpf@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 0/9] bpf: cpumap: enable GRO for XDP_PASS frames
-Message-ID: <ZtxTqNLZ2kbb-esH@lore-desk>
-References: <20240830162508.1009458-1-aleksander.lobakin@intel.com>
- <20240903135158.7031a3ab@kernel.org>
- <ZteAuB-QjYU6PIf7@lore-desk>
- <Ztnj9ujDg4NLZFDm@lore-desk>
- <20240905172029.5e9ca520@kernel.org>
- <Ztq6KAWXwjBcGci0@lore-desk>
+	s=arc-20240116; t=1725715577; c=relaxed/simple;
+	bh=rZWlTQC35qWRukStTjw642xQ+iZZzr40en6w7EIDDck=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FETk0rTTeXUkJREpnAT4SUGDsMm6kH1NuC+P0WrjBqTEDi88yprL/coaC8QkPiTBpFMFUrMkvNHW0dGwZGICQcSkaxTvQ2APb0d+tRD44KD4c+fseZa9FCHpV7Pzv4jWYeQ0gBhrK/Ci9sKt0wIiGhPyIwa3zEYreHaty19pFog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+From: Sam James <sam@gentoo.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,  Nicolas Schier
+ <nicolas@fjasle.eu>,  linux-kbuild@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fixdep: handle short reads in read_file
+In-Reply-To: <87y143ixdb.fsf@gentoo.org> (Sam James's message of "Sat, 07 Sep
+	2024 11:14:40 +0100")
+Organization: Gentoo
+References: <3132727fea08e81e834104761b5a5630d337340a.1725636560.git.sam@gentoo.org>
+	<CAK7LNATeuwaO8AvAqmz_4hyb5vjFnL-jhxbXv6_KoCTZbsS86A@mail.gmail.com>
+	<87y143ixdb.fsf@gentoo.org>
+Date: Sat, 07 Sep 2024 14:26:11 +0100
+Message-ID: <87seubioi4.fsf@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z8728SGFsNxd48Un"
-Content-Disposition: inline
-In-Reply-To: <Ztq6KAWXwjBcGci0@lore-desk>
-
-
---z8728SGFsNxd48Un
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-> > On Thu, 5 Sep 2024 19:01:42 +0200 Lorenzo Bianconi wrote:
-> > > In particular, the cpumap kthread pinned on cpu 'n' can schedule the
-> > > backlog NAPI associated to cpu 'n'. However according to my understan=
-ding
-> > > it seems the backlog NAPI APIs (in process_backlog()) do not support =
-GRO,
-> > > right? Am I missing something?
-> >=20
-> > I meant to use the struct directly, not to schedule it. All you need
-> > is GRO - feed it packets, flush it.=20
->=20
-> ack, thx for pointing this out.
->=20
-> > But maybe you can avoid the netdev allocation and patch 3 in other ways.
-> > Using backlog NAPI was just the first thing that came to mind.
->=20
-> ack, I will look into it.
->=20
-> Regards,
-> Lorenzo
+Sam James <sam@gentoo.org> writes:
 
-Hi all,
+> Masahiro Yamada <masahiroy@kernel.org> writes:
+>
+>> On Sat, Sep 7, 2024 at 12:29=E2=80=AFAM Sam James <sam@gentoo.org> wrote:
+>
+> Hi Masahiro,
+>
+>>>
+>>> 50% or so of kernel builds within our package manager fail for me with
+>>> 'fixdep: read: success' because read(), for some reason - possibly ptra=
+ce,
+>>> only read a short amount, not the full size.
+>>>
+>>> Unfortunately, this didn't trigger a -Wunused-result warning because
+>>> we _are_ checking the return value, but with a bad comparison (it's com=
+pletely
+>>> fine for read() to not read the whole file in one gulp).
+>>>
+>>> Fixes: 01b5cbe7012fb1eeffc5c143865569835bcd405e
+>>
+>>
+>> Fixes: 01b5cbe7012f ("fixdep: use malloc() and read() to load dep_file
+>> to buffer")
+>>
+>
+> Ah, thanks. I'll fix that and send v2 depending on how we decide to move
+> forward wrt below.
+>
+>>
+>> I guess, another approach would be to use fread() instead of read().
+>>
+>> Does the attached diff fix the issue too?
+>>
+>>
+>
+> Unfortunately no. It failed for me in the same way as before :(
+>
+> The man page mentions:
+>> On  success, fread() and fwrite() return the number of items read or
+>> written. This number equals the number of bytes transferred only when si=
+ze is 1.=20=20
+>
+> so I guess it suffers from the same pitfall. I checked POSIX & ISO C as w=
+ell
+> which says:
+>> If a partial element is read, its value is unspecified.
+> and
+>> The fread() function shall return the number of elements successfully
+>> read, which shall be less than nitems only if an error or end-of-file
+>> is encountered, or size is zero.
+>
+> The error reference is kind of mysterious there though.
+>
+> It kind of looks like fread *should* work. I'll send this mail and then
+> think about it a bit later and ask around to see if I'm missing
+> something obvious?
 
-I reworked my previous implementation to add GRO support to cpumap codebase=
-, removing
-the dummy netdev dependency and keeping most of the other logic. You can fi=
-nd
-the codebase here:
-- https://github.com/LorenzoBianconi/bpf-next/commit/e152cf8c212196fccece0b=
-516190827430c0f5f8
-I added to the two patches below in order to reuse some NAPI generic code:
-- https://github.com/LorenzoBianconi/bpf-next/commit/3c73e9c2f07486590749e9=
-b3bfb8a4b3df4cb5e0
-- https://github.com/LorenzoBianconi/bpf-next/commit/d435ce2e1b6a991a6264a5=
-aad4a0374a3ca86a51
-I have not run any performance test yet, just functional one.
+OK, others disagree with my reading of fread and think it is ambiguous.
 
-Regards,
-Lorenzo
+With your patch, I was able to get failures albeit possibly less
+frequently. I'm trying my patch again in a loop now.
 
---z8728SGFsNxd48Un
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZtxTqAAKCRA6cBh0uS2t
-rA1HAQDexOv6I+cjqBzVYgUS+y0Xn1LJ6hmUxSvpTHYqX2R+DQD/R9oiZLSX4JOy
-XFYnQsY4J2O8rgDbMEquWg0l1Uq3qQ8=
-=poHJ
------END PGP SIGNATURE-----
-
---z8728SGFsNxd48Un--
+>
+>> [...]
+>
+> thanks,
+> sam
 
