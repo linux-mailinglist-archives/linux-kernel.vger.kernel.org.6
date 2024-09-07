@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-319797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3D17970254
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:13:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D06970258
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B511F22B42
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:13:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8AB51C216F0
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F07F15C137;
-	Sat,  7 Sep 2024 13:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622C915C136;
+	Sat,  7 Sep 2024 13:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ORXKqv2w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dECZPJeb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFE015ADA7;
-	Sat,  7 Sep 2024 13:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23D9148FFC;
+	Sat,  7 Sep 2024 13:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725714781; cv=none; b=WprcGh/87Xm9Osyi7Ycwef2ibefU6N+bqOPFi4HxVeFucZP6ErsBmx7UUXLYW8d/k4b4W01EaAV+4ZP/Zx1G6QOMRIdhzC70tRikt2WboIbavvCz2OgChPwamCAV/vTqyuSBbRYrcJwHeQLv20A6VxfJLcxXwCsrKhqQn9Nv3aY=
+	t=1725715239; cv=none; b=pkMshanVZDK13vucxN7rcYmcYccpEDXQQgK+/rhBC5mryBgMMmzsjfHWb6sYJc1tVC31hDdu4tYYFmsk3M1yh5fze1kkj5BdCjU8794RRqLDj/knFk2+AUqfg5iDAB3o68kpulcs2PIZNb39G3+4ilsxn46BM4XAekI7gDkTV7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725714781; c=relaxed/simple;
-	bh=5xcVFcC3lSy5078QzRE82HrNFUD+O2QbexTWLvWcD9A=;
+	s=arc-20240116; t=1725715239; c=relaxed/simple;
+	bh=NVFeRPMzdjF/2jRLXwfSJYyA1VrDqtyaMCaBaRYj2IA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HuLnUUELbxLAXfvJwqvlw+i8zlmS+M0YmfO1Xk3WQ3WBRzaskdR3J49Kb7PjaQWeVgTIv+92cWf/Rm11ru50fXmTA1weIEQN45B61zCu/7FvU3vaMgv7uLEBTdAF+vX+bn2H70BiyBuzVhUMjYkd5r1zTtK5n0J+YLF2X4GrtU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ORXKqv2w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8DB4C4CEC2;
-	Sat,  7 Sep 2024 13:12:57 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=qGIDFiKwG7hGm4u8hstfVqq+wI9dxDTC1NFZ2NfL80o9r7ocvfr8UmKqc8mxb9AsIyStAOqfCU2G/0R5PA6BR41E9kQCSRcyMaMP2PJTVNaoALCpapoYreQe8xctGz1wnzeAxrgkrpkJ4KrMihaGnTHSmZp1O5XOCXJKWWDwRUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dECZPJeb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21A51C4CEC6;
+	Sat,  7 Sep 2024 13:20:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725714781;
-	bh=5xcVFcC3lSy5078QzRE82HrNFUD+O2QbexTWLvWcD9A=;
+	s=k20201202; t=1725715239;
+	bh=NVFeRPMzdjF/2jRLXwfSJYyA1VrDqtyaMCaBaRYj2IA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ORXKqv2wNTUxArmAh0ldnGJjCkLb7QzNweO0N/OmbsskJIQyydxv5F3okI9Nw1UEi
-	 om+AFyNAV2yE/QBbSYxt3jHZU+Ry+BxYFi832H+JkmA53IHOQc07wS7tItmiWvgK4d
-	 BbkWS8z6u7MYuh0VVRywAXVtoMuTrspo3zOyO+Jpb9P/6ToLLizr0Y2lCMAysAAT3t
-	 wD/rB/rgrQxw01qaLVwhSZMJF+06fUlONvDypybm52KglqW3R4As5Qddrg2Rd1jZtg
-	 kLNfs7pu9HuDwnVvMDmsPZWcRTN59iHSdGcHfF2D86JYY8IiK+xD09brtacOqAKdkD
-	 Rhfyzm9OK9POg==
-Message-ID: <6bfc4c47-e29d-4141-8ba9-c5b0803ab756@kernel.org>
-Date: Sat, 7 Sep 2024 15:12:54 +0200
+	b=dECZPJeb/KspeZrban7JgcA4CQyN7QEqXqY47Fy3otp55vU7/HVi78eGgeieSOl2i
+	 PZfN1J3RocoCIeaWrvDudHHhbANKDcMFSlWMECC2iV9PdScikIJPqhXnlhM/uSulRf
+	 m01mgtLlldBcaIgjgO37yA8BfExXUcAjmF9iU0kfCn4Yxz10Uo4JlKke07aJBYA0l3
+	 6+ttBdUxPlioCJDUR78Tsz/R9dRDtZd/QkSNCt/jtEGatpOjyTtmO15I712saEas2T
+	 TN+evJnlVcV1HkyKEEJdWgbDrSa0DwTsp6BoINf9qARXEuqa3+ARvtqdasRwKm90H5
+	 IEbYWQBpTKgFw==
+Message-ID: <0c9ff8b4-9e69-41cc-a622-2aea11def2e2@kernel.org>
+Date: Sat, 7 Sep 2024 15:20:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] dt-bindings: memory-controllers: fsl,ifc: add
- compatible string fsl,ifc-nand
-To: Frank Li <Frank.li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Michael Walle <mwalle@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- "open list:MEMORY CONTROLLER DRIVERS" <linux-kernel@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, imx@lists.linux.dev
-References: <20240830191144.1375849-1-Frank.Li@nxp.com>
- <l2xjrs7txycf3uhhhyzypfzoem2fr4fsvbyg3bt4ktfpbzxz47@loiytha55oml>
- <ZtX8k7UB/Txri5HF@lizhi-Precision-Tower-5810>
+Subject: Re: [RFC PATCH v3 35/37] kvx: Add IPI driver
+To: Yann Sionneau <ysionneau@kalrayinc.com>, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: Jonathan Borne <jborne@kalrayinc.com>,
+ Julian Vetter <jvetter@kalrayinc.com>,
+ Clement Leger <clement@clement-leger.fr>,
+ Guillaume Thouvenin <thouveng@gmail.com>, Luc Michel <luc@lmichel.fr>,
+ Jules Maselbas <jmaselbas@zdiv.net>, bpf@vger.kernel.org
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-36-ysionneau@kalrayinc.com>
+ <cbd74fa5-d4ad-4ed0-a680-6ff5e3b8ff84@kernel.org>
+ <42e7d388-a4c8-42f9-bf2f-001871a7d948@kalrayinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,87 +106,42 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <ZtX8k7UB/Txri5HF@lizhi-Precision-Tower-5810>
+In-Reply-To: <42e7d388-a4c8-42f9-bf2f-001871a7d948@kalrayinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/09/2024 19:57, Frank Li wrote:
-> On Mon, Sep 02, 2024 at 09:11:05AM +0200, Krzysztof Kozlowski wrote:
->> On Fri, Aug 30, 2024 at 03:11:43PM -0400, Frank Li wrote:
->>> ifc can connect nor, nand and fpag. Add child node "nand@" under fsl,ifc
->>> and compatible string "fsl,ifc-nand" when ifc connect to nand flash.
->>>
->>> Fix below warning:
->>> arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dtb: /soc/memory-controller@1530000/nand@1,0:
->>> 	failed to match any schema with compatible: ['fsl,ifc-nand']
->>>
->>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->>> ---
->>> Change from v2 to v3
->>> - add partition child node for nand
->>> - Only partition property is used at ppc
->>> Change from v1 to v2
->>> - add address-cells and size-cells
->>> ---
->>>  .../memory-controllers/fsl/fsl,ifc.yaml       | 26 +++++++++++++++++++
->>>  1 file changed, 26 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml b/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml
->>> index d1c3421bee107..5a11224da8914 100644
->>> --- a/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml
->>> +++ b/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml
->>> @@ -58,6 +58,32 @@ properties:
->>>        access window as configured.
->>>
->>>  patternProperties:
->>> +  "^nand@[a-f0-9]+(,[a-f0-9]+)+$":
->>> +    type: object
->>> +    properties:
->>> +      compatible:
->>> +        const: fsl,ifc-nand
->>> +
->>> +      reg:
->>> +        maxItems: 1
->>> +
->>> +      "#address-cells":
->>> +        const: 1
->>> +
->>> +      "#size-cells":
->>> +        const: 1
->>> +
->>> +    patternProperties:
->>> +      "^partition@[0-9a-f]+":
->>> +        $ref: /schemas/mtd/partitions/partition.yaml#
->>> +        deprecated: true
->>> +
->>> +    required:
->>> +      - compatible
->>> +      - reg
->>> +
->>> +    additionalProperties: false
->>> +
->>>    "^.*@[a-f0-9]+(,[a-f0-9]+)+$":
->>
->> This pattern is for NAND already. I don't understand why you are
->> duplicating it. If this part does not work, fix it.
+On 23/08/2024 16:46, Yann Sionneau wrote:
+> Hello Krzysztof,
 > 
-> It is old binding. It did not require compatible string. It should split
-> into nand\flash\fpga ...
+> On 22/07/2024 14:39, Krzysztof Kozlowski wrote:
+>> On 22/07/2024 11:41, ysionneau@kalrayinc.com wrote:
+>>> From: Yann Sionneau <ysionneau@kalrayinc.com>
+>>>
+>>> [...]
+>>> +
+>>> +int __init kvx_ipi_ctrl_init(struct device_node *node,
+>>> +			     struct device_node *parent)
+>>> +{
+>>> +	int ret;
+>>> +	unsigned int ipi_irq;
+>>> +	void __iomem *ipi_base;
+>>> +
+>>> +	BUG_ON(!node);
+>> Fix your code instead.
 > 
-> The difference part require difference compatible string. NAND is only
-> 1st step to improve it.
+> I am not sure I understand your comment here, I don't have the control over what the kernel passes to my driver, do I?
 
-I understand. I would prefer to make it complete, which you are quite
-close to it. Just change the remaining pattern for example:
+In general you have. Investigate the path and check whether NULL is
+allowed. If it is allowed, then this should be handled correctly and
+gracefully. If it is not allowed, then BUG_ON() is not welcomed in general.
 
-(flash|fpga)......:
-  type: object
-  oneOf:
-    - $ref: /schemas/board/fsl,fpga-qixis.yaml#
-    - $ref: /schemas/mtd/mtd-physmap.yaml#
-  unevaluatedProperties: false
+> 
+> On the other hand, "node" being the node that matches the compatible, maybe it can never be NULL, is that what you're saying?
 
-or something similar.
+I don't remember the context anymore. You responded one month after my
+review. But if this is about matching, then obviously this cannot happen
+for DT platforms. If this can be matched via different methods then it
+should not be BUG_ON...
 
 
 Best regards,
