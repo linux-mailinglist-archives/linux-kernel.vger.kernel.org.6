@@ -1,250 +1,152 @@
-Return-Path: <linux-kernel+bounces-319684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97785970085
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:03:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B71970088
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0285CB2297E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:03:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECDE3B22846
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39F13CF73;
-	Sat,  7 Sep 2024 07:03:23 +0000 (UTC)
-Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BE31B85EF;
-	Sat,  7 Sep 2024 07:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DDF131BAF;
+	Sat,  7 Sep 2024 07:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ph9P0haq"
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B364FEEAE
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 07:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725692603; cv=none; b=J88DTZeNK88Iadedw30ulu970ROf7aRRukl3DP0TMEbiu0KslM1upxDBJTB9GFQlV++zfu2L3FW0HRERK+5EuwoogO5AKBHVbr0O3vkTMz3MuZ2JvE9r4MTtRtOv0NCkFdXYQkQx0DnFa0xi8LEYyzz1wG+aPRrmcUjswmnblJQ=
+	t=1725692698; cv=none; b=a4gfiMwocYcFiODyHorwpVhCFx1Q+GJUqvz1HwVvl3iaYht4Wl0NHNroNbtO7XS+WwBU82Uf9c8ZxIhzGQKSA5e043ntw8cekgKziKXg7zVn0W0R0ZcPyxNJGmIXInhMhoaitoOXu5Z9Zc9O9NSfOGUlvZY5khJU6t3AsdKuwhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725692603; c=relaxed/simple;
-	bh=+/LcFYTp7KLv58itnht7DYnfbBPKyPA8iVJckCrOOQM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ryh0mxSj7SwpGzrcjw7Uid4wnPHi5lNFj1NsaM+JloWU0IXSzd7MCb/jzTgO2QLwYlXVk4BH+hmsJdt/Ltnae6d7CG1Ih9nsm94MOGgbWzVt6hQX5qFGfC62BjkNXuUXHNUoSGOJFFi8GoWpL0jbrKyvusER5fW1G62hOpQOO1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.79.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app1 (Coremail) with SMTP id HgEQrAA3PHyc+ttmGFurBQ--.48142S2;
-	Sat, 07 Sep 2024 15:02:52 +0800 (CST)
-Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
-	by gateway (Coremail) with SMTP id _____wBXXlKW+ttmNH1CAA--.25340S2;
-	Sat, 07 Sep 2024 15:02:47 +0800 (CST)
-From: Dongliang Mu <dzm91@hust.edu.cn>
-To: Alex Shi <alexs@kernel.org>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Dongliang Mu <dzm91@hust.edu.cn>
-Cc: hust-os-kernel-patches@googlegroups.cm,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH v3] docs/zh_CN: add the translation of kbuild/gcc-plugins.rst
-Date: Sat,  7 Sep 2024 15:02:08 +0800
-Message-ID: <20240907070244.206808-1-dzm91@hust.edu.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725692698; c=relaxed/simple;
+	bh=ZLHMe9jy8+HsVZINDX06hNiggV9hjGuZ8jU3JjSoxqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C0hjuO7MQ/yNJNt8tVsnOvRuBBPiAbJ+6vCEc8kkmLwMskLCrRONs4xLNQzkydRlLS0oEabcTPDy0Qnj52o2nQQCIZuewWD3jCsAK0ppmoevnZXBhN0ep7f3l/JZ7dFeh51eH8Dc6zVRM4I5g27+VxoVAaR//12ySSgTco/Re/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ph9P0haq; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id mpV5s8vX641DAmpV5s0s85; Sat, 07 Sep 2024 09:04:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725692693;
+	bh=ws6woaw3V59PogyDNQ6FMv2g3JohNKI2FGtYQY5L58I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=ph9P0haqZtBjA0qJLG0dPNjjC55IG/FYry9togkk2reDnvuHXC686t6x0u7Tq1hNW
+	 Kj8Ss4m63CGDlmqvO7YbCNZ+PJYDnN8bVLHaQiV4RTDkcCmIv2BwPXSOT10fUkPM+C
+	 im84USas1ww6OEHJcM0gdrrp1ke81vLVCvx54jL9LSdlWJv1CDB2pNy8hkVRC9PK9I
+	 3Eo0ww9gDgjSdmOdoNAcKYpGDJaiFTw2bXwBciqvLHfek5DJxYsf1WHVjcOeXKjduO
+	 H4Smx1nSl2QuUq9UkJVdsb+CADj7cJVJNe2Hth54rKtoWEFX6Wh4nTOmUQgsTxe5ro
+	 zevYN9RzzEyrQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 07 Sep 2024 09:04:53 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <47e0745c-e7a4-4201-b1bf-bb8e44e5911d@wanadoo.fr>
+Date: Sat, 7 Sep 2024 09:04:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mtd: spi-nor: Add support for gd25 and gd55 series chips.
+To: Renjun Wang <renjunw0@foxmail.com>, tudor.ambarus@linaro.org,
+ pratyush@kernel.org, mwalle@kernel.org, miquel.raynal@bootlin.com,
+ richard@nod.at, vigneshr@ti.com
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <tencent_983A0FB4662661C03E98E1AC214E32179F0A@qq.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <tencent_983A0FB4662661C03E98E1AC214E32179F0A@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HgEQrAA3PHyc+ttmGFurBQ--.48142S2
-Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoWxtry3CrWrKr13Gr4xKryfJFb_yoWxXF47pw
-	4vk34SgFWIyFy093yfKr1xuF15JFs3Ww1UKa48Gwn7tF1kJrZ0y3y3try5GryfWFy8ZrW3
-	XF4ayrWUuw1UZa7anT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQIb7Iv0xC_tr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vE
-	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_JF
-	0_Jw1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
-	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r
-	4UJVWxJr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1l
-	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43Mx
-	AIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
-	k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7Cj
-	xVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU0pbytUUUUU==
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-Finish the translation of kbuild/gcc-plugins.rst and move gcc-plugins
-from TODO to the main body.
+Le 07/09/2024 à 08:32, Renjun Wang a écrit :
+> Add support for gd25lq255, gd25lb256, gd25lb512m, gd25b512m, gd55b01ge
+> and gd55lb01ge. All these chips are tested on Rockchip boards[1].
+> 
+> [1]https://github.com/rockchip-linux/kernel/blob/develop-5.10/drivers/mtd/spi-nor/gigadevice.c
+> 
+> Signed-off-by: Renjun Wang <renjunw0@foxmail.com>
+> ---
+>   drivers/mtd/spi-nor/gigadevice.c | 43 ++++++++++++++++++++++++++++++++
+>   1 file changed, 43 insertions(+)
+> 
+> diff --git a/drivers/mtd/spi-nor/gigadevice.c b/drivers/mtd/spi-nor/gigadevice.c
+> index ef1edd0add70..f0069a4adbbf 100644
+> --- a/drivers/mtd/spi-nor/gigadevice.c
+> +++ b/drivers/mtd/spi-nor/gigadevice.c
+> @@ -61,6 +61,7 @@ static const struct flash_info gigadevice_nor_parts[] = {
+>   	}, {
+>   		.id = SNOR_ID(0xc8, 0x40, 0x19),
+>   		.name = "gd25q256",
+> +		.size = SZ_32M,
 
-Update to commit 3832d1fd84b6 ("docs/core-api: expand Fedora instructions
-for GCC plugins")
+Hi, just for my understanding, why this change?
 
-Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
----
-v2->v3: fix sign incorrect pointed by Alex
-v1->v2: fix comments from yanteng
- .../translations/zh_CN/kbuild/gcc-plugins.rst | 126 ++++++++++++++++++
- .../translations/zh_CN/kbuild/index.rst       |   2 +-
- 2 files changed, 127 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
+If it is a fix, should it be done a separate patch?
+Or should it be mentioned in the commit description?
 
-diff --git a/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst b/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
-new file mode 100644
-index 000000000000..67a8abbf5887
---- /dev/null
-+++ b/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
-@@ -0,0 +1,126 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/kbuild/gcc-plugins.rst
-+:Translator: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
-+
-+================
-+GCC 插件基础设施
-+================
-+
-+
-+介绍
-+====
-+
-+GCC 插件是为编译器提供额外功能的可加载模块 [1]_。它们对于运行时插装和静态分析非常有用。
-+我们可以在编译过程中通过回调 [2]_，GIMPLE [3]_，IPA [4]_ 和 RTL Passes [5]_
-+（译者注：Pass 是编译器所采用的一种结构化技术，用于完成编译对象的分析、优化或转换等功能）
-+来分析、修改和添加更多的代码。
-+
-+内核的 GCC 插件基础设施支持构建树外模块、交叉编译和在单独的目录中构建。插件源文件必须由
-+C++ 编译器编译。
-+
-+目前 GCC 插件基础设施只支持一些架构。搜索 "select HAVE_GCC_PLUGINS" 来查找支持
-+GCC 插件的架构。
-+
-+这个基础设施是从 grsecurity [6]_  和 PaX [7]_ 移植过来的。
-+
-+--
-+
-+.. [1] https://gcc.gnu.org/onlinedocs/gccint/Plugins.html
-+.. [2] https://gcc.gnu.org/onlinedocs/gccint/Plugin-API.html#Plugin-API
-+.. [3] https://gcc.gnu.org/onlinedocs/gccint/GIMPLE.html
-+.. [4] https://gcc.gnu.org/onlinedocs/gccint/IPA.html
-+.. [5] https://gcc.gnu.org/onlinedocs/gccint/RTL.html
-+.. [6] https://grsecurity.net/
-+.. [7] https://pax.grsecurity.net/
-+
-+
-+目的
-+====
-+
-+GCC 插件的设计目的是提供一个用于试验 GCC 或 Clang 上游没有的潜在编译器功能的场所。
-+一旦它们的实用性得到验证，这些功能将被添加到 GCC（和 Clang）的上游。随后，在所有
-+支持的 GCC 版本都支持这些功能后，它们会被从内核中移除。
-+
-+具体来说，新插件应该只实现上游编译器（GCC 和 Clang）不支持的功能。
-+
-+当 Clang 中存在 GCC 中不存在的某项功能时，应努力将该功能做到 GCC 上游（而不仅仅
-+是作为内核专用的 GCC 插件），以使整个生态都能从中受益。
-+
-+类似的，如果 GCC 插件提供的功能在 Clang 中 **不** 存在，但该功能被证明是有用的，也应
-+努力将该功能上传到 GCC（和 Clang）。
-+
-+在上游 GCC 提供了某项功能后，该插件将无法在相应的 GCC 版本（以及更高版本）下编译。
-+一旦所有内核支持的 GCC 版本都提供了该功能，该插件将从内核中移除。
-+
-+
-+文件
-+====
-+
-+**$(src)/scripts/gcc-plugins**
-+
-+	这是 GCC 插件的目录。
-+
-+**$(src)/scripts/gcc-plugins/gcc-common.h**
-+
-+	这是 GCC 插件的兼容性头文件。
-+	应始终包含它，而不是单独的 GCC 头文件。
-+
-+**$(src)/scripts/gcc-plugins/gcc-generate-gimple-pass.h,
-+$(src)/scripts/gcc-plugins/gcc-generate-ipa-pass.h,
-+$(src)/scripts/gcc-plugins/gcc-generate-simple_ipa-pass.h,
-+$(src)/scripts/gcc-plugins/gcc-generate-rtl-pass.h**
-+
-+	这些头文件可以自动生成 GIMPLE、SIMPLE_IPA、IPA 和 RTL passes 的注册结构。
-+	与手动创建结构相比，它们更受欢迎。
-+
-+
-+用法
-+====
-+
-+你必须为你的 GCC 版本安装 GCC 插件头文件，以 Ubuntu 上的 gcc-10 为例::
-+
-+	apt-get install gcc-10-plugin-dev
-+
-+或者在 Fedora 上::
-+
-+	dnf install gcc-plugin-devel libmpc-devel
-+
-+或者在 Fedora 上使用包含插件的交叉编译器时::
-+
-+	dnf install libmpc-devel
-+
-+在内核配置中启用 GCC 插件基础设施与一些你想使用的插件::
-+
-+	CONFIG_GCC_PLUGINS=y
-+	CONFIG_GCC_PLUGIN_LATENT_ENTROPY=y
-+	...
-+
-+运行 gcc（本地或交叉编译器），确保能够检测到插件头文件::
-+
-+	gcc -print-file-name=plugin
-+	CROSS_COMPILE=arm-linux-gnu- ${CROSS_COMPILE}gcc -print-file-name=plugin
-+
-+"plugin" 这个词意味着它们没有被检测到::
-+
-+	plugin
-+
-+完整的路径则表示插件已经被检测到::
-+
-+       /usr/lib/gcc/x86_64-redhat-linux/12/plugin
-+
-+编译包括插件在内的最小工具集::
-+
-+	make scripts
-+
-+或者直接在内核中运行 make，使用循环复杂性 GCC 插件编译整个内核。
-+
-+
-+4. 如何添加新的 GCC 插件
-+========================
-+
-+GCC 插件位于 scripts/gcc-plugins/。你需要将插件源文件放在 scripts/gcc-plugins/ 目录下。
-+子目录创建并不支持，你必须添加在 scripts/gcc-plugins/Makefile、scripts/Makefile.gcc-plugins
-+和相关的 Kconfig 文件中。
-diff --git a/Documentation/translations/zh_CN/kbuild/index.rst b/Documentation/translations/zh_CN/kbuild/index.rst
-index d906a4e88d0f..b51655d981f6 100644
---- a/Documentation/translations/zh_CN/kbuild/index.rst
-+++ b/Documentation/translations/zh_CN/kbuild/index.rst
-@@ -13,6 +13,7 @@
-     :maxdepth: 1
- 
-     headers_install
-+    gcc-plugins
- 
- TODO:
- 
-@@ -24,7 +25,6 @@ TODO:
- - modules
- - issues
- - reproducible-builds
--- gcc-plugins
- - llvm
- 
- .. only::  subproject and html
--- 
-2.43.0
+CJ
+
+>   		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_TB_SR_BIT6,
+>   		.fixups = &gd25q256_fixups,
+>   		.fixup_flags = SPI_NOR_4B_OPCODES,
+> @@ -82,6 +83,48 @@ static const struct flash_info gigadevice_nor_parts[] = {
+>   		.size = SZ_16M,
+>   		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+>   		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+> +	}, {
+> +		.id = SNOR_ID(0xc8, 0x60, 0x19),
+> +		.name = "gd25lq255",
+> +		.size = SZ_32M,
+> +		.flags = SPI_NOR_HAS_LOCK,
+> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+> +		.fixup_flags = SPI_NOR_4B_OPCODES,
+> +	}, {
+> +		.id = SNOR_ID(0xc8, 0x67, 0x19),
+> +		.name = "gd25lb256",
+> +		.size = SZ_32M,
+> +		.flags = SPI_NOR_HAS_LOCK,
+> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+> +		.fixup_flags = SPI_NOR_4B_OPCODES,
+> +	}, {
+> +		.id = SNOR_ID(0xc8, 0x67, 0x1a),
+> +		.name = "gd25lb512m",
+> +		.size = SZ_64M,
+> +		.flags = SPI_NOR_HAS_LOCK,
+> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+> +		.fixup_flags = SPI_NOR_4B_OPCODES,
+> +	}, {
+> +		.id = SNOR_ID(0xc8, 0x47, 0x1a),
+> +		.name = "gd25b512m",
+> +		.size = SZ_64M,
+> +		.flags = SPI_NOR_HAS_LOCK,
+> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+> +		.fixup_flags = SPI_NOR_4B_OPCODES,
+> +	}, {
+> +		.id = SNOR_ID(0xc8, 0x47, 0x1b),
+> +		.name = "gd55b01ge",
+> +		.size = SZ_128M,
+> +		.flags = SPI_NOR_HAS_LOCK,
+> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+> +		.fixup_flags = SPI_NOR_4B_OPCODES,
+> +	}, {
+> +		.id = SNOR_ID(0xc8, 0x67, 0x1b),
+> +		.name = "gd55lb01ge",
+> +		.size = SZ_128M,
+> +		.flags = SPI_NOR_HAS_LOCK,
+> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+> +		.fixup_flags = SPI_NOR_4B_OPCODES,
+>   	},
+>   };
+>   
 
 
