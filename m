@@ -1,81 +1,84 @@
-Return-Path: <linux-kernel+bounces-319761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B259701EA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:21:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF279701EF
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67CF91C216BA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:21:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B721284A36
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43021158A33;
-	Sat,  7 Sep 2024 11:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06870158A3C;
+	Sat,  7 Sep 2024 11:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+zP/1Ti"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RBWcyKFZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E23A1BC23;
-	Sat,  7 Sep 2024 11:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B4EA55;
+	Sat,  7 Sep 2024 11:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725708079; cv=none; b=F7xA+yPhzVNyX6XYPhyrWux3QX0zRoqzX3GlvFc+ZAooD25OP1o9hq3k3rD8z829YvQFxZLaHtSz4r6n8QhUGz+/M01obwgbRpY8FYxDFw3JhIY29Fa6nRzmcSKLHzVjhNu04c99B1nHOVvQ/FujphsfljYBHHBvazUYzzKtK7o=
+	t=1725708444; cv=none; b=BOvnWjzkolsygO8Ij7aJDS7EOpVChIMDRbULbNhSWwralfIIQZIOZR0MO5TYzyw738FzkLY3699pWqsdc0CSR7F4PgAyG3KDGH7kUWtPWvxTknG854WAcUUO7R0y1GfcjkuJ2ZJgjsAqRDso6LsWLkHkJyvjn+Xn/6AbLOgapU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725708079; c=relaxed/simple;
-	bh=mEPexLC/RTXu2kbuBXDYcWJoi+AtX+Puj/Yxb3cw06g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SbiAw1Ig/Xi2pSRWTni1ypOxTrdrCqd6fq4BJqcdUQ1HhNw2pJJ6eRrAnltbZk/U8TV4ypyCzg7CgAZhbPAqBkKyHD4IF3T+G+HFSKpJzh2/SVLn6ocLY0mEPQtv7nO+XyJOVUyozPq1S+e7+5m2mhi06fL3i4olpUaeWqst+1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+zP/1Ti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43324C4CEC5;
-	Sat,  7 Sep 2024 11:21:18 +0000 (UTC)
+	s=arc-20240116; t=1725708444; c=relaxed/simple;
+	bh=DzlgCZvoAslqJIa9rfeEGQCc5NjF7zvlXCe6WoEoX7I=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=OIgHcIURvj/ucQ7Dh0nhhYzmbSJMHe+5mB64UjV62HhyUJVG5pB0kY6Zg4EKbWP/0sjGeei17hcOX4gpRxFRymjovQ6jAGe6Lif3dGQnQajMqB7bSq4teLQiMKfth2do94h5iMM+OXe9weCGEWyqVq5u8B5pe10AUxW/YoVLxiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RBWcyKFZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62A9DC4CEC2;
+	Sat,  7 Sep 2024 11:27:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725708079;
-	bh=mEPexLC/RTXu2kbuBXDYcWJoi+AtX+Puj/Yxb3cw06g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=N+zP/1Ti2PpOL40OSqDb98AHTPRT6nvY7zW4WvjO50bT6FCqP+eN11FcLcwTEbgml
-	 js+4yDq3dAy7Hpibwfb/XOLMxxk8O4JRBpeu44wyYhc4RIyULxTlfykTx5WEP3OCYw
-	 y7BXG/mjeED/Bd/AZS8xFo+gDy7WHMFPqiUYK6M1CdJdfa8M8XaxXe2zEbzACxqKXt
-	 pQkKwuhVynQx8HzL4oGZiskgXOBbsZ38GXjOzblX96AbyE0pvuTj8sB3f5ZUle9IE3
-	 Ng/FNoVZFYY/ye6lqsDjjQpETkCbC3klCF5eIwEDSolvt/END8LaQwap1MgdHiwDWL
-	 7O0HmYy4M8LiA==
-From: William Breathitt Gray <wbg@kernel.org>
-To: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Liao Chen <liaochen4@huawei.com>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	patrick.havelange@essensium.com
-Subject: Re: [PATCH -next] counter: ftm-quaddec: Enable module autoloading
-Date: Sat,  7 Sep 2024 20:20:46 +0900
-Message-ID: <172570794715.339843.3334090626440270602.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240902122014.905237-1-liaochen4@huawei.com>
-References: <20240902122014.905237-1-liaochen4@huawei.com>
+	s=k20201202; t=1725708443;
+	bh=DzlgCZvoAslqJIa9rfeEGQCc5NjF7zvlXCe6WoEoX7I=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=RBWcyKFZe/9mOh4BaocbZV1L/fwv2mg/sbQWsUMfPaK8pCqrsjbDfX4iRVV1T69zh
+	 PTDY+O3fp00QR8UNjCq6pPT0w3UjUBvLOTUF+8iO4dFu2zdraTQli68wfSOHL4D7xF
+	 BZt445JRlAGbbnd6znNMZmF/XGFj3lMEKbNnnUvLOVOK6sGfpVjx0iLAvh279I2wqQ
+	 hSuzSRj4CcTMoSONY7fVDlMo3bFYaLBDz6fes8sULlD9l1n+CZzrb3KqOdhA1UZ1el
+	 osJbkjs6RfaTR1jOGl6IYOusIPlEs69Pp7wrcq2rNie/x1qL6JzEXuvC2s2FCYZjjj
+	 fiLrmYhXP+m9A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=373; i=wbg@kernel.org; h=from:subject:message-id; bh=f6blXwBybSGJsgti0bJ6UuW+qDDWWQjOZWHe47QN35A=; b=kA0DAAoWtUhWyr4SIysByyZiAGbcNwGik+IdgLYwQlIG5sontbEal8XgfBKUgPMXe3Xb4noKN 4h1BAAWCgAdFiEEjTfN3eDSJSj46J+2tUhWyr4SIysFAmbcNwEACgkQtUhWyr4SIyuSQQEA+sED Yh6nVyBk0lrJaDjzVgXycYcFYjINwVawNHhKi9QA/3TxmUiwXMesAnGta90v6sd25rGao4hk0m/ mqRsv6+0P
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 07 Sep 2024 14:27:20 +0300
+Message-Id: <D400L4YN4K7K.264IDL4O8374F@kernel.org>
+Cc: "Pingfan Liu" <piliu@redhat.com>, "Jan Hendrik Farr" <kernel@jfarr.cc>,
+ "Lennart Poettering" <mzxreary@0pointer.de>, "Eric Biederman"
+ <ebiederm@xmission.com>, "Baoquan He" <bhe@redhat.com>, "Dave Young"
+ <dyoung@redhat.com>, "Mark Rutland" <mark.rutland@arm.com>, "Will Deacon"
+ <will@kernel.org>, "Catalin Marinas" <catalin.marinas@arm.com>,
+ <kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Philipp Rudo" <prudo@redhat.com>, "Ard Biesheuvel" <ardb@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20240819145417.23367-1-piliu@redhat.com>
+ <CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
+ <20240906125438.1e54c5f6@rotkaeppchen>
+In-Reply-To: <20240906125438.1e54c5f6@rotkaeppchen>
 
+On Fri Sep 6, 2024 at 1:54 PM EEST, Philipp Rudo wrote:
+> Let me throw an other wild idea in the ring. Instead of implementing
+> a EFI runtime we could also include a eBPF version of the stub into the
+> images. kexec could then extract the eBPF program and let it run just
+> like any other eBPF program with all the pros (and cons) that come with
+> it. That won't be as generic as the EFI runtime, e.g. you couldn't
+> simply kexec any OS installer. On the other hand it would make it
+> easier to port UKIs et al. to non-EFI systems. What do you think?
 
-On Mon, 02 Sep 2024 12:20:14 +0000, Liao Chen wrote:
-> Add MODULE_DEVICE_TABLE(), so modules can be properly autoloaded based
-> on the alias from of_device_id table.
-> 
-> 
+BPF would have some guarantees that are favorable such as programs
+always end, even faulty ones. It always has implicit "ExitBootServices".
 
-Applied, thanks!
+Just a remark.
 
-[1/1] counter: ftm-quaddec: Enable module autoloading
-      commit: 0d0f611bdf8e1d06df7ecb44b424a6fb093e2efc
-
-Best regards,
--- 
-William Breathitt Gray <wbg@kernel.org>
+BR, Jarkko
 
