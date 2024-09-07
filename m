@@ -1,257 +1,202 @@
-Return-Path: <linux-kernel+bounces-319867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0742F970338
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:51:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E2497033B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E3481F22212
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:51:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51231B22EA2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9988C15FCE6;
-	Sat,  7 Sep 2024 16:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B3416132A;
+	Sat,  7 Sep 2024 16:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fbgABuco"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hwY65qwM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70DF1494B2;
-	Sat,  7 Sep 2024 16:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2771E15CD58;
+	Sat,  7 Sep 2024 16:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725727908; cv=none; b=BpcjnuwX2sWknVluYdis4pte/t+bbH4Kp820ogFAD2T0o6YmihjQy8vYV0MkMoohXBziGKeeUSLTkOKxRjQi9RAyu4dXNaB0BmIr9SCIeMcJM0jKMVH01OxjxOhHS4Ditsy/GJ4npROfcBiKuVd03MhXXPu1DK2GFl8vdDTTO6s=
+	t=1725728163; cv=none; b=rFbjV2XzzoSQBTRYkUJ6e8XZiMT2KW8Nh79qfAGwfB6+HLN/5EJCDfODtxl4l0k/37sTr3J6KTlb6K9uuB42H5/I1ejqGc/dI39IRZi2IBsOMjv7fjy6NK8Yb/ZY20iz1s6sL3Az6+rFdxOZwgldEHsHeCuC08BFByVJGxIJ8DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725727908; c=relaxed/simple;
-	bh=kMlhQMg4JT6QIjMP8ke0kwOdAb0W77/KBCV79nq4QLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LDAWmrD+H78A3D6xkagGVca4Mv0hza6EMYpnR8k/NMXBanWayjDukestcjjkg0/+ReBhoQO2sirwrbvK8wEjPbX8sre77qvDvF47uXOX+T3pGdOu+//79iz628kPJvv4t+uLfhJdyPqiGk8n2dZy0U4mbBoXY9uFHRj9+yE6Owo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fbgABuco; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31FD8C4CEC2;
-	Sat,  7 Sep 2024 16:51:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725727907;
-	bh=kMlhQMg4JT6QIjMP8ke0kwOdAb0W77/KBCV79nq4QLQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fbgABucotWYMGBEe3w5oWYfJuQGEaZddRe46N8xbMN/RTqKISMlF9lmX22Ut07+C9
-	 iRAMSgPqqoeWOA828QZPl2BJTOakbv9BNOLuBY+7lctcQO4OvKKLgN/Y3Dy/EE7Hhb
-	 6DVYSomzWwjcxWpx7fuogO982TEh/yiLP1w4EnTxbhmICXh+/6v+/Ws3gSujuEe/FD
-	 0UZs3AoRZR2yLjAhz72AAXTJ4Op5BstEdiYsejU2wdxkUwcwhoyaxvVV/qMJY2EL55
-	 cJsfqsbYlRSiOgHNgVCOps1NadpYFqrrUlFxBRusyeMpXJc/teq+V0U/1Ucy+83XZT
-	 eVvt4nyxX6CRA==
-Date: Sat, 7 Sep 2024 17:51:23 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Abhash Jha <abhashkumarjha123@gmail.com>
-Cc: linux-iio@vger.kernel.org, songqiang1304521@gmail.com, lars@metafoo.de,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] iio: proximity: vl53l0x-i2c: Added continuous
- mode support
-Message-ID: <20240907175123.0be3a531@jic23-huawei>
-In-Reply-To: <20240903035636.9559-3-abhashkumarjha123@gmail.com>
-References: <20240903035636.9559-1-abhashkumarjha123@gmail.com>
-	<20240903035636.9559-3-abhashkumarjha123@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725728163; c=relaxed/simple;
+	bh=x8ex8U0+4Uls5APqW8e9vtoDHeP3MUGcBiEZJ+bYhhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKzUii02qrJAfTGTrqfTlNyqvdIjM+sgHGiZEYvlvpqyrXgG8mUvUQJhWMpRdyMCVENJTyYArAmZYmPISC1iZdT63PoqWZJXUdbctB+l8keBdU0jaQmVInKO4WA7+6dw20EQLdLwvPS1sIV9rSa/CgJgTAFbsCGs25TAhMO7/x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hwY65qwM; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725728161; x=1757264161;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=x8ex8U0+4Uls5APqW8e9vtoDHeP3MUGcBiEZJ+bYhhI=;
+  b=hwY65qwM2PymvH2X418YagnGHqtl7LR/RUi2cwkP+HQoKIntV5AqZ77C
+   MxBb8ICnOy5a9FQ1EzKQN4D0henTbWa0LaA+ZmKB09YyAOT+22Djb/iu+
+   Ee6Ba6g0ZEfEr/1EJCnClgEMQ7MzCH4GVFTtADsZ4gwnpOuTAfkbz1e89
+   zrcVexuOzP926Ladxgy7Oj6bmSth1BBJ0meNZln9SPh4q9wr2IfkdbnuJ
+   ARvH8GXyCuU1nVSpb6YzqrXKqxXIm+LtY7CrCorKfcuMw+pZjMhPVT/6F
+   2JLEHkS35jDHw0AV+2KpW8SYsuxGiiTFmGOF7pVg89lN+9beSdlkqHhKa
+   w==;
+X-CSE-ConnectionGUID: vKrHaz2ySHeg0/4yHz3gcA==
+X-CSE-MsgGUID: H9h0XN2ZQ+mcdH3MW7yjWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="28209677"
+X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
+   d="scan'208";a="28209677"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 09:56:00 -0700
+X-CSE-ConnectionGUID: IOH8kLR+SYSJxCFoVqpOTQ==
+X-CSE-MsgGUID: iWIgpdyOTL2BgCNJ5v2Mug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
+   d="scan'208";a="66465071"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 07 Sep 2024 09:55:57 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1smyj5-000Ck7-2C;
+	Sat, 07 Sep 2024 16:55:55 +0000
+Date: Sun, 8 Sep 2024 00:55:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Judith Mendez <jm@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mmc: sdhci_am654: Add
+ sdhci_am654_start_signal_voltage_switch
+Message-ID: <202409080031.zgsuKKXB-lkp@intel.com>
+References: <20240906175032.1580281-1-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906175032.1580281-1-jm@ti.com>
 
-On Tue,  3 Sep 2024 09:26:36 +0530
-Abhash Jha <abhashkumarjha123@gmail.com> wrote:
+Hi Judith,
 
-> The continuous mode of the sensor is enabled in the buffer_postenable.
-> Replaced the original irq handler with a threaded irq handler to perform
-> i2c reads during continuous mode.
-> The continuous mode is disabled by disabling the buffer.
-> Added a trigger for this device to be used for continuous mode.
-> 
-> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+kernel test robot noticed the following build warnings:
 
-Just to check, did you try this with other triggers?
-Currently you have a check that the trigger is only used with the device
-but not the validate_trigger that says the device may only use this
-trigger.
+[auto build test WARNING on cf6444ba528f043398b112ac36e041a4d8685cb1]
 
-A few minor comments inline. This is looking good in general.
+url:    https://github.com/intel-lab-lkp/linux/commits/Judith-Mendez/mmc-sdhci_am654-Add-sdhci_am654_start_signal_voltage_switch/20240907-015144
+base:   cf6444ba528f043398b112ac36e041a4d8685cb1
+patch link:    https://lore.kernel.org/r/20240906175032.1580281-1-jm%40ti.com
+patch subject: [PATCH v1] mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240908/202409080031.zgsuKKXB-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240908/202409080031.zgsuKKXB-lkp@intel.com/reproduce)
 
-Jonathan
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409080031.zgsuKKXB-lkp@intel.com/
 
-> ---
->  drivers/iio/proximity/vl53l0x-i2c.c | 164 +++++++++++++++++++++++-----
->  1 file changed, 139 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
-> index 31d6aeb95..f91a9495a 100644
-> --- a/drivers/iio/proximity/vl53l0x-i2c.c
-> +++ b/drivers/iio/proximity/vl53l0x-i2c.c
-> @@ -22,6 +22,12 @@
->  #include <linux/module.h>
->  
->  #include <linux/iio/iio.h>
-> +#include <linux/iio/buffer.h>
-> +#include <linux/iio/trigger.h>
-> +#include <linux/iio/trigger_consumer.h>
-> +#include <linux/iio/triggered_buffer.h>
-> +
-> +#include <asm/unaligned.h>
->  
->  #define VL_REG_SYSRANGE_START				0x00
->  
-> @@ -49,14 +55,75 @@ struct vl53l0x_data {
->  	struct completion completion;
->  	struct regulator *vdd_supply;
->  	struct gpio_desc *reset_gpio;
-> +	struct iio_trigger *trig;
-> +
-> +	struct {
-> +		u16 chan;
-> +		s64 timestamp __aligned(8);
-> +	} scan;
->  };
->  
-> -static irqreturn_t vl53l0x_handle_irq(int irq, void *priv)
-> +static int vl53l0x_clear_irq(struct vl53l0x_data *data)
-> +{
-> +	struct device *dev = &data->client->dev;
-> +	int ret;
-> +
-> +	ret = i2c_smbus_write_byte_data(data->client,
-> +					VL_REG_SYSTEM_INTERRUPT_CLEAR, 1);
-> +	if (ret < 0)
-> +		dev_err(dev, "failed to clear error irq: %d\n", ret);
-It's unusual to carry on after a failed write. Add a comment on why that
-makes sense here.
-> +
-> +	ret = i2c_smbus_write_byte_data(data->client,
-> +					VL_REG_SYSTEM_INTERRUPT_CLEAR, 0);
-> +	if (ret < 0)
-> +		dev_err(dev, "failed to clear range irq: %d\n", ret);
-> +
-> +	ret = i2c_smbus_read_byte_data(data->client, VL_REG_RESULT_INT_STATUS);
-> +	if (ret < 0 || ret & 0x07) {
-> +		dev_err(dev, "failed to clear irq: %d\n", ret);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static irqreturn_t vl53l0x_trigger_handler(int irq, void *priv)
-> +{
-> +	struct iio_poll_func *pf = priv;
-> +	struct iio_dev *indio_dev = pf->indio_dev;
-> +	struct vl53l0x_data *data = iio_priv(indio_dev);
-> +	u8 buffer[12];
-> +	int ret;
-> +
-> +	ret = i2c_smbus_read_i2c_block_data(data->client,
-> +					VL_REG_RESULT_RANGE_STATUS,
-> +					sizeof(buffer), buffer);
-> +	if (ret < 0)
-> +		return ret;
-> +	else if (ret != 12)
-> +		return -EREMOTEIO;
-> +
-> +	data->scan.chan = get_unaligned_be16(&buffer[10]);
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->scan,
-> +					iio_get_time_ns(indio_dev));
-> +
-> +	iio_trigger_notify_done(indio_dev->trig);
-> +	ret = vl53l0x_clear_irq(data);
-> +	if (ret < 0)
-> +		return ret;
+All warnings (new ones prefixed by >>):
 
-you can't return normal error values from an interrupt handler.
-Print a message and return IRQ_HANDLED is probably the right thing to do.
-
-> +
-> +	return IRQ_HANDLED;
-> +}
+>> drivers/mmc/host/sdhci_am654.c:360:5: warning: no previous prototype for function 'sdhci_am654_start_signal_voltage_switch' [-Wmissing-prototypes]
+     360 | int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
+         |     ^
+   drivers/mmc/host/sdhci_am654.c:360:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+     360 | int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
+         | ^
+         | static 
+>> drivers/mmc/host/sdhci_am654.c:377:3: warning: variable 'ctrl' is uninitialized when used here [-Wuninitialized]
+     377 |                 ctrl &= ~SDHCI_CTRL_VDD_180;
+         |                 ^~~~
+   drivers/mmc/host/sdhci_am654.c:366:10: note: initialize the variable 'ctrl' to silence this warning
+     366 |         u16 ctrl;
+         |                 ^
+         |                  = 0
+   2 warnings generated.
 
 
+vim +/sdhci_am654_start_signal_voltage_switch +360 drivers/mmc/host/sdhci_am654.c
 
->  static int vl53l0x_read_proximity(struct vl53l0x_data *data,
->  				  const struct iio_chan_spec *chan,
->  				  int *val)
-> @@ -128,7 +176,9 @@ static int vl53l0x_read_proximity(struct vl53l0x_data *data,
->  		if (time_left == 0)
->  			return -ETIMEDOUT;
->  
-> -		vl53l0x_clear_irq(data);
-> +		ret = vl53l0x_clear_irq(data);
-> +		if (ret < 0)
-> +			return ret;
->  	} else {
->  		do {
->  			ret = i2c_smbus_read_byte_data(client,
-> @@ -163,7 +213,14 @@ static const struct iio_chan_spec vl53l0x_channels[] = {
->  		.type = IIO_DISTANCE,
->  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
->  				      BIT(IIO_CHAN_INFO_SCALE),
-> +		.scan_index = 0,
-> +		.scan_type = {
-> +			.sign = 'u',
-> +			.realbits = 12,
-> +			.storagebits = 16,
-> +		},
->  	},
-> +	IIO_CHAN_SOFT_TIMESTAMP(32),
-32
-That's a big channel index to set.  Technically you can do that as they
-are monotonic only, but more normal to have it right after the previous channel.
+   359	
+ > 360	int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
+   361						    struct mmc_ios *ios)
+   362	{
+   363		struct sdhci_host *host = mmc_priv(mmc);
+   364		struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+   365		struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+   366		u16 ctrl;
+   367		int ret;
+   368	
+   369		if (host->version < SDHCI_SPEC_300)
+   370			return 0;
+   371	
+   372		switch (ios->signal_voltage) {
+   373		case MMC_SIGNAL_VOLTAGE_330:
+   374			if (!(host->flags & SDHCI_SIGNALING_330))
+   375				return -EINVAL;
+   376	
+ > 377			ctrl &= ~SDHCI_CTRL_VDD_180;
+   378			sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+   379	
+   380			if (!IS_ERR(mmc->supply.vqmmc)) {
+   381				ret = mmc_regulator_set_vqmmc(mmc, ios);
+   382				if (ret < 0) {
+   383					pr_warn("%s: Switching to 3.3V signalling voltage failed\n",
+   384						mmc_hostname(mmc));
+   385					return -EIO;
+   386				}
+   387			}
+   388	
+   389			usleep_range(5000, 5500);
+   390	
+   391			ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+   392			if (!(ctrl & SDHCI_CTRL_VDD_180))
+   393				return 0;
+   394	
+   395			pr_warn("%s: 3.3V regulator output did not become stable\n",
+   396				mmc_hostname(mmc));
+   397	
+   398			return -EAGAIN;
+   399	
+   400		case MMC_SIGNAL_VOLTAGE_180:
+   401			if (!(host->flags & SDHCI_SIGNALING_180))
+   402				return -EINVAL;
+   403	
+   404			if (!IS_ERR(mmc->supply.vqmmc)) {
+   405				ret = mmc_regulator_set_vqmmc(mmc, ios);
+   406				if (ret < 0) {
+   407					pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
+   408						mmc_hostname(mmc));
+   409					return -EIO;
+   410				}
+   411			}
+   412	
+   413			if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_SET_V1P8_ENA) {
+   414				ctrl |= SDHCI_CTRL_VDD_180;
+   415				sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+   416	
+   417				ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+   418				if (ctrl & SDHCI_CTRL_VDD_180)
+   419					return 0;
+   420	
+   421				pr_warn("%s: 1.8V regulator output did not become stable\n",
+   422					mmc_hostname(mmc));
+   423	
+   424				return -EAGAIN;
+   425			}
+   426			return 0;
+   427	
+   428		default:
+   429			return 0;
+   430		}
+   431	}
+   432	
 
->  };
->  
->  static int vl53l0x_read_raw(struct iio_dev *indio_dev,
-> @@ -221,6 +278,41 @@ static int vl53l0x_power_on(struct vl53l0x_data *data)
->  	return 0;
->  }
->  
-> +static int vl53l0x_buffer_postenable(struct iio_dev *indio_dev)
-> +{
-> +	struct vl53l0x_data *data = iio_priv(indio_dev);
-> +
-> +	return i2c_smbus_write_byte_data(data->client, VL_REG_SYSRANGE_START, 0x02);
-> +}
-> +
-> +static int vl53l0x_buffer_postdisable(struct iio_dev *indio_dev)
-> +{
-> +	struct vl53l0x_data *data = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	ret = i2c_smbus_write_byte_data(data->client, VL_REG_SYSRANGE_START, 0x01);
-
-Can we name that 0x01 and the 0x02 above with names that give
-us a hint what they are doing?
-
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Let the ongoing reading finish */
-> +	reinit_completion(&data->completion);
-> +	wait_for_completion_timeout(&data->completion, HZ/10);
-
-Space around the / to comply with kernel style.
-
-> +	vl53l0x_clear_irq(data);
-> +	if (ret < 0)
-
-ret not set by anyone.
-
-If it's form vl53l0x_clear_irq() and that can't do positive returns then
-return vl53l0x_clear_irq(data);
-should work.
-
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +static const struct iio_trigger_ops vl53l0x_trigger_ops = {
-> +	.validate_device = iio_trigger_validate_own_device,
-> +};
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
