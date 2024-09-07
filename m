@@ -1,76 +1,69 @@
-Return-Path: <linux-kernel+bounces-319868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E2497033B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:56:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1CD497033D
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51231B22EA2
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:56:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55129B22FB1
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B3416132A;
-	Sat,  7 Sep 2024 16:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hwY65qwM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D96516132A;
+	Sat,  7 Sep 2024 16:56:16 +0000 (UTC)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2771E15CD58;
-	Sat,  7 Sep 2024 16:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5277915CD58;
+	Sat,  7 Sep 2024 16:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725728163; cv=none; b=rFbjV2XzzoSQBTRYkUJ6e8XZiMT2KW8Nh79qfAGwfB6+HLN/5EJCDfODtxl4l0k/37sTr3J6KTlb6K9uuB42H5/I1ejqGc/dI39IRZi2IBsOMjv7fjy6NK8Yb/ZY20iz1s6sL3Az6+rFdxOZwgldEHsHeCuC08BFByVJGxIJ8DA=
+	t=1725728175; cv=none; b=hsQfDXYqBssFuIkDe4pV9dCvCUZsz37S9VOw6JArLFUXTG7w4OlyqpQFQ+X6pGd5DZ457yyCE/DUWfP3/jaRlcalSitqEC1FuUMWp1RohwqUg6PZDpE7m6H5syZB6E6oJQQKxac2hR5SyZa3J2uwsV/8XkAgx2r1GeSLHx1OgLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725728163; c=relaxed/simple;
-	bh=x8ex8U0+4Uls5APqW8e9vtoDHeP3MUGcBiEZJ+bYhhI=;
+	s=arc-20240116; t=1725728175; c=relaxed/simple;
+	bh=0LZrFiFUhWq9Xr12CP/gaLrLEt3Cuu8ybH/pfwjcGVo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKzUii02qrJAfTGTrqfTlNyqvdIjM+sgHGiZEYvlvpqyrXgG8mUvUQJhWMpRdyMCVENJTyYArAmZYmPISC1iZdT63PoqWZJXUdbctB+l8keBdU0jaQmVInKO4WA7+6dw20EQLdLwvPS1sIV9rSa/CgJgTAFbsCGs25TAhMO7/x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hwY65qwM; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725728161; x=1757264161;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=x8ex8U0+4Uls5APqW8e9vtoDHeP3MUGcBiEZJ+bYhhI=;
-  b=hwY65qwM2PymvH2X418YagnGHqtl7LR/RUi2cwkP+HQoKIntV5AqZ77C
-   MxBb8ICnOy5a9FQ1EzKQN4D0henTbWa0LaA+ZmKB09YyAOT+22Djb/iu+
-   Ee6Ba6g0ZEfEr/1EJCnClgEMQ7MzCH4GVFTtADsZ4gwnpOuTAfkbz1e89
-   zrcVexuOzP926Ladxgy7Oj6bmSth1BBJ0meNZln9SPh4q9wr2IfkdbnuJ
-   ARvH8GXyCuU1nVSpb6YzqrXKqxXIm+LtY7CrCorKfcuMw+pZjMhPVT/6F
-   2JLEHkS35jDHw0AV+2KpW8SYsuxGiiTFmGOF7pVg89lN+9beSdlkqHhKa
-   w==;
-X-CSE-ConnectionGUID: vKrHaz2ySHeg0/4yHz3gcA==
-X-CSE-MsgGUID: H9h0XN2ZQ+mcdH3MW7yjWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="28209677"
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="28209677"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 09:56:00 -0700
-X-CSE-ConnectionGUID: IOH8kLR+SYSJxCFoVqpOTQ==
-X-CSE-MsgGUID: iWIgpdyOTL2BgCNJ5v2Mug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="66465071"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 07 Sep 2024 09:55:57 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1smyj5-000Ck7-2C;
-	Sat, 07 Sep 2024 16:55:55 +0000
-Date: Sun, 8 Sep 2024 00:55:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Judith Mendez <jm@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] mmc: sdhci_am654: Add
- sdhci_am654_start_signal_voltage_switch
-Message-ID: <202409080031.zgsuKKXB-lkp@intel.com>
-References: <20240906175032.1580281-1-jm@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DAOPTOA7vlfRjWCXhkDxhNxNcn0Ul9Hxa3NbYhy5ESPKYW26oxSnB4CUHwhCahKuRE/YeeZykM9Dst/NLCAOp+loiCulkgr7Innk/xeZbI2B9eizQQRqxTwzZ+WWHId9N+xjW1xCs1Ekcdsg0eSJbZ5nwsyJ5F62/x8MKIkY+uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so2179658b3a.1;
+        Sat, 07 Sep 2024 09:56:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725728173; x=1726332973;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7OEjKisGyZpikcENOe0EKCmxLKuxWqz4sfdKvQEqRUA=;
+        b=fkUO136lmxCopJfshmSFIDCbbMpdA9+QC1k9vxlRKq0+ZOZc6p/qB+JvPKgAxxvShn
+         U1HRZheFvTh72H5+ODhkEQbyyd9IFENHwAqM43qJXVI0gJkWLLN34nprHpSQ31kYTBiP
+         FZy0a70J5nzXDE1fDSZFw7/w7imbG/nrepuDm3eeaaAqMX+orRNqjnUR66fyhT4JvR2g
+         j4OjCCUSCnUMgV9pVgBIcISsrwjA58zGGjL56DkzJGuy8qpGO6nU0LMYc/gDp+JoYCMq
+         lPU8JeYu1Po1GciqR+29zFL3cbUmSdx+SZy3HC+k32cHdX3RXeWMPnwQX7QBORkJH//i
+         nLMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGxm9Jp0fr0CX3Twya4h0ZjlRIamTiXzqynbbmuAdmcL4oYh6ay3U8yx07j1oivVcQctI2SCKk2sVX@vger.kernel.org, AJvYcCXbZ4JLVcvxdId2ozcMs4CiLsFQ1twiUd90szFwMfd/IqMK8Wfi8aD8/bOa90I0Xygo84DJq/98S7XWD3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwruVj6InkEiaTFusBmtahIYaj/GkpOHdiAYbuW6MJ7apkMUuCi
+	OzWEgYV4wgKGXBUpOnbmhY12CSMzWWkqU1kWa3dENRWFODr1j5Ek
+X-Google-Smtp-Source: AGHT+IFhnEfqx9zlWtZDUEoXKA5kpIizfxwG/lM8NfgGOt5YnZlGPstyfe4XCWn8XKWtfokoFsEJlQ==
+X-Received: by 2002:a05:6a21:9201:b0:1cf:2d2f:3749 with SMTP id adf61e73a8af0-1cf2d2f3849mr2738865637.32.1725728173380;
+        Sat, 07 Sep 2024 09:56:13 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d823736c78sm1029199a12.3.2024.09.07.09.56.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Sep 2024 09:56:12 -0700 (PDT)
+Date: Sun, 8 Sep 2024 01:56:11 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Riyan Dhiman <riyandhiman14@gmail.com>
+Cc: jim2101024@gmail.com, nsaenz@kernel.org, florian.fainelli@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com, bhelgaas@google.com,
+	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH next V2] PCI: brmstb: Fix type mismatch for
+ num_inbound_wins in brcm_pcie_get_inbound_wins
+Message-ID: <20240907165611.GA238693@rocinante>
+References: <20240907160926.39556-1-riyandhiman14@gmail.com>
+ <20240907164613.GA183432@rocinante>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,124 +72,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240906175032.1580281-1-jm@ti.com>
+In-Reply-To: <20240907164613.GA183432@rocinante>
 
-Hi Judith,
+Hello,
 
-kernel test robot noticed the following build warnings:
+> > Change num_inbound_wins from u8 to int to correctly handle
+> > potential negative error codes returned by brcm_pcie_get_inbound_wins().
+> > The u8 type was inappropriate for capturing the function's return value,
+> > which can include error codes.
+> 
+> I squashed with the current code on the controller/brcmstb branch, see:
+> 
+>   - https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/brcmstb&id=ae6476c6de187bea90c729e3e0188143300fa671
+> 
+> And credited you via the Co-developed-by tag such that you get credit for
+> fixing this issue.  Thank you, by the way.
+> 
+> There is no Fixes: tag as this code is not yet merged into the mainline.
 
-[auto build test WARNING on cf6444ba528f043398b112ac36e041a4d8685cb1]
+For the record, I would prefer if we went with Florian's first
+recommendation per the following message:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Judith-Mendez/mmc-sdhci_am654-Add-sdhci_am654_start_signal_voltage_switch/20240907-015144
-base:   cf6444ba528f043398b112ac36e041a4d8685cb1
-patch link:    https://lore.kernel.org/r/20240906175032.1580281-1-jm%40ti.com
-patch subject: [PATCH v1] mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240908/202409080031.zgsuKKXB-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240908/202409080031.zgsuKKXB-lkp@intel.com/reproduce)
+  - https://lore.kernel.org/linux-pci/159c5fcf-709d-42ba-8d45-a70b109fe261@broadcom.com
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409080031.zgsuKKXB-lkp@intel.com/
+To clearly separate errors returned from the value being updated.
 
-All warnings (new ones prefixed by >>):
+Albeit, this is fine too, especially as Jim expressed no opinion either
+way regarding his preference.
 
->> drivers/mmc/host/sdhci_am654.c:360:5: warning: no previous prototype for function 'sdhci_am654_start_signal_voltage_switch' [-Wmissing-prototypes]
-     360 | int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
-         |     ^
-   drivers/mmc/host/sdhci_am654.c:360:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     360 | int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
-         | ^
-         | static 
->> drivers/mmc/host/sdhci_am654.c:377:3: warning: variable 'ctrl' is uninitialized when used here [-Wuninitialized]
-     377 |                 ctrl &= ~SDHCI_CTRL_VDD_180;
-         |                 ^~~~
-   drivers/mmc/host/sdhci_am654.c:366:10: note: initialize the variable 'ctrl' to silence this warning
-     366 |         u16 ctrl;
-         |                 ^
-         |                  = 0
-   2 warnings generated.
-
-
-vim +/sdhci_am654_start_signal_voltage_switch +360 drivers/mmc/host/sdhci_am654.c
-
-   359	
- > 360	int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
-   361						    struct mmc_ios *ios)
-   362	{
-   363		struct sdhci_host *host = mmc_priv(mmc);
-   364		struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-   365		struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
-   366		u16 ctrl;
-   367		int ret;
-   368	
-   369		if (host->version < SDHCI_SPEC_300)
-   370			return 0;
-   371	
-   372		switch (ios->signal_voltage) {
-   373		case MMC_SIGNAL_VOLTAGE_330:
-   374			if (!(host->flags & SDHCI_SIGNALING_330))
-   375				return -EINVAL;
-   376	
- > 377			ctrl &= ~SDHCI_CTRL_VDD_180;
-   378			sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
-   379	
-   380			if (!IS_ERR(mmc->supply.vqmmc)) {
-   381				ret = mmc_regulator_set_vqmmc(mmc, ios);
-   382				if (ret < 0) {
-   383					pr_warn("%s: Switching to 3.3V signalling voltage failed\n",
-   384						mmc_hostname(mmc));
-   385					return -EIO;
-   386				}
-   387			}
-   388	
-   389			usleep_range(5000, 5500);
-   390	
-   391			ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-   392			if (!(ctrl & SDHCI_CTRL_VDD_180))
-   393				return 0;
-   394	
-   395			pr_warn("%s: 3.3V regulator output did not become stable\n",
-   396				mmc_hostname(mmc));
-   397	
-   398			return -EAGAIN;
-   399	
-   400		case MMC_SIGNAL_VOLTAGE_180:
-   401			if (!(host->flags & SDHCI_SIGNALING_180))
-   402				return -EINVAL;
-   403	
-   404			if (!IS_ERR(mmc->supply.vqmmc)) {
-   405				ret = mmc_regulator_set_vqmmc(mmc, ios);
-   406				if (ret < 0) {
-   407					pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
-   408						mmc_hostname(mmc));
-   409					return -EIO;
-   410				}
-   411			}
-   412	
-   413			if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_SET_V1P8_ENA) {
-   414				ctrl |= SDHCI_CTRL_VDD_180;
-   415				sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
-   416	
-   417				ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-   418				if (ctrl & SDHCI_CTRL_VDD_180)
-   419					return 0;
-   420	
-   421				pr_warn("%s: 1.8V regulator output did not become stable\n",
-   422					mmc_hostname(mmc));
-   423	
-   424				return -EAGAIN;
-   425			}
-   426			return 0;
-   427	
-   428		default:
-   429			return 0;
-   430		}
-   431	}
-   432	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	Krzysztof
 
