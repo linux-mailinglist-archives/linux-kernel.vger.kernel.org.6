@@ -1,119 +1,139 @@
-Return-Path: <linux-kernel+bounces-319955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9989A970439
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 23:51:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF3597045C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 00:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 586C328308D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 21:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 578691F22160
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 22:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF8C1684B0;
-	Sat,  7 Sep 2024 21:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A9D166F2B;
+	Sat,  7 Sep 2024 22:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dcGsGKpx"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ASUqeBMf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8521547E8;
-	Sat,  7 Sep 2024 21:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1180826AE0;
+	Sat,  7 Sep 2024 22:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725745902; cv=none; b=JazgbxHuTqnOJEid3xHKXWfpHNsrjrNzWSIhs3qs0vZzfl53wH4mfc/2NVtg8V/iThhtVZJ41gWNWES0I1GVQLEzkdrzxdMKppA+/Jd66ek9uNI7t5Lvvickd517Ck7/RGMVQDFIVIiaMl+Z5vbgcnfdLFpy4kbfmFucUADmz1Q=
+	t=1725747634; cv=none; b=J89N3r8tDrlW6TQhwnNNSRhTBu0JjtrewYat9hDCZHl/HA+5lqGtkorMrP+IWKG/GIpp/YfAHEKh7Yu4cA1Qy/0KHvOuKLjAhxyvq+KqsqdpWDt9+o90+SPel+E2uBpnjngb5WlAf9grNyccpQGuP+dcv1UVkyTatkgajHZ27JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725745902; c=relaxed/simple;
-	bh=/jTtqmIgtCI8j73E8E4tG0WB17dOg2PuIMXjYTdAPzk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KMdHR8WVNbEIXfCBcZ9d17UyazvnfugEyG1oHTm4+EmeP/yrStpWxClt9NPbSHWa+JGlvhaEn1hDRTLRNzlMBLy+5eWApHetTSnitmuPCLvIQegXzYlRYxu8s+VF6T9R/hOK49Lyv6ZaEGU8F4yJic7NzIXmOdayh85Iy55WUak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dcGsGKpx; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e03f0564c6so139354b6e.2;
-        Sat, 07 Sep 2024 14:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725745900; x=1726350700; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SFNpcPMN6Rr/ohJnFWcKwtAD5AOsKybuMMXx3ZfZ94s=;
-        b=dcGsGKpxpGnsBpCHVm44GH8QOgvDZ3qIkH6yk6JYIFenc90S2I+DPjFk9sBJ4STJFD
-         hZXsE1/5lX+E4BJpC4dSnJrKySZ4TwDaVR84PDUl6nq4pEy7t2Imyrd2wpTCoz/l/dq9
-         1APcrUxnIkpqhV3XHI60puXNaXB8MsZyFj2NmrccYOkYqENplV6rIpczizS/vbLoW6xf
-         PGGfIcHTVHGu7Rp3KeJd8afz1STiaC6qPUnNlgyAUF+eqQwMqbAoNEFtry2PSdy5EjZN
-         5oKQqrr3buknOXpH02QbcHYSpNBEGg8p2+454QSfmgR6f37QVfFN7DtUkcNd/sH00dhp
-         +3oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725745900; x=1726350700;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SFNpcPMN6Rr/ohJnFWcKwtAD5AOsKybuMMXx3ZfZ94s=;
-        b=Tv5wcZRbkZvJ05Ps9RPn4Rc4wdfHLkh4RirCYjr3Hm8cZRixMmc0/P9E1xXEbNfuNn
-         NwrcK18QRmUv0rMjLu1E4wZ+CATmMXHlCB6v7YDxgj6Mw0AwjlpLmZS6qMNqwtTZ7hXy
-         y6gcjf7AzvbJGmmak5TEx2OQngcIYgxbh6Dp8x+VPZtoJnOUb+Q6KrKh9ulxjXznvK6P
-         VbEzRajHlRwh9ick+v2QdxIQBWQvdxnj7geBI7bTwYNa3KnNnMNczxWOx8CDhFV3Wc7t
-         MM3Q/+SgyoiLnMrLMGGd6OJmLxr2kMjqz7DyDgebn3r94HSRMCzzsvS6rcwB+yqZKsHt
-         q2GA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkWGc3wZnJFmFyJ84l3n2Y9Qna1Vcsy81Zk5auo+QoHppfSxqKaz+n3fU5nkN9psmKFo9GvlLG@vger.kernel.org, AJvYcCXA7Ar/UNsVQ47hXI34XVWBd0NLQh4vyladFW4bdYla5XjvjBSoEbPc1XfkOHZq2dy9UosMoES+ZCKWhRPq@vger.kernel.org, AJvYcCXFibyU/8kSQPI9FCggEfzHzJeZR9000mFnPRLocv1J7vvVhE7d+m+kdC7t2ykcx+4Cb76LevUwJrjKYOUIOQ7L@vger.kernel.org
-X-Gm-Message-State: AOJu0YyshAh2+B2K/QADRn2yEfEkehOidYz7mo6d/6xkurczKWHsso/P
-	OAy8NGDkt+dmCSOmXgm3McfbhGHRAn2Yy0GM9IESHpMBpiD2gd4O
-X-Google-Smtp-Source: AGHT+IF/VnbIjg7W8gxS+2I8gfDPYIT4yngOvvLIAxfRYUpUx556W3qejE6hNnrZ3iH2grG7g49j1Q==
-X-Received: by 2002:a05:6808:ec7:b0:3e0:1299:4dc with SMTP id 5614622812f47-3e029cffd44mr7102574b6e.25.1725745900546;
-        Sat, 07 Sep 2024 14:51:40 -0700 (PDT)
-Received: from localhost.localdomain ([49.37.215.122])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-718e58c6a8asm1274724b3a.80.2024.09.07.14.51.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 14:51:40 -0700 (PDT)
-From: Mohammed Anees <pvmohammedanees2003@gmail.com>
-To: hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev,
-	tj@kernel.org,
-	lizefan.x@bytedance.com,
-	mkoutny@suse.com,
-	shuah@kernel.org
-Cc: Mohammed Anees <pvmohammedanees2003@gmail.com>,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] kselftest/cgroup: Add missing newline in test_zswap.c
-Date: Sat,  7 Sep 2024 17:50:48 -0400
-Message-ID: <20240907215051.26029-1-pvmohammedanees2003@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725747634; c=relaxed/simple;
+	bh=18QHyOowCoerOI8GyYR6ejC+zvs3qPUSNSXla/8mTQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p8y1Fkw/fCO2iukpN2s7GPL5w+0NC201ToZEKEeookgrPFngzFw52EfRGq6a0Kk3OO3KGEXDrKdj3pO4uqd67qRIkD4CY2jOpN1qSYRGyeMtcEHAdnPK5yAeTLzCD4weEGjfpdwTYvvWfniRqbFhZjYDVTcFoGVUO+HUQ4gSkKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ASUqeBMf; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725747633; x=1757283633;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=18QHyOowCoerOI8GyYR6ejC+zvs3qPUSNSXla/8mTQQ=;
+  b=ASUqeBMfqSil6jOyEL/B2gMoJPy5FtrlBZU/b0ic47gJzm/GRuEgF3zj
+   yO6K7H5DZTw0e+TrfLIwN2QtqocIC2j7DQhQ33+3IjXMXHC9KC3Egqzge
+   Y8nBG2Cfhs2oDQJuem/vjVwGM/tOGT3nb6i6MPrhjfcnjz4RI51YsLUDD
+   fqSPfCAEZXx16ZZmZ+BAosgbnkpK6OLXPhc+eHf62bLIb8UyeBkcm2IGG
+   q5SeUUt3Ba8kzl1MT2Dd3OdQhrHqOJqUYlWENsSRAEg0IzS3v4iVJj48Y
+   ZoUA6uoqVEIcJQJ0P+8je4N61JU10gq7bXxIRsI97vXnLk35tWk+p0n48
+   w==;
+X-CSE-ConnectionGUID: AkvW5oGXSKK03FfX0ZfwAw==
+X-CSE-MsgGUID: HoHe/owVQHqYKuPN7m5l1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="27398002"
+X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
+   d="scan'208";a="27398002"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 15:20:32 -0700
+X-CSE-ConnectionGUID: 0o2KY8N/R/OI7fU2DO3w6Q==
+X-CSE-MsgGUID: gFO3pKwNQD26MyxnmRlHxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
+   d="scan'208";a="103750126"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 07 Sep 2024 15:20:29 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sn3n8-000D3Q-2V;
+	Sat, 07 Sep 2024 22:20:26 +0000
+Date: Sun, 8 Sep 2024 06:19:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chunhui Li <chunhui.li@mediatek.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com,
+	Chunhui Li <chunhui.li@mediatek.com>,
+	Petr Pavlu <petr.pavlu@suse.com>, kernel test robot <lkp@intel.com>,
+	Xion Wang <xion.wang@mediatek.com>
+Subject: Re: [PATCH v3 1/1] module: abort module loading when sysfs setup
+ suffer errors
+Message-ID: <202409080534.y2m1URF1-lkp@intel.com>
+References: <20240906115748.5367-2-chunhui.li@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906115748.5367-2-chunhui.li@mediatek.com>
 
-Thank you for the review, I have added the changelog as requested.
+Hi Chunhui,
 
-Changelog:
-- Added missing newline to the `ksft_print_msg` in `test_zswap_writeback` function.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
----
- tools/testing/selftests/cgroup/test_zswap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[auto build test WARNING on mcgrof/modules-next]
+[also build test WARNING on linus/master v6.11-rc6 next-20240906]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/tools/testing/selftests/cgroup/test_zswap.c b/tools/testing/selftests/cgroup/test_zswap.c
-index 190096017..7c849d836 100644
---- a/tools/testing/selftests/cgroup/test_zswap.c
-+++ b/tools/testing/selftests/cgroup/test_zswap.c
-@@ -351,7 +351,7 @@ static int test_zswap_writeback(const char *root, bool wb)
- 		goto out;
- 
- 	if (wb != !!zswpwb_after) {
--		ksft_print_msg("zswpwb_after is %ld while wb is %s",
-+		ksft_print_msg("zswpwb_after is %ld while wb is %s\n",
- 				zswpwb_after, wb ? "enabled" : "disabled");
- 		goto out;
- 	}
+url:    https://github.com/intel-lab-lkp/linux/commits/Chunhui-Li/module-abort-module-loading-when-sysfs-setup-suffer-errors/20240907-000002
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git modules-next
+patch link:    https://lore.kernel.org/r/20240906115748.5367-2-chunhui.li%40mediatek.com
+patch subject: [PATCH v3 1/1] module: abort module loading when sysfs setup suffer errors
+config: powerpc-asp8347_defconfig (https://download.01.org/0day-ci/archive/20240908/202409080534.y2m1URF1-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240908/202409080534.y2m1URF1-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409080534.y2m1URF1-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> kernel/module/sysfs.c:232:86: warning: non-void function does not return a value [-Wreturn-type]
+     232 | static inline int add_sect_attrs(struct module *mod, const struct load_info *info) { }
+         |                                                                                      ^
+   kernel/module/sysfs.c:234:87: warning: non-void function does not return a value [-Wreturn-type]
+     234 | static inline int add_notes_attrs(struct module *mod, const struct load_info *info) { }
+         |                                                                                       ^
+   2 warnings generated.
+
+
+vim +232 kernel/module/sysfs.c
+
+   230	
+   231	#else /* !CONFIG_KALLSYMS */
+ > 232	static inline int add_sect_attrs(struct module *mod, const struct load_info *info) { }
+   233	static inline void remove_sect_attrs(struct module *mod) { }
+   234	static inline int add_notes_attrs(struct module *mod, const struct load_info *info) { }
+   235	static inline void remove_notes_attrs(struct module *mod) { }
+   236	#endif /* CONFIG_KALLSYMS */
+   237	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
