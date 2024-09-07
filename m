@@ -1,367 +1,91 @@
-Return-Path: <linux-kernel+bounces-319609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF5D96FF41
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 04:27:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12EE96FF45
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 04:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3953FB2437D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 02:27:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64E4B1F23593
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 02:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B731AAC4;
-	Sat,  7 Sep 2024 02:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664631798F;
+	Sat,  7 Sep 2024 02:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NKxK/tmO"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fqO02YY5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E15D29E
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 02:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635CC134B1;
+	Sat,  7 Sep 2024 02:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725676021; cv=none; b=Fv14ZB0QcEG1+olF9A/Wu1ZhmL7gezhOYw8jUQ/GhidgVaS5cVDGdke7eO2TFcqvl1tKBuaIyn8860k7+mP1VCkex6cCGpDipZXDbxLAZvK39L/EKqPP+RMD8fkOZg/LWcLkNKURB/l08G+tP1UafYAdT32JbgJ2LjmK7OfNxoc=
+	t=1725677309; cv=none; b=VUNRq/HAqQZPRdkpB+gdQV0rZaeevehMShlGGANXU4WoXCKA6CFYewjMyt4AFwXS4YQTtwrFVLIm+SHacTSItI9GN6hbjwhiZ6ccVPFGpAuzQATJ3xr9Af3JttJmkmGv4dlYRwcfuMQHCmTB5AEKA9Z2KBKasBCEVgSMQsTKhRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725676021; c=relaxed/simple;
-	bh=Zu57J3ORUFFDl6UImfWt90pCcKI9cEed9srV8fr4rZo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hgg6q0mfxr6S5BVR98aLy4KbKfX1RQFqUpczvEjJnMAXSBXQ8Sse/THgrmVUt2jZLRBewLbTbdlz2hFRo5RvEto+aHQfGJgXAQoBbpmPuivZXrAFsVnZvRzjNzll/+sm55sgke1ihmZO28Ssv7Fd8rjl7UQFvNOOxAayk8f5UZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NKxK/tmO; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e1d0e74f484so3186977276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 19:26:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725676018; x=1726280818; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kBeddYgbDmYn5319rd5Q0c4oe13WBhLqIiKeKnDAi7E=;
-        b=NKxK/tmO36jvkjGeAV4SCSwiWUZgJkkU+Fb6qibIXcGjkSsOElLmAOpXPM9GZL2RGD
-         juX1ewBUvU3QMR8S0Dt6OnXAiTZI70Chnw1U5Q9McjDRlr1nZE9d8XdLRIdlrzLCjR2l
-         Giezdmo6gzvLL+vka+A/QV8Vc1Q2qgafPFznE4hzj6OCm18StqbnAdZc6Cm7Coxeho1o
-         lacJs2axXi+E9C9S1ZNCZOLX93T+ObPkHjMC326x4K2kGaiewIIVPbivBkFGV0r4levm
-         MRtzYcthik4iUT4jvza+xv8fBByvFdkodhALQNJEY1lVU2Luz6AL6OartSU9x3IkTKz0
-         We1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725676018; x=1726280818;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kBeddYgbDmYn5319rd5Q0c4oe13WBhLqIiKeKnDAi7E=;
-        b=iVJq2eoj0frXh9BQs5pLopkF+K0eXOhwgQ/OFfodBt7MWySOHxAw33lKrwjTF1rSsJ
-         nXA7F6lOFdFO6pVAxGKjs9PQLqxXEIZCtNaqL6weBPadAd+2gj2Wg9f3mlT7/hqT0wwG
-         tWtuyTvVWnzLmhiFaEPpoP3ucuzYFCcoztMTfHsZyo4qsq4E5BNnoCkQLnZoj6oUXrQC
-         fUzyS5Wpen2XREIa8oR23B5vGjoHzd0upruTF54JhAG8MC12NHJX7BDr2cJqxRoihtIw
-         e6pxfsbfDqXu9GF0tT/Vk/XfxBcR0ogRTjSwmQ9jNUTDdJpZ9UZkBNaYgM9ZEsx329dZ
-         sg4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXVzadLuH60pzbVwnwJEJA78q/T+/cBKqw2veer+9Cffe/s/zke8xbzmc7Lz3aUEDoKcPJEtbKQBByRCDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE899q9Z+mGf3wJfwWLvqWRyASDXuBX8kIV+DTFawEKiomZCCJ
-	0jGsAcfN2/4ic1boQT4HU4MaFv4tzhSqHUDvGJF3VccbGnUs8yYZu2cTwIcUrxR8gc9zrlPSWfv
-	KUz6X58g/QYNaMvPXXAoIIlt4568uHWcMkGkE
-X-Google-Smtp-Source: AGHT+IFr6erGGzLIowBv1MIlp4/drXvGHXusR5ak9HTYQTi51u3FknzGWur7d0TtuxQodMi0p2Ht/zIFPRbvZsf2ghA=
-X-Received: by 2002:a05:690c:2e06:b0:65f:cd49:48e0 with SMTP id
- 00721157ae682-6db452c39admr40487597b3.31.1725676017481; Fri, 06 Sep 2024
- 19:26:57 -0700 (PDT)
+	s=arc-20240116; t=1725677309; c=relaxed/simple;
+	bh=3tEnVSgl4KWu1DsgL0C8TGbUh8FjzR6eAkgRRbuiFhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e1Hsegbttny769I5nldjFJoHQXV6ozcNMsAm4UP43JgbKImUMQUoURywsz+WAnBv7fK5640vp6X96i5uX7gXjIdnPTzGMhiMqcaJ0a6+h9/zsbWb8zys3e9KI0Ri2JAbFXJkqrbFQeGmN0DjTxQ+zFyqmi1Chy8yEDXC1EDMxzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=fqO02YY5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78FEFC4CEC4;
+	Sat,  7 Sep 2024 02:48:27 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fqO02YY5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725677304;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3tEnVSgl4KWu1DsgL0C8TGbUh8FjzR6eAkgRRbuiFhw=;
+	b=fqO02YY5HU2dzIXH4LOY7waP1KOWEKEq+VK2fi3DFd0ALf2jlq4EUKGsxhcXb8luexzVoh
+	ln7+wBl1ecMkfj7zz+xVXxfFN25l7W2561YA50qHpmhc1r6x0u0AU+BLvbUUH7ezTwXtNP
+	geFkd0DFal/qrafG/iixh225s5PpreI=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b2310a09 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Sat, 7 Sep 2024 02:48:24 +0000 (UTC)
+Date: Sat, 7 Sep 2024 04:48:22 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: maobibo <maobibo@loongson.cn>, gaosong@loongson.cn,
+	jiaxun.yang@flygoat.com, qemu-devel@nongnu.org, thomas@t-8ch.de,
+	xry111@xry111.site, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Jinyang He <hejinyang@loongson.cn>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: Re: LoongArch without CONFIG_ACPI and CONFIG_EFI
+Message-ID: <Ztu-9qgiKS98c0hl@zx2c4.com>
+References: <ZtsX_tcEuOjktUl9@zx2c4.com>
+ <84a8ee9c-7781-c474-c394-d1498dc00050@loongson.cn>
+ <CAAhV-H5CbyemhjoYLXqW3pLPtp4Ne3wcOZXzv2k5=jJCpi3rfg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809194335.1726916-1-seanjc@google.com> <20240809194335.1726916-10-seanjc@google.com>
- <CADrL8HXcD--jn1iLeCJycCd3Btv4_rBPxz6NMnTREXfeh0vRZA@mail.gmail.com> <Ztuj7KapTJyBVCVR@google.com>
-In-Reply-To: <Ztuj7KapTJyBVCVR@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Fri, 6 Sep 2024 19:26:20 -0700
-Message-ID: <CADrL8HVaZk7m73FftxXYEXvAqjKa8vc4QG_1FAMXTYSfOE7jhQ@mail.gmail.com>
-Subject: Re: [PATCH 09/22] KVM: selftests: Verify KVM correctly handles mprotect(PROT_READ)
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Peter Xu <peterx@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H5CbyemhjoYLXqW3pLPtp4Ne3wcOZXzv2k5=jJCpi3rfg@mail.gmail.com>
 
-On Fri, Sep 6, 2024 at 5:53=E2=80=AFPM Sean Christopherson <seanjc@google.c=
-om> wrote:
->
-> On Fri, Sep 06, 2024, James Houghton wrote:
-> > On Fri, Aug 9, 2024 at 12:43=E2=80=AFPM Sean Christopherson <seanjc@goo=
-gle.com> wrote:
+On Sat, Sep 07, 2024 at 09:47:38AM +0800, Huacai Chen wrote:
+> On Sat, Sep 7, 2024 at 9:44 AM maobibo <maobibo@loongson.cn> wrote:
+> >
+> > Add huacai who is maintainer of Loongarch Linux kernel.
+> >
+> > On 2024/9/6 下午10:55, Jason A. Donenfeld wrote:
+> > > Hi,
 > > >
-> > > Add two phases to mmu_stress_test to verify that KVM correctly handle=
-s
-> > > guest memory that was writable, and then made read-only in the primar=
-y MMU,
-> > > and then made writable again.
+> > > It appears that as of QEMU 9.1, it's possible to boot LoongArch machines
+> > > that don't provide EFI or ACPI.
 > > >
-> > > Add bonus coverage for x86 to verify that all of guest memory was mar=
-ked
-> > > read-only.  Making forward progress (without making memory writable)
-> > > requires arch specific code to skip over the faulting instruction, bu=
-t the
-> > > test can at least verify each vCPU's starting page was made read-only=
-.
-> > >
-> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> >
-> > Writing off-list because I just have some smaller questions that I
-> > don't want to bother the list with.
->
-> Pulling everyone and the lists back in :-)
->
-> IMO, no question is too small for kvm@, and lkml@ is gigantic firehose th=
-at's 99%
-> archival and 1% list, at best.  Odds are very, very good that if you have=
- a
-> question, however trivial or small, then someone else has the exact same =
-question,
-> or _will_ have the question in the future.
->
-> I strongly prefer that all questions, review, feedback, etc. happen on li=
-st, even
-> if the questions/feedback may seem trivial or noisy.  The only exception =
-is if
-> information can't/shouldn't be made public, e.g. because of an embargo, N=
-DA,
-> security implications, etc.
+> > > Would you consider removing the `select ACPI` and `select EFI` from the
+> > > arch Kconfig, so that kernels built for this minimal QEMU environment
+> > > can be a bit leaner and quicker to build?
+> Very difficult, at least removing EFI is difficult. Even if booting to
+> a FDT environment, we still get information from EFI now.
 
-I'll keep this in mind, thanks!
-
-> > For the next version, feel free to add:
-> >
-> > Reviewed-by: James Houghton <jthoughton@google.com>
-> >
-> > All of the selftest patches look fine to me.
-> >
-> > > ---
-> > >  tools/testing/selftests/kvm/mmu_stress_test.c | 87 +++++++++++++++++=
-+-
-> > >  1 file changed, 84 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/tools/testing/selftests/kvm/mmu_stress_test.c b/tools/te=
-sting/selftests/kvm/mmu_stress_test.c
-> > > index 50c3a17418c4..98f9a4660269 100644
-> > > --- a/tools/testing/selftests/kvm/mmu_stress_test.c
-> > > +++ b/tools/testing/selftests/kvm/mmu_stress_test.c
-> > > @@ -16,6 +16,8 @@
-> > >  #include "guest_modes.h"
-> > >  #include "processor.h"
-> > >
-> > > +static bool mprotect_ro_done;
-> > > +
-> > >  static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_=
-t stride)
-> > >  {
-> > >         uint64_t gpa;
-> > > @@ -31,6 +33,33 @@ static void guest_code(uint64_t start_gpa, uint64_=
-t end_gpa, uint64_t stride)
-> > >                 *((volatile uint64_t *)gpa);
-> > >         GUEST_SYNC(2);
-> > >
-> > > +       /*
-> > > +        * Write to the region while mprotect(PROT_READ) is underway.=
-  Keep
-> > > +        * looping until the memory is guaranteed to be read-only, ot=
-herwise
-> > > +        * vCPUs may complete their writes and advance to the next st=
-age
-> > > +        * prematurely.
-> > > +        */
-> > > +       do {
-> > > +               for (gpa =3D start_gpa; gpa < end_gpa; gpa +=3D strid=
-e)
-> > > +#ifdef __x86_64__
-> > > +                       asm volatile(".byte 0xc6,0x40,0x0,0x0" :: "a"=
- (gpa) : "memory");
-> >
-> > Ok so this appears to be a `mov BYTE PTR [rax + 0x0], 0x0`, where %rax =
-=3D gpa. :)
-> >
-> > Does '0xc6,0x0,0x0' also work? It seems like that translates to `mov
-> > BYTE PTR [rax], 0x0`. (just curious, no need to change it)
->
-> LOL, yes, but as evidenced by the trailing comment, my intent was to gene=
-rate
-> "mov rax, [rax]", not "movb $0, [rax]".  I suspect I was too lazy to cons=
-ult the
-> SDM to recall the correct opcode and simply copied an instruction from so=
-me random
-> disassembly output without looking too closely at the output.
->
->         asm volatile(".byte 0xc6,0x40,0x0,0x0" :: "a" (gpa) : "memory"); =
-/* MOV RAX, [RAX] */
->
-> > And I take it you wrote it out like this (instead of using mnemonics)
-> > so that you could guarantee that IP + 4 would be the right way to skip
-> > forwards. Does it make sense to leave a comment about that?
->
-> Yes and yes.
->
-> > The translation from mnemonic --> bytes won't change...
->
-> Heh, this is x86, by no means is that guaranteed.  E.g. see the above, wh=
-ere the
-> same mnemonic can be represented multiple ways.
->
-> > so could you just write the proper assembly? (not a request,  just curi=
-ous)
->
-> In practice, probably.  But the rules for inline assembly are, at best, f=
-uzzy.
-> So long as the correct instruction is generated, the assembler has quite =
-a bit
-> of freedom.
->
-> E.g. similar to above, "mov %rax,(%rax)" can (should) be encoded as:
->
->   48 89 00
->
-> but can also be encoded as
->
->   48 89 40 00
->
-> Now, it's _extremely_ unlikely a compiler will actually generate the latt=
-er, but
-> it's perfectly legal to do so.  E.g. with gcc-13, this
->
->   mov %rax, 0x0(%rax)
->
-> generates
->
->   48 89 00
->
-> even though a more literal interpretation would be
->
->   48 89 40 00
-
-Oh... neat! I'm glad I asked about this.
-
->
-> So yeah, while the hand-coded opcode is gross and annoying, given that a =
-failure
-> due to the "wrong" instruction being generated would be painful and time =
-consuming
-> to debug, hand-coding is worth avoiding the risk and potential pain if th=
-e compiler
-> decides to be mean :-)
-
-I 100% agree with hand-writing the opcode given what you've said. :)
-
-> > A comment that 0x40 corresponds to %rax and that "a" also corresponds
-> > to %rax would have been helpful for me. :)
->
-> Eh, I get what you're saying, but giving a play-by-play of the encoding i=
-sn't
-> really all that reasonable because _so_ much information needs to be conv=
-eyed to
-> capture the entire picture, and some things are essentially table stakes =
-when it
-> comes to x86 kernel programming.
->
->
-> E.g. 0x40 doesn't simply mean "(%rax)", it's a full ModR/M that defines t=
-he
-> addressing mode, which in turn depends on the operating mode (64-bit).
->
-> And "a" isn't just %rax; it's specifically an input register constraint, =
-e.g. is
-> distinctly different than:
->
->   asm volatile(".byte 0x48,0x89,0x0" : "+a"(gpa) :: "memory"); /* mov %ra=
-x, (%rax) */
->
-> even though in this specific scenario they generate the same code.
->
-> And with the correct "48 89 00", understanding the full encoding requires=
- describing
-> REX prefixes, which are a mess unto themselves.
->
-> So, a trailing comment (with the correct mnemonic) is all I'm willing to =
-do, even
-> though I 100% agree that it puts a decent sized load on the reader.  Ther=
-e's just
-> _too_ much information to communicate to the reader, at least for x86.
-
-The trailing comment works for me! Thanks for all the detail -- I am
-learning so much.
-
->
-> > > +#else
-> > > +                       vcpu_arch_put_guest(*((volatile uint64_t *)gp=
-a), gpa);
-> > > +#endif
-> > > +       } while (!READ_ONCE(mprotect_ro_done));
-> > > +
-> > > +       /*
-> > > +        * Only x86 can explicitly sync, as other architectures will =
-be stuck
-> > > +        * on the write fault.
-> >
-> > It would also have been a little clearer if the comment also said how
-> > this is just because the test has been written to increment for the PC
-> > upon getting these write faults *for x86 only*. IDK something like
-> > "For x86, the test will adjust the PC for each write fault, allowing
-> > the above loop to complete. Other architectures will get stuck, so the
-> > #3 sync step is skipped."
->
-> Ya.  Untested, but how about this?
-
-LGTM! (I haven't tested it either.)
-
->
-> diff --git a/tools/testing/selftests/kvm/mmu_stress_test.c b/tools/testin=
-g/selftests/kvm/mmu_stress_test.c
-> index 2d66c2724336..29acb22ea387 100644
-> --- a/tools/testing/selftests/kvm/mmu_stress_test.c
-> +++ b/tools/testing/selftests/kvm/mmu_stress_test.c
-> @@ -38,11 +38,18 @@ static void guest_code(uint64_t start_gpa, uint64_t e=
-nd_gpa, uint64_t stride)
->          * looping until the memory is guaranteed to be read-only, otherw=
-ise
->          * vCPUs may complete their writes and advance to the next stage
->          * prematurely.
-> +        *
-> +        * For architectures that support skipping the faulting instructi=
-on,
-> +        * generate the store via inline assembly to ensure the exact len=
-gth
-> +        * of the instruction is known and stable (vcpu_arch_put_guest() =
-on
-> +        * fixed-length architectures should work, but the cost of parano=
-ia
-> +        * is low in this case).  For x86, hand-code the exact opcode so =
-that
-> +        * there is no room for variability in the generated instruction.
->          */
->         do {
->                 for (gpa =3D start_gpa; gpa < end_gpa; gpa +=3D stride)
->  #ifdef __x86_64__
-> -                       asm volatile(".byte 0xc6,0x40,0x0,0x0" :: "a" (gp=
-a) : "memory"); /* MOV RAX, [RAX] */
-> +                       asm volatile(".byte 0x48,0x89,0x00" :: "a"(gpa) :=
- "memory"); /* mov %rax, (%rax) */
-
-FWIW I much prefer the trailing comment you have ended up with vs. the
-one you had before. (To me, the older one _seems_ like it's Intel
-syntax, in which case the comment says it's a load..? The comment you
-have now is, to me, obviously indicating a store. Though... perhaps
-"movq"?)
-
-
->  #elif defined(__aarch64__)
->                         asm volatile("str %0, [%0]" :: "r" (gpa) : "memor=
-y");
->  #else
-> @@ -163,7 +170,7 @@ static void *vcpu_worker(void *data)
->                 TEST_ASSERT_EQ(errno, EFAULT);
->  #ifdef __x86_64__
->                 WRITE_ONCE(vcpu->run->kvm_dirty_regs, KVM_SYNC_X86_REGS);
-> -               vcpu->run->s.regs.regs.rip +=3D 4;
-> +               vcpu->run->s.regs.regs.rip +=3D 3;
->  #endif
->  #ifdef __aarch64__
->                 vcpu_set_reg(vcpu, ARM64_CORE_REG(regs.pc),
->
+Makes sense. !ACPI is the more interesting one for me, anyway, as that
+takes a while to build.
 
