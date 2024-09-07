@@ -1,129 +1,111 @@
-Return-Path: <linux-kernel+bounces-319877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2758970352
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:19:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 922F0970355
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DCED28382E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:19:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FC6F28378B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9055716132E;
-	Sat,  7 Sep 2024 17:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF811649CC;
+	Sat,  7 Sep 2024 17:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UM6OgsaI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fE+QVblp"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F051F15ECD7;
-	Sat,  7 Sep 2024 17:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E1C40BE5;
+	Sat,  7 Sep 2024 17:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725729544; cv=none; b=cO663FTowQGa+xHzoi60oxIB/+JsRFTK7RLLgTcHlY5NdEmwqE19lJOxLxNztHOO6b2Avd4d42Ne/lIa1VgQvej8+MfIvr5W6E8FyWOBuhbIurQ+Eb+A3GRDZdJKA9bScCPiP9ztcHTwcdKwTlQ0HGd+upUm9kG9h0O1olwxOEI=
+	t=1725729702; cv=none; b=QKZ9CUX11R9YzAoQS3Z7lnm5TUiBAQxhh70r586RfTiKL1W4g0XBDMK4e1R51ShwpJcgxZzYrnSgD+r55hIDLk7CKDybA26BMdmFujBeUN3SwRh/9P4dUubK/H5O9fGVD0/AuChVYmqM2+NIYlsBfcToyt/hTJFXerJxQO06FHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725729544; c=relaxed/simple;
-	bh=bvFB2XXvjdM+ZXXqgnzKkdPk8ExVd44b9X43rt827Iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZELPfI37h1Mcq28X1lp/zTyHblUfcbA12f8kB4u8TLl9mJlX9v6BSSgvoJjqiYZVhUbNfzTAjzGbhnbqYm9vTkgOf8MSM0LyfElF0ISE9SToUP92mhi1NdSIxgaBYijKHLMz78a1lKWSDaNm+vHRoa+xTCwQqnEHY+f2Ez3Vsgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UM6OgsaI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBEFCC4CEC2;
-	Sat,  7 Sep 2024 17:19:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725729543;
-	bh=bvFB2XXvjdM+ZXXqgnzKkdPk8ExVd44b9X43rt827Iw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UM6OgsaIFHTvvRjUTzslkDN4QdJ1NDpRD02DSXg8+6OF6YAJMO/vq96i/D3i4sVlF
-	 6wRE+3hHc9b1cHvJZgpgzG+E9UoYTbd3umd/zX52E3o+CoXwDXdtEwEDAiPjlerAB9
-	 G4yoVBA7n5t8IGpVyjZ+bpHgii9I9o3Nq9J2X13SmDn7tAenr5uDwbX9ztg9jQtANm
-	 CvD0F6C+uhQoqkEqS2ttfMLN7AWyXEJz3rq5qY3tW2s9uFRcTunuWKbWC2udQaCeLp
-	 CExbY/es/HjPpC1/91a8opoY2BiNTYOTOqz1NnpPRpNurLEapf9jjPYsRsQlQNcfcT
-	 XHlo84hs79jHg==
-Date: Sat, 7 Sep 2024 18:18:53 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v1 1/1] iio: imu: inv_mpu6050: Use
- upper_16_bits()/lower_16_bits() helpers
-Message-ID: <20240907181853.78367ac4@jic23-huawei>
-In-Reply-To: <FR3P281MB1757F1ABDB6FC9F2F02C21B4CE9D2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-References: <20240904184543.1219866-1-andy.shevchenko@gmail.com>
-	<FR3P281MB1757F1ABDB6FC9F2F02C21B4CE9D2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725729702; c=relaxed/simple;
+	bh=BH15G+LRkBf2raQI2Af5gfKoabGOmJToOKTHnDU9hu8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C0OP+2t1ifsCsUp8LFHA5JdSoQSwNwD2OzGt5O4ad+41UbUjKSze/t2icBG4ka/yccseUNHzOVrHIzvDFr5w/mqpPgaAa8b/ZNnv//g6a1bY7CDo1rQ2eYFE9S11W0T5WRcdso+7a9fEVJgwzACAvyrIFquxNh01Ns8VoLGErPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fE+QVblp; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2053f6b8201so28498225ad.2;
+        Sat, 07 Sep 2024 10:21:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725729701; x=1726334501; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tTWXzEyNPgr8Bi+ysv0iEfMTXJjCZNItKihJCs9lwDM=;
+        b=fE+QVblpR3UxAA8hj5wHS5IBu/W7sAdA3gmhB9bYMSztaAh2YrADISufIQLyF4r/08
+         jTdvjt6uLKIyHMbZlIY6XaqUsu1iv9eo3xcc8zuEDxIUYTu8qzTG5c25vjFuFWEzlJGG
+         cdonZbqhmENntUevOintczGo0HNjWygOEN8DU4eM9kQwQcxbew3IuYZcmOb7/rjwxnxy
+         iM/uKHNO8BQ9IoCFEy8t3gGu8C9s9iPFZt52q4Tu6hEnpAhB8NFYPolwozHBIqiU8dOA
+         wXhO4CJSoqt7jLhH6j9hWUbrMmiWrVO/hrXDfODikXwEtqjKw+pTGoHAmD4SNB6a2B/C
+         WMjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725729701; x=1726334501;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tTWXzEyNPgr8Bi+ysv0iEfMTXJjCZNItKihJCs9lwDM=;
+        b=tVWYCuBMDWEC6ce+TTc7RtnK95ec9/87sjAagJE2K218YQYJEXXKAgnfour6RpS7wd
+         mkCHl+LjtsxawzaV37Y8Jcth7A58U+Y00pLY9jaYWNoKHGbF4FwVPR79h6AgNrH+fFhw
+         TaB+IMEe+IvfTO3fRCNNYJhfcneubzz80GZf6Rf8o44tvVyvqFXF3C5sUq3xXd6pvP7j
+         TFdTfvwucrbmtCz2SnfwLRT2yPVR4QkckMcFDLWVnALlPjnIIOv8u0/HvmkjT5KtyZJs
+         amNf01goOPd1uPXhxgwhHIrJLZJVnvqc2BUFsi4KE2Yxt66R9F42qazF/8PTDYzCtMsr
+         IRcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJbQqNndvIJpQIVfftdCY6sNukr5gO2BkwxdMNL25y7x+YXSzt9uquoBa26FqOkn64O5C68bSFDjLinQxm@vger.kernel.org, AJvYcCWuHGnvsqv/AlTBWhdi9XkkGOAEMw5X0z2CimRd1plr4BjJ3SDBTLDgMkI4AK3W5q1mr9Tr+t29Zlya4cve@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj5xlk4pGPLDkjbeysJ5IvvcQoCsx3K4PYtxP9sCUWdtArre4P
+	KftLtniO6zJQnAl0glKhSj0kDPFnXzIEo6aOtHmQvElzUSM8UZrb
+X-Google-Smtp-Source: AGHT+IF9x8ky+ChW+xRQ8RXDYEvV+19bIfUhyrP0COKmFzZbVQhy6YP+xmncsAstlFBkkG2IVBk2qw==
+X-Received: by 2002:a17:902:f642:b0:202:3dcf:8c38 with SMTP id d9443c01a7336-206f05f62femr78813005ad.44.1725729700450;
+        Sat, 07 Sep 2024 10:21:40 -0700 (PDT)
+Received: from dell-xps.. ([2401:4900:51e3:cc18:d1b8:b902:8a52:a5f6])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d825ab14c7sm1058616a12.80.2024.09.07.10.21.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Sep 2024 10:21:40 -0700 (PDT)
+From: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: Ghanshyam Agrawal <ghanshyam1898@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com
+Subject: [PATCH] VFS: check i_nlink count before trying to unlink
+Date: Sat,  7 Sep 2024 22:51:10 +0530
+Message-Id: <20240907172111.127817-1-ghanshyam1898@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 5 Sep 2024 09:16:22 +0000
-Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com> wrote:
+Reported-by: syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=41b43444de86db4c5ed1
+Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+---
+ fs/namei.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> Hello,
->=20
-> looks good for me, nice reading improvement indeed.
->=20
-> Acked-by:=C2=A0Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-Applied.
-
->=20
-> Thanks for the patch,
-> JB
->=20
-> ________________________________________
-> From:=C2=A0Andy Shevchenko <andy.shevchenko@gmail.com>
-> Sent:=C2=A0Wednesday, September 4, 2024 20:45
-> To:=C2=A0Andy Shevchenko <andy.shevchenko@gmail.com>; linux-iio@vger.kern=
-el.org <linux-iio@vger.kernel.org>; linux-kernel@vger.kernel.org <linux-ker=
-nel@vger.kernel.org>
-> Cc:=C2=A0Jonathan Cameron <jic23@kernel.org>; Lars-Peter Clausen <lars@me=
-tafoo.de>
-> Subject:=C2=A0[PATCH v1 1/1] iio: imu: inv_mpu6050: Use upper_16_bits()/l=
-ower_16_bits() helpers
-> =C2=A0
-> This Message Is From an External Sender
-> This message came from outside your organization.
-> =C2=A0
-> Use upper_16_bits()/lower_16_bits() helpers instead of open-coding them.
-> This is easier to scan quickly compared to bitwise manipulation, and
-> it is pleasingly symmetric.
->=20
-> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> ---
->  drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c b/drivers/iio/imu=
-/inv_mpu6050/inv_mpu_acpi.c
-> index f7bce428d9eb..b15d8c94cc11 100644
-> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c
-> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c
-> @@ -10,6 +10,8 @@
->  #include <linux/i2c.h>
->  #include <linux/dmi.h>
->  #include <linux/acpi.h>
-> +#include <linux/wordpart.h>
-> +
->  #include "inv_mpu_iio.h"
-> =20
->  enum inv_mpu_product_name {
-> @@ -118,8 +120,8 @@ static int inv_mpu_process_acpi_config(struct i2c_cli=
-ent *client,
->  		return ret;
-> =20
->  	acpi_dev_free_resource_list(&resources);
-> -	*primary_addr =3D i2c_addr & 0x0000ffff;
-> -	*secondary_addr =3D (i2c_addr & 0xffff0000) >> 16;
-> +	*primary_addr =3D lower_16_bits(i2c_addr);
-> +	*secondary_addr =3D upper_16_bits(i2c_addr);
-> =20
->  	return 0;
->  }
+diff --git a/fs/namei.c b/fs/namei.c
+index 5512cb10fa89..9e5214dfd05d 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -4419,7 +4419,8 @@ int vfs_unlink(struct mnt_idmap *idmap, struct inode *dir,
+ 			error = try_break_deleg(target, delegated_inode);
+ 			if (error)
+ 				goto out;
+-			error = dir->i_op->unlink(dir, dentry);
++			if (dentry->d_inode->i_nlink)
++				error = dir->i_op->unlink(dir, dentry);
+ 			if (!error) {
+ 				dont_mount(dentry);
+ 				detach_mounts(dentry);
+-- 
+2.34.1
 
 
