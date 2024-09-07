@@ -1,115 +1,250 @@
-Return-Path: <linux-kernel+bounces-319683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFB3970081
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:58:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97785970085
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E60991C2213B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 06:58:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0285CB2297E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F138148FE8;
-	Sat,  7 Sep 2024 06:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nHWWcqsZ"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD5613D248
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 06:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39F13CF73;
+	Sat,  7 Sep 2024 07:03:23 +0000 (UTC)
+Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BE31B85EF;
+	Sat,  7 Sep 2024 07:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725692333; cv=none; b=cI56SsOxNiQl/FiirGCJRp+hjVl3CEZJSU2e3L/y8DknVyU/tOFESbc4LC28mmk4a6++dmLkjyzlrm6IW+HXhVesSt7IgHmhqYOqMY1KC1KTtI22k6xxAF+xpAgJj50sh0pZtX225MEAS3VfvNIhx89MuUT5Map28ggT2Wn1TAc=
+	t=1725692603; cv=none; b=J88DTZeNK88Iadedw30ulu970ROf7aRRukl3DP0TMEbiu0KslM1upxDBJTB9GFQlV++zfu2L3FW0HRERK+5EuwoogO5AKBHVbr0O3vkTMz3MuZ2JvE9r4MTtRtOv0NCkFdXYQkQx0DnFa0xi8LEYyzz1wG+aPRrmcUjswmnblJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725692333; c=relaxed/simple;
-	bh=rgaGjgEabV2AZI1mYeylbTN9fxh/1IY0+yKdiZ9hXl0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=RTdaCmZYKH+ltSFYs6UVuo/CN2iNJNqB/x6TVZIVUNwjjF0UmBL4OXKReDiZjQ+pDA3c8QBUD2OWWZ+dvIrB1MTu1d69on3f1dBKwfGogn2bjfdc7dtjQulQiYGvfR/dBMDZL2DCAkbqVfUMzCtgBJMvvbSQqDlgG/iL4XFpjKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nHWWcqsZ; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f66423686bso24330691fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 23:58:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725692329; x=1726297129; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PPG/uD8SZZ9HQeRTUezsbbELYqqE6wi9aZnU/g/IvvY=;
-        b=nHWWcqsZymLeX5Ll11Prcgms18hFO7Z8ON0f2fwdjFLRWuJckNr7UNIqGVkpN0oCsL
-         waJL7aLYTczvAvDMCNgKYvPdd6gEpwfh/ecQj7cAXaeVO5m1gxRePjnR3DhWZJkSJIkM
-         +KcwYs38Uod8jM4CC4QsbQ7SuRgDjEStY7tLdO6KpmbGBymGkXuPJ/LKY1mMjuGOHMst
-         UvV1H2ao+gWjakl0r4p79YW1M2z4rsR+q1jsabPiVmHb+FCr6dyauWEuVu+V2g2YHpY2
-         /5TPkXhvS4A3r0YcxGiLefQBK6rqZXXl5HwqNcHsU7irNviX3SzBNl2pnpoFFQ9m4OyI
-         bXrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725692329; x=1726297129;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PPG/uD8SZZ9HQeRTUezsbbELYqqE6wi9aZnU/g/IvvY=;
-        b=vO0ZI7gLabOpLgvLO78C3XDJHSOph39ndMlQx4CJzjSxy6xVQIUJZmNYfw+7opqSdQ
-         /0GeuVj9rrWqSRMWBVT189VNxgGZmyD92TgbpeJOVf7eGHxbUbg28qZgIHwm+tdkmWYc
-         MkQyCUMVvD2OvJQbWlKm+sx03zw34RqF6QufcbDEhQ83LedWv3JbZVLp9hDGQdDdI5FQ
-         vsyxbS88hIC2Uli9HpKR4ZTLgTEEn9DSQGPbY5rKjeI9lFFyyoVfXRTkrVL87PgsFLJF
-         CrDkIvSBsO6Xee0UuKfG6CfdM8JfjTMZZPjmLjGoKrkPNFXFn6o1USqy6C9Z2jOFx4fQ
-         QMzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXo18Y7f01ILaAboJ1b2LPeCYG9k7QbbnE+NOXgZLibozhvEhDa6Fp5dy1k2BTxBYD1PwAc/qoycuaXVoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJykVK3uBVEC6OBJL9zcfH8TyDYtm7vAdYuho/fYi0slEM4huG
-	WQ0CjTMVauLLhP+MKysjlvvLxVM7cAEnhR6oq19hJ26Zg7aObrh4P49ymFlp7Yn0/3sAvOQkZ/2
-	hFLrMANJsiEeRCoDah4o2yDcDiHVbDrGrBbk0dw==
-X-Google-Smtp-Source: AGHT+IGv5vE7FDTgdRe1M+YXuq3EjLJ8f7JAA0CMbIA7imH5TdPdPm87UXNbt5jLrgHXzb+2dRUXPtMD1uL0F53zgSw=
-X-Received: by 2002:a05:651c:b20:b0:2f3:f39f:3719 with SMTP id
- 38308e7fff4ca-2f751f5d783mr27611151fa.29.1725692327975; Fri, 06 Sep 2024
- 23:58:47 -0700 (PDT)
+	s=arc-20240116; t=1725692603; c=relaxed/simple;
+	bh=+/LcFYTp7KLv58itnht7DYnfbBPKyPA8iVJckCrOOQM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ryh0mxSj7SwpGzrcjw7Uid4wnPHi5lNFj1NsaM+JloWU0IXSzd7MCb/jzTgO2QLwYlXVk4BH+hmsJdt/Ltnae6d7CG1Ih9nsm94MOGgbWzVt6hQX5qFGfC62BjkNXuUXHNUoSGOJFFi8GoWpL0jbrKyvusER5fW1G62hOpQOO1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.79.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.50])
+	by app1 (Coremail) with SMTP id HgEQrAA3PHyc+ttmGFurBQ--.48142S2;
+	Sat, 07 Sep 2024 15:02:52 +0800 (CST)
+Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
+	by gateway (Coremail) with SMTP id _____wBXXlKW+ttmNH1CAA--.25340S2;
+	Sat, 07 Sep 2024 15:02:47 +0800 (CST)
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Dongliang Mu <dzm91@hust.edu.cn>
+Cc: hust-os-kernel-patches@googlegroups.cm,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH v3] docs/zh_CN: add the translation of kbuild/gcc-plugins.rst
+Date: Sat,  7 Sep 2024 15:02:08 +0800
+Message-ID: <20240907070244.206808-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 7 Sep 2024 08:58:36 +0200
-Message-ID: <CACRpkdb130FuEhKC2M6Ge42-sMDnKE04LGFv6uyAAUEvKXWyUA@mail.gmail.com>
-Subject: [GIT PULL] pin control fix for v6.11
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HgEQrAA3PHyc+ttmGFurBQ--.48142S2
+Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoWxtry3CrWrKr13Gr4xKryfJFb_yoWxXF47pw
+	4vk34SgFWIyFy093yfKr1xuF15JFs3Ww1UKa48Gwn7tF1kJrZ0y3y3try5GryfWFy8ZrW3
+	XF4ayrWUuw1UZa7anT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUQIb7Iv0xC_tr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vE
+	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_JF
+	0_Jw1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
+	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r
+	4UJVWxJr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1l
+	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43Mx
+	AIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkE
+	bVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
+	I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
+	k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7Cj
+	xVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU0pbytUUUUU==
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-Hi Linus,
+Finish the translation of kbuild/gcc-plugins.rst and move gcc-plugins
+from TODO to the main body.
 
-I have this critical Qualcomm fix pending so sending it to
-you.
+Update to commit 3832d1fd84b6 ("docs/core-api: expand Fedora instructions
+for GCC plugins")
 
-Please pull it in, the signed tag and commit itself describes
-the issue.
+Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+---
+v2->v3: fix sign incorrect pointed by Alex
+v1->v2: fix comments from yanteng
+ .../translations/zh_CN/kbuild/gcc-plugins.rst | 126 ++++++++++++++++++
+ .../translations/zh_CN/kbuild/index.rst       |   2 +-
+ 2 files changed, 127 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
 
-Yours,
-Linus Walleij
+diff --git a/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst b/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
+new file mode 100644
+index 000000000000..67a8abbf5887
+--- /dev/null
++++ b/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
+@@ -0,0 +1,126 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/kbuild/gcc-plugins.rst
++:Translator: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
++
++================
++GCC 插件基础设施
++================
++
++
++介绍
++====
++
++GCC 插件是为编译器提供额外功能的可加载模块 [1]_。它们对于运行时插装和静态分析非常有用。
++我们可以在编译过程中通过回调 [2]_，GIMPLE [3]_，IPA [4]_ 和 RTL Passes [5]_
++（译者注：Pass 是编译器所采用的一种结构化技术，用于完成编译对象的分析、优化或转换等功能）
++来分析、修改和添加更多的代码。
++
++内核的 GCC 插件基础设施支持构建树外模块、交叉编译和在单独的目录中构建。插件源文件必须由
++C++ 编译器编译。
++
++目前 GCC 插件基础设施只支持一些架构。搜索 "select HAVE_GCC_PLUGINS" 来查找支持
++GCC 插件的架构。
++
++这个基础设施是从 grsecurity [6]_  和 PaX [7]_ 移植过来的。
++
++--
++
++.. [1] https://gcc.gnu.org/onlinedocs/gccint/Plugins.html
++.. [2] https://gcc.gnu.org/onlinedocs/gccint/Plugin-API.html#Plugin-API
++.. [3] https://gcc.gnu.org/onlinedocs/gccint/GIMPLE.html
++.. [4] https://gcc.gnu.org/onlinedocs/gccint/IPA.html
++.. [5] https://gcc.gnu.org/onlinedocs/gccint/RTL.html
++.. [6] https://grsecurity.net/
++.. [7] https://pax.grsecurity.net/
++
++
++目的
++====
++
++GCC 插件的设计目的是提供一个用于试验 GCC 或 Clang 上游没有的潜在编译器功能的场所。
++一旦它们的实用性得到验证，这些功能将被添加到 GCC（和 Clang）的上游。随后，在所有
++支持的 GCC 版本都支持这些功能后，它们会被从内核中移除。
++
++具体来说，新插件应该只实现上游编译器（GCC 和 Clang）不支持的功能。
++
++当 Clang 中存在 GCC 中不存在的某项功能时，应努力将该功能做到 GCC 上游（而不仅仅
++是作为内核专用的 GCC 插件），以使整个生态都能从中受益。
++
++类似的，如果 GCC 插件提供的功能在 Clang 中 **不** 存在，但该功能被证明是有用的，也应
++努力将该功能上传到 GCC（和 Clang）。
++
++在上游 GCC 提供了某项功能后，该插件将无法在相应的 GCC 版本（以及更高版本）下编译。
++一旦所有内核支持的 GCC 版本都提供了该功能，该插件将从内核中移除。
++
++
++文件
++====
++
++**$(src)/scripts/gcc-plugins**
++
++	这是 GCC 插件的目录。
++
++**$(src)/scripts/gcc-plugins/gcc-common.h**
++
++	这是 GCC 插件的兼容性头文件。
++	应始终包含它，而不是单独的 GCC 头文件。
++
++**$(src)/scripts/gcc-plugins/gcc-generate-gimple-pass.h,
++$(src)/scripts/gcc-plugins/gcc-generate-ipa-pass.h,
++$(src)/scripts/gcc-plugins/gcc-generate-simple_ipa-pass.h,
++$(src)/scripts/gcc-plugins/gcc-generate-rtl-pass.h**
++
++	这些头文件可以自动生成 GIMPLE、SIMPLE_IPA、IPA 和 RTL passes 的注册结构。
++	与手动创建结构相比，它们更受欢迎。
++
++
++用法
++====
++
++你必须为你的 GCC 版本安装 GCC 插件头文件，以 Ubuntu 上的 gcc-10 为例::
++
++	apt-get install gcc-10-plugin-dev
++
++或者在 Fedora 上::
++
++	dnf install gcc-plugin-devel libmpc-devel
++
++或者在 Fedora 上使用包含插件的交叉编译器时::
++
++	dnf install libmpc-devel
++
++在内核配置中启用 GCC 插件基础设施与一些你想使用的插件::
++
++	CONFIG_GCC_PLUGINS=y
++	CONFIG_GCC_PLUGIN_LATENT_ENTROPY=y
++	...
++
++运行 gcc（本地或交叉编译器），确保能够检测到插件头文件::
++
++	gcc -print-file-name=plugin
++	CROSS_COMPILE=arm-linux-gnu- ${CROSS_COMPILE}gcc -print-file-name=plugin
++
++"plugin" 这个词意味着它们没有被检测到::
++
++	plugin
++
++完整的路径则表示插件已经被检测到::
++
++       /usr/lib/gcc/x86_64-redhat-linux/12/plugin
++
++编译包括插件在内的最小工具集::
++
++	make scripts
++
++或者直接在内核中运行 make，使用循环复杂性 GCC 插件编译整个内核。
++
++
++4. 如何添加新的 GCC 插件
++========================
++
++GCC 插件位于 scripts/gcc-plugins/。你需要将插件源文件放在 scripts/gcc-plugins/ 目录下。
++子目录创建并不支持，你必须添加在 scripts/gcc-plugins/Makefile、scripts/Makefile.gcc-plugins
++和相关的 Kconfig 文件中。
+diff --git a/Documentation/translations/zh_CN/kbuild/index.rst b/Documentation/translations/zh_CN/kbuild/index.rst
+index d906a4e88d0f..b51655d981f6 100644
+--- a/Documentation/translations/zh_CN/kbuild/index.rst
++++ b/Documentation/translations/zh_CN/kbuild/index.rst
+@@ -13,6 +13,7 @@
+     :maxdepth: 1
+ 
+     headers_install
++    gcc-plugins
+ 
+ TODO:
+ 
+@@ -24,7 +25,6 @@ TODO:
+ - modules
+ - issues
+ - reproducible-builds
+-- gcc-plugins
+ - llvm
+ 
+ .. only::  subproject and html
+-- 
+2.43.0
 
-
-The following changes since commit 431c1646e1f86b949fa3685efc50b660a364c2b6:
-
-  Linux 6.11-rc6 (2024-09-01 19:46:02 +1200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v6.11-3
-
-for you to fetch changes up to 602cb14e310a7a32c4f27d1f16c4614c790c7f6f:
-
-  pinctrl: qcom: x1e80100: Bypass PDC wakeup parent for now
-(2024-09-02 11:07:48 +0200)
-
-----------------------------------------------------------------
-A single fix for Qualcomm laptops that are affected by
-missing wakeup IRQs.
-
-----------------------------------------------------------------
-Stephan Gerhold (1):
-      pinctrl: qcom: x1e80100: Bypass PDC wakeup parent for now
-
- drivers/pinctrl/qcom/pinctrl-x1e80100.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
