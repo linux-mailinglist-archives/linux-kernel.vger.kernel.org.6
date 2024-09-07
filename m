@@ -1,80 +1,132 @@
-Return-Path: <linux-kernel+bounces-319927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 391189703CB
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 21:02:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E029703CE
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 21:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 678E21C21151
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:02:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71CD82838CE
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7294715C13C;
-	Sat,  7 Sep 2024 19:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A9015C13C;
+	Sat,  7 Sep 2024 19:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JLhl3FMk"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1Biah8X"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64FD17FE;
-	Sat,  7 Sep 2024 19:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AA6165EE6;
+	Sat,  7 Sep 2024 19:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725735757; cv=none; b=kLnAeclWjcPKDrmx1X82cZouwVBT+s0bcjIQyqTSTPR8602ZaNzwYvJOv3/I1xWOEsi4ez4vFHgAAm/mdJIO52aXHs6QwpM7CekI7OnNXSr27C+iTNu0MJzc728bn4SarX51gZGj+xk2e5HIEvsfcpn4R8lXlEiF/hELTYotV6w=
+	t=1725735831; cv=none; b=FjRPe8oUKCtitpQ9uBwjsCdMl99G2EGCwEmill3vyfK3zHv5UB+k/lAhv3TJUKEdjuGPm4mn2GxVsC+eXaW58ksmdDVb8zH00d2kvZq6Rq20Ttt/mWG65ctFEVK05wCfy36DI1mRTYeaOdAIFpJA9FpJOtiqr9emDiwwOBF3Q3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725735757; c=relaxed/simple;
-	bh=8TG9Q9C9WUF4Z26jooEX1NVB5l7ZrAOabJP7qxyldoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BW5rcw/E+yq7sX/xaNCZMFbugXRoWXcnDur9iuT/Xg8JyEZxhvxspGPg2S16cO/i1kO4MlAMAIBjtadUcwqY4lIETJ1pLycUvsOeck/TEN1z/K6MW0RAd0RLCspA4IfJcKa+/weZqnXVKFjvI044hay//BwRIXQqZuJfs8QlCo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JLhl3FMk; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8TG9Q9C9WUF4Z26jooEX1NVB5l7ZrAOabJP7qxyldoo=; b=JLhl3FMkkgP784HPXWLiR9g12+
-	ppPw2boOxchkJQeOV/2zEHzFvG8lpyzvtyOGmiRNZBLL+qvyxNfq54C2E0/UVaEycEFmWFqdgEBvC
-	ZFPSgzOCualYZ/W8fosy9ZA7RLflLOfOdIiFgZU+DquTRUnvTroE4rQgoRbdwg+p88dyhe4SjJVI4
-	dE4V6UFljxv6x9Wtz4Rsj2w3dHNlqPAY6wM5JeePWW4wz8VYKe3/VaXb9NHHx9O4jnEGO4Biod36K
-	QielkLEBMWNtqD6VOz84F6+31cAI66WWQc9wCJwDAJYotmdDi4JsG4lSv8LjoSa0UbDLu6Uf/B5ie
-	QKr3eNBA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sn0hc-00000009vQe-0REG;
-	Sat, 07 Sep 2024 19:02:32 +0000
-Date: Sat, 7 Sep 2024 20:02:32 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1725735831; c=relaxed/simple;
+	bh=dfph/+nheQwDiPwg/rtS9N3WHLIN0TbhfZndd6ZvTvQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f/KG79vP4LPhWAvjHS49IF95pmuEj9IO4LnYbxqj2aFBkXBDWG3iod5CtyCLVVusAmZ/AIdIJSxPoHWETWI2XlH9BMQA7athxCAAIRPhRslXFD9Ahoe8gOm0ANIYN+YdrKZLDyi3Fbgje/f3waBlDU9vWQNeb0tyanqPh2l/v1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1Biah8X; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-718d79fb6f7so1613975b3a.3;
+        Sat, 07 Sep 2024 12:03:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725735829; x=1726340629; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Zx1VFN5ZHG/PELZ4zI7xuhOBSu9xApqGwfQ/VTlx3U=;
+        b=P1Biah8XNGMx/KQetgtR3HSvwAdgk52PHYHiHyYMfS0Tl1K68r1vMR3rGfqMfwFdAy
+         0B+bKBXOFbv5XdKCg4buzFharaVRX/zriZp5YgBpliASgSGT4v6/oCuCF2vVLnfOY2mw
+         dXyp4QKknhYZubBANhn6oaAJ+pqlO36kt46oV+P5yhP9D5/1Up8Jb1zcywSoFm7ts3E2
+         WjWKcD60OQg9B7WHDZec4Vrejng4zkbFfF00Um9gtrqxG0I+af5WHtYjto4XXd5yxTWm
+         Jl7jnffqlc0DwerIjS6dWOfwa7IPPNc4UUikge1e+6IVHED3mHTRzvQ1/ld6cwQAFv8M
+         kxzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725735829; x=1726340629;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6Zx1VFN5ZHG/PELZ4zI7xuhOBSu9xApqGwfQ/VTlx3U=;
+        b=uJHrzfO5bwYbTOi20roDlpWOOXF10y7NzN4jq8NaTpB7Y4TC8LIaJVxx2Uuk+jkclQ
+         1ECKHaQoK/HkLnMol2RDR1LFCbMMPIYXFjfxE4nx9VdI6XmBCQvBR6EOE7hsX08Vjpkx
+         ruUncB/pV9voVYJexnoNhji7RA7oOuSSO8i/F9I3rX5rBwv0enRye3kb7P5gNeyn92Kz
+         Vf7E0b01PAoZjNJVHgiEYROL9MYCFS+j+VI1oWhFJqsSwCg3918KaA+JWr5WRf2YuOdv
+         cro+rJ+CaByhGxgtx8EweDlT8DOJq0Sn9151/suoE2N3Nz/t2MZAx4IX5BkzN7qERih+
+         xs0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUckzkouX6SuLzqy7o5qH10pBKnHxRMULYcvvKS2NBsZHom95y4k9tGfffqY8cGymIAMPlM06tc@vger.kernel.org, AJvYcCUoU4/HLTDPr5gycZgRerfArYXRih+NazmHh68bwE4v9YUgSFtynhGkSm1FERlanyYoQy70t0Q604tjoPA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTSMfAx89fSCxssYZ2eKGeRhUkwWh3plYT/2jQOJVcBfy/x5py
+	hVyJyWsaT12IP6iWcUAkjYJEuH+pYk9C90h568lecuuK/e9aGfyS
+X-Google-Smtp-Source: AGHT+IF2s6wWTR93OjwD/+aDtqpA+I1jBE57UiitafG1lKAb9FL9AHnURLl68bPKfCdojx/3px4j3g==
+X-Received: by 2002:a05:6a00:a0e:b0:717:85a4:c7a1 with SMTP id d2e1a72fcca58-718d5f2fca0mr6558673b3a.27.1725735829117;
+        Sat, 07 Sep 2024 12:03:49 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e5896ba6sm1166097b3a.5.2024.09.07.12.03.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Sep 2024 12:03:48 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: horms@kernel.org,
+	lukma@denx.de,
+	ricardo@marliere.net,
+	m-karicheri2@ti.com,
+	n.zhandarovich@fintech.ru,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com
-Subject: Re: [PATCH] VFS: check i_nlink count before trying to unlink
-Message-ID: <20240907190232.GI1049718@ZenIV>
-References: <20240907172111.127817-1-ghanshyam1898@gmail.com>
+	syzbot+02a42d9b1bd395cbcab4@syzkaller.appspotmail.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH net] net: hsr: prevent NULL pointer dereference in hsr_proxy_announce()
+Date: Sun,  8 Sep 2024 04:03:41 +0900
+Message-Id: <20240907190341.162289-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240907172111.127817-1-ghanshyam1898@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 07, 2024 at 10:51:10PM +0530, Ghanshyam Agrawal wrote:
-> Reported-by: syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=41b43444de86db4c5ed1
-> Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+In the function hsr_proxy_annouance() added in the previous commit 
+5f703ce5c981 ("net: hsr: Send supervisory frames to HSR network 
+with ProxyNodeTable data"), the return value of the hsr_port_get_hsr() 
+function is not checked to be a NULL pointer, which causes a NULL 
+pointer dereference.
 
-As far as I can tell, you have jfs_unlink() find and remove a directory
-entry without any problems, then find that the damn thing had corrupted
-inode link count (presumably due to creatively fucked up image).
+To solve this, we need to add code to check whether the return value 
+of hsr_port_get_hsr() is NULL.
 
-IF that's the case, NAK.
+Reported-by: syzbot+02a42d9b1bd395cbcab4@syzkaller.appspotmail.com
+Fixes: 5f703ce5c981 ("net: hsr: Send supervisory frames to HSR network with ProxyNodeTable data")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ net/hsr/hsr_device.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-vfs_unlink() is *NOT* the place to try and cope with that kind of crap.
-What's more, having unlink(2) quietly succeed and do nothing to directory
-is simply wrong.
+diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
+index e4cc6b78dcfc..b3191968e53a 100644
+--- a/net/hsr/hsr_device.c
++++ b/net/hsr/hsr_device.c
+@@ -427,6 +427,9 @@ static void hsr_proxy_announce(struct timer_list *t)
+ 	 * of SAN nodes stored in ProxyNodeTable.
+ 	 */
+ 	interlink = hsr_port_get_hsr(hsr, HSR_PT_INTERLINK);
++	if (!interlink)
++		goto done;
++
+ 	list_for_each_entry_rcu(node, &hsr->proxy_node_db, mac_list) {
+ 		if (hsr_addr_is_redbox(hsr, node->macaddress_A))
+ 			continue;
+@@ -441,6 +444,7 @@ static void hsr_proxy_announce(struct timer_list *t)
+ 		mod_timer(&hsr->announce_proxy_timer, jiffies + interval);
+ 	}
+ 
++done:
+ 	rcu_read_unlock();
+ }
+ 
+--
 
