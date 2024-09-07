@@ -1,97 +1,71 @@
-Return-Path: <linux-kernel+bounces-319600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D424B96FF0F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:47:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E5296FF15
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CC41F22DDA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:47:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA9B8B23EF6
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C10DDD9;
-	Sat,  7 Sep 2024 01:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AB5107A0;
+	Sat,  7 Sep 2024 01:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ja7P/h1R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z6MHrqil"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56B8DDA1
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 01:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B81DDA1;
+	Sat,  7 Sep 2024 01:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725673672; cv=none; b=dPbmUJTUZ8kFDxfWP+b5v1TjBusNWIKJNCyOaeYUr/+FtZ0qI2WRwJh2FcOdYvr/OkhMT1VgD9y1Sx+tNoOeUuHQeIy/RFFh4mbEeZV5xGWlW5GStVGT0/gglU9OUCzEMKF66bpgehSTGUoOt4ti5u4hKtb3c20OJbmxW1UCOfk=
+	t=1725674147; cv=none; b=aohmIyMRmVgW7SI+HSI3lZ8gcMPGHl4wchVNA2ZCLesxYKssPJqBhsRe2KjF0IUrGEZiN4eqCoPTPnPH/YRycv1ks7F3USBwR9YVehCM3zYZHz9pazJ6X9eQYGyYOwwinOKfLctR8obDhKR03iXZpyWyrpWrUtpfdiYeUaWK+ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725673672; c=relaxed/simple;
-	bh=KaK41JPOiwkTi9ta791J8wS37yAgctFiFMaLNuuZ/y0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q1Z3w97JKBQM0oCQ0tKg01/cMifZaajPqIDnzxahk3WWRMdbulyDKnwjxV/56/GlEFWPW+FvhOuhKZgAkROH8KWBtxtkDvn4dI1teZvqIvlbmkRICbxP6xLDAmxX3KZEtekhKkuU1p7nk3+ICglR9kip5K4CeyDRIwwrSmLgecc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ja7P/h1R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76ABBC4CEC4
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 01:47:52 +0000 (UTC)
+	s=arc-20240116; t=1725674147; c=relaxed/simple;
+	bh=59Cs32ix/tIL2TCspeZn2rp7YsU+U42yvvGmm/YBk4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bhRG60bDn/wig3Vj57hBIGGV3keSk2gW3QBt+SU5luMDTxJiVt/4wLHfFVjgIKDvb6LqXfQpRkEiQb+aSmMiVJ7zjkJvOLxVH4sHWjunlNzkeZd26AcorKjrpSAayWF3WDyNYwTw7be5B9ws/1jquI/LC1o3Z7uYHCrOC4znMA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z6MHrqil; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9FB5C4CEC4;
+	Sat,  7 Sep 2024 01:55:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725673672;
-	bh=KaK41JPOiwkTi9ta791J8wS37yAgctFiFMaLNuuZ/y0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ja7P/h1Rik8bso2VeBsPNO38kUZ0kWeIIQcLp+37wbHG6PfM0cQJxvklf5lJXOmHw
-	 K1zK90HEKY7dn9Ms3pOy/zrdxWWNJW18Kz82/vtVy2G0suYAtQ3QMGBxKdoA8QzxK8
-	 1ZzvkK7u6n9zLz5pnvkNMBN2XpOyjMe7/TIvEshNaDAc1NAd5HL1VxfbWRnM9nYmL+
-	 FnLRwRwdBZUxvHsJxzzG57l+RvUX8Avk1XrsDDH4EPirCwSrWmpKTvsshwT1aW4PCk
-	 8qs9bYkZuREQYydjqWbGxGjM0mMZT24j71lcxPGzn5urSLpG+/cnSCEc9FxjOTU69C
-	 +Ija1Qd0zJCzQ==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f75c205e4aso1306041fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 18:47:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCULQtxKZXXL82G4UIPZYo52FdKHoeKSD3kW/soSjk9MnPsZBdH54lya9XTUTzdVABDehsP4WfgMsnhOyC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVV0ZnPICtnpMa7WuCqkIrbnMYkIRvnJmuPJiDgW1Oytj9iJVK
-	0ny5263FkHwwymKkv298zfJhXUPOfq4+6HzMZ9e9YcfRCAapiIhX2CiG7ydcvKLEl939ao9i4Gb
-	YPRRaaoGQH4v7AJz0qQzfhf24FtY=
-X-Google-Smtp-Source: AGHT+IEAbN9Eqzj7/94jpm3ZQGTLWu4waEvFkSByhRyNjqTPy8Lz34CNrAmcTOD6tEPOYyD0XNKDboxR4rC3W+hfagk=
-X-Received: by 2002:a2e:a983:0:b0:2f6:63d1:166e with SMTP id
- 38308e7fff4ca-2f751eaee26mr34366321fa.3.1725673670870; Fri, 06 Sep 2024
- 18:47:50 -0700 (PDT)
+	s=k20201202; t=1725674147;
+	bh=59Cs32ix/tIL2TCspeZn2rp7YsU+U42yvvGmm/YBk4Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Z6MHrqil7Nr8YQgbxNaFqfjiPk7aWwQ1XCYbSIqljoIqkKw593woTx9aaB9R4I95D
+	 FOpq0BHhhbK4a0pOvoOqP8IFH7he35rEBVdxuwKKh2VhebI/ZAcIvccDlDynNavPAC
+	 70Oc8gtjzLSSMWPNf/gcsYeVyWDVXIQxDThBf+bocct4xYKK91DHo6XvINTCw0Png6
+	 xGZ6xuKdoXkMAOK9j8mH5QmcTqHQQ7E4ScENfILop34hMEdEzUDCX+2quezqh+U5F/
+	 yk7m77JOzb5tHNMkeu/Emp5FszvtN5ASNBqOZjpKe44FcVv+8cULzHFHLQQPIDOuti
+	 4lWAV43TaRYSg==
+Date: Fri, 6 Sep 2024 18:55:46 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Yan Zhen <yanzhen@vivo.com>
+Cc: marcin.s.wojtas@gmail.com, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ openkernel.kernel@vivo.com, horms@kernel.org, David.Laight@aculab.com
+Subject: Re: [PATCH net-next v1] net: mvneta: Avoid the misuse of the '_t'
+ variants
+Message-ID: <20240906185546.123b6d65@kernel.org>
+In-Reply-To: <20240905063645.586354-1-yanzhen@vivo.com>
+References: <20240905063645.586354-1-yanzhen@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZtsX_tcEuOjktUl9@zx2c4.com> <84a8ee9c-7781-c474-c394-d1498dc00050@loongson.cn>
-In-Reply-To: <84a8ee9c-7781-c474-c394-d1498dc00050@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 7 Sep 2024 09:47:38 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5CbyemhjoYLXqW3pLPtp4Ne3wcOZXzv2k5=jJCpi3rfg@mail.gmail.com>
-Message-ID: <CAAhV-H5CbyemhjoYLXqW3pLPtp4Ne3wcOZXzv2k5=jJCpi3rfg@mail.gmail.com>
-Subject: Re: LoongArch without CONFIG_ACPI and CONFIG_EFI
-To: maobibo <maobibo@loongson.cn>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, gaosong@loongson.cn, jiaxun.yang@flygoat.com, 
-	qemu-devel@nongnu.org, thomas@t-8ch.de, xry111@xry111.site, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Jinyang He <hejinyang@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 7, 2024 at 9:44=E2=80=AFAM maobibo <maobibo@loongson.cn> wrote:
->
-> Add huacai who is maintainer of Loongarch Linux kernel.
->
-> On 2024/9/6 =E4=B8=8B=E5=8D=8810:55, Jason A. Donenfeld wrote:
-> > Hi,
-> >
-> > It appears that as of QEMU 9.1, it's possible to boot LoongArch machine=
-s
-> > that don't provide EFI or ACPI.
-> >
-> > Would you consider removing the `select ACPI` and `select EFI` from the
-> > arch Kconfig, so that kernels built for this minimal QEMU environment
-> > can be a bit leaner and quicker to build?
-Very difficult, at least removing EFI is difficult. Even if booting to
-a FDT environment, we still get information from EFI now.
+On Thu,  5 Sep 2024 14:36:45 +0800 Yan Zhen wrote:
+> In this case if someone tries to set the tx_pending to 65536(0x10000),
+> after forcing it to convert to u16, it becomes 0x0000, they will get
+> the minimum supported size and not the maximum.
 
-Huacai
-
-> >
-> > Jason
-> >
->
+Core validates against tx_max_pending before calling the driver.
+-- 
+pw-bot: reject
 
