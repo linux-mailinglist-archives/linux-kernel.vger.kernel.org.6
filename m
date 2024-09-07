@@ -1,104 +1,125 @@
-Return-Path: <linux-kernel+bounces-319783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B7A970229
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:20:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E8197022B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D1802842A7
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:20:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E7B1C2158C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C4215B12D;
-	Sat,  7 Sep 2024 12:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231DA15B977;
+	Sat,  7 Sep 2024 12:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="hsSM6hd3"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R5h9AzWH"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B97155CB3
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 12:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9351B85DC;
+	Sat,  7 Sep 2024 12:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725711624; cv=none; b=lmJMLRkC6oErjbKdREFaavYVCF1nztpnhLmQP9H/FOal7d/kLKCv2jBGnEg1/S+B1xuT0ES5qxA9W13D7oSK0MUipnHd5ihuPX2hPwNPu5Zvt6YipKBz9RrxfdXEDttPE6o7UITu7Mc5U7wKtEcchyXm8B55oyENMPQXXRdHZeg=
+	t=1725711953; cv=none; b=KJWVSus9PDguRCkQczoxe5JXqohV1T8PHEQzwILI/YJLIIIfcvpl+8agEaw7RLBwP3nr3s1IjDcIFUeCznGtaU5YdVCFtQaqbPA1x6OFvymPkEZTESpGLbeCA+kPc0VMi4aM4viZ+5KedHUEV5UHQU9jqFAQUT/GF6wdH8EclDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725711624; c=relaxed/simple;
-	bh=23b5QUF86rTmTLWdEmIRMcy4qYGQI4Dt8E6pceHHrFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MPCG1dY2CJMDti8OznOmnC+Fs5Qyr+Ml0YFSMin1u+bZTWhFwbdwmeuxK9pHh1tlPf1x+SQPbenpepdd1nah6MVOX4ew5usW7OE9IGA2zng5tmqurBbKDNpChvBBnY4Hz20rW+yAD/DGNwk2a28+2RSJJnyCmRkoJ35RX/GfOVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=hsSM6hd3; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-45821eb62daso3503331cf.3
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 05:20:21 -0700 (PDT)
+	s=arc-20240116; t=1725711953; c=relaxed/simple;
+	bh=IDFLMWF0sr98Nz6o04LtSrB1FRNk7wAxpS/OlCHOCHQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DmbxwImVSpMqwCq/9xxaFaI6isXsti3A5Nu4CvreJZ1H+zNHbIusW0wvVR+3qSsdlH27wkq+bNCEIpTqtLkOkS4LKX5AtOGjymjYYIrJ6O5X8ZOXB8yWgCgsjIpmUG0+ham6cyj31q+clr87TVEKPdGcZzgoOOvCrl2cwdd1ULM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R5h9AzWH; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42bb6d3e260so23651215e9.1;
+        Sat, 07 Sep 2024 05:25:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1725711621; x=1726316421; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wrfZKMwhUBII5rQ5V9cSiTUYqeiY+7c6ebw5rFPM7IM=;
-        b=hsSM6hd3E5hwQCQyd6I9hIVjZNKhOJ0Hn72Z5shbwtqgZyiUXOf8Iqrld7r6Mbmkzg
-         vaxyKqLOlosvVAqFM3K17qR3pM5j8WR1kexIRK0EdT6HWob84vZda03/lOlJ2K6BPIAk
-         Kor8BDl7uVHb8FCvKA69vHLy7Sihm2fmbPCi85ULu05xzWY20+WZ04uUADgNKc97ziHN
-         qtSyC8pAVHh8w2nEVzCixZgjmj17apM4LMMJFKiIIU3Gw6PHHs7TZUjMxg9K/+hSoBA6
-         JuJEbEGfPvuhSWw/ir47UZBAtELpgj2HhmDEYigqBCS42VuxrN4HfsFikLl467nhgiLm
-         yfvg==
+        d=gmail.com; s=20230601; t=1725711950; x=1726316750; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mGLn13vOqyi02McjuZ5o91VC854GNRyf9UZYfl60p2U=;
+        b=R5h9AzWHEXm1rJjP1+CHpKVyZTyZmtlxiQ/urLXS4IGcpWhnVKzCo5RL990kR+SU+p
+         MFHsxJcpZCCe+RwGGjR0L1XneGrRQzkeX96skd5JzzDcKugd1ZMnn7w3+vObE7uMet0o
+         Usq4BM/01x1+fO/5cB3oWQ74k3Bdm3ut3COcjnZoDPHvmklL8r1vPcfEG/hwbPlhJ5J7
+         3Ffd81qeDmH3Gthdo8XKbhZfoNf/PWTrShPNdycky9RznQ2TuPcNHtMY+lSGw7DQrhr2
+         MIzakALvTVd6wE3LQhTBqbvhtlmRKw8B+FlYoWOhA61nKfCoztkSaSH3V4dXjwqTwO6u
+         /sQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725711621; x=1726316421;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wrfZKMwhUBII5rQ5V9cSiTUYqeiY+7c6ebw5rFPM7IM=;
-        b=htIWGUpHuMtoo0AetfWGusnqa+EbGk64rTfN6gXQ8WnTEmrGvxme5PMozYDSF5fcdt
-         W0VdZeJCW1xNjykA0BlkZ4WEvtRIRU5NhydSJHqS2nrfJ16u1ZvA4bAAoK/s8p1cFrFK
-         ox/WQooL032rE7hW8ti9fsfzdrBquc3Gy5bx8d/evJguqOys6HWD7FFWsGtJ8r8Htx/o
-         1cCCdWVVlwfLBJv1n6kIL7N5xfMOTdzgObxcgYVeFSphpBiWYyJ1kGxw4Lkb0AhlM1YK
-         yjZ4MTsIUFVOfPgOtGiTsD0Ba96N9gAiCdzVcl8VQYgQGi5j9iOsgMQZKGzP4DgjnnJy
-         sHxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWiHHMwvAFXSPvwoU8pmdT4jkNW9shDwrsMrBlEqILSMqg37AIAzS0/ZFnUo9Csx3MvdDkivXuVF8Tyy+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEbng18x3r3Xa/RQ/5GkGpe/+n4QSQw82ccLRNVllxhjb5QeJ9
-	uqBmG9wZgTPNXt96Gi1Y6Q/g8KhfeO2S29S75fpS8oSSy339PaUWiuSqlZhbf8o=
-X-Google-Smtp-Source: AGHT+IFc8nlwMAWVD4j4Rq3jwoqFGBPOSR8Rb8xebsYZYNleUkXX/b/9NqqvEPl8AfWpvsxBtC57sg==
-X-Received: by 2002:ac8:5f47:0:b0:458:fb8:9dc3 with SMTP id d75a77b69052e-4582012724cmr31153961cf.25.1725711620892;
-        Sat, 07 Sep 2024 05:20:20 -0700 (PDT)
-Received: from ziepe.ca ([24.114.87.3])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822e633b6sm3919851cf.13.2024.09.07.05.20.20
+        d=1e100.net; s=20230601; t=1725711950; x=1726316750;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mGLn13vOqyi02McjuZ5o91VC854GNRyf9UZYfl60p2U=;
+        b=JliEasM0yBItA8nAsDDr4VlbGwS9AY//R2KFu0ER36aaA8o+GDwPrxO98UOhhV1pQS
+         ZCCR5WH01C0rKw3in4AKpSVTby8ujUgywlNhRIUmkYm/EVFraztDLc8lDTSfjvbn7f+U
+         DUOvhGRYD7vFa4dOZqcn2DDaCeVO6+ronT0QhXxWJ8OKhWjo20dMH8IG+Tt053DxCAZ6
+         DdB3Uo/8hRHrfnKUMjP5kLobeh9vHnZxAk2spPNXOJ/YI4Eg8RDEgIukZ8rN76O3jW5v
+         7IScUQSI5CwTLcFmAaZxfLPLfY/kvxBuAsNMop7AHeQuD/1g7lghVfpajzPotBnxTOU8
+         v2OA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGlEbadZYysVa4wgyPxMT2qH/4DhXE3SJavcBfKSDLT985fyvqFSgxYEqVCelToU/HP+KyLHTyCMi5@vger.kernel.org, AJvYcCUhR9Y5bFwnnE97tD8le/ydXjFZBnWiraHPvyT3NGuDNCls4OAYKgucQyM0tbPTfgOnxKVySWEojDA2L5DQ@vger.kernel.org, AJvYcCW5fklROKAnrAHHN+iuJASS8ChAMpHv2b8RydSdtQ0h9E9qXgLbHYehwnzH3189L9DEsa39p79j3+PRjdZH8uA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHw8QTrmSbKYVitaRn0dgafqTdHP9/YYw+2ZHCfaAKyONv6KPE
+	EuY4qUDN/2qKPM5o7CPiWU9102S1BINEWqNHjyGRUxigFVQ/lYi4
+X-Google-Smtp-Source: AGHT+IEWcsjHo2WKugFYtP7kKcQJFOspfwt7F8M04DVXmlxk6PgC0zpj9mYba8M2nW76d8HrHT9vIQ==
+X-Received: by 2002:a05:600c:22cf:b0:42c:a8cb:6a75 with SMTP id 5b1f17b1804b1-42ca8cb6c5amr25868885e9.17.1725711949317;
+        Sat, 07 Sep 2024 05:25:49 -0700 (PDT)
+Received: from void.void ([141.226.8.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca0600639sm47346445e9.37.2024.09.07.05.25.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 05:20:20 -0700 (PDT)
-Received: from jgg by NV-9X0Z6D3. with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1smuQO-0001OI-03;
-	Sat, 07 Sep 2024 09:20:20 -0300
-Date: Sat, 7 Sep 2024 09:20:19 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: j.granados@samsung.com
-Cc: David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Subject: Re: [PATCH 3/6] iommu: kconfig: Move IOMMU_IOPF into INTEL_IOMMU
-Message-ID: <ZtxFAxM6QQBYVSJp@ziepe.ca>
-References: <20240904-jag-iopfv8-v1-0-e3549920adf3@samsung.com>
- <20240904-jag-iopfv8-v1-3-e3549920adf3@samsung.com>
+        Sat, 07 Sep 2024 05:25:46 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>
+Subject: [PATCH v2] docs/process: fix typos
+Date: Sat,  7 Sep 2024 15:21:39 +0300
+Message-ID: <20240907122534.15998-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904-jag-iopfv8-v1-3-e3549920adf3@samsung.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 04, 2024 at 03:17:14PM +0200, Joel Granados via B4 Relay wrote:
-> @@ -51,7 +52,6 @@ config INTEL_IOMMU_SVM
->  	depends on X86_64
->  	select MMU_NOTIFIER
->  	select IOMMU_SVA
-> -	select IOMMU_IOPF
+Fix typos in documentation.
 
-Does patch 1 still compile if INTEL_IOMMU_SVM=n?
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+Synced with docs-next as requested.
 
-Jason
+ Documentation/process/coding-style.rst   | 2 +-
+ Documentation/process/maintainer-tip.rst | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
+index 8e30c8f7697d..19d2ed47ff79 100644
+--- a/Documentation/process/coding-style.rst
++++ b/Documentation/process/coding-style.rst
+@@ -986,7 +986,7 @@ that can go into these 5 milliseconds.
+ 
+ A reasonable rule of thumb is to not put inline at functions that have more
+ than 3 lines of code in them. An exception to this rule are the cases where
+-a parameter is known to be a compiletime constant, and as a result of this
++a parameter is known to be a compile time constant, and as a result of this
+ constantness you *know* the compiler will be able to optimize most of your
+ function away at compile time. For a good example of this later case, see
+ the kmalloc() inline function.
+diff --git a/Documentation/process/maintainer-tip.rst b/Documentation/process/maintainer-tip.rst
+index ba312345d030..349a27a53343 100644
+--- a/Documentation/process/maintainer-tip.rst
++++ b/Documentation/process/maintainer-tip.rst
+@@ -154,7 +154,7 @@ Examples for illustration:
+ 
+     We modify the hot cpu handling to cancel the delayed work on the dying
+     cpu and run the worker immediately on a different cpu in same domain. We
+-    donot flush the worker because the MBM overflow worker reschedules the
++    do not flush the worker because the MBM overflow worker reschedules the
+     worker on same CPU and scans the domain->cpu_mask to get the domain
+     pointer.
+ 
+-- 
+2.46.0
+
 
