@@ -1,451 +1,260 @@
-Return-Path: <linux-kernel+bounces-319775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A5A97020F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:50:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 919D3970212
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D39528390F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:50:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1A80B237BA
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EA1165EEF;
-	Sat,  7 Sep 2024 11:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C76F15B103;
+	Sat,  7 Sep 2024 11:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="g+aXB3Z7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VQN7mVDO"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="GkJVL/+d"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8251607AC;
-	Sat,  7 Sep 2024 11:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE787159583;
+	Sat,  7 Sep 2024 11:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725709716; cv=none; b=sbG0Xpwky7rPbsH07VmahSB8lXnTQ4yIX7tCiZUQ9XEJvItiS6trRogVPr6fkPppXhi3+TYoaqi0rLq7A6760qnrpvHaEyXvtYaGuR5b0LgK+brgJJ8nKbNFs4+eDHcoq7RKNH2xdblnCl3x6JAvzKLOtj3f+lsmb1uAVJy1Ap0=
+	t=1725709779; cv=none; b=rRKgGS0ozjGSbbqN9JLHkx1qJWNw3JiCCq3UZ/rlukKtSbg8EAiPm3uw9Jc2GxMrlgTicc3vJMl6AgLGbAiN4VEO45x+wOwlHYtn0CWB2SsqJu4HFnfJmjuSKtLv17aZQOktOeI2lcbLHWLquEK0CtgBJmfUfHRCEIZVU+k6FZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725709716; c=relaxed/simple;
-	bh=yAaGy+mfs5mfzjmMr5ympnR40rfa6oPy+WXYv0opvAY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nmEAZEiI+plfFBIloNj5CGBnQwo8B6ZDEtrMe4mL99mXV+HNUggoSuU9Aai6LvLNcFcHINoMGa8ajZTg8eZQr2vRO89KT9sExOT1cLjnlM2M6USf7NqTmOx0ghAmm3t9+PPJdz3HIrEUjL1Xe+3za/RJsmvDeo/7wTAKqpG8wsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=g+aXB3Z7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VQN7mVDO; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id D2350114037E;
-	Sat,  7 Sep 2024 07:48:33 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Sat, 07 Sep 2024 07:48:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1725709713;
-	 x=1725796113; bh=mUaBn6aVgoiEbY+DmuAgQpvOlWt6JK4F1AoLqYdfmTk=; b=
-	g+aXB3Z7/w+ePUptkx4XYFH/9MPs82LjZcoWQyXhnN4M3gE7DJLydRv7cnBPVKj8
-	19zI32E37ErC41pdwGGcBmQXh+roL4yRaxL5PiKnfiY3lgH3x21eX1mQMyf/gF7t
-	N0Ok621+C6Q/kh99wqWPTpzMNDP+HkKYd1KbnRbv2ydCu1J6KFi0PcqaOKBO8p+3
-	07Q8YTjTT9l9O6o+7jh9TFmc9mk4hV87mljmGzL2MQRt+/x/Cae+xmV/okxDMX9q
-	hwDJtI04Pu+C2kEMEsExykxEfMldgaB+O0BWvjW5kQ8XRAHKvjvYusARYhsjbZFo
-	ZvNythwnBwypWhsBQIJEWw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725709713; x=
-	1725796113; bh=mUaBn6aVgoiEbY+DmuAgQpvOlWt6JK4F1AoLqYdfmTk=; b=V
-	QN7mVDOwp92S7PsHJvPyf+HoJ12QQBRJ3/Lu406ZXAeuOM/rzbku9MVEwbM0s6no
-	+1K9ThPYLMDXYb+LRIusfeM/GEJB9gGfAUTHOGke5JnphXFxMlezYEw8j6Mi9bzV
-	wNLt3yQJaGIHemfw1rfwx4qNEmVV2CZIERhWeeBW1NFuqYoH/E6pSTz7MY+PW5l4
-	X/hhXG5jiTs6r07fzen49/mE/6Trzh9Nt4FGY5EAXcoP2kf2C/7xhC/jAhGarknu
-	sFktg5H/n6re95vuKta2m7wqntdBYNER29RRtiwg7FDptkPkkxdvo0cuCYSwEqwy
-	+NgIgHgzMW5k6hzLooPcg==
-X-ME-Sender: <xms:kT3cZpXJl-YM5517LgITZ8Spq6MpY-FGCifBqqrleoz2HtlaZt7qJg>
-    <xme:kT3cZpnODuEjHzRXZCv9YUWtRyfqwHQUgChfcR7Nr7VcU1c1oAwVodEWex7hKRByk
-    LAwjdAsEJFueQjbtzs>
-X-ME-Received: <xmr:kT3cZlbFVzs4ELutWtsN9xaqIE-jd2mvqK5PnuBQucp2w2BYNvItHl0AzNg-3wUErCU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeifedggeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdej
-    necuhfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhi
-    hgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepvdekiefhfeevkeeuveetfeelffek
-    gedugefhtdduudeghfeuveegffegudekjeelnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdr
-    tghomhdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopegstghmqdhkvghrnhgvlhdqfhgvvggusggrtghkqdhlihhsthessghrohgruggtohhm
-    rdgtohhmpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpth
-    htohepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomhdprhgtphhtthhopegt
-    hhgvnhhhuhgrtggriheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmh
-    hiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgruhhlsghurhht
-    ohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehflhhorhhirghnrdhfrghinhgvlh
-    hlihessghrohgruggtohhmrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfhgrnhgtvghrrdhlrghntg
-    gvrhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:kT3cZsW11eMU8E5bgXOtgdBYxXO3brt_2pwKcpWfj5-orUv7waCwbg>
-    <xmx:kT3cZjknLafNswWuiHk7uyhfWkpFVdU-sGdbK7dX0OoQSVxx3ryK1w>
-    <xmx:kT3cZpeF6dZ8-XQiAs-mzF8SbbqM3p3Q8fbmmlcL3o9hEOgQim9JmA>
-    <xmx:kT3cZtEcRduNnYcVtRmz00-Rslqlz-1idb_F_mKTwZ2VKgPuOfit2g>
-    <xmx:kT3cZsf5_4IFTBAcpXU2YAVKKUC5gBxLJJyN3ZTRJp44EFGiaEg8JhKv>
-Feedback-ID: ifd894703:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 7 Sep 2024 07:48:32 -0400 (EDT)
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Sat, 07 Sep 2024 12:48:16 +0100
-Subject: [PATCH v4 10/10] MIPS: smp-mt: Rework IPI functions
+	s=arc-20240116; t=1725709779; c=relaxed/simple;
+	bh=djI8BGRkj46S1qzEgKP3B3hEa62L//RPhr0cSKF2LUA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PEDGCTxbzWfTFtcA82o2C5ob/a3uLHbf8GAwhpFBH953ImN1SfrQn0fvcNdf4ZhkS46CdV5f2X65lwU9IbTOcnrZr48fEpBjcx8EbzbBCvCB0R/b89J/8gPhu0tcalBtKQ8SDKa2xykVvSZbmyM6bcrkM0IK1MjL2xFj4raLIAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=GkJVL/+d; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1725709761; x=1726314561; i=wahrenst@gmx.net;
+	bh=HJ/p5a63dQNSRdiicH47k5M4HkDXkNI9n5S8d1EwY1k=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=GkJVL/+d+nwhHqLtD9TiQCtaBbNvTaJmMw2cYvbAJ11Kbz/4kXcXl/13hMeYi/IF
+	 iN8pd6VppQLqCSICn6vJJdYAId4TF1objLmVhg5Duc5D5vllxaAI4yTjS6h7OQr7L
+	 ZKsY8gnvlPnOWpXeKsbt9cDRd2Tcg3KFPFfBBtR8n3sf6po7vdJsSL97BRESVSMG5
+	 jo+FoWYQEOXWUzivXYqkPtqokvq7pHcb18INnfd9Rtn+78lCTQqlkUg6a8qzxUjuv
+	 KpY70SCJHUR8pXQbUGm7LjexifCSRyFaXjKtsjcjWIeiYpAtzAwE+co3j5+9x78A0
+	 TP8qmdAkU7/3Zfv/3A==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.128] ([37.4.248.43]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M3UZG-1snSAl0IBG-00D6il; Sat, 07
+ Sep 2024 13:49:21 +0200
+Message-ID: <5e3f9758-e392-44af-83c4-e60714046708@gmx.net>
+Date: Sat, 7 Sep 2024 13:49:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240907-b4-mips-ipi-improvements-v4-10-ac288f9aff0b@flygoat.com>
-References: <20240907-b4-mips-ipi-improvements-v4-0-ac288f9aff0b@flygoat.com>
-In-Reply-To: <20240907-b4-mips-ipi-improvements-v4-0-ac288f9aff0b@flygoat.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Huacai Chen <chenhuacai@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Serge Semin <fancer.lancer@gmail.com>, Paul Burton <paulburton@kernel.org>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jiaxun Yang <jiaxun.yang@flygoat.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8917;
- i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=yAaGy+mfs5mfzjmMr5ympnR40rfa6oPy+WXYv0opvAY=;
- b=owGbwMvMwCXmXMhTe71c8zDjabUkhrQ7tnWurHv9zF6WTZOUc1s1PXfWQa208Kyv8nsdH7tkx
- quZf8jqKGVhEONikBVTZAkRUOrb0HhxwfUHWX9g5rAygQxh4OIUgIn8rmZkOPLzgMjtHe/Lna48
- a3s5LeOjY1G1Yuvsl+wXPnqVy6vO3s/wT9XfPbhiev3PfZrrWwSu5jAxZH8LzJ/5gln/7Xm1G7J
- MnAA=
-X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
- fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/7] staging: vchiq_core: Factor out bulk transfer for
+ blocking mode
+To: Umang Jain <umang.jain@ideasonboard.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Phil Elwell <phil@raspberrypi.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20240906072506.174026-1-umang.jain@ideasonboard.com>
+ <20240906072506.174026-4-umang.jain@ideasonboard.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20240906072506.174026-4-umang.jain@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:y+U46tTUQZaiaoP4QMNw8UZm5YbdpDDeDJ7HfwsEnxrHWM5HDwm
+ uAYh0BOQNUpKpBnfEbiY0U1MX6dHjeUHgpKsW0XuqfOQyXcrIl/vcdrkJWwG615ds/j/jEb
+ uT8ApjtLhYIQgNocBizPMmxCAVqh3M5Vj7f/kvvzROayBy0lY34zSMr9Qo0omMctWvv6WZi
+ b3Fl7iNpH7wmBOUhzrepA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:5RvyLnInHUI=;kzkJ06/ngosiwsgEEHooZzDnYKs
+ LmNWOEoqfGWYmqOegn7bN1MPCD+ERv3+Oq3KviubiTNZk1PMzKD6M/fqaI5Pht2S0uXidMbSc
+ Nkp/mLuVxBLyAdBF0+VJBPe6olBnsEEPl5CRnUE5WbXAqNFlPu1eOrKa31QXKJigArST+jw8Z
+ fP2k9dqnl4V7DDb6O9zGLs8HHfO4yQoEtHYMNSZSwvwhXoZZRJqZOJ29X0Ay8xsvEjPVpOhbQ
+ u5GHPrpoDIgO8IqHQGrb5J00hh6cLIbrmUxDx6t5c6IMD0IxiivAjLg2Ky0IygnRofT6AW2Ji
+ TxympjAyFORO97+HCRPamaGg2Kr+yUiY3ibP2H7Gn7V01nRKxKEsidbAF8dlCYF+QSOuB5OSo
+ R2aKbvyfeMB5P1hwRZH8M7BX3qSL8h4A1QGRjSQCOiMKxL2KFaGsLHJJVjjrtv/a/+h/pb/mP
+ ACPNeSin4nCpaSN5JfieAyfpcBJoI0dF273oWRF4SfKYSuU8sF8WBZ+J/GTQf+y8qW7KGDAxu
+ 49klIzefoM2kr7lIwVr10h00cGXhGgs5ZbnDxMrLug26cF7H2tJgqa/4vYvIw+fN4Xi6UIXaY
+ 6vwVW/b3iNHc5+mIrdJJ1XXsLyq9TW17ictZLgkIK6KloCcb3ua5lODAiSt2VnuPil3nP4Qnq
+ qiehAYKjTK6AfrNYoodNXAJT09t0vuWuYqJ8+AQqASeoAzP76tWpRg3bhAalq2LJ4B31oSbYg
+ bXzWXtGvKKI5SxNYlMUbyC6teyiyG182kj8++FmWI1xm2yVnyGeglbQ83COVTiddv/wpPBcTs
+ 9FXoAvfrERgr/FfAjqV7yBhA==
 
-Move smp IRQ code from irq-mips-cpu to smp-mt as IPI is
-not really relavant to CPU intc. In VEIC mode we can have
-irq-mips-cpu not registered and SW interrupts comes from
-EIC controllers.
+Hi Umang,
 
-Implement IPI with ipi-mux to allow easy extension to number
-of IPIs.
+Am 06.09.24 um 09:25 schrieb Umang Jain:
+> Factor out bulk transfer for blocking mode into a separate dedicated
+> function bulk_xfer_blocking_interruptible(). It is suffixed by
+> "_interruptible" to denote that it can be interrupted and -EAGAIN
+> can be returned. It would be up to the users of the function to retry
+> the call in those cases.
+>
+> Adjust the calls to vchiq-dev.c ioctl interface and vchiq_arm.c
+> for blocking bulk transfers.
+>
+> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+i applied this series on top of recent linux-next and the vchiq ping
+test on Raspberry Pi 3 B Plus (multi_v7_defconfig) crashes or hanges
+strangly.
 
-Tested-by: Serge Semin <fancer.lancer@gmail.com>
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- arch/mips/Kconfig              |   2 +
- arch/mips/kernel/smp-mt.c      |  70 +++++++++++++++++++++++
- drivers/irqchip/Kconfig        |   1 -
- drivers/irqchip/irq-mips-cpu.c | 124 +----------------------------------------
- 4 files changed, 74 insertions(+), 123 deletions(-)
+I bisected the issue to this patch, but it's possible the root cause
+might be introduced before.
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 43da6d596e2b..08ef79093916 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -2189,6 +2189,8 @@ config MIPS_MT_SMP
- 	depends on SYS_SUPPORTS_MULTITHREADING && !CPU_MICROMIPS
- 	select CPU_MIPSR2_IRQ_VI
- 	select CPU_MIPSR2_IRQ_EI
-+	select GENERIC_IRQ_IPI
-+	select GENERIC_IRQ_IPI_MUX
- 	select SYNC_R4K
- 	select MIPS_MT
- 	select SMP
-diff --git a/arch/mips/kernel/smp-mt.c b/arch/mips/kernel/smp-mt.c
-index 7729cc733421..2f00077dbf07 100644
---- a/arch/mips/kernel/smp-mt.c
-+++ b/arch/mips/kernel/smp-mt.c
-@@ -10,6 +10,10 @@
- #include <linux/sched.h>
- #include <linux/cpumask.h>
- #include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/irqchip.h>
-+#include <linux/irqchip/chained_irq.h>
-+#include <linux/irqdomain.h>
- #include <linux/compiler.h>
- #include <linux/sched/task_stack.h>
- #include <linux/smp.h>
-@@ -19,6 +23,7 @@
- #include <asm/cpu.h>
- #include <asm/processor.h>
- #include <asm/hardirq.h>
-+#include <asm/ipi.h>
- #include <asm/mmu_context.h>
- #include <asm/time.h>
- #include <asm/mipsregs.h>
-@@ -26,6 +31,65 @@
- #include <asm/mips_mt.h>
- #include <asm/mips-cps.h>
- 
-+static int vsmp_sw0_virq __ro_after_init;
-+
-+static void smvp_handle_ipi_irq(struct irq_desc *desc)
-+{
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+
-+	chained_irq_enter(chip, desc);
-+
-+	/* irq-mips-cpu would ack for us, but EIC drivers won't */
-+	if (cpu_has_veic) {
-+		unsigned int vpflags = dvpe();
-+
-+		clear_c0_cause(C_SW0);
-+		evpe(vpflags);
-+	}
-+	ipi_mux_process();
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static void smvp_ipi_send(unsigned int cpu)
-+{
-+	unsigned long flags;
-+	int vpflags;
-+
-+	local_irq_save(flags);
-+
-+	/* We can only send IPIs to VPEs within the local core */
-+	WARN_ON(!cpus_are_siblings(smp_processor_id(), cpu));
-+	vpflags = dvpe();
-+	settc(cpu_vpe_id(&cpu_data[cpu]));
-+	write_vpe_c0_status(read_vpe_c0_status() | C_SW0);
-+	write_vpe_c0_cause(read_vpe_c0_cause() | C_SW0);
-+	evpe(vpflags);
-+
-+	local_irq_restore(flags);
-+}
-+
-+static int __init vsmp_ipi_init(void)
-+{
-+	int sw0_virq, mux_virq;
-+
-+	/* SW0 Interrupt for IPI */
-+	sw0_virq = get_mips_sw_int(0);
-+	if (!sw0_virq)
-+		return -EINVAL;
-+
-+	mux_virq = ipi_mux_create(IPI_MAX, smvp_ipi_send);
-+	if (!mux_virq)
-+		return -EINVAL;
-+
-+	irq_set_percpu_devid(sw0_virq);
-+	irq_set_chained_handler(sw0_virq, smvp_handle_ipi_irq);
-+	mips_smp_ipi_set_virq_range(mux_virq, IPI_MAX);
-+	vsmp_sw0_virq = sw0_virq;
-+
-+	return 0;
-+}
-+
- static void __init smvp_copy_vpe_config(void)
- {
- 	write_vpe_c0_status(
-@@ -123,6 +187,8 @@ static void vsmp_smp_finish(void)
- 	/* CDFIXME: remove this? */
- 	write_c0_compare(read_c0_count() + (8* mips_hpt_frequency/HZ));
- 
-+	enable_percpu_irq(vsmp_sw0_virq, IRQ_TYPE_NONE);
-+
- #ifdef CONFIG_MIPS_MT_FPAFF
- 	/* If we have an FPU, enroll ourselves in the FPU-full mask */
- 	if (cpu_has_fpu)
-@@ -226,7 +292,11 @@ static void __init vsmp_smp_setup(void)
- 
- static void __init vsmp_prepare_cpus(unsigned int max_cpus)
- {
-+	int rc;
-+
- 	mips_mt_set_cpuoptions();
-+	rc = vsmp_ipi_init();
-+	WARN_ON(rc);
- }
- 
- const struct plat_smp_ops vsmp_smp_ops = {
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 763070be0088..786ed8a6b719 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -192,7 +192,6 @@ config MADERA_IRQ
- config IRQ_MIPS_CPU
- 	bool
- 	select GENERIC_IRQ_CHIP
--	select GENERIC_IRQ_IPI if SMP && SYS_SUPPORTS_MULTITHREADING
- 	select IRQ_DOMAIN
- 	select GENERIC_IRQ_EFFECTIVE_AFF_MASK if SMP
- 
-diff --git a/drivers/irqchip/irq-mips-cpu.c b/drivers/irqchip/irq-mips-cpu.c
-index 99f9151cc8e7..8faa2bcf55de 100644
---- a/drivers/irqchip/irq-mips-cpu.c
-+++ b/drivers/irqchip/irq-mips-cpu.c
-@@ -34,8 +34,7 @@
- #include <asm/mipsmtregs.h>
- #include <asm/setup.h>
- 
--static struct irq_domain *irq_domain;
--static struct irq_domain *ipi_domain;
-+static struct irq_domain *irq_domain __read_mostly;
- 
- static inline void unmask_mips_irq(struct irq_data *d)
- {
-@@ -108,37 +107,12 @@ static void mips_mt_sw_irq_ack(struct irq_data *d)
- 	evpe(vpflags);
- }
- 
--#ifdef CONFIG_GENERIC_IRQ_IPI
--
--static void mips_mt_send_ipi(struct irq_data *d, unsigned int cpu)
--{
--	irq_hw_number_t hwirq = irqd_to_hwirq(d);
--	unsigned long flags;
--	int vpflags;
--
--	local_irq_save(flags);
--
--	/* We can only send IPIs to VPEs within the local core */
--	WARN_ON(!cpus_are_siblings(smp_processor_id(), cpu));
--
--	vpflags = dvpe();
--	settc(cpu_vpe_id(&cpu_data[cpu]));
--	write_vpe_c0_cause(read_vpe_c0_cause() | (C_SW0 << hwirq));
--	evpe(vpflags);
--
--	local_irq_restore(flags);
--}
--
--#endif /* CONFIG_GENERIC_IRQ_IPI */
- static const struct irq_chip mips_mt_cpu_irq_controller = {
- 	.name		= "MIPS",
- 	.irq_startup	= mips_mt_sw_irq_startup,
- 	.irq_ack	= mips_mt_sw_irq_ack,
- 	.irq_mask	= mask_mips_irq,
- 	.irq_unmask	= unmask_mips_irq,
--#ifdef CONFIG_GENERIC_IRQ_IPI
--	.ipi_send_single = mips_mt_send_ipi,
--#endif
- };
- #endif
- 
-@@ -154,15 +128,8 @@ asmlinkage void __weak plat_irq_dispatch(void)
- 
- 	pending >>= CAUSEB_IP;
- 	while (pending) {
--		struct irq_domain *d;
--
- 		irq = fls(pending) - 1;
--		if (IS_ENABLED(CONFIG_GENERIC_IRQ_IPI) && irq < 2)
--			d = ipi_domain;
--		else
--			d = irq_domain;
--
--		do_domain_IRQ(d, irq);
-+		do_domain_IRQ(irq_domain, irq);
- 		pending &= ~BIT(irq);
- 	}
- }
-@@ -202,86 +169,6 @@ static const struct irq_domain_ops mips_cpu_intc_irq_domain_ops = {
- 	.xlate = irq_domain_xlate_onecell,
- };
- 
--#ifdef CONFIG_GENERIC_IRQ_IPI
--
--struct cpu_ipi_domain_state {
--	DECLARE_BITMAP(allocated, 2);
--};
--
--static int mips_cpu_ipi_alloc(struct irq_domain *domain, unsigned int virq,
--			      unsigned int nr_irqs, void *arg)
--{
--	struct cpu_ipi_domain_state *state = domain->host_data;
--	unsigned int i, hwirq;
--	int ret;
--
--	for (i = 0; i < nr_irqs; i++) {
--		hwirq = find_first_zero_bit(state->allocated, 2);
--		if (hwirq == 2)
--			return -EBUSY;
--		bitmap_set(state->allocated, hwirq, 1);
--
--		ret = irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq,
--						    &mips_mt_cpu_irq_controller,
--						    NULL);
--		if (ret)
--			return ret;
--
--		ret = irq_domain_set_hwirq_and_chip(domain->parent, virq + i, hwirq,
--						    &mips_mt_cpu_irq_controller,
--						    NULL);
--
--		if (ret)
--			return ret;
--
--		ret = irq_set_irq_type(virq + i, IRQ_TYPE_LEVEL_HIGH);
--		if (ret)
--			return ret;
--	}
--
--	return 0;
--}
--
--static int mips_cpu_ipi_match(struct irq_domain *d, struct device_node *node,
--			      enum irq_domain_bus_token bus_token)
--{
--	bool is_ipi;
--
--	switch (bus_token) {
--	case DOMAIN_BUS_IPI:
--		is_ipi = d->bus_token == bus_token;
--		return (!node || (to_of_node(d->fwnode) == node)) && is_ipi;
--	default:
--		return 0;
--	}
--}
--
--static const struct irq_domain_ops mips_cpu_ipi_chip_ops = {
--	.alloc	= mips_cpu_ipi_alloc,
--	.match	= mips_cpu_ipi_match,
--};
--
--static void mips_cpu_register_ipi_domain(struct device_node *of_node)
--{
--	struct cpu_ipi_domain_state *ipi_domain_state;
--
--	ipi_domain_state = kzalloc(sizeof(*ipi_domain_state), GFP_KERNEL);
--	ipi_domain = irq_domain_add_hierarchy(irq_domain,
--					      IRQ_DOMAIN_FLAG_IPI_SINGLE,
--					      2, of_node,
--					      &mips_cpu_ipi_chip_ops,
--					      ipi_domain_state);
--	if (!ipi_domain)
--		panic("Failed to add MIPS CPU IPI domain");
--	irq_domain_update_bus_token(ipi_domain, DOMAIN_BUS_IPI);
--}
--
--#else /* !CONFIG_GENERIC_IRQ_IPI */
--
--static inline void mips_cpu_register_ipi_domain(struct device_node *of_node) {}
--
--#endif /* !CONFIG_GENERIC_IRQ_IPI */
--
- int mips_cpu_get_sw_int(int hwint)
- {
- 	/* Only 0 and 1 for SW INT */
-@@ -304,13 +191,6 @@ static void __init __mips_cpu_irq_init(struct device_node *of_node)
- 					   NULL);
- 	if (!irq_domain)
- 		panic("Failed to add irqdomain for MIPS CPU");
--
--	/*
--	 * Only proceed to register the software interrupt IPI implementation
--	 * for CPUs which implement the MIPS MT (multi-threading) ASE.
--	 */
--	if (cpu_has_mipsmt)
--		mips_cpu_register_ipi_domain(of_node);
- }
- 
- void __init mips_cpu_irq_init(void)
+But i'm pretty sure that the series introduced the regression.
 
--- 
-2.46.0
+Sorry, i don't have the time analyse this issue deeper.
+
+Best regards
+> ---
+>   .../interface/vchiq_arm/vchiq_arm.c           |  5 +--
+>   .../interface/vchiq_arm/vchiq_core.c          | 42 ++++++++++++++++---
+>   .../interface/vchiq_arm/vchiq_core.h          |  5 +++
+>   .../interface/vchiq_arm/vchiq_dev.c           |  6 +++
+>   4 files changed, 49 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm=
+.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> index c4d97dbf6ba8..688c9b1be868 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> @@ -968,9 +968,8 @@ vchiq_blocking_bulk_transfer(struct vchiq_instance *=
+instance, unsigned int handl
+>   			return -ENOMEM;
+>   	}
+>
+> -	ret =3D vchiq_bulk_transfer(instance, handle, data, NULL, size,
+> -				  &waiter->bulk_waiter,
+> -				  VCHIQ_BULK_MODE_BLOCKING, dir);
+> +	ret =3D vchiq_bulk_xfer_blocking_interruptible(instance, handle, data,=
+ NULL, size,
+> +						     &waiter->bulk_waiter, dir);
+>   	if ((ret !=3D -EAGAIN) || fatal_signal_pending(current) || !waiter->b=
+ulk_waiter.bulk) {
+>   		struct vchiq_bulk *bulk =3D waiter->bulk_waiter.bulk;
+>
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cor=
+e.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> index f36044bab194..43f951fa4b89 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> @@ -2985,6 +2985,42 @@ vchiq_remove_service(struct vchiq_instance *insta=
+nce, unsigned int handle)
+>   	return status;
+>   }
+>
+> +int
+> +vchiq_bulk_xfer_blocking_interruptible(struct vchiq_instance *instance,=
+ unsigned int handle,
+> +				       void *offset, void __user *uoffset, int size,
+> +				       void __user *userdata, enum vchiq_bulk_dir dir)
+> +{
+> +	struct vchiq_service *service =3D find_service_by_handle(instance, han=
+dle);
+> +	struct bulk_waiter *bulk_waiter;
+> +	enum vchiq_bulk_mode mode =3D VCHIQ_BULK_MODE_BLOCKING;
+> +	int status =3D -EINVAL;
+> +
+> +	if (!service)
+> +		return -EINVAL;
+> +
+> +	if (service->srvstate !=3D VCHIQ_SRVSTATE_OPEN)
+> +		goto error_exit;
+> +
+> +	if (!offset && !uoffset)
+> +		goto error_exit;
+> +
+> +	if (vchiq_check_service(service))
+> +		goto error_exit;
+> +
+> +	bulk_waiter =3D userdata;
+> +	init_completion(&bulk_waiter->event);
+> +	bulk_waiter->actual =3D 0;
+> +	bulk_waiter->bulk =3D NULL;
+> +
+> +	status =3D vchiq_bulk_xfer_queue_msg_interruptible(service, offset, uo=
+ffset, size,
+> +							 userdata, mode, dir);
+> +
+> +error_exit:
+> +	vchiq_service_put(service);
+> +
+> +	return status;
+> +}
+> +
+>   /*
+>    * This function may be called by kernel threads or user threads.
+>    * User threads may receive -EAGAIN to indicate that a signal has been
+> @@ -3018,12 +3054,6 @@ int vchiq_bulk_transfer(struct vchiq_instance *in=
+stance, unsigned int handle,
+>   	case VCHIQ_BULK_MODE_NOCALLBACK:
+>   	case VCHIQ_BULK_MODE_CALLBACK:
+>   		break;
+> -	case VCHIQ_BULK_MODE_BLOCKING:
+> -		bulk_waiter =3D userdata;
+> -		init_completion(&bulk_waiter->event);
+> -		bulk_waiter->actual =3D 0;
+> -		bulk_waiter->bulk =3D NULL;
+> -		break;
+>   	default:
+>   		goto error_exit;
+>   	}
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cor=
+e.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+> index 985d9ea3a06a..2dd89101c1c6 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+> @@ -474,6 +474,11 @@ extern int
+>   vchiq_bulk_xfer_waiting_interruptible(struct vchiq_instance *instance,
+>   				      unsigned int handle, struct bulk_waiter *userdata);
+>
+> +extern int
+> +vchiq_bulk_xfer_blocking_interruptible(struct vchiq_instance *instance,=
+ unsigned int handle,
+> +				       void *offset, void __user *uoffset, int size,
+> +				       void __user *userdata, enum vchiq_bulk_dir dir);
+> +
+>   extern int
+>   vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int hand=
+le, void *offset,
+>   		    void __user *uoffset, int size, void *userdata, enum vchiq_bulk_=
+mode mode,
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev=
+.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+> index 550838d2863b..830633f2326b 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+> @@ -304,6 +304,12 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_=
+instance *instance,
+>   		}
+>
+>   		userdata =3D &waiter->bulk_waiter;
+> +
+> +		status =3D vchiq_bulk_xfer_blocking_interruptible(instance, args->han=
+dle,
+> +								NULL, args->data, args->size,
+> +								userdata, dir);
+> +
+> +		goto bulk_transfer_handled;
+>   	} else if (args->mode =3D=3D VCHIQ_BULK_MODE_WAITING) {
+>   		mutex_lock(&instance->bulk_waiter_list_mutex);
+>   		list_for_each_entry(iter, &instance->bulk_waiter_list,
 
 
