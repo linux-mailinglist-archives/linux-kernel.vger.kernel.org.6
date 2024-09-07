@@ -1,133 +1,90 @@
-Return-Path: <linux-kernel+bounces-319668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB8C970053
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:34:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DC597005B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD5B285460
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 06:34:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2536C1F23321
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 06:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA81145341;
-	Sat,  7 Sep 2024 06:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81B9146592;
+	Sat,  7 Sep 2024 06:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Zsg18Ynj"
-Received: from msa.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWwweC9l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752CF537F5;
-	Sat,  7 Sep 2024 06:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA8717753;
+	Sat,  7 Sep 2024 06:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725690850; cv=none; b=i1fEdnPyJYkv/1D5nLytlTvZOyz89dcToUGUcCKTFRwN3MgfFBKx27l0FlqG9oClnYXPGrN61PPFH5b6bklHGCC64Fynx05lcIeovu+bU6TTRvuiQhFI/oTwC9Oozf+h2xaegyaFABRL6I2ojwbbxHHWw6qeZszdlHLp6xUSjYo=
+	t=1725691619; cv=none; b=sOIK3IQKYEfJQQmbBusixdJwgQ/cLOlNbaElYCskMDhmFBgIcT/oreN4Ix2Q3c7Ggdp7ySOmj5aAubJ6Miu7cd6hoVCGqYHz7pVhp+n5TT6Kg9cBFbVTlTgrLEQWJ/hi/cBK/Hr4jH7J92HZoOCotzikVpcEFzdp42p8vn+rbPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725690850; c=relaxed/simple;
-	bh=wKKUhuk4/8nuwN3KHkOpj5C9UBcs9XwomYBbixsGmT0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ahCPmtyJjp98KYweKjuKSIOtD8Tg4e3ONyded88cmxkStieYKniAwd0mOfjfBhFWEwq2yqUw6d67QNSKlSUN0EeMjajjItm39zn6BEAJSOWPwIh2QXN//MJgAwdh/GYWqXCj4AdoNlsmwcd8H5q8TzsRpIM2Bl23G/2nxOL8EXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Zsg18Ynj; arc=none smtp.client-ip=80.12.242.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id mp15s8krT41DAmp15s0m7E; Sat, 07 Sep 2024 08:34:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725690844;
-	bh=vatYoRMNlrx3CKxeuEKiLmkf8Cu3ogQPLSh6KML7njU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Zsg18YnjvI6bf0nAJC8erjWdsFkxjkuMmvbrXF0DvAu1mjFjcAUMVAH45WxWYjqiw
-	 cEATo6CIJhYkvQtCu3RKpW0ql2esQN5zxdGreUdY/agznIK1M/oo0LeFF7osaYkYC/
-	 /uQ6AdO8QJ1qR8+79rnQxcfXQoPQu71lV8hNVGpydWZTJW2tm2TVG/HwswOtViM1CG
-	 58DSkcqCzErp4UKHKWPF9xXswWxOdvcfRQLTusfZUFp1am7bFP2viC7gbGuX9UFZCu
-	 303rPaMmOfaejsbm+KjUsg5zs9blIoTiaxLHPITzb88dy8lBZXfSkk4xAcLUF1/G1Q
-	 097EQrU1samcg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 07 Sep 2024 08:34:04 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Beleswar Padhi <b-padhi@ti.com>,
-	Andrew Davis <afd@ti.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-remoteproc@vger.kernel.org
-Subject: [PATCH v2] remoteproc: k3-dsp: Fix an error handling path in k3_dsp_rproc_probe()
-Date: Sat,  7 Sep 2024 08:33:36 +0200
-Message-ID: <9485e427a9041cc76cfd3dbcc34874af495e160a.1725653543.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725691619; c=relaxed/simple;
+	bh=Ddn3DwKEqRO8W6Y1jXS9ScIz9T6uLhx01JDFe4OrAgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JrjFiijBwGfqnmkfCXnnRnzvw+5MP3PONlRdXjfIQ0sH1R+abDtHgiT1m3k6z+S5z7MKvGYBPb66vymI198r/q1uibCgE3mdnNW8LCTRKZPWG6NfVxFWMOVvpK23uRciX8l73LcXydPIdmvSPZWFn8EH6gjLW+MBacE362hbYjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sWwweC9l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E633C4CEC2;
+	Sat,  7 Sep 2024 06:46:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725691618;
+	bh=Ddn3DwKEqRO8W6Y1jXS9ScIz9T6uLhx01JDFe4OrAgw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sWwweC9ladpNEdDXczNyF5Wf8y5ES2yvdi591vKHfxX270r0lYD8T3Oe5g5pQzs2g
+	 zurK4/pEV2JUfVZbe7Bk6UoAWOXeElo6zOWL9H8mWFbc0ines05A8BLax2BFqJtlB2
+	 O7yKRkJhkLwPBoNVmnK/T6l8piBE0mfl+IHK/bI8ISY7o1CAgJU8OURiKZHPMjk8g4
+	 rZs5i01mLhlo5ZZ7FnCH8Ejuo+b/mAA7WE5eLhI8b58LNg/n6OsqeLGgTT2MxOIco5
+	 B6eI6QNWZJJm3nFqValext0HB6YE/HuMgjal+1vLel03qPqj7wP2HXRYN6LhkBPxS9
+	 uw43LtO+yVZtg==
+Date: Fri, 6 Sep 2024 23:46:56 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>
+Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
+Message-ID: <20240907064656.bkefak6jqpwxffze@treble>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <CAPhsuW6V-Scxv0yqyxmGW7e5XHmkSsHuSCdQ2qfKVbHpqu92xg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAPhsuW6V-Scxv0yqyxmGW7e5XHmkSsHuSCdQ2qfKVbHpqu92xg@mail.gmail.com>
 
-If an error occurs after the k3_dsp_rproc_request_mbox() call,
-mbox_free_channel() must be called, as already done in the remove function.
+On Tue, Sep 03, 2024 at 10:32:00AM -0700, Song Liu wrote:
+> +++ w/tools/objtool/elf.c
+> @@ -468,10 +468,8 @@ static void elf_add_symbol(struct elf *elf,
+> struct symbol *sym)
+>          *
+>          * TODO: is this still true?
+>          */
+> -#if 0
+> -       if (sym->type == STT_NOTYPE && !sym->len)
+> +       if (sym->type == STT_NOTYPE && !sym->len && false)
+>                 __sym_remove(sym, &sym->sec->symbol_tree);
+> -#endif
 
-Instead of adding an error handling path in the probe and changing all
-error handling in the function, add a new devm_add_action_or_reset() and
-simplify the .remove() function.
+Song, can you explain this change?  Was there a warning about
+__sym_remove() not being used?  Not sure how that would be possible
+since it should be static inline:
 
-Fixes: ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during probe routine")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Andrew Davis <afd@ti.com>
----
-Compile tested only
+INTERVAL_TREE_DEFINE(struct symbol, node, unsigned long, __subtree_last,
+		     __sym_start, __sym_last, static inline, __sym)
+					      ^^^^^^^^^^^^^
 
-Change in v2:
-  - fix the subject (cut'n'paste issue)   [Andrew Davis]
-  - add R-b tag
-  
-v1: https://lore.kernel.org/all/9485e127a00419c76cf13dbccf4874af395ef6ba.1725653543.git.christophe.jaillet@wanadoo.fr/
----
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index 8be3f631c192..f29780de37a5 100644
---- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -610,6 +610,13 @@ static void k3_dsp_release_tsp(void *data)
- 	ti_sci_proc_release(tsp);
- }
- 
-+static void k3_dsp_free_channel(void *data)
-+{
-+	struct k3_dsp_rproc *kproc = data;
-+
-+	mbox_free_channel(kproc->mbox);
-+}
-+
- static int k3_dsp_rproc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -649,6 +656,10 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	ret = devm_add_action_or_reset(dev, k3_dsp_free_channel, rproc);
-+	if (ret)
-+		return ret;
-+
- 	kproc->ti_sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
- 	if (IS_ERR(kproc->ti_sci))
- 		return dev_err_probe(dev, PTR_ERR(kproc->ti_sci),
-@@ -741,8 +752,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
- 		if (ret)
- 			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
- 	}
--
--	mbox_free_channel(kproc->mbox);
- }
- 
- static const struct k3_dsp_mem_data c66_mems[] = {
 -- 
-2.46.0
-
+Josh
 
