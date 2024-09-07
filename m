@@ -1,125 +1,118 @@
-Return-Path: <linux-kernel+bounces-319823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA609702A7
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:13:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4BA9702AA
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 959981C21A52
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:13:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2DB51C21B09
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CEC15DBDD;
-	Sat,  7 Sep 2024 14:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0764B1591F0;
+	Sat,  7 Sep 2024 14:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ep1ZulgP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CNhzSMDV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1475514EC5D;
-	Sat,  7 Sep 2024 14:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3836611E
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 14:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725718417; cv=none; b=ZKr6RV7sdrJNF3qKWd7LxlzQ6TEeMDUaJYIBuaflIwr7CSyA7vSn3fnr5sbLipge8aveOoTnFE2h4k8d2wM8HkxR50WrQ/nNzA9iz/Dk+ULhPzNrBd1yW1nMCn6OFb0BGESJJTofEGiDU0ojDwX1eqBtntwarHJasvwdiKUPfxg=
+	t=1725718669; cv=none; b=LVRWUrvMWXwK47q+ONTJge1w5drJPvT6SyYWz3AuIZb3rFHy60Ukx1TTcmhtUktQONQIOx4+JjY4OFl/dOKUe41kZVjUa6//po2pnRB7Vw55bVY+2aV9aEI5rj3GFAcmP7H1iQhf7AuacvJO8FXQLEoJYwJKm0Meo7TsBCX8Meg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725718417; c=relaxed/simple;
-	bh=qko2OkevnRrLYu4Aceoty+wFI+V0BJzREcrgVKbYvzA=;
+	s=arc-20240116; t=1725718669; c=relaxed/simple;
+	bh=gJGUibqKAbC++DCYC9bNNkLDiSrL70WQmVVk67pP830=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JOcgyZXr1LwVpuLldkpkxjw6UKhjUXab12jDWhhDoNmYa9C7HAeuM930JO4np0NMC4S0wyOKeuI1a6Le4WzvSPZ+lnmjAlE1XVD99LNKQ7ZG3qrVNYrIAtIbT/mfDfu0pENWN9AZuBRgAwWDxcaasT+72FxJm/6b1xvOm4a8+hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ep1ZulgP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D202DC4CEC2;
-	Sat,  7 Sep 2024 14:13:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725718416;
-	bh=qko2OkevnRrLYu4Aceoty+wFI+V0BJzREcrgVKbYvzA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ep1ZulgPBOi90upuj78yyY44kQrOiGBIvQGRExVuiIpavifk9h4CW4VN6a+VXbG5D
-	 XFlIaz9pafb+t1TlK2U8d0SDtd8NPm8XjZfHkMd0odL3HgDObmFSJzuBwZyibhCvJy
-	 vUe0ZeEynzzgAOETq8XSy6JYkwI2xaWpje83NRl0=
-Date: Sat, 7 Sep 2024 16:13:28 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Gui-Dong Han <hanguidong02@outlook.com>, netdev@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Simon Horman <horms@kernel.org>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>, stable@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: Re: [PATCH v2] ice: Fix improper handling of refcount in
- ice_sriov_set_msix_vec_count()
-Message-ID: <2024090715-grief-uneasily-4aa6@gregkh>
-References: <SY8P300MB0460D0263B2105307C444520C0932@SY8P300MB0460.AUSP300.PROD.OUTLOOK.COM>
- <99a2d643-9004-41c8-8585-6c5c86fab599@web.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qoNAPfrcJOgcJu4FwdcDbk0kAdOwu9ynipV4mAq/8grewhUyprF4ZmJeePJlWSPrIKBUqQ/9T9YhEHsLEkLBv2mje9QfYeiU2tr5OKPQ2bxHw/Pk331Eluhotq0qunVJ9nfLUsBd09iC+MquyyxlFXHkC2tC9JiJ7gI+PKT5oBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CNhzSMDV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725718665;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5kBE1l/JBjmXJiKdf5BwN+Xl9VjB2ieRInicxNpMmK0=;
+	b=CNhzSMDViK1YvVNp0GCuzisVKkzqQBN4syt6pvdVYXeY7l6WwPTu2fUnV6CufAQ8YjOZz2
+	12CYnITkBYIANTw6dA/BNPPAFO6Hqm3dJGEekp4cevSYUZq4zoIkyTMAOi6AaDbvMlVQdi
+	2NcunXu0axIO501v1OnBy6W0G+Ewhho=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-498-iCRCNCHlNiaCs18-0uS33A-1; Sat,
+ 07 Sep 2024 10:17:42 -0400
+X-MC-Unique: iCRCNCHlNiaCs18-0uS33A-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4931119560A2;
+	Sat,  7 Sep 2024 14:17:40 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.32.23])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CEF141956086;
+	Sat,  7 Sep 2024 14:17:37 +0000 (UTC)
+Date: Sat, 7 Sep 2024 10:17:35 -0400
+From: Joe Lawrence <joe.lawrence@redhat.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
+Message-ID: <Ztxgf6RGHwlonpus@redhat.com>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <ZtsJ9qIPcADVce2i@redhat.com>
+ <20240907014706.hw57colm6caxotyw@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <99a2d643-9004-41c8-8585-6c5c86fab599@web.de>
+In-Reply-To: <20240907014706.hw57colm6caxotyw@treble>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Sat, Sep 07, 2024 at 02:40:10PM +0200, Markus Elfring wrote:
-> …
-> > +++ b/drivers/net/ethernet/intel/ice/ice_sriov.c
-> > @@ -1096,8 +1096,10 @@ int ice_sriov_set_msix_vec_count(struct pci_dev *vf_dev, int msix_vec_count)
-> >  		return -ENOENT;
-> >
-> >  	vsi = ice_get_vf_vsi(vf);
-> > -	if (!vsi)
-> > +	if (!vsi) {
-> > +		ice_put_vf(vf);
-> >  		return -ENOENT;
-> > +	}
-> >
-> >  	prev_msix = vf->num_msix;
-> >  	prev_queues = vf->num_vf_qs;
-> > @@ -1142,8 +1144,10 @@ int ice_sriov_set_msix_vec_count(struct pci_dev *vf_dev, int msix_vec_count)
-> >  	vf->num_msix = prev_msix;
-> >  	vf->num_vf_qs = prev_queues;
-> >  	vf->first_vector_idx = ice_sriov_get_irqs(pf, vf->num_msix);
-> > -	if (vf->first_vector_idx < 0)
-> > +	if (vf->first_vector_idx < 0) {
-> > +		ice_put_vf(vf);
-> >  		return -EINVAL;
-> > +	}
-> >
-> >  	if (needs_rebuild) {
-> >  		ice_vf_reconfig_vsi(vf);
+On Fri, Sep 06, 2024 at 06:47:06PM -0700, Josh Poimboeuf wrote:
 > 
-> Would you like to collaborate with any goto chains according to
-> the desired completion of exception handling?
+> Normally I build objtool with
 > 
-> Regards,
-> Markus
+>   make tools/objtool
 > 
+> or just
+> 
+>   make
+> 
+> Those use the objtool Makefile without all the extra kernel flags.
+> 
+> How do you normally build objtool?
+>
 
+Usually as part of the kernel build, for example:
 
-Hi,
+  $ git clone \
+      git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git \
+      --branch klp-build-rfc
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+  $ cd linux && make -s defconfig && make -j$(nproc)
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+Results in the same implicit function declaration and uninitialized
+variables errors.  (Thanks to tools/objtool/Makefile's OBJTOOL_CFLAGS :=
+-Werror I believe.)
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+Re-reading my report, I thought building the two object files (check.o
+and klp-diff.o) individually would report their respective problems, but
+I see now that the invocation seems to want to build all the .o's, so
+disregard that build wrinkle.  I almost always build objtool by a
+top-level `make` or `make tools/objtool`, so sorry for any confusion.
 
-thanks,
+--
+Joe
 
-greg k-h's patch email bot
 
