@@ -1,116 +1,174 @@
-Return-Path: <linux-kernel+bounces-319805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31756970274
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:40:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29953970279
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2CD91F22836
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:40:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74751B21019
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A835E15D5A6;
-	Sat,  7 Sep 2024 13:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="uniWXxit"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437F515CD64;
+	Sat,  7 Sep 2024 13:41:34 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE85515C136
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 13:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B6615CD41;
+	Sat,  7 Sep 2024 13:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725716440; cv=none; b=Xby2VvaLsOAI4XA9ozijERlUhosMFo3DWBvph7amiAAayvxJjy0joYq3JrI0IrzxR8dPB+1LbsmpMsJWGEz80F8be2BPpHfzsrGg0jxvjQKOSsowbrQG0Y72R7iRbnIhtJ6/JgCYt4HxlIr443hMHmYXqzEOWtIgo78qn/0mH3A=
+	t=1725716493; cv=none; b=Mj4fBx9ZHCwgK1d4rFENCEN7eNkKGitTqO7+cJ+WdjKDD1IHmWaMJlIuvpiCLgnWzHmeHpVJN5w6OcOD6TrJwDcFJQrJO9GVIQwYSbaWsmXIMejKwe1iS5wpCt5RXEuRJmSPeZHwTQQwVa6pn+8qU+fg5NvWlATo6iTZC480HYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725716440; c=relaxed/simple;
-	bh=OaqPvacqn6/a9sSDdmHkzNo3Z3URadX8+wQz0oAN53I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nnI1e6tVKALHWMnBlp6kubI1aAIgluNWO24BoUfaVvT1K9EY1N/jpQw48jKrY0yHOyj2KgpegCWYJxykHZR+qqBQIknpcSGC2VMqhN61c6SZtj7GBosb7Avhs3PJ2ZdmcLRihQSvcKYm7D8IDTDYUyN3IijI+LXaQWbF7cV+1xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=uniWXxit; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d8a4bad409so2224004a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 06:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725716437; x=1726321237; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0z2NqKEDUroec7DxNinieI4BqCY7iLkxEiBrhdUI5is=;
-        b=uniWXxitIcKWLwnLlRalerHovn2y24ZO4ovMg9d3k8POA3K2q7FAOtJReXMKOXkR0j
-         29CzRcuT6c+4AUOqtl8Jz/X18WW7XQlFc2wMC665vvoJ2COW+fLmePIrFNFqA9CskTDH
-         cDDuzaInRC5uSuKBW2tyrcIvAilehUqUsQTNShjtgdeinXYC9Cy6OC8NLPY8ITLNSX9q
-         71kELuuBOgRFSrka1eRZ00kXhbwlzsD5dKsZiIkly8eJXT1gFBo+KolXLbeUHCUN4v9F
-         QHOAonTnRlcuSBvFnkABfqQxaiVFwE8haNV2VNaaVOelffKEXtA1jPd6czgsZerFWTIp
-         EAug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725716437; x=1726321237;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0z2NqKEDUroec7DxNinieI4BqCY7iLkxEiBrhdUI5is=;
-        b=u/kAVBomjUwIGJm99FadmlaIY6vy8VDmBg8zO3jQe7lRf7KsHb0zgrfp5BHc1K3xum
-         EwS7FqLepVxgagbIbgLZG30LZjawp+eB8ZIgNBMVoIprv/UclVIdH2ZFQwq+FIUBNSPH
-         mIsO2uD4hMsz39x8VqsSiEZPVuiPE4xwDHkSBzlC2txfpx55Rfv8zyXDjLhqgJnu5JGM
-         P+b3uNGXOEaUS7MOLVdyhTu9lAPJyuBIQKrCdIl+e4uWQSikKyb1Vu4bzGuMvlCLRFYP
-         Gg6ap+E7cKGt65pRwYnRIUMHfjqd/cRMSyswdGahtINUmtdQllVyAG0opjNT2KK5S4Bw
-         g53A==
-X-Forwarded-Encrypted: i=1; AJvYcCV6y1yn4NZglOKevPa3IaFHGyp7lFN3E0fjM/DjITTSDsEzSdDAF6We00FRm10I6hm7mOunGrIUlp/BYD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf3cY4G2HVAMBUrtVc+Ek+KJzPqffSJYsb+P30nyrlRcj5SThS
-	bRiarRP2D6gQQIOKRGO9SY5ToRhKUZbub2TPV4K/M3MrfOsRZJKxsvWo8nFvNNE=
-X-Google-Smtp-Source: AGHT+IEhZwbieHskPJo4Uyj4OnCXHu4QjPHSgjLqpiJL1ZTfT5B9jQR8sob0cT5Yfw2RSDaiyPHHbA==
-X-Received: by 2002:a17:90a:d150:b0:2c9:6cd2:1732 with SMTP id 98e67ed59e1d1-2dad4bf1ccdmr6610025a91.0.1725716436796;
-        Sat, 07 Sep 2024 06:40:36 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc12dfccsm3368356a91.47.2024.09.07.06.40.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 06:40:36 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Felix Moessbauer <felix.moessbauer@siemens.com>
-Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org, 
- io-uring@vger.kernel.org, cgroups@vger.kernel.org, dqminh@cloudflare.com, 
- longman@redhat.com, adriaan.schmidt@siemens.com, 
- florian.bezdeka@siemens.com, stable@vger.kernel.org
-In-Reply-To: <20240907100204.28609-1-felix.moessbauer@siemens.com>
-References: <20240907100204.28609-1-felix.moessbauer@siemens.com>
-Subject: Re: [PATCH v3 1/1] io_uring/sqpoll: inherit cpumask of creating
- process
-Message-Id: <172571643542.244981.10331950852185495338.b4-ty@kernel.dk>
-Date: Sat, 07 Sep 2024 07:40:35 -0600
+	s=arc-20240116; t=1725716493; c=relaxed/simple;
+	bh=yf1Rs+4BL1IQ6seaJ3Oyl+k9Cvz3jHdjfH6+zgZddDk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fwwxm22SpNc3AwSvLvWKUB2pk28bQtJaoTv7NSol0vLJuCPyo5hCC3+0gIA2UrGwtUzthqXMNSx7xj80+YHIKLGdmYnpDrR6oU5qphHrDjcgUy4Hq9H7Jyus97fTGuyKywX6UZUVrXwJBqU86NPPLlunV26fpXc7UXEdsoVqNp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav313.sakura.ne.jp (fsav313.sakura.ne.jp [153.120.85.144])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 487DfOUV089126;
+	Sat, 7 Sep 2024 22:41:24 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav313.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp);
+ Sat, 07 Sep 2024 22:41:24 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 487DfOi0089120
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 7 Sep 2024 22:41:24 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <efb8f264-f80e-43b2-8ea3-fcc9789520ec@I-love.SAKURA.ne.jp>
+Date: Sat, 7 Sep 2024 22:41:19 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me,
+        tomoyo-users-en@lists.osdn.me,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
+ <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
+ <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
+ <CAHC9VhRdQAoiKMVVUiDyCbEd4EDL9ppH3V4xRGhoOoFmHFy8nQ@mail.gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhRdQAoiKMVVUiDyCbEd4EDL9ppH3V4xRGhoOoFmHFy8nQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
 
+On 2024/09/06 23:24, Paul Moore wrote:
+> I've already recorded your NACK on several patches on two of the four
+> static call commits, if you like I can add it to the other two please
+> let me know and I'll be sure to do that.  I've recorded your NACKs on
+> other patches in the past and mentioned those NACKs to Linus when
+> sending the pull request, and I will do so again during this upcoming
+> merge window.
 
-On Sat, 07 Sep 2024 12:02:04 +0200, Felix Moessbauer wrote:
-> The submit queue polling threads are userland threads that just never
-> exit to the userland. In case the creating task is part of a cgroup
-> with the cpuset controller enabled, the poller should also stay within
-> that cpuset. This also holds, as the poller belongs to the same cgroup
-> as the task that started it.
-> 
-> With the current implementation, a process can "break out" of the
-> defined cpuset by creating sq pollers consuming CPU time on other CPUs,
-> which is especially problematic for realtime applications.
-> 
-> [...]
+Adding Nacked-by: lines is not an indulgence for ignoring my concerns.
+Commit f3b8788cde61 ("LSM: Identify modules by more than name") is an example
+you added Nacked-by: line without adding hints for why I nacked it (e.g.
+links to my posts).
 
-Applied, thanks!
+  LSM: Identify modules by more than name
 
-[1/1] io_uring/sqpoll: inherit cpumask of creating process
-      commit: b7ed6d8ffd627a3de8b0e336996d0247a6535608
+  Create a struct lsm_id to contain identifying information about Linux
+  Security Modules (LSMs). At inception this contains the name of the
+  module and an identifier associated with the security module.  Change
+  the security_add_hooks() interface to use this structure.  Change the
+  individual modules to maintain their own struct lsm_id and pass it to
+  security_add_hooks().
 
-Best regards,
--- 
-Jens Axboe
+  The values are for LSM identifiers are defined in a new UAPI
+  header file linux/lsm.h. Each existing LSM has been updated to
+  include it's LSMID in the lsm_id.
 
+  The LSM ID values are sequential, with the oldest module
+  LSM_ID_CAPABILITY being the lowest value and the existing modules
+  numbered in the order they were included in the main line kernel.
+  This is an arbitrary convention for assigning the values, but
+  none better presents itself. The value 0 is defined as being invalid.
+  The values 1-99 are reserved for any special case uses which may
+  arise in the future. This may include attributes of the LSM
+  infrastructure itself, possibly related to namespacing or network
+  attribute management. A special range is identified for such attributes
+  to help reduce confusion for developers unfamiliar with LSMs.
 
+  LSM attribute values are defined for the attributes presented by
+  modules that are available today. As with the LSM IDs, The value 0
+  is defined as being invalid. The values 1-99 are reserved for any
+  special case uses which may arise in the future.
+
+How can people (or Linus) find why I nacked it from patch description of that commit?
+The reason is partially explained in commit 063a7ce32ddc ("Merge tag 'lsm-pr-20240105'
+of git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm"), but is not accurate.
+
+  - Add three new syscalls: lsm_list_modules(), lsm_get_self_attr(), and
+    lsm_set_self_attr().
+
+    The first syscall simply lists the LSMs enabled, while the second and
+    third get and set the current process' LSM attributes. Yes, these
+    syscalls may provide similar functionality to what can be found under
+    /proc or /sys, but they were designed to support multiple,
+    simultaneaous (stacked) LSMs from the start as opposed to the current
+    /proc based solutions which were created at a time when only one LSM
+    was allowed to be active at a given time.
+
+    We have spent considerable time discussing ways to extend the
+    existing /proc interfaces to support multiple, simultaneaous LSMs and
+    even our best ideas have been far too ugly to support as a kernel
+    API; after +20 years in the kernel, I felt the LSM layer had
+    established itself enough to justify a handful of syscalls.
+
+    Support amongst the individual LSM developers has been nearly
+    unanimous, with a single objection coming from Tetsuo (TOMOYO) as he
+    is worried that the LSM_ID_XXX token concept will make it more
+    difficult for out-of-tree LSMs to survive. Several members of the LSM
+    community have demonstrated the ability for out-of-tree LSMs to
+    continue to exist by picking high/unused LSM_ID values as well as
+    pointing out that many kernel APIs rely on integer identifiers, e.g.
+    syscalls (!), but unfortunately Tetsuo's objections remain.
+
+    My personal opinion is that while I have no interest in penalizing
+    out-of-tree LSMs, I'm not going to penalize in-tree development to
+    support out-of-tree development, and I view this as a necessary step
+    forward to support the push for expanded LSM stacking and reduce our
+    reliance on /proc and /sys which has occassionally been problematic
+    for some container users. Finally, we have included the linux-api
+    folks on (all?) recent revisions of the patchset and addressed all of
+    their concerns.
+
+I am not against about having LSM ID itself. I am against about the fact
+that out-of-tree LSM modules cannot have stable LSM ID. Commit f3b8788cde61
+wants to assign LSM ID sequentially whereas those who demonstrated me
+suggests assigning LSM ID non-sequentially and pushes the burden of
+managing collision to out-of-tree LSM modules. As a result, out-of-tree
+LSM modules cannot start using userspace tools which rely on LSM ID.
+Rewriting userspace tools when that out-of-tree LSM module succeeded
+becoming in-tree is a penalty, for it breaks existing userspace tools
+and also remains the risk of old LSM ID being reused by unrelated LSM
+module.
+
+The fact that out-of-tree LSM modules cannot have stable LSM ID penalizes
+out-of-tree LSMs due to the risk of collision, and making it difficult for
+Linux users to find LSMs they want because Linux users cannot know what
+LSMs are available in the world. That is not a good usage of identifiers.
+
+I suggested you that the LSM community should allow assigning stable LSM ID
+to any LSM as long as that LSM is available to anybody, and serve as index
+for helping people to find LSMs that match their needs.
+
+Paul, where did you explain above when you sent pull request to Linus?
+Linus, did you understand why I nacked it from that pull request from Paul?
 
 
