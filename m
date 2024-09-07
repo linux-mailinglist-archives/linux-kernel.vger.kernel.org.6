@@ -1,108 +1,139 @@
-Return-Path: <linux-kernel+bounces-319746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E999701AE
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:23:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840039701B1
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B0791F2319F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:23:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFE8A1C21AE8
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B6A158540;
-	Sat,  7 Sep 2024 10:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4CA158556;
+	Sat,  7 Sep 2024 10:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P76BHhcr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VpwZxgXv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AD61B85DC;
-	Sat,  7 Sep 2024 10:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8BF1B85DC;
+	Sat,  7 Sep 2024 10:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725704576; cv=none; b=urpD0Wlponq7BMm5aAy2DvUoS9KFkrMlWuJE70RNFuRchQwm6sLnaGQx51woRx2LS50HUVvDrQUnsO2EmoA9n8HF6JLXCJkf/Uxx9WnMq2xxmg/wA2uufl95fjpOfnO7X6glO4HLoGBWAlQYnpCesYcWn3N4JPxnNKykOC0s2Tg=
+	t=1725704716; cv=none; b=dj451r3/bmb4DhD/ipNtaWXKxxutCaom0wXdfv9Ynku8QLCsTn5Znqp2GgcClhCwOle/Xp8HAnEpvmEuoPv1r6zKCO59yMXo/LsDJ9aDmX0AlPH2U1viSnrGSORUBrosMV8UCWRLmbZpwc/P6sa9oSe2lLVREBfSAuEwFK8Z05s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725704576; c=relaxed/simple;
-	bh=Q1pvLsvFqUeg52B5Bl4NZbvGj4evUD5AIy6A5sOYoQw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YFZlrOf0XsW3trzIfyLSPwXLP4Rcq4VSBuKQbLTGDbk9XBzpvBLZNhz1fSUO0j/84RN19lKxJjzJugaOL1gtocxvwCBGd54eplHIglbOLomayyJwV3neBs4Ed8X6ZIS8v/5D/BwUJzwaMaywTEcUu5/Tg7Xz0Nv3NyFn5ultSY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P76BHhcr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FCCEC4CEC2;
-	Sat,  7 Sep 2024 10:22:52 +0000 (UTC)
+	s=arc-20240116; t=1725704716; c=relaxed/simple;
+	bh=ZOiBC4rw7rIWO+otusVVv6/+6fAyiwV8MUgpz+CZHI0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e4oXl6uf/14bIwixdJByQgJ+KEG8Hh4+T4QuZor3XBSTve+FlBGbe77yppLVpGARCCg18pVjw1ORg8uIcguZsh2BVoL+pRkwy1VNphFbYwOBLMW7lEF4asqo4B4UBUouTc9u9ARBgfskt4peiVmcklJ+oS76ZqXEfAx8evidlag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VpwZxgXv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 477F3C4CECC;
+	Sat,  7 Sep 2024 10:25:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725704576;
-	bh=Q1pvLsvFqUeg52B5Bl4NZbvGj4evUD5AIy6A5sOYoQw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P76BHhcrHVkM6n1eEyLPfK5/BCXlNrYBqhCOxAhoDUNsaJdeiiXTFFOrhOpP96km/
-	 HKEbenXJ7kMhQAF+N5lBmZxJuPAAd7K+elZr+SdBs77R3wdIixGLcF7s/LOtizY4Eu
-	 1WXhqShQzVB3l/zHv3hHup50bAH6eHO11spprLv+PcQu7ut/Rl5Rp53dHiNjxkBWFt
-	 eLHc+TVsonNopAQfQllekbe2oNAj7SK+Zhk6MSKVkwJ8V+cWix3Y2DZuucq+LVL7Us
-	 OFFLnbpVfp+dLWmMttOWtETyPdDzAujAnw+IfPw7SC3MZ/J83m7CdtfLhqWIYS5S4j
-	 0+TS/eoMtQhiw==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Tom Haynes <loghyr@gmail.com>,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: (subset) [PATCH v4 09/11] fs: handle delegated timestamps in setattr_copy_mgtime
-Date: Sat,  7 Sep 2024 12:22:47 +0200
-Message-ID: <20240907-zumindest-knallen-d3f7cede5ab7@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240905-delstid-v4-9-d3e5fd34d107@kernel.org>
-References: <20240905-delstid-v4-0-d3e5fd34d107@kernel.org> <20240905-delstid-v4-9-d3e5fd34d107@kernel.org>
+	s=k20201202; t=1725704715;
+	bh=ZOiBC4rw7rIWO+otusVVv6/+6fAyiwV8MUgpz+CZHI0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VpwZxgXvA07XEpUo7eE5oUFnUrsYDAvnO3xFpU7yIW7buESD/V3moqEdgge30TTTK
+	 DGDEf0AlxJ8IhT+vt3v4HFj+BJBWS5SOROAnFaZHB89Lr8yQqdD+syRjUOWKCnlCwd
+	 gKNWUMPxrNpUdbs6iF6Y1rMfPo9NVj5/aPogBrtNNnU2YgJxxngmwRAnNZ8XbZKZqD
+	 kgehV6ws1t/gad+9m+EcC040XCES7lMLdh8dypSbApu764ULiu82CqJRq9Jy48oPs9
+	 uQ2IEw37QafsKY8SkA68uqWpaKQAtQaXkb7hpINxf5hSTMlqj+ErqxUlJVRCWfa0sT
+	 5DPVc3YY5CEFg==
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c245c62362so3701678a12.0;
+        Sat, 07 Sep 2024 03:25:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWbndEXLLzsnDf+MZmoIC0boWRLp4IhwTX2Z/FFVS5y4b3sFlaOpqcA/uyPknI9bal7KH4IcdX2mgfUHw==@vger.kernel.org, AJvYcCXTt1AAUtXYdEqHlT5IRji6TRQKns1GdoCL02Hv7s07n3tVGslX3BVdVcQ24oqqbNuGHdY=@vger.kernel.org, AJvYcCXUpDvL4bJ73nz13cPQBYiuId+kBM4d0BQHmaOaQa43gmZX8ESDQ9cdsWLl+SO4WpbPeTe1uA9eO7k=@vger.kernel.org, AJvYcCXoQaiTlDEaf0Azh02D5unyGoBvBoFzrmN98g0TZ7fFQEzlJSWh1JtSZJgRKqR64HrBSbL9btHJngOuasA/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5Q/k7G5yhb5LtP8KtTI9ZyBkecPtpE0Z3vsj0uozZotKv0fTH
+	CYqhFfHWF0rFqiWKhLwfB65KbdzKkJmt3N7wPZGT1uwMvTGYQ6kSajUmxJqaJgiYlGVkR8jUya5
+	CyZO0mF7zBT+4kjGBOnk8IC5CqTM=
+X-Google-Smtp-Source: AGHT+IF8gDSC2GgNG2uVaXUQhdcpbo41b6uqGtyA4cNTr9plIk60bkOTAnAU7uTyrLqBdsM7rP7CbJbwQQgpHzY6uyU=
+X-Received: by 2002:a17:906:db0a:b0:a86:843e:b3dc with SMTP id
+ a640c23a62f3a-a8a888ef4e0mr523837766b.62.1725704713795; Sat, 07 Sep 2024
+ 03:25:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1537; i=brauner@kernel.org; h=from:subject:message-id; bh=Q1pvLsvFqUeg52B5Bl4NZbvGj4evUD5AIy6A5sOYoQw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTd0ax4H2xRNt3j98wP/cKx62LjTsef4xBkcd8/M0Jjg bvnsflhHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPRf8rI0Pfd8+vGR2KRK2zK zGelxRjMyDp7Oay1lctRfxpPtGjFB4b/dapiqyb7TF6qof1n85mId9ZcVxdN6LhmWdfZmxwxc48 yPwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20240907-iocsr-v1-0-0c99b3334444@flygoat.com>
+In-Reply-To: <20240907-iocsr-v1-0-0c99b3334444@flygoat.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 7 Sep 2024 18:25:01 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7W06a8cyPtSTPibJw5jOsv9Oees-hJ+-jZgaiU31Ki-g@mail.gmail.com>
+Message-ID: <CAAhV-H7W06a8cyPtSTPibJw5jOsv9Oees-hJ+-jZgaiU31Ki-g@mail.gmail.com>
+Subject: Re: [PATCH 0/5] LoongArch, MIPS: Unify Loongson IOCSR handling
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: WANG Xuerui <kernel@xen0n.name>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-mips@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 05 Sep 2024 08:41:53 -0400, Jeff Layton wrote:
-> When updating the ctime on an inode for a SETATTR with a multigrain
-> filesystem, we usually want to take the latest time we can get for the
-> ctime. The exception to this rule is when there is a nfsd write
-> delegation and the server is proxying timestamps from the client.
-> 
-> When nfsd gets a CB_GETATTR response, we want to update the timestamp
-> value in the inode to the values that the client is tracking. The client
-> doesn't send a ctime value (since that's always determined by the
-> exported filesystem), but it can send a mtime value. In the case where
-> it does, then we may need to update the ctime to a value commensurate
-> with that instead of the current time.
-> 
-> [...]
+Hi, Jiaxun,
 
-Applied to the vfs.mgtime branch of the vfs/vfs.git tree.
-Patches in the vfs.mgtime branch should appear in linux-next soon.
+On Sat, Sep 7, 2024 at 6:17=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoat.com=
+> wrote:
+>
+> Hi folks,
+>
+> This series unfied LoongArch and MIPS's IOCSR functions and
+> macros so they will expose same interface to arch-indenpendent
+> drivers.
+>
+> This can reduce code deuplication, and also help my unifed IPI driver
+> and MIPS extio driver effort.
+>
+> This is touching many sub-systems in once so might be hard to merge.
+>
+> Huacai, can you apply first three patch via loongarch-next tree.
+> For last two patch maybe better merge them via a second PR after
+> all subsystem PRs merged.
+The problem is I'm not sure whether IOCSR registers are compatible in
+all Loongson processors.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Huacai
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.mgtime
-
-[09/11] fs: handle delegated timestamps in setattr_copy_mgtime
-        https://git.kernel.org/vfs/vfs/c/b0d5ea249d88
+>
+> Please review.
+> Thanks
+>
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+> Jiaxun Yang (5):
+>       LoongArch: Rename cpu_has_csr as cpu_has_iocsr
+>       LoongArch: Probe more CPU features from CPUCFG
+>       LoongArch: cpu-probe: Move IOCSR probing out of cpu_probe_common
+>       LoongArch: Extract IOCSR definitions to standalone header
+>       MIPS: Loongson64: Use shared IOCSR header
+>
+>  MAINTAINERS                                        |   1 +
+>  arch/loongarch/include/asm/cpu-features.h          |   2 +-
+>  arch/loongarch/include/asm/cpu.h                   |   4 +-
+>  arch/loongarch/include/asm/loongarch.h             |  90 ---------------=
+-
+>  arch/loongarch/kernel/cpu-probe.c                  | 111 ++++++++++++---=
+-----
+>  arch/loongarch/kernel/relocate_kernel.S            |   5 +-
+>  arch/loongarch/kernel/smp.c                        |  23 +++--
+>  .../include/asm/mach-loongson64/loongson_regs.h    |  58 +++--------
+>  arch/mips/kvm/vz.c                                 |   2 +-
+>  arch/mips/loongson64/smp.c                         |  44 ++++----
+>  drivers/cpufreq/loongson3_cpufreq.c                |  10 +-
+>  drivers/irqchip/irq-loongarch-avec.c               |   5 +-
+>  drivers/irqchip/irq-loongson-eiointc.c             |   5 +-
+>  drivers/platform/mips/cpu_hwmon.c                  |   7 +-
+>  include/linux/loongson/iocsr.h                     | 113 +++++++++++++++=
+++++++
+>  15 files changed, 256 insertions(+), 224 deletions(-)
+> ---
+> base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
+> change-id: 20240906-iocsr-829075458511
+>
+> Best regards,
+> --
+> Jiaxun Yang <jiaxun.yang@flygoat.com>
+>
 
