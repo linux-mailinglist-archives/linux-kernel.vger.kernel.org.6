@@ -1,189 +1,321 @@
-Return-Path: <linux-kernel+bounces-319857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2480097031E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:15:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E51EB970324
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEE5A1F21A5D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:15:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 530E5B22A7D
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF8915C13C;
-	Sat,  7 Sep 2024 16:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F246E15F3FF;
+	Sat,  7 Sep 2024 16:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dUgCL+hC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lEEEark4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F9B17740;
-	Sat,  7 Sep 2024 16:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251F522339;
+	Sat,  7 Sep 2024 16:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725725700; cv=none; b=KugTIUCVEKJh1/dmVv7lVHbP4BCQGTj68mgHSsr+VGPclsAxskLnnW0d2D59Ry/lKxsdO7/jIw+aEtVgXBAjbddkd6nShdfd06Bc8WbnJ/GUzIOBEtAdY8UxXBwyh1pu0dV9tqV0z1z8Eijgd+tDIH+zcDvU2BPXYaGPMZJOzLQ=
+	t=1725726049; cv=none; b=GSoCSlu0KdaO+pMUEGliPY9SQ7FfvPF0ZYYfI+07beOUwX6npc/TxWa6kQqEwY3Kz6otA+s/AKzrZamzRr3QXwfmOTeytHS5tRDEkwFh+zFIjbh3IhcXJMjkWA187upqQ8xRk8/1gOy2osoXRkdTM+HINYDAQ8R22gzSrJqkc0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725725700; c=relaxed/simple;
-	bh=80Ip9Qmk6loeYDopu8FVW0vT3IIbusL9QbQwlTjC1So=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i/1aHPHEsTz3Ait8xPQB7jObU8dnL0S2xM7ffb7q62qbSr28TqiC/Z+SntAC96vGf+w3aZ5QXg3zkgWQGF07iOE0Iw5NzFLd8nWEtkmGRDNzi/8RKZEKroFm731OkWOZKoMSN2fYBcSlZTrwy69nacmaQH/D0ED0hnbFRtfgCnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dUgCL+hC; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725725698; x=1757261698;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=80Ip9Qmk6loeYDopu8FVW0vT3IIbusL9QbQwlTjC1So=;
-  b=dUgCL+hCtP5oB2nZpqsUaqubrlQFEsYoUvYr127nPkt9VJ1gLrAUjIhU
-   rQEkRMkUoZz5j394U7B+S+E3xThaPwSDPoTLG+M/f/L5FaWxrBQzZVB4V
-   R8SmhZqEdltBXXbOw898yjJBsfUAFJ439+3o6SJU68JgPsMBdhET8XZjj
-   TYIY9Pv/clVZewQQk7wS4ZUoz1fUqQIKLyFG43sysKPIqqQjFNHF+VeSr
-   dg+QQH/BuX9zTevTk1tc35EThrhFIVYn29xHO8KejUG0bfM9f57U/bAwP
-   VTA2rmMMhhMhGmDxg6U3kXDc1SasZHVjaWD3jjPsNrkUPUTYhC9sQSUX3
-   A==;
-X-CSE-ConnectionGUID: f5wNcQGgSwCd4zxPzkLDIw==
-X-CSE-MsgGUID: x343W6mMSyewcoXPPE98Cw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="28253208"
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="28253208"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 09:14:57 -0700
-X-CSE-ConnectionGUID: jFf1V+8MQoKESBqGNeh9lw==
-X-CSE-MsgGUID: zLDql8f7TWOD+N4dK3co/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="66780413"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 07 Sep 2024 09:14:56 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1smy5N-000Cht-1t;
-	Sat, 07 Sep 2024 16:14:53 +0000
-Date: Sun, 8 Sep 2024 00:14:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Judith Mendez <jm@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] mmc: sdhci_am654: Add
- sdhci_am654_start_signal_voltage_switch
-Message-ID: <202409072350.685m24kB-lkp@intel.com>
-References: <20240906175032.1580281-1-jm@ti.com>
+	s=arc-20240116; t=1725726049; c=relaxed/simple;
+	bh=qJ6/waoFmT1Cv0La4E8wcTpUpscnpHiv3jMhTxVzN28=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Lpc4UihcI270DAqOnWEWHY2G0zck/fbCug1EDjhoNrUmtjFbugDieCK64OFe4BuN4IDCsARNfeZq5vlYXFtM3+16muDSKBvua00NvpG8/91kZhHnjegusxFX/0apTSrRtHel4X6UaebvkOmATexSlAMcUGEjSI+VfQibjNNty44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lEEEark4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05406C4CEC2;
+	Sat,  7 Sep 2024 16:20:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725726048;
+	bh=qJ6/waoFmT1Cv0La4E8wcTpUpscnpHiv3jMhTxVzN28=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lEEEark4aC4PhE91Gaq2r5z37AH3VAKz8oKtHjF7M6kZuDnNfePUHDkIOsdbBDnNa
+	 blIyhCCUzdyFf8o1lvvZdWzP+qgHZrf5BAzLkGes6DHHvK3edHZYMZsRMmNh/vQoUA
+	 JRuuIFDowlTMD+SdZQXbNUaUaX0a68Quid86TiWgINzljU0V4+/fmES881jg4oTkNZ
+	 PC6STuwxCqqqY4j3Ufp06HqkvYMaTywLtwEAyBLUDyIBtbzwnIkX1ELuaH5AZ5uAk9
+	 CyuY6qv/gq6U315zRO9Eb2XQMGfu7rhVQAmtYsX6MW0UuWUntpQGZLulCxXu0eLzJ7
+	 pcUQNMA+K8rYQ==
+Date: Sat, 7 Sep 2024 17:20:40 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoni Pokusinski <apokusinski01@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, pmeerw@pmeerw.net,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: temperature: tmp006: add triggered buffer
+ support
+Message-ID: <20240907172040.7cca5430@jic23-huawei>
+In-Reply-To: <20240902125946.350635-2-apokusinski01@gmail.com>
+References: <20240902125946.350635-1-apokusinski01@gmail.com>
+	<20240902125946.350635-2-apokusinski01@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906175032.1580281-1-jm@ti.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Judith,
+On Mon,  2 Sep 2024 14:59:47 +0200
+Antoni Pokusinski <apokusinski01@gmail.com> wrote:
 
-kernel test robot noticed the following build warnings:
+> Add support for continuous data capture using triggered buffers for the
+> tmp006 sensor. The device features a "data ready" interrupt line which
+> is pulled down once a new measurement is ready to be read.
+> 
+> Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
+> ---
+> Note:
+> For some reason, the checkpatch.pl returns a warning for this patch:
 
-[auto build test WARNING on cf6444ba528f043398b112ac36e041a4d8685cb1]
+Don't worry - it's a well known checkpatch false positive but the case is obscure
+enough no one ever bothered 'fixing' it.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Judith-Mendez/mmc-sdhci_am654-Add-sdhci_am654_start_signal_voltage_switch/20240907-015144
-base:   cf6444ba528f043398b112ac36e041a4d8685cb1
-patch link:    https://lore.kernel.org/r/20240906175032.1580281-1-jm%40ti.com
-patch subject: [PATCH v1] mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch
-config: openrisc-allyesconfig (https://download.01.org/0day-ci/archive/20240907/202409072350.685m24kB-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240907/202409072350.685m24kB-lkp@intel.com/reproduce)
+Ignore it.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409072350.685m24kB-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/mmc/host/sdhci_am654.c:360:5: warning: no previous prototype for 'sdhci_am654_start_signal_voltage_switch' [-Wmissing-prototypes]
-     360 | int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
-         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+However, I just merged a patch from Andy providing
+aligned_s64 as a type so feel free to use that which should
+get rid of this message.
 
 
-vim +/sdhci_am654_start_signal_voltage_switch +360 drivers/mmc/host/sdhci_am654.c
+> 
+>   WARNING: Missing a blank line after declarations
+>   #156: FILE: drivers/iio/temperature/tmp006.c:253:
+>   +               s16 channels[2];
+>   +               s64 ts __aligned(8);
+> 
+> It also suggests that the following code with a blank line is correct:
+> 
+> 	struct {
+> 		s16 channels[2];
+> 
+> 		s64 ts __aligned(8);
+> 	} scan;
+> 
+> I left the code as it was (with the WARNING) since it feels obviously
+> more natural.
 
-   359	
- > 360	int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
-   361						    struct mmc_ios *ios)
-   362	{
-   363		struct sdhci_host *host = mmc_priv(mmc);
-   364		struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-   365		struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
-   366		u16 ctrl;
-   367		int ret;
-   368	
-   369		if (host->version < SDHCI_SPEC_300)
-   370			return 0;
-   371	
-   372		switch (ios->signal_voltage) {
-   373		case MMC_SIGNAL_VOLTAGE_330:
-   374			if (!(host->flags & SDHCI_SIGNALING_330))
-   375				return -EINVAL;
-   376	
-   377			ctrl &= ~SDHCI_CTRL_VDD_180;
-   378			sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
-   379	
-   380			if (!IS_ERR(mmc->supply.vqmmc)) {
-   381				ret = mmc_regulator_set_vqmmc(mmc, ios);
-   382				if (ret < 0) {
-   383					pr_warn("%s: Switching to 3.3V signalling voltage failed\n",
-   384						mmc_hostname(mmc));
-   385					return -EIO;
-   386				}
-   387			}
-   388	
-   389			usleep_range(5000, 5500);
-   390	
-   391			ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-   392			if (!(ctrl & SDHCI_CTRL_VDD_180))
-   393				return 0;
-   394	
-   395			pr_warn("%s: 3.3V regulator output did not become stable\n",
-   396				mmc_hostname(mmc));
-   397	
-   398			return -EAGAIN;
-   399	
-   400		case MMC_SIGNAL_VOLTAGE_180:
-   401			if (!(host->flags & SDHCI_SIGNALING_180))
-   402				return -EINVAL;
-   403	
-   404			if (!IS_ERR(mmc->supply.vqmmc)) {
-   405				ret = mmc_regulator_set_vqmmc(mmc, ios);
-   406				if (ret < 0) {
-   407					pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
-   408						mmc_hostname(mmc));
-   409					return -EIO;
-   410				}
-   411			}
-   412	
-   413			if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_SET_V1P8_ENA) {
-   414				ctrl |= SDHCI_CTRL_VDD_180;
-   415				sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
-   416	
-   417				ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-   418				if (ctrl & SDHCI_CTRL_VDD_180)
-   419					return 0;
-   420	
-   421				pr_warn("%s: 1.8V regulator output did not become stable\n",
-   422					mmc_hostname(mmc));
-   423	
-   424				return -EAGAIN;
-   425			}
-   426			return 0;
-   427	
-   428		default:
-   429			return 0;
-   430		}
-   431	}
-   432	
+Various comments inline.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jonathan
+
+> ---
+>  drivers/iio/temperature/Kconfig  |   2 +
+>  drivers/iio/temperature/tmp006.c | 116 +++++++++++++++++++++++++++++--
+>  2 files changed, 111 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/iio/temperature/Kconfig b/drivers/iio/temperature/Kconfig
+> index ed0e4963362f..1244d8e17d50 100644
+> --- a/drivers/iio/temperature/Kconfig
+> +++ b/drivers/iio/temperature/Kconfig
+> @@ -91,6 +91,8 @@ config MLX90635
+>  config TMP006
+>  	tristate "TMP006 infrared thermopile sensor"
+>  	depends on I2C
+> +	select IIO_BUFFER
+> +	select IIO_TRIGGERED_BUFFER
+>  	help
+>  	  If you say yes here you get support for the Texas Instruments
+>  	  TMP006 infrared thermopile sensor.
+> diff --git a/drivers/iio/temperature/tmp006.c b/drivers/iio/temperature/tmp006.c
+> index 6d8d661f0c82..183b30a41573 100644
+> --- a/drivers/iio/temperature/tmp006.c
+
+>  #define TMP006_VOBJECT 0x00
+>  #define TMP006_TAMBIENT 0x01
+> @@ -45,6 +46,7 @@
+>  struct tmp006_data {
+>  	struct i2c_client *client;
+>  	u16 config;
+> +	struct iio_trigger *drdy_trig;
+>  };
+>  
+>  static int tmp006_read_measurement(struct tmp006_data *data, u8 reg)
+> @@ -81,15 +83,21 @@ static int tmp006_read_raw(struct iio_dev *indio_dev,
+>  
+>  	switch (mask) {
+>  	case IIO_CHAN_INFO_RAW:
+> +		ret = iio_device_claim_direct_mode(indio_dev);
+
+I'd suggest the scoped variant of this as you
+are effectively taking and releasing locks in different scopes.
+The code is write, but not nice to read.
+
+> +		if (ret)
+> +			return ret;
+> +
+>  		if (channel->type == IIO_VOLTAGE) {
+>  			/* LSB is 156.25 nV */
+>  			ret = tmp006_read_measurement(data, TMP006_VOBJECT);
+> +			iio_device_release_direct_mode(indio_dev);
+>  			if (ret < 0)
+>  				return ret;
+>  			*val = sign_extend32(ret, 15);
+>  		} else if (channel->type == IIO_TEMP) {
+>  			/* LSB is 0.03125 degrees Celsius */
+>  			ret = tmp006_read_measurement(data, TMP006_TAMBIENT);
+> +			iio_device_release_direct_mode(indio_dev);
+>  			if (ret < 0)
+>  				return ret;
+>  			*val = sign_extend32(ret, 15) >> TMP006_TAMBIENT_SHIFT;
+
+> @@ -164,13 +178,29 @@ static const struct iio_chan_spec tmp006_channels[] = {
+>  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+>  			BIT(IIO_CHAN_INFO_SCALE),
+>  		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
+> +		.scan_index = 0,
+> +		.scan_type = {
+> +			.sign = 's',
+> +			.realbits = 16,
+> +			.storagebits = 16,
+> +			.endianness = IIO_BE
+trailing comma wanted here.
+
+> +		}
+>  	},
+>  	{
+>  		.type = IIO_TEMP,
+>  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+>  			BIT(IIO_CHAN_INFO_SCALE),
+>  		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
+> -	}
+> +		.scan_index = 1,
+> +		.scan_type = {
+> +			.sign = 's',
+> +			.realbits = 14,
+> +			.storagebits = 16,
+> +			.shift = TMP006_TAMBIENT_SHIFT,
+> +			.endianness = IIO_BE
+add trailing comma. New fields may be added in future and need setting
+so having ht comma will make that easier to do.
+
+> +		}
+> +	},
+> +	IIO_CHAN_SOFT_TIMESTAMP(2)
+
+Add a comma.  In is possible that other channels will follow this.
+Doesn't often happen but there have been cases.
+
+>  };
+>  
+>  static const struct iio_info tmp006_info = {
+> @@ -213,6 +243,49 @@ static void tmp006_powerdown_cleanup(void *dev)
+>  	tmp006_power(dev, false);
+>  }
+>  
+> +static irqreturn_t tmp006_trigger_handler(int irq, void *p)
+> +{
+> +	struct iio_poll_func *pf = p;
+> +	struct iio_dev *indio_dev = pf->indio_dev;
+> +	struct tmp006_data *data = iio_priv(indio_dev);
+> +	struct {
+> +		s16 channels[2];
+> +		s64 ts __aligned(8);
+> +	} scan;
+> +
+> +	scan.channels[0] = i2c_smbus_read_word_data(data->client, TMP006_VOBJECT);
+
+read word_data uses an s32 return type to leave space for errors.  
+What you have here will cause problems if the top bit happens to be set in
+the register (i.e. it's a negative value).
+
+So use a local s32 first then assign it to the buffer
+data after checking for negative values.
+
+Note you currently don't ensure both channels are enabled, so if the
+user requests only the second channel they will get the wrong data.
+
+Either make this code handle or set available_scan_masks appropriately
+to let the core IIO code reorganize the data to what the user asked for.
+
+> +	if (scan.channels[0] < 0)
+> +		goto err;
+> +
+> +	scan.channels[1] = i2c_smbus_read_word_data(data->client, TMP006_TAMBIENT);
+> +	if (scan.channels[1] < 0)
+> +		goto err;
+> +
+> +	iio_push_to_buffers_with_timestamp(indio_dev, &scan,
+> +					   iio_get_time_ns(indio_dev));
+> +err:
+> +	iio_trigger_notify_done(indio_dev->trig);
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int tmp006_set_trigger_state(struct iio_trigger *trig, bool state)
+> +{
+> +	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
+> +	struct tmp006_data *data = iio_priv(indio_dev);
+> +
+> +	if (state)
+> +		data->config |= TMP006_CONFIG_DRDY_EN;
+> +	else
+> +		data->config &= ~TMP006_CONFIG_DRDY_EN;
+> +
+> +	return i2c_smbus_write_word_swapped(data->client, TMP006_CONFIG,
+> +		data->config);
+
+Align with data on the line above, so just after the (
+
+That's the preferred kernel style except when we are up against
+really long lines or similar.
+
+> +}
+> +
+> +static const struct iio_trigger_ops tmp006_trigger_ops = {
+> +	.set_trigger_state = tmp006_set_trigger_state,
+> +};
+> +
+>  static int tmp006_probe(struct i2c_client *client)
+>  {
+>  	struct iio_dev *indio_dev;
+> @@ -258,6 +331,35 @@ static int tmp006_probe(struct i2c_client *client)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	if (client->irq > 0) {
+> +		data->drdy_trig = devm_iio_trigger_alloc(&client->dev,
+> +							 "%s-dev%d",
+> +							 indio_dev->name,
+> +							 iio_device_id(indio_dev));
+> +		if (!data->drdy_trig)
+> +			return -ENOMEM;
+> +
+> +		data->drdy_trig->ops = &tmp006_trigger_ops;
+> +		iio_trigger_set_drvdata(data->drdy_trig, indio_dev);
+> +		ret = iio_trigger_register(data->drdy_trig);
+> +		if (ret)
+> +			return ret;
+> +
+> +		indio_dev->trig = iio_trigger_get(data->drdy_trig);
+> +
+> +		ret = devm_request_threaded_irq(&client->dev, client->irq,
+> +						iio_trigger_generic_data_rdy_poll,
+> +						NULL,
+> +						IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+Type of interrupt should come from firmware.   We wrongly used to set it
+in drivers (and are now stuck with that) but that overly constrains
+things for no useful purpose.  So IRQF_ONESHOT only here.
+
+> +						"tmp006_irq",
+> +						data->drdy_trig);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	ret = devm_iio_triggered_buffer_setup(&client->dev, indio_dev, NULL,
+> +					      tmp006_trigger_handler, NULL);
+> +
+check ret.
+
+>  	return devm_iio_device_register(&client->dev, indio_dev);
+>  }
+>  
+
 
