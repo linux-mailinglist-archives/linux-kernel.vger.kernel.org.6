@@ -1,245 +1,280 @@
-Return-Path: <linux-kernel+bounces-319816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF221970294
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:01:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5ACD970297
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5000D2833B0
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:01:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3719A1F22171
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C701F15C14F;
-	Sat,  7 Sep 2024 14:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E87515D5BB;
+	Sat,  7 Sep 2024 14:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+sWCVYL"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBtxcAdD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58BC4502F
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 14:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724284502F;
+	Sat,  7 Sep 2024 14:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725717707; cv=none; b=UiC7aZ5283jAdUMUE9CFNTloh55H++3DjlgXzzaIFTmpUK6JJncGz9pytXwscp6klBchx7uubUZzIjzJrcZ1vNuoZedeptKSpAh69MF92yeg4fToowIMMJy9t7+P8KA2WRxVTNrxoga0XT+wBqjBGHnq1yP9faK1VERcv2N7ewo=
+	t=1725717779; cv=none; b=DaE1pUXnXLYNpu3q3JI2iCWcur6DW1ap7Z6XiogGLa4MNgMXlT+E92okRC/qg2nZsZCNQhr4V+UpRLmPjkiMG+CCMr1NKgpkHL2uN2yw5Wt72btVB4R0xrJNDhz8r5Oni7BF31t6fkVtJZ+PtC6j3/GB+nlwijv7w4OH8xon5dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725717707; c=relaxed/simple;
-	bh=NTzcEOBZTwlNbZ8AOJbIZw31M1ae8YahyZI5KwgENbo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=baYBZdhm1HQQBdFXe07I08Xu536WqZcrKgYWpJFh6LNGQKGB0fk3RmBGcZq0qKgNXkoHKQMgS3i8Tt4EL9nFKLdXKkERv1CJAz/jEsBFSHCxSmx/CyqTqbvBjb0IToj+F6ry99wG9Zxif+rHOh1G7CLWs/rLy4vRPOnxobCLer0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D+sWCVYL; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71790ed8c2dso2529935b3a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 07:01:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725717705; x=1726322505; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yo5z6YbpFCbyn45YhRjk1uY7oiivyYsSSZRIxOYV05w=;
-        b=D+sWCVYLr4AutZzJE3BKug7EQAFoF/mW0Lp/R8+7LomB6cU5+RreZ8GxKeN0rm05ex
-         JmlQwL4wj4Nj7BoXIPk5fZ2ChvSrOhPHkhjTBX38ONtS7urK4mhf/gYBGP8lbDopAvnE
-         4h7moHRbS1PTc1t99DNSLnkezYNkkeFZHtPO9HWqeOiqswrPlhH0F5k8C+UrufRLZppQ
-         yBaOpkm/lLrPiSLcLpcbcrmPy0KIHmhmDvJgFiNMin0F6K95nyRrabAw3G9GjH1vbkh+
-         iw9WVL49LzXxc4JRXNmZX4wVvZPCNyL4YgUtP1W8WDDcCGpNnEBHYzPtBhyI0jTCZWoj
-         Tt5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725717705; x=1726322505;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yo5z6YbpFCbyn45YhRjk1uY7oiivyYsSSZRIxOYV05w=;
-        b=DNhKSIyMsEH9Gw1QuYA2KX5lwG/3C9QzP4FSGhgkB0uJQEAeCCI1ZNTwXqwEgtYhst
-         kzb/NQafBGsK1aHoITJxzbpwa2U6CCAGicW2bcwOILkpp2J9fftV+5bPQ8qcfWHSwXbv
-         BCgBBn9Rv/71rM7F4EwNRee7kEBry0r+QZr9Z3NIwkbQEaxfsKp90L1JnlXgt3S+l6xZ
-         PduxZfme5ZyEtkouX6AaQ0XJuAbr3aA1spsGZszUQatDXveDseAfsgO0D36kB4OLyglq
-         fmsFaa/yKFhikZzi8/LQ8Ai8MDbGOoa2kQ+QBVy9O+e46kVoVIetBD91PEhdP8sq+ICc
-         MwHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZWKlyH9li7CZt0a++RlKmXteAKkq5Usg1SkWbYYSgLzmm4ydiwsaUTBfNt3fwxyAwUlNtHqcv6wWW5jQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/Qg1oc+9KFL/7loDdlGGAESwm3LitLk99p2WFtOvIvGjczAWW
-	uyNaWpEMPguRAT+RBY9hKtxjfeTpRP/AWn94s2HBPAQJUnoMb/LA
-X-Google-Smtp-Source: AGHT+IGpqmqTNRmwfY/bZDZsLNpspnrjrnzEOH1n3LP9HaM8oIrON1a1L3mL3prDKSrR4TjZIAul6A==
-X-Received: by 2002:a05:6a00:1a8b:b0:704:2563:5079 with SMTP id d2e1a72fcca58-718d5f1b705mr7533743b3a.27.1725717704642;
-        Sat, 07 Sep 2024 07:01:44 -0700 (PDT)
-Received: from distilledx.srmu.edu.in ([103.4.221.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e58b2e1bsm914232b3a.52.2024.09.07.07.01.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 07:01:44 -0700 (PDT)
-From: Tejas Vipin <tejasvipin76@gmail.com>
-To: neil.armstrong@linaro.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch
-Cc: quic_jesszhan@quicinc.com,
-	dianders@chromium.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH] drm/panel: raydium-rm69380: transition to mipi_dsi wrapped functions
-Date: Sat,  7 Sep 2024 19:31:30 +0530
-Message-ID: <20240907140130.410349-1-tejasvipin76@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725717779; c=relaxed/simple;
+	bh=1nkW8OT/lgbFBao8ndgv4iUdKsjyBiMWPvtLtYaCeYo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a9hEKCMzFcTo4miPiOZedyUzv3swHW+Dta/5FZd3t3Raw/HTmBnSxNUzYmhLaKb0yboSkthpk3mJGy0bESHKngGwGbXXrCZBh59qHTWKKlRZQjXRXbPkuyROWlwDZuTIOiCWk/QA4UbCxAtUflRj4A4nVsLgnw482PYfSKENI6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBtxcAdD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD08C4CEC2;
+	Sat,  7 Sep 2024 14:02:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725717779;
+	bh=1nkW8OT/lgbFBao8ndgv4iUdKsjyBiMWPvtLtYaCeYo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bBtxcAdD4M561FgZyuAkl/r0qVJGmKpu9EfXCWi0YOMy7R57v1IWUuGkOEoaZJgke
+	 O9JmDpF0g5Vjs3q3xj6NnqPeJlZpKWRUPAXjq7n82hB7j4CbLuA5Nf7/dTRuRfB3Ms
+	 XN2BYm69VfeOh0so7vA1Md0892cGlla4zuUAwH4rgnMublrpefi+2iUZAsnhNVj67v
+	 Zc2hylznUYG4bivUo5jinEYxG2Qo8oWhDiAJBoD8pWdqKjsmstJSNFA78GMc4rQ3Un
+	 AvnWqlEYo+toAn7vsNqcqaWWvhiSqvlWDaBc+nEcZMNm2mgCNtW8rZLUAVV4byMJhG
+	 ofca3AtfDCNyQ==
+Date: Sat, 7 Sep 2024 15:02:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Angelo Dureghello <adureghello@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dlechner@baylibre.com
+Subject: Re: [PATCH RFC 2/8] iio: backend: extend features
+Message-ID: <20240907150250.40ba72f5@jic23-huawei>
+In-Reply-To: <f2568dd151efc2da76659fea4300fa7b3610d1e1.camel@gmail.com>
+References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
+	<20240829-wip-bl-ad3552r-axi-v0-v1-2-b6da6015327a@baylibre.com>
+	<20240831122313.4d993260@jic23-huawei>
+	<0fbe1321-cc67-4ade-8cbb-cbbaa40d2ca1@baylibre.com>
+	<20240903201157.5352ec04@jic23-huawei>
+	<4826097d-b575-4895-9335-f587bbf3bc89@baylibre.com>
+	<f2568dd151efc2da76659fea4300fa7b3610d1e1.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Changes the raydium-rm69380 panel to use multi style functions for
-improved error handling.
+On Thu, 05 Sep 2024 12:28:51 +0200
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
----
- drivers/gpu/drm/panel/panel-raydium-rm69380.c | 95 ++++++-------------
- 1 file changed, 30 insertions(+), 65 deletions(-)
+> On Wed, 2024-09-04 at 14:01 +0200, Angelo Dureghello wrote:
+> > Hi Jonathan,
+> >=20
+> > On 03/09/24 9:11 PM, Jonathan Cameron wrote: =20
+> > > On Mon, 2 Sep 2024 16:03:22 +0200
+> > > Angelo Dureghello <adureghello@baylibre.com> wrote:
+> > >  =20
+> > > > Hi Jonathan,
+> > > >=20
+> > > > thanks for the feedbacks,
+> > > >=20
+> > > > On 31/08/24 1:23 PM, Jonathan Cameron wrote: =20
+> > > > > On Thu, 29 Aug 2024 14:32:00 +0200
+> > > > > Angelo Dureghello <adureghello@baylibre.com> wrote:
+> > > > > =C2=A0  =20
+> > > > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > > > >=20
+> > > > > > Extend backend features with new calls needed later on this
+> > > > > > patchset from axi version of ad3552r.
+> > > > > >=20
+> > > > > > A bus type property has been added to the devicetree to
+> > > > > > inform the backend about the type of bus (interface) in use
+> > > > > > bu the IP.
+> > > > > >=20
+> > > > > > The follwoing calls are added:
+> > > > > >=20
+> > > > > > iio_backend_ext_sync_enable
+> > > > > > 	enable synchronize channels on external trigger
+> > > > > > iio_backend_ext_sync_disable
+> > > > > > 	disable synchronize channels on external trigger
+> > > > > > iio_backend_ddr_enable
+> > > > > > 	enable ddr bus transfer
+> > > > > > iio_backend_ddr_disable
+> > > > > > 	disable ddr bus transfer
+> > > > > > iio_backend_set_bus_mode
+> > > > > > 	select the type of bus, so that specific read / write
+> > > > > > 	operations are performed accordingly
+> > > > > > iio_backend_buffer_enable
+> > > > > > 	enable buffer
+> > > > > > iio_backend_buffer_disable
+> > > > > > 	disable buffer
+> > > > > > iio_backend_data_transfer_addr
+> > > > > > 	define the target register address where the DAC sample
+> > > > > > 	will be written.
+> > > > > > iio_backend_bus_reg_read
+> > > > > > 	generic bus read, bus-type dependent
+> > > > > > iio_backend_bus_read_write
+> > > > > > 	generic bus write, bus-type dependent
+> > > > > >=20
+> > > > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > > > > ---
+> > > > > > =C2=A0=C2=A0 drivers/iio/industrialio-backend.c | 151
+> > > > > > +++++++++++++++++++++++++++++++++++++
+> > > > > > =C2=A0=C2=A0 include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 24 ++++++
+> > > > > > =C2=A0=C2=A0 2 files changed, 175 insertions(+)
+> > > > > >=20
+> > > > > > diff --git a/drivers/iio/industrialio-backend.c
+> > > > > > b/drivers/iio/industrialio-backend.c
+> > > > > > index a52a6b61c8b5..1f60c8626be7 100644
+> > > > > > --- a/drivers/iio/industrialio-backend.c
+> > > > > > +++ b/drivers/iio/industrialio-backend.c
+> > > > > > @@ -718,6 +718,157 @@ static int __devm_iio_backend_get(struct =
+device
+> > > > > > *dev, struct iio_backend *back)
+> > > > > > =C2=A0=C2=A0=C2=A0	return 0;
+> > > > > > =C2=A0=C2=A0 } =20
+> > > > > =C2=A0  =20
+> > > > > > +
+> > > > > > +/**
+> > > > > > + * iio_backend_buffer_enable - Enable data buffering =20
+> > > > > Data buffering is a very vague term.=C2=A0 Perhaps some more deta=
+il on what
+> > > > > this means? =20
+> > > > for this DAC IP, it is the dma buffer where i write the samples,
+> > > > for other non-dac frontends may be something different, so i kept it
+> > > > generic. Not sure what a proper name may be, maybe
+> > > >=20
+> > > > "Enable optional data buffer" ? =20
+> > > How do you 'enable' a buffer?=C2=A0 Enable writing into it maybe? =20
+> >=20
+> > for the current case, this is done using the custom register
+> > of the AXI IP, enabling a "stream".
+> >=20
+> > return regmap_set_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
+> > =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 AXI_DAC_STREAM_ENABLE);
+> >=20
+> > Functionally, looks like dma data is processed (sent over qspi)
+> > when the stream is enabled.
+> >=20
+> > Maybe a name as "stream_enable" would me more appropriate ?
+> > "Stream" seems less generic btw.
+> >  =20
 
-diff --git a/drivers/gpu/drm/panel/panel-raydium-rm69380.c b/drivers/gpu/drm/panel/panel-raydium-rm69380.c
-index 4dca6802faef..bdab844dab55 100644
---- a/drivers/gpu/drm/panel/panel-raydium-rm69380.c
-+++ b/drivers/gpu/drm/panel/panel-raydium-rm69380.c
-@@ -46,108 +46,73 @@ static void rm69380_reset(struct rm69380_panel *ctx)
- static int rm69380_on(struct rm69380_panel *ctx)
- {
- 	struct mipi_dsi_device *dsi = ctx->dsi[0];
--	struct device *dev = &dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
- 
- 	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
- 	if (ctx->dsi[1])
- 		ctx->dsi[1]->mode_flags |= MIPI_DSI_MODE_LPM;
- 
--	mipi_dsi_dcs_write_seq(dsi, 0xfe, 0xd4);
--	mipi_dsi_dcs_write_seq(dsi, 0x00, 0x80);
--	mipi_dsi_dcs_write_seq(dsi, 0xfe, 0xd0);
--	mipi_dsi_dcs_write_seq(dsi, 0x48, 0x00);
--	mipi_dsi_dcs_write_seq(dsi, 0xfe, 0x26);
--	mipi_dsi_dcs_write_seq(dsi, 0x75, 0x3f);
--	mipi_dsi_dcs_write_seq(dsi, 0x1d, 0x1a);
--	mipi_dsi_dcs_write_seq(dsi, 0xfe, 0x00);
--	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x28);
--	mipi_dsi_dcs_write_seq(dsi, 0xc2, 0x08);
--
--	ret = mipi_dsi_dcs_set_tear_on(dsi, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set tear on: %d\n", ret);
--		return ret;
--	}
--
--	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to exit sleep mode: %d\n", ret);
--		return ret;
--	}
--	msleep(20);
--
--	ret = mipi_dsi_dcs_set_display_on(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set display on: %d\n", ret);
--		return ret;
--	}
--	msleep(36);
--
--	return 0;
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfe, 0xd4);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x00, 0x80);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfe, 0xd0);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x48, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfe, 0x26);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x75, 0x3f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1d, 0x1a);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfe, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x28);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc2, 0x08);
-+
-+	mipi_dsi_dcs_set_tear_on_multi(&dsi_ctx, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 20);
-+
-+	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 36);
-+
-+	return dsi_ctx.accum_err;
- }
- 
--static int rm69380_off(struct rm69380_panel *ctx)
-+static void rm69380_off(struct rm69380_panel *ctx)
- {
- 	struct mipi_dsi_device *dsi = ctx->dsi[0];
--	struct device *dev = &dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
- 
- 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
- 	if (ctx->dsi[1])
- 		ctx->dsi[1]->mode_flags &= ~MIPI_DSI_MODE_LPM;
- 
--	ret = mipi_dsi_dcs_set_display_off(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set display off: %d\n", ret);
--		return ret;
--	}
--	msleep(35);
--
--	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to enter sleep mode: %d\n", ret);
--		return ret;
--	}
--	msleep(20);
--
--	return 0;
-+	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 35);
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 20);
- }
- 
- static int rm69380_prepare(struct drm_panel *panel)
- {
- 	struct rm69380_panel *ctx = to_rm69380_panel(panel);
--	struct device *dev = &ctx->dsi[0]->dev;
- 	int ret;
- 
- 	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
--	if (ret < 0) {
--		dev_err(dev, "Failed to enable regulators: %d\n", ret);
--		return ret;
--	}
-+	if (ret < 0) 
-+		return ret;	
- 
- 	rm69380_reset(ctx);
- 
- 	ret = rm69380_on(ctx);
- 	if (ret < 0) {
--		dev_err(dev, "Failed to initialize panel: %d\n", ret);
- 		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
- 		regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
--		return ret;
- 	}
- 
--	return 0;
-+	return ret;
- }
- 
- static int rm69380_unprepare(struct drm_panel *panel)
- {
- 	struct rm69380_panel *ctx = to_rm69380_panel(panel);
--	struct device *dev = &ctx->dsi[0]->dev;
--	int ret;
- 
--	ret = rm69380_off(ctx);
--	if (ret < 0)
--		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
-+	rm69380_off(ctx);
- 
- 	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
- 	regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
--- 
-2.46.0
+Ok. Maybe "enable buffer filling" or something like that?
+
+>=20
+> Yes, stream enable is very specific for this usecase. This is basically
+> connected to typical IIO buffering. So maybe we could either:
+>=20
+> 1) Embed struct iio_buffer_setup_ops in the backend ops struct;
+> 2) Or just define directly the ones we need now in backend ops.
+Structurally whatever makes sense - I was just quibbling over the
+documentation ;)
+
+> =20
+> > > >  =20
+> > > > > > + * @back: Backend device
+> > > > > > + *
+> > > > > > + * RETURNS:
+> > > > > > + * 0 on success, negative error number on failure.
+> > > > > > + */
+> > > > > > +int iio_backend_buffer_enable(struct iio_backend *back)
+> > > > > > +{
+> > > > > > +	return iio_backend_op_call(back, buffer_enable);
+> > > > > > +}
+> > > > > > +EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_enable, IIO_BACKEND);
+> > > > > > +
+> > > > > > +/**
+> > > > > > +/**
+> > > > > > + * iio_backend_bus_reg_read - Read from the interface bus
+> > > > > > + * @back: Backend device
+> > > > > > + * @reg: Register valule
+> > > > > > + * @val: Pointer to register value
+> > > > > > + * @size: Size, in bytes
+> > > > > > + *
+> > > > > > + * A backend may operate on a specific interface with a relate=
+d bus.
+> > > > > > + * Read from the interface bus. =20
+> > > > > So this is effectively routing control plane data through the off=
+loaded
+> > > > > bus?=C2=A0 That sounds a lot more like a conventional bus than II=
+O backend.
+> > > > > Perhaps it should be presented as that with the IIO device attach=
+ed
+> > > > > to that bus? I don't fully understand what is wired up here.
+> > > > > =C2=A0  =20
+> > > > Mainly, an IP may include a bus as 16bit parallel, or LVDS, or simi=
+lar
+> > > > to QSPI as in my case (ad3552r). =20
+> > > ok.
+> > >=20
+> > > If this is a bus used for both control and dataplane, then we should =
+really
+> > > be presenting it as a bus (+ offload) similar to do for spi + offload.
+> > >  =20
+>=20
+> Yes, indeed. In this case we also use the axi-dac core for controlling the
+> frontend device (accessing it's register) which is fairly weird. But not =
+sure
+> how we can do it differently. For the spi_engine that is really a spi con=
+troller
+> with the extra offloading capability. For this one, it's now "acting" as =
+a spi
+> controller but in the future it may also "act" as a parallel controller (=
+the
+> axi-adc already is in works for that with the ad7606 series).
+>=20
+> I was also very skeptical when I first saw these new functions but I'm not
+> really sure how to do it differently. I mean, it also does not make much =
+sense
+> to have an additional bus driver as the register maps are the same. Not s=
+ure if
+> turning it in a MFD device, helps...
+
+Hmm. A given adi-axi-adc interface is going to be one of (or something else)
+1) SPI(ish) controller + offloads like this one.
+2) Parallel bus - data only
+3) Parallel bus with control.
+
+Maybe we argue these are tightly coupled enough that we don't care but it
+feels like a direction that might bite us in the long run, particularly
+if we end up dt bindings that are hard to work with if we change
+how this fits together - imagine an SPI engine with a mode that does work
+for this + an SPI offload engine that works with that.
+Then the binding here will be hard to deal with.
+
+
+>=20
+> FWIW, I still don't fully understand why can't we have this supported by =
+the
+> spi_engine core. My guess is that we need features from the axi-dac (for =
+the
+> dataplane) so we are incorporating the controlplane on it instead of going
+> spi_engine + axi-dac.
+>=20
+> Also want to leave a quick note about LVDS (that was mentioned). That int=
+erface
+> is typically only used for data so I'm not seeing any special handling li=
+ke this
+> for that interface.
+Makes sense.  I'm a bit surprised that the parallel bus being used for cont=
+rol
+is on the list given that is also a bit messy to do (need some signalling t=
+hat
+direction is changing or a lot of wires).
+
+Jonathan
+
+>=20
+> - Nuno S=C3=A1
+> > >  =20
 
 
