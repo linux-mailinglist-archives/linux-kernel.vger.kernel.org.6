@@ -1,138 +1,174 @@
-Return-Path: <linux-kernel+bounces-319802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DAE97026A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 068FC97026B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CEE1B22A7F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:36:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97DB6B2152A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8982515CD42;
-	Sat,  7 Sep 2024 13:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC62E15C15B;
+	Sat,  7 Sep 2024 13:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lxdBIR/g"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ly94zhzW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6FF15884A;
-	Sat,  7 Sep 2024 13:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3741815C136
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 13:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725716205; cv=none; b=rpkdsIWeQbxcVToa7xTcmAsScLSjeprlkCdhjkVtmwfD/Sboovhi1wUNUj1ywzQql8dOSQKUWuIu/0hxRQ/sYlP7MIaLPoDPBjreM+74AIjKGg67JGzuqoSSogfaD+J+2TEsh1QDAefudy84admTvx424G8ws6NplORUuW6UXec=
+	t=1725716269; cv=none; b=eOcnKFcIXxROrdmXE1dtAVRXpPJrRjWvEoxj18ZcbxAHENha4MYbIBXIUTtYi+uUA0rvZ2gd7bd+wzkLo2RjXOql/WANq+O3bOwFFssLU9kwAqEOPd/DT5sI3JQn8EVTiFBUkg9Kny9ISVE3fgrUYo72X/j5kOmaoOSR8PZcHFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725716205; c=relaxed/simple;
-	bh=QDAeMKDXx+8hSe+M0x6iS7yh4oBXpRy19ch8PrVqUUs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B3Jual4//VbrmzwR8zk1x+E36yaXYZz9wSWoTb8oghwyAs58/nPnoRT7oC01X624MrIqg40lUu6/WbQr6OkZ1YwUZB0bOSSLgAkmiOf0P+KYgR5lMzWpFFR5wU0UHvYwD/4PjT/4JEQ67HeDcQrRBgCrk7QUrANjeJLYCU4fZBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lxdBIR/g; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d873dc644dso2195863a91.3;
-        Sat, 07 Sep 2024 06:36:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725716202; x=1726321002; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YUTavBQ5qrHlQPm4dvfhw3yJpsNd8pyOFUFPgqrOJVE=;
-        b=lxdBIR/gHrT6/47FnqnBS1210EFMhPL9wLE1Wgql589fQ5/S3Q34YMt5R76a0TmLcK
-         hRp2gCeK9bjAqPH59yHfgF07xLkQcfqU7nsOmoHZRTm1j/pkgSi6HUaziCJCqWeCb9y6
-         54bpVM80DdncokM3egUXsQwMJqrK7ICQgg3iyE6HZjsZTmMMbcyazO6Vd5R8mL+OE9S3
-         lUQ25WZKOV4rsSMBOqijhiV+12dsDSD0vT1v8INxxM/RODwJz5beAZvdOIYix6n2HR6k
-         ozZx0NZv4gJ+pyzvv6vzCgde6IHpBGrOEC2ab/ULTB/M5pzj+Dc478WKedExpsS806CK
-         CcUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725716202; x=1726321002;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YUTavBQ5qrHlQPm4dvfhw3yJpsNd8pyOFUFPgqrOJVE=;
-        b=wGT+8E1K1bETru4FL/1S/JFotOXroaiNwbAbZERTABHdSay8e63THTnSldI60JQV/g
-         yn4SFpDzzIrp2QuK7aRU2yZUqwgYRGsSinGJ/XmBjfj0jjU0wg0gK7REcIIhd1RELlen
-         9/2Z8AEzSlhudyJW7Mewgwkc1S7RgKzZEc8X/80drmIC4EnZIn37zOyjG4tTYzIPdK5f
-         AR5Z/yhi3A4VH2rcu07qTiDJYg9K9CbNFe25OaLVr0s3B5subIE9suGtezNhWzzQCjm2
-         6xtkmPMl0A1CLZJ/CDSBe7mxx2v39el6VuzjUDWRSV63w4WPs+gUO0x1MOcTL1/Fp9qe
-         LOwA==
-X-Forwarded-Encrypted: i=1; AJvYcCULpP3BJRQCBsWdaqVvACkeOxAsgJTq+He5eebPeRFosBEb9xwt/hZtMSBZtLssUnGQhZkWNWzV3eXoLL0k@vger.kernel.org, AJvYcCWyzG/fdNVpTXDrvieM+N6KzSPWD9fAqQPr9NX7dissxpRY/ZGLajDSfv9W8CuHSHr+9BxH9sWc9SwF9b6yFVg4mDY=@vger.kernel.org, AJvYcCXS6aMOL1kIFFFrktzDD3Vbgmp+qqhL3NQHSa9FHLde0C414ligaCir0DxLM/wFyodLIneUcocP3lktSXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmua+y+BUusUGIuZcbGpaqiE8BVSFq+H5vKX0Weu4xd+eNNFNj
-	AA1qsWPjxQv9M5PpjtjTwkHMKDd1biWHnicXeJBq2RAuoN9KEz9hu3UdUG0Uvw8=
-X-Google-Smtp-Source: AGHT+IHDd6iQwUYAcG/97d9xepIXpXTiP9NBsHNofcF74jxr+3FjbR3kilNRA1s6jBVgx9qHN1vkwg==
-X-Received: by 2002:a17:90b:4b4a:b0:2d8:d098:4f31 with SMTP id 98e67ed59e1d1-2dafcf1c7f5mr2670367a91.17.1725716201718;
-        Sat, 07 Sep 2024 06:36:41 -0700 (PDT)
-Received: from [192.168.0.122] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db04136b71sm1251865a91.12.2024.09.07.06.36.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Sep 2024 06:36:41 -0700 (PDT)
-Message-ID: <d5d06aaa-ab93-47c3-b7c5-ad8dd3ca66f2@gmail.com>
-Date: Sat, 7 Sep 2024 21:36:38 +0800
+	s=arc-20240116; t=1725716269; c=relaxed/simple;
+	bh=xtrkjOHGGevMlNpIsMiOVof/a2y3wxes9ScvEXZzsx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CDXILj4NIm/b5rgCVfVxrT5BlAnISHPEbgQcG4oNnclJ0Refdv1mVkvI0oiZFnW0UHQGDaMMLEMp2+jkoJUH+lJZQuvn3y+C5wpWzbWpoLFG+jMUTINcPBYNmVdp6bUsU3uXylM4kSif3BmQsWb5LVWYSaW80pp7O2DU+C4XgU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ly94zhzW; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725716267; x=1757252267;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xtrkjOHGGevMlNpIsMiOVof/a2y3wxes9ScvEXZzsx8=;
+  b=ly94zhzWU7KISHcTYeRK0s0d34NZLRVAUnP3rNxB6OwquceQFjZHOHV4
+   EnWpHK7K8fzhS4PAheyQHc2rpvnE8O3mKdRd8cPfhxUISIdvPad4aoYd2
+   9/63Zsw+yu+WrxahSH9lTapjJsMz2U92hhMlt9rR0rzVfiaUnk/ueSCxb
+   XnemUdiF7o2cR8Ut7y13NHYP4yC+nJ0b8a/yf+JZFSotaX3oSLIVd77sU
+   TEqyjvUViT2OT++f2UBBybb3dVSqsYVaRIRM+TRfJ19knJsHGfRk5XWlo
+   xjrmQj0/ivnkynYuDx+TsMv/eAHGjPPcAcpU1dG6oVgbho11mCeutSKu2
+   g==;
+X-CSE-ConnectionGUID: K9LuEkoPSXW3Ui91N4q5jA==
+X-CSE-MsgGUID: sY9t6YcmQiW3N2QYplDm3w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="24656485"
+X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
+   d="scan'208";a="24656485"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 06:37:47 -0700
+X-CSE-ConnectionGUID: Ya/UwRVhRJmfAeJC8+8PXA==
+X-CSE-MsgGUID: PU+2OfopTCG9a4Aj+3uTPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
+   d="scan'208";a="89485404"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 07 Sep 2024 06:37:43 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1smvdF-000Cac-16;
+	Sat, 07 Sep 2024 13:37:41 +0000
+Date: Sat, 7 Sep 2024 21:36:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, joro@8bytes.org,
+	robin.murphy@arm.com, vasant.hegde@amd.com, ubizjak@gmail.com,
+	jgg@nvidia.com, jon.grimm@amd.com, santosh.shukla@amd.com,
+	pandoh@google.com, kumaranand@google.com,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: Re: [PATCH v3 2/5] iommu/amd: Introduce helper functions to access
+ and update 256-bit DTE
+Message-ID: <202409072100.WaB846Yg-lkp@intel.com>
+References: <20240906121308.5013-3-suravee.suthikulpanit@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] tty: serial: samsung: Fix serial rx on Apple A7-A9
- SoCs
-Content-Language: en-MW
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-Cc: asahi@lists.linux.dev
-References: <20240907111431.2970-1-towinchenmi@gmail.com>
- <20240907111431.2970-3-towinchenmi@gmail.com>
- <3596ef82-b2a4-40a0-8a66-575e26c386d9@kernel.org>
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <3596ef82-b2a4-40a0-8a66-575e26c386d9@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906121308.5013-3-suravee.suthikulpanit@amd.com>
+
+Hi Suravee,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on linus/master]
+[also build test WARNING on joro-iommu/next v6.11-rc6 next-20240906]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Suravee-Suthikulpanit/iommu-amd-Disable-AMD-IOMMU-if-CMPXCHG16B-feature-is-not-supported/20240906-201533
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240906121308.5013-3-suravee.suthikulpanit%40amd.com
+patch subject: [PATCH v3 2/5] iommu/amd: Introduce helper functions to access and update 256-bit DTE
+config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20240907/202409072100.WaB846Yg-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240907/202409072100.WaB846Yg-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409072100.WaB846Yg-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iommu/amd/iommu.c:299:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     299 |         if (!alias_data) {
+         |             ^~~~~~~~~~~
+   drivers/iommu/amd/iommu.c:309:9: note: uninitialized use occurs here
+     309 |         return ret;
+         |                ^~~
+   drivers/iommu/amd/iommu.c:299:2: note: remove the 'if' if its condition is always true
+     299 |         if (!alias_data) {
+         |         ^~~~~~~~~~~~~~~~
+   drivers/iommu/amd/iommu.c:279:9: note: initialize the variable 'ret' to silence this warning
+     279 |         int ret;
+         |                ^
+         |                 = 0
+   1 warning generated.
 
 
+vim +299 drivers/iommu/amd/iommu.c
 
-On 7/9/2024 20:55, Krzysztof Kozlowski wrote:
-> On 07/09/2024 13:06, Nick Chan wrote:
->>  
->> diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
->> index 1672cf0810ef..849d502d348d 100644
->> --- a/include/linux/serial_s3c.h
->> +++ b/include/linux/serial_s3c.h
->> @@ -246,24 +246,28 @@
->>  				 S5PV210_UFCON_TXTRIG4 |	\
->>  				 S5PV210_UFCON_RXTRIG4)
->>  
->> -#define APPLE_S5L_UCON_RXTO_ENA		9
->> -#define APPLE_S5L_UCON_RXTHRESH_ENA	12
->> -#define APPLE_S5L_UCON_TXTHRESH_ENA	13
->> -#define APPLE_S5L_UCON_RXTO_ENA_MSK	(1 << APPLE_S5L_UCON_RXTO_ENA)
->> -#define APPLE_S5L_UCON_RXTHRESH_ENA_MSK	(1 << APPLE_S5L_UCON_RXTHRESH_ENA)
->> -#define APPLE_S5L_UCON_TXTHRESH_ENA_MSK	(1 << APPLE_S5L_UCON_TXTHRESH_ENA)
->> +#define APPLE_S5L_UCON_RXTO_ENA			9
->> +#define APPLE_S5L_UCON_RXTO_LEGACY_ENA		11
->> +#define APPLE_S5L_UCON_RXTHRESH_ENA		12
->> +#define APPLE_S5L_UCON_TXTHRESH_ENA		13
->> +#define APPLE_S5L_UCON_RXTO_ENA_MSK		(1 << APPLE_S5L_UCON_RXTO_ENA)
->> +#define APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK	(1 << APPLE_S5L_UCON_RXTO_LEGACY_ENA)
->> +#define APPLE_S5L_UCON_RXTHRESH_ENA_MSK		(1 << APPLE_S5L_UCON_RXTHRESH_ENA)
->> +#define APPLE_S5L_UCON_TXTHRESH_ENA_MSK		(1 << APPLE_S5L_UCON_TXTHRESH_ENA)
-> 
-> Use BIT() for new entries. You can also convert the earlier defines to
-> BIT() in separate patches.
-Acked. Version 2 will change APPLE_S5L_* entries to use BIT(), and then
-add the new
-entries with BIT().
+   272	
+   273	static int clone_alias(struct pci_dev *pdev, u16 alias, void *data)
+   274	{
+   275		struct dev_table_entry dte;
+   276		struct amd_iommu *iommu;
+   277		struct iommu_dev_data *dev_data, *alias_data;
+   278		u16 devid = pci_dev_id(pdev);
+   279		int ret;
+   280	
+   281		if (devid == alias)
+   282			return 0;
+   283	
+   284		iommu = rlookup_amd_iommu(&pdev->dev);
+   285		if (!iommu)
+   286			return 0;
+   287	
+   288		/* Get DTE for pdev */
+   289		dev_data = dev_iommu_priv_get(&pdev->dev);
+   290		if (!dev_data)
+   291			return -EINVAL;
+   292	
+   293		spin_lock(&dev_data->dte_lock);
+   294		get_dte256(iommu, dev_data, &dte);
+   295		spin_unlock(&dev_data->dte_lock);
+   296	
+   297		/* Setup for alias */
+   298		alias_data = search_dev_data(iommu, alias);
+ > 299		if (!alias_data) {
+   300			ret = -EINVAL;
+   301			goto out;
+   302		}
+   303	
+   304		spin_lock(&alias_data->dte_lock);
+   305		update_dte256(iommu, alias_data, &dte);
+   306		amd_iommu_set_rlookup_table(iommu, alias);
+   307		spin_unlock(&alias_data->dte_lock);
+   308	out:
+   309		return ret;
+   310	}
+   311	
 
-> 
->>  
-> 
-> Best regards,
-> Krzysztof
-> 
-
-Nick Chan
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
