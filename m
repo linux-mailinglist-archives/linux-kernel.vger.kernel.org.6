@@ -1,117 +1,76 @@
-Return-Path: <linux-kernel+bounces-319832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86DC79702CE
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:47:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB1929702D1
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6412B21CA8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:47:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ECFCB23029
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EE915E5D4;
-	Sat,  7 Sep 2024 14:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760BE15E5CF;
+	Sat,  7 Sep 2024 14:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="n8Hp9Z5I"
-Received: from classfun.cn (unknown [129.204.178.38])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3484328FC;
-	Sat,  7 Sep 2024 14:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUo05fSQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98B828FC;
+	Sat,  7 Sep 2024 14:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725720412; cv=none; b=RhlitEeaJ+1FBHXMD4dSozA+6PolRAtK0S1bdCMHhnJNEEmgR6uLTuYKD8mG541W6+S5uvj6cNq3ayBj8aEHyohjYJphCR7NkjyIgKKugpfT5SxqtHXmG52YHZLaYKr9h0cWSvC9Uf/i+uG6fwe9PFD4plT82QhcNwDEeppDn6w=
+	t=1725720621; cv=none; b=pKUZY+DradkwdWseKse4oOpnKpEvub11Q8ceo4cARjgyg5f+ezqamXkJJDI91Sg4olMKDudc4MxBAepb8ZhTZfhVbCdGJMKOfexsEVqzR8wTAjWsN48lBPwXhzwjS+0EVtQHElLG7WAZoTCETpbVxA6Fs55EVPF7bBJem6uRV+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725720412; c=relaxed/simple;
-	bh=NHJ0+sU2adxTEFbuq/grgcIZX4veA7f7/RBQCE56QVQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VFBu5aKcFG3nAt01tvYdLbXJJpCVJ4zZ7yyYmYOTsplwq4ptMFoa8MlrY7l0igbUyZjbZ/hLlkRnzW77NNz1haEcosyHmOJ0qm/CTzhRJvzCdOeNrOqecTlEVh99+Ja92OVA3MTb027HEWc9mkBoFeeq5zzfLjeJesqoTYAJoz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=n8Hp9Z5I; arc=none smtp.client-ip=129.204.178.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
-Received: from [192.168.0.160] (unknown [14.155.100.110])
-	(Authenticated sender: bigfoot)
-	by classfun.cn (Postfix) with ESMTPSA id 0FEC078A04;
-	Sat,  7 Sep 2024 22:46:45 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn 0FEC078A04
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
-	s=default; t=1725720405;
-	bh=vEtoINhe3YqLp5wK8FdsELDTQbLLzWqrW7RhTNgkRsE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n8Hp9Z5I/WAxnS8iFA49TGS8ykMLsm9KqxVy18PU2SezXNKHTVWXySMyCtaJ53mg1
-	 1YCUaNGuArthbZ8+SgcaTpf9kuLqLvaNUctnJP4ysI84mZraFdWDO3FuvOCP9fkoH9
-	 xto2kSiaBr1njBrrCmT4EzHp6O1DKqANgjewI5JY=
-Message-ID: <9051dba0-0483-43dc-9e5d-d19500c019b9@classfun.cn>
-Date: Sat, 7 Sep 2024 22:46:29 +0800
+	s=arc-20240116; t=1725720621; c=relaxed/simple;
+	bh=D9LKBED8nFxxp/zFuU3ZPegohgW7em+VxTBYnkLTcr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c7wFgAmNRduL+RXljrkNtj5wXrvihdRibuuFd08yp4nhlXDCpmSitKThQkrdMJx7YGt4wMeJrKPD6+shWzrgrsjJTwuZd1nGO16JBf26+rSyPJ19oUjTuZrnUjFYLZZclFavk/XtQAPKxKubEbZhC+4L3W2F4RAf88a+OOAKTvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUo05fSQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1FBAC4CEC2;
+	Sat,  7 Sep 2024 14:50:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725720621;
+	bh=D9LKBED8nFxxp/zFuU3ZPegohgW7em+VxTBYnkLTcr4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GUo05fSQ9Oke/loC0abAk0esBzGTmaVcpZ95KyydbPFLDHx4nDmfWtAIcWEpp2wAH
+	 6L7sC4Tvq5Ig0pbrTrvCQumuyDdYL55NnxIc3hngpm9qTZKx+hMaBd7cAL0zqO8C1f
+	 VZiZXOftrFurUJF+LyBO89zBZwHS1glY1fAMMOecJieDjkT27JAgBUS1YyKaAGjTM/
+	 ovr0AiJiCMwSSkwnCgFm6SQw0pdleu0rI1Y4lPDo+KwJgqDulPqYa5jU4J6x1x8TQh
+	 FOU6cdfzEpx/VbEavdfVzBIhCgtoP/l3dvfnW7AYs7XumLw1jZW23xuj2ESI2QMpDa
+	 PSMVoJji1UNUw==
+Date: Sat, 7 Sep 2024 15:50:12 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Alexandru Ardelean <aardelean@baylibre.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, krzk+dt@kernel.org, robh@kernel.org,
+ lars@metafoo.de, michael.hennerich@analog.com, gstols@baylibre.com
+Subject: Re: [PATCH v5 0/9] iio: adc: ad7606: add support for
+ AD7606C-{16,18} parts
+Message-ID: <20240907155012.53766e2a@jic23-huawei>
+In-Reply-To: <20240907065043.771364-1-aardelean@baylibre.com>
+References: <20240907065043.771364-1-aardelean@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] mfd: Add driver for Photonicat power management MCU
-To: Markus Elfring <Markus.Elfring@web.de>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Chukun Pan <amadeus@jmu.edu.cn>, Conor Dooley <conor+dt@kernel.org>,
- =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Jean Delvare <jdelvare@suse.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Rob Herring <robh@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Junhao Xie <bigfoot@classfun.cn>
-References: <20240906093630.2428329-2-bigfoot@classfun.cn>
- <d79dbfae-d50b-45e5-b430-be8106bbb03c@web.de>
-Content-Language: en-US
-From: Junhao Xie <bigfoot@classfun.cn>
-In-Reply-To: <d79dbfae-d50b-45e5-b430-be8106bbb03c@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2024/9/7 16:10, Markus Elfring wrote:
-> …
->> +++ b/drivers/mfd/photonicat-pmu.c
->> @@ -0,0 +1,501 @@
-> …
->> +int pcat_pmu_execute(struct pcat_request *request)
->> +{
-> …
-> 
-> Under which circumstances would you become interested to apply statements
-> like the following?
-> 
-> 
->> +	mutex_lock(&pmu->reply_lock);
->> +	if (request->frame_id == 0)
->> +		request->frame_id = atomic_inc_return(&pmu->frame);
->> +	pmu->reply = request;
->> +	mutex_unlock(&pmu->reply_lock);
-> …
-> 
-> A) guard(mutex)(&pmu->reply_lock);
->    https://elixir.bootlin.com/linux/v6.11-rc6/source/include/linux/mutex.h#L196
-> 
-> 
-> 
->> +		spin_lock_irqsave(&pmu->bus_lock, flags);
->> +		ret = pcat_pmu_raw_write(pmu, request->frame_id, req->cmd,
->> +					 true, req->data, req->size);
->> +		spin_unlock_irqrestore(&pmu->bus_lock, flags);
-> …
-> 
-> B) guard(spinlock_irqsave)(&pmu->bus_lock);
->    https://elixir.bootlin.com/linux/v6.11-rc6/source/include/linux/spinlock.h#L572
-> 
-> 
-> Regards,
-> Markus
+On Sat,  7 Sep 2024 09:50:33 +0300
+Alexandru Ardelean <aardelean@baylibre.com> wrote:
 
-Thanks for your suggestions, I will try these statements.
+4 versions in a week is a bit too fast.
+I'm very good at ignoring emails but even for me that took a few clicks ;)
 
-Best regards,
-Junhao
+Unless it's 'final' tweaks on code that has had lots of review keep the
+cadence down 2 or less postings in a week.  On the plus side I thought
+I had even more to review than actually true this weekend based on numbers
+of emails in the relevant folder :)
+
+Jonathan
 
