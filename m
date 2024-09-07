@@ -1,202 +1,119 @@
-Return-Path: <linux-kernel+bounces-319808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A9D797027C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:45:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A40897027D
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99FA828420F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:45:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A23E01C2159A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C749115C14C;
-	Sat,  7 Sep 2024 13:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF95D15CD6E;
+	Sat,  7 Sep 2024 13:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zfpb1lxZ"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="d7vwSeAS"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749F614C5A7;
-	Sat,  7 Sep 2024 13:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7CE12E5B
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 13:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725716747; cv=none; b=Wg/dvDvSPe9JlAd4ij3bnOZMw8Q8M3BLIw6saLa++QNLCsQk3v0MFUCYY+yIv2tqrfR9iurEmYG4Iqdh/g6i9KXx/4rvCFp5iVmNfuFiiW1/O2nGESzhgKIUNPyLDScbsvglfJLrCA/eRWlcLt9F+Mvo3CpUs7vo30tKcyiJoFs=
+	t=1725716789; cv=none; b=RAinGPZL00QJV7klqC7B443aO3YQ0NvpXzmbEUrDEhqMYhsXFzTm8geGV14mRIarAQ6SDfoUw5+tW10riNeqYfdhvr1QMYwMZBonDFjygQc+Ln5I0fUGMEPTz8gEkqoKym56DpQkN4hXrvpACPXLDrKNJrSIQMjT3oZlxPo6cDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725716747; c=relaxed/simple;
-	bh=Bs2n4cacEbnXtn2sQA8ItigCb6VPZc5QtlT9Gy+AfNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJQwI27kUKZjYooUFRb1kBf14Pm2f4cwUCkIbKExCvqFVWqerH+u8gf/UQgMsOAWs85FnJR0WMpQnUjXiC4x6vsJt6v2YMTy9BpoEpIEl4j4qyx6yKl366u8BjEuxo1rKcc4nN1ynhlBzQMfhwvXoGqCZUeRD6iib/Q/ubdE/Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zfpb1lxZ; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8a6d1766a7so310837166b.3;
-        Sat, 07 Sep 2024 06:45:45 -0700 (PDT)
+	s=arc-20240116; t=1725716789; c=relaxed/simple;
+	bh=jC6eaEVaUgtHevOaNW5Npt0yuoQ+IKgQGTXS/6VL5l8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L69TgFNulfk6wrDl5dO1I23CDj1V3pciJ/r/Q3JZsr0KF0MiJt1X6B+XHPXqspGQXjXkTnLeOYRhQjVXcaRLP/f85JyKw+2qt85flHb8Q1T0ssq5Z+uP072nVxJzjlMRBm2aZ9q/J8Dj/gTuiB0esa6/hjCJ5oADZksiuW6G/C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=d7vwSeAS; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7163489149eso2375169a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 06:46:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725716744; x=1726321544; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qamyypXDvEru6GslpFCZ82pmRTAeT54q4yjZx4Pbqk0=;
-        b=Zfpb1lxZNZnGvte0AKRiwwC0mOLD/i8rn4ggFx29EwLNol7caocCxEwoBJIEFJpRpi
-         jKAtQlphgfwBF+NQkN50A9hNAD783+d9mIbBVRBAYIAVRoBSeLbIEUiXemLDXoA9jml5
-         R0YdhUmlFdRpOhky7BThVAxeBHns5drpQJ70fFvOIPP2PN/MZP/X+1Pz2KQBkJDBBQQy
-         bzVkKnNQAEufxkYEe17+Hh6wXVYt9f3XHLAxoN5plSSTdeZo3Ep36OEcrcqTfmFGsccO
-         l1qywMdQSaTD1RRK2gfIhAJgivYa4O0Xb3oq3Tbwm8w2/Xe4mxw584YTilc/LZGrJ9aL
-         OJVQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725716787; x=1726321587; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PKQCeQuyzhcW2EGOCYxUzY2nkSFp5q+ZqrKGkSxVdoM=;
+        b=d7vwSeASvql7yNw7RJ+lUyaBVbtv+2OQM8PhLUcKWMRpxKI11tufshh9O+REebZuja
+         TgK7vYRHizjfO2/h7hrer/bkoTSRA5tQTLYzRrYafpxEv9g9Xfg951f6YUnEoxQ/CDFj
+         VZTXD/BBBzyUXSEsR6ph3zevW/O+peC0F5KCtz6L5l6I8cXzfFwJYAFpoDWMR8KnH//n
+         EfWjBEmv4hEUK34vEELmK2zZNMoRZ8IfE7ND7gv2shDckyoMLjBAZPAizFA+IoX5ylVc
+         Hr+3x/mecDnSVTkxmiI+01sigC+jFktayuPWgN6f54l1mdX/u3NTX55YHDcbE273WFb7
+         OECw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725716744; x=1726321544;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qamyypXDvEru6GslpFCZ82pmRTAeT54q4yjZx4Pbqk0=;
-        b=AplQRg9zqo7U4n/UVdDy6izDR93/umhnJtgEmdrFriMmoqfBciwF3n7toH8FYRxd2m
-         3D0JkpbPgA6qDdkB5yfHPLyaMzBP0G3HTeqTrCmMpZCJgxdfne5dcWSohtaYQgnkBwHO
-         cDxgGfgz75HRHHdIJc/Bp+e3gbhNXiAWeYTeB1wmIDgvFdqpwZI1ag7I8XKGv9dQPHdB
-         nH4de51dBtFDnu99uCGM+TRNIS2BeiTvw7wy1vl/R6qZHLhpHsmnT5PmpFqOPEJCjfAh
-         GAmLsaiAPa6NBAMEf/gSQN7ZgizxXSYdWpGJBjxlsJlkczELnIwa1bqyGFx+GwQZQkk2
-         RNgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCMjrYbiCcMXD12wd4Sm3AQraYsDp7/a0yPmQnm8TA98u6qUz8hPveYp3kMFGa0YwyRUNSInj/dqpgEaU=@vger.kernel.org, AJvYcCWCZnWfBOFQ9Fjg7lk+zr/tgFE2wtSQ9l3Ts5gM1xr9pyVG2LfAr5TjwFKUX0qWYL251gTxcFt99cUrw4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnKiJ5jPjgBiJKEqgElMcrOaqpCp8IZdsHIzkPKpjsBtkP1chy
-	6NoyC9FX5TlqVbC8l8m1f7916VXM+2kuqEISJ/XbZvR4ZpHt32WE
-X-Google-Smtp-Source: AGHT+IHKqGgUUaqNiJSQpf0jmoZxO/skTBmkl21vQfXBsk0PJvCPqZwJ8i9pI1sFapK20PMq4xB30Q==
-X-Received: by 2002:a17:906:c156:b0:a7a:a89e:e230 with SMTP id a640c23a62f3a-a8a88667698mr405094866b.30.1725716743307;
-        Sat, 07 Sep 2024 06:45:43 -0700 (PDT)
-Received: from localhost (tor-exit-46.for-privacy.net. [185.220.101.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d2592647esm73436466b.48.2024.09.07.06.45.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 06:45:42 -0700 (PDT)
-Date: Sat, 7 Sep 2024 16:45:41 +0300
-From: Maxim Mikityanskiy <maxtram95@gmail.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
-	Rui Salvaterra <rsalvaterra@gmail.com>,
-	Sui Jingfeng <suijingfeng@loongson.cn>,
-	Bjorn Helgaas <bhelgaas@google.com>, Peter Wu <peter@lekensteyn.nl>,
-	Lukas Wunner <lukas@wunner.de>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda: intel: Fix Optimus when GPU has no sound
-Message-ID: <ZtxZBUjlF8TeIUKC@mail.gmail.com>
-References: <20240904203955.245085-1-maxtram95@gmail.com>
- <871q1ygov9.wl-tiwai@suse.de>
- <ZttEUjeYFzdznYKM@mail.gmail.com>
- <87wmjndbha.wl-tiwai@suse.de>
+        d=1e100.net; s=20230601; t=1725716787; x=1726321587;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PKQCeQuyzhcW2EGOCYxUzY2nkSFp5q+ZqrKGkSxVdoM=;
+        b=escMMqEdnp5McA5N89SALDR0JRAekciuIU++WCa7R+gu3hoHcogVMzSRi2U1BP6MV4
+         dcuEzZp075YJZ4A/74BaasQMGtsMLNysG61P8btPz2n4Pt7UfJ8QuF3aJQOzqUlTc13Q
+         29cKowMUOLm+TLFJyYPqJA2bblPLqjulHSG2D9pI0SeSEVS8OqkDRRVhDzedPPjEjNGW
+         hh90MoFq8XLeAlCVnFBdkzclE4qFBqOsSqfQZ4iUeqM14EBXSTr//3yqFOkoPURszuxc
+         DwdkqB9+WIZnd1x4RE2VGRGElsmx+skMB6r3AKg+1iI+I9FWv4M4joNfmGiaFR1+SqaD
+         FZ5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWU8qhGUpl46hPp1EyHEdWQ4+FvPxRLWVt6jD+wiZp3lNUEVLF+l2CMjvnk7UyhNSEXfxxq2f6c4REO0QQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5FWGVdILGkt1GrwWAzwOg3su8G2JZHmq5BXDoFZVeCp3gXPkR
+	nJ5KiDApTSwxUfzaPsWLWNV/TB2BHsQPHyKKifRIMCeWdsEZ/cmPdAgnnjv6iCo=
+X-Google-Smtp-Source: AGHT+IE6uE37wAuU+Qa8T3FQhdmjWcRErvMn2sQsvQu6TnaKx5AlJSuIz5qsqbq6z95mLsPrE9nXJA==
+X-Received: by 2002:a05:6a20:db0c:b0:1c4:8291:e94e with SMTP id adf61e73a8af0-1cf1d1ef82dmr6834087637.45.1725716787064;
+        Sat, 07 Sep 2024 06:46:27 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e5896537sm897885b3a.3.2024.09.07.06.46.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 Sep 2024 06:46:26 -0700 (PDT)
+Message-ID: <38a71a3f-b505-48a3-bbaf-2bdf60dfcd9d@kernel.dk>
+Date: Sat, 7 Sep 2024 07:46:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wmjndbha.wl-tiwai@suse.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] block: move non sync requests complete flow to softirq
+To: ZhangHui <zhanghui31@xiaomi.com>, bvanassche@acm.org,
+ ming.lei@redhat.com, dlemoal@kernel.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240907024901.405881-1-zhanghui31@xiaomi.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240907024901.405881-1-zhanghui31@xiaomi.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, 07 Sep 2024 at 12:06:25 +0200, Takashi Iwai wrote:
-> On Fri, 06 Sep 2024 20:05:06 +0200,
-> Maxim Mikityanskiy wrote:
-> > 
-> > On Thu, 05 Sep 2024 at 16:24:26 +0200, Takashi Iwai wrote:
-> > > On Wed, 04 Sep 2024 22:39:55 +0200,
-> > > Maxim Mikityanskiy wrote:
-> > > > 
-> > > > Lenovo IdeaPad Z570 with NVIDIA GeForce Ge 520M doesn't have sound on
-> > 
-> > Spotted a typo: s/520M/540M/
-> > 
-> > > > the discrete GPU. snd_hda_intel probes the device and schedules
-> > > > azx_probe_continue(), which fails at azx_first_init(). The driver ends
-> > > > up probed, but calls azx_free() and stops the chip. However, from the
-> > > > runtime PM point of view, the device remains active, because the PCI
-> > > > subsystem makes it active on probe, and it's still bound. It prevents
-> > > > vga_switcheroo from turning off the DGPU (pci_create_device_link() syncs
-> > > > power management for the video and audio devices).
-> > > > 
-> > > > Fix it by forcing the device to the suspended state in azx_free().
-> > > > 
-> > > > Fixes: 07f4f97d7b4b ("vga_switcheroo: Use device link for HDA controller")
-> > > > Signed-off-by: Maxim Mikityanskiy <maxtram95@gmail.com>
-> > > 
-> > > What if this device probe is skipped (e.g. adding your device entry to
-> > > driver_denylist[] in hda_intel.c)?  Is the device also in the
-> > > runtime-suspended state?
-> > 
-> > I added the following:
-> > 
-> > { PCI_DEVICE_SUB(0x10de, 0x0bea, 0x0000, 0x0000) },
-> > 
-> > The probe was apparently skipped (the device is not attached to a
-> > driver), runtime_status=suspended, runtime_usage=0, the GPU goes to
-> > DynOff.
+On 9/6/24 8:49 PM, ZhangHui wrote:
+> From: zhanghui <zhanghui31@xiaomi.com>
 > 
-> OK, that's good.
+> Currently, for a controller that supports multiple queues, like UFS4.0,
+> the mq_ops->complete is executed in the interrupt top-half. Therefore, 
+> the file system's end io is executed during the request completion process,
+> such as f2fs_write_end_io on smartphone.
 > 
-> > However, I'm not sure whether it's a good idea to blacklist 540M
-> > entirely, as there might be other laptops with this GPU that have sound,
-> > and AFAIK there are variants of Lenovo Z570 with other NVIDIA GPUs.
+> However, we found that the execution time of the file system end io
+> is strongly related to the size of the bio and the processing speed
+> of the CPU. Because the file system's end io will traverse every page
+> in bio, this is a very time-consuming operation.
 > 
-> You should specify the PCI SSID of your device instead of 0:0 in the
-> above, so that it's picked up only for yours.
+> We measured that the 80M bio write operation on the little CPU will
+> cause the execution time of the top-half to be greater than 100ms,
+> which will undoubtedly affect interrupt response latency.
+> 
+> Let's fix this issue by moving non sync requests completion to softirq
+> context, and keeping sync requests completion in the IRQ top-half context.
 
-Where can I get it?
+You keep ignoring the feedback, and hence I too shall be ignoring this
+patch going forward then.
 
-# cat /sys/bus/pci/devices/0000\:01\:00.1/subsystem_vendor
-0x0000
-# cat /sys/bus/pci/devices/0000\:01\:00.1/subsystem_device
-0x0000
+The key issue here is that the completion takes so long, and adding a
+heuristic that equates not-sync with latency-not-important is pretty
+bogus and not a good way to attempt to work around it.
 
-Is it not the right place?
+-- 
+Jens Axboe
 
-> 
-> Takashi
-> 
-> > Another way to make vga_switcheroo work is to disable quirk_nvidia_hda,
-> > although I don't know whether it can be done without recompiling the
-> > kernel. In this case, 0000:01:00.1 doesn't even appear on the bus.
-> > 
-> > (Note that I need to set nouveau.modeset=2 either way, otherwise it
-> > stays in DynPwr if the screen is on.)
-> > 
-> > > 
-> > > 
-> > > thanks,
-> > > 
-> > > Takashi
-> > > 
-> > > > ---
-> > > >  sound/pci/hda/hda_intel.c | 14 +++++++++++++-
-> > > >  1 file changed, 13 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-> > > > index b79020adce63..65fcb92e11c7 100644
-> > > > --- a/sound/pci/hda/hda_intel.c
-> > > > +++ b/sound/pci/hda/hda_intel.c
-> > > > @@ -1361,8 +1361,20 @@ static void azx_free(struct azx *chip)
-> > > >  	if (use_vga_switcheroo(hda)) {
-> > > >  		if (chip->disabled && hda->probe_continued)
-> > > >  			snd_hda_unlock_devices(&chip->bus);
-> > > > -		if (hda->vga_switcheroo_registered)
-> > > > +		if (hda->vga_switcheroo_registered) {
-> > > >  			vga_switcheroo_unregister_client(chip->pci);
-> > > > +
-> > > > +			/* Some GPUs don't have sound, and azx_first_init fails,
-> > > > +			 * leaving the device probed but non-functional. As long
-> > > > +			 * as it's probed, the PCI subsystem keeps its runtime
-> > > > +			 * PM status as active. Force it to suspended (as we
-> > > > +			 * actually stop the chip) to allow GPU to suspend via
-> > > > +			 * vga_switcheroo.
-> > > > +			 */
-> > > > +			pm_runtime_disable(&pci->dev);
-> > > > +			pm_runtime_set_suspended(&pci->dev);
-> > > > +			pm_runtime_enable(&pci->dev);
-> > > > +		}
-> > > >  	}
-> > > >  
-> > > >  	if (bus->chip_init) {
-> > > > -- 
-> > > > 2.46.0
-> > > > 
 
