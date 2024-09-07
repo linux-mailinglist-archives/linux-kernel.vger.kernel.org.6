@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-319964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC5297046E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 00:51:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A6D970475
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 01:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE42282F59
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 22:51:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C215283116
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 23:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C28F16A923;
-	Sat,  7 Sep 2024 22:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406F316A949;
+	Sat,  7 Sep 2024 23:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lB1ZAY35"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XdmPObxu"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00304160884;
-	Sat,  7 Sep 2024 22:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1645814F109;
+	Sat,  7 Sep 2024 23:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725749495; cv=none; b=o+bgVJMNoJ0m8Dl+P84NDX1H1Uu1C93GpUz1n7iSS5BzAm7OE58SAUzIa0Qkpk8TMQgnMP8RhwVD8idMasGiBgsj/3O/9UTTGH9Ge2UYhty+ucyvQ2PF7AZviF05MyozotRIamIT7P0+Z2MgTlq/cUDuE7B8CKFR9bJSVoh1S2M=
+	t=1725750651; cv=none; b=ayAGWqs8sbVOoCMpGuAynGV3zgkqpjioGbe3z92OGIu/zVzOwqMWSkeSSq8aF/D1LebgwD9l0EvY6pI4z1F26pNk3O8f09aIzP5r6jMfQ+kh+otpin6JgqwKfT9QyUtMP7S91LrNoItOOrZlmje4R73PJ7O5kBiN3D726/b0Nio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725749495; c=relaxed/simple;
-	bh=do842DqulJJ6dI6EnJSEYjNX4gsqnwlO4RWeiRD9jww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BjxDF8H0P2+Qtbg2+NYKe98mnDjArP+Cg6cXaSWv3ir1o3hXNrn8vyD7m7Sti0yq10EiiND1X3HAijIuLnX7Qjn0S0cSvUMMMAINgntjs9+iGlu3oMjcG6vVC4VEGjDtC6niIAeRQ+twHRC4H5jpJrlGlrNt40CEcP0EWGL3/i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lB1ZAY35; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725749494; x=1757285494;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=do842DqulJJ6dI6EnJSEYjNX4gsqnwlO4RWeiRD9jww=;
-  b=lB1ZAY357wCgvfFYXTX2nXGUBxpF1A+hovHCkA5gd9IgmCnfrg0xY72K
-   /fc/+6t9uSXOXg/vbJ++FH5v5qRZoNGl5By0VBoTNovIiGucpdOFIk8QL
-   J8thWKXDe1vtHb68omy1B5wIy37BYQ5fq0zWDdWTYOH43AKEIDeHNm1Yi
-   Eumn4pYR81HPkaNCaHcl1nEWRJKNTVZqyDl7pXzCLlybu7WCN0lJK7V4c
-   BsH0p6maNKP0g7+CqWJRghriZ/dnHcN7TEpn4qcbbucO9D2tYg2eKsZ6x
-   eCE5nJTpBcY+h+kbhffMFKhkqUCu/FwMdmOoY0+PnbavVB1Ka0UJibOwD
-   Q==;
-X-CSE-ConnectionGUID: /0t4ybZDRTiRApYG284ePQ==
-X-CSE-MsgGUID: ExXxmZSJTOKK8ah6YOudpQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="35829793"
-X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
-   d="scan'208";a="35829793"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 15:51:33 -0700
-X-CSE-ConnectionGUID: 8u21cVZpQTWszDXC4sHFxw==
-X-CSE-MsgGUID: kD/vSvzLTFyG7uaJTE2dgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
-   d="scan'208";a="89562848"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 07 Sep 2024 15:51:29 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sn4H9-000D4b-20;
-	Sat, 07 Sep 2024 22:51:27 +0000
-Date: Sun, 8 Sep 2024 06:50:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Trevor Gamblin <tgamblin@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	David Lechner <dlechner@baylibre.com>,
-	Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Trevor Gamblin <tgamblin@baylibre.com>
-Subject: Re: [PATCH v4 2/3] iio: adc: ad7625: add driver
-Message-ID: <202409080658.vblJ5uZm-lkp@intel.com>
-References: <20240904-ad7625_r1-v4-2-78bc7dfb2b35@baylibre.com>
+	s=arc-20240116; t=1725750651; c=relaxed/simple;
+	bh=l2kQYB77bC2AxhU+af9yBzS2fBMywHuBKH/qnAgGpeI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V+/iEeW1mqsJ7QMETA22jvwDd9CkxmlglHVrQlkXYUzlfsmalXAdY12MB5DsOmNTqOcedMh9oV3eT/zmthCpsvaRjzUx6VsFX1FT3QwuQ/eIPzAMnAtmK14efoMeXDnd22dqRi2dPXeJsE1R/1XGygWHBJMdw5BPSL0WYeSR8J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XdmPObxu; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42bbbff40bbso26789415e9.2;
+        Sat, 07 Sep 2024 16:10:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725750648; x=1726355448; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yT3dqWHm/QQeGC3GsIPG3eqkFd/IFt3zVxvD83TpSdU=;
+        b=XdmPObxut5yFEMq/QCe3Qm3ntSLmdMQUfuLuxE7KIMA3RHB0ytU7u9nQZaVV/6LrDA
+         ZmIaMlFs3O3wPtBc7/OaD4mPW7j8ti5doSe4nMqxT7Cj4MD/2Ln2g/6XkP+z3XrmiiQS
+         S0QrBKdnUsoJ9M+kmHbMR9+sn3/OwQgVyugAT7m6a1+b07aqgCyPdhjd8Ak8e44rwZ60
+         asJKlRmAUVXWNOm2I1jLZirKCwwOHT8XPk4h3kk6eTuCC1jm/HyX6BTbrmffE70jc4rQ
+         t32OIv36/Op5NS64Yd1tP6qxPyu2icIRvkK78psXh4X45+bNKARQZ24G+aDff3DARkS1
+         Qxyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725750648; x=1726355448;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yT3dqWHm/QQeGC3GsIPG3eqkFd/IFt3zVxvD83TpSdU=;
+        b=qGDgPSNv6pSeUMi3CJbB48mBsaNfpj2zO7HwuvZnp8enyC6vqx4ESbUt2Obi525a2T
+         j0pukeAXoJeStkTeu3bYQx5tz9hqQeCUhbLl6Z/QEFncn2OXO3P+oTdLgY6XbeWt0/dH
+         U/xyq53WIo2IhLUL/JKY1E3DxmbnjIqLncIvX6fb7K1fQuS8X3eLKARI3VSF6e1PdLN0
+         Y8Vl06DZxpaWSuZumtyY9HwULazKASzEOMvC7+v+gE8CQ2rt8lKkFype0J6DU1xS6Nwv
+         pmijqExig69d0IQagbx2wW35hGr8ESWTkqB01/X31JNEvP3zdB6DR2x8idaTXzdVL7bB
+         0NYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/DGkur4YwHWShaqb2vy+5G0+iMXxMhaqDJGidmdIr/mboWUQREqVZLv9uvdVtOSjplA2fZsvQF3nZ7Hcd@vger.kernel.org, AJvYcCUxPWxv5Z4DPxc3JN+HtNXije7z578SvDjOBnLNt6QE8XlWhY8pYBBcxyrgWUM1qSxMIcgXSy+ULGf7t+AEBVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK+E+cQ/2Tvv1dB+/BWW6g0a3LSAbOc6hYfuzf3EX+iCLd0ZIH
+	NBcTHRbB9Y+Us/dUuD0GCkzxpggM8Lo3oOCx6PD6C2ZNgrCNWqvn
+X-Google-Smtp-Source: AGHT+IGRlh7xezCJGsZisParei4WZZPnc8M77SkuN4s19NYt8Sx7WPkDUFWcZGbzQ038g0whCgsHAg==
+X-Received: by 2002:a5d:4b47:0:b0:374:c56c:fbb4 with SMTP id ffacd0b85a97d-378895c9ee0mr4444881f8f.22.1725750647370;
+        Sat, 07 Sep 2024 16:10:47 -0700 (PDT)
+Received: from void.void ([141.226.8.125])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d363asm2232537f8f.72.2024.09.07.16.10.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Sep 2024 16:10:47 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Quentin Monnet <qmo@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] bpftool: Fix a typo
+Date: Sun,  8 Sep 2024 02:10:10 +0300
+Message-ID: <20240907231028.53027-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904-ad7625_r1-v4-2-78bc7dfb2b35@baylibre.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Trevor,
+Fix a typo in documentation.
 
-kernel test robot noticed the following build errors:
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ tools/bpf/bpftool/Documentation/bpftool-gen.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[auto build test ERROR on 1ebd3850421749eb44bd040b249bd4db88d35b33]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Trevor-Gamblin/dt-bindings-iio-adc-add-AD762x-AD796x-ADCs/20240905-031609
-base:   1ebd3850421749eb44bd040b249bd4db88d35b33
-patch link:    https://lore.kernel.org/r/20240904-ad7625_r1-v4-2-78bc7dfb2b35%40baylibre.com
-patch subject: [PATCH v4 2/3] iio: adc: ad7625: add driver
-config: arm-randconfig-002-20240908 (https://download.01.org/0day-ci/archive/20240908/202409080658.vblJ5uZm-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 05f5a91d00b02f4369f46d076411c700755ae041)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240908/202409080658.vblJ5uZm-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409080658.vblJ5uZm-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_performance.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-aspeed.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
->> ERROR: modpost: "pwm_round_waveform_might_sleep" [drivers/iio/adc/ad7625.ko] undefined!
-
+diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+index c768e6d4ae09..6c3f98c64cee 100644
+--- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
++++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+@@ -172,7 +172,7 @@ bpftool gen min_core_btf *INPUT* *OUTPUT* *OBJECT* [*OBJECT*...]
+     CO-RE based application, turning the application portable to different
+     kernel versions.
+ 
+-    Check examples bellow for more information how to use it.
++    Check examples below for more information how to use it.
+ 
+ bpftool gen help
+     Print short help message.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.0
+
 
