@@ -1,206 +1,159 @@
-Return-Path: <linux-kernel+bounces-319748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DAB19701B5
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:31:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9139E9701B7
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70146B22ED5
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:30:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6D142838A4
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2140215855B;
-	Sat,  7 Sep 2024 10:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649E5157494;
+	Sat,  7 Sep 2024 10:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="SsI2IE6y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BZ7oF3tF"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D366B1B85FC;
-	Sat,  7 Sep 2024 10:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="nplw0cc+"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9713D0A9;
+	Sat,  7 Sep 2024 10:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725705043; cv=none; b=AxNdCzb4Z4EOjss5xlswKKm9MWwkUSCSBpyMNbA5LBAK4kIqPxXdrGQzbxX9L7LPEeFrM+B1ULfeuFdMywqk+RXApOgXuIO+/N3tBsAxrfXGrv5nD88JS2sR/3uJen4QX+tYc86I6+ynJFS1k1A6E/azFl0Kf0dKeCZktng+CvM=
+	t=1725705321; cv=none; b=IiScl0kNiWMfyITyQ+/ndJ62oHbwfxZyX3SWbLVi3IuJ/0NwfBu7Y1WtYUjyaQBfgLAmr6+f/FO6Ov7QgNP6Bg9wVz4i+WFwskAQgW2rHgXZb9J6QXEXfCcpK+Zi8zIdrkMh5xvhmGY5IAHP71VjvLLk5fMPKvQIjVG69OchVH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725705043; c=relaxed/simple;
-	bh=gTRnS+H0K3fdd4v/4EEGgyEIT8Dhp7diLhNDjA8eX8Y=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=hJjdowmWI+mUBgiC0T+K1xyL4ll1rRJYIdmxdh4LRu0vuCQCIX8ieN3A3MHKhewOtf66zXxYpc4Je843rmg/U7P3RT/Qukun+Ba6b2R9po5V/guZ8Xwpz3DhzVHLiswaP2KN+3yq2OdciNQkvrEw0iY7NMtHaPG4fHLFalpv02E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=SsI2IE6y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BZ7oF3tF; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 15DF3114023C;
-	Sat,  7 Sep 2024 06:30:41 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-09.internal (MEProxy); Sat, 07 Sep 2024 06:30:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1725705041;
-	 x=1725791441; bh=b7Kfbz9Fro8dBk93ekS9R/GXYRzSR7ixy4z+yYXqL4A=; b=
-	SsI2IE6yddd5O+mb4iy4qwv2mywJkmyqyTnbgW1wVn7RBHBdV3Vcs/Ox4tUWsXEX
-	hrq+C5Jkss+khBi3WJ6isz1RVWBJd02SzLCcAXpLgMuRheCEq3JKH+d7/sBCYERQ
-	if/QtH61AWasJDfwxdIvlpPsX/ITZXo8Zj8HXu8CseSGbjoVT0gkSkOZ9StSdXor
-	SfjKfWXxa7Rmfdbeegn7NNnTvA+Eeg2nES1pjmN1avm1XBCbHZ2kNGLMyEfnqbRm
-	MlRWTUeaMjXAQNai1ulos/i0qzEpyWU86ms9vIlimqWV6HCjUSPLjnJzAcH2CbUu
-	ipqH7+G+TCo8YJD/qCxOww==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725705041; x=
-	1725791441; bh=b7Kfbz9Fro8dBk93ekS9R/GXYRzSR7ixy4z+yYXqL4A=; b=B
-	Z7oF3tF0wpDe6SJ2yv7ebFKeLM6mHL/VnDs7xMyV/OBex87ZNEMYvlRv9fCD+Jgq
-	UdLjYvwkTmfZciDaGQ1l2wkNGXVAOk4gAqXEFIgVqBwa+SdmvsWm0YsVnUIlTKFM
-	9JGy7lad5WjJaOLaz4iDi5qNGN5vI4DwadRSGYhapcDb+K7i4PHLecbcbAVueGOc
-	t1mdsgQr6YFKKiUfOp/3w6xiKbTSGVijyxaV0V0htij3fQGGRk3kZicS83WMUiRN
-	qlRjKUGFApDjK7Pv6KZ1aKDQqoJnMt6NbWrNQvYNHKUad7bmy7M7EEkx8aLupikA
-	4ebDpv/6BVqCniVRittZQ==
-X-ME-Sender: <xms:UCvcZtWhZUvkNKGa3kAzMluxN2I_FSySUAM-shDvgWotS6uBEdiBPg>
-    <xme:UCvcZtlh_ZcxJfx9ADkF8UQ935QfM890IHcWoZvZaxAUNQkgm9EYPReOFxoG3uw5W
-    3mKUyQvBgLrzF0M4no>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeifedgfeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
-    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
-    thdrtghomhdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthht
-    oheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrg
-    gvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhgvshhhrdhkuhhmrghrsehl
-    ihhnrghrohdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
-    dprhgtphhtthhopehlohhonhhgrghrtghhsehlihhsthhsrdhlihhnuhigrdguvghvpdhr
-    tghpthhtohepkhhvmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
-    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
-    ihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:UCvcZpb3N7ZGZ__4bW3EA5hDNCpVtmDo4PtDhNXGYK9w6Ofl9hWxJA>
-    <xmx:UCvcZgWbcHXASo03eUhdHUtvQVx7zpgudZ_GcbIHGLr-AMVztnV0Fg>
-    <xmx:UCvcZnlDGKeHuG9tQJTzWuRoDyj8sB5o1syV-Gewc9Ll6UmESZZ2mg>
-    <xmx:UCvcZtcMZpRIG7a2YQXCARMNVrp46ef0s1Ii_IAldeo05K3hUi2f5Q>
-    <xmx:USvcZgem6iAKBM49GLewisNpgcKkWll8jHQ_4ctaSuJm2dvedithXsJc>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 8660E1C20066; Sat,  7 Sep 2024 06:30:40 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725705321; c=relaxed/simple;
+	bh=fStTyIXrXS6LxZ3OfDuTGxq3cQrSD60MHobAr22TQSM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=W6hW2Ac3plwU13BF1nfTtsybE44dsCaJvjJDG1lDqeIslUdJrHmS6oCXRQrWn5wKMrn0v1T7T8V85ZfDuw4KHaUdjpTWDO19yF0WRawWjVsMRLjDT9j//VnW1Ao63Vddc3gudRGVjGhXBr9Pm2/wNpB1DYYF42/DAk+5m6D7vi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=nplw0cc+; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=EylXd
+	0u/HEKVMslUIcbQfRlcGaWZZaHFbPx9fuLDqyg=; b=nplw0cc+Zr56K8QR54+Az
+	QVMSP2P+41V4qEWQ5kt2teWThqE4jIBF5qbFUnPICypxhtjdJhbFpmCSkIzoHZyL
+	zyhWOscHDFsVn/KRLG3UWvtqaezZb2tAGYLLMMxjWdXn/CkMBuG4DP+9Rx4rUdJx
+	fi9FMTdWN/A26YofRZlB1s=
+Received: from localhost.localdomain (unknown [111.35.190.113])
+	by gzga-smtp-mta-g2-1 (Coremail) with SMTP id _____wDnF7c9LNxmaUrfEg--.45805S4;
+	Sat, 07 Sep 2024 18:34:51 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: kent.overstreet@linux.dev
+Cc: 00107082@163.com,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [BUG?] bcachefs performance: read is way too slow when a file has no overwrite.
+Date: Sat,  7 Sep 2024 18:34:37 +0800
+Message-Id: <20240907103437.71139-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <ka3sjrka6dugdaab2bvewfbonc3ksixumue3hs2juhajhjm37w@bnxvz5mozpgr>
+References: <ka3sjrka6dugdaab2bvewfbonc3ksixumue3hs2juhajhjm37w@bnxvz5mozpgr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 07 Sep 2024 11:30:20 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Huacai Chen" <chenhuacai@kernel.org>
-Cc: "Xuerui Wang" <kernel@xen0n.name>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Viresh Kumar" <viresh.kumar@linaro.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- kvm@vger.kernel.org
-Message-Id: <3ff03992-09cc-4df7-ab2a-6c46fc308a09@app.fastmail.com>
-In-Reply-To: 
- <CAAhV-H7W06a8cyPtSTPibJw5jOsv9Oees-hJ+-jZgaiU31Ki-g@mail.gmail.com>
-References: <20240907-iocsr-v1-0-0c99b3334444@flygoat.com>
- <CAAhV-H7W06a8cyPtSTPibJw5jOsv9Oees-hJ+-jZgaiU31Ki-g@mail.gmail.com>
-Subject: Re: [PATCH 0/5] LoongArch, MIPS: Unify Loongson IOCSR handling
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnF7c9LNxmaUrfEg--.45805S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZr13JFWxKw17Kw1kXF4DXFb_yoWrZF4kpr
+	ySyF13JFnrJr15CwsrAw4UtF18Jr1rJwnxJFyUtry8WF15Cry5tayUJFZ5KrWUGryxJr1U
+	JFZYqw17try8Xw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUfl1DUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqQ5TqmVOCuEPwwAAsS
 
-
-
-=E5=9C=A82024=E5=B9=B49=E6=9C=887=E6=97=A5=E4=B9=9D=E6=9C=88 =E4=B8=8A=E5=
-=8D=8811:25=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
-> Hi, Jiaxun,
+At 2024-09-07 01:38:11, "Kent Overstreet" <kent.overstreet@linux.dev> wrote:
+>On Fri, Sep 06, 2024 at 11:43:54PM GMT, David Wang wrote:
+>> 
+>> Hi,
+>> 
+>> I notice a very strange performance issue:
+>> When run `fio direct randread` test on a fresh new bcachefs, the performance is very bad:
+>> 	fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=4k --iodepth=64 --size=1G --readwrite=randread  --runtime=600 --numjobs=8 --time_based=1
+>> 	...
+>> 	Run status group 0 (all jobs):
+>> 	   READ: bw=87.0MiB/s (91.2MB/s), 239B/s-14.2MiB/s (239B/s-14.9MB/s), io=1485MiB (1557MB), run=15593-17073msec
+>> 
+>> But if the files already exist and have alreay been thoroughly overwritten, the read performance is about 850MB+/s,
+>> almost 10-times better!
+>> 
+>> This means, if I copy some file from somewhere else, and make read access only afterwards, I would get really bad performance.
+>> (I copy files from other filesystem, and run fio read test on those files, the performance is indeed bad.)
+>> Copy some prepared files, and make readonly usage afterwards, this usage scenario is quite normal for lots of apps, I think.
 >
-> On Sat, Sep 7, 2024 at 6:17=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoa=
-t.com> wrote:
->>
->> Hi folks,
->>
->> This series unfied LoongArch and MIPS's IOCSR functions and
->> macros so they will expose same interface to arch-indenpendent
->> drivers.
->>
->> This can reduce code deuplication, and also help my unifed IPI driver
->> and MIPS extio driver effort.
->>
->> This is touching many sub-systems in once so might be hard to merge.
->>
->> Huacai, can you apply first three patch via loongarch-next tree.
->> For last two patch maybe better merge them via a second PR after
->> all subsystem PRs merged.
-> The problem is I'm not sure whether IOCSR registers are compatible in
-> all Loongson processors.
+>That's because checksums are at extent granularity, not block: if you're
+>doing O_DIRECT reads that are smaller than the writes the data was
+>written with, performance will be bad because we have to read the entire
+>extent to verify the checksum.
 
-Maybe we can introduce something like IOCSR flavour later, however my ta=
-ke
-would be force all IOCSR devices to be probed by OF/ACPI.
-
-In this case, it's still better to share IOCSR macro and functions betwe=
-en
-MIPS/LoongArch Loongson-3 processors, as they are guaranteed to be compa=
-tible.
-
-Future incompatible definitions will benefit from better resilience prov=
-ided
-by this series as well.
-
-Thanks
-- Jiaxun
 
 >
-> Huacai
->
->>
->> Please review.
->> Thanks
->>
->> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->> ---
->> Jiaxun Yang (5):
->>       LoongArch: Rename cpu_has_csr as cpu_has_iocsr
->>       LoongArch: Probe more CPU features from CPUCFG
->>       LoongArch: cpu-probe: Move IOCSR probing out of cpu_probe_common
->>       LoongArch: Extract IOCSR definitions to standalone header
->>       MIPS: Loongson64: Use shared IOCSR header
->>
->>  MAINTAINERS                                        |   1 +
->>  arch/loongarch/include/asm/cpu-features.h          |   2 +-
->>  arch/loongarch/include/asm/cpu.h                   |   4 +-
->>  arch/loongarch/include/asm/loongarch.h             |  90 -----------=
------
->>  arch/loongarch/kernel/cpu-probe.c                  | 111 +++++++++++=
-+--------
->>  arch/loongarch/kernel/relocate_kernel.S            |   5 +-
->>  arch/loongarch/kernel/smp.c                        |  23 +++--
->>  .../include/asm/mach-loongson64/loongson_regs.h    |  58 +++--------
->>  arch/mips/kvm/vz.c                                 |   2 +-
->>  arch/mips/loongson64/smp.c                         |  44 ++++----
->>  drivers/cpufreq/loongson3_cpufreq.c                |  10 +-
->>  drivers/irqchip/irq-loongarch-avec.c               |   5 +-
->>  drivers/irqchip/irq-loongson-eiointc.c             |   5 +-
->>  drivers/platform/mips/cpu_hwmon.c                  |   7 +-
->>  include/linux/loongson/iocsr.h                     | 113 +++++++++++=
-++++++++++
->>  15 files changed, 256 insertions(+), 224 deletions(-)
->> ---
->> base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
->> change-id: 20240906-iocsr-829075458511
->>
->> Best regards,
->> --
->> Jiaxun Yang <jiaxun.yang@flygoat.com>
->>
+>block granular checksums will come at some point, as an optional feature
+>(most of the time you don't want them, and you'd prefer more compact
+>metadata)
 
---=20
-- Jiaxun
+Hi, I made further tests combining different write and read size, the results
+are not confirming the explanation for O_DIRECT.
+
+Without O_DIRECT (fio  --direct=0....), the average read bandwidth
+is improved, but with a very big standard deviation:
++--------------------+----------+----------+----------+----------+
+| prepare-write\read |    1k    |    4k    |    8K    |   16K    |
++--------------------+----------+----------+----------+----------+
+|         1K         | 328MiB/s | 395MiB/s | 465MiB/s |          |
+|         4K         | 193MiB/s | 219MiB/s | 274MiB/s | 392MiB/s |
+|         8K         | 251MiB/s | 280MiB/s | 368MiB/s | 435MiB/s |
+|        16K         | 302MiB/s | 380MiB/s | 464MiB/s | 577MiB/s |
++--------------------+----------+----------+----------+----------+
+(Rows are write size when preparing the test files, and columns are read size for fio test.)
+
+And with O_DIRECT, the result is:
++--------------------+-----------+-----------+----------+----------+
+| prepare-write\read |     1k    |     4k    |    8K    |   16K    |
++--------------------+-----------+-----------+----------+----------+
+|         1K         | 24.1MiB/s | 96.5MiB/s | 193MiB/s |          |
+|         4K         | 14.4MiB/s | 57.6MiB/s | 116MiB/s | 230MiB/s |
+|         8K         | 24.6MiB/s | 97.6MiB/s | 192MiB/s | 309MiB/s |
+|        16K         | 26.4MiB/s |  104MiB/s | 206MiB/s | 402MiB/s |
++--------------------+-----------+-----------+----------+----------+
+
+code to prepare the test files:
+	#define KN 8 //<- adjust this for each row
+	char name[32];
+	char buf[1024*KN];
+	int main() {
+		int i, m = 1024*1024/KN, k, df;
+		for (i=0; i<8; i++) {
+			sprintf(name, "test.%d.0", i);
+			fd = open(name, O_CREAT|O_DIRECT|O_SYNC|O_TRUNC|O_WRONLY);
+			for (k=0; k<m; k++) write(fd, buf, sizeof(buf));
+			close(fd);
+		}
+		return 0;
+	}
+
+Based on the result:
+1. The row with prepare-write size 4K stands out, here.
+When files were prepaired with write size 4K, the afterwards
+ read performance is worse.  (I did double check the result,
+but it is possible that I miss some affecting factors.);
+2. Without O_DIRECT, read performance seems correlated with the difference
+ between read size and prepare write size, but with O_DIRECT, correlation is not obvious.
+
+And, to mention it again, if I overwrite the files **thoroughly** with fio write test
+(using same size), the read performance afterwards would be very good:
+
+	# overwrite the files with randwrite, block size 8k
+	$ fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=8k --iodepth=64 --size=1G --readwrite=randwrite  --runtime=300 --numjobs=8 --time_based=1
+	# test the read performance with randread, block size 8k
+	$ fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=8k --iodepth=64 --size=1G --readwrite=randread  --runtime=300 --numjobs=8 --time_based=1
+	...
+	Run status group 0 (all jobs):
+	   READ: bw=964MiB/s (1011MB/s), 116MiB/s-123MiB/s (121MB/s-129MB/s), io=283GiB (303GB), run=300004-300005msec
+
+
+
+FYI
+David
+
 
