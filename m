@@ -1,227 +1,332 @@
-Return-Path: <linux-kernel+bounces-319884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C916970366
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:37:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9838970363
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67EED1C21473
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:37:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B19CF1C2160A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550E64963C;
-	Sat,  7 Sep 2024 17:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F18315E5C0;
+	Sat,  7 Sep 2024 17:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bqMvVFYa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BvO6igFx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A41B40BE5
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 17:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725730621; cv=fail; b=eL/81KTzmEOPWHDIBb3bjGXIKF1fjv+UMZkUGY5ZD7vYEt7SqESx5IhSMwnvbAWy71UwH5B6hmCcJdQTeP2RJXLnorTNxn/Ut/vTxcIxR71E9lUqltEOc1vQS80EVZIt7FruEi9PAosn2CnlsVC4YS3sQicw30k8F7RRDzt18Wc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725730621; c=relaxed/simple;
-	bh=uY4wDrzOFZDH921p9W62Ou3WZmWToNnu/NxrsRKcVHU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ZWAA+ciBPpS4z4pqENTwiKcbVOa0MITkv1VJY+QAque5VC2tBGY0RSyXNhXz2xzg8a5Hj8B9xqRBA/U5fJayzKZPosbSsb9uuJ05HYUpu4cRMSk0tOZStE4BCE8VhoOk2OHjqSDv7qg1IkYi2qmsLIJ5PwDXXDgmmwt3yqn/Lrs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bqMvVFYa; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725730619; x=1757266619;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=uY4wDrzOFZDH921p9W62Ou3WZmWToNnu/NxrsRKcVHU=;
-  b=bqMvVFYayrDrpthwLtJ9i6M2WhHUsVtYxAeRiw6MNiBKHAID4IrZY/EJ
-   PxP2YjwRtIpZIVTCVpg24RLQpLIefM4GMHT9/gK5EwH5QHp+4TxqRC6pM
-   vyqIMfqbGSYvNMZUw1Yra3QXlVBOD4TERL3Le3PE2KHiXExJiks9RoMXN
-   tD/xTEw/K2yF4HS2HTPUW2STHOvOotZDlYHxn20PLmHX6b4u9meWgdxz0
-   SHnaqLWFs5Ngjf5zmo2y6b3vFbeqYxe0TS91lX0FPxRvg4is/JcOK6xEw
-   d9/mBbSzE8bGcEi2vPZYk3lwWMqYAjQGJ+OlbQr0zelIOEbAfK4EDxiqP
-   g==;
-X-CSE-ConnectionGUID: URxDqR+0R7Wx1x1bOBuhvA==
-X-CSE-MsgGUID: lCDzCldyTXSXG4Q3DBn0ZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="24619885"
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="24619885"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 10:36:59 -0700
-X-CSE-ConnectionGUID: bwjIfir7R7G5wFeVnsR0qw==
-X-CSE-MsgGUID: /iLUhz0cQTWowcNvSWPWLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="66276155"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Sep 2024 10:36:58 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 7 Sep 2024 10:36:58 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 7 Sep 2024 10:36:57 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sat, 7 Sep 2024 10:36:57 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.172)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 7 Sep 2024 10:36:57 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EJilAXFKiFuQFK4Sg27VakudCKhV14fh8iJgqxCjIDsSOGp3dGPWeMTS+5d8CKA9BIrTISUqkzEedU1gEJrVbIjiqi+diytHwE7C2b6EhZYjeBcu70mHbRh4H5eaJwMGTZobJRJKlmes1RffeCLG5UBc49tOR6YQ/9arQ7hf/1MdTC25fJsZcC6aRUOvx8x/ytxHcShK1HLaj0Gmk1wLRO/fNDSfAiM4M/s5mc4WRmm2if50kOvD80AFtYYCue3uN5A6J3eBD6NjDpg3jf0HorkPO8W3ccnS4Is+bfrpuMWhuLiOxbBATbv4ILdVI95/+lbWZuZjsHDMBPuSntjxLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ddjwCOYyLkQDG+vUUWponb8/SSYXYB6Jcurp37b+SiI=;
- b=GaqoGGlHodJLz1dm2Sbnt5p1JJ2I64IYuAWOZzQYAyMaNi41aXPYOyQRJk0nmPqF1J+2odQcmx7VCUMr1iIlek0WnRGKHFTBgJm7cqV9hoo2bELr/ZI+2lzgGIpece6WbKSj3YFNiceAMQQyMJCuAcd7o6q2QAmvDJyhGTr5kSn03PxP1edQAyEPD4/0tR5EutCEBL3+kFqiRQJ0BgbIhZLG2I8ytd8R2+teEwGtq1HTheV9VjBzlrJXaZBQF6Hjn7AdvW2LgJeoHWdMNZX+hIXazj/a0Ci9tLHTOtLzaVLBfqy+aNt18qYnOohS/SEiS8AVTK/1HQocwa2BDqQNQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
- by SJ2PR11MB8566.namprd11.prod.outlook.com (2603:10b6:a03:56e::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Sat, 7 Sep
- 2024 17:36:52 +0000
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332%6]) with mapi id 15.20.7918.024; Sat, 7 Sep 2024
- 17:36:52 +0000
-Date: Sat, 7 Sep 2024 17:34:48 +0000
-From: Matthew Brost <matthew.brost@intel.com>
-To: Min-Hua Chen <minhuadotchen@gmail.com>
-CC: Christian Koenig <christian.koenig@amd.com>, Huang Rui
-	<ray.huang@amd.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Thomas
- =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH for-next] drm/ttm: make ttm_swap_ops static
-Message-ID: <ZtyOuDQtWHU4Phr7@DUT025-TGLU.fm.intel.com>
-References: <20240907033643.1513301-1-minhuadotchen@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240907033643.1513301-1-minhuadotchen@gmail.com>
-X-ClientProxiedBy: BYAPR05CA0040.namprd05.prod.outlook.com
- (2603:10b6:a03:74::17) To PH7PR11MB6522.namprd11.prod.outlook.com
- (2603:10b6:510:212::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47459487B0;
+	Sat,  7 Sep 2024 17:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725730550; cv=none; b=ZsUaBCqWhk3UhIVD/UDRIEcBFHOL2dafipCw6mumaV6n2hLP2ipSPhFAeZIpNoXPYjyVNuD0tqCBCIGJBOcFc4qdzPS325WfsbGNCLrEMWzXXoub93XLZjR3TimwJyyOT4okQK17Ym9NKpf9VqXgXkd78t2HNeDqtaWtMbRFINc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725730550; c=relaxed/simple;
+	bh=kYRfiavOxNrAyi8Czh7NZlZ90eWICY+cSgo36pvPQw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S6BI6cHRRhOLdtqiZleIjL47ue32yZCUCkm+ZZftHcVFXn54HKDHzYgnvIt9Z3NHAWJQfMfe1OnE7iCHxU9kCl77hyOOYhE0irigc7NEO66eIdmbbi9HXwLWvfZ7BWbOxpYQP3OCdV6VoIxYd7pNH+l5fq3ahTD50ApJLUvO4Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BvO6igFx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2358C4CEC2;
+	Sat,  7 Sep 2024 17:35:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725730549;
+	bh=kYRfiavOxNrAyi8Czh7NZlZ90eWICY+cSgo36pvPQw8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BvO6igFxf75rWMUOXP2JzjowUvIgZvv36hnrXHw7bg8Zt+oZggYRyBn4hvkmNT5ZO
+	 VBejTHtx/VGuDwzuyem9XTnMURS6RJkt8r0xlG+UR8IxEh2/TLoo54I9tt+8RMCJq5
+	 ywivMeGm0GD3h8PWkrLOech2wVRYcVpyLaVwQIzP/pZH0OJEv7JeAoTMiZxt2cjCyE
+	 g3505gYeNPRP4ZI2vhMLXS7BgX7b8RTU+lgmVfErWe9FMhNhnFARZYzm+oL/5Kc6nX
+	 uTNNbIy56OhY2xwlwzX8zJtnfokg2aE1HcRyKHrJ6uypjVlmbSs1QpWhDd82I4Cwe9
+	 gimsC7g/85q3A==
+Date: Sat, 7 Sep 2024 18:35:18 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Emil Gedenryd <emil.gedenryd@axis.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andreas Dannenberg <dannenberg@ti.com>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <kernel@axis.com>
+Subject: Re: [PATCH 2/3] iio: light: opt3001: add support for TI's opt3002
+ light sensor
+Message-ID: <20240907183518.1e8ee0bf@jic23-huawei>
+In-Reply-To: <20240905-add_opt3002-v1-2-a5ae21b924fb@axis.com>
+References: <20240905-add_opt3002-v1-0-a5ae21b924fb@axis.com>
+	<20240905-add_opt3002-v1-2-a5ae21b924fb@axis.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|SJ2PR11MB8566:EE_
-X-MS-Office365-Filtering-Correlation-Id: b9b35785-e834-4fd5-eaf2-08dccf63a8c1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?9y7LozvlAEwayCF3SooPNeLXR1PQZBTBTb04sJklwOMU1ppKkANOUPj61lho?=
- =?us-ascii?Q?tGJ4rVAeT4c4/+66tx0+Dxd3K+i5HU47ZKbAfD46+Co0SCk6o+ULkmPnEHOE?=
- =?us-ascii?Q?bnsOVDO2sUysvsU2GSgS1VHGxRAsz0mnEbKml37l1X9ROmsqgzKrWLku6w5g?=
- =?us-ascii?Q?4yLR3gxdQoyGBi+r4PP8AuzXCudYMyb8+US9xO7vlpkxn3ZXcOR2rzfKHe9P?=
- =?us-ascii?Q?2kcJdIGXMlHuPZCrkkjXXJJk2/QCuSE3kIUlhzPUgSmgt5Fi87yi4SKvK2fn?=
- =?us-ascii?Q?6QHqNFE/dbRJin/qynGdDQMdLwWoYh22UbY9d92c74cr5U2oqHndNMdNSnQQ?=
- =?us-ascii?Q?HzU8LapXivZ54vAJAUfkdAzewWfjMFOcJCDjZdE00tDmyVFAF2a0KHlXNFtQ?=
- =?us-ascii?Q?FrBBi10wF0fkuN1GL2t4nH0Vl0htVFqd0b/R/sRDMnu35TGuITHLApHv9l35?=
- =?us-ascii?Q?lWIggcemGc3GQc0DJLMKUn+l1t1TKW5AimgY8wiIXEeaI5yTbbMajSo1kJzU?=
- =?us-ascii?Q?9/GSPMOwMzpGVhHFjGYeviq3RU/+jUaIDaR/lbKvhC1q8NZPF/PJJPtAO7HI?=
- =?us-ascii?Q?QXLNey9MW9J+J5cfXtsSkqLyjAWQWyUvTAdPROB8FviBotvWSg+qDFHoH8eO?=
- =?us-ascii?Q?Ro6tAmrvklmK4zcLQbVD7GtE6Yj1yIqeRc7mg1ahQD1MdA4m43BRpdbpS3AR?=
- =?us-ascii?Q?gBstoZJWZecoH6GMTV2gjYPgjBOhCnQjVPox1t3woGRTiSifzeK0Zlkcf4kx?=
- =?us-ascii?Q?+StuFVZOgXLCVSAPraUVrruNa2INN6JiILrtqrGwK1l+vZFmdQISJSpea5p1?=
- =?us-ascii?Q?vQFODw7ROYaLwAAMTg9o8rKFhXEhCgHS9SpD62I4a3R6Wyu/Wxb6ycGd+3B3?=
- =?us-ascii?Q?DeVco98vjbD1OhMb7IJM6JKYBSlMeqUsiMeQWfpUFz/L5v99rKPxMG5aesIy?=
- =?us-ascii?Q?JW8Qe9bGU1P3jp43w4krbZFY0Tv0gSCeYJ8ZyIHopaJZ5RPMFQg8ySRzQLPy?=
- =?us-ascii?Q?lxGHopyQXgWsOz90Clthhn/7RXcgRTz1WoASCnnqUeGK1skoduhcmtEN8YqX?=
- =?us-ascii?Q?g7OWL7Jk4foPRDJtPPjlfj3axUDt7bzpWaMhS/rzRFbmpnpi2tx2YfJvACsQ?=
- =?us-ascii?Q?wMs4tL7fpt/hFh0uEHs0AsOIMeZUTBkPH2TIBbqiWCeW0he6sZe6kAqtDWm2?=
- =?us-ascii?Q?sEpCjEW5hjnY7oWK+P2fMwfLwSD+a5ZAwtjH+V4xuift0YxqhJmKB9O9xZrj?=
- =?us-ascii?Q?49VVtGIe3EGyC4faiNQp4moRsJ7+rMyIS6VsTVeDd367CxPvO4bZ4E5KOYdd?=
- =?us-ascii?Q?TLwh+ab2deIL8girA1K1W0lKIDXdU7wgIdw3yqtPasKBvQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MFqfGktBaT00kpGjAWzhealSQg6NNO62/n3ABQYN1AdcdeS7rkUZOxSMFDn6?=
- =?us-ascii?Q?jKChwBlCHAEcFi7RMqP8PME+41SSiEs5E6gJDoukWsLj33AMTM0CMrTwbmFd?=
- =?us-ascii?Q?nbkJCT8yN3X1SSXzVDXSfdxT+cYKOqHMrAmSRZJxJouFKsHBVlx2q8s3GXYi?=
- =?us-ascii?Q?QiNx+BMjb49YHOxvJiYZUuMq10kHKhIDwS/eZPXmX61yWNuIpv7MnUmODBpu?=
- =?us-ascii?Q?pPt0CaCFBvXX3WDFGVzSxI710ar7Id8U38qxTD/df1AMCcXXarhB4nYCeKhI?=
- =?us-ascii?Q?1FoGIldyF/P1UIxODnv0Bhsd0i9twDeHQh4T2VtvFAiYG+9VuLMZKuiHpBVJ?=
- =?us-ascii?Q?ULZvmaquMW9rYRbl2Ay0j5U416scT5lwUsfhBVq97x/tM6M/QtaE1+cqiQnX?=
- =?us-ascii?Q?V/F00jj4nxJDRJpY+8pPR3J5bQw3RwAmGU3Vdd2YOsPynLhqYyUkcneAwF6a?=
- =?us-ascii?Q?w21aqerwb10TkFb/VC6aKOg/nXS2Gz8bm6iNUiMe7uhYqUYyKfiGosiu9S1Q?=
- =?us-ascii?Q?7yE1quJYrYR8bv2tFdiqwLYyrmNnC6QolRfxAI3eCmhT16VrneNqeATKY4VW?=
- =?us-ascii?Q?DjgmN3CvoV6gN7o8hI9plqZBs0mqE6cey6wZ+CNv3VgNmVcuIPaGIYogIqhc?=
- =?us-ascii?Q?CFmBe8NMnaZT+lxEJmlmFSR8FZO7GmfnBqhWdH4soonDc9yL6WtuUcjXfB2o?=
- =?us-ascii?Q?gaRcyX2yEIMGJJKkM5iSG/5oJKBjijaz0ABp2avUPvxekokHOj7rKKFQttQ1?=
- =?us-ascii?Q?UT/qr0UCQQuxUQMSdikX2NziX4XHxaHG4ca5zuQKQA6qIGrBZj78T6ZE81pa?=
- =?us-ascii?Q?CbwU+ikjI93IT1NDhF+ivCko34QpXHY1Bm6oN+Sv0/VWplAGyQc0MEu6jszI?=
- =?us-ascii?Q?i1J4T/ym9+XUsUAnbgpwh95AeA72Mrm7cMB/gx0eSS5SCe4y0WnV8y4h6aqB?=
- =?us-ascii?Q?jFiWcrM2Q2QD1nf+koNBMXW55g12e3nAo/WhlAH1Rrb7pqQE0et8ogdPCPtZ?=
- =?us-ascii?Q?VpMVkqJ5qbQeuN9ndSS5Ng+1HI4FDAGHeWLPFN/nbuMTQKCz56KrUhSyRGQ2?=
- =?us-ascii?Q?k1nENFui02fkKqctZmLqjtuFRMLcUREFa/31s1hE8Gef+uHJb5/Jg82mO7sz?=
- =?us-ascii?Q?oZiJeTeFaPVbwGLxVqa1ofWyS7lqF2h5XWQ49NCm2lfGb4VNnDiyG64jmfqC?=
- =?us-ascii?Q?46v35/kwSxF7rxBVdALmK8CgTmzUoVWKlTFFFqWO08qf0nRRI15DhQd0Kb3U?=
- =?us-ascii?Q?abgemhhSFDq8zmZAeX7ZrmtbSyRJ4gwsw0x/J18wls/hS89rrpnTPT53bGgC?=
- =?us-ascii?Q?vMgeOhvhpiteXz2CTWv2NlycPu36mVbjx3ev0l1wl2JF+vOGVvuH/ZjMXDhT?=
- =?us-ascii?Q?/CyNcBD8o0NMqcjy9SSZtS0rnxcvA8iI7rZJputW2AzZWPqP2wprgxnvxMEM?=
- =?us-ascii?Q?pCotFlraCt9NgEp4tekfTN/xcxBZiqYr07Ywo6T4/xgGZYAP/dWrc4QTkxQC?=
- =?us-ascii?Q?6W3jy5p38yIEjh17M68eNaLbjYT1KPMF67Amx2pqys5dIi9Mgu58/anVzYOj?=
- =?us-ascii?Q?UarakPZh4gXYvC62IG8Bikt7x41pdG4nx9czpNVc+HEZptvuv99a1t27fTtE?=
- =?us-ascii?Q?Kw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9b35785-e834-4fd5-eaf2-08dccf63a8c1
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2024 17:36:52.1368
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hszDAzYXrEPA5D9csEuqFwRjnMCAFcpCXVziGQxw5RtonDaKfccFy7JLrDyG22yVjh60FozEt3ktxvkqtcs+fw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8566
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 07, 2024 at 11:36:41AM +0800, Min-Hua Chen wrote:
-> make ttm_swap_ops static to fix the following sparse warning:
+On Thu, 5 Sep 2024 12:20:46 +0200
+Emil Gedenryd <emil.gedenryd@axis.com> wrote:
+
+> TI's opt3002 light sensor shares most properties with the opt3001
+> model, with the exception of supporting a wider spectrum range.
 > 
-> drivers/gpu/drm/ttm/ttm_bo.c:1142:31: sparse: warning: symbol
-> 'ttm_swap_ops' was not declared. Should it be static?
+> Add support for TI's opt3002 by extending the TI opt3001 driver.
 > 
+> See https://www.ti.com/product/OPT3002 for more information.
+Make that a Datasheet tag.
+> 
+Datasheet: https://www.ti.com/product/OPT3002
+> Signed-off-by: Emil Gedenryd <emil.gedenryd@axis.com>
 
-This looks correct. I'd drop the 'Should it be static?' from commit
-messge though. Assume a maintainer of TTM can drop at megre time.
+Various comments inline.
+Thanks,
 
-With that:
-Reviewed-by: Matthew Brost <matthew.brost@intel.com>
+Jonathan
 
-> Fixes: 10efe34dae79 ("drm/ttm: Use the LRU walker helper for swapping")
-> Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
 > ---
->  drivers/gpu/drm/ttm/ttm_bo.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/iio/light/Kconfig   |   2 +-
+>  drivers/iio/light/opt3001.c | 199 ++++++++++++++++++++++++++++++++++++--------
+>  2 files changed, 167 insertions(+), 34 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
-> index 320592435252..1aab30767e41 100644
-> --- a/drivers/gpu/drm/ttm/ttm_bo.c
-> +++ b/drivers/gpu/drm/ttm/ttm_bo.c
-> @@ -1139,7 +1139,7 @@ ttm_bo_swapout_cb(struct ttm_lru_walk *walk, struct ttm_buffer_object *bo)
->  	return ret;
->  }
+> diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
+> index b68dcc1fbaca..c35bf962dae6 100644
+> --- a/drivers/iio/light/Kconfig
+> +++ b/drivers/iio/light/Kconfig
+> @@ -461,7 +461,7 @@ config OPT3001
+>  	depends on I2C
+>  	help
+>  	  If you say Y or M here, you get support for Texas Instruments
+> -	  OPT3001 Ambient Light Sensor.
+> +	  OPT3001 Ambient Light Sensor, OPT3002 Light-to-Digital Sensor.
 >  
-> -const struct ttm_lru_walk_ops ttm_swap_ops = {
-> +static const struct ttm_lru_walk_ops ttm_swap_ops = {
->  	.process_bo = ttm_bo_swapout_cb,
+>  	  If built as a dynamically linked module, it will be called
+>  	  opt3001.
+> diff --git a/drivers/iio/light/opt3001.c b/drivers/iio/light/opt3001.c
+> index 176e54bb48c3..e6098f88dd04 100644
+> --- a/drivers/iio/light/opt3001.c
+> +++ b/drivers/iio/light/opt3001.c
+> @@ -70,6 +70,19 @@
+>  #define OPT3001_RESULT_READY_SHORT	150
+>  #define OPT3001_RESULT_READY_LONG	1000
+>  
+> +/* The opt3002 doesn't have a device id register, predefine value instead */
+> +#define OPT3002_DEVICE_ID_VALUE		3002
+
+Why?  Just make the code not care about the value for this
+device.  Add a flag to the chip info structure to say it doesn't have
+one and check that before using it.
+
+
+> +
+> +enum chip_model {
+> +	OPT3001,
+This should not be needed. See below.
+
+> +	OPT3002,
+> +};
+> +
+> +struct opt300x_chip_info {
+> +	enum chip_model model;
+> +	enum iio_chan_type chan_type;
+> +};
+> +
+>  struct opt3001 {
+>  	struct i2c_client	*client;
+>  	struct device		*dev;
+> @@ -79,6 +92,7 @@ struct opt3001 {
+>  	bool			result_ready;
+>  	wait_queue_head_t	result_ready_queue;
+>  	u16			result;
+> +	const struct opt300x_chip_info *chip_info;
+>  
+>  	u32			int_time;
+>  	u32			mode;
+> @@ -97,6 +111,16 @@ struct opt3001_scale {
+>  	int	val2;
 >  };
 >  
-> -- 
-> 2.43.0
+> +static const struct opt300x_chip_info opt3001_chip_info = {
+> +	.model = OPT3001,
+Having a model in a chip_info structure is almost always a sign
+of a design that won't scale well to lots of additional devices.
+
+Get rid of that and instead add all the 'data' that you are looking
+up with that model number to this structure so it can be just
+referenced without caring which mode it is for.
+
+> +	.chan_type = IIO_LIGHT,
+> +};
+> +
+> +static const struct opt300x_chip_info opt3002_chip_info = {
+> +	.model = OPT3002,
+> +	.chan_type = IIO_INTENSITY,
+> +};
+
+> +
+>  static int opt3001_find_scale(const struct opt3001 *opt, int val,
+>  		int val2, u8 *exponent)
+>  {
+>  	int i;
+> +	const struct opt3001_scale (*scale_arr)[12];
+>  
+> -	for (i = 0; i < ARRAY_SIZE(opt3001_scales); i++) {
+> -		const struct opt3001_scale *scale = &opt3001_scales[i];
+> +	switch (opt->chip_info->model) {
+> +	case OPT3001:
+> +		scale_arr = &opt3001_scales;
+Put them in chip_info directly, not look them up here.
+
+> +		break;
+> +	case OPT3002:
+> +		scale_arr = &opt3002_scales;
+> +		break;
+> +	default:
+> +		dev_err(opt->dev, "scale not configured for chip model\n");
+> +		return -EINVAL;
+> +	}
+>  
+> +	for (i = 0; i < ARRAY_SIZE(*scale_arr); i++) {
+> +		const struct opt3001_scale *scale = &(*scale_arr)[i];
+>  		/*
+> -		 * Combine the integer and micro parts for comparison
+> -		 * purposes. Use milli lux precision to avoid 32-bit integer
+> -		 * overflows.
+> +		 * Compare the integer and micro parts to determine value scale.
+>  		 */
+> -		if ((val * 1000 + val2 / 1000) <=
+> -				(scale->val * 1000 + scale->val2 / 1000)) {
+> +		if (val < scale->val ||
+> +		    (val == scale->val && val2 <= scale->val2)) {
+>  			*exponent = i;
+>  			return 0;
+>  		}
+> @@ -174,11 +259,20 @@ static int opt3001_find_scale(const struct opt3001 *opt, int val,
+>  static void opt3001_to_iio_ret(struct opt3001 *opt, u8 exponent,
+>  		u16 mantissa, int *val, int *val2)
+>  {
+> -	int lux;
+> +	int ret;
+>  
+> -	lux = 10 * (mantissa << exponent);
+> -	*val = lux / 1000;
+> -	*val2 = (lux - (*val * 1000)) * 1000;
+> +	switch (opt->chip_info->model) {
+> +	case OPT3001:
+> +		ret = 10 * (mantissa << exponent);
+> +		*val = ret / 1000;
+> +		*val2 = (ret - (*val * 1000)) * 1000;
+> +		break;
+> +	case OPT3002:
+> +		ret = 12 * (mantissa << exponent);
+> +		*val = ret / 10;
+> +		*val2 = (ret - (*val * 10)) * 100000;
+
+As below - constants in the chip_info structure so this becomes
+a simple case of using them without needing to know the chip type
+in the code.
+
+> +		break;
+> +	}
+>  }
+
+> @@ -497,7 +602,15 @@ static int opt3001_write_event_value(struct iio_dev *iio,
+>  		goto err;
+>  	}
+>  
+> -	mantissa = (((val * 1000) + (val2 / 1000)) / 10) >> exponent;
+> +	switch (opt->chip_info->model) {
+> +	case OPT3001:
+> +		mantissa = (((val * 1000) + (val2 / 1000)) / 10) >> exponent;
+
+Encode the sections of this maths that is different as values in the chip
+info structure and use them directly here rather than having a switch statement.
+
+> +		break;
+> +	case OPT3002:
+> +		mantissa = (((val * 10) + (val2 / 100000)) / 12) >> exponent;
+> +		break;
+> +	}
+> +
+>  	value = (exponent << 12) | mantissa;
+>  
+>  	switch (dir) {
+> @@ -607,15 +720,22 @@ static int opt3001_read_id(struct opt3001 *opt)
+>  	manufacturer[0] = ret >> 8;
+>  	manufacturer[1] = ret & 0xff;
+>  
+> -	ret = i2c_smbus_read_word_swapped(opt->client, OPT3001_DEVICE_ID);
+> -	if (ret < 0) {
+> -		dev_err(opt->dev, "failed to read register %02x\n",
+> +	switch (opt->chip_info->model) {
+
+Add a callback for this to the chip_info structure. That will make it
+much cleaner to add future devices.
+
+> +	case OPT3001:
+> +		ret = i2c_smbus_read_word_swapped(opt->client,
+> +						  OPT3001_DEVICE_ID);
+> +		if (ret == 0) {
+> +			dev_err(opt->dev, "failed to read register %02x\n",
+>  				OPT3001_DEVICE_ID);
+> -		return ret;
+> +			return ret;
+> +		}
+> +		device_id = ret;
+> +		break;
+> +	case OPT3002:
+> +		device_id = OPT3002_DEVICE_ID_VALUE;
+> +		break;
+
+> @@ -755,6 +877,7 @@ static int opt3001_probe(struct i2c_client *client)
+>  	opt = iio_priv(iio);
+>  	opt->client = client;
+>  	opt->dev = dev;
+> +	opt->chip_info = device_get_match_data(&client->dev);
+>  
+>  	mutex_init(&opt->lock);
+>  	init_waitqueue_head(&opt->result_ready_queue);
+> @@ -769,10 +892,18 @@ static int opt3001_probe(struct i2c_client *client)
+>  		return ret;
+>  
+>  	iio->name = client->name;
+> -	iio->channels = opt3001_channels;
+> -	iio->num_channels = ARRAY_SIZE(opt3001_channels);
+>  	iio->modes = INDIO_DIRECT_MODE;
+>  	iio->info = &opt3001_info;
+> +	switch (opt->chip_info->model) {
+> +	case OPT3001:
+> +		iio->channels = opt3001_channels;
+> +		iio->num_channels = ARRAY_SIZE(opt3001_channels);
+Add this to the chip info structure so this can become a simple assignment
+rather than having to look up by model.
+
+> +		break;
+> +	case OPT3002:
+> +		iio->channels = opt3002_channels;
+> +		iio->num_channels = ARRAY_SIZE(opt3002_channels);
+> +		break;
+> +	}
+>  
+>  	ret = devm_iio_device_register(dev, iio);
+>  	if (ret) {
+> @@ -826,13 +957,15 @@ static void opt3001_remove(struct i2c_client *client)
+>  }
+>  
+>  static const struct i2c_device_id opt3001_id[] = {
+> -	{ "opt3001" },
+> +	{ "opt3001", 0 },
+> +	{ "opt3002", 1 },
+>  	{ } /* Terminating Entry */
+>  };
+>  MODULE_DEVICE_TABLE(i2c, opt3001_id);
+>  
+>  static const struct of_device_id opt3001_of_match[] = {
+> -	{ .compatible = "ti,opt3001" },
+> +	{ .compatible = "ti,opt3001", .data = &opt3001_chip_info },
+> +	{ .compatible = "ti,opt3002", .data = &opt3002_chip_info },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, opt3001_of_match);
 > 
+
 
