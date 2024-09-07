@@ -1,165 +1,90 @@
-Return-Path: <linux-kernel+bounces-319872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5081C970346
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:02:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17AE4970349
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05BA11F222BA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:02:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21CDE1C21056
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C959161901;
-	Sat,  7 Sep 2024 17:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FE0161901;
+	Sat,  7 Sep 2024 17:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F3uACKrh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RfHmMwa/"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B00134B1;
-	Sat,  7 Sep 2024 17:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05858134B1
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 17:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725728562; cv=none; b=nqpnmYxu8UErcjCt5yl3GFe05sbfDMSKwh1TMdgvr/v9ZNf//kRb9dbvZYYUzgTX8hMTCafptCfqzhQYnYEdVKhQdv+9zUyBZgD09/CbyPbhGSFBc0Pg7WhmHrAK2tZz3bT2wK9tOd8PpFyyMKpq4eIoxJ0sssH6MM+SQPnNncQ=
+	t=1725728699; cv=none; b=k8qMNt+RhZs/UrGfucExe3lYrxUDORf2+8DoTEMzDYhYSe6a5XyPnMwAc5eRgsp7TC+6E1+l8OQ7xVbQIpLvLYMjXTsPn9qiIJ/ONoPOUwL7GOEAByURsno3bgWZLft4Tw7dXgAKwZHxE7spK2xjUc2nhJZan90W1+ME7bu/xrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725728562; c=relaxed/simple;
-	bh=u6Mcf2G/UtDhfG9F19/02cvhzAL2moivAo5JbQWdUjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cC+JIekE61rXXDWikKT7i8YM6jWfSMvYlEPYYILYaUKc97//C3/RGDKtsUjkrbmNWFpfnKvBfRNMyC9sA5veFpWfPs0/sZvNtCCzQ7+qp5g4fPXAjo3PCcobSpnjkTvOXtqSVypCvbi8Hr6CM2gcD3JaFzCB6tX6qQP5IEx+H3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F3uACKrh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15FC4C4CEC2;
-	Sat,  7 Sep 2024 17:02:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725728561;
-	bh=u6Mcf2G/UtDhfG9F19/02cvhzAL2moivAo5JbQWdUjU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F3uACKrhN9GA5HX9E40MrYEd924Ekodalev4mok5di1o7m5+DRaoO6D/+J/hV4JkN
-	 tRQUI8ZYvNHma2fRx+xXksjV/WSS99VmX1+eib2P5TRwXJenDOOeYz1kbp42v07F05
-	 dhFsa1kEx3KNbjJTIjKh7ifKOUGI5zrBGHeDBE7CLVgEpfeDzuRRBvegn4ZMqlhZ2Q
-	 ZUt2r7Dpr3ZVtpPDv3yRDDpFq8h2b8lM6LEjQdN1+mSQgcsjdXhziVpChE5xeRthSA
-	 x1NUUrm7+1mt1R43PvB/W41DPcLE8e6zgvxOQVLQEHzmUcURXIyssM3mVWVOU0Aco2
-	 eyCtVpc7kBuMQ==
-Date: Sat, 7 Sep 2024 18:01:49 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mariel Tinaco <Mariel.Tinaco@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter
- Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Conor Dooley <conor+dt@kernel.org>, Marcelo
- Schmitt <marcelo.schmitt1@gmail.com>, Dimitri Fedrau
- <dima.fedrau@gmail.com>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: iio: dac: add docs for ad8460
-Message-ID: <20240907180149.67fdc636@jic23-huawei>
-In-Reply-To: <pp3r4ygrialun2x6vtghp27ianggjzs3g3436b6mi6mttfy57a@q7kcwolkkn27>
-References: <20240904023040.23352-1-Mariel.Tinaco@analog.com>
-	<20240904023040.23352-2-Mariel.Tinaco@analog.com>
-	<pp3r4ygrialun2x6vtghp27ianggjzs3g3436b6mi6mttfy57a@q7kcwolkkn27>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725728699; c=relaxed/simple;
+	bh=ORKqNRQEJbh3hYA6p46yVoiiV3Civhz86GC8gnQlZEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DPkGwPr6L8MeKHUwZwQ7ue2uUm6zQk6zLW+AYwjfo1QW8hi/iTXmwwbZaS6nk3vnGG+6RDxS3dXbiDIBdynSeHsqpmALRYrfI/JpXS2pvaKPEwv6y1UnD5QG6vwyyoJGf6o5TlEGpYjgJ2SQB6EJVbtQ8puRXjy2X5LeVIUu60g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RfHmMwa/; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 7 Sep 2024 13:04:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725728694;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ofjB7t1Kdp6/mJ2/+OPdnvQvYH/QmfkD8+jlSOcEQnw=;
+	b=RfHmMwa/myMuODAxcjjJbZqlT7e/QhGFfMdkmpI1wdf64pM7QF2DEjhdwfhZxs2WBMEqvi
+	frdi6QKVNlbTNWK7ovJwuvjZZnyFsRqWw2y4UCmX4zPCw14UxpoWnItuUwi5d0sZ6zJznv
+	Agw7RF4ug8AvbgghMT75aNs7QaTwP7Y=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Alyssa Ross <hi@alyssa.is>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Erin Shepherd <erin.shepherd@e43.eu>, 
+	Ryan Lahfa <ryan@lahfa.xyz>
+Subject: Re: [PATCH] bcachefs: Fix negative timespecs
+Message-ID: <n7mhniclwckv7jxu6zwbk5xs5ig7w3eka3j54ioxi4uaha2k2q@tammak7sbrgk>
+References: <20240907160024.605850-3-hi@alyssa.is>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240907160024.605850-3-hi@alyssa.is>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 4 Sep 2024 08:20:53 +0200
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Sat, Sep 07, 2024 at 06:00:26PM GMT, Alyssa Ross wrote:
+> This fixes two problems in the handling of negative times:
+> 
+>  • rem is signed, but the rem * c->sb.nsec_per_time_unit operation
+>    produced a bogus unsigned result, because s32 * u32 = u32.
+> 
+>  • The timespec was not normalized (it could contain more than a
+>    billion nanoseconds).
+> 
+> For example, { .tv_sec = -14245441, .tv_nsec = 750000000 }, after
+> being round tripped through timespec_to_bch2_time and then
+> bch2_time_to_timespec would come back as
+> { .tv_sec = -14245440, .tv_nsec = 4044967296 } (more than 4 billion
+> nanoseconds).
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 595c1e9bab7f ("bcachefs: Fix time handling")
+> Closes: https://github.com/koverstreet/bcachefs/issues/743
+> Co-developed-by: Erin Shepherd <erin.shepherd@e43.eu>
+> Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
+> Co-developed-by: Ryan Lahfa <ryan@lahfa.xyz>
+> Signed-off-by: Ryan Lahfa <ryan@lahfa.xyz>
+> Signed-off-by: Alyssa Ross <hi@alyssa.is>
 
-> On Wed, Sep 04, 2024 at 10:30:39AM +0800, Mariel Tinaco wrote:
-> > This adds the bindings documentation for the 14-bit  
-> 
-> Please do not use "This commit/patch/change", but imperative mood. See
-> longer explanation here:
-> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
-> 
-> > High Voltage, High Current, Waveform Generator
-> > Digital-to-Analog converter.
-> > 
-> > Signed-off-by: Mariel Tinaco <Mariel.Tinaco@analog.com>
-> > ---
-> >  .../bindings/iio/dac/adi,ad8460.yaml          | 154 ++++++++++++++++++
-> >  MAINTAINERS                                   |   7 +
-> >  2 files changed, 161 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ad8460.yaml  
-> 
-> > +  adi,range-microvolt:
-> > +    description: Voltage output range specified as <minimum, maximum>
-> > +    oneOf:  
-> 
-> This oneOf does not make sense. There is only one condition. Drop.
-> 
-> > +      - items:
-> > +          - enum: [0, -10000000, -20000000, -30000000, -40000000, -55000000]
-> > +          - enum: [10000000, 20000000, 30000000, 40000000, 55000000]  
-> 
-> What's the default? It's not a required property.
-> 
-> > +
-> > +  adi,range-microamp:
-> > +    description: Current output range specified as <minimum, maximum>
-> > +    oneOf:
-> > +      - items:
-> > +          - enum: [-50000, -100000, -300000, -500000, -1000000]  
-> 
-> I don't understand why 0 is not listed here.
-
-I'm not sure why it is a list at all. Seems like the hardware
-allows a continuous value so this should just specify max and min.
-
-> 
-> > +          - enum: [50000, 100000, 300000, 500000, 1000000]
-> > +      - items:
-> > +          - const: 0
-> > +          - enum: [50000, 100000, 300000, 500000, 1000000]
-> > +  
-> 
-> What's the default? It's not a required property.
-> 
-> > +  adi,max-millicelsius:
-> > +    description: Overtemperature threshold
-> > +    default: 50000
-> > +    minimum: 20000
-> > +    maximum: 150000
-> > +
-> > +  shutdown-reset-gpios:
-> > +    description: Corresponds to SDN_RESET pin. To exit shutdown
-> > +      or sleep mode, pulse SDN_RESET HIGH, then leave LOW.
-> > +    maxItems: 1
-> > +
-> > +  reset-gpios:
-> > +    description: Manual Power On Reset (POR). Pull this GPIO pin
-> > +      LOW and then HIGH to reset all digital registers to default
-> > +    maxItems: 1
-> > +
-> > +  shutdown-gpios:
-> > +    description: Corresponds to SDN_IO pin. Shutdown may be
-> > +      initiated by the user, by pulsing SDN_IO high. To exit shutdown,
-> > +      pulse SDN_IO low, then float.
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks  
-> 
-> Some supplies are for sure required. Devices rarely can operate without
-> power provided.
-> 
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> > +
-> > +additionalProperties: false  
-> 
-> unevaluatedProperties instead.
-> 
-> Best regards,
-> Krzysztof
-> 
-
+Thanks! Applied
 
