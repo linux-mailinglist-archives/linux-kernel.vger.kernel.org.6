@@ -1,249 +1,143 @@
-Return-Path: <linux-kernel+bounces-319734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F056C970183
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:05:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE421970189
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 196B01C218C6
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:05:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BB8B1F22B76
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAB31547E8;
-	Sat,  7 Sep 2024 10:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB78156F46;
+	Sat,  7 Sep 2024 10:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YQOsxVe3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mSQeLPug";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0ThszcR1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kHibkI2e"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="A4HvNY6j"
+Received: from sonic305-19.consmr.mail.sg3.yahoo.com (sonic305-19.consmr.mail.sg3.yahoo.com [106.10.241.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEC954656;
-	Sat,  7 Sep 2024 10:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC8BA55
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 10:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.241.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725703545; cv=none; b=cSWywBuN7HhsmLwr16IHnBpWzmXlPNMVmz2mPax/IJaw+zigd1d1r5xc189uYABSGEOeohUCRGm5BBxrqoLMBauv8pTGo2OMTLfbmCW4AU5LTtm1MSGZUh2Y3jEZHlnVbliZPsMyD0gdhVgrJSASDmaNfrc4UVTcXhw9LQu1wnI=
+	t=1725703923; cv=none; b=D5WyGrLUagrXfI1DHLsEWodoU4unGUb1NJdBVGtqFoG3GegimxNIhN5dz34UkSqhKSHkjA+GS1ya310a08xw3XtGZt0la2cnyHGR1aEVWyW1w54d3tMwmBgwp+352HSKbpX5biEFQod8gL19/zY1k/U4/ZoI4qwhbr/TwngV5Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725703545; c=relaxed/simple;
-	bh=BOmcOHAF+2Qs3Xv8Rf/zZEHZ5V8eO4zCPwIAyzyalhU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=flm76CCISFpGNvwRTYRfdVWJCmuTSDN/TDK/FONX9rBn64xoxZEA7YcC833o4ioKxT3NNs7dm/cT9BFqitkQLzaQwChWrOgnPVna5uGAsT+6alxlDilaMMwtSubpUWR9a6hPxWeqhQA2KwUAjPFCRvKKULO5NOAjVBZwHuG9kYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YQOsxVe3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mSQeLPug; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0ThszcR1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kHibkI2e; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CD77C21229;
-	Sat,  7 Sep 2024 10:05:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725703540; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=spN8FZT1364KvIzdbQJ12M/ejhSlRN8HftF1NP0frAY=;
-	b=YQOsxVe3PZqeQ9kRKXNGfkEVa49XMXn+MmOMFHgtpzGfh9+QWwTvbYHVG8YH14gjq1Bwie
-	BRL+VbpG1qWsrPWkWvTeJ+svOi9W/PwcSaZf7a+lMvVVJrlJM0lMJKkzzl5oOJ1ABvCjJj
-	ZwFWX3mqNRg0LdNWXCsGgsnxRLu+whs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725703540;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=spN8FZT1364KvIzdbQJ12M/ejhSlRN8HftF1NP0frAY=;
-	b=mSQeLPugjc/pYAcNTRbD9Yz1p52/sUO+GkmFbpa00j0Dd9EoRLyONgTSBk3SOFOniypczk
-	DeATzqLsAoOMhiCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=0ThszcR1;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=kHibkI2e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725703539; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=spN8FZT1364KvIzdbQJ12M/ejhSlRN8HftF1NP0frAY=;
-	b=0ThszcR1BNlpTzWNCVfN1UNahcPLZMvbU4cwFKKkbVnz2OxtzorDE4ioXlXG1gHxyz+XEe
-	6VmRcgVGvfFUpCiMY3tcE5XadOeAnxNcaoDyZEXUG06Bugz/cw+10PcQO2jbVt7ZxT/XYO
-	3j45PuMJmaeqSWuWfubIE0i3V/PmFCM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725703539;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=spN8FZT1364KvIzdbQJ12M/ejhSlRN8HftF1NP0frAY=;
-	b=kHibkI2e0llJmZbVdAcMPWFSBct6MhHcknAqdBZJFN1+TYduSOvoJeHEt+0w++/P9XCU7z
-	oROhWNkbGJ4U52Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4F6BE139DE;
-	Sat,  7 Sep 2024 10:05:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id C2pJEXMl3GbwVgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sat, 07 Sep 2024 10:05:39 +0000
-Date: Sat, 07 Sep 2024 12:06:25 +0200
-Message-ID: <87wmjndbha.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Maxim Mikityanskiy <maxtram95@gmail.com>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
-	Rui Salvaterra <rsalvaterra@gmail.com>,
-	Sui Jingfeng <suijingfeng@loongson.cn>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Peter Wu <peter@lekensteyn.nl>,
-	Lukas Wunner <lukas@wunner.de>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda: intel: Fix Optimus when GPU has no sound
-In-Reply-To: <ZttEUjeYFzdznYKM@mail.gmail.com>
-References: <20240904203955.245085-1-maxtram95@gmail.com>
-	<871q1ygov9.wl-tiwai@suse.de>
-	<ZttEUjeYFzdznYKM@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1725703923; c=relaxed/simple;
+	bh=kkiHYYOtW+BApMBwN6H60TlyXxOO+Zx4IxGpk5W/e1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G4HqMMTqV7IEshN4s+UcD8fVMozvBI0p8cbXly/dz76Dxym/Gmxx1qGACcWjsCvFSBtmqdwimxlEoSAJdGKJkpxiWkxju8OL4oyI9W3fK59Gh+tORw9z8ASfmtB6xJnO9ekyrw1mypBXfpXatVjFzTV/Ub2tFr1sZneJ4TJPwq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=A4HvNY6j; arc=none smtp.client-ip=106.10.241.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1725703913; bh=zkTKJA2FhwivzUz5wJO2Jlnry0Ls8XEBLwuxnqUiJM4=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject:Reply-To; b=A4HvNY6j8WN+DHYNsG3CYj5q9MeLKgWPBz8Y50j+fOi+wdLz8S9kY/H4ENHPfXKplujas5Eu3Nb+Dytqvhf/mVBpvymkePoWZEvheTvg+vlCeOfnIdzT0YNsEjSAj8OFaWotTYZjg844qdV1kw4PMvvyRNnpUoWLism2bUZQyTOLVm/qLv4+NB52sH87JAo9LTCMbNw8+kuhoo98wYH9jSScDJ8mtulLgNwl7kPA1rfDAuzo7OZyU3GNruBh4PvPxbr+EtEO119BdkbUaBavpN4Hr+FvoX2BEsiFqwHP2WYqYujRkk8YyhhHnaVGb9uwMyrEpwVQAEdwwunrRhUB4A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725703913; bh=PKlfI6ejtF957zv0BOG039EtP2cZDnlRKEyeKMeQt5K=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=AVdVy2pRop3YzPaIGT9ilASB7TOep6Zqfp/1+xzlXPS4F5NyN4xmGoLOnDMQwr3VRW3dfep3xHjFKtkZ5ZLBCGxSVfoKLelae8C5PMjL1CIK3/eZHyPvxLXadGbtr6176IelgQ8nUEzQk0CAS7ZsV6xXkmvtISMF5JiDPVCrZ6lVm0wT/Y8eH2DGcg3TcA4GzoPe57nmar/yXfN8EvaquLT/dE8Duwh7JaR8QtIttum6GgbJ/l6cK9XuXkEF1y9lppCNg4U6iimHLYiAWOV8eLv001Y4Kk8UbYR+up+DKS4/FgN/qMlxtW7Y0iVdvGtISdxTqoMJAO/uBtlySQZ67Q==
+X-YMail-OSG: 40OVdcgVM1ngXn783d.sjWsogtiPN9AGriMrM4Hf.fdDnv8sNj_4WQc.wHkMzVL
+ Y4E4uICd82AqGk_UEJfQxgdT6qTldRfMcSmCZYVrGZGzz1AX0ASOluosqupMG_QRbMTkNDa2Da.S
+ aHQlmJQ.JvLZNqdkRv7VpDlfySWfR4oELhr1I1GJ29fz_HsKySlD_S40zbjxZTTHBTW3gDP_JK_w
+ QMGdi98a_OSoikDyagzFPjwSc4r3gSmYrLlGnw7Udq7IB6QGU_HLTvGA7LjCphrLieoQIaAkVO1g
+ RdlcgMnbrxPHhY9uV4wdctgdBnSycUYyVMlFI5Fvjd25nDnNe2_ASSjE13SgwKcM61YXchm0ucbW
+ d2GEau48rhE5wMMlz9kDlt5yqRT8iKjzJDUDFADv7J6XyYgRkwUQsIFND2yXdl0VLNNOgwQeiY5W
+ cvpw0_PhaJxsu8W8JodhjGgfMMwramYYR3hKv4BTydDUIgNiYP2u0lzN2GTIsqOJSuBMDUoYv_Lv
+ xMr79TL8hju1TkBYIJ6fyTbsnWX7hHeBC2Wu0tobKhfSuyjVrBUoMCoAShHdxeNy2Ue5KvSnIU1k
+ sCxDLZkkoYmYOKYJvZRXq9FsI8slBQSLq5A9UV0Rd..lqMkCGozm7coYJhS5m8TZammVRtLOwLUQ
+ 8h_qtFKUWWnNAlqCy29Bm8h85REe6_mZatKqv5dJXNZpqV3ag_hIKUNwl86dqvRAl7WRpkkfRMMq
+ QpVOwfCiWhZeBLEv0cjqaWMJsvHbkRnacNRVZ6e72jeZWlED72JMb2ztiAzyY1udQxyPyJNWIZP7
+ EW0kWTsa46kYi7GHEiA3plpvNtL8YA63qbrBKj1W2k7kLGdZUfIP5.H7l9GJMQ_gd1BXjUD3LiJM
+ dIfXBwYsNQXfOjaTDmg7F9IjQYU93aGEyM0whXD97R3GzrnAwONLCSLPlw5rSdG1eeM2NfUWvd1m
+ T1IxwRAFrWvSxm8t1p8TeXL37KY1DJ5eg_utn2zYxRiwZanWflrL2s1E4uQ8xt7NCqyxt7oV_5V2
+ xvUJRM0zcFuXmeMq4T1eSnaCFDhogqb3itFblN4UDKCXxfCm_6Uxj62wx6d21MbusXbSPFN6Vb3E
+ GOcJgSjMqPPvEeqeQuHJN50mgyhfcCOb63zcuD8jn2lnfUbRQ5KLNmL4upC_PBmyBfJfqYBOnlx_
+ 2RX5sQszb3n5W_yM0h._iEvN8uEQcjtpdSGtkHsKueZMsoRROz7P5HZNQ38fSNYz51C1UYxQ9AAR
+ Gh6Ra7I4sP1xvNvz_7N1EY.7tf3aNjuaAMrqvF9dn9_vJvBSXOqRX9GwyN7WYqnVJiPFos_rfr4r
+ UFGxXpL4LQJr4dSCIlYoouU524.6EPKAHWXhfeM_uD7qzSKjZJEx4oBJX.Ir7xJWsTE8Qavpw6iA
+ z6rCzrvhtGHG9cfNCYCKCsBPqcHnPIho7X4GlrsiqGcb65t09hyd_jibooZA6QwmnJbnZ2DoyJK5
+ X8x9Es6DcKatzbrvO9WFA25uE56FCSpsGNHA9caoppdUlOuZPcSW4oC5zTs.1FFCC3aO_HghfXvF
+ MB.Pf11fTXxPflGpXfMsmsP7qQ4_i4yGapqBlASuvcBOAw0mTzX2zK9i_LQIz1hnXq4rLeJl2UtM
+ 2_2MoaTIs3IEtonOaHuawO_dwF1N7h6Mg005D_CqpqVmdllrrsAcOMpEmJO_VjfT7mTbbueJFzos
+ VHMFEvNpOiqseFwsE4JtbUAKRHAsLrvnuLUJDByai2b_inOUT4Vcjb9X5sJqK.4x_pK66MFUMReu
+ Gn7JyxAIzbmq6hBKh9SIs8fT44B3artC_FAapQlvIic1jetvaf59KF1DkTmjUcJFssKjcfzqdzoq
+ m6fXAf7w9dJt.0iJG65QEMYSZDVutEhViYJl.nNoSk9ZLNjPg9HVTaij0NfrdDIV8zKYy6oPPMP_
+ VcLEghgx4QXSF2goqP3Q6HWnaRI3d4LWoELeBzoOLIM9YQyszX_xrcF_qF7j76px9iVBog2.Bd.e
+ 5mpIyVVQYGh4dHSVtL6QDiXeqQ995c0bQ0kH5611osX3GEgFwXkX.AgINGEwBPpZDV4Pb2Hh_P_C
+ uCHdQc6FjkAdVpoWVarNmAeTujHPEOL7q5sRzO9X9xQQ45lbLvEXfQlOmpjLN5dwt4AF0jOS3JXA
+ n76WFWGA8ER5Yucxld1Lke1O.VW2IUZJNwOqnjEDPY_OD_xNHjc1k5J4kzB063mxsviEZcmz63RV
+ Xv_Kt_V84YJfBznKabkKe.i4zYdoXMzjJAmS7wFuqvngdnzxL5iP4
+X-Sonic-MF: <abdul.rahim@myyahoo.com>
+X-Sonic-ID: ddf9fd8a-a61d-455e-a8bb-19462d5aa010
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.sg3.yahoo.com with HTTP; Sat, 7 Sep 2024 10:11:53 +0000
+Received: by hermes--production-sg3-fc85cddf6-kdpzj (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9082047fd5155f96c2e5472233bc10ec;
+          Sat, 07 Sep 2024 10:11:48 +0000 (UTC)
+Date: Sat, 7 Sep 2024 15:41:38 +0530
+From: Abdul Rahim <abdul.rahim@myyahoo.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, bhelgaas@google.com, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] PCI: Fixed spelling in Documentation/PCI/pci.rst
+Message-ID: <n7gabykujjulz5dg4eyrc6pcbvn6wzkw6opol3pclaychqnssx@prjklcr7qh34>
+References: <u4xan54bdxf5sniwhtvrixw3b2vg4c7magey6q3rsd4ssq6ihk@xfbijuhadyw4>
+ <20240906192429.GA430486@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: CD77C21229
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[suse.de,perex.cz,suse.com,linux.intel.com,intel.com,gmail.com,loongson.cn,google.com,lekensteyn.nl,wunner.de,vger.kernel.org];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -5.51
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906192429.GA430486@bhelgaas>
+X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, 06 Sep 2024 20:05:06 +0200,
-Maxim Mikityanskiy wrote:
-> 
-> On Thu, 05 Sep 2024 at 16:24:26 +0200, Takashi Iwai wrote:
-> > On Wed, 04 Sep 2024 22:39:55 +0200,
-> > Maxim Mikityanskiy wrote:
+On Fri, Sep 06, 2024 at 02:24:29PM GMT, Bjorn Helgaas wrote:
+> On Sat, Sep 07, 2024 at 12:44:13AM +0530, Abdul Rahim wrote:
+> > On Fri, Sep 06, 2024 at 12:53:18PM GMT, Jonathan Corbet wrote:
+> > > Abdul Rahim <abdul.rahim@myyahoo.com> writes:
 > > > 
-> > > Lenovo IdeaPad Z570 with NVIDIA GeForce Ge 520M doesn't have sound on
-> 
-> Spotted a typo: s/520M/540M/
-> 
-> > > the discrete GPU. snd_hda_intel probes the device and schedules
-> > > azx_probe_continue(), which fails at azx_first_init(). The driver ends
-> > > up probed, but calls azx_free() and stops the chip. However, from the
-> > > runtime PM point of view, the device remains active, because the PCI
-> > > subsystem makes it active on probe, and it's still bound. It prevents
-> > > vga_switcheroo from turning off the DGPU (pci_create_device_link() syncs
-> > > power management for the video and audio devices).
+> > > > On Fri, Sep 06, 2024 at 11:41:52AM GMT, Bjorn Helgaas wrote:
+> > > >> On Fri, Sep 06, 2024 at 06:15:18PM +0530, Abdul Rahim wrote:
+> > > >> > Fixed spelling and edited for clarity.
+> > > >> > 
+> > > >> > Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
+> > > >> > ---
+> > > >> >  Documentation/PCI/pci.rst | 2 +-
+> > > >> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >> > 
+> > > >> > diff --git a/Documentation/PCI/pci.rst b/Documentation/PCI/pci.rst
+> > > >> > index dd7b1c0c21da..344c2c2d94f9 100644
+> > > >> > --- a/Documentation/PCI/pci.rst
+> > > >> > +++ b/Documentation/PCI/pci.rst
+> > > >> > @@ -52,7 +52,7 @@ driver generally needs to perform the following initialization:
+> > > >> >    - Enable DMA/processing engines
+> > > >> >  
+> > > >> >  When done using the device, and perhaps the module needs to be unloaded,
+> > > >> > -the driver needs to take the follow steps:
+> > > >> > +the driver needs to perform the following steps:
+> > > >> 
+> > > >> I don't see a spelling fix here, and personally I wouldn't bother with
+> > > >> changing "take" to "perform" unless we have other more significant
+> > > >> changes to make at the same time.
+> > > >
+> > > > - "follow" has been corrected to "following", which is more appriopriate
+> > > > in this context.
+> > > > - I know its trivial, but can disturb the readers flow
+> > > > - do you want me to change the message to "Edited for clarity"
 > > > 
-> > > Fix it by forcing the device to the suspended state in azx_free().
-> > > 
-> > > Fixes: 07f4f97d7b4b ("vga_switcheroo: Use device link for HDA controller")
-> > > Signed-off-by: Maxim Mikityanskiy <maxtram95@gmail.com>
+> > > The problem is not s/follow/following/, it is the other, unrelated
+> > > change you made that does not improve the text.  There are reasons why
+> > > we ask people not to mix multiple changes.  If you submit just the
+> > > "following" fix, it will surely be applied.
 > > 
-> > What if this device probe is skipped (e.g. adding your device entry to
-> > driver_denylist[] in hda_intel.c)?  Is the device also in the
-> > runtime-suspended state?
+> > Understood, will take care next time. I will resend this patch with:
+> > "follow" -> "following", with commit message "Fixed spelling"
 > 
-> I added the following:
+> Sorry I missed the "follow" change, which is indeed worth fixing.  If
+> you resend it, make your subject and commit log say "fix" (not
+> "fixed"), like it's a command.
 > 
-> { PCI_DEVICE_SUB(0x10de, 0x0bea, 0x0000, 0x0000) },
+> https://chris.beams.io/posts/git-commit/
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/maintainer-tip.rst?id=v6.9#n134
 > 
-> The probe was apparently skipped (the device is not attached to a
-> driver), runtime_status=suspended, runtime_usage=0, the GPU goes to
-> DynOff.
 
-OK, that's good.
-
-> However, I'm not sure whether it's a good idea to blacklist 540M
-> entirely, as there might be other laptops with this GPU that have sound,
-> and AFAIK there are variants of Lenovo Z570 with other NVIDIA GPUs.
-
-You should specify the PCI SSID of your device instead of 0:0 in the
-above, so that it's picked up only for yours.
-
-
-Takashi
-
-> Another way to make vga_switcheroo work is to disable quirk_nvidia_hda,
-> although I don't know whether it can be done without recompiling the
-> kernel. In this case, 0000:01:00.1 doesn't even appear on the bus.
-> 
-> (Note that I need to set nouveau.modeset=2 either way, otherwise it
-> stays in DynPwr if the screen is on.)
-> 
-> > 
-> > 
-> > thanks,
-> > 
-> > Takashi
-> > 
-> > > ---
-> > >  sound/pci/hda/hda_intel.c | 14 +++++++++++++-
-> > >  1 file changed, 13 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-> > > index b79020adce63..65fcb92e11c7 100644
-> > > --- a/sound/pci/hda/hda_intel.c
-> > > +++ b/sound/pci/hda/hda_intel.c
-> > > @@ -1361,8 +1361,20 @@ static void azx_free(struct azx *chip)
-> > >  	if (use_vga_switcheroo(hda)) {
-> > >  		if (chip->disabled && hda->probe_continued)
-> > >  			snd_hda_unlock_devices(&chip->bus);
-> > > -		if (hda->vga_switcheroo_registered)
-> > > +		if (hda->vga_switcheroo_registered) {
-> > >  			vga_switcheroo_unregister_client(chip->pci);
-> > > +
-> > > +			/* Some GPUs don't have sound, and azx_first_init fails,
-> > > +			 * leaving the device probed but non-functional. As long
-> > > +			 * as it's probed, the PCI subsystem keeps its runtime
-> > > +			 * PM status as active. Force it to suspended (as we
-> > > +			 * actually stop the chip) to allow GPU to suspend via
-> > > +			 * vga_switcheroo.
-> > > +			 */
-> > > +			pm_runtime_disable(&pci->dev);
-> > > +			pm_runtime_set_suspended(&pci->dev);
-> > > +			pm_runtime_enable(&pci->dev);
-> > > +		}
-> > >  	}
-> > >  
-> > >  	if (bus->chip_init) {
-> > > -- 
-> > > 2.46.0
-> > > 
+Thanks for reviewing, i've resent this patch here: 
+https://lore.kernel.org/lkml/20240906205656.8261-1-abdul.rahim@myyahoo.com/
 
