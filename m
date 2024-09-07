@@ -1,150 +1,154 @@
-Return-Path: <linux-kernel+bounces-319661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82FC9970039
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F64B970043
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39A6E285B3E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 05:40:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC49F285B5E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 05:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55A912FB34;
-	Sat,  7 Sep 2024 05:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D4E1311B5;
+	Sat,  7 Sep 2024 05:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="SvCOeNwP"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9947042A9D;
-	Sat,  7 Sep 2024 05:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="q3O591lE"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272F8200CB
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 05:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725687609; cv=none; b=kecmn6VSStD7ZkslSC0HTIDFe+XVZEyaIguo4k4e5nOqGouo3o+2/TjxOB7Isb6SDjToeU5jRKmWXWfu4gfMGCus99OYqAdOzVP+F6f72G+FELHHMqCaVPgZvakq1syA/ci/p5OTHgzAuyfWDAfYFDTz2gohh50Wnc3vw/5xR4k=
+	t=1725688501; cv=none; b=pDSJ4PmjFCAOXwfegFtnDxYLLimK9KpEOJlcwxxfVElgAJ43eXQNv217/exX9fMlmbypOj1FRbBvRF+Tjp1ywmfSXF6Ic+fKaT5HXlLaMJQ46fQmsGLcIs8jpmXon+ycPRovfpvGMulCoyiEhPwLSIgMficycZrkm4E9EV41M3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725687609; c=relaxed/simple;
-	bh=zOv4kk3/GWfBNo5nWcBcuX+02WHMxWYhahUqOM41r38=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=njkeH/ZqRjiaNg13IEP7Coz4E7CojJe0ZY8XWInGb8cHS/wwTO9Mf4cUwLVrkGH1pmOg8PYyyRK+1kqjo0o4qrK/JRmhRv0ISWwMfdTWgJFxdlBsspF9gg3+8q7a6sTi5JOkMI6L5zbpYZYDdx9MiT/ZmgkKsY8uNjtPtFP3UbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=SvCOeNwP; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1725687607; x=1757223607;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=V9SNpebcQe7ikkeP1XZfukxclx4L3BFjvRNWhNZfbzQ=;
-  b=SvCOeNwPaAHQ2QBKEOpQ6BSLjQc1Gk8LpKqV/P5XgZhQyb6egd9spyLL
-   sC1Yf6J0augsgHWDR5mw0lbG+WfdxFRFQhe3xJdsEj4Pcz6uDpNK1KOy4
-   4aTsbNsPf5NlQhFpPV8UvyX9rS2a4CnNPgPxPwanPzcWZ7AaJ+iIxYEsH
-   k=;
-X-IronPort-AV: E=Sophos;i="6.10,210,1719878400"; 
-   d="scan'208";a="123211391"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 05:40:06 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:2311]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.21.223:2525] with esmtp (Farcaster)
- id fb74dccc-b930-4b81-b784-ae01b38705de; Sat, 7 Sep 2024 05:40:05 +0000 (UTC)
-X-Farcaster-Flow-ID: fb74dccc-b930-4b81-b784-ae01b38705de
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Sat, 7 Sep 2024 05:40:03 +0000
-Received: from 88665a182662.ant.amazon.com (10.94.49.188) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Sat, 7 Sep 2024 05:40:01 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <rao.shoaib@oracle.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in unix_stream_read_actor (2)
-Date: Fri, 6 Sep 2024 22:39:53 -0700
-Message-ID: <20240907053953.60412-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <2abf390b-91ff-4f37-a54d-0ceac3e0ee61@oracle.com>
-References: <2abf390b-91ff-4f37-a54d-0ceac3e0ee61@oracle.com>
+	s=arc-20240116; t=1725688501; c=relaxed/simple;
+	bh=easwMnHXgH6K81SUaN+DwxmV9xjcNAXmtB7JfGCCqlc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hzjWztDja2QmlgvpAgQrwzsKYssaLjX+04mkwFmMbaxZr66gLASvsrPO26hCDApsGHw5UmVwg3cDWMR4iiUGTzo2Rib/kSEMGyNWhv5uHdT7nvPVGWKdOTyW5sqJfHCtxah+GFbbZ70Rj/vq4a0JCXc2HrLDAwwksv5ZqO9iyCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=q3O591lE; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id AB4DC14C1E1;
+	Sat,  7 Sep 2024 07:54:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1725688491;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qj67ertlQRTeftmw+g9h4C2AnGK6C33+Vq5AG+IOQ2c=;
+	b=q3O591lE2JGBwdtdtSQntarN2ZlH/P1P3gKgDcxSXQEEQc9LNmyKwIaaBIssWoBYPHvTFy
+	3zJwvtJFNNpm8t+gcrfv9bnJ7VlXXcHhNL4xSaJX3aIXo+GZhCEj46Ybn5AnamgdC5Evz8
+	Y+GiT9apL96eIU0cdS6rvt1A9QmD//UR4hkGY7J1QkmJlDYaRFZnD5VXUj7TFFWbPXx7/t
+	1SPqrofM/N9ewj4zWf32a/xf7RctM4cgi8I7/rJPKGwN0eF3yJAxqzDsYp8CR8rjZSey0/
+	skv5TflnSFlduQaMa50hrsCiDwEUzkQZA+To0SmhbQw+HrhjBqRfkBpv9sCD+w==
+Received: from [127.0.0.1] (localhost.lan [::1])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTP id 6cf0701c;
+	Sat, 7 Sep 2024 05:54:42 +0000 (UTC)
+From: Dominique Martinet <asmadeus@codewreck.org>
+Date: Sat, 07 Sep 2024 14:54:33 +0900
+Subject: [PATCH v2] drm/bridge: imx8mp-hdmi-tx: allow 0.5% margin with
+ selected clock
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D038UWC004.ant.amazon.com (10.13.139.229) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240907-hdmi-tolerance-v2-1-b9d7abd89f5c@codewreck.org>
+X-B4-Tracking: v=1; b=H4sIAJjq22YC/zWMwQ7CIBAFf8XsWRqgNFRP/ofpgcAqGwUUsNE0/
+ Xexibc3L5lZoGAmLHDcLZBxpkIpNpD7HVhv4hUZucYguVT8wDXzLhCr6Y7ZRItMubHnWhk1CA1
+ NemS80HsLnqfGnkpN+bP1Z/F7/ynFx17wvhNy0GrkTDCXAkV6vrALJleKWE+mtnljFa2PqbMpw
+ LSu6xdNlPD1tgAAAA==
+To: Liu Ying <victor.liu@nxp.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: Adam Ford <aford173@gmail.com>, Lucas Stach <l.stach@pengutronix.de>, 
+ Frieder Schrempf <frieder.schrempf@kontron.de>, 
+ dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Dominique Martinet <dominique.martinet@atmark-techno.com>
+X-Mailer: b4 0.14-dev-87f09
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2120;
+ i=asmadeus@codewreck.org; h=from:subject:message-id;
+ bh=nqr2dM1v6KRqxdCBlCHE8iSEaSRxPOverS1W33lMLzI=;
+ b=owEBbQKS/ZANAwAIAatOm+xqmOZwAcsmYgBm2+qiwNG20vIXdu+YEeULa01ttlJy2QSvC7+R+
+ q5lR89eNZCJAjMEAAEIAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCZtvqogAKCRCrTpvsapjm
+ cCf/EAC4hi6ChKZlBaMMneNhA2qE4PdW2Keg3zZYWMKMWodNjPR+YBT6tLWWHh7AanTLVUyRzaV
+ RdNbsaIL3GBy3Z7IGQ5lQeESlFZ9A9TMOQf8UxEgNPL4bd/oWyE1toTD8nyRqzjNdqjdfBf+iw1
+ zv/TuvyicWWBKTSj9QNmJc7JQD42fbSMmsEhDZ0PSjViXNx7ZW9mqtLv/OkNePmqYqnNzz08T+v
+ 8V7DxK9Fpf6EH83bJFrJoZ0naeKb5W5UQ9uhCbSsxmYaowdt1ddwLrv+ZuoAvZqumcuEgVbwQYf
+ 3cZdJ0f+hvRtXzT8K1bLCJnk5yuFYHquQE/B4Jytol6LWsf+4igOtrQh3QW/DP+896lV7roSmHW
+ WGBl7yQ1kb63VwlEG6/tvkUYs5z+vKHJpX4VW3GF62qTespjQ9aykP0fUuEKIcockq3jI+WEZev
+ F3l2a/WmXIArf1jA/15TkPtc9AaB3zYrrBf2RJ7OGnx2ecX8Hxaao+nBD3KMNwwPi6lgDXwFauB
+ pTLGt6Xbr38u3xtGbqjerCN+Ri7B2LQADXd6GYDhTeT5Gy0MUOYvs+ANVaXqSdvlj5d9q1kGKpe
+ nuu5hqzt5ZGR7JAm5oHlZi+AwWKlxfqJ165Eg+PtClAPPzxhDXwFTMCKw8/cjMQnhsAU6Mwak1R
+ m88KRhuEw3Hjlaw==
+X-Developer-Key: i=asmadeus@codewreck.org; a=openpgp;
+ fpr=B894379F662089525B3FB1B9333F1F391BBBB00A
 
-From: Shoaib Rao <rao.shoaib@oracle.com>
-Date: Fri, 6 Sep 2024 22:06:27 -0700
-> I have tried reproducing using the newly added tests but no luck. I will 
-> keep trying but if there is another occurrence please let me know. I am 
-> using an AMD system but that should not have any impact.
-[...]
-> +TEST_F(msg_oob, ex_oob_oob)
-> +{
-> +       sendpair("x", 1, MSG_OOB);
-> +       epollpair(true);
-> +       siocatmarkpair(true);
-> +
-> +       recvpair("x", 1, 1, MSG_OOB);
-> +       epollpair(false);
-> +       siocatmarkpair(true);
-> +
-> +       sendpair("y", 1, MSG_OOB);
-> +       epollpair(true);
-> +       siocatmarkpair(true);
+From: Dominique Martinet <dominique.martinet@atmark-techno.com>
 
-The test fails on this line because SIOCATMARK has yet another bug
-triggered by the same pattern, and my patch also fixes that.
+This allows the hdmi driver to pick e.g. 64.8MHz instead of 65Mhz when we
+cannot output the exact frequency, enabling the imx8mp HDMI output to
+support more modes
 
-If you remove this line, you'll see this failure on the following
-recvpair("", -EAGAIN, 1, 0).
+Tested-by: Adam Ford <aford173@gmail.com> #imx8mp-beacon
+Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Tested-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+---
+Changes in v2:
+- Improve comment about the tolerance
+- Link to v1: https://lore.kernel.org/r/20240904083103.1257480-1-dominique.martinet@atmark-techno.com
+---
+ drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
----8<---
-# msg_oob.c:234:ex_oob_oob:AF_UNIX :y
-# msg_oob.c:235:ex_oob_oob:Expected:Resource temporarily unavailable
-# msg_oob.c:237:ex_oob_oob:Expected ret[0] (1) == expected_len (-1)
-# ex_oob_oob: Test terminated by assertion
-#          FAIL  msg_oob.peek.ex_oob_oob
-not ok 31 msg_oob.peek.ex_oob_oob
----8<---
+diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+index 13bc570c5473..200d65184159 100644
+--- a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
++++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+@@ -23,6 +23,7 @@ imx8mp_hdmi_mode_valid(struct dw_hdmi *dw_hdmi, void *data,
+ 		       const struct drm_display_mode *mode)
+ {
+ 	struct imx8mp_hdmi *hdmi = (struct imx8mp_hdmi *)data;
++	long round_rate;
+ 
+ 	if (mode->clock < 13500)
+ 		return MODE_CLOCK_LOW;
+@@ -30,8 +31,14 @@ imx8mp_hdmi_mode_valid(struct dw_hdmi *dw_hdmi, void *data,
+ 	if (mode->clock > 297000)
+ 		return MODE_CLOCK_HIGH;
+ 
+-	if (clk_round_rate(hdmi->pixclk, mode->clock * 1000) !=
+-	    mode->clock * 1000)
++	round_rate = clk_round_rate(hdmi->pixclk, mode->clock * 1000);
++	/* imx8mp's pixel clock generator (fsl-samsung-hdmi) cannot generate
++	 * all possible frequencies, so allow some tolerance to support more
++	 * modes.
++	 * Allow 0.5% difference allowed in various standards (VESA, CEA861)
++	 * 0.5% = 5/1000 tolerance (mode->clock is 1/1000)
++	 */
++	if (abs(round_rate - mode->clock * 1000) > mode->clock * 5)
+ 		return MODE_CLOCK_RANGE;
+ 
+ 	/* We don't support double-clocked and Interlaced modes */
 
-This failure means recv() without MSG_OOB expects -EAGAIN because
-no data has been sent on the normal stream, but actually the recv()
-returns 1 byte OOB data.
+---
+base-commit: 67784a74e258a467225f0e68335df77acd67b7ab
+change-id: 20240907-hdmi-tolerance-4d83074a4517
 
-This is the same result triggered by the syzbot's repro.
+Best regards,
+-- 
+Dominique Martinet | Asmadeus
 
-I don't know why KASAN does not show a splat on your setup, but what
-we need to do is not run the syz repro blindly and just wait a splat,
-rather carefully analyse the sequence of syscalls and each consequence.
-
-Sometimes I fixes bugs from the syzkaller's strace log without repro.
-
-This time, the fact that recv() without MSG_OOB returns OOB data is
-the clear sign that something went wrong.
-
-You need not rely on KASAN.
-
-
-> +
-> +       recvpair("", -EAGAIN, 1, 0);
-> +       epollpair(false);
-> +       siocatmarkpair(false);
-> +
-> +       recvpair("", -EINVAL, 1, MSG_OOB);
-> +       epollpair(false);
-> +       siocatmarkpair(false);
-> +}
-[...]
-> #  RUN           msg_oob.no_peek.ex_oob_oob ...
-> # msg_oob.c:305:ex_oob_oob:Expected answ[0] (0) == oob_head (1)
-> # ex_oob_oob: Test terminated by assertion
-> #          FAIL  msg_oob.no_peek.ex_oob_oob
 
