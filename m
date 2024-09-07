@@ -1,226 +1,76 @@
-Return-Path: <linux-kernel+bounces-319701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295209700F0
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:34:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F07849700F4
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 472901C21F45
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:34:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFE67282894
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50EF14C5A7;
-	Sat,  7 Sep 2024 08:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A513F14D6EB;
+	Sat,  7 Sep 2024 08:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bt+223O8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RngW58No"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276541BC23;
-	Sat,  7 Sep 2024 08:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092CF134BD;
+	Sat,  7 Sep 2024 08:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725698038; cv=none; b=cmFdcZzMWKWY3KYVp+hMHmA1Mrt1FgM/m9GpAb+ntpaCnZ8bZp/dbkQBiFV7ozBfeprmNBfxjHoDyJ9GkT52jGteGV9eY5VXZDo5AkfPWdwAgAlLB0TB9mP8obVWPrgAuPrFD8erUcAPuZr1javPZ7Xq6f1o7YZ4wSbzjALcmkQ=
+	t=1725698070; cv=none; b=V6BMVDa1Q/CqapNe78PZe4HHwwmrL3+41ojacbKoagnDW02MitJMk+WhSyNsv6Saa7mAdYyCncXQYAS3nOb4PPJ2gFYZDz/P19BlsFUDzyPXgBfS9DgFUuJaeRDBYE/bG6ZWgyAkuGCcTOitKhaODAuh+Axti719Uzv3miOaIX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725698038; c=relaxed/simple;
-	bh=28Hazu9X3gNJl3G8MxXIbEf04c6aPW6n4xtnOcKil40=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tt/rUB7l01mfwa9rdI5cssPN3eeGI9YRrJ9r7WxrArVPIz6GRqZDDyHvybAbsY9ucjU8iguKSxBi/uEQDpuTrGoP3oNS/oiQ6z9R6ANcOUGEcAhQihZeGeVrGFPD1mG5+qqvQ/0T9Yzv1wBJCsb3G067l448V8UqJaxTtfYLbW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bt+223O8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAD34C4CEC2;
-	Sat,  7 Sep 2024 08:33:56 +0000 (UTC)
+	s=arc-20240116; t=1725698070; c=relaxed/simple;
+	bh=2TyElHw+gfI3FzJ+ptP6petKvakRl/T5VCaUqGUHAZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jvlh9bJod0qeJtjT+qny1BU+TIZdxjQTS+TcMX1b3cYvrrozWK4fugLx06BA6t4/7mhPlI9ledMXutb76BSSzvxfJsOYTlRpF78vUW8LWbgtc3zohjfn1sCYlLtjreVswGFBzqN/YRniiBBSKz6urmt4iQ7YU5z8xDMCFEK3MjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RngW58No; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36410C4CEC2;
+	Sat,  7 Sep 2024 08:34:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725698036;
-	bh=28Hazu9X3gNJl3G8MxXIbEf04c6aPW6n4xtnOcKil40=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bt+223O8CGiUdqQTBKe1Dd1i2GE9czyhTdZHdAJ4W1kq7B4exG1Y52JTa4XalMtLw
-	 3EjGPKhbeHMxsRRCzdPO9qpbqEoG3zACev1lIyYSD1+6F9l//e6Y3WLBQZIExz4fy6
-	 zrt9/nWMkrMg8ZnaBmfwmZ3prqm8l5PXaip/Kbg7k1R1YRRy6PbS1vUebBiZwUoezm
-	 abONWDXSWj/bfxnWp1xOSzgNit2MDR2y7tr5MA+r/B/W31o7cmRlplWnZlxdDqfzMI
-	 2/LSzCUP9j467u6EqPukQBc7z72J8DbHww1OJJLOB4vZw28NFQn3qu2B1IvFW0+fIY
-	 Ddny+PjU6Pr2A==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f75aa08a96so5369721fa.1;
-        Sat, 07 Sep 2024 01:33:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUSBI2hLciR7WgN/ZEJ85J6Q7K9aCcQbPKOCYNZP6S6J/A0CnTvIf2avgOPzG6KKX8kPPFxlWnT7s46wTJi@vger.kernel.org, AJvYcCUlv/5sIilXh2IA88MowweBEb2sgGxIIzzpuGzVh5qoy8bFlJ6A64IcHOC1ga/vbYTAlgiPj3C9uSiSkNQ=@vger.kernel.org, AJvYcCVDnn+8sUzdaLtgmQ8A/SbpAyWwPMBrqdlHDaD33O0aSvR8sliKaBfgFH8MDibdDzefw4ylLidpEqK31BOA@vger.kernel.org, AJvYcCWUwfWn5JeLBACpSzZuurOffwTLa7M8BIp3s2/HsbDnKpfleGpPY2T+uwqmW0e4+vBMav9vrCVMZQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfe8NuvKC8/aOk5tLbVCFXLTL9Ul1W2EbMAn9ciX6re+0h8ZRx
-	GGY063XFsqDdokBPCLZ5SMV54wh0e6juNEfz2vk410mLfkRS4ZtNW6cunV3LCp7QsO7b87LhMcI
-	07OX8uBguPFBGpB3M7jrm4SWZTpA=
-X-Google-Smtp-Source: AGHT+IGiO0grfYCPThFgBWdbGnh5ywWPEfhApDWuSp1Dpho+N3p8He+DadB7u7HS7zJcZD43BZdwwTxPjh5NmXNMfjQ=
-X-Received: by 2002:a05:6512:e97:b0:533:3fc8:9ac0 with SMTP id
- 2adb3069b0e04-536587c6a50mr3459219e87.34.1725698035371; Sat, 07 Sep 2024
- 01:33:55 -0700 (PDT)
+	s=k20201202; t=1725698069;
+	bh=2TyElHw+gfI3FzJ+ptP6petKvakRl/T5VCaUqGUHAZE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RngW58Noc0cZRSeCi3kqssELiyewIzaE+oPFGP6raoN/XnHRrU23cPBqNZfe+7fSH
+	 b/Is5O/N1K10PPcYurANlsScr2RZAy1PEfbY2dj/qqzra+G/XdPGfu98Mubeo02yCK
+	 Vs+qXVFOGQ0n4AgNkfKfVNVDLRpu8JLD+6MwTvx/RlXBH5mk1CZ17YMNkQO81oKRc0
+	 d9bGAJU7G+Ku6RqnXQYJIX3RxQrrzksOO3rs3l1oKuvWFHbDwzW6a+T89NKDuBHcPf
+	 sSKl/iVoITtJWmr2VaOFzTH4JKtm/6w6XOpixo9TuuGCe+Q9Vo8q/9EJ9MO5iinLvE
+	 1yI5K1CTh2fmA==
+Date: Sat, 7 Sep 2024 10:34:26 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Farouk Bouabid <farouk.bouabid@cherry.de>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Quentin Schulz <quentin.schulz@cherry.de>, Peter Rosin <peda@axentia.se>, Jean Delvare <jdelvare@suse.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Heiko Stuebner <heiko@sntech.de>, linux-i2c@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v8 0/8] Add tsd,mule-i2c-mux support
+Message-ID: <2iuhzmnarxin74i7okuzppdpxs6jrsocahrbc3isie5b34f6pi@p7pqs7czx7ul>
+References: <20240906-dev-mule-i2c-mux-v8-0-dbd28a150e41@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906-macos-build-support-v2-0-06beff418848@samsung.com> <20240906-macos-build-support-v2-8-06beff418848@samsung.com>
-In-Reply-To: <20240906-macos-build-support-v2-8-06beff418848@samsung.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 7 Sep 2024 17:33:18 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASpWSXbjF_7n0MhosNism=BpvHOnKsa344RPM_wmC9dGA@mail.gmail.com>
-Message-ID: <CAK7LNASpWSXbjF_7n0MhosNism=BpvHOnKsa344RPM_wmC9dGA@mail.gmail.com>
-Subject: Re: [PATCH v2 8/8] Documentation: add howto build in macos
-To: da.gomez@samsung.com
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Lucas De Marchi <lucas.demarchi@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
-	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
-	Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Simona Vetter <simona.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, 
-	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
-	Finn Behrens <me@kloenk.dev>, "Daniel Gomez (Samsung)" <d+samsung@kruces.com>, gost.dev@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906-dev-mule-i2c-mux-v8-0-dbd28a150e41@cherry.de>
 
-On Fri, Sep 6, 2024 at 8:01=E2=80=AFPM Daniel Gomez via B4 Relay
-<devnull+da.gomez.samsung.com@kernel.org> wrote:
->
-> From: Daniel Gomez <da.gomez@samsung.com>
->
-> Add documentation under kbuild/llvm to inform about the experimental
-> support for building the Linux kernel in macOS hosts environments.
->
-> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+Hi Farouk,
 
+> Farouk Bouabid (8):
+>       dt-bindings: i2c: add support for tsd,mule-i2c-mux
+>       i2c: muxes: add support for tsd,mule-i2c multiplexer
 
-Instead, you can add this instruction to:
+Patch 1 and 2 merged to i2c/i2c-host.
 
-https://github.com/bee-headers/homebrew-bee-headers/blob/main/README.md
-
-
-
-
-
-> ---
->  Documentation/kbuild/llvm.rst | 78 +++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 78 insertions(+)
->
-> diff --git a/Documentation/kbuild/llvm.rst b/Documentation/kbuild/llvm.rs=
-t
-> index 6dc66b4f31a7..de3bde925793 100644
-> --- a/Documentation/kbuild/llvm.rst
-> +++ b/Documentation/kbuild/llvm.rst
-> @@ -186,6 +186,84 @@ yet. Bug reports are always welcome at the issue tra=
-cker below!
->       - Supported
->       - ``LLVM=3D1``
->
-> +Experimental Build in macOS
-> +---------------------------
-> +
-> +Building on macOS with LLVM is experimental. This section provides steps=
- to
-> +install dependencies via Homebrew, set up the environment, and start the=
- build
-> +process.
-> +
-> +1. **Create a Case-Sensitive Volume**
-> +
-> +   For fetching and building the project, you need a case-sensitive volu=
-me. Use the following
-> +   command to create one:
-> +
-> +   .. code-block:: shell
-> +
-> +      diskutil apfs addVolume /dev/disk<N> "Case-sensitive APFS" linux
-> +
-> +   Replace `/dev/disk<N>` with the appropriate disk identifier.
-> +
-> +2. **Install Build Dependencies**
-> +
-> +Use Homebrew to install the required build dependencies.
-> +
-> +- **Core Utilities**: `coreutils`, `findutils`, `gnu-sed`, `gnu-tar`, `g=
-rep`,
-> +  `llvm`, `make`, and `pkg-config`.
-> +
-> +   .. code-block:: shell
-> +
-> +      brew install coreutils findutils gnu-sed gnu-tar grep llvm make pk=
-g-config
-> +
-> +- **Bee Headers**: Install byteswap, elf and endian headers using the
-> +  `Bee Headers Project <https://github.com/bee-headers/headers>`_.
-> +
-> +   .. code-block:: shell
-> +
-> +      brew tap bee-headers/bee-headers
-> +      brew install bee-headers/bee-headers/bee-headers
-> +
-> +   After installation, verify the `CFLAGS` with `pkg-config`:
-> +
-> +   .. code-block:: shell
-> +
-> +      pkg-config --cflags bee-headers
-> +      -I/opt/homebrew/Cellar/bee-headers/0.1/include
-> +
-> +3. **Configure the PATH**
-> +
-> +   Include all the required GNU tools and LLVM in your `PATH`. This ensu=
-res that
-> +   the necessary tools are available during the build process.
-> +
-> +   .. code-block:: shell
-> +
-> +      PATH=3D"/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
-> +      PATH=3D"/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"
-> +      PATH=3D"/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
-> +      PATH=3D"/opt/homebrew/opt/gnu-tar/libexec/gnubin:$PATH"
-> +      PATH=3D"/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
-> +      PATH=3D"/opt/homebrew/opt/make/libexec/gnubin:$PATH"
-> +      PATH=3D"/opt/homebrew/opt/llvm/bin:$PATH"
-> +
-> +Building the Project
-> +--------------------
-> +
-> +Once the environment is set up, you can start the build process using LL=
-VM. Run
-> +the following commands to initiate the build:
-> +
-> +.. code-block:: shell
-> +
-> +   make LLVM=3D1 allyesconfig
-> +   make LLVM=3D1 -j$(nproc)
-> +
-> +Supported in macOS
-> +~~~~~~~~~~~~~~~~~~
-> +
-> +At the moment, only arm64 is supported and tested with `allyesconfig` Ma=
-kefile
-> +configuration target. Other Kconfig options not included in `allyesconfi=
-g`
-> +target and architectures may be supported as well as support in macOS is=
- based
-> +on LLVM effort and maintenance.
-> +
->  Getting Help
->  ------------
->
->
-> --
-> 2.46.0
->
->
-
-
---
-Best Regards
-Masahiro Yamada
+Thanks for following up on the reviews.
+Andi
 
