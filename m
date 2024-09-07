@@ -1,133 +1,112 @@
-Return-Path: <linux-kernel+bounces-319737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05AAC97018D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:14:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228B797018F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9EBA284FA2
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:14:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55D421C21830
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5B915534B;
-	Sat,  7 Sep 2024 10:14:31 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030091553AF;
+	Sat,  7 Sep 2024 10:14:47 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47F2BE6C;
-	Sat,  7 Sep 2024 10:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E972BE6C;
+	Sat,  7 Sep 2024 10:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725704071; cv=none; b=Eyu0PQH7b5W6yOdqmKe0/OcqWzp6XSUPCqBo7NVgrJJZNu05FuDyTxFWe0objLLudVAgHJXtaa7Q5jqb2DfYVwegabhzr5KPWsAjxHB8us4duSFfsKIVw1iuRzUE5tZecLQLTnvorgG2J7z7QJXpbwiE915qODTC+yPVCJwMH/w=
+	t=1725704086; cv=none; b=QA52Q4ovP80SOL7FERYRm1AXLQH0NlK8j//TTHeF9Kw8KS+vRBO0nB48JzP+fYoiNVXMCosl3iL1+emSyIV3k6najOatEesgxyiW3OAYv+1MMr9aczXKhSdMwoNHRJ6RDbefPocfGlek+jsf7oVsiYLmlSgeZ4uiIRoMOpX9OuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725704071; c=relaxed/simple;
-	bh=hi2xrJZBDuY0k+Bd7WbG4vjSF/HP4IxQQqOVAY4lq6I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r4G5pKNOW3x2xWfpEthIrkCJ5czbGDdW1pYL34J1Lhh20WH9GB0Zfu3T0bn1Ci7tiLUKQQgNn7wmMVIvNfUlgVS/1HsALHTh5LjyVIUWXvgVega6lugxGdeV799jzRyz0w4gHEec+CjGhhMp7GU4o7BZrjQ0hgcqKx414BOh4MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav116.sakura.ne.jp (fsav116.sakura.ne.jp [27.133.134.243])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 487AEGOt021346;
-	Sat, 7 Sep 2024 19:14:16 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav116.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp);
- Sat, 07 Sep 2024 19:14:16 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 487AEGYK021343
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 7 Sep 2024 19:14:16 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <d1e5b74a-5161-4906-96eb-4987ff440d19@I-love.SAKURA.ne.jp>
-Date: Sat, 7 Sep 2024 19:14:17 +0900
+	s=arc-20240116; t=1725704086; c=relaxed/simple;
+	bh=JT92TKwiGMMqxUOypsYQl8r9Varrf0PHpmosFXha8Tw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HLMFm6c9M2AW8CNO3pFHmmkLUeVVvoB3h56Y/MIMv8F6WGo9Oc2+CLb/dSotSxKjv5Mdie0x+s5PxDQf65tn+M32tU6UOg0DCTXhz8PT3Qw2J3cLy4aAe75PvIXca80OsUP9YCgXKam/BnR04HfcNHZs1A2SAWkL5FfVmmE1hb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+From: Sam James <sam@gentoo.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,  Nicolas Schier
+ <nicolas@fjasle.eu>,  linux-kbuild@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fixdep: handle short reads in read_file
+In-Reply-To: <CAK7LNATeuwaO8AvAqmz_4hyb5vjFnL-jhxbXv6_KoCTZbsS86A@mail.gmail.com>
+	(Masahiro Yamada's message of "Sat, 7 Sep 2024 11:02:44 +0900")
+Organization: Gentoo
+References: <3132727fea08e81e834104761b5a5630d337340a.1725636560.git.sam@gentoo.org>
+	<CAK7LNATeuwaO8AvAqmz_4hyb5vjFnL-jhxbXv6_KoCTZbsS86A@mail.gmail.com>
+Date: Sat, 07 Sep 2024 11:14:40 +0100
+Message-ID: <87y143ixdb.fsf@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me,
-        tomoyo-users-en@lists.osdn.me,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
- <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
- <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
- <CAHC9VhRdQAoiKMVVUiDyCbEd4EDL9ppH3V4xRGhoOoFmHFy8nQ@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHC9VhRdQAoiKMVVUiDyCbEd4EDL9ppH3V4xRGhoOoFmHFy8nQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/09/06 23:24, Paul Moore wrote:
-> On Fri, Sep 6, 2024 at 3:43 AM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->> If you ignore my concern, I have to NACK the static call changes you are
->> going to send in the upcoming merge window.
-> 
-> I'm not ignoring your concern, I've responded to your emails and
-> patches on the topic over, and over, and over, and over again by
-> trying to explain to you that your goal of supporting out-of-tree LSMs
-> regardless of the impact to the upstream LSM effort is not something
-> that is acceptable to the upstream LSM effort, or the Linux kernel in
-> general.
+Masahiro Yamada <masahiroy@kernel.org> writes:
 
-I want LKM-based LSM support in order to allow one of in-tree LSMs (namely
-TOMOYO) to be delivered to my intended users, for nobody can solve the
-realities that commit 20510f2f4e2d ("security: Convert LSM into a static
-interface") missed:
+> On Sat, Sep 7, 2024 at 12:29=E2=80=AFAM Sam James <sam@gentoo.org> wrote:
 
-  how difficult/unrealistic for Linux users who are using prebuilt kernel
-  packages provided by Linux distributors to replace their kernels
+Hi Masahiro,
 
-  how difficult for Linux distributors to allow their users to use in-tree
-  LSM modules which that distributor is not familiar with [1] because Linux
-  distributors are supposed to support kernel packages they built and
-  shipped
+>>
+>> 50% or so of kernel builds within our package manager fail for me with
+>> 'fixdep: read: success' because read(), for some reason - possibly ptrac=
+e,
+>> only read a short amount, not the full size.
+>>
+>> Unfortunately, this didn't trigger a -Wunused-result warning because
+>> we _are_ checking the return value, but with a bad comparison (it's comp=
+letely
+>> fine for read() to not read the whole file in one gulp).
+>>
+>> Fixes: 01b5cbe7012fb1eeffc5c143865569835bcd405e
+>
+>
+> Fixes: 01b5cbe7012f ("fixdep: use malloc() and read() to load dep_file
+> to buffer")
+>
 
-  Linux distributors do not want to enable out-of-tree code due to upstream
-  first policy, while Linux kernel development community can not afford
-  accepting whatever proposed code due to limited resources
+Ah, thanks. I'll fix that and send v2 depending on how we decide to move
+forward wrt below.
 
-One of LSM developers commented me ( Mon, 22 Jul 2024 17:12:05 +0200
-in off-list discusstion) about AKARI
+>
+> I guess, another approach would be to use fread() instead of read().
+>
+> Does the attached diff fix the issue too?
+>
+>
 
-  Ofcourse you found a way to hack it. You want me to curl bash pipe
-  your kernel module code that disables certain protections and runs
-  arbitrary hacks on my machine? No thank you!
+Unfortunately no. It failed for me in the same way as before :(
 
-  Ofcourse you change the memory mapping of data. You are misleading
-  your users into trusting you and instead of contributing code and
-  working with distros for your use case, you are shipping hacks and
-  making noise without any constructive code contribution or alignment
-  with distros for your use-case (below RHEL won't eneable it even
-  if we had a proper API). 
+The man page mentions:
+> On  success, fread() and fwrite() return the number of items read or
+> written. This number equals the number of bytes transferred only when siz=
+e is 1.=20=20
 
-and this patch is for following that comment. All concerns about updating
-__ro_after_init data is gone if we move to a dual static call and linked
-list based approach. I'm very very very sad that you did not respond to
+so I guess it suffers from the same pitfall. I checked POSIX & ISO C as well
+which says:
+> If a partial element is read, its value is unspecified.
+and
+> The fread() function shall return the number of elements successfully
+> read, which shall be less than nitems only if an error or end-of-file
+> is encountered, or size is zero.
 
-  I think what you can do is send patches for an API for LKM based LSMs
-  and have it merged before my series, I will work with the code I have
-  and make LKM based LSMs work. If this work gets merged, and your
-  use-case is accepted (I think I can speak for at least Kees [if not
-  others] too here) we will help you if you get stuck with MAX_LSM_COUNT
-  or a dual static call and linked list based approach.
+The error reference is kind of mysterious there though.
 
-in [2], and started saying "No" to this approach after you accepted
-the static call changes. You are ignoring my concern!
+It kind of looks like fread *should* work. I'll send this mail and then
+think about it a bit later and ask around to see if I'm missing
+something obvious?
 
+> [...]
 
-
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=542986 [1]
-Link: https://lkml.kernel.org/r/CACYkzJ7ght66802wQFKzokfJKMKDOobYgeaCpu5Gx=iX0EuJVg@mail.gmail.com [2]
-
+thanks,
+sam
 
