@@ -1,143 +1,171 @@
-Return-Path: <linux-kernel+bounces-319736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE421970189
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:12:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192DC970185
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BB8B1F22B76
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:12:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39FCF1C21929
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB78156F46;
-	Sat,  7 Sep 2024 10:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC071537DF;
+	Sat,  7 Sep 2024 10:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="A4HvNY6j"
-Received: from sonic305-19.consmr.mail.sg3.yahoo.com (sonic305-19.consmr.mail.sg3.yahoo.com [106.10.241.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KNJbeW3G"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC8BA55
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 10:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.241.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C74A55;
+	Sat,  7 Sep 2024 10:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725703923; cv=none; b=D5WyGrLUagrXfI1DHLsEWodoU4unGUb1NJdBVGtqFoG3GegimxNIhN5dz34UkSqhKSHkjA+GS1ya310a08xw3XtGZt0la2cnyHGR1aEVWyW1w54d3tMwmBgwp+352HSKbpX5biEFQod8gL19/zY1k/U4/ZoI4qwhbr/TwngV5Zc=
+	t=1725703911; cv=none; b=QO/avcMy5U1laoDrgjHkFhNdefJFisPvJopqVTyXt6kAHu4AQzkK0+0nnP5jVEXqQkJTJ+xAWrnx0hMSzXSWhu3HIcUZS69h98CAhTzd45v+lJV7tIYKlFuK3SHX1qaAMrhqBK1gdYBu4bYUZtQy0Jqz6E1xVHKWjsnCtsTNJSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725703923; c=relaxed/simple;
-	bh=kkiHYYOtW+BApMBwN6H60TlyXxOO+Zx4IxGpk5W/e1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G4HqMMTqV7IEshN4s+UcD8fVMozvBI0p8cbXly/dz76Dxym/Gmxx1qGACcWjsCvFSBtmqdwimxlEoSAJdGKJkpxiWkxju8OL4oyI9W3fK59Gh+tORw9z8ASfmtB6xJnO9ekyrw1mypBXfpXatVjFzTV/Ub2tFr1sZneJ4TJPwq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=A4HvNY6j; arc=none smtp.client-ip=106.10.241.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1725703913; bh=zkTKJA2FhwivzUz5wJO2Jlnry0Ls8XEBLwuxnqUiJM4=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject:Reply-To; b=A4HvNY6j8WN+DHYNsG3CYj5q9MeLKgWPBz8Y50j+fOi+wdLz8S9kY/H4ENHPfXKplujas5Eu3Nb+Dytqvhf/mVBpvymkePoWZEvheTvg+vlCeOfnIdzT0YNsEjSAj8OFaWotTYZjg844qdV1kw4PMvvyRNnpUoWLism2bUZQyTOLVm/qLv4+NB52sH87JAo9LTCMbNw8+kuhoo98wYH9jSScDJ8mtulLgNwl7kPA1rfDAuzo7OZyU3GNruBh4PvPxbr+EtEO119BdkbUaBavpN4Hr+FvoX2BEsiFqwHP2WYqYujRkk8YyhhHnaVGb9uwMyrEpwVQAEdwwunrRhUB4A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725703913; bh=PKlfI6ejtF957zv0BOG039EtP2cZDnlRKEyeKMeQt5K=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=AVdVy2pRop3YzPaIGT9ilASB7TOep6Zqfp/1+xzlXPS4F5NyN4xmGoLOnDMQwr3VRW3dfep3xHjFKtkZ5ZLBCGxSVfoKLelae8C5PMjL1CIK3/eZHyPvxLXadGbtr6176IelgQ8nUEzQk0CAS7ZsV6xXkmvtISMF5JiDPVCrZ6lVm0wT/Y8eH2DGcg3TcA4GzoPe57nmar/yXfN8EvaquLT/dE8Duwh7JaR8QtIttum6GgbJ/l6cK9XuXkEF1y9lppCNg4U6iimHLYiAWOV8eLv001Y4Kk8UbYR+up+DKS4/FgN/qMlxtW7Y0iVdvGtISdxTqoMJAO/uBtlySQZ67Q==
-X-YMail-OSG: 40OVdcgVM1ngXn783d.sjWsogtiPN9AGriMrM4Hf.fdDnv8sNj_4WQc.wHkMzVL
- Y4E4uICd82AqGk_UEJfQxgdT6qTldRfMcSmCZYVrGZGzz1AX0ASOluosqupMG_QRbMTkNDa2Da.S
- aHQlmJQ.JvLZNqdkRv7VpDlfySWfR4oELhr1I1GJ29fz_HsKySlD_S40zbjxZTTHBTW3gDP_JK_w
- QMGdi98a_OSoikDyagzFPjwSc4r3gSmYrLlGnw7Udq7IB6QGU_HLTvGA7LjCphrLieoQIaAkVO1g
- RdlcgMnbrxPHhY9uV4wdctgdBnSycUYyVMlFI5Fvjd25nDnNe2_ASSjE13SgwKcM61YXchm0ucbW
- d2GEau48rhE5wMMlz9kDlt5yqRT8iKjzJDUDFADv7J6XyYgRkwUQsIFND2yXdl0VLNNOgwQeiY5W
- cvpw0_PhaJxsu8W8JodhjGgfMMwramYYR3hKv4BTydDUIgNiYP2u0lzN2GTIsqOJSuBMDUoYv_Lv
- xMr79TL8hju1TkBYIJ6fyTbsnWX7hHeBC2Wu0tobKhfSuyjVrBUoMCoAShHdxeNy2Ue5KvSnIU1k
- sCxDLZkkoYmYOKYJvZRXq9FsI8slBQSLq5A9UV0Rd..lqMkCGozm7coYJhS5m8TZammVRtLOwLUQ
- 8h_qtFKUWWnNAlqCy29Bm8h85REe6_mZatKqv5dJXNZpqV3ag_hIKUNwl86dqvRAl7WRpkkfRMMq
- QpVOwfCiWhZeBLEv0cjqaWMJsvHbkRnacNRVZ6e72jeZWlED72JMb2ztiAzyY1udQxyPyJNWIZP7
- EW0kWTsa46kYi7GHEiA3plpvNtL8YA63qbrBKj1W2k7kLGdZUfIP5.H7l9GJMQ_gd1BXjUD3LiJM
- dIfXBwYsNQXfOjaTDmg7F9IjQYU93aGEyM0whXD97R3GzrnAwONLCSLPlw5rSdG1eeM2NfUWvd1m
- T1IxwRAFrWvSxm8t1p8TeXL37KY1DJ5eg_utn2zYxRiwZanWflrL2s1E4uQ8xt7NCqyxt7oV_5V2
- xvUJRM0zcFuXmeMq4T1eSnaCFDhogqb3itFblN4UDKCXxfCm_6Uxj62wx6d21MbusXbSPFN6Vb3E
- GOcJgSjMqPPvEeqeQuHJN50mgyhfcCOb63zcuD8jn2lnfUbRQ5KLNmL4upC_PBmyBfJfqYBOnlx_
- 2RX5sQszb3n5W_yM0h._iEvN8uEQcjtpdSGtkHsKueZMsoRROz7P5HZNQ38fSNYz51C1UYxQ9AAR
- Gh6Ra7I4sP1xvNvz_7N1EY.7tf3aNjuaAMrqvF9dn9_vJvBSXOqRX9GwyN7WYqnVJiPFos_rfr4r
- UFGxXpL4LQJr4dSCIlYoouU524.6EPKAHWXhfeM_uD7qzSKjZJEx4oBJX.Ir7xJWsTE8Qavpw6iA
- z6rCzrvhtGHG9cfNCYCKCsBPqcHnPIho7X4GlrsiqGcb65t09hyd_jibooZA6QwmnJbnZ2DoyJK5
- X8x9Es6DcKatzbrvO9WFA25uE56FCSpsGNHA9caoppdUlOuZPcSW4oC5zTs.1FFCC3aO_HghfXvF
- MB.Pf11fTXxPflGpXfMsmsP7qQ4_i4yGapqBlASuvcBOAw0mTzX2zK9i_LQIz1hnXq4rLeJl2UtM
- 2_2MoaTIs3IEtonOaHuawO_dwF1N7h6Mg005D_CqpqVmdllrrsAcOMpEmJO_VjfT7mTbbueJFzos
- VHMFEvNpOiqseFwsE4JtbUAKRHAsLrvnuLUJDByai2b_inOUT4Vcjb9X5sJqK.4x_pK66MFUMReu
- Gn7JyxAIzbmq6hBKh9SIs8fT44B3artC_FAapQlvIic1jetvaf59KF1DkTmjUcJFssKjcfzqdzoq
- m6fXAf7w9dJt.0iJG65QEMYSZDVutEhViYJl.nNoSk9ZLNjPg9HVTaij0NfrdDIV8zKYy6oPPMP_
- VcLEghgx4QXSF2goqP3Q6HWnaRI3d4LWoELeBzoOLIM9YQyszX_xrcF_qF7j76px9iVBog2.Bd.e
- 5mpIyVVQYGh4dHSVtL6QDiXeqQ995c0bQ0kH5611osX3GEgFwXkX.AgINGEwBPpZDV4Pb2Hh_P_C
- uCHdQc6FjkAdVpoWVarNmAeTujHPEOL7q5sRzO9X9xQQ45lbLvEXfQlOmpjLN5dwt4AF0jOS3JXA
- n76WFWGA8ER5Yucxld1Lke1O.VW2IUZJNwOqnjEDPY_OD_xNHjc1k5J4kzB063mxsviEZcmz63RV
- Xv_Kt_V84YJfBznKabkKe.i4zYdoXMzjJAmS7wFuqvngdnzxL5iP4
-X-Sonic-MF: <abdul.rahim@myyahoo.com>
-X-Sonic-ID: ddf9fd8a-a61d-455e-a8bb-19462d5aa010
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.sg3.yahoo.com with HTTP; Sat, 7 Sep 2024 10:11:53 +0000
-Received: by hermes--production-sg3-fc85cddf6-kdpzj (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9082047fd5155f96c2e5472233bc10ec;
-          Sat, 07 Sep 2024 10:11:48 +0000 (UTC)
+	s=arc-20240116; t=1725703911; c=relaxed/simple;
+	bh=WaPMHwU3Rxuwr3bf8WZxqprZwf/RxFr9wYjdc0f4vPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kYy5BpGgwp7L5NCUCOvHQrrMsqVQwT186KeDX+AipNATz2n/LufY4CDSXh1s2SZsgzr2tC6wgJ3NpZjhKaMWT+7jS3PPzvSYzYjfKGciDjg+43QgQcDrbI3XOsVmTyzpp17iixwBRYVp177aEUno0EcQaurKkC9DPWbxj9aS+bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KNJbeW3G; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 487ABiEK124605;
+	Sat, 7 Sep 2024 05:11:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725703904;
+	bh=9R5rjZuv1wB/YbDyuU7BA588rMLZUdVe8ARpHHFtqyE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=KNJbeW3GLfs3rZo1mhB6IrSlLslFssKcvZkWAB3T6FMG2C+cdvy7VfAZUh/4zw5nG
+	 rpZEcmEDli39dzcTc1ZMtTDb2Fh9E07n+O/XocZ2D7Ub9gMcM+BQoY7NgPkH2BboyE
+	 dem4WdtUQ1BIPkLHhXN58+7D7G6Ft7d8XSblU0js=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 487ABiHS032856
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 7 Sep 2024 05:11:44 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 7
+ Sep 2024 05:11:43 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 7 Sep 2024 05:11:43 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 487ABdMM052772;
+	Sat, 7 Sep 2024 05:11:40 -0500
+Message-ID: <56b63a39-ea4d-4edf-9295-ca28c83655c8@ti.com>
 Date: Sat, 7 Sep 2024 15:41:38 +0530
-From: Abdul Rahim <abdul.rahim@myyahoo.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, bhelgaas@google.com, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] PCI: Fixed spelling in Documentation/PCI/pci.rst
-Message-ID: <n7gabykujjulz5dg4eyrc6pcbvn6wzkw6opol3pclaychqnssx@prjklcr7qh34>
-References: <u4xan54bdxf5sniwhtvrixw3b2vg4c7magey6q3rsd4ssq6ihk@xfbijuhadyw4>
- <20240906192429.GA430486@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906192429.GA430486@bhelgaas>
-X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: k3-r5: Decouple firmware booting from probe
+ routine
+To: Beleswar Padhi <b-padhi@ti.com>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <s-anna@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240906094045.2428977-1-b-padhi@ti.com>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20240906094045.2428977-1-b-padhi@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, Sep 06, 2024 at 02:24:29PM GMT, Bjorn Helgaas wrote:
-> On Sat, Sep 07, 2024 at 12:44:13AM +0530, Abdul Rahim wrote:
-> > On Fri, Sep 06, 2024 at 12:53:18PM GMT, Jonathan Corbet wrote:
-> > > Abdul Rahim <abdul.rahim@myyahoo.com> writes:
-> > > 
-> > > > On Fri, Sep 06, 2024 at 11:41:52AM GMT, Bjorn Helgaas wrote:
-> > > >> On Fri, Sep 06, 2024 at 06:15:18PM +0530, Abdul Rahim wrote:
-> > > >> > Fixed spelling and edited for clarity.
-> > > >> > 
-> > > >> > Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
-> > > >> > ---
-> > > >> >  Documentation/PCI/pci.rst | 2 +-
-> > > >> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >> > 
-> > > >> > diff --git a/Documentation/PCI/pci.rst b/Documentation/PCI/pci.rst
-> > > >> > index dd7b1c0c21da..344c2c2d94f9 100644
-> > > >> > --- a/Documentation/PCI/pci.rst
-> > > >> > +++ b/Documentation/PCI/pci.rst
-> > > >> > @@ -52,7 +52,7 @@ driver generally needs to perform the following initialization:
-> > > >> >    - Enable DMA/processing engines
-> > > >> >  
-> > > >> >  When done using the device, and perhaps the module needs to be unloaded,
-> > > >> > -the driver needs to take the follow steps:
-> > > >> > +the driver needs to perform the following steps:
-> > > >> 
-> > > >> I don't see a spelling fix here, and personally I wouldn't bother with
-> > > >> changing "take" to "perform" unless we have other more significant
-> > > >> changes to make at the same time.
-> > > >
-> > > > - "follow" has been corrected to "following", which is more appriopriate
-> > > > in this context.
-> > > > - I know its trivial, but can disturb the readers flow
-> > > > - do you want me to change the message to "Edited for clarity"
-> > > 
-> > > The problem is not s/follow/following/, it is the other, unrelated
-> > > change you made that does not improve the text.  There are reasons why
-> > > we ask people not to mix multiple changes.  If you submit just the
-> > > "following" fix, it will surely be applied.
-> > 
-> > Understood, will take care next time. I will resend this patch with:
-> > "follow" -> "following", with commit message "Fixed spelling"
-> 
-> Sorry I missed the "follow" change, which is indeed worth fixing.  If
-> you resend it, make your subject and commit log say "fix" (not
-> "fixed"), like it's a command.
-> 
-> https://chris.beams.io/posts/git-commit/
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/maintainer-tip.rst?id=v6.9#n134
-> 
 
-Thanks for reviewing, i've resent this patch here: 
-https://lore.kernel.org/lkml/20240906205656.8261-1-abdul.rahim@myyahoo.com/
+On 9/6/2024 3:10 PM, Beleswar Padhi wrote:
+> The current implementation of the waiting mechanism in probe() waits for
+> the 'released_from_reset' flag to be set which is done in
+> k3_r5_rproc_prepare() as part of rproc_fw_boot(). This causes unexpected
+> failures in cases where the firmware is unavailable at boot time,
+> resulting in probe failure and removal of the remoteproc handles in the
+> sysfs paths.
+
+I won't say failure, I will say this is behavior of driver.
+
+Driver expect firmware to be available , but I agree driver should be 
+able to execute
+
+with/without firmware availability.
+
+
+> To address this, the waiting mechanism is refactored out of the probe
+> routine into the appropriate k3_r5_rproc_prepare/unprepare() and
+> k3_r5_rproc_start/stop() functions. This allows the probe routine to
+> complete without depending on firmware booting, while still maintaining
+> the required power-synchronization between cores.
+>
+> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+> Posted this as a Fix as this was breaking usecases where we wanted to load a
+> firmware by writing to sysfs handles in userspace.
+>
+>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 170 ++++++++++++++++-------
+>   1 file changed, 118 insertions(+), 52 deletions(-)
+>
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> [..]
+> +	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
+> +	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
+> +	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1 &&
+> +	    core0->released_from_reset == false) {
+> +		ret = wait_event_interruptible_timeout(cluster->core_transition,
+> +						       core0->released_from_reset,
+> +						       msecs_to_jiffies(2000));
+only one wait in start should be good enough,
+> +		if (ret <= 0) {
+> +			dev_err(dev, "can not power up core1 before core0");
+> +			return -EPERM;
+> +		}
+> +	}
+> +
+>   	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl, &stat);
+>   	if (ret < 0)
+>   		return ret;
+> @@ -470,6 +492,12 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+>   		return ret;
+>   	}
+>   
+> +	/* Notify all threads in the wait queue when core state has changed so
+> +	 * that threads waiting for this condition can be executed.
+> +	 */
+> +	core->released_from_reset = true;
+> +	wake_up_interruptible(&cluster->core_transition);
+> +
+>   	/*
+>   	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
+>   	 * of TCMs, so there is no need to perform the s/w memzero. This bit is
+> @@ -515,14 +543,46 @@ static int k3_r5_rproc_unprepare(struct rproc *rproc)
+>   {
+>   	struct k3_r5_rproc *kproc = rproc->priv;
+>   	struct k3_r5_cluster *cluster = kproc->cluster;
+> -	struct k3_r5_core *core = kproc->core;
+> +	struct k3_r5_core *core0, *core1, *core = kproc->core;
+
+
+why you need wait in unprepare/stop,
+
+In case you are failing during firmware load or so then already we are 
+in bad state.
+
+if this is call from user land then, i don't except anyone will auto 
+trigger stopping of core-0
+
+IMO, in unprepare/stop, if action is attempted on core1 with core-0 ON, 
+simply return error.
+
+
+> [..]
+> @@ -629,7 +702,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>   	struct k3_r5_rproc *kproc = rproc->priv;
+>   	struct k3_r5_cluster *cluster = kproc->cluster;
+>   	struct device *dev = kproc->dev;
+>
 
