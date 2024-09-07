@@ -1,121 +1,137 @@
-Return-Path: <linux-kernel+bounces-319693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B0E59700BC
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:09:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C848E9700C4
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A5541C22230
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4DC51C21D54
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D586914A4F0;
-	Sat,  7 Sep 2024 08:08:54 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4232914AD22;
+	Sat,  7 Sep 2024 08:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hVLvXf3W"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17404132124;
-	Sat,  7 Sep 2024 08:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11E71B85E5;
+	Sat,  7 Sep 2024 08:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725696534; cv=none; b=htjxwEx0vE6idUErWcIWdU9PCPYKjEEp6kNJQYqQhxJRomuzWb0ZHeQ4L9b7DRKS8KswkhV+ENgi6B/zBvnazCRbI8C7cDxnRqV+W+Ww7IxsRZYc18SaiDzSUMZuMRqgPC7362JPt3CPcHffl8Vuh2UYorNjdFfVOfQARnXrXuE=
+	t=1725697030; cv=none; b=WPZZ5x1Ej8mCdnKEFsBkJHlMmiU8wyEiMquPoj0Go5EoTpK7mnbKPeompjwCZNPXBbip/t55u9nm+iiTjacRnOW5/UH1qUAPgTnmM51T/A3tmzfh2h5hDlQPGal5usvnVvQ0NxY9nY6/ilyshjLkkJ4e4qmO9mQZM/gRfAqgyEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725696534; c=relaxed/simple;
-	bh=JfUIM5jVL4uUha3SMBR9r1gfPNBKWcmx2A5OhHPs4H0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fH89tFhkJ+K677LgMSMzEVy5ay5LjZG1YV045b6riT8nOA1GvtSvDxPsUq+LSw6bne0GpUASrKJC1eHi+J2scnomzSs+/2xkD5T5tLIlsN3g9FJtNehzPt0iJU9iEayW/yaYmUtDMX85Rpgl13TEaDXA4jnFRVyIHOrZF+t4RkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X15MC6srMz2Dbmd;
-	Sat,  7 Sep 2024 16:08:23 +0800 (CST)
-Received: from kwepemm600016.china.huawei.com (unknown [7.193.23.20])
-	by mail.maildlp.com (Postfix) with ESMTPS id 06F131A0188;
-	Sat,  7 Sep 2024 16:08:48 +0800 (CST)
-Received: from huawei.com (10.175.112.208) by kwepemm600016.china.huawei.com
- (7.193.23.20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sat, 7 Sep
- 2024 16:08:47 +0800
-From: Lin Ruifeng <linruifeng4@huawei.com>
-To: <b-liu@ti.com>, <gregkh@linuxfoundation.org>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-Subject: [PATCH -next] usb: musb: mediatek: Simplify code with dev_err_probe()
-Date: Sat, 7 Sep 2024 15:55:08 +0800
-Message-ID: <20240907075508.79889-1-linruifeng4@huawei.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1725697030; c=relaxed/simple;
+	bh=gvsW8BNIX7ljcrGWrKD6clzUjbfdkYMLn3v7uub/6MQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=izZkvzfm2bgO0AbUy73MfOVt9p6RZi9HBZYN78JKdjOyuK8fz91iUyIv+9S/xcoqqWkDrPXq8p1XyiQHzfmdway1rhJV8u8veIGrQTgg2uIB2AUgQ5WpfZl0cHztRz8LG9vMFVx5NJ8lkVTq3/5GXTUFuLRD3yUNS8SU2X3kNEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hVLvXf3W; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1725697009; x=1726301809; i=markus.elfring@web.de;
+	bh=1Mu96APm/7R/w7K+9IvvOwhZsTEP32teqBSIVibe/dU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=hVLvXf3WFsdgdiJPtcuSILojs7qpt2WHEdbgdm5cVtsG4xon+vSeZLZnhXniazQk
+	 vv5pm3O2k+FcAMYOhlufRRjNTcEVfqDvc+cPrz+Un0QQXuGuNyIVSLFSATWxc8U6r
+	 Cxc5HHgJgp77LpT5gUf4W83AwXdVW1u78GCWRcHGg5r1Sho9t9zHTGPPzg7kIotiC
+	 pCSitXocBLx0kJ0N9a+Os4tRML0+sKXCIaEmuVvNdPfg9s8qnO/UdDwRULDs5b4pb
+	 +Vgw7yeFpbJMx/WHaTsv66k/GBTVRi78QU0Di3V/7apVmqlJYsiJMOGMxx7FNQf2+
+	 FlgP1xpQuFeXDLMyqw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSZHv-1scDWM0IH3-00PRSE; Sat, 07
+ Sep 2024 10:10:27 +0200
+Message-ID: <d79dbfae-d50b-45e5-b430-be8106bbb03c@web.de>
+Date: Sat, 7 Sep 2024 10:10:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm600016.china.huawei.com (7.193.23.20)
+User-Agent: Mozilla Thunderbird
+To: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Chukun Pan <amadeus@jmu.edu.cn>, Conor Dooley <conor+dt@kernel.org>,
+ =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Jean Delvare <jdelvare@suse.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Lee Jones <lee@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Rob Herring <robh@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>
+References: <20240906093630.2428329-2-bigfoot@classfun.cn>
+Subject: Re: [PATCH 1/9] mfd: Add driver for Photonicat power management MCU
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240906093630.2428329-2-bigfoot@classfun.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:3sDZvZ572CstfLRiymj0OEa2v50uxQRQS5dGEo6EFlvxjxYXotF
+ iqSgsOe0U9L+cf9Xd7SKvjmB4Ob5MfVx3nFns3ltwbXYO6Zvkj3hqOxCWZDHFKgRP2B5l7s
+ dnGTu2+IcVzqaedRB5bfzg4zd4MslQitWJZMwCfnV+eEszme1/BaaIf8r3D0eu7hwTiiX2C
+ bc+jMBkrtEYHS4L0Oa85Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:hQwvtSihhyM=;ZvsDh+ewC/rGs/AQZ4pUdxKdguu
+ /7Dlmmzgx7ViXxl9CTTAadFCgTm91BJX01+CMVanf86teKHwyxK7SkgfzcxZPyve5XX+BYTeF
+ oXnMG4+wx5/wIzRHIWE0hJZCJiCFKQ/p/UZ6F5NvVyyXYftPNxq4vQ9IGpc/+P653j9zrguhA
+ +Pj4916QdVnjdR0tkSKf++3qStUvAH5GMcJdpVID7c67Qh6Tk7M3BqB3YiFcbt0KUUzBtxPHU
+ 7gVf2awH+qCdGxzuGg0cIg6XShFH2FVeYk58i5ICM0V97v7X5YDFyUDt1io1TpQu26QekifgJ
+ Cm5pMDya9q2US3bNQWpg1Mc/HF/pqrYN1f05qa0rL2KUgayeT/kXQR4+WOMmfM2hoT5Z2gnw+
+ Uzjy02T697sGHOruySceLgBXsWCA249FnKqinrJYYjEO0vKjihdlywxrjkt8EUOZiFGIQ+qhm
+ 7D64lLz/WllzrR/SpFBsyMSy1CBj/jRoV/2rgywR8vRFZ/X2QegTm/QcRE9Nlv4edn2SrJNfp
+ Mt69oeHmHVQFMVbU6+ZblpjNZqk+otxn/G4wm41jJp1s7vWAca7l6N4MQ3+Db5IUWkaXTspXd
+ Bm8AAtRGtWKFFn8bKs9VxZHJvVOCFHetcuQDg75OeCRXwnAj3mzgfceboyahv2KgO5Vr+rlTp
+ oDvaVc8HMFq55qiNRjJjsIkjOfkTMxYgff3VwssoK9A9UuFffZ7Ao5UjcMDVRM1z6iF8jPNL9
+ vwQ6cSWf4lZAdcOIeup2zLFUoH7YzAMT5Wu43LBnW3tTo+Ab+U3nGmf4qh3X9n4ubmph3dh8d
+ Xe13PuDCHS/ZPGfSqe264SyA==
 
-The combination of dev_err() and the returned error code could be
-replaced by dev_err_probe() in driver's probe function. Let's,
-converting to dev_err_probe() to make code more simple.
+=E2=80=A6
+> +++ b/drivers/mfd/photonicat-pmu.c
+> @@ -0,0 +1,501 @@
+=E2=80=A6
+> +int pcat_pmu_execute(struct pcat_request *request)
+> +{
+=E2=80=A6
 
-Signed-off-by: Lin Ruifeng <linruifeng4@huawei.com>
----
- drivers/usb/musb/mediatek.c | 27 +++++++++++----------------
- 1 file changed, 11 insertions(+), 16 deletions(-)
+Under which circumstances would you become interested to apply statements
+like the following?
 
-diff --git a/drivers/usb/musb/mediatek.c b/drivers/usb/musb/mediatek.c
-index 0a35aab3ab81..63c86c046b98 100644
---- a/drivers/usb/musb/mediatek.c
-+++ b/drivers/usb/musb/mediatek.c
-@@ -416,10 +416,9 @@ static int mtk_musb_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	ret = of_platform_populate(np, NULL, NULL, dev);
--	if (ret) {
--		dev_err(dev, "failed to create child devices at %p\n", np);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				"failed to create child devices at %p\n", np);
- 
- 	ret = mtk_musb_clks_get(glue);
- 	if (ret)
-@@ -448,23 +447,19 @@ static int mtk_musb_probe(struct platform_device *pdev)
- 		glue->role = USB_ROLE_NONE;
- 		break;
- 	default:
--		dev_err(&pdev->dev, "Error 'dr_mode' property\n");
--		return -EINVAL;
-+		return dev_err_probe(&pdev->dev, -EINVAL,
-+				"Error 'dr_mode' property\n");
- 	}
- 
- 	glue->phy = devm_of_phy_get_by_index(dev, np, 0);
--	if (IS_ERR(glue->phy)) {
--		dev_err(dev, "fail to getting phy %ld\n",
--			PTR_ERR(glue->phy));
--		return PTR_ERR(glue->phy);
--	}
-+	if (IS_ERR(glue->phy))
-+		return dev_err_probe(dev, PTR_ERR(glue->phy),
-+				"fail to getting phy\n");
- 
- 	glue->usb_phy = usb_phy_generic_register();
--	if (IS_ERR(glue->usb_phy)) {
--		dev_err(dev, "fail to registering usb-phy %ld\n",
--			PTR_ERR(glue->usb_phy));
--		return PTR_ERR(glue->usb_phy);
--	}
-+	if (IS_ERR(glue->usb_phy))
-+		return dev_err_probe(dev, PTR_ERR(glue->usb_phy),
-+				"fail to registering usb-phy\n");
- 
- 	glue->xceiv = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
- 	if (IS_ERR(glue->xceiv)) {
--- 
-2.17.1
 
+> +	mutex_lock(&pmu->reply_lock);
+> +	if (request->frame_id =3D=3D 0)
+> +		request->frame_id =3D atomic_inc_return(&pmu->frame);
+> +	pmu->reply =3D request;
+> +	mutex_unlock(&pmu->reply_lock);
+=E2=80=A6
+
+A) guard(mutex)(&pmu->reply_lock);
+   https://elixir.bootlin.com/linux/v6.11-rc6/source/include/linux/mutex.h=
+#L196
+
+
+
+> +		spin_lock_irqsave(&pmu->bus_lock, flags);
+> +		ret =3D pcat_pmu_raw_write(pmu, request->frame_id, req->cmd,
+> +					 true, req->data, req->size);
+> +		spin_unlock_irqrestore(&pmu->bus_lock, flags);
+=E2=80=A6
+
+B) guard(spinlock_irqsave)(&pmu->bus_lock);
+   https://elixir.bootlin.com/linux/v6.11-rc6/source/include/linux/spinloc=
+k.h#L572
+
+
+Regards,
+Markus
 
