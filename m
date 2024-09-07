@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-319720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72699970151
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:18:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1079B97014B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B81B1C208A3
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:18:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A53021F233BF
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE5114B96B;
-	Sat,  7 Sep 2024 09:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D281414D6E1;
+	Sat,  7 Sep 2024 09:11:33 +0000 (UTC)
 Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5151343ACB
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 09:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959452B9B1
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 09:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725700680; cv=none; b=l8Twh/tX5Ph8qPlSeh+TnkoCdgWdUoeRm33xR4g8jSe0ZaEOcMmn8vit6+VA+v/KUG0bdtKnaqYvKYXZWELkIWDHlYXoGKppyZFt3wy8bvW6+q+ggUj20S4f2WrBl+gDOIJ/YfZnFBP9WwULGEtc6H5o8cPalJiZRYZsetVyFG4=
+	t=1725700293; cv=none; b=lKO5y/WC4WiuOr/NfVm/6RBpsPQ8wRkVLC4OZBq4dGj0oK3Q68QElfJiec+f0DSVz2b1Jv/LGwnbwjz6g/N90/qNdxJn0SCafOdjf6itnaCgnkm5HTs77Pw+O6svRBeh85EYNKFOYd49Bwq2kylUNM/OAY9nn4N7wjphGHAsyBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725700680; c=relaxed/simple;
-	bh=w0coCENJbfWdTwt5oaRaKpY76vBuICJY77RJrmDb5Sg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
-	 References:In-Reply-To; b=H/FKki9l2++QO6Z8TbmIuSAn0zQrOgUYqBtHLhxsx4k7fTTkuugmiaVPSY4mLOj4Zk1le+FQpnpsVcaVFyanbd8BpkhlQtQn2yl7jzwEZsbkotOg4oVaM1BjB5JYStpwovPF9OaGBdTz39rmgHwDdc/9QsB9MZGBW3NCwsfPLyE=
+	s=arc-20240116; t=1725700293; c=relaxed/simple;
+	bh=HoP0i/qKcvq6jcAclYtG+dnkMQLY1YNOHQHjECFzr2A=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=ipVS4fG/Ucn3+Ea2aurdS3ZEG02Abf66UZYw5q66f/o0DjEP/ZsXhVZ237pctal5txwPDVjYecn9VahkrSC0MEYrpx4rXm9oALo1QSEmFfcb+Mc7GUfQFhigfpLeCs593XL2M1K0L0nwxVUNLj6Bb+Y8EE2RI1amQUZZdvwiSJA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
@@ -32,8 +32,8 @@ Received: from localhost (unknown [IPv6:2a02:810b:4340:4ee9:4685:ff:fe12:5967])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 564EDA01;
-	Sat,  7 Sep 2024 11:09:01 +0200 (CEST)
+	by mail.3ffe.de (Postfix) with ESMTPSA id E909B236;
+	Sat,  7 Sep 2024 11:11:28 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,34 +42,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Sat, 07 Sep 2024 11:09:00 +0200
-Message-Id: <D3ZXN8C7ABAT.SS2W1C409F4I@kernel.org>
-To: "Renjun Wang" <renjunw0@foxmail.com>, <tudor.ambarus@linaro.org>,
- <pratyush@kernel.org>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
- <vigneshr@ti.com>
-Subject: Re: [PATCH] mtd: spi-nor: Add support for XM25Q series chips.
+Date: Sat, 07 Sep 2024 11:11:28 +0200
+Message-Id: <D3ZXP46U6RQK.331FLSMEHHKUU@kernel.org>
+Subject: Re: [PATCH] mtd: spi-nor: Add support for gd25 and gd55 series
+ chips.
 Cc: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
 From: "Michael Walle" <mwalle@kernel.org>
+To: "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>, "Renjun Wang"
+ <renjunw0@foxmail.com>, <tudor.ambarus@linaro.org>, <pratyush@kernel.org>,
+ <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>
 X-Mailer: aerc 0.16.0
-References: <tencent_E68F624B67F256EA24115857B3DEB5E84907@qq.com>
-In-Reply-To: <tencent_E68F624B67F256EA24115857B3DEB5E84907@qq.com>
+References: <tencent_983A0FB4662661C03E98E1AC214E32179F0A@qq.com>
+ <47e0745c-e7a4-4201-b1bf-bb8e44e5911d@wanadoo.fr>
+In-Reply-To: <47e0745c-e7a4-4201-b1bf-bb8e44e5911d@wanadoo.fr>
 
 Hi,
 
-On Sat Sep 7, 2024 at 8:31 AM CEST, Renjun Wang wrote:
-> Add support for XM25QH32A, XM25QH64C, XM25QU64C, XM25QH128B, XM25QH128C,
-> XM25QU128C, XM25QH256C. These series chips are already tested on Orange
-> Pi boards[1].
+On Sat Sep 7, 2024 at 9:04 AM CEST, Christophe JAILLET wrote:
+> Le 07/09/2024 =C3=A0 08:32, Renjun Wang a =C3=A9crit=C2=A0:
+> > Add support for gd25lq255, gd25lb256, gd25lb512m, gd25b512m, gd55b01ge
+> > and gd55lb01ge. All these chips are tested on Rockchip boards[1].
+> >=20
+> > [1]https://github.com/rockchip-linux/kernel/blob/develop-5.10/drivers/m=
+td/spi-nor/gigadevice.c
 
-I've just checked a few but they all had SFDP. Thus they don't need
-an entry in the database as it is covered by the generic driver.
+That's even older. Sorry but no.
 
-Also please read https://docs.kernel.org/driver-api/mtd/spi-nor.html
-
-> [1]https://github.com/orangepi-xunlong/linux-orangepi/blob/orange-pi-6.1-=
-rk35xx/drivers/mtd/spi-nor/xmc.c
-
-That's an ancient kernel.
+Have you checked that these flashes doesn't have SFDP tables?
 
 -michael
 
