@@ -1,120 +1,104 @@
-Return-Path: <linux-kernel+bounces-319936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF609703F3
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 21:36:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8631A9703F6
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 21:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3D99282FE3
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D6F21F224C8
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F0F166F1B;
-	Sat,  7 Sep 2024 19:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5CB166F33;
+	Sat,  7 Sep 2024 19:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jZ7KeRDW"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gAWxy1iS"
+Received: from msa.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CD7136672
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 19:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7031662E8;
+	Sat,  7 Sep 2024 19:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725737806; cv=none; b=Vn2GPtq6u1lpPT4BXlMAZhRRzSRwJ2UaFYmmXQrcvAL87LLphz0VcCoByirkajmaNWt7HFpzXVVdC3t31YUa6k5q7eUqvhx1ZDUy546FUhKdzvZU0ty1S4O8Qx4QwoB/iPzi55PRb4JmADJGx9sE1oLdiD0HOAdOZl84Hd5yC1I=
+	t=1725738301; cv=none; b=MFPK5nr6gCb9WKBBd32I3BIF94UeKsmbOjrvRPYDzkxTrG+3v1d9DHL7i5NbEtm1OohjRv8rT9jnFT5tiXFbmnfRCQggad7gg0tg/X1YbGtKzGtE0IvcRjNxU4LsTo/+IOj+n/wb7NbWs28TmBaLKXsDKpBH7DKa4sGUVbqs/gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725737806; c=relaxed/simple;
-	bh=diq//ypwFpciLVOeg5yN2zfMUy+DDfDmYoj1id8kWHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A/1/5Kg5yjEtdaFLr0PLXt1uvlEfcWQqSfYv0P6hStE8rXy30L6CLiC3XBfMUFY7SgXNLgTjY2UIgwCvZEA0YyzeL2Y+2Fg5OA9tBkqLqJcxgmbBTkCqWmHniaSkQlh2+ZKuzVm2plmZoDDakXbSM/ozRRISpQJGKOWo7peZAPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jZ7KeRDW; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=ftmI
-	51XeY5SayZ7K9um85kpUIGa3z77Fyu2HJa1sqPQ=; b=jZ7KeRDW4lUedqNBLJR7
-	3yMfDiAwVEM9fmUcg6YiCIk+SO0/fkez5cBdVl6SAJ0e003lPPekRMZ++8pQbm/R
-	/HBo75oSZ7Dm+AvjEZwjY2mXKcKjyx//kgfZpkXoiG60iypEb9JrJvgCQyYl8E93
-	NYYukWi/46aQcgHXGNqZuSzVKQDjXzh7cTG7ymWveKTOuYx9IY4g3jrI5j/gy2D5
-	t0Zn5C6fiextcLNWIylAU6t+svjzXl0Mut230o3cH+YU+FYQ8l2QKLongufhNsmU
-	aq+lnGex715eYRM3IVCAY/Z8spy7QIAjqXng9pV8StmuEJ4Pu0DhQExAmYfjHuqJ
-	dQ==
-Received: (qmail 1597171 invoked from network); 7 Sep 2024 21:36:37 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Sep 2024 21:36:37 +0200
-X-UD-Smtp-Session: l3s3148p1@fJlhpIwhXJYujnvu
-Date: Sat, 7 Sep 2024 21:36:36 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Rong Qianfeng <rongqianfeng@vivo.com>
-Cc: andriy.shevchenko@intel.com, biju.das.jz@bp.renesas.com,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v4 1/3] i2c: emev2: Use devm_clk_get_enabled() helpers
-Message-ID: <ZtyrRLojI8GNiEj0@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Rong Qianfeng <rongqianfeng@vivo.com>, andriy.shevchenko@intel.com,
-	biju.das.jz@bp.renesas.com, Andi Shyti <andi.shyti@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	opensource.kernel@vivo.com
-References: <20240827034841.4121-1-rongqianfeng@vivo.com>
- <20240827034841.4121-2-rongqianfeng@vivo.com>
+	s=arc-20240116; t=1725738301; c=relaxed/simple;
+	bh=80KY32s7jH+WwsZ5XGrcLSAuljECxOPGb9mpfIlT8Sc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EvewUoNz4vSSgDH7+/QOb+f4KaWUq86iuhwOdc2v3NEQR2Be4iAMmdGlFeBvWjr7zblO0LB22Ciz+hdjYT2/NL3VfFJcNW/OkiiqhuRYtRui7wUJrTPA1aw04HtIJbZ+04otvHfUzX5rgn/QJTACiE1McOn9LOHAGK9Brx71EDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gAWxy1iS; arc=none smtp.client-ip=80.12.242.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id n1LNsp8B5S3tRn1LNstmOX; Sat, 07 Sep 2024 21:43:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725738221;
+	bh=QlUPUIyiyRIEHialSujayqzNL/PGIaRmBPrXrYsccKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=gAWxy1iSSmBRmGKBx6TF29hvsC4kIAp6VVUAQzwDtxcJcEEA2fDoUPtr3H9h+LTn+
+	 7xmnuW1wCuDP/5TT2+x5NzusXyTFJ+Noy2nEg/SvToaDbVmM8sV8tCnvLt4g1ifKy8
+	 INR+1qQ4v/kmmuP19EsQoEAKCblw9w6YRlSzrQ5yfk27aZC8shMrmHxJhvxC+srOAh
+	 W85Z8fF6VC9/tyG8qGP5AILJ+CIELjsnxudXI+8imxoj9aWTkkNui+ID1y2zN3sQZx
+	 REsoPL/1Jx1WhD2ysz8rJ7aCjtyacq9lxOtkYLfv2Su4Bh1stb9ZgEI156iWJUng6I
+	 ubH+pb3eRVo5w==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 07 Sep 2024 21:43:41 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <3a0eb0ec-48e4-488c-933f-49c45e256650@wanadoo.fr>
+Date: Sat, 7 Sep 2024 21:43:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zQo77BMXTDa4nVkc"
-Content-Disposition: inline
-In-Reply-To: <20240827034841.4121-2-rongqianfeng@vivo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv4 net-next 0/8] net: ibm: emac: modernize a bit
+To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
+Cc: andrew@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+ jacob.e.keller@intel.com, horms@kernel.org, sd@queasysnail.net,
+ chunkeey@gmail.com
+References: <20240907184528.8399-1-rosenp@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240907184528.8399-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Le 07/09/2024 à 20:45, Rosen Penev a écrit :
+> It's a very old driver with a lot of potential for cleaning up code to
+> modern standards. This was a simple one dealing with mostly the probe
+> function and adding some devm to it.
+> 
+> v2: removed the waiting code in favor of EPROBE_DEFER.
+> v3: reverse xmas order fix, unnecessary assignment fix, wrong usage of
+> EPROBE_DEFER fix.
+> v4: fixed line length warnings and unused goto.
+> 
+> Rosen Penev (8):
+>    net: ibm: emac: manage emac_irq with devm
+>    net: ibm: emac: use devm for of_iomap
+>    net: ibm: emac: remove mii_bus with devm
+>    net: ibm: emac: use devm for register_netdev
+>    net: ibm: emac: use netdev's phydev directly
+>    net: ibm: emac: replace of_get_property
+>    net: ibm: emac: remove all waiting code
+>    net: ibm: emac: get rid of wol_irq
+> 
+>   drivers/net/ethernet/ibm/emac/core.c | 210 +++++++++------------------
+>   drivers/net/ethernet/ibm/emac/core.h |   4 -
+>   2 files changed, 68 insertions(+), 146 deletions(-)
+> 
+There was 9 patches in v3.
 
---zQo77BMXTDa4nVkc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Patch 1/9: net: ibm: emac: use devm for alloc_etherdev is no more.
+Is it removed intentionaly?
 
-On Tue, Aug 27, 2024 at 11:48:39AM +0800, Rong Qianfeng wrote:
-> The devm_clk_get_enabled() helpers:
->     - call devm_clk_get()
->     - call clk_prepare_enable() and register what is needed in order to
->      call clk_disable_unprepare() when needed, as a managed resource.
->=20
-> This simplifies the code and avoids the calls to clk_disable_unprepare().
->=20
-> While at it, no need to save clk pointer, drop sclk from struct
-> em_i2c_device.
->=20
-> Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
+Also I made a comment on v3 6/9. It also apply to v4 5/9.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---zQo77BMXTDa4nVkc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbcq0AACgkQFA3kzBSg
-KbZZDRAAqpH+N1/D/nIYiSriyH3t4x3bAo19j269qgknU9HxkhD5orC618cheUhS
-vi2v/4U63GraIoGKMfelq6BSXWzozNotp5SF4+LVQP2D2Xc94sc1YAT7nPMGUniK
-AqVcb1eXrx99PEGU/hBVPu9DXXgOYM+8eK/xte0ASWlvishO6gKY3NqUhFxsF57G
-24oSEOXk4yHQgYXBbZ0jt1+H9THOdMWCJ5VyvOVK0Rt2P9hk/XJSyHxlRHyU29nd
-yQM46rWf0MMyG/qmZ5fJT8bCHJnAVpfLJUQlilLpH5w4pQ6uK/O3D+SKhIJn7Jwu
-gGFD9ztMvvHbgBDU2TBO3yOf3xuh+P/ZcFSXOu9xCWycHa17U6wpnFQw940kYnR1
-yP0uJTnWIJj3bwdHWiLFnctMS/3i7LODFNIk6uWUUxAyLMG8fBCkAPWSwcK0jEjJ
-Ej1G6f7AHZTBxO4oXa57Ydo03cV2IIH7C6k86C0bTuwouhnf5oUK1AU2TTm9hNWx
-abkuiEPotIXDe+sZK76C8XbGh1ViPn7xcYLM7RZe2iapQcs4gwulEEhtBSU4gjDK
-aTpNdxVqByMvIh8kGEA3V05Mot0JdUNRpOa1uQH36hmdIKjEAU35oa45ZN5n+7kE
-bg3gIqvXIJCc3P5FLFMvgrmj7CZ98RSs+CFOdbMADaWzID6yuuQ=
-=xVsd
------END PGP SIGNATURE-----
-
---zQo77BMXTDa4nVkc--
+CJ
 
