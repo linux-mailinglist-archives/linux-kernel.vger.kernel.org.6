@@ -1,104 +1,95 @@
-Return-Path: <linux-kernel+bounces-319869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1CD497033D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD731970341
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55129B22FB1
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:56:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3348F283843
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D96516132A;
-	Sat,  7 Sep 2024 16:56:16 +0000 (UTC)
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835B8161902;
+	Sat,  7 Sep 2024 16:57:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5277915CD58;
-	Sat,  7 Sep 2024 16:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0BC15FCE7
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 16:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725728175; cv=none; b=hsQfDXYqBssFuIkDe4pV9dCvCUZsz37S9VOw6JArLFUXTG7w4OlyqpQFQ+X6pGd5DZ457yyCE/DUWfP3/jaRlcalSitqEC1FuUMWp1RohwqUg6PZDpE7m6H5syZB6E6oJQQKxac2hR5SyZa3J2uwsV/8XkAgx2r1GeSLHx1OgLc=
+	t=1725728227; cv=none; b=Qrod5SMe5WSQwDQsjkjbKyKtmGpsK1iOde+DmCfZT4I03gxxMqG6FElZshmsyKmo4UoPrcvqosPwCN5mCSH2N3GWRB0dvYk+fnVvM5m04s5Na262aUqkCvWZbajoJSUTViiyG89K/G0UvT76uJM3NMa7ADz+gwhsRsuLa0mR61Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725728175; c=relaxed/simple;
-	bh=0LZrFiFUhWq9Xr12CP/gaLrLEt3Cuu8ybH/pfwjcGVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DAOPTOA7vlfRjWCXhkDxhNxNcn0Ul9Hxa3NbYhy5ESPKYW26oxSnB4CUHwhCahKuRE/YeeZykM9Dst/NLCAOp+loiCulkgr7Innk/xeZbI2B9eizQQRqxTwzZ+WWHId9N+xjW1xCs1Ekcdsg0eSJbZ5nwsyJ5F62/x8MKIkY+uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so2179658b3a.1;
-        Sat, 07 Sep 2024 09:56:14 -0700 (PDT)
+	s=arc-20240116; t=1725728227; c=relaxed/simple;
+	bh=ZtMU8w1tloWwxYw7AMQBvYsJJPEwFKU8fUMe+ZaWDOw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qm7RE6HC6ILXzpqb1le6s8LL47AMHwLm3GoMJ1Nk8WeH4o94cMmsKMw0NGFrmNoelriI0AqMANkMG5s2cNtI+iHvBAzu/zDKCL8c7ZXnFpuxMHqcXTM5/ShwwjHQKVUf50ZpaLXl/TWymJE5kgIZ4xH2TfIs8UmBS+g/Rk0m/Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a0459a8a46so62518235ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 09:57:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725728173; x=1726332973;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7OEjKisGyZpikcENOe0EKCmxLKuxWqz4sfdKvQEqRUA=;
-        b=fkUO136lmxCopJfshmSFIDCbbMpdA9+QC1k9vxlRKq0+ZOZc6p/qB+JvPKgAxxvShn
-         U1HRZheFvTh72H5+ODhkEQbyyd9IFENHwAqM43qJXVI0gJkWLLN34nprHpSQ31kYTBiP
-         FZy0a70J5nzXDE1fDSZFw7/w7imbG/nrepuDm3eeaaAqMX+orRNqjnUR66fyhT4JvR2g
-         j4OjCCUSCnUMgV9pVgBIcISsrwjA58zGGjL56DkzJGuy8qpGO6nU0LMYc/gDp+JoYCMq
-         lPU8JeYu1Po1GciqR+29zFL3cbUmSdx+SZy3HC+k32cHdX3RXeWMPnwQX7QBORkJH//i
-         nLMA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGxm9Jp0fr0CX3Twya4h0ZjlRIamTiXzqynbbmuAdmcL4oYh6ay3U8yx07j1oivVcQctI2SCKk2sVX@vger.kernel.org, AJvYcCXbZ4JLVcvxdId2ozcMs4CiLsFQ1twiUd90szFwMfd/IqMK8Wfi8aD8/bOa90I0Xygo84DJq/98S7XWD3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwruVj6InkEiaTFusBmtahIYaj/GkpOHdiAYbuW6MJ7apkMUuCi
-	OzWEgYV4wgKGXBUpOnbmhY12CSMzWWkqU1kWa3dENRWFODr1j5Ek
-X-Google-Smtp-Source: AGHT+IFhnEfqx9zlWtZDUEoXKA5kpIizfxwG/lM8NfgGOt5YnZlGPstyfe4XCWn8XKWtfokoFsEJlQ==
-X-Received: by 2002:a05:6a21:9201:b0:1cf:2d2f:3749 with SMTP id adf61e73a8af0-1cf2d2f3849mr2738865637.32.1725728173380;
-        Sat, 07 Sep 2024 09:56:13 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d823736c78sm1029199a12.3.2024.09.07.09.56.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 09:56:12 -0700 (PDT)
-Date: Sun, 8 Sep 2024 01:56:11 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Riyan Dhiman <riyandhiman14@gmail.com>
-Cc: jim2101024@gmail.com, nsaenz@kernel.org, florian.fainelli@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com, bhelgaas@google.com,
-	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH next V2] PCI: brmstb: Fix type mismatch for
- num_inbound_wins in brcm_pcie_get_inbound_wins
-Message-ID: <20240907165611.GA238693@rocinante>
-References: <20240907160926.39556-1-riyandhiman14@gmail.com>
- <20240907164613.GA183432@rocinante>
+        d=1e100.net; s=20230601; t=1725728225; x=1726333025;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pqioQfI0jRHJ+2HyBzWQTOPsbbuKbvskWBDUXI7NhPA=;
+        b=u/Bbr5auLXcJnmLCt0Az0rTobA3vbpOwC4guJMMMZwDZLXQ8PrqKRlmZ2kBAsUS4r9
+         5X20eeiYovFfkC3MtEzCzxJHf2e0YJ5XsNnfhDvhZ3cC1mLrrHSQ77CaXnUXLa2/xlQT
+         W7zB6Gh3whP6uUPQd7lK0DQaAFm2CkWEJDnuKz+rI8FCf6aDQrBtygIAxNqivhiKWeI7
+         X3f02fZKJyrm1C6NZqfrPwlGk4Pc4ic7TF5WSzGrNEphfYHJcQ4om7+l5SPzR3Qa3Ulv
+         XrOjVKdtKoYEfmX5gHo9/8JvTkHpdDuwkt2rE8qdA2ocUf8UyMH3SXtS9ZT7s34Zpiug
+         oNkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDnQG5RbhB/7ElbqYdWwPnqSR2JU/Feg+uMqerv4SU4iWYw+2CF7xH9yuvAN07i9GUsXLmF4F6eRb7KaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaVvkPATNpeY6F24GA34eRXalpNbN5MSeysjFa5VqQJRBVTdTp
+	zHkrbGF/BpazwnMwYykpxgVwOcyLVeX2AUSfKs+xSGKiDb+XILX78g0tM5x3z0EuP+Mhy9NiKN3
+	F+fPEgmldssu5JgYYQVAo9O3VAlVt5juYBKpsj5hRyHzaCJCmDONtdoM=
+X-Google-Smtp-Source: AGHT+IF8SgqIXPoeZdJvxIHF/R0WhiGyZdPrZBifF5WpHod7Lg5TLFK+P/zj4no5/G7TG7yVMkfnczv8rs8e36L7Y2XEMzVhfdtl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240907164613.GA183432@rocinante>
+X-Received: by 2002:a05:6e02:19ce:b0:3a0:4646:8a7d with SMTP id
+ e9e14a558f8ab-3a04f10e30fmr2545425ab.5.1725728224995; Sat, 07 Sep 2024
+ 09:57:04 -0700 (PDT)
+Date: Sat, 07 Sep 2024 09:57:04 -0700
+In-Reply-To: <00000000000031c6c50610660f17@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d4819606218a69a2@google.com>
+Subject: Re: [syzbot] [net?] [s390?] possible deadlock in smc_release
+From: syzbot <syzbot+621fd56ba002faba6392@syzkaller.appspotmail.com>
+To: agordeev@linux.ibm.com, aha310510@gmail.com, alibuda@linux.alibaba.com, 
+	davem@davemloft.net, edumazet@google.com, guwen@linux.alibaba.com, 
+	jaka@linux.ibm.com, johannes.berg@intel.com, johannes@sipsolutions.net, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	nico.escande@gmail.com, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+syzbot suspects this issue was fixed by commit:
 
-> > Change num_inbound_wins from u8 to int to correctly handle
-> > potential negative error codes returned by brcm_pcie_get_inbound_wins().
-> > The u8 type was inappropriate for capturing the function's return value,
-> > which can include error codes.
-> 
-> I squashed with the current code on the controller/brcmstb branch, see:
-> 
->   - https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/brcmstb&id=ae6476c6de187bea90c729e3e0188143300fa671
-> 
-> And credited you via the Co-developed-by tag such that you get credit for
-> fixing this issue.  Thank you, by the way.
-> 
-> There is no Fixes: tag as this code is not yet merged into the mainline.
+commit b7d7f11a291830fdf69d3301075dd0fb347ced84
+Author: Nicolas Escande <nico.escande@gmail.com>
+Date:   Tue May 28 14:26:05 2024 +0000
 
-For the record, I would prefer if we went with Florian's first
-recommendation per the following message:
+    wifi: mac80211: mesh: Fix leak of mesh_preq_queue objects
 
-  - https://lore.kernel.org/linux-pci/159c5fcf-709d-42ba-8d45-a70b109fe261@broadcom.com
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1536189f980000
+start commit:   5f76499fb541 tsnep: Add link down PHY loopback support
+git tree:       net-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bc36d99546fe9035
+dashboard link: https://syzkaller.appspot.com/bug?extid=621fd56ba002faba6392
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ad7bc3e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1461e9a7e80000
 
-To clearly separate errors returned from the value being updated.
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Albeit, this is fine too, especially as Jim expressed no opinion either
-way regarding his preference.
+#syz fix: wifi: mac80211: mesh: Fix leak of mesh_preq_queue objects
 
-	Krzysztof
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
