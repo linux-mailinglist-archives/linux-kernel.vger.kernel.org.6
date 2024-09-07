@@ -1,136 +1,189 @@
-Return-Path: <linux-kernel+bounces-319856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAAF97031C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:10:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2480097031E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94A121F20C85
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:10:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEE5A1F21A5D
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDC3160783;
-	Sat,  7 Sep 2024 16:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF8915C13C;
+	Sat,  7 Sep 2024 16:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WJGWcuXg"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dUgCL+hC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA7418030;
-	Sat,  7 Sep 2024 16:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F9B17740;
+	Sat,  7 Sep 2024 16:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725725435; cv=none; b=TU4TJSmZ2viDHr3vhpQ8xAxOfnJR84hWn3Mtl/srjKg7wGVwiFJszBjyP8P56/1Q6kPGgsnap1sHMuAnD/1VQJy9Gr+6pxcx9fliGdRj1CD/dDRI3CgEirh9fbRx8TlZ+TNNWgJL/NDLvdRi+brNVCCh4aSF3XbTiAyHAmxii9c=
+	t=1725725700; cv=none; b=KugTIUCVEKJh1/dmVv7lVHbP4BCQGTj68mgHSsr+VGPclsAxskLnnW0d2D59Ry/lKxsdO7/jIw+aEtVgXBAjbddkd6nShdfd06Bc8WbnJ/GUzIOBEtAdY8UxXBwyh1pu0dV9tqV0z1z8Eijgd+tDIH+zcDvU2BPXYaGPMZJOzLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725725435; c=relaxed/simple;
-	bh=Ugp61IROkC/lOhDqejlDeSWuUWpF6Fmjqq1c9KRVQcI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RJn9AGu7LB2huTps6O5ZoLCWv2x6MJqkEa5zPN2mmJucWl7bFrZXiUZyIKKt48uZ81f1clvMPgqgDWKe297660bT+tvNxh5yslc8xWiCqP6/caLIJimxH2Pb2ieDtyBUSZ3xeGYNr7bCpikAjuzXNDFhJ5B3WlQIaRRc1HEqwwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WJGWcuXg; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1725725425; x=1726330225; i=markus.elfring@web.de;
-	bh=Zch/7RsOkPMYqhdi+SXCgxMZs8r9uQoJW157WFzA8qw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=WJGWcuXgL7jfWIrx0Xtg37SqcdnktjUkfStBZbDXPTGJq5hRmmu7kpapK/aHBAhG
-	 10gV3j2Wq75D8KueuL1MVm1nH4j+WFCk+vRKcBY+xhDmL988nKk1R6ytvZvFNsD2M
-	 M5ZAbhJUzsaH1YQwyUUAasrQrBjjpPs8hLjcuwpR1k7X408Di4o6y8xkmj1EDBF8b
-	 LffpjcoKG90UPnH7zJvnpilQCAfcXd2zjkNXNHTDT6RIZzDOf0mF8kd2ru1IoI23X
-	 2OZuM0QbDZKi8afjSffF2laaPCyegdd6OHsIeFXSZHHc0uGz8Rb40N7P+53ZiOFeD
-	 KTlMb3c3fmqyKbZ7Iw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMp8Y-1sUCg90Bfg-00INlf; Sat, 07
- Sep 2024 18:10:25 +0200
-Message-ID: <2ab8c121-3fef-4d4d-a7b1-7892fb54b680@web.de>
-Date: Sat, 7 Sep 2024 18:10:24 +0200
+	s=arc-20240116; t=1725725700; c=relaxed/simple;
+	bh=80Ip9Qmk6loeYDopu8FVW0vT3IIbusL9QbQwlTjC1So=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i/1aHPHEsTz3Ait8xPQB7jObU8dnL0S2xM7ffb7q62qbSr28TqiC/Z+SntAC96vGf+w3aZ5QXg3zkgWQGF07iOE0Iw5NzFLd8nWEtkmGRDNzi/8RKZEKroFm731OkWOZKoMSN2fYBcSlZTrwy69nacmaQH/D0ED0hnbFRtfgCnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dUgCL+hC; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725725698; x=1757261698;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=80Ip9Qmk6loeYDopu8FVW0vT3IIbusL9QbQwlTjC1So=;
+  b=dUgCL+hCtP5oB2nZpqsUaqubrlQFEsYoUvYr127nPkt9VJ1gLrAUjIhU
+   rQEkRMkUoZz5j394U7B+S+E3xThaPwSDPoTLG+M/f/L5FaWxrBQzZVB4V
+   R8SmhZqEdltBXXbOw898yjJBsfUAFJ439+3o6SJU68JgPsMBdhET8XZjj
+   TYIY9Pv/clVZewQQk7wS4ZUoz1fUqQIKLyFG43sysKPIqqQjFNHF+VeSr
+   dg+QQH/BuX9zTevTk1tc35EThrhFIVYn29xHO8KejUG0bfM9f57U/bAwP
+   VTA2rmMMhhMhGmDxg6U3kXDc1SasZHVjaWD3jjPsNrkUPUTYhC9sQSUX3
+   A==;
+X-CSE-ConnectionGUID: f5wNcQGgSwCd4zxPzkLDIw==
+X-CSE-MsgGUID: x343W6mMSyewcoXPPE98Cw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="28253208"
+X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
+   d="scan'208";a="28253208"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 09:14:57 -0700
+X-CSE-ConnectionGUID: jFf1V+8MQoKESBqGNeh9lw==
+X-CSE-MsgGUID: zLDql8f7TWOD+N4dK3co/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
+   d="scan'208";a="66780413"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 07 Sep 2024 09:14:56 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1smy5N-000Cht-1t;
+	Sat, 07 Sep 2024 16:14:53 +0000
+Date: Sun, 8 Sep 2024 00:14:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Judith Mendez <jm@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mmc: sdhci_am654: Add
+ sdhci_am654_start_signal_voltage_switch
+Message-ID: <202409072350.685m24kB-lkp@intel.com>
+References: <20240906175032.1580281-1-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq: mediatek-hw: Fix resource management and error
- handling in mtk_cpu_resources_init()
-To: Riyan Dhiman <riyandhiman14@gmail.com>, linux-pm@vger.kernel.org,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <c1e8c2f1-d123-4e72-a774-f15daa156afb@web.de>
- <20240907154254.4704-1-riyandhiman14@gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240907154254.4704-1-riyandhiman14@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gVA7yHmIp591hFhBzzBwE027VvnIRQAtdZIdzxOyzPig36tB3b4
- u5hPaKZf1IH37Lr0LJ3mWfxcOnmiTFVOw4Ek5vo61EDrqe86J0BCNbNuUw+wOt0pQPJSNLx
- 16LffmDrOVrlXoHGBGlHc426kXH1E1nvQz0Ph6ojSEACarew1amWJar4tZ6TDC0cG8VTfH1
- DCDgSE58XaxKQKeQzZ80Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:GJEgDvg7pSk=;SvRF3u5F02Kr2mzGNozsS/en31W
- 5Onm1tGnt18eWGTZYtqyyWeaMdPFb68hFyZJ+FHOcm6/AAYSx4LQvGFesDXIBZ9pcm9Qges4Z
- 03L0l9HoSKEcTOOJ47yibDfA5r3ja8YF5lcLY7Stkgcex3isCTxf2WeZrKJSaZncQJWalDXiI
- Izw7HpsKl5VDLoKnEaz9JF3imJC/iBogG7X0TAQVh3XDfCsU3G5wSLrA9yL73+ooZAL4kk+l5
- q2L7dM9PZHOOn2hjyUNTOVAgfGMUwyAuPvDnzh8dvZqU25Aj2tT2BF3ZYuOeBE8vjzX4aAASn
- Tac8eVyevBGJhRVKXR9CvA/9QkfrfSGPWbQs/ixIgFj3efHToUvebvSjQoZcLcQRv2UBB4g0m
- zJFgpWVkwRQ2xqykpAP71kEPbXRGSvsa+HmgJsoqB9l2a1l2mGB2X5wHjI/es3KElF+yWUYeP
- BsvoWiQlQJ/kD/7wqBn9yDm+yeO35GPX2EsKTUwHC6wXKA3hchPxhKApa7X9EU13GZQpsn2gi
- 0txXi47ko6XdIJDrCLRsBUFYV7O2rCuxdOAGPUl4abbfk1jXZa2XMzKuJ/y0aBAI3ASqzQSae
- X2XXTc6+/yoscRZV89kMSOaz2Kpch6N+T9GMHFLR8OacKl8q7IQx331P23UNlyX2Ggyw3fP4x
- GMEczRJUFbV+/oVOMtgQfTRhd8q1PDCKd6UtXMn/+s35Q6MzB51dP3j2Ym3dDwq8U/zOmy7Ef
- vaxEZC4J2Mj9Fqmh1mLoGz9BzJeyl6EF4/nIAvEPLx5aTYjGRuQ34WJYwg072r2ApD3gHdlV5
- IgVr+RqiTfNq1I9LDin7WvAQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906175032.1580281-1-jm@ti.com>
 
->>> Memory region and IO memory were not released if mtk_cpu_create_freq_t=
-able() failed.
->>> Added error handling to ensure that IO memory is unmapped and the memo=
-ry region is
->>> released properly to prevent resource leaks and ensure all resources a=
-re cleaned up on error.
->>
->> * Would you like to improve such a change description another bit
->
-> Should I elaborate a little more on the issue and explain the fix I have=
- created?
+Hi Judith,
 
-Please take another look at guidance from linked information sources.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.11-rc6#n94
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on cf6444ba528f043398b112ac36e041a4d8685cb1]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Judith-Mendez/mmc-sdhci_am654-Add-sdhci_am654_start_signal_voltage_switch/20240907-015144
+base:   cf6444ba528f043398b112ac36e041a4d8685cb1
+patch link:    https://lore.kernel.org/r/20240906175032.1580281-1-jm%40ti.com
+patch subject: [PATCH v1] mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch
+config: openrisc-allyesconfig (https://download.01.org/0day-ci/archive/20240907/202409072350.685m24kB-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240907/202409072350.685m24kB-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409072350.685m24kB-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/mmc/host/sdhci_am654.c:360:5: warning: no previous prototype for 'sdhci_am654_start_signal_voltage_switch' [-Wmissing-prototypes]
+     360 | int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
->>  also according to other line length preferences?
->
-> Can you please help me a little bit about this?
+vim +/sdhci_am654_start_signal_voltage_switch +360 drivers/mmc/host/sdhci_am654.c
 
-Yes, of course.
+   359	
+ > 360	int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
+   361						    struct mmc_ios *ios)
+   362	{
+   363		struct sdhci_host *host = mmc_priv(mmc);
+   364		struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+   365		struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+   366		u16 ctrl;
+   367		int ret;
+   368	
+   369		if (host->version < SDHCI_SPEC_300)
+   370			return 0;
+   371	
+   372		switch (ios->signal_voltage) {
+   373		case MMC_SIGNAL_VOLTAGE_330:
+   374			if (!(host->flags & SDHCI_SIGNALING_330))
+   375				return -EINVAL;
+   376	
+   377			ctrl &= ~SDHCI_CTRL_VDD_180;
+   378			sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+   379	
+   380			if (!IS_ERR(mmc->supply.vqmmc)) {
+   381				ret = mmc_regulator_set_vqmmc(mmc, ios);
+   382				if (ret < 0) {
+   383					pr_warn("%s: Switching to 3.3V signalling voltage failed\n",
+   384						mmc_hostname(mmc));
+   385					return -EIO;
+   386				}
+   387			}
+   388	
+   389			usleep_range(5000, 5500);
+   390	
+   391			ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+   392			if (!(ctrl & SDHCI_CTRL_VDD_180))
+   393				return 0;
+   394	
+   395			pr_warn("%s: 3.3V regulator output did not become stable\n",
+   396				mmc_hostname(mmc));
+   397	
+   398			return -EAGAIN;
+   399	
+   400		case MMC_SIGNAL_VOLTAGE_180:
+   401			if (!(host->flags & SDHCI_SIGNALING_180))
+   402				return -EINVAL;
+   403	
+   404			if (!IS_ERR(mmc->supply.vqmmc)) {
+   405				ret = mmc_regulator_set_vqmmc(mmc, ios);
+   406				if (ret < 0) {
+   407					pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
+   408						mmc_hostname(mmc));
+   409					return -EIO;
+   410				}
+   411			}
+   412	
+   413			if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_SET_V1P8_ENA) {
+   414				ctrl |= SDHCI_CTRL_VDD_180;
+   415				sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+   416	
+   417				ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+   418				if (ctrl & SDHCI_CTRL_VDD_180)
+   419					return 0;
+   420	
+   421				pr_warn("%s: 1.8V regulator output did not become stable\n",
+   422					mmc_hostname(mmc));
+   423	
+   424				return -EAGAIN;
+   425			}
+   426			return 0;
+   427	
+   428		default:
+   429			return 0;
+   430		}
+   431	}
+   432	
 
-
-> Is it the character lenght of subject?
-
-Not directly.
-
-The summary phrase can eventually become more succinct.
-
-
->> * How do you think about to add any tags (like "Fixes" and "Cc") accord=
-ingly?
->
-> Should I change "patch" in subject to "Fixes" or =E2=80=A6
-
-Obviously not.
-
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.11-rc6#n145
-
-Regards,
-Markus
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
