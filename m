@@ -1,86 +1,116 @@
-Return-Path: <linux-kernel+bounces-319598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021B496FF0A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:45:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2377296FF0E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A33C91F23815
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:45:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDBF21F237F2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C48DE571;
-	Sat,  7 Sep 2024 01:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4383FDDC5;
+	Sat,  7 Sep 2024 01:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLMUfOiP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIoOWH40"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBB4DDC5;
-	Sat,  7 Sep 2024 01:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94520D51E;
+	Sat,  7 Sep 2024 01:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725673522; cv=none; b=p6iOtnir8D9i3FGc/ei/QX817DjRNcr4t4Tw/24EeaADz2Brf6Eg9KUem4e4I5OMgGYTTyEXQklAYqRchPfkWIsAhntnRW3DTLUnV91aSiGDic+zkR52CNWbOGrTvDAUUB177vxaRBrguj7mekinph8CQQKNq/84+wt8WjQHpws=
+	t=1725673628; cv=none; b=Vnetdrdb0uiFNW+YZjEhWoVaKZbWTXz0dKFIQ5b4JAME3eP1I0oDOZWbHWb1/YHCFe/J6kyN40gvxCehF91ajD9UloLZyy7/jewMTLchV7wUYQM/o7mdGgeake3albxIYpStt+gKGiXk5gDlneVSoy1LL3W4/3lZ/30hx3K83dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725673522; c=relaxed/simple;
-	bh=eivU6XWyLHMdNOrbe+NeFg4RRfc4uS3qZGTA0LUgLcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M00Zr9Jk7ebwIeLcfh7w8zUAIveu598Bt3mTaNTaCCEFvbz3OeJnnnK49Irxqf0Lab1O29wlqdGEIbXc8bFXGw3qXWFYnMA9hGjudHckwEUnDbxxx23hiEHDMpSaoETVntiUT69qs9nkJiP+BNJmrlewF3X68VKpXNK2bLW7Q0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLMUfOiP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AC34C4CEC4;
-	Sat,  7 Sep 2024 01:45:21 +0000 (UTC)
+	s=arc-20240116; t=1725673628; c=relaxed/simple;
+	bh=+hziEI1rjD1w2MJaKKVzbO9hyJSX3CmV8H47oi3Xqwo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uIYIPGFkAOL/x8bk0Drjg5clp8OvpDd/TCoXVWCrl/qVaAYyIOHfFaxN3t9VeKtsmYIKE4KzZGKHEcpzFuG7qXvtRWNGtDszCGsmdCvmJGC5xo6309GYXh05f1vZ0nQdXwojoYAW0iJr+Levxoj6LOL8Fnnmv59/Kn2pt7u5GPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIoOWH40; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A312DC4CEC4;
+	Sat,  7 Sep 2024 01:47:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725673521;
-	bh=eivU6XWyLHMdNOrbe+NeFg4RRfc4uS3qZGTA0LUgLcc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BLMUfOiPebwVNtSZFGuU1uSJXqMjt4IZDzx3TbTlfTL7yW+TbipAnQ0lVQAccD9I6
-	 CdXhI7Eed4+45LRCaOB9FbTkb8xCOWcb2ucUsDVx+ldTeF9a8U0thoL3kxWwG8NP7C
-	 8GuNdXjCE3fME0ie5g3z82gmaIAsISZE2bbNSl5UlsDxRevvEfj2KjXaUcrRYGreVe
-	 YJ4rlUS9oYLZkO9VruEkVNP8hP32QgDI5KTQhpz7kFdojk/owEDHts9ym8bH0OEuPa
-	 vBj7org0XMnWzQ1fMS+JZzODrE9BHZflmzmqsDV2dFQ/2aW7hKOo/47XG89tt0o9PI
-	 FLAPcetWnficw==
-Date: Fri, 6 Sep 2024 18:45:20 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
- <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
- <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
- <shiyongbang@huawei.com>, <libaihan@huawei.com>, <zhuyuan@huawei.com>,
- <forest.zhouchang@huawei.com>, <andrew@lunn.ch>, <jdamato@fastly.com>,
- <horms@kernel.org>, <jonathan.cameron@huawei.com>,
- <shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V7 net-next 01/11] net: hibmcge: Add pci table supported
- in this module
-Message-ID: <20240906184520.765db72d@kernel.org>
-In-Reply-To: <20240905143120.1583460-2-shaojijie@huawei.com>
-References: <20240905143120.1583460-1-shaojijie@huawei.com>
-	<20240905143120.1583460-2-shaojijie@huawei.com>
+	s=k20201202; t=1725673628;
+	bh=+hziEI1rjD1w2MJaKKVzbO9hyJSX3CmV8H47oi3Xqwo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lIoOWH40lFJtsAYMBip2uNgYg/13Nrzy5Gw09FCuqlV31ybKjIeQdJtpb2OpDk7sD
+	 pNWxz58EHOfwsRgv6tsk+3YTC4ypcInRIk9cCH9fsNEl8yVF15sX4zv1tc9XJ1XOyZ
+	 GYDl6QB3aaNF7TDcOoJWtw1Yuv9apD9NVAstN2/hOagTpyJp6UptHP7txCTPGjy/Ty
+	 mmBH3xFUUEnPcOPUy7qUpfETCrDD9l2gMWev/HHJIfMr77m/kClskKlhVY4xXY4DvI
+	 j1de5JDQINroLxoXpZT2T07hnBFYt2prRp7KewSvdyhuODEpE20qICnfwOEoipbL00
+	 wObJLlSKq+BQg==
+Date: Fri, 6 Sep 2024 18:47:06 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Joe Lawrence <joe.lawrence@redhat.com>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
+Message-ID: <20240907014706.hw57colm6caxotyw@treble>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <ZtsJ9qIPcADVce2i@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZtsJ9qIPcADVce2i@redhat.com>
 
-On Thu, 5 Sep 2024 22:31:10 +0800 Jijie Shao wrote:
-> +	netdev->tstats = devm_netdev_alloc_pcpu_stats(&pdev->dev,
-> +						      struct pcpu_sw_netstats);
-> +	if (!netdev->tstats)
-> +		return -ENOMEM;
+On Fri, Sep 06, 2024 at 09:56:06AM -0400, Joe Lawrence wrote:
+> A few minor build complaints on my system:
+> 
+>   $ make tools/objtool/check.o
+>     CALL    scripts/checksyscalls.sh
+>     DESCEND objtool
+>     INSTALL libsubcmd_headers
+>     CC      /home/jolawren/src/linux/tools/objtool/check.o
+>   check.c: In function ‘is_livepatch_module’:
+>   check.c:661:16: error: implicit declaration of function ‘memmem’; did you mean ‘memset’? [-Werror=implicit-function-declaration]
 
-Please set 
+I was confused why you and Song were having compile issues when I
+wasn't.  But now I'm realizing that your incantation above
 
-	dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
+  make tools/objtool/check.o
 
-will allocate and free the stats for you.
-This will also let other parts of the stack use the stats
-since the type will be known (netdev->tstats is part of 
-a union).
+uses the kernel's makefiles along with the kernel's compiler flags and
+include directories.  And I guess it also enables a bunch more warnings
+which probably explains the differences
+
+
+Somehow that normally works for you?
+
+When I try, I get
+
+tools/objtool/check.c:6:10: fatal error: string.h: No such file or directory
+    6 | #include <string.h>
+      |          ^~~~~~~~~~
+
+because of -nostdinc.
+
+
+Normally I build objtool with
+
+  make tools/objtool
+
+or just
+
+  make
+
+Those use the objtool Makefile without all the extra kernel flags.
+
+How do you normally build objtool?
+
+Regardless, I should probably enable a lot of those extra warnings in
+the objtool Makefile.
+
 -- 
-pw-bot: cr
+Josh
 
