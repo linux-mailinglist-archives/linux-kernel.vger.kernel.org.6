@@ -1,62 +1,49 @@
-Return-Path: <linux-kernel+bounces-319735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 192DC970185
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:11:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05AAC97018D
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39FCF1C21929
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:11:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9EBA284FA2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC071537DF;
-	Sat,  7 Sep 2024 10:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KNJbeW3G"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5B915534B;
+	Sat,  7 Sep 2024 10:14:31 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C74A55;
-	Sat,  7 Sep 2024 10:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47F2BE6C;
+	Sat,  7 Sep 2024 10:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725703911; cv=none; b=QO/avcMy5U1laoDrgjHkFhNdefJFisPvJopqVTyXt6kAHu4AQzkK0+0nnP5jVEXqQkJTJ+xAWrnx0hMSzXSWhu3HIcUZS69h98CAhTzd45v+lJV7tIYKlFuK3SHX1qaAMrhqBK1gdYBu4bYUZtQy0Jqz6E1xVHKWjsnCtsTNJSo=
+	t=1725704071; cv=none; b=Eyu0PQH7b5W6yOdqmKe0/OcqWzp6XSUPCqBo7NVgrJJZNu05FuDyTxFWe0objLLudVAgHJXtaa7Q5jqb2DfYVwegabhzr5KPWsAjxHB8us4duSFfsKIVw1iuRzUE5tZecLQLTnvorgG2J7z7QJXpbwiE915qODTC+yPVCJwMH/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725703911; c=relaxed/simple;
-	bh=WaPMHwU3Rxuwr3bf8WZxqprZwf/RxFr9wYjdc0f4vPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kYy5BpGgwp7L5NCUCOvHQrrMsqVQwT186KeDX+AipNATz2n/LufY4CDSXh1s2SZsgzr2tC6wgJ3NpZjhKaMWT+7jS3PPzvSYzYjfKGciDjg+43QgQcDrbI3XOsVmTyzpp17iixwBRYVp177aEUno0EcQaurKkC9DPWbxj9aS+bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KNJbeW3G; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 487ABiEK124605;
-	Sat, 7 Sep 2024 05:11:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725703904;
-	bh=9R5rjZuv1wB/YbDyuU7BA588rMLZUdVe8ARpHHFtqyE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=KNJbeW3GLfs3rZo1mhB6IrSlLslFssKcvZkWAB3T6FMG2C+cdvy7VfAZUh/4zw5nG
-	 rpZEcmEDli39dzcTc1ZMtTDb2Fh9E07n+O/XocZ2D7Ub9gMcM+BQoY7NgPkH2BboyE
-	 dem4WdtUQ1BIPkLHhXN58+7D7G6Ft7d8XSblU0js=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 487ABiHS032856
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 7 Sep 2024 05:11:44 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 7
- Sep 2024 05:11:43 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 7 Sep 2024 05:11:43 -0500
-Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 487ABdMM052772;
-	Sat, 7 Sep 2024 05:11:40 -0500
-Message-ID: <56b63a39-ea4d-4edf-9295-ca28c83655c8@ti.com>
-Date: Sat, 7 Sep 2024 15:41:38 +0530
+	s=arc-20240116; t=1725704071; c=relaxed/simple;
+	bh=hi2xrJZBDuY0k+Bd7WbG4vjSF/HP4IxQQqOVAY4lq6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r4G5pKNOW3x2xWfpEthIrkCJ5czbGDdW1pYL34J1Lhh20WH9GB0Zfu3T0bn1Ci7tiLUKQQgNn7wmMVIvNfUlgVS/1HsALHTh5LjyVIUWXvgVega6lugxGdeV799jzRyz0w4gHEec+CjGhhMp7GU4o7BZrjQ0hgcqKx414BOh4MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav116.sakura.ne.jp (fsav116.sakura.ne.jp [27.133.134.243])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 487AEGOt021346;
+	Sat, 7 Sep 2024 19:14:16 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav116.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp);
+ Sat, 07 Sep 2024 19:14:16 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 487AEGYK021343
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 7 Sep 2024 19:14:16 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <d1e5b74a-5161-4906-96eb-4987ff440d19@I-love.SAKURA.ne.jp>
+Date: Sat, 7 Sep 2024 19:14:17 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,108 +51,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: k3-r5: Decouple firmware booting from probe
- routine
-To: Beleswar Padhi <b-padhi@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <afd@ti.com>, <hnagalla@ti.com>, <s-anna@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240906094045.2428977-1-b-padhi@ti.com>
+Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me,
+        tomoyo-users-en@lists.osdn.me,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
+ <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
+ <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
+ <CAHC9VhRdQAoiKMVVUiDyCbEd4EDL9ppH3V4xRGhoOoFmHFy8nQ@mail.gmail.com>
 Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20240906094045.2428977-1-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhRdQAoiKMVVUiDyCbEd4EDL9ppH3V4xRGhoOoFmHFy8nQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On 2024/09/06 23:24, Paul Moore wrote:
+> On Fri, Sep 6, 2024 at 3:43 AM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>> If you ignore my concern, I have to NACK the static call changes you are
+>> going to send in the upcoming merge window.
+> 
+> I'm not ignoring your concern, I've responded to your emails and
+> patches on the topic over, and over, and over, and over again by
+> trying to explain to you that your goal of supporting out-of-tree LSMs
+> regardless of the impact to the upstream LSM effort is not something
+> that is acceptable to the upstream LSM effort, or the Linux kernel in
+> general.
+
+I want LKM-based LSM support in order to allow one of in-tree LSMs (namely
+TOMOYO) to be delivered to my intended users, for nobody can solve the
+realities that commit 20510f2f4e2d ("security: Convert LSM into a static
+interface") missed:
+
+  how difficult/unrealistic for Linux users who are using prebuilt kernel
+  packages provided by Linux distributors to replace their kernels
+
+  how difficult for Linux distributors to allow their users to use in-tree
+  LSM modules which that distributor is not familiar with [1] because Linux
+  distributors are supposed to support kernel packages they built and
+  shipped
+
+  Linux distributors do not want to enable out-of-tree code due to upstream
+  first policy, while Linux kernel development community can not afford
+  accepting whatever proposed code due to limited resources
+
+One of LSM developers commented me ( Mon, 22 Jul 2024 17:12:05 +0200
+in off-list discusstion) about AKARI
+
+  Ofcourse you found a way to hack it. You want me to curl bash pipe
+  your kernel module code that disables certain protections and runs
+  arbitrary hacks on my machine? No thank you!
+
+  Ofcourse you change the memory mapping of data. You are misleading
+  your users into trusting you and instead of contributing code and
+  working with distros for your use case, you are shipping hacks and
+  making noise without any constructive code contribution or alignment
+  with distros for your use-case (below RHEL won't eneable it even
+  if we had a proper API). 
+
+and this patch is for following that comment. All concerns about updating
+__ro_after_init data is gone if we move to a dual static call and linked
+list based approach. I'm very very very sad that you did not respond to
+
+  I think what you can do is send patches for an API for LKM based LSMs
+  and have it merged before my series, I will work with the code I have
+  and make LKM based LSMs work. If this work gets merged, and your
+  use-case is accepted (I think I can speak for at least Kees [if not
+  others] too here) we will help you if you get stuck with MAX_LSM_COUNT
+  or a dual static call and linked list based approach.
+
+in [2], and started saying "No" to this approach after you accepted
+the static call changes. You are ignoring my concern!
 
 
-On 9/6/2024 3:10 PM, Beleswar Padhi wrote:
-> The current implementation of the waiting mechanism in probe() waits for
-> the 'released_from_reset' flag to be set which is done in
-> k3_r5_rproc_prepare() as part of rproc_fw_boot(). This causes unexpected
-> failures in cases where the firmware is unavailable at boot time,
-> resulting in probe failure and removal of the remoteproc handles in the
-> sysfs paths.
 
-I won't say failure, I will say this is behavior of driver.
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=542986 [1]
+Link: https://lkml.kernel.org/r/CACYkzJ7ght66802wQFKzokfJKMKDOobYgeaCpu5Gx=iX0EuJVg@mail.gmail.com [2]
 
-Driver expect firmware to be available , but I agree driver should be 
-able to execute
-
-with/without firmware availability.
-
-
-> To address this, the waiting mechanism is refactored out of the probe
-> routine into the appropriate k3_r5_rproc_prepare/unprepare() and
-> k3_r5_rproc_start/stop() functions. This allows the probe routine to
-> complete without depending on firmware booting, while still maintaining
-> the required power-synchronization between cores.
->
-> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
-> Posted this as a Fix as this was breaking usecases where we wanted to load a
-> firmware by writing to sysfs handles in userspace.
->
->   drivers/remoteproc/ti_k3_r5_remoteproc.c | 170 ++++++++++++++++-------
->   1 file changed, 118 insertions(+), 52 deletions(-)
->
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> [..]
-> +	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
-> +	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
-> +	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1 &&
-> +	    core0->released_from_reset == false) {
-> +		ret = wait_event_interruptible_timeout(cluster->core_transition,
-> +						       core0->released_from_reset,
-> +						       msecs_to_jiffies(2000));
-only one wait in start should be good enough,
-> +		if (ret <= 0) {
-> +			dev_err(dev, "can not power up core1 before core0");
-> +			return -EPERM;
-> +		}
-> +	}
-> +
->   	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl, &stat);
->   	if (ret < 0)
->   		return ret;
-> @@ -470,6 +492,12 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
->   		return ret;
->   	}
->   
-> +	/* Notify all threads in the wait queue when core state has changed so
-> +	 * that threads waiting for this condition can be executed.
-> +	 */
-> +	core->released_from_reset = true;
-> +	wake_up_interruptible(&cluster->core_transition);
-> +
->   	/*
->   	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
->   	 * of TCMs, so there is no need to perform the s/w memzero. This bit is
-> @@ -515,14 +543,46 @@ static int k3_r5_rproc_unprepare(struct rproc *rproc)
->   {
->   	struct k3_r5_rproc *kproc = rproc->priv;
->   	struct k3_r5_cluster *cluster = kproc->cluster;
-> -	struct k3_r5_core *core = kproc->core;
-> +	struct k3_r5_core *core0, *core1, *core = kproc->core;
-
-
-why you need wait in unprepare/stop,
-
-In case you are failing during firmware load or so then already we are 
-in bad state.
-
-if this is call from user land then, i don't except anyone will auto 
-trigger stopping of core-0
-
-IMO, in unprepare/stop, if action is attempted on core1 with core-0 ON, 
-simply return error.
-
-
-> [..]
-> @@ -629,7 +702,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->   	struct k3_r5_rproc *kproc = rproc->priv;
->   	struct k3_r5_cluster *cluster = kproc->cluster;
->   	struct device *dev = kproc->dev;
->
 
