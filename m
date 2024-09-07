@@ -1,183 +1,126 @@
-Return-Path: <linux-kernel+bounces-319889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 978C1970372
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:58:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0C4970379
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180DC1F225B1
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:58:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F939B21110
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E0515F41B;
-	Sat,  7 Sep 2024 17:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D30C165EE7;
+	Sat,  7 Sep 2024 17:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="I5Ojc0JW"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HU+k8Ci4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B4B15E5BA
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 17:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3479415A843;
+	Sat,  7 Sep 2024 17:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725731881; cv=none; b=V0Y4q+mkeuRq1cR4pU0DC5s7kPT9n1VD1ereKnykfmbPobZa9AnXgt+eLtTmE8iGthlIgX6Cw72YzQjf5MuNJwabQfb6FNfl5Gpvi/Bd7W3hOw/lVlaitti6cOkKcp9AAIi5pSsfbPwBMikH62Q4dVwW9V55nWIoblJwh4EEIIM=
+	t=1725731954; cv=none; b=dKBEfb+YssILcVGDpq/Rmw/PrW2WtNs1QdgwiT94xk7pGWWfO+9BNtvmus7wlVcbefhTT5/G6/I7gyDQTVtB8KDqlCQht8X85zuVbRrF4pDp0pKqZaEoLTpgwsrUe7eB2Y3BCkm0FIw9o4svDL1UKVP/JwDli8bdyde0GVbl5HA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725731881; c=relaxed/simple;
-	bh=DdO9HrqBAqZusoz+T5LGpZj4hxMS5+FS7Q8HCuPb+f4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JkpQCnTxeTdL7zQqRaN+/RaIAEZ6rfnDFREVv9E27kPp9aFDwpOVaon7OehLyir7R+GMC/6ZgkwomlipfZXxAi9qdMfpK6Tay96Wum5R0syDrxD/IbI40IWuWsrwxzxeqDHcuE+bLbgoPeMDujcjAtnIv6R5fSM1nPPYGvF5mAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=I5Ojc0JW; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-502bdf65b52so296177e0c.3
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 10:57:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725731879; x=1726336679; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yFM7Y/HPo2thtCReOXE4IBHniLnqof6WN7AzI/44yKo=;
-        b=I5Ojc0JWgJn57f+K+3ipme19qs5JomiDAMliHqkWXBKp3h5LcBfkRNa7p9rPTt/MXM
-         2OkdxqXm1aPoc+w0oS1J8RwMQ2i2qudxPYWjat7x0PoNWdaywG3D5fA3ZPo36b44QpQJ
-         1zC90tECMaB1mQM7KD4I1w22HKWygkFNrV8cgEd6+u/g8wzGsW5qc+yOknR2rnwpDCwz
-         Grnl3BE5VnigV6n0A8UnxSK7+8FEBMDl+fI07t6qOZ0J5Qh8VibXM5RvRGvEjacGO1gA
-         gektEnXPv8bYz08XkhKLd98o471voKdBmlZ9SCZZunfmSkfnODCSe8Ml+tMeUCYNZQK/
-         JkfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725731879; x=1726336679;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yFM7Y/HPo2thtCReOXE4IBHniLnqof6WN7AzI/44yKo=;
-        b=J610mCGbGFbq0jdByM0bVwifTGqvywQMHPsIo0boSWOynQ8hXeCKm/9UNOKY2VmraK
-         jeyJbVXQbUrRXZkdyEt8nf2c6DokGXaCDM1ONfz9ZxgCufztMLMwUZE0nqCVW3pGETJ7
-         woUIZsNanjTQTu9vWLqyA0JXkAA9/B7u6pY7CjEiubeCPvRZxin3rCfMCBOMtl1Fs8ax
-         0vuY5sLiqTAAFTln0AREcwj/6zKJ2JMSvUD13FukxzSc7YDVt39rLpBZIwhlqjV1yUYT
-         LIv2t2CJwXz/HuofQJmFr+jyLBF3CPevQuniBtpOUCkH2b5ygJYukedmV+ylivoyFVdc
-         R7FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWd+M7G8pb3sHDHgssrZuBtfFEkykNBUQSv4q2O6gTU31neMBn+eQ3d/nJF0sQG8/saLe153hktT2K+ZYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkyhqYSIyEt9DPf+P1d9OkjeEsfOYk2rjCLh8CqV1kAqbnA+8G
-	/t2ETBkDfYCC8lmiMb75k5wVVKKA3ksUJXu/RNZjcVmX2lGWgaazP4VPsF9PcT+dPLL8WnVRunB
-	+oXzyF0T4ry6mGicOdkt7LwypsblUQ+GiSgzXLQ==
-X-Google-Smtp-Source: AGHT+IHgCRsZHlIq2Y8KZG57PrCBPIcYyj6T8/ZZsKVqsBbzi82PAyVUBN2lCKHyshg4cwjuxTn0c7M8ZsW/8B7VCfc=
-X-Received: by 2002:a05:6122:318d:b0:4ef:5b2c:df41 with SMTP id
- 71dfb90a1353d-502143d02a4mr6965110e0c.9.1725731878706; Sat, 07 Sep 2024
- 10:57:58 -0700 (PDT)
+	s=arc-20240116; t=1725731954; c=relaxed/simple;
+	bh=7W+Y2WI2P8yRIyWHBY18RxuM3cQNL1ZRi9/hscrP9ew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MpzjtZ18onq10YAuuDa2/Tz1+5VaexELsJ4DwNv0CGr+AYNlx1qi0pRqKcKBvhp1oZl0VHgaoIhBuPj4QsGZzI964rFoYVGaweczq7Ppw7n77xdJ0qjSkh/p93Bd1qOZkhm2J+9ztHX0aW418Giq+XxGg7zM1kTn/jseuHCEqpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HU+k8Ci4; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725731952; x=1757267952;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7W+Y2WI2P8yRIyWHBY18RxuM3cQNL1ZRi9/hscrP9ew=;
+  b=HU+k8Ci4PmdmW9tKa/2QAX73BHncSHCMYiB7JiJ3MlKrZ8rah/SegcuS
+   hGP+yLfgPYAoAjj1eR8G26ykysDkzwLxouwkh4/yP1fbqiRJLjfGpc6Wq
+   Q8wI2g1hmqUpBoFOl8DhAFywya8thJV4nrx/tvv8SU8aD04eJDtY4cTb+
+   QgCaktjhUuoCA9IOlOpLazLjj5tGFPoLyxtYNJWNnUaAPlCKmfbwtB4cQ
+   qwEeM/06m6+B30p8e+3oYxUV3wcj8HkUToZsOsfz+xh1OM/7j16n9DF13
+   Fi5JuBbWh6rcJ0CPx077iOZX96SRYhDoPs2iA1o3hOoHoMx98qZlCzsAM
+   Q==;
+X-CSE-ConnectionGUID: 1bGfKg9QR5yJgj8BZeyU1w==
+X-CSE-MsgGUID: p/zcejw5TACjKtvmqN3xhQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="49882567"
+X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
+   d="scan'208";a="49882567"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 10:59:11 -0700
+X-CSE-ConnectionGUID: l8Vfll+VRQ+MA6fVyOu7BA==
+X-CSE-MsgGUID: 6UhShR+JQPmdIVXJXH/Kjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
+   d="scan'208";a="66041591"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 07 Sep 2024 10:59:08 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1smziD-000Cot-1z;
+	Sat, 07 Sep 2024 17:59:05 +0000
+Date: Sun, 8 Sep 2024 01:58:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chen Wang <unicornxw@gmail.com>, ukleinek@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, unicorn_wang@outlook.com,
+	inochiama@outlook.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
+	haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
+	chunzhi.lin@sophgo.com
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH 2/2] pwm: sophgo: add driver for Sophgo SG2042 PWM
+Message-ID: <202409080100.h6lX5Asm-lkp@intel.com>
+References: <3985690b29340982a45314bdcc914c554621e909.1725536870.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905082404.119022-1-aardelean@baylibre.com>
- <20240905082404.119022-8-aardelean@baylibre.com> <4f522d0c-7ed8-4dd4-83ae-f400d6958c6f@baylibre.com>
- <CA+GgBR-H8W_YS3gPrrvxAWoQybjEb-p36pqxEatFbEAnuz2DvQ@mail.gmail.com> <a5472be7-26c6-486b-834c-2a5f6bfaf982@baylibre.com>
-In-Reply-To: <a5472be7-26c6-486b-834c-2a5f6bfaf982@baylibre.com>
-From: Alexandru Ardelean <aardelean@baylibre.com>
-Date: Sat, 7 Sep 2024 20:57:46 +0300
-Message-ID: <CA+GgBR9BWcLJ=stqT0F8n2mC=6C0y9ia2W7HFOfkX+0WM82_wA@mail.gmail.com>
-Subject: Re: [PATCH v4 7/8] dt-bindings: iio: adc: add docs for
- AD7606C-{16,18} parts
-To: David Lechner <dlechner@baylibre.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, 
-	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
-	gstols@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3985690b29340982a45314bdcc914c554621e909.1725536870.git.unicorn_wang@outlook.com>
 
-On Sat, Sep 7, 2024 at 5:09=E2=80=AFPM David Lechner <dlechner@baylibre.com=
-> wrote:
->
-> On 9/6/24 11:59 PM, Alexandru Ardelean wrote:
-> > On Fri, Sep 6, 2024 at 12:54=E2=80=AFAM David Lechner <dlechner@baylibr=
-e.com> wrote:
-> >>
-> >> On 9/5/24 3:24 AM, Alexandru Ardelean wrote:
->
-> ...
->
-> >>> +patternProperties:
-> >>> +  "^channel@[1-8]$":
-> >>> +    type: object
-> >>> +    $ref: adc.yaml
-> >>> +    unevaluatedProperties: false
-> >>> +
-> >>> +    properties:
-> >>> +      reg:
-> >>> +        description:
-> >>> +          The channel number, as specified in the datasheet (from 1 =
-to 8).
-> >>> +        minimum: 1
-> >>> +        maximum: 8
-> >>> +
-> >>> +      diff-channels:
-> >>> +        description:
-> >>> +          Each channel can be configured as a differential bipolar c=
-hannel.
-> >>> +          The ADC uses the same positive and negative inputs for thi=
-s.
-> >>> +          This property must be specified as 'reg' (or the channel n=
-umber) for
-> >>> +          both positive and negative inputs (i.e. diff-channels =3D =
-<reg reg>).
-> >>> +        items:
-> >>> +          minimum: 1
-> >>> +          maximum: 8
-> >>> +
-> >>> +      bipolar:
-> >>> +        description:
-> >>> +          Each channel can be configured as a unipolar or bipolar si=
-ngle-ended.
-> >>> +          When this property is not specified, it's unipolar, so the=
- ADC will
-> >>> +          have only the positive input wired.
-> >>> +          For this ADC the 'diff-channels' & 'bipolar' properties ar=
-e mutually
-> >>> +          exclusive.
-> >>> +
-> >>> +    required:
-> >>> +      - reg
-> >>> +
-> >>> +    oneOf:
-> >>> +      - required:
-> >>> +          - diff-channels
-> >>> +      - required:
-> >>> +          - bipolar
-> >>
-> >> The datasheet (ad7606c-18.pdf) lists the following combinations:
-> >>
-> >> * Bipolar single-ended
-> >> * Unipolar single-ended
-> >> * Bipolar differential
-> >>
-> >> The logic in the oneOf: doesn't match this.
-> >>
-> >> This I think this would be sufficient:
-> >>
-> >> - if:
-> >>     required: [diff-channels]
-> >>   then:
-> >>     required: [bipolar]
-> >
-> > So here, I am a bit vague.
-> > This makes 'bipolar' mandatory if 'diff-channels' is mandatory, right?
-> > But then 'bipolar' (on its own) becomes optional?
-> > The way I understood the oneOf case is that:
-> > 1. if it's 'diff-channels' then it's specified 'bipolar differential'.
->
-> diff-channels does not imply bipolar in DT, so we need both properties
-> set to specify "bipolar differential".
->
+Hi Chen,
 
-ack
-will update then
+kernel test robot noticed the following build warnings:
 
-> > 2. if it's 'bipolar' then it's specified as 'bipolar single-ended'
-> > 3. otherwise it's unipolar
-> > 4. oneOf enforces that at least 'diff-channels' or 'bipolar' is
-> > specified if there is a channel node
-> >
-> >
+[auto build test WARNING on 431c1646e1f86b949fa3685efc50b660a364c2b6]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Wang/dt-bindings-pwm-sophgo-add-bindings-for-sg2042/20240905-201303
+base:   431c1646e1f86b949fa3685efc50b660a364c2b6
+patch link:    https://lore.kernel.org/r/3985690b29340982a45314bdcc914c554621e909.1725536870.git.unicorn_wang%40outlook.com
+patch subject: [PATCH 2/2] pwm: sophgo: add driver for Sophgo SG2042 PWM
+config: m68k-randconfig-r133-20240907 (https://download.01.org/0day-ci/archive/20240908/202409080100.h6lX5Asm-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20240908/202409080100.h6lX5Asm-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409080100.h6lX5Asm-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/pwm/pwm-sophgo-sg2042.c:99:34: warning: 'sg2042_pwm_match' defined but not used [-Wunused-const-variable=]
+      99 | static const struct of_device_id sg2042_pwm_match[] = {
+         |                                  ^~~~~~~~~~~~~~~~
+
+
+vim +/sg2042_pwm_match +99 drivers/pwm/pwm-sophgo-sg2042.c
+
+    98	
+  > 99	static const struct of_device_id sg2042_pwm_match[] = {
+   100		{ .compatible = "sophgo,sg2042-pwm" },
+   101		{ },
+   102	};
+   103	MODULE_DEVICE_TABLE(of, sg2042_pwm_match);
+   104	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
