@@ -1,147 +1,228 @@
-Return-Path: <linux-kernel+bounces-319689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0458F9700A7
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:49:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D579700AE
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD5872830D4
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94766285651
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EF21420D8;
-	Sat,  7 Sep 2024 07:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E89149C4F;
+	Sat,  7 Sep 2024 07:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SzfCHF1S"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJJ+oFs+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75EF013C81B;
-	Sat,  7 Sep 2024 07:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BB614885B;
+	Sat,  7 Sep 2024 07:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725695337; cv=none; b=SkCXEVw2o7vbDLpkqtV2l8pnDvvXFwfrgOiDgiKpnY3HTtjzR/W6TGRmGGrbisRTDU1G2cCwRYgT6MgIgwY/48O+HzZh2hQ01+BWwwpuiZDhspdS505RY1BsX1RkNoVrk5vfIRFNQ5uuSY51S/rfhB3uk/GGY7zpTh63LAL8qZk=
+	t=1725695780; cv=none; b=oKdyoi5slnWSY9Qc4w5a46m8HggmftWdh1iOZ6MHR8Q2Q47BRTKzc7Y8PobjNlarMkpyE5HftvoSB0XQ+/+jugun3VUa90SYVIsHJJ5rfuT4GCtDvBiuv3PTV4CPI3ZmtIQ+c8biKSy/nprEndNHRcl+Z4vlhP9CcwHR6DCy9Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725695337; c=relaxed/simple;
-	bh=3FnuhTd4tctA2VAFnygx80jYcOLe/RkLw+DxvUF3sig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MF3vk8tEpyZ255UNfrFqOAUN+k9R/T9InxQ9SVsVekPFe1wEFUruBGXDubSECVN4p3/S5j4GIbz31JNuJu6mc23h1E/593ZFefxhxAVMJwHN2ZUG6d6PSDko9sgM9dFmGH8uWV6pxoqEGEI2IAqNhGqTp8nJN8fkgsp3V1HZIrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SzfCHF1S; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725695335; x=1757231335;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3FnuhTd4tctA2VAFnygx80jYcOLe/RkLw+DxvUF3sig=;
-  b=SzfCHF1SveKTTYTV6IZN4NMTRuIxs1dRFtHr2vozRydyqJ50SRt1rj0S
-   VusaIhJ/dl9kARG5t8ooPrpVOcpdIlVE79HplHr5r5bVvnCcJAYdz8+3i
-   QY74nxk5NVuAjNQprE103bYNnMaqwaL9DEBM2/ZLzhXPW4QOmFZZK5cXt
-   KlQR91qcD8scmFmwPoM4JNk6TCdEg87PPeeMUXM8W3Ez2b66JCwF+Gob5
-   U/qJHToLjRrRWQl8y3kTmVDFVIc7aPUnuDSimA5oFIPfgzVgfMCjZN/qA
-   977bZYF1dfjO8F0wJHzjIexc9KT0alCRvN7kIp8FDq2fLbqaGKZYO9qSp
-   Q==;
-X-CSE-ConnectionGUID: 3Ug7rSFgQVWmnnkmGbVVhQ==
-X-CSE-MsgGUID: 8hu+HVRZTxW3RkVtSqFwag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="35030415"
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="35030415"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 00:48:55 -0700
-X-CSE-ConnectionGUID: xN4Q0pCiSOq9ZCtaxa4LbA==
-X-CSE-MsgGUID: XWC9soK2TXajDjbAtHM8Ng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,210,1719903600"; 
-   d="scan'208";a="89442270"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 07 Sep 2024 00:48:52 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1smqBe-000CIf-17;
-	Sat, 07 Sep 2024 07:48:50 +0000
-Date: Sat, 7 Sep 2024 15:47:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Rohit Chavan <roheetchavan@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	Rohit Chavan <roheetchavan@gmail.com>
-Subject: Re: [PATCH] lib80211: Use ERR_CAST() to return
-Message-ID: <202409071509.vfmUeHx0-lkp@intel.com>
-References: <20240906114455.730559-1-roheetchavan@gmail.com>
+	s=arc-20240116; t=1725695780; c=relaxed/simple;
+	bh=rMVIG8fA6B1s7+r843qnmUPH6dIbkzZfUao/2Yt9+YY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IUX5QBNH4aLtz+LkyZugILt7feBuoYMurmqzWkY/evyjq2vZzRX0c6hgTleK8DhsytfupEtLubWXvyBx9R4AipVDa4zHXtnnHeamivUZxoUsjx/CWTMkKKvQouSCwtYW2ZcE93KZtSrJnVvZxVioNlh9MAeAaLQMVZFi5pzRXHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJJ+oFs+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFB4C4CEC8;
+	Sat,  7 Sep 2024 07:56:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725695779;
+	bh=rMVIG8fA6B1s7+r843qnmUPH6dIbkzZfUao/2Yt9+YY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TJJ+oFs+uFbWQey6H9FSdONVeJ4+Nk7PZGC9p+R2xuE2DkeG0lI/c8ZrquDzjvXND
+	 TT1sTnWMNe876xx2L+mb1mq6hB0xlOrQAzYERAXRcndj9NWl49oYLNsLnnbw5s+LD7
+	 WoJv+ptxNU2n+ygq27JpMw2x+RXZyO1NQ9sFJjzQ+XuneExjx5QXw60ieVd83vN2JO
+	 zkWNggYANOwWUbCvH0xvrQSSSyIx0wdGRR3/Lt3fhk3u/HdP9Ninfy4wXH08MZFeJJ
+	 cikHm59nL/Tbd7kBSD8DM+YwfBEOOkhBvzFDBgilbUqX0uT7/irgdE6pB41QyYO44Q
+	 KXEdXNlwTHxpA==
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42ca573fd5aso10385045e9.3;
+        Sat, 07 Sep 2024 00:56:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXL+27G7So9dUTb6ev/XgbWUHHqWS9ZfuHvMcuMrrhwptnJYqFEnU6bE6Qs/NRvUTDzo7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDnPyNxZQ5PZpDy1v4i1jcMzRktrk2H1nHA3NzYWAUd3WTO9SO
+	oJuD5t7//e6h2tAI5ptnhqiq9v7tFSxL2HxSTI0kJJn83TniGfhUMlhKom4G4WC1maUWqQpJ7pI
+	NYON7hHYoI8QVCWiw9r7MBYF0p2s=
+X-Google-Smtp-Source: AGHT+IFynoxTnXMTC8+Fo8fU+IIAu5+BJVgogUzWFqVgiJkrBh84P8uiKBPNKKNr7iDLnJaT3bdYOiP9AiNGJX1tMqU=
+X-Received: by 2002:a5d:540b:0:b0:374:b6f3:728d with SMTP id
+ ffacd0b85a97d-378896740ecmr3049996f8f.46.1725695778169; Sat, 07 Sep 2024
+ 00:56:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906114455.730559-1-roheetchavan@gmail.com>
+References: <20240823093404.204450-1-lixianglai@loongson.cn>
+In-Reply-To: <20240823093404.204450-1-lixianglai@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 7 Sep 2024 15:56:05 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7eGNof=qjq=U1KaQaC4p48DDroiRxhiTEWs9Eg=Y7D5w@mail.gmail.com>
+Message-ID: <CAAhV-H7eGNof=qjq=U1KaQaC4p48DDroiRxhiTEWs9Eg=Y7D5w@mail.gmail.com>
+Subject: Re: [[PATCH V2 00/10] Added Interrupt controller emulation for
+ loongarch kvm
+To: Xianglai Li <lixianglai@loongson.cn>
+Cc: linux-kernel@vger.kernel.org, Bibo Mao <maobibo@loongson.cn>, kvm@vger.kernel.org, 
+	loongarch@lists.linux.dev, Paolo Bonzini <pbonzini@redhat.com>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rohit,
+Hi, Xianglai,
 
-kernel test robot noticed the following build warnings:
+This series is good as a whole, just some naming issues.
+1, In the current kernel the short name of "Extended I/O Interrupt
+Controller" is eiointc, so please change related prefix from extioi_
+to eiointc.
 
-[auto build test WARNING on wireless-next/main]
-[also build test WARNING on wireless/main linus/master v6.11-rc6 next-20240906]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+And for
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Rohit-Chavan/lib80211-Use-ERR_CAST-to-return/20240906-194721
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
-patch link:    https://lore.kernel.org/r/20240906114455.730559-1-roheetchavan%40gmail.com
-patch subject: [PATCH] lib80211: Use ERR_CAST() to return
-config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20240907/202409071509.vfmUeHx0-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240907/202409071509.vfmUeHx0-lkp@intel.com/reproduce)
+  KVM_DEV_TYPE_LA_IOAPIC,
+  KVM_DEV_TYPE_LA_IPI,
+  KVM_DEV_TYPE_LA_EXTIOI,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409071509.vfmUeHx0-lkp@intel.com/
+Please use
 
-All warnings (new ones prefixed by >>):
+  KVM_DEV_TYPE_LOONGARCH_IPI,
+  KVM_DEV_TYPE_LOONGARCH_EXTIOI,
+  KVM_DEV_TYPE_LOONGARCH_PCHPIC,
 
-   net/wireless/lib80211.c: In function 'lib80211_crypt_null_init':
->> net/wireless/lib80211.c:230:25: warning: passing argument 1 of 'ERR_CAST' makes pointer from integer without a cast [-Wint-conversion]
-     230 |         return ERR_CAST(1);
-         |                         ^
-         |                         |
-         |                         int
-   In file included from include/linux/string.h:10,
-                    from include/linux/bitmap.h:13,
-                    from include/linux/cpumask.h:12,
-                    from include/linux/smp.h:13,
-                    from include/linux/lockdep.h:14,
-                    from include/linux/spinlock.h:63,
-                    from include/linux/mmzone.h:8,
-                    from include/linux/gfp.h:7,
-                    from include/linux/umh.h:4,
-                    from include/linux/kmod.h:9,
-                    from include/linux/module.h:17,
-                    from net/wireless/lib80211.c:19:
-   include/linux/err.h:82:64: note: expected 'const void *' but argument is of type 'int'
-      82 | static inline void * __must_check ERR_CAST(__force const void *ptr)
-         |                                                    ~~~~~~~~~~~~^~~
+instead.
 
+Huacai
 
-vim +/ERR_CAST +230 net/wireless/lib80211.c
-
-   227	
-   228	static void *lib80211_crypt_null_init(int keyidx)
-   229	{
- > 230		return ERR_CAST(1);
-   231	}
-   232	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Fri, Aug 23, 2024 at 5:51=E2=80=AFPM Xianglai Li <lixianglai@loongson.cn=
+> wrote:
+>
+> Before this, the interrupt controller simulation has been completed
+> in the user mode program. In order to reduce the loss caused by frequent
+> switching of the virtual machine monitor from kernel mode to user mode
+> when the guest accesses the interrupt controller, we add the interrupt
+> controller simulation in kvm.
+>
+> The following is a virtual machine simulation diagram of interrupted
+> connections:
+>   +-----+    +---------+     +-------+
+>   | IPI |--> | CPUINTC | <-- | Timer |
+>   +-----+    +---------+     +-------+
+>                  ^
+>                  |
+>            +---------+
+>            | EIOINTC |
+>            +---------+
+>             ^       ^
+>             |       |
+>      +---------+ +---------+
+>      | PCH-PIC | | PCH-MSI |
+>      +---------+ +---------+
+>        ^      ^          ^
+>        |      |          |
+> +--------+ +---------+ +---------+
+> | UARTs  | | Devices | | Devices |
+> +--------+ +---------+ +---------+
+>
+> In this series of patches, we mainly realized the simulation of
+> IPI EXTIOI PCH-PIC interrupt controller.
+>
+> The simulation of IPI EXTIOI PCH-PIC interrupt controller mainly
+> completes the creation simulation of the interrupt controller,
+> the register address space read and write simulation,
+> and the interface with user mode to obtain and set the interrupt
+> controller state for the preservation,
+> recovery and migration of virtual machines.
+>
+> IPI simulation implementation reference:
+> https://github.com/loongson/LoongArch-Documentation/tree/main/docs/Loongs=
+on-3A5000-usermanual-EN/inter-processor-interrupts-and-communication
+>
+> EXTIOI simulation implementation reference:
+> https://github.com/loongson/LoongArch-Documentation/tree/main/docs/Loongs=
+on-3A5000-usermanual-EN/io-interrupts/extended-io-interrupts
+>
+> PCH-PIC simulation implementation reference:
+> https://github.com/loongson/LoongArch-Documentation/blob/main/docs/Loongs=
+on-7A1000-usermanual-EN/interrupt-controller.adoc
+>
+> For PCH-MSI, we used irqfd mechanism to send the interrupt signal
+> generated by user state to kernel state and then to EXTIOI without
+> maintaining PCH-MSI state in kernel state.
+>
+> You can easily get the code from the link below:
+> the kernel:
+> https://github.com/lixianglai/linux
+> the branch is: interrupt
+>
+> the qemu:
+> https://github.com/lixianglai/qemu
+> the branch is: interrupt
+>
+> Please note that the code above is regularly updated based on community
+> reviews.
+>
+> change log:
+> V1->V2:
+> 1.Remove redundant blank lines according to community comments
+> 2.Remove simplified redundant code
+> 3.Adds 16 bits of read/write interface to the extioi iocsr address space
+> 4.Optimize user - and kernel-mode data access interfaces: Access
+> fixed length data each time to prevent memory overruns
+> 5.Added virtual extioi, where interrupts can be routed to cpus other than=
+ cpu 4
+>
+> Cc: Bibo Mao <maobibo@loongson.cn>
+> Cc: Huacai Chen <chenhuacai@kernel.org>
+> Cc: kvm@vger.kernel.org
+> Cc: loongarch@lists.linux.dev
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Tianrui Zhao <zhaotianrui@loongson.cn>
+> Cc: WANG Xuerui <kernel@xen0n.name>
+> Cc: Xianglai li <lixianglai@loongson.cn>
+>
+> Xianglai Li (10):
+>   LoongArch: KVM: Add iocsr and mmio bus simulation in kernel
+>   LoongArch: KVM: Add IPI device support
+>   LoongArch: KVM: Add IPI read and write function
+>   LoongArch: KVM: Add IPI user mode read and write function
+>   LoongArch: KVM: Add EXTIOI device support
+>   LoongArch: KVM: Add EXTIOI read and write functions
+>   LoongArch: KVM: Add PCHPIC device support
+>   LoongArch: KVM: Add PCHPIC read and write functions
+>   LoongArch: KVM: Add PCHPIC user mode read and write functions
+>   LoongArch: KVM: Add irqfd support
+>
+>  arch/loongarch/include/asm/kvm_extioi.h  |  122 +++
+>  arch/loongarch/include/asm/kvm_host.h    |   30 +
+>  arch/loongarch/include/asm/kvm_ipi.h     |   52 ++
+>  arch/loongarch/include/asm/kvm_pch_pic.h |   61 ++
+>  arch/loongarch/include/uapi/asm/kvm.h    |   19 +
+>  arch/loongarch/kvm/Kconfig               |    3 +
+>  arch/loongarch/kvm/Makefile              |    4 +
+>  arch/loongarch/kvm/exit.c                |   86 +-
+>  arch/loongarch/kvm/intc/extioi.c         | 1056 ++++++++++++++++++++++
+>  arch/loongarch/kvm/intc/ipi.c            |  510 +++++++++++
+>  arch/loongarch/kvm/intc/pch_pic.c        |  521 +++++++++++
+>  arch/loongarch/kvm/irqfd.c               |   87 ++
+>  arch/loongarch/kvm/main.c                |   18 +-
+>  arch/loongarch/kvm/vcpu.c                |    3 +
+>  arch/loongarch/kvm/vm.c                  |   53 +-
+>  include/linux/kvm_host.h                 |    1 +
+>  include/trace/events/kvm.h               |   35 +
+>  include/uapi/linux/kvm.h                 |    8 +
+>  18 files changed, 2641 insertions(+), 28 deletions(-)
+>  create mode 100644 arch/loongarch/include/asm/kvm_extioi.h
+>  create mode 100644 arch/loongarch/include/asm/kvm_ipi.h
+>  create mode 100644 arch/loongarch/include/asm/kvm_pch_pic.h
+>  create mode 100644 arch/loongarch/kvm/intc/extioi.c
+>  create mode 100644 arch/loongarch/kvm/intc/ipi.c
+>  create mode 100644 arch/loongarch/kvm/intc/pch_pic.c
+>  create mode 100644 arch/loongarch/kvm/irqfd.c
+>
+>
+> base-commit: 872cf28b8df9c5c3a1e71a88ee750df7c2513971
+> --
+> 2.39.1
+>
 
