@@ -1,170 +1,181 @@
-Return-Path: <linux-kernel+bounces-319603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96F796FF18
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 04:03:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060E796FF1D
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 04:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D5411C2234C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 02:03:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23ED81C221BF
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 02:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB403E571;
-	Sat,  7 Sep 2024 02:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F84512B8B;
+	Sat,  7 Sep 2024 02:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAxWe/8d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cdddIEfl"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2A7B657;
-	Sat,  7 Sep 2024 02:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D0EA93D;
+	Sat,  7 Sep 2024 02:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725674602; cv=none; b=X02xsJovuOOGpEE9IQxrkdYVlzdgaYgDpbxIdXjBzeEOydiDs/wHbJ5BohRWAr0roLCFrhzTPeqngtg6TMgSNcFuk5ubCLZCfMHVyTSmtM9VII/DUYf5TbkrvbrcRdaGwlRKJIWoCdCBTplt1J4mQ+nyVXw9c0Dp1hV9SuqnYu8=
+	t=1725674752; cv=none; b=ZuBYSE9MkG6TaG/v5kA1JSHVuFfgHBbVGrscSic3wuafAawstAi2XLuUiNgKfQMPKZE0yq/gbiY4Lnhy76Y3IvbVH+gSsSN/iWsbnnyDke9nMYY5clxX8UxCdVFgwf8wdypYBlChINqSQn0GQYgCyduWgjQ4zjJnVcUKnP3hPko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725674602; c=relaxed/simple;
-	bh=Hk2EGGq16biP+yZ6h5NqQ8pAy8Q8Ykm6aDAv3pg9IJk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AES15n36gESY5PeC67RZaav1vc2w6PF3EjgB/ECKaD0izLuK5zyEjqpqwO4WadqUa/YRLR6zkGr8Lt/l1XJKL5at0m9HEr7hxM6w2aZ6X6qKxUyyrdnSNclDHIEfNtXTcKBWdW4D20atDu+0VoCkiqZ/dmfb4NgofCpxNGnH29o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nAxWe/8d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEEADC4CEC4;
-	Sat,  7 Sep 2024 02:03:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725674601;
-	bh=Hk2EGGq16biP+yZ6h5NqQ8pAy8Q8Ykm6aDAv3pg9IJk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nAxWe/8dHLm+bK07w0Epp9UactfmLja0tdwMKT50yr9E+qO7E9DTZbubkQaA7uE/B
-	 FteRqRYMLpSTMFawo87QAwE2LF5rAftB5JwqFoFW5eAQ7G4qPvHU7Kp8dhWPmSLRd/
-	 whldqxX+Tjp2V2g8BNB8uhPOqn3ZVprKNth66c3XCPELBPFVvz+vVJRfkBGPDJV+du
-	 K3zvqflpTcCigSNNPM1RJnNLvmdt2zQw6RMOtjrbY+mpNBzs7Aa0aN3ZTQtJ473ziq
-	 YUnYONylEx97VeS7TE3YGrmY2EfCRcFB8PXpM586Y4iw7c6V4WJ9TJT2FNXXdXKUAF
-	 me4FbE4pCP8hQ==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5365c060f47so976466e87.2;
-        Fri, 06 Sep 2024 19:03:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUTP8MZduEzg0kxKqoQH6JOzNca7JiCglX4BLXUqGIG3VOfuhSeP4B9ny0pbCMuV+Fj50IISeEuYxpX04M=@vger.kernel.org, AJvYcCVlZss7ruWWMS9OO+73xPLD4WdMJysQ3/ahgaTQyeRzZKiGWdlwx6ro7GgjPO2TG01p8XuY68jazoWQzZ5j@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuIeAE3EkTTTP39+6/C9ORp9URzIS6iOmfLKj6tZ3c9b1iv34L
-	Ib6GdHVx5tat+68Vwx2M4UjBRZxtmFb9X7fXCU1h0P0bTRESl1JOlpAuDFWcCDLHBcRMVhgOVkK
-	mb+hmnFBTdXjXeHwZSKyOruw2M6Q=
-X-Google-Smtp-Source: AGHT+IGuW9A/+Mtv/et+IIFraZ2DG+shMdS0pUGTfWcBsB/5fUVm3PT1A1YXsSaGWAIXYnScJY+vWY89qU1Dhl41VkI=
-X-Received: by 2002:a05:6512:39cb:b0:536:545f:3893 with SMTP id
- 2adb3069b0e04-5365880bd20mr2713458e87.57.1725674600516; Fri, 06 Sep 2024
- 19:03:20 -0700 (PDT)
+	s=arc-20240116; t=1725674752; c=relaxed/simple;
+	bh=rIIJ66Btf0/S4uXzK+bKHvP4AW8rj0OAUyQFtmKPrGQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=rPiKpbuAcgh8CP7oqLCUIS1H/snDDpZzqaVutxlV7x0Tkl9xujmuFc2V3/EWpqCqUHvY7vWdXypv7k76eNz5RASAoOues9H4/NLi1ZyXSCFartI2uaawtKnDkfHi96p+mXxIe+0TzYwdMupAeOiN2bACEFBkYk4wrdxyVNYvJkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cdddIEfl; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-456855afe0fso14381031cf.3;
+        Fri, 06 Sep 2024 19:05:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725674750; x=1726279550; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yNuRf41PkhMk6rEC1d89BfhoreluVxX6rNBvM1mU4Ls=;
+        b=cdddIEflPBunilMaXnznTTDWRy1ra5uotOkbQqplDylY3b6m7RtD528lz7H61vxuFM
+         Xt6rSUeOsV8kU1GMcZfmZ62NiuaIPvQH4rvTkdDvfTnhU0PULUgguksSOEK9UXkUmlXV
+         R/wm23C5Fcps5UFY9xCbpIW5UZt30i++sNtzNyXXCVnf611NbMwVh2PUv7yzFpdGvUKe
+         xSCfHA8G6JCc8aUdb1rMWo1DaXR2AVrcNs+ogJhqXQQpaJxCmiyr8OVirZDJggfTfdn4
+         ycH6rip1CpueboxxFfqIbRlmUTSLzUX+cV9ESDlH3u109G68TKKo036L62yoPXrMCFxI
+         PSsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725674750; x=1726279550;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yNuRf41PkhMk6rEC1d89BfhoreluVxX6rNBvM1mU4Ls=;
+        b=bDdAUo55VxCyXdKSq/V9fUqTKeu3MBZSJr5XWFUtN3grgFmC2z/2Y0sq55hvzcEK0E
+         uzh+opl8JAHkXFLSdm45mreVNb7f/wCSOhYPiSzFImzA26rFqBq0+EOtxB3jRaMLJwHP
+         QDMeg2mPeSX48zgXazhrlum2YYUfzZ/77rHbjd3bJvyHGZbLO8y67hurJP2TPP+k9385
+         g1ypwTrAKEIoO5YzD6YYo/ywR9AP0iOIJEV6m9w0GKdx7AT88Z+8nY6A7prpLA69+Ah7
+         8Xoe2a0T4dc5NiS4sddotbrIQNJh3PGU0wLo5AaSLZSOgvmGPm8/OrcD7jc37o30gu9U
+         /puQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJnJ1+fDbPs/25Cer3Z6LzqN7/quV29brgW+4Hq9Ok4+X/e7l/QJHMI9v1VfjStYiIvBS8Q84m@vger.kernel.org, AJvYcCVrLsh9O+OzBOhX5KMnSHvpmvc+aHmOW3gTJCvy4BrVhCxeXLRCF2zLVCyP4E3jYrFNv5sRBKrEqhQOL+k=@vger.kernel.org, AJvYcCWRyY2Ctwni69IVz7rc1vXaDiYjn7K01RMGFkEXKwiYyF8+91MDcVo/oDeaclRdu+2jqj0u4jsNlPrhJCwfGoLQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJN2MZ83JUrWtjfiRLOd1lKL3Ffbrf8TnUiHBeYOVs+QD+XKSx
+	+JC7SqYN0Fm4OrjAnSwNuu2rZm/HufSEZyW/bFIQH7gBLSN2cgLP
+X-Google-Smtp-Source: AGHT+IEThUx4A+kGc9bMpBczdqdcL8d6Wub3sWEOK/0CwwXfKU1W+aGPinin4wUQe/0o5b+y/ucngw==
+X-Received: by 2002:ac8:5803:0:b0:456:811c:4ecd with SMTP id d75a77b69052e-4580c675320mr47866681cf.4.1725674749609;
+        Fri, 06 Sep 2024 19:05:49 -0700 (PDT)
+Received: from localhost (193.132.150.34.bc.googleusercontent.com. [34.150.132.193])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822e87ec5sm795431cf.37.2024.09.06.19.05.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 19:05:49 -0700 (PDT)
+Date: Fri, 06 Sep 2024 22:05:48 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Sean Anderson <sean.anderson@linux.dev>, 
+ "David S . Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ netdev@vger.kernel.org
+Cc: Willem de Bruijn <willemb@google.com>, 
+ linux-kernel@vger.kernel.org, 
+ Shuah Khan <shuah@kernel.org>, 
+ linux-kselftest@vger.kernel.org, 
+ Sean Anderson <sean.anderson@linux.dev>
+Message-ID: <66dbb4fcbf560_2af86229423@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20240906210743.627413-1-sean.anderson@linux.dev>
+References: <20240906210743.627413-1-sean.anderson@linux.dev>
+Subject: Re: [PATCH net] selftests: net: csum: Fix checksums for packets with
+ non-zero padding
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <3132727fea08e81e834104761b5a5630d337340a.1725636560.git.sam@gentoo.org>
-In-Reply-To: <3132727fea08e81e834104761b5a5630d337340a.1725636560.git.sam@gentoo.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 7 Sep 2024 11:02:44 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATeuwaO8AvAqmz_4hyb5vjFnL-jhxbXv6_KoCTZbsS86A@mail.gmail.com>
-Message-ID: <CAK7LNATeuwaO8AvAqmz_4hyb5vjFnL-jhxbXv6_KoCTZbsS86A@mail.gmail.com>
-Subject: Re: [PATCH] fixdep: handle short reads in read_file
-To: Sam James <sam@gentoo.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000901d2f06217dedc3"
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
---000000000000901d2f06217dedc3
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Sean Anderson wrote:
+> Padding is not included in UDP and TCP checksums. Therefore, reduce the
+> length of the checksummed data to include only the data in the IP
+> payload. This fixes spurious reported checksum failures like
+> 
+> rx: pkt: sport=33000 len=26 csum=0xc850 verify=0xf9fe
+> pkt: bad csum
 
-On Sat, Sep 7, 2024 at 12:29=E2=80=AFAM Sam James <sam@gentoo.org> wrote:
->
-> 50% or so of kernel builds within our package manager fail for me with
-> 'fixdep: read: success' because read(), for some reason - possibly ptrace=
-,
-> only read a short amount, not the full size.
->
-> Unfortunately, this didn't trigger a -Wunused-result warning because
-> we _are_ checking the return value, but with a bad comparison (it's compl=
-etely
-> fine for read() to not read the whole file in one gulp).
->
-> Fixes: 01b5cbe7012fb1eeffc5c143865569835bcd405e
+Are you using this test as receiver for other input?
 
+The packet builder in the test doesn't generate these, does it?
 
-Fixes: 01b5cbe7012f ("fixdep: use malloc() and read() to load dep_file
-to buffer")
+Just trying to understand if this is a bug fix or a new use for
+csum.c as receiver.
 
+> Technically it is possible for there to be trailing bytes after the UDP
+> data but before the Ethernet padding (e.g. if sizeof(ip) + sizeof(udp) +
+> udp.len < ip.len). However, we don't generate such packets.
 
-I guess, another approach would be to use fread() instead of read().
-
-Does the attached diff fix the issue too?
-
-
-
-
-
-> Signed-off-by: Sam James <sam@gentoo.org>
+More likely is that L3 and L4 length fields agree, as both are
+generated at the sender, but that some trailer is attached in the
+network. Such as a timestamp trailer.
+ 
+> Fixes: 91a7de85600d ("selftests/net: add csum offload test")
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 > ---
->  scripts/basic/fixdep.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
-> index 84b6efa849f4d..04d7742c99ac2 100644
-> --- a/scripts/basic/fixdep.c
-> +++ b/scripts/basic/fixdep.c
-> @@ -233,9 +233,15 @@ static void *read_file(const char *filename)
->                 perror("fixdep: malloc");
->                 exit(2);
->         }
-> -       if (read(fd, buf, st.st_size) !=3D st.st_size) {
-> -               perror("fixdep: read");
-> -               exit(2);
-> +       ssize_t bytes =3D 0;
-> +       while (bytes < st.st_size) {
-> +               ssize_t cur =3D read(fd, buf + bytes, st.st_size - bytes)=
-;
-> +               if (cur =3D=3D -1) {
-> +                       perror("fixdep: read");
-> +                       exit(2);
-> +               } else {
-> +                       bytes +=3D cur;
-> +               }
->         }
->         buf[st.st_size] =3D '\0';
->         close(fd);
-> --
-> 2.46.0
->
+> Found while testing for this very bug in hardware checksum offloads.
+> 
+>  tools/testing/selftests/net/lib/csum.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/net/lib/csum.c b/tools/testing/selftests/net/lib/csum.c
+> index b9f3fc3c3426..e0a34e5e8dd5 100644
+> --- a/tools/testing/selftests/net/lib/csum.c
+> +++ b/tools/testing/selftests/net/lib/csum.c
+> @@ -654,10 +654,16 @@ static int recv_verify_packet_ipv4(void *nh, int len)
+>  {
+>  	struct iphdr *iph = nh;
+>  	uint16_t proto = cfg_encap ? IPPROTO_UDP : cfg_proto;
+> +	uint16_t ip_len;
+>  
+>  	if (len < sizeof(*iph) || iph->protocol != proto)
+>  		return -1;
+>  
+> +	ip_len = ntohs(iph->tot_len);
+> +	if (ip_len > len || ip_len < sizeof(*iph))
+> +		return -1;
+> +
+> +	len = ip_len;
+>  	iph_addr_p = &iph->saddr;
+>  	if (proto == IPPROTO_TCP)
+>  		return recv_verify_packet_tcp(iph + 1, len - sizeof(*iph));
+> @@ -669,16 +675,22 @@ static int recv_verify_packet_ipv6(void *nh, int len)
+>  {
+>  	struct ipv6hdr *ip6h = nh;
+>  	uint16_t proto = cfg_encap ? IPPROTO_UDP : cfg_proto;
+> +	uint16_t ip_len;
+
+nit: payload_len, as it never includes sizeof ipv6hdr
+
+>  	if (len < sizeof(*ip6h) || ip6h->nexthdr != proto)
+>  		return -1;
+>  
+> +	ip_len = ntohs(ip6h->payload_len);
+> +	if (ip_len > len - sizeof(*ip6h))
+> +		return -1;
+> +
+> +	len = ip_len;
+>  	iph_addr_p = &ip6h->saddr;
+>  
+>  	if (proto == IPPROTO_TCP)
+> -		return recv_verify_packet_tcp(ip6h + 1, len - sizeof(*ip6h));
+> +		return recv_verify_packet_tcp(ip6h + 1, len);
+>  	else
+> -		return recv_verify_packet_udp(ip6h + 1, len - sizeof(*ip6h));
+> +		return recv_verify_packet_udp(ip6h + 1, len);
+>  }
+>  
+>  /* return whether auxdata includes TP_STATUS_CSUM_VALID */
+> -- 
+> 2.35.1.1320.gc452695387.dirty
+> 
 
 
---=20
-Best Regards
-Masahiro Yamada
-
---000000000000901d2f06217dedc3
-Content-Type: text/x-patch; charset="US-ASCII"; name="use_fread.diff"
-Content-Disposition: attachment; filename="use_fread.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m0ri19gq0>
-X-Attachment-Id: f_m0ri19gq0
-
-ZGlmZiAtLWdpdCBhL3NjcmlwdHMvYmFzaWMvZml4ZGVwLmMgYi9zY3JpcHRzL2Jhc2ljL2ZpeGRl
-cC5jCmluZGV4IGNkZDVkYTdlMDA5Yi4uN2EwY2E5ZjBmYmJlIDEwMDY0NAotLS0gYS9zY3JpcHRz
-L2Jhc2ljL2ZpeGRlcC5jCisrKyBiL3NjcmlwdHMvYmFzaWMvZml4ZGVwLmMKQEAgLTg5LDEwICs4
-OSw3IEBACiAgKiAgYnV0IEkgZG9uJ3QgdGhpbmsgdGhlIGFkZGVkIGNvbXBsZXhpdHkgaXMgd29y
-dGggaXQpCiAgKi8KIAotI2luY2x1ZGUgPHN5cy90eXBlcy5oPgogI2luY2x1ZGUgPHN5cy9zdGF0
-Lmg+Ci0jaW5jbHVkZSA8dW5pc3RkLmg+Ci0jaW5jbHVkZSA8ZmNudGwuaD4KICNpbmNsdWRlIDxz
-dHJpbmcuaD4KICNpbmNsdWRlIDxzdGRib29sLmg+CiAjaW5jbHVkZSA8c3RkbGliLmg+CkBAIC0y
-MTMsMjcgKzIxMCwyOCBAQCBzdGF0aWMgdm9pZCBwYXJzZV9jb25maWdfZmlsZShjb25zdCBjaGFy
-ICpwKQogc3RhdGljIHZvaWQgKnJlYWRfZmlsZShjb25zdCBjaGFyICpmaWxlbmFtZSkKIHsKIAlz
-dHJ1Y3Qgc3RhdCBzdDsKLQlpbnQgZmQ7CisJRklMRSAqZmlsZTsKIAljaGFyICpidWY7CiAKLQlm
-ZCA9IG9wZW4oZmlsZW5hbWUsIE9fUkRPTkxZKTsKLQlpZiAoZmQgPCAwKSB7CisJZmlsZSA9IGZv
-cGVuKGZpbGVuYW1lLCAicmIiKTsKKwlpZiAoIWZpbGUpIHsKIAkJZnByaW50ZihzdGRlcnIsICJm
-aXhkZXA6IGVycm9yIG9wZW5pbmcgZmlsZTogIik7CiAJCXBlcnJvcihmaWxlbmFtZSk7CiAJCWV4
-aXQoMik7CiAJfQotCWlmIChmc3RhdChmZCwgJnN0KSA8IDApIHsKLQkJZnByaW50ZihzdGRlcnIs
-ICJmaXhkZXA6IGVycm9yIGZzdGF0J2luZyBmaWxlOiAiKTsKKwlpZiAoc3RhdChmaWxlbmFtZSwg
-JnN0KSA8IDApIHsKKwkJZnByaW50ZihzdGRlcnIsICJmaXhkZXA6IGVycm9yIHN0YXQnaW5nIGZp
-bGU6ICIpOwogCQlwZXJyb3IoZmlsZW5hbWUpOwogCQlleGl0KDIpOwogCX0KKwogCWJ1ZiA9IHht
-YWxsb2Moc3Quc3Rfc2l6ZSArIDEpOwotCWlmIChyZWFkKGZkLCBidWYsIHN0LnN0X3NpemUpICE9
-IHN0LnN0X3NpemUpIHsKKwlpZiAoZnJlYWQoYnVmLCAxLCBzdC5zdF9zaXplLCBmaWxlKSAhPSBz
-dC5zdF9zaXplKSB7CiAJCXBlcnJvcigiZml4ZGVwOiByZWFkIik7CiAJCWV4aXQoMik7CiAJfQog
-CWJ1ZltzdC5zdF9zaXplXSA9ICdcMCc7Ci0JY2xvc2UoZmQpOworCWZjbG9zZShmaWxlKTsKIAog
-CXJldHVybiBidWY7CiB9Cg==
---000000000000901d2f06217dedc3--
 
