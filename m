@@ -1,288 +1,229 @@
-Return-Path: <linux-kernel+bounces-319672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062D797005E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:50:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3C9970064
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D4D11F2374B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 06:50:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D53AE28582C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 06:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67085146D65;
-	Sat,  7 Sep 2024 06:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E703F1494DE;
+	Sat,  7 Sep 2024 06:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F8Vws0Mm"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MArLBWK3"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CB21B85DC
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 06:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83DF1B85DC
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 06:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725691813; cv=none; b=kwJIjyJ/Jzfxh3zvZaAW6kV/QaQA3K1Je8IWn/GRyKRt+IzeVrWx9JU9HYRrhPVYgrhwb6UzXkFo9Dwnb0+HUBkKIN64qo9lguFlEqlCnMo+ULkjfO77UFRJk4cmsq50wxA70SzLExSUXHIEIHoa95MJqxYIVM5uRc+LGJYA+C0=
+	t=1725691855; cv=none; b=UQNNpMdPEjmvXrB9EKRqLaejer6t3R40L4GOkXBOcfxYA84uozFggckzsfSQwjZ+kupiHXRMNdp1E1k2hJUeMr7Ydce5KUR+ZF9g2VxcpbOITg5hp6D0vrQRUps3I7knu90lIljEqocLB6cHoThjoQn+xwHdctEU41KhL2B8Gds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725691813; c=relaxed/simple;
-	bh=i2uOkNX6iQ7HEu64eFtb0mO0J4C/lWGw0S+Es9lDS3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R8U66B1IZILfY1QJGhaIx5NTOEQ++2jtSALNH7qkWADho84KLvHEtkymDw7xnWxJcqsQwUzNW80kX1kurHvBmGKIX0OEJu8roojVicEVxIaK4M9uBW7nIO1o34QyK5PgReJ6d0PKIhjevs5pOkN8/Xgsvrz2swtuuz/AAllDoWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F8Vws0Mm; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6bf9db9740aso18643126d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 23:50:11 -0700 (PDT)
+	s=arc-20240116; t=1725691855; c=relaxed/simple;
+	bh=leWSQje+ukEc8agXDt91UFlYTYx+/7CTkDdZc0d+tPU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mLa7JjYzUFDBM975N5/iWg1WnXX9ow22ENDURWuxFevGw0hT4tfiuIyrFlgekvpLd8b5sqa/+ektTHaJkm87JqEF58Bb3wB2sWf1rcoCTV/RVFV3nazpTl8/pdQiH79bQNjGswC4hMHDN2vN+nWLdTCWafVkCVVCf878xIcR2nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MArLBWK3; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53653ff0251so3065347e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 23:50:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725691811; x=1726296611; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=icmroFp+NE+ls/1yeuZYEXpbFcCK1qvQeDALpedMFVk=;
-        b=F8Vws0MmrOb/K7T0tiNZVsMLGXyDCm+egBfUtWCAVGA3YX5ns3KWsOcO3tTo80f2ue
-         JjozAQzCY/QXkp/Sj+4Rf6bM/d/z2QI8Jn3xu27aYIMK9O3oDEyXZAnTwa+xq/TnxcHj
-         VKkdqGKvUgO/mGYyLf/hOcXTSQUKOIeAuxzVwYMFMljgxeeY9MSl6LVQSR2jA3SZkzR+
-         4zVCXrfQy/v1AM990VOayM/yIIT/2feBvD8cqmbKCNMbmWtuN2Oo1i8dRb0fhQt++JRw
-         wtimovi2xnDssSMR6MPNZCYiZtft2uniB6LLVq13OV92ShI0LuemRunzOIUcN4E7N/Nu
-         pYuA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725691849; x=1726296649; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+JqF7PWi3iax7JPq5MD9TNOmdUBUg/2y2TKvAmNZk64=;
+        b=MArLBWK31xi+jHODwAmflN4qWltATI6c6Efn93n0U7+2AfQWB8fuTYXx1EBexF8dYD
+         ECdLh5YfPKYHW/lW1lM5Gs5uJ6g6Z0ri2Thu0lqjlgG6LCmVZbi//P8Q54f+NuJioVlp
+         PiSQICvF3zaGJyfCP64uYqekmlySc/KXZwsHEkNn4caEWb1fVU2zJ3HuLkv9jkJhrahI
+         1ED2hg9+Nug/wk/4J/6gjSz/J92oJAeCr6cmTYd9G9h8nO3AJ+I15XlqMlcQNClSDP+h
+         LD61u57UPlvA/xoxkR4d/mQ4WVIlMWLJTWy2hLSSro5mHZOgflb+W3+zudwo4OVe3aeW
+         adzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725691811; x=1726296611;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1725691849; x=1726296649;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=icmroFp+NE+ls/1yeuZYEXpbFcCK1qvQeDALpedMFVk=;
-        b=bqmN522mL8AXTC+OEdt/ou6T5JGDOt+PF6G0uZs+kE5p11lKkJjixZv8DtYZSJsAH9
-         +WvfVCW7tvgpBwKslTN1k7xneYLtb4ZFyt2cLlNnFRo82KzuQsr3YQDdDPIjmvE6IjNH
-         IWov3NWGQkG614RgiMuWAzUjqf8mWkvlRdFs3il47MHGDfQlxmdcATk7Xe1llderbFq/
-         4mgbKxK0aoFoKrGR1ldaYypAgRKk+OOCss5LTcskERVSXYo9csubaTT0AGo2TnLNYrbW
-         T4YafX+Pu+oumhcqcYKoYpZhFI3y6diLjapDQXjhsSp0Xps9HsWmzGT4LUWtNpQYAA9y
-         buBA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+HGAO4HczrcqRq6cKNd3UtfbcrHgQI7cX95q+OrfKW5lNA9fiDSxDTYMvatL5ISG/uAWQROWyecytJKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxRJUHbaMbOoOvK9CA98F6YEHnnv1CS0rfMSSKsnmyObqtrZC+
-	M6tQcssPLVVhJ6ayMDMERmwp7rykr1+6B8M7FB/1yUeWJY5jYL4GnjaN6Mu/XQ9yiFokqrvEUxd
-	n3u4/GAUEP0qIdAkMAmpkvkam8DEjhfEB+RSD
-X-Google-Smtp-Source: AGHT+IE+5p1I5J4NATlIOgXPM/KvOXZH1P/WhtcoRor4Pe4Cw+LefNUF2lgjTWAOyt8VAkdi9j5fnQkMwNfme1BkRec=
-X-Received: by 2002:a05:6214:2c0d:b0:6b7:aed3:408f with SMTP id
- 6a1803df08f44-6c5283faf36mr67219076d6.13.1725691810413; Fri, 06 Sep 2024
- 23:50:10 -0700 (PDT)
+        bh=+JqF7PWi3iax7JPq5MD9TNOmdUBUg/2y2TKvAmNZk64=;
+        b=En0dF9p+YxJzat8SakiCGG8Ldp8MQaQTIta2Imf2Ne/SCvcm8lMmKw7o0WU+7Ue2n/
+         6mHDvH8A/WSaLgAqTiqshagEMZ705qWLKVxcZmS7wMXV0EHM2wGmh+GGGKHWfBnL2ALT
+         cFkUDuKunsRHucmQyDFAnNhj84WNRvLfxkLmxGJhRzHAnuAT/BlZGSy5d0V5AJSm/MSU
+         8vQluZnVeHDTpG7NX2CAzClMOnmzTx+Nci08b9sj9hMJythCis/VUPIBC2ndYbPLPbwF
+         5AoLHZ1mb3Lp6xeVrwMtnfRiytRcWsaAdIvricSaZF1i7cMCEgj+R9E8BNhRnJFosKk8
+         XniA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3K6QzbL09AA4mTo498MKwPvQEhg+0u32IXeIRRMWBcXjgDipaB899ax/Sp46vZwxXcpmvKbopxYXYMlQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpSYw3TnArXppolkGe+ANAVg2L7vSCDVmkL46ZeowuCp6JOKry
+	xWLrwvd8AP+EnkTK4o/2bcj+D0A0z5jbXoCelS2TR4GI8Hi8xHAuZy9aEpb34er/c8AHjfa9DfT
+	tcvI=
+X-Google-Smtp-Source: AGHT+IGaZymJr/vP+UZobOPpVdjUAMoict+okKsDPTRXN5mqf7+99tIgikuVmr+VFtqEKMj2jmBtdQ==
+X-Received: by 2002:a05:6512:1191:b0:536:5515:e9bc with SMTP id 2adb3069b0e04-536587fc7a7mr2720792e87.46.1725691847823;
+        Fri, 06 Sep 2024 23:50:47 -0700 (PDT)
+Received: from localhost.localdomain ([188.27.130.242])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25835a76sm36539266b.39.2024.09.06.23.50.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 23:50:47 -0700 (PDT)
+From: Alexandru Ardelean <aardelean@baylibre.com>
+To: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: jic23@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	lars@metafoo.de,
+	michael.hennerich@analog.com,
+	gstols@baylibre.com,
+	Alexandru Ardelean <aardelean@baylibre.com>
+Subject: [PATCH v5 0/9] iio: adc: ad7606: add support for AD7606C-{16,18} parts
+Date: Sat,  7 Sep 2024 09:50:33 +0300
+Message-ID: <20240907065043.771364-1-aardelean@baylibre.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904134152.2141-1-thunder.leizhen@huawei.com> <20240904134152.2141-3-thunder.leizhen@huawei.com>
-In-Reply-To: <20240904134152.2141-3-thunder.leizhen@huawei.com>
-From: David Gow <davidgow@google.com>
-Date: Sat, 7 Sep 2024 14:49:58 +0800
-Message-ID: <CABVgOSm6taiZpoeTz3Rry-ZU3bY-vS7FtCH98-O+pHMn9jcgzQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] list: test: Add a test for hlist_cut_number()
-To: Zhen Lei <thunder.leizhen@huawei.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="00000000000064c668062181efa8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---00000000000064c668062181efa8
-Content-Type: text/plain; charset="UTF-8"
+The AD7606C-16 and AD7606C-18 are pretty similar with the AD7606B.
+The main difference between AD7606C-16 & AD7606C-18 is the precision in
+bits (16 vs 18).
+Because of that, some scales need to be defined for the 18-bit variants, as
+they need to be computed against 2**18 (vs 2**16 for the 16 bit-variants).
 
-On Wed, 4 Sept 2024 at 21:43, 'Zhen Lei' via KUnit Development
-<kunit-dev@googlegroups.com> wrote:
->
-> Test cases cover all possible situations:
-> 1. The cut number is invalid: zero or negative
-> 2. Partially cut.
-> 3. Cut all.
-> 4. The cut number is greater than the number of nodes in the old list.
-> 5. The old list is empty.
->
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> ---
+Because the AD7606C-16,18 also supports bipolar & differential channels,
+for SW-mode, the default range of 10 V or ±10V should be set at probe.
+On reset, the default range (in the registers) is set to value 0x3 which
+corresponds to '±10 V single-ended range', regardless of bipolar or
+differential configuration.
 
-Thanks very much for the detailed test. It's great to see these kept up-to-date!
+Aside from the scale/ranges, the AD7606C-16 is similar to the AD7606B.
 
-Reviewed-by: David Gow <davidgow@google.com>
+This changeset, does a bit of rework to the existing ad7606 driver and then
+adds support for the AD7606C-16 & AD7606C-18 parts.
 
-Cheers,
--- David
+Datasheet links:
+  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7606c-16.pdf
+  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7606c-18.pdf
 
->  lib/list-test.c | 51 +++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
->
-> diff --git a/lib/list-test.c b/lib/list-test.c
-> index 37cbc33e9fdb380..3c60a6458545452 100644
-> --- a/lib/list-test.c
-> +++ b/lib/list-test.c
-> @@ -1172,6 +1172,56 @@ static void hlist_test_for_each_entry_safe(struct kunit *test)
->         KUNIT_EXPECT_TRUE(test, hlist_empty(&list));
->  }
->
-> +static void hlist_test_cut_number(struct kunit *test)
-> +{
-> +       struct hlist_node a[4], *last;
-> +       HLIST_HEAD(old);
-> +       HLIST_HEAD(new);
-> +       int cnt;
-> +
-> +       hlist_add_head(&a[3], &old);
-> +       hlist_add_head(&a[2], &old);
-> +       hlist_add_head(&a[1], &old);
-> +       hlist_add_head(&a[0], &old);
-> +
-> +       /* The cut number is less than 0 or zero */
-> +       cnt = hlist_cut_number(&new, &old, -1, &last);
-> +       KUNIT_EXPECT_EQ(test, cnt, 0);
-> +       KUNIT_EXPECT_EQ(test, hlist_count_nodes(&old), 4);
-> +       cnt = hlist_cut_number(&new, &old, 0, &last);
-> +       KUNIT_EXPECT_EQ(test, cnt, 0);
-> +       KUNIT_EXPECT_EQ(test, hlist_count_nodes(&old), 4);
-> +
-> +       /* The cut number is less than the number of nodes in the old list. */
-> +       cnt = hlist_cut_number(&new, &old, 2, &last);
-> +       KUNIT_EXPECT_EQ(test, cnt, 2);
-> +       KUNIT_EXPECT_EQ(test, hlist_count_nodes(&old), 2);
-> +       KUNIT_EXPECT_EQ(test, hlist_count_nodes(&new), 2);
-> +       KUNIT_EXPECT_PTR_EQ(test, last, &a[1]);
-> +       hlist_splice_init(&new, last, &old);
-> +
-> +       /* The cut number is equal to the number of nodes in the old list. */
-> +       cnt = hlist_cut_number(&new, &old, 4, &last);
-> +       KUNIT_EXPECT_EQ(test, cnt, 4);
-> +       KUNIT_EXPECT_TRUE(test, hlist_empty(&old));
-> +       KUNIT_EXPECT_EQ(test, hlist_count_nodes(&new), 4);
-> +       KUNIT_EXPECT_PTR_EQ(test, last, &a[3]);
-> +       hlist_splice_init(&new, last, &old);
-> +
-> +       /* The cut number is greater than the number of nodes in the old list. */
-> +       cnt = hlist_cut_number(&new, &old, 5, &last);
-> +       KUNIT_EXPECT_EQ(test, cnt, 4);
-> +       KUNIT_EXPECT_TRUE(test, hlist_empty(&old));
-> +       KUNIT_EXPECT_EQ(test, hlist_count_nodes(&new), 4);
-> +       KUNIT_EXPECT_PTR_EQ(test, last, &a[3]);
-> +
-> +       /* The old list is empty. */
-> +       cnt = hlist_cut_number(&new, &old, 1, &last);
-> +       KUNIT_EXPECT_EQ(test, cnt, 0);
-> +       KUNIT_EXPECT_TRUE(test, hlist_empty(&old));
-> +       KUNIT_EXPECT_TRUE(test, hlist_empty(&new));
-> +}
-> +
->
->  static struct kunit_case hlist_test_cases[] = {
->         KUNIT_CASE(hlist_test_init),
-> @@ -1192,6 +1242,7 @@ static struct kunit_case hlist_test_cases[] = {
->         KUNIT_CASE(hlist_test_for_each_entry_continue),
->         KUNIT_CASE(hlist_test_for_each_entry_from),
->         KUNIT_CASE(hlist_test_for_each_entry_safe),
-> +       KUNIT_CASE(hlist_test_cut_number),
->         {},
->  };
->
-> --
-> 2.34.1
->
-> --
-> You received this message because you are subscribed to the Google Groups "KUnit Development" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kunit-dev+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kunit-dev/20240904134152.2141-3-thunder.leizhen%40huawei.com.
+Changelog v4 -> v5:
+  - v4: https://lore.kernel.org/linux-iio/20240905082404.119022-1-aardelean@baylibre.com/
+  - Not all topics from v4 have been fully resolved; but I created a v5 in
+    case it helps to spot other (new) topics
+  - Added patch 'iio: adc: ad7606: remove frstdata check for serial mode'
+    - This is from the 'fixes-togreg' branch
+    - It should be ignored
+    - Should help with a bit of context for this series
+  - For patch 'iio: adc: ad7606: add 'bits' parameter to channels macros'
+    - Added '.storagebits = (bits) > 16 ? 32 : 16'
+    - Reduces the final patch a bit
+      - i.e. 'iio: adc: ad7606: add support for AD7606C-{16,18} parts'
+  - For patch 'iio: adc: ad7606: move 'val' pointer to ad7606_scan_direct() '
+    - Added 'Reviewed-by: David Lechner <dlechner@baylibre.com>'
+  - For patch 'iio: adc: ad7606: rework available attributes for SW channels'
+    - Added '.storagebits = (bits) > 16 ? 32 : 16'
+    - Reduces the final patch a bit
+      - i.e. 'iio: adc: ad7606: add support for AD7606C-{16,18} parts'
+  - For patch 'dt-bindings: iio: adc: add docs for AD7606C-{16,18} parts'
+    - Added '"^channel@[1-8]$": false' if not 'adi,sw-mode'
+    - Added 'Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>'
+    - Given the change, I would need confirmation that the Krzysztof's
+      Reviewed-by tag is still valid
+    - There is still an open topic about using
+      'oneOf:required:{diff-channels,bipolar}' vs 
+      'if:required: [diff-channels]then:required: [bipolar]'
+      - I'm leaning towards 'oneOf:required:{diff-channels,bipolar}'
+      - Let's see what a discussio will yield
+  - For patch 'iio: adc: ad7606: add support for AD7606C-{16,18} parts'
+    - In 'ad7606_spi_read_block18to32()' fixed 
+       '.len = count * sizeof(uint32_t)' in 'struct spi_transfer xfer'
+    - In 'ad7606_read_samples()' changed 'u16 *data = st->data;' to
+      'void *data = st->data.d16;' ; both would compile though ;
+      converting 'data' to 'void *' may show that it's not just 16 bits
+    - In ad7606c_18_chan_setup() & ad7606c_16_chan_setup()
+      - Added explicit 'cs->reg_offset = 0;'
+    - In 'ad7606c_sw_mode_setup_channels()' :
+      - If pins are specified incorrectly, an error is triggered (vs
+        ignoring it before)
+      - Updated comment about why 'st->bops->sw_mode_config()' is called
+        first
 
---00000000000064c668062181efa8
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+Changelog v3 -> v4:
+  - v3: https://lore.kernel.org/linux-iio/20240904072718.1143440-1-aardelean@baylibre.com/
+  - For patch 'dt-bindings: iio: adc: document diff-channels corner case
+    for some ADCs'
+    - Added 'Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>'
+  - Renamed patch 'dt-bindings: iio: adc: add adi,ad7606c-{16,18} compatible strings'
+    to 'dt-bindings: iio: adc: add docs for AD7606C-{16,18} parts'
+    - Updated based on notes from Krzysztof Kozlowski (from v3)
+      - Dropped ()
+      - Re-ordered the patternProperties:oneOf:required specification
+      - Unified match-pattern to '^channel@[1-8]$'
 
-MIIUqgYJKoZIhvcNAQcCoIIUmzCCFJcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
-4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
-mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
-KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
-VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
-ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
-vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
-BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
-OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
-1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
-ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
-BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
-18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
-bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
-AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
-BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
-A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
-MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
-jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
-0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
-jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
-jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
-C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
-NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
-zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
-A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
-hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
-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
-erg7AgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
-/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFKFQnbTpSq0q
-cOYnlrbegXJIIvA6MFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
-BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
-MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
-LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
-bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
-FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBR
-nRJBmUP+IpudtmSQ/R55Sv0qv8TO9zHTlIdsIf2Gc/zeCi0SamUQkFWb01d7Q+20kcpxNzwV6M7y
-hDRk5uuVFvtVxOrmbhflCo0uBpD9vz/symtfJYZLNyvSDi1PIVrwGNpyRrD0W6VQJxzzsBTwsO+S
-XWN3+x70+QDf7+zovW7KF0/y8QYD6PIN7Y9LRUXct0HKhatkHmO3w6MSJatnqSvsjffIwpNecUMo
-h10c6Etz17b7tbGdxdxLw8njN+UnfoFp3v4irrafB6jkArRfsR5TscZUUKej0ihl7mXEKUBmClkP
-ndcbXHFxS6WTkpjvl7Jjja8DdWJSJmdEWUnFjnQnDrqLqvYjeVMS/8IBF57eyT6yEPrMzA+Zd+f5
-hnM7HuBSGvVHv+c/rlHVp0S364DBGXj11obl7nKgL9D59QwC5/kNJ1whoKwsATUSepanzALdOTn3
-BavXUVE38e4c90il44T1bphqtLfmHZ1T5ZwxjtjzNMKy0Mb9j/jcFxfibCISYbnk661FBe38bhYj
-0DhqINx2fw0bwhpfFGADOZDe5DVhI7AIW/kEMHuIgAJ/HPgyn1+tldOPWiFLQbTNNBnfGv9sDPz0
-hWV2vSAXq35i+JS06BCkbGfE5ci6zFy4pt8fmqMGKFH/t3ELCTYo116lqUTDcVC8DAWN8E55aDGC
-AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
-BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAZ6Vqszmp/3gGFW0sCFu
-eDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgJR2gj3fLWjigd2Ws8lFgMoOv3sFA
-sJUvXSj94NNj7uwwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQw
-OTA3MDY1MDExWjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
-YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
-BAIBMA0GCSqGSIb3DQEBAQUABIIBAAK+W1m87K4GFVUPW1gUqhlWL6Yg3+09BAzCbkELMN94yuqM
-BGhJVt3WPj65KG+XB4nSFAleI0Z44rnyveOqI0KwcLz6CYdBdqFjt5NebTXYKoZEtKFYXq+uXxkh
-z39IyI8s9OKFoSK7pPL9IaJWagZz3M4fEC6q22TDgQ60ucpxuRsMChKJTGN49GY5xsQC5/2zbdVH
-znbEKGKooMicmeCUoiEf2bOmEgr2Pj4drjnsA1hPTrCe5fYsO+S+59NclQ43yyOrR+O25Slk2sMr
-2tWcPCUK4GbK3hg0ZoenEHfMzNzHmV8zHyQ7UNG07Z70knqG/cPJIfMsGzQiO684Sp8=
---00000000000064c668062181efa8--
+Changelog v2 -> v3:
+  - v2: https://lore.kernel.org/linux-iio/20240902103638.686039-1-aardelean@baylibre.com/
+  - Applied checkpatch.pl changes
+  - Managed to setup and run 'make dt_binding_check DT_SCHEMA_FILES=adi,ad7606.yaml'
+    - Found the winning combination for this setup
+    - David Lechner also helped
+  - For patch 'iio: adc: ad7606: rework available attributes for SW channels'
+    - Removed an extra space that checkpatch found
+  - For patch 'dt-bindings: iio: adc: document diff-channels corner case
+    for some ADCs'
+    - Removed 'the the' stutter (that I did in writing)
+  - For patch 'dt-bindings: iio: adc: add adi,ad7606c-{16,18} compatible strings'
+    - Updated binding with some description for 'diff-channels' & 'bipolar'
+      properties
+    - Channel definitions are counted from 1 to 8 to match datasheet
+    - Added more bindings rules for 'diff-channels' & 'bipolar' for AD7606C
+      - Adapted some ideas from adi,ad7192.yaml
+  - For patch 'iio: adc: ad7606: add support for AD7606C-{16,18} parts'
+    - Updated 'diff-channels' property with channel numbers (from 1 to 8)
+      handling
+
+Changelog v1 -> v2:
+  - v1: https://lore.kernel.org/linux-iio/20240819064721.91494-1-aardelean@baylibre.com/
+  - Fixed description in 'iio: adc: ad7606: add 'bits' parameter to channels macros'
+  - Added patch 'dt-bindings: iio: adc: document diff-channels corner case
+    for some ADCs'
+    - diff-channels = <reg reg> can be used to define differential channels
+      with dedicated positive + negative pins
+  - Re-worked patch 'dt-bindings: iio: adc: add adi,ad7606c-{16,18} compatible strings'
+    - Using standard 'diff-channels' & 'bipolar' properties from adc.yaml
+  - Re-worked patch 'iio: adc: ad7606: add support for AD7606C-{16,18} parts'
+    - Reading 18-bit samples now relies on SPI controllers being able to
+      pad 18-bits to 32-bits.
+    - Implemented 'diff-channels = <reg reg>' setting
+    - Removed some bad/left-over channel configuration code which I forgot
+      during development and rebasing.
+
+Alexandru Ardelean (8):
+  iio: adc: ad7606: add 'bits' parameter to channels macros
+  iio: adc: ad7606: move 'val' pointer to ad7606_scan_direct()
+  iio: adc: ad7606: split a 'ad7606_sw_mode_setup()' from probe
+  iio: adc: ad7606: wrap channel ranges & scales into struct
+  iio: adc: ad7606: rework available attributes for SW channels
+  dt-bindings: iio: adc: document diff-channels corner case for some
+    ADCs
+  dt-bindings: iio: adc: add docs for AD7606C-{16,18} parts
+  iio: adc: ad7606: add support for AD7606C-{16,18} parts
+
+Guillaume Stols (1):
+  iio: adc: ad7606: remove frstdata check for serial mode
+
+ .../devicetree/bindings/iio/adc/adc.yaml      |   4 +
+ .../bindings/iio/adc/adi,ad7606.yaml          | 117 +++++
+ drivers/iio/adc/ad7606.c                      | 432 ++++++++++++++----
+ drivers/iio/adc/ad7606.h                      |  80 +++-
+ drivers/iio/adc/ad7606_par.c                  |  48 +-
+ drivers/iio/adc/ad7606_spi.c                  |  71 ++-
+ 6 files changed, 633 insertions(+), 119 deletions(-)
+
+-- 
+2.46.0
+
 
