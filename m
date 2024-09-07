@@ -1,91 +1,112 @@
-Return-Path: <linux-kernel+bounces-319610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12EE96FF45
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 04:48:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C74D96FF47
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 04:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64E4B1F23593
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 02:48:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85847B24202
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 02:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664631798F;
-	Sat,  7 Sep 2024 02:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fqO02YY5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635CC134B1;
-	Sat,  7 Sep 2024 02:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD1818B1A;
+	Sat,  7 Sep 2024 02:49:13 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE8912B73;
+	Sat,  7 Sep 2024 02:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725677309; cv=none; b=VUNRq/HAqQZPRdkpB+gdQV0rZaeevehMShlGGANXU4WoXCKA6CFYewjMyt4AFwXS4YQTtwrFVLIm+SHacTSItI9GN6hbjwhiZ6ccVPFGpAuzQATJ3xr9Af3JttJmkmGv4dlYRwcfuMQHCmTB5AEKA9Z2KBKasBCEVgSMQsTKhRk=
+	t=1725677353; cv=none; b=gtwbDEd4nYQSwW8RBABd0ARIGOm1VmsMpom7NWnEV2XybpojND3TL8kEyaR3fj5GXiK2v2teCepTuEzbipLiROrIfQ/Ewo8WXm7x4mU0nBr1PzDGbU5m7ePFhQowCZ9rMdh9Z0UOSVuoMUD9fIqhF7aODpEr2qktWPDkPysuzI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725677309; c=relaxed/simple;
-	bh=3tEnVSgl4KWu1DsgL0C8TGbUh8FjzR6eAkgRRbuiFhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e1Hsegbttny769I5nldjFJoHQXV6ozcNMsAm4UP43JgbKImUMQUoURywsz+WAnBv7fK5640vp6X96i5uX7gXjIdnPTzGMhiMqcaJ0a6+h9/zsbWb8zys3e9KI0Ri2JAbFXJkqrbFQeGmN0DjTxQ+zFyqmi1Chy8yEDXC1EDMxzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=fqO02YY5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78FEFC4CEC4;
-	Sat,  7 Sep 2024 02:48:27 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fqO02YY5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725677304;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3tEnVSgl4KWu1DsgL0C8TGbUh8FjzR6eAkgRRbuiFhw=;
-	b=fqO02YY5HU2dzIXH4LOY7waP1KOWEKEq+VK2fi3DFd0ALf2jlq4EUKGsxhcXb8luexzVoh
-	ln7+wBl1ecMkfj7zz+xVXxfFN25l7W2561YA50qHpmhc1r6x0u0AU+BLvbUUH7ezTwXtNP
-	geFkd0DFal/qrafG/iixh225s5PpreI=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b2310a09 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Sat, 7 Sep 2024 02:48:24 +0000 (UTC)
-Date: Sat, 7 Sep 2024 04:48:22 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: maobibo <maobibo@loongson.cn>, gaosong@loongson.cn,
-	jiaxun.yang@flygoat.com, qemu-devel@nongnu.org, thomas@t-8ch.de,
-	xry111@xry111.site, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Jinyang He <hejinyang@loongson.cn>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: LoongArch without CONFIG_ACPI and CONFIG_EFI
-Message-ID: <Ztu-9qgiKS98c0hl@zx2c4.com>
-References: <ZtsX_tcEuOjktUl9@zx2c4.com>
- <84a8ee9c-7781-c474-c394-d1498dc00050@loongson.cn>
- <CAAhV-H5CbyemhjoYLXqW3pLPtp4Ne3wcOZXzv2k5=jJCpi3rfg@mail.gmail.com>
+	s=arc-20240116; t=1725677353; c=relaxed/simple;
+	bh=oVznIj7eRvWK/+KNA9U9aIBb3pNYcA+DKLQ7kQ7F/UY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fLFco6LOPS9O7sqUtEhospyYjTziTR+dWLqrwuee7Kn1rqDGhZiQ2Sxf5OjNbBpE/ryB65NNWAukGDh9eRklWnwnX+Y8V1u4/WjcbeuqoUp2pTE4YgvNSY/o5WtdJK2/4KmV9LI+mjY7wusLZhyP6f2vwNVX9yO/S7T6zKIOc54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: cFzu5RXERpG8C0m1mR8yTQ==
+X-CSE-MsgGUID: dMu9Av/YQRe8yi7eNITGww==
+X-IronPort-AV: E=Sophos;i="6.10,209,1719849600"; 
+   d="scan'208";a="95662598"
+From: ZhangHui <zhanghui31@xiaomi.com>
+To: <axboe@kernel.dk>, <bvanassche@acm.org>, <ming.lei@redhat.com>,
+	<dlemoal@kernel.org>
+CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<zhanghui31@xiaomi.com>
+Subject: [PATCH v6] block: move non sync requests complete flow to softirq
+Date: Sat, 7 Sep 2024 10:49:01 +0800
+Message-ID: <20240907024901.405881-1-zhanghui31@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H5CbyemhjoYLXqW3pLPtp4Ne3wcOZXzv2k5=jJCpi3rfg@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: BJ-MBX13.mioffice.cn (10.237.8.133) To YZ-MBX07.mioffice.cn
+ (10.237.88.127)
 
-On Sat, Sep 07, 2024 at 09:47:38AM +0800, Huacai Chen wrote:
-> On Sat, Sep 7, 2024 at 9:44 AM maobibo <maobibo@loongson.cn> wrote:
-> >
-> > Add huacai who is maintainer of Loongarch Linux kernel.
-> >
-> > On 2024/9/6 下午10:55, Jason A. Donenfeld wrote:
-> > > Hi,
-> > >
-> > > It appears that as of QEMU 9.1, it's possible to boot LoongArch machines
-> > > that don't provide EFI or ACPI.
-> > >
-> > > Would you consider removing the `select ACPI` and `select EFI` from the
-> > > arch Kconfig, so that kernels built for this minimal QEMU environment
-> > > can be a bit leaner and quicker to build?
-> Very difficult, at least removing EFI is difficult. Even if booting to
-> a FDT environment, we still get information from EFI now.
+From: zhanghui <zhanghui31@xiaomi.com>
 
-Makes sense. !ACPI is the more interesting one for me, anyway, as that
-takes a while to build.
+Currently, for a controller that supports multiple queues, like UFS4.0,
+the mq_ops->complete is executed in the interrupt top-half. Therefore, 
+the file system's end io is executed during the request completion process,
+such as f2fs_write_end_io on smartphone.
+
+However, we found that the execution time of the file system end io
+is strongly related to the size of the bio and the processing speed
+of the CPU. Because the file system's end io will traverse every page
+in bio, this is a very time-consuming operation.
+
+We measured that the 80M bio write operation on the little CPU will
+cause the execution time of the top-half to be greater than 100ms,
+which will undoubtedly affect interrupt response latency.
+
+Let's fix this issue by moving non sync requests completion to softirq
+context, and keeping sync requests completion in the IRQ top-half context.
+
+Signed-off-by: zhanghui <zhanghui31@xiaomi.com>
+---
+Changes in v6:
+- remove unnecessary inner parenthesis
+
+Changes in v5:
+- modify the commit log
+- remove unnecessary variable and add comment
+
+Changes in v4:
+- fix commit log from "scheduling efficiency" to "interrupt response latency"
+
+Changes in v3:
+- modify op_is_sync to rq_is_sync
+
+Changes in v2:
+- fix build warning
+---
+ block/blk-mq.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index e3c3c0c21b55..45e4d255ea3b 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1210,7 +1210,11 @@ bool blk_mq_complete_request_remote(struct request *rq)
+ 		return true;
+ 	}
+ 
+-	if (rq->q->nr_hw_queues == 1) {
++	/*
++	 * To reduce the execution time in the IRQ top-half,
++	 * move non-sync request completions to softirq context.
++	 */
++	if (rq->q->nr_hw_queues == 1 || !rq_is_sync(rq)) {
+ 		blk_mq_raise_softirq(rq);
+ 		return true;
+ 	}
+-- 
+2.43.0
+
 
