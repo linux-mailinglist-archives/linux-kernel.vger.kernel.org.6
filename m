@@ -1,214 +1,183 @@
-Return-Path: <linux-kernel+bounces-319888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B448297036F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:53:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978C1970372
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04356B22CC9
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:53:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180DC1F225B1
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA09E1649BF;
-	Sat,  7 Sep 2024 17:53:25 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E0515F41B;
+	Sat,  7 Sep 2024 17:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="I5Ojc0JW"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889E81649CC
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 17:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B4B15E5BA
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 17:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725731605; cv=none; b=jX2I7aICplztos1Tg4CoaYam7N05G4ifJGyJidpQfAJ2B21DV6xniGKWLXzMTu1iNGkwwHQjyeGAYSJH7R4SBBpXYMCYF/1fikY5nTUJB6Td0oV4oaVzhXjxWnlPJWypXfgi8+MrwiuQDetNtZPSPMcybghSq/G38GYREG8gQhQ=
+	t=1725731881; cv=none; b=V0Y4q+mkeuRq1cR4pU0DC5s7kPT9n1VD1ereKnykfmbPobZa9AnXgt+eLtTmE8iGthlIgX6Cw72YzQjf5MuNJwabQfb6FNfl5Gpvi/Bd7W3hOw/lVlaitti6cOkKcp9AAIi5pSsfbPwBMikH62Q4dVwW9V55nWIoblJwh4EEIIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725731605; c=relaxed/simple;
-	bh=OxzHOd5ga6+EW1Cu+39R5r5SnFLpaW3qBO9c1lb/Mt0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dddyO6mSf+9cW1bxrmMQmtFsgwPuahmuxhuuyOUhoqXZ7lbffDalt8G0FJAIAgkaiGeWZSFyl5qmGEhs0cLP6wFCpMkk5EQoOIAGO/xCtWE7zfn4vVLOfY+mm/WRgTZq9M5mWGY6yqTFYCLLyVi4aNPCJzfBcqLiua8SSifGaYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82aa3527331so100291539f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 10:53:23 -0700 (PDT)
+	s=arc-20240116; t=1725731881; c=relaxed/simple;
+	bh=DdO9HrqBAqZusoz+T5LGpZj4hxMS5+FS7Q8HCuPb+f4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JkpQCnTxeTdL7zQqRaN+/RaIAEZ6rfnDFREVv9E27kPp9aFDwpOVaon7OehLyir7R+GMC/6ZgkwomlipfZXxAi9qdMfpK6Tay96Wum5R0syDrxD/IbI40IWuWsrwxzxeqDHcuE+bLbgoPeMDujcjAtnIv6R5fSM1nPPYGvF5mAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=I5Ojc0JW; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-502bdf65b52so296177e0c.3
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 10:57:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725731879; x=1726336679; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yFM7Y/HPo2thtCReOXE4IBHniLnqof6WN7AzI/44yKo=;
+        b=I5Ojc0JWgJn57f+K+3ipme19qs5JomiDAMliHqkWXBKp3h5LcBfkRNa7p9rPTt/MXM
+         2OkdxqXm1aPoc+w0oS1J8RwMQ2i2qudxPYWjat7x0PoNWdaywG3D5fA3ZPo36b44QpQJ
+         1zC90tECMaB1mQM7KD4I1w22HKWygkFNrV8cgEd6+u/g8wzGsW5qc+yOknR2rnwpDCwz
+         Grnl3BE5VnigV6n0A8UnxSK7+8FEBMDl+fI07t6qOZ0J5Qh8VibXM5RvRGvEjacGO1gA
+         gektEnXPv8bYz08XkhKLd98o471voKdBmlZ9SCZZunfmSkfnODCSe8Ml+tMeUCYNZQK/
+         JkfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725731602; x=1726336402;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ogs60RJ79QB8EzRED1rwHgMM/Zl20ZBDV9MlHAh0gTI=;
-        b=EHxokQbPL+mj7HtYqEEpLJLTuuZEwvSQ48LDF9CoZ0ICFbC/R26vSP1IfS3g5aszs2
-         klf6Y6rDFDEUZUvhRU2kAJ50Ov5sT6SnD+S95PCi/ZUzpVJ++wsqits/OeHc8Ma4D1EO
-         +3tiPTwNtXr5qrY6GwuEyjLg54fHSDEd3Jwzd3Jsnb6816WXyoNtIy0BMWYgJRVAV99D
-         eUZBQaB4XIvIYfxgu+EzufF3lp9ci324PqI0rJ06s6MDL8Fx2SKL/Fhjf+2qm/I+OcVP
-         eMAj/1niHRQcLYvaAFDFUcb5JgVX6QsiBFBVK1dAplm+Y2uN0z3huv8Uu1Vunlyowz46
-         u1mg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKnxlk1ifGwSmwQr2kwLzkcbdoVsvDE8US/yZqAJyn6XCEqbwvLDxue+UJtm5DI0Y2VujZtFNW6k07kfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxj1SDdWS2gfflKIQzXRzdFnckijp/PJ1h7zbaf6cEde7A433r
-	ATt6NEbXWXSxipcso6lmn1OQhVG9wYHzjpBTXyU4Sq+x7ZshS6d/gMetWJ22JRhVNQs/VzoiSf3
-	yMMDyZdh6Bi8ajImJu7bJKuQRB18og6xLvXVvX2Cwgkmry9cfxK0noks=
-X-Google-Smtp-Source: AGHT+IHeudbzRzLTaqbQCB8u7XJEFwpBrVCAnhdcXduguBpZO9dKxTF/1NEAae0K0FpkfjEKNwH+USOAEBcjH+zdcS9RnLuwQliy
+        d=1e100.net; s=20230601; t=1725731879; x=1726336679;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yFM7Y/HPo2thtCReOXE4IBHniLnqof6WN7AzI/44yKo=;
+        b=J610mCGbGFbq0jdByM0bVwifTGqvywQMHPsIo0boSWOynQ8hXeCKm/9UNOKY2VmraK
+         jeyJbVXQbUrRXZkdyEt8nf2c6DokGXaCDM1ONfz9ZxgCufztMLMwUZE0nqCVW3pGETJ7
+         woUIZsNanjTQTu9vWLqyA0JXkAA9/B7u6pY7CjEiubeCPvRZxin3rCfMCBOMtl1Fs8ax
+         0vuY5sLiqTAAFTln0AREcwj/6zKJ2JMSvUD13FukxzSc7YDVt39rLpBZIwhlqjV1yUYT
+         LIv2t2CJwXz/HuofQJmFr+jyLBF3CPevQuniBtpOUCkH2b5ygJYukedmV+ylivoyFVdc
+         R7FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWd+M7G8pb3sHDHgssrZuBtfFEkykNBUQSv4q2O6gTU31neMBn+eQ3d/nJF0sQG8/saLe153hktT2K+ZYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkyhqYSIyEt9DPf+P1d9OkjeEsfOYk2rjCLh8CqV1kAqbnA+8G
+	/t2ETBkDfYCC8lmiMb75k5wVVKKA3ksUJXu/RNZjcVmX2lGWgaazP4VPsF9PcT+dPLL8WnVRunB
+	+oXzyF0T4ry6mGicOdkt7LwypsblUQ+GiSgzXLQ==
+X-Google-Smtp-Source: AGHT+IHgCRsZHlIq2Y8KZG57PrCBPIcYyj6T8/ZZsKVqsBbzi82PAyVUBN2lCKHyshg4cwjuxTn0c7M8ZsW/8B7VCfc=
+X-Received: by 2002:a05:6122:318d:b0:4ef:5b2c:df41 with SMTP id
+ 71dfb90a1353d-502143d02a4mr6965110e0c.9.1725731878706; Sat, 07 Sep 2024
+ 10:57:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2710:b0:4b9:ad20:51ff with SMTP id
- 8926c6da1cb9f-4d084ec9e1emr364470173.1.1725731602633; Sat, 07 Sep 2024
- 10:53:22 -0700 (PDT)
-Date: Sat, 07 Sep 2024 10:53:22 -0700
-In-Reply-To: <00000000000087e83e061dd271bd@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000272a2706218b333e@google.com>
-Subject: Re: [syzbot] [kernfs?] INFO: task hung in eventpoll_release_file (2)
-From: syzbot <syzbot+63ab1a905aebbf410bb7@syzkaller.appspotmail.com>
-To: brauner@kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org, viro@zeniv.linux.org.uk
+References: <20240905082404.119022-1-aardelean@baylibre.com>
+ <20240905082404.119022-8-aardelean@baylibre.com> <4f522d0c-7ed8-4dd4-83ae-f400d6958c6f@baylibre.com>
+ <CA+GgBR-H8W_YS3gPrrvxAWoQybjEb-p36pqxEatFbEAnuz2DvQ@mail.gmail.com> <a5472be7-26c6-486b-834c-2a5f6bfaf982@baylibre.com>
+In-Reply-To: <a5472be7-26c6-486b-834c-2a5f6bfaf982@baylibre.com>
+From: Alexandru Ardelean <aardelean@baylibre.com>
+Date: Sat, 7 Sep 2024 20:57:46 +0300
+Message-ID: <CA+GgBR9BWcLJ=stqT0F8n2mC=6C0y9ia2W7HFOfkX+0WM82_wA@mail.gmail.com>
+Subject: Re: [PATCH v4 7/8] dt-bindings: iio: adc: add docs for
+ AD7606C-{16,18} parts
+To: David Lechner <dlechner@baylibre.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, 
+	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
+	gstols@baylibre.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
+On Sat, Sep 7, 2024 at 5:09=E2=80=AFPM David Lechner <dlechner@baylibre.com=
+> wrote:
+>
+> On 9/6/24 11:59 PM, Alexandru Ardelean wrote:
+> > On Fri, Sep 6, 2024 at 12:54=E2=80=AFAM David Lechner <dlechner@baylibr=
+e.com> wrote:
+> >>
+> >> On 9/5/24 3:24 AM, Alexandru Ardelean wrote:
+>
+> ...
+>
+> >>> +patternProperties:
+> >>> +  "^channel@[1-8]$":
+> >>> +    type: object
+> >>> +    $ref: adc.yaml
+> >>> +    unevaluatedProperties: false
+> >>> +
+> >>> +    properties:
+> >>> +      reg:
+> >>> +        description:
+> >>> +          The channel number, as specified in the datasheet (from 1 =
+to 8).
+> >>> +        minimum: 1
+> >>> +        maximum: 8
+> >>> +
+> >>> +      diff-channels:
+> >>> +        description:
+> >>> +          Each channel can be configured as a differential bipolar c=
+hannel.
+> >>> +          The ADC uses the same positive and negative inputs for thi=
+s.
+> >>> +          This property must be specified as 'reg' (or the channel n=
+umber) for
+> >>> +          both positive and negative inputs (i.e. diff-channels =3D =
+<reg reg>).
+> >>> +        items:
+> >>> +          minimum: 1
+> >>> +          maximum: 8
+> >>> +
+> >>> +      bipolar:
+> >>> +        description:
+> >>> +          Each channel can be configured as a unipolar or bipolar si=
+ngle-ended.
+> >>> +          When this property is not specified, it's unipolar, so the=
+ ADC will
+> >>> +          have only the positive input wired.
+> >>> +          For this ADC the 'diff-channels' & 'bipolar' properties ar=
+e mutually
+> >>> +          exclusive.
+> >>> +
+> >>> +    required:
+> >>> +      - reg
+> >>> +
+> >>> +    oneOf:
+> >>> +      - required:
+> >>> +          - diff-channels
+> >>> +      - required:
+> >>> +          - bipolar
+> >>
+> >> The datasheet (ad7606c-18.pdf) lists the following combinations:
+> >>
+> >> * Bipolar single-ended
+> >> * Unipolar single-ended
+> >> * Bipolar differential
+> >>
+> >> The logic in the oneOf: doesn't match this.
+> >>
+> >> This I think this would be sufficient:
+> >>
+> >> - if:
+> >>     required: [diff-channels]
+> >>   then:
+> >>     required: [bipolar]
+> >
+> > So here, I am a bit vague.
+> > This makes 'bipolar' mandatory if 'diff-channels' is mandatory, right?
+> > But then 'bipolar' (on its own) becomes optional?
+> > The way I understood the oneOf case is that:
+> > 1. if it's 'diff-channels' then it's specified 'bipolar differential'.
+>
+> diff-channels does not imply bipolar in DT, so we need both properties
+> set to specify "bipolar differential".
+>
 
-HEAD commit:    b31c44928842 Merge tag 'linux_kselftest-kunit-fixes-6.11-r..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=157bba00580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=58a85aa6925a8b78
-dashboard link: https://syzkaller.appspot.com/bug?extid=63ab1a905aebbf410bb7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10662bc7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137bba00580000
+ack
+will update then
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5f716370b7d9/disk-b31c4492.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/45074cd156bc/vmlinux-b31c4492.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7c45c63d7fed/bzImage-b31c4492.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/4ad4ee0b00a8/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+63ab1a905aebbf410bb7@syzkaller.appspotmail.com
-
-INFO: task syz-executor302:5246 blocked for more than 143 seconds.
-      Not tainted 6.11.0-rc6-syzkaller-00308-gb31c44928842 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor302 state:D stack:25880 pid:5246  tgid:5246  ppid:5235   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5188 [inline]
- __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
- __schedule_loop kernel/sched/core.c:6606 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6621
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
- eventpoll_release_file+0xcb/0x1c0 fs/eventpoll.c:1106
- eventpoll_release include/linux/eventpoll.h:53 [inline]
- __fput+0x6e0/0x8a0 fs/file_table.c:413
- __do_sys_close fs/open.c:1566 [inline]
- __se_sys_close fs/open.c:1551 [inline]
- __x64_sys_close+0x7f/0x110 fs/open.c:1551
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f597c12319a
-RSP: 002b:00007ffd4a27f4d0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f597c12319a
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000007
-RBP: 00007f597c0e7300 R08: 0000000000000000 R09: 00007f597c17720f
-R10: 0000000000000000 R11: 0000000000000293 R12: 00000000000155fa
-R13: 000000000001562c R14: 00007ffd4a27f5b0 R15: 00007ffd4a27f540
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6626
-1 lock held by syslogd/4664:
-2 locks held by getty/4988:
- #0: ffff88803078b0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000312b2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6ac/0x1e00 drivers/tty/n_tty.c:2211
-1 lock held by syz-executor302/5246:
- #0: ffff8880328a7868 (&ep->mtx){+.+.}-{3:3}, at: eventpoll_release_file+0xcb/0x1c0 fs/eventpoll.c:1106
-3 locks held by syz-executor302/5247:
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.11.0-rc6-syzkaller-00308-gb31c44928842 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xff4/0x1040 kernel/hung_task.c:379
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 5247 Comm: syz-executor302 Not tainted 6.11.0-rc6-syzkaller-00308-gb31c44928842 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:get_current arch/x86/include/asm/current.h:49 [inline]
-RIP: 0010:__sanitizer_cov_trace_pc+0x8/0x70 kernel/kcov.c:215
-Code: 8b 3d 6c 76 96 0c 48 89 de 5b e9 b3 99 5b 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 8b 04 24 <65> 48 8b 0c 25 00 d7 03 00 65 8b 15 40 4a 70 7e 81 e2 00 01 ff 00
-RSP: 0018:ffffc90004d876b8 EFLAGS: 00000202
-RAX: ffffffff81e12736 RBX: 0000000000000001 RCX: ffff88802f810000
-RDX: ffff88802f810000 RSI: ffffffff8c608e60 RDI: ffffffff8c608e20
-RBP: ffffc90004d87790 R08: ffffffff81e12724 R09: 1ffffffff283c90e
-R10: dffffc0000000000 R11: fffffbfff283c90f R12: 0000000000000046
-R13: ffffffff81e12474 R14: dffffc0000000000 R15: 1ffff920009b0edc
-FS:  00007f597c0d36c0(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020008040 CR3: 000000007c01c000 CR4: 0000000000350ef0
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- rcu_read_unlock include/linux/rcupdate.h:867 [inline]
- count_memcg_event_mm+0x356/0x420 include/linux/memcontrol.h:1021
- mm_account_fault mm/memory.c:5698 [inline]
- handle_mm_fault+0x16f7/0x1bc0 mm/memory.c:5858
- do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x2b9/0x8c0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0010:__put_user_nocheck_4+0x7/0x20 arch/x86/lib/putuser.S:97
-Code: d9 0f 01 cb 89 01 31 c9 0f 01 ca e9 ae a7 39 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 01 cb <89> 01 31 c9 0f 01 ca e9 88 a7 39 00 66 2e 0f 1f 84 00 00 00 00 00
-RSP: 0018:ffffc90004d87b38 EFLAGS: 00050246
-RAX: 0000000000000008 RBX: ffff8880279cf06c RCX: 0000000020008040
-RDX: ffff88802f810000 RSI: 0000000000000008 RDI: 0000000000000000
-RBP: ffffc90004d87db8 R08: ffffffff82232656 R09: 1ffff110049ee77b
-R10: dffffc0000000000 R11: ffffed10049ee77c R12: 0000000020008040
-R13: 0000000000000000 R14: 0000000000000008 R15: 1ffff11004f39e0d
- epoll_put_uevent include/linux/eventpoll.h:81 [inline]
- ep_send_events fs/eventpoll.c:1876 [inline]
- ep_poll fs/eventpoll.c:2005 [inline]
- do_epoll_wait+0xe3a/0x2040 fs/eventpoll.c:2464
- do_epoll_pwait+0x56/0x1e0 fs/eventpoll.c:2498
- __do_sys_epoll_pwait fs/eventpoll.c:2511 [inline]
- __se_sys_epoll_pwait fs/eventpoll.c:2505 [inline]
- __x64_sys_epoll_pwait+0x2b8/0x310 fs/eventpoll.c:2505
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f597c124049
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1b 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f597c0d3208 EFLAGS: 00000246 ORIG_RAX: 0000000000000119
-RAX: ffffffffffffffda RBX: 00007f597c1b34e8 RCX: 00007f597c124049
-RDX: 0000000000000001 RSI: 0000000020008040 RDI: 0000000000000008
-RBP: 00007f597c1b34e0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000401 R11: 0000000000000246 R12: 00007f597c179414
-R13: 00007f597c177052 R14: 0000000000000000 R15: 7061632f7665642f
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> > 2. if it's 'bipolar' then it's specified as 'bipolar single-ended'
+> > 3. otherwise it's unipolar
+> > 4. oneOf enforces that at least 'diff-channels' or 'bipolar' is
+> > specified if there is a channel node
+> >
+> >
 
