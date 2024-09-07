@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-319587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9949596FEE2
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:11:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 090D896FEE4
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E26285E15
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:11:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A4D11C221DA
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F1D18030;
-	Sat,  7 Sep 2024 01:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55999208CA;
+	Sat,  7 Sep 2024 01:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQio7Tgq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFm4ds2J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7376517547;
-	Sat,  7 Sep 2024 01:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43371CF83;
+	Sat,  7 Sep 2024 01:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725671432; cv=none; b=u0vY1Nh33QGDVr+YjYZ1IiCBvX1vHvOpZ6C0sNes1a+4AO2OQXfTe60vrnTYCH6TGYgDuI3l5Wi/K3ed5Wrjl1bVdRbA/J74XfXBKunX/LAHAKHJ+LcDl6zVutxUaiWugHax7rumHYMyjyzKPgg/IcZMZt2bf2zbsESer7fE1+Q=
+	t=1725671434; cv=none; b=d1b7ZBc1HwwH9dN5J78gUoX4Yr3NB02XL/RsNAK5/wkncWqe5gI7kWNtjgGN0jyKkZYCaAE0DvHS+fpgpKmo2FDCwRGV3bBs/NXYgolkhAJoNb4QGHdXDflLRw396yx6mVbKOxhtvgfq9wt4j5JxMuX4T5D+DcAaOi0gdBpEwGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725671432; c=relaxed/simple;
-	bh=Pudxc51AuNjZ2r2qtU60GR3UhwVUaZfPyUtQ4VQFf1M=;
+	s=arc-20240116; t=1725671434; c=relaxed/simple;
+	bh=GiZztz3WOXElZk8KGkeKQ145fb/w8KsZ6vdRLvoCkDc=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=S2ZP9GRXbnrgSPkwQvt58MapGbaew6tWlBFnaAyPCDdA9jlmW9+ZWm6AMerA+lBa9/DUJdpx3x4lI7aecWX0lvidjIJDTvGnoymTKnqYMFMjun9SS8p/84FWBT4R2STK8SvfEEeEcZrRVxOtKatkFhsWBqxgZ4y1mB4b76AXGnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQio7Tgq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 507A6C4CEC8;
-	Sat,  7 Sep 2024 01:10:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725671432;
-	bh=Pudxc51AuNjZ2r2qtU60GR3UhwVUaZfPyUtQ4VQFf1M=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=qQio7TgqGyA/1nX05lKqc/KnFKCrGc+dxFOJBWdmo6YHr6ZW2aujwoHZVVySLEVUA
-	 fTGr8pAF+KdRy8FduyOidAeA1IiN1JnO+ZZAYoTtNAxJgPmN0K2ggV1uuJR07+7LY9
-	 XlOz8LoR6kHNR3WadJRT2lq/Lviu41Y+Ywh+yjk+QqRd0yOALE20Ei1ccmiFDBno9w
-	 +HunV3ECBVqhYNpeWyJ7b1NoK9OZRh/11UIBq6krYrK8sSbr7SsI0jAwhWem8/mt0a
-	 mwenF6kF/z6N5uw3nDZM7p/OYbBWeNWzFj/vGFebiIgTLFnknASb8dzlNwj5KAXnDm
-	 kXmEZJV/8LSpQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C723805D82;
+	 In-Reply-To:To:Cc; b=mo1VBpd7PEtxn8SgSbgSWOVZ88aYV+4EE5GoD/gMSOyR9Z8WGfyVvxP4vwfT5P8KGDAS3/y3cdhliHru0TaAh/cL/RIiUtNmoCeb4J8la4tiWG4u1iPq3V5hOj5W7g2fUb4m1RVcFfzL38bjPt/uio9zsKjidpu8K4GUk5pCPp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFm4ds2J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 500C2C4CEC4;
 	Sat,  7 Sep 2024 01:10:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725671434;
+	bh=GiZztz3WOXElZk8KGkeKQ145fb/w8KsZ6vdRLvoCkDc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=CFm4ds2JVFUPGXSkaEx6S5wCpeqkh3I/Zt2+aH86dpO+NmHwSeyVJ04xFpgqJi/r2
+	 kbhbNsyP8xXXI/AzMVED5627BieO1IiS638XU3u6ZLqfA55FmqpqvsSH4G3yc0lxCM
+	 +4fA1iVPa09vDV+Ffixi9DvsL032dhF8gado3hiRCNO0vjHlRKUPox9ES1SGxhUo/f
+	 xgxeCDUV+Cw7nfvLFSaLR3l5A+ftjFKZmaFP9Co8yPZF701Y72jYeLqejIYMHF9spN
+	 mqtEKTX9yzsLM8daK2PRR3GmrsAgxHDEDIwfVxHbP3PxoEcj9ENLilOol1p1d1MGsV
+	 dMnAFzcKUEvQQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70BD73805D82;
+	Sat,  7 Sep 2024 01:10:36 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,16 +51,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: atlantic: convert comma to semicolon
+Subject: Re: [PATCH net-next] sfc/siena: Convert comma to semicolon
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172567143300.2573151.7934604646137684001.git-patchwork-notify@kernel.org>
-Date: Sat, 07 Sep 2024 01:10:33 +0000
-References: <20240904080845.1353144-1-nichen@iscas.ac.cn>
-In-Reply-To: <20240904080845.1353144-1-nichen@iscas.ac.cn>
+ <172567143509.2573151.13384461285910953583.git-patchwork-notify@kernel.org>
+Date: Sat, 07 Sep 2024 01:10:35 +0000
+References: <20240904084034.1353404-1-nichen@iscas.ac.cn>
+In-Reply-To: <20240904084034.1353404-1-nichen@iscas.ac.cn>
 To: Chen Ni <nichen@iscas.ac.cn>
-Cc: irusskikh@marvell.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+Cc: ecree.xilinx@gmail.com, habetsm.xilinx@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ richardcochran@gmail.com, vladimir.oltean@nxp.com, shannon.nelson@amd.com,
+ wintera@linux.ibm.com, kory.maincent@bootlin.com, alex.austin@amd.com,
+ netdev@vger.kernel.org, linux-net-drivers@amd.com,
  linux-kernel@vger.kernel.org
 
 Hello:
@@ -68,7 +71,7 @@ Hello:
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed,  4 Sep 2024 16:08:45 +0800 you wrote:
+On Wed,  4 Sep 2024 16:40:34 +0800 you wrote:
 > Replace comma between expressions with semicolons.
 > 
 > Using a ',' in place of a ';' can have unintended side effects.
@@ -82,8 +85,8 @@ On Wed,  4 Sep 2024 16:08:45 +0800 you wrote:
 > [...]
 
 Here is the summary with links:
-  - [net-next] net: atlantic: convert comma to semicolon
-    https://git.kernel.org/netdev/net-next/c/aac0484423b7
+  - [net-next] sfc/siena: Convert comma to semicolon
+    https://git.kernel.org/netdev/net-next/c/96487cb211ce
 
 You are awesome, thank you!
 -- 
