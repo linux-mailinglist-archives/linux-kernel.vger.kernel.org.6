@@ -1,76 +1,64 @@
-Return-Path: <linux-kernel+bounces-319670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D80B297005A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:43:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB8C970053
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 08:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64E151F23A1C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 06:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD5B285460
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 06:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EBC145323;
-	Sat,  7 Sep 2024 06:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA81145341;
+	Sat,  7 Sep 2024 06:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="O66wITbc"
-Received: from out203-205-221-235.mail.qq.com (out203-205-221-235.mail.qq.com [203.205.221.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Zsg18Ynj"
+Received: from msa.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88ED381A4
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 06:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752CF537F5;
+	Sat,  7 Sep 2024 06:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725691429; cv=none; b=MlJ69K+N3u6OIQkECiger/bUf4ingEMcai4Lq8JABmCOvD1o0qGs7A49brQajzrOMN3BT8q7iuTUhPUkdPpIa3lReDqKtkcOgH6695Bn4+c788CVNjNXF8Ae3mFJazeZW+SpcvAq1bVfETXXSa7ChIhjR0866o7lt11aRm7wMAc=
+	t=1725690850; cv=none; b=i1fEdnPyJYkv/1D5nLytlTvZOyz89dcToUGUcCKTFRwN3MgfFBKx27l0FlqG9oClnYXPGrN61PPFH5b6bklHGCC64Fynx05lcIeovu+bU6TTRvuiQhFI/oTwC9Oozf+h2xaegyaFABRL6I2ojwbbxHHWw6qeZszdlHLp6xUSjYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725691429; c=relaxed/simple;
-	bh=6od8ddP3uRcwaizSSA9CraAzYiRmA8yzgWtGt4u8yMI=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=BQYRXZAGco9/3+Y22EFx43a2X9E/d2QRYaU7l0qMd03FlEBu6n2sNq0p4nnmKSzZRNQBHETHSb8N31WuiDOi5/9BAbf0V3F0Zz2fM3304OO4j6P0gEJWksJ95HphM8g/b6TK+8BFdo20DwfXOyqaQJGv8DNOAjhESVve2r0WE9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=O66wITbc; arc=none smtp.client-ip=203.205.221.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1725691120;
-	bh=2+NoZb8HY05rj6hzt63kWk/NKYFBBygQXfpEjmIYg0w=;
-	h=From:To:Cc:Subject:Date;
-	b=O66wITbcx+o0TiIrcnh7efdA1GN7ClqOdQAy4MqrCPfkM/MFPzm4WcMuBNvIX7pjX
-	 vDDuSy2hYaY0XE4GuyNMTw1oz8s+xd49sB3LtFdmlA5A9kk0xsHLA17wUKy5bQ/V2L
-	 FJIsDpv/gS44aBrPUPJQy/mZ1PFA9GmD17/L1KOA=
-Received: from localhost.localdomain ([171.223.88.74])
-	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
-	id 8199523B; Sat, 07 Sep 2024 14:32:25 +0800
-X-QQ-mid: xmsmtpt1725690745tmnhxwdgq
-Message-ID: <tencent_983A0FB4662661C03E98E1AC214E32179F0A@qq.com>
-X-QQ-XMAILINFO: NIg715EJm9p9pWMynSbLFDeumTZtNfn1AbnDHe650i/GQdybJA9qRMxnB7C8xG
-	 Hj0IEwS1aQUYxTzu47jVPkM4v0cGJeIZRqRse/SAAdJAGTbjU0eb8xn8su/QOYK8JNtbCKABvHZA
-	 NduilOU9j1aRNouLZIjW5wL3F5h7yMLK6q03oYwBiqQVIcfTivlQLxyu9EVQ+COWyfTEYQYiKVMO
-	 aSlBN0gbVyBaDfhxw342dU+kvRSmQhxXthrip2NobVYFoiq8tRw6HndX3REWcL+QNJd8bdEAAZVh
-	 hskdBiv1EaXhHPpbidu4XGO+aW1FyAKrK/ekR1Kffi+C9HTKZzbqakKfXoPzLULI7UurUldFWWz3
-	 tPu7I+5MBf1ZHCusuUglCF8c5vYYBJf2cqRIkDh993rKrbTnfn/w6HPbggh2ORQk/SbHVW0ahW1v
-	 NnYBkK9l/AF0oJTAz/6aTxRojYoIjo4D/wyeJkQdgm6lBQY/4SqIT9YNSKUIDDmlImsAc8z/zfyT
-	 K1zQd1GAt4XnFxZhZoDrsz81+WWKfpAvtYMZEINDNNwP+dpwysSl3h5TgP4kMUR0pEo08BdYwC1p
-	 VsyUzMZClwXvAyeCWVTuF0Wf08IBSCa9DFscB3++UkvRsGS4PeQcGgsUd981XzToG9j8dxEr9yXa
-	 mpQyxfWvwKZWZckPhHDXIzsTyR20yzQ/c74vgQZ/VneB8OIoNAkbYxgV0C1qh79B+GHBkXslEvz7
-	 jeMVVaoQb8p/8Fp50vV4iAR6FBt20lFNefwQlU4y7jwgbFOtHUJH3Pk/4mM3kQYfcStGzJagYKG7
-	 seugme97Wtyp/ebBjdKEIKYL5/3NafQYP5Co9c9s1eqN6M6BdAL20K6OeWkSGkSY2El0RzyUXBKB
-	 l7jSfDFnWQVGawr3jGIGVie1MlKSVFpG6lSLg8wm+TC0539YejKnEZ5qnIaNuJqNRZ+9Ys2CXh+n
-	 iKsdMJxMbDukygwDKU9cJEAl8HI4uXuHHhw1X29s068j7DKYNLhNqYJ0gniPCT/y6lV4BuZuf4Zo
-	 9JZgppeehi3728PGX4M+n2fp9ebgkPsivIVKcFZiCvQEO4HE4RzgkmxQmG79Q=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Renjun Wang <renjunw0@foxmail.com>
-To: tudor.ambarus@linaro.org,
-	pratyush@kernel.org,
-	mwalle@kernel.org,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Renjun Wang <renjunw0@foxmail.com>
-Subject: [PATCH] mtd: spi-nor: Add support for gd25 and gd55 series chips.
-Date: Sat,  7 Sep 2024 14:32:13 +0800
-X-OQ-MSGID: <20240907063213.387211-1-renjunw0@foxmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1725690850; c=relaxed/simple;
+	bh=wKKUhuk4/8nuwN3KHkOpj5C9UBcs9XwomYBbixsGmT0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ahCPmtyJjp98KYweKjuKSIOtD8Tg4e3ONyded88cmxkStieYKniAwd0mOfjfBhFWEwq2yqUw6d67QNSKlSUN0EeMjajjItm39zn6BEAJSOWPwIh2QXN//MJgAwdh/GYWqXCj4AdoNlsmwcd8H5q8TzsRpIM2Bl23G/2nxOL8EXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Zsg18Ynj; arc=none smtp.client-ip=80.12.242.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id mp15s8krT41DAmp15s0m7E; Sat, 07 Sep 2024 08:34:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725690844;
+	bh=vatYoRMNlrx3CKxeuEKiLmkf8Cu3ogQPLSh6KML7njU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Zsg18YnjvI6bf0nAJC8erjWdsFkxjkuMmvbrXF0DvAu1mjFjcAUMVAH45WxWYjqiw
+	 cEATo6CIJhYkvQtCu3RKpW0ql2esQN5zxdGreUdY/agznIK1M/oo0LeFF7osaYkYC/
+	 /uQ6AdO8QJ1qR8+79rnQxcfXQoPQu71lV8hNVGpydWZTJW2tm2TVG/HwswOtViM1CG
+	 58DSkcqCzErp4UKHKWPF9xXswWxOdvcfRQLTusfZUFp1am7bFP2viC7gbGuX9UFZCu
+	 303rPaMmOfaejsbm+KjUsg5zs9blIoTiaxLHPITzb88dy8lBZXfSkk4xAcLUF1/G1Q
+	 097EQrU1samcg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 07 Sep 2024 08:34:04 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Beleswar Padhi <b-padhi@ti.com>,
+	Andrew Davis <afd@ti.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-remoteproc@vger.kernel.org
+Subject: [PATCH v2] remoteproc: k3-dsp: Fix an error handling path in k3_dsp_rproc_probe()
+Date: Sat,  7 Sep 2024 08:33:36 +0200
+Message-ID: <9485e427a9041cc76cfd3dbcc34874af495e160a.1725653543.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,78 +67,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for gd25lq255, gd25lb256, gd25lb512m, gd25b512m, gd55b01ge
-and gd55lb01ge. All these chips are tested on Rockchip boards[1].
+If an error occurs after the k3_dsp_rproc_request_mbox() call,
+mbox_free_channel() must be called, as already done in the remove function.
 
-[1]https://github.com/rockchip-linux/kernel/blob/develop-5.10/drivers/mtd/spi-nor/gigadevice.c
+Instead of adding an error handling path in the probe and changing all
+error handling in the function, add a new devm_add_action_or_reset() and
+simplify the .remove() function.
 
-Signed-off-by: Renjun Wang <renjunw0@foxmail.com>
+Fixes: ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during probe routine")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Andrew Davis <afd@ti.com>
 ---
- drivers/mtd/spi-nor/gigadevice.c | 43 ++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+Compile tested only
 
-diff --git a/drivers/mtd/spi-nor/gigadevice.c b/drivers/mtd/spi-nor/gigadevice.c
-index ef1edd0add70..f0069a4adbbf 100644
---- a/drivers/mtd/spi-nor/gigadevice.c
-+++ b/drivers/mtd/spi-nor/gigadevice.c
-@@ -61,6 +61,7 @@ static const struct flash_info gigadevice_nor_parts[] = {
- 	}, {
- 		.id = SNOR_ID(0xc8, 0x40, 0x19),
- 		.name = "gd25q256",
-+		.size = SZ_32M,
- 		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_TB_SR_BIT6,
- 		.fixups = &gd25q256_fixups,
- 		.fixup_flags = SPI_NOR_4B_OPCODES,
-@@ -82,6 +83,48 @@ static const struct flash_info gigadevice_nor_parts[] = {
- 		.size = SZ_16M,
- 		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
- 		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-+	}, {
-+		.id = SNOR_ID(0xc8, 0x60, 0x19),
-+		.name = "gd25lq255",
-+		.size = SZ_32M,
-+		.flags = SPI_NOR_HAS_LOCK,
-+		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-+		.fixup_flags = SPI_NOR_4B_OPCODES,
-+	}, {
-+		.id = SNOR_ID(0xc8, 0x67, 0x19),
-+		.name = "gd25lb256",
-+		.size = SZ_32M,
-+		.flags = SPI_NOR_HAS_LOCK,
-+		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-+		.fixup_flags = SPI_NOR_4B_OPCODES,
-+	}, {
-+		.id = SNOR_ID(0xc8, 0x67, 0x1a),
-+		.name = "gd25lb512m",
-+		.size = SZ_64M,
-+		.flags = SPI_NOR_HAS_LOCK,
-+		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-+		.fixup_flags = SPI_NOR_4B_OPCODES,
-+	}, {
-+		.id = SNOR_ID(0xc8, 0x47, 0x1a),
-+		.name = "gd25b512m",
-+		.size = SZ_64M,
-+		.flags = SPI_NOR_HAS_LOCK,
-+		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-+		.fixup_flags = SPI_NOR_4B_OPCODES,
-+	}, {
-+		.id = SNOR_ID(0xc8, 0x47, 0x1b),
-+		.name = "gd55b01ge",
-+		.size = SZ_128M,
-+		.flags = SPI_NOR_HAS_LOCK,
-+		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-+		.fixup_flags = SPI_NOR_4B_OPCODES,
-+	}, {
-+		.id = SNOR_ID(0xc8, 0x67, 0x1b),
-+		.name = "gd55lb01ge",
-+		.size = SZ_128M,
-+		.flags = SPI_NOR_HAS_LOCK,
-+		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-+		.fixup_flags = SPI_NOR_4B_OPCODES,
- 	},
- };
+Change in v2:
+  - fix the subject (cut'n'paste issue)   [Andrew Davis]
+  - add R-b tag
+  
+v1: https://lore.kernel.org/all/9485e127a00419c76cf13dbccf4874af395ef6ba.1725653543.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index 8be3f631c192..f29780de37a5 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -610,6 +610,13 @@ static void k3_dsp_release_tsp(void *data)
+ 	ti_sci_proc_release(tsp);
+ }
  
++static void k3_dsp_free_channel(void *data)
++{
++	struct k3_dsp_rproc *kproc = data;
++
++	mbox_free_channel(kproc->mbox);
++}
++
+ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -649,6 +656,10 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = devm_add_action_or_reset(dev, k3_dsp_free_channel, rproc);
++	if (ret)
++		return ret;
++
+ 	kproc->ti_sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
+ 	if (IS_ERR(kproc->ti_sci))
+ 		return dev_err_probe(dev, PTR_ERR(kproc->ti_sci),
+@@ -741,8 +752,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
+ 		if (ret)
+ 			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
+ 	}
+-
+-	mbox_free_channel(kproc->mbox);
+ }
+ 
+ static const struct k3_dsp_mem_data c66_mems[] = {
 -- 
-2.39.2
+2.46.0
 
 
