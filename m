@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-319922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C9519703C0
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 20:49:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD13E9703C3
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 20:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6901E1C21391
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:49:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 634651F21438
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6577116A935;
-	Sat,  7 Sep 2024 18:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0944916B3B8;
+	Sat,  7 Sep 2024 18:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o2/Dinxu"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vIo8xpzJ"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8675166317
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 18:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D27166F21
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 18:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725734906; cv=none; b=hUWQD8f+hZGfvJnep63fWMwqSygaFyCYFR+Ibht5n/UFY8uDE1+inKqcX00gejnmLxawYG+kS6cw2KeV1D3logohNhRREGCQ8cyq2CtxN0Dz4hG2VK72SlPvNyoAbOlHhDdQrU4MRpg4mfoc1bYeRr2/5mQNjX2cDJG52jTuKu8=
+	t=1725734907; cv=none; b=StIzQhjSbXkNuDiBJ4cyCMU2nt6JxZNUoKrfdv4MHHeFoHjMAZgnQh0p83SX3r6h4ousoeUioNHcBep1N9F7pOGDSYfl7HXaAJRLhJ/4i/snx13pfxcKN7pwUzuTT7DU8SlN52t9r0UB6YFbBKvglfB22YBdCUibHZcgjcxqwnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725734906; c=relaxed/simple;
-	bh=6TCDPpBkY5pK/ecMFCBKg6KyrCqiL2Nwxp1MC/3FL0Y=;
+	s=arc-20240116; t=1725734907; c=relaxed/simple;
+	bh=gth7VehLLAYczDDqOTK1mioSLmcntX+IjHSeS1+PsRg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FcCl7jj/mKvAn0opcqDbkWO8FsHVzA1dqyJyC11nQASHOVz/7ZRSFCn7XuyzNcvu2p0lC69SA+t3SRWJinpjQXokrti4UNX8DNKxnaKhpDbsHhPItIBzLW4Yysqa/tPuhi/r/GDvu1R7n2yLGf/e6qRMvvZh9PjlRZ9G6dKaJ+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o2/Dinxu; arc=none smtp.client-ip=209.85.208.169
+	 In-Reply-To:To:Cc; b=gv0ppzwc3b9WvcuJwfRfO3FcoTwEUtaHNrcY8cSkbw7zZyJmEklAVAF8F9yapvWJUyR0rodxHU/+mVQTOmowiVMpzSStN3NoTD2WrAcSokosKdVUZUfhhEF0azwcxhUcnDoTWKvCcTHEWSjpkfgNRuPFdwCRIGCc/+EP6rfBmOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vIo8xpzJ; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f5064816edso34290351fa.3
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 11:48:24 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f762de00e5so243441fa.3
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 11:48:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1725734903; x=1726339703; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Rm1chB3YeV/rbRF4sUAZL0Reqk72Eb44oLJJOE10AxM=;
-        b=o2/DinxuiNLO9bPGDLhnAmyLnEno7TrrrNLvQUpC5lDqNo46XLOMdYEEwrpo0yEsbT
-         HYDd4ZwmIAbnsAQNfsTCfrIhxj3BX/rMTRLLIgR8GoF5BGAA5WL+pvzQCshyAhfHYBel
-         bxKbyJTaskrrh2OOYjxk+X8X3wOEhzEXIylpOdB87yhOyPcBACjcXnQFliaRsphGhlFy
-         vo34DWADOqK16j1e3CTLoedhx3URW+D5VmPkmKG+DjZDD50bK4Ukug7x5tMUiWewEmfD
-         HdHpXUSlfTRtu7aVltXvD5mghONWBiaUVCvmpEcDKfI0wsrEAj8TH6eIW4kRs3IKvwLN
-         sYNw==
+        bh=u7LsuAqj5Yv+PzKysRic0Rp3tIs0Hiyq7Bki4F0WIhU=;
+        b=vIo8xpzJ0CMt9KjDhrSe1ZLfTESnJfCqq5iGMC1yxfHA59BLqPiObuVyVoGNBjQZSn
+         9g7c7LKiapWkrktibx4g2iBySq6kfrMa3yk8pBEWjfbmnTwGkZUTyMPTEOgzszMSbiba
+         fOBbODHvZHOP8vXQr80N4jYnXskEQFDqS0wGqifzaWBjzqpWz2oF4xBOh8oy1gyrlDVT
+         d0F8tLXRYSylhQTM/i3ct0UECtxLi/hERZEL8yVzFf/y3obz97jGvr1zlvdnPq7rI8DJ
+         XHwRpE9YxaCMzfeTDN9aHtoNoB/xIEsclvffTt04LpuCyssRlrikC2W6WPyeLNtkQdRD
+         Mr0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1725734903; x=1726339703;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Rm1chB3YeV/rbRF4sUAZL0Reqk72Eb44oLJJOE10AxM=;
-        b=kbb4ZM+Lwwb0d3ZLbHl80hE7kqAQOLDhGs5nI3aH1aMRLTKbhloqZdZaMrGIsVpa+f
-         p6CQVcJZRQLFI3oQlB+Jj1ipXWblm/9DdEMKJFMGQ+peBmtBzPmuVZorUP9DKeNCrKK7
-         UW+wF5FY52MQC+PWhkTbzP56L3dYVjKtfi4OMX1wDybp+dy47QNZkoy6bwmHMGT/rNJ3
-         U83od166ZBF5krFGjjjKHtZTFGwhwsut/XsrYxX2lAChK6HXFeMBrtFRYUeVCqINPdSP
-         cyrG86VpOujP5bqOAdcHG3OM3YxcZaDQYPF23lXFKMhmMyxYdiUS/ctYhaXlfopTVle7
-         5MvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgHrZNt0LLwnMbeVkgTMAiM1vUXyj7+osulWAg5MCTmNbYux6ZjkxM3s3YSRuralB5hyEIxlcCNM8GxEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDtrW5YURdjMcsLln6l9mw9zYzLQ0U5UJwH/ChAAZgGqaOE//E
-	ftAY5ykrq6Hv9xij0AGouQ0zPOkAv4uLG9s+1LRJJ31ACYVfa0nX5iHxRQuBAXa9moCWwuPf8Qt
-	6
-X-Google-Smtp-Source: AGHT+IHu563+x1ywd7U+RrDE+KW3K25LUY98BF0NdOnVsnzEUTN6YUx2CDuriBbnNOmez6VMCEAmJw==
-X-Received: by 2002:a2e:819:0:b0:2f7:4c9d:7a87 with SMTP id 38308e7fff4ca-2f75232641cmr33900971fa.21.1725734902386;
-        Sat, 07 Sep 2024 11:48:22 -0700 (PDT)
+        bh=u7LsuAqj5Yv+PzKysRic0Rp3tIs0Hiyq7Bki4F0WIhU=;
+        b=sTlMw56vda1c3JihseBHbD9q9AEkLjwE1RuZrsVEvZfb6f3BxDXaO+s0LTkh4t7qNE
+         s8ECuD++nYYTFeDpI9I25i6Z24FO8aCICNEjRWlW3X1o59vvGUDRyqwf0PG9vfx205Vu
+         Mwx4A0PWnPrAJZ0jf4pv1DPeWjW+qKK5rfpKUoG07bdA+HbUr4B0WkjajGeb2Zc91L0+
+         P4XWMzxcMY/GAIHmEre1PRTZXnIutZp4uA8HUELWN/MoU4DVGWS1EzmQhr171m8P+Wdo
+         GnVu9DGLboSWBdCvdkZvC+UcOPOkzkQm3d+1SrBiQNK1IFkXHKFnIysGEnbOH7RYaOay
+         0vMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGz8FfDp3ESvulr+CHiUTs493ELIuIoJ9JOidxaRC/V6iX5lBHq+nlRVssegQda6NQc6I/j1l+Z30BbRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr1+Df5VQb1QlSSGvQ9YwtWEigzYE/x0S0GZmulVeJajmrbk9n
+	ehG0FXk9rtbeoUU+CGBO1wZshSVMSXv5+MWA40A7HdB7K08I7p13bfgr8iBlM7veGaDYMorn3NF
+	a
+X-Google-Smtp-Source: AGHT+IG6Er2WTTB9ykLtsnwLJMIhAvVqgLPtZjGk+LCEAz8mWM1M2LvXxH2Ll6NQE9F97hNSetaCCQ==
+X-Received: by 2002:a2e:be83:0:b0:2ee:8453:5164 with SMTP id 38308e7fff4ca-2f751db7570mr44719081fa.0.1725734903101;
+        Sat, 07 Sep 2024 11:48:23 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75c0b1af3sm2271861fa.129.2024.09.07.11.48.21
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75c0b1af3sm2271861fa.129.2024.09.07.11.48.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 11:48:21 -0700 (PDT)
+        Sat, 07 Sep 2024 11:48:22 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 07 Sep 2024 21:48:15 +0300
-Subject: [PATCH 4/7] arm64: dts: qcom: sda660-ifc6560: fix l10a voltage
- ranges
+Date: Sat, 07 Sep 2024 21:48:16 +0300
+Subject: [PATCH 5/7] arm64: dts: qcom: sdm630: enable A2NOC and LPASS SMMU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240907-sdm660-wifi-v1-4-e316055142f8@linaro.org>
+Message-Id: <20240907-sdm660-wifi-v1-5-e316055142f8@linaro.org>
 References: <20240907-sdm660-wifi-v1-0-e316055142f8@linaro.org>
 In-Reply-To: <20240907-sdm660-wifi-v1-0-e316055142f8@linaro.org>
 To: Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>, 
@@ -93,42 +92,49 @@ Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  devicetree@vger.kernel.org
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1040;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=980;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=6TCDPpBkY5pK/ecMFCBKg6KyrCqiL2Nwxp1MC/3FL0Y=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBm3J/yYgngcJjUMb3ImAgjjHipMpb3WTf93cRNT
- iQYHXaOttKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZtyf8gAKCRCLPIo+Aiko
- 1QQ1B/9bAfy4pGc7ZPqq1iHOoY3bTcWAcmd7v2Qz79lyDxIMcv6LmE7qVWnxa3xXBT9FzGon5UF
- 9mVlaNnMAPckOLbCL5rLh1e+ipDAycCXla3X8iPEmzZsLdvzdSsNjm7SJ403+kB0JkBoBmLzQEE
- 5c7OuYEkLOhNkb90pSzBBV/UgmfvZoAGSEaes2pf4FwH+R4Qz7cFFCj/iHI5AY8JGVKr89eFJH8
- 9i1ITgZ4uEXit1VxxeEba8+y9wW1wlGe4yXolhk9o8pOSifAYL1qWLjEGoUZSfMXxgthP6yN+7/
- GpgBONEmhzqQy9Mkb0GsjthGtQu0xfaLV1COcEVd8ObQS6jc
+ bh=gth7VehLLAYczDDqOTK1mioSLmcntX+IjHSeS1+PsRg=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBm3J/yK0Kr6gfauwYtKBj2YifOOoYasEb2/KJQy
+ oQEzjAtvuWJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZtyf8gAKCRCLPIo+Aiko
+ 1eXDB/9YMK3v0BNnzKGqm5xYDSjWyN0LHPfuoGLoxqF11BB6jzZ6HjSdbB6BPi6n8/uMcF2CYCU
+ pUhc1bXjxfVuHGaf6cHWqtrnm7QnBYbY9S7oexm20BZreHSMx1mnvyugF1faew9zNq1i2P1VmaW
+ tewDNsm9c7RZhrMo8cO/oHOa9PCy0u9yKVQlnBYbWFEdjODYF+LEK4HQTo3Nz/eca3UAyniGYYK
+ NoyD5wvdIVIhaTLstIx19dmx4DHhmbkyOR5XRyfpvPD6mMbJJQd3pK9+vtPWua3amdHbpfVaJaS
+ UyTHeyQAsEcjpl2psOw4Yjpzg+Yj+fS2DFCA/EGPiMz/yeke
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-L10A, being a fixed regulator, should have min_voltage = max_voltage,
-otherwise fixed rulator fails to probe. Fix the max_voltage range to be
-equal to minimum.
+Now as the arm-smmu-qcom driver gained workarounds for the A2NOC and
+LPASS SMMU devices, enable those two devices.
 
-Fixes: 4edbcf264fe2 ("arm64: dts: qcom: sda660-ifc6560: document missing USB PHY supplies")
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/sdm630.dtsi | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dts b/arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dts
-index ac0197624c09..09bc010ce56a 100644
---- a/arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dts
-+++ b/arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dts
-@@ -104,7 +104,7 @@ vreg_l10a_1p8: vreg-l10a-regulator {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vreg_l10a_1p8";
- 		regulator-min-microvolt = <1804000>;
--		regulator-max-microvolt = <1896000>;
-+		regulator-max-microvolt = <1804000>;
- 		regulator-always-on;
- 		regulator-boot-on;
- 	};
+diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
+index 92695375a63b..dc8bc63bdc70 100644
+--- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
+@@ -665,8 +665,6 @@ anoc2_smmu: iommu@16c0000 {
+ 				<GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
+ 				<GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>,
+ 				<GIC_SPI 474 IRQ_TYPE_LEVEL_HIGH>;
+-
+-			status = "disabled";
+ 		};
+ 
+ 		a2noc: interconnect@1704000 {
+@@ -1234,8 +1232,6 @@ lpass_smmu: iommu@5100000 {
+ 				<GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>,
+ 				<GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
+ 				<GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>;
+-
+-			status = "disabled";
+ 		};
+ 
+ 		sram@290000 {
 
 -- 
 2.39.2
