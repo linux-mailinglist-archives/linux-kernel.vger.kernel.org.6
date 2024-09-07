@@ -1,159 +1,101 @@
-Return-Path: <linux-kernel+bounces-319749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9139E9701B7
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:35:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCF09701C5
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 12:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6D142838A4
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:35:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 762DD1C215D6
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 10:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649E5157494;
-	Sat,  7 Sep 2024 10:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="nplw0cc+"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9713D0A9;
-	Sat,  7 Sep 2024 10:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BF2158536;
+	Sat,  7 Sep 2024 10:59:11 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4803127E01;
+	Sat,  7 Sep 2024 10:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725705321; cv=none; b=IiScl0kNiWMfyITyQ+/ndJ62oHbwfxZyX3SWbLVi3IuJ/0NwfBu7Y1WtYUjyaQBfgLAmr6+f/FO6Ov7QgNP6Bg9wVz4i+WFwskAQgW2rHgXZb9J6QXEXfCcpK+Zi8zIdrkMh5xvhmGY5IAHP71VjvLLk5fMPKvQIjVG69OchVH8=
+	t=1725706751; cv=none; b=L9gbKVXOqc3YyFQlNzc9HAPHSGUWxQXixj9SYM6S/8k6mwJCWU3iyRVkeYxkrTUR3cn8218aSSEFq/LPTBkXcICQRx3De4KPpV2ha4rtU/C8VGB3ZAOvxmkFQiAKiWZQyMoau2bEBpP65gIVQyZi9znMAaeego3M/PVZ4Cqn0DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725705321; c=relaxed/simple;
-	bh=fStTyIXrXS6LxZ3OfDuTGxq3cQrSD60MHobAr22TQSM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=W6hW2Ac3plwU13BF1nfTtsybE44dsCaJvjJDG1lDqeIslUdJrHmS6oCXRQrWn5wKMrn0v1T7T8V85ZfDuw4KHaUdjpTWDO19yF0WRawWjVsMRLjDT9j//VnW1Ao63Vddc3gudRGVjGhXBr9Pm2/wNpB1DYYF42/DAk+5m6D7vi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=nplw0cc+; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=EylXd
-	0u/HEKVMslUIcbQfRlcGaWZZaHFbPx9fuLDqyg=; b=nplw0cc+Zr56K8QR54+Az
-	QVMSP2P+41V4qEWQ5kt2teWThqE4jIBF5qbFUnPICypxhtjdJhbFpmCSkIzoHZyL
-	zyhWOscHDFsVn/KRLG3UWvtqaezZb2tAGYLLMMxjWdXn/CkMBuG4DP+9Rx4rUdJx
-	fi9FMTdWN/A26YofRZlB1s=
-Received: from localhost.localdomain (unknown [111.35.190.113])
-	by gzga-smtp-mta-g2-1 (Coremail) with SMTP id _____wDnF7c9LNxmaUrfEg--.45805S4;
-	Sat, 07 Sep 2024 18:34:51 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: kent.overstreet@linux.dev
-Cc: 00107082@163.com,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [BUG?] bcachefs performance: read is way too slow when a file has no overwrite.
-Date: Sat,  7 Sep 2024 18:34:37 +0800
-Message-Id: <20240907103437.71139-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <ka3sjrka6dugdaab2bvewfbonc3ksixumue3hs2juhajhjm37w@bnxvz5mozpgr>
-References: <ka3sjrka6dugdaab2bvewfbonc3ksixumue3hs2juhajhjm37w@bnxvz5mozpgr>
+	s=arc-20240116; t=1725706751; c=relaxed/simple;
+	bh=kpxElk2dkoAlcFJ5feqpmZiQ58Ydf62BvvTiM22WHms=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pYHLQPbBoP7py91G5jz44fsWV0qpw/mrJKragYx5U5FFrjUgCrSawsJUhWycPbs/Oj3GVmGv97Truk7FbU2+FJ46jPEDhozP2cpuX/SP4d306xTsR23LajBwYLRFIPdIZTPbau4d5A57qaVAeYC+e1GBqT2T2grdw/aYQpx0QPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id E81831617C4;
+	Sat,  7 Sep 2024 10:53:09 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf03.hostedemail.com (Postfix) with ESMTPA id BA24B6000B;
+	Sat,  7 Sep 2024 10:53:04 +0000 (UTC)
+Message-ID: <db693ef6c064fa42eda323f067d4270baf68b1f5.camel@perches.com>
+Subject: Re: [PATCH 2/2] checkpatch: warn on known non-plural rust doc
+ headers
+From: Joe Perches <joe@perches.com>
+To: Patrick Miller <paddymills@proton.me>, a.hindborg@samsung.com, 
+	alex.gaynor@gmail.com, aliceryhl@google.com, apw@canonical.com, 
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	dwaipayanray1@gmail.com, gary@garyguo.net, linux-kernel@vger.kernel.org, 
+	lukas.bulwahn@gmail.com, ojeda@kernel.org, rust-for-linux@vger.kernel.org, 
+	tmgross@umich.edu, wedsonaf@gmail.com
+Date: Sat, 07 Sep 2024 03:53:03 -0700
+In-Reply-To: <20240906180456.2302688-1-paddymills@proton.me>
+References: <20240906180456.2302688-1-paddymills@proton.me>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnF7c9LNxmaUrfEg--.45805S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZr13JFWxKw17Kw1kXF4DXFb_yoWrZF4kpr
-	ySyF13JFnrJr15CwsrAw4UtF18Jr1rJwnxJFyUtry8WF15Cry5tayUJFZ5KrWUGryxJr1U
-	JFZYqw17try8Xw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUfl1DUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqQ5TqmVOCuEPwwAAsS
+X-Rspamd-Queue-Id: BA24B6000B
+X-Rspamd-Server: rspamout01
+X-Stat-Signature: 835gqfdxxbzxjbte386dejxc7ucdzbck
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19J62pEc0qGcTEGxQZhEymOZJlI8WC6kkg=
+X-HE-Tag: 1725706384-574290
+X-HE-Meta: U2FsdGVkX1/PE69iYO7Hp2ebYr1TVllNJQ+fcrf1CU+2fB4PQ0FsTyJifx6RySv+WqW2zWdG03pQDpHUID8vsuHnDivW4VWeb2pw1fRTKpyQk1APx2PepzuqmP1WIXDH0BkasSyNKb9lPlTf+iiysVKA0Uwrmzof7R+4UEtiQWlK0tOB+5IEbpsPTzMV8yRIlmNoQf2g5w/K2A1oYOGULnU6Bd1oZbvGWGxfWGaFofcHoiPh3YbZfT9TkwjkXKLTIt8vimp0J+tJ6mJb2mW5FLjRayQ76mou7y8rxYKtqb8kWhM1c50jSzDC0muijQA+
 
-At 2024-09-07 01:38:11, "Kent Overstreet" <kent.overstreet@linux.dev> wrote:
->On Fri, Sep 06, 2024 at 11:43:54PM GMT, David Wang wrote:
->> 
->> Hi,
->> 
->> I notice a very strange performance issue:
->> When run `fio direct randread` test on a fresh new bcachefs, the performance is very bad:
->> 	fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=4k --iodepth=64 --size=1G --readwrite=randread  --runtime=600 --numjobs=8 --time_based=1
->> 	...
->> 	Run status group 0 (all jobs):
->> 	   READ: bw=87.0MiB/s (91.2MB/s), 239B/s-14.2MiB/s (239B/s-14.9MB/s), io=1485MiB (1557MB), run=15593-17073msec
->> 
->> But if the files already exist and have alreay been thoroughly overwritten, the read performance is about 850MB+/s,
->> almost 10-times better!
->> 
->> This means, if I copy some file from somewhere else, and make read access only afterwards, I would get really bad performance.
->> (I copy files from other filesystem, and run fio read test on those files, the performance is indeed bad.)
->> Copy some prepared files, and make readonly usage afterwards, this usage scenario is quite normal for lots of apps, I think.
->
->That's because checksums are at extent granularity, not block: if you're
->doing O_DIRECT reads that are smaller than the writes the data was
->written with, performance will be bad because we have to read the entire
->extent to verify the checksum.
+On Fri, 2024-09-06 at 18:05 +0000, Patrick Miller wrote:
+> Adds a check for documentation in rust file. Warns if certain known
+> documentation headers are not plural. Even though some sections may
+> be singular (i.e. only one example), the header should still be plural
+> so that more examples can be added later without needing to change the
+> header.
+>=20
+> Fixed the whitespace issue on my previous patch.
 
+Well, one of them.
 
->
->block granular checksums will come at some point, as an optional feature
->(most of the time you don't want them, and you'd prefer more compact
->metadata)
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> @@ -3900,6 +3900,13 @@ sub process {
+>  			     "Avoid using '.L' prefixed local symbol names for denoting a ran=
+ge of code via 'SYM_*_START/END' annotations; see Documentation/core-api/as=
+m-annotations.rst\n" . $herecurr);
+>  		}
+> =20
+> +# check that document section headers are plural in rust files
+> +		if ($realfile =3D~ /\.rs$/
+> +			&& $rawline =3D~ /^\+\s*\/\/\/\s+#+\s+(Example|Invariant|Guarantee|Pa=
+nic)\s*$/) {
+> +			WARN( "RUST_DOC_HEADER",
+> +				"Rust doc headers should be plural\n" . $herecurr );
 
-Hi, I made further tests combining different write and read size, the results
-are not confirming the explanation for O_DIRECT.
+There is no autoformatter for checkpatch/perl/etc.
 
-Without O_DIRECT (fio  --direct=0....), the average read bandwidth
-is improved, but with a very big standard deviation:
-+--------------------+----------+----------+----------+----------+
-| prepare-write\read |    1k    |    4k    |    8K    |   16K    |
-+--------------------+----------+----------+----------+----------+
-|         1K         | 328MiB/s | 395MiB/s | 465MiB/s |          |
-|         4K         | 193MiB/s | 219MiB/s | 274MiB/s | 392MiB/s |
-|         8K         | 251MiB/s | 280MiB/s | 368MiB/s | 435MiB/s |
-|        16K         | 302MiB/s | 380MiB/s | 464MiB/s | 577MiB/s |
-+--------------------+----------+----------+----------+----------+
-(Rows are write size when preparing the test files, and columns are read size for fio test.)
+Continuation && on previous line
+No space after open paren
+Align to open paren
+No space before close paren
 
-And with O_DIRECT, the result is:
-+--------------------+-----------+-----------+----------+----------+
-| prepare-write\read |     1k    |     4k    |    8K    |   16K    |
-+--------------------+-----------+-----------+----------+----------+
-|         1K         | 24.1MiB/s | 96.5MiB/s | 193MiB/s |          |
-|         4K         | 14.4MiB/s | 57.6MiB/s | 116MiB/s | 230MiB/s |
-|         8K         | 24.6MiB/s | 97.6MiB/s | 192MiB/s | 309MiB/s |
-|        16K         | 26.4MiB/s |  104MiB/s | 206MiB/s | 402MiB/s |
-+--------------------+-----------+-----------+----------+----------+
-
-code to prepare the test files:
-	#define KN 8 //<- adjust this for each row
-	char name[32];
-	char buf[1024*KN];
-	int main() {
-		int i, m = 1024*1024/KN, k, df;
-		for (i=0; i<8; i++) {
-			sprintf(name, "test.%d.0", i);
-			fd = open(name, O_CREAT|O_DIRECT|O_SYNC|O_TRUNC|O_WRONLY);
-			for (k=0; k<m; k++) write(fd, buf, sizeof(buf));
-			close(fd);
-		}
-		return 0;
-	}
-
-Based on the result:
-1. The row with prepare-write size 4K stands out, here.
-When files were prepaired with write size 4K, the afterwards
- read performance is worse.  (I did double check the result,
-but it is possible that I miss some affecting factors.);
-2. Without O_DIRECT, read performance seems correlated with the difference
- between read size and prepare write size, but with O_DIRECT, correlation is not obvious.
-
-And, to mention it again, if I overwrite the files **thoroughly** with fio write test
-(using same size), the read performance afterwards would be very good:
-
-	# overwrite the files with randwrite, block size 8k
-	$ fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=8k --iodepth=64 --size=1G --readwrite=randwrite  --runtime=300 --numjobs=8 --time_based=1
-	# test the read performance with randread, block size 8k
-	$ fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=8k --iodepth=64 --size=1G --readwrite=randread  --runtime=300 --numjobs=8 --time_based=1
-	...
-	Run status group 0 (all jobs):
-	   READ: bw=964MiB/s (1011MB/s), 116MiB/s-123MiB/s (121MB/s-129MB/s), io=283GiB (303GB), run=300004-300005msec
-
-
-
-FYI
-David
+I think this is an overly trivial addition.
 
 
