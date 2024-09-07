@@ -1,235 +1,106 @@
-Return-Path: <linux-kernel+bounces-319815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D55B970292
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:00:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9CE97028A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 15:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B48F1F221F7
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:00:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 661CB1F22515
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 13:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768B115D5C1;
-	Sat,  7 Sep 2024 14:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4203415D5AB;
+	Sat,  7 Sep 2024 13:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gDtvx9jA"
-Received: from msa.smtpout.orange.fr (smtp-66.smtpout.orange.fr [80.12.242.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRshFzzi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FDD15575B;
-	Sat,  7 Sep 2024 14:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A35615C13C;
+	Sat,  7 Sep 2024 13:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725717629; cv=none; b=Ffv++o9yRwxX6m+cflnsry5NzbdZXH81XWiYUOOdRx+IGD3nE5KzJVwRPeup6Y0ibCinheVlHbXOgki3MnZHTIlpnsgLZZ7+55mW9d/ffBXCvAl76dZOySWpaq8WhCJII6StAvTj7AsZqhFmJPaMBt0TxKfpA1yzUiiIeeRGBKc=
+	t=1725717128; cv=none; b=dWanJJJgOVmYtTcq2PAP/6gcsWx4suM5q/nPBUU2WU5DWTu1036MZv5dr2AIc7psSmzqAfdpfZu5k1ScYhIV1LIp3UuYf05UhfzWP3MZY3G1SSdPOZmSjppsWDmmEt31XCp7shBAf+oMC3Dirpq6V2NNitHEpM6dY11P1uKZDvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725717629; c=relaxed/simple;
-	bh=s27k5mEy8VSUEgorKgZR16XXq3J5gswprF0OHfkaZts=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Yo4ve4TU8KXHydAzJdCyrjYbs5ZeisL8GPw1A5aui69UVNB4EHIW98+7StSHa32gvvd1Wph71AltwOkTTIxo87Zn+mmowaixjEFQoASjvtDqrlQy/jOPpWxinTgY9lt7vnMwZ9i+gIWC84OnWglpi3lokwqQ7MS5wcug2rFyrYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gDtvx9jA; arc=none smtp.client-ip=80.12.242.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id mvqKs8Zr7lt0qmvqKsJ2Fc; Sat, 07 Sep 2024 15:51:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725717073;
-	bh=hNavVn77VF0lTtMSxrk81smDP2O/T7hN077eeKQGcV8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=gDtvx9jApf+CYTLvtwgutidBZrrFxmNH+eiWJAOmz3Ju2pfIvkZsbwwx/sz0wulkp
-	 5iLLdckTEVxw+eqp4IGLQIIU5HMUsylQohKsn5Jwc4ZKjJB7YzLaIpIbGzPKStO2xq
-	 ANzskTB36HG3wGNilPejxmCnT2cxLOu79ux+5wrguzDow9t15nQ52VjgZDM9qk/RtH
-	 JzNQZjLA6t2zKz+vek0UKPP1lLEXWqYL0HXoopWKwUCr9mgTNQhBuTsbWJe3Doz1Yt
-	 F2Y/mWDX0VG+JtKmfC4sVAklADEoI95hr9FfkbT5V90gNfeTL3JZ66vrjnnxD++5RL
-	 VqCkmVsvc5+fQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 07 Sep 2024 15:51:13 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-iio@vger.kernel.org
-Subject: [PATCH] =?UTF-8?q?iio:=20addac:=20ad74xxx:=20Constify=20struct=20?= =?UTF-8?q?iio=5Fchan=5Fspec=E2=80=8B?=
-Date: Sat,  7 Sep 2024 15:51:07 +0200
-Message-ID: <da291278e78b983ea2e657a25769f7d82ea2a6d0.1725717045.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725717128; c=relaxed/simple;
+	bh=MYrO/3eKljHyoKJjSw8BBububPsJc6vLPebzXA5ILLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FfqT7rxb6xnsLZBYDVgyatDk/etsZHpegKy186HWYn/SRMJDq+iIMSyBB/k8iyZPZw8c6D5HcuXdkkuXNNBr1x1saU1RfCgyT8U4ACdxCktFNDi/j5dicz+dtRcg5mEAAU4k8UkkOHQh3aRiHiQnCAALTSg6QAPaYa6usF3T0so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRshFzzi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9089AC4CEC2;
+	Sat,  7 Sep 2024 13:52:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725717128;
+	bh=MYrO/3eKljHyoKJjSw8BBububPsJc6vLPebzXA5ILLM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bRshFzzihKz7KcoG149wshja98LfJ2ZGlpiI96+3s2DvdHyw6EeJiCLWqjhfJo8oq
+	 wjtkprMaMTouRtQTTTIMBSH3qnJeSK+PnANQat9T3C0FKPuAmLfX0snkJ+OcWwDYJa
+	 dxuV3baL39uwwsocxhbDXzN4z87U+h2KF6U8vCddICIx8CbZrzsT5Y9vC7mU5N+EeJ
+	 uYYeQZe4oMj1N976JWokknF7Rm0ilKPneEjWo8Y/4js0rqutlpFgHDPZ/Z11QnvTKr
+	 fpNgN43LC/H6Hn0hSDUxLX/IoSSCbev6FmrEnqXXlqwfVXJ4/Rv0nkUqJCfzr+fiy3
+	 RvVXgZSjMHN2Q==
+Date: Sat, 7 Sep 2024 14:52:03 +0100
+From: Simon Horman <horms@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Gui-Dong Han <hanguidong02@outlook.com>, netdev@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>, stable@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: Re: [PATCH v2] ice: Fix improper handling of refcount in
+ ice_sriov_set_msix_vec_count()
+Message-ID: <20240907135203.GQ2097826@kernel.org>
+References: <SY8P300MB0460D0263B2105307C444520C0932@SY8P300MB0460.AUSP300.PROD.OUTLOOK.COM>
+ <99a2d643-9004-41c8-8585-6c5c86fab599@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <99a2d643-9004-41c8-8585-6c5c86fab599@web.de>
 
-'struct iio_chan_spec' are not modified in these drivers.
+On Sat, Sep 07, 2024 at 02:40:10PM +0200, Markus Elfring wrote:
+> …
+> > +++ b/drivers/net/ethernet/intel/ice/ice_sriov.c
+> > @@ -1096,8 +1096,10 @@ int ice_sriov_set_msix_vec_count(struct pci_dev *vf_dev, int msix_vec_count)
+> >  		return -ENOENT;
+> >
+> >  	vsi = ice_get_vf_vsi(vf);
+> > -	if (!vsi)
+> > +	if (!vsi) {
+> > +		ice_put_vf(vf);
+> >  		return -ENOENT;
+> > +	}
+> >
+> >  	prev_msix = vf->num_msix;
+> >  	prev_queues = vf->num_vf_qs;
+> > @@ -1142,8 +1144,10 @@ int ice_sriov_set_msix_vec_count(struct pci_dev *vf_dev, int msix_vec_count)
+> >  	vf->num_msix = prev_msix;
+> >  	vf->num_vf_qs = prev_queues;
+> >  	vf->first_vector_idx = ice_sriov_get_irqs(pf, vf->num_msix);
+> > -	if (vf->first_vector_idx < 0)
+> > +	if (vf->first_vector_idx < 0) {
+> > +		ice_put_vf(vf);
+> >  		return -EINVAL;
+> > +	}
+> >
+> >  	if (needs_rebuild) {
+> >  		ice_vf_reconfig_vsi(vf);
+> 
+> Would you like to collaborate with any goto chains according to
+> the desired completion of exception handling?
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
-
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  35749	   5879	    384	  42012	   a41c	drivers/iio/addac/ad74115.o
-  32242	   3297	    384	  35923	   8c53	drivers/iio/addac/ad74413r.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  39109	   2519	    384	  42012	   a41c	drivers/iio/addac/ad74115.o
-  33842	   1697	    384	  35923	   8c53	drivers/iio/addac/ad74413r.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/iio/addac/ad74115.c  | 18 +++++++++---------
- drivers/iio/addac/ad74413r.c | 21 +++++++++++----------
- 2 files changed, 20 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/iio/addac/ad74115.c b/drivers/iio/addac/ad74115.c
-index 12dc43d487b4..bdbdd67536ff 100644
---- a/drivers/iio/addac/ad74115.c
-+++ b/drivers/iio/addac/ad74115.c
-@@ -191,7 +191,7 @@ enum ad74115_gpio_mode {
- };
- 
- struct ad74115_channels {
--	struct iio_chan_spec		*channels;
-+	const struct iio_chan_spec	*channels;
- 	unsigned int			num_channels;
- };
- 
-@@ -1295,46 +1295,46 @@ static const struct iio_info ad74115_info = {
- 	_AD74115_ADC_CHANNEL(_type, index, BIT(IIO_CHAN_INFO_SCALE)	\
- 					   | BIT(IIO_CHAN_INFO_OFFSET))
- 
--static struct iio_chan_spec ad74115_voltage_input_channels[] = {
-+static const struct iio_chan_spec ad74115_voltage_input_channels[] = {
- 	AD74115_ADC_CHANNEL(IIO_VOLTAGE, AD74115_ADC_CH_CONV1),
- 	AD74115_ADC_CHANNEL(IIO_VOLTAGE, AD74115_ADC_CH_CONV2),
- };
- 
--static struct iio_chan_spec ad74115_voltage_output_channels[] = {
-+static const struct iio_chan_spec ad74115_voltage_output_channels[] = {
- 	AD74115_DAC_CHANNEL(IIO_VOLTAGE, AD74115_DAC_CH_MAIN),
- 	AD74115_ADC_CHANNEL(IIO_CURRENT, AD74115_ADC_CH_CONV1),
- 	AD74115_ADC_CHANNEL(IIO_VOLTAGE, AD74115_ADC_CH_CONV2),
- };
- 
--static struct iio_chan_spec ad74115_current_input_channels[] = {
-+static const struct iio_chan_spec ad74115_current_input_channels[] = {
- 	AD74115_ADC_CHANNEL(IIO_CURRENT, AD74115_ADC_CH_CONV1),
- 	AD74115_ADC_CHANNEL(IIO_VOLTAGE, AD74115_ADC_CH_CONV2),
- };
- 
--static struct iio_chan_spec ad74115_current_output_channels[] = {
-+static const struct iio_chan_spec ad74115_current_output_channels[] = {
- 	AD74115_DAC_CHANNEL(IIO_CURRENT, AD74115_DAC_CH_MAIN),
- 	AD74115_ADC_CHANNEL(IIO_VOLTAGE, AD74115_ADC_CH_CONV1),
- 	AD74115_ADC_CHANNEL(IIO_VOLTAGE, AD74115_ADC_CH_CONV2),
- };
- 
--static struct iio_chan_spec ad74115_2_wire_resistance_input_channels[] = {
-+static const struct iio_chan_spec ad74115_2_wire_resistance_input_channels[] = {
- 	_AD74115_ADC_CHANNEL(IIO_RESISTANCE, AD74115_ADC_CH_CONV1,
- 			     BIT(IIO_CHAN_INFO_PROCESSED)),
- 	AD74115_ADC_CHANNEL(IIO_VOLTAGE, AD74115_ADC_CH_CONV2),
- };
- 
--static struct iio_chan_spec ad74115_3_4_wire_resistance_input_channels[] = {
-+static const struct iio_chan_spec ad74115_3_4_wire_resistance_input_channels[] = {
- 	AD74115_ADC_CHANNEL(IIO_RESISTANCE, AD74115_ADC_CH_CONV1),
- 	AD74115_ADC_CHANNEL(IIO_VOLTAGE, AD74115_ADC_CH_CONV2),
- };
- 
--static struct iio_chan_spec ad74115_digital_input_logic_channels[] = {
-+static const struct iio_chan_spec ad74115_digital_input_logic_channels[] = {
- 	AD74115_DAC_CHANNEL(IIO_VOLTAGE, AD74115_DAC_CH_COMPARATOR),
- 	AD74115_ADC_CHANNEL(IIO_VOLTAGE, AD74115_ADC_CH_CONV1),
- 	AD74115_ADC_CHANNEL(IIO_VOLTAGE, AD74115_ADC_CH_CONV2),
- };
- 
--static struct iio_chan_spec ad74115_digital_input_loop_channels[] = {
-+static const struct iio_chan_spec ad74115_digital_input_loop_channels[] = {
- 	AD74115_DAC_CHANNEL(IIO_CURRENT, AD74115_DAC_CH_MAIN),
- 	AD74115_DAC_CHANNEL(IIO_VOLTAGE, AD74115_DAC_CH_COMPARATOR),
- 	AD74115_ADC_CHANNEL(IIO_VOLTAGE, AD74115_ADC_CH_CONV1),
-diff --git a/drivers/iio/addac/ad74413r.c b/drivers/iio/addac/ad74413r.c
-index 2410d72da49b..1e2f6d9804e3 100644
---- a/drivers/iio/addac/ad74413r.c
-+++ b/drivers/iio/addac/ad74413r.c
-@@ -45,8 +45,8 @@ struct ad74413r_channel_config {
- };
- 
- struct ad74413r_channels {
--	struct iio_chan_spec	*channels;
--	unsigned int		num_channels;
-+	const struct iio_chan_spec	*channels;
-+	unsigned int			num_channels;
- };
- 
- struct ad74413r_state {
-@@ -1138,34 +1138,34 @@ static const struct iio_info ad74413r_info = {
- 	AD74413R_ADC_CHANNEL(IIO_CURRENT,  BIT(IIO_CHAN_INFO_SCALE)	\
- 			     | BIT(IIO_CHAN_INFO_OFFSET))
- 
--static struct iio_chan_spec ad74413r_voltage_output_channels[] = {
-+static const struct iio_chan_spec ad74413r_voltage_output_channels[] = {
- 	AD74413R_DAC_CHANNEL(IIO_VOLTAGE, BIT(IIO_CHAN_INFO_SCALE)),
- 	AD74413R_ADC_CURRENT_CHANNEL,
- };
- 
--static struct iio_chan_spec ad74413r_current_output_channels[] = {
-+static const struct iio_chan_spec ad74413r_current_output_channels[] = {
- 	AD74413R_DAC_CHANNEL(IIO_CURRENT, BIT(IIO_CHAN_INFO_SCALE)),
- 	AD74413R_ADC_VOLTAGE_CHANNEL,
- };
- 
--static struct iio_chan_spec ad74413r_voltage_input_channels[] = {
-+static const struct iio_chan_spec ad74413r_voltage_input_channels[] = {
- 	AD74413R_ADC_VOLTAGE_CHANNEL,
- };
- 
--static struct iio_chan_spec ad74413r_current_input_channels[] = {
-+static const struct iio_chan_spec ad74413r_current_input_channels[] = {
- 	AD74413R_ADC_CURRENT_CHANNEL,
- };
- 
--static struct iio_chan_spec ad74413r_current_input_loop_channels[] = {
-+static const struct iio_chan_spec ad74413r_current_input_loop_channels[] = {
- 	AD74413R_DAC_CHANNEL(IIO_CURRENT, BIT(IIO_CHAN_INFO_SCALE)),
- 	AD74413R_ADC_CURRENT_CHANNEL,
- };
- 
--static struct iio_chan_spec ad74413r_resistance_input_channels[] = {
-+static const struct iio_chan_spec ad74413r_resistance_input_channels[] = {
- 	AD74413R_ADC_CHANNEL(IIO_RESISTANCE, BIT(IIO_CHAN_INFO_PROCESSED)),
- };
- 
--static struct iio_chan_spec ad74413r_digital_input_channels[] = {
-+static const struct iio_chan_spec ad74413r_digital_input_channels[] = {
- 	AD74413R_ADC_VOLTAGE_CHANNEL,
- };
- 
-@@ -1270,7 +1270,8 @@ static int ad74413r_setup_channels(struct iio_dev *indio_dev)
- {
- 	struct ad74413r_state *st = iio_priv(indio_dev);
- 	struct ad74413r_channel_config *config;
--	struct iio_chan_spec *channels, *chans;
-+	const struct iio_chan_spec *chans;
-+	struct iio_chan_spec *channels;
- 	unsigned int i, num_chans, chan_i;
- 	int ret;
- 
--- 
-2.46.0
-
+Yes, I agree that might be nice. But the changes made by this patch are
+consistent with the exiting error handling in this function. And as a fix,
+this minimal approach seems appropriate to me. IOW, I believe clean-up
+should be separated from fixes in this case.
 
