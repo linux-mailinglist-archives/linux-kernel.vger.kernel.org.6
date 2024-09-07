@@ -1,228 +1,123 @@
-Return-Path: <linux-kernel+bounces-319691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D579700AE
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:56:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F0C9700B4
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94766285651
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:56:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 984BA1F2331E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E89149C4F;
-	Sat,  7 Sep 2024 07:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB4914A614;
+	Sat,  7 Sep 2024 07:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJJ+oFs+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmAHzH2G"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BB614885B;
-	Sat,  7 Sep 2024 07:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E052D627;
+	Sat,  7 Sep 2024 07:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725695780; cv=none; b=oKdyoi5slnWSY9Qc4w5a46m8HggmftWdh1iOZ6MHR8Q2Q47BRTKzc7Y8PobjNlarMkpyE5HftvoSB0XQ+/+jugun3VUa90SYVIsHJJ5rfuT4GCtDvBiuv3PTV4CPI3ZmtIQ+c8biKSy/nprEndNHRcl+Z4vlhP9CcwHR6DCy9Qw=
+	t=1725695809; cv=none; b=MZqlNyRSgDeOG/A4PoZk59Wks91ZAqOt8feWwCpWp2QDW9o5jQT0Li78ecW37IauvjjN71q0Qc4FyBFC34Akbs0THSzA/NM0ftGDDAQ0pt3JhWKzNZgBw4/fIDbxpsG6ItfokknOFxqSOvK5KlxELu1M7Yza9cwqg8go+PHG5AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725695780; c=relaxed/simple;
-	bh=rMVIG8fA6B1s7+r843qnmUPH6dIbkzZfUao/2Yt9+YY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IUX5QBNH4aLtz+LkyZugILt7feBuoYMurmqzWkY/evyjq2vZzRX0c6hgTleK8DhsytfupEtLubWXvyBx9R4AipVDa4zHXtnnHeamivUZxoUsjx/CWTMkKKvQouSCwtYW2ZcE93KZtSrJnVvZxVioNlh9MAeAaLQMVZFi5pzRXHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJJ+oFs+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFB4C4CEC8;
-	Sat,  7 Sep 2024 07:56:19 +0000 (UTC)
+	s=arc-20240116; t=1725695809; c=relaxed/simple;
+	bh=+mMc6B5j7zB6GCWEfBYhnQ5y4Mas/2X7aChRewkQeEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NdcpTiWk+GRCwF1VDhOg3y1PZ4PeAsJqm6w3gf3gy2a0dLgXMf4VppckpGNyiKTLet6psVezwwOVptdA9aSj8EjOylEG21oDtR9pWvKCyQY7n8W68IQhdYhQfLM0COwRSQl2jPev33MzZA8gqueeMzGxpODAi5LHwEYRQF4xDHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmAHzH2G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49EB3C4CEC2;
+	Sat,  7 Sep 2024 07:56:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725695779;
-	bh=rMVIG8fA6B1s7+r843qnmUPH6dIbkzZfUao/2Yt9+YY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TJJ+oFs+uFbWQey6H9FSdONVeJ4+Nk7PZGC9p+R2xuE2DkeG0lI/c8ZrquDzjvXND
-	 TT1sTnWMNe876xx2L+mb1mq6hB0xlOrQAzYERAXRcndj9NWl49oYLNsLnnbw5s+LD7
-	 WoJv+ptxNU2n+ygq27JpMw2x+RXZyO1NQ9sFJjzQ+XuneExjx5QXw60ieVd83vN2JO
-	 zkWNggYANOwWUbCvH0xvrQSSSyIx0wdGRR3/Lt3fhk3u/HdP9Ninfy4wXH08MZFeJJ
-	 cikHm59nL/Tbd7kBSD8DM+YwfBEOOkhBvzFDBgilbUqX0uT7/irgdE6pB41QyYO44Q
-	 KXEdXNlwTHxpA==
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42ca573fd5aso10385045e9.3;
-        Sat, 07 Sep 2024 00:56:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXL+27G7So9dUTb6ev/XgbWUHHqWS9ZfuHvMcuMrrhwptnJYqFEnU6bE6Qs/NRvUTDzo7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDnPyNxZQ5PZpDy1v4i1jcMzRktrk2H1nHA3NzYWAUd3WTO9SO
-	oJuD5t7//e6h2tAI5ptnhqiq9v7tFSxL2HxSTI0kJJn83TniGfhUMlhKom4G4WC1maUWqQpJ7pI
-	NYON7hHYoI8QVCWiw9r7MBYF0p2s=
-X-Google-Smtp-Source: AGHT+IFynoxTnXMTC8+Fo8fU+IIAu5+BJVgogUzWFqVgiJkrBh84P8uiKBPNKKNr7iDLnJaT3bdYOiP9AiNGJX1tMqU=
-X-Received: by 2002:a5d:540b:0:b0:374:b6f3:728d with SMTP id
- ffacd0b85a97d-378896740ecmr3049996f8f.46.1725695778169; Sat, 07 Sep 2024
- 00:56:18 -0700 (PDT)
+	s=k20201202; t=1725695809;
+	bh=+mMc6B5j7zB6GCWEfBYhnQ5y4Mas/2X7aChRewkQeEU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mmAHzH2GRdzTEu15Q+QtypMrFa3wi1mKgv+0UtcUiqHvLGRI2YW25SFoS6u0BIA6O
+	 /LBTDnum/6xHqchhCvo05y6KVb/FWN+0E1iz/jeEnvpWEc9YqhEdRxS0cjAcPyrn1b
+	 Pw0F8eqh6ajmjfS2Lls4d3O7G2lDuEkXxpaRj8rseW+Q5ErVA0dzwRvC6qPCEIuzWv
+	 VfRJD5k5WlPNhwqXrYvUePi7J39ovlXJQKR3fqNqamW3vMj7qT1arPdUehlVZTIQuC
+	 puXV597AkRIeEgFmw5UMWA8uqPD0mZUaYHgR51my9Eh+kbIHQH/7CMMJyc1Eg9v90p
+	 07J2dmmzsKuiA==
+Date: Sat, 7 Sep 2024 09:56:45 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Cc: konrad.dybcio@linaro.org, andersson@kernel.org, 
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, conor+dt@kernel.org, agross@kernel.org, 
+	devicetree@vger.kernel.org, vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org, 
+	Frank.Li@nxp.com, konradybcio@kernel.org, quic_vdadhani@quicinc.com
+Subject: Re: [PATCH v2 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
+ between two subsystems
+Message-ID: <pnt6pyeaqu3v3qk6hsccqfm5agtvzqjujs35roicovgv5xbsh5@gskuy5wefq6r>
+References: <20240906191438.4104329-1-quic_msavaliy@quicinc.com>
+ <20240906191438.4104329-5-quic_msavaliy@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823093404.204450-1-lixianglai@loongson.cn>
-In-Reply-To: <20240823093404.204450-1-lixianglai@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 7 Sep 2024 15:56:05 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7eGNof=qjq=U1KaQaC4p48DDroiRxhiTEWs9Eg=Y7D5w@mail.gmail.com>
-Message-ID: <CAAhV-H7eGNof=qjq=U1KaQaC4p48DDroiRxhiTEWs9Eg=Y7D5w@mail.gmail.com>
-Subject: Re: [[PATCH V2 00/10] Added Interrupt controller emulation for
- loongarch kvm
-To: Xianglai Li <lixianglai@loongson.cn>
-Cc: linux-kernel@vger.kernel.org, Bibo Mao <maobibo@loongson.cn>, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, Paolo Bonzini <pbonzini@redhat.com>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906191438.4104329-5-quic_msavaliy@quicinc.com>
 
-Hi, Xianglai,
+Hi Mukesh,
 
-This series is good as a whole, just some naming issues.
-1, In the current kernel the short name of "Extended I/O Interrupt
-Controller" is eiointc, so please change related prefix from extioi_
-to eiointc.
+On Sat, Sep 07, 2024 at 12:44:38AM GMT, Mukesh Kumar Savaliya wrote:
+> Add support to share I2C SE by two Subsystems in a mutually exclusive way.
+> Use  "qcom,shared-se" flag in a particular i2c instance node if the
+> usecase requires i2c controller to be shared.
+> 
+> I2C driver just need to mark first_msg and last_msg flag to help indicate
+> GPI driver to  take lock and unlock TRE there by protecting from concurrent
+> access from other EE or Subsystem.
+> 
+> gpi_create_i2c_tre() function at gpi.c will take care of adding Lock and
+> Unlock TRE for the respective transfer operations.
+> 
+> Since the GPIOs are also shared for the i2c bus between two SS, do not
+> touch GPIO configuration during runtime suspend and only turn off the
+> clocks. This will allow other SS to continue to transfer the data
+> without any disturbance over the IO lines.
 
-And for
+if I remember correctly, someone already commented on your
+patches to explain and expand the achronyms you are using. Please
+improve the commit log so that people who don't know this device
+can understand.
 
-  KVM_DEV_TYPE_LA_IOAPIC,
-  KVM_DEV_TYPE_LA_IPI,
-  KVM_DEV_TYPE_LA_EXTIOI,
+...
 
-Please use
+> @@ -631,8 +636,11 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>  		dma_async_issue_pending(gi2c->tx_c);
+>  
+>  		time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
+> -		if (!time_left)
+> +		if (!time_left) {
+> +			dev_err(gi2c->se.dev, "I2C timeout gpi flags:%d addr:0x%x\n",
+> +						gi2c->cur->flags, gi2c->cur->addr);
 
-  KVM_DEV_TYPE_LOONGARCH_IPI,
-  KVM_DEV_TYPE_LOONGARCH_EXTIOI,
-  KVM_DEV_TYPE_LOONGARCH_PCHPIC,
+Please, don't print out here. The user doesn't really need to
+know, let the upper levels decide what to do.
 
-instead.
+>  			gi2c->err = -ETIMEDOUT;
+> +		}
+>  
+>  		if (gi2c->err) {
+>  			ret = gi2c->err;
+> @@ -800,6 +808,11 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>  		gi2c->clk_freq_out = KHZ(100);
+>  	}
+>  
+> +	if (of_property_read_bool(pdev->dev.of_node, "qcom,shared-se")) {
+> +		gi2c->is_shared = true;
+> +		dev_dbg(&pdev->dev, "Shared SE Usecase\n");
 
-Huacai
+Please, improve this debug message.
 
-On Fri, Aug 23, 2024 at 5:51=E2=80=AFPM Xianglai Li <lixianglai@loongson.cn=
-> wrote:
->
-> Before this, the interrupt controller simulation has been completed
-> in the user mode program. In order to reduce the loss caused by frequent
-> switching of the virtual machine monitor from kernel mode to user mode
-> when the guest accesses the interrupt controller, we add the interrupt
-> controller simulation in kvm.
->
-> The following is a virtual machine simulation diagram of interrupted
-> connections:
->   +-----+    +---------+     +-------+
->   | IPI |--> | CPUINTC | <-- | Timer |
->   +-----+    +---------+     +-------+
->                  ^
->                  |
->            +---------+
->            | EIOINTC |
->            +---------+
->             ^       ^
->             |       |
->      +---------+ +---------+
->      | PCH-PIC | | PCH-MSI |
->      +---------+ +---------+
->        ^      ^          ^
->        |      |          |
-> +--------+ +---------+ +---------+
-> | UARTs  | | Devices | | Devices |
-> +--------+ +---------+ +---------+
->
-> In this series of patches, we mainly realized the simulation of
-> IPI EXTIOI PCH-PIC interrupt controller.
->
-> The simulation of IPI EXTIOI PCH-PIC interrupt controller mainly
-> completes the creation simulation of the interrupt controller,
-> the register address space read and write simulation,
-> and the interface with user mode to obtain and set the interrupt
-> controller state for the preservation,
-> recovery and migration of virtual machines.
->
-> IPI simulation implementation reference:
-> https://github.com/loongson/LoongArch-Documentation/tree/main/docs/Loongs=
-on-3A5000-usermanual-EN/inter-processor-interrupts-and-communication
->
-> EXTIOI simulation implementation reference:
-> https://github.com/loongson/LoongArch-Documentation/tree/main/docs/Loongs=
-on-3A5000-usermanual-EN/io-interrupts/extended-io-interrupts
->
-> PCH-PIC simulation implementation reference:
-> https://github.com/loongson/LoongArch-Documentation/blob/main/docs/Loongs=
-on-7A1000-usermanual-EN/interrupt-controller.adoc
->
-> For PCH-MSI, we used irqfd mechanism to send the interrupt signal
-> generated by user state to kernel state and then to EXTIOI without
-> maintaining PCH-MSI state in kernel state.
->
-> You can easily get the code from the link below:
-> the kernel:
-> https://github.com/lixianglai/linux
-> the branch is: interrupt
->
-> the qemu:
-> https://github.com/lixianglai/qemu
-> the branch is: interrupt
->
-> Please note that the code above is regularly updated based on community
-> reviews.
->
-> change log:
-> V1->V2:
-> 1.Remove redundant blank lines according to community comments
-> 2.Remove simplified redundant code
-> 3.Adds 16 bits of read/write interface to the extioi iocsr address space
-> 4.Optimize user - and kernel-mode data access interfaces: Access
-> fixed length data each time to prevent memory overruns
-> 5.Added virtual extioi, where interrupts can be routed to cpus other than=
- cpu 4
->
-> Cc: Bibo Mao <maobibo@loongson.cn>
-> Cc: Huacai Chen <chenhuacai@kernel.org>
-> Cc: kvm@vger.kernel.org
-> Cc: loongarch@lists.linux.dev
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Tianrui Zhao <zhaotianrui@loongson.cn>
-> Cc: WANG Xuerui <kernel@xen0n.name>
-> Cc: Xianglai li <lixianglai@loongson.cn>
->
-> Xianglai Li (10):
->   LoongArch: KVM: Add iocsr and mmio bus simulation in kernel
->   LoongArch: KVM: Add IPI device support
->   LoongArch: KVM: Add IPI read and write function
->   LoongArch: KVM: Add IPI user mode read and write function
->   LoongArch: KVM: Add EXTIOI device support
->   LoongArch: KVM: Add EXTIOI read and write functions
->   LoongArch: KVM: Add PCHPIC device support
->   LoongArch: KVM: Add PCHPIC read and write functions
->   LoongArch: KVM: Add PCHPIC user mode read and write functions
->   LoongArch: KVM: Add irqfd support
->
->  arch/loongarch/include/asm/kvm_extioi.h  |  122 +++
->  arch/loongarch/include/asm/kvm_host.h    |   30 +
->  arch/loongarch/include/asm/kvm_ipi.h     |   52 ++
->  arch/loongarch/include/asm/kvm_pch_pic.h |   61 ++
->  arch/loongarch/include/uapi/asm/kvm.h    |   19 +
->  arch/loongarch/kvm/Kconfig               |    3 +
->  arch/loongarch/kvm/Makefile              |    4 +
->  arch/loongarch/kvm/exit.c                |   86 +-
->  arch/loongarch/kvm/intc/extioi.c         | 1056 ++++++++++++++++++++++
->  arch/loongarch/kvm/intc/ipi.c            |  510 +++++++++++
->  arch/loongarch/kvm/intc/pch_pic.c        |  521 +++++++++++
->  arch/loongarch/kvm/irqfd.c               |   87 ++
->  arch/loongarch/kvm/main.c                |   18 +-
->  arch/loongarch/kvm/vcpu.c                |    3 +
->  arch/loongarch/kvm/vm.c                  |   53 +-
->  include/linux/kvm_host.h                 |    1 +
->  include/trace/events/kvm.h               |   35 +
->  include/uapi/linux/kvm.h                 |    8 +
->  18 files changed, 2641 insertions(+), 28 deletions(-)
->  create mode 100644 arch/loongarch/include/asm/kvm_extioi.h
->  create mode 100644 arch/loongarch/include/asm/kvm_ipi.h
->  create mode 100644 arch/loongarch/include/asm/kvm_pch_pic.h
->  create mode 100644 arch/loongarch/kvm/intc/extioi.c
->  create mode 100644 arch/loongarch/kvm/intc/ipi.c
->  create mode 100644 arch/loongarch/kvm/intc/pch_pic.c
->  create mode 100644 arch/loongarch/kvm/irqfd.c
->
->
-> base-commit: 872cf28b8df9c5c3a1e71a88ee750df7c2513971
-> --
-> 2.39.1
->
+The rest looks good to me.
+
+Thanks,
+Andi
 
