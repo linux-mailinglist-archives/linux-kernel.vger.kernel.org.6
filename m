@@ -1,96 +1,165 @@
-Return-Path: <linux-kernel+bounces-319828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1D79702BE
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A53DF9702C0
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 360251F213FC
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:34:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AF941F22475
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 14:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D5B15E5AB;
-	Sat,  7 Sep 2024 14:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0683715D5A6;
+	Sat,  7 Sep 2024 14:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="DSNlpm8V"
-Received: from classfun.cn (unknown [129.204.178.38])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B91DF53;
-	Sat,  7 Sep 2024 14:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="cgY7SHp1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE5215C133
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 14:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725719643; cv=none; b=OhTpi4ifz/V5xbrSpTN1O5Z8f4NA4K6zBf4ACVKi0yJv/CR1D4OMWe2pe6PmsguKCFLqoKu8j0FI2M4K7CCjL6QdVlXGWP5oBsReiY/c6Hw2wg8O48PM2CkuO4fDSdRxqlP5uvvxf676Hjj5dHzgHEb5uyUPkqG1aiJVa9wxGEU=
+	t=1725719764; cv=none; b=C7NVmqnMI8PX1g42zea/MPCxITdRu58z6yrjQA9vjZUTVrUvktAZmCiMwXadBg1xbhylKoNMsYmLCEiskxT0Wwmi8jArDrA0CY+VLzyMCww7OxQzfuh0XCWninIF1FEWb0b+Ysb4+s1Qs5ftTAb+3Qg6lXI3oqCkjIvkU0dJvno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725719643; c=relaxed/simple;
-	bh=uzKsDDJjS7gq8EcZmXUPlxPJDGZWlwn06A72RrFvCaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DqlKBXsdRv4Fm79YBA9UqFKc/VwIh9/bRUA5k3ykAe8dxEaGwBYlt0MJXTqmsWNF57rYI+ofTIsi4x5bkWeOtzQP+SRsINzBndXjX2kES+Ss614Bzkk0Myy/Oh6jChJDyUlGp8b1oaefZIKBQYoL7FBVQsa3J8ICqEQoVLrebwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=DSNlpm8V; arc=none smtp.client-ip=129.204.178.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
-Received: from [192.168.0.160] (unknown [14.155.100.110])
-	(Authenticated sender: bigfoot)
-	by classfun.cn (Postfix) with ESMTPSA id 2278778A01;
-	Sat,  7 Sep 2024 22:33:56 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn 2278778A01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
-	s=default; t=1725719638;
-	bh=gG2BH1+dXG7ZoJOt2ZX2FJLzrZcgshauVLlXVmZq6sM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DSNlpm8Vqtpho/RR7/MrKCNIEHFUFwwo/5l+BjIiUEgoS/ohM5XFx/jEygmd6VrWX
-	 Ficq4hrX/KNy045+dpBwYrC5HAtq1+QfDxuRCBmvXQ8b82WTjXTLr797wpeVzIyaVz
-	 0LwzUe5E6XCPOlgoplXM/RpP0R2GK63DfSfLnJsU=
-Message-ID: <43918eda-c4e8-471a-9de4-ea72bb090803@classfun.cn>
-Date: Sat, 7 Sep 2024 22:33:55 +0800
+	s=arc-20240116; t=1725719764; c=relaxed/simple;
+	bh=pRYD/cbq9Oa8VPa231IqFnxaPN1Vce3vzUD8u9v7QgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LOG3S2XBvM3GJGVFu7MisSZVIf4qQ+cw6NmouaM7ZQ8I+1lLniW4+XIUkzH0NmKRa6bcEb1+qOOE3FECjedqRzIbwTHlXDGio4ZzvPwWcNuvPm0rIRxUbHS+x/DFq4UcKWKXsLJTUdxYhmOg9i1x4yeuuvLNFjqj1En1I4PpOhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=cgY7SHp1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18471C4CECA;
+	Sat,  7 Sep 2024 14:36:03 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="cgY7SHp1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725719760;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zaEo8gilrmxogMmzsNMScJpOwzlO2ivQy8zmDfqEv4A=;
+	b=cgY7SHp1xO5oPO5RsEP47PF73VB+d0FY23/q67jdWND6uXjRx0pjw091wozLwxTM67sfgo
+	G+pFQr56sf6mr4hw5zxBn2Th+pLJXT8J493ic5hi2mZo50MOpx5fg7zBvvYUvBgfXIgM7x
+	wEtG6GPUnraNdvCfRfTKwL8wQRpVLvM=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 1d2759ad (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Sat, 7 Sep 2024 14:36:00 +0000 (UTC)
+Date: Sat, 7 Sep 2024 16:35:58 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Andrei Vagin <avagin@gmail.com>
+Subject: Re: [PATCH 2/2] Fixup for 3279be36b671 ("powerpc/vdso: Wire up
+ getrandom() vDSO implementation on VDSO32")
+Message-ID: <ZtxkzjvHyaCWTsSf@zx2c4.com>
+References: <700dbf296d02e32376329774be35cfbead08041d.1725611321.git.christophe.leroy@csgroup.eu>
+ <ffd7fc255e194d1e2b0aa3d9d129e826c53219d4.1725611321.git.christophe.leroy@csgroup.eu>
+ <ZtsMpcV7iLYoytdJ@zx2c4.com>
+ <795db5f1-c266-4fb3-a51b-c2b3745d334b@csgroup.eu>
+ <ZtsVry_LL2jjeLJ3@zx2c4.com>
+ <8d0a8d03-95b3-40a8-85cd-5c2e6f92eb6b@csgroup.eu>
+ <ZttP-SU9i6iOyfnG@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] mfd: Add driver for Photonicat power management MCU
-To: Markus Elfring <Markus.Elfring@web.de>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Chukun Pan <amadeus@jmu.edu.cn>, Conor Dooley <conor+dt@kernel.org>,
- =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Jean Delvare <jdelvare@suse.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Rob Herring <robh@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>
-References: <20240906093630.2428329-2-bigfoot@classfun.cn>
- <de5c9c27-56fa-4163-98e1-9a98400d2408@web.de>
-Content-Language: en-US
-From: Junhao Xie <bigfoot@classfun.cn>
-In-Reply-To: <de5c9c27-56fa-4163-98e1-9a98400d2408@web.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZttP-SU9i6iOyfnG@zx2c4.com>
 
-On 2024/9/7 16:44, Markus Elfring wrote:
-> …
->> +++ b/include/linux/mfd/photonicat-pmu.h
->> @@ -0,0 +1,86 @@
-> …
->> +#ifndef _PHOTONICAT_PMU_H
->> +#define _PHOTONICAT_PMU_H
-> …
+On Fri, Sep 06, 2024 at 08:54:49PM +0200, Jason A. Donenfeld wrote:
+> On Fri, Sep 06, 2024 at 05:14:43PM +0200, Christophe Leroy wrote:
+> > 
+> > 
+> > Le 06/09/2024 à 16:46, Jason A. Donenfeld a écrit :
+> > > On Fri, Sep 06, 2024 at 04:26:32PM +0200, Christophe Leroy wrote:
+> > > 
+> > >> On the long run I wonder if we should try to find a more generic
+> > >> solution for getrandom instead of requiring each architecture to handle
+> > >> it. On gettimeofday the selection of the right page is embeded in the
+> > >> generic part, see for instance :
+> > >>
+> > >> static __maybe_unused __kernel_old_time_t
+> > >> __cvdso_time_data(const struct vdso_data *vd, __kernel_old_time_t *time)
+> > >> {
+> > >> 	__kernel_old_time_t t;
+> > >>
+> > >> 	if (IS_ENABLED(CONFIG_TIME_NS) &&
+> > >> 	    vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
+> > >> 		vd = __arch_get_timens_vdso_data(vd);
+> > >>
+> > >> 	t = READ_ONCE(vd[CS_HRES_COARSE].basetime[CLOCK_REALTIME].sec);
+> > >>
+> > >> 	if (time)
+> > >> 		*time = t;
+> > >>
+> > >> 	return t;
+> > >> }
+> > >>
+> > >> and powerpc just provides:
+> > >>
+> > >> static __always_inline
+> > >> const struct vdso_data *__arch_get_timens_vdso_data(const struct
+> > >> vdso_data *vd)
+> > >> {
+> > >> 	return (void *)vd + (1U << CONFIG_PAGE_SHIFT);
+> > >> }
+> > > 
+> > > It's tempting, but maybe a bit tricky. LoongArch, for example, doesn't
+> > > have this problem at all, because the layout of their vvars doesn't
+> > > require it. So the vd->clock_mode access is unnecessary.
+> > > 
+> > >> Or another solution could be to put random data in a third page that is
+> > >> always at the same place regardless of timens ?
+> > > 
+> > > Maybe that's the easier way, yea. Potentially wasteful, though.
+> > > 
+> > 
+> > Indeed I just looked at Loongarch and that's exactly what they do: they 
+> > have a third page after the two pages dedicated to TIME for arch 
+> > specific data, and they have added getrandom data there.
+> > 
+> > The third page is common to every process so it won't waste more than a 
+> > few bytes. It doesn't worry me even on the older boards that only have 
+> > 32 Mbytes of RAM.
+> > 
+> > So yes, I may have a look at that in the future, what we have at the 
+> > moment is good enough to move forward.
 > 
-> I suggest to omit leading underscores from such identifiers.
-> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+define+a+reserved+identifier
+> My x86 code is kind of icky for this:
 > 
-> Regards,
-> Markus
+> static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
+> {
+>         if (IS_ENABLED(CONFIG_TIME_NS) && __vdso_data->clock_mode == VDSO_CLOCKMODE_TIMENS)
+>                 return (void *)&__vdso_rng_data + ((void *)&__timens_vdso_data - (void *)&__vdso_data);
+>         return &__vdso_rng_data;
+> }
+> 
+> Doing the subtraction like that means that this is more clearly correct.
+> But it also makes the compiler insert two jumps for the branch, and then
+> reads the addresses of those variables and such.
+> 
+> If I change it to:
+> 
+> static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
+> {
+>         if (IS_ENABLED(CONFIG_TIME_NS) && __vdso_data->clock_mode == VDSO_CLOCKMODE_TIMENS)
+>                 return (void *)&__vdso_rng_data + (3UL << CONFIG_PAGE_SHIFT);
+>         return &__vdso_rng_data;
+> }
+> 
+> Then there's a much nicer single `cmov` with no branching.
+> 
+> But if I want to do that for real, I'll have to figure out what set of
+> nice compile-time constants I can use. I haven't looked into this yet.
 
-Thanks for your suggestion, does this look better?
-#ifndef MFD_PHOTONICAT_PMU_H
-#define MFD_PHOTONICAT_PMU_H
-
-Best regards,
-Junhao
+https://lore.kernel.org/all/20240906190655.2777023-1-Jason@zx2c4.com/
 
