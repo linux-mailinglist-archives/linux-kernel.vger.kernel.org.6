@@ -1,125 +1,131 @@
-Return-Path: <linux-kernel+bounces-319862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458C397032F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:36:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03500970331
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 18:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B820D1F221CD
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:36:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 669F5B22D3D
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 16:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3FA16088F;
-	Sat,  7 Sep 2024 16:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3EF16088F;
+	Sat,  7 Sep 2024 16:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SjJ5ImNA"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKiuVA79"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C30FB657;
-	Sat,  7 Sep 2024 16:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BB81B85DC;
+	Sat,  7 Sep 2024 16:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725727003; cv=none; b=f6+TTXuKbH93JtZgtQ6t4HO9wcZSNcK7XsScpcuD0aO2BsLU4Mre3VfafNtUWB8+VyKSW9VsXh8f5Oe9sNmExrhgnpoOsizLx8Wsl1ciBSXwMLYUytRV37R85hQpaKAe8mNMgXsYlW1qPBIZGrTDCSb/FQPyfCraPbHFmylrfVQ=
+	t=1725727234; cv=none; b=ND6nXY78S7YM4IMxenkfnirBMa7AV1jiKivZwAg/PEczLMrWweUn0j30xFaert1SBDmOEI/CKTZQSSbXm+vmk88GVG/VjivvZYaVJvb0WGe8jR918k67LrGr1RwQYVQ7Tj6dcQrHI8zCP5QV5aba7PqeO6ViksNvULELjz7i62o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725727003; c=relaxed/simple;
-	bh=J2oHil4s5j6fDRPPMOrCwMnX9TKV76ZFuBNLxjM4vo0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j3JJ35yjyfYPWd2E9A0hoZZjuTt69EgDdBuNnP5hZ8DQDE7YBHgKdRB+Pi2+HNGbKFSBXYCQguZrRcPBVCQ+R3MPL2rlCHyFIrU7AMFvyW7jE5iu7oSIskw8TRj+xwG7u4xnHQPBZlXdjg8Loij7S4iyPbPpIDFjf22bl4t8978=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SjJ5ImNA; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-656d8b346d2so1992804a12.2;
-        Sat, 07 Sep 2024 09:36:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725727001; x=1726331801; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=66WiSZsVUBQEEsHoVHWVdIuUou4pZ/NswnAiyCAcZ68=;
-        b=SjJ5ImNAEzCvTU/UCo2kJKzwa2K944HEtJmOalHJK2VXDfCmsjewqkJhrJ6cpLiAgx
-         qp8D5+LgrAG7mdO00OEcxEFMlPDMK+xu/hK/xe9gvn7oEENtQM3PIMbXrlZzC/q1OHy+
-         OVLT7tioBVmXm3+jC4+iZuanmMnRIZ8IPrrc4hWTNuaVaH4tj9TlmwVn79xYukHd8vzj
-         RTr8+zbEV0YZv6Z99ek8vLmUReXSucDKlQRbBAUvH/ZszHPErailydrlTZNfLp63XYuA
-         /QCN3/141FvkJw24oyqSsFa/okNnl9nz1+XrTbqWpnsDChUN9iQuWdQQJeoGk6/i4YAd
-         jz3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725727001; x=1726331801;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=66WiSZsVUBQEEsHoVHWVdIuUou4pZ/NswnAiyCAcZ68=;
-        b=GC03V2hD06/O3KUaed1hpBFolAAht+sxiEymcNBRpTc591LplHX5sjf+yxmYhraoVx
-         /7495Nd6aQHsI7Jl4AiIqh1WDHY8XrKyHqi1/6A/VGi0v5lLtj2wX1qtkIQ7AEnP9B3H
-         +K2ZJ+sxLzkGLDtiCjPeH9sPD9KRSZveqjiNW/kx4FQpwZSlQzJYD94MvDWVlW3Rf+gm
-         qeJGQSU5XqSB/bP9hd3BR4npdc5QctIzxI4DPPszaW0NUgxND3dG4MsAr/nieQTIzcLv
-         amTE15A4x438vJfV+xQsFcRl+TGOSFl5eNe3Qq2HElAibEOTSFXpyO5oM1qRkVL12zSf
-         +mjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnBthm6htdf8neixAJrR4RUwjZCLjwTTyWoMVTgMEallDET6NnbOzF6q2gCyXyVAK68rrY36zuuqH7RM4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxpiU6ExjhJm7XLaStic7iR4x95KqLhm2b0fXohyXX9QxyCSf7
-	j83wTXh5kRymAmFqxcOgxjfn313d0cyvYsalIP+O23tRfzt5P5Vu
-X-Google-Smtp-Source: AGHT+IG0BAdsFfZ4BSvpTajwHLdND3K1qnRpWO0OkCWsycd8lHP4SZ9YbPKgNXMRc35W3fybDOb7xg==
-X-Received: by 2002:a05:6a21:3a87:b0:1c8:b336:4022 with SMTP id adf61e73a8af0-1cf1d1bf3eemr5790838637.36.1725727000752;
-        Sat, 07 Sep 2024 09:36:40 -0700 (PDT)
-Received: from fedora.. ([106.219.163.133])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e59687e2sm1055194b3a.114.2024.09.07.09.36.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 09:36:40 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: rafael@kernel.org,
-	viresh.kumar@linaro.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH v2] cpufreq: mediatek: Fix resource leaks on mtk_cpu_create_freq_table() failure
-Date: Sat,  7 Sep 2024 22:06:30 +0530
-Message-ID: <20240907163630.55704-1-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725727234; c=relaxed/simple;
+	bh=hTd2Jrdk4vfPdEIOB7bAzp4qujyHJie0PQKTucUpqNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d/bdjrDuQJdADaCFwlkL7GKJt8qvlRWOYyNTBjWYmlYmXJ9PY3/vA5AkvdsWYmGD3xy+GulitUcRCI4kyCzbe6pCWwQrOXXsVI6CF0HBB151F35swk+Gl9abqixTcX6LBqgYVPXrQPyqt8Jd+YD300rnp7koKIibgCbSmbUlWsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKiuVA79; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08BA8C4CEC2;
+	Sat,  7 Sep 2024 16:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725727233;
+	bh=hTd2Jrdk4vfPdEIOB7bAzp4qujyHJie0PQKTucUpqNk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UKiuVA79Ui3kx6VNzzYi41/ZZ4Y55+8vGtfzAMC4pl125Bv1rbfADeZeLFDkhvgkZ
+	 hlsw64wv0ik5QeG1apozIMrUaTDjdUYLcleYTC2IE/FUAhC7bn718ce02ZuNC8XNAw
+	 lgeyrofviW4t81FkXNQjRtw0728wIt+bOrA0MhIwo3PhvKaPNcakFrJm/mb3MIJ9aq
+	 cVy95rshMoGxxrYINDQShNvlxeemaZ6M0YqVu4KwU/f7KAYqMzn4AgIxhd/xhtO8yJ
+	 Wb6DSsoyIK6UaiUBKvPHMvbdW6XO42fXRo5qO4aQYD4Up+Vo4hXX0OWXAktBOgGmQE
+	 43Rp4N48ECupA==
+Date: Sat, 7 Sep 2024 17:40:28 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Abhash Jha <abhashkumarjha123@gmail.com>
+Cc: linux-iio@vger.kernel.org, songqiang1304521@gmail.com, lars@metafoo.de,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] iio: proximity: vl53l0x-i2c: Added sensor ID
+ check
+Message-ID: <20240907174028.75840886@jic23-huawei>
+In-Reply-To: <20240903035636.9559-2-abhashkumarjha123@gmail.com>
+References: <20240903035636.9559-1-abhashkumarjha123@gmail.com>
+	<20240903035636.9559-2-abhashkumarjha123@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-If mtk_cpu_create_freq_table() fails then there is a potential resource leak because 
-memory region is not released and IO memory is not unmapped. 
-Added error handling to ensure proper cleanup of all resources on failure, preventing potential leaks.
+On Tue,  3 Sep 2024 09:26:35 +0530
+Abhash Jha <abhashkumarjha123@gmail.com> wrote:
 
-Fixes: d776790a5536 (cpufreq: mediatek-hw: Fix double devm_remap in hotplug case)
+> The commit adds a check for the sensor's model ID. We read the model
+> identification register (0xC0) and expect a value of 0xEE.
+> 
+> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+Hi Abhash,
 
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
----
-It is more of a extension of the above commit as this error handling was missing in that commit.
+Small comment on the message below
 
-v2: Fix commit message.
-v1: Added error handling.
+> ---
+>  drivers/iio/proximity/vl53l0x-i2c.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
+> index 8d4f3f849..31d6aeb95 100644
+> --- a/drivers/iio/proximity/vl53l0x-i2c.c
+> +++ b/drivers/iio/proximity/vl53l0x-i2c.c
+> @@ -39,8 +39,11 @@
+>  
+>  #define VL_REG_RESULT_INT_STATUS			0x13
+>  #define VL_REG_RESULT_RANGE_STATUS			0x14
+> +#define VL_REG_IDENTIFICATION_MODEL_ID			0xC0
+>  #define VL_REG_RESULT_RANGE_STATUS_COMPLETE		BIT(0)
+>  
+> +#define VL53L0X_MODEL_ID_VAL				0xEE
+> +
+>  struct vl53l0x_data {
+>  	struct i2c_client *client;
+>  	struct completion completion;
+> @@ -223,6 +226,7 @@ static int vl53l0x_probe(struct i2c_client *client)
+>  	struct vl53l0x_data *data;
+>  	struct iio_dev *indio_dev;
+>  	int error;
+> +	int ret;
+>  
+>  	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+>  	if (!indio_dev)
+> @@ -237,6 +241,13 @@ static int vl53l0x_probe(struct i2c_client *client)
+>  				     I2C_FUNC_SMBUS_BYTE_DATA))
+>  		return -EOPNOTSUPP;
+>  
+> +	ret = i2c_smbus_read_byte_data(data->client, VL_REG_IDENTIFICATION_MODEL_ID);
+> +	if (ret < 0)
+> +		return -EINVAL;
+> +
+> +	if (ret != VL53L0X_MODEL_ID_VAL)
+> +		dev_info(&client->dev, "Received invalid model id: 0x%x", ret);
+Unknown model id:
 
- drivers/cpufreq/mediatek-cpufreq-hw.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+It's probably valid, we just don't know what it means!
 
-diff --git a/drivers/cpufreq/mediatek-cpufreq-hw.c b/drivers/cpufreq/mediatek-cpufreq-hw.c
-index 8925e096d5b9..3b1303f350ec 100644
---- a/drivers/cpufreq/mediatek-cpufreq-hw.c
-+++ b/drivers/cpufreq/mediatek-cpufreq-hw.c
-@@ -207,13 +207,15 @@ static int mtk_cpu_resources_init(struct platform_device *pdev,
- 	ret = mtk_cpu_create_freq_table(pdev, data);
- 	if (ret) {
- 		dev_info(dev, "Domain-%d failed to create freq table\n", index);
--		return ret;
-+		goto unmap_region;
- 	}
- 
- 	policy->freq_table = data->table;
- 	policy->driver_data = data;
- 
- 	return 0;
-+unmap_region:
-+	iounmap(base);
- release_region:
- 	release_mem_region(res->start, resource_size(res));
- 	return ret;
--- 
-2.46.0
+> +
+>  	data->vdd_supply = devm_regulator_get(&client->dev, "vdd");
+>  	if (IS_ERR(data->vdd_supply))
+>  		return dev_err_probe(&client->dev, PTR_ERR(data->vdd_supply),
+> @@ -265,8 +276,6 @@ static int vl53l0x_probe(struct i2c_client *client)
+>  
+>  	/* usage of interrupt is optional */
+>  	if (client->irq) {
+> -		int ret;
+> -
+>  		init_completion(&data->completion);
+>  
+>  		ret = vl53l0x_configure_irq(client, indio_dev);
 
 
