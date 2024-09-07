@@ -1,123 +1,114 @@
-Return-Path: <linux-kernel+bounces-319692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F0C9700B4
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:56:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A80970117
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 11:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 984BA1F2331E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 07:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C661F22F9B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 09:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB4914A614;
-	Sat,  7 Sep 2024 07:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE801537DF;
+	Sat,  7 Sep 2024 09:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmAHzH2G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="KSf9TGV6"
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E052D627;
-	Sat,  7 Sep 2024 07:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AFF1384BF;
+	Sat,  7 Sep 2024 09:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725695809; cv=none; b=MZqlNyRSgDeOG/A4PoZk59Wks91ZAqOt8feWwCpWp2QDW9o5jQT0Li78ecW37IauvjjN71q0Qc4FyBFC34Akbs0THSzA/NM0ftGDDAQ0pt3JhWKzNZgBw4/fIDbxpsG6ItfokknOFxqSOvK5KlxELu1M7Yza9cwqg8go+PHG5AU=
+	t=1725699615; cv=none; b=RxvLJ7E5KzqoPsUwiVfdbqF2j8pOZdCg5481lNT0iHwnbplepsXHAZ1wI66kFeyRQW09WpedurpLbm8Sl+E1JVNDUITXaIVqIgZc2LxdGQbk2coMDMy8uj2eK2glIbXyqWB5++ZAXzgV07kI+0wAbnr3FT3GWyOwa73Q42DSijg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725695809; c=relaxed/simple;
-	bh=+mMc6B5j7zB6GCWEfBYhnQ5y4Mas/2X7aChRewkQeEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NdcpTiWk+GRCwF1VDhOg3y1PZ4PeAsJqm6w3gf3gy2a0dLgXMf4VppckpGNyiKTLet6psVezwwOVptdA9aSj8EjOylEG21oDtR9pWvKCyQY7n8W68IQhdYhQfLM0COwRSQl2jPev33MzZA8gqueeMzGxpODAi5LHwEYRQF4xDHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmAHzH2G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49EB3C4CEC2;
-	Sat,  7 Sep 2024 07:56:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725695809;
-	bh=+mMc6B5j7zB6GCWEfBYhnQ5y4Mas/2X7aChRewkQeEU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mmAHzH2GRdzTEu15Q+QtypMrFa3wi1mKgv+0UtcUiqHvLGRI2YW25SFoS6u0BIA6O
-	 /LBTDnum/6xHqchhCvo05y6KVb/FWN+0E1iz/jeEnvpWEc9YqhEdRxS0cjAcPyrn1b
-	 Pw0F8eqh6ajmjfS2Lls4d3O7G2lDuEkXxpaRj8rseW+Q5ErVA0dzwRvC6qPCEIuzWv
-	 VfRJD5k5WlPNhwqXrYvUePi7J39ovlXJQKR3fqNqamW3vMj7qT1arPdUehlVZTIQuC
-	 puXV597AkRIeEgFmw5UMWA8uqPD0mZUaYHgR51my9Eh+kbIHQH/7CMMJyc1Eg9v90p
-	 07J2dmmzsKuiA==
-Date: Sat, 7 Sep 2024 09:56:45 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Cc: konrad.dybcio@linaro.org, andersson@kernel.org, 
-	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, conor+dt@kernel.org, agross@kernel.org, 
-	devicetree@vger.kernel.org, vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org, 
-	Frank.Li@nxp.com, konradybcio@kernel.org, quic_vdadhani@quicinc.com
-Subject: Re: [PATCH v2 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
- between two subsystems
-Message-ID: <pnt6pyeaqu3v3qk6hsccqfm5agtvzqjujs35roicovgv5xbsh5@gskuy5wefq6r>
-References: <20240906191438.4104329-1-quic_msavaliy@quicinc.com>
- <20240906191438.4104329-5-quic_msavaliy@quicinc.com>
+	s=arc-20240116; t=1725699615; c=relaxed/simple;
+	bh=iW4kPlXxu37yfL9FJ/tJj3k3DqFzi26mGnjj8suS9lg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q9Lj3dTAd2qLe0VfQ6QNOVeO5CMI+voy2qpUt+cY1x/vZrjQDNUqYNhmw2wkYJJxY4HtzWmsC9iigqs62AOx5OdNbJDymr2rANsh3Wn3ZaLYrEZBSnek0lTlewDx69/DdyXKuzAzc0GKA30fg+HRAZ+3UDYntG//dilKErnCdRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=KSf9TGV6; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id mpQXsPTZ8Ne0ImpQYsxdp4; Sat, 07 Sep 2024 09:00:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725692417;
+	bh=rX81KQHUGSEqEz2QKyT6FzHMJ4cGxuCMFPTkegHxuyY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=KSf9TGV69Sur6qViQeAfUSY3LTR3tH7pAHSL7Qa5xvsuvuj0CHN/DmkXDVnmDnJo5
+	 jOK5OO3iRLaw8e6FFoRxvQvUCIZws3dCr8BLaO2m6o4K+E+DoVVwlePo4xy+DFwCZ5
+	 dslVcbiiV81rD+fY9bJr28wkJj7a9HVfeiApuGl5mQXHhr1bXtQxvbURwHu4FfO7CS
+	 6hmJHrubc6zYMPNhcZZ7gwZh6ezlvgXlJvhjgqi+PN34iNJaI75vLUSE71/hNkGvfz
+	 f1MmZagPwYTPkPiFkPG8TPN6BNff+Ahu6T1NuwLCt+sJw2JgpMO/xiUSTJN7wL4oDy
+	 qEwvhMdrlQAGQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 07 Sep 2024 09:00:17 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>,
+	Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Iwona Winiarska <iwona.winiarska@intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	openbmc@lists.ozlabs.org
+Subject: [PATCH] =?UTF-8?q?peci:=20npcm:=20Constify=20struct=20peci=5Fcont?= =?UTF-8?q?roller=5Fops=E2=80=8B?=
+Date: Sat,  7 Sep 2024 09:00:04 +0200
+Message-ID: <3c7d455745c2265c19ed02f026dfc9610271d3c2.1725692376.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906191438.4104329-5-quic_msavaliy@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Mukesh,
+'struct peci_controller_ops' is not modified in this driver.
 
-On Sat, Sep 07, 2024 at 12:44:38AM GMT, Mukesh Kumar Savaliya wrote:
-> Add support to share I2C SE by two Subsystems in a mutually exclusive way.
-> Use  "qcom,shared-se" flag in a particular i2c instance node if the
-> usecase requires i2c controller to be shared.
-> 
-> I2C driver just need to mark first_msg and last_msg flag to help indicate
-> GPI driver to  take lock and unlock TRE there by protecting from concurrent
-> access from other EE or Subsystem.
-> 
-> gpi_create_i2c_tre() function at gpi.c will take care of adding Lock and
-> Unlock TRE for the respective transfer operations.
-> 
-> Since the GPIOs are also shared for the i2c bus between two SS, do not
-> touch GPIO configuration during runtime suspend and only turn off the
-> clocks. This will allow other SS to continue to transfer the data
-> without any disturbance over the IO lines.
+Constifying this structure moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers.
 
-if I remember correctly, someone already commented on your
-patches to explain and expand the achronyms you are using. Please
-improve the commit log so that people who don't know this device
-can understand.
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   8003	    784	     48	   8835	   2283	drivers/peci/controller/peci-npcm.o
 
-...
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   8003	    776	     48	   8827	   227b	drivers/peci/controller/peci-npcm.o
 
-> @@ -631,8 +636,11 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->  		dma_async_issue_pending(gi2c->tx_c);
->  
->  		time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
-> -		if (!time_left)
-> +		if (!time_left) {
-> +			dev_err(gi2c->se.dev, "I2C timeout gpi flags:%d addr:0x%x\n",
-> +						gi2c->cur->flags, gi2c->cur->addr);
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/peci/controller/peci-npcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please, don't print out here. The user doesn't really need to
-know, let the upper levels decide what to do.
+diff --git a/drivers/peci/controller/peci-npcm.c b/drivers/peci/controller/peci-npcm.c
+index ec613d35c796..fa91be58f6f3 100644
+--- a/drivers/peci/controller/peci-npcm.c
++++ b/drivers/peci/controller/peci-npcm.c
+@@ -224,7 +224,7 @@ static const struct regmap_config npcm_peci_regmap_config = {
+ 	.fast_io = true,
+ };
+ 
+-static struct peci_controller_ops npcm_ops = {
++static const struct peci_controller_ops npcm_ops = {
+ 	.xfer = npcm_peci_xfer,
+ };
+ 
+-- 
+2.46.0
 
->  			gi2c->err = -ETIMEDOUT;
-> +		}
->  
->  		if (gi2c->err) {
->  			ret = gi2c->err;
-> @@ -800,6 +808,11 @@ static int geni_i2c_probe(struct platform_device *pdev)
->  		gi2c->clk_freq_out = KHZ(100);
->  	}
->  
-> +	if (of_property_read_bool(pdev->dev.of_node, "qcom,shared-se")) {
-> +		gi2c->is_shared = true;
-> +		dev_dbg(&pdev->dev, "Shared SE Usecase\n");
-
-Please, improve this debug message.
-
-The rest looks good to me.
-
-Thanks,
-Andi
 
