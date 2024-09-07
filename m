@@ -1,87 +1,98 @@
-Return-Path: <linux-kernel+bounces-319875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4790597034E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:16:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D8D970351
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 19:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F30821F2249E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:16:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 341212838C6
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 17:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1633161914;
-	Sat,  7 Sep 2024 17:16:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004981649BF;
+	Sat,  7 Sep 2024 17:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L70dQnAq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AC840BE5
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 17:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7DF40BE5;
+	Sat,  7 Sep 2024 17:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725729364; cv=none; b=UiPXckmF4rsMXbqkty0TILrsVxxoiMvc3bKG3ZvWP60NOyYSjupUitBSOMsUNSPyJeX+aY7ifScIIOVygdCU+uKEWEQDBjht3vbEhP2ZNtTLpRXIijz97iatMonb19hzmHvN3Y2wisRt0qoy+OR8cBBad/IShx3aJtr9FTC0MY0=
+	t=1725729491; cv=none; b=OYhAwSDGn4knMt8ufsvHvBvPAJnGAr56dTiCFzS8qu8SYNW8BBpKDP42U4TtEcMkYvcv2QV47Uh+IlKGZTJ09H4z0ZEzBJ9TaRJTDEi0yLTBQrxkN3Zr6N8Qpn3mSrtbBJIV6vGlOmChW1IW9K9zC174kL/yTvKmsGt9m/CW4/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725729364; c=relaxed/simple;
-	bh=ndywN073E0k6sTkM/ZVfC9q4Vcrw/JRDe+9SUhWR3o0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=GXL6EDSnQ0HEY0ajO/QHcir64gmwREjnnbW/Fd86pf8pkU0/RyPXqLIHVmQgng9rvUHXGJReq8RF8Eq5YsoMkHpahAB+soLUrbOWN9Ez4d3hsInJf4zkpJBV3k12OkGSwQXrtE1C5eCOpv80qtxVVH4bBJmCw2jQQJokB5nDGhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a045bf5779so51048045ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 10:16:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725729362; x=1726334162;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9D65iIYDSawVBByvUh+jS9qZI3QDC5eYj5oMaDJiYY0=;
-        b=C9OrdwCI971lwfiR/FfwvLyvHv+UrSX+V9QQ0XIgDLWGFZTrLcJJreru10r0HfKHzi
-         9PU5EpPmZ4UV2m+n7QfSkd6XXbxeTJntL5gZQyJildyYEgEPXKINIrVmFdm0D58tXC1l
-         cIzmT08qYVugDDXWfad3Xw4Vehxhqx1WRwUY2d6KWV7so15PJWBVA1NYolqrfKqgSdjI
-         95VQlttIaDR4iwlL/mbhIBd3MvQu6J5Kh8pEpfvuonNL0FAsgFji4UNBzm9TqWdgQjet
-         Ncs/3lL7b5h4GcsAonxWnBPM+VUov3UiqQq/5JOjpnUQUAUPqSsQPdvw+q+jOB8VN1ph
-         8o1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXTZ03bjvQkXcAl1SNZ4j6kz8hl+COP1W7+Xp3sgdg5jBOLv6KF9V12vSQOMq583B+31nptSMtp43H5RWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSh7ebzQVVqcneE9t4URxnC1IAaZl9+vPUUYAFeffprw/3v0jC
-	TnYqQRW8VYZl9cONoLJvSgi1rcYxryiVa/Z/f0RpllJ5t99V9DOcl12hKWlmoPi3uYZZLT+2dVg
-	cx97Vrbyii4iZWPo6dbH4LziHPRU1efOGKWPgnLGsChEltm/8dQ6xVbM=
-X-Google-Smtp-Source: AGHT+IHny+ovz8OZCs5BdIhiyFQoXV6XCV4S0GtKSePQEZTOlCIaNQ6MzmB6yYxYTu/HOPIaFwdGizv9ck7ARvRYNkhkFY39DUUo
+	s=arc-20240116; t=1725729491; c=relaxed/simple;
+	bh=6nO/2jZ6ballFTuHFc/CYyoTZ/XdNPP32Q2kT9ibE7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uJkZTLCfPrjDFrfVPS/MiKPpOp+kfxbXx/swS8YlOqVKJLyjRki8o23EwS2++v27B+jUY9bOQXoFk63rJVHCzqdvHADktv23/gMlNgCdL9OHvkqCcxBFErnNyt2yiQYPkVGwlYSVAMmG6EEVODM8oFO7fC5kDshMDOrZaSBSyKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L70dQnAq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 410EAC4CEC2;
+	Sat,  7 Sep 2024 17:18:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725729489;
+	bh=6nO/2jZ6ballFTuHFc/CYyoTZ/XdNPP32Q2kT9ibE7c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=L70dQnAqI14SxVZGq8uI12mC/Lr+kTcv18aG/Bxjt4megCvT7yi/1bqueFOGotDdQ
+	 IBaJgoy4Kebeu0eVPQdEQRIjDh9jubtlCcgV6IZevhRv3hQhsWpP+jKKVSDGSzwCRr
+	 rYmh09X535+LKZNyIYkjTnRTbI0RE0ryrvZPSaiG1kGh0SaKc4IWF9/bhFjAa1Yc4E
+	 NrAtqIV2BWYJRRVR2VbjOlae1cEhsMTTeVREE2aAJXmVdZ2L+WyiqEP1ZdW/bjlG4s
+	 1SCKOtvD4AsHuHS38SXZSUJNpgbtxIhRejNw3frnmp5Qoha43nufgi/lQhbcSj7cFG
+	 Qyzs7dnL5tL9Q==
+Date: Sat, 7 Sep 2024 18:17:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Tsai
+ <ktsai@capellamicro.com>, Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v1 1/1] iio: light: cm32181: Remove duplicate ACPI
+ handle check
+Message-ID: <20240907181750.78b27e6f@jic23-huawei>
+In-Reply-To: <20240904183646.1219485-1-andy.shevchenko@gmail.com>
+References: <20240904183646.1219485-1-andy.shevchenko@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1ca8:b0:3a0:45c5:a358 with SMTP id
- e9e14a558f8ab-3a04f07aa03mr1149985ab.2.1725729362453; Sat, 07 Sep 2024
- 10:16:02 -0700 (PDT)
-Date: Sat, 07 Sep 2024 10:16:02 -0700
-In-Reply-To: <CAG-BmocVhraJ7Jp3Y6b05hW78-tDEnAXKh--1DOtJHkhLb7jQQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a0c6ca06218aad61@google.com>
-Subject: Re: [syzbot] [jfs?] kernel BUG in jfs_unlink
-From: syzbot <syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com>
-To: ghanshyam1898@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Wed,  4 Sep 2024 21:36:46 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> cm32181_acpi_parse_cpm_tables() is a no-op if ACPI handle
+> is not available. Remove duplicate ACPI handle check at
+> the caller side.
+> 
+> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Hmmm. Not the most obvious code give it relies on an error
+being definitely less than the header size, but indeed it
+will error out if the handle isn't there.
 
-Reported-by: syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com
-Tested-by: syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com
+Applied.
 
-Tested on:
+Jonathan
 
-commit:         b31c4492 Merge tag 'linux_kselftest-kunit-fixes-6.11-r..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=162e189f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc7fa3453562e8b
-dashboard link: https://syzkaller.appspot.com/bug?extid=41b43444de86db4c5ed1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1116189f980000
+> ---
+>  drivers/iio/light/cm32181.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/light/cm32181.c b/drivers/iio/light/cm32181.c
+> index 9df85b3999fa..aeae0566ec12 100644
+> --- a/drivers/iio/light/cm32181.c
+> +++ b/drivers/iio/light/cm32181.c
+> @@ -217,8 +217,7 @@ static int cm32181_reg_init(struct cm32181_chip *cm32181)
+>  	cm32181->lux_per_bit = CM32181_LUX_PER_BIT;
+>  	cm32181->lux_per_bit_base_it = CM32181_LUX_PER_BIT_BASE_IT;
+>  
+> -	if (ACPI_HANDLE(cm32181->dev))
+> -		cm32181_acpi_parse_cpm_tables(cm32181);
+> +	cm32181_acpi_parse_cpm_tables(cm32181);
+>  
+>  	/* Initialize registers*/
+>  	for_each_set_bit(i, &cm32181->init_regs_bitmap, CM32181_CONF_REG_NUM) {
 
-Note: testing is done by a robot and is best-effort only.
 
