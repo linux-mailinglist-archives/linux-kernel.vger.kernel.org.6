@@ -1,161 +1,119 @@
-Return-Path: <linux-kernel+bounces-319625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8734796FFDA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 05:31:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6BD896FFDF
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 05:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3ECEB23698
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:31:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D0701C21E6E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 03:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051BC38FA3;
-	Sat,  7 Sep 2024 03:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2C63A1B5;
+	Sat,  7 Sep 2024 03:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F0gXMJnC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KWHiU7/e"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97489DDA6;
-	Sat,  7 Sep 2024 03:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB284EAE9
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2024 03:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725679879; cv=none; b=Qazw7hQZaPSnIPGVDUIGCza40y0UBvSsYJ+vdtNn4npfC9zRdELM14w/yjXp2Bzk9nkL/oStxrRnQ2CybqG1OYbe3cmz01wwAma5/LVmwXSHfjuWY1NhWDBKpXMHBztBZx7w/TIBC5Ej9dyjWbgbEUsNm+6nLJ0XnAovj9iS/IY=
+	t=1725680232; cv=none; b=GnutU3aO3w65hlYNsl4xuTA0dqadl0YF9cUQbDYbBzaNikvnSs0/Z2aeCq4WISCGltYJkawL/UxQXe9Pd/bYc5U+THz88cJCF9Z5tT/SFMWJo1QKI3J0JYv4gnXOuRncxvD8n7UsZ8K5EYRmqlnw70SfCRsgcetvRLGNNYXxBBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725679879; c=relaxed/simple;
-	bh=hEGaHKODjVXh1NimtLs72WsXNCmMTIIkMZXiMa9laZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W2FH1gihx7uRgJC1O8slzvCyKarug9/GB9E5PxVNe+Y/fvKfUUtjhRpDiig2SErgFA/sFoVnrLtTTzlixsETCpGBJhZS5TB8yGeEsK+JD8DwaY/3DnNXmZtNtViwc/gNCf2QPPDeQ7EumVTs0g+hVXXepK2HcuKrSFdaBwduBHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F0gXMJnC; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725679878; x=1757215878;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hEGaHKODjVXh1NimtLs72WsXNCmMTIIkMZXiMa9laZQ=;
-  b=F0gXMJnCYWTK9yNA6KuquFjKDE9J+lNMQDu6TXEMyiw5UF2umIGD9BPE
-   ++76+d1cFKicnXtZdNrJ2GotDyYIynWi6aSWvoJQQ5DaXBdjWDx6lacAf
-   +0t0Ek9eb6PdXx8aBilbr/yj40nGuKl+LWwLRSIhFYrpTflKhsoa+p/tG
-   tEn22NskjPGFlOTkUiQ5+N89d6cES5iqcxzT14gwuanhmMZ1ZZP6Vh+Mo
-   i3ao9o2vStkm6F1Ugl5dKodep+d3Ae/vFcbFzWqInpKOrk8aEBQ02m9SO
-   V8P30CK0KIJ15/jQ6AkPF2/H3kNOacnjmEXPdWTnhh4ZZDbupM+h8mI16
-   w==;
-X-CSE-ConnectionGUID: CzYRDQAmQAyA+bOpC0SPQw==
-X-CSE-MsgGUID: Bug3weRfSFeB8wSDQQ7P6Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="35115597"
-X-IronPort-AV: E=Sophos;i="6.10,209,1719903600"; 
-   d="scan'208";a="35115597"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 20:31:17 -0700
-X-CSE-ConnectionGUID: YcjMdzw1SKGwwAHhN3ztFg==
-X-CSE-MsgGUID: aDYgvrRLQsGKPCVLdQexNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,209,1719903600"; 
-   d="scan'208";a="70928207"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 06 Sep 2024 20:31:14 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1smmAJ-000C5q-0J;
-	Sat, 07 Sep 2024 03:31:11 +0000
-Date: Sat, 7 Sep 2024 11:30:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: KobaK <kobak@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
-	James Morse <james.morse@arm.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH V3] acpi/prmt: find block with specific type
-Message-ID: <202409071110.LWdX8txQ-lkp@intel.com>
-References: <20240905124950.512973-1-kobak@nvidia.com>
+	s=arc-20240116; t=1725680232; c=relaxed/simple;
+	bh=9IpRdE+iMO3lDZEnFlMi6eq14jHtpDEtJEsroLAxjOs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J6j8NmHPUsYjI2Mrg0cy7GlWR91FVCLhnUQkXOQoBmGEpf1ifsksCQb6cco11xhw2f9u3ZJgG7TsfDHpsDX6HSEGQSpSc+c8j478osGtxM5qDgx6VlM9QMqH9RkVnW7EwRSmGkNLSF93Tqowtx3SZSDGTBoaWBOjF7LfVMPRDoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KWHiU7/e; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-277f0540c3aso1616587fac.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 20:37:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725680230; x=1726285030; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bdn1vzRRTAxkrY+XEO+BGgWLg/pK8pUQR7KL2TxVAiA=;
+        b=KWHiU7/epXS+jv2CGun8ZXff/vc/TO/VUHFWhFys3if8DlslNsi6rss2A/fs/k9h04
+         I98Sl9I+3Tc24tKrPMqQ7Or1p2kh2EyI7BRYCRNifimhfNpiisHYG4xbISK7cME6h2TG
+         xHxN/tX0cIoZy/GoZOg1Tg9JcgHOG9Y7ugtyvpfYq+7vUyj7Y2OcN+45A8oS9MT0yBvV
+         X2gp602dQJ5BjV9ukbBGuJ99bkLE518fLnnzRh8t78E8cu2o4GlvkB1QntB6zzw+/z0F
+         lKuoEFb5i8synbg+pxqDvAvU4IA3uySrjXpsncXZduF+Nu5DDLse0aRHPlW3R4pjt/mH
+         dsJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725680230; x=1726285030;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bdn1vzRRTAxkrY+XEO+BGgWLg/pK8pUQR7KL2TxVAiA=;
+        b=ZrdVoKqPNg+CPL7WbArAGgfvH9tSNZ7TlgZLp7FO4APjHdwTVOPZnwKrC8ihG1idkB
+         zIqRjPzUXW/5NFKtdezX8yU8J+bCpZzIDlZtO17/P5rXHIOkz2i03XfG/wMFmRCJFUVF
+         tRVJHLAMGQBQEAWt6pKwruag3e3Cdau6o0CJJ5Tyf7EjcTBrEEG2Xekb7aFlyYJqOVk/
+         0S1T5GtFHAgVFxCZDI/2OJXZ73ZqkK3L/G4xztFmq6jeezrSR6e78gkGjRZDlJ/MM97H
+         Gufhf9WjUdjRq6z/ZWyVkSozXG67dBgpbzMP1B94RYXZvxGXM4X9y0Xvw43vHKxdo1sE
+         R4Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCV6yBELr9jmZYIWKYu6VrX0gwQsDZl+AJjHXMMH5sFOy87IlW+t94cqAT5mhdIu6BuwHB5U4t+/Mn3eOz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjGJ+Gw1HIDuisTofMxcE1vcldt91qwEWvtlgIYjPNqjkKCxIi
+	gWyMwJltrs9M6MFVe0eJTjT5my0JIZsn9FXQQl7fEO4BLzdVhVc1
+X-Google-Smtp-Source: AGHT+IG4gOsQ09yMILSjZI04blubJ9v01hUa3KPBH71rWt2ry/eeQM6gjBxX9uOR2G0GPYSV5n6ALg==
+X-Received: by 2002:a05:6870:b294:b0:268:a79a:be0d with SMTP id 586e51a60fabf-27b8302d7f6mr4854143fac.47.1725680229766;
+        Fri, 06 Sep 2024 20:37:09 -0700 (PDT)
+Received: from localhost.localdomain (111-240-109-89.dynamic-ip.hinet.net. [111.240.109.89])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e59841fbsm217637b3a.167.2024.09.06.20.37.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 20:37:09 -0700 (PDT)
+From: Min-Hua Chen <minhuadotchen@gmail.com>
+To: Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Matthew Brost <matthew.brost@intel.com>
+Cc: Min-Hua Chen <minhuadotchen@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH for-next] drm/ttm: make ttm_swap_ops static
+Date: Sat,  7 Sep 2024 11:36:41 +0800
+Message-ID: <20240907033643.1513301-1-minhuadotchen@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905124950.512973-1-kobak@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-Hi KobaK,
+make ttm_swap_ops static to fix the following sparse warning:
 
-kernel test robot noticed the following build warnings:
+drivers/gpu/drm/ttm/ttm_bo.c:1142:31: sparse: warning: symbol
+'ttm_swap_ops' was not declared. Should it be static?
 
-[auto build test WARNING on rafael-pm/linux-next]
-[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.11-rc6 next-20240906]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Fixes: 10efe34dae79 ("drm/ttm: Use the LRU walker helper for swapping")
+Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
+---
+ drivers/gpu/drm/ttm/ttm_bo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/KobaK/acpi-prmt-find-block-with-specific-type/20240905-205316
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20240905124950.512973-1-kobak%40nvidia.com
-patch subject: [PATCH V3] acpi/prmt: find block with specific type
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20240907/202409071110.LWdX8txQ-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240907/202409071110.LWdX8txQ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409071110.LWdX8txQ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/kernel.h:31,
-                    from drivers/acpi/prmt.c:17:
-   drivers/acpi/prmt.c: In function 'acpi_parse_prmt':
->> include/linux/kern_levels.h:5:25: warning: format '%d' expects argument of type 'int', but argument 2 has type 'u64' {aka 'long long unsigned int'} [-Wformat=]
-       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
-         |                         ^~~~~~
-   include/linux/printk.h:437:25: note: in definition of macro 'printk_index_wrap'
-     437 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ^~~~
-   include/linux/printk.h:518:9: note: in expansion of macro 'printk'
-     518 |         printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
-         |         ^~~~~~
-   include/linux/kern_levels.h:12:25: note: in expansion of macro 'KERN_SOH'
-      12 | #define KERN_WARNING    KERN_SOH "4"    /* warning conditions */
-         |                         ^~~~~~~~
-   include/linux/printk.h:518:16: note: in expansion of macro 'KERN_WARNING'
-     518 |         printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
-         |                ^~~~~~~~~~~~
-   drivers/acpi/prmt.c:161:25: note: in expansion of macro 'pr_warn'
-     161 |                         pr_warn(
-         |                         ^~~~~~~
->> include/linux/kern_levels.h:5:25: warning: format '%llx' expects a matching 'long long unsigned int' argument [-Wformat=]
-       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
-         |                         ^~~~~~
-   include/linux/printk.h:437:25: note: in definition of macro 'printk_index_wrap'
-     437 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ^~~~
-   include/linux/printk.h:518:9: note: in expansion of macro 'printk'
-     518 |         printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
-         |         ^~~~~~
-   include/linux/kern_levels.h:12:25: note: in expansion of macro 'KERN_SOH'
-      12 | #define KERN_WARNING    KERN_SOH "4"    /* warning conditions */
-         |                         ^~~~~~~~
-   include/linux/printk.h:518:16: note: in expansion of macro 'KERN_WARNING'
-     518 |         printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
-         |                ^~~~~~~~~~~~
-   drivers/acpi/prmt.c:161:25: note: in expansion of macro 'pr_warn'
-     161 |                         pr_warn(
-         |                         ^~~~~~~
-
-
-vim +5 include/linux/kern_levels.h
-
-314ba3520e513a Joe Perches 2012-07-30  4  
-04d2c8c83d0e3a Joe Perches 2012-07-30 @5  #define KERN_SOH	"\001"		/* ASCII Start Of Header */
-04d2c8c83d0e3a Joe Perches 2012-07-30  6  #define KERN_SOH_ASCII	'\001'
-04d2c8c83d0e3a Joe Perches 2012-07-30  7  
-
+diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
+index 320592435252..1aab30767e41 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo.c
++++ b/drivers/gpu/drm/ttm/ttm_bo.c
+@@ -1139,7 +1139,7 @@ ttm_bo_swapout_cb(struct ttm_lru_walk *walk, struct ttm_buffer_object *bo)
+ 	return ret;
+ }
+ 
+-const struct ttm_lru_walk_ops ttm_swap_ops = {
++static const struct ttm_lru_walk_ops ttm_swap_ops = {
+ 	.process_bo = ttm_bo_swapout_cb,
+ };
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
