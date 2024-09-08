@@ -1,128 +1,78 @@
-Return-Path: <linux-kernel+bounces-320324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07EE9708DF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:10:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB2B9708E2
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04CBFB210D8
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:10:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A60F51F216A0
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D84175D44;
-	Sun,  8 Sep 2024 17:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E0C175D5D;
+	Sun,  8 Sep 2024 17:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOdtHTwP"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFOAvR88"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945CAC8D7;
-	Sun,  8 Sep 2024 17:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEC0535D8;
+	Sun,  8 Sep 2024 17:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725815446; cv=none; b=CPrRyBzNUyMuHB1oO+D4+TutsBrI4nYc6j9hnFcAQMV6QiZHPNtX39yrmWg8/9m4P5si0IsNZfCBK4Mhb8n/o1DBuWJnDs1+cFQngeCCr8eYfQ4yVdaiNhsXQLinKELhOPQwFoCEFjxKOEgAV6uVkJB6b46V2wCsZ1yduIV5FzI=
+	t=1725815843; cv=none; b=EweB0OJFXb3SACqS3u5gTSWLwupqb5z5iYTSf3mTWytMGjGwSQ91GszKzHm8dJTYC4jvlKUfYnR8BJGlhsMMdzgXh8UjhluZGgqQTVCKigFrRLhl4f2lif1xzCArxLAcLcSq73Yv3IxirHcUQxtJrXKXumjfmr4DdKNFH4YlAIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725815446; c=relaxed/simple;
-	bh=ETmEyKY/wmFWkgs6oDDGLtk+Ums6ozmdGe3NhiKv9lQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sTD/boe5Ox5vpwisyftPDhY8CGjoOUvu7Y7lstAY6TWeYqP7bYK1mBbtt6JHAZtWXFye7gCi2uMcPC0ehPQM5Bd9F9RZEe6RBOoW6raECTijrKBKv5JzQDI3e+A1RsApXF4F1GBh+E+NNObfNExZe5ox3cTs06KeNv4CT8ecMoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOdtHTwP; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2705d31a35cso2209011fac.0;
-        Sun, 08 Sep 2024 10:10:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725815443; x=1726420243; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=byBuFjgDxI+Clh3ypYFOuNkNtpRkS52941a5a/b/UG0=;
-        b=BOdtHTwPrOOjojLoDbmFRbPIVtX6oaA1v1yUduuPaa2TBrMBVwSt1w3vbxaHjDIW5v
-         eqavkodYHP0b7vxK6qn1YJ8h+OS42I7yXI4B8sp9BA18bt0pQGklMm9r4zPQ49QLx7jY
-         lwpircVHV4d8g4TbS+sJTdRVM+o7G3Kq8ShEjB/UuEG8DtpLBaRIE24i8inUhH2YhpXK
-         8mci7DErRBHm+eUE998WKueeH5CZrtlydSHL/HeZI0JtSDsazLgMOIfQhpvt9TkePydB
-         g+8ZAnLYntTEyWiMUXMiLWpFT+lMa8pIVW4aG74SHviz5keSjDQ3y6i1TSdodSfEGlRK
-         Dz4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725815443; x=1726420243;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=byBuFjgDxI+Clh3ypYFOuNkNtpRkS52941a5a/b/UG0=;
-        b=JfNRon6kIH+66fqmfVq1iT1m4MzE/N/lfzjSM0JDxKDEEQ5ATrV5w8Rej3dTMloBLo
-         nZ/3qa7+iITZjT069GmQTpjsvk+pv8JYg6npZGBme/0rbyaC9yS6nNVjn5Zcfna1EQ1w
-         8YD1I4MOmStA5I/35kcywXleJ01hPCb3Cx6n2GkJDLNcL7HSfXWEm50BqMsxDmA3mJ52
-         SUw6g59cxt51cY+fZfxHAAuGteseWXIqE1Ad7b4ud48B6J8EtdbditHas4OsTh7IiJAn
-         YWO9tpxFxAJDVBjfc+mZQOmvQ+l4be56KEBnIghZE0xfUArVSavMYbClcHXYkszNadkx
-         W6xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoPIV6oHHAyzFp+AmEZsr+CpUFcRUIN1bBGs8dDzGSsYq6Nso7NCcElOrBNAX6Dy73bmGijiRHwmPiZjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf/Ns2Ti6690/PWP1166+SOf/2wWo524xPqeWNtkuRQlf3kqzF
-	qQj1YbRGHai41JXW2YJVFF5AJPKTDU2bZEOTbKmWkNhMEUgRvRjI
-X-Google-Smtp-Source: AGHT+IHl3f6WSZw7QaESPgVzFX6GH959Zxb37RMZB5GYNtWCuMeDpv79hH7EnhuumG50S5l8PS7Hfg==
-X-Received: by 2002:a05:6870:a54b:b0:278:237:57ea with SMTP id 586e51a60fabf-27b82ea9594mr9741493fac.28.1725815443447;
-        Sun, 08 Sep 2024 10:10:43 -0700 (PDT)
-Received: from fedora.. ([106.219.163.133])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d82092e957sm2610168a12.0.2024.09.08.10.10.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 10:10:42 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH] block: fix potential invalid pointer dereference in blk_add_partition
-Date: Sun,  8 Sep 2024 22:40:36 +0530
-Message-ID: <20240908171036.71874-1-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725815843; c=relaxed/simple;
+	bh=uPpvTTxcBc/nZRx5WCbV4GYWTcujKt39sdy1KaJcQRU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=PhvtZQi5Vs3B1s+bJV7Q3OzyIPV2/kHp6VbISZ3TX81l9rN4ehf+yhZ/xGDwwq73WTq2U0vrSeTlthlUmo2I1brBVAqlA7PpplwAz4dZPIBTR8npWxzPiB6DIgo3r2ZxfAPr0GHdxfTN2T5A0oBhK/gBDkEG7uQHq/897fYLDqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFOAvR88; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2DB8C4CEC5;
+	Sun,  8 Sep 2024 17:17:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725815842;
+	bh=uPpvTTxcBc/nZRx5WCbV4GYWTcujKt39sdy1KaJcQRU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=cFOAvR884g8x+IOOv5SeyySQaHtXLFtubwvM9cU4IbZ3Z4GTj19mvDU3ZgVyxPdTN
+	 UUqz9RFc3dzg7PWhHESF2UNBlZ+hjszBK7tj5WQMPrLJxRv0ev+0Zg3wPadbgvhwre
+	 QiQ9v+jN/rvn7xKqXrgJuU9txbKPCgMLn+vT5DkW/VGb2KbFBQjxYKqLilYJ2CJc8F
+	 PoxxM35DIVOXJP5FpmG45uIjgHPg1kwk0p+qk07H7irqEeThKLpp0X4sOWvv/0vsk2
+	 5KUw468SMMp5FSMeYsIoh/em+4QRoqoBdISroZG3iNgQKjam1ZZuuNk6XpC4AbIHJy
+	 hq6ZVBRJDPiVg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB15D3805D82;
+	Sun,  8 Sep 2024 17:17:24 +0000 (UTC)
+Subject: Re: [GIT PULL] USB driver fixes for 6.11-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Zt1W7_sJsYEfHDLu@kroah.com>
+References: <Zt1W7_sJsYEfHDLu@kroah.com>
+X-PR-Tracked-List-Id: <linux-usb.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Zt1W7_sJsYEfHDLu@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.11-rc7
+X-PR-Tracked-Commit-Id: 87eb3cb4ec619299cd5572e1d5eb68aef4074ac2
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 51c4d5f10da4434d63790a679f54e68abc7170e7
+Message-Id: <172581584339.2926424.15484863288024218338.pr-tracker-bot@kernel.org>
+Date: Sun, 08 Sep 2024 17:17:23 +0000
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The blk_add_partition() function initially used a single if-condition
-(IS_ERR(part)) to check for errors when adding a partition. This was
-modified to handle the specific case of -ENXIO separately, allowing the
-function to proceed without logging the error in this case. However,
-this change unintentionally left a path where md_autodetect_dev()
-could be called without confirming that part is a valid pointer.
+The pull request you sent on Sun, 8 Sep 2024 09:49:03 +0200:
 
-This commit separates the error handling logic by splitting the
-initial if-condition, improving code readability and handling specific
-error scenarios explicitly. The function now distinguishes the general
-error case from -ENXIO without altering the existing behavior of
-md_autodetect_dev() calls.
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.11-rc7
 
-Fixes: b72053072c0b (block: allow partitions on host aware zone devices)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/51c4d5f10da4434d63790a679f54e68abc7170e7
 
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
----
-Compile tested only
+Thank you!
 
- block/partitions/core.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/block/partitions/core.c b/block/partitions/core.c
-index ab76e64f0f6c..5bd7a603092e 100644
---- a/block/partitions/core.c
-+++ b/block/partitions/core.c
-@@ -555,9 +555,11 @@ static bool blk_add_partition(struct gendisk *disk,
- 
- 	part = add_partition(disk, p, from, size, state->parts[p].flags,
- 			     &state->parts[p].info);
--	if (IS_ERR(part) && PTR_ERR(part) != -ENXIO) {
--		printk(KERN_ERR " %s: p%d could not be added: %pe\n",
--		       disk->disk_name, p, part);
-+	if (IS_ERR(part)) {
-+		if (PTR_ERR(part) != -ENXIO) {
-+			printk(KERN_ERR " %s: p%d could not be added: %pe\n",
-+			       disk->disk_name, p, part);
-+		}
- 		return true;
- 	}
- 
 -- 
-2.46.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
