@@ -1,128 +1,157 @@
-Return-Path: <linux-kernel+bounces-320408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE64C9709C8
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:44:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9587C9709CC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30B631F22063
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:44:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E4201F21EE6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC85A17A5A1;
-	Sun,  8 Sep 2024 20:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8545317ADF9;
+	Sun,  8 Sep 2024 20:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RLIehhls"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="DsTGXWoz"
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9E017622D
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 20:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496B724B28
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 20:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725828280; cv=none; b=ihLJOoqf9PzNVpnKJ3Wo0OsvEFtyqT9YP9ub3i70cKM34cIuPQSifoNr1LB9ICieM+ZgLtFmasqu4zUEEITjFs0ZbJwX5UWfjGndfuonLAxyYlM+xqNrTVRU/60h7MbQjwK+6OGZNIZV1Tzfk+8UPz6lbb2H9faU3VKSlM9ULCw=
+	t=1725828571; cv=none; b=QLPH+n5r3Zu/LDF44z453ZL1A9FI0K1OeRGTTUYawRRG7sBqdCZBnApmnPdWrGw2gYQlEAXyIo93tSnghbXUdzHmBtInZqdLnbX2Bxvf4pBBRLLxpubOtnzmw0lZaDyF9ptiHbHhU0yZP9UkTXfLV+gVLrJrYP5Whyg5z3hupuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725828280; c=relaxed/simple;
-	bh=ce5/oy94qv4P5QWUjkFHth5O//hDjwj3U4B40R0gHfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FyzlLvwB0KsGhj1MrrGkIWSKcxs3aoodIZYO+LGNsd6geQ1XOVor0s9Cv9zSXP+nyL/1j/qUClqZ//N8Bx84ApnN1tIzptcKYWDuaVANuribQmm5+mS1xrHBI76tAnKprySqCHyidiqmEBm3KxSAdFPBQAdmmf5d0RbwMLeYbe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RLIehhls; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42bbdf7f860so33348125e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 13:44:38 -0700 (PDT)
+	s=arc-20240116; t=1725828571; c=relaxed/simple;
+	bh=EoBKEDH3k4qBQyLBQhS51btl8ruh9qqZSDp7H6obE4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DqOIntYWLdm5f0s8UEAruIQ+f014v7o/wUPFmyPE+4BOTZHM5w3tXcFa+xFyEGMFhRRrZE4rT6HMPG+zYMbF4XEDlgYtPvwqY9jR67J32uhpvPwSXsNld4SXwgHgbdrY9MQeWWP/tzRG6ZKy4Ydgubl6S9RG6tiCHhM1Z6ZW1IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=DsTGXWoz; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a8a7cdfdd80so171545966b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 13:49:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725828277; x=1726433077; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Asp8Q/euPnossaqJrTRIZ1Vkqf9RFiJuPtiDLCvZeQI=;
-        b=RLIehhlsb+OoeIufE63mt5lgblGdQ/SfScUxP/5kvXJMXMDk4Y5NRwprRsohVSxfbG
-         CieGmlCEBYrJEjN6q4jUToqaz5mEHNGIVFW45CoWm7riHeDQHGs6C2E2f87aTWoAnexD
-         8x0Zn4IwbfAA6i+YqyeLhobPNKQZnLDRA6EsnyGwbor8WnOpgorp03qxdDTNR0UK4qYt
-         Lh/3ABsvDQMafKGrAhjQO748efqcL6JVypxqA8DKwyUxU89xZtLITf++F5GpeurOB1la
-         KszxnPnyRummN4CGtidXgNrtcabvCVniatr+JCCugPMyawzM7fXbfyhZWyDCij4kVH1B
-         n0KA==
+        d=fastly.com; s=google; t=1725828567; x=1726433367; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zEC4wQ1JIXOpeG5hhCNp2MQwBTDr5gpJ3bo6M3CBVtc=;
+        b=DsTGXWozC0utvVsJa3InhG1XGU+B/yEZ+wok3O0ikK+btkJIuqrUeaZwhLy/IZUI2X
+         rv8CxMqnTYwQa3C5tE9rJM04dRkkb/pA5cc79fj5t1xU5m7UNAkQLNjKIVjRGOhpHB2W
+         NoCc8FEKttJ3NnC/gTuP53/q78Zcme5e+lhvY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725828277; x=1726433077;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1725828567; x=1726433367;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Asp8Q/euPnossaqJrTRIZ1Vkqf9RFiJuPtiDLCvZeQI=;
-        b=LnsC87o+j0nLExg2Cn9+cJrR2frx4HRJIDdqpVApjimkccdFF4bXuCidSm1cKCe/Fk
-         4A0+JEOBgpGCBmwhNbqA7EshbvtzgE9N70VZbF3Y2noSiRD1V/kwK00Mh7889aRZJ27y
-         41wq0QJ4loqUQt6/x2UTWRFZKK/mEUyvPDrrOx9pZM8CS1mk7p+TZwzJ8fWqj8ejK5Jg
-         8DaT25AYs89R2iQjCC5eCdpJki1YWNABltrMQwygNQLaH/x4+uU6z57yK4IqBW+SVDqf
-         kfZYD7uWtFZ3ZV4ifxAjr/pvMFE3rgvLcomb8n70PO9wl543hJHGaSJquPoLSB61apXN
-         MNYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfD1NX1FZkf993VSHcXR6hoqovs2wEZU19iy4lU8GYu2I3yFbzJ3auRQ2jpgIvts2tnWoHnXLuMw3CEzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyZRgSVscmjeowSbRO82bHMJWbvtCYHLQr80sFLqFWkhJnKsiD
-	D5KOZNEndIStQlcm+c8mCNjXvdObMbZGval8tgsYW7HZ/9HT8I0k
-X-Google-Smtp-Source: AGHT+IHM9xQj2l/pnuowsDJq0ee0kHagA1SOlJxibcTBQRb3up7/6pVWYiWNY9O39D5wKe7cZS6Abg==
-X-Received: by 2002:a5d:5e0e:0:b0:374:af04:d6a3 with SMTP id ffacd0b85a97d-3789913417fmr2521402f8f.57.1725828276957;
-        Sun, 08 Sep 2024 13:44:36 -0700 (PDT)
-Received: from [192.168.0.104] (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25979fa3sm244384266b.71.2024.09.08.13.44.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Sep 2024 13:44:36 -0700 (PDT)
-Message-ID: <74e0d097-7883-446f-8722-f79169cab15d@gmail.com>
-Date: Sun, 8 Sep 2024 22:44:36 +0200
+        bh=zEC4wQ1JIXOpeG5hhCNp2MQwBTDr5gpJ3bo6M3CBVtc=;
+        b=FuOLcU884eEu/udAYu9vp50QgWmBNmfEobJ+FSc1bN19ss+qOqQxJUUk/3+y6tqRPm
+         8z9HkzWrGCM4MkrQU5DPVcixfpgKsU5J/2RRVJ8EfxNU3iDJzIIxf024AmO/y4An9vdK
+         so3x1kfvFMciH//yNfhWmxP7qUXgNYlWQYmvNUP4paGUkYuAG1VWXvCoZvOIwuX044kO
+         4Uf2gysdwnTifJJCtTHIjIBA2hNXiJX8kgUCOuirssmQz1q3d+9PRMjaruXLfU1V3dkw
+         mJqf6zgabzo0uHcF76l+Ki1BzlWW7AnoPkDFfsT+TCZ1r9GJQYSurZzsrSe7lfIjLrJ+
+         bs6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWXJNaeL8ak53s+lWoFwMxW1vtBxw8GPaJBF8vfb34fPJo8BR46yl9Fqd71GeaJnfLzV1YuL0qfxLeB3S8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDwGN/bNXqQAvbWnCfy9f4GnAaz1AQW/jaWop5B5XfFozBdsOT
+	GO+NIw5NJOa8P7le5dvhnFreHbPYOQEGSn6lpcWi08UseBeRPt6EIuoL0FoRGx0=
+X-Google-Smtp-Source: AGHT+IEpMGHYf5BD/zUKQTqTgiisAQ1anJ5u/AzUGtH+fTD6Vnd38+tGUnUUgp5rDSrfzmoVdpGKVA==
+X-Received: by 2002:a17:907:97d2:b0:a8d:5472:b56c with SMTP id a640c23a62f3a-a8d5472bbf6mr81751866b.22.1725828567442;
+        Sun, 08 Sep 2024 13:49:27 -0700 (PDT)
+Received: from LQ3V64L9R2.homenet.telecomitalia.it (host-79-23-194-51.retail.telecomitalia.it. [79.23.194.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25a2844fsm247389666b.88.2024.09.08.13.49.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 13:49:27 -0700 (PDT)
+Date: Sun, 8 Sep 2024 22:49:25 +0200
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: mkarsten@uwaterloo.ca, kuba@kernel.org, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next v2 1/9] net: napi: Add napi_storage
+Message-ID: <Zt4N1RoplScF2Dbw@LQ3V64L9R2.homenet.telecomitalia.it>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, kuba@kernel.org, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240908160702.56618-1-jdamato@fastly.com>
+ <20240908160702.56618-2-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] Staging: rtl8192e: Cleanup even more camelcase
- variable names
-To: Tree Davies <tdavies@darkphysics.net>, gregkh@linuxfoundation.org,
- anjan@momi.ca
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240908192633.94144-1-tdavies@darkphysics.net>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240908192633.94144-1-tdavies@darkphysics.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240908160702.56618-2-jdamato@fastly.com>
 
-On 9/8/24 21:26, Tree Davies wrote:
-> This series performs variable renames
-> ~ Tree
+On Sun, Sep 08, 2024 at 04:06:35PM +0000, Joe Damato wrote:
+> Add a persistent NAPI storage area for NAPI configuration to the core.
+> Drivers opt-in to setting the storage for a NAPI by passing an index
+> when calling netif_napi_add_storage.
 > 
-> Tree Davies (16):
->    Staging: rtl8192e: Rename variable pReorderEntry
->    Staging: rtl8192e: Rename variable SeqNum
->    Staging: rtl8192e: Rename variable SignalStrength
->    Staging: rtl8192e: Rename variable pFrame
->    Staging: rtl8192e: Rename variable bPacketToSelf
->    Staging: rtl8192e: Rename variable Para1
->    Staging: rtl8192e: Rename variable Para2
->    Staging: rtl8192e: Rename variable ScanOperationBackupHandler
->    Staging: rtl8192e: Rename variable Operation
->    Staging: rtl8192e: Rename variable bAssoc
->    Staging: rtl8192e: Rename variable SignalQuality
->    Staging: rtl8192e: Rename variable isEncrypt
->    Staging: rtl8192e: Rename variable nStuckCount
->    Staging: rtl8192e: Rename variable bAddNewTs
->    Staging: rtl8192e: Rename variable RxBufShift
->    Staging: rtl8192e: Rename variable RxDrvInfoSize
+> napi_storage is allocated in alloc_netdev_mqs, freed in free_netdev
+> (after the NAPIs are deleted), and set to 0 when napi_enable is called.
 > 
->   .../staging/rtl8192e/rtl8192e/r8190P_def.h    |   2 +-
->   .../staging/rtl8192e/rtl8192e/r8192E_dev.c    |  40 +++---
->   .../staging/rtl8192e/rtl8192e/r8192E_phy.c    |  22 ++--
->   .../staging/rtl8192e/rtl8192e/r8192E_phy.h    |   4 +-
->   drivers/staging/rtl8192e/rtl8192e/rtl_core.c  |  14 +--
->   drivers/staging/rtl8192e/rtl8192e/rtl_wx.c    |   4 +-
->   drivers/staging/rtl8192e/rtl819x_HTProc.c     |   4 +-
->   drivers/staging/rtl8192e/rtl819x_TSProc.c     |  30 ++---
->   drivers/staging/rtl8192e/rtllib.h             |  32 ++---
->   drivers/staging/rtl8192e/rtllib_rx.c          | 116 +++++++++---------
->   drivers/staging/rtl8192e/rtllib_softmac_wx.c  |   4 +-
->   11 files changed, 136 insertions(+), 136 deletions(-)
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> ---
+>  .../networking/net_cachelines/net_device.rst  |  1 +
+>  include/linux/netdevice.h                     | 34 +++++++++++++++++++
+>  net/core/dev.c                                | 18 +++++++++-
+>  3 files changed, 52 insertions(+), 1 deletion(-)
 > 
 
+[...]
 
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -6719,6 +6719,9 @@ void napi_enable(struct napi_struct *n)
+>  		if (n->dev->threaded && n->thread)
+>  			new |= NAPIF_STATE_THREADED;
+>  	} while (!try_cmpxchg(&n->state, &val, new));
+> +
+> +	if (n->napi_storage)
+> +		memset(n->napi_storage, 0, sizeof(*n->napi_storage));
+
+This part is very obviously wrong ;)
+
+I think when I was reading the other thread about resetting on
+channel change [1] I got a bit confused.
+
+Maybe what was intended was on napi_enable, do nothing / remove the
+above code (which I suppose would give the persistence desired?).
+
+But modify net/ethtool/channels.c to reset NAPIs to the global
+(sysfs) settings? Not sure how to balance both persistence with
+queue count changes in a way that makes sense for users of the API.
+
+And, I didn't quite follow the bits about:
+  1. The proposed ring to NAPI mapping
+  2. The two step "takeover" which seemed to imply that we might
+     pull napi_id into napi_storage? Or maybe I just read that part
+     wrong?
+
+I'll go back re-re-(re?)-read those emails to see if I can figure
+out what the desired implementation is.
+
+I'd welcome any/all feedback/clarifications on this part in
+particular.
+
+[1]: https://lore.kernel.org/netdev/20240903124008.4793c087@kernel.org/
 
