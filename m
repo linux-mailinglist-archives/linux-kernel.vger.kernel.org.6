@@ -1,126 +1,154 @@
-Return-Path: <linux-kernel+bounces-320079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013059705EA
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:03:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 471059705EF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FD871F21A99
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:03:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64B6C1C20EDA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D291136353;
-	Sun,  8 Sep 2024 09:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AD213BAF1;
+	Sun,  8 Sep 2024 09:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Alms2yDT"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="msrOKWhQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509164D8CE
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 09:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025D856B8C;
+	Sun,  8 Sep 2024 09:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725786208; cv=none; b=goH2QRH0fQyCXk91VM/+EITWAqknnQ+mSmlIjDASHCEQ9khoi0eCvgp9pssgwbj6Q/NycQ+Si/BX+kBeGKkjSS9RKBHRl/+pzQlsEiTZy8gCC5UWQtp0Sd8DKHkeY3NcDjqJhlpIWrdjHxYNn1rI4W+FQe6FjIPLG12RTQ0yRNM=
+	t=1725786224; cv=none; b=Zl0/zGtOOZV6f+w0lzqSKlD8QPIrVKeOXuKhoXhxjo7Oh+6FjKkyWRFBDlGqc+47lnAmw9YXDWm6r7NrgoTGHyG08UGmOE8KcaZRIvNBWZ89+bcp0zmKjhSIpWwnQJHsrjmQKN6NNu2IeX74SASjacyitgogwdbvVnJ7zXmBPPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725786208; c=relaxed/simple;
-	bh=pluH5GVLHbVz66JIqkRrlKPpokM977q/boxnEB751Q8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WyalXHy+VyUyIZzLNXPU1cwkGibVr8OrytWYIvHbWkmoX0rkySNE1L/clD1gwc/fQ2s5ozBDkhNpfrRS6KqUoWX4Dz5POVHa6rggnRLN3zaXw4gAy7XTRgEGHwuBC2FF8g+0COlh9lRwcJPeg3Tm3hcy/QMTOcayYwKiaIpN5Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Alms2yDT; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4EA5040E0198;
-	Sun,  8 Sep 2024 09:03:16 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Xxqo4dxPcXFx; Sun,  8 Sep 2024 09:03:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1725786191; bh=DKME3XFVEe8ofW3md/gCIKE8K8akYLZGHUMo9OeG8nE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Alms2yDTEMjF82+UoEpcj82gWhaSQujjEHzx8E6/CwbE28BKdwHCOpqHAsxUzUFpx
-	 N45TOQ83bdKOlwajA384JDrxDf+OP3OPhJ+B/nUp7ws0AkALq4GxBZUMgaEzXZpjjy
-	 1Btjg7E0OX97MTgYOl0pzZBRWaLrMG/nvwiJJ5msrGD9uL0pZn/FEFR0zYhCgVVaGh
-	 TCz9Zl9C3FQJMKYV0ynAUTB470fl40+gOSwQl9DxiIBt/0UEk0bhb0wg0luvX5PWzV
-	 EVKOmP2eW7fhkKJhFLhmJV/bHhId8PqROJP5AmiYRhNhlo9/uW3TX9Cm4uc44vYX9n
-	 7g3n33c8PzInUH+Bt9YqdT0JPhLFACU1vLz+/i+8PXKUt3Oo1YDDmWj+wGj9BwQNYm
-	 8IunjCo+fnn2d+eezM1p5lQ8NBI1+unmvB1H984pMP0LasR6Q76xlkmLg+HQFrG05J
-	 EwL8z4E3tN/vawsL2o1HpKVYPImGQNEJA/V6TOpPCmTU1UrUOEhsv5pnqmqTXsowfe
-	 Q9c4OP1sGJjn9hRKOk4IkGiIuCUL7UB0q1udjdXtFG2+UcYBaccKRzdkbIQ57G0FFp
-	 1v7DLGyVvt7bHAGAH70jOSYK+7sfVmdd5Xr/JfV49tVqfmsuhHZ+hdpJ0zpml0sx1u
-	 ZyRO0UbiVVjG36JBfD9FBv2Y=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D1C4A40E0185;
-	Sun,  8 Sep 2024 09:03:08 +0000 (UTC)
-Date: Sun, 8 Sep 2024 11:03:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] locking/urgent for v6.11-rc7
-Message-ID: <20240908090302.GAZt1oRk_8H_68AxCe@fat_crate.local>
+	s=arc-20240116; t=1725786224; c=relaxed/simple;
+	bh=iaWBGRY0Ga/QyUiWnGcCNwe6GvY+ter/ioZNDc3NI98=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=asbCa9rj+5t3QscoLXMTgRUWigwXTWnVEz5yeecmAmfNEy33HPqvzryUaKmanS2XuqkPsPSFEAFaF5WveGiJshWnAGZ/6MjtVHL7sAKqCWoSV/s8vENKJ5D8JewDglzw3QtXCPiALTnW142SRp7x079sTRKRVoEHEwIzY9mV3wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=msrOKWhQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B215C4CEC3;
+	Sun,  8 Sep 2024 09:03:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725786223;
+	bh=iaWBGRY0Ga/QyUiWnGcCNwe6GvY+ter/ioZNDc3NI98=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=msrOKWhQM0NPDWGVtAJ5zBEdnKCnebFP9yaFEL1mSerelkJzG94ySzSfD6m0E4ojc
+	 kjMQh/ag+VyC/d780XoBD3PFZknFPAaFuYrxlcv/7ehW/GnvHaXFX6vSxvK6izDxeT
+	 1aT8e43zs2q3ex2vaR4U5q7VCLRR17De16EZEcUEMrm6e/Ihnzg7IC+Z3iUYdB/LSl
+	 oDcnllCDJdMTn71NrJDIl+KUsuiipPjrCpjpyr+ARjQTJ57aC6uYZR+FfbtZC+MKA/
+	 lRKaWi8C3AchITgoKamTtMqoTINB1JW/Ckv5nWk919r8jMsGBxedp0p7u2Dy37tp1T
+	 Gwnf0KlvbKv3Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1snDpa-00AcmB-1V;
+	Sun, 08 Sep 2024 10:03:38 +0100
+Date: Sun, 08 Sep 2024 10:03:36 +0100
+Message-ID: <86cylev7o7.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: "Daniel Gomez (Samsung)" <d+samsung@kruces.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,	da.gomez@samsung.com,	Nathan
+ Chancellor <nathan@kernel.org>,	Nicolas Schier <nicolas@fjasle.eu>,	Lucas
+ De Marchi <lucas.demarchi@intel.com>,	Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
+ <thomas.hellstrom@linux.intel.com>,	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,	Maxime Ripard
+ <mripard@kernel.org>,	Thomas Zimmermann <tzimmermann@suse.de>,	David Airlie
+ <airlied@gmail.com>,	William Hubbs <w.d.hubbs@gmail.com>,	Chris Brannon
+ <chris@the-brannons.com>,	Kirk Reiser <kirk@reisers.ca>,	Samuel Thibault
+ <samuel.thibault@ens-lyon.org>,	Paul Moore <paul@paul-moore.com>,	Stephen
+ Smalley <stephen.smalley.work@gmail.com>,	Ondrej Mosnacek
+ <omosnace@redhat.com>,	Catalin Marinas <catalin.marinas@arm.com>,	Will
+ Deacon <will@kernel.org>,	Oliver Upton <oliver.upton@linux.dev>,	James
+ Morse <james.morse@arm.com>,	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,	Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,	Jiri Slaby <jirislaby@kernel.org>,	Nick
+ Desaulniers <ndesaulniers@google.com>,	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,	Simona Vetter
+ <simona.vetter@ffwll.ch>,	linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,	speakup@linux-speakup.org,
+	selinux@vger.kernel.org,	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,	linux-serial@vger.kernel.org,	llvm@lists.linux.dev,
+	Finn Behrens <me@kloenk.dev>,	gost.dev@samsung.com
+Subject: Re: [PATCH v2 8/8] Documentation: add howto build in macos
+In-Reply-To: <CABj0suBQCc8=0tLng=OWW=K1hjFuLFZWhbjsqHtz2FzZt4i0sw@mail.gmail.com>
+References: <20240906-macos-build-support-v2-0-06beff418848@samsung.com>
+	<20240906-macos-build-support-v2-8-06beff418848@samsung.com>
+	<CAK7LNASpWSXbjF_7n0MhosNism=BpvHOnKsa344RPM_wmC9dGA@mail.gmail.com>
+	<CABj0suBQCc8=0tLng=OWW=K1hjFuLFZWhbjsqHtz2FzZt4i0sw@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: d+samsung@kruces.com, masahiroy@kernel.org, da.gomez@samsung.com, nathan@kernel.org, nicolas@fjasle.eu, lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, w.d.hubbs@gmail.com, chris@the-brannons.com, kirk@reisers.ca, samuel.thibault@ens-lyon.org, paul@paul-moore.com, stephen.smalley.work@gmail.com, omosnace@redhat.com, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, gregkh@linuxfoundation.org, jirislaby@kernel.org, ndesaulniers@google.com, morbo@google.com, justinstitt@google.com, simona.vetter@ffwll.ch, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-serial@vger
+ .kernel.org, llvm@lists.linux.dev, me@kloenk.dev, gost.dev@samsung.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Linus,
+On Sat, 07 Sep 2024 10:32:20 +0100,
+"Daniel Gomez (Samsung)" <d+samsung@kruces.com> wrote:
+>=20
+> On Sat, Sep 7, 2024 at 10:33=E2=80=AFAM Masahiro Yamada <masahiroy@kernel=
+.org> wrote:
+> >
+> > On Fri, Sep 6, 2024 at 8:01=E2=80=AFPM Daniel Gomez via B4 Relay
+> > <devnull+da.gomez.samsung.com@kernel.org> wrote:
+> > >
+> > > From: Daniel Gomez <da.gomez@samsung.com>
+> > >
+> > > Add documentation under kbuild/llvm to inform about the experimental
+> > > support for building the Linux kernel in macOS hosts environments.
+> > >
+> > > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> >
+> >
+> > Instead, you can add this instruction to:
+> >
+> > https://github.com/bee-headers/homebrew-bee-headers/blob/main/README.md
+>=20
+> Sure, that can be done as well. But the effort here is to have this
+> integrated. So, I think documentation should be in-tree.
 
-please pull the locking/urgent lineup for v6.11-rc7.
+I think this ship sailed the moment you ended-up with an external
+dependency.
 
-Thx.
+Having looked at this series (and in particular patch #4 which falls
+under my remit), I can't help but think that the whole thing should
+simply live as a wrapper around the pristine build system instead of
+hacking things inside of it. You already pull external dependencies
+(the include files). Just add a script that sets things up
+(environment variables that already exist) and calls 'make' in the
+kernel tree.
 
----
+I also dislike that this is forcing "native" developers to cater for
+an operating system they are unlikely to have access to. If I break
+this hack tomorrow by adding a new dependency that MacOS doesn't
+provide, how do I fix it? Should I drop my changes on the floor?
 
-The following changes since commit d33d26036a0274b472299d7dcdaa5fb34329f91b:
+As an alternative, and since you already have to create a special
+file-system to contain your kernel tree, you may as well run Linux in
+a VM, which I am told works pretty well (QEMU supports HVF, and there
+are plenty of corporate-friendly alternatives). This would solve your
+problem once and for all.
 
-  rtmutex: Drop rt_mutex::wait_lock before scheduling (2024-08-15 15:38:53 +0200)
+Please don't take the above the wrong way. I'm sympathetic to what you
+are trying to do. But this is IMO going in the wrong direction.
 
-are available in the Git repository at:
+Thanks,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/locking_urgent_for_v6.11_rc7
+	M.
 
-for you to fetch changes up to de752774f38bb766941ed1bf910ba5a9f6cc6bf7:
-
-  jump_label: Fix static_key_slow_dec() yet again (2024-09-06 16:29:22 +0200)
-
-----------------------------------------------------------------
-- Correct unwinding the static_call machinery when encountering an error while
-  loading a module due to a mis-assumption in the static_call_del_module()
-  path
-
-- Replace a WARN_ON in the memory allocation failure path of the static_call
-  module machinery which unnecessarily leads to a panic when panic_on_warn is
-  set
-
-- Fix an ordering problem in jump_label's static key reference counting code
-
-----------------------------------------------------------------
-Peter Zijlstra (1):
-      jump_label: Fix static_key_slow_dec() yet again
-
-Thomas Gleixner (2):
-      static_call: Handle module init failure correctly in static_call_del_module()
-      static_call: Replace pointless WARN_ON() in static_call_module_notify()
-
- kernel/jump_label.c         | 83 +++++++++++++++++++++++++++++----------------
- kernel/static_call_inline.c | 13 ++++++-
- 2 files changed, 66 insertions(+), 30 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+--=20
+Without deviation from the norm, progress is not possible.
 
