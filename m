@@ -1,174 +1,110 @@
-Return-Path: <linux-kernel+bounces-320400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E4B9709B4
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:26:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311599709B2
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26EC81C210E3
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:26:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E499E281318
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BAF17ADEB;
-	Sun,  8 Sep 2024 20:26:17 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6606179658;
+	Sun,  8 Sep 2024 20:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pqsEi7lI"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F85179652
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 20:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980B44085D
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 20:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725827176; cv=none; b=TbQx7hAWB2LrQiBa28xGEe6HWv8vJiVNSFBziYwD8omW8UDAAniBULE34bnFMsPDpYbvQOz5oxrl088/7aR0v5gazBRrGFGj6EiCzDhGSk9uZeTQ/GIB+L+6QgGKlq/sZDFz2FRN122EeGe+GEqlkq5qsqWrsmeTFEECHY1SSz0=
+	t=1725827161; cv=none; b=mr8nt55Dq1ldTbEZX5sFJ5rxVrOqAoNCP2j9ErF7tsabiSWbX/rZjao6pdR12jnHnq+QHIGjnbxwzn+dqWl5FFM88Ux9XmhFtjMjAHDLXJtfCwVWm0vdr+t9zSHU5CmdBbtjRXkdhEn8sfpt9LIsyCjmmyjvglcEpyJUNV4JJGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725827176; c=relaxed/simple;
-	bh=sRVdJsmKaxJWCGmzVM6Y7AGWnjzept4H4UQhjAJCzww=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=EpM+KrlSh8nTkpEQ3cwTrxrv359AUX2CWMZNuGEB6ztO9kPgjkFp6LrvdVELCAi/yXiZttehCZFR9lX6PBDKEX+kGPzqCRbQkd4W9/NMe+qdhe0tHLfogio5o6C7quRqd+tCSLy5YqJwsKiS/UWT1+9mG2OunwsIO5mPnTLrNCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-104-tt6BonG2PZGqiqmfEPaGSw-1; Sun, 08 Sep 2024 21:26:06 +0100
-X-MC-Unique: tt6BonG2PZGqiqmfEPaGSw-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 8 Sep
- 2024 21:25:15 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 8 Sep 2024 21:25:15 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Scott Mayhew' <smayhew@redhat.com>, Li Lingfeng <lilingfeng3@huawei.com>
-CC: "chuck.lever@oracle.com" <chuck.lever@oracle.com>, "jlayton@kernel.org"
-	<jlayton@kernel.org>, "neilb@suse.de" <neilb@suse.de>, "okorniev@redhat.com"
-	<okorniev@redhat.com>, "Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>,
-	"tom@talpey.com" <tom@talpey.com>, "linux-nfs@vger.kernel.org"
-	<linux-nfs@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "yukuai1@huaweicloud.com"
-	<yukuai1@huaweicloud.com>, "houtao1@huawei.com" <houtao1@huawei.com>,
-	"yi.zhang@huawei.com" <yi.zhang@huawei.com>, "yangerkun@huawei.com"
-	<yangerkun@huawei.com>, "lilingfeng@huaweicloud.com"
-	<lilingfeng@huaweicloud.com>
-Subject: RE: [PATCH] nfsd: return -EINVAL when namelen is 0
-Thread-Topic: [PATCH] nfsd: return -EINVAL when namelen is 0
-Thread-Index: AQHa/tltH5fpypZKDEqICq9omYVD5rJOXHzA
-Date: Sun, 8 Sep 2024 20:25:15 +0000
-Message-ID: <cccdc13066204448af7f0fd550f34586@AcuMS.aculab.com>
-References: <20240903111446.659884-1-lilingfeng3@huawei.com>
- <ZthzJiKF6TY0Nv32@aion>
-In-Reply-To: <ZthzJiKF6TY0Nv32@aion>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1725827161; c=relaxed/simple;
+	bh=OWhGxkM+E+3B9VGjjUmp41Zb5ilGs6qZIQWN5UYay3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eaNk2T6++4rTxT2gdrXy1QHlnqqMkSg8KzjuLqlYEVKukqOmwtVRDE9Il10kfBfWXWIDiqzgmnVMG66TGjbsFom6JZTQIVXiFtQiwEk2qXwCTnPbPP/s4Us6Y2pKQBF6Y3hPJ0qA/ZXubpW2lfSjf81wKECBvq74IudqRpM/EME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pqsEi7lI; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c26815e174so3854812a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 13:25:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725827157; x=1726431957; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iKdWxgBubPsCeu89Q5OS2FOBwOKmd4HEM0yySNUBW9Q=;
+        b=pqsEi7lIye6AdnaBfam9walxOOzZR+LFvo5RtQNQH6Gscgl1w6g4IPXf5VcztZ7GPU
+         p+sZXv87y7P6OLIcP89aHo7/nA38j+Xb/LmXPQAB/C1C0y5JpGe5Pu3aontngRGhtfFB
+         VohW6myUZ7+wzDzjV0Fibvy7kOQeZVuJlvVsHJtxVOjJTvF46v9+cqZ5hsvHKPtzL412
+         j9tjtEUA4xEpry0kqb3mPk0iO1M4ntWZP/lKciSjntH0vuuB6m5I7ku1yqi/wfbfIoR/
+         rmh+x+o1TCWuEZoe3oQpLFMNp+i0CCfa5jqJA4cx6Mj1SbhKxtxGBVTqWdIf9wCI/ZUw
+         kO4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725827157; x=1726431957;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iKdWxgBubPsCeu89Q5OS2FOBwOKmd4HEM0yySNUBW9Q=;
+        b=xJvzFylBoFUR5UWhDbdwIUi7iuO3+lHYoNdz1/88wREfX6Mf/WR44GruE8MSXgEQAu
+         kHPV3nAAoGJfieGXup9JdQphalz/MNBTQ1jVoBL+UiniArOSmNH5ibRIp7R74OvlRJ3Q
+         iEt8I8f/bY7uq9Gtpyx9h49kZsh8/V5JigTFZeweo+7PTemPtuRuq74JVNJTJa+nVPq6
+         NPAEBGRsGgBBcPm9hiiS/foRFLMRJJbKFIV8KN6+nlc6VKIBLTZDT2fXyaunquf6uXIg
+         GTe0JtFWyoivuKue4y1bobnaKBzmdUQ9MccN2gKh02XUaTyAV88kZ3p7aqOhxLn9vmFu
+         C9GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW28wpMeuu5fxdW2dHIkDL55P9xwbwQ6LH0f3k+02iKbnapQPAZ0apXKygvQNXqgh2mwzYPTws9HgkXAs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz60x3qLo4FZlMXU2Y92UThUY5Z3l2KvYmJm0ecQ7L1i6wZ+kN0
+	wj8jysu7ME+dySDzUgYRijbEac7Et4MtdXRKGxB2pigujX9PxmsaAstZD2XVBeo=
+X-Google-Smtp-Source: AGHT+IGwiL32zOZEhvp+wF8LdGQNAS8/J/6T/AW7OR7ZiyrV3rOdJR7rEG03ntO/Jtsx6id+rqF/vw==
+X-Received: by 2002:a05:6402:4015:b0:5c3:cd88:a0a with SMTP id 4fb4d7f45d1cf-5c3e963621dmr3924299a12.18.1725827155919;
+        Sun, 08 Sep 2024 13:25:55 -0700 (PDT)
+Received: from linaro.org ([84.232.173.69])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd5217asm2190519a12.45.2024.09.08.13.25.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 13:25:55 -0700 (PDT)
+Date: Sun, 8 Sep 2024 23:25:53 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, imx@lists.linux.dev,
+	NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] clk: imx: Updates for v6.12
+Message-ID: <Zt4IUQavM62F/kP8@linaro.org>
+References: <20240904095710.2813541-1-abel.vesa@linaro.org>
+ <a8400f018cc94177b6a91634fd977248.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a8400f018cc94177b6a91634fd977248.sboyd@kernel.org>
 
-From: Scott Mayhew=20
-> Sent: 04 September 2024 15:48
->=20
-> On Tue, 03 Sep 2024, Li Lingfeng wrote:
->=20
-> > When we have a corrupted main.sqlite in /var/lib/nfs/nfsdcld/, it may
-> > result in namelen being 0, which will cause memdup_user() to return
-> > ZERO_SIZE_PTR.
-> > When we access the name.data that has been assigned the value of
-> > ZERO_SIZE_PTR in nfs4_client_to_reclaim(), null pointer dereference is
-> > triggered.
-> >
-> > [ T1205] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [ T1205] BUG: KASAN: null-ptr-deref in nfs4_client_to_reclaim+0xe9/0x26=
-0
-> > [ T1205] Read of size 1 at addr 0000000000000010 by task nfsdcld/1205
-> > [ T1205]
-> > [ T1205] CPU: 11 PID: 1205 Comm: nfsdcld Not tainted 5.10.0-00003-g2c14=
-23731b8d #406
-> > [ T1205] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-=
-20190727_073836-buildvm-
-> ppc64le-16.ppc.fedoraproject.org-3.fc31 04/01/2014
-> > [ T1205] Call Trace:
-> > [ T1205]  dump_stack+0x9a/0xd0
-> > [ T1205]  ? nfs4_client_to_reclaim+0xe9/0x260
-> > [ T1205]  __kasan_report.cold+0x34/0x84
-> > [ T1205]  ? nfs4_client_to_reclaim+0xe9/0x260
-> > [ T1205]  kasan_report+0x3a/0x50
-> > [ T1205]  nfs4_client_to_reclaim+0xe9/0x260
-> > [ T1205]  ? nfsd4_release_lockowner+0x410/0x410
-> > [ T1205]  cld_pipe_downcall+0x5ca/0x760
-> > [ T1205]  ? nfsd4_cld_tracking_exit+0x1d0/0x1d0
-> > [ T1205]  ? down_write_killable_nested+0x170/0x170
-> > [ T1205]  ? avc_policy_seqno+0x28/0x40
-> > [ T1205]  ? selinux_file_permission+0x1b4/0x1e0
-> > [ T1205]  rpc_pipe_write+0x84/0xb0
-> > [ T1205]  vfs_write+0x143/0x520
-> > [ T1205]  ksys_write+0xc9/0x170
-> > [ T1205]  ? __ia32_sys_read+0x50/0x50
-> > [ T1205]  ? ktime_get_coarse_real_ts64+0xfe/0x110
-> > [ T1205]  ? ktime_get_coarse_real_ts64+0xa2/0x110
-> > [ T1205]  do_syscall_64+0x33/0x40
-> > [ T1205]  entry_SYSCALL_64_after_hwframe+0x67/0xd1
-> > [ T1205] RIP: 0033:0x7fdbdb761bc7
-> > [ T1205] Code: 0f 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00=
- f3 0f 1e fa 64 8b 04 25 18
-> 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 514
-> > [ T1205] RSP: 002b:00007fff8c4b7248 EFLAGS: 00000246 ORIG_RAX: 00000000=
-00000001
-> > [ T1205] RAX: ffffffffffffffda RBX: 000000000000042b RCX: 00007fdbdb761=
-bc7
-> > [ T1205] RDX: 000000000000042b RSI: 00007fff8c4b75f0 RDI: 0000000000000=
-008
-> > [ T1205] RBP: 00007fdbdb761bb0 R08: 0000000000000000 R09: 0000000000000=
-001
-> > [ T1205] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000=
-42b
-> > [ T1205] R13: 0000000000000008 R14: 00007fff8c4b75f0 R15: 0000000000000=
-000
-> > [ T1205] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > Fix it by checking namelen.
-> >
-> > Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
-> > ---
-> >  fs/nfsd/nfs4recover.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-> > index 67d8673a9391..69a3a84e159e 100644
-> > --- a/fs/nfsd/nfs4recover.c
-> > +++ b/fs/nfsd/nfs4recover.c
-> > @@ -809,6 +809,10 @@ __cld_pipe_inprogress_downcall(const struct cld_ms=
-g_v2 __user *cmsg,
-> >  =09=09=09ci =3D &cmsg->cm_u.cm_clntinfo;
-> >  =09=09=09if (get_user(namelen, &ci->cc_name.cn_len))
-> >  =09=09=09=09return -EFAULT;
-> > +=09=09=09if (!namelen) {
-> > +=09=09=09=09dprintk("%s: namelen should not be zero", __func__);
-> > +=09=09=09=09return -EINVAL;
-> > +=09=09=09}
-> >  =09=09=09name.data =3D memdup_user(&ci->cc_name.cn_id, namelen);
+On 24-09-05 11:25:37, Stephen Boyd wrote:
+> Quoting Abel Vesa (2024-09-04 02:57:10)
+> > The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+> > 
+> >   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+> > 
+> > are available in the Git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.12
+> > 
+> > for you to fetch changes up to 32c055ef563c3a4a73a477839f591b1b170bde8e:
+> > 
+> >   clk: imx6ul: fix clock parent for IMX6UL_CLK_ENETx_REF_SEL (2024-09-04 12:39:38 +0300)
+> > 
+> > ----------------------------------------------------------------
+> 
+> Thanks. Pulled into clk-next. I also found the v6.11 PR for clk-imx in my
+> repo for some reason :( Sorry about that! I've merged that into clk-next
+> as well now so the next merge window will get two cycles worth.
 
-Don't you also want an upper bound sanity check?
-(or is cn_len only 8 bit?)
-
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+No worries. Please let me know if you want the pull requests in more
+earlier or something.
 
