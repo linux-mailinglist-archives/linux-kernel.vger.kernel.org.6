@@ -1,54 +1,74 @@
-Return-Path: <linux-kernel+bounces-320211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FDD797079E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:50:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5769C9707AD
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC480282005
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:50:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E75881F214B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8BC15F3F3;
-	Sun,  8 Sep 2024 12:50:45 +0000 (UTC)
-Received: from mail115-63.sinamail.sina.com.cn (mail115-63.sinamail.sina.com.cn [218.30.115.63])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C015165F12;
+	Sun,  8 Sep 2024 13:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ddt79ys/"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96961E522
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 12:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26333224;
+	Sun,  8 Sep 2024 13:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725799844; cv=none; b=cZfIJ2Qc3wActFcklWeKBbm0yc7ZxRcvzsJLbcehQCpzQESq6IpOQQdj4KuVcBVzit+bS+Wp21Bz6cmITYihWNSUatIWKozuQxbDB1BEjjIhGPo6emSQ+jsQsDzqZ02jj+yILK0gy+FuhOp2FFDtVeG/MxyD3MBUC4jrqVTtlcE=
+	t=1725800768; cv=none; b=V/7YxQc2eulLyYYUGacMNnM/suOH7eR8WYsApKt2q/qiNFj3rW/r/aOes+IqaRLS5KIoueMMW6ejn1NXsMUP+dRedixOexQyrlS/v+f7nRRJwCesfLX/YzD0zc7rCQYZBjygbE0tcEQniIGATRpIXGe+9TvMdqY0DdDfP3+Hps8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725799844; c=relaxed/simple;
-	bh=hefThDtLX/Nk4YNwotWsCwXdIafqr3DbVSdifcpl4UA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pN63xGgU7Ehc5lReMnJONUUKilpPdBNf2538a2niYQ0l7fL5qPhhc73rHMN0T4BsA+GZZrGrv+ljkzMozsqd6EuM1HZen+Ojl6T2sdAHYNeOUM7lCj/33YRMeh7Eb9tDcioXO+PF6SJNgk2tkBroxD+Go/nqJKKZUIF5ZpJRZDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.65.196])
-	by sina.com (10.185.250.22) with ESMTP
-	id 66DD9D9300001051; Sun, 8 Sep 2024 20:50:29 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 4317947602730
-X-SMAIL-UIID: 1A63C8FDD5254558BEAF2C745CED631C-20240908-205029-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1725800768; c=relaxed/simple;
+	bh=CaRVzvEevftBdvo1pGuwdOT3yTW/S0LOeUWgEWmRm0o=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=i+4t2c+7C8OIWBCtipod6el5XHKtxJmu8owP5wjoncxDXgxQ45n+19VfDx+jU2p+5p743hjgh2GSFmoRmlxsWw2ksDlvSEJ/fW6mtQoG+hwmaUhzFon3JxvDt2Vc+6KUnc5pwznx8T9gdQfojaIbMUZEzBIz1M+wj3MEVGjZcXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ddt79ys/; arc=none smtp.client-ip=43.163.128.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725800756; bh=TOmiRb9kT4y40MPa249+aAJYNFmF4Q7BxFuTvX0qR/8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ddt79ys/1AmJV0aQ0Td8cfDOgeLFtzk1jsFF6aTccEd8m9t8Pn7RtjpTsoFNzyMVq
+	 bOlLLyn5SYk20zPrRyXTwuBzR3P5yrQKs8aSWpNE4b6Wzh4KXnRdIUZzVj+6JEV5st
+	 9Zt3q4cxt3GWAEv6/UNxbz6YTcQvskytMJZKnYUY=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id EEA29A9D; Sun, 08 Sep 2024 20:59:42 +0800
+X-QQ-mid: xmsmtpt1725800382t9n026mas
+Message-ID: <tencent_6FF377237A096263A9C4469779777566C805@qq.com>
+X-QQ-XMAILINFO: Mdc3TkmnJyI/Hjc/Q79dP+nhHR01LVthwLXtMFIRjJ/Txo6sSmj12AVdUd3qZG
+	 wgZOB5BjoGR4WgcNnJceKNDvBXDRSUjoZhQq71wh4YMBMsWjcV6D5raF0dDhZjj+KTbAjEhBkrGr
+	 N4n3kDlcdmOfRM07CLEceidAz5Vco2BL/uWZD823ip0voE8epT7qL1iM3+h30EQVKRGszyDgwK7h
+	 hCeFSrEb4LQMGbn0pqyi7ty6y/2e3tE4y9c+ACqpKAC1Ngsq1hvu0PTWE+oXnD4MeuBOOG+VfuZA
+	 oZqjkNTmLr0gUDdKLCGH2qDLL4k8vsr8FaDmEXyshQyXiMw2gHC64uLsvobbrW3qu1emqIWIqEXf
+	 Jv1Tg9g/fL/oVoGWXnOo+EKIBoGKpCMwxP0H5YFlIWQBw3OKadNakJ43AA5g/FlqK3RCssvQSduv
+	 HsqxyPneWtlldqfrKgdMQuo7rPTf+RMRzOp4jWSwzM8JM1Dm1icdKlom/2ua9hpVa60klnyBKa6g
+	 hE4jNMAvLBZvrx6ihufZiBoSaqFjhahsjQPd+Naw2y3LiJJoZSiosTc2ow+9bFr7LuMKNRvdXG2W
+	 nk4XXmVF2IxQ9DOjkZ/S9MR1a07V9PiSp9Mi0ILfwVXNtlv6bjbjLU+SA/AbV5G5rTB0vptMDR5B
+	 twan1H0NFvUvR+Q1WxQCj+V0ikCDtqRePb/jXa1kTH5Nsw0Gw4ihsL5vk1EBEOn/46KJTjuRe/e0
+	 epPx2V8YBYNCb9h9LhTnChq+N8pYM4UtRiIfr4ptFkIkBWIn2nae3kv5SSu4V7gxbFX2QN4URszg
+	 QvyALBKJzmoPfjM56ZrcF/XM/UMgWwgl53t370xpU0e1/ZXLC76c5IsA0mTP661Nqbzy5In7omoB
+	 ghDo4pyScg+NYXi3rjy2DavrK014VcyQDFctfSW3mX4jhGe/Ww29Z9g48F9FZGWbUcmZxaqGxlw3
+	 bXTnDYFi4SBpQ2JVBllUR2NrTb1sEajZ8EcNFUoNTP7cphRilhEOOKiLyVfoh8
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: kent.overstreet@linux.dev
+Cc: eadavis@qq.com,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+064ce437a1ad63d3f6ef@syzkaller.appspotmail.com,
 	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect (2)
-Date: Sun,  8 Sep 2024 20:50:17 +0800
-Message-Id: <20240908125017.2529-1-hdanton@sina.com>
-In-Reply-To: <0000000000004a130a0621888811@google.com>
-References: 
+Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in member_to_text
+Date: Sun,  8 Sep 2024 20:59:37 +0800
+X-OQ-MSGID: <20240908125936.1839376-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <hqzhbzxbp3rjbal3z4kdwygvus76h22o2br3iwuzohgniivw5q@etyntoz75vyp>
+References: <hqzhbzxbp3rjbal3z4kdwygvus76h22o2br3iwuzohgniivw5q@etyntoz75vyp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,27 +77,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Sat, 07 Sep 2024 07:42:26 -0700
-> syzbot has found a reproducer for the following issue on:
+On Wed, 4 Sep 2024 15:39:37 -0400, Kent Overstreet wrote: 
+> On Tue, Sep 03, 2024 at 10:13:02AM GMT, Edward Adam Davis wrote:
+> > Because the value of m.btree_bitmap_shift is 69 in this case, it cause
+> > shift-out-of-bounds in member_to_text.
+> >
+> > Add a check for btree_bitmap_shift in validate_member, when it bigger than 64
+> > return -BCH_ERR_invalid_sb_members.
+> > Simultaneously adjust the output mode of btree_bitmap_shift in member_to_text.
+> >
+> > #syz test
+> >
+> > diff --git a/fs/bcachefs/sb-members.c b/fs/bcachefs/sb-members.c
+> > index 39196f2a4197..85a4245ea6a3 100644
+> > --- a/fs/bcachefs/sb-members.c
+> > +++ b/fs/bcachefs/sb-members.c
+> > @@ -162,6 +162,12 @@ static int validate_member(struct printbuf *err,
+> >  		return -BCH_ERR_invalid_sb_members;
+> >  	}
+> >
+> > +	if (m.btree_bitmap_shift > 64) {
 > 
-> HEAD commit:    788220eee30d Merge tag 'pm-6.11-rc7' of git://git.kernel.o..
-> git tree:       upstream
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1304189f980000
+> should be >=, no?
+Yes, you are right, here should be "if (m.btree_bitmap_shift >= 64)"
+> 
+> > +		prt_printf(err, "device %u: too many big bitmap shift (got %u, max 64)",
+> > +			   i, m.btree_bitmap_shift);
+> > +		return -BCH_ERR_invalid_sb_members;
+> > +	}
+> > +
+> >  	return 0;
+> >  }
+> >
+> > @@ -245,8 +251,7 @@ static void member_to_text(struct printbuf *out,
+> >  		prt_printf(out, "(none)");
+> >  	prt_newline(out);
+> >
+> > -	prt_printf(out, "Btree allocated bitmap blocksize:\t");
+> > -	prt_units_u64(out, 1ULL << m.btree_bitmap_shift);
+> > +	prt_printf(out, "Btree allocated bitmap shift: %d\t", m.btree_bitmap_shift);
+> >  	prt_newline(out);
+> >
+> >  	prt_printf(out, "Btree allocated bitmap:\t");
 
-#syz test
+BR,
+Edward
 
---- x/net/bluetooth/hci_core.c
-+++ y/net/bluetooth/hci_core.c
-@@ -3787,8 +3787,10 @@ static void hci_acldata_packet(struct hc
- 	if (conn) {
- 		hci_conn_enter_active_mode(conn, BT_POWER_FORCE_ACTIVE_OFF);
- 
-+		hci_req_sync_lock(hdev);
- 		/* Send to upper protocol */
- 		l2cap_recv_acldata(conn, skb, flags);
-+		hci_req_sync_unlock(hdev);
- 		return;
- 	} else {
- 		bt_dev_err(hdev, "ACL packet for unknown connection handle %d",
---
 
