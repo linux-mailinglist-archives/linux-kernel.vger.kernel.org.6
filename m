@@ -1,117 +1,147 @@
-Return-Path: <linux-kernel+bounces-320041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E4CF970559
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:35:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A5197055A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65D9BB21C2C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 07:35:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD0DF1C214B9
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 07:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452975733A;
-	Sun,  8 Sep 2024 07:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098E474040;
+	Sun,  8 Sep 2024 07:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kode54.net header.i=@kode54.net header.b="vs9QuaaM"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="eSj6zT60"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF7BEEBA
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 07:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876BF26296;
+	Sun,  8 Sep 2024 07:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725780926; cv=none; b=f00sN65UoqaMUzfQqCVtASIyRPsv2Kw6JRHhxEHZEcHV2CTa4m5dqbQumgbp+kaEmH8HcZLQREGpVdfpR+Vq0KsuN4XzY614L1IsbPEwkgxw+VOiaW9Np5g6mv9gMmy6hemjjfZfWggU8yTnDlQ7JyQ40ID8qOXCVsKK+HKyFkY=
+	t=1725780958; cv=none; b=VoZZGzgdEdkMQHZtm1Pew3F3+nUM2fAeGFbkVg/GM7V/1BoHeQX0xF5fOU5zBOh1i1aUWoUq0UhbZOYP9DGzMbSJeOiR/FcIHYcNSgQh15+ld4vQWN1nkckYx9QLZobBlbTYDH8oAjyg6WRuIrKhevIAEzi8ubG0SyFJzF4Q9+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725780926; c=relaxed/simple;
-	bh=Z3bkSIIMCaJ2Mews1CBMj8m/WqlFLp+FFx301ufFIGw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:
-	 References:In-Reply-To; b=dTkS3X9tfSXuv5xbdbyfcTMqLnmPiwyyiuAFmwHKjkccRO320iyKRqYbTxujn1WdujlVEox4vFb5pP4Toi/OW5bj5hk9CjnVThvh/bw7szsA/vEv12HCEU42y2xLKqtqF0FHktUTO3dHEnpS3aPcJ0PUXNuZbT2+8sXhaFTYIU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kode54.net; spf=pass smtp.mailfrom=kode54.net; dkim=pass (2048-bit key) header.d=kode54.net header.i=@kode54.net header.b=vs9QuaaM; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kode54.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kode54.net
+	s=arc-20240116; t=1725780958; c=relaxed/simple;
+	bh=+5Du/I0b/YwY0yDWJXG2xrUkKygycxVdBak0RWbYQuU=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=k0Q6hBmW3P8Jj9aQT0AO8tW20AqBIpKHFnayDS3MMfm6V3xWMNuF+gBP7TnMFCa09hpfMERX1VjUFcY9zTtJt6sQu7BE7ExKg3c+Y2S8sPkdS1+b5XGwMLdHhetmASthXx6q2mfK/0UypdWVEopXyR+sKJsJXOlGBYngrNAtOKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=eSj6zT60; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725780951; bh=aWi3u4SquujumKH20vbOc/6WFqG37KRn5h0vwsFMTus=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=eSj6zT60hiPMNpQ5wSbsqU3W729ZWmWa/BSq+ohojcyCd5iNIn5Y37iyEucSAFFVq
+	 6wKepOwEpEhY1BlEFyTTLLYPnxVDp5qO86LrE7EXSUkdc21AtQz0pQMgka/HlqmjWy
+	 2qzzyYjMINCbu9rvmkbCyK6cQ3OoDrQwhSvIyrCI=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id 8F0396CB; Sun, 08 Sep 2024 15:35:48 +0800
+X-QQ-mid: xmsmtpt1725780948tkd7qakel
+Message-ID: <tencent_E06EEC2C516D3C9500E952ED0ACD9C787A0A@qq.com>
+X-QQ-XMAILINFO: NafziRg7Bx69qsVPcD628GDEMwrIKT1RnOij3gjh0bnQcRTMFtaVy68Ixl5BvI
+	 Hi44CAtZKWx0fLYNJy/4tlZGMwjdfZw6sdXbjDqR1hEJYlRfIZZqq1Ax3tiIcWo6cmlVlj4e8hrn
+	 AGYkeUSQYV/oXZAUfery16kQ1C4BXTlAfksqdwydGcbbk6nY7QuXgEWbDwzi9hR/CEH6oOl/kngW
+	 HdS+4NOzr8hpg6UnbYXwDH0atfNyGAJOC8eAeXWkwGZ0HaK6jCz0/dpMgGUaAHKWpporh3WpB587
+	 b5z/QZ1o//H8XxAqdcb+vD/9SA6Sm1OnQ/2w7bA+C83liDbh6aWxfaPEFLxRQmDp4mT7wS6zKQBY
+	 WnjEPjaMTn1uhLolNn+xlu1eAvuijjuIg1uhRk9UZZwiftpIR7mHjzzDL3MAK0UMNkUGCZzUpmqx
+	 WRn2vRVERHx9KCPWbMO5Qq1UgXPRHJ0DTy0n+y0LkENu+sDGFjUUFj7cuuKIDlvxz+HtjfodtBe4
+	 PKWBYum0CbhKlPmDXhaVGlhJpK6lpfqgaOYKMzJyvI1/JFYuBSiGlqFbHtBlrp2MYqbZ+/HONp19
+	 0hnmeZSjpsv1g3Bb/P+SIBrEouezBPLG3BedAnQirLP2FLA4GhNpNuk3tdETPYIrF7zHjCRycCKy
+	 bos9HDpxEpzDArPfl0nbDRUGL8K4Yjt6o41aETs4n7kZ3+Z2AUTW7qScjbtTkWGT1n2EPN+2QK91
+	 jpz6SC1IuctcBTz2Rbc7pHQTRZcjm5g/UPqO75nAeiGY6VDTGTQzPrvG3PxlCe+yI8Ykmu+30TyL
+	 6JkPg68/2LZzoimKLJ5E9Jop8R/musIzTgKANOPFjX8nZpS9rFIHRfZISEFXC8qS4pFv70/auiLh
+	 NxsvbaAV+ACcVM19/RYcEputhBrCEU7+83alPMTA9c+LU2eS6rdtLySQ0nJlbeUkyGLVLI4XHI/H
+	 V5/nzxxkU4oo1pbJX94A==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: gregkh@linuxfoundation.org
+Cc: eadavis@qq.com,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	stern@rowland.harvard.edu,
+	syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V3] USB: usbtmc: prevent kernel-usb-infoleak
+Date: Sun,  8 Sep 2024 15:35:49 +0800
+X-OQ-MSGID: <20240908073548.1559597-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <2024090810-arrogant-disallow-6f08@gregkh>
+References: <2024090810-arrogant-disallow-6f08@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kode54.net; s=key1;
-	t=1725780919;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D0T3JnuFovJcPSZrr0kiMqAwcD+Baav4OSrwaNtip90=;
-	b=vs9QuaaMH8C5P7D10dtuh1AepPnZZdG3yid2Oz9KNSEq4mtwRL5Cu2t3HTCYdYCt2KjVG3
-	0QKlwtk54rU+jcrnkIwJMRMgO0DqZSDAdgvdmpodIuOFnGaDtpmWCmSEq339Epm+C9KET6
-	Vo8FlerLFeurqQyPR3+vyZevwOAdpCvE2Yc7NTqQcjcfjqb+4IKTycLtKG1bVBhGa27nXr
-	5oeyvleig15Ll6b74NLwRUuSqj43jjc3pCu1Z3VtDcySI51KDYEyYfMkyFXlWjsbskE3Up
-	5+1ex8AkPPMu6S9VZY1u3VitgM2madHFyWsbGMpKm9MNZaHhdadCsWz7KXCD0g==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 08 Sep 2024 00:35:15 -0700
-Message-Id: <D40Q9ZLDQIZF.3OERFS0AYREN0@kode54.net>
-Subject: Re: [PATCH 0/2] drm/amd: fix VRR race condition during IRQ handling
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Christopher Snowhill" <chris@kode54.net>
-To: <tjakobi@math.uni-bielefeld.de>, <amd-gfx@lists.freedesktop.org>,
- <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <cover.1725269643.git.tjakobi@math.uni-bielefeld.de>
-In-Reply-To: <cover.1725269643.git.tjakobi@math.uni-bielefeld.de>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon Sep 2, 2024 at 2:40 AM PDT, tjakobi wrote:
-> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->
-> Hello,
->
-> this fixes a nasty race condition in the set_drr() callbacks for DCN10
-> and DCN35 that has existed now since quite some time, see this GitLab
-> issue for reference.
->
-> https://gitlab.freedesktop.org/drm/amd/-/issues/3142
->
-> The report just focuses von DCN10, but the same problem also exists in
-> the DCN35 code.
+On Sun, 8 Sep 2024 07:20:40 +0200, Greg KH wrote:
+> On Sun, Sep 08, 2024 at 10:20:57AM +0800, Edward Adam Davis wrote:
+> > The syzbot reported a kernel-usb-infoleak in usbtmc_write.
+> >
+> > The expression "aligned = (transfersize + (USBTMC_HEADER_SIZE + 3)) & ~3;"
+> > in usbtmcw_write() follows the following pattern:
+> >
+> > aligned = (1 + 12 + 3) & ~3 = 16   // 3 bytes have not been initialized
+> > aligned = (2 + 12 + 3) & ~3 = 16   // 2 bytes have not been initialized
+> > aligned = (3 + 12 + 3) & ~3 = 16   // 1 byte has not been initialized
+> > aligned = (4 + 12 + 3) & ~3 = 16   // All bytes have been initialized
+> > aligned = (5 + 12 + 3) & ~3 = 20   // 3 bytes have not been initialized
+> > aligned = (6 + 12 + 3) & ~3 = 20   // 2 bytes have not been initialized
+> > aligned = (7 + 12 + 3) & ~3 = 20   // 1 byte has not been initialized
+> > aligned = (8 + 12 + 3) & ~3 = 20   // All bytes have been initialized
+> > aligned = (9 + 12 + 3) & ~3 = 24
+> > ...
+> >
+> > Note: #define USBTMC_HEADER_SIZE      12
+> >
+> > This results in the buffer[USBTMC_SEAD_SIZE+transfersize] and its
+> > subsequent memory not being initialized.
+> >
+> > Fixes: 4ddc645f40e9 ("usb: usbtmc: Add ioctl for vendor specific write")
+> > Reported-and-tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
+> > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > ---
+> > V2 -> V3: Update condition and comments
+> >
+> >  drivers/usb/class/usbtmc.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
+> > index 6bd9fe565385..faf8c5508997 100644
+> > --- a/drivers/usb/class/usbtmc.c
+> > +++ b/drivers/usb/class/usbtmc.c
+> > @@ -1591,6 +1591,10 @@ static ssize_t usbtmc_write(struct file *filp, const char __user *buf,
+> >  		goto exit;
+> >  	}
+> >
+> > +	if (USBTMC_HEADER_SIZE + transfersize < aligned)
+> > +		memset(&buffer[USBTMC_HEADER_SIZE + transfersize], 0,
+> > +			aligned - USBTMC_HEADER_SIZE - transfersize);
+> 
+> As this is now a pain to read/understand, and there's no comment
+> describing it so we'll not really understand it in a few months, let
+> alone years, how about we just do the trivial thing and make the
+> allocation with kzalloc() to start with?  And put a comment there saying
+> why it's zeroed out.
+Perhaps I wrote too much in my comments, but in essence, the logic behind
+this version's fix is:
+When aligned is greater than (USBTMC_HEADER_SIZE+transfersize), there are
+(aligned - (USBTMC_HEADER_SIZE+transfersize) bytes after the header and data
+that have not been initialized, and these bytes are then set to 0.
+> 
+> Sorry, I thought this was going to be a lot simpler based on your first
+> patch than this type of logic.
+As you mentioned in my first version patch, this approach is simple and
+easy to understand, but it comes at the cost of losing the real issue,
+and KMSAN will not find similar problems again in the future, which is
+not conducive to making the program logic more robust.
 
-Does the problem not exist in the following references to funcs->set_drr?
-
-drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c:      if (pipe_ct=
-x->stream_res.tg->funcs->set_drr)
-drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c:              pip=
-e_ctx->stream_res.tg->funcs->set_drr(
-drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c:              pip=
-e_ctx[i]->stream_res.tg->funcs->set_drr(
-drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:        if (pipe_ct=
-x->stream_res.tg->funcs->set_drr)
-drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:                pip=
-e_ctx->stream_res.tg->funcs->set_drr(
-drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:                if =
-(pipe_ctx->stream_res.tg->funcs->set_drr)
-drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:                   =
-     pipe_ctx->stream_res.tg->funcs->set_drr(
-drivers/gpu/drm/amd/display/dc/hwss/dcn31/dcn31_hwseq.c:        if (pipe_ct=
-x->stream_res.tg->funcs->set_drr)
-drivers/gpu/drm/amd/display/dc/hwss/dcn31/dcn31_hwseq.c:                pip=
-e_ctx->stream_res.tg->funcs->set_drr(
-drivers/gpu/drm/amd/display/dc/hwss/dcn401/dcn401_hwseq.c:      if (pipe_ct=
-x->stream_res.tg->funcs->set_drr)
-drivers/gpu/drm/amd/display/dc/hwss/dcn401/dcn401_hwseq.c:              pip=
-e_ctx->stream_res.tg->funcs->set_drr(
-
->
-> With best wishes,
-> Tobias
->
-> Tobias Jakobi (2):
->   drm/amd/display: Avoid race between dcn10_set_drr() and
->     dc_state_destruct()
->   drm/amd/display: Avoid race between dcn35_set_drr() and
->     dc_state_destruct()
->
->  .../amd/display/dc/hwss/dcn10/dcn10_hwseq.c   | 20 +++++++++++--------
->  .../amd/display/dc/hwss/dcn35/dcn35_hwseq.c   | 20 +++++++++++--------
->  2 files changed, 24 insertions(+), 16 deletions(-)
+BR,
+Edward
 
 
