@@ -1,209 +1,176 @@
-Return-Path: <linux-kernel+bounces-320142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3980E97069B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:30:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1835E9706A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEC6B281854
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:30:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48A31B21656
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F34814C585;
-	Sun,  8 Sep 2024 10:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FF91509B0;
+	Sun,  8 Sep 2024 10:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XRZWTgIt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ham38r2j"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DF971742
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 10:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DAE1DDC9;
+	Sun,  8 Sep 2024 10:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725791449; cv=none; b=dnZgU440SnL9w8RDg65BANNIuuGw3KvE9euoVGq2pDed0CjwXpIiY6VuNaf5i10d2xzt3GyMQoBdMOV7PR/14BsOh4i9AlNcvJcKK2jNlZIaDk9PK/yn6pX5u838GTFBdqcsVlHlbbBC06f5ggzhmJOo/g4vp1/bh9FQVmIWZmI=
+	t=1725791964; cv=none; b=nlwOFQgn/R/TxWouwND9S9YdwG7PZICTuMoEL+iljvaMXrJuYHUB8V/qAfqBlikEz5jA2B1Kbgr4v3agkkYZ6tAg7VvKW4NRJIfBmpxApA92sNdQ1wDIIKAWRW/f742Oog+mTpk49/PSF7PSm8jqn3n2K7hforq/lQmK9+11W0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725791449; c=relaxed/simple;
-	bh=BaELaY8cg6cEOAQWaxrPFpr4EaviwT3pJYTbPOjdaSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Av439cpdtaStjDdKvjP8u3VZap/xGpN5olM9cbdmO5RC7fQC53qUlKoxuhhjYE5q1HPAtzJGT/lRlxV5KMLIMKFkQylzDCWbcYNVW89Bnjmbd7vswhMvFgm8rBf5eFurgFpQd0Vvp36igJflC6IdnZxAGT7TNQ63bh3bA78s6WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XRZWTgIt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725791446;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i5OMd23lOq0TQ1xex/NXYk3jY8jVWK0MlC2mTgfKJm8=;
-	b=XRZWTgItqatABYQtL/NNGGSvGv6bKza6yGwmiLvobVKYaIvEPXOHuNOHrUf6ogHy6JtT71
-	s8n+AI1rzBogkUwnvWhT8sQJ89IjsBLm6NxCRD8w5GufhkN3uVW+chIDTIQJVeXVANqDr3
-	JU1LNRzILJZbjQPh6JiuZYkgyTKqrhw=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-66-3_IErx1HNZWPkhjP_PcxIQ-1; Sun,
- 08 Sep 2024 06:30:43 -0400
-X-MC-Unique: 3_IErx1HNZWPkhjP_PcxIQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 76F5F19560B5;
-	Sun,  8 Sep 2024 10:30:41 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.58])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 91F211956056;
-	Sun,  8 Sep 2024 10:30:39 +0000 (UTC)
-Date: Sun, 8 Sep 2024 18:30:33 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Sourabh Jain <sourabhjain@linux.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-	Hari Bathini <hbathini@linux.ibm.com>, kexec@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
-Subject: Re: [PATCH] kexec/crash: no crash update when kexec in progress
-Message-ID: <Zt18yUCWRK8178uv@MiWiFi-R3L-srv>
-References: <20240731152738.194893-1-sourabhjain@linux.ibm.com>
- <87v80lnf8d.fsf@mail.lhotse>
- <10c666ae-d528-4f49-82e9-8e0fee7099e0@linux.ibm.com>
- <355b58b1-6c51-4c42-b6ea-dcd6b1617a18@linux.ibm.com>
- <ZsLjGJvAUIaxrG6x@MiWiFi-R3L-srv>
- <1e4a8e18-cda9-45f5-a842-8ffcd725efc9@linux.ibm.com>
- <ZtGqTSMvx6Ljf5Xi@MiWiFi-R3L-srv>
- <0dd94920-b13f-4da7-9ea6-4f008af1f4b3@linux.ibm.com>
- <ZtkkIoUIu8shp/ut@MiWiFi-R3L-srv>
- <c6f30e31-69fe-4ece-b251-c49f1ab59a04@linux.ibm.com>
+	s=arc-20240116; t=1725791964; c=relaxed/simple;
+	bh=WIpuUnXJlsMs+zuwt8sFWY0A+PiiPlSaPMHytO9GMuw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hSeGPkG5f1/2t+WNP2UTAYDy2AMZMBr7aVbvGtfgZXhR99s9fbPHapt2e12rTXTIHBPjv7lZl2ScJM6G+S2h/6q6u6dRE4ImEb4DIMHuoK2yWx2BbNh9EgX7px8dNq++g+eKdiy9PL/cL+N5adJRXZbE84ckU4dvugccuIXZmz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ham38r2j; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f7528f4658so21759331fa.3;
+        Sun, 08 Sep 2024 03:39:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725791961; x=1726396761; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QBlzT4DhXGVmK0DDC40shs2P1XOGabvgOZdRTDdJKzA=;
+        b=ham38r2joHdgz5KhAYwEb7f39eqXtWecLZ+CbHPhx5fjQnGMSrYOXB/0Hv4jilepn9
+         TNMkctruQ4ZxJSafCJNR8KTGlutc+rQfR/5hxQhsJJqKN1wXTRq7VxPNIMM1AjsK8pA1
+         QNpUc6uVstIismfEUDXeQHUziSFUxr/Lo1W03OLf8Y2RbVIluXJyTNN5Nvlnk3UDRFwZ
+         pSz1OaV8Pscz2K6DtNPpFfiwwBrbWzFjhqVwQIOBy/5dFTpQ7JHL3uJu1sj7eUEQPvhY
+         IGK3a4O/LGIGPW94BZhNiFAboBq6ALRK25vF3KmKwcSzO+B4LU9l2DPBmUejhHs+i/e3
+         24sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725791961; x=1726396761;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QBlzT4DhXGVmK0DDC40shs2P1XOGabvgOZdRTDdJKzA=;
+        b=ICFpHY33N/34G8kU4QqFFP0Z52EQSBt+wyFROoGHWiAjqVb2xuMzpfI+8TccGbEpom
+         C9atUra7IF8cmuZx5boo1XSPfCFPJAQBz4OPpcBvIu2NFRdfXvbL8pTt5jBcot85kQXE
+         0IekzcVxXU2djFazDWhCcGUHophXBA/65abrDfVwHKy3Wr+82B1uXTvDh7iZ5GpN1Eal
+         dlbbxbqjVuy8JH+NSU2Qpk6Mry1eyeWbdl+51CTCBqRwiPr0ArqJiOi09nLJqI9lzOUM
+         PAxJv5BXi0c/fesXDK+IAMu5GHNDxe/WhCbqgcZzt9H5PjrMXp+GzOD2XgmY++ReOu/x
+         BIXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAnB8KOPyGE8Qj/tNfAqZnGTlpf3EQBeJRlVuhD3LV90nCce5YWxVmgi3StzzQGbgVGk2mvZ7XSUg=@vger.kernel.org, AJvYcCVH+5mHbX5PoatZ92I04xrt+2a8wmMJl5ZgeGo4c7dgUrgLqKX6KbbwNyP44MUFGCwU8CldBmNcaYgC5Oqv@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXRzr5Zu3nu8GB3nRSyr6k+CNJcNYsgMoAYw6H5QZBI43NH6Nu
+	YCXN5JQTsOS6634ECPL6yQrmPgmxo2nJ7DNAMrOIzk9HT8CiCTP8D647126ZaL3FQncrzTOl9K8
+	/461YMMjx1OjYwd7ihcZc4++/wi4=
+X-Google-Smtp-Source: AGHT+IF8YSDnTUVBg5gTulU8iOWZhp8+Web6nIHMCIZHXU6A4YxtGVVmAIDqAaz7dyJzivALraGk1Qt4N0/Zujzb45E=
+X-Received: by 2002:a05:651c:2127:b0:2f6:43fd:f870 with SMTP id
+ 38308e7fff4ca-2f751f69865mr54977021fa.31.1725791959684; Sun, 08 Sep 2024
+ 03:39:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c6f30e31-69fe-4ece-b251-c49f1ab59a04@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20240830034640.7049-1-kfting@nuvoton.com> <20240830034640.7049-3-kfting@nuvoton.com>
+ <cfdfldh5tuhb4r5pdpgolcr2roeewsobedet2uvmpbnqlw5yh4@c4a2szsbs2r2>
+In-Reply-To: <cfdfldh5tuhb4r5pdpgolcr2roeewsobedet2uvmpbnqlw5yh4@c4a2szsbs2r2>
+From: Tali Perry <tali.perry1@gmail.com>
+Date: Sun, 8 Sep 2024 13:39:08 +0300
+Message-ID: <CAHb3i=sHzF8p572SBMvfCVQmo+7VcYbOYuqUU-H2sEiTkfWD7A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] i2c: npcm: correct the read/write operation procedure
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Tyrone Ting <warp5tw@gmail.com>, avifishman70@gmail.com, tmaimon77@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
+	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/05/24 at 02:07pm, Sourabh Jain wrote:
-> Hello Baoquan,
-> 
-> On 05/09/24 08:53, Baoquan He wrote:
-> > On 09/04/24 at 02:55pm, Sourabh Jain wrote:
-> > > Hello Baoquan,
-> > > 
-> > > On 30/08/24 16:47, Baoquan He wrote:
-> > > > On 08/20/24 at 12:10pm, Sourabh Jain wrote:
-> > > > > Hello Baoquan,
-> > > > > 
-> > ......snip...
-> > > > > 2. A patch to return early from the `crash_handle_hotplug_event()` function
-> > > > > if `kexec_in_progress` is
-> > > > >      set to True. This is essentially my original patch.
-> > > > There's a race gap between the kexec_in_progress checking and the
-> > > > setting it to true which Michael has mentioned.
-> > > The window where kernel is holding kexec_lock to do kexec boot
-> > > but kexec_in_progress is yet not set to True.
-> > > 
-> > > If kernel needs to handle crash hotplug event, the function
-> > > crash_handle_hotplug_event()  will not get the kexec_lock and
-> > > error out by printing error message about not able to update
-> > > kdump image.
-> > But you wanted to avoid the erroring out if it's being in
-> > kernel_kexec().  Now you are seeing at least one the noising
-> > message, aren't you?
-> 
-> Yes, but it is very rare to encounter.
-> 
-> My comments on your updated code are inline below.
-> 
-> > 
-> > > I think it should be fine. Given that lock is already taken for
-> > > kexec kernel boot.
-> > > 
-> > > Am I missing something major?
-> > > 
-> > > > That's why I think
-> > > > maybe checking kexec_in_progress after failing to retriving
-> > > > __kexec_lock is a little better, not very sure.
-> > > Try for kexec lock before kexec_in_progress check will not solve
-> > > the original problem this patch trying to solve.
-> > > 
-> > > You proposed the below changes earlier:
-> > > 
-> > > -	if (!kexec_trylock()) {
-> > > +	if (!kexec_trylock() && kexec_in_progress) {
-> > >   		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
-> > >   		crash_hotplug_unlock();
-> > Ah, I meant as below, but wrote it mistakenly.
-> > 
-> > diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-> > index 63cf89393c6e..e7c7aa761f46 100644
-> > --- a/kernel/crash_core.c
-> > +++ b/kernel/crash_core.c
-> > @@ -504,7 +504,7 @@ int crash_check_hotplug_support(void)
-> >   	crash_hotplug_lock();
-> >   	/* Obtain lock while reading crash information */
-> > -	if (!kexec_trylock()) {
-> > +	if (!kexec_trylock() && !kexec_in_progress) {
-> >   		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
-> >   		crash_hotplug_unlock();
-> >   		return 0;
-> > 
-> > 
-> > > 
-> > > Once the kexec_in_progress is set to True there is no way one can get
-> > > kexec_lock. So kexec_trylock() before kexec_in_progress is not helpful
-> > > for the problem I am trying to solve.
-> > With your patch, you could still get the error message if the race gap
-> > exist. With above change, you won't get it. Please correct me if I am
-> > wrong.
-> 
-> The above code will print an error message during the race gap. Here's why:
-> 
-> Let’s say the kexec lock is acquired in the kernel_kexec() function,
-> but kexec_in_progress is not yet set to True. In this scenario, the code
-> will print
-> an error message.
-> 
-> There is another issue I see with the above code:
-> 
-> Consider that the system is on the kexec kernel boot path, and
-> kexec_in_progress
-> is set to True. If crash_hotplug_unlock() is called, the kernel will not
-> only update
-> the kdump image without acquiring the kexec lock, but it will also release
-> the
-> kexec lock in the out label. I believe this is incorrect.
-> 
-> Please share your thoughts.
+Hi Andi,
 
-How about this?
+On Fri, Sep 6, 2024 at 12:29=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org> =
+wrote:
+>
+> Hi Tyronne,
+>
+> On Fri, Aug 30, 2024 at 11:46:35AM GMT, Tyrone Ting wrote:
+> > Originally the driver uses the XMIT bit in SMBnST register to decide
+> > the upcoming i2c transaction. If XMIT bit is 1, then it will be an i2c
+> > write operation. If it's 0, then a read operation will be executed.
+> >
+> > After checking the datasheet, the XMIT bit is valid when the i2c module
+> > is acting in a slave role. Use the software status to control the i2c
+> > transaction flow instead when the i2c module is acting in a master role=
+.
+> >
+> > Fixes: 48acf8292280 ("i2c: Remove redundant comparison in npcm_i2c_reg_=
+slave")
+>
+> Fixes needs to be used if you are fixing a bug (crash,
+> device malfunction, etc.). If you want to use it, please describe
+> the bug you are fixing. Otherwise, please, remove it.
+>
+> > Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
+> > ---
+> >  drivers/i2c/busses/i2c-npcm7xx.c | 7 ++-----
+> >  1 file changed, 2 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-=
+npcm7xx.c
+> > index bbcb4d6668ce..2b76dbfba438 100644
+> > --- a/drivers/i2c/busses/i2c-npcm7xx.c
+> > +++ b/drivers/i2c/busses/i2c-npcm7xx.c
+> > @@ -1628,13 +1628,10 @@ static void npcm_i2c_irq_handle_sda(struct npcm=
+_i2c *bus, u8 i2cst)
+> >                       npcm_i2c_wr_byte(bus, bus->dest_addr | BIT(0));
+> >       /* SDA interrupt, after start\restart */
+> >       } else {
+> > -             if (NPCM_I2CST_XMIT & i2cst) {
+> > -                     bus->operation =3D I2C_WRITE_OPER;
+> > +             if (bus->operation =3D=3D I2C_WRITE_OPER)
+> >                       npcm_i2c_irq_master_handler_write(bus);
+> > -             } else {
+> > -                     bus->operation =3D I2C_READ_OPER;
+> > +             else if (bus->operation =3D=3D I2C_READ_OPER)
+> >                       npcm_i2c_irq_master_handler_read(bus);
+>
+> mmmhhh... you are changing the logic here and you are not
+> describing the logic change in the commit log.
+>
+> Without looking at the details, if this is a state machine you
+> are breaking it.
+>
+> Can anyone from the ARM/NUVOTON NPCM supporters and reviewers
+> take a look at this patch?
+>
 
-diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-index 63cf89393c6e..8ba7b1da0ded 100644
---- a/kernel/crash_core.c
-+++ b/kernel/crash_core.c
-@@ -505,7 +505,8 @@ int crash_check_hotplug_support(void)
- 	crash_hotplug_lock();
- 	/* Obtain lock while reading crash information */
- 	if (!kexec_trylock()) {
--		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
-+		if (!kexec_in_progress)
-+			pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
- 		crash_hotplug_unlock();
- 		return 0;
- 	}
-@@ -540,7 +541,8 @@ static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu,
- 	crash_hotplug_lock();
- 	/* Obtain lock while changing crash information */
- 	if (!kexec_trylock()) {
--		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
-+		if (!kexec_in_progress)
-+			pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
- 		crash_hotplug_unlock();
- 		return;
- 	}
+Indeed, the driver can use both the register bits or the state machine
+to determine the current state of the bus.
+In slave mode the XMIT bit can simply be used directly to set the state.
+XMIT bit can be used as indication to the current state of the state
+machine during slave operation.
+(meaning XMIT =3D 1 during writing and XMIT =3D 0 during reading).
+In master operation XMIT is valid only if there are no bus errors.
+For example: in a multi master where the same module is switching from
+master to slave at runtime, and there are collisions,
+the XMIT bit cannot be trusted.
+However the maser already "knows" what the bus state is, so this bit
+is not needed and the driver can just track
+what it is currently doing.
 
+
+
+
+> Thanks,
+> Andi
+>
+> > -             }
+> >       }
+> >  }
+> >
+> > --
+> > 2.34.1
+> >
 
