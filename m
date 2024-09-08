@@ -1,54 +1,73 @@
-Return-Path: <linux-kernel+bounces-320322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1757E9708D7
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:59:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D98399708DB
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:03:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43EAC1C20CEB
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:59:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 969BE281D61
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59C4175D2C;
-	Sun,  8 Sep 2024 16:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142A22746D;
+	Sun,  8 Sep 2024 17:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Waf26juj"
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="RSeJHGM4"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64172535D8;
-	Sun,  8 Sep 2024 16:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41976132111
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 17:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725814742; cv=none; b=RV/2X1f/GY0zwh90ff/v920eDqIbP5kfj/P95d45qAs5LT7MCniah29Z75QHY6zTyJkoyFgmwQ6QrL7UJk9Z7WGuka1tdJ1Y45tnVgALsf4OeSzs+mNA9eTMRhF7YNCMAaDM1dIDTfk/pSQl9mT8fcdsTlNJw3ML4DPxWqeqi/s=
+	t=1725814993; cv=none; b=mHECIv8vW5K28J08spIW2IQ1gzPK2mFP1fPhxJ5+EKfit9nmvNe4s/F907o8JkHqzmhRkyEPRioMEvcRt9z0t9XOcuo9mhdvQDVvf+9O1+LdoldfVY5EeQhX6586X2zuV7Y7RonNf3fn3IU4+KxvsTmVhBVpjSjlSh+Kc54bBTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725814742; c=relaxed/simple;
-	bh=6QjX+p/V7p6CoIL0gKUlUJEfv0XMVAsaxYaaV5atd5k=;
+	s=arc-20240116; t=1725814993; c=relaxed/simple;
+	bh=M6hOX6d67g/sHrbUEKNZOlyXGlA5MldEKz/S1CCvNOI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G6Op/R/x1+mfVWJlH7G3fNdn99BZoEBDA1oNK7pg0RN6Obh5QKsGNEIzTRBl9nMOE6xOFESB6V77ZNH9Oqh1pJeWRXQS3G2cN22Tu+5pf05uCnvyi0+YPVJDszWtVQgSnEwlB65ED+cBgEEXYfTXM18V//YgPufj7WLjdgDsb+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Waf26juj; arc=none smtp.client-ip=80.12.242.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id nLFVsSexkHecynLFVs3xum; Sun, 08 Sep 2024 18:58:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725814737;
-	bh=RdcTk8ohJPW11cQiApgamG5S3f5jcX8WFaEBB5WL29M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Waf26jujfPXECY3CCDjijKiHyI/dBzztosdUkGORAS/uepLb4kcKcLqmgiPDoYcku
-	 MoXMKrUxZEDENW48sn74nf7unkftTZiaW/l95dmfPviRRTkvexcsvSiskoc1uat1ZD
-	 +gRtAs187E32Lft/bz80V2cScm6OjBinBKUQVX9Wyx0Xf17m1H6bpTOHmpjU4VtAGW
-	 rklcVfzdta3T+DQRBeCO2mgLWFTmkVQ7LbQ6V4SI36ZSf59SzBh56y+6KmeB1IZu3Q
-	 i/ZB8QGH7iR9sLQpi46o6xJdGoV3ffCZLVCx/6E7ZWWtMtOPTJ/mI/ktgazDnTtOe9
-	 irQCqqT4HbSPg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 08 Sep 2024 18:58:57 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <d01bed96-7811-4ace-8b92-1ee9fafac649@wanadoo.fr>
-Date: Sun, 8 Sep 2024 18:58:52 +0200
+	 In-Reply-To:Content-Type; b=EY5waUmbNiqC6KRjuUyWr/V5FRVMKGvHL+Gg1vYoc8d6/tLsgQduxzo85tm+yGoR4ORdZd/oxF+8b2MhF4oEsZNKzTwLfRgEZHKDQv+uObQjyLxkaNMTSlfpH6LIuNSzpiSf4Uwmp8A2lPHScTs3s3XtUp4UX5+NfT8oszkMEQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=RSeJHGM4; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-717849c0dcaso3170377b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 10:03:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725814990; x=1726419790; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YfYf9qgMs/s/Cf29/MVQd3LQ6tknsxRcEwEDS7AwwRE=;
+        b=RSeJHGM4VQttQCzEtYoOZ+PxnycBpCobU63tLfQZ6tDDj9Fju0LAWJaoXIR8mG0f0k
+         xqYCcrAMiWuetW5hPtUJNdJTLaZ9OJFsZwiYN933cEkVQdFdW4Ho8kin7i2F5Mzpk7BQ
+         zvpJbvtMIVQughZqU+bo+cjCAuZJC7eUiqQT9e6LcfYhmj5CC7JcRHR4sCoLyxSQ3Aav
+         HhjWcyja5/wKBA9fFlSkltoazPXaINk5Qserl3EQfA8ee54WyvM+KDR3V1lIqnRWfXZ8
+         We9TEaPprF6jWLRE/xjDqNEFq1lz1NbtYwjs0WMUQyqy9k3b5VJnh+BSqmSG4xSVzWDe
+         67oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725814990; x=1726419790;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YfYf9qgMs/s/Cf29/MVQd3LQ6tknsxRcEwEDS7AwwRE=;
+        b=H5qhRHITHF5+wn/X3mOBdwvn45paE4eAJUJRsUOF4xkbUk82j7z4IqgC9h6McW/UsP
+         srQbaQnN0nsQ6WzjZbZmvLdYtAbai1y/DA6sTjyfGUAuP0puG0XaUoOCN/tQcPqOHhmv
+         Vd2PIzzL/iOmdr9lmdlMf71j+tEWvbLtQI4UWGxevdSxx/ix+Ow90daHMoE9JaMMYxOS
+         25iMHnCtxY0FLSI535Tnowoc+jSlS851utx8AvgdRNyI8o4EkQY+ndRsf24hwV5LmlCV
+         iEtl4FjBtvYP5Axl9oVrWVMRYRKh6tNmPbFUAXIaauWemjP4o67MNnDJdyzZCFpHb3wD
+         rz+A==
+X-Forwarded-Encrypted: i=1; AJvYcCX7IYZz353y+rH8sKzrv+ORWozdXLmZeNcF4WA2/J9FL7XzcMRNgpUyKVr6AlKfpGkWrPUt8lmx4V/qQQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHxD/Yv6FxQStMoGWyCUqcDvVBba9S/9/zZjyXpuuV8VYgUs2+
+	9zAKdTBxegVaLF7YQA5f4XW2F7Zd0Wz9kdDb9EYLvO3fBTYoqVZ4b59EqT4jQkM=
+X-Google-Smtp-Source: AGHT+IEboSXi6Gg5AQgJ6R2dG81rS4lvAyKMHkl5m3fSbPs9p/sQnX3Y4+or6QEHsu48LyxGweVUzQ==
+X-Received: by 2002:a05:6a00:a29:b0:717:85d4:939c with SMTP id d2e1a72fcca58-718d5f52c04mr12201175b3a.23.1725814990529;
+        Sun, 08 Sep 2024 10:03:10 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e58c1f15sm2240605b3a.76.2024.09.08.10.03.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Sep 2024 10:03:09 -0700 (PDT)
+Message-ID: <fa31473a-39ab-4605-9966-90800ddd84a9@kernel.dk>
+Date: Sun, 8 Sep 2024 11:03:08 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,128 +75,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] phy: renesas: rcar-gen3-usb2: Fix an error handling
- path in rcar_gen3_phy_usb2_probe()
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>
-References: <4efe2d0419cbe98163e2422ebe0c7896b8a5efed.1725717505.git.christophe.jaillet@wanadoo.fr>
- <TY3PR01MB113468D1573C1E50AC9F97DCF86982@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <TY3PR01MB113468D1573C1E50AC9F97DCF86982@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] block and io_uring: typo fixes
+To: CPestka <constantin.pestka@c-pestka.de>
+Cc: asml.silence@gmail.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20240908164723.36468-1-constantin.pestka@c-pestka.de>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240908164723.36468-1-constantin.pestka@c-pestka.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le 08/09/2024 à 18:39, Biju Das a écrit :
-> Hi Christophe JAILLET,
-> 
-> Thanks for the patch.
-> 
->> -----Original Message-----
->> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> Sent: Saturday, September 7, 2024 2:59 PM
->> Subject: [PATCH v2] phy: renesas: rcar-gen3-usb2: Fix an error handling path in
->> rcar_gen3_phy_usb2_probe()
->>
->> If an error occurs after the rcar_gen3_phy_usb2_init_bus(),
->> reset_control_assert() must be called, as already done in the remove function.
->>
->> This is fine to re-use the existing error handling path, because even if "channel->rstc" is still NULL
->> at this point, it is safe to call reset_control_assert(NULL).
->>
->> Fixes: 4eae16375357 ("phy: renesas: rcar-gen3-usb2: Add support to initialize the bus")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Changes in v2:
->>    - Re-use 'error' to simplify the patch   [claudiu beznea]
->>    - Update the commit description to explain why it is safe.
->>
->> v1:
->> https://lore.kernel.org/all/fc9f7b444f0ca645411868992bbe16514aeccfed.1725652654.git.christophe.jaillet
->> @wanadoo.fr/
->> ---
->>   drivers/phy/renesas/phy-rcar-gen3-usb2.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
->> index 58e123305152..ccb0b54b70f7 100644
->> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
->> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
->> @@ -803,6 +803,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
->>   	return 0;
->>
->>   error:
->> +	reset_control_assert(channel->rstc);
-> 
-> This will result in either kernel crash [1] or reset usage count imbalance in case
-> of error [2] and [3] in rcar_gen3_phy_usb2_init_bus() see [4]. Also reset control API is not
-> respected for SoCs other than RZ/G3S. For those SoC's reset assert is
-> called without calling a get(). Maybe add a check (phy_data->init_bus) for
-> assert api's, that guarantees assert is called after calling a get() as it
-> valid only for RZ/G3S??
-> 
-> [1]
-> channel->rstc = devm_reset_control_array_get_shared(dev);
-> 	if (IS_ERR(channel->rstc))
-> 		return PTR_ERR(channel->rstc);
-> 
-> [2]
-> ret = pm_runtime_resume_and_get(dev);
-> 	if (ret)
-> 		return ret;
-> [3]
-> ret = reset_control_deassert(channel->rstc);
-> 	if (ret)
-> 		goto rpm_put;
-> 
-> [4] https://elixir.bootlin.com/linux/v6.11-rc6/source/drivers/reset/core.c#L483
+1) Don't combine patches for separate trees into one patch
+2) Both cancellation and cancelation are correct spellings, io_uring has
+used the latter since the start.
 
-So, if I understand correctly, v1 [5] was correct. :)
-
-
-I don't think that [1] would crash, because of [6]. It would only 
-WARN_ON. But with v1, it is not called.
-
-With v1, reset_control_assert() is not called if 
-rcar_gen3_phy_usb2_init_bus() fails. So [2] and [3] can't occur.
-
-I can send a v3, which is the same of v1, or you can pick v1 as-is (if 
-I'm correct... :)) or you can just ignore it if "reset control API is 
-not respected for SoCs".
-
-
-If of interest, I spotted it with one of my coccinelle script that 
-compares functions called in .remove function, but not in error handling 
-path of probe.
-
-
-CJ
-
-[5]: 
-https://lore.kernel.org/all/fc9f7b444f0ca645411868992bbe16514aeccfed.1725652654.git.christophe.jaillet@wanadoo.fr/
-
-[6]: 
-https://elixir.bootlin.com/linux/v6.11-rc6/source/drivers/reset/core.c#L473
-
-> 
-> Cheers,
-> Biju
-> 
->>   	pm_runtime_disable(dev);
->>
->>   	return ret;
->> --
->> 2.46.0
->>
-> 
-> 
-> 
+-- 
+Jens Axboe
 
 
