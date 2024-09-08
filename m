@@ -1,112 +1,205 @@
-Return-Path: <linux-kernel+bounces-320271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76FD7970837
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:49:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E4E5970836
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 203FE1F21CE9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:49:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5AC0281D82
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5A8171658;
-	Sun,  8 Sep 2024 14:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47108171652;
+	Sun,  8 Sep 2024 14:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="NG2S5lLm"
-Received: from xry111.site (xry111.site [89.208.246.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XX5MdYW7"
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B192516630E
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 14:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979D8EACD
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 14:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725806937; cv=none; b=rgre6JsWZWu9AJcOohg69oFZh3ORQxdGZfoi8LubN/2BiblVL+JEVMT7bNM+0dHVsfSqTuMH5jtY+4sK1cDxoy4P0izicy29VMrDczxrjlj2lqM7GISXva/Rh1wUgzu4wwUip4SzGmyLkw8bRIK5DjnRYuoEf8nctQJ58guUyi4=
+	t=1725806687; cv=none; b=YQXpwDSleT6kWmtfenGCeEYjo72yJvtGDR4cw5KMwGbJi9G5goDUz4+s1ZjMRRar6Xfg3jWH1NWhHLKKIUE6UPMSSkC53EtPJmMTqkZgub+rOHhWpXjFncIFykaIUTK2E7wXAEMdxllPHQGzwcnsmjvovSXzgE+77R21rVxOsXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725806937; c=relaxed/simple;
-	bh=b9ZHpPU7fHgDP46JdtdbnVn5kDILGONuZcMcJ+8oFAU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uVL2c+tggqYQy3q6lI3gNsrRUaJ3/z/ePRmOtGF1WuM0V5rfWqy3yc1fOAoZV0rQJjdy7JxOvwu3odJ7E6giJxRSE5GBQknIlZFZN7XKJoe3s2TcIiWCwThDMbsUXXpfZJcMEaLTmKxoTkxt0Oyyg/AlfeG5Og1gYE9+ZGLxl80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=NG2S5lLm; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1725806569;
-	bh=0nBvIXI1Xrh+4qFlXlqkpL124CaVlEGXUIHWyQUvX/Y=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=NG2S5lLmOLYyQt9beGGyX8udhsnnxLlHDkox/MJxR5iD2XfMc5/XRZPdPlZvrsuSL
-	 pcDe7KKZFj4f7GI4G8esCbVTfNPwtlZfYaKOoHi+KaXsEpBJV+7ewmK6UT8o0RMjUI
-	 ngEBCGNdNsmg/UPsM5TOHNOCYEk749TydgR7pwbo=
-Received: from [192.168.124.11] (unknown [113.200.174.95])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 87182673D9;
-	Sun,  8 Sep 2024 10:42:48 -0400 (EDT)
-Message-ID: <c75a2de763dc8ea42a734490936f198a6ad07349.camel@xry111.site>
-Subject: Re: [PATCH v3 3/4] LoongArch: Set AS_HAS_THIN_ADD_SUB as y if
- AS_IS_LLVM
-From: Xi Ruoyao <xry111@xry111.site>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf
- <jpoimboe@kernel.org>,  Peter Zijlstra <peterz@infradead.org>, Huacai Chen
- <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Date: Sun, 08 Sep 2024 22:42:45 +0800
-In-Reply-To: <20240807085906.27397-4-yangtiezhu@loongson.cn>
-References: <20240807085906.27397-1-yangtiezhu@loongson.cn>
-	 <20240807085906.27397-4-yangtiezhu@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1725806687; c=relaxed/simple;
+	bh=I0qjUUfnPXmQ1uXaZFi0U19PUntebPrsSua+lCWaTx8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
+	 In-Reply-To:Content-Type; b=fBzTumJlcmjATXvj/rvAD2Us8NI5xA/AvDk3WvxcHvLQuJLSSyojAu7ikPkwsNd8SvZS170JFssTqh3RfdFOnm0zMHOP8G5AMGcPe9SSsTdJMXhxSOjE/Sa9B3kkAc64D6frGuRDfh+8uv2cqEEwRSagEi5v7b31cWNS7pR18tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XX5MdYW7; arc=none smtp.client-ip=80.12.242.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id nJ9TsuXviS3tRnJ9Vs50vb; Sun, 08 Sep 2024 16:44:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725806676;
+	bh=cR3VYMMURPSiFaFZKJGG3Rc11X1L8jXkvDrs4A4koFc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To;
+	b=XX5MdYW7WdDxfdC3dFTrteO3FizHnAtoGRFEC8UtBkPuwoYh823fAktnsbXLtkawH
+	 rRRssBhWkNn9oQ+GCD9ctUpDAaVcTLtRA4KsbrtYqPVmEiyXqX2KOZPq5OG4wQMdPn
+	 Nl97sO5SPcaIqgZ8kpwSnsRosE/x70oCLSHwtBG25KaxZUpQeEDnb/8/l7d6zLR/DW
+	 8wVfslDmw4qu/IsNLPOSqTG9nL354GGtMgzScsEH/qobdmxZRfcSckTVxEsw1NHLSU
+	 vRPkdkaY/Cd6N+bcJUc5fJljycP+U++UCgKiC47Is5Unv6PnAeioB3yHqhFgbF/q+d
+	 ZdGFiAeJvhlHg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 08 Sep 2024 16:44:36 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <8debbb55-449d-4f8d-a6dd-3ba15836aacf@wanadoo.fr>
+Date: Sun, 8 Sep 2024 16:44:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v8 3/4] driver core: shut down devices asynchronously
+To: Stuart Hayes <stuart.w.hayes@gmail.com>, linux-kernel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Martin Belanger <Martin.Belanger@dell.com>,
+ Oliver O'Halloran <oohall@gmail.com>, Daniel Wagner <dwagner@suse.de>,
+ Keith Busch <kbusch@kernel.org>, Lukas Wunner <lukas@wunner.de>,
+ David Jeffery <djeffery@redhat.com>, Jeremy Allison <jallison@ciq.com>,
+ Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org
+References: <20240822202805.6379-1-stuart.w.hayes@gmail.com>
+ <20240822202805.6379-4-stuart.w.hayes@gmail.com>
+X-Mozilla-News-Host: news://news.gmane.io
+Content-Language: en-US, fr-FR
+In-Reply-To: <20240822202805.6379-4-stuart.w.hayes@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-08-07 at 16:59 +0800, Tiezhu Yang wrote:
-> When building kernel with "make CC=3Dclang defconfig", LLVM Assembler
-> is used due to LLVM_IAS=3D0 is not specified, then AS_HAS_THIN_ADD_SUB
-> is not set, thus objtool can not be built after enable it for Clang.
->=20
-> config AS_HAS_THIN_ADD_SUB is to check whether -mthin-add-sub option is
-> available to know R_LARCH_{32,64}_PCREL are supported for GNU Assembler,
-> there is no this option for LLVM Assembler. The minimal version of Clang
-> is 18 for building LoongArch kernel, and Clang >=3D 17 already supports
-> R_LARCH_{32,64}_PCREL, that is to say, there is no need to depend on
-> AS_HAS_THIN_ADD_SUB for Clang, so just set AS_HAS_THIN_ADD_SUB as y if
-> AS_IS_LLVM.
->=20
-> Fixes: 120dd4118e58 ("LoongArch: Only allow OBJTOOL & ORC unwinder if too=
-lchain supports -mthin-add-sub")
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-
-This is what I wanted in
-https://lore.kernel.org/all/20240604150741.30252-1-xry111@xry111.site/.
-
-Reviewed-by: Xi Ruoyao <xry111@xry111.site>
-
+Le 22/08/2024 à 22:28, Stuart Hayes a écrit :
+> Add code to allow asynchronous shutdown of devices, ensuring that each
+> device is shut down before its parents & suppliers.
+> 
+> Only devices with drivers that have async_shutdown_enable enabled will be
+> shut down asynchronously.
+> 
+> This can dramatically reduce system shutdown/reboot time on systems that
+> have multiple devices that take many seconds to shut down (like certain
+> NVMe drives). On one system tested, the shutdown time went from 11 minutes
+> without this patch to 55 seconds with the patch.
+> 
+> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+> Signed-off-by: David Jeffery <djeffery@redhat.com>
 > ---
-> =C2=A0arch/loongarch/Kconfig | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index 70f169210b52..e1b6cb306d4d 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -265,7 +265,7 @@ config AS_HAS_FCSR_CLASS
-> =C2=A0	def_bool $(as-instr,movfcsr2gr \$t0$(comma)\$fcsr0)
-> =C2=A0
-> =C2=A0config AS_HAS_THIN_ADD_SUB
-> -	def_bool $(cc-option,-Wa$(comma)-mthin-add-sub)
-> +	def_bool $(cc-option,-Wa$(comma)-mthin-add-sub) || AS_IS_LLVM
-> =C2=A0
-> =C2=A0config AS_HAS_LSX_EXTENSION
-> =C2=A0	def_bool $(as-instr,vld \$vr0$(comma)\$a0$(comma)0)
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+...
+
+> +/**
+> + * shutdown_one_device_async
+> + * @data: the pointer to the struct device to be shutdown
+> + * @cookie: not used
+> + *
+> + * Shuts down one device, after waiting for shutdown_after to complete.
+> + * shutdown_after should be set to the cookie of the last child or consumer
+> + * of this device to be shutdown (if any), or to the cookie of the previous
+> + * device to be shut down for devices that don't enable asynchronous shutdown.
+> + */
+> +static void shutdown_one_device_async(void *data, async_cookie_t cookie)
+> +{
+> +	struct device *dev = data;
+> +
+> +	async_synchronize_cookie_domain(dev->p->shutdown_after + 1, &sd_domain);
+> +
+> +	shutdown_one_device(dev);
+> +}
+> +
+>   /**
+>    * device_shutdown - call ->shutdown() on each device to shutdown.
+>    */
+>   void device_shutdown(void)
+>   {
+>   	struct device *dev, *parent;
+> +	async_cookie_t cookie = 0;
+> +	struct device_link *link;
+> +	int idx;
+>   
+>   	wait_for_device_probe();
+>   	device_block_probing();
+> @@ -4852,11 +4878,37 @@ void device_shutdown(void)
+>   		list_del_init(&dev->kobj.entry);
+>   		spin_unlock(&devices_kset->list_lock);
+>   
+> -		shutdown_one_device(dev);
+> +
+> +		/*
+> +		 * Set cookie for devices that will be shut down synchronously
+> +		 */
+> +		if (!dev->driver || !dev->driver->async_shutdown_enable)
+> +			dev->p->shutdown_after = cookie;
+> +
+> +		get_device(dev);
+> +		get_device(parent);
+> +
+> +		cookie = async_schedule_domain(shutdown_one_device_async,
+> +					       dev, &sd_domain);
+> +		/*
+> +		 * Ensure parent & suppliers wait for this device to shut down
+> +		 */
+> +		if (parent) {
+> +			parent->p->shutdown_after = cookie;
+> +			put_device(parent);
+
+Would it make sense to have this put_device() out of the if block?
+
+IIUC, the behavior would be exactly the same, but it is more intuitive 
+to have a put_device(parent) called for each get_device(parent) call.
+
+Another way to keep symmetry is to have:
+	if (parent)
+		get_device(parent);
+above.
+
+> +		}
+> +
+> +		idx = device_links_read_lock();
+> +		list_for_each_entry_rcu(link, &dev->links.suppliers, c_node,
+> +				device_links_read_lock_held())
+> +			link->supplier->p->shutdown_after = cookie;
+> +		device_links_read_unlock(idx);
+> +		put_device(dev);
+>   
+>   		spin_lock(&devices_kset->list_lock);
+>   	}
+>   	spin_unlock(&devices_kset->list_lock);
+> +	async_synchronize_full_domain(&sd_domain);
+>   }
+>   
+>   /*
+> diff --git a/include/linux/device/driver.h b/include/linux/device/driver.h
+> index 1fc8b68786de..2b6127faaa25 100644
+> --- a/include/linux/device/driver.h
+> +++ b/include/linux/device/driver.h
+> @@ -56,6 +56,7 @@ enum probe_type {
+>    * @mod_name:	Used for built-in modules.
+>    * @suppress_bind_attrs: Disables bind/unbind via sysfs.
+>    * @probe_type:	Type of the probe (synchronous or asynchronous) to use.
+> + * @async_shutdown_enable: Enables devices to be shutdown asynchronously.
+>    * @of_match_table: The open firmware table.
+>    * @acpi_match_table: The ACPI match table.
+>    * @probe:	Called to query the existence of a specific device,
+> @@ -102,6 +103,7 @@ struct device_driver {
+>   
+>   	bool suppress_bind_attrs;	/* disables bind/unbind via sysfs */
+>   	enum probe_type probe_type;
+> +	bool async_shutdown_enable;
+
+Maybe keep these 2 bools together to potentially avoid hole?
+
+Just my 2c.
+
+CJ
+
+>   
+>   	const struct of_device_id	*of_match_table;
+>   	const struct acpi_device_id	*acpi_match_table;
+
 
