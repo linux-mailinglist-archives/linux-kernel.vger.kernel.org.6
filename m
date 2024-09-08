@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-320124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1E46970662
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:12:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D35970663
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65CC3B2182B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:12:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93A571C20DE5
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BDA14F9DC;
-	Sun,  8 Sep 2024 10:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7017514D2B1;
+	Sun,  8 Sep 2024 10:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKWdl+D1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKirUJIE"
 Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0393E14F130
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 10:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A811509B0
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 10:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725790290; cv=none; b=Hp71WF8fOW0V7i7/wOqLL/4HCFuf396WJ8kqaNg1CZ7xA4TREos6t3sF/Amhkw2ogDiV3iJg57oyrjE6u++trDVh1dC8NA020GLcGNWn4STSuqw93mxjSpK0Wh+/Sz9jPxAUU4bZd2qZWidqzlN7zW8t6XcX20tylxZSLYYNMEs=
+	t=1725790292; cv=none; b=hFfqhaAcbvCyqXgoiU0SDNniztEfUjgMs3kbcIozqWuGid+we3xEttSRietoz6LId2N29+SMgKE6S+dwi5ZvZ76VjDez+TwuBnNPL6FMWRzGsscr+KjXURmiaXrMxYDxlAjcmZhqlcSywRRP2GWs1TN8nb/BstV+1Z25rX5+t8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725790290; c=relaxed/simple;
-	bh=s1ZVJGmAf1WF0Wr/k2J6OsVbhkjRW9zrp1i/9wazWnI=;
+	s=arc-20240116; t=1725790292; c=relaxed/simple;
+	bh=BboeagGjKvfTaMpatd3Q9UtiYxSVOaorAWSf4hQUXUM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ink4WUSfFTAejsEotDEjNAK5ZvsEMKrVLbPC00b/Sm+ldupIttLUxqql4vd3bm8jh/3Rh+4pXfm4PQarFK/SeOBcE3tg0CG1tiPFo63DpisKCh85q1yo4j3acffJ1JySSAhLzyUYLPej2YslPyAd+BRIdKv+cHRzeDesTIaeTrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SKWdl+D1; arc=none smtp.client-ip=209.85.216.48
+	 MIME-Version; b=rdzcKIYI/ywn9fspuxWh9ew1MBCw1fhAY2XZxZx8BMBqhJ8FGseo9JlijCQnHnn3pnNi+4s/jzJiGBLhv02Bc5u6wUuIQv2/l5k1Lzs+MnFoMri951ZqoRrpNrbdzr6jwVRTEJm8kf4EN4MYg9YUgf1lVXPqTjRM3VLuBgQgVZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKirUJIE; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2d8815ef6d2so2519439a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 03:11:28 -0700 (PDT)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2da4e84c198so2365709a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 03:11:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725790288; x=1726395088; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725790291; x=1726395091; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zsUwf0eCWNJhcn14DjOfJsivn1oeErSWNJpstq9iJpM=;
-        b=SKWdl+D1A5dRXykxrhnmitrqjnsH4kpjPuiAai9IjYUScC39cqvRUg8SZU17gc+qCc
-         G139F9g12d41Xd1s2VIhGhE3haioUWrhg5gY2sFeDPbm2JJvtoLJv0xm476q5pEeoMRp
-         ZgYZaKXbtF5gQhwB4iu+4XPpFkRdv+b0S+wpJH7vpVyYleZzQ7r6+Fi2SAfqui5VAB6F
-         SuG+6nPVscBQETPN42PMnxNl2xqmsrAOzylI2xx1tn0epMefOUBAdOEHaSHwW8i9TzLx
-         KMb58TM1V5JW9UjhQfhgIBejG/pIet8oA1de+NgJQvgBRyCLJgVTqIa1gMCLCK7QPaIW
-         lYyw==
+        bh=8Pz0T81DyM+ABMiQOyhUaG4cYHqvUmHaS8GbpCvlsf4=;
+        b=WKirUJIEj+3rdpjkMLlLFqtQ2h8Nmkx6QqYeO9IYqkl1+YbSYUBtSvbyZwAgp2NDhs
+         xTRmI5OpnIwCG8hWSeuqDnddnuinpO5M6VzhW83oX7ZQIt2x5pQgTPT6808OlxRBc/K1
+         lRm6Z25XOAQI8H1K9QppxmdworJ9ELMi+Wb3npT6fk77yt5Lt2s600oGhE44XlwnLGaE
+         cBupRoVOYwxDTuYzBn4bcbtmQ3MxPck0+liuu3TSJTHg6Eh6kNz71efu2pkUzD7lYmqv
+         kWjaxGj714IQPcErLjd+lqS1Axx0LXmOGo4+XFbxETQVpsqgXPeLv9jkvAdTsh1vjCw0
+         cOjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725790288; x=1726395088;
+        d=1e100.net; s=20230601; t=1725790291; x=1726395091;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zsUwf0eCWNJhcn14DjOfJsivn1oeErSWNJpstq9iJpM=;
-        b=omg82fKP0tQDxmt3YiWRVswdBufusbVOAFJfKkTsiU7+dPOwdK6RWn0K4wdN8+JCZW
-         ddZloQlkozVPWVH/IBU0zeMa5//qxOnAZLg+v3sLSnl2PES9K/Wu+niLcKkMlOuc+U0M
-         3uRkrvRZhaiA2dr2wxHcQDIfcf7iIkr0NQ26Ax3EhhyhUzbEjUAzY917U97K0jgUT9CH
-         Evs4fNYCCDFRx2sDybbvteOQSeihmAju0Tgfh2aX36BkjT7W+1sximQ3RS1PoAkoDG5f
-         V5K8NkepZ71yWSDwc+xhEE8dM2J4E7qtE/ciHfif5zaLPIfQXQY6ZkWNW9NOga9qpPT0
-         17Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8GmnpGXhcyv5miILq1ZepZaLBghcPTir9POjjVrxoYAyUKoBDfCVstT4KYj+7OJf8kfRTN/TUIovGd5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0y2CGw17hxDbr+LpWm7uGolz11G/krZDx/BESWv+X/ul6nba9
-	KPKaCTGw1EZ7yQLys73yrFo0vnuqsZxsz76a17kXWcNIsD6j3BXq
-X-Google-Smtp-Source: AGHT+IGYZ/4cGvhA3GCX5HW0cLd4Aocj+nI6+i/9i4QfISAEPr015JG3Br5rF128Gd04XmYXERHwuQ==
-X-Received: by 2002:a17:90b:17cc:b0:2da:9dc7:add2 with SMTP id 98e67ed59e1d1-2dafd099b12mr4758575a91.26.1725790288310;
-        Sun, 08 Sep 2024 03:11:28 -0700 (PDT)
+        bh=8Pz0T81DyM+ABMiQOyhUaG4cYHqvUmHaS8GbpCvlsf4=;
+        b=aNe3ouLqUXMd0Gs5NG7RvrS3VaUAKFVO3RiXFuH18c+pCo74HBTOR7sQUs0p6bAFG7
+         KnzV0odyj+LsBt4Ahmn0ys7eRR7PG9Tof8rePwuYObhoKgbj1HjL/nmPlNaX6Xuf38Ks
+         zY5pWDYujmRtZeFaBbWiRJFMddzXny4vsJiqHYrsdwDuSXGbGSOAsBdoRxH5/bWzUCwG
+         JOBOh/UnQXeEnmG8vI+mBzxNalcF9prW2BFYmslLLre1UkwZDmAkrJ0g3xhnMp1bGkaO
+         3r1KVa+CXbtyrQ8ikQjMrKQ7zWlaNEr43ybVNQaAvPagw41cXJEaRuo+BQbcOb540coz
+         MJgg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSSgrN37ukhsI9CfDbBImibzIe+4uFfLM+5L/WkhFP+jCiHJ0jPCXbBVQ44CMTtYpHedRsr+ZxFStbzRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+0YKfRz5L8u/tKk4sS6QRHmS1rh5EphV+Jh3qZB0dUu684o62
+	n686z9/Hu4lcWXAJ4+Jx6hPg1dsrgjRJ6zPUg6pAQ8mQ/jITJ/tW
+X-Google-Smtp-Source: AGHT+IHRjf5GcLOnN3CwmtT15cylTOwvR3MWVaG9aLxHdFF9oWFgzIhjEotLGg1C/PcPcdVbvFYyzQ==
+X-Received: by 2002:a17:90b:3b87:b0:2d8:9dd2:b8a1 with SMTP id 98e67ed59e1d1-2daffa3a9dfmr5177223a91.9.1725790290898;
+        Sun, 08 Sep 2024 03:11:30 -0700 (PDT)
 Received: from debian.tail629bbc.ts.net ([103.57.172.39])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc0782dfsm4589379a91.34.2024.09.08.03.11.26
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc0782dfsm4589379a91.34.2024.09.08.03.11.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 03:11:28 -0700 (PDT)
+        Sun, 08 Sep 2024 03:11:30 -0700 (PDT)
 From: Sayyad Abid <sayyad.abid16@gmail.com>
 To: linux-staging@lists.linux.dev
 Cc: philipp.g.hortmann@gmail.com,
 	gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
 	sayyad.abid16@gmail.com
-Subject: [PATCH 3/6] staging: rtl8723bs: fix space before tabs
-Date: Sun,  8 Sep 2024 15:41:07 +0530
-Message-Id: <20240908101110.1028931-4-sayyad.abid16@gmail.com>
+Subject: [PATCH 4/6] staging: rtl8723bs: fix comment with a trailing */ on a separate line
+Date: Sun,  8 Sep 2024 15:41:08 +0530
+Message-Id: <20240908101110.1028931-5-sayyad.abid16@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240908101110.1028931-1-sayyad.abid16@gmail.com>
 References: <20240908101110.1028931-1-sayyad.abid16@gmail.com>
@@ -86,37 +86,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch fixes the coding style issue of removing extra space before
-tabs.
+This patch fixes the trailing "*/" on a comment block.
 
 Signed-off-by: Sayyad Abid <sayyad.abid16@gmail.com>
 
 ---
- drivers/staging/rtl8723bs/include/rtw_security.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/staging/rtl8723bs/include/rtw_security.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/staging/rtl8723bs/include/rtw_security.h b/drivers/staging/rtl8723bs/include/rtw_security.h
-index 3ccbccf92417..4efa2d258ebf 100644
+index 4efa2d258ebf..1e5e7f52f8da 100644
 --- a/drivers/staging/rtl8723bs/include/rtw_security.h
 +++ b/drivers/staging/rtl8723bs/include/rtw_security.h
-@@ -81,12 +81,12 @@ union Keytype {
+@@ -240,7 +240,8 @@ struct mic_data {
+ /* ===== start - public domain SHA256 implementation ===== */
  
+ /* This is based on SHA256 implementation in LibTomCrypt that was released into
+- * public domain by Tom St Denis. */
++ * public domain by Tom St Denis.
++ */
  
- struct rt_pmkid_list {
--	u8 				bUsed;
--	u8 				Bssid[6];
--	u8 				PMKID[16];
--	u8 				SsidBuf[33];
-+	u8				bUsed;
-+	u8				Bssid[6];
-+	u8				PMKID[16];
-+	u8				SsidBuf[33];
- 	u8 *ssid_octet;
--	u16 					ssid_length;
-+	u16					ssid_length;
- };
- 
- 
+ int omac1_aes_128(u8 *key, u8 *data, size_t data_len, u8 *mac);
+ void rtw_secmicsetkey(struct mic_data *pmicdata, u8 *key);
 -- 
 2.39.2
 
