@@ -1,125 +1,146 @@
-Return-Path: <linux-kernel+bounces-320399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 233029709B3
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:26:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD2099709B8
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8D631F229F7
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:26:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896262811B9
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3975D17A597;
-	Sun,  8 Sep 2024 20:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA97C179956;
+	Sun,  8 Sep 2024 20:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0nDQ9/b"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GswIuH2N"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E41017839E
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 20:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F9BF9EC;
+	Sun,  8 Sep 2024 20:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725827174; cv=none; b=l7DgGO7gWvtECy80ms6PUcnF2PLuRYwRMkeJGTZwp93l/wCJHq6IWjJ6QdnAL73sbftZBQZXggkzWHy+4AjmMgNugz/4dZ+mnFKatwoywRnuVf8VlO+U93juERhb225llFqpGeloPp8okrJZ/uafGga4M0xpByIt2RLlgzYE8e8=
+	t=1725827304; cv=none; b=BW2u3QR1LlxhqGMkiU+D7NhGs0tNF69SBf7DZx1S2yk5c1etxrn2vOv3Qb6X9fWa7PwLJXpIavIWCvm/iIKZLzizbPODLyPQFHnhD0DUtaoo2TGY+0fOC1xeJPMKvlONnq9cwd9WbyWE1UGrqtsvEthP39rrkmggmo5gtIlXJs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725827174; c=relaxed/simple;
-	bh=ZONi8oTVgdeLD7glO6pXuDk1u8cI1QYm/3E0oElhbP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AVboCrHyl2fd9uZnqB3wqkc8GFjUMOBM2I2t8E2fP+Laj+HJQXWwANDzIHeH0kYAdhmY9pFECSOCiOlyvZcXNbDE3VaJWehsjwaWlek6uPu1z661nQr0mWH1thOICF3bri6xSHqB4HfSNNXwn4+vfBL7yKqbRI2BZ5I9Ixi7iv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0nDQ9/b; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374ca65cafdso2245030f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 13:26:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725827171; x=1726431971; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KFgTZS6YaG4OZRC2cQbKF/8vq72Pq4HNgWz2U4ZCqEo=;
-        b=d0nDQ9/bxvUMWpoGGRRQSabiNhQJmpH0h1lZLn7dMleNapoRy+37I/eoRBmxfbQxhY
-         ik4Lq6HBDUWjIyCjkF80g+eamBVFPApOqfTJm7+xyTl02PQowCe+/Q0QDg8lbP5CCWbZ
-         CVdIm7NnXt9CT37f4ftRr/I3jYstk4z7mL7g7dtT7ks3jTUHWSWLJ+qQxd/0Fyv/E7rR
-         oEO3fBfrPJs759a0VgDyes/MjuAP+ut0F4FNev/E7UEcv47r4A01Nk49w6mSjtbBKhS5
-         n/VB5zSotP+arehGvB8U5oqtk0qj+9WtMi869xZSfAlD7wBxdsRXjCsXlAobbCrNOndH
-         GB0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725827171; x=1726431971;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KFgTZS6YaG4OZRC2cQbKF/8vq72Pq4HNgWz2U4ZCqEo=;
-        b=g+cBUm30K9jBzlhLBuNCIQWajQzh8mIQehSQiTPec/RLQ/SgnqDC2+3sd7ibauqq0L
-         hOy43rVNGABAka2NeWSvTmVN0dNJiDbtrSskOIIL2jPVrUEJnQALaVdpmOQ8r9aYD/k0
-         jahIwxbu/SnjzNYCALtPXgi3MuJsWNUtGVZTQoOjAbNDJcSjmn/U1KQac09puwg+WM7/
-         k7RTdTs2gS5c98gTKwQBc5AhILWETs4wdJzrkXoieyQaOCgMKIJ3UFkhtoxfKYKHr4Jx
-         DVuY+cvBiz9fUXzQZlO4V8loZnUY6UXDxn5Gs2S35Ei79oDRVPlwUuJcOaxPSgQuQTKD
-         /89g==
-X-Forwarded-Encrypted: i=1; AJvYcCVnommWre9BwmtiSthyt9+GeNMmuxRpao7OlBw3j1UJ685PuAxScY3slWFT3d6HvqA63c6k64KIBKVWzuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhLkqDfn2eV3gZWpMVxraSKmGj69AR88HGKmHHKzpE9ulvZUVn
-	M0RQJA2xPzVoVdGcCj2x0VuAyd1cSv40uvAZ1CxD9RwjSr3RETfK
-X-Google-Smtp-Source: AGHT+IHVNtAxcHLeKntFo0w1vxjjPlBWpIVcqJJM9cZm+EOP8X5coWa622xs7sypcOql4/uV4QZ3uw==
-X-Received: by 2002:a5d:5189:0:b0:374:c1de:7e64 with SMTP id ffacd0b85a97d-37894a53e29mr3416928f8f.42.1725827171022;
-        Sun, 08 Sep 2024 13:26:11 -0700 (PDT)
-Received: from ?IPV6:2003:c7:8f2a:8576:4416:5fef:fc17:c89e? (p200300c78f2a857644165feffc17c89e.dip0.t-ipconnect.de. [2003:c7:8f2a:8576:4416:5fef:fc17:c89e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25cebcb2sm242997466b.153.2024.09.08.13.26.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Sep 2024 13:26:10 -0700 (PDT)
-Message-ID: <4bc6cfea-ecf4-40ad-a3f6-c32bb411949a@gmail.com>
-Date: Sun, 8 Sep 2024 22:26:10 +0200
+	s=arc-20240116; t=1725827304; c=relaxed/simple;
+	bh=9lJbxYAq0pQArWPt6MRJRLmNOUsJkWmIbCPf3UCfggo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GKVXSxLLVdVpnfs3Grzv26z4xh74Y4KeeOSI9RKZiPNaK17jjdrRxiH4tmKrpF04QzzJN8SJJHYvVR9Mgy9Ictzg2Xh3oU3Ywyxgn/KA5x0VB4lsKg2Y8D/vxMY/15Iw4dCVLgRXqByFWsLbnicGsP84aPkgxBQmj6EWIS3Z0rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GswIuH2N; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725827303; x=1757363303;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9lJbxYAq0pQArWPt6MRJRLmNOUsJkWmIbCPf3UCfggo=;
+  b=GswIuH2NxfEwTEALmXV5J2PGMZu7hIr1bLng0NQriCVNHroQ5iSsc0eI
+   vEC6+jR+aVpkKGfFI5Dj3RdxVpxMsQdbQq1pLK05nEruovF06afhx+clS
+   pEMQsaCjVjACVriHL9DB1QSB3OqtlFG5ZDson9zKpGR6fegX0A4uGzRqu
+   5eWd0IFIHwQsAQZBuJhNMj+A7IzWC2Vf/jVFC/FP3khXsjrIi/aGKHclN
+   fjjYLM65INqBhdGAlXR4Dev9ALym23c6WeU/c+zWo1sS/b2NC/R5ObC9n
+   r+LoQP7uqKO+QK7pzrx4OUWo9c84ND2gAhXW7l+HM8EsuBS8ghVsH1/bR
+   Q==;
+X-CSE-ConnectionGUID: eqXejJaMQHyYaFD4+h08xA==
+X-CSE-MsgGUID: ETOgFb7LTZ2H6/vTukEbew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="28392593"
+X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
+   d="scan'208";a="28392593"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 13:28:22 -0700
+X-CSE-ConnectionGUID: OQnRXdWmRS+k8z6WOMwfjw==
+X-CSE-MsgGUID: K5QnxdVmTj2supDBlDERBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
+   d="scan'208";a="70583604"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by fmviesa003.fm.intel.com with ESMTP; 08 Sep 2024 13:28:21 -0700
+From: kan.liang@linux.intel.com
+To: acme@kernel.org,
+	namhyung@kernel.org
+Cc: irogers@google.com,
+	jolsa@kernel.org,
+	adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH] perf evlist: Print hint for group
+Date: Sun,  8 Sep 2024 13:28:47 -0700
+Message-Id: <20240908202847.176280-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] staging: rtl8723bs: fix comment with a trailing */ on
- a separate line
-To: Sayyad Abid <sayyad.abid16@gmail.com>, linux-staging@lists.linux.dev
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-References: <20240908101110.1028931-1-sayyad.abid16@gmail.com>
- <20240908101110.1028931-5-sayyad.abid16@gmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240908101110.1028931-5-sayyad.abid16@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/8/24 12:11, Sayyad Abid wrote:
-> This patch fixes the trailing "*/" on a comment block.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Hi Sayyad,
+An event group is a critical relationship. There is a -g option that can
+display the relationship. But it's hard for a user to know when should
+this option be applied.
 
-important is to describe why this patch makes the code better. You 
-described in the description just what you did. But that can be seen in 
-the changed lines blow.
+If there is an event group in the perf record, print a hint to suggest
+the user apply the -g to display the group information.
 
-Thanks
+With the patch,
 
-Bye Philipp
+ $perf record -e "{cycles,instructions},instructions" sleep 1
+ [ perf record: Woken up 1 times to write data ]
+ [ perf record: Captured and wrote 0.024 MB perf.data (4 samples) ]
 
-> 
-> Signed-off-by: Sayyad Abid <sayyad.abid16@gmail.com>
-> 
-> ---
->   drivers/staging/rtl8723bs/include/rtw_security.h | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/include/rtw_security.h b/drivers/staging/rtl8723bs/include/rtw_security.h
-> index 4efa2d258ebf..1e5e7f52f8da 100644
-> --- a/drivers/staging/rtl8723bs/include/rtw_security.h
-> +++ b/drivers/staging/rtl8723bs/include/rtw_security.h
-> @@ -240,7 +240,8 @@ struct mic_data {
->   /* ===== start - public domain SHA256 implementation ===== */
->   
->   /* This is based on SHA256 implementation in LibTomCrypt that was released into
-> - * public domain by Tom St Denis. */
-> + * public domain by Tom St Denis.
-> + */
->   
->   int omac1_aes_128(u8 *key, u8 *data, size_t data_len, u8 *mac);
->   void rtw_secmicsetkey(struct mic_data *pmicdata, u8 *key);
+ $perf evlist
+ cycles
+ instructions
+ instructions
+ # Tip: use 'perf evlist -g' to show group information
+
+ $perf evlist -g
+ {cycles,instructions}
+ instructions
+
+Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+Closes: https://lore.kernel.org/lkml/ZttgvduaKsVn1r4p@x1/
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ tools/perf/builtin-evlist.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/builtin-evlist.c b/tools/perf/builtin-evlist.c
+index 818ab21c3f73..a9bd7bbef5a9 100644
+--- a/tools/perf/builtin-evlist.c
++++ b/tools/perf/builtin-evlist.c
+@@ -36,7 +36,7 @@ static int __cmd_evlist(const char *file_name, struct perf_attr_details *details
+ 		.force     = details->force,
+ 	};
+ 	struct perf_tool tool;
+-	bool has_tracepoint = false;
++	bool has_tracepoint = false, has_group = false;
+ 
+ 	perf_tool__init(&tool, /*ordered_events=*/false);
+ 	/* only needed for pipe mode */
+@@ -54,11 +54,17 @@ static int __cmd_evlist(const char *file_name, struct perf_attr_details *details
+ 
+ 		if (pos->core.attr.type == PERF_TYPE_TRACEPOINT)
+ 			has_tracepoint = true;
++
++		if (!evsel__is_group_leader(pos))
++			has_group = true;
+ 	}
+ 
+ 	if (has_tracepoint && !details->trace_fields)
+ 		printf("# Tip: use 'perf evlist --trace-fields' to show fields for tracepoint events\n");
+ 
++	if (has_group && !details->event_group)
++		printf("# Tip: use 'perf evlist -g' to show group information\n");
++
+ 	perf_session__delete(session);
+ 	return 0;
+ }
+-- 
+2.38.1
 
 
