@@ -1,164 +1,123 @@
-Return-Path: <linux-kernel+bounces-320196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99EE970746
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:12:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B1A970764
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D32D1F2150C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:12:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A829B2149C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BE815E5CF;
-	Sun,  8 Sep 2024 12:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B500516133E;
+	Sun,  8 Sep 2024 12:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QGV9ju/l"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="niQ6mWLG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0157E160887
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 12:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169361509AB;
+	Sun,  8 Sep 2024 12:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725797505; cv=none; b=aQcmU/tI/TU/ANQSLEn9FwMlkxAWpsrSs0dZgNgHwmksGGA5RZRUsKG2J/A3qOHrwOLSGdvKE/I1gvzRupZ0RE3bVPWXvF8qQU4J4FO33Gn4wcotp1TB+oCegjVUNTwXNPljpVU/92yiMWdrx1wCro2NYxWipvyCJz5gEQknfY8=
+	t=1725798409; cv=none; b=B2Ns5CigvRN4Qf12lQvUCJg9i3oIsxDAxzAKkqwRx5m5hX+m8jXF+iLR3TfXMEuCRoJau3I4wjnik7O8El6c9SDNdRGIvFvP2hiSxfEU5gGeos42C7NxGNO9YDO29j+ypTnTdaVo6eyIaSaNafIchIsE/RGcweMlJT65qq/5qD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725797505; c=relaxed/simple;
-	bh=hFrsyhyrmjmy0it0UfFVUJiSXkbV+PyoAF0ve9xM/mc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RkzwaLwrzAiuzE1uP5B/HaCmrn7iYiD+MSSH+dUEKZ6dAGinv6pPg3ggQo3snzbytR4Mc3lnRYD1l0Ob/gsPbdslS4yKhMNIjU0gRrEvebZ7lFi7vPgGO3JHWQfijv2y9yvPeUjdotTc2bwSBD+iRRDV42/uiKlLlqCwSXxWdn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QGV9ju/l; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725797502;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eZZRYHosjOP12sXZTztLeX53ogVSB/zJnzTtl6YWZvQ=;
-	b=QGV9ju/l+8DcXKr1muYF99ggepZEi9YXBOyIp48r5uRC5lYgQ8oQB6B0g3gASnkllNAoEo
-	YxnS2IOa13jrycI/lKeCXqfAQIrZQAicnClewDHSBjYUaoT4qs0ufnd6cnl+2Dg2rBGKaF
-	lhmEdrmkiMdV/1hMEPk5NA9CdYu04Uw=
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Christian Gmeiner <christian.gmeiner@gmail.com>,
-	Russell King <linux+etnaviv@armlinux.org.uk>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Maxime Ripard <mripard@kernel.org>,
-	dri-devel@lists.freedesktop.org,
-	etnaviv@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Sui Jingfeng <sui.jingfeng@linux.dev>,
-	Christian Gmeiner <cgmeiner@igalia.com>
-Subject: [PATCH v2 5/5] drm/etnaviv: Replace the '&pdev->dev' with 'dev'
-Date: Sun,  8 Sep 2024 20:11:07 +0800
-Message-ID: <20240908121107.328740-5-sui.jingfeng@linux.dev>
-In-Reply-To: <20240908121107.328740-1-sui.jingfeng@linux.dev>
-References: <20240908121107.328740-1-sui.jingfeng@linux.dev>
+	s=arc-20240116; t=1725798409; c=relaxed/simple;
+	bh=VAcsrFstzUOeCIGcnQ5KBqekKS17CdwXMYlisjyPJQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QdhFtIeAB9RDAbqLgPjEgOKT+WRNY7ntjgsNdHLrnOziK0MZ3K+iEzN2HQuDlkTzA0srxAPwMIy+cLfDjXdPfElh62Bh/5eY/B16qjZb+1NysMFZal0igYv59kxsWPKZpz7NkBMAXhl8XNirnkPpShu+S5bNciRpoZQ4oJ9pogg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=niQ6mWLG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9939C4CEC3;
+	Sun,  8 Sep 2024 12:26:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725798408;
+	bh=VAcsrFstzUOeCIGcnQ5KBqekKS17CdwXMYlisjyPJQ4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=niQ6mWLGzsHB8u7kUzL1M9m5aUfJ4bChFO8ZO3nnPftaa3Ak+oYKbDDalzX8P0qUJ
+	 WGgTFycxhZu1+S51n3Wy2spFPyl/CVxSy4WQVn6p8tnGhqWfUDXl47YAUM6DQxMFRe
+	 IvavxhXlkCiXOJ36VUnQYPWyDljohSe00MOsPctmbKBfAz3S1qTr8WidrLT4KS9AIq
+	 62ORDHh+/YIuDXiPLh4VSo56CtuAwcSP512abmU4fxPceaVx1eYRX2D+8udsrfmuKl
+	 fVatOOVhPbzufo6RL8qBz7A9dvpcCeIZ/hkPkbIU30aXyaJWYQ/iE/fpdCIXXZypj1
+	 CAkFiSa5J5f9Q==
+Date: Sun, 8 Sep 2024 13:26:38 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Angelo Dureghello <adureghello@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 9/9] iio: ABI: add DAC sysfs synchronous_mode
+ parameter
+Message-ID: <20240908132638.6322be29@jic23-huawei>
+In-Reply-To: <b70612bd-e61f-4286-9337-bca48768fbdd@baylibre.com>
+References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+	<20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-9-87d669674c00@baylibre.com>
+	<b70612bd-e61f-4286-9337-bca48768fbdd@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-In the etnaviv_pdev_probe() and etnaviv_gpu_platform_probe() function, the
-value of '&pdev->dev' has been cached to the local auto variable 'dev'.
-But some callers use 'dev', while the rest use '&pdev->dev'. To keep it
-consistent, use 'dev' uniformly.
+On Thu, 5 Sep 2024 14:14:37 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Tested-by: Christian Gmeiner <cgmeiner@igalia.com>
-Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
----
- drivers/gpu/drm/etnaviv/etnaviv_drv.c | 10 +++++-----
- drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 16 ++++++++--------
- 2 files changed, 13 insertions(+), 13 deletions(-)
+> On 9/5/24 10:17 AM, Angelo Dureghello wrote:
+> > From: Angelo Dureghello <adureghello@baylibre.com>
+> > 
+> > Some DACs as ad3552r need a synchronous mode setting, adding
+> > this parameter for ad3552r and for future use on other DACs,
+> > if needed.
+> > 
+> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > ---
+> >  Documentation/ABI/testing/sysfs-bus-iio-dac | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-bus-iio-dac b/Documentation/ABI/testing/sysfs-bus-iio-dac
+> > index 810eaac5533c..2f4960c79385 100644
+> > --- a/Documentation/ABI/testing/sysfs-bus-iio-dac
+> > +++ b/Documentation/ABI/testing/sysfs-bus-iio-dac
+> > @@ -59,3 +59,19 @@ Description:
+> >  		multiple predefined symbols. Each symbol corresponds to a different
+> >  		output, denoted as out_voltageY_rawN, where N is the integer value
+> >  		of the symbol. Writing an integer value N will select out_voltageY_rawN.
+> > +
+> > +What:		/sys/bus/iio/devices/iio:deviceX/out_voltage_synchronous_mode
+> > +KernelVersion:	6.13
+> > +Contact:	linux-iio@vger.kernel.org
+> > +Description:
+> > +		Arm or disarm a wait-for-synchronization flag. Arming this flag
+> > +		means the DAC will wait for a synchronizatiopn signal on a
+> > +		specific internal or external wired connection. I.e., there are
+> > +		cases where multiple DACs IP are built in the same chip or fpga
+> > +		design, and they need to start the data stream synchronized.
+> > +
+> > +What:		/sys/bus/iio/devices/iio:deviceX/out_voltage_synchronous_mode_available
+> > +KernelVersion:	6.13
+> > +Contact:	linux-iio@vger.kernel.org
+> > +Description:
+> > +		List of available values for synchronous_mode.
+> >   
+> 
+> Since this depends on how things are wired, it seems like this should be
+> something specified in the devicetree, not through sysfs attributes.
+> 
+Agreed. Smells like a wiring thing given the description.  Is there a case
+where it works either way and it is usecase dependent which choice makes
+sense?   Superficially it seems likely if a board has this wired, there
+is little disadvantage in using it always.
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-index 7844cd961a29..6591e420a051 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-@@ -609,7 +609,7 @@ static int etnaviv_pdev_probe(struct platform_device *pdev)
- 			if (!of_device_is_available(core_node))
- 				continue;
- 
--			drm_of_component_match_add(&pdev->dev, &match,
-+			drm_of_component_match_add(dev, &match,
- 						   component_compare_of, core_node);
- 		}
- 	} else {
-@@ -632,9 +632,9 @@ static int etnaviv_pdev_probe(struct platform_device *pdev)
- 	 * bit to make sure we are allocating the command buffers and
- 	 * TLBs in the lower 4 GiB address space.
- 	 */
--	if (dma_set_mask(&pdev->dev, DMA_BIT_MASK(40)) ||
--	    dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32))) {
--		dev_dbg(&pdev->dev, "No suitable DMA available\n");
-+	if (dma_set_mask(dev, DMA_BIT_MASK(40)) ||
-+	    dma_set_coherent_mask(dev, DMA_BIT_MASK(32))) {
-+		dev_dbg(dev, "No suitable DMA available\n");
- 		return -ENODEV;
- 	}
- 
-@@ -645,7 +645,7 @@ static int etnaviv_pdev_probe(struct platform_device *pdev)
- 	 */
- 	first_node = etnaviv_of_first_available_node();
- 	if (first_node) {
--		of_dma_configure(&pdev->dev, first_node, true);
-+		of_dma_configure(dev, first_node, true);
- 		of_node_put(first_node);
- 	}
- 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-index 3c869970cba4..d0df5c53a829 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-@@ -1862,7 +1862,7 @@ static int etnaviv_gpu_platform_probe(struct platform_device *pdev)
- 	if (!gpu)
- 		return -ENOMEM;
- 
--	gpu->dev = &pdev->dev;
-+	gpu->dev = dev;
- 	mutex_init(&gpu->lock);
- 	mutex_init(&gpu->sched_lock);
- 
-@@ -1876,8 +1876,8 @@ static int etnaviv_gpu_platform_probe(struct platform_device *pdev)
- 	if (gpu->irq < 0)
- 		return gpu->irq;
- 
--	err = devm_request_irq(&pdev->dev, gpu->irq, irq_handler, 0,
--			       dev_name(gpu->dev), gpu);
-+	err = devm_request_irq(dev, gpu->irq, irq_handler, 0,
-+			       dev_name(dev), gpu);
- 	if (err) {
- 		dev_err(dev, "failed to request IRQ%u: %d\n", gpu->irq, err);
- 		return err;
-@@ -1914,13 +1914,13 @@ static int etnaviv_gpu_platform_probe(struct platform_device *pdev)
- 	 * autosuspend delay is rather arbitary: no measurements have
- 	 * yet been performed to determine an appropriate value.
- 	 */
--	pm_runtime_use_autosuspend(gpu->dev);
--	pm_runtime_set_autosuspend_delay(gpu->dev, 200);
--	pm_runtime_enable(gpu->dev);
-+	pm_runtime_use_autosuspend(dev);
-+	pm_runtime_set_autosuspend_delay(dev, 200);
-+	pm_runtime_enable(dev);
- 
--	err = component_add(&pdev->dev, &gpu_ops);
-+	err = component_add(dev, &gpu_ops);
- 	if (err < 0) {
--		dev_err(&pdev->dev, "failed to register component: %d\n", err);
-+		dev_err(dev, "failed to register component: %d\n", err);
- 		return err;
- 	}
- 
--- 
-2.43.0
+Jonathan
+
+> 
 
 
