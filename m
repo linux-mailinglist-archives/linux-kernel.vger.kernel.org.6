@@ -1,137 +1,220 @@
-Return-Path: <linux-kernel+bounces-320154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 427259706BF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:50:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DED79706C2
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E5F11C2127B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAE68282128
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEFF1531C5;
-	Sun,  8 Sep 2024 10:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883111531C8;
+	Sun,  8 Sep 2024 10:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jV/z2/7t"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJHdM2zq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E034B5AE;
-	Sun,  8 Sep 2024 10:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33A24B5AE;
+	Sun,  8 Sep 2024 10:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725792641; cv=none; b=j1ZFH4TZ30I4+T6bEqVjm6uBhyLbqnqK+G0zcZ4pNzq2WcyZAlvu5tYZf70ZZJ/yE2SZMDs681syNWd7tKkwmmjrOPuQPrwRSkbalu7tifkEslG3z24m+700KJtV0lyqLCSGotPCSxgF8SZ7V73r3T0vqZyu8wV4uRAyzxqdp0E=
+	t=1725792684; cv=none; b=F6ZGQKdZfOOZelCBzXLVMr32w41+L+YQ4/cqRuAH37xE8Y+vCO6tsn6RI3e/5pTJGYYoh7WBuhgpADQG/j4P5AcSz1tSxdthRk8yggBESjLe8X54qEbHTSefHpU2FxdXK3S2maIajSYslKK3DpmfhCKJAnEkWQFzFw8PvzStBO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725792641; c=relaxed/simple;
-	bh=XTEKknxXzDedLq8V/KCwXhmxrkjWHhIY8sXQoZD4sqo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qny92cgFpzRKAZ58AaSpa9qB2x6E6tnJNRNQY80S7JwAsKdXc0qpZnzaQCrQCx8ppNfb/D6GjEKqFkqsxohBoHFa6IW3FLJnMAJyLX2mUDcacfXk0MJv9HL5WM3aaFeNInIzkLthZNG9qQd6lSiCNzqWNH+uFloDOQm9N/Qy1Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jV/z2/7t; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c3c34e3c39so5035751a12.2;
-        Sun, 08 Sep 2024 03:50:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725792638; x=1726397438; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X8UC9BcNKMNBnj+FF0WoUDB/hfX7jIiecCwc+cDfBDY=;
-        b=jV/z2/7tbzwXTzWVmS1RgrZmvj6fLasXLRPmXuRhDlY3l+5kBwAHAlpNlBSKStdr7y
-         F32RRPl/0jt0QcVzo271nDONH0kIGsBSK6pzK5OEoUvs8D39VFqs7n/Ogm0LLo1OKGSb
-         GuGDUygmrKsqtIIq3916w4RVKHLaflWg1U5oWDuVydsxlcZb35CER9lx1p/gr5Y/+npX
-         RfGdxPa7adpj79T/ei79ECGTMdh/7xuTvnaz3cpyTzVrCPHrtYkvYSPJa92sg90Z6jGl
-         XjyQuqOX2FPyU9jRQwNSx1dgqhywI5ksb+mfcou/ACVlWiMqWDOWxadCJo42boTyTSI5
-         oYxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725792638; x=1726397438;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X8UC9BcNKMNBnj+FF0WoUDB/hfX7jIiecCwc+cDfBDY=;
-        b=RNdW1nIJ2PSOp7gv9FELMyLfUHVjFAJaIBB54NL7aPAME37L6rZ/OiqD0eWFTMk+2e
-         AaGUVm57VOmjGhVRIs+fZbh9jV8W/jtZv0hlHP8DpNPGfCucKgUpDUkc441r+3Jyimx8
-         T1mfOMKVzTlAePp6Lx7ahcffPeTdlki7sjvLuxD3qzyX0hZ/O4HWkqxrGEEJcXF0ygw0
-         IZFB7E8sKoX08kdXMh7NlNCv79baT/cSVAxiEwXZ8kV/UlRcWnR8rPN6cezNL3QuJZNE
-         f81n57BrLCZYs8Pn/BxFvEjYpPGPcOVUEdOItN50JaN2mheQHsRgSYvHZPsFwt4zDy0V
-         Q0lw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBb4yVg2VBAwhMSzhFtjYiGqkxQxY0xgXDBW8T3m+LFjZ/CGcuSM9fgpzQJR02J58R+/dr0ybsPZSCIJWk@vger.kernel.org, AJvYcCXWrcg4SmfbeJIqEgeVdxklii8Ul2pBOricPDkqPhGRD8sj5OdfhSr/0geO26HPZwO3SUysVjr3x/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmI9NDUJ7jEn3p1gOjF2ygAxzYLnUH8qr83mS9ZqRj1qXDj2iR
-	SZx0vsjHgjMHDUok2qJqslhe0chMApPDXNi+uwroCJ/NMaPEL9Ln5HmqVogKmR4XfRoAbjzohb+
-	ZQokJQ6aJlSskiRCQ127/Aejpehc=
-X-Google-Smtp-Source: AGHT+IHjNDzrG+Hu8Kq74TDaYMI626cC24Kdi6p4FMuvK+r3YMdG+pdfZ2q+Ju+rX5OhSWYBrVs/4g1tic81Vld1G6U=
-X-Received: by 2002:a05:6402:5309:b0:5c2:4404:a193 with SMTP id
- 4fb4d7f45d1cf-5c3dc7c5012mr4781758a12.34.1725792637172; Sun, 08 Sep 2024
- 03:50:37 -0700 (PDT)
+	s=arc-20240116; t=1725792684; c=relaxed/simple;
+	bh=OFfjpZOaBCRy6/aLBKamak0P24a0SfLNSwakEI54tBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HB0rULxC7tuNoFV/e+fOF0WYwAaqzrJYwxoJ1l0N53z6e5r2tliRJF0c0dbfi9onG4HJE7JyxylHUfinYOpWGc0AhdqZpIqiII7M/Sa2A3IJu0emax203vkFIoW9W/cwvoCu28CnOC/KKDICK3wqSxzms8FyU97RcJi0TAheexE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJHdM2zq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24619C4CEC3;
+	Sun,  8 Sep 2024 10:51:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725792683;
+	bh=OFfjpZOaBCRy6/aLBKamak0P24a0SfLNSwakEI54tBs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hJHdM2zqFH63fWYXIquUTb0f4V3VRm+skZXPUnIKkzm6QvX1HkEOjJbLgsaRXo7vz
+	 nw9eWghWA4IDMqV7S+ct6ThyPlyDebCc7Ytg7Q+xbCZ3uLHjfL46+CpEACPfoKbaCK
+	 ZEUMWRCeETqvX7Qs9P0+A27RLUfDKD5YgnYJM5pDWD1s2MVmdF0QfwmP5RJ+iMuAUL
+	 AysPrFc4byah4h1GX0GswsF5b7FqbvVYKAjm1gsonVuMk4KJ+qnlbmtyM3IFNPtT+f
+	 mPtPTVv6MRbMPU9mbvaF4eWPgZwLVFjHTVpSLUgabiVCzCV7dmq0nY8KruGdsE0roE
+	 S52DTkTq/YCZw==
+Date: Sun, 8 Sep 2024 11:51:15 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: jason liu <jasonliu10041728@gmail.com>
+Cc: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>,
+ "lars@metafoo.de" <lars@metafoo.de>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: =?UTF-8?B?5Zue5aSNOg==?= [PATCH] iio/inv_icm42600: add
+ inv_icm42600 id_table
+Message-ID: <20240908115115.1bf1155d@jic23-huawei>
+In-Reply-To: <SI6PR01MB63197238674C8895885420D8F59E2@SI6PR01MB6319.apcprd01.prod.exchangelabs.com>
+References: <FR3P281MB175720831E0817C23AD0B1BACE922@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+	<20240902113101.3135-1-jasonliu10041728@gmail.com>
+	<CAJci1vC9pvdqEpA8sk+uB5jJGn_DKUruXFfY6tbG9mO07YxgHQ@mail.gmail.com>
+	<FR3P281MB1757BEA60FF72A44847F1646CE9D2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+	<SI6PR01MB63197238674C8895885420D8F59E2@SI6PR01MB6319.apcprd01.prod.exchangelabs.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830034640.7049-1-kfting@nuvoton.com> <20240830034640.7049-8-kfting@nuvoton.com>
-In-Reply-To: <20240830034640.7049-8-kfting@nuvoton.com>
-From: Tali Perry <tali.perry1@gmail.com>
-Date: Sun, 8 Sep 2024 13:50:26 +0300
-Message-ID: <CAHb3i=txqvDpNXSRkke3SXZKCUAnapODGczO+GCJkQOKpgcTCA@mail.gmail.com>
-Subject: Re: [PATCH v2 7/7] i2c: npcm: Enable slave in eob interrupt
-To: Tyrone Ting <warp5tw@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com, 
-	yuenn@google.com, benjaminfair@google.com, andi.shyti@kernel.org, 
-	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
-	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Charles Boyer <Charles.Boyer@fii-usa.com>, Vivekanand Veeracholan <vveerach@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Tali Perry <tali.perry1@gmail.com>
+On Fri, 6 Sep 2024 05:02:59 +0000
+jason liu <jasonliu10041728@gmail.com> wrote:
 
-On Fri, Aug 30, 2024 at 6:49=E2=80=AFAM Tyrone Ting <warp5tw@gmail.com> wro=
-te:
->
-> From: Charles Boyer <Charles.Boyer@fii-usa.com>
->
-> Nuvoton slave enable was in user space API call master_xfer, so it is
-> subject to delays from the OS scheduler. If the BMC is not enabled for
-> slave mode in time for master to send response, then it will NAK the
-> address match. Then the PLDM request timeout occurs.
->
-> If the slave enable is moved to the EOB interrupt service routine, then
-> the BMC can be ready in slave mode by the time it needs to receive a
-> response.
->
-> Signed-off-by: Charles Boyer <Charles.Boyer@fii-usa.com>
-> Signed-off-by: Vivekanand Veeracholan <vveerach@google.com>
-> Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
+> Hello,
+>=20
+> I'm glad this patch could help. And I would like to know, how will the pa=
+tch to be handled moving forward?
+>=20
+It is queued up on the IIO tree.  Given timing it's queued for 6.13.
+Note that for now that is only pushed out as testing because I will
+be rebasing the IIO togreg branch on 6.12-rc1.
+One that is done it will appear in linux-next.
+
+It should go upstream and appear in char-misc/char-misc-next
+in about 6 weeks.  After that Greg KH will send a pull request during
+the 6.13 merge window in about 12 weeks time and it will then hopefully
+get merged into Linus' tree before 6.13-rc1=20
+
+I haven't treated this as a fix because it was never there, but
+it may make sense to request a backport to stable after it is upstream.
+
+Thanks,
+
+Jonathan
+
+> Thanks.
+>=20
+> ________________________________
+> From: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
+> Sent: Thursday, September 5, 2024 5:25 PM
+> To: jason liu <jasonliu10041728@gmail.com>
+> Cc: jic23@kernel.org <jic23@kernel.org>; lars@metafoo.de <lars@metafoo.de=
+>; linux-iio@vger.kernel.org <linux-iio@vger.kernel.org>; linux-kernel@vger=
+.kernel.org <linux-kernel@vger.kernel.org>
+> Subject: Re: [PATCH] iio/inv_icm42600: add inv_icm42600 id_table
+>=20
+> Hello,
+>=20
+> looks good for me now, thanks for the patch.
+>=20
+> Acked-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+>=20
+> Thanks,
+> JB
+>=20
+> ________________________________________
+> From: jason liu <jasonliu10041728@gmail.com>
+> Sent: Wednesday, September 4, 2024 11:00
+> To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
+> Cc: jic23@kernel.org <jic23@kernel.org>; lars@metafoo.de <lars@metafoo.de=
+>; linux-iio@vger.kernel.org <linux-iio@vger.kernel.org>; linux-kernel@vger=
+.kernel.org <linux-kernel@vger.kernel.org>
+> Subject: Re: [PATCH] iio/inv_icm42600: add inv_icm42600 id_table
+>=20
+> This Message Is From an Untrusted Sender
+> You have not previously corresponded with this sender.
+>=20
+> Hello, does patch v3 meet the requirements?
+>=20
+> BR.
+>=20
+> Jason Liu <jasonliu10041728@gmail.com> =E4=BA=8E2024=E5=B9=B49=E6=9C=882=
+=E6=97=A5=E5=91=A8=E4=B8=80 19:31=E5=86=99=E9=81=93=EF=BC=9A
+> Add the id_table of inv_icm42600, so the device can probe correctly.
+>=20
+> Signed-off-by: Jason Liu <jasonliu10041728@gmail.com>
 > ---
->  drivers/i2c/busses/i2c-npcm7xx.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-np=
-cm7xx.c
-> index cac4ea0b69b8..5bdc1b5895ac 100644
-> --- a/drivers/i2c/busses/i2c-npcm7xx.c
-> +++ b/drivers/i2c/busses/i2c-npcm7xx.c
-> @@ -1781,6 +1781,12 @@ static int npcm_i2c_int_master_handler(struct npcm=
-_i2c *bus)
->             (FIELD_GET(NPCM_I2CCST3_EO_BUSY,
->                        ioread8(bus->reg + NPCM_I2CCST3)))) {
->                 npcm_i2c_irq_handle_eob(bus);
-> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
-> +               /* reenable slave if it was enabled */
-> +               if (bus->slave)
-> +                       iowrite8((bus->slave->addr & 0x7F) | NPCM_I2CADDR=
-_SAEN,
-> +                                bus->reg + NPCM_I2CADDR1);
-> +#endif
->                 return 0;
->         }
->
+> V1->V2: fix up the formatting as requested
+> ---
+> V2->V3: add icm42686 (INV_ICM_42686) and icm42688 (INV_ICM_42688)
+> ---
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c | 17 +++++++++++++++++
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c | 17 +++++++++++++++++
+>  2 files changed, 34 insertions(+)
+>=20
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c b/drivers/ii=
+o/imu/inv_icm42600/inv_icm42600_i2c.c
+> index ebb31b385881..9e65fef04c39 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
+> @@ -71,6 +71,22 @@ static int inv_icm42600_probe(struct i2c_client *clien=
+t)
+>                                        inv_icm42600_i2c_bus_setup);
+>  }
+>=20
+> +/*
+> + * device id table is used to identify what device can be
+> + * supported by this driver
+> + */
+> +static const struct i2c_device_id inv_icm42600_id[] =3D {
+> +       { "icm42600", INV_CHIP_ICM42600 },
+> +       { "icm42602", INV_CHIP_ICM42602 },
+> +       { "icm42605", INV_CHIP_ICM42605 },
+> +       { "icm42686", INV_CHIP_ICM42686 },
+> +       { "icm42622", INV_CHIP_ICM42622 },
+> +       { "icm42688", INV_CHIP_ICM42688 },
+> +       { "icm42631", INV_CHIP_ICM42631 },
+> +       {}
+> +};
+> +MODULE_DEVICE_TABLE(i2c, inv_icm42600_id);
+> +
+>  static const struct of_device_id inv_icm42600_of_matches[] =3D {
+>         {
+>                 .compatible =3D "invensense,icm42600",
+> @@ -104,6 +120,7 @@ static struct i2c_driver inv_icm42600_driver =3D {
+>                 .of_match_table =3D inv_icm42600_of_matches,
+>                 .pm =3D pm_ptr(&inv_icm42600_pm_ops),
+>         },
+> +       .id_table =3D inv_icm42600_id,
+>         .probe =3D inv_icm42600_probe,
+>  };
+>  module_i2c_driver(inv_icm42600_driver);
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c b/drivers/ii=
+o/imu/inv_icm42600/inv_icm42600_spi.c
+> index eae5ff7a3cc1..75441b2be174 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
+> @@ -67,6 +67,22 @@ static int inv_icm42600_probe(struct spi_device *spi)
+>                                        inv_icm42600_spi_bus_setup);
+>  }
+>=20
+> +/*
+> + * device id table is used to identify what device can be
+> + * supported by this driver
+> + */
+> +static const struct spi_device_id inv_icm42600_id[] =3D {
+> +       { "icm42600", INV_CHIP_ICM42600 },
+> +       { "icm42602", INV_CHIP_ICM42602 },
+> +       { "icm42605", INV_CHIP_ICM42605 },
+> +       { "icm42686", INV_CHIP_ICM42686 },
+> +       { "icm42622", INV_CHIP_ICM42622 },
+> +       { "icm42688", INV_CHIP_ICM42688 },
+> +       { "icm42631", INV_CHIP_ICM42631 },
+> +       {}
+> +};
+> +MODULE_DEVICE_TABLE(spi, inv_icm42600_id);
+> +
+>  static const struct of_device_id inv_icm42600_of_matches[] =3D {
+>         {
+>                 .compatible =3D "invensense,icm42600",
+> @@ -100,6 +116,7 @@ static struct spi_driver inv_icm42600_driver =3D {
+>                 .of_match_table =3D inv_icm42600_of_matches,
+>                 .pm =3D pm_ptr(&inv_icm42600_pm_ops),
+>         },
+> +       .id_table =3D inv_icm42600_id,
+>         .probe =3D inv_icm42600_probe,
+>  };
+>  module_spi_driver(inv_icm42600_driver);
 > --
-> 2.34.1
->
+> 2.25.1
+
 
