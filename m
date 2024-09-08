@@ -1,145 +1,215 @@
-Return-Path: <linux-kernel+bounces-320139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5DE097068C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:23:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C291E970693
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 601BD1F22250
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:23:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41DCD1F21913
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38BA14E2EF;
-	Sun,  8 Sep 2024 10:23:10 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1AB1494CC
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 10:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FEA14D428;
+	Sun,  8 Sep 2024 10:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUzlh5UT"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA7414A0A0
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 10:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725790990; cv=none; b=U9OE7tOnAY922P0eQpKFuq4v49/6eyR+OuM6HkhGRO4RPgFcoxchl8uLgR6jSfVnuAge384d3aKFI9nWxhebuzoAWFqg11eC8HI65zNZep+J902EdRaEuY2iZCkh3IoeVgwIu3BidMuvyVGhPM//sYfP4uT4K68vu6/njngFSm4=
+	t=1725791279; cv=none; b=pNgrC9tsLgdpEWZr/eNtSCbgNzDVaSpXvOPn1hF0bhcyrBLcWfEHXYNztmQrRf+xXwyxLqNBjhonuEhacncim02zhB5TmuFEJDaCqIZLpJlSKR8sfohNm+dde01c+LVUFKw2TZS9iUlpwDV9UbkThjdSgKbvCIUhH8yIwkS33KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725790990; c=relaxed/simple;
-	bh=/I2xsDKtHCWK29Dtri1Aq+cD29P6i7WEO/zFf0RCbIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2SLcW8f/a3uWOqZ85YS2huNzva7qUjbN1/gjyfZ1rrkA1EUeRqPQGxuyDqq8sOHhBtL9jKRbcsxM0KHiS2QiIFK1GOwezEhiJKpka9VwbpPgfifK7G96k0Nir725+MEJrX5FHVVZuB11fXLl3+ND5UXhOqMObnjfjGUTHyBguw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 488AMlwr001183;
-	Sun, 8 Sep 2024 12:22:47 +0200
-Date: Sun, 8 Sep 2024 12:22:47 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-        "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] nolibc for 6.12-rc1
-Message-ID: <20240908102247.GA1175@1wt.eu>
-References: <9de5090f-038f-4d68-af96-fbb9ed45b901@linuxfoundation.org>
- <f882fa56-c198-4574-bb12-18337ac0927e@linuxfoundation.org>
- <9440397d-5077-460d-9c96-6487b8b0d923@t-8ch.de>
- <13169754-c8ea-4e9e-b062-81b253a07078@linuxfoundation.org>
- <e594db6c-5795-4038-bcb2-1dc3290bfb27@t-8ch.de>
- <ZtlOGkADy7OkXY9u@1wt.eu>
- <ZtlQbpgpn9OQOPyI@1wt.eu>
- <bcdba244-aaf9-4a06-a4a6-c521d4cfa97e@t-8ch.de>
- <Ztnd26IlnMwrywUO@1wt.eu>
- <e36fb1f5-f370-4806-912e-d9d2f777a1bc@linuxfoundation.org>
+	s=arc-20240116; t=1725791279; c=relaxed/simple;
+	bh=aTSE1n6xrZTiUV/fAuc/0WrqIi4ApvzsNBFhFNf9pUk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qv191NWZRtJHIiNCkIXN7HgINgNrOO8LVuCDfoRa/1632DzXVpBIlbEFGp5Gz8SNNcFcAvLnSd1easW6VMfer2R6oBPQPaJCJeM6ZBD5lZW5ywR7AfKPix0OBo8fK2y13cdgThq5J9TKtVSSFMvt2AcjMelnkuECY5CqusKDO/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUzlh5UT; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7d50e865b7aso2322384a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 03:27:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725791277; x=1726396077; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nCf3SqIpi+smHSMa+FhqUwP6bRy0VLcMO9hbpROT3lg=;
+        b=HUzlh5UTAir/QnhIRyZ8Gw2jUgXOMR1vxeKOKpm9T4Yk7vJxQyJOdt7YgubdfeZZLX
+         uOCDDKvWx5Gpkt/ozVwZsHlXpNHBtya4yTr1xh3k2BGAGCm29luPuvqhlAxvGVkvjU3K
+         uY9kZ4mADbp3NOssduzznr0ARY+zYjO+UuLu8HI0I9ob4WmnzNXH7oLmR2gc0zVteYXu
+         KTuTuTrhPfbU+j2Rew11OFZpaqziH7Xpm720NGCWXTcSml7ECYMoqjNUPFnQTGlXBcRq
+         q5iYbtBYKERP20lYPYiugVD49DSEhAtpaGLmOGrZYLu7MbV/bMNEWZR4k1AhzQhpYz3P
+         79AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725791277; x=1726396077;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nCf3SqIpi+smHSMa+FhqUwP6bRy0VLcMO9hbpROT3lg=;
+        b=am5KA+VMYlbEBRIjZe+oUFiGjG3XgggiwSCfxwB6w8hxZ/qYIx1hcbnx3KEDsEXR9t
+         3Q3u4BVSUsxJNroliC9BgTqNQ9QZWT/V8WUdY1YOXB6eQtHMP3d6+uzvyM4Mfug+uNOG
+         Vv5hN0b8ljIEXb6G+OEL9tL6puHHRas4tYDczK3hbBX4fR/9EekWXtdzKkivBdOg9EOj
+         bZMFijtZbobPSmDBnP5nPWQFwfFdZK2KSIUVnwTOLIBqBoecedxv3polp9K8W9qUeBSz
+         yj3nYaR45SNpAhmyvkZTqDlItP3xmVhqmzrSO6/Bfj5P52/QB8w+QJyBZ378lp3v+1zk
+         lVYw==
+X-Gm-Message-State: AOJu0YxSKhp4Nxpmg7V1fjJoO06ei2ZgSuv957hprA0PLWQ+i1tgnM0O
+	AnK7wkguXVnosy6aws/MOJDWrARiwrh9nma83kLRg/rkrE4HTYwapVptnR0I
+X-Google-Smtp-Source: AGHT+IH+e+tBnnZpI36SxJaa4X8luSB3LwFz8/UCq1v2CvSUTn7yelaUEzbYbHzQ9zpFs23HC9KzSQ==
+X-Received: by 2002:a17:902:e841:b0:1fd:8eaf:ea73 with SMTP id d9443c01a7336-206f056e8e3mr83673145ad.35.1725791277040;
+        Sun, 08 Sep 2024 03:27:57 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e11e02sm18491225ad.14.2024.09.08.03.27.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 03:27:56 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: KCSAN: data-race in generic_fillattr / shmem_mknod (2)
+Date: Sun,  8 Sep 2024 19:27:51 +0900
+Message-Id: <20240908102751.14188-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e36fb1f5-f370-4806-912e-d9d2f777a1bc@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Sep 05, 2024 at 05:57:52PM -0600, Shuah Khan wrote:
-> On 9/5/24 10:35, Willy Tarreau wrote:
-> > On Thu, Sep 05, 2024 at 05:57:22PM +0200, Thomas Weißschuh wrote:
-> > > On 2024-09-05 08:32:14+0000, Willy Tarreau wrote:
-> > > > On Thu, Sep 05, 2024 at 08:22:18AM +0200, Willy Tarreau wrote:
-> > > > > > 
-> > > > > > ./run-tests.sh -p -m user
-> > > > > > 
-> > > > > > These toolchains can then also be used for direct "make" invocations
-> > > > > > through CROSS_COMPILE.
-> > > > > 
-> > > > > I really suspect an empty CC variable somewhere that could explain why
-> > > > > only CROSS_COMPILE is used. I'll try to find time today to give it a
-> > > > > try here as well, just in case I can reproduce the same issue.
-> > > > 
-> > > > In fact I'm getting it without any options:
-> > > > 
-> > > >    $ ./run-tests.sh
-> > > >    realpath: /home/willy/.cache/crosstools/gcc-13.2.0-nolibc/i386-linux/bin/i386-linux-: No such file or directory
-> > > > 
-> > > > It comes from here in test_arch():
-> > > > 
-> > > >          cross_compile=$(realpath "${download_location}gcc-${crosstool_version}-nolibc/${ct_arch}-${ct_abi}/bin/${ct_arch}-${ct_abi}-")
-> > > > 
-> > > > Thus it's indeed related to the absence of the toolchain there. It's
-> > > > just that the way the error is reported (due to set -e) is a bit harsh.
-> > > 
-> > > Ack. It should not occur with "-p" though.
-> > 
-> > Agreed, I was focusing on first experience for users essentially.
-> > 
-> > > > What about this ?
-> > > > 
-> > > >    $ ./run-tests.sh
-> > > >    No toolchain found in /home/willy/.cache/crosstools/gcc-13.2.0-nolibc/i386-linux.
-> > > >    Did you install the toolchains or set the correct arch ? Rerun with -h for help.
-> > > >    Aborting...
-> > > > 
-> > > > or anything similar, achieved by this patch (warning copy-paste, mangled
-> > > > indents):
-> > > > 
-> > > > diff --git a/tools/testing/selftests/nolibc/run-tests.sh b/tools/testing/selftests/nolibc/run-tests.sh
-> > > > index e7ecda4ae796..0f67e80051dc 100755
-> > > > --- a/tools/testing/selftests/nolibc/run-tests.sh
-> > > > +++ b/tools/testing/selftests/nolibc/run-tests.sh
-> > > > @@ -143,6 +143,13 @@ test_arch() {
-> > > >          arch=$1
-> > > >          ct_arch=$(crosstool_arch "$arch")
-> > > >          ct_abi=$(crosstool_abi "$1")
-> > > > +
-> > > > +       if [ ! -d "${download_location}gcc-${crosstool_version}-nolibc/${ct_arch}-${ct_abi}/bin/." ]; then
-> > > > +               echo "No toolchain found in ${download_location}gcc-${crosstool_version}-nolibc/${ct_arch}-${ct_abi}."
-> > > > +               echo "Did you install the toolchains or set the correct arch ? Rerun with -h for help."
-> > > > +               return 1
-> > > > +       fi
-> > > > +
-> > > >          cross_compile=$(realpath "${download_location}gcc-${crosstool_version}-nolibc/${ct_arch}-${ct_abi}/bin/${ct_arch}-${ct_abi}-")
-> > > >          build_dir="${build_location}/${arch}"
-> > > >          if [ "$werror" -ne 0 ]; then
-> > > 
-> > > Looks good.
-> > 
-> > OK thanks, I'll try to handle it this week-end if I'm not beaten to
-> > it. If you or Shuah want to merge it before, feel free to, no offense
-> > on my side!
-> > 
-> 
-> Sounds good. My system is back to a good state with the tests after running
-> ./run-tests.sh -p -m user
-> 
-> My guess is my setup was lost when I upgraded my system.
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-Makes sense.
+---
+ fs/ext4/orphan.c |  2 +-
+ fs/ext4/super.c  |  4 ++--
+ mm/percpu.c      |  5 ++---
+ mm/shmem.c       | 12 +++++++-----
+ 4 files changed, 12 insertions(+), 11 deletions(-)
 
-FWIW I've just pushed the patch above to nolibc-next. Since it's not a
-result of a change of the last PR, there's no need to udpate it I think,
-it can easily wait for the next one (it's just a help message after all).
-
-During the tests I've also got caught with -d which needs a trailing slash
-otherwise doesn't concatenate directories correctly. I don't know if that's
-intentional or not so I didn't change it (and it's not important either).
-
-Best regards,
-Willy
+diff --git a/fs/ext4/orphan.c b/fs/ext4/orphan.c
+index e5b47dda3317..08299b2a1b3b 100644
+--- a/fs/ext4/orphan.c
++++ b/fs/ext4/orphan.c
+@@ -293,7 +293,7 @@ int ext4_orphan_del(handle_t *handle, struct inode *inode)
+ 			mutex_unlock(&sbi->s_orphan_lock);
+ 			goto out_brelse;
+ 		}
+-		NEXT_ORPHAN(i_prev) = ino_next;
++		WRITE_ONCE(NEXT_ORPHAN(i_prev), ino_next);
+ 		err = ext4_mark_iloc_dirty(handle, i_prev, &iloc2);
+ 		mutex_unlock(&sbi->s_orphan_lock);
+ 	}
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index e72145c4ae5a..8cc5e19bfe78 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -346,7 +346,7 @@ __u32 ext4_free_group_clusters(struct super_block *sb,
+ __u32 ext4_free_inodes_count(struct super_block *sb,
+ 			      struct ext4_group_desc *bg)
+ {
+-	return le16_to_cpu(bg->bg_free_inodes_count_lo) |
++	return le16_to_cpu(READ_ONCE(bg->bg_free_inodes_count_lo)) |
+ 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
+ 		 (__u32)le16_to_cpu(bg->bg_free_inodes_count_hi) << 16 : 0);
+ }
+@@ -402,7 +402,7 @@ void ext4_free_group_clusters_set(struct super_block *sb,
+ void ext4_free_inodes_set(struct super_block *sb,
+ 			  struct ext4_group_desc *bg, __u32 count)
+ {
+-	bg->bg_free_inodes_count_lo = cpu_to_le16((__u16)count);
++	WRITE_ONCE(bg->bg_free_inodes_count_lo, cpu_to_le16((__u16)count));
+ 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
+ 		bg->bg_free_inodes_count_hi = cpu_to_le16(count >> 16);
+ }
+diff --git a/mm/percpu.c b/mm/percpu.c
+index 20d91af8c033..5c958a54da51 100644
+--- a/mm/percpu.c
++++ b/mm/percpu.c
+@@ -1864,7 +1864,6 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
+ 
+ area_found:
+ 	pcpu_stats_area_alloc(chunk, size);
+-	spin_unlock_irqrestore(&pcpu_lock, flags);
+ 
+ 	/* populate if not all pages are already there */
+ 	if (!is_atomic) {
+@@ -1878,14 +1877,12 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
+ 
+ 			ret = pcpu_populate_chunk(chunk, rs, re, pcpu_gfp);
+ 
+-			spin_lock_irqsave(&pcpu_lock, flags);
+ 			if (ret) {
+ 				pcpu_free_area(chunk, off);
+ 				err = "failed to populate";
+ 				goto fail_unlock;
+ 			}
+ 			pcpu_chunk_populated(chunk, rs, re);
+-			spin_unlock_irqrestore(&pcpu_lock, flags);
+ 		}
+ 
+ 		mutex_unlock(&pcpu_alloc_mutex);
+@@ -1894,6 +1891,8 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
+ 	if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
+ 		pcpu_schedule_balance_work();
+ 
++	spin_unlock_irqrestore(&pcpu_lock, flags);
++
+ 	/* clear the areas and return address relative to base address */
+ 	for_each_possible_cpu(cpu)
+ 		memset((void *)pcpu_chunk_addr(chunk, cpu, 0) + off, 0, size);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 5a77acf6ac6a..1595f6e7688c 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1154,7 +1154,9 @@ static int shmem_getattr(struct mnt_idmap *idmap,
+ 	stat->attributes_mask |= (STATX_ATTR_APPEND |
+ 			STATX_ATTR_IMMUTABLE |
+ 			STATX_ATTR_NODUMP);
++	inode_lock_shared(inode);
+ 	generic_fillattr(idmap, request_mask, inode, stat);
++	inode_unlock_shared(inode);
+ 
+ 	if (shmem_is_huge(inode, 0, false, NULL, 0))
+ 		stat->blksize = HPAGE_PMD_SIZE;
+@@ -3439,7 +3441,7 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (error)
+ 		goto out_iput;
+ 
+-	dir->i_size += BOGO_DIRENT_SIZE;
++	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
+ 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+ 	inode_inc_iversion(dir);
+ 	d_instantiate(dentry, inode);
+@@ -3526,7 +3528,7 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir,
+ 		goto out;
+ 	}
+ 
+-	dir->i_size += BOGO_DIRENT_SIZE;
++	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
+ 	inode_set_mtime_to_ts(dir,
+ 			      inode_set_ctime_to_ts(dir, inode_set_ctime_current(inode)));
+ 	inode_inc_iversion(dir);
+@@ -3639,8 +3641,8 @@ static int shmem_rename2(struct mnt_idmap *idmap,
+ 		inc_nlink(new_dir);
+ 	}
+ 
+-	old_dir->i_size -= BOGO_DIRENT_SIZE;
+-	new_dir->i_size += BOGO_DIRENT_SIZE;
++	i_size_write(old_dir, i_size_read(old_dir) - BOGO_DIRENT_SIZE);
++	i_size_write(new_dir, i_size_read(new_dir) + BOGO_DIRENT_SIZE);
+ 	simple_rename_timestamp(old_dir, old_dentry, new_dir, new_dentry);
+ 	inode_inc_iversion(old_dir);
+ 	inode_inc_iversion(new_dir);
+@@ -3694,7 +3696,7 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 		folio_unlock(folio);
+ 		folio_put(folio);
+ 	}
+-	dir->i_size += BOGO_DIRENT_SIZE;
++	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
+ 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+ 	inode_inc_iversion(dir);
+ 	d_instantiate(dentry, inode);
+--
 
