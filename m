@@ -1,143 +1,174 @@
-Return-Path: <linux-kernel+bounces-320397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A89D9709AC
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08E4B9709B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E4011C20B20
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:24:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26EC81C210E3
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A9B179652;
-	Sun,  8 Sep 2024 20:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGHutnDW"
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BAF17ADEB;
+	Sun,  8 Sep 2024 20:26:17 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A714085D;
-	Sun,  8 Sep 2024 20:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F85179652
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 20:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725827061; cv=none; b=UrZV/lGtu+hKZ4uQSu5WDLJh6HpVLqdRtug8dOYCNZoh9S2O/p64DXExrxklb2Joi8NcRFrr4msL31PcauL7xpTM+YCXlgEAO1VpFNrWCXBGKZNN5Ig0rnn+beOJQYamMl8qfSeGGdJt+/lXimyDCnkMsagwhvd1jU3o+3G/I50=
+	t=1725827176; cv=none; b=TbQx7hAWB2LrQiBa28xGEe6HWv8vJiVNSFBziYwD8omW8UDAAniBULE34bnFMsPDpYbvQOz5oxrl088/7aR0v5gazBRrGFGj6EiCzDhGSk9uZeTQ/GIB+L+6QgGKlq/sZDFz2FRN122EeGe+GEqlkq5qsqWrsmeTFEECHY1SSz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725827061; c=relaxed/simple;
-	bh=qyTMDaNl3wEhwWVcojNWjkZnsJpC+40VxxbDY5HqtT8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fHTbdF24IO0OFoSxy34rNnYcCLl9QvDQfTpoMvjKlLWsJCWDvqtyeul+rBfFr8qxdW4WKDfT46eHeuPK4RbYao/cR6c9vacokdyAKTbajkQsCzW8oTF4/5MpByRXsru6lA4VQqz6GB1cc6OeAnhcIXzNFMMdmYcNfZJC+VvvZFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TGHutnDW; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-502b144f31bso887498e0c.1;
-        Sun, 08 Sep 2024 13:24:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725827059; x=1726431859; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sl+8qFsuwS53ls/QxH0ANQIZHTR+8dp3OUKkdq/DQXU=;
-        b=TGHutnDWGgum1oCmH31TOFATZ9vSAEoWy1vhH4avZ/PGL0QODpcs6ZOc2CXbpapmqi
-         UN+1CEsBM30MCQ/e7939CJO4GsXwUk7ZC4cBFK33WU1JhOFPd09kBwyiI3UtZcNtQEkB
-         /sfwC8B/1HFoJcZWj1uJMdcsz155A9wRt/JyQQzVziIeWnm+TgbURDkcGVcfPYVDG9K4
-         xk3ozTXHsysn3IeOXw/84xm/KIwd3lYa+99Pai4phWPeJg0nqVnW5I4xLH4zpzqr/VQm
-         wTyfwu3cL85HDddKqFYChXijaYYthIGsfGCdrnqWAZEXPGBeeNTZdDFnxWNSPWqDtjDD
-         fzaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725827059; x=1726431859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sl+8qFsuwS53ls/QxH0ANQIZHTR+8dp3OUKkdq/DQXU=;
-        b=dh0qhnLmkOwFPgX6K+pU+qnJkq+jbszCvidPvEKuatAQkpDGFLbW2DrBG9GflBRu/a
-         ap6HFbD1/x3q5fytXjV/X4rWeAW0AKv33qkeFTxLKXMk/4M3RhFTVeEIR6TKBtAb2tJl
-         KHajP7f60XykL06O7ZjAjQKigQ4omhC9lrJ70yCaRtzmA4GQohgj1JhOqOT52Dtrpz8g
-         gssW7M1q7MLkkM9tSmDcs25L3htOr35squAb9KLh1GQI4Qa3mo5ldMAH0VidrLwtB9nl
-         LOZ9SpO6YGc7qOva9g3Btv8arobb8iFRbVxaTK/mM3QJn1xOTwt+cWeHPeI/jaoHAdQ+
-         g1EA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtSrUu26lYkO+SWJOuEAhX+m0MKeIUpJs5LjZQ2dj1gtSX6SZcnfu3foAxD+rqFKnRqvApPAjQsiU+SxI=@vger.kernel.org, AJvYcCW8xU6luNVLD6KW0pFET1CSIUAyov3jTkZ1VFAxmVnSFHpoetzdD+ICKJSHx2xiNOjOHZbyBQ9vaGDdNyeylbniWAo=@vger.kernel.org, AJvYcCWyPkV8DmvIyzdhMxUSCl0RQ+VxkOgMmYR/bLs/N5Oni5y+tndY1oPFqlalFXjTXJ1ra2/jqBuJSb2PqkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7fjRmfNzK7YNwsy20ejXxK3+lavF3xJKLHd4gCVpvp621U3cv
-	1SzcMe7tZXuBhTiNeoZpbkgyFr9usqu3How2JrzQfBIveuSOhqcXjQRV8aPoVP6jO6bPtM3qpdb
-	XQQHGZZlD0atgCFKfXhle5/24dNzLth5BzuX+Ag==
-X-Google-Smtp-Source: AGHT+IHmWtl+POZCFiFgXBKJFuO0g41J3A5BIAsnkX9EHA+oI8Tuq0ND52koymelfGcabRoqf24bHCCox9nxwnWa51o=
-X-Received: by 2002:a05:6122:168d:b0:4ed:145:348f with SMTP id
- 71dfb90a1353d-50220c7bb1emr10298047e0c.12.1725827059067; Sun, 08 Sep 2024
- 13:24:19 -0700 (PDT)
+	s=arc-20240116; t=1725827176; c=relaxed/simple;
+	bh=sRVdJsmKaxJWCGmzVM6Y7AGWnjzept4H4UQhjAJCzww=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=EpM+KrlSh8nTkpEQ3cwTrxrv359AUX2CWMZNuGEB6ztO9kPgjkFp6LrvdVELCAi/yXiZttehCZFR9lX6PBDKEX+kGPzqCRbQkd4W9/NMe+qdhe0tHLfogio5o6C7quRqd+tCSLy5YqJwsKiS/UWT1+9mG2OunwsIO5mPnTLrNCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-104-tt6BonG2PZGqiqmfEPaGSw-1; Sun, 08 Sep 2024 21:26:06 +0100
+X-MC-Unique: tt6BonG2PZGqiqmfEPaGSw-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 8 Sep
+ 2024 21:25:15 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 8 Sep 2024 21:25:15 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Scott Mayhew' <smayhew@redhat.com>, Li Lingfeng <lilingfeng3@huawei.com>
+CC: "chuck.lever@oracle.com" <chuck.lever@oracle.com>, "jlayton@kernel.org"
+	<jlayton@kernel.org>, "neilb@suse.de" <neilb@suse.de>, "okorniev@redhat.com"
+	<okorniev@redhat.com>, "Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>,
+	"tom@talpey.com" <tom@talpey.com>, "linux-nfs@vger.kernel.org"
+	<linux-nfs@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "yukuai1@huaweicloud.com"
+	<yukuai1@huaweicloud.com>, "houtao1@huawei.com" <houtao1@huawei.com>,
+	"yi.zhang@huawei.com" <yi.zhang@huawei.com>, "yangerkun@huawei.com"
+	<yangerkun@huawei.com>, "lilingfeng@huaweicloud.com"
+	<lilingfeng@huaweicloud.com>
+Subject: RE: [PATCH] nfsd: return -EINVAL when namelen is 0
+Thread-Topic: [PATCH] nfsd: return -EINVAL when namelen is 0
+Thread-Index: AQHa/tltH5fpypZKDEqICq9omYVD5rJOXHzA
+Date: Sun, 8 Sep 2024 20:25:15 +0000
+Message-ID: <cccdc13066204448af7f0fd550f34586@AcuMS.aculab.com>
+References: <20240903111446.659884-1-lilingfeng3@huawei.com>
+ <ZthzJiKF6TY0Nv32@aion>
+In-Reply-To: <ZthzJiKF6TY0Nv32@aion>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906173947.282402-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240906173947.282402-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240906231038.GC12915@pendragon.ideasonboard.com> <CA+V-a8vsmYSOWgoiHnO5xWdn-wo-eda6hdxGz5X_Hc5s-yVv6g@mail.gmail.com>
-In-Reply-To: <CA+V-a8vsmYSOWgoiHnO5xWdn-wo-eda6hdxGz5X_Hc5s-yVv6g@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Sun, 8 Sep 2024 21:23:52 +0100
-Message-ID: <CA+V-a8s4UjjDTrQ4aw3OjQuac8B-oq++KqYf-fJEQvuxD5GodA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] media: platform: rzg2l-cru: rzg2l-video: Retrieve
- virtual channel information
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Laurent,
-
-On Sat, Sep 7, 2024 at 10:09=E2=80=AFPM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
->
-> Hi Laurent,
->
-> Thank you for the review.
->
-> On Sat, Sep 7, 2024 at 12:10=E2=80=AFAM Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
-<snip>
-> > > +
-> > >  int rzg2l_cru_start_image_processing(struct rzg2l_cru_dev *cru)
-> > >  {
-> > >       struct v4l2_mbus_framefmt *fmt =3D rzg2l_cru_ip_get_src_fmt(cru=
-);
-> > >       unsigned long flags;
-> > >       int ret;
-> > >
-> > > +     ret =3D rzg2l_cru_get_virtual_channel(cru);
-> > > +     if (ret < 0)
-> > > +             return ret;
-> > > +     cru->csi.channel =3D ret;
+From: Scott Mayhew=20
+> Sent: 04 September 2024 15:48
+>=20
+> On Tue, 03 Sep 2024, Li Lingfeng wrote:
+>=20
+> > When we have a corrupted main.sqlite in /var/lib/nfs/nfsdcld/, it may
+> > result in namelen being 0, which will cause memdup_user() to return
+> > ZERO_SIZE_PTR.
+> > When we access the name.data that has been assigned the value of
+> > ZERO_SIZE_PTR in nfs4_client_to_reclaim(), null pointer dereference is
+> > triggered.
 > >
-> > How about passing the value to the function that needs it, instead of
-> > storing it in cru->csi.channel ? You can do that on top and drop the
-> > csi.channel field.
+> > [ T1205] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > [ T1205] BUG: KASAN: null-ptr-deref in nfs4_client_to_reclaim+0xe9/0x26=
+0
+> > [ T1205] Read of size 1 at addr 0000000000000010 by task nfsdcld/1205
+> > [ T1205]
+> > [ T1205] CPU: 11 PID: 1205 Comm: nfsdcld Not tainted 5.10.0-00003-g2c14=
+23731b8d #406
+> > [ T1205] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-=
+20190727_073836-buildvm-
+> ppc64le-16.ppc.fedoraproject.org-3.fc31 04/01/2014
+> > [ T1205] Call Trace:
+> > [ T1205]  dump_stack+0x9a/0xd0
+> > [ T1205]  ? nfs4_client_to_reclaim+0xe9/0x260
+> > [ T1205]  __kasan_report.cold+0x34/0x84
+> > [ T1205]  ? nfs4_client_to_reclaim+0xe9/0x260
+> > [ T1205]  kasan_report+0x3a/0x50
+> > [ T1205]  nfs4_client_to_reclaim+0xe9/0x260
+> > [ T1205]  ? nfsd4_release_lockowner+0x410/0x410
+> > [ T1205]  cld_pipe_downcall+0x5ca/0x760
+> > [ T1205]  ? nfsd4_cld_tracking_exit+0x1d0/0x1d0
+> > [ T1205]  ? down_write_killable_nested+0x170/0x170
+> > [ T1205]  ? avc_policy_seqno+0x28/0x40
+> > [ T1205]  ? selinux_file_permission+0x1b4/0x1e0
+> > [ T1205]  rpc_pipe_write+0x84/0xb0
+> > [ T1205]  vfs_write+0x143/0x520
+> > [ T1205]  ksys_write+0xc9/0x170
+> > [ T1205]  ? __ia32_sys_read+0x50/0x50
+> > [ T1205]  ? ktime_get_coarse_real_ts64+0xfe/0x110
+> > [ T1205]  ? ktime_get_coarse_real_ts64+0xa2/0x110
+> > [ T1205]  do_syscall_64+0x33/0x40
+> > [ T1205]  entry_SYSCALL_64_after_hwframe+0x67/0xd1
+> > [ T1205] RIP: 0033:0x7fdbdb761bc7
+> > [ T1205] Code: 0f 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00=
+ f3 0f 1e fa 64 8b 04 25 18
+> 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 514
+> > [ T1205] RSP: 002b:00007fff8c4b7248 EFLAGS: 00000246 ORIG_RAX: 00000000=
+00000001
+> > [ T1205] RAX: ffffffffffffffda RBX: 000000000000042b RCX: 00007fdbdb761=
+bc7
+> > [ T1205] RDX: 000000000000042b RSI: 00007fff8c4b75f0 RDI: 0000000000000=
+008
+> > [ T1205] RBP: 00007fdbdb761bb0 R08: 0000000000000000 R09: 0000000000000=
+001
+> > [ T1205] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000=
+42b
+> > [ T1205] R13: 0000000000000008 R14: 00007fff8c4b75f0 R15: 0000000000000=
+000
+> > [ T1205] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > >
-> OK, let me check if this can be done.
->
-The virtual channel number is programmed in rzg2l_cru_csi2_setup() [0]
-call, below is the code flow of the call. This code flow is called by
-spinlock held.
+> > Fix it by checking namelen.
+> >
+> > Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> > ---
+> >  fs/nfsd/nfs4recover.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+> > index 67d8673a9391..69a3a84e159e 100644
+> > --- a/fs/nfsd/nfs4recover.c
+> > +++ b/fs/nfsd/nfs4recover.c
+> > @@ -809,6 +809,10 @@ __cld_pipe_inprogress_downcall(const struct cld_ms=
+g_v2 __user *cmsg,
+> >  =09=09=09ci =3D &cmsg->cm_u.cm_clntinfo;
+> >  =09=09=09if (get_user(namelen, &ci->cc_name.cn_len))
+> >  =09=09=09=09return -EFAULT;
+> > +=09=09=09if (!namelen) {
+> > +=09=09=09=09dprintk("%s: namelen should not be zero", __func__);
+> > +=09=09=09=09return -EINVAL;
+> > +=09=09=09}
+> >  =09=09=09name.data =3D memdup_user(&ci->cc_name.cn_id, namelen);
 
-rzg2l_cru_start_image_processing()
-    rzg2l_cru_initialize_image_conv()
-        rzg2l_cru_csi2_setup()
+Don't you also want an upper bound sanity check?
+(or is cn_len only 8 bit?)
 
-When rzg2l_cru_get_virtual_channel() is called directly in
-rzg2l_cru_csi2_setup() function we get "BUG: Invalid wait context"
-(when PROVE_LOCKING is enabled) this is due to we do a mutex lock as
-part of v4l2_subdev_lock_and_get_active_state() in get_frame_desc.
+=09David
 
-So probably I'll leave this as it is now.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
-[0] https://elixir.bootlin.com/linux/v6.10.8/source/drivers/media/platform/=
-renesas/rzg2l-cru/rzg2l-video.c#L311
-
-Cheers,
-Prabhakar
 
