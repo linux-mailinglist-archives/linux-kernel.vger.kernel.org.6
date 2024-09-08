@@ -1,210 +1,183 @@
-Return-Path: <linux-kernel+bounces-320321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FCE39708D4
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:57:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1757E9708D7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5CAE1F21E71
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:57:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43EAC1C20CEB
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE276175D56;
-	Sun,  8 Sep 2024 16:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59C4175D2C;
+	Sun,  8 Sep 2024 16:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aUgEmSEz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Waf26juj"
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDB2535D8;
-	Sun,  8 Sep 2024 16:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64172535D8;
+	Sun,  8 Sep 2024 16:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725814652; cv=none; b=bZbiaCaHlPFcrASVm+RY8m/9lYmSupCZfDEtVXFRlIa50VaEjX7ej+VgNG6OOinuWfWnXQYErPfIjSEqCQR4RLfx+IhsOzJUTY1togKFnK/saS6StknC5hBQCPyvvqO2NeAYaxq+V7667V8U3BoIUGhFx+LaksPEzGGb5OxJAV0=
+	t=1725814742; cv=none; b=RV/2X1f/GY0zwh90ff/v920eDqIbP5kfj/P95d45qAs5LT7MCniah29Z75QHY6zTyJkoyFgmwQ6QrL7UJk9Z7WGuka1tdJ1Y45tnVgALsf4OeSzs+mNA9eTMRhF7YNCMAaDM1dIDTfk/pSQl9mT8fcdsTlNJw3ML4DPxWqeqi/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725814652; c=relaxed/simple;
-	bh=gFpZpGEkhVcZmvpYlYMlw1TLTYXTJ+SJ6Et27zpaRkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EnwjEeFg4742/6sxw5zNC7+oaZ/QPx5JOy+qulJVodvNjBoJtxjvzjHBYRQVGDgOmO4eifqr9FfevXHWBhYcf8TM0XHV74zgZko1HBZzxNoI9LEbBhcpmrXEmr+8BITAbWVAfuXmstTTpKjRaYpvj7EMe22yE4PCjIbq9vax+yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aUgEmSEz; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725814650; x=1757350650;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gFpZpGEkhVcZmvpYlYMlw1TLTYXTJ+SJ6Et27zpaRkE=;
-  b=aUgEmSEzJE4GXILroVxNErvHC+02J+WAcGLKHwNdVOWyoWvkEh4qCwza
-   GRvWXgsQVZbJDt3rG7mq+1/Hq2A4XzfXqEH3BWXyLVBJVK1nousJZbY/2
-   02zYcFNJn90FGMOyKg4mpepIjzG2HHExQ3JpZLdfdrsHCenyk4SSe4+D3
-   GFQQMHBzpAyoZAMvaXRetaGzVmEc+C6bmhZA/6bGyVHykiK0rSkjj65Hm
-   kTrQAJd8LTJcmy8vekeDobdlmFT1LtL30M9AFIc6F3DZwUVnJaz76IF69
-   55Asqf3CEEgx2TwEh6vHWEKCx0L/+aEsxcVJ7Koqzc4ZfRZDpx/ZU2hM/
-   w==;
-X-CSE-ConnectionGUID: gBceiOG9SmWjic5eILwIVA==
-X-CSE-MsgGUID: hqzjjl4xSx2Mj37XcBBL3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="24006791"
-X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
-   d="scan'208";a="24006791"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 09:57:29 -0700
-X-CSE-ConnectionGUID: /aVMb7qWTuSucpJIB32DwA==
-X-CSE-MsgGUID: 0EMBbu5/TJGp7yLL1NeXfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
-   d="scan'208";a="67173237"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 08 Sep 2024 09:57:26 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1snLE3-000Dk7-2l;
-	Sun, 08 Sep 2024 16:57:23 +0000
-Date: Mon, 9 Sep 2024 00:56:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: oe-kbuild-all@lists.linux.dev, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-mips@vger.kernel.org, kvm@vger.kernel.org,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: Re: [PATCH 4/5] LoongArch: Extract IOCSR definitions to standalone
- header
-Message-ID: <202409090054.D3vEaTqr-lkp@intel.com>
-References: <20240907-iocsr-v1-4-0c99b3334444@flygoat.com>
+	s=arc-20240116; t=1725814742; c=relaxed/simple;
+	bh=6QjX+p/V7p6CoIL0gKUlUJEfv0XMVAsaxYaaV5atd5k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G6Op/R/x1+mfVWJlH7G3fNdn99BZoEBDA1oNK7pg0RN6Obh5QKsGNEIzTRBl9nMOE6xOFESB6V77ZNH9Oqh1pJeWRXQS3G2cN22Tu+5pf05uCnvyi0+YPVJDszWtVQgSnEwlB65ED+cBgEEXYfTXM18V//YgPufj7WLjdgDsb+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Waf26juj; arc=none smtp.client-ip=80.12.242.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id nLFVsSexkHecynLFVs3xum; Sun, 08 Sep 2024 18:58:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725814737;
+	bh=RdcTk8ohJPW11cQiApgamG5S3f5jcX8WFaEBB5WL29M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Waf26jujfPXECY3CCDjijKiHyI/dBzztosdUkGORAS/uepLb4kcKcLqmgiPDoYcku
+	 MoXMKrUxZEDENW48sn74nf7unkftTZiaW/l95dmfPviRRTkvexcsvSiskoc1uat1ZD
+	 +gRtAs187E32Lft/bz80V2cScm6OjBinBKUQVX9Wyx0Xf17m1H6bpTOHmpjU4VtAGW
+	 rklcVfzdta3T+DQRBeCO2mgLWFTmkVQ7LbQ6V4SI36ZSf59SzBh56y+6KmeB1IZu3Q
+	 i/ZB8QGH7iR9sLQpi46o6xJdGoV3ffCZLVCx/6E7ZWWtMtOPTJ/mI/ktgazDnTtOe9
+	 irQCqqT4HbSPg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 08 Sep 2024 18:58:57 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <d01bed96-7811-4ace-8b92-1ee9fafac649@wanadoo.fr>
+Date: Sun, 8 Sep 2024 18:58:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240907-iocsr-v1-4-0c99b3334444@flygoat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] phy: renesas: rcar-gen3-usb2: Fix an error handling
+ path in rcar_gen3_phy_usb2_probe()
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>
+References: <4efe2d0419cbe98163e2422ebe0c7896b8a5efed.1725717505.git.christophe.jaillet@wanadoo.fr>
+ <TY3PR01MB113468D1573C1E50AC9F97DCF86982@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <TY3PR01MB113468D1573C1E50AC9F97DCF86982@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Jiaxun,
+Le 08/09/2024 à 18:39, Biju Das a écrit :
+> Hi Christophe JAILLET,
+> 
+> Thanks for the patch.
+> 
+>> -----Original Message-----
+>> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> Sent: Saturday, September 7, 2024 2:59 PM
+>> Subject: [PATCH v2] phy: renesas: rcar-gen3-usb2: Fix an error handling path in
+>> rcar_gen3_phy_usb2_probe()
+>>
+>> If an error occurs after the rcar_gen3_phy_usb2_init_bus(),
+>> reset_control_assert() must be called, as already done in the remove function.
+>>
+>> This is fine to re-use the existing error handling path, because even if "channel->rstc" is still NULL
+>> at this point, it is safe to call reset_control_assert(NULL).
+>>
+>> Fixes: 4eae16375357 ("phy: renesas: rcar-gen3-usb2: Add support to initialize the bus")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Changes in v2:
+>>    - Re-use 'error' to simplify the patch   [claudiu beznea]
+>>    - Update the commit description to explain why it is safe.
+>>
+>> v1:
+>> https://lore.kernel.org/all/fc9f7b444f0ca645411868992bbe16514aeccfed.1725652654.git.christophe.jaillet
+>> @wanadoo.fr/
+>> ---
+>>   drivers/phy/renesas/phy-rcar-gen3-usb2.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+>> index 58e123305152..ccb0b54b70f7 100644
+>> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+>> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+>> @@ -803,6 +803,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+>>   	return 0;
+>>
+>>   error:
+>> +	reset_control_assert(channel->rstc);
+> 
+> This will result in either kernel crash [1] or reset usage count imbalance in case
+> of error [2] and [3] in rcar_gen3_phy_usb2_init_bus() see [4]. Also reset control API is not
+> respected for SoCs other than RZ/G3S. For those SoC's reset assert is
+> called without calling a get(). Maybe add a check (phy_data->init_bus) for
+> assert api's, that guarantees assert is called after calling a get() as it
+> valid only for RZ/G3S??
+> 
+> [1]
+> channel->rstc = devm_reset_control_array_get_shared(dev);
+> 	if (IS_ERR(channel->rstc))
+> 		return PTR_ERR(channel->rstc);
+> 
+> [2]
+> ret = pm_runtime_resume_and_get(dev);
+> 	if (ret)
+> 		return ret;
+> [3]
+> ret = reset_control_deassert(channel->rstc);
+> 	if (ret)
+> 		goto rpm_put;
+> 
+> [4] https://elixir.bootlin.com/linux/v6.11-rc6/source/drivers/reset/core.c#L483
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 9aaeb87ce1e966169a57f53a02ba05b30880ffb8]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jiaxun-Yang/LoongArch-Rename-cpu_has_csr-as-cpu_has_iocsr/20240907-181959
-base:   9aaeb87ce1e966169a57f53a02ba05b30880ffb8
-patch link:    https://lore.kernel.org/r/20240907-iocsr-v1-4-0c99b3334444%40flygoat.com
-patch subject: [PATCH 4/5] LoongArch: Extract IOCSR definitions to standalone header
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240909/202409090054.D3vEaTqr-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240909/202409090054.D3vEaTqr-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409090054.D3vEaTqr-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/loongarch/include/asm/cpu-info.h:11,
-                    from arch/loongarch/include/asm/processor.h:13,
-                    from arch/loongarch/include/asm/thread_info.h:15,
-                    from include/linux/thread_info.h:60,
-                    from include/asm-generic/current.h:6,
-                    from ./arch/loongarch/include/generated/asm/current.h:1,
-                    from include/linux/mutex.h:14,
-                    from include/linux/notifier.h:14,
-                    from include/linux/clk.h:14,
-                    from include/linux/cpufreq.h:11,
-                    from drivers/cpufreq/loongson3_cpufreq.c:10:
-   drivers/cpufreq/loongson3_cpufreq.c: In function 'do_service_request':
->> drivers/cpufreq/loongson3_cpufreq.c:185:35: error: 'LOONGSON_IOCSR_SMCMBX' undeclared (first use in this function)
-     185 |         last.value = iocsr_read32(LOONGSON_IOCSR_SMCMBX);
-         |                                   ^~~~~~~~~~~~~~~~~~~~~
-   drivers/cpufreq/loongson3_cpufreq.c:185:22: note: in expansion of macro 'iocsr_read32'
-     185 |         last.value = iocsr_read32(LOONGSON_IOCSR_SMCMBX);
-         |                      ^~~~~~~~~~~~
-   drivers/cpufreq/loongson3_cpufreq.c:185:35: note: each undeclared identifier is reported only once for each function it appears in
-     185 |         last.value = iocsr_read32(LOONGSON_IOCSR_SMCMBX);
-         |                                   ^~~~~~~~~~~~~~~~~~~~~
-   drivers/cpufreq/loongson3_cpufreq.c:185:22: note: in expansion of macro 'iocsr_read32'
-     185 |         last.value = iocsr_read32(LOONGSON_IOCSR_SMCMBX);
-         |                      ^~~~~~~~~~~~
->> drivers/cpufreq/loongson3_cpufreq.c:199:36: error: 'LOONGSON_IOCSR_MISC_FUNC' undeclared (first use in this function)
-     199 |         iocsr_write32(iocsr_read32(LOONGSON_IOCSR_MISC_FUNC) | IOCSR_MISC_FUNC_SOFT_INT,
-         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~
-   arch/loongarch/include/asm/loongarch.h:187:45: note: in definition of macro 'iocsr_write32'
-     187 | #define iocsr_write32(val, reg) __iocsrwr_w(val, reg)
-         |                                             ^~~
-   drivers/cpufreq/loongson3_cpufreq.c:199:23: note: in expansion of macro 'iocsr_read32'
-     199 |         iocsr_write32(iocsr_read32(LOONGSON_IOCSR_MISC_FUNC) | IOCSR_MISC_FUNC_SOFT_INT,
-         |                       ^~~~~~~~~~~~
->> drivers/cpufreq/loongson3_cpufreq.c:199:64: error: 'IOCSR_MISC_FUNC_SOFT_INT' undeclared (first use in this function)
-     199 |         iocsr_write32(iocsr_read32(LOONGSON_IOCSR_MISC_FUNC) | IOCSR_MISC_FUNC_SOFT_INT,
-         |                                                                ^~~~~~~~~~~~~~~~~~~~~~~~
-   arch/loongarch/include/asm/loongarch.h:187:45: note: in definition of macro 'iocsr_write32'
-     187 | #define iocsr_write32(val, reg) __iocsrwr_w(val, reg)
-         |                                             ^~~
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
-   Depends on [n]: MAILBOX [=y] && (ARCH_OMAP2PLUS || ARCH_K3)
-   Selected by [m]:
-   - TI_K3_M4_REMOTEPROC [=m] && REMOTEPROC [=y] && (ARCH_K3 || COMPILE_TEST [=y])
+So, if I understand correctly, v1 [5] was correct. :)
 
 
-vim +/LOONGSON_IOCSR_SMCMBX +185 drivers/cpufreq/loongson3_cpufreq.c
+I don't think that [1] would crash, because of [6]. It would only 
+WARN_ON. But with v1, it is not called.
 
-   175	
-   176	static inline int do_service_request(u32 id, u32 info, u32 cmd, u32 val, u32 extra)
-   177	{
-   178		int retries;
-   179		unsigned int cpu = raw_smp_processor_id();
-   180		unsigned int package = cpu_data[cpu].package;
-   181		union smc_message msg, last;
-   182	
-   183		mutex_lock(&cpufreq_mutex[package]);
-   184	
- > 185		last.value = iocsr_read32(LOONGSON_IOCSR_SMCMBX);
-   186		if (!last.complete) {
-   187			mutex_unlock(&cpufreq_mutex[package]);
-   188			return -EPERM;
-   189		}
-   190	
-   191		msg.id		= id;
-   192		msg.info	= info;
-   193		msg.cmd		= cmd;
-   194		msg.val		= val;
-   195		msg.extra	= extra;
-   196		msg.complete	= 0;
-   197	
-   198		iocsr_write32(msg.value, LOONGSON_IOCSR_SMCMBX);
- > 199		iocsr_write32(iocsr_read32(LOONGSON_IOCSR_MISC_FUNC) | IOCSR_MISC_FUNC_SOFT_INT,
-   200			      LOONGSON_IOCSR_MISC_FUNC);
-   201	
-   202		for (retries = 0; retries < 10000; retries++) {
-   203			msg.value = iocsr_read32(LOONGSON_IOCSR_SMCMBX);
-   204			if (msg.complete)
-   205				break;
-   206	
-   207			usleep_range(8, 12);
-   208		}
-   209	
-   210		if (!msg.complete || msg.cmd != CMD_OK) {
-   211			mutex_unlock(&cpufreq_mutex[package]);
-   212			return -EPERM;
-   213		}
-   214	
-   215		mutex_unlock(&cpufreq_mutex[package]);
-   216	
-   217		return msg.val;
-   218	}
-   219	
+With v1, reset_control_assert() is not called if 
+rcar_gen3_phy_usb2_init_bus() fails. So [2] and [3] can't occur.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I can send a v3, which is the same of v1, or you can pick v1 as-is (if 
+I'm correct... :)) or you can just ignore it if "reset control API is 
+not respected for SoCs".
+
+
+If of interest, I spotted it with one of my coccinelle script that 
+compares functions called in .remove function, but not in error handling 
+path of probe.
+
+
+CJ
+
+[5]: 
+https://lore.kernel.org/all/fc9f7b444f0ca645411868992bbe16514aeccfed.1725652654.git.christophe.jaillet@wanadoo.fr/
+
+[6]: 
+https://elixir.bootlin.com/linux/v6.11-rc6/source/drivers/reset/core.c#L473
+
+> 
+> Cheers,
+> Biju
+> 
+>>   	pm_runtime_disable(dev);
+>>
+>>   	return ret;
+>> --
+>> 2.46.0
+>>
+> 
+> 
+> 
+
 
