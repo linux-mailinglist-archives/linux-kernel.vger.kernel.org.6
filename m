@@ -1,121 +1,78 @@
-Return-Path: <linux-kernel+bounces-320331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AAC99708F3
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:29:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D499708F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4587F1C21033
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:29:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02A981C20DF1
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB46F17625F;
-	Sun,  8 Sep 2024 17:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB35158A36;
+	Sun,  8 Sep 2024 17:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S9xKHqRP"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjSyMmG+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B631E26281;
-	Sun,  8 Sep 2024 17:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB7C1C01
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 17:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725816541; cv=none; b=XLKq2rZWEkC4MURy59rEHYxHuQRsU8fJsHr5kGTs+50srQKV9vj5BtoYvcnojOi5Sk0YYySW5Vwcpjl3Bs1iKRN5Y+EMsLys99FnyDr3Rgv7JGkBeyOJIhpf25ahalRWOeJCjf9PLjQeuVduBoFXDgAgR24h3eBY2zby3itT2n4=
+	t=1725816679; cv=none; b=NlNUMOpI1GKZbpLXWgjLLGm7R9aM4pVkymC2FPibwj597LeCuVqTL+P1OWZJxx0Lszah9MobbuU6k2IDXY1hggE2XDU6JuIndlysnmDHetW5yoYMzbhA8Oxtv3PkImA8ivcdMaOfaZ+wdLt1HxhpaaPAl3I+Hd0z5WQpMtbrOZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725816541; c=relaxed/simple;
-	bh=ODeLpK4Af15QLuBE5+94jWGI6ekq3Rl0Ngi9ZJdlkvw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mo/erU8V9FTf0tpYu1jjPEIwn+eT5TZermcE2J6zqBlWOqW86d+nMEOFxObyxyvJmBROm94xvYtfBzoeAYEqxSisITMhSju3AhB4XvNnOxqweFkHB8xIDdAjFuR78WHaOzT+4bd2Fkub0EevSw/BAyrTzknab32VdkQJpr6XZO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S9xKHqRP; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a99c99acf7so219052485a.1;
-        Sun, 08 Sep 2024 10:28:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725816539; x=1726421339; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zsm4RBB/t1W/avz/RLFv9t+SfuXFUhmHDDisoJZDHX4=;
-        b=S9xKHqRPQQM7xPhEStgC00isOr/r4gEGd8azrYHW2eHIwEIhTU6j+lO8in92a9dDjG
-         Tqh0c7Io9+HgaupshO/OJMb1+L+7GO80OhOdv3rdMXHMceeYMKMPD/kdrO/m6cw42fIE
-         RP2WHlJPVsBkrJFMCikbcZPkbXHqHi04Egt8TqgZLA5GL+BajET1V2GTfqRtayCFIi/M
-         UfFCFgJCOT0X4UcgiK7/1c4uKjQ70zZY1owGr1KG2VvnsvcRAGjcpX1VJ0M9JlboCS0J
-         GQmZVuXJ2czNrl9uCF8JKiIkD3cZHDEZM5gPkEPdA1AY/UIPmbKkxza0rdd8jRRj/QW4
-         UijA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725816539; x=1726421339;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zsm4RBB/t1W/avz/RLFv9t+SfuXFUhmHDDisoJZDHX4=;
-        b=B3wqw35L928dDQ6wnVY1jOwV/mP2NLWObM+BsV8WyHj4qayHl3b9K43MkO6PgJcd1k
-         nnj9/irXdO+6JCTMPUDXphNtfPtlztmlvaJhqVDjSVh+IL1Uhzi8Wb4KnyK8MOuJN+a6
-         gIBi8cxtzuJagMDsFHaFNllvpUNrUDYibbRXTK7SIeXZ3UwmnxDv2Td4GgjwU+jYe8zk
-         nMVUW/6ToxbX/LK8JDaLxHXMaUu/mBjRmkI1Cv+F3URxVi4cwx6LtFJdDkYXTDFxXvLH
-         JCbkTY4ESC4/d+f7g7qo5rigPdjG5GJLgEs6NuKTVk/lc3ROrzUMFRbXINykU4htx1rh
-         JZeg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+0ORQRj3az9mP0rFMd400eUkby26l2G40tSctfaECfeZ8JaEzGsOvVmX2W53SrFK5ukCDrWreW4Drg7Ls@vger.kernel.org, AJvYcCWHG5lLIr7kGznmT8m8c9RtjadyCDRQN1BQzdXEqEEpLJrSV/e5HS1n5buReeBJ+gvU0/wjyF8/7Q4wVFE6og==@vger.kernel.org, AJvYcCWxOJCKfKVIaHrYM2btYj4v1A8PUwQhSsm1e78FYmYdVRzP/XDoP7O+FQ9VcmtBj6SzqxLBd6iekvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6KAuroSOVRz8RnL7OugNBCkLje6MQky7+yyGRDNmQfjY2gvR7
-	j3WUUCEMIc/FMBSwX9/miSEcUxqQODKTQu3avo2NOfUqZSjLP48f
-X-Google-Smtp-Source: AGHT+IFsyFIKWpHy038Lxs6Jr/2PCnsALaerIi1bPVPX58yVKn+KBHywpybD0Fvqok+idKj5a7aUew==
-X-Received: by 2002:a05:620a:40c7:b0:7a9:b9c6:ab3e with SMTP id af79cd13be357-7a9b9c6ba9dmr10025185a.4.1725816538546;
-        Sun, 08 Sep 2024 10:28:58 -0700 (PDT)
-Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
-        by smtp.googlemail.com with ESMTPSA id af79cd13be357-7a9a7a040dbsm144713585a.86.2024.09.08.10.28.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 10:28:58 -0700 (PDT)
-From: Dennis Lam <dennis.lamerice@gmail.com>
-To: brauner@kernel.org,
-	djwong@kernel.org,
-	corbet@lwn.net
-Cc: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dennis Lam <dennis.lamerice@gmail.com>
-Subject: [PATCH] docs:filesystems: fix spelling and grammar mistakes in iomap design page
-Date: Sun,  8 Sep 2024 13:28:42 -0400
-Message-ID: <20240908172841.9616-2-dennis.lamerice@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725816679; c=relaxed/simple;
+	bh=e0tEGkEymG5RUbw7XUBxSyrsxkisv0ZvAwk0FCrFR8g=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=iFXKQE2eRi2ETi93imdwYenS5s9nBqXNHoxdMjIZbXrd1oYpIFPTMnkFB1pIcMvXFv/CgYTydnxLES4S+8yZXy3QRQoPQzPKPRUQXur74GEyRiOmY15GuxBNaArCdCJBZNv5UsZ1fsFZp5CEruh4UpwzlYrGSWrZ2wacvACHZYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjSyMmG+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF54C4CEC3;
+	Sun,  8 Sep 2024 17:31:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725816678;
+	bh=e0tEGkEymG5RUbw7XUBxSyrsxkisv0ZvAwk0FCrFR8g=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=sjSyMmG+c9AD8aK7bzaySvtRuTCdpVPx8p55j+lDaVHGARH2LBF9Wv5Eq/gPha1g/
+	 4Ey9ZbyI4MhUDaxsufAOwK045xwQWrTYKicpHJZmWxWFHYeayk3B46jED+bolTx5P+
+	 /riG3Cgcdt9dbpCm4TZA35iPSV9/4+zfLVf1mchv7xMv3Krls9zucNIb8Qd5YEqaSI
+	 /W9AECDalDIzAUSDvegS1aMRqoL6Dua8yGTUBLxXq9wpgCDDn+lptSZFTygsMxqd/l
+	 wCMVJTj3zKlt8Ot59DPWbtZyDix73qobjK8c7IdNWT9IDfMj0iSZ9BFiOdW2/WsIMp
+	 CZxuUF+wFBdpQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0A53805D82;
+	Sun,  8 Sep 2024 17:31:20 +0000 (UTC)
+Subject: Re: [GIT PULL] perf/urgent for v6.11-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240908090759.GAZt1pb1NBL9QiXEq7@fat_crate.local>
+References: <20240908090759.GAZt1pb1NBL9QiXEq7@fat_crate.local>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240908090759.GAZt1pb1NBL9QiXEq7@fat_crate.local>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/perf_urgent_for_v6.11_rc7
+X-PR-Tracked-Commit-Id: 2ab9d830262c132ab5db2f571003d80850d56b2a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: e20398877b6216023ac311053baf2f50965cbf27
+Message-Id: <172581667952.2929521.14599999722941605264.pr-tracker-bot@kernel.org>
+Date: Sun, 08 Sep 2024 17:31:19 +0000
+To: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
----
- Documentation/filesystems/iomap/design.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The pull request you sent on Sun, 8 Sep 2024 11:07:59 +0200:
 
-diff --git a/Documentation/filesystems/iomap/design.rst b/Documentation/filesystems/iomap/design.rst
-index f8ee3427bc1a..e2d34085dd0e 100644
---- a/Documentation/filesystems/iomap/design.rst
-+++ b/Documentation/filesystems/iomap/design.rst
-@@ -142,9 +142,9 @@ Definitions
-  * **pure overwrite**: A write operation that does not require any
-    metadata or zeroing operations to perform during either submission
-    or completion.
--   This implies that the fileystem must have already allocated space
-+   This implies that the filesystem must have already allocated space
-    on disk as ``IOMAP_MAPPED`` and the filesystem must not place any
--   constaints on IO alignment or size.
-+   constraints on IO alignment or size.
-    The only constraints on I/O alignment are device level (minimum I/O
-    size and alignment, typically sector size).
- 
-@@ -426,7 +426,7 @@ iomap is concerned:
- 
- The exact locking requirements are specific to the filesystem; for
- certain operations, some of these locks can be elided.
--All further mention of locking are *recommendations*, not mandates.
-+All further mentions of locking are *recommendations*, not mandates.
- Each filesystem author must figure out the locking for themself.
- 
- Bugs and Limitations
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/perf_urgent_for_v6.11_rc7
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/e20398877b6216023ac311053baf2f50965cbf27
+
+Thank you!
+
 -- 
-2.46.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
