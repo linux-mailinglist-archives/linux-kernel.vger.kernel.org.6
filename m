@@ -1,672 +1,349 @@
-Return-Path: <linux-kernel+bounces-320366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52ECC97095B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 21:04:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7DD597095D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 21:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70D1A1C20DD8
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:04:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76F221F213EC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C94178384;
-	Sun,  8 Sep 2024 19:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6111779BD;
+	Sun,  8 Sep 2024 19:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGDIxygP"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="IE689qlD"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C666C339A8;
-	Sun,  8 Sep 2024 19:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C87174EDF
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 19:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725822254; cv=none; b=uI0VfqCeamU/hqLgYIyS/Esso2tJXcL/9EiEGseCkcTsOj3b6caTFE7NWUFA0Vl2DSLPEsU0qK+iqu2yXVxdnjffkcldMbPx6Hah9fzQWilzLL8XZqT4OAXF49HT0Bif5+NtdizRJ/snRb1vxHrO8ynN+FU36s85ilIimMLk2DQ=
+	t=1725822269; cv=none; b=mQ0IP+aK/Df8v8BfV0gHc5xZ8hbxoy99walKUYl5J3vAuJUoc9JHKKHDg+9tHj1XZsBnrI/zaA7ztmGyJY/eNlcGEd+K07vOuYWwl1oMxAiZHTxkzzOO46A71swmCSxdQ4p2IEFJlfFcoHmdsLwPsD1OIsyhcJoF4oolg4hvDpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725822254; c=relaxed/simple;
-	bh=wvoFQLXpDcwGOU+Ix+bGW5ByAfIzdxUZT3hcleVNDf4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a9KF94QVR8iJx2qlMgPg+p6tJ0r7Bbre9HW2Ll+OVnh72RMUjVvDQSbgfH6utuJeK3A1d5sB+yUlkyXY1FGZxdaZrlK8+Cdk+0LXChsROw5SoT1APYGRuoC62mGRLHnEqdsbzLuOTzcQK6yeEe5ZuAhMstp5ZSgS5NveYQ1Tl+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AGDIxygP; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e034fac53bso1225471b6e.3;
-        Sun, 08 Sep 2024 12:04:12 -0700 (PDT)
+	s=arc-20240116; t=1725822269; c=relaxed/simple;
+	bh=cSuRv1s4Z3jU6ggrMdiItv7yMIs76w8gQpvH3RezZhI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CRs6XE7vhLhnuZs4f3zoRydLO99ilNvSNguXDrow6o06YBTn3Q8Wql4EUHImCuU2Rofi8uno2j0jKIrhmI+84C0Xq3hs/SWfZnXkvNXREvQxCcUt0aSKFoiCi4WNA5dgakzllxdt8QPhhig62UMIyauAgg3Ax4ENTYwfffEP+Cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=IE689qlD; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71798661a52so2041306b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 12:04:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725822252; x=1726427052; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E7Pc8uemgNp7ujP3oIrZDplRhNU9YJTKtM4gsksl0to=;
-        b=AGDIxygPreAx/RmIpob3DVkX2EDfkLaYiucEYQYAgTUT5YjlE1nRjd41n192cKLsSq
-         Ts2W7EsOE+c8M6fxk2I2iDnMBr/uijHTmww80BehcwGxBkMf8zk+dGS7T5SJjwFMjA7H
-         IlRjhcwG3YAd/fd0dG01FgHOOCbS9Dt/pC40iOjPU8zRlKh8Cvp8H3ERg8oGhLrtYS4S
-         Z/tHY91gxkwICFl2gFRqHQC1gltCNwF0gkEzhFblC04YIZYoCH927URgbtblObfj4wo9
-         qCVqpnBKh6PayaHQnswlUpo6obuo3IjKbxVBGanRbJXOMGxtVVfG7bbdPBV4uz7fSBLZ
-         MRPg==
+        d=wbinvd.org; s=wbinvd; t=1725822266; x=1726427066; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CVdlK6bqU1J6v6b7a6AyJDnN3HxR3Wbc9tjxaGTWMUE=;
+        b=IE689qlDbI35V0hamaDxD0csqU/ZFjkBuoSnLDaOSmTAzxqpUnA2R9ZW8CA+khRVJ6
+         OeKT5HW4/7A2wyo/M5B0ZEestQwzsZQ2wghVrQhtONqRY5XgOaWVBILwXE7P3l28SRzi
+         G+iZZQOwCUM1QvKRDGpZ6/dXO/Jr9mRk7G8tr5LqYZZloCmxUZ3SxsSYXek/Dwo3hoEX
+         njlI7Byjv96n17WYYHklmFMlV8MTgMrThaRT627S9MceoKQqo4LSASthqNuX7BP/7w6p
+         3X7ELaDo50dKBrTvw0bGDAh9uML5xp4B9tdXIu44p071hFsujIw1rGgDkvZwqsOpuXxO
+         3dbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725822252; x=1726427052;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E7Pc8uemgNp7ujP3oIrZDplRhNU9YJTKtM4gsksl0to=;
-        b=q4osst0aHAyZhfpydbnPfXPDi6yK1V9Jz+beTwZXZa9U3pwDWKUtU6MGlUZtsHHcU7
-         1VGcLwlrxdmK4g0GkDy3IgusRjEaz2nzlwlPaGtj00/lU4/YKQKQZVihxovrthCPbSEp
-         za9WPeHh/4sNdL61c7cYnNnu4js/nQQL9aT04iR8osDl9Mm7R3DXYy2aRQ+Tbsdb5F4C
-         T3sCph7IySUw/ZOQfFzYyf65xz0EQ02PasBB+lqQ8YepmZuyXO/dIn+G53oWs7N6R0xu
-         lJF9L4nDLbCqUTm31TKtMRTvjX0P6V9VK8suWRkHI5comZeXrIH/kb7hMy3qowucqm+K
-         SGlw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6dbN9u5rUCfzBDWy9IClfqHNGJl3l1hah5k0r5fMPp2Ts7W6tPQMXhKmVx/i/SPUT028qr7PY0wd3@vger.kernel.org, AJvYcCVCSgU/fQ2E2MjzXdvJvWvD3WN7SvcHAUWgO+lJsjTn51vBgxRZFrhpBSs/jBwWGjFA6ma0hNt5KuUM57Dp@vger.kernel.org, AJvYcCXvna91iV9ATXt5yZvucm7/N67oXkMLac4io48g7cOC49YCU7lxb6TvPdxGInbrvcyPiySoDGnvwT2n@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO8z6xWAR6Z0rXxtEe4OvG+z/AXrno/ZB5Oj2JuM3YSa4o24mE
-	8xUWWLQ/t0Rb3K9WQ8cvKs8VkWHZLCZvi4FBy2It3zi1hRE6bucCtZRyXf/v
-X-Google-Smtp-Source: AGHT+IG80yHW3muzJZFhoTbxaKVvcuFOYmgX9h4T4v+XMAqyKZmyn2Bfi8Fg+jI7EgX8MLQi9k+D+A==
-X-Received: by 2002:a05:6808:1a0a:b0:3de:220c:ace2 with SMTP id 5614622812f47-3e029df8226mr10345447b6e.14.1725822251576;
-        Sun, 08 Sep 2024 12:04:11 -0700 (PDT)
-Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822f993a3sm14224431cf.93.2024.09.08.12.04.05
+        d=1e100.net; s=20230601; t=1725822266; x=1726427066;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CVdlK6bqU1J6v6b7a6AyJDnN3HxR3Wbc9tjxaGTWMUE=;
+        b=uKeFWcANUJ+2uqNFKATXvwRLr22WlFdfhvUqi1ivH4nrn/0k/sFggaBoZaeFR3Cufh
+         DpYbNHZLIc2JHVoyumXcnS1eGP6sZDsOQcwoTrjkr/uMCQkk21XBzz9YXIVE+EKk8bdF
+         IbFOwiyKj9OkA1Zu6/tpiEcmo+1wU6+2WEM5xM+z/s4rCEhx07KOnAcqvmVjBt8jLFtP
+         rLR2ZT874ODEqwsArRUaCtbMEN9nqzfbutO4m3MHC47FHP9ZfiLhv34OJPtxKx4L62T+
+         pW90BpkS4kEsHmm904frAN59k/l1AvM9Z0QM8/lTmwh3TQX7yVU2MoaQmjqBU6ue1ycg
+         Irmw==
+X-Gm-Message-State: AOJu0YzwRtN8BfreOpnUTbmH4mmXNbmfgf5RwThHzWvLYd8SYU5kcA6Q
+	FA+ELA9NGG6Wmy3JPHR+e0ttr0dnXJGCD3DLZZ0ymP5o75WR6tnxAvp/7FPBKoEroot43nHs/9u
+	X
+X-Google-Smtp-Source: AGHT+IFyaU2il64o/F+ORIgIKZHOvXTBgexbGGEuLPa36C+5BY1sXRPupmYXTT+2C3ihE5u6bfj56g==
+X-Received: by 2002:a05:6a00:cca:b0:704:151d:dcce with SMTP id d2e1a72fcca58-718d5341f04mr13528793b3a.5.1725822265513;
+        Sun, 08 Sep 2024 12:04:25 -0700 (PDT)
+Received: from mozart.vkv.me (192-184-160-110.fiber.dynamic.sonic.net. [192.184.160.110])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e5896f19sm2310580b3a.32.2024.09.08.12.04.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 12:04:06 -0700 (PDT)
-Date: Sun, 8 Sep 2024 15:04:03 -0400
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jagath Jog J <jagathjog1996@gmail.com>, Ramona Gradinariu <ramona.bolboaca13@gmail.com>, 
-	Nuno Sa <nuno.sa@analog.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] iio: imu: Add i2c driver for bmi270 imu
-Message-ID: <ltddorwstm4hbsczsf4klqaoboagvdj3bbdhwyvbeslfdnnoc6@6fow6su5fju4>
-References: <20240906165322.1745328-1-lanzano.alex@gmail.com>
- <20240906165322.1745328-3-lanzano.alex@gmail.com>
- <20240907170844.7eadb406@jic23-huawei>
+        Sun, 08 Sep 2024 12:04:24 -0700 (PDT)
+From: Calvin Owens <calvin@wbinvd.org>
+To: linux-kernel@vger.kernel.org
+Cc: Rodolfo Giometti <giometti@enneenne.com>,
+	George Spelvin <linux@horizon.com>,
+	Calvin Owens <calvin@wbinvd.org>
+Subject: [PATCH] pps: Remove embedded cdev to fix a use-after-free
+Date: Sun,  8 Sep 2024 12:04:13 -0700
+Message-ID: <ed73319e062495a56f5c8fd95c1674f891871882.1725820970.git.calvin@wbinvd.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240907170844.7eadb406@jic23-huawei>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 07, 2024 at 05:08:44PM GMT, Jonathan Cameron wrote:
-> On Fri,  6 Sep 2024 12:52:51 -0400
-> Alex Lanzano <lanzano.alex@gmail.com> wrote:
-> 
-> > Add initial i2c support for the Bosch BMI270 6-axis IMU.
-> > Provides raw read access to acceleration and angle velocity measurements
-> > via iio channels. Device configuration requires firmware provided by
-> > Bosch and is requested and load from userspace.
-> > 
-> > Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
-> 
-> Hi Alex,
-> 
-> Various comments inline.  Just to check, have you confirmed these have
-> a substantially different interface to the other bosch IMU devices?
-> 
-> (I'm too lazy / busy to datasheet dive today!)
-> 
-> Jonathan
-> 
+On a board running ntpd and gpsd, I'm seeing a consistent use-after-free
+in sys_exit() from gpsd when rebooting:
 
-Yes, the BMI270 has a different register layout and some features not
-included in the existing BMI160 and BMI323 such as the wrist worn
-gesture detection.
+    pps pps1: removed
+    ------------[ cut here ]------------
+    kobject: '(null)' (00000000db4bec24): is not initialized, yet kobject_put() is being called.
+    WARNING: CPU: 2 PID: 440 at lib/kobject.c:734 kobject_put+0x120/0x150
+    CPU: 2 UID: 299 PID: 440 Comm: gpsd Not tainted 6.11.0-rc6-00308-gb31c44928842 #1
+    Hardware name: Raspberry Pi 4 Model B Rev 1.1 (DT)
+    pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+    pc : kobject_put+0x120/0x150
+    lr : kobject_put+0x120/0x150
+    sp : ffffffc0803d3ae0
+    x29: ffffffc0803d3ae0 x28: ffffff8042dc9738 x27: 0000000000000001
+    x26: 0000000000000000 x25: ffffff8042dc9040 x24: ffffff8042dc9440
+    x23: ffffff80402a4620 x22: ffffff8042ef4bd0 x21: ffffff80405cb600
+    x20: 000000000008001b x19: ffffff8040b3b6e0 x18: 0000000000000000
+    x17: 0000000000000000 x16: 0000000000000000 x15: 696e6920746f6e20
+    x14: 7369203a29343263 x13: 205d303434542020 x12: 0000000000000000
+    x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+    x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
+    x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+    x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
+    Call trace:
+     kobject_put+0x120/0x150
+     cdev_put+0x20/0x3c
+     __fput+0x2c4/0x2d8
+     ____fput+0x1c/0x38
+     task_work_run+0x70/0xfc
+     do_exit+0x2a0/0x924
+     do_group_exit+0x34/0x90
+     get_signal+0x7fc/0x8c0
+     do_signal+0x128/0x13b4
+     do_notify_resume+0xdc/0x160
+     el0_svc+0xd4/0xf8
+     el0t_64_sync_handler+0x140/0x14c
+     el0t_64_sync+0x190/0x194
+    ---[ end trace 0000000000000000 ]---
 
-> > diff --git a/drivers/iio/imu/bmi270/Kconfig b/drivers/iio/imu/bmi270/Kconfig
-> > new file mode 100644
-> > index 000000000000..05e13c67db57
-> > --- /dev/null
-> > +++ b/drivers/iio/imu/bmi270/Kconfig
-> > @@ -0,0 +1,22 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +#
-> > +# BMI270 IMU driver
-> > +#
-> > +
-> > +config BMI270
-> > +	tristate
-> > +	select IIO_BUFFER
-> > +	select IIO_TRIGGERED_BUFFER
-> So far the driver isn't using the buffer / triggered buffer
-> so drop this until it does.
-> 
+...followed by more symptoms of corruption, with similar stacks:
 
-Wiil do in v3!
+    refcount_t: underflow; use-after-free.
+    kernel BUG at lib/list_debug.c:62!
+    Kernel panic - not syncing: Oops - BUG: Fatal exception
 
-> > +
-> > +config BMI270_I2C
-> > +	tristate "Bosch BMI270 I2C driver"
-> > +	depends on I2C
-> > +	select BMI270
-> > +	select REGMAP_I2C
-> > +	help
-> > +	  Enable support for the Bosch BMI270 6-Axis IMU connected to I2C
-> > +	  interface.
-> > +
-> > +	  This driver can also be built as a module. If so, the module will be
-> > +	  called bmi270_i2c.
-> > +
-> 
-> > diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
-> > new file mode 100644
-> > index 000000000000..f8c53e8e35a2
-> > --- /dev/null
-> > +++ b/drivers/iio/imu/bmi270/bmi270_core.c
-> > @@ -0,0 +1,322 @@
-> > +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +
-> > +#include <linux/firmware.h>
-> > +#include <linux/i2c.h>
-> > +#include <linux/iio/iio.h>
-> > +#include <linux/module.h>
-> > +#include <linux/regmap.h>
-> > +
-> > +#include "bmi270.h"
-> > +
-> > +#define BMI270_CHIP_ID 0x24
-> > +#define BMI270_INIT_DATA_FILE "bmi270-init-data.fw"
-> > +
-> > +enum bmi270_registers {
-> 
-> Unless you use the type somewhere, ti's usually better to just
-> use defines for register addresses.
-> That lets you group them with the field definitions for the
-> elements that make up each register.
-> 
+This happens because pps_device_destruct() frees the pps_device with the
+embedded cdev immediately after calling cdev_del(), but, as the comment
+above cdev_del() notes, fops for previously opened cdevs are still
+callable even after cdev_del() returns. I think this bug has always
+been there: I can't explain why it suddenly started happening every time
+I reboot this particular board.
 
-Will fix in v3!
+In commit d953e0e837e6 ("pps: Fix a use-after free bug when
+unregistering a source."), George Spelvin suggested removing the
+embedded cdev. That seems like the simplest way to fix this, so I've
+implemented his suggestion, with pps_idr becoming the source of truth
+for which minor corresponds to which device.
 
-> > +	BMI270_REG_CHIP_ID = 0x00,
-> > +	BMI270_REG_INTERNAL_STATUS = 0x21,
-> > +	BMI270_REG_ACC_CONF = 0x40,
-> > +	BMI270_REG_GYR_CONF = 0x42,
-> > +	BMI270_REG_INIT_CTRL = 0x59,
-> > +	BMI270_REG_INIT_DATA = 0x5e,
-> > +	BMI270_REG_PWR_CONF = 0x7c,
-> > +	BMI270_REG_PWR_CTRL = 0x7d,
-> > +};
-> 
-> > +static int bmi270_get_data(struct bmi270_data *bmi270_device,
-> > +			   int chan_type, int axis, int *val)
-> > +{
-> > +	__le16 sample;
-> > +	int reg;
-> > +
-> > +	switch (chan_type) {
-> > +	case IIO_ACCEL:
-> > +		reg = 0xc + (axis - IIO_MOD_X) * sizeof(sample);
-> 
-> 0xc and 0x12 are magic values, give them names via defines.
-> I assume they are the x access data registers.
-> 
+But now that pps_idr defines userspace visibility instead of cdev_add(),
+we need to be sure the pps->dev kobject refcount can't reach zero while
+userspace can still find it again. So, the idr_remove() call moves to
+pps_unregister_cdev(), and pps_idr now holds a reference to the pps->dev
+kobject.
 
-Will fix in v3!
+Fixes: d953e0e837e6 ("pps: Fix a use-after free bug when unregistering a source.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+---
+ drivers/pps/pps.c          | 85 ++++++++++++++++++++------------------
+ include/linux/pps_kernel.h |  1 -
+ 2 files changed, 45 insertions(+), 41 deletions(-)
 
-> > +		break;
-> > +	case IIO_ANGL_VEL:
-> > +		reg = 0x12 + (axis - IIO_MOD_X) * sizeof(sample);
-> > +		break;
-> > +	default:
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	regmap_bulk_read(bmi270_device->regmap, reg, &sample, sizeof(sample));
-> check for an error return.
-> 
+diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
+index 5d19baae6a38..72606d10f5f5 100644
+--- a/drivers/pps/pps.c
++++ b/drivers/pps/pps.c
+@@ -25,7 +25,7 @@
+  * Local variables
+  */
+ 
+-static dev_t pps_devt;
++static int pps_major;
+ static struct class *pps_class;
+ 
+ static DEFINE_MUTEX(pps_idr_lock);
+@@ -296,19 +296,35 @@ static long pps_cdev_compat_ioctl(struct file *file,
+ #define pps_cdev_compat_ioctl	NULL
+ #endif
+ 
++static struct pps_device *pps_idr_get(unsigned long id)
++{
++	struct pps_device *pps;
++
++	mutex_lock(&pps_idr_lock);
++	pps = idr_find(&pps_idr, id);
++	if (pps)
++		kobject_get(&pps->dev->kobj);
++
++	mutex_unlock(&pps_idr_lock);
++	return pps;
++}
++
+ static int pps_cdev_open(struct inode *inode, struct file *file)
+ {
+-	struct pps_device *pps = container_of(inode->i_cdev,
+-						struct pps_device, cdev);
++	struct pps_device *pps = pps_idr_get(iminor(inode));
++
++	if (!pps)
++		return -ENODEV;
++
+ 	file->private_data = pps;
+-	kobject_get(&pps->dev->kobj);
+ 	return 0;
+ }
+ 
+ static int pps_cdev_release(struct inode *inode, struct file *file)
+ {
+-	struct pps_device *pps = container_of(inode->i_cdev,
+-						struct pps_device, cdev);
++	struct pps_device *pps = file->private_data;
++
++	WARN_ON(pps->id != iminor(inode));
+ 	kobject_put(&pps->dev->kobj);
+ 	return 0;
+ }
+@@ -332,14 +348,6 @@ static void pps_device_destruct(struct device *dev)
+ {
+ 	struct pps_device *pps = dev_get_drvdata(dev);
+ 
+-	cdev_del(&pps->cdev);
+-
+-	/* Now we can release the ID for re-use */
+-	pr_debug("deallocating pps%d\n", pps->id);
+-	mutex_lock(&pps_idr_lock);
+-	idr_remove(&pps_idr, pps->id);
+-	mutex_unlock(&pps_idr_lock);
+-
+ 	kfree(dev);
+ 	kfree(pps);
+ }
+@@ -364,39 +372,26 @@ int pps_register_cdev(struct pps_device *pps)
+ 		goto out_unlock;
+ 	}
+ 	pps->id = err;
+-	mutex_unlock(&pps_idr_lock);
+ 
+-	devt = MKDEV(MAJOR(pps_devt), pps->id);
+-
+-	cdev_init(&pps->cdev, &pps_cdev_fops);
+-	pps->cdev.owner = pps->info.owner;
+-
+-	err = cdev_add(&pps->cdev, devt, 1);
+-	if (err) {
+-		pr_err("%s: failed to add char device %d:%d\n",
+-				pps->info.name, MAJOR(pps_devt), pps->id);
+-		goto free_idr;
+-	}
++	devt = MKDEV(pps_major, pps->id);
+ 	pps->dev = device_create(pps_class, pps->info.dev, devt, pps,
+ 							"pps%d", pps->id);
+ 	if (IS_ERR(pps->dev)) {
+ 		err = PTR_ERR(pps->dev);
+-		goto del_cdev;
++		goto free_idr;
+ 	}
+ 
+ 	/* Override the release function with our own */
+ 	pps->dev->release = pps_device_destruct;
+ 
+-	pr_debug("source %s got cdev (%d:%d)\n", pps->info.name,
+-			MAJOR(pps_devt), pps->id);
++	pr_debug("source %s got cdev (%d:%d)\n", pps->info.name, pps_major,
++		 pps->id);
+ 
++	kobject_get(&pps->dev->kobj);
++	mutex_unlock(&pps_idr_lock);
+ 	return 0;
+ 
+-del_cdev:
+-	cdev_del(&pps->cdev);
+-
+ free_idr:
+-	mutex_lock(&pps_idr_lock);
+ 	idr_remove(&pps_idr, pps->id);
+ out_unlock:
+ 	mutex_unlock(&pps_idr_lock);
+@@ -408,6 +403,13 @@ void pps_unregister_cdev(struct pps_device *pps)
+ 	pr_debug("unregistering pps%d\n", pps->id);
+ 	pps->lookup_cookie = NULL;
+ 	device_destroy(pps_class, pps->dev->devt);
++
++	/* Now we can release the ID for re-use */
++	pr_debug("deallocating pps%d\n", pps->id);
++	mutex_lock(&pps_idr_lock);
++	idr_remove(&pps_idr, pps->id);
++	kobject_put(&pps->dev->kobj);
++	mutex_unlock(&pps_idr_lock);
+ }
+ 
+ /*
+@@ -427,6 +429,11 @@ void pps_unregister_cdev(struct pps_device *pps)
+  * so that it will not be used again, even if the pps device cannot
+  * be removed from the idr due to pending references holding the minor
+  * number in use.
++ *
++ * Since pps_idr holds a reference to the kobject, the returned
++ * pps_device is guaranteed to be valid until pps_unregister_cdev() is
++ * called on it. But after calling pps_unregister_cdev(), it may be
++ * freed at any time.
+  */
+ struct pps_device *pps_lookup_dev(void const *cookie)
+ {
+@@ -449,13 +456,11 @@ EXPORT_SYMBOL(pps_lookup_dev);
+ static void __exit pps_exit(void)
+ {
+ 	class_destroy(pps_class);
+-	unregister_chrdev_region(pps_devt, PPS_MAX_SOURCES);
++	__unregister_chrdev(pps_major, 0, PPS_MAX_SOURCES, "pps");
+ }
+ 
+ static int __init pps_init(void)
+ {
+-	int err;
+-
+ 	pps_class = class_create("pps");
+ 	if (IS_ERR(pps_class)) {
+ 		pr_err("failed to allocate class\n");
+@@ -463,8 +468,9 @@ static int __init pps_init(void)
+ 	}
+ 	pps_class->dev_groups = pps_groups;
+ 
+-	err = alloc_chrdev_region(&pps_devt, 0, PPS_MAX_SOURCES, "pps");
+-	if (err < 0) {
++	pps_major = __register_chrdev(0, 0, PPS_MAX_SOURCES, "pps",
++				      &pps_cdev_fops);
++	if (pps_major < 0) {
+ 		pr_err("failed to allocate char device region\n");
+ 		goto remove_class;
+ 	}
+@@ -477,8 +483,7 @@ static int __init pps_init(void)
+ 
+ remove_class:
+ 	class_destroy(pps_class);
+-
+-	return err;
++	return pps_major;
+ }
+ 
+ subsys_initcall(pps_init);
+diff --git a/include/linux/pps_kernel.h b/include/linux/pps_kernel.h
+index 78c8ac4951b5..8ee312788118 100644
+--- a/include/linux/pps_kernel.h
++++ b/include/linux/pps_kernel.h
+@@ -56,7 +56,6 @@ struct pps_device {
+ 
+ 	unsigned int id;			/* PPS source unique ID */
+ 	void const *lookup_cookie;		/* For pps_lookup_dev() only */
+-	struct cdev cdev;
+ 	struct device *dev;
+ 	struct fasync_struct *async_queue;	/* fasync method */
+ 	spinlock_t lock;
+-- 
+2.45.2
 
-Will fix in v3!
-
-> It's fine with i2c to use a buffer on the stack (as it bounce buffers
-> everything) but keep in mind that regmap in general doesn't guarantee that
-> (even it happens to be the case today) so when you add SPI this will need
-> to be a DMA safe buffer.  Either allocate one on the heap, or embed one
-> marked __aligned(IIO_DMA_MINALIGN) at the end of your iio_priv() structure.
-> 
-> Note you only need to do this once you add spi support.
-> 
-
-Will make note of this for upcoming SPI support.
-
-> > +	*val = sign_extend32(le16_to_cpu(sample), 15);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int bmi270_read_raw(struct iio_dev *indio_dev,
-> > +			   struct iio_chan_spec const *chan,
-> > +			   int *val, int *val2, long mask)
-> > +{
-> > +	struct bmi270_data *bmi270_device = iio_priv(indio_dev);
-> > +
-> > +	switch (mask) {
-> > +	case IIO_CHAN_INFO_RAW:
-> > +		bmi270_get_data(bmi270_device, chan->type, chan->channel2, val);
-> 
-> Check for error return and pass it on if there is one.
-> 
-
-Will fix in v3.
-
-> > +		return IIO_VAL_INT;
-> > +	default:
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	return 0;
-> unreachable code. Drop this last return.
-> 
-
-Will fix in v3.
-
-> > +}
-> > +
-> > +static const struct iio_info bmi270_info = {
-> > +	.read_raw = bmi270_read_raw,
-> > +};
-> > +
-> > +static const struct iio_chan_spec bmi270_channels[] = {
-> > +	{
-> > +		.type = IIO_ACCEL,
-> > +		.modified = 1,
-> > +		.channel2 = IIO_MOD_X,
-> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |
-> > +			BIT(IIO_CHAN_INFO_FREQUENCY),
-> > +		.scan_index = BMI270_SCAN_ACCEL_X,
-> > +		.scan_type = {
-> > +			.sign = 's',
-> > +			.realbits = 16,
-> > +			.storagebits = 16,
-> > +			.endianness = IIO_LE,
-> > +		},
-> > +	},
-> > +	{
-> > +		.type = IIO_ACCEL,
-> > +		.modified = 1,
-> > +		.channel2 = IIO_MOD_Y,
-> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |
-> > +			BIT(IIO_CHAN_INFO_FREQUENCY),
-> > +		.scan_index = BMI270_SCAN_ACCEL_Y,
-> > +		.scan_type = {
-> > +			.sign = 's',
-> > +			.realbits = 16,
-> > +			.storagebits = 16,
-> > +			.endianness = IIO_LE,
-> > +		},
-> > +	},
-> > +	{
-> > +		.type = IIO_ACCEL,
-> > +		.modified = 1,
-> > +		.channel2 = IIO_MOD_Z,
-> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |
-> > +			BIT(IIO_CHAN_INFO_FREQUENCY),
-> > +		.scan_index = BMI270_SCAN_ACCEL_Z,
-> > +		.scan_type = {
-> > +			.sign = 's',
-> > +			.realbits = 16,
-> > +			.storagebits = 16,
-> > +			.endianness = IIO_LE,
-> > +		},
-> > +	},
-> > +	{
-> > +		.type = IIO_ANGL_VEL,
-> 
-> Perhaps a macro given 3 instances that only differ in _X _Y _Z.
-> And another one for the acceleration channels.
-> 
-> 
-
-Will create macro in v3.
-
-> > +		.modified = 1,
-> > +		.channel2 = IIO_MOD_X,
-> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |
-> > +			BIT(IIO_CHAN_INFO_FREQUENCY),
-> > +		.scan_index = BMI270_SCAN_GYRO_X,
-> > +		.scan_type = {
-> > +			.sign = 's',
-> > +			.realbits = 16,
-> > +			.storagebits = 16,
-> > +			.endianness = IIO_LE,
-> > +		},
-> > +	},
-> > +	{
-> > +		.type = IIO_ANGL_VEL,
-> > +		.modified = 1,
-> > +		.channel2 = IIO_MOD_Y,
-> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |
-> > +			BIT(IIO_CHAN_INFO_FREQUENCY),
-> > +		.scan_index = BMI270_SCAN_GYRO_Y,
-> > +		.scan_type = {
-> > +			.sign = 's',
-> > +			.realbits = 16,
-> > +			.storagebits = 16,
-> > +			.endianness = IIO_LE,
-> > +		},
-> > +
-> > +	},
-> > +	{
-> > +		.type = IIO_ANGL_VEL,
-> > +		.modified = 1,
-> > +		.channel2 = IIO_MOD_Z,
-> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |
-> > +			BIT(IIO_CHAN_INFO_FREQUENCY),
-> > +		.scan_index = BMI270_SCAN_GYRO_Z,
-> > +		.scan_type = {
-> > +			.sign = 's',
-> > +			.realbits = 16,
-> > +			.storagebits = 16,
-> > +			.endianness = IIO_LE,
-> 
-> Until you add support for the buffer, scan_index and scan_type should be
-> at least mostly irrelevant. If you aren't using them for something else, don't
-> set them until the patch where you add buffer support.
-> 
-
-Will drop in v3.
-
-> > +		},
-> > +	},
-> > +};
-> > +
-> > +static int bmi270_validate_chip_id(struct bmi270_data *bmi270_device)
-> > +{
-> > +	int chip_id;
-> > +	int ret;
-> > +	struct device *dev = bmi270_device->dev;
-> > +	struct regmap *regmap = bmi270_device->regmap;
-> > +
-> > +	ret = regmap_read(regmap, BMI270_REG_CHIP_ID, &chip_id);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to read chip id");
-> > +
-> > +	if (chip_id != BMI270_CHIP_ID)
-> > +		return dev_err_probe(dev, -ENODEV, "Invalid chip id");
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int bmi270_write_init_data(struct bmi270_data *bmi270_device)
-> Consider renaming.  Perhaps bmi270_write_calibration_data()
-> or something like that?
-> 
-
-Will rename in v3.
-
-> > +{
-> > +	int pwr_conf = 0;
-> > +	int ret;
-> > +	int status = 0;
-> > +	const struct firmware *init_data;
-> > +	struct device *dev = bmi270_device->dev;
-> > +	struct regmap *regmap = bmi270_device->regmap;
-> > +
-> > +	ret = regmap_read(regmap, BMI270_REG_PWR_CONF, &pwr_conf);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to read power configuration");
-> > +
-> > +	pwr_conf &=  0xfffffffe;
-> 
-> Probably define that as ~BIT(0) plus give it a name as that's not obvious.
-> regmap_clear_bits() would be cleaner for clearing just one bit.
-> 
-
-Will use regmap_clear_bits() in v3.
-
-> > +	ret = regmap_write(regmap, BMI270_REG_PWR_CONF, pwr_conf);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to write power configuration");
-> > +
-> > +	usleep_range(450, 1000);
-> > +
-> > +	ret = regmap_write(regmap, BMI270_REG_INIT_CTRL, 0x0);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to prepare device to load init data");
-> > +
-> > +	ret = request_firmware(&init_data, BMI270_INIT_DATA_FILE, dev);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to load init data file");
-> > +
-> > +	ret = regmap_bulk_write(regmap, BMI270_REG_INIT_DATA,
-> > +				init_data->data, init_data->size);
-> > +	release_firmware(init_data);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to write init data");
-> > +
-> > +	ret = regmap_write(regmap, BMI270_REG_INIT_CTRL, 0x1);
-> Give that bit a define even if it's the only one in the register.
-> 
-
-Will do in v3.
-
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to stop device initialization");
-> > +
-> > +	usleep_range(20000, 55000);
-> > +
-> > +	ret = regmap_read(regmap, BMI270_REG_INTERNAL_STATUS, &status);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to read internal status");
-> > +
-> > +	if (status != 1)
-> 
-> Define even for that 1.  It must mean something?
-> 
-
-Will define in v3.
-
-> > +		return dev_err_probe(dev, -ENODEV, "Device failed to initialize");
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int bmi270_configure_imu(struct bmi270_data *bmi270_device)
-> > +{
-> > +	int ret;
-> > +	struct device *dev = bmi270_device->dev;
-> > +	struct regmap *regmap = bmi270_device->regmap;
-> > +
-> > +	ret = regmap_write(regmap, BMI270_REG_PWR_CTRL, 0x0e);
-> 
-> Magic register values. Assuming you know what these break down into
-> please add the defines for each field so see can see what is
-> being controlled by each write.
-> 
-
-Will define in v3.
-
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to enable accelerometer and gyroscope");
-> > +
-> > +	ret = regmap_write(regmap, BMI270_REG_ACC_CONF, 0xa8);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to configure accelerometer");
-> > +
-> > +	ret = regmap_write(regmap, BMI270_REG_GYR_CONF, 0xa9);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to configure gyroscope");
-> > +
-> > +	ret = regmap_write(regmap, BMI270_REG_PWR_CONF, 0x02);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to set power configuration");
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int bmi270_chip_init(struct bmi270_data *bmi270_device)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret = bmi270_validate_chip_id(bmi270_device);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = bmi270_write_init_data(bmi270_device);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = bmi270_configure_imu(bmi270_device);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return 0;
-> 
-> 	return bmi270_configure_imu()
-> saves a few lines for no significant loss of readability.
-> 
-
-Will do in v3.
-
-> > +}
-> > +
-> > +int bmi270_core_probe(struct device *dev, struct regmap *regmap,
-> > +		      const char *name, bool use_spi)
-> 
-> Drop the use_spi parameter. That isn't relevant yet (and may never be!)
-> 
-
-Will do in v3.
-
-> > +{
-> > +	int ret;
-> > +	struct bmi270_data *bmi270_device;
-> > +	struct iio_dev *indio_dev;
-> > +
-> > +	indio_dev = devm_iio_device_alloc(dev, sizeof(struct bmi270_data *));
-> > +	if (!indio_dev)
-> > +		return -ENOMEM;
-> > +
-> > +	bmi270_device = iio_priv(indio_dev);
-> > +	bmi270_device->dev = dev;
-> > +	bmi270_device->regmap = regmap;
-> > +
-> > +	dev_set_drvdata(dev, indio_dev);
-> Is this ever used? If not, don't set it.
-> 
-
-Will drop in v3.
-
-> > +
-> > +	ret = bmi270_chip_init(bmi270_device);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	indio_dev->channels = bmi270_channels;
-> > +	indio_dev->num_channels = ARRAY_SIZE(bmi270_channels);
-> > +	indio_dev->name = name;
-> > +	indio_dev->modes = INDIO_DIRECT_MODE;
-> > +	indio_dev->info = &bmi270_info;
-> > +
-> > +	return devm_iio_device_register(dev, indio_dev);
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(bmi270_core_probe, IIO_BMI270);
-> > +
-> > +MODULE_AUTHOR("Alex Lanzano");
-> > +MODULE_DESCRIPTION("BMI270 driver");
-> > +MODULE_LICENSE("GPL");
-> > diff --git a/drivers/iio/imu/bmi270/bmi270_i2c.c b/drivers/iio/imu/bmi270/bmi270_i2c.c
-> > new file mode 100644
-> > index 000000000000..2a18c3af92d2
-> > --- /dev/null
-> > +++ b/drivers/iio/imu/bmi270/bmi270_i2c.c
-> > @@ -0,0 +1,56 @@
-> > +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +
-> > +#include <linux/module.h>
-> > +#include <linux/i2c.h>
-> > +#include <linux/iio/iio.h>
-> > +#include <linux/module.h>
-> 
-> mod_devicetable.h
-> 
-
-Will add in v3.
-
-> > +#include <linux/regmap.h>
-> > +
-> > +#include "bmi270.h"
-> > +
-> > +static int bmi270_i2c_probe(struct i2c_client *client)
-> > +{
-> > +	const char *name;
-> > +	struct regmap *regmap;
-> > +	struct device *dev = &client->dev;
-> > +	const struct i2c_device_id *id;
-> > +
-> > +	regmap = devm_regmap_init_i2c(client, &bmi270_regmap_config);
-> > +	if (IS_ERR(regmap)) {
-> > +		return dev_err_probe(dev, PTR_ERR(regmap),
-> > +				     "Failed to init i2c regmap");
-> > +	}
-> 
-> No {} needed around a single statement like this.
-> 
-
-Will fix in v3.
-
-> > +
-> > +	id = i2c_client_get_device_id(client);
-> 
-> For modern drivers, should only need to get the associated data
-> and i2c_get_match_data() deals with various firmware types.
-> You only need that once multiple chips are supported.
-> For now there should be no reason to query this.
-> 
-
-Will drop in v3.
-
-> > +	if (id)
-> > +		name = id->name;
-> > +	else
-> > +		name = dev_name(dev);
-> 
-> Until the driver supports multiple devices, hardcode this
-> in the core code as "bmi270"
-> 
-> When multiple parts are supported, use a chip type specific
-> structure with a const char * in it.
-> naming via id->name or dev_name and similar tends to give
-> unstable results that aren't always the part number of the
-> device.
-> 
-
-Will hardcode this in v3.
-
-> > +
-> > +	return bmi270_core_probe(dev, regmap, name, false);
-> > +}
-> > +
-> > +static const struct i2c_device_id bmi270_i2c_id[] = {
-> > +	{"bmi270", 0},
-> > +	{}
-> > +};
-> > +
-> > +static const struct of_device_id bmi270_of_match[] = {
-> > +	{.compatible = "bosch,bmi270"},
-> > +	{},
-> Preferred style (I'm slowly tidying this up across IIO) is
-> 	{ .compatible = "bosch,bmi270" },
-> 	{ }
-> 
-> So spaces and no comma after terminator as we never want to
-> add anything after that.
-> Applies to other similar cases.
-> 
-
-Will fix in v3!
-
-> > +};
-> 
-> 
-
-Thanks for the review! Will fix this up and resend!
-
-Best regards,
-Alex
 
