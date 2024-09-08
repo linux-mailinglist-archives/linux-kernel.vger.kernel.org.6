@@ -1,154 +1,126 @@
-Return-Path: <linux-kernel+bounces-320145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB0B9706AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:42:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70FBD9706AC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E9C228211B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:42:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECF7C2821EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC31D1531C2;
-	Sun,  8 Sep 2024 10:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGkuBqin"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025191509BF;
+	Sun,  8 Sep 2024 10:44:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C73D150984;
-	Sun,  8 Sep 2024 10:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B31B148828
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 10:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725792115; cv=none; b=SRSGM6j1JNOeeTEeRShRG/IKJoeA8PlvH8GXABsW+t6VZXa1zvHdTQVOGyWhKzIFEsUAFkFAXelrHrviN0dvKzXenJ7MoRGOSGMszX5gPiodU0vpO2W3HnNVvCQyaSK56GDBzpTPUhJzwMJ1AB6BmFAthao+LXco3rBgbhxN4Lo=
+	t=1725792244; cv=none; b=IDJdT9E4ZIIeFKt2YPspZlRn+60178AE6Vzg7x5cIEoo7CFvmZ/Uo3QI13ie+sU43untJRqTvKp6bWMtSLgTbkPny9ry/XbN1Gb3t2uqG8USjZAaWy/Rmsa1H8+qqzaxnepCZhE5tOSOvumq4TP1tgmGNmT5WR1s08mbirdI/Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725792115; c=relaxed/simple;
-	bh=+M6JdLABBdfXrmO8zUKmmKac7j/TQa7IzYDjOIGqSeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qb0yklmSSoq/LH6+iT/h/HsMJft4Di5H8xtp2uPrLDXOrwDaANfbXTGfZhGhuXr9sg/1XNr/BTVEpyfq4ddbuOl9AQb1CmZOJXvaR8EeRjdQji/7FYGHXatTWsxpuFbwYa5u7NBCd155yYjyZKSBxXo4VLl3ZSuTbc+Nq7v6HY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SGkuBqin; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B8DC4CEC3;
-	Sun,  8 Sep 2024 10:41:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725792114;
-	bh=+M6JdLABBdfXrmO8zUKmmKac7j/TQa7IzYDjOIGqSeE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SGkuBqin0MlEDug6vExUXXwXRFVFCtcoZOgP1Cl1YTAmSKXOvjqseTQqEIhahXH0b
-	 DJ37PMjMU6hEEEuvk686jHdG/MqRCBUoIkw3v8zHnqVuWQt1WOh29u1esh64z5WDxY
-	 DihdzjiljsXcVqgz3KKvITmD1CGNxhkLxEQ4swpYw2GwA3F8+dWBVU8JQoI/wPxb+H
-	 Rkj/WF58VxLmhT86PAA83hUaJ4lL55PCJ3ov0OWDQVcAkhQ3Fa4kg+kRjreZkJs3ub
-	 hDQq7mdyWXmSRwih/T8uNEGl9YNdC0K4pwB1vzcQml5P5JkTeDZVqfwhCq1FqqfAHF
-	 x6enYTyWsd2QA==
-Date: Sun, 8 Sep 2024 11:41:43 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dumitru Ceclan via B4 Relay
- <devnull+dumitru.ceclan.analog.com@kernel.org>
-Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, mitrutzceclan@gmail.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Conor Dooley
- <conor.dooley@microchip.com>, Nuno Sa <nuno.sa@analog.com>
-Subject: Re: [PATCH v3 0/3] Add support for AD4113
-Message-ID: <20240908114143.414a9367@jic23-huawei>
-In-Reply-To: <20240817111902.2ed6b98a@jic23-huawei>
-References: <20240812-ad4113-v3-0-046e785dd253@analog.com>
-	<20240817111902.2ed6b98a@jic23-huawei>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725792244; c=relaxed/simple;
+	bh=vJ5A+bZx4EHd4oy8YkgNGSS7Y+DI8Iwe7U0/S4IpFJY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ihs703cq7HIvZXjegZPVf5tZYik/olAaf2uvoqtxSAqipviq75tFo8mLhW5ZNqueHkhkk7vN6RNRWDtFFNkEQ+XVbzvTc0Gsc7m5GecI0FWyEMqgsriS8dGwGBhZOgecYTsW8SFEzY6vWMk+wpfB8an4nRZn/qCm9lpiE80zM1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82b930cd6b2so156562839f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 03:44:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725792242; x=1726397042;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ZDUnJNz1Sni9j4jon0Z02e8bEXNh5mS4eFCffhJmU4=;
+        b=nYjNEQzNWHhdGckgAxd7EOrRMKK7x7RRaRPqfzf5+m+rMGxYY4dKdOx6mbhJ7/3ZSk
+         Rv0f2h7N6GBbxy3WjQYbDY5XK1/dFlddLD696kKTozQY3dUH+wM5SWMQp/CS76XjW2Bq
+         nYxdHQLsjICDcu7ny/zmtyqyABpojcmCY/xGE07AcGwA5kPGpNuQe9PKbHYl09uOSdiu
+         KcTvk+xkU+Ire3GU5C2N6j3w2R8aj66cv6d45c5QWjMK08OsGRWEgGjZoi0EXcr4IK2W
+         ZT5UrcSATkaBX/+jSEq69gY1zFNyyDluOq5BHOeaXxZ+FvDbfLYK0g9k+XlbeuBM8hSg
+         Wurw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbPOgacU26IsBjz7dmNMbEmy0SNpyOuoj+5sBt6sZjJjLLVDNlIMzopWIXa3XoeqQpQbZAd6zTvFVXLWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEx5GCwRNT1hjjPwKBm9o8+dRTEOuXuTmr4SZBeeeA5fhN0NMF
+	GcK2K49/8exq4u7iojn+Ih0wSC8ggBRg1+TOxqhaQeTlPZsvH5KT/50tFquAX9U0cIGUBCsaS34
+	a1QqmAkUsVnp/MtYpRxcSZJVmPFT2M/iluI8VMWpVxZ0HqISr2J8oAxA=
+X-Google-Smtp-Source: AGHT+IGZq25FllB+kkH7lCtAHGEX/kfOIVTe8S9KsU0bn1pIY3wwxvPEm5jP4qBc+u6DGH/XvMrCJ2EoRaNhpSL/vs7IvFcYI+xa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:b2c:b0:398:36c0:7968 with SMTP id
+ e9e14a558f8ab-3a04f0758camr96064475ab.6.1725792241791; Sun, 08 Sep 2024
+ 03:44:01 -0700 (PDT)
+Date: Sun, 08 Sep 2024 03:44:01 -0700
+In-Reply-To: <20240908102751.14188-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000874d270621995192@google.com>
+Subject: Re: [syzbot] [mm?] KCSAN: data-race in generic_fillattr / shmem_mknod (2)
+From: syzbot <syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 17 Aug 2024 11:19:02 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+Hello,
 
-> On Mon, 12 Aug 2024 11:13:13 +0300
-> Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org=
-> wrote:
->=20
-> > This patch series adds support for the AD4113 ADC within the existing
-> > AD7173 driver.
-> >=20
-> > The AD4113 is a low power, low noise, 16-bit, =CE=A3-=CE=94 analog-to-d=
-igital
-> > converter (ADC) that integrates an analog front end (AFE) for four
-> > fully differential or eight single-ended inputs.
-> >=20
-> > The part is not released yet and the documentation is not public.
-> > Register map is identical to AD4114 besides the lower width data
-> > register and the GPIO register.
-> >=20
-> > Particularities of this model:
-> > - 16 bit data register
-> > - no temperature sensor
-> > - no current inputs
-> > - input buffers
-> > - internal reference
-> > - external reference REF-/REF+
-> > - no second external reference REF2-/REF2+
-> > - no AVDD2 supply
-> > - 2 GPIO pins with config bits starting at a higher position in register
-> > - 8 VINx inputs with voltage divider
-> > - 16 channel registers and 8 setup registers
-> >=20
-> > Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com> =20
-> Hi.
->=20
-> Series is fine, but I don't yet have the fix=20
-> [PATCH] iio: adc: ad7173: Fix incorrect compatible string
-> in the upstream of my togreg branch.
->=20
-> Hence this will have to wait a little while for that to be present.
-> Otherwise this will create a fiddly merge for linux-next etc.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KCSAN: data-race in __fsnotify_parent / fsnotify_put_mark
 
-Tree juggling didn't go entirely according to plan so unfortunately
-this has slipped back to next cycle unless there is a delay in the
-6.12 merge window opening.
+==================================================================
+BUG: KCSAN: data-race in __fsnotify_parent / fsnotify_put_mark
 
-Sorry about that, and I'll make sure to queued it up nice and early
-after rc1.
+write to 0xffff888101229cf0 of 4 bytes by task 3493 on cpu 0:
+ fsnotify_detach_connector_from_object fs/notify/mark.c:330 [inline]
+ fsnotify_put_mark+0x2db/0x5d0 fs/notify/mark.c:393
+ __do_sys_inotify_rm_watch fs/notify/inotify/inotify_user.c:819 [inline]
+ __se_sys_inotify_rm_watch+0x105/0x180 fs/notify/inotify/inotify_user.c:793
+ __x64_sys_inotify_rm_watch+0x31/0x40 fs/notify/inotify/inotify_user.c:793
+ x64_sys_call+0x1ae0/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:256
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
->=20
-> Jonathan
->=20
-> > ---
-> > Changes in v3:
-> > - lowercase chip ID
-> > - add patch to correctly order chip IDs defines
-> > - picked up RB and ACK tags
-> > - Link to v2: https://lore.kernel.org/r/20240809-ad4113-v2-0-2a70c101a1=
-f4@analog.com
-> >=20
-> > Changes in v2:
-> > - correctly set realbits and storagebits to 16 in iio_chan_spec
-> > - describe bindings restrictions in commit message due to lack of
-> >   sufficient diff context
-> > - describe model differences better in cover letter
-> > - Link to v1: https://lore.kernel.org/r/20240807-ad4113-v1-0-2d338f702c=
-7b@analog.com
-> >=20
-> > ---
-> > Dumitru Ceclan (3):
-> >       dt-bindings: adc: ad7173: add support for ad4113
-> >       iio: adc: ad7173: order chipID by value
-> >       iio: adc: ad7173: add support for ad4113
-> >=20
-> >  .../devicetree/bindings/iio/adc/adi,ad7173.yaml    |  3 ++
-> >  drivers/iio/adc/ad7173.c                           | 38 ++++++++++++++=
-++++++--
-> >  2 files changed, 39 insertions(+), 2 deletions(-)
-> > ---
-> > base-commit: 1c61e13d7dc9003662bd7fd6064dfea67e64b014
-> > change-id: 20240725-ad4113-baa63ff99245
-> >=20
-> > Best regards, =20
->=20
->=20
+read to 0xffff888101229cf0 of 4 bytes by task 3339 on cpu 1:
+ fsnotify_object_watched fs/notify/fsnotify.c:198 [inline]
+ __fsnotify_parent+0xd4/0x380 fs/notify/fsnotify.c:228
+ fsnotify_parent include/linux/fsnotify.h:96 [inline]
+ fsnotify_file include/linux/fsnotify.h:131 [inline]
+ fsnotify_open include/linux/fsnotify.h:401 [inline]
+ vfs_open+0x1be/0x1f0 fs/open.c:1096
+ do_open fs/namei.c:3727 [inline]
+ path_openat+0x1a1e/0x1f00 fs/namei.c:3886
+ do_filp_open+0xf7/0x200 fs/namei.c:3913
+ do_sys_openat2+0xab/0x120 fs/open.c:1416
+ do_sys_open fs/open.c:1431 [inline]
+ __do_sys_openat fs/open.c:1447 [inline]
+ __se_sys_openat fs/open.c:1442 [inline]
+ __x64_sys_openat+0xf3/0x120 fs/open.c:1442
+ x64_sys_call+0x1025/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+value changed: 0x00002008 -> 0x00000000
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 UID: 0 PID: 3339 Comm: syz-executor.2 Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+==================================================================
+
+
+Tested on:
+
+commit:         d1f2d51b Merge tag 'clk-fixes-for-linus' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=169a589f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e81d40b0108ea8fe
+dashboard link: https://syzkaller.appspot.com/bug?extid=702361cf7e3d95758761
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=142a589f980000
 
 
