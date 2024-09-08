@@ -1,174 +1,176 @@
-Return-Path: <linux-kernel+bounces-320348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C35B97092A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:10:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 835E5970943
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820461F21DF2
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:10:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 057B31F21B4E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C49A176AAF;
-	Sun,  8 Sep 2024 18:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1826B17624F;
+	Sun,  8 Sep 2024 18:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrRO9XbF"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="F2aybbR9"
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D89165F06
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 18:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E9C2B9CD
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 18:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725819024; cv=none; b=KbcPCQepB5yiu28ARQuOcyDF6nizB8Yv4+FbX3BUcfa7MDv2EixvPEI5+oWSbVau2eT5EJj0zYTUVMkM+8PHaA/Q3ICrY4Z4vtuxHFefs9A0qJowauD2JriES9YX7CUeXuoP+VDRhvB422IXrpzqOlUvIuVRBfNlJ9C7PgdA9os=
+	t=1725821416; cv=none; b=VxQSYrnNOdq/GkT4rh17aeCxA2+z2Lrpl2FX7UUskooUYQalamsUsY9l4GY95D+USOBzgJ6g6xQwhhSKQyePYTE5blzt0ZMjDT7u01CKJpIEYN3M9BsR0Pi3YjgNESaP5T9zT6Xdbsv5RxqHfxpBdeF9CdfStXrrHsK36vrULNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725819024; c=relaxed/simple;
-	bh=3pkGKpnps9BRZYFTTIc/uwOCzJXREVREtCLzMWazsNA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TCDpVaPb5KCapmjiNjKhkL/RldDH3yFJBnXwaoWFVRDxhZlEtjAoLvifjg3aWtGr0c+G2u6050062COQgi8BPtbVldtQ3B4RHYm9ubQTrwp2j/qtxilt23k213yj7pKJoX8tH4EbbD6BRixsaNBkZLKUgMXy1au4HQWvJAKkPxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QrRO9XbF; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-718d962ad64so2156837b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 11:10:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725819022; x=1726423822; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ar6XzATEWGm9OHxBFH6LESh/+hr+qtyBbKtC4UJ6nYM=;
-        b=QrRO9XbF5InAf5uKoDkOk8M+9mx7vFH3zE+vETWvuctC40kTUqqbBJfk0eVNyizh8R
-         mbusOrGpVaUbFCmYUbsuWlrUxbxkPqJuy7G07MZtiZfcnZDeDYUcOO3JW6rehxLNyS6J
-         acmyEcPlKIkOJ/PK4547RNV7CWaoVfRUD8x4w1gNRMAR+tbNsPBBH3K+EUXslZ0tkwU1
-         /zAavrKea3iJdO3wPuaK81OL4AutAadyJ4ydimGbrOJJivqFQISkl3MBEi3JhkG4Aoh8
-         G36Oi3nJ2z3+R+6ZADkbCriSR8yXfTCu9/d0ej8eVzWPemK6ffPimSG5lLQoRUFPNsLy
-         H7NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725819022; x=1726423822;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ar6XzATEWGm9OHxBFH6LESh/+hr+qtyBbKtC4UJ6nYM=;
-        b=YN3SnpSdjLTxoiYjbwx9xKkrNbK5tyYarM8bdjBz+RBklVLRNB3NpOBVvZ+UC1ZaCp
-         KjMBjIarSDTWDsTr+oE6nhgTmAPpXTXalY/TMP1Hoe8RR6IP5m2x2WVbaF9vGjTsyzZS
-         6sdd/3kaysF7X6kXd9cCxHVUe5PiCD+B+aNJZIn3aR85tSRgD1rBMI/5o4NuvXBQodtk
-         5czbwJrz00W+YoAsi1HTNP60IEJCtIEwzx/QPULS2hY3/yQLV/hkGBwp9g+A8xbzrUkV
-         oydAeQ+UqDL44atO1aftPC8fQ8rztGCRQuG1oOyHXZxmm4GoCgCp92gTN+qyZHS4aI0a
-         4+nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvf0dFw41bbsVum8gygWFztVXoQYwQyOLIPWbUOL3yIXMnbVQvdEa93geIA4cQOgo+aNMqsQDoUsjfQX4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8/K+n3B+08HSOdHqJzvWZx+aFdXB9bc8MtGhA7OXUp+4setmu
-	z7it5sbKZhjGvebqSMIEaI1WyASrp7S8a/Jc/Rk4yFeQi0R/+Renwmg3GAh8zbM=
-X-Google-Smtp-Source: AGHT+IFojJtbBA7n99nPrVY+xntXWkLZS3SZDBpXDq21nzUN1RbLsMOWEgz+7t+o4Zu6RIAB+RTWZw==
-X-Received: by 2002:a05:6a00:b42:b0:714:2069:d90e with SMTP id d2e1a72fcca58-718d5f0839amr12084718b3a.26.1725819021981;
-        Sun, 08 Sep 2024 11:10:21 -0700 (PDT)
-Received: from debian.tail629bbc.ts.net ([103.57.172.39])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e5896f19sm2278769b3a.32.2024.09.08.11.10.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 11:10:21 -0700 (PDT)
-From: Sayyad Abid <sayyad.abid16@gmail.com>
-To: linux-staging@lists.linux.dev
-Cc: gregkh@linuxfoundation.org,
-	philipp.g.hortmann@gmail.com,
-	sayyad.abid16@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: Fix tabs for indent and + in comment blocks
-Date: Sun,  8 Sep 2024 23:39:03 +0530
-Message-Id: <20240908180902.3196764-1-sayyad.abid16@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1725821416; c=relaxed/simple;
+	bh=gNKnIuGvVMJr191hD6VCownoEv1f54m/1RShTokZqUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TsGFkxbnpX+b2dyvLVh4XTbz05bCgxXswxdD6pZ5LYEMOtVR5e13Ze/HWPvUrr3cBAfZaYLPPZZsOAeC+H6x+35PL5am0yh5rnx1a/yrABgwp1RnDm79W0wiwd3mG4q7QXJFjmGimL0Xwo22bqIjGQDZDtvVKlZLdBkJ8Nfu8dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=F2aybbR9; arc=none smtp.client-ip=83.166.143.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X1yhM005Xzn4P;
+	Sun,  8 Sep 2024 20:11:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1725819074;
+	bh=nXI9xic4x3kUhmU/n/oTnixYiW2o/Ba+mWZgJ65FcYU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F2aybbR9SGRO8ntewsvTYFuHGvAUHrhTiLBB/jRK1/tkv4vPCc+/z+dcy1Fzwh98K
+	 h8Ldft3UX4SPDXPe0qt22j+0PNrLPVgH4fvDqcSjzyuzHoDQmAVbGsLM9CpwGZ7gy7
+	 loxmwtN9/Hw7IBhxZB2PN6qlA9udH6kKLaD+ydOU=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X1yhK3qYJzggS;
+	Sun,  8 Sep 2024 20:11:13 +0200 (CEST)
+Date: Sun, 8 Sep 2024 20:11:07 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH v3 1/2] fs: Fix file_set_fowner LSM hook inconsistencies
+Message-ID: <20240908.jeim4Aif3Fee@digikod.net>
+References: <20240821095609.365176-1-mic@digikod.net>
+ <CAHC9VhQ7e50Ya4BNoF-xM2y+MDMW3i_SRPVcZkDZ2vdEMNtk7Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhQ7e50Ya4BNoF-xM2y+MDMW3i_SRPVcZkDZ2vdEMNtk7Q@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-This patch fixes the use of space instead of tabs,
-removes trailing space and adds "+" each line in a comment block.
+On Wed, Aug 21, 2024 at 12:32:17PM -0400, Paul Moore wrote:
+> On Wed, Aug 21, 2024 at 5:56 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGURG
+> > for the related file descriptor.  Before this change, the
+> > file_set_fowner LSM hook was always called, ignoring the VFS logic which
+> > may not actually change the process that handles SIGIO (e.g. TUN, TTY,
+> > dnotify), nor update the related UID/EUID.
+> >
+> > Moreover, because security_file_set_fowner() was called without lock
+> > (e.g. f_owner.lock), concurrent F_SETOWN commands could result to a race
+> > condition and inconsistent LSM states (e.g. SELinux's fown_sid) compared
+> > to struct fown_struct's UID/EUID.
+> >
+> > This change makes sure the LSM states are always in sync with the VFS
+> > state by moving the security_file_set_fowner() call close to the
+> > UID/EUID updates and using the same f_owner.lock .
+> >
+> > Rename f_modown() to __f_setown() to simplify code.
+> >
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Cc: Casey Schaufler <casey@schaufler-ca.com>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: Jann Horn <jannh@google.com>
+> > Cc: Ondrej Mosnacek <omosnace@redhat.com>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: Serge E. Hallyn <serge@hallyn.com>
+> > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > ---
+> >
+> > Changes since v2:
+> > https://lore.kernel.org/r/20240812174421.1636724-1-mic@digikod.net
+> > - Only keep the LSM hook move.
+> >
+> > Changes since v1:
+> > https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
+> > - Add back the file_set_fowner hook (but without user) as
+> >   requested by Paul, but move it for consistency.
+> > ---
+> >  fs/fcntl.c | 14 ++++----------
+> >  1 file changed, 4 insertions(+), 10 deletions(-)
+> 
+> This looks reasonable to me, and fixes a potential problem with
+> existing LSMs.  Unless I hear any strong objections I'll plan to merge
+> this, and patch 2/2, into the LSM tree tomorrow.
 
-Signed-off-by: Sayyad Abid <sayyad.abid16@gmail.com>
----
- .../staging/rtl8723bs/include/hal_pwr_seq.h   | 46 +++++++++----------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+I didn't see these patches in -next, did I miss something?
+Landlock will use this hook really soon and it would make it much easier
+if these patches where upstream before.
 
-diff --git a/drivers/staging/rtl8723bs/include/hal_pwr_seq.h b/drivers/staging/rtl8723bs/include/hal_pwr_seq.h
-index 5e43cc89f535..10fef1b3f393 100644
---- a/drivers/staging/rtl8723bs/include/hal_pwr_seq.h
-+++ b/drivers/staging/rtl8723bs/include/hal_pwr_seq.h
-@@ -5,26 +5,26 @@
- #include "HalPwrSeqCmd.h"
-
- /*
--	Check document WM-20130815-JackieLau-RTL8723B_Power_Architecture v08.vsd
--	There are 6 HW Power States:
--	0: POFF--Power Off
--	1: PDN--Power Down
--	2: CARDEMU--Card Emulation
--	3: ACT--Active Mode
--	4: LPS--Low Power State
--	5: SUS--Suspend
--
--	The transition from different states are defined below
--	TRANS_CARDEMU_TO_ACT
--	TRANS_ACT_TO_CARDEMU
--	TRANS_CARDEMU_TO_SUS
--	TRANS_SUS_TO_CARDEMU
--	TRANS_CARDEMU_TO_PDN
--	TRANS_ACT_TO_LPS
--	TRANS_LPS_TO_ACT
--
--	TRANS_END
--*/
-+ *	Check document WM-20130815-JackieLau-RTL8723B_Power_Architecture v08.vsd
-+ *	There are 6 HW Power States:
-+ *	0: POFF--Power Off
-+ *	1: PDN--Power Down
-+ *	2: CARDEMU--Card Emulation
-+ *	3: ACT--Active Mode
-+ *	4: LPS--Low Power State
-+ *	5: SUS--Suspend
-+ *
-+ *	The transition from different states are defined below
-+ *	TRANS_CARDEMU_TO_ACT
-+ *	TRANS_ACT_TO_CARDEMU
-+ *	TRANS_CARDEMU_TO_SUS
-+ *	TRANS_SUS_TO_CARDEMU
-+ *	TRANS_CARDEMU_TO_PDN
-+ *	TRANS_ACT_TO_LPS
-+ *	TRANS_LPS_TO_ACT
-+ *
-+ *	TRANS_END
-+ */
- #define	RTL8723B_TRANS_CARDEMU_TO_ACT_STEPS	26
- #define	RTL8723B_TRANS_ACT_TO_CARDEMU_STEPS	15
- #define	RTL8723B_TRANS_CARDEMU_TO_SUS_STEPS	15
-@@ -101,7 +101,7 @@
- 	{0x0007, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, 0xFF, 0x20}, /*0x07 = 0x20 , SOP option to disable BG/MB*/	\
- 	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK|PWR_INTF_SDIO_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT3|BIT4, BIT3}, /*0x04[12:11] = 2b'01 enable WL suspend*/	\
- 	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_PCI_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT2, BIT2}, /*0x04[10] = 1, enable SW LPS*/	\
--        {0x004A, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT0, 1}, /*0x48[16] = 1 to enable GPIO9 as EXT WAKEUP*/   \
-+	{0x004A, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT0, 1}, /*0x48[16] = 1 to enable GPIO9 as EXT WAKEUP*/   \
- 	{0x0023, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT4, BIT4}, /*0x23[4] = 1b'1 12H LDO enter sleep mode*/   \
- 	{0x0086, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_SDIO, PWR_CMD_WRITE, BIT0, BIT0}, /*Set SDIO suspend local register*/	\
- 	{0x0086, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_SDIO, PWR_CMD_POLLING, BIT1, 0}, /*wait power state to suspend*/
-@@ -112,7 +112,7 @@
- 	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT3 | BIT7, 0}, /*clear suspend enable and power down enable*/	\
- 	{0x0086, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_SDIO, PWR_CMD_WRITE, BIT0, 0}, /*Set SDIO suspend local register*/	\
- 	{0x0086, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_SDIO, PWR_CMD_POLLING, BIT1, BIT1}, /*wait power state to suspend*/\
--        {0x004A, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT0, 0}, /*0x48[16] = 0 to disable GPIO9 as EXT WAKEUP*/   \
-+	{0x004A, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT0, 0}, /*0x48[16] = 0 to disable GPIO9 as EXT WAKEUP*/   \
- 	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT3|BIT4, 0}, /*0x04[12:11] = 2b'01enable WL suspend*/\
- 	{0x0023, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT4, 0}, /*0x23[4] = 1b'0 12H LDO enter normal mode*/   \
- 	{0x0301, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_PCI_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, 0xFF, 0},/*PCIe DMA start*/
-@@ -209,7 +209,7 @@
- #define RTL8723B_TRANS_END															\
- 	/* format */																\
- 	/* { offset, cut_msk, fab_msk|interface_msk, base|cmd, msk, value }, comments here*/								\
--	{0xFFFF, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, 0, PWR_CMD_END, 0, 0},
-+	{0xFFFF, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, 0, PWR_CMD_END, 0, 0},
-
-
- extern struct wlan_pwr_cfg rtl8723B_power_on_flow[RTL8723B_TRANS_CARDEMU_TO_ACT_STEPS+RTL8723B_TRANS_END_STEPS];
---
-2.39.2
-
+> 
+> > diff --git a/fs/fcntl.c b/fs/fcntl.c
+> > index 300e5d9ad913..c28dc6c005f1 100644
+> > --- a/fs/fcntl.c
+> > +++ b/fs/fcntl.c
+> > @@ -87,8 +87,8 @@ static int setfl(int fd, struct file * filp, unsigned int arg)
+> >         return error;
+> >  }
+> >
+> > -static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+> > -                     int force)
+> > +void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
+> > +               int force)
+> >  {
+> >         write_lock_irq(&filp->f_owner.lock);
+> >         if (force || !filp->f_owner.pid) {
+> > @@ -98,19 +98,13 @@ static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+> >
+> >                 if (pid) {
+> >                         const struct cred *cred = current_cred();
+> > +                       security_file_set_fowner(filp);
+> >                         filp->f_owner.uid = cred->uid;
+> >                         filp->f_owner.euid = cred->euid;
+> >                 }
+> >         }
+> >         write_unlock_irq(&filp->f_owner.lock);
+> >  }
+> > -
+> > -void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
+> > -               int force)
+> > -{
+> > -       security_file_set_fowner(filp);
+> > -       f_modown(filp, pid, type, force);
+> > -}
+> >  EXPORT_SYMBOL(__f_setown);
+> >
+> >  int f_setown(struct file *filp, int who, int force)
+> > @@ -146,7 +140,7 @@ EXPORT_SYMBOL(f_setown);
+> >
+> >  void f_delown(struct file *filp)
+> >  {
+> > -       f_modown(filp, NULL, PIDTYPE_TGID, 1);
+> > +       __f_setown(filp, NULL, PIDTYPE_TGID, 1);
+> >  }
+> >
+> >  pid_t f_getown(struct file *filp)
+> > --
+> > 2.46.0
+> 
+> -- 
+> paul-moore.com
+> 
 
