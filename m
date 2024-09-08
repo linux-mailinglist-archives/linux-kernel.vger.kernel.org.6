@@ -1,119 +1,94 @@
-Return-Path: <linux-kernel+bounces-320176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8665970708
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:44:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A1097070A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C951F21A8A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:44:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07798B21273
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8912415821E;
-	Sun,  8 Sep 2024 11:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691E41531FB;
+	Sun,  8 Sep 2024 11:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NJ0YRBV6"
-Received: from msa.smtpout.orange.fr (msa-208.smtpout.orange.fr [193.252.23.208])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fjVjfc1m"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593B618C22;
-	Sun,  8 Sep 2024 11:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9349314D715
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 11:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725795882; cv=none; b=AamoG1rwlahtEQondsp4OrjVnm+9ZPuhjk0hGom/KaGITR32LNSE3RjR7g+XVW9kViwl6Nf7Pv+//u3RgJXmiqOs0FURa83eeDi+j1p3Z3fZ8ond/HCn/Vbu9lh844NnK9m2kCRysCfS6bwaEUwbjxtD3L0U1jw31TebslxMeUY=
+	t=1725795913; cv=none; b=nj6od4IKpKiTTgzWINR61v2Bfg874uWnNnlGZbCFKWcMZy/968zOxsULIOQJHFIx9PGSZCna749U1d9buoF6IXQ5FKbOSNHNGN5lNCKSXQrRpO8+msXQeBtrqhRoSxZedgFsDgZ1qSV8QAddmvv3F//jbFSQ53438w/DGV7z5+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725795882; c=relaxed/simple;
-	bh=X54QgKZkowUFWekxz5jn1MXRDbhBtNSUV2+YPjIO3lY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A4aMkubsCbYkzDJSPM1ao2/lLkhgdIX4w8d7KMLkAbAs1CfsxHdKM0VU+G0/TyWTbY6RWzooppL3qGvVN9ZgTXy/KnqQgTncevOgUwC8TJRcRM/MH4R+UN01Czf8cx9ReEm1bUCc46zduHWX+FGref5/xwlo/FFVe4waQxqVtv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=NJ0YRBV6; arc=none smtp.client-ip=193.252.23.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id nGLKsM1d52iYJnGLKsH1eE; Sun, 08 Sep 2024 13:44:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725795878;
-	bh=O7lWOpC+TJoMHHozDCqt61jx1ZWnzh85Y8vzc+JCg+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=NJ0YRBV61CW3WPmbnIZrQPCymP9w08VhacUQSWX8uzP6PWbTlD3E+pOny5Xqrte9M
-	 df6KYzPaT0u9Npft0iFlsyLDzYetPebXkqCFpkNy5x6uLqcHnsxwup0nZv9/WPELu5
-	 ElUFy7wZWHD2ajTVCQ4acY8o4idmOYECbfAzAULJhwa7cUEc4TioWs+j76WAdc9h81
-	 itckHpGXtwVAqbsgCx5dria+JjWUabOsuJ7gFrTAMGqBYbwAw5AA3juTgg5ZzjP9ZN
-	 6uaWTygyGOrqtxmKR1YqT0rbVY+Z9tIdp4IAKVhM2F4t9vlWCy6NlxrDIh8PmnUmhu
-	 FtqpnHNgaTq4A==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 08 Sep 2024 13:44:38 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <eb89a77d-c733-4efd-be19-b95039ae10ee@wanadoo.fr>
-Date: Sun, 8 Sep 2024 13:44:33 +0200
+	s=arc-20240116; t=1725795913; c=relaxed/simple;
+	bh=HSnXKMQgZLXcJYUHL18kiCIOeKVxkWAs5Di1nGk0eV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=awY1IBxCQiQS0wpsJLvw86b4EUeyb8nQ/ucEf3U5rt1awTajWdYmqTOAWlP8y+ndN0i7FZBpphC+nuoGTPSt0kyOl457Qv79FTrGXpXEXN4DhxfXSDfXuLbHNSvOnRW6nQtPxYYTmzW1KD2gnOOcHKQH8TiUaOwSnpzcEKQcWW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fjVjfc1m; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-205659dc63aso33462025ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 04:45:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1725795912; x=1726400712; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qgXrTvuyZhyT6kmnMqrr/qesyKb1JNQr87bAiGPrQNs=;
+        b=fjVjfc1moUjoAodWa2TLA4D6dcUwTKeInLbZB7C+GDIWLARQ5lgWbP9OYbDqVki4cm
+         BlKbEpgbmPu7qE27Gv6hJgv0qXsJg1KnAjUGt13Fn8IOKtMbguz7o8pS3P2Fnubxco9Q
+         f2AhgD9hESxlNzSNvphCb6O+LdAVtVsXlEyXE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725795912; x=1726400712;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qgXrTvuyZhyT6kmnMqrr/qesyKb1JNQr87bAiGPrQNs=;
+        b=YcGSCdbgEV1xsDq3zaH75weQ9qvALLfSYuLH+SiuYT6crPo3YUFZIeQCbLEYMq9kk/
+         vEQvPo3Z0pWi4fbkyULsgk/fccHn7+Wi/NqqS8caTfVklmcmFJ3uemtJr6ExYUdeYrhT
+         R0Kyf2tvNPYCP3W7zeNGsPYE4uvyNsyz4s23VehGJftRlYyI/lKg+BUzshN2imuu0tjA
+         f43VK/2QiRtDJd0z6mRaY2xbIAUvZH+25lKKh0szzX72MtgECG6zIAy0wZ9NaJmMgq5e
+         T5G/u7IL0Y/rTV4s8Di/u2pNdU7r9ruHwpEcMY/C8WXirZ34wDpXgWcmc9XlEqC7U04E
+         n64g==
+X-Forwarded-Encrypted: i=1; AJvYcCXDOgiyqCypPGtVuDrtlEYrEJ18t68SC1KsIG+4YtKzK+HlDgIEl+xpmhe/oSfQfofSzKNn9+Ta1RSbfps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDqjA5F4dyEbcHsGDP9l1bwkv4qk4qSZOjzJWTuL7xPcaMnqz/
+	fk1JCC0Od4A7hzIm6WW2cCYnddZ8i0uuQ6WeY5Lu/YsGcyQtYIhqEzIptCLOgw==
+X-Google-Smtp-Source: AGHT+IEpkG7C0gtn+JFnmRlwmIzAn0lFjV4MHb5ZiSpAl6tX8TlN1ny/DyyNvDTcgmu/ZpjQPxqQRQ==
+X-Received: by 2002:a17:903:182:b0:205:500f:5dcc with SMTP id d9443c01a7336-206f05e5f73mr74085415ad.40.1725795911786;
+        Sun, 08 Sep 2024 04:45:11 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:5879:695a:4656:45ff])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f31f31sm19121285ad.243.2024.09.08.04.45.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 04:45:11 -0700 (PDT)
+Date: Sun, 8 Sep 2024 20:45:07 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Richard Chang <richardycc@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 0/3] zram: optimal post-processing target selection
+Message-ID: <20240908114507.GB2413563@google.com>
+References: <20240908114223.3024872-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] iio: adc: Constify struct iio_map
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Chen-Yu Tsai <wens@csie.org>,
- Support Opensource <support.opensource@diasemi.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-References: <5729dc3cc3892ecf0d8ea28c5f7307b34e27493e.1725729801.git.christophe.jaillet@wanadoo.fr>
- <20240908114546.395661ef@jic23-huawei>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240908114546.395661ef@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240908114223.3024872-1-senozhatsky@chromium.org>
 
-Le 08/09/2024 à 12:45, Jonathan Cameron a écrit :
-> On Sat,  7 Sep 2024 19:24:46 +0200
-> Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org> wrote:
+On (24/09/08 20:42), Sergey Senozhatsky wrote:
 > 
->> 'struct iio_map' are not modified in these drivers.
->>
->> Constifying this structure moves some data to a read-only section, so
->> increase overall security.
->>
->> In order to do it, the prototype of iio_map_array_register() and
->> devm_iio_map_array_register(), and a few structures that hold a
->> "struct iio_map *" need to be adjusted.
->>
->> On a x86_64, with allmodconfig, as an example:
->> Before:
->> ======
->>     text	   data	    bss	    dec	    hex	filename
->>    21086	    760	      0	  21846	   5556	drivers/iio/adc/axp20x_adc.o
->>
->> After:
->> =====
->>     text	   data	    bss	    dec	    hex	filename
->>    21470	    360	      0	  21830	   5546	drivers/iio/adc/axp20x_adc.o
->>    33842	   1697	    384	  35923	   8c53	drivers/iio/addac/ad74413r.o
-> Cropping was a bit random, given before and after have different files.
+> v2..v1:
+> -- clear PP_SLOT when slot is accessed
+> -- kmalloc pp_ctl instead of keeoing it on the stack
+> -- increase the number of pp-buckets and rework the way it's defined
+> -- code reshuffle and refactoring
+>
 
-Argh, the 2nd line related to ad74413r.o should be removed. Only the 1st 
-one is relevant.
-
-Sorry about that.
-
-> 
-> Anyhow, doesn't matter much, so applied as is.
-> Note this is 6.13 material now.
-> 
-> Thanks,
-
-Thanks,
-
-CJ
-
-> 
-> Jonathan
-
+D'oh... Let me re-send it properly.  It was supposed to be sent to
+Minchan and Andrew.  Sorry for the noise.
 
