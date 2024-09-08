@@ -1,91 +1,54 @@
-Return-Path: <linux-kernel+bounces-320242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3759707EA
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:00:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D979707EC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAE56281D73
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D392281DE6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABD3170828;
-	Sun,  8 Sep 2024 14:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dFMq+FJo"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D2EA2D;
-	Sun,  8 Sep 2024 14:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D1916FF41;
+	Sun,  8 Sep 2024 14:03:16 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC6629CF7;
+	Sun,  8 Sep 2024 14:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725804029; cv=none; b=VNFgxgolLn6tbaBScNqwlC0nboylYuLYKOOywM3rfUpJLDtrvNpeETLqWAWZTY+14ZuJycMVQ5o8+Pbeqd17qyEGeEzgFQZ/6QiE8ugn5G0KWN6Rs1TT+HVYPivScpIOlOLiAICqxZlcJtclKwx2cIceKBMEg8N9c5eX1dfwBsk=
+	t=1725804196; cv=none; b=TlB6k25nnkQopR+Y9zrNWbgAGO8bAvMXAa33QYA7Onr0deHi8+UfnKsdnzzL9kRVnwKQFoXm/04JffC7AS8UUOR1Med0HlDzf2L25dJ9tfEK3rrKaU9cNQQ7XYmi4CSRA1iQ0YN2y/A154aGic9nzi1zoCf7VznzeU+gT1qd714=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725804029; c=relaxed/simple;
-	bh=Y2NDtCjVER93A9w2ReGNK7/dzcf+hFjKCrvUyF4u80E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LO+dIGdVlAD4LilFD5/V09HQGylrrXskcYKji80Ml4uYyv37/RtnJuBt6zbhXTS6MguSUjZi3WfHumODlbKMHbtvsFA5iCENUTtJ/NFTwNCdYW6R+PjiQ7LPe3To8LVc8YQiUWbLTKHoYEUviDJ5ZzzLpOxumIPBvzaYiB/LFcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dFMq+FJo; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2054feabfc3so30093325ad.1;
-        Sun, 08 Sep 2024 07:00:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725804027; x=1726408827; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7pj0AerlWB+eF4qNe7zKXJKWx1M/nXwU17bMun+xn84=;
-        b=dFMq+FJo275m23g/1KxemJXU8v6vG8cbNXebAJI+KZSkBz3KZ88Of5dxDm99lwKUUX
-         IO4WMhp0rFq0YCHfIwszARGYNTtasOf5PEpU2h57Mx3ePEthJOocFA/8rEvLqh1uIT8o
-         4h+YHwEkzh1iRSUWd4w2B9XSmf54Re6BzT7QzmsKfXh8TI3ytJxZcMITTncKK/r/adO9
-         KxlNygdBj7myE5q3yDoMhBN17Uv8WetUDyN9A5YygSo0Jnhygt5jDOeUTLKGMNAZzZKy
-         cetI52fgF9McpUEEQP/rI3KenyeSgRh5rJL2V1Joclm0Jzw9dOuwD1Z6cIR+Z2fAfcI5
-         95uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725804027; x=1726408827;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7pj0AerlWB+eF4qNe7zKXJKWx1M/nXwU17bMun+xn84=;
-        b=JxYm5xNxHYCValTGpcQ9y1ttzPJDCEwuqt86frADrHQtcPXDXhQR2zE1PHVcw7s/Pj
-         y4PbAUC4ND6UNkA40AYmUMcnyuVLMBbXvpn2TBaf2KDp/guIQvCdoFgiE9VBwm1yEnCQ
-         mURmwT9la0YIGMRHDwCnuVYYNkBPuGFJ2Qek64g+z8ekercR5QexCYDz+UJujBYDxMbx
-         l8cVguMkc+soSOobfsiVIjQ9GcMulYbSn0exe9I5CF9Cw33leYJZkb8AcqcO8lrYqsYa
-         FyoRYeb7iKh0S2nWv+4EC28hrrXn9Z3F+Y7IEdaJZRdjzDHgdDIg2V65PcEQzpW79Cke
-         O/PA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQHRk2W23/1Qb7qIELzZyq1xZZr15KsyZOrzVNFl44+9QP7NwOBlblGtKmTqqUD+zFUfI=@vger.kernel.org, AJvYcCX9r45aLPpS1tl0WI1I0/GskJbzyjoNanzKH169kFir3u7xBPc/ycIhIIv9+TDNMueHG49uZaohxFTSuuLs@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqB9oHEZ8KnpskJj+kDBN//L/lLmmDdAd9ioSvHqiM+GMLEyg7
-	AQiFUs43QA/VUsYu+b3NBpyDe/FawaIQUW8gX7O1+KNu96cn4kx/
-X-Google-Smtp-Source: AGHT+IHbKGBuA+EAxRn/bKTjAwZ/cMAEbkBNM60vx74Q24qVyty3SApZob0+FbTm5Ul8OtxMM30rjg==
-X-Received: by 2002:a17:903:23c9:b0:206:a913:9697 with SMTP id d9443c01a7336-206f0612ef6mr82267335ad.43.1725804026367;
-        Sun, 08 Sep 2024 07:00:26 -0700 (PDT)
-Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e328aasm20379895ad.91.2024.09.08.07.00.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 07:00:24 -0700 (PDT)
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: qmo@kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	jserv@ccns.ncku.edu.tw,
-	bpf@vger.kernel.org,
+	s=arc-20240116; t=1725804196; c=relaxed/simple;
+	bh=/zUV+wsffSBMJF3ubql0/xykGgvQ/PvnMyt4eWIMoIs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lYeaU9reu/eNvwaysHysNnYQLby6BmngP3gDEZhpvnFafrhqIHFlJHVAI7VGbiud/JMlywz3EiSECMwJmDqcnRrt56KcyVt0vzjz+3HiF5moBqGRCECxsuTJq+JKODhH6eEOCix8lJqM0Iar5qNJQ7zZYQ3MZ2OdBZwptMS04O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee466ddae9c65a-d3f4f;
+	Sun, 08 Sep 2024 22:03:10 +0800 (CST)
+X-RM-TRANSID:2ee466ddae9c65a-d3f4f
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from 192.168.102.140 (unknown[223.64.113.255])
+	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee366ddae956e3-13b16;
+	Sun, 08 Sep 2024 22:03:10 +0800 (CST)
+X-RM-TRANSID:2ee366ddae956e3-13b16
+From: Tang Bin <tangbin@cmss.chinamobile.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH] bpftool: Fix undefined behavior caused by shifting into the sign bit
-Date: Sun,  8 Sep 2024 22:00:09 +0800
-Message-Id: <20240908140009.3149781-1-visitorckw@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	Tang Bin <tangbin@cmss.chinamobile.com>
+Subject: [PATCH] ASoC: topology: Fix redundant logical jump
+Date: Sun,  8 Sep 2024 22:02:59 +0800
+Message-Id: <20240908140259.3859-1-tangbin@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,46 +57,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace shifts of '1' with '1U' in bitwise operations within
-__show_dev_tc_bpf() to prevent undefined behavior caused by shifting
-into the sign bit of a signed integer. By using '1U', the operations
-are explicitly performed on unsigned integers, avoiding potential
-integer overflow or sign-related issues.
+In the function soc_tplg_dai_config, the logical jump
+of 'goto err' is redundant, so remove it.
 
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
 ---
- tools/bpf/bpftool/net.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/soc/soc-topology.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/tools/bpf/bpftool/net.c b/tools/bpf/bpftool/net.c
-index 968714b4c3d4..ad2ea6cf2db1 100644
---- a/tools/bpf/bpftool/net.c
-+++ b/tools/bpf/bpftool/net.c
-@@ -482,9 +482,9 @@ static void __show_dev_tc_bpf(const struct ip_devname_ifindex *dev,
- 		if (prog_flags[i] || json_output) {
- 			NET_START_ARRAY("prog_flags", "%s ");
- 			for (j = 0; prog_flags[i] && j < 32; j++) {
--				if (!(prog_flags[i] & (1 << j)))
-+				if (!(prog_flags[i] & (1U << j)))
- 					continue;
--				NET_DUMP_UINT_ONLY(1 << j);
-+				NET_DUMP_UINT_ONLY(1U << j);
- 			}
- 			NET_END_ARRAY("");
- 		}
-@@ -493,9 +493,9 @@ static void __show_dev_tc_bpf(const struct ip_devname_ifindex *dev,
- 			if (link_flags[i] || json_output) {
- 				NET_START_ARRAY("link_flags", "%s ");
- 				for (j = 0; link_flags[i] && j < 32; j++) {
--					if (!(link_flags[i] & (1 << j)))
-+					if (!(link_flags[i] & (1U << j)))
- 						continue;
--					NET_DUMP_UINT_ONLY(1 << j);
-+					NET_DUMP_UINT_ONLY(1U << j);
- 				}
- 				NET_END_ARRAY("");
- 			}
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index af5d42b57..af3158cdc 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -1894,7 +1894,7 @@ static int soc_tplg_dai_config(struct soc_tplg *tplg,
+ 		caps = &d->caps[SND_SOC_TPLG_STREAM_PLAYBACK];
+ 		ret = set_stream_info(tplg, stream, caps);
+ 		if (ret < 0)
+-			goto err;
++			return ret;
+ 	}
+ 
+ 	if (d->capture) {
+@@ -1902,7 +1902,7 @@ static int soc_tplg_dai_config(struct soc_tplg *tplg,
+ 		caps = &d->caps[SND_SOC_TPLG_STREAM_CAPTURE];
+ 		ret = set_stream_info(tplg, stream, caps);
+ 		if (ret < 0)
+-			goto err;
++			return ret;
+ 	}
+ 
+ 	if (d->flag_mask)
+@@ -1914,13 +1914,10 @@ static int soc_tplg_dai_config(struct soc_tplg *tplg,
+ 	ret = soc_tplg_dai_load(tplg, dai_drv, NULL, dai);
+ 	if (ret < 0) {
+ 		dev_err(tplg->dev, "ASoC: DAI loading failed\n");
+-		goto err;
++		return ret;
+ 	}
+ 
+ 	return 0;
+-
+-err:
+-	return ret;
+ }
+ 
+ /* load physical DAI elements */
 -- 
-2.34.1
+2.33.0
+
+
 
 
