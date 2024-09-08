@@ -1,140 +1,236 @@
-Return-Path: <linux-kernel+bounces-320055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5DD49705A9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:01:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A73C89705AD
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AC9F1C20FF9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:01:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EA3C1F21ED5
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365EE5FEED;
-	Sun,  8 Sep 2024 08:01:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6BE7DA94;
+	Sun,  8 Sep 2024 08:12:28 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D05517BA4
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 08:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E664B5C1
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 08:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725782464; cv=none; b=a+44SZUtFz6XJNCvfpw+nutJP8TqHhAxV1T40M5KcOKzFDrG7cs72tJwx1JEh0UyfLXUXq+VZku1a62TcNQq3x6Km+3+GN3zcz4FzMoxCpTqF9e0qhYqOTMwR5nurjwjBj+W3q/dg876rZhGUNbUoK7SQsU4psv+gDJXyiZGYkI=
+	t=1725783148; cv=none; b=D+UQUhwX/AQVbT6X3ot0cwQ9FC6+p38c92UXkd4OglcCz+vEwm/xga2FhfCc9dR3R6OJGX6tigULIpGLBzoMIRXRBDITGJfBIq/ojHkVxy1K+Bk4h26i0g6PMLEVlbROUZPAkEWqEfdnF42gf0vG5hsD4Clac6oSi20dgh6MLyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725782464; c=relaxed/simple;
-	bh=MgQ5kkdmmjKKEqvs/ok+0LUVcRj+7qMhTerJ+jcYmzE=;
+	s=arc-20240116; t=1725783148; c=relaxed/simple;
+	bh=kyePYKOFDQL+5mXF1w2Q/Uxe3QCbgrcrKYOqYih5jes=;
 	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=joDcwUYNZzX3TjiqEjZgRo/dD0UIuWeQ1HXIj3r5ZnjaIlGoSqKgI3wK8jvwsAxDFXjX+4lwV9xgkTq1cBwbP/DTDzOOnT8SrKa6VomIpHZiPn/dahhGDdgxX+nsCRTs3I91TNPIMZRpxqkG1TYZqHzrtJpBq4xpNWZ8Vb7HCeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+	 Content-Type; b=iVRdiLUvs4gvgJENhRevmwnEV1G1RLRzJs2DtQB9DkQWhCVl/teKqXft9Eu1pJd9w1/52K0St6xbs8rhtSHBTEloGghAmtDcR+zyy/lk42jQHUTJv+Rp7mUAZiqGXTGKuZo454mukiYYh18vupGemSiKHcViofohpyPsLtB1CgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82cdc7b7debso71490339f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 01:01:02 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a04c2472f6so57397815ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 01:12:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725782462; x=1726387262;
+        d=1e100.net; s=20230601; t=1725783146; x=1726387946;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dj53MgpjqImcqnTIiClZa5M8wkQOA7r/GcFou0UMC0o=;
-        b=K4UeIoUi5s1kNYcdXIBJk/CCY3EDFsm93LKbpP5IyhQJyT3UpIVg7YwKm5IqdGVsnC
-         nbJpXtY/OA+es9mnFIFDbrUeAtTpZ5d4S0GoaZ93kvzn2dTEokka5V+X5EDJdlJDuQ/x
-         hLF9WTSxeN+9pdoFvxRXKWe9ciGUn0TNZULKTkme/fTXfiAodTBpT5PpOg7DzSDSYFIc
-         mPIX7yZaZBqFV9VLGbK0tL2joXLNlveYYFi6x9eXmlQZ35VuzmZxBlxHo1MvEgA+1Gce
-         M0VZzJbdChcHbJqy9dMU2Y2+Da9B7zpvCBHsFngOfmB29qWwpZ3C6Bjkk9GTy79WF13j
-         /Idw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxirT2EnTf0CQq411+kEg+fts/dXdc151pDbcR7bIvW6BBph0xV/nihjuo2lHZGsh4KGVz8pOTgSjHpA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtkESS7+1uxHgiXWAkGjBROIUBo175JkeCe5MA7uZ3D+N09PUS
-	dxPnD9RuA347m2MCvXddxFljhkSVBvSy6+GqWl7dsRABEX3yxfxNAgTloWUT35BzUD/76p9MRyq
-	usR0ptcodC9p1eHxTG+4r1nKOM3P9JaYd7ls3EQewYHRnfcuVB0o5ntY=
-X-Google-Smtp-Source: AGHT+IHpBu45aYzb7as3tfx7l1VYXY+P7ResQkYWihv9GOv2sSsqHfHwX01WeUaKDe714uJyGxHvjZz0JmuIF55jET/ac8ecNLGn
+        bh=e6zkXL6M85HDpU3e6kg1bEucVPuZexPj9yvmKku646o=;
+        b=PP6aMUuUVYxDME17YLtAptLT9+A0UZh0uBLLCqcjMNBVci9BZcBYNQ8oWwYpliXr4L
+         dQNmDmqfQIt0Fz00bVOdGa6K+WcmcMQhsspRZSv4znK2w/9aIHYALVDc8Cch7u5youpN
+         1oFK5NejnsNItcWZQdCL/VkbbPxB3358BxNRrbJGJVl92I16UQKlKKQTi0kI1aGtsMaf
+         c+on4nh57k6R3lhxhbrVZdnmyI1hAt3Yzmu4AAInJiFWOyMJpVf5llB946jXzNaWpXMm
+         iRfjbxc8KL+71N7XFy/Wo34rx7JUjGcduEwk0FrV4jYSQiTEfRkUBIlO2FoZcfXOiQt0
+         +32A==
+X-Forwarded-Encrypted: i=1; AJvYcCXWWngjeq7fHSyC9GND1UZLfGhFyT9tSXQAXVcb0PwCW9krQ4aUUYppRX2fc666U/mlY+v5qizCjunuexk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymB8mbI9X+m7xVV2MlCoJhx7HPN5LmyikaRNJo1XjaMXn/2FpM
+	igikywHWpceuQAPJFHXLVG82EOmYFdl1DN7rJsXmBnaSxToJ0i/eI90tVQ0h0EmP4iuOJ7DR04k
+	8InPciN2wNeYHEYzOCPgBplfyfwuy5G4vCs2TI69gtxsiInypU4uigbY=
+X-Google-Smtp-Source: AGHT+IHX5E7ARNZRNjQXWYsaEFPDYFA+o52IjvnN2dB/X4I6GJJk0W9cIok9iF3h7hLu9LoRvCdYKyZXiGmxhlTCEaTs05iLRDNa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:29c4:b0:803:5e55:ecb2 with SMTP id
- ca18e2360f4ac-82aa4475e7bmr416211839f.0.1725782462212; Sun, 08 Sep 2024
- 01:01:02 -0700 (PDT)
-Date: Sun, 08 Sep 2024 01:01:02 -0700
-In-Reply-To: <20240908074757.8436-1-aha310510@gmail.com>
+X-Received: by 2002:a05:6e02:1386:b0:381:40be:4ce6 with SMTP id
+ e9e14a558f8ab-3a04f09be4cmr98368985ab.11.1725783145775; Sun, 08 Sep 2024
+ 01:12:25 -0700 (PDT)
+Date: Sun, 08 Sep 2024 01:12:25 -0700
+In-Reply-To: <0000000000000311430620013217@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009eb8fe0621970a98@google.com>
-Subject: Re: [syzbot] [mm?] KCSAN: data-race in generic_fillattr / shmem_mknod (2)
-From: syzbot <syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+Message-ID: <0000000000005d1b320621973380@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
+From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+syzbot has found a reproducer for the following issue on:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KCSAN: data-race in pcpu_alloc_noprof / pcpu_free_area
-
-==================================================================
-BUG: KCSAN: data-race in pcpu_alloc_noprof / pcpu_free_area
-
-read-write to 0xffffffff883f872c of 4 bytes by task 3378 on cpu 0:
- pcpu_update_empty_pages mm/percpu.c:602 [inline]
- pcpu_block_update_hint_free mm/percpu.c:1044 [inline]
- pcpu_free_area+0x4dc/0x570 mm/percpu.c:1302
- free_percpu+0x1c6/0xb30 mm/percpu.c:2277
- xt_percpu_counter_free+0x63/0x80 net/netfilter/x_tables.c:1951
- cleanup_entry+0x195/0x1c0 net/ipv6/netfilter/ip6_tables.c:671
- __do_replace+0x470/0x580 net/ipv6/netfilter/ip6_tables.c:1099
- do_replace net/ipv6/netfilter/ip6_tables.c:1158 [inline]
- do_ip6t_set_ctl+0x820/0x8c0 net/ipv6/netfilter/ip6_tables.c:1644
- nf_setsockopt+0x195/0x1b0 net/netfilter/nf_sockopt.c:101
- ipv6_setsockopt+0x126/0x140 net/ipv6/ipv6_sockglue.c:998
- tcp_setsockopt+0x93/0xb0 net/ipv4/tcp.c:3768
- sock_common_setsockopt+0x64/0x80 net/core/sock.c:3735
- do_sock_setsockopt net/socket.c:2324 [inline]
- __sys_setsockopt+0x1d8/0x250 net/socket.c:2347
- __do_sys_setsockopt net/socket.c:2356 [inline]
- __se_sys_setsockopt net/socket.c:2353 [inline]
- __x64_sys_setsockopt+0x66/0x80 net/socket.c:2353
- x64_sys_call+0x278d/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:55
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-read to 0xffffffff883f872c of 4 bytes by task 3374 on cpu 1:
- pcpu_alloc_noprof+0x9a5/0x10c0 mm/percpu.c:1894
- xt_percpu_counter_alloc+0x79/0x110 net/netfilter/x_tables.c:1931
- find_check_entry net/ipv4/netfilter/ip_tables.c:526 [inline]
- translate_table+0x921/0xf70 net/ipv4/netfilter/ip_tables.c:716
- do_replace net/ipv4/netfilter/ip_tables.c:1137 [inline]
- do_ipt_set_ctl+0x7bd/0x8b0 net/ipv4/netfilter/ip_tables.c:1635
- nf_setsockopt+0x195/0x1b0 net/netfilter/nf_sockopt.c:101
- ip_setsockopt+0xea/0x100 net/ipv4/ip_sockglue.c:1424
- tcp_setsockopt+0x93/0xb0 net/ipv4/tcp.c:3768
- sock_common_setsockopt+0x64/0x80 net/core/sock.c:3735
- do_sock_setsockopt net/socket.c:2324 [inline]
- __sys_setsockopt+0x1d8/0x250 net/socket.c:2347
- __do_sys_setsockopt net/socket.c:2356 [inline]
- __se_sys_setsockopt net/socket.c:2353 [inline]
- __x64_sys_setsockopt+0x66/0x80 net/socket.c:2353
- x64_sys_call+0x278d/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:55
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-value changed: 0x00000005 -> 0x00000006
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 3374 Comm: syz-executor.3 Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-==================================================================
-
-
-Tested on:
-
-commit:         d1f2d51b Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10691ffb980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e81d40b0108ea8fe
-dashboard link: https://syzkaller.appspot.com/bug?extid=702361cf7e3d95758761
+HEAD commit:    df54f4a16f82 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=12bdabc7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dde5a5ba8d41ee9e
+dashboard link: https://syzkaller.appspot.com/bug?extid=51cf7cc5f9ffc1006ef2
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=117d8877980000
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1798589f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a30e00580000
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/aa2eb06e0aea/disk-df54f4a1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/14728733d385/vmlinux-df54f4a1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/99816271407d/Image-df54f4a1.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-rc5-syzkaller-gdf54f4a16f82 #0 Not tainted
+------------------------------------------------------
+syz-executor272/6388 is trying to acquire lock:
+ffff8000923b6ce8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
+
+but task is already holding lock:
+ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x178/0x10fc net/smc/af_smc.c:3064
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
+       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+       __mutex_lock kernel/locking/mutex.c:752 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+       smc_switch_to_fallback+0x48/0xa80 net/smc/af_smc.c:902
+       smc_sendmsg+0xfc/0x9f8 net/smc/af_smc.c:2779
+       sock_sendmsg_nosec net/socket.c:730 [inline]
+       __sock_sendmsg net/socket.c:745 [inline]
+       __sys_sendto+0x374/0x4f4 net/socket.c:2204
+       __do_sys_sendto net/socket.c:2216 [inline]
+       __se_sys_sendto net/socket.c:2212 [inline]
+       __arm64_sys_sendto+0xd8/0xf8 net/socket.c:2212
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+-> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
+       lock_sock_nested net/core/sock.c:3543 [inline]
+       lock_sock include/net/sock.h:1607 [inline]
+       sockopt_lock_sock+0x88/0x148 net/core/sock.c:1061
+       do_ip_setsockopt+0x1438/0x346c net/ipv4/ip_sockglue.c:1078
+       ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
+       raw_setsockopt+0x100/0x294 net/ipv4/raw.c:845
+       sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
+       do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
+       __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
+       __do_sys_setsockopt net/socket.c:2356 [inline]
+       __se_sys_setsockopt net/socket.c:2353 [inline]
+       __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+-> #0 (rtnl_mutex){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3133 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+       validate_chain kernel/locking/lockdep.c:3868 [inline]
+       __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
+       lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
+       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+       __mutex_lock kernel/locking/mutex.c:752 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+       rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
+       do_ip_setsockopt+0xe8c/0x346c net/ipv4/ip_sockglue.c:1077
+       ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
+       tcp_setsockopt+0xcc/0xe8 net/ipv4/tcp.c:3768
+       sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
+       smc_setsockopt+0x204/0x10fc net/smc/af_smc.c:3072
+       do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
+       __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
+       __do_sys_setsockopt net/socket.c:2356 [inline]
+       __se_sys_setsockopt net/socket.c:2353 [inline]
+       __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+other info that might help us debug this:
+
+Chain exists of:
+  rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&smc->clcsock_release_lock);
+                               lock(sk_lock-AF_INET);
+                               lock(&smc->clcsock_release_lock);
+  lock(rtnl_mutex);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor272/6388:
+ #0: ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x178/0x10fc net/smc/af_smc.c:3064
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6388 Comm: syz-executor272 Not tainted 6.11.0-rc5-syzkaller-gdf54f4a16f82 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
+ dump_stack+0x1c/0x28 lib/dump_stack.c:128
+ print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2059
+ check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2186
+ check_prev_add kernel/locking/lockdep.c:3133 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+ validate_chain kernel/locking/lockdep.c:3868 [inline]
+ __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
+ lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
+ __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+ __mutex_lock kernel/locking/mutex.c:752 [inline]
+ mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+ rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
+ do_ip_setsockopt+0xe8c/0x346c net/ipv4/ip_sockglue.c:1077
+ ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
+ tcp_setsockopt+0xcc/0xe8 net/ipv4/tcp.c:3768
+ sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
+ smc_setsockopt+0x204/0x10fc net/smc/af_smc.c:3072
+ do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
+ __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
+ __do_sys_setsockopt net/socket.c:2356 [inline]
+ __se_sys_setsockopt net/socket.c:2353 [inline]
+ __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
