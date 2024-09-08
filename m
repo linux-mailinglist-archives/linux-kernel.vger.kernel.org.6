@@ -1,63 +1,54 @@
-Return-Path: <linux-kernel+bounces-320065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A328A9705CD
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:33:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF739705CF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61A361F21C30
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:33:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD69BB21B54
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B03136351;
-	Sun,  8 Sep 2024 08:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Mp7Y8QGk"
-Received: from msa.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A256A136337;
+	Sun,  8 Sep 2024 08:33:12 +0000 (UTC)
+Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F301366;
-	Sun,  8 Sep 2024 08:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0CE7D07D
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 08:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725784372; cv=none; b=s/q+1j2FGNRfA5TP7pQfcWW03ci7Qb7RyFOjyvp+kq1DiXii3xWcTDYT1C6UFR7Q8C4fa/AZfg4oMkJ3M3kkNM/drJnMA55Ge83maW78MuyEU26ips/QCP5tehoDQ3/A0/sK/BJUCK4/QClU5A2Z/VbPNFx9ehAQKYNAryqVnwg=
+	t=1725784392; cv=none; b=fjBSspLWfLqwNgpZrrEg3g2wLPrzgeZ54TvN3EBp1m3PBasxJsRMTeeHu01d4Jida1G+xFvdcS9AkMmXWHiKao+xjz2imHJaDKkBrCPzxNaPKS63hiMr1vbNgazJnHeTUWjInsifuuai4ZcLVWg05xmakJHUgWbX4hpteCYDf5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725784372; c=relaxed/simple;
-	bh=zsZ0ys2e1oNlKEbWk9IGe/z9GanXVYq8rzb+eYVJNzE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AV7t+nzuXmKd5lmxbvSVhcrnE4ljr5NvieBMmG3MvB4abVeHSEpeeRUa2s+BRQ2wqLYohL3S+E/4CX/FFNX0JadWsCOHSr4Fo/7zxUNiMj+H1FztZ6bCfqw9PL3rMRNkJ8iIC15UHCUZS6uW384bdVSEg9T3QaYkvHPVT5c7VwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Mp7Y8QGk; arc=none smtp.client-ip=80.12.242.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id nDLdsf6JjbNNsnDLdsCrGJ; Sun, 08 Sep 2024 10:32:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725784362;
-	bh=OD7y2O6XhtERo4H6oeABbYtmnm3CLAfuszGvQrmB7Yo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Mp7Y8QGkofcivcaI6dpjIE1u/AWADIy+aC2QhspdwE7z1/4xe/5skkHtse+b9/nfq
-	 01RD2V8/rpYmGUkyidg9+s742xLIhS7tLrml4EpQrwF5KhESjkg7Gzm3dIUQ1f+BW8
-	 MFvzZlts97tPg9ydc+WBSoge1uTfVXHXC5MCH2ewOPW11I1dqIjEzPoaZWAB0iXErh
-	 0dawff0MHo8s1NxQ8rpZ0EKFfAcVVQEROMC0CwG+VPOvnxyJ9PE1EtZnVjjFEef+oS
-	 pVNd/0+r1u2hPjPoRXPwbvwbkiLD3xplmkV5LkDvYBfA3czHlQkd/GrfECgpJTzQhr
-	 w1hQGROAtkEeQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 08 Sep 2024 10:32:42 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Saravanan Sekar <sravanhome@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>
+	s=arc-20240116; t=1725784392; c=relaxed/simple;
+	bh=JM6sWCaxiUXtNMP7Bmj/fVAfIlGVpMuithZEfIDgzDw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=axXwG0bqffFbDSKV4Q9CMnbKC9QiUDP/jrSbY+IytCalaUEgASbImUXqS7elyAkEFEbO98NYf7HUNRWT0dAIhUrcbz7wLgLvdASDC9ZhKxnwCfD6CxXFW/PYRfaSXt8ZLZgptUB+idE/+PmURVVIgfwheYicm5Wht377JsjVcyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.65.196])
+	by sina.com (10.185.250.24) with ESMTP
+	id 66DD613800000795; Sun, 8 Sep 2024 16:32:58 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 79833410748088
+X-SMAIL-UIID: 9062114413BC429FBD1FD941F0267B94-20240908-163258-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
 Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-hwmon@vger.kernel.org
-Subject: [PATCH] hwmon: (pmbus/mpq7932) Constify struct regulator_desc
-Date: Sun,  8 Sep 2024 10:32:38 +0200
-Message-ID: <c0585a07547ec58d99a5bff5e02b398114bbe312.1725784343.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect (2)
+Date: Sun,  8 Sep 2024 16:32:46 +0800
+Message-Id: <20240908083246.2329-1-hdanton@sina.com>
+In-Reply-To: <0000000000004a130a0621888811@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,48 +57,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct regulator_desc' is not modified in this driver.
+On Sat, 07 Sep 2024 07:42:26 -0700
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    788220eee30d Merge tag 'pm-6.11-rc7' of git://git.kernel.o..
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1304189f980000
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security, especially when the structure holds some
-function pointers.
+#syz test
 
-This also makes mpq7932_regulators_desc consistent with
-mpq7932_regulators_desc_one which is already a "static const struct
-regulator_desc".
-
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   3516	   2264	      0	   5780	   1694	drivers/hwmon/pmbus/mpq7932.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   5396	    384	      0	   5780	   1694	drivers/hwmon/pmbus/mpq7932.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
---
-Compile tested only
----
- drivers/hwmon/pmbus/mpq7932.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hwmon/pmbus/mpq7932.c b/drivers/hwmon/pmbus/mpq7932.c
-index 67487867c70f..2dcb6da853bd 100644
---- a/drivers/hwmon/pmbus/mpq7932.c
-+++ b/drivers/hwmon/pmbus/mpq7932.c
-@@ -35,7 +35,7 @@ struct mpq7932_data {
- };
+--- l/net/bluetooth/l2cap_core.c
++++ c/net/bluetooth/l2cap_core.c
+@@ -1747,6 +1747,8 @@ static void l2cap_unregister_all_users(s
+ 	}
+ }
  
- #if IS_ENABLED(CONFIG_SENSORS_MPQ7932_REGULATOR)
--static struct regulator_desc mpq7932_regulators_desc[] = {
-+static const struct regulator_desc mpq7932_regulators_desc[] = {
- 	PMBUS_REGULATOR_STEP("buck", 0, MPQ7932_N_VOLTAGES,
- 			     MPQ7932_UV_STEP, MPQ7932_BUCK_UV_MIN),
- 	PMBUS_REGULATOR_STEP("buck", 1, MPQ7932_N_VOLTAGES,
--- 
-2.46.0
-
++static DEFINE_MUTEX(l2cap_conn_del_mutex);
++
+ static void l2cap_conn_del(struct hci_conn *hcon, int err)
+ {
+ 	struct l2cap_conn *conn = hcon->l2cap_data;
+@@ -1797,8 +1799,10 @@ static void l2cap_conn_del(struct hci_co
+ 	if (conn->info_state & L2CAP_INFO_FEAT_MASK_REQ_SENT)
+ 		cancel_delayed_work_sync(&conn->info_timer);
+ 
++	mutex_lock(&l2cap_conn_del_mutex);
+ 	hcon->l2cap_data = NULL;
+ 	conn->hchan = NULL;
++	mutex_unlock(&l2cap_conn_del_mutex);
+ 	l2cap_conn_put(conn);
+ }
+ 
+@@ -7480,11 +7484,21 @@ void l2cap_recv_acldata(struct hci_conn
+ 	struct l2cap_conn *conn = hcon->l2cap_data;
+ 	int len;
+ 
+-	if (!conn)
++	if (!conn) {
+ 		conn = l2cap_conn_add(hcon);
+-
+-	if (!conn)
+-		goto drop;
++		if (!conn)
++			goto drop;
++		l2cap_conn_get(conn);
++	} else {
++		mutex_lock(&l2cap_conn_del_mutex);
++		conn = hcon->l2cap_data;
++		if (conn)
++			if (!kref_get_unless_zero(&conn->ref))
++				conn = NULL;
++		mutex_unlock(&l2cap_conn_del_mutex);
++		if (!conn)
++			goto drop;
++	}
+ 
+ 	BT_DBG("conn %p len %u flags 0x%x", conn, skb->len, flags);
+ 
+@@ -7512,6 +7526,7 @@ void l2cap_recv_acldata(struct hci_conn
+ 		if (len == skb->len) {
+ 			/* Complete frame received */
+ 			l2cap_recv_frame(conn, skb);
++			l2cap_conn_put(conn);
+ 			return;
+ 		}
+ 
+@@ -7576,6 +7591,8 @@ void l2cap_recv_acldata(struct hci_conn
+ 
+ drop:
+ 	kfree_skb(skb);
++	if (conn)
++		l2cap_conn_put(conn);
+ }
+ 
+ static struct hci_cb l2cap_cb = {
+--
 
