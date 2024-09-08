@@ -1,131 +1,127 @@
-Return-Path: <linux-kernel+bounces-320088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9DEA970603
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:12:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5751E970600
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B0511F22130
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:12:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F00521F21E5A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DBB13C672;
-	Sun,  8 Sep 2024 09:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2609B13B78F;
+	Sun,  8 Sep 2024 09:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GCj7k49T"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FoiaN2sP"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DBB13635B;
-	Sun,  8 Sep 2024 09:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE9913634F
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 09:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725786770; cv=none; b=WIXGO44BNXvGYTuOZRrJypEk//V5s8FSL+5IAmQfVlNv1hpcSIKx3CjnFVPTIU0AQp7OZs/u+2Ch55wSecmew1b/vm9Cte7f6OlrfvSDXYatXDEVPMO3KtXMYgfedht0M4UcpYanuKjSwuWBG1rQ+B3dm8M/x5V6GReBLM3jjQw=
+	t=1725786733; cv=none; b=Fpl1XucWFQMfpyMPfmQSoL5TPvveRPxJ+Ur6SMpw2I+q/ZJzpV0uGTpPsDZxdsEMQtOoV48LQ3/7XDPPYErML3cELO6dT49ARCa/TpBogzlwpsmSyw5AYmNR9aOSupalbRzEbpxXi4Z4kX5cJpM1spKDAW9sVYIiOJqOKeUDtfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725786770; c=relaxed/simple;
-	bh=DG8z1BQmAAA0Lc71ZeDOdTuGe04gc7DnYCtpQRynvB0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=BfQpAXXW17gn6niaAidEWFGYWocyOJTXG9gLAi7mCVHDhRXDfm3dmJeUlp+e22VY/jLpE+25WainRhiIsve1GG/wFqtTb74rxFxXcNmX2JxjNAHizkUIYnPu7QVBACv31HZkXjKsKcLto05ByMYG0NRFv8ysbHWkmp883oLiV7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GCj7k49T; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1725786702; x=1726391502; i=markus.elfring@web.de;
-	bh=WCMJWEieh/sXV2CRivFT84rsK/t+kM3zpH1slTwVITk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=GCj7k49Tx/Lbx9BOMox0uWwLn5BevksJ8proerqSJxEF6ETIuNFBL1hyXbXX+ouh
-	 aQbtsnnttRHBarnvr0TNcVdsl0CAgCFLdNlNKHIiwlawR0yur6FWW08S2rKrjhnde
-	 JAnPiL661yKYygz6Rn/Xst4cVb4suSX1FzZSTlTGf8/ZDsS6CwUIjDOKaqi/38WUl
-	 BcyiqCI+BTCiOmjEa509/AHQmp1ZqUgu7tLtyZfyiSGexn5XPhff1Za5+2TZdZvlP
-	 yWmmcdsiBWlsOBGjuVOZxKJ4LoW+Ww2hc0uDsv0HcJ6ovt0nKiDRUO70v30iL9Tif
-	 StwdfmPS1INWbIgq/Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mf3uS-1s87a02mnC-00mEdG; Sun, 08
- Sep 2024 11:11:42 +0200
-Message-ID: <ab8a17d0-9505-4e81-b5ec-4a3025c48245@web.de>
-Date: Sun, 8 Sep 2024 11:11:23 +0200
+	s=arc-20240116; t=1725786733; c=relaxed/simple;
+	bh=3mUaNwJxoetmMOhsCNXpNJY/Sj5TJHe9Kvm9AMgyWxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PzDuV8Z+rYm3BipoQTizhdlASBhR1R4std3u36nnPYdNEd0nU3gObJyNIyh1H9J7OWSpN6W8tZuzqjQqxSSc+sFuLINJSTS3ycYNGsLWso/So8m5uRKsppE9RQYr9A/wgWOXSD/Uli87lUfGfXhD3XiWShLZ856OHM8tYkUJfkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FoiaN2sP; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B492B40E0198;
+	Sun,  8 Sep 2024 09:12:09 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id s8hhTfzOpYfJ; Sun,  8 Sep 2024 09:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1725786724; bh=ZQXhS2ST16sMhfnDLTdHEl99s6OAVudrs7LYT80/QOA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=FoiaN2sPx+CPUPybF4KdnT7pN1hsgY6Nh9mUJx04QKZQx3pP1d8W3XO1CNtmu38tn
+	 JWrgQO0eDOxzaryYVPxTL41+h/Cso5nZwEmDfy2nlnb/soh25zyBorH59xk7s5cNRr
+	 aEBADvACUkMpA8hl1mGdmMEuWkqdLFXb3n3Iap/RfEVA0pSk7aFZ9XuI7EX4WEWKkh
+	 iECNbaxhDKamiyBaJ28am9VzdCLdWjTbiXxCm53SwEahW324m38tZgCb5JIe5fxwl5
+	 ehZb9nsH65ErftdVxuXOIy7nTdsPXiCeKVHWoC0fn3AePT9pcXCL9DSvtXbvANnOsV
+	 IPTqs/mnhGJA7+wamMCOuzjoBQ8F4xeIWa8lO5JHdlfIZPVe5v0jHPGEoSxVsYjCqd
+	 5yXVkgUhO4OkxAfgzpkezL/eLee0gNXrwr/Tfv2BEnV6MWG/Z7urHahIa+FQLXpKOb
+	 XoEKg1nXsRGNOhL6t3i539TqrAZ4gRH/ST25yhUK5ML3ymKZTwhusDuHHDaAop+9Tr
+	 h9nGiGA0CO4wn341k9auEm7U96VUQpKjqo5ni8R0U+Szsn2AD91UGksqQvHSgWnL6c
+	 08NAuejuv7/ZpeXEaoOlumsMP5Mx74JwNHK0fVEtisE62K880vqkmVUF+XJvIxBzhH
+	 RW7gtyGKCJYoztgVPVMBcWyQ=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8D83840E0185;
+	Sun,  8 Sep 2024 09:12:01 +0000 (UTC)
+Date: Sun, 8 Sep 2024 11:12:00 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] timers/urgent for v6.11-rc7
+Message-ID: <20240908091200.GAZt1qYAzqQjCa7H2W@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Algea Cao <algea.cao@rock-chips.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- kernel@collabora.com, Andrzej Hajda <andrzej.hajda@intel.com>,
- Andy Yan <andy.yan@rock-chips.com>, Conor Dooley <conor+dt@kernel.org>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Mark Yao <markyao0591@gmail.com>, Maxime Ripard <mripard@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
- Robert Foss <rfoss@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Alexandre Arnoud <aarnoud@me.com>,
- Luis de Arquer <ldearquer@gmail.com>
-References: <20240831-b4-rk3588-bridge-upstream-v5-2-9503bece0136@collabora.com>
-Subject: Re: [PATCH v5 2/4] drm/bridge: synopsys: Add DW HDMI QP TX Controller
- support library
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240831-b4-rk3588-bridge-upstream-v5-2-9503bece0136@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PJluZpNkDXlZ3wkBX5/Gqh/OwUEU3EH/o63oMUDBKTJGS5rOy8l
- tLwTiwnKIsd0JwYJGqrZj40eP3l+rSCYh1XNNEcr3iyt0ouyCKinmqYbQhMRzBCstjxX4Hh
- CodzD4RfYB1DsHm1q1+vztQUEr8oK+KWPwJUzVHsCsEsRCcFyiq22MOdN8/XyNoeqbCxw09
- /7R1YQdoLWnNnrbOautug==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RoHr7exywYI=;VDzCZb0+H1eula7sqILN1mFZDuw
- rzBqr//2R5GEMKkyiriv5zyZqUaS4/00MPyIZtZaMkHm+a2lDmymIwCLE2DbX2qd+5tBczgE8
- 0BXJ1VpSKZhFwLLld6/yzGqWvmZ0wI5KGRTqyLd+AEcgn2aCEYePFeb51ACMkJFA3isHDBCzF
- pZG+jq8WWdMFEHop9PPBy/bQRzHqrXdMAjpIkzsPfSRg72vwQM0xQjItM1ePNPde0jbH/oDTd
- LflTRZxkbj4lZ0jc7tljIUwoPZOA4bRWPSEgXTubzuH3O9cLmN7TqBkP8Ar77kdnfBm3fdx5r
- WIE+uHxOq+DhETnKm4fFrlEPWtz1uvQ/K6a2t3LtvKM59ifQJZaQONxH3rSUS3sVSnt7/T6FS
- ldO0wJ0IhAlhP1ziHsqmmz8bv4laJ2jb/s42l0icSfIKr6rxc73SHfLy1pxFiRbknZjDXWIlg
- a2Lzdd0KP07/Rgq/E4/VFXCc2HgM6jEsTlvYxDZNXZZXuyECOetT/Ut9ms8Iatvi/vYAl6Dja
- y5BAqbzCh+clapxDa8Ek62E6cD6CK4e8u40h8L94gdIDrPBj7zfELurEC03KupzyMn2PTDae0
- 6GSATlihwoboef7AvG1ExMmOYjBMkfK3uwscUD+u8037oMEMY0iWpOuQie20EswoN9rPzp5lz
- 5Qjglihp0gwyi51kRHGbHoLX2tViqVCmwZ/agCygCpaU7O3KAXJoYZUrCZ3GL3PLBGMaUVogh
- ho8PJXJBeZGS8ltsLuAepk+W0+zRMaAxebaZsrjmcYx89pRbpRnVjmmeeoINdELpxtnpZX4Uo
- 1yk6rGl8IIOCh1xgQ01u+2Sw==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-=E2=80=A6
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
-> @@ -0,0 +1,708 @@
-=E2=80=A6
-> +static int dw_hdmi_qp_i2c_xfer(struct i2c_adapter *adap,
-> +			       struct i2c_msg *msgs, int num)
-> +{
-=E2=80=A6
-> +	mutex_lock(&i2c->lock);
-=E2=80=A6
-> +	dw_hdmi_qp_mod(hdmi, 0, I2CM_OP_DONE_MASK_N | I2CM_NACK_RCVD_MASK_N,
-> +		       MAINUNIT_1_INT_MASK_N);
-> +
-> +	mutex_unlock(&i2c->lock);
-> +
-> +	return ret;
-> +}
-=E2=80=A6
+Hi Linus,
 
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(mutex)(&i2c->lock);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.11-rc6/source/include/linux/mutex.h#L1=
-96
+please pull clocksource driver fixes for v6.11-rc7, courtesy of Daniel
+Lezcano.
 
-Regards,
-Markus
+Thx.
+
+---
+
+The following changes since commit 431c1646e1f86b949fa3685efc50b660a364c2b6:
+
+  Linux 6.11-rc6 (2024-09-01 19:46:02 +1200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/timers_urgent_for_v6.11_rc7
+
+for you to fetch changes up to 342123d6913c62be17e5ca1bb325758c5fd0db34:
+
+  Merge tag 'timers-v6.11-rc7' of https://git.linaro.org/people/daniel.lezcano/linux into timers/urgent (2024-09-02 11:56:59 +0200)
+
+----------------------------------------------------------------
+- Remove percpu irq related code in the timer-of initialization
+  routine as it is broken but also unused (Daniel Lezcano)
+
+- Fix return -ETIME when delta exceeds INT_MAX and the next event not
+  taking effect sometimes (Jacky Bai)
+
+----------------------------------------------------------------
+Daniel Lezcano (1):
+      clocksource/drivers/timer-of: Remove percpu irq related code
+
+Jacky Bai (2):
+      clocksource/drivers/imx-tpm: Fix return -ETIME when delta exceeds INT_MAX
+      clocksource/drivers/imx-tpm: Fix next event not taking effect sometime
+
+Thomas Gleixner (1):
+      Merge tag 'timers-v6.11-rc7' of https://git.linaro.org/people/daniel.lezcano/linux into timers/urgent
+
+ drivers/clocksource/timer-imx-tpm.c | 16 ++++++++++++----
+ drivers/clocksource/timer-of.c      | 17 ++++-------------
+ drivers/clocksource/timer-of.h      |  1 -
+ 3 files changed, 16 insertions(+), 18 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
