@@ -1,103 +1,141 @@
-Return-Path: <linux-kernel+bounces-320404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178009709BC
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:35:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1B99709BD
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43C441C21339
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:35:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA4D21C2141B
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9F4179658;
-	Sun,  8 Sep 2024 20:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D96D179972;
+	Sun,  8 Sep 2024 20:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzPIIGQE"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="u+9j2KLk"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7F7176FDB
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 20:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17A6175D4C
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 20:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725827701; cv=none; b=EMi559Jsb2JFVrJfeqH9F03qFC8Vl85oinM7yIuHAguvycArnJb/8nPtNJfZfhKitaIVOmi3J99W3uirt84b6YBpAIiSiREoAXDnCq8OW8OWQJwLMweXWFOBUTnaw2kVljuXP8yjlSltBlrN8sadga6Zx48G8+xT+UtYYznNsFk=
+	t=1725827775; cv=none; b=t3AutRPeVRhJmv/YUEkmzrKrj8jY4/9545Qt5XN3g64Vo0l/LAYfPFJQ/wFS1fdx+wiycfr0xHzQ/R3AS1nsoy2/VTZcFqWargwgaPXormtde3xXvqzSiVg9HL5aRO/4BfYPrC4Er8t7eYbU5N3k3vKnFmn1PZdrYTIUU4gDmPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725827701; c=relaxed/simple;
-	bh=+pMLN04S56lAq85RIxX9RiClF8fhTbYZoEsWW028IxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RrcUWfpZenR8ISzotjOhgBeOuJanTMAlW8clfvknsdFbQ0aM9vZWNZTQH9AWqzZJnFIAoe+DtC91Euwtet3VquPQdkYxHdP4KJ8zaX2CpDAARfVkID/D4K6uYnsjf9pzylwsk+TLO8Tkt9sF4IfVi56R/BVEpbKo7cLZATySSaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzPIIGQE; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f761461150so13197631fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 13:34:59 -0700 (PDT)
+	s=arc-20240116; t=1725827775; c=relaxed/simple;
+	bh=JBK/+8+xE6SKdG2I/38E82/V5dQx54e/WDpzVZy6Az8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p4PBYd6sUNcdnoWrzt9h+WRZCAk9fyXd7s3YTY8OinKCPXhzpgeBQP7xUW0RLPKGJGIcSNm1REFfzS43LE1HdWG6DB2BCMVMKUrs2fhYsplJ8smq7R1P2uYVaeBK05MgwsEHVvKM69CcEdkhbBVs5ibK4UWNwUSE5BW6Lufwl4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=u+9j2KLk; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso598720266b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 13:36:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725827698; x=1726432498; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wwAgKG3MjNdWJJ46a6f9nMyHqkocgTVWsSRI47bgPvI=;
-        b=RzPIIGQEFqB6gEmDzRDV/GMmwSomjprl/OytyRFgAFKmOCFQQukOGvxRJvs0QrmLid
-         fUROALoZezkQY+jl8BB6+k+wbuKyPlb6wA34ffKIjcfyoRyRIp9pvktz763IXrWQad+Q
-         KtuYP5ZxNI7PT89s2PSll/Rkfr8CbCk8RDZ8zhSTwUwqcR5I9BudxToakyNYD7TPSScw
-         bGhdpGyATBKZgai39Xmis2WHjr/5tEzOE2vVIsg4GU4jQBDFAyRly21HRM3IGyRnyZm2
-         k+zVrY4AIUUD0YiGHAcQ66RfYI3Hrh/VOoAwoalZwJ1Vy28CKYQv/nWwKeWNBr4a4egE
-         FR8Q==
+        d=fastly.com; s=google; t=1725827772; x=1726432572; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MbBTL5pJFbc4WoL9/Ssz6+tLyOzVs5blYq3ErDDrhAE=;
+        b=u+9j2KLk9l3Vgo4opW5FTNhqaqXAsHAo3YRo9nRy/dNJzJJfWCXGdL7e3fHhUD3bHI
+         9kPF+rP4cdpfMynHeyZoji+7hy/QckxnHiHHxdCAkPxE3K2CU8WrnUVhesjtBigFL+yo
+         C2qMFAuiNrSPcnqRopqSMSyp2w1SG6pTbc1RI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725827698; x=1726432498;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1725827772; x=1726432572;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wwAgKG3MjNdWJJ46a6f9nMyHqkocgTVWsSRI47bgPvI=;
-        b=wsDEZLs4WeblClaGAJvT31za7WVrv9kmgl4jZxquO8FhJveeK4m7TaOCmA071uieTY
-         FnIcoE+BZV66+aYVQ713Fi701R6fzEuo+1XI3CHGAB9NXVFoB2bPBGZrCdx2ygj9wg3u
-         X6fv9ZmECf0JQ0R4Ws2Fh60XvsNDTcMQ6+Ag+cZOfrZTEuJUzT3ZdVLYUPlFUlwLX1em
-         71sL+2V/64oE+Ca8K0U4X6DUI4Mqo/R93OBa2sluQtlxhkL99EKx+v249tMA3+IcoF1K
-         YCUSjvHFLDka1rbcIM5ioYZPZGRfTqZQaXeokbMIj9piDmM3PO2rtpHlry+jMvFPi9t+
-         SbWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ6Cv/+15fESsraGSko5CH7I9410hLMmrN/dnXxS9vCSlK3S943Z3H0J4nzQR2Nf66nCXdpJVxBYBuvsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD9PvAcrusHKVqTPhM3UEKxyKIeieTzHH+9k+B+FmCRGVmtyzN
-	hqpSebWrYvn7FYI1eCxdRkCz8s2WOCpbDNndBQHg2nF63j6pPJXC
-X-Google-Smtp-Source: AGHT+IHdu8DeRAFkv5dqkoi3zd2OuN0xB+xEPifmnIJZZ1OhX+mQue/HtypaNmzl1gSCxIYcLgOmOg==
-X-Received: by 2002:a2e:750:0:b0:2f6:4a89:9afa with SMTP id 38308e7fff4ca-2f75a992205mr36381251fa.22.1725827697172;
-        Sun, 08 Sep 2024 13:34:57 -0700 (PDT)
-Received: from ?IPV6:2003:c7:8f2a:8576:4416:5fef:fc17:c89e? (p200300c78f2a857644165feffc17c89e.dip0.t-ipconnect.de. [2003:c7:8f2a:8576:4416:5fef:fc17:c89e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d3eef7sm245296666b.192.2024.09.08.13.34.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Sep 2024 13:34:56 -0700 (PDT)
-Message-ID: <ca1908f3-74aa-45e7-a389-3995aba2660c@gmail.com>
-Date: Sun, 8 Sep 2024 22:34:56 +0200
+        bh=MbBTL5pJFbc4WoL9/Ssz6+tLyOzVs5blYq3ErDDrhAE=;
+        b=nnePmAZyWdxZKtk3fucyFAYmVeQVNzIaHGO9/8GaJbQaKi662b11Jvhsh5GMQBRXEO
+         oi7QcpGXB0LYqtSrCoHdOYAX51Z39fFn9mJfgNBLxcu/5r4nGUZkpM9l3BcrEnH0IZAr
+         D1Fuxhy+wlQHuhEw1T9VLqEtXNTI8lXuR7J7rZ/ANEeTcp3FnD3AwnyRpUObcUea2oYa
+         iod1lPMweoKOK2ZvO1wtP7xl4ITJODqRSmU5yGCVocBnvbJR+OKTeLgShI9b+oRgh7yr
+         62qlluolZNaX03TcB/d8itrC8mlXuMqwWHZE63CVrFEJgTfQX1uapemSO4xtiwfY9mhv
+         MKpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsrkMTmvACsU77DeTh6GKBQ+Xu2W78PX+mW6QUNFc/AkCTHje1vmpL01yBOzwBzhot8veOfToHgS+Zilk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL30PdQHn5rfVS3iaIkJ5B5kmU5zuZLxqtKZknuCrEsZQb8qkU
+	yUYxLZgH7/jdy4YKb5o0p8KXLSkfmZPeLB3MgCxUfPJyOQdFLwirS/+NtkDOAqc=
+X-Google-Smtp-Source: AGHT+IFOxhb2pMqFVg3cQTabJXtA0kstKltwdqMCbv+++XsxCaWtLu3qNwqExqs50+Jq6di85P9Wkg==
+X-Received: by 2002:a17:907:c13:b0:a8d:35a5:c8e5 with SMTP id a640c23a62f3a-a8d35a5cd2dmr333281166b.6.1725827771622;
+        Sun, 08 Sep 2024 13:36:11 -0700 (PDT)
+Received: from LQ3V64L9R2.homenet.telecomitalia.it (host-79-23-194-51.retail.telecomitalia.it. [79.23.194.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25835b0bsm248837566b.12.2024.09.08.13.36.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 13:36:11 -0700 (PDT)
+Date: Sun, 8 Sep 2024 22:36:09 +0200
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: mkarsten@uwaterloo.ca, kuba@kernel.org, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next v2 4/9] netdev-genl: Dump napi_defer_hard_irqs
+Message-ID: <Zt4KuV77wt1as5QW@LQ3V64L9R2.homenet.telecomitalia.it>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, kuba@kernel.org, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240908160702.56618-1-jdamato@fastly.com>
+ <20240908160702.56618-5-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: rtl8723bs: Fix tabs for indent and + in comment
- blocks
-To: Sayyad Abid <sayyad.abid16@gmail.com>, linux-staging@lists.linux.dev
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-References: <20240908180902.3196764-1-sayyad.abid16@gmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240908180902.3196764-1-sayyad.abid16@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240908160702.56618-5-jdamato@fastly.com>
 
-On 9/8/24 20:09, Sayyad Abid wrote:
-> This patch fixes the use of space instead of tabs,
-> removes trailing space and adds "+" each line in a comment block.
+On Sun, Sep 08, 2024 at 04:06:38PM +0000, Joe Damato wrote:
+> Support dumping defer_hard_irqs for a NAPI ID.
 > 
-> Signed-off-by: Sayyad Abid<sayyad.abid16@gmail.com>
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
 > ---
+>  Documentation/netlink/specs/netdev.yaml | 8 ++++++++
+>  include/uapi/linux/netdev.h             | 1 +
+>  net/core/netdev-genl.c                  | 5 +++++
+>  tools/include/uapi/linux/netdev.h       | 1 +
+>  4 files changed, 15 insertions(+)
 
-Hi Sayyad,
+[...]
 
-please apply previous send emails to this patch as well.
+> diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
+> index 9561841b9d2d..f1e505ad069f 100644
+> --- a/net/core/netdev-genl.c
+> +++ b/net/core/netdev-genl.c
+> @@ -160,6 +160,7 @@ static int
+>  netdev_nl_napi_fill_one(struct sk_buff *rsp, struct napi_struct *napi,
+>  			const struct genl_info *info)
+>  {
+> +	int napi_defer_hard_irqs;
 
-Thanks for your support.
+I've already made this a u32 in my rfcv2 branch.
 
-Bye Philipp
+>  	void *hdr;
+>  	pid_t pid;
+>  
+> @@ -191,6 +192,10 @@ netdev_nl_napi_fill_one(struct sk_buff *rsp, struct napi_struct *napi,
+>  			goto nla_put_failure;
+>  	}
+>  
+> +	napi_defer_hard_irqs = napi_get_defer_hard_irqs(napi);
+> +	if (nla_put_s32(rsp, NETDEV_A_NAPI_DEFER_HARD_IRQS, napi_defer_hard_irqs))
+> +		goto nla_put_failure;
+> +
+>  	genlmsg_end(rsp, hdr);
+>  
+>  	return 0;
 
