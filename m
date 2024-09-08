@@ -1,108 +1,106 @@
-Return-Path: <linux-kernel+bounces-320426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 523AF970A2C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 23:45:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA86F970A2F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 23:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77EA21C20A1A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 21:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A97CF2820D6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 21:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CA0179957;
-	Sun,  8 Sep 2024 21:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C990A17622F;
+	Sun,  8 Sep 2024 21:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="p2d7BhfS"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q0LN+GsE"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE05B1C01;
-	Sun,  8 Sep 2024 21:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E2917B50F
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 21:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725831949; cv=none; b=NcEdu6Zc35DtIAmL60e5fUc5gm8VjpHDyjGTv9HosFFYnpS33OtNSV1GCfXbh4iU7FQ/HBjZwAUjwpi+FKAv6jKzrDlKyPj8LeYfJn0yeQkyBPyRj3o2bb2IyT4EMcD9zU+HMVsLZ1/M3lbEmInTZ0sSosHA9OrGCXjr+rEwsaw=
+	t=1725832076; cv=none; b=ClsR+av+bAFFhykPctXvKCRYW+Jjf1wXAwNsyV+5tDfwHV0+nCdfKkuVS4LBd/OI5iwkx3cthMwBuhGUm8K833yfpkHBpqSqOow8RnMUgrjzoWD41/fJZ0rtlPD7AHhMWIpt/yjYuoqjZh4M9dINkqhJKg8B0MAJJAomMQzAT8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725831949; c=relaxed/simple;
-	bh=uFbTZ8rCLMeyJmuzwiJ+FJLw6nsBMyOUqolkKRCG0tw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ADiorZkgJfJ4Xz7ovb/zH20/rrp91QunpkMk7xVuaFV+zgx3dPmjOMky6S/RDK8BDEH/hDnsfZMsPtUlJyP4WjaBvrmYmbslao3J951w8MjzmuKzHKzGFT0bo1kOVqf+ERFH8mDG2DNJBKVDnZBmYeaE+hLojl9QcHD4TTaL1Qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=p2d7BhfS; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725831943;
-	bh=gnieCGxkX7sucHFlTE01Uglj+XF3Jr3DEnCXNTJDaM4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=p2d7BhfSv49E4LG6ej8ZEM7t9YKNkDGU+mzK7zX9wgGlXVqx6lhrC83N8ekx5J14V
-	 kuUdBKlMDBvZEWTMqPPTDtoql80ghnUv0uEywTzGDY+nHWPRkxSiBid8uO5+ydIwiK
-	 rFEQ8R9hA4+kYwecoDKIuLF/UjHyRUgN4GAfUqPErxrtGLP+GI1kodL3Akbn+0oagP
-	 EJ1O337vE2dI4xvLRdNY9eJvmeIrJC30PyXO9UjpzK9XNZ7LxU0zjb9kFwm6tlQKcw
-	 FK9k/gjj/Gebf4QXpM6SJ42+Xlb5u1AHFfJYdGCVNXnkECtIK1ftGTGwkCbnaUzv3X
-	 QsWttuzFvy8lg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X23Rq5BrRz4wb5;
-	Mon,  9 Sep 2024 07:45:43 +1000 (AEST)
-Date: Mon, 9 Sep 2024 07:45:43 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the vfs-brauner tree
-Message-ID: <20240909074543.39073215@canb.auug.org.au>
+	s=arc-20240116; t=1725832076; c=relaxed/simple;
+	bh=XJ4CSrhgxMN9+EF0tqC13ww61yxAj9wlkBh9vifA1Wo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wav9K/orVQc9rU7YpUI/XNzvPvYsriwWTjHRNlAwEdgcIWEvQTC46HaM4OU971w2YTmUAvsn4R3t2+JRYSNTsmok0P2Jda+JPAahQgebLJAUW7ttBq4GE0f5ScphQsvf4tWH0IGGN60VKjPMPKzCxDRCNGN8a8si8u0EwgqC01k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q0LN+GsE; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f761cfa5e6so10617011fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 14:47:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725832073; x=1726436873; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MWck7tjojIGtA3jbkTcAOWGGnySDnERm4jXqJmtrvo4=;
+        b=Q0LN+GsEVDwiD+tZJu9wZStsYolPBKYikjW8k2efpjx+WqRhY0CKMaJyDp4lZDZczK
+         mWKAItKbayFjnVRWsUV3VITdJyAZfotbRVaow0aPjwUr8t1RVN/S8TouoYvm5gHC5ryK
+         dhkcd+S1pkvhGxK58FQxqTJgsVXeFvfrSs97jbPc8DHR6A8UAsJXFQ0XEtqGd5vpMyEq
+         qcw0ciRygnnhq+HnKwp6sZ6plPj462FY2gGcDgKdSxSwD6pKj3wutW42fjcrTgtBG7Of
+         Wy4UdqIbJ2FpT191h9KP0+l6OVt5CzMfZzG1b1joQ/PepjATla4Zzuvb6KdaL2x74LiH
+         J63A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725832073; x=1726436873;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MWck7tjojIGtA3jbkTcAOWGGnySDnERm4jXqJmtrvo4=;
+        b=h098XqsdFf7tqN6s3gr3+AOLa5AGHlB0kpcJ11doXLTnYKi6hGwzcapyNijOAEKXYA
+         +vhSI1hoT/4MPUuyuaIJPSdyOctVkOq04rGd35RWcWuFv2A4n0kTkXQtEWjgiKTY/Ion
+         nZDlp75ajNbtSYM3KgyOVcRaCwTiTOkEO0l9JjXTxXOi/YQW2tsSRusHY4o+O5wPa0sU
+         MNEx62a0vuBdgEo2J+u+6e6C/E+1HQrr/9L7YZ5tkmQWDMZn29wJTWZuu3FbYc/yajPE
+         ZWeJ9/Ecp/nPhHjF0bH4G+XvR7MeOxIy9sDBP0F6NUoUJJvQ1G0TDFUWYIobcO8Kl8SA
+         qzjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMxIvZ9FfsXyYTAELl9mcMfCRU5lJ85X4BlOtyqm3fCvBjibvtUmpC1jzMVgcesgpPNd+5T2UDF8+3xIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywemeuddx2+BjaOrDydMj8CXfRKhYqQzEhqZy0dhlpIqRPOZChw
+	Fz+87JX1r8sIA44rMyjomV/9OSLaNCpbZZSTfQngW6jAbvTmHNIB
+X-Google-Smtp-Source: AGHT+IHH5LDq+cJeQo9Iu/YbHJ4F6xDRCHMrQ5Oe3uoIDa6QEvOqs9sr+epk1Zv6hklICrrZK9RnRg==
+X-Received: by 2002:a2e:910a:0:b0:2f1:a30c:cd15 with SMTP id 38308e7fff4ca-2f75b930786mr28087061fa.36.1725832071787;
+        Sun, 08 Sep 2024 14:47:51 -0700 (PDT)
+Received: from localhost.localdomain ([94.19.228.143])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75c009a5dsm6094001fa.72.2024.09.08.14.47.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 14:47:51 -0700 (PDT)
+From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Shoji Keita <awaittrot@shjk.jp>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Andrey Skvortsov <andrej.skvortzov@gmail.com>
+Subject: [PATCH 0/2] Fix magnetometers on PinePhone
+Date: Mon,  9 Sep 2024 00:47:16 +0300
+Message-ID: <20240908214718.36316-1-andrej.skvortzov@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/sURfN6DVNARdQ0LfUC5a.x6";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/sURfN6DVNARdQ0LfUC5a.x6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Introduce support for alternative magnetometer (AF8133J) used on new
+batches of PinePhones and define mount-matrix for both magnetometers.
 
-Hi all,
+Icenowy Zheng (1):
+  arm64: dts: sun50i-a64-pinephone: Add AF8133J to PinePhone
 
-In commit
+Shoji Keita (1):
+  arm64: dts: sun50i-a64-pinephone: Add mount-matrix for PinePhone
+    magnetometers
 
-  785de7deb1e5 ("9p: Fix missing set of NETFS_SREQ_HIT_EOF")
+ .../dts/allwinner/sun50i-a64-pinephone.dtsi    | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Fixes tag
+-- 
+2.45.2
 
-  Fixes: 7e23bc911449 ("netfs: Speed up buffered reading")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe you meant
-
-Fixes: 0fda1f8c6bf8 ("netfs: Speed up buffered reading")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/sURfN6DVNARdQ0LfUC5a.x6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbeGwcACgkQAVBC80lX
-0GyGbAf/fsAbwFjl4qcSFZyY+CiHXSaoPO9N0tSoSirTVoXHPw459M09RYwJOqDH
-Zjrg6uOJi0SKyIBaQCEpZe6wg6OVaT0/SJKjVCzEp/FjSC1cH3aHj5BLQkzae5Qj
-fAlhUdoxp7IWyL5b4CyDsZgFqR2D30uZMP0R8bHd7TtA/xAvirOijHiDhhZEp3CM
-TsoQsVjnNEmQo5PzW5uwsjhMdsU1RnCq6i4JnNNyvd6U8oS/YRDIev9U0D76Ds1H
-F4H/bo9J6DuRLk9n+pfQMJjZUzCKwwP1RJDiBEybwLhluiMIxobtYKeKI57D4Dkb
-NHzIGwUhUXpvANbXLLm4VND8mtH2dw==
-=vhbG
------END PGP SIGNATURE-----
-
---Sig_/sURfN6DVNARdQ0LfUC5a.x6--
 
