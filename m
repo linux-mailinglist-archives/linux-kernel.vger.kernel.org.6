@@ -1,215 +1,151 @@
-Return-Path: <linux-kernel+bounces-320140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C291E970693
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:28:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C9C4970694
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41DCD1F21913
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:28:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C066FB216B0
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FEA14D428;
-	Sun,  8 Sep 2024 10:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9379514C5A4;
+	Sun,  8 Sep 2024 10:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUzlh5UT"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="AjWNE9n5"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA7414A0A0
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 10:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B1F14A0A0;
+	Sun,  8 Sep 2024 10:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725791279; cv=none; b=pNgrC9tsLgdpEWZr/eNtSCbgNzDVaSpXvOPn1hF0bhcyrBLcWfEHXYNztmQrRf+xXwyxLqNBjhonuEhacncim02zhB5TmuFEJDaCqIZLpJlSKR8sfohNm+dde01c+LVUFKw2TZS9iUlpwDV9UbkThjdSgKbvCIUhH8yIwkS33KE=
+	t=1725791301; cv=none; b=In1UQhFzfNzAJwgL6WCRsqMWsGlDSWph8zWAE4MGPQ83fu5UNRnUdr1w65mQkhHm5J2UII7HJGNo8f9Ld8VYOwzjTRRVoX/eqeSUeFSI5+WhsNOb4UUzPqIgPXf1wL08zKFva5WHbIWdx6GWwg9/FYJrJj1U/d3BXyjG27RAkjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725791279; c=relaxed/simple;
-	bh=aTSE1n6xrZTiUV/fAuc/0WrqIi4ApvzsNBFhFNf9pUk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qv191NWZRtJHIiNCkIXN7HgINgNrOO8LVuCDfoRa/1632DzXVpBIlbEFGp5Gz8SNNcFcAvLnSd1easW6VMfer2R6oBPQPaJCJeM6ZBD5lZW5ywR7AfKPix0OBo8fK2y13cdgThq5J9TKtVSSFMvt2AcjMelnkuECY5CqusKDO/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUzlh5UT; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7d50e865b7aso2322384a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 03:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725791277; x=1726396077; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nCf3SqIpi+smHSMa+FhqUwP6bRy0VLcMO9hbpROT3lg=;
-        b=HUzlh5UTAir/QnhIRyZ8Gw2jUgXOMR1vxeKOKpm9T4Yk7vJxQyJOdt7YgubdfeZZLX
-         uOCDDKvWx5Gpkt/ozVwZsHlXpNHBtya4yTr1xh3k2BGAGCm29luPuvqhlAxvGVkvjU3K
-         uY9kZ4mADbp3NOssduzznr0ARY+zYjO+UuLu8HI0I9ob4WmnzNXH7oLmR2gc0zVteYXu
-         KTuTuTrhPfbU+j2Rew11OFZpaqziH7Xpm720NGCWXTcSml7ECYMoqjNUPFnQTGlXBcRq
-         q5iYbtBYKERP20lYPYiugVD49DSEhAtpaGLmOGrZYLu7MbV/bMNEWZR4k1AhzQhpYz3P
-         79AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725791277; x=1726396077;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nCf3SqIpi+smHSMa+FhqUwP6bRy0VLcMO9hbpROT3lg=;
-        b=am5KA+VMYlbEBRIjZe+oUFiGjG3XgggiwSCfxwB6w8hxZ/qYIx1hcbnx3KEDsEXR9t
-         3Q3u4BVSUsxJNroliC9BgTqNQ9QZWT/V8WUdY1YOXB6eQtHMP3d6+uzvyM4Mfug+uNOG
-         Vv5hN0b8ljIEXb6G+OEL9tL6puHHRas4tYDczK3hbBX4fR/9EekWXtdzKkivBdOg9EOj
-         bZMFijtZbobPSmDBnP5nPWQFwfFdZK2KSIUVnwTOLIBqBoecedxv3polp9K8W9qUeBSz
-         yj3nYaR45SNpAhmyvkZTqDlItP3xmVhqmzrSO6/Bfj5P52/QB8w+QJyBZ378lp3v+1zk
-         lVYw==
-X-Gm-Message-State: AOJu0YxSKhp4Nxpmg7V1fjJoO06ei2ZgSuv957hprA0PLWQ+i1tgnM0O
-	AnK7wkguXVnosy6aws/MOJDWrARiwrh9nma83kLRg/rkrE4HTYwapVptnR0I
-X-Google-Smtp-Source: AGHT+IH+e+tBnnZpI36SxJaa4X8luSB3LwFz8/UCq1v2CvSUTn7yelaUEzbYbHzQ9zpFs23HC9KzSQ==
-X-Received: by 2002:a17:902:e841:b0:1fd:8eaf:ea73 with SMTP id d9443c01a7336-206f056e8e3mr83673145ad.35.1725791277040;
-        Sun, 08 Sep 2024 03:27:57 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e11e02sm18491225ad.14.2024.09.08.03.27.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 03:27:56 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: KCSAN: data-race in generic_fillattr / shmem_mknod (2)
-Date: Sun,  8 Sep 2024 19:27:51 +0900
-Message-Id: <20240908102751.14188-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725791301; c=relaxed/simple;
+	bh=0aGUpa0cTQoQd5vb3VcZYKrfMFGlogBnCLdhJJJFBmA=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=Mpd5tKEHxWBmZ865gAeZKz5Hav6IKPDtFhfhP6dIb+EFcmQNB5W9WymOsKjs1qp0EUiTRyYWWeKaF5IOrfjiVx4RKRHs6r6nAuW6JafWYpZC5QWxCthhpeywO8B4dj0oqcbTV6jMrZvcv0tsMzFav1Ruf6Q77B9FR8M7vau6Df0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=AjWNE9n5; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:Subject
+	:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=0aGUpa0cTQoQd5vb3VcZYKrfMFGlogBnCLdhJJJFBmA=; t=1725791299; x=1726223299;
+	 b=AjWNE9n5TU/dbjX/pTaBkQ3hhehX6YOTWmAIctD7XpmUse0qfcJjiqobq4XaPqwOJN1UH2S6Hm
+	O+4Au2RT0C5X2modRRn72VZvYcQa5kBfv7bF8QsRcfKAhQnwJsMhtwFUbQ+7iu0DHpr5M/9A48ItO
+	3bAATf84q61puLA5gNiJI8P4JFGlUCf5cv+cQ9/WKQ15c5NPCqSH5mbkWxktKUL3aJ9m1p3mOt4/1
+	LgtJ2eRFlAVGlEpwiDjjfl22jDWaS9TzaAc/jS+LlYp5FFcbggOtmZ+Srnew9Cho7qI7LpUYLFR9s
+	AK4LZALt0dIid93mM71djd5K0UCB0Xxvdystw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1snF9Q-0003rp-3p; Sun, 08 Sep 2024 12:28:12 +0200
+Message-ID: <f31bcc2a-20c5-4182-8b32-fb9ede8712b5@leemhuis.info>
+Date: Sun, 8 Sep 2024 12:28:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+Subject: Linux regressions report for mainline [2024-09-08]
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1725791299;a6646d2b;
+X-HE-SMSGID: 1snF9Q-0003rp-3p
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Hi Linus! Tried to approach regression tracking a bit differently this
+cycle, which is why I didn't send any reports in the past few weeks. But
+as we are nearing the end of the cycle, let me quickly compile a report
+for afaics unresolved regressions that were reported and bisected to a
+change in this or the previous cycle.
 
----
- fs/ext4/orphan.c |  2 +-
- fs/ext4/super.c  |  4 ++--
- mm/percpu.c      |  5 ++---
- mm/shmem.c       | 12 +++++++-----
- 4 files changed, 12 insertions(+), 11 deletions(-)
+I only mentioned those I found noteworthy for one reason or another,
+most of the time because there is a lack of progress. But I track more
+regression, for example 12 others from this cycle. See
+https://linux-regtracking.leemhuis.info/regzbot/mainline/ for
+details[1]. But people are working busily on fixing those afaics; and
+none of them seem to affect a lot of users. Will send a more detailed
+report next week due to the pending release.
 
-diff --git a/fs/ext4/orphan.c b/fs/ext4/orphan.c
-index e5b47dda3317..08299b2a1b3b 100644
---- a/fs/ext4/orphan.c
-+++ b/fs/ext4/orphan.c
-@@ -293,7 +293,7 @@ int ext4_orphan_del(handle_t *handle, struct inode *inode)
- 			mutex_unlock(&sbi->s_orphan_lock);
- 			goto out_brelse;
- 		}
--		NEXT_ORPHAN(i_prev) = ino_next;
-+		WRITE_ONCE(NEXT_ORPHAN(i_prev), ino_next);
- 		err = ext4_mark_iloc_dirty(handle, i_prev, &iloc2);
- 		mutex_unlock(&sbi->s_orphan_lock);
- 	}
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index e72145c4ae5a..8cc5e19bfe78 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -346,7 +346,7 @@ __u32 ext4_free_group_clusters(struct super_block *sb,
- __u32 ext4_free_inodes_count(struct super_block *sb,
- 			      struct ext4_group_desc *bg)
- {
--	return le16_to_cpu(bg->bg_free_inodes_count_lo) |
-+	return le16_to_cpu(READ_ONCE(bg->bg_free_inodes_count_lo)) |
- 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
- 		 (__u32)le16_to_cpu(bg->bg_free_inodes_count_hi) << 16 : 0);
- }
-@@ -402,7 +402,7 @@ void ext4_free_group_clusters_set(struct super_block *sb,
- void ext4_free_inodes_set(struct super_block *sb,
- 			  struct ext4_group_desc *bg, __u32 count)
- {
--	bg->bg_free_inodes_count_lo = cpu_to_le16((__u16)count);
-+	WRITE_ONCE(bg->bg_free_inodes_count_lo, cpu_to_le16((__u16)count));
- 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
- 		bg->bg_free_inodes_count_hi = cpu_to_le16(count >> 16);
- }
-diff --git a/mm/percpu.c b/mm/percpu.c
-index 20d91af8c033..5c958a54da51 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -1864,7 +1864,6 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
- 
- area_found:
- 	pcpu_stats_area_alloc(chunk, size);
--	spin_unlock_irqrestore(&pcpu_lock, flags);
- 
- 	/* populate if not all pages are already there */
- 	if (!is_atomic) {
-@@ -1878,14 +1877,12 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
- 
- 			ret = pcpu_populate_chunk(chunk, rs, re, pcpu_gfp);
- 
--			spin_lock_irqsave(&pcpu_lock, flags);
- 			if (ret) {
- 				pcpu_free_area(chunk, off);
- 				err = "failed to populate";
- 				goto fail_unlock;
- 			}
- 			pcpu_chunk_populated(chunk, rs, re);
--			spin_unlock_irqrestore(&pcpu_lock, flags);
- 		}
- 
- 		mutex_unlock(&pcpu_alloc_mutex);
-@@ -1894,6 +1891,8 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
- 	if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
- 		pcpu_schedule_balance_work();
- 
-+	spin_unlock_irqrestore(&pcpu_lock, flags);
-+
- 	/* clear the areas and return address relative to base address */
- 	for_each_possible_cpu(cpu)
- 		memset((void *)pcpu_chunk_addr(chunk, cpu, 0) + off, 0, size);
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 5a77acf6ac6a..1595f6e7688c 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1154,7 +1154,9 @@ static int shmem_getattr(struct mnt_idmap *idmap,
- 	stat->attributes_mask |= (STATX_ATTR_APPEND |
- 			STATX_ATTR_IMMUTABLE |
- 			STATX_ATTR_NODUMP);
-+	inode_lock_shared(inode);
- 	generic_fillattr(idmap, request_mask, inode, stat);
-+	inode_unlock_shared(inode);
- 
- 	if (shmem_is_huge(inode, 0, false, NULL, 0))
- 		stat->blksize = HPAGE_PMD_SIZE;
-@@ -3439,7 +3441,7 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	if (error)
- 		goto out_iput;
- 
--	dir->i_size += BOGO_DIRENT_SIZE;
-+	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	inode_inc_iversion(dir);
- 	d_instantiate(dentry, inode);
-@@ -3526,7 +3528,7 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir,
- 		goto out;
- 	}
- 
--	dir->i_size += BOGO_DIRENT_SIZE;
-+	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
- 	inode_set_mtime_to_ts(dir,
- 			      inode_set_ctime_to_ts(dir, inode_set_ctime_current(inode)));
- 	inode_inc_iversion(dir);
-@@ -3639,8 +3641,8 @@ static int shmem_rename2(struct mnt_idmap *idmap,
- 		inc_nlink(new_dir);
- 	}
- 
--	old_dir->i_size -= BOGO_DIRENT_SIZE;
--	new_dir->i_size += BOGO_DIRENT_SIZE;
-+	i_size_write(old_dir, i_size_read(old_dir) - BOGO_DIRENT_SIZE);
-+	i_size_write(new_dir, i_size_read(new_dir) + BOGO_DIRENT_SIZE);
- 	simple_rename_timestamp(old_dir, old_dentry, new_dir, new_dentry);
- 	inode_inc_iversion(old_dir);
- 	inode_inc_iversion(new_dir);
-@@ -3694,7 +3696,7 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 		folio_unlock(folio);
- 		folio_put(folio);
- 	}
--	dir->i_size += BOGO_DIRENT_SIZE;
-+	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	inode_inc_iversion(dir);
- 	d_instantiate(dentry, inode);
---
+Ciao, Thorsten
+
+[1] ignore any pre-6.10 stuff for now, I lacked time to re-check if
+there was any progress that was not properly tagged (which is frequent)
+and thus missed by regzbot.
+
+
+mainline regressions introduced during development of 6.11
+==========================================================
+
+* Marc Payne 18 days ago reported that btusb fails to initialize on
+MT7921AUN since ccfc8948d7e4d9 ("Bluetooth: btusb: mediatek: reset the
+controller before downloading the fw") [v6.11-rc1] but did not get even
+a reply from a developer yet:
+https://lore.kernel.org/lkml/ZsTh7Jyug7MbZsLE@mdpsys.co.uk/
+
+* Mikhail Gavrilov five weeks ago reported that launching some RenPy
+games causes hangs since 1b04dcca4fb10d ("drm/amd/display: Introduce
+overlay cursor mode") [v6.11-rc1]. Fell through the cracks, now being
+worked on.
+https://lore.kernel.org/lkml/CABXGCsNgx6gQCqBq-L2P15ydaN_66sM9CgGa9GQYNzQsaa6Dkg@mail.gmail.com/
+
+* Chris Li six weeks ago reported swap stress tests now running into OOM
+since 33dfe9204f29b4 ("mm/gup: clear the LRU flag of a page before
+adding to LRU batch") [v6.11-rc1]. Fell through the cracks, but after
+prodding from my side recently posted a patch to fix this:
+https://lore.kernel.org/all/CAF8kJuNP5iTj2p07QgHSGOJsiUfYpJ2f4R1Q5-3BN9JiD9W_KA@mail.gmail.com/
+https://lore.kernel.org/lkml/20240905-lru-flag-v2-1-8a2d9046c594@kernel.org/
+
+
+mainline regressions introduced during development of 6.10
+==========================================================
+
+* Seven weeks ago someone reported that mpu6050 gyroscopes stopped
+working; a fix is in -next for 15 days now and hopefully will make it to
+you soon:
+https://lore.kernel.org/linux-iio/0ea167a1-75d0-469d-a79f-ff2cb5e81bdc@gmail.com/
+0a3b517c8089aa ("iio: imu: inv_mpu6050: fix interrupt status read for
+old buggy chips") [next-20240819 (pending-fixes)]
+
+* Two people three and a half weeks ago reported problems (like crashes
+on receiving large data over virtio_net under memory and IO load) due to
+f9dac92ba90810 ("virtio_ring: enable premapped mode whatever
+use_dma_api") [v6.10-rc1]; there will likely be a few reverts heading
+your way to fix this:
+https://bugzilla.kernel.org/show_bug.cgi?id=219154
+https://lore.kernel.org/netdev/8b20cc28-45a9-4643-8e87-ba164a540c0a@oracle.com/
+https://lore.kernel.org/netdev/20240906123137.108741-1-xuanzhuo@linux.alibaba.com/
+
+* Six weeks ago someone reported massive stuttering when GPU is almost
+100% load since b7a1a0ef12b819 ("drm/amd/amdgpu: add pipe1 hardware
+support") [v6.10-rc1]; four weeks ago a partial revert was discussed to
+fix the issue, but not merged -- and from here it looks like the issue
+is not yet resolved yet and stalled for three weeks now:
+https://gitlab.freedesktop.org/drm/amd/-/issues/3519
+
+* Since about six seeks it's known that 4df96ba6676034
+("drm/amd/display: Add timing pixel encoding for mst mode validation")
+[v6.10-rc1] caused issues for some users with 4k displays connected via
+a dock; no fix in sight yet afaics. :-/
+https://lore.kernel.org/amd-gfx/872a3e83-9bc5-47de-8514-48abe8ff03c5@typeblog.net/
+https://lore.kernel.org/stable/d74a7768e957e6ce88c27a5bece0c64dff132e24@holm.dev/
+https://gitlab.freedesktop.org/drm/amd/-/issues/3513
+
+* Since about four weeks it's known that 6f31d6b643a32c ("igc: Refactor
+runtime power management flow") [v6.10-rc1] causes suspend to fail on
+the second attempt; at least two people seem to be affected; progress is
+slow, no fix in sight, revert seems to fix this (it's not totally clear):
+https://bugzilla.kernel.org/show_bug.cgi?id=219143
+
+
 
