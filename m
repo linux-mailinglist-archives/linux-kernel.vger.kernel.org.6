@@ -1,121 +1,230 @@
-Return-Path: <linux-kernel+bounces-320013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C46BA970509
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 06:12:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E103797050E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 06:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AFF21F220FC
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:12:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9572928245B
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D880A3715E;
-	Sun,  8 Sep 2024 04:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="x1tVaZg7"
-Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570263B1BC;
+	Sun,  8 Sep 2024 04:28:39 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.honor.com [81.70.206.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DAA28FC
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 04:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C391AA31
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 04:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725768749; cv=none; b=ekGQ3fSGIaMeotQoQgv7J2Xb5ZDwZpC5WoVDsRGQ0ONrZ/gQrgBYyHwbMzQVN92e5HiQKTp5SdNBIonRWT4o/EpvEufm8n7kxtECSBqW+7evHBPJKtdq4lpOvVotSCawDbib1g7TkB2rgnsY3hf94e3qIfKxmBS/LTFMCA4WZ7o=
+	t=1725769718; cv=none; b=q08T/wMULwUf+gtKNP6ASBv1gNzVh1JCUqnHPX/0053ICv3J3W6+R15wJgGiYCVd6Tp9++Xsn8/tVO0JHZHUE1+fgrFUymRWzQ/cjr9V2Hag2YaSP9i/guNuhFG4tlQOnX/oRNUS3yU1lKJr3BDdxBqYNJ7libQdt1HfKsEJwtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725768749; c=relaxed/simple;
-	bh=I2l+dZYtO8xyYvTz31QPDr8MCIHGQZpOifbU9r4yhD4=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=bldk6ALjydm/RsVx1rcas9zv50H70toi8FWwLkUtbflOu15UcRUg0E/3bRaymWtcLoWZ+U37r6c5F22MwdmzoHDABMFE0b4pdbHw4hmJ4jKuTfo+GcqvPd+I7EBBK2Lv23MxbYiN3K8mCzXPokGk16fVws05S4uFmc3A9uSjdpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=x1tVaZg7; arc=none smtp.client-ip=203.205.221.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725768443; bh=5hCDN02vHnOzZJpY4KkDHbaWuVRAbHOGnN3wGSWztQk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=x1tVaZg7Qcu0JUM1uIClnL3Wa9p29nbmqfePAuG45ZY5WcC6up/z6i75qPfXIdznr
-	 Q3uvnHsebeGApwgvnJH5bMIRsB6Z2QkJP4Y5SY3sn5Xd4h9har7dJC7vyr+O/uSYuG
-	 0TveQYpdRmwTgBJB+ZqqHhAKnB0Qb10THdHvsFlc=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id 1D5230C8; Sun, 08 Sep 2024 12:07:21 +0800
-X-QQ-mid: xmsmtpt1725768441t369304jx
-Message-ID: <tencent_6352E6C65F89856EFC6EC18C92E7CCC6FF06@qq.com>
-X-QQ-XMAILINFO: OQhZ3T0tjf0aOFsS0p9Z35/zGR0mI2pgyKINPT8KhlimFwfi22o0+IuOyHEeCk
-	 8dNWSSDQdYY6JS3YJogMD1UrJY2e0xsoXTTl1EMuYLcpfUDapwCgirJjOhb3hrVv2kWdJsHZHGJe
-	 /4iQ5p4WIkE7mQj+lw8jeDlN8uaH8QGP9c6TMT3FFhJvfpWuWqmeNudIBGxLN9ttXXiyWa0Ah7gL
-	 Ib7PARq2MVBSJk6+xXTWXbsSYsp3ngDgVzJHQ7w066lEGJmhRH78yddwRsm2/hsCqrlFQYq16KcQ
-	 VPhhbh5/u3MOleQ93UbNbK6ztk03Shj1w1pMU7pRHPVYXU01s3hMhJ9eEom2b+p7LYfI+3a3LtbK
-	 OEmfvh9K/NxVDGq1An+tCFaBCTizXqAp6SLJGo9R+UknUaB0uS6mbo7RhP1BVL8oNySkN5inABB5
-	 x6M9iLt4zItqni3Hg/egU+BYvSnk3fI6/JKPJ+IFVYwa4/VGZQFLQL9gLzT9G7pf5NncD0x1FdRH
-	 5nXLVQVBu1Rr89dq7Aw2ZNUqOaYrx6izXCvrryC13SV4cjNJYrEkSFlMjbxcbNLzu+HRLm8Fj3pd
-	 4+phVekyEmOhIc7LcyndkmX5SV8AsYQzwTc+iQyrSNnIVWjBFd+3OXh2tIKZJo84840EuhMcEnKz
-	 rBhnyC/Tzzkiuy0RHvOebrUyqsWmK5BF0uVfatI71Byh+qbUv2KpAkHWnTneO5fqAJIQ9uRzLzlo
-	 kKDPQ4g8BeOFZA3FcuE3Igs7Na/FG1e0CvriJTBBhJdB/vKJC0zuM7bMY2GLbNzNoyzRvud1XYNo
-	 Fuu+EeumsnVVXPP8UGTgI25rzSE+a/UGLnRhAgzIPB8su6C6E2lws8+BW93nMf4A9/Jgnp67WIsV
-	 XsN9MzBpbm1eJh7UsdD4hAhCNj91XUwu2D6UvByiYbZ6/NB7FL0/GgwxNr2skgNw==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect (2)
-Date: Sun,  8 Sep 2024 12:07:21 +0800
-X-OQ-MSGID: <20240908040720.1380618-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <0000000000004a130a0621888811@google.com>
-References: <0000000000004a130a0621888811@google.com>
+	s=arc-20240116; t=1725769718; c=relaxed/simple;
+	bh=BTqJgZyXRBke5NSoBuShw3jhRHlyG2CESRKQAvYt9ME=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b9KXtRWA8E0c3NTbacY4MXtsZeieMyZJH9jOXHYxVbbCRdUZMCMCH78TSKZzGIxjH8ZHwSd1vVYn+s8i5zvtHH4MLoO3vP4b2CiJqy42MkcX9RcyeF2SMtUCnjtRyCkrqlCnoVEn8hDIqcYu8tqFgUANDjbVU920xN3TB5GDjyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w001.hihonor.com (unknown [10.68.25.235])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4X1c1j0mCKzYkyX1;
+	Sun,  8 Sep 2024 12:10:01 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w001.hihonor.com
+ (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sun, 8 Sep
+ 2024 12:12:03 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sun, 8 Sep
+ 2024 12:12:03 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <chao@kernel.org>
+CC: <jaegeuk@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
+	<linux-kernel@vger.kernel.org>, <wangzijie1@honor.com>
+Subject: Re: [f2fs-dev] [RFC PATCH] f2fs: don't set SBI_QUOTA_NEED_REPAIR flag if receive SIGKILL
+Date: Sun, 8 Sep 2024 12:12:02 +0800
+Message-ID: <20240908041202.2272053-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <973e075b-7044-4448-9cd0-45b5a1ad1382@kernel.org>
+References: <973e075b-7044-4448-9cd0-45b5a1ad1382@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: w011.hihonor.com (10.68.20.122) To a011.hihonor.com
+ (10.68.31.243)
 
-after release conn, we need to cancle rx_work
+>> From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+>> 
+>>> On 2024/8/27 14:22, wangzijie wrote:
+>>>> Thread A
+>>>> -dquot_initialize
+>>>>   -dqget
+>>>>    -f2fs_dquot_acquire
+>>>>     -v2_read_dquot
+>>>>      -qtree_read_dquot
+>>>>       -find_tree_dqentry
+>>>>        -f2fs_quota_read
+>>>>         -read_cache_page_gfp
+>>>>          -do_read_cache_folio
+>>>>           -fiemap_read_folio
+>>>>            -folio_wait_locked_killable
+>>>>             -receive SIGKILL : return -EINTR
+>>>>         -set SBI_QUOTA_NEED_REPAIR
+>>>>     -set SBI_QUOTA_NEED_REPAIR
+>>>>
+>>>> When calling read_cache_page_gfp in quota read, thread may receive SIGKILL and
+>>>> set SBI_QUOTA_NEED_REPAIR, should we set SBI_QUOTA_NEED_REPAIR in this error path?
+>>>
+>>> f2fs_quota_read() can be called in a lot of contexts, can we just ignore -EINTR
+>>> for f2fs_dquot_initialize() case?
+>>>
+>>> Thanks,
+>> 
+>> Yes, in many contexts f2fs_quota_read() can be called and may return -EINTR, we need to ignore this errno for more cases. If we need to do so, I will check it and resend patch.
+>> Or do you have other suggestions to avoid unnecessary SBI_QUOTA_NEED_REPAIR flag set?
+>
+>How about this?
+>
+>---
+>  fs/f2fs/f2fs.h  |  1 +
+>  fs/f2fs/inode.c |  3 +--
+>  fs/f2fs/super.c | 17 +++++++++++++----
+>  3 files changed, 15 insertions(+), 6 deletions(-)
+>
+>diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>index dfed1974eda5..a1704a19dfe9 100644
+>--- a/fs/f2fs/f2fs.h
+>+++ b/fs/f2fs/f2fs.h
+>@@ -810,6 +810,7 @@ enum {
+>  	FI_ATOMIC_DIRTIED,	/* indicate atomic file is dirtied */
+>  	FI_ATOMIC_REPLACE,	/* indicate atomic replace */
+>  	FI_OPENED_FILE,		/* indicate file has been opened */
+>+	FI_INIT_DQUOT,		/* indicate it's initializing dquot */
+>  	FI_MAX,			/* max flag, never be used */
+>  };
+>
+>diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>index 008f01348afa..b1dbaeda306f 100644
+>--- a/fs/f2fs/inode.c
+>+++ b/fs/f2fs/inode.c
+>@@ -827,8 +827,7 @@ void f2fs_evict_inode(struct inode *inode)
+>
+>  	err = f2fs_dquot_initialize(inode);
+>  	if (err) {
+>-		if (err != -EINTR)
+>-			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+>+		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+>  		err = 0;
+>  	}
+>
+>diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>index 8e29aba4b7a4..e774bdf875b2 100644
+>--- a/fs/f2fs/super.c
+>+++ b/fs/f2fs/super.c
+>@@ -2644,8 +2644,11 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+>  			if (PTR_ERR(page) == -ENOMEM) {
+>  				memalloc_retry_wait(GFP_NOFS);
+>  				goto repeat;
+>-			} else if (PTR_ERR(page) != -EINTR)
+>-				set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>+			} else if (PTR_ERR(page) == -EINTR &&
+>+				is_inode_flag_set(inode, FI_INIT_DQUOT)) {
+>+				return PTR_ERR(page);
+>+			}
+>+			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>  			return PTR_ERR(page);
+>  		}
+>
+>@@ -2721,10 +2724,16 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+>
+>  int f2fs_dquot_initialize(struct inode *inode)
+>  {
+>+	int ret;
+>+
+>  	if (time_to_inject(F2FS_I_SB(inode), FAULT_DQUOT_INIT))
+>  		return -ESRCH;
+>
+>-	return dquot_initialize(inode);
+>+	set_inode_flag(inode, FI_INIT_DQUOT);
+>+	ret = dquot_initialize(inode);
+>+	clear_inode_flag(inode, FI_INIT_DQUOT);
+>+
+>+	return ret;
+>  }
+>
+>  static struct dquot __rcu **f2fs_get_dquots(struct inode *inode)
+>@@ -3064,7 +3073,7 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
+>
+>  	f2fs_down_read(&sbi->quota_sem);
+>  	ret = dquot_acquire(dquot);
+>-	if (ret < 0 && ret != -EINTR)
+>+	if (ret < 0)
+>  		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+>  	f2fs_up_read(&sbi->quota_sem);
+>  	return ret;
+>-- 
+>2.40.1
 
-#syz test
+Hi, Chao
+If we dont't ignore -EINTR in f2fs_dquot_acquire(), we will still set SBI_QUOTA_NEED_REPAIR flag
+in f2fs_dquot_acquire() if f2fs_quota_read return -EINTR. I think we need more cases in addition to 
+dquot initializing and I will check it again.
+Thank you for your suggestion!
 
-diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-index f25a21f532aa..4f7b45bb863f 100644
---- a/net/bluetooth/hci_core.c
-+++ b/net/bluetooth/hci_core.c
-@@ -3776,18 +3776,19 @@ static void hci_acldata_packet(struct hci_dev *hdev, struct sk_buff *skb)
- 
- 	hci_dev_lock(hdev);
- 	conn = hci_conn_hash_lookup_handle(hdev, handle);
--	hci_dev_unlock(hdev);
- 
- 	if (conn) {
- 		hci_conn_enter_active_mode(conn, BT_POWER_FORCE_ACTIVE_OFF);
- 
- 		/* Send to upper protocol */
- 		l2cap_recv_acldata(conn, skb, flags);
-+		hci_dev_unlock(hdev);
- 		return;
- 	} else {
- 		bt_dev_err(hdev, "ACL packet for unknown connection handle %d",
- 			   handle);
- 	}
-+	hci_dev_unlock(hdev);
- 
- 	kfree_skb(skb);
- }
-diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-index 9988ba382b68..b948b0a3b2f2 100644
---- a/net/bluetooth/l2cap_core.c
-+++ b/net/bluetooth/l2cap_core.c
-@@ -4072,10 +4072,8 @@ static int l2cap_connect_req(struct l2cap_conn *conn,
- 	if (cmd_len < sizeof(struct l2cap_conn_req))
- 		return -EPROTO;
- 
--	hci_dev_lock(hdev);
- 	if (hci_dev_test_flag(hdev, HCI_MGMT))
- 		mgmt_device_connected(hdev, hcon, NULL, 0);
--	hci_dev_unlock(hdev);
- 
- 	l2cap_connect(conn, cmd, data, L2CAP_CONN_RSP);
- 	return 0;
+>> 
+>> Thank you for review.
+>> 
+>>>>
+>>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
+>>>> ---
+>>>>   fs/f2fs/inode.c | 3 ++-
+>>>>   fs/f2fs/super.c | 6 +++---
+>>>>   2 files changed, 5 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>>>> index ed629dabb..2af98e2b7 100644
+>>>> --- a/fs/f2fs/inode.c
+>>>> +++ b/fs/f2fs/inode.c
+>>>> @@ -837,8 +837,9 @@ void f2fs_evict_inode(struct inode *inode)
+>>>>       err = f2fs_dquot_initialize(inode);
+>>>>       if (err) {
+>>>> +        if (err != -EINTR)
+>>>> +            set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+>>>>           err = 0;
+>>>> -        set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+>>>>       }
+>>>>       f2fs_remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
+>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>> index 1f1b3647a..f99a36ff3 100644
+>>>> --- a/fs/f2fs/super.c
+>>>> +++ b/fs/f2fs/super.c
+>>>> @@ -2650,8 +2650,8 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+>>>>               if (PTR_ERR(page) == -ENOMEM) {
+>>>>                   memalloc_retry_wait(GFP_NOFS);
+>>>>                   goto repeat;
+>>>> -            }
+>>>> -            set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>>>> +            } else if (PTR_ERR(page) != -EINTR)
+>>>> +                set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>>>>               return PTR_ERR(page);
+>>>>           }
+>>>> @@ -3070,7 +3070,7 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
+>>>>       f2fs_down_read(&sbi->quota_sem);
+>>>>       ret = dquot_acquire(dquot);
+>>>> -    if (ret < 0)
+>>>> +    if (ret < 0 && ret != -EINTR)
+>>>>           set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+>>>>       f2fs_up_read(&sbi->quota_sem);
+>>>>       return ret;
+>> 
+>> 
+
 
 
