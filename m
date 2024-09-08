@@ -1,145 +1,159 @@
-Return-Path: <linux-kernel+bounces-319992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60C139704DA
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:38:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21AE49704DD
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CB70282FE5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 02:38:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D32FD281BF3
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 02:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB4D24B2F;
-	Sun,  8 Sep 2024 02:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pfw+5l2G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690441CA81;
+	Sun,  8 Sep 2024 02:40:41 +0000 (UTC)
+Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265EBD272;
-	Sun,  8 Sep 2024 02:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D5B33C5;
+	Sun,  8 Sep 2024 02:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725763095; cv=none; b=J1B4XnTLRI1QaeUJFBdG+l2MN2s5FX1HWw7Tzdt1A6W6v8evO98jVx7tcC6gGRnGWyD4s+qDuw11h8Lbp2IrlUv6+Rz+f2phu1kGFQ6Dx6qyDRBKNb8g7ClgaQS+/57FRdKxUxo4pyPijO5INBaxGFSPl9fhjsnxtm0uM1SYjVc=
+	t=1725763241; cv=none; b=Gq+SDnv84i4Gucg7LQ0jFKX4ThVPYfZz7zflIGXqxJAEOeVK/V6ViZaGwn8BWMN7hBGZ6/aqaSUOvK6qyafnEMHLIdI2Pge2Cy28nq7chppTUsLkPsBOU8UBMAqCS9u/Nbb39ONg9p2G6SUSa/5de9JAqAJirPh7AQQg19IQ364=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725763095; c=relaxed/simple;
-	bh=QRLowZOK063HZ8aCZ32C9grtYQV6cWDgqk9akduwUjM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t9aCuWhxlH3sXXXFruvj8lEfBTsURpdl1O+k5tZShAQAhh7uhQYqZNHW0nVALO0q5UFZ72YlJa6MgTILsf/CU9grXtTKZLRevCoftjU+v9TUwO1IBfliubzWtmSKf6L4TTQkvp0xv7NgnJTM0U5ESA8UiFplsEE+HaVsDobGoYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pfw+5l2G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9025DC4CEC4;
-	Sun,  8 Sep 2024 02:38:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725763094;
-	bh=QRLowZOK063HZ8aCZ32C9grtYQV6cWDgqk9akduwUjM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Pfw+5l2GeOPPyWuqs9BNFXOTTj16lFZ+PFrQ7ZYtTaKeFaG6WOxJVE41svVzhXrsb
-	 Kb7OJYTghOJhm3QNvduiPXCV8EwtBRMdUMtBuuNI2MwGo7afpIO0DPxR8zgpOIiIro
-	 PjyQ+sNJJXYoce07yxsvDnsn0bxispffHGywP3unKsCVYH+a3Y4nkPFHwzV0talOa9
-	 I/9P30awNAU5XSN5a18O3OQ2wBAeAcvUkyuAxAUvnzz6YuUWsWfyD1c6RGAAY6fxvH
-	 WKZHWo/tJqUHHb2QRh6E1LHqjyZBRW54zLARr5V3j6TxZ2//YDzMoPH7v4eSRnJFmw
-	 CKFzqP2TvWVSg==
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c3d209da98so4954048a12.1;
-        Sat, 07 Sep 2024 19:38:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUyNEjgKoaKPvDM/b1VRtDmAs7dVLQ4I4205k1GNa3X3XDVgSCgDWDyEkojxzQwSXSznQc=@vger.kernel.org, AJvYcCV1qnh6Mcw3+drUk0c+Y5vNzlBMY/VnNWaPvG1sGRmXQKbqsk+ZoxcSPtEZVWQi6l53G5dNmhqAEps=@vger.kernel.org, AJvYcCWdfjrp8MS9PVbePg38q/HXWBRDl5MO31Hy5Lhg7ziMOF8AtnGK7/lQnQWuumN443by02PYBPJSvBDvYDa9@vger.kernel.org, AJvYcCXyNE0ISy70+MepMk+asXopEJ9OOOl1q1mRzoYGZ+AdjzWTqMCcszMcaE8z2FrNe49nHCFO407ccWY3yw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV31/OHLNHA6R9R5xY0UxVmNw4fU9Ma7h7UzxprFHBBc52U7g5
-	3OM+YqUCCIu+l35qpCCJGfi/C71dx1ZmLoaKHeNoAeZR+2a+Jaw5HUJ0fNM+UuwOoRA2ZDxncHZ
-	RXFjH6qxhgwCNVwW0boPUrP+eckU=
-X-Google-Smtp-Source: AGHT+IGrmEb6wjce45DDeIXQI62sW6ehBa4TumudW+Xqf5CX2GvNkX+QBM4cqNClCBuXL95+M0TaZ+7xljM4dw9T+wE=
-X-Received: by 2002:a05:6402:3549:b0:5c2:5f31:8888 with SMTP id
- 4fb4d7f45d1cf-5c3c1f9cbd4mr13982347a12.15.1725763093152; Sat, 07 Sep 2024
- 19:38:13 -0700 (PDT)
+	s=arc-20240116; t=1725763241; c=relaxed/simple;
+	bh=9h14hdjvsJvyeLLJrfX6660rmVaeCeMYxBJ7mQEL2I4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uH0o2LJQCk5iJayHVXw/K+Pe4NiP7DkrKMfZkG/hTmgD+Ny428eMvCQHrOHhQ2DUR2yzqhKrBL4AWFHPKtZFb9UukUDDKMQICKqfloCNjbCc/m8BEnejmo9qAYJH7t5gsXogz+USxxfeNoOz66ZKV26CHddqKyHRrrvquN7laXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
+Received: from dsgsiengine01.siengine.com ([10.8.1.61])
+	by mail03.siengine.com with ESMTPS id 4882e1KY024547
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 8 Sep 2024 10:40:01 +0800 (+08)
+	(envelope-from kimriver.liu@siengine.com)
+Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
+	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4X1Z1q74Y8z7ZMns;
+	Sun,  8 Sep 2024 10:39:59 +0800 (CST)
+Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
+ SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Sun, 8 Sep 2024 10:40:00 +0800
+Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
+ SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.9; Sun, 8 Sep 2024 10:39:59 +0800
+Received: from SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe]) by
+ SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe%16]) with mapi id
+ 15.02.1544.011; Sun, 8 Sep 2024 10:39:59 +0800
+From: =?gb2312?B?TGl1IEtpbXJpdmVyL8H1vfC60w==?= <kimriver.liu@siengine.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+CC: "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
+        "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+        "jsd@semihalf.com" <jsd@semihalf.com>,
+        "andi.shyti@kernel.org"
+	<andi.shyti@kernel.org>,
+        "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: =?gb2312?B?u9i4tDogW1BBVENIXSBpMmM6IGRlc2lnbndhcmU6IGZpeCBtYXN0ZXIgaXMg?=
+ =?gb2312?Q?holding_SCL_low_while_ENABLE_bit_is_disabled?=
+Thread-Topic: [PATCH] i2c: designware: fix master is holding SCL low while
+ ENABLE bit is disabled
+Thread-Index: AQHbADEIW35yKdnseE29IGkdUrOvKrJJ4TuAgANMHMA=
+Date: Sun, 8 Sep 2024 02:39:59 +0000
+Message-ID: <9015556aa8d34cac80419348c6028a44@siengine.com>
+References: <20240906074731.3064-1-kimriver.liu@siengine.com>
+ <20240906080749.GE275077@black.fi.intel.com>
+In-Reply-To: <20240906080749.GE275077@black.fi.intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240907-iocsr-v1-0-0c99b3334444@flygoat.com> <20240907-iocsr-v1-1-0c99b3334444@flygoat.com>
-In-Reply-To: <20240907-iocsr-v1-1-0c99b3334444@flygoat.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 8 Sep 2024 10:38:07 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H64tf8=XekeBKwR3w65ofjUrbgeqPngNxiT-11EHMKwdA@mail.gmail.com>
-Message-ID: <CAAhV-H64tf8=XekeBKwR3w65ofjUrbgeqPngNxiT-11EHMKwdA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] LoongArch: Rename cpu_has_csr as cpu_has_iocsr
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: WANG Xuerui <kernel@xen0n.name>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-mips@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-DKIM-Results: [10.8.1.61]; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:mail03.siengine.com 4882e1KY024547
 
-Hi, Jiaxun,
-
-On Sat, Sep 7, 2024 at 6:17=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoat.com=
-> wrote:
->
-> It meant to be IOCSR as CSR is not optional for LoongArch.
-Keep the CSR definition and add IOCSR definition after it, OK? This
-also means the 1st patch can be dropped.
-
-And it is just OK to change the values after CPU_FEATURE_CSR, because
-they are only for internal use.
-
-Huacai
->
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
->  arch/loongarch/include/asm/cpu-features.h | 2 +-
->  arch/loongarch/include/asm/cpu.h          | 2 +-
->  arch/loongarch/kernel/cpu-probe.c         | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/loongarch/include/asm/cpu-features.h b/arch/loongarch/i=
-nclude/asm/cpu-features.h
-> index 16a716f88a5c..0190ed28a647 100644
-> --- a/arch/loongarch/include/asm/cpu-features.h
-> +++ b/arch/loongarch/include/asm/cpu-features.h
-> @@ -50,7 +50,7 @@
->  #define cpu_has_lbt_arm                cpu_opt(LOONGARCH_CPU_LBT_ARM)
->  #define cpu_has_lbt_mips       cpu_opt(LOONGARCH_CPU_LBT_MIPS)
->  #define cpu_has_lbt            (cpu_has_lbt_x86|cpu_has_lbt_arm|cpu_has_=
-lbt_mips)
-> -#define cpu_has_csr            cpu_opt(LOONGARCH_CPU_CSR)
-> +#define cpu_has_iocsr          cpu_opt(LOONGARCH_CPU_IOCSR)
->  #define cpu_has_tlb            cpu_opt(LOONGARCH_CPU_TLB)
->  #define cpu_has_watch          cpu_opt(LOONGARCH_CPU_WATCH)
->  #define cpu_has_vint           cpu_opt(LOONGARCH_CPU_VINT)
-> diff --git a/arch/loongarch/include/asm/cpu.h b/arch/loongarch/include/as=
-m/cpu.h
-> index 843f9c4ec980..7c44f4ede3a2 100644
-> --- a/arch/loongarch/include/asm/cpu.h
-> +++ b/arch/loongarch/include/asm/cpu.h
-> @@ -115,7 +115,7 @@ enum cpu_type_enum {
->  #define LOONGARCH_CPU_LBT_ARM          BIT_ULL(CPU_FEATURE_LBT_ARM)
->  #define LOONGARCH_CPU_LBT_MIPS         BIT_ULL(CPU_FEATURE_LBT_MIPS)
->  #define LOONGARCH_CPU_TLB              BIT_ULL(CPU_FEATURE_TLB)
-> -#define LOONGARCH_CPU_CSR              BIT_ULL(CPU_FEATURE_CSR)
-> +#define LOONGARCH_CPU_IOCSR            BIT_ULL(CPU_FEATURE_IOCSR)
->  #define LOONGARCH_CPU_WATCH            BIT_ULL(CPU_FEATURE_WATCH)
->  #define LOONGARCH_CPU_VINT             BIT_ULL(CPU_FEATURE_VINT)
->  #define LOONGARCH_CPU_CSRIPI           BIT_ULL(CPU_FEATURE_CSRIPI)
-> diff --git a/arch/loongarch/kernel/cpu-probe.c b/arch/loongarch/kernel/cp=
-u-probe.c
-> index 14f0449f5452..4446616d497c 100644
-> --- a/arch/loongarch/kernel/cpu-probe.c
-> +++ b/arch/loongarch/kernel/cpu-probe.c
-> @@ -91,7 +91,7 @@ static void cpu_probe_common(struct cpuinfo_loongarch *=
-c)
->         unsigned int config;
->         unsigned long asid_mask;
->
-> -       c->options =3D LOONGARCH_CPU_CPUCFG | LOONGARCH_CPU_CSR |
-> +       c->options =3D LOONGARCH_CPU_CPUCFG | LOONGARCH_CPU_IOCSR |
->                      LOONGARCH_CPU_TLB | LOONGARCH_CPU_VINT | LOONGARCH_C=
-PU_WATCH;
->
->         elf_hwcap =3D HWCAP_LOONGARCH_CPUCFG;
->
-> --
-> 2.46.0
->
+SGkgDQogIEkgYW0gc29ycnkgZm9yIG5vdCByZXBseWluZyB0byBxdWVzdGlvbnMgaW4gdGltZSBv
+biBGcmlkYXkuDQoNCg0KLS0tLS3Tyrz+1K28/i0tLS0tDQq3orz+yMs6IE1pa2EgV2VzdGVyYmVy
+ZyA8bWlrYS53ZXN0ZXJiZXJnQGxpbnV4LmludGVsLmNvbT4gDQq3osvNyrG85DogMjAyNMTqOdTC
+NsjVIDE2OjA4DQrK1bz+yMs6IExpdSBLaW1yaXZlci/B9b3wutMgPGtpbXJpdmVyLmxpdUBzaWVu
+Z2luZS5jb20+DQqzrcvNOiBqYXJra28ubmlrdWxhQGxpbnV4LmludGVsLmNvbTsgYW5kcml5LnNo
+ZXZjaGVua29AbGludXguaW50ZWwuY29tOyBqc2RAc2VtaWhhbGYuY29tOyBhbmRpLnNoeXRpQGtl
+cm5lbC5vcmc7IGxpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
+cm5lbC5vcmcNCtb3zOI6IFJlOiBbUEFUQ0hdIGkyYzogZGVzaWdud2FyZTogZml4IG1hc3RlciBp
+cyBob2xkaW5nIFNDTCBsb3cgd2hpbGUgRU5BQkxFIGJpdCBpcyBkaXNhYmxlZA0KDQpIaSwNCg0K
+T24gRnJpLCBTZXAgMDYsIDIwMjQgYXQgMDM6NDc6MzFQTSArMDgwMCwgS2ltcml2ZXIgTGl1IHdy
+b3RlOg0KPiBJdCB3YXMgb2JzZXJ2ZWQgaXNzdWluZyBBQk9SVCBiaXQoSUNfRU5BQkxFWzFdKSB3
+aWxsIG5vdCB3b3JrIHdoZW4NCj4gSUNfRU5BQkxFIGlzIGFscmVhZHkgZGlzYWJsZWQuDQo+IA0K
+PiBDaGVjayBpZiBFTkFCTEUgYml0KElDX0VOQUJMRVswXSkgaXMgZGlzYWJsZWQgd2hlbiB0aGUg
+bWFzdGVyIGlzDQo+IGhvbGRpbmcgU0NMIGxvdy4gSWYgRU5BQkxFIGJpdCBpcyBkaXNhYmxlZCwg
+dGhlIHNvZnR3YXJlIG5lZWQNCj4gZW5hYmxlIGl0IGJlZm9yZSB0cnlpbmcgdG8gaXNzdWUgQUJP
+UlQgYml0LiBvdGhlcndpc2UsDQo+IHRoZSBjb250cm9sbGVyIGlnbm9yZXMgYW55IHdyaXRlIHRv
+IEFCT1JUIGJpdC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEtpbXJpdmVyIExpdSA8a2ltcml2ZXIu
+bGl1QHNpZW5naW5lLmNvbT4NCj4gDQo+IC0tLQ0KPiBWNS0+VjY6IHJlc3RvcmUgaTJjX2R3X2lz
+X21hc3Rlcl9pZGxpbmcoKSBmdW5jdGlvbiBjaGVja2luZw0KPiBWNC0+VjU6IGRlbGV0ZSBtYXN0
+ZXIgaWRsaW5nIGNoZWNraW5nDQo+IFYzLT5WNDoNCj4gICAgICAgMS4gdXBkYXRlIGNvbW1pdCBt
+ZXNzYWdlcyBhbmQgYWRkIHBhdGNoIHZlcnNpb24gYW5kIGNoYW5nZWxvZw0KPiAgICAgICAyLiBt
+b3ZlIHByaW50IHRoZSBlcnJvciBtZXNzYWdlIGluIGkyY19kd194ZmVyDQo+IFYyLT5WMzogY2hh
+bmdlICghZW5hYmxlKSB0byAoIShlbmFibGUgJiBEV19JQ19FTkFCTEVfRU5BQkxFKSkNCj4gVjEt
+PlYyOiB1c2VkIHN0YW5kYXJkIHdvcmRzIGluIGZ1bmN0aW9uIG5hbWVzIGFuZCBhZGRyZXNzZWQg
+cmV2aWV3IGNvbW1lbnRzDQo+IA0KPiBsaW5rIHRvIFYxOg0KPiBodHRwczovL2xvcmUua2VybmVs
+Lm9yZy9sa21sLzIwMjQwOTA0MDY0MjI0LjIzOTQtMS1raW1yaXZlci5saXVAc2llbmdpbmUuY29t
+Lw0KPiAtLS0NCj4gIGRyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtZGVzaWdud2FyZS1jb21tb24uYyB8
+IDExICsrKysrKysrKysrDQo+ICBkcml2ZXJzL2kyYy9idXNzZXMvaTJjLWRlc2lnbndhcmUtbWFz
+dGVyLmMgfCAyMiArKysrKysrKysrKysrKysrKysrKysrDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDMz
+IGluc2VydGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJj
+LWRlc2lnbndhcmUtY29tbW9uLmMgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLWRlc2lnbndhcmUt
+Y29tbW9uLmMNCj4gaW5kZXggZThhNjg4ZDA0YWVlLi4yYjMzOThjZDQzODIgMTAwNjQ0DQo+IC0t
+LSBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtZGVzaWdud2FyZS1jb21tb24uYw0KPiArKysgYi9k
+cml2ZXJzL2kyYy9idXNzZXMvaTJjLWRlc2lnbndhcmUtY29tbW9uLmMNCj4gQEAgLTQ1Myw2ICs0
+NTMsMTcgQEAgdm9pZCBfX2kyY19kd19kaXNhYmxlKHN0cnVjdCBkd19pMmNfZGV2ICpkZXYpDQo+
+ICANCj4gIAlhYm9ydF9uZWVkZWQgPSByYXdfaW50cl9zdGF0cyAmIERXX0lDX0lOVFJfTVNUX09O
+X0hPTEQ7DQo+ICAJaWYgKGFib3J0X25lZWRlZCkgew0KPiArCQlpZiAoIShlbmFibGUgJiBEV19J
+Q19FTkFCTEVfRU5BQkxFKSkgew0KPiArCQkJcmVnbWFwX3dyaXRlKGRldi0+bWFwLCBEV19JQ19F
+TkFCTEUsIERXX0lDX0VOQUJMRV9FTkFCTEUpOw0KPiArCQkJZW5hYmxlIHw9IERXX0lDX0VOQUJM
+RV9FTkFCTEU7DQo+ICsJCQkvKg0KPiArCQkJICogV2FpdCB0d28gaWNfY2xrIGRlbGF5IHdoZW4g
+ZW5hYmxpbmcgdGhlIEkyQyB0byBlbnN1cmUgRU5BQkxFIGJpdA0KPiArCQkJICogaXMgYWxyZWFk
+eSBzZXQgYnkgdGhlIGRyaXZlciAoZm9yIDQwMEtIeiB0aGlzIGlzIDI1dXMpDQo+ICsJCQkgKiBh
+cyBkZXNjcmliZWQgaW4gdGhlIERlc2lnbldhcmUgSTJDIGRhdGFib29rLg0KPiArCQkJICovDQo+
+ICsJCQlmc2xlZXAoMjUpOw0KPiArCQl9DQo+ICsNCj4gIAkJcmVnbWFwX3dyaXRlKGRldi0+bWFw
+LCBEV19JQ19FTkFCTEUsIGVuYWJsZSB8IERXX0lDX0VOQUJMRV9BQk9SVCk7DQo+ICAJCXJldCA9
+IHJlZ21hcF9yZWFkX3BvbGxfdGltZW91dChkZXYtPm1hcCwgRFdfSUNfRU5BQkxFLCBlbmFibGUs
+DQo+ICAJCQkJCSAgICAgICAhKGVuYWJsZSAmIERXX0lDX0VOQUJMRV9BQk9SVCksIDEwLA0KPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1kZXNpZ253YXJlLW1hc3Rlci5jIGIv
+ZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1kZXNpZ253YXJlLW1hc3Rlci5jDQo+IGluZGV4IGM3ZTU2
+MDAyODA5YS4uMTMyYjcyMzdjMDA0IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2kyYy9idXNzZXMv
+aTJjLWRlc2lnbndhcmUtbWFzdGVyLmMNCj4gKysrIGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1k
+ZXNpZ253YXJlLW1hc3Rlci5jDQo+IEBAIC0yNTMsNiArMjUzLDE5IEBAIHN0YXRpYyB2b2lkIGky
+Y19kd194ZmVyX2luaXQoc3RydWN0IGR3X2kyY19kZXYgKmRldikNCj4gIAlfX2kyY19kd193cml0
+ZV9pbnRyX21hc2soZGV2LCBEV19JQ19JTlRSX01BU1RFUl9NQVNLKTsNCj4gIH0NCj4gIA0KPiAr
+c3RhdGljIGJvb2wgaTJjX2R3X2lzX21hc3Rlcl9pZGxpbmcoc3RydWN0IGR3X2kyY19kZXYgKmRl
+dikNCj4gK3sNCj4gKwl1MzIgc3RhdHVzOw0KPiArDQo+ICsJcmVnbWFwX3JlYWQoZGV2LT5tYXAs
+IERXX0lDX1NUQVRVUywgJnN0YXR1cyk7DQo+ICsJaWYgKCEoc3RhdHVzICYgRFdfSUNfU1RBVFVT
+X01BU1RFUl9BQ1RJVklUWSkpDQo+ICsJCXJldHVybiB0cnVlOw0KPiArDQo+ICsJcmV0dXJuICFy
+ZWdtYXBfcmVhZF9wb2xsX3RpbWVvdXQoZGV2LT5tYXAsIERXX0lDX1NUQVRVUywgc3RhdHVzLA0K
+PiArCQkJIShzdGF0dXMgJiBEV19JQ19TVEFUVVNfTUFTVEVSX0FDVElWSVRZKSwNCj4gKwkJCTEx
+MDAsIDIwMDAwKTsNCj4gK30NCg0KPlllYWgsIEkgbm93IHJlYWxpemUgdGhhdCBpMmNfZHdfd2Fp
+dF9idXNfbm90X2J1c3koKSBjaGVja3MgZm9yDQo+RFdfSUNfU1RBVFVTX0FDVElWSVRZIG5vdCBm
+b3IgRFdfSUNfU1RBVFVTX01BU1RFUl9BQ1RJVklUWSBhcyBJIHRob3VnaHQNCj5zbyBjb25zb2xp
+ZGF0aW5nIHRoZW0gbWFrZXMgbm90IHRoYXQgbXVjaCBzZW5zZS4NCg0KPlRoaXMgbG9va3MgZ29v
+ZCB0byBtZSwNCg0KVGhhbmtzLg0KIFRoaXMgY2FzZSBoYXBwZW5zIHJhcmVseSBhbmQgaXMgaGFy
+ZCB0byByZXByb2R1Y2UuIFdlIHJlcHJvZHVjZSB0aGlzIGlzc3VlIA0KIGluIFJUTCBzaW11bGF0
+aW9uLiBJdCBpcyBuZWNlc3NhcnkgdG8gYWRkIHdhaXRpbmcgRFdfSUNfU1RBVFVTX01BU1RFUl9B
+Q1RJVklUWQ0KIGlkbGluZyBiZWZvcmUgZGlzYWJsaW5nIEkyQyB3aGVuIEkyQyB0cmFuc2ZlciBj
+b21wbGV0ZWQuICBhcyBkZXNjcmliZWQgaW4gdGhlDQogRGVzaWduV2FyZSBJMkMgZGF0YWJvb2so
+Rmxvd2NoYXJ0IGZvciBEV19hcGJfaTJjIENvbnRyb2xsZXIpDQoNCg0KLS0tLS0tLS0tLS0tLS0t
+LS0NCkJlc3QgUmVnYXJkcw0KS2ltcml2ZXIgTGl1DQo=
 
