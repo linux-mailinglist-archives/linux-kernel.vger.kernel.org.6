@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-320278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93BA4970848
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:57:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B133970849
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52EA8283C47
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:56:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 865C31C214B2
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92DF171671;
-	Sun,  8 Sep 2024 14:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C3017624F;
+	Sun,  8 Sep 2024 14:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="ZWFw9OF1"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="m5w1Uc0E"
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DF5175D27
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 14:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24739173347
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 14:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725807369; cv=none; b=kVBCD61AZY0omSx/t80rIDnl9oxAC9QY7ezm8boLbg1GVvZGwPghbxCmV9v/oJAMcvYkNR/81WVQ9eE/45xmzLudS+O/r5fbIcTGnWPg+zsIJcW9h80MxidCtBd1dQH249r3UtzBmDxS5E9FvaZ8GZeAKvd0kpzQWinKNKT9rJ8=
+	t=1725807370; cv=none; b=DsotRQ1ri0k2rvmaHCc6xMrSsg3iCcnBly05z+YXpJajgffkGusuZk3FznSAL1uw3qluOVkFwNrOLafqVUHoLdBjKgp3TA1yW9lwzmxn613j5OwLZSyh6oikPC2/+ueCQw05b53NfMKC1qIhZnuTGZ6DNUJV/CDe0gD37vzcGgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725807369; c=relaxed/simple;
-	bh=A2AxR9xSRjg/K7y3Z60Yb5AJMbrkD6IZDJS9jfCAxSA=;
+	s=arc-20240116; t=1725807370; c=relaxed/simple;
+	bh=a1deiAozCdmJ4GF9o0XtiEt1ZU8QWLsHqhwArBEVCNQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WKnTU/SmrhMhdNf6rOxX8ZY70gA/vtaVihg/mocYv7Or8kCQ47YX0QoTJ61D33wF3ygzrXrepFf+mnWJZHBv2FvD7NtKXF2NV8BTewpMKMB2L7xDVO1wR2O7vOoyBicetFITXRqtVCvrUXR1QP1uXZliu5shflTPv+nWcdnl4gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=ZWFw9OF1; arc=none smtp.client-ip=149.28.215.223
+	 MIME-Version; b=W6zLn7x92pQaazB/4s8CNFVHeRuDYQJZFwqDdtrXRrJphAhRCNiPWtXHuZjhsLOaR3J5ofJzeI/UdAEqqAG00+XW6GptOrBwo2mrjj+rBMCI3VH7+xunNHXe64x9tcz3RbF7L7cpnMFaGGVRHoSHk+Qt3fM9MUEeLnv7ZzxVktw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=m5w1Uc0E; arc=none smtp.client-ip=149.28.215.223
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
  h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
  Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1725807347; bh=Z2Cb05mWFWfLkKZu5GopUYFl3Iafbmet5hEZs8+nUeA=;
- b=ZWFw9OF16J2MAEap+3I5h+/az2xi/wHRm7DllMZjY0aQd7sjFlUhM/H+FinAB7Km48FhKRnqw
- IGE8v5JowRdcX9XWgyYCHMbu//+nXvqEh035H/W5T2z9N//axANOb9VN93Ed53+TKtEUOOGepKe
- Jq8Glb3tWa4tZ95gXSAxiXbnj71SFioMLm1QpXPlOZDkaH9UjMa8sdik2yQYEkPDS9NDi2cx9zn
- wuj0njHuyUpbrrybPmuLJty8WSJK8htzDrI+/xG/jAm9oweo6QjhwyI5s70HEkfRik5epconors
- yF/T92FDl+eRPSSIQs4EoKjzkcDyB9ueUgUvHqcjtwdg==
+ t=1725807352; bh=Fen8SXObvKui+EcVpqkgeahn1KAOdYtBUTto1YpsJkY=;
+ b=m5w1Uc0EeJDeC8pY9mEZGT+8uLPtvOHjxBvWrFo7oXfen30wNWXyRXtKQ2KTcWdmeFsmPsjbY
+ iyKSEUAZkXkU+YOFZkTZzjyJ85ybHQi+pls3GRgyRaEm7S4+TzaPvxIqNG8SzNo9OAd3s4Hd/ql
+ v2GXx+LxPcBrdcfOI6Ln1klzhkOGb7LJi1SlQFUv0Ucsgh0YpyhYoZvrcdi06I+FlkAX1qXceKe
+ Yz5omvgvyPkBsiFTWP57yurqi3nfRr6j5ERcqpKI2/5rQWMNeEXnqvW1GZDjgAjRF5fnf3RmLNH
+ C59wRK93UqFi8h5SnYBvvOuXAPw6ssz3VW3XfyA7pd0g==
 From: Jonas Karlman <jonas@kwiboo.se>
 To: Heiko Stuebner <heiko@sntech.de>,
 	Sandy Huang <hjc@rock-chips.com>,
@@ -54,9 +54,9 @@ Cc: Diederik de Haas <didi.debian@cknow.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH v2 6/7] drm/rockchip: dw_hdmi: Enable 4K@60Hz mode on RK3399 and RK356x
-Date: Sun,  8 Sep 2024 14:55:03 +0000
-Message-ID: <20240908145511.3331451-7-jonas@kwiboo.se>
+Subject: [PATCH v2 7/7] drm/rockchip: Load crtc devices in preferred order
+Date: Sun,  8 Sep 2024 14:55:04 +0000
+Message-ID: <20240908145511.3331451-8-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240908145511.3331451-1-jonas@kwiboo.se>
 References: <20240908145511.3331451-1-jonas@kwiboo.se>
@@ -73,41 +73,64 @@ X-Complaints-To: abuse@forwardemail.net
 X-ForwardEmail-Version: 0.4.40
 X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
  149.28.215.223
-X-ForwardEmail-ID: 66ddbaf13c9877b459588eff
+X-ForwardEmail-ID: 66ddbaf53c9877b459588f11
 
-Use a maximum TMDS clock rate limit of 594MHz to enable use of HDMI2.0
-modes, e.g. 4K@60Hz, on RK3399 and RK3568.
+On RK3399 the VOPL is loaded before VOPB and get registered as crtc-0.
+However, on RK3288 and PX30 VOPB is gets registered as crtc-0 instead of
+VOPL.
+
+With VOPL registered as crtc-0 the kernel kms client is not able to
+enable 4K display modes for console use on RK3399.
+
+Load VOPB before VOPL to help kernel kms client make use of 4K display
+modes for console use on RK3399.
 
 Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-Tested-by: Diederik de Haas <didi.debian@cknow.org> # Quartz64 Model B
 ---
-v2: Collect t-b tag
+v2: No change
 ---
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c | 23 +++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-index 090d8c0f306f..96e1097f993d 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-@@ -481,7 +481,7 @@ static struct rockchip_hdmi_chip_data rk3399_chip_data = {
- 	.lcdsel_grf_reg = RK3399_GRF_SOC_CON20,
- 	.lcdsel_big = HIWORD_UPDATE(0, RK3399_HDMI_LCDC_SEL),
- 	.lcdsel_lit = HIWORD_UPDATE(RK3399_HDMI_LCDC_SEL, RK3399_HDMI_LCDC_SEL),
--	.max_tmds_clock = 340000,
-+	.max_tmds_clock = 594000,
- };
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+index 44d769d9234d..b84451d59187 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -354,11 +354,34 @@ static void rockchip_drm_match_remove(struct device *dev)
+ 		device_link_del(link);
+ }
  
- static const struct dw_hdmi_plat_data rk3399_hdmi_drv_data = {
-@@ -495,7 +495,7 @@ static const struct dw_hdmi_plat_data rk3399_hdmi_drv_data = {
++/* list of preferred vop devices */
++static const char *const rockchip_drm_match_preferred[] = {
++	"rockchip,rk3399-vop-big",
++	NULL,
++};
++
+ static struct component_match *rockchip_drm_match_add(struct device *dev)
+ {
+ 	struct component_match *match = NULL;
++	struct device_node *port;
+ 	int i;
  
- static struct rockchip_hdmi_chip_data rk3568_chip_data = {
- 	.lcdsel_grf_reg = -1,
--	.max_tmds_clock = 340000,
-+	.max_tmds_clock = 594000,
- };
- 
- static const struct dw_hdmi_plat_data rk3568_hdmi_drv_data = {
++	/* add preferred vop device match before adding driver device matches */
++	for (i = 0; ; i++) {
++		port = of_parse_phandle(dev->of_node, "ports", i);
++		if (!port)
++			break;
++
++		if (of_device_is_available(port->parent) &&
++		    of_device_compatible_match(port->parent,
++					       rockchip_drm_match_preferred))
++			drm_of_component_match_add(dev, &match,
++						   component_compare_of,
++						   port->parent);
++
++		of_node_put(port);
++	}
++
+ 	for (i = 0; i < num_rockchip_sub_drivers; i++) {
+ 		struct platform_driver *drv = rockchip_sub_drivers[i];
+ 		struct device *p = NULL, *d;
 -- 
 2.46.0
 
