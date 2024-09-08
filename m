@@ -1,94 +1,256 @@
-Return-Path: <linux-kernel+bounces-320320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB5279708CC
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:43:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806DD970913
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D97B1C20DB2
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:43:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F643282025
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D277175D5D;
-	Sun,  8 Sep 2024 16:43:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE0F176AA3;
+	Sun,  8 Sep 2024 17:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=c-pestka.de header.i=@c-pestka.de header.b="Z/Jysm73";
+	dkim=permerror (0-bit key) header.d=c-pestka.de header.i=@c-pestka.de header.b="XaF/lOYQ"
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53C6171652
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 16:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725813785; cv=none; b=ppqNbCrTa87/PR33gfN0GPd4WGNY2ZdWlPcPoPfB1rk6Bbne0tlEaQfH5Han6EaeaWQILGTYSZlG7q29mzwVBQmuxh5wnC+X9MEoIK716JA5KKUPJ3v5fpHAOkAiD4c7T0sgcB4D415d1Z0H7nqTZRRTeMaa49G3KnFDidxeWzA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725813785; c=relaxed/simple;
-	bh=+hpRt2dV5nPaL/nXyAs/uGkUnfPrWQbCVMJPn5e929Q=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JZWinUL58moMUXZNdHjf/etpH0JBX+iJmN5EGPNBuLhR8LwhvpO+MpEMwjeXvHmclY1yHkmnvldOPyNFk6tl50BL254hOmsK/cCZuCUBD1rGpjnKVMIT5wtrQBHYBW5YI3YNW6fAMSX3LsmWqzbsEk/AJOjdcYKlCGmPDo1Qjaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39f5328fd5eso57630955ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 09:43:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725813783; x=1726418583;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l+wp0usBhcD98D12aDAt+WbEjn/+6VIsoMm0S/3mqMI=;
-        b=QiyLN7qXSKgVHgnp7GfzZq2Pi/Eje2dL4UXi6BoTjltmEcDVOH+29awbfb5iKA1+fG
-         xCHBytKRSOQGg3UAEV9eF05G1NWRccsCGNdOQyvZ1nk5q5D2iVOtK58xjM4o/IiUiMaV
-         DYV1uR5wvSInqdUCjTYEnzg2k5QrN+m4GrhNm/e9XZnaMfE7DnQs5aASu7BLGg26EQo9
-         jpJTIymPja6D2gVWPfLR02jmWxLvbMsrEXZ5w/yqKtZ0A6MPzFbaWXW5hcrZF2aLy5nU
-         dgJ7gY8hZwrrfnBLu0djlN4XaAgJTWRycXBapDEmZ4NefyYYPQ4Bole9UWqraJxLzTln
-         ITTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhoBOvT2MHUBoqhm4tbGheeL/K0owNSDKWOt46HbRJbD1is+F4H09sFnJZ8EM1j1JviVKIefL0X+Fs5bY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGodpg7o0NWSHRUlTrCR6ckklky0O51tSBAV5uz6HKzQZgDM1K
-	KqTBchmS7mJ/7c+fk4FxGhtpMqgsFzIkvWyiC2nlIkmyTRtJyM+gz3jKHtB/pG/lCV4h4etuZS4
-	O0qlwrRoU99Qc/quqBlt6L/L4EAgupMJNKqR8x9RlHBTsDIcWSe2VGKg=
-X-Google-Smtp-Source: AGHT+IErW406J68fk8lzI9LE+Br5vIRWQbo3xGD7mtxZhp3G/swle8CJ+fMHpBuJiwZP8Jv49IExS2en+n4PALMBN85sEoQb4UpM
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EF31741F8;
+	Sun,  8 Sep 2024 17:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.221
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725817219; cv=pass; b=KKaZzie3UQEsI32naDcyNGlVkPl+KCMoPHVO+OIYJSh1CoQhHptKplS1/K8gHjVYw+RenWy4RcOO9uBWi2elqeHoqkeKvQ/t0uUMqb1lF59ztFes4QXSBdvVLiOMreQd0roVZwx/cuHJ04H8hnFRUBh8vJJfFwEOqLEEs6pgAWQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725817219; c=relaxed/simple;
+	bh=D6+Xt05mKgW9VIpF13ieIKUQH+0/o70Le7eZMj+QWR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MIWxnTa5WP1PPgpqBcNf/JG9t5njlaMBWF6w+dOQyuTucUrTgAxKDLwYvAp0SmAhzrKrCmbUZ3PBLphID0hsre+bi7R3muWtk4msZsaCMn4Mt8sKp3srdDImq10WhKg9P1GNejKUZH2SNMuKynhFfj+t5qnQUpgArY4BP5xta70=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c-pestka.de; spf=none smtp.mailfrom=c-pestka.de; dkim=pass (2048-bit key) header.d=c-pestka.de header.i=@c-pestka.de header.b=Z/Jysm73; dkim=permerror (0-bit key) header.d=c-pestka.de header.i=@c-pestka.de header.b=XaF/lOYQ; arc=pass smtp.client-ip=81.169.146.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c-pestka.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=c-pestka.de
+ARC-Seal: i=1; a=rsa-sha256; t=1725814205; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=a9c5ahdHRqIgVmTrX89XBjFW1ggWp1eMzKRa/MJsQffqs3Qt0aFUOLNeA24lI8pU1+
+    38ee9+jFqoQPqpg77fX+4sgddsfyOmD78f09QLCvU1oxKgO4R9gXKpkxWt1pPa6j7uOZ
+    yasopUifGQkOeqtHr2d+1VFNdBrBWgYcbgJvBHy7yx1yn8HWQM3uoQCLqxrsroS3A/zg
+    Rqko0zFidipomCuFUls4h2z89vlMNfwH2Z5zBGf8j+huWHMwQQiqeKCSRuG0AhgNEUWz
+    ZxymeyVESEkAlaj7g5oMfRPdAp8GRlmyk4lwByhEq6n6l45nUtwYcTABhdBsxVxVu/nD
+    W3Ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1725814205;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=dOd96coyOjgjOOeKj0OXf5THYVEwQQ4N2Zp/6b9P0Wo=;
+    b=ouiPubx74uo5byJ8PgTUYzgLRzrF/rEp4pTMtwJXWqApjZFm3OIftZ1MntKGZiP4JL
+    JDKYt4OFTjyaY1BFo5zV3ONGWS98YZ5z3oCEsKQdp5wgBt1jSLrrXmvhZf4oiG77AhRe
+    w8Pav8LCyILi4QSFIcQhjwq7cX6joZaQwACDFSfqbFMF6AcSJ0amqgbBBnHFZlrEmIuE
+    8Jja69jeUXX3Yt+O86v3g7cIjhGKDwsSWSiSwSxeT8gXBl4kZHK/9rlDKtogSUQFRWRm
+    qSXZiUzneCEM33lAOk9qDBVObDw8/lNH2K3iEAvf0abL1ggPnLmOAJBl1MTYHOG+YazU
+    5CYg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1725814205;
+    s=strato-dkim-0002; d=c-pestka.de;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=dOd96coyOjgjOOeKj0OXf5THYVEwQQ4N2Zp/6b9P0Wo=;
+    b=Z/Jysm73Sr7oJzWjALXShi3EUHK45NJYcacSUWY+6kYJnZHpvH+1B6NpX0aniopax+
+    LI25G1HDkqgv8yVARKTqQpSlapdJjWAF96u0Q6WY4hDdRx9fi7sg4myTD+OM8dUDLQU2
+    MlX/sp/RRsoeIgjPL0VOkE4kRqYDYvZBxFzmVCdNFJe0s1nPUrhh6tEIVl8RSgMG1UPu
+    hDO5TeTisD6b8W2FB5SJ0YM0QnYkw+AmeJq09Agl6Msp5NEhj143Wr+xnDJKpmRjxidb
+    7sTHCTWhmXHElMfyczNGiLQEm8U0OzSSXYb1kyvRnmA3edZ9bCssN6gAf2g7u2m/ChvT
+    vcBA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1725814205;
+    s=strato-dkim-0003; d=c-pestka.de;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=dOd96coyOjgjOOeKj0OXf5THYVEwQQ4N2Zp/6b9P0Wo=;
+    b=XaF/lOYQ2psUX5x3js9U3ijQKdJTfvL+ZFDL2DSLHIctRIs3/R5mR2foVtZT808t69
+    K18nclTaBV3sOtQmFcCA==
+X-RZG-AUTH: ":L2MKZlSpdet8FP+8D8Y/EFgj3PDuHqiU+J2UvJ91fMU85+sWFzCdeIxJCqi9QKnfTxPU18j3ONv7H6kamhT49+xdFd5PhUVwIAmVdhyEU1q+1io="
+Received: from cpestka-main-ubunt.fritz.box
+    by smtp.strato.de (RZmta 51.2.3 AUTH)
+    with ESMTPSA id I9634d088Go5Fud
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Sun, 8 Sep 2024 18:50:05 +0200 (CEST)
+From: CPestka <constantin.pestka@c-pestka.de>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	CPestka <constantin.pestka@c-pestka.de>
+Subject: [PATCH] block and io_uring: typo fixes
+Date: Sun,  8 Sep 2024 18:47:23 +0200
+Message-ID: <20240908164723.36468-1-constantin.pestka@c-pestka.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c27:b0:3a0:4dcb:de0b with SMTP id
- e9e14a558f8ab-3a057461e7dmr42929675ab.10.1725813782959; Sun, 08 Sep 2024
- 09:43:02 -0700 (PDT)
-Date: Sun, 08 Sep 2024 09:43:02 -0700
-In-Reply-To: <000000000000932e45061d45f6e8@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007b685f06219e55c5@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
-From: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>
-To: brian.gix@intel.com, davem@davemloft.net, johan.hedberg@gmail.com, 
-	kuba@kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, luiz.von.dentz@intel.com, 
-	marcel@holtmann.org, mlevitsk@redhat.com, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-syzbot has bisected this issue to:
+Signed-off-by: Constantin Pestka <constantin.pestka@c-pestka.de>
+---
+ block/Kconfig.iosched         | 2 +-
+ block/genhd.c                 | 8 ++++----
+ include/uapi/linux/io_uring.h | 6 +++---
+ io_uring/io_uring.c           | 8 ++++----
+ io_uring/uring_cmd.c          | 4 ++--
+ 5 files changed, 14 insertions(+), 14 deletions(-)
 
-commit 275f3f64870245b06188f24bdf917e55a813d294
-Author: Brian Gix <brian.gix@intel.com>
-Date:   Tue Mar 1 22:34:57 2022 +0000
+diff --git a/block/Kconfig.iosched b/block/Kconfig.iosched
+index 27f11320b8d1..1ecd19f9506b 100644
+--- a/block/Kconfig.iosched
++++ b/block/Kconfig.iosched
+@@ -20,7 +20,7 @@ config IOSCHED_BFQ
+ 	tristate "BFQ I/O scheduler"
+ 	select BLK_ICQ
+ 	help
+-	BFQ I/O scheduler for BLK-MQ. BFQ distributes the bandwidth of
++	BFQ I/O scheduler for BLK-MQ. BFQ distributes the bandwidth
+ 	of the device among all processes according to their weights,
+ 	regardless of the device parameters and with any workload. It
+ 	also guarantees a low latency to interactive and soft
+diff --git a/block/genhd.c b/block/genhd.c
+index 1c05dd4c6980..8c93fb977a59 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -352,7 +352,7 @@ int disk_scan_partitions(struct gendisk *disk, blk_mode_t mode)
+ 
+ 	/*
+ 	 * If the device is opened exclusively by current thread already, it's
+-	 * safe to scan partitons, otherwise, use bd_prepare_to_claim() to
++	 * safe to scan partitions, otherwise, use bd_prepare_to_claim() to
+ 	 * synchronize with other exclusive openers and other partition
+ 	 * scanners.
+ 	 */
+@@ -374,7 +374,7 @@ int disk_scan_partitions(struct gendisk *disk, blk_mode_t mode)
+ 	/*
+ 	 * If blkdev_get_by_dev() failed early, GD_NEED_PART_SCAN is still set,
+ 	 * and this will cause that re-assemble partitioned raid device will
+-	 * creat partition for underlying disk.
++	 * create partition for underlying disk.
+ 	 */
+ 	clear_bit(GD_NEED_PART_SCAN, &disk->state);
+ 	if (!(mode & BLK_OPEN_EXCL))
+@@ -607,7 +607,7 @@ static void __blk_mark_disk_dead(struct gendisk *disk)
+  * blk_mark_disk_dead - mark a disk as dead
+  * @disk: disk to mark as dead
+  *
+- * Mark as disk as dead (e.g. surprise removed) and don't accept any new I/O
++ * Mark a disk as dead (e.g. surprise removed) and don't accept any new I/O
+  * to this disk.
+  */
+ void blk_mark_disk_dead(struct gendisk *disk)
+@@ -732,7 +732,7 @@ EXPORT_SYMBOL(del_gendisk);
+  * invalidate_disk - invalidate the disk
+  * @disk: the struct gendisk to invalidate
+  *
+- * A helper to invalidates the disk. It will clean the disk's associated
++ * A helper to invalidate the disk. It will clean the disk's associated
+  * buffer/page caches and reset its internal states so that the disk
+  * can be reused by the drivers.
+  *
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index a275f91d2ac0..69cbdb1df9d4 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -318,7 +318,7 @@ enum io_uring_op {
+  * ASYNC_CANCEL flags.
+  *
+  * IORING_ASYNC_CANCEL_ALL	Cancel all requests that match the given key
+- * IORING_ASYNC_CANCEL_FD	Key off 'fd' for cancelation rather than the
++ * IORING_ASYNC_CANCEL_FD	Key off 'fd' for cancellation rather than the
+  *				request 'user_data'
+  * IORING_ASYNC_CANCEL_ANY	Match any request
+  * IORING_ASYNC_CANCEL_FD_FIXED	'fd' passed in is a fixed descriptor
+@@ -361,7 +361,7 @@ enum io_uring_op {
+  *				result 	will be the number of buffers send, with
+  *				the starting buffer ID in cqe->flags as per
+  *				usual for provided buffer usage. The buffers
+- *				will be	contigious from the starting buffer ID.
++ *				will be	contiguous from the starting buffer ID.
+  */
+ #define IORING_RECVSEND_POLL_FIRST	(1U << 0)
+ #define IORING_RECV_MULTISHOT		(1U << 1)
+@@ -594,7 +594,7 @@ enum io_uring_register_op {
+ 	IORING_REGISTER_PBUF_RING		= 22,
+ 	IORING_UNREGISTER_PBUF_RING		= 23,
+ 
+-	/* sync cancelation API */
++	/* sync cancellation API */
+ 	IORING_REGISTER_SYNC_CANCEL		= 24,
+ 
+ 	/* register a range of fixed file slots for automatic slot allocation */
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 1aca501efaf6..41e5f00d7f01 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -1137,7 +1137,7 @@ static inline void io_req_local_work_add(struct io_kiocb *req,
+ 	BUILD_BUG_ON(IO_CQ_WAKE_FORCE <= IORING_MAX_CQ_ENTRIES);
+ 
+ 	/*
+-	 * We don't know how many reuqests is there in the link and whether
++	 * We don't know how many requests is there in the link and whether
+ 	 * they can even be queued lazily, fall back to non-lazy.
+ 	 */
+ 	if (req->flags & (REQ_F_LINK | REQ_F_HARDLINK))
+@@ -1177,7 +1177,7 @@ static inline void io_req_local_work_add(struct io_kiocb *req,
+ 	 * in set_current_state() on the io_cqring_wait() side. It's used
+ 	 * to ensure that either we see updated ->cq_wait_nr, or waiters
+ 	 * going to sleep will observe the work added to the list, which
+-	 * is similar to the wait/wawke task state sync.
++	 * is similar to the wait/wake task state sync.
+ 	 */
+ 
+ 	if (!head) {
+@@ -2842,7 +2842,7 @@ static __cold void io_tctx_exit_cb(struct callback_head *cb)
+ 	 * When @in_cancel, we're in cancellation and it's racy to remove the
+ 	 * node. It'll be removed by the end of cancellation, just ignore it.
+ 	 * tctx can be NULL if the queueing of this task_work raced with
+-	 * work cancelation off the exec path.
++	 * work cancellation off the exec path.
+ 	 */
+ 	if (tctx && !atomic_read(&tctx->in_cancel))
+ 		io_uring_del_tctx_node((unsigned long)work->ctx);
+@@ -3141,7 +3141,7 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
+ 		if (!tctx_inflight(tctx, !cancel_all))
+ 			break;
+ 
+-		/* read completions before cancelations */
++		/* read completions before cancellations */
+ 		inflight = tctx_inflight(tctx, false);
+ 		if (!inflight)
+ 			break;
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 8391c7c7c1ec..b89623012d52 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -93,7 +93,7 @@ static void io_uring_cmd_del_cancelable(struct io_uring_cmd *cmd,
+ }
+ 
+ /*
+- * Mark this command as concelable, then io_uring_try_cancel_uring_cmd()
++ * Mark this command as cancellable, then io_uring_try_cancel_uring_cmd()
+  * will try to cancel this issued command by sending ->uring_cmd() with
+  * issue_flags of IO_URING_F_CANCEL.
+  *
+@@ -120,7 +120,7 @@ static void io_uring_cmd_work(struct io_kiocb *req, struct io_tw_state *ts)
+ {
+ 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
+ 
+-	/* task_work executor checks the deffered list completion */
++	/* task_work executor checks the deferred list completion */
+ 	ioucmd->task_work_cb(ioucmd, IO_URING_F_COMPLETE_DEFER);
+ }
+ 
+-- 
+2.43.0
 
-    Bluetooth: Fix not checking MGMT cmd pending queue
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=138c743b980000
-start commit:   f723224742fc Merge tag 'nf-next-24-09-06' of git://git.ker..
-git tree:       net-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=104c743b980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=178c743b980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=37742f4fda0d1b09
-dashboard link: https://syzkaller.appspot.com/bug?extid=03d6270b6425df1605bf
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110c589f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=139b0e00580000
-
-Reported-by: syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com
-Fixes: 275f3f648702 ("Bluetooth: Fix not checking MGMT cmd pending queue")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
