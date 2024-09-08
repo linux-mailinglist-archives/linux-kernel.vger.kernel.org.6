@@ -1,159 +1,225 @@
-Return-Path: <linux-kernel+bounces-319993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21AE49704DD
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:40:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D039704E0
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D32FD281BF3
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 02:40:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DB8F2816C8
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 02:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690441CA81;
-	Sun,  8 Sep 2024 02:40:41 +0000 (UTC)
-Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32D027442;
+	Sun,  8 Sep 2024 02:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VjscTXMo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D5B33C5;
-	Sun,  8 Sep 2024 02:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC20D272;
+	Sun,  8 Sep 2024 02:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725763241; cv=none; b=Gq+SDnv84i4Gucg7LQ0jFKX4ThVPYfZz7zflIGXqxJAEOeVK/V6ViZaGwn8BWMN7hBGZ6/aqaSUOvK6qyafnEMHLIdI2Pge2Cy28nq7chppTUsLkPsBOU8UBMAqCS9u/Nbb39ONg9p2G6SUSa/5de9JAqAJirPh7AQQg19IQ364=
+	t=1725763260; cv=none; b=SshKbZBODCnWjQyHmxUTJPZ16CcD2w7DZYplY4omKgfuOLv5eHqJULb9P4HpWdold++Em9iGK3p7Bqi1oqbYQ0zYcyow4UAA8PeMmNJfp7w2Pn/tml5bDNOremTLhj6hUaK+/2uK0bbFAYKKPRJXNSvM2ocWLsV72g4p81wIIn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725763241; c=relaxed/simple;
-	bh=9h14hdjvsJvyeLLJrfX6660rmVaeCeMYxBJ7mQEL2I4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=uH0o2LJQCk5iJayHVXw/K+Pe4NiP7DkrKMfZkG/hTmgD+Ny428eMvCQHrOHhQ2DUR2yzqhKrBL4AWFHPKtZFb9UukUDDKMQICKqfloCNjbCc/m8BEnejmo9qAYJH7t5gsXogz+USxxfeNoOz66ZKV26CHddqKyHRrrvquN7laXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
-Received: from dsgsiengine01.siengine.com ([10.8.1.61])
-	by mail03.siengine.com with ESMTPS id 4882e1KY024547
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 8 Sep 2024 10:40:01 +0800 (+08)
-	(envelope-from kimriver.liu@siengine.com)
-Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
-	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4X1Z1q74Y8z7ZMns;
-	Sun,  8 Sep 2024 10:39:59 +0800 (CST)
-Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
- SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Sun, 8 Sep 2024 10:40:00 +0800
-Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
- SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.9; Sun, 8 Sep 2024 10:39:59 +0800
-Received: from SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe]) by
- SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe%16]) with mapi id
- 15.02.1544.011; Sun, 8 Sep 2024 10:39:59 +0800
-From: =?gb2312?B?TGl1IEtpbXJpdmVyL8H1vfC60w==?= <kimriver.liu@siengine.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-CC: "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
-        "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-        "jsd@semihalf.com" <jsd@semihalf.com>,
-        "andi.shyti@kernel.org"
-	<andi.shyti@kernel.org>,
-        "linux-i2c@vger.kernel.org"
-	<linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: =?gb2312?B?u9i4tDogW1BBVENIXSBpMmM6IGRlc2lnbndhcmU6IGZpeCBtYXN0ZXIgaXMg?=
- =?gb2312?Q?holding_SCL_low_while_ENABLE_bit_is_disabled?=
-Thread-Topic: [PATCH] i2c: designware: fix master is holding SCL low while
- ENABLE bit is disabled
-Thread-Index: AQHbADEIW35yKdnseE29IGkdUrOvKrJJ4TuAgANMHMA=
-Date: Sun, 8 Sep 2024 02:39:59 +0000
-Message-ID: <9015556aa8d34cac80419348c6028a44@siengine.com>
-References: <20240906074731.3064-1-kimriver.liu@siengine.com>
- <20240906080749.GE275077@black.fi.intel.com>
-In-Reply-To: <20240906080749.GE275077@black.fi.intel.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1725763260; c=relaxed/simple;
+	bh=5yBf3P0dSFge8zUoOWsK+QCozjauF+zs2WTj4pouJaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c6V33rNajft1CCvvq6W33AUQv8eaq8tBF4PpC/6RgmzUENFScR18Fh2GKBwy2OTwqj6kuvGP2bASpIsO/MRJg/vJV9jU0o54VR6nzeVUWKswZUBIWJa5jckCDCGZtUzirv5YtLtt0HhaUt9VXOlav+GTTrLKJffMsRhL5dfUB68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VjscTXMo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7947EC4AF09;
+	Sun,  8 Sep 2024 02:40:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725763259;
+	bh=5yBf3P0dSFge8zUoOWsK+QCozjauF+zs2WTj4pouJaw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VjscTXMoucJlbj8kNtnN57wDZdI7OyMn4haFStIVDoQuJn0Dz6fhPQTvg5q6HyGXZ
+	 m0Au1syXz8e7aqa9FBTNe0rye1+M3moC+FvX/auA1KjeDcRqUW45/zcEHltOjafcDe
+	 x02p0Sajx3UmOPoLgB2TbL2jm+DAPUyXYG529yisn9qe90DsX8cbrOhi4s9eVcy9DD
+	 uJeayRFlljaWspnZypvQRXBROD41B3H6Jmpz/Yw0di5L4qDK7mu63yCb8xHFQpYaU9
+	 tGaf1UPKqL4Nk41l9wmO1HgkimSKV7E8NWeNclVXJMDcnIciydAIT/8gICggKVKuEr
+	 j1OyRx1BPXS5A==
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso11186691fa.0;
+        Sat, 07 Sep 2024 19:40:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVPLljAFDALhl562NGF/MFqcWOzcyD1iYnsoolkI/GTUGAWPuw2rIovUS3iqDdz5LHlxdg=@vger.kernel.org, AJvYcCVPzZe4kA1p1K7/ykQ9fa6u45o8QPTh062fSbS7Xbqyflk1mNagkI8xLEJ8WW07L3TznpqgSk50AZVAmWxD@vger.kernel.org, AJvYcCW+HrcIqnvH3QvyeIbIkFhN8/F6zTHH+QoJWF6dmf6K2XjJcbWgduH4O1/DmGhayxklmgz1kQzdMoctDA==@vger.kernel.org, AJvYcCW3FHHvF8SoEUkt5GOu4/A/qjy9tOC1tNYv30hMwlNIliBX9RvcMTAQ7I5uSEJuMNrid9dpQ7oEytE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy206pWXhtGMk4dyqrK/I154jjNsdJdzawCZEukzX9QVNJhEs0j
+	tG1nJQHPcIakRWrwfYWUw8d2pczFHBsT7Js42/AMa+NTlweTKnREH+NFdOsKh710fl2bSkPf8BK
+	tKV+Urw9WVbTJRLRWtJsVSjPmdvU=
+X-Google-Smtp-Source: AGHT+IFBhtpwKNxTp7iZ3GwOsA0OLDoMib+tZBANDrIJ3CV1VN598IEmU3BI2NkBNy3Pv+Hc1qkFk5vMO0dpsoVQoVg=
+X-Received: by 2002:a2e:5109:0:b0:2f6:6d6d:63cd with SMTP id
+ 38308e7fff4ca-2f751f11e9amr38216391fa.26.1725763257790; Sat, 07 Sep 2024
+ 19:40:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-DKIM-Results: [10.8.1.61]; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:mail03.siengine.com 4882e1KY024547
+References: <20240907-iocsr-v1-0-0c99b3334444@flygoat.com> <20240907-iocsr-v1-2-0c99b3334444@flygoat.com>
+In-Reply-To: <20240907-iocsr-v1-2-0c99b3334444@flygoat.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sun, 8 Sep 2024 10:40:51 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4B19+pybM_PeSNEnSmWaLLi6W15t2scbKhEOGLyCtEWw@mail.gmail.com>
+Message-ID: <CAAhV-H4B19+pybM_PeSNEnSmWaLLi6W15t2scbKhEOGLyCtEWw@mail.gmail.com>
+Subject: Re: [PATCH 2/5] LoongArch: Probe more CPU features from CPUCFG
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: WANG Xuerui <kernel@xen0n.name>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-mips@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgDQogIEkgYW0gc29ycnkgZm9yIG5vdCByZXBseWluZyB0byBxdWVzdGlvbnMgaW4gdGltZSBv
-biBGcmlkYXkuDQoNCg0KLS0tLS3Tyrz+1K28/i0tLS0tDQq3orz+yMs6IE1pa2EgV2VzdGVyYmVy
-ZyA8bWlrYS53ZXN0ZXJiZXJnQGxpbnV4LmludGVsLmNvbT4gDQq3osvNyrG85DogMjAyNMTqOdTC
-NsjVIDE2OjA4DQrK1bz+yMs6IExpdSBLaW1yaXZlci/B9b3wutMgPGtpbXJpdmVyLmxpdUBzaWVu
-Z2luZS5jb20+DQqzrcvNOiBqYXJra28ubmlrdWxhQGxpbnV4LmludGVsLmNvbTsgYW5kcml5LnNo
-ZXZjaGVua29AbGludXguaW50ZWwuY29tOyBqc2RAc2VtaWhhbGYuY29tOyBhbmRpLnNoeXRpQGtl
-cm5lbC5vcmc7IGxpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmcNCtb3zOI6IFJlOiBbUEFUQ0hdIGkyYzogZGVzaWdud2FyZTogZml4IG1hc3RlciBp
-cyBob2xkaW5nIFNDTCBsb3cgd2hpbGUgRU5BQkxFIGJpdCBpcyBkaXNhYmxlZA0KDQpIaSwNCg0K
-T24gRnJpLCBTZXAgMDYsIDIwMjQgYXQgMDM6NDc6MzFQTSArMDgwMCwgS2ltcml2ZXIgTGl1IHdy
-b3RlOg0KPiBJdCB3YXMgb2JzZXJ2ZWQgaXNzdWluZyBBQk9SVCBiaXQoSUNfRU5BQkxFWzFdKSB3
-aWxsIG5vdCB3b3JrIHdoZW4NCj4gSUNfRU5BQkxFIGlzIGFscmVhZHkgZGlzYWJsZWQuDQo+IA0K
-PiBDaGVjayBpZiBFTkFCTEUgYml0KElDX0VOQUJMRVswXSkgaXMgZGlzYWJsZWQgd2hlbiB0aGUg
-bWFzdGVyIGlzDQo+IGhvbGRpbmcgU0NMIGxvdy4gSWYgRU5BQkxFIGJpdCBpcyBkaXNhYmxlZCwg
-dGhlIHNvZnR3YXJlIG5lZWQNCj4gZW5hYmxlIGl0IGJlZm9yZSB0cnlpbmcgdG8gaXNzdWUgQUJP
-UlQgYml0LiBvdGhlcndpc2UsDQo+IHRoZSBjb250cm9sbGVyIGlnbm9yZXMgYW55IHdyaXRlIHRv
-IEFCT1JUIGJpdC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEtpbXJpdmVyIExpdSA8a2ltcml2ZXIu
-bGl1QHNpZW5naW5lLmNvbT4NCj4gDQo+IC0tLQ0KPiBWNS0+VjY6IHJlc3RvcmUgaTJjX2R3X2lz
-X21hc3Rlcl9pZGxpbmcoKSBmdW5jdGlvbiBjaGVja2luZw0KPiBWNC0+VjU6IGRlbGV0ZSBtYXN0
-ZXIgaWRsaW5nIGNoZWNraW5nDQo+IFYzLT5WNDoNCj4gICAgICAgMS4gdXBkYXRlIGNvbW1pdCBt
-ZXNzYWdlcyBhbmQgYWRkIHBhdGNoIHZlcnNpb24gYW5kIGNoYW5nZWxvZw0KPiAgICAgICAyLiBt
-b3ZlIHByaW50IHRoZSBlcnJvciBtZXNzYWdlIGluIGkyY19kd194ZmVyDQo+IFYyLT5WMzogY2hh
-bmdlICghZW5hYmxlKSB0byAoIShlbmFibGUgJiBEV19JQ19FTkFCTEVfRU5BQkxFKSkNCj4gVjEt
-PlYyOiB1c2VkIHN0YW5kYXJkIHdvcmRzIGluIGZ1bmN0aW9uIG5hbWVzIGFuZCBhZGRyZXNzZWQg
-cmV2aWV3IGNvbW1lbnRzDQo+IA0KPiBsaW5rIHRvIFYxOg0KPiBodHRwczovL2xvcmUua2VybmVs
-Lm9yZy9sa21sLzIwMjQwOTA0MDY0MjI0LjIzOTQtMS1raW1yaXZlci5saXVAc2llbmdpbmUuY29t
-Lw0KPiAtLS0NCj4gIGRyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtZGVzaWdud2FyZS1jb21tb24uYyB8
-IDExICsrKysrKysrKysrDQo+ICBkcml2ZXJzL2kyYy9idXNzZXMvaTJjLWRlc2lnbndhcmUtbWFz
-dGVyLmMgfCAyMiArKysrKysrKysrKysrKysrKysrKysrDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDMz
-IGluc2VydGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJj
-LWRlc2lnbndhcmUtY29tbW9uLmMgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLWRlc2lnbndhcmUt
-Y29tbW9uLmMNCj4gaW5kZXggZThhNjg4ZDA0YWVlLi4yYjMzOThjZDQzODIgMTAwNjQ0DQo+IC0t
-LSBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtZGVzaWdud2FyZS1jb21tb24uYw0KPiArKysgYi9k
-cml2ZXJzL2kyYy9idXNzZXMvaTJjLWRlc2lnbndhcmUtY29tbW9uLmMNCj4gQEAgLTQ1Myw2ICs0
-NTMsMTcgQEAgdm9pZCBfX2kyY19kd19kaXNhYmxlKHN0cnVjdCBkd19pMmNfZGV2ICpkZXYpDQo+
-ICANCj4gIAlhYm9ydF9uZWVkZWQgPSByYXdfaW50cl9zdGF0cyAmIERXX0lDX0lOVFJfTVNUX09O
-X0hPTEQ7DQo+ICAJaWYgKGFib3J0X25lZWRlZCkgew0KPiArCQlpZiAoIShlbmFibGUgJiBEV19J
-Q19FTkFCTEVfRU5BQkxFKSkgew0KPiArCQkJcmVnbWFwX3dyaXRlKGRldi0+bWFwLCBEV19JQ19F
-TkFCTEUsIERXX0lDX0VOQUJMRV9FTkFCTEUpOw0KPiArCQkJZW5hYmxlIHw9IERXX0lDX0VOQUJM
-RV9FTkFCTEU7DQo+ICsJCQkvKg0KPiArCQkJICogV2FpdCB0d28gaWNfY2xrIGRlbGF5IHdoZW4g
-ZW5hYmxpbmcgdGhlIEkyQyB0byBlbnN1cmUgRU5BQkxFIGJpdA0KPiArCQkJICogaXMgYWxyZWFk
-eSBzZXQgYnkgdGhlIGRyaXZlciAoZm9yIDQwMEtIeiB0aGlzIGlzIDI1dXMpDQo+ICsJCQkgKiBh
-cyBkZXNjcmliZWQgaW4gdGhlIERlc2lnbldhcmUgSTJDIGRhdGFib29rLg0KPiArCQkJICovDQo+
-ICsJCQlmc2xlZXAoMjUpOw0KPiArCQl9DQo+ICsNCj4gIAkJcmVnbWFwX3dyaXRlKGRldi0+bWFw
-LCBEV19JQ19FTkFCTEUsIGVuYWJsZSB8IERXX0lDX0VOQUJMRV9BQk9SVCk7DQo+ICAJCXJldCA9
-IHJlZ21hcF9yZWFkX3BvbGxfdGltZW91dChkZXYtPm1hcCwgRFdfSUNfRU5BQkxFLCBlbmFibGUs
-DQo+ICAJCQkJCSAgICAgICAhKGVuYWJsZSAmIERXX0lDX0VOQUJMRV9BQk9SVCksIDEwLA0KPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1kZXNpZ253YXJlLW1hc3Rlci5jIGIv
-ZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1kZXNpZ253YXJlLW1hc3Rlci5jDQo+IGluZGV4IGM3ZTU2
-MDAyODA5YS4uMTMyYjcyMzdjMDA0IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2kyYy9idXNzZXMv
-aTJjLWRlc2lnbndhcmUtbWFzdGVyLmMNCj4gKysrIGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1k
-ZXNpZ253YXJlLW1hc3Rlci5jDQo+IEBAIC0yNTMsNiArMjUzLDE5IEBAIHN0YXRpYyB2b2lkIGky
-Y19kd194ZmVyX2luaXQoc3RydWN0IGR3X2kyY19kZXYgKmRldikNCj4gIAlfX2kyY19kd193cml0
-ZV9pbnRyX21hc2soZGV2LCBEV19JQ19JTlRSX01BU1RFUl9NQVNLKTsNCj4gIH0NCj4gIA0KPiAr
-c3RhdGljIGJvb2wgaTJjX2R3X2lzX21hc3Rlcl9pZGxpbmcoc3RydWN0IGR3X2kyY19kZXYgKmRl
-dikNCj4gK3sNCj4gKwl1MzIgc3RhdHVzOw0KPiArDQo+ICsJcmVnbWFwX3JlYWQoZGV2LT5tYXAs
-IERXX0lDX1NUQVRVUywgJnN0YXR1cyk7DQo+ICsJaWYgKCEoc3RhdHVzICYgRFdfSUNfU1RBVFVT
-X01BU1RFUl9BQ1RJVklUWSkpDQo+ICsJCXJldHVybiB0cnVlOw0KPiArDQo+ICsJcmV0dXJuICFy
-ZWdtYXBfcmVhZF9wb2xsX3RpbWVvdXQoZGV2LT5tYXAsIERXX0lDX1NUQVRVUywgc3RhdHVzLA0K
-PiArCQkJIShzdGF0dXMgJiBEV19JQ19TVEFUVVNfTUFTVEVSX0FDVElWSVRZKSwNCj4gKwkJCTEx
-MDAsIDIwMDAwKTsNCj4gK30NCg0KPlllYWgsIEkgbm93IHJlYWxpemUgdGhhdCBpMmNfZHdfd2Fp
-dF9idXNfbm90X2J1c3koKSBjaGVja3MgZm9yDQo+RFdfSUNfU1RBVFVTX0FDVElWSVRZIG5vdCBm
-b3IgRFdfSUNfU1RBVFVTX01BU1RFUl9BQ1RJVklUWSBhcyBJIHRob3VnaHQNCj5zbyBjb25zb2xp
-ZGF0aW5nIHRoZW0gbWFrZXMgbm90IHRoYXQgbXVjaCBzZW5zZS4NCg0KPlRoaXMgbG9va3MgZ29v
-ZCB0byBtZSwNCg0KVGhhbmtzLg0KIFRoaXMgY2FzZSBoYXBwZW5zIHJhcmVseSBhbmQgaXMgaGFy
-ZCB0byByZXByb2R1Y2UuIFdlIHJlcHJvZHVjZSB0aGlzIGlzc3VlIA0KIGluIFJUTCBzaW11bGF0
-aW9uLiBJdCBpcyBuZWNlc3NhcnkgdG8gYWRkIHdhaXRpbmcgRFdfSUNfU1RBVFVTX01BU1RFUl9B
-Q1RJVklUWQ0KIGlkbGluZyBiZWZvcmUgZGlzYWJsaW5nIEkyQyB3aGVuIEkyQyB0cmFuc2ZlciBj
-b21wbGV0ZWQuICBhcyBkZXNjcmliZWQgaW4gdGhlDQogRGVzaWduV2FyZSBJMkMgZGF0YWJvb2so
-Rmxvd2NoYXJ0IGZvciBEV19hcGJfaTJjIENvbnRyb2xsZXIpDQoNCg0KLS0tLS0tLS0tLS0tLS0t
-LS0NCkJlc3QgUmVnYXJkcw0KS2ltcml2ZXIgTGl1DQo=
+Hi, Jiaxun,
+
+On Sat, Sep 7, 2024 at 6:17=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoat.com=
+> wrote:
+>
+> Probe ISA level, TLB, IOCSR information from CPUCFG to
+> improve kernel resilience to different core implementations.
+>
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+>  arch/loongarch/include/asm/cpu.h  |  2 +-
+>  arch/loongarch/kernel/cpu-probe.c | 47 ++++++++++++++++++++++++++-------=
+------
+>  2 files changed, 32 insertions(+), 17 deletions(-)
+>
+> diff --git a/arch/loongarch/include/asm/cpu.h b/arch/loongarch/include/as=
+m/cpu.h
+> index 7c44f4ede3a2..31a2de821236 100644
+> --- a/arch/loongarch/include/asm/cpu.h
+> +++ b/arch/loongarch/include/asm/cpu.h
+> @@ -86,7 +86,7 @@ enum cpu_type_enum {
+>  #define CPU_FEATURE_LBT_ARM            11      /* CPU has ARM Binary Tra=
+nslation */
+>  #define CPU_FEATURE_LBT_MIPS           12      /* CPU has MIPS Binary Tr=
+anslation */
+>  #define CPU_FEATURE_TLB                        13      /* CPU has TLB */
+> -#define CPU_FEATURE_CSR                        14      /* CPU has CSR */
+> +#define CPU_FEATURE_IOCSR              14      /* CPU has IOCSR */
+>  #define CPU_FEATURE_WATCH              15      /* CPU has watchpoint reg=
+isters */
+>  #define CPU_FEATURE_VINT               16      /* CPU has vectored inter=
+rupts */
+>  #define CPU_FEATURE_CSRIPI             17      /* CPU has CSR-IPI */
+> diff --git a/arch/loongarch/kernel/cpu-probe.c b/arch/loongarch/kernel/cp=
+u-probe.c
+> index 4446616d497c..6a82ceb6e321 100644
+> --- a/arch/loongarch/kernel/cpu-probe.c
+> +++ b/arch/loongarch/kernel/cpu-probe.c
+> @@ -91,12 +91,23 @@ static void cpu_probe_common(struct cpuinfo_loongarch=
+ *c)
+>         unsigned int config;
+>         unsigned long asid_mask;
+>
+> -       c->options =3D LOONGARCH_CPU_CPUCFG | LOONGARCH_CPU_IOCSR |
+> -                    LOONGARCH_CPU_TLB | LOONGARCH_CPU_VINT | LOONGARCH_C=
+PU_WATCH;
+> +       c->options =3D LOONGARCH_CPU_CPUCFG | LOONGARCH_CPU_VINT |
+> +                    LOONGARCH_CPU_WATCH;
+>
+>         elf_hwcap =3D HWCAP_LOONGARCH_CPUCFG;
+>
+>         config =3D read_cpucfg(LOONGARCH_CPUCFG1);
+> +
+> +       if (config & CPUCFG1_ISGR64)
+> +               set_isa(c, LOONGARCH_CPU_ISA_LA64);
+> +       else if (config & CPUCFG1_ISGR32)
+> +               set_isa(c, LOONGARCH_CPU_ISA_LA32S);
+> +       else
+> +               set_isa(c, LOONGARCH_CPU_ISA_LA32R);
+Switch-case is better than if-else here.
+
+> +       if (config & CPUCFG1_PAGING)
+> +               c->options |=3D LOONGARCH_CPU_TLB;
+> +       if (config & CPUCFG1_IOCSR)
+> +               c->options |=3D LOONGARCH_CPU_IOCSR;
+>         if (config & CPUCFG1_UAL) {
+>                 c->options |=3D LOONGARCH_CPU_UAL;
+>                 elf_hwcap |=3D HWCAP_LOONGARCH_UAL;
+> @@ -222,6 +233,7 @@ static inline void cpu_probe_loongson(struct cpuinfo_=
+loongarch *c, unsigned int
+>  {
+>         uint64_t *vendor =3D (void *)(&cpu_full_name[VENDOR_OFFSET]);
+>         uint64_t *cpuname =3D (void *)(&cpu_full_name[CPUNAME_OFFSET]);
+> +       const char *core_name =3D "Unknown";
+>
+>         if (!__cpu_full_name[cpu])
+>                 __cpu_full_name[cpu] =3D cpu_full_name;
+> @@ -232,40 +244,43 @@ static inline void cpu_probe_loongson(struct cpuinf=
+o_loongarch *c, unsigned int
+>         switch (c->processor_id & PRID_SERIES_MASK) {
+>         case PRID_SERIES_LA132:
+>                 c->cputype =3D CPU_LOONGSON32;
+> -               set_isa(c, LOONGARCH_CPU_ISA_LA32S);
+>                 __cpu_family[cpu] =3D "Loongson-32bit";
+> -               pr_info("32-bit Loongson Processor probed (LA132 Core)\n"=
+);
+> +               core_name =3D "LA132";
+>                 break;
+>         case PRID_SERIES_LA264:
+>                 c->cputype =3D CPU_LOONGSON64;
+> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
+>                 __cpu_family[cpu] =3D "Loongson-64bit";
+> -               pr_info("64-bit Loongson Processor probed (LA264 Core)\n"=
+);
+> +               core_name =3D "LA264";
+>                 break;
+>         case PRID_SERIES_LA364:
+>                 c->cputype =3D CPU_LOONGSON64;
+> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
+>                 __cpu_family[cpu] =3D "Loongson-64bit";
+> -               pr_info("64-bit Loongson Processor probed (LA364 Core)\n"=
+);
+> +               core_name =3D "LA364";
+>                 break;
+>         case PRID_SERIES_LA464:
+>                 c->cputype =3D CPU_LOONGSON64;
+> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
+>                 __cpu_family[cpu] =3D "Loongson-64bit";
+> -               pr_info("64-bit Loongson Processor probed (LA464 Core)\n"=
+);
+> +               core_name =3D "LA464";
+>                 break;
+>         case PRID_SERIES_LA664:
+>                 c->cputype =3D CPU_LOONGSON64;
+> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
+>                 __cpu_family[cpu] =3D "Loongson-64bit";
+> -               pr_info("64-bit Loongson Processor probed (LA664 Core)\n"=
+);
+> +               core_name =3D "LA664";
+>                 break;
+>         default: /* Default to 64 bit */
+> -               c->cputype =3D CPU_LOONGSON64;
+> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
+> -               __cpu_family[cpu] =3D "Loongson-64bit";
+> -               pr_info("64-bit Loongson Processor probed (Unknown Core)\=
+n");
+> +               if (c->isa_level & LOONGARCH_CPU_ISA_LA64) {
+> +                       c->cputype =3D CPU_LOONGSON64;
+> +                       __cpu_family[cpu] =3D "Loongson-64bit";
+> +               } else if (c->isa_level & LOONGARCH_CPU_ISA_LA32S) {
+> +                       c->cputype =3D CPU_LOONGSON32;
+> +                       __cpu_family[cpu] =3D "Loongson-32bit";
+Change the name to "Loongson-32bit Standard".
+
+Huacai
+> +               } else if (c->isa_level & LOONGARCH_CPU_ISA_LA32R) {
+> +                       c->cputype =3D CPU_LOONGSON32;
+> +                       __cpu_family[cpu] =3D "Loongson-32bit Reduced";
+> +               }
+>         }
+> +
+> +       pr_info("%s Processor probed (%s Core)\n", __cpu_family[cpu], cor=
+e_name);
+>  }
+>
+>  #ifdef CONFIG_64BIT
+>
+> --
+> 2.46.0
+>
 
