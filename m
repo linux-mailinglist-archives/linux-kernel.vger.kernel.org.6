@@ -1,865 +1,215 @@
-Return-Path: <linux-kernel+bounces-320164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C1F9706ED
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:33:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFF09706EE
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93C15B218CB
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:33:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 284D2281F3C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9911547C7;
-	Sun,  8 Sep 2024 11:33:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDA51547D1;
+	Sun,  8 Sep 2024 11:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+iGXD0U"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB6F1537CE
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 11:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44BD153BE3
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 11:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725795185; cv=none; b=V7Fy6sv4umGySz1Dmnuc6jEZEvon72/+hY38QIVlRDcajOnkI9vYJztcNXaQ8YMTP2QzVMCB8+PI39clqE77ICsJgPmhIj7liUXyxWPvPOs3bdsf+zkcENQm4P7SQh5M5Q3eKwncLpsz4xLa7WOg9Nf4hRcA79REl09hfe0Lvxc=
+	t=1725795200; cv=none; b=qBZt781byb1c3cwVOla1fCDJ3zehUYbjI9jynBgmed4uSvVHu7DrBKjdP30xuRtGle6EiLgshMsA3WY2qbzFp9B4G5O9niwG8Q7iS/vz+lVQF1gVx16NkDPCt301a67LCrxEMqqCZBeLiyQWFP39SGucc7xAn/rDcTduVNXShCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725795185; c=relaxed/simple;
-	bh=8CXqWxk7c55fNyNFuUz4lkx1t5+nEm2/hPVLY6onpmE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cHpjLZoHVEtVfKtnMRFriXljuZRJIlS5W7ZrRYvhKo/71E8z1W2QdiLflbCJPfdoMxRtXSXKdz+nQ6tPRHAyHKkHUFrlz9ugjDqUCu88C1z8TAgmCVIs7jiqP+2MNPIIO+2wce1wspetDYDfaQJ7MXCH/Vq/kHMBmMBeTC6KeWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82cda2c8997so119887539f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 04:33:02 -0700 (PDT)
+	s=arc-20240116; t=1725795200; c=relaxed/simple;
+	bh=aTSE1n6xrZTiUV/fAuc/0WrqIi4ApvzsNBFhFNf9pUk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uHkDMiRHNkEvFLJBvvwoIcDYX8wdH+Fd/k3XQCv5PyyVDhUeUHqe/IFL+2QJk7vIHJeEMo65VIR+BdB880C9kgMU3QLoV9ZXFC4I1rf6dW8Oft8XXdy3meryk8evmEIkpeIw/mBRK5RobUY/19zCgGCcgunAsdksVcIifkC5sUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+iGXD0U; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-26fda13f898so2183939fac.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 04:33:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725795198; x=1726399998; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nCf3SqIpi+smHSMa+FhqUwP6bRy0VLcMO9hbpROT3lg=;
+        b=O+iGXD0UM/w38mI0zRglmYUSf9aobNKk7i/KgCip9rlLOPsr0srnT63hZliaDVhEjv
+         Y80QULXLcWWNYT2Gmy60vraXzmXOuFXJrK2ekjCMPRCT+M14d3DOZ9RDdYy/0Xlfpqle
+         4CUbVGgLL+n8eepAL4WTTbMtTJsAL7Jf7s/M0dSYCy9ym4z7unS74GpCiUln8FEvs9yq
+         7DpZXkW6llra8Buvyl5Ui4qs0ZhXabbW9MKTg6ScuQZXb7zboRvMneh4/H6I9oLy7ai2
+         2blM9czWFS5pKyCUldqK/RWDdbTLgc5VC4voVNZNACcM+0q7hmBDnMh5kU8T0imOOMEE
+         1U7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725795182; x=1726399982;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MPBktk5ulHWLJeJb5WPOhQJL3QIc9Wzxkhg3ZchqWv8=;
-        b=pnSfl29an36JMVPa1+6ML+5Ay1vBFY/uNlPw5wayyhPzM1OVrgXNKO20l0mkoxtafS
-         f/Rvcl3WB6vv/G6h08+YjMDK2HUg2n8tFPJMPgpfGMjK1eybwi4tLNTK2nbJFMlhUZYw
-         hniu1LW5rFgT/5n1gKs23atlEdU/SY2OWv8nAb9MLsC/R9wzrIPLgdFxb1dsoGNFe67f
-         7npOa9imeyhuwuF9+7q5ytrrVMLBR9BWoAPTgwsABrAAIf3I8UsKRjNhu4/oLMT9/0ov
-         85EymxsnYvksLTUABOZHiFXoyFpVWcrtCd2w9QUHJRO045XSGQ+uaT/GNxMgSTS0JV/k
-         pMaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURvBE41zARRfCxxBHeXOfzdVOPkXH5Q1MRDpWL+Kv3QY5cNaazLKgr9cuLfcVqBgh4Qbu4sT6itluQryU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG00ckGk2rPON2cGewVjLiU5VeQEjD7LkH4hWKu5FkNhQVTWnD
-	Ez5WcJwQUQznvj0U05snI63JZIgNCCi6ogjN/4rxIS/vVlwdE8/hgqHr0m42jg/6xDI8w9Lmm0M
-	8gmxLq+D/BY8bgd0Sn4FIILlYOHEeIgRTapG96Y0Zd9WaSfvi7eacFuM=
-X-Google-Smtp-Source: AGHT+IFFZt7e+fTOWMGDx/UnOPDv/S2wUPaPRi7Jz3DfA3QMJMNWLVyc8QfBkbY/A+opG6+RKvFmZ/QfxtwBtyOYDRpgH5j5dztg
+        d=1e100.net; s=20230601; t=1725795198; x=1726399998;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nCf3SqIpi+smHSMa+FhqUwP6bRy0VLcMO9hbpROT3lg=;
+        b=grl3teVgwdH7S8wB1Ieom76KQb4kXjmL+cXI/Xz4jEhO+8bzW4UyWBTN9nnqcnKx05
+         JseZVWz27Q/FmASNzi/Gdd/Z3AMJN5eRrWMsaMKg8Xlz8zixm9im8yoPhvxVBEql/UX+
+         I/Aw/EBepzDx28VT4GvJwD8mjd8k4SFzvjWjemW4JDxwHXU0q+KkTGZh5rtQeeJiAYkD
+         X9KeXRIhTkLKjHJTzSxbwygiQgr/p9evpZR616aUiTif22220+STwvG14tR0ODCT1Qub
+         0lEvQIb8gQB2El7qnwMK1Op1nGazoflHht9hafJ0Pt8li356cSsKqHlvzV6cEFi8bpkN
+         hGsA==
+X-Gm-Message-State: AOJu0Yx6R+9Qlya4/jVpVn1X+YzlEKjbSH/SUxEwDmfo4upG5sf2GUEa
+	YinDsFN+Vyn4vuUsw+HOnogGyG9x6kL7owB5a2y17iTPPWRZB1KI
+X-Google-Smtp-Source: AGHT+IGgnVUgCX9L9lS8XnRGuJjXO+VV4YSVk8d73qgSbvuWxv39aa8cX4xgbe9tq35ikK1YGUUU6w==
+X-Received: by 2002:a05:6870:610e:b0:277:f14c:9c0f with SMTP id 586e51a60fabf-27b82fab15amr9961210fac.32.1725795197690;
+        Sun, 08 Sep 2024 04:33:17 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e5896e1bsm1973485b3a.7.2024.09.08.04.33.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 04:33:17 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] KCSAN: data-race in generic_fillattr / shmem_mknod (2)
+Date: Sun,  8 Sep 2024 20:33:13 +0900
+Message-Id: <20240908113313.14315-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b0c:b0:39f:6f8c:45f3 with SMTP id
- e9e14a558f8ab-3a04f0ccb8emr97725015ab.16.1725795182168; Sun, 08 Sep 2024
- 04:33:02 -0700 (PDT)
-Date: Sun, 08 Sep 2024 04:33:02 -0700
-In-Reply-To: <20240908111515.2457-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c9de6206219a007f@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
- l2cap_connect (2)
-From: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in l2cap_recv_frame
+---
+ fs/ext4/orphan.c |  2 +-
+ fs/ext4/super.c  |  4 ++--
+ mm/percpu.c      |  5 ++---
+ mm/shmem.c       | 12 +++++++-----
+ 4 files changed, 12 insertions(+), 11 deletions(-)
 
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc6-syzkaller-00326-gd1f2d51b711a-dirty #0 Not tainted
-------------------------------------------------------
-kworker/u9:2/5273 is trying to acquire lock:
-ffff888031c20078 (&hdev->lock){+.+.}-{3:3}, at: l2cap_connect_req net/bluetooth/l2cap_core.c:4078 [inline]
-ffff888031c20078 (&hdev->lock){+.+.}-{3:3}, at: l2cap_bredr_sig_cmd net/bluetooth/l2cap_core.c:4775 [inline]
-ffff888031c20078 (&hdev->lock){+.+.}-{3:3}, at: l2cap_sig_channel net/bluetooth/l2cap_core.c:5546 [inline]
-ffff888031c20078 (&hdev->lock){+.+.}-{3:3}, at: l2cap_recv_frame+0xe9d/0x8eb0 net/bluetooth/l2cap_core.c:6828
-
-but task is already holding lock:
-ffffffff8fcb1c28 (l2cap_conn_del_mutex){+.+.}-{3:3}, at: l2cap_recv_acldata+0x57/0xbd0 net/bluetooth/l2cap_core.c:7486
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (l2cap_conn_del_mutex){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       l2cap_conn_del+0x462/0x750 net/bluetooth/l2cap_core.c:1800
-       l2cap_disconn_cfm net/bluetooth/l2cap_core.c:7310 [inline]
-       l2cap_disconn_cfm+0x96/0xd0 net/bluetooth/l2cap_core.c:7303
-       hci_disconn_cfm include/net/bluetooth/hci_core.h:1975 [inline]
-       hci_conn_hash_flush+0x114/0x260 net/bluetooth/hci_conn.c:2592
-       hci_dev_close_sync+0x59e/0x1110 net/bluetooth/hci_sync.c:5195
-       hci_dev_do_close+0x2e/0x90 net/bluetooth/hci_core.c:483
-       hci_unregister_dev+0x213/0x620 net/bluetooth/hci_core.c:2698
-       vhci_release+0x7f/0x100 drivers/bluetooth/hci_vhci.c:664
-       __fput+0x408/0xbb0 fs/file_table.c:422
-       task_work_run+0x14e/0x250 kernel/task_work.c:228
-       exit_task_work include/linux/task_work.h:40 [inline]
-       do_exit+0xaa3/0x2bb0 kernel/exit.c:882
-       do_group_exit+0xd3/0x2a0 kernel/exit.c:1031
-       get_signal+0x25fb/0x2770 kernel/signal.c:2917
-       arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:310
-       exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
-       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-       syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
-       do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (hci_cb_list_lock){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       hci_connect_cfm include/net/bluetooth/hci_core.h:1957 [inline]
-       hci_remote_features_evt+0x4dc/0x9e0 net/bluetooth/hci_event.c:3721
-       hci_event_func net/bluetooth/hci_event.c:7446 [inline]
-       hci_event_packet+0x9eb/0x1180 net/bluetooth/hci_event.c:7498
-       hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4023
-       process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
-       process_scheduled_works kernel/workqueue.c:3312 [inline]
-       worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
-       kthread+0x2c1/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #0 (&hdev->lock){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain kernel/locking/lockdep.c:3868 [inline]
-       __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
-       lock_acquire kernel/locking/lockdep.c:5759 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       l2cap_connect_req net/bluetooth/l2cap_core.c:4078 [inline]
-       l2cap_bredr_sig_cmd net/bluetooth/l2cap_core.c:4775 [inline]
-       l2cap_sig_channel net/bluetooth/l2cap_core.c:5546 [inline]
-       l2cap_recv_frame+0xe9d/0x8eb0 net/bluetooth/l2cap_core.c:6828
-       l2cap_recv_acldata+0x9fe/0xbd0 net/bluetooth/l2cap_core.c:7518
-       hci_acldata_packet net/bluetooth/hci_core.c:3791 [inline]
-       hci_rx_work+0xaab/0x1610 net/bluetooth/hci_core.c:4028
-       process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
-       process_scheduled_works kernel/workqueue.c:3312 [inline]
-       worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
-       kthread+0x2c1/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
-Chain exists of:
-  &hdev->lock --> hci_cb_list_lock --> l2cap_conn_del_mutex
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(l2cap_conn_del_mutex);
-                               lock(hci_cb_list_lock);
-                               lock(l2cap_conn_del_mutex);
-  lock(&hdev->lock);
-
- *** DEADLOCK ***
-
-3 locks held by kworker/u9:2/5273:
- #0: ffff888062dda148 ((wq_completion)hci1#2){+.+.}-{0:0}, at: process_one_work+0x1277/0x1b40 kernel/workqueue.c:3206
- #1: ffffc9000379fd80 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1b40 kernel/workqueue.c:3207
- #2: ffffffff8fcb1c28 (l2cap_conn_del_mutex){+.+.}-{3:3}, at: l2cap_recv_acldata+0x57/0xbd0 net/bluetooth/l2cap_core.c:7486
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 5273 Comm: kworker/u9:2 Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: hci1 hci_rx_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain kernel/locking/lockdep.c:3868 [inline]
- __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
- lock_acquire kernel/locking/lockdep.c:5759 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
- l2cap_connect_req net/bluetooth/l2cap_core.c:4078 [inline]
- l2cap_bredr_sig_cmd net/bluetooth/l2cap_core.c:4775 [inline]
- l2cap_sig_channel net/bluetooth/l2cap_core.c:5546 [inline]
- l2cap_recv_frame+0xe9d/0x8eb0 net/bluetooth/l2cap_core.c:6828
- l2cap_recv_acldata+0x9fe/0xbd0 net/bluetooth/l2cap_core.c:7518
- hci_acldata_packet net/bluetooth/hci_core.c:3791 [inline]
- hci_rx_work+0xaab/0x1610 net/bluetooth/hci_core.c:4028
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0c
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0d
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x0f
-Bluetooth: Wrong link type (-22)
-Bluetooth: Unknown BR/EDR signaling command 0x11
-Bluetooth: Wrong link type (-22)
-
-
-Tested on:
-
-commit:         d1f2d51b Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=103f1ffb980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=57042fe37c7ee7c2
-dashboard link: https://syzkaller.appspot.com/bug?extid=c12e2f941af1feb5632c
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15508e00580000
-
+diff --git a/fs/ext4/orphan.c b/fs/ext4/orphan.c
+index e5b47dda3317..08299b2a1b3b 100644
+--- a/fs/ext4/orphan.c
++++ b/fs/ext4/orphan.c
+@@ -293,7 +293,7 @@ int ext4_orphan_del(handle_t *handle, struct inode *inode)
+ 			mutex_unlock(&sbi->s_orphan_lock);
+ 			goto out_brelse;
+ 		}
+-		NEXT_ORPHAN(i_prev) = ino_next;
++		WRITE_ONCE(NEXT_ORPHAN(i_prev), ino_next);
+ 		err = ext4_mark_iloc_dirty(handle, i_prev, &iloc2);
+ 		mutex_unlock(&sbi->s_orphan_lock);
+ 	}
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index e72145c4ae5a..8cc5e19bfe78 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -346,7 +346,7 @@ __u32 ext4_free_group_clusters(struct super_block *sb,
+ __u32 ext4_free_inodes_count(struct super_block *sb,
+ 			      struct ext4_group_desc *bg)
+ {
+-	return le16_to_cpu(bg->bg_free_inodes_count_lo) |
++	return le16_to_cpu(READ_ONCE(bg->bg_free_inodes_count_lo)) |
+ 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
+ 		 (__u32)le16_to_cpu(bg->bg_free_inodes_count_hi) << 16 : 0);
+ }
+@@ -402,7 +402,7 @@ void ext4_free_group_clusters_set(struct super_block *sb,
+ void ext4_free_inodes_set(struct super_block *sb,
+ 			  struct ext4_group_desc *bg, __u32 count)
+ {
+-	bg->bg_free_inodes_count_lo = cpu_to_le16((__u16)count);
++	WRITE_ONCE(bg->bg_free_inodes_count_lo, cpu_to_le16((__u16)count));
+ 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
+ 		bg->bg_free_inodes_count_hi = cpu_to_le16(count >> 16);
+ }
+diff --git a/mm/percpu.c b/mm/percpu.c
+index 20d91af8c033..5c958a54da51 100644
+--- a/mm/percpu.c
++++ b/mm/percpu.c
+@@ -1864,7 +1864,6 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
+ 
+ area_found:
+ 	pcpu_stats_area_alloc(chunk, size);
+-	spin_unlock_irqrestore(&pcpu_lock, flags);
+ 
+ 	/* populate if not all pages are already there */
+ 	if (!is_atomic) {
+@@ -1878,14 +1877,12 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
+ 
+ 			ret = pcpu_populate_chunk(chunk, rs, re, pcpu_gfp);
+ 
+-			spin_lock_irqsave(&pcpu_lock, flags);
+ 			if (ret) {
+ 				pcpu_free_area(chunk, off);
+ 				err = "failed to populate";
+ 				goto fail_unlock;
+ 			}
+ 			pcpu_chunk_populated(chunk, rs, re);
+-			spin_unlock_irqrestore(&pcpu_lock, flags);
+ 		}
+ 
+ 		mutex_unlock(&pcpu_alloc_mutex);
+@@ -1894,6 +1891,8 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
+ 	if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
+ 		pcpu_schedule_balance_work();
+ 
++	spin_unlock_irqrestore(&pcpu_lock, flags);
++
+ 	/* clear the areas and return address relative to base address */
+ 	for_each_possible_cpu(cpu)
+ 		memset((void *)pcpu_chunk_addr(chunk, cpu, 0) + off, 0, size);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 5a77acf6ac6a..1595f6e7688c 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1154,7 +1154,9 @@ static int shmem_getattr(struct mnt_idmap *idmap,
+ 	stat->attributes_mask |= (STATX_ATTR_APPEND |
+ 			STATX_ATTR_IMMUTABLE |
+ 			STATX_ATTR_NODUMP);
++	inode_lock_shared(inode);
+ 	generic_fillattr(idmap, request_mask, inode, stat);
++	inode_unlock_shared(inode);
+ 
+ 	if (shmem_is_huge(inode, 0, false, NULL, 0))
+ 		stat->blksize = HPAGE_PMD_SIZE;
+@@ -3439,7 +3441,7 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (error)
+ 		goto out_iput;
+ 
+-	dir->i_size += BOGO_DIRENT_SIZE;
++	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
+ 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+ 	inode_inc_iversion(dir);
+ 	d_instantiate(dentry, inode);
+@@ -3526,7 +3528,7 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir,
+ 		goto out;
+ 	}
+ 
+-	dir->i_size += BOGO_DIRENT_SIZE;
++	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
+ 	inode_set_mtime_to_ts(dir,
+ 			      inode_set_ctime_to_ts(dir, inode_set_ctime_current(inode)));
+ 	inode_inc_iversion(dir);
+@@ -3639,8 +3641,8 @@ static int shmem_rename2(struct mnt_idmap *idmap,
+ 		inc_nlink(new_dir);
+ 	}
+ 
+-	old_dir->i_size -= BOGO_DIRENT_SIZE;
+-	new_dir->i_size += BOGO_DIRENT_SIZE;
++	i_size_write(old_dir, i_size_read(old_dir) - BOGO_DIRENT_SIZE);
++	i_size_write(new_dir, i_size_read(new_dir) + BOGO_DIRENT_SIZE);
+ 	simple_rename_timestamp(old_dir, old_dentry, new_dir, new_dentry);
+ 	inode_inc_iversion(old_dir);
+ 	inode_inc_iversion(new_dir);
+@@ -3694,7 +3696,7 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 		folio_unlock(folio);
+ 		folio_put(folio);
+ 	}
+-	dir->i_size += BOGO_DIRENT_SIZE;
++	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
+ 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+ 	inode_inc_iversion(dir);
+ 	d_instantiate(dentry, inode);
+--
 
