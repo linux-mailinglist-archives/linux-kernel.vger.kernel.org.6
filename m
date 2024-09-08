@@ -1,186 +1,159 @@
-Return-Path: <linux-kernel+bounces-320250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931519707FA
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:08:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A59C39707FC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63C0F1F227FB
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:07:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D02041C217F9
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD2D173332;
-	Sun,  8 Sep 2024 14:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1E0170A3A;
+	Sun,  8 Sep 2024 14:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="e8WaERJg"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CcwrGXJJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Da3N4sK/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A3A171E5A
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 14:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AF5170A29;
+	Sun,  8 Sep 2024 14:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725804445; cv=none; b=KMw1I//eL11vyjToZvHpoNG6/j9l0q2/iHSH5I0xFrslWQJxlM3X2f9I9+tHGotQSnUTAgMKzLwvReo7qJ7Io+M8OH19UyNehdb89Hov9HzvpwuyBPizbVjUdPMgLFUCyBnqKSfkssX4DhA5SQP+Y2wMqXF5suL5smpcgLGtYe4=
+	t=1725804455; cv=none; b=cd12Vi0PuZ94QFPnC3p6Q1Xl7DfL3FlNyBwOlHby3uZ4xGxZD0ZskxYewAcEEX0Qlcl5Bm3uH93mfdSJ6pOia1pm1lGqTZrCtQD7JWsCwq3txKEksjMoxmfaYmUktVXTLYN0C45PLBbWZHLFKlmqEFx4Hc9al29opuuw2IIYdo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725804445; c=relaxed/simple;
-	bh=VdJeHcRa81uNgktXVnAIXziYQCFEfA5cn+PUdZ+gLkg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=icC8XBW2fB10DIo4KeojxzU2WZbBZDLS/ggXzGVI7C/yzZANvIow/nowPF9Bdoj7pH9apHihcTkMdd9dATKqBbA9BSzhs94Z/vlLt49bcpsWf6X5l1zTRafi2a+b30Aqhkyw3v0Vjlzl+BDMGdAixYSEpeW96uLbZbptwo88apg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=e8WaERJg; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cb6eebfa1so271705e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 07:07:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725804442; x=1726409242; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vR6N4fCC++oBDLKVVVJ7HiCM6XtmAM6PYHQUGBS1rhs=;
-        b=e8WaERJgQ6IuO2P3WFlE7zeJAaG0/TM4iOW7XCJsNp68ELSNhzuGa/GETvbKkbUXGs
-         W3+iK53K4e1cfdT5+47OlFijupW+FZ2YJrp51GQAMDCFCGw37SlI4idYHcHN8797iCGu
-         u3M64y5NRrU/kRIPZqFHqBFo5VLSDdUGfTJVsZ7tlzNEcfoMF1wOWFokFq5BcuTGNbEa
-         mWflKbnpgJhxCQIfUMTpcjBYxblAzLr5e9KetxzMp+y3w76PZqpZVj5ggxpLR7ZQz1Ob
-         T/ZgnK63GF3y8pJnTZ1fwMW0qyo4blRTMoPG4w7vW46kPn9KttNWT26eWStG0pD1hAcA
-         ZLoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725804442; x=1726409242;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vR6N4fCC++oBDLKVVVJ7HiCM6XtmAM6PYHQUGBS1rhs=;
-        b=S4833dWheSd1LJVHAMbl6Et1f/wMf/Y8XU1+Ed7HsdJo4YuPlaO2mnp0SczwJd/wRa
-         fuVXSfwjljp9JqcZUMZTD5ZkPcgbnRbSq4tEQHdUYQcN0FYd+DEYqp7LK3FKDLi6nBwT
-         WWjWD3LxG41vHUEpq3vpGYdbj+ohWrRN6EPBmkDRlczKo0EJBiOZgmkVD7j4pBSosJug
-         dvyH0wLZlr4uyaW9JWMSQPiO5gOh2G/hVsZdfJ2gy09/yjNNAnoYg5Arx9S3lezhRo99
-         2SJJXOutwKSq2aMUl8z+ueG5bmNky6VoYMVJ/7wep4kEHbZCUW/Pdc/Ltz0nQxnj8Ixp
-         ghjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXI7DzLD8o0ex3yOoVTwTTFvR2N8uAOwmDT53+rKeqf0VPPK6NuBw/LNf1w1ToU25SFYDAbIFnpQuNJQEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwX2+Hxucwab97eR3kjraKRHacY2Gx5udcMEBbz3TB+wfThb7g
-	0mePbOLlZMOwLgciiK+UcJfA/f/55HKk2/A2QWNOnkFANRLUgBNjxl0YpNkfmMM=
-X-Google-Smtp-Source: AGHT+IEjD0/PC0WO2GOqUMpTA2/eZmSm46TAshTjVAAAEN0En/GnWtBMyhgW+2LIQa8czyBy0jD9zw==
-X-Received: by 2002:a05:600c:4707:b0:426:6f48:415e with SMTP id 5b1f17b1804b1-42c9f97b9ddmr28933705e9.1.1725804441252;
-        Sun, 08 Sep 2024 07:07:21 -0700 (PDT)
-Received: from localhost.localdomain ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc074599sm4863371a91.31.2024.09.08.07.07.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 07:07:20 -0700 (PDT)
-From: Heming Zhao <heming.zhao@suse.com>
-To: joseph.qi@linux.alibaba.com,
-	glass.su@suse.com
-Cc: Heming Zhao <heming.zhao@suse.com>,
-	ocfs2-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] ocfs2: adjust spinlock_t ip_lock protection scope
-Date: Sun,  8 Sep 2024 22:07:05 +0800
-Message-Id: <20240908140705.19169-4-heming.zhao@suse.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20240908140705.19169-1-heming.zhao@suse.com>
-References: <20240908140705.19169-1-heming.zhao@suse.com>
+	s=arc-20240116; t=1725804455; c=relaxed/simple;
+	bh=R5pwBp2715o6NSCvRGgWRxubQJOcAIg7xxhu5ATYuXk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=CkzQVqBnYLoeldk6giiYDkA032b87YMvyoGrWx5PnpSrXzD7QHbJdPd4jV4VHEaovUy23j4QNAbfG6FKyQWzMKwuYYuAciHtVKRub7xqP3EauiTmglGlfR7ZZSsjYRA/MovDolNZNzGQGMbncFYSFVmcZIi0YkST/lx6ZawQe8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CcwrGXJJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Da3N4sK/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 08 Sep 2024 14:07:31 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725804452;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8bYUEw/Haot8RTB94y9rK+bV3L99l6rdkTwTLwDMgkY=;
+	b=CcwrGXJJx+rtPtZfwPgR6xlWT4pqbPEGuzD47zMnynNka1L4vLRQD9xbsJo+TzATyoWOUA
+	HpSITYyu5P17NCKduaTwE747dCj775qEbtpw2JepAzor3jdXl3JKpUs3yVOzAYd7BA7kN8
+	s4BtSmLMpZs/fJHX75tGfkseFrNY4t2wdPNh44vYw9rTkIYjpzt7Gzy6nFCKO8zCVg7rZM
+	V0CiphWWCnwLW1BmsCV0e6Ci1+m4qaF0LEyaTAvrYXIRUz7iCh0IzFZ2QlT8iFqwSFx9d4
+	nUrVeKgLhS35105tPy9B5a9lFgN7BUijZVbvVa5nMGyGqC+F2qxf8Rqw36KWyg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725804452;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8bYUEw/Haot8RTB94y9rK+bV3L99l6rdkTwTLwDMgkY=;
+	b=Da3N4sK/afGRHsgEyWZf0TQ2s75hUu2wVOmkel1PvJgHEQOw61519Csr53MJ318ufWRwiu
+	OXCBgOZEd+ySQfDQ==
+From: "tip-bot2 for Bibo Mao" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: smp/core] smp: Mark smp_prepare_boot_cpu() __init
+Cc: Bibo Mao <maobibo@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>,
+ Huacai Chen <chenhuacai@loongson.cn>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240907082720.452148-1-maobibo@loongson.cn>
+References: <20240907082720.452148-1-maobibo@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <172580445139.2215.14675924073007959489.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Some of the spinlock_t ip_lock protection scopes are incorrect and
-should follow the usage in 'struct ocfs2_inode_info'.
+The following commit has been merged into the smp/core branch of tip:
 
-Signed-off-by: Heming Zhao <heming.zhao@suse.com>
-Reviewed-by: Su Yue <glass.su@suse.com>
+Commit-ID:     1d07085402d122f223bda3f8b72bea37a46ee0c9
+Gitweb:        https://git.kernel.org/tip/1d07085402d122f223bda3f8b72bea37a46ee0c9
+Author:        Bibo Mao <maobibo@loongson.cn>
+AuthorDate:    Sat, 07 Sep 2024 16:27:20 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sun, 08 Sep 2024 16:01:10 +02:00
+
+smp: Mark smp_prepare_boot_cpu() __init
+
+smp_prepare_boot_cpu() is only called during boot, hence mark it as
+__init.
+
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+Link: https://lore.kernel.org/all/20240907082720.452148-1-maobibo@loongson.cn
 ---
- fs/ocfs2/dlmglue.c  | 3 ++-
- fs/ocfs2/inode.c    | 5 +++--
- fs/ocfs2/resize.c   | 4 ++--
- fs/ocfs2/suballoc.c | 2 +-
- 4 files changed, 8 insertions(+), 6 deletions(-)
+ arch/loongarch/kernel/smp.c | 2 +-
+ arch/mips/kernel/smp.c      | 2 +-
+ arch/powerpc/kernel/smp.c   | 2 +-
+ include/linux/smp.h         | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
-index da78a04d6f0b..4a5900c8dc8f 100644
---- a/fs/ocfs2/dlmglue.c
-+++ b/fs/ocfs2/dlmglue.c
-@@ -2232,6 +2232,8 @@ static int ocfs2_refresh_inode_from_lvb(struct inode *inode)
- 	else
- 		inode->i_blocks = ocfs2_inode_sector_count(inode);
+diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+index ca405ab..be2655c 100644
+--- a/arch/loongarch/kernel/smp.c
++++ b/arch/loongarch/kernel/smp.c
+@@ -476,7 +476,7 @@ core_initcall(ipi_pm_init);
+ #endif
  
-+	spin_unlock(&oi->ip_lock);
-+
- 	i_uid_write(inode, be32_to_cpu(lvb->lvb_iuid));
- 	i_gid_write(inode, be32_to_cpu(lvb->lvb_igid));
- 	inode->i_mode    = be16_to_cpu(lvb->lvb_imode);
-@@ -2242,7 +2244,6 @@ static int ocfs2_refresh_inode_from_lvb(struct inode *inode)
- 	inode_set_mtime_to_ts(inode, ts);
- 	ocfs2_unpack_timespec(&ts, be64_to_cpu(lvb->lvb_ictime_packed));
- 	inode_set_ctime_to_ts(inode, ts);
--	spin_unlock(&oi->ip_lock);
- 	return 0;
+ /* Preload SMP state for boot cpu */
+-void smp_prepare_boot_cpu(void)
++void __init smp_prepare_boot_cpu(void)
+ {
+ 	unsigned int cpu, node, rr_node;
+ 
+diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
+index 0362fc5..39e193c 100644
+--- a/arch/mips/kernel/smp.c
++++ b/arch/mips/kernel/smp.c
+@@ -439,7 +439,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
  }
  
-diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index 2cc5c99fe941..4af9a6dfddd2 100644
---- a/fs/ocfs2/inode.c
-+++ b/fs/ocfs2/inode.c
-@@ -1348,14 +1348,15 @@ void ocfs2_refresh_inode(struct inode *inode,
- 		inode->i_blocks = 0;
- 	else
- 		inode->i_blocks = ocfs2_inode_sector_count(inode);
-+
-+	spin_unlock(&OCFS2_I(inode)->ip_lock);
-+
- 	inode_set_atime(inode, le64_to_cpu(fe->i_atime),
- 			le32_to_cpu(fe->i_atime_nsec));
- 	inode_set_mtime(inode, le64_to_cpu(fe->i_mtime),
- 			le32_to_cpu(fe->i_mtime_nsec));
- 	inode_set_ctime(inode, le64_to_cpu(fe->i_ctime),
- 			le32_to_cpu(fe->i_ctime_nsec));
--
--	spin_unlock(&OCFS2_I(inode)->ip_lock);
+ /* preload SMP state for boot cpu */
+-void smp_prepare_boot_cpu(void)
++void __init smp_prepare_boot_cpu(void)
+ {
+ 	if (mp_ops->prepare_boot_cpu)
+ 		mp_ops->prepare_boot_cpu();
+diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+index 46e6d2c..4ab9b8c 100644
+--- a/arch/powerpc/kernel/smp.c
++++ b/arch/powerpc/kernel/smp.c
+@@ -1166,7 +1166,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
+ 	cpu_smt_set_num_threads(num_threads, threads_per_core);
  }
  
- int ocfs2_validate_inode_block(struct super_block *sb,
-diff --git a/fs/ocfs2/resize.c b/fs/ocfs2/resize.c
-index c4a4016d3866..b29f71357d63 100644
---- a/fs/ocfs2/resize.c
-+++ b/fs/ocfs2/resize.c
-@@ -153,8 +153,8 @@ static int ocfs2_update_last_group_and_inode(handle_t *handle,
+-void smp_prepare_boot_cpu(void)
++void __init smp_prepare_boot_cpu(void)
+ {
+ 	BUG_ON(smp_processor_id() != boot_cpuid);
+ #ifdef CONFIG_PPC64
+diff --git a/include/linux/smp.h b/include/linux/smp.h
+index fcd61df..6a0813c 100644
+--- a/include/linux/smp.h
++++ b/include/linux/smp.h
+@@ -109,7 +109,7 @@ static inline void on_each_cpu_cond(smp_cond_func_t cond_func,
+  * Architecture specific boot CPU setup.  Defined as empty weak function in
+  * init/main.c. Architectures can override it.
+  */
+-void smp_prepare_boot_cpu(void);
++void __init smp_prepare_boot_cpu(void);
  
- 	spin_lock(&OCFS2_I(bm_inode)->ip_lock);
- 	OCFS2_I(bm_inode)->ip_clusters = le32_to_cpu(fe->i_clusters);
--	le64_add_cpu(&fe->i_size, (u64)new_clusters << osb->s_clustersize_bits);
- 	spin_unlock(&OCFS2_I(bm_inode)->ip_lock);
-+	le64_add_cpu(&fe->i_size, (u64)new_clusters << osb->s_clustersize_bits);
- 	i_size_write(bm_inode, le64_to_cpu(fe->i_size));
+ #ifdef CONFIG_SMP
  
- 	ocfs2_journal_dirty(handle, bm_bh);
-@@ -564,8 +564,8 @@ int ocfs2_group_add(struct inode *inode, struct ocfs2_new_group_input *input)
- 
- 	spin_lock(&OCFS2_I(main_bm_inode)->ip_lock);
- 	OCFS2_I(main_bm_inode)->ip_clusters = le32_to_cpu(fe->i_clusters);
--	le64_add_cpu(&fe->i_size, (u64)input->clusters << osb->s_clustersize_bits);
- 	spin_unlock(&OCFS2_I(main_bm_inode)->ip_lock);
-+	le64_add_cpu(&fe->i_size, (u64)input->clusters << osb->s_clustersize_bits);
- 	i_size_write(main_bm_inode, le64_to_cpu(fe->i_size));
- 
- 	ocfs2_update_super_and_backups(main_bm_inode, input->clusters);
-diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
-index 9e847f59c9ef..3f91615d8702 100644
---- a/fs/ocfs2/suballoc.c
-+++ b/fs/ocfs2/suballoc.c
-@@ -798,9 +798,9 @@ static int ocfs2_block_group_alloc(struct ocfs2_super *osb,
- 
- 	spin_lock(&OCFS2_I(alloc_inode)->ip_lock);
- 	OCFS2_I(alloc_inode)->ip_clusters = le32_to_cpu(fe->i_clusters);
-+	spin_unlock(&OCFS2_I(alloc_inode)->ip_lock);
- 	fe->i_size = cpu_to_le64(ocfs2_clusters_to_bytes(alloc_inode->i_sb,
- 					     le32_to_cpu(fe->i_clusters)));
--	spin_unlock(&OCFS2_I(alloc_inode)->ip_lock);
- 	i_size_write(alloc_inode, le64_to_cpu(fe->i_size));
- 	alloc_inode->i_blocks = ocfs2_inode_sector_count(alloc_inode);
- 	ocfs2_update_inode_fsync_trans(handle, alloc_inode, 0);
--- 
-2.35.3
-
 
