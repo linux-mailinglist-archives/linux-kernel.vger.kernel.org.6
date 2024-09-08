@@ -1,230 +1,88 @@
-Return-Path: <linux-kernel+bounces-320014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E103797050E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 06:28:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0431970516
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 06:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9572928245B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:28:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14D54B21A48
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570263B1BC;
-	Sun,  8 Sep 2024 04:28:39 +0000 (UTC)
-Received: from mta20.hihonor.com (mta20.honor.com [81.70.206.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079482B9B9;
+	Sun,  8 Sep 2024 04:37:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C391AA31
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 04:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFB14C98
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 04:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725769718; cv=none; b=q08T/wMULwUf+gtKNP6ASBv1gNzVh1JCUqnHPX/0053ICv3J3W6+R15wJgGiYCVd6Tp9++Xsn8/tVO0JHZHUE1+fgrFUymRWzQ/cjr9V2Hag2YaSP9i/guNuhFG4tlQOnX/oRNUS3yU1lKJr3BDdxBqYNJ7libQdt1HfKsEJwtw=
+	t=1725770224; cv=none; b=okdSUavPPbt9UoXSLcPkPyncFWAcLD9A4xjhgM7PHU9BLvATRJx7RbwErT5uoomVwd0ngUMvuTWNhZil4tZiJs8kEu/uG4JPryqBPUttj7OQm7BlBcCco6ZtyNFv3/PuQggvziOpFMNui3dVCGTUMS1HOmCArHZQkwqGcQ/R+74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725769718; c=relaxed/simple;
-	bh=BTqJgZyXRBke5NSoBuShw3jhRHlyG2CESRKQAvYt9ME=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b9KXtRWA8E0c3NTbacY4MXtsZeieMyZJH9jOXHYxVbbCRdUZMCMCH78TSKZzGIxjH8ZHwSd1vVYn+s8i5zvtHH4MLoO3vP4b2CiJqy42MkcX9RcyeF2SMtUCnjtRyCkrqlCnoVEn8hDIqcYu8tqFgUANDjbVU920xN3TB5GDjyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w001.hihonor.com (unknown [10.68.25.235])
-	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4X1c1j0mCKzYkyX1;
-	Sun,  8 Sep 2024 12:10:01 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w001.hihonor.com
- (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sun, 8 Sep
- 2024 12:12:03 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sun, 8 Sep
- 2024 12:12:03 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <chao@kernel.org>
-CC: <jaegeuk@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
-	<linux-kernel@vger.kernel.org>, <wangzijie1@honor.com>
-Subject: Re: [f2fs-dev] [RFC PATCH] f2fs: don't set SBI_QUOTA_NEED_REPAIR flag if receive SIGKILL
-Date: Sun, 8 Sep 2024 12:12:02 +0800
-Message-ID: <20240908041202.2272053-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <973e075b-7044-4448-9cd0-45b5a1ad1382@kernel.org>
-References: <973e075b-7044-4448-9cd0-45b5a1ad1382@kernel.org>
+	s=arc-20240116; t=1725770224; c=relaxed/simple;
+	bh=bbPwXl7mcVMe08TIPS+iIqFSQWWuAZhXJy7r9dlS2Ew=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ux6bdDVD68vTRue9qqiSF5CeWUZsewltl7Q33LE0cpgRo+hFKjy8LBBqZFB0tjCLKZwaOfiPzVC0UQYEa4Im5P6AagQG2tfe2BMJIrx+g/FVLG0Lq48K/+yh9nhReXbz5vj48iBeL1jjka73Ujpt4S1dCLu06Swe4LoVugDC3Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82cdc7b7debso52174339f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 21:37:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725770222; x=1726375022;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C7BvyJ+2UBDZmC8DQ/cPyT9aC8GkhA+CksbUFq++n+0=;
+        b=Qb0/qOF06gWdWxhifIdaAQWyTq+MmD0aE6Aybx24BFOhJwaaxMj8jN3GUqu6BbSmmd
+         cFX3p8OImMvzxj7YkUs76Te8WeJzIodMbbgjyPX5J++04NH0e4KmuedJLk1UWYrlWwTG
+         QAhFgVL3YgdwE1RcjiSttEQJjqUXCVD9VtdXbwFtM5yGHd4imGOQnEG2PhsAlQBIYkAk
+         R1X9UZcN2AgTU1JT2WHlk/rbvkHj0ehrcWcQfeOUawXKruevp4vVdsxLvL01GmjfohTE
+         oEvQv5bUr8GVewU1fMd1eTT6qQuKaGSpj+8P6B27/nALT/vGkndJuKc8TnH/GFtlNlk8
+         zINg==
+X-Forwarded-Encrypted: i=1; AJvYcCWc3cPCJjSHmlplX/xhQO5NkH4qzfmVP9nikIU+w2NSrJx0JDFXS0CyOcL1qEIfd/zyKxKXL4CnVcbNqJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsRF6B/CGCVUdCA4x/he4uOf338m6W3qyPf5zVBMQ10L37WzUy
+	qcF2l1sOERSkt/EHy3Cf470AByQrY7h6X1zf40Jlcm04BgnLWHXIWDw9lsFJ+4KyREwsW75VNKm
+	T9MQeuqeKUacqn+ILYaOPEDbcMiiVc9Wo/pNDt9Sz+JC0CNphTUjoGus=
+X-Google-Smtp-Source: AGHT+IHPxM5VqR17yfYZtkoLNdM1KRswj6aHXXxnQRZN3t+t6btAMLO8DI5mjA8Z9uiqpWQ1N5/8MJW0M2VPe7Kn6MuZQdEwxeZx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:160d:b0:3a0:4e74:8af with SMTP id
+ e9e14a558f8ab-3a0576b618dmr41919055ab.24.1725770222469; Sat, 07 Sep 2024
+ 21:37:02 -0700 (PDT)
+Date: Sat, 07 Sep 2024 21:37:02 -0700
+In-Reply-To: <tencent_6352E6C65F89856EFC6EC18C92E7CCC6FF06@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000013154b062194313f@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
+ l2cap_connect (2)
+From: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: w011.hihonor.com (10.68.20.122) To a011.hihonor.com
- (10.68.31.243)
 
->> From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
->> 
->>> On 2024/8/27 14:22, wangzijie wrote:
->>>> Thread A
->>>> -dquot_initialize
->>>>   -dqget
->>>>    -f2fs_dquot_acquire
->>>>     -v2_read_dquot
->>>>      -qtree_read_dquot
->>>>       -find_tree_dqentry
->>>>        -f2fs_quota_read
->>>>         -read_cache_page_gfp
->>>>          -do_read_cache_folio
->>>>           -fiemap_read_folio
->>>>            -folio_wait_locked_killable
->>>>             -receive SIGKILL : return -EINTR
->>>>         -set SBI_QUOTA_NEED_REPAIR
->>>>     -set SBI_QUOTA_NEED_REPAIR
->>>>
->>>> When calling read_cache_page_gfp in quota read, thread may receive SIGKILL and
->>>> set SBI_QUOTA_NEED_REPAIR, should we set SBI_QUOTA_NEED_REPAIR in this error path?
->>>
->>> f2fs_quota_read() can be called in a lot of contexts, can we just ignore -EINTR
->>> for f2fs_dquot_initialize() case?
->>>
->>> Thanks,
->> 
->> Yes, in many contexts f2fs_quota_read() can be called and may return -EINTR, we need to ignore this errno for more cases. If we need to do so, I will check it and resend patch.
->> Or do you have other suggestions to avoid unnecessary SBI_QUOTA_NEED_REPAIR flag set?
->
->How about this?
->
->---
->  fs/f2fs/f2fs.h  |  1 +
->  fs/f2fs/inode.c |  3 +--
->  fs/f2fs/super.c | 17 +++++++++++++----
->  3 files changed, 15 insertions(+), 6 deletions(-)
->
->diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->index dfed1974eda5..a1704a19dfe9 100644
->--- a/fs/f2fs/f2fs.h
->+++ b/fs/f2fs/f2fs.h
->@@ -810,6 +810,7 @@ enum {
->  	FI_ATOMIC_DIRTIED,	/* indicate atomic file is dirtied */
->  	FI_ATOMIC_REPLACE,	/* indicate atomic replace */
->  	FI_OPENED_FILE,		/* indicate file has been opened */
->+	FI_INIT_DQUOT,		/* indicate it's initializing dquot */
->  	FI_MAX,			/* max flag, never be used */
->  };
->
->diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->index 008f01348afa..b1dbaeda306f 100644
->--- a/fs/f2fs/inode.c
->+++ b/fs/f2fs/inode.c
->@@ -827,8 +827,7 @@ void f2fs_evict_inode(struct inode *inode)
->
->  	err = f2fs_dquot_initialize(inode);
->  	if (err) {
->-		if (err != -EINTR)
->-			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->+		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->  		err = 0;
->  	}
->
->diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->index 8e29aba4b7a4..e774bdf875b2 100644
->--- a/fs/f2fs/super.c
->+++ b/fs/f2fs/super.c
->@@ -2644,8 +2644,11 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
->  			if (PTR_ERR(page) == -ENOMEM) {
->  				memalloc_retry_wait(GFP_NOFS);
->  				goto repeat;
->-			} else if (PTR_ERR(page) != -EINTR)
->-				set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->+			} else if (PTR_ERR(page) == -EINTR &&
->+				is_inode_flag_set(inode, FI_INIT_DQUOT)) {
->+				return PTR_ERR(page);
->+			}
->+			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->  			return PTR_ERR(page);
->  		}
->
->@@ -2721,10 +2724,16 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
->
->  int f2fs_dquot_initialize(struct inode *inode)
->  {
->+	int ret;
->+
->  	if (time_to_inject(F2FS_I_SB(inode), FAULT_DQUOT_INIT))
->  		return -ESRCH;
->
->-	return dquot_initialize(inode);
->+	set_inode_flag(inode, FI_INIT_DQUOT);
->+	ret = dquot_initialize(inode);
->+	clear_inode_flag(inode, FI_INIT_DQUOT);
->+
->+	return ret;
->  }
->
->  static struct dquot __rcu **f2fs_get_dquots(struct inode *inode)
->@@ -3064,7 +3073,7 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
->
->  	f2fs_down_read(&sbi->quota_sem);
->  	ret = dquot_acquire(dquot);
->-	if (ret < 0 && ret != -EINTR)
->+	if (ret < 0)
->  		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->  	f2fs_up_read(&sbi->quota_sem);
->  	return ret;
->-- 
->2.40.1
+Hello,
 
-Hi, Chao
-If we dont't ignore -EINTR in f2fs_dquot_acquire(), we will still set SBI_QUOTA_NEED_REPAIR flag
-in f2fs_dquot_acquire() if f2fs_quota_read return -EINTR. I think we need more cases in addition to 
-dquot initializing and I will check it again.
-Thank you for your suggestion!
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
->> 
->> Thank you for review.
->> 
->>>>
->>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
->>>> ---
->>>>   fs/f2fs/inode.c | 3 ++-
->>>>   fs/f2fs/super.c | 6 +++---
->>>>   2 files changed, 5 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->>>> index ed629dabb..2af98e2b7 100644
->>>> --- a/fs/f2fs/inode.c
->>>> +++ b/fs/f2fs/inode.c
->>>> @@ -837,8 +837,9 @@ void f2fs_evict_inode(struct inode *inode)
->>>>       err = f2fs_dquot_initialize(inode);
->>>>       if (err) {
->>>> +        if (err != -EINTR)
->>>> +            set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>>>           err = 0;
->>>> -        set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>>>       }
->>>>       f2fs_remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
->>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>> index 1f1b3647a..f99a36ff3 100644
->>>> --- a/fs/f2fs/super.c
->>>> +++ b/fs/f2fs/super.c
->>>> @@ -2650,8 +2650,8 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
->>>>               if (PTR_ERR(page) == -ENOMEM) {
->>>>                   memalloc_retry_wait(GFP_NOFS);
->>>>                   goto repeat;
->>>> -            }
->>>> -            set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>>> +            } else if (PTR_ERR(page) != -EINTR)
->>>> +                set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>>>               return PTR_ERR(page);
->>>>           }
->>>> @@ -3070,7 +3070,7 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
->>>>       f2fs_down_read(&sbi->quota_sem);
->>>>       ret = dquot_acquire(dquot);
->>>> -    if (ret < 0)
->>>> +    if (ret < 0 && ret != -EINTR)
->>>>           set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>>>       f2fs_up_read(&sbi->quota_sem);
->>>>       return ret;
->> 
->> 
+Reported-by: syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com
+Tested-by: syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com
 
+Tested on:
 
+commit:         d1f2d51b Merge tag 'clk-fixes-for-linus' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1187ef29980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=57042fe37c7ee7c2
+dashboard link: https://syzkaller.appspot.com/bug?extid=c12e2f941af1feb5632c
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11ad989f980000
+
+Note: testing is done by a robot and is best-effort only.
 
