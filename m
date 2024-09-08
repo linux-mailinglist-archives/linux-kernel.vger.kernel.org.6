@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-320224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C5B9707C9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:29:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2289707CF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B890282509
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:29:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A24792825AF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A9416A947;
-	Sun,  8 Sep 2024 13:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF3316BE18;
+	Sun,  8 Sep 2024 13:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="iRA9mz85"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="eXg+J6yY"
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [207.246.76.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACF8167296
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 13:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4B116B396
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 13:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.246.76.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725802153; cv=none; b=eLY6woMnzxZ6z/tx8NWy1G+nmTzO3xcSWiX2tTbTkwA9qTfmzztsyRrmMeFcpYplqVgCWp/vcNazG0D6cT21rY8cy3NVIa7U9I0ndaCsr5TQaKloHtdNZCCJ08O7/NmXsQlFrWeyuzYPYi5fg1kryCJ9Od1NvpzACw2tTFrHX28=
+	t=1725802158; cv=none; b=CQA+MzKQlG7JcU4kF0VKvmMLHA4kKb+eGJwaAQWxi/naK7wDaC0/fA4GEC8lvGzFZcIS70d5ZlkIR0h1JJ1fBlNshEvNc/nagYekFp+w5h3mhlmShyrJrfbDezcFLq4/vqby4izH03KK7PEgC+M1ZJmKe1aXVIMcbkq6CsvlsCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725802153; c=relaxed/simple;
-	bh=QBjftpFE00OunI40RJX3FzxsG9u8JiaZOgW8fd9XDtc=;
+	s=arc-20240116; t=1725802158; c=relaxed/simple;
+	bh=2oOtJBX+NrccfHTcufrs6z0wriZKAF9lH7s08bQrrQs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZYHggWBIgp2/skYDZfGMkDkkwqvgpgxKzNDl7ocCnVQQLYTXZfzPZ0MiGbRn9C+nhhR7nfwZi/Snp3BiHSHm2hNobSaPensDROmc5be9GRQIqBMORcoeR0i9/kDjaj1crrbINt0zZ/llKcduEJDPLWaFXKTwpuTfj/9dIHKId+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=iRA9mz85; arc=none smtp.client-ip=207.246.76.47
+	 MIME-Version; b=AxkJ4uJh/QDWeCAbfh8Ip+OW8Kq+9Y736ZJBBMjyvyulkCzA+Bj1mtagyL8yEGSbdG1TJkCr0otMNirCks1sNXAIky5TXVmreSqZKYoJylhUUa13USm6tbYev+YfdAzYzi8MJQ0xnj22pBGS0lVju1fZWzibWcH5P7QKfxXBcAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=eXg+J6yY; arc=none smtp.client-ip=207.246.76.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
  h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
  Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1725802130; bh=SwssP0ZpPX5Ykot2pn4Kbx+P04XckEzOPPdS7RWmo0Q=;
- b=iRA9mz85jO/O9CJ/OMJ6xgpSH5z+MIAZW2dbu7dgBeSXtMX2tiPnf0elCHnY3Ncgee3OZ954C
- ZMG4rX32ljGHSkTn4M/YdniFpIvUw7DqadONi1Lg1SUjFW6sYpdcPyC6gYZIx9fp6hT65JkomVE
- Y13UjOQZ62dpEPrnBYuHIxCZytTo6YtM1rG5nSJ8N0Kv7rEy/jr8cwL9GVzg2jD2ACnAyGxiB//
- ajOuTj5Zk8rtBDAJ8twgxc4Tk4zZdRc8g/QcxTuENOvm5/peMLUVj1r0XizOWZK7IPZK5qmjsDD
- X2Q2BzNFaVfMUNveA0yEUC2Por7faBUOzIYqPKbwI5YQ==
+ t=1725802135; bh=dbyT3VAtgqFNJh28eDMPmAIkHE6wApqXiwyZdxlGJ50=;
+ b=eXg+J6yY2ho68gZxczDf9ptPgVNEqKCgFIUF1ABOkk9V+8oRlByp15AaaIdvk2/wpE9Skwwmt
+ bU4CQR4DApmyxK31xVIODvcSmhATVv/xe0wA+1LHjkTCXVuz5bo/Vo/zDuEryHi/0RytbMowC3E
+ PLS3iOrlix/1uMLfUqph2TtBso8mSJi9Hu97+PkSNdkXu42L+sXgPlVT/j8775S/Z/3xNS45raR
+ wf/R9KthxXUnPwtsuAJ/uL5/vk8v7VYpIL7ylra9Kd+M8vXFwGPJWsRc3XnWYUiMXRwx+oNmr2N
+ sbIOrjlhI/4lBzOlSq9O3+4K4AQguMSxUc+02sN8fbxQ==
 From: Jonas Karlman <jonas@kwiboo.se>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -57,9 +57,9 @@ Cc: Christian Hewitt <christianshewitt@gmail.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 04/10] drm: bridge: dw_hdmi: Use passed mode instead of stored previous_mode
-Date: Sun,  8 Sep 2024 13:28:06 +0000
-Message-ID: <20240908132823.3308029-5-jonas@kwiboo.se>
+Subject: [PATCH v2 05/10] drm: bridge: dw_hdmi: Fold poweron and setup functions
+Date: Sun,  8 Sep 2024 13:28:07 +0000
+Message-ID: <20240908132823.3308029-6-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240908132823.3308029-1-jonas@kwiboo.se>
 References: <20240908132823.3308029-1-jonas@kwiboo.se>
@@ -76,48 +76,73 @@ X-Complaints-To: abuse@forwardemail.net
 X-ForwardEmail-Version: 0.4.40
 X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
  207.246.76.47
-X-ForwardEmail-ID: 66dda6903c9877b459587942
+X-ForwardEmail-ID: 66dda6943c9877b459587956
 
-Use the passed mode instead of mixing use of passed mode and the stored
-previous_mode. The passed mode is currenly always the previous_mode.
-
-Also fix a small typo and add a variable to help shorten a code line.
+Fold the poweron and setup functions into one function and use the
+adjusted_mode directly from the new crtc_state to remove the need of
+storing previous_mode.
 
 Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 ---
-v2: Update commit message, s/type/typo/
+v2: No change
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 5b67640b1d0a..87fb6fd5cffd 100644
+index 87fb6fd5cffd..1eefa633ff78 100644
 --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
 +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -2240,6 +2240,7 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi,
- 			 const struct drm_connector *connector,
- 			 const struct drm_display_mode *mode)
+@@ -2236,9 +2236,9 @@ static void hdmi_disable_overflow_interrupts(struct dw_hdmi *hdmi)
+ 		    HDMI_IH_MUTE_FC_STAT2);
+ }
+ 
+-static int dw_hdmi_setup(struct dw_hdmi *hdmi,
+-			 const struct drm_connector *connector,
+-			 const struct drm_display_mode *mode)
++static int dw_hdmi_poweron(struct dw_hdmi *hdmi,
++			   const struct drm_connector *connector,
++			   const struct drm_display_mode *mode)
  {
-+	const struct drm_display_info *display = &connector->display_info;
+ 	const struct drm_display_info *display = &connector->display_info;
  	int ret;
+@@ -2378,15 +2378,6 @@ static void initialize_hdmi_ih_mutes(struct dw_hdmi *hdmi)
+ 	hdmi_writeb(hdmi, ih_mute, HDMI_IH_MUTE);
+ }
  
- 	hdmi_disable_overflow_interrupts(hdmi);
-@@ -2285,12 +2286,10 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi,
- 	hdmi->hdmi_data.video_mode.mdataenablepolarity = true;
+-static void dw_hdmi_poweron(struct dw_hdmi *hdmi)
+-{
+-	/*
+-	 * The curr_conn field is guaranteed to be valid here, as this function
+-	 * is only be called when !hdmi->disabled.
+-	 */
+-	dw_hdmi_setup(hdmi, hdmi->curr_conn, &hdmi->previous_mode);
+-}
+-
+ static void dw_hdmi_poweroff(struct dw_hdmi *hdmi)
+ {
+ 	if (hdmi->phy.enabled) {
+@@ -2936,15 +2927,19 @@ static void dw_hdmi_bridge_atomic_enable(struct drm_bridge *bridge,
+ {
+ 	struct dw_hdmi *hdmi = bridge->driver_private;
+ 	struct drm_atomic_state *state = old_state->base.state;
++	const struct drm_display_mode *mode;
+ 	struct drm_connector *connector;
++	struct drm_crtc *crtc;
  
- 	/* HDMI Initialization Step B.1 */
--	hdmi_av_composer(hdmi, &connector->display_info, mode);
-+	hdmi_av_composer(hdmi, display, mode);
+ 	connector = drm_atomic_get_new_connector_for_encoder(state,
+ 							     bridge->encoder);
++	crtc = drm_atomic_get_new_connector_state(state, connector)->crtc;
++	mode = &drm_atomic_get_new_crtc_state(state, crtc)->adjusted_mode;
  
--	/* HDMI Initializateion Step B.2 */
--	ret = hdmi->phy.ops->init(hdmi, hdmi->phy.data,
--				  &connector->display_info,
--				  &hdmi->previous_mode);
-+	/* HDMI Initialization Step B.2 */
-+	ret = hdmi->phy.ops->init(hdmi, hdmi->phy.data, display, mode);
- 	if (ret)
- 		return ret;
- 	hdmi->phy.enabled = true;
+ 	mutex_lock(&hdmi->mutex);
+ 	hdmi->disabled = false;
+ 	hdmi->curr_conn = connector;
+-	dw_hdmi_poweron(hdmi);
++	dw_hdmi_poweron(hdmi, connector, mode);
+ 	dw_hdmi_update_phy_mask(hdmi);
+ 	handle_plugged_change(hdmi, true);
+ 	mutex_unlock(&hdmi->mutex);
 -- 
 2.46.0
 
