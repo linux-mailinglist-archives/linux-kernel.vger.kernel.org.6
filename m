@@ -1,50 +1,79 @@
-Return-Path: <linux-kernel+bounces-320458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71BB2970AA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:51:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51437970AAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABB3DB21275
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 23:51:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D394E1F21472
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 23:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432BF1779BA;
-	Sun,  8 Sep 2024 23:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA3A17A938;
+	Sun,  8 Sep 2024 23:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="IbWSfQ7u"
-Received: from pv50p00im-ztbu10011701.me.com (pv50p00im-ztbu10011701.me.com [17.58.6.53])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bpttvt7z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C2C38F9C
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 23:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546D0149C42
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 23:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725839499; cv=none; b=qiNr95ZXMl+sxs8XMhunYOt8axP4hqMrv+K/kg/J9G+Ko0KVzHBItbRz6pDk7GdScrentFCKDv+jnslngcc+VGl/SGCD9XF4B+ILO6dozibwQBUo05NEmXzfQ5ONy/N/SmvLs7uv3+0k0q3ycwUFMVMf069gEQx83ifoO2WcsOk=
+	t=1725839642; cv=none; b=kElgLPZVMbCy73BgP/HQwf7WA3IG4YjvAyHVXH29dD8O3BDmprEGtBAr7xsGJkZSaf1nCVDFa1ZTcDQyitg3a/25ciXlwAjtRq6nNyhzv3ATmEkHkixDo76dOhh9HdLdoMFW7E59c5Z22WnKDQ0dqSHExINXsvVkyuU9iWqs0BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725839499; c=relaxed/simple;
-	bh=EBryZdcz714do1mPnDAH6k5ZNjgJ36jHisPZ74d9Y+g=;
+	s=arc-20240116; t=1725839642; c=relaxed/simple;
+	bh=qwN6aTuK14BJZiNEg06ambo4ndmvNdA+B4b3NhYEMic=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BvE4O0EOVHnngjeeA0unkmk2AwFQrJWZ6yORfzugnyCV7RQvZ3bUAygQWiSh3utmnY04/G0OynkbfdgFf9zmNCs7PHkyEboB7UtxPiwS1F26gl0eLyXW/f0d7Zmw2qbhqpLtiT+mxMLSTNBgkWZdY2Iv7uoI+aWi3+pRv/DSxdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=IbWSfQ7u; arc=none smtp.client-ip=17.58.6.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1725839497;
-	bh=ovAOMviYZ5bSsgrZCk4yESoIqIlWOIEGtYOKesznvVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=IbWSfQ7u4kd63nIxSlY63P8SbqCYfnbeKyS5TC1gFjcJWI8bYLwfVhGcAvwO/xUhU
-	 hR+rE6oK7z7TRIQqGJQzdYCyf/282Ba+ALEJm+b0N4NkDFkAD0JCwHxm8OBQE6PapP
-	 bt8tKPqFnxlf9MpnrQrlsbglXYEiJxDGd14LQ3dzVgMxVRa85bZYWDh6qr4xHaEfEe
-	 DPvKxDZa+G++F5kkg/4Ec1yVeu4TaujvXpQIss0h4FCsZ1IOal7zLuD0O5WMVpsLrw
-	 8V7BD+Vb4OME/oPjfa+DEqvU0nqOCjfzT915Up1caNuGiHtMG+ea+UgAYUFs0bIbQp
-	 c3qkIdWoq4OlA==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztbu10011701.me.com (Postfix) with ESMTPSA id 6B52174021C;
-	Sun,  8 Sep 2024 23:51:32 +0000 (UTC)
-Message-ID: <3a907e77-792d-4bf1-8685-db48f607b562@icloud.com>
-Date: Mon, 9 Sep 2024 07:51:28 +0800
+	 In-Reply-To:Content-Type; b=Zzpw0MTTeMMgRQueOabJIgJnZrgBhPOMn9fHrXJPajJ9JFgWDt6L2bsCV05U7vEdWXtdL8DpHEQ+71bS4u1U5QnKgF6+WB+BFt4d4AnF4l8N3ie3b8WgvRFp5pqMXVYJ3HcN5KRWK9VL9+xJ86aqasEKrEEyQAPir2SI7h8l9kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bpttvt7z; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725839639;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wi0uDfX5sgX+oLv1lO6K16Ep91IJ96aWPDPwqIWLlPg=;
+	b=bpttvt7zrlKHG8d1+F84x6ToJ5P7gT+g+m4Ztx73vR6V3PAlLojeDlTh0Tg+Yf48dpgaDj
+	/3yOQwbdQ8R8fiXHcQOXUcmpOCh2SBlTTbAB+mt+j1+0B44IyQe8r5G/8cXLWQ7I4CyR/T
+	jDCi4r9X0XMf3PcxpNQ9XKVhUSK/4go=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-75-0fykEUlDPlmILteYI_xDew-1; Sun, 08 Sep 2024 19:53:57 -0400
+X-MC-Unique: 0fykEUlDPlmILteYI_xDew-1
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2d8b4a23230so4053334a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 16:53:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725839636; x=1726444436;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wi0uDfX5sgX+oLv1lO6K16Ep91IJ96aWPDPwqIWLlPg=;
+        b=QRhRA8uEmIDodlLo0f8oSTMtGIJrLWlabHLkafRYKJu8/WgyYVHojn7CNv9Bn4vvp8
+         +O5nFLDLGituuBRKdB3WJ5hFmYUNC8WGClN4lRfEFl0rmnFTs+BBVG7vIZg2N4x0txjI
+         rvYJdScD4dCWRM72iVaZgLkDa7qsjtbHVh/4aeoIWEwqihTBzGAATvAhJxWFJdR/6+I7
+         /UrejRMbliJeRyWSD7Hh1PKSjr4YcKZTmBTDF7u034ZC9+Bu6TVIy9zMoXuDbSYpxCUZ
+         wTpT5swCAztHY/ZCk8mE5F28vkwOru9Ov3pWgQobMqBxxYUn+TxO1IM4kmdiqW/8956j
+         EVJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdqY01fKmXfMV8F/RzcaRfa+N98mfXj7K45Urv7OdhtcPr+y9Q/+m9jsQYLrO8JAD7yxOkt13N2pLb6QM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnKaCVm5nIEopK4cSXn3d7nkczw7AkHzkzuJzJOnzu/DQtHnBW
+	pqhlSjUEXeU17HLWaINN1L0qbkPXUmT4NlO7BfxtcTnv3y1CZro/mHB7Kdsu821cKLl7d3V6Ys+
+	JmL9gZ+jlzTLb52Oy3RdGrQ88ERVZfYGVmcEbyF7m0cly1JadbD/fJPqwGWCrEw==
+X-Received: by 2002:a17:90b:e8b:b0:2d8:a672:1869 with SMTP id 98e67ed59e1d1-2daffd0bf58mr7417920a91.32.1725839636443;
+        Sun, 08 Sep 2024 16:53:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnXND6LKMPjrt0KKzz0KFo7SeRMM4AcKKnPnTFybXe+F72ZSBtfd/QDe02gIE0c1lTfUVnXA==
+X-Received: by 2002:a17:90b:e8b:b0:2d8:a672:1869 with SMTP id 98e67ed59e1d1-2daffd0bf58mr7417893a91.32.1725839635739;
+        Sun, 08 Sep 2024 16:53:55 -0700 (PDT)
+Received: from [192.168.68.54] ([103.210.27.31])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db049873b0sm3208257a91.47.2024.09.08.16.53.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Sep 2024 16:53:54 -0700 (PDT)
+Message-ID: <8ed3b6da-8bd2-4c98-9364-8b14c1baae7f@redhat.com>
+Date: Mon, 9 Sep 2024 09:53:46 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,187 +81,185 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/3] amba: bus: Move reading periphid operation from
- amba_match() to amba_probe()
-To: Russell King <linux@armlinux.org.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>,
- Isaac Manjarres <isaacmanjarres@google.com>,
- Lu Baolu <baolu.lu@linux.intel.com>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240909-fix_amba-v1-0-4658eed26906@quicinc.com>
- <20240909-fix_amba-v1-3-4658eed26906@quicinc.com>
+Subject: Re: [PATCH v5 07/19] arm64: rsi: Add support for checking whether an
+ MMIO is protected
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun <alpergun@google.com>
+References: <20240819131924.372366-1-steven.price@arm.com>
+ <20240819131924.372366-8-steven.price@arm.com>
+ <fe3da777-c6de-451d-8a8a-19fdda8e82e5@redhat.com>
+ <8a675a19-52c1-43c7-b560-fbadce0c5145@arm.com>
 Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20240909-fix_amba-v1-3-4658eed26906@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 9r5L0a7NbYNATNvayp6rGPEYGwRHiStY
-X-Proofpoint-GUID: 9r5L0a7NbYNATNvayp6rGPEYGwRHiStY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-08_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 spamscore=0 bulkscore=0 phishscore=0 mlxscore=0
- adultscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2409080207
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <8a675a19-52c1-43c7-b560-fbadce0c5145@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2024/9/9 07:37, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> amba_match(), as bus_type @amba_bustype's match(), reads periphid from
-> hardware and may return -EPROBE_DEFER consequently, and it is the only
-> one that breaks below ideal rule in current kernel tree:
-> 
-> bus_type's match() should only return bool type compatible integer 0 or
-> 1 ideally since its main operations are lookup and comparison normally.
-> 
-> fixed by moving reading periphid operation to amba_probe().
+On 9/6/24 11:55 PM, Steven Price wrote:
+> On 06/09/2024 05:32, Gavin Shan wrote:
+>> On 8/19/24 11:19 PM, Steven Price wrote:
+>>> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>>
+>>> On Arm CCA, with RMM-v1.0, all MMIO regions are shared. However, in
+>>> the future, an Arm CCA-v1.0 compliant guest may be run in a lesser
+>>> privileged partition in the Realm World (with Arm CCA-v1.1 Planes
+>>> feature). In this case, some of the MMIO regions may be emulated
+>>> by a higher privileged component in the Realm world, i.e, protected.
+>>>
+>>> Thus the guest must decide today, whether a given MMIO region is shared
+>>> vs Protected and create the stage1 mapping accordingly. On Arm CCA, this
+>>> detection is based on the "IPA State" (RIPAS == RIPAS_IO). Provide a
+>>> helper to run this check on a given range of MMIO.
+>>>
+>>> Also, provide a arm64 helper which may be hooked in by other solutions.
+>>>
+>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>> Signed-off-by: Steven Price <steven.price@arm.com>
+>>> ---
+>>> New patch for v5
+>>> ---
+>>>    arch/arm64/include/asm/io.h       |  8 ++++++++
+>>>    arch/arm64/include/asm/rsi.h      |  3 +++
+>>>    arch/arm64/include/asm/rsi_cmds.h | 21 +++++++++++++++++++++
+>>>    arch/arm64/kernel/rsi.c           | 26 ++++++++++++++++++++++++++
+>>>    4 files changed, 58 insertions(+)
 
-or move to amba_dma_configure() which is the first bus_type's function
-called after match()?
+[...]
 
+>>> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
+>>> index e968a5c9929e..381a5b9a5333 100644
+>>> --- a/arch/arm64/kernel/rsi.c
+>>> +++ b/arch/arm64/kernel/rsi.c
+>>> @@ -67,6 +67,32 @@ void __init arm64_rsi_setup_memory(void)
+>>>        }
+>>>    }
+>>>    +bool arm64_rsi_is_protected_mmio(phys_addr_t base, size_t size)
+>>> +{
+>>> +    enum ripas ripas;
+>>> +    phys_addr_t end, top;
+>>> +
+>>> +    /* Overflow ? */
+>>> +    if (WARN_ON(base + size < base))
+>>> +        return false;
+>>> +
+>>> +    end = ALIGN(base + size, RSI_GRANULE_SIZE);
+>>> +    base = ALIGN_DOWN(base, RSI_GRANULE_SIZE);
+>>> +
+>>> +    while (base < end) {
+>>> +        if (WARN_ON(rsi_ipa_state_get(base, end, &ripas, &top)))
+>>> +            break;
+>>> +        if (WARN_ON(top <= base))
+>>> +            break;
+>>> +        if (ripas != RSI_RIPAS_IO)
+>>> +            break;
+>>> +        base = top;
+>>> +    }
+>>> +
+>>> +    return (size && base >= end);
+>>> +}
+>>
+>> I don't understand why @size needs to be checked here. Its initial value
+>> taken from the input parameter should be larger than zero and its value
+>> is never updated in the loop. So I'm understanding @size is always larger
+>> than zero, and the condition would be something like below if I'm correct.
 > 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  drivers/amba/bus.c       | 55 +++++++++++++++++++++++++++++-------------------
->  include/linux/amba/bus.h |  1 -
->  2 files changed, 33 insertions(+), 23 deletions(-)
+> Yes you are correct. I'm not entirely sure why it was written that way.
+> The only change dropping 'size' as you suggest is that a zero-sized
+> region is considered protected. But I'd consider it a bug if this is
+> called with size=0. I'll drop 'size' here.
 > 
-> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-> index 033d626aff46..8fe2e054b5ce 100644
-> --- a/drivers/amba/bus.c
-> +++ b/drivers/amba/bus.c
-> @@ -188,7 +188,7 @@ static int amba_read_periphid(struct amba_device *dev)
->  	}
->  
->  	if (cid == AMBA_CID || cid == CORESIGHT_CID) {
-> -		dev->periphid = pid;
-> +		WRITE_ONCE(dev->periphid, pid);
->  		dev->cid = cid;
->  	}
->  
-> @@ -246,24 +246,14 @@ static int amba_match(struct device *dev, const struct device_driver *drv)
->  	struct amba_device *pcdev = to_amba_device(dev);
->  	const struct amba_driver *pcdrv = to_amba_driver(drv);
->  
-> -	mutex_lock(&pcdev->periphid_lock);
-> -	if (!pcdev->periphid) {
-> -		int ret = amba_read_periphid(pcdev);
-> -
-> -		/*
-> -		 * Returning any error other than -EPROBE_DEFER from bus match
-> -		 * can cause driver registration failure. So, if there's a
-> -		 * permanent failure in reading pid and cid, simply map it to
-> -		 * -EPROBE_DEFER.
-> -		 */
-> -		if (ret) {
-> -			mutex_unlock(&pcdev->periphid_lock);
-> -			return -EPROBE_DEFER;
-> -		}
-> -		dev_set_uevent_suppress(dev, false);
-> -		kobject_uevent(&dev->kobj, KOBJ_ADD);
-> -	}
-> -	mutex_unlock(&pcdev->periphid_lock);
-> +	/*
-> +	 * For an AMBA device without valid periphid, only read periphid
-> +	 * in amba_probe() for it when try to bind @amba_proxy_drv.
-> +	 * For @pcdev->periphid, Reading here has a little race with
-> +	 * writing in amba_probe().
-> +	 */
-> +	if (!READ_ONCE(pcdev->periphid))
-> +		return pcdrv == &amba_proxy_drv ? 1 : 0;
->  
->  	/* When driver_override is set, only bind to the matching driver */
->  	if (pcdev->driver_override)
-> @@ -315,10 +305,24 @@ static int amba_probe(struct device *dev)
->  {
->  	struct amba_device *pcdev = to_amba_device(dev);
->  	struct amba_driver *pcdrv = to_amba_driver(dev->driver);
-> -	const struct amba_id *id = amba_lookup(pcdrv->id_table, pcdev);
-> +	const struct amba_id *id;
->  	int ret;
->  
->  	do {
-> +		if (!pcdev->periphid) {
-> +			ret = amba_read_periphid(pcdev);
-> +			if (ret) {
-> +				dev_err_probe(dev, ret, "failed to read periphid\n");
-> +			} else {
-> +				dev_set_uevent_suppress(dev, false);
-> +				kobject_uevent(&dev->kobj, KOBJ_ADD);
-> +			}
-> +
-> +			ret = -EPROBE_DEFER;
-> +			break;
-> +		}
-> +		id = amba_lookup(pcdrv->id_table, pcdev);
-> +
 
-or read periphid in this function later since it does some
-preparation for hardware ready to read which also is done by
-amba_read_periphid() ?
+The check 'size == 0' could be squeezed to the overflow check if you agree.
 
->  		ret = of_amba_device_decode_irq(pcdev);
->  		if (ret)
->  			break;
-> @@ -389,10 +393,15 @@ static void amba_shutdown(struct device *dev)
->  
->  static int amba_dma_configure(struct device *dev)
->  {
-> +	struct amba_device *pcdev = to_amba_device(dev);
->  	struct amba_driver *drv = to_amba_driver(dev->driver);
->  	enum dev_dma_attr attr;
->  	int ret = 0;
->  
-> +	/* To successfully go to amba_probe() to read periphid */
-> +	if (!pcdev->periphid)
-> +		return 0;
-> +
->  	if (dev->of_node) {
->  		ret = of_dma_configure(dev, dev->of_node, true);
->  	} else if (has_acpi_companion(dev)) {
-> @@ -411,8 +420,12 @@ static int amba_dma_configure(struct device *dev)
->  
->  static void amba_dma_cleanup(struct device *dev)
->  {
-> +	struct amba_device *pcdev = to_amba_device(dev);
->  	struct amba_driver *drv = to_amba_driver(dev->driver);
->  
-> +	if (!pcdev->periphid)
-> +		return;
-> +
->  	if (!drv->driver_managed_dma)
->  		iommu_device_unuse_default_domain(dev);
->  }
-> @@ -535,7 +548,6 @@ static void amba_device_release(struct device *dev)
->  	fwnode_handle_put(dev_fwnode(&d->dev));
->  	if (d->res.parent)
->  		release_resource(&d->res);
-> -	mutex_destroy(&d->periphid_lock);
->  	kfree(d);
->  }
->  
-> @@ -593,7 +605,6 @@ static void amba_device_initialize(struct amba_device *dev, const char *name)
->  	dev->dev.dma_mask = &dev->dev.coherent_dma_mask;
->  	dev->dev.dma_parms = &dev->dma_parms;
->  	dev->res.name = dev_name(&dev->dev);
-> -	mutex_init(&dev->periphid_lock);
->  }
->  
->  /**
-> diff --git a/include/linux/amba/bus.h b/include/linux/amba/bus.h
-> index 958a55bcc708..4bb3467d9c3d 100644
-> --- a/include/linux/amba/bus.h
-> +++ b/include/linux/amba/bus.h
-> @@ -67,7 +67,6 @@ struct amba_device {
->  	struct clk		*pclk;
->  	struct device_dma_parameters dma_parms;
->  	unsigned int		periphid;
-> -	struct mutex		periphid_lock;
->  	unsigned int		cid;
->  	struct amba_cs_uci_id	uci;
->  	unsigned int		irq[AMBA_NR_IRQS];
+     /* size == 0 or overflow */
+     if (WARN_ON(base + size) <= base)
+         return false;
+     :
+     
+     return (base >= end);
+
+
+>>         return (base >= end);     /* RSI_RIPAS_IO returned for all
+>> granules */
+>>
+>> Another issue is @top is always zero with the latest tf-rmm. More details
+>> are provided below.
 > 
+> That suggests that you are not actually using the 'latest' tf-rmm ;)
+> (for some definition of 'latest' which might not be obvious!)
+> 
+>>From the cover letter:
+> 
+>> As mentioned above the new RMM specification means that corresponding
+>> changes need to be made in the RMM, at this time these changes are still
+>> in review (see 'topics/rmm-1.0-rel0-rc1'). So you'll need to fetch the
+>> changes[3] from the gerrit instance until they are pushed to the main
+>> branch.
+>>
+>> [3] https://review.trustedfirmware.org/c/TF-RMM/tf-rmm/+/30485
+> 
+> Sorry, I should probably have made this much more prominent in the cover
+> letter.
+> 
+> Running something like...
+> 
+>   git fetch https://git.trustedfirmware.org/TF-RMM/tf-rmm.git \
+> 	refs/changes/85/30485/11
+> 
+> ... should get you the latest. Hopefully these changes will get merged
+> to the main branch soon.
+> 
+
+My bad. I didn't check the cover letter in time. With this specific TF-RMM branch,
+I'm able to boot the guest with cca/host-v4 and cca/guest-v5. However, there are
+messages indicating unhandled system register accesses, as below.
+
+# ./start.sh
+   Info: # lkvm run -k Image -m 256 -c 2 --name guest-152
+   Info: Removed ghost socket file "/root/.lkvm//guest-152.sock".
+[   rmm ] SMC_RMI_REALM_CREATE          882860000 880856000 > RMI_SUCCESS
+[   rmm ] SMC_RMI_REC_AUX_COUNT         882860000 > RMI_SUCCESS 10
+[   rmm ] SMC_RMI_REC_CREATE            882860000 88bdc5000 88bdc4000 > RMI_SUCCESS
+[   rmm ] SMC_RMI_REC_CREATE            882860000 88bdd7000 88bdc4000 > RMI_SUCCESS
+[   rmm ] SMC_RMI_REALM_ACTIVATE        882860000 > RMI_SUCCESS
+[   rmm ] Unhandled write S2_0_C0_C2_2
+[   rmm ] Unhandled write S3_3_C9_C14_0
+[   rmm ] SMC_RSI_VERSION               10000 > RSI_SUCCESS 10000 10000
+[   rmm ] SMC_RSI_REALM_CONFIG          82b2b000 > RSI_SUCCESS
+[   rmm ] SMC_RSI_IPA_STATE_SET         80000000 90000000 1 0 > RSI_SUCCESS 90000000 0
+[   rmm ] SMC_RSI_IPA_STATE_GET         1000000 1001000 > RSI_SUCCESS 1001000 0
+      :
+[    1.835570] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    1.865993] audit: initializing netlink subsys (disabled)
+[    1.891218] audit: type=2000 audit(0.492:1): state=initialized audit_enabled=0 res=1
+[    1.899066] thermal_sys: Registered thermal governor 'step_wise'
+[    1.920869] thermal_sys: Registered thermal governor 'power_allocator'
+[    1.944151] cpuidle: using governor menu
+[    1.988588] hw-breakpoint: found 16 breakpoint and 16 watchpoint registers.
+[   rmm ] Unhandled write S2_0_C0_C0_5
+[   rmm ] Unhandled write S2_0_C0_C0_4
+[   rmm ] Unhandled write S2_0_C0_C1_5
+[   rmm ] Unhandled write S2_0_C0_C1_4
+[   rmm ] Unhandled write S2_0_C0_C2_5
+      :
+[   rmm ] Unhandled write S2_0_C0_C13_6
+[   rmm ] Unhandled write S2_0_C0_C14_7
+[   rmm ] Unhandled write S2_0_C0_C14_6
+[   rmm ] Unhandled write S2_0_C0_C15_7
+[   rmm ] Unhandled write S2_0_C0_C15_6
+
+Thanks,
+Gavin
 
 
