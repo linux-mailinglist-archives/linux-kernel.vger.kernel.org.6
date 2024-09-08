@@ -1,143 +1,124 @@
-Return-Path: <linux-kernel+bounces-320023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2230970523
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 07:36:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C15EF970524
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 07:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D64A282FEA
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 05:36:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04E83B221A6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 05:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCEC482DD;
-	Sun,  8 Sep 2024 05:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="dAdVZNkL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="M2kMpNDn"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DAC4778E;
+	Sun,  8 Sep 2024 05:39:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCC41114;
-	Sun,  8 Sep 2024 05:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6851114
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 05:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725773778; cv=none; b=M4mSmwSriWfyr2ay6oRtQQmFb6Jn0FW+Ro505UrVrw3Fwej4RfDlxqCnerBuHUbsELG+A5Ly4HhGHDEsk1rjXkMlNbLmURcveQ5E+rvaxGvbA3LhEK4fCFk0wdkzAL5AP386Lkhd/UoAMJ/qUYFZxTcFv9fF0UR0YMFNHEvKQEI=
+	t=1725773944; cv=none; b=Sr173dxeAjXwWEpQReRNrR2358XblpWWKAu4ucmNwXFUgP4f+z+5aOe0FkUSKF1Ayv8qGYuSJgiMuueW1at4M+jKZNn73mR3m8IIegwi4r4JKi8boC6bZRjT2IsM9JZBfxbrqLvKNagc6Em5KKCw2Ri78q+vV0VPrjjRrDaJmFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725773778; c=relaxed/simple;
-	bh=rpRYgTdMHGGe2A8iAOqjp0QcTLymtWVdC4fe6olEdZg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nKAZ9WZTTMZoU+v4C/3I/ZAPC961CNn6asYqMhxKjXeaw+u2LIASLijj3bYGS9dmJaaHS/oYmBQsqhIJTVLYLrs7YQwcQt6VpFSgnwMbVQXbtAn0w+5bmfkZpcQZY/6Q0yVV9ZJRQIUiL5sssUUNnuwnV7Javrr4l/p1e7uIjIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=dAdVZNkL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=M2kMpNDn; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.phl.internal (Postfix) with ESMTP id 07004138012C;
-	Sun,  8 Sep 2024 01:36:15 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Sun, 08 Sep 2024 01:36:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1725773775; x=1725860175; bh=i3s05PCH2bZCBIKhbs5xm
-	5yHX2bnfCNCLNbQjYfnB4o=; b=dAdVZNkL0GHKYWliZV1Y1n27+qfAlbzmJt53d
-	k+Xby79C1NNQISEKIJo0FyQNWQy2Sjl2P4lpQ+rrNWRED/l6LgrljmawvsPlLy5p
-	ylzSLj8ppCUyDkbH+CFK6TdLcnlH0KC1CiJrMfgdzVVL2NU4Fjs2d0rSuAEBUOzf
-	lK2y4h6kjvVB4uqWC4PGS7ZeaE/UyQI98K4QvTicwhGfjHdWiJEoUcopbApsG9Hz
-	3BI5TIrRXUYrI2iF7L9BpTkLf8tWrN6zU0od9ZbrXPWgM8g21H6xaMxmIG0btrXg
-	vTHtVVD8rHf+hVe556wpYClVwLAssNE0mOgYDG3pJMsCJdSdg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1725773775; x=1725860175; bh=i3s05PCH2bZCBIKhbs5xm5yHX2bn
-	fCNCLNbQjYfnB4o=; b=M2kMpNDnvF/HJyI3Ri2MSRoNcfOEVXBJPGUp1AYWsuBJ
-	i3HL3A1Rb3JVPIKtKbNAApPNigwgcwoaBhqvMMbPNvc0yiaaS8p5R5jOJpHYRcI4
-	fuursr2g3jnNq7rfetWim1zT4SyAFO4nEs35omgDjxU7H/dbKsEBV1mTMHfZ2+1w
-	RC1epFReDVqAznkLyRWn0Zo5Q3UEbn1xkTlN+xeepcReg9ZrmVeJI14w26eejAbD
-	dZmPDeg59sztK7K5jwjxjvFECebOxcNJjGbvOg8oBS9p4sIwawTkGEDGj9P6jxpR
-	VsDuav79Osj2dhVEmEzpsuJv20SLveR7rv0xZtJoyw==
-X-ME-Sender: <xms:zjfdZnalC-3hFxvYTy0F4iCHNofnmdSbkhshbT5fcFbaxYV7EYfpHw>
-    <xme:zjfdZmaTW4kR7E_Mfm7cCV7XRNxcntDV9p-E3CUmamJ3sVvioK31mPZJg3NbwlNkE
-    Etq6adRktzT9zX-LwU>
-X-ME-Received: <xmr:zjfdZp--0w9J8CRgpFL6uJhb_7M5ctKHL4BCy49zNaCTR0RUo-lqyMkPD8VIMus>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeigedgleejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
-    ffkffoggfgsedtkeertdertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdf
-    uceolhhukhgvsehljhhonhgvshdruggvvheqnecuggftrfgrthhtvghrnheptdehkeeige
-    eggfelkeeufeefjeduvdejveduvdehtdegveeftdeugeetvdeltdejnecuffhomhgrihhn
-    pehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtphhtthhopeeh
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhg
-    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvghnsgeskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
-    uhhkvgeslhhjohhnvghsrdguvghv
-X-ME-Proxy: <xmx:zjfdZtpv4tvoQcAEvZ8eT8SHpYa2wAGZilnv7HQPLQLWywp-bFVFww>
-    <xmx:zjfdZipAI3V129CzwwxgcVoWoEAR891TYZ0kc0Lq-K7F0v9kP9bUqw>
-    <xmx:zjfdZjSqRp-gXK3OJcswxrEUUlcMdwMyWir-N2VAqLnzcdhKKbPYxQ>
-    <xmx:zjfdZqrBjsAg5Gk-thLymVEZL-4CBEcB5JpVmvAx6BOpp-z0Qew__g>
-    <xmx:zjfdZrkbM2WQPu9dEROPGl704pFxllsRZuTCJoPnztHYRkd1LwmNSi5F>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 8 Sep 2024 01:36:12 -0400 (EDT)
-From: "Luke D. Jones" <luke@ljones.dev>
-To: linux-acpi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	lenb@kernel.org,
-	rafael@kernel.org,
-	"Luke D. Jones" <luke@ljones.dev>
-Subject: [PATCH] ACPI: PM: Quirk ASUS ROG M16 to default to S3 sleep
-Date: Sun,  8 Sep 2024 17:36:07 +1200
-Message-ID: <20240908053607.4213-1-luke@ljones.dev>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725773944; c=relaxed/simple;
+	bh=poGalDcET4RTTkyp3nP4JH7jsGhyxh5AUNlBCTilN9o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MTG2j2UPXPasxWWwyoFtIj5885tmLhHY55LvZriXGZEyUqV3QxE3hzfZUXqDmEfRuwK72zi4lxbWBsQrUC1kx+IZGVDVHtSWXcF7xWC22R+he9OV05Mi0Ftgcq1PrKNzV7MYavuK5k3yvJdPxa/VGgj5PBl5tzHYVV3mzeFQcZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39f5328fd5eso55667765ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 22:39:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725773942; x=1726378742;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yBhJUxcBgSA5iRS3h1YcMTK9YoNeNTsPIchhWvKUDgY=;
+        b=nEuxcCYqLwY4iuhfFazlLH7b+ZdBqX3vQOpcOpdXWK3q+5U8E5FfEHj0fbngTKn6cg
+         GGP/m9NUO5EZx8R9EFNFWbKwGr3bqb/H/KjrhCHiyXQ5+fMr1NAijqckm1HoHWprI8Gn
+         gyhnAVQfdz5qaeFomfMZJyD08xKgcKXi92UaOw8zg06ZXwfGXmidH5rC9XatVKSop6V1
+         QYMUnwfgE7zw0SO7Pyp9m/g14y656l+DIXGHxEqyblSJwpx0php6g8+LG5mozMaKviHi
+         kSaFbrp0ALL7xgacHPTOTIpIf8YYDYDkVRrgmVQ4lvcQ4e5NmSor4bGN916WY2KmttsG
+         zrFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVELRsfu+HoaCN/EtzlrRVBw2POiAcR3bvyeD+u0TkgjBQeIQeXfhf3OunV3Kopz8fY812kCierAYJdocc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzV7JyXkXDL77vQajXM0oSjVo9p24TLc01YvXnyHieR0dATpaF
+	l/6QheUm5oWnjaL/YwB1lhcnpagEcmwcl/3Ak/78yhqstKQpzOGWeAsmdDqtN3IFz3o9/jg1X11
+	oJkJFvRgMh7NKRetTLr9XEHNSZnrV2j3phfpVxQarWQnnkrwakt0pGNk=
+X-Google-Smtp-Source: AGHT+IHkzMyEUc+APF9QQVCmNZp9X+YExnOidxZzQyStC3C/0trh1+v05d9mjf5ibPjHwHU3nL9DnFg0kQgaFH1PhXkDcsimvScC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2166:b0:3a0:49da:8f6d with SMTP id
+ e9e14a558f8ab-3a0576ae034mr39991735ab.22.1725773942312; Sat, 07 Sep 2024
+ 22:39:02 -0700 (PDT)
+Date: Sat, 07 Sep 2024 22:39:02 -0700
+In-Reply-To: <20240908052338.7283-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cb63e20621950e5f@google.com>
+Subject: Re: [syzbot] [mm?] KCSAN: data-race in generic_fillattr / shmem_mknod (2)
+From: syzbot <syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The 2023 ASUS ROG Zephyrus M16 can suffer from quite a variety of events
-causing wakeup from s2idle sleep. The events may come from the EC being
-noisey, from the MMC reader, from the AniMe matrix display on some models
-or from AC events.
+Hello,
 
-Defaulting to S3 sleep prevents all these wakeup issues.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KCSAN: data-race in ext4_free_inodes_count / ext4_free_inodes_set
 
-Signed-off-by: Luke D. Jones <luke@ljones.dev>
----
- drivers/acpi/sleep.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+==================================================================
+BUG: KCSAN: data-race in ext4_free_inodes_count / ext4_free_inodes_set
 
-diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
-index 889f1c1a1fa9..c8ee8e42b0f6 100644
---- a/drivers/acpi/sleep.c
-+++ b/drivers/acpi/sleep.c
-@@ -351,6 +351,20 @@ static const struct dmi_system_id acpisleep_dmi_table[] __initconst = {
- 		DMI_MATCH(DMI_PRODUCT_NAME, "1025C"),
- 		},
- 	},
-+	/*
-+	 * The ASUS ROG M16 from 2023 has many events which wake it from s2idle
-+	 * resulting in excessive battery drain and risk of laptop overheating,
-+	 * these events can be caused by the MMC or  y AniMe display if installed.
-+	 * The match is valid for all of the GU604V<x> range.
-+	 */
-+	{
-+	.callback = init_default_s3,
-+	.ident = "ASUS ROG Zephyrus M16 (2023)",
-+	.matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "ROG Zephyrus M16 GU604V"),
-+		},
-+	},
- 	/*
- 	 * https://bugzilla.kernel.org/show_bug.cgi?id=189431
- 	 * Lenovo G50-45 is a platform later than 2012, but needs nvs memory
--- 
-2.46.0
+write to 0xffff888103fc500e of 2 bytes by task 13551 on cpu 0:
+ ext4_free_inodes_set+0x1f/0x80 fs/ext4/super.c:405
+ __ext4_new_inode+0x15ca/0x2200 fs/ext4/ialloc.c:1216
+ ext4_symlink+0x242/0x5a0 fs/ext4/namei.c:3391
+ vfs_symlink+0xca/0x1d0 fs/namei.c:4568
+ do_symlinkat+0xe3/0x340 fs/namei.c:4594
+ __do_sys_symlinkat fs/namei.c:4610 [inline]
+ __se_sys_symlinkat fs/namei.c:4607 [inline]
+ __x64_sys_symlinkat+0x5e/0x70 fs/namei.c:4607
+ x64_sys_call+0x1dda/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:267
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+read to 0xffff888103fc500e of 2 bytes by task 13552 on cpu 1:
+ ext4_free_inodes_count+0x1c/0x80 fs/ext4/super.c:349
+ find_group_other fs/ext4/ialloc.c:594 [inline]
+ __ext4_new_inode+0x6ec/0x2200 fs/ext4/ialloc.c:1017
+ ext4_symlink+0x242/0x5a0 fs/ext4/namei.c:3391
+ vfs_symlink+0xca/0x1d0 fs/namei.c:4568
+ do_symlinkat+0xe3/0x340 fs/namei.c:4594
+ __do_sys_symlinkat fs/namei.c:4610 [inline]
+ __se_sys_symlinkat fs/namei.c:4607 [inline]
+ __x64_sys_symlinkat+0x5e/0x70 fs/namei.c:4607
+ x64_sys_call+0x1dda/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:267
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+value changed: 0x185c -> 0x185b
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 UID: 0 PID: 13552 Comm: syz-executor.1 Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+==================================================================
+
+
+Tested on:
+
+commit:         d1f2d51b Merge tag 'clk-fixes-for-linus' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17ffef29980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e81d40b0108ea8fe
+dashboard link: https://syzkaller.appspot.com/bug?extid=702361cf7e3d95758761
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17d10e00580000
 
 
