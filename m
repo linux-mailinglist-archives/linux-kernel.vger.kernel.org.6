@@ -1,165 +1,131 @@
-Return-Path: <linux-kernel+bounces-320048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB87970571
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:49:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4280A97059E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1182E1C21290
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 07:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECE951F220A6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 07:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC454CB36;
-	Sun,  8 Sep 2024 07:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CF77C6E6;
+	Sun,  8 Sep 2024 07:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BAse+IEW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7lCXhY6"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C49B1B85F2
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 07:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB904C66;
+	Sun,  8 Sep 2024 07:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725781772; cv=none; b=Uy9AhCZOaYBgoVavkxoTsMSXYUSodJLINN8eb0vRXurG92BL89He2OLjTlE0p70cOr0AoZUTI5QFKKr4SmXaxhAw+WtKMJwdchJJYkROe3wbt3PVYHS4UlaB8D3j23pRLtZ8RCAdFZILQGhVj7Vljm3SaoseFOTRnlT5Zm95OaQ=
+	t=1725782375; cv=none; b=V0C977YZEZ4mgpceDfMBzSKsaCpVQeCGlJ2xdaT/ItnxVe1wsY16AfwZz6gnYfcvpC0WbaFJlVZVAqa1YPC6rVkac2pP4Pcv1zX7qiQlhBr3vlGbLL4nX3iQPThqvlFIJ4/6jJnTmSd6An1TtoYlcI7dHRRj3QDWIOn6kBolSww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725781772; c=relaxed/simple;
-	bh=ZaFwJ3mZbKQK3sWYP8D9iDTGCj9GrATcuNCENKstKyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BjPFG1E5Ql+1KTZivN3Azw753o2cc0/vjXnwAwUOipWT8SBRWfuIesyM8YS3YwRm7QoZu0/dMNU8FVZe6x+NSpBenhTfv7+go29ST/LrISvhNJxMvBd9zEhB56kAp4npokY8QDJsQ8aI/TFPnH+3ceJhWCry4zYXk/2o211tD/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BAse+IEW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91AFCC4CEC3;
-	Sun,  8 Sep 2024 07:49:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725781771;
-	bh=ZaFwJ3mZbKQK3sWYP8D9iDTGCj9GrATcuNCENKstKyc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=BAse+IEWLXYmUzqaOXV2Rp9cq2R+JavYpbX5r8unv1mdEiHJABYD1BURtYVplbOtx
-	 9mZ/yuqGUM7A1kC5hTqj811VvpxvGrnxSwccUiL1h6uoSOdGiqzSYQXl3X8IuxZSvh
-	 LzouOB6b0lpi5EJU47egG6TaSzUOVQVZQT5lkfZM=
-Date: Sun, 8 Sep 2024 09:49:29 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Char/Misc driver fixes for 6.11-rc7
-Message-ID: <Zt1XCZ_1hdVsi5mJ@kroah.com>
+	s=arc-20240116; t=1725782375; c=relaxed/simple;
+	bh=jbSFvKRmOU53nKVT6skmCp2X/sydWQgG7fEHQCHd40w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fXaXsPwdjZmUy6vLKqzll5T/ac2emVLIbyteS5IehMZY/GtCgXq5jpdVW54q7GAUq2rQQ26wYLXsYelL2VRWKa1zvqvDy2teZJAENGBhsoOM1TvLMkL+R6CPfGmKJQo1bfcNxRBoZ1tMY0iYhPUarXAcDb0Zt9fZwf/YueU+uR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7lCXhY6; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5df9433ac0cso2402741eaf.3;
+        Sun, 08 Sep 2024 00:59:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725782373; x=1726387173; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1vxC7/1i8CwujpweZ1wTUP4heu2CRN+sI53b8o2l2Nw=;
+        b=W7lCXhY6jPPRTnEK7cAZq7C989JEnR3arwNszdJkonm5HNdu+U+MuVhay1QfWdShm/
+         orSCwHGNXnXpJqyVc4cX3+aRSziRG58IEK63CPdDc10GsKu/3JGEPvfPzNw/V5qrNIb3
+         3esDdI3H8D0Sxruup/TY/0r3zaBTRHKp+YB+QBewFbMwJOiXHBnokqf3PDwpXtDhbEYG
+         Clra5n8Iby1xI9xWq55zriKv0Rg4swdWclgKzzETi4DlC6ai9zSr+kEOSZ4Rp5K3Cb79
+         I8P8mg25JlNibWL6w9PUFpdd+uSonAKXcLB4zvJm2xY2LtorYGbVjkXXoSMsYGqlkW7y
+         POQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725782373; x=1726387173;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1vxC7/1i8CwujpweZ1wTUP4heu2CRN+sI53b8o2l2Nw=;
+        b=f9mLy8DnYZ5pQIm472qB64XK0ojIuQEEgf7pAH6y1KszNXuhnCrH4IeZnh6sTYLlzI
+         85doqPbC7n3Cg458L1g38rsKvE0nZBNjABfm5BLcfLjlggkWXdqiJk4RP9DsrcBIwpkx
+         zc7BNxKLhTcid/FDsZ5ELbYbskJUe12JTOu/EOSsq0FnU2mrnejplxKTluv5XoA1gKnM
+         teGPcGtK/Tv3eSM1IJ5lDmlQV+MAf8aBFBGDBfAQ8c9Fp7c9jl9W8kMZWrLTcPg9PaYh
+         zY9O0O24Ohfr5Ky6n1L4wUgvACVj50boONdnhlDuhQinUOrq0zbQVJFfZZBKMCA+/H+S
+         AYlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ/KWft0RVIrReUQCRIul5paVYtQZV7g0591VfZ6IPpFs2dqAHUlvWifTpnURpB59jqM0lp9F5uim4agM=@vger.kernel.org, AJvYcCUTHKB3CoXa815V5rWX9itob68Qa27qX2lSaHz8fzNb3RaKFNHVSYKyQolOZ8Cn57eT3/d6o6XPd3OBQVrttgM4Y7k=@vger.kernel.org, AJvYcCXYQ9eStCadE4uwVsEqI7++DB1C7DKLs2oL+guxa5w36+K6HZ8fgejAIXYhGHgPbYBbeQSIWUA5WyoPfo35@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeKwNElcXgOZSEpYbuw6+A/Ju6HOgI5TgxbhXdmx7QQdfK0Xt7
+	H0xb+jAbtcBOh97B9/P7PkEJGBq1L1GxfT6pgCfyZDGCWXU9dZRp
+X-Google-Smtp-Source: AGHT+IG2oi15GFOnc4iepyTdQsMnqiBXkibBTS5arEx2FbGWXrLqY9KDnKuLXcROgxDP2ZZUq7RAjw==
+X-Received: by 2002:a05:6820:2213:b0:5da:a2fd:5af9 with SMTP id 006d021491bc7-5e1a9da272cmr7835288eaf.8.1725782372868;
+        Sun, 08 Sep 2024 00:59:32 -0700 (PDT)
+Received: from localhost.localdomain ([59.188.211.160])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7d8255dc1c6sm2012690a12.68.2024.09.08.00.59.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 00:59:32 -0700 (PDT)
+From: Nick Chan <towinchenmi@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: asahi@lists.linux.dev,
+	Nick Chan <towinchenmi@gmail.com>
+Subject: [PATCH 0/3] tty: serial: samsung: Serial fixes for Apple A7-A11 SoCs
+Date: Sun,  8 Sep 2024 15:50:47 +0800
+Message-ID: <20240908075904.12133-1-towinchenmi@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+Hi,
 
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+This series fixes issues with serial on A7-A11 SoCs. The changes do not
+seem to affect existing M1 and up users so they can be applied
+unconditionally.
 
-are available in the Git repository at:
+Firstly, these SoCs require 32-bit writes on the serial port. This only
+manifested in earlycon as reg-io-width in device tree is consulted for
+normal serial writes.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.11-rc7
+Secondly, A7-A9 SoCs seems to use different bits for RXTO and RXTO
+enable. Accessing these bits in addition to the original RXTO and RXTO
+enable bits will allow serial rx to work correctly on those SoCs.
 
-for you to fetch changes up to 48b9a8dabcc3cf5f961b2ebcd8933bf9204babb7:
+Changes in v2:
+  - Mention A7-A11 in the comment about changing register accesses to
+    MMIO32.
 
-  VMCI: Fix use-after-free when removing resource in vmci_resource_remove() (2024-09-03 13:16:42 +0200)
+  - Use BIT() macro for new entries, and change the existing APPLE_S5L_*
+    entries for consistency.
 
-----------------------------------------------------------------
-Char/Misc driver fixes for 6.11-rc7
+v1: https://lore.kernel.org/linux-samsung-soc/20240907111431.2970-1-towinchenmi@gmail.com
 
-Here are some small char/misc/other driver fixes for 6.11-rc7.  It's
-nothing huge, just a bunch of small fixes of reported problems,
-including:
-  - lots of tiny iio driver fixes
-  - nvmem driver fixex
-  - binder UAF bugfix
-  - uio driver crash fix
-  - other small fixes
+Nick Chan
 
-All of these have been in linux-next this week with no reported
-problems.
+---
 
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Nick Chan (3):
+  tty: serial: samsung: Use BIT() macro for APPLE_S5L_*
+  tty: serial: samsung: Fix A7-A11 serial earlycon SError
+  tty: serial: samsung: Fix serial rx on Apple A7-A9
 
-----------------------------------------------------------------
-Aleksandr Mishin (1):
-      staging: iio: frequency: ad9834: Validate frequency parameter value
+ drivers/tty/serial/samsung_tty.c | 22 ++++++++++++++++------
+ include/linux/serial_s3c.h       | 24 ++++++++++++++----------
+ 2 files changed, 30 insertions(+), 16 deletions(-)
 
-Carlos Llamas (1):
-      binder: fix UAF caused by offsets overwrite
 
-David Fernandez Gonzalez (1):
-      VMCI: Fix use-after-free when removing resource in vmci_resource_remove()
+base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
+-- 
+2.46.0
 
-David Lechner (1):
-      iio: buffer-dmaengine: fix releasing dma channel on error
-
-Dumitru Ceclan (5):
-      iio: adc: ad7173: Fix incorrect compatible string
-      iio: adc: ad7124: fix chip ID mismatch
-      iio: adc: ad7124: fix config comparison
-      iio: adc: ad7124: fix DT configuration parsing
-      iio: adc: ad7173: fix GPIO device info
-
-Francesco Dolcini (1):
-      iio: adc: ads1119: Fix IRQ flags
-
-Geert Uytterhoeven (1):
-      nvmem: Fix return type of devm_nvmem_device_get() in kerneldoc
-
-Gerhard Engleder (1):
-      misc: keba: Fix sysfs group creation
-
-Greg Kroah-Hartman (1):
-      Merge tag 'iio-fixes-for-6.11a' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/jic23/iio into char-misc-linus
-
-Guillaume Stols (1):
-      iio: adc: ad7606: remove frstdata check for serial mode
-
-Jean-Baptiste Maneyrol (1):
-      iio: imu: inv_mpu6050: fix interrupt status read for old buggy chips
-
-John Thomson (1):
-      nvmem: u-boot-env: error if NVMEM device is too small
-
-Matteo Martelli (1):
-      iio: fix scale application in iio_convert_raw_to_processed_unlocked
-
-Michal Simek (1):
-      dt-bindings: nvmem: Use soc-nvmem node name instead of nvmem
-
-Naman Jain (1):
-      Drivers: hv: vmbus: Fix rescind handling in uio_hv_generic
-
-Nuno Sa (1):
-      iio: adc: ad_sigma_delta: fix irq_flags on irq request
-
-Saurabh Sengar (1):
-      uio_hv_generic: Fix kernel NULL pointer dereference in hv_uio_rescind
-
-Sukrut Bellary (1):
-      misc: fastrpc: Fix double free of 'buf' in error path
-
- .../bindings/nvmem/xlnx,zynqmp-nvmem.yaml          |  2 +-
- drivers/android/binder.c                           |  1 +
- drivers/hv/vmbus_drv.c                             |  1 +
- drivers/iio/adc/ad7124.c                           | 30 ++++++++------
- drivers/iio/adc/ad7173.c                           | 13 +++---
- drivers/iio/adc/ad7606.c                           | 28 +------------
- drivers/iio/adc/ad7606.h                           |  2 +
- drivers/iio/adc/ad7606_par.c                       | 46 +++++++++++++++++++++-
- drivers/iio/adc/ad_sigma_delta.c                   |  2 +-
- drivers/iio/adc/ti-ads1119.c                       |  2 +-
- drivers/iio/buffer/industrialio-buffer-dmaengine.c |  4 +-
- drivers/iio/imu/inv_mpu6050/inv_mpu_trigger.c      | 13 +++++-
- drivers/iio/inkern.c                               |  8 ++--
- drivers/misc/fastrpc.c                             |  5 +--
- drivers/misc/keba/cp500.c                          | 14 ++-----
- drivers/misc/vmw_vmci/vmci_resource.c              |  3 +-
- drivers/nvmem/core.c                               |  6 +--
- drivers/nvmem/u-boot-env.c                         |  7 ++++
- drivers/staging/iio/frequency/ad9834.c             |  2 +-
- drivers/uio/uio_hv_generic.c                       | 11 +++++-
- 20 files changed, 122 insertions(+), 78 deletions(-)
 
