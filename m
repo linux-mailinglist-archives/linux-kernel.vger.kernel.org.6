@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-320038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B86970550
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:20:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 885A7970551
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFCF41F21DCE
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 07:20:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C41D1F21E09
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 07:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5D94D8C8;
-	Sun,  8 Sep 2024 07:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28FE71742;
+	Sun,  8 Sep 2024 07:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eKYbH2W3"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MxDhUpew"
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597F61CA81
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 07:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648B71CA81;
+	Sun,  8 Sep 2024 07:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725780008; cv=none; b=DyBFHnK+PjBgycUjfi6dPETc5+H/4sZNivgUml7CzjdVKJBnpMgKsGYnaZwbRQLyM0Vfup6egLHR+Rp6oDVeQS/ym6tU2hULBefJFuabBwVpvtwgG+LbiyaY4v3+CdZwjZrwmA9iJjSgwZDENPniSe1PapDpp2jox0p1k8ZwFtQ=
+	t=1725780055; cv=none; b=SquHgSRJK/vydgu177rsOeHbJmX+Bh9XsLF7+T+k0c/jS5zW8XzTDVK0xOLKUz/Ebk2mixzlwyLtmI5iL6h6Dv8J/Sw6FsFpnox4Twh7AueKAB6+ksQ0GZcsSRxORlk5eh3PVZRrhe75ExGrqNGr0NHkjATw7LKte6NSFQ/wHCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725780008; c=relaxed/simple;
-	bh=QKek4z8eLQcZylK2hsqIodQSecQVxvOpWDvOHZ7nKyg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EPf3+yyZLK08E9ojajw2jOHZq6ripr5nrLiIIcnJa628Q7Xr7MiLp7HaMb2y0DVgPuA2JZYXfNUdNMAtXuM1WgzwKavLy44V1BWmMentHa6KrPkexpIMoiqw5WMXqiXJ+PrtU8O9piNwwSnEoKDbMJ8A0ps4jQ9NmaXBNzPfVFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eKYbH2W3; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725780002;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Jechb95hmorUhOngmJkF9gCQgvUHcIPjIBZ73kyW/N8=;
-	b=eKYbH2W3T8L9iU6FxtWjDR20MtrRZZ/TWlvZWwrJiCeyrgMGDnAak6jaVEcE3pqKEXkC1+
-	qjX6MBu5BSQ/sAoF2aoyzlwBg8JDqGiKcPF72+mHQjHX3UytXo2c8nXL44gbm+5W/PC8WF
-	nx6R4rgvOIW3T3VW/UC33MIQ3brZWCM=
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-To: Lucas Stach <l.stach@pengutronix.de>,
-	Russell King <linux+etnaviv@armlinux.org.uk>,
-	Christian Gmeiner <christian.gmeiner@gmail.com>
-Cc: David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	etnaviv@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Sui Jingfeng <sui.jingfeng@linux.dev>
-Subject: [PATCH] drm/etnaviv: Print error message when driver can't get pages
-Date: Sun,  8 Sep 2024 15:19:50 +0800
-Message-ID: <20240908071950.200508-1-sui.jingfeng@linux.dev>
+	s=arc-20240116; t=1725780055; c=relaxed/simple;
+	bh=HeG2uL8Bqswn5W8MK5eBY16hS8/iTMvLaKfm0muxDTo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GyaXp7eX46QVboRKe72CXtFmLOkG9OAAQfUIXWcDNmhqHvXWT+Y0Qx7KMhpsha4MxNHjztHnOpoTV9NeeUu3KIyCNDA5ohpBi7ikgQd+pATd+ipdJk8Pn8AF2VEImEOQnWML1fCimhErchMpzejWMuNCSqq5NcGDwLh7tAWhYfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MxDhUpew; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id nCDzsEBBjH7HInCDzsT8vQ; Sun, 08 Sep 2024 09:20:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725780044;
+	bh=tmhFCMafs4w7/ikKQfk8iMWvMCPuQdk70+cMn7alsA8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=MxDhUpewEFnAOziGUSMo3wFmMdeYNJHhK4WsSVwrFHgUejtmqHIwZyP0Vn4edjK+y
+	 Y45Y9L4ofHE0wRXzNSu+1h7OhLar2+ekng1+bqztcqGSSGrtHkVmQhRtLHpwCY/IZk
+	 h+D8hGeeJNOfVL+GUyOJoR4QIWgVZZR3Zi+3XJvoTf7bF4Fb1ZPZYBzJKBtLDLDb1O
+	 dEDXFWUuK6XYzqz/MDgFLx31cgd6bE0d5EpVq2usBU4zs1FO9tAlLkHBE+kP8LmthR
+	 2DUL+AtoHcXAIazHE9CDUxhLVw2lUCs+8af+5jneHUAjGDmghcDo5I0gDP5S0J2Ier
+	 wu6xOnHO1DXSw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 08 Sep 2024 09:20:44 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-media@vger.kernel.org
+Subject: [PATCH] media: dibx000_common: Constify struct i2c_algorithm
+Date: Sun,  8 Sep 2024 09:20:37 +0200
+Message-ID: <6539cac4d4eb239e9d2528ae7e34be46fe0e1544.1725780011.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,38 +63,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-This error could happen when the GFP_HIGHUSER flag is set, such an error
-can also be seen on the X86 platform. According to the kernel document in
-gfp_types.h, "the GFP_HIGHUSER is for userspace allocations that may be
-mapped to userspace, it do not need to be directly accessible by the
-kernel."
+'struct i2c_algorithm' and 'struct virtio_device_id' are not modified in
+this driver.
 
-However, drm/etnaviv will use the pages to implement vmap and mmap
-operations of the GEM object function. The flag still set at present.
-When we can't get pages, it certainly is a bug. Hence, we should print
-this kind of error with drm_err() instead of dev_dbg().
+To do so, the prototype of i2c_adapter_init() has to be updated as well.
 
-Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+Constifying this structure moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers.
+
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  17213	    932	     20	  18165	   46f5	drivers/media/dvb-frontends/dibx000_common.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  17490	    660	     20	  18170	   46fa	drivers/media/dvb-frontends/dibx000_common.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+--
+Compile tested only
 ---
- drivers/gpu/drm/etnaviv/etnaviv_gem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/dvb-frontends/dibx000_common.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-index 5c0c9d4e3be1..5ffc31f32ac9 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-@@ -61,7 +61,7 @@ static int etnaviv_gem_shmem_get_pages(struct etnaviv_gem_object *etnaviv_obj)
- 	struct page **p = drm_gem_get_pages(&etnaviv_obj->base);
+diff --git a/drivers/media/dvb-frontends/dibx000_common.c b/drivers/media/dvb-frontends/dibx000_common.c
+index 63a4c6a4afb5..bd5c5d7223aa 100644
+--- a/drivers/media/dvb-frontends/dibx000_common.c
++++ b/drivers/media/dvb-frontends/dibx000_common.c
+@@ -250,12 +250,12 @@ static int dibx000_i2c_master_xfer_gpio34(struct i2c_adapter *i2c_adap, struct i
+ 	return num;
+ }
  
- 	if (IS_ERR(p)) {
--		dev_dbg(dev->dev, "could not get pages: %ld\n", PTR_ERR(p));
-+		drm_err(dev, "could not get pages: %ld\n", PTR_ERR(p));
- 		return PTR_ERR(p);
- 	}
+-static struct i2c_algorithm dibx000_i2c_master_gpio12_xfer_algo = {
++static const struct i2c_algorithm dibx000_i2c_master_gpio12_xfer_algo = {
+ 	.master_xfer = dibx000_i2c_master_xfer_gpio12,
+ 	.functionality = dibx000_i2c_func,
+ };
  
+-static struct i2c_algorithm dibx000_i2c_master_gpio34_xfer_algo = {
++static const struct i2c_algorithm dibx000_i2c_master_gpio34_xfer_algo = {
+ 	.master_xfer = dibx000_i2c_master_xfer_gpio34,
+ 	.functionality = dibx000_i2c_func,
+ };
+@@ -324,7 +324,7 @@ static int dibx000_i2c_gated_gpio67_xfer(struct i2c_adapter *i2c_adap,
+ 	return ret;
+ }
+ 
+-static struct i2c_algorithm dibx000_i2c_gated_gpio67_algo = {
++static const struct i2c_algorithm dibx000_i2c_gated_gpio67_algo = {
+ 	.master_xfer = dibx000_i2c_gated_gpio67_xfer,
+ 	.functionality = dibx000_i2c_func,
+ };
+@@ -369,7 +369,7 @@ static int dibx000_i2c_gated_tuner_xfer(struct i2c_adapter *i2c_adap,
+ 	return ret;
+ }
+ 
+-static struct i2c_algorithm dibx000_i2c_gated_tuner_algo = {
++static const struct i2c_algorithm dibx000_i2c_gated_tuner_algo = {
+ 	.master_xfer = dibx000_i2c_gated_tuner_xfer,
+ 	.functionality = dibx000_i2c_func,
+ };
+@@ -422,7 +422,7 @@ void dibx000_reset_i2c_master(struct dibx000_i2c_master *mst)
+ EXPORT_SYMBOL(dibx000_reset_i2c_master);
+ 
+ static int i2c_adapter_init(struct i2c_adapter *i2c_adap,
+-				struct i2c_algorithm *algo, const char *name,
++				const struct i2c_algorithm *algo, const char *name,
+ 				struct dibx000_i2c_master *mst)
+ {
+ 	strscpy(i2c_adap->name, name, sizeof(i2c_adap->name));
 -- 
-2.43.0
+2.46.0
 
 
