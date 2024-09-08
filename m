@@ -1,117 +1,104 @@
-Return-Path: <linux-kernel+bounces-320186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76EDD970719
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:50:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C32B197065F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A432AB209E7
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:50:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C90D21C20CDD
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBDF15820C;
-	Sun,  8 Sep 2024 11:50:41 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBD614C596;
+	Sun,  8 Sep 2024 10:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gbJCrlbT"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86E518C22;
-	Sun,  8 Sep 2024 11:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCD31366
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 10:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725796241; cv=none; b=EHRXCiOMJnkDPWhMApBgO22A6kwNyWVhKJPQHCp3p4SSm50i1+x/Cmg/I5h6YEe6cgSvOAwnW5V9sgO3mJvHKWufSxUOFwc4MFA0j6ANQIrf1wBT4GMeMX8I4RBieOcaTWzkuKecPLvS85fZQB6aDCh7QHhgWXBtwz0fhCBzjb0=
+	t=1725790282; cv=none; b=U1d0BFsejqhQLr8ku6/rSPUB8DmIYbqP6MjbfYMB66yPAW71mdofSEJbu60oaQjMv2HgLcrUMdovRy/pDLCxJqVaoIJ+vZ6gpNwwkvwn2bWr0BDP0rZOltXoU1c6Coxh6B3KenhyNps47dBeQTuqdxsfu2q4LkE+0Ao9vcoXHMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725796241; c=relaxed/simple;
-	bh=f4b3EWGgDvYEBxJXLd9EJXkZFmAy/z1D3M4a+/Gf9BE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YZulf1N1B+HeaGHPEnquEPGlBNdRVmYM0lRYjyfqYdTRbsDarcQJe7VCUlN+zzQyzmYgQ2Sw/nwhU405dBw2M/XJloKKPXV0e1dYFM5S47naNtza9JhREDUrrRJLePXCkFcHoG+juLY0EmoAUJ84jtr42pFAistE10xSS3G42kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4X1pF965xzz9rvV;
-	Sun,  8 Sep 2024 13:50:37 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id CAwNtBLKD90C; Sun,  8 Sep 2024 13:50:37 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4X1pF32Rqbz9sSK;
-	Sun,  8 Sep 2024 13:50:31 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D802D8CC3A;
-	Sat,  7 Sep 2024 17:40:49 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id WICCX_2l4Sbn; Sat,  7 Sep 2024 17:40:49 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.232.96])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 73A788CC38;
-	Sat,  7 Sep 2024 17:40:49 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>,
-	arnd@arndb.de
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	s=arc-20240116; t=1725790282; c=relaxed/simple;
+	bh=avGcyUF4moSstecPBUHUlVU4X6Gn9wgfwbWgPoyt0Zo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ofNDsxL7NV8xoR5TtmWb+S1u14MyjnI6yL/q4bCH8KqrkOpjfttWwDuvPtY2umLaijdnZUIobKHuy+vrd0NFOjyTW97fKDobqoc8TzseYjKO9X47VcCcT1ZoodhFwjdUEteLSk4BV96Ui6xUxAmQ5mwR5SvNzKUEiXQvDbsCIlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gbJCrlbT; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d8a54f1250so2281639a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 03:11:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725790280; x=1726395080; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=biYfC5HUlpa0qqeVAFPV4kB9CvhBlwCgTvPQrrf8Rs0=;
+        b=gbJCrlbTJV0YU1JGWBBP/CNkrVPp1B3swou27HkakE+0K/f5Om1apMFNAyfncAFatP
+         Sph9B5r8utVAWOENX5f/grFVB7Y15QBa4Ystm8RgteguhFk+bO0PW1QHEQurPRMqAv7V
+         FvSrmjbXEhcLr9Xw5pvlHH2Jt2RREWnH+W6iM1AxApC9Gk0VxKfC5PQDIk0EqltKd9h9
+         ZOXPf6syB/KgflQ4uOUTtXmMqUTIsI4efIA7cmHj026AgB/blMfPVfZ3qKsY8dA/QD3I
+         x/lZO40oQjWWSYQ6C1PsnAB90A3LUmaeAF7f3b7K7Nq0AwkdQHbg4jtzkG+C71f7i7BT
+         ZHhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725790280; x=1726395080;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=biYfC5HUlpa0qqeVAFPV4kB9CvhBlwCgTvPQrrf8Rs0=;
+        b=iBCbmfbZkTPsmzQUVNH9JW+Ed09HtrqBVO0FKWqIdmz0Ol5rol/nrvQZHfMvotZlm1
+         7bgz65nFafVroKvx0+kqXDUW5IqYXY1+uPFt6qldwywVbJmm+DgKx0MrpQF5VSTsb53X
+         8rsVP2rus/hS8HTlK6y4obeBnRFdVhHt24Vkq4EJTSMtr4CZsh1xxWwbQ3hUjUkhSkXu
+         B5QeZV7o8gDJMaOnFO5R8v6KAC/Lv7BjZgnmGYpGBIvICXJyCOjyIx3q9ipffZu+OMQa
+         TVNJ36bzdDlPZ9FhZWDSfTDfgKiGDGDDynTO2UsIr3vuhTL4SMC9rHsH18ROf9hU24lL
+         HWmg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5bPdoINSu0ZeOkaS/tuWGTnuvW0t07AkofrNTY6H/bRaKjZ/zpSWAKt07MeijrL3FSF6Z5xUCs1W4ki4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLWuxAETmLLANttTm/ucgcVE1ITkuTZy6P3O58VXvOtdCmdg88
+	HFpd+Zx03C0e90rB1L6se3OtQ/B2kYeXUeU2dwEgexdyeFRCkQ+g
+X-Google-Smtp-Source: AGHT+IFC0W//oMWfh8aTsrMzXObPPAsI2g8sKwq1wCoYvHc5wJmv6zLbt2HKdL6Gb4kbk2GC/oQy+w==
+X-Received: by 2002:a17:90b:4c88:b0:2c8:f3b4:421 with SMTP id 98e67ed59e1d1-2dad4de18f6mr10139212a91.4.1725790279885;
+        Sun, 08 Sep 2024 03:11:19 -0700 (PDT)
+Received: from debian.tail629bbc.ts.net ([103.57.172.39])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc0782dfsm4589379a91.34.2024.09.08.03.11.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 03:11:19 -0700 (PDT)
+From: Sayyad Abid <sayyad.abid16@gmail.com>
+To: linux-staging@lists.linux.dev
+Cc: philipp.g.hortmann@gmail.com,
+	gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-hardening@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Subject: [PATCH] set_memory: Add __must_check to generic stubs
-Date: Sat,  7 Sep 2024 17:40:42 +0200
-Message-ID: <6a89ffc69666de84721216947c6b6c7dcca39d7d.1725723347.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <775dae48064a661554802ed24ed5bdffe1784724.1725723351.git.christophe.leroy@csgroup.eu>
-References: <775dae48064a661554802ed24ed5bdffe1784724.1725723351.git.christophe.leroy@csgroup.eu>
+	sayyad.abid16@gmail.com
+Subject: [PATCH 0/6] staging: rtl8723bs: Fix various coding style issues
+Date: Sun,  8 Sep 2024 15:41:04 +0530
+Message-Id: <20240908101110.1028931-1-sayyad.abid16@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725723642; l=1883; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=f4b3EWGgDvYEBxJXLd9EJXkZFmAy/z1D3M4a+/Gf9BE=; b=GO8Jmv0feXJjWdAIlGrWtN3vOIY+RcbII4YzFBMOV4qn10O93VQTky4E/rglcXaFOX/2T25C5 TUaw+OtAjkkBvWcjTprrjV966nDWaRdnZM26nPa74kRTTib6k4Guy2w
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-Following query shows that architectures that don't provide
-asm/set_memory.h don't use set_memory_...() functions.
+This patch series fixes various coding style issues in the
+rtl8723bs/include/rtw_security.h
 
-  $ git grep set_memory_ alpha arc csky hexagon loongarch m68k microblaze mips nios2 openrisc parisc sh sparc um xtensa
+Patches :
+  Patch 1/6: fix use of tab wherever possible
+  Patch 2/6: fix position of opening braces
+  Patch 3/6: fix space before tabs
+  Patch 4/6: fix comment with a trailing */ on a separate line
+  Patch 5/6: fix switch and case to be at same indent
+  Patch 6/6: fix no space before tab and statement start on tabstop
 
-Following query shows that all core users of set_memory_...()
-functions always take returned value into account:
+All these patches address minor coding style issues in the file.
 
-  $ git grep -w -e set_memory_ro -e set_memory_rw -e set_memory_x -e set_memory_nx -e set_memory_rox `find . -maxdepth 1 -type d | grep -v arch | grep /`
+ .../staging/rtl8723bs/include/rtw_security.h  | 95 +++++++++----------
+ 1 file changed, 47 insertions(+), 48 deletions(-)
 
-set_memory_...() functions can fail, leaving the memory attributes
-unchanged. Make sure all callers check the returned code.
-
-Link: https://github.com/KSPP/linux/issues/7
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- include/linux/set_memory.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
-index 95ac8398ee72..e7aec20fb44f 100644
---- a/include/linux/set_memory.h
-+++ b/include/linux/set_memory.h
-@@ -8,10 +8,10 @@
- #ifdef CONFIG_ARCH_HAS_SET_MEMORY
- #include <asm/set_memory.h>
- #else
--static inline int set_memory_ro(unsigned long addr, int numpages) { return 0; }
--static inline int set_memory_rw(unsigned long addr, int numpages) { return 0; }
--static inline int set_memory_x(unsigned long addr,  int numpages) { return 0; }
--static inline int set_memory_nx(unsigned long addr, int numpages) { return 0; }
-+static inline int __must_check set_memory_ro(unsigned long addr, int numpages) { return 0; }
-+static inline int __must_check set_memory_rw(unsigned long addr, int numpages) { return 0; }
-+static inline int __must_check set_memory_x(unsigned long addr,  int numpages) { return 0; }
-+static inline int __must_check set_memory_nx(unsigned long addr, int numpages) { return 0; }
- #endif
- 
- #ifndef set_memory_rox
 -- 
-2.44.0
+2.39.2
 
 
