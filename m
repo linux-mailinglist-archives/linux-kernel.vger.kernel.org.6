@@ -1,184 +1,252 @@
-Return-Path: <linux-kernel+bounces-320421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7848F970A13
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 23:13:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC39E970A11
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 23:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E85CB21F8E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 21:12:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 855A7283370
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 21:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4330F38DD6;
-	Sun,  8 Sep 2024 21:11:10 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244ED18801C;
+	Sun,  8 Sep 2024 21:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="nxes8+Mg"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67BF54673
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 21:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5C417BB21;
+	Sun,  8 Sep 2024 21:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725829869; cv=none; b=h/N6Kubfu+NK//G38QRFMR8r6u1EVZrI8mG1+G4odXsYd8djoo/lO6cCS5c3VSBaKj7sCKWQY4YfY1HYUzpaMQjRM1T9Z3ZpuEgaSZPAt/81NcBGFn8SvE+6JsIyDFYZjvwu5+FDQEdUpQ70MziqLrskWI8lYtbdF+qndNaqoek=
+	t=1725829801; cv=none; b=jBR7XKSXoHzsriXMLMf1Saj5LkmLdNuhBzimFIMgo23PlF6RU/DFoNFcWQF/DqxalGtIUExjGdy+YOrrXWr60RYIg8rvNOyQ8AgW7WHWpE+5Wu/v0GkfEWP/GgcyrHLzUYSAhncRZhfC+c3py4gOGd+ggSqNsVjZe1zXQF3bHFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725829869; c=relaxed/simple;
-	bh=zN3q3bvVxr+IRbcTF7Mt9+0mGWCJvt/L/HlTFdTrw2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eii/mImN1g23dqfn+Z6edDqnOrWlVFD+GQrxaIgdP1ECiosqhYbL6Ij+QwYs+rNMT8fE/QLsTCpNZwwCXlbDQWOMTWCCL82rDRdaJXtMTt3Qzs89my0phIlcLbsPXidPhJo6diK+bzFr4lqUBLTXBP3VV74cSt9ArONWSU7foF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1snOvn-0002CA-Jf; Sun, 08 Sep 2024 22:54:47 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	s=arc-20240116; t=1725829801; c=relaxed/simple;
+	bh=4VXE2x4NSw8emUUpj3uJHU1W4cfHreQcCtdOxGuG5kU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=efF92IIc5/DClvCGFlqr0IKijzsu5fWMqh4jpPMDJyS5iwTsompXZ6aSuqgiNaP1pw+TRU+xXrBofc8ZJDS903h9s/Hg2T2rIXddsjtrwF1DG/FR7eM+ZBYg7hx5ZjlMZu/VzTTpNvjL4YOVIUyTFn6Bg0/wjGG6c0QafrxtfxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=nxes8+Mg; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=bJYmi9c9oz6tm2pyzXmgxUUZvpQmzK+TNH7qhaJHuP4=; b=nxes8+Mgd1KylK6uEjYsusu31I
+	NX+wkjgMwadO2am6zoSRtvJtFs/e2I70OooJHgTIQCJc7Yfl5tgFVpoUslKegImmDcKAVvWT7i10Y
+	9nF0miCzg1xB+PlbrEHLPHp6sqxwhYRJY8oykOw3SHC5W9JuMQLIPyU6FIFeWD1ANAlSdbnX7lnu4
+	le4J30MmN0b8iWCS8P9kI+sLk0msBiHgwcSWnXTAW25ZKff6eQoMkbVLTb3uOR2s0djSN766CC5vT
+	5jWNstERwHC5CzBfAru+jRxMtNvlXN+T99G3xi7D5IJ6fh31i5Ap1iP2PJUstBsL4RIRHnZsYk1ss
+	Wz6I04UQ==;
+Received: from i5e8616cc.versanet.de ([94.134.22.204] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1snOvi-006Uad-Jx; Sun, 08 Sep 2024 22:54:42 +0200
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1snOvi-00DtLg-1c;
-	Sun, 08 Sep 2024 22:54:42 +0200
-Date: Sun, 8 Sep 2024 22:54:42 +0200
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux USB <linux-usb@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	v9fs@lists.linux.dev, Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jan Luebbe <jlu@pengutronix.de>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] tools: usb: p9_fwd: wrap USBG shell command examples in
- literal code blocks
-Message-ID: <Zt4PEp8z1rfhFZCm@pengutronix.de>
-References: <20240908113423.158352-1-bagasdotme@gmail.com>
+	(envelope-from <heiko@sntech.de>)
+	id 1snPA0-0003s9-8T; Sun, 08 Sep 2024 23:09:28 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: lee@kernel.org,
+	jikos@kernel.org,
+	jic23@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	srinivas.pandruvada@linux.intel.com,
+	bentiss@kernel.org,
+	dmitry.torokhov@gmail.com,
+	pavel@ucw.cz,
+	ukleinek@debian.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-input@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v8 0/9] Drivers to support the MCU on QNAP NAS devices
+Date: Sun,  8 Sep 2024 23:07:54 +0200
+Message-ID: <20240908210803.3339919-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2GlOQuJU+wYS6vhG"
-Content-Disposition: inline
-In-Reply-To: <20240908113423.158352-1-bagasdotme@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+
+This implements a set of drivers for the MCU used on QNAP NAS devices.
+
+Of course no documentation for the serial protocol is available, so
+thankfully QNAP has a tool on their rescue-inird to talk to the MCU and
+I found interceptty [0] to listen to what goes over the serial connection.
+
+In general it looks like there are two different generations in general,
+an "EC" device and now this "MCU" - referenced in the strings of the
+userspace handlers for those devices.
+
+For the MCU "SPEC3" and "SPEC4" are listed which is configured in
+the model.conf of the device. When setting the value from SPEC4 to
+SPEC3 on my TS433, the supported commands change, but the command
+interface stays the same and especially the version command is the
+same.
+
+The binding also does not expose any interals of the device that
+might change, so hopefully there shouldn't be big roadblocks to
+support different devices, apart from possibly adapting the commands.
 
 
---2GlOQuJU+wYS6vhG
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+changes in v8:
+- patch for hid-sensor hub to not do wonky stuff with an old
+  platform-data copy
+  I hope my reading of the situation is correct here, but that
+  initial platform_data really seemed wrong
 
-Thanks for taking care of this.
+mfd:
+- flush serial before writing a new command
+- wait for send to complete before starting the receive wait-timeout
+- set expected length to 0 directly when the reply is complete
+  not after leaving the receive callback
 
-On Sun, Sep 08, 2024 at 06:34:23PM +0700, Bagas Sanjaya wrote:
->Stephen Rothwell reported htmldocs warning when merging usb tree:
->
->Documentation/filesystems/9p.rst:99: ERROR: Unexpected indentation.
->
->That's because Sphinx tries rendering p9_fwd.py output as a grid table
->instead.
->
->Wrap shell commands in "USBG Example" section in literal code blocks
->to fix above warning and to be in line with rest of commands in the doc.
->
->Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
->Closes: https://lore.kernel.org/linux-next/20240905184059.0f30ff9a@canb.au=
-ug.org.au/
->Fixes: 673f0c3ffc75 ("tools: usb: p9_fwd: add usb gadget packet forwarder =
-script")
->Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-Acked-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+changes in v7:
+- use ASCII representation in commands where possible instead of hex vals
+- drop get_variant function and use mfd platform-data instead
 
->---
-> Documentation/filesystems/9p.rst | 6 +++---
-> 1 file changed, 3 insertions(+), 3 deletions(-)
->
->diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/=
-9p.rst
->index 2cc85f3e8659ff..514ed13a0122b0 100644
->--- a/Documentation/filesystems/9p.rst
->+++ b/Documentation/filesystems/9p.rst
->@@ -86,11 +86,11 @@ When using the usbg transport, for now there is no nat=
-ive usb host
-> service capable to handle the requests from the gadget driver. For
-> this we have to use the extra python tool p9_fwd.py from tools/usb.
->
->-Just start the 9pfs capable network server like diod/nfs-ganesha e.g.:
->+Just start the 9pfs capable network server like diod/nfs-ganesha e.g.::
->
->         $ diod -f -n -d 0 -S -l 0.0.0.0:9999 -e $PWD
->
->-Optionaly scan your bus if there are more then one usbg gadgets to find t=
-heir path:
->+Optionaly scan your bus if there are more then one usbg gadgets to find t=
-heir path::
->
->         $ python $kernel_dir/tools/usb/p9_fwd.py list
->
->@@ -99,7 +99,7 @@ Optionaly scan your bus if there are more then one usbg =
-gadgets to find their pa
->           2 |   67 | unknown          | unknown          | 1d6b:0109 | 2-=
-1.1.2
->           2 |   68 | unknown          | unknown          | 1d6b:0109 | 2-=
-1.1.3
->
->-Then start the python transport:
->+Then start the python transport::
->
->         $ python $kernel_dir/tools/usb/p9_fwd.py --path 2-1.1.2 connect -=
-p 9999
->
->
->base-commit: 9c0c11bb87b09a8b7cdc21ca1090e7b36abe9d09
->--=20
->An old man doll... just what I always wanted! - Clara
->
->
+mfd:
+- a lot of style improvements
 
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+leds:
+- name variables better (value -> brightness, num -> num_err_led)
+- handle preservation of blink mode more effectively
+- snprintf -> scnprintf
+- drop duplicate "failed to register ... LED" messages
 
---2GlOQuJU+wYS6vhG
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+changes in v6:
+- format mcu commands arrays in single lines (Lee)
 
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmbeDw8ACgkQC+njFXoe
-LGTkwBAArdhWO1zhxAGW/ByLL4IiT1YV1Lbkg+uvEfThLHZeVp2jwg4dfko/K3yn
-I1nEaIwg3cbbiU0IY93yZjXGwCULzhJxP8PeQ8o97DleU918Onphp7Wt4Vt74vag
-0GG6i9mzx7J6rd9P9aW+Wcnixm7hO8lCkDNda8jrlXuNWLD/a+fz+3RdOdgj1EaC
-AW1HqYRKBA/wA4fCHn8U7bjCP1cbBU67mJgopm2TxA+L82D0+l9r3l8ncb4fgmNr
-mIcNwIuxmiHvKEZck/n9FKc+TW18AKG9YND+iPcLXEGNG1GCUmflR2IZgKtLXVjf
-gp32r8o7c8OVy34DcJh57y3zwlL+4eYR59Bn4MGS8vaF9z907phi4OttfrpgBDU4
-fKBX4Mfnxldflj0S3eeb6pXs01NLH13oI7HdIWMinTjLLmFacNYDelvlc6PFKKP6
-uxLfHZ8PeVYHxVmjSurBqwXqCwzN7dMzMdSPTf5ZG+OCr5/AHMoFgpRVSgYnVKQF
-UEvpg2pVgxsw0oZrB6A5xFjd1j3v7qdBeoA4hDEbYeLaBng0i7oF/8mPWXNOhRyy
-vxrSEvwWvb4AmJfImiBiSsIUrUPJnL39Kz79knYOwCDwx2znfpjIrcii9gvWEXOZ
-kGqPqnH9QRiZq8GPMA2GE2q3/3I6dEM1sHEawvA26lDu2Hin5R4=
-=ZSZ5
------END PGP SIGNATURE-----
+mfd:
+- drop obsolete remain kdoc for the removed
+  reply_lock (kernel test robot)
 
---2GlOQuJU+wYS6vhG--
+
+changes in v5:
+binding:
+- add Conor's Reviewed-by
+
+mfd:
+Address comments from Lee
+- improve commit message
+- improve Kconfig help text
+- sort headers alphabetical
+- style and spelling improvements
+- constants for magic numbers
+- drop reply assignment, the mcu only replies to commands sent to it,
+  so there should only ever be one command in fligth.
+
+hwmon:
+Add Acked-by from Guenter and address some remarks
+  - don't allow empty fan subnode
+  - use num var directly when getting cooling levels, without using ret
+    intermediate
+  - use dev_err_probe in thermal init function
+
+
+changes in v4:
+binding:
+- move cooling properties into a fan subnode and reference
+  fan-common.yaml (Rob)
+- dropped Krzysztof's Ack because of this
+
+mfd:
+- use correct format-string for size_t (kernel test robot)
+
+input:
+- added Dmitry's Ack
+
+hwmon:
+- adapted to fan-subnode when reading cooling properties
+- dropped Guenter's Ack because of this
+
+
+changes in v3:
+mfd
+- use correct power-off priority: default
+- constify the cmd-data array in command functions (Dmitry)
+
+leds:
+- don't point to temporary buffers for cdev->name (Florian Eckert)
+
+hwmon:
+- use clamp_val(), don't try to reimplement (Guenter)
+- add Guenter's Ack
+
+input:
+address Dmitry's comments
+- constify some cmd arrays
+- add input-close callback to cancel beep worker
+- drop initial input event report
+
+
+changes in v2:
+binding:
+- rename to qnap,ts433-mcu.yaml (Krzysztof)
+- drop "preserve formatting" indicator (Krzysztof)
+- add Krzysztof's Review tag
+
+mfd:
+- fix checkpatch --strict CHECKs
+- add a MAINTAINERS entry for all qnap-mcu-parts
+
+
+Heiko Stuebner (9):
+  HID: hid-sensor-hub: don't use stale platform-data on remove
+  mfd: core: make platform_data pointer const in struct mfd_cell
+  dt-bindings: mfd: add binding for qnap,ts433-mcu devices
+  mfd: add base driver for qnap-mcu devices
+  leds: add driver for LEDs from qnap-mcu devices
+  Input: add driver for the input part of qnap-mcu devices
+  hwmon: add driver for the hwmon parts of qnap-mcu devices
+  arm64: dts: rockchip: hook up the MCU on the QNAP TS433
+  arm64: dts: rockchip: set hdd led labels on qnap-ts433
+
+ .../bindings/mfd/qnap,ts433-mcu.yaml          |  42 ++
+ Documentation/hwmon/index.rst                 |   1 +
+ Documentation/hwmon/qnap-mcu-hwmon.rst        |  27 ++
+ MAINTAINERS                                   |   9 +
+ .../boot/dts/rockchip/rk3568-qnap-ts433.dts   |  61 +++
+ drivers/hid/hid-sensor-hub.c                  |  21 +-
+ drivers/hwmon/Kconfig                         |  12 +
+ drivers/hwmon/Makefile                        |   1 +
+ drivers/hwmon/qnap-mcu-hwmon.c                | 364 ++++++++++++++++++
+ drivers/input/misc/Kconfig                    |  12 +
+ drivers/input/misc/Makefile                   |   1 +
+ drivers/input/misc/qnap-mcu-input.c           | 153 ++++++++
+ drivers/leds/Kconfig                          |  11 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-qnap-mcu.c                  | 227 +++++++++++
+ drivers/mfd/Kconfig                           |  13 +
+ drivers/mfd/Makefile                          |   2 +
+ drivers/mfd/qnap-mcu.c                        | 332 ++++++++++++++++
+ include/linux/mfd/core.h                      |   2 +-
+ include/linux/mfd/qnap-mcu.h                  |  26 ++
+ 20 files changed, 1310 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/qnap,ts433-mcu.yaml
+ create mode 100644 Documentation/hwmon/qnap-mcu-hwmon.rst
+ create mode 100644 drivers/hwmon/qnap-mcu-hwmon.c
+ create mode 100644 drivers/input/misc/qnap-mcu-input.c
+ create mode 100644 drivers/leds/leds-qnap-mcu.c
+ create mode 100644 drivers/mfd/qnap-mcu.c
+ create mode 100644 include/linux/mfd/qnap-mcu.h
+
+-- 
+2.43.0
+
 
