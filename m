@@ -1,76 +1,97 @@
-Return-Path: <linux-kernel+bounces-320022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B19C970521
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 07:23:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2230970523
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 07:36:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 872B31C20BE8
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 05:23:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D64A282FEA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 05:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562303A8F7;
-	Sun,  8 Sep 2024 05:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCEC482DD;
+	Sun,  8 Sep 2024 05:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TA1dBZpV"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="dAdVZNkL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="M2kMpNDn"
+Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4117F6
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 05:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCC41114;
+	Sun,  8 Sep 2024 05:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725773024; cv=none; b=OB+Y+2miot8YWLNFFwEGJsJ5JMY0Dqhbtzh8xd0FOtVitjy8M2bfuCnM18B6iuNRSkDGRrnxgKgCal5BOBnoiVButq2egb99DdEBhPzlerjIG+z28XDJVTTAOxoJ163NvLM95tIgRrGjLhIlYRzgLqcwR5l8yKBAFm7gPo8RQqg=
+	t=1725773778; cv=none; b=M4mSmwSriWfyr2ay6oRtQQmFb6Jn0FW+Ro505UrVrw3Fwej4RfDlxqCnerBuHUbsELG+A5Ly4HhGHDEsk1rjXkMlNbLmURcveQ5E+rvaxGvbA3LhEK4fCFk0wdkzAL5AP386Lkhd/UoAMJ/qUYFZxTcFv9fF0UR0YMFNHEvKQEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725773024; c=relaxed/simple;
-	bh=Yfv0pt+LGiQg14tp9TXf6mVRyf3onYByhS1Xvhyqg+s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Log46vfsFvJxux62ucHVY1lFKOZSu0rFMQF6vA5H7CBKpBOPfjVX08fOrRvm6hr/L2zrr98qeeBeM0l+8vxys0cXx+xuWLaJmD2quwjc8+VFPGsvZ7x+MMkAZWjzLjJPkJTdsWittYKnpUXSV834fW8EOxoisNsjS8T8hvs7xho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TA1dBZpV; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e03b6d99c3so419006b6e.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 22:23:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725773022; x=1726377822; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L3oVj8gIKovVLpII7y0IVEPaNyb/VXbz1UOiMbkHR8I=;
-        b=TA1dBZpVL/Xx1l2lPip48wkcFfND3GtU2X0QBNKNZiV6dhWAxPNgmTFar7eA2do9UE
-         hsgMWVkU918tPkOau896M30QTSf/HU5DwYdkcdw7NptQXVkwa2Yf/+jFYLKF8U9ZIxDu
-         XIFAdzHsAahMTF6TOnS9c2rrO0N7jSHu2orAlLDS4aMytur/zFYU0b5V1zGlvNNqchvH
-         ch4p0PNWXNbjomsmxuQgypx1sbVHLaPLU+3i1cMIW2YSylfDnNUCaYVcLtQ3hi3l1ADz
-         1gSfH2lLP7ESQiKq/MjrSesES+maKmJYy51Ij2DpcqXeXN02yX/5krnhX9DhiXm6p39F
-         O5ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725773022; x=1726377822;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L3oVj8gIKovVLpII7y0IVEPaNyb/VXbz1UOiMbkHR8I=;
-        b=wZrBB/qtCK8sTjasw1+ZuhOGLb6XFRleeIFcFR3O/Q3sP7RrL4eTj6hlSnyEou87Is
-         KqbPxIr4iZ5cPDuwI1K5aB9EfVfEMaLJ4GwEexsBZGEztbibB2Q40m5AMbacjpZVG4th
-         O07mKLp+xn8ZwW4RS7CLAhiALKE1h4lKTlQMjiOZmIrAzf8LWBGPwTpI9C1GrPYKVcQ2
-         dgcTAwqx7QWmy80CCYsFwDabe+Dd+GADLFo01wuuFdjSTAa2bsOHcTLx2ogdpWBfHehQ
-         Ram8K8vP76PgpIL1vnFgYyxPriyaDR3jIM6O6hvegEZxjjlop0fxby8pJ6+ghu3S4hfW
-         JSfg==
-X-Gm-Message-State: AOJu0YzLHf+FvLRwFC9da5RXm9Jh+ghlgdC88+dDvPB+8WetC1gZyBN5
-	94ezqvMN/NjmuTQinXPpT9QF7J1haSq4FTSWSaxaTU2uRPd9OIbEGT4dqSwy
-X-Google-Smtp-Source: AGHT+IE1KGBAaCLetGIU6aMpwK//8HmwHYIc1Ckt9ND6tM3J9UxbI2VWM+U61Kse9gKo05eRwtQF+g==
-X-Received: by 2002:a05:6808:1910:b0:3e0:3c1c:169e with SMTP id 5614622812f47-3e03c1c3143mr3339743b6e.14.1725773022213;
-        Sat, 07 Sep 2024 22:23:42 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d8259bcfefsm1521359a12.82.2024.09.07.22.23.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 22:23:41 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com
+	s=arc-20240116; t=1725773778; c=relaxed/simple;
+	bh=rpRYgTdMHGGe2A8iAOqjp0QcTLymtWVdC4fe6olEdZg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nKAZ9WZTTMZoU+v4C/3I/ZAPC961CNn6asYqMhxKjXeaw+u2LIASLijj3bYGS9dmJaaHS/oYmBQsqhIJTVLYLrs7YQwcQt6VpFSgnwMbVQXbtAn0w+5bmfkZpcQZY/6Q0yVV9ZJRQIUiL5sssUUNnuwnV7Javrr4l/p1e7uIjIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=dAdVZNkL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=M2kMpNDn; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfout.phl.internal (Postfix) with ESMTP id 07004138012C;
+	Sun,  8 Sep 2024 01:36:15 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-08.internal (MEProxy); Sun, 08 Sep 2024 01:36:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1725773775; x=1725860175; bh=i3s05PCH2bZCBIKhbs5xm
+	5yHX2bnfCNCLNbQjYfnB4o=; b=dAdVZNkL0GHKYWliZV1Y1n27+qfAlbzmJt53d
+	k+Xby79C1NNQISEKIJo0FyQNWQy2Sjl2P4lpQ+rrNWRED/l6LgrljmawvsPlLy5p
+	ylzSLj8ppCUyDkbH+CFK6TdLcnlH0KC1CiJrMfgdzVVL2NU4Fjs2d0rSuAEBUOzf
+	lK2y4h6kjvVB4uqWC4PGS7ZeaE/UyQI98K4QvTicwhGfjHdWiJEoUcopbApsG9Hz
+	3BI5TIrRXUYrI2iF7L9BpTkLf8tWrN6zU0od9ZbrXPWgM8g21H6xaMxmIG0btrXg
+	vTHtVVD8rHf+hVe556wpYClVwLAssNE0mOgYDG3pJMsCJdSdg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1725773775; x=1725860175; bh=i3s05PCH2bZCBIKhbs5xm5yHX2bn
+	fCNCLNbQjYfnB4o=; b=M2kMpNDnvF/HJyI3Ri2MSRoNcfOEVXBJPGUp1AYWsuBJ
+	i3HL3A1Rb3JVPIKtKbNAApPNigwgcwoaBhqvMMbPNvc0yiaaS8p5R5jOJpHYRcI4
+	fuursr2g3jnNq7rfetWim1zT4SyAFO4nEs35omgDjxU7H/dbKsEBV1mTMHfZ2+1w
+	RC1epFReDVqAznkLyRWn0Zo5Q3UEbn1xkTlN+xeepcReg9ZrmVeJI14w26eejAbD
+	dZmPDeg59sztK7K5jwjxjvFECebOxcNJjGbvOg8oBS9p4sIwawTkGEDGj9P6jxpR
+	VsDuav79Osj2dhVEmEzpsuJv20SLveR7rv0xZtJoyw==
+X-ME-Sender: <xms:zjfdZnalC-3hFxvYTy0F4iCHNofnmdSbkhshbT5fcFbaxYV7EYfpHw>
+    <xme:zjfdZmaTW4kR7E_Mfm7cCV7XRNxcntDV9p-E3CUmamJ3sVvioK31mPZJg3NbwlNkE
+    Etq6adRktzT9zX-LwU>
+X-ME-Received: <xmr:zjfdZp--0w9J8CRgpFL6uJhb_7M5ctKHL4BCy49zNaCTR0RUo-lqyMkPD8VIMus>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeigedgleejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
+    ffkffoggfgsedtkeertdertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdf
+    uceolhhukhgvsehljhhonhgvshdruggvvheqnecuggftrfgrthhtvghrnheptdehkeeige
+    eggfelkeeufeefjeduvdejveduvdehtdegveeftdeugeetvdeltdejnecuffhomhgrihhn
+    pehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtphhtthhopeeh
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhg
+    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvghnsgeskhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
+    uhhkvgeslhhjohhnvghsrdguvghv
+X-ME-Proxy: <xmx:zjfdZtpv4tvoQcAEvZ8eT8SHpYa2wAGZilnv7HQPLQLWywp-bFVFww>
+    <xmx:zjfdZipAI3V129CzwwxgcVoWoEAR891TYZ0kc0Lq-K7F0v9kP9bUqw>
+    <xmx:zjfdZjSqRp-gXK3OJcswxrEUUlcMdwMyWir-N2VAqLnzcdhKKbPYxQ>
+    <xmx:zjfdZqrBjsAg5Gk-thLymVEZL-4CBEcB5JpVmvAx6BOpp-z0Qew__g>
+    <xmx:zjfdZrkbM2WQPu9dEROPGl704pFxllsRZuTCJoPnztHYRkd1LwmNSi5F>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 8 Sep 2024 01:36:12 -0400 (EDT)
+From: "Luke D. Jones" <luke@ljones.dev>
+To: linux-acpi@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: KCSAN: data-race in generic_fillattr / shmem_mknod (2)
-Date: Sun,  8 Sep 2024 14:23:38 +0900
-Message-Id: <20240908052338.7283-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	lenb@kernel.org,
+	rafael@kernel.org,
+	"Luke D. Jones" <luke@ljones.dev>
+Subject: [PATCH] ACPI: PM: Quirk ASUS ROG M16 to default to S3 sleep
+Date: Sun,  8 Sep 2024 17:36:07 +1200
+Message-ID: <20240908053607.4213-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,63 +100,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+The 2023 ASUS ROG Zephyrus M16 can suffer from quite a variety of events
+causing wakeup from s2idle sleep. The events may come from the EC being
+noisey, from the MMC reader, from the AniMe matrix display on some models
+or from AC events.
 
+Defaulting to S3 sleep prevents all these wakeup issues.
+
+Signed-off-by: Luke D. Jones <luke@ljones.dev>
 ---
- mm/shmem.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/acpi/sleep.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 5a77acf6ac6a..1595f6e7688c 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1154,7 +1154,9 @@ static int shmem_getattr(struct mnt_idmap *idmap,
- 	stat->attributes_mask |= (STATX_ATTR_APPEND |
- 			STATX_ATTR_IMMUTABLE |
- 			STATX_ATTR_NODUMP);
-+	inode_lock_shared(inode);
- 	generic_fillattr(idmap, request_mask, inode, stat);
-+	inode_unlock_shared(inode);
- 
- 	if (shmem_is_huge(inode, 0, false, NULL, 0))
- 		stat->blksize = HPAGE_PMD_SIZE;
-@@ -3439,7 +3441,7 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	if (error)
- 		goto out_iput;
- 
--	dir->i_size += BOGO_DIRENT_SIZE;
-+	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	inode_inc_iversion(dir);
- 	d_instantiate(dentry, inode);
-@@ -3526,7 +3528,7 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir,
- 		goto out;
- 	}
- 
--	dir->i_size += BOGO_DIRENT_SIZE;
-+	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
- 	inode_set_mtime_to_ts(dir,
- 			      inode_set_ctime_to_ts(dir, inode_set_ctime_current(inode)));
- 	inode_inc_iversion(dir);
-@@ -3639,8 +3641,8 @@ static int shmem_rename2(struct mnt_idmap *idmap,
- 		inc_nlink(new_dir);
- 	}
- 
--	old_dir->i_size -= BOGO_DIRENT_SIZE;
--	new_dir->i_size += BOGO_DIRENT_SIZE;
-+	i_size_write(old_dir, i_size_read(old_dir) - BOGO_DIRENT_SIZE);
-+	i_size_write(new_dir, i_size_read(new_dir) + BOGO_DIRENT_SIZE);
- 	simple_rename_timestamp(old_dir, old_dentry, new_dir, new_dentry);
- 	inode_inc_iversion(old_dir);
- 	inode_inc_iversion(new_dir);
-@@ -3694,7 +3696,7 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 		folio_unlock(folio);
- 		folio_put(folio);
- 	}
--	dir->i_size += BOGO_DIRENT_SIZE;
-+	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	inode_inc_iversion(dir);
- 	d_instantiate(dentry, inode);
---
+diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
+index 889f1c1a1fa9..c8ee8e42b0f6 100644
+--- a/drivers/acpi/sleep.c
++++ b/drivers/acpi/sleep.c
+@@ -351,6 +351,20 @@ static const struct dmi_system_id acpisleep_dmi_table[] __initconst = {
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "1025C"),
+ 		},
+ 	},
++	/*
++	 * The ASUS ROG M16 from 2023 has many events which wake it from s2idle
++	 * resulting in excessive battery drain and risk of laptop overheating,
++	 * these events can be caused by the MMC or  y AniMe display if installed.
++	 * The match is valid for all of the GU604V<x> range.
++	 */
++	{
++	.callback = init_default_s3,
++	.ident = "ASUS ROG Zephyrus M16 (2023)",
++	.matches = {
++		DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
++		DMI_MATCH(DMI_PRODUCT_NAME, "ROG Zephyrus M16 GU604V"),
++		},
++	},
+ 	/*
+ 	 * https://bugzilla.kernel.org/show_bug.cgi?id=189431
+ 	 * Lenovo G50-45 is a platform later than 2012, but needs nvs memory
+-- 
+2.46.0
+
 
