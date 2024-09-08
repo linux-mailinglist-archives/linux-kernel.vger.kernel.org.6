@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-320349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 674F797092C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:12:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB2BD970933
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 145E32823B0
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:12:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 138641C20A31
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828CA17799F;
-	Sun,  8 Sep 2024 18:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4D7178364;
+	Sun,  8 Sep 2024 18:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OP/K6lA1"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TlDvjW6V"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9377165F06
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 18:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7C1C8D7;
+	Sun,  8 Sep 2024 18:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725819163; cv=none; b=AdEAAuF8M8D97dNHm7DT7QJsSUoPzqJlOjWvnCLJEmljQgcIxUArmYza4e9OJhE+qlt+aI/ncsYTQYZvtpo+R5w8dMnmKMrE8a8zw27Nt70QTwXF48Op5vfBopGROAgEXfJ1A8pQDNw6DoqmO2TDgd8tHzpdOkW4LVIuWbvXnjA=
+	t=1725819684; cv=none; b=Vbsz0ZiviHS5TWQ6gYTrrpx54aXpUAuzV8F3z6FyOUN0cQMvjyTh+fFdXpLxxD8f/e+x7cOk7UtJY80CJf5PmEMZRslmnlJ7p670hrp6JAkMPMkCkMuyk4OeAOBV/zwxn/0x1EcXPScTktMdRWLez6KpZjTDXBxhgtzKNbn2otk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725819163; c=relaxed/simple;
-	bh=pAlcQ1Gnpb2CK8FeyRxSYjzPAIE1VSrVqPgTmByThbg=;
+	s=arc-20240116; t=1725819684; c=relaxed/simple;
+	bh=3HYeaqqVbWWLuM6OA/ypsrqs6vWrj9Lf8e94p5J7ny4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LBVkVoEb5KTOC+Lb+UJvyuVJoe3/yyTw4FC4LV2S+ZPtdlpJCtiB8Be6a8bt1Hnt9U9A2rhuCbSMiYJEzJMi09mvxVP2Q2wjrKcdxj8piBjuR9lox5eDI1aii1tSXrl+BSWr124nQH4JSynorB2C4UyMS+UuRWXs/szdbukHsHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OP/K6lA1; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c25554ec1eso4602942a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 11:12:41 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AHXRi6+yiAEVS8mGOMwi/kjOPvG5Ol4wPRuVMvCbgAGk8j56KAN9s00J8mbOJVfUnJh/3h3mub2EEp5NiET3FdMpsvuvgQQ5HWR48MshRoEUe1SNxr1E6rNJ/2tFbiDa6JAzra0SvU+vrmwnnksdxiC+cAh/CEoWCzQFortmlMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TlDvjW6V; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4581ec0e00eso14267911cf.3;
+        Sun, 08 Sep 2024 11:21:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725819160; x=1726423960; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725819682; x=1726424482; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yLpbA80LmxTHG9gW0hEcEP8bDOpNZeMU9QCy58Ejxfk=;
-        b=OP/K6lA169yW9D007vfr+O/65uPNnceNAWG0D4OqHmvMe/9ydeEiybwThkLo74F4k5
-         FfFfQXCYIVtAfZxRFuF8DZygsEc/zwHJe+xPs6ITIQnYz5Q6lCuqaqDnIyj82DdNbz1O
-         PZ7xOo6LOHV4OZmZU591CK0nY6FJuEQ1/krSxGg7Tuvud3iO/760ksFAHRfQHfx+qrtK
-         16RKbFEcS0Hgw2SPvvP3Wp5TCXMYRq9/PPdu97rfwxs6tz87dGPymQ3ksJ+lD15m2Nhj
-         jIXkFQpJ4kOHCeUTPfQMSgC7XgJiRr+W+bagVGxyA93zk7H5nGeb73UuWzykL4ZyBRnQ
-         fR8w==
+        bh=5YqmqHRKCpL6x+1lsPapogj4+nAp/0jRfZNYEmkU5RY=;
+        b=TlDvjW6VV6epzeCgSDiuJEIQDAdm/t3x3KMzhCcBCcBZSVV483HNSpeDKqvgHk4HBy
+         eyYBUPn8BiQSB6HJyZFEcdBjFopBpEoQ4o54ybO5wLHFAKNLcTeahgi9TI/bTbNnMaCQ
+         AmnRVcCwhM1vmeQ4E2+FM6f1o+javNVtOLX9oDPMJsffSO3k3BpeS+DA1fw3woFOpboy
+         NyWu2Oi18gP0Cm0WWlops+61jYHk+Ky+6qjm7drepHN6+CspD4q2RQIm5JI0VAGu3EYv
+         WXErquf7GSV2LmeFd8JTWCDT4RiYADJdR9elIhcWecQMvct66iPyZL4GddDAp3Dj44bn
+         fjnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725819160; x=1726423960;
+        d=1e100.net; s=20230601; t=1725819682; x=1726424482;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yLpbA80LmxTHG9gW0hEcEP8bDOpNZeMU9QCy58Ejxfk=;
-        b=bKwvCsw6P2zqLKifm9qCOHuaCPdsTvMGLFLMKlhxE90miXj+MwyVDXczqvxm0X1rD1
-         vO3lF4Hyrw4drK96LVCgxBvdureJBPas82rTSyKnbsscwELuAX0+L55eNMh1iBUKwquD
-         s5FWL56ol5l3SEtX+t6nrKtmrtmzqTO+xh00ODRlYK5LtD0vw6jyWME2AOq0MQrFX9k/
-         RH+vRKGgP/q+2ekGI1r3+10ixOErGBkIXQzAsUObLDlehpZYxLSiOxl351W7ZvFe4NhR
-         SEN+aQPuJC4btvCmviUcc6Sn2F1KDTpQLCuS2D74VYcvcju2kyb2sghArH775ZU8po0R
-         +4LA==
-X-Forwarded-Encrypted: i=1; AJvYcCUERWVyTghGpSx9negZ/jTubL9b7pLt4YvZyvJX+ymLZehyR4cTXMutz741LbrbZXN7Bf62W7xHDO8l9eY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAV4UZEBkk5RMQofJatJA5S283puyIAd0QuUeyBkapzaaZGYt+
-	HPZSDKEDl7th8W+2xzSfpaG8m8cCAiOp15M6IqeX0RUxIVSs+7GI5atwo8RxwLU=
-X-Google-Smtp-Source: AGHT+IGZmYxgGiI70T7NWs+HoEGWThK7q03OcDCcCbtJuh4T+au00Xa5qZUqzPdTJml0KnkDuhKByQ==
-X-Received: by 2002:a05:6402:4020:b0:5c3:c548:bb25 with SMTP id 4fb4d7f45d1cf-5c3e964ccc4mr4692004a12.23.1725819158955;
-        Sun, 08 Sep 2024 11:12:38 -0700 (PDT)
-Received: from linaro.org ([84.232.173.69])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd8cc28sm2094903a12.83.2024.09.08.11.12.37
+        bh=5YqmqHRKCpL6x+1lsPapogj4+nAp/0jRfZNYEmkU5RY=;
+        b=RNpGoiR7mrp2Ncs1vV449egzvqYZ6dtUlB1mkLhmEqyr0lTGUG5C4PdrD9Hl1n805O
+         oNL1mxwgg5YyZhWjt8WxXeLGMjDUeCyRiLxpkdNnEoO/4GCEkI0JMw+k/+LWtjH/7Zw5
+         EY7RxNF0b8r/TECnIvjlFtdIxgONU/5O6B7yLQS7BuA2BnqNmtmTyjg0XVStTnB6TQt3
+         O9pemqYnDgImwRfrBhvz20k9+IgeQRpd353DOPQz+0gPAzI24JYmKK/Zr1LMhOG9lFko
+         Y/uE9vycA4hHuCpT/zKwUaaH9AuMuXCMsxfg+JHMQ64rmgj14tE0PGeFUUmMHl/IDdoQ
+         orKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiTZlOraV06ZfM2EcEZye/+0b/0bH5JVsIETc0tU3xl+CxnzL2KfqRfUo4c9113eD0Mot9LgUJnQAN@vger.kernel.org, AJvYcCXO86b526iu7WhV76UhfAQOU//GHrBOBN/A7KeZG8FTGgs3k4QBnYYxlMsa+ZXKnXVRcuZ1/U9IaQs13Ozd@vger.kernel.org, AJvYcCXbnUfaEAyo9ibfYFXC0bX6cDPX2cVfYmXnI7FFRqynHDctfrz26pj/9DFl1DT9LgRGclyWcTVRGqlR@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE43g/V53Jj8fmZnk46buXhEUL+ZX9Vf+J+eyFEhBXU0SBaace
+	UCtYWq8zeJI/YTZ784XgmdvGYpFFvV7rbl5XzkgJ49rJCIUqv0eQnYrSmHDQ
+X-Google-Smtp-Source: AGHT+IGVv6laIPP4952ucmfTHF1E+SFRopLmcmDS6Rx2ZezDW8S4Atg1D1dfLb14h4JzZON8hgI1Vg==
+X-Received: by 2002:a05:622a:7295:b0:458:2607:d5a7 with SMTP id d75a77b69052e-4582607d83fmr65660641cf.43.1725819681975;
+        Sun, 08 Sep 2024 11:21:21 -0700 (PDT)
+Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45830ec2d72sm3059221cf.41.2024.09.08.11.21.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 11:12:38 -0700 (PDT)
-Date: Sun, 8 Sep 2024 21:12:37 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Johan Hovold <johan@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: qcom: edp: Add runtime PM support
-Message-ID: <Zt3pFdndtTw/nbgs@linaro.org>
-References: <20240907-phy-qcom-edp-enable-runtime-pm-v1-1-8b9ee4210e1e@linaro.org>
- <CAA8EJpqw6pB4d_zQyYdhq9_prLnh+mLMdRSzJ+5EvAjT9wi86A@mail.gmail.com>
+        Sun, 08 Sep 2024 11:21:20 -0700 (PDT)
+Date: Sun, 8 Sep 2024 14:21:17 -0400
+From: Alex Lanzano <lanzano.alex@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ramona Gradinariu <ramona.bolboaca13@gmail.com>, Nuno Sa <nuno.sa@analog.com>, 
+	Jagath Jog J <jagathjog1996@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: imu: add bmi270 bindings
+Message-ID: <2jvzk37rx3lx47j4p5sjl4xgzcsinog5mc5ew2nseos2fuqnhm@mj7wzzgwtdpq>
+References: <20240906165322.1745328-1-lanzano.alex@gmail.com>
+ <20240906165322.1745328-2-lanzano.alex@gmail.com>
+ <20240907164743.1cb7070e@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,277 +86,127 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAA8EJpqw6pB4d_zQyYdhq9_prLnh+mLMdRSzJ+5EvAjT9wi86A@mail.gmail.com>
+In-Reply-To: <20240907164743.1cb7070e@jic23-huawei>
 
-On 24-09-07 20:52:14, Dmitry Baryshkov wrote:
-> On Sat, 7 Sept 2024 at 18:25, Abel Vesa <abel.vesa@linaro.org> wrote:
-> >
-> > Enable runtime PM support by adding proper ops which will handle the
-> > clocks and regulators. These resources will now be handled on power_on and
-> > power_off instead of init and exit PHY ops. Also enable these resources on
-> > probe in order to balance out the disabling that is happening right after.
-> > Prevent runtime PM from being ON by default as well.
-> >
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+On Sat, Sep 07, 2024 at 04:47:43PM GMT, Jonathan Cameron wrote:
+> On Fri,  6 Sep 2024 12:52:50 -0400
+> Alex Lanzano <lanzano.alex@gmail.com> wrote:
+> 
+> > Add device tree bindings for the bmi270 IMU
+> > 
+> > Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+> Hi Alex 
+> 
+> One totally trivial thing inline. If nothing comes up in
+> driver I'll tidy this up whilst applying
+> 
+> Jonathan
+> 
+
+Will apply in v3!
+
 > > ---
-> >  drivers/phy/qualcomm/phy-qcom-edp.c | 105 ++++++++++++++++++++++++++----------
-> >  1 file changed, 77 insertions(+), 28 deletions(-)
-> >
-> > diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/phy-qcom-edp.c
-> > index da2b32fb5b45..3affeef261bf 100644
-> > --- a/drivers/phy/qualcomm/phy-qcom-edp.c
-> > +++ b/drivers/phy/qualcomm/phy-qcom-edp.c
-> > @@ -192,14 +192,6 @@ static int qcom_edp_phy_init(struct phy *phy)
-> >         int ret;
-> >         u8 cfg8;
-> >
-> > -       ret = regulator_bulk_enable(ARRAY_SIZE(edp->supplies), edp->supplies);
-> > -       if (ret)
-> > -               return ret;
-> > -
-> > -       ret = clk_bulk_prepare_enable(ARRAY_SIZE(edp->clks), edp->clks);
-> > -       if (ret)
-> > -               goto out_disable_supplies;
-> > -
-> >         writel(DP_PHY_PD_CTL_PWRDN | DP_PHY_PD_CTL_AUX_PWRDN |
-> >                DP_PHY_PD_CTL_PLL_PWRDN | DP_PHY_PD_CTL_DP_CLAMP_EN,
-> >                edp->edp + DP_PHY_PD_CTL);
-> > @@ -246,11 +238,6 @@ static int qcom_edp_phy_init(struct phy *phy)
-> >         msleep(20);
-> >
-> >         return 0;
-> > -
-> > -out_disable_supplies:
-> > -       regulator_bulk_disable(ARRAY_SIZE(edp->supplies), edp->supplies);
-> > -
-> > -       return ret;
-> >  }
-> >
-> >  static int qcom_edp_set_voltages(struct qcom_edp *edp, const struct phy_configure_opts_dp *dp_opts)
-> > @@ -721,6 +708,8 @@ static int qcom_edp_phy_power_on(struct phy *phy)
-> >         u32 val;
-> >         u8 cfg1;
-> >
-> > +       pm_runtime_get_sync(&phy->dev);
+> >  .../bindings/iio/imu/bosch,bmi270.yaml        | 77 +++++++++++++++++++
+> >  1 file changed, 77 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/iio/imu/bosch,bmi270.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/imu/bosch,bmi270.yaml b/Documentation/devicetree/bindings/iio/imu/bosch,bmi270.yaml
+> > new file mode 100644
+> > index 000000000000..7de35b9bfa2e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/imu/bosch,bmi270.yaml
+> > @@ -0,0 +1,77 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/iio/imu/bosch,bmi270.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > > +
-> >         ret = edp->cfg->ver_ops->com_power_on(edp);
-> >         if (ret)
-> >                 return ret;
-> > @@ -841,6 +830,8 @@ static int qcom_edp_phy_power_off(struct phy *phy)
-> >
-> >         writel(DP_PHY_PD_CTL_PSR_PWRDN, edp->edp + DP_PHY_PD_CTL);
-> >
-> > +       pm_runtime_put(&phy->dev);
+> > +title: Bosch BMI270 6-Axis IMU
 > > +
-> >         return 0;
-> >  }
-> >
-> > @@ -856,23 +847,12 @@ static int qcom_edp_phy_set_mode(struct phy *phy, enum phy_mode mode, int submod
-> >         return 0;
-> >  }
-> >
-> > -static int qcom_edp_phy_exit(struct phy *phy)
-> > -{
-> > -       struct qcom_edp *edp = phy_get_drvdata(phy);
-> > -
-> > -       clk_bulk_disable_unprepare(ARRAY_SIZE(edp->clks), edp->clks);
-> > -       regulator_bulk_disable(ARRAY_SIZE(edp->supplies), edp->supplies);
-> > -
-> > -       return 0;
-> > -}
-> > -
-> >  static const struct phy_ops qcom_edp_ops = {
-> >         .init           = qcom_edp_phy_init,
-> >         .configure      = qcom_edp_phy_configure,
-> >         .power_on       = qcom_edp_phy_power_on,
-> >         .power_off      = qcom_edp_phy_power_off,
-> >         .set_mode       = qcom_edp_phy_set_mode,
-> > -       .exit           = qcom_edp_phy_exit,
-> >         .owner          = THIS_MODULE,
-> >  };
-> >
-> > @@ -1036,6 +1016,32 @@ static int qcom_edp_clks_register(struct qcom_edp *edp, struct device_node *np)
-> >         return devm_of_clk_add_hw_provider(edp->dev, of_clk_hw_onecell_get, data);
-> >  }
-> >
-> > +static int __maybe_unused qcom_edp_runtime_suspend(struct device *dev)
-> > +{
-> > +       struct qcom_edp *edp = dev_get_drvdata(dev);
+> > +maintainers:
+> > +  - Alex Lanzano <lanzano.alex@gmail.com>
 > > +
-> > +       dev_err(dev, "Suspending DP phy\n");
+> > +description: |
+> > +  BMI270 is a 6-axis inertial measurement unit that can measure acceleration and
+> > +  angular velocity. The sensor also supports configurable interrupt events such
+> > +  as motion, step counter, and wrist motion gestures. The sensor can communicate
+> > +  I2C or SPI.
+> > +  https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi270/
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: bosch,bmi270
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  vdd-supply: true
+> > +  vddio-supply: true
+> > +
+> > +  interrupts:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +
+> > +  interrupt-names:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +    items:
+> > +      enum:
+> > +        - INT1
+> > +        - INT2
+> > +
+> > +  drive-open-drain:
+> > +    description:
+> > +      set if the specified interrupt pin should be configured as
 > 
-> Debug leftovers?
-
-Well, I should've made those dev_vdbg instead. 
-
+> pins
 > 
-> > +
-> > +       clk_bulk_disable_unprepare(ARRAY_SIZE(edp->clks), edp->clks);
-> > +       regulator_bulk_disable(ARRAY_SIZE(edp->supplies), edp->supplies);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int __maybe_unused qcom_edp_runtime_resume(struct device *dev)
-> > +{
-> > +       struct qcom_edp *edp = dev_get_drvdata(dev);
-> > +       int ret;
-> > +
-> > +       dev_err(dev, "Resuming DP phy\n");
-> 
-> Debug leftovers?
+> Even if they are configurable separately we've previously argued that
+> it is very unlikely a board designer would want one open drain
+> and the other push-pull.  So simply making the description plural
+> should be enough.
 > 
 
-See above.
+Will Fix in v3!
 
+> > +      open drain. If not set, defaults to push-pull.
 > > +
-> > +       ret = regulator_bulk_enable(ARRAY_SIZE(edp->supplies), edp->supplies);
-> > +       if (ret)
-> > +               return ret;
+> > +  mount-matrix:
+> > +    description:
+> > +      an optional 3x3 mounting rotation matrix.
 > > +
-> > +       return clk_bulk_prepare_enable(ARRAY_SIZE(edp->clks), edp->clks);
-> 
-> Missing error handling
-> 
-
-Yep, will fix.
-
-> > +}
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - vdd-supply
+> > +  - vddio-supply
 > > +
-> >  static int qcom_edp_phy_probe(struct platform_device *pdev)
-> >  {
-> >         struct phy_provider *phy_provider;
-> > @@ -1091,20 +1097,57 @@ static int qcom_edp_phy_probe(struct platform_device *pdev)
-> >                 return ret;
-> >         }
-> >
-> > -       ret = qcom_edp_clks_register(edp, pdev->dev.of_node);
-> > -       if (ret)
-> > +       ret = regulator_bulk_enable(ARRAY_SIZE(edp->supplies), edp->supplies);
-> > +       if (ret) {
-> > +               dev_err(dev, "failed to enable regulators, err=%d\n", ret);
-> >                 return ret;
-> > +       }
+> > +allOf:
+> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
 > > +
-> > +       ret = clk_bulk_prepare_enable(ARRAY_SIZE(edp->clks), edp->clks);
-> > +       if (ret) {
-> > +               dev_err(dev, "failed to enable clocks, err=%d\n", ret);
-> > +               goto err_disable_regulators;
-> > +       }
-> 
-> Please use pm_runtime_get_sync() instead().
-> 
-
-So let me explain how I thought this through first. This DP PHY is
-usually used on platforms where display is left enabled by the
-bootloader. So doing pm_runtime_get_sync would mean we increment the
-device's usage counter while it is known to be already enabled, even if
-genpd doesn't consider it so. So doing set_active instead would be more
-accurate. Now, for the regulator and clock generic frameworks, that
-seemed OK to do at the time. Now I can see that the same argument can be
-made for those as well. So I'm thinking maybe I just drop the enable
-here and don't do _get_sync, but rather rely on the resume being done
-on power on instead. 
-
+> > +unevaluatedProperties: false
 > > +
-> > +       ret = qcom_edp_clks_register(edp, pdev->dev.of_node);
-> > +       if (ret) {
-> > +               dev_err(dev, "failed to register PHY clocks, err=%d\n", ret);
-> > +               goto err_disable_clocks;
-> > +       }
-> >
-> >         edp->phy = devm_phy_create(dev, pdev->dev.of_node, &qcom_edp_ops);
-> >         if (IS_ERR(edp->phy)) {
-> >                 dev_err(dev, "failed to register phy\n");
-> > -               return PTR_ERR(edp->phy);
-> > +               ret = PTR_ERR(edp->phy);
-> > +               goto err_disable_clocks;
-> >         }
-> >
-> > +       pm_runtime_set_active(dev);
-> > +       ret = devm_pm_runtime_enable(dev);
-> 
-> If this handles earlier, you don't need to call pm_runtime_set_active() manually
-> 
-
-Enable and set_active are two separate things. Maybe I'm
-misunderstanding your comment.
-
-> > +       if (ret)
-> > +               goto err_disable_clocks;
-> > +       /*
-> > +        * Prevent runtime pm from being ON by default. Users can enable
-> > +        * it using power/control in sysfs.
-> 
-> why?
-> 
-
-OK, so this is a tricky one. If there is any platform out there that
-makes use of this PHY but the resources are not properly described, we
-might get in trouble. So I was thinking that maybe we don't risk that
-but let the user enable it via sysfs. That way, this patch will not
-break by default such platforms.
-
-Also, this would be in line with the rest of the other Qcom PHYs.
-
-> > +        */
-> > +       pm_runtime_forbid(dev);
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +    i2c {
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
 > > +
-> > +       dev_set_drvdata(dev, edp);
-> >         phy_set_drvdata(edp->phy, edp);
-> >
-> >         phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> > -       return PTR_ERR_OR_ZERO(phy_provider);
-> > +       if (IS_ERR(phy_provider))
-> > +               goto err_disable_clocks;
-> > +
-> > +       return 0;
-> > +
-> > +err_disable_clocks:
-> > +       clk_bulk_disable_unprepare(ARRAY_SIZE(edp->clks), edp->clks);
-> > +
-> > +err_disable_regulators:
-> > +       regulator_bulk_disable(ARRAY_SIZE(edp->supplies), edp->supplies);
-> 
-> Ideally this should be handled by pm_runtime. Or at least by pm_runtime_put().
+> > +        imu@68 {
+> > +            compatible = "bosch,bmi270";
+> > +            reg = <0x68>;
+> > +            vdd-supply = <&vdd>;
+> > +            vddio-supply = <&vddio>;
+> > +            interrupt-parent = <&gpio1>;
+> > +            interrupts = <16 IRQ_TYPE_EDGE_RISING>;
+> > +            interrupt-names = "INT1";
+> > +        };
+> > +    };
 
-Will drop entirely. Again, lets not enable anything on probe for now.
+Thanks so much for the review!
 
-> 
-> > +
-> > +       return ret;
-> >  }
-> >
-> >  static const struct of_device_id qcom_edp_phy_match_table[] = {
-> > @@ -1117,10 +1160,16 @@ static const struct of_device_id qcom_edp_phy_match_table[] = {
-> >  };
-> >  MODULE_DEVICE_TABLE(of, qcom_edp_phy_match_table);
-> >
-> > +static const struct dev_pm_ops qcom_edp_pm_ops = {
-> > +       SET_RUNTIME_PM_OPS(qcom_edp_runtime_suspend,
-> > +                          qcom_edp_runtime_resume, NULL)
-> > +};
-> > +
-> >  static struct platform_driver qcom_edp_phy_driver = {
-> >         .probe          = qcom_edp_phy_probe,
-> >         .driver = {
-> >                 .name   = "qcom-edp-phy",
-> > +               .pm     = &qcom_edp_pm_ops,
-> >                 .of_match_table = qcom_edp_phy_match_table,
-> >         },
-> >  };
-> >
-> > ---
-> > base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
-> > change-id: 20240907-phy-qcom-edp-enable-runtime-pm-6fad07af8947
-> >
-> > Best regards,
-> > --
-> > Abel Vesa <abel.vesa@linaro.org>
-> >
-> 
-> 
-> -- 
-> With best wishes
-> Dmitry
+Best regards,
+Alex
 
