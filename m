@@ -1,176 +1,340 @@
-Return-Path: <linux-kernel+bounces-320143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1835E9706A4
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:39:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67EA99706A7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48A31B21656
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:39:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A10F5B21665
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FF91509B0;
-	Sun,  8 Sep 2024 10:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997CC1509B0;
+	Sun,  8 Sep 2024 10:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ham38r2j"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="Te4cUR0Z"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DAE1DDC9;
-	Sun,  8 Sep 2024 10:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A2514E2EF;
+	Sun,  8 Sep 2024 10:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725791964; cv=none; b=nlwOFQgn/R/TxWouwND9S9YdwG7PZICTuMoEL+iljvaMXrJuYHUB8V/qAfqBlikEz5jA2B1Kbgr4v3agkkYZ6tAg7VvKW4NRJIfBmpxApA92sNdQ1wDIIKAWRW/f742Oog+mTpk49/PSF7PSm8jqn3n2K7hforq/lQmK9+11W0c=
+	t=1725792082; cv=none; b=T1IdRY/J3ddmn/lv7LjhBi9geQxVVU1rcuul5Z+qbM9qWlRtJMclWXbX3huwgylPFHrgKZbIHT6RZjnKQojtt3vFZcragCIhQT6zHQkgvNBL3wIed640tAmh/dkZHCb6uxx0wVT1OwsiMfYvGpwWAyJcVEyzI2YC8Kqi7iB/DDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725791964; c=relaxed/simple;
-	bh=WIpuUnXJlsMs+zuwt8sFWY0A+PiiPlSaPMHytO9GMuw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hSeGPkG5f1/2t+WNP2UTAYDy2AMZMBr7aVbvGtfgZXhR99s9fbPHapt2e12rTXTIHBPjv7lZl2ScJM6G+S2h/6q6u6dRE4ImEb4DIMHuoK2yWx2BbNh9EgX7px8dNq++g+eKdiy9PL/cL+N5adJRXZbE84ckU4dvugccuIXZmz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ham38r2j; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f7528f4658so21759331fa.3;
-        Sun, 08 Sep 2024 03:39:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725791961; x=1726396761; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QBlzT4DhXGVmK0DDC40shs2P1XOGabvgOZdRTDdJKzA=;
-        b=ham38r2joHdgz5KhAYwEb7f39eqXtWecLZ+CbHPhx5fjQnGMSrYOXB/0Hv4jilepn9
-         TNMkctruQ4ZxJSafCJNR8KTGlutc+rQfR/5hxQhsJJqKN1wXTRq7VxPNIMM1AjsK8pA1
-         QNpUc6uVstIismfEUDXeQHUziSFUxr/Lo1W03OLf8Y2RbVIluXJyTNN5Nvlnk3UDRFwZ
-         pSz1OaV8Pscz2K6DtNPpFfiwwBrbWzFjhqVwQIOBy/5dFTpQ7JHL3uJu1sj7eUEQPvhY
-         IGK3a4O/LGIGPW94BZhNiFAboBq6ALRK25vF3KmKwcSzO+B4LU9l2DPBmUejhHs+i/e3
-         24sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725791961; x=1726396761;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QBlzT4DhXGVmK0DDC40shs2P1XOGabvgOZdRTDdJKzA=;
-        b=ICFpHY33N/34G8kU4QqFFP0Z52EQSBt+wyFROoGHWiAjqVb2xuMzpfI+8TccGbEpom
-         C9atUra7IF8cmuZx5boo1XSPfCFPJAQBz4OPpcBvIu2NFRdfXvbL8pTt5jBcot85kQXE
-         0IekzcVxXU2djFazDWhCcGUHophXBA/65abrDfVwHKy3Wr+82B1uXTvDh7iZ5GpN1Eal
-         dlbbxbqjVuy8JH+NSU2Qpk6Mry1eyeWbdl+51CTCBqRwiPr0ArqJiOi09nLJqI9lzOUM
-         PAxJv5BXi0c/fesXDK+IAMu5GHNDxe/WhCbqgcZzt9H5PjrMXp+GzOD2XgmY++ReOu/x
-         BIXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAnB8KOPyGE8Qj/tNfAqZnGTlpf3EQBeJRlVuhD3LV90nCce5YWxVmgi3StzzQGbgVGk2mvZ7XSUg=@vger.kernel.org, AJvYcCVH+5mHbX5PoatZ92I04xrt+2a8wmMJl5ZgeGo4c7dgUrgLqKX6KbbwNyP44MUFGCwU8CldBmNcaYgC5Oqv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXRzr5Zu3nu8GB3nRSyr6k+CNJcNYsgMoAYw6H5QZBI43NH6Nu
-	YCXN5JQTsOS6634ECPL6yQrmPgmxo2nJ7DNAMrOIzk9HT8CiCTP8D647126ZaL3FQncrzTOl9K8
-	/461YMMjx1OjYwd7ihcZc4++/wi4=
-X-Google-Smtp-Source: AGHT+IF8YSDnTUVBg5gTulU8iOWZhp8+Web6nIHMCIZHXU6A4YxtGVVmAIDqAaz7dyJzivALraGk1Qt4N0/Zujzb45E=
-X-Received: by 2002:a05:651c:2127:b0:2f6:43fd:f870 with SMTP id
- 38308e7fff4ca-2f751f69865mr54977021fa.31.1725791959684; Sun, 08 Sep 2024
- 03:39:19 -0700 (PDT)
+	s=arc-20240116; t=1725792082; c=relaxed/simple;
+	bh=SIx70ERL/JQKB7CyDIc/XfZXKI0K0q6I9jq3FYhYevY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s9F1l+zoht/Za1lVil5rK1n73u4QGN7iGhfZxNLTTelJYHn4V/r4i9VNxHo5CZnew5eZA36YrwYwsV/HloA5ajxSzvPzHc8SbpWUwCqDBTzyR4VG3f6sjGaxEQsWF8yEkjzMJ3h6QPsfOflDr72lgWg7gZerWzfnmhV2OWDSog4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=Te4cUR0Z; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1725792068; x=1726396868; i=wahrenst@gmx.net;
+	bh=SIx70ERL/JQKB7CyDIc/XfZXKI0K0q6I9jq3FYhYevY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Te4cUR0Z2jBibzIF4oLtyfj1s46+j/gY/5jUlTgnoQKhzjt0rCOMgo/34sKZGDA+
+	 IJ9NsWVlWpoOIqt0+aD8ODnHdbmyXy4TIAUj16bPBj3aZig6ipX5UbxFezfxgDMEA
+	 jsaQbBO3JDHmy1QTu9TRYggRzRK6mfjYOyWuAo7Lb1XhDDJv1oXn3dPNBgNpZKaMa
+	 jZvgQ8+2kolMQcbsLpGRxGeqa1A6aYFMiPItUTs5gNWzfMwvgJp1tZqMiNP8cvlRK
+	 cJgbw1wxXL/8wJ3Xhi8ynkA92DwIK2PiPjFN2SCp4W74Agt7xlf4PrHmLLFfcovFZ
+	 UKdF7sMcBIGXUK+M6w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.128] ([37.4.248.43]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M3DNt-1sjeqv0F3N-003eOW; Sun, 08
+ Sep 2024 12:41:08 +0200
+Message-ID: <c7e302b6-fc62-4754-ab1d-7c2771cccf60@gmx.net>
+Date: Sun, 8 Sep 2024 12:41:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830034640.7049-1-kfting@nuvoton.com> <20240830034640.7049-3-kfting@nuvoton.com>
- <cfdfldh5tuhb4r5pdpgolcr2roeewsobedet2uvmpbnqlw5yh4@c4a2szsbs2r2>
-In-Reply-To: <cfdfldh5tuhb4r5pdpgolcr2roeewsobedet2uvmpbnqlw5yh4@c4a2szsbs2r2>
-From: Tali Perry <tali.perry1@gmail.com>
-Date: Sun, 8 Sep 2024 13:39:08 +0300
-Message-ID: <CAHb3i=sHzF8p572SBMvfCVQmo+7VcYbOYuqUU-H2sEiTkfWD7A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] i2c: npcm: correct the read/write operation procedure
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Tyrone Ting <warp5tw@gmail.com>, avifishman70@gmail.com, tmaimon77@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
-	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/7] staging: vchiq_core: Factor out bulk transfer for
+ blocking mode
+To: Umang Jain <umang.jain@ideasonboard.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Phil Elwell <phil@raspberrypi.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20240906072506.174026-1-umang.jain@ideasonboard.com>
+ <20240906072506.174026-4-umang.jain@ideasonboard.com>
+ <5e3f9758-e392-44af-83c4-e60714046708@gmx.net>
+ <2f5af934-de4a-4548-ac59-f23c3ae0f54e@ideasonboard.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <2f5af934-de4a-4548-ac59-f23c3ae0f54e@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:l5ag+yar9VbvCZJx2KrkUY3NgHVgzEl93RkyEb+ysX3jtlDIj7z
+ b1RzHCv5QozqmvcXMOF2omRhk51bOEKBbd/yXxJ61yENDie63R1Q2a/fEaCgdAx7SeVaa4K
+ pUvQe/SdiabObPCPMAQAwelfRD/Mo3A2ki4VBPf5Hx9jUDsyz5pgMmKPny7AHD8HBXuTk4c
+ G7OqShMMNN7E0SK15fq2w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:mX0rXUukPB4=;8hQ5wngErmNoi15rt/q9XoYVRMA
+ aCAkJJ98JTgaaDPnwqAB9RXcFEiKd7rPJVVHnDQFyOM83EYjT3Udx2YerN9U5ZIzew30OuF1R
+ QB9CBu7lMg6Sg8jxkIM8q0s4yMvMHWAQ3DC16vcdf3HRHT+ofPEy/42QIb1OQJHAzJ1ewFfKl
+ oxI9RIM59uDjFAXrvAXCeybMI+6LezCX7lXF8RWjfUBC4pYbZw/E5zcCNILTkc30vMiwin2dn
+ g2RJuoSyYCALvy2vnLLce6gBjg8nhOR1pdBqU7nJ2bgDukaQUyMuUjJ+jVRDw3380gLuGFHTn
+ etvnL+s3/lkU5e5RQAb4p3UQOe6HFFnc33VTW5Nf3G0+/HQuB9bmDyC79/uYouhToXsD6chss
+ 6rjWoFmnw4sI9fTd6MxuMaOqJfii2+Yg91f7T72orOxVw6oMEqcdVFEWx9gAx9qE62vX8p5RT
+ D15PJrJ5rH9wb1ueyXKbtOd/EtEEfTe/TwYqRdp2sSz1qVUkZ4um4KQirdQ0wT3IMeM2gIeDg
+ DA5OCrOKGY9DOZAHQ373TfjE9oPIlJNXtC995IpigtwOmCOq/RRLzxe0pFHc0CpcNO0WSW5D4
+ jEccZXPO2XpGjZ1KXWLdV4NCvBB5VTPGjgGANO6Ji9tK9DYhfgyI9fOBOJtz9UNW+n2VJ7NeI
+ 2qG1QAvRbWJOpp8kAXkmm/PeOrd9vMYkz69xRLvJSN03gWe/KLwZjGP8pAOqztlJhR8aX1rUN
+ yUsAdsNruFU8ZkVVoAqY6gIm4KbWrDbzIKkikEgtOpx7a3Sx4POOgkwO2MZCMHPyHWlcsrEwr
+ /yiMbIN2xGVjCidpokTXNaqw==
 
-Hi Andi,
+Hi Umang,
 
-On Fri, Sep 6, 2024 at 12:29=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org> =
-wrote:
+Am 07.09.24 um 20:26 schrieb Umang Jain:
+> Hi Stefan
 >
-> Hi Tyronne,
+> On 07/09/24 5:19 pm, Stefan Wahren wrote:
+>> Hi Umang,
+>>
+>> Am 06.09.24 um 09:25 schrieb Umang Jain:
+>>> Factor out bulk transfer for blocking mode into a separate dedicated
+>>> function bulk_xfer_blocking_interruptible(). It is suffixed by
+>>> "_interruptible" to denote that it can be interrupted and -EAGAIN
+>>> can be returned. It would be up to the users of the function to retry
+>>> the call in those cases.
+>>>
+>>> Adjust the calls to vchiq-dev.c ioctl interface and vchiq_arm.c
+>>> for blocking bulk transfers.
+>>>
+>>> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+>> i applied this series on top of recent linux-next and the vchiq ping
+>> test on Raspberry Pi 3 B Plus (multi_v7_defconfig) crashes or hanges
+>> strangly.
 >
-> On Fri, Aug 30, 2024 at 11:46:35AM GMT, Tyrone Ting wrote:
-> > Originally the driver uses the XMIT bit in SMBnST register to decide
-> > the upcoming i2c transaction. If XMIT bit is 1, then it will be an i2c
-> > write operation. If it's 0, then a read operation will be executed.
-> >
-> > After checking the datasheet, the XMIT bit is valid when the i2c module
-> > is acting in a slave role. Use the software status to control the i2c
-> > transaction flow instead when the i2c module is acting in a master role=
-.
-> >
-> > Fixes: 48acf8292280 ("i2c: Remove redundant comparison in npcm_i2c_reg_=
-slave")
+> This is really annoying. The behavior is non-deterministic
 >
-> Fixes needs to be used if you are fixing a bug (crash,
-> device malfunction, etc.). If you want to use it, please describe
-> the bug you are fixing. Otherwise, please, remove it.
+> I tested this repeatedly and I see the hang on my 3rd ping test.
+> The first 2 ping tests completed successfully.
 >
-> > Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
-> > ---
-> >  drivers/i2c/busses/i2c-npcm7xx.c | 7 ++-----
-> >  1 file changed, 2 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-=
-npcm7xx.c
-> > index bbcb4d6668ce..2b76dbfba438 100644
-> > --- a/drivers/i2c/busses/i2c-npcm7xx.c
-> > +++ b/drivers/i2c/busses/i2c-npcm7xx.c
-> > @@ -1628,13 +1628,10 @@ static void npcm_i2c_irq_handle_sda(struct npcm=
-_i2c *bus, u8 i2cst)
-> >                       npcm_i2c_wr_byte(bus, bus->dest_addr | BIT(0));
-> >       /* SDA interrupt, after start\restart */
-> >       } else {
-> > -             if (NPCM_I2CST_XMIT & i2cst) {
-> > -                     bus->operation =3D I2C_WRITE_OPER;
-> > +             if (bus->operation =3D=3D I2C_WRITE_OPER)
-> >                       npcm_i2c_irq_master_handler_write(bus);
-> > -             } else {
-> > -                     bus->operation =3D I2C_READ_OPER;
-> > +             else if (bus->operation =3D=3D I2C_READ_OPER)
-> >                       npcm_i2c_irq_master_handler_read(bus);
+> Here is the output for all 3 tries:
 >
-> mmmhhh... you are changing the logic here and you are not
-> describing the logic change in the commit log.
+> https://paste.debian.net/plain/1328739
 >
-> Without looking at the details, if this is a state machine you
-> are breaking it.
+> I'll take a look and fix it in next version.
+I was too imprecise with my information.
+
+Just try "vchiq_test -p" which makes a big difference in reproducibility.
+
+Best regards
 >
-> Can anyone from the ARM/NUVOTON NPCM supporters and reviewers
-> take a look at this patch?
+>>
+>> I bisected the issue to this patch, but it's possible the root cause
+>> might be introduced before.
+>>
+>> But i'm pretty sure that the series introduced the regression.
+>>
+>> Sorry, i don't have the time analyse this issue deeper.
+>>
+>> Best regards
+>>> ---
+>>> =C2=A0 .../interface/vchiq_arm/vchiq_arm.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 5 +--
+>>> =C2=A0 .../interface/vchiq_arm/vchiq_core.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 42
+>>> ++++++++++++++++---
+>>> =C2=A0 .../interface/vchiq_arm/vchiq_core.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 5 +++
+>>> =C2=A0 .../interface/vchiq_arm/vchiq_dev.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 6 +++
+>>> =C2=A0 4 files changed, 49 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git
+>>> a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+>>> b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+>>> index c4d97dbf6ba8..688c9b1be868 100644
+>>> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+>>> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+>>> @@ -968,9 +968,8 @@ vchiq_blocking_bulk_transfer(struct
+>>> vchiq_instance *instance, unsigned int handl
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 return -ENOMEM;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>
+>>> -=C2=A0=C2=A0=C2=A0 ret =3D vchiq_bulk_transfer(instance, handle, data=
+, NULL, size,
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &waiter->bulk_waiter,
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 VCHIQ_BULK_MODE_BLOCKING, dir);
+>>> +=C2=A0=C2=A0=C2=A0 ret =3D vchiq_bulk_xfer_blocking_interruptible(ins=
+tance, handle,
+>>> data, NULL, size,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 &waiter->bulk_waiter, dir);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if ((ret !=3D -EAGAIN) || fatal_signal_=
+pending(current) ||
+>>> !waiter->bulk_waiter.bulk) {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct vchiq_bu=
+lk *bulk =3D waiter->bulk_waiter.bulk;
+>>>
+>>> diff --git
+>>> a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+>>> b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+>>> index f36044bab194..43f951fa4b89 100644
+>>> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+>>> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+>>> @@ -2985,6 +2985,42 @@ vchiq_remove_service(struct vchiq_instance
+>>> *instance, unsigned int handle)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return status;
+>>> =C2=A0 }
+>>>
+>>> +int
+>>> +vchiq_bulk_xfer_blocking_interruptible(struct vchiq_instance
+>>> *instance, unsigned int handle,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void *offs=
+et, void __user *uoffset, int size,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void __use=
+r *userdata, enum vchiq_bulk_dir dir)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 struct vchiq_service *service =3D
+>>> find_service_by_handle(instance, handle);
+>>> +=C2=A0=C2=A0=C2=A0 struct bulk_waiter *bulk_waiter;
+>>> +=C2=A0=C2=A0=C2=A0 enum vchiq_bulk_mode mode =3D VCHIQ_BULK_MODE_BLOC=
+KING;
+>>> +=C2=A0=C2=A0=C2=A0 int status =3D -EINVAL;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (!service)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (service->srvstate !=3D VCHIQ_SRVSTATE_OPEN)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto error_exit;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (!offset && !uoffset)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto error_exit;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (vchiq_check_service(service))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto error_exit;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 bulk_waiter =3D userdata;
+>>> +=C2=A0=C2=A0=C2=A0 init_completion(&bulk_waiter->event);
+>>> +=C2=A0=C2=A0=C2=A0 bulk_waiter->actual =3D 0;
+>>> +=C2=A0=C2=A0=C2=A0 bulk_waiter->bulk =3D NULL;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 status =3D vchiq_bulk_xfer_queue_msg_interruptible=
+(service,
+>>> offset, uoffset, size,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 userdata, mode, dir);
+>>> +
+>>> +error_exit:
+>>> +=C2=A0=C2=A0=C2=A0 vchiq_service_put(service);
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return status;
+>>> +}
+>>> +
+>>> =C2=A0 /*
+>>> =C2=A0=C2=A0 * This function may be called by kernel threads or user t=
+hreads.
+>>> =C2=A0=C2=A0 * User threads may receive -EAGAIN to indicate that a sig=
+nal has
+>>> been
+>>> @@ -3018,12 +3054,6 @@ int vchiq_bulk_transfer(struct vchiq_instance
+>>> *instance, unsigned int handle,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case VCHIQ_BULK_MODE_NOCALLBACK:
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case VCHIQ_BULK_MODE_CALLBACK:
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+>>> -=C2=A0=C2=A0=C2=A0 case VCHIQ_BULK_MODE_BLOCKING:
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bulk_waiter =3D userdata;
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 init_completion(&bulk_wait=
+er->event);
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bulk_waiter->actual =3D 0;
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bulk_waiter->bulk =3D NULL=
+;
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default:
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto error_exit=
+;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> diff --git
+>>> a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+>>> b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+>>> index 985d9ea3a06a..2dd89101c1c6 100644
+>>> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+>>> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+>>> @@ -474,6 +474,11 @@ extern int
+>>> =C2=A0 vchiq_bulk_xfer_waiting_interruptible(struct vchiq_instance
+>>> *instance,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsi=
+gned int handle, struct bulk_waiter
+>>> *userdata);
+>>>
+>>> +extern int
+>>> +vchiq_bulk_xfer_blocking_interruptible(struct vchiq_instance
+>>> *instance, unsigned int handle,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void *offs=
+et, void __user *uoffset, int size,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void __use=
+r *userdata, enum vchiq_bulk_dir
+>>> dir);
+>>> +
+>>> =C2=A0 extern int
+>>> =C2=A0 vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned i=
+nt
+>>> handle, void *offset,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 void __user *uoffset, int size, void *userdata, enum
+>>> vchiq_bulk_mode mode,
+>>> diff --git
+>>> a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+>>> b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+>>> index 550838d2863b..830633f2326b 100644
+>>> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+>>> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+>>> @@ -304,6 +304,12 @@ static int vchiq_irq_queue_bulk_tx_rx(struct
+>>> vchiq_instance *instance,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 userdata =3D &w=
+aiter->bulk_waiter;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 status =3D vchiq_bulk_xfer=
+_blocking_interruptible(instance,
+>>> args->handle,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NULL, args->data, args->size=
+,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 userdata, dir);
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto bulk_transfer_handled=
+;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else if (args->mode =3D=3D VCHIQ_BULK=
+_MODE_WAITING) {
+>>> mutex_lock(&instance->bulk_waiter_list_mutex);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 list_for_each_e=
+ntry(iter, &instance->bulk_waiter_list,
+>>
 >
 
-Indeed, the driver can use both the register bits or the state machine
-to determine the current state of the bus.
-In slave mode the XMIT bit can simply be used directly to set the state.
-XMIT bit can be used as indication to the current state of the state
-machine during slave operation.
-(meaning XMIT =3D 1 during writing and XMIT =3D 0 during reading).
-In master operation XMIT is valid only if there are no bus errors.
-For example: in a multi master where the same module is switching from
-master to slave at runtime, and there are collisions,
-the XMIT bit cannot be trusted.
-However the maser already "knows" what the bus state is, so this bit
-is not needed and the driver can just track
-what it is currently doing.
-
-
-
-
-> Thanks,
-> Andi
->
-> > -             }
-> >       }
-> >  }
-> >
-> > --
-> > 2.34.1
-> >
 
