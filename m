@@ -1,149 +1,164 @@
-Return-Path: <linux-kernel+bounces-320058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F80C9705BB
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:14:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3809705C3
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BC971F21825
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:14:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 727DE1F21D65
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F85D13049E;
-	Sun,  8 Sep 2024 08:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FD6130AC8;
+	Sun,  8 Sep 2024 08:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUdtfPnG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="o6vCzqqK"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D3D51C5A;
-	Sun,  8 Sep 2024 08:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B881D1CA81;
+	Sun,  8 Sep 2024 08:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725783281; cv=none; b=moMCR2BSFxz4LchO1Y58NH7IIgKfvbtk6NkWDxvcFrveFWpKKAemhgvS/0jPIoval0Zuuea/V0616PlmDK/wJP6b0Bq7KgK7W+mMBKgvBjU9TGr8v4NS29IrYIQjCk4yA//DaVVnzAJAGi/e3YMfS3i/8RSvRvOAN+easS7NLuc=
+	t=1725783716; cv=none; b=TbJRIoW+Xyc4Q7IZF0Oaq/bYk2dpy5ShUV5a6J/APgqNKMxW4DjLhpKM/ac8RcOxuiu3BJw6eQa/Dnt7xrEKOLW/CyyAvPLqASMDQ0CBnWxdse4U/Fzx1bR7Go9rjhE09OGfQ19txvsu9glEKfNBy/o2AyPhcdUIv8aQRofkaH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725783281; c=relaxed/simple;
-	bh=cgiJhlr4nnR/uILZjD9whNKFrbDvLlZZ6dEmFKExB/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hiWAnDohBxB6slDBej/L0iIfYUADJ9DEW4PksQGRGNpDPOazmb6Q4c8qwDwCGno3x0hkIjqc+9Q6Eh0ZaNozFBKN66s5JRzE1dqmmprCPiiCne/oC5Hl/wSb4yXuB0iV62Lxf3+3C5mdrfqTpmhSpRDsjFG4N01mZuPjj2IjVcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUdtfPnG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BE45C4CEC3;
-	Sun,  8 Sep 2024 08:14:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725783281;
-	bh=cgiJhlr4nnR/uILZjD9whNKFrbDvLlZZ6dEmFKExB/Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nUdtfPnGu6eTeN6unjA6pZxdWG/XS9XZFUQrb7gEbB3broTXlo6bDA/15QWSthRnk
-	 XH/+22uS6otXO9wBz+DCq+HqW09kyO7PYKcGiWCGv0nVqPSW+RCSVq58IHBNqD58H8
-	 VOKuEN55UGhxEmrghl7kpeoCNZRE83dtiVfExkrItThBpi4teZOabqcTsjDGw7XwvW
-	 +IfUMlo5YaC7UdDidVlQCGMSjd8zOH7IxUQNkVtofyzeoh1RdMqzrGUpxayFK7tAqp
-	 yg3aLD7C+tPOw2XAAzFcDI1cbIWqXW3/svnxllISQqnzZnjcIItNhThZaviF0W46GX
-	 Wat38rKxm16ZQ==
-Message-ID: <917ac8d8-a483-422c-a408-cdd44793e910@kernel.org>
-Date: Sun, 8 Sep 2024 10:14:33 +0200
+	s=arc-20240116; t=1725783716; c=relaxed/simple;
+	bh=XpDvroTCD7M7t0/pWIpHFxvlLBovbtfrCd2SaWdEZAw=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=nkaFHJZtvTbRF0FdsqAEokhRV1sT5vYYzX0x6+J4XVjyT7slDUlkMO9bDEtYaTPIppR825upDCJlAHXFgiGFT585nSBqpKy0JINyViBZsEKFrq53z1DiePLd94JwpO7Uzic8mYJO/VKx8QO5+IY79oLx5JqYgM8kcXMahgwlKk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=o6vCzqqK; arc=none smtp.client-ip=43.163.128.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725783403; bh=MTFiqidyfyd1lVibjtfJKQcnAojxFXUIWUWS/TMg16E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=o6vCzqqKVefhtrB5XfajCRxTTnU7LXg/56V15FCns2gma/JXGWcnYWruhZ0V222kW
+	 IQTsJM35fHPZkBulAktOsgyUju/2Io717S7NL6VkzAuPkIcCdAHi4YBLjOLORoqiwA
+	 8UaNF9KL3F6npDoNlHeaok14hGryZJF5cYvq8tZU=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id 4281F460; Sun, 08 Sep 2024 16:16:40 +0800
+X-QQ-mid: xmsmtpt1725783400th6vr957d
+Message-ID: <tencent_6C71E6C09363C370897103ADC45ED7743705@qq.com>
+X-QQ-XMAILINFO: MidKUt01ypo8g6gIhpBCHgnOUZDnCKXQPLjtbtXrhP+H1yQ6QxSBWoSbZjJdVJ
+	 8BXGuTlj2QxKrm1sw/46XFhThkFbWP4ALD9ybnFBnauzOnq3IDaw8t387xH1JIDPh8W0a9y2Es2U
+	 g2fvOukDmtRwvBhByjLg+MAu3WR4phqNQcqCXhsPmWsGgzFUgzSzNgIYYvzV78nEX3/uYKKs20pM
+	 i5qce6mM9fniF8gZZHU2GSgdPYIoqsmXjkXzn9C5Q4rvWc6U0RIos2UNInOmH2/ecXsEqFuArcOs
+	 /Ofasx/xyUvOmkwqElUMtvd6mtDcSNDBPXtWA4H5T1juacHXN/09WALevnCllfbsMJCPXUzuJVB1
+	 CHEz4NRLAmCKtWunep9ddy7QYAtNq+Y3RLhomQq/ERSCPSgSsufaExiQogYJns4RCCc4DWcS2BL5
+	 Ad/oG9MOyG78wN+NdPW6ViX7A31iig+eU0UV5aF6AjoJ6ItEnViAjH+ZWbo8vdHzGj3xjAj3bAs3
+	 G8aiV/cc7CFVLkprjq/L1vSCGh+t/JyyR6hpngq40FB/btbtFb1pKGDq2c2ku5r5GKw46KqZvwp+
+	 hSrd0O3gRS2Ebt7mys60UEN1bey0fP+rgWV79+BWzx2Pmfu/ukxrTWxiWI3845xPNDo3i0EoyLoi
+	 qiPHQeelNTygab6aSLOsu322/mcttQLYfYtN5f61988uAnwnpiTRxTW0Zx9srdUu2bhJPycdimOf
+	 e4jOjIaYV7vde+O5O9jBx+ZNJFrpAy8qm6BTDzCbhEBbwMcMToXLo9zdwzqgH/q/55MBu0E1s2PM
+	 hZp+TutfpcPewQoojCjD3PNLhCz+jsQnj0eym9Z642iXADI9magQ8bWMe2tK0QjvxphnDvNs7+l+
+	 ekPRSBNl3GXOJpr6AUkaWNcKChfqnI6TBwz6Ttnzsx/H9s8cZAwnUdnUJFlFN8dLqYPOTNNisXNd
+	 ivs3beLwkDQ7P4ahLRVmtDJ7lk4eDG8CV39R6FeQCCPahZ3c16O+yA+cQjLIvPZ55ykhPZ1DK5Sb
+	 a6E8EPZDtIKtdEMyYkqnHmsbgcJ7c=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: gregkh@linuxfoundation.org
+Cc: eadavis@qq.com,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	stern@rowland.harvard.edu,
+	syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V3] USB: usbtmc: prevent kernel-usb-infoleak
+Date: Sun,  8 Sep 2024 16:16:39 +0800
+X-OQ-MSGID: <20240908081638.1595458-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <2024090832-tabby-mom-e3d6@gregkh>
+References: <2024090832-tabby-mom-e3d6@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] mfd: Add driver for Photonicat power management MCU
-To: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Chukun Pan <amadeus@jmu.edu.cn>, Conor Dooley <conor+dt@kernel.org>,
- =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Jean Delvare <jdelvare@suse.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Rob Herring <robh@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>
-References: <20240906093630.2428329-2-bigfoot@classfun.cn>
- <de5c9c27-56fa-4163-98e1-9a98400d2408@web.de>
- <43918eda-c4e8-471a-9de4-ea72bb090803@classfun.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <43918eda-c4e8-471a-9de4-ea72bb090803@classfun.cn>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 07/09/2024 16:33, Junhao Xie wrote:
-> On 2024/9/7 16:44, Markus Elfring wrote:
->> …
->>> +++ b/include/linux/mfd/photonicat-pmu.h
->>> @@ -0,0 +1,86 @@
->> …
->>> +#ifndef _PHOTONICAT_PMU_H
->>> +#define _PHOTONICAT_PMU_H
->> …
->>
->> I suggest to omit leading underscores from such identifiers.
->> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+define+a+reserved+identifier
->>
->> Regards,
->> Markus
+On Sun, 8 Sep 2024 09:54:22 +0200, Greg KH wrote:
+> On Sun, Sep 08, 2024 at 03:35:49PM +0800, Edward Adam Davis wrote:
+> > On Sun, 8 Sep 2024 07:20:40 +0200, Greg KH wrote:
+> > > On Sun, Sep 08, 2024 at 10:20:57AM +0800, Edward Adam Davis wrote:
+> > > > The syzbot reported a kernel-usb-infoleak in usbtmc_write.
+> > > >
+> > > > The expression "aligned = (transfersize + (USBTMC_HEADER_SIZE + 3)) & ~3;"
+> > > > in usbtmcw_write() follows the following pattern:
+> > > >
+> > > > aligned = (1 + 12 + 3) & ~3 = 16   // 3 bytes have not been initialized
+> > > > aligned = (2 + 12 + 3) & ~3 = 16   // 2 bytes have not been initialized
+> > > > aligned = (3 + 12 + 3) & ~3 = 16   // 1 byte has not been initialized
+> > > > aligned = (4 + 12 + 3) & ~3 = 16   // All bytes have been initialized
+> > > > aligned = (5 + 12 + 3) & ~3 = 20   // 3 bytes have not been initialized
+> > > > aligned = (6 + 12 + 3) & ~3 = 20   // 2 bytes have not been initialized
+> > > > aligned = (7 + 12 + 3) & ~3 = 20   // 1 byte has not been initialized
+> > > > aligned = (8 + 12 + 3) & ~3 = 20   // All bytes have been initialized
+> > > > aligned = (9 + 12 + 3) & ~3 = 24
+> > > > ...
+> > > >
+> > > > Note: #define USBTMC_HEADER_SIZE      12
+> > > >
+> > > > This results in the buffer[USBTMC_SEAD_SIZE+transfersize] and its
+> > > > subsequent memory not being initialized.
+> > > >
+> > > > Fixes: 4ddc645f40e9 ("usb: usbtmc: Add ioctl for vendor specific write")
+> > > > Reported-and-tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
+> > > > Closes: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
+> > > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > > > ---
+> > > > V2 -> V3: Update condition and comments
+> > > >
+> > > >  drivers/usb/class/usbtmc.c | 4 ++++
+> > > >  1 file changed, 4 insertions(+)
+> > > >
+> > > > diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
+> > > > index 6bd9fe565385..faf8c5508997 100644
+> > > > --- a/drivers/usb/class/usbtmc.c
+> > > > +++ b/drivers/usb/class/usbtmc.c
+> > > > @@ -1591,6 +1591,10 @@ static ssize_t usbtmc_write(struct file *filp, const char __user *buf,
+> > > >  		goto exit;
+> > > >  	}
+> > > >
+> > > > +	if (USBTMC_HEADER_SIZE + transfersize < aligned)
+> > > > +		memset(&buffer[USBTMC_HEADER_SIZE + transfersize], 0,
+> > > > +			aligned - USBTMC_HEADER_SIZE - transfersize);
+> > >
+> > > As this is now a pain to read/understand, and there's no comment
+> > > describing it so we'll not really understand it in a few months, let
+> > > alone years, how about we just do the trivial thing and make the
+> > > allocation with kzalloc() to start with?  And put a comment there saying
+> > > why it's zeroed out.
+> > Perhaps I wrote too much in my comments, but in essence, the logic behind
+> > this version's fix is:
+> > When aligned is greater than (USBTMC_HEADER_SIZE+transfersize), there are
+> > (aligned - (USBTMC_HEADER_SIZE+transfersize) bytes after the header and data
+> > that have not been initialized, and these bytes are then set to 0.
+> > >
+> > > Sorry, I thought this was going to be a lot simpler based on your first
+> > > patch than this type of logic.
+> > As you mentioned in my first version patch, this approach is simple and
+> > easy to understand, but it comes at the cost of losing the real issue,
+> > and KMSAN will not find similar problems again in the future, which is
+> > not conducive to making the program logic more robust.
 > 
-> Thanks for your suggestion, does this look better?
-> #ifndef MFD_PHOTONICAT_PMU_H
-> #define MFD_PHOTONICAT_PMU_H
+> There will not be similar problems in the future as you are explicitly
+> setting everything to 0, so all should be fine :)
+> 
+> The real issue here is that the usbtmc logic of sending data is crazy,
+> and unique to it for various reasons that well all really don't
+> understand.  Given the very small number of these devices in the world,
+> it's probably best left to the maintainers of it to handle any real
+> problems going forward, and just squash these types of fuzzing bugs now
+> with a heavy hammer to make them happy.
+I reserve my opinion.
 
-<form letter>
-Feel free to ignore all comments from Markus, regardless whether the
-suggestion is reasonable or not. This person is banned from LKML and
-several maintainers ignore Markus' feedback, because it is just a waste
-of time.
-</form letter>
+If you insist, you can use my first patch directly:
+https://lore.kernel.org/all/tencent_088B2EF2AEE00C8AE7D706CCD2CBC6484906@qq.com
 
-Best regards,
-Krzysztof
+BR,
+Edward
 
 
