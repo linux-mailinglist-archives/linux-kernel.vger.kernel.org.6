@@ -1,94 +1,137 @@
-Return-Path: <linux-kernel+bounces-320177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72A1097070A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:45:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B42C97070C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07798B21273
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:45:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 257081F21A1D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691E41531FB;
-	Sun,  8 Sep 2024 11:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537A41586CD;
+	Sun,  8 Sep 2024 11:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fjVjfc1m"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lonXM0MF"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9349314D715
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 11:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5302E157A41
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 11:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725795913; cv=none; b=nj6od4IKpKiTTgzWINR61v2Bfg874uWnNnlGZbCFKWcMZy/968zOxsULIOQJHFIx9PGSZCna749U1d9buoF6IXQ5FKbOSNHNGN5lNCKSXQrRpO8+msXQeBtrqhRoSxZedgFsDgZ1qSV8QAddmvv3F//jbFSQ53438w/DGV7z5+0=
+	t=1725795948; cv=none; b=g55lluoY3E+hxJ4AVhyJri2mC6gGa7kd91EOhA/2yTKygNgjDwlnOjgd1nsn8MwxVsC6i9SezGUXCtaX9HN8nhN0Le9A5mjRT6sOA0HSBMEe0kpVbhHf2Z+GOocU6Otrv+vHDe7RZgAbI922d0Jg1Z485tisb1ukecrlFH/eLlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725795913; c=relaxed/simple;
-	bh=HSnXKMQgZLXcJYUHL18kiCIOeKVxkWAs5Di1nGk0eV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=awY1IBxCQiQS0wpsJLvw86b4EUeyb8nQ/ucEf3U5rt1awTajWdYmqTOAWlP8y+ndN0i7FZBpphC+nuoGTPSt0kyOl457Qv79FTrGXpXEXN4DhxfXSDfXuLbHNSvOnRW6nQtPxYYTmzW1KD2gnOOcHKQH8TiUaOwSnpzcEKQcWW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fjVjfc1m; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1725795948; c=relaxed/simple;
+	bh=57eFswqTrr8+S8LlyO+kLla9Ay+AAffsr0OTTIPiLtw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IKPKI5E8/P4oVdoI58lNDIfl6Mc3dzqPK+BQ28MSvjk9kNJUPlcsRYWi6xZkgL+8iY3FA8Qmaa6GcV1z+5WB1hr/vUaIwbmI8iWJ7/gZ8M2XN+As60dcpYxXuTXrRi9OBS9bzSH3ROVWzNtb2p5RIXZYVONZeYOtkjXLFvLwd78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lonXM0MF; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-205659dc63aso33462025ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 04:45:12 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2053f6b8201so32571375ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 04:45:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725795912; x=1726400712; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qgXrTvuyZhyT6kmnMqrr/qesyKb1JNQr87bAiGPrQNs=;
-        b=fjVjfc1moUjoAodWa2TLA4D6dcUwTKeInLbZB7C+GDIWLARQ5lgWbP9OYbDqVki4cm
-         BlKbEpgbmPu7qE27Gv6hJgv0qXsJg1KnAjUGt13Fn8IOKtMbguz7o8pS3P2Fnubxco9Q
-         f2AhgD9hESxlNzSNvphCb6O+LdAVtVsXlEyXE=
+        d=chromium.org; s=google; t=1725795946; x=1726400746; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LsFajEjZr956Q5CmXQIoAb+FGBAkdzDqcpohNG6RrgA=;
+        b=lonXM0MFO/wLkVMQwvzShPJISNDxG4v6RZs+hsv1tkHwVNwPITSWF5vlk74UNpEUVC
+         JJXdzU8gaF7AcC3RK38wPVtWZHjTAkCy6E8OTXXNMcg605LN6uqTc4pJjumBVaIsdKW6
+         qcFLwmeW9j3O3urgZHGahANCemWZIpUjDJrPs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725795912; x=1726400712;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qgXrTvuyZhyT6kmnMqrr/qesyKb1JNQr87bAiGPrQNs=;
-        b=YcGSCdbgEV1xsDq3zaH75weQ9qvALLfSYuLH+SiuYT6crPo3YUFZIeQCbLEYMq9kk/
-         vEQvPo3Z0pWi4fbkyULsgk/fccHn7+Wi/NqqS8caTfVklmcmFJ3uemtJr6ExYUdeYrhT
-         R0Kyf2tvNPYCP3W7zeNGsPYE4uvyNsyz4s23VehGJftRlYyI/lKg+BUzshN2imuu0tjA
-         f43VK/2QiRtDJd0z6mRaY2xbIAUvZH+25lKKh0szzX72MtgECG6zIAy0wZ9NaJmMgq5e
-         T5G/u7IL0Y/rTV4s8Di/u2pNdU7r9ruHwpEcMY/C8WXirZ34wDpXgWcmc9XlEqC7U04E
-         n64g==
-X-Forwarded-Encrypted: i=1; AJvYcCXDOgiyqCypPGtVuDrtlEYrEJ18t68SC1KsIG+4YtKzK+HlDgIEl+xpmhe/oSfQfofSzKNn9+Ta1RSbfps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDqjA5F4dyEbcHsGDP9l1bwkv4qk4qSZOjzJWTuL7xPcaMnqz/
-	fk1JCC0Od4A7hzIm6WW2cCYnddZ8i0uuQ6WeY5Lu/YsGcyQtYIhqEzIptCLOgw==
-X-Google-Smtp-Source: AGHT+IEpkG7C0gtn+JFnmRlwmIzAn0lFjV4MHb5ZiSpAl6tX8TlN1ny/DyyNvDTcgmu/ZpjQPxqQRQ==
-X-Received: by 2002:a17:903:182:b0:205:500f:5dcc with SMTP id d9443c01a7336-206f05e5f73mr74085415ad.40.1725795911786;
-        Sun, 08 Sep 2024 04:45:11 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:5879:695a:4656:45ff])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f31f31sm19121285ad.243.2024.09.08.04.45.10
+        d=1e100.net; s=20230601; t=1725795946; x=1726400746;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LsFajEjZr956Q5CmXQIoAb+FGBAkdzDqcpohNG6RrgA=;
+        b=v3tiZn+rSWhcKnbW0vKvSz9tH668SL1eV5fupCA3OTp/oT7G7PNKopOgMph3Ic4sPs
+         LPFaYl0pBzPf31Gxz7Ct5VxJ/H7qxq0kBfMx7vxLCGfqOW1JUAJi2btzvTbeHXN74aNa
+         D5oOOirsGAN2SWUT0LSNJHPMWmTi5ueVTK5EWYMZaG8sIao4CkZSfJm99tRNvSOUDnBO
+         08+NKck+gYg2sqJVlDESGLDzw87RYq3zk1B0JB/uIHjL00JI9+d2goXdoiU1X7AOQuB3
+         yor4PWrULWByP1eqAaFQ/IASVabOy8r8sJeAydN1GaZWGrxOl0vGRliMO5lqdo2SXKTS
+         y7ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSGrIuS9IZtoDw74eEROE2Xb2xHGZs4ODzyFSQoUx0rRES4spXxAKz9BTjv1LXcUqhg7PZcsZB6LdjMx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuOqONLLbZ7/k0teQ8pJpFfXwp2pn5+Q76Of/zGUY41U+7AE+e
+	j+g6Yyt8uyl18HRQ34W2UG/2VGzYlVkiICQsH/EZF1GES0FOxzGMn/yufXK1Hw==
+X-Google-Smtp-Source: AGHT+IH9y9NEhDBsK/1Qr4jxJclMVF4y5mSVNKqKgdgPm5E+qL5OXcjfFUsYpp1qKq0BTmzYKPN0SA==
+X-Received: by 2002:a17:902:e888:b0:202:2fc8:da35 with SMTP id d9443c01a7336-206f06241femr115225005ad.55.1725795946465;
+        Sun, 08 Sep 2024 04:45:46 -0700 (PDT)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:5879:695a:4656:45ff])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f1f3f6sm19087065ad.226.2024.09.08.04.45.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 04:45:11 -0700 (PDT)
-Date: Sun, 8 Sep 2024 20:45:07 +0900
+        Sun, 08 Sep 2024 04:45:46 -0700 (PDT)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Richard Chang <richardycc@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 0/3] zram: optimal post-processing target selection
-Message-ID: <20240908114507.GB2413563@google.com>
-References: <20240908114223.3024872-1-senozhatsky@chromium.org>
+To: Minchan Kim <minchan@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Richard Chang <richardycc@google.com>,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCHv2 0/3] zram: optimal post-processing target selection
+Date: Sun,  8 Sep 2024 20:45:10 +0900
+Message-ID: <20240908114541.3025351-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240908114223.3024872-1-senozhatsky@chromium.org>
+Content-Transfer-Encoding: 8bit
 
-On (24/09/08 20:42), Sergey Senozhatsky wrote:
-> 
-> v2..v1:
-> -- clear PP_SLOT when slot is accessed
-> -- kmalloc pp_ctl instead of keeoing it on the stack
-> -- increase the number of pp-buckets and rework the way it's defined
-> -- code reshuffle and refactoring
->
+Problem:
+--------
+Both recompression and writeback perform a very simple linear scan
+of all zram slots in search for post-processing (writeback or
+recompress) candidate slots.  This often means that we pick the
+worst candidate for pp (post-processing), e.g. a 48 bytes object for
+writeback, which is nearly useless, because it only releases 48
+bytes from zsmalloc pool, but consumes an entire 4K slot in the
+backing device.  Similarly, recompression of an 48 bytes objects
+is unlikely to save more memory that recompression of a 3000 bytes
+object.  Both recompression and writeback consume constrained
+resources (CPU time, batter, backing device storage space) and
+quite often have a (daily) limit on the number of items they
+post-process, so we should utilize those constrained resources in
+the most optimal way.
 
-D'oh... Let me re-send it properly.  It was supposed to be sent to
-Minchan and Andrew.  Sorry for the noise.
+Solution:
+---------
+This patch reworks the way we select pp targets.  We, quite clearly,
+want to sort all the candidates and always pick the largest, be it
+recompression or writeback.  Especially for writeback, because the
+larger object we writeback the more memory we release.  This series
+introduces concept of pp buckets and pp scan/selection.
+
+The scan step is a simple iteration over all zram->table entries,
+just like what we currently do, but we don't post-process a candidate
+slot immediately.  Instead we assign it to a PP (post-processing)
+bucket.  PP bucket is, basically, a list which holds pp candidate
+slots that belong to the same size class.  PP buckets are 64 bytes
+apart, slots are not strictly sorted within a bucket there is a
+64 bytes variance.
+
+The select step simply iterates over pp buckets from highest to lowest
+and picks all candidate slots a particular buckets contains.  So this
+gives us sorted candidates (in linear time) and allows us to select
+most optimal (largest) candidates for post-processing first.
+
+v2..v1:
+-- clear PP_SLOT when slot is accessed
+-- kmalloc pp_ctl instead of keeoing it on the stack
+-- increase the number of pp-buckets and rework the way it's defined
+-- code reshuffle and refactoring
+
+Sergey Senozhatsky (3):
+  zram: introduce ZRAM_PP_SLOT flag
+  zram: rework recompress target selection strategy
+  zram: rework writeback target selection strategy
+
+ drivers/block/zram/zram_drv.c | 279 ++++++++++++++++++++++++++++------
+ drivers/block/zram/zram_drv.h |   1 +
+ 2 files changed, 235 insertions(+), 45 deletions(-)
+
+--
+2.46.0.469.g59c65b2a67-goog
+
 
