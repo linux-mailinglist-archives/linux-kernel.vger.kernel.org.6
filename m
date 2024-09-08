@@ -1,135 +1,184 @@
-Return-Path: <linux-kernel+bounces-320410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83F39709CF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:52:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7848F970A13
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 23:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74250282B03
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:52:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E85CB21F8E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 21:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E29179958;
-	Sun,  8 Sep 2024 20:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJQJqcx6"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4330F38DD6;
+	Sun,  8 Sep 2024 21:11:10 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7646A2D;
-	Sun,  8 Sep 2024 20:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67BF54673
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 21:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725828731; cv=none; b=qGXjZAv2/HezTjK//jZ+5dv5+VapMFH/m8ojuSabtN7/PK2285hhiHLIOWW+5opFEAfMR5d3/UKCWU2F5Rum4sjZHF2y/h0dbng7DKOEmxNoPdbxULukc8kHoloDkXhYL9sKqWCrs9VpM3RxYc1VlYkncdYDLpUrM0Nvwp/5e5E=
+	t=1725829869; cv=none; b=h/N6Kubfu+NK//G38QRFMR8r6u1EVZrI8mG1+G4odXsYd8djoo/lO6cCS5c3VSBaKj7sCKWQY4YfY1HYUzpaMQjRM1T9Z3ZpuEgaSZPAt/81NcBGFn8SvE+6JsIyDFYZjvwu5+FDQEdUpQ70MziqLrskWI8lYtbdF+qndNaqoek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725828731; c=relaxed/simple;
-	bh=WFLcP+KQCqOquO+3jU9XmdDfCmJ2fDT1r262MXhyGZM=;
+	s=arc-20240116; t=1725829869; c=relaxed/simple;
+	bh=zN3q3bvVxr+IRbcTF7Mt9+0mGWCJvt/L/HlTFdTrw2c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SVynVw2z3fw1CR+NLLO9TLHLmfkkYhZeeY/94O4q0JljOTHXwgyIyg/uBqnUzYjEpcICxSrsIwTxzakwogMjgixBPyI6FlW9Cb69LgwAUTyOqrifPhi+zoAjeveuYT4CQTyudI4Cv9wRzT7aTJOAhUDRIhcuPf5KBoCeqlp7494=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GJQJqcx6; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2da55ea8163so2610648a91.1;
-        Sun, 08 Sep 2024 13:52:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725828729; x=1726433529; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Do9uQL1svkTVMYX5XXwR7FApqFQnFVGbvN0JvWZ55Js=;
-        b=GJQJqcx6NrWt9mlDNJeMGTP3TYckMrbMYeCmk3d0xpk51q/rPkToSpsaxv+6bpNH1N
-         URg/5dPGUfzFssQNO6ZBxICdk9ye91VuAJ4VO1Z5i9fIT3UQY73mKkfVE6ot+/qfZcE1
-         fTDg0tfVSD12WIWZAlhcU/S5P/5Wy1WhluMgnqWHaoIDHSA8zlK8UwArJQSSPWO27qqj
-         4EsYVYNbtU2fJ1Gg+H0L3yt8WGO0lYz2WieyctLoOvh1ySoqp+RjJxsQK/vSyv1pmrLK
-         Suc2ZhzuPVZ+gq8oTqTwPGvukqpEqRQN8yoJwfrJwvT0HN00lOvrU3QQIi/OYljPlVwF
-         3PIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725828729; x=1726433529;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Do9uQL1svkTVMYX5XXwR7FApqFQnFVGbvN0JvWZ55Js=;
-        b=MPZliy04X7XNAh/kDpspHL8Z+izk4F8iPf7xfN+/RvpUpjz2DKI6wIwvtrwRxz8V02
-         z4vvzm1kiyU6bF657BDkUVi6ppwh+nyUobsSOimtJNV+jfl1VtX7Z/YEz0Hf0fvNb1az
-         enQYxJkyXRnLHWirSyrYsKs3P+WZMyY8J8Cb33ghh8LMH/kbdj2khCxynDrcLddPMKCj
-         VxLp8m7rDveg7/96m8wwvKG4hogiI4g9VHfU3IH8u9NiUx01LHFGxsrqfyH0OJoYtOAt
-         HrF2qcwyuuyyp/oBd/gBzWA6OaQfcQ05EcC3f1Q1JCKdUQU/RCe4cnnzT1UJjISavLnH
-         tMBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPPq7qe2r2FNprd//10D4B6HBo7DnMhStHzP+dLY9HdmVuBILeY8CHutJpwqoNerkFfULMERsN7x9/+QPK@vger.kernel.org, AJvYcCVHEnj1taXN8jugAqcjae6449dLwtfQO56sGxBNoB3nUET6Hq8HarFaqcaI2a5cM6MX36U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmEluEfuQ/NEu98Z+tjjF3QPUw++RO1G+58Fqy5jfs/o0tUBg9
-	MmGso+OZB0DaDo+hagABwmIYVTt2mR7tVsJ+VNYl83SenqNAVFPs
-X-Google-Smtp-Source: AGHT+IGhDxknc26KrAM3JR2U4DgMaDnzsxai0mKLD7DQ5Iya9tVBRKQb/u3qm2L8xDufVrd+0lD4Dg==
-X-Received: by 2002:a17:90b:384e:b0:2cf:cbc7:91f8 with SMTP id 98e67ed59e1d1-2dad50fc904mr8022707a91.19.1725828728773;
-        Sun, 08 Sep 2024 13:52:08 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db04136902sm3077744a91.6.2024.09.08.13.52.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 13:52:08 -0700 (PDT)
-Date: Mon, 9 Sep 2024 04:52:03 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Quentin Monnet <qmo@kernel.org>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
-	yonghong.song@linux.dev, john.fastabend@gmail.com,
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-	jolsa@kernel.org, jserv@ccns.ncku.edu.tw, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bpftool: Fix undefined behavior caused by shifting into
- the sign bit
-Message-ID: <Zt4Oc+4/DPqDSsoN@visitorckw-System-Product-Name>
-References: <20240908140009.3149781-1-visitorckw@gmail.com>
- <4a42a392-590d-4b90-a21d-df4290d86204@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eii/mImN1g23dqfn+Z6edDqnOrWlVFD+GQrxaIgdP1ECiosqhYbL6Ij+QwYs+rNMT8fE/QLsTCpNZwwCXlbDQWOMTWCCL82rDRdaJXtMTt3Qzs89my0phIlcLbsPXidPhJo6diK+bzFr4lqUBLTXBP3VV74cSt9ArONWSU7foF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1snOvn-0002CA-Jf; Sun, 08 Sep 2024 22:54:47 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1snOvi-006Uad-Jx; Sun, 08 Sep 2024 22:54:42 +0200
+Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1snOvi-00DtLg-1c;
+	Sun, 08 Sep 2024 22:54:42 +0200
+Date: Sun, 8 Sep 2024 22:54:42 +0200
+From: Michael Grzeschik <mgr@pengutronix.de>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux USB <linux-usb@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	v9fs@lists.linux.dev, Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jan Luebbe <jlu@pengutronix.de>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] tools: usb: p9_fwd: wrap USBG shell command examples in
+ literal code blocks
+Message-ID: <Zt4PEp8z1rfhFZCm@pengutronix.de>
+References: <20240908113423.158352-1-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2GlOQuJU+wYS6vhG"
 Content-Disposition: inline
-In-Reply-To: <4a42a392-590d-4b90-a21d-df4290d86204@kernel.org>
+In-Reply-To: <20240908113423.158352-1-bagasdotme@gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Sun, Sep 08, 2024 at 08:48:40PM +0100, Quentin Monnet wrote:
-> On 08/09/2024 15:00, Kuan-Wei Chiu wrote:
-> > Replace shifts of '1' with '1U' in bitwise operations within
-> > __show_dev_tc_bpf() to prevent undefined behavior caused by shifting
-> > into the sign bit of a signed integer. By using '1U', the operations
-> > are explicitly performed on unsigned integers, avoiding potential
-> > integer overflow or sign-related issues.
-> > 
-> > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> 
-> 
-> Looks good, thank you.
-> 
-> Acked-by: Quentin Monnet <qmo@kernel.org>
-> 
-> How did you find these?
 
-TL;DR: I discovered this issue through code review.
+--2GlOQuJU+wYS6vhG
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I am a student developer trying to contribute to the Linux kernel. I
-was attempting to compile bpftool with ubsan enabled, and while running
-./bpftool net list, I encountered the following error message:
+Thanks for taking care of this.
 
-net.c:827:2: runtime error: null pointer passed as argument 1, which is declared to never be null
+On Sun, Sep 08, 2024 at 06:34:23PM +0700, Bagas Sanjaya wrote:
+>Stephen Rothwell reported htmldocs warning when merging usb tree:
+>
+>Documentation/filesystems/9p.rst:99: ERROR: Unexpected indentation.
+>
+>That's because Sphinx tries rendering p9_fwd.py output as a grid table
+>instead.
+>
+>Wrap shell commands in "USBG Example" section in literal code blocks
+>to fix above warning and to be in line with rest of commands in the doc.
+>
+>Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>Closes: https://lore.kernel.org/linux-next/20240905184059.0f30ff9a@canb.au=
+ug.org.au/
+>Fixes: 673f0c3ffc75 ("tools: usb: p9_fwd: add usb gadget packet forwarder =
+script")
+>Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-This prompted me to review the code in net.c, and during that process,
-I unexpectedly came across the bug that this patch addresses.
+Acked-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 
-As for the ubsan complaint mentioned above, it was triggered because
-qsort is being called as qsort(NULL, 0, ...) when netfilter has no
-entries to display. In glibc, qsort is marked with __nonnull ((1, 4)).
-However, I found conflicting information on cppreference.com [1], which
-states that when count is zero, both ptr and comp can be NULL. This
-confused me, so I will need to check the C standard to clarify this. If
-it turns out that qsort(NULL, 0, ...) is invalid, I will submit a
-separate patch to fix it.
+>---
+> Documentation/filesystems/9p.rst | 6 +++---
+> 1 file changed, 3 insertions(+), 3 deletions(-)
+>
+>diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/=
+9p.rst
+>index 2cc85f3e8659ff..514ed13a0122b0 100644
+>--- a/Documentation/filesystems/9p.rst
+>+++ b/Documentation/filesystems/9p.rst
+>@@ -86,11 +86,11 @@ When using the usbg transport, for now there is no nat=
+ive usb host
+> service capable to handle the requests from the gadget driver. For
+> this we have to use the extra python tool p9_fwd.py from tools/usb.
+>
+>-Just start the 9pfs capable network server like diod/nfs-ganesha e.g.:
+>+Just start the 9pfs capable network server like diod/nfs-ganesha e.g.::
+>
+>         $ diod -f -n -d 0 -S -l 0.0.0.0:9999 -e $PWD
+>
+>-Optionaly scan your bus if there are more then one usbg gadgets to find t=
+heir path:
+>+Optionaly scan your bus if there are more then one usbg gadgets to find t=
+heir path::
+>
+>         $ python $kernel_dir/tools/usb/p9_fwd.py list
+>
+>@@ -99,7 +99,7 @@ Optionaly scan your bus if there are more then one usbg =
+gadgets to find their pa
+>           2 |   67 | unknown          | unknown          | 1d6b:0109 | 2-=
+1.1.2
+>           2 |   68 | unknown          | unknown          | 1d6b:0109 | 2-=
+1.1.3
+>
+>-Then start the python transport:
+>+Then start the python transport::
+>
+>         $ python $kernel_dir/tools/usb/p9_fwd.py --path 2-1.1.2 connect -=
+p 9999
+>
+>
+>base-commit: 9c0c11bb87b09a8b7cdc21ca1090e7b36abe9d09
+>--=20
+>An old man doll... just what I always wanted! - Clara
+>
+>
 
-BTW, should this patch include a Fixes tag and a Cc @stable?
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
-[1]: https://en.cppreference.com/w/c/algorithm/qsort
+--2GlOQuJU+wYS6vhG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
-Kuan-Wei
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmbeDw8ACgkQC+njFXoe
+LGTkwBAArdhWO1zhxAGW/ByLL4IiT1YV1Lbkg+uvEfThLHZeVp2jwg4dfko/K3yn
+I1nEaIwg3cbbiU0IY93yZjXGwCULzhJxP8PeQ8o97DleU918Onphp7Wt4Vt74vag
+0GG6i9mzx7J6rd9P9aW+Wcnixm7hO8lCkDNda8jrlXuNWLD/a+fz+3RdOdgj1EaC
+AW1HqYRKBA/wA4fCHn8U7bjCP1cbBU67mJgopm2TxA+L82D0+l9r3l8ncb4fgmNr
+mIcNwIuxmiHvKEZck/n9FKc+TW18AKG9YND+iPcLXEGNG1GCUmflR2IZgKtLXVjf
+gp32r8o7c8OVy34DcJh57y3zwlL+4eYR59Bn4MGS8vaF9z907phi4OttfrpgBDU4
+fKBX4Mfnxldflj0S3eeb6pXs01NLH13oI7HdIWMinTjLLmFacNYDelvlc6PFKKP6
+uxLfHZ8PeVYHxVmjSurBqwXqCwzN7dMzMdSPTf5ZG+OCr5/AHMoFgpRVSgYnVKQF
+UEvpg2pVgxsw0oZrB6A5xFjd1j3v7qdBeoA4hDEbYeLaBng0i7oF/8mPWXNOhRyy
+vxrSEvwWvb4AmJfImiBiSsIUrUPJnL39Kz79knYOwCDwx2znfpjIrcii9gvWEXOZ
+kGqPqnH9QRiZq8GPMA2GE2q3/3I6dEM1sHEawvA26lDu2Hin5R4=
+=ZSZ5
+-----END PGP SIGNATURE-----
+
+--2GlOQuJU+wYS6vhG--
 
