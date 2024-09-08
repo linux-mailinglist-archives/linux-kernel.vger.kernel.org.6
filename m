@@ -1,159 +1,174 @@
-Return-Path: <linux-kernel+bounces-320076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C652B9705E1
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:52:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D62EF9705E5
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 804EE282829
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:52:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 904E128289C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D68130E27;
-	Sun,  8 Sep 2024 08:52:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724AA139597;
+	Sun,  8 Sep 2024 08:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/mS/vFh"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951FD4204E
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 08:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B4727442;
+	Sun,  8 Sep 2024 08:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725785524; cv=none; b=WzR1UhWIuTbQr1M+6qokhD5cwNofKZltCEsVYflMBPPMpL9A4UaC9V8q9lanOF066ehDVeqS890YXGuwgSjmTBQC+GcQOY3WnRJifRD68uJWVAZBw0a1L7S5SydxTSDrTZopk2ptMGeXU95IdODm+/wd02xTvP6XWISj0KGOQCc=
+	t=1725785705; cv=none; b=IQcEtOMohDkBCNcDH5HRvqHdO/5ylrb/ChLXEwcmDZjjUd6Asp7NGf95MPuvzhJtA0MZOcJb2NCFaC1fWKygo6pkqwaaVaQkpXy0zVrAhUDRTTAwI3zBCVBTuoSsRSL1PJ86Cd9DYXVPCY225jW7qs/ZZDBQjypczsukBG3DFcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725785524; c=relaxed/simple;
-	bh=iNsomBAtPoQ2CE1aQYFZLUkPVc55iwv21qD1pB2CNic=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=El9ndbtZ+IVJnJOhKXtLRG1naMbR+Ov8l9aEiwW1HViH1Hl6/6JlaXxSaoOcLV3TIT8PmPGvxZ9dAYDb4QmLBT9wrL75OGMyB+8YZK32cLG/1z1JI+e9x8+IrzKyPiJCMoOmL45cRLh35Yrb0ACo+O+CXFZ4TrotCAFpWDwanXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a04eef8ed2so36218365ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 01:52:02 -0700 (PDT)
+	s=arc-20240116; t=1725785705; c=relaxed/simple;
+	bh=9JD1vPA6nENu4r8g78FFrQX/VYp2ni6MK1UWczeROl0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NlLXknYGMOeOMqLT/6jtPH/qSRmYKJv76e2PLpsL+QexCNYqBARZX0WngjM1FGKZVyuNXLCsmbYqAnqNHwHjER7Y1KM+EBuCbpOvVg4FHnoSWYQa11AR5uVXOi+DAB6cbCHsyNWTnZDp6K0vaDDM8dU1bcJXqtGCxZ75x9SSPv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/mS/vFh; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so138696066b.1;
+        Sun, 08 Sep 2024 01:55:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725785702; x=1726390502; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nq5WJ2pHAHyT2QwFtM7kzrtPjs0zR32si2qK77Z+LEw=;
+        b=T/mS/vFh5ktiecqnJiUXDuzb/F2K+uUFyQzemOkzlcaXJQEcjhKMfJ81ys1a4Y8Cqt
+         9Te5Ioy9k0p3xJZp9JeZe+Uxoq28rHywGYYFOezk4O4kVxJEY+WljFSaA5R8w3uqRR2k
+         8AUW7zWaxS5d6W0nCZFhuGLilFYNLGm9NFt0+yPEonDgErDVWA9Y9oKCtFPlu3AhB5GS
+         DbW3Hky8/67x3rM3GCe19JKeUUvhGsBZdwao9YHb9A7uccniTaTeuuWCXSDIZWDYwVSl
+         6pzJHfWLfv2DsoEDZ7+y24HK0OZpO5e+sWuvyfS4yeFp47QFsCzIc3ivPvRhs+YS6ENF
+         65Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725785522; x=1726390322;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cDbOddmKpKC9TBwYDpqg6lQLfuqHsGkeE0Rn3FG9cRQ=;
-        b=VwmQwt7XfkOODH8EhxSbsbL6sPAe44hZvR3K91mBVoj9PZEwSZioZJc7Jmqb5Fo7Yu
-         X2CJj1CH401cIO/uViZREXaiVQH74QSQ0ui7DyPF2LZYsfcRqnz3GYx1kLah8Ielgo4Q
-         22fV40W3PCbNjgoQVy5ij6E5gjVBVM4s/ZJE87PEw349rIhxpVShWScKbhO8LNvq/fag
-         V/acezYwCftcDxJov/Ezx4UUkKFlfPWVKh9mLnR7+YcMGWwPGpFG2F+6+6KJTjMdP+cj
-         uNsmx8RTmTVDfVLgORzmGXkv8cUodgihTYMErt0hfnkhwGjUXATjcIQooWC3C2HJRgPS
-         0E1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW5DAUY5d0kew/NG9kvu8iwGj/4hQAo354L5/DHlE4Nii/65oeE9oHkS3XVMibRGYvR2FrqaEtOq57Cmjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw52JUb+PNF1m0HmLWfSmOoyiHL51u1HOnbfs1NiduMVebecVG
-	P0NKuytGkLxFQFkO2E9iafbFqw4SdJo8g8NOGIoWJB1GACMgEbzlVJBjRA2q81D99DHhxiFbi0T
-	qN3e4GmbbkoFVvqtbTuNNgMt8GOdu+vsfNffq1n4QhfJanOuYLSwPJu0=
-X-Google-Smtp-Source: AGHT+IE8z9ufBCPCMGsCQAfM0P4u6ZLa03mk5SBCcpuLE33vn/ZdXcEwNvPmUL6M+a/Z2o0bVVlMsg9wVtOT2zNk7ZKrnBhVyJQ+
+        d=1e100.net; s=20230601; t=1725785702; x=1726390502;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nq5WJ2pHAHyT2QwFtM7kzrtPjs0zR32si2qK77Z+LEw=;
+        b=JcD7XZjhAkQy9NTnatczDjzUjhq2keZYfWsu6sHOyHJfxMb+aY1FMQtwDywGlD7ynS
+         M0FfzDnjmV9Op6z0LLOQr7EaV3yMpBQ6JJRrf10rXVYYAnkf1rApgV3lzJk/ijocvl1Z
+         xMFmxENlR+iawO1TP3TK6gxBc34XwPgtYsD0bnP20gBx8GOsHE7b4Xm1IU7WjRlrq3MV
+         N9RfqSTxebi+lN+PrVDbqd+wcEZBMSahQ4KK+CjDdj/EdYDVTqjiH8jIN5vcPDBxs0pF
+         LJ8N/PtqBW3V9+GqVmmeWq4Me/Y0gpS4KDPD5FskRY6zvqcYjzQS2m2gq1gH5HvhV5rV
+         QVVA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5yAy6e477wTno6fN84PwINA3CauEuRQIyfqiqox5XaGliZTnH/c9VzGW4pBVBVL/E0tZycXs/ck5nVsfs@vger.kernel.org, AJvYcCXZlN7XT6UikV52aWV0wmwnLs/zm2w/2t+9rwQjbg6NTYBbSznaQthoJobww2SMqecbnjjqurNaAHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjAHOkjn5XurE457iwj15pJx8Q4aREszD6rQpaXqR6Rkl/wJHn
+	36kjmMza1rWlRi2kosmoxuLWdHWOQAc2V6QJlhM08kXla2KiBWkdQ5PADJrj2QD55JC7GrwGWcz
+	uwfBMdi6G344BYH0JGmViLtsik24=
+X-Google-Smtp-Source: AGHT+IGh/mOI9VQapbeOWVjXZtarUc22MPB8ax7nNK0XjS+Txuppy6n3+QBXGfNuyoB8Y/EZ24dbDWaIDHrHw4x8upI=
+X-Received: by 2002:a17:907:7b95:b0:a72:5967:b34 with SMTP id
+ a640c23a62f3a-a8a863f664amr914111866b.22.1725785701564; Sun, 08 Sep 2024
+ 01:55:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b2c:b0:398:36c0:7968 with SMTP id
- e9e14a558f8ab-3a04f0758camr94040205ab.6.1725785521695; Sun, 08 Sep 2024
- 01:52:01 -0700 (PDT)
-Date: Sun, 08 Sep 2024 01:52:01 -0700
-In-Reply-To: <20240908083246.2329-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fac115062197c099@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
- l2cap_connect (2)
-From: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240830034640.7049-1-kfting@nuvoton.com> <20240830034640.7049-7-kfting@nuvoton.com>
+ <ZtIbM4NTbldBIDXf@smile.fi.intel.com> <CAHb3i=vWNmokQYyOZJOVeaJaT6XAroct2gZiJYPVQf6rHzR5LA@mail.gmail.com>
+ <ZtWnPTSu1RKmIlhK@smile.fi.intel.com>
+In-Reply-To: <ZtWnPTSu1RKmIlhK@smile.fi.intel.com>
+From: Tali Perry <tali.perry1@gmail.com>
+Date: Sun, 8 Sep 2024 11:54:50 +0300
+Message-ID: <CAHb3i=uN5jtczEjHhzwL9E9c6d9rU-QZckhU79KzPuY5n81CyA@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] i2c: npcm: use i2c frequency table
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Tyrone Ting <warp5tw@gmail.com>, avifishman70@gmail.com, tmaimon77@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com, 
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
+	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Andy,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-general protection fault in hci_send_acl
+On Mon, Sep 2, 2024 at 3:00=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Sun, Sep 01, 2024 at 06:53:38PM +0300, Tali Perry wrote:
+> > On Fri, Aug 30, 2024 at 10:19=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > On Fri, Aug 30, 2024 at 11:46:39AM +0800, Tyrone Ting wrote:
+> > > > Modify i2c frequency from table parameters
+> > > > for NPCM i2c modules.
+> > > >
+> > > > Supported frequencies are:
+> > > >
+> > > > 1. 100KHz
+> > > > 2. 400KHz
+> > > > 3. 1MHz
+> > >
+> > > There is no explanations "why". What's wrong with the calculations do=
+ne in the
+> > > current code?
+> > >
+> > > --
+> > > With Best Regards,
+> > > Andy Shevchenko
+> > >
+> > >
+> > Hi Andy,
+> >
+> > The original equations were tested on a variety of chips and base clock=
+s.
+> > Since we added devices that use higher frequencies of the module we
+> > saw that there is a mismatch between the equation and the actual
+> > results on the bus itself, measured on scope.
+> > So instead of using the equations we did an optimization per module
+> > frequency, verified on a device.
+> > Most of the work was focused on the rise time of the SCL and SDA,
+> > which depends on external load of the bus and PU.
+> > We needed to make sure that in all valid range of load the rise time
+> > is compliant of the SMB spec timing requirements.
+> >
+> > This patch include the final values after extensive testing both at
+> > Nuvoton as well as at customer sites.
+>
+> But:
+> 1) why is it better than do calculations?
+> 2) can it be problematic on theoretically different PCB design in the fut=
+ure?
+>
+> P.S. If there is a good explanations to these and more, elaborate this in=
+ the
+> commit message.
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 1 UID: 0 PID: 7269 Comm: kworker/u9:8 Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: hci2 hci_rx_work
-RIP: 0010:hci_send_acl+0x35/0xd30 net/bluetooth/hci_core.c:3230
-Code: 41 55 41 54 55 49 8d 6f 18 53 48 89 f3 48 83 ec 70 89 14 24 e8 1c 18 83 f7 48 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f 85 bc 0b 00 00 49 8b 47 18 48 8d b8 e0 0f 00 00 48
-RSP: 0018:ffffc9000ae676e0 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: ffff888030adc500 RCX: ffffffff8a1303d4
-RDX: 0000000000000003 RSI: ffffffff8a08b834 RDI: 0000000000000000
-RBP: 0000000000000018 R08: 0000000000000001 R09: 0000000000000080
-R10: 0000000000000001 R11: 0000000000000000 R12: ffff888011da0000
-R13: 0000000000000002 R14: ffffc9000ae67880 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000080 CR3: 00000000781ba000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- l2cap_send_cmd+0x6e5/0x920 net/bluetooth/l2cap_core.c:973
- l2cap_connect.constprop.0+0x6f7/0x1270 net/bluetooth/l2cap_core.c:4038
- l2cap_connect_req net/bluetooth/l2cap_core.c:4084 [inline]
- l2cap_bredr_sig_cmd net/bluetooth/l2cap_core.c:4776 [inline]
- l2cap_sig_channel net/bluetooth/l2cap_core.c:5547 [inline]
- l2cap_recv_frame+0xf0b/0x8eb0 net/bluetooth/l2cap_core.c:6829
- l2cap_recv_acldata+0xd58/0xfd0 net/bluetooth/l2cap_core.c:7528
- hci_acldata_packet net/bluetooth/hci_core.c:3791 [inline]
- hci_rx_work+0xaab/0x1610 net/bluetooth/hci_core.c:4028
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:hci_send_acl+0x35/0xd30 net/bluetooth/hci_core.c:3230
-Code: 41 55 41 54 55 49 8d 6f 18 53 48 89 f3 48 83 ec 70 89 14 24 e8 1c 18 83 f7 48 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f 85 bc 0b 00 00 49 8b 47 18 48 8d b8 e0 0f 00 00 48
-RSP: 0018:ffffc9000ae676e0 EFLAGS: 00010206
+Thanks for your comments,
 
-RAX: dffffc0000000000 RBX: ffff888030adc500 RCX: ffffffff8a1303d4
-RDX: 0000000000000003 RSI: ffffffff8a08b834 RDI: 0000000000000000
-RBP: 0000000000000018 R08: 0000000000000001 R09: 0000000000000080
-R10: 0000000000000001 R11: 0000000000000000 R12: ffff888011da0000
-R13: 0000000000000002 R14: ffffc9000ae67880 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000080 CR3: 00000000781ba000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	41 55                	push   %r13
-   2:	41 54                	push   %r12
-   4:	55                   	push   %rbp
-   5:	49 8d 6f 18          	lea    0x18(%r15),%rbp
-   9:	53                   	push   %rbx
-   a:	48 89 f3             	mov    %rsi,%rbx
-   d:	48 83 ec 70          	sub    $0x70,%rsp
-  11:	89 14 24             	mov    %edx,(%rsp)
-  14:	e8 1c 18 83 f7       	call   0xf7831835
-  19:	48 89 ea             	mov    %rbp,%rdx
-  1c:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  23:	fc ff df
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2e:	0f 85 bc 0b 00 00    	jne    0xbf0
-  34:	49 8b 47 18          	mov    0x18(%r15),%rax
-  38:	48 8d b8 e0 0f 00 00 	lea    0xfe0(%rax),%rdi
-  3f:	48                   	rex.W
+1) The equations were not accurate to begin with.
+  They are an approximation of the ideal value.
+  The ideal value is calculated per frequency of the core module.
+2) As you wrote , different PCB designs, or specifically to this case
+: the number and type of targets on the bus,
+   impact the required values for the timing registers.
+   Users can recalculate the numbers for each bus ( out of 24) and get
+an even better optimization,
+   but our users chose not to.
+  Instead - we manually picked values per frequency that match the
+entire valid range of targets (from 1 to max number).
+  Then we check against the AMR described in SMB spec and make sure
+that none of the values is exceeding.
+  this process was led by the chip architect and included a lot of testing.
 
+Do we need to add this entire description to the commit message? It
+sounds a bit too detailed to me.
 
-Tested on:
-
-commit:         d1f2d51b Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13f51ffb980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=57042fe37c7ee7c2
-dashboard link: https://syzkaller.appspot.com/bug?extid=c12e2f941af1feb5632c
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11651ffb980000
-
+Thanks,
+Tali Perry, Nuvoton
 
