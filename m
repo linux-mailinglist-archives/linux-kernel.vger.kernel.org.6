@@ -1,213 +1,138 @@
-Return-Path: <linux-kernel+bounces-320054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE83D9705A8
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:00:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F60970599
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1509EB212E4
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:00:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ACF22821DE
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 07:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA357130AC8;
-	Sun,  8 Sep 2024 07:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9951D74040;
+	Sun,  8 Sep 2024 07:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WxEFmcT6"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HQ97m91n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1DD84E1C;
-	Sun,  8 Sep 2024 07:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021F74C66;
+	Sun,  8 Sep 2024 07:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725782395; cv=none; b=PuGSC1Elm+iVZqWBnVAqqmaPUYJOyw2Hg79ZUt1Ea3W4CIfsH5Sp5tKge5S2tgfGCMObKwGKQ+OzQv31FKyikkWFdFm8zRJuzndF0h3VuVIdyU6zCX46hhm1YxeXC06hhowKTvHlo/oP7Z7V+cukfnvbNW2SfUAsDLgo3AfNM8w=
+	t=1725782066; cv=none; b=DSzM3dVL9JycTdryJ1pkXuwQs6IaZm0G1v/0ZIoOKup9uX4ZErAri0UWisbpsfbYOcWYnPYl2Mfm5o7Vwu1xD3mvnagleOje6AW/SCXgN4l2Rox6XHJOljmb8WDsi/otikgHXZT8JIEt0yN4J8pHtYRE1WNNT42hsr9TJubvrYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725782395; c=relaxed/simple;
-	bh=UPTJKYpZuE+NMhy0BOghVRXFT6JoLBwVcxFYq/KQDsE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kmONKNKs/am2DMCKYg4RUbInT0DjODJEUgOALZEagqhBXf+kzZmoEd63jXpmJlW7i8+asfBmNW7JQ+ElACt8pgTo/xYRlh+N1lFs0DEsMqB3WDv18nSoCtilJbJgKbZuFMGntGSPeqQUs6F9+G28mGIyciH/IbC286uuyI8TC8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WxEFmcT6; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2053f6b8201so31611115ad.2;
-        Sun, 08 Sep 2024 00:59:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725782393; x=1726387193; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yp/lE9jsjwYr4QJVO6arIKQKvwQTHVJgAIKKrLEU4/M=;
-        b=WxEFmcT6S/CYdZYFwDUAhV5QHeTD/ZPnwz34XS4I7AHlNcIsGN+1AFBBkydU4yyEvW
-         6i7Z8+JfQzrMJLInqkRKM0W2Lsp+VYwLUapEDMcH1QZUD+uNZjvHq23QragcEzhmBfy6
-         P/Gq9V/ZKXPEk6pfSTd5n5AC9Ufc2hDosPV8qRpp2FQ3nDZ+4ZoBANHE+OtyE62thneG
-         0Cq1qslyxN3qFX6aWRyOC1iqK48Y4+zinnxiAHM5mUQAtctmCVNPgF1/rM68XtFBYyHF
-         NKBrJYf9x8E6jw7RiQmn1iLXWtRUh3upV0KhCq6oRpZAdTCrPGf3P4JDsf64POvME7jW
-         /Arw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725782393; x=1726387193;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yp/lE9jsjwYr4QJVO6arIKQKvwQTHVJgAIKKrLEU4/M=;
-        b=YL5ZiCjYrhLx5BaxKP5lU1pt5sUks9Nrrw+wF7042yjB2m/1Xc92fGGutkDR3YqRls
-         stGJIj+5O+JDCgUn+FDvEyb08FYFhUlJvWPJeRnzpdQmYjxvOHMs7bK6T1RnybvGmII7
-         lJohrNGsRou6t9EycaG/56jpRh08TH25Bx8b22rNxL7ML7A5oJLHkw29Q/x9DlNT9x0I
-         z/Fl7RACw1Jn0CIXdkamPw1rjlzUxGjKGowuEcReFUvkmalpKWy6Ifx/2M7fgO1GIW54
-         W7BnK+3nEoatamSV83m9q+Ao+qM60TAjUaHrdybXa2V2D8f/oovr41Pagu3Lt19RNE35
-         k9VA==
-X-Forwarded-Encrypted: i=1; AJvYcCUu9jIOKK073ROBF29pgYZKgH1ZfBYch4Bua4THbh+wV1Sik/l1G45gtwGi/lc+lVQqYWBHdTvs+MpYmXU=@vger.kernel.org, AJvYcCWW7uQ70VbKmSmmMfkT0g531wAnF3FdzzCP3GCy2nU5pHJvqkjn9KCksviEwaWgsZu1N0N6IbEbhW+JI3l2iag6Zcg=@vger.kernel.org, AJvYcCXeDMMDGxt8Hpl2HnXyiv/DeB93ncZ4tX7uS7MyO+AwYOsq6vTUx3CImreF+lNGE9d0YXpR0OwxZPJ6Usju@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+EyMl4Bu/UOWnT752xvztrTuBU0huOyil+FsrgrN0jKlUHKYb
-	OrRlzNal7Q92nh2jtWYHfqdLVJLPmuzM13EqorYq3/7a3VwlJDeL
-X-Google-Smtp-Source: AGHT+IGCGgxhBLnfpM1/1m1EpmPE/ZTOPIdCCK6RTEVjqefLCbamq/qcZG3kSjyvJcNn7Jo7ZJWEiA==
-X-Received: by 2002:a17:902:e752:b0:206:ba20:dd49 with SMTP id d9443c01a7336-206f0552304mr128552445ad.33.1725782392935;
-        Sun, 08 Sep 2024 00:59:52 -0700 (PDT)
-Received: from localhost.localdomain ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7d8255dc1c6sm2012690a12.68.2024.09.08.00.59.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 00:59:52 -0700 (PDT)
-From: Nick Chan <towinchenmi@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Cc: asahi@lists.linux.dev,
-	Nick Chan <towinchenmi@gmail.com>
-Subject: [PATCH 3/3] tty: serial: samsung: Fix serial rx on Apple A7-A9
-Date: Sun,  8 Sep 2024 15:50:50 +0800
-Message-ID: <20240908075904.12133-4-towinchenmi@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240908075904.12133-1-towinchenmi@gmail.com>
-References: <20240908075904.12133-1-towinchenmi@gmail.com>
+	s=arc-20240116; t=1725782066; c=relaxed/simple;
+	bh=ILYqftmtMuZNK51jHq+yDX0+y9CLy3G/YcuYbf7yHkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rR2P0VZona378lCGJj+nWsqMC0fPPQKdRrdj+X0ZUimT7E49tyU6D+utpVDFAgqSTOFqaHCxkOMS2oRnImjCXafiAGLJLphxkTLapP4xHFLmQSKlqL5YOHSFpokZZtx55P4nfAFKxSDsOCzyrI48xEAz7U/54/kK8VruOYaDg5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HQ97m91n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23051C4CEC3;
+	Sun,  8 Sep 2024 07:54:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725782065;
+	bh=ILYqftmtMuZNK51jHq+yDX0+y9CLy3G/YcuYbf7yHkQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HQ97m91ng8zpfEjL902Z4yc63dB7Ek9gHhVyia4K97NAtgIAB776riXbo0CxoJhpK
+	 KDUhqWnDLTldtmDeAeJ5dLoje1r+J5BHmzFIqr/vqveLL2NDz4enQHYaem80PzFpGn
+	 w9kOrApjb1Kg1xK0VMRXUdDIkLNuUm6c1RE6g7mY=
+Date: Sun, 8 Sep 2024 09:54:22 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	stern@rowland.harvard.edu,
+	syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V3] USB: usbtmc: prevent kernel-usb-infoleak
+Message-ID: <2024090832-tabby-mom-e3d6@gregkh>
+References: <2024090810-arrogant-disallow-6f08@gregkh>
+ <tencent_E06EEC2C516D3C9500E952ED0ACD9C787A0A@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_E06EEC2C516D3C9500E952ED0ACD9C787A0A@qq.com>
 
-Apple's older A7-A9 SoCs seems to use bit 3 in UTRSTAT as RXTO, which is
-enabled by bit 11 in UCON.
+On Sun, Sep 08, 2024 at 03:35:49PM +0800, Edward Adam Davis wrote:
+> On Sun, 8 Sep 2024 07:20:40 +0200, Greg KH wrote:
+> > On Sun, Sep 08, 2024 at 10:20:57AM +0800, Edward Adam Davis wrote:
+> > > The syzbot reported a kernel-usb-infoleak in usbtmc_write.
+> > >
+> > > The expression "aligned = (transfersize + (USBTMC_HEADER_SIZE + 3)) & ~3;"
+> > > in usbtmcw_write() follows the following pattern:
+> > >
+> > > aligned = (1 + 12 + 3) & ~3 = 16   // 3 bytes have not been initialized
+> > > aligned = (2 + 12 + 3) & ~3 = 16   // 2 bytes have not been initialized
+> > > aligned = (3 + 12 + 3) & ~3 = 16   // 1 byte has not been initialized
+> > > aligned = (4 + 12 + 3) & ~3 = 16   // All bytes have been initialized
+> > > aligned = (5 + 12 + 3) & ~3 = 20   // 3 bytes have not been initialized
+> > > aligned = (6 + 12 + 3) & ~3 = 20   // 2 bytes have not been initialized
+> > > aligned = (7 + 12 + 3) & ~3 = 20   // 1 byte has not been initialized
+> > > aligned = (8 + 12 + 3) & ~3 = 20   // All bytes have been initialized
+> > > aligned = (9 + 12 + 3) & ~3 = 24
+> > > ...
+> > >
+> > > Note: #define USBTMC_HEADER_SIZE      12
+> > >
+> > > This results in the buffer[USBTMC_SEAD_SIZE+transfersize] and its
+> > > subsequent memory not being initialized.
+> > >
+> > > Fixes: 4ddc645f40e9 ("usb: usbtmc: Add ioctl for vendor specific write")
+> > > Reported-and-tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
+> > > Closes: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
+> > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > > ---
+> > > V2 -> V3: Update condition and comments
+> > >
+> > >  drivers/usb/class/usbtmc.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
+> > > index 6bd9fe565385..faf8c5508997 100644
+> > > --- a/drivers/usb/class/usbtmc.c
+> > > +++ b/drivers/usb/class/usbtmc.c
+> > > @@ -1591,6 +1591,10 @@ static ssize_t usbtmc_write(struct file *filp, const char __user *buf,
+> > >  		goto exit;
+> > >  	}
+> > >
+> > > +	if (USBTMC_HEADER_SIZE + transfersize < aligned)
+> > > +		memset(&buffer[USBTMC_HEADER_SIZE + transfersize], 0,
+> > > +			aligned - USBTMC_HEADER_SIZE - transfersize);
+> > 
+> > As this is now a pain to read/understand, and there's no comment
+> > describing it so we'll not really understand it in a few months, let
+> > alone years, how about we just do the trivial thing and make the
+> > allocation with kzalloc() to start with?  And put a comment there saying
+> > why it's zeroed out.
+> Perhaps I wrote too much in my comments, but in essence, the logic behind
+> this version's fix is:
+> When aligned is greater than (USBTMC_HEADER_SIZE+transfersize), there are
+> (aligned - (USBTMC_HEADER_SIZE+transfersize) bytes after the header and data
+> that have not been initialized, and these bytes are then set to 0.
+> > 
+> > Sorry, I thought this was going to be a lot simpler based on your first
+> > patch than this type of logic.
+> As you mentioned in my first version patch, this approach is simple and
+> easy to understand, but it comes at the cost of losing the real issue,
+> and KMSAN will not find similar problems again in the future, which is
+> not conducive to making the program logic more robust.
 
-Access these bits in addition to the original RXTO and RXTO enable bits,
-to allow serial rx to function on A7-A9 SoCs. This change does not
-appear to affect the A10 SoC and up.
+There will not be similar problems in the future as you are explicitly
+setting everything to 0, so all should be fine :)
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
----
- drivers/tty/serial/samsung_tty.c | 17 ++++++++++++-----
- include/linux/serial_s3c.h       | 18 +++++++++++-------
- 2 files changed, 23 insertions(+), 12 deletions(-)
+The real issue here is that the usbtmc logic of sending data is crazy,
+and unique to it for various reasons that well all really don't
+understand.  Given the very small number of these devices in the world,
+it's probably best left to the maintainers of it to handle any real
+problems going forward, and just squash these types of fuzzing bugs now
+with a heavy hammer to make them happy.
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 7574d4176e76..f6f8645b0798 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -550,6 +550,7 @@ static void s3c24xx_serial_stop_rx(struct uart_port *port)
- 		case TYPE_APPLE_S5L:
- 			s3c24xx_clear_bit(port, APPLE_S5L_UCON_RXTHRESH_ENA, S3C2410_UCON);
- 			s3c24xx_clear_bit(port, APPLE_S5L_UCON_RXTO_ENA, S3C2410_UCON);
-+			s3c24xx_clear_bit(port, APPLE_S5L_UCON_RXTO_LEGACY_ENA, S3C2410_UCON);
- 			break;
- 		default:
- 			disable_irq_nosync(ourport->rx_irq);
-@@ -963,9 +964,11 @@ static irqreturn_t apple_serial_handle_irq(int irq, void *id)
- 	u32 pend = rd_regl(port, S3C2410_UTRSTAT);
- 	irqreturn_t ret = IRQ_NONE;
- 
--	if (pend & (APPLE_S5L_UTRSTAT_RXTHRESH | APPLE_S5L_UTRSTAT_RXTO)) {
-+	if (pend & (APPLE_S5L_UTRSTAT_RXTHRESH | APPLE_S5L_UTRSTAT_RXTO |
-+		APPLE_S5L_UTRSTAT_RXTO_LEGACY)) {
- 		wr_regl(port, S3C2410_UTRSTAT,
--			APPLE_S5L_UTRSTAT_RXTHRESH | APPLE_S5L_UTRSTAT_RXTO);
-+			APPLE_S5L_UTRSTAT_RXTHRESH | APPLE_S5L_UTRSTAT_RXTO |
-+			APPLE_S5L_UTRSTAT_RXTO_LEGACY);
- 		ret = s3c24xx_serial_rx_irq(ourport);
- 	}
- 	if (pend & APPLE_S5L_UTRSTAT_TXTHRESH) {
-@@ -1190,7 +1193,8 @@ static void apple_s5l_serial_shutdown(struct uart_port *port)
- 	ucon = rd_regl(port, S3C2410_UCON);
- 	ucon &= ~(APPLE_S5L_UCON_TXTHRESH_ENA_MSK |
- 		  APPLE_S5L_UCON_RXTHRESH_ENA_MSK |
--		  APPLE_S5L_UCON_RXTO_ENA_MSK);
-+		  APPLE_S5L_UCON_RXTO_ENA_MSK |
-+		  APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK);
- 	wr_regl(port, S3C2410_UCON, ucon);
- 
- 	wr_regl(port, S3C2410_UTRSTAT, APPLE_S5L_UTRSTAT_ALL_FLAGS);
-@@ -1287,6 +1291,7 @@ static int apple_s5l_serial_startup(struct uart_port *port)
- 	/* Enable Rx Interrupt */
- 	s3c24xx_set_bit(port, APPLE_S5L_UCON_RXTHRESH_ENA, S3C2410_UCON);
- 	s3c24xx_set_bit(port, APPLE_S5L_UCON_RXTO_ENA, S3C2410_UCON);
-+	s3c24xx_set_bit(port, APPLE_S5L_UCON_RXTO_LEGACY_ENA, S3C2410_UCON);
- 
- 	return ret;
- }
-@@ -2143,13 +2148,15 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
- 
- 			ucon &= ~(APPLE_S5L_UCON_TXTHRESH_ENA_MSK |
- 				  APPLE_S5L_UCON_RXTHRESH_ENA_MSK |
--				  APPLE_S5L_UCON_RXTO_ENA_MSK);
-+				  APPLE_S5L_UCON_RXTO_ENA_MSK |
-+				  APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK);
- 
- 			if (ourport->tx_enabled)
- 				ucon |= APPLE_S5L_UCON_TXTHRESH_ENA_MSK;
- 			if (ourport->rx_enabled)
- 				ucon |= APPLE_S5L_UCON_RXTHRESH_ENA_MSK |
--					APPLE_S5L_UCON_RXTO_ENA_MSK;
-+					APPLE_S5L_UCON_RXTO_ENA_MSK |
-+					APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK;
- 
- 			wr_regl(port, S3C2410_UCON, ucon);
- 
-diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
-index 1e8686695487..964a4fbf2626 100644
---- a/include/linux/serial_s3c.h
-+++ b/include/linux/serial_s3c.h
-@@ -246,24 +246,28 @@
- 				 S5PV210_UFCON_TXTRIG4 |	\
- 				 S5PV210_UFCON_RXTRIG4)
- 
--#define APPLE_S5L_UCON_RXTO_ENA		9
--#define APPLE_S5L_UCON_RXTHRESH_ENA	12
--#define APPLE_S5L_UCON_TXTHRESH_ENA	13
--#define APPLE_S5L_UCON_RXTO_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO_ENA)
--#define APPLE_S5L_UCON_RXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_RXTHRESH_ENA)
--#define APPLE_S5L_UCON_TXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_TXTHRESH_ENA)
-+#define APPLE_S5L_UCON_RXTO_ENA			9
-+#define APPLE_S5L_UCON_RXTO_LEGACY_ENA		11
-+#define APPLE_S5L_UCON_RXTHRESH_ENA		12
-+#define APPLE_S5L_UCON_TXTHRESH_ENA		13
-+#define APPLE_S5L_UCON_RXTO_ENA_MSK		BIT(APPLE_S5L_UCON_RXTO_ENA)
-+#define APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO_LEGACY_ENA)
-+#define APPLE_S5L_UCON_RXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_RXTHRESH_ENA)
-+#define APPLE_S5L_UCON_TXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_TXTHRESH_ENA)
- 
- #define APPLE_S5L_UCON_DEFAULT		(S3C2410_UCON_TXIRQMODE | \
- 					 S3C2410_UCON_RXIRQMODE | \
- 					 S3C2410_UCON_RXFIFO_TOI)
- #define APPLE_S5L_UCON_MASK		(APPLE_S5L_UCON_RXTO_ENA_MSK | \
-+					 APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK | \
- 					 APPLE_S5L_UCON_RXTHRESH_ENA_MSK | \
- 					 APPLE_S5L_UCON_TXTHRESH_ENA_MSK)
- 
-+#define APPLE_S5L_UTRSTAT_RXTO_LEGACY	BIT(3)
- #define APPLE_S5L_UTRSTAT_RXTHRESH	BIT(4)
- #define APPLE_S5L_UTRSTAT_TXTHRESH	BIT(5)
- #define APPLE_S5L_UTRSTAT_RXTO		BIT(9)
--#define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f0)
-+#define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f8)
- 
- #ifndef __ASSEMBLY__
- 
--- 
-2.46.0
+thanks,
 
+greg k-h
 
