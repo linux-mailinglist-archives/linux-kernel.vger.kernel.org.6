@@ -1,135 +1,148 @@
-Return-Path: <linux-kernel+bounces-320066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF739705CF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:33:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02EF69705D1
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:33:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD69BB21B54
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:33:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3D1F282DA6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A256A136337;
-	Sun,  8 Sep 2024 08:33:12 +0000 (UTC)
-Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC3913A261;
+	Sun,  8 Sep 2024 08:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="t/3ptwsS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0CE7D07D
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 08:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4960139D1E;
+	Sun,  8 Sep 2024 08:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725784392; cv=none; b=fjBSspLWfLqwNgpZrrEg3g2wLPrzgeZ54TvN3EBp1m3PBasxJsRMTeeHu01d4Jida1G+xFvdcS9AkMmXWHiKao+xjz2imHJaDKkBrCPzxNaPKS63hiMr1vbNgazJnHeTUWjInsifuuai4ZcLVWg05xmakJHUgWbX4hpteCYDf5k=
+	t=1725784394; cv=none; b=HFmaG524e33LxJuyZXfdQi3JL/Jcski+XSHEnZh1XX/w5zMwYrNaHz8DQTiHC+3EsYda4L1TM2J20HzVTN+TgvaZEiVEQqxgwsMKk3r9kBfqT7uclUv0Pm+BewSuc/nBOGWZzNrlBAgl1o7+DFd58GqBfhjXZXSx2SMYBuVufYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725784392; c=relaxed/simple;
-	bh=JM6sWCaxiUXtNMP7Bmj/fVAfIlGVpMuithZEfIDgzDw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=axXwG0bqffFbDSKV4Q9CMnbKC9QiUDP/jrSbY+IytCalaUEgASbImUXqS7elyAkEFEbO98NYf7HUNRWT0dAIhUrcbz7wLgLvdASDC9ZhKxnwCfD6CxXFW/PYRfaSXt8ZLZgptUB+idE/+PmURVVIgfwheYicm5Wht377JsjVcyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.65.196])
-	by sina.com (10.185.250.24) with ESMTP
-	id 66DD613800000795; Sun, 8 Sep 2024 16:32:58 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 79833410748088
-X-SMAIL-UIID: 9062114413BC429FBD1FD941F0267B94-20240908-163258-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1725784394; c=relaxed/simple;
+	bh=KRBSBkWnA5Oy7vKfkRLxp5pkNZEjHseXzliLTWr2IVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OOKTpedAff4d9pg3TrmzZb3u7NkBZdY4Y3fwpBUWsDPLFgdza0GR3gQb8WNHJYB6Srm8PiokfDuJLH6nkZpm/BN+3xvPrLjCmC2bUCa7XIx/Dzk9u7CVeSoIPxB8Md1Y1W+W0ac8qBQwS9R0oTrTqHZELy8rzmveF9dH720Z3Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=t/3ptwsS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3AA5C4CEC6;
+	Sun,  8 Sep 2024 08:33:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725784394;
+	bh=KRBSBkWnA5Oy7vKfkRLxp5pkNZEjHseXzliLTWr2IVs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t/3ptwsSor/eQSQj/FpXX6lk5Bmrb94QrAtyn63/sohCOTahNtDmCfB5la1HODffD
+	 qa0Hw6NmNTJcvw7HAgcmI2/brd6fO93ocr0nqBz749JbDTySkxDev5cZHWJEg6wq44
+	 Gd2us+1/g57rrlZHzIvsTKk37PEbO622qHg/gRi0=
+Date: Sun, 8 Sep 2024 10:33:11 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	stern@rowland.harvard.edu,
+	syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com,
 	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect (2)
-Date: Sun,  8 Sep 2024 16:32:46 +0800
-Message-Id: <20240908083246.2329-1-hdanton@sina.com>
-In-Reply-To: <0000000000004a130a0621888811@google.com>
-References: 
+Subject: Re: [PATCH V3] USB: usbtmc: prevent kernel-usb-infoleak
+Message-ID: <2024090809-subdued-mystify-32b6@gregkh>
+References: <2024090832-tabby-mom-e3d6@gregkh>
+ <tencent_6C71E6C09363C370897103ADC45ED7743705@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_6C71E6C09363C370897103ADC45ED7743705@qq.com>
 
-On Sat, 07 Sep 2024 07:42:26 -0700
-> syzbot has found a reproducer for the following issue on:
+On Sun, Sep 08, 2024 at 04:16:39PM +0800, Edward Adam Davis wrote:
+> On Sun, 8 Sep 2024 09:54:22 +0200, Greg KH wrote:
+> > On Sun, Sep 08, 2024 at 03:35:49PM +0800, Edward Adam Davis wrote:
+> > > On Sun, 8 Sep 2024 07:20:40 +0200, Greg KH wrote:
+> > > > On Sun, Sep 08, 2024 at 10:20:57AM +0800, Edward Adam Davis wrote:
+> > > > > The syzbot reported a kernel-usb-infoleak in usbtmc_write.
+> > > > >
+> > > > > The expression "aligned = (transfersize + (USBTMC_HEADER_SIZE + 3)) & ~3;"
+> > > > > in usbtmcw_write() follows the following pattern:
+> > > > >
+> > > > > aligned = (1 + 12 + 3) & ~3 = 16   // 3 bytes have not been initialized
+> > > > > aligned = (2 + 12 + 3) & ~3 = 16   // 2 bytes have not been initialized
+> > > > > aligned = (3 + 12 + 3) & ~3 = 16   // 1 byte has not been initialized
+> > > > > aligned = (4 + 12 + 3) & ~3 = 16   // All bytes have been initialized
+> > > > > aligned = (5 + 12 + 3) & ~3 = 20   // 3 bytes have not been initialized
+> > > > > aligned = (6 + 12 + 3) & ~3 = 20   // 2 bytes have not been initialized
+> > > > > aligned = (7 + 12 + 3) & ~3 = 20   // 1 byte has not been initialized
+> > > > > aligned = (8 + 12 + 3) & ~3 = 20   // All bytes have been initialized
+> > > > > aligned = (9 + 12 + 3) & ~3 = 24
+> > > > > ...
+> > > > >
+> > > > > Note: #define USBTMC_HEADER_SIZE      12
+> > > > >
+> > > > > This results in the buffer[USBTMC_SEAD_SIZE+transfersize] and its
+> > > > > subsequent memory not being initialized.
+> > > > >
+> > > > > Fixes: 4ddc645f40e9 ("usb: usbtmc: Add ioctl for vendor specific write")
+> > > > > Reported-and-tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
+> > > > > Closes: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
+> > > > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > > > > ---
+> > > > > V2 -> V3: Update condition and comments
+> > > > >
+> > > > >  drivers/usb/class/usbtmc.c | 4 ++++
+> > > > >  1 file changed, 4 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
+> > > > > index 6bd9fe565385..faf8c5508997 100644
+> > > > > --- a/drivers/usb/class/usbtmc.c
+> > > > > +++ b/drivers/usb/class/usbtmc.c
+> > > > > @@ -1591,6 +1591,10 @@ static ssize_t usbtmc_write(struct file *filp, const char __user *buf,
+> > > > >  		goto exit;
+> > > > >  	}
+> > > > >
+> > > > > +	if (USBTMC_HEADER_SIZE + transfersize < aligned)
+> > > > > +		memset(&buffer[USBTMC_HEADER_SIZE + transfersize], 0,
+> > > > > +			aligned - USBTMC_HEADER_SIZE - transfersize);
+> > > >
+> > > > As this is now a pain to read/understand, and there's no comment
+> > > > describing it so we'll not really understand it in a few months, let
+> > > > alone years, how about we just do the trivial thing and make the
+> > > > allocation with kzalloc() to start with?  And put a comment there saying
+> > > > why it's zeroed out.
+> > > Perhaps I wrote too much in my comments, but in essence, the logic behind
+> > > this version's fix is:
+> > > When aligned is greater than (USBTMC_HEADER_SIZE+transfersize), there are
+> > > (aligned - (USBTMC_HEADER_SIZE+transfersize) bytes after the header and data
+> > > that have not been initialized, and these bytes are then set to 0.
+> > > >
+> > > > Sorry, I thought this was going to be a lot simpler based on your first
+> > > > patch than this type of logic.
+> > > As you mentioned in my first version patch, this approach is simple and
+> > > easy to understand, but it comes at the cost of losing the real issue,
+> > > and KMSAN will not find similar problems again in the future, which is
+> > > not conducive to making the program logic more robust.
+> > 
+> > There will not be similar problems in the future as you are explicitly
+> > setting everything to 0, so all should be fine :)
+> > 
+> > The real issue here is that the usbtmc logic of sending data is crazy,
+> > and unique to it for various reasons that well all really don't
+> > understand.  Given the very small number of these devices in the world,
+> > it's probably best left to the maintainers of it to handle any real
+> > problems going forward, and just squash these types of fuzzing bugs now
+> > with a heavy hammer to make them happy.
+> I reserve my opinion.
 > 
-> HEAD commit:    788220eee30d Merge tag 'pm-6.11-rc7' of git://git.kernel.o..
-> git tree:       upstream
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1304189f980000
+> If you insist, you can use my first patch directly:
+> https://lore.kernel.org/all/tencent_088B2EF2AEE00C8AE7D706CCD2CBC6484906@qq.com
 
-#syz test
+No, that should be 'kzalloc()' instead of alocating and calling
+memset(), to save us the round-trip of someone coming afterward and
+cleaning up this common pattern to be a single call.
 
---- l/net/bluetooth/l2cap_core.c
-+++ c/net/bluetooth/l2cap_core.c
-@@ -1747,6 +1747,8 @@ static void l2cap_unregister_all_users(s
- 	}
- }
- 
-+static DEFINE_MUTEX(l2cap_conn_del_mutex);
-+
- static void l2cap_conn_del(struct hci_conn *hcon, int err)
- {
- 	struct l2cap_conn *conn = hcon->l2cap_data;
-@@ -1797,8 +1799,10 @@ static void l2cap_conn_del(struct hci_co
- 	if (conn->info_state & L2CAP_INFO_FEAT_MASK_REQ_SENT)
- 		cancel_delayed_work_sync(&conn->info_timer);
- 
-+	mutex_lock(&l2cap_conn_del_mutex);
- 	hcon->l2cap_data = NULL;
- 	conn->hchan = NULL;
-+	mutex_unlock(&l2cap_conn_del_mutex);
- 	l2cap_conn_put(conn);
- }
- 
-@@ -7480,11 +7484,21 @@ void l2cap_recv_acldata(struct hci_conn
- 	struct l2cap_conn *conn = hcon->l2cap_data;
- 	int len;
- 
--	if (!conn)
-+	if (!conn) {
- 		conn = l2cap_conn_add(hcon);
--
--	if (!conn)
--		goto drop;
-+		if (!conn)
-+			goto drop;
-+		l2cap_conn_get(conn);
-+	} else {
-+		mutex_lock(&l2cap_conn_del_mutex);
-+		conn = hcon->l2cap_data;
-+		if (conn)
-+			if (!kref_get_unless_zero(&conn->ref))
-+				conn = NULL;
-+		mutex_unlock(&l2cap_conn_del_mutex);
-+		if (!conn)
-+			goto drop;
-+	}
- 
- 	BT_DBG("conn %p len %u flags 0x%x", conn, skb->len, flags);
- 
-@@ -7512,6 +7526,7 @@ void l2cap_recv_acldata(struct hci_conn
- 		if (len == skb->len) {
- 			/* Complete frame received */
- 			l2cap_recv_frame(conn, skb);
-+			l2cap_conn_put(conn);
- 			return;
- 		}
- 
-@@ -7576,6 +7591,8 @@ void l2cap_recv_acldata(struct hci_conn
- 
- drop:
- 	kfree_skb(skb);
-+	if (conn)
-+		l2cap_conn_put(conn);
- }
- 
- static struct hci_cb l2cap_cb = {
---
+thanks,
+
+greg k-h
 
