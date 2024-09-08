@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-320226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE809707CE
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:29:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35FA9707D1
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 485BBB21718
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:29:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B29FF2826AC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D5116B754;
-	Sun,  8 Sep 2024 13:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9CD16938C;
+	Sun,  8 Sep 2024 13:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="RFreiCMw"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="irIJXzKj"
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A7616A924
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 13:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCF116BE3F
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 13:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725802156; cv=none; b=nBwRbSq7fYH9iLbPWhA0ikFs15BqashsamolZFGymILNGfVkAYrH+urmU1RHnigqU7d14MG0xRzq4fHCICeI8XbK5nDLKVrRNsKlcOt4qG0J4oulZ6IBIqSz+Mh7R3hUwNjHp0NQqQ/v76F101C0pibCwswimH9GmU5eqiUeEY4=
+	t=1725802166; cv=none; b=dpHbHzfOlUmgJ7iyi8Zx/sAoxcb1HSeDKxNLk3GA34q6bAy0puI62hiF/ttm9MMhVzdy1gdz2YtQc9Ona/0CPcozqKakrxyV40Q/mU7MwwcbfbjSbIvXTMlww6YCgRnRH5Ued941VdtLV8tZURZnng8k21HJh/WSLvcj7qrbeFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725802156; c=relaxed/simple;
-	bh=Mhs6wZix2bP21g1CDNYMsdZZqlfok+FeZX4AEp59FSI=;
+	s=arc-20240116; t=1725802166; c=relaxed/simple;
+	bh=yjxwFeT+ax2YQbYDL/znuQXIisIA+xYp2KdtH3aXyC0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SLNTLevCdsfMBYSFPwko3J5TbxZ3rmij3TZ/BUlgrz/7oxGCPfe316Szb6tpr6YRwh+9ZbHtf/4Gg0l8J9Q6bqi0asD7HYuovsIP8660yv831Z7jwkeMgFIxGM2BbgJJ7wC+qkm8oS+lClbtyJPf6HH5ytem6LjCg3JWQ7pxRpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=RFreiCMw; arc=none smtp.client-ip=149.28.215.223
+	 MIME-Version; b=A1kqFs/p/9tRE0/ArdN7mwtv4ibhnjZWXl0o4y0hfH2dQyUK6BbPIlXxfEaTtLthhAI+xG8VC1Xpz+x1fJyMGV4+nibPVn7ue1iDca/7PwN2arPPktANHdQz5h14IPHnpIu36c3CFG8CGtFEPBcLznOjmASH/hD+6PRXFXdb53E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=irIJXzKj; arc=none smtp.client-ip=149.28.215.223
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
  h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
  Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1725802140; bh=PMtF2O6gt4k2B52zCrqb9+HqSYyBlwLm0yxYoXiBs0M=;
- b=RFreiCMwTU2X8JQ9IGlVoSEMYHgeMxWmIs0eUknjGi6shdywHEYXMRf9ATeTndJgTTYh7M1Fd
- TxIzNrCv2jbE63YLjz7OMBiHIrgA/x6+EOVHyJJOpA4t6cXOYs8mX6G9V7rPQGTU8gHmlB2ExLu
- PwUQciIryPldt8ArfjdlMRsRJT0N/oL4MjyVSlngdGPUomlENBB8m3HD4r+bF45YcDelaIy9Mi6
- qKIvwNpAQhGivX3EiwMtyybE1vi9OWs7ZreZEev+A7E6gs9WAWrvkmAnhB1ct+La72Zm9zU5lVX
- xDW6iaVKjFUb5mF8Mwmj9reFGnsulP6qtUOxdTVVh2/g==
+ t=1725802145; bh=bw7hUA9+T9ojuBGzAwclXIncQiP3YNb92ShoyGh/flo=;
+ b=irIJXzKjfxQDHQuGOAJzKUxX4mvjCB4XMUrvWnyX9XcNVS0WkpkPBwmf4okaWaixE6WIcKRzQ
+ YqgkSQBE/yZrD5XcgwidI1wV2I8ZRndbkzgsW92FzCfUqf4NWU0SLve6yaF/bAVSGO83SDjAKsM
+ EUyBayPFiykG3+5NBN5NGz7q0+JTVHkeiX4FF6qvh+nEnLF670zgk2nhuJA1pxnosZi6TMRw48u
+ t89YR5ikSMgw6rLnRq/AjR37QCLvMVmGC5KAMeFQHif4kF60Eq7AYbUWJbfxmKK0ENFwLDmCMB/
+ vwjGHB7aiXCv7qC2t030xXkw+AcEir6354uHB2habKtQ==
 From: Jonas Karlman <jonas@kwiboo.se>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -57,9 +57,9 @@ Cc: Christian Hewitt <christianshewitt@gmail.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 06/10] drm: bridge: dw_hdmi: Remove previous_mode and mode_set
-Date: Sun,  8 Sep 2024 13:28:08 +0000
-Message-ID: <20240908132823.3308029-7-jonas@kwiboo.se>
+Subject: [PATCH v2 07/10] drm: bridge: dw_hdmi: Invalidate CEC phys addr from connector detect
+Date: Sun,  8 Sep 2024 13:28:09 +0000
+Message-ID: <20240908132823.3308029-8-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240908132823.3308029-1-jonas@kwiboo.se>
 References: <20240908132823.3308029-1-jonas@kwiboo.se>
@@ -76,70 +76,55 @@ X-Complaints-To: abuse@forwardemail.net
 X-ForwardEmail-Version: 0.4.40
 X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
  149.28.215.223
-X-ForwardEmail-ID: 66dda6993c9877b459587968
+X-ForwardEmail-ID: 66dda69d3c9877b45958797c
 
-With the use of adjusted_mode directly from the crtc_state there is no
-longer a need to store a copy in previous_mode, remove it and the now
-unneeded mode_set ops.
+Wait until the connector detect ops is called to invalidate CEC phys
+addr instead of doing it directly from the irq handler.
 
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 ---
-v2: No change
+v2: Collect r-b tag
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 19 +------------------
- 1 file changed, 1 insertion(+), 18 deletions(-)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 1eefa633ff78..6a94376a3da3 100644
+index 6a94376a3da3..8ec97babd334 100644
 --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
 +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -154,8 +154,6 @@ struct dw_hdmi {
- 		bool enabled;
- 	} phy;
- 
--	struct drm_display_mode previous_mode;
--
- 	struct i2c_adapter *ddc;
- 	void __iomem *regs;
- 	bool sink_is_hdmi;
-@@ -165,7 +163,7 @@ struct dw_hdmi {
- 	struct pinctrl_state *default_state;
- 	struct pinctrl_state *unwedge_state;
- 
--	struct mutex mutex;		/* for state below and previous_mode */
-+	struct mutex mutex;		/* for state below */
- 	enum drm_connector_force force;	/* mutex-protected force state */
- 	struct drm_connector *curr_conn;/* current connector (only valid when !disabled) */
- 	bool disabled;			/* DRM has disabled our bridge */
-@@ -2894,20 +2892,6 @@ dw_hdmi_bridge_mode_valid(struct drm_bridge *bridge,
- 	return mode_status;
+@@ -2454,7 +2454,17 @@ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
+ {
+ 	struct dw_hdmi *hdmi = container_of(connector, struct dw_hdmi,
+ 					     connector);
+-	return dw_hdmi_detect(hdmi);
++	enum drm_connector_status status;
++
++	status = dw_hdmi_detect(hdmi);
++
++	if (status == connector_status_disconnected) {
++		mutex_lock(&hdmi->cec_notifier_mutex);
++		cec_notifier_phys_addr_invalidate(hdmi->cec_notifier);
++		mutex_unlock(&hdmi->cec_notifier_mutex);
++	}
++
++	return status;
  }
  
--static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
--				    const struct drm_display_mode *orig_mode,
--				    const struct drm_display_mode *mode)
--{
--	struct dw_hdmi *hdmi = bridge->driver_private;
+ static int dw_hdmi_connector_get_modes(struct drm_connector *connector)
+@@ -3065,12 +3075,6 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+ 				       phy_stat & HDMI_PHY_HPD,
+ 				       phy_stat & HDMI_PHY_RX_SENSE);
+ 
+-		if ((phy_stat & (HDMI_PHY_RX_SENSE | HDMI_PHY_HPD)) == 0) {
+-			mutex_lock(&hdmi->cec_notifier_mutex);
+-			cec_notifier_phys_addr_invalidate(hdmi->cec_notifier);
+-			mutex_unlock(&hdmi->cec_notifier_mutex);
+-		}
 -
--	mutex_lock(&hdmi->mutex);
--
--	/* Store the display mode for plugin/DKMS poweron events */
--	drm_mode_copy(&hdmi->previous_mode, mode);
--
--	mutex_unlock(&hdmi->mutex);
--}
--
- static void dw_hdmi_bridge_atomic_disable(struct drm_bridge *bridge,
- 					  struct drm_bridge_state *old_state)
- {
-@@ -2971,7 +2955,6 @@ static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
- 	.atomic_get_input_bus_fmts = dw_hdmi_bridge_atomic_get_input_bus_fmts,
- 	.atomic_enable = dw_hdmi_bridge_atomic_enable,
- 	.atomic_disable = dw_hdmi_bridge_atomic_disable,
--	.mode_set = dw_hdmi_bridge_mode_set,
- 	.mode_valid = dw_hdmi_bridge_mode_valid,
- 	.detect = dw_hdmi_bridge_detect,
- 	.edid_read = dw_hdmi_bridge_edid_read,
+ 		if ((intr_stat & HDMI_IH_PHY_STAT0_HPD) &&
+ 		    (phy_stat & HDMI_PHY_HPD))
+ 			status = connector_status_connected;
 -- 
 2.46.0
 
