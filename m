@@ -1,203 +1,116 @@
-Return-Path: <linux-kernel+bounces-320286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7B1970861
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:17:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B8D970865
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18F561F21222
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:17:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71B79282427
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63F2173336;
-	Sun,  8 Sep 2024 15:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7AF1741CB;
+	Sun,  8 Sep 2024 15:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m0uHsgcR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHotEJL4"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C61D1487F1;
-	Sun,  8 Sep 2024 15:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD5AEAF9;
+	Sun,  8 Sep 2024 15:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725808642; cv=none; b=X+PaZsvHdkDGKGNi8eC9HUnUoD1V0A+A9/j4Wu/1VsR+/fxsF4dwdVA4335uk1vReFbEGj4VjqQ+6Y+FnhtAxQypttZgki2ZktIfn1sz+8tX9UFztc8EPIorgKdDfGMsZw8dlTdX+rkJKbwpzojUlipcPOXalIJfaF8h0tejnNs=
+	t=1725808695; cv=none; b=OJxqSMqexe+Q41/5QXO4uhtxA6TwZzrSwtQjRZKH1Pse5k83HDm9HbTgpnIY95CzG1V4O5w4wKqG2eSRA/6f++nIML0P19IvCdwfneJA215ovbPpWo2npjPWdzX6lTGJTS33HfagNNBpE+e16B1p/b5a/W4med0XBwuJ+8toPtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725808642; c=relaxed/simple;
-	bh=hVjgUKusbVBPprpt143SVZ7B/OMrtw61kI00W3VV/Zc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=t2/0dJNF2v2lcjG9kZ8UoDn9KloSDVmVn53Ki89fGGEr5o1jAfyvou+cTkOs0KAohLcxqV+z6Uz3jVFJQNRwIpe+HaUhC0fD2Ro98KlNByO/O2ItLs7Zm1XykS66K/8bsEtYN+gKPP7kL8ZKrfnkJb39B+GKMXvO3oPmELiFeAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m0uHsgcR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 179FFC4CEC5;
-	Sun,  8 Sep 2024 15:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725808642;
-	bh=hVjgUKusbVBPprpt143SVZ7B/OMrtw61kI00W3VV/Zc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=m0uHsgcRFn6NfT8z80S67WbbKSEKby8GbTb/NitaCzghveveOrd97FvMJbsnUbDaM
-	 6Msvttf1R/8B25RXk6Eu8DYsw4NurmerwEwaUI5+BztmmCgfPokW8F/bif0ukwaWQg
-	 /nWx+3EQmFIpxhoV8XG+QPE3wjtbHsf3s0R+2WKX+OPJgOsh2QDieI7dg8SYDNP/1g
-	 dubytga6H+iq/cqSNnmZDyez9afAjWT1Nl/b6vEaQJv2ZbPzap0NJBQDysY+v37pkg
-	 jnAkvOeT4x8YGBSTYWgRO32vrlLnQud1tYuFMd9EDo6r4Aa3UQW90Nkk0JKiNHgjGF
-	 OyeftEpA2U4Fg==
-Date: Mon, 9 Sep 2024 00:17:18 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Sven Schnelle <svens@linux.ibm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Subject: Re: [PATCH 4/7] Add print_function_args()
-Message-Id: <20240909001718.ffbfc2ac8b7888a94735720f@kernel.org>
-In-Reply-To: <20240904065908.1009086-5-svens@linux.ibm.com>
-References: <20240904065908.1009086-1-svens@linux.ibm.com>
-	<20240904065908.1009086-5-svens@linux.ibm.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725808695; c=relaxed/simple;
+	bh=HetVwA2icroIjaoAACllYQdENIflDpr1iRlBdiqUea0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lyFxNiWXn3lpWEXf2fiXEyczJQjIF6B8LNhKwmwy5879KX79ExAEioFN0DWRi4H4p850U2b3OHd3YJWBbdKcf+BVuAIjGn8qv6TALyGFm9iFC2bnU27KOB33dPIqPa3fUXapHzRQO+ECVzVaQF5hU+Wed78eyfqNmR9RthdD6VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHotEJL4; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-718d985b6bbso1868312b3a.2;
+        Sun, 08 Sep 2024 08:18:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725808693; x=1726413493; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cZpkFOIc5/0NZVjzEtOpjFbI0AWB4oMd9gmLouDFEeg=;
+        b=IHotEJL4HY3rnpW+jFKEmP3sKEUwYRLD1jHHa31qL1Zg+4Bwq136XzQ5dHHe3Lq0jo
+         uViq3dIBD15XHfPVI+tYPEYDDNi/Ugo6UPorpDK9R4Mul/xcsBd4/UlCyifO3J6Yurih
+         2szgK8ImvpXbVv0Q7LPMjbA2j+/VbAG5IjTyQViStAm/N1kl44n96VaUKoy7Pe3uZmZN
+         ss9iP+oKrEmZjRD1vo/8nNKhgPozCB7RAvjchKnScQSl12jmTBbZb6IewLYxIk4yTHKQ
+         5a36S2Asf/DetF3hqverrKyogzHAEZzoPGYjxafJ68Y/dSgnuflkCvXXoInM3HRb9/OQ
+         I5mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725808693; x=1726413493;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cZpkFOIc5/0NZVjzEtOpjFbI0AWB4oMd9gmLouDFEeg=;
+        b=cYZlK37pFpiKGudf7vlNDpbj6UroJVn5Znb4wN2CnsdtZKAmuIgfTejva20lMOS4AP
+         h0zP7rrOmY5NIZD6bFiG0ssL5P1AaGaQoYBVIhZcf7odgLOISPsNq0w3CAcTZVsJO/Ff
+         noJ/NyDMfmbnv1a+PErjsbCR50fNK4Flsh1ree9s9I9yguzSF4W6cBDnP/Um75ixsnHo
+         6td9mb0VN+JZ2cHo45QIcU5xUSGno5Q0kHchvZvYLjRMnFX5x1QawWExoYDkkp3Nq8Fw
+         GOExdcjaasnlw7fIDwoHeOdj7F6oS+K4lT25hzvJQhPn1kW+KhR6RU3hr/AY0/AQTmQu
+         eDGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVv7Wj4OSS0HZX4wb02vHq4IMWEm18cdNkkwgcEbiLIm/v0hnI43BNW88+VjGqFOTeIEfxq0LwTq8+nKg==@vger.kernel.org, AJvYcCVvwfKdO3x6gpXpxj1Jm+EUsdBmmCwqjTk0unC+1JAZq7A6hT+MbH3Gpm7HeTL5dk+FWeKBgnc2VMyx9nCz@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsV/s7BJpnTojqeZve9DWwF9dQwB7NHyTDqEHF8TbIYLOLcRs8
+	QxxSY4fEOSiLaeLg9d37VGTZ02Ag9fDJu3UyGXsjKyp7u8gBLFtBjcqBGURHvXU=
+X-Google-Smtp-Source: AGHT+IGR61g7iCGyQpL5P0HJuPGkQYU5vhjGLDzD63FYU3Ri0vLjIEuowo2Fdledz7GNOA4i7PVtYA==
+X-Received: by 2002:a05:6a00:816:b0:717:8cef:4053 with SMTP id d2e1a72fcca58-718d5e9028cmr11064320b3a.14.1725808693173;
+        Sun, 08 Sep 2024 08:18:13 -0700 (PDT)
+Received: from debian.tail629bbc.ts.net ([103.57.172.39])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e5982ed0sm2231777b3a.148.2024.09.08.08.18.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 08:18:12 -0700 (PDT)
+From: Sayyad Abid <sayyad.abid16@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Vasut <marex@denx.de>,
+	Michael Welling <mwelling@ieee.org>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sayyad.abid16@gmail.com
+Subject: [PATCH] dt-binding: touchscreen: fix x-plat-ohm missing type definition
+Date: Sun,  8 Sep 2024 20:47:43 +0530
+Message-Id: <20240908151742.2453402-1-sayyad.abid16@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed,  4 Sep 2024 08:58:58 +0200
-Sven Schnelle <svens@linux.ibm.com> wrote:
+This patch fixes the issue with x-plat-ohm missing a type definition.
+The patch adds the fix for this issue by adding value of this property
+should be a 32-bit unsigned integer.
 
-> Add a function to decode argument types with the help of BTF. Will
-> be used to display arguments in the function and function graph
-> tracer.
-> 
-> Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
-> ---
->  kernel/trace/trace_output.c | 68 +++++++++++++++++++++++++++++++++++++
->  kernel/trace/trace_output.h |  9 +++++
->  2 files changed, 77 insertions(+)
-> 
-> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-> index d8b302d01083..70405c4cceb6 100644
-> --- a/kernel/trace/trace_output.c
-> +++ b/kernel/trace/trace_output.c
-> @@ -12,8 +12,11 @@
->  #include <linux/sched/clock.h>
->  #include <linux/sched/mm.h>
->  #include <linux/idr.h>
-> +#include <linux/btf.h>
-> +#include <linux/bpf.h>
->  
->  #include "trace_output.h"
-> +#include "trace_btf.h"
->  
->  /* must be a power of 2 */
->  #define EVENT_HASHSIZE	128
-> @@ -669,6 +672,71 @@ int trace_print_lat_context(struct trace_iterator *iter)
->  	return !trace_seq_has_overflowed(s);
->  }
->  
-> +#ifdef CONFIG_FUNCTION_TRACE_ARGS
-> +void print_function_args(struct trace_seq *s, struct ftrace_regs *fregs,
-> +			 unsigned long func)
-> +{
-> +	const struct btf_param *param;
-> +	const struct btf_type *t;
-> +	const char *param_name;
-> +	char name[KSYM_NAME_LEN];
-> +	unsigned long arg;
-> +	struct btf *btf;
-> +	s32 tid, nr = 0;
-> +	int i;
-> +
-> +	trace_seq_printf(s, "(");
-> +
-> +	if (!ftrace_regs_has_args(fregs))
-> +		goto out;
-> +	if (lookup_symbol_name(func, name))
-> +		goto out;
-> +
-> +	btf = bpf_get_btf_vmlinux();
-> +	if (IS_ERR_OR_NULL(btf))
-> +		goto out;
-> +
-> +	t = btf_find_func_proto(name, &btf);
-> +	if (IS_ERR_OR_NULL(t))
-> +		goto out;
-> +
-> +	param = btf_get_func_param(t, &nr);
-> +	if (!param)
-> +		goto out_put;
-> +
-> +	for (i = 0; i < nr; i++) {
-> +		arg = ftrace_regs_get_argument(fregs, i);
-> +
-> +		param_name = btf_name_by_offset(btf, param[i].name_off);
-> +		if (param_name)
-> +			trace_seq_printf(s, "%s = ", param_name);
-> +		t = btf_type_skip_modifiers(btf, param[i].type, &tid);
-> +		if (!t)
-> +			continue;
-> +		switch (BTF_INFO_KIND(t->info)) {
-> +		case BTF_KIND_PTR:
-> +			trace_seq_printf(s, "0x%lx", arg);
-> +			break;
-> +		case BTF_KIND_INT:
-> +			trace_seq_printf(s, "%ld", arg);
+Signed-off-by: Sayyad Abid <sayyad.abid16@gmail.com>
 
-Don't we check the size and signed? :)
+---
+ .../devicetree/bindings/input/touchscreen/ti,tsc2005.yaml       | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> +			break;
-> +		case BTF_KIND_ENUM:
-> +			trace_seq_printf(s, "%ld", arg);
-
-nit: %d? (enum is equal to the int type)
-
-BTW, this series splits the patches by coding, not functionality.
-For the first review, it is OK. But eventually those should be merged.
-
-Thank you,
-
-> +			break;
-> +		default:
-> +			trace_seq_printf(s, "0x%lx (%d)", arg, BTF_INFO_KIND(param[i].type));
-> +			break;
-> +		}
-> +		if (i < nr - 1)
-> +			trace_seq_printf(s, ", ");
-> +	}
-> +out_put:
-> +	btf_put(btf);
-> +out:
-> +	trace_seq_printf(s, ")");
-> +}
-> +#endif
-> +
->  /**
->   * ftrace_find_event - find a registered event
->   * @type: the type of event to look for
-> diff --git a/kernel/trace/trace_output.h b/kernel/trace/trace_output.h
-> index dca40f1f1da4..a21d8ce606f7 100644
-> --- a/kernel/trace/trace_output.h
-> +++ b/kernel/trace/trace_output.h
-> @@ -41,5 +41,14 @@ extern struct rw_semaphore trace_event_sem;
->  #define SEQ_PUT_HEX_FIELD(s, x)				\
->  	trace_seq_putmem_hex(s, &(x), sizeof(x))
->  
-> +#ifdef CONFIG_FUNCTION_TRACE_ARGS
-> +void print_function_args(struct trace_seq *s, struct ftrace_regs *fregs,
-> +			 unsigned long func);
-> +#else
-> +static inline void print_function_args(struct trace_seq *s, struct ftrace_regs *fregs,
-> +				       unsigned long func) {
-> +	trace_seq_puts(s, "()");
-> +}
-> +#endif
->  #endif
->  
-> -- 
-> 2.43.0
-> 
-
-
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.yaml b/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.yaml
+index 7187c390b2f5..98ff65cf9f9f 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.yaml
++++ b/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.yaml
+@@ -38,6 +38,8 @@ properties:
+ 
+   ti,x-plate-ohms:
+     description: resistance of the touchscreen's X plates in ohm (defaults to 280)
++    $ref: /schemas/types.yaml#/definitions/uint32
++
+ 
+   ti,esd-recovery-timeout-ms:
+     description: |
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.39.2
+
 
