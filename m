@@ -1,80 +1,66 @@
-Return-Path: <linux-kernel+bounces-320252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7657D9707FF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:09:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 198B1970803
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBE22B212C6
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:09:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4649A1C21225
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A416170849;
-	Sun,  8 Sep 2024 14:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E49170A1E;
+	Sun,  8 Sep 2024 14:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PQYAMH3/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="g21nXnFp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF2F613D
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 14:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEA7613D;
+	Sun,  8 Sep 2024 14:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725804543; cv=none; b=ZglQONUzbeofTMVUsM+W9uVkp4C3vtZqU5vjFGhXqV27/0g7UBiTojQazgPmuwXEfBqp7WoSCP3BaXZ5sEM1GN+k/npg8IXE1UzL5v2R2BlL8w7gGRf8S8HXFR4+PgOp1hqh45ZSIWq0s4Iz+tpqVyhu35Rlel2utUsdZOqVXIk=
+	t=1725804622; cv=none; b=I/x0fyhvwypVqsyX5bWuL9/uuLzIyFSGF5iZcxXa6Q6q5eNHVKoQYFgn4fURhDnp5ecFy2tbH5seuxsDYX6r1hIVnWYIc4/ZWY7XFPmPMncsOXYbjAOMj1UE2GyaXRQjKP5z67lO3yjFFCAYYxwNJWWMjPgiR1dRzBwz020v2cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725804543; c=relaxed/simple;
-	bh=hBk/SL4tpO6HfJcIpRx6T8wytp3+JBcSbb+R4nhrIPQ=;
+	s=arc-20240116; t=1725804622; c=relaxed/simple;
+	bh=L52NrvFH6cCL7WSJulp5eAsipG5pw57QkN8inQ79Oco=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mTJPr225mx8gctHS+sBUqb1KbQs0FlwOXzTNTHFBpXJdiac9/3wQ6EgaqCOPyzEUaL/y27BOv1BpfI3fKga4y3wER2vroYJY/MsYpWY04it5TkoyK9TK66b7PQKGOqVxy6nJmxE6Ha43WkLrwBVjXrl4tlEEuvjKVY0uElEQdt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PQYAMH3/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725804540;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X1yWgQvR8tKlP3+9+N1qTzJaYgfANig+10GR3V5FEns=;
-	b=PQYAMH3/neuDTWOxAanImfu4rY1u7KT/iRpv+AHt2Mhm0ehZnpI+nzN7NAVt83a3vppnW5
-	yZN48Q+VP4x71+0cKW+vxURoQj5u3f93kYEsGUWfxmPGTdYvzZJPDljM4pO0Yx4glHjZ3N
-	sFGcfQ+hVBC//nU+IOe/Y1whgv+O4ws=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-9-qUxeiRUnOGW5_eakoL_q4g-1; Sun,
- 08 Sep 2024 10:08:56 -0400
-X-MC-Unique: qUxeiRUnOGW5_eakoL_q4g-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7A745195608B;
-	Sun,  8 Sep 2024 14:08:54 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.19])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 7015A19560AA;
-	Sun,  8 Sep 2024 14:08:50 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  8 Sep 2024 16:08:43 +0200 (CEST)
-Date: Sun, 8 Sep 2024 16:08:38 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, apais@microsoft.com,
-	benhill@microsoft.com, ssengar@microsoft.com,
-	sunilmut@microsoft.com, vdso@hexbites.dev
-Subject: Re: [PATCH 1/1] ptrace: Get tracer PID without reliance on the proc
- FS
-Message-ID: <20240908140838.GB21236@redhat.com>
-References: <20240905212741.143626-1-romank@linux.microsoft.com>
- <20240905212741.143626-2-romank@linux.microsoft.com>
- <20240906112345.GA17874@redhat.com>
- <CAHk-=wjtMKmoC__NJ5T18TaRCqXL-3VFc6uADJv_MzgR1ZWPJQ@mail.gmail.com>
- <da4baf5b-19e9-474c-90f6-fe17dd934333@linux.microsoft.com>
- <20240906205436.GA2417@redhat.com>
- <7cabfc9f-398a-41c2-898b-296e53a048de@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XG4y420BBHrGRY4ZyB1Tap0UOIGF2bdSdxzGYR6/px5+t7gSZ7UN39qXEslW6W5dYorfwrQiZ99P8KkVG1kJwHKzeVBmZ19plibj/yXDDWWdaaigBMqDJjvZcG9SPNiEV4tvzQzrHKSsPWPYkyCE/8W2glPpNYERyrdWGm0SSb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=g21nXnFp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66505C4CEC3;
+	Sun,  8 Sep 2024 14:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725804622;
+	bh=L52NrvFH6cCL7WSJulp5eAsipG5pw57QkN8inQ79Oco=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g21nXnFpknMI2iSsRnuzU8ofufypbHq8Lycu/54iYLStunG5IRZvwfEehMdKJCFG+
+	 o/lsVIe/S+2/vXnDXjLQnFUUA35NEZxM9SDl/lsd9iyNA0rTGcFNN5pZT2Uak6fhOB
+	 EXTO5l2M3fz6xF3tSWgeivOPR0rTxa1b+G+P+SK0=
+Date: Sun, 8 Sep 2024 16:10:19 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: stable@vger.kernel.org, sashal@kernel.org, alexghiti@rivosinc.com,
+	palmer@rivosinc.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, anup@brainfault.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	rdunlap@infradead.org, dvlachos@ics.forth.gr, bhe@redhat.com,
+	samuel.holland@sifive.com, guoren@kernel.org, linux@armlinux.org.uk,
+	linux-arm-kernel@lists.infradead.org, willy@infradead.org,
+	akpm@linux-foundation.org, fengwei.yin@intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, conor.dooley@microchip.com,
+	glider@google.com, elver@google.com, dvyukov@google.com,
+	kasan-dev@googlegroups.com, ardb@kernel.org,
+	linux-efi@vger.kernel.org, atishp@atishpatra.org,
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+	qiaozhe@iscas.ac.cn, ryan.roberts@arm.com, ryabinin.a.a@gmail.com,
+	andreyknvl@gmail.com, vincenzo.frascino@arm.com,
+	namcao@linutronix.de
+Subject: Re: [PATCH 6.6 4/4] riscv: Use accessors to page table entries
+ instead of direct dereference
+Message-ID: <2024090808-elusive-deviate-3bbb@gregkh>
+References: <20240906082254.435410-1-wangyuli@uniontech.com>
+ <D68939319C9C81B0+20240906082254.435410-4-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,41 +69,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7cabfc9f-398a-41c2-898b-296e53a048de@linux.microsoft.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <D68939319C9C81B0+20240906082254.435410-4-wangyuli@uniontech.com>
 
-On 09/06, Roman Kisel wrote:
->
-> On 9/6/2024 1:55 PM, Oleg Nesterov wrote:
-> >
-> >Not that I think this is a good idea, but std::breakpoint_if_debugging()
-> >looks even more strange to me...
-> Can't speak for everyone obviously, I've found that convenient
-> when making sense of large (unknown) codebases instead of setting
-> up breakpoints and adding prints/logs, and when the process
-> can't/doesn't fault when it encounters a fatal error.
+On Fri, Sep 06, 2024 at 04:22:39PM +0800, WangYuli wrote:
+> From: Alexandre Ghiti <alexghiti@rivosinc.com>
+> 
+> [ Upstream commit edf955647269422e387732870d04fc15933a25ea ]
+> 
+> As very well explained in commit 20a004e7b017 ("arm64: mm: Use
+> READ_ONCE/WRITE_ONCE when accessing page tables"), an architecture whose
+> page table walker can modify the PTE in parallel must use
+> READ_ONCE()/WRITE_ONCE() macro to avoid any compiler transformation.
+> 
+> So apply that to riscv which is such architecture.
+> 
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> Acked-by: Anup Patel <anup@brainfault.org>
+> Link: https://lore.kernel.org/r/20231213203001.179237-5-alexghiti@rivosinc.com
+> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> ---
 
-Sorry, I don't understand.
+all now queued up, thanks.
 
-I fail to understand how/why people can use std::breakpoint_if_debugging().
-To me it doesn't look useful at all.
-
-But you can safely ignore me, I do not pretend I understand the userspace's
-needs.
-
-And I guess people will use it anyway, so I won't argue with, say, a trivial
-patch which just adds
-
-	case PR_GET_PTRACED:
-		error = !!current->ptrace;
-		break;
-
-into sys_prctl(), even if I agree that this probably just makes bad behavior
-easier.
-
-But you need to convince Linus.
-
-Oleg.
-
+greg k-h
 
