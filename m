@@ -1,121 +1,80 @@
-Return-Path: <linux-kernel+bounces-320295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6BD2970875
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:49:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1309970879
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E189C1C2137D
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:49:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B744E1C21028
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51861741D4;
-	Sun,  8 Sep 2024 15:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C54E173355;
+	Sun,  8 Sep 2024 15:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZ8GvTNL"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xQTrSEU4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A92EACD;
-	Sun,  8 Sep 2024 15:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8062134AC
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 15:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725810556; cv=none; b=LRQ5cCp0RigbGxphuOGcg33OSrNWc0cTIeQN15Ri4du5YopOgiSDCh+t5dGsyW+/NrYGqw9vhImyEEc73DY4+/g1Wa3nfUrWWhx5kE+AzkbryXqBpEqxsjY6Mn2QH2cWoBsc//Yo6Al2l8tYGQgtNR21kkpD3q9dVDkbYfdB0fc=
+	t=1725810604; cv=none; b=TE0fG/RR+fKym8nQVL4y0bjuGhpOFh2EDVCe1msPPUpRw5HiZ4Ru8vgfvvnwSAQXXxwzd6cF0UvF1IHAa99TkUUb7bJOVffKwEN16tuM0vi6UacOIK8H4m7XrAsPKxMZ2jqCja7JZAnkKDT6JqCoDRnwVXQ0BfC3J4n2DRiTPPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725810556; c=relaxed/simple;
-	bh=Ej/MFl0U2grPzl6++vWZajsco3EirVz0KDFILRpbV9o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sWBWwFysmoJdD6gZgLxpsuwdePO2juI5QJR3i5mTnKe261K745U6k5+ssgkZuWBlDGnmiDOLcvrAjqQFZfaxKt67z+VIwLzdFngJyOY2K5FLsVTjluIajPTWSJsguZuaQWh15dUrn/Q4SauB2Yagl013EMd/sIxmXRIVTs+FKiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fZ8GvTNL; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-718d704704aso1972104b3a.3;
-        Sun, 08 Sep 2024 08:49:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725810554; x=1726415354; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SAgWa81lHt3+8vspOTElzUpWSVFWjeBPjKGz1uM25hg=;
-        b=fZ8GvTNL5thcj5d6mYrR9gmw9iDLa2YM+AIgtgCF3FCFrllz2DwODgonZj34n+tX6E
-         lwkX4A6uhuHnMLTnjAsYEWdHAcZG4DhOeRBp1Dj5jvGX3fOT/XPTTEw889m2qQWgpkBK
-         Nla5kR5Us+xUegsGd/gTRF2U0ycK2Sgg7riFRznbiBatNmBWhcfK9oOluSf2iMDrZYAM
-         L3n2mGZ97K0boyaKq4HVMEvF3pW1qCmkzZ5YFwkSLYhi6t41pkFePUxnwscS1psexrom
-         H9t/B8Z+uUyhqPs6e4R5o5okwxFFK6LzdPaLub2MzKWv5BqL+S7k2lIjiLltFCdILZ1Q
-         flSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725810554; x=1726415354;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SAgWa81lHt3+8vspOTElzUpWSVFWjeBPjKGz1uM25hg=;
-        b=UFaOvLZp2WgP/OINVWDUSptmTsB6J59F9sjRyLiIKFEvXuQoNaSrUcfhBtIU45kURx
-         Wznv8cdwhJirIDpeY8PKakMpHpYP/MfLSllDDzSl0fBwOxCTh9fjHrS+MDHWxtIo1ar1
-         VqNVwVdlF8LVnPMpsvtL0sao+B6C9n25Er2M1TcfndimOye3D2XWjJKxaDsXhOfH+OWF
-         Vx59P9WOH5XyHPss1wbzntvK+JHQt46xTb6CYsRyWqQaNMgiYfNz762VyquMe0FBpQha
-         cB9m4lPNqvu5AGiz3xXBsWgdeIIzBhhrSqpqel5KF35tdaaZ1NHrBRfiZViI5ozLYqtC
-         5lKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRhzy2yn30AXSdYcSxvYHRR26b130yshsIDZ5jsGwP5d1WyBZDJMw+egf3tZgCDbRazfBg9+f8ntSak/pVdqftcX4=@vger.kernel.org, AJvYcCW7Dqn3sT0imp++5sgnGPx2ifRmzVoRxR2mdVh72VZV0kYuNvV3jJzBWwvy2f/Xopbrf+HB/WlbHUhOtI8=@vger.kernel.org, AJvYcCXk7qZ10bCZuIgz0KBqhdbdQFhZDcpwd7f159TyGBMv1EdgVk5xrsRSCZJGQzYzlzNtc8xGDrDGPJDc3dir@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQYx0vpAyspQi0yB/eHvVGZL2wdiBl23cvAnUIOYo4bX6+qi+3
-	gm3EL85j/T7qlLftIaPUz9g1DfYtHMtCC6z6GITaSRghBiBm6MaO
-X-Google-Smtp-Source: AGHT+IFFrn46ubbqFuvUo4a8LlVSDErVxtVEIX8+YBhSiGmjRd6iFtQgAdWXG9qXP5Fm0bTGW9ZC8Q==
-X-Received: by 2002:a05:6a00:21cb:b0:717:8aaf:43be with SMTP id d2e1a72fcca58-718e3108dcamr8126650b3a.0.1725810553973;
-        Sun, 08 Sep 2024 08:49:13 -0700 (PDT)
-Received: from [172.20.10.2] ([49.130.9.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e599135csm2162442b3a.193.2024.09.08.08.49.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Sep 2024 08:49:13 -0700 (PDT)
-Message-ID: <13a98caf-80f0-477d-b276-249e3fb20e83@gmail.com>
-Date: Sun, 8 Sep 2024 23:49:09 +0800
+	s=arc-20240116; t=1725810604; c=relaxed/simple;
+	bh=3BruFAXVq8RX6cMi0k/zTXL2TXSy1HASLmWj77Yztik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xn8KVLbFKDGDZKI46cjth8G8Hhh/lbaiNhvaBy4mDC8zohIOHX4SYhI17qhug03hu+cLv4yksA46H4s/pjmRj3xdqTaYYvXhxlspmDxSctD/A+pCvcRABNs3fCgD7gSG390wBsKZ9ZA/RYG/bqpW0kSbXAOPZquo8jEm/xucVuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xQTrSEU4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1092EC4CEC3;
+	Sun,  8 Sep 2024 15:50:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725810603;
+	bh=3BruFAXVq8RX6cMi0k/zTXL2TXSy1HASLmWj77Yztik=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xQTrSEU4o/YqDUXUgna9NJIJJvrUtfcsekawvZChNY2yU+veV162LS145kAWMlkZO
+	 46NlJMgikPZK/bOS9nqFUF6Zhkc+PHhPAGuA9lmOVRddhawzvdnCXh1RbWMMi7mfcw
+	 K5etVcrrPDjH88HZa/UvpUlz/gbBayzbRV0dHUEo=
+Date: Sun, 8 Sep 2024 17:49:31 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Chanwoo Choi <chanwoo@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [GIT PULL] extcon next for v6.12
+Message-ID: <2024090824-unmatched-grueling-1789@gregkh>
+References: <aac3f30a-bab1-4a45-a69d-050b15ead4a8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] tty: serial: samsung: Fix serial rx on Apple A7-A9
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-Cc: asahi@lists.linux.dev
-References: <20240908090939.2745-1-towinchenmi@gmail.com>
- <20240908090939.2745-4-towinchenmi@gmail.com>
- <215fde01-0e04-4445-9620-b0dba3232a92@kernel.org>
-Content-Language: en-MW
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <215fde01-0e04-4445-9620-b0dba3232a92@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aac3f30a-bab1-4a45-a69d-050b15ead4a8@kernel.org>
 
-
-
-On 8/9/2024 17:14, Krzysztof Kozlowski wrote:
-> On 08/09/2024 11:05, Nick Chan wrote:
->> Apple's older A7-A9 SoCs seems to use bit 3 in UTRSTAT as RXTO, which is
->> enabled by bit 11 in UCON.
->>
->> Access these bits in addition to the original RXTO and RXTO enable bits,
->> to allow serial rx to function on A7-A9 SoCs. This change does not
->> appear to affect the A10 SoC and up.
->>
->> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+On Mon, Sep 09, 2024 at 12:18:11AM +0900, Chanwoo Choi wrote:
+> Dear Greg,
 > 
-> This never happened. Please do not add fake tags.
-Sorry, this happened by mistake, and tags are added to both commits present
-in previous versions by accident. I can send a v4 tomorrow, though I think
-it is the best if this version is to be reviewed, since the mistake does
-not make a difference in the patch submitted further upstream, and it saves
-everyone's time.
-
+> This is extcon-next pull request for v6.12. I add detailed description of
+> this pull request on below. Please pull extcon with following updates.
 > 
-> Best regards,
-> Krzysztof
+> Best Regards,
+> Chanwoo Choi
 > 
+> 
+> The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+> 
+>   Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-6.12
 
-Nick Chan
+Pulled and pushed out, thanks.
+
+greg k-h
 
