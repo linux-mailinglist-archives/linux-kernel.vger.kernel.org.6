@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-320204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189C497077D
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:41:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C51D897078A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44CAF1C20F36
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:41:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36EB9B216FD
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F305C1649A8;
-	Sun,  8 Sep 2024 12:41:49 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0071531F4;
-	Sun,  8 Sep 2024 12:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FED6CDBA;
+	Sun,  8 Sep 2024 12:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cM2cxsWN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F45515F3F3;
+	Sun,  8 Sep 2024 12:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725799309; cv=none; b=hfZdADSu5daHyiNfG7m676ZfLEbnLfwgBGX4GMOF8ieJGhcTJIiciIjobeAsz5sVt5Y2ZTibturm7YkiD+XcqrjYlZCKXnB3CiZZCSf50R3zPm2Xw1FkR9mzuehXTKamBbSOH+lopMlatMtemjYhUFaF61iTtdnVaYjeytFthQc=
+	t=1725799445; cv=none; b=asfO3rCf52tidueGbt5O68/sJWIiZt0HITROg7NfM8TX43h5PkhCjer7jqj7SoIxsu3Fjp+biWQYq5Mgp7OvFYNGv8bdlRUjqGh3jmPkbsOQP7NADqywZLDwwUY+Zn5K+80XiUcTnB1WQUKtu3pqT4dHm2Ms99BHdy4tIOIRPQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725799309; c=relaxed/simple;
-	bh=5E/Oj4hrHfo3SnHgf0xLEcui4/pppyRLwTfkkuzdjkc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=msdq1R7g/pTx4OHyhBrHaqneRnOKcJ5MDnKut1K0diREdMFOfI2oViv0AF8j7I1cssggeRUHMu3a06nVx5cYE5yry8HmEkQ1dHbn3dF3PfBQF21YSQ+Effl0eQSdthfiDTM7au2y05dO1UcP1Xp2kA0jrly6L9H+rtTGktUSMOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee566dd9b7e002-03005;
-	Sun, 08 Sep 2024 20:41:36 +0800 (CST)
-X-RM-TRANSID:2ee566dd9b7e002-03005
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from 192.168.102.139 (unknown[223.64.113.255])
-	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea66dd9b75ec5-0de13;
-	Sun, 08 Sep 2024 20:41:35 +0800 (CST)
-X-RM-TRANSID:2eea66dd9b75ec5-0de13
-From: Tang Bin <tangbin@cmss.chinamobile.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tang Bin <tangbin@cmss.chinamobile.com>
-Subject: [PATCH] ASoC: soc-ac97: Fix the incorrect description
-Date: Sun,  8 Sep 2024 20:41:23 +0800
-Message-Id: <20240908124124.1971-1-tangbin@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1725799445; c=relaxed/simple;
+	bh=SBTEtiyEiAxysFHy1lrokIISQuJXKcwSNQZjCTO0YD4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gtHbg9Kdj8BWjGFhLMxMLGGdefqhPe5ttsLwnYykvKt+BY8XTYIlDMbwbNDJq8Q+spvkQaB9xonWYOwRxzKTwrb6SdZwlGN1aJRYROyjH9i8sHzLmpZtyEQ6U3pufpRJtgT+RSHmFnCun1i6hJdCsNynQ3+SWfw80WHFPEtbcRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cM2cxsWN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3AE7C4CEC3;
+	Sun,  8 Sep 2024 12:44:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725799445;
+	bh=SBTEtiyEiAxysFHy1lrokIISQuJXKcwSNQZjCTO0YD4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cM2cxsWNoRdZ/wHMTeQVqrnIS5Xc0vPdEt3ePe52bgRLWu4FfMF/fsM5bwkj4C+7+
+	 9qNfPofIKKTsWmi9RxXbGcyJxCl+0+QtvQLcnciYx22jdYnA3vot1C98Fhf59oep7a
+	 idX/1++Ajto/BWnnH6h27fAd7nEXUewg9zM4D2EZdXSqVUa7ypexJkpqVEuK6pWNaw
+	 j0mzmQr4zpi0nH3sNvJzVKUxF4lAxn2UGOJuKkjY2wjLrfiCbH5PGya/TSKUJxNu+V
+	 3YoNkFZDxUOBl5LuhKB1Ti4W4pRIxmVPYEgfdWnosMRoMGBU38OfLjz1f+SnsQb1Te
+	 Qzy6zxRjKG5yA==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: [PATCH 1/6] scripts: move hash function from scripts/kconfig/ to scripts/include/
+Date: Sun,  8 Sep 2024 21:43:16 +0900
+Message-ID: <20240908124352.1828890-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,41 +57,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In the function snd_soc_alloc_ac97_component &
-snd_soc_new_ac97_component, the error return is
-ERR_PTR, so fix the incorrect description.
+This function was originally added by commit 8af27e1dc4e4 ("fixdep: use
+hash table instead of a single array").
 
-Fixes: 47e039413cac ("ASoC: soc-ac97: Return correct error codes")
-Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
+Move it to scripts/include/ so that other host programs can use it.
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 ---
- sound/soc/soc-ac97.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/soc-ac97.c b/sound/soc/soc-ac97.c
-index 4e4fe29ad..079e4ff5a 100644
---- a/sound/soc/soc-ac97.c
-+++ b/sound/soc/soc-ac97.c
-@@ -168,7 +168,7 @@ static void snd_soc_ac97_free_gpio(struct snd_ac97 *ac97)
-  * it. The caller is responsible to either call device_add(&ac97->dev) to
-  * register the device, or to call put_device(&ac97->dev) to free the device.
-  *
-- * Returns: A snd_ac97 device or a PTR_ERR in case of an error.
-+ * Returns: A snd_ac97 device or an ERR_PTR in case of an error.
-  */
- struct snd_ac97 *snd_soc_alloc_ac97_component(struct snd_soc_component *component)
+ scripts/include/hash.h   | 15 +++++++++++++++
+ scripts/kconfig/lkc.h    |  1 -
+ scripts/kconfig/symbol.c |  5 +++--
+ scripts/kconfig/util.c   | 13 ++-----------
+ 4 files changed, 20 insertions(+), 14 deletions(-)
+ create mode 100644 scripts/include/hash.h
+
+diff --git a/scripts/include/hash.h b/scripts/include/hash.h
+new file mode 100644
+index 000000000000..ce2bc43b308b
+--- /dev/null
++++ b/scripts/include/hash.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++#ifndef HASH_H
++#define HASH_H
++
++static inline unsigned int hash_str(const char *s)
++{
++	/* fnv32 hash */
++	unsigned int hash = 2166136261U;
++
++	for (; *s; s++)
++		hash = (hash ^ *s) * 0x01000193;
++	return hash;
++}
++
++#endif /* HASH_H */
+diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
+index ddfb2b1cb737..b8ebc3094a23 100644
+--- a/scripts/kconfig/lkc.h
++++ b/scripts/kconfig/lkc.h
+@@ -51,7 +51,6 @@ static inline void xfwrite(const void *str, size_t len, size_t count, FILE *out)
+ }
+ 
+ /* util.c */
+-unsigned int strhash(const char *s);
+ const char *file_lookup(const char *name);
+ 
+ /* lexer.l */
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index 6793f016af5e..6243f0143ecf 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -9,6 +9,7 @@
+ #include <string.h>
+ #include <regex.h>
+ 
++#include <hash.h>
+ #include <xalloc.h>
+ #include "internal.h"
+ #include "lkc.h"
+@@ -893,7 +894,7 @@ struct symbol *sym_lookup(const char *name, int flags)
+ 			case 'n': return &symbol_no;
+ 			}
+ 		}
+-		hash = strhash(name);
++		hash = hash_str(name);
+ 
+ 		hash_for_each_possible(sym_hashtable, symbol, node, hash) {
+ 			if (symbol->name &&
+@@ -936,7 +937,7 @@ struct symbol *sym_find(const char *name)
+ 		case 'n': return &symbol_no;
+ 		}
+ 	}
+-	hash = strhash(name);
++	hash = hash_str(name);
+ 
+ 	hash_for_each_possible(sym_hashtable, symbol, node, hash) {
+ 		if (symbol->name &&
+diff --git a/scripts/kconfig/util.c b/scripts/kconfig/util.c
+index 50698fff5b9d..5cdcee144b58 100644
+--- a/scripts/kconfig/util.c
++++ b/scripts/kconfig/util.c
+@@ -8,20 +8,11 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
++#include <hash.h>
+ #include <hashtable.h>
+ #include <xalloc.h>
+ #include "lkc.h"
+ 
+-unsigned int strhash(const char *s)
+-{
+-	/* fnv32 hash */
+-	unsigned int hash = 2166136261U;
+-
+-	for (; *s; s++)
+-		hash = (hash ^ *s) * 0x01000193;
+-	return hash;
+-}
+-
+ /* hash table of all parsed Kconfig files */
+ static HASHTABLE_DEFINE(file_hashtable, 1U << 11);
+ 
+@@ -35,7 +26,7 @@ const char *file_lookup(const char *name)
  {
-@@ -207,7 +207,7 @@ EXPORT_SYMBOL(snd_soc_alloc_ac97_component);
-  * the device and check if it matches the expected ID. If it doesn't match an
-  * error will be returned and device will not be registered.
-  *
-- * Returns: A PTR_ERR() on failure or a valid snd_ac97 struct on success.
-+ * Returns: An ERR_PTR on failure or a valid snd_ac97 struct on success.
-  */
- struct snd_ac97 *snd_soc_new_ac97_component(struct snd_soc_component *component,
- 	unsigned int id, unsigned int id_mask)
+ 	struct file *file;
+ 	size_t len;
+-	int hash = strhash(name);
++	int hash = hash_str(name);
+ 
+ 	hash_for_each_possible(file_hashtable, file, node, hash)
+ 		if (!strcmp(name, file->name))
 -- 
-2.33.0
-
-
+2.43.0
 
 
