@@ -1,110 +1,125 @@
-Return-Path: <linux-kernel+bounces-320398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311599709B2
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:26:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 233029709B3
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E499E281318
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:26:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8D631F229F7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6606179658;
-	Sun,  8 Sep 2024 20:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3975D17A597;
+	Sun,  8 Sep 2024 20:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pqsEi7lI"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0nDQ9/b"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980B44085D
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 20:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E41017839E
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 20:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725827161; cv=none; b=mr8nt55Dq1ldTbEZX5sFJ5rxVrOqAoNCP2j9ErF7tsabiSWbX/rZjao6pdR12jnHnq+QHIGjnbxwzn+dqWl5FFM88Ux9XmhFtjMjAHDLXJtfCwVWm0vdr+t9zSHU5CmdBbtjRXkdhEn8sfpt9LIsyCjmmyjvglcEpyJUNV4JJGk=
+	t=1725827174; cv=none; b=l7DgGO7gWvtECy80ms6PUcnF2PLuRYwRMkeJGTZwp93l/wCJHq6IWjJ6QdnAL73sbftZBQZXggkzWHy+4AjmMgNugz/4dZ+mnFKatwoywRnuVf8VlO+U93juERhb225llFqpGeloPp8okrJZ/uafGga4M0xpByIt2RLlgzYE8e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725827161; c=relaxed/simple;
-	bh=OWhGxkM+E+3B9VGjjUmp41Zb5ilGs6qZIQWN5UYay3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eaNk2T6++4rTxT2gdrXy1QHlnqqMkSg8KzjuLqlYEVKukqOmwtVRDE9Il10kfBfWXWIDiqzgmnVMG66TGjbsFom6JZTQIVXiFtQiwEk2qXwCTnPbPP/s4Us6Y2pKQBF6Y3hPJ0qA/ZXubpW2lfSjf81wKECBvq74IudqRpM/EME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pqsEi7lI; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c26815e174so3854812a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 13:25:58 -0700 (PDT)
+	s=arc-20240116; t=1725827174; c=relaxed/simple;
+	bh=ZONi8oTVgdeLD7glO6pXuDk1u8cI1QYm/3E0oElhbP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AVboCrHyl2fd9uZnqB3wqkc8GFjUMOBM2I2t8E2fP+Laj+HJQXWwANDzIHeH0kYAdhmY9pFECSOCiOlyvZcXNbDE3VaJWehsjwaWlek6uPu1z661nQr0mWH1thOICF3bri6xSHqB4HfSNNXwn4+vfBL7yKqbRI2BZ5I9Ixi7iv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0nDQ9/b; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374ca65cafdso2245030f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 13:26:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725827157; x=1726431957; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iKdWxgBubPsCeu89Q5OS2FOBwOKmd4HEM0yySNUBW9Q=;
-        b=pqsEi7lIye6AdnaBfam9walxOOzZR+LFvo5RtQNQH6Gscgl1w6g4IPXf5VcztZ7GPU
-         p+sZXv87y7P6OLIcP89aHo7/nA38j+Xb/LmXPQAB/C1C0y5JpGe5Pu3aontngRGhtfFB
-         VohW6myUZ7+wzDzjV0Fibvy7kOQeZVuJlvVsHJtxVOjJTvF46v9+cqZ5hsvHKPtzL412
-         j9tjtEUA4xEpry0kqb3mPk0iO1M4ntWZP/lKciSjntH0vuuB6m5I7ku1yqi/wfbfIoR/
-         rmh+x+o1TCWuEZoe3oQpLFMNp+i0CCfa5jqJA4cx6Mj1SbhKxtxGBVTqWdIf9wCI/ZUw
-         kO4g==
+        d=gmail.com; s=20230601; t=1725827171; x=1726431971; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KFgTZS6YaG4OZRC2cQbKF/8vq72Pq4HNgWz2U4ZCqEo=;
+        b=d0nDQ9/bxvUMWpoGGRRQSabiNhQJmpH0h1lZLn7dMleNapoRy+37I/eoRBmxfbQxhY
+         ik4Lq6HBDUWjIyCjkF80g+eamBVFPApOqfTJm7+xyTl02PQowCe+/Q0QDg8lbP5CCWbZ
+         CVdIm7NnXt9CT37f4ftRr/I3jYstk4z7mL7g7dtT7ks3jTUHWSWLJ+qQxd/0Fyv/E7rR
+         oEO3fBfrPJs759a0VgDyes/MjuAP+ut0F4FNev/E7UEcv47r4A01Nk49w6mSjtbBKhS5
+         n/VB5zSotP+arehGvB8U5oqtk0qj+9WtMi869xZSfAlD7wBxdsRXjCsXlAobbCrNOndH
+         GB0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725827157; x=1726431957;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iKdWxgBubPsCeu89Q5OS2FOBwOKmd4HEM0yySNUBW9Q=;
-        b=xJvzFylBoFUR5UWhDbdwIUi7iuO3+lHYoNdz1/88wREfX6Mf/WR44GruE8MSXgEQAu
-         kHPV3nAAoGJfieGXup9JdQphalz/MNBTQ1jVoBL+UiniArOSmNH5ibRIp7R74OvlRJ3Q
-         iEt8I8f/bY7uq9Gtpyx9h49kZsh8/V5JigTFZeweo+7PTemPtuRuq74JVNJTJa+nVPq6
-         NPAEBGRsGgBBcPm9hiiS/foRFLMRJJbKFIV8KN6+nlc6VKIBLTZDT2fXyaunquf6uXIg
-         GTe0JtFWyoivuKue4y1bobnaKBzmdUQ9MccN2gKh02XUaTyAV88kZ3p7aqOhxLn9vmFu
-         C9GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW28wpMeuu5fxdW2dHIkDL55P9xwbwQ6LH0f3k+02iKbnapQPAZ0apXKygvQNXqgh2mwzYPTws9HgkXAs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz60x3qLo4FZlMXU2Y92UThUY5Z3l2KvYmJm0ecQ7L1i6wZ+kN0
-	wj8jysu7ME+dySDzUgYRijbEac7Et4MtdXRKGxB2pigujX9PxmsaAstZD2XVBeo=
-X-Google-Smtp-Source: AGHT+IGwiL32zOZEhvp+wF8LdGQNAS8/J/6T/AW7OR7ZiyrV3rOdJR7rEG03ntO/Jtsx6id+rqF/vw==
-X-Received: by 2002:a05:6402:4015:b0:5c3:cd88:a0a with SMTP id 4fb4d7f45d1cf-5c3e963621dmr3924299a12.18.1725827155919;
-        Sun, 08 Sep 2024 13:25:55 -0700 (PDT)
-Received: from linaro.org ([84.232.173.69])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd5217asm2190519a12.45.2024.09.08.13.25.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 13:25:55 -0700 (PDT)
-Date: Sun, 8 Sep 2024 23:25:53 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, imx@lists.linux.dev,
-	NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] clk: imx: Updates for v6.12
-Message-ID: <Zt4IUQavM62F/kP8@linaro.org>
-References: <20240904095710.2813541-1-abel.vesa@linaro.org>
- <a8400f018cc94177b6a91634fd977248.sboyd@kernel.org>
+        d=1e100.net; s=20230601; t=1725827171; x=1726431971;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KFgTZS6YaG4OZRC2cQbKF/8vq72Pq4HNgWz2U4ZCqEo=;
+        b=g+cBUm30K9jBzlhLBuNCIQWajQzh8mIQehSQiTPec/RLQ/SgnqDC2+3sd7ibauqq0L
+         hOy43rVNGABAka2NeWSvTmVN0dNJiDbtrSskOIIL2jPVrUEJnQALaVdpmOQ8r9aYD/k0
+         jahIwxbu/SnjzNYCALtPXgi3MuJsWNUtGVZTQoOjAbNDJcSjmn/U1KQac09puwg+WM7/
+         k7RTdTs2gS5c98gTKwQBc5AhILWETs4wdJzrkXoieyQaOCgMKIJ3UFkhtoxfKYKHr4Jx
+         DVuY+cvBiz9fUXzQZlO4V8loZnUY6UXDxn5Gs2S35Ei79oDRVPlwUuJcOaxPSgQuQTKD
+         /89g==
+X-Forwarded-Encrypted: i=1; AJvYcCVnommWre9BwmtiSthyt9+GeNMmuxRpao7OlBw3j1UJ685PuAxScY3slWFT3d6HvqA63c6k64KIBKVWzuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhLkqDfn2eV3gZWpMVxraSKmGj69AR88HGKmHHKzpE9ulvZUVn
+	M0RQJA2xPzVoVdGcCj2x0VuAyd1cSv40uvAZ1CxD9RwjSr3RETfK
+X-Google-Smtp-Source: AGHT+IHVNtAxcHLeKntFo0w1vxjjPlBWpIVcqJJM9cZm+EOP8X5coWa622xs7sypcOql4/uV4QZ3uw==
+X-Received: by 2002:a5d:5189:0:b0:374:c1de:7e64 with SMTP id ffacd0b85a97d-37894a53e29mr3416928f8f.42.1725827171022;
+        Sun, 08 Sep 2024 13:26:11 -0700 (PDT)
+Received: from ?IPV6:2003:c7:8f2a:8576:4416:5fef:fc17:c89e? (p200300c78f2a857644165feffc17c89e.dip0.t-ipconnect.de. [2003:c7:8f2a:8576:4416:5fef:fc17:c89e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25cebcb2sm242997466b.153.2024.09.08.13.26.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Sep 2024 13:26:10 -0700 (PDT)
+Message-ID: <4bc6cfea-ecf4-40ad-a3f6-c32bb411949a@gmail.com>
+Date: Sun, 8 Sep 2024 22:26:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a8400f018cc94177b6a91634fd977248.sboyd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] staging: rtl8723bs: fix comment with a trailing */ on
+ a separate line
+To: Sayyad Abid <sayyad.abid16@gmail.com>, linux-staging@lists.linux.dev
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+References: <20240908101110.1028931-1-sayyad.abid16@gmail.com>
+ <20240908101110.1028931-5-sayyad.abid16@gmail.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240908101110.1028931-5-sayyad.abid16@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 24-09-05 11:25:37, Stephen Boyd wrote:
-> Quoting Abel Vesa (2024-09-04 02:57:10)
-> > The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-> > 
-> >   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-> > 
-> > are available in the Git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.12
-> > 
-> > for you to fetch changes up to 32c055ef563c3a4a73a477839f591b1b170bde8e:
-> > 
-> >   clk: imx6ul: fix clock parent for IMX6UL_CLK_ENETx_REF_SEL (2024-09-04 12:39:38 +0300)
-> > 
-> > ----------------------------------------------------------------
+On 9/8/24 12:11, Sayyad Abid wrote:
+> This patch fixes the trailing "*/" on a comment block.
+
+Hi Sayyad,
+
+important is to describe why this patch makes the code better. You 
+described in the description just what you did. But that can be seen in 
+the changed lines blow.
+
+Thanks
+
+Bye Philipp
+
 > 
-> Thanks. Pulled into clk-next. I also found the v6.11 PR for clk-imx in my
-> repo for some reason :( Sorry about that! I've merged that into clk-next
-> as well now so the next merge window will get two cycles worth.
+> Signed-off-by: Sayyad Abid <sayyad.abid16@gmail.com>
+> 
+> ---
+>   drivers/staging/rtl8723bs/include/rtw_security.h | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/include/rtw_security.h b/drivers/staging/rtl8723bs/include/rtw_security.h
+> index 4efa2d258ebf..1e5e7f52f8da 100644
+> --- a/drivers/staging/rtl8723bs/include/rtw_security.h
+> +++ b/drivers/staging/rtl8723bs/include/rtw_security.h
+> @@ -240,7 +240,8 @@ struct mic_data {
+>   /* ===== start - public domain SHA256 implementation ===== */
+>   
+>   /* This is based on SHA256 implementation in LibTomCrypt that was released into
+> - * public domain by Tom St Denis. */
+> + * public domain by Tom St Denis.
+> + */
+>   
+>   int omac1_aes_128(u8 *key, u8 *data, size_t data_len, u8 *mac);
+>   void rtw_secmicsetkey(struct mic_data *pmicdata, u8 *key);
 
-No worries. Please let me know if you want the pull requests in more
-earlier or something.
 
