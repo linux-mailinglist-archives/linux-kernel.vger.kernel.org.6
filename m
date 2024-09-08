@@ -1,89 +1,123 @@
-Return-Path: <linux-kernel+bounces-320005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEEDD9704FA
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 05:25:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 677629704FD
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 05:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E96541C20E30
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 03:25:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 932541C212BB
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 03:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1005226281;
-	Sun,  8 Sep 2024 03:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6DE36B17;
+	Sun,  8 Sep 2024 03:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RJpiXoFq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgSr9YUl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3402B2DA;
-	Sun,  8 Sep 2024 03:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B1F45C0B;
+	Sun,  8 Sep 2024 03:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725765900; cv=none; b=ENNiEdk4GrIogjc0Xa3r2p4Gk2LBeU4fDBGUoryA6RDrhU2DYJCUV30C9mf1iaPHhFgmrNxBWV7qdiUg6vXENRPIWpOwDDRAODrWn5BOQ7d6PBlb+3PwkmIt0pRUBBJQHLiKnmzp5IPephYXedfoNZYzoPLlR69dkvhAaxveO34=
+	t=1725765919; cv=none; b=LTNoKVWitu6JjMNPG7TRqwO/+lb0IvtK3YrJ5ERcqaarJg72Pnea9IRCt+fiIlkIMuRhq28uYhlScuDRuGVYZVadDl+POWgwqyN3GOHKQv0Q7JEJ36GC6JnccmIQTFOif1RrDeDsVMww0zwGlWSWk6uCJROGlGVmxrmk2eZDwr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725765900; c=relaxed/simple;
-	bh=Pyp7dRfMcSf5MD+6qBE70iGPu2i/5ZdA4dgou2lJL98=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=OPBA/pSCEl/uFvoeU27gA5t3AMu4YJiAos2lJ1xvae3Sao0cJoHAqlJwNsyw0oZrmDw7UKt3S6xtOH7yG2HaSfD5nx9KLK4kH4nvBJ0EGX5kMm0y9kEHFI4x/ZxMhX8dDusuURA+giRvPSz9djS/oskiB+18o4KB+BJa3BbI07Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RJpiXoFq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47301C4CEC4;
-	Sun,  8 Sep 2024 03:24:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1725765899;
-	bh=Pyp7dRfMcSf5MD+6qBE70iGPu2i/5ZdA4dgou2lJL98=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RJpiXoFqyWKXsiRSbKurj/snbkWegxcRcdb5ipXFzmA+U2SVo7fEschQfzxsFsF5C
-	 GMawSuO/7erkzr53L8e4p5jTyXVqxw+Re+zRAxuqTn1yM3BH4ybYr9jbQIHMriq4ku
-	 4p5HhU/JdZhsi6vBVG69PzBRl4njn7vGqaPEfRxg=
-Date: Sat, 7 Sep 2024 20:24:58 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Huang Ying <ying.huang@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, David
- Hildenbrand <david@redhat.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Dave Jiang
- <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Alistair Popple <apopple@nvidia.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Baoquan He <bhe@redhat.com>
-Subject: Re: [PATCH -v3 1/3] resource: Fix region_intersects() vs
- add_memory_driver_managed()
-Message-Id: <20240907202458.dfe90bfee071021706af91eb@linux-foundation.org>
-In-Reply-To: <20240906030713.204292-2-ying.huang@intel.com>
-References: <20240906030713.204292-1-ying.huang@intel.com>
-	<20240906030713.204292-2-ying.huang@intel.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725765919; c=relaxed/simple;
+	bh=izGX5IudWXgEPrTjrFt+ZvVIsIuXuq42/A8TQru98MI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KNJPXLWtW9cwGdzDWlqKanODutkSmzprLbBqbaI9B1Yj2H1kz48/c8wMpM3CTCn4PQ/jH+nkUrQY9qUOoN9a7fOzx5nJJ8vw3Ir+owQmI9XjRRsaps3LQouVHGgq6KvSJ+EhqNVdpzsIidNmE/CjBOZC8ixm/pQ8+WDmueJK2EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgSr9YUl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF81C4CEC4;
+	Sun,  8 Sep 2024 03:25:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725765919;
+	bh=izGX5IudWXgEPrTjrFt+ZvVIsIuXuq42/A8TQru98MI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bgSr9YUl3ec2QDIJBhlp9ubWExTyxIkzDjQN8a9tGQFMqFE/HCfJF+2j6BqWybUQ4
+	 rxAWSxKi9BrdJndn7N+koNEgWja7ktN6MPpupqSUMosOrMtJZK4k/4MrnZqIu1IcZ6
+	 +TIIIyn/xxJ0TeV1W2nGXcugc+abm6flwytC+s6f9fP/72+4uVUM7wI+SSUjD5uXQH
+	 HsWTfoKQDwDLS9IPk0pZI2L86uv7Ld9DbJa1V2BFMcbKI9Ci+UuIR6oYTPvP9gNnom
+	 EEOFI81IAdmB7Jvj+CZUOtt2m6ZZDJWlCMoHO/GB81BUj22Dyh+d/5+PB5kKTJKVpZ
+	 K3Mm26tEWtq3Q==
+Date: Sat, 7 Sep 2024 22:25:16 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/7] iommu/arm-smmu-qcom: apply num_context_bank fixes
+ for SDM630 / SDM660
+Message-ID: <ptugcisjsh6mdnkhrdhbtetykjpeya4epmlbqbuayst5efgjq4@mzan2bvz74r7>
+References: <20240907-sdm660-wifi-v1-0-e316055142f8@linaro.org>
+ <20240907-sdm660-wifi-v1-1-e316055142f8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240907-sdm660-wifi-v1-1-e316055142f8@linaro.org>
 
-On Fri,  6 Sep 2024 11:07:11 +0800 Huang Ying <ying.huang@intel.com> wrote:
+On Sat, Sep 07, 2024 at 09:48:12PM GMT, Dmitry Baryshkov wrote:
+> The Qualcomm SDM630 / SDM660 platform requires the same kind of
+> workaround as MSM8998: some IOMMUs have context banks reserved by
+> firmware / TZ, touching those banks resets the board.
+> 
+> Apply the num_context_bank workaround to those two SMMU devices in order
+> to allow them to be used by Linux.
+> 
+> Fixes: b812834b5329 ("iommu: arm-smmu-qcom: Add sdm630/msm8998 compatibles for qcom quirks")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-> On a system with CXL memory, the resource tree (/proc/iomem) related
-> to CXL memory may look like something as follows.
-> 
-> 490000000-50fffffff : CXL Window 0
->   490000000-50fffffff : region0
->     490000000-50fffffff : dax0.0
->       490000000-50fffffff : System RAM (kmem)
-> 
-> Because drivers/dax/kmem.c calls add_memory_driver_managed() during
-> onlining CXL memory, which makes "System RAM (kmem)" a descendant of
-> "CXL Window X".  This confuses region_intersects(), which expects all
-> "System RAM" resources to be at the top level of iomem_resource.  This
-> can lead to bugs.
-> 
-> ...
-> 
-> Fixes: c221c0b0308f ("device-dax: "Hotplug" persistent memory for use like normal RAM")
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-Do you believe this should be fixed in earlier (-stable) kernels?
+> ---
+>  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> index 087fb4f6f4d3..13a3e3585c89 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> @@ -288,6 +288,12 @@ static int qcom_smmu_cfg_probe(struct arm_smmu_device *smmu)
+>  	 */
+>  	if (of_device_is_compatible(smmu->dev->of_node, "qcom,msm8998-smmu-v2") && smmu->num_context_banks == 13)
+>  		smmu->num_context_banks = 12;
+
+This should now be wrapped in {}
+
+Regards,
+Bjorn
+
+> +	else if (of_device_is_compatible(smmu->dev->of_node, "qcom,sdm630-smmu-v2")) {
+> +		if (smmu->num_context_banks == 21) /* SDM630 / SDM660 A2NOC SMMU */
+> +			smmu->num_context_banks = 7;
+> +		else if (smmu->num_context_banks == 14) /* SDM630 / SDM660 LPASS SMMU */
+> +			smmu->num_context_banks = 13;
+> +	}
+>  
+>  	/*
+>  	 * Some platforms support more than the Arm SMMU architected maximum of
+> @@ -350,6 +356,11 @@ static int qcom_adreno_smmuv2_cfg_probe(struct arm_smmu_device *smmu)
+>  	/* Support for 16K pages is advertised on some SoCs, but it doesn't seem to work */
+>  	smmu->features &= ~ARM_SMMU_FEAT_FMT_AARCH64_16K;
+>  
+> +	/* TZ protects several last context banks, hide them from Linux */
+> +	if (of_device_is_compatible(smmu->dev->of_node, "qcom,sdm630-smmu-v2") &&
+> +	    smmu->num_context_banks == 5)
+> +		smmu->num_context_banks = 2;
+> +
+>  	return 0;
+>  }
+>  
+> 
+> -- 
+> 2.39.2
+> 
 
