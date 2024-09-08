@@ -1,125 +1,212 @@
-Return-Path: <linux-kernel+bounces-320127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C270970665
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:12:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AE6F97066B
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCB162824F4
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:12:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91BEFB218AC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B48E1537BE;
-	Sun,  8 Sep 2024 10:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFB414D2A4;
+	Sun,  8 Sep 2024 10:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/jgDR3M"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="Y0/xPvFs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E4rIQSNX"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E5E1531EB
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 10:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8548E13BAC2;
+	Sun,  8 Sep 2024 10:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725790299; cv=none; b=QeAslpssn5l2F9S5LmuTtVh0EBTxu8wcB79Elqa5DUqXlI2x9CP4GwRilCNRgQfXo/Dfgrwkzn+O2zlzeAAVX+zAmNgt0wmkZMYzK2oWCIqUKGdBxyzQOlSUGz3+q+/TS6PfXppzx9Q349ck5AYY3RrL4d3C0oAsThV1BIBr0+U=
+	t=1725790820; cv=none; b=dKFtWo/73B6Qlis39GVOAnLlBCzQ6iCpdTXo9yFnYXzh+X6Zjm9toQtcO4n+Sduc8CTUIIfamuC53HkuB2sT2lLmUbXrid1r/VlK/FUuSaasdELD+vOeMw2LRz3z4Xhaolp6+54maJIb2OE/cgWBy+QT+pKaT2mLZnptjj2yZNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725790299; c=relaxed/simple;
-	bh=483x2FSxPESFFxIfnShpBoUUsKE1beMkctUgEWytKaE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jD5sl+Pv87mguDCcd6WUTwRY3ahDiH8brFcDwfiNtIM1U+fosl7EmIxPMLunaHhsSRFehg87Bd320HYqvACukWKq5fZxvTvjqptz2vGH3WI8FC3jHQTtlP3W3L1AYXQDWo32RpF4Pcy5bdWSTr9SxtWFgn3YpTmN9WkgczCI3Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/jgDR3M; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d8a7c50607so2274015a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 03:11:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725790297; x=1726395097; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jS2VzpVc7dJ/AT4s9AMcRZ31HOXjijKxq9pngMXABpU=;
-        b=T/jgDR3MF60X6aj+V+9R3QqpQqhalb8V4VMj4x9e+tN6vzxILJnmz2seA5P3iF76Rt
-         eMCKM7gQXVE57OueJtcL0pU2DKR4uhZCrDYFOYRFUOakyLQqn3CqZB0FYSKAXgVytoy6
-         2Ua2szLKe+TiV0S4A6UuEbXjmlO0bEXL1DSyybtmp/PK+2dHx/FrO+bzwZZDqOCv0KoM
-         4euwsneuYX7p4qhPZUJZRYk9fTBPVsM7EGW4/A/+0a0jK2atv7Oxfs/xYgXcsv7E+KTN
-         L86PGc3Ia4D5yOwV8P0h6mQFuwl5q1tuGMVGczVoNVnybyrjJEnx5y3sFqpa+Dy2BYfN
-         Nwew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725790297; x=1726395097;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jS2VzpVc7dJ/AT4s9AMcRZ31HOXjijKxq9pngMXABpU=;
-        b=LwB0FrCU9NA2AFAvehxiNLmvUrWzzdyN9xeEATpQJct3YEWeiHnCzc+ylhEf8jpwvB
-         c3MtYHsoLtWxH+QLMBxchggQUF32DTrWRTGXVf38p5yIx5P1XUIO5NbfpiXNCFnn/0ko
-         EGMDa131Jq/P7LGXuYcRtmuephmnq5aunzK5oBg4WhFD2ao+NeqcM2W3kmJpEIszlegE
-         Ru+Ecl4ncQkDPutbXXMav9t21LT+xuS8Gmaa+40Ki5Cd1YyGBXwY7jGeWqmRG2KF2uZg
-         9dbCr+8v+AeX9GGhviEILZROyuq/CImwKVHl2Lrnw0aKTqCgbJLfCsSrJ4hUHlq9Bmp7
-         kzDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKKgzr0p7WcyoMChv1ZBUNmDH6EwwNwqJ+7BZhWSyEYmSZyEodSGe7k6u40qyrjNY85DkXFwgkwd8lMhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzpf/sNvra9lu34xdWfrMh1LSKwqySUl2PzGBXOYoYcJG1/ibwy
-	YC2QMMaaAUJQP0k4kc02l6Tch1s0hM3O93Ea6JUZoiLUc1zi86yKXSeLJDgSlvk=
-X-Google-Smtp-Source: AGHT+IHJ7o1p0iqupb5RIo7H5GyO4HCiTFe05FSVlpTqlLviSdgV4ymj1jv4O2HjhZDxkZzc+VnpVA==
-X-Received: by 2002:a17:90b:3143:b0:2ca:7636:2217 with SMTP id 98e67ed59e1d1-2dad4de1151mr9596174a91.2.1725790296990;
-        Sun, 08 Sep 2024 03:11:36 -0700 (PDT)
-Received: from debian.tail629bbc.ts.net ([103.57.172.39])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc0782dfsm4589379a91.34.2024.09.08.03.11.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 03:11:36 -0700 (PDT)
-From: Sayyad Abid <sayyad.abid16@gmail.com>
-To: linux-staging@lists.linux.dev
-Cc: philipp.g.hortmann@gmail.com,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	sayyad.abid16@gmail.com
-Subject: [PATCH 6/6] staging: rtl8723bs: fix no space before tab and statement start on tabstop
-Date: Sun,  8 Sep 2024 15:41:10 +0530
-Message-Id: <20240908101110.1028931-7-sayyad.abid16@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240908101110.1028931-1-sayyad.abid16@gmail.com>
-References: <20240908101110.1028931-1-sayyad.abid16@gmail.com>
+	s=arc-20240116; t=1725790820; c=relaxed/simple;
+	bh=aXx5MqD9+K2h3R9X1our/w8nZIq6lWFvAt9iZvdXlvM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qrnm1WpZS/fYZzOZDx4ip54sOilr3mLdaqL4zcNV8wNfRhpQ3mG/fRNPm8iOfzXD4BAq6l8yzHAvWPdXUoW3bY5+XTx+DuPP/ByCAtbvRQhJnrKorOpWRcxOdyLakVKuDnYT8BvpLiYgjtDfDds1crEmqVGkmFLefgcaEEbvDxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=Y0/xPvFs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=E4rIQSNX; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9439813802FB;
+	Sun,  8 Sep 2024 06:20:17 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Sun, 08 Sep 2024 06:20:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1725790817; x=1725877217; bh=hQ
+	oc5KrThSTJ0MbCp5+fBQzMyUtoQbboBi8fRtQIF/c=; b=Y0/xPvFsCJBS0UhkE9
+	ZVv6whAno4NUP9TnMlYPXHo6oNs2prWgWLG2RVxCP6/ufW7HyQhVag0n0C5VSIYx
+	A4/LcLmqLPJwkizyNxCNsX1SFwOZFDcNF7UBF+S9wfSbEw99zwPRDWCDk1z3XD/R
+	PxcOwNglGk1a9F94WBRQ08qB5ZVmukxe7JU0kkA2LF//+6u31bX5C0jlrIC3xUcl
+	w68r+onNihgjhRJb2yHAdXBZ/00Com1J/ebtUvnYPVQYuL5yiyt6U0vkemNeEdRa
+	v8KtSgvyYaOmj5RBNG4lU9QevmZxc6Oc3rUazniUHTHI1TLKIQWFB3L6jj+JDEn3
+	Thmg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1725790817; x=1725877217; bh=hQoc5KrThSTJ0
+	MbCp5+fBQzMyUtoQbboBi8fRtQIF/c=; b=E4rIQSNXmE+NMkh197BmW5X87Rk+L
+	21tPQxrtiXRQ8UowpUX0nLWjT5BDKUUK6pddLX7YGv7pUlbUQXKlV6kPee9Z+zmv
+	fLFj3WcfpCbxMrKJS52qFWh6i78Yr95u1gpomDcgqMNrOH+N6vZM+HWwmmdVRHe5
+	gCpn3wfRE32qvDQywqJluOw6G5ZjrA8urb7+a4mRfXMOa35aMuoY91NDt+keGVZs
+	SCGAQZfvtwb6oWnT3xIA2a32V9fiPUMJJoKnp/K6FaHASMxxKbU6gDWfQTLlgdZs
+	i89CDel0OCJlRh5ITkTe/J5N01Jv4XyZZl/bwV5eYn7fBtoCu7tlWjgeQ==
+X-ME-Sender: <xms:YXrdZhHocwjHOOhvHALpAV38vsVe5vamCS-_xOZcG6RfcpEC3ktDtQ>
+    <xme:YXrdZmUxe7HeEx68phJN0IxXKxYpHPCZ1djZBb_WqVMQLiPdEtyuxm7k_488AMXQo
+    4hbdLC7a03-hPrwhas>
+X-ME-Received: <xmr:YXrdZjIeUVZRQjU9fDrUr7Px_8sNBZq4G41e3d9M2OtZBGzwT463PQh2TtyMecdvUuA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeihedgvdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecu
+    hfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgoh
+    grthdrtghomheqnecuggftrfgrthhtvghrnhepgfevffejteegjeeflefgkeetleekhfeu
+    gfegvdeuueejkeejteekkedvfffffedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrgh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgr
+    gihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphhtthhopedutddpmh
+    houggvpehsmhhtphhouhhtpdhrtghpthhtohepfhgrnhgtvghrrdhlrghntggvrhesghhm
+    rghilhdrtghomhdprhgtphhtthhopehjihgrgihunhdrhigrnhhgsehflhihghhorghtrd
+    gtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepfhhlohhrihgrnhdrfhgrihhnvghllhhisegsrhhorggutg
+    homhdrtghomhdprhgtphhtthhopehprghulhgsuhhrthhonheskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheplhhinhhugidqmhhiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgt
+    phhtthhopegstghmqdhkvghrnhgvlhdqfhgvvggusggrtghkqdhlihhsthessghrohgrug
+    gtohhmrdgtohhmpdhrtghpthhtoheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhr
+    gh
+X-ME-Proxy: <xmx:YXrdZnEzphg2kCA8MwZ2Ud9RM30Dp5XggUbCTVDGAMfSWsu_ZlucsA>
+    <xmx:YXrdZnUxa3c238MbA8uYidEl5jAq5CGShhsbVqyJHDiij0nz00wADw>
+    <xmx:YXrdZiPJ1bVNsp6DLEI5RNz7hZQb_C8bkfVhT_JVwhlKW_Gx3zYOeA>
+    <xmx:YXrdZm2nnbc-yr-aDUwNZFUK2ijevNttRKxA1U1TWdGS5x7YZFaceQ>
+    <xmx:YXrdZgMLBQIlOuZQ0823J-XF-W7wnm44vbgDPVbhFt8LEZ4qnCQTLMYu>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 8 Sep 2024 06:20:16 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH v5 00/10] MIPS: IPI Improvements
+Date: Sun, 08 Sep 2024 11:20:11 +0100
+Message-Id: <20240908-b4-mips-ipi-improvements-v5-0-be8617dd2e53@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFt63WYC/43NQWrDMBCF4asErasyGsuSnFXvUbqw5VEyUFtGM
+ qIh+O5VsjElYLr8H8w3d5EpMWVxPt1FosKZ41yjfTsJf+3nC0keawsE1GCUkYOWEy9Z8sKSpyX
+ FQhPNa5bBeWcGNXpjrajnS6LAP0/686v2lfMa0+35qajH+g+0KAmSmgaNs0GZDj/C9+0S+/Xdx
+ 0k82II7ZaE9oLBSOLYwtKZy5F6pZqecggOqqZRC1GG0XkNnXim9Ux3YA0pXqvfoXOj6EGD4S23
+ b9gugvK3LowEAAA==
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Huacai Chen <chenhuacai@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Serge Semin <fancer.lancer@gmail.com>, Paul Burton <paulburton@kernel.org>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3467;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=aXx5MqD9+K2h3R9X1our/w8nZIq6lWFvAt9iZvdXlvM=;
+ b=owGbwMvMwCXmXMhTe71c8zDjabUkhrS7VQnHq46VMJ28umC6gXXVfe6nc/4K3pgpcyjI8OPBN
+ Ztd9zV3dJSyMIhxMciKKbKECCj1bWi8uOD6g6w/MHNYmUCGMHBxCsBENs9kZNjiUJGayqWUHKLM
+ VOT75HXeFJl1KpEL71fabgtcu+9eZh3DX9lPGw4e/JF5Xnm6V86sgGiZuqwGc89nzW/f3iu9dHX
+ 5FS4A
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-This patch fixes the space before tabs and also makes the sentences
-start on a tabstop instead of spaces.
+Hi all,
 
-Signed-off-by: Sayyad Abid <sayyad.abid16@gmail.com>
+This series improved general handling to MIPS IPI interrupts, made
+IPI numbers scalable, and switch to IPI-MUX for all GERNERIC_IPI
+users on mux.
+
+It is a prerequisite for enabling IRQ_WORK for MIPS.
+
+It has been tested on MIPS Boston I6500, malta CoreFPGA3 47K MT/
+interAptiv MPF, Loongson-2K, Cavium CN7130 (EdgeRouter 4), and an
+unannounced interaptiv UP MT platform with EIC.
+
+I don't really know broadcom platforms and SGI platforms well so
+changes to those platforms are kept minimal (no functional change).
+
+Please review.
+Thanks
+
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+Changes in v5:
+- Actual v4, v4 was sent in mistake
+- Link to v4: https://lore.kernel.org/r/20240907-b4-mips-ipi-improvements-v4-0-ac288f9aff0b@flygoat.com
+
+Changes in v4:
+- irqchip commit message and code style fixes (tglx)
+- Link to v3: https://lore.kernel.org/r/20240810-b4-mips-ipi-improvements-v3-0-1224fd7c4096@flygoat.com
+
+Changes in v3:
+- Fix build errors reported by kernel test bot
+- Rebasing to current next
+- Link to v2: https://lore.kernel.org/r/20240705-b4-mips-ipi-improvements-v2-0-2d50b56268e8@flygoat.com
+
+Changes in v2:
+- Build warning fixes
+- Massage commit messages
+- Link to v1: https://lore.kernel.org/r/20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com
 
 ---
- drivers/staging/rtl8723bs/include/rtw_security.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Jiaxun Yang (10):
+      MIPS: smp: Make IPI interrupts scalable
+      MIPS: smp: Manage IPI interrupts as percpu_devid interrupts
+      MIPS: smp: Provide platform IPI virq & domain hooks
+      MIPS: Move mips_smp_ipi_init call after prepare_cpus
+      MIPS: smp: Implement IPI stats
+      irqchip/irq-mips-gic: Switch to ipi_mux
+      MIPS: Implement get_mips_sw_int hook
+      MIPS: GIC: Implement get_sw_int hook
+      irqchip/irq-mips-cpu: Rework software IRQ handling flow
+      MIPS: smp-mt: Rework IPI functions
 
-diff --git a/drivers/staging/rtl8723bs/include/rtw_security.h b/drivers/staging/rtl8723bs/include/rtw_security.h
-index 740c8504cba7..f005ec88d00a 100644
---- a/drivers/staging/rtl8723bs/include/rtw_security.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_security.h
-@@ -162,7 +162,7 @@ struct security_priv {
- 
- 	/*  For WPA2 Pre-Authentication. */
- 	struct rt_pmkid_list		PMKIDList[NUM_PMKID_CACHE];	/*  Renamed from PreAuthKey[NUM_PRE_AUTH_KEY]. Annie, 2006-10-13. */
--	u8 		PMKIDIndex;
-+	u8		PMKIDIndex;
- 
- 	u8 bWepDefaultKeyIdxSet;
- 
-@@ -183,8 +183,8 @@ do {\
- 			encry_algo = (u8)psta->dot118021XPrivacy;\
- 		break;\
- 	case dot11AuthAlgrthm_WAPI:\
--	     encry_algo = (u8)psecuritypriv->dot11PrivacyAlgrthm;\
--	     break;\
-+		encry_algo = (u8)psecuritypriv->dot11PrivacyAlgrthm;\
-+		break;\
- 	} \
- } while (0)
- 
+ arch/mips/Kconfig                     |   2 +
+ arch/mips/cavium-octeon/smp.c         | 111 ++++++-----------
+ arch/mips/fw/arc/init.c               |   1 -
+ arch/mips/generic/irq.c               |  15 +++
+ arch/mips/include/asm/ipi.h           |  71 +++++++++++
+ arch/mips/include/asm/irq.h           |   1 +
+ arch/mips/include/asm/irq_cpu.h       |   3 +
+ arch/mips/include/asm/mips-gic.h      |  10 ++
+ arch/mips/include/asm/octeon/octeon.h |   2 +
+ arch/mips/include/asm/smp-ops.h       |   8 +-
+ arch/mips/include/asm/smp.h           |  41 +++----
+ arch/mips/kernel/irq.c                |  21 ++++
+ arch/mips/kernel/smp-bmips.c          |  43 ++++---
+ arch/mips/kernel/smp-cps.c            |   2 +
+ arch/mips/kernel/smp-mt.c             |  70 +++++++++++
+ arch/mips/kernel/smp.c                | 213 ++++++++++++++++++++-------------
+ arch/mips/loongson64/smp.c            |  24 ++--
+ arch/mips/mm/c-octeon.c               |   3 +-
+ arch/mips/sgi-ip27/ip27-smp.c         |  15 ++-
+ arch/mips/sgi-ip30/ip30-smp.c         |  15 ++-
+ arch/mips/sibyte/bcm1480/smp.c        |  19 +--
+ arch/mips/sibyte/sb1250/smp.c         |  13 +-
+ drivers/irqchip/Kconfig               |   2 +-
+ drivers/irqchip/irq-mips-cpu.c        | 191 +++++++++---------------------
+ drivers/irqchip/irq-mips-gic.c        | 217 +++++++++++++---------------------
+ 25 files changed, 590 insertions(+), 523 deletions(-)
+---
+base-commit: 61c01d2e181adfba02fe09764f9fca1de2be0dbe
+change-id: 20240616-b4-mips-ipi-improvements-f8c86b1dc677
+
+Best regards,
 -- 
-2.39.2
+Jiaxun Yang <jiaxun.yang@flygoat.com>
 
 
