@@ -1,132 +1,101 @@
-Return-Path: <linux-kernel+bounces-320291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA87970868
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:25:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E954697086C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3582B2158D
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:25:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 879A3281F2E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D28017279C;
-	Sun,  8 Sep 2024 15:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF730167296;
+	Sun,  8 Sep 2024 15:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aDI6fGkV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BhFvfe1b"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09EA36B0D
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 15:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A73B134AC;
+	Sun,  8 Sep 2024 15:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725809125; cv=none; b=jvmpk0JtVEPXlHMvbX11uRt1kjEsW+0a/qe7HvJOC+M5pg7nDPw0b5hYEt698BdQDSXuRERR3XyEj/u66Yuiy59QT9AcwbfW33cF4Gde5rctmnd6FEMATJ1cSLPvH2YBY2GirsYmIXiv6NiZhvQKV5WDi/a+8ltUuq5RrCkRCNI=
+	t=1725810039; cv=none; b=JSXYXqRrtq3YyG1PPmal1+pZHQX9VP+fXcZ3CctkOlQ0SYr134NFp6ch/saTTD/8TS5Jla05uVCSv8dg5+mScIIkKRji8AaEXN6XKb6tMldHjhiUpSvjhOBzafc8C4IPC/1uO31exwYXFUjqQstN0DUzTSmiTMbIb8enZZsrc/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725809125; c=relaxed/simple;
-	bh=By5zUPgfL+dN0S3WzMVycd1W/qmxScpWCUYn81UoJaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HibQ3LbPVq+HdNSZ9LR/KsiFXQl7L0dxBVpAhj7QHhMXZfCXj+V+BWTDgi/VVKiJBvbyrkLAHlzKYifLd+wZuAcYKGHv0YhNbM6C45cNKYlU4gMBXerpSJ/p8EPHlrdSYwe6mdGjw7NWm1YCoTlKFOh4llkjXDTEEAcP89kBXVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aDI6fGkV; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725809123; x=1757345123;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=By5zUPgfL+dN0S3WzMVycd1W/qmxScpWCUYn81UoJaA=;
-  b=aDI6fGkV0RzqyTcK+rE+0rdcCyLmgl2sHJM3bMzS9xODjzbXQ1UddXwZ
-   CFEqt5zy+b/x86xEaAivGOak3Jsdf8887ZpxO8bAfAHHuQ4rL/KiAQpOg
-   PrufHw9I5FhbYrGqTiaD+2nhHt4qbTAIN6S1VmzxWykZOLKRvkxgY+40G
-   bx+cNqbcp58H7U6++ff8+4hl31CBjtIO3uokO8beDJ+5UFW8vF110ZX7j
-   +jBkuDZ8soeKz5fPOElkh46mHtdO4/F2bxZYsYpuSIbjzBHJuIL0QQqFs
-   zqUgpubCqQrGrBVX3+GiP4ozwXpZJWq2ylsBaHSuXGxxnZxMdz8Fynnx6
-   Q==;
-X-CSE-ConnectionGUID: uRgySVh1QtaT9vZZe+W/3w==
-X-CSE-MsgGUID: x/mOD+RnRmSrbsTJ8r8PtA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="27425469"
-X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
-   d="scan'208";a="27425469"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 08:25:22 -0700
-X-CSE-ConnectionGUID: xkZQwZlKTna5gIidrpR0Rg==
-X-CSE-MsgGUID: stG7cw0pSnq58gqzTlPOPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
-   d="scan'208";a="71385024"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 08 Sep 2024 08:25:21 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1snJmw-000DeV-1K;
-	Sun, 08 Sep 2024 15:25:18 +0000
-Date: Sun, 8 Sep 2024 23:24:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Howells <dhowells@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Dominique Martinet <asmadeus@codewreck.org>
-Subject: fs/netfs/objects.c:148:5-24: WARNING: atomic_dec_and_test variation
- before object free at line 150.
-Message-ID: <202409082345.wiwtJarb-lkp@intel.com>
+	s=arc-20240116; t=1725810039; c=relaxed/simple;
+	bh=q+Kh6wwc5YZa16QFaGgnd5UtQDrNcPs7tb9A0peheWY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=XRgiOlGZaB8nDctP6mSw8UJYUUQmwt1zCOldsyfjuQAAhfXHE5mODDoMnwspyQAMMzeDXqNI42k4TI5GLj3cUquNC57CVhvNrhgViHfUFOGxJpiGWXyosyIHF6BTTDLDUGdKn6yuKY+p1LEIzfJ8bfKF3huF4lfrIxIpkFkM6bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BhFvfe1b; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1725810011; x=1726414811; i=markus.elfring@web.de;
+	bh=ptJ9KRiiwKf0exozRFbwa/8czRd8EAb1dHK48JunPuE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=BhFvfe1bxXq3j2XOXGqlULvp0rUpex086BwxYXZuqyPr3iZsuey9mq29XvAUk3CE
+	 jssBSeILm/C6GhjBcGEgQQKFD6YYDhyyukvplVY4ovhBdDjkHI55T9vrP4bZmX0jd
+	 ShiaSjvKJ0N0BtP6ugcQb9JIWyqDH/ibuLq2byp7HFEA7XbEungeHJNsc4bde+kga
+	 UyGw8uDW+Zbj/K9z3r25bIO/QOhccOxjRrG4OYKtDZA2ZDP7sjpMEAYUQc+xY7US6
+	 lwAgdh1u1MH9NjjGGt9KT5WSndiJRUS95xWCPz611bG1SnX0BRwyGTuhnVwaTmsMd
+	 F02ND+aMKXghHHk4vg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N4NDQ-1s4bKn3CeU-00w1xz; Sun, 08
+ Sep 2024 17:40:11 +0200
+Message-ID: <a2d13042-c19f-48cd-bc1a-375ab44c89d7@web.de>
+Date: Sun, 8 Sep 2024 17:40:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+To: Tang Bin <tangbin@cmss.chinamobile.com>, linux-sound@vger.kernel.org,
+ Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240908140259.3859-1-tangbin@cmss.chinamobile.com>
+Subject: Re: [PATCH] ASoC: topology: Fix redundant logical jump
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240908140259.3859-1-tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:YRbIm10HrBGUnXPEZk/8HGrkF2hkx3G0aojXPAOUAEvEXXmySiL
+ 4JPdxNtfhxQyWZwV1KN/LhxE1uCYNN5QmZ9GnMjkD2Lm7uWeICyrc+JO7AsPvqMkulWiYqo
+ dd2bsHcAOsX9rd40SdDrkO+2t54YJ159Lka+M0Y5TPm0sAOlfzR51yXdP656DVmGhN6K5/h
+ rAIfd2mBX7mF9M6EZWOiQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:EtzDlGTjLO0=;aJ0dU1KNayylHLRXh6wH+DXxFT0
+ suYlg8zmX3kJ6RAN7yDh1wLLbh22m18tOqTVP2zPhXFDepW+ugFRW99coZVPWgO+f8DG8NDJT
+ 0NWYa4Nc+WiiLeCP6d3Q84d+NXreOc2xNWzyc+RqEz4PD7pEIkb+cfcr5ajetYH08zt/LEUBL
+ Gk+4k4mQ37Xzmiso3eydwUCcfeZdzuStWgN3QX6ezelpRvoqu4pj2YKX2h1VQyaWJL7UhY6vR
+ ksvKkq7wRDkERQucp0ET1eAC4w5xn8Gd/PCN/pYeai9it3Nmlev9Iu6Wl7DWRJHFs/NumWEM2
+ 6S7BghwAUGzrsFAFGjaq44PyEjVHAp3Bne8kcK0fh2Kval9xvqy2JQ4BHeVLmFpTx5kPbH0m4
+ vSvGlI7nB1AioTPCkkY1VHB37thWH/Mn4cSErJNaA5K/M0noizxsvB0D08EYdMHYuhycxSiaH
+ UK30IoAwH42AJ+T02YQv7pxmvsyYf5cJSePRyLkWkP8zxpzWZ3htDUGdJK93q2zUanmKf1xYS
+ xhN/oNMAwO2+GWMxsVzQrrXbjL5DirpYhaTyHICdTfBfARa3vPFyaAcwrAK/RCcyIgagshVdz
+ uOQU6N4IxVPn86+xn9x3WTJ43R20BkgECKMzMLNRF4vMsB/ezxD+sdLdzdCaXUPmw9fHG5LXc
+ ZAPZtAOn4ii7dKS+BamCXAEHcG3QcVvxVrApfUrXsw7cW1moqN2yJssVdYTTvZzuFWpn1vHuv
+ xeSCwfb2Ra+ION9aipJws3i7OmFQryg4UfTDZaG5Xk+niAGAfz8T74i2zlEfh5vH1yE+AR8WA
+ 1cHcBwA76xesv+khFwOi7DQA==
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   d1f2d51b711a3b7f1ae1b46701c769c1d580fa7f
-commit: f89ea63f1c65d3e93b255f14f9d9e05df87955fa netfs, 9p: Fix race between umount and async request completion
-date:   3 months ago
-config: x86_64-randconfig-102-20240908 (https://download.01.org/0day-ci/archive/20240908/202409082345.wiwtJarb-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> In the function soc_tplg_dai_config, the logical jump
+> of 'goto err' is redundant, so remove it.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409082345.wiwtJarb-lkp@intel.com/
+* You may occasionally put more than 53 characters into text lines
+  of such a change description.
 
-cocci warnings: (new ones prefixed by >>)
->> fs/netfs/objects.c:148:5-24: WARNING: atomic_dec_and_test variation before object free at line 150.
+* Can it be simpler just to return directly instead of extra jumps here?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.11-rc6#n532
 
-vim +148 fs/netfs/objects.c
 
-   123	
-   124	static void netfs_free_request(struct work_struct *work)
-   125	{
-   126		struct netfs_io_request *rreq =
-   127			container_of(work, struct netfs_io_request, work);
-   128		struct netfs_inode *ictx = netfs_inode(rreq->inode);
-   129		unsigned int i;
-   130	
-   131		trace_netfs_rreq(rreq, netfs_rreq_trace_free);
-   132		netfs_proc_del_rreq(rreq);
-   133		netfs_clear_subrequests(rreq, false);
-   134		if (rreq->netfs_ops->free_request)
-   135			rreq->netfs_ops->free_request(rreq);
-   136		if (rreq->cache_resources.ops)
-   137			rreq->cache_resources.ops->end_operation(&rreq->cache_resources);
-   138		if (rreq->direct_bv) {
-   139			for (i = 0; i < rreq->direct_bv_count; i++) {
-   140				if (rreq->direct_bv[i].bv_page) {
-   141					if (rreq->direct_bv_unpin)
-   142						unpin_user_page(rreq->direct_bv[i].bv_page);
-   143				}
-   144			}
-   145			kvfree(rreq->direct_bv);
-   146		}
-   147	
- > 148		if (atomic_dec_and_test(&ictx->io_count))
-   149			wake_up_var(&ictx->io_count);
- > 150		call_rcu(&rreq->rcu, netfs_free_request_rcu);
-   151	}
-   152	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Markus
 
