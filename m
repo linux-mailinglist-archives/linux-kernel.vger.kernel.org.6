@@ -1,94 +1,115 @@
-Return-Path: <linux-kernel+bounces-320368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B1AC970965
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 21:20:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D9397096D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 21:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B2B41C20C10
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:20:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18C28281AF2
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFE7179202;
-	Sun,  8 Sep 2024 19:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635D5178CE2;
+	Sun,  8 Sep 2024 19:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzY+I+E6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RH7DVrYY"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F441114;
-	Sun,  8 Sep 2024 19:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DF4177991;
+	Sun,  8 Sep 2024 19:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725823207; cv=none; b=setIgbZZ9L5UBY0ieLe/357baDaHaNG7RlgRKyQAaIFqZWdiyFJKNQtbneETqag035wIeIne3fr54sjcAOkRpthgUMAd1wl0gT7TohZBbFkyMdSRnfxoe44ToWs0XLIDeDFWK2JUiq10o+yC8Jv/wDAdNO0/x4+QaIpCTdERXOg=
+	t=1725823436; cv=none; b=Onado79lGRmFAxYuyut6nN2NfvTqiSHLH9d+M83A64MDbUmbCS8hFUt10eV5TpO88BbhpGok0+C8dipRmvwaacaxGphH/P2uIjGCr8q5DbxiddJvTWsH4XSMbyAQIAhTxO0Tm6rvm77ubu1lRJ3OJaHUMKp+QRlRwY8ipMS7gvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725823207; c=relaxed/simple;
-	bh=fPzRhjNMvX2wVQZqO7nLiFSOLSviBH/ZaPY/0H3vcjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h99CX6d66NJccG019sSeF/y3T6i9H7e/gXjv+LhUVmd2gts9kuN8x3h2Qqe/US1bmGCgO7u0n+h2+vhW/4rAzu4Jx8s2V7Yk/LE9kVJkawyos32I66oD31O5x2pDKAPgLSODptSP0YSb8/JXkskHeyYMJ9tXSOtgrBXBIv7U8FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzY+I+E6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE16C4CECA;
-	Sun,  8 Sep 2024 19:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725823206;
-	bh=fPzRhjNMvX2wVQZqO7nLiFSOLSviBH/ZaPY/0H3vcjw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VzY+I+E6IvXzqIcugLikR2Kl8TDc9RGC95OA/VWBKZEjqTMNfnr/5xCQNJGTY58/N
-	 0tJdwOhj7URs1g/yO2Pgm8hUH9YdSC3cjc37ZqdEuZFP1WY59eYCd5IUBcfaChKpKg
-	 3Hps6usetCMrUL6t3ZO/+7k8RbGkPqeJMGsq1N+SuiYTxSiXVmB3ZaIyBeHuxpWTaA
-	 bpPug1eu0o5sgpt9YGb70bJXkaJEFe1WBkiO9hu3htJ+oS2ZzFG5gIiZfAHs3ddhJN
-	 vKpyV1D9mDnGQ4MylXY+3PAz66BIog5itMQJzXmAKIygUoCYsvhuJn0s9WLZJDJEaF
-	 Y6jkHYxUm2T/Q==
-Message-ID: <c63c6c0d-80f0-4e44-8e02-b12ff365f4eb@kernel.org>
-Date: Sun, 8 Sep 2024 20:20:01 +0100
+	s=arc-20240116; t=1725823436; c=relaxed/simple;
+	bh=m/W0s303G6CAVDATz7o5LzmdnZ3kzZdIQCH0Cbz1fgQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mv75iY3ABj1JsWlWhXfp36/eN6Sz+mPBAph8Z0v4/rsO/fGlZ3+xpO79x5P7CwXImwmZRcj8NvlYhI2Ou9w9QfMwA5NriyU5GF4WSGsNjp7ClXRIwOPU61z3n9JcWTi7DnPvpa5V9PV0KlZTB8hWcKLTfmFF7grZCfq2jP3256k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RH7DVrYY; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a99de9beb2so119103785a.3;
+        Sun, 08 Sep 2024 12:23:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725823434; x=1726428234; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JXrFgzwbiTSr4Ylz2mlW0T8OOl+bUrZIiSty64NIZsA=;
+        b=RH7DVrYYBDtING8D4bs6m4l2mVr6oALwVsqQj/ONyBNQkUeuuV6KEQJ/LgrKAnX7a+
+         2UtDHUII+Ovo0NqfoGtdxntd+dJwvsGl+E57UCRBz6wA7l/wkIeUH0JhJ0HeGXndbZ+9
+         mc2o5FDp0VtLG7wcca7Pi92DAN92tXw7Xgju+sI74M6nL6M9fkk+9QOS8jhvn5Urklt4
+         MnHTnzU0xFuSRJRSRfxJeQVgv9Spb4i+U3unv4eacfJZ493iBoH43LfEAQMISmbT/Uvw
+         6JWDnPOeZJ1rpxavjurTWfhfXRVGZAbSA2UcKHI2ZKt5rnyjTyLuzC/B5ibOCo/619Qt
+         ABmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725823434; x=1726428234;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JXrFgzwbiTSr4Ylz2mlW0T8OOl+bUrZIiSty64NIZsA=;
+        b=ROd5KGfX2ZTDJOdCsAulBOqjIbwegMpWH7YxCRL1PXZxrTcfUC3WiMqnSEOb8H+dcl
+         YqE7tYWLYAZsN5q5L3n9w5PlQ0FfC3Bdp40HEZ6ZJjfQpUCmcGqAviimHVqhRMt35Sp0
+         SXUoCsrmlUIZBX/KRrQdim1MbeSyHB0k8HroNuh5rbDGHW3S0eWxN2XD+84QqjNowxuf
+         Edb5fMW11Xnx0Ag8jX699PJQA6SRyNSDuDzNiF7EN8sukSayaR+AvpZlnlwg7dpZJ9yb
+         46X+BFsZ1mWqIA0nGp13PsXHxXM6aBhN7aBdaCERmg0Kn0C5Myd2BQsQ6tOr4kP7IqwT
+         xL+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUTq4yClqTLYZp6U7Xb0ldtdVUMrTywuDaCDCKE4RhTWiN+sDSmXbLLqxICMjs8H6HbjSCB8hctzldZ50141A==@vger.kernel.org, AJvYcCUe+PKQsDUc14MbDy0Kh64tOMTHwpapFpiiAOJ8WaMuHlVD03nZvLGu2jqhxozb8CpVItuRml+heNc=@vger.kernel.org, AJvYcCVfoOeSNxvemZxJPIZ4gcCk8ltcraI+G+A9n0ViWEwXtHfVqcg+pcxARY/IRAeY0DM7SkEBzrP7yaNvES2c@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlLJmQsHZk+shldToXLVq9cy6uecMTl97WkQ3ef1K1uWteUR9U
+	i11Y1IXIymhfpRW1OqaQsUBQ+wbkL/QwvSQrXQpoq6ai8ReUvI1Y
+X-Google-Smtp-Source: AGHT+IGgKnSGL4uaFiJd97SurDl/WRYL/3PCh4JiAicvu+wT8MBh5XrPuZh99WHUqGS9aW7p6JSFXg==
+X-Received: by 2002:a05:620a:40cf:b0:79f:793:9a63 with SMTP id af79cd13be357-7a99737a8ffmr1464157785a.44.1725823434041;
+        Sun, 08 Sep 2024 12:23:54 -0700 (PDT)
+Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
+        by smtp.googlemail.com with ESMTPSA id af79cd13be357-7a9a7969043sm151309485a.44.2024.09.08.12.23.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 12:23:53 -0700 (PDT)
+From: Dennis Lam <dennis.lamerice@gmail.com>
+To: dhowells@redhat.com,
+	jlayton@kernel.org,
+	corbet@lwn.net
+Cc: netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dennis Lam <dennis.lamerice@gmail.com>
+Subject: [PATCH] docs:filesystems: fix spelling and grammar mistakes on netfs library page
+Date: Sun,  8 Sep 2024 15:23:09 -0400
+Message-ID: <20240908192307.20733-3-dennis.lamerice@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH] bpftool: Fix a typo
-To: Andrew Kreimer <algonell@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-References: <20240907231028.53027-1-algonell@gmail.com>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <20240907231028.53027-1-algonell@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 08/09/2024 00:10, Andrew Kreimer wrote:
-> Fix a typo in documentation.
-> 
-> Reported-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> ---
->  tools/bpf/bpftool/Documentation/bpftool-gen.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-> index c768e6d4ae09..6c3f98c64cee 100644
-> --- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-> +++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-> @@ -172,7 +172,7 @@ bpftool gen min_core_btf *INPUT* *OUTPUT* *OBJECT* [*OBJECT*...]
->      CO-RE based application, turning the application portable to different
->      kernel versions.
->  
-> -    Check examples bellow for more information how to use it.
-> +    Check examples below for more information how to use it.
-Thanks! Since we're at it, would you mind fixing the rest of the
-sentence, too?
-“Check _the_ examples below for more information _on_ how to use it”
+Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
+---
+ Documentation/filesystems/netfs_library.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Quentin
+diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/filesystems/netfs_library.rst
+index 4cc657d743f7..cc8e7a249de5 100644
+--- a/Documentation/filesystems/netfs_library.rst
++++ b/Documentation/filesystems/netfs_library.rst
+@@ -111,12 +111,12 @@ The following services are provided:
+  * Allow the netfs to expand a readahead request in both directions to meet its
+    needs.
+ 
+- * Allow the netfs to partially fulfil a read, which will then be resubmitted.
++ * Allow the netfs to partially fulfill a read, which will then be resubmitted.
+ 
+  * Handle local caching, allowing cached data and server-read data to be
+    interleaved for a single request.
+ 
+- * Handle clearing of bufferage that aren't on the server.
++ * Handle clearing of bufferages that aren't on the server.
+ 
+  * Handle retrying of reads that failed, switching reads from the cache to the
+    server as necessary.
+-- 
+2.46.0
+
 
