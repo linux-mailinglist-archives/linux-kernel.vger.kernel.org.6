@@ -1,215 +1,140 @@
-Return-Path: <linux-kernel+bounces-320166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37DCF9706EF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:33:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 884449706F1
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567921C20D35
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A36861C20E05
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2DB156668;
-	Sun,  8 Sep 2024 11:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jq/sHy7S"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF90157E87;
+	Sun,  8 Sep 2024 11:34:25 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F70155A32
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 11:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BB31537CE
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 11:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725795210; cv=none; b=XhjaxzIfOJiWW8PUpMWGw2z6QVpignYgbXqPNcLVKy6A6BV7jvYXinalekXcGzHHX4hPH+MW3jFHb0tf5I5/HqT845eGptLeL2VzxsP8wHHHqnrH0xhzSHXmNBlBgmDaty76Y+wPtxdb461D3HDQnmAOnN/e0w9vbmBr5VdO87I=
+	t=1725795265; cv=none; b=qcNjmx7Yk6/Dxv8TjYESkYyXzdj28/xXzU8c2jQpWYVeI7QESSiPKQ3QmrIcHujw1yW43ItT/KWFd/INYdJn+qMkFfIwi9zKWh/iNisFR8WOgQsAQ6lDC8NmniwCxO401fth75dbRci7rr/D+4b0tv11oWaVXCfxAr20/wQmVvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725795210; c=relaxed/simple;
-	bh=aTSE1n6xrZTiUV/fAuc/0WrqIi4ApvzsNBFhFNf9pUk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ojAyssAPwmu/SxSHkwq1nEVhnwUOLVU7ESBfrpqQuGp/Ylx5zmchV8B0dn0FI2sF15OjAjCcsbOd2rXWBijPyVOfbfYLVodBA8m94M53dEj8wnXIY6oItcep944sqw5odB3xqpm+eLoTa963SBEYOdKw8NA51M5n7OvTQkU8QUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jq/sHy7S; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-718d962ad64so1969793b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 04:33:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725795207; x=1726400007; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nCf3SqIpi+smHSMa+FhqUwP6bRy0VLcMO9hbpROT3lg=;
-        b=jq/sHy7S6dVt26OznsWpZdsCvp4hP1HR+CjE4t2gPQe8ITfrUZs5jCAL+RGvu2XCnE
-         wC4VhWQzQpEA7i4jFNJCUuVyhdjWL1ZKDXTCQE1YM3fDpt2wZ1Y8ixD/o0GXfpKLFvbo
-         H4VdLSwhCTuRA6C+BZicnjWFB5tHwXyUFes+K7o2YVlpZVFqwRZWvYlalMc32yJEHz4b
-         CGW0czeukmTfi73BdrEdrrSUXstaOPuQoKDLJS1PIbkhhGxu1QXpoBfBXsXZpy5eiUKi
-         Jl080haYKEch+RYRLm0RhxwD97eHQLfRbYcPWr3ZGXgBbluzEtXUWvOQDlFHI+et7uan
-         cCNQ==
+	s=arc-20240116; t=1725795265; c=relaxed/simple;
+	bh=/Xh8WI8DrM0WgcNjfV1N+w3yIHvEJX6uEl/GDnSjjgw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=W2F+QiwVlbawXF0otRJPFIZNmPSuEltyZkWuzz2z4kcRblGfkc7FLNqtYkxcdhBWB7sR8rdekI9i3wH/lbOW2LoxcwL+2MnGHTh9eeQFe2vWwuNjp75QRFu2IZwL/o4R85S9FzLsX+NURgrdJWUgrtxNEi54DAtsBAzuFL4DIys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82ad9fca614so146568039f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 04:34:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725795207; x=1726400007;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nCf3SqIpi+smHSMa+FhqUwP6bRy0VLcMO9hbpROT3lg=;
-        b=Kd91KKfVciek33BVAtF+DL3cVLX7dsIQ8CO0wRlcMJFAcLrvTsPeZGbwYkr835xj2/
-         nI232/gdH2kJ5Riu3gfuX/srykzdES1y0mZsLc1Fyi2lHzK9mZaEjn+PoJR8kOUw2kqR
-         srWdYeNeiq3lk/ce1YGn+Fm7qohRk5d5xeHPQxploo1C4dc7a6ZoZRx8V/devumPCiio
-         ogcXDnO0SLKcwQpev95T7zfcxWntujo9iTU/Vypvi9+cuH7OBy3trZybjPzZrI2H6qGr
-         Tf+2jVbzAwuI8dROkLs/RIiQi3V5GqmTmhJukytl0CpOaaX/g5BudTVzrQjfEzqiDCtR
-         rQ+A==
-X-Gm-Message-State: AOJu0YxeuR41wCHqzaBoKtcLBHLI+okafxIKBQKSgEIHLw06jK3ykbt3
-	WmOHVKMfkmdz9PvXeE9UHmgNT01//hrelOSvai7l8vnMMroAYTr1
-X-Google-Smtp-Source: AGHT+IFCOaOEPadUfPPLp3kmtu/pED1UJGaXg6V+o88mLDUCO822mavVEMiOzKF3BfM+uTqTOwXA8Q==
-X-Received: by 2002:a17:902:ec8e:b0:206:983c:39af with SMTP id d9443c01a7336-206f054f7bdmr83032475ad.31.1725795207151;
-        Sun, 08 Sep 2024 04:33:27 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710eeaf34sm18975695ad.135.2024.09.08.04.33.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 04:33:26 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] KCSAN: data-race in generic_fillattr / shmem_mknod (2)
-Date: Sun,  8 Sep 2024 20:33:22 +0900
-Message-Id: <20240908113322.14366-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1725795263; x=1726400063;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zQJqLe5gOilYbtWQRHW73MpTdXn87Rs1z9P3F3h4QoI=;
+        b=nMnVzIXLSqQdO30QxeDkYWJf1SixhCoXYAOAbKpc7VH+2iBIi/segh5rj3YbTNWhD+
+         7EBwUcog7TAmrn3rdoviqLTjf4JniRzqHaobmA5mBYWja+FnSIOwKun21PsQZ4gGQidw
+         rkZGTuSrvpeKsOt1j8Z5hkqaEUUmVKhJK7JGIOLOPDuDV07itHzhTcuqbKYGC4S+fo3B
+         6JiYAP1k6UCttgVMiqFVUdpJ5wl2lY7XmKUg8KmWq4lXeIcC+pO/3Ft034EkqM+NKUy9
+         lQgSmxsIfeXHdpfMMrsU2hlAKSAVmYYqRBQgzUuG3XCWsFgnZ2Xv6wUx+fIx1ASbkSjd
+         F3NA==
+X-Forwarded-Encrypted: i=1; AJvYcCXijDT4jK89l0Bc/l8Sfzckp1V5qYzO2q9c29ZJFyrAN0cOLN/5SErlRWsAVM350X2WkXifuEAC+cY0RNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtX1jFOe3jp978eLff+I0OQ9FCwaXrUFrnVAL1v9iCuGYLYzCO
+	SATXU5TSA4STAOKmlWsBKKA8Un1jxIpbXFnLZAYpSSvI8wUAbeYKSpwDT8UJyqn5zGdFwd5rSfA
+	4lc5bkKL4Vl2Dsp9DjiZlOzI0HAIN1EELi9vOjcPEZ+iG374Cg5FRMfk=
+X-Google-Smtp-Source: AGHT+IFvxJJN0rABiEX4KHr1m4mvasQ48MP3SQX0gGl2Kz4p7SerANvHWedVKOxWJ0vGKx3d4B8uPz+4YVFwA8nWKcO1LPsCkFPp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:c544:0:b0:39f:d6a9:a6b9 with SMTP id
+ e9e14a558f8ab-3a0568ab181mr42470295ab.24.1725795262931; Sun, 08 Sep 2024
+ 04:34:22 -0700 (PDT)
+Date: Sun, 08 Sep 2024 04:34:22 -0700
+In-Reply-To: <00000000000047bf6a061d976fdb@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009a38c906219a056f@google.com>
+Subject: Re: [syzbot] [hfs?] WARNING: ODEBUG bug in hfsplus_fill_super (3)
+From: syzbot <syzbot+dd02382b022192737ea3@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    d1f2d51b711a Merge tag 'clk-fixes-for-linus' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=147f1ffb980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=58a85aa6925a8b78
+dashboard link: https://syzkaller.appspot.com/bug?extid=dd02382b022192737ea3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11b6589f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=127f1ffb980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8b52ee4d6014/disk-d1f2d51b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3409402d9dfd/vmlinux-d1f2d51b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7da5cc92617b/bzImage-d1f2d51b.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/73e23808204f/mount_3.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/0d235c82b3b0/mount_19.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dd02382b022192737ea3@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+ODEBUG: free active (active state 0) object: ffff88807c180238 object type: timer_list hint: delayed_sync_fs+0x0/0xf0
+WARNING: CPU: 0 PID: 5700 at lib/debugobjects.c:518 debug_print_object+0x17a/0x1f0 lib/debugobjects.c:515
+Modules linked in:
+CPU: 0 UID: 0 PID: 5700 Comm: syz-executor651 Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:debug_print_object+0x17a/0x1f0 lib/debugobjects.c:515
+Code: e8 0b 84 40 fd 4c 8b 0b 48 c7 c7 40 98 60 8c 48 8b 74 24 08 48 89 ea 44 89 e1 4d 89 f8 ff 34 24 e8 fb 60 9b fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 ec 59 5e 0b 48 83 c4 10 5b 41 5c 41 5d 41 5e 41
+RSP: 0018:ffffc9000324f5b8 EFLAGS: 00010286
+RAX: 098b313f44a3ce00 RBX: ffffffff8c0cc1a0 RCX: ffff888027455a00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffffff8c6099c0 R08: ffffffff8155b372 R09: fffffbfff1cfa0e0
+R10: dffffc0000000000 R11: fffffbfff1cfa0e0 R12: 0000000000000000
+R13: ffffffff8c6098d8 R14: dffffc0000000000 R15: ffff88807c180238
+FS:  00007f7e074f76c0(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000680 CR3: 0000000024282000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ __debug_check_no_obj_freed lib/debugobjects.c:990 [inline]
+ debug_check_no_obj_freed+0x45b/0x580 lib/debugobjects.c:1020
+ slab_free_hook mm/slub.c:2223 [inline]
+ slab_free mm/slub.c:4477 [inline]
+ kfree+0x10f/0x360 mm/slub.c:4598
+ hfsplus_fill_super+0xf25/0x1ca0 fs/hfsplus/super.c:618
+ mount_bdev+0x20c/0x2d0 fs/super.c:1679
+ legacy_get_tree+0xf0/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x92/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7e0756d80a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 ee 08 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7e074f6f98 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020002900 RCX: 00007f7e0756d80a
+RDX: 0000000020000100 RSI: 0000000020002900 RDI: 00007f7e074f6ff0
+RBP: 0000000020000100 R08: 00007f7e074f7030 R09: 00000000000006ca
+R10: 0000000002000010 R11: 0000000000000286 R12: 00007f7e074f6ff0
+R13: 00007f7e074f7030 R14: 00000000000006d0 R15: 00000000200022c0
+ </TASK>
+
 
 ---
- fs/ext4/orphan.c |  2 +-
- fs/ext4/super.c  |  4 ++--
- mm/percpu.c      |  5 ++---
- mm/shmem.c       | 12 +++++++-----
- 4 files changed, 12 insertions(+), 11 deletions(-)
-
-diff --git a/fs/ext4/orphan.c b/fs/ext4/orphan.c
-index e5b47dda3317..08299b2a1b3b 100644
---- a/fs/ext4/orphan.c
-+++ b/fs/ext4/orphan.c
-@@ -293,7 +293,7 @@ int ext4_orphan_del(handle_t *handle, struct inode *inode)
- 			mutex_unlock(&sbi->s_orphan_lock);
- 			goto out_brelse;
- 		}
--		NEXT_ORPHAN(i_prev) = ino_next;
-+		WRITE_ONCE(NEXT_ORPHAN(i_prev), ino_next);
- 		err = ext4_mark_iloc_dirty(handle, i_prev, &iloc2);
- 		mutex_unlock(&sbi->s_orphan_lock);
- 	}
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index e72145c4ae5a..8cc5e19bfe78 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -346,7 +346,7 @@ __u32 ext4_free_group_clusters(struct super_block *sb,
- __u32 ext4_free_inodes_count(struct super_block *sb,
- 			      struct ext4_group_desc *bg)
- {
--	return le16_to_cpu(bg->bg_free_inodes_count_lo) |
-+	return le16_to_cpu(READ_ONCE(bg->bg_free_inodes_count_lo)) |
- 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
- 		 (__u32)le16_to_cpu(bg->bg_free_inodes_count_hi) << 16 : 0);
- }
-@@ -402,7 +402,7 @@ void ext4_free_group_clusters_set(struct super_block *sb,
- void ext4_free_inodes_set(struct super_block *sb,
- 			  struct ext4_group_desc *bg, __u32 count)
- {
--	bg->bg_free_inodes_count_lo = cpu_to_le16((__u16)count);
-+	WRITE_ONCE(bg->bg_free_inodes_count_lo, cpu_to_le16((__u16)count));
- 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
- 		bg->bg_free_inodes_count_hi = cpu_to_le16(count >> 16);
- }
-diff --git a/mm/percpu.c b/mm/percpu.c
-index 20d91af8c033..5c958a54da51 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -1864,7 +1864,6 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
- 
- area_found:
- 	pcpu_stats_area_alloc(chunk, size);
--	spin_unlock_irqrestore(&pcpu_lock, flags);
- 
- 	/* populate if not all pages are already there */
- 	if (!is_atomic) {
-@@ -1878,14 +1877,12 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
- 
- 			ret = pcpu_populate_chunk(chunk, rs, re, pcpu_gfp);
- 
--			spin_lock_irqsave(&pcpu_lock, flags);
- 			if (ret) {
- 				pcpu_free_area(chunk, off);
- 				err = "failed to populate";
- 				goto fail_unlock;
- 			}
- 			pcpu_chunk_populated(chunk, rs, re);
--			spin_unlock_irqrestore(&pcpu_lock, flags);
- 		}
- 
- 		mutex_unlock(&pcpu_alloc_mutex);
-@@ -1894,6 +1891,8 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
- 	if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
- 		pcpu_schedule_balance_work();
- 
-+	spin_unlock_irqrestore(&pcpu_lock, flags);
-+
- 	/* clear the areas and return address relative to base address */
- 	for_each_possible_cpu(cpu)
- 		memset((void *)pcpu_chunk_addr(chunk, cpu, 0) + off, 0, size);
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 5a77acf6ac6a..1595f6e7688c 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1154,7 +1154,9 @@ static int shmem_getattr(struct mnt_idmap *idmap,
- 	stat->attributes_mask |= (STATX_ATTR_APPEND |
- 			STATX_ATTR_IMMUTABLE |
- 			STATX_ATTR_NODUMP);
-+	inode_lock_shared(inode);
- 	generic_fillattr(idmap, request_mask, inode, stat);
-+	inode_unlock_shared(inode);
- 
- 	if (shmem_is_huge(inode, 0, false, NULL, 0))
- 		stat->blksize = HPAGE_PMD_SIZE;
-@@ -3439,7 +3441,7 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	if (error)
- 		goto out_iput;
- 
--	dir->i_size += BOGO_DIRENT_SIZE;
-+	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	inode_inc_iversion(dir);
- 	d_instantiate(dentry, inode);
-@@ -3526,7 +3528,7 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir,
- 		goto out;
- 	}
- 
--	dir->i_size += BOGO_DIRENT_SIZE;
-+	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
- 	inode_set_mtime_to_ts(dir,
- 			      inode_set_ctime_to_ts(dir, inode_set_ctime_current(inode)));
- 	inode_inc_iversion(dir);
-@@ -3639,8 +3641,8 @@ static int shmem_rename2(struct mnt_idmap *idmap,
- 		inc_nlink(new_dir);
- 	}
- 
--	old_dir->i_size -= BOGO_DIRENT_SIZE;
--	new_dir->i_size += BOGO_DIRENT_SIZE;
-+	i_size_write(old_dir, i_size_read(old_dir) - BOGO_DIRENT_SIZE);
-+	i_size_write(new_dir, i_size_read(new_dir) + BOGO_DIRENT_SIZE);
- 	simple_rename_timestamp(old_dir, old_dentry, new_dir, new_dentry);
- 	inode_inc_iversion(old_dir);
- 	inode_inc_iversion(new_dir);
-@@ -3694,7 +3696,7 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 		folio_unlock(folio);
- 		folio_put(folio);
- 	}
--	dir->i_size += BOGO_DIRENT_SIZE;
-+	i_size_write(dir, i_size_read(dir) + BOGO_DIRENT_SIZE);
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	inode_inc_iversion(dir);
- 	d_instantiate(dentry, inode);
---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
