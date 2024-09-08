@@ -1,78 +1,117 @@
-Return-Path: <linux-kernel+bounces-320326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74609708E3
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:17:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 912319708E7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D28CD1C20C03
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:17:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B4321F21714
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E845535D8;
-	Sun,  8 Sep 2024 17:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408AB176230;
+	Sun,  8 Sep 2024 17:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcREh1zr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsOVsPQt"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9005717624C
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 17:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD733FF1;
+	Sun,  8 Sep 2024 17:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725815845; cv=none; b=ghewuyZC5REvgmm/Whf0rTK7Dt8o4MTW8KM6es2C2WzRHp7csCx+b2ZvF/c371hIF3puV5qcmFm05pShCyZ7LEA5hh1cSBO+cjZZxSHBdAZJj46yqqS4lnPOdMYniGFiAA4NA7an0MnfXpwZNv4/zI0FhowkgMgy+V04NECLrLw=
+	t=1725816134; cv=none; b=kuDR0JkvjeLMNJjmmbUvVpM356kf4IlJ6Yrcef+BLaDI1oLi7nUEmP/eR0IZKv+5BxdQj1tsfVhMwZN9B3gTxthxLCp9loCS0UHhuOUQ0ntfaP9NXi1KUjceSO738pmGTUXBXSxRzsDi/gQbvHncrFpNo0uISw6c3tOB2oGO1ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725815845; c=relaxed/simple;
-	bh=GDCED7EW+Rha9jRUxO+jdSWh++/5SYMI+BM3kMTCBGs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=fIll02i5dwgwOsfveX7zDyuwEf4UyHQudGZ+BMvf2+oeAOZhjvKQw4/EVmQhIlaegTl00JY6eVEqw6XYF7KtSCy90cHnuQL1rDXtf6c8oFGkvmSQw/k3iBO74CKXlICr6ZOKurfkbTJudKdPSbSITt7vbrGZtPWlBj4CICZPaLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KcREh1zr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 726F2C4CEC3;
-	Sun,  8 Sep 2024 17:17:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725815845;
-	bh=GDCED7EW+Rha9jRUxO+jdSWh++/5SYMI+BM3kMTCBGs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=KcREh1zrF4Wcdq/JAT1pVdCEEyzXdUFvcUZautMal9uFo9HfePKznvDtyw/DzhM8B
-	 5/RIxXh2jL6wEby3zvq9tfkOr8tRHk/CaLMwCYEz75IOEFYzhPG+Xhf5AldfZK//bW
-	 XgM3RzA1pO/lrzEt3eXh4N0gv1R1Etvhqstwx8VuuWcodBmTMsgW1jEIRnaf/V18rP
-	 sLQ5LwQNpSGnwzlZeBtCKvZkaXz+vt+tyY4TeUAQyn7CjU1ecVlPFJ7Tle9Nsh7MTZ
-	 is3O2BhrSk/TnheuO5WC3i2m4cU7Y5iq53wTSqbhb8NyqhkHsQlyZippcChhUb9RNn
-	 CHcURyFFuWJ4w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0F13805D82;
-	Sun,  8 Sep 2024 17:17:27 +0000 (UTC)
-Subject: Re: [GIT PULL] Char/Misc driver fixes for 6.11-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Zt1XCZ_1hdVsi5mJ@kroah.com>
-References: <Zt1XCZ_1hdVsi5mJ@kroah.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Zt1XCZ_1hdVsi5mJ@kroah.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.11-rc7
-X-PR-Tracked-Commit-Id: 48b9a8dabcc3cf5f961b2ebcd8933bf9204babb7
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5dadc1be8fc5355034a8515e021ed557acf5fd17
-Message-Id: <172581584637.2926424.9373598374037504015.pr-tracker-bot@kernel.org>
-Date: Sun, 08 Sep 2024 17:17:26 +0000
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1725816134; c=relaxed/simple;
+	bh=P5i1+89CNVgiI6rLqPepCwbboW9ljWdOnFqApU+po90=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IvtaxM71W07g3JXR8Zsxd6u8NVo61bJht17XoawXn6rYr0zSHydvpvjnrbJi9MepL2mPPETG+Hbp3KiPXnBnQBB4Fj6VY1eVtapbLFjX4YF7XG2KDQMXd4gmf2kQzA8Cam9r0zMohKJH576PIaWtQEbvU3akhD9XG5mmOMmoick=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TsOVsPQt; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d56155f51so17351266b.2;
+        Sun, 08 Sep 2024 10:22:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725816131; x=1726420931; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aaRFLIiqgByI8Tt+Uc7hvPM/vlHUKYNZpdYUZBKAbGo=;
+        b=TsOVsPQtA2hxKc2tHpx/E+/NzeAm7C6hd9Rydx6QwYYpf/5rdsNzQofUP7cT+XxGcr
+         dXVWLzUbk3QQ5ntIa3kRYRqCeLsMSvS2wSDGmhtBqqVpFFbBJIj72nqpe5zw3r5UFT5k
+         JZ+HlygSZlOJl/rsnLK5gHoJ5h0kCvav3vZBnBuI6o6bEpdoYHKkcHekPLK18aYfgXV+
+         q4HLJ7+Y4ZxjX3imI8jYeA6VAwldQYWHSPuhz4wmrY3aJ7E33tWlShjaKuEeZzIN2Ev1
+         jEHYX0JQo5N99vnW1xL5PzoZgr6zVivNBn61iiQW+e1b/j04RzzHunVm73YVRJripM3x
+         /Ztg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725816131; x=1726420931;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aaRFLIiqgByI8Tt+Uc7hvPM/vlHUKYNZpdYUZBKAbGo=;
+        b=X9+J8Klxjz5lc3R4VLc/7835Fg4NK1BiWvG2NEYy1VCf8IySdKWPdBtr7GhmTDNmh5
+         gtYYBik7x7ZA0lsIjIM6oQB95SC8C8ACyS/Vse6RMMiIjIfOS3bSzmSWXpx8dgUcwm/U
+         nQuSHNUs19SEz3+R6ilIwHv8aN4o4xas4nEaMi2MCbi3jj1L9mRCXSgL9C7xR84mlRRo
+         vb2MshLN3C+Z19786QRcUJitR/mM1R6XeShz/5Bm1OAHa9ZvobqX8QdAqA3lh186Pcc5
+         i/2sbM/d5YXyReIK50/ikep7+yubMTTBMp1v3eRexvNQf2S1ISJyNzCq+hOReo/lfUWC
+         2p5A==
+X-Forwarded-Encrypted: i=1; AJvYcCU45apwbSweA0xp5HCUq9hJqQcCkC/7EuerJGIL9pSuK+AxAI8tmNNOvNG7Lm9x83F1kWKyo84zbOYs@vger.kernel.org, AJvYcCUha8vwsylxDkxbu99Cs25hOD3ezSJmUaaAAjlr+MdrdBPu+3byMSZlvWrRmDIm6I+pqXk/XitxUFdt@vger.kernel.org, AJvYcCXdODciqgr0xHZxEI/qAtSZ2Oy0wWlh8h3nr/vIKed1ExonXFrOSOCbb2tQWRY8ZbCFZXCmoppY3V3J22oS@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZvPeSI4KK5gqPeR5uD3AkibtZYIMYQBIcTgcvdYppgC1XcHGl
+	SIOHvQG83NDnAjNGETvgO0u0YpvcnaiLMvqD/okLbCC7WjBLR/2y
+X-Google-Smtp-Source: AGHT+IEl6fcC1V4FK0m5YthXlzTLQG/FpPWB6CDdvX+BxJrWPi6Yi4PxTym9Iyz6YVQRn7zmNG8lJQ==
+X-Received: by 2002:a17:907:e2d8:b0:a8b:6ee7:ba22 with SMTP id a640c23a62f3a-a8b70ee9498mr491177366b.39.1725816130288;
+        Sun, 08 Sep 2024 10:22:10 -0700 (PDT)
+Received: from localhost.localdomain ([78.210.149.157])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c61258sm228048066b.116.2024.09.08.10.22.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 10:22:09 -0700 (PDT)
+From: Antoni Pokusinski <apokusinski01@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org
+Cc: pmeerw@pmeerw.net,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Antoni Pokusinski <apokusinski01@gmail.com>
+Subject: [PATCH v2 0/2] iio: temperature: tmp006: support for drdy irq
+Date: Sun,  8 Sep 2024 19:21:51 +0200
+Message-Id: <20240908172153.177406-1-apokusinski01@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Sun, 8 Sep 2024 09:49:29 +0200:
+This patch series adds support for the data ready interrupt of tmp006
+sensor. The interrupt line is pulled down once there is a measurement
+available to be read. Hence, triggered buffers are used in order to
+support continuous data capture for the sensor.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.11-rc7
+Changes since v1:
+  * dt-binding: improve the commit message
+  * tmp006_read_raw: use iio_device_claim_direct_scoped()
+  * tmp006_channels[] : add trailing commas
+  * tmp006_trigger_handler: use s32 to check return value of read_word_data()
+  * tmp006_set_trigger_state: fix data alignment
+  * tmp006_probe: check return value of devm_iio_triggered_buffer_setup()
+  * tmp006_probe: remove IRQF_TRIGGER_FALLING from irqflags argument of
+    devm_request_threaded_irq()
+  * tmp006_probe: set avaliable_scan_masks to tmp006_scan_masks[]
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5dadc1be8fc5355034a8515e021ed557acf5fd17
+Antoni Pokusinski (2):
+  iio: temperature: tmp006: add triggered buffer support
+  dt-bindings: iio: temperature: tmp006: document interrupt
 
-Thank you!
+ .../bindings/iio/temperature/ti,tmp006.yaml   |   6 +
+ drivers/iio/temperature/Kconfig               |   2 +
+ drivers/iio/temperature/tmp006.c              | 134 ++++++++++++++++--
+ 3 files changed, 129 insertions(+), 13 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.25.1
+
 
