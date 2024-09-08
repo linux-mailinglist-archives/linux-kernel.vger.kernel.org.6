@@ -1,65 +1,62 @@
-Return-Path: <linux-kernel+bounces-320279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B133970849
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:57:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 677E797084A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 865C31C214B2
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24A87284155
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C3017624F;
-	Sun,  8 Sep 2024 14:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5680C172773;
+	Sun,  8 Sep 2024 14:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="m5w1Uc0E"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="cyZFMvK+"
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24739173347
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 14:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8199F176231
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 14:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725807370; cv=none; b=DsotRQ1ri0k2rvmaHCc6xMrSsg3iCcnBly05z+YXpJajgffkGusuZk3FznSAL1uw3qluOVkFwNrOLafqVUHoLdBjKgp3TA1yW9lwzmxn613j5OwLZSyh6oikPC2/+ueCQw05b53NfMKC1qIhZnuTGZ6DNUJV/CDe0gD37vzcGgQ=
+	t=1725807372; cv=none; b=DKQ6c4Y5zC5yolL4Csu87EFEJOtGItGVJUNmuyIB1iuK7tHA/g3l6DUiZoN+juo57N6G03hd7JJ63UMf2MEMZBHH3POKDq2ry67U3MOzhy1KTUqwrnRf12Ijn9S1Mvs/5TYeUXR2hLCJOLLGIOBjpo3pG3tPqc+0H53zg4qGWcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725807370; c=relaxed/simple;
-	bh=a1deiAozCdmJ4GF9o0XtiEt1ZU8QWLsHqhwArBEVCNQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W6zLn7x92pQaazB/4s8CNFVHeRuDYQJZFwqDdtrXRrJphAhRCNiPWtXHuZjhsLOaR3J5ofJzeI/UdAEqqAG00+XW6GptOrBwo2mrjj+rBMCI3VH7+xunNHXe64x9tcz3RbF7L7cpnMFaGGVRHoSHk+Qt3fM9MUEeLnv7ZzxVktw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=m5w1Uc0E; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1725807352; bh=Fen8SXObvKui+EcVpqkgeahn1KAOdYtBUTto1YpsJkY=;
- b=m5w1Uc0EeJDeC8pY9mEZGT+8uLPtvOHjxBvWrFo7oXfen30wNWXyRXtKQ2KTcWdmeFsmPsjbY
- iyKSEUAZkXkU+YOFZkTZzjyJ85ybHQi+pls3GRgyRaEm7S4+TzaPvxIqNG8SzNo9OAd3s4Hd/ql
- v2GXx+LxPcBrdcfOI6Ln1klzhkOGb7LJi1SlQFUv0Ucsgh0YpyhYoZvrcdi06I+FlkAX1qXceKe
- Yz5omvgvyPkBsiFTWP57yurqi3nfRr6j5ERcqpKI2/5rQWMNeEXnqvW1GZDjgAjRF5fnf3RmLNH
- C59wRK93UqFi8h5SnYBvvOuXAPw6ssz3VW3XfyA7pd0g==
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Diederik de Haas <didi.debian@cknow.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH v2 7/7] drm/rockchip: Load crtc devices in preferred order
-Date: Sun,  8 Sep 2024 14:55:04 +0000
-Message-ID: <20240908145511.3331451-8-jonas@kwiboo.se>
+	s=arc-20240116; t=1725807372; c=relaxed/simple;
+	bh=2878OUAvPn02hVcYzrKk0j2qA6pHn64HxA1X+3YpEIk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y2vogH2P6wYALzRdwdils1scSAQ6Oxno6cPL4+6pu8UA9MTrY5kFZuQGks8rdudr1H2wSpE1UOJbeU36Ak9pMzRAb/YJQehk5d5j9odkv6VOOje0pzt07HEXVrp6n3vovPd503EvTh8bVJ71xzCC9wszU+v6dzWPvqbqc5wFOTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=cyZFMvK+; arc=none smtp.client-ip=80.12.242.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id nJKcspaGM80YWnJKcsvWqg; Sun, 08 Sep 2024 16:56:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725807362;
+	bh=RHBdDISU9XxsvKd0TEtXZNwSPdBnrbA7/zYXeOo/hTM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=cyZFMvK+rRuA5lv4L9Y3RCgLI6m1UBlDGro8SIjXPFTMncZY/JnCNIDft8mlnIYqc
+	 1UcjluFHIXmf8OpnLU+mDNVMyBr73gJwwuck43OMdf78WRI4dy2ul6boLtUeoKaiWh
+	 7tfMSEfm0L1NpzgPYAFwi+5+sb21ShaMJKBEuSo+o3GlIvq4iL5y+w+gwE8Wq5SuQE
+	 3t0/Dl2dbB5sq8X6K+FVIH3C5V8WiDnvp7tLD/fS2oRAorGChUJl6MHCftqc3idwzh
+	 dySW1KHGpDb0rrXl5aMiXF3KjfLOpzs1h1urY017HoslYHzgaaLQXuvSjyampSjhPI
+	 8H+VaKy3IeYoA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 08 Sep 2024 16:56:02 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Saravanan Sekar <sravanhome@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] regulator: mp5416: Constify struct regulator_desc
+Date: Sun,  8 Sep 2024 16:55:58 +0200
+Message-ID: <fd8d1307f211ec7754f46b6678c04309556003bc.1725807320.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240908145511.3331451-1-jonas@kwiboo.se>
-References: <20240908145511.3331451-1-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,70 +64,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-ForwardEmail-ID: 66ddbaf53c9877b459588f11
 
-On RK3399 the VOPL is loaded before VOPB and get registered as crtc-0.
-However, on RK3288 and PX30 VOPB is gets registered as crtc-0 instead of
-VOPL.
+'struct regulator_desc' is not modified in this driver.
 
-With VOPL registered as crtc-0 the kernel kms client is not able to
-enable 4K display modes for console use on RK3399.
+Constifying this structure moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers.
 
-Load VOPB before VOPL to help kernel kms client make use of 4K display
-modes for console use on RK3399.
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   3516	   5320	     32	   8868	   22a4	drivers/regulator/mp5416.o
 
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   8508	    320	     32	   8860	   229c	drivers/regulator/mp5416.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+--
+Compile tested only
 ---
-v2: No change
----
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c | 23 +++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/regulator/mp5416.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-index 44d769d9234d..b84451d59187 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -354,11 +354,34 @@ static void rockchip_drm_match_remove(struct device *dev)
- 		device_link_del(link);
- }
+diff --git a/drivers/regulator/mp5416.c b/drivers/regulator/mp5416.c
+index 3457e650a994..e6794190cb68 100644
+--- a/drivers/regulator/mp5416.c
++++ b/drivers/regulator/mp5416.c
+@@ -163,7 +163,7 @@ static const struct regulator_ops mp5416_buck_ops = {
+ 	.set_ramp_delay		= regulator_set_ramp_delay_regmap,
+ };
  
-+/* list of preferred vop devices */
-+static const char *const rockchip_drm_match_preferred[] = {
-+	"rockchip,rk3399-vop-big",
-+	NULL,
-+};
-+
- static struct component_match *rockchip_drm_match_add(struct device *dev)
- {
- 	struct component_match *match = NULL;
-+	struct device_node *port;
- 	int i;
+-static struct regulator_desc mp5416_regulators_desc[MP5416_MAX_REGULATORS] = {
++static const struct regulator_desc mp5416_regulators_desc[MP5416_MAX_REGULATORS] = {
+ 	MP5416BUCK("buck1", 1, mp5416_I_limits1, MP5416_REG_CTL1, BIT(0), 1),
+ 	MP5416BUCK("buck2", 2, mp5416_I_limits2, MP5416_REG_CTL1, BIT(1), 2),
+ 	MP5416BUCK("buck3", 3, mp5416_I_limits1, MP5416_REG_CTL1, BIT(2), 1),
+@@ -174,7 +174,7 @@ static struct regulator_desc mp5416_regulators_desc[MP5416_MAX_REGULATORS] = {
+ 	MP5416LDO("ldo4", 4, BIT(1)),
+ };
  
-+	/* add preferred vop device match before adding driver device matches */
-+	for (i = 0; ; i++) {
-+		port = of_parse_phandle(dev->of_node, "ports", i);
-+		if (!port)
-+			break;
-+
-+		if (of_device_is_available(port->parent) &&
-+		    of_device_compatible_match(port->parent,
-+					       rockchip_drm_match_preferred))
-+			drm_of_component_match_add(dev, &match,
-+						   component_compare_of,
-+						   port->parent);
-+
-+		of_node_put(port);
-+	}
-+
- 	for (i = 0; i < num_rockchip_sub_drivers; i++) {
- 		struct platform_driver *drv = rockchip_sub_drivers[i];
- 		struct device *p = NULL, *d;
+-static struct regulator_desc mp5496_regulators_desc[MP5416_MAX_REGULATORS] = {
++static const struct regulator_desc mp5496_regulators_desc[MP5416_MAX_REGULATORS] = {
+ 	MP5416BUCK("buck1", 1, mp5416_I_limits1, MP5416_REG_CTL1, BIT(0), 1),
+ 	MP5416BUCK("buck2", 2, mp5416_I_limits2, MP5416_REG_CTL1, BIT(1), 1),
+ 	MP5416BUCK("buck3", 3, mp5416_I_limits1, MP5416_REG_CTL1, BIT(2), 1),
 -- 
 2.46.0
 
