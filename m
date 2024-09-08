@@ -1,126 +1,103 @@
-Return-Path: <linux-kernel+bounces-320214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5769C9707AD
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:06:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D02859707A6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E75881F214B4
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:06:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 849F01F216AC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C015165F12;
-	Sun,  8 Sep 2024 13:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115B7165F15;
+	Sun,  8 Sep 2024 12:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ddt79ys/"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HZtBrN4Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26333224;
-	Sun,  8 Sep 2024 13:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC3E165EE4;
+	Sun,  8 Sep 2024 12:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725800768; cv=none; b=V/7YxQc2eulLyYYUGacMNnM/suOH7eR8WYsApKt2q/qiNFj3rW/r/aOes+IqaRLS5KIoueMMW6ejn1NXsMUP+dRedixOexQyrlS/v+f7nRRJwCesfLX/YzD0zc7rCQYZBjygbE0tcEQniIGATRpIXGe+9TvMdqY0DdDfP3+Hps8=
+	t=1725800391; cv=none; b=Thz7dtbw4FKjqtqxCKaEm96ldLiTlnHnKiPpxivwXK4B1FpzHzW6yfMrWqM1WCuMotTEoCsLw56SmMDXeJguDAgn0NYOaaaA6lMzvMZgPJo/RyLcuoo40/YC3CgbTjb5cbBWm13CAY52/F3xkHcPGI6P3YLj1kdS1GvqnlUsqM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725800768; c=relaxed/simple;
-	bh=CaRVzvEevftBdvo1pGuwdOT3yTW/S0LOeUWgEWmRm0o=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=i+4t2c+7C8OIWBCtipod6el5XHKtxJmu8owP5wjoncxDXgxQ45n+19VfDx+jU2p+5p743hjgh2GSFmoRmlxsWw2ksDlvSEJ/fW6mtQoG+hwmaUhzFon3JxvDt2Vc+6KUnc5pwznx8T9gdQfojaIbMUZEzBIz1M+wj3MEVGjZcXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ddt79ys/; arc=none smtp.client-ip=43.163.128.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725800756; bh=TOmiRb9kT4y40MPa249+aAJYNFmF4Q7BxFuTvX0qR/8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ddt79ys/1AmJV0aQ0Td8cfDOgeLFtzk1jsFF6aTccEd8m9t8Pn7RtjpTsoFNzyMVq
-	 bOlLLyn5SYk20zPrRyXTwuBzR3P5yrQKs8aSWpNE4b6Wzh4KXnRdIUZzVj+6JEV5st
-	 9Zt3q4cxt3GWAEv6/UNxbz6YTcQvskytMJZKnYUY=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id EEA29A9D; Sun, 08 Sep 2024 20:59:42 +0800
-X-QQ-mid: xmsmtpt1725800382t9n026mas
-Message-ID: <tencent_6FF377237A096263A9C4469779777566C805@qq.com>
-X-QQ-XMAILINFO: Mdc3TkmnJyI/Hjc/Q79dP+nhHR01LVthwLXtMFIRjJ/Txo6sSmj12AVdUd3qZG
-	 wgZOB5BjoGR4WgcNnJceKNDvBXDRSUjoZhQq71wh4YMBMsWjcV6D5raF0dDhZjj+KTbAjEhBkrGr
-	 N4n3kDlcdmOfRM07CLEceidAz5Vco2BL/uWZD823ip0voE8epT7qL1iM3+h30EQVKRGszyDgwK7h
-	 hCeFSrEb4LQMGbn0pqyi7ty6y/2e3tE4y9c+ACqpKAC1Ngsq1hvu0PTWE+oXnD4MeuBOOG+VfuZA
-	 oZqjkNTmLr0gUDdKLCGH2qDLL4k8vsr8FaDmEXyshQyXiMw2gHC64uLsvobbrW3qu1emqIWIqEXf
-	 Jv1Tg9g/fL/oVoGWXnOo+EKIBoGKpCMwxP0H5YFlIWQBw3OKadNakJ43AA5g/FlqK3RCssvQSduv
-	 HsqxyPneWtlldqfrKgdMQuo7rPTf+RMRzOp4jWSwzM8JM1Dm1icdKlom/2ua9hpVa60klnyBKa6g
-	 hE4jNMAvLBZvrx6ihufZiBoSaqFjhahsjQPd+Naw2y3LiJJoZSiosTc2ow+9bFr7LuMKNRvdXG2W
-	 nk4XXmVF2IxQ9DOjkZ/S9MR1a07V9PiSp9Mi0ILfwVXNtlv6bjbjLU+SA/AbV5G5rTB0vptMDR5B
-	 twan1H0NFvUvR+Q1WxQCj+V0ikCDtqRePb/jXa1kTH5Nsw0Gw4ihsL5vk1EBEOn/46KJTjuRe/e0
-	 epPx2V8YBYNCb9h9LhTnChq+N8pYM4UtRiIfr4ptFkIkBWIn2nae3kv5SSu4V7gxbFX2QN4URszg
-	 QvyALBKJzmoPfjM56ZrcF/XM/UMgWwgl53t370xpU0e1/ZXLC76c5IsA0mTP661Nqbzy5In7omoB
-	 ghDo4pyScg+NYXi3rjy2DavrK014VcyQDFctfSW3mX4jhGe/Ww29Z9g48F9FZGWbUcmZxaqGxlw3
-	 bXTnDYFi4SBpQ2JVBllUR2NrTb1sEajZ8EcNFUoNTP7cphRilhEOOKiLyVfoh8
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: kent.overstreet@linux.dev
-Cc: eadavis@qq.com,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+064ce437a1ad63d3f6ef@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in member_to_text
-Date: Sun,  8 Sep 2024 20:59:37 +0800
-X-OQ-MSGID: <20240908125936.1839376-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <hqzhbzxbp3rjbal3z4kdwygvus76h22o2br3iwuzohgniivw5q@etyntoz75vyp>
-References: <hqzhbzxbp3rjbal3z4kdwygvus76h22o2br3iwuzohgniivw5q@etyntoz75vyp>
+	s=arc-20240116; t=1725800391; c=relaxed/simple;
+	bh=YhbRXnQ7EvIla3z4/eYbiKI7JBI6Gs+gMj9L+GFh4sg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NjKuNAnfZQkLK72VwKqTyYNChkt4RnPUbcktey3tZuTklKo2YXY3/hGLfi+xyZ5mJIDrfIiM3a01I4twc47bdJTk+YPcuK5h2OQxmIfQYXmeNsOYSMVdK9NIq35ql1mn0AtxtOdcgsTjNHSDEZEN0NmNWnSxd5vBIUX7rhNwD54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HZtBrN4Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9AEEC4CEC3;
+	Sun,  8 Sep 2024 12:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725800391;
+	bh=YhbRXnQ7EvIla3z4/eYbiKI7JBI6Gs+gMj9L+GFh4sg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HZtBrN4ZrhaOMUqXBEWM6rYfy6dMhWXi5azbVVRiVwlh1Zbw43h9BiJOw72ZRrakL
+	 772lKjiq+5QmvD52Xb/VaXt8yg07ykkGHgUXT0sSy1AcCntIIgRUHZVgMucm8CcYL8
+	 Gqby4C6UQTM9gKycY8/qiwJumLsxImwofGL5+RCk=
+Date: Sun, 8 Sep 2024 14:59:48 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Mukul Sikka <mukul.sikka@broadcom.com>, stable@vger.kernel.org,
+	evan.quan@amd.com, alexander.deucher@amd.com,
+	christian.koenig@amd.com, airlied@linux.ie, daniel@ffwll.ch,
+	Jun.Ma2@amd.com, kevinyang.wang@amd.com, sashal@kernel.org,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com, vasavi.sirnapalli@broadcom.com,
+	Bob Zhou <bob.zhou@amd.com>, Tim Huang <Tim.Huang@amd.com>
+Subject: Re: [PATCH v5.15-v5.10] drm/amd/pm: Fix the null pointer dereference
+ for vega10_hwmgr
+Message-ID: <2024090829-mutt-remold-6d2c@gregkh>
+References: <20240903045809.5025-1-mukul.sikka@broadcom.com>
+ <CADnq5_OVSD1DXgi_9f_H-uT7KSjMwz-FfhP=vRQvposSxv=BMw@mail.gmail.com>
+ <CAG99D9Jss=h5aVLDq0tkDjfZgGUbrNV1gqwcw631RbwCiPVqNg@mail.gmail.com>
+ <CADnq5_NWX7u=S+jrC8YA6fJxN7GXpSN+kqsQieqphdOz2HT6EA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADnq5_NWX7u=S+jrC8YA6fJxN7GXpSN+kqsQieqphdOz2HT6EA@mail.gmail.com>
 
-On Wed, 4 Sep 2024 15:39:37 -0400, Kent Overstreet wrote: 
-> On Tue, Sep 03, 2024 at 10:13:02AM GMT, Edward Adam Davis wrote:
-> > Because the value of m.btree_bitmap_shift is 69 in this case, it cause
-> > shift-out-of-bounds in member_to_text.
+On Fri, Sep 06, 2024 at 11:02:32AM -0400, Alex Deucher wrote:
+> On Fri, Sep 6, 2024 at 4:50 AM Mukul Sikka <mukul.sikka@broadcom.com> wrote:
 > >
-> > Add a check for btree_bitmap_shift in validate_member, when it bigger than 64
-> > return -BCH_ERR_invalid_sb_members.
-> > Simultaneously adjust the output mode of btree_bitmap_shift in member_to_text.
-> >
-> > #syz test
-> >
-> > diff --git a/fs/bcachefs/sb-members.c b/fs/bcachefs/sb-members.c
-> > index 39196f2a4197..85a4245ea6a3 100644
-> > --- a/fs/bcachefs/sb-members.c
-> > +++ b/fs/bcachefs/sb-members.c
-> > @@ -162,6 +162,12 @@ static int validate_member(struct printbuf *err,
-> >  		return -BCH_ERR_invalid_sb_members;
-> >  	}
-> >
-> > +	if (m.btree_bitmap_shift > 64) {
+> > On Fri, Sep 6, 2024 at 12:05 AM Alex Deucher <alexdeucher@gmail.com> wrote:
+> > >
+> > > On Tue, Sep 3, 2024 at 5:53 AM sikkamukul <mukul.sikka@broadcom.com> wrote:
+> > > >
+> > > > From: Bob Zhou <bob.zhou@amd.com>
+> > > >
+> > > > [ Upstream commit 50151b7f1c79a09117837eb95b76c2de76841dab ]
+> > > >
+> > > > Check return value and conduct null pointer handling to avoid null pointer dereference.
+> > > >
+> > > > Signed-off-by: Bob Zhou <bob.zhou@amd.com>
+> > > > Reviewed-by: Tim Huang <Tim.Huang@amd.com>
+> > > > Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+> > > > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > > > Signed-off-by: Mukul Sikka <mukul.sikka@broadcom.com>
+> > >
+> > > Just out of curiosity, are you actually seeing an issue?  This and a
+> > > lot of the other recent NULL check patches are just static checker
+> > > fixes.  They don't actually fix a known issue.
+> > >
+> > No, according to the description of this patch and CVE-2024-43905.
+> > It seems to be applicable to LTS.
 > 
-> should be >=, no?
-Yes, you are right, here should be "if (m.btree_bitmap_shift >= 64)"
-> 
-> > +		prt_printf(err, "device %u: too many big bitmap shift (got %u, max 64)",
-> > +			   i, m.btree_bitmap_shift);
-> > +		return -BCH_ERR_invalid_sb_members;
-> > +	}
-> > +
-> >  	return 0;
-> >  }
-> >
-> > @@ -245,8 +251,7 @@ static void member_to_text(struct printbuf *out,
-> >  		prt_printf(out, "(none)");
-> >  	prt_newline(out);
-> >
-> > -	prt_printf(out, "Btree allocated bitmap blocksize:\t");
-> > -	prt_units_u64(out, 1ULL << m.btree_bitmap_shift);
-> > +	prt_printf(out, "Btree allocated bitmap shift: %d\t", m.btree_bitmap_shift);
-> >  	prt_newline(out);
-> >
-> >  	prt_printf(out, "Btree allocated bitmap:\t");
+> I don't know that this is really CVE material, but oh well.  I'm not
+> sure if it's actually possible to hit this in practice.
 
-BR,
-Edward
+If it's not possible, there's no need to add the check.
 
+thanks,
+
+greg k-h
 
