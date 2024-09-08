@@ -1,125 +1,158 @@
-Return-Path: <linux-kernel+bounces-320059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 763369705BC
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:16:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8EF49705BF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E379D1F21B78
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:16:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51F79B21991
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FDD6A039;
-	Sun,  8 Sep 2024 08:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cv0kXp06"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCE773176;
+	Sun,  8 Sep 2024 08:21:03 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C37224B28
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 08:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3641E25761;
+	Sun,  8 Sep 2024 08:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725783410; cv=none; b=NYUHa+c3ywzZi6pBjkBr7FbQF0vBa8hDWK1nvQLbwWryB53WmtX9cCcHZbSg+Z+/kWTM/v/1cNqox+v981tPCzpKVkqQI/zBT8eqh9RQlqAi1VHS5xOzUFmNcHWZb6JviJG44C7wvq95GbKawhrlCN5kJyMKkYsDbt5AOHmWg8E=
+	t=1725783663; cv=none; b=LOUtXkhjVj/R989sMR/duDeYDbVbyphPVCMLFjABQlT2u1CvaCKDd9zi3bQ5OFBMyMFRtDl+WlI+4IuBycjUhuJRyvBHcCzvpwYIxJz62/Zuo6vnBhnKmxZYafIHwitnEwt4QAkT6s6vY8UYICTYXYXqBpWEgNvCk2cuKn69Wv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725783410; c=relaxed/simple;
-	bh=EK1ACcO0LC3YIOzuuiM9wTPhkGN9bFUkP056XW97RbU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EcCWlxPi8eIBrXSlo4ltdOaGTZf05axG+DT+aR0u7hheZw99sKTAfHST7ObLYamDChsT4WoM6VgNRZ802ordOvPhMcCneqTiPeZUc4QLXuyB/uBWehTfIpHCA7zd0Vs3+aa/l3Y8E4BfiGd2QRNJHDLAEPiEU0V00iZ2yNBO6ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cv0kXp06; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7cd967d8234so2252444a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 01:16:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725783408; x=1726388208; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SCnWJhAMU0YGsqyejO1iLQfcsvWEKu49O7te55wdpEc=;
-        b=Cv0kXp06mb9TJi3NAZlmi3JfD1dpk+U3PnsTRIspCGajpuBnuQYxq8CQ9iBtoM8KCp
-         HTMXOb9mkedZaBDTwSxnGOuEtSPrUZXHid7C5dpBcfx5F18Ayp/roZAQJ2InCjo2FJPG
-         GmhvLkVIQqkADqZ545H3EPV1iCD7g6nxgfrG62K0jW4mC1YM3CBNHN4k8Prk1OFV+d1M
-         fuKQbQ+Nh/7W27E55VD5Cs9FK1PFNDFDPFBzv+28Y6G53JqCIMuWbRBgIXPjOmdtYhz2
-         y3AK9ScE8E7ETdXqj4HQ3yJwL8seu62TOBOUBvZkC74JLT4n34kjyU1+P/7XIMai3294
-         9zJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725783408; x=1726388208;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SCnWJhAMU0YGsqyejO1iLQfcsvWEKu49O7te55wdpEc=;
-        b=dZr0ipaEi6J3xzqR3qSqyV+UF8dZR6d/8eIYs7erMnEk3Gf4x9OJ7y3ttdVGenFffW
-         nEnnXdYx0Q5hFuQUnfqpWqTOWMu3zLvJ0NJwwXgvq04yLN6UZyknuGol1d1D8TgqKVQL
-         eUDc5/wtj73Dl/Xvg9nrd54u81d4GvgBuo975JwBqgGcwhm7XI8SRpNW7W4Xx0ce6jsA
-         D7i2ywUn0XUSrfC1qCS7l0tFybQgU4PhScpofy0UjsXNpp7cVUfcEwlMsH1PrhjI9Bdm
-         HphpDUENBXgTiMmdBgs6DGXQFV+oyhyaP/6/yHllnVUStvyV9uQseGcQB83y21PuK8t/
-         ykyw==
-X-Gm-Message-State: AOJu0YyTEpmdHiRP4LZND2jo9TTdVW+baLi6ywJFTjkD2cABg9wAg1Ya
-	A9k06KvFbtkrsmqbgrg4Yhn7B9ho7jaCsPXxn05mLBhqHWETFDIf
-X-Google-Smtp-Source: AGHT+IHMicrvV7nhJNHhM/+AAvI8phGMSgD1jCN69T9LRxXlqdIX9cNzcJIHVR8TxjIdnSLP8tkfgA==
-X-Received: by 2002:a05:6a21:38c:b0:1c4:214c:d885 with SMTP id adf61e73a8af0-1cf1d1ec4a9mr5758033637.36.1725783408283;
-        Sun, 08 Sep 2024 01:16:48 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db0413685bsm2323599a91.3.2024.09.08.01.16.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 01:16:47 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: KCSAN: data-race in generic_fillattr / shmem_mknod (2)
-Date: Sun,  8 Sep 2024 17:16:43 +0900
-Message-Id: <20240908081643.8511-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725783663; c=relaxed/simple;
+	bh=PTbvdXCNAdnt2fG2xjYbF+2g2dpemJHQFiO9iHVSl7I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VG47NTljQ3UR3WBBSZYiPZR90faZwd4D3qC0zxxgxa1dn0VE9OkK2NV9ooIHv1e8cL2TDHR7kKJvkTMNpHyC8CswZKjs40W26E62ZID+MFMmmVacL2JAWodqGkyQekgb8B6aKrQmws1X7B49AZingO0MMk2frikRpNoBdJ3QMRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+From: Sam James <sam@gentoo.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,  Nicolas Schier
+ <nicolas@fjasle.eu>,  linux-kbuild@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fixdep: handle short reads in read_file
+In-Reply-To: <CAK7LNARW8CgOXFLtavR9BQMdDqASDTBLMij23b8Srn5Krd32Ug@mail.gmail.com>
+	(Masahiro Yamada's message of "Sun, 8 Sep 2024 08:48:48 +0900")
+Organization: Gentoo
+References: <3132727fea08e81e834104761b5a5630d337340a.1725636560.git.sam@gentoo.org>
+	<CAK7LNATeuwaO8AvAqmz_4hyb5vjFnL-jhxbXv6_KoCTZbsS86A@mail.gmail.com>
+	<87y143ixdb.fsf@gentoo.org> <87seubioi4.fsf@gentoo.org>
+	<CAK7LNARW8CgOXFLtavR9BQMdDqASDTBLMij23b8Srn5Krd32Ug@mail.gmail.com>
+Date: Sun, 08 Sep 2024 09:20:57 +0100
+Message-ID: <87h6aqo8t2.fsf@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Masahiro Yamada <masahiroy@kernel.org> writes:
 
----
- fs/ext4/orphan.c | 2 +-
- fs/ext4/super.c  | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+> On Sat, Sep 7, 2024 at 10:26=E2=80=AFPM Sam James <sam@gentoo.org> wrote:
+>>
+>> Sam James <sam@gentoo.org> writes:
+>>
+>> > Masahiro Yamada <masahiroy@kernel.org> writes:
+>> >
+>> >> On Sat, Sep 7, 2024 at 12:29=E2=80=AFAM Sam James <sam@gentoo.org> wr=
+ote:
+>> >
+>> > Hi Masahiro,
+>> >
+>> >>>
+>> >>> 50% or so of kernel builds within our package manager fail for me wi=
+th
+>> >>> 'fixdep: read: success' because read(), for some reason - possibly p=
+trace,
+>> >>> only read a short amount, not the full size.
+>> >>>
+>> >>> Unfortunately, this didn't trigger a -Wunused-result warning because
+>> >>> we _are_ checking the return value, but with a bad comparison (it's =
+completely
+>> >>> fine for read() to not read the whole file in one gulp).
+>> >>>
+>> >>> Fixes: 01b5cbe7012fb1eeffc5c143865569835bcd405e
+>> >>
+>> >>
+>> >> Fixes: 01b5cbe7012f ("fixdep: use malloc() and read() to load dep_file
+>> >> to buffer")
+>> >>
+>> >
+>> > Ah, thanks. I'll fix that and send v2 depending on how we decide to mo=
+ve
+>> > forward wrt below.
+>> >
+>> >>
+>> >> I guess, another approach would be to use fread() instead of read().
+>> >>
+>> >> Does the attached diff fix the issue too?
+>> >>
+>> >>
+>> >
+>> > Unfortunately no. It failed for me in the same way as before :(
+>> >
+>> > The man page mentions:
+>> >> On  success, fread() and fwrite() return the number of items read or
+>> >> written. This number equals the number of bytes transferred only when=
+ size is 1.
+>> >
+>> > so I guess it suffers from the same pitfall. I checked POSIX & ISO C a=
+s well
+>> > which says:
+>> >> If a partial element is read, its value is unspecified.
+>> > and
+>> >> The fread() function shall return the number of elements successfully
+>> >> read, which shall be less than nitems only if an error or end-of-file
+>> >> is encountered, or size is zero.
+>> >
+>> > The error reference is kind of mysterious there though.
+>> >
+>> > It kind of looks like fread *should* work. I'll send this mail and then
+>> > think about it a bit later and ask around to see if I'm missing
+>> > something obvious?
+>>
+>> OK, others disagree with my reading of fread and think it is ambiguous.
+>>
+>> With your patch, I was able to get failures albeit possibly less
+>> frequently. I'm trying my patch again in a loop now.
+>>
+>> >
+>> >> [...]
+>> >
+>> > thanks,
+>> > sam
+>>
+>
+>
+>
+>
+>
+>
+> Your quotation of the POSIX fread() spec:
+> (https://pubs.opengroup.org/onlinepubs/000095399/functions/fread.html)
+>
+>> If a partial element is read, its value is unspecified.
+> and
+>> The fread() function shall return the number of elements successfully
+>> read, which shall be less than nitems only if an error or end-of-file
+>> is encountered, or size is zero.
+>
+>
+> I think this is clear enough.
+>
+>
+> The end-of-file should not be encountered, as we check the file
+> size in advance.
 
-diff --git a/fs/ext4/orphan.c b/fs/ext4/orphan.c
-index e5b47dda3317..08299b2a1b3b 100644
---- a/fs/ext4/orphan.c
-+++ b/fs/ext4/orphan.c
-@@ -293,7 +293,7 @@ int ext4_orphan_del(handle_t *handle, struct inode *inode)
- 			mutex_unlock(&sbi->s_orphan_lock);
- 			goto out_brelse;
- 		}
--		NEXT_ORPHAN(i_prev) = ino_next;
-+		WRITE_ONCE(NEXT_ORPHAN(i_prev), ino_next);
- 		err = ext4_mark_iloc_dirty(handle, i_prev, &iloc2);
- 		mutex_unlock(&sbi->s_orphan_lock);
- 	}
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index e72145c4ae5a..8cc5e19bfe78 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -346,7 +346,7 @@ __u32 ext4_free_group_clusters(struct super_block *sb,
- __u32 ext4_free_inodes_count(struct super_block *sb,
- 			      struct ext4_group_desc *bg)
- {
--	return le16_to_cpu(bg->bg_free_inodes_count_lo) |
-+	return le16_to_cpu(READ_ONCE(bg->bg_free_inodes_count_lo)) |
- 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
- 		 (__u32)le16_to_cpu(bg->bg_free_inodes_count_hi) << 16 : 0);
- }
-@@ -402,7 +402,7 @@ void ext4_free_group_clusters_set(struct super_block *sb,
- void ext4_free_inodes_set(struct super_block *sb,
- 			  struct ext4_group_desc *bg, __u32 count)
- {
--	bg->bg_free_inodes_count_lo = cpu_to_le16((__u16)count);
-+	WRITE_ONCE(bg->bg_free_inodes_count_lo, cpu_to_le16((__u16)count));
- 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
- 		bg->bg_free_inodes_count_hi = cpu_to_le16(count >> 16);
- }
---
+I believe that it's referring to the number of records, not if you read
+*1* record of size N. I looked at the musl and glibc sources and neither
+seem to retry partial reads in that case.
+
+I don't see any error indicator set.
 
