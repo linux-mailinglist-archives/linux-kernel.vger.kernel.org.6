@@ -1,87 +1,142 @@
-Return-Path: <linux-kernel+bounces-320190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7DC797072B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:08:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E57E697072F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27ACA1F21ADE
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:08:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D2BC1C20E09
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DF6156668;
-	Sun,  8 Sep 2024 12:08:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693361598E3;
+	Sun,  8 Sep 2024 12:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ACK8BkQ6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F1918C22
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 12:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8CA18C22
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 12:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725797285; cv=none; b=SquZe31V6YYPHbFGApfnWQDFhwl9nQOa1EdQsWQRMTEmMPT/LQw1RNJ2drUqMi82+zEHB2+bjfMkdkmn2hrLkj9HfENEIVI08mxBXEAfvtGxlbO2jiW9paNmSFObg0WhBEjhcXdhLW0RGlbTbjAvRm1mCMY2lDgVjhk5+r0KErQ=
+	t=1725797352; cv=none; b=sCcLu7iPvV3wRehbR8HZ5xvkk0XSG6auIgpTbFU9n6zzIEGGAJDTTxnujEw45hgn260HCPQy5PGA72XNt0Kq4M+jvNZBwFA76GYhTOQkpecLfF5woJCv7ct3iD4s67iVDmrSblnUTzDRHisFBWGvEr2rSRj7zyyO34lDAFOxY7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725797285; c=relaxed/simple;
-	bh=O2vVubl7eodvU9KCwDS4uoi5Exj56B2RGaW4JZA4MNs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FFBoUwZqmya1NTT1FcZnifIB82TsJaGXm08ctui3R9sn+5pEaWOJT4to7eVFPk+vxfZCZjj6Elz5lxYmn6Tf8ZbXvFtcqLw0G6o4lgy0fos3+pOVKkdtGgRDqwBPLtg1StaRrD9FjOG+zJDKvMBOv2NKEddd/fLCTnDQzepvbdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0459a8a46so72898885ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 05:08:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725797283; x=1726402083;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YXT/3QiPRhKyZcpqb21LbK+IFZcjHYr/pzjr0chrQww=;
-        b=ge6WYgho//IkMPWb4nFEA/P6fy8dbahTocp1MuxePm6DdbGrB6UahXpov0Ngdw1W0O
-         EtnA7oPzynNoBvxWlgYyEtLo7yrpmf2DDXPRkFOXUFEx2sxXpq7eiILqjtfiEEgJqaUr
-         VaY+6zEqR2yhERyCBzSo/pCWJeIfwc16oYIgOzrdxvEdvREnkLkBruUieV0cGZ6HeG5K
-         PinP7dMlgrTS762XDcMISPF7PlwwGUW0M8qfsSz+VWAR/qcsjpcCbcJR4DUZHxv7wItQ
-         npyruFIkHrFQqCKrHX3mE6FDo2LpV7nl+dQw4kqpf7uDdh376wnFNVqwbGR0CcNIEOkj
-         gyZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXon03PtWYY85Nu1yFpd3CojSXuA3wkMprQZbeoDGxSYH7Hg2b7+fyDYE8ljSxqS+rY74jGM6IM9srxqi8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkIT51bhEF84+3gyHBTPVBs6/x+TfHNOCqaurOn/UslvUmk2xA
-	oTO6BVHDDMd+Wy4QUBe/uR2otXX3GJPkxos76Q8FNONGca8wg+AWstyE8G1T2eoTGxrMS4mrRIr
-	2cA6whei82Mt7Rak5mORoejBIdaIjK5p1XOrCSVHSyo1rD74gS63BlQs=
-X-Google-Smtp-Source: AGHT+IE5W92AWfa1yaHlNdCVJm9Am5A3d6JGlM9d00zgaHkRlBoN+68Lr/mPfFCmPE01bYkYOG7bg5F2lStc40tC35Tkv12J/lus
+	s=arc-20240116; t=1725797352; c=relaxed/simple;
+	bh=7aTt9deB0bUQjGqPFdnilBucNJk3412JATnOJJ0rKCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EHM66KDHrnFsUDpkB8+ZcAn8adhDO0xzeQOQtBkB6MJX8IELCvAeZYUccmfQ7xPjE5uRkOUN7gFN25TeyB0juPOLrFsTwCnXAlEPsl+QNjhj4dtLLV1cmE+Kmey1cOe28sIiuVQB4ahltiiV4BBYgWkBU0g1D//1EWFBKbswmEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ACK8BkQ6; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725797351; x=1757333351;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=7aTt9deB0bUQjGqPFdnilBucNJk3412JATnOJJ0rKCo=;
+  b=ACK8BkQ6rhHtIVaiDWDp0WIpbUMgc0KGjzoa3uIIf4wkQ9cQVA+w/+dd
+   LmzywWRe6u4F2RmmLQplFJsRTnAkctUk2lU2Vy0sRMWl0pmAZADYt76GR
+   XxbvQFOu3Qk22g1ruxbRE5VFdtcnJaP+F0WtjfSM5QTquTIYZ+HFx4Ve5
+   V67F7WtOYyOlRIgjoK1QHp/VfNzKLR9f3JKodKa86NfHmN9zdYa0nGanM
+   akjrjNCRoNg6JypnKRlJQh8VVOdnKLSWPoaldxZ8Ytc5f333+rdmA6fLA
+   ksadujT0Op6JS8I6SjV0jdnOToyc4nprrCZl/mND3xUOoqQvWgAR6KXL0
+   g==;
+X-CSE-ConnectionGUID: 5qjTCXkLQT27aYfm0kAPHw==
+X-CSE-MsgGUID: c2Wr1xywScu6aThbzbiEEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="27419415"
+X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
+   d="scan'208";a="27419415"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 05:09:10 -0700
+X-CSE-ConnectionGUID: O449ENtnT0OGSvyVHZkglg==
+X-CSE-MsgGUID: W0fnMHhwSFuOgCkA1SpxWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
+   d="scan'208";a="89671565"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 08 Sep 2024 05:09:10 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1snGj5-000DVH-21;
+	Sun, 08 Sep 2024 12:09:07 +0000
+Date: Sun, 8 Sep 2024 20:09:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: io_uring/eventfd.c:80:5-24: WARNING: atomic_dec_and_test variation
+ before object free at line 81.
+Message-ID: <202409082039.hnsaIJ3X-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d1d:b0:3a0:451b:ade3 with SMTP id
- e9e14a558f8ab-3a057462029mr53800675ab.10.1725797283229; Sun, 08 Sep 2024
- 05:08:03 -0700 (PDT)
-Date: Sun, 08 Sep 2024 05:08:03 -0700
-In-Reply-To: <20240908113322.14366-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000583ca06219a7eab@google.com>
-Subject: Re: [syzbot] [mm?] KCSAN: data-race in generic_fillattr / shmem_mknod (2)
-From: syzbot <syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   d1f2d51b711a3b7f1ae1b46701c769c1d580fa7f
+commit: 200f3abd14db55f9aadcb74f4e7a678f1c469ba1 io_uring/eventfd: move eventfd handling to separate file
+date:   3 months ago
+config: hexagon-randconfig-r054-20240908 (https://download.01.org/0day-ci/archive/20240908/202409082039.hnsaIJ3X-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 05f5a91d00b02f4369f46d076411c700755ae041)
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409082039.hnsaIJ3X-lkp@intel.com/
 
-Reported-by: syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com
-Tested-by: syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com
+cocci warnings: (new ones prefixed by >>)
+>> io_uring/eventfd.c:80:5-24: WARNING: atomic_dec_and_test variation before object free at line 81.
+   io_uring/eventfd.c:154:6-25: WARNING: atomic_dec_and_test variation before object free at line 155.
 
-Tested on:
+vim +80 io_uring/eventfd.c
 
-commit:         d1f2d51b Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=149e589f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e81d40b0108ea8fe
-dashboard link: https://syzkaller.appspot.com/bug?extid=702361cf7e3d95758761
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16b6589f980000
+    43	
+    44	void io_eventfd_signal(struct io_ring_ctx *ctx)
+    45	{
+    46		struct io_ev_fd *ev_fd = NULL;
+    47	
+    48		if (READ_ONCE(ctx->rings->cq_flags) & IORING_CQ_EVENTFD_DISABLED)
+    49			return;
+    50	
+    51		guard(rcu)();
+    52	
+    53		/*
+    54		 * rcu_dereference ctx->io_ev_fd once and use it for both for checking
+    55		 * and eventfd_signal
+    56		 */
+    57		ev_fd = rcu_dereference(ctx->io_ev_fd);
+    58	
+    59		/*
+    60		 * Check again if ev_fd exists incase an io_eventfd_unregister call
+    61		 * completed between the NULL check of ctx->io_ev_fd at the start of
+    62		 * the function and rcu_read_lock.
+    63		 */
+    64		if (unlikely(!ev_fd))
+    65			return;
+    66		if (!atomic_inc_not_zero(&ev_fd->refs))
+    67			return;
+    68		if (ev_fd->eventfd_async && !io_wq_current_is_worker())
+    69			goto out;
+    70	
+    71		if (likely(eventfd_signal_allowed())) {
+    72			eventfd_signal_mask(ev_fd->cq_ev_fd, EPOLL_URING_WAKE);
+    73		} else {
+    74			if (!atomic_fetch_or(BIT(IO_EVENTFD_OP_SIGNAL_BIT), &ev_fd->ops)) {
+    75				call_rcu_hurry(&ev_fd->rcu, io_eventfd_do_signal);
+    76				return;
+    77			}
+    78		}
+    79	out:
+  > 80		if (atomic_dec_and_test(&ev_fd->refs))
+  > 81			call_rcu(&ev_fd->rcu, io_eventfd_free);
+    82	}
+    83	
 
-Note: testing is done by a robot and is best-effort only.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
