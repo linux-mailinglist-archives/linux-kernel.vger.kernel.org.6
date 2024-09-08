@@ -1,141 +1,86 @@
-Return-Path: <linux-kernel+bounces-320011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07EEC970504
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 06:06:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716CD970508
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 06:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D6FA28307F
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:06:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1002830AF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D834D112;
-	Sun,  8 Sep 2024 04:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="cQKJtZXJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BI6uAxry"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF303715E;
+	Sun,  8 Sep 2024 04:07:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A783629D19;
-	Sun,  8 Sep 2024 04:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00B928FC
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 04:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725768359; cv=none; b=A8zQv331AeIgVTjwBN0FcbbNCuTFxSbajALfiB9foici+/6YC0dUCE9DPQS7aIZXuZ+QqTKfO33xoFtCfBZ1Sqi6afel/R8r3VyweA28UKGao96kZAYE1RJHhWtbqwb0UE3lpG/yHJ7FIf4bUh7dXoX4OevE77Y2HD7x26GsX+I=
+	t=1725768425; cv=none; b=Au+/6sdPIb4AmZ8uHow1LoZZdJQJh0UVi5JBiHemq7GeHFJ7ff2WQpdbC/WNPCo47GlbaY9neEOj5mgh0bm6jwGCVMDanC3EAMU6pPn5EMgm5Wjg4kniSIm79AO9wQJwwuKaWo/8NQHo3UXVLsRoW49ws8yKm7abnU2DDx9iirw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725768359; c=relaxed/simple;
-	bh=ZX3+HkeTf3IDOyCdWnmGLRu2Y1CXaszCrkxBkeSgqyY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QpjZa7cUFxWeDw3ar6g/Rcvu7G9TI4AaB1P7gkmIZXRNRi4395XPBTuMmWe9+Pene05moaFMqZ488e0VFuK078M6EwhnUAvdhmYR9whZLZpBLrBDWBzFg4OQXvUcQfvoU0NA/2cLFZmLkfSj7+sBCrs9UDvLdT34GeMgKbR8Ae4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=cQKJtZXJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BI6uAxry; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id D3A8D13802A2;
-	Sun,  8 Sep 2024 00:05:56 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Sun, 08 Sep 2024 00:05:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1725768356; x=
-	1725854756; bh=g3rVD5AMlaA9gk9eYXsId57UmfOtU4hWVY6wnZR27GA=; b=c
-	QKJtZXJVfBhH88DEnrt3ibxpI4iMC/52cmJ/tYqis6dXH9WrNWomXW/yaMKjZMZ4
-	3xBj4dS8Szyd6OIiD4phP4T5H+holYErWY1EXyTc69cDvIUsld8ka/CzuvO8ehM3
-	JFlBugPverI0lOazy+RoOlMaCTUKOijk9cJQo83GrMQFBVS51Y0YeHMZAvyMKPU6
-	K6+Lk6Um3anOqiuZJBDEsCNWvwQwWGhi2ka13001ZrcbaMTaVhEARbS0UkmIyXgq
-	JF2nwokCRJghCK0mZNBrrs11RIoEpGskrQQbYIpPJdjz0j4LySjD/l7zGx7JMJ+G
-	OtwTLkHM11JDwGNVJ8y+Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725768356; x=
-	1725854756; bh=g3rVD5AMlaA9gk9eYXsId57UmfOtU4hWVY6wnZR27GA=; b=B
-	I6uAxrygoNzOunL6IUC00vJAsU2GItBvlfqpOEkLB+EgbvlwUDDmKWd9byYaP9na
-	XplNlhuT3hpfaTgknTrABiEqIS58e6qxKLZ8Kzxx6UavaVquOGG3ZA3L1tEYGFXi
-	SdgtxmJbC3kijUxzrf8Ox7f5YY4pXekdqpMod7pxzluIy9lL0vHB26Xjqlysd/7E
-	6yNm+VaVm5VZbD+/NcHT0N1GgJOSU+FqAYnpWn2tCmSxbqmRI8D3OtCOWSWBiEg1
-	cv81Hu7V53MWlRR7nQBH4qazuqrjK67ycF1b5/o6863Dl86QOqeRjZhFJHXI2roW
-	5ZAJIeDlm/PSAzO2N3rGg==
-X-ME-Sender: <xms:pCLdZmXsoB3KIgzKOK9E45cycsjYdHkITIZOvgPJgbgtqK7TFuikrQ>
-    <xme:pCLdZimB-fzz5EMdz5lDssOsMvmTWa4FvncuztpTJ6pSXZVDoWrbK4-HOV7OnqKQe
-    drCbfLMBZgS68n1YYE>
-X-ME-Received: <xmr:pCLdZqYsc3cPk55IIr0UPlfoBq4JSzLfHsPKBt__Tgb9kRmbc4oClZfO1WB0JdGpmpGh8_RguvUchsWZQ2y6woUAhRkldGTC6AtfvZX8h8aDeg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeigedgjeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
-    ffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghm
-    ohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrg
-    htthgvrhhnpedvjefgjeeuvdfguddukeelveetgfdtvefhtdfffeeigfevueetffeivdff
-    kedvtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhopeef
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvg
-    hlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhu
-    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqshhouhhnugesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:pCLdZtWSErjzNIk48F6WO2J5fAtNMTSfDzxUnSxN57TOr9okgJH6zg>
-    <xmx:pCLdZgmnc14IyNC8AJiVjfxrkTjHKkREh5tgoZ-9rAZSZZU5Z6_-Dg>
-    <xmx:pCLdZifRgmqCb1F9s6yNAgu-GnOdCggqQaYnEmdGK78MthuOGnf0RQ>
-    <xmx:pCLdZiGpLfbV7T2YKWA1vk19pYfT1hAOUWnL_IRluy7mWqsjUxrx_w>
-    <xmx:pCLdZqiUD1QgWteANhR-et8TbkBLPTPw9ftHE8uEmoXoeeXkLQZVfQXZ>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 8 Sep 2024 00:05:55 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: [PATCH 2/2] firewire: core: fulfill documentation of fw_iso_context_flush_completions()
-Date: Sun,  8 Sep 2024 13:05:49 +0900
-Message-ID: <20240908040549.75304-3-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240908040549.75304-1-o-takashi@sakamocchi.jp>
-References: <20240908040549.75304-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1725768425; c=relaxed/simple;
+	bh=klX3N0HJmGDDWAYFlKAffyVuccgTzWS6L5grL4Yse1M=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ghdskbVC03+0BFqkCk8XPBum9i+T2YkMyNQ41MS2iL9i62tnqLST4ofGUdmN5oYU4J5XSNauKlBbro2a2kQC0wI+FUvnRWwLSy6id84YA1HG7Qp4ogVyfcM5dayFomwgOvvz3jotJjMa0Yc0Kuy4GgdVrpnAYI/pMCSE3b0/rX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82ad9fca5fcso127038039f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 21:07:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725768423; x=1726373223;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3dF8HtaJAB37nJiTVH7S4KIuA3PLW9CXtv4XuM4V5pk=;
+        b=M8UqbWDPJ1Kf0qyO5oOyOFZnybHPn+2yhf7VfgW8ZJMuzSg4CqWAD1SzHnEsmYeWcY
+         8cDL7ekzUhN0LOFdtCxqPTnylxC6it+OHaDLBgEJ40zoO0kaE1JcnfEczZQzh8Gt1Nvv
+         CAGs0DJgGhYmgUoCMEKAIoUvtHY6frPSQ+DGQzFek1mBHrgRWfYbAWgmmxWDRjyrxfAU
+         vhkVWKW4HrR/w4DDIcQhVgBjzsxhLy8asnA2dYaZzYRrn74vfGMpaDPwbFE+PUcufYlH
+         QGNuPYbj+Q3iIxkSn+Py4WnrcmCAcHLzfYfT6u8NYzbD0xZDyFuYM4oxaVPPjnKcEW9n
+         KWrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmVXf12ogLVOCB/t1vKY6oxF0FbPUgrCXUe/lIDtDLNLYkJngXxrfLKsBY7yArQBCAc6sPbsI0jAnmyC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQw7u4/T0z/S+bdRJCqAIYBo/9iKeRQOiBiFrQLg/eXDO+FdhK
+	LuWyjOMA+LnJ917m/xusv6r8LfimJj9apQJmCjVDREh2cnQbwbyqn8GIlHej/o3olFITP3Q+E6C
+	xbuZxaa6GFBadW4WmcafkxcN0f0yb/f1Hi4JxlkAb44oGTt5whln4Aus=
+X-Google-Smtp-Source: AGHT+IH8omUymT/OITzvTzD9UkD/VVvB6QMVTacgFHYlF5HDOwj7xcM91H67DH2obQ+r651aqYqGf9ASO5mzuhhUHcdInPr44DzS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1d1d:b0:3a0:451b:ade3 with SMTP id
+ e9e14a558f8ab-3a057462029mr46846495ab.10.1725768422864; Sat, 07 Sep 2024
+ 21:07:02 -0700 (PDT)
+Date: Sat, 07 Sep 2024 21:07:02 -0700
+In-Reply-To: <20240908032540.2276-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cf49fc062193c58b@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
+ l2cap_connect (2)
+From: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The fw_iso_context_flush_completions() is the counterpart of
-fw_iso_context_schedule_work() to process isochronous context in current
-process context.
+Hello,
 
-This commit fulfills its documentation.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
----
- drivers/firewire/core-iso.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+net/bluetooth/l2cap_core.c:7595:17: error: invalid suffix "cap_conn_put" on integer constant
 
-diff --git a/drivers/firewire/core-iso.c b/drivers/firewire/core-iso.c
-index a249974a0f87..f2394f3ed194 100644
---- a/drivers/firewire/core-iso.c
-+++ b/drivers/firewire/core-iso.c
-@@ -209,6 +209,17 @@ void fw_iso_context_queue_flush(struct fw_iso_context *ctx)
- }
- EXPORT_SYMBOL(fw_iso_context_queue_flush);
- 
-+/**
-+ * fw_iso_context_flush_completions() - process isochronous context in current process context.
-+ * @ctx: the isochronous context
-+ *
-+ * Process the isochronous context in the current process context. The registered callback function
-+ * is called if some packets have been already transferred since the last time. If it is required
-+ * to process the context asynchronously, fw_iso_context_schedule_flush_completions() is available
-+ * instead.
-+ *
-+ * Context: Process context. May sleep due to disable_work_sync().
-+ */
- int fw_iso_context_flush_completions(struct fw_iso_context *ctx)
- {
- 	int err;
--- 
-2.43.0
+
+Tested on:
+
+commit:         d1f2d51b Merge tag 'clk-fixes-for-linus' of git://git...
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=57042fe37c7ee7c2
+dashboard link: https://syzkaller.appspot.com/bug?extid=c12e2f941af1feb5632c
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=137def29980000
 
 
