@@ -1,104 +1,116 @@
-Return-Path: <linux-kernel+bounces-320219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5099707BE
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:26:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 419AD9707C3
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A3D11F21A4E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:26:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F1251C213D2
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D97169397;
-	Sun,  8 Sep 2024 13:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E58169AD0;
+	Sun,  8 Sep 2024 13:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="UrJ2XWrr"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="QbzNxNnw"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C53167296;
-	Sun,  8 Sep 2024 13:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDCA168C26
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 13:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725801988; cv=none; b=Kk/UHue53S+0TewGSowP2FpG33nKO0mUL5J2lpb3bZNdU+c3E7VdAiZKE3ZNyyLGM6zpAzvt1Y4n3H+h4LGdXnkmmWG3Nq8aPyMVMSsgDgvCp+wvBuxz7ASxzdr9EiYF2VKcvBz/JhlG5MZexxBOoYQCdhnIGbfCfchsNiYWojs=
+	t=1725802135; cv=none; b=mTTy9xg4+hrA7vOjYoeM2GrD7nNprTxsYdnncw8SNAL2txMtjfClvr+vSxtu/H270qjYoxh/wVQNVcM+Gxkq0bkYUQWeiiQsLdEfxus98QLXL1H0VzOmCI1enEsrfl6CyFjrckUTmHq3WpDbMADT/QiynAq+4XrxSLFi8S3CWvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725801988; c=relaxed/simple;
-	bh=VDWtvNE3uEvsK6/pNswP0Jk8jyvAO95n8sbNuTrPdrg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oxFhhil7SZWGFnIl5dvtt7nNkzWhg6oVkjncsoYsA4wfzozFiUfkSxlkzmWLEWeOdNhRoR/dTN/sEL/RFvYF4ssUpsprxMQy0rmx3P/fB5su5b/Bdue+9l7PNYvZ7GVHAXuI3bhh8M/72WYT5IfS9Pj1X1HT0JXwLVfUMlH7AwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=UrJ2XWrr; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1725801970;
-	bh=VDWtvNE3uEvsK6/pNswP0Jk8jyvAO95n8sbNuTrPdrg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=UrJ2XWrr++DPK3Be2DUhS1AzkOzoC3yxJB6VrKriVM7E4fjzD7toRsAuHFvhA19my
-	 LrtiuteDMhubxgT4XCydK3BLE9Z6XlllS0AN2tvZQ9gvA7cuOjl353FCeECiXRlFoM
-	 HWPXqVVEkRfdDjSuo5qOwFZdrzv2SZ7kI4eojbNE=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 08 Sep 2024 15:26:00 +0200
-Subject: [PATCH] kbuild: remove append operation on cmd_ld_ko_o
+	s=arc-20240116; t=1725802135; c=relaxed/simple;
+	bh=mcdmqRHDK0CCRxh9fA0BKSIVZhjMOYoKHUATixf26XI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rHpL70Me94o8qziyB6JDF6dfxfXcD6ucl6j+Dp1RHDE0iZUO+U0kp6Fxts6p+v8iwd72o+JV+G560CEkHgHC1wWV8iAgFxEmkHQRDxcAFkp8Wu4JlR+TiTgQ2FDpflqbsYFjWzvx8efLaY+0yBrw65/jINQyZhGWQMWTy7pqvm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=QbzNxNnw; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
+ To: From; q=dns/txt; s=fe-e1b5cab7be; t=1725802110;
+ bh=GBZtSa7NV3xr9PArtmtkDJNem8kQ3e2llQ47ktafnlQ=;
+ b=QbzNxNnwSbAb4TQ0yFDTzC/y6DCt00xusYXBD0R775cQFANiwsAxdsWUidwdgFnVI/q9VQAHb
+ ecYAQkXR8UTg+RAoSPT39McuBqkm2XuMiEI6O8WMWJH7WT6VuTsSIMbVGeUKjPoqBWmxcRi5ZgP
+ og27kIcMHxUjoxSfvSDRTfuBm6sY8wb+ttpc95L4LkPekY9rRqPb29dw6vIqMiBMFW2GGtoZoNt
+ GS7xC0b94GAvEcaHrB65JqOK1rl0snStDeHcUwnY1/KHZAGUfJPToHdc6lSrEDQF0sdBm86uMk0
+ uD315y37RqcRausvaNHsn+kHR2g2ipfTSt6MTiCsxOqg==
+From: Jonas Karlman <jonas@kwiboo.se>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Christian Hewitt <christianshewitt@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Christopher Obbard <chris.obbard@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jonas Karlman <jonas@kwiboo.se>
+Subject: [PATCH v2 00/10] drm: bridge: dw_hdmi: Misc enable/disable, CEC and EDID cleanup
+Date: Sun,  8 Sep 2024 13:28:02 +0000
+Message-ID: <20240908132823.3308029-1-jonas@kwiboo.se>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240908-kbuild-cmd_ld_ko_o-v1-1-a4afc3c2d47a@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAOel3WYC/x3MTQqAIBBA4avErBPMDKyrREg2Uw39GEoRRHdPW
- n6L9x6IFJgiNNkDgS6O7PeEIs9gmPt9IsGYDEoqLWtpxOJOXlEMG9oV7eKtF6pyqGtXGk0GUng
- EGvn+p233vh/KNgroZAAAAA==
-To: Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725801970; l=1267;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=VDWtvNE3uEvsK6/pNswP0Jk8jyvAO95n8sbNuTrPdrg=;
- b=6VSS7sz9eqxyOWJIlyP4dPFm6VN6Zm5WWi29cjAbQva7ICXJ0IMRP5VCh4zyPzTKc8+5DUo4T
- PIs1b2GfJKRAonT6HIveNWV3lXPgF9zPFiFrVujvj9mG1ipvOrCndrd
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 66dda67e3c9877b4595878e3
 
-The append operation was introduced in
-commit b1a1a1a09b46 ("kbuild: lto: postpone objtool")
-when the command was created from two parts.
-In commit 850ded46c642 ("kbuild: Fix TRIM_UNUSED_KSYMS with LTO_CLANG")
-however the first part was removed again, making the append operation
-unnecessary.
+This series ensure poweron/poweroff and CEC phys addr invalidation is
+happening under drm mode_config mutex lock, and also ensure EDID is
+updated (when the dw-hdmi connector is used) after a hotplug pulse.
 
-To keep this command definition aligned with all other command
-definitions, remove the append again.
+These changes has mainly been tested on Rockchip devices together with a
+series [1] that add HDMI 2.0 4K@60Hz support to RK3228, RK3328, RK3399
+and RK3568.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- scripts/Makefile.modfinal | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Rockchip use the dw-hdmi connector so this should also be validated with
+a driver that use the bridge connector.
 
-diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
-index 6b1b72257b29..1482884ec3ca 100644
---- a/scripts/Makefile.modfinal
-+++ b/scripts/Makefile.modfinal
-@@ -34,7 +34,7 @@ $(extmod_prefix).module-common.o: $(srctree)/scripts/module-common.c FORCE
- 	$(call if_changed_dep,cc_o_c)
- 
- quiet_cmd_ld_ko_o = LD [M]  $@
--      cmd_ld_ko_o +=							\
-+      cmd_ld_ko_o =							\
- 	$(LD) -r $(KBUILD_LDFLAGS)					\
- 		$(KBUILD_LDFLAGS_MODULE) $(LDFLAGS_MODULE)		\
- 		-T scripts/module.lds -o $@ $(filter %.o, $^)
+Changes in v2:
+- Add patch to disable scrambler feature when not supported
+- Add patch to only notify connected status on HPD interrupt
+- Update commit messages
+- Collect r-b tags
+- Rebased on next-20240906
 
----
-base-commit: 4dda2081d84398248af60da1d519840a5d6e3390
-change-id: 20240908-kbuild-cmd_ld_ko_o-25bd49b384e8
+[1] https://lore.kernel.org/r/20240615170417.3134517-1-jonas@kwiboo.se/
 
-Best regards,
+Jonas Karlman (10):
+  drm: bridge: dw_hdmi: Disable scrambler feature when not supported
+  drm: bridge: dw_hdmi: Only notify connected status on HPD interrupt
+  drm: bridge: dw_hdmi: Call poweron/poweroff from atomic enable/disable
+  drm: bridge: dw_hdmi: Use passed mode instead of stored previous_mode
+  drm: bridge: dw_hdmi: Fold poweron and setup functions
+  drm: bridge: dw_hdmi: Remove previous_mode and mode_set
+  drm: bridge: dw_hdmi: Invalidate CEC phys addr from connector detect
+  drm: bridge: dw_hdmi: Remove cec_notifier_mutex
+  drm: bridge: dw_hdmi: Update EDID during hotplug processing
+  drm: bridge: dw_hdmi: Use display_info is_hdmi and has_audio
+
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 150 +++++++---------------
+ 1 file changed, 43 insertions(+), 107 deletions(-)
+
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
+2.46.0
 
 
