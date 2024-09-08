@@ -1,106 +1,285 @@
-Return-Path: <linux-kernel+bounces-320004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588729704F9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 05:21:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB9D9704F8
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 05:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00EB41F21EC1
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 03:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B1381F21F34
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 03:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD81922638;
-	Sun,  8 Sep 2024 03:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C0D29D19;
+	Sun,  8 Sep 2024 03:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="jpWBzJ/n"
-Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oDDYNwFJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0730B11C92
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 03:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9AA11C92;
+	Sun,  8 Sep 2024 03:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725765697; cv=none; b=T/levdXAYRN0mdBzVkJFHOzg1ww8BWq8YhCnMs7mKANekrgv/AGEt50XlzmPz40W0KfjhA3tewO+/tZd5D1fAK3tI2i3xfqJsar0qPjzyCYQK0fpCd1lF3IER+RPSE4rn0B3Kiz1dLcQxeBJ/bWjtoAPQBEM0Kc2uBWSfYN7Rls=
+	t=1725765585; cv=none; b=kuhV+MvaM0TAUmeh/rMIjLFEVZ4sQ5lfND4xekua3PDnkquxtvxOShm67L4kDLq7sio+e0Pz80Jaju9UJFzNqDDcP2aT58HCdSP2kiO9XPVHEZjbuU/sZULHwlxOtcknMlJHleLZT8TFcslECO8oBLyIZ1Fc7cFqYXmpkxO3Z7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725765697; c=relaxed/simple;
-	bh=ostqFxmtpDqQc7Dg9xf3SBNDQtoJdq/Ru9fUGaTfJvE=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=GDEHCJznKtX212E15/SZWtxRq0L+eh3uoL0nIT06vm8JaZHUqlrDkO8W1aIL77kgQa7PdAUkSOXJLHSKCpzQQzx4QjRCyCX4YBGQ9zdzweZMi8nurimzyz0n3EXJwiaAzYsXjXs/k4S+zxEK8SjGI5F8vSC02uiSQioN7+gmieg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=jpWBzJ/n; arc=none smtp.client-ip=203.205.221.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725765692; bh=qQoc9TWRF8Fcv8tdfcnwwwYSIt0xHTdd4ONoTIHghu8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=jpWBzJ/nTGc0FBX8LdOI/QuqsfX6wLkoFakSBuPG6LwMnemGG+TgZe5FWUyd4akUh
-	 cP3uQoCy4Ecn6lTjIuujby4ondJkXSn2DRuxIUMmU7+4Nsu2yclrzPQeZvTqeRmx/L
-	 32SkAB1DXFDZeXwRvT/eCaTUvD7eSg3D8KKISumc=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id 3D42BA3E; Sun, 08 Sep 2024 11:15:20 +0800
-X-QQ-mid: xmsmtpt1725765320tssqofoe1
-Message-ID: <tencent_716CE97A03B68449F760577CC6C6336E2305@qq.com>
-X-QQ-XMAILINFO: NvKyM24IHTKS82gOX5jqS7t05/XEnWpky2PW8I7ubsN+DMluluNW0sL3To3Mra
-	 iO9ARJ7nhxYkqTQJzR/pmkarjbYoMM7CavX9Yiosk2NMzBlAyTT0qoKISBnJPDRKEJV7qJW7wYpY
-	 o62ncQvb7sChT6+COCVOssiu2ZZWvCVHm6VUa1BRmoLxC81QQImufBr6Jh6WQAd8wlqanzSBFWb/
-	 BoYsfB+ZVD6dnBipJyPlHDWiZgVAL8Z9HbJxKMu2RTYvqp7La55qoyfxMmF4zlFprHS/lYafuGIZ
-	 ZGbmk9u+M5FfMX6enLgFDE5pX4hhC1jzfv6ebIfgV1xWaJrBi+S1sbx4+oGRE/MfdPL0784ImKes
-	 lLS8jawjMIN+kBXuP73TqNieZ1G6kJhpSTo0k1FAjBypIrSrDBKXUSIijEeFYQhEJDazml08RNpr
-	 dVvsOsD43955jKcocy3Lui/uK/7w+3kx4jfvAq4TsIgdxOgFRUKlxS2PoU94zwVLY7RmueG3h+1j
-	 XI4zb7LRFB/bXswtz3/AdG6V8ZhZjja2bdO10T8GIFeI7bDueknMpLSzt3+30ZhpaRnGpE9+WWUr
-	 9W90FP8IvdN3wN4HbHOyBPvMzAXnvKCpYl38/jGpl0BR4Ar4ei86Bw4QrzAZHWPcYkLMQGHQ7BUd
-	 IvFmRvITB7/LF+uD7R0Ax+a+O/1OCUmQd6PuPiiwzOx54mqxHd2KDsf4yIb7dPn+EUqIkU2xoLMe
-	 8lcYe0NaUj3+dMtQP56KJ+QQDUFaC/bRPTMPYL3pWNGBWsEdbQh/XdjYE4V6nx6Vg0zeOOPP7FuC
-	 6fS9eY9EC6JNmI875DX6JIGivb0J4Q65soQ2ctYlXGS4bYeL+GRDpiJE2Iboff6N8wurvL2zCcup
-	 YwxD3GZsSj3CX7Yykbs6tEQd4nhjjnW7QairEQJUzegjSYReWenck/z7wmAWPM3XP2kFVcOQxh
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect (2)
-Date: Sun,  8 Sep 2024 11:15:20 +0800
-X-OQ-MSGID: <20240908031519.1338677-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <0000000000004a130a0621888811@google.com>
-References: <0000000000004a130a0621888811@google.com>
+	s=arc-20240116; t=1725765585; c=relaxed/simple;
+	bh=dKtKvgCT0A7VnzYFqYSnTV61i+lVLVKOOj/YC5m3Daw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J68Mu6XSMesMAhKG2qiIy2Hs2h9Ac+EwifOw+FzZJel9gkwC+9ZBlv0BkbHUoaYF8sXWi1n5B4ekpHCrRrBPL++/mUgjRT/P9TUFeHb8lCQb2F69r/cWv3mBld4MF9bPs+6RYwX2u09f1ky6GFrSAALOMOAe7uKVvilD4F905r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oDDYNwFJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23826C4CEC8;
+	Sun,  8 Sep 2024 03:19:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725765584;
+	bh=dKtKvgCT0A7VnzYFqYSnTV61i+lVLVKOOj/YC5m3Daw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oDDYNwFJd2eh380q6zm6NBsR1Zz7XoaaHGBtjD1TcBPwt+y6eZ3uC9kdho8DUkCMl
+	 2QTeIl4kedZmJ6mh0idEeHvKQbS9sRJgBh3GY0cggO5cjGZcwk4eKLeAPnLKC/kfzk
+	 xrPfA6FCRbUe75qLZVqtqw/hnxH9Eho8SUNlHBjLZqj9MPADwVBHfGmR4/wBn49PJY
+	 j+5pJuWq2C088/ML9LAO4XAscVeYF/94v1DJPD5KcLf7fSfWpctT1POoQEBUWX++md
+	 EYCvzIkkJADqExcGiWE+lggvuZQTQs1au6kOpej7Mry+hfpwIjn+tNpT7CCCsnkl6x
+	 L/Tbku2v7oqTg==
+Date: Sat, 7 Sep 2024 22:19:42 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Johan Hovold <johan@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] phy: qcom: edp: Add runtime PM support
+Message-ID: <v6jzz6q5eutbmdy6vwagdhenjnvxucf3u3nl5qdjte65wlc77e@tzvxcm3xnuht>
+References: <20240907-phy-qcom-edp-enable-runtime-pm-v1-1-8b9ee4210e1e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240907-phy-qcom-edp-enable-runtime-pm-v1-1-8b9ee4210e1e@linaro.org>
 
-after release conn, we need to cancle rx_work
+On Sat, Sep 07, 2024 at 06:25:21PM GMT, Abel Vesa wrote:
+> Enable runtime PM support by adding proper ops which will handle the
+> clocks and regulators. These resources will now be handled on power_on and
+> power_off instead of init and exit PHY ops. Also enable these resources on
+> probe in order to balance out the disabling that is happening right after.
 
-#syz test
+Sounds good, I assume there's a good reason for doing this?
 
-diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-index f25a21f532aa..4f7b45bb863f 100644
---- a/net/bluetooth/hci_core.c
-+++ b/net/bluetooth/hci_core.c
-@@ -3776,18 +3776,19 @@ static void hci_acldata_packet(struct hci_dev *hdev, struct sk_buff *skb)
- 
- 	hci_dev_lock(hdev);
- 	conn = hci_conn_hash_lookup_handle(hdev, handle);
--	hci_dev_unlock(hdev);
- 
- 	if (conn) {
- 		hci_conn_enter_active_mode(conn, BT_POWER_FORCE_ACTIVE_OFF);
- 
- 		/* Send to upper protocol */
- 		l2cap_recv_acldata(conn, skb, flags);
-+		hci_dev_unlock(hdev);
- 		return;
- 	} else {
- 		bt_dev_err(hdev, "ACL packet for unknown connection handle %d",
- 			   handle);
- 	}
-+	hci_dev_unlock(hdev);
- 
- 	kfree_skb(skb);
- }
+Please provide a proper problem description, as defined in:
+https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
 
+> Prevent runtime PM from being ON by default as well.
+> 
+
+Why?
+
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-edp.c | 105 ++++++++++++++++++++++++++----------
+>  1 file changed, 77 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/phy-qcom-edp.c
+> index da2b32fb5b45..3affeef261bf 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-edp.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-edp.c
+> @@ -192,14 +192,6 @@ static int qcom_edp_phy_init(struct phy *phy)
+>  	int ret;
+>  	u8 cfg8;
+>  
+> -	ret = regulator_bulk_enable(ARRAY_SIZE(edp->supplies), edp->supplies);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = clk_bulk_prepare_enable(ARRAY_SIZE(edp->clks), edp->clks);
+> -	if (ret)
+> -		goto out_disable_supplies;
+> -
+>  	writel(DP_PHY_PD_CTL_PWRDN | DP_PHY_PD_CTL_AUX_PWRDN |
+>  	       DP_PHY_PD_CTL_PLL_PWRDN | DP_PHY_PD_CTL_DP_CLAMP_EN,
+>  	       edp->edp + DP_PHY_PD_CTL);
+> @@ -246,11 +238,6 @@ static int qcom_edp_phy_init(struct phy *phy)
+>  	msleep(20);
+>  
+>  	return 0;
+> -
+> -out_disable_supplies:
+> -	regulator_bulk_disable(ARRAY_SIZE(edp->supplies), edp->supplies);
+> -
+> -	return ret;
+>  }
+>  
+>  static int qcom_edp_set_voltages(struct qcom_edp *edp, const struct phy_configure_opts_dp *dp_opts)
+> @@ -721,6 +708,8 @@ static int qcom_edp_phy_power_on(struct phy *phy)
+>  	u32 val;
+>  	u8 cfg1;
+>  
+> +	pm_runtime_get_sync(&phy->dev);
+> +
+>  	ret = edp->cfg->ver_ops->com_power_on(edp);
+>  	if (ret)
+>  		return ret;
+> @@ -841,6 +830,8 @@ static int qcom_edp_phy_power_off(struct phy *phy)
+>  
+>  	writel(DP_PHY_PD_CTL_PSR_PWRDN, edp->edp + DP_PHY_PD_CTL);
+>  
+> +	pm_runtime_put(&phy->dev);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -856,23 +847,12 @@ static int qcom_edp_phy_set_mode(struct phy *phy, enum phy_mode mode, int submod
+>  	return 0;
+>  }
+>  
+> -static int qcom_edp_phy_exit(struct phy *phy)
+> -{
+> -	struct qcom_edp *edp = phy_get_drvdata(phy);
+> -
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(edp->clks), edp->clks);
+> -	regulator_bulk_disable(ARRAY_SIZE(edp->supplies), edp->supplies);
+> -
+> -	return 0;
+> -}
+> -
+>  static const struct phy_ops qcom_edp_ops = {
+>  	.init		= qcom_edp_phy_init,
+>  	.configure	= qcom_edp_phy_configure,
+>  	.power_on	= qcom_edp_phy_power_on,
+>  	.power_off	= qcom_edp_phy_power_off,
+>  	.set_mode	= qcom_edp_phy_set_mode,
+> -	.exit		= qcom_edp_phy_exit,
+>  	.owner		= THIS_MODULE,
+>  };
+>  
+> @@ -1036,6 +1016,32 @@ static int qcom_edp_clks_register(struct qcom_edp *edp, struct device_node *np)
+>  	return devm_of_clk_add_hw_provider(edp->dev, of_clk_hw_onecell_get, data);
+>  }
+>  
+> +static int __maybe_unused qcom_edp_runtime_suspend(struct device *dev)
+> +{
+> +	struct qcom_edp *edp = dev_get_drvdata(dev);
+> +
+> +	dev_err(dev, "Suspending DP phy\n");
+> +
+> +	clk_bulk_disable_unprepare(ARRAY_SIZE(edp->clks), edp->clks);
+> +	regulator_bulk_disable(ARRAY_SIZE(edp->supplies), edp->supplies);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused qcom_edp_runtime_resume(struct device *dev)
+> +{
+> +	struct qcom_edp *edp = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	dev_err(dev, "Resuming DP phy\n");
+> +
+> +	ret = regulator_bulk_enable(ARRAY_SIZE(edp->supplies), edp->supplies);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return clk_bulk_prepare_enable(ARRAY_SIZE(edp->clks), edp->clks);
+> +}
+> +
+>  static int qcom_edp_phy_probe(struct platform_device *pdev)
+>  {
+>  	struct phy_provider *phy_provider;
+> @@ -1091,20 +1097,57 @@ static int qcom_edp_phy_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	ret = qcom_edp_clks_register(edp, pdev->dev.of_node);
+> -	if (ret)
+> +	ret = regulator_bulk_enable(ARRAY_SIZE(edp->supplies), edp->supplies);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable regulators, err=%d\n", ret);
+>  		return ret;
+> +	}
+> +
+> +	ret = clk_bulk_prepare_enable(ARRAY_SIZE(edp->clks), edp->clks);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable clocks, err=%d\n", ret);
+> +		goto err_disable_regulators;
+> +	}
+> +
+> +	ret = qcom_edp_clks_register(edp, pdev->dev.of_node);
+> +	if (ret) {
+> +		dev_err(dev, "failed to register PHY clocks, err=%d\n", ret);
+> +		goto err_disable_clocks;
+> +	}
+>  
+>  	edp->phy = devm_phy_create(dev, pdev->dev.of_node, &qcom_edp_ops);
+>  	if (IS_ERR(edp->phy)) {
+>  		dev_err(dev, "failed to register phy\n");
+> -		return PTR_ERR(edp->phy);
+> +		ret = PTR_ERR(edp->phy);
+> +		goto err_disable_clocks;
+>  	}
+>  
+> +	pm_runtime_set_active(dev);
+> +	ret = devm_pm_runtime_enable(dev);
+> +	if (ret)
+> +		goto err_disable_clocks;
+> +	/*
+> +	 * Prevent runtime pm from being ON by default. Users can enable
+> +	 * it using power/control in sysfs.
+
+That is what this call do, please describe why it's done instead.
+
+Regards,
+Bjorn
+
+> +	 */
+> +	pm_runtime_forbid(dev);
+> +
+> +	dev_set_drvdata(dev, edp);
+>  	phy_set_drvdata(edp->phy, edp);
+>  
+>  	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> -	return PTR_ERR_OR_ZERO(phy_provider);
+> +	if (IS_ERR(phy_provider))
+> +		goto err_disable_clocks;
+> +
+> +	return 0;
+> +
+> +err_disable_clocks:
+> +	clk_bulk_disable_unprepare(ARRAY_SIZE(edp->clks), edp->clks);
+> +
+> +err_disable_regulators:
+> +	regulator_bulk_disable(ARRAY_SIZE(edp->supplies), edp->supplies);
+> +
+> +	return ret;
+>  }
+>  
+>  static const struct of_device_id qcom_edp_phy_match_table[] = {
+> @@ -1117,10 +1160,16 @@ static const struct of_device_id qcom_edp_phy_match_table[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, qcom_edp_phy_match_table);
+>  
+> +static const struct dev_pm_ops qcom_edp_pm_ops = {
+> +	SET_RUNTIME_PM_OPS(qcom_edp_runtime_suspend,
+> +			   qcom_edp_runtime_resume, NULL)
+> +};
+> +
+>  static struct platform_driver qcom_edp_phy_driver = {
+>  	.probe		= qcom_edp_phy_probe,
+>  	.driver = {
+>  		.name	= "qcom-edp-phy",
+> +		.pm	= &qcom_edp_pm_ops,
+>  		.of_match_table = qcom_edp_phy_match_table,
+>  	},
+>  };
+> 
+> ---
+> base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
+> change-id: 20240907-phy-qcom-edp-enable-runtime-pm-6fad07af8947
+> 
+> Best regards,
+> -- 
+> Abel Vesa <abel.vesa@linaro.org>
+> 
+> 
 
