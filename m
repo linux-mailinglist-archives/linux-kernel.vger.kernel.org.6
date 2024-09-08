@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-320275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 389FF970845
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:56:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A828970844
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E664B2137C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB93F282D8D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 14:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEB61741CB;
-	Sun,  8 Sep 2024 14:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2335C171E70;
+	Sun,  8 Sep 2024 14:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="dDz0Rd+y"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="cKDElm8h"
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95174171652
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951C3171E4F
 	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 14:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725807355; cv=none; b=rgy42X4E2451WHs2YqCkgauIC5El6Xbby6kl0zXAsl/SbVMwpoYDDDc6qpTcFW5N7Rt0TUc2lfqitQjyljK77DChuiowkQlXrMhcyZB+IhxFSYFh7Iw0Q1Oify9yzf7PsBZsAg/ESh2GBNdS5btLIsLHhHwLA0+zOxlIgzCk1P4=
+	t=1725807353; cv=none; b=MR3SZX+nLrA+mzTPZRN05P5T83bFRzaT9i3NIc7Iprkigr9V2sdBkeCtUba3a3UBOrifMFHJ7BcHKjKxX+BV6di2AVLuvgSxfhKxa4HV8JA1KgemnP3drkGyu/PuXf0n7VTQ5PV5Pq2OQwEZKopAj0v3BGPhj2ejiKi7fJ9p1sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725807355; c=relaxed/simple;
-	bh=gH17k/hgoxWWnDI+TiP+CAFBgkQO9cbEtxG+mFs9ywY=;
+	s=arc-20240116; t=1725807353; c=relaxed/simple;
+	bh=eHTkdr7y77ghbU7+/Khvq9iSPwLUxOqI2Sp0bsjqUWo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aCPlSUlTIh8aoH+QXPwsb2w6BFUNvORfjkbC8AoHQNVf2Bv/j7HflN89UhVpqRtbcfcAyRA6X/wv8QuIgoY/6tM6UhEpU0ubxaBsnKl8dLOTeoHN7ypZoNdIVikF17f+nhOIeC/jwJgK5HkVBLGCRzsT/IGRyb5lV9L5vxYYBY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=dDz0Rd+y; arc=none smtp.client-ip=149.28.215.223
+	 MIME-Version; b=ukYIOgkOVaC2W8qaZKFreVs86XHwh5y6rtl9Ybudxh16w4EmXMnHunYwqLh/ssHDNP353Br+Mh2wDrXZhy/IBFVLf9ZoTAo6F4/ER1kjFggw1xhv62pD9XU6OdC/GA9NGkXcNmTZRjo0sRJkkorchVSVZxxXi3g7IfaQhiHUpa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=cKDElm8h; arc=none smtp.client-ip=149.28.215.223
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
  h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
  Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1725807332; bh=s4d/+ThRHSQtfU43RCtR36kOGQZWrroV7EpFOhfrkPA=;
- b=dDz0Rd+ysMJo7E7Mp/8ntt1o7OUMS97maozuVK800alL0C7nalo7oYo02BiBtmFvibztL0h6V
- 0esFL6jjvePN3SxQgMjohPvX5NV3d38QJK9IDb1i5UFay1F7LoC6+x+V1BETArYs4QwFf6nyIWD
- jI7G/S2TDMp46puwgyQdgt5YoEOQDJrvVGLifkIOXsbFcZGwwCGSVfzd6FaB18cA/uvmNM/uf44
- A2xHypv3Vitpof6yldLNUz4pzBxitCaky3kOcq1x1LTHKyKf0UTnaAZcC483yTgP26gUqcAFV0Q
- nGJsENbQ/8W/7x4XwcR24/2fHGDKD8sfEHsUqXIkyv9Q==
+ t=1725807332; bh=ctgViwAoHsdszvG54A8azRGdEh0njwBKxxYrSAjOB98=;
+ b=cKDElm8hkD5z4aDRmrjf1JCNcgRL4B5pCSs5R0UJigy1xpP45jYyDXBkE1nFaYhrYUs/2FKWA
+ L+HlkMoh6YbZhuoHrmwJVurpAmo3teK3NvylohUiM6c8xYZ2kYc8xwOI19K/YOQUQ/QilKDn4b6
+ BZtF+DqgGwoTkm/GFo0vPOJ0ZNMb7YHWjRUf36CBF9/FEywtBbvL/q/SGTw7PORtSjIU1axCQml
+ GEWtk4VViZ/vrXBYPmeuP79/7Iecsv6LM3wEXjt6gn/qVHwTre7M3+6360b2rwa75eDyJRgA9pG
+ GJxJdXUxKZtD+3en6+sVA/flh8HTI6qSPAqG9x3wsg7g==
 From: Jonas Karlman <jonas@kwiboo.se>
 To: Heiko Stuebner <heiko@sntech.de>,
 	Sandy Huang <hjc@rock-chips.com>,
@@ -54,10 +54,10 @@ Cc: Diederik de Haas <didi.debian@cknow.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Jonas Karlman <jonas@kwiboo.se>,
-	Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v2 2/7] drm/rockchip: dw_hdmi: Adjust cklvl & txlvl for RF/EMI
-Date: Sun,  8 Sep 2024 14:54:59 +0000
-Message-ID: <20240908145511.3331451-3-jonas@kwiboo.se>
+	Nickey Yang <nickey.yang@rock-chips.com>
+Subject: [PATCH v2 3/7] drm/rockchip: dw_hdmi: Add phy_config for 594Mhz pixel clock
+Date: Sun,  8 Sep 2024 14:55:00 +0000
+Message-ID: <20240908145511.3331451-4-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240908145511.3331451-1-jonas@kwiboo.se>
 References: <20240908145511.3331451-1-jonas@kwiboo.se>
@@ -74,60 +74,32 @@ X-Complaints-To: abuse@forwardemail.net
 X-ForwardEmail-Version: 0.4.40
 X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
  149.28.215.223
-X-ForwardEmail-ID: 66ddbadf3c9877b459588e98
+X-ForwardEmail-ID: 66ddbae33c9877b459588eac
 
-From: Yakir Yang <ykk@rock-chips.com>
+From: Nickey Yang <nickey.yang@rock-chips.com>
 
-Dut to the high HDMI signal voltage driver, Mickey have meet
-a serious RF/EMI problem, so we decided to reduce HDMI signal
-voltage to a proper value.
+Add phy_config for 594Mhz pixel clock used for HDMI2.0 display modes.
 
-The default params for phy is cklvl = 20 & txlvl = 13 (RF/EMI failed)
-  ck: lvl = 13, term=100, vlo = 2.71, vhi=3.14, vswing = 0.43
-  tx: lvl = 20, term=100, vlo = 2.81, vhi=3.16, vswing = 0.35
-
-1. We decided to reduce voltage value to lower, but VSwing still
-keep high, RF/EMI have been improved but still failed.
-   ck: lvl =  6, term=100, vlo = 2.61, vhi=3.11, vswing = 0.50
-   tx: lvl =  6, term=100, vlo = 2.61, vhi=3.11, vswing = 0.50
-
-2. We try to keep voltage value and vswing both lower, then RF/EMI
-test all passed  ;)
-   ck: lvl = 11, term= 66, vlo = 2.68, vhi=3.09, vswing = 0.40
-   tx: lvl = 11, term= 66, vlo = 2.68, vhi=3.09, vswing = 0.40
-When we back to run HDMI different test and single-end test, we see
-different test passed, but signle-end test failed. The oscilloscope
-show that simgle-end clock's VL value is 1.78v (which remind LowLimit
-should not lower then 2.6v).
-
-3. That's to say there are some different between PHY document and
-measure value. And according to experiment 2 results, we need to
-higher clock voltage and lower data voltage, then we can keep RF/EMI
-satisfied and single-end & differen test passed.
-  ck: lvl =  9, term=100, vlo = 2.65, vhi=3.12, vswing = 0.47
-  tx: lvl = 16, term=100, vlo = 2.75, vhi=3.15, vswing = 0.39
-
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+Signed-off-by: Nickey Yang <nickey.yang@rock-chips.com>
 Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 ---
 v2: No change
 ---
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-index 36cc700766fd..fc5e87285a91 100644
+index fc5e87285a91..dffbae005a96 100644
 --- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
 +++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-@@ -202,7 +202,7 @@ static const struct dw_hdmi_curr_ctrl rockchip_cur_ctr[] = {
- static const struct dw_hdmi_phy_config rockchip_phy_config[] = {
- 	/*pixelclk   symbol   term   vlev*/
+@@ -204,6 +204,7 @@ static const struct dw_hdmi_phy_config rockchip_phy_config[] = {
  	{ 74250000,  0x8009, 0x0004, 0x0272},
--	{ 148500000, 0x802b, 0x0004, 0x028d},
-+	{ 165000000, 0x802b, 0x0004, 0x0209},
+ 	{ 165000000, 0x802b, 0x0004, 0x0209},
  	{ 297000000, 0x8039, 0x0005, 0x028d},
++	{ 594000000, 0x8039, 0x0000, 0x019d},
  	{ ~0UL,	     0x0000, 0x0000, 0x0000}
  };
+ 
 -- 
 2.46.0
 
