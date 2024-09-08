@@ -1,123 +1,140 @@
-Return-Path: <linux-kernel+bounces-320217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D189707B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:11:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57FA09707B5
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 631B4282302
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:11:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 180A31C213AC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B00166314;
-	Sun,  8 Sep 2024 13:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08C4166313;
+	Sun,  8 Sep 2024 13:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="dBFK7HKw"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PdUC/Uzv"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81A118E06;
-	Sun,  8 Sep 2024 13:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED061876
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 13:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725801057; cv=none; b=JJK9JuDrZRLyj3EItVpvNtI6fO2ptlLWcuD9nKeFBJM1Hw4fdu8z1C1DJbD1JBrDKOVJ1fmHQnsEm3z+tRW3MQlgUnq29OK+vleg/Dz8qfg7frni/s9GYQMmfv8h2DHFPeDUFAaalCd1AcF+J1oMWswyoTaVwE7AJvmFmfAjAJc=
+	t=1725801185; cv=none; b=Z8SW9aDnQ9lGOoY0ne3vCIl5KwU/fX0LrL25XoXZ0Tw5oEbO1E1AvHfE4o9UbuRNEI60+XBJp/EcDqddvUjUv52r/hll2Ivwg4w/T0U4eHUT7Y6ldPaldQaCq8Pg04gtjCRVWcq2oMFtB5oOAKEzGEVZrDodHsds/X0gXYGkA3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725801057; c=relaxed/simple;
-	bh=vmy3wYtA0bqBkRE7D1HK1YjHmGiijUSC5O9noOIlX2g=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=QO2Db0X+jsJPHcRhOvOKImkncFsjDDfFDC8RYsUIPL0RB3/+8KehYfqG/zQQN3yaVg0t+tcbz+v3hR3VtCufA0IHKbw2s2FsRofi+LUJDmH5XhXGXsiKbo+NSak/Of9Azw0yxChv95IgPDM4YWL/P5l/c+W3Rq0dfNp5xc4noj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=dBFK7HKw; arc=none smtp.client-ip=43.163.128.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725801052; bh=qCzKK9/NiFxsnYf3uyLTDZ/hnpDcPheM8WoJaeTXBr8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=dBFK7HKwaWne2e2Lz7fXhGYhkXcan/YSXoOEVcB8wBspuWWP4unLO2UiOsssrVXQE
-	 a0TwKcLfzdDwnSHRpVIUB7qoYAkpNQkekI2yDn3hTsUSAGQOGyvympbk+/iByBSQbu
-	 3gzyyNGLSlsGZRFeoXXTD8Aj/yorTr3R7CjBtoCs=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
-	id 2B186C72; Sun, 08 Sep 2024 21:10:49 +0800
-X-QQ-mid: xmsmtpt1725801049tj4vudcw8
-Message-ID: <tencent_3EF360A372696363B6E45AF76BD769C6CB05@qq.com>
-X-QQ-XMAILINFO: MyIXMys/8kCtp7tarnHIJG13GKqToQsjfTNkDCJSgaYxH/dIdOeXWP6Mb5W/4q
-	 ctES+x0BVaCRRWYu5bca7iiPVk26tYdrtgEh0noZK12D3429hCtSIRZu+R4S3ktbjrVQl6MOf4eB
-	 ZK0QJkj9IrZ2nj20ij8qDV705rAFMCaGFcjaYhErH2Z8vdSvi256Zlov4jEGxNj7VklylIGG1xGF
-	 10dXTeJkBGTFHXfqj7MBD19dEJFsAP40fzZNfYJkJ5gMEwqzOkElrHSuupka2ULLRlVR58GkyL9V
-	 CW8eZgtOGGrPLiwsFtYGP/6gy+qCMy8gkvZXFCO1vlPNzQ2nhxi2opiGSBor1GUc+I205sYqUNHY
-	 G1mNFHOYDBxSl97IF1D52pZ8SMSwwDrnmxLfoFWYypuBEelv0UORCGdieAggIx+u4xUZzSn/rjGe
-	 V55ak4g6aO3VXYiSly/RgGQUGSIN4YX4ejGBQsRvZZ4ICQnnl/6ggaYg6Ee/LpGlNmYeBzgRUZjG
-	 MtYXQXiAsVSEG9eYRNtTXLmDXVa3ilDCmzL0j/NoEMTXiYdqdrNoYcDliUBubGC4DvVAsvSYM8D1
-	 t9ri8B4ZoxR80ZZkAj36nP7PEBvaSeSKQIqdbN+vK6sfgk42UlJ3R91b+GOpkuTJvXDJasMQMrmk
-	 2Kl9hEkVl7Hv+whwIlGnBiAYgpD9nst1vysoc7M/clnjKwsZ/ma4wPePRfrb73GW1GKWOI2cpAAJ
-	 7yTU3kY+o4ZklsoCRU+ROoXl279uKJD+QsQos+pSoG3IbXlpq9sKL99fVY37SBTjEnaH8kUUDDTx
-	 32r1WuL41dd/zzn2u80ZB/x4TyeRS0fxB8OhLX7Uvmj08mcKsnGtDAcZAKwVKe/Qrc3qu+Lrutto
-	 CqmlxaHpWvYnaig7b7jibj6hTNYI+jeB26vceZmfVSH5uE4MWB129EavbQqUTwheG8VktiCuaiES
-	 ohYgHB6W9KAUw9O5RVUWRaFluaZgHvCGCieBXoN76zaPDfpWOi6A==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+064ce437a1ad63d3f6ef@syzkaller.appspotmail.com
-Cc: kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org,
+	s=arc-20240116; t=1725801185; c=relaxed/simple;
+	bh=NKiwk4E+1hUxFu6CCi5WcyZLUsFQZm+sYpKgdfCk1Nw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n15fl+wptAkgS1U43kPlTiJCpibRpBQm64a+KBBOwJ0xS3oNkIv9pu2kSebE9khD5S4BqQ9p5+QlDpZfhDCeehIGKanH2b6+8iS9Drd7890LvabHGER6wr0bl3PFOH7fZnUk0gYRLC3/JmwnSck77l32P2obqI68fwWMymKuHlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PdUC/Uzv; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d89dbb60bdso2398671a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 06:13:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725801183; x=1726405983; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7QFv+GNCFsI4pY6KpEfbngQLTkjwWYYfX0SGlW8YyEU=;
+        b=PdUC/UzvXFkGzgxHPfQcvvbcNIOTeyGb8uBa3mL11gmsHHTBU1oKisPGxjTfXS6GJu
+         oPeBfwhhTAZ6+tVGVCnFJBLTlCheIEf2VO82ypI4/CpCHeeb5ufdfKuMGLnDVoEMG+LO
+         JIItlygs7nnuSzx3eifPTa24gSOcTmmmlaKRShmXlcAUjTksFRSxIpLD4zv/l0XXrGLC
+         Mpg8m0kJGLbyvr5iyK+SDShct4KmCpjxRmOk9sNtUoKYA97wDdduLJ5rqKVd7270ZTSy
+         gmrqCh68b/tngU53UnEyoSuTcccwdEoWcY8/ComV5iKFGV8yBHk7zhTNhdZpRm+1RoLY
+         Ny3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725801183; x=1726405983;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7QFv+GNCFsI4pY6KpEfbngQLTkjwWYYfX0SGlW8YyEU=;
+        b=exJRZ3JeZkvwLwnEEHeHWU5fAvUsc6baCk7EB7EkZhWh3I7bdDsCDTaI8ZNWWBm+hm
+         i5VGt+j9cFDdrp4E4M2wUpC/VsPa/48dL31vVUlRgeI5PAwnyHZEsDCzyC70JNp/l4Y1
+         CrMwXCiPZAUHzuCmTnJ6ksoWkRmtvAg2BxOajGd/X1SjbU9KplDb64DhODKrhtcMqPDv
+         h0Vw2a0g1MtV51RSwHj87oOAUWAdo2XbU6IxvzsnnppzGMqQxF1dARIs5XEedfQGasuL
+         Ehih32zXyqppCj10TWpr7eHFJDjcIaSj5qTcylHHZUbS65epXgI5NHG3cCKLCdk2snJ6
+         uaPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxBXSVNNQu8gJemjFYPaOJK4iYbamHWyJiGZZDdbjRKcaUuGYKVYMsIze5wkdaspguL64xL5j2VSHRpfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO9UjLZI7BrX3rwSqZLdAxNzHdMqVVJGfQP9+f+b92qHMQGxWH
+	SzzSC6Cl4JfCaIvaAhwPcgZSkgapxOv0y6GKn5520IzKiG2ClbH0
+X-Google-Smtp-Source: AGHT+IEfAWgV1CcdDM42hBbDeFjDbTFwOWDIC4d24tE1KlukJw+3/UVvLeds94DXNOk6wgRI4B09jA==
+X-Received: by 2002:a17:90b:3846:b0:2da:89ac:75b9 with SMTP id 98e67ed59e1d1-2daffa7fcaamr6298933a91.11.1725801183059;
+        Sun, 08 Sep 2024 06:13:03 -0700 (PDT)
+Received: from localhost.localdomain (111-240-109-89.dynamic-ip.hinet.net. [111.240.109.89])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db043c3b65sm2721946a91.25.2024.09.08.06.13.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 06:13:02 -0700 (PDT)
+From: Min-Hua Chen <minhuadotchen@gmail.com>
+To: andyshrk@163.com
+Cc: airlied@gmail.com,
+	andy.yan@rock-chips.com,
+	daniel@ffwll.ch,
+	didi.debian@cknow.org,
+	dri-devel@lists.freedesktop.org,
+	heiko@sntech.de,
+	hjc@rock-chips.com,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] bcachefs: Fix oob in member_to_text
-Date: Sun,  8 Sep 2024 21:10:50 +0800
-X-OQ-MSGID: <20240908131049.1851817-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <00000000000005e6c90621278371@google.com>
-References: <00000000000005e6c90621278371@google.com>
+	linux-rockchip@lists.infradead.org,
+	maarten.lankhorst@linux.intel.com,
+	minhuadotchen@gmail.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de
+Subject: Re:Re: [PATCH] drm/rockchip: include rockchip_drm_drv.h
+Date: Sun,  8 Sep 2024 21:12:37 +0800
+Message-ID: <20240908131237.741-1-minhuadotchen@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <175266d5.2a89.191cbb2a62e.Coremail.andyshrk@163.com>
+References: <175266d5.2a89.191cbb2a62e.Coremail.andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Because the value of m.btree_bitmap_shift is 69 in this case, it cause
-shift-out-of-bounds in member_to_text.
+>>  DTC     arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-kb.dtb
+>>  DTC     arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-wifi.dtbo
+>>  DTC     arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-lte.dtb
+>>  DTC     arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6b-io.dtb
+>>  DTC     arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dtb
+>>  DTC     arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9.dtb
+>>../init/main.c:192:12: sparse: warning: symbol 'envp_init' was not declared. Should it be static?
+>>../init/main.c:290:16: sparse: warning: cast to restricted __le32
+>>../init/main.c:291:16: sparse: warning: cast to restricted __le32
+>>  CHECK   ../init/do_mounts.c
+>
+>>
+>
+>
+>I can see same warnings， a lots of。
+>And also see the warning in vop2：
+>drivers/gpu/drm/rockchip/rockchip_vop2_reg.c:502:24: sparse: warning: symbol 'vop2_platform_driver' was not declared. Should it be static?
+>
+>
+>Min Hua，If you are agree，I will split it from my patch， and add a Fix tag ，and also add a SoB of you， Then resend in My V3 series，this
+>will make my patch series easier。
 
-Add a check for btree_bitmap_shift in validate_member, when it is greater
-than or equal to 64 return -BCH_ERR_invalid_sb_members.
-Simultaneously adjust the output mode of btree_bitmap_shift in member_to_text.
+It looks good to me. Thank you and Diederik for commenting.
 
-Reported-and-tested-by: syzbot+064ce437a1ad63d3f6ef@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=064ce437a1ad63d3f6ef
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/bcachefs/sb-members.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+cheers,
+Min-Hua
 
-diff --git a/fs/bcachefs/sb-members.c b/fs/bcachefs/sb-members.c
-index 39196f2a4197..c9daab47f886 100644
---- a/fs/bcachefs/sb-members.c
-+++ b/fs/bcachefs/sb-members.c
-@@ -162,6 +162,12 @@ static int validate_member(struct printbuf *err,
- 		return -BCH_ERR_invalid_sb_members;
- 	}
- 
-+	if (m.btree_bitmap_shift >= 64) {
-+		prt_printf(err, "device %u: too many big bitmap shift (got %u, max 64)",
-+			   i, m.btree_bitmap_shift);
-+		return -BCH_ERR_invalid_sb_members;
-+	}
-+
- 	return 0;
- }
- 
-@@ -245,8 +251,7 @@ static void member_to_text(struct printbuf *out,
- 		prt_printf(out, "(none)");
- 	prt_newline(out);
- 
--	prt_printf(out, "Btree allocated bitmap blocksize:\t");
--	prt_units_u64(out, 1ULL << m.btree_bitmap_shift);
-+	prt_printf(out, "Btree allocated bitmap shift: %d\t", m.btree_bitmap_shift);
- 	prt_newline(out);
- 
- 	prt_printf(out, "Btree allocated bitmap:\t");
--- 
-2.43.0
-
+> >And several followed, including in c-code files. So I stopped the build
+>>and assume you've identified a or several actual issues.
+>>
+>>I've seen several commits where changes were made because LLVM flagged
+>>potentially problematic code, where GCC did not, so it's quite possible
+>>you're on to something here.
+>>
+>>But it would be helpful if the commit message said what code was
+>>potentially problematic and why. And then the proper fix for that could
+>>indeed be to include `rockchip_drm_drv.h`.
+>>
+>>Cheers,
+>>  Diederik
 
