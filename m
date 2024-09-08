@@ -1,236 +1,229 @@
-Return-Path: <linux-kernel+bounces-320056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73C89705AD
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:12:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0574D9705B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EA3C1F21ED5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:12:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B14AB282E08
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6BE7DA94;
-	Sun,  8 Sep 2024 08:12:28 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718BD12AAE2;
+	Sun,  8 Sep 2024 08:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pclr3fWN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E664B5C1
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 08:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FA5F9F5;
+	Sun,  8 Sep 2024 08:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725783148; cv=none; b=D+UQUhwX/AQVbT6X3ot0cwQ9FC6+p38c92UXkd4OglcCz+vEwm/xga2FhfCc9dR3R6OJGX6tigULIpGLBzoMIRXRBDITGJfBIq/ojHkVxy1K+Bk4h26i0g6PMLEVlbROUZPAkEWqEfdnF42gf0vG5hsD4Clac6oSi20dgh6MLyI=
+	t=1725783242; cv=none; b=EhhRpltLvhYK6rOMaNI3OUjtMfZqrOnBJ+wuE0D2+50FO0SdhtNyQIc4/aTiiE3lcyRsn3KAV2gR5b1Mj4FRj9wejsNsfMV3dZUtEQccAHFHI977ZGKTKd0yxZyKartAOcXDZ0kT0ep+lg4OD3b0P1ks1MckZg5P75Ha7gnpAOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725783148; c=relaxed/simple;
-	bh=kyePYKOFDQL+5mXF1w2Q/Uxe3QCbgrcrKYOqYih5jes=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iVRdiLUvs4gvgJENhRevmwnEV1G1RLRzJs2DtQB9DkQWhCVl/teKqXft9Eu1pJd9w1/52K0St6xbs8rhtSHBTEloGghAmtDcR+zyy/lk42jQHUTJv+Rp7mUAZiqGXTGKuZo454mukiYYh18vupGemSiKHcViofohpyPsLtB1CgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a04c2472f6so57397815ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 01:12:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725783146; x=1726387946;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e6zkXL6M85HDpU3e6kg1bEucVPuZexPj9yvmKku646o=;
-        b=PP6aMUuUVYxDME17YLtAptLT9+A0UZh0uBLLCqcjMNBVci9BZcBYNQ8oWwYpliXr4L
-         dQNmDmqfQIt0Fz00bVOdGa6K+WcmcMQhsspRZSv4znK2w/9aIHYALVDc8Cch7u5youpN
-         1oFK5NejnsNItcWZQdCL/VkbbPxB3358BxNRrbJGJVl92I16UQKlKKQTi0kI1aGtsMaf
-         c+on4nh57k6R3lhxhbrVZdnmyI1hAt3Yzmu4AAInJiFWOyMJpVf5llB946jXzNaWpXMm
-         iRfjbxc8KL+71N7XFy/Wo34rx7JUjGcduEwk0FrV4jYSQiTEfRkUBIlO2FoZcfXOiQt0
-         +32A==
-X-Forwarded-Encrypted: i=1; AJvYcCXWWngjeq7fHSyC9GND1UZLfGhFyT9tSXQAXVcb0PwCW9krQ4aUUYppRX2fc666U/mlY+v5qizCjunuexk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymB8mbI9X+m7xVV2MlCoJhx7HPN5LmyikaRNJo1XjaMXn/2FpM
-	igikywHWpceuQAPJFHXLVG82EOmYFdl1DN7rJsXmBnaSxToJ0i/eI90tVQ0h0EmP4iuOJ7DR04k
-	8InPciN2wNeYHEYzOCPgBplfyfwuy5G4vCs2TI69gtxsiInypU4uigbY=
-X-Google-Smtp-Source: AGHT+IHX5E7ARNZRNjQXWYsaEFPDYFA+o52IjvnN2dB/X4I6GJJk0W9cIok9iF3h7hLu9LoRvCdYKyZXiGmxhlTCEaTs05iLRDNa
+	s=arc-20240116; t=1725783242; c=relaxed/simple;
+	bh=lk3y3r9rCVBETAKY3ZTOr+TpiAyeqn8OZ0JuF1RrzBI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uaphcUv2brAgMBhdjLuG2XX+F48WKPXAVoKVtTAC5OuDXXGSHvkv6195ELnPhhSkU7HeFY++vUOA0VYieSXWVZT8RNEkhPYwIysYmMjCsoj4405n5kd/yyfILChajYQv6vlkV1q5GOq50BnvWcmdPtchQo5qnNB9xyD8WVdKj+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pclr3fWN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA59EC4CEC3;
+	Sun,  8 Sep 2024 08:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725783242;
+	bh=lk3y3r9rCVBETAKY3ZTOr+TpiAyeqn8OZ0JuF1RrzBI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Pclr3fWNCXyFvmnW7/dKCy75j6qc38ImoqMgkG1VKgZVu6ir2YWdCkVJSGVutF1h/
+	 7Z+pwlL/HL/pO4puQt6uGk82kbye2biFWZIrjSePMKFNcsbfa+g6MnFuOZmf8H8kn6
+	 dpcReWjafb+rcFGUdGNfJiG4fWSQl5WDZrVyOlS2ff/4PynEeBYETKI5QLRr3nDGKz
+	 SGDB8SWqQPaheNsS3Dz8Dmi38VmBnYZpC4IMPsqyPbK5gS+b1UYOecahBx7RRATE/A
+	 X4v+f2smG7vP0Yl3N7iJsRwJe8dHCqG3TE8liCxab+JXSE0Av8gOonotjfxgPPsqYZ
+	 Xt8yru/lucckw==
+Message-ID: <77d41268-30e3-48a5-b611-40f586586ffb@kernel.org>
+Date: Sun, 8 Sep 2024 10:13:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1386:b0:381:40be:4ce6 with SMTP id
- e9e14a558f8ab-3a04f09be4cmr98368985ab.11.1725783145775; Sun, 08 Sep 2024
- 01:12:25 -0700 (PDT)
-Date: Sun, 08 Sep 2024 01:12:25 -0700
-In-Reply-To: <0000000000000311430620013217@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005d1b320621973380@google.com>
-Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/9] dt-bindings: Add documentation for Photonicat PMU
+To: Junhao Xie <bigfoot@classfun.cn>
+Cc: devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ "\"Conor Dooley,\"," <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
+ Chukun Pan <amadeus@jmu.edu.cn>
+References: <20240906093630.2428329-1-bigfoot@classfun.cn>
+ <20240906093630.2428329-9-bigfoot@classfun.cn>
+ <dbc6af20-886a-46fb-a16c-dbcb5861478c@kernel.org>
+ <cd0b36f4-f31d-4a65-868c-72b3c7021f14@classfun.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <cd0b36f4-f31d-4a65-868c-72b3c7021f14@classfun.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot has found a reproducer for the following issue on:
+On 07/09/2024 16:27, Junhao Xie wrote:
 
-HEAD commit:    df54f4a16f82 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=12bdabc7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dde5a5ba8d41ee9e
-dashboard link: https://syzkaller.appspot.com/bug?extid=51cf7cc5f9ffc1006ef2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1798589f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a30e00580000
+>>> +
+> [...]
+>>> +  local-address:
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    minimum: 1
+>>> +    maximum: 127
+>>> +    default: 1
+>>> +    description: CPU board address
+>>
+>> Address of what? In which notation? It's part of this hardware.
+>>
+> 
+> Photonicat's MCU protocol documentation says it supports multiple hosts.
+> But Photonicat only uses one.
+> Is it necessary to remove local-address and use a fixed address?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/aa2eb06e0aea/disk-df54f4a1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/14728733d385/vmlinux-df54f4a1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/99816271407d/Image-df54f4a1.gz.xz
+I don't understand what this "address" is for.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com
+> 
+>>
+>>> +
+>>> +  remote-address:
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    minimum: 1
+>>> +    maximum: 127
+>>> +    default: 1
+>>> +    description: PMU board address
+>>
+>> Eee, no. Your board knows its address. You do not have to tell it.
+> 
+> I will remove remote-address.
+> 
+>>
+> [...]
+>>> +
+>>> +patternProperties:
+>>> +  '^leds-(status)':
+>>
+>> That's not a pattern.
+>>
+> 
+> I originally wanted to keep it for extensions, but it didn't seem like a good idea.
+> I will move it to properties.
+> 
+>>> +    $ref: /schemas/leds/ariaboard,photonicat-pmu-leds.yaml
+>>> +
+>>> +  '^supply-(battery|charger)$':
+>>> +    $ref: /schemas/power/supply/ariaboard,photonicat-pmu-supply.yaml
+>>
+>> Why two nodes?
+>>
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +      serial {
+>>> +          photonicat-pmu {
+>>> +              compatible = "ariaboard,photonicat-pmu";
+>>> +              current-speed = <115200>;
+>>> +              local-address = <1>;
+>>> +              remote-address = <1>;
+>>> +
+>>> +              supply-battery {
+>>> +                  compatible = "ariaboard,photonicat-pmu-supply";
+>>> +                  label = "battery";
+>>
+>> Nope, drop label.
+>>
+>>> +                  type = "battery";
+>>
+>> No, there is no type property.
+> 
+> There are two supplies here, one is the charger and the other is the battery.
+> Is it necessary to change to use different compatible ones like
+> ariaboard,photonicat-pmu-battery and ariaboard,photonicat-pmu-charger?
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc5-syzkaller-gdf54f4a16f82 #0 Not tainted
-------------------------------------------------------
-syz-executor272/6388 is trying to acquire lock:
-ffff8000923b6ce8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
+Are the devices different? Why do you even need the type?
 
-but task is already holding lock:
-ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x178/0x10fc net/smc/af_smc.c:3064
+> 
+>>
+>> Missing monitored battery.
+>>
+> 
+> I will add it.
+> 
+>>> +              };
+>>> +
+> [...]
+>>> +
+>>> +              watchdog {
+>>> +                  compatible = "ariaboard,photonicat-pmu-watchdog";
+>>> +              };
+>>
+>> These are seriously redundant and useless nodes.  There is nothing
+>> beneficial from the nodes above - they are all empty, without resources.
+>> Drop all of them.
+> 
+> How should I describe these devices? Using mfd_cell?
 
-which lock already depends on the new lock.
+You mean drivers? MFD or auxiliary bus.
 
+Best regards,
+Krzysztof
 
-the existing dependency chain (in reverse order) is:
-
--> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
-       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
-       __mutex_lock kernel/locking/mutex.c:752 [inline]
-       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
-       smc_switch_to_fallback+0x48/0xa80 net/smc/af_smc.c:902
-       smc_sendmsg+0xfc/0x9f8 net/smc/af_smc.c:2779
-       sock_sendmsg_nosec net/socket.c:730 [inline]
-       __sock_sendmsg net/socket.c:745 [inline]
-       __sys_sendto+0x374/0x4f4 net/socket.c:2204
-       __do_sys_sendto net/socket.c:2216 [inline]
-       __se_sys_sendto net/socket.c:2212 [inline]
-       __arm64_sys_sendto+0xd8/0xf8 net/socket.c:2212
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
-       lock_sock_nested net/core/sock.c:3543 [inline]
-       lock_sock include/net/sock.h:1607 [inline]
-       sockopt_lock_sock+0x88/0x148 net/core/sock.c:1061
-       do_ip_setsockopt+0x1438/0x346c net/ipv4/ip_sockglue.c:1078
-       ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
-       raw_setsockopt+0x100/0x294 net/ipv4/raw.c:845
-       sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
-       do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
-       __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
-       __do_sys_setsockopt net/socket.c:2356 [inline]
-       __se_sys_setsockopt net/socket.c:2353 [inline]
-       __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #0 (rtnl_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain kernel/locking/lockdep.c:3868 [inline]
-       __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
-       lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
-       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
-       __mutex_lock kernel/locking/mutex.c:752 [inline]
-       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
-       rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
-       do_ip_setsockopt+0xe8c/0x346c net/ipv4/ip_sockglue.c:1077
-       ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
-       tcp_setsockopt+0xcc/0xe8 net/ipv4/tcp.c:3768
-       sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
-       smc_setsockopt+0x204/0x10fc net/smc/af_smc.c:3072
-       do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
-       __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
-       __do_sys_setsockopt net/socket.c:2356 [inline]
-       __se_sys_setsockopt net/socket.c:2353 [inline]
-       __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-other info that might help us debug this:
-
-Chain exists of:
-  rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&smc->clcsock_release_lock);
-                               lock(sk_lock-AF_INET);
-                               lock(&smc->clcsock_release_lock);
-  lock(rtnl_mutex);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor272/6388:
- #0: ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x178/0x10fc net/smc/af_smc.c:3064
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 6388 Comm: syz-executor272 Not tainted 6.11.0-rc5-syzkaller-gdf54f4a16f82 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
- dump_stack+0x1c/0x28 lib/dump_stack.c:128
- print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2059
- check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain kernel/locking/lockdep.c:3868 [inline]
- __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
- lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
- __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
- __mutex_lock kernel/locking/mutex.c:752 [inline]
- mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
- rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
- do_ip_setsockopt+0xe8c/0x346c net/ipv4/ip_sockglue.c:1077
- ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
- tcp_setsockopt+0xcc/0xe8 net/ipv4/tcp.c:3768
- sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
- smc_setsockopt+0x204/0x10fc net/smc/af_smc.c:3072
- do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
- __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
- __do_sys_setsockopt net/socket.c:2356 [inline]
- __se_sys_setsockopt net/socket.c:2353 [inline]
- __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
