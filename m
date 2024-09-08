@@ -1,123 +1,135 @@
-Return-Path: <linux-kernel+bounces-320006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677629704FD
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 05:25:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E997F9704FE
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 05:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 932541C212BB
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 03:25:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76FAAB21B9F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 03:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6DE36B17;
-	Sun,  8 Sep 2024 03:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgSr9YUl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFB42B9B3;
+	Sun,  8 Sep 2024 03:26:11 +0000 (UTC)
+Received: from smtp134-33.sina.com.cn (smtp134-33.sina.com.cn [180.149.134.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B1F45C0B;
-	Sun,  8 Sep 2024 03:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DBB22638
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 03:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725765919; cv=none; b=LTNoKVWitu6JjMNPG7TRqwO/+lb0IvtK3YrJ5ERcqaarJg72Pnea9IRCt+fiIlkIMuRhq28uYhlScuDRuGVYZVadDl+POWgwqyN3GOHKQv0Q7JEJ36GC6JnccmIQTFOif1RrDeDsVMww0zwGlWSWk6uCJROGlGVmxrmk2eZDwr8=
+	t=1725765970; cv=none; b=CW49S+Z5cQkHXFMyJzrSYae8U0mmRTyQGo5DT/USEXTR3vNMyO+MSxfAoen5iIr9ZMuJPBflWTom0maolZCVRVzcyS859KySgB0m+HTQSc8md8i2CBFOiXvuLONVNlCNVK5m+RBf5oiOLJnpw/U+1958vRUUvcpLaRBaS3WQTYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725765919; c=relaxed/simple;
-	bh=izGX5IudWXgEPrTjrFt+ZvVIsIuXuq42/A8TQru98MI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KNJPXLWtW9cwGdzDWlqKanODutkSmzprLbBqbaI9B1Yj2H1kz48/c8wMpM3CTCn4PQ/jH+nkUrQY9qUOoN9a7fOzx5nJJ8vw3Ir+owQmI9XjRRsaps3LQouVHGgq6KvSJ+EhqNVdpzsIidNmE/CjBOZC8ixm/pQ8+WDmueJK2EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgSr9YUl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF81C4CEC4;
-	Sun,  8 Sep 2024 03:25:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725765919;
-	bh=izGX5IudWXgEPrTjrFt+ZvVIsIuXuq42/A8TQru98MI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bgSr9YUl3ec2QDIJBhlp9ubWExTyxIkzDjQN8a9tGQFMqFE/HCfJF+2j6BqWybUQ4
-	 rxAWSxKi9BrdJndn7N+koNEgWja7ktN6MPpupqSUMosOrMtJZK4k/4MrnZqIu1IcZ6
-	 +TIIIyn/xxJ0TeV1W2nGXcugc+abm6flwytC+s6f9fP/72+4uVUM7wI+SSUjD5uXQH
-	 HsWTfoKQDwDLS9IPk0pZI2L86uv7Ld9DbJa1V2BFMcbKI9Ci+UuIR6oYTPvP9gNnom
-	 EEOFI81IAdmB7Jvj+CZUOtt2m6ZZDJWlCMoHO/GB81BUj22Dyh+d/5+PB5kKTJKVpZ
-	 K3Mm26tEWtq3Q==
-Date: Sat, 7 Sep 2024 22:25:16 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/7] iommu/arm-smmu-qcom: apply num_context_bank fixes
- for SDM630 / SDM660
-Message-ID: <ptugcisjsh6mdnkhrdhbtetykjpeya4epmlbqbuayst5efgjq4@mzan2bvz74r7>
-References: <20240907-sdm660-wifi-v1-0-e316055142f8@linaro.org>
- <20240907-sdm660-wifi-v1-1-e316055142f8@linaro.org>
+	s=arc-20240116; t=1725765970; c=relaxed/simple;
+	bh=+vPd2FYmwdp+ujT82fQtwcQQs8nbSJnHG2HvVKwJXT0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=oZWZmN8w8AcnyGNc/sEbUubprwJ369+dJG0NOXVfsiVcEblemsTIZhOGu4107wjd3AmfKVHhK+vb1LIZI2uyMeF9MNZul/2VLCwRy5QiJc0b14ykNgA2WSuxHhUt3vhblirr7CsFpMQ3nbCiF5DYSgj4S7jXO4sA7p8S+9bLsts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.65.196])
+	by sina.com (10.185.250.21) with ESMTP
+	id 66DD193E0000313C; Sun, 8 Sep 2024 11:25:52 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9152453408424
+X-SMAIL-UIID: 5F131371AFAA4602B3D14B7C6CA5A000-20240908-112552-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect (2)
+Date: Sun,  8 Sep 2024 11:25:40 +0800
+Message-Id: <20240908032540.2276-1-hdanton@sina.com>
+In-Reply-To: <0000000000004a130a0621888811@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240907-sdm660-wifi-v1-1-e316055142f8@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 07, 2024 at 09:48:12PM GMT, Dmitry Baryshkov wrote:
-> The Qualcomm SDM630 / SDM660 platform requires the same kind of
-> workaround as MSM8998: some IOMMUs have context banks reserved by
-> firmware / TZ, touching those banks resets the board.
+On Sat, 07 Sep 2024 07:42:26 -0700
+> syzbot has found a reproducer for the following issue on:
 > 
-> Apply the num_context_bank workaround to those two SMMU devices in order
-> to allow them to be used by Linux.
-> 
-> Fixes: b812834b5329 ("iommu: arm-smmu-qcom: Add sdm630/msm8998 compatibles for qcom quirks")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> HEAD commit:    788220eee30d Merge tag 'pm-6.11-rc7' of git://git.kernel.o..
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1304189f980000
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+#syz test
 
-> ---
->  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> index 087fb4f6f4d3..13a3e3585c89 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> @@ -288,6 +288,12 @@ static int qcom_smmu_cfg_probe(struct arm_smmu_device *smmu)
->  	 */
->  	if (of_device_is_compatible(smmu->dev->of_node, "qcom,msm8998-smmu-v2") && smmu->num_context_banks == 13)
->  		smmu->num_context_banks = 12;
-
-This should now be wrapped in {}
-
-Regards,
-Bjorn
-
-> +	else if (of_device_is_compatible(smmu->dev->of_node, "qcom,sdm630-smmu-v2")) {
-> +		if (smmu->num_context_banks == 21) /* SDM630 / SDM660 A2NOC SMMU */
-> +			smmu->num_context_banks = 7;
-> +		else if (smmu->num_context_banks == 14) /* SDM630 / SDM660 LPASS SMMU */
-> +			smmu->num_context_banks = 13;
-> +	}
->  
->  	/*
->  	 * Some platforms support more than the Arm SMMU architected maximum of
-> @@ -350,6 +356,11 @@ static int qcom_adreno_smmuv2_cfg_probe(struct arm_smmu_device *smmu)
->  	/* Support for 16K pages is advertised on some SoCs, but it doesn't seem to work */
->  	smmu->features &= ~ARM_SMMU_FEAT_FMT_AARCH64_16K;
->  
-> +	/* TZ protects several last context banks, hide them from Linux */
-> +	if (of_device_is_compatible(smmu->dev->of_node, "qcom,sdm630-smmu-v2") &&
-> +	    smmu->num_context_banks == 5)
-> +		smmu->num_context_banks = 2;
-> +
->  	return 0;
->  }
->  
-> 
-> -- 
-> 2.39.2
-> 
+--- l/net/bluetooth/l2cap_core.c
++++ c/net/bluetooth/l2cap_core.c
+@@ -1747,6 +1747,8 @@ static void l2cap_unregister_all_users(s
+ 	}
+ }
+ 
++static DEFINE_MUTEX(l2cap_conn_del_mutex);
++
+ static void l2cap_conn_del(struct hci_conn *hcon, int err)
+ {
+ 	struct l2cap_conn *conn = hcon->l2cap_data;
+@@ -1797,8 +1799,10 @@ static void l2cap_conn_del(struct hci_co
+ 	if (conn->info_state & L2CAP_INFO_FEAT_MASK_REQ_SENT)
+ 		cancel_delayed_work_sync(&conn->info_timer);
+ 
++	mutex_lock(&l2cap_conn_del_mutex);
+ 	hcon->l2cap_data = NULL;
+ 	conn->hchan = NULL;
++	mutex_unlock(&l2cap_conn_del_mutex);
+ 	l2cap_conn_put(conn);
+ }
+ 
+@@ -7480,11 +7484,21 @@ void l2cap_recv_acldata(struct hci_conn
+ 	struct l2cap_conn *conn = hcon->l2cap_data;
+ 	int len;
+ 
+-	if (!conn)
++	if (!conn) {
+ 		conn = l2cap_conn_add(hcon);
+-
+-	if (!conn)
+-		goto drop;
++		if (!conn)
++			goto drop;
++		l2cap_conn_get(conn);
++	} else {
++		mutex_lock(&l2cap_conn_del_mutex);
++		conn = hcon->l2cap_data;
++		if (conn)
++			if (!kref_get_unless_zero(&conn->ref))
++				conn = NULL;
++		mutex_unlock(&l2cap_conn_del_mutex);
++		if (!conn)
++			goto drop;
++	}
+ 
+ 	BT_DBG("conn %p len %u flags 0x%x", conn, skb->len, flags);
+ 
+@@ -7512,6 +7526,7 @@ void l2cap_recv_acldata(struct hci_conn
+ 		if (len == skb->len) {
+ 			/* Complete frame received */
+ 			l2cap_recv_frame(conn, skb);
++			l2cap_conn_put(conn);
+ 			return;
+ 		}
+ 
+@@ -7576,6 +7591,8 @@ void l2cap_recv_acldata(struct hci_conn
+ 
+ drop:
+ 	kfree_skb(skb);
++	if (conn)
++		2cap_conn_put(conn);
+ }
+ 
+ static struct hci_cb l2cap_cb = {
+--
 
