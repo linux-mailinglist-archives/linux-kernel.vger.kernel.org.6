@@ -1,130 +1,295 @@
-Return-Path: <linux-kernel+bounces-319989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C385C9704C7
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:27:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA239704C5
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 767B51F21FF0
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 02:27:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835AF282D80
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 02:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065071C687;
-	Sun,  8 Sep 2024 02:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B6F18E06;
+	Sun,  8 Sep 2024 02:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="dWn5CaKJ"
-Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oq3CsNEn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F761C6A3;
-	Sun,  8 Sep 2024 02:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.236
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725762439; cv=none; b=My2Rk5vfXlaSw1j1rWFRAw9fTiN6njylrg4y+MVrtm8duVfBje6rSot8lg4V7yRjnTOllqeHSeLwGFCFqZ3cRu26bvqVYKoLpP0H1QdRZV1BgxqBuOHeKIRLeZ/ni6WUOVqhg0b/0qXjNiWrx45EBLdc0AmM3BzF4QkkP+OBGzk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725762439; c=relaxed/simple;
-	bh=AR5x396hMeoSem05Pk2AvKmRJ6WuVPoQprpA1QtXPj4=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=qRRCdUzrXW4d315uapeyKiAw5y3DxH8RoqyXjTfg7TMoCn+Guhwe9nOiTxyw+TK37HUOnOCQI19NJ28T7ajGQCE7LeHKFm6L2TaZmuJDCnYoE6bP92lPdYBDUT/qelaaViW6yRx+TObVun4efrH1utmT+oQhhNJhVLGqqQI1ne0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=dWn5CaKJ; arc=none smtp.client-ip=203.205.221.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725762428; bh=UudtNL88LUJ3NB8arAYr34hP2OIPJIAhi9QV+4JSPGw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=dWn5CaKJ6vXwXGxkWqX98nFa3qlhbhkomVGhP+D617fhnWbmVHyi+UDbR8QH1G5f2
-	 VtEHC/PPukv9hFEAntQkghe6DOp8gvtyDrx7E3dSf2i2TCZ978PJVjZHeNnj1hn31h
-	 qJoUkPzYjkKYNQRPtJZvOniwLWXz+mDaFlJR+nhw=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 53915208; Sun, 08 Sep 2024 10:20:57 +0800
-X-QQ-mid: xmsmtpt1725762057tsgdbm3ks
-Message-ID: <tencent_5F7E6CD82F3D6FB49414E9D6EC3ACCFC780A@qq.com>
-X-QQ-XMAILINFO: MfTIjKnZiIhe9l50zj7PLAadxBLycdpkrfqd8JFMvsnwZlST30ze3ifXbumsKz
-	 RbEiZ9MHIg18vHSapTnvOFazYfWxCliB4sNBbCZI2dBbd39LSsYzrKJB7AcERkWHKHjo6kPEOJX4
-	 0ZWWuwVKr8VpihgZsegcRDFttNhjqwX5b+95y5IT9b43sp1HEFEHvtT+2aicDgHYqU5qC6gkCFKh
-	 fsDi8Nt3EfkQiqQfBDWEiBhhyYWe6z/s03nrjnZDv9PYaHo8FI+e4EenB/PIyGArkA2S+v58HG33
-	 Fj8LmUZG+GOED8s6MYTXy89da8wHovJWi0ecW8Fv+G0LXRKGa7RAX9sBJRotuyYaUxveJ6Yg9gbI
-	 OQfNsCHCrsGt8grMPPaUk2MjS/8Joyazk3gR1YdGy+bjkrKEfJ3F17NvB1F0gi5Glpobe5M+cAP0
-	 RVazcRSmU45EWO+ad20IYFxOFhh2y0TUQPSvHf4g9REo8b/TTw+jbiAerD0iSDX5A7N0RRO146Xj
-	 Drz4T839hayCP+1VxReDTTSdvgbLkxJyTybll+hXQc4ra+SECoNQYJ/n8xikEWys2QGhbwzQ5Frw
-	 pR6E5If/Y74dp6IHRkqrOnwhBLgvrL8wc/IjkvEyT5xjIyPTLiS/Ft3frDNGBlpZdqAngfRH/Spx
-	 2/XNAB4eHHENl6iuGldyMibeh0P8bKkgsMzPF5Vz+jcUdTHtKRp5VSiSngT0wWpwMiI+j7G2lnaR
-	 I2sXQEBPZRae8boEx8d8B/zoTtasd0uKqc/aP+LPezYweGkkLdzsYWRqcXRcW7Hqm0ehsWjmZdqN
-	 WpOqNLewhtIU+UFuP9X+eqStXXtbAGeVx9CTqPolA3XHrAJ/LH45Fp+XpXSrS1EH6/oGVIlrFbW5
-	 UQR2NRW7zufK+LoRvCJNGBihEKnIGn3YCqQYBurnkiS69gDPRm1JDoT9k4dmGCfEOMfi+vBJRPI7
-	 hZ6ghN9RO+qCahtoP6deL3jrnABq9M
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: stern@rowland.harvard.edu
-Cc: eadavis@qq.com,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V3] USB: usbtmc: prevent kernel-usb-infoleak
-Date: Sun,  8 Sep 2024 10:20:57 +0800
-X-OQ-MSGID: <20240908022056.1286558-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <3b4b8e7f-57b2-4ca1-8dc1-63faef573df3@rowland.harvard.edu>
-References: <3b4b8e7f-57b2-4ca1-8dc1-63faef573df3@rowland.harvard.edu>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE7824B28;
+	Sun,  8 Sep 2024 02:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725762265; cv=fail; b=phu/H89TWlH27KxpY58Vy0NqaSnugtMadXhFr4NKA/ZdfaDvBQInK/uiSI/QF2/WLqScaEqca0jeWh7EN1++5emiGSDTnlay5f5W1d8X2MeeiEwgVukH+o2zL2mb3MOWwOMIwiw6RkD4k2hPXulZkgHKxEszHvDXyZYV9ObgNx4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725762265; c=relaxed/simple;
+	bh=CQTH29FyN34M3Q6s36wMjJnh2SoLx9BSd4aLbr7qfS4=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bWASlZykB/xf9vmhXK5NeuqY2+ABYgqzJifrkNpUdZjjdhZ/w1ue0p7l5pg1SOK2tdJBBTOfD2sGDJf5wjfRYM4KDfoLGkrYZP3t63JmmpXrBQ/WjP87vgDDwubIT5CkuqGfvLS4xV3bvmlmwyDzRGRRvIFhqM1iN1dg8X93xic=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oq3CsNEn; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725762263; x=1757298263;
+  h=date:from:to:cc:subject:message-id:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=CQTH29FyN34M3Q6s36wMjJnh2SoLx9BSd4aLbr7qfS4=;
+  b=Oq3CsNEnXHZDQ5uF4lKSAJWGisg+tq0rUjrVnKKcIkcK3BQby8a7UoIJ
+   /mCrjh4+IV7a72fFjzhZXeLMB6CHaLQc8xZusbNu/SxBGztOCE3wu3IXI
+   Z+wQ76FhXi69O+IVUAkgfiFPQRbj+eLMYzbKFF0CmPdR7OOhle2diX/VG
+   gLYXy60hO67To4SGbLawPDsFmRof030A744jnoEtFroV/uIPT9z9TwQ4o
+   Ma+EEuP9dNCLMgiZImvDc7AtdT8XBZBBEWgk/VFwNDF3CmFnR/+OJcAaM
+   ZXhRwLiZh+ywzW3s2J4rBs6IDXSTlFWIHFzDudKgxxprQhSEPxEBVIfUh
+   A==;
+X-CSE-ConnectionGUID: lT44jyGRTHCwF2u1vT76gw==
+X-CSE-MsgGUID: iIdZevbuQuyPGEvXdmJk/Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="28223751"
+X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
+   d="scan'208";a="28223751"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 19:24:23 -0700
+X-CSE-ConnectionGUID: crAB66qwTcK421bPOAon9g==
+X-CSE-MsgGUID: ird9zRqeRG+9uR9tHHlzKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
+   d="scan'208";a="70442671"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Sep 2024 19:24:22 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sat, 7 Sep 2024 19:24:21 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sat, 7 Sep 2024 19:24:21 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Sat, 7 Sep 2024 19:24:21 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.172)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sat, 7 Sep 2024 19:24:21 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QpUJMV4yQ2BBtte4i3qHG4PUtACTQeJYk3Y12x5VvTamrWje35H6/pV1QzAdp2hulzfEgs60RD4GgyhtR6gapWGEDTb7pa9s8UujkCax0JE2egMFhwPsjsnHWrWlIv+t4Swg9cfl8UrclNbERsUnRL04pOXud53489wmWdIzzw01FFg/9IGotnG7xwNOmgw93LfZQBCbOeZvsexBNrX2EKF53/t5XNnJGC8NImA8oTD9JkzilKVvBcbtxETtlb7/fSs0sljoLCsFleEjo3dach/glJq2nRoLSnqdqmJJeTG5QGk1bedU3OQ5cKt9Z5EXB+rwCSmVdB/nQ0QPKLpZsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kJzaCHnlGFDKi60nRIg6Bc5nzu64aX+gwpMjnkOZUcM=;
+ b=rQ6PY04y8ILHsYY5dTiWPtFg6W3Qto+HRaNcbNyRmUaRreSkm8Jf+Kc/rq+D4TXKJU7ZsxFSy2NItkewJqHJgUk9zSgYON87rkPo+yUiyIfYrBwKgpvoKPpk0tFT9+C60ZNwnKlYQV7D/YAztaWNphSvXnTvKrWaMqo0K0opnWh1MZ+N3mwk/VK3Bd6HueSZYEpLJgI+xz11JRdUWDDhJMVVXChQP2QqOcxCk0inM7maROu42uRC93K8rGeJFzgevOde4/dOy987V8TflbPyvoqlMPZfMjBgthBrwRccBWiw7HVS3h/RtcjncceFD8LuDotFEGHSg7muIeSoRKRA/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB5423.namprd11.prod.outlook.com (2603:10b6:5:39b::20)
+ by PH0PR11MB5208.namprd11.prod.outlook.com (2603:10b6:510:3b::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Sun, 8 Sep
+ 2024 02:24:18 +0000
+Received: from DM4PR11MB5423.namprd11.prod.outlook.com
+ ([fe80::dffa:e0c8:dbf1:c82e]) by DM4PR11MB5423.namprd11.prod.outlook.com
+ ([fe80::dffa:e0c8:dbf1:c82e%5]) with mapi id 15.20.7918.024; Sun, 8 Sep 2024
+ 02:24:18 +0000
+Date: Sun, 8 Sep 2024 10:24:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
+	<peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, Davidlohr Bueso
+	<dave@stgolabs.net>, Shuah Khan <skhan@linuxfoundation.org>
+CC: <oe-kbuild-all@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <kernel-dev@igalia.com>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
+Subject: Re: [PATCH v2] selftests/futex: Create test for robust list
+Message-ID: <Zt0KxQlpXXGvugV9@rli9-mobl>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240903134033.816500-1-andrealmeid@igalia.com>
+X-ClientProxiedBy: SG2PR04CA0170.apcprd04.prod.outlook.com (2603:1096:4::32)
+ To DM4PR11MB5423.namprd11.prod.outlook.com (2603:10b6:5:39b::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB5423:EE_|PH0PR11MB5208:EE_
+X-MS-Office365-Filtering-Correlation-Id: a79a1222-40b0-438c-d73d-08dccfad572e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?u78KV0YOo1tUCyyNxvW0Kbf8FwYrn3+FzwEVbc2BDhm93R/4alJzcD2rFX?=
+ =?iso-8859-1?Q?lynn6jT9A802Efrg0YDuaMyUnwUMlNZKvxYjKWJr0YCoSI8heqY+C5XMdG?=
+ =?iso-8859-1?Q?6sM71dlzsDYqFcIZwAUPW0fObIWEe22vrPYu/Yk/SpPejikzibCsWs/IVs?=
+ =?iso-8859-1?Q?Lgh1NmlN+9+oo7m19TZ6HGPIEYann+dqXl4E66l8jfvdSX0kzCckUSkpRh?=
+ =?iso-8859-1?Q?Ja8Q1j5mG6LMDxWjOkAgms2OMbvovguLQUowfnUeB0K5FS27Q310fEoV9a?=
+ =?iso-8859-1?Q?04vamN7M0FIyh/qq39lmM+mhpBBNi05gvDvE7d+Namo/hafPXIGmOfMY5+?=
+ =?iso-8859-1?Q?g0Gvw2Y+j764RJQzpxY886SuIddJgG5xlxhiLWiA/617u+i5RK9GQDrFUC?=
+ =?iso-8859-1?Q?FFaxRcsd8GYayGOxH8LBWENHlY2mfP0oMgkxI21jMYHUd7LtZaqOnvyhcR?=
+ =?iso-8859-1?Q?f9twPykE+Y22mLC8bHC3VDhOQywy7f6Zm9ahtg8UCs3aEXR/Sii2aZ3Rbd?=
+ =?iso-8859-1?Q?Knkj5xYGOiG2D9y3usXZeWax+eqE2VTbx71apYaEwzvyQ3PzhAohWTfzJ7?=
+ =?iso-8859-1?Q?/Rx9Qs3N8a6ze0F83s7MQLg3yksBYgEe2XGamsOMOO0cYM2awmIAwm31v4?=
+ =?iso-8859-1?Q?oY1QLIgXUdZtb7rXVeXnRkjThjRmqRA1VgeLBZGQdXiIVcZAs+Pk8bPgUS?=
+ =?iso-8859-1?Q?z0VeKJs2FCXzD2g2vtuA5XVVDkSJrCapEVMHYCnomEUPrp9EXh1iugeF7o?=
+ =?iso-8859-1?Q?Pym1lcmBSh43IzXklJxAhyYcVC9l6X0vLN5Gk3oL8TjrP8sQ+znhlxM5rX?=
+ =?iso-8859-1?Q?1eMeIZcYUgbMTPq22lb35KBJTDFUakv2nrrtv/xqcWwuNBAGRMoEuyexHd?=
+ =?iso-8859-1?Q?ujJop+4WGtkOfOJMCXWXTJG2sKnLCb8jAEGIphjPzXnN0RDr6jQyzXDMdu?=
+ =?iso-8859-1?Q?MMcxxwWkS6SiJBsqOvMV+U5u9RgIi6bQhok1DIU8Ik68jDYQwQrB9UvPF+?=
+ =?iso-8859-1?Q?KFuMfsQS+ICg9ghcIEFHh9LUx8F/DAo732QBHExLVLwT65caJ+qDM++hg5?=
+ =?iso-8859-1?Q?1CQGdvUeRUdXi2DlKtp8HdGYdJnTR5T88A8fzsOVLt5jDlCY1GgCQWs1wC?=
+ =?iso-8859-1?Q?+mmGa70+3mYe65pyub2GgwdD9ipVQltO+B2mBSE+AaIbUhCU1KYqb9IBj/?=
+ =?iso-8859-1?Q?N89xoy0LsnlvxOWuhu1sHDZ1TkfrAB6inX0Q1mUr1x8znZ6fxXwPSbKY0+?=
+ =?iso-8859-1?Q?PvkOtFiWcE32kU8qU5zQIUH9/Z9IYfuhtsKrjkDLHheDiOFCjDKUm0npGK?=
+ =?iso-8859-1?Q?jw/yu1Bfd1yzQkyWXHyYk294Y4RgIP2nbDR9V12pVUTDWGDXYm+PAeU0pW?=
+ =?iso-8859-1?Q?zgGSitSdOg?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5423.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?v3et1sgMc6vYVfuaJJW+689sNdVPSCdIwvnwgECzDES4z9+hGSdPDZYoaA?=
+ =?iso-8859-1?Q?MHrk9iDF+XHmwTNpWvvkckfdCMYZF7XnIkWRX0uBv/8qQajUcUhm9QEoOr?=
+ =?iso-8859-1?Q?YlBMX9CLpRA5MWdtEpJ0cmu4lOdtv4zB0whjZmO95uHl0aZq2B0Eva1dU1?=
+ =?iso-8859-1?Q?YSCTx7ihHZA6hbUBq/+gxO+C0pMiE7oCsi1VAntZENLouMg9P/1CT935Zn?=
+ =?iso-8859-1?Q?K4YKy9Z8IZc3IneJGTS4eg9PxQ5Bd0dYXZAN8tVSFcINJ4npdBDh8sW+/x?=
+ =?iso-8859-1?Q?0V7AAQgr9wdyhOflJ37jmvC2QXDFdIBiKzAZTorJHxVY297BB9Q4xNL0zX?=
+ =?iso-8859-1?Q?W/mhCGJfYjQFBQ2qMtrzQA5WrYX6pFXPh5pFWoY+YU+/aKC63xknPq/Gvx?=
+ =?iso-8859-1?Q?0MVBK2JXEUGT9w5UKZykND4kTZJNFPGJ0rjUCB8wTLSk05r1sfIyCSiGuW?=
+ =?iso-8859-1?Q?gjxK3bgSsm28xtlg83PDk5wZCkTRiFLPokCpLK5u/y3NbSaAHy/AK1tTls?=
+ =?iso-8859-1?Q?CYslM5PL9dyW1OouOSMkkS9rEHmfs7eTU5QSRfCH7JUiNi5Sp3VlBF+UVA?=
+ =?iso-8859-1?Q?qdX+Nj5RYcngG0VK+Q06EjSZuKhBMYMuHp+YwOl6iK74FbuD5xlkRJuD/b?=
+ =?iso-8859-1?Q?94XZcVRV35VEkaEY+ccKUMZiUCzCnDZxTUISiRDJzm5vyYhB/CnKdE/T4Z?=
+ =?iso-8859-1?Q?ZemJYAVa9HC79oB5at8P6qD3rbP38wJGbC+vzj00vTxHyifAybzzNxqf/m?=
+ =?iso-8859-1?Q?zi2wijLQmJn9Rn0FwdunDTA+Dq93nXV6YEz3G87AvYEKZE2jmQ/KiNZlKZ?=
+ =?iso-8859-1?Q?SQ2z+oQdBRVzGDANJJ2pLLreCU0qvq6DDNAZ6y4rnzUG4CIy9/oUubCGZH?=
+ =?iso-8859-1?Q?HuQImmiP2bMGvT2kQW5sHl39wgh8k7SHklsYXYcMjeJkE+PIRCBM0iV1Md?=
+ =?iso-8859-1?Q?vrtu1/c+xRbYcHgdBXD4bBaAu8Lanbv5QgosiGmxemBlF3eT+4J5FYej1E?=
+ =?iso-8859-1?Q?njKgqEEVnIWNbppuULbkny7+xPAeQnIrX7VjpbjYNOxoivF4Jk14ipVroW?=
+ =?iso-8859-1?Q?m/aU0pSiWwyozv63XexZPBEaXRKS1BO3yzg21NkQRqNgiToh2fETSEjMP0?=
+ =?iso-8859-1?Q?WDXVoBBrusMTq1wgnxx7r3lWaFufkKU2bNtn8s1jc6IozhQ5z++zp4aRvN?=
+ =?iso-8859-1?Q?HhkCCSXLQie2AdiNx0FXgf+S/Rs3Axlq1un8auUlwI1P8/DBDJjUIqw13S?=
+ =?iso-8859-1?Q?EtHp2f54qr8UAY/Dc5Lbgz2rW3p5NL3iW99UxXHR5Vl4P6A4/sT+LyBVtg?=
+ =?iso-8859-1?Q?h02CjO1gA75zpRwTCKPBF/+0jCX283MpDt2jGjkyw4AK2XkdxRtTijsCkJ?=
+ =?iso-8859-1?Q?Ktyc4PzktLSLDjcRVd7WgIbBCQl2+3SB73lqUkLOMxNssffvrg81Wh9dNz?=
+ =?iso-8859-1?Q?Cneio7n+SZPM5iAHi49lvkzEDT6bavOT8BdtOLabsQy4gGga/9HZkqqMRU?=
+ =?iso-8859-1?Q?ou1tFENf1YFHfMtZ+fj5ztW3IsT6b5y5LQgeaOKuh6s7KLWVfS2l4QIhIB?=
+ =?iso-8859-1?Q?NcZM1LROFYrVfPDv2VcCcitjAoekn9sypRitC3nbAa5CUBybxRRIwgMR51?=
+ =?iso-8859-1?Q?5KBNdydZLIlZzdekKSV8yV+awVlbNot+w6?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a79a1222-40b0-438c-d73d-08dccfad572e
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5423.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2024 02:24:18.0830
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oUUHE9dzouwzKOhk10I1hlcDfysYnCff2kwwYb4h/kRIqpYhnP1Cqi7hPcD3Q2MsCKcWYOkcO4owvqH4KfdbJw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5208
+X-OriginatorOrg: intel.com
 
-The syzbot reported a kernel-usb-infoleak in usbtmc_write.
+Hi André,
 
-The expression "aligned = (transfersize + (USBTMC_HEADER_SIZE + 3)) & ~3;"
-in usbtmcw_write() follows the following pattern:
+kernel test robot noticed the following build warnings:
 
-aligned = (1 + 12 + 3) & ~3 = 16   // 3 bytes have not been initialized
-aligned = (2 + 12 + 3) & ~3 = 16   // 2 bytes have not been initialized
-aligned = (3 + 12 + 3) & ~3 = 16   // 1 byte has not been initialized
-aligned = (4 + 12 + 3) & ~3 = 16   // All bytes have been initialized
-aligned = (5 + 12 + 3) & ~3 = 20   // 3 bytes have not been initialized
-aligned = (6 + 12 + 3) & ~3 = 20   // 2 bytes have not been initialized
-aligned = (7 + 12 + 3) & ~3 = 20   // 1 byte has not been initialized
-aligned = (8 + 12 + 3) & ~3 = 20   // All bytes have been initialized
-aligned = (9 + 12 + 3) & ~3 = 24
-...
+[auto build test WARNING on tip/locking/core]
+[also build test WARNING on linus/master v6.11-rc6 next-20240906]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Note: #define USBTMC_HEADER_SIZE      12
+url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Almeida/selftests-futex-Create-test-for-robust-list/20240903-214428
+base:   tip/locking/core
+patch link:    https://lore.kernel.org/r/20240903134033.816500-1-andrealmeid%40igalia.com
+patch subject: [PATCH v2] selftests/futex: Create test for robust list
+:::::: branch date: 4 days ago
+:::::: commit date: 4 days ago
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240907/202409071354.clW9RcwR-lkp@intel.com/reproduce)
 
-This results in the buffer[USBTMC_SEAD_SIZE+transfersize] and its
-subsequent memory not being initialized.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/r/202409071354.clW9RcwR-lkp@intel.com/
 
-Fixes: 4ddc645f40e9 ("usb: usbtmc: Add ioctl for vendor specific write")
-Reported-and-tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
-V2 -> V3: Update condition and comments
+All warnings (new ones prefixed by >>):
 
- drivers/usb/class/usbtmc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+>> robust_list.c:117:44: warning: passing 'int *' to parameter of type 'unsigned int *' converts between pointers to integer types with different sign [-Wpointer-sign]
+     117 |         if (atomic_compare_exchange_strong(futex, &zero, tid)) {
+         |                                                   ^~~~~
+   /opt/cross/clang-617a15a9ea/lib/clang/18/include/stdatomic.h:144:112: note: expanded from macro 'atomic_compare_exchange_strong'
+     144 | #define atomic_compare_exchange_strong(object, expected, desired) __c11_atomic_compare_exchange_strong(object, expected, desired, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
+         |                                                                                                                ^~~~~~~~
+   1 warning generated.
 
-diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
-index 6bd9fe565385..faf8c5508997 100644
---- a/drivers/usb/class/usbtmc.c
-+++ b/drivers/usb/class/usbtmc.c
-@@ -1591,6 +1591,10 @@ static ssize_t usbtmc_write(struct file *filp, const char __user *buf,
- 		goto exit;
- 	}
- 
-+	if (USBTMC_HEADER_SIZE + transfersize < aligned)
-+		memset(&buffer[USBTMC_HEADER_SIZE + transfersize], 0,
-+			aligned - USBTMC_HEADER_SIZE - transfersize);
-+
- 	dev_dbg(&data->intf->dev, "%s(size:%u align:%u)\n", __func__,
- 		(unsigned int)transfersize, (unsigned int)aligned);
- 
+
+vim +117 tools/testing/selftests/futex/functional/robust_list.c
+
+32807b4449f353 André Almeida 2024-09-03  101  
+32807b4449f353 André Almeida 2024-09-03  102  /*
+32807b4449f353 André Almeida 2024-09-03  103   * A basic (and incomplete) mutex lock function with robustness
+32807b4449f353 André Almeida 2024-09-03  104   */
+32807b4449f353 André Almeida 2024-09-03  105  static int mutex_lock(struct lock_struct *lock, struct robust_list_head *head, bool error_inject)
+32807b4449f353 André Almeida 2024-09-03  106  {
+32807b4449f353 André Almeida 2024-09-03  107  	_Atomic(unsigned int) *futex = &lock->futex;
+32807b4449f353 André Almeida 2024-09-03  108  	int zero = 0, ret = -1;
+32807b4449f353 André Almeida 2024-09-03  109  	pid_t tid = gettid();
+32807b4449f353 André Almeida 2024-09-03  110  
+32807b4449f353 André Almeida 2024-09-03  111  	/*
+32807b4449f353 André Almeida 2024-09-03  112  	 * Set list_op_pending before starting the lock, so the kernel can catch
+32807b4449f353 André Almeida 2024-09-03  113  	 * the case where the thread died during the lock operation
+32807b4449f353 André Almeida 2024-09-03  114  	 */
+32807b4449f353 André Almeida 2024-09-03  115  	head->list_op_pending = &lock->list;
+32807b4449f353 André Almeida 2024-09-03  116  
+32807b4449f353 André Almeida 2024-09-03 @117  	if (atomic_compare_exchange_strong(futex, &zero, tid)) {
+32807b4449f353 André Almeida 2024-09-03  118  		/*
+32807b4449f353 André Almeida 2024-09-03  119  		 * We took the lock, insert it in the robust list
+32807b4449f353 André Almeida 2024-09-03  120  		 */
+32807b4449f353 André Almeida 2024-09-03  121  		struct robust_list *list = &head->list;
+32807b4449f353 André Almeida 2024-09-03  122  
+32807b4449f353 André Almeida 2024-09-03  123  		/* Error injection to test list_op_pending */
+32807b4449f353 André Almeida 2024-09-03  124  		if (error_inject)
+32807b4449f353 André Almeida 2024-09-03  125  			return 0;
+32807b4449f353 André Almeida 2024-09-03  126  
+32807b4449f353 André Almeida 2024-09-03  127  		while (list->next != &head->list)
+32807b4449f353 André Almeida 2024-09-03  128  			list = list->next;
+32807b4449f353 André Almeida 2024-09-03  129  
+32807b4449f353 André Almeida 2024-09-03  130  		list->next = &lock->list;
+32807b4449f353 André Almeida 2024-09-03  131  		lock->list.next = &head->list;
+32807b4449f353 André Almeida 2024-09-03  132  
+32807b4449f353 André Almeida 2024-09-03  133  		ret = 0;
+32807b4449f353 André Almeida 2024-09-03  134  	} else {
+32807b4449f353 André Almeida 2024-09-03  135  		/*
+32807b4449f353 André Almeida 2024-09-03  136  		 * We didn't take the lock, wait until the owner wakes (or dies)
+32807b4449f353 André Almeida 2024-09-03  137  		 */
+32807b4449f353 André Almeida 2024-09-03  138  		struct timespec to;
+32807b4449f353 André Almeida 2024-09-03  139  
+32807b4449f353 André Almeida 2024-09-03  140  		clock_gettime(CLOCK_MONOTONIC, &to);
+32807b4449f353 André Almeida 2024-09-03  141  		to.tv_sec = to.tv_sec + FUTEX_TIMEOUT;
+32807b4449f353 André Almeida 2024-09-03  142  
+32807b4449f353 André Almeida 2024-09-03  143  		tid = atomic_load(futex);
+32807b4449f353 André Almeida 2024-09-03  144  		/* Kernel ignores futexes without the waiters flag */
+32807b4449f353 André Almeida 2024-09-03  145  		tid |= FUTEX_WAITERS;
+32807b4449f353 André Almeida 2024-09-03  146  		atomic_store(futex, tid);
+32807b4449f353 André Almeida 2024-09-03  147  
+32807b4449f353 André Almeida 2024-09-03  148  		ret = futex_wait((futex_t *) futex, tid, &to, 0);
+32807b4449f353 André Almeida 2024-09-03  149  
+32807b4449f353 André Almeida 2024-09-03  150  		/*
+32807b4449f353 André Almeida 2024-09-03  151  		 * A real mutex_lock() implementation would loop here to finally
+32807b4449f353 André Almeida 2024-09-03  152  		 * take the lock. We don't care about that, so we stop here.
+32807b4449f353 André Almeida 2024-09-03  153  		 */
+32807b4449f353 André Almeida 2024-09-03  154  	}
+32807b4449f353 André Almeida 2024-09-03  155  
+32807b4449f353 André Almeida 2024-09-03  156  	head->list_op_pending = NULL;
+32807b4449f353 André Almeida 2024-09-03  157  
+32807b4449f353 André Almeida 2024-09-03  158  	return ret;
+32807b4449f353 André Almeida 2024-09-03  159  }
+32807b4449f353 André Almeida 2024-09-03  160  
+
 -- 
-2.43.0
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
