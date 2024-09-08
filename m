@@ -1,140 +1,149 @@
-Return-Path: <linux-kernel+bounces-320167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884449706F1
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:34:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F22E19706F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A36861C20E05
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:34:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CA841C21048
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF90157E87;
-	Sun,  8 Sep 2024 11:34:25 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957A8158522;
+	Sun,  8 Sep 2024 11:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMxaaB52"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BB31537CE
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 11:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBDD1547D4;
+	Sun,  8 Sep 2024 11:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725795265; cv=none; b=qcNjmx7Yk6/Dxv8TjYESkYyXzdj28/xXzU8c2jQpWYVeI7QESSiPKQ3QmrIcHujw1yW43ItT/KWFd/INYdJn+qMkFfIwi9zKWh/iNisFR8WOgQsAQ6lDC8NmniwCxO401fth75dbRci7rr/D+4b0tv11oWaVXCfxAr20/wQmVvE=
+	t=1725795281; cv=none; b=c5z1qsdqIE1Cayw3dSacelEmS6McGGIfku18UgtpwKGlknjfqjHcdEv6rvTxZ/QYpT2570E70Y7TIxCvxlCJt+peAFKdk+m3mg91B9XovCy11rq/7aUuv8mMN3l/bxWYh1HT/r/l6+G4mD8r6NX/5VC5Y1CwhnEaPqq1IpxOYYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725795265; c=relaxed/simple;
-	bh=/Xh8WI8DrM0WgcNjfV1N+w3yIHvEJX6uEl/GDnSjjgw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=W2F+QiwVlbawXF0otRJPFIZNmPSuEltyZkWuzz2z4kcRblGfkc7FLNqtYkxcdhBWB7sR8rdekI9i3wH/lbOW2LoxcwL+2MnGHTh9eeQFe2vWwuNjp75QRFu2IZwL/o4R85S9FzLsX+NURgrdJWUgrtxNEi54DAtsBAzuFL4DIys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82ad9fca614so146568039f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 04:34:23 -0700 (PDT)
+	s=arc-20240116; t=1725795281; c=relaxed/simple;
+	bh=l8Afgqu3WXAVFAIqNvZ59IhIs09LB+0FmnTuuXCr790=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n+5FOm03+xnrEjOKB823ga77sbfFvmqI0i5s+n4sS4qi4jOR+d6p0iNcSxb9mm2A40CC/IL2A5oM26yRkMV6tjfOI8EJAPzs+Dm8pESjR/hZvPesUeYN3gqXp/eUaLit4ZX0m6eB6KmltkME0gJ8MLr29K4MrL0wbFGNWXuefc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMxaaB52; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20696938f86so29849445ad.3;
+        Sun, 08 Sep 2024 04:34:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725795279; x=1726400079; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TevhFPkg0ehgq3/IrZZMrhzq3fN8W8bdolBRTCGu5DA=;
+        b=AMxaaB52Pacbf0mzujeBqi5RpPm8aaDxX0j2HO/KfXrrRmCFeiHkhnLNL3TJp19CY+
+         MPWFiJ1nc90TsyMgAmGROBNQ/aE6UyoZScRN7Lvn5nzvatFZL4z0mAga4W8W58MTeXNt
+         kpAK/gQuV3ZPB4SjbmyJllLjim8B/T4JtkUj3bg3+cfoB67kt3cICb9RRgI5ssdaqbfk
+         Paisj9jhw/NrvdXYDNQdonvsNq/kOpeypRz8XcNgp/1lL+skWOOBkJILjPGsY+qmjy5K
+         +143Kt9w4oU8ejl4FrcN1/l4viRIW9y04phZPIY9VFe7quRBC32eIj8OhBCmhCHbHtZx
+         JqMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725795263; x=1726400063;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zQJqLe5gOilYbtWQRHW73MpTdXn87Rs1z9P3F3h4QoI=;
-        b=nMnVzIXLSqQdO30QxeDkYWJf1SixhCoXYAOAbKpc7VH+2iBIi/segh5rj3YbTNWhD+
-         7EBwUcog7TAmrn3rdoviqLTjf4JniRzqHaobmA5mBYWja+FnSIOwKun21PsQZ4gGQidw
-         rkZGTuSrvpeKsOt1j8Z5hkqaEUUmVKhJK7JGIOLOPDuDV07itHzhTcuqbKYGC4S+fo3B
-         6JiYAP1k6UCttgVMiqFVUdpJ5wl2lY7XmKUg8KmWq4lXeIcC+pO/3Ft034EkqM+NKUy9
-         lQgSmxsIfeXHdpfMMrsU2hlAKSAVmYYqRBQgzUuG3XCWsFgnZ2Xv6wUx+fIx1ASbkSjd
-         F3NA==
-X-Forwarded-Encrypted: i=1; AJvYcCXijDT4jK89l0Bc/l8Sfzckp1V5qYzO2q9c29ZJFyrAN0cOLN/5SErlRWsAVM350X2WkXifuEAC+cY0RNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtX1jFOe3jp978eLff+I0OQ9FCwaXrUFrnVAL1v9iCuGYLYzCO
-	SATXU5TSA4STAOKmlWsBKKA8Un1jxIpbXFnLZAYpSSvI8wUAbeYKSpwDT8UJyqn5zGdFwd5rSfA
-	4lc5bkKL4Vl2Dsp9DjiZlOzI0HAIN1EELi9vOjcPEZ+iG374Cg5FRMfk=
-X-Google-Smtp-Source: AGHT+IFvxJJN0rABiEX4KHr1m4mvasQ48MP3SQX0gGl2Kz4p7SerANvHWedVKOxWJ0vGKx3d4B8uPz+4YVFwA8nWKcO1LPsCkFPp
+        d=1e100.net; s=20230601; t=1725795279; x=1726400079;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TevhFPkg0ehgq3/IrZZMrhzq3fN8W8bdolBRTCGu5DA=;
+        b=Sg/CHvFfbweaiot2HtK7qNh0OjgJ8AyRrzF9XkR5ghJSrShLZznb26XFPXzNEMP4V/
+         UmULit0Eqeax18bxacymuMQRrS0zx7+X+yzB3gB50T6FdZxsnmRefbJjLq3zFo+QQq7F
+         CkyjpOJYYIv7jk1glHJsIKb3erj/8MGZZcDx953+5NkcHG8FPFMcMHE9AkUJ42V1LRlJ
+         0c1QFFAG2+OCQQLItsgHuEL66O2/cfDIYVFEVcJ/VHvvRrs1n6weHu2tunWS/nEr8InS
+         kLMXDMGlQnKZi0fLT02nKvvGsDlfMXmynw6N2VSl6uQ6ARlEMaOwR9ERVtUKffQw5PLF
+         nJtw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIs1yFJ0yt0cURDKO7F0xQ8JoiP5Z4nX1VYRsEIBNSUEN6Ukkb1NWU8hIfulfcSr1HYH0Wo4ugoBM=@vger.kernel.org, AJvYcCX0SVYDVdmGOrUmQ/YYoE+pi5n281jdNwAITLNLevCwdrCq8Vp5WLlOX1Nq9oLuM83OZJSNMCRfPmw0@vger.kernel.org, AJvYcCX3G3pduJGDlPwTr6F+xq99ot+Z+FXct4LC15Stx6pYQJatDmBWp8FUokAIy2f1As9mFKyNFzQeqFi9mQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwhXqtBBzTuNPh7Aa4BC/y/c4LiA1mbRjhF6xWwHFsKt/7xdVb
+	TEdM2vDs0xRdmeu9C20cV/FOC7JQWpu1DJ1iXEaaMRZwc6h9EalI
+X-Google-Smtp-Source: AGHT+IH6GPQK9EkkIM7ZYRVSmYXzhsKD5YcP8izmijFJcd7CdVzsEBDd4KL7pL76B3SbTRorF5l+dQ==
+X-Received: by 2002:a17:902:f547:b0:206:ae88:417f with SMTP id d9443c01a7336-206f04e17fdmr111199545ad.6.1725795278085;
+        Sun, 08 Sep 2024 04:34:38 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2071a6109cfsm13980345ad.175.2024.09.08.04.34.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 04:34:37 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id A1ABB4A19C6E; Sun, 08 Sep 2024 18:34:31 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux USB <linux-usb@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	v9fs@lists.linux.dev
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michael Grzeschik <m.grzeschik@pengutronix.de>,
+	Jan Luebbe <jlu@pengutronix.de>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] tools: usb: p9_fwd: wrap USBG shell command examples in literal code blocks
+Date: Sun,  8 Sep 2024 18:34:23 +0700
+Message-ID: <20240908113423.158352-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c544:0:b0:39f:d6a9:a6b9 with SMTP id
- e9e14a558f8ab-3a0568ab181mr42470295ab.24.1725795262931; Sun, 08 Sep 2024
- 04:34:22 -0700 (PDT)
-Date: Sun, 08 Sep 2024 04:34:22 -0700
-In-Reply-To: <00000000000047bf6a061d976fdb@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009a38c906219a056f@google.com>
-Subject: Re: [syzbot] [hfs?] WARNING: ODEBUG bug in hfsplus_fill_super (3)
-From: syzbot <syzbot+dd02382b022192737ea3@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2171; i=bagasdotme@gmail.com; h=from:subject; bh=l8Afgqu3WXAVFAIqNvZ59IhIs09LB+0FmnTuuXCr790=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDGl3uw48Tfu/RCuuck9OdunT1UdCLn944Nl8dsskHollK qqXIr9+6yhlYRDjYpAVU2SZlMjXdHqXkciF9rWOMHNYmUCGMHBxCsBEjtsxMkw8xnBop8Aap+KN O1+cKlqz79IftZsZvI+6tvJnr0kR9f/B8L9+53RdkbCzO1rnHdz6QMzJtYxvUZaNP3tK66q0R1z vrXgB
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+Stephen Rothwell reported htmldocs warning when merging usb tree:
 
-HEAD commit:    d1f2d51b711a Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=147f1ffb980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=58a85aa6925a8b78
-dashboard link: https://syzkaller.appspot.com/bug?extid=dd02382b022192737ea3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11b6589f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=127f1ffb980000
+Documentation/filesystems/9p.rst:99: ERROR: Unexpected indentation.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8b52ee4d6014/disk-d1f2d51b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3409402d9dfd/vmlinux-d1f2d51b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7da5cc92617b/bzImage-d1f2d51b.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/73e23808204f/mount_3.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/0d235c82b3b0/mount_19.gz
+That's because Sphinx tries rendering p9_fwd.py output as a grid table
+instead.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+dd02382b022192737ea3@syzkaller.appspotmail.com
+Wrap shell commands in "USBG Example" section in literal code blocks
+to fix above warning and to be in line with rest of commands in the doc.
 
-------------[ cut here ]------------
-ODEBUG: free active (active state 0) object: ffff88807c180238 object type: timer_list hint: delayed_sync_fs+0x0/0xf0
-WARNING: CPU: 0 PID: 5700 at lib/debugobjects.c:518 debug_print_object+0x17a/0x1f0 lib/debugobjects.c:515
-Modules linked in:
-CPU: 0 UID: 0 PID: 5700 Comm: syz-executor651 Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:debug_print_object+0x17a/0x1f0 lib/debugobjects.c:515
-Code: e8 0b 84 40 fd 4c 8b 0b 48 c7 c7 40 98 60 8c 48 8b 74 24 08 48 89 ea 44 89 e1 4d 89 f8 ff 34 24 e8 fb 60 9b fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 ec 59 5e 0b 48 83 c4 10 5b 41 5c 41 5d 41 5e 41
-RSP: 0018:ffffc9000324f5b8 EFLAGS: 00010286
-RAX: 098b313f44a3ce00 RBX: ffffffff8c0cc1a0 RCX: ffff888027455a00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffffff8c6099c0 R08: ffffffff8155b372 R09: fffffbfff1cfa0e0
-R10: dffffc0000000000 R11: fffffbfff1cfa0e0 R12: 0000000000000000
-R13: ffffffff8c6098d8 R14: dffffc0000000000 R15: ffff88807c180238
-FS:  00007f7e074f76c0(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000680 CR3: 0000000024282000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- __debug_check_no_obj_freed lib/debugobjects.c:990 [inline]
- debug_check_no_obj_freed+0x45b/0x580 lib/debugobjects.c:1020
- slab_free_hook mm/slub.c:2223 [inline]
- slab_free mm/slub.c:4477 [inline]
- kfree+0x10f/0x360 mm/slub.c:4598
- hfsplus_fill_super+0xf25/0x1ca0 fs/hfsplus/super.c:618
- mount_bdev+0x20c/0x2d0 fs/super.c:1679
- legacy_get_tree+0xf0/0x190 fs/fs_context.c:662
- vfs_get_tree+0x92/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3472
- do_mount fs/namespace.c:3812 [inline]
- __do_sys_mount fs/namespace.c:4020 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7e0756d80a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 ee 08 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7e074f6f98 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020002900 RCX: 00007f7e0756d80a
-RDX: 0000000020000100 RSI: 0000000020002900 RDI: 00007f7e074f6ff0
-RBP: 0000000020000100 R08: 00007f7e074f7030 R09: 00000000000006ca
-R10: 0000000002000010 R11: 0000000000000286 R12: 00007f7e074f6ff0
-R13: 00007f7e074f7030 R14: 00000000000006d0 R15: 00000000200022c0
- </TASK>
-
-
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/linux-next/20240905184059.0f30ff9a@canb.auug.org.au/
+Fixes: 673f0c3ffc75 ("tools: usb: p9_fwd: add usb gadget packet forwarder script")
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ Documentation/filesystems/9p.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/9p.rst
+index 2cc85f3e8659ff..514ed13a0122b0 100644
+--- a/Documentation/filesystems/9p.rst
++++ b/Documentation/filesystems/9p.rst
+@@ -86,11 +86,11 @@ When using the usbg transport, for now there is no native usb host
+ service capable to handle the requests from the gadget driver. For
+ this we have to use the extra python tool p9_fwd.py from tools/usb.
+ 
+-Just start the 9pfs capable network server like diod/nfs-ganesha e.g.:
++Just start the 9pfs capable network server like diod/nfs-ganesha e.g.::
+ 
+         $ diod -f -n -d 0 -S -l 0.0.0.0:9999 -e $PWD
+ 
+-Optionaly scan your bus if there are more then one usbg gadgets to find their path:
++Optionaly scan your bus if there are more then one usbg gadgets to find their path::
+ 
+         $ python $kernel_dir/tools/usb/p9_fwd.py list
+ 
+@@ -99,7 +99,7 @@ Optionaly scan your bus if there are more then one usbg gadgets to find their pa
+           2 |   67 | unknown          | unknown          | 1d6b:0109 | 2-1.1.2
+           2 |   68 | unknown          | unknown          | 1d6b:0109 | 2-1.1.3
+ 
+-Then start the python transport:
++Then start the python transport::
+ 
+         $ python $kernel_dir/tools/usb/p9_fwd.py --path 2-1.1.2 connect -p 9999
+ 
+
+base-commit: 9c0c11bb87b09a8b7cdc21ca1090e7b36abe9d09
+-- 
+An old man doll... just what I always wanted! - Clara
+
 
