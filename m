@@ -1,190 +1,185 @@
-Return-Path: <linux-kernel+bounces-319990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 530A19704D5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:29:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E569704D6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37C131C21260
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 02:29:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 924D4282E39
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 02:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37E71CAB8;
-	Sun,  8 Sep 2024 02:29:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9451799D;
+	Sun,  8 Sep 2024 02:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKsAnic/"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A4418E06
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 02:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C6429A0;
+	Sun,  8 Sep 2024 02:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725762545; cv=none; b=EY0HOXuAWVkGJGP+BVJHkCCPAcNCnFJeambWlPUJD5v7I8wiQSZbKYVYD4d8bwto12RVEKAufxyZjdWcL7kZV4X3cF2W/m/qYKe4j8TdocBSaYuYh1y0AY9wocV7Vk65hpVUt0H9juPgyBh2vCnsse4VKDXcHKM+YKeZjFF/6VI=
+	t=1725762720; cv=none; b=jYfgKXGHak+oDmLpkCDMjrw5tzsMakPYZQbLSuRlnLLm0S4Aw4jiNiW6tvGwlHewmqge8mbbzDCdxYaG8ZAS34fQOY/sez12Is0p0n1frDGueeN0qXt36A1R327DZtw5l0y2zwW7GdVOsZIDlVvGk8xwkm+smHF8+OxzApD7FC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725762545; c=relaxed/simple;
-	bh=+XKiIObvSCPSAgX7pAurM4jZ8EGmkt1FMDRQUDTBGjU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=r1BJuX5eS4ydPiYeUiWk+BXps9C4355MfqqBYR1GjSnSbF0lFRAvQVEs6gdBgpf9+jfyQXUgrkPM0wQeteduNMtDpGmBjiI2q3vDqTmVqR3I8TutaxCcv1BHkIQZrnnU63sMgcISDCHw1E0iDyfj+t5FOA6KHfwcdr64FK3Nir4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d28a70743so63034555ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 19:29:03 -0700 (PDT)
+	s=arc-20240116; t=1725762720; c=relaxed/simple;
+	bh=+gqU3t9RnxCCRloie90vB91nyAZ71SfWne/rn1qERXE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=mg0Ecjk+xRd5x0+jXW0obgYD6hrNc3sXBTEUJtGEJgbXLRpVqikWjOUbRTJZ9Lkf1tu32adXmfs1VRrJaEdDTxClqQ6vgcf/Z8zzbmSHZGKMcuK28pot1Okbux4/gCcCJtYVyUiNskoBgBrdOigm58Qp98dZuWnljI5AHPosbAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JKsAnic/; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2068a7c9286so29892295ad.1;
+        Sat, 07 Sep 2024 19:31:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725762718; x=1726367518; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1NMMLMX4o0piSKyjCJad9XUzjBltmT/gvFww3HdzydI=;
+        b=JKsAnic/U/zcQAjWfHDl5eNe4wN5Zul5onqAfVgx06NeVE6R8G13qGi4hICDDPfPwy
+         65VRNCqZeET4mGfAmlsPIyhzOQOqEGYtNGrA9koJQcHgJa+xtto6Uvu0zJaFQE1LJA+H
+         fVNu5ymcEz01aysDtnMW+9Wr4BsazYrbmogUpyO8DlaNbA/DSC2TThJGNo9uCSg8B8BP
+         FW7QSW7uUNpy4T6QY21SpkiEr8Duwsf75eaQVmgzQjio2LLVWb2re26Oz6WGL6G4KhRV
+         SVz7Kd0oU/YWGB8tidLiB37YWLmhaOxqjVwr6/HGQ1R4Kjo4H+zXnRajtbaD6P6/Q4hF
+         WkdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725762543; x=1726367343;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kiTPIOaKoJ8RROFx9phlWAm18ZpiaONe8dYomUfcGEI=;
-        b=bqrQtA52Q0/spqwVmvLvzWcK6IWF6ZyIrybKRgtCRxTfX/qngF62oIsYE+CwZZshI7
-         BkS7O3Y9QwnqFpBsQ2ajqU1SvSmEPACE73cM9M/8Rda2gceozxAbSPFeVc3q3ert1L+t
-         bW75KYZXsp9i14hhg2QUa+WM+qXWP+N8wmTC6whotMF7+7nOEFxn9FecdAWkIhT14eZH
-         jnBiAvUK8up1Xv73Jcf3FCmrFNBOnQGESqIXtgMxdKG2GczEZquzyBaAQtiF5QqtYf86
-         RpPJ33PYBYlyPYr2sJBSr//hpr0Xka4TSW8yTKo6UprAl9+8imyL6q/2gfr9mSYJ1XlX
-         2WbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUF00QZ5NeleNWK9mjgY+R13oiQS+cPj79WDzJ1a2Wgfckb3ptOcL1bFPnQVfSJXCc9qC2AejbnDEI7OOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzunjao0UjdJDJ5TPLVdkKpJnQ9PxFg58PAKc2EbOr6TfapoGvh
-	kKDnIh3LMY966YV2zFB7npCEyVNfJHT0nOLGebi43H6MKmhqV6zYUsdZtjqTNTj8z4Cgk0veivu
-	N0aA2y7hM03DwAe5dZitDc+cYSTKV/fZ1BuhPh+69rN0+cKWT3TdC24E=
-X-Google-Smtp-Source: AGHT+IHk6CFfFbrdiyTssZ3bHX6GYTGz1Vwz1rwBOMSYX/k6HRfPZUpaXk2T3lLFoBHYpqt+BpI1FhZE2lE5OCZ37pQSl6kueczR
+        d=1e100.net; s=20230601; t=1725762718; x=1726367518;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1NMMLMX4o0piSKyjCJad9XUzjBltmT/gvFww3HdzydI=;
+        b=isCQKajv9FdC9B6mRS+ZqWKhGLwDEuCDx3+T76zUdO1V3hjig26GuUUElmt5s4zU9d
+         4ffsrM9CYNV4DmqYBnMwQ0/Y86iGkUKc47+UnBeT7PWWJpCRLTqox+0tZZcjk50aNJjH
+         0yGb5SOz9KDGp08eP0IhaBN6TZFBLuSf7s62gUKtVrO1bCgINyaDd3qXbPVnUdluEW5j
+         L7vc8n0JrFk5AgpFcThSX1Hr4/BCZdImCeWoMYsAY1BVhFebZlSVtdzx2S/ULjAuQxX8
+         SN7Bo/gl9M8gJLgGePNq2+9M8pv8amGFxJ3Eu1aW0eVylO3HINJh/34K+CIIAri7kEdX
+         ahLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWatZxjKGoZ89bYMOSIxKho9kCMmE7CEbbBbwUP4a4Vxqb2XI8rF7nRWoi4zCgtYnA9oh3blNwIwEW7Hzs=@vger.kernel.org, AJvYcCWwlNLaHb31N1lMKvThORnsf8vK6BHxOUQZwkjPaN9ojj4MCyT5dzzfmaBJUKVimUIQDzqVd3F3H76CdsoW7Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEt68je2b+jZ6tb1DkDwPbIKcVnyHArxcjucv107CKYHfS6I9O
+	bNN/TykdvwlFqtFsw7x/J5zqYGb5cHDSjxS6zBuJwG2IHDr5LEK79fRDoTVoQOw=
+X-Google-Smtp-Source: AGHT+IHKfSPoo0yHXelm/gZXtpVhE3DaMPfLC0jGTwGUPfHCCoqCZKZ8i4afcD3DO9n1hJ4BNNcYLg==
+X-Received: by 2002:a17:902:e849:b0:1fd:69e0:a8e5 with SMTP id d9443c01a7336-206f05b3356mr89131285ad.41.1725762718046;
+        Sat, 07 Sep 2024 19:31:58 -0700 (PDT)
+Received: from smtpclient.apple ([47.89.225.180])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f3176fsm13981395ad.264.2024.09.07.19.31.55
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 07 Sep 2024 19:31:57 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a48:b0:395:e85e:f2fa with SMTP id
- e9e14a558f8ab-3a04eb6051emr62133845ab.1.1725762542829; Sat, 07 Sep 2024
- 19:29:02 -0700 (PDT)
-Date: Sat, 07 Sep 2024 19:29:02 -0700
-In-Reply-To: <tencent_4264A96683BCC4583779976346D633660305@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005514e806219267eb@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
- l2cap_connect (2)
-From: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in hci_abort_conn_sync
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc6-syzkaller-00326-gd1f2d51b711a-dirty #0 Not tainted
-------------------------------------------------------
-kworker/u9:2/5285 is trying to acquire lock:
-ffff888043094aa0 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0}, at: touch_work_lockdep_map kernel/workqueue.c:3890 [inline]
-ffff888043094aa0 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0}, at: start_flush_work kernel/workqueue.c:4144 [inline]
-ffff888043094aa0 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0}, at: __flush_work+0x46d/0xc30 kernel/workqueue.c:4176
-
-but task is already holding lock:
-ffff888043094078 (&hdev->lock){+.+.}-{3:3}, at: hci_abort_conn_sync+0x150/0xb50 net/bluetooth/hci_sync.c:5564
-
-which lock already depends on the new lock.
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH v4 2/2] livepatch: Add using attribute to klp_func for
+ using function show
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <ZtswXFD3xud0i6AO@pathway.suse.cz>
+Date: Sun, 8 Sep 2024 10:31:42 +0800
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+ Miroslav Benes <mbenes@suse.cz>,
+ Jiri Kosina <jikos@kernel.org>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D022A707-3C81-4CBD-B438-C8F2DF0A9151@gmail.com>
+References: <20240828022350.71456-1-zhangwarden@gmail.com>
+ <20240828022350.71456-3-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2409051215140.8559@pobox.suse.cz>
+ <20240905163449.ly6gbpizooqwwvt6@treble>
+ <285979BA-2A85-495F-8888-47EAFC061BE9@gmail.com>
+ <ZtswXFD3xud0i6AO@pathway.suse.cz>
+To: Petr Mladek <pmladek@suse.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
 
-the existing dependency chain (in reverse order) is:
+Hi, Petr
 
--> #1 (&hdev->lock){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       hci_store_wake_reason net/bluetooth/hci_event.c:7191 [inline]
-       hci_event_packet+0x323/0x1180 net/bluetooth/hci_event.c:7494
-       hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4023
-       process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
-       process_scheduled_works kernel/workqueue.c:3312 [inline]
-       worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
-       kthread+0x2c1/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> On Sep 7, 2024, at 00:39, Petr Mladek <pmladek@suse.com> wrote:
+>=20
+> On Fri 2024-09-06 17:39:46, zhang warden wrote:
+>> Hi, John & Miroslav
+>>=20
+>>>>=20
+>>>> Would it be possible to just use klp_transition_patch and implement =
+the=20
+>>>> logic just in using_show()?
+>>>=20
+>>> Yes, containing the logic to the sysfs file sounds a lot better.
+>>=20
+>> Maybe I can try to use the state of klp_transition_patch to update =
+the function's state instead of changing code in =
+klp_complete_transition?
+>>=20
+>>>=20
+>>>> I have not thought through it completely but=20
+>>>> klp_transition_patch is also an indicator that there is a =
+transition going=20
+>>>> on. It is set to NULL only after all func->transition are false. So =
+if you=20
+>>>> check that, you can assign -1 in using_show() immediately and then =
+just=20
+>>>> look at the top of func_stack.
+>>>=20
+>>> sysfs already has per-patch 'transition' and 'enabled' files so I =
+don't
+>>> like duplicating that information.
+>>>=20
+>>> The only thing missing is the patch stack order.  How about a simple
+>>> per-patch file which indicates that?
+>>>=20
+>>> /sys/kernel/livepatch/<patchA>/order =3D> 1
+>>> /sys/kernel/livepatch/<patchB>/order =3D> 2
+>>>=20
+>>> The implementation should be trivial with the use of
+>>> klp_for_each_patch() to count the patches.
+>>>=20
+>> I think this is the second solution. It seems that adding an
+>> interface to patch level is an acceptable way.
+>=20
+> It seems to be the only acceptable idea at the moment.
+>=20
+>> And if patch order
+>> is provided in /sys/kernel/livepatch/<patchA>/order, we should
+>> make a user space tool to calculate the function that
+>> is activate in the system. =46rom my point to the original
+>> problem, it is more look like a workaround.
+>=20
+> It is always a compromise between the complexity and the benefit.
+> Upstream will accept only changes which are worth it.
+>=20
+> Here, the main problem is that you do not have coordinated =
+developement
+> and installation of livepatches. This is dangerous and you should
+> not do it! Upstream will never support such a wild approach.
+>=20
+> You could get upstream some features which would make your life
+> easier. But the features must be worth the effort.
 
--> #0 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain kernel/locking/lockdep.c:3868 [inline]
-       __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
-       lock_acquire kernel/locking/lockdep.c:5759 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
-       touch_work_lockdep_map kernel/workqueue.c:3890 [inline]
-       start_flush_work kernel/workqueue.c:4144 [inline]
-       __flush_work+0x477/0xc30 kernel/workqueue.c:4176
-       __cancel_work_sync+0x10c/0x130 kernel/workqueue.c:4332
-       hci_abort_conn_sync+0x75a/0xb50 net/bluetooth/hci_sync.c:5583
-       abort_conn_sync+0x197/0x360 net/bluetooth/hci_conn.c:2918
-       hci_cmd_sync_work+0x1a4/0x410 net/bluetooth/hci_sync.c:328
-       process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
-       process_scheduled_works kernel/workqueue.c:3312 [inline]
-       worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
-       kthread+0x2c1/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Yep, I have the same idea as you here. The problem we face now as Josh =
+describes, livepatch now missing the information of patch order. If we =
+can have it, the rest information user need can be processed my the =
+original information from the kernel.
 
-other info that might help us debug this:
+My intention to introduce "using" feature is to solve the missing info =
+of livepatch, facing the original problem I met. But as livepatch =
+becomes more and more widely used, this is a real problem that may be =
+widely encountered.
 
- Possible unsafe locking scenario:
+If maintainer thinks the way changing klp_transition_patch is not worth =
+it. Maybe I can try another way to fix this problem. ( For example, the =
+patch-level order interface?) :)=20
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(&hdev->lock);
-                               lock((work_completion)(&hdev->rx_work));
-                               lock(&hdev->lock);
-  lock((work_completion)(&hdev->rx_work));
+=46rom my point of view, this information have its worth it provide, =
+what we need to consider is how to implement this function specifically. =
+Do you agree with me?
 
- *** DEADLOCK ***
+Best Regards,
+Wardenjohn.
 
-5 locks held by kworker/u9:2/5285:
- #0: ffff8880439ca148 ((wq_completion)hci0){+.+.}-{0:0}, at: process_one_work+0x1277/0x1b40 kernel/workqueue.c:3206
- #1: ffffc9000392fd80 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1b40 kernel/workqueue.c:3207
- #2: ffff888043094d80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_cmd_sync_work+0x170/0x410 net/bluetooth/hci_sync.c:327
- #3: ffff888043094078 (&hdev->lock){+.+.}-{3:3}, at: hci_abort_conn_sync+0x150/0xb50 net/bluetooth/hci_sync.c:5564
- #4: ffffffff8ddb9fe0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #4: ffffffff8ddb9fe0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #4: ffffffff8ddb9fe0 (rcu_read_lock){....}-{1:2}, at: start_flush_work kernel/workqueue.c:4118 [inline]
- #4: ffffffff8ddb9fe0 (rcu_read_lock){....}-{1:2}, at: __flush_work+0x103/0xc30 kernel/workqueue.c:4176
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5285 Comm: kworker/u9:2 Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: hci0 hci_cmd_sync_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain kernel/locking/lockdep.c:3868 [inline]
- __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
- lock_acquire kernel/locking/lockdep.c:5759 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
- touch_work_lockdep_map kernel/workqueue.c:3890 [inline]
- start_flush_work kernel/workqueue.c:4144 [inline]
- __flush_work+0x477/0xc30 kernel/workqueue.c:4176
- __cancel_work_sync+0x10c/0x130 kernel/workqueue.c:4332
- hci_abort_conn_sync+0x75a/0xb50 net/bluetooth/hci_sync.c:5583
- abort_conn_sync+0x197/0x360 net/bluetooth/hci_conn.c:2918
- hci_cmd_sync_work+0x1a4/0x410 net/bluetooth/hci_sync.c:328
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
-Tested on:
-
-commit:         d1f2d51b Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=146feffb980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=57042fe37c7ee7c2
-dashboard link: https://syzkaller.appspot.com/bug?extid=c12e2f941af1feb5632c
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=175c0e00580000
 
 
