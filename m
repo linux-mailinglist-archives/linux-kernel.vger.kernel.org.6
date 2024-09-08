@@ -1,295 +1,190 @@
-Return-Path: <linux-kernel+bounces-319988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA239704C5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:24:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 530A19704D5
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 04:29:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835AF282D80
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 02:24:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37C131C21260
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 02:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B6F18E06;
-	Sun,  8 Sep 2024 02:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oq3CsNEn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37E71CAB8;
+	Sun,  8 Sep 2024 02:29:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE7824B28;
-	Sun,  8 Sep 2024 02:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725762265; cv=fail; b=phu/H89TWlH27KxpY58Vy0NqaSnugtMadXhFr4NKA/ZdfaDvBQInK/uiSI/QF2/WLqScaEqca0jeWh7EN1++5emiGSDTnlay5f5W1d8X2MeeiEwgVukH+o2zL2mb3MOWwOMIwiw6RkD4k2hPXulZkgHKxEszHvDXyZYV9ObgNx4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725762265; c=relaxed/simple;
-	bh=CQTH29FyN34M3Q6s36wMjJnh2SoLx9BSd4aLbr7qfS4=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bWASlZykB/xf9vmhXK5NeuqY2+ABYgqzJifrkNpUdZjjdhZ/w1ue0p7l5pg1SOK2tdJBBTOfD2sGDJf5wjfRYM4KDfoLGkrYZP3t63JmmpXrBQ/WjP87vgDDwubIT5CkuqGfvLS4xV3bvmlmwyDzRGRRvIFhqM1iN1dg8X93xic=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oq3CsNEn; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725762263; x=1757298263;
-  h=date:from:to:cc:subject:message-id:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=CQTH29FyN34M3Q6s36wMjJnh2SoLx9BSd4aLbr7qfS4=;
-  b=Oq3CsNEnXHZDQ5uF4lKSAJWGisg+tq0rUjrVnKKcIkcK3BQby8a7UoIJ
-   /mCrjh4+IV7a72fFjzhZXeLMB6CHaLQc8xZusbNu/SxBGztOCE3wu3IXI
-   Z+wQ76FhXi69O+IVUAkgfiFPQRbj+eLMYzbKFF0CmPdR7OOhle2diX/VG
-   gLYXy60hO67To4SGbLawPDsFmRof030A744jnoEtFroV/uIPT9z9TwQ4o
-   Ma+EEuP9dNCLMgiZImvDc7AtdT8XBZBBEWgk/VFwNDF3CmFnR/+OJcAaM
-   ZXhRwLiZh+ywzW3s2J4rBs6IDXSTlFWIHFzDudKgxxprQhSEPxEBVIfUh
-   A==;
-X-CSE-ConnectionGUID: lT44jyGRTHCwF2u1vT76gw==
-X-CSE-MsgGUID: iIdZevbuQuyPGEvXdmJk/Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="28223751"
-X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
-   d="scan'208";a="28223751"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 19:24:23 -0700
-X-CSE-ConnectionGUID: crAB66qwTcK421bPOAon9g==
-X-CSE-MsgGUID: ird9zRqeRG+9uR9tHHlzKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
-   d="scan'208";a="70442671"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Sep 2024 19:24:22 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 7 Sep 2024 19:24:21 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 7 Sep 2024 19:24:21 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sat, 7 Sep 2024 19:24:21 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.172)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 7 Sep 2024 19:24:21 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QpUJMV4yQ2BBtte4i3qHG4PUtACTQeJYk3Y12x5VvTamrWje35H6/pV1QzAdp2hulzfEgs60RD4GgyhtR6gapWGEDTb7pa9s8UujkCax0JE2egMFhwPsjsnHWrWlIv+t4Swg9cfl8UrclNbERsUnRL04pOXud53489wmWdIzzw01FFg/9IGotnG7xwNOmgw93LfZQBCbOeZvsexBNrX2EKF53/t5XNnJGC8NImA8oTD9JkzilKVvBcbtxETtlb7/fSs0sljoLCsFleEjo3dach/glJq2nRoLSnqdqmJJeTG5QGk1bedU3OQ5cKt9Z5EXB+rwCSmVdB/nQ0QPKLpZsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kJzaCHnlGFDKi60nRIg6Bc5nzu64aX+gwpMjnkOZUcM=;
- b=rQ6PY04y8ILHsYY5dTiWPtFg6W3Qto+HRaNcbNyRmUaRreSkm8Jf+Kc/rq+D4TXKJU7ZsxFSy2NItkewJqHJgUk9zSgYON87rkPo+yUiyIfYrBwKgpvoKPpk0tFT9+C60ZNwnKlYQV7D/YAztaWNphSvXnTvKrWaMqo0K0opnWh1MZ+N3mwk/VK3Bd6HueSZYEpLJgI+xz11JRdUWDDhJMVVXChQP2QqOcxCk0inM7maROu42uRC93K8rGeJFzgevOde4/dOy987V8TflbPyvoqlMPZfMjBgthBrwRccBWiw7HVS3h/RtcjncceFD8LuDotFEGHSg7muIeSoRKRA/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB5423.namprd11.prod.outlook.com (2603:10b6:5:39b::20)
- by PH0PR11MB5208.namprd11.prod.outlook.com (2603:10b6:510:3b::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Sun, 8 Sep
- 2024 02:24:18 +0000
-Received: from DM4PR11MB5423.namprd11.prod.outlook.com
- ([fe80::dffa:e0c8:dbf1:c82e]) by DM4PR11MB5423.namprd11.prod.outlook.com
- ([fe80::dffa:e0c8:dbf1:c82e%5]) with mapi id 15.20.7918.024; Sun, 8 Sep 2024
- 02:24:18 +0000
-Date: Sun, 8 Sep 2024 10:24:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
-	<peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, Davidlohr Bueso
-	<dave@stgolabs.net>, Shuah Khan <skhan@linuxfoundation.org>
-CC: <oe-kbuild-all@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <kernel-dev@igalia.com>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Subject: Re: [PATCH v2] selftests/futex: Create test for robust list
-Message-ID: <Zt0KxQlpXXGvugV9@rli9-mobl>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240903134033.816500-1-andrealmeid@igalia.com>
-X-ClientProxiedBy: SG2PR04CA0170.apcprd04.prod.outlook.com (2603:1096:4::32)
- To DM4PR11MB5423.namprd11.prod.outlook.com (2603:10b6:5:39b::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A4418E06
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 02:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725762545; cv=none; b=EY0HOXuAWVkGJGP+BVJHkCCPAcNCnFJeambWlPUJD5v7I8wiQSZbKYVYD4d8bwto12RVEKAufxyZjdWcL7kZV4X3cF2W/m/qYKe4j8TdocBSaYuYh1y0AY9wocV7Vk65hpVUt0H9juPgyBh2vCnsse4VKDXcHKM+YKeZjFF/6VI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725762545; c=relaxed/simple;
+	bh=+XKiIObvSCPSAgX7pAurM4jZ8EGmkt1FMDRQUDTBGjU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=r1BJuX5eS4ydPiYeUiWk+BXps9C4355MfqqBYR1GjSnSbF0lFRAvQVEs6gdBgpf9+jfyQXUgrkPM0wQeteduNMtDpGmBjiI2q3vDqTmVqR3I8TutaxCcv1BHkIQZrnnU63sMgcISDCHw1E0iDyfj+t5FOA6KHfwcdr64FK3Nir4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d28a70743so63034555ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 19:29:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725762543; x=1726367343;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kiTPIOaKoJ8RROFx9phlWAm18ZpiaONe8dYomUfcGEI=;
+        b=bqrQtA52Q0/spqwVmvLvzWcK6IWF6ZyIrybKRgtCRxTfX/qngF62oIsYE+CwZZshI7
+         BkS7O3Y9QwnqFpBsQ2ajqU1SvSmEPACE73cM9M/8Rda2gceozxAbSPFeVc3q3ert1L+t
+         bW75KYZXsp9i14hhg2QUa+WM+qXWP+N8wmTC6whotMF7+7nOEFxn9FecdAWkIhT14eZH
+         jnBiAvUK8up1Xv73Jcf3FCmrFNBOnQGESqIXtgMxdKG2GczEZquzyBaAQtiF5QqtYf86
+         RpPJ33PYBYlyPYr2sJBSr//hpr0Xka4TSW8yTKo6UprAl9+8imyL6q/2gfr9mSYJ1XlX
+         2WbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUF00QZ5NeleNWK9mjgY+R13oiQS+cPj79WDzJ1a2Wgfckb3ptOcL1bFPnQVfSJXCc9qC2AejbnDEI7OOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzunjao0UjdJDJ5TPLVdkKpJnQ9PxFg58PAKc2EbOr6TfapoGvh
+	kKDnIh3LMY966YV2zFB7npCEyVNfJHT0nOLGebi43H6MKmhqV6zYUsdZtjqTNTj8z4Cgk0veivu
+	N0aA2y7hM03DwAe5dZitDc+cYSTKV/fZ1BuhPh+69rN0+cKWT3TdC24E=
+X-Google-Smtp-Source: AGHT+IHk6CFfFbrdiyTssZ3bHX6GYTGz1Vwz1rwBOMSYX/k6HRfPZUpaXk2T3lLFoBHYpqt+BpI1FhZE2lE5OCZ37pQSl6kueczR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB5423:EE_|PH0PR11MB5208:EE_
-X-MS-Office365-Filtering-Correlation-Id: a79a1222-40b0-438c-d73d-08dccfad572e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?u78KV0YOo1tUCyyNxvW0Kbf8FwYrn3+FzwEVbc2BDhm93R/4alJzcD2rFX?=
- =?iso-8859-1?Q?lynn6jT9A802Efrg0YDuaMyUnwUMlNZKvxYjKWJr0YCoSI8heqY+C5XMdG?=
- =?iso-8859-1?Q?6sM71dlzsDYqFcIZwAUPW0fObIWEe22vrPYu/Yk/SpPejikzibCsWs/IVs?=
- =?iso-8859-1?Q?Lgh1NmlN+9+oo7m19TZ6HGPIEYann+dqXl4E66l8jfvdSX0kzCckUSkpRh?=
- =?iso-8859-1?Q?Ja8Q1j5mG6LMDxWjOkAgms2OMbvovguLQUowfnUeB0K5FS27Q310fEoV9a?=
- =?iso-8859-1?Q?04vamN7M0FIyh/qq39lmM+mhpBBNi05gvDvE7d+Namo/hafPXIGmOfMY5+?=
- =?iso-8859-1?Q?g0Gvw2Y+j764RJQzpxY886SuIddJgG5xlxhiLWiA/617u+i5RK9GQDrFUC?=
- =?iso-8859-1?Q?FFaxRcsd8GYayGOxH8LBWENHlY2mfP0oMgkxI21jMYHUd7LtZaqOnvyhcR?=
- =?iso-8859-1?Q?f9twPykE+Y22mLC8bHC3VDhOQywy7f6Zm9ahtg8UCs3aEXR/Sii2aZ3Rbd?=
- =?iso-8859-1?Q?Knkj5xYGOiG2D9y3usXZeWax+eqE2VTbx71apYaEwzvyQ3PzhAohWTfzJ7?=
- =?iso-8859-1?Q?/Rx9Qs3N8a6ze0F83s7MQLg3yksBYgEe2XGamsOMOO0cYM2awmIAwm31v4?=
- =?iso-8859-1?Q?oY1QLIgXUdZtb7rXVeXnRkjThjRmqRA1VgeLBZGQdXiIVcZAs+Pk8bPgUS?=
- =?iso-8859-1?Q?z0VeKJs2FCXzD2g2vtuA5XVVDkSJrCapEVMHYCnomEUPrp9EXh1iugeF7o?=
- =?iso-8859-1?Q?Pym1lcmBSh43IzXklJxAhyYcVC9l6X0vLN5Gk3oL8TjrP8sQ+znhlxM5rX?=
- =?iso-8859-1?Q?1eMeIZcYUgbMTPq22lb35KBJTDFUakv2nrrtv/xqcWwuNBAGRMoEuyexHd?=
- =?iso-8859-1?Q?ujJop+4WGtkOfOJMCXWXTJG2sKnLCb8jAEGIphjPzXnN0RDr6jQyzXDMdu?=
- =?iso-8859-1?Q?MMcxxwWkS6SiJBsqOvMV+U5u9RgIi6bQhok1DIU8Ik68jDYQwQrB9UvPF+?=
- =?iso-8859-1?Q?KFuMfsQS+ICg9ghcIEFHh9LUx8F/DAo732QBHExLVLwT65caJ+qDM++hg5?=
- =?iso-8859-1?Q?1CQGdvUeRUdXi2DlKtp8HdGYdJnTR5T88A8fzsOVLt5jDlCY1GgCQWs1wC?=
- =?iso-8859-1?Q?+mmGa70+3mYe65pyub2GgwdD9ipVQltO+B2mBSE+AaIbUhCU1KYqb9IBj/?=
- =?iso-8859-1?Q?N89xoy0LsnlvxOWuhu1sHDZ1TkfrAB6inX0Q1mUr1x8znZ6fxXwPSbKY0+?=
- =?iso-8859-1?Q?PvkOtFiWcE32kU8qU5zQIUH9/Z9IYfuhtsKrjkDLHheDiOFCjDKUm0npGK?=
- =?iso-8859-1?Q?jw/yu1Bfd1yzQkyWXHyYk294Y4RgIP2nbDR9V12pVUTDWGDXYm+PAeU0pW?=
- =?iso-8859-1?Q?zgGSitSdOg?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5423.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?v3et1sgMc6vYVfuaJJW+689sNdVPSCdIwvnwgECzDES4z9+hGSdPDZYoaA?=
- =?iso-8859-1?Q?MHrk9iDF+XHmwTNpWvvkckfdCMYZF7XnIkWRX0uBv/8qQajUcUhm9QEoOr?=
- =?iso-8859-1?Q?YlBMX9CLpRA5MWdtEpJ0cmu4lOdtv4zB0whjZmO95uHl0aZq2B0Eva1dU1?=
- =?iso-8859-1?Q?YSCTx7ihHZA6hbUBq/+gxO+C0pMiE7oCsi1VAntZENLouMg9P/1CT935Zn?=
- =?iso-8859-1?Q?K4YKy9Z8IZc3IneJGTS4eg9PxQ5Bd0dYXZAN8tVSFcINJ4npdBDh8sW+/x?=
- =?iso-8859-1?Q?0V7AAQgr9wdyhOflJ37jmvC2QXDFdIBiKzAZTorJHxVY297BB9Q4xNL0zX?=
- =?iso-8859-1?Q?W/mhCGJfYjQFBQ2qMtrzQA5WrYX6pFXPh5pFWoY+YU+/aKC63xknPq/Gvx?=
- =?iso-8859-1?Q?0MVBK2JXEUGT9w5UKZykND4kTZJNFPGJ0rjUCB8wTLSk05r1sfIyCSiGuW?=
- =?iso-8859-1?Q?gjxK3bgSsm28xtlg83PDk5wZCkTRiFLPokCpLK5u/y3NbSaAHy/AK1tTls?=
- =?iso-8859-1?Q?CYslM5PL9dyW1OouOSMkkS9rEHmfs7eTU5QSRfCH7JUiNi5Sp3VlBF+UVA?=
- =?iso-8859-1?Q?qdX+Nj5RYcngG0VK+Q06EjSZuKhBMYMuHp+YwOl6iK74FbuD5xlkRJuD/b?=
- =?iso-8859-1?Q?94XZcVRV35VEkaEY+ccKUMZiUCzCnDZxTUISiRDJzm5vyYhB/CnKdE/T4Z?=
- =?iso-8859-1?Q?ZemJYAVa9HC79oB5at8P6qD3rbP38wJGbC+vzj00vTxHyifAybzzNxqf/m?=
- =?iso-8859-1?Q?zi2wijLQmJn9Rn0FwdunDTA+Dq93nXV6YEz3G87AvYEKZE2jmQ/KiNZlKZ?=
- =?iso-8859-1?Q?SQ2z+oQdBRVzGDANJJ2pLLreCU0qvq6DDNAZ6y4rnzUG4CIy9/oUubCGZH?=
- =?iso-8859-1?Q?HuQImmiP2bMGvT2kQW5sHl39wgh8k7SHklsYXYcMjeJkE+PIRCBM0iV1Md?=
- =?iso-8859-1?Q?vrtu1/c+xRbYcHgdBXD4bBaAu8Lanbv5QgosiGmxemBlF3eT+4J5FYej1E?=
- =?iso-8859-1?Q?njKgqEEVnIWNbppuULbkny7+xPAeQnIrX7VjpbjYNOxoivF4Jk14ipVroW?=
- =?iso-8859-1?Q?m/aU0pSiWwyozv63XexZPBEaXRKS1BO3yzg21NkQRqNgiToh2fETSEjMP0?=
- =?iso-8859-1?Q?WDXVoBBrusMTq1wgnxx7r3lWaFufkKU2bNtn8s1jc6IozhQ5z++zp4aRvN?=
- =?iso-8859-1?Q?HhkCCSXLQie2AdiNx0FXgf+S/Rs3Axlq1un8auUlwI1P8/DBDJjUIqw13S?=
- =?iso-8859-1?Q?EtHp2f54qr8UAY/Dc5Lbgz2rW3p5NL3iW99UxXHR5Vl4P6A4/sT+LyBVtg?=
- =?iso-8859-1?Q?h02CjO1gA75zpRwTCKPBF/+0jCX283MpDt2jGjkyw4AK2XkdxRtTijsCkJ?=
- =?iso-8859-1?Q?Ktyc4PzktLSLDjcRVd7WgIbBCQl2+3SB73lqUkLOMxNssffvrg81Wh9dNz?=
- =?iso-8859-1?Q?Cneio7n+SZPM5iAHi49lvkzEDT6bavOT8BdtOLabsQy4gGga/9HZkqqMRU?=
- =?iso-8859-1?Q?ou1tFENf1YFHfMtZ+fj5ztW3IsT6b5y5LQgeaOKuh6s7KLWVfS2l4QIhIB?=
- =?iso-8859-1?Q?NcZM1LROFYrVfPDv2VcCcitjAoekn9sypRitC3nbAa5CUBybxRRIwgMR51?=
- =?iso-8859-1?Q?5KBNdydZLIlZzdekKSV8yV+awVlbNot+w6?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: a79a1222-40b0-438c-d73d-08dccfad572e
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5423.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2024 02:24:18.0830
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oUUHE9dzouwzKOhk10I1hlcDfysYnCff2kwwYb4h/kRIqpYhnP1Cqi7hPcD3Q2MsCKcWYOkcO4owvqH4KfdbJw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5208
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a05:6e02:1a48:b0:395:e85e:f2fa with SMTP id
+ e9e14a558f8ab-3a04eb6051emr62133845ab.1.1725762542829; Sat, 07 Sep 2024
+ 19:29:02 -0700 (PDT)
+Date: Sat, 07 Sep 2024 19:29:02 -0700
+In-Reply-To: <tencent_4264A96683BCC4583779976346D633660305@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005514e806219267eb@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
+ l2cap_connect (2)
+From: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi André,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+possible deadlock in hci_abort_conn_sync
 
-[auto build test WARNING on tip/locking/core]
-[also build test WARNING on linus/master v6.11-rc6 next-20240906]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-rc6-syzkaller-00326-gd1f2d51b711a-dirty #0 Not tainted
+------------------------------------------------------
+kworker/u9:2/5285 is trying to acquire lock:
+ffff888043094aa0 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0}, at: touch_work_lockdep_map kernel/workqueue.c:3890 [inline]
+ffff888043094aa0 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0}, at: start_flush_work kernel/workqueue.c:4144 [inline]
+ffff888043094aa0 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0}, at: __flush_work+0x46d/0xc30 kernel/workqueue.c:4176
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Almeida/selftests-futex-Create-test-for-robust-list/20240903-214428
-base:   tip/locking/core
-patch link:    https://lore.kernel.org/r/20240903134033.816500-1-andrealmeid%40igalia.com
-patch subject: [PATCH v2] selftests/futex: Create test for robust list
-:::::: branch date: 4 days ago
-:::::: commit date: 4 days ago
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240907/202409071354.clW9RcwR-lkp@intel.com/reproduce)
+but task is already holding lock:
+ffff888043094078 (&hdev->lock){+.+.}-{3:3}, at: hci_abort_conn_sync+0x150/0xb50 net/bluetooth/hci_sync.c:5564
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/r/202409071354.clW9RcwR-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> robust_list.c:117:44: warning: passing 'int *' to parameter of type 'unsigned int *' converts between pointers to integer types with different sign [-Wpointer-sign]
-     117 |         if (atomic_compare_exchange_strong(futex, &zero, tid)) {
-         |                                                   ^~~~~
-   /opt/cross/clang-617a15a9ea/lib/clang/18/include/stdatomic.h:144:112: note: expanded from macro 'atomic_compare_exchange_strong'
-     144 | #define atomic_compare_exchange_strong(object, expected, desired) __c11_atomic_compare_exchange_strong(object, expected, desired, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
-         |                                                                                                                ^~~~~~~~
-   1 warning generated.
+which lock already depends on the new lock.
 
 
-vim +117 tools/testing/selftests/futex/functional/robust_list.c
+the existing dependency chain (in reverse order) is:
 
-32807b4449f353 André Almeida 2024-09-03  101  
-32807b4449f353 André Almeida 2024-09-03  102  /*
-32807b4449f353 André Almeida 2024-09-03  103   * A basic (and incomplete) mutex lock function with robustness
-32807b4449f353 André Almeida 2024-09-03  104   */
-32807b4449f353 André Almeida 2024-09-03  105  static int mutex_lock(struct lock_struct *lock, struct robust_list_head *head, bool error_inject)
-32807b4449f353 André Almeida 2024-09-03  106  {
-32807b4449f353 André Almeida 2024-09-03  107  	_Atomic(unsigned int) *futex = &lock->futex;
-32807b4449f353 André Almeida 2024-09-03  108  	int zero = 0, ret = -1;
-32807b4449f353 André Almeida 2024-09-03  109  	pid_t tid = gettid();
-32807b4449f353 André Almeida 2024-09-03  110  
-32807b4449f353 André Almeida 2024-09-03  111  	/*
-32807b4449f353 André Almeida 2024-09-03  112  	 * Set list_op_pending before starting the lock, so the kernel can catch
-32807b4449f353 André Almeida 2024-09-03  113  	 * the case where the thread died during the lock operation
-32807b4449f353 André Almeida 2024-09-03  114  	 */
-32807b4449f353 André Almeida 2024-09-03  115  	head->list_op_pending = &lock->list;
-32807b4449f353 André Almeida 2024-09-03  116  
-32807b4449f353 André Almeida 2024-09-03 @117  	if (atomic_compare_exchange_strong(futex, &zero, tid)) {
-32807b4449f353 André Almeida 2024-09-03  118  		/*
-32807b4449f353 André Almeida 2024-09-03  119  		 * We took the lock, insert it in the robust list
-32807b4449f353 André Almeida 2024-09-03  120  		 */
-32807b4449f353 André Almeida 2024-09-03  121  		struct robust_list *list = &head->list;
-32807b4449f353 André Almeida 2024-09-03  122  
-32807b4449f353 André Almeida 2024-09-03  123  		/* Error injection to test list_op_pending */
-32807b4449f353 André Almeida 2024-09-03  124  		if (error_inject)
-32807b4449f353 André Almeida 2024-09-03  125  			return 0;
-32807b4449f353 André Almeida 2024-09-03  126  
-32807b4449f353 André Almeida 2024-09-03  127  		while (list->next != &head->list)
-32807b4449f353 André Almeida 2024-09-03  128  			list = list->next;
-32807b4449f353 André Almeida 2024-09-03  129  
-32807b4449f353 André Almeida 2024-09-03  130  		list->next = &lock->list;
-32807b4449f353 André Almeida 2024-09-03  131  		lock->list.next = &head->list;
-32807b4449f353 André Almeida 2024-09-03  132  
-32807b4449f353 André Almeida 2024-09-03  133  		ret = 0;
-32807b4449f353 André Almeida 2024-09-03  134  	} else {
-32807b4449f353 André Almeida 2024-09-03  135  		/*
-32807b4449f353 André Almeida 2024-09-03  136  		 * We didn't take the lock, wait until the owner wakes (or dies)
-32807b4449f353 André Almeida 2024-09-03  137  		 */
-32807b4449f353 André Almeida 2024-09-03  138  		struct timespec to;
-32807b4449f353 André Almeida 2024-09-03  139  
-32807b4449f353 André Almeida 2024-09-03  140  		clock_gettime(CLOCK_MONOTONIC, &to);
-32807b4449f353 André Almeida 2024-09-03  141  		to.tv_sec = to.tv_sec + FUTEX_TIMEOUT;
-32807b4449f353 André Almeida 2024-09-03  142  
-32807b4449f353 André Almeida 2024-09-03  143  		tid = atomic_load(futex);
-32807b4449f353 André Almeida 2024-09-03  144  		/* Kernel ignores futexes without the waiters flag */
-32807b4449f353 André Almeida 2024-09-03  145  		tid |= FUTEX_WAITERS;
-32807b4449f353 André Almeida 2024-09-03  146  		atomic_store(futex, tid);
-32807b4449f353 André Almeida 2024-09-03  147  
-32807b4449f353 André Almeida 2024-09-03  148  		ret = futex_wait((futex_t *) futex, tid, &to, 0);
-32807b4449f353 André Almeida 2024-09-03  149  
-32807b4449f353 André Almeida 2024-09-03  150  		/*
-32807b4449f353 André Almeida 2024-09-03  151  		 * A real mutex_lock() implementation would loop here to finally
-32807b4449f353 André Almeida 2024-09-03  152  		 * take the lock. We don't care about that, so we stop here.
-32807b4449f353 André Almeida 2024-09-03  153  		 */
-32807b4449f353 André Almeida 2024-09-03  154  	}
-32807b4449f353 André Almeida 2024-09-03  155  
-32807b4449f353 André Almeida 2024-09-03  156  	head->list_op_pending = NULL;
-32807b4449f353 André Almeida 2024-09-03  157  
-32807b4449f353 André Almeida 2024-09-03  158  	return ret;
-32807b4449f353 André Almeida 2024-09-03  159  }
-32807b4449f353 André Almeida 2024-09-03  160  
+-> #1 (&hdev->lock){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       hci_store_wake_reason net/bluetooth/hci_event.c:7191 [inline]
+       hci_event_packet+0x323/0x1180 net/bluetooth/hci_event.c:7494
+       hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4023
+       process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+       process_scheduled_works kernel/workqueue.c:3312 [inline]
+       worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
+       kthread+0x2c1/0x3a0 kernel/kthread.c:389
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-> #0 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3133 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+       validate_chain kernel/locking/lockdep.c:3868 [inline]
+       __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
+       lock_acquire kernel/locking/lockdep.c:5759 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
+       touch_work_lockdep_map kernel/workqueue.c:3890 [inline]
+       start_flush_work kernel/workqueue.c:4144 [inline]
+       __flush_work+0x477/0xc30 kernel/workqueue.c:4176
+       __cancel_work_sync+0x10c/0x130 kernel/workqueue.c:4332
+       hci_abort_conn_sync+0x75a/0xb50 net/bluetooth/hci_sync.c:5583
+       abort_conn_sync+0x197/0x360 net/bluetooth/hci_conn.c:2918
+       hci_cmd_sync_work+0x1a4/0x410 net/bluetooth/hci_sync.c:328
+       process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+       process_scheduled_works kernel/workqueue.c:3312 [inline]
+       worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
+       kthread+0x2c1/0x3a0 kernel/kthread.c:389
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&hdev->lock);
+                               lock((work_completion)(&hdev->rx_work));
+                               lock(&hdev->lock);
+  lock((work_completion)(&hdev->rx_work));
+
+ *** DEADLOCK ***
+
+5 locks held by kworker/u9:2/5285:
+ #0: ffff8880439ca148 ((wq_completion)hci0){+.+.}-{0:0}, at: process_one_work+0x1277/0x1b40 kernel/workqueue.c:3206
+ #1: ffffc9000392fd80 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1b40 kernel/workqueue.c:3207
+ #2: ffff888043094d80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_cmd_sync_work+0x170/0x410 net/bluetooth/hci_sync.c:327
+ #3: ffff888043094078 (&hdev->lock){+.+.}-{3:3}, at: hci_abort_conn_sync+0x150/0xb50 net/bluetooth/hci_sync.c:5564
+ #4: ffffffff8ddb9fe0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
+ #4: ffffffff8ddb9fe0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ #4: ffffffff8ddb9fe0 (rcu_read_lock){....}-{1:2}, at: start_flush_work kernel/workqueue.c:4118 [inline]
+ #4: ffffffff8ddb9fe0 (rcu_read_lock){....}-{1:2}, at: __flush_work+0x103/0xc30 kernel/workqueue.c:4176
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5285 Comm: kworker/u9:2 Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Workqueue: hci0 hci_cmd_sync_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2186
+ check_prev_add kernel/locking/lockdep.c:3133 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+ validate_chain kernel/locking/lockdep.c:3868 [inline]
+ __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
+ lock_acquire kernel/locking/lockdep.c:5759 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
+ touch_work_lockdep_map kernel/workqueue.c:3890 [inline]
+ start_flush_work kernel/workqueue.c:4144 [inline]
+ __flush_work+0x477/0xc30 kernel/workqueue.c:4176
+ __cancel_work_sync+0x10c/0x130 kernel/workqueue.c:4332
+ hci_abort_conn_sync+0x75a/0xb50 net/bluetooth/hci_sync.c:5583
+ abort_conn_sync+0x197/0x360 net/bluetooth/hci_conn.c:2918
+ hci_cmd_sync_work+0x1a4/0x410 net/bluetooth/hci_sync.c:328
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+Tested on:
+
+commit:         d1f2d51b Merge tag 'clk-fixes-for-linus' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=146feffb980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=57042fe37c7ee7c2
+dashboard link: https://syzkaller.appspot.com/bug?extid=c12e2f941af1feb5632c
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=175c0e00580000
 
 
