@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-320230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0ACA9707D2
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:30:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C69AB9707D4
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A061D282D8B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:30:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D1F51F21679
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0FCC16B39E;
-	Sun,  8 Sep 2024 13:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0272716C6A9;
+	Sun,  8 Sep 2024 13:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="SiliM5Y4"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="G6QUvcBF"
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC9416A95C
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 13:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0D516C6A2
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 13:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725802172; cv=none; b=n7xotr28lR+uYgGO7BBzjyrEiWcx5ecX0+cerN0nj4+M3KKqfXx5+QVBuG0ThVBNYWK3IQLKhPt8qPmY8lMr40jZFEkL59yn8CQVF49lubeqrzhU60UQen6XIAQBgNm6Q1lnWF6D1RFdG34yDojQfTyhldLyCt4fKMcD+2Hgkns=
+	t=1725802175; cv=none; b=Iz3uS3a+Bbja2aa/9ln4r0BCIzAZ72ZT2YwaQwAgprMbDNygz02b11kW28dcXkysSlCCequyQI3bOBFQPhj086yXk/niU8CvTNFrZn43Qu+MdTLxAl9xrs7CJhtfl1GEOW4PUabc/3j32a9M62VPAp6O+ZC8C7b3EfIZ3BDr6IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725802172; c=relaxed/simple;
-	bh=TLnE+I3Km3LhX9uCXy0i3BsVfFWkyan3TgA0dDhpGwM=;
+	s=arc-20240116; t=1725802175; c=relaxed/simple;
+	bh=VwiE9zdi0HOLl8uwddvAdWVBAipm3KGbew0Qr1xyzNk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aZqrqg8nU5hwDWj+5jCNsRZxvAXYtenWPALr4Bo0d3JRTGXkWGnsIA5XCnU/WyPXNmfC2Ci4eH0gCLgNhOeF6mOf9l7YieW3mSegUYKovjq4NhAQbj58iN0ofeqgGt7rfi66dgOfbcRkP/IDPZgPJ0lWjZtwTTjXd45d2iLw4OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=SiliM5Y4; arc=none smtp.client-ip=149.28.215.223
+	 MIME-Version; b=NTO4lLysDqZRIAL9JI9gs+ukfPK2m1FdujRtIk7OZEFdAQhpKQ27/kiu2k6HGd0MnYczQDy7vGXdgPZbB/o1Mey1ipOc/N3bzcDhwQJsLJQjxPR67WelDcK2pUK1CY+RvWLPGUBiMfBZYQ5F3XoVIGG/Fc5ECIr/evq9E01Ltrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=G6QUvcBF; arc=none smtp.client-ip=149.28.215.223
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
  h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
  Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1725802151; bh=8TqgWjT3UGoq8NhlqNVT+UNBc/OTSgrzdmn4WedFMlo=;
- b=SiliM5Y4uv2xAzqEW+kAAu/blbSllSL/y+qZapkThn+8tepqhlG7/P7tSN2kHBjMZC4w2sG+u
- pnwbz7P1CW2jtYTM281z1BbT1beKCMT0MYyHw/qfWsO5vReUYcv7WHjcsrcafdKlmcKBmzuBi+8
- pzccuCRELE62qQZDcSZZEMRl8o+QArmL+MLBcRDnnh/hirA/ZAMNXm05NEILgtpMXxP+dc1fFt4
- lndVGtMo4nRVI5gmoNjfeok1QR79uMa+KbE4ag0ViHB0EQgWT4mYzk//NXd/ZX/xNGxKRMVPiWV
- 2J2xgcKLljj5FSlSFiET7xcG+nerpJYh8sJCvmK13nyw==
+ t=1725802156; bh=PP2Q5FqW/bN+deyQX3i1184rCXMWlxXESw9UhvzQYVs=;
+ b=G6QUvcBFgWWyHpZGH137Ht0yhKDVAU313ONpBmYC1FzNVoJyo1ca/BR2NtA6vfj3/dh/fq8zd
+ eRLd1Ei7ZYlKnplSs4E0cDLoJWWYgSs5Mj/Xt3zd08C2e1x9VvBq3P2CrzNakSZn+CxQkDSPJ/L
+ iXXWUrP8ACEAdq238tfVsv+VOkXXWEQ1T5fkWLJDcZyPSr/geSFHs+dDJuwSJkCUh2oCodTgkK5
+ xBEkDxotiD38PoZ82rSPN1I7ENbAYpisRp8xqcKyeKdCbjCMW+w4KZwGKB1xjNriAt63CNJ/UeO
+ ITqvdJvvxNgy11KMWeZ5L2s7FZi1rXHDveoX5VGVrRhQ==
 From: Jonas Karlman <jonas@kwiboo.se>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -57,9 +57,9 @@ Cc: Christian Hewitt <christianshewitt@gmail.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 09/10] drm: bridge: dw_hdmi: Update EDID during hotplug processing
-Date: Sun,  8 Sep 2024 13:28:11 +0000
-Message-ID: <20240908132823.3308029-10-jonas@kwiboo.se>
+Subject: [PATCH v2 10/10] drm: bridge: dw_hdmi: Use display_info is_hdmi and has_audio
+Date: Sun,  8 Sep 2024 13:28:12 +0000
+Message-ID: <20240908132823.3308029-11-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240908132823.3308029-1-jonas@kwiboo.se>
 References: <20240908132823.3308029-1-jonas@kwiboo.se>
@@ -76,41 +76,122 @@ X-Complaints-To: abuse@forwardemail.net
 X-ForwardEmail-Version: 0.4.40
 X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
  149.28.215.223
-X-ForwardEmail-ID: 66dda6a63c9877b4595879b6
+X-ForwardEmail-ID: 66dda6ab3c9877b4595879ca
 
-Update successfully read EDID during hotplug processing to ensure the
-connector diplay_info is always up-to-date.
+drm_edid_connector_update() is being called from bridge connector ops
+and from detect and get_modes ops for dw-hdmi connector.
 
+Change to use is_hdmi and has_audio from display_info directly instead
+of keeping our own state in sink_is_hdmi and sink_has_audio.
+
+Also remove the old and unused edid struct member and related define.
+
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 ---
-v2: No change
+v2: Collect r-b tag
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 32 ++++-------------------
+ 1 file changed, 5 insertions(+), 27 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index c19307120909..7bd9f895f03f 100644
+index 7bd9f895f03f..b9a1304b740c 100644
 --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
 +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -2457,6 +2457,18 @@ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
+@@ -43,8 +43,6 @@
+ #define DDC_CI_ADDR		0x37
+ #define DDC_SEGMENT_ADDR	0x30
  
- 	status = dw_hdmi_detect(hdmi);
+-#define HDMI_EDID_LEN		512
+-
+ /* DW-HDMI Controller >= 0x200a are at least compliant with SCDC version 1 */
+ #define SCDC_MIN_SOURCE_VERSION	0x1
  
-+	/* Update EDID during hotplug processing (force=false) */
-+	if (status == connector_status_connected && !force) {
-+		const struct drm_edid *drm_edid;
-+
-+		drm_edid = dw_hdmi_edid_read(hdmi, connector);
-+		if (drm_edid)
-+			drm_edid_connector_update(connector, drm_edid);
-+		cec_notifier_set_phys_addr(hdmi->cec_notifier,
-+			connector->display_info.source_physical_address);
-+		drm_edid_free(drm_edid);
-+	}
-+
- 	if (status == connector_status_disconnected)
- 		cec_notifier_phys_addr_invalidate(hdmi->cec_notifier);
+@@ -145,8 +143,6 @@ struct dw_hdmi {
  
+ 	int vic;
+ 
+-	u8 edid[HDMI_EDID_LEN];
+-
+ 	struct {
+ 		const struct dw_hdmi_phy_ops *ops;
+ 		const char *name;
+@@ -156,8 +152,6 @@ struct dw_hdmi {
+ 
+ 	struct i2c_adapter *ddc;
+ 	void __iomem *regs;
+-	bool sink_is_hdmi;
+-	bool sink_has_audio;
+ 
+ 	struct pinctrl *pinctrl;
+ 	struct pinctrl_state *default_state;
+@@ -2038,7 +2032,7 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+ 		HDMI_FC_INVIDCONF_IN_I_P_INTERLACED :
+ 		HDMI_FC_INVIDCONF_IN_I_P_PROGRESSIVE;
+ 
+-	inv_val |= hdmi->sink_is_hdmi ?
++	inv_val |= display->is_hdmi ?
+ 		HDMI_FC_INVIDCONF_DVI_MODEZ_HDMI_MODE :
+ 		HDMI_FC_INVIDCONF_DVI_MODEZ_DVI_MODE;
+ 
+@@ -2274,7 +2268,7 @@ static int dw_hdmi_poweron(struct dw_hdmi *hdmi,
+ 	if (hdmi->hdmi_data.enc_out_bus_format == MEDIA_BUS_FMT_FIXED)
+ 		hdmi->hdmi_data.enc_out_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
+ 
+-	hdmi->hdmi_data.rgb_limited_range = hdmi->sink_is_hdmi &&
++	hdmi->hdmi_data.rgb_limited_range = display->is_hdmi &&
+ 		drm_default_rgb_quant_range(mode) ==
+ 		HDMI_QUANTIZATION_RANGE_LIMITED;
+ 
+@@ -2294,7 +2288,7 @@ static int dw_hdmi_poweron(struct dw_hdmi *hdmi,
+ 	/* HDMI Initialization Step B.3 */
+ 	dw_hdmi_enable_video_path(hdmi);
+ 
+-	if (hdmi->sink_has_audio) {
++	if (display->has_audio) {
+ 		dev_dbg(hdmi->dev, "sink has audio support\n");
+ 
+ 		/* HDMI Initialization Step E - Configure audio */
+@@ -2303,7 +2297,7 @@ static int dw_hdmi_poweron(struct dw_hdmi *hdmi,
+ 	}
+ 
+ 	/* not for DVI mode */
+-	if (hdmi->sink_is_hdmi) {
++	if (display->is_hdmi) {
+ 		dev_dbg(hdmi->dev, "%s HDMI mode\n", __func__);
+ 
+ 		/* HDMI Initialization Step F - Configure AVI InfoFrame */
+@@ -2417,29 +2411,13 @@ static const struct drm_edid *dw_hdmi_edid_read(struct dw_hdmi *hdmi,
+ 						struct drm_connector *connector)
+ {
+ 	const struct drm_edid *drm_edid;
+-	const struct edid *edid;
+ 
+ 	if (!hdmi->ddc)
+ 		return NULL;
+ 
+ 	drm_edid = drm_edid_read_ddc(connector, hdmi->ddc);
+-	if (!drm_edid) {
++	if (!drm_edid)
+ 		dev_dbg(hdmi->dev, "failed to get edid\n");
+-		return NULL;
+-	}
+-
+-	/*
+-	 * FIXME: This should use connector->display_info.is_hdmi and
+-	 * connector->display_info.has_audio from a path that has read the EDID
+-	 * and called drm_edid_connector_update().
+-	 */
+-	edid = drm_edid_raw(drm_edid);
+-
+-	dev_dbg(hdmi->dev, "got edid: width[%d] x height[%d]\n",
+-		edid->width_cm, edid->height_cm);
+-
+-	hdmi->sink_is_hdmi = drm_detect_hdmi_monitor(edid);
+-	hdmi->sink_has_audio = drm_detect_monitor_audio(edid);
+ 
+ 	return drm_edid;
+ }
 -- 
 2.46.0
 
