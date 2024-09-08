@@ -1,67 +1,85 @@
-Return-Path: <linux-kernel+bounces-320359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1FA0970947
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:53:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07DE097094E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 409D01F21922
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:53:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 880281F215AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FAE176FB6;
-	Sun,  8 Sep 2024 18:53:27 +0000 (UTC)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22AD1531F9;
+	Sun,  8 Sep 2024 18:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K7zfNxR/"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994862B9CD
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 18:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC572B9CD
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 18:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725821607; cv=none; b=bnMOc8cmaVG5HsLnct+xeB6lj2pFmim+OMkw2VmIYfXJWFjPk0mHOJ1HvkyakVemQBCg57Yfdjgi06BmOkIJvf96HuIoPOlagLE7s7ZL02RJfVmLeu/OegKyHFdEaA4rERFh2EXlsV+S2aftHxl1jUP2UzLImHUowMTBoylLEKY=
+	t=1725821728; cv=none; b=kF67t1eJPXJ1zLX1X3hVJo1Q4M+vPrB5ihg/A3s7m08pz7bUm+qIRbJiU2FAynmXLq34brEWZXBak0lP9Sy8MC2hIIycwhy5W4e5w9KWQ5WUBk0rihsCb+dNyQWzLQJCU8hhHzEHmOIFQURfq2mRIOhJRzWNAacsZGgEVSRypsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725821607; c=relaxed/simple;
-	bh=tSzAKMeFkT26Zg0eEpBFE5CLLGmQSu9e5DhK9eXz5cM=;
+	s=arc-20240116; t=1725821728; c=relaxed/simple;
+	bh=1/3Q6ZHOxGza3tyCQKF+hUivViClPMnF5pw3ko1ZF/Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=flr9pfRUok0PCDXHfo3xBihs0l+o3LXWBbF7ZXYSfYagCAyR8aB48+gfQqxmiHCR52kA2ls23JgTSIlg20ZWRjOdeg8zrKGFHZYHG+EHNAPzWf5n6AaCwHbIFG/ZOPxCNa+cSs3jGpBvWGx6UfbHjKAaiwXi3GPGWekKuS5GmeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2059112f0a7so32798665ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 11:53:25 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uFv+e7P4ckChAE0gbvTmzl92vrosOimeaMvJbXRJFge6YoU4+uLvV2nexM5pOVV/Gk3v3QtgB/TDaQs6qhUYDmSZySftg0h6RFh/fNlfd3qU7o8zLwhk8HrFMtqBKNnJsaeVevW/imfwbsAOjchf0CRO3VFU5tCyWzX532r4wDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K7zfNxR/; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c241feb80dso8969992a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 11:55:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725821725; x=1726426525; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TZqIGddUBas03ff3I6BsSNqLWw68X6NTJ5NUnBgSAJs=;
+        b=K7zfNxR/qQYdX2d4JfVltBFWA3IfPd/dXngK/VvpI5DZLHV7+JwCkP6YbBRcS9ntab
+         M3/KHcf/EwhD+b+iplDhoA9prWFNUWIrv5K4h8h3Ir5EfsFv/eKVYU6ETRRCYo5Hb8Qp
+         ExSzgGixTDCCdzEeoHLAmRUopNSpq1bcVVO4/CPf5pqePf4fk3ufywwrCAf5iJheFvj8
+         SDfR3uhm7GqKjPrD3X+UtFPj7Uwug7tzZJkSWMSujOym8yFv6l1yxXCtEgTxJ5GYBHwz
+         0hHuOGz4Lx+hBhm6jeZkQBkJEMP87xSdbdN8XxBIj5Em1U2T1JRYoNcAatd2KaZ96gBi
+         HmIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725821605; x=1726426405;
+        d=1e100.net; s=20230601; t=1725821725; x=1726426525;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6uCJ9AvJDNH55nzQc9GN1xu818GG/S5c50EOZ6rrXCc=;
-        b=H8crdmorwzez/7c137lu9K7ITgX0v303o8e8DmeAuy1TWjTfm6h0cF/qEcIQj8205N
-         qpYOAGW0oUp6CCQitk8RUVWorpjUYt25ejD7C1qNdmBruXydSQ6QzUyRIwjOiue0YxX5
-         JkapFiq9Jsd2WsBbLvtQgD5eWhVPEAherLCppVufCqOQEqjByVAyI1QktmvYB9D+sqUw
-         zmhbng4UevYIWyLXWI80Dgaa8F3zw2EN/bZlAQ3nMbii7+ddNFh37PrUb+VKYihPsBsR
-         lcm6K0TXec2MfmWERx6FIU8cGylIP1AmRvFi1oiEMSMIajbbxU0BL8UFJ7/OhzQDp6wK
-         3iLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLypeOCuSM7HYHmR1Usja6tpMCfGWf+qaHAa7fwBBKPYBe/X88X6giTD6JKDWCV2NIykrPLPnpnoDlLZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMZLkYD9bNzvbc4qu6lD69UewCDjI1xIxHRGX/0pihr1S89F+7
-	li5awg0hIoDvsbVdj0IiBy8czkATd8fPOavV6/HNM9AjsTd2Cj9e
-X-Google-Smtp-Source: AGHT+IHGXoFhM3YhJqWziJWfozX3naXDrko1aq8/x/3ZldaDxH8TQZBA47/qpJJIFMKBgXqm8GR6ww==
-X-Received: by 2002:a17:902:c946:b0:206:c8dc:e334 with SMTP id d9443c01a7336-20706fb929emr49132025ad.39.1725821604582;
-        Sun, 08 Sep 2024 11:53:24 -0700 (PDT)
-Received: from V92F7Y9K0C.attlocal.net (99-124-153-174.lightspeed.sntcca.sbcglobal.net. [99.124.153.174])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20714b31ba5sm21092205ad.248.2024.09.08.11.53.23
+        bh=TZqIGddUBas03ff3I6BsSNqLWw68X6NTJ5NUnBgSAJs=;
+        b=LKh5pB4F2HA9ORZhyok75PjBEM6dFOtBZA/zrAw4S8G2rFThNAbP5k7uHAktSbbQwB
+         i1B29lUJjLFQDgDNZypT8LvUAjphZhbsOT0QsGTNAfmsTz3tDfC78Qyr1UnZrYxjfw0p
+         bmyNaR7zs4oQwa0WCr7EEduiLD/03j1xe8k+xvP+LD9tnc3giSC8xQbVNvAE0kQ4KVwZ
+         GV4OVQr9PTd5nesZNnlc3NsaFrx21wDA3aU7RUn0XXPcRRRzWjevEeSzSsWjN3zTbceQ
+         FU4GqlakCBe46QEYgc2x6XddsXzEenp3NwCgbT6ENXaEpr008Zirf/y6mRYERZa8xY9y
+         /FPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIiUxX3YHfHyc8aZXV4QzAVXfAZWrEEUTiRpOQDGgQ3jQadFgc3BdiUb9H02jQultO0dtJhpdGwrd8FDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7cn447v+M0/RzrNg2a2vT7enwKAjWQxptISakwq3oDoQBiChK
+	RrcZYNw3S8Qqv1UiPCPsrkCwOUPZfl0MXfugl5yf0X2tKlX7tJqZEdhw4Xx+dTw=
+X-Google-Smtp-Source: AGHT+IETZqM2pc1rLuzoyDSyX/OFqGWUSsTan/jxSxZruPDYvwhZl5X8EVMtgIHXYzE+I2N7GQc1qw==
+X-Received: by 2002:a17:907:3da4:b0:a80:c0ed:2145 with SMTP id a640c23a62f3a-a8a85f2ee3dmr874155266b.2.1725821724657;
+        Sun, 08 Sep 2024 11:55:24 -0700 (PDT)
+Received: from linaro.org ([84.232.173.69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c73c00sm236188466b.101.2024.09.08.11.55.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 11:53:24 -0700 (PDT)
-Date: Sun, 8 Sep 2024 11:53:21 -0700
-From: Dennis Zhou <dennis@kernel.org>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: dennis@kernel.org, tj@kernel.org, cl@linux.com,
-	akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, syzbot <syzkaller@googlegroups.com>
-Subject: Re: [PATCH] percpu: fix data race in pcpu_alloc_noprof() and extend
- spinlock protection area
-Message-ID: <Zt3yoaLmrII_gypa@V92F7Y9K0C.attlocal.net>
-References: <20240908135209.15159-1-aha310510@gmail.com>
+        Sun, 08 Sep 2024 11:55:24 -0700 (PDT)
+Date: Sun, 8 Sep 2024 21:55:22 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] phy: qcom: edp: Add runtime PM support
+Message-ID: <Zt3zGg6VhZJ7qdgz@linaro.org>
+References: <20240907-phy-qcom-edp-enable-runtime-pm-v1-1-8b9ee4210e1e@linaro.org>
+ <CAA8EJpqw6pB4d_zQyYdhq9_prLnh+mLMdRSzJ+5EvAjT9wi86A@mail.gmail.com>
+ <Zt3pFdndtTw/nbgs@linaro.org>
+ <CAA8EJppTp5S1L-rHKDW58uXQO08p6o=aNbE3kA9UjVKZsyJ-Jw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,136 +88,164 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240908135209.15159-1-aha310510@gmail.com>
+In-Reply-To: <CAA8EJppTp5S1L-rHKDW58uXQO08p6o=aNbE3kA9UjVKZsyJ-Jw@mail.gmail.com>
 
-Hello,
+On 24-09-08 21:43:01, Dmitry Baryshkov wrote:
+> On Sun, 8 Sept 2024 at 21:12, Abel Vesa <abel.vesa@linaro.org> wrote:
+> >
+> > On 24-09-07 20:52:14, Dmitry Baryshkov wrote:
+> > > On Sat, 7 Sept 2024 at 18:25, Abel Vesa <abel.vesa@linaro.org> wrote:
+> > > >
+> > > > Enable runtime PM support by adding proper ops which will handle the
+> > > > clocks and regulators. These resources will now be handled on power_on and
+> > > > power_off instead of init and exit PHY ops. Also enable these resources on
+> > > > probe in order to balance out the disabling that is happening right after.
+> > > > Prevent runtime PM from being ON by default as well.
+> > > >
+> > > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > > > ---
+> > > >  drivers/phy/qualcomm/phy-qcom-edp.c | 105 ++++++++++++++++++++++++++----------
+> > > >  1 file changed, 77 insertions(+), 28 deletions(-)
+> > > >
+> > > > diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/phy-qcom-edp.c
+> > > > index da2b32fb5b45..3affeef261bf 100644
+> > > > --- a/drivers/phy/qualcomm/phy-qcom-edp.c
+> > > > +++ b/drivers/phy/qualcomm/phy-qcom-edp.c
 
-On Sun, Sep 08, 2024 at 10:52:10PM +0900, Jeongjun Park wrote:
-> I got the following KCSAN report during syzbot testing:
-> 
-> ==================================================================
-> BUG: KCSAN: data-race in pcpu_alloc_noprof / pcpu_free_area
-> 
-> read-write to 0xffffffff883f872c of 4 bytes by task 3378 on cpu 0:
->  pcpu_update_empty_pages mm/percpu.c:602 [inline]
->  pcpu_block_update_hint_free mm/percpu.c:1044 [inline]
->  pcpu_free_area+0x4dc/0x570 mm/percpu.c:1302
->  free_percpu+0x1c6/0xb30 mm/percpu.c:2277
->  xt_percpu_counter_free+0x63/0x80 net/netfilter/x_tables.c:1951
->  cleanup_entry+0x195/0x1c0 net/ipv6/netfilter/ip6_tables.c:671
->  __do_replace+0x470/0x580 net/ipv6/netfilter/ip6_tables.c:1099
->  do_replace net/ipv6/netfilter/ip6_tables.c:1158 [inline]
->  do_ip6t_set_ctl+0x820/0x8c0 net/ipv6/netfilter/ip6_tables.c:1644
->  nf_setsockopt+0x195/0x1b0 net/netfilter/nf_sockopt.c:101
->  ipv6_setsockopt+0x126/0x140 net/ipv6/ipv6_sockglue.c:998
->  tcp_setsockopt+0x93/0xb0 net/ipv4/tcp.c:3768
->  sock_common_setsockopt+0x64/0x80 net/core/sock.c:3735
->  do_sock_setsockopt net/socket.c:2324 [inline]
->  __sys_setsockopt+0x1d8/0x250 net/socket.c:2347
->  __do_sys_setsockopt net/socket.c:2356 [inline]
->  __se_sys_setsockopt net/socket.c:2353 [inline]
->  __x64_sys_setsockopt+0x66/0x80 net/socket.c:2353
->  x64_sys_call+0x278d/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:55
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> read to 0xffffffff883f872c of 4 bytes by task 3374 on cpu 1:
->  pcpu_alloc_noprof+0x9a5/0x10c0 mm/percpu.c:1894
->  xt_percpu_counter_alloc+0x79/0x110 net/netfilter/x_tables.c:1931
->  find_check_entry net/ipv4/netfilter/ip_tables.c:526 [inline]
->  translate_table+0x921/0xf70 net/ipv4/netfilter/ip_tables.c:716
->  do_replace net/ipv4/netfilter/ip_tables.c:1137 [inline]
->  do_ipt_set_ctl+0x7bd/0x8b0 net/ipv4/netfilter/ip_tables.c:1635
->  nf_setsockopt+0x195/0x1b0 net/netfilter/nf_sockopt.c:101
->  ip_setsockopt+0xea/0x100 net/ipv4/ip_sockglue.c:1424
->  tcp_setsockopt+0x93/0xb0 net/ipv4/tcp.c:3768
->  sock_common_setsockopt+0x64/0x80 net/core/sock.c:3735
->  do_sock_setsockopt net/socket.c:2324 [inline]
->  __sys_setsockopt+0x1d8/0x250 net/socket.c:2347
->  __do_sys_setsockopt net/socket.c:2356 [inline]
->  __se_sys_setsockopt net/socket.c:2353 [inline]
->  __x64_sys_setsockopt+0x66/0x80 net/socket.c:2353
->  x64_sys_call+0x278d/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:55
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> value changed: 0x00000005 -> 0x00000006
-> 
-> Reported by Kernel Concurrency Sanitizer on:
-> CPU: 1 UID: 0 PID: 3374 Comm: syz-executor.3 Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a-dirty #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-> ==================================================================
-> 
-> The global variable pcpu_nr_empty_pop_pages can be protected by pcpu_lock, 
-> but since pcpu_alloc_noprof reads outside the spinlock protection section,
-> a data race may occur and the branch of the conditional statement may change.
-> Therefore, the reading of pcpu_nr_empty_pop_pages should be modified to be 
-> performed within the spinlock protection section.
-> 
-> However, the for_each_clear_bitrange_from loop requires and uses a spinlock, 
-> but it repeatedly locks and unlocks the spinlock unnecessarily. 
-> 
-> Therefore, I think it is appropriate to remove the repeated spin_lock and 
-> spin_unlock in for_each_clear_bitrange_from and perform the operation of 
-> reading pcpu_nr_empty_pop_pages and then perform spin_unlock to postpone 
-> the point in time when the spin_unlock is performed.
-> 
-> Reported-by: syzbot <syzkaller@googlegroups.com>
-> Fixes: e04d320838f5 ("percpu: indent the population block in pcpu_alloc()")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->  mm/percpu.c |  5 ++---
->  1 files changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/percpu.c b/mm/percpu.c
-> index 20d91af8c033..5c958a54da51 100644
-> --- a/mm/percpu.c
-> +++ b/mm/percpu.c
-> @@ -1864,7 +1864,6 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
->  
->  area_found:
->  	pcpu_stats_area_alloc(chunk, size);
-> -	spin_unlock_irqrestore(&pcpu_lock, flags);
->  
->  	/* populate if not all pages are already there */
->  	if (!is_atomic) {
-> @@ -1878,14 +1877,12 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
->  
->  			ret = pcpu_populate_chunk(chunk, rs, re, pcpu_gfp);
->  
-> -			spin_lock_irqsave(&pcpu_lock, flags);
->  			if (ret) {
->  				pcpu_free_area(chunk, off);
->  				err = "failed to populate";
->  				goto fail_unlock;
->  			}
->  			pcpu_chunk_populated(chunk, rs, re);
-> -			spin_unlock_irqrestore(&pcpu_lock, flags);
->  		}
+[...]
 
-We don't want to do this because pcpu_populate_chunk() calls
-alloc_pages_node() which can block.
->  
->  		mutex_unlock(&pcpu_alloc_mutex);
-> @@ -1894,6 +1891,8 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
->  	if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
->  		pcpu_schedule_balance_work();
->  
-> +	spin_unlock_irqrestore(&pcpu_lock, flags);
-> +
->  	/* clear the areas and return address relative to base address */
->  	for_each_possible_cpu(cpu)
->  		memset((void *)pcpu_chunk_addr(chunk, cpu, 0) + off, 0, size);
-> --
+> > > > +}
+> > > > +
+> > > >  static int qcom_edp_phy_probe(struct platform_device *pdev)
+> > > >  {
+> > > >         struct phy_provider *phy_provider;
+> > > > @@ -1091,20 +1097,57 @@ static int qcom_edp_phy_probe(struct platform_device *pdev)
+> > > >                 return ret;
+> > > >         }
+> > > >
+> > > > -       ret = qcom_edp_clks_register(edp, pdev->dev.of_node);
+> > > > -       if (ret)
+> > > > +       ret = regulator_bulk_enable(ARRAY_SIZE(edp->supplies), edp->supplies);
+> > > > +       if (ret) {
+> > > > +               dev_err(dev, "failed to enable regulators, err=%d\n", ret);
+> > > >                 return ret;
+> > > > +       }
+> > > > +
+> > > > +       ret = clk_bulk_prepare_enable(ARRAY_SIZE(edp->clks), edp->clks);
+> > > > +       if (ret) {
+> > > > +               dev_err(dev, "failed to enable clocks, err=%d\n", ret);
+> > > > +               goto err_disable_regulators;
+> > > > +       }
+> > >
+> > > Please use pm_runtime_get_sync() instead().
+> > >
+> >
+> > So let me explain how I thought this through first. This DP PHY is
+> > usually used on platforms where display is left enabled by the
+> > bootloader. So doing pm_runtime_get_sync would mean we increment the
+> > device's usage counter while it is known to be already enabled, even if
+> > genpd doesn't consider it so. So doing set_active instead would be more
+> > accurate. Now, for the regulator and clock generic frameworks, that
+> > seemed OK to do at the time. Now I can see that the same argument can be
+> > made for those as well. So I'm thinking maybe I just drop the enable
+> > here and don't do _get_sync, but rather rely on the resume being done
+> > on power on instead.
+> 
+> Please don't rely on the bootloader. The device should be in the
+> resumed state when registering clocks. Also devm_pm_runtime_enable()
+> should also be called before, so that the CCF makes note of PM being
+> enabled.
 
-I sent out [1] which is a more appropriate fix. I'll merge it later
-today.
+Fair enough. Will do that.
 
-Thanks,
-Dennis
+> 
+> >
+> > > > +
+> > > > +       ret = qcom_edp_clks_register(edp, pdev->dev.of_node);
+> > > > +       if (ret) {
+> > > > +               dev_err(dev, "failed to register PHY clocks, err=%d\n", ret);
+> > > > +               goto err_disable_clocks;
+> > > > +       }
+> > > >
+> > > >         edp->phy = devm_phy_create(dev, pdev->dev.of_node, &qcom_edp_ops);
+> > > >         if (IS_ERR(edp->phy)) {
+> > > >                 dev_err(dev, "failed to register phy\n");
+> > > > -               return PTR_ERR(edp->phy);
+> > > > +               ret = PTR_ERR(edp->phy);
+> > > > +               goto err_disable_clocks;
+> > > >         }
+> > > >
+> > > > +       pm_runtime_set_active(dev);
+> > > > +       ret = devm_pm_runtime_enable(dev);
+> > >
+> > > If this handles earlier, you don't need to call pm_runtime_set_active() manually
+> > >
+> >
+> > Enable and set_active are two separate things. Maybe I'm
+> > misunderstanding your comment.
+> 
+> Yeah, I wrote something strange here. I meant that if enable is called
+> earlier and then if the device is resumed, there is no need to call
+> set_active.
 
-[1] https://lore.kernel.org/lkml/20240906031151.80719-1-dennis@kernel.org/
+I guess you meant "that if _get_sync is called earlier and then ...", right?
+Enable won't resume it.
+
+> 
+> >
+> > > > +       if (ret)
+> > > > +               goto err_disable_clocks;
+> > > > +       /*
+> > > > +        * Prevent runtime pm from being ON by default. Users can enable
+> > > > +        * it using power/control in sysfs.
+> > >
+> > > why?
+> > >
+> >
+> > OK, so this is a tricky one. If there is any platform out there that
+> > makes use of this PHY but the resources are not properly described, we
+> > might get in trouble. So I was thinking that maybe we don't risk that
+> > but let the user enable it via sysfs. That way, this patch will not
+> > break by default such platforms.
+> 
+> If the platform doesn't describe resources, it is broken, there is no
+> need to support it.
+> >
+> > Also, this would be in line with the rest of the other Qcom PHYs.
+> 
+> I think it's a bit of a cargo cult. Such code was added in 2018 and
+> then it was c&p'ed since that time.
+
+OK, will drop it.
+
+> 
+> >
+> > > > +        */
+> > > > +       pm_runtime_forbid(dev);
+> > > > +
+> > > > +       dev_set_drvdata(dev, edp);
+> > > >         phy_set_drvdata(edp->phy, edp);
+> > > >
+> > > >         phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> > > > -       return PTR_ERR_OR_ZERO(phy_provider);
+> > > > +       if (IS_ERR(phy_provider))
+> > > > +               goto err_disable_clocks;
+> > > > +
+> > > > +       return 0;
+> > > > +
+> > > > +err_disable_clocks:
+> > > > +       clk_bulk_disable_unprepare(ARRAY_SIZE(edp->clks), edp->clks);
+> > > > +
+> > > > +err_disable_regulators:
+> > > > +       regulator_bulk_disable(ARRAY_SIZE(edp->supplies), edp->supplies);
+> > >
+> > > Ideally this should be handled by pm_runtime. Or at least by pm_runtime_put().
+> >
+> > Will drop entirely. Again, lets not enable anything on probe for now.
+> 
+> NAK.
+
+OK, your argument above about the registering of clocks needing the
+PHY resumed makes sense. Will do _get_sync on probe.
 
 
