@@ -1,152 +1,132 @@
-Return-Path: <linux-kernel+bounces-320287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ADC1970862
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:18:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA87970868
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02CDFB2149A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:18:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3582B2158D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255F4172BDE;
-	Sun,  8 Sep 2024 15:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D28017279C;
+	Sun,  8 Sep 2024 15:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzxzhB18"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aDI6fGkV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834B136B0D
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 15:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09EA36B0D
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 15:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725808694; cv=none; b=GrTgE7wnGSIwnwKRLPq8lNZONPuIavRH9MqS1KVk9LWxD6iPvDbfPn94dqDIIkyPpMxFVZN1GRr3R4N4KjMYRryADE3uuY4z4uCN/RkyuRF1wwriyj2Zml5Hx9JaIlvvJ3oTtQhauQNLKZiX6F1FIVYFHw1rsOQwodfg3pkc2NA=
+	t=1725809125; cv=none; b=jvmpk0JtVEPXlHMvbX11uRt1kjEsW+0a/qe7HvJOC+M5pg7nDPw0b5hYEt698BdQDSXuRERR3XyEj/u66Yuiy59QT9AcwbfW33cF4Gde5rctmnd6FEMATJ1cSLPvH2YBY2GirsYmIXiv6NiZhvQKV5WDi/a+8ltUuq5RrCkRCNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725808694; c=relaxed/simple;
-	bh=me/RfXv4m3863MDF2iMXaivbpwAD1QHQrY/y8muO+Iw=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=sqkkEw57ZGr+O64Z7AGv8IXWO7dFbMe8eSt2ab6vBJ5NWdCbe5u6WqUbcKi8lkOxyN0RaqhUEX61ERk/UuZGh8lEIuhw9eO91jKpinJn0lPBjrftiK1v6ZOwyw1s0u1PoLJrym/dN4qieHda/ptdlrCuKg7By69TQo+J3Rc8bPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzxzhB18; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71032C4CEC3;
-	Sun,  8 Sep 2024 15:18:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725808694;
-	bh=me/RfXv4m3863MDF2iMXaivbpwAD1QHQrY/y8muO+Iw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=BzxzhB183/8bk5iVTc5OY4bGyTbiL7E0OeS/ioO5uw9WGCXKTcuWjzAqAuajnmQ/b
-	 qdNk8mUwfH8OD4JQj9ElKhwlePaWuPirrFniwHTcGl2aPU0NZHHGkx4VaDxdtsTF3i
-	 IqeZZDs+pP4XTJbo2vRCQH5VF3qzQmA8B9h/FHXs/IY5eIe4wHcR8/WbdV5EeRJGzS
-	 43XYoeKS7R3hcIBC+QeNKMpqPreaAFTDt4OpV389fSppiUx2kn9cA4FGJoGMEUdyv3
-	 J/vf32czwWX8GlAa3vTSJMjcdrz0LbL+ytG/NZiGeh+e2nskc00tNbQy6nRc1K7a7O
-	 u5UgPFII2pbGg==
-Message-ID: <aac3f30a-bab1-4a45-a69d-050b15ead4a8@kernel.org>
-Date: Mon, 9 Sep 2024 00:18:11 +0900
+	s=arc-20240116; t=1725809125; c=relaxed/simple;
+	bh=By5zUPgfL+dN0S3WzMVycd1W/qmxScpWCUYn81UoJaA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HibQ3LbPVq+HdNSZ9LR/KsiFXQl7L0dxBVpAhj7QHhMXZfCXj+V+BWTDgi/VVKiJBvbyrkLAHlzKYifLd+wZuAcYKGHv0YhNbM6C45cNKYlU4gMBXerpSJ/p8EPHlrdSYwe6mdGjw7NWm1YCoTlKFOh4llkjXDTEEAcP89kBXVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aDI6fGkV; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725809123; x=1757345123;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=By5zUPgfL+dN0S3WzMVycd1W/qmxScpWCUYn81UoJaA=;
+  b=aDI6fGkV0RzqyTcK+rE+0rdcCyLmgl2sHJM3bMzS9xODjzbXQ1UddXwZ
+   CFEqt5zy+b/x86xEaAivGOak3Jsdf8887ZpxO8bAfAHHuQ4rL/KiAQpOg
+   PrufHw9I5FhbYrGqTiaD+2nhHt4qbTAIN6S1VmzxWykZOLKRvkxgY+40G
+   bx+cNqbcp58H7U6++ff8+4hl31CBjtIO3uokO8beDJ+5UFW8vF110ZX7j
+   +jBkuDZ8soeKz5fPOElkh46mHtdO4/F2bxZYsYpuSIbjzBHJuIL0QQqFs
+   zqUgpubCqQrGrBVX3+GiP4ozwXpZJWq2ylsBaHSuXGxxnZxMdz8Fynnx6
+   Q==;
+X-CSE-ConnectionGUID: uRgySVh1QtaT9vZZe+W/3w==
+X-CSE-MsgGUID: x/mOD+RnRmSrbsTJ8r8PtA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="27425469"
+X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
+   d="scan'208";a="27425469"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 08:25:22 -0700
+X-CSE-ConnectionGUID: xkZQwZlKTna5gIidrpR0Rg==
+X-CSE-MsgGUID: stG7cw0pSnq58gqzTlPOPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
+   d="scan'208";a="71385024"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 08 Sep 2024 08:25:21 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1snJmw-000DeV-1K;
+	Sun, 08 Sep 2024 15:25:18 +0000
+Date: Sun, 8 Sep 2024 23:24:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Howells <dhowells@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	Dominique Martinet <asmadeus@codewreck.org>
+Subject: fs/netfs/objects.c:148:5-24: WARNING: atomic_dec_and_test variation
+ before object free at line 150.
+Message-ID: <202409082345.wiwtJarb-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Chanwoo Choi <chanwoo@kernel.org>
-Content-Language: en-US
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [GIT PULL] extcon next for v6.12
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Dear Greg,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   d1f2d51b711a3b7f1ae1b46701c769c1d580fa7f
+commit: f89ea63f1c65d3e93b255f14f9d9e05df87955fa netfs, 9p: Fix race between umount and async request completion
+date:   3 months ago
+config: x86_64-randconfig-102-20240908 (https://download.01.org/0day-ci/archive/20240908/202409082345.wiwtJarb-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
 
-This is extcon-next pull request for v6.12. I add detailed description of
-this pull request on below. Please pull extcon with following updates.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409082345.wiwtJarb-lkp@intel.com/
 
-Best Regards,
-Chanwoo Choi
+cocci warnings: (new ones prefixed by >>)
+>> fs/netfs/objects.c:148:5-24: WARNING: atomic_dec_and_test variation before object free at line 150.
 
+vim +148 fs/netfs/objects.c
 
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+   123	
+   124	static void netfs_free_request(struct work_struct *work)
+   125	{
+   126		struct netfs_io_request *rreq =
+   127			container_of(work, struct netfs_io_request, work);
+   128		struct netfs_inode *ictx = netfs_inode(rreq->inode);
+   129		unsigned int i;
+   130	
+   131		trace_netfs_rreq(rreq, netfs_rreq_trace_free);
+   132		netfs_proc_del_rreq(rreq);
+   133		netfs_clear_subrequests(rreq, false);
+   134		if (rreq->netfs_ops->free_request)
+   135			rreq->netfs_ops->free_request(rreq);
+   136		if (rreq->cache_resources.ops)
+   137			rreq->cache_resources.ops->end_operation(&rreq->cache_resources);
+   138		if (rreq->direct_bv) {
+   139			for (i = 0; i < rreq->direct_bv_count; i++) {
+   140				if (rreq->direct_bv[i].bv_page) {
+   141					if (rreq->direct_bv_unpin)
+   142						unpin_user_page(rreq->direct_bv[i].bv_page);
+   143				}
+   144			}
+   145			kvfree(rreq->direct_bv);
+   146		}
+   147	
+ > 148		if (atomic_dec_and_test(&ictx->io_count))
+   149			wake_up_var(&ictx->io_count);
+ > 150		call_rcu(&rreq->rcu, netfs_free_request_rcu);
+   151	}
+   152	
 
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-6.12
-
-for you to fetch changes up to 2e01ac83c1c7166e58043ff2bdb0dc7dbfcfd11a:
-
-  extcon: lc824206xa: Fix build error of POWER_SUPPLY_PROP_USB_TYPE (2024-09-05 01:44:51 +0900)
-
-----------------------------------------------------------------
-Update extcon next for v6.12
-
-Detailed description for this pull request:
-- Add missing child node port on exttcon-ptn5150 binding document
-
-- Convert extcon-usb-gpio.txt to yaml format for binding document
-
-- Add new LC824206XA microUSB switch driver
- : Add a new driver for the ON Semiconductor LC824206XA microUSB switch and
-   accessory detector chip. It has been tested on a Lenovo Yoga Tablet 2 Pro
-   1380. And this driver is only used on x86/ACPI (non devicetree) devices,
-   Therefor there is no devicetree bindings documentation.
-
-- Apply immutable branch between power_supply and extcon tree for extcon-lc824206xa.c
-----------------------------------------------------------------
-
-Chanwoo Choi (1):
-      Merge tag 'ib-psy-usb-types-signed' of git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply into extcon-next
-
-Frank Li (2):
-      dt-bindings: extcon: ptn5150: add child node port
-      dt-bindings: extcon: convert extcon-usb-gpio.txt to yaml format
-
-Hans de Goede (7):
-      power: supply: "usb_type" property may be written to
-      power: supply: ucs1002: Adjust ucs1002_set_usb_type() to accept string values
-      power: supply: rt9467-charger: Remove "usb_type" property write support
-      power: supply: sysfs: Add power_supply_show_enum_with_available() helper
-      power: supply: sysfs: Move power_supply_show_enum_with_available() up
-      power: supply: Change usb_types from an array into a bitmask
-      extcon: Add LC824206XA microUSB switch driver
-
-Stephen Rothwell (1):
-      extcon: lc824206xa: Fix build error of POWER_SUPPLY_PROP_USB_TYPE
-
- Documentation/ABI/testing/sysfs-class-power        |   7 +-
- .../devicetree/bindings/extcon/extcon-ptn5150.yaml |  11 +
- .../devicetree/bindings/extcon/extcon-usb-gpio.txt |  21 -
- .../bindings/extcon/linux,extcon-usb-gpio.yaml     |  37 ++
- drivers/extcon/Kconfig                             |  11 +
- drivers/extcon/Makefile                            |   1 +
- drivers/extcon/extcon-intel-cht-wc.c               |  15 +-
- drivers/extcon/extcon-lc824206xa.c                 | 495 +++++++++++++++++++++
- drivers/phy/ti/phy-tusb1210.c                      |  11 +-
- drivers/power/supply/axp20x_usb_power.c            |  13 +-
- drivers/power/supply/bq256xx_charger.c             |  15 +-
- drivers/power/supply/cros_usbpd-charger.c          |  22 +-
- drivers/power/supply/lenovo_yoga_c630_battery.c    |   7 +-
- drivers/power/supply/mp2629_charger.c              |  15 +-
- drivers/power/supply/mt6360_charger.c              |  13 +-
- drivers/power/supply/mt6370-charger.c              |  13 +-
- drivers/power/supply/power_supply_core.c           |   4 -
- drivers/power/supply/power_supply_sysfs.c          |  66 +--
- drivers/power/supply/qcom_battmgr.c                |  37 +-
- drivers/power/supply/qcom_pmi8998_charger.c        |  13 +-
- drivers/power/supply/rk817_charger.c               |   9 +-
- drivers/power/supply/rn5t618_power.c               |  13 +-
- drivers/power/supply/rt9467-charger.c              |  16 +-
- drivers/power/supply/rt9471.c                      |  15 +-
- drivers/power/supply/ucs1002_power.c               |  26 +-
- drivers/usb/typec/anx7411.c                        |  11 +-
- drivers/usb/typec/rt1719.c                         |  11 +-
- drivers/usb/typec/tcpm/tcpm.c                      |  11 +-
- drivers/usb/typec/tipd/core.c                      |   9 +-
- drivers/usb/typec/ucsi/psy.c                       |  11 +-
- include/linux/power_supply.h                       |   3 +-
- 31 files changed, 687 insertions(+), 275 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/extcon/extcon-usb-gpio.txt
- create mode 100644 Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml
- create mode 100644 drivers/extcon/extcon-lc824206xa.c
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
