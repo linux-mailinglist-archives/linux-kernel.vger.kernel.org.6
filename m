@@ -1,148 +1,162 @@
-Return-Path: <linux-kernel+bounces-320067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02EF69705D1
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:33:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A87269705D2
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3D1F282DA6
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:33:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65C9B28161D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 08:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC3913A261;
-	Sun,  8 Sep 2024 08:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE2B136337;
+	Sun,  8 Sep 2024 08:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="t/3ptwsS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEYMtKBe"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4960139D1E;
-	Sun,  8 Sep 2024 08:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701A31366
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 08:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725784394; cv=none; b=HFmaG524e33LxJuyZXfdQi3JL/Jcski+XSHEnZh1XX/w5zMwYrNaHz8DQTiHC+3EsYda4L1TM2J20HzVTN+TgvaZEiVEQqxgwsMKk3r9kBfqT7uclUv0Pm+BewSuc/nBOGWZzNrlBAgl1o7+DFd58GqBfhjXZXSx2SMYBuVufYY=
+	t=1725784470; cv=none; b=N8Oc1YHQlQBah3vFNnV+ypSshfDi2tKZsJ+96MbDwG2SiZEd0znN2T5w+IQqKpbXL2vcrllbMNK4YaAXJTDj1x9PTIe40GesIqIyOL75meD2CBs0y5NGyhXmlUGkQG5u3ARMTCeWc6gEFvtG9Gaq/zb+pxhVKQxuwd/+bmtBCFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725784394; c=relaxed/simple;
-	bh=KRBSBkWnA5Oy7vKfkRLxp5pkNZEjHseXzliLTWr2IVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OOKTpedAff4d9pg3TrmzZb3u7NkBZdY4Y3fwpBUWsDPLFgdza0GR3gQb8WNHJYB6Srm8PiokfDuJLH6nkZpm/BN+3xvPrLjCmC2bUCa7XIx/Dzk9u7CVeSoIPxB8Md1Y1W+W0ac8qBQwS9R0oTrTqHZELy8rzmveF9dH720Z3Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=t/3ptwsS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3AA5C4CEC6;
-	Sun,  8 Sep 2024 08:33:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725784394;
-	bh=KRBSBkWnA5Oy7vKfkRLxp5pkNZEjHseXzliLTWr2IVs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t/3ptwsSor/eQSQj/FpXX6lk5Bmrb94QrAtyn63/sohCOTahNtDmCfB5la1HODffD
-	 qa0Hw6NmNTJcvw7HAgcmI2/brd6fO93ocr0nqBz749JbDTySkxDev5cZHWJEg6wq44
-	 Gd2us+1/g57rrlZHzIvsTKk37PEbO622qHg/gRi0=
-Date: Sun, 8 Sep 2024 10:33:11 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	stern@rowland.harvard.edu,
-	syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com,
+	s=arc-20240116; t=1725784470; c=relaxed/simple;
+	bh=c9Kfjg6JKXpt/LOPnS2V0Nlg3DxraxDVjUcwGhfqnyg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TmUaARmC2XjNDhtOjEbno+rdzvBJG2yhxXw0KLIaEeWH9H1LQO0ZOwfjtOpdLpVX8bgm4igxdGvyb8ztknLIoDf6DMKpO4Rl9AM5y1ZPKLEtuBYhYNOQI/i7eb2GWoH8867E07aoXiMVCsx5ZbI18vzp/dJza80XLf2sLvtJzNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hEYMtKBe; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2068acc8b98so30755495ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 01:34:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725784469; x=1726389269; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=voSUAYCbvQQ5+MVh4n8SzuPW1IBELoz77eh1vYARkhw=;
+        b=hEYMtKBeC1h1jzeY77IQEeSdevcxXC+dsWUmfQTS+khUvxkt0Ik7xTTkZHTejFfgy8
+         1ofwPZs+irO94wOa/NM5mdux/opOUTz/ds8FI3A0+D1Ci9FZA0DCRAwEr2sQ8vZl2/1g
+         jSWTqSmii/6mQufpAbhIHVcQHSnlbrUpRuv0CLxFc4tgT2d7la7iL/RPb+lsfw/BR1JR
+         L2cemgjViBOki2sezRUHE4pfvVtgZz89BAOWbAJx2EajYw4PNoRTg50+/WfUpNhxRh5x
+         OfgaW0mSsuPDXZYuNPJ19knlCc2JfjFFpltCBxDmW3xDhxs7th71yfyeXi/5c0UelLHZ
+         YvEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725784469; x=1726389269;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=voSUAYCbvQQ5+MVh4n8SzuPW1IBELoz77eh1vYARkhw=;
+        b=qwkAWPolxbkPxABgx+Ek8idJhEx9eYgvR/m0I+I7Z7If1AqvqnBQH8Ffl6acgxepm1
+         e3Ry9sqUnpQ/Rd2ox1aDm8Zbc2EwhHAlSMlhkGkafxvDEFo3FD+2EcZeIHb3oYPF9twz
+         XPXtwZm17WQGJgbNHnp6oO+KAiHHgDEnG5TYrdcFEdkBFCtRVpIpR68A3DKneFj/hzNg
+         lgi980Z27aZ85bct10rWGziYz4Pwcd6XKmK2OtDsJNq1A2cz07DYhMb9nA9UT/I4f3Hx
+         iekEcyxbS9RCFNTr9KQ4xiCn7XRINmG9qB6kApK51qxwION2bZyrz0ORL+e5QRYO7mvh
+         h6RA==
+X-Gm-Message-State: AOJu0Yz8HVXywRj5Yyvn6DerNguD0WEixQdrG5+oGfkaD9dHf+Y6FoFB
+	QuN+vNbdh4VnIwlDE/RDpFoMKDjiR6ESkA8n5aB9OzjlnpSLgVH+
+X-Google-Smtp-Source: AGHT+IE3tS3jb+AX/ZGV4b/l4lSSsFckA2vMXJ12ZW7hl3ozT5whmyXAK4X3El2BhJgyREFWZEeu0w==
+X-Received: by 2002:a17:903:8ce:b0:207:2093:99a3 with SMTP id d9443c01a7336-20720939ac8mr26112895ad.5.1725784468747;
+        Sun, 08 Sep 2024 01:34:28 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710eead48sm17190615ad.131.2024.09.08.01.34.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 01:34:28 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
 	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V3] USB: usbtmc: prevent kernel-usb-infoleak
-Message-ID: <2024090809-subdued-mystify-32b6@gregkh>
-References: <2024090832-tabby-mom-e3d6@gregkh>
- <tencent_6C71E6C09363C370897103ADC45ED7743705@qq.com>
+Subject: Re: KCSAN: data-race in generic_fillattr / shmem_mknod (2)
+Date: Sun,  8 Sep 2024 17:34:24 +0900
+Message-Id: <20240908083424.13212-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_6C71E6C09363C370897103ADC45ED7743705@qq.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 08, 2024 at 04:16:39PM +0800, Edward Adam Davis wrote:
-> On Sun, 8 Sep 2024 09:54:22 +0200, Greg KH wrote:
-> > On Sun, Sep 08, 2024 at 03:35:49PM +0800, Edward Adam Davis wrote:
-> > > On Sun, 8 Sep 2024 07:20:40 +0200, Greg KH wrote:
-> > > > On Sun, Sep 08, 2024 at 10:20:57AM +0800, Edward Adam Davis wrote:
-> > > > > The syzbot reported a kernel-usb-infoleak in usbtmc_write.
-> > > > >
-> > > > > The expression "aligned = (transfersize + (USBTMC_HEADER_SIZE + 3)) & ~3;"
-> > > > > in usbtmcw_write() follows the following pattern:
-> > > > >
-> > > > > aligned = (1 + 12 + 3) & ~3 = 16   // 3 bytes have not been initialized
-> > > > > aligned = (2 + 12 + 3) & ~3 = 16   // 2 bytes have not been initialized
-> > > > > aligned = (3 + 12 + 3) & ~3 = 16   // 1 byte has not been initialized
-> > > > > aligned = (4 + 12 + 3) & ~3 = 16   // All bytes have been initialized
-> > > > > aligned = (5 + 12 + 3) & ~3 = 20   // 3 bytes have not been initialized
-> > > > > aligned = (6 + 12 + 3) & ~3 = 20   // 2 bytes have not been initialized
-> > > > > aligned = (7 + 12 + 3) & ~3 = 20   // 1 byte has not been initialized
-> > > > > aligned = (8 + 12 + 3) & ~3 = 20   // All bytes have been initialized
-> > > > > aligned = (9 + 12 + 3) & ~3 = 24
-> > > > > ...
-> > > > >
-> > > > > Note: #define USBTMC_HEADER_SIZE      12
-> > > > >
-> > > > > This results in the buffer[USBTMC_SEAD_SIZE+transfersize] and its
-> > > > > subsequent memory not being initialized.
-> > > > >
-> > > > > Fixes: 4ddc645f40e9 ("usb: usbtmc: Add ioctl for vendor specific write")
-> > > > > Reported-and-tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
-> > > > > Closes: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
-> > > > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> > > > > ---
-> > > > > V2 -> V3: Update condition and comments
-> > > > >
-> > > > >  drivers/usb/class/usbtmc.c | 4 ++++
-> > > > >  1 file changed, 4 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
-> > > > > index 6bd9fe565385..faf8c5508997 100644
-> > > > > --- a/drivers/usb/class/usbtmc.c
-> > > > > +++ b/drivers/usb/class/usbtmc.c
-> > > > > @@ -1591,6 +1591,10 @@ static ssize_t usbtmc_write(struct file *filp, const char __user *buf,
-> > > > >  		goto exit;
-> > > > >  	}
-> > > > >
-> > > > > +	if (USBTMC_HEADER_SIZE + transfersize < aligned)
-> > > > > +		memset(&buffer[USBTMC_HEADER_SIZE + transfersize], 0,
-> > > > > +			aligned - USBTMC_HEADER_SIZE - transfersize);
-> > > >
-> > > > As this is now a pain to read/understand, and there's no comment
-> > > > describing it so we'll not really understand it in a few months, let
-> > > > alone years, how about we just do the trivial thing and make the
-> > > > allocation with kzalloc() to start with?  And put a comment there saying
-> > > > why it's zeroed out.
-> > > Perhaps I wrote too much in my comments, but in essence, the logic behind
-> > > this version's fix is:
-> > > When aligned is greater than (USBTMC_HEADER_SIZE+transfersize), there are
-> > > (aligned - (USBTMC_HEADER_SIZE+transfersize) bytes after the header and data
-> > > that have not been initialized, and these bytes are then set to 0.
-> > > >
-> > > > Sorry, I thought this was going to be a lot simpler based on your first
-> > > > patch than this type of logic.
-> > > As you mentioned in my first version patch, this approach is simple and
-> > > easy to understand, but it comes at the cost of losing the real issue,
-> > > and KMSAN will not find similar problems again in the future, which is
-> > > not conducive to making the program logic more robust.
-> > 
-> > There will not be similar problems in the future as you are explicitly
-> > setting everything to 0, so all should be fine :)
-> > 
-> > The real issue here is that the usbtmc logic of sending data is crazy,
-> > and unique to it for various reasons that well all really don't
-> > understand.  Given the very small number of these devices in the world,
-> > it's probably best left to the maintainers of it to handle any real
-> > problems going forward, and just squash these types of fuzzing bugs now
-> > with a heavy hammer to make them happy.
-> I reserve my opinion.
-> 
-> If you insist, you can use my first patch directly:
-> https://lore.kernel.org/all/tencent_088B2EF2AEE00C8AE7D706CCD2CBC6484906@qq.com
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-No, that should be 'kzalloc()' instead of alocating and calling
-memset(), to save us the round-trip of someone coming afterward and
-cleaning up this common pattern to be a single call.
+---
+ fs/ext4/orphan.c | 2 +-
+ fs/ext4/super.c  | 4 ++--
+ mm/percpu.c      | 5 ++---
+ 3 files changed, 5 insertions(+), 6 deletions(-)
 
-thanks,
-
-greg k-h
+diff --git a/fs/ext4/orphan.c b/fs/ext4/orphan.c
+index e5b47dda3317..08299b2a1b3b 100644
+--- a/fs/ext4/orphan.c
++++ b/fs/ext4/orphan.c
+@@ -293,7 +293,7 @@ int ext4_orphan_del(handle_t *handle, struct inode *inode)
+ 			mutex_unlock(&sbi->s_orphan_lock);
+ 			goto out_brelse;
+ 		}
+-		NEXT_ORPHAN(i_prev) = ino_next;
++		WRITE_ONCE(NEXT_ORPHAN(i_prev), ino_next);
+ 		err = ext4_mark_iloc_dirty(handle, i_prev, &iloc2);
+ 		mutex_unlock(&sbi->s_orphan_lock);
+ 	}
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index e72145c4ae5a..8cc5e19bfe78 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -346,7 +346,7 @@ __u32 ext4_free_group_clusters(struct super_block *sb,
+ __u32 ext4_free_inodes_count(struct super_block *sb,
+ 			      struct ext4_group_desc *bg)
+ {
+-	return le16_to_cpu(bg->bg_free_inodes_count_lo) |
++	return le16_to_cpu(READ_ONCE(bg->bg_free_inodes_count_lo)) |
+ 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
+ 		 (__u32)le16_to_cpu(bg->bg_free_inodes_count_hi) << 16 : 0);
+ }
+@@ -402,7 +402,7 @@ void ext4_free_group_clusters_set(struct super_block *sb,
+ void ext4_free_inodes_set(struct super_block *sb,
+ 			  struct ext4_group_desc *bg, __u32 count)
+ {
+-	bg->bg_free_inodes_count_lo = cpu_to_le16((__u16)count);
++	WRITE_ONCE(bg->bg_free_inodes_count_lo, cpu_to_le16((__u16)count));
+ 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
+ 		bg->bg_free_inodes_count_hi = cpu_to_le16(count >> 16);
+ }
+diff --git a/mm/percpu.c b/mm/percpu.c
+index 20d91af8c033..5c958a54da51 100644
+--- a/mm/percpu.c
++++ b/mm/percpu.c
+@@ -1864,7 +1864,6 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
+ 
+ area_found:
+ 	pcpu_stats_area_alloc(chunk, size);
+-	spin_unlock_irqrestore(&pcpu_lock, flags);
+ 
+ 	/* populate if not all pages are already there */
+ 	if (!is_atomic) {
+@@ -1878,14 +1877,12 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
+ 
+ 			ret = pcpu_populate_chunk(chunk, rs, re, pcpu_gfp);
+ 
+-			spin_lock_irqsave(&pcpu_lock, flags);
+ 			if (ret) {
+ 				pcpu_free_area(chunk, off);
+ 				err = "failed to populate";
+ 				goto fail_unlock;
+ 			}
+ 			pcpu_chunk_populated(chunk, rs, re);
+-			spin_unlock_irqrestore(&pcpu_lock, flags);
+ 		}
+ 
+ 		mutex_unlock(&pcpu_alloc_mutex);
+@@ -1894,6 +1891,8 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
+ 	if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
+ 		pcpu_schedule_balance_work();
+ 
++	spin_unlock_irqrestore(&pcpu_lock, flags);
++
+ 	/* clear the areas and return address relative to base address */
+ 	for_each_possible_cpu(cpu)
+ 		memset((void *)pcpu_chunk_addr(chunk, cpu, 0) + off, 0, size);
+--
 
