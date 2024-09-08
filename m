@@ -1,131 +1,180 @@
-Return-Path: <linux-kernel+bounces-320233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488249707D5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:31:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC849707D7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D6201C21622
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F83A1F20B64
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289D7165F03;
-	Sun,  8 Sep 2024 13:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EA4169382;
+	Sun,  8 Sep 2024 13:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5G8XIoT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LQcGR9F4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B71D272;
-	Sun,  8 Sep 2024 13:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D298161306;
+	Sun,  8 Sep 2024 13:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725802253; cv=none; b=W6Gw18aVQDyHaXUnp03jsdW4hPobN6p6mVshYZ9hWyGUtCluyaRjBRds3vzLO3OZO8dXeoDmOuGr8K2fhocDKLFqJWkScAVOJiFQZDPI5U0yem3AgIxzoqj9nb7OjRM7C5BlVXB4jhrZAIwMQctlsL8GY31kGBjGv7Y+ovAxTlI=
+	t=1725802343; cv=none; b=FLCJTGyDryETPtpnD/eTb3HdWDJCoOdRD6pAsPgXWeFYujxI7xEWgzBXHpdgUrJtFFQMpxkOKWrGCN9kxYLMberfZEBbGzapV8pW6j7JD27Bnaq1Y2p1zwIQGCA7txT23RKNgrI0ss5ZoeutgP3fT+7qaDOj4JSQMhadKkqB5cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725802253; c=relaxed/simple;
-	bh=06b1TC/iLGnM4QRdcpRyvjIokKNse0VVHgIaEOzq4Js=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=FnUo6puW+OuyUCHLf7L5bEFaLsWaNLBKvIj40Od08Ui4GP4Ht6o3NLdm5KEKGPVAx+oeqUix9pLdvqEPR80Mw/v4zKq3IDGRgVfa4yCoM/PmYyVkszzrgIMYireePdErjH+BCrUh0s/AGrevmuIxvPeWH3DuJmPMYW6k5sK2Yiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5G8XIoT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0048BC4CEC3;
-	Sun,  8 Sep 2024 13:30:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725802253;
-	bh=06b1TC/iLGnM4QRdcpRyvjIokKNse0VVHgIaEOzq4Js=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=W5G8XIoTOtTWPGz1v+dtfcSAsGh7cWtpw2+1Yqfd3SigwbgK9P+ML7pYhPZV2t/LA
-	 9h3H+xFmAgRCX2MYNG8aqckkW19hQcrF9RmHNl+Ep4j5UUjVGN529XB2QfYBgYoF91
-	 I6klpbOcRp4o2sZc9IioQSCvlR1br0iubIXCEk7RmTBw+QnpR14JQRsBaJAxPBEKNv
-	 V+KuQFyyAl73e9nkuOm/46ZHNnhN+44gYjKe92WdqbE0gvUlqcZ6ltrAvqlEI5Komw
-	 yd2d2iXDD2ATKlFO+GnWYcR9wcOBZ3NbjWPYhx34R/EqqslgMWRz5zCaSqiKfSx3FE
-	 4MMMWfPtYsd8g==
-Date: Sun, 8 Sep 2024 22:30:48 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Zheng Yejian <zhengyejian@huaweicloud.com>
-Cc: Sven Schnelle <svens@linux.ibm.com>, Steven Rostedt
- <rostedt@goodmis.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] tracing: add config option for print arguments in
- ftrace
-Message-Id: <20240908223048.8bd6961dbc741d971f57b5c2@kernel.org>
-In-Reply-To: <69b78634-3295-c22e-c09c-e41aa4554df3@huaweicloud.com>
-References: <20240904065908.1009086-1-svens@linux.ibm.com>
-	<20240904065908.1009086-6-svens@linux.ibm.com>
-	<69b78634-3295-c22e-c09c-e41aa4554df3@huaweicloud.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725802343; c=relaxed/simple;
+	bh=6bArD0WILUY5I5Fe0W9HdSzvuwHGO4vcaHpwE4fX98Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VNC/Dm57kvMAoAFCR/faSshwDKPcxPY84z21njTQyFgKmk3pT7lM4R9g8NlDfuXgZZQ1/S43bExFU7XTXdrSmmrxwRSxit6BbRspc70wwNRWvY9mdgdGq8vDeiVAHLkuzUqol4AL0f5RUiqdmf1ITInqQQds1b6mU6GaJsU0ZWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LQcGR9F4; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725802340; x=1757338340;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6bArD0WILUY5I5Fe0W9HdSzvuwHGO4vcaHpwE4fX98Q=;
+  b=LQcGR9F462GYsBm86f/M85O45aTOUBua/6w/Zbo5oOluSrERGUhKTJKr
+   qbMLgFFBMYZz2ovMTZ6DzhMNs3dKNr1bQZcRYisUB4ipQ1aFLjc6/u20G
+   rmoqSQ/6vuRfP0SifmfWv/UiT6NvYDkeIr5MKZ654ybFxn3aWSIiKvU01
+   5xTSj17VjmmR3VLjxfH5i+9h6bLFBO7/tm9Z4krFcDNakmmmg/2ioxzKU
+   O16LRmZ8Fk5tqfStzpEbnTHfkT9VFNnWAu9KS99cGHWZaLYuTcZlYRW4N
+   NMdQ6vn2HRLJXRTqsl37IJO2lXZRG/62FEfT/5CQ7RRdsOnDLkwKato/s
+   A==;
+X-CSE-ConnectionGUID: T4piLYn9Sjy2KV1Zn6xf2w==
+X-CSE-MsgGUID: UdSLXjr4RJ+Y3/+h3tbj8w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="35876032"
+X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
+   d="scan'208";a="35876032"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 06:32:20 -0700
+X-CSE-ConnectionGUID: s95PrwJrR3ClxUDgnyccWw==
+X-CSE-MsgGUID: hu3CmFqKQx+YIIp98nYT7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
+   d="scan'208";a="89681106"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 08 Sep 2024 06:32:17 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1snI1X-000DZb-0i;
+	Sun, 08 Sep 2024 13:32:15 +0000
+Date: Sun, 8 Sep 2024 21:31:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: kimriver liu <kimriver.liu@siengine.com>, jarkko.nikula@linux.intel.com
+Cc: oe-kbuild-all@lists.linux.dev, andriy.shevchenko@linux.intel.com,
+	mika.westerberg@linux.intel.com, jsd@semihalf.com,
+	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kimriver.liu@siengine.com
+Subject: Re: [PATCH] i2c: designware: fix master is holding SCL low while
+ ENABLE bit is disabled
+Message-ID: <202409082011.9JF6aYsk-lkp@intel.com>
+References: <20240905074211.2278-1-kimriver.liu@siengine.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240905074211.2278-1-kimriver.liu@siengine.com>
 
-On Fri, 6 Sep 2024 11:36:11 +0800
-Zheng Yejian <zhengyejian@huaweicloud.com> wrote:
+Hi kimriver,
 
-> On 2024/9/4 14:58, Sven Schnelle wrote:
-> > Add a config option to disable/enable function argument
-> > printing support during runtime.
-> > 
-> > Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
-> > ---
-> >   kernel/trace/Kconfig | 12 ++++++++++++
-> >   1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> > index 721c3b221048..8b9b6cdf39ac 100644
-> > --- a/kernel/trace/Kconfig
-> > +++ b/kernel/trace/Kconfig
-> > @@ -242,6 +242,18 @@ config FUNCTION_GRAPH_RETVAL
-> >   	  enable it via the trace option funcgraph-retval.
-> >   	  See Documentation/trace/ftrace.rst
-> >   
-> > +config FUNCTION_TRACE_ARGS
-> > +	bool "Kernel Function Tracer Arguments"
-> > +	depends on HAVE_FUNCTION_ARG_ACCESS_API
-> > +	depends on DEBUG_INFO_BTF && BPF_SYSCALL
-> 
-> Nice feature!
-> 
-> Just a nit, DEBUG_INFO_BTF currently depends on BPF_SYSCALL,
-> so BPF_SYSCALL may not be necessary here. This feature
-> also doesn't seem to depend on bpf.
+kernel test robot noticed the following build errors:
 
-Indeed. Sven, you can check the PROBE_EVENTS_BTF_ARGS as
-an example.
+[auto build test ERROR on andi-shyti/i2c/i2c-host]
+[also build test ERROR on linus/master v6.11-rc6 next-20240906]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-config PROBE_EVENTS_BTF_ARGS
-        depends on HAVE_FUNCTION_ARG_ACCESS_API
-        depends on FPROBE_EVENTS || KPROBE_EVENTS
-        depends on DEBUG_INFO_BTF && BPF_SYSCALL
-        bool "Support BTF function arguments for probe events"
+url:    https://github.com/intel-lab-lkp/linux/commits/kimriver-liu/i2c-designware-fix-master-is-holding-SCL-low-while-ENABLE-bit-is-disabled/20240905-154711
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20240905074211.2278-1-kimriver.liu%40siengine.com
+patch subject: [PATCH] i2c: designware: fix master is holding SCL low while ENABLE bit is disabled
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20240908/202409082011.9JF6aYsk-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240908/202409082011.9JF6aYsk-lkp@intel.com/reproduce)
 
-Thank you,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409082011.9JF6aYsk-lkp@intel.com/
 
-> 
-> > +	default n
-> > +	help
-> > +	  Support recording and printing of function arguments when using
-> > +	  the function tracer or function graph tracer. This feature is off
-> > +	  by default, and can be enabled via the trace option func-args (for
-> > +	  the function tracer) and funcgraph-args (for the function graph
-> > +	  tracer).
-> > +
-> >   config DYNAMIC_FTRACE
-> >   	bool "enable/disable function tracing dynamically"
-> >   	depends on FUNCTION_TRACER
-> 
-> -- 
-> Thanks,
-> Zheng Yejian
-> 
-> 
+All errors (new ones prefixed by >>):
 
+   drivers/i2c/busses/i2c-designware-common.c: In function '__i2c_dw_disable':
+>> drivers/i2c/busses/i2c-designware-common.c:538:32: error: 'DW_IC_ENABLE_ENABLE' undeclared (first use in this function); did you mean 'DW_IC_ENABLE_STATUS'?
+     538 |                 if (!(enable & DW_IC_ENABLE_ENABLE)) {
+         |                                ^~~~~~~~~~~~~~~~~~~
+         |                                DW_IC_ENABLE_STATUS
+   drivers/i2c/busses/i2c-designware-common.c:538:32: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +538 drivers/i2c/busses/i2c-designware-common.c
+
+   523	
+   524	void __i2c_dw_disable(struct dw_i2c_dev *dev)
+   525	{
+   526		unsigned int raw_intr_stats;
+   527		unsigned int enable;
+   528		int timeout = 100;
+   529		bool abort_needed;
+   530		unsigned int status;
+   531		int ret;
+   532	
+   533		regmap_read(dev->map, DW_IC_RAW_INTR_STAT, &raw_intr_stats);
+   534		regmap_read(dev->map, DW_IC_ENABLE, &enable);
+   535	
+   536		abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
+   537		if (abort_needed) {
+ > 538			if (!(enable & DW_IC_ENABLE_ENABLE)) {
+   539				regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
+   540				enable |= DW_IC_ENABLE_ENABLE;
+   541	
+   542				/*
+   543				 * Wait two ic_clk delay when enabling the i2c to ensure ENABLE bit
+   544				 * is already set by the driver (for 400KHz this is 25us)
+   545				 * as described in the DesignWare I2C databook.
+   546				 */
+   547				fsleep(25);
+   548			}
+   549	
+   550			regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
+   551			ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
+   552						       !(enable & DW_IC_ENABLE_ABORT), 10,
+   553						       100);
+   554			if (ret)
+   555				dev_err(dev->dev, "timeout while trying to abort current transfer\n");
+   556		}
+   557	
+   558		do {
+   559			__i2c_dw_disable_nowait(dev);
+   560			/*
+   561			 * The enable status register may be unimplemented, but
+   562			 * in that case this test reads zero and exits the loop.
+   563			 */
+   564			regmap_read(dev->map, DW_IC_ENABLE_STATUS, &status);
+   565			if ((status & 1) == 0)
+   566				return;
+   567	
+   568			/*
+   569			 * Wait 10 times the signaling period of the highest I2C
+   570			 * transfer supported by the driver (for 400KHz this is
+   571			 * 25us) as described in the DesignWare I2C databook.
+   572			 */
+   573			usleep_range(25, 250);
+   574		} while (timeout--);
+   575	
+   576		dev_warn(dev->dev, "timeout in disabling adapter\n");
+   577	}
+   578	
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
