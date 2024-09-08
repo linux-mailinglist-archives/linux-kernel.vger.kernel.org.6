@@ -1,141 +1,160 @@
-Return-Path: <linux-kernel+bounces-320094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DDC4970610
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:38:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748CB970617
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2661F2824A3
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:38:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CF2C1F21DC1
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDCE13A261;
-	Sun,  8 Sep 2024 09:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3A113BAF1;
+	Sun,  8 Sep 2024 09:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPLeRvTG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rHaEmaBi"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C482DF58
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 09:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E972E634
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 09:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725788281; cv=none; b=OEnzvGqv1gB5FIF3Lp89qiYlTf1J1m5yjbgJ0rxMGGLdBJqnZ8W8CZ7PHFjZ2FDJYQJ3AbX2cwquJXky5QLfquuRNDDx5aobHDPVO77hnuRPQvhEFZY6HMIqV8IHxyXZwRe18B2P9XYTREinKzBUOKRI+K/4KfwlyOmc+3LT2to=
+	t=1725788658; cv=none; b=d7WqOfTvu96327rSUp0KiSnnQpFHPoz6ox9nPN+Udg/97UBfwTci1wlH8aDIMCRbKsh8TZOlTpVO2+SDk3sGdKdWXwCpGj1kgjKL1ha1aMh5niE7bSxplrzDKo6QYSNmxvqM19Esj4gjkO6Gn7ENp6XgoIqOPLRKCjDH5hhla8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725788281; c=relaxed/simple;
-	bh=siJn425AxZ5+7HkM3BgAENCGYl7MdXTqBPGST4nKFcY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=elHSXK2FjKYaTVB5+DT5jwJe46wn6lwUPi7M8uDd6BL9Ee583eS/MM23joP/kyzaCPSKWFnb6G/41OSb2BIQgLDlSdFBA3T2QoOcOpEIWCcHERzrROKDDw0bRvC1xB/PkCD4JygVXb3HHBMaI041RRwV2lnIX6Q0ZjIfwZxffcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPLeRvTG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B76C4CEC3;
-	Sun,  8 Sep 2024 09:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725788280;
-	bh=siJn425AxZ5+7HkM3BgAENCGYl7MdXTqBPGST4nKFcY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lPLeRvTGFAWE1X2IoSaZ9WkgMsVRhhTxDBU+ZjXIiQEw6hgN9Cwly5XSQSoUTMoTA
-	 Sl9HGCWYZaamEKPCuzJ+4h8zFZvh/oqS2FuugJeA/C3nCb2WSYjU5nGOtH/w6Btebd
-	 4yJZuewcfwF2kOiXfA9e4tIC0ATJ5PqCCdwQG+ygYG11hWir1DQEV30AwaXD5SE45z
-	 R/CW5V364aAXx1Nvc37ea1OUrgFVEAWAABu0WOoLsSZC5BBGoMr4aUwM40AHX73mEI
-	 YWd8Kw5eebZWZKQpRXY/Z1xxKvYOUh+BZDvFCsTSE+ccG1XgLT/3v60fVsv/Hsh2sC
-	 uL24p8s/3JWtA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1snEMo-00Aczu-ST;
-	Sun, 08 Sep 2024 10:37:59 +0100
-Date: Sun, 08 Sep 2024 10:37:53 +0100
-Message-ID: <87wmjmv632.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sergey Shtylyov <s.shtylyov@omp.ru>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] irqchip/gic: prevent buffer overflow in gic_ipi_send_mask()
-In-Reply-To: <f0efe812-a77b-9a77-c17c-ece503475923@omp.ru>
-References: <048ff3bb-09d1-2e60-4f3b-611e2bfde7aa@omp.ru>
-	<87cyli5zj7.ffs@tglx>
-	<86o752v8xs.wl-maz@kernel.org>
-	<f0efe812-a77b-9a77-c17c-ece503475923@omp.ru>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1725788658; c=relaxed/simple;
+	bh=h2Y7DN7i00hmHpiRGedcAo6/ZSy2lb2/ftAZcUJWNHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sz7+hH7NXKXDEXiWlBFxpI5BLXuK9jn3cXGRWt0d/5qyHpLnTEjQcYB7ev/1jQoGHNoKkwwMWcJm0o7PWJwuQ9l7vX4f/RmgU6vI/q3Z8ihR1IciPE5EAudH+OAZGTsFD8e0JpigMcnv8d+ievuIKwbI1Ld/kf97D7ThrrvQ/8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rHaEmaBi; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725788649;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iKnfMiLB9a0irdtB/pTgb8p6Wd2qUK1Juyy7jyAjfjI=;
+	b=rHaEmaBicjBGAmqWhHkyYqdYs01Q6y4bCAls4YnFnT9zwYVLf0hloQCPz+A9zRYxDMFlmc
+	9PSeDg8TU2ARUZwu+gJbJR/DUTue8a4SXBVOm6Ra763oB2C6edY1pGmsawHSIRdgIw8931
+	9NNhBa6nOfGaOwC5Bsy6JHC4sOoPB04=
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	dri-devel@lists.freedesktop.org,
+	etnaviv@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Sui Jingfeng <sui.jingfeng@linux.dev>
+Subject: [PATCH v15 00/19] drm/etnaviv: Add driver wrapper for vivante GPUs attached on PCI(e) device
+Date: Sun,  8 Sep 2024 17:43:38 +0800
+Message-ID: <20240908094357.291862-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: s.shtylyov@omp.ru, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 06 Sep 2024 21:29:47 +0100,
-Sergey Shtylyov <s.shtylyov@omp.ru> wrote:
-> 
-> On 9/5/24 10:47 AM, Marc Zyngier wrote:
-> [...]
-> 
-> >>> ARM GIC arch v2 spec claims support for just 8 CPU interfaces.  However,
-> >>> looking at the GIC driver's irq_set_affinity() method, it seems that the
-> >>> passed CPU mask may contain the logical CPU #s beyond 8, and that method
-> >>> filters them out before reading gic_cpu_map[], bailing out with
-> >>> -EINVAL.
-> >>
-> >> The reasoning is correct in theory, but in reality it's a non problem.
-> >>
-> >> Simply because processors which use this GIC version cannot have more
-> >> than 8 cores.
-> >>
-> >> That means num_possible_cpus() <= 8 so the cpumask handed in cannot have
-> >> bits >= 8 set. Ergo for_each_cpu() can't return a bit which is >= 8.
-> > 
-> > That.
-> 
->    That? :-)
+drm/etnaviv use the component framework to bind multiple GPU cores to a
+virtual master, the virtual master is manually create during driver load
+time. This may works well for SoCs, yet there are some PCIe card has the
+vivante GPU cores integrated. The driver lacks support for PCIe devices
+currently.
 
-What Thomas explained.
+Adds PCIe driver wrapper on the top of drm/etnaviv, the component
+framework is still being used to bind subdevices, even though there is
+only one GPU core. But the process is going to be reversed, we create
+virtual platform device for each of the vivante GPU IP core that is
+shipped by the PCIe card. Select the PCIe device as parent, generate a
+virtual platform device as component master to take over the bind actions.
 
-> 
-> > The irq_set_affinity() check exists because the affinity can be
-> > provided by userspace, and used to be be *anything*. Since
-> 
->    In this case you mean gic_set_affinity(), right?
+Sui Jingfeng (19):
+  drm/etnaviv: Implement drm_gem_object_funcs::print_info()
+  drm/etnaviv: Export drm_gem_print_info() and use it
+  drm/etnaviv: Implement drm_gem_object_funcs::vunmap()
+  drm/etnaviv: Make etnaviv_gem_prime_vmap() a static function
+  drm/etnaviv: Add contructor and destructor for etnaviv_gem_get_mapping
+    structure
+  drm/etnaviv: Prefer drm_device based drm_WARN_ON() over regular
+    WARN_ON()
+  drm/etnaviv: Add a dedicated helper function to get various clocks
+  drm/etnaviv: Fix wrong caching mode being used for non writecombine
+    buffers
+  drm/etnaviv: Add constructor and destructor for the
+    etnaviv_drm_private structure
+  drm/etnaviv: Embed struct drm_device into struct etnaviv_drm_private
+  drm/etnaviv: Add etnaviv_gem_obj_remove() helper
+  drm/etnaviv: Add support for cached coherent caching mode
+  drm/etnaviv: Add support for vivante GPU cores attached via PCIe
+    device
+  drm/etnaviv: Add PCIe IP setup code
+  drm/etnaviv: Make more use of the etnaviv_gem_new_private() function
+  drm/etnaviv: Call etnaviv_gem_obj_add() in ernaviv_gem_new_private()
+  drm/etnaviv: Support to manage dedicated VRAM base on drm_mm
+  drm/etnaviv: Allow userspace specify the domain of etnaviv GEM buffer
+    object
+  drm/etnaviv: Expose basic sanity tests via debugfs
 
-Yes.
+v10:
+	* Add one more cleanup patch
+	* Resolve the conflict with a patch from Rob
+	* Make the dummy PCI stub inlined
+	* Print only if the platform is dma-coherrent
+V11:
+	* Process reviews since V10.
+	* Provide a side by side implement
 
-> 
-> > 33de0aa4bae98, the affinity that the driver gets is narrowed to what
-> > is actually *online*.
-> 
->    What I haven't quite understood from my (cursory) looking at the GICv2
-> spec (and the GIC driver) is why only one CPU (with a lowest #) is selected
-> from *mask_val before writing to GICD_GIC_DIST_TARGET, while the spec holds
-> that an IRQ can be forwarded to any set of 8 CPU interfaces...
+V12:
+	* Create a virtual platform device for the subcomponent GPU cores
+	* Bind all subordinate GPU cores to the real PCI master via component.
 
-Because on all the existing implementations, having more than a single
-target in GICD_ITARGETSRn results in all the targeted CPUs to be
-interrupted, with the guarantee that only one will see the actual
-interrupt (the read from GICC_IAR returns a value that is not 0x3ff),
-and everyone else will only see a spurious interrupt (0x3ff). This is
-because the distributor does not track which CPU is actually in a
-position to handle the interrupt.
+V13:
+	* Drop the non-component code path, always use the component framework
+	  to bind subcomponent GPU core. Even though there is only one core.
+	* Defer the irq handler register.
+	* Rebase and improve the commit message
 
-While this can be, under limited circumstances, beneficial from an
-interrupt servicing latency, it is always bad from a global throughput
-perspective. You end-up thrashing CPU caches, generating odd latencies
-in unsuspecting code, and in general with disappointing performance.
+V14:
+	* Rebase onto etnaviv-next and improve commit message.
 
-Thankfully, GIC (v1/v2) is a dead horse, and v3 doesn't have this
-particular problem (it replaced it with a bigger one in the form of
-1:n distribution).
+V15:
+	* Plug in a drm-mm based dedicated VRAM range allocator.
 
-	M.
+ drivers/gpu/drm/drm_gem.c                    |   1 +
+ drivers/gpu/drm/etnaviv/Kconfig              |   9 +
+ drivers/gpu/drm/etnaviv/Makefile             |   5 +
+ drivers/gpu/drm/etnaviv/etnaviv_debugfs.c    | 118 +++++++++
+ drivers/gpu/drm/etnaviv/etnaviv_debugfs.h    |  15 ++
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c        | 183 +++++++++----
+ drivers/gpu/drm/etnaviv/etnaviv_drv.h        |  40 ++-
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c        | 224 ++++++++++++----
+ drivers/gpu/drm/etnaviv/etnaviv_gem.h        |  21 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c  |  31 +--
+ drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c |   2 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gem_vram.c   | 264 +++++++++++++++++++
+ drivers/gpu/drm/etnaviv/etnaviv_gem_vram.h   |  14 +
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.c        | 136 +++++++---
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.h        |   4 +
+ drivers/gpu/drm/etnaviv/etnaviv_mmu.c        |  11 +-
+ drivers/gpu/drm/etnaviv/etnaviv_pci_drv.c    | 217 +++++++++++++++
+ drivers/gpu/drm/etnaviv/etnaviv_pci_drv.h    |  63 +++++
+ drivers/gpu/drm/etnaviv/pcie_ip_setup.c      | 109 ++++++++
+ include/drm/drm_gem.h                        |   2 +
+ include/uapi/drm/etnaviv_drm.h               |  13 +
+ 21 files changed, 1308 insertions(+), 174 deletions(-)
+ create mode 100644 drivers/gpu/drm/etnaviv/etnaviv_debugfs.c
+ create mode 100644 drivers/gpu/drm/etnaviv/etnaviv_debugfs.h
+ create mode 100644 drivers/gpu/drm/etnaviv/etnaviv_gem_vram.c
+ create mode 100644 drivers/gpu/drm/etnaviv/etnaviv_gem_vram.h
+ create mode 100644 drivers/gpu/drm/etnaviv/etnaviv_pci_drv.c
+ create mode 100644 drivers/gpu/drm/etnaviv/etnaviv_pci_drv.h
+ create mode 100644 drivers/gpu/drm/etnaviv/pcie_ip_setup.c
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.43.0
+
 
