@@ -1,138 +1,82 @@
-Return-Path: <linux-kernel+bounces-320390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E4FC970992
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 21:45:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D701E970998
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 21:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73D941C21608
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:45:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EEB31C212F1
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D7E178377;
-	Sun,  8 Sep 2024 19:45:01 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFEA176231;
+	Sun,  8 Sep 2024 19:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGvyBwOf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412B917740
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 19:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A811C01;
+	Sun,  8 Sep 2024 19:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725824701; cv=none; b=lGUs5HYUHBHVXshwgJfyC2a0fT6eysQo+a0DMzQtfzCNyD8a8hozht4l+NFVlW9h8q1/zY1oJCPTyyR7EfOdIVFQKJkRshkMefjjNNR2uEXLtew8s9P8WcyND6jNTQSgdHisM/d7bbbN5UW4UOzKNOMw1CcmNKElpM4XKCFTBws=
+	t=1725824926; cv=none; b=uFzLJE2LCwH2SWEwh+OgnbQHnA9F/ID+Yt2Pbjp0LSdVcwTKITqCSyCPEUzZ12CBDUTs/PtzsCZ3O1AilMxZ5RSMHAQ0a+hg8smxXeHehSDk70XzjTsw/lVyx3C8mkMYS/ta3LNsgI1CEaejQNqUIuDLKQJYmzLhU1pCoh+E15Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725824701; c=relaxed/simple;
-	bh=T4lbU3Mns5fbxeZNTnz6NaF1mRkxmXr3WV5PejjH3RY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=XnoXTvRaC25RQqcAhSJqDhPWqu4ohSiyiByZhNrV3l1JdJM9VkGdu8j5cz/mj9DUamDzpDKlBFuM0ldNDGnOWBxjMmkttSDAC6H876CfKGAa/Pi7HqLOR3TXpmtrLD9hSxgUIFP4wvanzH1hozf24tBqf7t7yVJHgBYika/ZZYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-323-cfZ70aNhPeG4p8VQmNOQdg-1; Sun, 08 Sep 2024 20:44:50 +0100
-X-MC-Unique: cfZ70aNhPeG4p8VQmNOQdg-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 8 Sep
- 2024 20:43:59 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 8 Sep 2024 20:43:59 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Peter Zijlstra' <peterz@infradead.org>, Josh Poimboeuf
-	<jpoimboe@kernel.org>
-CC: "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>, Miroslav Benes <mbenes@suse.cz>, "Petr
- Mladek" <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, "Jiri
- Kosina" <jikos@kernel.org>, Marcos Paulo de Souza <mpdesouza@suse.com>, "Song
- Liu" <song@kernel.org>
-Subject: RE: [RFC 05/31] x86/compiler: Tweak __UNIQUE_ID naming
-Thread-Topic: [RFC 05/31] x86/compiler: Tweak __UNIQUE_ID naming
-Thread-Index: AQHa/da8Kbv7PqyNRkCNp5PR2zK+C7JOUHcg
-Date: Sun, 8 Sep 2024 19:43:59 +0000
-Message-ID: <9b8f1beb0d444a84ab500ebdac756eba@AcuMS.aculab.com>
-References: <cover.1725334260.git.jpoimboe@kernel.org>
- <d8d876dcd1d76c667a4449f4673104669480c08d.1725334260.git.jpoimboe@kernel.org>
- <20240903075634.GL4723@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240903075634.GL4723@noisy.programming.kicks-ass.net>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1725824926; c=relaxed/simple;
+	bh=IfaPlI7gHBuGvdyuPoCk5K67BUbA6tOt76dIMRn98YQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ewywwVurAL5flaYK9dVa+oKoNxNmoYKWKQg+c4Clox7I2x07eVtmuTBDvuYIyT44LXXge1i5fia5UKQp0TUs2sXgq2M+yn6Keaph9GkrOUd75Lf8tO/BMQ7gKu2+/SNDCdmzesfNbtiqhqYTRlCiQogn6wKUHKfhkqobwy82hYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGvyBwOf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94D94C4CEC3;
+	Sun,  8 Sep 2024 19:48:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725824925;
+	bh=IfaPlI7gHBuGvdyuPoCk5K67BUbA6tOt76dIMRn98YQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tGvyBwOfggoGnf4pf1PWvsAJzhf0l3mRmYm4CTbuYO3qy6CEP3DTytrFAxbRCA+s+
+	 Z9La34kZQZCNlawwl2Z+boRjlNbHngdYZKS03WCfs24e7G9yiisj5+4l9i/gz7aZUp
+	 usfFQcSmzM0w40RFr/b4kOBHY8YZv/nCVW9ahlilwcByIXxQdYkSroKkA56qb/5F/6
+	 gfYI57YB7e8ZGlt00XjmKbK2GME/gn+J6mOPOLh8CJUrqTP05c7WxHyegPmRfdcakC
+	 l5s8Lcqmr87V3CVcil+BSq8gDlopXx4G7nK3wjnv5GhhH0BMJrZdcPlvbz+yBj73mN
+	 OEDZJj93tA7OQ==
+Message-ID: <4a42a392-590d-4b90-a21d-df4290d86204@kernel.org>
+Date: Sun, 8 Sep 2024 20:48:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] bpftool: Fix undefined behavior caused by shifting into
+ the sign bit
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ jserv@ccns.ncku.edu.tw, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240908140009.3149781-1-visitorckw@gmail.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20240908140009.3149781-1-visitorckw@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-From: Peter Zijlstra
-> Sent: 03 September 2024 08:57
->=20
-> On Mon, Sep 02, 2024 at 08:59:48PM -0700, Josh Poimboeuf wrote:
-> > Add an underscore between the "name" and the counter so tooling can
-> > distinguish between the non-unique and unique portions of the symbol
-> > name.
-> >
-> > This will come in handy for "objtool klp diff".
-> >
-> > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> > ---
-> >  include/linux/compiler.h | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> > index 8c252e073bd8..d3f100821d45 100644
-> > --- a/include/linux/compiler.h
-> > +++ b/include/linux/compiler.h
-> > @@ -186,7 +186,11 @@ void ftrace_likely_update(struct ftrace_likely_dat=
-a *f, int val,
-> >  =09__asm__ ("" : "=3Dr" (var) : "0" (var))
-> >  #endif
-> >
-> > -#define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __C=
-OUNTER__)
-> > +/* Format: __UNIQUE_ID_<name>_<__COUNTER__> */
-> > +#define __UNIQUE_ID(name)=09=09=09=09=09\
-> > +=09__PASTE(__UNIQUE_ID_,=09=09=09=09=09\
-> > +=09__PASTE(name,=09=09=09=09=09=09\
-> > +=09__PASTE(_, __COUNTER__)))
->=20
-> OK, that's just painful to read; how about so?
->=20
-> =09__PASTE(__UNIQUE_ID_,=09=09=09=09=09\
-> =09        __PASTE(name,=09=09=09=09=09\
-> =09=09        __PASTE(_, __COUNTER)))
+On 08/09/2024 15:00, Kuan-Wei Chiu wrote:
+> Replace shifts of '1' with '1U' in bitwise operations within
+> __show_dev_tc_bpf() to prevent undefined behavior caused by shifting
+> into the sign bit of a signed integer. By using '1U', the operations
+> are explicitly performed on unsigned integers, avoiding potential
+> integer overflow or sign-related issues.
+> 
+> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 
-Why not just generate name_nnnnn?
-I believe it that the 'prefix' was added to allow multiple unique names be
-generated on a single line on versions of gcc that didn't support __COUNTER=
-__
-and __LINE__ was used instead.
-So prior to that the result would have been __UNIQUE_ID_nnnn with no indica=
-tion
-of the variable name.
 
-In one of the min/max changes I suggested just passing __COUNTER__ through
-the required 2 #defines and then just appending it to the variable name.
-IIRC Linus liked that idea :-)
-Need to find time to write the patch...
+Looks good, thank you.
 
-After all __PASTE() itself is only really necessary for a K&R C cpp.
-Possibly still relevant for .S files - not sure.
-(You had to generate a/**/b to get ab when the comment was removed.)
+Acked-by: Quentin Monnet <qmo@kernel.org>
 
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+How did you find these?
 
