@@ -1,144 +1,123 @@
-Return-Path: <linux-kernel+bounces-320156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1589706C7
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 12:58:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A23919706CA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 13:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BC871C20C4C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 10:58:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BA1DB21676
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8861531C5;
-	Sun,  8 Sep 2024 10:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C2QHiaLl"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F08914D715;
+	Sun,  8 Sep 2024 11:15:36 +0000 (UTC)
+Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CDE4B5AE;
-	Sun,  8 Sep 2024 10:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAC536B0D
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 11:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725793124; cv=none; b=TEvdYv4XlO9R1UDtrP6ecqjvjBP90LIDTp/2nqCxXCjKCk7n6/yt9WK9FOinOm/UkQlDa47WYgIuxnVnMz61+iUAW1kVzbBCEpGgL8DASdKJd6sFwh7S3lZOgBH4pbQu74k4YoWunTRMRTGAMILD95EqOQpDpkxaYKLZ+KHhjNw=
+	t=1725794136; cv=none; b=eCXKFaUgnP7MxEXUeuC4Vg0SaVw3J6F4xwvFOpoVD2AgcYxo4eWywWKSutDVJE8viKxAdgyRxwLVRXhI4UNAwsA5ipVOwCitOyLli37z/dlkdBFy66qo3KbR5+nD6PwAqsQPZg0c8RTQOxvvWYu7Cy4pZPbs21Knp6jqypb1VrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725793124; c=relaxed/simple;
-	bh=K/6mlzVzop0ReaWhpJex3yfaSrj4OKc2vPe05yd8ngo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aAJIZrFD3BKy62nS5EBkEf4khpaNiFTmM7Y2L8ZO5mg+LxxEcmKJng32m6AkmfibtxNvcoDfCUTS1iOZYYyDhMCQ4Huv6onz99HEkiCoHi2bnDeoi4m0iJVffzKU8pGBMMN5YhaVxK5lEpFrdcOZcH2XUF14qNVzcb/GorizX5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C2QHiaLl; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c3c30e6649so4194586a12.2;
-        Sun, 08 Sep 2024 03:58:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725793121; x=1726397921; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P7fqY6U/cxvjBE+lCHhb79+U+IBZZTdEO1cL6Ww0FMI=;
-        b=C2QHiaLlqOpwg0B8hvjCtthtaqMt9ZQ4sL92Aj6hEmKTAbyBr1teq+Us8eEN3x1EXR
-         XwVdZVcryrs/2zks71AN1HaNNrtcddrHaB7JaVqyjp3GxOviRwwQdBYiPRgn2CgAu4jq
-         mswN6fBI780QOAqx3h1uGJEJfN+1uy35Ny4yjAK80enfaEoBAiPg36VjXrwPL2Ek0X09
-         rBlR/rp4xuvKi7S+yIrh9Dv0X+dltdaJHWEnuheLrDa4osqV2YELZkcqOpCZc6CaYxYT
-         Mg/xDrCIhaj2tIZbaO7O/yhyXety8ijf3WmcTpsdUqEYVbHkWFvrA0fMRo99oiZ4VDEc
-         xThQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725793121; x=1726397921;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P7fqY6U/cxvjBE+lCHhb79+U+IBZZTdEO1cL6Ww0FMI=;
-        b=jkDZph2vqgtijKLNCci+1ZSyDZaGcRP8flV2nvtf82N1y7S4RS2v7XUCNiEqx4S5uy
-         YiCpG8NarVkidHyHGLgRi3KB5LEzqth2ck33EEzRa4trGryEjweijAUAX31qAxwvBRN6
-         CFE3fGRps2YgfPCF86m9GvfujG+iPNE+z5FTiQoDYZqcXRjv8zaYUlhxVYqImLK0bkUG
-         MBnCyRk2UDb2JiJtm2W61KTJhD1Pfe860wCfcLmQvF6A9Ar0jlZO1wpNvuYjASnodKwE
-         +wwVCW8aGmkWXKu8mVv6C2IM0aBmtz4ZwpGS6hGhhVFZor/28IKyNkWzQ2lqjV70q6M5
-         Wd/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUoGazKvj9gpbGewC6Wkz7kYLM52fB0wtGZifoWeeg9GEknXGkNztl5+ZjseexELy7W4fZPX4E/rbk=@vger.kernel.org, AJvYcCWgZ5nxaYugTyn+UpXuGqx+udDfs63JUKGQI2Fr2rh4VTFSmY3C16Mt5BnJZNN9IE/wODXNEkfNCHPR7w05@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvLm0yKwjcWIE5P+lXLQB7jvHozZxLtf5pyZVFadWunpf5wyjT
-	mbpWyiQPZRdNVyDjQzr1k7Qly6Z/Hnl7OT8boPX485Q25kMckWxDlmo1U5/H9O1RebCUgJaI6RB
-	tFU004p+koTVdNi/yVPGM0TrRvoPyvonNoC8=
-X-Google-Smtp-Source: AGHT+IEZR3MHhdgXo7TUrROfd6+7Y0uP1oucdSzBfzf0VIGBOcB42Mz+Nh2eAOCNe7YZNFcBag+BYm/nI04DNY+iS8o=
-X-Received: by 2002:a05:6402:50c6:b0:5c0:9fca:9352 with SMTP id
- 4fb4d7f45d1cf-5c3dc7e4a2cmr3709906a12.36.1725793120594; Sun, 08 Sep 2024
- 03:58:40 -0700 (PDT)
+	s=arc-20240116; t=1725794136; c=relaxed/simple;
+	bh=w/PM+27W4wly9VN1ft91DuizPLDIduCoyAjJ/gt+yLk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=EPLutMLM27jXbvm/v638o7h29PmtZP+kF02YmpUWKVqrtuFXhvwemYHuEA7PB2ZFxrYaMq7Ob35xCIYSk/nAx3ZO4cV0qh6aUJImuMfFJVbSzZH/M4SkpOxpBwrmpgx4DqAAWQax4RwpL68sm1LAOYHxI/EWnLXiah+oUgjlJa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.65.196])
+	by sina.com (10.185.250.24) with ESMTP
+	id 66DD874D00002549; Sun, 8 Sep 2024 19:15:27 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 52991110748395
+X-SMAIL-UIID: E2BC172ABB924FAE876B1DEAEE557DB5-20240908-191527-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect (2)
+Date: Sun,  8 Sep 2024 19:15:15 +0800
+Message-Id: <20240908111515.2457-1-hdanton@sina.com>
+In-Reply-To: <0000000000004a130a0621888811@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830034640.7049-1-kfting@nuvoton.com>
-In-Reply-To: <20240830034640.7049-1-kfting@nuvoton.com>
-From: Tali Perry <tali.perry1@gmail.com>
-Date: Sun, 8 Sep 2024 13:58:29 +0300
-Message-ID: <CAHb3i=tt8hy==3BftYNGjgG_4MNLtRzQ64eyR7Qxw7jtg3aiRA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/7] i2c: npcm: Bug fixes read/write operation, checkpatch
-To: Tyrone Ting <warp5tw@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com, 
-	yuenn@google.com, benjaminfair@google.com, andi.shyti@kernel.org, 
-	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
-	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Reviewed-by: Tali Perry <tali.perry1@gmail.com>
+On Sat, 07 Sep 2024 07:42:26 -0700
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    788220eee30d Merge tag 'pm-6.11-rc7' of git://git.kernel.o..
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1304189f980000
 
-On Fri, Aug 30, 2024 at 6:48=E2=80=AFAM Tyrone Ting <warp5tw@gmail.com> wro=
-te:
->
-> This patchset includes the following fixes:
->
-> - Restore the npcm_i2caddr array length to fix the smatch warning.
-> - Enable the target functionality in the interrupt handling routine
->   when the i2c transfer is about to finish.
-> - Correct the read/write operation procedure.
-> - Introduce a software flag to handle the bus error (BER) condition
->   which is not caused by the i2c transfer.
-> - Modify timeout calculation.
-> - Assign the client address earlier logically.
-> - Use an i2c frequency table for the frequency parameters assignment.
-> - Coding style fix.
->
-> The NPCM I2C driver is tested on NPCM750 and NPCM845 evaluation boards.
->
-> Addressed comments from:
-> - kernel test robot : https://lore.kernel.org/oe-kbuild-all/
->   202408080319.de2B6PgU-lkp@intel.com/
-> - Dan Carpenter : https://lore.kernel.org/all/202408130818
->   .FgDP5uNm-lkp@intel.com/
-> - Andrew Jeffery : https://lore.kernel.org/lkml/
->   20240807100244.16872-7-kfting@nuvoton.com/T/
->   #m3ed3351bf59675bfe0de89c75aae1fb26cad5567
->
-> Changes since version 1:
-> - Restore the npcm_i2caddr array length to fix the smatch warning.
-> - Remove unused variables.
-> - Handle the condition where scl_table_cnt reaches to the maximum value.
-> - Fix the checkpatch warning.
->
-> Charles Boyer (1):
->   i2c: npcm: Enable slave in eob interrupt
->
-> Tyrone Ting (6):
->   i2c: npcm: restore slave addresses array length
->   i2c: npcm: correct the read/write operation procedure
->   i2c: npcm: use a software flag to indicate a BER condition
->   i2c: npcm: Modify timeout evaluation mechanism
->   i2c: npcm: Modify the client address assignment
->   i2c: npcm: use i2c frequency table
->
->  drivers/i2c/busses/i2c-npcm7xx.c | 276 +++++++++++++++++++------------
->  1 file changed, 172 insertions(+), 104 deletions(-)
->
->
-> base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
-> --
-> 2.34.1
->
+#syz test
+
+--- l/net/bluetooth/l2cap_core.c
++++ c/net/bluetooth/l2cap_core.c
+@@ -1747,6 +1747,8 @@ static void l2cap_unregister_all_users(s
+ 	}
+ }
+ 
++static DEFINE_MUTEX(l2cap_conn_del_mutex);
++
+ static void l2cap_conn_del(struct hci_conn *hcon, int err)
+ {
+ 	struct l2cap_conn *conn = hcon->l2cap_data;
+@@ -1792,14 +1794,15 @@ static void l2cap_conn_del(struct hci_co
+ 
+ 	mutex_unlock(&conn->chan_lock);
+ 
+-	hci_chan_del(conn->hchan);
+-
+ 	if (conn->info_state & L2CAP_INFO_FEAT_MASK_REQ_SENT)
+ 		cancel_delayed_work_sync(&conn->info_timer);
+ 
++	mutex_lock(&l2cap_conn_del_mutex);
+ 	hcon->l2cap_data = NULL;
++	hci_chan_del(conn->hchan);
+ 	conn->hchan = NULL;
+ 	l2cap_conn_put(conn);
++	mutex_unlock(&l2cap_conn_del_mutex);
+ }
+ 
+ static void l2cap_conn_free(struct kref *ref)
+@@ -7480,6 +7483,7 @@ void l2cap_recv_acldata(struct hci_conn
+ 	struct l2cap_conn *conn = hcon->l2cap_data;
+ 	int len;
+ 
++	mutex_lock(&l2cap_conn_del_mutex);
+ 	if (!conn)
+ 		conn = l2cap_conn_add(hcon);
+ 
+@@ -7512,6 +7516,7 @@ void l2cap_recv_acldata(struct hci_conn
+ 		if (len == skb->len) {
+ 			/* Complete frame received */
+ 			l2cap_recv_frame(conn, skb);
++			mutex_unlock(&l2cap_conn_del_mutex);
+ 			return;
+ 		}
+ 
+@@ -7576,6 +7581,7 @@ void l2cap_recv_acldata(struct hci_conn
+ 
+ drop:
+ 	kfree_skb(skb);
++	mutex_unlock(&l2cap_conn_del_mutex);
+ }
+ 
+ static struct hci_cb l2cap_cb = {
+--
 
