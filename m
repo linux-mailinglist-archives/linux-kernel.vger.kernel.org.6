@@ -1,234 +1,226 @@
-Return-Path: <linux-kernel+bounces-320446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B47970A90
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 00:50:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF55970A93
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D37E281CD9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:50:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B599C1F21699
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 23:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A5A17A5A4;
-	Sun,  8 Sep 2024 22:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B38B1531E6;
+	Sun,  8 Sep 2024 23:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="24X1ZUeS"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGpMt2dg"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEEB1F942
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 22:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A8D136663
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 23:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725835791; cv=none; b=T+mFJkWKs91fvzwneHhkTV1oBKfg0Mg0OOyjB4dZZDr47SuP91olkeAz8Fpyie27Yhg/X3fQvXd8DUlGxDuzFknPCC4DX5IQ8cqYdd63pUcT41RSdzSPNgBfyqhfT/+3NRQqqsOLDFB4AbLSnUvrjI94Vz8au8lbPiqhWye+qqA=
+	t=1725837695; cv=none; b=EZzCaskh/EvoEWqWfy5jL4nVhCslrz1hq6lZlUE/7wNATE46CNxtdjjq4M6sNoWBjpZSJZfeh8BkvY93xOdIm1VTVMAOodYSPJMKgSWWGyiXDcAymdRYMT9OscCb3Mky1/0OZDGNZbZyIHEf0n4HBY16rbyUoyM+1wBB0DFSNCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725835791; c=relaxed/simple;
-	bh=bsa+rnV7uBrxI0i9jQrjgili2wj/kL9oQ3CZA5IWysY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I1Yu2MH68+nptLrJygykqv3a4IsIXh6FLD4yrbiggUYXLVSsybXLitb0r+lo80mKLQPBqRmE04Y0f3IRrcL2w9+MOGRDkY1tpO/db5C9zbwmz3Lfo8PABusKcO/tzSZzRbtAzGfWCxh73cxGufzJlmCjDNBeywe49srFiBURB/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=24X1ZUeS; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7d1fa104851so2275788a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 15:49:49 -0700 (PDT)
+	s=arc-20240116; t=1725837695; c=relaxed/simple;
+	bh=Bn4zGkzyhelvgOynGb7w7VBCWSp/Z3k1qg7oi08db8E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=CvaGEUeP//ZNFxGjwzRuq9udN+CL4vivxl6l1PHiPHAfdo7oyW3gbpof1FTPymybsopddqKECGuRdfgGgGzO5v3E0m/pwmkgQg0CWA37UCrvg/qAZBJAZ2EsOtUXlc/UWJ0hxl9x6WaVQW1YHO2bq5Qx5sZRyxAhL++b9CV/hX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGpMt2dg; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-717911ef035so2869405b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 16:21:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1725835789; x=1726440589; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3QPsmYILQd/xd8I5FvjxiALY4rS0T+MuhxN623BzYE8=;
-        b=24X1ZUeSVKNBIoChvU7lgsA9q89ep3BGRQy4zaT0O+OSntYGdcO3BoGCYqXvhD5W9z
-         4nS5DP2Iw9Da0Ihfww7D9uQJGgjTcGOXPF8EFyIxjUBifZ8jC6gFOULUsL4wDCM5ATrP
-         i+zXse7tmYaMztEI0nIk6Ylx9HYntj3nHDn6zhHtSR1QGOvdHI4irHpIPQxD5fUSShjx
-         P7MQg5YuXEEIs8Zrkexz2nBb9h/eoVgKGgPWE1w/ymoWntZxdqOg2ubvsSefjpc/rSfm
-         1RzX8Z0r8Scm+qVRTVVCCyK7tQW/eF3UWvnnVtz2J3StZ8/StWUtNHY/UVCqo/XFIZ6u
-         UZ6Q==
+        d=gmail.com; s=20230601; t=1725837693; x=1726442493; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D4XfG6mbU1pHrhOieTfAg/3V0YCeOX3JLypNHo4Aiik=;
+        b=BGpMt2dgfUsvAmqpUTlhqHzxJh7s2rTQ4y9joT1vkHDIxdf75U9G78xWvatpkE2OKO
+         WBZZgSbRzRnGB59hmR1VwWpsdewhZcHp15beFeRjWTX/eXWsPhEPMgXkb3MvOpuTp8ig
+         rnBBoNPpjnRc0OnQdTVsohQqEIo9BvB77nANv3evfhfGBtt9tDwiNliGv7rIkDiRW+q6
+         qWNOXVklYH0iBGwcZuyQtURW3apAaKUPHLXWn7URGYZEy6KvRfOgHGrRA8r9FJK1262m
+         x3Ss5xC0eG6PP3GFBw+dp7SJHLkvf+4ghiE5/UP9+wWzYe1xvdbnEn6soZNu0zlz+CDt
+         dGTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725835789; x=1726440589;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3QPsmYILQd/xd8I5FvjxiALY4rS0T+MuhxN623BzYE8=;
-        b=D4LltcEpNnrCSxSThhz0Y2T01CnFifYdjf6ConCbaglVAeF6yUuDIU79nqDXkx7U9N
-         KmBJDXkaT+IO8k3+dK1ijqOt/Sn5JOXZ4XRHkU8pAcJn6xReaeFmXyMwFXs0nyYq/jBG
-         KaU4g1izdNXwdQmd1qgXZ84nBALP2P/OSeg/fU4vEt0cjvJhW4gS2Vd5x5zwPQKgEdO6
-         FAhcENLWYbRMxdLa5+uPYD5i1OQTDTXVy9uAsjGdij65+gu62IGMdQQTcg5avqceWbHR
-         wzww/oukp8MPbl3vFpdqgBNfIhE/wx+OMosXuQ5238M611Kjc4im1uTpOWxmDp/C8m4D
-         NMXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWy4bgHhUgKEIhPkTAd1fJ2k3fHZWA6h8+llgFu46f7m7u7bNB7VNx5TXE/CfwczZ1hEtOnOtNpaApmjAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfQecMeNT3GL06TRzNjVNuHmQy7yYAd7u/AYDn3ycfFgYf/8cb
-	Kr9gSIRRjiC2xFjiHF6Pu8nw2P/Wz3EDhWbz7oxcMZBkpvYQx3UDMfgeTlV/Lxs=
-X-Google-Smtp-Source: AGHT+IEti9DLUoOJUH5lYfPvZdHn3IUvnN8GoCzu9jtLgyl2DhZKP1ozk/sJ68zA1IyNVSpl3JUsAA==
-X-Received: by 2002:a05:6a21:3305:b0:1cf:354e:93df with SMTP id adf61e73a8af0-1cf354e9586mr6624507637.4.1725835789293;
-        Sun, 08 Sep 2024 15:49:49 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d8241bf552sm2796175a12.48.2024.09.08.15.49.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 15:49:48 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1snQj2-002dFM-1r;
-	Mon, 09 Sep 2024 08:49:44 +1000
-Date: Mon, 9 Sep 2024 08:49:44 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
-	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-Message-ID: <Zt4qCLL6gBQ1kOFj@dread.disaster.area>
-References: <20240813163638.3751939-1-john.g.garry@oracle.com>
- <87frqf2smy.fsf@gmail.com>
- <ZtjrUI+oqqABJL2j@dread.disaster.area>
- <79e22c54-04bd-4b89-b20c-3f80a9f84f6b@oracle.com>
- <Ztom6uI0L4uEmDjT@dread.disaster.area>
- <ce87e4fb-ab5f-4218-aeb8-dd60c48c67cb@oracle.com>
+        d=1e100.net; s=20230601; t=1725837693; x=1726442493;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D4XfG6mbU1pHrhOieTfAg/3V0YCeOX3JLypNHo4Aiik=;
+        b=W5UGW0bcRHf6qg5/V/p9/B2+IEl84XT77Z8pZQ+QRam2oOzn/C4ER4NHRt6KZHYzUC
+         wIILw3Gqk722valYFKSmGJi9gFXl8Js4ZtjwedufPHZPv2SdqVUs6SfMpjg2phnwHKut
+         hmiX+mYDivGoNfqHbIUteXAvsushaxQAGaYYPL5YUS8aWRY97f9G0MmfuG3yoOF5ajVi
+         j6K2U/t2tyt8JJrpzrstaZjzjlu1nYtH6imcTr98cmbmNVCyy/A6BiVzRSo+0e1L1rFJ
+         yPVODIIxjxduOEEXh/UZEkWt4Dkpu+fU+ixVvnaJqYQrT6zghgMNjObxfNKUVGHmN85B
+         V06w==
+X-Forwarded-Encrypted: i=1; AJvYcCUW/frgwRW7NTFHlGI35yJqGPFhU6cg4oo3fxs1s7vq8Y5eo3cxT1MYzT9jtxDYw1QnbbWhy7k09NBuAn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIlEBZks5p7NW9vBXGx7x3RaONlUZzaRnN07U5ZePlnX2A6f86
+	46lW4Nob/tvw/q3JLTKIfnwWIr/sM4MswkcHzW9cH5ZcfURpuQkQ
+X-Google-Smtp-Source: AGHT+IF/PMhDHe/5mSj4TkI1XBbuxWuCkRI0tlZ/vvDLAbmDq+Ontuf0QtBlpGcaKpyUcqQGdsZbjw==
+X-Received: by 2002:a05:6a00:94a2:b0:714:1e36:3bcb with SMTP id d2e1a72fcca58-718d5e0f288mr7969912b3a.9.1725837693317;
+        Sun, 08 Sep 2024 16:21:33 -0700 (PDT)
+Received: from Barrys-MBP.hub ([2407:7000:8942:5500:ecbd:b95f:f7b2:8158])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e58c703asm2447643b3a.82.2024.09.08.16.21.24
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 08 Sep 2024 16:21:32 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: baolin.wang@linux.alibaba.com,
+	chrisl@kernel.org,
+	david@redhat.com,
+	hanchuanhua@oppo.com,
+	hannes@cmpxchg.org,
+	hch@infradead.org,
+	hughd@google.com,
+	kaleshsingh@google.com,
+	kasong@tencent.com,
+	linux-kernel@vger.kernel.org,
+	mhocko@suse.com,
+	minchan@kernel.org,
+	nphamcs@gmail.com,
+	ryan.roberts@arm.com,
+	ryncsn@gmail.com,
+	senozhatsky@chromium.org,
+	shakeel.butt@linux.dev,
+	shy828301@gmail.com,
+	surenb@google.com,
+	v-songbaohua@oppo.com,
+	willy@infradead.org,
+	xiang@kernel.org,
+	ying.huang@intel.com,
+	yosryahmed@google.com
+Subject: [PATCH v9 0/3] mm: enable large folios swap-in support
+Date: Mon,  9 Sep 2024 11:21:16 +1200
+Message-Id: <20240908232119.2157-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ce87e4fb-ab5f-4218-aeb8-dd60c48c67cb@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 06, 2024 at 03:31:43PM +0100, John Garry wrote:
-> On 05/09/2024 22:47, Dave Chinner wrote:
-> > > > >   If the start or end of the extent which needs unmapping is
-> > > > >        unaligned then we convert that extent to unwritten and skip,
-> > > > >        is it? (__xfs_bunmapi())
-> > > > The high level code should be aligning the start and end of the
-> > > > file range to be removed via xfs_inode_alloc_unitsize().
-> > > Is that the case for something like truncate? There we just say what is the
-> > > end block which we want to truncate to in
-> > > xfs_itruncate_extents_flags(new_size)  ->
-> > > xfs_bunmapi_range(XFS_B_TO_FSB(new_size)), and that may not be alloc unit
-> > > aligned.
-> > Ah, I thought we had that alignment in xfs_itruncate_extents_flags()
-> > already, but if we don't then that's a bug that needs to be fixed.
-> 
-> AFAICS, forcealign behaviour is same as RT, so then this would be a mainline
-> bug, right?
+From: Barry Song <v-songbaohua@oppo.com>
 
-No, I don't think so. I think this is a case where forcealign and RT
-behaviours differ, primarily because RT doesn't actually care about
-file offset -> physical offset alignment and can do unaligned IO
-whenever it wants. Hence having an unaligned written->unwritten
-extent state transition doesnt' affect anything for rt files...
+Currently, we support mTHP swapout but not swapin. This means that once mTHP
+is swapped out, it will come back as small folios when swapped in. This is
+particularly detrimental for devices like Android, where more than half of
+the memory is in swap.
 
-> 
-> > > We change the space reservation in xfs-setattr_size() for this case
-> > (patch 9) but then don't do any alignment there - it relies on
-> > xfs_itruncate_extents_flags() to do the right thing w.r.t. extent
-> > removal alignment w.r.t. the new EOF.
-> > 
-> > i.e. The xfs_setattr_size() code takes care of EOF block zeroing and
-> > page cache removal so the user doesn't see old data beyond EOF,
-> > whilst xfs_itruncate_extents_flags() is supposed to take care of the
-> > extent removal and the details of that operation (e.g. alignment).
-> 
-> So we should roundup the unmap block to the alloc unit, correct? I have my
-> doubts about that, and thought that xfs_bunmapi_range() takes care of any
-> alignment handling.
+The lack of mTHP swapin functionality makes mTHP a showstopper in scenarios
+that heavily rely on swap. This patchset introduces mTHP swap-in support.
+It starts with synchronous devices similar to zRAM, aiming to benefit as
+many users as possible with minimal changes.
 
-The start should round up, yes. And, no, xfs_bunmapi_range() isn't
-specifically "taking care" of alignment. It's just marking a partial
-alloc unit range as unwritten, which means we now have -unaligned
-extents- in the BMBT. 
+-v9:
+ * cleanup (rename, drop local variable) for patch 1 according to Yosry,
+   thanks!
+ * collect Yosry's reviewed-by tags, thanks!
 
-> 
-> > 
-> > Patch 10 also modifies xfs_can_free_eofblocks() to take alignment
-> > into account for the post-eof block removal, but doesn't change
-> > xfs_free_eofblocks() at all. i.e  it also relies on
-> > xfs_itruncate_extents_flags() to do the right thing for force
-> > aligned inodes.
-> 
-> What state should the blocks post-EOF blocks be? A simple example of
-> partially truncating an alloc unit is:
-> 
-> $xfs_io -c "extsize" mnt/file
-> [16384] mnt/file
-> 
-> 
-> $xfs_bmap -vvp mnt/file
-> mnt/file:
->  EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
->    0: [0..20479]:      192..20671        0 (192..20671)     20480 000000
-> 
-> 
-> $truncate -s 10461184 mnt/file # 10M - 6FSB
-> 
-> $xfs_bmap -vvp mnt/file
-> mnt/file:
->  EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
->    0: [0..20431]:      192..20623        0 (192..20623)     20432 000000
->    1: [20432..20447]:  20624..20639      0 (20624..20639)      16 010000
->  FLAG Values:
->     0010000 Unwritten preallocated extent
-> 
-> Is that incorrect state?
+-v8:
+ https://lore.kernel.org/linux-mm/20240906001047.1245-1-21cnbao@gmail.com/
+ * fix the conflicts with zeromap(this is also a hotfix to zeromap with a
+   Fixes tag), reported by Kairui, thanks!
+   Usama, Yosry, thanks for all your comments during the discussion!
+ * refine the changelog to add the case Kanchana reported, using Intel
+   IAA, with mTHP swap-in zRAM read latency can improve 7X. thanks!
+ * some other code cleanup
 
-Think about it: what happens if you now truncate it back up to 10MB
-(i.e. aligned length) and then do an aligned atomic write on it.
+-v7:
+ https://lore.kernel.org/linux-mm/20240821074541.516249-1-hanchuanhua@oppo.com/
+ * collect Chris's ack tags, thanks!
+ * adjust the comment and subject，pointed by Christoph. 
+ * make alloc_swap_folio() always charge the folio to fix the problem of charge
+   failure in memcg when the memory limit is reached(reported and pointed by
+   Kairui), pointed by Kefeng, Matthew.
 
-First: What happens when you truncate up?
+-v6:
+ https://lore.kernel.org/linux-mm/20240802122031.117548-1-21cnbao@gmail.com/
+ * remove the swapin control added in v5, per Willy, Christoph;
+   The original reason for adding the swpin_enabled control was primarily
+   to address concerns for slower devices. Currently, since we only support
+   fast sync devices, swap-in size is less of a concern.
+   We’ll gain a clearer understanding of the next steps while more devices
+   begin to support mTHP swap-in.
+ * add nr argument in mem_cgroup_swapin_uncharge_swap() instead of adding
+   new API, Willy;
+ * swapcache_prepare() and swapcache_clear() large folios support is also
+   removed as it has been separated per Baolin's request, right now has
+   been in mm-unstable.
+ * provide more data in changelog.
 
-......
+-v5:
+ https://lore.kernel.org/linux-mm/20240726094618.401593-1-21cnbao@gmail.com/
 
-Yes, iomap_zero_range() will see the unwritten extent and skip it.
-i.e. The unwritten extent stays as an unwritten extent, it's now
-within EOF. That written->unwritten extent boundary is not on an
-aligned file offset.
+ * Add swap-in control policy according to Ying's proposal. Right now only
+   "always" and "never" are supported, later we can extend to "auto";
+ * Fix the comment regarding zswap_never_enabled() according to Yosry;
+ * Filter out unaligned swp entries earlier;
+ * add mem_cgroup_swapin_uncharge_swap_nr() helper
 
-Second: What happens when you do a correctly aligned atomic write
-that spans this range now?
+-v4:
+ https://lore.kernel.org/linux-mm/20240629111010.230484-1-21cnbao@gmail.com/
 
-......
+ Many parts of v3 have been merged into the mm tree with the help on reviewing
+ from Ryan, David, Ying and Chris etc. Thank you very much!
+ This is the final part to allocate large folios and map them.
 
-Iomap only maps a single extent at a time, so it will only map the
-written range from the start of the IO (aligned) to the start of the
-unwritten extent (unaligned).  Hence the atomic write will be
-rejected because we can't do the atomic write to such an unaligned
-extent.
+ * Use Yosry's zswap_never_enabled(), notice there is a bug. I put the bug fix
+   in this v4 RFC though it should be fixed in Yosry's patch
+ * lots of code improvement (drop large stack, hold ptl etc) according
+   to Yosry's and Ryan's feedback
+ * rebased on top of the latest mm-unstable and utilized some new helpers
+   introduced recently.
 
-That's not a bug in the atomic write path - this failure occurs
-because of the truncate behaviour doing post-eof unwritten extent
-conversion....
+-v3:
+ https://lore.kernel.org/linux-mm/20240304081348.197341-1-21cnbao@gmail.com/
+ * avoid over-writing err in __swap_duplicate_nr, pointed out by Yosry,
+   thanks!
+ * fix the issue folio is charged twice for do_swap_page, separating
+   alloc_anon_folio and alloc_swap_folio as they have many differences
+   now on
+   * memcg charing
+   * clearing allocated folio or not
 
-Yes, I agree that the entire -physical- extent is still correctly
-aligned on disk so you could argue that the unwritten conversion
-that xfs_bunmapi_range is doing is valid forced alignment behaviour.
-However, the fact is that breaking the aligned physical extent into
-two unaligned contiguous extents in different states in the BMBT
-means that they are treated as two seperate unaligned extents, not
-one contiguous aligned physical extent.
+-v2:
+ https://lore.kernel.org/linux-mm/20240229003753.134193-1-21cnbao@gmail.com/
+ * lots of code cleanup according to Chris's comments, thanks!
+ * collect Chris's ack tags, thanks!
+ * address David's comment on moving to use folio_add_new_anon_rmap
+   for !folio_test_anon in do_swap_page, thanks!
+ * remove the MADV_PAGEOUT patch from this series as Ryan will
+   intergrate it into swap-out series
+ * Apply Kairui's work of "mm/swap: fix race when skipping swapcache"
+   on large folios swap-in as well
+ * fixed corrupted data(zero-filled data) in two races: zswap and
+   a part of entries are in swapcache while some others are not
+   in by checking SWAP_HAS_CACHE while swapping in a large folio
 
-This extent state discontiunity is results in breaking physical IO
-across the extent state boundary. Hence such an unaligned extent
-state change violates the physical IO alignment guarantees that
-forced alignment is supposed to provide atomic writes...
+-v1:
+ https://lore.kernel.org/all/20240118111036.72641-1-21cnbao@gmail.com/#t
 
-This is the reason why operations like hole punching round to extent
-size for forced alignment at the highest level. i.e. We cannot allow
-xfs_bunmapi_range() to "take care" of alignment handling because
-managing partial extent unmappings with sub-alloc-unit unwritten
-extents does not work for forced alignment.
+Barry Song (2):
+  mm: Fix swap_read_folio_zeromap() for large folios with partial
+    zeromap
+  mm: add nr argument in mem_cgroup_swapin_uncharge_swap() helper to
+    support large folios
 
-Again, this is different to the traditional RT file behaviour - it
-can use unwritten extents for sub-alloc-unit alignment unmaps
-because the RT device can align file offset to any physical offset,
-and issue unaligned sector sized IO without any restrictions. Forced
-alignment does not have this freedom, and when we extend forced
-alignment to RT files, it will not have the freedom to use
-unwritten extents for sub-alloc-unit unmapping, either.
+Chuanhua Han (1):
+  mm: support large folios swap-in for sync io devices
 
--Dave.
+ include/linux/memcontrol.h |   5 +-
+ mm/memcontrol.c            |   7 +-
+ mm/memory.c                | 261 +++++++++++++++++++++++++++++++++----
+ mm/page_io.c               |  32 +----
+ mm/swap.h                  |  33 +++++
+ mm/swap_state.c            |   2 +-
+ 6 files changed, 282 insertions(+), 58 deletions(-)
+
 -- 
-Dave Chinner
-david@fromorbit.com
+2.34.1
+
 
