@@ -1,86 +1,105 @@
-Return-Path: <linux-kernel+bounces-320392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A177597099B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 21:58:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E6F97099E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 21:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 408071F21746
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:58:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43CDC281D53
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C68177991;
-	Sun,  8 Sep 2024 19:57:58 +0000 (UTC)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C101779AE;
+	Sun,  8 Sep 2024 19:59:27 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1237917554A;
-	Sun,  8 Sep 2024 19:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC6C1C01
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 19:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725825478; cv=none; b=mVc1EuDb49BWfUG8Sdw3fdezlnBncNr/njCUTn3B3hPRDz0WJMJSxEN3/d6MkXGCL51qYXTSUczfOxSd456Ac++mpDy2EZbjGUaTTmvQMNT2371Y39AAWUeTweTQr09aiBcTj/xk8hmnsXSAsRykwEfwPZtODK4Ew0W7WdYj25A=
+	t=1725825567; cv=none; b=Xz/NB3GwXTp8IJYi8B/JyU+YXGBAWjvct9jt5c8dY4NpWtDFJbjqN5/tzhC1J8zCMO9NxvXw3/9mS74ZuQHv3EJxB9FOELD/W3cTrKILfIHTrdYtcMBImPmciGDJb7ZKgJX3hZEWmNEjSoKtOzRHEHz3N/IG2MACq7Yfm2bzR6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725825478; c=relaxed/simple;
-	bh=6iRQ4ycMPuueLuQbrmkO5BYrgQaV5z5SVussbCyOKoM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JJXBE+icaEp8SGPWmF3ntaSaOut/1NBNz8tOQ/LXC8ZalDuNy1jrubdYpdIB2McZjwtnH4rdjph7xJyfEf6xpONR1Yh9lCnOxCCDxB+YasX49jQHUfyqbAXQWNQKIPsa4we+6lXePW+4Jq/IAwcpuEKpE+0NPH0XZwrZDIaI5X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vasilevsky.ca; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vasilevsky.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e02b79c6f21so4218105276.2;
-        Sun, 08 Sep 2024 12:57:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725825475; x=1726430275;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6iRQ4ycMPuueLuQbrmkO5BYrgQaV5z5SVussbCyOKoM=;
-        b=hMYSJXWQveeBIzsHNU6pUQwZ3zdIzJm237c4B3/KA48tmaq076Invff2qT4Fc2aQu6
-         oZ3OfC8lzIGgAR8F1n8pBBnjNtHEqqo5bpqIdA7Hpa2osiqLJL2wRTXrzRGkLLpmgs1x
-         IT8+ymKZzd3UsELtmCPJX/ASt1JNnoVn3e0FqHrVseB0OTVH7fDK14l93MsRXXVd/s9+
-         CKnPNX737uYEGJH6xChcqANWfhvAIlhVOcwV26BbpHj3ExOFOmV1fQMt7ftCnxj93lAx
-         mN8WcODhPVA6a0KBaCAJRvYj1zi3IVaNXBBrWMYF1yjkLTmaOORM9tcfO5oCD/oIUbEd
-         8MVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeo3507guALs0WN48A/aAIzD9nlCJzboqhfMtu7d6c/h3MMJTWkizWQiGQFzhMufNiy+xHpOP2R7YbKu4=@vger.kernel.org, AJvYcCX6WUWvOteYutmYYxiPC7HkBrmbHSYBNkC457cstD6xnGtSJ3rmHEvmwtTD3u/DpqddQwt/9jMKY5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyLJ6HXVwwp9LYeuB5MDCeOK8ooARHwfrxMbrLZQOpLQF6wnsD
-	xFTzaPOV3hvpNnjWyc/IGhjgeFbuubkP5M49SRD2yXzX8hK/MatR
-X-Google-Smtp-Source: AGHT+IHbDiMdtH2pqnAbxLEMjAlHcuY4ygwDQW8Q8ews50/boV7RDQlibc4OTUwRVZ+TyW4cporrAg==
-X-Received: by 2002:a25:cece:0:b0:e1d:436c:3b4f with SMTP id 3f1490d57ef6-e1d436c3bd7mr5094797276.50.1725825474790;
-        Sun, 08 Sep 2024 12:57:54 -0700 (PDT)
-Received: from [192.168.2.254] ([70.24.204.168])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822e7723asm14597531cf.22.2024.09.08.12.57.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Sep 2024 12:57:54 -0700 (PDT)
-Message-ID: <c04fe24a-26e6-44b5-a2dd-00eac589e36b@vasilevsky.ca>
-Date: Sun, 8 Sep 2024 15:57:42 -0400
+	s=arc-20240116; t=1725825567; c=relaxed/simple;
+	bh=VWa+VuWxEr4chYv5590B0BLqcgbZUprsswlSpAmZjuc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=SutI4ODX2i8f7BiJvrkK6tbqALy98uBcVgehZODUm5Z/SNnXMOlujTHkYKE86MZAL2iyYteIWXQiTrVEBdYANHH6Z32N3NoQPfDW2tE8Hd8u7gFvtJJ+BuHI7Uhyk5JTxt+8yfwoo4cIPkU2f1mpAgbqqhrqfPYJjt+l+Jmy4qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-231-KzG2DeCpP5-7FmGTxaYhAQ-1; Sun, 08 Sep 2024 20:59:23 +0100
+X-MC-Unique: KzG2DeCpP5-7FmGTxaYhAQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 8 Sep
+ 2024 20:58:32 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 8 Sep 2024 20:58:32 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Vincenzo Frascino' <vincenzo.frascino@arm.com>, Arnd Bergmann
+	<arnd@arndb.de>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Arch
+	<linux-arch@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+CC: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>, Michael Ellerman
+	<mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao
+	<naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin"
+	<hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>, Andrew Morton
+	<akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, "Masami
+ Hiramatsu" <mhiramat@kernel.org>, Mathieu Desnoyers
+	<mathieu.desnoyers@efficios.com>
+Subject: RE: [PATCH 5/9] vdso: Split linux/minmax.h
+Thread-Topic: [PATCH 5/9] vdso: Split linux/minmax.h
+Thread-Index: AQHbAFGj6anFtpX/JkyngSSwmyUx4rJOUXIA
+Date: Sun, 8 Sep 2024 19:58:32 +0000
+Message-ID: <79a350d94d754a16864b55336e50bce6@AcuMS.aculab.com>
+References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
+ <20240903151437.1002990-6-vincenzo.frascino@arm.com>
+ <b78eab34-61f5-4c9e-b080-d2524cd30eb8@csgroup.eu>
+ <780d969f-8057-41aa-901f-08a5fbebcba9@app.fastmail.com>
+ <1d86a38b-dd57-48ac-875b-4d9d2f645d47@arm.com>
+In-Reply-To: <1d86a38b-dd57-48ac-875b-4d9d2f645d47@arm.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crash: Default to CRASH_DUMP=n when support for it is
- unlikely
-To: glaubitz@physik.fu-berlin.de, bhe@redhat.com,
- linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org, mpe@ellerman.id.au,
- kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: =?UTF-8?Q?Reimar_D=C3=B6ffinger?= <Reimar.Doeffinger@gmx.de>
-References: <20240823125156.104775-1-dave@vasilevsky.ca>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-From: Dave Vasilevsky <dave@vasilevsky.ca>
-In-Reply-To: <20240823125156.104775-1-dave@vasilevsky.ca>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 
-I received a notification from Patchwork that my patch is now in the state "Handled Elsewhere".[0] Does that mean someone merged it somewhere? Or that I should be using a different mailing list? Or something else?
+RnJvbTogVmluY2Vuem8gRnJhc2Npbm8NCj4gU2VudDogMDYgU2VwdGVtYmVyIDIwMjQgMTI6NDEN
+Cj4gDQo+IE9uIDA0LzA5LzIwMjQgMTg6MjMsIEFybmQgQmVyZ21hbm4gd3JvdGU6DQo+ID4gT24g
+V2VkLCBTZXAgNCwgMjAyNCwgYXQgMTc6MTcsIENocmlzdG9waGUgTGVyb3kgd3JvdGU6DQo+ID4+
+IExlIDAzLzA5LzIwMjQgw6AgMTc6MTQsIFZpbmNlbnpvIEZyYXNjaW5vIGEgw6ljcml0wqA6DQo+
+ID4+PiBUaGUgVkRTTyBpbXBsZW1lbnRhdGlvbiBpbmNsdWRlcyBoZWFkZXJzIGZyb20gb3V0c2lk
+ZSBvZiB0aGUNCj4gPj4+IHZkc28vIG5hbWVzcGFjZS4NCj4gPj4+DQo+ID4+PiBTcGxpdCBsaW51
+eC9taW5tYXguaCB0byBtYWtlIHN1cmUgdGhhdCB0aGUgZ2VuZXJpYyBsaWJyYXJ5DQo+ID4+PiB1
+c2VzIG9ubHkgdGhlIGFsbG93ZWQgbmFtZXNwYWNlLg0KPiA+Pg0KPiA+PiBJdCBpcyBwcm9iYWJs
+eSBlYXNpZXIgdG8ganVzdCBkb24ndCB1c2UgbWluX3QoKSBpbiBWRFNPLiBDYW4gYmUgb3Blbg0K
+PiA+PiBjb2RlZCB3aXRob3V0IGltcGVlZGluZyByZWFkYWJpbGl0eS4NCj4gPg0KPiA+IFJpZ2h0
+LCBvciBwb3NzaWJseSB0aGUgZXZlbiBzaW1wbGVyIE1JTigpL01BWCgpIGlmIHRoZSBhcmd1bWVu
+dHMNCj4gPiBoYXZlIG5vIHNpZGUtZWZmZWN0cy4NCj4gPg0KPiANCj4gQWdyZWVkLCBnZW5lcmFs
+bHkgSSBkbyBub3QgbGlrZSBvcGVuLWNvZGluZyBzaW5jZSBpdCB0ZW5kcyB0byBpbnRyb2R1Y2UN
+Cj4gZHVwbGljYXRpb24sIGJ1dCB0aGVzZSBjYXNlcyBhcmUgc2ltcGxlIGVzcGVjaWFsbHkgaWYg
+d2UgY2FuIHVzZSBNSU4oKS9NQVgoKS4NCg0KQXJlbid0IE1JTigpL01BWCgpIGxpa2VseSB0byBn
+ZXQgZGVmaW5lZCBpbiBtaW5tYXguaCBmb3IgY2FzZXMgd2hlcmUgdGhlDQphcmd1bWVudHMgYXJl
+IGNvbnN0YW50cyAtIGFuZCBtYXliZSBoYXZlIGNoZWNrcyB0aGF0IHRoZXkgYXJlIGNvbnN0YW50
+cy4NClNvIHlvdSBkb24ndCB3YW50IHRvIGRlZmluZSB0aGVtIGluIHRoZSBWRFNPIGhlYWRlciBl
+aXRoZXIuDQoNCk9wZW4gY29kaW5nIHNpbXBsZSBjYXNlcyBpcyBhY3R1YWxseSBlYXNpZXIgdG8g
+cmVhZCA6LSkNCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJh
+bWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0
+cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-I'd appreciate some guidance.
-
-Thanks,
-Dave
-
-
-[0] http://patchwork.ozlabs.org/project/linuxppc-dev/patch/20240823125156.104775-1-dave@vasilevsky.ca/
 
