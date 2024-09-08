@@ -1,116 +1,152 @@
-Return-Path: <linux-kernel+bounces-320288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B8D970865
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:18:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ADC1970862
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71B79282427
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:18:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02CDFB2149A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7AF1741CB;
-	Sun,  8 Sep 2024 15:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255F4172BDE;
+	Sun,  8 Sep 2024 15:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHotEJL4"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzxzhB18"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD5AEAF9;
-	Sun,  8 Sep 2024 15:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834B136B0D
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 15:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725808695; cv=none; b=OJxqSMqexe+Q41/5QXO4uhtxA6TwZzrSwtQjRZKH1Pse5k83HDm9HbTgpnIY95CzG1V4O5w4wKqG2eSRA/6f++nIML0P19IvCdwfneJA215ovbPpWo2npjPWdzX6lTGJTS33HfagNNBpE+e16B1p/b5a/W4med0XBwuJ+8toPtc=
+	t=1725808694; cv=none; b=GrTgE7wnGSIwnwKRLPq8lNZONPuIavRH9MqS1KVk9LWxD6iPvDbfPn94dqDIIkyPpMxFVZN1GRr3R4N4KjMYRryADE3uuY4z4uCN/RkyuRF1wwriyj2Zml5Hx9JaIlvvJ3oTtQhauQNLKZiX6F1FIVYFHw1rsOQwodfg3pkc2NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725808695; c=relaxed/simple;
-	bh=HetVwA2icroIjaoAACllYQdENIflDpr1iRlBdiqUea0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lyFxNiWXn3lpWEXf2fiXEyczJQjIF6B8LNhKwmwy5879KX79ExAEioFN0DWRi4H4p850U2b3OHd3YJWBbdKcf+BVuAIjGn8qv6TALyGFm9iFC2bnU27KOB33dPIqPa3fUXapHzRQO+ECVzVaQF5hU+Wed78eyfqNmR9RthdD6VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHotEJL4; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-718d985b6bbso1868312b3a.2;
-        Sun, 08 Sep 2024 08:18:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725808693; x=1726413493; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cZpkFOIc5/0NZVjzEtOpjFbI0AWB4oMd9gmLouDFEeg=;
-        b=IHotEJL4HY3rnpW+jFKEmP3sKEUwYRLD1jHHa31qL1Zg+4Bwq136XzQ5dHHe3Lq0jo
-         uViq3dIBD15XHfPVI+tYPEYDDNi/Ugo6UPorpDK9R4Mul/xcsBd4/UlCyifO3J6Yurih
-         2szgK8ImvpXbVv0Q7LPMjbA2j+/VbAG5IjTyQViStAm/N1kl44n96VaUKoy7Pe3uZmZN
-         ss9iP+oKrEmZjRD1vo/8nNKhgPozCB7RAvjchKnScQSl12jmTBbZb6IewLYxIk4yTHKQ
-         5a36S2Asf/DetF3hqverrKyogzHAEZzoPGYjxafJ68Y/dSgnuflkCvXXoInM3HRb9/OQ
-         I5mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725808693; x=1726413493;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cZpkFOIc5/0NZVjzEtOpjFbI0AWB4oMd9gmLouDFEeg=;
-        b=cYZlK37pFpiKGudf7vlNDpbj6UroJVn5Znb4wN2CnsdtZKAmuIgfTejva20lMOS4AP
-         h0zP7rrOmY5NIZD6bFiG0ssL5P1AaGaQoYBVIhZcf7odgLOISPsNq0w3CAcTZVsJO/Ff
-         noJ/NyDMfmbnv1a+PErjsbCR50fNK4Flsh1ree9s9I9yguzSF4W6cBDnP/Um75ixsnHo
-         6td9mb0VN+JZ2cHo45QIcU5xUSGno5Q0kHchvZvYLjRMnFX5x1QawWExoYDkkp3Nq8Fw
-         GOExdcjaasnlw7fIDwoHeOdj7F6oS+K4lT25hzvJQhPn1kW+KhR6RU3hr/AY0/AQTmQu
-         eDGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVv7Wj4OSS0HZX4wb02vHq4IMWEm18cdNkkwgcEbiLIm/v0hnI43BNW88+VjGqFOTeIEfxq0LwTq8+nKg==@vger.kernel.org, AJvYcCVvwfKdO3x6gpXpxj1Jm+EUsdBmmCwqjTk0unC+1JAZq7A6hT+MbH3Gpm7HeTL5dk+FWeKBgnc2VMyx9nCz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsV/s7BJpnTojqeZve9DWwF9dQwB7NHyTDqEHF8TbIYLOLcRs8
-	QxxSY4fEOSiLaeLg9d37VGTZ02Ag9fDJu3UyGXsjKyp7u8gBLFtBjcqBGURHvXU=
-X-Google-Smtp-Source: AGHT+IGR61g7iCGyQpL5P0HJuPGkQYU5vhjGLDzD63FYU3Ri0vLjIEuowo2Fdledz7GNOA4i7PVtYA==
-X-Received: by 2002:a05:6a00:816:b0:717:8cef:4053 with SMTP id d2e1a72fcca58-718d5e9028cmr11064320b3a.14.1725808693173;
-        Sun, 08 Sep 2024 08:18:13 -0700 (PDT)
-Received: from debian.tail629bbc.ts.net ([103.57.172.39])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e5982ed0sm2231777b3a.148.2024.09.08.08.18.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 08:18:12 -0700 (PDT)
-From: Sayyad Abid <sayyad.abid16@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Vasut <marex@denx.de>,
-	Michael Welling <mwelling@ieee.org>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sayyad.abid16@gmail.com
-Subject: [PATCH] dt-binding: touchscreen: fix x-plat-ohm missing type definition
-Date: Sun,  8 Sep 2024 20:47:43 +0530
-Message-Id: <20240908151742.2453402-1-sayyad.abid16@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1725808694; c=relaxed/simple;
+	bh=me/RfXv4m3863MDF2iMXaivbpwAD1QHQrY/y8muO+Iw=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=sqkkEw57ZGr+O64Z7AGv8IXWO7dFbMe8eSt2ab6vBJ5NWdCbe5u6WqUbcKi8lkOxyN0RaqhUEX61ERk/UuZGh8lEIuhw9eO91jKpinJn0lPBjrftiK1v6ZOwyw1s0u1PoLJrym/dN4qieHda/ptdlrCuKg7By69TQo+J3Rc8bPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzxzhB18; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71032C4CEC3;
+	Sun,  8 Sep 2024 15:18:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725808694;
+	bh=me/RfXv4m3863MDF2iMXaivbpwAD1QHQrY/y8muO+Iw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BzxzhB183/8bk5iVTc5OY4bGyTbiL7E0OeS/ioO5uw9WGCXKTcuWjzAqAuajnmQ/b
+	 qdNk8mUwfH8OD4JQj9ElKhwlePaWuPirrFniwHTcGl2aPU0NZHHGkx4VaDxdtsTF3i
+	 IqeZZDs+pP4XTJbo2vRCQH5VF3qzQmA8B9h/FHXs/IY5eIe4wHcR8/WbdV5EeRJGzS
+	 43XYoeKS7R3hcIBC+QeNKMpqPreaAFTDt4OpV389fSppiUx2kn9cA4FGJoGMEUdyv3
+	 J/vf32czwWX8GlAa3vTSJMjcdrz0LbL+ytG/NZiGeh+e2nskc00tNbQy6nRc1K7a7O
+	 u5UgPFII2pbGg==
+Message-ID: <aac3f30a-bab1-4a45-a69d-050b15ead4a8@kernel.org>
+Date: Mon, 9 Sep 2024 00:18:11 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Chanwoo Choi <chanwoo@kernel.org>
+Content-Language: en-US
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [GIT PULL] extcon next for v6.12
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This patch fixes the issue with x-plat-ohm missing a type definition.
-The patch adds the fix for this issue by adding value of this property
-should be a 32-bit unsigned integer.
+Dear Greg,
 
-Signed-off-by: Sayyad Abid <sayyad.abid16@gmail.com>
+This is extcon-next pull request for v6.12. I add detailed description of
+this pull request on below. Please pull extcon with following updates.
 
----
- .../devicetree/bindings/input/touchscreen/ti,tsc2005.yaml       | 2 ++
- 1 file changed, 2 insertions(+)
+Best Regards,
+Chanwoo Choi
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.yaml b/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.yaml
-index 7187c390b2f5..98ff65cf9f9f 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.yaml
-+++ b/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.yaml
-@@ -38,6 +38,8 @@ properties:
- 
-   ti,x-plate-ohms:
-     description: resistance of the touchscreen's X plates in ohm (defaults to 280)
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
- 
-   ti,esd-recovery-timeout-ms:
-     description: |
--- 
-2.39.2
 
+The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+
+  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-6.12
+
+for you to fetch changes up to 2e01ac83c1c7166e58043ff2bdb0dc7dbfcfd11a:
+
+  extcon: lc824206xa: Fix build error of POWER_SUPPLY_PROP_USB_TYPE (2024-09-05 01:44:51 +0900)
+
+----------------------------------------------------------------
+Update extcon next for v6.12
+
+Detailed description for this pull request:
+- Add missing child node port on exttcon-ptn5150 binding document
+
+- Convert extcon-usb-gpio.txt to yaml format for binding document
+
+- Add new LC824206XA microUSB switch driver
+ : Add a new driver for the ON Semiconductor LC824206XA microUSB switch and
+   accessory detector chip. It has been tested on a Lenovo Yoga Tablet 2 Pro
+   1380. And this driver is only used on x86/ACPI (non devicetree) devices,
+   Therefor there is no devicetree bindings documentation.
+
+- Apply immutable branch between power_supply and extcon tree for extcon-lc824206xa.c
+----------------------------------------------------------------
+
+Chanwoo Choi (1):
+      Merge tag 'ib-psy-usb-types-signed' of git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply into extcon-next
+
+Frank Li (2):
+      dt-bindings: extcon: ptn5150: add child node port
+      dt-bindings: extcon: convert extcon-usb-gpio.txt to yaml format
+
+Hans de Goede (7):
+      power: supply: "usb_type" property may be written to
+      power: supply: ucs1002: Adjust ucs1002_set_usb_type() to accept string values
+      power: supply: rt9467-charger: Remove "usb_type" property write support
+      power: supply: sysfs: Add power_supply_show_enum_with_available() helper
+      power: supply: sysfs: Move power_supply_show_enum_with_available() up
+      power: supply: Change usb_types from an array into a bitmask
+      extcon: Add LC824206XA microUSB switch driver
+
+Stephen Rothwell (1):
+      extcon: lc824206xa: Fix build error of POWER_SUPPLY_PROP_USB_TYPE
+
+ Documentation/ABI/testing/sysfs-class-power        |   7 +-
+ .../devicetree/bindings/extcon/extcon-ptn5150.yaml |  11 +
+ .../devicetree/bindings/extcon/extcon-usb-gpio.txt |  21 -
+ .../bindings/extcon/linux,extcon-usb-gpio.yaml     |  37 ++
+ drivers/extcon/Kconfig                             |  11 +
+ drivers/extcon/Makefile                            |   1 +
+ drivers/extcon/extcon-intel-cht-wc.c               |  15 +-
+ drivers/extcon/extcon-lc824206xa.c                 | 495 +++++++++++++++++++++
+ drivers/phy/ti/phy-tusb1210.c                      |  11 +-
+ drivers/power/supply/axp20x_usb_power.c            |  13 +-
+ drivers/power/supply/bq256xx_charger.c             |  15 +-
+ drivers/power/supply/cros_usbpd-charger.c          |  22 +-
+ drivers/power/supply/lenovo_yoga_c630_battery.c    |   7 +-
+ drivers/power/supply/mp2629_charger.c              |  15 +-
+ drivers/power/supply/mt6360_charger.c              |  13 +-
+ drivers/power/supply/mt6370-charger.c              |  13 +-
+ drivers/power/supply/power_supply_core.c           |   4 -
+ drivers/power/supply/power_supply_sysfs.c          |  66 +--
+ drivers/power/supply/qcom_battmgr.c                |  37 +-
+ drivers/power/supply/qcom_pmi8998_charger.c        |  13 +-
+ drivers/power/supply/rk817_charger.c               |   9 +-
+ drivers/power/supply/rn5t618_power.c               |  13 +-
+ drivers/power/supply/rt9467-charger.c              |  16 +-
+ drivers/power/supply/rt9471.c                      |  15 +-
+ drivers/power/supply/ucs1002_power.c               |  26 +-
+ drivers/usb/typec/anx7411.c                        |  11 +-
+ drivers/usb/typec/rt1719.c                         |  11 +-
+ drivers/usb/typec/tcpm/tcpm.c                      |  11 +-
+ drivers/usb/typec/tipd/core.c                      |   9 +-
+ drivers/usb/typec/ucsi/psy.c                       |  11 +-
+ include/linux/power_supply.h                       |   3 +-
+ 31 files changed, 687 insertions(+), 275 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/extcon/extcon-usb-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml
+ create mode 100644 drivers/extcon/extcon-lc824206xa.c
 
