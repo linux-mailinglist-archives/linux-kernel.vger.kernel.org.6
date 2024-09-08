@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-320334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DCAD9708F9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:32:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFBC69708FD
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 19:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 790AE1C2102C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:32:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 626571F211B8
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E2A176AD3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB3A73176;
 	Sun,  8 Sep 2024 17:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="D1O2x4TG"
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="ibJ98p/x"
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3962169397
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 17:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD2C176230
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 17:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725816766; cv=none; b=r7iJ6y9cdB4ActdvgSlwpx4jcgb11x0Q05e/v3KUjvQthegpnqpMLH9RvbF0Gkiy8TiakXC+evfQFll8Rn4gfF0ILiJ/0TXmH0/D/SGmkPCu0Bondxy6UmsX7SL1avPwjhORG+niWPr10CPndCzdkhZ7Ss3KX4w5pLqMQ8JkJhc=
+	t=1725816767; cv=none; b=SAF4DNOT5j+RU1s8ELLvR5n9duodeD/30YZS+suvBkUOwFmhFcLUKXCw1BAG6vJvr/h/dbQLNLKkqa8XpcOdkPyamfpJqM9O9FRFg2f0E4aF7GqA0kVqcvVaisBXF2GYnDiFThnt5PD2lBKD0BEUDyLgiuut7WOXfLgMQpytq5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725816766; c=relaxed/simple;
-	bh=ieZrb6nBNYizoVaRxWgq+w4P0Om1mIl5xlMgXmHJLpQ=;
+	s=arc-20240116; t=1725816767; c=relaxed/simple;
+	bh=nA7OrD55DWADTycCQzj+qgY8P/JDYY4XE91hoTgicEQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UliLiLR+P7w8+cSDy1ZXinPH/dG87pULNjVkvqzBhjexEHZYJp5o425SZ2gUfEH8QGtlAXYUwBASGR73tHR9QnzNIft2yuQC1lVhvgAA/nwHGmMCK82ht7JyfCICTSU3+mQLJEjTOjtSTC/nvfwYDTle3E78lZLForDjWhCDByA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=D1O2x4TG; arc=none smtp.client-ip=185.136.64.227
+	 MIME-Version:Content-Type; b=nrl6FK/sCTz86pmCLIU6nr4P8oKT8ErLxFvJ6IEPz5SzTQQCNFvDIqeCE6R+i3CumMF3bjNJ5d84VmDaqPce4Y+jnnrmjPBbAEitfAaKr4mJjFZZiKw8ZyjdxncnsvyCLISITmZLyukOOs4BmRwTsQFTpbck4GUzEc4wQMGhq5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=ibJ98p/x; arc=none smtp.client-ip=185.136.64.228
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 2024090817323594273e59d88fa356dc
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20240908173236f330ae2049d86e1db5
         for <linux-kernel@vger.kernel.org>;
         Sun, 08 Sep 2024 19:32:36 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=jan.kiszka@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=7HUlfn1xmn+4ZGiB6aVKgQXPt7LJ9m0S52DW4howHBI=;
- b=D1O2x4TG8yerTvR8iz6SByB6PiPmdrGEBtnM7uIHThJXi54uj1hO1+hpr84L9fQGsGbrZr
- X6m94dl1/lK6jb3rWr389WAkOd2+Cg4ymkQrruP6KX3EyprHq7iA2rLzeoAQaa0JPqYESF8K
- 1sQoW4IF/r52NuYxJWkoZYB1WufD1TeI8vJMu4dhWLdIdagT8aMyySSgBC1lg1vtE5PSPO/g
- Dpa6Zv6WUjAqA9KqZw7Hn6jNS1MuzB+iwY+2Rn5iE5vwQMGVBMXEDP9oimKkRYxHSPsviXHf
- r0UkWwMOYmy2bYAANMLCnUqNCkgitHcLDny8YHu5WYdJclGqIEAK5wNQ==;
+ bh=xh5qkc0c1+MDM8uSvx3tNtBQFpLWdYTXf/RSsVtEdy4=;
+ b=ibJ98p/xG9+0uKRwbXrpftDDuC3NOwllC2IbqCSkizfOqjw3ImVvbkdLNsMVEIuTfH+Xkr
+ EyddHfiXA5PkIqwfFYC363dKbq/hKMK8fc5HAHRPDJQsvjrASOlT9lecE9pDabwzLgMEgZKr
+ Ip/jKF6OcqPnn/JfLboBTXF55s5ylKGAsfJbeotcnwPDf/e5Nw+vfq43I/+tgwgk/2pS8BFI
+ AsvUXcZwv6+P4zVc5sW5pgQeRNRo5bqGgc2S+JhffeQVTGFH/np32q50iW/5Gp78SdmcNcQZ
+ a+Gre+vZlf5IBW4/bA9b2uEwzmpVOpKlWn8RcsMxNd/chbqQ6zHNv+iw==;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Nishanth Menon <nm@ti.com>,
 	Santosh Shilimkar <ssantosh@kernel.org>,
@@ -58,10 +58,12 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Bao Cheng Su <baocheng.su@siemens.com>,
 	Hua Qian Li <huaqian.li@siemens.com>,
 	Diogo Ivo <diogo.ivo@siemens.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v5 1/7] dt-bindings: soc: ti: Add AM65 peripheral virtualization unit
-Date: Sun,  8 Sep 2024 19:32:27 +0200
-Message-ID: <78294ee7ac10ce9f6fc3a57ba10cee92369d8aa8.1725816753.git.jan.kiszka@siemens.com>
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v5 2/7] dt-bindings: PCI: ti,am65: Extend for use with PVU
+Date: Sun,  8 Sep 2024 19:32:28 +0200
+Message-ID: <33d08f61fe9bd692da0eceab91209832bf16e804.1725816753.git.jan.kiszka@siemens.com>
 In-Reply-To: <cover.1725816753.git.jan.kiszka@siemens.com>
 References: <cover.1725816753.git.jan.kiszka@siemens.com>
 Precedence: bulk
@@ -70,80 +72,101 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
 Feedback-ID: 519:519-294854:519-21489:flowmailer
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-The PVU allows to define a limited set of mappings for incoming DMA
-requests to the system memory. It is not a real IOMMU, thus hooked up
-under the TI SoC bindings.
+The PVU on the AM65 SoC is capable of restricting DMA from PCIe devices
+to specific regions of host memory. Add the optional property
+"memory-regions" to point to such regions of memory when PVU is used.
+
+Since the PVU deals with system physical addresses, utilizing the PVU
+with PCIe devices also requires setting up the VMAP registers to map the
+Requester ID of the PCIe device to the CBA Virtual ID, which in turn is
+mapped to the system physical address. Hence, describe the VMAP
+registers which are optional unless the PVU shall be used for PCIe.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/soc/ti/ti,am654-pvu.yaml         | 51 +++++++++++++++++++
- 1 file changed, 51 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,am654-pvu.yaml
+CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
+CC: "Krzysztof Wilczyński" <kw@linux.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>
+CC: linux-pci@vger.kernel.org
+---
+ .../bindings/pci/ti,am65-pci-host.yaml        | 29 +++++++++++++++++--
+ 1 file changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/ti/ti,am654-pvu.yaml b/Documentation/devicetree/bindings/soc/ti/ti,am654-pvu.yaml
-new file mode 100644
-index 000000000000..e4a5fc47d674
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/ti/ti,am654-pvu.yaml
-@@ -0,0 +1,51 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (c) Siemens AG, 2024
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/ti/ti,am654-pvu.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+index 0a9d10532cc8..0c297d12173c 100644
+--- a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
++++ b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+@@ -20,14 +20,18 @@ properties:
+       - ti,keystone-pcie
+ 
+   reg:
+-    maxItems: 4
++    minItems: 4
++    maxItems: 6
+ 
+   reg-names:
++    minItems: 4
+     items:
+       - const: app
+       - const: dbics
+       - const: config
+       - const: atu
++      - const: vmap_lp
++      - const: vmap_hp
+ 
+   interrupts:
+     maxItems: 1
+@@ -83,13 +87,30 @@ if:
+     compatible:
+       enum:
+         - ti,am654-pcie-rc
 +
-+title: TI AM654 Peripheral Virtualization Unit
+ then:
++  properties:
++    memory-region:
++      maxItems: 1
++      description: |
++        phandle to a restricted DMA pool to be used for all devices behind
++        this controller. The regions should be defined according to
++        reserved-memory/shared-dma-pool.yaml.
 +
-+maintainers:
-+  - Jan Kiszka <jan.kiszka@siemens.com>
+   required:
+     - dma-coherent
+     - power-domains
+     - msi-map
+     - num-viewport
+ 
++else:
++  properties:
++    reg:
++      maxItems: 4
 +
-+properties:
-+  compatible:
-+    enum:
-+      - ti,am654-pvu
++    reg-names:
++      maxItems: 4
 +
-+  reg:
-+    maxItems: 2
-+
-+  reg-names:
-+    items:
-+      - const: cfg
-+      - const: tlbif
-+
-+  interrupts:
-+    items:
-+      - description: fault interrupt
-+
-+  interrupt-names:
-+    items:
-+      - const: pvu
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    iommu@30f80000 {
-+        compatible = "ti,am654-pvu";
-+        reg = <0x30f80000 0x1000>,
-+              <0x36000000 0x100000>;
-+        reg-names = "cfg", "tlbif";
-+        interrupts-extended = <&intr_main_navss 390>;
-+        interrupt-names = "pvu";
-+    };
+ unevaluatedProperties: false
+ 
+ examples:
+@@ -104,8 +125,10 @@ examples:
+         reg =  <0x5500000 0x1000>,
+                <0x5501000 0x1000>,
+                <0x10000000 0x2000>,
+-               <0x5506000 0x1000>;
+-        reg-names = "app", "dbics", "config", "atu";
++               <0x5506000 0x1000>,
++               <0x2900000 0x1000>,
++               <0x2908000 0x1000>;
++        reg-names = "app", "dbics", "config", "atu", "vmap_lp", "vmap_hp";
+         power-domains = <&k3_pds 120 TI_SCI_PD_EXCLUSIVE>;
+         #address-cells = <3>;
+         #size-cells = <2>;
 -- 
 2.43.0
 
