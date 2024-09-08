@@ -1,147 +1,124 @@
-Return-Path: <linux-kernel+bounces-319974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E930970496
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 03:00:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA5C9970498
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 03:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 125C11C21034
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 01:00:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8901F2830BA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 01:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91268F77;
-	Sun,  8 Sep 2024 01:00:25 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414CF6FA8;
+	Sun,  8 Sep 2024 01:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f31NDp+N"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDA4139B
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 01:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3C7181;
+	Sun,  8 Sep 2024 01:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725757225; cv=none; b=ZndF/1gTzQddC79zrfoLmC0MxPmrZxMUyfTla6XaQCR2yAgU/3UsRtzcjvDdmqYUtb4KnQV5wLE3TtgXrGVy688pDWVyas+04Ve4HqhzrDYFWY6t3LM4g2+b4a3QfAmexVKXpwGySsuH20cwDF61pi3SablpcufkEeSipMTdYxA=
+	t=1725757353; cv=none; b=A12DruV3FZEeac/JrRaZLDSPw0uSSNYz3xVIpNaHe4e/p732yueJRenqEcAkudLiS4S4BNtrKzKYA7n8auM30G9w1hDKLxp+2kA/s9nNRLk3WLNBFyHLO1ilfBk3MGDUNpL+Fz1JvlszhsTT7Agsxtr6unPvXHy/PtF1f2snlwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725757225; c=relaxed/simple;
-	bh=nN+Xdy6eqP5nBG0WviKyMcsgSxSk912KV85ek1jZnNg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=k8wSlwYfnGIBX35eFK5RFryiG0EFdGxEo1xuj2OZCq4o1ml5M86DsVHlxh3dq3Lzxd9NADJKkL7rto7c6rwLwTuMLqJ/BCTLRrLYRY4wf4mVjrOcgGXvMZ9y4LdRWuhWb5ez9Iso3kRHUJtkRp9pAyTUti0DYeVWj0Zo0xRJ+0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a04bf03b1aso66289525ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2024 18:00:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725757223; x=1726362023;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=le4o9LNhRw5dRCRxm9Zvl+lgrjIbcNn76g7qdenbjhY=;
-        b=OQ4u7CONzu7DJEWrQu50qYNT1Hw7AFQLdycVCjQDNm46SgoztkiIz2mjwDWflOVJR9
-         mm/HmYnSXhyhAVS1frqaDM2gD+I9xD1T+2AsaJ7Jv6gBGnGwhwSKl4sL+uJ0pulJn9Jq
-         De5GlCYpjXmjjh47NgtRTetGGnRLI/rN8vjxgYzb/H3i4QcHqTWsnDV7Rc1ISUmE2E8i
-         s/6bVxw3Owb3W6oYZyhq6vKZUtX9xtk7E/gK8sdbBv9wPp6MCjhqDtUEDmw/N1b4dgY2
-         t+AWk5dAby1ubrIAU23VQj4PYkckUh14QoEVrUKEDZjvN1h+SOtO7iUzOLyRw7GshhQm
-         yOHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNbSoJn5EJGbfT6RVdWXhzWlPWSBqlQRg/uEuRxo8ZkS+DmOgthESK/xJEasTY/eZUAh0+gFe18Bm1ilA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKyT0+uCxjv8slA0ExRJedSSA/tk3VN3hgbDZJYRjlVts25nA9
-	oFBcN6jO9iaQi33pCzIh3G2vG8nMyUtIGEka45Y9b7+qdmS99E+DqQAub9iqCWSSqxzeDfjZXPt
-	YfFiyIW+2iYnIQRr3s8pR/Wnu2oYevU03pwrq9IU6GQHFGHS0AWqx7Kc=
-X-Google-Smtp-Source: AGHT+IHRjMQWpg6IH2uXQypexFMtW3rcieDBX/0qB8PLabGDjpHfj5ILKTmT0let7fJ39+AhNtx40ROSrUqrFZoyYUcw0GsLfmdW
+	s=arc-20240116; t=1725757353; c=relaxed/simple;
+	bh=F0s7ixT9XH5I6XOBr+KkTkTMxUaSIGOaGHhl2A4jZKI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kwKH1LAXDm30TwPs84Zp7J4SuGPmlvGGDYC9ZiMzLDZ4tgFGRRgXtzLvg8k/MirrPIzJMO3nXz5sJZg7Hdj7CD2/a3TksnUutp6QAKP8oZumy6ZfeA/m6Fjk08ycXJC0LtGWalAxeieS2bCO6luFh74poiws7DAJIl0Gr6A/77g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f31NDp+N; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4880fnkh014185;
+	Sun, 8 Sep 2024 01:02:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=9+3mVQXFRnFOnGuVXqAeii
+	ZKG/0loiyMqVxdiPFiiSo=; b=f31NDp+NW5l1v9X3SQ6DuXOFXG+1XmzBuJPJLk
+	B7lccsJvJaz4vzCX2QqtXg9f+tL/QBpATirTOykUS/7BfBEBEi7HyJOljXFlpvIu
+	UkESAg/08fCwSnRbP7VpTlL9RTjq+2mEZadK3lhTrUR56fm3wRWybma2+l2mvLY9
+	Mw8uZ1bX/mHE+KLdBxM4it7E7YNLOiaXxCPQ1pvzQ48YBXP/yXjjUv6H2lPaFFej
+	jyGuFY5EJguF4VCyNuzmWMmozTChFDyh2HUKFiyitQbRNbYjVMO7654HF3/5Vnj8
+	qQCyOITspWhIuANBI4maK0Qx1t+UTX5fdelYcZVQkeAuU90w==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy59r4ax-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 08 Sep 2024 01:02:22 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48812M3O014068
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 8 Sep 2024 01:02:22 GMT
+Received: from hu-nkela-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sat, 7 Sep 2024 18:02:18 -0700
+From: Nikunj Kela <quic_nkela@quicinc.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, <quic_psodagud@quicinc.com>,
+        Nikunj Kela
+	<quic_nkela@quicinc.com>
+Subject: [PATCH v3] dt-bindings: arm: GIC: add ESPI and EPPI specifiers
+Date: Sat, 7 Sep 2024 18:02:05 -0700
+Message-ID: <20240908010205.863701-1-quic_nkela@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b06:b0:3a0:4a63:e7b3 with SMTP id
- e9e14a558f8ab-3a056868d66mr32414835ab.9.1725757222922; Sat, 07 Sep 2024
- 18:00:22 -0700 (PDT)
-Date: Sat, 07 Sep 2024 18:00:22 -0700
-In-Reply-To: <000000000000a45a92061ce6cc7d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003dbdfe0621912ad7@google.com>
-Subject: Re: [syzbot] [wpan?] WARNING in __dev_change_net_namespace (2)
-From: syzbot <syzbot+1df6ffa7a6274ae264db@syzkaller.appspotmail.com>
-To: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wpan@vger.kernel.org, 
-	miquel.raynal@bootlin.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: V5b_YhaldSlPk4b-Z_9qpa8eZ8lK6Fqr
+X-Proofpoint-ORIG-GUID: V5b_YhaldSlPk4b-Z_9qpa8eZ8lK6Fqr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ bulkscore=0 mlxlogscore=543 phishscore=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 clxscore=1015 adultscore=0 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409080007
 
-syzbot has found a reproducer for the following issue on:
+Add interrupt specifier for extended SPI and extended PPI interrupts.
 
-HEAD commit:    d1f2d51b711a Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1378abc7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=58a85aa6925a8b78
-dashboard link: https://syzkaller.appspot.com/bug?extid=1df6ffa7a6274ae264db
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e80e00580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1493effb980000
+Qualcomm SA8255p platform uses extended SPI for SCMI 'a2p' doorbells.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-d1f2d51b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/eb526efe4f45/vmlinux-d1f2d51b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6a7b8adfc0a8/bzImage-d1f2d51b.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1df6ffa7a6274ae264db@syzkaller.appspotmail.com
-
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
-R13: 0000000000000002 R14: 00007ffc64b5c120 R15: 0000000000000000
- </TASK>
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5214 at net/core/dev.c:11568 __dev_change_net_namespace+0x171a/0x1830 net/core/dev.c:11568
-Modules linked in:
-CPU: 0 UID: 0 PID: 5214 Comm: syz-executor241 Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__dev_change_net_namespace+0x171a/0x1830 net/core/dev.c:11568
-Code: 01 90 48 c7 c7 40 e2 0c 8d 48 c7 c6 20 e2 0c 8d ba c5 2c 00 00 e8 36 d0 cb f7 90 0f 0b 90 90 e9 54 ea ff ff e8 f7 ab 09 f8 90 <0f> 0b 90 e9 4a fb ff ff e8 e9 ab 09 f8 90 0f 0b 90 e9 d5 fe ff ff
-RSP: 0018:ffffc9000314efc0 EFLAGS: 00010293
-RAX: ffffffff8989e0b9 RBX: dffffc0000000000 RCX: ffff888034d44880
-RDX: 0000000000000000 RSI: 00000000fffffff4 RDI: 0000000000000000
-RBP: ffffc9000314f3f8 R08: ffffffff8989dbf9 R09: 1ffffffff283c909
-R10: dffffc0000000000 R11: fffffbfff283c90a R12: ffff888035ac01b8
-R13: ffff888035ac0bf0 R14: ffff888035ac0734 R15: 00000000fffffff4
-FS:  00005555597a9480(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5c5e3e6440 CR3: 0000000048598000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- dev_change_net_namespace include/linux/netdevice.h:3932 [inline]
- cfg802154_switch_netns+0xc8/0x390 net/ieee802154/core.c:230
- nl802154_wpan_phy_netns+0x13d/0x210 net/ieee802154/nl802154.c:1292
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
- ___sys_sendmsg net/socket.c:2651 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe650790ba9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 a1 1d 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc64b5c098 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007ffc64b5c0b0 RCX: 00007fe650790ba9
-RDX: 0000000000000000 RSI: 0000000020000280 RDI: 0000000000000004
-RBP: 0000000000000002 R08: 00007ffc64b5be36 R09: 00007ffc64b5c0b0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
-R13: 0000000000000002 R14: 00007ffc64b5c120 R15: 0000000000000000
- </TASK>
-
-
+Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+
+Changes in v3:
+	- Removed the patch from original series[1]
+
+Changes in v2:
+	- Modified subject line and description
+	- Added EPPI macro
+
+[1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
+---
+ include/dt-bindings/interrupt-controller/arm-gic.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/dt-bindings/interrupt-controller/arm-gic.h b/include/dt-bindings/interrupt-controller/arm-gic.h
+index 35b6f69b7db6..887f53363e8a 100644
+--- a/include/dt-bindings/interrupt-controller/arm-gic.h
++++ b/include/dt-bindings/interrupt-controller/arm-gic.h
+@@ -12,6 +12,8 @@
+ 
+ #define GIC_SPI 0
+ #define GIC_PPI 1
++#define GIC_ESPI 2
++#define GIC_EPPI 3
+ 
+ /*
+  * Interrupt specifier cell 2.
+-- 
+2.34.1
+
 
