@@ -1,124 +1,425 @@
-Return-Path: <linux-kernel+bounces-320312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90B29708B9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:11:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E770A970886
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5DE4B21393
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:11:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FFFE2820DC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DEE17E002;
-	Sun,  8 Sep 2024 16:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64775174ED0;
+	Sun,  8 Sep 2024 16:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="HWjZbpdC"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gv2WHiR9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BE817C233
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 16:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875CD26281;
+	Sun,  8 Sep 2024 16:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725811747; cv=none; b=F+dTITZr5A9TQnY/XRvzekNVeHP7Bi4DHAeXKewfjm6OajnMd5f4PumrzRA4ZGurYnd3IrDQP7uB+rqpyF7I99CBLqKhPpDyAkc+Bgqat7gTzrsihQMqEIM/+sZjMAIEfHQaWtoq9RS8KIoFHGCrh3NMF1FjsBe75nFkl1BaYPw=
+	t=1725811637; cv=none; b=HhIKcuQ3XzKi1cbbRkifzpPAh/ZpeE0pz9S5P/WeqDdmeoTPuuLxXBOMHjScwpUqzsMt2yDfIngXfkSUXHOWxxmnQER/nX0a6iOGcMIWJWa8WDmsnqpl7NB5Ax3G7bxmRE51XLS5jjLXuDeQwhYw/cwy2ZQuSfVe2i9sDib2foM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725811747; c=relaxed/simple;
-	bh=HIV7bkoPSQ3rxlaFpK7J86ATOFDCNnMGhMFf+TgF5jE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=W4JyxgvzGj8kSsnY3WsMmZOxL5Y+Y2m21+2gumdkWv10pFq/QH5lI0dH+27MDUmNWRI1RmJlqlnPeHLbh0DJjR8b6LMMK05G3kfN8TPNS5uNS6EFGnh7QdYAQZ4BrA5OZtOLFa7YyeZjHUbbp8ntV8SnnxtonspLRun2qBbQI9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=HWjZbpdC; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-206e614953aso26464895ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 09:09:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1725811745; x=1726416545; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LGhj6cfvUKa56g6O8vcdWhred6v1jtnORdUuxs2iulk=;
-        b=HWjZbpdC7/EXlidULkCI1N46DMduufGoO6rTjl3UCirvdYy7vu0090SK7CU5KXtYZt
-         LULa/5pt6JfNsFH3Fvp2r+q60+X4ywZI50F4rPBhMuAUM5/X8mL+dP3NXOThjnejSvsX
-         CIT5tqU7SGwlOqZPOzZsoBnGR9xT1bcQ5o8YU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725811745; x=1726416545;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LGhj6cfvUKa56g6O8vcdWhred6v1jtnORdUuxs2iulk=;
-        b=T//r/jq21FgAmw14eMolPKYdXZ3uZ3yyIaUsyJSPrd+rMrhtBfOEy5/yq2d0QtBwVs
-         71bjeFfAezN/2XqeuVSwNRHXlG4twHJWLMjeuwTZylkGXnvX6da04w0Put50eZZdUWcX
-         AjT80lYoncnGDE0n30IMhTP5JHMYGakr5yH3YWTYPLNVrmJIHK+HgYy4CBc1sdzWn1zG
-         2PDLUll3C6HCCt8qzuDASBVBX8uI2vgz22jTA1YEmV+CfndNxKYCQdwyYUMPoNEtnLW5
-         JkoHGLIFhMjriQbOhdxYKMGhF1glIcToWQrnhZ/zJPmiBRP66LVBqc1PRcmCeLpyn2pt
-         S1pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXBIB7Y7OasAMNUfU99WUwNVVLXLMbTOC1f06Kb9Fb1S2sGA2//bqoQ8hGMgRrpgELLJmpv75MerLekDY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/zvkWWLwyOseLppXZx1sMal3teaoTpaCFq1O0ow6CHbt1veNb
-	BDWYANokd8y0cdi4xZdt6eVcqQkxUGD9KXUrJA2WPHIXX6zjQ2qr7svxnGcJPCY=
-X-Google-Smtp-Source: AGHT+IFQURgAP0IwRMpYNE1DAaAqoQ3640I7A6bdcacvbt4VU16dYwn8Pnh0y3O4wA8pyPK8qtXIIA==
-X-Received: by 2002:a17:902:c94f:b0:207:c38:9fd7 with SMTP id d9443c01a7336-2070c38a075mr77160875ad.22.1725811745045;
-        Sun, 08 Sep 2024 09:09:05 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f3179fsm21412535ad.258.2024.09.08.09.09.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 09:09:04 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: mkarsten@uwaterloo.ca,
-	kuba@kernel.org,
-	skhawaja@google.com,
-	sdf@fomichev.me,
-	bjorn@rivosinc.com,
-	amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com,
-	Joe Damato <jdamato@fastly.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-rdma@vger.kernel.org (open list:MELLANOX MLX4 core VPI driver),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [RFC net-next v2 9/9] mlx4: Add support for napi storage to RX CQs
-Date: Sun,  8 Sep 2024 16:06:43 +0000
-Message-Id: <20240908160702.56618-10-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240908160702.56618-1-jdamato@fastly.com>
-References: <20240908160702.56618-1-jdamato@fastly.com>
+	s=arc-20240116; t=1725811637; c=relaxed/simple;
+	bh=PIcvZtsoIzTVaZa/nNjjaWmeTXq08evXFChGDir598Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iPeYYWDBFCIPwsy/9foQMiUx4lXqWRjZ6YkFRLglClVFbvqUczCj85RovSlJxUy3caZxomzoLrcyRShNvdAnARwR+7iQmbn+GWO2QU+zJqiV/dZhtq5SG5B8wWgH9T3THcCETqxg4m5b2y7ntIHdTwLJVlAxJxOQmfbEjXT0uSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gv2WHiR9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE71C4CEC3;
+	Sun,  8 Sep 2024 16:07:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725811636;
+	bh=PIcvZtsoIzTVaZa/nNjjaWmeTXq08evXFChGDir598Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Gv2WHiR99Ydnee/z7mHk6CwvnDAa2gij/yb8AbG4oRQhW1m+OJQbiwLkNbLc9MUrH
+	 323+NNKW+kHXh11VviwYwD0adrBI+e3LtIhsBSRQAFs2aEsVPtmY7jtsPdlnyW00qN
+	 9OzOLZWn1dqr9ZQ0J0ZX5SBr44Z/Ltd/NLANz9bHigShtHLSAH2EUMSSMBQOMnrR6S
+	 nUZ0Im4xMDWob67euLExRD/6Q12gCEbtalFl7S5ZrIjHchnlIrauaBsNljym93+Sd+
+	 2nhb/pqrpr0katSmrlDsbFjsxwGFauphC+i+a66SA6PVZsaaJIo8tA20abxZJn0XIo
+	 uuNohV9GJBKBA==
+Date: Sun, 8 Sep 2024 17:07:07 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, David Lechner
+ <dlechner@baylibre.com>
+Subject: Re: [PATCH v2 8/9] iio: dac: ad3552r: add axi platform driver
+Message-ID: <20240908170708.2efd6fd0@jic23-huawei>
+In-Reply-To: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-8-87d669674c00@baylibre.com>
+References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+	<20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-8-87d669674c00@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Use netif_napi_add_storage to assign per-NAPI storage when initializing
-RX CQ NAPIs.
+On Thu, 05 Sep 2024 17:17:38 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
 
-Presently, struct napi_storage only has support for two fields used for
-RX, so there is no need to support them with TX CQs, yet.
+> From: Angelo Dureghello <adureghello@baylibre.com>
+>=20
+> Add support for ad3552r-axi, where ad3552r has to be controlled
+> by the custom (fpga-based) ad3552r AXI DAC IP.
+>=20
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> Co-developed-by: David Lechner <dlechner@baylibre.com>
+> Co-developed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Comments inline.
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- drivers/net/ethernet/mellanox/mlx4/en_cq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
+> index 56a125f56284..cc2af3aa3f52 100644
+> --- a/drivers/iio/dac/Makefile
+> +++ b/drivers/iio/dac/Makefile
+> @@ -5,6 +5,7 @@
+> =20
+>  # When adding new entries keep the list in alphabetical order
+>  obj-$(CONFIG_AD3552R) +=3D ad3552r.o ad3552r-common.o
+> +obj-$(CONFIG_AD3552R_AXI) +=3D ad3552r-axi.o ad3552r-common.o
+>  obj-$(CONFIG_AD5360) +=3D ad5360.o
+>  obj-$(CONFIG_AD5380) +=3D ad5380.o
+>  obj-$(CONFIG_AD5421) +=3D ad5421.o
+> diff --git a/drivers/iio/dac/ad3552r-axi.c b/drivers/iio/dac/ad3552r-axi.c
+> new file mode 100644
+> index 000000000000..a9311f29f45d
+> --- /dev/null
+> +++ b/drivers/iio/dac/ad3552r-axi.c
+> @@ -0,0 +1,567 @@
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_cq.c b/drivers/net/ethernet/mellanox/mlx4/en_cq.c
-index 461cc2c79c71..74f4d8b63ffb 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_cq.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_cq.c
-@@ -156,7 +156,8 @@ int mlx4_en_activate_cq(struct mlx4_en_priv *priv, struct mlx4_en_cq *cq,
- 		break;
- 	case RX:
- 		cq->mcq.comp = mlx4_en_rx_irq;
--		netif_napi_add(cq->dev, &cq->napi, mlx4_en_poll_rx_cq);
-+		netif_napi_add_storage(cq->dev, &cq->napi, mlx4_en_poll_rx_cq,
-+				       NAPI_POLL_WEIGHT, cq_idx);
- 		netif_napi_set_irq(&cq->napi, irq);
- 		napi_enable(&cq->napi);
- 		netif_queue_set_napi(cq->dev, cq_idx, NETDEV_QUEUE_TYPE_RX, &cq->napi);
--- 
-2.25.1
+> +
+> +static int ad3552r_axi_read_raw(struct iio_dev *indio_dev,
+> +				struct iio_chan_spec const *chan,
+> +				int *val, int *val2, long mask)
+> +{
+> +	struct ad3552r_axi_state *st =3D iio_priv(indio_dev);
+> +	int err, ch =3D chan->channel;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_SAMP_FREQ: {
+> +		int clk_rate;
+> +
+> +		err =3D iio_backend_read_raw(st->back, chan, &clk_rate, 0,
+> +					   IIO_CHAN_INFO_FREQUENCY);
+> +		if (err !=3D IIO_VAL_INT)
+> +			return err;
+
+If it is another postive value I think you want to return -EINVAL
+If it's negative return err as here.
+
+> +
+> +		/*
+> +		 * Data stream SDR/DDR (clk_in/8 or clk_in/4 update rate).
+> +		 * Samplerate has sense in DDR only.
+> +		 */
+> +		if (st->single_channel)
+> +			clk_rate =3D DIV_ROUND_CLOSEST(clk_rate, 4);
+> +		else
+> +			clk_rate =3D DIV_ROUND_CLOSEST(clk_rate, 8);
+> +
+> +		*val =3D clk_rate;
+> +
+> +		return IIO_VAL_INT;
+> +	}
+> +	case IIO_CHAN_INFO_RAW:
+> +		err =3D iio_backend_bus_reg_read(st->back,
+> +					       AD3552R_REG_ADDR_CH_DAC_16B(ch),
+> +					       val, 2);
+> +		if (err)
+> +			return err;
+> +
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+
+> +
+> +static int ad3552r_axi_set_output_range(struct ad3552r_axi_state *st,
+> +					unsigned int mode)
+> +{
+> +	int range_ch_0 =3D FIELD_PREP(AD3552R_MASK_CH0_RANGE, mode);
+> +	int range_ch_1 =3D FIELD_PREP(AD3552R_MASK_CH1_RANGE, mode);
+> +
+> +	return axi3552r_qspi_update_reg_bits(st->back,
+> +				AD3552R_REG_ADDR_CH0_CH1_OUTPUT_RANGE,
+> +				AD3552R_MASK_CH_OUTPUT_RANGE,
+> +				range_ch_0 | range_ch_1, 1);
+
+
+	return axi3552r_qspi_update_reg_bits(st->back,
+				AD3552R_REG_ADDR_CH0_CH1_OUTPUT_RANGE,
+				AD3552R_MASK_CH_OUTPUT_RANGE,
+				FIELD_PREP(AD3552R_MASK_CH0_RANGE, mode) |
+				FIELD_PREP(AD3552R_MASK_CH1_RANGE, mode),
+				1);
+
+looks fine to me  from readability point of view and it's shorter.
+
+
+> +}
+
+> +
+> +static int ad3552r_axi_setup(struct ad3552r_axi_state *st)
+> +{
+> +	struct fwnode_handle *child __free(fwnode_handle) =3D NULL;
+> +	u8 gs_p, gs_n;
+> +	s16 goffs;
+> +	u16 id, rfb;
+> +	u16 reg =3D 0, offset =3D 0;
+> +	u32 val, range;
+> +	int err;
+> +
+> +	err =3D ad3552r_axi_reset(st);
+> +	if (err)
+> +		return err;
+> +
+> +	err =3D iio_backend_ddr_disable(st->back);
+> +	if (err)
+> +		return err;
+> +
+> +	err =3D iio_backend_bus_reg_write(st->back, AD3552R_REG_ADDR_SCRATCH_PA=
+D,
+> +					AD3552R_SCRATCH_PAD_TEST_VAL1, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	err =3D iio_backend_bus_reg_read(st->back, AD3552R_REG_ADDR_SCRATCH_PAD,
+> +				       &val, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	if (val !=3D AD3552R_SCRATCH_PAD_TEST_VAL1) {
+> +		dev_err(st->dev,
+> +			"SCRATCH_PAD_TEST mismatch. Expected 0x%x, Read 0x%x\n",
+> +			AD3552R_SCRATCH_PAD_TEST_VAL1, val);
+> +		return -EIO;
+> +	}
+> +
+> +	err =3D iio_backend_bus_reg_write(st->back,
+> +					AD3552R_REG_ADDR_SCRATCH_PAD,
+> +					AD3552R_SCRATCH_PAD_TEST_VAL2, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	err =3D iio_backend_bus_reg_read(st->back, AD3552R_REG_ADDR_SCRATCH_PAD,
+> +				       &val, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	if (val !=3D AD3552R_SCRATCH_PAD_TEST_VAL2) {
+> +		dev_err(st->dev,
+> +			"SCRATCH_PAD_TEST mismatch. Expected 0x%x, Read 0x%x\n",
+> +			AD3552R_SCRATCH_PAD_TEST_VAL2, val);
+> +		return -EIO;
+> +	}
+
+This scratch pad test is a separate enough 'thing' maybe pull it out as
+another function called from here?
+
+
+> +
+> +	err =3D iio_backend_bus_reg_read(st->back, AD3552R_REG_ADDR_PRODUCT_ID_=
+L,
+> +				       &val, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	id =3D val;
+> +
+> +	err =3D iio_backend_bus_reg_read(st->back, AD3552R_REG_ADDR_PRODUCT_ID_=
+H,
+> +				       &val, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	id |=3D val << 8;
+> +	if (id !=3D st->model_data->chip_id) {
+> +		dev_err(st->dev, "Chip ID mismatch. Expected 0x%x, Read 0x%x\n",
+> +			AD3552R_ID, id);
+> +	}
+
+no {} needed here.
+Also dev_info()  to make it slightly less ominous :)
+
+
+> +
+> +	err =3D iio_backend_bus_reg_write(st->back,
+> +					AD3552R_REG_ADDR_SH_REFERENCE_CONFIG,
+> +					AD3552R_REF_INIT, 1);
+
+Hmm. This was snuck in during previous patch.  Pull new definitions out of =
+that
+and put them in this patch.  I only noticed because I wondered what value it
+had and was surprised to find it doesn't exist in current driver.
+
+I'm not sure a define for write it all to 0 is worth while. Maybe just
+put a zero here.
+
+> +	if (err)
+> +		return err;
+> +
+> +	err =3D iio_backend_bus_reg_write(st->back,
+> +					AD3552R_REG_ADDR_TRANSFER_REGISTER,
+> +					AD3552R_TRANSFER_INIT, 1);
+Another define that sneaked in during previous patch.
+Given it's not 'general' and only used here. I'd drop that define and
+use the various parts that make it up here.
+
+Mind you those defines should be introduced in this patch not the
+previous one.
+
+
+> +	if (err)
+> +		return err;
+> +
+> +	err =3D iio_backend_data_source_set(st->back, 0, IIO_BACKEND_EXTERNAL);
+> +	if (err)
+> +		return err;
+> +
+> +	err =3D iio_backend_data_source_set(st->back, 1, IIO_BACKEND_EXTERNAL);
+> +	if (err)
+> +		return err;
+> +
+> +	err =3D ad3552r_get_ref_voltage(st->dev, &val);
+> +	if (err)
+> +		return err;
+> +
+> +	err =3D axi3552r_qspi_update_reg_bits(st->back,
+> +				AD3552R_REG_ADDR_SH_REFERENCE_CONFIG,
+> +				AD3552R_MASK_REFERENCE_VOLTAGE_SEL,
+> +				val, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	err =3D ad3552r_get_drive_strength(st->dev, &val);
+> +	if (!err) {
+> +		err =3D axi3552r_qspi_update_reg_bits(st->back,
+> +					AD3552R_REG_ADDR_INTERFACE_CONFIG_D,
+> +					AD3552R_MASK_SDO_DRIVE_STRENGTH,
+> +					val, 1);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	child =3D device_get_named_child_node(st->dev, "channel");
+> +	if (!child)
+> +		return -EINVAL;
+> +
+> +	err =3D ad3552r_get_output_range(st->dev, st->model_data->chip_id,
+> +				       child, &range);
+> +	if (!err)
+> +		return ad3552r_axi_set_output_range(st, range);
+> +
+> +	if (err !=3D -ENOENT)
+> +		return err;
+> +
+> +	/* Try to get custom range */
+> +	err =3D ad3552r_get_custom_gain(st->dev, child,
+> +					&gs_p, &gs_n, &rfb, &goffs);
+> +	if (err)
+> +		return err;
+> +
+> +	ad3552r_calc_custom_gain(gs_p, gs_n, goffs, &reg);
+
+I'd return regs
+
+> +
+> +	offset =3D abs((s32)goffs);
+
+Hmm. abs(goffs) should use a short I think which will work without the
+cast and ultimately rely on sign extension of the result.
+
+> +
+> +	err =3D iio_backend_bus_reg_write(st->back,
+> +					AD3552R_REG_ADDR_CH_OFFSET(0),
+> +					offset, 1);
+> +	if (err)
+> +		return dev_err_probe(st->dev, err,
+> +					"Error writing register\n");
+> +
+> +	err =3D iio_backend_bus_reg_write(st->back,
+> +					AD3552R_REG_ADDR_CH_OFFSET(1),
+> +					offset, 1);
+> +	if (err)
+> +		return dev_err_probe(st->dev, err,
+> +					"Error writing register\n");
+> +
+> +	err =3D iio_backend_bus_reg_write(st->back,
+> +					AD3552R_REG_ADDR_CH_GAIN(0),
+> +					reg, 1);
+> +	if (err)
+> +		return dev_err_probe(st->dev, err,
+> +					"Error writing register\n");
+> +
+> +	err =3D iio_backend_bus_reg_write(st->back,
+> +					AD3552R_REG_ADDR_CH_GAIN(1),
+> +					reg, 1);
+> +	if (err)
+> +		return dev_err_probe(st->dev, err,
+> +					"Error writing register\n");
+> +
+> +	return 0;
+> +}
+
+...
+
+> +
+> +static const struct iio_chan_spec_ext_info ad3552r_axi_ext_info[] =3D {
+> +	IIO_ENUM("synchronous_mode", IIO_SHARED_BY_TYPE,
+> +		 &ad3552r_synchronous_mode_enum),
+> +	IIO_ENUM_AVAILABLE("synchronous_mode", IIO_SHARED_BY_TYPE,
+> +			   &ad3552r_synchronous_mode_enum),
+> +	{}
+{ }
+
+Also see discussion in next patch on this. I'm not sure it makes
+sense to expose this to userspace but maybe I just don't yet understand
+the use case.
+
+> +};
+> +
+> +#define AD3552R_CHANNEL(ch) { \
+> +	.type =3D IIO_VOLTAGE, \
+> +	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW), \
+> +	.info_mask_shared_by_all =3D BIT(IIO_CHAN_INFO_SAMP_FREQ), \
+> +	.output =3D 1, \
+> +	.indexed =3D 1, \
+> +	.channel =3D (ch), \
+> +	.scan_index =3D (ch), \
+> +	.scan_type =3D { \
+> +		.sign =3D 'u', \
+> +		.realbits =3D 16, \
+> +		.storagebits =3D 16, \
+> +		.endianness =3D IIO_BE, \
+> +	}, \
+> +	.ext_info =3D ad3552r_axi_ext_info, \
+> +}
+
+> +
+> +MODULE_AUTHOR("Dragos Bogdan <dragos.bogdan@analog.com>");
+> +MODULE_AUTHOR("Angelo Dureghello <adueghello@baylibre.com>");
+> +MODULE_DESCRIPTION("AD3552R Driver - AXI IP version");
+
+Maybe relax that description to include all potential backends.
+As long as they keep to the bindings and interfaces, someone else's
+completely different backend implementation should work with your
+front end driver.  Mind you I can't immediately think of a better
+name and module descriptions aren't ABI anyway, so maybe we don't care.
+
+
+> +MODULE_LICENSE("GPL");
+>=20
 
 
