@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-320292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E954697086C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:40:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DCB97086F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 17:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 879A3281F2E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:40:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15D6F282242
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 15:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF730167296;
-	Sun,  8 Sep 2024 15:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07619173357;
+	Sun,  8 Sep 2024 15:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BhFvfe1b"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XILgvEbv"
+Received: from msa.smtpout.orange.fr (msa-210.smtpout.orange.fr [193.252.23.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A73B134AC;
-	Sun,  8 Sep 2024 15:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9766134AC;
+	Sun,  8 Sep 2024 15:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725810039; cv=none; b=JSXYXqRrtq3YyG1PPmal1+pZHQX9VP+fXcZ3CctkOlQ0SYr134NFp6ch/saTTD/8TS5Jla05uVCSv8dg5+mScIIkKRji8AaEXN6XKb6tMldHjhiUpSvjhOBzafc8C4IPC/1uO31exwYXFUjqQstN0DUzTSmiTMbIb8enZZsrc/s=
+	t=1725810048; cv=none; b=mwR2A4f5GIYinD1ga40ZcnkDcPze492LsccmgOYPVDkfn9ACKm5U8tFixBhvJTCkgM/kolPr2J5W+3e2yfMhN9ix3VtQ6Qvdc14ZcMotFjtMAwMy68iY3uhrZ6VyEjLot+I8po3i+jgCbTvLng8jzdV/PR0f1r8z2vHSuGAiOtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725810039; c=relaxed/simple;
-	bh=q+Kh6wwc5YZa16QFaGgnd5UtQDrNcPs7tb9A0peheWY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=XRgiOlGZaB8nDctP6mSw8UJYUUQmwt1zCOldsyfjuQAAhfXHE5mODDoMnwspyQAMMzeDXqNI42k4TI5GLj3cUquNC57CVhvNrhgViHfUFOGxJpiGWXyosyIHF6BTTDLDUGdKn6yuKY+p1LEIzfJ8bfKF3huF4lfrIxIpkFkM6bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BhFvfe1b; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1725810011; x=1726414811; i=markus.elfring@web.de;
-	bh=ptJ9KRiiwKf0exozRFbwa/8czRd8EAb1dHK48JunPuE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=BhFvfe1bxXq3j2XOXGqlULvp0rUpex086BwxYXZuqyPr3iZsuey9mq29XvAUk3CE
-	 jssBSeILm/C6GhjBcGEgQQKFD6YYDhyyukvplVY4ovhBdDjkHI55T9vrP4bZmX0jd
-	 ShiaSjvKJ0N0BtP6ugcQb9JIWyqDH/ibuLq2byp7HFEA7XbEungeHJNsc4bde+kga
-	 UyGw8uDW+Zbj/K9z3r25bIO/QOhccOxjRrG4OYKtDZA2ZDP7sjpMEAYUQc+xY7US6
-	 lwAgdh1u1MH9NjjGGt9KT5WSndiJRUS95xWCPz611bG1SnX0BRwyGTuhnVwaTmsMd
-	 F02ND+aMKXghHHk4vg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N4NDQ-1s4bKn3CeU-00w1xz; Sun, 08
- Sep 2024 17:40:11 +0200
-Message-ID: <a2d13042-c19f-48cd-bc1a-375ab44c89d7@web.de>
-Date: Sun, 8 Sep 2024 17:40:10 +0200
+	s=arc-20240116; t=1725810048; c=relaxed/simple;
+	bh=g25NVEPkLYfQKiBQT41BXUY41SwfOzr/KnSecEgtyZw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SEysMrLmda03m1KPFUHBM31+sj8Jk0qNg1XVHW4GXQQFhU3Dl40kvmnnkdofLzv+xNw5kGFxTSg5x51JACBAKxxeEMbd8hS9soDrQZ2Q9yuY2FaxhaU4igpKuOVLXOoTk0gMWMgutJL/zWiLFsX0RkCXGoCDHzm/UYRrcoSqpoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XILgvEbv; arc=none smtp.client-ip=193.252.23.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id nK1qs6CH2OcVznK1qs0yP5; Sun, 08 Sep 2024 17:40:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725810043;
+	bh=FwZvZLmaerUCdXxSG0fc+ZRB7XAjK/XuKX5y8QgnPCU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=XILgvEbvugzYhWWlI9DF9C3M5IzX1ebALuzSZuLViNOp+t2gcYiwLY0orI7QiIq5p
+	 XkkOiPRFZDK1qW871r1ti1tqTudoIUg+cV8+8nejN/kzgoQA0l5Dpn19Hp1NoWQ8Os
+	 wETVprcZ/s9KSCMVKGLaAaT0fvPQEV1L4bVsR470wsCtH2vP1O72uzhTfYZ3oyw2UU
+	 slnWminUDKLBxdjH6wwz3wfUVy3TcClVR2zqOVoOnypGI2EDGAxS0wwiua+ZFtBbnV
+	 vJjLxmnzkUifJzy0/DbltLFF8RkOAJ3phKUTelptCq3YBUNqNvEU1oaJXRQOHR2z9B
+	 W7NDn5tt+Hnrw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 08 Sep 2024 17:40:43 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <2e2f0626-b9aa-4230-9396-d241615db8f9@wanadoo.fr>
+Date: Sun, 8 Sep 2024 17:40:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,46 +56,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Tang Bin <tangbin@cmss.chinamobile.com>, linux-sound@vger.kernel.org,
- Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240908140259.3859-1-tangbin@cmss.chinamobile.com>
-Subject: Re: [PATCH] ASoC: topology: Fix redundant logical jump
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240908140259.3859-1-tangbin@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:YRbIm10HrBGUnXPEZk/8HGrkF2hkx3G0aojXPAOUAEvEXXmySiL
- 4JPdxNtfhxQyWZwV1KN/LhxE1uCYNN5QmZ9GnMjkD2Lm7uWeICyrc+JO7AsPvqMkulWiYqo
- dd2bsHcAOsX9rd40SdDrkO+2t54YJ159Lka+M0Y5TPm0sAOlfzR51yXdP656DVmGhN6K5/h
- rAIfd2mBX7mF9M6EZWOiQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EtzDlGTjLO0=;aJ0dU1KNayylHLRXh6wH+DXxFT0
- suYlg8zmX3kJ6RAN7yDh1wLLbh22m18tOqTVP2zPhXFDepW+ugFRW99coZVPWgO+f8DG8NDJT
- 0NWYa4Nc+WiiLeCP6d3Q84d+NXreOc2xNWzyc+RqEz4PD7pEIkb+cfcr5ajetYH08zt/LEUBL
- Gk+4k4mQ37Xzmiso3eydwUCcfeZdzuStWgN3QX6ezelpRvoqu4pj2YKX2h1VQyaWJL7UhY6vR
- ksvKkq7wRDkERQucp0ET1eAC4w5xn8Gd/PCN/pYeai9it3Nmlev9Iu6Wl7DWRJHFs/NumWEM2
- 6S7BghwAUGzrsFAFGjaq44PyEjVHAp3Bne8kcK0fh2Kval9xvqy2JQ4BHeVLmFpTx5kPbH0m4
- vSvGlI7nB1AioTPCkkY1VHB37thWH/Mn4cSErJNaA5K/M0noizxsvB0D08EYdMHYuhycxSiaH
- UK30IoAwH42AJ+T02YQv7pxmvsyYf5cJSePRyLkWkP8zxpzWZ3htDUGdJK93q2zUanmKf1xYS
- xhN/oNMAwO2+GWMxsVzQrrXbjL5DirpYhaTyHICdTfBfARa3vPFyaAcwrAK/RCcyIgagshVdz
- uOQU6N4IxVPn86+xn9x3WTJ43R20BkgECKMzMLNRF4vMsB/ezxD+sdLdzdCaXUPmw9fHG5LXc
- ZAPZtAOn4ii7dKS+BamCXAEHcG3QcVvxVrApfUrXsw7cW1moqN2yJssVdYTTvZzuFWpn1vHuv
- xeSCwfb2Ra+ION9aipJws3i7OmFQryg4UfTDZaG5Xk+niAGAfz8T74i2zlEfh5vH1yE+AR8WA
- 1cHcBwA76xesv+khFwOi7DQA==
+Subject: Re: [PATCH v2 3/9] iio: backend adi-axi-dac: extend features
+To: adureghello@baylibre.com
+Cc: Michael.Hennerich@analog.com, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, dlechner@baylibre.com, jic23@kernel.org,
+ krzk+dt@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, nuno.sa@analog.com,
+ olivier.moysan@foss.st.com, robh@kernel.org
+References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+ <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-3-87d669674c00@baylibre.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-3-87d669674c00@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> In the function soc_tplg_dai_config, the logical jump
-> of 'goto err' is redundant, so remove it.
+Le 05/09/2024 à 17:17, Angelo Dureghello a écrit :
+> From: Angelo Dureghello <adureghello-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+> 
+> Extend DAC backend with new features required for the AXI driver
+> version for the ad3552r DAC. Mainly, a new compatible string has
+> been added to support a DAC IP very similar to the generic DAC IP
+> but with some customizations to work with the ad3552r.
+> 
+> Then, a serie of generic functions has been added to match with
+> ad3552r needs. Function names has been kept generic as much as
+> possible, to allow re-utilization from other frontend drivers.
 
-* You may occasionally put more than 53 characters into text lines
-  of such a change description.
+Hi,
 
-* Can it be simpler just to return directly instead of extra jumps here?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.11-rc6#n532
+...
 
+> +static int axi_dac_read_raw(struct iio_backend *back,
+> +			    struct iio_chan_spec const *chan,
+> +			    int *val, int *val2, long mask)
+> +{
+> +	struct axi_dac_state *st = iio_backend_get_priv(back);
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_FREQUENCY:
+> +		*val = clk_get_rate(devm_clk_get(st->dev, 0));
 
-Regards,
-Markus
+Having a devm_clk_get() in such a place is really unusual.
+Is it correct?
+
+This look like a memory leak to me.
+
+> +
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+...
+
+> +		/*
+> +		 * Both REG_CNTRL_2 and AXI_DAC_CNTRL_DATA_WR need to know
+> +		 * the data size. So keeping data size control here only,
+> +		 * since data size is mandatory for to the current transfer.
+
+"... for to ..." sounds strange to my *non*-native English ears.
+
+> +		 * DDR state handled separately by specific backend calls,
+> +		 * generally all raw register writes are SDR.
+> +		 */
+> +		if (data_size == 1)
+> +			ret = regmap_set_bits(st->regmap, AXI_DAC_REG_CNTRL_2,
+> +					      AXI_DAC_SYMB_8B);
+> +		else
+> +			ret = regmap_clear_bits(st->regmap, AXI_DAC_REG_CNTRL_2,
+> +						AXI_DAC_SYMB_8B);
+> +		if (ret)
+> +			return ret;
+
+...
+
+> @@ -556,10 +792,12 @@ static int axi_dac_probe(struct platform_device *pdev)
+>   	if (!st)
+>   		return -ENOMEM;
+>   
+> -	expected_ver = device_get_match_data(&pdev->dev);
+> -	if (!expected_ver)
+> +	info = device_get_match_data(&pdev->dev);
+> +	if (!info)
+
+writing:
+	st->info = device_get_match_data(&pdev->dev);
+	if (!st->info)
+
+would save the 'info' variable and a few lines of code without loosing 
+(IMHO) readability.
+
+CJ
+
+>   		return -ENODEV;
+>   
+> +	st->info = info;
+> +
+>   	clk = devm_clk_get_enabled(&pdev->dev, NULL);
+>   	if (IS_ERR(clk))
+>   		return dev_err_probe(&pdev->dev, PTR_ERR(clk),
+> @@ -588,12 +826,13 @@ static int axi_dac_probe(struct platform_device *pdev)
+>   	if (ret)
+>   		return ret;
+>   
+> -	if (ADI_AXI_PCORE_VER_MAJOR(ver) != ADI_AXI_PCORE_VER_MAJOR(*expected_ver)) {
+> +	if (ADI_AXI_PCORE_VER_MAJOR(ver) !=
+> +		ADI_AXI_PCORE_VER_MAJOR(st->info->version)) {
+>   		dev_err(&pdev->dev,
+>   			"Major version mismatch. Expected %d.%.2d.%c, Reported %d.%.2d.%c\n",
+> -			ADI_AXI_PCORE_VER_MAJOR(*expected_ver),
+> -			ADI_AXI_PCORE_VER_MINOR(*expected_ver),
+> -			ADI_AXI_PCORE_VER_PATCH(*expected_ver),
+> +			ADI_AXI_PCORE_VER_MAJOR(st->info->version),
+> +			ADI_AXI_PCORE_VER_MINOR(st->info->version),
+> +			ADI_AXI_PCORE_VER_PATCH(st->info->version),
+>   			ADI_AXI_PCORE_VER_MAJOR(ver),
+>   			ADI_AXI_PCORE_VER_MINOR(ver),
+>   			ADI_AXI_PCORE_VER_PATCH(ver));
+> @@ -631,10 +870,18 @@ static int axi_dac_probe(struct platform_device *pdev)
+>   	return 0;
+>   }
+
+...
+
 
