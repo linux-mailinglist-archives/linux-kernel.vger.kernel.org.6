@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-320402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9EC59709B9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:30:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C6BE9709BB
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 22:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E1322827A5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAA801F232DE
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 20:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A6A179972;
-	Sun,  8 Sep 2024 20:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EEB17A59B;
+	Sun,  8 Sep 2024 20:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FfR6AEmm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jF5SBPN4"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3331C01;
-	Sun,  8 Sep 2024 20:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF5C175D4C
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 20:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725827452; cv=none; b=UdUWPvuUFjlg/xUNrkVk6jIZ1GoatoRgl9BrWlr/WyFhXbCYS0x/e9p420sWbWWyuIkj2PCmdYRw3z9vwq8PwlerBkigPsHxSh3UvrpKcERyTNdveRqG84jI+xTNf77hEJ9gdvyNlRptzfuD8+76XQ5pR3xrjAE1Mcs9tHcrqAg=
+	t=1725827624; cv=none; b=GjOhkkamkXQW8NwsHR0Xb8Ga1pZ7YckiAXlNk2175O8/PHMm1Os3/9VRTJHJv2kpFF/apLQWANlcxNAHYFXLif8KJMngffXWC/XRJQaUobR6RT7hNeCoDlGrK5gv0LKN5xV72VJ8vTb3hwLo5j8rktpPai7VJ3vrMQ73vwPeusA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725827452; c=relaxed/simple;
-	bh=qQFmnoNk7VNN8/ZS193YeNoFNiaW3ZCntUmMI6q2f7s=;
+	s=arc-20240116; t=1725827624; c=relaxed/simple;
+	bh=xwD4m181/ghlyX16sIsZDzu4zhFafGG1cb7UM3VEeS0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cl453rE1BBxSpraU1XGRouhPA42AiXFrJty76EiaGfwqe9QIIC0fZ9wvyRxUlLwklBmFmWgRZ+DpHZEVBZGp+fwJSzzcu+FHU5ZagZagw2o8cBHMyFcuXl53XiIgwWRUebsjjWyX9oEfRNFmFSxn7+WLonN4C2ZNm4swVJarikc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FfR6AEmm; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725827451; x=1757363451;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qQFmnoNk7VNN8/ZS193YeNoFNiaW3ZCntUmMI6q2f7s=;
-  b=FfR6AEmmeaOg8+v4KgB6FbyufiiGyn2pdwaAtZa7VjVRhmyBC8Y9RbiB
-   4lQK/6ypaFuMeNlT4mBKl3flAjzKi4uqSo3WmEX9bXJnSK58SfpzuFfEl
-   VICaEMn8jkMA7pyVUc7iWikRPcM+aCkjgQSaf82VJ9jAbIXbbL9Axu+iy
-   cdavyiNMT/MskjVdVeCmpCWLI2xSsS3w7xIA2LzKb+24iUTskXEZ92kp2
-   DhYV1XxHxaosRYbMJzpk/YMVrORmvNClLFaPzx6fw2Co9+2g/TYiBZ4fJ
-   9n76SeJ84HrRivPiBEP1ONZAy8lMQuADALwdwH2qADdS7zK8TxzHf8wiV
-   Q==;
-X-CSE-ConnectionGUID: VMc38jzUSxWY+eXbhnrrdQ==
-X-CSE-MsgGUID: GvXUpKcHTQyEtRdjsWXowg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="24653474"
-X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
-   d="scan'208";a="24653474"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 13:30:50 -0700
-X-CSE-ConnectionGUID: 8fmgPsSpTkWsV7YB0Khurw==
-X-CSE-MsgGUID: dsstNfYsRpCzwcfx05B6vQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,212,1719903600"; 
-   d="scan'208";a="71424440"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 13:30:48 -0700
-Received: from [10.212.20.3] (kliang2-mobl1.ccr.corp.intel.com [10.212.20.3])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id E8B9220B5782;
-	Sun,  8 Sep 2024 13:30:45 -0700 (PDT)
-Message-ID: <eafb8f49-2396-4652-a74e-882b4066790e@linux.intel.com>
-Date: Sun, 8 Sep 2024 16:30:44 -0400
+	 In-Reply-To:Content-Type; b=af/KkpHon7rgt+v//nQMxulCRh/EGesdoZOltjjs5hRLvdHbychkSJonQtV5eTICNu/75I5f52Mc+YA2Qq7dtF9e1Xy4cCGA2i4OSd8DB5GuPuJWdoP/PQ7nSoyLiiS9PdMwetsJWbmu3WFn4H07TFZ2VLzv3Qz/RMFeGTgImeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jF5SBPN4; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d29b7edc2so168276166b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 13:33:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725827620; x=1726432420; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kF2uO3WLFmIzAKWxOZE3qObArcTQBZD6pgoNP5m+nYs=;
+        b=jF5SBPN4OAZkx5G0x+i9zVc4TGC3xBoOBqIHLQRLMw4DYiZYu5Y+KW5HfMPOXd4mfQ
+         nVuaMfIL+XzPkXn23c9U03PD8Z4PLnzXDUP81N7S7rkRyKpHBboXVUnUBAM6jl9znyHq
+         9fW5k+Pg7O6q2wKE057cFpqSjXCBQ7k1JUzZHlUCf/YHobq5ppozIxBQSf/+lDxTwN9s
+         dQenC+5HN1qCDyNSYF1gaPrF1JktpDbAXyFGSXyyzzTGoIwUc0eZLGv7wvsfdjHu7apA
+         NNfytbpZO7sBwwtGVTBmtPgDkOqFxY9U3FwxQLRFVlnISw1f0RN2cVSjcj8iphlF0uvw
+         HO/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725827620; x=1726432420;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kF2uO3WLFmIzAKWxOZE3qObArcTQBZD6pgoNP5m+nYs=;
+        b=VKWs4LksqJ+kKoaXuEU46Yk7v3YKoarq/7qN7Sicy1bxmolo0LF51jAdc+9PUpJ/Ay
+         ZA+WeLsup++1ijqc4GTQn/1bE5Us9Gmaa79u58ITrlsCfOigt/JSks67W4V/Emkgk7Ws
+         t/+4n4Li6ObBGIPhTVVOWf/163R3OKKxy4J/whx4SNE3ewBzXaIcJvppu6UTbjZEPOTV
+         /klyGfrqIBgks1pXYTM16xnJqtKLKFdkYqNWOw1LcPirQ0HMsM2QiWmTw/0gwy3mQfAb
+         ngjq2zUJLZGPk+nVB5ekgzMysSJBKbtWGV897fv+HAAM1Hje2N0c4tjSOKyVqM2IfvPe
+         bkIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMIRtQ60+UFvD9bDS4k9JQ7qDSmi3twzbHPX/0PhCOEkCnh0mjBFV7jsOy2BNmR86i+QSSnZO/4p1qwCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDRRTNdRaYWq8UMgaas5bgQRr3ugRl6q/NPt9RDYRyxAPIxpFQ
+	sRanAMGwBnsdESFdHM7U3k1+C7ACKAqsiCjCBXE5FyY5Ga8NQkSC
+X-Google-Smtp-Source: AGHT+IHkhLuRJsXaIsWySKb1wYWCss338DDk4msZoEw3vDmi8KE+93iuiZd4yfSMTfIOpsAjfe1ewQ==
+X-Received: by 2002:a17:907:2daa:b0:a8d:489a:d23 with SMTP id a640c23a62f3a-a8d489a0f42mr361532566b.25.1725827620292;
+        Sun, 08 Sep 2024 13:33:40 -0700 (PDT)
+Received: from ?IPV6:2003:c7:8f2a:8576:4416:5fef:fc17:c89e? (p200300c78f2a857644165feffc17c89e.dip0.t-ipconnect.de. [2003:c7:8f2a:8576:4416:5fef:fc17:c89e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d2595117dsm246784566b.63.2024.09.08.13.33.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Sep 2024 13:33:40 -0700 (PDT)
+Message-ID: <b335b3dc-61b4-4e39-8627-76bd4acc82c2@gmail.com>
+Date: Sun, 8 Sep 2024 22:33:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,68 +75,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] perf mem: Fix missed p-core mem events on ADL and RPL
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: namhyung@kernel.org, irogers@google.com, jolsa@kernel.org,
- adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240905170737.4070743-1-kan.liang@linux.intel.com>
- <20240905170737.4070743-2-kan.liang@linux.intel.com> <ZtoHgMqNhnDdvAIi@x1>
- <1a339858-74a3-414a-9fc1-bef47c513728@linux.intel.com> <ZtsO-v3pUVezKBgE@x1>
- <8644996b-33d6-4eee-890c-f23a3c830b77@linux.intel.com> <ZttgvduaKsVn1r4p@x1>
+Subject: Re: [PATCH 2/6] staging: rtl8723bs: fix position of opening braces
+To: Sayyad Abid <sayyad.abid16@gmail.com>, linux-staging@lists.linux.dev
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+References: <20240908101110.1028931-1-sayyad.abid16@gmail.com>
+ <20240908101110.1028931-3-sayyad.abid16@gmail.com>
 Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <ZttgvduaKsVn1r4p@x1>
-Content-Type: text/plain; charset=UTF-8
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240908101110.1028931-3-sayyad.abid16@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 9/8/24 12:11, Sayyad Abid wrote:
+> This patch fixes the coding style issue of opening bracket "{" being on
+> the next line.
+> 
+> Signed-off-by: Sayyad Abid <sayyad.abid16@gmail.com>
+> 
+> ---
+>   drivers/staging/rtl8723bs/include/rtw_security.h | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/include/rtw_security.h b/drivers/staging/rtl8723bs/include/rtw_security.h
+> index 487d69460cec..3ccbccf92417 100644
+> --- a/drivers/staging/rtl8723bs/include/rtw_security.h
+> +++ b/drivers/staging/rtl8723bs/include/rtw_security.h
+> @@ -170,8 +170,7 @@ struct security_priv {
+>   
+>   #define GET_ENCRY_ALGO(psecuritypriv, psta, encry_algo, bmcst)\
+>   do {\
+> -	switch (psecuritypriv->dot11AuthAlgrthm)\
+> -	{\
+> +	switch (psecuritypriv->dot11AuthAlgrthm) {\
+>   		case dot11AuthAlgrthm_Open:\
+>   		case dot11AuthAlgrthm_Shared:\
+>   		case dot11AuthAlgrthm_Auto:\
+> @@ -191,8 +190,7 @@ do {\
+>   
+>   #define SET_ICE_IV_LEN(iv_len, icv_len, encrypt)\
+>   do {\
+> -	switch (encrypt)\
+> -	{\
+> +	switch (encrypt) {\
+>   		case _WEP40_:\
+>   		case _WEP104_:\
+>   			iv_len = 4;\
 
 
-On 2024-09-06 4:06 p.m., Arnaldo Carvalho de Melo wrote:
-> On Fri, Sep 06, 2024 at 12:08:52PM -0400, Liang, Kan wrote:
->> On 2024-09-06 10:17 a.m., Arnaldo Carvalho de Melo wrote:
->>> On Thu, Sep 05, 2024 at 03:47:03PM -0400, Liang, Kan wrote:
->>>> On 2024-09-05 3:33 p.m., Arnaldo Carvalho de Melo wrote:
->>>>> But can we reconstruct the events relationship (group, :S, etc) from
->>>>> what we have in the perf.data header?
-> 
->>>> Do you mean show the group relation in the perf evlist?
-> 
->>>> $perf mem record sleep 1
->>>> [ perf record: Woken up 1 times to write data ]
->>>> [ perf record: Captured and wrote 0.027 MB perf.data (10 samples) ]
-> 
->>>> $perf evlist -g
->>>> cpu_atom/mem-loads,ldlat=30/P
->>>> cpu_atom/mem-stores/P
->>>> {cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}
->>>> cpu_core/mem-stores/P
->>>> dummy:u
-> 
->>>> The -g option already did it, although the group modifier looks lost.
-> 
->>> Right, I can reproduce that, but I wonder if we shouldn't make this '-g'
->>> option the default?
-> 
->> I think the evlist means a list of events. Only outputting the events
->> makes sense to me.
->> With -g, the extra relationship information is provided.
-> 
-> At first 'perf evlist' showing just the events present in the perf.data
-> file seems enough, and maybe it should continue like that.
-> 
-> It is just that this relationship is so critical that not showing it by
-> default looks suboptimal :-\
-> 
-> Perhaps we should add some warning at the end mentioning the special
-> relationships present and suggest using '-g' to see it?
-> 
+Hi Sayyad,
 
-Agree, and we already did a similar hint for tracepoint events.
+I cannot apply this patch. Please rebase.
 
-Here is the patch to add a hint for '-g'.
-https://lore.kernel.org/lkml/20240908202847.176280-1-kan.liang@linux.intel.com/
+Thanks for your support.
 
-Thanks,
-Kan
+Bye Philipp
 
