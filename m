@@ -1,105 +1,81 @@
-Return-Path: <linux-kernel+bounces-320092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACFED97060E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:28:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8AD7970655
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 11:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38979B21726
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:28:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D5961F221F6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 09:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBFC145B21;
-	Sun,  8 Sep 2024 09:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/Fc/ul1"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC4D14882D;
+	Sun,  8 Sep 2024 09:47:48 +0000 (UTC)
+Received: from mail-m609.netease.com (mail-m609.netease.com [210.79.60.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA9A1B85DC;
-	Sun,  8 Sep 2024 09:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB894204E;
+	Sun,  8 Sep 2024 09:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.79.60.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725787671; cv=none; b=ui2dgaVH17/YvddDJeh89FqH1rvCak1Mra2mo/ikgyzxDkZLW+nnb3R8au/O+2cY3B15WAv6wQyRLflMsAAJhmFR7Horh9j7pDFm/9Nl7uLRJv22r5IRLdpTUvOCgIYsV2yLu6LB7d0w9UhEr4gK9bUz6XQVBTpZQRI4aPfxO+c=
+	t=1725788868; cv=none; b=MShwmuQ4WKwubZqQSuJlaCz7sZvvo4Kubsk1MnWm+Vuw47pDZWb38L3VQsSF3wQyfZAFX+ig+ERVKA3Sb59OKcpJsoiemYHBoVmD/tORXU48llp34FOaONhRyJHkeXQUJeR2oooclTTJvfxBIvglCX+t3eVWLqvAI43rRwCEbnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725787671; c=relaxed/simple;
-	bh=vCkW6jzRHY2geB9TlROg9NExkkVvGa+4Mp029GMoc4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VPHuP4jnYdsDnjdif3RL+0hbL+Jp1FfwQkE4SO1UiJpxd1wPlE4ROEO2zppiPm0YINUDRdjnhYgtSB5Ga0+HYeh0osxaKfoNLohxc7HLMqA5bq14AFked+8TBWS/OUnB9XyTpl98Xg9JWZN4Zfyf1hya/vL6RDadHzk6cxGTzIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/Fc/ul1; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c3d8d3ebbdso4633811a12.0;
-        Sun, 08 Sep 2024 02:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725787668; x=1726392468; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sMIg3Phaiaih7OBmofRKIXRXo86YxKJvUDO8CKa+ZDE=;
-        b=K/Fc/ul1OSCcecqsfbGqq0QgsBazVZ/Tidlkjirwq/f9aPCUd7Pq8nNjIwmaxSg5Gc
-         Lf/b/qTFSHO0kbaFfvadI0+NWIhN4pI4RRJgDsvydFd80l7HeTQz9rgc2fcPFcR61BHe
-         BsZf4f9pYXQwswcOg188rj775ZdEOlHSd5pAWyP4t2xd1k0gFMsymBNOB4CbvXlts5jv
-         ftaNEvjKxJJ8eYbvv3THZ2zFN+5oC++AGzfPgy7A6ICkEt/cs6x2hManpeA+4nVhUMus
-         jUFjhwsvg8pTtDz8siT6L/NFkBMSYX7ORlb9gDyhV0KnAEe1Nhj8/Ff27yxEJF3djLnt
-         ZdGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725787668; x=1726392468;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sMIg3Phaiaih7OBmofRKIXRXo86YxKJvUDO8CKa+ZDE=;
-        b=pGvzeHInXYyzXPgnxLX5CGGuybEYVCgaELyM7T2iXOQbiLS3JfbZFrZ/wSOMCioZVL
-         RWN2vdxXwjdut9V6MM9BYnsiavizo1gFAULT5IRwrY/vNi4VmtdmKSwim8XgRFqvEA/g
-         59FPatnHakF2vf5EDNrUKWFOs6Ylx3JUgDLTTVXEtm+f3zX8oVoPaXlX41TaVlihfq86
-         5+1jl6httvf1vK89ox62cTpkUIWjIxoxssnPx2tpbeH8skJgZWkpiEsn4n1RC9JDMpru
-         Y8Y2tPqA8KeNDHH8YfDe9NepL8OcIWWwIH6Kt/e7fFzB07JpEPzVgCJXgivZi+Lbjlld
-         6q7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUae0TCAH/ZRa1ImU/BM1egzIj5hPyuanRs/m1FHgl6Gbn7+xyJInuIYrQAL2xW2Ajq1nqn1ly6i/735UiP@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu1ZfdBYtzeDFiyJ7D2pvPIc/NnldAMNl98sTK8jD1wINCw/jd
-	1XgUIgumdayMXgLwQH4HWYeUch4CvV67BQD//kFXL3ZTxzFji3VwVQA8
-X-Google-Smtp-Source: AGHT+IHZF01SXR2omQWh99Kn9B2X+7iMBsoHVgblIh1VccS3gX78f4ZrWTUZlBzOwnQJyytB3+c6pQ==
-X-Received: by 2002:a05:6402:51d4:b0:5be:d595:5413 with SMTP id 4fb4d7f45d1cf-5c3db967a6dmr8639017a12.3.1725787667858;
-        Sun, 08 Sep 2024 02:27:47 -0700 (PDT)
-Received: from p183 ([46.53.251.102])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd424e5sm1588913a12.10.2024.09.08.02.27.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 02:27:47 -0700 (PDT)
-Date: Sun, 8 Sep 2024 12:27:45 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] proc: fold kmalloc() + strcpy() into kmemdup()
-Message-ID: <90af27c1-0b86-47a6-a6c8-61a58b8aa747@p183>
+	s=arc-20240116; t=1725788868; c=relaxed/simple;
+	bh=PVmzuNEc8v5rWStQSiZ8VF7qRD5aaCjcgn5xVcir2eY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TZrIMCPa3iF/Y2/UuxniBFy9P0N3KmY7GbSLXPnUXblw1xkCDAQnLaryByeGMXsLDza9SOgIhTMqcu7/3Sw1TAUYvxXKyH+swx3JOt0keh7+Q+/jeATkWepO2YUdzxU4z9iUifHwy9xbCRrGO3/n37KMuGBkBUFoTpVY9vtVZWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=210.79.60.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [58.61.141.10])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 24CA27E011A;
+	Sun,  8 Sep 2024 17:30:06 +0800 (CST)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: bigfoot@classfun.cn
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-rtc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux@roeck-us.net,
+	wim@linux-watchdog.org,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Subject: Re: [PATCH 0/9] Introduce Photonicat power management MCU driver
+Date: Sun,  8 Sep 2024 17:30:02 +0800
+Message-Id: <20240908093002.26317-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240906093630.2428329-1-bigfoot@classfun.cn>
+References: <20240906093630.2428329-1-bigfoot@classfun.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTU0dVk1KTkkfGUhOThodTlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlOQ1VNSlVKT0pVSktZV1kWGg8SFR0UWUFZT0tIVUpLSUJNSEpVSktLVUtZBg
+	++
+X-HM-Tid: 0a91d0f81ae203a2kunm24ca27e011a
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PAg6HRw*KzIxATIoECo8PDRC
+	TD0KCT5VSlVKTElOTENMQ0tNQ0JKVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWU5D
+	VU1KVUpPSlVKS1lXWQgBWUFKTE1NNwY+
 
-strcpy() will recalculate string length second time which is
-unnecessary in this case.
+Hi Junhao,
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+> Initial support for the power management MCU in the Ariaboard Photonicat
+> This patch series depends on Add support for Ariaboard Photonicat RK3568 [1]
 
- fs/proc/generic.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The official website says it's "Renesas RA2E1 cortex M23 ultra-low power MCU"
+Perhaps renaming the 'Photonicat MCU' to 'Renesas RA2E1 MCU' would be better?
 
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -464,9 +464,9 @@ struct proc_dir_entry *proc_symlink(const char *name,
- 			  (S_IFLNK | S_IRUGO | S_IWUGO | S_IXUGO),1);
- 
- 	if (ent) {
--		ent->data = kmalloc((ent->size=strlen(dest))+1, GFP_KERNEL);
-+		ent->size = strlen(dest);
-+		ent->data = kmemdup(dest, ent->size + 1, GFP_KERNEL);
- 		if (ent->data) {
--			strcpy((char*)ent->data,dest);
- 			ent->proc_iops = &proc_link_inode_operations;
- 			ent = proc_register(parent, ent);
- 		} else {
+-- 
+2.25.1
+
 
