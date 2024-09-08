@@ -1,425 +1,143 @@
-Return-Path: <linux-kernel+bounces-320302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E770A970886
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:07:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64CC29708BC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 18:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FFFE2820DC
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:07:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AC941F214C7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 16:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64775174ED0;
-	Sun,  8 Sep 2024 16:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323C31714AE;
+	Sun,  8 Sep 2024 16:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gv2WHiR9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/VaaMII"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875CD26281;
-	Sun,  8 Sep 2024 16:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B502B9B5;
+	Sun,  8 Sep 2024 16:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725811637; cv=none; b=HhIKcuQ3XzKi1cbbRkifzpPAh/ZpeE0pz9S5P/WeqDdmeoTPuuLxXBOMHjScwpUqzsMt2yDfIngXfkSUXHOWxxmnQER/nX0a6iOGcMIWJWa8WDmsnqpl7NB5Ax3G7bxmRE51XLS5jjLXuDeQwhYw/cwy2ZQuSfVe2i9sDib2foM=
+	t=1725812435; cv=none; b=ad9aKvIcdw85hONIQvlTtMjUTyChwijdsS26h2ysflOhcpp+EC4Gh+x9P6NwYTN8ItxLJQkWBySm6nlWXkDzxGZ5nipIoljTf8rmHRpQtnnEv23zkdGFnF6eZczQPR8jcrru/jmDZC7EuKA2EcGDwiMDwi08lOIePSDr/xZX09o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725811637; c=relaxed/simple;
-	bh=PIcvZtsoIzTVaZa/nNjjaWmeTXq08evXFChGDir598Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iPeYYWDBFCIPwsy/9foQMiUx4lXqWRjZ6YkFRLglClVFbvqUczCj85RovSlJxUy3caZxomzoLrcyRShNvdAnARwR+7iQmbn+GWO2QU+zJqiV/dZhtq5SG5B8wWgH9T3THcCETqxg4m5b2y7ntIHdTwLJVlAxJxOQmfbEjXT0uSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gv2WHiR9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE71C4CEC3;
-	Sun,  8 Sep 2024 16:07:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725811636;
-	bh=PIcvZtsoIzTVaZa/nNjjaWmeTXq08evXFChGDir598Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Gv2WHiR99Ydnee/z7mHk6CwvnDAa2gij/yb8AbG4oRQhW1m+OJQbiwLkNbLc9MUrH
-	 323+NNKW+kHXh11VviwYwD0adrBI+e3LtIhsBSRQAFs2aEsVPtmY7jtsPdlnyW00qN
-	 9OzOLZWn1dqr9ZQ0J0ZX5SBr44Z/Ltd/NLANz9bHigShtHLSAH2EUMSSMBQOMnrR6S
-	 nUZ0Im4xMDWob67euLExRD/6Q12gCEbtalFl7S5ZrIjHchnlIrauaBsNljym93+Sd+
-	 2nhb/pqrpr0katSmrlDsbFjsxwGFauphC+i+a66SA6PVZsaaJIo8tA20abxZJn0XIo
-	 uuNohV9GJBKBA==
-Date: Sun, 8 Sep 2024 17:07:07 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
- <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, David Lechner
- <dlechner@baylibre.com>
-Subject: Re: [PATCH v2 8/9] iio: dac: ad3552r: add axi platform driver
-Message-ID: <20240908170708.2efd6fd0@jic23-huawei>
-In-Reply-To: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-8-87d669674c00@baylibre.com>
-References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
-	<20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-8-87d669674c00@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725812435; c=relaxed/simple;
+	bh=hiPiTepAb+Fpvuy0MqNdPFDvMpFOPNQ50AG2OJe8f7Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T7IJdHSQLZX2609r1MqkmS+qe/na2SCIEKl8a+3d6M7rzFB24XxikmFn8HHYWGZAP49I+PWbj40fhnF/oj4cvPgfLyfLIKletic15NP0T14rjK0Kj4aNq2Cg4osUkC5wDaUTj6SPh4P5H7EoQvLaN2bOWd2KyRj0nnsf0Cz8TpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S/VaaMII; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a9aa913442so60767985a.1;
+        Sun, 08 Sep 2024 09:20:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725812433; x=1726417233; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R+KJF6T6XBCWzZ+orANPx7bX+BJ+F0qpNOws7FrO2Ek=;
+        b=S/VaaMIIJchlufs6QLml/n+Z9HVGgmcEO06nQ+wu7NsuX/AymD8iUM15vRsItA4I2D
+         0KHI6pFBqXZoNhGHtT8HDlXmKpjyYM9oIL9LwhpLBu9gv1mZxOvRoRqArnJpdfUVh6/r
+         akfrFtYRd+OQDm8+8mjBe/ZoleMbnu1bkW+ciqZZX8kRo+FRzQwtqVJVPInLCXxqZaVi
+         KFQC3D+TGAMXWbwTQylWnvdZZ2HBGsIAaqv+03kfjYH6J7FOul9A2pTNgIG2/zjywCd3
+         5Cy508R24zABCrq5Xs+Br4+Y4BCaomXWWIF6FIQcTEtoU7Ds/cCijOaYLHgQ0VkE4jzy
+         ov+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725812433; x=1726417233;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R+KJF6T6XBCWzZ+orANPx7bX+BJ+F0qpNOws7FrO2Ek=;
+        b=sizf3QiIFg2GIVdEfcHAcKpcogmETawRq9cgw2MT4RE7hQGTEj95RywTKfhQHgtMCQ
+         0TvWPYMM+ED+SHfeOSkNTUnGgJuYqkSZmYpDoSUKY5hdDrEKwA+tXYqJQfo5ftwUzopv
+         LCtHfQp86g4aNp2SpHxfKFsIo5U1movhwY99Ewl/1KqXs+cQNG1D05bKmpjkPSC+d/EO
+         oMGVTSQ2b/Qe33wRiJWW9mwOXc7AMCgci9D7h0Kb0FTIItu5GYLAexeq80yP1Sm5rY3Q
+         igJTPXtb2by8KliBxDRcNmNmuvXRu0wql/OFdh8EtUOPY5t+CaQ7HIBKN+IRTqqXPbfv
+         CdSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkRwmBFVfRNhqOCsIZ8FRq0fh1tJdCHwFcr5FHDkO7gfaimzWzcQ/SaAM2PcB8gsk8GYI31+eA5A1lxxUM@vger.kernel.org, AJvYcCXwyQsSR+jzY5ERWmAf61x7y3xemH71WYFv3ra3MVNTZYMxEC817eZWCYTGFOLJXxu43iv4nxIFQI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCUATK+tSxtqSYkLyxmyXBr8Fno8Cj+BCgvQNx1J6+WOIYOtUz
+	xeAaGXOIugfmqMXHal7QWin7/op9xeQU5peBmVMLvqYuKs1PiNN8qr7rsGib
+X-Google-Smtp-Source: AGHT+IGWDM3DwoIoL/vXTEgHYvo5VkmJMcLfpXnfszmZQCj0MNu7rhwgZQmWCAM6dDFsg9ve+yfHtw==
+X-Received: by 2002:a05:620a:4547:b0:7a9:ac57:ff5a with SMTP id af79cd13be357-7a9ac58052dmr522393885a.39.1725812432755;
+        Sun, 08 Sep 2024 09:20:32 -0700 (PDT)
+Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
+        by smtp.googlemail.com with ESMTPSA id af79cd13be357-7a9a7a1ff6bsm139874185a.122.2024.09.08.09.20.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 09:20:32 -0700 (PDT)
+From: Dennis Lam <dennis.lamerice@gmail.com>
+To: jglisse@redhat.com,
+	corbet@lwn.net
+Cc: linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dennis Lam <dennis.lamerice@gmail.com>
+Subject: [PATCH] docs:mm: fix spelling mistakes in heterogeneous memory management page
+Date: Sun,  8 Sep 2024 12:19:28 -0400
+Message-ID: <20240908161928.3700-1-dennis.lamerice@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 05 Sep 2024 17:17:38 +0200
-Angelo Dureghello <adureghello@baylibre.com> wrote:
+Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
+---
+ Documentation/mm/hmm.rst | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-> From: Angelo Dureghello <adureghello@baylibre.com>
->=20
-> Add support for ad3552r-axi, where ad3552r has to be controlled
-> by the custom (fpga-based) ad3552r AXI DAC IP.
->=20
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> Co-developed-by: David Lechner <dlechner@baylibre.com>
-> Co-developed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
-Comments inline.
-
-> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-> index 56a125f56284..cc2af3aa3f52 100644
-> --- a/drivers/iio/dac/Makefile
-> +++ b/drivers/iio/dac/Makefile
-> @@ -5,6 +5,7 @@
-> =20
->  # When adding new entries keep the list in alphabetical order
->  obj-$(CONFIG_AD3552R) +=3D ad3552r.o ad3552r-common.o
-> +obj-$(CONFIG_AD3552R_AXI) +=3D ad3552r-axi.o ad3552r-common.o
->  obj-$(CONFIG_AD5360) +=3D ad5360.o
->  obj-$(CONFIG_AD5380) +=3D ad5380.o
->  obj-$(CONFIG_AD5421) +=3D ad5421.o
-> diff --git a/drivers/iio/dac/ad3552r-axi.c b/drivers/iio/dac/ad3552r-axi.c
-> new file mode 100644
-> index 000000000000..a9311f29f45d
-> --- /dev/null
-> +++ b/drivers/iio/dac/ad3552r-axi.c
-> @@ -0,0 +1,567 @@
-
-> +
-> +static int ad3552r_axi_read_raw(struct iio_dev *indio_dev,
-> +				struct iio_chan_spec const *chan,
-> +				int *val, int *val2, long mask)
-> +{
-> +	struct ad3552r_axi_state *st =3D iio_priv(indio_dev);
-> +	int err, ch =3D chan->channel;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_SAMP_FREQ: {
-> +		int clk_rate;
-> +
-> +		err =3D iio_backend_read_raw(st->back, chan, &clk_rate, 0,
-> +					   IIO_CHAN_INFO_FREQUENCY);
-> +		if (err !=3D IIO_VAL_INT)
-> +			return err;
-
-If it is another postive value I think you want to return -EINVAL
-If it's negative return err as here.
-
-> +
-> +		/*
-> +		 * Data stream SDR/DDR (clk_in/8 or clk_in/4 update rate).
-> +		 * Samplerate has sense in DDR only.
-> +		 */
-> +		if (st->single_channel)
-> +			clk_rate =3D DIV_ROUND_CLOSEST(clk_rate, 4);
-> +		else
-> +			clk_rate =3D DIV_ROUND_CLOSEST(clk_rate, 8);
-> +
-> +		*val =3D clk_rate;
-> +
-> +		return IIO_VAL_INT;
-> +	}
-> +	case IIO_CHAN_INFO_RAW:
-> +		err =3D iio_backend_bus_reg_read(st->back,
-> +					       AD3552R_REG_ADDR_CH_DAC_16B(ch),
-> +					       val, 2);
-> +		if (err)
-> +			return err;
-> +
-> +		return IIO_VAL_INT;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-
-
-> +
-> +static int ad3552r_axi_set_output_range(struct ad3552r_axi_state *st,
-> +					unsigned int mode)
-> +{
-> +	int range_ch_0 =3D FIELD_PREP(AD3552R_MASK_CH0_RANGE, mode);
-> +	int range_ch_1 =3D FIELD_PREP(AD3552R_MASK_CH1_RANGE, mode);
-> +
-> +	return axi3552r_qspi_update_reg_bits(st->back,
-> +				AD3552R_REG_ADDR_CH0_CH1_OUTPUT_RANGE,
-> +				AD3552R_MASK_CH_OUTPUT_RANGE,
-> +				range_ch_0 | range_ch_1, 1);
-
-
-	return axi3552r_qspi_update_reg_bits(st->back,
-				AD3552R_REG_ADDR_CH0_CH1_OUTPUT_RANGE,
-				AD3552R_MASK_CH_OUTPUT_RANGE,
-				FIELD_PREP(AD3552R_MASK_CH0_RANGE, mode) |
-				FIELD_PREP(AD3552R_MASK_CH1_RANGE, mode),
-				1);
-
-looks fine to me  from readability point of view and it's shorter.
-
-
-> +}
-
-> +
-> +static int ad3552r_axi_setup(struct ad3552r_axi_state *st)
-> +{
-> +	struct fwnode_handle *child __free(fwnode_handle) =3D NULL;
-> +	u8 gs_p, gs_n;
-> +	s16 goffs;
-> +	u16 id, rfb;
-> +	u16 reg =3D 0, offset =3D 0;
-> +	u32 val, range;
-> +	int err;
-> +
-> +	err =3D ad3552r_axi_reset(st);
-> +	if (err)
-> +		return err;
-> +
-> +	err =3D iio_backend_ddr_disable(st->back);
-> +	if (err)
-> +		return err;
-> +
-> +	err =3D iio_backend_bus_reg_write(st->back, AD3552R_REG_ADDR_SCRATCH_PA=
-D,
-> +					AD3552R_SCRATCH_PAD_TEST_VAL1, 1);
-> +	if (err)
-> +		return err;
-> +
-> +	err =3D iio_backend_bus_reg_read(st->back, AD3552R_REG_ADDR_SCRATCH_PAD,
-> +				       &val, 1);
-> +	if (err)
-> +		return err;
-> +
-> +	if (val !=3D AD3552R_SCRATCH_PAD_TEST_VAL1) {
-> +		dev_err(st->dev,
-> +			"SCRATCH_PAD_TEST mismatch. Expected 0x%x, Read 0x%x\n",
-> +			AD3552R_SCRATCH_PAD_TEST_VAL1, val);
-> +		return -EIO;
-> +	}
-> +
-> +	err =3D iio_backend_bus_reg_write(st->back,
-> +					AD3552R_REG_ADDR_SCRATCH_PAD,
-> +					AD3552R_SCRATCH_PAD_TEST_VAL2, 1);
-> +	if (err)
-> +		return err;
-> +
-> +	err =3D iio_backend_bus_reg_read(st->back, AD3552R_REG_ADDR_SCRATCH_PAD,
-> +				       &val, 1);
-> +	if (err)
-> +		return err;
-> +
-> +	if (val !=3D AD3552R_SCRATCH_PAD_TEST_VAL2) {
-> +		dev_err(st->dev,
-> +			"SCRATCH_PAD_TEST mismatch. Expected 0x%x, Read 0x%x\n",
-> +			AD3552R_SCRATCH_PAD_TEST_VAL2, val);
-> +		return -EIO;
-> +	}
-
-This scratch pad test is a separate enough 'thing' maybe pull it out as
-another function called from here?
-
-
-> +
-> +	err =3D iio_backend_bus_reg_read(st->back, AD3552R_REG_ADDR_PRODUCT_ID_=
-L,
-> +				       &val, 1);
-> +	if (err)
-> +		return err;
-> +
-> +	id =3D val;
-> +
-> +	err =3D iio_backend_bus_reg_read(st->back, AD3552R_REG_ADDR_PRODUCT_ID_=
-H,
-> +				       &val, 1);
-> +	if (err)
-> +		return err;
-> +
-> +	id |=3D val << 8;
-> +	if (id !=3D st->model_data->chip_id) {
-> +		dev_err(st->dev, "Chip ID mismatch. Expected 0x%x, Read 0x%x\n",
-> +			AD3552R_ID, id);
-> +	}
-
-no {} needed here.
-Also dev_info()  to make it slightly less ominous :)
-
-
-> +
-> +	err =3D iio_backend_bus_reg_write(st->back,
-> +					AD3552R_REG_ADDR_SH_REFERENCE_CONFIG,
-> +					AD3552R_REF_INIT, 1);
-
-Hmm. This was snuck in during previous patch.  Pull new definitions out of =
-that
-and put them in this patch.  I only noticed because I wondered what value it
-had and was surprised to find it doesn't exist in current driver.
-
-I'm not sure a define for write it all to 0 is worth while. Maybe just
-put a zero here.
-
-> +	if (err)
-> +		return err;
-> +
-> +	err =3D iio_backend_bus_reg_write(st->back,
-> +					AD3552R_REG_ADDR_TRANSFER_REGISTER,
-> +					AD3552R_TRANSFER_INIT, 1);
-Another define that sneaked in during previous patch.
-Given it's not 'general' and only used here. I'd drop that define and
-use the various parts that make it up here.
-
-Mind you those defines should be introduced in this patch not the
-previous one.
-
-
-> +	if (err)
-> +		return err;
-> +
-> +	err =3D iio_backend_data_source_set(st->back, 0, IIO_BACKEND_EXTERNAL);
-> +	if (err)
-> +		return err;
-> +
-> +	err =3D iio_backend_data_source_set(st->back, 1, IIO_BACKEND_EXTERNAL);
-> +	if (err)
-> +		return err;
-> +
-> +	err =3D ad3552r_get_ref_voltage(st->dev, &val);
-> +	if (err)
-> +		return err;
-> +
-> +	err =3D axi3552r_qspi_update_reg_bits(st->back,
-> +				AD3552R_REG_ADDR_SH_REFERENCE_CONFIG,
-> +				AD3552R_MASK_REFERENCE_VOLTAGE_SEL,
-> +				val, 1);
-> +	if (err)
-> +		return err;
-> +
-> +	err =3D ad3552r_get_drive_strength(st->dev, &val);
-> +	if (!err) {
-> +		err =3D axi3552r_qspi_update_reg_bits(st->back,
-> +					AD3552R_REG_ADDR_INTERFACE_CONFIG_D,
-> +					AD3552R_MASK_SDO_DRIVE_STRENGTH,
-> +					val, 1);
-> +		if (err)
-> +			return err;
-> +	}
-> +
-> +	child =3D device_get_named_child_node(st->dev, "channel");
-> +	if (!child)
-> +		return -EINVAL;
-> +
-> +	err =3D ad3552r_get_output_range(st->dev, st->model_data->chip_id,
-> +				       child, &range);
-> +	if (!err)
-> +		return ad3552r_axi_set_output_range(st, range);
-> +
-> +	if (err !=3D -ENOENT)
-> +		return err;
-> +
-> +	/* Try to get custom range */
-> +	err =3D ad3552r_get_custom_gain(st->dev, child,
-> +					&gs_p, &gs_n, &rfb, &goffs);
-> +	if (err)
-> +		return err;
-> +
-> +	ad3552r_calc_custom_gain(gs_p, gs_n, goffs, &reg);
-
-I'd return regs
-
-> +
-> +	offset =3D abs((s32)goffs);
-
-Hmm. abs(goffs) should use a short I think which will work without the
-cast and ultimately rely on sign extension of the result.
-
-> +
-> +	err =3D iio_backend_bus_reg_write(st->back,
-> +					AD3552R_REG_ADDR_CH_OFFSET(0),
-> +					offset, 1);
-> +	if (err)
-> +		return dev_err_probe(st->dev, err,
-> +					"Error writing register\n");
-> +
-> +	err =3D iio_backend_bus_reg_write(st->back,
-> +					AD3552R_REG_ADDR_CH_OFFSET(1),
-> +					offset, 1);
-> +	if (err)
-> +		return dev_err_probe(st->dev, err,
-> +					"Error writing register\n");
-> +
-> +	err =3D iio_backend_bus_reg_write(st->back,
-> +					AD3552R_REG_ADDR_CH_GAIN(0),
-> +					reg, 1);
-> +	if (err)
-> +		return dev_err_probe(st->dev, err,
-> +					"Error writing register\n");
-> +
-> +	err =3D iio_backend_bus_reg_write(st->back,
-> +					AD3552R_REG_ADDR_CH_GAIN(1),
-> +					reg, 1);
-> +	if (err)
-> +		return dev_err_probe(st->dev, err,
-> +					"Error writing register\n");
-> +
-> +	return 0;
-> +}
-
-...
-
-> +
-> +static const struct iio_chan_spec_ext_info ad3552r_axi_ext_info[] =3D {
-> +	IIO_ENUM("synchronous_mode", IIO_SHARED_BY_TYPE,
-> +		 &ad3552r_synchronous_mode_enum),
-> +	IIO_ENUM_AVAILABLE("synchronous_mode", IIO_SHARED_BY_TYPE,
-> +			   &ad3552r_synchronous_mode_enum),
-> +	{}
-{ }
-
-Also see discussion in next patch on this. I'm not sure it makes
-sense to expose this to userspace but maybe I just don't yet understand
-the use case.
-
-> +};
-> +
-> +#define AD3552R_CHANNEL(ch) { \
-> +	.type =3D IIO_VOLTAGE, \
-> +	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW), \
-> +	.info_mask_shared_by_all =3D BIT(IIO_CHAN_INFO_SAMP_FREQ), \
-> +	.output =3D 1, \
-> +	.indexed =3D 1, \
-> +	.channel =3D (ch), \
-> +	.scan_index =3D (ch), \
-> +	.scan_type =3D { \
-> +		.sign =3D 'u', \
-> +		.realbits =3D 16, \
-> +		.storagebits =3D 16, \
-> +		.endianness =3D IIO_BE, \
-> +	}, \
-> +	.ext_info =3D ad3552r_axi_ext_info, \
-> +}
-
-> +
-> +MODULE_AUTHOR("Dragos Bogdan <dragos.bogdan@analog.com>");
-> +MODULE_AUTHOR("Angelo Dureghello <adueghello@baylibre.com>");
-> +MODULE_DESCRIPTION("AD3552R Driver - AXI IP version");
-
-Maybe relax that description to include all potential backends.
-As long as they keep to the bindings and interfaces, someone else's
-completely different backend implementation should work with your
-front end driver.  Mind you I can't immediately think of a better
-name and module descriptions aren't ABI anyway, so maybe we don't care.
-
-
-> +MODULE_LICENSE("GPL");
->=20
+diff --git a/Documentation/mm/hmm.rst b/Documentation/mm/hmm.rst
+index 0595098a74d9..f6d53c37a2ca 100644
+--- a/Documentation/mm/hmm.rst
++++ b/Documentation/mm/hmm.rst
+@@ -66,7 +66,7 @@ combinatorial explosion in the library entry points.
+ Finally, with the advance of high level language constructs (in C++ but in
+ other languages too) it is now possible for the compiler to leverage GPUs and
+ other devices without programmer knowledge. Some compiler identified patterns
+-are only do-able with a shared address space. It is also more reasonable to use
++are only doable with a shared address space. It is also more reasonable to use
+ a shared address space for all other patterns.
+ 
+ 
+@@ -267,7 +267,7 @@ functions are designed to make drivers easier to write and to centralize common
+ code across drivers.
+ 
+ Before migrating pages to device private memory, special device private
+-``struct page`` need to be created. These will be used as special "swap"
++``struct page`` needs to be created. These will be used as special "swap"
+ page table entries so that a CPU process will fault if it tries to access
+ a page that has been migrated to device private memory.
+ 
+@@ -322,7 +322,7 @@ between device driver specific code and shared common code:
+    The ``invalidate_range_start()`` callback is passed a
+    ``struct mmu_notifier_range`` with the ``event`` field set to
+    ``MMU_NOTIFY_MIGRATE`` and the ``owner`` field set to
+-   the ``args->pgmap_owner`` field passed to migrate_vma_setup(). This is
++   the ``args->pgmap_owner`` field passed to migrate_vma_setup(). This
+    allows the device driver to skip the invalidation callback and only
+    invalidate device private MMU mappings that are actually migrating.
+    This is explained more in the next section.
+@@ -405,7 +405,7 @@ can be used to make a memory range inaccessible from userspace.
+ 
+ This replaces all mappings for pages in the given range with special swap
+ entries. Any attempt to access the swap entry results in a fault which is
+-resovled by replacing the entry with the original mapping. A driver gets
++resolved by replacing the entry with the original mapping. A driver gets
+ notified that the mapping has been changed by MMU notifiers, after which point
+ it will no longer have exclusive access to the page. Exclusive access is
+ guaranteed to last until the driver drops the page lock and page reference, at
+@@ -431,7 +431,7 @@ Same decision was made for memory cgroup. Device memory pages are accounted
+ against same memory cgroup a regular page would be accounted to. This does
+ simplify migration to and from device memory. This also means that migration
+ back from device memory to regular memory cannot fail because it would
+-go above memory cgroup limit. We might revisit this choice latter on once we
++go above memory cgroup limit. We might revisit this choice later on once we
+ get more experience in how device memory is used and its impact on memory
+ resource control.
+ 
+-- 
+2.46.0
 
 
