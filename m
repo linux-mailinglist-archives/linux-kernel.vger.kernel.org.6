@@ -1,270 +1,127 @@
-Return-Path: <linux-kernel+bounces-320764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE0EA970FF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:35:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4911970FF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AEC21F2270B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:35:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F7CF281034
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18141AF4EE;
-	Mon,  9 Sep 2024 07:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0221AF4D1;
+	Mon,  9 Sep 2024 07:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBmEiOuq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N8CMAvtc"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105961AE856;
-	Mon,  9 Sep 2024 07:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340E9171E5A
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 07:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725867340; cv=none; b=N0j5mvPVd5P6UpffdI65rHNamQMB+GJME8NaITf8ZUnui0Vv7ge6YDm6ZeTRgVX5M3qbQBVGmVknUAG8zm+L/UL7kGblK2ZcyohT8sP68dPyw/xtTVk9JQbZFQmoJTQGXIK3JIsvp3G3R3KRVyc/+r2uRF9n34THcGoHk0GTGUs=
+	t=1725867329; cv=none; b=TS+hNsNg6wlP/ABaPUEZm/pDXVUI2HJp+c/33lwYB45z0LutawyZPwFvy00+8yTyGpUBF8pa/0kydQgTNt5G5m51PElWhwDyYfgBarfHNtTW0yrHIElVRZAznqRImT3RiMHqfMiQpuqkrhDOAB5ithS4hyEBz39yGZz4q5we3dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725867340; c=relaxed/simple;
-	bh=sZQ1ENMLvpyFT3RPVVOSVSec1mz43owuiOBScJQ7TFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T0fkUQ+pESMz03qAsf2gMZ77Dc+mTjKOCG3nkqupw9Mp7V52Q/ufW5QITwKVdDPTxk9xpbAHQsTMNca+9cQY82v0PeNMLq7vJoewI06l0PGa1bYipPwgEoyCzGx+tklSzkt+tEjnfpeL3VYDLZ1SYtqxZMF/RDYxnQ7D6YmqCNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBmEiOuq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 969AFC4CECA;
-	Mon,  9 Sep 2024 07:35:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725867339;
-	bh=sZQ1ENMLvpyFT3RPVVOSVSec1mz43owuiOBScJQ7TFA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iBmEiOuq+Tb9WPFknk5HT7FFPiJzFxqXirFzbbIMNWDHLaVq5vzt9aqqwYYUzGjHt
-	 5RCVzBMIogAg5oOdKeeiyuTejbjiEGhw0JaPsrxWGd+FCNLWLK/QYoe99q6J2ikP72
-	 7q2EIQxxIxkrx+1zZQLfaJoLrVljy+dk6gH2QaUJvdzwhC3MPsPNK8LRCrflFpwe0v
-	 ZhW42vZHBiJYGg/tDqXVPPx/xHo7en3w8gTGZ1hK5XmsPl9fNE84fuSe9YzkF0rcnV
-	 oygUluZTfYx9tOB5K+wk0jxUcPDpHQDExKjcoRh7TuI6yhBKqP2W7UDrsM63ZuXgfl
-	 azJadC/FZLCtw==
-Date: Mon, 9 Sep 2024 08:35:04 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: jason liu <jasonliu10041728@gmail.com>
-Cc: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>,
- "lars@metafoo.de" <lars@metafoo.de>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: =?UTF-8?B?5Zue5aSNOiDlm57lpI06?= [PATCH] iio/inv_icm42600: add
- inv_icm42600 id_table
-Message-ID: <20240909083504.605e9ca7@jic23-huawei>
-In-Reply-To: <SI6PR01MB63194A7F2D2FD7701DD0465BF5992@SI6PR01MB6319.apcprd01.prod.exchangelabs.com>
-References: <FR3P281MB175720831E0817C23AD0B1BACE922@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-	<20240902113101.3135-1-jasonliu10041728@gmail.com>
-	<CAJci1vC9pvdqEpA8sk+uB5jJGn_DKUruXFfY6tbG9mO07YxgHQ@mail.gmail.com>
-	<FR3P281MB1757BEA60FF72A44847F1646CE9D2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-	<SI6PR01MB63197238674C8895885420D8F59E2@SI6PR01MB6319.apcprd01.prod.exchangelabs.com>
-	<20240908115115.1bf1155d@jic23-huawei>
-	<SI6PR01MB63194A7F2D2FD7701DD0465BF5992@SI6PR01MB6319.apcprd01.prod.exchangelabs.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725867329; c=relaxed/simple;
+	bh=IAbjWFWsgGT75Dueeq4crLIvbfv02TRNsKfDqxBdgBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n3+ZCpn7Q8XkSVXz4EAWnrbshrKtcth1ncZFFkJhZzwWt/JaNE8moeJzvQJacsAppZBFshWxyqZsu0OJcUUUQXCA9W0Gl4C+kupjjiN2/BGB9aSuVbwpBi+84+TV/c0JEVdJxPrGtpy+d8XPgT3RkHA+s/eurvdbpEioRP4mhs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N8CMAvtc; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8a7929fd64so474732466b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 00:35:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725867326; x=1726472126; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JSyWMbLAIiVLQsXdks3HCLYLCsP3mSrbhpF0vqvBOCg=;
+        b=N8CMAvtcmKUJfKBZj28kghADw6NeFfgy8e2VWqhDb+syFAswIRIZmGBA39eO1kiypy
+         NujC8Hc4npDRpTcnl6wUIH6YqHRf1wKbaGN34JJ5Oid/CTlxsotIFuXAtDTehud5K7yB
+         T6W2E2R8G59ZBW7GctB621jjLaOmRWHZtoDEIpXor0k/g9LszLG27mSnT0n0g9DI79AU
+         4z0cTBCnaUS75Skidcc+4FWDg/oW1sVdCEkBcGUrb1gY633IicnsP5ADkwjr8sw1XnJW
+         fE3hmNhnPWzdoKxn/TBMcFhGuDTiZ3+dcUB4p/apuLQ2CX9yuZLfH+D+O2P+6WBsJWwF
+         RgVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725867326; x=1726472126;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JSyWMbLAIiVLQsXdks3HCLYLCsP3mSrbhpF0vqvBOCg=;
+        b=a4iLDSa0JYP51bc9tPtxjJIL0+64Q7TKA+DgiJ6l//lg0oOQWzHiwHVv0cFRfIkwSx
+         gSuql+lLfKFldoazydspb32HvT/2b4m+nxwV+0McWqOzuz0K2kSJEKJLdfvRnCAM28Oj
+         5jOw2rMglQ14EKLkVPTMgix+nwwhLuAb3l3zBDkfC/bsg2CsNnHIAEVH84+JcGDTraLG
+         AT0wYo3qYJPz6QL+0E5DieWWOwsjABiyX74VyKLks8X+XQyj0J4GIP7eJq5lLzPSkMBt
+         7/YZGHOk8jFDZaRNnAEklmFyQ22+uLrQ382VPNRkK59G4vTFMvEyWflNx1Q+FtCVBJ/c
+         y6fw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmHRlrxjU4tF+UhldCAHcAIlpBr9y/F4SM7i6fBWw3d11g6Nx1P5oUjodr6sCHnhzShA2zDXlfbmDE7l4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+8AMe+VSOoGA5rdzfkZcQpWLQMvlh45lPav45GhUgpp1u9Mor
+	CrScubPc3wS4iEgWA7rDkc/mGF9VZI1MBKdlobRV1lv7dQy7lBeaMxUVOyIPuoI=
+X-Google-Smtp-Source: AGHT+IEiPJXGsX5J1tk213MU20LHOyQWs711l73TpOnftb+1B1+yCMOVrh07U1XusjImbewemB7MXg==
+X-Received: by 2002:a17:907:98c:b0:a86:ac91:a571 with SMTP id a640c23a62f3a-a8a88867469mr791091866b.56.1725867325770;
+        Mon, 09 Sep 2024 00:35:25 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.155])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25950cc6sm299397466b.54.2024.09.09.00.35.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 00:35:25 -0700 (PDT)
+Message-ID: <ad9ee29c-b96a-4861-a7cd-b8649a3d1f3a@linaro.org>
+Date: Mon, 9 Sep 2024 08:35:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mtd: spi-nor: fix flash probing
+To: Michael Walle <mwalle@kernel.org>, Pratyush Yadav <pratyush@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Takahiro Kuwano <Takahiro.Kuwano@infineon.com>,
+ linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Jon Hunter <jonathanh@nvidia.com>
+References: <20240909072854.812206-1-mwalle@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20240909072854.812206-1-mwalle@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Mon, 9 Sep 2024 06:43:47 +0000
-jason liu <jasonliu10041728@gmail.com> wrote:
 
-> Hi Jonathan,
->=20
-> > Hi Jason, =20
->=20
-> > I've picked this up, but the patch submission has a number of issues
-> > you should be sure to fix in future patches.
-> > =20
-> I am sorry for the issues, and I will keep your suggestions in mind.
-> So, do I still need to submit a new patch to fix these issues?
-No need,.
-> My understanding is that since you've picked it up, there's no need for m=
-e to resubmit.
-> Is it right?
 
-Yes that's right.
+On 9/9/24 8:28 AM, Michael Walle wrote:
+> Fix flash probing by name. Flash entries without a name are allowed
+> since commit 15eb8303bb42 ("mtd: spi-nor: mark the flash name as
+> obsolete"). But it was just until recently that a flash entry without a
+> name was actually introduced. This triggers a bug in the legacy probe by
+> name path. Skip entries without a name to fix it.
+> 
+> Fixes: 2095e7da8049 ("mtd: spi-nor: spansion: Add support for S28HS256T")
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Closes: https://lore.kernel.org/r/66c8ebb0-1324-4ad9-9926-8d4eb7e1e63a@nvidia.com/
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
 
->=20
-> > I haven't treated this as a fix because it was never there, but
-> > it may make sense to request a backport to stable after it is upstream.
-> > =20
-> Sorry, I didn=E2=80=99t quite understand what you meant.
-> Why did you say 'it was never there'? Do you mean that this issue doesn't=
- exist?
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
-The autoprobing never worked, hence this is an improvement not a regression.
-As such I've not rushed it in as a fix, but instead it can take a slower
-path upstream.
-
-Jonathan
-
->=20
-> Thanks,
->=20
-> Jason
->=20
-> ________________________________________
-> From: Jonathan Cameron <jic23@kernel.org>
-> Sent: Sunday, September 8, 2024 6:51 PM
-> To: jason liu
-> Cc: Jean-Baptiste Maneyrol; lars@metafoo.de; linux-iio@vger.kernel.org; l=
-inux-kernel@vger.kernel.org
-> Subject: Re: =E5=9B=9E=E5=A4=8D: [PATCH] iio/inv_icm42600: add inv_icm426=
-00 id_table
->=20
-> On Fri, 6 Sep 2024 05:02:59 +0000
-> jason liu <jasonliu10041728@gmail.com> wrote:
->=20
-> > Hello,
-> >
-> > I'm glad this patch could help. And I would like to know, how will the =
-patch to be handled moving forward?
-> > =20
-> It is queued up on the IIO tree.  Given timing it's queued for 6.13.
-> Note that for now that is only pushed out as testing because I will
-> be rebasing the IIO togreg branch on 6.12-rc1.
-> One that is done it will appear in linux-next.
->=20
-> It should go upstream and appear in char-misc/char-misc-next
-> in about 6 weeks.  After that Greg KH will send a pull request during
-> the 6.13 merge window in about 12 weeks time and it will then hopefully
-> get merged into Linus' tree before 6.13-rc1
->=20
-> I haven't treated this as a fix because it was never there, but
-> it may make sense to request a backport to stable after it is upstream.
->=20
-> Thanks,
->=20
-> Jonathan
->=20
-> > Thanks.
-> >
-> > ________________________________
-> > From: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-> > Sent: Thursday, September 5, 2024 5:25 PM
-> > To: jason liu <jasonliu10041728@gmail.com>
-> > Cc: jic23@kernel.org <jic23@kernel.org>; lars@metafoo.de <lars@metafoo.=
-de>; linux-iio@vger.kernel.org <linux-iio@vger.kernel.org>; linux-kernel@vg=
-er.kernel.org <linux-kernel@vger.kernel.org>
-> > Subject: Re: [PATCH] iio/inv_icm42600: add inv_icm42600 id_table
-> >
-> > Hello,
-> >
-> > looks good for me now, thanks for the patch.
-> >
-> > Acked-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-> >
-> > Thanks,
-> > JB
-> >
-> > ________________________________________
-> > From: jason liu <jasonliu10041728@gmail.com>
-> > Sent: Wednesday, September 4, 2024 11:00
-> > To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-> > Cc: jic23@kernel.org <jic23@kernel.org>; lars@metafoo.de <lars@metafoo.=
-de>; linux-iio@vger.kernel.org <linux-iio@vger.kernel.org>; linux-kernel@vg=
-er.kernel.org <linux-kernel@vger.kernel.org>
-> > Subject: Re: [PATCH] iio/inv_icm42600: add inv_icm42600 id_table
-> >
-> > This Message Is From an Untrusted Sender
-> > You have not previously corresponded with this sender.
-> >
-> > Hello, does patch v3 meet the requirements?
-> >
-> > BR.
-> >
-> > Jason Liu <jasonliu10041728@gmail.com> =E4=BA=8E2024=E5=B9=B49=E6=9C=88=
-2=E6=97=A5=E5=91=A8=E4=B8=80 19:31=E5=86=99=E9=81=93=EF=BC=9A
-> > Add the id_table of inv_icm42600, so the device can probe correctly.
-> >
-> > Signed-off-by: Jason Liu <jasonliu10041728@gmail.com>
-> > ---
-> > V1->V2: fix up the formatting as requested
-> > ---
-> > V2->V3: add icm42686 (INV_ICM_42686) and icm42688 (INV_ICM_42688)
-> > ---
-> >  drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c | 17 +++++++++++++++++
-> >  drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c | 17 +++++++++++++++++
-> >  2 files changed, 34 insertions(+)
-> >
-> > diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c b/drivers/=
-iio/imu/inv_icm42600/inv_icm42600_i2c.c
-> > index ebb31b385881..9e65fef04c39 100644
-> > --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-> > +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-> > @@ -71,6 +71,22 @@ static int inv_icm42600_probe(struct i2c_client *cli=
-ent)
-> >                                        inv_icm42600_i2c_bus_setup);
-> >  }
-> >
-> > +/*
-> > + * device id table is used to identify what device can be
-> > + * supported by this driver
-> > + */
-> > +static const struct i2c_device_id inv_icm42600_id[] =3D {
-> > +       { "icm42600", INV_CHIP_ICM42600 },
-> > +       { "icm42602", INV_CHIP_ICM42602 },
-> > +       { "icm42605", INV_CHIP_ICM42605 },
-> > +       { "icm42686", INV_CHIP_ICM42686 },
-> > +       { "icm42622", INV_CHIP_ICM42622 },
-> > +       { "icm42688", INV_CHIP_ICM42688 },
-> > +       { "icm42631", INV_CHIP_ICM42631 },
-> > +       {}
-> > +};
-> > +MODULE_DEVICE_TABLE(i2c, inv_icm42600_id);
-> > +
-> >  static const struct of_device_id inv_icm42600_of_matches[] =3D {
-> >         {
-> >                 .compatible =3D "invensense,icm42600",
-> > @@ -104,6 +120,7 @@ static struct i2c_driver inv_icm42600_driver =3D {
-> >                 .of_match_table =3D inv_icm42600_of_matches,
-> >                 .pm =3D pm_ptr(&inv_icm42600_pm_ops),
-> >         },
-> > +       .id_table =3D inv_icm42600_id,
-> >         .probe =3D inv_icm42600_probe,
-> >  };
-> >  module_i2c_driver(inv_icm42600_driver);
-> > diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c b/drivers/=
-iio/imu/inv_icm42600/inv_icm42600_spi.c
-> > index eae5ff7a3cc1..75441b2be174 100644
-> > --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-> > +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-> > @@ -67,6 +67,22 @@ static int inv_icm42600_probe(struct spi_device *spi)
-> >                                        inv_icm42600_spi_bus_setup);
-> >  }
-> >
-> > +/*
-> > + * device id table is used to identify what device can be
-> > + * supported by this driver
-> > + */
-> > +static const struct spi_device_id inv_icm42600_id[] =3D {
-> > +       { "icm42600", INV_CHIP_ICM42600 },
-> > +       { "icm42602", INV_CHIP_ICM42602 },
-> > +       { "icm42605", INV_CHIP_ICM42605 },
-> > +       { "icm42686", INV_CHIP_ICM42686 },
-> > +       { "icm42622", INV_CHIP_ICM42622 },
-> > +       { "icm42688", INV_CHIP_ICM42688 },
-> > +       { "icm42631", INV_CHIP_ICM42631 },
-> > +       {}
-> > +};
-> > +MODULE_DEVICE_TABLE(spi, inv_icm42600_id);
-> > +
-> >  static const struct of_device_id inv_icm42600_of_matches[] =3D {
-> >         {
-> >                 .compatible =3D "invensense,icm42600",
-> > @@ -100,6 +116,7 @@ static struct spi_driver inv_icm42600_driver =3D {
-> >                 .of_match_table =3D inv_icm42600_of_matches,
-> >                 .pm =3D pm_ptr(&inv_icm42600_pm_ops),
-> >         },
-> > +       .id_table =3D inv_icm42600_id,
-> >         .probe =3D inv_icm42600_probe,
-> >  };
-> >  module_spi_driver(inv_icm42600_driver);
-> > --
-> > 2.25.1 =20
->=20
-
+> ---
+>  drivers/mtd/spi-nor/core.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+> index d8e551fd2e2a..101ee5b0ddeb 100644
+> --- a/drivers/mtd/spi-nor/core.c
+> +++ b/drivers/mtd/spi-nor/core.c
+> @@ -3281,7 +3281,8 @@ static const struct flash_info *spi_nor_match_name(struct spi_nor *nor,
+>  
+>  	for (i = 0; i < ARRAY_SIZE(manufacturers); i++) {
+>  		for (j = 0; j < manufacturers[i]->nparts; j++) {
+> -			if (!strcmp(name, manufacturers[i]->parts[j].name)) {
+> +			if (manufacturers[i]->parts[j].name &&
+> +			    !strcmp(name, manufacturers[i]->parts[j].name)) {
+>  				nor->manufacturer = manufacturers[i];
+>  				return &manufacturers[i]->parts[j];
+>  			}
 
