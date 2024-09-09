@@ -1,205 +1,134 @@
-Return-Path: <linux-kernel+bounces-321656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82F0971DB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:13:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D84971DB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 369671F22A41
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:13:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8490B21965
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8951CAA6;
-	Mon,  9 Sep 2024 15:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73372233A;
+	Mon,  9 Sep 2024 15:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QoUGTfvk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZVWS7fJj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0BD23775;
-	Mon,  9 Sep 2024 15:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2FD1CFBE;
+	Mon,  9 Sep 2024 15:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725894810; cv=none; b=fTg+w8OYjBRVgHn7gqxQAB5pmy26kA6PugZX/0p2Wxkz7gQEXOGLngwT4kqaIH+4hP587aVFbK8gE5d8ICxCKWzn41nYYsL98h1/CU+4ZMUpK3wNBKfRpztMLXovlNF6RnD7fte46mHtjL7mSArs6cWs+HiaumJoHXgUQYWWMp8=
+	t=1725894812; cv=none; b=DsOVXBEG/cgvOq+5nNvwXrhwEdRtO5J2R8A9/az2qan0wnsvcKAONIkZezhRkstKc/xMo5gq/3aKYy5oIRMvgT6YbI3Tjq6oVm2JcVE+t4jadmqUUAKViNYKOq0L3fHVyyev263ZRsujtdiBlFjnToRSdDJE21nTF+mLKjb/cX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725894810; c=relaxed/simple;
-	bh=LXNT4Z6GvggPgU1hWsYIMeaZPLiQWY/+X+IdN6qNy6o=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ZSvn+oCcSspjYHwXoPba4kdbY0CtyLbONIvNPY47U+aL/8q4Yde4vRxSAkMl05FSGnszEyjXRwN7vEehsl2VYN0CzgBJd5BRFEBOxZMy4pqG+H6IF5NtrsPKONQC8GxNAeN6LnV1BN64Xq968fOU54NvL+hPZGfmc4iETBkWPqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QoUGTfvk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86405C4CEC5;
-	Mon,  9 Sep 2024 15:13:28 +0000 (UTC)
+	s=arc-20240116; t=1725894812; c=relaxed/simple;
+	bh=yV2uXKxMqi7mz1WN5z5wldbH9IOzkDhnMu2iCjQncXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lBi/hniS5MksEQNH9YgCVGAE2hOq55b62kPF0PO20bPGs9TUYiz7qnQsWnqL2G3193n4wdBgRq9TWR632LjA2qPNv/emWS8YNZdt8ZuefkqFJe9Qe4s9HdoUaGSU06eKetrWSdBdyZZQ31vrTPqVg6MYLtFwkZHin5b5G3HZt24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZVWS7fJj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4081CC4CEC5;
+	Mon,  9 Sep 2024 15:13:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725894809;
-	bh=LXNT4Z6GvggPgU1hWsYIMeaZPLiQWY/+X+IdN6qNy6o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QoUGTfvkgAR7XOTmR7zBo+YdCIo5OouyYpCHAnj5x9gpbRIllicl07wJS+g987u8N
-	 +RaXyOpy7x2iueOfS7Gh7URq+41oyEcBoRZmVZA0brdbrahcv+Uqn6jVhZPdo6ZEdw
-	 Nqpcc9+6CY/sGhtQYTR9SF1XNyQXFgUvnh0FPlOxxfOimsA/MUwNzzun6Pt+ZAAp8G
-	 j3BtrtH46Z1TCfuvqHNXxrPvAyu8Hw7RgNA0Kpz3DgutL6P9Jmx73zfSTXpWa0z/HL
-	 eeCN/LWsvksLjfy2FHHRm8tS3FolZHpzv6n/XRtQqicQxaekGYrbWX7THJhddwaM2H
-	 6FNmWIGxFkF8A==
-Date: Tue, 10 Sep 2024 00:13:26 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Jeff Xie <jeff.xie@linux.dev>
-Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- xiehuan09@gmail.com
-Subject: Re: [PATCH v2] ftrace: Get the true parent ip for function tracer
-Message-Id: <20240910001326.87f27e6b312f1d956cf352a2@kernel.org>
-In-Reply-To: <20240821233021.2785584-1-jeff.xie@linux.dev>
-References: <20240821233021.2785584-1-jeff.xie@linux.dev>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1725894811;
+	bh=yV2uXKxMqi7mz1WN5z5wldbH9IOzkDhnMu2iCjQncXE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZVWS7fJjWHCb2XkF55GdXZwdBa+k3fkK+cw4UAr3EqvXyTfI5HLn3r58KlFT/WDsV
+	 PbYkTrZ4q73wlMOAtln4UfzZhSNyw09TeVtwWa9cZstso/O6rFXy/25dKOep/Z+Lqg
+	 2/ryq9Rmmkg/IT5inkt7UJmyMX4C4VjXEEqEufpvMSldUx7grYFUZC95ESgJAwIzqp
+	 Lfbvi7+DUpG3/H1Hdd1NyUrzTIdwyD9Taohfem49TD5DdHFTf1Sos/GP3wif/E8ULa
+	 6UG4dRuiD7mru0RBVt1NTuKA9fFOwcen268rsBW+UcX49ttd79K4myATTYwdclAO0M
+	 hTWfZ2LATQ6Ow==
+Date: Mon, 9 Sep 2024 17:13:28 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
+	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>, 
+	Luis de Arquer <ldearquer@gmail.com>, Algea Cao <algea.cao@rock-chips.com>
+Subject: Re: [PATCH v6 1/3] drm/bridge: synopsys: Add DW HDMI QP TX
+ Controller support library
+Message-ID: <20240909-horned-congenial-curassow-ebc5fa@houat>
+References: <20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com>
+ <20240906-b4-rk3588-bridge-upstream-v6-1-a3128fb103eb@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="a6pjesfz3btllyif"
+Content-Disposition: inline
+In-Reply-To: <20240906-b4-rk3588-bridge-upstream-v6-1-a3128fb103eb@collabora.com>
 
-On Thu, 22 Aug 2024 07:30:21 +0800
-Jeff Xie <jeff.xie@linux.dev> wrote:
 
-> Currently, when using both function tracer and function graph simultaneously,
-> it is found that function tracer sometimes captures a fake parent ip(return_to_handler)
-> instead of the true parent ip.
-> 
-> This issue is easy to reproduce. Below are my reproduction steps:
-> 
-> jeff-labs:~/bin # ./trace-net.sh
-> 
-> jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trace | grep return_to_handler
->     trace-net.sh-405     [001] ...2.    31.859501: avc_has_perm+0x4/0x190 <-return_to_handler+0x0/0x40
->     trace-net.sh-405     [001] ...2.    31.859503: simple_setattr+0x4/0x70 <-return_to_handler+0x0/0x40
->     trace-net.sh-405     [001] ...2.    31.859503: truncate_pagecache+0x4/0x60 <-return_to_handler+0x0/0x40
->     trace-net.sh-405     [001] ...2.    31.859505: unmap_mapping_range+0x4/0x140 <-return_to_handler+0x0/0x40
->     trace-net.sh-405     [001] ...3.    31.859508: _raw_spin_unlock+0x4/0x30 <-return_to_handler+0x0/0x40
->     [...]
-> 
+--a6pjesfz3btllyif
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Can you also add 
+Hi,
 
-> The following is my simple trace script:
-> 
-> <snip>
-> jeff-labs:~/bin # cat ./trace-net.sh
-> TRACE_PATH="/sys/kernel/debug/tracing"
-> 
-> set_events() {
->         echo 1 > $1/events/net/enable
->         echo 1 > $1/events/tcp/enable
->         echo 1 > $1/events/sock/enable
->         echo 1 > $1/events/napi/enable
->         echo 1 > $1/events/fib/enable
->         echo 1 > $1/events/neigh/enable
-> }
-> 
-> set_events ${TRACE_PATH}
-> echo 1 > ${TRACE_PATH}/options/sym-offset
-> echo 1 > ${TRACE_PATH}/options/funcgraph-tail
-> echo 1 > ${TRACE_PATH}/options/funcgraph-proc
-> echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
-> 
-> echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
-> echo function_graph > ${TRACE_PATH}/current_tracer
-> 
-> INSTANCE_FOO=${TRACE_PATH}/instances/foo
-> if [ ! -e $INSTANCE_FOO ]; then
->         mkdir ${INSTANCE_FOO}
-> fi
-> set_events ${INSTANCE_FOO}
-> echo 1 > ${INSTANCE_FOO}/options/sym-offset
-> echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
-> echo function > ${INSTANCE_FOO}/current_tracer
-> 
-> echo 1 > ${TRACE_PATH}/tracing_on
-> echo 1 > ${INSTANCE_FOO}/tracing_on
-> 
-> echo > ${TRACE_PATH}/trace
-> echo > ${INSTANCE_FOO}/trace
-> </snip>
-> 
-> Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
-> ---
-> v2:
-> - Adding __always_inline to function_get_true_parent_ip suggested by Steve
-> 
->  kernel/trace/trace_functions.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
-> index 3b0cea37e029..d989e927c898 100644
-> --- a/kernel/trace/trace_functions.c
-> +++ b/kernel/trace/trace_functions.c
-> @@ -176,6 +176,19 @@ static void function_trace_start(struct trace_array *tr)
->  	tracing_reset_online_cpus(&tr->array_buffer);
->  }
->  
-> +static __always_inline unsigned long
-> +function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
+On Fri, Sep 06, 2024 at 04:17:40AM GMT, Cristian Ciocaltea wrote:
+> +static enum drm_connector_status
+> +dw_hdmi_qp_bridge_detect(struct drm_bridge *bridge)
 > +{
-> +	unsigned long true_parent_ip;
-> +	int idx = 0;
+> +	struct dw_hdmi_qp *hdmi = bridge->driver_private;
+> +	enum drm_connector_status status;
 > +
-> +	true_parent_ip = parent_ip;
-> +	if (unlikely(parent_ip == (unsigned long)&return_to_handler))
-> +		true_parent_ip = ftrace_graph_ret_addr(current, &idx, parent_ip,
-> +				(unsigned long *)fregs->regs.sp);
-> +	return true_parent_ip;
+> +	status = hdmi->phy.ops->read_hpd(hdmi, hdmi->phy.data);
+> +
+> +	dev_dbg(hdmi->dev, "%s conn=%d scramb=%d\n", __func__,
+> +		status == connector_status_connected, hdmi->scramb_enabled);
+> +
+> +	if (hdmi->scramb_enabled) {
+> +		cancel_delayed_work_sync(&hdmi->scramb_work);
+> +
+> +		if (status == connector_status_connected)
+> +			dw_hdmi_qp_check_and_set_scramb(hdmi);
+> +	}
+> +
+> +	return status;
 > +}
 
-Can this work without CONFIG_FUNCTION_GRAPH_TRACER? Maybe it cause a build error
-because return_to_handler is not defined.
+Unfortunately, that won't work. The HDMI Spec has (HDMI 2.0, Section
+6.1.3.1 - Scrambling Control):
 
-Could you check it?
+The minimum time period between the write to the Scrambling_Enable bit,
+and the transmission of a scrambled video signal is not specified;
+however the Source shall not begin transmission of a scrambled video
+signal before writing a 1 to the Scrambling_Enable bit. The maximum time
+period between the write to the Scrambling_Enable bit and the
+transmission of a scrambled video signal shall be 100 ms.
 
-Thank you,
+So you need to disable the output and enable it again.
 
-> +
->  static void
->  function_trace_call(unsigned long ip, unsigned long parent_ip,
->  		    struct ftrace_ops *op, struct ftrace_regs *fregs)
-> @@ -193,6 +206,8 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
->  	if (bit < 0)
->  		return;
->  
-> +	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
-> +
->  	trace_ctx = tracing_gen_ctx();
->  
->  	cpu = smp_processor_id();
-> @@ -241,6 +256,7 @@ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
->  	 * recursive protection is performed.
->  	 */
->  	local_irq_save(flags);
-> +	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
->  	cpu = raw_smp_processor_id();
->  	data = per_cpu_ptr(tr->array_buffer.data, cpu);
->  	disabled = atomic_inc_return(&data->disabled);
-> @@ -309,6 +325,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
->  	if (bit < 0)
->  		return;
->  
-> +	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
->  	cpu = smp_processor_id();
->  	data = per_cpu_ptr(tr->array_buffer.data, cpu);
->  	if (atomic_read(&data->disabled))
-> @@ -356,6 +373,7 @@ function_stack_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
->  	 * recursive protection is performed.
->  	 */
->  	local_irq_save(flags);
-> +	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
->  	cpu = raw_smp_processor_id();
->  	data = per_cpu_ptr(tr->array_buffer.data, cpu);
->  	disabled = atomic_inc_return(&data->disabled);
-> -- 
-> 2.34.1
-> 
+vc4 does just that, you can have a look here:
+https://elixir.bootlin.com/linux/v6.10.9/source/drivers/gpu/drm/vc4/vc4_hdmi.c#L410
 
+Maxime
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+--a6pjesfz3btllyif
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZt8QmAAKCRAnX84Zoj2+
+djUdAYDRdEgSW7Wj/UA+T/XsaiAocjWHwnktCrXecrwrTQQLmwTpGoDKU6nmsxBR
+eU74UeEBfiF7DgCZ3hfYdjQvzGKKyzvQQQitqxvSxT4+rBQyGtUKC89mLd+1wOlo
+uzb+gTqbBA==
+=hgwR
+-----END PGP SIGNATURE-----
+
+--a6pjesfz3btllyif--
 
