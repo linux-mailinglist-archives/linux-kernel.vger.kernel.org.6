@@ -1,115 +1,90 @@
-Return-Path: <linux-kernel+bounces-321285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3AF89716F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:34:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F8A9716FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4A81F234F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:34:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79C09B20C04
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833371B533A;
-	Mon,  9 Sep 2024 11:34:04 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FD61B5EA4;
+	Mon,  9 Sep 2024 11:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qwN8b1Ck"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B5642A81
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 11:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4A61AF4F0;
+	Mon,  9 Sep 2024 11:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725881644; cv=none; b=AjsGy4Ajdin3U2XKEHqkw7bqEFkf2W6ZhkxI2xYAwiq4IlnKvfyUfcd/GDhYrnp6uD6mPLvnea99oaN56ECykrdqQ7+tIKGZXJhd8BbnCWzbWr6E2p/uuzvPf7dYV+tQbe39MsGqjHBRYEWBD3iEcAfgr7es4+WDe6fwrFdHH+4=
+	t=1725881720; cv=none; b=KhoRCLn1uuy6wfEti8nGfkYrgr4f4LYfcr9hYdn80xuQjRqQaZ/+KsRyf65MKiVWQ8hyZLsEpsLkli/JKhGJn2FqelWAx5MFH13XA6EAYoxMKJMlfdYyvE2NxStnEfws2IgkjbJWuV8BAEXY6frUIq5qiGJ/vcNKk2cMLvqpTrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725881644; c=relaxed/simple;
-	bh=R1nya6Eo+iPzdodCYDnS0daVSwPndrpQ5/s2bM2RmuE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=hilx6H58qTC4RXFg/2IaHHRvVhEKXavcasq/C4apcGNUUEixFjxS4ShhBqIQIk8vSnyBZ/00VAxjDR9g1pri0wWifetdAcIjbLpuJlAW/McG/7AIPuWWLFuVUMGny7Ll5VCxcbUEnxDsmnnDvB4b4qvT+mL5NKovae8+1ZvlNz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-277-H4Bn3nZzNZ6V0rqbRnoiOA-1; Mon, 09 Sep 2024 12:33:58 +0100
-X-MC-Unique: H4Bn3nZzNZ6V0rqbRnoiOA-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 9 Sep
- 2024 12:33:04 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 9 Sep 2024 12:33:04 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Scott Mayhew' <smayhew@redhat.com>
-CC: Li Lingfeng <lilingfeng3@huawei.com>, "chuck.lever@oracle.com"
-	<chuck.lever@oracle.com>, "jlayton@kernel.org" <jlayton@kernel.org>,
-	"neilb@suse.de" <neilb@suse.de>, "okorniev@redhat.com" <okorniev@redhat.com>,
-	"Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>, "tom@talpey.com" <tom@talpey.com>,
-	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"yukuai1@huaweicloud.com" <yukuai1@huaweicloud.com>, "houtao1@huawei.com"
-	<houtao1@huawei.com>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
-	"yangerkun@huawei.com" <yangerkun@huawei.com>, "lilingfeng@huaweicloud.com"
-	<lilingfeng@huaweicloud.com>
-Subject: RE: [PATCH] nfsd: return -EINVAL when namelen is 0
-Thread-Topic: [PATCH] nfsd: return -EINVAL when namelen is 0
-Thread-Index: AQHa/tltH5fpypZKDEqICq9omYVD5rJOXHzAgADqoYCAABJ2gA==
-Date: Mon, 9 Sep 2024 11:33:04 +0000
-Message-ID: <674f0d570dc241bf86294a9c8141a0b4@AcuMS.aculab.com>
-References: <20240903111446.659884-1-lilingfeng3@huawei.com>
- <ZthzJiKF6TY0Nv32@aion> <cccdc13066204448af7f0fd550f34586@AcuMS.aculab.com>
- <Zt7a2XO-ze1aAM-d@aion>
-In-Reply-To: <Zt7a2XO-ze1aAM-d@aion>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1725881720; c=relaxed/simple;
+	bh=WaxKDSZmCLK6e4990YXcBC73ym+tO6hTNsQxMNIYLOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S/5gjxNebmomZurZxiBJwLPUSOOyuSVZovYEJ2gub/1SJCwZZpNTzwARV0sZpTWq7iww+x9hMepHM6lUfo6hqX5T7kH99caFrRyFZShu1yXjQHxiVQjZSpL00p+Wlouilzqtl8UenhPZtzs4E7uU4ROkeE6QiLP8ReXEaUYgTMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qwN8b1Ck; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73353C4CEC6;
+	Mon,  9 Sep 2024 11:35:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725881719;
+	bh=WaxKDSZmCLK6e4990YXcBC73ym+tO6hTNsQxMNIYLOw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qwN8b1CkzWVuyTLuL9t45t9B+06xik2a6clb0LwI0H003Gvk13fP8Cg4L1Nl5KPiq
+	 AICzY4Hp6IcTB84X9M+TkQERCRJ7uK/MB6y7Hi3f9BHtjQFwk62hHQHTteyTNEm/XC
+	 9tZ8zfS6BHm6H2T7CYAXXHtswVj1B8uuM8TyRclXKM78a4O/gq8v0SKa3WYGPCvPRh
+	 VsHA/SZqA7MQEZ0Mrczd4pbbEPn7IogkL3AQzffsalnLDXk1cZ003X8tnuf5NedliT
+	 dxAHTYdBrqQhDbqiaciyz+sVinMkdT9YWiwTrRdu+rTp4vl0CX4mRovIeXxTaroBo9
+	 FrbxHEFwq133g==
+Message-ID: <bbdd95e3-9090-4952-beb5-ad52f2a3dcae@kernel.org>
+Date: Mon, 9 Sep 2024 13:35:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] soc: qcom: geni-se: Export function
+ geni_se_clks_off()
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+ konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
+ linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
+ vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
+ Frank.Li@nxp.com, konradybcio@kernel.org
+Cc: quic_vdadhani@quicinc.com
+References: <20240906191438.4104329-1-quic_msavaliy@quicinc.com>
+ <20240906191438.4104329-4-quic_msavaliy@quicinc.com>
 Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240906191438.4104329-4-quic_msavaliy@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-From: Scott Mayhew
-> Sent: 09 September 2024 12:24
-...
-> > > > diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-> > > > index 67d8673a9391..69a3a84e159e 100644
-> > > > --- a/fs/nfsd/nfs4recover.c
-> > > > +++ b/fs/nfsd/nfs4recover.c
-> > > > @@ -809,6 +809,10 @@ __cld_pipe_inprogress_downcall(const struct cl=
-d_msg_v2 __user *cmsg,
-> > > >  =09=09=09ci =3D &cmsg->cm_u.cm_clntinfo;
-> > > >  =09=09=09if (get_user(namelen, &ci->cc_name.cn_len))
-> > > >  =09=09=09=09return -EFAULT;
-> > > > +=09=09=09if (!namelen) {
-> > > > +=09=09=09=09dprintk("%s: namelen should not be zero", __func__);
-> > > > +=09=09=09=09return -EINVAL;
-> > > > +=09=09=09}
-> > > >  =09=09=09name.data =3D memdup_user(&ci->cc_name.cn_id, namelen);
-> >
-> > Don't you also want an upper bound sanity check?
-> > (or is cn_len only 8 bit?)
->=20
-> Yeah, actually it should probably be checking for namelen >
-> NFS4_OPAQUE_LIMIT.
+On 6.09.2024 9:14 PM, Mukesh Kumar Savaliya wrote:
+> Currently the driver provides a function called geni_serial_resources_off()
+> to turn off resources like clocks and  pinctrl. We don't have a function to
+> control clocks separately hence, export the function geni_se_clks_off() to
+> turn off clocks separately without disturbing GPIO.
+> 
+> Client drivers like I2C require this function for use-cases where the I2C
+> SE is shared between two subsystems.
+> 
+> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> ---
 
-I suspect memdup_user() itself should have a third 'maxlen' argument.
-And probably one that is required to be a compile-time constant.
+Well, i2c is probably not the only type of client you'll want
+to share and the current approach requires changes in all protocol
+drivers.
 
-Oh, and is dprintk() rate-limited?
-Not that the message looks very helpful.
+How about adding a parameter like `bool shared_se` to
+geni_se_resources_off() and changing the pinctrl state conditionally?
 
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+Konrad
 
