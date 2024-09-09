@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-321312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E0097189C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 614BD97189E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 744C2B259EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:50:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4F93B25B43
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80751B7902;
-	Mon,  9 Sep 2024 11:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F32F1B81A4;
+	Mon,  9 Sep 2024 11:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y8p9/Wqx"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2OqJB4V"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887031B6538;
-	Mon,  9 Sep 2024 11:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F39C1B7917;
+	Mon,  9 Sep 2024 11:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725882585; cv=none; b=APiRpQmxBVjVj/sJFQrEdHJ77tL9kI441o+RnS1X7abd8SsIjPP0UV5+H7kZVKlVp6VieaHKgwjIW0NhNDlIT54Wl21ukeGhWJ1AKXdRZtlj+xzeaA9Ds5hZnrOeJOzqWP6WFGtXWbqiDKSk/7zCXExAKr0MHo355gY2QtjN48E=
+	t=1725882587; cv=none; b=EZzT+FpDiN46Jku9b9fjczzS8LlH00k+2Gp4qiSE+0YZ6ng3AOXitozGSj5xgQhLPnNmLR3jgvqxAP6hpXWiRFzZ+4JC3rtGXN1x7c84ZkkIa5jYCO4Sie3Ipq0NslwLsZTQlOf5Oe2O0hE5uWzsXVbhakz+MeuNHIn3/eJIQfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725882585; c=relaxed/simple;
-	bh=MZsa6SYqxrl3ZzgfuYbLQifE0u6uddW87QbRWyNYiIw=;
+	s=arc-20240116; t=1725882587; c=relaxed/simple;
+	bh=QgtHIMpjtn3bGDdEa6ryJ9WyaUPfJvtSFw3QZhNj3SQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lITUUhKws+x2MFppHgZLxN69oDRteWXTzU46GU4VmERha/TKfd9g2cNG/a8OIFePaFfAJCwLBUUo2zukjPm2PBhbeaa9XSEVap22dqXbqKMxQtHggmr+hQl5swHafY0A3xNGQGIPvIie8zdqwLjsIi+LQwifwKBhcfbiN5UhoJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y8p9/Wqx; arc=none smtp.client-ip=209.85.208.45
+	 MIME-Version; b=jAmaxE9LQL27VhEvEJsgOmu0t1lueEtFyf/ktKJAZC5FbsIJ3CagOocOCppf5DIUrijAjcUcrjduRMJGUOJgQnClNz7teK5wFuYGcDqJu5GmuQbd3Gv/hESK7s4GhRpefMFznOY55VnU+rPpYl6Wcv36qJwyhEA42QStjkes7k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z2OqJB4V; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bef295a429so4622779a12.2;
-        Mon, 09 Sep 2024 04:49:43 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5365aa568ceso3566615e87.0;
+        Mon, 09 Sep 2024 04:49:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725882582; x=1726487382; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725882584; x=1726487384; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0FqtYi1iw2vOhsrcvx4Iygrl7+RxYd6jvfQ3jmeOKNc=;
-        b=Y8p9/Wqx7kuYTuVE7llRv6M2WvqNGZccrUeiXnhBVB0G6A3FxIXPBCtzuUcWDITrw9
-         fcgoaZo3uegFlzsHtjMeNOii3pTGDs78jQjOvI3V7AirsPT1iKp0XCteYHGk4YIvEXQ3
-         LgL7Q/1h8qKlwrl7C3Vo1R0zgpt+RW5+O/vtyf4fvNNhzmPAwvs0dORz+9+ZWs7OyHsK
-         vV3E6wf/OuOTzq2sYi0SZ/IzksKWeSERGt0HTg+fa+64oI0tAWnrYdU6VQrmmR2JBIDJ
-         +VYe6k9KYwTuwBsOOd4joNFyuGDOXb/E1r7SNUzxNgzg5qX3Ezk8xvb4lnYIEL4BJ1gV
-         Mk6A==
+        bh=4SrH5fJX/lD1lScDa7P0w2wLCrh1QxPnu0aKdVtdlvA=;
+        b=Z2OqJB4VTPfLtmP0HYLOrxe1piKRJAaOIysQKRHmq49iKlgeOZiHvCVtQq6qOGFBhO
+         P3M2S3eY0/pGBMAGr5xfSm1LeELKLg0aq6X2wwoRvB0MAmv8lOcpxpz620CWnzF8ulTv
+         e8G9EJmoAR+j7oaaRI9ZhCnKyZw43/SqZYN7wudFE9rNHykEO5yHPh66lJXAOINkGzFQ
+         V5DFw3zz6Y7ngHVOBI9IeQQX11RdjbKJp1aMZUB1mLxs1taf6zv+u2G65QnSR0V+z5nL
+         zrl1jq6MuwdbPE6snnhyCJjt91FfK22bBDrfXx3Ig/6zrWbvNaHNIrQyteWK+ox8DyX3
+         PrHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725882582; x=1726487382;
+        d=1e100.net; s=20230601; t=1725882584; x=1726487384;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0FqtYi1iw2vOhsrcvx4Iygrl7+RxYd6jvfQ3jmeOKNc=;
-        b=BQ4ZGuZOfnNtOox6EEpaubmb3uRjnUCm8rDm0+PsI3sEegY0IBao/v8z0ALoJtArWW
-         gKAJjUd3emkTbr8JbYWygTCEVkOBSdcRldsKlNVYVk+viV0jCvkFzpGQ1NIb6b4ZpZPS
-         m38KPwdmvGn8KxwfI59EHwAadeJPq2IyODQ9HhoThSh+u4AjogkNBOjRRtsL17PZL+M8
-         cSG83N+LqfFZRkR/bZXcbkkXxcr8+zVYLNd6T/dJfmNjk4VeHMlT/7J8E24PR25LYLh3
-         zt8JETck/n82jXDXmtz0XMs5ZMwFDYKbnY+xeilL8TLD9XQ2kuxspgTu5Z5g5PRvdnpz
-         I57w==
-X-Forwarded-Encrypted: i=1; AJvYcCVdO8CT8JoFXS3SRQv0niQVRlf93QJCbyrw4jqVCb6lhPfqYnTwcWsdd3rFmWAk91CPihzO68kfzRezWXXC@vger.kernel.org, AJvYcCW8VjHU8tfmJ1uChObbYOfJCJjTGpbwCmoNEUKwIIRyC6waB0WbcSmysml/wtj3NsD75H0Znhj+vCEn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV2o9AwYGYJfo7gHucKXW6AJt66/wNQA4NjZIzBO1TKJTm8wfr
-	Cj8GXORqWRHgavdz6xxDw4cGArkNIA8QSVZz75WSDXX4/7PpABsi
-X-Google-Smtp-Source: AGHT+IF4fgHY75/BQyX+RpiuMPmhFfijUoVKMVSVclMKAAtr7zrwuxZWYAPVtcBG+8zbwSQmOE2r4w==
-X-Received: by 2002:a17:907:3e9e:b0:a8a:8127:4a8 with SMTP id a640c23a62f3a-a8a887e5ea4mr831498566b.43.1725882581741;
-        Mon, 09 Sep 2024 04:49:41 -0700 (PDT)
+        bh=4SrH5fJX/lD1lScDa7P0w2wLCrh1QxPnu0aKdVtdlvA=;
+        b=A9EWNIyme/i8FNtMNZsUzEM1Iu01W0J+SFMwgmRom/4/qWyC9jvgKcQpmEwCyNlWLD
+         9wc/B28UCEhoEpo0kZtQ8vFlt7bIXOAVxZ7Sb7KgPlDElVKp8TQ5wLfWLHC9T1eQq2aP
+         nOU40dOXPDBUM+CZ7PVM2Bq1529HxGF9gfyu42gqs+ZFqHHGFpc9bz+lWov4MxisBVC+
+         QTxE4G4YWc9VdG+Ibfj02oJVs1KxvVph18D9+Kj+2I9BNs6eetkMnHIVftxV/aXf+Imh
+         NkGIkioF4T4O8ac0byXGd+OB1cC/bbAAjb4Z3URTOJYKR1HLyU9QbKGkWz+CX/6u8Anx
+         nnKA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/GjTE9rbd8nByISK7fJZRt4bN6E2MuxpGPNtgHPdvss6KAhbwPi3N+1gvL/6Ke+bzAcZIDQQSGQ2X@vger.kernel.org, AJvYcCUZEJ2m3qRQKLkdiwZ8c3P9PI9j0pqu79TxwBUNL93IJM+RUa92klGVsNLQoLjubv/WDf8uqtx1hqTAN6he@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeSH2dfP1wuYmx+ePZosGHiFrqX2oFK4qzvXT1ZRVuuBMLxR41
+	sMFEv535yhLosRp82Pr28vk/EBvB/0GBB+CI1SKmOfhxeOIpOBtHf8XMet2DT5g=
+X-Google-Smtp-Source: AGHT+IEFlBY64a4PNwKClA+dB/6i9d7wohMcmhw2O+Ea8FAfmTqfSbsQcuFCHgj6kSiZsUrDTBHILA==
+X-Received: by 2002:a05:6512:33c8:b0:535:6aa8:dc49 with SMTP id 2adb3069b0e04-536587a672emr8694852e87.9.1725882583246;
+        Mon, 09 Sep 2024 04:49:43 -0700 (PDT)
 Received: from hiago-nb.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25835697sm333258566b.16.2024.09.09.04.49.40
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25835697sm333258566b.16.2024.09.09.04.49.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 04:49:41 -0700 (PDT)
+        Mon, 09 Sep 2024 04:49:42 -0700 (PDT)
 From: Hiago De Franco <hiagofranco@gmail.com>
 To: Shawn Guo <shawnguo@kernel.org>
 Cc: Rob Herring <robh@kernel.org>,
@@ -79,9 +79,9 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Hiago De Franco <hiago.franco@toradex.com>
-Subject: [PATCH 2/3] ARM: dts: imx6qdl-colibri: Update audio card name
-Date: Mon,  9 Sep 2024 13:49:01 +0200
-Message-Id: <20240909114902.82380-3-hiagofranco@gmail.com>
+Subject: [PATCH 3/3] ARM: dts: imx7-colibri: Update audio card name
+Date: Mon,  9 Sep 2024 13:49:02 +0200
+Message-Id: <20240909114902.82380-4-hiagofranco@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240909114902.82380-1-hiagofranco@gmail.com>
 References: <20240909114902.82380-1-hiagofranco@gmail.com>
@@ -95,34 +95,28 @@ Content-Transfer-Encoding: 8bit
 
 From: Hiago De Franco <hiago.franco@toradex.com>
 
-Update the audio card name for Colibri iMX6 to match its specific SoM
-name, making it less than 15 characters to fix the following warning
-
-fsl-asoc-card sound: ASoC: driver name too long
-'imx6dl-colibri-sgtl5000' -> 'imx6dl-colibri-'
-
-making it compliant with the ALSA configuration specification [1].
-
-[1] Documentation/sound/alsa-configuration.rst
+Update the audio card name for Colibri iMX7 to match its specific SoM
+name, making it compliant with the other names for Colibri iMX6 and
+Apalis iMX6.
 
 Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
 ---
- arch/arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi | 2 +-
+ arch/arm/boot/dts/nxp/imx/imx7-colibri.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi
-index b01670cdd52c..9f33419c260b 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi
-@@ -136,7 +136,7 @@ sound {
- 			"LINE_IN", "Line In Jack",
- 			"MIC_IN", "Mic Jack",
- 			"Mic Jack", "Mic Bias";
--		model = "imx6dl-colibri-sgtl5000";
-+		model = "colibri-imx6";
- 		mux-int-port = <1>;
- 		mux-ext-port = <5>;
- 		ssi-controller = <&ssi1>;
+diff --git a/arch/arm/boot/dts/nxp/imx/imx7-colibri.dtsi b/arch/arm/boot/dts/nxp/imx/imx7-colibri.dtsi
+index 62e41edcaf1d..8666dcd7fe97 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx7-colibri.dtsi
++++ b/arch/arm/boot/dts/nxp/imx/imx7-colibri.dtsi
+@@ -120,7 +120,7 @@ sound {
+ 		simple-audio-card,bitclock-master = <&dailink_master>;
+ 		simple-audio-card,format = "i2s";
+ 		simple-audio-card,frame-master = <&dailink_master>;
+-		simple-audio-card,name = "imx7-sgtl5000";
++		simple-audio-card,name = "colibri-imx7";
+ 
+ 		simple-audio-card,cpu {
+ 			sound-dai = <&sai1>;
 -- 
 2.39.2
 
