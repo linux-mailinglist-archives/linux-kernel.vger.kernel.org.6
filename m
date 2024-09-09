@@ -1,135 +1,173 @@
-Return-Path: <linux-kernel+bounces-321938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD10797217F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:02:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0876972181
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8957128359B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:02:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 075661C2383C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DBE158521;
-	Mon,  9 Sep 2024 18:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A76817E011;
+	Mon,  9 Sep 2024 18:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n5iGktuw"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xaSxC3dl"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBEF364CD
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 18:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A027F54278
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 18:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725904942; cv=none; b=QcfWGgqF+zz70fEJtFnV21Mr4oqGCGlJfUY5lRGUHynCJeE76KbbQKbuKS0unbVL2x1rlCFO6ayd0OD36l0klCBSDUeX7lnS3snYkr0s0vN27K78SWkVJ23EXjAeWDVyD2z/+rK0j4ZpXU4444AyMCkFJujdw9TuDa1FlYvD3pY=
+	t=1725904968; cv=none; b=S4J6SqhmDe+HCnYGPFz/NVl45c0VriZOUkvaDHKkbNcepy9tJvgUSdi2t4jSAw7m7/JfoVmGaHV8rd19qm485PYlK2O9c2T2c6tDEoKksbwMhNRSoUX6br5N2M7+WLx3U5p7p5ZyBpul9Ll76nbwDBzpWZxDESMD9wdyUGtBLa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725904942; c=relaxed/simple;
-	bh=m/wGZi8BcTf1EOpqGRqnWjiKZB6QmIMK4V1d+BMQEsk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=r3Mo5sI8K8Sfx0dVc5+VGxB/nKfMCmFUjqLYB45nCQB1zXXiuN3i0oORsl1xn4VUuizB3CLCNd0zrju7OIeEoKhwbM6Jf2pFG+STxqW1SVU+CAWHw1PBRSsVW0a7GX+PJbUFKrMVnd8BhGZqYNM1+EyI8xmrw7GFXlzRa0n0n98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--snehalreddy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n5iGktuw; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--snehalreddy.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6db791c41daso43094907b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 11:02:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725904939; x=1726509739; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4GzdOAnXsu8VayoX45huUrzJ6QMBoTAjQVvSrXaAbFE=;
-        b=n5iGktuwmsrYcUtfdii+78dIct02mmwAbl3XiuBUxAhIGgiolW5uemJd84NcXxJVJL
-         g8CE0NrADn79BYtrnZLSh/3zgRRM+XvVGyx/5fjigX4LS7MYugk3hkEVV/96jltR4e7b
-         gzZ73kleJaHnWbPYznbxVAKkwHwhQWPT59vbcJDavurdhsz3uQ+wsz3ECEfpUmg/fbu6
-         8ixwo87PgZOwUcQYUMFlB8aRAhygYm6Vl0d3eMcvSecF8mu/FtNn3IMWioaKes6kjII7
-         efnmoRAB0eMGsu9jHAL3HvFJqPQxxnzo3+rI7LHiksw4SE/azclFALInFta/y/pHn9il
-         1eTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725904939; x=1726509739;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4GzdOAnXsu8VayoX45huUrzJ6QMBoTAjQVvSrXaAbFE=;
-        b=s5y9HE2YzGuoT7+Cvgz8QEk6twh7sfh+pSZiCNdgjaAi2sN7aXYDCPW0wcRNSVyoOT
-         tD0LtCV4b8zO/2aO9u6PfP191CteLrbmdfvWdDus8pyZ2Lbo8TzVyszvG3YbbC/TXbHj
-         3nhQWZW8HmkfpLkTrOkUwjj4SHAQgkxj6aUsVt7fXVA2w3iK7R1QvIAa/Lo3BX80I/3Z
-         HX+lT7fG+h/iZigtJQbEUeA5fk4QIcYc/FwQ9FEmeKLPfc1S80ie4mNAqxrCetlJaHBQ
-         Mzws8GGEG3AIj+ca66k0UGMa2OCd2KlEsCSRiSQ7yo8pMFhniL/areMuudSPjcSPDrQN
-         gtqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxnhAj37Zp0LfdOMYLF2nyK1TSrgIX7MfOSTi6JhzMWFR4X4inqXeCtlmDrye5abMBoKMHBCrkNkDScuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyqNpKBabliCffCmzjUWfKv6rtPZPoWpqM8iKf4W6K0jCk4XQN
-	ySWHELE7jxh1Wfcmm777CR8R9ptTJSBZS53rkAGA25aXyVn2Mb/2cpwnJoRQINegUwoXagMN0Y1
-	S3qBr+onLXgB/JQ02Ju5JOg==
-X-Google-Smtp-Source: AGHT+IFAuTEL+1ahwEy/aM3fSi5ne7wxws+pnvSGN+IlqZz9OjmkUToSqSs13gvLLdON+5TO44ygwJ2bXIpXxfgvnA==
-X-Received: from snehalreddy-1.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:c1f])
- (user=snehalreddy job=sendgmr) by 2002:a25:680b:0:b0:e0b:958a:3344 with SMTP
- id 3f1490d57ef6-e1d34a3abb7mr28584276.10.1725904939453; Mon, 09 Sep 2024
- 11:02:19 -0700 (PDT)
-Date: Mon,  9 Sep 2024 18:01:54 +0000
+	s=arc-20240116; t=1725904968; c=relaxed/simple;
+	bh=1k8tFhRQPpn1Fk12JXIXWqlkalGBGe2FZcpDGf/yyhY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WuqjwaYkXxihDtKi4BTPMwMw6+uKqsOSLqRaPBc3LYv3m+zz5pGdfwbLNvLuN27Y6/w5GR3R8H5/tLlybZDmN4hD30d0BTzxdbudH8jWqbgkkEUesa5l/n7gmd7VJ1U3dP3dhcdT7C/L4BxpDHvp0dZwTTIaaurKEuOKfAaH9fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xaSxC3dl; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a4c02c5b-af54-456b-b36a-42653991ea34@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725904963;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EYbueR0PDXZpaF3ZZ/nt7eKjsvBmORIBNkb8Dq6k9X4=;
+	b=xaSxC3dlxLazqcXhE316s390pQ924aUIwwX/bMqoxrsLOk0xSSMNXYs4ck3hLaWwedOjjA
+	T9aaqt/n2ZPMcHw+WRtk4L1p6W4XS/vc82FTo46stRx79/pGS9v7AfCjvPbbdSJ02BS7pA
+	xQ1FhUN9zbFvCw1ED119okb0c5K0JMk=
+Date: Mon, 9 Sep 2024 14:02:37 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
-Message-ID: <20240909180154.3267939-1-snehalreddy@google.com>
-Subject: [PATCH v3] KVM: arm64: Add memory length checks and remove inline in do_ffa_mem_xfer
-From: Snehal Koukuntla <snehalreddy@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-Cc: James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Sebastian Ene <sebastianene@google.com>, Vincent Donnefort <vdonnefort@google.com>, 
-	Snehal <snehalreddy@google.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Subject: Re: [PATCH net] net: dpaa: Pad packets to ETH_ZLEN
+To: Eric Dumazet <edumazet@google.com>
+Cc: Madalin Bucur <madalin.bucur@nxp.com>, netdev@vger.kernel.org,
+ Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ linux-kernel@vger.kernel.org, "David S . Miller" <davem@davemloft.net>
+References: <20240909160604.1148178-1-sean.anderson@linux.dev>
+ <CANn89i+UHJgx5cp6M=6PidC0rdPdr4hnsDaQ=7srijR3ArM1jw@mail.gmail.com>
+ <c17ef59b-330f-404d-ab03-0c45447305b0@linux.dev>
+ <CANn89iJp6exvUkDSS6yG7_gLGknYGCyOE5vdkL-q5ZpPktWzqA@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <CANn89iJp6exvUkDSS6yG7_gLGknYGCyOE5vdkL-q5ZpPktWzqA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-When we share memory through FF-A and the description of the buffers
-exceeds the size of the mapped buffer, the fragmentation API is used.
-The fragmentation API allows specifying chunks of descriptors in subsequent
-FF-A fragment calls and no upper limit has been established for this.
-The entire memory region transferred is identified by a handle which can be
-used to reclaim the transferred memory.
-To be able to reclaim the memory, the description of the buffers has to fit
-in the ffa_desc_buf.
-Add a bounds check on the FF-A sharing path to prevent the memory reclaim
-from failing.
+On 9/9/24 13:14, Eric Dumazet wrote:
+> On Mon, Sep 9, 2024 at 7:07 PM Sean Anderson <sean.anderson@linux.dev> wrote:
+>>
+>> On 9/9/24 12:46, Eric Dumazet wrote:
+>> > On Mon, Sep 9, 2024 at 6:06 PM Sean Anderson <sean.anderson@linux.dev> wrote:
+>> >>
+>> >> When sending packets under 60 bytes, up to three bytes of the buffer following
+>> >> the data may be leaked. Avoid this by extending all packets to ETH_ZLEN,
+>> >> ensuring nothing is leaked in the padding. This bug can be reproduced by
+>> >> running
+>> >>
+>> >>         $ ping -s 11 destination
+>> >>
+>> >> Fixes: 9ad1a3749333 ("dpaa_eth: add support for DPAA Ethernet")
+>> >> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> >> ---
+>> >>
+>> >>  drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 6 ++++++
+>> >>  1 file changed, 6 insertions(+)
+>> >>
+>> >> diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+>> >> index cfe6b57b1da0..e4e8ee8b7356 100644
+>> >> --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+>> >> +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+>> >> @@ -2322,6 +2322,12 @@ dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+>> >>         }
+>> >>  #endif
+>> >>
+>> >> +       /* Packet data is always read as 32-bit words, so zero out any part of
+>> >> +        * the skb which might be sent if we have to pad the packet
+>> >> +        */
+>> >> +       if (__skb_put_padto(skb, ETH_ZLEN, false))
+>> >> +               goto enomem;
+>> >> +
+>> >
+>> > This call might linearize the packet.
+>> >
+>> > @nonlinear variable might be wrong after this point.
+>> >
+>> >>         if (nonlinear) {
+>> >>                 /* Just create a S/G fd based on the skb */
+>> >>                 err = skb_to_sg_fd(priv, skb, &fd);
+>> >> --
+>> >> 2.35.1.1320.gc452695387.dirty
+>> >>
+>> >
+>> > Perhaps this instead ?
+>> >
+>> > diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+>> > b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+>> > index cfe6b57b1da0e45613ac1bbf32ddd6ace329f4fd..5763d2f1bf8dd31b80fda0681361514dad1dc307
+>> > 100644
+>> > --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+>> > +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+>> > @@ -2272,12 +2272,12 @@ static netdev_tx_t
+>> >  dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+>> >  {
+>> >         const int queue_mapping = skb_get_queue_mapping(skb);
+>> > -       bool nonlinear = skb_is_nonlinear(skb);
+>> >         struct rtnl_link_stats64 *percpu_stats;
+>> >         struct dpaa_percpu_priv *percpu_priv;
+>> >         struct netdev_queue *txq;
+>> >         struct dpaa_priv *priv;
+>> >         struct qm_fd fd;
+>> > +       bool nonlinear;
+>> >         int offset = 0;
+>> >         int err = 0;
+>> >
+>> > @@ -2287,6 +2287,10 @@ dpaa_start_xmit(struct sk_buff *skb, struct
+>> > net_device *net_dev)
+>> >
+>> >         qm_fd_clear_fd(&fd);
+>> >
+>> > +       if (__skb_put_padto(skb, ETH_ZLEN, false))
+>> > +               goto enomem;
+>> > +
+>> > +       nonlinear = skb_is_nonlinear(skb);
+>> >         if (!nonlinear) {
+>> >                 /* We're going to store the skb backpointer at the beginning
+>> >                  * of the data buffer, so we need a privately owned skb
+>>
+>> Thanks for the suggestion; I was having a hard time figuring out where
+>> to call this.
+>>
+>> Do you have any hints for how to test this for correctness? I'm not sure
+>> how to generate a non-linear packet under 60 bytes.
+> 
+> I think pktgen can do this, with its frags parameter.
 
-Also do_ffa_mem_xfer() does not need __always_inline
+OK, I tested both and was able to use
 
-Fixes: 634d90cf0ac65 ("KVM: arm64: Handle FFA_MEM_LEND calls from the host")
-Cc: stable@vger.kernel.org
-Reviewed-by: Sebastian Ene <sebastianene@google.com>
-Signed-off-by: Snehal Koukuntla <snehalreddy@google.com>
----
- arch/arm64/kvm/hyp/nvhe/ffa.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+./pktgen/pktgen_sample01_simple.sh -i net5 -m 7e:de:97:38:53:b9 -d 10.0.0.2 -n 3 -s 59
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index e715c157c2c4..637425f63fd1 100644
---- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-+++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -426,7 +426,7 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_res *res,
- 	return;
- }
- 
--static __always_inline void do_ffa_mem_xfer(const u64 func_id,
-+static void do_ffa_mem_xfer(const u64 func_id,
- 					    struct arm_smccc_res *res,
- 					    struct kvm_cpu_context *ctxt)
- {
-@@ -461,6 +461,11 @@ static __always_inline void do_ffa_mem_xfer(const u64 func_id,
- 		goto out_unlock;
- 	}
- 
-+	if (len > ffa_desc_buf.len) {
-+		ret = FFA_RET_NO_MEMORY;
-+		goto out_unlock;
-+	}
-+
- 	buf = hyp_buffers.tx;
- 	memcpy(buf, host_buffers.tx, fraglen);
- 
--- 
-2.46.0.598.g6f2099f65c-goog
+with a call to `pg_set $DEV "frags 2"` added manually.
 
+This results in the following result
+
+OK: 109(c13+d95) usec, 1 (59byte,0frags)
+
+The original patch causes the nonlinear path to be taken (see with the
+"tx S/G [TOTAL]" statistic) while your suggestion uses the linear path.
+Both work, since there's no problem using the nonlinear path with a
+linear skb.
+
+--Sen
 
