@@ -1,135 +1,168 @@
-Return-Path: <linux-kernel+bounces-320972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DEE99712DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:03:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB92B9712DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48B5028580E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:03:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F2AEB22674
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0301B2ED0;
-	Mon,  9 Sep 2024 09:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D341B29CA;
+	Mon,  9 Sep 2024 09:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="UCKyBw0t"
-Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jnClp46A"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF90113635E;
-	Mon,  9 Sep 2024 09:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEDC13635E;
+	Mon,  9 Sep 2024 09:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725872578; cv=none; b=fJVTyCkrH6fYJ62XW84FrVUmYMZ6ULZAbuKimWs3DTqrLaAaHN2yigN8C5q98ro35Z6QEhGV/niB+vHBwF2J7ld7noABvguVcmje9ETtydI+bY4929K5AKMhwXwXq8VhmJxKc+CDMvzoWO837qVbQwtDLo9J0IrOhlgUfDeidbk=
+	t=1725872600; cv=none; b=edAvI2v5NhNJv9H/+gFf4ABx0lz+gvcET4zs0BV0D0X7eiaq4u6mtVuA+auDN6igyH5zN4KvnMomAykiWEAnK1iavgZfO7H3PkczIIBaQvF0Nq8+h0n/xPsCCzvChOeQJ+S5QuHjrBNNtLZ2UdD6iYGrVckcRA51mM4FJr+96hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725872578; c=relaxed/simple;
-	bh=Qut1EyCSXF5XKk8lrf1jldw5ylJErkj1/nQaI3URoaw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eoPfp7uIqQ6qTYo/9DP+LVLc75HHL+IXQ1bVe/76iO2k/R+8uI/cht9VYFVEOOtDni+JkNqsKmxi7rTlGKbBSkdI76+q6tSIaaCnuVmqUXlGxuNbJ6mh2A1HR5HRHHkkQtjoMrvWEw2JTZhw9htM2CCyWciwJdVn8x+SqS023Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=UCKyBw0t; arc=none smtp.client-ip=178.154.239.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
-Received: from mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:5e9c:0:640:b3f4:0])
-	by forward501a.mail.yandex.net (Yandex) with ESMTPS id 36D27613B6;
-	Mon,  9 Sep 2024 12:02:44 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id a2dHS5JKaSw0-Uuowlycf;
-	Mon, 09 Sep 2024 12:02:42 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1725872562; bh=Qut1EyCSXF5XKk8lrf1jldw5ylJErkj1/nQaI3URoaw=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=UCKyBw0t6OLNpveKLHRyVdH4SZAFS1aM3i5JVQ8KQ5rIHiHlKcQKgkqrfFC6c8Kek
-	 R9zZ3ZAROjskp9kB0OrvKFjT8aa1lyzn42GuLR0RT8850GDMyebxN0ZKhcvu8dixES
-	 a/SqIJj456K3YYiyyxC8j7ouVj9XUUEG0040u5qg=
-Authentication-Results: mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <0e3902c9a42b05b0227e767b227624c6fe8fd2bb.camel@maquefel.me>
-Subject: Re: [PATCH v12 00/38] ep93xx device tree conversion
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Hartley Sweeten
- <hsweeten@visionengravers.com>, Alexander Sverdlin
- <alexander.sverdlin@gmail.com>, Russell King <linux@armlinux.org.uk>,
- Lukasz Majewski <lukma@denx.de>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Sebastian Reichel <sre@kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
- Vinod Koul <vkoul@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>,
- Guenter Roeck <linux@roeck-us.net>, Thierry Reding
- <thierry.reding@gmail.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
- <u.kleine-koenig@pengutronix.de>, Mark Brown <broonie@kernel.org>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh
- Raghavendra <vigneshr@ti.com>, Damien Le Moal <dlemoal@kernel.org>, Sergey
- Shtylyov <s.shtylyov@omp.ru>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Ralf Baechle <ralf@linux-mips.org>,  "Wu,
- Aaron" <Aaron.Wu@analog.com>, Lee Jones <lee@kernel.org>, Olof Johansson
- <olof@lixom.net>, Niklas Cassel <cassel@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org,  devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org,  linux-watchdog@vger.kernel.org,
- linux-pwm@vger.kernel.org,  linux-spi@vger.kernel.org,
- netdev@vger.kernel.org, linux-mtd@lists.infradead.org, 
- linux-ide@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-sound@vger.kernel.org, Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>,  Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Andrew Lunn <andrew@lunn.ch>
-Date: Mon, 09 Sep 2024 12:02:37 +0300
-In-Reply-To: <CAHp75Veusv=f6Xf9-gL3ctoO5Njn7wiWMw-aMN45KbZ=YB=mQw@mail.gmail.com>
-References: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
-	 <CAHp75Veusv=f6Xf9-gL3ctoO5Njn7wiWMw-aMN45KbZ=YB=mQw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1725872600; c=relaxed/simple;
+	bh=8WYAzJl0zYRh1E8R9UP4JEzv76LjRdU1nrYAQz8NicI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=N9tOX2HnVnO+Wb6ZEbUX5ttZCvT/9LBQcklUU4xGTXZdUHAmxN47fTzmnQ6d0J0eVdJbQKfL/XXiLO3FwUIosUMXpD7Hak4RhILjdX26M/h5CE282YEjWObCieqrDRNFviK9ebJttQXGHWiDApNt26gnhxQQlWfaz5PIAXp30iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jnClp46A; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E86F640E0185;
+	Mon,  9 Sep 2024 09:03:16 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 7bh40M_SYptb; Mon,  9 Sep 2024 09:03:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1725872592; bh=eDk+ruS6hx45oNskKYQXXNbRrKJegFNg5kxe7NFyCmo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jnClp46A02FcRBBeAjcUm3XiUnmWSSMkxZiuhm1AWKoYiwnsmyCx2qBPjy7MxvfVL
+	 rrF9dK6AHJQsekaO17YXDGDAY1LypLKnm+W5Uhcvjh0Xq001YJytM0A4y5U0IvGHvP
+	 uT4Xx03z+mAPFKkmpkmMnHtsojFaCqbU5YK2qNdUYO4prAsVny/MaycyFUfNP6mvQE
+	 16kKx4n+8xt46QmhrvYh24ozfITaRkuljmlzFVVBf8kV/izFBiYYiIPOStaLiGhOlR
+	 VJ6iLmaT0LLpv2/rFJ2XkhGnUu5IFwdLsTeQc/OzgN0NMrgIhCMSH8QYgjY9PJYGVw
+	 1NXvRAZ+L/uhz69RQESM5EZP/RX7900Dal+bJwoTKd/t6RE6piHWkWiQK/jKmqhAn0
+	 Gi7dNmHIh7vUYOYRtoKWyp4BCXMYHqfHFnBVBbpb97zdYnot8WTX+2nPOcTsCctSGU
+	 ZbAOkfwcmdejRbx440UUsRGBj5HjUHpEp0hsqoze9uOgHzs8Bys/Dg+L6DSvnG8XLC
+	 j+ODxZ0thsL2IIFKbtsmGoAJP1HsoKV/i4DeyZ2mjdYzBZCSMmV8ubU07sFP5HrTba
+	 4HxRQFi/VcQne2rbnMjSEU4jO1yrkQcbJpWsXzuorKaD1qnnbd5bS0zc4k6w5Ogb8N
+	 RCcropa2BGZlXwz+z/A5yoqk=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3D72540E0263;
+	Mon,  9 Sep 2024 09:03:09 +0000 (UTC)
+Date: Mon, 9 Sep 2024 11:03:02 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] EDAC updates for v6.12
+Message-ID: <20240909090302.GAZt65xhBpCvrrefhl@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Hi Andy!
+Hi Linus,
 
-On Mon, 2024-09-09 at 11:49 +0300, Andy Shevchenko wrote:
-> On Mon, Sep 9, 2024 at 11:12=E2=80=AFAM Nikita Shubin via B4 Relay
-> <devnull+nikita.shubin.maquefel.me@kernel.org> wrote:
-> >=20
-> > The goal is to recieve ACKs for all patches in series to merge it
-> > via Arnd branch.
-> >=20
-> > It was decided from the very beginning of these series, mostly
-> > because
-> > it's a full conversion of platform code to DT and it seemed not
-> > convenient to maintain compatibility with both platform and DT.
-> >=20
-> > Following patches require attention from Stephen Boyd or clk
-> > subsystem:
->=20
-> Does it mean you still have a few patches without tags?
-> What are their respective numbers?
+please pull EDAC updates for v6.12.
 
-The clk is the last one as i think, all others can be ACKed by
-Alexander or by Arnd himself.
+Like you said "All the actual work should be done before the
+merge window" and before we bring you the pull requests live, written with
+a pen and paper, lemme send you some now so that there's less stress next
+week.
 
->=20
-> > - clk: ep93xx: add DT support for Cirrus EP93xx:
-> > =C2=A0 - tristate
-> > =C2=A0 - drop MFD_SYSCON/REGMAP
-> > =C2=A0 - add AUXILIARY_BUS/REGMAP_MMIO
-> > =C2=A0 - prefixed all static with ep9xx_
-> > =C2=A0 - s/clk_hw_register_ddiv()/ep93xx_clk_register_ddiv()/
-> > =C2=A0 - s/clk_register_div()/ep93xx_clk_register_div()/
-> > =C2=A0 - dropped devm_ep93xx_clk_hw_register_fixed_rate_parent_data
-> > macro
-> > =C2=A0 -
-> > s/devm_ep93xx_clk_hw_register_fixed_rate_parent_data()/devm_clk_hw_
-> > register_fixed_rate_parent_data()/
->=20
+Thx.
 
+---
+
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_updates_for_v6.12
+
+for you to fetch changes up to 92f8358bce13da0b2c37122573a2b2d7de0071df:
+
+  Merge remote-tracking branches 'ras/edac-amd-atl', 'ras/edac-misc' and 'ras/edac-drivers' into edac-updates (2024-09-09 10:51:30 +0200)
+
+----------------------------------------------------------------
+- Drop a now obsolete ppc4xx_edac driver
+
+- Fix conversion to physical memory addresses on Intel's Elkhart Lake and Ice
+  Lake hardware when the system address is above the (Top-Of-Memory) TOM
+  address
+
+- Pay attention to the memory hole on Zynq UltraScale+ MPSoC DDR controllers
+  when injecting errors for testing purposes
+
+- Add support for translating normalized error addresses reported by an AMD
+  memory controller into system physical addresses using an UEFI mechanism
+  called platform runtime mechanism (PRM).
+
+- The usual cleanups and fixes
+
+----------------------------------------------------------------
+Borislav Petkov (AMD) (1):
+      Merge remote-tracking branches 'ras/edac-amd-atl', 'ras/edac-misc' and 'ras/edac-drivers' into edac-updates
+
+John Allen (2):
+      ACPI: PRM: Add PRM handler direct call support
+      RAS/AMD/ATL: Translate normalized to system physical addresses using PRM
+
+Qiuxu Zhuo (4):
+      EDAC/igen6: Fix conversion of system address to physical memory address
+      EDAC/{skx_common,skx,i10nm}: Move the common debug code to skx_common
+      EDAC/{skx_common,i10nm}: Remove the AMAP register for determing DDR5
+      EDAC/sb_edac: Fix the compile warning of large frame size
+
+Rob Herring (Arm) (1):
+      EDAC: Drop obsolete PPC4xx driver
+
+Shubhrajyoti Datta (1):
+      EDAC/synopsys: Fix error injection on Zynq UltraScale+
+
+ drivers/acpi/prmt.c            |   24 +
+ drivers/edac/Kconfig           |    9 -
+ drivers/edac/Makefile          |    1 -
+ drivers/edac/i10nm_base.c      |   61 +-
+ drivers/edac/igen6_edac.c      |    2 +-
+ drivers/edac/ppc4xx_edac.c     | 1425 ----------------------------------------
+ drivers/edac/ppc4xx_edac.h     |  167 -----
+ drivers/edac/sb_edac.c         |   35 +-
+ drivers/edac/skx_base.c        |   52 +-
+ drivers/edac/skx_common.c      |   49 +-
+ drivers/edac/skx_common.h      |    8 +
+ drivers/edac/synopsys_edac.c   |   35 +-
+ drivers/ras/amd/atl/Kconfig    |    4 +
+ drivers/ras/amd/atl/Makefile   |    2 +
+ drivers/ras/amd/atl/internal.h |   10 +
+ drivers/ras/amd/atl/prm.c      |   57 ++
+ drivers/ras/amd/atl/umc.c      |    5 +
+ include/linux/prmt.h           |    5 +
+ 18 files changed, 222 insertions(+), 1729 deletions(-)
+ delete mode 100644 drivers/edac/ppc4xx_edac.c
+ delete mode 100644 drivers/edac/ppc4xx_edac.h
+ create mode 100644 drivers/ras/amd/atl/prm.c
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
