@@ -1,248 +1,166 @@
-Return-Path: <linux-kernel+bounces-320617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D1E8970CD1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:05:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3AB5970CD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2338A281C7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 908D0281BF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E99146D75;
-	Mon,  9 Sep 2024 05:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A781ACE1F;
+	Mon,  9 Sep 2024 05:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BhBH7jtc"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MYropRbZ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0109C9461
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 05:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E783F9461;
+	Mon,  9 Sep 2024 05:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725858351; cv=none; b=FMGb+IezsXegrOXEEJMOU0C58IVYoQzFiwg6WwY8bwdv2nzARqfzp004Agbk0SaCqVx4ifwUFbTlMPu0nF1akAMzd14HOWwA+lFAIYqSw6p0AhC9JMl41D6EG41IDcMlCZpf79TEGHWKIrc7y+lJXiQInqGRZghuMVfMyztYs9k=
+	t=1725858489; cv=none; b=SfYjmFsPXzD7Na/s7qXaja1qbGMv/FL+p9AXXXKd7qhhlEiHXE8ivx14X4isBLe9xIOTxER4Ib1DdGevGlZo5G6GgLRxZoX333ip/jwzUoeD4bHTSnCRWuAJjYQbnD/Ao72nHja//O+oYgPiIIPiicW8jdsGRA/FAo58Klmxuvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725858351; c=relaxed/simple;
-	bh=0/UowsAImf7weERteQ0LgjJ5RIz4ptPEoPHV+Vilaeg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gEusvNCBlR1SHUnz+tsdcjJSCIA67YKIwz39eAq7MWfvklfJm/5t5ou53/Ggbnt7HboHLLvmrqULTRa4CT+5wV/vbdIx7vlcOUpgoreVYy0BXYdnZER4AyjPKmUlnp7ReW3qilb8NZHyYxZWWfqv1b3AimKswll8kgsGpcySQ3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BhBH7jtc; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 488NFGne006405;
-	Mon, 9 Sep 2024 05:05:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	GPrmwWnko671No7/Z6IdQjS7SU1lDVNUmv4xVmaX2TY=; b=BhBH7jtcqvwgasbt
-	iohUnWhPwCiUt9yxj7OMdiMGueLVYw4eZoSvNw5C8YsqGNR3f+ZU7cIyUfHJTnko
-	e9Zc1khk95vqNVRyyOP0ZyK6W3fG7AUg17XMOETz1Njnr0WFDWY4OkKlOJr02c0j
-	IlV03iAvNmYmG4qIMiISJ+FbLH55FmeeeYCkHto2PY7Ebj+rhWzDoM9vZo22ykRq
-	JsoAQfsgBBFqP/uSiwlaUN1RD3BOgolkE+g4mRner7Hy0zZqtqWQWE7k+tGkaAd3
-	Yn8tp4rhG7bk8CTCWFsp99VrA0Kimg0Wa9tMxnhC7rPicY/12eDTBgqojS3yKPWN
-	EBZqoQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefy7rxr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 05:05:21 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48955LAq004183;
-	Mon, 9 Sep 2024 05:05:21 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefy7rxm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 05:05:21 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4894D5q8027308;
-	Mon, 9 Sep 2024 05:05:20 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h3v2vgkv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 05:05:20 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48955IZ552101476
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Sep 2024 05:05:19 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DD9AA2004B;
-	Mon,  9 Sep 2024 05:05:18 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5571020040;
-	Mon,  9 Sep 2024 05:05:14 +0000 (GMT)
-Received: from [9.43.108.91] (unknown [9.43.108.91])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  9 Sep 2024 05:05:13 +0000 (GMT)
-Message-ID: <9eba8dc4-ceb3-4234-b352-aeb34c840e70@linux.ibm.com>
-Date: Mon, 9 Sep 2024 10:35:11 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kexec/crash: no crash update when kexec in progress
-To: Baoquan He <bhe@redhat.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        Hari Bathini <hbathini@linux.ibm.com>, kexec@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
-References: <20240731152738.194893-1-sourabhjain@linux.ibm.com>
- <87v80lnf8d.fsf@mail.lhotse>
- <10c666ae-d528-4f49-82e9-8e0fee7099e0@linux.ibm.com>
- <355b58b1-6c51-4c42-b6ea-dcd6b1617a18@linux.ibm.com>
- <ZsLjGJvAUIaxrG6x@MiWiFi-R3L-srv>
- <1e4a8e18-cda9-45f5-a842-8ffcd725efc9@linux.ibm.com>
- <ZtGqTSMvx6Ljf5Xi@MiWiFi-R3L-srv>
- <0dd94920-b13f-4da7-9ea6-4f008af1f4b3@linux.ibm.com>
- <ZtkkIoUIu8shp/ut@MiWiFi-R3L-srv>
- <c6f30e31-69fe-4ece-b251-c49f1ab59a04@linux.ibm.com>
- <Zt18yUCWRK8178uv@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-In-Reply-To: <Zt18yUCWRK8178uv@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: L_T2SMdDgcohbwN827nc0vwdNPIo8LnP
-X-Proofpoint-ORIG-GUID: XhV8Ue3GrBekmk7WD7oyGoA-qFgUxvRJ
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1725858489; c=relaxed/simple;
+	bh=cViwBcSL2eJK2KEiF4+UCbZlJ/7Jb60mwsfIFX/LNXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WiDT1QecixhPjT2R5vdc4G40yxphDXE4UIyvrscmZiBHP+KgRqz6o9+R+46MB9DSb2GlH+qLxMZSgnPAdr2flyEz2Zq1kH/ZCsa2e3/IpoPEFL3Igsa14X2ghMY4lxyZBXrwybB6y9cuRiINjrwwfBnhdfvGemo/qbYD+o1/Jn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MYropRbZ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 218F43EA;
+	Mon,  9 Sep 2024 07:06:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1725858409;
+	bh=cViwBcSL2eJK2KEiF4+UCbZlJ/7Jb60mwsfIFX/LNXg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MYropRbZm6S7gwem9F0TMcV4zXxRf+N9sv8biltmv7iH3K7UV0hN5/WJVAefHRTqs
+	 9g54aKLd8O3WSuaKiQlpcW111v1S9vP9x6IL/1/t6/njkEl4Qrwvq2FShram4lfNvB
+	 jVZNuN95Jiiji4s3LwTrWqdippzalrcEggzGL1gg=
+Message-ID: <40cc1e95-b9fc-4c27-9428-1698d0bf9d25@ideasonboard.com>
+Date: Mon, 9 Sep 2024 08:08:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-08_10,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
- adultscore=0 clxscore=1015 spamscore=0 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409090039
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/4] media: raspberrypi: Add support for RP1-CFE
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, oe-kbuild-all@lists.linux.dev,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, Naushir Patuck
+ <naush@raspberrypi.com>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ kernel test robot <lkp@intel.com>
+References: <20240904-rp1-cfe-v4-3-f1b5b3d69c81@ideasonboard.com>
+ <202409051822.ZzUGw3XQ-lkp@intel.com>
+ <20240905111120.GK16183@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20240905111120.GK16183@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
+On 05/09/2024 14:11, Laurent Pinchart wrote:
+> On Thu, Sep 05, 2024 at 06:50:48PM +0800, kernel test robot wrote:
+>> Hi Tomi,
+>>
+>> kernel test robot noticed the following build warnings:
+>>
+>> [auto build test WARNING on 431c1646e1f86b949fa3685efc50b660a364c2b6]
+>>
+>> url:    https://github.com/intel-lab-lkp/linux/commits/Tomi-Valkeinen/media-uapi-Add-meta-formats-for-PiSP-FE-config-and-stats/20240904-192729
+>> base:   431c1646e1f86b949fa3685efc50b660a364c2b6
+>> patch link:    https://lore.kernel.org/r/20240904-rp1-cfe-v4-3-f1b5b3d69c81%40ideasonboard.com
+>> patch subject: [PATCH v4 3/4] media: raspberrypi: Add support for RP1-CFE
+>> config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240905/202409051822.ZzUGw3XQ-lkp@intel.com/config)
+>> compiler: m68k-linux-gcc (GCC) 14.1.0
+>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240905/202409051822.ZzUGw3XQ-lkp@intel.com/reproduce)
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <lkp@intel.com>
+>> | Closes: https://lore.kernel.org/oe-kbuild-all/202409051822.ZzUGw3XQ-lkp@intel.com/
+>>
+>> All warnings (new ones prefixed by >>):
+>>
+>>>> drivers/media/platform/raspberrypi/rp1-cfe/cfe.c:2445:12: warning: 'cfe_runtime_resume' defined but not used [-Wunused-function]
+>>      2445 | static int cfe_runtime_resume(struct device *dev)
+>>           |            ^~~~~~~~~~~~~~~~~~
+>>>> drivers/media/platform/raspberrypi/rp1-cfe/cfe.c:2435:12: warning: 'cfe_runtime_suspend' defined but not used [-Wunused-function]
+>>      2435 | static int cfe_runtime_suspend(struct device *dev)
+>>           |            ^~~~~~~~~~~~~~~~~~~
+>> vim +/cfe_runtime_resume +2445 drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
+> 
+> The recommended way to fix this is to switch from SET_RUNTIME_PM_OPS()
+> to RUNTIME_PM_OPS() and use pm_ptr() to set .driver.pm. This being said,
+> the driver won't work on a kernel with !CONFIG_PM given how you
+> implemented probe() and remove().
+> 
+> The pisp-be driver suffered from the same issue and Jacopo fixed it in
+> the last version. You can have a look at implement something similar.
 
-On 08/09/24 16:00, Baoquan He wrote:
-> On 09/05/24 at 02:07pm, Sourabh Jain wrote:
->> Hello Baoquan,
->>
->> On 05/09/24 08:53, Baoquan He wrote:
->>> On 09/04/24 at 02:55pm, Sourabh Jain wrote:
->>>> Hello Baoquan,
->>>>
->>>> On 30/08/24 16:47, Baoquan He wrote:
->>>>> On 08/20/24 at 12:10pm, Sourabh Jain wrote:
->>>>>> Hello Baoquan,
->>>>>>
->>> ......snip...
->>>>>> 2. A patch to return early from the `crash_handle_hotplug_event()` function
->>>>>> if `kexec_in_progress` is
->>>>>>       set to True. This is essentially my original patch.
->>>>> There's a race gap between the kexec_in_progress checking and the
->>>>> setting it to true which Michael has mentioned.
->>>> The window where kernel is holding kexec_lock to do kexec boot
->>>> but kexec_in_progress is yet not set to True.
->>>>
->>>> If kernel needs to handle crash hotplug event, the function
->>>> crash_handle_hotplug_event()  will not get the kexec_lock and
->>>> error out by printing error message about not able to update
->>>> kdump image.
->>> But you wanted to avoid the erroring out if it's being in
->>> kernel_kexec().  Now you are seeing at least one the noising
->>> message, aren't you?
->> Yes, but it is very rare to encounter.
->>
->> My comments on your updated code are inline below.
->>
->>>> I think it should be fine. Given that lock is already taken for
->>>> kexec kernel boot.
->>>>
->>>> Am I missing something major?
->>>>
->>>>> That's why I think
->>>>> maybe checking kexec_in_progress after failing to retriving
->>>>> __kexec_lock is a little better, not very sure.
->>>> Try for kexec lock before kexec_in_progress check will not solve
->>>> the original problem this patch trying to solve.
->>>>
->>>> You proposed the below changes earlier:
->>>>
->>>> -	if (!kexec_trylock()) {
->>>> +	if (!kexec_trylock() && kexec_in_progress) {
->>>>    		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
->>>>    		crash_hotplug_unlock();
->>> Ah, I meant as below, but wrote it mistakenly.
->>>
->>> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
->>> index 63cf89393c6e..e7c7aa761f46 100644
->>> --- a/kernel/crash_core.c
->>> +++ b/kernel/crash_core.c
->>> @@ -504,7 +504,7 @@ int crash_check_hotplug_support(void)
->>>    	crash_hotplug_lock();
->>>    	/* Obtain lock while reading crash information */
->>> -	if (!kexec_trylock()) {
->>> +	if (!kexec_trylock() && !kexec_in_progress) {
->>>    		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
->>>    		crash_hotplug_unlock();
->>>    		return 0;
->>>
->>>
->>>> Once the kexec_in_progress is set to True there is no way one can get
->>>> kexec_lock. So kexec_trylock() before kexec_in_progress is not helpful
->>>> for the problem I am trying to solve.
->>> With your patch, you could still get the error message if the race gap
->>> exist. With above change, you won't get it. Please correct me if I am
->>> wrong.
->> The above code will print an error message during the race gap. Here's why:
->>
->> Let’s say the kexec lock is acquired in the kernel_kexec() function,
->> but kexec_in_progress is not yet set to True. In this scenario, the code
->> will print
->> an error message.
->>
->> There is another issue I see with the above code:
->>
->> Consider that the system is on the kexec kernel boot path, and
->> kexec_in_progress
->> is set to True. If crash_hotplug_unlock() is called, the kernel will not
->> only update
->> the kdump image without acquiring the kexec lock, but it will also release
->> the
->> kexec lock in the out label. I believe this is incorrect.
->>
->> Please share your thoughts.
-> How about this?
->
-> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-> index 63cf89393c6e..8ba7b1da0ded 100644
-> --- a/kernel/crash_core.c
-> +++ b/kernel/crash_core.c
-> @@ -505,7 +505,8 @@ int crash_check_hotplug_support(void)
->   	crash_hotplug_lock();
->   	/* Obtain lock while reading crash information */
->   	if (!kexec_trylock()) {
-> -		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
-> +		if (!kexec_in_progress)
-> +			pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
->   		crash_hotplug_unlock();
->   		return 0;
->   	}
-> @@ -540,7 +541,8 @@ static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu,
->   	crash_hotplug_lock();
->   	/* Obtain lock while changing crash information */
->   	if (!kexec_trylock()) {
-> -		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
-> +		if (!kexec_in_progress)
-> +			pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
->   		crash_hotplug_unlock();
->   		return;
->   	}
+I can't right away think of any reason to not just depend on CONFIG_PM 
+and be done with it without any tricks. Do you know if there's a reason?
 
-Yes putting pr_info under kexec in progress check would work.
-
-I will rebase the patch on top on next-20240906 to avoid conflict with
-https://lore.kernel.org/all/20240812041651.703156-1-sourabhjain@linux.ibm.com/T/#u
-and send v2.
-
-Thanks,
-Sourabh Jain
+  Tomi
 
 
