@@ -1,154 +1,185 @@
-Return-Path: <linux-kernel+bounces-321180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C44F97158E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:42:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D637971592
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C036B2498F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:42:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F1F4B26303
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B1D1B4C4A;
-	Mon,  9 Sep 2024 10:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3C41B5304;
+	Mon,  9 Sep 2024 10:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MV+AUGpx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="ro+MYWG+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l011lgwr"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E625E42AAB;
-	Mon,  9 Sep 2024 10:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C64F1B4C4D;
+	Mon,  9 Sep 2024 10:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725878560; cv=none; b=MYQYO4uUgX3XL9bGAmZQRxxovVNdNbvZLskpX5cg3gjCfxmWA8348KUW94b0QwIetWZNFJhInxweUDBYWfmwe4uoU96dlKrcU4AS2ZljHjjbgmLnB7mcp/LSyA7DeExucR4kchtj14YvWs0S5LLNkgfA994WXrFjx0mQ6OGKe4I=
+	t=1725878572; cv=none; b=dC3DfqklOwpAu/4y5JLlNFC4hNDP4MuxP3pcKr5QWIDw43pRjnPEZwpjj/sewa5nVgN9Tr1U19Aaa2TX2AxqI9TlrkuaiM4hkevZwRXNgL6wu10glVhFppebQ4J44+MKDIKONcUgCTddok3xr5sqCO1DJsKlaSoc1LKTnd7JdTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725878560; c=relaxed/simple;
-	bh=EcljC2EbxFVVdlOsDxfQkrDxv7+U1j5kYHByA5pJVqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ba41Ae38Qb6WN/Y3VNF7WOHEFzXZRbHu5QVOQwadPuOK5/+Xnm5hAIujHzyqMqOHhphnIOjKUIB0u+8zrvDfOhCTOqGopOLJ/Z/Drn0Klt+9Ot5bLmqfm3n41MPjQ4DUdsuxezyP9T9vc6Y4trbT9plrxmq8h3YAHIkKrQDdlPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MV+AUGpx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A38A5C4CEC5;
-	Mon,  9 Sep 2024 10:42:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725878559;
-	bh=EcljC2EbxFVVdlOsDxfQkrDxv7+U1j5kYHByA5pJVqw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MV+AUGpxBHPxWJyioWyV4zQqRtQoTYmjghgNDqkJQtWGbO32YepHHywizcq8i3p2I
-	 RjgBjPXnKMvN5ScKJ+v+gb81yAx4wqDBrprz6eTs6h5Na9ml8OGuFUIxw1pTVKTa/p
-	 0ia60G4eQlULA6CPMYIpALy7ORgNUJloQCn61igdmBeOXbrPWdYnZNFjHgAl3DiKlm
-	 /pbONUn1k1W5loKcLDuqRLaltyhzpL6PWwNWSPlYbulkVAbC4+7w0gLk/1c0gqJG9G
-	 Ad+02d31uyZt7dqRmacQu0GygKhyK+XlEwsdDyLfgSifDNNmm7nhaLWOHlEHwLLYla
-	 3Id6R2feKSIJg==
-Message-ID: <121d4b0d-dd8e-4beb-a64b-f237bbbed7ad@kernel.org>
-Date: Mon, 9 Sep 2024 12:42:33 +0200
+	s=arc-20240116; t=1725878572; c=relaxed/simple;
+	bh=zbWvCp2Ln7Z1FkE6rb5eCGP8rWOJnCjmfIGYDktlLe8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Er+LbjpWJOqKSViDAYbPiW5nvxKc1RrT4yeUa5n3113g164WD/jjFTS+JfmidBiBJGGktRJWHMYgnUgk3mEaWDgUuE7K97E5EjLuCZSmzYQSyOUa8nS5aYZow0w+91dBsoVM2FVltBj84TPsd/ycf1OmPN0qN5akddDozRyegvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=ro+MYWG+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l011lgwr; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 40CC91140206;
+	Mon,  9 Sep 2024 06:42:49 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 09 Sep 2024 06:42:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1725878569; x=1725964969; bh=ZFTA+pO0V1
+	16RhPMfAQzVCkGKQSIt4l0h5shzFuOeNk=; b=ro+MYWG+JmT2YEB/62iuK8yM9O
+	3exbN72n/Ol15M23lBZ2inyBUN+ZR/NpTqFeaxX1dns071cyW6QuGVWfdp7yrgIK
+	r4QasFH4QQxmDGAKMid6/K4zFubqMZyxmKItJDX1/jUKYnVOY1noWmIkbjMNNDrD
+	5FPIuteECmGKG8DLQlMqZuR8n5ofokP2FiTQpJoHJ0Lk13VHUUVMME4GHbumaUKa
+	CgdVzHqEF8srQ9JsmJ5K8iOwUd6ibacSl1BsEa0H8c85vbnfDhNTG0Y5Tiee6i9C
+	oDdDqeEJyrdXm0MTr0R4c9nioUaS84Fv1ay6106zHq9lPH+ZzkWkIxgpwT5w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1725878569; x=1725964969; bh=ZFTA+pO0V116RhPMfAQzVCkGKQSI
+	t4l0h5shzFuOeNk=; b=l011lgwrlWJ0pDW7aJCNH/DMfXqPMe/pxYc3knKROLOF
+	hiithLggMKjYVkQuYjZ4HoRXQCw/3SZr4+aiElmc57GycZVuws+sMFQwh/fAUd+T
+	CFEYa9Xusf/s2P9dvcFd2hraW7xhtYpwg7OXDr3WPrlFAn4rRuKFoRIQLeE2aXYZ
+	9ovU8mCvgue8GnbmHlu5j2DpQ9h2mZZf3O/DgPQaGWNe/laiS4vUHSFakXi4VLi4
+	DnAPNXw1YZzJajTxr/tQDSnKZlyVEYKBea4CiWgB9Fh5Q+e5RYWPdz93Qqg7TBUH
+	GJQMB/TzCR0AuW8XfL3cApzkXIGJzye+7nnVeOKrhA==
+X-ME-Sender: <xms:KNHeZr3wBH6Jopv0Q3WJM1mr6LZ6MPHep4kKOSizOqvR3CzWK5QFSg>
+    <xme:KNHeZqFqljSXp3Sdnb8bp5OuQ1XkxH2kE7B9R9LOgn_JaTJ3ZPZdL3F9otWQILt-N
+    ztKzJtkfIvvOoxlXug>
+X-ME-Received: <xmr:KNHeZr5kpGmddeHQGeobGRqYj1b3aXRGNx7CeUj-vCtqfB0fX4BPG9NYtw9CC4jAxGu5dc1UMeKUwvaxiBq878RheAQp>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeijedgudeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdlfedtmdenucfjughrpeffhffvvefukfhf
+    gggtuggjsehttdertddttddvnecuhfhrohhmpeflrghnucfjvghnughrihhkucfhrghrrh
+    cuoehkvghrnhgvlhesjhhfrghrrhdrtggtqeenucggtffrrghtthgvrhhnpedukeegffdt
+    feeihfehteevvdeiueetteelgfefvdfhleeufeegieduieduhfekieenucevlhhushhtvg
+    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkvghrnhgvlhesjhhfrghr
+    rhdrtggtpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepmhiigihrvggrrhihsedtphhoihhnthgvrhdruggvpdhrtghpthhtohepphhruhgu
+    ohesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehpihhlihhusehrvgguhhgrthdrtghomhdprhgtphhtthhopehjrghr
+    khhkoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvggsihgvuggvrhhmseigmhhish
+    hsihhonhdrtghomhdprhgtphhtthhopegshhgvsehrvgguhhgrthdrtghomhdprhgtphht
+    thhopeguhihouhhnghesrhgvughhrghtrdgtohhmpdhrtghpthhtohepmhgrrhhkrdhruh
+    htlhgrnhgusegrrhhmrdgtohhm
+X-ME-Proxy: <xmx:KNHeZg0FjZU7uScSbgbh3obke5N0LOltSv6hXggI3crxdagqrBzwsA>
+    <xmx:KNHeZuGY1IkWebm7_BxT6C3PlBBCxpFFFoMbFj-ouBCuarvFAXy4GQ>
+    <xmx:KNHeZh_aMT-9F9SYnt1-mmeGuoWBrGpIxUVn2J3mwvwDFntn25MPFQ>
+    <xmx:KNHeZrlKYxvrEmbTpDWI3Anq021tpG4tKvxGtuktKSsBYfleGAXjaw>
+    <xmx:KdHeZrdQJNBx9W6KzlOZ1Ky6jBnbcqsbNM-uf-XhwHmXDDXASLcsnz0v>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 9 Sep 2024 06:42:46 -0400 (EDT)
+Date: Mon, 9 Sep 2024 12:42:45 +0200
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+To: Lennart Poettering <mzxreary@0pointer.de>
+Cc: Philipp Rudo <prudo@redhat.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Pingfan Liu <piliu@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>, Baoquan He <bhe@redhat.com>,
+	Dave Young <dyoung@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	kexec@lists.infradead.org, linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
+Message-ID: <Zt7RJepoCiCMRZSu@archlinux>
+References: <20240819145417.23367-1-piliu@redhat.com>
+ <CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
+ <20240906125438.1e54c5f6@rotkaeppchen>
+ <Zt7EbvWjF9WPCYfn@gardel-login>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/9] dt-bindings: phy: sparx5: document lan969x in sparx5
- dt-bindings
-To: Daniel Machon <daniel.machon@microchip.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Lars Povlsen <lars.povlsen@microchip.com>,
- Steen Hegelund <Steen.Hegelund@microchip.com>, UNGLinuxDriver@microchip.com,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-phy@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240906-sparx5-lan969x-serdes-driver-v1-0-8d630614c58a@microchip.com>
- <20240906-sparx5-lan969x-serdes-driver-v1-8-8d630614c58a@microchip.com>
- <c0aa5342-a2af-4ac4-bc33-b6dbfff77f63@kernel.org>
- <20240909082241.hvw3a7yig3pujrsk@DEN-DL-M70577>
- <ee4d4375-873b-4b9c-b694-f0191e5c2c54@kernel.org>
- <20240909094324.u2aahgnrmxkxt7fc@DEN-DL-M70577>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240909094324.u2aahgnrmxkxt7fc@DEN-DL-M70577>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt7EbvWjF9WPCYfn@gardel-login>
 
-On 09/09/2024 11:43, Daniel Machon wrote:
->>>>>    compatible:
->>>>> -    const: microchip,sparx5-serdes
->>>>> +    enum:
->>>>> +      - microchip,sparx5-serdes
->>>>> +      - microchip,lan969x-serdes
->>>>
->>>> It seems there is no lan969x SoC/chip. Are you sure you are using
->>>> correct naming, matching what kernel is using? Maybe you just sent
->>>> whatever you had in downstream (hint: that's never a good idea).
->>>
->>> You are right. There is no upstream support for lan969x SoC yet. The
->>> upstreaming of the lan969x SoC has just begun, and this series is part
->>> of that upstreaming effort. The lan969x switch driver (not submitted
->>> yet) will depend on this SERDES driver, however, their functionality is
->>> really independent of each other. That is why I am also upstreaming the
->>> SERDES- and switch driver series independent of each other.
->>
->> That's not exactly my point. Becayse lan969x appears. I claim you use
->> incorrect name, so are you sure you do not use wildcards?
->> Best regards,
->> Krzysztof
+On 09 11:48:30, Lennart Poettering wrote:
+> On Fr, 06.09.24 12:54, Philipp Rudo (prudo@redhat.com) wrote:
 > 
-> Ahh.
+> > I mostly agree on what you have wrote. But I see a big problem in
+> > running the EFI emulator in user space when it comes to secure boot.
+> > The chain of trust ends in the kernel. So it's the kernel that needs to
+> > verify that the image to be loaded can be trusted. But when the EFI
+> > runtime is in user space the kernel simply cannot do that. Which means,
+> > if we want to go this way, we would need to extend the chain of trust
+> > to user space. Which will be a whole bucket of worms, not just a
+> > can.
 > 
-> So the problem is the 'x' in lan969x, right? I think we have a habbit of
-> documenting compatible strings like this in bindings. Anyway, what I can
-> do is document the different part numbers in the bindings: lan9691,
-> lan9692, lan9693, lan9694, lan9696 and lan9698.
+> May it would be nice to have a way to "zap" userspace away, i.e. allow
+> the kernel to get rid of all processes in some way, reliable. And then
+> simply start a new userspace, from a trusted definition. Or in other
+> words: if you don't want to trust the usual userspace, then let's
+> maybe just terminate it, and create it anew, with a clean, pristine
+> definition the old userspace cannot get access to.
 
-Depends. I remember I was confused about such wildcards before and for
-some cases wildcard was ok. For some not. I don't remember, I don't know
-which case is here.
+Well, this is an interesting idea!
 
-Best regards,
-Krzysztof
+However, I'm sceptical if this could be done in a secure way. How do we
+ensure that nothing the old userspace did with the various interfaces to
+the kernel has no impact on the new userspace? Maybe others can chime in
+on this? Does kernel_lockdown give more guarantees related to this?
 
+Even if this is possible in a secure way, there is a problem with doing
+this for kernels that are to be kexec'd on kernel panic. In this
+approach we can't pre-run them until EBS(), so we would rely on the old
+kernel to still be intact when we want to kexec reboot.
+
+
+
+You could do a system where you kexec into an intermediate kernel. That
+kernel get's kexec'd with a signed initrd that can use the normal
+kexec_load syscall to load do any kind of preparation in userspace.
+Problem: For that intermediate enviroment we already need a format
+that combines kernel image, initrd, cmdline all signed in one package
+aka UKI. Was it the chicken or the egg?
+
+But this shows that if we implemented UKIs the easy way (kernel simply
+checks signature, extracts the pieces, and kexecs them like normal),
+this approach could always be used to support kexec for other future
+formats. They could use the kernels UKI support to boot into an
+intermediate kernel with UEFI implemented in userspace in the initrd.
+
+So basically support UKIs the easy way and use them to be able to
+securely zap away userspace and start with a fresh kernel and signed
+userspace as a way to support other UEFI formats that are not UKI.
+
+> 
+> > Let me throw an other wild idea in the ring. Instead of implementing
+> > a EFI runtime we could also include a eBPF version of the stub into the
+> > images. kexec could then extract the eBPF program and let it run just
+> > like any other eBPF program with all the pros (and cons) that come with
+> > it. That won't be as generic as the EFI runtime, e.g. you couldn't
+> > simply kexec any OS installer. On the other hand it would make it
+> > easier to port UKIs et al. to non-EFI systems. What do you think?
+> 
+> ebpf is not turing complete, I am not sure how far you will make it
+> with this, in the various implementations of EFI payloads there are
+> plenty of loops, sometimes IO loops, sometimes hash loops of huge data
+> (for measurements). As I understand ebpf is not really compatible such
+> code.
+> 
+> Lennart
+> 
+> --
+> Lennart Poettering, Berlin
 
