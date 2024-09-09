@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-321357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50374971951
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:29:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09862971956
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ED65281A3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:29:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A633AB21D34
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B90D1B7908;
-	Mon,  9 Sep 2024 12:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B3D1B5827;
+	Mon,  9 Sep 2024 12:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IE0j7kUX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8xP5ytq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045F71B78F6;
-	Mon,  9 Sep 2024 12:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54DE1E522;
+	Mon,  9 Sep 2024 12:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725884938; cv=none; b=u4aWtrqSbdlwXcBpvOaKSrQPeGpDKscJwrAy2WopIyhLuSEdr5Chs9Oj95Dvdm/ewX+TCMlWSKBvk4UbhLSQYRsDx5ruVlKnwA6GruPk9AmDFu5pT7CriJRLRw/q1VhM3T2dToliER23IwVZNKgy54HakIYWuyNyvrVYdmnbqz4=
+	t=1725885036; cv=none; b=KCCCFadxxKRbRaI4ADpB2RkYPEtKmnHU6WTQcxHLfrzP4jr3aF5ashqftY4ns3yaXI87dlI9MiFgl76BnlE/ItzCckRBhuMInD7qJeoHIUHyvVqTDaLx60G4IFOP74X4/FR2fkQ9/Pc310/H5ua5D3k7ABdf9fmg7ZzniTrpY1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725884938; c=relaxed/simple;
-	bh=5O2h9ZBRnHFV0BV+f7wiOeOjlbMGcr2vAgVBmYYVJnc=;
+	s=arc-20240116; t=1725885036; c=relaxed/simple;
+	bh=OUn/degUiH165tZNLfvps1/lgjuYW32EmyaNsXg1vuA=;
 	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=uVKKuFW+GCBjRv2DiHl6i+6zPg1WQX65PolBlmvA2P24GXjKvJAOsplZi+cn9xhv3jxWlVmFWfOu64zsHWaSwtHSyEZYFwhZoTu7AKBCn+mH8bHpJwCoX6Jdq9zlwSuBMG8lr6wzrfB8J8PRszZmz+isb+i+E6zpZqTT/jNFO2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IE0j7kUX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32984C4CEC5;
-	Mon,  9 Sep 2024 12:28:56 +0000 (UTC)
+	 Cc:Message-ID:Date; b=EvvOcjJnQ0Kcq5ABHaFeR6qLGsUGiqzF2Ja4hWlDXiRCQP0YMRl/LpDtgqbH/xCIu4FaARV6UlEVOSJN9L9xSzACfeJDrhVeU3wbwH5lzBjqOfkmcMCe4NuXihcgs5CrMRkrTovemqsT5G5wT7pLOpBZ3pxjjfYSNePoSI6sjqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8xP5ytq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72323C4CEC5;
+	Mon,  9 Sep 2024 12:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725884937;
-	bh=5O2h9ZBRnHFV0BV+f7wiOeOjlbMGcr2vAgVBmYYVJnc=;
+	s=k20201202; t=1725885035;
+	bh=OUn/degUiH165tZNLfvps1/lgjuYW32EmyaNsXg1vuA=;
 	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=IE0j7kUXjC9JZfuKX542/C24MiB3E81jpqu+3CvAoVLU53+Ig93ne320fT045i9PE
-	 KHDl7OODbEx56+8cfAIB4utqcNte0hR5hnCc9tP7/9B1UXcoF2j4dclEU5c+pR82bW
-	 KSLjizGmDHw+9zyK3Qj72uKPqLY6/KV+pgUqeqGH3AAX8pRTCJkOZ7IXO/HtSuvWkf
-	 6ISpB/cFyAjwko90OoafwUf8Oj94Hnxm1BlG90r4Oeu+Zc63PCJvbkxckccUAVRL5l
-	 CrTP0AIY5t1TOBb3cBLG6eQERgOpAOgkQEEfy7lIcXbsbTCo+IiRE+pZsbaTefvcX9
-	 Mzl6m37f0c7Dw==
+	b=o8xP5ytqGtSGwMeIHwXV/gYK9s33IQNMG+ym2oxDo4sQi6G18aaD20mAKJL0PNKND
+	 XSkCog4OVizqGbzx3Ydo18T1cEre7gULlG9UT4KXnzdoPJaq5QBUTOFleFdwbqW2HP
+	 mxRHdGpxaqdwC0Ktx0IBN+HdwVhq5UhMa9hsSvj+WwjExnDGO36UJjBwW9+m9Jh4Mz
+	 m2BpyZ8to0tZQVDI1KTC8vw8u1gEQ+OSEVzQ5ltjLZ/RS6ieVftSjPbMRNWalwZNnP
+	 6UguEEAeg6xPRN/aPW0pXzNPLybV2IeO4/fRg6L/O8nJbGs96Ye3iCuRaUr7HI1yp1
+	 5/qCL7MhIBt9w==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -47,46 +47,30 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] wifi: wilc1000: fix potential RCU dereference issue in
- wilc_parse_join_bss_param
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: libertas: Cleanup unused declarations
 From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <tencent_466225AA599BA49627FB26F707EE17BC5407@qq.com>
-References: <tencent_466225AA599BA49627FB26F707EE17BC5407@qq.com>
-To: Jiawei Ye <jiawei.ye@foxmail.com>
-Cc: ajay.kathat@microchip.com, claudiu.beznea@tuxon.dev,
- alexis.lothore@bootlin.com, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org
+In-Reply-To: <20240903115811.958692-1-yuehaibing@huawei.com>
+References: <20240903115811.958692-1-yuehaibing@huawei.com>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: <yuehaibing@huawei.com>, <libertas-dev@lists.infradead.org>,
+ <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172588493454.2095526.12090951581547763945.kvalo@kernel.org>
-Date: Mon,  9 Sep 2024 12:28:56 +0000 (UTC)
+Message-ID: <172588503287.2095526.16517907817437814288.kvalo@kernel.org>
+Date: Mon,  9 Sep 2024 12:30:34 +0000 (UTC)
 
-Jiawei Ye <jiawei.ye@foxmail.com> wrote:
+Yue Haibing <yuehaibing@huawei.com> wrote:
 
-> In the `wilc_parse_join_bss_param` function, the TSF field of the `ies`
-> structure is accessed after the RCU read-side critical section is
-> unlocked. According to RCU usage rules, this is illegal. Reusing this
-> pointer can lead to unpredictable behavior, including accessing memory
-> that has been updated or causing use-after-free issues.
+> There is no caller and implementation in tree.
 > 
-> This possible bug was identified using a static analysis tool developed
-> by myself, specifically designed to detect RCU-related issues.
-> 
-> To address this, the TSF value is now stored in a local variable
-> `ies_tsf` before the RCU lock is released. The `param->tsf_lo` field is
-> then assigned using this local variable, ensuring that the TSF value is
-> safely accessed.
-> 
-> Fixes: 205c50306acf ("wifi: wilc1000: fix RCU usage in connect path")
-> Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
-> Reviewed-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 
 Patch applied to wireless-next.git, thanks.
 
-6d7c6ae1efb1 wifi: wilc1000: fix potential RCU dereference issue in wilc_parse_join_bss_param
+54c9b9735246 wifi: libertas: Cleanup unused declarations
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/tencent_466225AA599BA49627FB26F707EE17BC5407@qq.com/
+https://patchwork.kernel.org/project/linux-wireless/patch/20240903115811.958692-1-yuehaibing@huawei.com/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
