@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-321059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 540B79713E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:36:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1879713F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 805CE1C22C36
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:36:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3203F1F276F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC2A1B7904;
-	Mon,  9 Sep 2024 09:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063A71B3725;
+	Mon,  9 Sep 2024 09:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jrF/MW2q"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kt4o5tHy"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF98E1B78FA;
-	Mon,  9 Sep 2024 09:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8EE1B1D4E;
+	Mon,  9 Sep 2024 09:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725874402; cv=none; b=gthmD/E4zK9iN25OdVPiLc45kzWE6HMm1AnTjYI0RbzQoJF18+4mEzCPGRF30gOYabqWgqs6hUwkXwseOuFSdD8GlOwFR1jcFkEjEjgu01fEyrj6jbqMzKj64811DubWh++b085UV2SLlYT424D2p6PMJux6ocWFoXrzghoxU2A=
+	t=1725874620; cv=none; b=mnstabQgj3P85Axz5cy+FxvjHnunD5qCCuDa3x0O/oGLIek1jEX149p8yvwfH/TpOZvxQ8JlC+Y4NHU70l+01WPgPzEX5nQUEngVmwdNCNBXKOgtElzbearGc5BXhk3sHubg8CdHm7sIX8OqjgHmYHBG9YVSJKIsWh5OMcB0riw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725874402; c=relaxed/simple;
-	bh=PLDOu0hJeXUrdPFd45o3G1smItDcEQJxKOPJ8j6E0J0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o0NYHfpLQFzZKLRiSq097J3pLucoqgR0w2jjqgNgsZy0ajpQJ1ntC80a87QIbRXaOL0rsO0hBw09tTUBOx4Q+IJQF3snByzrE940uV8kTYV01ypjNPOGfC8iyL+XJEHcGVKwvd8cVb2odjRKwZBl1aPbc63rwEUsQqMuoSb1jNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jrF/MW2q; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725874397;
-	bh=Y3whYM0Hw06COQz5uKBqKXlBUIklvczzXpbwxID6qEs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jrF/MW2qx9wFMIzNy99FTuMz/XdERqIPxOJgQm50Q47Mr4C8CxmNxY7yhV/Xwzg5O
-	 L4nmn4dSuF66ASAVT6sbNl8joUeu9qn/8P2z6bv0YBdPGSdLjx4vcIlJ4nEf33yWO5
-	 y+cN+Mr8M1tHnUTBz9oHczRLkygWuyHzA3wKOx5k/v5OT0nKAJblV+oxtpfRKGD6IV
-	 JGRYVz4yYxBgI/vO5Xs7oVlMU8+tWzF1sNpAVQ5F8eD6KHkCklBVrHMyT+j5xXSPR4
-	 VBMc2ern7SWJE5Lq/K2zI0N2Pg3mJsZRShg571IMXg82Yxs0Ipy/ponqJNA/QJxL87
-	 WRQhDC9gbujKA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X2M8F5lXhz4w2N;
-	Mon,  9 Sep 2024 19:33:17 +1000 (AEST)
-Date: Mon, 9 Sep 2024 19:33:16 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the slab tree
-Message-ID: <20240909193316.007148df@canb.auug.org.au>
-In-Reply-To: <c741cfbb-f209-4466-9d35-aef32dc3424f@suse.cz>
-References: <20240909171220.32e862e3@canb.auug.org.au>
-	<20240909181035.4ffd7434@canb.auug.org.au>
-	<bde596e3-365b-4fdb-8a03-0a4e40a56246@suse.cz>
-	<c741cfbb-f209-4466-9d35-aef32dc3424f@suse.cz>
+	s=arc-20240116; t=1725874620; c=relaxed/simple;
+	bh=GQEr/9zpRirO1wQsM0VqynSiZInCc24ILWtlBq5o0yQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dvehJkSdUxib6hBpi8Vd9H2I3AVlRFlu669jKoNjYf/49WReRhyrFLRRuPAbDaT9RcVPAsITa1PDRJO/8xJHAGLafCoctZe7E4K3N+wUfRMaQPW9r2NrLo2xHCguKoV3Kj2mINrH4Dykq3XUk4VL608TOlAIDK/rM6xWopxB/Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kt4o5tHy; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4899aPEr114802;
+	Mon, 9 Sep 2024 04:36:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725874585;
+	bh=9rFahbn1qIk8LJHzDYN4y2k/Snsiv71P703icd1KpGI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=kt4o5tHySTtI4MT0ZHZRH5WucoWLVokLdUlABPXgQVIm2Cd3JTDqPhSQvDi4GWvGR
+	 xfSssveZrHUXx8a9VcEoYnYStzA7aw+88XIKPWMPdDWApIYSaun/iKK/FSFQVTBw3v
+	 WPPGGrRsWhseNDS7kv808vtRuQ2mF9uPB47lW9QE=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4899aPTn104813
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 9 Sep 2024 04:36:25 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 9
+ Sep 2024 04:36:24 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 9 Sep 2024 04:36:25 -0500
+Received: from [10.250.149.85] ([10.250.149.85])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4899aKaD032721;
+	Mon, 9 Sep 2024 04:36:21 -0500
+Message-ID: <7a7f5870-b74e-4c0e-8d76-b97b45bae963@ti.com>
+Date: Mon, 9 Sep 2024 13:36:19 +0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/tRfC9vyh8EsWDiSalMzOJzL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH wireless-next v2 2/3] wifi: wlcore: sdio: Make use of
+ irq_get_trigger_type()
+To: Vasileios Amoiridis <vassilisamir@gmail.com>,
+        <arend.vanspriel@broadcom.com>, <kvalo@kernel.org>
+CC: <knaerzche@gmail.com>, <leitao@debian.org>, <linus.walleij@linaro.org>,
+        <javierm@redhat.com>, <linux-wireless@vger.kernel.org>,
+        <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20240904154919.118513-1-vassilisamir@gmail.com>
+ <20240904154919.118513-3-vassilisamir@gmail.com>
+Content-Language: en-US
+From: "Khan, Sabeeh" <sabeeh-khan@ti.com>
+In-Reply-To: <20240904154919.118513-3-vassilisamir@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
---Sig_/tRfC9vyh8EsWDiSalMzOJzL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Vasileios,
 
-Hi Vlastimil,
-
-On Mon, 9 Sep 2024 10:49:45 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
+On 9/4/2024 7:49 PM, Vasileios Amoiridis wrote:
+> Convert irqd_get_trigger_type(irq_get_irq_data(irq)) cases to the more
+> simple irq_get_trigger_type(irq).
 >
-> ... so it would have to be either slab tree from 20240905 (before it
-> included the vfs commits), or vfs from 20240906 (before the commits on vfs
-> side got different id's).
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> ---
+>  drivers/net/wireless/ti/wlcore/sdio.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
+> index 92fb5b8dcdae..9e1b644beba9 100644
+> --- a/drivers/net/wireless/ti/wlcore/sdio.c
+> +++ b/drivers/net/wireless/ti/wlcore/sdio.c
+> @@ -324,15 +324,13 @@ static int wl1271_probe(struct sdio_func *func,
+>  	memset(res, 0x00, sizeof(res));
+>  
+>  	res[0].start = irq;
+> -	res[0].flags = IORESOURCE_IRQ |
+> -		       irqd_get_trigger_type(irq_get_irq_data(irq));
+> +	res[0].flags = IORESOURCE_IRQ | irq_get_trigger_type(irq);
+>  	res[0].name = "irq";
+>  
+>  
+>  	if (wakeirq > 0) {
+>  		res[1].start = wakeirq;
+> -		res[1].flags = IORESOURCE_IRQ |
+> -			       irqd_get_trigger_type(irq_get_irq_data(wakeirq));
+> +		res[1].flags = IORESOURCE_IRQ | irq_get_trigger_type(wakeirq);
+>  		res[1].name = "wakeirq";
+>  		num_irqs = 2;
+>  	} else {
+Reviewed-by: Sabeeh Khan <sabeeh-khan@ti.com>
+Tested-by: Sabeeh Khan <sabeeh-khan@ti.com>
 
-You need to remember that my time zone is UTC+1000 :-)
-
-> I guess if you rolled back vfs side in -next, then it makes more sense to
-> reset vfs, and if slab side, then slab.
-
-The vfs-brauner tree is merged into linux-next earlyish in the morning.
-the slab tree late in the afternoon.  My preference is to rollback the
-later tree is that works.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/tRfC9vyh8EsWDiSalMzOJzL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbewNwACgkQAVBC80lX
-0GxUIggAkHHpOvWVe9thOJKuweIZkAOov6bcs850brOol5CiAvVmxsc0ckuWll+e
-wEpcj7bHkXW0pVnUQaeFhmvRzKe0BxwE3h4wTENr/RavD/DjtpvtE2B2TQR1CenA
-Sv6AduTcaWbPP5RhUP4KH161sv6bWFXYoZqXGvs2P8z/tT8/j9s79fIlZj3QV6ww
-awd8XxYZz0BIkMGvF7oTs1Sw2/tuLwadx/+UUI0OvU3jryVA1ac4UHqq7Q4nXV/9
-8JxGIaxF37ZoLigxgUbDWYnfDQ1RZ8qQqc2XSYxfcj92AUiWPOMlZ8cXRBiqyr+H
-gB7BOBdnwnmkZccBwGwNQ7wy3cH0Ew==
-=JVU8
------END PGP SIGNATURE-----
-
---Sig_/tRfC9vyh8EsWDiSalMzOJzL--
 
