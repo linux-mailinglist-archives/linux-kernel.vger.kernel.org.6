@@ -1,112 +1,156 @@
-Return-Path: <linux-kernel+bounces-322035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FCB97231E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:03:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AAAE972322
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3A4F2855BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:03:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD28D1C23386
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC58918A922;
-	Mon,  9 Sep 2024 20:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FF0189F2F;
+	Mon,  9 Sep 2024 20:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cYb7epX4"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGSsTNC6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D6C1304BA;
-	Mon,  9 Sep 2024 20:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C3C1F95E;
+	Mon,  9 Sep 2024 20:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725912186; cv=none; b=LZqmMo3GyArfw14cuLYM9LDE6N9sMDiPXdOTiYzvEDcvpY+1ylKCUvRA8hIe3jyGwdu6cI1OyLNoIsUJrdHM2q+7xjTlF+Ibl6xjH2nAeXHYW0THBATH5b5WQomWjtodn4VAxXNKu9jTQEjW4HrpBx9C81c+Qau9UAlk/7bEPgg=
+	t=1725912315; cv=none; b=PKIPmXP/5O0aBhumgWVsm1M3xV+KFqios3ouNcc6ux6g/4oQcJIrLgKZYwUgCe6cqGcO6XvXXG1fAAwkxAKrCxnlbjBYNFzf18DfmhtHvfyNUSmoy2vH+5mbWCUlxXYxFqLc6cc1VvWl6whFFb+DEtxSe6NPL8fOcMtBUn9AZmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725912186; c=relaxed/simple;
-	bh=98ATOqRpPlw66eNskJRZJR4j0GxcPt3Mqkps8rzxzXI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q9Ibmbi+ri1xI6rb/OFAs7F/p5Ztm8ChutEn0/duxB/XVcvgljqilgFo2P005BCEQmpAFa9SbkenFEtJtjInHQih/E6SzxAr/MCbJuUFRUltaIA1iD6rr0Wh9DIlUeDEx6jzyJI90m6kmzJY5hFy4hdi1Mq71yBkwXhAnjvMFQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cYb7epX4; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-718e482930bso1460483b3a.2;
-        Mon, 09 Sep 2024 13:03:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725912184; x=1726516984; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XIpVNTIU7AkD5qFomoi/slMfyi8wrL5+kfsNJ7Mu8EY=;
-        b=cYb7epX4QuIBXakh3b7oVVB6kz3Lrdig12yXgKKF35UhyCHjjq2343dApswxhIm/Yb
-         szLEtLj/p4JlRK6WlOZ8S1JROu+9ZgmVrhGTa5BbyASMdSTk7TQFLI6CTk1xcZA81PMB
-         khIFjytazcZ9i4beIuAJHuQOU2kouT7abITXUbior7l6jZVcat7cmAA+mbAVoVkAIsA8
-         YiiOPdFhj1CQolkDsx1He0lX9vxRzEcKD8i2pfEPAHN01p++mAzURdAI8KogLMmyttia
-         TAN+jlJ0F1f3TicagncN3X8zK87XMKh5P1PCxY+z1rauY6JQgQHAQddH8RAh/326fXx1
-         ZrEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725912184; x=1726516984;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XIpVNTIU7AkD5qFomoi/slMfyi8wrL5+kfsNJ7Mu8EY=;
-        b=A6WGS0vwpER7BVmGX8CcZOKMLKeTwm1NUR8/u3UNfv3w7YinUezVFy6/2OnRDOUZVT
-         9BB5cILjugFycLFKt78WoG1uT4Jbqe6cIKqFSc/XY3yJFYv0iJqFY8/6aQPDL5CHgW5n
-         296DMw71SzuFlcdrgv/5TZAEJ4Ja+tddgaSTI1FS4sRMVRxKA8uvi4v1DPKf8XmVSy4T
-         v1SPIUuYOWo73oStR3LHaqpezrZl5qcu29/ODnlHgPK2DePtCp8LoLRuXNj0kbTrHIoZ
-         dASilSap56SxFM+1WkaJDcVvtoF+UwIXcXj300pQ/bR9jZB9pwUQJT3vR+93pEA2rGu1
-         LJIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3SEAtUEA66KhrSidhWJsbHx7hpgw2eZeuTvePFEEIwqqDjkRSexI0f/9oEh63YB4jUYgmlw1bhuM=@vger.kernel.org, AJvYcCUNWLZnlich0ry7m2SeEoURVCWOPzC3A3VOM0CJZ4vfUSeOiTicRwHoOwXKofwURMLejgSUeR3Sr506fo3U@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqk18BaEiA/rGKhQIvyWcI4c1HdAfaAzWHzf0mucrUGRC3Ji7J
-	Chi4Qh0lSjCNvShetCB4EzIgHcCPUMrtgzhezodD8SXiprgcp29I
-X-Google-Smtp-Source: AGHT+IHPYLUqDL9wxAHrYhKP1C7rVJvZOr82JaMztbBhc457FG8zFTv3sXRmmYAsW5VdVnxAsMdvRA==
-X-Received: by 2002:a05:6300:4c:b0:1cf:32b6:bcd with SMTP id adf61e73a8af0-1cf32b60ca3mr9822622637.33.1725912183946;
-        Mon, 09 Sep 2024 13:03:03 -0700 (PDT)
-Received: from Kuchus.. ([27.7.2.211])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7190909222bsm110594b3a.115.2024.09.09.13.03.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 13:03:03 -0700 (PDT)
-From: cvam <cvam0000@gmail.com>
-To: kbusch@kernel.org,
-	axboe@kernel.dk
-Cc: hch@lst.de,
-	sagi@grimberg.me,
-	corbet@lwn.net,
-	linux-nvme@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cvam <cvam0000@gmail.com>
-Subject: [PATCH] Typo in the file 'feature-and-quirk-policy.rst'.
-Date: Tue, 10 Sep 2024 01:32:53 +0530
-Message-Id: <20240909200253.19818-1-cvam0000@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725912315; c=relaxed/simple;
+	bh=WAjFmHe8CHpD+UbXJ0yMn429XuMtyhYznyF+ycDlMRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PpxTyjWYe2gwZCAbO686Ur/Q+uCiHyjwUr/ltxlFFhkaF/kPv/UuL+yoPaxSOZt9cPv+S1cExzeiX7ivMHuzX2GY0ZQwH6dSZEuCLNJMd7BynkDeMoKMdE6vHaLFPl59vufOPQvF39rcDkPjD9GnxfpqybajbfcHCrE1dDiOw08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGSsTNC6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E0AC4CEC5;
+	Mon,  9 Sep 2024 20:05:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725912315;
+	bh=WAjFmHe8CHpD+UbXJ0yMn429XuMtyhYznyF+ycDlMRw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AGSsTNC6StWvz0ciGaK9NhvO6Zgb/AHhG3iN5H4Gcg2fff0kUgsFNiC1JEFMw+0ac
+	 sIbKL8bZkT1gox4K75CFXdgCAN8l1eu7EdnvnIVO81i8oaPqHauh5dCePJAcTTcgRx
+	 PU/BsIt5GDNCB9MUTRRuDP0LN7skFUjfdKNf1DzR+f/GJKZoIfPvJ6i7NoY65OqAGD
+	 GNdMeVOlsla18fAI5ZxdDwQrkOZfWrj7QzWDhuDYVO8iTG5IA9ftmjOKISzL++eA3l
+	 jxcFvZcNXak3fhomT/hHB+KhlL1YO32qMPYUJZ2KLBioDso3sdHZ7XZo+NcDkQG8OT
+	 6lBMCziXzyUJA==
+Message-ID: <734452da-6a3e-4063-ab42-607ac8dd10ac@kernel.org>
+Date: Mon, 9 Sep 2024 22:05:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] arm64: dts: qcom: Add coresight nodes for x1e80100
+To: Jie Gan <quic_jiegan@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, Tao Zhang <quic_taozha@quicinc.com>,
+ Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+ Song Chai <quic_songchai@quicinc.com>, Yushan Li <quic_yushli@quicinc.com>
+References: <20240905103825.2154633-1-quic_jiegan@quicinc.com>
+ <20240905103825.2154633-2-quic_jiegan@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240905103825.2154633-2-quic_jiegan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-location: 'Documentation/nvme/feature-and-quirk-policy.rst'
-tested: Not breaking anything.
-Signed-off-by: cvam <cvam0000@gmail.com>
----
- Documentation/nvme/feature-and-quirk-policy.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 5.09.2024 12:38 PM, Jie Gan wrote:
+> Add following coresight components for x1e80100 platform.
+> It includes CTI, dummy sink, dynamic Funnel, Replicator, STM,
+> TPDM, TPDA and TMC ETF.
+> 
+> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> Tested-by: Yushan Li <quic_yushli@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 1516 ++++++++++++++++++++++++
+>  1 file changed, 1516 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index 74b694e74705..9d6f3098e144 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -305,6 +305,19 @@ CLUSTER_CL5: cluster-sleep-1 {
+>  		};
+>  	};
+>  
+> +	dummy-sink {
+> +		compatible = "arm,coresight-dummy-sink";
+> +
+> +		in-ports {
+> +			port {
+> +				eud_in: endpoint {
+> +					remote-endpoint =
+> +					<&swao_rep_out1>;
 
-diff --git a/Documentation/nvme/feature-and-quirk-policy.rst b/Documentation/nvme/feature-and-quirk-policy.rst
-index c01d836d8e41..b5461aa303a4 100644
---- a/Documentation/nvme/feature-and-quirk-policy.rst
-+++ b/Documentation/nvme/feature-and-quirk-policy.rst
-@@ -1,7 +1,7 @@
- .. SPDX-License-Identifier: GPL-2.0
- 
- =======================================
--Linux NVMe feature and and quirk policy
-+Linux NVMe feature and quirk policy
- =======================================
- 
- This file explains the policy used to decide what is supported by the
--- 
-2.34.1
+Don't be scared to keep the lines 100-long, easier to read that way
 
+[...]
+
+> +		tpda@10004000 {
+> +			compatible = "qcom,coresight-tpda", "arm,primecell";
+> +			reg = <0x0 0x10004000 0x0 0x1000>;
+> +
+> +			clocks = <&aoss_qmp>;
+> +			clock-names = "apb_pclk";
+> +
+> +			out-ports {
+> +				port {
+> +					qdss_tpda_out: endpoint {
+> +						remote-endpoint =
+> +						<&funnel0_in6>;
+> +					};
+> +				};
+> +			};
+> +
+> +			in-ports {
+
+'i' < 'o', please sort things alphabetically if there's no other sorting key
+as per Documentation/devicetree/bindings/dts-coding-style.rst
+
+[...]
+
+> +		tpda@10c2b000 {
+> +			compatible = "qcom,coresight-tpda", "arm,primecell";
+> +			reg = <0x0 0x10c2b000 0x0 0x1000>;
+> +
+> +			clocks = <&aoss_qmp>;
+> +			clock-names = "apb_pclk";
+> +
+> +			out-ports {
+> +				port {
+> +					dlct1_tpda_out: endpoint {
+> +						remote-endpoint =
+> +						<&dlct1_funnel_in0>;
+> +					};
+> +				};
+> +			};
+> +
+> +			in-ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@4 {
+> +					reg = <4>;
+> +					dlct1_tpda_in4: endpoint {
+
+Please keep a new line between the last property (reg here) and the
+following subnode
+
+I was able to confirm that this patch doesn't break booting on the
+Surface laptop anymore.
+
+Konrad
 
