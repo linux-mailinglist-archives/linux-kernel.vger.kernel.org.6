@@ -1,106 +1,183 @@
-Return-Path: <linux-kernel+bounces-321839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5D6972027
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6467D972029
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 966AE2846C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:17:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C0AA28432D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40EB6170A01;
-	Mon,  9 Sep 2024 17:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AD816EBEC;
+	Mon,  9 Sep 2024 17:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JY3sl1qn"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ModtjG1U"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675F3282E2;
-	Mon,  9 Sep 2024 17:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B78282E2;
+	Mon,  9 Sep 2024 17:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902222; cv=none; b=ox8wiu3NJeCJu8x+DLd8S752APE9BG5qAAuZN1sUxiO5vq6laR+bMgOcPAA1CVRBqxBxkV71bPRCmHXa+Xz3ObOj5dktieKl/LNYhhAV/lac6JMpjDvxWNj3bhSRfaNQ/h/4vGk+lvT5hfxNUPgBBuvP8ivpFEYWQ30ezLWFGbA=
+	t=1725902267; cv=none; b=YkPW3bj5D60SjA4JRvHfvbChTsFtEJCZt79brzq/BJ+CFc6Smld0DVkGLS/skSJEdTJb1Z/lDB9kHFirkaqVg/SD8AAHaGyVTqXAWFIZIJahyC5IhRXrivj3RjpPjKIKP7s4YJ8vnik7UrdPbYy0I5jSJJ3dM0ijQ/1rFB5ZY3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902222; c=relaxed/simple;
-	bh=J7ZxKBd8GNjoUAMjkac/WKKJV8okz4PGJYbZ3Y3ZgkY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=avZw4+A9J/4aQYo2I5ib3LMtSBOWEcd5ut0/qIoOg/1lntqjnsDcZ31cBsCFXSYh+v4yfXAFWcVGyT4HSU7eirU1N+7cbPC37o5fsFMb+uv5EBsawRdFzNU2KErWMA1FdBOEjNMozgylahL3DNBpMV4IhhHFz1nEaJ5rhk+lJ1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JY3sl1qn; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1725902267; c=relaxed/simple;
+	bh=tJnZ0MyCyvB6YXbCZujAhcaDHD/eOAYo73ue6WDv1Ew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VW/FZRYZv+lWOJ/HJ8BKgMNzRSN6yr9mtABh71NUpjZ3j8aRc+0gZzdc+tPQ/qeBN895lvtZBGEt4ecEXE10ncyR5jSwDruj6/TXhFIPv60q0z8tu4jLeXXhYE/7U9BW0tbRM2H0wSc5C5NouOJQ6Xrq0uXIRzaQgg+Mm1Slec0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ModtjG1U; arc=none smtp.client-ip=209.85.128.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2068acc8a4fso43325395ad.1;
-        Mon, 09 Sep 2024 10:17:01 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-68518bc1407so50619887b3.2;
+        Mon, 09 Sep 2024 10:17:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725902221; x=1726507021; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hauHXk0UHvL9WIL9OJwYkRJrxeJ42bwu7guvi9wUyZ0=;
-        b=JY3sl1qnjLg4/r0ntWouCd3WpY6GppXlx7hP2US9/VU584jvVDDxGbXMp1FyZMnUWo
-         u77ji/zmcuV+Ht5XwvQK0rEnwb3x7MFuz53Q9jh2ur7ElNGIlv6OCNEmxx/JROojhLFt
-         YXKIYFXRV8LIjAX6OS/go5ey9rYvtQr6iV+j492LWMm3e6L1HBPTgHlRy41xaaib8SMa
-         BrTSK/mmx2nPKfT9gu35IE34sOapUlPSHBmWKx09CTLG787B8B4TyLLhdwuLIsKoAHnS
-         tjNPSpyb5jRu29bAFSecb3eiYoJ0SnaVvWz/r1SE4pHLMxEMJHsGSOs4nYTBn9tVraxv
-         oHuA==
+        d=gmail.com; s=20230601; t=1725902265; x=1726507065; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GLjwZvtm9fDNmFus3AqmB0mN+HgGQoej9Lv75TKzLzs=;
+        b=ModtjG1U7aFX0rX26SBNXvteQkw3x+mfYqUIAej27r7y59Nn6ZCtvzz1fGTg9Xw2b/
+         iNb/YoQ6+h4Rezsmc9c3u9SRbD8VJ4cso8Ky5HjBdNja7tbiQOPCttsq+UdlG62WOqqw
+         A7uJUvmwjpCFt9pxFjX/wEzh21R7OVQAY7KoWSFlrNG3VZVkIHDwiWEtfe8udfE4mEIV
+         7X/12eucRAzAVPLWL867BlbWrLXA1MN8k+cbQ+e99NOOx+rpK89MBmo7+oACIU5dDiDn
+         ktG3NQK4/vM50nbB2ID9nvgil5IWTwlrWl9R9uPNpByRnm8/fwFgVhu4WVEK+g0MLtPz
+         2tKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725902221; x=1726507021;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hauHXk0UHvL9WIL9OJwYkRJrxeJ42bwu7guvi9wUyZ0=;
-        b=IsFA5TrjJD1bOO8Zm9m+acIxCxZOk2YuXKFp8te2+7Ih4sAmLQMcvg81sWDnoxvWrL
-         VjdJmUGLqsm5FrUFD23h7vjUOYPqTxt+itsWLyx3ngQgK4fmHI4jIJ7xFEPDbJyUvgj8
-         vrP8thmGJXVqMd1h26GWrb6vfBaSGAtv4VXMq5+Y0p3eJt52i4MMiF+jpGYrt3y8avIc
-         4xragrImeDAP2o+evEj0VZiUyMKlqMknmkD0Vw85ARqyTsQXzKaF4x93id+YXQob5Vlt
-         ruqEkkdVe6oLP2I0ZOMOc1SJ/nKoaWj2gV5CFjuPPL3U4ZnZGraM/vc15tC+kLwnaqPi
-         jM/w==
-X-Forwarded-Encrypted: i=1; AJvYcCULs+ix832Mk2eoGb7l7AlJANgr76nQO4wJuhygM78F9QD6CgwUh9fv6IF3+CmOjGsw7MVBHQhK+s0=@vger.kernel.org, AJvYcCVNOhC5/C7VxrZC/UEMv9StGpphYo6rW9ciOv/q8wJR0OIuc9f4dYpQ/NObGC/G9uicjyvTwAI9cTNS@vger.kernel.org, AJvYcCW+fBVEoeWHSO9mtClJ8+Oupb00Lxg+ve+kz+3+z6ZgYjajb5dX5ptZ/DeYNyD0TykLJCtV202bK+brfLOu@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRrgs2HVLGn49fqyalsvTjwtoGJB2HNakjO8hofUa7nw9BVSKC
-	FZ6sxyt6JlCLdcizJ5JVV42e9AXeIwUO7nW3k2TdXa/gJRA4x+b2
-X-Google-Smtp-Source: AGHT+IHnNeEvODa1Qt6cj+F9ZMmq0nJBVXi/m6bl9hffcSzJHoVbOj9/wfPZtg6NqY9graxO1THDuw==
-X-Received: by 2002:a17:903:120d:b0:205:866d:174f with SMTP id d9443c01a7336-207070002e8mr83668675ad.44.1725902220449;
-        Mon, 09 Sep 2024 10:17:00 -0700 (PDT)
-Received: from ?IPV6:2601:1c2:c184:dc00:6c38:4539:e063:d0ba? ([2601:1c2:c184:dc00:6c38:4539:e063:d0ba])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f31729sm36233705ad.261.2024.09.09.10.16.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 10:16:59 -0700 (PDT)
-Message-ID: <08466bb0-4306-4941-97e1-e62ba07d8ea2@gmail.com>
-Date: Mon, 9 Sep 2024 10:16:56 -0700
+        d=1e100.net; s=20230601; t=1725902265; x=1726507065;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GLjwZvtm9fDNmFus3AqmB0mN+HgGQoej9Lv75TKzLzs=;
+        b=t4pUgYwWEV53WZDSFurJfEJY+8Q59Cqnpa6g1ivA+R7ClAQhO5OWjdVQwb/4/zvxrY
+         reeWjMVs2P6O6ROdCG/R/0Rm6G+w16W75NTGQ0jHifE99UvdW3CpIx3biDlVn4L1XXMy
+         15XRe54FG4wnc4v87HMwND4IGfFj1Vz7cJ0ZXJ1bI04u4gmZ+VZIE5SnPnY7UQlLs2L/
+         q9KR0pkaVXHpvzQpuAwDQL9vctzlQyiA6QoVNnLwsAJMMDJkRcAacFnpe5Hu5YMt6qcc
+         glmBEJUGScmHB9WxC1f0+sh4KcOjHGFluJiofh1UPuQcv55J+khQDhWPgVGF27o7azER
+         UOxA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/D/GrWLZiwpArCpUtAPsT5pjB80DtdQkb9QoVF6bKyIRjB88zD9as9/FP0i6+axQdatXYxAyJ+Sn0jB+jaDxS6A==@vger.kernel.org, AJvYcCWzzJs89WoQk7VttfkGfHpUJOmK71+M43NlNy0oG9XHaUy/tajfP0XFf8ZbbSovgqyxIudbswa5MsUpStE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzsw5n+yIQgCHZ0iPxDZNGeH8o3V1Onbqlbv6kbou2vQzYDh8zr
+	uukmNGDJK9aQCj/PWx7T7Q9u019u+qim31UvnN/f+msOrwPwu8HJkdy13DXDRagiGFLDiyJ+rIZ
+	MoIVdnzwVWSb5wD8AFzhEkKDSGgY=
+X-Google-Smtp-Source: AGHT+IETKPuUGYlF0a95Dcrs0q8kYMg/nXPOO4xkyP4nywoxfffqTqNsXSFFkep26h1GjAoRE7CostnwyVE8fipdl0E=
+X-Received: by 2002:a05:690c:2b83:b0:66a:ba89:d671 with SMTP id
+ 00721157ae682-6db45154999mr102218757b3.35.1725902264799; Mon, 09 Sep 2024
+ 10:17:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Sam Edwards <cfsworks@gmail.com>
-Subject: Re: [PATCH v6 3/3] riscv: dts: allwinner: d1: Add thermal sensor
-To: bigunclemax@gmail.com
-Cc: anarsoul@gmail.com, andre.przywara@arm.com, aou@eecs.berkeley.edu,
- conor+dt@kernel.org, contact@jookia.org, cristian.ciocaltea@collabora.com,
- daniel.lezcano@linaro.org, devicetree@vger.kernel.org,
- jernej.skrabec@gmail.com, krzysztof.kozlowski+dt@linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-sunxi@lists.linux.dev, lukasz.luba@arm.com, mkl@pengutronix.de,
- palmer@dabbelt.com, paul.walmsley@sifive.com, rafael@kernel.org,
- robh+dt@kernel.org, rui.zhang@intel.com, samuel@sholland.org,
- tiny.windzz@gmail.com, wens@csie.org
-References: <20231217210629.131486-4-bigunclemax@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20231217210629.131486-4-bigunclemax@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240824163322.60796-1-howardchu95@gmail.com> <20240824163322.60796-6-howardchu95@gmail.com>
+ <Zt8jTfzDYgBPvFCd@x1> <Zt8mMB7rkgSY1VSD@x1>
+In-Reply-To: <Zt8mMB7rkgSY1VSD@x1>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Mon, 9 Sep 2024 10:17:34 -0700
+Message-ID: <CAH0uvojsnmgj-55ftARr9=6vPv55tvEtQtNp1yvUr7q46irY7Q@mail.gmail.com>
+Subject: Re: [PATCH v3 5/8] perf trace: Pretty print buffer data
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org, 
+	kan.liang@linux.intel.com, namhyung@kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Maksim,
+On Mon, Sep 9, 2024 at 9:45=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
+l.org> wrote:
+>
+> On Mon, Sep 09, 2024 at 01:33:17PM -0300, Arnaldo Carvalho de Melo wrote:
+> > >  static bool trace__filter_duration(struct trace *trace, double t)
+> > >  {
+> > >     return t < (trace->duration_filter * NSEC_PER_MSEC);
+> > > @@ -1956,6 +1987,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_=
+fmt *arg, struct tep_format_field
+> > >                 ((len >=3D 4 && strcmp(field->name + len - 4, "name")=
+ =3D=3D 0) ||
+> > >                  strstr(field->name, "path") !=3D NULL))
+> > >                     arg->scnprintf =3D SCA_FILENAME;
+> > > +           else if (strstr(field->type, "char *") && strstr(field->n=
+ame, "buf"))
+> > > +                   arg->scnprintf =3D SCA_BUF;
+> >
+> > You can't really do this for things like 'read' as we would be printing
+> > whatever is in the buffer when we enter the syscall, right? As we can
+> > see testing after applying the following patch:
+>
+> This is also valid for the struct dumper, where I'll have to add some
+> indication in the syscall_fmt table when the pointer should be read in
+> the BPF augmenter, and thus we shouldn't bother to get it in the
+> sys_enter if it is, say, fstat().
 
-Apologies if I have failed to find a v7 of this patch in my searching, 
-but I'm seeing that patch #3 here was never applied, so Linux still does 
-not enable the thermal sensor in these chips. I just thought I'd give 
-you a heads-up in case you weren't aware. :)
+Yes you are right, problems with read buffers happen in structs too.
+I'll get my read family patch out soon to ease your pain...
 
-Thanks for all your hard work,
-Sam
+Thanks,
+Howard
+>
+> - Arnaldo
+>
+> > root@number:~# perf trace -e read,write cat /etc/passwd > /dev/null
+> >      0.000 ( 0.004 ms): cat/291442 read(fd: 3, buf: \0\0\0\0\0\0\0\0\0\=
+0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0, count: 832) =3D 832
+> >      0.231 ( 0.004 ms): cat/291442 read(fd: 3, buf: , count: 131072)   =
+                                  =3D 3224
+> >      0.236 ( 0.001 ms): cat/291442 write(fd: 1, buf: root:x:0:0:Super U=
+ser:/root:/bin, count: 3224)      =3D 3224
+> >      0.239 ( 0.001 ms): cat/291442 read(fd: 3, buf: root:x:0:0:Super Us=
+er:/root:/bin, count: 131072)     =3D 0
+> > root@number:~#
+> >
+> > So we can't really do it at this point, we have to do it, for now, by
+> > doing it on that syscall table initialization, for instance, for the
+> > 'write' syscall:
+> >
+> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > index 5f0877e891c2047d..1bcb45e737d830bf 100644
+> > --- a/tools/perf/builtin-trace.c
+> > +++ b/tools/perf/builtin-trace.c
+> > @@ -1379,6 +1379,8 @@ static const struct syscall_fmt syscall_fmts[] =
+=3D {
+> >         .arg =3D { [2] =3D { .scnprintf =3D SCA_WAITID_OPTIONS, /* opti=
+ons */ }, }, },
+> >       { .name     =3D "waitid",     .errpid =3D true,
+> >         .arg =3D { [3] =3D { .scnprintf =3D SCA_WAITID_OPTIONS, /* opti=
+ons */ }, }, },
+> > +     { .name     =3D "write",      .errpid =3D true,
+> > +       .arg =3D { [1] =3D { .scnprintf =3D SCA_BUF, /* buf */ }, }, },
+> >  };
+> >
+> >  static int syscall_fmt__cmp(const void *name, const void *fmtp)
+> > @@ -1987,8 +1989,6 @@ syscall_arg_fmt__init_array(struct syscall_arg_fm=
+t *arg, struct tep_format_field
+> >                   ((len >=3D 4 && strcmp(field->name + len - 4, "name")=
+ =3D=3D 0) ||
+> >                    strstr(field->name, "path") !=3D NULL))
+> >                       arg->scnprintf =3D SCA_FILENAME;
+> > -             else if (strstr(field->type, "char *") && strstr(field->n=
+ame, "buf"))
+> > -                     arg->scnprintf =3D SCA_BUF;
+> >               else if ((field->flags & TEP_FIELD_IS_POINTER) || strstr(=
+field->name, "addr"))
+> >                       arg->scnprintf =3D SCA_PTR;
+> >               else if (strcmp(field->type, "pid_t") =3D=3D 0)
+> >
+> > With that we get:
+> >
+> > root@number:~# perf trace -e read,write cat /etc/passwd > /dev/null
+> >      0.000 ( 0.005 ms): cat/296870 read(fd: 3, buf: 0x7ffe9cb8df98, cou=
+nt: 832)                          =3D 832
+> >      0.268 ( 0.004 ms): cat/296870 read(fd: 3, buf: 0x7fa7d700a000, cou=
+nt: 131072)                       =3D 3224
+> >      0.273 ( 0.002 ms): cat/296870 write(fd: 1, buf: root:x:0:0:Super U=
+ser:/root:/bin, count: 3224)      =3D
+> >      0.276 ( 0.001 ms): cat/296870 read(fd: 3, buf: 0x7fa7d700a000, cou=
+nt: 131072)                       =3D 0
+> > root@number:~#
+> >
+> > After the following patch is applied.
+> >
+> > - Arnaldo
 
