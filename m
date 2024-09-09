@@ -1,130 +1,116 @@
-Return-Path: <linux-kernel+bounces-321916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 618C8972109
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:38:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD99B97210C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D60A1C23025
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:38:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F675B23ED4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED0E198A38;
-	Mon,  9 Sep 2024 17:28:10 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C6C17D8A9;
+	Mon,  9 Sep 2024 17:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MbPmw/Jp"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3810F192B74;
-	Mon,  9 Sep 2024 17:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CB0178CE4
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902889; cv=none; b=b5bCfC6tX3fvhq+UU0E55E7D4JOIsAxdzVxDgyy7D++piVy307U5yP7vhi5rSYJmiTGPfxpxNeYJzdruLlDDIM65DcoVfv0Ol47c+fWYOWz2fmoDLEiaHm04P5ts48uaLUcHddKt/QLh766q5qxsWyZnT/9RXZJqWGL9CZraTP8=
+	t=1725902945; cv=none; b=a5RSEfmLScTxy6JKeu0XvKObbwydPtpQwN/DZ5z/5zqsqPIQX4eZyNH+bz5BitrU+WBsV398jnPmJ35X0RNlYcWwVjzUVjGXTdGOcVH2HmF/nTZzNyf8+PUAJVu0lI1xBaBLBbOcT6B510pcSnYHF7CKN32Eodymn2EOdacqhQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902889; c=relaxed/simple;
-	bh=O4Iz7mP271R9IfVK4+eCyH7d6Ghv9pm1fo9cOAVTweA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ubtk8jNRrfen0afu/aKbFX0BVqcMi8VdsnNHuKRzOGPcXvm8FOV0i3LazQaezu2nqr566CgMUGWhaTpJWdUJuBftoj+097QLlP1D/GkzijoCXCqHlIha/F6D++qlZR7oQmrM6AYxKSyWmz65YHTasDQFzU9SanRTCzLgWe7MrfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4X2Yh44JjTz9sPd;
-	Mon,  9 Sep 2024 19:28:04 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id QisATpZx7e2u; Mon,  9 Sep 2024 19:28:04 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4X2Yh43NNVz9rvV;
-	Mon,  9 Sep 2024 19:28:04 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5EE818B770;
-	Mon,  9 Sep 2024 19:28:04 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id wkH-WeMfTZ0k; Mon,  9 Sep 2024 19:28:04 +0200 (CEST)
-Received: from [192.168.232.154] (PO25124.IDSI0.si.c-s.fr [192.168.232.154])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 03C138B76C;
-	Mon,  9 Sep 2024 19:28:03 +0200 (CEST)
-Message-ID: <b154ab25-70f6-46cd-99db-ccfbe3e13fb7@csgroup.eu>
-Date: Mon, 9 Sep 2024 19:28:03 +0200
+	s=arc-20240116; t=1725902945; c=relaxed/simple;
+	bh=04f/NG7uG8xJCYrjo8eeFixG+3G6Lz5sLV0VFuL28jA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kBGL9tX6ZoXl8URbwWIauaSwVpevwLOQ8bqYnzI+sAxPOPY8JTbx6xY374DxLO4ae4ghDCv59mxO87dlE0UvdrwMrntzXu00TlFDPf0o8KEVaI3kU6sBDi2NIml1qIk8AW+dmhCIlixiheZ6MrRZ681n4d5AVAbr9pdRekxbzSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MbPmw/Jp; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4581cec6079so20461cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 10:29:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725902943; x=1726507743; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=04f/NG7uG8xJCYrjo8eeFixG+3G6Lz5sLV0VFuL28jA=;
+        b=MbPmw/JpVKUFwXLmfyJ4Nh07KD7KT6CtaXUcyZfs5ZmWjMZdwn984Mv361WxQQK+G9
+         FVWYADMPRfzzvUVquWl1O9Jp3iezSQvgs4jQpiOfBo61Oc2nXRIlPqKnY+8v/U47tmmB
+         OZ/AbNs3ZNkKilj01Qsrzs4skJeSUEINu1wHsJnRrLuJpjVI/yDpQkwDfcIuVe7Xaavs
+         JTfkhJ78CEGL67LbsszismNs1ZFdLmjk9apQpQv/I4raTrUdHCBhBK4K9fHOm9WShpKm
+         MtGxgUP2xAfHFc6tuQ+uz1m628avK8ubDR7Z90EgrzoA/NR8sjVR1cjaicWVQ1wdazpK
+         2Qgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725902943; x=1726507743;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=04f/NG7uG8xJCYrjo8eeFixG+3G6Lz5sLV0VFuL28jA=;
+        b=Yn2TE9pgFAr99UNe50ncduqAYzahNeO2qYTEITXn1FVMAnx6arVhBzPgrz2geX+KOl
+         Dz6Hnbi8meI82A+ovDM0A6qTWYJjyz+ZR94ebB1T2dYUpN5rhn1Y2lF0iBNF0zrThuD7
+         V/9sVDCkiCwGvg3jEHUyB3XcM9DLVjJ85T9RQXYXCtqmhv/Kf7+I47+a7Kx4x9gHBmWi
+         DUTdamdYoYZllixhrSScw4UGE4Ev7sOkbXZqrsuoao4VWb9BVQPATahvG8LCneTberg/
+         bSeESTg33q2auCQ7WSOjdFCWw6NYUuaomfu0bsJ7yE49Zvhc7ddXLYsn3mR7dDERXtsK
+         zBnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMlik4dw5F5i5a/kPVZ4zTbj89zjoPl71vXxfhFkROi62No/XdtCfPYAsyTGRvlld5i9+h6jtkCoFCF34=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh0Fy6B/bdPJl+hyStqDFIblIGOq9iOAf2kdmdRTAFRMHjfTnb
+	NuSts28j1baoZdn71hpHOptm7KKgVhf+usTtFa5ds+bbjdrwSXpjyRst+7RX5pVEAuJTUDm90hv
+	cGDxkTuXoj5G2octGviZulB5bqxMytOstnwAX
+X-Google-Smtp-Source: AGHT+IFnxYeNUTaiJzioMhpfJmPbKwXRc8/Ury8YtqFEElFUIOmLINaQJV62PuA8eYbmnaR2d40uOsCUMUEG9M7B2Yc=
+X-Received: by 2002:ac8:5910:0:b0:456:7d9f:2af8 with SMTP id
+ d75a77b69052e-4582147f7a7mr5005451cf.7.1725902942736; Mon, 09 Sep 2024
+ 10:29:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the powerpc tree
-To: Masahiro Yamada <masahiroy@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, "Rob Herring (Arm)"
- <robh@kernel.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20240909200948.70087f49@canb.auug.org.au>
- <afa6f06a-8d92-4ac1-b5fe-d5b6ade3f740@csgroup.eu>
- <20240910005808.2e355995@canb.auug.org.au>
- <CAK7LNARMD=PR9x-OMN5QJHmeDdAzDM=2F47ccqdLHHGTxVq5Jg@mail.gmail.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <CAK7LNARMD=PR9x-OMN5QJHmeDdAzDM=2F47ccqdLHHGTxVq5Jg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240909091913.987826-1-linyunsheng@huawei.com>
+In-Reply-To: <20240909091913.987826-1-linyunsheng@huawei.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 9 Sep 2024 10:28:48 -0700
+Message-ID: <CAHS8izNfLYQFgZYkRPJFonq8LH6SnV70B4pfC_cQ5gyz780cZA@mail.gmail.com>
+Subject: Re: [PATCH net-next] page_pool: add a test module for page_pool
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: hawk@kernel.org, ilias.apalodimas@linaro.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 9, 2024 at 2:25=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.com=
+> wrote:
+>
+> The testing is done by ensuring that the page allocated from
+> the page_pool instance is pushed into a ptr_ring instance in
+> a kthread/napi binded to a specified cpu, and a kthread/napi
+> binded to a specified cpu will pop the page from the ptr_ring
+> and free it back to the page_pool.
+>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 
+It seems this test is has a correctness part and a performance part.
+For the performance test, Jesper has out of tree tests for the
+page_pool:
+https://github.com/netoptimizer/prototype-kernel/blob/master/kernel/lib/ben=
+ch_page_pool_simple.c
 
-Le 09/09/2024 à 18:23, Masahiro Yamada a écrit :
-> On Mon, Sep 9, 2024 at 11:58 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Hi Christophe,
->>
->> On Mon, 9 Sep 2024 16:22:26 +0200 Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
->>>
->>> Le 09/09/2024 à 12:09, Stephen Rothwell a écrit :
->>>> Hi all,
->>>>
->>>> After merging the powerpc tree, today's linux-next build (powerpc
->>>> ppc44x_defconfig) failed like this:
->>>>
->>>> make[3]: *** No rule to make target 'arch/powerpc/boot/treeImage.ebony', needed by 'arch/powerpc/boot/zImage'.  Stop.
->>>> make[2]: *** [/home/sfr/next/next/arch/powerpc/Makefile:236: zImage] Error 2
->>>> make[1]: *** [/home/sfr/next/next/Makefile:224: __sub-make] Error 2
->>>> make: *** [Makefile:224: __sub-make] Error 2
->>>>
->>>> It is not obvious to me what change caused this, so I have just left
->>>> the build  broken for today.
->>>>
->>>
->>> Bisected to commit e6abfb536d16 ("kbuild: split device tree build rules into scripts/Makefile.dtbs")
->>
->> Thanks for that.
->>
->> --
->> Cheers,
->> Stephen Rothwell
-> 
-> 
-> I squashed the following fix. Hopefully, it will be ok tomorrow.
-> 
-> 
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index 6385e7aa5dbb..8403eba15457 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -444,7 +444,7 @@ ifneq ($(userprogs),)
->   include $(srctree)/scripts/Makefile.userprogs
->   endif
-> 
-> -ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb.o %.dtbo.o,$(targets)),)
-> +ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb %.dtb.o
-> %.dtbo.o,$(targets)),)
->   include $(srctree)/scripts/Makefile.dtbs
->   endif
-> 
+I have these rebased on top of net-next and use them to verify devmem
+& memory-provider performance:
+https://github.com/mina/linux/commit/07fd1c04591395d15d83c07298b4d37f6b5615=
+7f
 
-The build of ppc44x_defconfig is ok with this change
-on top of next-20240909
+My preference here (for the performance part) is to upstream the
+out-of-tree tests that Jesper (and probably others) are using, rather
+than adding a new performance test that is not as battle-hardened.
+
+--
+Thanks,
+Mina
 
