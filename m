@@ -1,68 +1,69 @@
-Return-Path: <linux-kernel+bounces-321251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351A1971669
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:19:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81EF397166D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0E601F232B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:19:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C7871F22A39
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D511D1B81AE;
-	Mon,  9 Sep 2024 11:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116161B86C4;
+	Mon,  9 Sep 2024 11:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CN8RKyHW"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XlHstpjn"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15D41B533B
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 11:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993C81B7910
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 11:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725880680; cv=none; b=mH4ndi9BnFb6ciBN4NVsr/mSz94M7+xqPqrc+392aJro6ke4KMJzAPeSuJtOSEm9l5WwzjJzaI6H0PBIy0Cu91+ysOWk/+xzgFpzo6kxbRKsdJsDss3kdlkSy11abWuthtOLsmDagAiprff8/N3yKaoCDrsCTTs1iV08E+c4WjM=
+	t=1725880683; cv=none; b=MeV3xNJZZl2Jrr2gMFt4/J9zVqEVlqzUyoEQ++RJtn2U2xxpojBS9He2yjPX39ZZGh6fhmMMgxbpO+0WQfO1PX222qOTKDrvt4edgPD+SHSHeXrUqBufWfumhbk56j+LjdqEO9g2ZpeVVGyQS+EH/uxf+IOWV/CkCBf5Nye1QC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725880680; c=relaxed/simple;
-	bh=v0lqhXDww126ExqWe1NdjbR42IBr9nBcR7KMJ8c7f20=;
+	s=arc-20240116; t=1725880683; c=relaxed/simple;
+	bh=OfaNXpIVOcun7tAFbJU9wVbgLLuQ52GRIm7j44u8m9I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jp4B4RoCZWE/eCU1AkVtAVv4gkbXd2JtG4rnrONG2iHqbOc+wN9KyWUHrEeEr16cHXwp1eCn3Jv51sukI9aj6OItKjAYTP8YE3f+QPoSS6NKSmG15cJjwnUCrt/Fj6SpvBHujWh+11+A3zdUpu2B1E9MaFIXuHqI2r+hGzC/bmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CN8RKyHW; arc=none smtp.client-ip=209.85.215.174
+	 MIME-Version; b=LhHQBN7+mSm2BwxVUqUcKRSVKWZB8J/7U2YNXl29jwPJW6xIihfG0VUntzBZ7IF/laYB5YiTHMYvj2DxOiUOh14p/3jaI8+iSCumZ96cj5WxnQhNTw3ouXR3HeeQ4W9ugNplEzI76Mrf5hoBx+QGQ5WuJZ+760yolADCIAYaAq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XlHstpjn; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7d50a42ce97so1576009a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 04:17:58 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-206f9b872b2so20524625ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 04:18:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725880678; x=1726485478; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1725880681; x=1726485481; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=k98xHcx8LIPGVP0kPjUAh1AHHL+3f8QtEI3GBp8SnEs=;
-        b=CN8RKyHW/v9hdsKYgE2wJa21IKEiURYOsamy0ZCvUC27E0RmarZN/5QcUYmyYHvfco
-         G2QupkcLQv+f7Ej3/26/g9EpZaf6sWzQKp0NgQmtBITIpyLpvmciKjmgWy54GRXgkUIq
-         1kSV8nNKZH3j2KOo45klf2/pF+xkIMUwkB2n8=
+        bh=eSPMDqXmxOOBZ2+bT3H0bytGBe/kVJSeEJXvBbWjwBM=;
+        b=XlHstpjn3yKnkUAkdyHT0npI6PRcZteXF3coOTBgXgJxgQcKEk+KGn8lESrcRLHGBm
+         VEL2tRU19yNXys5bI/oZ6Rn8LOho8kiagyfsEc0WGW5ZZkm6SJTq3zzIw2R+d46RxlxL
+         oT12hmTBxSdw5FTNJ6VwQrbSAc+PZ75X70F1k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725880678; x=1726485478;
+        d=1e100.net; s=20230601; t=1725880681; x=1726485481;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k98xHcx8LIPGVP0kPjUAh1AHHL+3f8QtEI3GBp8SnEs=;
-        b=nEljqQLEtQqayTg7CkkewHQINujCh/JKCoZsfXtgfcEiTcyoz4xhzceDtfJnFIJxOl
-         aN4gRpCthi0lCAdXfQAwcy4D0Y7h7K/5roxK2VrlL8i7CP68Sq5CkSkTQmUs1xw68mZs
-         GdBoA1iEmqnmZW8MJsv+uvO17G+g/X8bf0eHJTZOSrpD4U0pmzAjLA0/cbYGyXTyww8/
-         8rtKJB0RCqWqvVvdaM+CWVddtDz02xodubLFPHa21+qt6onX9C5QU7yI4HbtAR81023M
-         wTaGNejKGQMwCmUBcuc2JCI4eXaAW9afHUG4JkBS9PbdZAEFTtp4z0xJk/QeMp4sqwyg
-         eINQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsq00ANK0k8SRUP0iBeCAKOfSjPLVPaNl0mFt5bdT+6iHrpaFu0CjHbHjI4M+LgmUkIxM4jtiqXxb4DmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/JaCBJZf6pNS52zcBRPmNmfgbpndzxwNrPI913Qc2ozlJdT7Z
-	enF68NS7CPMh9uPL1HG0j50FlNZ3m9JyyQWBJKUtL9tf1bZSDcI/n88pyNerOQ==
-X-Google-Smtp-Source: AGHT+IGoS/wNfT96ErEpO6j2A4iVl+SSYkCw9fl18EPKIdICyKbSqkOSzDP41poSrNFHrcako0/RMQ==
-X-Received: by 2002:a17:903:22cb:b0:206:bbaa:84e9 with SMTP id d9443c01a7336-2070a7e5982mr90617095ad.47.1725880678168;
-        Mon, 09 Sep 2024 04:17:58 -0700 (PDT)
+        bh=eSPMDqXmxOOBZ2+bT3H0bytGBe/kVJSeEJXvBbWjwBM=;
+        b=HhQy5fWiarwY8vxs7ZmwMu4SmkoZNcgn+NPEPKE0kzmTXkVybNkFiqPQaZr5z0e7rQ
+         oQoDVpOIcKh4fpdoSNPzwSY0Q0CISy+9VM2MtpQ2TFevPpq/QRwwkJ2c8anR7WIIBjRb
+         xG2IMlBQ2IlpXmNWGeEbYVJ/3m13sozGKP8A3XMPPOfRSc+qHiSQOMtAW82+UCbwpUZs
+         1w3vF9a7Qgk+0YxzowfHUQiesf+sfBHyxJ6RpCRA6gtvKoDtSuh5MZNjVcbnwDHg0FD7
+         veqNDoA6b1kIvCG91W13jCH5ITmCIreK4llz3VHMa30zMjxk0lBGTSKzKOnBvK981qEj
+         p/9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUlV8JOJDhdE7ii5Ngs+mw6XxGC38DRrydHmOAWuDixgxzFEMXD9Isd5cGpSCdUaiNDvrb/vmWcXoSWCy0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2tyEWxsupInxAP6qj47W7WmoxL3TGb4R5XJyaXhU1Og720Ytg
+	pCxGk4J7gwf0pjBunD/C8S2PVZ/xKWPxLag3BlGXnfIiiMVjOFp6iq3Z8Bvq+TybRE8ae5BhKOc
+	=
+X-Google-Smtp-Source: AGHT+IGHVTuEQzGi8BTEcqf2mCRiL5XS1yhXsk1hu/kaz1W0RCb0r+W6kSM7h0W7qrtU4wtKiSxLSw==
+X-Received: by 2002:a17:903:22c1:b0:1fd:5eab:8c76 with SMTP id d9443c01a7336-206f05e7881mr97040825ad.41.1725880680731;
+        Mon, 09 Sep 2024 04:18:00 -0700 (PDT)
 Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:6647:6d5f:dd48:8f5c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f1dc55sm32039745ad.186.2024.09.09.04.17.56
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f1dc55sm32039745ad.186.2024.09.09.04.17.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 04:17:57 -0700 (PDT)
+        Mon, 09 Sep 2024 04:18:00 -0700 (PDT)
 From: Fei Shao <fshao@chromium.org>
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	Matthias Brugger <matthias.bgg@gmail.com>
@@ -74,9 +75,9 @@ Cc: Fei Shao <fshao@chromium.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-mediatek@lists.infradead.org
-Subject: [PATCH 04/13] arm64: dts: mediatek: mt8188: Move vdec1 power domain under vdec0
-Date: Mon,  9 Sep 2024 19:14:17 +0800
-Message-ID: <20240909111535.528624-5-fshao@chromium.org>
+Subject: [PATCH 05/13] arm64: dts: mediatek: mt8188: Add missing GCE clock names
+Date: Mon,  9 Sep 2024 19:14:18 +0800
+Message-ID: <20240909111535.528624-6-fshao@chromium.org>
 X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 In-Reply-To: <20240909111535.528624-1-fshao@chromium.org>
 References: <20240909111535.528624-1-fshao@chromium.org>
@@ -88,62 +89,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are two hardware IP blocks in MT8188 video decoder pipeline:
-vdec-lat and vdec-core, which are powered by vdec0 and vdec1 power
-domains respectively.
-
-We noticed that vdec-core needs to be powered down before vdec-lat
-during suspend to prevent failures. It's unclear if it's an intended
-hardware design or due to power isolation glitch. But in any case, we
-observed a power-off sequence here, and it can be considered as an
-indirect dependency implication between the vdec0 and vdec1 domains.
-
-Given that, update vdec1 as a sub-domain of vdec0 to enforce the
-sequence. Also, use more specific clock names for both power domains.
+Add the missing clock-names property for GCE nodes to fix errors from
+`make CHECK_DTBS=y mediatek/mt8188-evb.dtb`.
 
 Signed-off-by: Fei Shao <fshao@chromium.org>
 ---
 
- arch/arm64/boot/dts/mediatek/mt8188.dtsi | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-index dfbc50c878c4..445d30eee2a1 100644
+index 445d30eee2a1..2900d78b7ceb 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-@@ -1078,20 +1078,22 @@ power-domain@MT8188_POWER_DOMAIN_VPPSYS1 {
- 							#power-domain-cells = <0>;
- 						};
+@@ -1316,6 +1316,7 @@ gce0: mailbox@10320000 {
+ 			interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH 0>;
+ 			#mbox-cells = <2>;
+ 			clocks = <&infracfg_ao CLK_INFRA_AO_GCE>;
++			clock-names = "gce";
+ 		};
  
--						power-domain@MT8188_POWER_DOMAIN_VDEC1 {
--							reg = <MT8188_POWER_DOMAIN_VDEC1>;
--							clocks = <&vdecsys CLK_VDEC2_LARB1>;
--							clock-names = "ss-vdec";
--							mediatek,infracfg = <&infracfg_ao>;
--							#power-domain-cells = <0>;
--						};
--
- 						power-domain@MT8188_POWER_DOMAIN_VDEC0 {
- 							reg = <MT8188_POWER_DOMAIN_VDEC0>;
- 							clocks = <&vdecsys_soc CLK_VDEC1_SOC_LARB1>;
--							clock-names = "ss-vdec";
-+							clock-names = "ss-vdec1-soc-l1";
- 							mediatek,infracfg = <&infracfg_ao>;
--							#power-domain-cells = <0>;
-+							#address-cells = <1>;
-+							#size-cells = <0>;
-+							#power-domain-cells = <1>;
-+
-+							power-domain@MT8188_POWER_DOMAIN_VDEC1 {
-+								reg = <MT8188_POWER_DOMAIN_VDEC1>;
-+								clocks = <&vdecsys CLK_VDEC2_LARB1>;
-+								clock-names = "ss-vdec2-l1";
-+								mediatek,infracfg = <&infracfg_ao>;
-+								#power-domain-cells = <0>;
-+							};
- 						};
+ 		gce1: mailbox@10330000 {
+@@ -1324,6 +1325,7 @@ gce1: mailbox@10330000 {
+ 			interrupts = <GIC_SPI 228 IRQ_TYPE_LEVEL_HIGH 0>;
+ 			#mbox-cells = <2>;
+ 			clocks = <&infracfg_ao CLK_INFRA_AO_GCE2>;
++			clock-names = "gce";
+ 		};
  
- 						cam_vcore: power-domain@MT8188_POWER_DOMAIN_CAM_VCORE {
+ 		scp: scp@10500000 {
 -- 
 2.46.0.469.g59c65b2a67-goog
 
