@@ -1,130 +1,123 @@
-Return-Path: <linux-kernel+bounces-321440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E128971A72
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:11:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D83F971A74
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3140E1F24BD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:11:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39D8F1C23D3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484E61BBBFC;
-	Mon,  9 Sep 2024 13:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9A71B9B46;
+	Mon,  9 Sep 2024 13:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ed1QGc1h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2AAtqU+w"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34AF1BBBE3;
-	Mon,  9 Sep 2024 13:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525FE1B9B29
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725887309; cv=none; b=AjcoFdtmwtXT5eBktyJ82of4Z8+tJQTCdm0vRqyVyq2A0hh48EcK4zVQqYadpaFY1MW1cRxmqEmkfz6rhtR8qSEUUXA12P8IfsoCqSm/UGzb0cXK2QsymuKlPMKCNTQZo1h2+8XNrTqE0Y/4sinRCmz2Av/heUhqhJeIt3X1Cdc=
+	t=1725887325; cv=none; b=ahwoDoiiQqaOwF6mAbKRFV3yxy4geRmYLS9/CDBOSOoWQbvZiq0PpQmxX2a1d6CBZt2ZHCfloY45D0RBrVnxCy/k9zsnBRQfX+LEvPZR5tvP4JKKIvg1nQbO2Zz6xR86HT9PYIr+lzAUAmqZnsHPpSn/yjzK1P6WIy3pMoq3654=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725887309; c=relaxed/simple;
-	bh=EgMs+TbVTeQGo2kimjC1q99O6NPUAD9k97y6im6JB8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B1S8nMTzEn5I8GwyaCskMUmH7tNR8nDUsk3WwKmMNJ19wvC/yL0PTxj7R0TFNNJ9/HCNBjWPndvLCuq+XT0elwWF8Uu5QNBjIdyj0Is5xjCMAiOlxtsCKUVmbPpzcefvHCaZAYxLtkUeKAY/XQuNwryKowI8KDDpIjUFWUI7Ifc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ed1QGc1h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2367C4CEC7;
-	Mon,  9 Sep 2024 13:08:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725887309;
-	bh=EgMs+TbVTeQGo2kimjC1q99O6NPUAD9k97y6im6JB8c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ed1QGc1h6aTtYmiBuwJbQJm6rxM3VY/jX6mn6ksD/QB37N+osWcz8rFoXCr2QNmEv
-	 bEPOlxkaRdidGYyfp7GOvy4ZF09lSLz0YUdJ2sPpC5C6OUZHYKujipxJ7Vg0E6qkee
-	 xcBA0ndIsNYugrVOIS8G9lQPVR0jjccmT5NUumA6ePS9DU3zYNSmfcC614e+vocM0a
-	 IffogVlqBq5MeRFRt6BfWPPpesgTm8yARmV0Gqcf64i8nzao3pQ0EQzOT5YeIBSxDy
-	 GVa3lnsl5YUe6TSOz9lWqBGpNQ9/hxAvycpRLOQMyxdsDQqMY3vX5uOebH96kEyWJr
-	 5AncAhFKAxqzg==
-Date: Mon, 9 Sep 2024 15:08:25 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Kimriver Liu <kimriver.liu@siengine.com>
-Cc: jarkko.nikula@linux.intel.com, andriy.shevchenko@linux.intel.com, 
-	mika.westerberg@linux.intel.com, jsd@semihalf.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7] i2c: designware: fix master is holding SCL low while
- ENABLE bit is disabled
-Message-ID: <traj5uhqbny5yro3hf72k2qpga7ez7cuqv2mesvl73fku2b5xq@uw5dqjdc6mms>
-References: <20240909015646.2285-1-kimriver.liu@siengine.com>
+	s=arc-20240116; t=1725887325; c=relaxed/simple;
+	bh=VimrJNUrhgwuXOUZQj8K1x4oJhjSufEAbZfaXLz2Bbs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jvuHZe3oCoWSKT3gPLOTyQNOSYdPzPV2Kox3muZMB64BkQg5aOT7+L11LcsC/r9rkv2iKwFewYfL+x2zCmHrqgbQxb2CMg0Ibp79k6KafVECwfl/lr/d0rr6GMunyHNXfJ4xJIEgbhrQGpQ3UufByYGSvIaOu795o41zx0upeJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--snehalreddy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2AAtqU+w; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--snehalreddy.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1ce191f74fso8886223276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 06:08:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725887322; x=1726492122; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gkcR1LQPE4FCQJPuyJ1psNJiBytHsKUOZJ03Mjoli6E=;
+        b=2AAtqU+wLIIf083ZVx2DddXM37MbC+oQY1EnRJx1mKcxvosHIPFoQOkZnNqOHIfylo
+         zxE9BMQnKVAwqq5U9YNG8qLUvtSMP1qoNdBDYZOBmCA3zq3yNxwA9X+wJfRAEG6mtPNx
+         Xb7p9aPgNubg3I91fbnN2R/YbXUrGWzdJHuTcY0jUc37VUrUYpM+XftsauVSvYfWh0+q
+         2jHLfcyGCRThgvy3CSJiW4MxbgrOIGLcBBLiiLNa/tIceMZzdjmWqpFOmoap17hZvtRn
+         4AOFSikmdEyfcehrRsSbzAFAFiT+dPhun0hnQ7RYUdRqw5DuDLwLKzwllEJNHxwxJEW2
+         CrjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725887322; x=1726492122;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gkcR1LQPE4FCQJPuyJ1psNJiBytHsKUOZJ03Mjoli6E=;
+        b=xVbLJ4hmEmiHhw4O9JyQXPCTFEbESdRy2xvjc9blR0lkhhw9+zAZRWCXzd8e7jM2WY
+         2tUf6eLPZVdFAQ8SACy92AyRWScIKIHc1VWUvUbjPeAQQIm6U84IfeDzNt+svNudiyYX
+         Bhz4jQLb8QMlcyRrnmph7rlVq7gEsaHVwl9fUFlirdTjBYl8iDXMZe9n8Vv0srB57rxs
+         d5bEQ/Nu1y0M+oI6zhX97RLuIWG58no8sT/rExD957mV+x0REYUUzMW9E1wNBe2nBDuR
+         mwk5EYVJGxq2p9Q6ENfUavo2/J7tEoZEpXr6PSmCIbwIUR6QLlgJJvmk5OIhx/W33l2x
+         Dh+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVUtXXo8EpfpG3WtlNMuKT/wRTNcynJtSraO1BsQGwpV5pr2zRdhgPJLOqbNe85xUG7AJWuEeGsJftFy2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJTKOJm7ivwOU8JU1kOT2w6f1OeSFC+Nc3yeq99qnQHOuw2aWk
+	Jqx/XhuBh60ref1i2qu2G3WlcRUelT9wx3Wl2uLK7v13iSATlWhRPP8X5FESR3eM9leD5c5VRzg
+	Tkgg9DEZhKX2HALSKNqWX7A==
+X-Google-Smtp-Source: AGHT+IHZHeeJzJA+rBQ2ukVV7/hhG+otbYJ/RCdAhQjZtiHGvPzEoizdzLQoCYDilJms56oKXlfXRy7wmQN6XoFmtg==
+X-Received: from snehalreddy-1.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:c1f])
+ (user=snehalreddy job=sendgmr) by 2002:a05:6902:4d1:b0:e0b:cce3:45c7 with
+ SMTP id 3f1490d57ef6-e1d349e38d5mr19825276.9.1725887322131; Mon, 09 Sep 2024
+ 06:08:42 -0700 (PDT)
+Date: Mon,  9 Sep 2024 13:08:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909015646.2285-1-kimriver.liu@siengine.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Message-ID: <20240909130832.1203849-1-snehalreddy@google.com>
+Subject: [PATCH v2] KVM: arm64: Add memory length checks and remove inline in do_ffa_mem_xfer
+From: Snehal Koukuntla <snehalreddy@google.com>
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+Cc: James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Sebastian Ene <sebastianene@google.com>, Vincent Donnefort <vdonnefort@google.com>, 
+	Snehal <snehalreddy@google.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Kimriver,
+Check size during allocation to fix discrepancy in memory reclaim path.
+Currently only happens during memory reclaim, inconsistent with mem_xfer
+Also  do_ffa_mem_xfer() does not need __always_inline
 
-On Mon, Sep 09, 2024 at 09:56:46AM GMT, Kimriver Liu wrote:
-> It was observed issuing ABORT bit(IC_ENABLE[1]) will not work when
-> IC_ENABLE is already disabled.
-> 
-> Check if ENABLE bit(IC_ENABLE[0]) is disabled when the master is
-> holding SCL low. If ENABLE bit is disabled, the software need
-> enable it before trying to issue ABORT bit. otherwise,
-> the controller ignores any write to ABORT bit.
-> 
-> Signed-off-by: Kimriver Liu <kimriver.liu@siengine.com>
+Signed-off-by: Snehal Koukuntla <snehalreddy@google.com>
+---
+ arch/arm64/kvm/hyp/nvhe/ffa.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-You forgot:
+diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+index e715c157c2c4..637425f63fd1 100644
+--- a/arch/arm64/kvm/hyp/nvhe/ffa.c
++++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+@@ -426,7 +426,7 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_res *res,
+ 	return;
+ }
+ 
+-static __always_inline void do_ffa_mem_xfer(const u64 func_id,
++static void do_ffa_mem_xfer(const u64 func_id,
+ 					    struct arm_smccc_res *res,
+ 					    struct kvm_cpu_context *ctxt)
+ {
+@@ -461,6 +461,11 @@ static __always_inline void do_ffa_mem_xfer(const u64 func_id,
+ 		goto out_unlock;
+ 	}
+ 
++	if (len > ffa_desc_buf.len) {
++		ret = FFA_RET_NO_MEMORY;
++		goto out_unlock;
++	}
++
+ 	buf = hyp_buffers.tx;
+ 	memcpy(buf, host_buffers.tx, fraglen);
+ 
+-- 
+2.46.0.469.g59c65b2a67-goog
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-
-> ---
-> V6->V7:
-> 	1. add Subject versioning [PATCH v7]
-> 	2. change fsleep(25) to usleep_range(25, 250)
-> 	3. Add macro definition DW_iC_ENABLE_ENABLE to fix compile errors
-> 	4. base: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=master
-
-Thanks a lot for following up! :-)
-
-> V5->V6: restore i2c_dw_is_master_idling() function checking
-> V4->V5: delete master idling checking
-> V3->V4:
-> 	1. update commit messages and add patch version and changelog
-> 	2. move print the error message in i2c_dw_xfer
-> V2->V3: change (!enable) to (!(enable & DW_IC_ENABLE_ENABLE))
-> V1->V2: used standard words in function names and addressed review comments
-> 
-> link to V1:
-> https://lore.kernel.org/lkml/20240904064224.2394-1-kimriver.liu@siengine.com/
-> ---
-
-...
-
-> --- a/drivers/i2c/busses/i2c-designware-common.c
-> +++ b/drivers/i2c/busses/i2c-designware-common.c
-> @@ -453,6 +453,18 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
->  
->  	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
->  	if (abort_needed) {
-> +		if (!(enable & DW_IC_ENABLE_ENABLE)) {
-> +			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
-> +			enable |= DW_IC_ENABLE_ENABLE;
-> +			/*
-> +			 * Need two ic_clk delay when enabling the I2C to ensure ENABLE bit
-> +			 * is already set. Wait 10 times the signaling period of the highest
-> +			 * I2C transfer supported by the driver(for 400KHz this is 25us)
-> +			 * as described in the DesignWare I2C databook.
-> +			 */
-> +			usleep_range(25, 250);
-
-I think there is a misunderstanding here. Andy asked you to use
-flseep and improve the calculation: "Please, calculate this delay
-based on the actual speed in use (or about to be in use)."[*]
-
-Andy can you please clarify with Kimriver here?
-
-Thanks,
-Andi
-
-[*] Message-ID: <6392ecd3f9934e9d8641b5f608ee6d60@siengine.com>
 
