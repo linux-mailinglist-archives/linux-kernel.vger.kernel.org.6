@@ -1,211 +1,110 @@
-Return-Path: <linux-kernel+bounces-321642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0848D971D70
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:04:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC007971D7A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E63A1F23F1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:04:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A500284442
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECBE1C6B5;
-	Mon,  9 Sep 2024 15:04:18 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37AB1A716;
+	Mon,  9 Sep 2024 15:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="L8rRQggL"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B0C1C286;
-	Mon,  9 Sep 2024 15:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1112C8DF;
+	Mon,  9 Sep 2024 15:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725894258; cv=none; b=sVVUzZ+62dBulOxFxEJJ1NVVsIfVN8cC3zJUMvE6KEMjfg6KSxu0FK3/L0JQi0MzuU8jb2yNG8TnFQHsUJtzm0HMZi0T5nWLnY3TL7YeFHZfq5PcKKaUoCKFrrtHusUK+9yAbacqFSDAePJjsr5KykJ17+t6pGspe4Jo71vlPOA=
+	t=1725894390; cv=none; b=Ri0AzpEdiac5tTr4MTW0KHHgvnqtKPyqgIRoWEy3rK2MECMR3q/rlNnwLM8GrIymi1279vlWC0bIlX8FZ9fOwsqq8ao5qLVhVVivgzGTs7/gp5/EB7C2Vt4NPSsg5ZHGSseNstjkUbQOSHLpoUrpxHz9IM1koHbD+RlvjpIJJFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725894258; c=relaxed/simple;
-	bh=ltl+e7qvQSFa6Ln9RRzbpSDQC/9PCYBgd6N5egTzrK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bJcTfBfw3pi8UOvXj3NQFx1EuQCKOAvTYDHD83hKm6HRSYxtpUCRYFTREzMkn21ViB0QuO+iGF5DFd0euia1wL2D8j1O15AT8l9z0OcREdVM3kWn+qW7vkL3Lp1KonK9HXrphQdS9mCfa6r9RvVNg+eSxuT8BqNzbOPhd9UHuAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C4A6C4CEC5;
-	Mon,  9 Sep 2024 15:04:17 +0000 (UTC)
-Date: Mon, 9 Sep 2024 11:04:15 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: mhiramat@kernel.org, mark.rutland@arm.com,
- mathieu.desnoyers@efficios.com, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] function_graph: Support recording and printing the
- function return address
-Message-ID: <20240909110415.33cb5f22@gandalf.local.home>
-In-Reply-To: <20240908142544.1409032-1-dolinux.peng@gmail.com>
-References: <20240908142544.1409032-1-dolinux.peng@gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725894390; c=relaxed/simple;
+	bh=mEfzBH9UUDzeL64oVGZ9YG8/E8wuV86GjdrFpI0djI0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WzQ6QAwTfxG6kfJ6AGaVFmlLKBY8G7O+jID0x3AcKkKG3u1IPv9eDv27TBc53n0pTHq04zHPBeEMheX3YPvff4wWWWQwFXen3G/cJthIa024uTL5EzRqnsn4+uIERqUXMDYNi5d5gzY78/adzfG3ffsUXXkDEiLkLeXc/ugKdXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=L8rRQggL; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4895bC0D012744;
+	Mon, 9 Sep 2024 10:06:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=Zt6fqKJBYcIvDy1BdE
+	RA1l4JfqzuzikdZ3MHUwdqk84=; b=L8rRQggLGWeLyvDOxoKhLMIdYB0TFR1KN1
+	exRSH6XUaC5SP7diOAYBJFymw/JiuKqwvRzzUu4i5EdUdLgGFmbS7h9glosJIgcC
+	DWLunoaFVia3GHpntz/3M5Mlpfu4tLJfTm8hAeFbjBdwsrywXqBWyj1BB/KoFhcG
+	BxI5tlDEhrR2Ju0y2fzTbmWTZICbwkC8OuSUlYH75zWhutoxtCyukaXnSmGknLTj
+	BPgMwLZPu0tILt8lkqdtTkzHC4OGLcMWvHI0MANZhjeAcZj3wGNT8owiHkC7Qsw7
+	BfpqPg0qITZU136T2kdjLQZfVuZhvcKD+PZyZqNfVDnfVQ4inb4Q==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 41gm7x1rnq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 10:06:20 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Sep 2024
+ 16:06:16 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 9 Sep 2024 16:06:16 +0100
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 6244E820249;
+	Mon,  9 Sep 2024 15:06:16 +0000 (UTC)
+Date: Mon, 9 Sep 2024 16:06:15 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Bard Liao <yung-chuan.liao@linux.intel.com>
+CC: <linux-sound@vger.kernel.org>, <vkoul@kernel.org>, <vinod.koul@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <pierre-louis.bossart@linux.intel.com>,
+        <bard.liao@intel.com>
+Subject: Re: [PATCH 13/14] soundwire: mipi-disco: add new properties from 2.0
+ spec
+Message-ID: <Zt8O54x+NVu+UwwD@opensource.cirrus.com>
+References: <20240827130707.298477-1-yung-chuan.liao@linux.intel.com>
+ <20240827130707.298477-14-yung-chuan.liao@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240827130707.298477-14-yung-chuan.liao@linux.intel.com>
+X-Proofpoint-GUID: loWlG_imP7-qyd1LNjPwKrEbs4n25qnr
+X-Proofpoint-ORIG-GUID: loWlG_imP7-qyd1LNjPwKrEbs4n25qnr
+X-Proofpoint-Spam-Reason: safe
 
-On Sun,  8 Sep 2024 07:25:44 -0700
-Donglin Peng <dolinux.peng@gmail.com> wrote:
-
-Hi Donglin!
-
-> When using function_graph tracer to analyze the flow of kernel function
-> execution, it is often necessary to quickly locate the exact line of code
-> where the call occurs. While this may be easy at times, it can be more
-> time-consuming when some functions are inlined or the flow is too long.
-> 
-> This feature aims to simplify the process by recording the return address
-> of traced funcions and printing it when outputing trace logs.
-> 
-> To distinguish the return value, 'V=' is used as the prefix for the kernel
-> return value, and 'A=' is used as the prefix for the return address in trace
-> logs. A new trace option named 'funcgraph-retaddr' has been added, and the
-> option 'sym-addr' can control the format of the return address.
-> 
-> See below logs with both funcgraph-retval and funcgraph-retaddr enabled.
-> 
-> 4)               |  load_elf_binary() { /* A=bprm_execve+0x249/0x600 */
-
-I wonder if we should make this look more like the function tracer when it
-shows the parent. That is:
-
-  4)               |  load_elf_binary() { /* <-bprm_execve+0x249/0x600 */
-
-> 4)               |    load_elf_phdrs() { /* A=load_elf_binary+0x84/0x1730 */
-> 4)               |      __kmalloc_noprof() { /* A=load_elf_phdrs+0x4a/0xb0 */
-> 4) + 47.910 us   |        __cond_resched(); /* V=0x0 A=__kmalloc_noprof+0x28c/0x390 */
-> 4) ! 204.142 us  |      } /* __kmalloc_noprof V=0xffff888201e32c00 */
-> 4)               |      kernel_read() { /* A=load_elf_phdrs+0x6c/0xb0 */
-> 4)               |        rw_verify_area() { /* A=kernel_read+0x2b/0x50 */
-> 4)               |          security_file_permission() {
-> 4)               |            selinux_file_permission() { /* A=security_file_permission+0x26/0x40 */
-> 4)               |              __inode_security_revalidate() { /* A=selinux_file_permission+0x6d/0x140 */
-> 4)   1.182 us    |                __cond_resched(); /* V=0x0 A=__inode_security_revalidate+0x5f/0x80 */
-> 4)   4.138 us    |              } /* __inode_security_revalidate V=0x0 */
-> 4)   1.513 us    |              avc_policy_seqno(); /* V=0x0 A=selinux_file_permission+0x107/0x140 */
-> 4) + 12.133 us   |            } /* selinux_file_permission V=0x0 */
-> 4) + 39.834 us   |          } /* security_file_permission V=0x0 */
-> 4) + 42.710 us   |        } /* rw_verify_area V=0x0 */
-> 
-> Then, we can use the faddr2line to locate the source code, for example:
-> 
-> $ ./scripts/faddr2line ./vmlinux load_elf_phdrs+0x6c/0xb0
-> load_elf_phdrs+0x6c/0xb0:
-> elf_read at fs/binfmt_elf.c:471
-> (inlined by) load_elf_phdrs at fs/binfmt_elf.c:531
-> 
-> Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> ---
->  include/linux/ftrace.h               |   1 +
->  kernel/trace/fgraph.c                |   1 +
->  kernel/trace/trace.h                 |   1 +
->  kernel/trace/trace_entries.h         |  19 ++++-
->  kernel/trace/trace_functions_graph.c | 105 ++++++++++++++++++---------
->  5 files changed, 92 insertions(+), 35 deletions(-)
-> 
-> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> index fd5e84d0ec47..bdf51163b3b8 100644
-> --- a/include/linux/ftrace.h
-> +++ b/include/linux/ftrace.h
-> @@ -1011,6 +1011,7 @@ static inline void ftrace_init(void) { }
->   */
->  struct ftrace_graph_ent {
->  	unsigned long func; /* Current function */
-> +	unsigned long retaddr;  /* Return address */
->  	int depth;
->  } __packed;
+On Tue, Aug 27, 2024 at 09:07:06PM +0800, Bard Liao wrote:
+> diff --git a/drivers/soundwire/mipi_disco.c b/drivers/soundwire/mipi_disco.c
+> index d6eb63bf1252..2215c53f95de 100644
+> --- a/drivers/soundwire/mipi_disco.c
+> +++ b/drivers/soundwire/mipi_disco.c
+> @@ -398,6 +398,19 @@ int sdw_slave_read_prop(struct sdw_slave *slave)
+>  	device_property_read_u32(dev, "mipi-sdw-sink-port-list",
+>  				 &prop->sink_ports);
 >  
-> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> index d7d4fb403f6f..fcc4162c10f6 100644
-> --- a/kernel/trace/fgraph.c
-> +++ b/kernel/trace/fgraph.c
-> @@ -622,6 +622,7 @@ int function_graph_enter(unsigned long ret, unsigned long func,
->  
->  	trace.func = func;
->  	trace.depth = ++current->curr_ret_depth;
-> +	trace.retaddr = ret;
->  
->  	offset = ftrace_push_return_trace(ret, func, frame_pointer, retp, 0);
->  	if (offset < 0)
-> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-> index bd3e3069300e..87e02815b030 100644
-> --- a/kernel/trace/trace.h
-> +++ b/kernel/trace/trace.h
-> @@ -870,6 +870,7 @@ static __always_inline bool ftrace_hash_empty(struct ftrace_hash *hash)
->  #define TRACE_GRAPH_GRAPH_TIME          0x400
->  #define TRACE_GRAPH_PRINT_RETVAL        0x800
->  #define TRACE_GRAPH_PRINT_RETVAL_HEX    0x1000
-> +#define TRACE_GRAPH_PRINT_RETADDR       0x2000
->  #define TRACE_GRAPH_PRINT_FILL_SHIFT	28
->  #define TRACE_GRAPH_PRINT_FILL_MASK	(0x3 << TRACE_GRAPH_PRINT_FILL_SHIFT)
->  
-> diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-> index c47422b20908..8b8753319dd3 100644
-> --- a/kernel/trace/trace_entries.h
-> +++ b/kernel/trace/trace_entries.h
-> @@ -71,6 +71,7 @@ FTRACE_ENTRY_REG(function, ftrace_entry,
->  	perf_ftrace_event_register
->  );
->  
-> +#ifdef CONFIG_FUNCTION_GRAPH_RETVAL
->  /* Function call entry */
->  FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
->  
-> @@ -79,6 +80,7 @@ FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
->  	F_STRUCT(
->  		__field_struct(	struct ftrace_graph_ent,	graph_ent	)
->  		__field_packed(	unsigned long,	graph_ent,	func		)
-> +		__field_packed(	unsigned long,	graph_ent,	retaddr		)
->  		__field_packed(	int,		graph_ent,	depth		)
->  	),
->  
+> +	device_property_read_u32(dev, "mipi-sdw-sdca-interrupt-register-list",
+> +				 &prop->sdca_interrupt_register_list);
+> +
+> +	/*
+> +	 * The specification defines the property value as boolean, but
+> +	 * the value can be defined as zero. This is not aligned the
+> +	 * implementation of device_property_read_bool() which only checks
+> +	 * the presence of the property.
+> +	 * Let's use read_u8 to work-around this conceptual disconnect.
+> +	 */
+> +	device_property_read_u8(dev, "mipi-sdw-commit-register-supported",
+> +				&prop->commit_register_supported);
 
-Let's make this a new event, so that when this option is not enabled, we
-don't waste the ring buffer. For function tracing, every element added to
-the event will add megabytes extra to the ring buffer.
-
-It should be possible to switch what event gets created at the time of the
-trace. Even calling different functions to do it.
+Would this not be a case for the new helper added earlier in the
+series? Or is this some third type of boolean?
 
 Thanks,
-
--- Steve
-
-
-> @@ -86,8 +88,6 @@ FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
->  );
->  
->  /* Function return entry */
-> -#ifdef CONFIG_FUNCTION_GRAPH_RETVAL
-> -
->  FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_ret_entry,
->  
->  	TRACE_GRAPH_RET,
-> @@ -110,6 +110,21 @@ FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_ret_entry,
->  
->  #else
->  
-> +/* Function call entry */
-> +FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
-> +
-> +	TRACE_GRAPH_ENT,
-> +
-> +	F_STRUCT(
-> +		__field_struct(	struct ftrace_graph_ent,	graph_ent	)
-> +		__field_packed(	unsigned long,	graph_ent,	func		)
-> +		__field_packed(	int,		graph_ent,	depth		)
-> +	),
-> +
-> +	F_printk("--> %ps (%d)", (void *)__entry->func, __entry->depth)
-> +);
-> +
-> +/* Function return entry */
->  FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_ret_entry,
->  
->  	TRACE_GRAPH_RET,
+Charles
 
