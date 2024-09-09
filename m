@@ -1,241 +1,96 @@
-Return-Path: <linux-kernel+bounces-320964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C21FF9712A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:55:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3199712AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE45282DF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:54:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 721FAB20EBF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515E71B2519;
-	Mon,  9 Sep 2024 08:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B791C1B2529;
+	Mon,  9 Sep 2024 08:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wmLUSfCe"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ym9j8qI7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC9E1B1D76
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2082114B94A;
+	Mon,  9 Sep 2024 08:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725872092; cv=none; b=uR8EyNlAOznmcH3J2iuXQIID0YJ+8Qx1BJbCozjBz9ns9oTQXTWM0VgwtswuPJH7E5eh/TUlbLlTCuzlEzpP0PGsSjxEkKN7CFdXYKgcZLw/9nABf9+PvwP8tGnlhZE6t7ivch80rJ3QGVuj+lzyoLe3gyuPan+WlXDneZHXEqo=
+	t=1725872147; cv=none; b=CqVbufSYQYua7si2WyT7uPbN0djYhRxR6WA2Jm0jxNcY9xscklyHcTyt3ufnnt/BH//MyjD0xR4vKoox30/RNj2PBCd6WoDVo5h+qXkqRMnrHDvWxiOVyR15QtlqXfl9r0sgcBCvyr4Pr9qvgWWAbgyRcylB37gRdSDg9ajd6ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725872092; c=relaxed/simple;
-	bh=9NW2eWgUEPYGMgqTTAJOulDxRDM5ZibU1CDb2TG/UIU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bfpCgNGpgbcbSzWerTFsGeF43ebz6q1RlxTlJxwID7yJ8UMlbW8mRm7q/n/bMxbDutgvLqkAAXcOqR8KZlHYbM4MS9WxPRZ1iNdvsiPUWIgDUFEfs3rLkeb6BM8/KgtptnIilo3bOUS6o5vPExKzkgSF6WBrnymP1xecMtdRnWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wmLUSfCe; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8a7cdfdd80so220387766b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 01:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725872089; x=1726476889; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yG/d1qUdxYTFFDjEy58VtD5KHrMD8xW4N/b1u+y2Cz0=;
-        b=wmLUSfCeZfx5N1YW7DQI+Nx8gTyE0MzE5qmzP1M15eOOtXLDV4Hx5iuyOHZLrv2CTq
-         vsHCI4TeqFki44NEgXxIXmP9ciBb3ewhCVw+EVx4pxTVtnwLSjQRu3mxrqJxrbj/NHLr
-         0te7IOIx5G2dFhmGPh69O3s+QYQtLp9NbGDgr71U+pPHHveP8j8XuuT7CRAkXOfQVBXO
-         eP47SrE3tjLWvwXKXmAmoFpmksml42PSF0gMH0GBqRB+G0VKjIUh+9gcneJZ/DJ7PTDa
-         qIjwXMrAQpoAKmMOGw6WdBerr9Mc/KtHoc2hWoMxAy+79FMXt6ScumW+Oa9+YgKUGBru
-         kWqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725872089; x=1726476889;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yG/d1qUdxYTFFDjEy58VtD5KHrMD8xW4N/b1u+y2Cz0=;
-        b=aE1zJwP3Ag6N0NwGa0nk2c36UA90l4qBye7LpKx1gyaN/meRyyjWxgTvGLHkiqw4rr
-         L18wtwKKWMkED6umJa9z7j6nIpsYIUqAgn1Inv2dCQ94TIDwYBkENugoHOe1VnAvP+/d
-         t3lnfs8r7LA9Ujmk7Y7Q0curFX0R28XV2uPwmKvSF3CAPVEMsVGBvk65wwFDH7SxLVhk
-         z695QP2hV63G1YEDWVDYz3qVLCuRccM/giD5g7Onp70BVTQLSb+RJljdWPcJhrhOT5TP
-         QM6cVHDhxsW91a4ehsMEW5CT5xFImsURhDYhPJjxEGglsqyzvQ6a7igk5fzvLqIgd2K8
-         /s6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVcB/kzp4mFxRqF7VxWq8/SqPeFcODQ/jSRMNXu37IEwQJAC6psnZRTcYcKtfrfUFKhups+sp9sY4lCu/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDNLE/i5lLoZMoGOVgybDei85kcGC228WF4KYXLdyIGxfG6kHX
-	+eqp2629f+xk6D/d6fy7UNIuiyd8qTVzYIJl5IZ4IhdkUODT0yALWN1UQKwFPo0=
-X-Google-Smtp-Source: AGHT+IEvfzk/SxAXufH/seMQzMP3N3vvMRUKKCoLzWJKRZt4xOsE+GdEic8FWJngVTj/WRC44oGsQA==
-X-Received: by 2002:a17:906:da85:b0:a7a:9f0f:ab2c with SMTP id a640c23a62f3a-a8a8866090amr889703866b.29.1725872088318;
-        Mon, 09 Sep 2024 01:54:48 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:63a3:6883:a358:b850? ([2a01:e0a:982:cbb0:63a3:6883:a358:b850])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ce96d9sm307445466b.157.2024.09.09.01.54.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 01:54:48 -0700 (PDT)
-Message-ID: <b3a5dd54-90ba-4d75-9650-efbff12cddeb@linaro.org>
-Date: Mon, 9 Sep 2024 10:54:48 +0200
+	s=arc-20240116; t=1725872147; c=relaxed/simple;
+	bh=e4aVb+sNmgYBf09msxQwgK2NAZ3FFz0XQ4u9sLpYhFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/InieUGSzrHRtnj4vbzmzEcSEk9TdiUx8eWgutyAEuyR/8wwpbw5wISTjml19NS7bXDe5X6VMdmPXvvTWfwVhIr0w1walPAgrM8lqV9zZ4JzMCIhIaq6w6e+DwxBg167l6GVjdwFEzx6hieEx/3vIv1lqZ5GukZA09/qwPiCAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ym9j8qI7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A100BC4CEC5;
+	Mon,  9 Sep 2024 08:55:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725872146;
+	bh=e4aVb+sNmgYBf09msxQwgK2NAZ3FFz0XQ4u9sLpYhFs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ym9j8qI7l6W5G2EENS+PrKEYzzRj9tIWk4Qe4wlGLFke+dkRhr7gSbxUywWEo0cAd
+	 A5g0QXrH1OzRrgkdxKrqDskrD6VLOfIOWGNUM9YWWT5yKujfYpKMPZhVumr157xCKx
+	 swIcA2CCiRnlps2N9XIcEQghQ8m9SVG0qZRVL5WSnG02z2FjT9qHcCQqP6lM7z7LS8
+	 h0THfKUxmEtQU5cc3GTI4eldZMCJo4ztTFaL1S0+XrNj4qzlcZwR7cgn7KKbI3fnIY
+	 r7y3NtNxKV5s6Y+zlzaxiIgvTVA/CaIylsLEDDaS72HNbY1It0LNnGD+s1KUjP3Xno
+	 ZCFvaceBDbjZg==
+Date: Mon, 9 Sep 2024 09:55:42 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, claudiu.manoil@nxp.com,
+	mail@david-bauer.net
+Subject: Re: [PATCH net-next] net: gianfar: fix NVMEM mac address
+Message-ID: <20240909085542.GV2097826@kernel.org>
+References: <20240908213554.11979-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
- between two subsystems
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
- konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
- linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
- vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
- Frank.Li@nxp.com, konradybcio@kernel.org
-Cc: quic_vdadhani@quicinc.com
-References: <20240906191438.4104329-1-quic_msavaliy@quicinc.com>
- <20240906191438.4104329-5-quic_msavaliy@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240906191438.4104329-5-quic_msavaliy@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240908213554.11979-1-rosenp@gmail.com>
 
-Hi,
-
-On 06/09/2024 21:14, Mukesh Kumar Savaliya wrote:
-> Add support to share I2C SE by two Subsystems in a mutually exclusive way.
-> Use  "qcom,shared-se" flag in a particular i2c instance node if the
-> usecase requires i2c controller to be shared.
+On Sun, Sep 08, 2024 at 02:35:54PM -0700, Rosen Penev wrote:
+> If nvmem loads after the ethernet driver, mac address assignments will
+> not take effect. of_get_ethdev_address returns EPROBE_DEFER in such a
+> case so we need to handle that to avoid eth_hw_addr_random.
 > 
-> I2C driver just need to mark first_msg and last_msg flag to help indicate
-> GPI driver to  take lock and unlock TRE there by protecting from concurrent
-> access from other EE or Subsystem.
-> 
-> gpi_create_i2c_tre() function at gpi.c will take care of adding Lock and
-> Unlock TRE for the respective transfer operations.
-> 
-> Since the GPIOs are also shared for the i2c bus between two SS, do not
-> touch GPIO configuration during runtime suspend and only turn off the
-> clocks. This will allow other SS to continue to transfer the data
-> without any disturbance over the IO lines.
-
-This doesn't answer my question about what would be the behavior if one
-use uses, for example, GPI DMA, and the Linux kernel FIFO mode or SE DMA ?
-
-Because it seems to "fix" only the GPI DMA shared case.
-
-Neil
-
-> 
-> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 > ---
->   drivers/i2c/busses/i2c-qcom-geni.c | 29 ++++++++++++++++++++++-------
->   1 file changed, 22 insertions(+), 7 deletions(-)
+>  drivers/net/ethernet/freescale/gianfar.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> index eebb0cbb6ca4..ee2e431601a6 100644
-> --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> @@ -1,5 +1,6 @@
->   // SPDX-License-Identifier: GPL-2.0
->   // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
-> +// Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->   
->   #include <linux/acpi.h>
->   #include <linux/clk.h>
-> @@ -99,6 +100,7 @@ struct geni_i2c_dev {
->   	struct dma_chan *rx_c;
->   	bool gpi_mode;
->   	bool abort_done;
-> +	bool is_shared;
->   };
->   
->   struct geni_i2c_desc {
-> @@ -602,6 +604,7 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->   	peripheral.clk_div = itr->clk_div;
->   	peripheral.set_config = 1;
->   	peripheral.multi_msg = false;
-> +	peripheral.shared_se = gi2c->is_shared;
->   
->   	for (i = 0; i < num; i++) {
->   		gi2c->cur = &msgs[i];
-> @@ -612,6 +615,8 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->   		if (i < num - 1)
->   			peripheral.stretch = 1;
->   
-> +		peripheral.first_msg = (i == 0);
-> +		peripheral.last_msg = (i == num - 1);
->   		peripheral.addr = msgs[i].addr;
->   
->   		ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
-> @@ -631,8 +636,11 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->   		dma_async_issue_pending(gi2c->tx_c);
->   
->   		time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
-> -		if (!time_left)
-> +		if (!time_left) {
-> +			dev_err(gi2c->se.dev, "I2C timeout gpi flags:%d addr:0x%x\n",
-> +						gi2c->cur->flags, gi2c->cur->addr);
->   			gi2c->err = -ETIMEDOUT;
-> +		}
->   
->   		if (gi2c->err) {
->   			ret = gi2c->err;
-> @@ -800,6 +808,11 @@ static int geni_i2c_probe(struct platform_device *pdev)
->   		gi2c->clk_freq_out = KHZ(100);
->   	}
->   
-> +	if (of_property_read_bool(pdev->dev.of_node, "qcom,shared-se")) {
-> +		gi2c->is_shared = true;
-> +		dev_dbg(&pdev->dev, "Shared SE Usecase\n");
-> +	}
-> +
->   	if (has_acpi_companion(dev))
->   		ACPI_COMPANION_SET(&gi2c->adap.dev, ACPI_COMPANION(dev));
->   
-> @@ -962,14 +975,16 @@ static int __maybe_unused geni_i2c_runtime_suspend(struct device *dev)
->   	struct geni_i2c_dev *gi2c = dev_get_drvdata(dev);
->   
->   	disable_irq(gi2c->irq);
-> -	ret = geni_se_resources_off(&gi2c->se);
-> -	if (ret) {
-> -		enable_irq(gi2c->irq);
-> -		return ret;
-> -
-> +	if (gi2c->is_shared) {
-> +		geni_se_clks_off(&gi2c->se);
->   	} else {
-> -		gi2c->suspended = 1;
-> +		ret = geni_se_resources_off(&gi2c->se);
-> +		if (ret) {
-> +			enable_irq(gi2c->irq);
-> +			return ret;
-> +		}
->   	}
-> +	gi2c->suspended = 1;
->   
->   	clk_disable_unprepare(gi2c->core_clk);
->   
+> diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+> index 634049c83ebe..9755ec947029 100644
+> --- a/drivers/net/ethernet/freescale/gianfar.c
+> +++ b/drivers/net/ethernet/freescale/gianfar.c
+> @@ -716,6 +716,8 @@ static int gfar_of_init(struct platform_device *ofdev, struct net_device **pdev)
+>  		priv->device_flags |= FSL_GIANFAR_DEV_HAS_BUF_STASHING;
+>  
+>  	err = of_get_ethdev_address(np, dev);
+> +	if (err == -EPROBE_DEFER)
+> +		return err;
 
+To avoid leaking resources, I think this should be:
+
+		goto err_grp_init;
+
+Flagged by Smatch.
+
+>  	if (err) {
+>  		eth_hw_addr_random(dev);
+>  		dev_info(&ofdev->dev, "Using random MAC address: %pM\n", dev->dev_addr);
+
+-- 
+pw-bot: cr
 
