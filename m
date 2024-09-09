@@ -1,55 +1,70 @@
-Return-Path: <linux-kernel+bounces-321414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 222B5971A2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:58:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE916971A2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5D812816A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 260861C21C1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952631B86E1;
-	Mon,  9 Sep 2024 12:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CCD1B78F7;
+	Mon,  9 Sep 2024 12:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h9itpF9e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bjT1SrN8"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC511B790E;
-	Mon,  9 Sep 2024 12:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCB41B4C4F
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725886672; cv=none; b=Zzjsl8+ER+9yiUMzHBslYatO2BKjenEGz8VIaLQJPCRfITO5OcvGlh7avbV2Ae/NZ3IryLYVG2+TT/CIqmzW566QYPTybtmnkl+yKYkCfJmU8UsV3ZEOjwihTYNMjNmxoRc/0na6gxEeHuJH2Uq7/mFY4tNCnxr7+cHJXkFkr3Y=
+	t=1725886692; cv=none; b=DAZtFH/sP3KaZtrHYLgQI3hEMIl20C0gOUPG4rA8lomHRFJPbru0gm+t3frKs0rZBqyzEbfLM4u99JjyIF7BefOptdVCx4cE5JdiPRXUaoHc8Kbjdi9RgaQqMc5UVkPak8Hse8tB4woxSg5Y9Sd5ZWLuCKoSjofA3SXUWiO9ZS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725886672; c=relaxed/simple;
-	bh=PpiHwLihXlv9slsWWgeRNxz0ygIyTVN9UC/5LY/o5to=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDjlaHgpIyzO1p4v/1oneQJOeLYGAuAuJo9XPTG7xNATYsJPDGr4RwMi/LEn6QLTESxq7rF3uUluZmBWu79ZAqEfK+lmuJOQY6fcqTY/lUGeTUtcUvMM88TMppSIGvw8z1lxLmt2qxe5Elu6++vWnUogH44ZbQjP6WOp8j/Wgyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h9itpF9e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F2F5C4CEC5;
-	Mon,  9 Sep 2024 12:57:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725886671;
-	bh=PpiHwLihXlv9slsWWgeRNxz0ygIyTVN9UC/5LY/o5to=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h9itpF9eKDSVTEj3CvndqUuJ8B6HMYvbXR5TLMJNSSglt08VMn+4Cv1NdOQ5DxHYt
-	 PLThoiEOtq6BllsEhvSWLaPV2+r4dM6KNBreqAlbJPOhbT7q1HYj0paEYIeeOUN9Ma
-	 pP8f3e3jpptQ4TWVzvFy/UpzmmZjHQdhXXH287CmNL3AqO52SrnW6qhDN40u8b64mL
-	 xmQrkiHDFpok7QlylQm1SwyYyeNgTRUYrkFqviLMcjbg4ZIALKuBrNGTX7lkGz0498
-	 UzjS27PD2DSz5CwGAPQDZQC7+qjGXZM9o7Tn+hszOcupeD08QBNtgeIoB6oFRadjUI
-	 Yirb9yONGo7vw==
-Date: Mon, 9 Sep 2024 14:57:46 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: mszeredi@redhat.com, linux-fsdevel@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Seth Forshee <sforshee@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] fs/mnt_idmapping: introduce an invalid_mnt_idmap
-Message-ID: <20240909-moosbedeckt-landnahme-61cecf06e530@brauner>
-References: <20240906143453.179506-1-aleksandr.mikhalitsyn@canonical.com>
- <20240906143453.179506-2-aleksandr.mikhalitsyn@canonical.com>
+	s=arc-20240116; t=1725886692; c=relaxed/simple;
+	bh=ZpnocGD3VaBOcTHVLGeKcx/oLO7/CPdPhguOFHXp8Zk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Gp2pTb/+QJiIOE5QprlVvDQ+wZbr8ecjvYACOtN9atROu2EUXmWQFicGI7tlQwPwTjYn5K9mGVHpBSdzJhmJhT+ArxzU3bFUuFAMFXPJyLTPuVy6l+6NIZzguZ3jvYzjZ6AtgsVMZkYt0BZRlzRHMrTm/L6Wii2JT26T1/nPeck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bjT1SrN8; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 057E240E0284;
+	Mon,  9 Sep 2024 12:58:09 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id PP-SypyLXrOA; Mon,  9 Sep 2024 12:58:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1725886684; bh=k2B8zAy6jgdBzYEuqd4KPdP5XftBCf3jUigky1RDHdw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bjT1SrN8v3diSo6Wd1y6V39+VL77mR190Vt3uNg9fP2M2RJiMcn8MwK8i6HPtvr1q
+	 E8Aj2zQuH+ALKU0FjTa+iqwq/ucbo1m/cgNCGfPdVjE2mZPCAB3AiiGECcuE9SFDB5
+	 Ryp0T+lVvb7OvaCBsYGpzMoQx0HkEvt6vvPavdlUaGfQHtbLVhEOA/jFlgOqqfygzJ
+	 84qzfksjZygX7RqpJ47iMjoYh4lg4RTt0VKPuF6ruL1ZAdbZ6H8kd25kpMzfWWUehM
+	 TeR3uWr0AxtH73N48R/YkveGq2v8DZwM7QzHDrpQxkVEEJTo1MP1U5vhjjgQfxf+fy
+	 2vCDzO5G3FV8Qp9QaSuTSuAF2LT0jaWDl9R/pGeodV/6lw7Dze9/GJPYuxlfgf4GWp
+	 zuhd/Xe1jftFkIf60PCbCTbWApVZIn6DLb32/yxSoDYTXvVzz5ri58Kbr/OvtKriLl
+	 JWTvtAgEkAhzBQtFThbS8DaHVmTO1Rr3XRtbi9Z4G4r0eLIVQBqUfUcVFD2dk0yoKU
+	 KgcomZl+BRmHlVgvMlrBBXLWBpVVZLU6TO0bPdERpPZCxti/iW4BJLhfyp3si4ppoX
+	 Kv+Tne/JausbeFpFqvfh06Qc9F2jL0uOPfWp/QFNd68Ru+YiVTeCl/j+Rv41oCpWIG
+	 BC1WguEIcIIECNW1a1v2cvRg=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B64F540E0185;
+	Mon,  9 Sep 2024 12:58:01 +0000 (UTC)
+Date: Mon, 9 Sep 2024 14:58:00 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/sev for v6.12-rc1
+Message-ID: <20240909125800.GAZt7w2DcMRPncqQ1w@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,53 +73,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240906143453.179506-2-aleksandr.mikhalitsyn@canonical.com>
 
-On Fri, Sep 06, 2024 at 04:34:52PM GMT, Alexander Mikhalitsyn wrote:
-> Link: https://lore.kernel.org/linux-fsdevel/20240904-baugrube-erhoben-b3c1c49a2645@brauner/
-> Suggested-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-> ---
->  fs/mnt_idmapping.c            | 22 ++++++++++++++++++++--
->  include/linux/mnt_idmapping.h |  1 +
->  2 files changed, 21 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
-> index 3c60f1eaca61..cbca6500848e 100644
-> --- a/fs/mnt_idmapping.c
-> +++ b/fs/mnt_idmapping.c
-> @@ -32,6 +32,15 @@ struct mnt_idmap nop_mnt_idmap = {
->  };
->  EXPORT_SYMBOL_GPL(nop_mnt_idmap);
->  
-> +/*
-> + * Carries the invalid idmapping of a full 0-4294967295 {g,u}id range.
-> + * This means that all {g,u}ids are mapped to INVALID_VFS{G,U}ID.
-> + */
-> +struct mnt_idmap invalid_mnt_idmap = {
-> +	.count	= REFCOUNT_INIT(1),
-> +};
-> +EXPORT_SYMBOL_GPL(invalid_mnt_idmap);
-> +
->  /**
->   * initial_idmapping - check whether this is the initial mapping
->   * @ns: idmapping to check
-> @@ -75,6 +84,8 @@ vfsuid_t make_vfsuid(struct mnt_idmap *idmap,
->  
->  	if (idmap == &nop_mnt_idmap)
->  		return VFSUIDT_INIT(kuid);
-> +	if (idmap == &invalid_mnt_idmap)
-> +		return INVALID_VFSUID;
+Hi Linus,
 
-Could possibly deserve an:
+please pull some x86 SEV cleanups for v6.12-rc1.
 
-if (unlikely(idmap == &invalid_mnt_idmap))
-	return INVALID_VFSUID;
+Thx.
 
-and technically I guess we could also do:
+---
 
-if (likely(idmap == &nop_mnt_idmap))
-	return VFSUIDT_INIT(kuid);
+The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
 
-but not that relevant for this patch.
+  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_sev_for_v6.12_rc1
+
+for you to fetch changes up to 2b9ac0b84c2cae91bbaceab62df4de6d503421ec:
+
+  virt: sev-guest: Ensure the SNP guest messages do not exceed a page (2024-08-27 10:35:38 +0200)
+
+----------------------------------------------------------------
+- A bunch of cleanups to the sev-guest driver. All in preparation for
+  future SEV work
+
+----------------------------------------------------------------
+Nikunj A Dadhania (4):
+      virt: sev-guest: Replace dev_dbg() with pr_debug()
+      virt: sev-guest: Rename local guest message variables
+      virt: sev-guest: Fix user-visible strings
+      virt: sev-guest: Ensure the SNP guest messages do not exceed a page
+
+ arch/x86/include/asm/sev.h              |   2 +-
+ drivers/virt/coco/sev-guest/sev-guest.c | 132 ++++++++++++++++----------------
+ 2 files changed, 69 insertions(+), 65 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
