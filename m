@@ -1,217 +1,381 @@
-Return-Path: <linux-kernel+bounces-322113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1C8972430
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:06:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1487972434
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 669E1B227D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:06:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFC76283D8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9914418B48A;
-	Mon,  9 Sep 2024 21:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15FB18BC28;
+	Mon,  9 Sep 2024 21:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nuccHPB9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3vUo1Q6E";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/LDxeoDB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E71189BB6;
-	Mon,  9 Sep 2024 21:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725915997; cv=fail; b=qZ93s4NFRNPwRThvGWY104iaxTLmmJ2NONAgQSGxsF+CIflMeHuWL4v7MyyedxnfQsIgkrLrEHhDBwsk5VTzoQLjZM7ii+kY3yF/kpaDQSMLconPip7TnHR934/g1EMYtJIajopPlTCNopLh+vV4fmd67+236TIGcQYemdv49qg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725915997; c=relaxed/simple;
-	bh=Z5K5V9eUfSQ9qiXHAJmWWMggZWSSkok/aFlBr7Ixz5E=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=UHjZQFnZB0b2A9GGrKT9B0lDocbuF2h6uZE5gi9qtCGztpLmtrCdz3CiqcNOgqrqvPhaQZoVPqx3vUO8TyaQOuQ4h4Hof7afzh32oIP25qdSqcJCToOJ8h09CjXb3kCMT1m6gbyVNexNH7RSvi2rwAbnKo/Hv+Mapbz9nE0QOrg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nuccHPB9; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725915996; x=1757451996;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=Z5K5V9eUfSQ9qiXHAJmWWMggZWSSkok/aFlBr7Ixz5E=;
-  b=nuccHPB98osvrOb0YUweMkZLbzXyDCY0CJnv2XKTZ6v5QQhZhsuw/qxy
-   SFaK2c+2s7CL3X0qfh0NAomA/7rChA4RR6+AXS0Z77p78UX/zE2ZvFhnz
-   +kVjdXTiISVi27jBLezjjySGL8/FxW/LPQb93Dst6vLK1VNXQ3g+hBztd
-   U3gQvHkPPQTjWwJjAJ6Kr57d3c/M5xK/SCG5HhkbI33bnse61OhwK9hBh
-   0oKgumbL65qhUtuNkqI+2sX9JmURIZtdxaSw2u2bVD5Ys2ceV9We23MDc
-   oLF/8IdjWd6nSqcL3AxNKwCbpT4ryplsv3WKxXWwFkxsX5Uem+mZJyTke
-   g==;
-X-CSE-ConnectionGUID: x0B49+GXSEu1laaiy9QKDw==
-X-CSE-MsgGUID: zol1eTxTRTafd9C9TWfGcg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="28521958"
-X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="28521958"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 14:06:35 -0700
-X-CSE-ConnectionGUID: OWRnzxarSB+j42mDYwvABg==
-X-CSE-MsgGUID: sLS/CL1RQ5q8m5c9GLif2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="97603744"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Sep 2024 14:06:35 -0700
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 9 Sep 2024 14:06:34 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 9 Sep 2024 14:06:34 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.174)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 9 Sep 2024 14:06:33 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iaybgVJ8qc92Ylr5AJsFYFIbOd2Fr0tJnGfwU1rxYhqW0g5HYEr5a+kfN4SrJTVb8Vvj6DY16Auz0Qn5uCz+8JbYbTd/SjDa151MtXPeWXFAl8aDX4uss1/y3u2PCtWCiuRL2JwzAHF+1v+mmGFB6oUtY1DDni1QVXOp9NGTaxZsymOw1KYWe6t1QzLFssyuE30s0DRg83Du2gF3Fu1WO9AXHmttl38iuZTfGdxtHelLcoL+hmwMEWzQ4x5k4x4ANsob8j/uNauaXOrYJudGujR/hzhUXq4HLQwGQ6YCZ3c1+lDYsbiDUjuDB1euCn3mOT5u+3Y8GyMu1lBE/UC8ig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z5K5V9eUfSQ9qiXHAJmWWMggZWSSkok/aFlBr7Ixz5E=;
- b=xumgMgxt/g3NtkGVU57w8lk39YPtH3Z3zanVW8JVcdP1zTPYS5pPQd3dZAtqdTWeAEdhxNR+zfAiKo9nMXi60eB6Tlw3/0YZVsx797rvkZwZuUoM/pmorqSeMjYjjzHYKkUvmGXJBo8gHHKjT5K0UyQ/5y4oRmRPnzV33P1K0nN74f4nIcNyRbTcoAkPDtM4TsRoPImfsyvszKTNTVCjJdbS0gfB+kHOSrPu1V2XZWcbRxa+hJ2sInFYpIk8PBx1LKRL3qT0myBHEYBmoMl5meJQIIjtFIGNleOBA6sX6gBAB/tO6q7nZp5tu9DOibHNj4nmcYxZ6J1USKPqmAFfXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by IA0PR11MB7862.namprd11.prod.outlook.com (2603:10b6:208:3dc::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Mon, 9 Sep
- 2024 21:06:32 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.7939.017; Mon, 9 Sep 2024
- 21:06:32 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "seanjc@google.com" <seanjc@google.com>
-CC: "Zhao, Yan Y" <yan.y.zhao@intel.com>, "nik.borisov@suse.com"
-	<nik.borisov@suse.com>, "dmatlack@google.com" <dmatlack@google.com>, "Huang,
- Kai" <kai.huang@intel.com>, "isaku.yamahata@gmail.com"
-	<isaku.yamahata@gmail.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/21] KVM: x86/mmu: Implement memslot deletion for TDX
-Thread-Topic: [PATCH 01/21] KVM: x86/mmu: Implement memslot deletion for TDX
-Thread-Index: AQHa/neucVRb6Pn3ak6v16vDJhYLb7JPf/2AgAB7WoA=
-Date: Mon, 9 Sep 2024 21:06:32 +0000
-Message-ID: <b78f469988ccf14626fc7a5934c9ae96a743af9f.camel@intel.com>
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
-	 <20240904030751.117579-2-rick.p.edgecombe@intel.com>
-	 <d4e07759-c9fc-49db-8b99-0b5798644fcc@redhat.com>
-In-Reply-To: <d4e07759-c9fc-49db-8b99-0b5798644fcc@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|IA0PR11MB7862:EE_
-x-ms-office365-filtering-correlation-id: 205fb3af-eb65-4b8e-970e-08dcd11347e7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?ZXEzc0N3RzdLOUJMNEZrTDJrbTlWUlhTZ0cxVmM0dldyVm05RUpteTc5TmpV?=
- =?utf-8?B?NVpteFJUWk4vUk83Mkd5NS9heC94R1lkb2tBQ3RKNmdLU3YyS1Y1WmVGT1Qz?=
- =?utf-8?B?ZDBjeVJpamQzclFCR2d2TnZJTW1OUDJyTXRZZGpCWTgvb2FnUjBSSGtNTEZa?=
- =?utf-8?B?VXVWbVdwdEpySktDUUFQN1NaRWNObVN5bkNRQTlMSjc2R3N4RXFObmwwbnZL?=
- =?utf-8?B?S3BxSExHeFpzaEJDSVJ6aUQ1dkJiTDkzdytLaVA2Q3V2eC9NWTNmZE82SWlF?=
- =?utf-8?B?MGFXd0p3MTIrcTdwV1lDNk1EMXZUbWRQZ0NKS0Y0ajJHa3BPL3crSCtzM1RF?=
- =?utf-8?B?NUVUNmRmSHQ5WldBNURwL2pZalpXeUI2OFRpR0Vnd2p2SlFQODZVNDY1YjhH?=
- =?utf-8?B?QzdqMGhoeS9TU005dy92M3VadDRXdjZwK1hTeStvVERsVkpEMUx5MmJOYnFa?=
- =?utf-8?B?RDVCRTdRN0FjQjJBNDc1cWdyeHdJN3FsRG1LRm1XSEpvUmJubktrTGZLcjJ6?=
- =?utf-8?B?ZDczcHRZeEFNQ1dmN2p1ZUQ0bUt6dFk4aHhKWmdLcWk0YkphVDBoaERaYS8x?=
- =?utf-8?B?ZGtuNHgvOUc1VER2ZE1uQmRkbHlobHpTam9icmU2YjVwYkRlTnJ2RzhTakND?=
- =?utf-8?B?YjVibWF2WGtjWUZuVHJPN3Q5RzgrVTJjS3JaVGNHK250dkl4RDBRRmVjelJk?=
- =?utf-8?B?TVh4dmdQYzZFSGdrc3UzUDVZaG9OMVBUS3k2aENSSU9UOS9OM0RaejlnMEIr?=
- =?utf-8?B?cmgxazVhTk5Ldm9BWEtXdDNoN1R4bXdIY1E5M2RlUy9PamRHc0hwYUMvSmE0?=
- =?utf-8?B?MHZIZDl2RlU1MUJaaXVBNFNCdEJBRUQvRkZLWFUwbVN4QXd5amxGQ3VVajFp?=
- =?utf-8?B?cWExbVJFRElNQm93cTN3Um9DZUpUaFdJRGRuT3VrSlFNcnk2T0NQRGIycVVJ?=
- =?utf-8?B?bkpvTC9YWEFvNWpZVDBSUWhoYWp4M3EwU3JvYjVIYzAycVp2TE5LbzB4Q1c5?=
- =?utf-8?B?S0JGbWtIaFNDZW1meWQ3bkZTQ0pLNlR3ZG9FRnpzcWtldWJLWTV4T1Y0cDlN?=
- =?utf-8?B?RmtSMFlMbEl4L0p6WlhHOWhOellWRWVqNGxXNUdaVUh6OXorNVVXNzE2K2Jo?=
- =?utf-8?B?dEZ3WXdDUUwzdVVyY0tHZS9LcUNidk1qWVY5cGFtL1VsYXNvSGM5dThiZE1G?=
- =?utf-8?B?N2RYbTRFQlZQSUZEb2RIQjd5cThnc09DWndGZmcvVjZqNXpJeXFXRDQ3OUFt?=
- =?utf-8?B?V2NtL1dCYkZQQlUrU1VIbzBRemd4bzA3SDA1NEorci8weXJwdzNOdGpwS0ds?=
- =?utf-8?B?Kzg5NGNhZEFxWEFERWVYRWRSdjhqSFEzanhTbjVJc2ZOdWZSQ0RVeG9teHNV?=
- =?utf-8?B?bjdSSDhOa1BQRmM4bVRTYVJuWHZVaTFWbkQ3STdRbWxVaEl6eGdvOUdjMURj?=
- =?utf-8?B?UHV6RDhLeXBoRExQWS9aa1hYVms4UysrVGg0Z3V5QlFta041Tml6WTgxYTBJ?=
- =?utf-8?B?WXhuRkw1SnE3b3RScUlwdnB6QVhhVUNUYjZnT1ZSdEpobitRY1F0L1c3RDZZ?=
- =?utf-8?B?SjUvNXdkSDNWenFzaUNZZm5VMEUzeU1WYy9UT0t5RDBNbmUxNlBxVkpBVXpS?=
- =?utf-8?B?a25LSUc1Tm1ncDhOWC9ocHFEOEU1c1RUZm45VGZ0MVlxbkpwTFkrVStyV29P?=
- =?utf-8?B?ZmFhUGxXc3BOYXBwUitxN0o4dyt4dGRMbjM4Q25Fb3JKRTc1OHFST24vUm5B?=
- =?utf-8?B?djdML2k3dkpkZlVWbE56S1A2REp6V05QL2JQSlJnQW41cUt5RzRlT2hRcjlx?=
- =?utf-8?B?YlltdVcvRjNVMmdTT3ZWWDN0NlBuRW9XV1dvVlFONWxXZi92VGpHakF2a0Fl?=
- =?utf-8?B?alA5WStFaEFDQ3JtZVc5SnlISDQxMFZzQUJxeDFWZHpCYXc9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Z1ZxWnB2YTFLbVc3YUlSZS9wampGbEN2aDZBeWg1RE14WVV1OUpUNWxidm16?=
- =?utf-8?B?WEVSbjN3Y2JabGVJcnpBS0s3cHdaZWZwWldPQk83YVd0UEE5SFRRV2RUQ0o1?=
- =?utf-8?B?TlhxaUlSb3cwdjBVUnlWUFVXVmFvdVNvSW5ORzhyaG5uQmRHV295SEgvWlR4?=
- =?utf-8?B?Z2p5Y1RuM0RxM3BnN2w0enFSV2JleldNVVU4SFVSZG4xNHA5K2tsaVRJV3JU?=
- =?utf-8?B?V2RGenNwZzhFZDFscWgrYzdEZEVYNlZkL1Z6VnhabXhmcjR1c2hMWGt2Wktr?=
- =?utf-8?B?bkVjUGp0SjZCc0ovRWdtVUx4L3Y2TjVXeDlFYXN4OFVtMVAwUWJDQjZBSnlT?=
- =?utf-8?B?QU1uVGdUbjhLY2pDTkE5MmQ1V08rMXRoTWtzRGlsRTRnZlVpVzI0MHNUaExT?=
- =?utf-8?B?c2xFc0lBVEFBVTA3NWk4bzh6YS9oL2t2TjhXbHdvdldnWGIxQ1hGTjROVjNC?=
- =?utf-8?B?bUJpMzNTMmhGRzZaNzUvS1JQcHJTcEhBNkdvK2F3MHpoekxtWTFYcTVLU0RO?=
- =?utf-8?B?Q3pWVnUxTDY1YkovUmx2djY0SzB6SXN6UEFnZUlmTk9IZzNtTUFaaDI2VUlJ?=
- =?utf-8?B?SXZ5SmIyZXJZMm9sMDlDVjF2V08zNFBpM1M0ZDNJc0xYRjZDTnVsNngrK0Jo?=
- =?utf-8?B?TmtmTm5EcHBab1IzRkNySGY0THhuSXJ4aVhCYlBEckQxbElDNFphbEJrcHMw?=
- =?utf-8?B?a29ERnhZRmpZMEltRlhhS1M0aTd1QXFIS2ZBZnBydXdDWmdLSjI4RmhERlo5?=
- =?utf-8?B?aDFxa3hVbHIzdlJzbGJqVmpnU25zUitZWVBmN3J2OGRubTQ2OWRtZGFkaWdL?=
- =?utf-8?B?d0lRN0M2cXFtSTEwYWd1YTRIV0lCSDRQd1R5ZjJNR3FKMUR4TTUxaktvTkpX?=
- =?utf-8?B?TzBlaFJ6S2hVZkxaYysraFBiY1ZxVk9vSFc3UFBnekJUMHFjaUhFR2pWaEpo?=
- =?utf-8?B?ZVJXZmNQclhWN29qODlMQ1dGMWIxekRjS0l4OHJNSmVEUHNKZVVOWjFoN3ZC?=
- =?utf-8?B?RXRIK1NOMDdNSTJ6cld6aENpYzFrNHNCRDM2WWl3WjJFQ3Rnc1I4eXl0N0FZ?=
- =?utf-8?B?T3VTWmdtK0krbXhGYUFSdmtlUmRkeFN5MThvK3JlNTVWS0pzS1RFVWdzekNy?=
- =?utf-8?B?N2V1cTB1eVB5L2daSGovdkZoZUNKTmVMY1JVYzJwaDczNnZVZmg1Vi9WeHp6?=
- =?utf-8?B?ODVqSjIxU2E5QWZNeTV2N0IrYTk2d01mWGFXc1h5UGpTdkg5enhqa2ZMSWx5?=
- =?utf-8?B?SUczR2dOcUEwYlZjY3ZnTUVwbFVWbVVWRjBKcE5ncHI1dEdkNlZ0NlVSTkVU?=
- =?utf-8?B?a1hnVFhFZmREajJZR1g2MVlVOTFFMUJGNlRLUXk2d1lJNHRwWXUxZVVBaVFp?=
- =?utf-8?B?YjRSOU5pRy96b0h0WlRSMTZpZDRTeUcwUGVXZ04rd1NFdk4wbEJyK3RrWWV4?=
- =?utf-8?B?YS9TNWhrOXp6dE5xYXNKQkZsVXRqOGxISVdRQ0V0U3FvalhwZCt6dDF0QTF2?=
- =?utf-8?B?NzRibVE0b0VDdmFzbVd0K3dGY2wza3NvenJCWjlXcFZoR2UyNnRtWHdRL3U4?=
- =?utf-8?B?Z01zNGxCNC9VSHVOZndDSTFHSk1vTjMva1ZiaU90WTdoeGw2K2k0SDl3elM2?=
- =?utf-8?B?dnFzY3NIYVcyT0ZQRUVIeDB1cUhvU2sydzNkOU1wZTFBazdCS09QaGpSTUhT?=
- =?utf-8?B?WUFaaHA2RTVvWERGd0tROGw4RzZ4MHdIdmpPQ0VaYzYvUCs3STA5R215eDc0?=
- =?utf-8?B?dzVFNkpPZkhHa2tneFJVNHlTTlg2aDc3YTNFcnhwTVoxaTNod241TXNUZkd5?=
- =?utf-8?B?b2R0d0EvTVFiSDFmSnk3N0dEYUxidjBZOUtQVitXRXltZUY0aHBDaEJyYmtZ?=
- =?utf-8?B?U2J0c2Y4aFJYblZXQWYwYjZ5VE5Qc3lUNUdpUDJxckQzUmtnbTdWcGZpcnZ0?=
- =?utf-8?B?L2RvQSthdStMYXRLa0xEOFNsZWFtV0V6Ynovbldac0ZWVlExaWVDQzNCTWhv?=
- =?utf-8?B?Q0NVaVlNWGdNZHBJUWFqcVRGS0luSEEwc1J1Z0hGb0x5aWxWVVJZV2oyMjEr?=
- =?utf-8?B?aEZ0ajUwWjRUaDJTUXhhTVR4THljeWRaR1dKTE54WklkOUUrQWNVTjFoWU9C?=
- =?utf-8?B?WEpQVUtyQytOZTFMR1krcVo0RElHZXQxc2xXcHorTTlNUUdmVlBzV2gweFMw?=
- =?utf-8?B?dEE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1A8F7D31BC7B534C875420417969A9FA@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88366178CC8;
+	Mon,  9 Sep 2024 21:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725916035; cv=none; b=GP46+VEkOIEi9z/BdPj/ff4ekMRLz7bt0ou5tBjDD3ab1SN431w8XBiPiMuCtjM2o+8RhZ0zETCwrzm2CjThorpeTnHCkCdgVBmjVr2XHKwl2BIjNSt+BL7XXdRDqalst4InS81SvbZQEsvKyehIun0GFCoUjGHeFvJcbg6SzZ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725916035; c=relaxed/simple;
+	bh=l8RFvQvy45dX+U0oegyvg58M7Rrq3sg++EAnk6lwz18=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Py6LVygj+fnJKo6dD6UW3AZKcdclCVrPOSfwUbFRStR4V4DSLdVolYkH/0i0iQ+HmrhXiZ2JyDz7+W1AjkkNjTrE/VcPK/cYhBfx9xwcOURTgRlxC/PoKTbAsWQa+pn2oymP0n9KJCxXN8tb6Tybl2Mn8AYNkNKZK/ebrPF+YPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3vUo1Q6E; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/LDxeoDB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Florian Kauer <florian.kauer@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725916031;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1kuFpZpWeJWLvsFXiLDVH/pZ9m0VjY5XQDuskkb2mAM=;
+	b=3vUo1Q6EXItFr13CRNwbWKKJtU6Hww57YiIn+2xN4REBYC5yd7xH9rjruLxgF/v+0ZiPrl
+	P9+eHskEH5lX74Pmwh4ZFeSmnCV7rsKBsS8QVv3wqrOCWah0Hb0GE9Ltt7djJg7o+dgBmi
+	86y70v/niGghHnd5HkSEimy3V8Nt/w8hb8GH4XsM5ZTojaNu/7US6gFtu52wrfOw0WjzbC
+	f07y6gROwFfFLJFTEWbDysEgCKfDP1268p7hwjFRvxUNdnhgHSQFlCvUCRp3Qr9N+8j705
+	BVMSrRZjhoHJ2CwGtG4/FUpWixhoQo6LKal1rqNXuMdV7MpFko0pEpC26bfYWA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725916031;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1kuFpZpWeJWLvsFXiLDVH/pZ9m0VjY5XQDuskkb2mAM=;
+	b=/LDxeoDBmDjAhCiKgTGYiZZcEB7fhduAM/H8aUl6UDxr0xSSoMxeSgRmOpaL32OxeVFQ8l
+	S5Pu+nKunF8/eNCg==
+Date: Mon, 09 Sep 2024 23:06:56 +0200
+Subject: [PATCH] bpf: devmap: allow for repeated redirect
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 205fb3af-eb65-4b8e-970e-08dcd11347e7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2024 21:06:32.0523
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NS6OWzm6ML35m4H08VGLdxkTpfY7KU0jDMYiNfs2jBZyPlXoKF3olmBa0IQhWT7mrZtyIlM3/eFWEPjENInK52bVXi3VJob1oPjvSnucvxg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7862
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240909-devel-koalo-fix-redirect-v1-1-2dd90771146c@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAHBj32YC/yWNS47CMBBErxJ5jaW202m7cxXEom03g8Un4GTQS
+ Ii7jwXLV6V69TKrtqqrmYeXafqsa11uHdxuMPkktx+1tXQ2HjwCA9uiT73Y8yKXxR7rn21aatO
+ 8WYpIIxMjT870+b1p7z/q/eHLTR+//WH7huYuWz51/zwQ+ygaArrgg47JS0KJGf1ECUgiOUAQ+
+ HiTrGrzcr3WbR6iEmemcgzB9U0HzT5ELQkDAI+TK4pFyBze73+dDLyY7AAAAA==
+To: =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ xdp-newbies@vger.kernel.org, Florian Kauer <florian.kauer@linutronix.de>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9305;
+ i=florian.kauer@linutronix.de; h=from:subject:message-id;
+ bh=l8RFvQvy45dX+U0oegyvg58M7Rrq3sg++EAnk6lwz18=;
+ b=owEBbQKS/ZANAwAKATKF5IolV+EkAcsmYgBm32N6bYwzjxIcqtwZW1gMChPXvtpHV838n/Cyr
+ kZTFXonTlWJAjMEAAEKAB0WIQSG5cmCLvpm5t9g7UUyheSKJVfhJAUCZt9jegAKCRAyheSKJVfh
+ JA1eD/0dsqc5m+40sYaRFDVVF0isNkFzOaiZELOETddXJlgJaFRlZf/0+cFJ4d0/T0NeZvFbShs
+ 7OvTqG6vIB4t+DNw/U7Xrcii8BOw4mDT0l9XCtL2HbNsFmvE7YiwdAcD2XZKO7+f5oO5lgASvqF
+ TjKsPwGNXWhdOwe+CaxBLVUdp05I384VokgWpvTTOcFpQjqouBS+pEEdsaY+gH8GmCfKK7QHCgn
+ o5GFnGFClsl0BcjkesZVx+csc4tUVPWxNTmo8wJso+sr7FvMqPiBsSKKKrXWs7qVrY9QX+egvS4
+ M+8fT+gJJLuQifJaLx2mQCAKnupFirQuO381ITgGV6ygAx9RPQhLJuTxW4evPOEXXHtW6ow6CDy
+ hp0tjXSYO2VUMNf88kus7ZBaI/ZOr3lReNVdLChfD1NquVPC5MONiU/S6wL+Mj7ubFeIv4HKdfh
+ YDkQBW2mWaG4Bx6Y4rn2N6It11pNhNn9Sw6QjKtVuu2g3j31t/8hvPvSE6X48ZK5k7dkVdeeYAc
+ zpgdLDG9AGSIuJyZf/wU9D0cJrOlFMhPs6Yois7Nw7/safH9YJVobtPtXxMlwhGLCfmcmY0wFWz
+ P1Fq0oFsNMnWVKBIccptupym5VtsnLjmHvFULB87BX4UV+6+FIVe0XeQkU1M1gmvipsYqfvXhLt
+ lLrrTNPqFq6uMmw==
+X-Developer-Key: i=florian.kauer@linutronix.de; a=openpgp;
+ fpr=F17D8B54133C2229493E64A0B5976DD65251944E
 
-T24gTW9uLCAyMDI0LTA5LTA5IGF0IDE1OjQ0ICswMjAwLCBQYW9sbyBCb256aW5pIHdyb3RlOg0K
-PiANCj4gU3RhbGUgY29tbWl0IG1lc3NhZ2UsIEkgZ3Vlc3MuDQoNCk9vZiwgeWVzLiBXZSBjYW4g
-bG9zZSB0aGUgS1ZNX1g4Nl9RVUlSS19TTE9UX1pBUF9BTEwgZGlzY3Vzc2lvbi4NCg==
+Currently, returning XDP_REDIRECT from a xdp/devmap program
+is considered as invalid action and an exception is traced.
+
+While it might seem counterintuitive to redirect in a xdp/devmap
+program (why not just redirect to the correct interface in the
+first program?), we faced several use cases where supporting
+this would be very useful.
+
+Most importantly, they occur when the first redirect is used
+with the BPF_F_BROADCAST flag. Using this together with xdp/devmap
+programs, enables to perform different actions on clones of
+the same incoming frame. In that case, it is often useful
+to redirect either to a different CPU or device AFTER the cloning.
+
+For example:
+- Replicate the frame (for redundancy according to IEEE 802.1CB FRER)
+  and then use the second redirect with a cpumap to select
+  the path-specific egress queue.
+
+- Also, one of the paths might need an encapsulation that
+  exceeds the MTU. So a second redirect can be used back
+  to the ingress interface to send an ICMP FRAG_NEEDED packet.
+
+- For OAM purposes, you might want to send one frame with
+  OAM information back, while the original frame in passed forward.
+
+To enable these use cases, add the XDP_REDIRECT case to
+dev_map_bpf_prog_run. Also, when this is called from inside
+xdp_do_flush, the redirect might add further entries to the
+flush lists that are currently processed. Therefore, loop inside
+xdp_do_flush until no more additional redirects were added.
+
+Signed-off-by: Florian Kauer <florian.kauer@linutronix.de>
+---
+ include/linux/bpf.h        |  4 ++--
+ include/trace/events/xdp.h | 10 ++++++----
+ kernel/bpf/devmap.c        | 37 +++++++++++++++++++++++++++--------
+ net/core/filter.c          | 48 +++++++++++++++++++++++++++-------------------
+ 4 files changed, 65 insertions(+), 34 deletions(-)
+
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 3b94ec161e8c..1b57cbabf199 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -2498,7 +2498,7 @@ struct sk_buff;
+ struct bpf_dtab_netdev;
+ struct bpf_cpu_map_entry;
+ 
+-void __dev_flush(struct list_head *flush_list);
++void __dev_flush(struct list_head *flush_list, int *redirects);
+ int dev_xdp_enqueue(struct net_device *dev, struct xdp_frame *xdpf,
+ 		    struct net_device *dev_rx);
+ int dev_map_enqueue(struct bpf_dtab_netdev *dst, struct xdp_frame *xdpf,
+@@ -2740,7 +2740,7 @@ static inline struct bpf_token *bpf_token_get_from_fd(u32 ufd)
+ 	return ERR_PTR(-EOPNOTSUPP);
+ }
+ 
+-static inline void __dev_flush(struct list_head *flush_list)
++static inline void __dev_flush(struct list_head *flush_list, int *redirects)
+ {
+ }
+ 
+diff --git a/include/trace/events/xdp.h b/include/trace/events/xdp.h
+index a7e5452b5d21..fba2c457e727 100644
+--- a/include/trace/events/xdp.h
++++ b/include/trace/events/xdp.h
+@@ -269,9 +269,9 @@ TRACE_EVENT(xdp_devmap_xmit,
+ 
+ 	TP_PROTO(const struct net_device *from_dev,
+ 		 const struct net_device *to_dev,
+-		 int sent, int drops, int err),
++		 int sent, int drops, int redirects, int err),
+ 
+-	TP_ARGS(from_dev, to_dev, sent, drops, err),
++	TP_ARGS(from_dev, to_dev, sent, drops, redirects, err),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(int, from_ifindex)
+@@ -279,6 +279,7 @@ TRACE_EVENT(xdp_devmap_xmit,
+ 		__field(int, to_ifindex)
+ 		__field(int, drops)
+ 		__field(int, sent)
++		__field(int, redirects)
+ 		__field(int, err)
+ 	),
+ 
+@@ -288,16 +289,17 @@ TRACE_EVENT(xdp_devmap_xmit,
+ 		__entry->to_ifindex	= to_dev->ifindex;
+ 		__entry->drops		= drops;
+ 		__entry->sent		= sent;
++		__entry->redirects	= redirects;
+ 		__entry->err		= err;
+ 	),
+ 
+ 	TP_printk("ndo_xdp_xmit"
+ 		  " from_ifindex=%d to_ifindex=%d action=%s"
+-		  " sent=%d drops=%d"
++		  " sent=%d drops=%d redirects=%d"
+ 		  " err=%d",
+ 		  __entry->from_ifindex, __entry->to_ifindex,
+ 		  __print_symbolic(__entry->act, __XDP_ACT_SYM_TAB),
+-		  __entry->sent, __entry->drops,
++		  __entry->sent, __entry->drops, __entry->redirects,
+ 		  __entry->err)
+ );
+ 
+diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
+index 7878be18e9d2..89bdec49ea40 100644
+--- a/kernel/bpf/devmap.c
++++ b/kernel/bpf/devmap.c
+@@ -334,7 +334,8 @@ static int dev_map_hash_get_next_key(struct bpf_map *map, void *key,
+ static int dev_map_bpf_prog_run(struct bpf_prog *xdp_prog,
+ 				struct xdp_frame **frames, int n,
+ 				struct net_device *tx_dev,
+-				struct net_device *rx_dev)
++				struct net_device *rx_dev,
++				int *redirects)
+ {
+ 	struct xdp_txq_info txq = { .dev = tx_dev };
+ 	struct xdp_rxq_info rxq = { .dev = rx_dev };
+@@ -359,6 +360,13 @@ static int dev_map_bpf_prog_run(struct bpf_prog *xdp_prog,
+ 			else
+ 				frames[nframes++] = xdpf;
+ 			break;
++		case XDP_REDIRECT:
++			err = xdp_do_redirect(rx_dev, &xdp, xdp_prog);
++			if (unlikely(err))
++				xdp_return_frame_rx_napi(xdpf);
++			else
++				*redirects += 1;
++			break;
+ 		default:
+ 			bpf_warn_invalid_xdp_action(NULL, xdp_prog, act);
+ 			fallthrough;
+@@ -373,7 +381,7 @@ static int dev_map_bpf_prog_run(struct bpf_prog *xdp_prog,
+ 	return nframes; /* sent frames count */
+ }
+ 
+-static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
++static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags, int *redirects)
+ {
+ 	struct net_device *dev = bq->dev;
+ 	unsigned int cnt = bq->count;
+@@ -390,8 +398,10 @@ static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
+ 		prefetch(xdpf);
+ 	}
+ 
++	int new_redirects = 0;
+ 	if (bq->xdp_prog) {
+-		to_send = dev_map_bpf_prog_run(bq->xdp_prog, bq->q, cnt, dev, bq->dev_rx);
++		to_send = dev_map_bpf_prog_run(bq->xdp_prog, bq->q, cnt, dev, bq->dev_rx,
++				&new_redirects);
+ 		if (!to_send)
+ 			goto out;
+ 	}
+@@ -413,19 +423,21 @@ static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
+ 
+ out:
+ 	bq->count = 0;
+-	trace_xdp_devmap_xmit(bq->dev_rx, dev, sent, cnt - sent, err);
++	*redirects += new_redirects;
++	trace_xdp_devmap_xmit(bq->dev_rx, dev, sent, cnt - sent - new_redirects,
++			new_redirects, err);
+ }
+ 
+ /* __dev_flush is called from xdp_do_flush() which _must_ be signalled from the
+  * driver before returning from its napi->poll() routine. See the comment above
+  * xdp_do_flush() in filter.c.
+  */
+-void __dev_flush(struct list_head *flush_list)
++void __dev_flush(struct list_head *flush_list, int *redirects)
+ {
+ 	struct xdp_dev_bulk_queue *bq, *tmp;
+ 
+ 	list_for_each_entry_safe(bq, tmp, flush_list, flush_node) {
+-		bq_xmit_all(bq, XDP_XMIT_FLUSH);
++		bq_xmit_all(bq, XDP_XMIT_FLUSH, redirects);
+ 		bq->dev_rx = NULL;
+ 		bq->xdp_prog = NULL;
+ 		__list_del_clearprev(&bq->flush_node);
+@@ -458,8 +470,17 @@ static void bq_enqueue(struct net_device *dev, struct xdp_frame *xdpf,
+ {
+ 	struct xdp_dev_bulk_queue *bq = this_cpu_ptr(dev->xdp_bulkq);
+ 
+-	if (unlikely(bq->count == DEV_MAP_BULK_SIZE))
+-		bq_xmit_all(bq, 0);
++	if (unlikely(bq->count == DEV_MAP_BULK_SIZE)) {
++		int redirects = 0;
++
++		bq_xmit_all(bq, 0, &redirects);
++
++		/* according to comment above xdp_do_flush() in
++		 * filter.c, xdp_do_flush is always called at
++		 * the end of the NAPI anyway, so no need to act
++		 * on the redirects here
++		 */
++	}
+ 
+ 	/* Ingress dev_rx will be the same for all xdp_frame's in
+ 	 * bulk_queue, because bq stored per-CPU and must be flushed
+diff --git a/net/core/filter.c b/net/core/filter.c
+index 8569cd2482ee..b33fc0b1444a 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -4287,14 +4287,18 @@ static const struct bpf_func_proto bpf_xdp_adjust_meta_proto = {
+ void xdp_do_flush(void)
+ {
+ 	struct list_head *lh_map, *lh_dev, *lh_xsk;
++	int redirect;
+ 
+-	bpf_net_ctx_get_all_used_flush_lists(&lh_map, &lh_dev, &lh_xsk);
+-	if (lh_dev)
+-		__dev_flush(lh_dev);
+-	if (lh_map)
+-		__cpu_map_flush(lh_map);
+-	if (lh_xsk)
+-		__xsk_map_flush(lh_xsk);
++	do {
++		redirect = 0;
++		bpf_net_ctx_get_all_used_flush_lists(&lh_map, &lh_dev, &lh_xsk);
++		if (lh_dev)
++			__dev_flush(lh_dev, &redirect);
++		if (lh_map)
++			__cpu_map_flush(lh_map);
++		if (lh_xsk)
++			__xsk_map_flush(lh_xsk);
++	} while (redirect > 0);
+ }
+ EXPORT_SYMBOL_GPL(xdp_do_flush);
+ 
+@@ -4303,20 +4307,24 @@ void xdp_do_check_flushed(struct napi_struct *napi)
+ {
+ 	struct list_head *lh_map, *lh_dev, *lh_xsk;
+ 	bool missed = false;
++	int redirect;
+ 
+-	bpf_net_ctx_get_all_used_flush_lists(&lh_map, &lh_dev, &lh_xsk);
+-	if (lh_dev) {
+-		__dev_flush(lh_dev);
+-		missed = true;
+-	}
+-	if (lh_map) {
+-		__cpu_map_flush(lh_map);
+-		missed = true;
+-	}
+-	if (lh_xsk) {
+-		__xsk_map_flush(lh_xsk);
+-		missed = true;
+-	}
++	do {
++		redirect = 0;
++		bpf_net_ctx_get_all_used_flush_lists(&lh_map, &lh_dev, &lh_xsk);
++		if (lh_dev) {
++			__dev_flush(lh_dev, &redirect);
++			missed = true;
++		}
++		if (lh_map) {
++			__cpu_map_flush(lh_map);
++			missed = true;
++		}
++		if (lh_xsk) {
++			__xsk_map_flush(lh_xsk);
++			missed = true;
++		}
++	} while (redirect > 0);
+ 
+ 	WARN_ONCE(missed, "Missing xdp_do_flush() invocation after NAPI by %ps\n",
+ 		  napi->poll);
+
+---
+base-commit: 8e69c96df771ab469cec278edb47009351de4da6
+change-id: 20240909-devel-koalo-fix-redirect-684639694951
+prerequisite-patch-id: 6928ae7741727e3b2ab4a8c4256b06a861040a01
+
+Best regards,
+-- 
+Florian Kauer <florian.kauer@linutronix.de>
+
 
