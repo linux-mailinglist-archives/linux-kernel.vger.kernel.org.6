@@ -1,565 +1,349 @@
-Return-Path: <linux-kernel+bounces-322120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 146C397245B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:15:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2B9972460
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 385A61C23127
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:15:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DAEA28526E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414D718C357;
-	Mon,  9 Sep 2024 21:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C358F18C33E;
+	Mon,  9 Sep 2024 21:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="g69lOhyO"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="W/8gJ34V"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8914189520
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 21:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE19417085C;
+	Mon,  9 Sep 2024 21:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725916531; cv=none; b=Lfyf5K7CEL63eyNIHzMNpOeXu0ZSD2E1TjXKmdmSh3+eWvpxIsyN8yNsSzW5hTHBcwVZfZpXmuXBsDoIWa8UvdBiMznAqKl5B1jonrJbSqyvOAQRZ49kPar5kWsfjFHpImSo5IzVmYqnl329JcVriU5HzN7L96mYeFXVVhWdLPQ=
+	t=1725916684; cv=none; b=bplGWhzu0s01oW2VtvpCKFXhGUgv5A8PIC3Q6s5jklquHCrbzT/8XG3xZRFjnoPtlXPgemmKUm5UHYwKTSn3CNzSgVO6+JtaxFts78k3gUlQ0GMTvCYTvaixY6v1mxl/rjkrHYDMjHwdPJQsk2lhM8/fHdy5XVUR7K0an2Uw9Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725916531; c=relaxed/simple;
-	bh=xjUOWwvdGRLyiSismqd+njHk8UwgX97PEoTWUK3Cscw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q/aJoxddPAEzjaoLKXV5TpDTMQ4keQk/ckIXqRBXpbDbEhRW+SMb2ipmp9N9RRgHc2nzIn6CsqmyBFpCoEIcEnDZuP+KDn/tPwOO7sMa9YjxrqUprJniWbHZaky6DMBTbJ9hsq5pYPpz0jEfb41Kyu/E9q4J9yv+83ZB3KNvGI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=g69lOhyO; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1725916527;
-	bh=xjUOWwvdGRLyiSismqd+njHk8UwgX97PEoTWUK3Cscw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=g69lOhyOaxT8FT0yqVE9rKqJ3wUHtKHDb6RhrqNVtF/42XDa/LQm7zEeadQt8sYKa
-	 AdDtzr0AFp+kkoFjWX1rBMFNKEs12sxrg8F9tHg7HW3XsTL2N61HULytcT5kjNrwT+
-	 nNh8HlWEwBAmt7XjFSzaLHRvcBfOpurapvpqGr3/nfmW29BDW2SPm4XBEvtTRpRZsB
-	 oQQGlA/fglFYvWKJawjomkM+ybeYeDg7nkZXZRkT0n/eZcQaOiQxkdlauQNVwCapOH
-	 eAr4lIzEq0W5bqgx2+Im/wFlEX4ZaxzgiYvrJSwLp9zndaSyBhq7fPbhE6S/Vae9QB
-	 ooeqB+H0uzQQA==
-Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4X2fkR3MnFz1KSh;
-	Mon,  9 Sep 2024 17:15:27 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Marco Elver <elver@google.com>
-Subject: [PATCH v2 1/1] sched: Improve cache locality of RSEQ concurrency IDs for intermittent workloads
-Date: Mon,  9 Sep 2024 17:15:06 -0400
-Message-Id: <20240909211506.326648-2-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240909211506.326648-1-mathieu.desnoyers@efficios.com>
-References: <20240909211506.326648-1-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1725916684; c=relaxed/simple;
+	bh=8dD8qWypGnCFacam4LF8FYB6oNE4Yete5auyayOtlj8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ggz2qC4972/WFNg8e4TsBN24JB7pOPJ/XbXdZm1QqtWi3M5CEVUQeJXLcU0JobGua7qDD04oX8XPDMPDELUlEhGEtxrzlqdyn2sdWiptUuzaUklvj70zWQ1uMS8QxiiHKhqo8X5Eu7tW+gQH9baL7MkcfRmA+OrE5mvr3g1yvwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=W/8gJ34V; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1725916679; x=1726175879;
+	bh=mKJSL1WLkzQQfvSewxHUvxherY3mwVtPg6Pj0SUV9M0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=W/8gJ34Vlduij03PSusMjXeyWnVjahDQTI4wSQVHNkFDDreSbda/3xMgKyX5H1zEq
+	 g/hKMF7TeYEGxjpegxpuM8l+9l+pbFRWABasYYiO1oJh1BYCuW+T3Hv9fFJPxlAVC2
+	 qvtGbgTwKmWkIXPHpBk8eygy9guKwoden/nwKKovkeBoBwLCNwhtrpr6zxAEmbWAmi
+	 eJc1aknwFxj7nag1NsYQtgrd7oIAmce6u3Y77i0NxdWRvGLjC4SnmXnteIBMOSpOs5
+	 O5iPfg+L/RYIpcQhbgb4atoC//aunM3O5AcwXT7UsARypyDJY88avMjdXZBH44up24
+	 gyQai3zNi15tg==
+Date: Mon, 09 Sep 2024 21:17:54 +0000
+To: levymitchell0@gmail.com, Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] rust: lockdep: Use Pin for all LockClassKey usages
+Message-ID: <75b6167d-ed22-4c7f-b2a2-390d938a7f1a@proton.me>
+In-Reply-To: <20240905-rust-lockdep-v1-1-d2c9c21aa8b2@gmail.com>
+References: <20240905-rust-lockdep-v1-1-d2c9c21aa8b2@gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 6689aa314c1e5f79ad7e9e9dcd6c667a849523dc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-commit 223baf9d17f25 ("sched: Fix performance regression introduced by mm_cid")
-introduced a per-mm/cpu current concurrency id (mm_cid), which keeps
-a reference to the concurrency id allocated for each CPU. This reference
-expires shortly after a 100ms delay.
+On 06.09.24 01:13, Mitchell Levy via B4 Relay wrote:
+> From: Mitchell Levy <levymitchell0@gmail.com>
+>=20
+> The current LockClassKey API has soundness issues related to the use of
+> dynamically allocated LockClassKeys. In particular, these keys can be
+> used without being registered and don't have address stability.
+>=20
+> This fixes the issue by using Pin<&LockClassKey> and properly
+> registering/deregistering the keys on init/drop.
+>=20
+> Link: https://lore.kernel.org/rust-for-linux/20240815074519.2684107-1-nmi=
+@metaspace.dk/
+> Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
+> ---
+> This change is based on applying the linked patch to the top of
+> rust-next.
+>=20
+> I'm sending this as an RFC because I'm not sure that using
+> Pin<&'static LockClassKey> is appropriate as the parameter for, e.g.,
+> Work::new. This should preclude using dynamically allocated
+> LockClassKeys here, which might not be desirable. Unfortunately, using
+> Pin<&'a LockClassKey> creates other headaches as the compiler then
+> requires that T and PinImpl<Self> be bounded by 'a, which also seems
+> undesirable. I would be especially interested in feedback/ideas along
+> these lines.
+> ---
+>  rust/kernel/block/mq/gen_disk.rs |  2 +-
+>  rust/kernel/sync.rs              | 30 +++++++++++++++++++++---------
+>  rust/kernel/sync/condvar.rs      | 13 ++++++++-----
+>  rust/kernel/sync/lock.rs         |  6 +++---
+>  rust/kernel/workqueue.rs         |  6 +++---
+>  5 files changed, 36 insertions(+), 21 deletions(-)
 
-These per-CPU references keep the per-mm-cid data cache-local in
-situations where threads are running at least once on each CPU within
-each 100ms window, thus keeping the per-cpu reference alive.
+When I try to build with LOCKDEP=3Dn, then I get this error:
 
-However, intermittent workloads behaving in bursts spaced by more than
-100ms on each CPU exhibit bad cache locality and degraded performance
-compared to purely per-cpu data indexing, because concurrency IDs are
-allocated over various CPUs and cores, therefore losing cache locality
-of the associated data.
+    error[E0425]: cannot find function `lockdep_register_key` in crate `bin=
+dings`
+      --> rust/kernel/sync.rs:40:65
+       |
+    40 |             inner <- Opaque::ffi_init(|slot| unsafe { bindings::lo=
+ckdep_register_key(slot) })
+       |                                                                 ^^=
+^^^^^^^^^^^^^^^^^^ not found in `bindings`
+   =20
+    error[E0425]: cannot find function `lockdep_unregister_key` in crate `b=
+indings`
+      --> rust/kernel/sync.rs:52:28
+       |
+    52 |         unsafe { bindings::lockdep_unregister_key(self.as_ptr()) }
+       |
 
-Introduce the following changes to improve per-mm-cid cache locality:
+> diff --git a/rust/kernel/block/mq/gen_disk.rs b/rust/kernel/block/mq/gen_=
+disk.rs
+> index 708125dce96a..706ac3c532d5 100644
+> --- a/rust/kernel/block/mq/gen_disk.rs
+> +++ b/rust/kernel/block/mq/gen_disk.rs
+> @@ -108,7 +108,7 @@ pub fn build<T: Operations>(
+>                  tagset.raw_tag_set(),
+>                  &mut lim,
+>                  core::ptr::null_mut(),
+> -                static_lock_class!().as_ptr(),
+> +                static_lock_class!().get_ref().as_ptr(),
 
-- Add a "recent_cid" field to the per-mm/cpu mm_cid structure to keep
-  track of which mm_cid value was last used, and use it as a hint to
-  attempt re-allocating the same concurrency ID the next time this
-  mm/cpu needs to allocate a concurrency ID,
+Why do we need the `get_ref()` calls? `Pin<&T>` implements
+`Deref<Target =3D T>`, so I don't think that it is necessary to add the
+`get_ref` calls.
 
-- Add a per-mm CPUs allowed mask, which keeps track of the union of
-  CPUs allowed for all threads belonging to this mm. This cpumask is
-  only set during the lifetime of the mm, never cleared, so it
-  represents the union of all the CPUs allowed since the beginning of
-  the mm lifetime. (note that the mm_cpumask() is really arch-specific
-  and tailored to the TLB flush needs, and is thus _not_ a viable
-  approach for this)
+>              )
+>          })?;
+>=20
+> diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
+> index 0ab20975a3b5..c46a296cbe6d 100644
+> --- a/rust/kernel/sync.rs
+> +++ b/rust/kernel/sync.rs
+> @@ -5,6 +5,8 @@
+>  //! This module contains the kernel APIs related to synchronisation that=
+ have been ported or
+>  //! wrapped for usage by Rust code in the kernel.
+>=20
+> +use crate::pin_init;
+> +use crate::prelude::*;
+>  use crate::types::Opaque;
+>=20
+>  mod arc;
+> @@ -20,7 +22,11 @@
+>=20
+>  /// Represents a lockdep class. It's a wrapper around C's `lock_class_ke=
+y`.
+>  #[repr(transparent)]
+> -pub struct LockClassKey(Opaque<bindings::lock_class_key>);
+> +#[pin_data(PinnedDrop)]
+> +pub struct LockClassKey {
+> +    #[pin]
+> +    inner: Opaque<bindings::lock_class_key>,
+> +}
+>=20
+>  // SAFETY: `bindings::lock_class_key` is designed to be used concurrentl=
+y from multiple threads and
+>  // provides its own synchronization.
+> @@ -28,18 +34,22 @@ unsafe impl Sync for LockClassKey {}
+>=20
+>  impl LockClassKey {
+>      /// Creates a new lock class key.
+> -    pub const fn new() -> Self {
+> -        Self(Opaque::uninit())
+> +    pub fn new_dynamic() -> impl PinInit<Self> {
 
-- Add a per-mm nr_cpus_allowed to keep track of the weight of the
-  per-mm CPUs allowed mask (for fast access),
+Can you add some more documentation on this function? For example:
+- directing people to use `static_lock_class!` if they only need a
+  static key (AFAIK that is the common use-case).
+- Also would be nice if we had an example here.
+- I would change the first line to be "Creates a dynamic lock class
+  key.".
 
-- Add a per-mm nr_cids_used to keep track of the highest concurrency
-  ID allocated for the mm. This is used for expanding the concurrency ID
-  allocation within the upper bound defined by:
+> +        pin_init!(Self {
+> +            // SAFETY: lockdep_register_key expects an uninitialized blo=
+ck of memory
+> +            inner <- Opaque::ffi_init(|slot| unsafe { bindings::lockdep_=
+register_key(slot) })
+> +        })
+>      }
+>=20
+>      pub(crate) fn as_ptr(&self) -> *mut bindings::lock_class_key {
+> -        self.0.get()
+> +        self.inner.get()
+>      }
+>  }
+>=20
+> -impl Default for LockClassKey {
+> -    fn default() -> Self {
+> -        Self::new()
+> +#[pinned_drop]
+> +impl PinnedDrop for LockClassKey {
+> +    fn drop(self: Pin<&mut Self>) {
+> +        unsafe { bindings::lockdep_unregister_key(self.as_ptr()) }
+>      }
+>  }
+>=20
+> @@ -48,8 +58,10 @@ fn default() -> Self {
+>  #[macro_export]
+>  macro_rules! static_lock_class {
+>      () =3D> {{
+> -        static CLASS: $crate::sync::LockClassKey =3D $crate::sync::LockC=
+lassKey::new();
+> -        &CLASS
+> +        static CLASS: $crate::sync::LockClassKey =3D unsafe {
+> +            ::core::mem::MaybeUninit::uninit().assume_init()
+> +        };
+> +        $crate::prelude::Pin::static_ref(&CLASS)
 
-    min(mm->nr_cpus_allowed, mm->mm_users)
+Just to make sure we get it right this time, is this true: "static
+`lock_class_key` values don't need to be initialized."?
 
-  When the next unused CID value reaches this threshold, stop trying
-  to expand the cid allocation and use the first available cid value
-  instead.
+>      }};
+>  }
+>=20
+> diff --git a/rust/kernel/sync/condvar.rs b/rust/kernel/sync/condvar.rs
+> index 2b306afbe56d..6c40b45e35cd 100644
+> --- a/rust/kernel/sync/condvar.rs
+> +++ b/rust/kernel/sync/condvar.rs
+> @@ -14,9 +14,12 @@
+>      time::Jiffies,
+>      types::Opaque,
+>  };
+> -use core::ffi::{c_int, c_long};
+> -use core::marker::PhantomPinned;
+> -use core::ptr;
+> +use core::{
+> +    ffi::{c_int, c_long},
+> +    marker::PhantomPinned,
+> +    pin::Pin,
+> +    ptr,
+> +};
+>  use macros::pin_data;
+>=20
+>  /// Creates a [`CondVar`] initialiser with the given name and a newly-cr=
+eated lock class.
+> @@ -102,13 +105,13 @@ unsafe impl Sync for CondVar {}
+>=20
+>  impl CondVar {
+>      /// Constructs a new condvar initialiser.
+> -    pub fn new(name: &'static CStr, key: &'static LockClassKey) -> impl =
+PinInit<Self> {
+> +    pub fn new(name: &'static CStr, key: Pin<&'static LockClassKey>) -> =
+impl PinInit<Self> {
+>          pin_init!(Self {
+>              _pin: PhantomPinned,
+>              // SAFETY: `slot` is valid while the closure is called and b=
+oth `name` and `key` have
+>              // static lifetimes so they live indefinitely.
+>              wait_queue_head <- Opaque::ffi_init(|slot| unsafe {
+> -                bindings::__init_waitqueue_head(slot, name.as_char_ptr()=
+, key.as_ptr())
+> +                bindings::__init_waitqueue_head(slot, name.as_char_ptr()=
+, key.get_ref().as_ptr())
+>              }),
+>          })
+>      }
+> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+> index f6c34ca4d819..c6bdbb85a39c 100644
+> --- a/rust/kernel/sync/lock.rs
+> +++ b/rust/kernel/sync/lock.rs
+> @@ -7,7 +7,7 @@
+>=20
+>  use super::LockClassKey;
+>  use crate::{init::PinInit, pin_init, str::CStr, types::Opaque, types::Sc=
+opeGuard};
+> -use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned}=
+;
+> +use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned,=
+ pin::Pin};
+>  use macros::pin_data;
+>=20
+>  pub mod mutex;
+> @@ -106,14 +106,14 @@ unsafe impl<T: ?Sized + Send, B: Backend> Sync for =
+Lock<T, B> {}
+>=20
+>  impl<T, B: Backend> Lock<T, B> {
+>      /// Constructs a new lock initialiser.
+> -    pub fn new(t: T, name: &'static CStr, key: &'static LockClassKey) ->=
+ impl PinInit<Self> {
+> +    pub fn new(t: T, name: &'static CStr, key: Pin<&'static LockClassKey=
+>) -> impl PinInit<Self> {
+>          pin_init!(Self {
+>              data: UnsafeCell::new(t),
+>              _pin: PhantomPinned,
+>              // SAFETY: `slot` is valid while the closure is called and b=
+oth `name` and `key` have
+>              // static lifetimes so they live indefinitely.
+>              state <- Opaque::ffi_init(|slot| unsafe {
+> -                B::init(slot, name.as_char_ptr(), key.as_ptr())
+> +                B::init(slot, name.as_char_ptr(), key.get_ref().as_ptr()=
+)
+>              }),
+>          })
+>      }
+> diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
+> index 553a5cba2adc..eefc2b7b578c 100644
+> --- a/rust/kernel/workqueue.rs
+> +++ b/rust/kernel/workqueue.rs
+> @@ -367,9 +367,9 @@ impl<T: ?Sized, const ID: u64> Work<T, ID> {
+>      /// Creates a new instance of [`Work`].
+>      #[inline]
+>      #[allow(clippy::new_ret_no_self)]
+> -    pub fn new(name: &'static CStr, key: &'static LockClassKey) -> impl =
+PinInit<Self>
+> +    pub fn new(name: &'static CStr, key: Pin<&'static LockClassKey>) -> =
+impl PinInit<Self>
+>      where
+> -        T: WorkItem<ID>,
+> +        T: WorkItem<ID>
 
-Spreading allocation to use all the cid values within the range
+`rustfmt` re-adds the comma. It also formats other parts of your patch
+differently. You can run it using the `rustfmt` target.
 
-  [ 0, min(mm->nr_cpus_allowed, mm->mm_users) - 1 ]
-
-improves cache locality while preserving mm_cid compactness within the
-expected user limits.
-
-- In __mm_cid_try_get, only return cid values within the range
-  [ 0, mm->nr_cpus_allowed ] rather than [ 0, nr_cpu_ids ]. This
-  prevents allocating cids above the number of allowed cpus in
-  rare scenarios where cid allocation races with a concurrent
-  remote-clear of the per-mm/cpu cid. This improvement is made
-  possible by the addition of the per-mm CPUs allowed mask.
-
-- In sched_mm_cid_migrate_to, use mm->nr_cpus_allowed rather than
-  t->nr_cpus_allowed. This criterion was really meant to compare
-  the number of mm->mm_users to the number of CPUs allowed for the
-  entire mm. Therefore, the prior comparison worked fine when all
-  threads shared the same CPUs allowed mask, but not so much in
-  scenarios where those threads have different masks (e.g. each
-  thread pinned to a single CPU). This improvement is made
-  possible by the addition of the per-mm CPUs allowed mask.
-
-* Benchmarks
-
-Each thread increments 16kB worth of 8-bit integers in bursts, with
-a configurable delay between each thread's execution. Each thread run
-one after the other (no threads run concurrently). The order of
-thread execution in the sequence is random. The thread execution
-sequence begins again after all threads have executed. The 16kB areas
-are allocated with rseq_mempool and indexed by either cpu_id, mm_cid
-(not cache-local), or cache-local mm_cid. Each thread is pinned to its
-own core.
-
-Testing configurations:
-
-8-core/1-L3:        Use 8 cores within a single L3
-24-core/24-L3:      Use 24 cores, 1 core per L3
-192-core/24-L3:     Use 192 cores (all cores in the system)
-384-thread/24-L3:   Use 384 HW threads (all HW threads in the system)
-
-Intermittent workload delays between threads: 200ms, 10ms.
-
-Hardware:
-
-CPU(s):                   384
-  On-line CPU(s) list:    0-383
-Vendor ID:                AuthenticAMD
-  Model name:             AMD EPYC 9654 96-Core Processor
-    Thread(s) per core:   2
-    Core(s) per socket:   96
-    Socket(s):            2
-Caches (sum of all):
-  L1d:                    6 MiB (192 instances)
-  L1i:                    6 MiB (192 instances)
-  L2:                     192 MiB (192 instances)
-  L3:                     768 MiB (24 instances)
-
-Each result is an average of 5 test runs. The cache-local speedup
-is calculated as: (cache-local mm_cid) / (mm_cid).
-
-Intermittent workload delay: 200ms
-
-                     per-cpu     mm_cid    cache-local mm_cid    cache-local speedup
-                         (ns)      (ns)                  (ns)
-8-core/1-L3             1374      19289                  1336            14.4x
-24-core/24-L3           2423      26721                  1594            16.7x
-192-core/24-L3          2291      15826                  2153             7.3x
-384-thread/24-L3        1874      13234                  1907             6.9x
-
-Intermittent workload delay: 10ms
-
-                     per-cpu     mm_cid    cache-local mm_cid    cache-local speedup
-                         (ns)      (ns)                  (ns)
-8-core/1-L3               662       756                   686             1.1x
-24-core/24-L3            1378      3648                  1035             3.5x
-192-core/24-L3           1439     10833                  1482             7.3x
-384-thread/24-L3         1503     10570                  1556             6.8x
-
-[ This deprecates the prior "sched: NUMA-aware per-memory-map concurrency IDs"
-  patch series with a simpler and more general approach. ]
-
-Link: https://lore.kernel.org/lkml/20240823185946.418340-1-mathieu.desnoyers@efficios.com/
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Marco Elver <elver@google.com>
-Cc: Yury Norov <yury.norov@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
-Changes since v0:
-- Use for_each_cpu_andnot.
-- Drop "cpumask: Implement cpumask_next_andnot" from the series, which
-  is not needed anymore.
-- Use the shorter form
-    "nr_set += !cpumask_test_and_set_cpu(cpu, mm_allowed);"
-  as suggested by Yury Norov.
-- Document that ordering between mm_cpus_allowed mask and
-  nr_cpus_allowed is unnecessary, because the cid algorithm
-  only cares about nr_cpus_allowed.
+Cheers,
+Benno
 
-Changes since v1:
-- Only invoke atomic_add if value to add is nonzero.
-- Use cpumask_or and cpumask_weight with locking, as suggested by Yury
-  Norov.
----
- fs/exec.c                |  2 +-
- include/linux/mm_types.h | 72 +++++++++++++++++++++++++++++++++++-----
- kernel/fork.c            |  2 +-
- kernel/sched/core.c      |  7 ++--
- kernel/sched/sched.h     | 47 ++++++++++++++++++--------
- 5 files changed, 103 insertions(+), 27 deletions(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 0c17e59e3767..7e73b0fc1305 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1039,7 +1039,7 @@ static int exec_mmap(struct mm_struct *mm)
- 	active_mm = tsk->active_mm;
- 	tsk->active_mm = mm;
- 	tsk->mm = mm;
--	mm_init_cid(mm);
-+	mm_init_cid(mm, tsk);
- 	/*
- 	 * This prevents preemption while active_mm is being loaded and
- 	 * it and mm are being updated, which could cause problems for
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index af3a0256fa93..10d35933d0e8 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -755,6 +755,7 @@ struct vm_area_struct {
- struct mm_cid {
- 	u64 time;
- 	int cid;
-+	int recent_cid;
- };
- #endif
- 
-@@ -825,6 +826,27 @@ struct mm_struct {
- 		 * When the next mm_cid scan is due (in jiffies).
- 		 */
- 		unsigned long mm_cid_next_scan;
-+		/**
-+		 * @nr_cpus_allowed: Number of CPUs allowed for mm.
-+		 *
-+		 * Number of CPUs allowed in the union of all mm's
-+		 * threads allowed CPUs.
-+		 */
-+		atomic_t nr_cpus_allowed;
-+		/**
-+		 * @nr_cids_used: Number of used concurrency IDs.
-+		 *
-+		 * Track the highest concurrency ID allocated for the
-+		 * mm: nr_cids_used - 1.
-+		 */
-+		atomic_t nr_cids_used;
-+		/**
-+		 * @cpus_allowed_lock: Lock protecting mm cpus_allowed.
-+		 *
-+		 * Provide mutual exclusion for mm cpus_allowed and
-+		 * mm nr_cpus_allowed updates.
-+		 */
-+		spinlock_t cpus_allowed_lock;
- #endif
- #ifdef CONFIG_MMU
- 		atomic_long_t pgtables_bytes;	/* size of all page tables */
-@@ -1143,18 +1165,30 @@ static inline int mm_cid_clear_lazy_put(int cid)
- 	return cid & ~MM_CID_LAZY_PUT;
- }
- 
-+/*
-+ * mm_cpus_allowed: Union of all mm's threads allowed CPUs.
-+ */
-+static inline cpumask_t *mm_cpus_allowed(struct mm_struct *mm)
-+{
-+	unsigned long bitmap = (unsigned long)mm;
-+
-+	bitmap += offsetof(struct mm_struct, cpu_bitmap);
-+	/* Skip cpu_bitmap */
-+	bitmap += cpumask_size();
-+	return (struct cpumask *)bitmap;
-+}
-+
- /* Accessor for struct mm_struct's cidmask. */
- static inline cpumask_t *mm_cidmask(struct mm_struct *mm)
- {
--	unsigned long cid_bitmap = (unsigned long)mm;
-+	unsigned long cid_bitmap = (unsigned long)mm_cpus_allowed(mm);
- 
--	cid_bitmap += offsetof(struct mm_struct, cpu_bitmap);
--	/* Skip cpu_bitmap */
-+	/* Skip mm_cpus_allowed */
- 	cid_bitmap += cpumask_size();
- 	return (struct cpumask *)cid_bitmap;
- }
- 
--static inline void mm_init_cid(struct mm_struct *mm)
-+static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p)
- {
- 	int i;
- 
-@@ -1162,17 +1196,22 @@ static inline void mm_init_cid(struct mm_struct *mm)
- 		struct mm_cid *pcpu_cid = per_cpu_ptr(mm->pcpu_cid, i);
- 
- 		pcpu_cid->cid = MM_CID_UNSET;
-+		pcpu_cid->recent_cid = MM_CID_UNSET;
- 		pcpu_cid->time = 0;
- 	}
-+	atomic_set(&mm->nr_cpus_allowed, p->nr_cpus_allowed);
-+	atomic_set(&mm->nr_cids_used, 0);
-+	spin_lock_init(&mm->cpus_allowed_lock);
-+	cpumask_copy(mm_cpus_allowed(mm), p->cpus_ptr);
- 	cpumask_clear(mm_cidmask(mm));
- }
- 
--static inline int mm_alloc_cid_noprof(struct mm_struct *mm)
-+static inline int mm_alloc_cid_noprof(struct mm_struct *mm, struct task_struct *p)
- {
- 	mm->pcpu_cid = alloc_percpu_noprof(struct mm_cid);
- 	if (!mm->pcpu_cid)
- 		return -ENOMEM;
--	mm_init_cid(mm);
-+	mm_init_cid(mm, p);
- 	return 0;
- }
- #define mm_alloc_cid(...)	alloc_hooks(mm_alloc_cid_noprof(__VA_ARGS__))
-@@ -1185,16 +1224,31 @@ static inline void mm_destroy_cid(struct mm_struct *mm)
- 
- static inline unsigned int mm_cid_size(void)
- {
--	return cpumask_size();
-+	return 2 * cpumask_size();	/* mm_cpus_allowed(), mm_cidmask(). */
-+}
-+
-+static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumask *cpumask)
-+{
-+	struct cpumask *mm_allowed = mm_cpus_allowed(mm);
-+
-+	if (!mm)
-+		return;
-+	/* The mm_cpus_allowed is the union of each thread allowed CPUs masks. */
-+	spin_lock(&mm->cpus_allowed_lock);
-+	cpumask_or(mm_allowed, mm_allowed, cpumask);
-+	atomic_set(&mm->nr_cpus_allowed, cpumask_weight(mm_allowed));
-+	spin_unlock(&mm->cpus_allowed_lock);
- }
- #else /* CONFIG_SCHED_MM_CID */
--static inline void mm_init_cid(struct mm_struct *mm) { }
--static inline int mm_alloc_cid(struct mm_struct *mm) { return 0; }
-+static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p) { }
-+static inline int mm_alloc_cid(struct mm_struct *mm, struct task_struct *p) { return 0; }
- static inline void mm_destroy_cid(struct mm_struct *mm) { }
-+
- static inline unsigned int mm_cid_size(void)
- {
- 	return 0;
- }
-+static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumask *cpumask) { }
- #endif /* CONFIG_SCHED_MM_CID */
- 
- struct mmu_gather;
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 99076dbe27d8..b44f545ad82c 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1298,7 +1298,7 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
- 	if (init_new_context(p, mm))
- 		goto fail_nocontext;
- 
--	if (mm_alloc_cid(mm))
-+	if (mm_alloc_cid(mm, p))
- 		goto fail_cid;
- 
- 	if (percpu_counter_init_many(mm->rss_stat, 0, GFP_KERNEL_ACCOUNT,
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 3e84a3b7b7bb..3243e9abfefb 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2784,6 +2784,7 @@ __do_set_cpus_allowed(struct task_struct *p, struct affinity_context *ctx)
- 		put_prev_task(rq, p);
- 
- 	p->sched_class->set_cpus_allowed(p, ctx);
-+	mm_set_cpus_allowed(p->mm, ctx->new_mask);
- 
- 	if (queued)
- 		enqueue_task(rq, p, ENQUEUE_RESTORE | ENQUEUE_NOCLOCK);
-@@ -11784,6 +11785,7 @@ int __sched_mm_cid_migrate_from_try_steal_cid(struct rq *src_rq,
- 	 */
- 	if (!try_cmpxchg(&src_pcpu_cid->cid, &lazy_cid, MM_CID_UNSET))
- 		return -1;
-+	WRITE_ONCE(src_pcpu_cid->recent_cid, MM_CID_UNSET);
- 	return src_cid;
- }
- 
-@@ -11825,7 +11827,7 @@ void sched_mm_cid_migrate_to(struct rq *dst_rq, struct task_struct *t)
- 	dst_pcpu_cid = per_cpu_ptr(mm->pcpu_cid, cpu_of(dst_rq));
- 	dst_cid = READ_ONCE(dst_pcpu_cid->cid);
- 	if (!mm_cid_is_unset(dst_cid) &&
--	    atomic_read(&mm->mm_users) >= t->nr_cpus_allowed)
-+	    atomic_read(&mm->mm_users) >= atomic_read(&mm->nr_cpus_allowed))
- 		return;
- 	src_pcpu_cid = per_cpu_ptr(mm->pcpu_cid, src_cpu);
- 	src_rq = cpu_rq(src_cpu);
-@@ -11843,6 +11845,7 @@ void sched_mm_cid_migrate_to(struct rq *dst_rq, struct task_struct *t)
- 	/* Move src_cid to dst cpu. */
- 	mm_cid_snapshot_time(dst_rq, mm);
- 	WRITE_ONCE(dst_pcpu_cid->cid, src_cid);
-+	WRITE_ONCE(dst_pcpu_cid->recent_cid, src_cid);
- }
- 
- static void sched_mm_cid_remote_clear(struct mm_struct *mm, struct mm_cid *pcpu_cid,
-@@ -12079,7 +12082,7 @@ void sched_mm_cid_after_execve(struct task_struct *t)
- 		 * Matches barrier in sched_mm_cid_remote_clear_old().
- 		 */
- 		smp_mb();
--		t->last_mm_cid = t->mm_cid = mm_cid_get(rq, mm);
-+		t->last_mm_cid = t->mm_cid = mm_cid_get(rq, t, mm);
- 	}
- 	rseq_set_notify_resume(t);
- }
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 38aeedd8a6cc..4d11dbd5847b 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -3311,24 +3311,40 @@ static inline void mm_cid_put(struct mm_struct *mm)
- 	__mm_cid_put(mm, mm_cid_clear_lazy_put(cid));
- }
- 
--static inline int __mm_cid_try_get(struct mm_struct *mm)
-+static inline int __mm_cid_try_get(struct task_struct *t, struct mm_struct *mm)
- {
--	struct cpumask *cpumask;
--	int cid;
-+	struct cpumask *cidmask = mm_cidmask(mm);
-+	struct mm_cid __percpu *pcpu_cid = mm->pcpu_cid;
-+	int cid = __this_cpu_read(pcpu_cid->recent_cid);
- 
--	cpumask = mm_cidmask(mm);
-+	/* Try to re-use recent cid. This improves cache locality. */
-+	if (!mm_cid_is_unset(cid) && !cpumask_test_and_set_cpu(cid, cidmask))
-+		return cid;
-+	/*
-+	 * Expand cid allocation if used cids are below the number cpus
-+	 * allowed and number of threads. Expanding cid allocation as
-+	 * much as possible improves cache locality.
-+	 */
-+	cid = atomic_read(&mm->nr_cids_used);
-+	while (cid < atomic_read(&mm->nr_cpus_allowed) && cid < atomic_read(&mm->mm_users)) {
-+		if (!atomic_try_cmpxchg(&mm->nr_cids_used, &cid, cid + 1))
-+			continue;
-+		if (!cpumask_test_and_set_cpu(cid, cidmask))
-+			return cid;
-+	}
- 	/*
-+	 * Find the first available concurrency id.
- 	 * Retry finding first zero bit if the mask is temporarily
- 	 * filled. This only happens during concurrent remote-clear
- 	 * which owns a cid without holding a rq lock.
- 	 */
- 	for (;;) {
--		cid = cpumask_first_zero(cpumask);
--		if (cid < nr_cpu_ids)
-+		cid = cpumask_first_zero(cidmask);
-+		if (cid < atomic_read(&mm->nr_cpus_allowed))
- 			break;
- 		cpu_relax();
- 	}
--	if (cpumask_test_and_set_cpu(cid, cpumask))
-+	if (cpumask_test_and_set_cpu(cid, cidmask))
- 		return -1;
- 	return cid;
- }
-@@ -3345,7 +3361,8 @@ static inline void mm_cid_snapshot_time(struct rq *rq, struct mm_struct *mm)
- 	WRITE_ONCE(pcpu_cid->time, rq->clock);
- }
- 
--static inline int __mm_cid_get(struct rq *rq, struct mm_struct *mm)
-+static inline int __mm_cid_get(struct rq *rq, struct task_struct *t,
-+			       struct mm_struct *mm)
- {
- 	int cid;
- 
-@@ -3355,13 +3372,13 @@ static inline int __mm_cid_get(struct rq *rq, struct mm_struct *mm)
- 	 * guarantee forward progress.
- 	 */
- 	if (!READ_ONCE(use_cid_lock)) {
--		cid = __mm_cid_try_get(mm);
-+		cid = __mm_cid_try_get(t, mm);
- 		if (cid >= 0)
- 			goto end;
- 		raw_spin_lock(&cid_lock);
- 	} else {
- 		raw_spin_lock(&cid_lock);
--		cid = __mm_cid_try_get(mm);
-+		cid = __mm_cid_try_get(t, mm);
- 		if (cid >= 0)
- 			goto unlock;
- 	}
-@@ -3381,7 +3398,7 @@ static inline int __mm_cid_get(struct rq *rq, struct mm_struct *mm)
- 	 * all newcoming allocations observe the use_cid_lock flag set.
- 	 */
- 	do {
--		cid = __mm_cid_try_get(mm);
-+		cid = __mm_cid_try_get(t, mm);
- 		cpu_relax();
- 	} while (cid < 0);
- 	/*
-@@ -3397,7 +3414,8 @@ static inline int __mm_cid_get(struct rq *rq, struct mm_struct *mm)
- 	return cid;
- }
- 
--static inline int mm_cid_get(struct rq *rq, struct mm_struct *mm)
-+static inline int mm_cid_get(struct rq *rq, struct task_struct *t,
-+			     struct mm_struct *mm)
- {
- 	struct mm_cid __percpu *pcpu_cid = mm->pcpu_cid;
- 	struct cpumask *cpumask;
-@@ -3414,8 +3432,9 @@ static inline int mm_cid_get(struct rq *rq, struct mm_struct *mm)
- 		if (try_cmpxchg(&this_cpu_ptr(pcpu_cid)->cid, &cid, MM_CID_UNSET))
- 			__mm_cid_put(mm, mm_cid_clear_lazy_put(cid));
- 	}
--	cid = __mm_cid_get(rq, mm);
-+	cid = __mm_cid_get(rq, t, mm);
- 	__this_cpu_write(pcpu_cid->cid, cid);
-+	__this_cpu_write(pcpu_cid->recent_cid, cid);
- 	return cid;
- }
- 
-@@ -3467,7 +3486,7 @@ static inline void switch_mm_cid(struct rq *rq,
- 		prev->mm_cid = -1;
- 	}
- 	if (next->mm_cid_active)
--		next->last_mm_cid = next->mm_cid = mm_cid_get(rq, next->mm);
-+		next->last_mm_cid = next->mm_cid = mm_cid_get(rq, next, next->mm);
- }
- 
- #else
--- 
-2.39.2
+>      {
+>          pin_init!(Self {
+>              work <- Opaque::ffi_init(|slot| {
+> @@ -381,7 +381,7 @@ pub fn new(name: &'static CStr, key: &'static LockCla=
+ssKey) -> impl PinInit<Self
+>                          Some(T::Pointer::run),
+>                          false,
+>                          name.as_char_ptr(),
+> -                        key.as_ptr(),
+> +                        key.get_ref().as_ptr(),
+>                      )
+>                  }
+>              }),
+>=20
+> ---
+> base-commit: 8edf38a534a38e5d78470a98d43454e3b73e307c
+> change-id: 20240905-rust-lockdep-d3e30521c8ba
+>=20
+> Best regards,
+> --
+> Mitchell Levy <levymitchell0@gmail.com>
+>=20
+>=20
 
 
