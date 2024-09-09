@@ -1,107 +1,136 @@
-Return-Path: <linux-kernel+bounces-320656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5DB970DCA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:17:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3B65970DDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A658B1C21DB2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 06:17:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26F2FB20C05
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 06:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89470178376;
-	Mon,  9 Sep 2024 06:17:45 +0000 (UTC)
-Received: from 189.cn (ptr.189.cn [183.61.185.101])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95AC101F7;
-	Mon,  9 Sep 2024 06:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1031AD3F1;
+	Mon,  9 Sep 2024 06:27:04 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641A31741FD
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 06:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725862665; cv=none; b=ZFieNLztU8xKvO1l/c3uoDxnc+bMefEBVEJ8mtTeqwiQo2RpRxpKbDO0lc9b47aUfCN+eDE3vrw6I8htiqA7tzcwHtzFFvktWENMqh6MFVb837WwECA/WabNbENaJJN55A/RL/BUVLetYcnNcJzZOgEmmV65XfWSKm5cgE1wAFY=
+	t=1725863223; cv=none; b=d+ic+cYNPyREXS1+SZhxcx/epyPXZ7yK4PPl8+VA1QbGZnCTo7p7tsfuvRVkBbb/MeJgFug+yzdP5yS9SiNC+jGLy4bSNIqVihQrLc374v8BvRN+7vG3Itg8dzQqt3OgKNKpMyyg4WKQ/A4Ti8LzEQ8SA80XWpApCYQ+ypfT3vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725862665; c=relaxed/simple;
-	bh=V5nSOAXQRm890+80kRs6becI47NhojlDPCW+3UaHPEQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ixh/HPax+KY8FtSmFqDvblukVKJ9Fw9dgT0Ux5KkEswft3+cuacc1k8Ddrazl9GMY36YcS0bt1kDdqyZmGC9iB/LtOpXEemGVpuopREztxZ3YUAOukJv8lPqm9asPoL9DOjNDqSEXBhbBsqPtm95/SeYNQHPBqNUwDx1avPPFTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
-HMM_SOURCE_IP:10.158.243.220:8405.744959442
-HMM_ATTACHE_NUM:0000
-HMM_SOURCE_TYPE:SMTP
-Received: from clientip-123.150.8.42 (unknown [10.158.243.220])
-	by 189.cn (HERMES) with SMTP id E365C1002BE;
-	Mon,  9 Sep 2024 14:17:37 +0800 (CST)
-Received: from  ([123.150.8.42])
-	by gateway-153622-dep-68cfdf7599-nkmwn with ESMTP id e80b8439e6f344f8b2eb94403cb88e37 for willy@infradead.org;
-	Mon, 09 Sep 2024 14:17:37 CST
-X-Transaction-ID: e80b8439e6f344f8b2eb94403cb88e37
-X-Real-From: chensong_2000@189.cn
-X-Receive-IP: 123.150.8.42
-X-MEDUSA-Status: 0
-Sender: chensong_2000@189.cn
-From: chensong_2000@189.cn
-To: willy@infradead.org,
-	akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Song Chen <chensong_2000@189.cn>
-Subject: [PATCH] mm/filemap: introduce local helper for_each_folio
-Date: Mon,  9 Sep 2024 14:17:35 +0800
-Message-Id: <20240909061735.152421-1-chensong_2000@189.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725863223; c=relaxed/simple;
+	bh=jOLl/YUfN9Kib9erf2YkpEcSGJdS+XScDgfrk4H3TZw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VTWTdYvsgqjwj3evruWKZDdFoX1nUxOydvve45zhYWZ2VRTMeLjZjFG9bPpLzYqPHS6wnWy2C0d09AjDDfVmujB8qmguyQzeoAwb84Xk87IiiaaP+2zgnBGcGfRSinP3zWDH63298O/ZoiXULxLjQVrR9trkYwqNxnuljkOQ33c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1snXrV-0002Fo-Sa
+	for linux-kernel@vger.kernel.org; Mon, 09 Sep 2024 08:26:57 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1snXrV-006aO6-Cl
+	for linux-kernel@vger.kernel.org; Mon, 09 Sep 2024 08:26:57 +0200
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id 0C457336171
+	for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 06:21:57 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id 395B333615A;
+	Mon, 09 Sep 2024 06:21:54 +0000 (UTC)
+Received: from [172.20.34.65] (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id fcd9152b;
+	Mon, 9 Sep 2024 06:21:53 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Mon, 09 Sep 2024 08:21:49 +0200
+Subject: [PATCH] can: rockchip_canfd: rkcanfd_timestamp_init(): fix 64 bit
+ division on 32 bit platforms
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240909-can-rockchip_canfd-fix-64-bit-division-v1-1-2748d9422b00@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAPyT3mYC/yXN0QqDMAyF4VeRXBvoRB31VYaIJukMQpVWRBDff
+ WFefnD4zwVZkkqGrrggyaFZ12h4lQXQPMavoLIZKlfVzjuPNEZMKy006zYYAmPQE9saJ92R9Ul
+ gE5q3D8wykQeLbUls9j/69Pf9A3YqY8R4AAAA
+To: kernel@pengutronix.de, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Heiko Stuebner <heiko@sntech.de>
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+ Marc Kleine-Budde <mkl@pengutronix.de>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1680; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=jOLl/YUfN9Kib9erf2YkpEcSGJdS+XScDgfrk4H3TZw=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBm3pP+A1YrjAv0lzrha1Nz9rc4vPQQl58ocRltf
+ dWB5/nQhB6JATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZt6T/gAKCRAoOKI+ei28
+ b9sKB/wKSh1HQddIfxdzPaV1MxLN0kLc2tvUQTxavUh6omqbZfw2yaAVlBUj2NVOPcI/hHqO47Z
+ XDdE8vzNyHfdKYtbQb7ln4iNMxoHMiGlnZGcilapFzBQOPlQnbkGhum9fMpdnPHLodtasuwc2s6
+ cf6RDW0xEQ+ZVpG5nSOZWK8/wbYYUrZubzk+rs9rW7BM0VCWe4VNwsCz9o/LLLrfiU8ohC6Z8pd
+ VsunCw84awq9wjDRWReZH0h5/1QoRgjvGPDPBEYASO26WSQ4hAWc+K1wgkm9PPZsHZ6xtYh3ykE
+ KHMnTOeUz94vn6b6YvtZaCaHho8PjQgTD40zKPZ9JP8O98JR
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Song Chen <chensong_2000@189.cn>
+On some 32-bit platforms (at least on parisc), the compiler generates
+a call to __divdi3() from the u32 by 3 division in
+rkcanfd_timestamp_init(), which results in the following linker
+error:
 
-Introduce for_each_folio to iterate folios in xarray for code style
-compliance and better readability.
+| ERROR: modpost: "__divdi3" [drivers/net/can/rockchip/rockchip_canfd.ko] undefined!
 
-Signed-off-by: Song Chen <chensong_2000@189.cn>
+As this code doesn't run in the hot path, a 64 bit by 32 bit division
+is OK, even on 32 bit platforms. Use an explicit call to div_u64() to
+fix linking.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202409072304.lCQWyNLU-lkp@intel.com/
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 ---
- mm/filemap.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/net/can/rockchip/rockchip_canfd-timestamp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d62150418b91..5386348acacd 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -62,6 +62,9 @@
+diff --git a/drivers/net/can/rockchip/rockchip_canfd-timestamp.c b/drivers/net/can/rockchip/rockchip_canfd-timestamp.c
+index 81cccc5fd838..fb1a8f4e6217 100644
+--- a/drivers/net/can/rockchip/rockchip_canfd-timestamp.c
++++ b/drivers/net/can/rockchip/rockchip_canfd-timestamp.c
+@@ -71,7 +71,7 @@ void rkcanfd_timestamp_init(struct rkcanfd_priv *priv)
  
- #include "swap.h"
+ 	max_cycles = div_u64(ULLONG_MAX, cc->mult);
+ 	max_cycles = min(max_cycles, cc->mask);
+-	work_delay_ns = clocksource_cyc2ns(max_cycles, cc->mult, cc->shift) / 3;
++	work_delay_ns = div_u64(clocksource_cyc2ns(max_cycles, cc->mult, cc->shift), 3);
+ 	priv->work_delay_jiffies = nsecs_to_jiffies(work_delay_ns);
+ 	INIT_DELAYED_WORK(&priv->timestamp, rkcanfd_timestamp_work);
  
-+#define for_each_folio(folio, xas, max)	\
-+	for (folio = xas_load(&xas);	\
-+		 folio && xas.xa_index <= max; folio = xas_next(&xas))
- /*
-  * Shared mappings implemented 30.11.1994. It's not fully working yet,
-  * though.
-@@ -2170,8 +2173,7 @@ unsigned filemap_get_folios_contig(struct address_space *mapping,
- 
- 	rcu_read_lock();
- 
--	for (folio = xas_load(&xas); folio && xas.xa_index <= end;
--			folio = xas_next(&xas)) {
-+	for_each_folio(folio, xas, end) {
- 		if (xas_retry(&xas, folio))
- 			continue;
- 		/*
-@@ -2306,7 +2308,7 @@ static void filemap_get_read_batch(struct address_space *mapping,
- 	struct folio *folio;
- 
- 	rcu_read_lock();
--	for (folio = xas_load(&xas); folio; folio = xas_next(&xas)) {
-+	for_each_folio(folio, xas, ULONG_MAX) {
- 		if (xas_retry(&xas, folio))
- 			continue;
- 		if (xas.xa_index > max || xa_is_value(folio))
+
+---
+base-commit: c259acab839e57eab0318f32da4ae803a8d59397
+change-id: 20240909-can-rockchip_canfd-fix-64-bit-division-5f579fddebc9
+
+Best regards,
 -- 
-2.34.1
+Marc Kleine-Budde <mkl@pengutronix.de>
+
 
 
