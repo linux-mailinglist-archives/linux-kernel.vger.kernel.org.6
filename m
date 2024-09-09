@@ -1,100 +1,158 @@
-Return-Path: <linux-kernel+bounces-321010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7393A97134D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:22:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9419E971358
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D4B1F22AD8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:22:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 519AB2834B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E871F1B5831;
-	Mon,  9 Sep 2024 09:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995871B5EDE;
+	Mon,  9 Sep 2024 09:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h9QhVcKk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FIZrgtIx"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8711B5309
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC031B3B2F;
+	Mon,  9 Sep 2024 09:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725873572; cv=none; b=l7fNBWICCmsSQgiQy4wewDNNxvQELe+EuEsxR6zKOpCUTx0MQ6olmbzqE7UP2kQwvfe+B0OF+iUHetBCKjUsU6IJMEPhaHGnSrpc9zJwmr8po5u/9ewxRrf+jH1mA1NJkDGhWSFrE87XvjNOXDgeeIeTI2oV6tdW2HiIRFGS0v4=
+	t=1725873661; cv=none; b=gTZKtE0wawTNSQzKJt85hEHyYFPHqzpcD8s1L9m95zsP4BRHD8go69u0OKVXCa+h01cCrcK9FH+YINLf79oEbO/Db9+qBn0NBy5hAFbgWu8+UK/X/1EeSYzp+GXXLT5hVGgWjc+Cpo1Q2fJyjO1mA9tymbUfpBLPfbepkxmSyRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725873572; c=relaxed/simple;
-	bh=vBicCEn34wOQk+mxT1S9HSE+MwVayxQWhVfS2wuRQoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TkDVO+z1ShaNUyz52/v9n0hDurW0OsfJsmFAD8Q/y2+K4cWGkMdII0MUdOAXYqajtB9YO/1HIWdk/XVsuzCjaBnxRiap5BWkkSy7l8a/MWxvoTM5z18k55kk//ZU3glZxMVL4ovOd7GsJ2D9aXEeG6hNJxBirJLcVh3zxhZDJ9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h9QhVcKk; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725873571; x=1757409571;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vBicCEn34wOQk+mxT1S9HSE+MwVayxQWhVfS2wuRQoY=;
-  b=h9QhVcKkUUWgq2oq+b8IQoO5zEhbwHBdvTjleTF5cKfYl7m83LNf+APo
-   xwrivNvVbDOZRwnWtEoheJmyzJNMrsxqHPft1wo0DcCgH6Y5PFF1oFKFE
-   QovAfKC4kXSph6wHBnpg/0CGumfKLVowPIs4Md9dspl2wFDedkYCnjfZ7
-   Te0tqZMrSOSXaaK2lv33zS0I+E1piqf4ePC1bSMzY+z+4X71EWlFMsNtY
-   DyowH74PTO5seX7pu6jQg5AfkTBzbYz+S/qndm338fxFJ+yZig9hVy8xc
-   Ed5d+F3WthiEKjW3CGeSERU3da2ceQx7hijA2UnM9ZpyMqj6japu5RNwC
-   A==;
-X-CSE-ConnectionGUID: ImryyoK4TN2RvgTEJJlvfQ==
-X-CSE-MsgGUID: l/BCKclZTqWKNDTKKao4hQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="24717027"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="24717027"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 02:19:23 -0700
-X-CSE-ConnectionGUID: cvkWcm4WR729h0FwFTRqiQ==
-X-CSE-MsgGUID: w3M1/NvXSfKQry4pHGACxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="66846484"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 09 Sep 2024 02:19:19 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 60847297; Mon, 09 Sep 2024 12:19:18 +0300 (EEST)
-Date: Mon, 9 Sep 2024 12:19:18 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Alexey Gladkov <legion@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>, 
-	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, cho@microsoft.com, 
-	decui@microsoft.com, John.Starks@microsoft.com
-Subject: Re: [PATCH v6 5/6] x86/tdx: Move MMIO helpers to common library
-Message-ID: <hga6pbwtnx4wgbau5nqem7d5ypsv3swwxezdpok2fw2zqfbvxe@f4zsrbvymckf>
-References: <cover.1724837158.git.legion@kernel.org>
- <cover.1725622408.git.legion@kernel.org>
- <24044dab4a665f6208c10d1cbce4b99f0fea8239.1725622408.git.legion@kernel.org>
+	s=arc-20240116; t=1725873661; c=relaxed/simple;
+	bh=TJq1nvR0rf3j+JkErKdsYvqOcBWi6G4yVRoLRKv6cV4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gd7zWAZ8VVymF/p5zt3gzH2zyM/bRpCZBthLJy8o4+UOQmSPfmNwAOLtGj5Tw5QBMX8V0AabizA4c5/ZP7Uv3/y/Zca09ZA80lzkykrM7pcGGCy5jKoZauISHQkoaxGgIceVZzJSTrQKluOKTKIwBJ8QvODV/CpiNfL7Wd6R4rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FIZrgtIx; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-20573eb852aso33979145ad.1;
+        Mon, 09 Sep 2024 02:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725873659; x=1726478459; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c8oJcgmLJj/vtZTNDCjHyX3EWWzSoBqFkOBi+RgnpsA=;
+        b=FIZrgtIx4IYROxwGj/eRL+88mDQ4xAE31ZqIBdTvdTCeSSEgEutez9Umu2qAOSoaiU
+         QWhVW/tteEJm0DpD/f906iCuGa4e6zLSV7C58nXPE5kmCbog5tZWgGqYy0GRE0jKShX0
+         nyfGnzFC5sGKUnraWZd11ky4r5qQLjUuPxIMFgjLDofWtw7kzKMdLZMCbocJwWP1HOdj
+         PwRmx8uOKPRcbuR29BbAHfAay0B4qXEqesYXAHiexIFAkJrduZWwxVyd+sr5GksLfXsy
+         LpcOUi+3LvtO54fGVnQYzgphHsl+Xa1vMyMP1DoBooWnCzliYSz0c0GtBA2R+TnV7Ljq
+         /HbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725873659; x=1726478459;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c8oJcgmLJj/vtZTNDCjHyX3EWWzSoBqFkOBi+RgnpsA=;
+        b=dPmpN75cSQ0QIp6rRQgTwlh5JsZxoeE8w1WPZLoA+cBNB4B801+wzISAIe8bkLMqLZ
+         FUM2jhr6wic9QmqLcckFVxDf4OMS5nf2JodcqSDYuJKA6ihmJj5B5TyHVWCFaUR6Ar/P
+         O4U/umeNIFsa0Tczv3phqkVVW6p7KR98lhLyxngH29tTHGbsdCwWDoczmCRoAv6d10bO
+         etK9t6RTbq9aABZ2alp9VRzpH5HtIQoGfUbW69QXsm8jcG3heWjaIiNCpwGexexbrDZb
+         2QInzhRZcRalYrOBDYYkjKmeycK9DWmteuveIrLzWk9PZuSXfwogC9lOmlCEOw8Yqj9e
+         uSdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiYuSShI9uINiG+bAAcLNUjrzsV6V5tLXk9VQUSvnCzWbJJ7pEBCg/oDwrreK6Hd8k9Hy7ySo+RURjLos=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj5ZuwwfsI6j5hgAy7bWEQsQjzLpTQbDF/L3nyLfN4jfNdma6F
+	6lPf2qhFWiD2HYWnkJ9GT8Lt6KGTTIxntyZoUzRldBSlCVHTfzD+zevp0MtxKWrPWw==
+X-Google-Smtp-Source: AGHT+IHSLSuKhFpOhxjR4Jw7h+UXkXnwGndUpE57b1vk6Nt2lt3ZBV77mon2JQgxoq8gN08E/K+Keg==
+X-Received: by 2002:a17:903:22ca:b0:205:5a3f:76b2 with SMTP id d9443c01a7336-206b848994fmr251370545ad.29.1725873658471;
+        Mon, 09 Sep 2024 02:20:58 -0700 (PDT)
+Received: from localhost.localdomain ([223.104.134.124])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d8241be93asm3589403a12.42.2024.09.09.02.20.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 02:20:58 -0700 (PDT)
+From: luzhixing12345 <luzhixing12345@gmail.com>
+To: linux-cxl@vger.kernel.org
+Cc: luzhixing12345 <luzhixing12345@gmail.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] test: add cxl region test template
+Date: Mon,  9 Sep 2024 17:19:38 +0800
+Message-Id: <20240909091938.27647-1-luzhixing12345@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <24044dab4a665f6208c10d1cbce4b99f0fea8239.1725622408.git.legion@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 06, 2024 at 01:50:03PM +0200, Alexey Gladkov wrote:
-> From: "Alexey Gladkov (Intel)" <legion@kernel.org>
-> 
-> AMD code has helpers that are used to emulate MOVS instructions. To be
-> able to reuse this code in the MOVS implementation for intel, it is
-> necessary to move them to a common location.
-> 
-> Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
+CXL2.0 support dynamic provisioning of new memory region,
+add cxl region test template
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: luzhixing12345 <luzhixing12345@gmail.com>
+---
+ MAINTAINERS                         | 1 +
+ tools/testing/cxl/Kbuild            | 6 ++++++
+ tools/testing/cxl/cxl_region_test.c | 6 ++++++
+ tools/testing/cxl/test/cxl.c        | 1 +
+ 4 files changed, 14 insertions(+)
+ create mode 100644 tools/testing/cxl/cxl_region_test.c
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 10430778c998..708407d34584 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5616,6 +5616,7 @@ M:	Alison Schofield <alison.schofield@intel.com>
+ M:	Vishal Verma <vishal.l.verma@intel.com>
+ M:	Ira Weiny <ira.weiny@intel.com>
+ M:	Dan Williams <dan.j.williams@intel.com>
++M:	luzhixing12345 <luzhixing12345@gmail.com>
+ L:	linux-cxl@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/driver-api/cxl
+diff --git a/tools/testing/cxl/Kbuild b/tools/testing/cxl/Kbuild
+index 3d1ca9e38b1f..8b430274a1ad 100644
+--- a/tools/testing/cxl/Kbuild
++++ b/tools/testing/cxl/Kbuild
+@@ -67,6 +67,12 @@ cxl_core-y += config_check.o
+ cxl_core-y += cxl_core_test.o
+ cxl_core-y += cxl_core_exports.o
+ 
++obj-m += cxl_region.o
++
++cxl_region-y += $(CXL_CORE_SRC)/region.o
++cxl_region-y += config_check.o
++cxl_region-y += cxl_region_test.o
++
+ KBUILD_CFLAGS := $(filter-out -Wmissing-prototypes -Wmissing-declarations, $(KBUILD_CFLAGS))
+ 
+ obj-m += test/
+diff --git a/tools/testing/cxl/cxl_region_test.c b/tools/testing/cxl/cxl_region_test.c
+new file mode 100644
+index 000000000000..c5859a96e35b
+--- /dev/null
++++ b/tools/testing/cxl/cxl_region_test.c
+@@ -0,0 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright(c) 2022 Intel Corporation. All rights reserved. */
++
++#include "watermark.h"
++
++cxl_test_watermark(cxl_region);
+diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
+index 90d5afd52dd0..320aaed2df17 100644
+--- a/tools/testing/cxl/test/cxl.c
++++ b/tools/testing/cxl/test/cxl.c
+@@ -1304,6 +1304,7 @@ static __init int cxl_test_init(void)
+ 	cxl_mem_test();
+ 	cxl_pmem_test();
+ 	cxl_port_test();
++	cxl_region_test();
+ 
+ 	register_cxl_mock_ops(&cxl_mock_ops);
+ 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.34.1
+
 
