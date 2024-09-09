@@ -1,216 +1,166 @@
-Return-Path: <linux-kernel+bounces-321972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD6897223F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:01:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A7BA97223C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A8EF1C23A25
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:00:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889D81C23A64
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14B2189906;
-	Mon,  9 Sep 2024 19:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IJR1LrNI"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EC5189906;
+	Mon,  9 Sep 2024 19:00:30 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E37134C4
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 19:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDED25779
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 19:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725908454; cv=none; b=oNIi+CpBAaGvnFTKWcwo09Il+4tA1KiUzli+9Yg/We5ibpW5Ck6wpVh5f/lBvCvZzZhevZrJj6AvFMQgtSUZJANpp2ukHVlFOhgZ6wI5hbPbt9T4F2q6vqpei3h0uRRINby5mUs+6NqsjMxKP6EQKSmeR8LpU+pxjlKpCcp5YuE=
+	t=1725908430; cv=none; b=Q2mufmfwz+wQjFNVhEloPJMO9p62mcEg4ROElYSe9bD+qSQ5meQ7vzSBVfD32w1Cf1bsx1aw1Np6uzEmvYDeKIJhsj61aMoBBrVT9CtWDGJoDu33VwhJU847J/WJBiHxS0iDmJutX59HhJSWsPfVGTioAflNs5bJppAB5Hc85tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725908454; c=relaxed/simple;
-	bh=j/numQIZWtWkd6EtYn4iL3OE7HPVQg+q+JXn6cioXTU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BsK5WARFAKHBPH+fDK8Dk/RdeYGx+JZ9QcO2fCz8mzA/UvRxELsGOEdc95CSHlhtBkLoAML0gm8gayGcHTUYEHOFrE6LjueWPKFhn2Wsjya/J8+97ynw9keVZvkCbCAhZjSMtXARGov3SI1681FGRAuDNudZ0xBDVSYiusLVrEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IJR1LrNI; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6bada443ffeso35097167b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 12:00:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725908451; x=1726513251; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A72L+GUjbQDFBk2MUwlGfe11O4m077FKuGtcJSgBRQQ=;
-        b=IJR1LrNIAIBVgtkHXuaVN9HDOrRcbydlX8cTKaXZT3ANXZq7yNHc6cT5MLlgpAhvPb
-         Fz85SRrLcKkFgaYqiQ91IchbIXyKl3RAoC6ZaEcHM0mZruQyVJERy4sRnso3eYyqytw2
-         adkYF7UvExT0CJy5aWrqutJrI0nzerA0E469hHEQyYSepEJmSzoQ2gSI8od4qxARo1bt
-         X9eZni/S18UBIwrcTYpzWZq6PBHw5WSQGZvdvP/AJdTOIeIRPaNO1onbTW+M5jFRPf6m
-         PcZp2ICn1HkBhZpGOr/eX84ACeev34ldi2NIrWxnFdwR11GLLgamwrCOk0pTsWGZxHZL
-         /yDg==
+	s=arc-20240116; t=1725908430; c=relaxed/simple;
+	bh=YBJ7N57PFghVozGSVnOMZ4czC9mduxg6tedfKugZ5us=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mVUmAGE7OC/tS2PYvYyWp0MVt/Dppy/sR8IY4PubhKISawAvbliQKp8i8kHZqnssz3EWbNYfaODTonfVZ4abP+3tHxxcT7q+ZGiYw9BQR4U5N3w/NbcQomSA6hd+al2DOHyKHUSrBFBnra6AgHfq9w5Q+HpoU3awHUethnGainM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82aa67b1101so509644239f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 12:00:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725908451; x=1726513251;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A72L+GUjbQDFBk2MUwlGfe11O4m077FKuGtcJSgBRQQ=;
-        b=Td+ECXwYOechXG1nAz60rP+am6H+o415uF1ldZpmUA/PlEFLVBU4mvvwYMcHSigS2O
-         bqsExV1W11HrgRFeoslMZZlNlg4g+NJ3NnZQRPBhmVVLznqL9KQ5dntkgUidoW3xuqhG
-         w/U+wWkE/UL5dOkVRztHEWSUzlxTdxAvWgxJ1f8KYmD6xiaCUmkLK4pa8V2Y3lQGK0nl
-         /fFAFiF7+c2pqTaQkRQNAD5gynXF4s4cgGiJIvMAYZ0J02N1WIYU78+cQUs4C4EWuIf1
-         q3qdoWy5NxH8xvcCMDOShk0hPbUUmd1ccM73TVfjiF/+YOUo7qy6v89JvzIRNqVvcDrd
-         ikHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvx/gOf80fijn22UukVkg5qzUBdBWtANwWeUzDcIyvfVR4WYBYhNXuX2ap9uhfRJp2dsYklSHsZ4zskUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3V/uccRAQZ7L2GcRdEchOLA2g/cPMIV+WgEckBih3YXOP5kWz
-	1AQ27OPzQtY3sTnOxSW/LPU+t7YB5Mt/6sI2qZ80eEziXxsZF+5v1EigaXzS135P/KUrPzzIkin
-	AShd4rD+6k/e7iyDTEaZw5LDTeVd/8dTabOHh
-X-Google-Smtp-Source: AGHT+IFR6zulDZKlUD4bAN1hPEwMA1FY+4vRNJHse0GHukSpBMl4XHH4SgwprP02hwRSXpE0fsxpg+6qvu7h46yJxCs=
-X-Received: by 2002:a05:690c:4b0e:b0:6d4:72b7:177e with SMTP id
- 00721157ae682-6db95312363mr6193027b3.5.1725908451204; Mon, 09 Sep 2024
- 12:00:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725908428; x=1726513228;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y54PztHGwSAI8/Jf/tUurGKOciAkk0Ur88jNfvTGdGQ=;
+        b=EwxTXfg5QkZrzAmSQMd3dWVlcsicwntOv/2qpiWAQOGdrlwaUGqxuupW9FIEs6pSBM
+         muV4rSA2nqGgJGaPs79kfe4Al1DOHLohJCaivwKga9Jc+4XeTXTD6lxSoVSSveiDOC+Z
+         dJej+7FcRpiGGToe2yMsx6FW+4EliFW4aa/Jz6vBRgfRZWUAFdfqXxL9ZRJtAKG/gwBQ
+         M+PMTuJfKxDggh3UUxK+6PYfRoZbpoY0uN7bHFukR0BcbbA5yapHQVEoNNLHTEueDAYH
+         44HI6z/45wcG2GsvSnJp+es0Gy63huyA5XzmS0HjRN9xU2Lw5HHDJ+TdeghByfCOG8Ed
+         9yeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYc2FOWw90B5r/tDLmHlJBMgJ56TEKBWhDiwu65WCnT81siS7HheKUGkKD3jjnW1FLr6MRVvYlbtuL3Co=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCK4IN+UoWQ2pqKLyCT12M3M66vAnHVxHkM2DycwquFD2xjBPT
+	i1npY8sKO3bO3QF9/D5WahlKuYyEV+vGv+uQQk/JzAGmwibVAyvvCT6KJERDmOYL/Ip8rp98gNY
+	MYNNZnfu2JPUqcUhTMJlGzXMcLIauNV7QHiwLnRtWth1HrHnfs8us8c4=
+X-Google-Smtp-Source: AGHT+IE8kTe40tat07PZm3BRhKLiWjktlMUi8aNQn0szQWIy17wOGlwMjSrwjR1+vtZWbjs30p9EfQ3QokaVYYg+CNHBNKPhI13l
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809194335.1726916-1-seanjc@google.com> <20240809194335.1726916-20-seanjc@google.com>
-In-Reply-To: <20240809194335.1726916-20-seanjc@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Mon, 9 Sep 2024 12:00:14 -0700
-Message-ID: <CADrL8HWACwbzraG=MbDoORJ8ramDxb-h9yb0p4nx9-wq4o3c6A@mail.gmail.com>
-Subject: Re: [PATCH 19/22] KVM: x86/mmu: Add infrastructure to allow walking
- rmaps outside of mmu_lock
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Peter Xu <peterx@redhat.com>
+X-Received: by 2002:a05:6602:6209:b0:82b:c70f:5061 with SMTP id
+ ca18e2360f4ac-82bc70f511emr565773739f.7.1725908428139; Mon, 09 Sep 2024
+ 12:00:28 -0700 (PDT)
+Date: Mon, 09 Sep 2024 12:00:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c643440621b45e4e@google.com>
+Subject: [syzbot] [ext4?] KCSAN: data-race in redirty_tail_locked /
+ vfs_fsync_range (2)
+From: syzbot <syzbot+a388a53633c9a4e9b22e@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 9, 2024 at 12:44=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> Steal another bit from rmap entries (which are word aligned pointers, i.e=
-.
-> have 2 free bits on 32-bit KVM, and 3 free bits on 64-bit KVM), and use
-> the bit to implement a *very* rudimentary per-rmap spinlock.  The only
-> anticipated usage of the lock outside of mmu_lock is for aging gfns, and
-> collisions between aging and other MMU rmap operations are quite rare,
-> e.g. unless userspace is being silly and aging a tiny range over and over
-> in a tight loop, time between contention when aging an actively running V=
-M
-> is O(seconds).  In short, a more sophisticated locking scheme shouldn't b=
-e
-> necessary.
->
-> Note, the lock only protects the rmap structure itself, SPTEs that are
-> pointed at by a locked rmap can still be modified and zapped by another
-> task (KVM drops/zaps SPTEs before deleting the rmap entries)
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/mmu/mmu.c | 80 +++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 71 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 8ca7f51c2da3..a683b5fc4026 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -909,11 +909,73 @@ static struct kvm_memory_slot *gfn_to_memslot_dirty=
-_bitmap(struct kvm_vcpu *vcpu
->   * About rmap_head encoding:
->   *
->   * If the bit zero of rmap_head->val is clear, then it points to the onl=
-y spte
-> - * in this rmap chain. Otherwise, (rmap_head->val & ~1) points to a stru=
-ct
-> + * in this rmap chain. Otherwise, (rmap_head->val & ~3) points to a stru=
-ct
->   * pte_list_desc containing more mappings.
->   */
->  #define KVM_RMAP_MANY  BIT(0)
->
-> +/*
-> + * rmaps and PTE lists are mostly protected by mmu_lock (the shadow MMU =
-always
-> + * operates with mmu_lock held for write), but rmaps can be walked witho=
-ut
-> + * holding mmu_lock so long as the caller can tolerate SPTEs in the rmap=
- chain
-> + * being zapped/dropped _while the rmap is locked_.
-> + *
-> + * Other than the KVM_RMAP_LOCKED flag, modifications to rmap entries mu=
-st be
-> + * done while holding mmu_lock for write.  This allows a task walking rm=
-aps
-> + * without holding mmu_lock to concurrently walk the same entries as a t=
-ask
-> + * that is holding mmu_lock but _not_ the rmap lock.  Neither task will =
-modify
-> + * the rmaps, thus the walks are stable.
-> + *
-> + * As alluded to above, SPTEs in rmaps are _not_ protected by KVM_RMAP_L=
-OCKED,
-> + * only the rmap chains themselves are protected.  E.g. holding an rmap'=
-s lock
-> + * ensures all "struct pte_list_desc" fields are stable.
+Hello,
 
-This last sentence makes me think we need to be careful about memory orderi=
-ng.
+syzbot found the following issue on:
 
-> + */
-> +#define KVM_RMAP_LOCKED        BIT(1)
-> +
-> +static unsigned long kvm_rmap_lock(struct kvm_rmap_head *rmap_head)
-> +{
-> +       unsigned long old_val, new_val;
-> +
-> +       old_val =3D READ_ONCE(rmap_head->val);
-> +       if (!old_val)
-> +               return 0;
-> +
-> +       do {
-> +               /*
-> +                * If the rmap is locked, wait for it to be unlocked befo=
-re
-> +                * trying acquire the lock, e.g. to bounce the cache line=
-.
-> +                */
-> +               while (old_val & KVM_RMAP_LOCKED) {
-> +                       old_val =3D READ_ONCE(rmap_head->val);
-> +                       cpu_relax();
-> +               }
-> +
-> +               /*
-> +                * Recheck for an empty rmap, it may have been purged by =
-the
-> +                * task that held the lock.
-> +                */
-> +               if (!old_val)
-> +                       return 0;
-> +
-> +               new_val =3D old_val | KVM_RMAP_LOCKED;
-> +       } while (!try_cmpxchg(&rmap_head->val, &old_val, new_val));
+HEAD commit:    da3ea35007d0 Linux 6.11-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=172d743b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1e7d02549be622b2
+dashboard link: https://syzkaller.appspot.com/bug?extid=a388a53633c9a4e9b22e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-I think we (technically) need an smp_rmb() here. I think cmpxchg
-implicitly has that on x86 (and this code is x86-only), but should we
-nonetheless document that we need smp_rmb() (if it indeed required)?
-Perhaps we could/should condition the smp_rmb() on `if (old_val)`.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-kvm_rmap_lock_readonly() should have an smb_rmb(), but it seems like
-adding it here will do the right thing for the read-only lock side.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3cf4ae8a1204/disk-da3ea350.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d8186bac98f7/vmlinux-da3ea350.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a1ab98f32196/bzImage-da3ea350.xz
 
-> +
-> +       /* Return the old value, i.e. _without_ the LOCKED bit set. */
-> +       return old_val;
-> +}
-> +
-> +static void kvm_rmap_unlock(struct kvm_rmap_head *rmap_head,
-> +                           unsigned long new_val)
-> +{
-> +       WARN_ON_ONCE(new_val & KVM_RMAP_LOCKED);
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a388a53633c9a4e9b22e@syzkaller.appspotmail.com
 
-Same goes with having an smp_wmb() here. Is it necessary? If so,
-should it at least be documented?
+==================================================================
+BUG: KCSAN: data-race in redirty_tail_locked / vfs_fsync_range
 
-And this is *not* necessary for kvm_rmap_unlock_readonly(), IIUC.
+read-write to 0xffff88811317dce8 of 8 bytes by task 4275 on cpu 0:
+ redirty_tail_locked+0x56/0x270 fs/fs-writeback.c:1346
+ writeback_single_inode+0x1ea/0x4a0 fs/fs-writeback.c:1792
+ sync_inode_metadata+0x5c/0x90 fs/fs-writeback.c:2842
+ generic_buffers_fsync_noflush+0xe4/0x130 fs/buffer.c:610
+ ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
+ ext4_sync_file+0x20b/0x6c0 fs/ext4/fsync.c:151
+ vfs_fsync_range+0x122/0x140 fs/sync.c:188
+ generic_write_sync include/linux/fs.h:2822 [inline]
+ ext4_buffered_write_iter+0x338/0x380 fs/ext4/file.c:305
+ ext4_file_write_iter+0x29f/0xe30
+ iter_file_splice_write+0x5e6/0x970 fs/splice.c:743
+ do_splice_from fs/splice.c:941 [inline]
+ direct_splice_actor+0x16c/0x2c0 fs/splice.c:1164
+ splice_direct_to_actor+0x305/0x670 fs/splice.c:1108
+ do_splice_direct_actor fs/splice.c:1207 [inline]
+ do_splice_direct+0xd7/0x150 fs/splice.c:1233
+ do_sendfile+0x3ab/0x950 fs/read_write.c:1295
+ __do_sys_sendfile64 fs/read_write.c:1362 [inline]
+ __se_sys_sendfile64 fs/read_write.c:1348 [inline]
+ __x64_sys_sendfile64+0x110/0x150 fs/read_write.c:1348
+ x64_sys_call+0xed5/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:41
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> +       WRITE_ONCE(rmap_head->val, new_val);
-> +}
+read to 0xffff88811317dce8 of 8 bytes by task 4277 on cpu 1:
+ vfs_fsync_range+0xa6/0x140 fs/sync.c:186
+ generic_write_sync include/linux/fs.h:2822 [inline]
+ ext4_buffered_write_iter+0x338/0x380 fs/ext4/file.c:305
+ ext4_file_write_iter+0x29f/0xe30
+ iter_file_splice_write+0x5e6/0x970 fs/splice.c:743
+ do_splice_from fs/splice.c:941 [inline]
+ direct_splice_actor+0x16c/0x2c0 fs/splice.c:1164
+ splice_direct_to_actor+0x305/0x670 fs/splice.c:1108
+ do_splice_direct_actor fs/splice.c:1207 [inline]
+ do_splice_direct+0xd7/0x150 fs/splice.c:1233
+ do_sendfile+0x3ab/0x950 fs/read_write.c:1295
+ __do_sys_sendfile64 fs/read_write.c:1362 [inline]
+ __se_sys_sendfile64 fs/read_write.c:1348 [inline]
+ __x64_sys_sendfile64+0x110/0x150 fs/read_write.c:1348
+ x64_sys_call+0xed5/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:41
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0x0000000000000087 -> 0x0000000000000080
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 UID: 0 PID: 4277 Comm: syz.2.232 Not tainted 6.11.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
