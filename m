@@ -1,105 +1,138 @@
-Return-Path: <linux-kernel+bounces-322013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB539722D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:38:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7BD9722DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 759EFB22480
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:37:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78D6CB21B21
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5171F1898F7;
-	Mon,  9 Sep 2024 19:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8413A18A6D1;
+	Mon,  9 Sep 2024 19:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fT0CGzqQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3GWPjxGf";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/25BoWyt"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48111200AF
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 19:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C81D17C9B9;
+	Mon,  9 Sep 2024 19:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725910671; cv=none; b=IE1Qo4y8brkEX1yEigCxiG1lsTH6LbEHEzmt0a98+VLa8yjELv0FkNCu68ldVazQloaJik9dcI1e4VzULcNK+35Ida2QT0LH5v81Zc5vvKHX1MTYPFJnmEM2UbgnRTO/X9YDHan7o1Vu+XMsyvKa+yezgXIrKVewdbW1uIJdxrA=
+	t=1725910705; cv=none; b=pR1aDCGTYg6U4ZJjj5wj9PxB/5VWubvg5jYar524s2T44FkFcj53uM7VTteiuYQvpwESCZwKayMgNDipiPEOm06kO7INsAHwGbxa8PdPLarfB0wUvr4ID4szZutDDvCiojIHxkXueG24Fco8TrywVup1HZZZzo6zEJrmjLBnfYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725910671; c=relaxed/simple;
-	bh=RsXgnz/Awu8194XCZziysSI+1w0BvXXdgMewrhU6Q4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ikQu4tA+kneKVhzz1A6wuw6wQ5qldQPmuMQoTm2//xWnOBFXygFi9H0nzJdJgMDLv7NOHqfcjYwy9E/9aoeNu4qln2Rn2+M4RHz62FgewImTDxqO46I5UJaBL9ga1wpK+AqKdt/B+2Bb7PNUBoQv7iu+DZ85ByvKuQSMhsB/BGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fT0CGzqQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725910669;
+	s=arc-20240116; t=1725910705; c=relaxed/simple;
+	bh=RnvkZhjYRI7CMLflZiYVjg05UbvuzfnP5NsX2zc5vA4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qJ4CtgambG2aMNzuRDCE5rZYLBEnGdY4sabSjayoA2Rs1+9AXJaCWONvgkJoDc2ovx+iyHtWBD5y6Gy13oD2XkFjm7PIHjkAssOY77S9MATMXoeFzt49r0xol7xkULX3SWYbKFm0qXE9IZiQXpq6KIdLnDv1ezHOZF85NG/apY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3GWPjxGf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/25BoWyt; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Florian Kauer <florian.kauer@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725910702;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=76PMED9qVa8H24o7AErFGwfepAPAtA5MZWDkqvtekV0=;
-	b=fT0CGzqQjraxoWaqIxRgEr7NuVIqWb9WwVPZ7daPaoFOmMpgbgl2PXZeb+jmGK2ED7BpjO
-	aAdgjNDukN15dgzRFMc8yz+ie8hODlVZUhA331sFKS4NrOTnMcT9MnHpI24qpPPv848BxM
-	bDr1pFJz61GhK2Wd3yBChz8zoLHZj8E=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-414-V6GzlB0yMd6Y-8EAXNL46A-1; Mon,
- 09 Sep 2024 15:37:44 -0400
-X-MC-Unique: V6GzlB0yMd6Y-8EAXNL46A-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6DCC819560B1;
-	Mon,  9 Sep 2024 19:37:42 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.74])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 36C571955F45;
-	Mon,  9 Sep 2024 19:37:37 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon,  9 Sep 2024 21:37:31 +0200 (CEST)
-Date: Mon, 9 Sep 2024 21:37:25 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jubilee Young <workingjubilee@gmail.com>
-Cc: akpm@linux-foundation.org, apais@microsoft.com, benhill@microsoft.com,
-	ebiederm@xmission.com, linux-kernel@vger.kernel.org,
-	romank@linux.microsoft.com, ssengar@microsoft.com,
-	sunilmut@microsoft.com, torvalds@linux-foundation.org,
-	vdso@hexbites.dev
-Subject: Re: [PATCH 1/1] ptrace: Get tracer PID without reliance on the proc
- FS
-Message-ID: <20240909193725.GD14058@redhat.com>
-References: <CAPNHn3rTjMcbNXRpZTBc-zEkmnnMJO2iem9-eUdBkyaquz88rw@mail.gmail.com>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6YEooAw5RFwgRDx0O+u59W8NXtkjDoxyTJ47o256NPE=;
+	b=3GWPjxGf/DKI9TaqKxBajvEJuNeK255j6+T0I9psL6Pw2CzhAGQTezsCgRJ3g7waw90BBb
+	AKAY8x8EIk6AhvweBLgAIUnO6GxyJrbE2zCUF03XwUPRQXOESSthJjZUjO60/YbDFgGwNQ
+	pqkgaYHsJ6jOaj6q6A6JR0bcCXP8WPMh9IN16pSK3U+zCSC2mK06sZywkgfqduN8XP0TM7
+	KjhSoWZgTalgl/KA3sT/I9urVSq0Yvs6nSThEkPguCjZDGWQgyi6zuTUwCKdkQEnn0PX+r
+	CWh9l537lZgWJrVBrJGyzSEz4MQ1ENLVIrZR6OcixWIzyE4y3CblyHsWbdAjYg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725910702;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6YEooAw5RFwgRDx0O+u59W8NXtkjDoxyTJ47o256NPE=;
+	b=/25BoWytWM3UpjFD4Dlp1P66UOAzwlf3HmaGpABrWj8k3ENnH2NhvP1vExSJpt+dtdRx9B
+	pvRP6bU5uY+8saCQ==
+Subject: [PATCH net v3 0/2] bpf: devmap: provide rxq after redirect
+Date: Mon, 09 Sep 2024 21:38:04 +0200
+Message-Id: <20240909-devel-koalo-fix-ingress-ifindex-v3-0-66218191ecca@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPNHn3rTjMcbNXRpZTBc-zEkmnnMJO2iem9-eUdBkyaquz88rw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJxO32YC/42NTQ7CIBBGr9KwdgxQbFNX3sO4oDBtJzZgoJKap
+ neXsDJudPn95L2NRQyEkZ2rjQVMFMm7HOpDxcyk3YhANmcmuVS84yewmHCGu9ezh4FWIDcGjBF
+ oIGdxhb6TXW1VK2zfsEx5BMy3Yrgyhwu75XKiuPjwKtYkyvS3IAkQYIXU3LbKyM5cZnLPJXhH6
+ 9Fi4Sf5yWx+MyVwUEZrIU2jVK++mfu+vwH+rv9XKwEAAA==
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+ Jesper Dangaard Brouer <hawk@kernel.org>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, 
+ =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>, 
+ David Ahern <dsahern@kernel.org>, Hangbin Liu <liuhangbin@gmail.com>, 
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>, 
+ linux-kselftest@vger.kernel.org, 
+ Florian Kauer <florian.kauer@linutronix.de>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1157;
+ i=florian.kauer@linutronix.de; h=from:subject:message-id;
+ bh=RnvkZhjYRI7CMLflZiYVjg05UbvuzfnP5NsX2zc5vA4=;
+ b=owEBbQKS/ZANAwAKATKF5IolV+EkAcsmYgBm306hIE0EZJvycKLxajvOwUK7ncI3nmDr3BVrr
+ 0tMIS7bVdKJAjMEAAEKAB0WIQSG5cmCLvpm5t9g7UUyheSKJVfhJAUCZt9OoQAKCRAyheSKJVfh
+ JGTHD/9Y1kSnmNhyRHb0AfRk7xJMPl/NhWh2eM7dXClwC9hdQjJMtN7kSf0TvbI2wGFJeDUDW7g
+ URitHNg6ptOH7x8XXJTKxDGc1XgHh3jzEmmi9v/rZTml6iFCYvEwgST7dcgHlVLLUnJclQit5zv
+ FVer8BArNz32e16DTj0cSk40WX5GpQzkyx3Cn/FMSkeK01VWvghFs/asD94I8QkE2gqyiluW1Hm
+ ji+GA9pEv5B72/+EuJEPRWFVUUiHKzMcVUQWIR1knaW+JpTm2MqxFxB+7ocke0pdfG/ewYlQhC/
+ kUBmyHvYWEgyQv8iQrfwCgNme+5BIz6j2Zg2n7PffbpZi/PSZEoFpNaZLOJf6yz1i6HaoMhJmBA
+ NcIZ4v+xjcMIpeyqVCkNZBFF6MuuHf/nL96ekLjdingUX7uQpGlldlA1k8sZkWGh45Rf6L1fTcA
+ 9z9i2EhNRTkbzk9UZDmwFHNf5SJt0SCKikBCEYsBGvM5nfo94e64h+fN6zfOhObiUZZOqVpcPf/
+ mHbs3H5ntHWMJ5GQlkOQ4mDt4qHr3UjnHlFAVXq3AY0KJttEdnoydqLjcM5aHSJlQnr+Z/Qxa/I
+ 93FAvcF43Ji2KuNR1RYFf5h9MCngztmAS1v3S7JXdMX2TzmB5M+FkcfAKNcvtB/f6zAdI7kZkt2
+ Vvbl1lz2uAYYWOA==
+X-Developer-Key: i=florian.kauer@linutronix.de; a=openpgp;
+ fpr=F17D8B54133C2229493E64A0B5976DD65251944E
 
-On 09/07, Jubilee Young wrote:
->
-> > Perhaps it makes sense to discuss the alternatives? Say, a process can have a
-> > please_insert_the_breakpoint_here() function implemented in asm which just does
-> > asm(ret).
->
-> There's some merit in having the debuggers recognize this pattern, as that
-> then would save every language that wants to have this power available
-> the trouble of reimplementing it. But first debuggers must recognize it,
-> which would require teaching each of them, which can be... tedious.
+rxq contains a pointer to the device from where
+the redirect happened. Currently, the BPF program
+that was executed after a redirect via BPF_MAP_TYPE_DEVMAP*
+does not have it set.
 
-Yet another thing in this discussion I can't understand... sorry, I tried.
-You do not need to teach, say, gdb to recognize this pattern. You can just do
+Add bugfix and related selftest.
 
-	$ gdb -ex 'b please_insert_the_breakpoint_here' ...
+Signed-off-by: Florian Kauer <florian.kauer@linutronix.de>
+---
+Changes in v3:
+- initialize skel to NULL, thanks Stanislav
+- Link to v2: https://lore.kernel.org/r/20240906-devel-koalo-fix-ingress-ifindex-v2-0-4caa12c644b4@linutronix.de
 
-Nevermind, as I have already said you can safely ignore me. I still do not
-see any "real" use-case for breakpoint_if_debugging(), but I guess that is
-due to my ignorance and lack of imagination.
+Changes in v2:
+- changed fixes tag
+- added selftest
+- Link to v1: https://lore.kernel.org/r/20240905-devel-koalo-fix-ingress-ifindex-v1-1-d12a0d74c29c@linutronix.de
 
-Oleg.
+---
+Florian Kauer (2):
+      bpf: devmap: provide rxq after redirect
+      bpf: selftests: send packet to devmap redirect XDP
+
+ kernel/bpf/devmap.c                                |  11 +-
+ .../selftests/bpf/prog_tests/xdp_devmap_attach.c   | 114 +++++++++++++++++++--
+ 2 files changed, 115 insertions(+), 10 deletions(-)
+---
+base-commit: 8e69c96df771ab469cec278edb47009351de4da6
+change-id: 20240905-devel-koalo-fix-ingress-ifindex-b9293d471db6
+
+Best regards,
+-- 
+Florian Kauer <florian.kauer@linutronix.de>
 
 
