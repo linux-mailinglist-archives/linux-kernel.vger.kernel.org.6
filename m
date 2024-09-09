@@ -1,157 +1,95 @@
-Return-Path: <linux-kernel+bounces-321410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8582C971A23
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:57:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C29971A25
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8911F23765
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:57:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 385EBB24B68
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62391B81B6;
-	Mon,  9 Sep 2024 12:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237641B86E2;
+	Mon,  9 Sep 2024 12:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="nqqDcqUc"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F9C1B2529
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="l0C8vqO6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4493D1B2529
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725886622; cv=none; b=JP9Qp6Rxe/NBlad//tBRK+qE/UoDBvJ3jmIbVaDZJ8bCkaQM3lMIX8xkC5GQjxMkpiyNyxUwxNUB902NWegtFUBv/tJlc/PRMRRdiestpqfPBrF6eS1sENuBra6nHX0DkCKYG3S8eRYOkxb1muICMDSgrIjzd4J8e1yxr1Fvj0M=
+	t=1725886626; cv=none; b=Bj3nftJsYnXICsLRSEP2TwBGXoczcxkKdSEaE5FCv3kCj/L+5yeBMGavfeUxAjI3nrbJiu7SYLT3REhyMqpmzatb3DO6c4L0Hou3qlCXkei6nTsbeED/N2cTYKPPu1QJLCCqpof9Ntr4S4oALnT+p4K4uzgrO+z42WCTm1BOpiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725886622; c=relaxed/simple;
-	bh=1uXxAD+XEEYPhdTmZstA0HW7wY7h8tyGGxT9tjDx9LI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i2s0jrMNaBRe8RM2GOg9hW6JVI6Atub7By99JdgCTdmGKj4beO3Uy/RRy4GlkyTXRhdmE4T4iKRIBQpruypTk6MnevITm+R7L+MmMLbtpbUQpoPHVEB2mZALk53WyhSphOnwqBgFKv+WrkPVAIu8GqNbrj1hubt4nPy6DGGQTzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=nqqDcqUc; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=WwFKI
-	+bxvE/sH0jt32LyN7fO/Tl860tFmSw7h6gPV2U=; b=nqqDcqUclCM9m94XLC8a6
-	fBVJ4W6RknZd6ElHvyedVV8+Ns4nOVZbcwMZiQa/rraX4q1VMbnpqXE32JBkgXyV
-	4vNzYTPI/Zeqos6Xa5B12b2GpePETHvtT3zgSC7DocOjEk9xM0tmOOwO7J4hAqmH
-	i3Vz/KKrZlz5yCbq/KQwTE=
-Received: from fedora40-vm.. (unknown [160.86.227.247])
-	by gzga-smtp-mta-g0-0 (Coremail) with SMTP id _____wDnT2B38N5mBtdlGQ--.6710S2;
-	Mon, 09 Sep 2024 20:56:26 +0800 (CST)
-From: Xiao Yang <ice_yangxiao@163.com>
-To: lorenzo.stoakes@oracle.com,
-	akpm@linux-foundation.org,
-	vbabka@suse.cz,
-	Liam.Howlett@oracle.com
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	ltp@lists.linux.it,
-	oliver.sang@intel.com,
-	Xiao Yang <ice_yangxiao@163.com>
-Subject: [PATCH v2] mm/vma: Return the exact errno in vms_gather_munmap_vmas()
-Date: Mon,  9 Sep 2024 21:56:21 +0900
-Message-ID: <20240909125621.1994-1-ice_yangxiao@163.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725886626; c=relaxed/simple;
+	bh=Cd0tRbBC8z/SXozT4nfhpxNkfjK4Qb93NiYph6UqVsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AMHa5E329Lmy4RvwkLjXkOPn7eoGNWfSE8pv1FabGul9tuevol8SjRHRGUzfE2R2zd9DnIuxDtW1JtXoqvzKkU5jojVsLjxyiQBa/zgQcqm0RlKm/OpXPNkmsTQ403PWn0h/bootyO4CAWMgq19Ft/lxMQZSBv+f8LefYSWySXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=l0C8vqO6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64A14C4CEC5;
+	Mon,  9 Sep 2024 12:57:05 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="l0C8vqO6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725886623;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tjj9pMckNrZn7r06sJTn7WWtsAUED56WaVUDPWPH3ug=;
+	b=l0C8vqO6Gwe6lzG9ejUc1Q+n2IZ0YfrmZl4bW5PGpgsbjbZ+3DRhYejrEYCalmaPy9ulJa
+	ZNV4wKxQLmaJlCVMnbzvSgi+r9vprfjMuk3GG6yommoBZhSXFK6ZEvJd9ZmeV/nGUJ/Tjb
+	uoizrUVuJRC+aRbInvuftlg4oItv+T4=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 827428f2 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 9 Sep 2024 12:57:02 +0000 (UTC)
+Date: Mon, 9 Sep 2024 14:57:01 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-kernel@vger.kernel.org, adhemerval.zanella@linaro.org,
+	xry111@xry111.site
+Subject: Re: [PATCH] selftests: vDSO: ensure vgetrandom works in a time
+ namespace
+Message-ID: <Zt7wndSBTuqGlViB@zx2c4.com>
+References: <ZtnnZMa_Yi-UwhHT@zx2c4.com>
+ <20240905173220.2243959-1-Jason@zx2c4.com>
+ <6c84d516-a3fd-4b9f-a27d-8da8ff117c92@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnT2B38N5mBtdlGQ--.6710S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWFWkXryfJrW8Zw1DJw45GFg_yoW5ZF4xpF
-	93W3s8WFWxXr4xW3Wagayjvw1Yva4rGa1jyrWUGF1Sv3ZIqwsIqryrJFyFvr9rKrZ7Ar9a
-	qr4UG3WfW3W5taDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pZg46tUUUUU=
-X-CM-SenderInfo: 5lfhs5xdqj5xldr6il2tof0z/1tbiMx5VXmXAnvb-xQAAsR
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6c84d516-a3fd-4b9f-a27d-8da8ff117c92@csgroup.eu>
 
-__split_vma() and mas_store_gfp() returns several types of errno on
-failure so don't ignore them in vms_gather_munmap_vmas(). For example,
-__split_vma() returns -EINVAL when an unaligned huge page is unmapped.
-This issue is reproduced by ltp memfd_create03 test.
+On Mon, Sep 09, 2024 at 12:42:01PM +0200, Christophe Leroy wrote:
+> > +	assert(unshare(CLONE_NEWUSER) == 0 && unshare(CLONE_NEWTIME) == 0);
+> 
+> ~# ./vdso_test_getrandom
+> TAP version 13
+> 1..2
+> ok 1 getrandom: PASS
+> vdso_test_getrandom: vdso_test_getrandom.c:276: kselftest: Assertion 
+> `ret == 0' failed.
+> Aborted
+> 
+> That's too strong. When unshare() returns EINVAL it means the kernel is 
+> not built with CONFIG_TIME_NS. In that case the test should be SKIPPED.
+> 
+> And when unshare() returns EPERM, it means the user is not authorised to 
+> use unshare(), that's an expected error that shouldn't lead to an assert 
+> either, instead it should gracefully says FAILED I think.
 
-Don't initialise the error variable and assign it when a failure
-actually occurs.
+Generally those assertions are for when the test itself or the test
+environment is broken, rather than the thing the test is testing for.
 
-Fixes: 6898c9039bc8 ("mm/vma: extract the gathering of vmas from do_vmi_align_munmap()")
-Signed-off-by: Xiao Yang <ice_yangxiao@163.com>
-Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202409081536.d283a0fb-oliver.sang@intel.com
----
- mm/vma.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+The CLONE_NEWUSER can be split into a separate unshare statement,
+though, and then the return value can be ignored. The only point of it
+is to make it less likely that the CLONE_NEWTIME will fail. I'll fix
+that up.
 
-diff --git a/mm/vma.c b/mm/vma.c
-index 8d1686fc8d5a..dc5355d99a18 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -1171,13 +1171,13 @@ void vms_complete_munmap_vmas(struct vma_munmap_struct *vms,
-  * @vms: The vma munmap struct
-  * @mas_detach: The maple state tracking the detached tree
-  *
-- * Return: 0 on success, -EPERM on mseal vmas, -ENOMEM otherwise
-+ * Return: 0 on success, error otherwise
-  */
- int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
- 		struct ma_state *mas_detach)
- {
- 	struct vm_area_struct *next = NULL;
--	int error = -ENOMEM;
-+	int error;
- 
- 	/*
- 	 * If we need to split any vma, do it now to save pain later.
-@@ -1191,8 +1191,10 @@ int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
- 		 * its limit temporarily, to help free resources as expected.
- 		 */
- 		if (vms->end < vms->vma->vm_end &&
--		    vms->vma->vm_mm->map_count >= sysctl_max_map_count)
-+		    vms->vma->vm_mm->map_count >= sysctl_max_map_count) {
-+			error = -ENOMEM;
- 			goto map_count_exceeded;
-+		}
- 
- 		/* Don't bother splitting the VMA if we can't unmap it anyway */
- 		if (!can_modify_vma(vms->vma)) {
-@@ -1200,7 +1202,8 @@ int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
- 			goto start_split_failed;
- 		}
- 
--		if (__split_vma(vms->vmi, vms->vma, vms->start, 1))
-+		error = __split_vma(vms->vmi, vms->vma, vms->start, 1);
-+		if (error)
- 			goto start_split_failed;
- 	}
- 	vms->prev = vma_prev(vms->vmi);
-@@ -1220,12 +1223,14 @@ int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
- 		}
- 		/* Does it split the end? */
- 		if (next->vm_end > vms->end) {
--			if (__split_vma(vms->vmi, next, vms->end, 0))
-+			error = __split_vma(vms->vmi, next, vms->end, 0);
-+			if (error)
- 				goto end_split_failed;
- 		}
- 		vma_start_write(next);
- 		mas_set(mas_detach, vms->vma_count++);
--		if (mas_store_gfp(mas_detach, next, GFP_KERNEL))
-+		error = mas_store_gfp(mas_detach, next, GFP_KERNEL);
-+		if (error)
- 			goto munmap_gather_failed;
- 
- 		vma_mark_detached(next, true);
-@@ -1255,8 +1260,8 @@ int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
- 			 * split, despite we could. This is unlikely enough
- 			 * failure that it's not worth optimizing it for.
- 			 */
--			if (userfaultfd_unmap_prep(next, vms->start, vms->end,
--						   vms->uf))
-+			error = userfaultfd_unmap_prep(next, vms->start, vms->end, vms->uf);
-+			if (error)
- 				goto userfaultfd_error;
- 		}
- #ifdef CONFIG_DEBUG_VM_MAPLE_TREE
--- 
-2.46.0
-
+Jason
 
