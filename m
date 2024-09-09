@@ -1,185 +1,218 @@
-Return-Path: <linux-kernel+bounces-321595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8323D971C93
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:31:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7605F971C9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05DA21F2347D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:31:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93E351C230F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F2C1B86D0;
-	Mon,  9 Sep 2024 14:30:52 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06081BAED7;
+	Mon,  9 Sep 2024 14:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="eAI6SxVu"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF70C1AF4EF;
-	Mon,  9 Sep 2024 14:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4389F1BA890
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 14:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725892252; cv=none; b=WfY1z4FzavpeWfAFY0aP5FoQVo0490vYc8DOc36qSozrpvLB6SiQcLHGS24PZOwQzurWzD3gz5fA4/vu+Af9L9UFjXyx+DjM+dcj6/H8Tgt7TZvDXCWcsZtRj8GgQTqG68jfYkSXmI9TA6VT6kLfUoVeeE0m/uBHale2mYWj4l4=
+	t=1725892258; cv=none; b=fUEbC8y//lYorvvJbhwtRC0BgAQVitgmD8r3j1X82/KW2iCHkJkvK/OSbheiraRcFlldhJkdD4Gw1Df2p7md0vFxdsiNJPDhZON7bt2V+2FF72JQGr1RR5B2zSdtQ/+DDNpTtBTJMM2OFWK90Hp+OdX9YO6+oqSp3GM/x+TbWME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725892252; c=relaxed/simple;
-	bh=GhRvGtJUKZ/IPcyo/TIqW2UKjgDTaWcuNk9nbtEmIjc=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rU89pbl67zfYNWjFPgMi5h5KpQXoODp8aLNNZBoh+Dq3Dn9PeIT8ubTCATH/Y3gEuH0vFtANQvj+DUOUOmT2quxUDXLwV5M4QIqV5v3Z2mO4JxjkDLMY06Me/hYxmGcCLOcYO5ZuxodLquMaAT2hgGBdZMlwkBNZlpBcuQMomeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4X2TkF006Bz1P9PD;
-	Mon,  9 Sep 2024 22:29:40 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2AB721400FD;
-	Mon,  9 Sep 2024 22:30:45 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 9 Sep 2024 22:30:43 +0800
-Message-ID: <1a7746a7-af17-43f9-805f-fd1cbd24e607@huawei.com>
-Date: Mon, 9 Sep 2024 22:30:43 +0800
+	s=arc-20240116; t=1725892258; c=relaxed/simple;
+	bh=DW04yH0XU139TSLbJbJ4pR8NkfNv08nuuKOMX7q12VI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=t233Ydzgg9dzU36g1mCfBGbPxvBk3afauwznX7SY3jJuLS3KmgDVrivDy3gv/8YwfsQskJ52T1cttChkUeYoL95csg0A9OqgWKn49ZJN1RjWUHZjH78IkvPCsQWcTBWztcMpE+4t2042eLAuolONe8QbOxrj5UBliqhR/asyEIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=eAI6SxVu; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6c35b545b41so50851276d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 07:30:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725892254; x=1726497054; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AKIrdqEGuviqafDylOOcfJwZmeUjt0cKiabCw9KBNZQ=;
+        b=eAI6SxVuNZWd6KuOqKdcIeLiP4WsL7SUcckZnIb+mN5XI5ZP/Pqdeiv991MiyILnfU
+         +GMajQmAD33pux8itUQO8hJXqvptkXBZwmMgo78e5v78q8YpXrUciLta+3zFhi2NLxQs
+         L+XYELGteT60RyUBitXzropqzPjuxgQLtPKK1+01T1TJex8/9ZiO3u4j6wvPBP1mLWVz
+         nmUS2wUHQPGVmF0v/08BobYhtcYrAk/ATX+G49V5TPv7In6q19fq6G9A5rJW4h3RlaxQ
+         n9cpBXFuvRV7W4K3A/+zqWM+wtMPkLIgkrw/J6y2tkoECvxuQ1ZBLx7kjo4WIVIsKWUg
+         M3Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725892254; x=1726497054;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AKIrdqEGuviqafDylOOcfJwZmeUjt0cKiabCw9KBNZQ=;
+        b=ld6WK3kAyoAeF5yvfQmCrMO3hJG28SS3fLlUVoLr86D8gqXLUZHtbo+KwlbzRlFRrH
+         2exatCKgvnPWL64p5KIxqDEQTEj+UJZokSgEHb2QmIu0mkS9ofUqAR/HmLEly1ElUub9
+         XvD8OVF9by1kXUnEaQUGZAGi5c7kXpsvUSTf+i6G/K+pEFE5/i30wzdWOsUnz3EGqdRj
+         2mGt/UAEnOh0jYju4eY/qwJ0ahxj37I5cho8mEcMxbFN8Eploz0ErSO++S7SlWJQiOhy
+         0Hs/gqi8A21dxXkwlQjjYztRyOMW9/Gyhkx/Ga2YCqym9llYzjDagxLLuCR5UmXwG3oM
+         jz/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV5mhryIGiV3q6Pj6pnd5M1mgfPQL4ZPYaizaNT2ucLejU6UmPmhZomXn5edilhL4lrMTfcMoGEdMPBNqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDa5i57lQ9XqslKJB0SgqPGtCyNQR+yRWeGDtvw8YRAyPQRD4l
+	PF9i+zy03sJWpbytlVTKWVbvXdlY7zNYmol563mFSO9e/plwJBUDw0j4XsmXopA=
+X-Google-Smtp-Source: AGHT+IF+g9jRLqDZGgb760Cz9sXF4yDHvHfvuizV4gwK1fPzXWtkTWlteY/AmZp8QG9S7mSbFWaf1A==
+X-Received: by 2002:a05:6214:d05:b0:6b0:8ac1:26bc with SMTP id 6a1803df08f44-6c518efc45emr311335196d6.14.1725892253587;
+        Mon, 09 Sep 2024 07:30:53 -0700 (PDT)
+Received: from [127.0.1.1] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c534339987sm21385406d6.33.2024.09.09.07.30.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 07:30:53 -0700 (PDT)
+From: Trevor Gamblin <tgamblin@baylibre.com>
+Subject: [PATCH v5 0/3] iio: adc: add new ad7625 driver
+Date: Mon, 09 Sep 2024 10:30:46 -0400
+Message-Id: <20240909-ad7625_r1-v5-0-60a397768b25@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, Kalesh Anakkur Purayil
-	<kalesh-anakkur.purayil@broadcom.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
-	<shiyongbang@huawei.com>, <libaihan@huawei.com>, <zhuyuan@huawei.com>,
-	<forest.zhouchang@huawei.com>, <jdamato@fastly.com>, <horms@kernel.org>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V8 net-next 05/11] net: hibmcge: Implement some .ndo
- functions
-To: Andrew Lunn <andrew@lunn.ch>
-References: <20240909023141.3234567-1-shaojijie@huawei.com>
- <20240909023141.3234567-6-shaojijie@huawei.com>
- <CAH-L+nOxj1_wHdSacC5R9WG5GeMswEQDXa4xgVFxyLHM7xjycg@mail.gmail.com>
- <116bff77-f12f-43f0-8325-b513a6779a55@huawei.com>
- <fec0a530-64d9-401c-bb43-4c5670587909@lunn.ch>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <fec0a530-64d9-401c-bb43-4c5670587909@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: base64
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJcG32YC/23MTWrDMBCG4asEreuiGXksOavcI5Sin1EiSO0gB
+ 1NjfPfKgRInZPkN87yzGDgnHsR+N4vMYxpS35VBHzvhz7Y7cZVC2QIl1lIrWdmgG6TvDFUjA2i
+ 2aFoyovxfM8f0e28dv8o+p+HW5+meHmG9/ldgUxmhKlHgyJEsWtcenJ0uyWX+9P2PWEMjPrCR7
+ RZjwdEQa+uNApJvsNpgeMKqYE2BELTXjaM3uH7gVtZbXK/YOK9DdOjUK16W5Q8N2IxfXAEAAA=
+ =
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ David Lechner <dlechner@baylibre.com>, 
+ Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Trevor Gamblin <tgamblin@baylibre.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.1
 
-DQpvbiAyMDI0LzkvOSAyMDoxOSwgQW5kcmV3IEx1bm4gd3JvdGU6DQo+IE9uIE1vbiwgU2Vw
-IDA5LCAyMDI0IGF0IDEyOjA0OjUzUE0gKzA4MDAsIEppamllIFNoYW8gd3JvdGU6DQo+PiBv
-biAyMDI0LzkvOSAxMTowNSwgS2FsZXNoIEFuYWtrdXIgUHVyYXlpbCB3cm90ZToNCj4+PiBP
-biBNb24sIFNlcCA5LCAyMDI0IGF0IDg6MTHigK9BTSBKaWppZSBTaGFvIDxzaGFvamlqaWVA
-aHVhd2VpLmNvbT4gd3JvdGU6DQo+Pj4+ICt9DQo+Pj4+ICsNCj4+Pj4gK3N0YXRpYyBpbnQg
-aGJnX25ldF9vcGVuKHN0cnVjdCBuZXRfZGV2aWNlICpuZXRkZXYpDQo+Pj4+ICt7DQo+Pj4+
-ICsgICAgICAgc3RydWN0IGhiZ19wcml2ICpwcml2ID0gbmV0ZGV2X3ByaXYobmV0ZGV2KTsN
-Cj4+Pj4gKw0KPj4+PiArICAgICAgIGlmICh0ZXN0X2FuZF9zZXRfYml0KEhCR19OSUNfU1RB
-VEVfT1BFTiwgJnByaXYtPnN0YXRlKSkNCj4+Pj4gKyAgICAgICAgICAgICAgIHJldHVybiAw
-Ow0KPj4+IFtLYWxlc2hdIElzIHRoZXJlIGEgcG9zc2liaWxpdHkgdGhhdCBkZXZfb3Blbigp
-IGNhbiBiZSBpbnZva2VkIHR3aWNlPw0KPj4gV2Ugd2FudCBzdG9wIE5JQyB3aGVuIGNoYW5n
-X210dSDjgIFzZWxmX3Rlc3Qgb3IgRkxSLg0KPj4gU28sIGRyaXZlciB3aWxsIGRpcmVjdGx5
-IGludm9rZSBoYmdfbmV0X3N0b3AoKSBub3QgZGV2X29wZW4oKSBpZiBuZWVkLg0KPj4gVGhl
-cmVmb3JlLCBkcml2ZXIgbXVzdCBlbnN1cmUgdGhhdCBoYmdfbmV0X29wZW4oKSBvciBoYmdf
-bmV0X3N0b3AoKSBjYW4gbm90IGJlIGludm9rZWQgdHdpY2UuDQo+IEdlbmVyYWxseSwgd2Ug
-ZG9uJ3Qgd2FudCBkZWZlbnNpdmUgcHJvZ3JhbW1pbmcuIFlvdSBzZWVtIHRvIHN1Z2dlc3QN
-Cj4gaGJnX25ldF9vcGVuIGFuZCBoYmdfbmV0X3N0b3AgYXJlIGNhbGxlZCBpbiBwYWlycy4g
-SWYgdGhpcyBpcyBub3QNCj4gdHJ1ZSwgeW91IGhhdmUgYSBidWc/IFJhdGhlciB0aGFuIHBh
-cGVyIG92ZXIgdGhlIGJ1ZyB3aXRoIGEgcmV0dXJuLA0KPiBsZXQgYmFkIHRoaW5ncyBoYXBw
-ZW4gc28gdGhlIGJ1ZyBpcyBvYnZpb3VzLg0KDQpObywgSEJHX05JQ19TVEFURV9PUEVOIGlz
-IG5vdCBpbnRlbmRlZCB0byBlbnN1cmUgdGhhdCBoYmdfbmV0X29wZW4oKSBhbmQNCmhiZ19u
-ZXRfc3RvcCgpIGFyZSBtdXR1YWxseSBleGNsdXNpdmUuDQoNCkFjdHVhbGx5LCB3aGVuIHRo
-ZSBkcml2ZXIgZG8gcmVzZXQgb3Igc2VsZi10ZXN0KGV0aHRvb2wgLXQgb3IgZXRodG9vbCAt
-LXJlc2V0IG9yIEZMUikuDQpXZSBob3BlIHRoYXQgbm8gb3RoZXIgZGF0YSBpcyB0cmFuc21p
-dHRlZCBvciByZWNlaXZlZCBhdCB0aGlzIHRpbWUuDQpUaGVyZWZvcmUsIHRoZSBkcml2ZXIg
-ZGlyZWN0bHkgdXNlcyBoYmdfbmV0X3N0b3AoKSB0byBzdG9wIHRoZSBOSUMuDQoNCkluIHRo
-aXMgY2FzZSwgSUZGX1VQIG1heSBiZSBzZXQuIFRoZXJlZm9yZSwgZGV2X2Nsb3NlKCkgY2Fu
-IGJlIGludm9rZWQuDQpBcyBhIHJlc3VsdCwgaGJnX25ldF9zdG9wIGlzIGludm9rZWQgdHdp
-Y2UuDQoNCkluIG15IG9waW5pb24sIGRyaXZlciBpcyBub3Qgc3VpdGFibGUgZm9yIGRpcmVj
-dGx5IHVzaW5nIGRldl9vcGVuKCksIGRldl9jbG9zZSgpLA0Kb3IgbW9kaWZ5aW5nIGRldi0+
-c3RhdGUuIFRoZXJlZm9yZSwgSEJHX05JQ19TVEFURV9PUEVOIGlzIGFkZGVkIHRvDQplbnN1
-cmUgdGhhdCBoYmdfbmV0X3N0b3AoKSBpcyBub3QgaW52b2tlZCB0d2ljZS4NCg0KaWYgSSBy
-ZW1vdmUgSEJHX05JQ19TVEFURV9PUEVOLCBJIG1heSBnZXQgbG9nKDEwcyBzbGVlcCB0aW1l
-IGlzIGFkZGVkIGR1cmluZyByZXNldCk6DQoNCiNpZmNvbmZpZyBlbnAxMzFzMGYxIHVwDQoj
-ZWNobyAxID4gL3N5cy9idXMvcGNpL2RldmljZXMvMDAwMFw6ODNcOjAwLjEvcmVzZXQgICYg
-c2xlZXAgMjsgaWZjb25maWcgZW5wMTMxczBmMSBkb3duDQpbICAyMTMuMzMyODU1XSBoaWJt
-Y2dlIDAwMDA6ODM6MDAuMTogRkxSIHByZXBhcmUNClsgIDIxMy4zMzc5MDVdIFtTVFVCXVto
-YmdfbmV0X3N0b3AgODFdIEhCR19OSUNfU1RBVEVfT1BFTiBhbHJlYWR5IGNsZWFyDQpbICAy
-MTMuMzQ1MDY0XSBoaWJtY2dlIDAwMDA6ODM6MDAuMSBlbnAxMzFzMGYxOiBMaW5rIGlzIERv
-d24NClsgIDIxMy4zNTE0MDhdIFtTVFVCXVtoYmdfcmVzZXRfcHJlcGFyZSAxMjZdIHJlc2V0
-IHNsZWVwIDEwcyBhZnRlciBoYmdfbmV0X3N0b3ANClsgIDIxNS4zNTk4MTJdIFtTVFVCXVto
-YmdfbmV0X3N0b3AgODFdIEhCR19OSUNfU1RBVEVfT1BFTiBhbHJlYWR5IGNsZWFyDQpbICAy
-MjMuOTkxOTU5XSBoaWJtY2dlIDAwMDA6ODM6MDAuMTogcmVidWlsZCBzdWNjZXNzDQpbICAy
-MjMuOTk4NjU2XSAtLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0NClsgIDIy
-My45OTg5ODddIGhpYm1jZ2UgMDAwMDo4MzowMC4xOiByZXNldCBkb25lDQpbICAyMjQuMDAz
-OTUwXSBjYWxsZWQgZnJvbSBzdGF0ZSBIQUxURUQNClsgIDIyNC4wMDg4OThdIGhpYm1jZ2Ug
-MDAwMDo4MzowMC4xOiBGTFIgZG9uZQ0KWyAgMjI0LjAwODkyNl0gV0FSTklORzogQ1BVOiA3
-IFBJRDogNDM4MSBhdCBkcml2ZXJzL25ldC9waHkvcGh5LmM6MTMzMCBwaHlfc3RvcCsweDEx
-OC8weDE2MA0KWyAgMjI0LjAyMjQxMl0gTW9kdWxlcyBsaW5rZWQgaW46IGhpYm1jZ2UoT0Up
-IG5mdF9maWJfaW5ldCBuZnRfZmliX2lwdjQgbmZ0X2ZpYl9pcHY2IG5mdF9maWIgbmZ0X3Jl
-amVjdF9pbmV0IG5mX3JlamVjdF9pcHY0IG5mX3JlamVjdF9pcHY2IG5mdF9yZWplY3QgbmZ0
-X2N0IG5mdF9jaGFpbl9uYXQgbmZfdGFibGVzIGVidGFibGVfbmF0IGVidGFibGVfYnJvdXRl
-IGlwNnRhYmxlX25hdCBpcDZ0YWJsZV9tYW5nbGUgaXA2dGFibGVfcmF3IGlwNnRhYmxlX3Nl
-Y3VyaXR5IGlwdGFibGVfbmF0IG5mX25hdCBuZl9jb25udHJhY2sgbmZfZGVmcmFnX2lwdjYg
-bmZfZGVmcmFnX2lwdjQgbGliY3JjMzJjIGlwdGFibGVfbWFuZ2xlIGlwdGFibGVfcmF3IGlw
-dGFibGVfc2VjdXJpdHkgaXBfc2V0IG5mbmV0bGluayByZmtpbGwgZWJ0YWJsZV9maWx0ZXIg
-ZWJ0YWJsZXMgaXA2dGFibGVfZmlsdGVyIGlwNl90YWJsZXMgaXB0YWJsZV9maWx0ZXIgaXBf
-dGFibGVzIHN1bnJwYyBubHNfY3A0MzcgdmZhdCBmYXQgaXBtaV9zc2lmIGhuc19yb2NlX2h3
-X3YyIHNnIGliX3V2ZXJicyBpYl9jb3JlIGFjcGlfaXBtaSBoaXNpX3VuY29yZV9kZHJjX3Bt
-dSBoaXNpX3VuY29yZV9sM2NfcG11IGhpc2lfdW5jb3JlX2hoYV9wbXUgaXBtaV9zaSBoaXNp
-X3VuY29yZV9wbXUgaXBtaV9kZXZpbnRmIGlwbWlfbXNnaGFuZGxlciBzY2hfZnFfY29kZWwg
-ZnVzZSBleHQ0IG1iY2FjaGUgamJkMiBzZF9tb2QgcmVhbHRlayB0MTBfcGkgY3JjNjRfcm9j
-a3NvZnRfZ2VuZXJpYyBjcmM2NF9yb2Nrc29mdCBjcmM2NCBoY2xnZSBoaXNpX3Nhc192M19o
-dyBjcmN0MTBkaWZfY2UgaGlzaV9zYXNfbWFpbiB1YXMgZ2hhc2hfY2UgbGlic2FzIHNoYTJf
-Y2UgYWhjaSBsaWJhaGNpIHNjc2lfdHJhbnNwb3J0X3NhcyBzaGEyNTZfYXJtNjQgc2hhMV9j
-ZSBzYnNhX2d3ZHQgdXNiX3N0b3JhZ2UgaG5zMyBuZml0IGxpYmF0YSBobmFlMyBsaWJudmRp
-bW0gaTJjX2Rlc2lnbndhcmVfcGxhdGZvcm0gaTJjX2Rlc2lnbndhcmVfY29yZSBkbV9taXJy
-b3IgZG1fcmVnaW9uX2hhc2gNClsgIDIyNC4wMjI1MDRdICBkbV9sb2cgZG1fbW9kIGFlc19u
-ZW9uX2JzIGFlc19uZW9uX2JsayBhZXNfY2VfYmxrIGFlc19jZV9jaXBoZXINClsgIDIyNC4w
-MjI1MTRdIENQVTogNyBQSUQ6IDQzODEgQ29tbTogaWZjb25maWcgS2R1bXA6IGxvYWRlZCBU
-YWludGVkOiBHICAgICAgICAgICBPRSAgICAgIDYuNC4wKyAjMQ0KWyAgMjI0LjAyMjUxN10g
-SGFyZHdhcmUgbmFtZTogSHVhd2VpIFRhaVNoYW4gMjAwIChNb2RlbCAyMjgwKS9CQzgyQU1E
-RCwgQklPUyAxLjkzIDEwLzEzLzIwMjINClsgIDIyNC4wMjI1MTldIHBzdGF0ZTogNjA0MDAw
-MDkgKG5aQ3YgZGFpZiArUEFOIC1VQU8gLVRDTyAtRElUIC1TU0JTIEJUWVBFPS0tKQ0KWyAg
-MjI0LjAyMjUyMV0gcGMgOiBwaHlfc3RvcCsweDExOC8weDE2MA0KWyAgMjI0LjAyMjUyNF0g
-bHIgOiBwaHlfc3RvcCsweDExOC8weDE2MA0KWyAgMjI0LjAyMjUyN10gc3AgOiBmZmZmODAw
-MDMzNzViYTgwDQpbICAyMjQuMDIyNTI4XSB4Mjk6IGZmZmY4MDAwMzM3NWJhODAgeDI4OiBm
-ZmZmMjAyMDBhN2YxYTAwIHgyNzogMDAwMDAwMDAwMDAwMDAwMA0KWyAgMjI0LjAyMjUzM10g
-eDI2OiAwMDAwMDAwMDAwMDAwMDAxIHgyNTogMDAwMDAwMDAwMDAwMDAwMCB4MjQ6IGZmZmYy
-MDIwMGMxZDIyNjANClsgIDIyNC4wMjI1MzddIHgyMzogZmZmZjIwMjAwYzFkMjA3MCB4MjI6
-IGZmZmYyMDIwMGMxZDIwMDAgeDIxOiBmZmZmYjk3NDdlMjFlNTE0DQpbICAyMjQuMDIyNTQx
-XSB4MjA6IGZmZmYyMDIwMGMxZDI5ODAgeDE5OiBmZmZmMDAyMDkyZDFkODAwIHgxODogMDAw
-MDAwMDAwMDAwMDAyMA0KWyAgMjI0LjAyMjU0NF0geDE3OiAwMDAwMDAwMDAwMDAwMDAwIHgx
-NjogZmZmZmI5NzQ3ZTA2OGYzMCB4MTU6IGZmZmZmZmZmZmZmZmZmZmYNClsgIDIyNC4wMjI1
-NDhdIHgxNDogMDAwMDAwMDAwMDAwMDAwMCB4MTM6IDQ0NDU1NDRjNDE0ODIwNjUgeDEyOiA3
-NDYxNzQ3MzIwNmQ2ZjcyDQpbICAyMjQuMDIyNTUyXSB4MTE6IDAwMDAwMDAwZmZmZjdmZmYg
-eDEwOiAwMDAwMDAwMGZmZmY3ZmZmIHg5IDogZmZmZmI5NzQ3ZDk3ODUwMA0KWyAgMjI0LjAy
-MjU1Nl0geDggOiAwMDAwMDAwMDAwMGJmZmU4IHg3IDogYzAwMDAwMDBmZmZmN2ZmZiB4NiA6
-IDAwMDAwMDAwMDAwNWZmZjQNClsgIDIyNC4wMjI1NjBdIHg1IDogMDAwMDAwMDAwMDJiZmZh
-OCB4NCA6IDAwMDAwMDAwMDAwMDAwMDAgeDMgOiAwMDAwMDAwMDAwMDAwMDAwDQpbICAyMjQu
-MDIyNTY0XSB4MiA6IDAwMDAwMDAwMDAwMDAwMDAgeDEgOiAwMDAwMDAwMDAwMDAwMDAwIHgw
-IDogZmZmZjAwMjEwOTljNDgwMA0KWyAgMjI0LjAyMjU2OF0gQ2FsbCB0cmFjZToNClsgIDIy
-NC4wMjI1NzFdICBwaHlfc3RvcCsweDExOC8weDE2MA0KWyAgMjI0LjAyMjU3NF0gIGhiZ19w
-aHlfc3RvcCsweDIwLzB4MzggW2hpYm1jZ2VdDQpbICAyMjQuMDIyNTgzXSAgaGJnX25ldF9z
-dG9wKzB4NzQvMHhkMCBbaGlibWNnZV0NClsgIDIyNC4wMjI1OTBdICBfX2Rldl9jbG9zZV9t
-YW55KzB4YmMvMHgxNzANClsgIDIyNC4wMjI1OTVdICBfX2Rldl9jaGFuZ2VfZmxhZ3MrMHgx
-MjAvMHgzMDANClsgIDIyNC4wMjI2MDBdICBkZXZfY2hhbmdlX2ZsYWdzKzB4MmMvMHg4MA0K
-WyAgMjI0LjAyMjYwMl0gIGRldmluZXRfaW9jdGwrMHg2M2MvMHg3MDANClsgIDIyNC4wMjI2
-MDldICBpbmV0X2lvY3RsKzB4MWU0LzB4MjAwDQpbICAyMjQuMDIyNjExXSAgc29ja19kb19p
-b2N0bCsweDUwLzB4MTA4DQpbICAyMjQuMDIyNjE2XSAgc29ja19pb2N0bCsweDEyMC8weDM4
-OA0KWyAgMjI0LjAyMjYxOF0gIF9fYXJtNjRfc3lzX2lvY3RsKzB4YjAvMHgxMDANClsgIDIy
-NC4wMjI2MjNdICBpbnZva2Vfc3lzY2FsbCsweDUwLzB4MTI4DQpbICAyMjQuMDIyNjI3XSAg
-ZWwwX3N2Y19jb21tb24uY29uc3Rwcm9wLjArMHgxNTgvMHgxODgNClsgIDIyNC4wMjI2Mjld
-ICBkb19lbDBfc3ZjKzB4MzQvMHg1MA0KWyAgMjI0LjAyMjYzMV0gIGVsMF9zdmMrMHgyOC8w
-eGUwDQpbICAyMjQuMDIyNjM3XSAgZWwwdF82NF9zeW5jX2hhbmRsZXIrMHhiOC8weGMwDQpb
-ICAyMjQuMDIyNjQwXSAgZWwwdF82NF9zeW5jKzB4MTg4LzB4MTkwDQpbICAyMjQuMDIyNjQz
-XSAtLS1bIGVuZCB0cmFjZSAwMDAwMDAwMDAwMDAwMDAwIF0tLS0NCg0KDQpJZiBpdCBpcyBz
-dWl0YWJsZSB0byBjYWxsIGRldl9jbG9zZSgpIGRpcmVjdGx5IGluIGRyaXZlciwNCkkgdGhp
-bmsgSEJHX05JQ19TVEFURV9PUEVOIGNhbiBiZSByZW1vdmVkLg0KDQpUaGFua3MNCglKaWpp
-ZSBTaGFvDQogIA0KDQo=
+This series adds a new driver for the Analog Devices Inc. AD7625,
+AD7626, AD7960, and AD7961. These chips are part of a family of
+LVDS-based SAR ADCs. The initial driver implementation does not support
+the devices' self-clocked mode, although that can be added later.
+
+The devices make use of two offset PWM signals, one to trigger
+conversions and the other as a burst signal for transferring data to the
+host. These rely on the new PWM waveform functionality being
+reviewed in [1] and also available at [2].
+
+This work is being done by BayLibre and on behalf of Analog Devices
+Inc., hence the maintainers are @analog.com.
+
+Special thanks to David Lechner for his guidance and reviews.
+
+[1]: https://lore.kernel.org/linux-pwm/cover.1722261050.git.u.kleine-koenig@baylibre.com
+[2]: https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git/log/?h=pwm/chardev
+
+Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+---
+Changes in v5:
+- Link to v4: https://lore.kernel.org/r/20240904-ad7625_r1-v4-0-78bc7dfb2b35@baylibre.com
+
+  [PATCH 1/3]
+  - Picked up Reviewed-by tag from Conor, missed in v4
+
+  [PATCH 2/3]
+  - Make frequency values in ad7625_set_sampling_freq() u32 and make
+    struct members match. Also do the same for 'target' variable
+  - Use DIV_ROUND_CLOSEST() and DIV_ROUND_UP() instead of ULL variants
+  - Change occurrences of sample_rate to sample_freq to be more
+    consistent throughout driver
+  - Picked up Nuno's Reviewed-by tag
+
+  [PATCH 3/3]
+  - No change
+
+Changes in v4:
+- Link to v3: https://lore.kernel.org/r/20240819-ad7625_r1-v3-0-75d5217c76b5@baylibre.com
+- Rebase on top of latest pwm/chardev branch at:
+  https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git/log/?h=pwm/chardev
+
+  [PATCH 1/3]
+  - No change
+
+  [PATCH 2/3]
+  - Add 'depends on PWM' under 'CONFIG AD7625' in
+    drivers/iio/adc/Kconfig, based on v3 discussions
+  - Cleanup whitespace usage in Kconfig, bandwidth logic to match
+    Jonathan's suggestions
+
+  [PATCH 3/3]
+  - No change
+
+Changes in v3:
+- Link to v2: https://lore.kernel.org/r/20240809-ad7625_r1-v2-0-f85e7ac83150@baylibre.com
+  
+  [PATCH 1/3]
+  - Add gpio bindings header, en0-gpios and en1-gpios to binding example
+  - Remove unnecessary comments
+
+  [PATCH 2/3]
+  - No change
+
+  [PATCH 3/3]
+  - No change
+
+Changes in v2:
+- Link to v1 (marked as RFC): https://lore.kernel.org/r/20240731-ad7625_r1-v1-0-a1efef5a2ab9@baylibre.com
+- Include link to required PWM patch series in cover letter (missing before)
+- Include new link to the pwm/chardev branch of Uwe's kernel tree
+  
+  [PATCH 1/3]
+  - Rework dt bindings to be compliant using make dt_binding_check
+  - Add "adi,no-dco" flag to address indication of how DCO lines are
+    configured
+  - Fix binding patch message
+  - Remove chip packaging info from binding description
+  - Move comments around to be clearer
+
+  [PATCH 2/3]
+  - Remove ad7625_pwm_disable(), call pwm_disable() directly
+  - Add ad7625_buffer_preenable() and ad7625_buffer_postdisable()
+    functions
+  - Add devm_ad7625_regulator_setup() function, move all regulator logic
+    to it, consolidate the comment blocks related to it above
+  - Add have_refin flag in ad7625_state struct
+  - Add pwm_waveform structs to ad7625_state struct for storing
+    requested waveform characteristics
+  - Refactor ad7625_set_sampling_freq() to set the pwm_waveform struct
+    values in ad7625_state, limiting PWM enable/disable to
+    preenable/postdisable functions
+  - Remove redundant dev_err_probe() after devm_ad7625_pwm_get()
+  - Use device_property_read_bool() instead of device_property_present()
+  - General alignment and line wrapping fixes
+
+  [PATCH 3/3]
+  - No change
+
+---
+Trevor Gamblin (3):
+      dt-bindings: iio: adc: add AD762x/AD796x ADCs
+      iio: adc: ad7625: add driver
+      docs: iio: new docs for ad7625 driver
+
+ .../devicetree/bindings/iio/adc/adi,ad7625.yaml    | 176 ++++++
+ Documentation/iio/ad7625.rst                       |  91 +++
+ MAINTAINERS                                        |  11 +
+ drivers/iio/adc/Kconfig                            |  16 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/ad7625.c                           | 684 +++++++++++++++++++++
+ 6 files changed, 979 insertions(+)
+---
+base-commit: 1ebd3850421749eb44bd040b249bd4db88d35b33
+change-id: 20240730-ad7625_r1-60d17ea28958
+
+Best regards,
+-- 
+Trevor Gamblin <tgamblin@baylibre.com>
+
 
