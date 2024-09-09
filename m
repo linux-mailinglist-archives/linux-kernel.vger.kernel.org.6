@@ -1,132 +1,98 @@
-Return-Path: <linux-kernel+bounces-321855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3427A97206C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:25:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C89197206F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEC331F246C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:25:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8376E1C236DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42219178378;
-	Mon,  9 Sep 2024 17:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52494178CE8;
+	Mon,  9 Sep 2024 17:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QK7w6x1U"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrvFPkWH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC66173328;
-	Mon,  9 Sep 2024 17:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDD5176ABB;
+	Mon,  9 Sep 2024 17:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902727; cv=none; b=fc6atbMdO1L7jv9qzTVe97uiwJN8W0iknClprUTMC4XPsxuTINlzjVRXOgc/nYOLoBWFTHmpiHKtJeKInKm85dX/PmeD00tk7cdQiYKhPSMfBzQ+ega8bp4970o88mvAqUEOwwFUtBwxiE4hqk1NSd/SEGWYcYdYOG35on8FFrU=
+	t=1725902798; cv=none; b=pDLCRqA3ANnCle/2Tu+dwEDR1xcQ05mSiFqv2QSjadkzlrj/kAhXbJjA3XMN3FvfAq7KF5UFXlS2QftvZ9I9+Fh5PgB/wLRdtgsXdHPLsdNGZaJeRUiCkc5A9vDJmVgNfe2DnfqM28XxwQO4Qp1uGy+k94TUJpfzJ242yvT4K1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902727; c=relaxed/simple;
-	bh=x5b9yMIYdeozokFTxEtCcPcMyDUISRlG4u4tDgBljBE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sRCv+XNgG/h5IZHuXti8T8kLlRbY2/T6yqfAcVAd+N1Wf0CAaFfVsjM7G155DaJdIy0jnphdZf+ZksaFIOMAfMw2m3fuW5F2KEY11gCUGUIwrGTAhxJ3tYaYPrs54PXGB12CPtgBu9MP659mxPDXrg7mogRA3W2iv0yz6+hzAr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QK7w6x1U; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-846c3aa0ff2so158087241.3;
-        Mon, 09 Sep 2024 10:25:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725902725; x=1726507525; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V6HhkSoNUnMMq3D2hVDty/duRuGXfXAOcY5s6838TPc=;
-        b=QK7w6x1URtvvq4vY/uh+T2BiUkWhBVLOqBhPN+KvFs/eAOSx/IdcAWymTzw9luwdao
-         UAfdOMc71JC6eTDjmYxPtN2lFWzgMjWcS+yNiwLLdCtR5vTVAbk5ajiEZ1B1SzZY9Tx8
-         Rv4CasBoN9NNuclmhaCwlq4b3Jfy+aSmHAOv9zGWJCFgPZ/mQnZ64qGFq/SdqZ21Q1Hz
-         ks+TUx8MrxlkACgnHY4Lu3nlUqQoicYBXkBUdZBUtKt+DpEJ2rboMjT6WC9uhPHSd1QZ
-         KgIrIOZX63pdg8YuT5Vwf611hpHWyOOu0QTYxJSBmb3RDaSIRu7bWK9e7fnl9X1lrV/i
-         ZFQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725902725; x=1726507525;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V6HhkSoNUnMMq3D2hVDty/duRuGXfXAOcY5s6838TPc=;
-        b=JV12tqtT+zlCcFbb9gj7HhgNjoTulWWAr94SdsBqzv+rHmDFKY4G/xcL8RYcbAyqlU
-         Kuwo6EngJA9PUlSBCn+WXLcAlIdSDq8sgr1CJSVW2hqKarPaA1QRqRiEhADSYQ+BqS6n
-         +fSKlL0Xw8iJusnHJjYt8c+FEPp5nXmwnEymk7EfezM32Hr+YvCm/bQCvZCzhOINREBV
-         je3gfFKewHz61QwPyYylY3PyZBRHAo6DIer5Yb0gzXkfUIJN+X9KQLyxLc+Z+7bOjZrX
-         RewVcd8i9sTYdpBitqx4AN2oia1ekutqXjVQNAGSAmdyJDS4ZlURNG5/syTE86TAiRiZ
-         oZjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnu6Sy8fchk9BS/kytKyuh0fxuMQCedQPMJlo/rlej5/fV2DsVFsh8rkW7s9sbHlZeNe7mPdBF@vger.kernel.org, AJvYcCXRCKzV9egQn7OgzQ3wtpmB+j3uqbe/v2XvfrGj6aVZE0Obe0Pr5X+CKZ/0VoJqCYLYgZdlpXbAhsgz2Tc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxBAQA1XhRmSjB0Jc2CkMgnD/5pse2cYAPk7uHFQQhqh8xS90V
-	QorxEV4Ib/8hanTvduTNaLmoEPeqqz2phBEBZH3ljwRIHaiQeLwTj51mUOZDQ27Y8HvY8EnwhWn
-	jCNoqR6HuiwaXlqmAPFtG9TRoYG4=
-X-Google-Smtp-Source: AGHT+IE+92W3Wb5qGWWv0/BNzhYfbYBSNd1bpAERi4JgZtkLOBi8feyRz8JARPymwdvLFiYP5/0AF80SNFmwkpF82h8=
-X-Received: by 2002:a05:6122:6113:b0:501:2e0a:ed2a with SMTP id
- 71dfb90a1353d-501e77976bemr6205128e0c.0.1725902724367; Mon, 09 Sep 2024
- 10:25:24 -0700 (PDT)
+	s=arc-20240116; t=1725902798; c=relaxed/simple;
+	bh=AnFzIOts1bseLvgHbZIPxmk1t6OKKNJUx33RD6kae2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lEJwgKVKkF4GiLxuN9GFDA/cV0tfTNsrlrMkZAyA/KrwDUdnXVSOqoiT+DLzjLdHh9HgT8JpRw2a2lPe65w92LHRWvf0aRmi+yBrpU7fSa76UEd+5PSogCSevDPEd4sWZOyhYYDSt1JbDqoeIdi9p6qvVzRmQk4If3HuqYQYI+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrvFPkWH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C78DBC4CEC5;
+	Mon,  9 Sep 2024 17:26:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725902798;
+	bh=AnFzIOts1bseLvgHbZIPxmk1t6OKKNJUx33RD6kae2w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZrvFPkWHSMaPqVTZKNs4pFHA5ZIzafs3P0GXZLU99ZBviTO8XFXslT+daQrLF4iBJ
+	 CjVbSIVLTcaNHUASN/dkx6iFjI7cyWXFDdLtFb20XV4K5VU2oafTjY0uPnb1w/uELo
+	 NG83u0fVMeTupV9nEUZGFR5Ss5SvZ94RfWrcAcnM5UtVXAshwx5CgrU0q2pnk3Ojwn
+	 lV5s7OoIGvYIBLTJoIO4LUPPEKE7WU2XTTxukmCz3C/uxwiN2R/BeafVtVoDdaKHuF
+	 v4JMvN6WMadXnk1GKr73/kj+OafS+EyPwKoQ0iFIGfxrSo3U3IHgiErL/B9EEhVJC3
+	 +YNNzpQvLQVBA==
+Date: Mon, 9 Sep 2024 18:26:32 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Tang Bin <tangbin@cmss.chinamobile.com>
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: soc-ac97: Fix the incorrect description
+Message-ID: <98f0a674-1636-449f-b9a6-5668021d114b@sirena.org.uk>
+References: <20240908124124.1971-1-tangbin@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909064000.1198047-1-make24@iscas.ac.cn>
-In-Reply-To: <20240909064000.1198047-1-make24@iscas.ac.cn>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 9 Sep 2024 13:25:12 -0400
-Message-ID: <CADnq5_Ouci1bvRJh+1mDRxgazvL7C-rgg+BjeGyNT-qa=vHtyQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND] drm/amd/display: Add null check before access
- structs in dcn32_enable_phantom_plane
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, 
-	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
-	airlied@gmail.com, daniel@ffwll.ch, alvin.lee2@amd.com, wenjing.liu@amd.com, 
-	roman.li@amd.com, dillon.varone@amd.com, moadhuri@amd.com, 
-	aurabindo.pillai@amd.com, akpm@linux-foundation.org, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OMzUP2TZUyaqgLUe"
+Content-Disposition: inline
+In-Reply-To: <20240908124124.1971-1-tangbin@cmss.chinamobile.com>
+X-Cookie: Last week's pet, this week's special.
+
+
+--OMzUP2TZUyaqgLUe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 9, 2024 at 2:48=E2=80=AFAM Ma Ke <make24@iscas.ac.cn> wrote:
->
-> In dcn32_enable_phantom_plane, we should better check null pointer before
-> accessing various structs.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 235c67634230 ("drm/amd/display: add DCN32/321 specific files for D=
-isplay Core")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+On Sun, Sep 08, 2024 at 08:41:23PM +0800, Tang Bin wrote:
+> In the function snd_soc_alloc_ac97_component &
+> snd_soc_new_ac97_component, the error return is
+> ERR_PTR, so fix the incorrect description.
+>=20
+> Fixes: 47e039413cac ("ASoC: soc-ac97: Return correct error codes")
+> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
 
-Thanks for the patch.  This is already fixed in:
-https://gitlab.freedesktop.org/agd5f/linux/-/commit/fdd5ecbbff751c3b9061d8e=
-bb08e5c96119915b4
+That commit hash corresponds to "ASoC: Add support for allocating AC'97
+device before registering it" which is not what your Fixes tag says,
+there is a commit with that title but it's got hash
+76f5aaabce492aa6991c28c96bb78b00b05d06c5.
 
-Alex
+--OMzUP2TZUyaqgLUe
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> ---
->  drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource=
-.c b/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
-> index 969658313fd6..1d1b40d22f42 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
-> @@ -1650,6 +1650,8 @@ static void dcn32_enable_phantom_plane(struct dc *d=
-c,
->                         phantom_plane =3D prev_phantom_plane;
->                 else
->                         phantom_plane =3D dc_state_create_phantom_plane(d=
-c, context, curr_pipe->plane_state);
-> +               if (!phantom_plane)
-> +                       return;
->
->                 memcpy(&phantom_plane->address, &curr_pipe->plane_state->=
-address, sizeof(phantom_plane->address));
->                 memcpy(&phantom_plane->scaling_quality, &curr_pipe->plane=
-_state->scaling_quality,
-> --
-> 2.25.1
->
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbfL8gACgkQJNaLcl1U
+h9CODwf+OVduaE2xBOG/Qzm688Yss1s3G5TGCqNeubivPxXAQdvTBjmpgIBNgLrJ
+/f1MJJPgxxY7tUZY/wTvQ3CnJXMOC9Em5gYtf5MX+ibsBzDaKkA/YPfoAGi5Egtk
+EWBhCUzHu8HAE/8sOmE8El9aDokOtyUnQ7R5IUDVBl1oBxPcmZdH9ioP+ZqQijhM
+cfRxi4bhRArk/DCQD1TKfCNYIEt09VSHGp5SM8p8b6LBe5vIXxPysxiDui/fHqpu
+LQoct63sW4sUPHccLp5PMN9JwK4ioD6oBflVl1jWxqkHjAAEbZ26CiM2qYzekWLa
+NRL3MQGC9eiy6CTR+0N4rlBlDDkQjg==
+=SIrX
+-----END PGP SIGNATURE-----
+
+--OMzUP2TZUyaqgLUe--
 
