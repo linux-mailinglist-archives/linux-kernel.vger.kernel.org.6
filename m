@@ -1,113 +1,131 @@
-Return-Path: <linux-kernel+bounces-321265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F24497169D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:22:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4711A9716A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFD90B22080
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:22:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C997DB25D57
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECA81B7911;
-	Mon,  9 Sep 2024 11:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB791B81D5;
+	Mon,  9 Sep 2024 11:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llMRU4jB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ULDXuJML"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B71A1B5820;
-	Mon,  9 Sep 2024 11:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3461B81BA;
+	Mon,  9 Sep 2024 11:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725880744; cv=none; b=OGdKfTZVGgqV66sFDwEuskw8D//EcqDXwCoOv16eeI0PJQ1k1O8yTCyybwNjtAUIiEg5C6XAXfDp2V+1qDsZ+jzPG/awo3EflHeffdD7OXXdjuec3KGI2hcDV0IVvRRF+yRKlHa9WSvEyO6VY5JH0AvKZ+vKIqVFZ4OBUBTrowQ=
+	t=1725880848; cv=none; b=F6JfqaYQBbToSSyTYdjEQ9EazWRffyI4WFwkJw5wVWCcxabwAKx3IO4Whgvc5TDloPWtxokOy5CJ2fsMwLr1POkXvqtWH8Q2fpoZyUDnSVpevvKIrqNHL2Usb5nJvUL6VmCTvBRM+oKkDBx1/rDLHOnlCluTKG+hOAy94uLfgS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725880744; c=relaxed/simple;
-	bh=fizaTSEXyuljg6z99BiS3/Mrs+MIVr7UUib2+wXCqrI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=ERuD8M8l/aByKfSyUqDoABzAbSprDFEMloWRxVxwazlNOAGROR/Pm9WkL3HzMe8g6AkrLDbSNlCkvbONFh7dbqljBfa9S6HsNdZUSbQgWJuGXTT0yx9Fz/E2R1uRTvCSRpGf0lBe2wQklNx8kpPWsOA1/Ncxy9U4BEZqPLbV42E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llMRU4jB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01F4BC4CEC5;
-	Mon,  9 Sep 2024 11:19:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725880743;
-	bh=fizaTSEXyuljg6z99BiS3/Mrs+MIVr7UUib2+wXCqrI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=llMRU4jBH0AM1JdyNXEFRiRfhyjHedUj/nkSh699MZuJ3A/blM8Vsm2qf3DZrzIz+
-	 OHQJUh+l9E798zfPbXgRbT5koeL5Z0FEVfUk41otCyKI4nWEKNkyPabVpcCgohK2nq
-	 6rMBtYFYAr/l/EK/sJglmJssL8J2gQQwPJEDSoAt0Bh/5NZMND4GdtJQchi/Ue9TxE
-	 J5xy5q7X5FJ0aS+FqUxXpAgurHlYYiRUE944dR+SVE+3pMBsWmttqnkFVGY0pxPW+W
-	 aErRF1PNM2HhvRHA6jNcW00VCmAE8+I8ghfIL8NOUMYrFhpuPRNIbvp+86C3lkhVAA
-	 rSnG1DcI3vWQg==
-From: Kalle Valo <kvalo@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,  Konrad Dybcio
- <konradybcio@kernel.org>,  Dmitry Baryshkov <dbaryshkov@gmail.com>,  Johan
- Hovold <johan@kernel.org>,  Bjorn Andersson <andersson@kernel.org>,  Rob
- Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>,  linux-arm-msm@vger.kernel.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,  Bartosz
- Golaszewski <bartosz.golaszewski@linaro.org>,  ath11k@lists.infradead.org
-Subject: Re: [PATCH v3 1/4] arm64: dts: qcom: sc8280xp-crd: model the PMU of
- the on-board wcn6855
-References: <20240905122023.47251-1-brgl@bgdev.pl>
-	<20240905122023.47251-2-brgl@bgdev.pl>
-	<6vikrqhdnkefzpahhhtz2hpi62jvcwnzclm7touwtnpxdzvgrf@uc7r6a7bbjek>
-	<CAMRc=MeijX2by+MS_vq_OVx25JO6z=zNfymta35h11mbm=vmtQ@mail.gmail.com>
-	<CALT56yOP+un5nkxuirJVg=gr7fo4Hqjt1ew3z-=F2J_Y_RcTqg@mail.gmail.com>
-	<CAMRc=Mci-8R1Oe3Fe+1E+K-7khzwBPgn_8SQSUPXthpE4032Pw@mail.gmail.com>
-	<d6d5a943-ab29-4034-b465-b62d9d1efa61@kernel.org>
-	<87v7zagcyf.fsf@kernel.org>
-	<ywn7bq6j6jgokwmm3vsumkuwijplezmery5tr6z5yeblnpyjh7@djkwdbt4sl3q>
-	<CAMRc=Mfj3gpgV0N__oB8kF5pk4PrDwP1CqeUgUbvTwyo7p=7bQ@mail.gmail.com>
-	<CAA8EJppi5Zy82=ZUZ67DW-40Qm7aMerNLu_Mzh3HiUBWqPiHVw@mail.gmail.com>
-	<CAMRc=Mf--M9d-awzQcs=W8frBwNfkjyvyCrmHAc3MofQo-qp1Q@mail.gmail.com>
-Date: Mon, 09 Sep 2024 14:18:58 +0300
-In-Reply-To: <CAMRc=Mf--M9d-awzQcs=W8frBwNfkjyvyCrmHAc3MofQo-qp1Q@mail.gmail.com>
-	(Bartosz Golaszewski's message of "Fri, 6 Sep 2024 11:45:39 +0200")
-Message-ID: <875xr5gjml.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1725880848; c=relaxed/simple;
+	bh=xnJr/zsL534VZEk0Nh7lt6toQZM7O+OmyOi3AnZky+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kEzEUq5TtDdkqIMfqCMBdgUYL5KFAUh8DAj/pjQADvpjykwN8pR0/DE9sRQQbjgE6oXljIJGD5t+OcQAmQWakyOjoJiACJ4cripfqQws4xBJM0yoJCd9P1YSmC7ehAnAv3+5lVaWITwZ5Qacucv5tIAdbigKJT5AGx27YHCn4Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ULDXuJML; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4899Jnul030692;
+	Mon, 9 Sep 2024 11:20:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FKZfd352d3YrxGnDzNNnk0JqdueJK5oEeG2Wrl9zpkY=; b=ULDXuJML7isiwV0S
+	zbnFfWFH3jJ3K4SetyG/nYg2MFlFCa1K8Rp5z8P83suecWxY8BqzG8QtmwPm96RF
+	a6fyb0Z4eAL3RACt/G9zvnL0eJ7iNAJTrwKP6AaGYzEi1Yq4+iKp+xbgXES6gwM+
+	10gFXxn1O0iNtyao0No35BVnbprE1wku3xWK7OKAYhjT5WKHXyS2ADXiqRqKy8hD
+	yP97FPKX1sEd6G3EEqvIovWI/aRguE8leierjFcY9P4JaidQ6o+FTDBgQxxQ4pun
+	0o536r3ITvOOyEjvSHKiAbIpc7QCpuGeLKupTKqdLJFo13keDDXYDOcBcrfs6K7W
+	hilmAw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy5rak48-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 11:20:34 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 489BKOd2032617
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Sep 2024 11:20:24 GMT
+Received: from [10.217.219.107] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Sep 2024
+ 04:20:20 -0700
+Message-ID: <43de24a2-1fc4-4c04-a19e-09a11bac52e9@quicinc.com>
+Date: Mon, 9 Sep 2024 16:50:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] can: mcp251xfd: Enable transceiver using gpio
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+CC: <manivannan.sadhasivam@linaro.org>, <thomas.kopp@microchip.com>,
+        <mailhol.vincent@wanadoo.fr>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_msavaliy@quicinc.com>,
+        <quic_vdadhani@quicinc.com>
+References: <20240806090339.785712-1-quic_anupkulk@quicinc.com>
+ <20240806-industrious-augmented-crane-44239a-mkl@pengutronix.de>
+Content-Language: en-US
+From: Anup Kulkarni <quic_anupkulk@quicinc.com>
+In-Reply-To: <20240806-industrious-augmented-crane-44239a-mkl@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: y1XjWUsM3S6CmtmXk23SG9WjMG35so1f
+X-Proofpoint-ORIG-GUID: y1XjWUsM3S6CmtmXk23SG9WjMG35so1f
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ clxscore=1011 malwarescore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ mlxscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=777 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409090091
 
-Bartosz Golaszewski <brgl@bgdev.pl> writes:
+Thanks Marc, for pointing to the thread.
+I have internally validated the given patch, and it works fine for me.
+Hence we intend to add only DT related change.
 
-> On Fri, Sep 6, 2024 at 11:37=E2=80=AFAM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
->
->>
->> On Fri, 6 Sept 2024 at 10:45, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> >
->> > On Thu, Sep 5, 2024 at 9:26=E2=80=AFPM Dmitry Baryshkov
->> > <dmitry.baryshkov@linaro.org> wrote:
->> > >
->> > > QC_8380_CRD (following DMI / Windows name) or QC_X1E80100_CRD (follo=
-wing
->> > > marketing name). Or maybe QTI_ instead of QC_. WDYT?
->> > >
->> >
->> > Is there any central authority listing these names? Or are they just
->> > agreed upon on the mailing list? I honestly don't know where they come
->> > from.
->>
->> I think on ath12k these names come from ACPI tables. On all previous
->> devices it is just being agreed upon. Kalle is the central authority.
->>
->
-> Kalle: is "QC_8280XP_CRD" fine for you for a board called sc8280xp-crd?
+Do you plan to merge it in next release or any time by which I can expect the patch to be merged?
+Since my DT change is dependent on the given patch. 
 
-Yes.
+Please let me know if you need any support/help in any further validation of the patch.
 
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
+regards,
+Anup
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
+On 8/7/2024 1:32 AM, Marc Kleine-Budde wrote:
+> On 06.08.2024 14:33:39, Anup Kulkarni wrote:
+>> Ensure the CAN transceiver is active during mcp251xfd_open() and
+>> inactive during mcp251xfd_close() by utilizing
+>> mcp251xfd_transceiver_mode(). Adjust GPIO_0 to switch between
+>> NORMAL and STANDBY modes of transceiver.
+> 
+> There is still the gpio support patch pending, which I have to review
+> and test.
+> 
+> https://lore.kernel.org/all/20240522-mcp251xfd-gpio-feature-v3-0-8829970269c5@ew.tq-group.com/
+> 
+> After this has been merged, we can have a look at this patch.
+> 
+> It might actually not be needed anymore, as we can describe a CAN
+> transceiver switched by a GPIO in the DT. Hopefully we don't run into
+> some crazy circular dependencies or similar issues.
+> 
+> regards,
+> Marc
+> 
+
 
