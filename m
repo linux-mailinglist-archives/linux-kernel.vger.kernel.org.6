@@ -1,179 +1,135 @@
-Return-Path: <linux-kernel+bounces-321326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1850E9718C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:54:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81DB59718CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7567EB22469
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:54:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3608B28141F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B411B6542;
-	Mon,  9 Sep 2024 11:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4134E1B78E8;
+	Mon,  9 Sep 2024 11:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="h9w5RVGK"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhHzZQ7n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0618F17BB04;
-	Mon,  9 Sep 2024 11:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD2E13BAF1;
+	Mon,  9 Sep 2024 11:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725882861; cv=none; b=QiZu4ADPv+9Qc5svFOFlfELFjPtImInBPYOwOJOIqTn3LaDmhdNOYcG2ToxTGmusEu8545+uXk4+NSSDTpnvAW+nQkFHdZqAqHhWaSDuGRdhzDqE8GGD/jv/I/Bw9xg0X8Equk5EtmdkmjzOlbTLNVjEpDB2BmahVArK1/teDy4=
+	t=1725882983; cv=none; b=dbPZW1xjenvgofKT8nolDMas8Ipyv0JevhQmo/y8ojnnLeRRdAXzCwRmO4qPOsEx3S348rGodbb+aYlz1SfdJVxa9++ZAlQIw7+VrHi1YkFo4rIxdlDEMOKPLfjcnPbEn7lLrMAFut0UrD4/KxitYz5u0xrRGPlvJEJdTio0OCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725882861; c=relaxed/simple;
-	bh=S/0Gvcdwc9czGIGZ/KN+mgXrysiIL6aDrU9W19Ga/ZE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKbgQJwuBrnARVRUytO8nmmmFrrqLOH3ytIKt/NPBv19JV8SbDktlAVR+7mmtNG3xe2vBJ1QsHZtRqLfaPjTB+lB4hzoN8JSqbXZAYl6u9h77tjXjnQZ5uiX8Ey5zdeeLfXsMKtJesDW0ukYnzw/azxArHqnYVRUwWBIThgn9iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=h9w5RVGK; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725882859; x=1757418859;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S/0Gvcdwc9czGIGZ/KN+mgXrysiIL6aDrU9W19Ga/ZE=;
-  b=h9w5RVGKp8A/YMgL8zgEtbXena/cWIWEdeH9IOGbgGc4KxM5KLuxaAg7
-   tgx3ImNnN0ZC9eZI9Bhp1hhUrqhJy/S24m69g9qwfOMyRdVvVQEWzz2Zi
-   Oi164IJzZODTJsavTZg27WGHk1UGefXPWmp316CyqhvUo1HBm3wP6Hc2E
-   sIVVv1R1wUWTGoVilrakRujDJu+QzEfYvsQWCC155a++RklOulE68XqMO
-   3OY77aEwy7tT2yOgVZUdZqZR9nB+up/yu9C6cTf4RDuZCLBvwTtnfF+5s
-   R7DPjzONhYmIN37guh+yfaHeDMn9MmDfJd0sL+v+KV6g2CxaYQPrOAf5y
-   Q==;
-X-CSE-ConnectionGUID: Ke3+C3CXR++lxv0xXUTyow==
-X-CSE-MsgGUID: Jln5HjirQm6z9i/EpH+Fiw==
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="asc'?scan'208";a="32144688"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 04:54:17 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 9 Sep 2024 04:53:54 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Mon, 9 Sep 2024 04:53:50 -0700
-Date: Mon, 9 Sep 2024 12:53:17 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Celeste Liu <coelacanthushex@gmail.com>
-CC: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
-	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren
-	<guoren@kernel.org>, Anup Patel <anup@brainfault.org>, Heinrich Schuchardt
-	<heinrich.schuchardt@canonical.com>, Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz
-	<glaubitz@physik.fu-berlin.de>, Russell King <linux@armlinux.org.uk>, Florian
- Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review
- list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>, Tony Lindgren <tony@atomide.com>,
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
-	<jonathanh@nvidia.com>, Palmer Dabbelt <palmer@rivosinc.com>,
-	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<loongarch@lists.linux.dev>, <linux-sh@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-rpi-kernel@lists.infradead.org>, <linux-omap@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] riscv: defconfig: drop RT_GROUP_SCHED=y
-Message-ID: <20240909-gave-celtic-af2ea8bc38d5@wendy>
-References: <20240823-fix-riscv-rt_group_sched-v2-0-e4dbae24f7e1@gmail.com>
- <20240823-fix-riscv-rt_group_sched-v2-1-e4dbae24f7e1@gmail.com>
+	s=arc-20240116; t=1725882983; c=relaxed/simple;
+	bh=/YtRu2MORuw03OqntPGRgVqgK255CA2LiMaiIADwXrk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UA1F3fDpM6mGTSYs8+SJjrlTzro/O3if+mFyFnEorj2uFOZdxkvT+l1Hdbbdrjq9Ztl1ShRFavsWk363T8B0+/DV670wZq2A3X7lJ1BkYa9L5dyUCKaWMd2Ton37vBGlY7f+zDgy2pUYb0Ala2CenUng2cIxV4erMNUnNsNf6io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhHzZQ7n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAF93C4CEC5;
+	Mon,  9 Sep 2024 11:56:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725882983;
+	bh=/YtRu2MORuw03OqntPGRgVqgK255CA2LiMaiIADwXrk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bhHzZQ7n7PMR2BNbizOYSxL+P4Zy5IkWjJpzjaiNOE1d+Id4GRkgYxIX2MGfzgt6g
+	 48a53xifmqGRExB/4QwUBAy86hBjnHe+VL9RW6fLIJjIPGM5doT7wWYsq/aTQn485F
+	 007XJGBf3SsAHsDESrFeo2UjYBX+vXAkocffLiKGQLcZTMiWItkSLVVpPAXUnlwka7
+	 s+ET6l0Ls0+jcDCsd9txQ5ii3Qir13AWZ1183IQXF9Dz1U2ySN+zRNIHd8SV+a8vYJ
+	 sV3rj/7D0++1O4uBmTRetLtwCfBOlWys5ApTCypm/5Wgve6bSNXEUb3QEsWA9Cfs6J
+	 xVefcKeJVyzzQ==
+Message-ID: <85cb5092-fbc9-4fa7-99ca-e9b26c7a61b6@kernel.org>
+Date: Mon, 9 Sep 2024 13:56:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="SUs/mhM/C8VTfn2w"
-Content-Disposition: inline
-In-Reply-To: <20240823-fix-riscv-rt_group_sched-v2-1-e4dbae24f7e1@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 16/17] ufs: host: add a callback for deriving software
+ secrets and use it
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
+ Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Asutosh Das <quic_asutoshd@quicinc.com>,
+ Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Gaurav Kashyap <quic_gaurkash@quicinc.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
+ <20240906-wrapped-keys-v6-16-d59e61bc0cb4@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240906-wrapped-keys-v6-16-d59e61bc0cb4@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---SUs/mhM/C8VTfn2w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Aug 23, 2024 at 01:43:26AM +0800, Celeste Liu wrote:
-> Commit ba6cfef057e1 ("riscv: enable Docker requirements in defconfig")
-> introduced it because of Docker, but Docker has removed this requirement
-> since [1] (2023-04-19).
->=20
-> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarch=
-y it
-> needs an RT budget assigned, otherwise the processes in it will not be ab=
-le to
-> get RT at all. The problem with RT group scheduling is that it requires t=
-he
-> budget assigned but there's no way we could assign a default budget, sinc=
-e the
-> values to assign are both upper and lower time limits, are absolute, and =
-need to
-> be sum up to < 1 for each individal cgroup. That means we cannot really c=
-ome up
-> with values that would work by default in the general case.[2]
->=20
-> For cgroup v2, it's almost unusable as well. If it turned on, the cpu con=
-troller
-> can only be enabled when all RT processes are in the root cgroup. But it =
-will
-> lose the benefits of cgroup v2 if all RT process were placed in the same =
-cgroup.
->=20
-> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn=
-'t
-> support it.[3]
->=20
-> [1]: https://github.com/moby/moby/commit/005150ed69c540fb0b5323e0f2208608=
-c1204536
-> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=3D1229700
-> [3]: https://github.com/systemd/systemd/issues/13781#issuecomment-5491643=
-83
->=20
-> Fixes: ba6cfef057e1 ("riscv: enable Docker requirements in defconfig")
-
-I don't think this fixes tag is suitable, the commit you cite in
-moby/docker is a year younger than the one in the fixes tag, so it was
-correct at the time it was written. I think the fixes tag should just be
-removed, since that commit was not wrong. Or am I missing something?
-
-> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+On 6.09.2024 8:07 PM, Bartosz Golaszewski wrote:
+> From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> 
+> Add a new UFS core callback for deriving software secrets from hardware
+> wrapped keys and implement it in QCom UFS.
+> 
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
->  arch/riscv/configs/defconfig | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-> index 12dc8c73a8ac..de85c3ab261e 100644
-> --- a/arch/riscv/configs/defconfig
-> +++ b/arch/riscv/configs/defconfig
-> @@ -9,7 +9,6 @@ CONFIG_CGROUPS=3Dy
->  CONFIG_MEMCG=3Dy
->  CONFIG_CGROUP_SCHED=3Dy
->  CONFIG_CFS_BANDWIDTH=3Dy
-> -CONFIG_RT_GROUP_SCHED=3Dy
->  CONFIG_CGROUP_PIDS=3Dy
->  CONFIG_CGROUP_FREEZER=3Dy
->  CONFIG_CGROUP_HUGETLB=3Dy
->=20
-> --=20
-> 2.46.0
->=20
+>  drivers/ufs/host/ufs-qcom.c | 15 +++++++++++++++
+>  include/ufs/ufshcd.h        |  1 +
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 366fd62a951f..77fb5e66e4be 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -182,9 +182,23 @@ static int ufs_qcom_ice_program_key(struct ufs_hba *hba,
+>  		return qcom_ice_evict_key(host->ice, slot);
+>  }
+>  
+> +/*
+> + * Derive a software secret from a hardware wrapped key. The key is unwrapped in
+> + * hardware from trustzone and a software key/secret is then derived from it.
+> + */
+> +static int ufs_qcom_ice_derive_sw_secret(struct ufs_hba *hba, const u8 wkey[],
+> +					 unsigned int wkey_size,
+> +					 u8 sw_secret[BLK_CRYPTO_SW_SECRET_SIZE])
+> +{
+> +	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+> +
+> +	return qcom_ice_derive_sw_secret(host->ice, wkey, wkey_size, sw_secret);
+> +}
 
---SUs/mhM/C8VTfn2w
-Content-Type: application/pgp-signature; name="signature.asc"
+There's platforms with multiple UFS hosts (e.g. 8280 has one with the
+intention to be used for an onboard flash and one for a UFS card (they're
+like microSD except they're UFS and not MMC).. We need to handle that
+somehow too.
 
------BEGIN PGP SIGNATURE-----
+My uneducated guess would be that the encryption infra is there for the
+primary host only and that it would be the one assumed by SCM calls.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZt7hrQAKCRB4tDGHoIJi
-0ucHAQCjkWwsUr+Tf13mvf/NIW8TxI0fFZYidIvfu2FZrQ6WAQEA74PlsEXjODkK
-cpamVx+2CMaasJI43MaDxnWfquAS/QU=
-=+ur3
------END PGP SIGNATURE-----
+I thiiiink it should be enough not to add a `qcom,ice` property in the
+DT for the secondary slot, but please somebody else take another look
+here
 
---SUs/mhM/C8VTfn2w--
+Konrad
 
