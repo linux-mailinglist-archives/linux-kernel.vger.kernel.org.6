@@ -1,206 +1,214 @@
-Return-Path: <linux-kernel+bounces-320471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E20970AD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:43:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF22970AD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E88281D36
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 00:43:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 366621C2163A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 00:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32588B67F;
-	Mon,  9 Sep 2024 00:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4659BA42;
+	Mon,  9 Sep 2024 00:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mYtcNi8F"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="I+ux4opw"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2027.outbound.protection.outlook.com [40.92.103.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5453A7494;
-	Mon,  9 Sep 2024 00:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725842599; cv=none; b=txKtTxA9Nxzh9/5AlwoTcDIrIzOlG5go0BOulihOlgddmEpcKP2DMobyBqIVXI7aQBN5xzwVJESMiErRdWkyQ1VCdntle0StCs7N7GQdzudOq+e18xAsJPLCZCljcTH64PNGXGrvcLbDJ8XOpSChgls7hTdpkZ1QY5p5oMpYjJE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725842599; c=relaxed/simple;
-	bh=XNNSjYDp2/vVWve1yWNzSRejqISxf3CiHc/EGOCbqS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rwEynkzmeG0xsypskFBy3o6VHebNw5H/TIaCWR2HlEuhu9TEPmOPnriyIXOQ9Lu7EXXaDSbnIU/CNtAFKC1rfVA9tNZrL5e8ZabrNLuxnI8s5cwTCsQgE8H8+O28Z/JM+Z/Hkqcb0bBvwLz5Ek/6glyHmSukR7jKQNPw5pJZSyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mYtcNi8F; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725842597; x=1757378597;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XNNSjYDp2/vVWve1yWNzSRejqISxf3CiHc/EGOCbqS8=;
-  b=mYtcNi8Fi0UyHIm9oZ270oxhzjF+MX5BHyg3V5L5Ehjj3H3z5HLHpkSU
-   a7uUn1gg3M7N4Jyi3o0MhUwdD73C+Y1R2m1iLVkAipzc+zXiYo37qBwaR
-   Ns7XAHkQlko/jptamBV4CuRym+0eez96AkzWJmyvpVOionjWplBL0T/JN
-   ZombqPQctjhJuAs5rJJ0AJsjgwiChxluJuI8qfbGNGnIRS0Gn43SONkNn
-   /jfHJ42+Bx4tpmkyj2KmGAy5lf0g8uPlu62GhfJ7l5x3vcOaG7rskeP6o
-   e76+NIabNj8SMu8oKLL25wsANK8Kst1vj7f+0X1Y1Twxfzdfks/zgRB23
-   g==;
-X-CSE-ConnectionGUID: 5lFTeKySRm6f5kn2PvZPHw==
-X-CSE-MsgGUID: aBF2J85vRFCheoqKGMjmrQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="24380700"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="24380700"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 17:43:16 -0700
-X-CSE-ConnectionGUID: 0TF1Qs4nRxmSO0LssqBdig==
-X-CSE-MsgGUID: nHhGW951T3ePC2vI+90hZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="89764067"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 08 Sep 2024 17:43:10 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1snSUl-000E7t-2r;
-	Mon, 09 Sep 2024 00:43:07 +0000
-Date: Mon, 9 Sep 2024 08:42:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mark Yao <markyao0591@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
-	Luis de Arquer <ldearquer@gmail.com>,
-	Algea Cao <algea.cao@rock-chips.com>
-Subject: Re: [PATCH v6 3/3] drm/rockchip: Add basic RK3588 HDMI output support
-Message-ID: <202409090615.l6BkuR5K-lkp@intel.com>
-References: <20240906-b4-rk3588-bridge-upstream-v6-3-a3128fb103eb@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D23F4C8D;
+	Mon,  9 Sep 2024 00:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725842723; cv=fail; b=R4CnjE52WCiKDoeoQyW3hjLut6CFEr0m+QXh6Gu3nPrzs8fnnowkJEchnj2w2Q6yl9GcKjKWgDmRaavv9jz3kVAhCIqOXGqTvyS1ef3VH9d5XLqyFVfhmDrHspQKgfzmwqTs4JQxDFQQmVel3ny5ZwpO4I0GVTjfPbkRC7zoXag=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725842723; c=relaxed/simple;
+	bh=+DPe5+mbADSnz1iqKPH14J19Rqp4ZUJB4RRpmipPfEs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=URV5PgUpKtrl899Ieab+YTeMQx6RAoBYiUCIVaSG10sZV5z1qfW1EJPhhrL7nXpQrmu/OqKQ36yWr0nAUyBMgfAV9KlHj56BjpYY9CcQdvlEj3aqeh/QmUk1jLR661VTdQF9VuCkFM5S2Cf2diEyq4UspWgWv1UGN7nvr9olzMQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=I+ux4opw; arc=fail smtp.client-ip=40.92.103.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tOJu31gcoR3QDB+9Nz3Y1yYVg/SxCfwR0b3uB91hOPcTMc4Gg4cZuOJPTA4Xh6zBqJdhswwH5PAVUbi6YVxh0azKCwXG6A/HGlmel3smG1Wqu0adlpg6wppiu475zdHBPGRbxWqpXatD/8yBw82ytX7KDgIIWeL89ATM7bPn4CM0ygXXEEI1zZYjOG1l+YA090H3l3gsqx46C7bvb5VGpHMB5yyYfyqTpqEAsq4seLTEuO6koTT3Tm6OtkWVVTcD7eLK8ISPDpaDC1Ok6JRGRZQRMI+Xaz+TCSq9sXUnvwdTJGvBFzMvPiJ7Kh07wC3wqvACMJPq5eg+5PNysabxCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vzrsSpjTbMITQ+WG9Mk3Yh/o8s/ex1WGywDnClXjzKI=;
+ b=UIY4cj8e2l9MCc8WK4E/ANgQKk9cLLmFGWiAZyAz1xsA8fUikHsB9XalMR2Lj8KYnjly3pY4UKzqAsAOYGJvHaR4GucH1b+S6Q5WTjcrLmq85KJ4zsLmjRFXm2TBsIWikjwZ9hG0FPcRir51+e2yO3RcsZEixn6UzpSU53aSNbUMb1yKnjxrP40NUL/haH6idNm2Cz8Ah7xARinPv5tJ/MwkYcanvSkZ4VVRf2dlaAVRQEQqYfsrQz3KBuZaNwzWALg3EnH8rq1lUXiTBFOYlHL9/Phqd2N5vesb/jsRF2w1C77oIXJPuBk4jJu3mrZjCApUUPLwQmU/v8a4pbDeIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vzrsSpjTbMITQ+WG9Mk3Yh/o8s/ex1WGywDnClXjzKI=;
+ b=I+ux4opw3SlAXtnmLcFemy1G8Q3YNWtf5RdhWtX6OZsr1rXpWj2W/oSzmDKMvwbeQfYSk9P5FWZVyOCirxFKFs7e17x1/aEY5zudtgY7m4UJN/m3OcP8W1lYguq55aZMDivyQcqaYfg5MMtx3REA9KISAAAC0R34z1+QDXZCbyd69WyABZjlloKeph4faGnRQhT0Yph57QCXOPOaalbtZ70jMEhpQrQEmV6JX/bTY11gnIdnQBOpBkK0r/dFfRSxYJx2meJxH31nVaTqw2ZQT+l5JszoVhUFV3SHiYV5dQXgL9BRpuPPcNs5ese/wrh6fo0mbPQFLUD9xTdf1MEcOw==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by MA0P287MB0916.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:e0::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Mon, 9 Sep
+ 2024 00:45:14 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%4]) with mapi id 15.20.7939.022; Mon, 9 Sep 2024
+ 00:45:14 +0000
+Message-ID:
+ <MA0P287MB28222BA933FA505DDAC89CEBFE992@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Mon, 9 Sep 2024 08:45:09 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: pwm: sophgo: add bindings for sg2042
+To: Krzysztof Kozlowski <krzk@kernel.org>, Chen Wang <unicornxw@gmail.com>
+Cc: ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, inochiama@outlook.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
+ haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, chunzhi.lin@sophgo.com
+References: <cover.1725536870.git.unicorn_wang@outlook.com>
+ <6e5fb37472b916cb9d9abfbe3bea702d8d0d9737.1725536870.git.unicorn_wang@outlook.com>
+ <clq2dwmsks56553cythofgd3x5sw4t6pss7cxup2hrvj2n563g@3ishagojtabx>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <clq2dwmsks56553cythofgd3x5sw4t6pss7cxup2hrvj2n563g@3ishagojtabx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [eEI5scsklPZ1p9qOPj/U6wDOGRUh7rlH]
+X-ClientProxiedBy: TYCP286CA0012.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:26c::16) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <c1c15693-925b-451c-aa10-60df07d18467@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906-b4-rk3588-bridge-upstream-v6-3-a3128fb103eb@collabora.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|MA0P287MB0916:EE_
+X-MS-Office365-Filtering-Correlation-Id: 99743621-d3e0-4eb1-a0e3-08dcd068aac0
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799006|461199028|6090799003|5072599009|19110799003|8060799006|3412199025|440099028|4302099013|1602099012;
+X-Microsoft-Antispam-Message-Info:
+	lKntOInxYLx2HCLzTXKuayj5jI/iU3eFwcqkTrUotiJXPFocOjKfS8tx+N7RwsdPgrXKv+VeJisndqrxxwSso4ZCkoouBEacI1pEvZvuF8Jyf9dQbbXjvsPSpMjnj0E4tAZsA6ksmsIn2RzZJu4KN14bb6W23tl7XuXaDx2a4ppWqgyYUaCPR5zWOWJt/VpEb3QLhi1hA4vVXn+m+mR5b0dZ3QgC3P4E3iyZiW+U4M4q3QWKCHnYOaRr49BNbzsQ5vJHtLk5yOsNNdAu4F0rf3VrWWimTJUoavVHDOPGBbj7/kVwAvYLJhTIlJtkGwjI+goiT4Mn2Kqi3ggWeNH87v+DcOkeJ+LIXofJntDUsimw4sj6SjfewzyZFZQnTWJvMpiI5PQwCSikyZQn8BcqDFjcxJiuUvfguoQNPJu3Kqj9O8rq+9jtzmaT23VNC1L9L7scxFmx5HXP2V4ncutyVkyEn4WPUVSkXloUxYHTD2ilLYP1DazPjNzgmoMvqUYnGXdYGX7nLdkBFn/4q5/ra+7myUz5JHaI+cUU/AUOgiJp9/b/FvFa1ZEvyXViRPP84zDyd2f0/WbW0ZXdv1tJ9dQLXdDO/c09wVCExjNH1DqECGfpZjqLGzB3Fh7gMP03GJSIhbSVCOs/SYMc9WzHYHpI9gRCASHbD+1AbFQjbJMuZN3DcYtaxDw32HnubLnTSIuTwniZJMZ7QGKVqVQD0IJZN3lA/m1z9bVJb9dLnsOmZY/kNwb9R7nGCZpfAQG4//91OEcbCaxizZkeWm8kcFemfvEAAZw+W710vvitORTuHbrCXfswvuD/LZ8KkXAAswbbdOvxopB24S2lVt8sTTn4+kJO2V8onoIyd2lI5oo=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?M1Npd09EcHBRYXV1cUtac3hjRmUvUXpwM000ZmxXeTJ3WUhURW8xaVYzakQv?=
+ =?utf-8?B?djNnZStJTDBTOEdWNThMLzJwZHZienhpZFpsWnFvSXVuT1lLL0hoSHBFQ21J?=
+ =?utf-8?B?Q0hvREtQYW5Vcm1PeW90cFQ1YW5rRUlQSkU4OC94STQ0cWZlZGs5eXZ4bWRm?=
+ =?utf-8?B?WXJwTGZkdGVQSkhLbGxER1U1ZC9GRm5GbDNmazNURDJibzVnMWxkUjVlY0VW?=
+ =?utf-8?B?a1h3Z0VaQ011RzJaRmtVS05mT2puamtCUFF5RWNSMHRmMjNFcFh5bEVKS1Fn?=
+ =?utf-8?B?V01ycTlPMnJMTzdYWkZRbzVTNHJJVUF1WndBcjIvSm5jdHliU1R0M0ozY2dZ?=
+ =?utf-8?B?MUU5S0xpS3U0MWpKYkpXczNLaUdzRTJ0TytXOGNJY2F1V2VSY1QwbWtjODl1?=
+ =?utf-8?B?SmhkaXB6QmU0MFA5ZVk0TGcrWUtuek51N0tBMUxrdW9aZUpBSWNWWXp0WGZC?=
+ =?utf-8?B?UWZUN0F4VlNldE8wMHNkc1hZOHNDODhBVGhEb3N1bGVZWUFyNlRxa2VPenVL?=
+ =?utf-8?B?djVYZythN3VUSW50d09uUUhsNmc3QzJ3NjhjZ0JvalJSOS9sdkdRYVJJb0ZH?=
+ =?utf-8?B?eGFVNE9tREZubnBpNE94NUQwM3Axai9sc0ZENHFac0lwcTNqODF4aHRHajdW?=
+ =?utf-8?B?NExLVGtTV2dUUFlnc0crc0ZkbmxLRzYxUnBpQy93T1hDUlFpeCtTc2hHRUZm?=
+ =?utf-8?B?bDRGUkdZcmM1VnV2aUg5V09NRE1WSFRCWFBOekNmd0hvdkNMdGp4bTV1NEVR?=
+ =?utf-8?B?T09Fb1FlR0pibHBFOVlyRXVDUForR20wY1U5R3F5UWRQL2VlekxMazJVZVJz?=
+ =?utf-8?B?d1IxQytHUkoxTXM5VS9lcUl5UENXODNNRlJoRUlTUlZYSDFVTEJLYTQ2bjNU?=
+ =?utf-8?B?SW1mS3pnSm95TWpwOFlDU1RVajdSRTJkLzgrUlczSGtlU0hHQ0hOb1JuS3ow?=
+ =?utf-8?B?Ry9mMHJXL3pPaDc1RTk5eTJ4L0loNEZZS1pQcDgzSHZIalFhQjFYWm8rV0JV?=
+ =?utf-8?B?OEg4UHFJTU9JL3NoMUxQWmxMZ1pQdU03U0NzbWQ2U0xyK2JBcjNzZTBxTGUv?=
+ =?utf-8?B?OE9ydVlXd3VVcmZhNEhTc2xteVViSFBTMXBOY0pkT25Zb3JacmUxZHBQaWJB?=
+ =?utf-8?B?Zm41SU4vOFFZS1Nacmo5aFo3TGQ3eTNCZVg0RUlYMDRBWHEwTlFYVXpkTWRs?=
+ =?utf-8?B?cUtPMEN0MVVPajVhcm40Ri9VZEh1UkVuLythT1IyVzY4aUU3M2Y1Z3dJWmIw?=
+ =?utf-8?B?amVvZ0g2Y3NxcXBublNOVzZlY0xwd3J4emNZY1gvN1lMdnA0dy9vN2RhMkN3?=
+ =?utf-8?B?TkxWOTJRYWRUcWp2TFlsVjVTcXloS01oVVNUUzZ0ZkgxZytqZUVla3dsdldq?=
+ =?utf-8?B?aS82cVNqZWk0aVFWNXE4TTBWd0xEalN2OTdHdFMrc0NaWE5IVEV2NnhER3ph?=
+ =?utf-8?B?M29KOEEwY0toRWhPN2NyRlA5U1UvRFpBVXdCcDE1S0Q3SERmS0IwQ2hVdW0z?=
+ =?utf-8?B?T3JYZVplN3UveDBzSGJvT0I5NksvV2c0SG1ld1B5RE5Ob0NhTkJMamJKaTVr?=
+ =?utf-8?B?RmJ3akgzbVdiY3NDRmFKTTV5clByNGMwcmlOSitDc0lQY29RR0pFUjBzeFJn?=
+ =?utf-8?B?RmZtM1BOVEx0MHFiZERYZEI5YmRrVGwzWGRxZHRzREJVaUdZY2dRdGl2U0RC?=
+ =?utf-8?Q?zEQpviX16NEWu5ez9zo6?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99743621-d3e0-4eb1-a0e3-08dcd068aac0
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 00:45:14.2324
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB0916
 
-Hi Cristian,
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 8400291e289ee6b2bf9779ff1c83a291501f017b]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Cristian-Ciocaltea/drm-bridge-synopsys-Add-DW-HDMI-QP-TX-Controller-support-library/20240906-092027
-base:   8400291e289ee6b2bf9779ff1c83a291501f017b
-patch link:    https://lore.kernel.org/r/20240906-b4-rk3588-bridge-upstream-v6-3-a3128fb103eb%40collabora.com
-patch subject: [PATCH v6 3/3] drm/rockchip: Add basic RK3588 HDMI output support
-config: powerpc64-randconfig-r122-20240908 (https://download.01.org/0day-ci/archive/20240909/202409090615.l6BkuR5K-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce: (https://download.01.org/0day-ci/archive/20240909/202409090615.l6BkuR5K-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409090615.l6BkuR5K-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c:679:24: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected struct dw_hdmi_qp * @@     got void [noderef] __iomem *[assigned] regs @@
-   drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c:679:24: sparse:     expected struct dw_hdmi_qp *
-   drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c:679:24: sparse:     got void [noderef] __iomem *[assigned] regs
-
-vim +679 drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
-
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  653  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  654  struct dw_hdmi_qp *dw_hdmi_qp_bind(struct platform_device *pdev,
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  655  				   struct drm_encoder *encoder,
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  656  				   const struct dw_hdmi_qp_plat_data *plat_data)
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  657  {
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  658  	struct device *dev = &pdev->dev;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  659  	struct dw_hdmi_qp *hdmi;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  660  	void __iomem *regs;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  661  	int ret;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  662  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  663  	if (!plat_data->phy_ops || !plat_data->phy_ops->init ||
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  664  	    !plat_data->phy_ops->disable || !plat_data->phy_ops->read_hpd) {
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  665  		dev_err(dev, "Missing platform PHY ops\n");
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  666  		return ERR_PTR(-ENODEV);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  667  	}
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  668  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  669  	hdmi = devm_kzalloc(dev, sizeof(*hdmi), GFP_KERNEL);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  670  	if (!hdmi)
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  671  		return ERR_PTR(-ENOMEM);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  672  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  673  	INIT_DELAYED_WORK(&hdmi->scramb_work, dw_hdmi_qp_scramb_work);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  674  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  675  	hdmi->dev = dev;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  676  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  677  	regs = devm_platform_ioremap_resource(pdev, 0);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  678  	if (IS_ERR(regs))
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06 @679  		return regs;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  680  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  681  	hdmi->regm = devm_regmap_init_mmio(dev, regs, &dw_hdmi_qp_regmap_config);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  682  	if (IS_ERR(hdmi->regm)) {
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  683  		dev_err(dev, "Failed to configure regmap\n");
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  684  		return ERR_CAST(hdmi->regm);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  685  	}
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  686  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  687  	hdmi->phy.ops = plat_data->phy_ops;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  688  	hdmi->phy.data = plat_data->phy_data;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  689  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  690  	dw_hdmi_qp_init_hw(hdmi);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  691  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  692  	ret = devm_request_threaded_irq(dev, plat_data->main_irq,
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  693  					dw_hdmi_qp_main_hardirq, NULL,
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  694  					IRQF_SHARED, dev_name(dev), hdmi);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  695  	if (ret)
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  696  		return ERR_PTR(ret);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  697  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  698  	hdmi->bridge.driver_private = hdmi;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  699  	hdmi->bridge.funcs = &dw_hdmi_qp_bridge_funcs;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  700  	hdmi->bridge.ops = DRM_BRIDGE_OP_DETECT |
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  701  			   DRM_BRIDGE_OP_EDID |
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  702  			   DRM_BRIDGE_OP_HDMI |
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  703  			   DRM_BRIDGE_OP_HPD;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  704  	hdmi->bridge.of_node = pdev->dev.of_node;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  705  	hdmi->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  706  	hdmi->bridge.vendor = "Synopsys";
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  707  	hdmi->bridge.product = "DW HDMI QP TX";
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  708  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  709  	hdmi->bridge.ddc = dw_hdmi_qp_i2c_adapter(hdmi);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  710  	if (IS_ERR(hdmi->bridge.ddc))
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  711  		hdmi->bridge.ddc = NULL;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  712  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  713  	ret = devm_drm_bridge_add(dev, &hdmi->bridge);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  714  	if (ret)
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  715  		return ERR_PTR(ret);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  716  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  717  	ret = drm_bridge_attach(encoder, &hdmi->bridge, NULL,
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  718  				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  719  	if (ret)
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  720  		return ERR_PTR(ret);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  721  
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  722  	return hdmi;
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  723  }
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  724  EXPORT_SYMBOL_GPL(dw_hdmi_qp_bind);
-4ae2f13b217e6c Cristian Ciocaltea 2024-09-06  725  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On 2024/9/6 18:31, Krzysztof Kozlowski wrote:
+> On Thu, Sep 05, 2024 at 08:10:25PM +0800, Chen Wang wrote:
+>> From: Chen Wang <unicorn_wang@outlook.com>
+>>
+>> Add binding document for sophgo,sg2042-pwm.
+> A nit, subject: drop second/last, redundant "bindings for". The
+> "dt-bindings" prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+>
+> Say something useful about hardware instead. The same in commit msg -
+> you keep saying obvious and duplicated commit subject.
+OK, thanks
+>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+>> ---
+>>   .../bindings/pwm/sophgo,sg2042-pwm.yaml       | 52 +++++++++++++++++++
+>>   1 file changed, 52 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
+>> new file mode 100644
+>> index 000000000000..10212694dd41
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
+>> @@ -0,0 +1,52 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/pwm/sophgo,sg2042-pwm.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Sophgo SG2042 PWM controller
+>> +
+>> +maintainers:
+>> +  - Chen Wang <unicorn_wang@outlook.com>
+>> +
+>> +description: |
+> drop |
+Ack and thansk.
+>> +  This controller contains 4 channels which can generate PWM waveforms.
+>> +
+>> +allOf:
+>> +  - $ref: pwm.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: sophgo,sg2042-pwm
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: apb
+>> +
+>> +  "#pwm-cells":
+>> +    # See pwm.yaml in this directory for a description of the cells format.
+> Drop
+Ack and thanks.
+>> +    const: 2
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +additionalProperties: false
+> unevaluatedProperties instead
+Yes, my mistake, thanks.
+> Best regards,
+> Krzysztof
+>
 
