@@ -1,150 +1,136 @@
-Return-Path: <linux-kernel+bounces-321637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2470D971D57
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:59:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0206971D61
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1691F22AF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:59:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 796E91F231AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7611BC088;
-	Mon,  9 Sep 2024 14:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AB61B7FD;
+	Mon,  9 Sep 2024 15:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NZTv9jA6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hZyv1vfs"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="UEYY5X7T"
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C87C1BBBEC;
-	Mon,  9 Sep 2024 14:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FC314267
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 15:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725893966; cv=none; b=ILKqogXW9LJoNXu2UodXzPrtxXwJsEI4fIG5sBudfriabYbOqkUBM9KyUJtdXb5Ty/0Nq7o/PDDQ/T2cAykQJkM5GwIcpMcR+v2VzEMkWc4M1DaLCet8QdrbBIaOpwvuooO0dCaX45AdeXyjI7d89u2u9+JUkfwELsJLqzP5K6M=
+	t=1725894059; cv=none; b=gNt5zwBG6jtCo24PGC0av9WzhYSfkn2KDyaz4C4+68xnIhROxs3/jVi2p1B0sRiUBEQTn3DKcBF7J4IE15eZhx5Y6hi0CAsSCPYbsDfeIYotR7JU93OldYi8vYj8/1COa16vfhVvx7Yx3wNcLYcfN45urf3PUVZTdiBEebq+BmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725893966; c=relaxed/simple;
-	bh=Z6sR8fjg2pBXQo75zazGmZ5+4iK+fSnf1Ae1m9qQmrc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=DSchLihGVXTUHd9N3MeMahF2CRDhHXEgKYssQ/ugoTlUVvZxeCbC/P9/UUw0hcFsBUDVyHwpJQp+e9xZMarvsi2b6EXZYHao+U5zsL0uvVt43JQ/Sf+TTjkp7heFrL0X6hGATV1j2E7OQq0Gus88VZZ5ER5p/aXMCuq/mThg70c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NZTv9jA6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hZyv1vfs; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 09 Sep 2024 14:59:23 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725893963;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c80oYamQG2uT6yTzdWn7QC4Lyxk/oOAaQ+j9UP1Cefo=;
-	b=NZTv9jA6u6lTNTtqgEvWZkcUnWoDdUc7RFQZqCuJ5+Chowl+/hEyrv5lkuATiiMotelo8z
-	4FqZCGRmDu6Dq4PM3iUkW5T8648Aqs9CDyTMs7AbWxTWkMSkIs9nmtfN3vxWokX5bziv9P
-	e6pQ7LCiq0cRETueiVMUTncJ7OIOXNxFkjIaKXHMrbLOe038iO17dAIytnU/pm+6UDKoR1
-	b+Lw+HEU4aJ2ao+6Uoe5/17vFPkWWI14oUdJreGMmTaBMKgazCS6kwrdl7xo3tVHDUlffa
-	GAdO5rniTVNELoYpyB116687aTjd+Njh6C5RzbOFqutpu/ZjnlQ9C+FOfWUT2w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725893963;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c80oYamQG2uT6yTzdWn7QC4Lyxk/oOAaQ+j9UP1Cefo=;
-	b=hZyv1vfsATcTp5hgcDl/D+N+ZEzZIknSMs3j79lDuY+0Wc2ThkXusXD4KhxY6IfR1DYRuF
-	P/cdpOzymQfDjMAg==
-From: "tip-bot2 for Zhen Lei" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: core/debugobjects] debugobjects: Fix the compilation attributes
- of some global variables
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Zhen Lei <thunder.leizhen@huawei.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240904133944.2124-2-thunder.leizhen@huawei.com>
-References: <20240904133944.2124-2-thunder.leizhen@huawei.com>
+	s=arc-20240116; t=1725894059; c=relaxed/simple;
+	bh=RzOo4nswEo3jSmFZkHprYDJX4YMV6YOVmHsXRuguc3I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kJZqs7TUlck110RYuSCUPJ+Xi9mZSBdo4KevlzJRaRkmmwbYedu88VytNQjPsacHJIl/r5U4RMP1wsKQBili9+L7pfIZrRAtoKblIKuxEiyij6GL6GJ5i8y/8a54xIRe/lzb8cY0cmtH5R7Zyc48rvxgioPm7HdH0kr2TgOCzJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=UEYY5X7T; arc=none smtp.client-ip=185.136.64.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 2024090915005240ac48f7558c76b34a
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 09 Sep 2024 17:00:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=felix.moessbauer@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=X8ddSxPwoRliEpQfz+Jf+VCcHRWUMvdaMj1Nlh/9NU8=;
+ b=UEYY5X7TmjROFRyYtCHlEzx4t24DMp5YL4hySPe6h9WTnpz0lWSLABoy7dAvKjnNF4b2s8
+ miG+PXci6F0GzQyXFt2C1WEkjpYWd8ybyLc3vzvpsIm2AHdaQ0nq33CQFK/hbU2zcnknNez7
+ ZJ/AMH5sWfu0/KgJqTCGoPF+J+zqjnUfjI5oWO4dNi/rIxz/lm5cyqne6k/Cbz9RKxASI8P5
+ 59eeZXbsQW/5kCh1kRKGvr8WUrl5pb8ptwj6dvQcuCNC1gyTGDF7ZrLwUhKqau0otFK+5tXj
+ hMa7SxWede2zJX1NGLh8ZTVb8s0bDuygmUzy3P1jK0d022gRhWUVDglw==;
+From: Felix Moessbauer <felix.moessbauer@siemens.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	dqminh@cloudflare.com,
+	longman@redhat.com,
+	adriaan.schmidt@siemens.com,
+	florian.bezdeka@siemens.com,
+	stable@vger.kernel.org,
+	Felix Moessbauer <felix.moessbauer@siemens.com>
+Subject: [PATCH 1/1] io_uring/sqpoll: do not allow pinning outside of cpuset
+Date: Mon,  9 Sep 2024 17:00:36 +0200
+Message-Id: <20240909150036.55921-1-felix.moessbauer@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172589396315.2215.10252001791260543898.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1321639:519-21489:flowmailer
 
-The following commit has been merged into the core/debugobjects branch of tip:
+The submit queue polling threads are userland threads that just never
+exit to the userland. When creating the thread with IORING_SETUP_SQ_AFF,
+the affinity of the poller thread is set to the cpu specified in
+sq_thread_cpu. However, this CPU can be outside of the cpuset defined
+by the cgroup cpuset controller. This violates the rules defined by the
+cpuset controller and is a potential issue for realtime applications.
 
-Commit-ID:     e4757c710ba27a1d499cf5941fc3950e9e542731
-Gitweb:        https://git.kernel.org/tip/e4757c710ba27a1d499cf5941fc3950e9e542731
-Author:        Zhen Lei <thunder.leizhen@huawei.com>
-AuthorDate:    Wed, 04 Sep 2024 21:39:39 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 09 Sep 2024 16:40:25 +02:00
+In b7ed6d8ffd6 we fixed the default affinity of the poller thread, in
+case no explicit pinning is required by inheriting the one of the
+creating task. In case of explicit pinning, the check is more
+complicated, as also a cpu outside of the parent cpumask is allowed.
+We implemented this by using cpuset_cpus_allowed (that has support for
+cgroup cpusets) and testing if the requested cpu is in the set.
 
-debugobjects: Fix the compilation attributes of some global variables
-
-1. Both debug_objects_pool_min_level and debug_objects_pool_size are
-   read-only after initialization, change attribute '__read_mostly' to
-   '__ro_after_init', and remove '__data_racy'.
-
-2. Many global variables are read in the debug_stats_show() function, but
-   didn't mask KCSAN's detection. Add '__data_racy' for them.
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240904133944.2124-2-thunder.leizhen@huawei.com
+Fixes: 37d1e2e3642e ("io_uring: move SQPOLL thread io-wq forked worker")
+Cc: stable@vger.kernel.org # 6.1+
+Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
 ---
- lib/debugobjects.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Hi,
 
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 7cea91e..7226fdb 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -70,10 +70,10 @@ static HLIST_HEAD(obj_to_free);
-  * made at debug_stats_show(). Both obj_pool_min_free and obj_pool_max_used
-  * can be off.
-  */
--static int			obj_pool_min_free = ODEBUG_POOL_SIZE;
--static int			obj_pool_free = ODEBUG_POOL_SIZE;
-+static int __data_racy		obj_pool_min_free = ODEBUG_POOL_SIZE;
-+static int __data_racy		obj_pool_free = ODEBUG_POOL_SIZE;
- static int			obj_pool_used;
--static int			obj_pool_max_used;
-+static int __data_racy		obj_pool_max_used;
- static bool			obj_freeing;
- /* The number of objs on the global free list */
- static int			obj_nr_tofree;
-@@ -84,9 +84,9 @@ static int __data_racy			debug_objects_fixups __read_mostly;
- static int __data_racy			debug_objects_warnings __read_mostly;
- static int __data_racy			debug_objects_enabled __read_mostly
- 					= CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT;
--static int __data_racy			debug_objects_pool_size __read_mostly
-+static int				debug_objects_pool_size __ro_after_init
- 					= ODEBUG_POOL_SIZE;
--static int __data_racy			debug_objects_pool_min_level __read_mostly
-+static int				debug_objects_pool_min_level __ro_after_init
- 					= ODEBUG_POOL_MIN_LEVEL;
+that's hopefully the last fix of cpu pinnings of the sq poller threads.
+However, there is more to come on the io-wq side. E.g the syscalls for
+IORING_REGISTER_IOWQ_AFF that can be used to change the affinites are
+not yet protected. I'm currently just lacking good reproducers for that.
+I also have to admit that I don't feel too comfortable making changes to
+the wq part, given that I don't have good tests.
+
+While fixing this, I'm wondering if it makes sense to add tests for the
+combination of pinning and cpuset. If yes, where should these tests be
+added?
+
+Best regards,
+Felix Moessbauer
+Siemens AG
+
+ io_uring/sqpoll.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index 713be7c29388..b8ec8fec99b8 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -10,6 +10,7 @@
+ #include <linux/slab.h>
+ #include <linux/audit.h>
+ #include <linux/security.h>
++#include <linux/cpuset.h>
+ #include <linux/io_uring.h>
  
- static const struct debug_obj_descr *descr_test  __read_mostly;
-@@ -95,8 +95,8 @@ static struct kmem_cache	*obj_cache __ro_after_init;
- /*
-  * Track numbers of kmem_cache_alloc()/free() calls done.
-  */
--static int			debug_objects_allocated;
--static int			debug_objects_freed;
-+static int __data_racy		debug_objects_allocated;
-+static int __data_racy		debug_objects_freed;
+ #include <uapi/linux/io_uring.h>
+@@ -459,10 +460,12 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
+ 			return 0;
  
- static void free_obj_work(struct work_struct *work);
- static DECLARE_DELAYED_WORK(debug_obj_work, free_obj_work);
+ 		if (p->flags & IORING_SETUP_SQ_AFF) {
++			struct cpumask allowed_mask;
+ 			int cpu = p->sq_thread_cpu;
+ 
+ 			ret = -EINVAL;
+-			if (cpu >= nr_cpu_ids || !cpu_online(cpu))
++			cpuset_cpus_allowed(current, &allowed_mask);
++			if (!cpumask_test_cpu(cpu, &allowed_mask))
+ 				goto err_sqpoll;
+ 			sqd->sq_cpu = cpu;
+ 		} else {
+-- 
+2.39.2
+
 
