@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-321240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9657B97164E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:08:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6B7971650
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C108E1C22DDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:08:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A6F1C22E21
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD511B581F;
-	Mon,  9 Sep 2024 11:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFB41B5828;
+	Mon,  9 Sep 2024 11:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d57qRwra"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VivR4AM4"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024A01B5801;
-	Mon,  9 Sep 2024 11:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0591B5339;
+	Mon,  9 Sep 2024 11:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725880129; cv=none; b=VzcTAijlIitf3f8gpV719+2nQR1aRqAGsj7UzEiiaLYoMquaWuk2Dqhm/k7HecGMJSHPkpxpiL6jhY8jGpWAz1YzyZMgc0FkJQSyjC8RhyAedB8bmEsiIDFcE83FTl/+K3jF/XtdoHbgjHahEjo9iIYgf0yyMMZF0by7aNafsLk=
+	t=1725880150; cv=none; b=VsQgY39VHWSr/lCxrTduPsn+9Ir9PngiTrPVJ+miA8QibFWUNO0S+euSpsxWXDHKZ3yco4JTfMY08O9JO7U0bZ6gSBt+XEpBOtOZR2XVlAJtHDqBC+nV1C39FoO7ssUzxA2VUjsno2oTpnnZ0yQpAerFVcWCLKQdh0b3feGb1Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725880129; c=relaxed/simple;
-	bh=g1Y3OFKNW9jpx1fweo0ZCA23xQ16LHdaByxNW8/mYG8=;
+	s=arc-20240116; t=1725880150; c=relaxed/simple;
+	bh=ITBN3/6sTO4KTF29WCVqy33W+ejaIqLMludROwyxawE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NsmpB5VelG9W4eiIJSlfO4mggix2f6T9++S99GgRHDlLs9gZZG18GJ5uLOm6f9Ihh2EmDWEjPTF9oqF6SnJnxAkVU67gFQ4n3cPhh1F6HHt2GoU2JKD6CuP10/AokbD5m4h/BdI+H+kkk9Y5T1r9FaFHwmDtaP/SxwoX59Xb6MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d57qRwra; arc=none smtp.client-ip=209.85.221.52
+	 In-Reply-To:Content-Type; b=pReCDiE2yO8/rOXAxv1UHAfRqfOqfwdkdpyEkTQt+RVXTlgIy8iegE2ei2EL5nO206Za5vkRg1dB2dnfgVxSr/6nvIt45Rb6lQK0qH+VAmkVQ7YeJsZqHO7Z+KaWcsiYYDf6bGxo2hSJbnTainqOmfixPO3W2uEQpBU0eu9NVB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VivR4AM4; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374c84dcc64so3136422f8f.1;
-        Mon, 09 Sep 2024 04:08:47 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37747c1d928so2646559f8f.1;
+        Mon, 09 Sep 2024 04:09:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725880126; x=1726484926; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725880147; x=1726484947; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=54/v3CZUDKwhTlaA6Ai115KKdU9T7Nni9HPnsOuIo6Q=;
-        b=d57qRwra0aAGeOjY7epuS2UYH0LHAcE9NG2JsMx/gO9i0FCXzyLdwRcDpr01SESgeg
-         j+7LGIOnxH4Y4MaSBsdXc+8b8kxONPfsZrCqOxhEnNLKDPMLM9PUJwbYM8KvAJd2qyYf
-         L0UYhVZUqW8g8RMVTOmzS4Tge/Jrc2098W1fqeQD5mRXTyhfutOEXn3MCgdL9FW6R9G5
-         x1/iwGgFelRPwllj8TiXAN1jbXOp5STh74oOOQ5Mvu1BdHfHtX+/o4XnCYBKM0eJqrpA
-         MgKVTjgWWRKoIRNc/XOyk8kqfWOvILCe6JHlqMbqQl/iUqX/Hvbps+PiXN83dA+bXoyv
-         qu4Q==
+        bh=JKCOZrldnYduNnL61xc3dc80JAPoqtyn7Zl7i0OXJcg=;
+        b=VivR4AM49CGGjiYeeaisVrYBbc1hzQ2IYoSZtOJBfG+CHL99sM9jyb1T4+KxVDjwTW
+         8qhrjjn+pCOEgUVdQVTgQRWjbmaPsIA7Y6tq6DcMzbRhPkKK/bkx1nrY0TPHyi5L+L3w
+         zYRtIF6hlVPmlH5k5YSXmEYaY/5lyZWIEdeL5bu/BRIlqbkwXOxF6cgZNbQzRcICxHYY
+         c7N6cPzE+0FNHvQq6PHG9LaVPqXGeG0HBlwPEr8sNHBrxdtbUep65boLYz7/xOJ1uPOY
+         7fHsJ9L3RZMdJkCgLIWYO43Vc+a7ZV+noXvRStFQ3ySBhRhOP4WtejUw6u4WyjrppNj9
+         0PfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725880126; x=1726484926;
+        d=1e100.net; s=20230601; t=1725880147; x=1726484947;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=54/v3CZUDKwhTlaA6Ai115KKdU9T7Nni9HPnsOuIo6Q=;
-        b=Jkved45YwyrfxoT8+Nl49XdudpHcyN+abh6/M2FrW9+gdmR8tpHCLCjqC5y+51T32V
-         1bZ6pCQo0yUlQSLb07L44ViIjN0Gq3FHnWbuNB+bqEdKU03urP4JoCpFnCJ2h24lp+jy
-         6VTSCVKfsBngwKla4WPRbH2IrWE4LVtMOWJ4Nvt+P8eK7oQHj93OWfBFNMIzmNU0TdVW
-         PZZhdk27B0tdEQf7I+XAh4vWMy93klQgWslZFNpdcn9cX7HGb191FGQkOoW+luOM1IRO
-         5dajeDWSATftLNQpGnMssVf3uF/NT0h59qHKPLli1HLtkEnVhVEI2wBh37nE2xqXWrrE
-         k8Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzlOgiKP3OA0qQwqstMAoY200tlA3doOfGXWY3tZ5T1/0gX3iZ7/L/ky0B4NZcXBBxkaYjewZ7kE2cZ+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJoY/y+LX001MluJXMiyu2jpJNwbGZ60kPsmY0IMtGzlr6Uh74
-	dsLE8moE0bha1aX48AP5X5nD6ceC7mZdZYXNj4zOEGnPfrgAgpee
-X-Google-Smtp-Source: AGHT+IGouGuLJRUXOQ91gpjxXcK+BoTTVXE9awbO2fKeAKpuBCJGpDcBgsbuisNTOTTUzspZK9cpaQ==
-X-Received: by 2002:a5d:5081:0:b0:374:c9f0:7533 with SMTP id ffacd0b85a97d-3789243fbb9mr6020119f8f.41.1725880126137;
-        Mon, 09 Sep 2024 04:08:46 -0700 (PDT)
+        bh=JKCOZrldnYduNnL61xc3dc80JAPoqtyn7Zl7i0OXJcg=;
+        b=V3hF8BV2qilMiAFRn03E9nZ17FhSgsVtS1YExp61eci/4eAKwNM7/CySzEM+dISWKq
+         1Qdl7U1t9YVVB4U08k0NeAqoghEvOxnbrblNl6cTly8K+56yysdWwEmVFLO4zY94fc1o
+         rgjZBBlw0uhI7kEt+45uHMtRjR81H6KMK8X7rrRCb2ZjvAALdYIIuA+PA3E/THRBUI8x
+         f9qffXn6XojPo5yE+wKAnt/gcG4vxEFQtOkgTljl751j434ppgJPjDgyjs2KoX4nL2nO
+         QRvMF4xaUPJTyKajk3QjSB8Ku3ZqcDNSIDlpcMjOpHDXFYPRgj3Me8RsCIeovi/K4MyJ
+         GOqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWld6pMQ81sKQbxgfOtKSx8whOXlXVNdLWXHa3mIooJzrEDShLZbdF3NSqxs9vSti+jHP3B/10xyohA3rA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ/wPkwcXQb1lZu0P0Y+zJVVfoj8UEMQYAa4gcdLEyEtUrjx9P
+	CRenVsaaMKKCgLR23LkcxPSW9rM+Xn+mlkzis3pVKbZ6OegbTqBO
+X-Google-Smtp-Source: AGHT+IFQ8yFWuoufiSrwdwuCH7CB8tTaVfxMQgnOZD2dQGHhDOu3CcPRpeInWdYearb8IO9J7Szimg==
+X-Received: by 2002:adf:f610:0:b0:371:82ec:206f with SMTP id ffacd0b85a97d-378895c71b8mr7345837f8f.16.1725880147087;
+        Mon, 09 Sep 2024 04:09:07 -0700 (PDT)
 Received: from [192.168.2.177] ([81.0.7.156])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d54978sm325966666b.199.2024.09.09.04.08.44
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d3765sm5762004f8f.74.2024.09.09.04.09.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 04:08:45 -0700 (PDT)
-Message-ID: <c88b24fa-5393-462a-8781-07cdcca01b12@gmail.com>
-Date: Mon, 9 Sep 2024 13:08:43 +0200
+        Mon, 09 Sep 2024 04:09:06 -0700 (PDT)
+Message-ID: <252cba39-b55c-4ea8-9a5e-271b77a6a064@gmail.com>
+Date: Mon, 9 Sep 2024 13:09:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: mt8183: krane: Fix the address of eeprom
+Subject: Re: [PATCH 2/2] arm64: dts: mt8183: kukui: Fix the address of eeprom
  at i2c4
 To: Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -87,7 +87,7 @@ To: Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
 References: <20240909-eeprom-v1-0-1ed2bc5064f4@chromium.org>
- <20240909-eeprom-v1-1-1ed2bc5064f4@chromium.org>
+ <20240909-eeprom-v1-2-1ed2bc5064f4@chromium.org>
 Content-Language: en-US, ca-ES, es-ES
 From: Matthias Brugger <matthias.bgg@gmail.com>
 Autocrypt: addr=matthias.bgg@gmail.com; keydata=
@@ -133,7 +133,7 @@ Autocrypt: addr=matthias.bgg@gmail.com; keydata=
  +zFJv9fVUpo/bjePOL4PMP1y+PYrp4PmPmRwoklBpy1ep8m8XURv46fGUHUEIsTwPWs2Q87k
  7vjYyrcyAOarX2X5pvMQvpAMADGf2Z3wrCsDdG25w2HztweUNd9QEprtJG8GNNzMOD4cQ82T
  a7eGvPWPeXauWJDLVR9jHtWT9Ot3BQgmApLxACvwvD1a69jaFKov28SPHxUCQ9Y1Y/Ct
-In-Reply-To: <20240909-eeprom-v1-1-1ed2bc5064f4@chromium.org>
+In-Reply-To: <20240909-eeprom-v1-2-1ed2bc5064f4@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -142,26 +142,44 @@ Content-Transfer-Encoding: 7bit
 On 09/09/2024 10:33, Hsin-Te Yuan wrote:
 > The address of eeprom should be 50.
 > 
-> Fixes: cd894e274b74 ("arm64: dts: mt8183: Add krane-sku176 board")
+> Fixes: ff33d889567e ("arm64: dts: mt8183: Add kukui kodama board")
+> Fixes: d1eaf77f2c66 ("arm64: dts: mt8183: Add kukui kakadu board")
 > Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
 
 Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
 > ---
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-krane.dtsi | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>   arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu.dtsi | 4 ++--
+>   arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama.dtsi | 4 ++--
+>   2 files changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-krane.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-krane.dtsi
-> index 0f5fa893a77426d50c293f780b75cacfe988d866..8b56b8564ed7a25c269f4231ddadf8621aec41d8 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-krane.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-krane.dtsi
-> @@ -88,9 +88,9 @@ &i2c4 {
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu.dtsi
+> index bfb9e42c8acaa7c2e5515888a77fe97258a1b78a..ff02f63bac29b2c473bfdd90a15aba09c2915271 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu.dtsi
+> @@ -92,9 +92,9 @@ &i2c4 {
 >   	clock-frequency = <400000>;
 >   	vbus-supply = <&mt6358_vcn18_reg>;
 >   
 > -	eeprom@54 {
 > +	eeprom@50 {
 >   		compatible = "atmel,24c32";
+> -		reg = <0x54>;
+> +		reg = <0x50>;
+>   		pagesize = <32>;
+>   		vcc-supply = <&mt6358_vcn18_reg>;
+>   	};
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama.dtsi
+> index 5c1bf6a1e475865fc0f6187e9733d7d98908797e..da6e767b4ceede9f5258274fbd702c6e6929f515 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama.dtsi
+> @@ -79,9 +79,9 @@ &i2c4 {
+>   	clock-frequency = <400000>;
+>   	vbus-supply = <&mt6358_vcn18_reg>;
+>   
+> -	eeprom@54 {
+> +	eeprom@50 {
+>   		compatible = "atmel,24c64";
 > -		reg = <0x54>;
 > +		reg = <0x50>;
 >   		pagesize = <32>;
