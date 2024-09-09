@@ -1,116 +1,83 @@
-Return-Path: <linux-kernel+bounces-321419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69AF9971A38
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:01:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83906971A3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9432C1C21BED
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:01:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4189428513E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEF01B81D6;
-	Mon,  9 Sep 2024 13:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSkYCQVb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DE21F942;
-	Mon,  9 Sep 2024 13:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680211B86FA;
+	Mon,  9 Sep 2024 13:01:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED841B78F7;
+	Mon,  9 Sep 2024 13:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725886871; cv=none; b=rbzQI1v4yElcm3ZowFpfj7VYcV9ICitMTtOq+0SVwGEPHejDQfZec25Z7F6/FgFGkQf9NHD2k0+u/TnOGOuyUwMTDRvLm66myco7ug391XOBbISlkp6QzkbR/omLBRKSCZ8cKRDwq4n9bKrRtN5LlVm0+RY1h67UdZVvt7r33Dg=
+	t=1725886912; cv=none; b=IeZeReBN2LpIWliiPzP8QreLU5q1moYVVYDuZQuFiai5nXuOVijNKFd6eJVVvB33sgS5tBhBX0Vevis2vADmXbPemg0+ZoQoItZaMaAKJgbaPYZDbbiwaMIrFLrwacMmw6LjO3aoUewHua1C9ufIz5pqpAKPE9cP6AgkIE6gtP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725886871; c=relaxed/simple;
-	bh=LstzvHjrnqTCggL5xnNIDoAEnRl3AQ9Gx2qh2MrSAJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N1vnb410hzWdKXKKkcDPmvD2gH+wFKpmKIkglulp+KUkl7rWhgPilcUQuo2wqD4yfzZUfeI9YsaAlNmi/fAsFlWaDspdLeixcOYVLTW/7HgFIXWlixl3EZ7KLnTcCEWjWbhvuXzDhAl/Pgm3THc6cigxjisUIOlFYH2N2Wj2LCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSkYCQVb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60F8FC4CEC5;
-	Mon,  9 Sep 2024 13:01:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725886869;
-	bh=LstzvHjrnqTCggL5xnNIDoAEnRl3AQ9Gx2qh2MrSAJg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RSkYCQVb5GNvcIg0Ra+c8oDiO6iLkzV4bOW/eQfdH9mogvsAL/omTfXzWZx7aSRDJ
-	 SKA4yaqNHnGgwjox94evLUQr15B8kbJHCJGIISpJc28/LBAqW9K1phD0wmxdtXjChv
-	 lCx7wzV4kp1KxZ5HMYAoyoLn6O1dqa65Nb65DY+Iwi4xvOHpdRAi2DDDULpISxSQCM
-	 M14rb24lYGi6schqoauiZ9txQH3nRVw8xoUrFVIxZttpDA4VQyoaDprx+1ianiyq+s
-	 V3DtQlcx4ihsP3fw4E8TnRC+LKpKFObjgWUeph2mcGqEtrcA9EM6+IhMRA82F2oX+d
-	 HkO+9l0Tr2trg==
-Date: Mon, 9 Sep 2024 15:01:04 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: mszeredi@redhat.com, linux-fsdevel@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Seth Forshee <sforshee@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] fs/mnt_idmapping: introduce an invalid_mnt_idmap
-Message-ID: <20240909-tugend-weiten-13e04fec5f48@brauner>
-References: <20240906143453.179506-1-aleksandr.mikhalitsyn@canonical.com>
- <20240906143453.179506-2-aleksandr.mikhalitsyn@canonical.com>
- <20240909-moosbedeckt-landnahme-61cecf06e530@brauner>
+	s=arc-20240116; t=1725886912; c=relaxed/simple;
+	bh=2qK7iuRG4sIpqwJOBL5BB32FvL7kK5EgrLz3GIJWy/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gfseTweX4Qesolz3kM5FUzj5EGJfWXXmTzn1V2dAqMb4mjlN0hJFToVSFbHTPX5JtGuyEnIodTw6WcDwr+t3eT/SY16djxqPIjTh3iY0qKU0QdjT+wZQsWtxaNNqfxWPDAmD6AuN6E32ri343tMwJ65pPwSoGtpwO2rOje0TEug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E2E2FEC;
+	Mon,  9 Sep 2024 06:02:11 -0700 (PDT)
+Received: from [10.1.39.38] (e127648.arm.com [10.1.39.38])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D9DCD3F64C;
+	Mon,  9 Sep 2024 06:01:40 -0700 (PDT)
+Message-ID: <1f5f7643-8743-40f4-80ac-0534affd70cd@arm.com>
+Date: Mon, 9 Sep 2024 14:01:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240909-moosbedeckt-landnahme-61cecf06e530@brauner>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] sched/deadline: nanoseconds clarifications
+To: Peter Zijlstra <peterz@infradead.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rafael@kernel.org, vincent.guittot@linaro.org, qyousef@layalina.io,
+ peterz@infradead.org, daniel.lezcano@linaro.org, rostedt@goodmis.org,
+ dietmar.eggemann@arm.com, Juri Lelli <juri.lelli@redhat.com>
+References: <20240813144348.1180344-1-christian.loehle@arm.com>
+ <ZruDkw2XB8iXMepz@jlelli-thinkpadt14gen4.remote.csb>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <ZruDkw2XB8iXMepz@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 09, 2024 at 02:57:51PM GMT, Christian Brauner wrote:
-> On Fri, Sep 06, 2024 at 04:34:52PM GMT, Alexander Mikhalitsyn wrote:
-> > Link: https://lore.kernel.org/linux-fsdevel/20240904-baugrube-erhoben-b3c1c49a2645@brauner/
-> > Suggested-by: Christian Brauner <brauner@kernel.org>
-> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-> > ---
-> >  fs/mnt_idmapping.c            | 22 ++++++++++++++++++++--
-> >  include/linux/mnt_idmapping.h |  1 +
-> >  2 files changed, 21 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
-> > index 3c60f1eaca61..cbca6500848e 100644
-> > --- a/fs/mnt_idmapping.c
-> > +++ b/fs/mnt_idmapping.c
-> > @@ -32,6 +32,15 @@ struct mnt_idmap nop_mnt_idmap = {
-> >  };
-> >  EXPORT_SYMBOL_GPL(nop_mnt_idmap);
-> >  
-> > +/*
-> > + * Carries the invalid idmapping of a full 0-4294967295 {g,u}id range.
-> > + * This means that all {g,u}ids are mapped to INVALID_VFS{G,U}ID.
-> > + */
-> > +struct mnt_idmap invalid_mnt_idmap = {
-> > +	.count	= REFCOUNT_INIT(1),
-> > +};
-> > +EXPORT_SYMBOL_GPL(invalid_mnt_idmap);
-> > +
-> >  /**
-> >   * initial_idmapping - check whether this is the initial mapping
-> >   * @ns: idmapping to check
-> > @@ -75,6 +84,8 @@ vfsuid_t make_vfsuid(struct mnt_idmap *idmap,
-> >  
-> >  	if (idmap == &nop_mnt_idmap)
-> >  		return VFSUIDT_INIT(kuid);
-> > +	if (idmap == &invalid_mnt_idmap)
-> > +		return INVALID_VFSUID;
+On 8/13/24 17:02, Juri Lelli wrote:
+> Hi,
 > 
-> Could possibly deserve an:
+> On 13/08/24 15:43, Christian Loehle wrote:
+>> A couple of clarifications about the time units for the deadline
+>> parameters uncovered in the discussion around
+>> https://lore.kernel.org/lkml/3c726cf5-0c94-4cc6-aff0-a453d840d452@arm.com/
+>>
+>> While at it I changed the documentation example to chrt instead
+>> of the schedtool fork.
+>>
+>> No functional changes.
 > 
-> if (unlikely(idmap == &invalid_mnt_idmap))
-> 	return INVALID_VFSUID;
+> Looks good to me!
 > 
-> and technically I guess we could also do:
+> At least for docs/uapi,
 > 
-> if (likely(idmap == &nop_mnt_idmap))
-> 	return VFSUIDT_INIT(kuid);
-> 
-> but not that relevant for this patch.
+> Acked-by: Juri Lelli <juri.lelli@redhat.com>
 
-Forgot:
+(gentle ping)
+Peter, do you want to take {1,2} and Rafael {3,4}?
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+Thanks,
+Christian
 
