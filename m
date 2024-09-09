@@ -1,147 +1,137 @@
-Return-Path: <linux-kernel+bounces-320795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23BF971050
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:52:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8250971052
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CDB2B21EC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:52:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A502C282FB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE051B12DC;
-	Mon,  9 Sep 2024 07:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB401B013A;
+	Mon,  9 Sep 2024 07:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Zq6JXZ//"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sdc1ZcbQ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832DA1AF4D9;
-	Mon,  9 Sep 2024 07:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE061B012A;
+	Mon,  9 Sep 2024 07:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725868337; cv=none; b=J86bvj4H6zq+UeUvbcoIsugXo7gJt3+CZeOwPkeML8ki+7PiE+SKBliKU4YrPfIMHEXeTO5KquJSbI2tYBBI52GCkCFX8b8DxAYgiDyKDzW+bl3idQMSwoB/DUfxsoUsYQUrPNTdz2PcTrR8GYUlJrk3J3UFx2b41mZDStzDF2o=
+	t=1725868362; cv=none; b=aKtBIW6s95QBns5RyvcPkXhlENzzRL55IXmYvmg7yD8KpfbERI0DmjyRIDC3glJZXvry9NlURhVOO8cV+JW9OwpEj0BIs/JLz4FNoO7qe/23Fe12Br2J2PlKJbLUcM/zQfqu3WPpduKijnQP1F8BrP6jbZPOsvL2TXUsbORVCkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725868337; c=relaxed/simple;
-	bh=tYpdgaZCN0lmhTqQidVM517rCDCWKPWudibqWnwydI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hh1/prBYLk43uoaz2bmqoCV5Th/nDoO9kzinaCVpvh5usdH/kuBY8phJ1yignsZOpQktN4NL2exAVU3nUoBIXKA5PnWcgBPupZpFVa7opfUGpFuB8kDJYYNIPMoytyAqO3Mn0VpzEQbPSqDwAQ1kAvxbHYMhPwRK9uWp7Y/KLKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Zq6JXZ//; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 26DFA40005;
-	Mon,  9 Sep 2024 07:52:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725868327;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ryHecAjCKFHY5a39/P+GIvh5tYnxD8Fg8PfucobQxhs=;
-	b=Zq6JXZ//+adouwtwkw6boEPhyiUb2gfFl1RlA0RtXhCzJdYB5HfGK1TUuiPkVXECfEwRwo
-	5FksXPPXTfRR/GOVEhY+/BBte1UQQL25WwxYjwMs8hI6zh80c0qZ8lho8BBY9p/4i7aqGx
-	HVeByxhdV3V98xdhXabPHXeeVJJ+ojd/5b5xx4NhZ2xsZZaBgPbGmDkM7S5gBdiuQFAVn4
-	WF17yA5QBKYBiKqL8Q7+2YUgOIzQQwVr5fl42DKQM21/Muj8AIaUrastdmO0NdIpt/nGT+
-	dfkAHGEQdaTjvIEcerwNh6l4fmtvPPZrqc3P4P4ns6/jQPS79ay20fahDCDf3g==
-Date: Mon, 9 Sep 2024 09:52:03 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Andy Shevchenko
- <andy.shevchenko@gmail.com>, Simon Horman <horms@kernel.org>, Arnd Bergmann
- <arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel
- <p.zabel@pengutronix.de>, Lars Povlsen <lars.povlsen@microchip.com>, Steen
- Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon
- <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Rob Herring
- <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
- <clement.leger@bootlin.com>
-Subject: Re: [PATCH v5 3/8] mfd: syscon: Add reference counting and device
- managed support
-Message-ID: <20240909095203.3d6effdb@bootlin.com>
-In-Reply-To: <20240903180116.717a499b@bootlin.com>
-References: <20240808154658.247873-1-herve.codina@bootlin.com>
-	<20240808154658.247873-4-herve.codina@bootlin.com>
-	<20240903153839.GB6858@google.com>
-	<20240903180116.717a499b@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1725868362; c=relaxed/simple;
+	bh=BcuSQx643SHfhyrLiS2tq0Rnh9mIkchyToPZe+TkftI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Type:MIME-Version; b=Bf2XG3STwhfanAe4CT33f/aMtL76gqftq5HgnWQ3qEvHV0X+w5gxnYNsbqLSIbUqrlfT6Zp+d7t9voR827dSnWrph/0Z42oEIz6ETrw0MvtPv7JItoKPIPvBAAUBKkMEsu/fCdlQyHNtos97AFYCi0CcXz6oAdpVyBpDiSDsRy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sdc1ZcbQ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 488EGkuL028493;
+	Mon, 9 Sep 2024 07:52:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:in-reply-to:references:date:message-id
+	:content-type:mime-version; s=pp1; bh=moBXgB70de3lqjGc3xvwz3nwGd
+	M+kLX4K4e1CtqCfZ4=; b=sdc1ZcbQ/8Uu30BI3hll/ZZKmpbCvKSUaQBgtC4Oft
+	h0CbuIuk2EVJzTcp492wfWrPk+jbTSvpPq768JHxnPo5xBp4UsSRsmPXtNAPxLDU
+	4vRfRwV3AqB4MypjtDPSc9HjovscGDk95GuElNQxzX7ihpdQcNqbROwxKp4tV/Fo
+	YFDpniTP5gt7xwrD3pqXvXFo8oxDE903tv5OY1exvkteLz7QBzO3jAb6U3dnm/yB
+	WJ1BJDhtg7msCVnZNCfL+Ptm0r2LpLnWrhwk4BtUygvaVU7f7wHii6mBOUk/ponX
+	X/Z/XydQbXbkckwbVTi3IcBAUb3387hkOODAsvH1iKuw==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefy8dw6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 07:52:24 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4894XkfN027333;
+	Mon, 9 Sep 2024 07:52:23 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h3v2w2dr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 07:52:23 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4897qLQu22217104
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Sep 2024 07:52:21 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CBBDB2005A;
+	Mon,  9 Sep 2024 07:52:21 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A018320040;
+	Mon,  9 Sep 2024 07:52:21 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  9 Sep 2024 07:52:21 +0000 (GMT)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mark Rutland
+ <mark.rutland@arm.com>,
+        Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>,
+        Paul Walmsley
+ <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert
+ Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-csky@vger.kernel.org
+Subject: Re: [PATCH 0/7] add function arguments to ftrace
+In-Reply-To: <20240908222830.01a01b10d62d59ed73dcb676@kernel.org> (Masami
+	Hiramatsu's message of "Sun, 8 Sep 2024 22:28:30 +0900")
+References: <20240904065908.1009086-1-svens@linux.ibm.com>
+	<20240905111620.5211d9f8@gandalf.local.home>
+	<yt9dv7z9l2zp.fsf@linux.ibm.com>
+	<20240906100738.2526cffd@gandalf.local.home>
+	<20240908222830.01a01b10d62d59ed73dcb676@kernel.org>
+Date: Mon, 09 Sep 2024 09:52:21 +0200
+Message-ID: <yt9dh6ape022.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: jS8qGd1Kag-0cgWKKAQwQPih_Lh8MSWc
+X-Proofpoint-ORIG-GUID: jS8qGd1Kag-0cgWKKAQwQPih_Lh8MSWc
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-09_01,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=765 priorityscore=1501
+ adultscore=0 clxscore=1015 spamscore=0 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409090059
 
-Hi Lee, Arnd,
+Masami Hiramatsu (Google) <mhiramat@kernel.org> writes:
 
-On Tue, 3 Sep 2024 18:01:16 +0200
-Herve Codina <herve.codina@bootlin.com> wrote:
+> On Fri, 6 Sep 2024 10:07:38 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+>> On Fri, 06 Sep 2024 08:18:02 +0200
+>> Sven Schnelle <svens@linux.ibm.com> wrote:
+>> 
+>> 
+>> > One thing i learned after submitting the series is that struct
+>> > ftrace_regs depends on CONFIG_FUNCTION_TRACER, so it cannot be used
+>> > with the graph tracer.
+>
+> Yeah, this is solved by my series [1].
+>
+> [1] https://patchwork.kernel.org/project/linux-trace-kernel/patch/172398532480.293426.13232399076477198126.stgit@devnote2/
+>
+> So I think this series is easier to apply after my series, which
+> passes fgraph_regs in return handler.
 
-> Hi Lee,
-> 
-> On Tue, 3 Sep 2024 16:38:39 +0100
-> Lee Jones <lee@kernel.org> wrote:
-> 
-> > On Thu, 08 Aug 2024, Herve Codina wrote:
-> >   
-> > > From: Clément Léger <clement.leger@bootlin.com>
-> > > 
-> > > Syscon releasing is not supported.
-> > > Without release function, unbinding a driver that uses syscon whether
-> > > explicitly or due to a module removal left the used syscon in a in-use
-> > > state.
-> > > 
-> > > For instance a syscon_node_to_regmap() call from a consumer retrieves a
-> > > syscon regmap instance. Internally, syscon_node_to_regmap() can create
-> > > syscon instance and add it to the existing syscon list. No API is
-> > > available to release this syscon instance, remove it from the list and
-> > > free it when it is not used anymore.
-> > > 
-> > > Introduce reference counting in syscon in order to keep track of syscon
-> > > usage using syscon_{get,put}() and add a device managed version of
-> > > syscon_regmap_lookup_by_phandle(), to automatically release the syscon
-> > > instance on the consumer removal.
-> > > 
-> > > Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > > ---
-> > >  drivers/mfd/syscon.c       | 138 ++++++++++++++++++++++++++++++++++---
-> > >  include/linux/mfd/syscon.h |  16 +++++
-> > >  2 files changed, 144 insertions(+), 10 deletions(-)    
-> > 
-> > This doesn't look very popular.
-> > 
-> > What are the potential ramifications for existing users?
-> >   
-> 
-> Existing user don't use devm_syscon_regmap_lookup_by_phandle() nor
-> syscon_put_regmap().
-> 
-> So refcount is incremented but never decremented. syscon is never
-> released. Exactly the same as current implementation.
-> Nothing change for existing users.
-> 
-> Best regards,
-> Hervé
+Thanks, i'll rebase my changes on top of your patches then.
 
-I hope I answered to Lee's question related to possible impacts on
-existing drivers.
-
-Is there anything else that blocks this patch from being applied ?
-
-Best regards,
-Hervé
+Regards
+Sven
 
