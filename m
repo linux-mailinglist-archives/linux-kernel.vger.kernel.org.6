@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-320485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E4E970B2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:22:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33C9970B2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D05EB2115A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:22:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75D65281E80
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEFBBA42;
-	Mon,  9 Sep 2024 01:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33484D53C;
+	Mon,  9 Sep 2024 01:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TNCy29nJ"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElRQWZXu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE046C8D7
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 01:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7474BAD55
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 01:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725844948; cv=none; b=soymYmvFOnze3fVECSpvTQDWYs0jc/w30AujSTN0Mhs4QiVe1W5BpJ1hOUnZhFGsUJCEFgL+vQJLBoO0Ggo0uxzLSJ3WbTFGZsGk7XTC32oehMZO9o7Ll+WJG0hHNJ5N+0+YFw91n+kFUKROaUi5xVvpEcJOrWQUU+S5Vb32SBk=
+	t=1725845076; cv=none; b=FpFUV2VV8RuSL7zSPMSro7UQ5dmpNRCmwkHG5A8bbJr6eYU2TWIMYdqVwPmMYZYEYTKa0MOjnR2OKwQ3TUzB/xtVvdkdDovquHzy0DFTNtcWc8klLLDT28AIjgPxRf7fG5tfIa5vdlM44ibqoQ8PFYgWL50BDcfU3JSLqmtNflY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725844948; c=relaxed/simple;
-	bh=b1PmgMcpXLm/0Ne9+AZSQIYWcJPcEsIyGh1cxP/mInM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A9G6jFTtvQGNkjGLutAn1FY0jk8X2IWyBhWykURHhXIPFsJZDaS3PTStW4+XBAsVKO6vOUTerjun9eLpX7mnBOJi3gYLVVWE7Ubv3VZs3lXSuBluPa4zPA/gn0z9N3yXiPgvEU12qne/4kOasR1jlLqv3x4Th6ZZgo7QIrLRDMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TNCy29nJ; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725844937; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=80WCtbj8jM9c9NM49mgaWLX8tfT9emUWMYbHRmGHerc=;
-	b=TNCy29nJ1pK1Tgs6VpOwBhZLHb+Fy+NNnMT7vhBb6qCqGIqxVWI49saUWJEosm4fOIq5YoD+0POcYBNUx/bCB9Iew8XYMSs29Ch3m3hwlQfgNsp37rq0ZjEAKZ1mQBDi7k+hYXkl4HOBoRKPXH3TEva/MbeyrJGT9UPC+MrLeqg=
-Received: from 30.74.144.122(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WEVg-uL_1725844936)
-          by smtp.aliyun-inc.com;
-          Mon, 09 Sep 2024 09:22:17 +0800
-Message-ID: <e8761f5a-3a7a-4ca5-9e38-325a0d2d2386@linux.alibaba.com>
-Date: Mon, 9 Sep 2024 09:22:15 +0800
+	s=arc-20240116; t=1725845076; c=relaxed/simple;
+	bh=YKZhEHCGlF9dx65kfivouqFr+WTDDU0a6y9vWlyBKak=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YeX75IBNfwKZplDgv5UirEfvWIT9U+3NzA1oImxSltsbgR7psITHY6liObTwTnzHpnyATPQ+5iik8WBxwEUTd+5uqbCZWPxtwjKnjD5Tz383Ruja0AGWwdJ+ldyMwHLBgTjo9Rt+q3imR7mKWv5MD6DEs/3jEUB3+rh9dI2cZ50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElRQWZXu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B472FC4CEC3;
+	Mon,  9 Sep 2024 01:24:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725845076;
+	bh=YKZhEHCGlF9dx65kfivouqFr+WTDDU0a6y9vWlyBKak=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=ElRQWZXuugvLvlzhgE0HKVu6mTvfRPdkx94zxo6fzReUhgW8M0eRUoMNvQPVy4glc
+	 vUjQrjjjQY/C2hOKv/CmUSHcqlVRABGdp8gPjuVhWwsWDTbDm+C9tkzjMJvXruOA87
+	 BODIYnI3vIi+uxat7XSLwniX7xZR09DXHl2i2V0kSB+6sVCRh/cL28tePwYElqHS+Y
+	 l923Xx8oAiDPyR+d0bquLuCelXzYXve5O9khA+4J17UfdJSOPt37G30FnZ/R8/Dbso
+	 3et3KFXejdQnKui+nL89rGKs13z0cXMRETdiGDbfm519BrFgQKqRv79kHq4OUynrkC
+	 HSVN87Db0vnKA==
+Message-ID: <55f6fdba-f505-4557-8074-6bfa942c275d@kernel.org>
+Date: Mon, 9 Sep 2024 09:24:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,143 +49,212 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: shmem: fix khugepaged activation policy for shmem
-To: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, david@redhat.com, 21cnbao@gmail.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <7c796904528e21152ba5aa639e963e0ae45b7040.1725600217.git.baolin.wang@linux.alibaba.com>
- <58cf63c1-25e5-4958-96cb-a9d65390ca3e@arm.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <58cf63c1-25e5-4958-96cb-a9d65390ca3e@arm.com>
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [RFC PATCH] f2fs: don't set SBI_QUOTA_NEED_REPAIR flag
+ if receive SIGKILL
+To: wangzijie <wangzijie1@honor.com>
+References: <973e075b-7044-4448-9cd0-45b5a1ad1382@kernel.org>
+ <20240908041202.2272053-1-wangzijie1@honor.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240908041202.2272053-1-wangzijie1@honor.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-
-On 2024/9/6 16:55, Ryan Roberts wrote:
-> On 06/09/2024 06:28, Baolin Wang wrote:
->> Shmem has a separate interface (different from anonymous pages) to control
->> huge page allocation, that means shmem THP can be enabled while anonymous
->> THP is disabled. However, in this case, khugepaged will not start to collapse
->> shmem THP, which is unreasonable.
+On 2024/9/8 12:12, wangzijie wrote:
+>>> From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+>>>
+>>>> On 2024/8/27 14:22, wangzijie wrote:
+>>>>> Thread A
+>>>>> -dquot_initialize
+>>>>>    -dqget
+>>>>>     -f2fs_dquot_acquire
+>>>>>      -v2_read_dquot
+>>>>>       -qtree_read_dquot
+>>>>>        -find_tree_dqentry
+>>>>>         -f2fs_quota_read
+>>>>>          -read_cache_page_gfp
+>>>>>           -do_read_cache_folio
+>>>>>            -fiemap_read_folio
+>>>>>             -folio_wait_locked_killable
+>>>>>              -receive SIGKILL : return -EINTR
+>>>>>          -set SBI_QUOTA_NEED_REPAIR
+>>>>>      -set SBI_QUOTA_NEED_REPAIR
+>>>>>
+>>>>> When calling read_cache_page_gfp in quota read, thread may receive SIGKILL and
+>>>>> set SBI_QUOTA_NEED_REPAIR, should we set SBI_QUOTA_NEED_REPAIR in this error path?
+>>>>
+>>>> f2fs_quota_read() can be called in a lot of contexts, can we just ignore -EINTR
+>>>> for f2fs_dquot_initialize() case?
+>>>>
+>>>> Thanks,
+>>>
+>>> Yes, in many contexts f2fs_quota_read() can be called and may return -EINTR, we need to ignore this errno for more cases. If we need to do so, I will check it and resend patch.
+>>> Or do you have other suggestions to avoid unnecessary SBI_QUOTA_NEED_REPAIR flag set?
 >>
->> To fix this issue, we should call start_stop_khugepaged() to activate or
->> deactivate the khugepaged thread when setting shmem mTHP interfaces.
->> Moreover, add a new helper shmem_hpage_pmd_enabled() to help to check
->> whether shmem THP is enabled, which will determine if khugepaged should
->> be activated.
+>> How about this?
 >>
->> Reported-by: Ryan Roberts <ryan.roberts@arm.com>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 >> ---
->> Hi Ryan,
+>>   fs/f2fs/f2fs.h  |  1 +
+>>   fs/f2fs/inode.c |  3 +--
+>>   fs/f2fs/super.c | 17 +++++++++++++----
+>>   3 files changed, 15 insertions(+), 6 deletions(-)
 >>
->> I remember we discussed the shmem khugepaged activation issue before, but
->> I haven’t seen any follow-up patches to fix it. Recently, I am trying to
->> fix the shmem mTHP collapse issue in the series [1], and I also addressed
->> this activation issue. Please correct me if you have a better idea. Thanks.
-> 
-> Thanks for for sorting this - it looks like a good approach to me! Just a couple
-> of nits. Regardless:
-> 
-> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-
-Thanks for reviewing.
-
-> 
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index dfed1974eda5..a1704a19dfe9 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -810,6 +810,7 @@ enum {
+>>   	FI_ATOMIC_DIRTIED,	/* indicate atomic file is dirtied */
+>>   	FI_ATOMIC_REPLACE,	/* indicate atomic replace */
+>>   	FI_OPENED_FILE,		/* indicate file has been opened */
+>> +	FI_INIT_DQUOT,		/* indicate it's initializing dquot */
+>>   	FI_MAX,			/* max flag, never be used */
+>>   };
 >>
->> [1] https://lore.kernel.org/all/cover.1724140601.git.baolin.wang@linux.alibaba.com/T/#u
->> ---
->>   include/linux/shmem_fs.h |  6 ++++++
->>   mm/khugepaged.c          |  2 ++
->>   mm/shmem.c               | 29 +++++++++++++++++++++++++++--
->>   3 files changed, 35 insertions(+), 2 deletions(-)
+>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>> index 008f01348afa..b1dbaeda306f 100644
+>> --- a/fs/f2fs/inode.c
+>> +++ b/fs/f2fs/inode.c
+>> @@ -827,8 +827,7 @@ void f2fs_evict_inode(struct inode *inode)
 >>
->> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
->> index 515a9a6a3c6f..ee6635052383 100644
->> --- a/include/linux/shmem_fs.h
->> +++ b/include/linux/shmem_fs.h
->> @@ -114,6 +114,7 @@ int shmem_unuse(unsigned int type);
->>   unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>   				struct vm_area_struct *vma, pgoff_t index,
->>   				loff_t write_end, bool shmem_huge_force);
->> +bool shmem_hpage_pmd_enabled(void);
->>   #else
->>   static inline unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>   				struct vm_area_struct *vma, pgoff_t index,
->> @@ -121,6 +122,11 @@ static inline unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>>   	err = f2fs_dquot_initialize(inode);
+>>   	if (err) {
+>> -		if (err != -EINTR)
+>> -			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+>> +		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+>>   		err = 0;
+>>   	}
+>>
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 8e29aba4b7a4..e774bdf875b2 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -2644,8 +2644,11 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+>>   			if (PTR_ERR(page) == -ENOMEM) {
+>>   				memalloc_retry_wait(GFP_NOFS);
+>>   				goto repeat;
+>> -			} else if (PTR_ERR(page) != -EINTR)
+>> -				set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>> +			} else if (PTR_ERR(page) == -EINTR &&
+>> +				is_inode_flag_set(inode, FI_INIT_DQUOT)) {
+>> +				return PTR_ERR(page);
+>> +			}
+>> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>>   			return PTR_ERR(page);
+>>   		}
+>>
+>> @@ -2721,10 +2724,16 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+>>
+>>   int f2fs_dquot_initialize(struct inode *inode)
 >>   {
->>   	return 0;
->>   }
+>> +	int ret;
 >> +
->> +static inline bool shmem_hpage_pmd_enabled(void)
->> +{
->> +	return false;
->> +}
->>   #endif
->>   
->>   #ifdef CONFIG_SHMEM
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index f9c39898eaff..caf10096d4d1 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -430,6 +430,8 @@ static bool hugepage_pmd_enabled(void)
->>   	if (test_bit(PMD_ORDER, &huge_anon_orders_inherit) &&
->>   	    hugepage_global_enabled())
->>   		return true;
->> +	if (shmem_hpage_pmd_enabled())
->> +		return true;
-> 
-> nit: There is a comment at the top of this function, perhaps that could be
-> extended to cover shmem too?
-
-Sure. How about the following changes?
-
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 945c0f2aff81..b0ac46ae561b 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -416,9 +416,11 @@ static inline int 
-hpage_collapse_test_exit_or_disable(struct mm_struct *mm)
-  static bool hugepage_pmd_enabled(void)
-  {
-         /*
--        * We cover both the anon and the file-backed case here; file-backed
-+        * We cover the anon, shmem and the file-backed case here; 
-file-backed
-          * hugepages, when configured in, are determined by the global 
-control.
-          * Anon pmd-sized hugepages are determined by the pmd-size control.
-+        * Shmem pmd-sized hugepages are also determined by its pmd-size 
-control,
-+        * except when the global shmem_huge is set to SHMEM_HUGE_DENY.
-          */
-         if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
-             hugepage_global_enabled())
-
->>   	return false;
+>>   	if (time_to_inject(F2FS_I_SB(inode), FAULT_DQUOT_INIT))
+>>   		return -ESRCH;
+>>
+>> -	return dquot_initialize(inode);
+>> +	set_inode_flag(inode, FI_INIT_DQUOT);
+>> +	ret = dquot_initialize(inode);
+>> +	clear_inode_flag(inode, FI_INIT_DQUOT);
+>> +
+>> +	return ret;
 >>   }
->>   
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index 74f093d88c78..d7c342ae2b37 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -1653,6 +1653,23 @@ static gfp_t limit_gfp_mask(gfp_t huge_gfp, gfp_t limit_gfp)
->>   }
->>   
->>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +bool shmem_hpage_pmd_enabled(void)
->> +{
->> +	if (shmem_huge == SHMEM_HUGE_DENY)
->> +		return false;
->> +	if (test_bit(HPAGE_PMD_ORDER, &huge_shmem_orders_always))
+>>
+>>   static struct dquot __rcu **f2fs_get_dquots(struct inode *inode)
+>> @@ -3064,7 +3073,7 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
+>>
+>>   	f2fs_down_read(&sbi->quota_sem);
+>>   	ret = dquot_acquire(dquot);
+>> -	if (ret < 0 && ret != -EINTR)
+>> +	if (ret < 0)
+>>   		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+>>   	f2fs_up_read(&sbi->quota_sem);
+>>   	return ret;
+>> -- 
+>> 2.40.1
 > 
-> question: When is it correct to use HPAGE_PMD_ORDER vs PMD_ORDER? I tend to use
-> PMD_ORDER (in hugepage_pmd_enabled() for example).
+> Hi, Chao
+> If we dont't ignore -EINTR in f2fs_dquot_acquire(), we will still set SBI_QUOTA_NEED_REPAIR flag
+> in f2fs_dquot_acquire() if f2fs_quota_read return -EINTR. I think we need more cases in addition to
+> dquot initializing and I will check it again.
 
-In shmem, the HPAGE_PMD_* related macros are all controlled by 
-CONFIG_TRANSPARENT_HUGEPAGE, and at this point, HPAGE_PMD_ORDER and 
-PMD_ORDER are equal. I would like to keep consistency in the shmem code 
-by using the HPAGE_PMD_* related macros.
+Maybe we can cover this case w/ below diff?
+
+---
+  fs/f2fs/super.c | 3 ++-
+  1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index e774bdf875b2..7fc970121a3f 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3073,7 +3073,8 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
+
+  	f2fs_down_read(&sbi->quota_sem);
+  	ret = dquot_acquire(dquot);
+-	if (ret < 0)
++	if (ret < 0 &&
++		(ret != -EINTR || !is_inode_flag_set(inode, FI_INIT_DQUOT)))
+  		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+  	f2fs_up_read(&sbi->quota_sem);
+  	return ret;
+-- 
+2.40.1
+
+Thanks,
+
+> Thank you for your suggestion!
+> 
+>>>
+>>> Thank you for review.
+>>>
+>>>>>
+>>>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
+>>>>> ---
+>>>>>    fs/f2fs/inode.c | 3 ++-
+>>>>>    fs/f2fs/super.c | 6 +++---
+>>>>>    2 files changed, 5 insertions(+), 4 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>>>>> index ed629dabb..2af98e2b7 100644
+>>>>> --- a/fs/f2fs/inode.c
+>>>>> +++ b/fs/f2fs/inode.c
+>>>>> @@ -837,8 +837,9 @@ void f2fs_evict_inode(struct inode *inode)
+>>>>>        err = f2fs_dquot_initialize(inode);
+>>>>>        if (err) {
+>>>>> +        if (err != -EINTR)
+>>>>> +            set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+>>>>>            err = 0;
+>>>>> -        set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+>>>>>        }
+>>>>>        f2fs_remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
+>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>>> index 1f1b3647a..f99a36ff3 100644
+>>>>> --- a/fs/f2fs/super.c
+>>>>> +++ b/fs/f2fs/super.c
+>>>>> @@ -2650,8 +2650,8 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+>>>>>                if (PTR_ERR(page) == -ENOMEM) {
+>>>>>                    memalloc_retry_wait(GFP_NOFS);
+>>>>>                    goto repeat;
+>>>>> -            }
+>>>>> -            set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>>>>> +            } else if (PTR_ERR(page) != -EINTR)
+>>>>> +                set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>>>>>                return PTR_ERR(page);
+>>>>>            }
+>>>>> @@ -3070,7 +3070,7 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
+>>>>>        f2fs_down_read(&sbi->quota_sem);
+>>>>>        ret = dquot_acquire(dquot);
+>>>>> -    if (ret < 0)
+>>>>> +    if (ret < 0 && ret != -EINTR)
+>>>>>            set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+>>>>>        f2fs_up_read(&sbi->quota_sem);
+>>>>>        return ret;
+>>>
+>>>
+> 
+> 
+
 
