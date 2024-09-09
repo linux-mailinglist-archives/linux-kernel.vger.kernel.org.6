@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-321706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60A7971E5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:45:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA307971E60
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D21A21C2328F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:45:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A6928506F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A874E4963A;
-	Mon,  9 Sep 2024 15:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A83130495;
+	Mon,  9 Sep 2024 15:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AhzO145G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oovaTBbY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0662D611;
-	Mon,  9 Sep 2024 15:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8F25589C;
+	Mon,  9 Sep 2024 15:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725896718; cv=none; b=J8yApYo4GgtjZVbWuv1I8BL51q1KNbXvWN+Id8mA9aEXOe6FSwlhbOr+zJaCiWWJVJkMo6JxIOYYONMBkp9JhNva/iUG2HfX7vJELfRZGM8lcdOShJVaE2I/UU1+X3lp+uyS6CjsOpHHxrvCAM+vOIhgUdmjTJwQl+Hd7U9TI/A=
+	t=1725896719; cv=none; b=LChbgHYRXAwL7BJ0zl83IfFYt1obh06AViYMmKzuSmKHvldC1b3OBfOtHDuW6fzH9Kni9DUKgEmuGD3aluDvRFIWl44ac89b9+c1UcV5413U3BP+FhdiP1FtHK8dLqKjwf3/VYayrH7flaXPqANJFtU4vvk9geEop5+M9s6qa0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725896718; c=relaxed/simple;
-	bh=kytQjnfXJeBElN05Ib1j89/8KJHIp2OL0uZJWxHGeDw=;
+	s=arc-20240116; t=1725896719; c=relaxed/simple;
+	bh=Ur507D/9IZAyiU6XEqp8riPXsLXhfJupKj8cr1+m2pE=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=JwLTyhptZsw0ePDm4EBgM2dFiY+Rp7uspH7VaDUu1nEelWle5epU6ggFF95q3ESCUzfi/EsXB9++0J0bD7/TGOtyBaUK/geYNumu8ngr0I1p5Ngkl+C5ILgcy1teN3ZP4/QFcfvRq3Cqk/5PHIzzaqG+Ra1tysag3l/Ho4RI01Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AhzO145G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6849EC4CEC5;
-	Mon,  9 Sep 2024 15:45:17 +0000 (UTC)
+	 Message-Id:Subject; b=KkMki/W/f+wuG+RczZAoFnT38Wc1apJANjPVI1LzEk4E/UGGXv67Inbmaw4Ns4YRTyly5MBgRIE2x2/glr1Kg90TJBKaxN2nU+3ajjvDUA8dyb4Vui6/gRE1SkxFJGD493Kgkmd0C/D4u01NtzWgHkyxPrH3jFSOJwt6TaLZlS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oovaTBbY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE5CC4CEC7;
+	Mon,  9 Sep 2024 15:45:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725896717;
-	bh=kytQjnfXJeBElN05Ib1j89/8KJHIp2OL0uZJWxHGeDw=;
+	s=k20201202; t=1725896718;
+	bh=Ur507D/9IZAyiU6XEqp8riPXsLXhfJupKj8cr1+m2pE=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=AhzO145GeU9vEI1TCJQVW51z6K3/qmN2HpusMWOLLwm84DA+VJgqVvUhDIFA7jb1J
-	 P2b+AMPmqCdfezi4SkIHPeAoxa1t6LcAe+eMrgw08Oj9YzBab9ZQH7ZsCSZSS+qG+S
-	 7aoafYN4pXQ5/QBFZPX2sNn1+aPobBrIRhLN5o/uqVZqJRM3n8sdDIA6fCes+BTltP
-	 t8P8jMIogVRhoYF/+PL/WLqR1yo5D3+sA6JWX1g4Gm8hobZl/ba43S0AQ/nMQyS2vs
-	 IZxWx33IOpvgT90nJqiRO2vel9Z7VRgQXzDVQTMjz2O5uHLEdp7fr9tymP3AuWB/0e
-	 ws+pWRbV8xKHQ==
-Date: Mon, 09 Sep 2024 10:45:16 -0500
+	b=oovaTBbY3CzWuyUKTX786FZQwx2gT3U5PUPQ9XoK0h08O2YTXJ9fnHsmfPCaZlAvZ
+	 Ovw5vm45HMw/seE0fw/A8j007TWa6qotq6HeP3Rb2P/C/FwSv3/fiQzWwq4YAcfmYo
+	 oJeC53COu7aI84MQHUDwM72zbF7EOH9B4M3BtXrNFifVjKEbu4GCTC0h5zr/G2ltaj
+	 9jvC2R8obKb1i1FGs6HGAXwp5MR5a3RAZePIWNni2pmmoNxqyJeWrR+2yHFQD0iQwo
+	 eLptuClzZPUkU9B9kbCOry2utj2hjnKdbGfPzCIlh441+GytAHNAwHCEKdEvHHm1ZK
+	 RIPKEBGS8EsEg==
+Date: Mon, 09 Sep 2024 10:45:17 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,56 +50,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
-Cc: linux-mediatek@lists.infradead.org, 
- angelogioacchino.delregno@collabora.com, devicetree@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, krzk+dt@kernel.org, knoxchiou@google.com, 
- conor+dt@kernel.org, linux-kernel@vger.kernel.org, hsinyi@google.com, 
- matthias.bgg@gmail.com, hsinyi@chromium.org
-In-Reply-To: <20240909023148.1677936-1-cengjianeng@huaqin.corp-partner.google.com>
-References: <CAJMQK-imYrDTuycVzQxkfbkZuHehE8uwc+qS2w=UDShETsBvEw@mail.gmail.com>
- <20240909023148.1677936-1-cengjianeng@huaqin.corp-partner.google.com>
-Message-Id: <172589660972.199140.1860414842334878111.robh@kernel.org>
-Subject: Re: [PATCH v5 0/2] arm64: dts: mediatek: Add MT8186 Ponyta
+To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, devicetree@vger.kernel.org, 
+ Joel Stanley <joel@jms.id.au>, Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, linux-aspeed@lists.ozlabs.org, 
+ linux-arm-kernel@lists.infradead.org, patrick@stwcx.xyz, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240909105420.441607-1-Delphine_CC_Chiu@wiwynn.com>
+References: <20240909105420.441607-1-Delphine_CC_Chiu@wiwynn.com>
+Message-Id: <172589661042.199175.14634437656639420015.robh@kernel.org>
+Subject: Re: [PATCH v18 0/3] Add i2c-mux and eeprom devices for Meta
+ Yosemite4
 
 
-On Mon, 09 Sep 2024 10:31:46 +0800, Jianeng Ceng wrote:
-> This is v5 of the MT8186 Chromebook device tree series.
-> ---
-> Changes in v5:
-> - PATCH 1/2: Remove sku2147483647.
-> - PATCH 2/2: Remove sku2147483647.
-> - Link to v4:https://lore.kernel.org/all/20240906085739.1322676-1-cengjianeng@huaqin.corp-partner.google.com/
+On Mon, 09 Sep 2024 18:54:15 +0800, Delphine CC Chiu wrote:
+> From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
 > 
-> Changes in v4:
-> - PATCH 1/2: Add more info for Ponyta custom label in commit.
-> - Link to v3:https://lore.kernel.org/all/20240904081501.2060933-1-cengjianeng@huaqin.corp-partner.google.com/
+> Changelog:
+>   - v18
+>     - Fix warnings for reg_format reporting by dts checking tool.
+>   - v17
+>     - Add SoB for the patches.
+>   - v16
+>     - Reorganized the patches.
+>     - Add i2c-mux and resolve the dt-validate errors.
+>     - Revise Yosemite 4 devicetree for devices behind i2c-mux.
+>     - Add mctp config and sensors for NIC after i2c-mux on bus 15.
+>     - Add fan led config for BMC to control according the status of fan.
+>   - v15
+>     - Add ISL28022 support
+>   - v14
+>     - Add SQ52205 support
+>     - Add GPIO I6 pin
+>   - v13
+>     - Add RTQ6056-support-on-bus-11
+>   - v12
+>     - Fix GPIO linename typo and add missing GPIO pin initial state.
+>   - v11
+>     - Revise all GPIO line name with bottom line
+>   - v10
+>     - adjust mgm cpld ioexp bus
+>     - add GPIOO7 name
+>     - remove mctp driver
+>   - v9
+>     - add XDP710 support
+>     - add RTQ6056 support
+>     - add MP5990 support
+>   - v8
+>     - add fan led config
+>   - v7
+>     - Revise pca9506 i2c address
+>   - v6
+>     - Revise i2c duty-cycle for meeting 400khz spec
+>   - v5
+>     - Support medusa board adc sensors
+>     - support NIC eeprom
+>   - v4
+>     - Re-format gpio linename
+>     - Revise i2c device node names
+>     - Split patches by logic changes
+>   - v3
+>     - Correct patch for revising gpio name
+>   - v2
+>     - Revise mx31790 fan tach config
+>     - Add mctp config for NIC
+>     - Support mux to cpld
+>     - Revise gpio name
+>   - v1
+>     - Add gpio and eeprom behind i2c-mux
+>     - Remove redundant idle-state setting for i2c-mux
+>     - Enable adc 15, wdt2,spi gpio for yosemite4 use
+>     - Revise quad mode to dual mode to avoid WP pin influnece the SPI
+>     - Revise power sensor adm1281 for yosemite4 schematic change
+>     - Add gpio pca9506 I/O expander for yosemite4 use
+>     - remove space for adm1272 compatible
+>     - enable interrupt setting for pca9555
+>     - add eeprom for yosemite4 medusa board/BSM use
+>     - remove temperature sensor for yosemite4 schematic change
+>     - add power sensor for power module reading
+>     - Revise adc128d818 adc mode for yosemite4 schematic change
+>     - Revise ina233 for yosemite4 schematic change
+>     - Remove idle state setting for yosemite4 NIC connection
+>     - Initialize bmc gpio state
+>     - Revise mx31790 fan tach config
+>     - Add mctp config for NIC
+>     - Support mux to cpld
+>     - Revise gpio name
 > 
-> Changes in v3:
-> - PATCH 0/2: Add the modify records.
-> - PATCH 1/2: Modify lable to label.
-> - Link to v2:https://lore.kernel.org/all/20240903061603.3007289-1-cengjianeng@huaqin.corp-partner.google.com/
+> Ricky CX Wu (3):
+>   ARM: dts: aspeed: yosemite4: Revise i2c-mux devices
+>   ARM: dts: aspeed: yosemite4: add mctp config and sensors for NIC
+>   ARM: dts: aspeed: yosemite4: add fan led config
 > 
-> Changes in v2:
-> - PATCH 2/2: Modify the dtb name without rev2.
-> - Link to v1:https://lore.kernel.org/all/20240902125502.1844374-1-cengjianeng@huaqin.corp-partner.google.com/
-> 
-> Jianeng Ceng (2):
->   dt-bindings: arm: mediatek: Add MT8186 Ponyta Chromebook
->   arm64: dts: mediatek: Add MT8186 Ponyta Chromebooks
-> 
->  .../devicetree/bindings/arm/mediatek.yaml     | 10 +++++
->  arch/arm64/boot/dts/mediatek/Makefile         |  2 +
->  .../mediatek/mt8186-corsola-ponyta-sku0.dts   | 23 ++++++++++
->  .../mediatek/mt8186-corsola-ponyta-sku1.dts   | 27 ++++++++++++
->  .../dts/mediatek/mt8186-corsola-ponyta.dtsi   | 44 +++++++++++++++++++
->  5 files changed, 106 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi
+>  .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 706 ++++++++++++++++--
+>  1 file changed, 660 insertions(+), 46 deletions(-)
 > 
 > --
-> 2.34.1
+> 2.25.1
 > 
 > 
 > 
@@ -119,30 +167,22 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y mediatek/mt8186-corsola-ponyta-sku0.dtb mediatek/mt8186-corsola-ponyta-sku1.dtb' for 20240909023148.1677936-1-cengjianeng@huaqin.corp-partner.google.com:
+New warnings running 'make CHECK_DTBS=y aspeed/aspeed-bmc-facebook-yosemite4.dtb' for 20240909105420.441607-1-Delphine_CC_Chiu@wiwynn.com:
 
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic: failed to match any schema with compatible: ['mediatek,mt6366', 'mediatek,mt6358']
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic: failed to match any schema with compatible: ['mediatek,mt6366', 'mediatek,mt6358']
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic: failed to match any schema with compatible: ['mediatek,mt6366', 'mediatek,mt6358']
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic: failed to match any schema with compatible: ['mediatek,mt6366', 'mediatek,mt6358']
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic/codec: failed to match any schema with compatible: ['mediatek,mt6366-sound', 'mediatek,mt6358-sound']
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic/codec: failed to match any schema with compatible: ['mediatek,mt6366-sound', 'mediatek,mt6358-sound']
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic/codec: failed to match any schema with compatible: ['mediatek,mt6366-sound', 'mediatek,mt6358-sound']
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic/codec: failed to match any schema with compatible: ['mediatek,mt6366-sound', 'mediatek,mt6358-sound']
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic/rtc: failed to match any schema with compatible: ['mediatek,mt6366-rtc', 'mediatek,mt6358-rtc']
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic/rtc: failed to match any schema with compatible: ['mediatek,mt6366-rtc', 'mediatek,mt6358-rtc']
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic/rtc: failed to match any schema with compatible: ['mediatek,mt6366-rtc', 'mediatek,mt6358-rtc']
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic/rtc: failed to match any schema with compatible: ['mediatek,mt6366-rtc', 'mediatek,mt6358-rtc']
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: touchpad@2c: 'vcc-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/input/hid-over-i2c.yaml
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: dp-bridge@5c: 'extcon' is a required property
-	from schema $id: http://devicetree.org/schemas/display/bridge/ite,it6505.yaml
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: dp-bridge@5c: 'extcon' is a required property
-	from schema $id: http://devicetree.org/schemas/display/bridge/ite,it6505.yaml
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: sound: 'model' is a required property
-	from schema $id: http://devicetree.org/schemas/sound/mt8186-mt6366-rt1019-rt5682s.yaml
-arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: sound: 'model' is a required property
-	from schema $id: http://devicetree.org/schemas/sound/mt8186-mt6366-rt1019-rt5682s.yaml
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: pwm@20: '#address-cells', '#size-cells' do not match any of the regexes: '^fan-[0-9]+$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/hwmon/maxim,max31790.yaml
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: pwm@2f: '#address-cells', '#size-cells' do not match any of the regexes: '^fan-[0-9]+$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/hwmon/maxim,max31790.yaml
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/apb/bus@1e78a000/i2c@780/i2c-mux@74/i2c@0/gpio@61: failed to match any schema with compatible: ['nxp,pca9552']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: pwm@20: '#address-cells', '#size-cells' do not match any of the regexes: '^fan-[0-9]+$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/hwmon/maxim,max31790.yaml
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: pwm@2f: '#address-cells', '#size-cells' do not match any of the regexes: '^fan-[0-9]+$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/hwmon/maxim,max31790.yaml
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/apb/bus@1e78a000/i2c@780/i2c-mux@74/i2c@1/gpio@61: failed to match any schema with compatible: ['nxp,pca9552']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/apb/bus@1e78a000/i2c@800/i2c-mux@72/i2c@0/temperature-sensor@3c: failed to match any schema with compatible: ['smsc,emc1403']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/apb/bus@1e78a000/i2c@800/i2c-mux@72/i2c@1/temperature-sensor@3c: failed to match any schema with compatible: ['smsc,emc1403']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/apb/bus@1e78a000/i2c@800/i2c-mux@72/i2c@2/temperature-sensor@3c: failed to match any schema with compatible: ['smsc,emc1403']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/apb/bus@1e78a000/i2c@800/i2c-mux@72/i2c@3/temperature-sensor@3c: failed to match any schema with compatible: ['smsc,emc1403']
 
 
 
