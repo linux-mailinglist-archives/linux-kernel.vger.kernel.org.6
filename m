@@ -1,142 +1,101 @@
-Return-Path: <linux-kernel+bounces-321620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8092971D00
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:46:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 059FF971D0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D48231C2325D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:46:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B75CB284004
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF0B1BB693;
-	Mon,  9 Sep 2024 14:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829E71BB6BC;
+	Mon,  9 Sep 2024 14:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2IBQ5/u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hGSUexYc"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDB5B641;
-	Mon,  9 Sep 2024 14:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FCE1B81D8;
+	Mon,  9 Sep 2024 14:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725893207; cv=none; b=igTj/ZWhp9062AxLQsacZTQ9Kh+XSFpvgsJeehSuzNoP54lUxnA9dxkdfGJUGEsYzw8xW9Prx67tNlSCriobBYHNfqvyBD6GLyadujSw29NLGnaXmHE1yNHXH3nKzq9jIpbpbOLH2EBbK90PSFvNqtpj44YplUig7NmQ/PeCt3A=
+	t=1725893328; cv=none; b=GBaFv6vJA2Ovfjr07mohxoqZWIFNKKGajA8G3L2RD8mezbJNxQ6P4eANHmKH5iKRN3ALKV0Eh7JTOu5jrGSLn5fDZ2zvuhSpeVGXh/9Xd5ycWqqoq5X5HBbPEApwDUZv9Euiz/lRWsB26R2IvL0F9ynkJS7ftrB/wb5lqzdtZQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725893207; c=relaxed/simple;
-	bh=vt3/zY+w/72VdyeZwvCfYhiseVM9iQz7GprY+4GWGvU=;
+	s=arc-20240116; t=1725893328; c=relaxed/simple;
+	bh=c9Hm/3zSlzuUxpB7pXyFXiCPLd00AzAQrXA5c12PEZY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VfeZRKAWadch1H8KBljrEfZVjbt3hSxa3RD2lzbJrROI6BAmcUIcleBBw2khWLseGcqB74zdcKSfML1RJjSf8tF62hGj0DG1Wmq4gKdonX0a06asN16VUAeKnfCUC/Be/0v/ZQiR1rMzM/Kpz/N2kMThfyJwLVoJoXQZuTX4ROE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B2IBQ5/u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC56C4CEC5;
-	Mon,  9 Sep 2024 14:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725893207;
-	bh=vt3/zY+w/72VdyeZwvCfYhiseVM9iQz7GprY+4GWGvU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B2IBQ5/ux8mxZwfdjtNpFztXnypYdhXtistleS08KXrlJRAKSMBGjHbFHX+ib0V9f
-	 65Mv+AdVXjg5B3ipucjBXaAeXRwxI33Z8piFd/KBK0NEHFAqSAUPyn+ME6LxFUi/zL
-	 oU231jTNCdn1ZgZLuQTucNXQjS8h2xcW9MixroNfohjKU1kX9uMdw+/qUye8uxHs7p
-	 Gjs6AXjXzKPeNyQKUoaZuLhggAjo/04R82dGB0oZSUo2pR04akXN1LgHavyqntue7J
-	 EG5yCVWtaRrL3f0FwBSS4SJha7nOr/cwmVMCirnNsd40Uegp/5dOjZ9rbLSXoyhmIu
-	 RCyCWiodmA2Wg==
-Date: Mon, 9 Sep 2024 11:46:44 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH v3 4/8] perf trace: Pretty print struct data
-Message-ID: <Zt8KVFmh0JXD_VhX@x1>
-References: <20240824163322.60796-1-howardchu95@gmail.com>
- <20240824163322.60796-5-howardchu95@gmail.com>
- <Zs-Q-ZyZKd_NzsIv@x1>
- <CAH0uvoge5QUsioZ-j8OS+VoxJAXuP9CyXOJbBkJPwUXWhEryMg@mail.gmail.com>
- <Zt8IypiWo0OuK5cR@x1>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwLkO6jLS+FgyAII5NcL8Yopaou1U1Mw+aFtSeEFJZc5eZsrMmDbw38W/7sXocCUiEztPt9RXCAR6WgzryBbuRSnjdQr2oh8r/0h2AQYsfUieSzU3lGCrmS2gMAsSrsqIlsDO5z3u53AAPBttnyRzfgghO9sKz75zz3MhGib7Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hGSUexYc; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=MgRCqs/Q+pHFW7qR5f/uHj6Sf4Hn8eXOok4j/wQZW7k=; b=hGSUexYckTv9g3Za+Bp/id3v5t
+	mUgAkjKHHK+Aqw1ImkwBnEyb1Rr4aG5A2znmarVpqd9PXHKRWR0gAMdlAuPhgWMRfIuTPju0xxftN
+	Rvd/Lgv5CCMEk1CnfnuolY8nvCgMhcVwrc/OGs/YWR5eR4gy/cuD47Ff0MvzIvWvEfgw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1snfgv-0071Ao-Dw; Mon, 09 Sep 2024 16:48:33 +0200
+Date: Mon, 9 Sep 2024 16:48:33 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	sudongming1@huawei.com, xujunsheng@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com, zhuyuan@huawei.com,
+	forest.zhouchang@huawei.com, jdamato@fastly.com, horms@kernel.org,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V8 net-next 05/11] net: hibmcge: Implement some .ndo
+ functions
+Message-ID: <49166f60-bf25-4313-bacb-496103086d40@lunn.ch>
+References: <20240909023141.3234567-1-shaojijie@huawei.com>
+ <20240909023141.3234567-6-shaojijie@huawei.com>
+ <CAH-L+nOxj1_wHdSacC5R9WG5GeMswEQDXa4xgVFxyLHM7xjycg@mail.gmail.com>
+ <116bff77-f12f-43f0-8325-b513a6779a55@huawei.com>
+ <fec0a530-64d9-401c-bb43-4c5670587909@lunn.ch>
+ <1a7746a7-af17-43f9-805f-fd1cbd24e607@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zt8IypiWo0OuK5cR@x1>
+In-Reply-To: <1a7746a7-af17-43f9-805f-fd1cbd24e607@huawei.com>
 
-On Mon, Sep 09, 2024 at 11:40:14AM -0300, Arnaldo Carvalho de Melo wrote:
-> On Fri, Aug 30, 2024 at 08:16:38AM +0800, Howard Chu wrote:
-> > On Thu, Aug 29, 2024 at 5:05 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > > I.e. isn't this a change in the protocol of the BPF colector with the
-> > > userpace augmented snprintf routines?
-
-> > > If I remember we discussed that first you make this change in the
-> > > protocol, test it with the pre-existing BPF collector, it works. Ok, now
-> > > we have a new protocol and we then use it in the generic BTF-based BPF
-> > > collector. This way that option of using the BTF-based collector or the
-> > > preexisting BPF collector works.
-
-> > > I'll try to do this.
-
-> > Thank you so much.
-
-> Now that I have:
-
-> 6b22c2b502a1c21b (x1/perf-tools-next, perf-tools-next/tmp.perf-tools-next, acme/tmp.perf-tools-next) perf trace: Use a common encoding for augmented arguments, with size + error + payload
-> 5d9cd24924f57066 perf trace augmented_syscalls.bpf: Move the renameat aumenter to renameat2, temporarily
-
-> And also:
-
-> 7bedcbaefdf5d4f7 perf trace: Pass the richer 'struct syscall_arg' pointer to trace__btf_scnprintf()
-> 8df1d8c6cbd6825b perf trace: Fix perf trace -p <PID>
-
-> I can move to this patch, but then it doesn't build as it uses things
-> that will only be available when we get to adding the new BPF components
-> in a later patch:
+> No, HBG_NIC_STATE_OPEN is not intended to ensure that hbg_net_open() and
+> hbg_net_stop() are mutually exclusive.
 > 
-> builtin-trace.c: In function ‘trace__init_syscalls_bpf_prog_array_maps’:
-> builtin-trace.c:3725:58: error: ‘struct <anonymous>’ has no member named ‘beauty_map_enter’
->  3725 |         int beauty_map_fd = bpf_map__fd(trace->skel->maps.beauty_map_enter);
->       |                                                          ^
-> make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:105: /tmp/build/perf-tools-next/builtin-trace.o] Error 1
-> make[3]: *** Waiting for unfinished jobs....
-> 
-> It will only come when we add:
-> 
-> Subject: [PATCH v3 6/8] perf trace: Collect augmented data using BPF
-> 
-> Where we have:
-> 
-> +struct beauty_map_enter {
-> +	__uint(type, BPF_MAP_TYPE_HASH);
-> +	__type(key, int);
-> +	__type(value, __u32[6]);
-> +	__uint(max_entries, 512);
-> +} beauty_map_enter SEC(".maps");
-> 
-> 
-> So I'll try to combine the addition of the map with the code that uses
-> it in the builtin-trace.c codebase.
-> 
+> Actually, when the driver do reset or self-test(ethtool -t or ethtool --reset or FLR).
+> We hope that no other data is transmitted or received at this time.
 
-diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-index 9c7d2f8552945695..4ebce67637435192 100644
---- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-+++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-@@ -124,6 +124,13 @@ struct augmented_args_tmp {
- 	__uint(max_entries, 1);
- } augmented_args_tmp SEC(".maps");
- 
-+struct beauty_map_enter {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__type(key, int);
-+	__type(value, __u32[6]);
-+	__uint(max_entries, 512);
-+} beauty_map_enter SEC(".maps");
-+
- static inline struct augmented_args_payload *augmented_args_payload(void)
- {
- 	int key = 0;
-This did the trick:
+That is an invalid assumption. You could be receiving line rate
+broadcast traffic for example, because there is a broadcast storm
+happening.
+
+I assume for testing, you are configuring a loopback somewhere? PHY
+loopback or PCS loopback? I've seen some PHYs do 'broken' loopback
+where egress traffic is looped back, but ingress traffic is also still
+received. Is this true for your hardware? Is this why you make this
+assumption?
+
+What is your use case for ethtool --reset? Are you working around
+hardware bugs? Why not simply return -EBUSY if the user tries to use
+--reset when the interface is admin up. You then know the interface is
+down, you don't need open/close to be re-entrant safe.
+
+Same for testing. Return -ENETDOWN if the user tries to do self test
+on an interface which is admin down.
+
+	Andrew
 
