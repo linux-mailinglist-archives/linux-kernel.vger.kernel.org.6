@@ -1,280 +1,341 @@
-Return-Path: <linux-kernel+bounces-320830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A5B971124
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:07:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D477D971128
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0C3C1C223BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:07:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9F6282C45
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F631B2EEF;
-	Mon,  9 Sep 2024 08:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C075C1B1500;
+	Mon,  9 Sep 2024 08:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dI3X6XmA"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fNTzMZat"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BE41B1429
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C5E1B1424
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725868994; cv=none; b=vGEHMu5acYNOm1zWuyHoMK1ksuW9HMFRQFDqoyz2c6GJavnkV7/wGXerakA4Op6Ch29DuXr7rVZMH4e6HRqMFxPXvuHjdkxoLQXC45qwpk95/FvmkULnYs+kVZ5sWpJEw+C54jQLwf/bsV1EWrzI1XgDZ6jpeJo8q74KMH4Ksm4=
+	t=1725869090; cv=none; b=NM+aW9GJ+8oY9awD0nP/bisw7jYJYMHDCGxc+pKkqQ3IUQ4OBABPgZ5P8TEr9X3J3OIhi8dQyEpWwO7Mbb/9NjcvrOxE9h9XMiNzAKzREX5GLmPPcTO9pU9Nn014Yuntp+6oBZ2ywkLTB5foE7R0uCqnoQdnFAa2yzpL7ygPLbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725868994; c=relaxed/simple;
-	bh=L0hohc3csRPqlhpsA/7CFpXamY61LYCnBD2Jby731mw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n1oCfibYYT3Z23kGJ+GfJsIQqq6JYb1vs4bp2GrEp2K5upBBWQY6O7ZWmDzhKVCnI19TrwgK5AZhdoFgwry5yTDHn8zbmMTXAs9tfBWr8j6spf3/4TaqnuhVgnqF7PPovGTiFwXD1soOeIKV7Xef2sjKO6yzPpfv6kess4dMCZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dI3X6XmA; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5365b6bd901so2648706e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 01:03:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725868991; x=1726473791; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cPPk0TDYYzm2xt2bFl0UC0M7dNTFBvwSqsGyjtReLrc=;
-        b=dI3X6XmAdzp+Lxkstzwo9dSBvi4wNtLm515/IFiDU2qqys2Vur4euvxh/MpSQitLgj
-         8ZeNIPYn7milRcBe8F+iu0yUYxqUzRYt3zOG1YC9hHrBc4q7bKn0cz1djM4vYaNXHU0d
-         in0aZZoOKzFs/TX1Ftoh4g8rQVn95qxMEdy+h5b+FTvGo76XZrrACawr/btyAH4+ILYb
-         3dnrfrGTzJR35FZjaOwYuLEtAhqitKh9BgnTo03WH57JsepmCekQ99HDuM4G0t2qZ+PR
-         Dfh6T9+8jZ4F4uzvvtyATn286t9NfDlfG8xuJOL0pNaWb801sARg9rXfI224S2dLNBk1
-         ZWVw==
+	s=arc-20240116; t=1725869090; c=relaxed/simple;
+	bh=3+TJ8qVxjJytrnvPbKuUSyCh5qj1d3qPasNk4OSQPw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I7+EGCBYisLCt3L1Mz2jzxCfUCsP1dnUw5fevJGOI6YJFBIDQGNfF9gkb2MS+wmn4uSExLUB/fIpHrE0GfovLWv1ZzbIb/wgQGLqDrl53O7JbAAE1G9AmcczVr5oPKy452SpdA0wCu3fdqKveYDLMrwCe/JxHlQAUm6Dk9NossA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fNTzMZat; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725869087;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=e8IHWWpBLJwFTy83f+891OGYQEfwFLVAklDrVSkaYV8=;
+	b=fNTzMZatgDNeaTCV+bcTh0KyUKgkqqJIVWjkEcMYjlbimM9kUdQ5VRHwmBVI5ghA1tex7L
+	mqqecIt+whkapkrKL6CmcbdsS4MQ1M4yHMl+mQcShr6ZWm7Kuto9ego8yosdMXyOjZBsT1
+	io91sl/h8znWVoKrp7lVCXlaQGBnpI0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-271-_--U6TR4PW2nlDbySDQoZg-1; Mon, 09 Sep 2024 04:04:46 -0400
+X-MC-Unique: _--U6TR4PW2nlDbySDQoZg-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cb827e9b6so5198725e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 01:04:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725868991; x=1726473791;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cPPk0TDYYzm2xt2bFl0UC0M7dNTFBvwSqsGyjtReLrc=;
-        b=dVJfkuaTMRcLkE9LirEIlwF2nJXu5DkA9ez2RT+ECbM7UYNjmFfiqzdQOIy2+MSFJU
-         Q6OX5PZe28hJCzfvrRuBs6DIhAq9UuiiS1uAQHDRMLVdRzrV9tKjQ+ggolFdaRvLLOGM
-         3K2aR7J/agksrVvCu5+0Y8EWyxJtJ943YJ1kllzN3+CX1OC9YFudHyrBA8g8vDlV+lwh
-         r/tEUECIzsLI6s+nmmGlwkDUvY/PEhqDGpBtrMikyZSK+DzaO8+p2LAgJgCwOxL8lqWL
-         lA3MwHJ0dYvcP6Abl6I9m7bjJymmpXNP7AaI2dTe8DLYiWzg71M8KAk7JlSddelzVmo6
-         lhQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXG0gTXsPdU0JFqs55RslRiIdY8lxT+lg7EY8fh0/r1x284mp/rezB8ngplnxAb4UJCZ4Gk1MYpWR060kY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+ZlTcIV2TvoX/X7Pp47+nxc6DYMTOyQ14f9vsNIR7KLvAWgHs
-	+aYrgRCRM7AyRjO5zVzSfqeY7zPEyXhxJZnMxMXYjL0U8nBet7c0e7E8ifIZyvdDJXKAtmVvoQH
-	cRY9JAFYuiP9o2hEWILqsAifZDc7d+J9ehYSp
-X-Google-Smtp-Source: AGHT+IGevTrumeB14D+HR+GB884L8lvx1LTcCsqiv+IlGdkhOr28skbKiW0TNF4r7PfBeqFHvoec35w/kiJOOJ296TE=
-X-Received: by 2002:a05:6512:239d:b0:535:67d9:c4b3 with SMTP id
- 2adb3069b0e04-536587aa4dfmr5077214e87.11.1725868989987; Mon, 09 Sep 2024
- 01:03:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725869085; x=1726473885;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e8IHWWpBLJwFTy83f+891OGYQEfwFLVAklDrVSkaYV8=;
+        b=Is1EQ7rLb4/Hdp/gFaSby0SsUTiNmj9ijsHZm4/C7fF+Ug7UO7lAfcO04Kc8Rm9HDJ
+         qK2/1i4elxs/p7RzCoPaJS5B4YT+GCXtmKR17Tw4AbJLCEQW4cGd4+e10Dg0AoUrg0bg
+         wWc4cX4QmPSDaqO7/iK4qPWb3BuHaFq9k8Oagq9DH5Z+BnRKlTveDPK/uKJUbrYJqVF9
+         vtZZPxoUAhh8LCVgXZBNu8tN8krSRGe73XdFih521Ml4t6dqwwmRKhCH/Qp4LZzl05By
+         IN2785TSnncv4qQ+y/A0nsQZmGl54Q9GkAndmAgNrRUDlmt0BLswegqt2aJxM41R8UKh
+         FffA==
+X-Forwarded-Encrypted: i=1; AJvYcCXeRYx9eroN9cykBJlHf1hrxOSE1qJo8p3slGrGLNPoETEDlEZEFrAfpPW3/EyFCrxzKlYJiLgoAKISTbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/vMM0i0/OJztqCslJEwnGMU4Re6NBmgiF14iK8hO9TGMd98h/
+	Xf8JpOMZ7c4dP34Zjuf0AmZ3sQ3vNAMjDWUxaRZJJf5SglBQIOYAqgnImkFFN7aYANww8DBj6I6
+	4gdwLvxUhkeGOSO7no4rx3cLdujJRevSPC2ihOG9n2xBb69SRCiSlMtVxFK70Wg==
+X-Received: by 2002:a05:600c:4494:b0:42c:acfa:9cae with SMTP id 5b1f17b1804b1-42cacfa9f20mr42778785e9.35.1725869084962;
+        Mon, 09 Sep 2024 01:04:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE/AIWHe/2+xDVD/F8b5G2rMIWdA0lV4swL3L7hBBzDZj3/R53uAWzXa9IYybbWmNrhoio2WA==
+X-Received: by 2002:a05:600c:4494:b0:42c:acfa:9cae with SMTP id 5b1f17b1804b1-42cacfa9f20mr42778295e9.35.1725869084003;
+        Mon, 09 Sep 2024 01:04:44 -0700 (PDT)
+Received: from [192.168.3.141] (p4ff2397f.dip0.t-ipconnect.de. [79.242.57.127])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca3a3cc31sm94306155e9.24.2024.09.09.01.04.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 01:04:43 -0700 (PDT)
+Message-ID: <2bb87247-9212-426b-aaa7-e101f25d38ca@redhat.com>
+Date: Mon, 9 Sep 2024 10:04:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0000000000000311430620013217@google.com> <0000000000005d1b320621973380@google.com>
-In-Reply-To: <0000000000005d1b320621973380@google.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 9 Sep 2024 10:02:59 +0200
-Message-ID: <CANn89iJGw2EVw0V5HUs9-CY4f8FucYNgQyjNXThE6LLkiKRqUA@mail.gmail.com>
-Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-To: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>, 
-	"D. Wythe" <alibuda@linux.alibaba.com>, Wenjia Zhang <wenjia@linux.ibm.com>, 
-	Dust Li <dust.li@linux.alibaba.com>
-Cc: davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -v3 2/3] resource: Make alloc_free_mem_region() works for
+ iomem_resource
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+ Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso
+ <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Alistair Popple <apopple@nvidia.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>
+References: <20240906030713.204292-1-ying.huang@intel.com>
+ <20240906030713.204292-3-ying.huang@intel.com>
+ <28bbd51b-cc47-4468-9523-45dab25d20dd@redhat.com>
+ <878qw11f05.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <878qw11f05.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Sep 8, 2024 at 10:12=E2=80=AFAM syzbot
-<syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com> wrote:
->
-> syzbot has found a reproducer for the following issue on:
->
-> HEAD commit:    df54f4a16f82 Merge branch 'for-next/core' into for-kernel=
-ci
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux=
-.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D12bdabc798000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Ddde5a5ba8d41e=
-e9e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D51cf7cc5f9ffc10=
-06ef2
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1798589f980=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10a30e0058000=
-0
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/aa2eb06e0aea/dis=
-k-df54f4a1.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/14728733d385/vmlinu=
-x-df54f4a1.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/99816271407d/I=
-mage-df54f4a1.gz.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> WARNING: possible circular locking dependency detected
-> 6.11.0-rc5-syzkaller-gdf54f4a16f82 #0 Not tainted
-> ------------------------------------------------------
-> syz-executor272/6388 is trying to acquire lock:
-> ffff8000923b6ce8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x20/0x2c net/co=
-re/rtnetlink.c:79
->
-> but task is already holding lock:
-> ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsoc=
-kopt+0x178/0x10fc net/smc/af_smc.c:3064
->
-> which lock already depends on the new lock.
->
->
-> the existing dependency chain (in reverse order) is:
->
-> -> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
->        __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
->        __mutex_lock kernel/locking/mutex.c:752 [inline]
->        mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
->        smc_switch_to_fallback+0x48/0xa80 net/smc/af_smc.c:902
->        smc_sendmsg+0xfc/0x9f8 net/smc/af_smc.c:2779
->        sock_sendmsg_nosec net/socket.c:730 [inline]
->        __sock_sendmsg net/socket.c:745 [inline]
->        __sys_sendto+0x374/0x4f4 net/socket.c:2204
->        __do_sys_sendto net/socket.c:2216 [inline]
->        __se_sys_sendto net/socket.c:2212 [inline]
->        __arm64_sys_sendto+0xd8/0xf8 net/socket.c:2212
->        __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->        invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->        el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->        do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->        el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
->        el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:73=
-0
->        el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
->
-> -> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
->        lock_sock_nested net/core/sock.c:3543 [inline]
->        lock_sock include/net/sock.h:1607 [inline]
->        sockopt_lock_sock+0x88/0x148 net/core/sock.c:1061
->        do_ip_setsockopt+0x1438/0x346c net/ipv4/ip_sockglue.c:1078
->        ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
->        raw_setsockopt+0x100/0x294 net/ipv4/raw.c:845
->        sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
->        do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
->        __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
->        __do_sys_setsockopt net/socket.c:2356 [inline]
->        __se_sys_setsockopt net/socket.c:2353 [inline]
->        __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
->        __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->        invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->        el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->        do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->        el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
->        el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:73=
-0
->        el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
->
-> -> #0 (rtnl_mutex){+.+.}-{3:3}:
->        check_prev_add kernel/locking/lockdep.c:3133 [inline]
->        check_prevs_add kernel/locking/lockdep.c:3252 [inline]
->        validate_chain kernel/locking/lockdep.c:3868 [inline]
->        __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
->        lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
->        __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
->        __mutex_lock kernel/locking/mutex.c:752 [inline]
->        mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
->        rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
->        do_ip_setsockopt+0xe8c/0x346c net/ipv4/ip_sockglue.c:1077
->        ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
->        tcp_setsockopt+0xcc/0xe8 net/ipv4/tcp.c:3768
->        sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
->        smc_setsockopt+0x204/0x10fc net/smc/af_smc.c:3072
->        do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
->        __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
->        __do_sys_setsockopt net/socket.c:2356 [inline]
->        __se_sys_setsockopt net/socket.c:2353 [inline]
->        __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
->        __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->        invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->        el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->        do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->        el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
->        el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:73=
-0
->        el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
->
-> other info that might help us debug this:
->
-> Chain exists of:
->   rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
->
->  Possible unsafe locking scenario:
->
->        CPU0                    CPU1
->        ----                    ----
->   lock(&smc->clcsock_release_lock);
->                                lock(sk_lock-AF_INET);
->                                lock(&smc->clcsock_release_lock);
->   lock(rtnl_mutex);
->
->  *** DEADLOCK ***
->
-> 1 lock held by syz-executor272/6388:
->  #0: ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_s=
-etsockopt+0x178/0x10fc net/smc/af_smc.c:3064
->
-> stack backtrace:
-> CPU: 1 UID: 0 PID: 6388 Comm: syz-executor272 Not tainted 6.11.0-rc5-syzk=
-aller-gdf54f4a16f82 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 08/06/2024
-> Call trace:
->  dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
->  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
->  __dump_stack lib/dump_stack.c:93 [inline]
->  dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
->  dump_stack+0x1c/0x28 lib/dump_stack.c:128
->  print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2059
->  check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2186
->  check_prev_add kernel/locking/lockdep.c:3133 [inline]
->  check_prevs_add kernel/locking/lockdep.c:3252 [inline]
->  validate_chain kernel/locking/lockdep.c:3868 [inline]
->  __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
->  lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
->  __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
->  __mutex_lock kernel/locking/mutex.c:752 [inline]
->  mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
->  rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
->  do_ip_setsockopt+0xe8c/0x346c net/ipv4/ip_sockglue.c:1077
->  ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
->  tcp_setsockopt+0xcc/0xe8 net/ipv4/tcp.c:3768
->  sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
->  smc_setsockopt+0x204/0x10fc net/smc/af_smc.c:3072
->  do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
->  __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
->  __do_sys_setsockopt net/socket.c:2356 [inline]
->  __se_sys_setsockopt net/socket.c:2353 [inline]
->  __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
->  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
->  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
->
->
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
+On 09.09.24 09:07, Huang, Ying wrote:
+> Hi, David,
+> 
+> David Hildenbrand <david@redhat.com> writes:
+> 
+>> On 06.09.24 05:07, Huang Ying wrote:
+>>> During developing a kunit test case for region_intersects(), some fake
+>>> resources need to be inserted into iomem_resource.  To do that, a
+>>> resource hole needs to be found first in iomem_resource.
+>>> However, alloc_free_mem_region() cannot work for iomem_resource now.
+>>> Because the start address to check cannot be 0 to detect address
+>>> wrapping 0 in gfr_continue(), while iomem_resource.start == 0.  To
+>>> make alloc_free_mem_region() works for iomem_resource, gfr_start() is
+>>> changed to avoid to return 0 even if base->start == 0.  We don't need
+>>> to check 0 as start address.
+>>> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+>>> Cc: Dan Williams <dan.j.williams@intel.com>
+>>> Cc: David Hildenbrand <david@redhat.com>
+>>> Cc: Davidlohr Bueso <dave@stgolabs.net>
+>>> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+>>> Cc: Dave Jiang <dave.jiang@intel.com>
+>>> Cc: Alison Schofield <alison.schofield@intel.com>
+>>> Cc: Vishal Verma <vishal.l.verma@intel.com>
+>>> Cc: Ira Weiny <ira.weiny@intel.com>
+>>> Cc: Alistair Popple <apopple@nvidia.com>
+>>> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>> Cc: Bjorn Helgaas <bhelgaas@google.com>
+>>> Cc: Baoquan He <bhe@redhat.com>
+>>> ---
+>>>    kernel/resource.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>> diff --git a/kernel/resource.c b/kernel/resource.c
+>>> index 235dc77f8add..035ef16c1a66 100644
+>>> --- a/kernel/resource.c
+>>> +++ b/kernel/resource.c
+>>> @@ -1873,7 +1873,7 @@ static resource_size_t gfr_start(struct resource *base, resource_size_t size,
+>>>    		return end - size + 1;
+>>>    	}
+>>>    -	return ALIGN(base->start, align);
+>>
+>> You should add a comment here. But I do find what you are doing here
+>> quite confusing.
+> 
+> Sure.  And sorry for confusing words.
+> 
+>> Above you write: "We don't need to check 0 as start address." -- why?
+>> To make the code extra confusing? :)
+> 
+> After the change, we will not return "0" from gfr_start().  So we cannot
+> check "0" as start address.  And I think nobody need to check "0", so it
+> should be OK to do that.
+> 
+>> /* Never return address 0, because XXX. */
+>> if (!base->start)
+>> 	return align;
+>> return ALIGN(base->start, align);
+>>
+>>
+>> And i still haven't understood XXX. For whom exactly is address 0 a problem?
+> 
+> Because the following lines in gfr_continue()
+> 
+> 	/*
+> 	 * In the ascend case be careful that the last increment by
+> 	 * @size did not wrap 0.
+> 	 */
+> 	return addr > addr - size &&
+> 	       addr <= min_t(resource_size_t, base->end,
+> 			     (1ULL << MAX_PHYSMEM_BITS) - 1);
+> 
+> If addr == 0, then addr < addr - size.  gfr_continue() will return
+> false, and we will not check any address.
 
-Please SMC folks, can you take a look ?
+Thanks, that makes things cleaner. I think it might be better to just rework
+the retying logic, to detect wraps based on the old and new address. That
+would require a bit more work, something like that should probably handle all
+possible corner case. Dan wrote that code, so I'll leave it up to him to decide
+how to handle that :)
+
+
+diff --git a/kernel/resource.c b/kernel/resource.c
+index 9f747bb7cd031..2cd054c8277e8 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1819,40 +1819,48 @@ EXPORT_SYMBOL(resource_list_free);
+  #define GFR_REQUEST_REGION	(1UL << 1)
+  #define GFR_DEFAULT_ALIGN (1UL << PA_SECTION_SHIFT)
+  
+-static resource_size_t gfr_start(struct resource *base, resource_size_t size,
+-				 resource_size_t align, unsigned long flags)
++static bool gfr_start(struct resource *base, resource_size_t *addr,
++		resource_size_t size, resource_size_t align, unsigned long flags)
+  {
++	resource_size_t start_addr;
++
+  	if (flags & GFR_DESCENDING) {
+  		resource_size_t end;
+  
+  		end = min_t(resource_size_t, base->end,
+  			    (1ULL << MAX_PHYSMEM_BITS) - 1);
+-		return end - size + 1;
++		start_addr = end - size + 1;
++		if (start_addr > end || start_addr < base->start)
++			return false;
++	} else {
++		start_addr = ALIGN(base->start, align);
++		if (start_addr < base->start || start_addr > base->end)
++			return false;
+  	}
+-
+-	return ALIGN(base->start, align);
++	*addr = start_addr;
++	return true;
+  }
+  
+-static bool gfr_continue(struct resource *base, resource_size_t addr,
+-			 resource_size_t size, unsigned long flags)
++static bool gfr_continue(struct resource *base, resource_size_t *addr,
++			 resource_size_t align, unsigned long flags)
+  {
+-	if (flags & GFR_DESCENDING)
+-		return addr > size && addr >= base->start;
+-	/*
+-	 * In the ascend case be careful that the last increment by
+-	 * @size did not wrap 0.
+-	 */
+-	return addr > addr - size &&
+-	       addr <= min_t(resource_size_t, base->end,
+-			     (1ULL << MAX_PHYSMEM_BITS) - 1);
+-}
++	resource_size_t new_addr;
+  
+-static resource_size_t gfr_next(resource_size_t addr, resource_size_t size,
+-				unsigned long flags)
+-{
+-	if (flags & GFR_DESCENDING)
+-		return addr - size;
+-	return addr + size;
++	if (flags & GFR_DESCENDING) {
++		new_addr = *addr - align;
++		if (new_addr > *addr || new_addr < base->start)
++			return false;
++	} else {
++		resource_size_t end;
++
++		end = min_t(resource_size_t, base->end,
++			    (1ULL << MAX_PHYSMEM_BITS) - 1);
++		new_addr = *addr + align;
++		if (new_addr < *addr || new_addr > end)
++			return false;
++	}
++	*addr = new_addr;
++	return true;
+  }
+  
+  static void remove_free_mem_region(void *_res)
+@@ -1893,9 +1901,9 @@ get_free_mem_region(struct device *dev, struct resource *base,
+  	}
+  
+  	write_lock(&resource_lock);
+-	for (addr = gfr_start(base, size, align, flags);
+-	     gfr_continue(base, addr, align, flags);
+-	     addr = gfr_next(addr, align, flags)) {
++	if (!gfr_start(base, &addr, size, align, flags))
++		goto unlock;
++	do {
+  		if (__region_intersects(base, addr, size, 0, IORES_DESC_NONE) !=
+  		    REGION_DISJOINT)
+  			continue;
+@@ -1939,7 +1947,8 @@ get_free_mem_region(struct device *dev, struct resource *base,
+  		}
+  
+  		return res;
+-	}
++	} while (gfr_continue(base, &addr, align, flags));
++unlock:
+  	write_unlock(&resource_lock);
+  
+  	if (flags & GFR_REQUEST_REGION) {
+-- 
+2.46.0
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
