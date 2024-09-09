@@ -1,91 +1,99 @@
-Return-Path: <linux-kernel+bounces-320797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C48C971054
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:53:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE3E971056
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39F032830C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:53:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E74E01C22287
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12B01B1422;
-	Mon,  9 Sep 2024 07:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7B81B010A;
+	Mon,  9 Sep 2024 07:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThRjNgdf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jz/w9S0U"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0875A1AF4DC;
-	Mon,  9 Sep 2024 07:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BFB1AF4DC
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 07:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725868368; cv=none; b=baHKIOYopIogjQASMFZSJA5q3bfdiRt5/qmN9FLifDgNi0H5NIvOPZGX150r4LwLZtHbGjWJJocePPG24J6coyTLsNEfrPEQxq8TP9oiR/Dnqc09UBXWSjbKa3vJyQPyxqQKxffZ6XJY+WFRKlhD10SoRl9HweA3wCbKZ0nGdG8=
+	t=1725868379; cv=none; b=MW3X3o2pKmrQu5T/FwqvuiDGP0VD/fSgfXFOlQ/RfVPmXrVCjKq1IMtY74DLRH8LZfKK5F6ROUlTkZ7f8k5uFcE4WJM3nTm67rG5OLvVYJE371hn/uIuOD6fUuvGy6cEMQwT7sLiC3vq/K5s4DQF44MSjHmHEhpFj29cQcksLBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725868368; c=relaxed/simple;
-	bh=qOaesh/TAKQrrzKDplHaxB6/8unPc3QHMjB/XOYRlec=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oBUOj1c2Vp1qmzxHoLe3N58p9Ir4WBt0M1wjaR9y7scQYZQx+J3Citmq0DGoTdVDdgI8zm0npaUAqYUpAKiW3Uu3WGC00ZTWsAYmdZJjOHqllBxot3QirBE/ifEyIHHEmm8EaO4erm5kbpJYkyWLsUDrI4ODhjAjKDekFtQWN+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThRjNgdf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F9F2C4CEC5;
-	Mon,  9 Sep 2024 07:52:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725868367;
-	bh=qOaesh/TAKQrrzKDplHaxB6/8unPc3QHMjB/XOYRlec=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ThRjNgdfZsk/SqlPY4+gtwcBYkOWhvLjzicDqHP+hacZRi3wO6DkW1Bd5bCMwEfCz
-	 zl0Ukc4YGvII7kh871XU8j2OBKF6oPzYacXr23mXrp6g60PoYisGsmcd3dcx9QlTxy
-	 qZO7BFhr7p+ExjOOh/6xRBHT7eYbN6sFKow+Kcdbo4xqW3xu1VMiciWFZg2bwgIBjw
-	 8IkJ6c7mosalkDKHmdZGQ3ox2w3yWseHaN+2jf5bxysoyYJUUgpYh6i8aBKOLss7kJ
-	 Afpm61Z65OGWvb5WUF9Bn6RzE91tDcnvWJIeQzl5kK2eC0sncyoSWq50NBxkcBkJmk
-	 0PjoqB/TRx4nQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Dennis Lam <dennis.lamerice@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dhowells@redhat.com,
-	jlayton@kernel.org,
-	corbet@lwn.net
-Subject: Re: [PATCH] docs:filesystems: fix spelling and grammar mistakes on netfs library page
-Date: Mon,  9 Sep 2024 09:52:33 +0200
-Message-ID: <20240909-bebte-sonst-e4939ee628df@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240908192307.20733-3-dennis.lamerice@gmail.com>
-References: <20240908192307.20733-3-dennis.lamerice@gmail.com>
+	s=arc-20240116; t=1725868379; c=relaxed/simple;
+	bh=mlxlmUquTmFkGQqdmXvdPV3nUNa9fBi5zLHacZJ5o/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LdF1U+h/9LxLlhepyoLYK64FirZWOT5KvhicK8alHo5VpUn4TjtychkGLJBGXre8RCMw8N4xWHSqp0uiZY++32Qs7r9F675dEyXJdZ5AyTSN3neqqrcHT09HUSudi1zytJwZ/Yh1HW0MhTDpfKTSgzW6OwCSPnNBmTdK5+WDct0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jz/w9S0U; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 63215E0002;
+	Mon,  9 Sep 2024 07:52:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725868370;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mlxlmUquTmFkGQqdmXvdPV3nUNa9fBi5zLHacZJ5o/8=;
+	b=jz/w9S0UQaB4D8O0Wr59wr3duykztU3f2WTxMBQ0sM6bQJT53Rb9IgVadC5YSYXscBy1iJ
+	tEkekPl2LG5xUJBLtFZSXyCfk9iK/++xGGAkvZMyrt4R9M7OMfD5C+glg5gWPiOxRpw2cJ
+	2pGMOK1eHHLY0aX6D+DxTA4khYh+i9eLwXdk2tsKH5aK9fpxsYmO4qp4sg/KXDkxZ4wNFn
+	8hEYruSZU1HrWuwKoqUv7ONkscsX3IgrQGnp4+wKaPmBEedzSKcMFvGBP1yVDOou37RK8w
+	mK9ZHGa3sy5pTppMsbiGKqLbA+Fg5SzaM/yWl9ItW8DtAMmT9mE+vcEoc5RHBQ==
+Date: Mon, 9 Sep 2024 09:52:47 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Michael Walle <mwalle@kernel.org>, Pratyush Yadav <pratyush@kernel.org>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Takahiro Kuwano <Takahiro.Kuwano@infineon.com>,
+ linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, Jon Hunter
+ <jonathanh@nvidia.com>
+Subject: Re: [PATCH] mtd: spi-nor: fix flash probing
+Message-ID: <20240909095247.48358afa@xps-13>
+In-Reply-To: <ad9ee29c-b96a-4861-a7cd-b8649a3d1f3a@linaro.org>
+References: <20240909072854.812206-1-mwalle@kernel.org>
+	<ad9ee29c-b96a-4861-a7cd-b8649a3d1f3a@linaro.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=849; i=brauner@kernel.org; h=from:subject:message-id; bh=qOaesh/TAKQrrzKDplHaxB6/8unPc3QHMjB/XOYRlec=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdW+m+9s36Gd5hDvM32Ezes1pbk/Py1yi3vgMWWiu4Q 2f0b7Ob2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRWdMY/oc1yvLvr4lOYjDk 0jd9kXDl6Tvu1qvuqT7TJv8VPFy6IJnhr9Brx93r6s/HFLcuCDu/re9nhErV3OPmMu9fefxOcdD s5gcA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Sun, 08 Sep 2024 15:23:09 -0400, Dennis Lam wrote:
-> 
+Hey,
 
+tudor.ambarus@linaro.org wrote on Mon, 9 Sep 2024 08:35:23 +0100:
 
-Applied to the vfs.netfs branch of the vfs/vfs.git tree.
-Patches in the vfs.netfs branch should appear in linux-next soon.
+> On 9/9/24 8:28 AM, Michael Walle wrote:
+> > Fix flash probing by name. Flash entries without a name are allowed
+> > since commit 15eb8303bb42 ("mtd: spi-nor: mark the flash name as
+> > obsolete"). But it was just until recently that a flash entry without a
+> > name was actually introduced. This triggers a bug in the legacy probe by
+> > name path. Skip entries without a name to fix it.
+> >=20
+> > Fixes: 2095e7da8049 ("mtd: spi-nor: spansion: Add support for S28HS256T=
+")
+> > Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> > Closes: https://lore.kernel.org/r/66c8ebb0-1324-4ad9-9926-8d4eb7e1e63a@=
+nvidia.com/
+> > Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> > Signed-off-by: Michael Walle <mwalle@kernel.org> =20
+>=20
+> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+This patch will only apply on top of spi-nor/next. It would spend more
+time in -next if one of you applied it to this branch before sending
+the MR?
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.netfs
-
-[1/1] docs:filesystems: fix spelling and grammar mistakes on netfs library page
-      https://git.kernel.org/vfs/vfs/c/8bec52672c67
+Cheers,
+Miqu=C3=A8l
 
