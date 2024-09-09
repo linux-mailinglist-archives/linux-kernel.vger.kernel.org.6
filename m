@@ -1,225 +1,139 @@
-Return-Path: <linux-kernel+bounces-321962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67869972207
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:41:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D907972214
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FE771C23509
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:41:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE91D2840C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C5518953A;
-	Mon,  9 Sep 2024 18:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6363B170A16;
+	Mon,  9 Sep 2024 18:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jnplpmEX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HbiHCzBi"
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF6F189517;
-	Mon,  9 Sep 2024 18:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D73A158521
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 18:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725907298; cv=none; b=JC+s+HplSIzgzLG8KffWV2tVXw6YA7QHT0PLk+tJmexYB+CU45kYozvpEXdHAN0KwKY+ho+lb7pWfBXHCwaZzCaLnCh7FuG36sAUXiu4nxuBcwL7SS+Ile1GiKTu1CgLHFUDEiUiqvdd0FS2ErTpDZtUH+MFT6EWBC2Sfjwvmxc=
+	t=1725907814; cv=none; b=EmQ820QfBi9R0EKa6FcvTVXgUPKF4RisWWZKuaLescq6v2hDP/8FPx3B7pLcMNehPvGpLKHZSK9kAdSMo5rrn+D7RiEG4dijGUjymY3tyzpwTDwzaLD/HUpNkZrwUFOyykxabFstKoUNORBiVkAx83gNF9JTZ5qPcITJz+XjBJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725907298; c=relaxed/simple;
-	bh=WnCghRFlzYOP5F1Yp27TU0E0lq5lDZ+J31399wd0VDk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IPuOItkSuzmMM8vNPzusNZqEap+cHFGrcJWVK8h6esH3Emrln9j4U1rF0G6do7ZuyJ5IygR9Eh03HlLe5hodzCtmAt3a8/AslZOE2sceGTeo1W3PQZivY7pnQXQoTkCIPEaTdWXuC6LKrIVgay+eutHJC8lu5sjpMfUAtEsr704=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jnplpmEX; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725907296; x=1757443296;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=WnCghRFlzYOP5F1Yp27TU0E0lq5lDZ+J31399wd0VDk=;
-  b=jnplpmEXk52Gn5joU4fsrTiqmx6Oxau5j4tFS71AzWOEBX0jKEqLSlIc
-   RjQMJh6idf4VLEIAcfVJL9TyK7846jMNPhj2iL5A/7mGovi/2DUrvoiof
-   vZIrd02gSdxVz2AuJLTMzMdkRTcxyOapZx6gqjAA4g/+bK4o7vCgJtrXA
-   3mZycoOtH35QUEfQxA9njh6tfvqj3AG1BbiDCWsbAJHqJF7E+aIxM09hN
-   6J7SknLwPdKhgrl2JjP4xykMLPUkx/VnaoyPW9rGX4mtNWey4X6t4QOn4
-   bEh5bkuRVaZH/+XlnOUrM7YoAYabexpkDSNP5jXml7V4y7aS+V7pVwgZP
-   g==;
-X-CSE-ConnectionGUID: p29RZ0mDTM+FWtfy5hMDhA==
-X-CSE-MsgGUID: Ml0uglGpScGdeU6oQEwXcg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="13446609"
-X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="13446609"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 11:41:36 -0700
-X-CSE-ConnectionGUID: fJ+mdhOMSNGHkjCwZHdHAA==
-X-CSE-MsgGUID: lANOy5GLS56lgBnND42pYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="97469002"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by orviesa002.jf.intel.com with ESMTP; 09 Sep 2024 11:41:35 -0700
-From: kan.liang@linux.intel.com
-To: acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	jolsa@kernel.org,
-	adrian.hunter@intel.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH] perf env: Find correct branch counter info on hybrid
-Date: Mon,  9 Sep 2024 11:42:00 -0700
-Message-Id: <20240909184201.553519-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1725907814; c=relaxed/simple;
+	bh=iX6x+X+C2KmnTglmajitY2d8V7n/jwEPwVA+GAC6eiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S6RBPnz6VmKZjvB09ZpFrekTm22PMadU/e0DuTHNPAzK29jJOkWphURNhLjmmd4fRbMPmg0iJCsULaXL6CxdDTs5OuWXVZpBL5cfSw6pG6rWqp+qTS/wzYWTKf0lyIza+TwVC4QWAoZFTd05mMZSchTqpYjlSvd3c0Lxzj5t6+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HbiHCzBi; arc=none smtp.client-ip=84.16.66.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X2bMc50Nvzqk1;
+	Mon,  9 Sep 2024 20:43:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1725907436;
+	bh=oxG77P3NVtf5xxUT9J4SD9IVKFdgoO+cgYyab1/OTdA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HbiHCzBik6ccWXsmUvJQLIqOCgka7Ec894qPRxXTXCbv1YFhdhXr12RHBDKF+f6Nx
+	 qjo2Nl+av5qGDdDVB0Td1Z5NEODrgaFXQ9TP8xDb0lz0870wJJMMElvhHUrhTCjVbk
+	 XFz3brhGV6mpYyowybeg0Qn7/DYLIeQ0hWHoAY/o=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4X2bMb0H3gzvVV;
+	Mon,  9 Sep 2024 20:43:54 +0200 (CEST)
+Date: Mon, 9 Sep 2024 20:43:48 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH v3 1/2] fs: Fix file_set_fowner LSM hook inconsistencies
+Message-ID: <20240909.fea6omu9Ohof@digikod.net>
+References: <20240821095609.365176-1-mic@digikod.net>
+ <CAHC9VhQ7e50Ya4BNoF-xM2y+MDMW3i_SRPVcZkDZ2vdEMNtk7Q@mail.gmail.com>
+ <20240908.jeim4Aif3Fee@digikod.net>
+ <CAHC9VhSGTOv9eiYCvbY67PJwtuBKWtv6nBgy_T=SMr-JPBO+SA@mail.gmail.com>
+ <CAHC9VhTck26ogxtTK-Z_gxhhdfYR4MgHystKdWttjsXcydyB9A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhTck26ogxtTK-Z_gxhhdfYR4MgHystKdWttjsXcydyB9A@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Mon, Sep 09, 2024 at 12:44:16PM -0400, Paul Moore wrote:
+> On Mon, Sep 9, 2024 at 12:03 PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > On Sun, Sep 8, 2024 at 2:11 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > >
+> > > On Wed, Aug 21, 2024 at 12:32:17PM -0400, Paul Moore wrote:
+> > > > On Wed, Aug 21, 2024 at 5:56 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > >
+> > > > > The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGURG
+> > > > > for the related file descriptor.  Before this change, the
+> > > > > file_set_fowner LSM hook was always called, ignoring the VFS logic which
+> > > > > may not actually change the process that handles SIGIO (e.g. TUN, TTY,
+> > > > > dnotify), nor update the related UID/EUID.
+> > > > >
+> > > > > Moreover, because security_file_set_fowner() was called without lock
+> > > > > (e.g. f_owner.lock), concurrent F_SETOWN commands could result to a race
+> > > > > condition and inconsistent LSM states (e.g. SELinux's fown_sid) compared
+> > > > > to struct fown_struct's UID/EUID.
+> > > > >
+> > > > > This change makes sure the LSM states are always in sync with the VFS
+> > > > > state by moving the security_file_set_fowner() call close to the
+> > > > > UID/EUID updates and using the same f_owner.lock .
+> > > > >
+> > > > > Rename f_modown() to __f_setown() to simplify code.
+> > > > >
+> > > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > > > > Cc: Casey Schaufler <casey@schaufler-ca.com>
+> > > > > Cc: Christian Brauner <brauner@kernel.org>
+> > > > > Cc: James Morris <jmorris@namei.org>
+> > > > > Cc: Jann Horn <jannh@google.com>
+> > > > > Cc: Ondrej Mosnacek <omosnace@redhat.com>
+> > > > > Cc: Paul Moore <paul@paul-moore.com>
+> > > > > Cc: Serge E. Hallyn <serge@hallyn.com>
+> > > > > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > > > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > > > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > > > > ---
+> > > > >
+> > > > > Changes since v2:
+> > > > > https://lore.kernel.org/r/20240812174421.1636724-1-mic@digikod.net
+> > > > > - Only keep the LSM hook move.
+> > > > >
+> > > > > Changes since v1:
+> > > > > https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
+> > > > > - Add back the file_set_fowner hook (but without user) as
+> > > > >   requested by Paul, but move it for consistency.
+> > > > > ---
+> > > > >  fs/fcntl.c | 14 ++++----------
+> > > > >  1 file changed, 4 insertions(+), 10 deletions(-)
+> > > >
+> > > > This looks reasonable to me, and fixes a potential problem with
+> > > > existing LSMs.  Unless I hear any strong objections I'll plan to merge
+> > > > this, and patch 2/2, into the LSM tree tomorrow.
+> > >
+> > > I didn't see these patches in -next, did I miss something?
+> > > Landlock will use this hook really soon and it would make it much easier
+> > > if these patches where upstream before.
+> >
+> > Ah!  My apologies, I'll do that right now and send another update once
+> > it's done.  FWIW, I'm going to tag 1/2 for stable, but since we are at
+> > -rc7 presently I'll just plan to send it during the next merge window.
+> 
+> Merged into lsm/dev, thanks for the nudge :)
 
-No event is printed in the "Branch Counter" column on hybrid machines.
-
-For example,
- $perf record -e "{cpu_core/branch-instructions/pp,cpu_core/branches/}:S"
- -j any,counter
- $perf report --total-cycles
-
- # Branch counter abbr list:
- # cpu_core/branch-instructions/pp = A
- # cpu_core/branches/ = B
- # '-' No event occurs
- # '+' Event occurrences may be lost due to branch counter saturated
- #
- # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles  Branch Counter
- # ...............  ..............  ...........  ..........  ..............
-           44.54%          727.1K        0.00%           1   |+   |+   |
-           36.31%          592.7K        0.00%           2   |+   |+   |
-           17.83%          291.1K        0.00%           1   |+   |+   |
-
-The branch counter information (br_cntr_width and br_cntr_nr) in the
-perf_env is retrieved from the CPU_PMU_CAPS. However, the CPU_PMU_CAPS
-is not available on hybrid machines. Without the width information, the
-number of occurrences of an event cannot be calculated.
-
-For a hybrid machine, the caps information should be retrieved from the
-PMU_CAPS, and stored in the perf_env->pmu_caps.
-
-Add a perf_env__find_br_cntr_info() to return the correct branch counter
-information from the corresponding fields.
-
-Fixes: 6f9d8d1de2c6 ("perf script: Add branch counters")
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- tools/perf/builtin-script.c |  5 +++--
- tools/perf/util/annotate.c  |  5 +++--
- tools/perf/util/env.c       | 15 +++++++++++++++
- tools/perf/util/env.h       |  3 +++
- tools/perf/util/session.c   |  6 ++++--
- 5 files changed, 28 insertions(+), 6 deletions(-)
-
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index dbe792b52c5c..a644787fa9e1 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1241,10 +1241,11 @@ static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
- 	}
- 
- 	if (PRINT_FIELD(BRCNTR)) {
--		unsigned int width = evsel__env(evsel)->br_cntr_width;
--		unsigned int i = 0, j, num, mask = (1L << width) - 1;
- 		struct evsel *pos = evsel__leader(evsel);
-+		unsigned int i = 0, j, num, mask, width;
- 
-+		perf_env__find_br_cntr_info(evsel__env(evsel), NULL, &width);
-+		mask = (1L << width) - 1;
- 		printed += fprintf(fp, "br_cntr: ");
- 		evlist__for_each_entry_from(evsel->evlist, pos) {
- 			if (!(pos->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_COUNTERS))
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 4990c70b1794..c6ebde9d40a8 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -333,14 +333,15 @@ static int symbol__account_br_cntr(struct annotated_branch *branch,
- {
- 	unsigned int br_cntr_nr = evsel__leader(evsel)->br_cntr_nr;
- 	unsigned int base = evsel__leader(evsel)->br_cntr_idx;
--	unsigned int width = evsel__env(evsel)->br_cntr_width;
- 	unsigned int off = offset * evsel->evlist->nr_br_cntr;
--	unsigned int i, mask = (1L << width) - 1;
- 	u64 *branch_br_cntr = branch->br_cntr;
-+	unsigned int i, mask, width;
- 
- 	if (!br_cntr || !branch_br_cntr)
- 		return 0;
- 
-+	perf_env__find_br_cntr_info(evsel__env(evsel), NULL, &width);
-+	mask = (1L << width) - 1;
- 	for (i = 0; i < br_cntr_nr; i++) {
- 		u64 cntr = (br_cntr >> i * width) & mask;
- 
-diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
-index a459374d0a1a..1edbccfc3281 100644
---- a/tools/perf/util/env.c
-+++ b/tools/perf/util/env.c
-@@ -624,3 +624,18 @@ char *perf_env__find_pmu_cap(struct perf_env *env, const char *pmu_name,
- 	free(cap_eq);
- 	return NULL;
- }
-+
-+void perf_env__find_br_cntr_info(struct perf_env *env,
-+				 unsigned int *nr,
-+				 unsigned int *width)
-+{
-+	if (nr) {
-+		*nr = env->cpu_pmu_caps ? env->br_cntr_nr :
-+					  env->pmu_caps->br_cntr_nr;
-+	}
-+
-+	if (width) {
-+		*width = env->cpu_pmu_caps ? env->br_cntr_width :
-+					     env->pmu_caps->br_cntr_width;
-+	}
-+}
-diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
-index 2a2c37cc40b7..51b36c36019b 100644
---- a/tools/perf/util/env.h
-+++ b/tools/perf/util/env.h
-@@ -192,4 +192,7 @@ char *perf_env__find_pmu_cap(struct perf_env *env, const char *pmu_name,
- 			     const char *cap);
- 
- bool perf_env__has_pmu_mapping(struct perf_env *env, const char *pmu_name);
-+void perf_env__find_br_cntr_info(struct perf_env *env,
-+				 unsigned int *nr,
-+				 unsigned int *width);
- #endif /* __PERF_ENV_H */
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index b492300ec959..dbaf07bf6c5f 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -856,7 +856,6 @@ static void branch_stack__printf(struct perf_sample *sample,
- 	struct branch_entry *entries = perf_sample__branch_entries(sample);
- 	bool callstack = evsel__has_branch_callstack(evsel);
- 	u64 *branch_stack_cntr = sample->branch_stack_cntr;
--	struct perf_env *env = evsel__env(evsel);
- 	uint64_t i;
- 
- 	if (!callstack) {
-@@ -900,8 +899,11 @@ static void branch_stack__printf(struct perf_sample *sample,
- 	}
- 
- 	if (branch_stack_cntr) {
-+		unsigned int br_cntr_width, br_cntr_nr;
-+
-+		perf_env__find_br_cntr_info(evsel__env(evsel), &br_cntr_nr, &br_cntr_width);
- 		printf("... branch stack counters: nr:%" PRIu64 " (counter width: %u max counter nr:%u)\n",
--			sample->branch_stack->nr, env->br_cntr_width, env->br_cntr_nr);
-+			sample->branch_stack->nr, br_cntr_width, br_cntr_nr);
- 		for (i = 0; i < sample->branch_stack->nr; i++)
- 			printf("..... %2"PRIu64": %016" PRIx64 "\n", i, branch_stack_cntr[i]);
- 	}
--- 
-2.38.1
-
+Thanks!
 
