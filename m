@@ -1,160 +1,87 @@
-Return-Path: <linux-kernel+bounces-321730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AB72971EA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:04:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7041A971EAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C46FB23B9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:03:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A121C238D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149D113AA2D;
-	Mon,  9 Sep 2024 16:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18461BC39;
+	Mon,  9 Sep 2024 16:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dLprfjyR"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cd7tt4XB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C74713A27E
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4630913A240;
+	Mon,  9 Sep 2024 16:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725897806; cv=none; b=t3wO9ugvN+7adwjcvqNIOcWqNcmFaTvMfPMyXQfQHliQ88QBDKK9vglLZeZve3lFGLqCH+mFO5A+zQ+D2rfuxsRu2txLGDUpJsnw9bwVJrNkwzYPMM/kTI9PdHe9VF9Fhx3l2Obzu8RmJ3fMRcF3HfxkEg9NbtifoFvRdAOwZBo=
+	t=1725897842; cv=none; b=ijEpVMDvjEeUZVaZAVXUzH/i4rd3FWGSRSvlIx5Nf7KKO0k+iL78wD+HqvQwQmoUAYn5vxVgN88+QR4EtzZA0++CLuOqrXHT3W7KRP3SGFSoXJXkSHjcs0bjxsw0xLHO52iRUlRW9FWXKNVO1g4ovxzpKHwM6xNlizKSw0u2npE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725897806; c=relaxed/simple;
-	bh=UD2ljjMyeCTiG/VAuf2toxKpwa7RSFcC6BIY4yWZNYs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gswgyxI7xgEEBbYbA27DFoq43Tlwdk2BgkYG+lgJx3WxnceyVLHTP0cwDR1cOHddiLf8z0ZAebUuwXPuEfYJmIk99JgnYoopwCv83lTIWAK9C0dtrljO0TOzAOsb/EH5j+ykRzLtXWFDAZLR+peN8JwTlWQ17K72hecIsrci1F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dLprfjyR; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6db20e22c85so38323837b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:03:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1725897804; x=1726502604; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RmLD+KoyfTyy43xEOB1Jl+N/7L+1hOh+6Y9O1otzjvc=;
-        b=dLprfjyRK5uq/nYa80qxz7L67vNzBIztE3iaw1kXiHeXiEE5qUJdJs75Pazd4Ox3sM
-         dnMBirVg9XDN4x6GhnjpCPlX7KNMnbrWkNTGUZpF7yg08v8vO2CgBMNXyQnr1b/mlTJk
-         Bowjjv2X/4cBI4Dpzh+z8WKsw1c0HLlQtrHGjQ/J/Qzs8KwmyG0TF0dQAGIcW9ykro43
-         lzVg3iGS4VKQ7iNL4lgDPnjQccev9SA7jijY3NH6rUhIH6W9xJ8zTYdUXe8vbhPSS1f7
-         z/Xzfd5cEDmsNpjEXFHdbn6JILcL8ngh92frrPQsDWeZGfb1lEjPeMiGpSxJqV9LR7xz
-         qRsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725897804; x=1726502604;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RmLD+KoyfTyy43xEOB1Jl+N/7L+1hOh+6Y9O1otzjvc=;
-        b=LkqF+PCRuOKp1CTjDF7FTfGuXebjLTH42vOIv9aVGufb9HQRTaWEiEsp8qdMW8nwZ0
-         MvPFRQUzVOT6MscU/ug3KREgF3LKx19gP6lXHGpwDfk92yszcsCau3nGfx62jbWBGc8k
-         67EooRu+inUHgeQ4WuOnOScJ8knI45rSKNG0VVp40HAbEXNqDx+KEChllyFkwpMfHgwZ
-         Tl/fyx4B1oGqKPsoHb0MQgc048V6qwEt7IDt4AZS6ITTKaeMe+kRp2eI/qy5F0ah1hft
-         8NqhNJmkMQiLWAD1f8I+BaktZcoDcuL0CFkJtB8Q1cfF9u1H0HzP25xMgr5LCvM3CTwo
-         sONA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlITyNPwhlXGusSsyFq03zNbwtVezFG6XvohKogCyqYiYUWWjNW1OBZdF5+/SOUyVKVg1vdPpo45+yCbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxuy9fO7aNq+k9D4X+j+ILJ2WYBjtlxDKywvddXR9jPSggP+1Kt
-	cOeUAq4jI58tjHfo1n428zqcAHdYsJMvtqV0/yYI7p9AHuPglRFiZ6zSpIzmarieMzrA/C8HKlo
-	7xtlwZL6t8rfePHbxM/dtOCozIIMXSEadKRSR
-X-Google-Smtp-Source: AGHT+IFXJbCdQgIsUYiuclOIDXjii4BA+zlkZU46pBKrIPA+T27zslxg+uUckYtLiLzOREZpnuOR1x8LngOyzQPy6Do=
-X-Received: by 2002:a05:690c:350a:b0:6b2:7ff8:ca1 with SMTP id
- 00721157ae682-6db4515443dmr111890657b3.22.1725897803463; Mon, 09 Sep 2024
- 09:03:23 -0700 (PDT)
+	s=arc-20240116; t=1725897842; c=relaxed/simple;
+	bh=XcUDm/k+911vW3FZtkVePJXLt22j80SWvX41/HfoO3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AIV2fXVoj83cUG6dv3i5zHOjDFA/1L5w7/AwlVbP7Ch0m5d4GlswuiYJdu01ycNWb36UFHA+NIXTe1R0C63F+R2q4c7uF9gMJHEC7yjHGwKRZFlKSZJgyVDQ6jX0OM/1iC8lm3q2iLZ1PIz9DDeQb/7DFg55dElG8BqUa5VjWho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cd7tt4XB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B71B7C4CEC5;
+	Mon,  9 Sep 2024 16:04:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725897841;
+	bh=XcUDm/k+911vW3FZtkVePJXLt22j80SWvX41/HfoO3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cd7tt4XBxV3SFOwaiRoDq9Bwimf/e2Z6oHXS6IplUIbZRoBGbllmWvj+4TSsOx2yr
+	 poSh9WS6+0+OcteGNXurFGmDxl28P5JVLHJznBh/4lgCSvCd8ErA9LsSLpGb3KGhXi
+	 Z9Qo4SVvIrjEpIOSA0y+oryXRehmY05vLxF2y5BnMYCyt7+UcpEB4hKwJd8CPEmxgU
+	 V4XqCoI47JBNuwM4CO+HyafDV+BhsYilNMCMhVxr3oDhsIDXLa21KAXfLi3RdGirDW
+	 qAEq61fzbhXRUbxR8jaUDCNn2XcEyVkSW8vx8qsj9AqGQNErQtYsVOVAU2IMVfksqF
+	 4TfB4V5q5da6Q==
+Date: Mon, 9 Sep 2024 11:04:00 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: andrew@lunn.ch, devicetree@vger.kernel.org, davem@davemloft.net,
+	conor+dt@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	pabeni@redhat.com, hkallweit1@gmail.com, f.fainelli@gmail.com,
+	krzk+dt@kernel.org
+Subject: Re: [PATCH v2 net] dt-bindings: net: tja11xx: fix the broken binding
+Message-ID: <172589770898.219234.12343458471539869016.robh@kernel.org>
+References: <20240909012152.431647-1-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821095609.365176-1-mic@digikod.net> <CAHC9VhQ7e50Ya4BNoF-xM2y+MDMW3i_SRPVcZkDZ2vdEMNtk7Q@mail.gmail.com>
- <20240908.jeim4Aif3Fee@digikod.net>
-In-Reply-To: <20240908.jeim4Aif3Fee@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 9 Sep 2024 12:03:12 -0400
-Message-ID: <CAHC9VhSGTOv9eiYCvbY67PJwtuBKWtv6nBgy_T=SMr-JPBO+SA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] fs: Fix file_set_fowner LSM hook inconsistencies
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909012152.431647-1-wei.fang@nxp.com>
 
-On Sun, Sep 8, 2024 at 2:11=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
->
-> On Wed, Aug 21, 2024 at 12:32:17PM -0400, Paul Moore wrote:
-> > On Wed, Aug 21, 2024 at 5:56=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > >
-> > > The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGUR=
-G
-> > > for the related file descriptor.  Before this change, the
-> > > file_set_fowner LSM hook was always called, ignoring the VFS logic wh=
-ich
-> > > may not actually change the process that handles SIGIO (e.g. TUN, TTY=
-,
-> > > dnotify), nor update the related UID/EUID.
-> > >
-> > > Moreover, because security_file_set_fowner() was called without lock
-> > > (e.g. f_owner.lock), concurrent F_SETOWN commands could result to a r=
-ace
-> > > condition and inconsistent LSM states (e.g. SELinux's fown_sid) compa=
-red
-> > > to struct fown_struct's UID/EUID.
-> > >
-> > > This change makes sure the LSM states are always in sync with the VFS
-> > > state by moving the security_file_set_fowner() call close to the
-> > > UID/EUID updates and using the same f_owner.lock .
-> > >
-> > > Rename f_modown() to __f_setown() to simplify code.
-> > >
-> > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> > > Cc: Christian Brauner <brauner@kernel.org>
-> > > Cc: James Morris <jmorris@namei.org>
-> > > Cc: Jann Horn <jannh@google.com>
-> > > Cc: Ondrej Mosnacek <omosnace@redhat.com>
-> > > Cc: Paul Moore <paul@paul-moore.com>
-> > > Cc: Serge E. Hallyn <serge@hallyn.com>
-> > > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > > ---
-> > >
-> > > Changes since v2:
-> > > https://lore.kernel.org/r/20240812174421.1636724-1-mic@digikod.net
-> > > - Only keep the LSM hook move.
-> > >
-> > > Changes since v1:
-> > > https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
-> > > - Add back the file_set_fowner hook (but without user) as
-> > >   requested by Paul, but move it for consistency.
-> > > ---
-> > >  fs/fcntl.c | 14 ++++----------
-> > >  1 file changed, 4 insertions(+), 10 deletions(-)
-> >
-> > This looks reasonable to me, and fixes a potential problem with
-> > existing LSMs.  Unless I hear any strong objections I'll plan to merge
-> > this, and patch 2/2, into the LSM tree tomorrow.
->
-> I didn't see these patches in -next, did I miss something?
-> Landlock will use this hook really soon and it would make it much easier
-> if these patches where upstream before.
 
-Ah!  My apologies, I'll do that right now and send another update once
-it's done.  FWIW, I'm going to tag 1/2 for stable, but since we are at
--rc7 presently I'll just plan to send it during the next merge window.
+On Mon, 09 Sep 2024 09:21:52 +0800, Wei Fang wrote:
+> As Rob pointed in another mail thread [1], the binding of tja11xx PHY
+> is completely broken, the schema cannot catch the error in the DTS. A
+> compatiable string must be needed if we want to add a custom propety.
+> So extract known PHY IDs from the tja11xx PHY drivers and convert them
+> into supported compatible string list to fix the broken binding issue.
+> 
+> [1]: https://lore.kernel.org/netdev/31058f49-bac5-49a9-a422-c43b121bf049@kernel.org/T/
+> 
+> Fixes: 52b2fe4535ad ("dt-bindings: net: tja11xx: add nxp,refclk_in property")
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> ---
+> V2 changes:
+> 1. Add more compatible strings based on TJA11xx data sheets.
+> V1 link: https://lore.kernel.org/imx/20240904145720.GA2552590-robh@kernel.org/T/
+> ---
+>  .../devicetree/bindings/net/nxp,tja11xx.yaml  | 62 ++++++++++++++-----
+>  1 file changed, 46 insertions(+), 16 deletions(-)
+> 
 
---=20
-paul-moore.com
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
