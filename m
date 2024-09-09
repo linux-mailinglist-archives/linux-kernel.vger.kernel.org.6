@@ -1,208 +1,230 @@
-Return-Path: <linux-kernel+bounces-321566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8441B971C16
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:04:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0C7971C18
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1E5E1C23180
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:04:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99F371C23367
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDFA1B5826;
-	Mon,  9 Sep 2024 14:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83EF1B9B55;
+	Mon,  9 Sep 2024 14:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="b1CF+czc"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lk2Gj73F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B260822095
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 14:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1E517837E;
+	Mon,  9 Sep 2024 14:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725890687; cv=none; b=IIC4g4CDvFzfZ6MpPYSvVS7UJf69xM3Wr9ufu0oH59LeeDeAImLfa/Yy96Zc7Usrqv29qy+sMHz7ZbGNCvgwjZ6uwWF9kbmQ/pkPtlFvhhpk8/TfPpspXDMYzok4MHqo9/kQeI4VuD4bbEBKbIurA2rJpLJbuCGT8a8CJm0yhr4=
+	t=1725890704; cv=none; b=mzSaIXk5B1uZXSsTG49MF8lVxpy8rrKaUg+XKLCVfcY+W1xyNAI/ml03U8Vw/yY2vkeUrR8l6T7M0tgnFvrVkHgLInw0ajxx+zgGizl0H1i5gPQVxBH5SxwR6qjiZSSa0hDTRdnjusaKrcayDzsANunoRjmrjziehBcuJ6s/cnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725890687; c=relaxed/simple;
-	bh=Vh4pLtxdZtbS3hCyjBv3SKte5AGWGx3B0en4haCDVu8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=AU4Spg1Vo/AnLSGtE8EOsr0BFG3jfe1StzfqPAWsrDapUPc31Ew4bvb/1iNsrj1Go2sMzgA+jfrQEBEASK+R1l0tGmf/FZqLiNrTpQdJJv4WecXt6ZZ8Dhc1DcQvms6HcFkItJ9CF3JsHTnZRBqPmQ4q6YdfE2raTeHiPKg9NqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=b1CF+czc; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4899SWSM028493;
-	Mon, 9 Sep 2024 14:04:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	WeKnLh7j171W3o0vnrs6rgz/OyHAOjCX7QJuAuvN8x8=; b=b1CF+czc5S4k+9EL
-	qc0eI6X/JvyvUA6VXjd8oXeBGP6qZggHuTEceShsZYgrZMcO+YhjOeZckBXAgTCb
-	kkyyWCmy+4MtGihkc1++kFUkoTCTSfj7ymcTXuooSTedUkSMyl3AMiIn19JLurEq
-	KFpjyJOfbJzpERA1TtUsoyPiqidxEfMtpge6TIbGvNldNsEjp/UCCJRrKAokMxVY
-	FIMX1obMMPw7r0yfIYhB2AMRg/JuESOQ9H66BmbikGdr5zQdNhq4XHogI7obaCQn
-	2SHMCSOTRv/fXb7dgylVQxbL+qrqLFPH1ARlt9ix4+EogIgwQfcKTk13dISyLUfY
-	iDp/Tg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefya4y4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 14:04:33 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 489E4WfH022044;
-	Mon, 9 Sep 2024 14:04:32 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefya4y2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 14:04:32 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 489CjDXd013476;
-	Mon, 9 Sep 2024 14:04:32 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h3ckxf2v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 14:04:31 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 489E4Sr050921886
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Sep 2024 14:04:28 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 64F6E2004B;
-	Mon,  9 Sep 2024 14:04:28 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B545320043;
-	Mon,  9 Sep 2024 14:04:23 +0000 (GMT)
-Received: from [9.61.248.162] (unknown [9.61.248.162])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  9 Sep 2024 14:04:23 +0000 (GMT)
-Message-ID: <66e3558d-a9a6-4caa-9102-7c22a695acda@linux.ibm.com>
-Date: Mon, 9 Sep 2024 19:34:21 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] powerpc/pseries/eeh: Fix pseries_eeh_err_inject
-To: Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, vaibhav@linux.ibm.com,
-        ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
-References: <20240823151158.92602-1-nnmlinux@linux.ibm.com>
- <877cbq5k1y.fsf@mail.lhotse>
-Content-Language: en-US
-From: Narayana Murty N <nnmlinux@linux.ibm.com>
-In-Reply-To: <877cbq5k1y.fsf@mail.lhotse>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: RlxcfRHUjNEBYuEAm3N5TpPxikbLwuPO
-X-Proofpoint-ORIG-GUID: C7YU61U7blTkJ3XKmErHkmeLyNJy2e8D
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1725890704; c=relaxed/simple;
+	bh=39t/3qJV4Q2JW5H0rZSfS2mJT51lZ2xxZvskNVI7R9o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aZN0z+A45xZTouqM+m2xfC5FtAoRJ5tHlVDBmlpMLdtq6SzOZH2Mk3rldoaHbvKtyDv3Pu4abWG1TPbbebyzQdg3LGrSdQXiY6H37EvecZNILdTmC+gbSFta1QykwiUh4N6wswy1RTKj5TM23xVTD59Y7ettfojUT2idVwszoiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lk2Gj73F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BED0C4CECC;
+	Mon,  9 Sep 2024 14:05:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725890703;
+	bh=39t/3qJV4Q2JW5H0rZSfS2mJT51lZ2xxZvskNVI7R9o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Lk2Gj73FjiSiEZus3uC7mkNG4XywWqQ7NR0y3ikap2Q+6o++ADr1PK8l7VSXdhcsQ
+	 NrMbhgAEtgUEC99n6rRBm5+kaHpo5Mop5C3UcgHmG1YsEOqL8UYNP7ne3w/YGnDQab
+	 VN2eyxke+dnFp1KjS1Bft2bKSut8sTHIM/gKDNpyMWTR06KGjTm7cd6TRZIv/S93Ob
+	 jN3iD2WphAFVmr+r3zIFplnxxY0ChXDhTvmCHR04xg+fxiKIEf9BFe24MzKGHEKKNm
+	 zzvs+TMo+CjJxcZP5R8dUsyksaRN9X8bPXbOQandqBAkMMmORoo12ZNGx4OZ/M/+fG
+	 FpucO2WUCsqDw==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5365aa568ceso3771865e87.0;
+        Mon, 09 Sep 2024 07:05:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVNBN9b6BDH+ZlQGE5uV45aV3H+nPbu1mhk6vpXCx9iVPq9qDJDea6JgcKP25i9pPT2k3fn173BYdCY+PnC@vger.kernel.org, AJvYcCXkfEg499gEdfWnKlSbU1FBaDruw5yvT8uL+u0JAV7n1o/T8Kpz2qD/Lwhe+ItkxbySwJiLCe77Seo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYu61DusMNJHistRuoFSOQWfKc3+6i41ndA7QQGig81YUrj+8H
+	rM70r79CwtVsPK/U41kifJkbktsrNwuE6AUa1MUqGRcsrPkYr+CJwTy8ymtb7FcEcQQ4ACowDFr
+	xdFJISHts729MjWw1tj0nX2qSufM=
+X-Google-Smtp-Source: AGHT+IEJTNfHR7krKocDudQJXBZne2qOZFYCOAl5tMDGgePisWMZ4797/twUNPb5n/v9GxwDhTtOYhmZyMfcyRmybBY=
+X-Received: by 2002:a05:6512:1283:b0:536:553f:a6e7 with SMTP id
+ 2adb3069b0e04-536587c7fe0mr10827543e87.32.1725890701674; Mon, 09 Sep 2024
+ 07:05:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-09_06,2024-09-09_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
- adultscore=0 clxscore=1015 spamscore=0 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409090113
+References: <20240819145417.23367-1-piliu@redhat.com> <CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
+ <20240906125438.1e54c5f6@rotkaeppchen> <Zt7EbvWjF9WPCYfn@gardel-login>
+ <Zt7RJepoCiCMRZSu@archlinux> <20240909154940.7ab93782@rotkaeppchen>
+In-Reply-To: <20240909154940.7ab93782@rotkaeppchen>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 9 Sep 2024 16:04:50 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHN5NgUJ+wwaZxsKeT4bDHqO6C2CHaALAi7JV5hWVmR2A@mail.gmail.com>
+Message-ID: <CAMj1kXHN5NgUJ+wwaZxsKeT4bDHqO6C2CHaALAi7JV5hWVmR2A@mail.gmail.com>
+Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
+To: Philipp Rudo <prudo@redhat.com>
+Cc: Jan Hendrik Farr <kernel@jfarr.cc>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Pingfan Liu <piliu@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Eric Biederman <ebiederm@xmission.com>, Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, kexec@lists.infradead.org, 
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-On 05/09/24 6:33 PM, Michael Ellerman wrote:
-> Narayana Murty N <nnmlinux@linux.ibm.com> writes:
->> VFIO_EEH_PE_INJECT_ERR ioctl is currently failing on pseries
->> due to missing implementation of err_inject eeh_ops for pseries.
->> This patch implements pseries_eeh_err_inject in eeh_ops/pseries
->> eeh_ops. Implements support for injecting MMIO load/store error
->> for testing from user space.
->>
->> The check on PCI error type code is moved to platform code, since
->> the eeh_pe_inject_err can be allowed to more error types depending
->> on platform requirement.
->>
->> Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
->> ---
->>
->> Testing:
->> ========
->> vfio-test [1] by Alex Willamson, was forked and updated to add
->> support inject error on pSeries guest and used to test this
->> patch[2].
->>
->> References:
->> ===========
->> [1] https://github.com/awilliam/tests
->> [2] https://github.com/nnmwebmin/vfio-ppc-tests/tree/vfio-ppc-ex
->>
->> ================
->> Changelog:
->> V1:https://lore.kernel.org/all/20240822082713.529982-1-nnmlinux@linux.ibm.com/
->> - Resolved build issues for ppc64|le_defconfig by moving the
->> pseries_eeh_err_inject() definition outside of the CONFIG_PCI_IOV
->> code block.
->> - New eeh_pe_inject_mmio_error wrapper function added to avoid
->> CONFIG_EEH is not set.
->   
-> I don't see why that's necessary?
+On Mon, 9 Sept 2024 at 15:49, Philipp Rudo <prudo@redhat.com> wrote:
 >
-> It's only called from eeh_pseries.c, which is only built for
-> PPC_PSERIES, and when PPC_PSERIES=y, EEH is always enabled.
+> Hi Lennart,
+> Hi Jan,
 >
->> diff --git a/arch/powerpc/include/asm/eeh.h b/arch/powerpc/include/asm/eeh.h
->> index 91a9fd53254f..8da6b047a4fe 100644
->> --- a/arch/powerpc/include/asm/eeh.h
->> +++ b/arch/powerpc/include/asm/eeh.h
->> @@ -308,7 +308,7 @@ int eeh_pe_reset(struct eeh_pe *pe, int option, bool include_passed);
->>   int eeh_pe_configure(struct eeh_pe *pe);
->>   int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
->>   		      unsigned long addr, unsigned long mask);
->> -
->> +int eeh_pe_inject_mmio_error(struct pci_dev *pdev);
->>   /**
->>    * EEH_POSSIBLE_ERROR() -- test for possible MMIO failure.
->>    *
->> @@ -338,6 +338,10 @@ static inline int eeh_check_failure(const volatile void __iomem *token)
->>   	return 0;
->>   }
->>   
->> +static inline int eeh_pe_inject_mmio_error(struct pci_dev *pdev)
->> +{
->> +	return -ENXIO;
->> +}
->>   #define eeh_dev_check_failure(x) (0)
->>   
->>   static inline void eeh_addr_cache_init(void) { }
->> diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
->> index d03f17987fca..49ab11a287a3 100644
->> --- a/arch/powerpc/kernel/eeh.c
->> +++ b/arch/powerpc/kernel/eeh.c
->> @@ -1537,10 +1537,6 @@ int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
->>   	if (!eeh_ops || !eeh_ops->err_inject)
->>   		return -ENOENT;
->>   
->> -	/* Check on PCI error type */
->> -	if (type != EEH_ERR_TYPE_32 && type != EEH_ERR_TYPE_64)
->> -		return -EINVAL;
->> -
->   
-> The change log should mention why it's OK to remove these checks. You
-> add the same checks in pseries_eeh_err_inject(), but what about
-> pnv_eeh_err_inject() ?
+> On Mon, 9 Sep 2024 12:42:45 +0200
+> Jan Hendrik Farr <kernel@jfarr.cc> wrote:
 >
-> It is OK AFAICS, because pnv_eeh_err_inject() already contains
-> equivalent checks, but you should spell that out.
+> > On 09 11:48:30, Lennart Poettering wrote:
+> > > On Fr, 06.09.24 12:54, Philipp Rudo (prudo@redhat.com) wrote:
+> > >
+> > > > I mostly agree on what you have wrote. But I see a big problem in
+> > > > running the EFI emulator in user space when it comes to secure boot.
+> > > > The chain of trust ends in the kernel. So it's the kernel that needs to
+> > > > verify that the image to be loaded can be trusted. But when the EFI
+> > > > runtime is in user space the kernel simply cannot do that. Which means,
+> > > > if we want to go this way, we would need to extend the chain of trust
+> > > > to user space. Which will be a whole bucket of worms, not just a
+> > > > can.
+> > >
+> > > May it would be nice to have a way to "zap" userspace away, i.e. allow
+> > > the kernel to get rid of all processes in some way, reliable. And then
+> > > simply start a new userspace, from a trusted definition. Or in other
+> > > words: if you don't want to trust the usual userspace, then let's
+> > > maybe just terminate it, and create it anew, with a clean, pristine
+> > > definition the old userspace cannot get access to.
+> >
+> > Well, this is an interesting idea!
+> >
+> > However, I'm sceptical if this could be done in a secure way. How do we
+> > ensure that nothing the old userspace did with the various interfaces to
+> > the kernel has no impact on the new userspace? Maybe others can chime in
+> > on this? Does kernel_lockdown give more guarantees related to this?
+> >
+> > Even if this is possible in a secure way, there is a problem with doing
+> > this for kernels that are to be kexec'd on kernel panic. In this
+> > approach we can't pre-run them until EBS(), so we would rely on the old
+> > kernel to still be intact when we want to kexec reboot.
 >
-> cheers
+> I don't believe there's a way to do that on running kernels. As Jan
+> pointed out, this cannot be done during reboot, as for kdump that would
+> mean to run after a panic. So it would need to run when the new image
+> is loaded. But at that time your user space is running. Plus you also
+> always have a user space component that triggers kexec. So you cannot
+> simply "zap" user space but have to somehow stash it away, run your
+> trusted user space and, then restore the old user space again. That
+> sounds pretty error prone to me. Plus it will tank your performance
+> every time you do a kexec, which for kdump is every boot...
+>
 
-yes mpe. I do agree, your comments are addressed in V3 posted
+kdump has a kexec kernel 'standby' to launch when the kernel panics.
+So for the UKI/EFI payload case, this would imply that the load
+involves running the payload until EBS() and freezing the state.
 
-here 
-https://lore.kernel.org/all/20240909140220.529333-1-nnmlinux@linux.ibm.com/
+Whether execution occurs in true user space or in a deprivileged
+kernel context is an implementation detail, imho. We don't want to run
+external code in privileged mode inside the kernel in any case, as
+this would violate lockdown already. But it should be feasible to have
+a EFI compatible layer in the kernel that invokes the EFI entrypoint
+of an image in a way that protects the host kernel. This could be user
+mode on the CPU or perhaps a minimal KVM virtual machine.
 
-regards,
+The advantage of this approach is that the whole concept of purgatory
+can be avoided - the EFI boot phase runs in parallel with the previous
+kernel, which has full control over authentication and [emulated] PCR
+externsion, and has ultimate control over whether the kexec reboot is
+permitted.
 
-Narayana Murty.
+> > You could do a system where you kexec into an intermediate kernel. That
+> > kernel get's kexec'd with a signed initrd that can use the normal
+> > kexec_load syscall to load do any kind of preparation in userspace.
+> > Problem: For that intermediate enviroment we already need a format
+> > that combines kernel image, initrd, cmdline all signed in one package
+> > aka UKI. Was it the chicken or the egg?
+> >
+> > But this shows that if we implemented UKIs the easy way (kernel simply
+> > checks signature, extracts the pieces, and kexecs them like normal),
+> > this approach could always be used to support kexec for other future
+> > formats. They could use the kernels UKI support to boot into an
+> > intermediate kernel with UEFI implemented in userspace in the initrd.
+> >
+> > So basically support UKIs the easy way and use them to be able to
+> > securely zap away userspace and start with a fresh kernel and signed
+> > userspace as a way to support other UEFI formats that are not UKI.
+>
+> Well, in theory that should work. But I see several problems:
+>
+> 1) How does the first kernel tell the intermediate kernel which
+> file(s) with wich command line to load? In fact, how does the first
+> kernel get the information itself? You would need a new system call
+> that takes two kernel images, one for the intermediate and one for the
+> kernel to load,for that.
+>
+> Of course you could also build the intermediate UKI during kernel build
+> and include it into the image. Similar to what is done with the
+> purgatory. But that would totally bloat the kernel image.
+>
+> 2) I expect that to be extremely painful to debug, if the intermediate
+> kernel runs into a panic. For sure kdump won't work in that case...
+>
+> 3) Distros would need maintain and test the additional UKI.
+>
+> 4) This approach basically needs to boot twice. But there are people
+> out there who fight to reduce boot times extremely hard. For them every
+> millisecond counts. Telling them that they will need to wait twice as
+> long will be very hard to sell.
+>
 
+I don't think intermediate kernels are the solution here. We need to
+run as much as possible under the control of the preceding kernel, and
+minimize the bare metal handover that occurs after EBS(). Adding more
+code to the purgatory (as this series does) is not acceptable to me,
+as it is extremely difficult to debug, and duplicates drivers and
+other logic (making it an 'intermediate kernel' of sorts already)
+
+> > >
+> > > > Let me throw an other wild idea in the ring. Instead of implementing
+> > > > a EFI runtime we could also include a eBPF version of the stub into the
+> > > > images. kexec could then extract the eBPF program and let it run just
+> > > > like any other eBPF program with all the pros (and cons) that come with
+> > > > it. That won't be as generic as the EFI runtime, e.g. you couldn't
+> > > > simply kexec any OS installer. On the other hand it would make it
+> > > > easier to port UKIs et al. to non-EFI systems. What do you think?
+> > >
+> > > ebpf is not turing complete, I am not sure how far you will make it
+> > > with this, in the various implementations of EFI payloads there are
+> > > plenty of loops, sometimes IO loops, sometimes hash loops of huge data
+> > > (for measurements). As I understand ebpf is not really compatible such
+> > > code.
+>
+> I don't believe we can simply take all those payloads and recompile
+> them to eBPF. There definitely needs to be some refactoring done first.
+> For example the IO loops you can drop for eBPF and simply map to the
+> corresponding kernel function, letting them do the full IO in one go.
+> There will be cases where that will be more difficult like for hash
+> loops when you have to have the same hash at the end. But I believe
+> even for that ways could be found to get it to work.
+>
+> Anyway, I'm sure that the picture I have in my head is way
+> oversimplified. There will be many pitfalls to handle for sure. Still I
+> believe it would be a nice experiment.
+>
+
+Today, UKI functionality is implemented in terms of EFI API calls. Any
+solution that needs either a parallel implementation (eBPF vs EFI) or
+needs to unpack the UKI in order to perform the steps that the UKI
+would perform itself if it were executed in an EFI environment is a
+no-go in my opinion.
+
+So either we provide some EFI compatible runtime sufficient to run a
+UKI, or we re-engineer UKI to be built on top of an abstraction that
+can be implemented straight-forwardly both on system firmware and in
+the EFI context.
 
