@@ -1,165 +1,270 @@
-Return-Path: <linux-kernel+bounces-320724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF671970F8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:23:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE0EA970FF3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A7342811DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:23:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AEC21F2270B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6FF1B1415;
-	Mon,  9 Sep 2024 07:23:09 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18141AF4EE;
+	Mon,  9 Sep 2024 07:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBmEiOuq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDA41AF4E0;
-	Mon,  9 Sep 2024 07:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105961AE856;
+	Mon,  9 Sep 2024 07:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725866589; cv=none; b=DqBVcb3n0RD+oAT10ryMHh6OlmZ8HaHs0Fx8y+2ZtFI9UUK1S6/6QqGrG/fx2pzivt1+M11c+DDQ1SR6PaUE/ynEQJ70PXKRszPOiKW9ZuljMwgD5a3Qx7x6S6vjJ6Au7Ja/+4q6DIZoBXm/mprHSgOQlmHNtxUayZ2Dp94Slsk=
+	t=1725867340; cv=none; b=N0j5mvPVd5P6UpffdI65rHNamQMB+GJME8NaITf8ZUnui0Vv7ge6YDm6ZeTRgVX5M3qbQBVGmVknUAG8zm+L/UL7kGblK2ZcyohT8sP68dPyw/xtTVk9JQbZFQmoJTQGXIK3JIsvp3G3R3KRVyc/+r2uRF9n34THcGoHk0GTGUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725866589; c=relaxed/simple;
-	bh=f/gAvk3LY5QcZ5R+QAYNfr2fubYhtonii7MAMhcpejM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HuTxa/p5HwIT07MOsytM8rY4MIFYmNPRk0ri+nc0dZJimvSNhfl4WkNwPaRP/50aSa+WN05Dhcdr23NFjuvZlde/sVMRwHsjI/5A8J0WciUcAuOK0eaMl499KlLIuc5rr0OqH9ZQ+BLTKQVgV2gKPTGcuNLjJWTOjEXYcT0J4TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4X2JDm5llNz1P9HD;
-	Mon,  9 Sep 2024 15:22:00 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 917E2140336;
-	Mon,  9 Sep 2024 15:23:04 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 9 Sep
- 2024 15:23:04 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <broonie@kernel.org>, <akashast@codeaurora.org>, <dianders@chromium.org>,
-	<vkoul@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v3 3/3] spi: geni-qcom: Use devm functions to simplify code
-Date: Mon, 9 Sep 2024 15:31:41 +0800
-Message-ID: <20240909073141.951494-4-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240909073141.951494-1-ruanjinjie@huawei.com>
-References: <20240909073141.951494-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1725867340; c=relaxed/simple;
+	bh=sZQ1ENMLvpyFT3RPVVOSVSec1mz43owuiOBScJQ7TFA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T0fkUQ+pESMz03qAsf2gMZ77Dc+mTjKOCG3nkqupw9Mp7V52Q/ufW5QITwKVdDPTxk9xpbAHQsTMNca+9cQY82v0PeNMLq7vJoewI06l0PGa1bYipPwgEoyCzGx+tklSzkt+tEjnfpeL3VYDLZ1SYtqxZMF/RDYxnQ7D6YmqCNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBmEiOuq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 969AFC4CECA;
+	Mon,  9 Sep 2024 07:35:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725867339;
+	bh=sZQ1ENMLvpyFT3RPVVOSVSec1mz43owuiOBScJQ7TFA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iBmEiOuq+Tb9WPFknk5HT7FFPiJzFxqXirFzbbIMNWDHLaVq5vzt9aqqwYYUzGjHt
+	 5RCVzBMIogAg5oOdKeeiyuTejbjiEGhw0JaPsrxWGd+FCNLWLK/QYoe99q6J2ikP72
+	 7q2EIQxxIxkrx+1zZQLfaJoLrVljy+dk6gH2QaUJvdzwhC3MPsPNK8LRCrflFpwe0v
+	 ZhW42vZHBiJYGg/tDqXVPPx/xHo7en3w8gTGZ1hK5XmsPl9fNE84fuSe9YzkF0rcnV
+	 oygUluZTfYx9tOB5K+wk0jxUcPDpHQDExKjcoRh7TuI6yhBKqP2W7UDrsM63ZuXgfl
+	 azJadC/FZLCtw==
+Date: Mon, 9 Sep 2024 08:35:04 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: jason liu <jasonliu10041728@gmail.com>
+Cc: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>,
+ "lars@metafoo.de" <lars@metafoo.de>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: =?UTF-8?B?5Zue5aSNOiDlm57lpI06?= [PATCH] iio/inv_icm42600: add
+ inv_icm42600 id_table
+Message-ID: <20240909083504.605e9ca7@jic23-huawei>
+In-Reply-To: <SI6PR01MB63194A7F2D2FD7701DD0465BF5992@SI6PR01MB6319.apcprd01.prod.exchangelabs.com>
+References: <FR3P281MB175720831E0817C23AD0B1BACE922@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+	<20240902113101.3135-1-jasonliu10041728@gmail.com>
+	<CAJci1vC9pvdqEpA8sk+uB5jJGn_DKUruXFfY6tbG9mO07YxgHQ@mail.gmail.com>
+	<FR3P281MB1757BEA60FF72A44847F1646CE9D2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+	<SI6PR01MB63197238674C8895885420D8F59E2@SI6PR01MB6319.apcprd01.prod.exchangelabs.com>
+	<20240908115115.1bf1155d@jic23-huawei>
+	<SI6PR01MB63194A7F2D2FD7701DD0465BF5992@SI6PR01MB6319.apcprd01.prod.exchangelabs.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Use devm_pm_runtime_enable(), devm_request_irq() and
-devm_spi_register_controller() to simplify code.
+On Mon, 9 Sep 2024 06:43:47 +0000
+jason liu <jasonliu10041728@gmail.com> wrote:
 
-And also register a callback spi_geni_release_dma_chan() with
-devm_add_action_or_reset(), to release dma channel in both error
-and device detach path, which can make sure the release sequence is
-consistent with the original one.
+> Hi Jonathan,
+>=20
+> > Hi Jason, =20
+>=20
+> > I've picked this up, but the patch submission has a number of issues
+> > you should be sure to fix in future patches.
+> > =20
+> I am sorry for the issues, and I will keep your suggestions in mind.
+> So, do I still need to submit a new patch to fix these issues?
+No need,.
+> My understanding is that since you've picked it up, there's no need for m=
+e to resubmit.
+> Is it right?
 
-1. Unregister spi controller.
-2. Free the IRQ.
-3. Free DMA chans
-4. Disable runtime PM.
+Yes that's right.
 
-So the remove function can also be removed.
+>=20
+> > I haven't treated this as a fix because it was never there, but
+> > it may make sense to request a backport to stable after it is upstream.
+> > =20
+> Sorry, I didn=E2=80=99t quite understand what you meant.
+> Why did you say 'it was never there'? Do you mean that this issue doesn't=
+ exist?
 
-Suggested-by: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
-v3:
-- Land the rest of the cleanups afterwards.
----
- drivers/spi/spi-geni-qcom.c | 37 +++++++++++++------------------------
- 1 file changed, 13 insertions(+), 24 deletions(-)
+The autoprobing never worked, hence this is an improvement not a regression.
+As such I've not rushed it in as a fix, but instead it can take a slower
+path upstream.
 
-diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
-index 6f4057330444..8b0039d14605 100644
---- a/drivers/spi/spi-geni-qcom.c
-+++ b/drivers/spi/spi-geni-qcom.c
-@@ -632,8 +632,10 @@ static int spi_geni_grab_gpi_chan(struct spi_geni_master *mas)
- 	return ret;
- }
- 
--static void spi_geni_release_dma_chan(struct spi_geni_master *mas)
-+static void spi_geni_release_dma_chan(void *data)
- {
-+	struct spi_geni_master *mas = data;
-+
- 	if (mas->rx) {
- 		dma_release_channel(mas->rx);
- 		mas->rx = NULL;
-@@ -1132,6 +1134,12 @@ static int spi_geni_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	ret = devm_add_action_or_reset(dev, spi_geni_release_dma_chan, spi);
-+	if (ret) {
-+		dev_err(dev, "Unable to add action.\n");
-+		return ret;
-+	}
-+
- 	/*
- 	 * check the mode supported and set_cs for fifo mode only
- 	 * for dma (gsi) mode, the gsi will set cs based on params passed in
-@@ -1146,33 +1154,15 @@ static int spi_geni_probe(struct platform_device *pdev)
- 	if (mas->cur_xfer_mode == GENI_GPI_DMA)
- 		spi->flags = SPI_CONTROLLER_MUST_TX;
- 
--	ret = request_irq(mas->irq, geni_spi_isr, 0, dev_name(dev), spi);
-+	ret = devm_request_irq(dev, mas->irq, geni_spi_isr, 0, dev_name(dev), spi);
- 	if (ret)
--		goto spi_geni_release_dma;
-+		return ret;
- 
--	ret = spi_register_controller(spi);
-+	ret = devm_spi_register_controller(dev, spi);
- 	if (ret)
--		goto spi_geni_probe_free_irq;
-+		return ret;
- 
- 	return 0;
--spi_geni_probe_free_irq:
--	free_irq(mas->irq, spi);
--spi_geni_release_dma:
--	spi_geni_release_dma_chan(mas);
--	return ret;
--}
--
--static void spi_geni_remove(struct platform_device *pdev)
--{
--	struct spi_controller *spi = platform_get_drvdata(pdev);
--	struct spi_geni_master *mas = spi_controller_get_devdata(spi);
--
--	/* Unregister _before_ disabling pm_runtime() so we stop transfers */
--	spi_unregister_controller(spi);
--
--	free_irq(mas->irq, spi);
--
--	spi_geni_release_dma_chan(mas);
- }
- 
- static int __maybe_unused spi_geni_runtime_suspend(struct device *dev)
-@@ -1254,7 +1244,6 @@ MODULE_DEVICE_TABLE(of, spi_geni_dt_match);
- 
- static struct platform_driver spi_geni_driver = {
- 	.probe  = spi_geni_probe,
--	.remove_new = spi_geni_remove,
- 	.driver = {
- 		.name = "geni_spi",
- 		.pm = &spi_geni_pm_ops,
--- 
-2.34.1
+Jonathan
+
+>=20
+> Thanks,
+>=20
+> Jason
+>=20
+> ________________________________________
+> From: Jonathan Cameron <jic23@kernel.org>
+> Sent: Sunday, September 8, 2024 6:51 PM
+> To: jason liu
+> Cc: Jean-Baptiste Maneyrol; lars@metafoo.de; linux-iio@vger.kernel.org; l=
+inux-kernel@vger.kernel.org
+> Subject: Re: =E5=9B=9E=E5=A4=8D: [PATCH] iio/inv_icm42600: add inv_icm426=
+00 id_table
+>=20
+> On Fri, 6 Sep 2024 05:02:59 +0000
+> jason liu <jasonliu10041728@gmail.com> wrote:
+>=20
+> > Hello,
+> >
+> > I'm glad this patch could help. And I would like to know, how will the =
+patch to be handled moving forward?
+> > =20
+> It is queued up on the IIO tree.  Given timing it's queued for 6.13.
+> Note that for now that is only pushed out as testing because I will
+> be rebasing the IIO togreg branch on 6.12-rc1.
+> One that is done it will appear in linux-next.
+>=20
+> It should go upstream and appear in char-misc/char-misc-next
+> in about 6 weeks.  After that Greg KH will send a pull request during
+> the 6.13 merge window in about 12 weeks time and it will then hopefully
+> get merged into Linus' tree before 6.13-rc1
+>=20
+> I haven't treated this as a fix because it was never there, but
+> it may make sense to request a backport to stable after it is upstream.
+>=20
+> Thanks,
+>=20
+> Jonathan
+>=20
+> > Thanks.
+> >
+> > ________________________________
+> > From: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
+> > Sent: Thursday, September 5, 2024 5:25 PM
+> > To: jason liu <jasonliu10041728@gmail.com>
+> > Cc: jic23@kernel.org <jic23@kernel.org>; lars@metafoo.de <lars@metafoo.=
+de>; linux-iio@vger.kernel.org <linux-iio@vger.kernel.org>; linux-kernel@vg=
+er.kernel.org <linux-kernel@vger.kernel.org>
+> > Subject: Re: [PATCH] iio/inv_icm42600: add inv_icm42600 id_table
+> >
+> > Hello,
+> >
+> > looks good for me now, thanks for the patch.
+> >
+> > Acked-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+> >
+> > Thanks,
+> > JB
+> >
+> > ________________________________________
+> > From: jason liu <jasonliu10041728@gmail.com>
+> > Sent: Wednesday, September 4, 2024 11:00
+> > To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
+> > Cc: jic23@kernel.org <jic23@kernel.org>; lars@metafoo.de <lars@metafoo.=
+de>; linux-iio@vger.kernel.org <linux-iio@vger.kernel.org>; linux-kernel@vg=
+er.kernel.org <linux-kernel@vger.kernel.org>
+> > Subject: Re: [PATCH] iio/inv_icm42600: add inv_icm42600 id_table
+> >
+> > This Message Is From an Untrusted Sender
+> > You have not previously corresponded with this sender.
+> >
+> > Hello, does patch v3 meet the requirements?
+> >
+> > BR.
+> >
+> > Jason Liu <jasonliu10041728@gmail.com> =E4=BA=8E2024=E5=B9=B49=E6=9C=88=
+2=E6=97=A5=E5=91=A8=E4=B8=80 19:31=E5=86=99=E9=81=93=EF=BC=9A
+> > Add the id_table of inv_icm42600, so the device can probe correctly.
+> >
+> > Signed-off-by: Jason Liu <jasonliu10041728@gmail.com>
+> > ---
+> > V1->V2: fix up the formatting as requested
+> > ---
+> > V2->V3: add icm42686 (INV_ICM_42686) and icm42688 (INV_ICM_42688)
+> > ---
+> >  drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c | 17 +++++++++++++++++
+> >  drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c | 17 +++++++++++++++++
+> >  2 files changed, 34 insertions(+)
+> >
+> > diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c b/drivers/=
+iio/imu/inv_icm42600/inv_icm42600_i2c.c
+> > index ebb31b385881..9e65fef04c39 100644
+> > --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
+> > +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
+> > @@ -71,6 +71,22 @@ static int inv_icm42600_probe(struct i2c_client *cli=
+ent)
+> >                                        inv_icm42600_i2c_bus_setup);
+> >  }
+> >
+> > +/*
+> > + * device id table is used to identify what device can be
+> > + * supported by this driver
+> > + */
+> > +static const struct i2c_device_id inv_icm42600_id[] =3D {
+> > +       { "icm42600", INV_CHIP_ICM42600 },
+> > +       { "icm42602", INV_CHIP_ICM42602 },
+> > +       { "icm42605", INV_CHIP_ICM42605 },
+> > +       { "icm42686", INV_CHIP_ICM42686 },
+> > +       { "icm42622", INV_CHIP_ICM42622 },
+> > +       { "icm42688", INV_CHIP_ICM42688 },
+> > +       { "icm42631", INV_CHIP_ICM42631 },
+> > +       {}
+> > +};
+> > +MODULE_DEVICE_TABLE(i2c, inv_icm42600_id);
+> > +
+> >  static const struct of_device_id inv_icm42600_of_matches[] =3D {
+> >         {
+> >                 .compatible =3D "invensense,icm42600",
+> > @@ -104,6 +120,7 @@ static struct i2c_driver inv_icm42600_driver =3D {
+> >                 .of_match_table =3D inv_icm42600_of_matches,
+> >                 .pm =3D pm_ptr(&inv_icm42600_pm_ops),
+> >         },
+> > +       .id_table =3D inv_icm42600_id,
+> >         .probe =3D inv_icm42600_probe,
+> >  };
+> >  module_i2c_driver(inv_icm42600_driver);
+> > diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c b/drivers/=
+iio/imu/inv_icm42600/inv_icm42600_spi.c
+> > index eae5ff7a3cc1..75441b2be174 100644
+> > --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
+> > +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
+> > @@ -67,6 +67,22 @@ static int inv_icm42600_probe(struct spi_device *spi)
+> >                                        inv_icm42600_spi_bus_setup);
+> >  }
+> >
+> > +/*
+> > + * device id table is used to identify what device can be
+> > + * supported by this driver
+> > + */
+> > +static const struct spi_device_id inv_icm42600_id[] =3D {
+> > +       { "icm42600", INV_CHIP_ICM42600 },
+> > +       { "icm42602", INV_CHIP_ICM42602 },
+> > +       { "icm42605", INV_CHIP_ICM42605 },
+> > +       { "icm42686", INV_CHIP_ICM42686 },
+> > +       { "icm42622", INV_CHIP_ICM42622 },
+> > +       { "icm42688", INV_CHIP_ICM42688 },
+> > +       { "icm42631", INV_CHIP_ICM42631 },
+> > +       {}
+> > +};
+> > +MODULE_DEVICE_TABLE(spi, inv_icm42600_id);
+> > +
+> >  static const struct of_device_id inv_icm42600_of_matches[] =3D {
+> >         {
+> >                 .compatible =3D "invensense,icm42600",
+> > @@ -100,6 +116,7 @@ static struct spi_driver inv_icm42600_driver =3D {
+> >                 .of_match_table =3D inv_icm42600_of_matches,
+> >                 .pm =3D pm_ptr(&inv_icm42600_pm_ops),
+> >         },
+> > +       .id_table =3D inv_icm42600_id,
+> >         .probe =3D inv_icm42600_probe,
+> >  };
+> >  module_spi_driver(inv_icm42600_driver);
+> > --
+> > 2.25.1 =20
+>=20
 
 
