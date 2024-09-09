@@ -1,115 +1,110 @@
-Return-Path: <linux-kernel+bounces-321735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27513971EB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:06:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B02F971EBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9B89284027
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:06:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35A1F1F230E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A9113A240;
-	Mon,  9 Sep 2024 16:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EC8139CF6;
+	Mon,  9 Sep 2024 16:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQEmJJIK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XHR+6EIf"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7A458ABF;
-	Mon,  9 Sep 2024 16:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02721BC39
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725898002; cv=none; b=XEqBB7Em05Z++C5YvkQca3NK+nsNw7GaQFpcpFgWGiO9XUppyIouloF3CM/4J+M3u5c9aW91UrghGoLDuOccUhRPPM04lHBUhLWnU9h8K6BbnrdGSXfGvVOX6o6W3QsGkRWZHxTpO/+wLqmG18UkTyCPinSHLuRT3XMl/xkbuis=
+	t=1725898019; cv=none; b=mOLMc7duJJuGdXkrHEJgO64BSMGzWYRNCBQ4LxQkJlO9lqGRf3DH8eCn4KX/JDZO0QhBoQacM80G+nHiH6BFm5xbK33TuAO1xpGAPptyEmoiS0WflQqarghHAXMrcjlypwD8OGtzvrurBqx1GFFVmC8x7OtjBgtTIcRzNUgG30Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725898002; c=relaxed/simple;
-	bh=mDVnefQAJunAzspN/WsR1bpxkh1iGXg4R1jTU0SJ5zk=;
+	s=arc-20240116; t=1725898019; c=relaxed/simple;
+	bh=AMn6y0LLnUyZw3lQvi4U/9tc1ZepqvIfjkITOcTT8S8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TbTU/2XJ0wXK1O1mnCfbhBcUztgrLYBeqjNDN2uLxCsb4bj8BWGk5DmKl6AtEkiLANr0TGi2AXuW3RzVP3OmbEP/xVZifk/YxDf2UAA7ChCBu95CFGET4M5pQKWGGaFSmT/4L0qzsgsc2DqbX7GzuSe3DWauR0jf10CA2pZXsgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQEmJJIK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73B56C4CEC5;
-	Mon,  9 Sep 2024 16:06:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725898002;
-	bh=mDVnefQAJunAzspN/WsR1bpxkh1iGXg4R1jTU0SJ5zk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uQEmJJIK9i4b2nmvW46aeXYhPMA9/zZm4b9452RpqaHyyfkPcFmPcyapYTH7uULRf
-	 S7KnvUrSKOR2mHjaMKH45hlLSYL30kjOy/3TGdGj2qqgXfvIcRVaddtxnD3NdCUtjX
-	 OB2+1RWxjcPQYrYfVqcbFjLrnrX1lS3DLAas38fqEWpEvqSUC9oQuQlWmYqp3bZwrE
-	 5xuX75HATmmF5uE06MMgwjWVO5HBkiPH1XaE2tFzC1iXNISST+0NWDQqzKxX6w1dpl
-	 YS+UMuBPszxoNcrja40bWNGGOuL7ZtYoqTk1GGbY5JvWoUINd5EzCrNbZ9DQ+/Dm8T
-	 GFY9EJmyH5eJQ==
-Date: Mon, 9 Sep 2024 17:06:37 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Angelo Dureghello <adureghello@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH v2 1/9] dt-bindings: iio: dac: ad3552r: add io-backend
- property
-Message-ID: <20240909-retrieval-guide-da2a35e571a5@spud>
-References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
- <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-1-87d669674c00@baylibre.com>
- <20240908132925.331c5175@jic23-huawei>
- <20240909-dwelled-specimen-949f44c8d04d@wendy>
- <1dca9ce52e7c701c7fb6cbbc723e9dff5d0ace8b.camel@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NgpMbLCqGL9PkWD63aFOUm2Qf3+gnHCfNr4wKZ0nAveCkY3bZd/7nt81ftRGdQVs0w05gtQ1uUrlhxQaZYDwzuCnYeZb6J3oec/ps8OKuzp850BOBucNPg5kWM9YGNNzUENq3+bWUD3cjbhZFZ/NMY0oakSLSIFn+efD4Wjb5DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XHR+6EIf; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5365cf5de24so2769174e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:06:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725898015; x=1726502815; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TBo7euW2AxmzY3hCumIAJKbC5cFKmjP+M3T4dF3osUk=;
+        b=XHR+6EIfmNl1HgRhbdS6lME0yKMujaUdAF64w1heWjtDTQ3eEZeuLVa+1p3l2A/ESS
+         roBa8uuPoLdqpAi/Go2L4AbBmsMmfoM9s+NOjIydS8NdD1mV39TX9Kx7FQOtJlRE4DZ3
+         OsuHrB66NXC8njQdm3GJ4bktqJW55ZlSHuvxbpLHW1KMkcg66vj+rLaIbwCE4Rn6LMdZ
+         Q/6xHnV4bYPV+vrdd6gt4brFwsAuvlXWZqkt3Vntu1gEA4qRKVVFXecFAz/MtZKjYuRC
+         /akSp36H4M5Pc+fSr4QqGfC7UlTQ6lnQbRqRcVQIbpJ2NblGH8WcmRZrLKalCymly9zZ
+         Ybgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725898015; x=1726502815;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TBo7euW2AxmzY3hCumIAJKbC5cFKmjP+M3T4dF3osUk=;
+        b=jqyHWiIpu047DLrnHk55OYHiVYxDPFiffSIfCxCoheFyBeSyQwO3ldQOpdGCJ/PAhS
+         5UU3Su8sZq4XvEx2UaPwiTne1Hz0DsTP3MVoPnhzX/m5DwFfwBJFrslp/3/v5CpmQmFi
+         lG4TF1oFdB1+RTSiuh2A8kUI65w+mQ4SvQ6Wa3zVbOHseEUa7jiYTkG2fECo9iwbsMH4
+         ONHwmIk78Vv5bs/M7QBfbwiD6H+FqcsaTyJ2tETGb5ifuc9rKE6CAGB8yRi0Mr+nfP9F
+         KkH26K2NeIM9cP3T4rJ+WalMsUG72TOliSqTT16140bX7POoa5AMae9W3xu/TUrri+ga
+         dVIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXV+CaAoz+6hTLxsJwm3Kb9rQaAb7nog6uXxUKtpO+QatUKfoOUhLYjCENtAwk0wQ/tjk4dbHTzRRtBrc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk8PRzLiHmaJe9KFdsEw1+uNZkiAGP/bedLFdf0cK6NJSrMdkA
+	ODNe+hVDShtXGnSsh1cJ08dyPMJkD0IsgP11bknkhv+15gHruf/SCaDV0srjP/zX7d8UIwS3vm7
+	u
+X-Google-Smtp-Source: AGHT+IGXD9saRSaDZFp955XdoS7d6+sE6nBRqw5e4xrE88B8h6aYoLJLp6Rx0f9mJDF0nGUiOGewzw==
+X-Received: by 2002:a05:6512:10c6:b0:535:6908:d4c5 with SMTP id 2adb3069b0e04-536587c6517mr5195463e87.34.1725898014850;
+        Mon, 09 Sep 2024 09:06:54 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d5dd8csm354635166b.205.2024.09.09.09.06.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 09:06:54 -0700 (PDT)
+Date: Mon, 9 Sep 2024 18:06:53 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Yu Liao <liaoyu15@huawei.com>
+Cc: tony.lindgren@linux.intel.com, liwei391@huawei.com, rostedt@goodmis.org,
+	john.ogness@linutronix.de, senozhatsky@chromium.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] printk: Export
+ match_devname_and_update_preferred_console()
+Message-ID: <Zt8dHUN3Z78fmYFd@pathway.suse.cz>
+References: <20240909075652.747370-1-liaoyu15@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="QJgtZu1F/+wMZDUF"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1dca9ce52e7c701c7fb6cbbc723e9dff5d0ace8b.camel@gmail.com>
+In-Reply-To: <20240909075652.747370-1-liaoyu15@huawei.com>
 
+On Mon 2024-09-09 15:56:52, Yu Liao wrote:
+> When building serial_base as a module, modpost fails with the following
+> error message:
+> 
+>   ERROR: modpost: "match_devname_and_update_preferred_console"
+>   [drivers/tty/serial/serial_base.ko] undefined!
+> 
+> Export the symbol to allow using it from modules.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202409071312.qlwtTOS1-lkp@intel.com/
+> Fixes: 12c91cec3155 ("serial: core: Add serial_base_match_and_update_preferred_console()")
+> Signed-off-by: Yu Liao <liaoyu15@huawei.com>
 
---QJgtZu1F/+wMZDUF
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It looks good. I have pushed the fix into printk/linux.git,
+branch for-6.11-fixup. I am going to send a pull request
+later this week.
 
-On Mon, Sep 09, 2024 at 04:03:17PM +0200, Nuno S=E1 wrote:
-> On Mon, 2024-09-09 at 13:46 +0100, Conor Dooley wrote:
-> > On Sun, Sep 08, 2024 at 01:29:25PM +0100, Jonathan Cameron wrote:
+Best Regards,
+Petr
 
-> > I'd also really like to know how this fits in with spi-offloads. It
-> > /feels/, and I'd like to reiterate the word feels, like a rather similar
-> > idea just applied to a DAC instead of an ADC.
->=20
-> The offload main principle is to replay a spi transfer periodically given=
- an
-> input trigger. I'm not so sure we have that same principle in here. In he=
-re I
-> guess we stream data over the qspi interface based on SCLK which can look
-> similar. The difference is that this IP does not need any trigger for any=
- spi
-> transfer replay (I think).=20
-
-Right, if the trigger part is what decides it for you then I'm wildin
-here.
-
---QJgtZu1F/+wMZDUF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZt8dDQAKCRB4tDGHoIJi
-0s4xAQC4NATh6G425B4WZvd5sGTC5i3wnUDbjaIlQmp/hHwjPQD+L1esehPkEcGt
-6094n/y+3K7GbjRT7uSXeGW9wQf2LQo=
-=Wl47
------END PGP SIGNATURE-----
-
---QJgtZu1F/+wMZDUF--
 
