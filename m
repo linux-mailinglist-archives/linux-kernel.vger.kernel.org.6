@@ -1,80 +1,62 @@
-Return-Path: <linux-kernel+bounces-321624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2168C971D1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:50:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DECF4971D1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3DF1F23C21
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:50:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16E4A1C23409
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722061BB6B1;
-	Mon,  9 Sep 2024 14:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401111BBBDD;
+	Mon,  9 Sep 2024 14:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JqrGPKru"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="caE5/RNT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71AE1B81D8
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 14:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956221BBBC3;
+	Mon,  9 Sep 2024 14:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725893406; cv=none; b=ZL4CuTIqXJM/MSS7Dr3C73tJnG0eP86U/h0di3XZ8a4BHPKDwABOWHjX2xPZtCSOLlKQcsiiR1A/CMAJjYX5PL/wUvLpUDa/EbZ3t/gwiE1LySOtC2bh1sG/MP0lCmBGZ+tj8vkPzzA+RbzLZJG1AGilxAwTsM/B63Izr+4J7iA=
+	t=1725893409; cv=none; b=gsTdkRo7KANaWJ7C8Lz7HdSsbISG6UjQpqtpe/gQKH5gY1coMungayhWD859wk0+q8l0mlypqG73J5dR8SO54VsiAtcCoLXqzHWsHzsSbJoY94SW9Ovh92XnJ7ysJM7OI4sWS4Nnh/Wz/We91sjsqbke8LFz/cTrT1+B/yln9lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725893406; c=relaxed/simple;
-	bh=VyMYMatbM0ZkxcQ7JH9byFExbaiv76IZbIMr2qViwHw=;
+	s=arc-20240116; t=1725893409; c=relaxed/simple;
+	bh=E55QCe1LlO+SgbpQ8x5M5ZFRadQoSvxYJkVZCOdkJ8M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZXWH4kDtbJPV/XGGXpA4seo7nOJKtw1apl01X3K1vWcRPOmmpb5+FD688WPjSqLWd4CnHShAOncrEQ3aAG7UxMWR+BfvKoINMmJEtJw9YLCR4P8cFNahSHFHd3nKR7AI2SK1gw4lOeCADvEOsQ/bL77voIb6JqlEaHjr0FMGyNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JqrGPKru; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c3c30e663fso5087761a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 07:50:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725893403; x=1726498203; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+9v2Ew7hhlLr4kMPvE7YVmpXKAISPQ2qnVJhqFoRzg8=;
-        b=JqrGPKru7XPZ68x5zlbipz+N98DpF3kUcV5OaTg4dObqzxEMjRvIp0BC1scQeP0KvR
-         HI6p8XYn2JV0JlRZZa2duLgqjkkdAbjmzoGlFYEQ0CQXsn551BhKZBZBi8G0OUQZ7i17
-         BtXX3KCKtgS7nMuMW1IiRRVXTqiQKldzU7W6fTeO+mLz3jw+2WmDkrDGu23MJ0l6VzNh
-         Ep5T3CqR+Wm1U6cOWRrdTg68y4B2FbU56yrs5saE3OUtENZuPciwYzT4mM5yx+Rdt9ro
-         aBXhHf1HJ0g2eGZ1GMLfwP7UIKLblCk6Xk8VLuznqBg0abRKmphj3tIICVv6Gd05jeD9
-         mBNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725893403; x=1726498203;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+9v2Ew7hhlLr4kMPvE7YVmpXKAISPQ2qnVJhqFoRzg8=;
-        b=Z5MH3Fta9rXjCymv52L+3SyWZDx7P7Rkr50JIflC16H+uQ88hF2BitygaSC1Wai6+7
-         jN6TNdxdd5fIUM5M+RIg9y9xO7lIKB4ibBqcTyT2/3gcgIQoBuYIKwRokvvNt5lZZ4Vj
-         siXpSNRdKZrGcLaQGngPO7CO05+rYP9ifTPBwFUwAtQx+panqaxRltwTkE5Bf0RlqcGi
-         9c6I/M2Ml45iavF8ePHQirq/4LiAg0ktBKMlxVyjasTNpZSMeNDUIjwcbI8KOz3D9Ydq
-         65actpQOY4eZZr9O1GcCdyXsZLBKlexAlDw1IotDnrFzUlKPAKbzVaX7V6vcPfllRI/r
-         OU5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWOqzfoQ2tMJdJYa+i6PD1G+DHmVPsF36bQPxN17ubh8HqTIUAb1bBMSIJmoVnUTBvaNY/DQaotRXXVNXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGCPR1NAN2yhit06h2fpprsMm2pS1SxilTV6p/HYwp1auj0x5a
-	6GxQfmAOuv4eMV3jgoGW9LDpVm6qOLWneZwZTwWpx41RyD7araTOTMqvg3MRSN8=
-X-Google-Smtp-Source: AGHT+IHf434hHzqA3na7vHiDZ07v1njm5O6rCFLa56eADhixaf8Z8IRp8g+sM15hDoTHcp+eFRE1lw==
-X-Received: by 2002:a05:6402:448a:b0:5c2:632e:fad7 with SMTP id 4fb4d7f45d1cf-5c3dc7955famr8352205a12.15.1725893402803;
-        Mon, 09 Sep 2024 07:50:02 -0700 (PDT)
-Received: from localhost ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd8ceccsm3086633a12.91.2024.09.09.07.50.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 07:50:02 -0700 (PDT)
-Date: Mon, 9 Sep 2024 16:50:02 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>, yosryahmed@google.com,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] mm: introduce per-node proactive reclaim interface
-Message-ID: <Zt8LGqwoq4dSd_Ed@tiehlicka>
-References: <Zt6fw4ibDq_XA_0q@tiehlicka>
- <20240909105157.2663-1-hdanton@sina.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mWxB1rc54PkiyGIxKnKKm981oKD246TjKj7OLAcBcLYWc/aPusDzrrEGBowqh1IdPqZ4H4vCRe3Q59Z5zUZJqsLeTGIU0bWYQ16KewgFdyEhwtqitCeTvu9imQqbRMgMsCpOIr93eX7k0w7L6UoKoFC//BtBQ6mRix9Xyo1rUXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=caE5/RNT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35CF6C4CEC5;
+	Mon,  9 Sep 2024 14:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725893409;
+	bh=E55QCe1LlO+SgbpQ8x5M5ZFRadQoSvxYJkVZCOdkJ8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=caE5/RNTOUOsQsj8LWstsX0UOrUi2jXtTVmUSgE0NSXCn1ylC4knk6tA3GzsVdO0L
+	 OGM4P/yJlj/iV5nNgz9Zay3U0ENwIFNRAC3lw+4sNQIvaIM8BqSkm7ANQ8RFGc2G25
+	 X16ImJ5hGf8Ml/26fhUB9tleasW6LHXdeRHVTfQDPzfktf2V3yQz8+GwHYYN/JLCwK
+	 epTfR0BJS9jHfhoEWfX4fjqvqJS3DTtc3E8TsHITLxhudD8Xl7pWZLNlO7IrFf95AE
+	 1+aJ+4ntWXUFaOdDWPM5YZb8JbdXfa4epw+jLt6+JOgM3H0cmTrKhPdYQ6uQ0gJ0Hy
+	 USV/12/5rovqw==
+Date: Mon, 9 Sep 2024 15:50:03 +0100
+From: Will Deacon <will@kernel.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Rob Clark <robdclark@gmail.com>, iommu@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+	Ashish Mhetre <amhetre@nvidia.com>,
+	Rob Clark <robdclark@chromium.org>, Joerg Roedel <joro@8bytes.org>,
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Revert "iommu/io-pgtable-arm: Optimise non-coherent
+ unmap"
+Message-ID: <20240909145003.GB19863@willie-the-truck>
+References: <20240905124956.84932-1-robdclark@gmail.com>
+ <20240905155330.GA15246@willie-the-truck>
+ <53f13813-a515-475a-836d-0b6017a117eb@arm.com>
+ <20240906105656.GA16124@willie-the-truck>
+ <8e17f1ac-0178-454b-b9dc-bb14ad6c465b@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,45 +65,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240909105157.2663-1-hdanton@sina.com>
+In-Reply-To: <8e17f1ac-0178-454b-b9dc-bb14ad6c465b@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon 09-09-24 18:51:57, Hillf Danton wrote:
-> On Date: Mon, 9 Sep 2024 09:12:03 +0200 Michal Hocko <mhocko@suse.com>
-> > On Fri 06-09-24 19:04:19, Hillf Danton wrote:
-> > > On Thu, 5 Sep 2024 16:29:41 -0700 Davidlohr Bueso <dave@stgolabs.net>
-> > > > On Fri, 06 Sep 2024, Hillf Danton wrote:\n
-> > > > >The proactive reclaim on the cmdline looks like waste of cpu cycles before
-> > > > >the cases where kswapd fails to work are spotted. It is not correct to add
-> > > > >it because you can type the code.
+On Fri, Sep 06, 2024 at 04:25:19PM +0100, Robin Murphy wrote:
+> On 06/09/2024 11:56 am, Will Deacon wrote:
+> > On Thu, Sep 05, 2024 at 05:27:28PM +0100, Robin Murphy wrote:
+> > > On 05/09/2024 4:53 pm, Will Deacon wrote:
+> > > > On Thu, Sep 05, 2024 at 05:49:56AM -0700, Rob Clark wrote:
+> > > > > From: Rob Clark <robdclark@chromium.org>
+> > > > > 
+> > > > > This reverts commit 85b715a334583488ad7fbd3001fe6fd617b7d4c0.
+> > > > > 
+> > > > > It was causing gpu smmu faults on x1e80100.
+> > > > > 
+> > > > > I _think_ what is causing this is the change in ordering of
+> > > > > __arm_lpae_clear_pte() (dma_sync_single_for_device() on the pgtable
+> > > > > memory) and io_pgtable_tlb_flush_walk().  I'm not entirely sure how
+> > > > > this patch is supposed to work correctly in the face of other
+> > > > > concurrent translations (to buffers unrelated to the one being
+> > > > > unmapped(), because after the io_pgtable_tlb_flush_walk() we can have
+> > > > > stale data read back into the tlb.
+> > > > > 
+> > > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > > > > ---
+> > > > >    drivers/iommu/io-pgtable-arm.c | 31 ++++++++++++++-----------------
+> > > > >    1 file changed, 14 insertions(+), 17 deletions(-)
 > > > > 
-> > > > Are you against proactive reclaim altogether (ie: memcg) or this patch in
-> > > > particular, which extends its availability?
+> > > > Please can you try the diff below, instead?
+> > > 
+> > > Given that the GPU driver's .tlb_add_page is a no-op, I can't see this
+> > > making a difference. In fact, given that msm_iommu_pagetable_unmap() still
+> > > does a brute-force iommu_flush_iotlb_all() after io-pgtable returns, and in
+> > > fact only recently made .tlb_flush_walk start doing anything either for the
+> > > sake of the map path, I'm now really wondering how this patch has had any
+> > > effect at all... :/
+> > 
+> > Hmm, yup. Looks like Rob has come back to say the problem lies elsewhere
+> > anyway.
+> > 
+> > One thing below though...
+> > 
 > > > > 
-> > > The against makes no sense to me because I know your patch is never able to
-> > > escape standing ovation.
+> > > > Will
+> > > > 
+> > > > --->8
+> > > > 
+> > > > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+> > > > index 0e67f1721a3d..0a32e9499e2c 100644
+> > > > --- a/drivers/iommu/io-pgtable-arm.c
+> > > > +++ b/drivers/iommu/io-pgtable-arm.c
+> > > > @@ -672,7 +672,7 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+> > > >                   /* Clear the remaining entries */
+> > > >                   __arm_lpae_clear_pte(ptep, &iop->cfg, i);
+> > > > -               if (gather && !iommu_iotlb_gather_queued(gather))
+> > > > +               if (!iommu_iotlb_gather_queued(gather))
+> > > 
+> > > Note that this would reintroduce the latent issue which was present
+> > > originally, wherein iommu_iotlb_gather_queued(NULL) is false, but if we
+> > > actually allow a NULL gather to be passed to io_pgtable_tlb_add_page() it
+> > > may end up being dereferenced (e.g. in arm-smmu-v3).
 > > 
-> > I fail to understand your reasoning. Do you have any actual technical
-> > arguments why this is a bad idea?
+> > I think there is still something to fix here. arm_lpae_init_pte() can
+> > pass a NULL gather to __arm_lpae_unmap() and I don't think skipping the
+> > invalidation is correct in that case. Either the drivers need to handle
+> > that or we shouldn't be passing NULL.
 > > 
-> > > > The benefits of proactive reclaim are well documented, and the community has
-> > > > been overall favorable towards it. This operation is not meant to be generally
-> > > > used, but there are real latency benefits to be had which are completely
-> > > > unrelated to watermarks. Similarly, we have 'compact' as an alternative to
-> > > > kcompactd (which was once upon a time part of kswapd).
-> > > >
-> > > Because kswapd is responsible for watermark instead of high order pages,
-> > > compact does not justify proactive reclaim from the begining.
-> > 
-> > What do you mean? How does keeping a global watermark helps to trigger
-> > per NUMA node specific aging - e.g. demotion?
-> >
-> In addition to the cost of pro/demorion, the percpu pages prevent random aging
-> from making any sense without memory pressue, because I think it is aging that
-> rolls out red carpet for multi-gen lru.
+> > What do you think?
+> 
+> The subtlety there is that in that case it's always a non-leaf PTE, so all
+> that goes back to the driver is io_pgtable_tlb_flush_walk() and the gather
+> is never used.
 
-I am sorry but I do not get what you are trying to say. Can you be
-_much_more_ specific?
--- 
-Michal Hocko
-SUSE Labs
+Beautiful...
+
+Will
 
