@@ -1,129 +1,119 @@
-Return-Path: <linux-kernel+bounces-321385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7655C9719DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:49:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BBD59719F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DF701F23576
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:49:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDFB41F23FED
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5B41B81AE;
-	Mon,  9 Sep 2024 12:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D26F1B9B3B;
+	Mon,  9 Sep 2024 12:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="J/mKy7c/"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="R2BQieh1"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C661B81B6;
-	Mon,  9 Sep 2024 12:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B9A1B9B25
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725886187; cv=none; b=ePReR1EB1goIMgKOqU9pT+e5GIXYPYrQbYTcxMFRU26c4kC4ZYzF+yrwh4OekyIR2A35sI2r2uj9q9IcFXU8BvQ8EjkVbu0Gxf4LctnoiSeio7Rb/KHJOl+DQt9nQ3+tPt9kIfK77lw+Gsug3PPEQTekg406aEPG5bXdhgH20kw=
+	t=1725886255; cv=none; b=iN5jeCQ8SPOZOhfi6e63cg0mIP7ri9uEfNPC+HjqxfpcR2QrqCj/89TmYwXBYFXVQMjOOWHg1mxM/Yj7SoCoLy0rc2/iPX2n80lSW5/cMjmkIOFj2Ik827Y+FbFyQrNA/wrmJyQmmES3RGBPSMWbJ2CppgAU4OIlMFXYevzLEkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725886187; c=relaxed/simple;
-	bh=rsV/D5Iax9mR3YMxeIoRf5kDzlBXjxnzlxbSb+zIKbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I5vG6LFPaXi2vU/NCOX3vAxq7aCj2QzZRWxl/DA/LveVUmgz6Obca7OoPOXai+yz3xnA6+dIe+WaO7y2uJuS2dVd2e0dpY/lJCZeD1diSDMSEEgqvysuFhyQFUo8rWK2+FifgEJBNdW/GcvpOeGqcNtBY5HJGrpDL6X5dycaAy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=de.ibm.com; spf=pass smtp.mailfrom=de.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=J/mKy7c/; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=de.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 489CceRm014671;
-	Mon, 9 Sep 2024 12:49:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=O
-	/a5ZHuunPO6XGWQOGbtxfTXMRt0vWNdU6EEjgFO/F0=; b=J/mKy7c/K6po+t1q6
-	HRAZEBWBDNsnq6WyZA4jUxTXhhGb6KdL98LVMz+umH3zIJ9gtI/sx3jwu2V/y+Hn
-	aJC0nWPV/BRIzFEJ2grPOYTfbx9iFUNfQXQPwKB/ZSPlSaYAFawQvcwtWFMSXD9+
-	Z+F6Pz0kOrFGJdBjex+dFV016c9CP3M2thVmzzkuxfUyNqs+UHyGBwJpLhVJ5FXF
-	zkO1RwIdJuW64ZNFFOsEpDlWoIEegEBUZPW3LHeqz4HFBbLRP4Xlycbrpt1UkP2o
-	XPf9l52Tz+UAGomNnkyWo1QujSf7ru4V1hpL/8BGjDaG2Tc6RaZcS4/S7QVl0CDH
-	evM2g==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefy9sf9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 12:49:43 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 489BK6pS019847;
-	Mon, 9 Sep 2024 12:49:42 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41h25ppfjm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 12:49:42 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 489CncA731654428
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Sep 2024 12:49:38 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9A9622004D;
-	Mon,  9 Sep 2024 12:49:38 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7AF132004B;
-	Mon,  9 Sep 2024 12:49:38 +0000 (GMT)
-Received: from [9.152.224.192] (unknown [9.152.224.192])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  9 Sep 2024 12:49:38 +0000 (GMT)
-Message-ID: <54224e8e-9b9e-4bc4-a6c1-f8392de6f889@de.ibm.com>
-Date: Mon, 9 Sep 2024 14:49:38 +0200
+	s=arc-20240116; t=1725886255; c=relaxed/simple;
+	bh=B0GeGCeqxTV7HRhC6jjkUDPP3gF6hn8VnvqBTrIuPIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DoFlcNa5BdDpjxB5uMvtTvoRpPL10Diph9UazoWncbELJVpAYrxXSt6GF67YlECVY0ZvXaMMa+80gkI7FeaQJm4j1VPK4juFyvxQ/zjR+hpTpK0QroTCVBmUXFn89argFOMY5gUVhvIWBNVI9s6FW5kZHqAjiz7/d74fvxELvFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=R2BQieh1; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7553E40E0263;
+	Mon,  9 Sep 2024 12:50:45 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id kAI6MAHyl6io; Mon,  9 Sep 2024 12:50:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1725886236; bh=11qbqW1QzojUC4ahPK3yzmckmx27RXFXkq8EvRePEn4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=R2BQieh13z++pmjnLfRw38RuL0AA6TGt48Hsr9256UwSz61A71SwkFhdd9wwShJLS
+	 fw++4EmdsvskG2pFrfp9dPtTMGmC63yb0whUJ4cWaAF/o34Axn9z2lOnCD6IkHIGs2
+	 tbUvLSddY4ihoHbQRpwQvVnGWu61e0z8TmeGElPwNiMCtRc7Tse030mwDZQb8dpoWR
+	 9+isENbwWPTRkLPSr4LLDzg1UPGEGDzNZ96FjASunAaEG0f09JiD2w0el1viYWW7yB
+	 BDEwTQz+3x5oSajmZbd7JaatjGnga65ULy5DJ4KbqysdfOMkGIqjBVpN2wo9UZZKqB
+	 +5V4psGjJkkuwD/RQPX7ZpMR5IhDf7vz6TYZESSa7bvYb60tW2ewuyFyhBMQ3cBhd/
+	 QmSF3Lxq53lJpJnjfUfH4iVGb2S+ygV9UbtZx/dO+zmOwRnTplxo1gcMIIgHnTHqHJ
+	 yXatELbsZn3+74IozrNw1w7sgmpU5Na1O4b5dP9J8TcFw4aAH9ZJnhYYdAwCA+ypwx
+	 qjcU76TbF/6m225DSwKyXw3iQhtjWm1j9JmcZMO5c/HUQJea6I3tuhJdJMqJLJNFUE
+	 Q78XPSNAAT+wNFY2ge7LyDX+FXRgQq9FmBkTI7Aiv78D17eecxQ3spTHeL9iUE7IPK
+	 qcIvlR5Y9/YFLZ0blsL7z8aQ=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4AF4740E028B;
+	Mon,  9 Sep 2024 12:50:33 +0000 (UTC)
+Date: Mon, 9 Sep 2024 14:50:25 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/microcode for v6.12-rc1
+Message-ID: <20240909125025.GAZt7vEdURlnid5eDh@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] s390/vfio-ap: Driver feature advertisement
-To: Heiko Carstens <hca@linux.ibm.com>,
-        "Jason J. Herne"
- <jjherne@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        akrowiak@linux.ibm.com, agordeev@linux.ibm.com, gor@linux.ibm.com
-References: <20240905124351.14594-1-jjherne@linux.ibm.com>
- <20240906104540.9510-F-hca@linux.ibm.com>
- <d5911cd9-0365-47e8-91e4-f55317b8040b@linux.ibm.com>
- <20240909124159.11471-B-hca@linux.ibm.com>
-Content-Language: en-US
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-In-Reply-To: <20240909124159.11471-B-hca@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: W2cmA4pXMbr65crPZQNJIqGWmJtZqMIr
-X-Proofpoint-ORIG-GUID: W2cmA4pXMbr65crPZQNJIqGWmJtZqMIr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-09_04,2024-09-09_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=800 priorityscore=1501
- adultscore=0 clxscore=1011 spamscore=0 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409090101
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Am 09.09.24 um 14:41 schrieb Heiko Carstens:
-> On Mon, Sep 09, 2024 at 08:02:17AM -0400, Jason J. Herne wrote:
->> On 9/6/24 6:45 AM, Heiko Carstens wrote:
->>> On Thu, Sep 05, 2024 at 08:43:51AM -0400, Jason J. Herne wrote:
->>>> Advertise features of the driver for the benefit of automated tooling
->>>> like Libvirt and mdevctl.
->>>>
->>>> Signed-off-by: Jason J. Herne <jjherne@linux.ibm.com>
->>>> Reviewed-by: Anthony Krowiak <akrowiak@linux.ibm.com>
->>>> ---
->>>>    Documentation/arch/s390/vfio-ap.rst | 34 +++++++++++++++++++++++++++++
->>>>    drivers/s390/crypto/vfio_ap_drv.c   | 13 +++++++++++
->>>>    2 files changed, 47 insertions(+)
->>>
->>> Via which tree should this go upstream?
->>>
->> I'm not 100% sure. Would s390 next be appropriate?
-> 
-> Well that's up to you to decide; no objection from my side.
+Hi Linus,
 
-I think as long as we do not touch vfio internals (then we need to talk
-to Alex) or kvm internals the s390 tree is a good default tree for
-vfio-ap, so lets do that here.
+please pull the x86/microcode lineup for v6.12-rc1.
+
+Thx.
+
+---
+
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_microcode_for_v6.12_rc1
+
+for you to fetch changes up to 5343558a868e7e635b40baa2e46bf53df1a2d131:
+
+  x86/microcode/AMD: Fix a -Wsometimes-uninitialized clang false positive (2024-07-30 09:52:43 +0200)
+
+----------------------------------------------------------------
+- Simplify microcode patches loading on AMD Zen and newer by using the family,
+  model and stepping encoded in the patch revision number
+
+- Fix a silly clang warning
+
+----------------------------------------------------------------
+Borislav Petkov (1):
+      x86/microcode/AMD: Use the family,model,stepping encoded in the patch ID
+
+Borislav Petkov (AMD) (1):
+      x86/microcode/AMD: Fix a -Wsometimes-uninitialized clang false positive
+
+ arch/x86/kernel/cpu/microcode/amd.c | 192 +++++++++++++++++++++++++++++-------
+ 1 file changed, 159 insertions(+), 33 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
