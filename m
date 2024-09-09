@@ -1,139 +1,94 @@
-Return-Path: <linux-kernel+bounces-321768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11A38971F34
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:28:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E328971F3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04A311C234AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:28:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB5B286195
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6A114B96D;
-	Mon,  9 Sep 2024 16:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918B215B54B;
+	Mon,  9 Sep 2024 16:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYS+RqKx"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVoKh7Bt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC582C87A;
-	Mon,  9 Sep 2024 16:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72002771C;
+	Mon,  9 Sep 2024 16:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725899307; cv=none; b=e4Lw5XKzxS+UMcADeQtVS6fEwEUQLAgfNfGTdWdBX7p1Wk2gQZTSaCqd2A/Jbl0fZtnVpPM0qwX4v3osA4+bICWPoqvorWGp/mKiA1Q5+b+QNZSF4fu+ZMk9zyxxFjQkvzTlGCsvNrn4pLDMOEf/AcPMcD0v52Q76/eQfDis7mo=
+	t=1725899444; cv=none; b=aKwHBHpfUZvXQCLLoj+RePRL0O9QtlIlU740VFXwXPPNzoM53tTRGf47ve5pMkZ+7QJWTJlf8SFbKllrYj2lV75PvCKk9y4FLkiLWyHiv3CVi1wr+fGDtZw0nKTfAWJmgsCAPS68vVIgPGGEjTZAaoL7Dxp9a4mhq/oNzARb4sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725899307; c=relaxed/simple;
-	bh=AT3uhYXs4WQk5nUGzcghStqSzCBcYc5YHN4gjc6Dq3M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W2kkwZ9ffzqHTxMuekYmzBoZTfuvuMz2i4dPssPO3fYjVBncrhKMMs2LFLE0hhHUUzpLQv05xusUNVjlzcjQMh4llPGx5VhU+O1WGPK5PvqOOEApYAOJKvDDEs3W6v8ptD2tHS3J4B+367YL74JBFw1S5cs/n038Suy/0elTSpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYS+RqKx; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d8b679d7f2so3556925a91.1;
-        Mon, 09 Sep 2024 09:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725899305; x=1726504105; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AO2g12o97GrYb+jXYO5BZ62vGbQeOV8uZETbJlcrW78=;
-        b=jYS+RqKxVevddQ8uGpT9ylm5ZX/izqXWcBkuvghXq49wMyVg+kd8bSWzZJtVkcIpdo
-         1fEeErZItfE3cqlDXA/4xgfW1VLPWMbGbdkNdiyYXiPMaSPc1HjkW7JAIiKJFt4WBAqs
-         nV+f8JvJrdvciCbtJWs98Pgc0yPgVqXwEA87vnTazTrfHp1naD6NB5NlIGYeHQIXVZO+
-         b7HTNM4x6CbrLIzgCNX8GgPGKHHICcxoDoNeZ6KEY6iUu7WaM2Ml7xIxgejIBEpfovj5
-         LztEoGm+HASE+Uw4HDG8TAqZ+xig2/bAs0VmbN2lqbxSBBDfTw6h+yJnUmKtjZZl/9cu
-         jfrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725899305; x=1726504105;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AO2g12o97GrYb+jXYO5BZ62vGbQeOV8uZETbJlcrW78=;
-        b=nYr4uOwBex/F5dOzJihaaIkp8NjoQJR+RQq5g62Jqntmos6Zh15iguILKWqYhUotjH
-         xeC789O86jCrcSiGO4dkwcctQnGUNVt2G6lanz2SojkWF09eGKpRAXZULld6g/vS3+NN
-         3JoRshsX6dPIURRYpFcCNDmqblzc9Pzv4Pt3M1NWSjJw/HBLvWIxLamvCGHvOPVj5PTt
-         XeT/3mGe57FCkamsp6PrHxIQ8R+mZJ+85nEW1nt7M62SkSiFhPtrRWoPUxe8sRo9ej0F
-         SrtDOyBde9QvPcdl8rvF5EETfOYMwNCpfoWS1Pj9UMY/8MYqbkPRjo0MwJQ7o3Z8Jyk4
-         B/uA==
-X-Forwarded-Encrypted: i=1; AJvYcCVB06/5y5hB9phdYSnrLOH6vsv657V6579cJh9xunPblQN/35OsgkwqgPRrBtd0fJqTUpWJY5OveB6DlaM=@vger.kernel.org, AJvYcCVJh7kWXmubMJYAwaJIQTIlNG7rnsUEWYqx6+OXT0YcX7IppNr4AGtJ+HPMOk1NN+FxyDoivofDXn0f3P8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3hcwc/0xh0g1a5zuDnpAjyQnT7/V6J5bSGpS2PoF8yTypXAA2
-	l6iuAztLsujugJNOe+/26ieQtA+GpTAOJbRZHIGxifb4cTwE/IJNRvpRpQSF
-X-Google-Smtp-Source: AGHT+IFxNVuk2fduecKMw2WpwK9T5MHZCQJjHo+MrHekAxaaaCiRiRg/e/Q09PKzkErJUPOHHMP5Vw==
-X-Received: by 2002:a17:90a:d143:b0:2d8:905e:d25b with SMTP id 98e67ed59e1d1-2dad4ef223emr13696799a91.9.1725899304980;
-        Mon, 09 Sep 2024 09:28:24 -0700 (PDT)
-Received: from localhost.localdomain ([187.17.229.39])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc0782dfsm6867579a91.34.2024.09.09.09.28.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 09:28:24 -0700 (PDT)
-From: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
-To: tiwai@suse.com
-Cc: perex@perex.cz,
-	kailang@realtek.com,
-	sbinding@opensource.cirrus.com,
-	simont@opensource.cirrus.com,
-	foss@athaariq.my.id,
-	rf@opensource.cirrus.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	edson.drosdeck@gmail.com
-Subject: [PATCH] ALSA: hda/realtek: Enable mic on Vaio VJFH52
-Date: Mon,  9 Sep 2024 13:27:51 -0300
-Message-Id: <20240909162751.4790-1-edson.drosdeck@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1725899444; c=relaxed/simple;
+	bh=SijMxlPS2d+y1Q8eTo8Td1dmzevGnURxE5EkxDDjDjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bDURaWiYv/xBlzdyTagOp1VkN2aASQ3NHB9D1wj7+fV0jnlaMmfWfauiq3cu4r7q+ZBfyZKkh0UtwPdTVtJGaY+4ujUlkSreGKVWO9ERORYBzjPa+8AaHxYm8+a7OSVxQ/tU7rDoaSel5OzhtHbj+fGZLrRy7xc/dJJp9Ppt7Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVoKh7Bt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2360C4CEC7;
+	Mon,  9 Sep 2024 16:30:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725899443;
+	bh=SijMxlPS2d+y1Q8eTo8Td1dmzevGnURxE5EkxDDjDjU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iVoKh7BtDABa4TTEUYl0bfbva4OeD+0ythCEfgZUnHLQqMkxLheT263aYiFhhx678
+	 pu7Qc++6CJRxThHZeJHmK1YSf4M9dCGtMiFy5mZKLzk0iuljH+/93rd1CWVtCYnyf2
+	 KEwAZ1Ydq11k7sUW7+g/eSqldyAsDw9v62mLylhjU/RiirgNxbYAbyBFsbvNc5HS7s
+	 sIweFNbnwxMrStZGYnX/ZrzGT/7hcJtH+gS2H6fHmAo3K5AyXe04K/U3+QTv0bTEMG
+	 014JGGm1utlAEcv44sVX7kUX0KRetGBwD+6iOoG3d2H0aQ3GNn3uCBPVQ4eMnNz/CS
+	 hJQoWv5iGHvcA==
+Date: Mon, 9 Sep 2024 17:30:38 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Michal Simek <monstr@monstr.eu>, Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>
+Subject: Re: [PATCH 06/15] riscv: migrate to the generic rule for built-in DTB
+Message-ID: <20240909-trial-composer-83d5f5cc4fc6@spud>
+References: <20240904234803.698424-1-masahiroy@kernel.org>
+ <20240904234803.698424-7-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="1zmht3JeO8heTtkb"
+Content-Disposition: inline
+In-Reply-To: <20240904234803.698424-7-masahiroy@kernel.org>
 
-Vaio VJFH52 is equipped with ACL256, and needs a
-fix to make the internal mic and headphone mic to work.
-Also must to limits the internal microphone boost.
 
-Signed-off-by: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
----
- sound/pci/hda/patch_realtek.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+--1zmht3JeO8heTtkb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 452c6e7c20e2..6c7e7330da3a 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -7639,6 +7639,7 @@ enum {
- 	ALC287_FIXUP_LENOVO_SSID_17AA3820,
- 	ALCXXX_FIXUP_CS35LXX,
- 	ALC245_FIXUP_CLEVO_NOISY_MIC,
-+	ALC269_FIXUP_VAIO_VJFH52_MIC_NO_PRESENCE,
- };
- 
- /* A special fixup for Lenovo C940 and Yoga Duet 7;
-@@ -9984,6 +9985,16 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.chained = true,
- 		.chain_id = ALC256_FIXUP_SYSTEM76_MIC_NO_PRESENCE,
- 	},
-+	[ALC269_FIXUP_VAIO_VJFH52_MIC_NO_PRESENCE] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x19, 0x03a1113c }, /* use as headset mic, without its own jack detect */
-+			{ 0x1b, 0x20a11040 }, /* dock mic */
-+			{ }
-+		},
-+		.chained = true,
-+		.chain_id = ALC269_FIXUP_LIMIT_INT_MIC_BOOST
-+	},
- };
- 
- static const struct snd_pci_quirk alc269_fixup_tbl[] = {
-@@ -10633,6 +10644,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1558, 0x961d, "Clevo N960S[CDF]", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1558, 0x971d, "Clevo N970T[CDF]", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1558, 0xa500, "Clevo NL5[03]RU", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
-+	SND_PCI_QUIRK(0x1558, 0xa554, "VAIO VJFH52", ALC269_FIXUP_VAIO_VJFH52_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1558, 0xa600, "Clevo NL50NU", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1558, 0xa650, "Clevo NP[567]0SN[CD]", ALC256_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1558, 0xa671, "Clevo NP70SN[CDE]", ALC256_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
--- 
-2.39.2
+On Thu, Sep 05, 2024 at 08:47:42AM +0900, Masahiro Yamada wrote:
+> Select GENERIC_BUILTIN_DTB when built-in DTB support is enabled.
+>=20
+> To keep consistency across architectures, this commit also renames
+> CONFIG_BUILTIN_DTB_SOURCE to CONFIG_BUILTIN_DTB_NAME.
+>=20
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+--1zmht3JeO8heTtkb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZt8irgAKCRB4tDGHoIJi
+0trhAQDqKRWWntMPCunsAaxopzU2jYVbAtsCUiJEW/z2j58/yAD7BJE6vqDg5O7Y
+VqGnVulUhYdkydfA4mgszdVz6GVWzQQ=
+=QBvD
+-----END PGP SIGNATURE-----
+
+--1zmht3JeO8heTtkb--
 
