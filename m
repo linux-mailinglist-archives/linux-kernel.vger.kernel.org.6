@@ -1,101 +1,100 @@
-Return-Path: <linux-kernel+bounces-321622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 059FF971D0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:48:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEC0D971D18
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B75CB284004
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:48:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D18D1F22419
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829E71BB6BC;
-	Mon,  9 Sep 2024 14:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hGSUexYc"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE55F1BBBCA;
+	Mon,  9 Sep 2024 14:49:48 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FCE1B81D8;
-	Mon,  9 Sep 2024 14:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CCB1B5831;
+	Mon,  9 Sep 2024 14:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725893328; cv=none; b=GBaFv6vJA2Ovfjr07mohxoqZWIFNKKGajA8G3L2RD8mezbJNxQ6P4eANHmKH5iKRN3ALKV0Eh7JTOu5jrGSLn5fDZ2zvuhSpeVGXh/9Xd5ycWqqoq5X5HBbPEApwDUZv9Euiz/lRWsB26R2IvL0F9ynkJS7ftrB/wb5lqzdtZQw=
+	t=1725893388; cv=none; b=MRJZkoVOtXuZ2R44zkUsTiqo+RAOvw5hZScvYLpm/uDpzqmp99R5UT8wGKVI4rD6h4bkfw92+S40dosbJebuDqfc/T8h4NyhjWmTYEZxyvpAKjwyGd8txZRy8p7TDLGqxtjnLT0+CwbUIPjBlCr6rQa0EuywoVmVP2YCGSNTI0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725893328; c=relaxed/simple;
-	bh=c9Hm/3zSlzuUxpB7pXyFXiCPLd00AzAQrXA5c12PEZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HwLkO6jLS+FgyAII5NcL8Yopaou1U1Mw+aFtSeEFJZc5eZsrMmDbw38W/7sXocCUiEztPt9RXCAR6WgzryBbuRSnjdQr2oh8r/0h2AQYsfUieSzU3lGCrmS2gMAsSrsqIlsDO5z3u53AAPBttnyRzfgghO9sKz75zz3MhGib7Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hGSUexYc; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=MgRCqs/Q+pHFW7qR5f/uHj6Sf4Hn8eXOok4j/wQZW7k=; b=hGSUexYckTv9g3Za+Bp/id3v5t
-	mUgAkjKHHK+Aqw1ImkwBnEyb1Rr4aG5A2znmarVpqd9PXHKRWR0gAMdlAuPhgWMRfIuTPju0xxftN
-	Rvd/Lgv5CCMEk1CnfnuolY8nvCgMhcVwrc/OGs/YWR5eR4gy/cuD47Ff0MvzIvWvEfgw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1snfgv-0071Ao-Dw; Mon, 09 Sep 2024 16:48:33 +0200
-Date: Mon, 9 Sep 2024 16:48:33 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	sudongming1@huawei.com, xujunsheng@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com, zhuyuan@huawei.com,
-	forest.zhouchang@huawei.com, jdamato@fastly.com, horms@kernel.org,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V8 net-next 05/11] net: hibmcge: Implement some .ndo
- functions
-Message-ID: <49166f60-bf25-4313-bacb-496103086d40@lunn.ch>
-References: <20240909023141.3234567-1-shaojijie@huawei.com>
- <20240909023141.3234567-6-shaojijie@huawei.com>
- <CAH-L+nOxj1_wHdSacC5R9WG5GeMswEQDXa4xgVFxyLHM7xjycg@mail.gmail.com>
- <116bff77-f12f-43f0-8325-b513a6779a55@huawei.com>
- <fec0a530-64d9-401c-bb43-4c5670587909@lunn.ch>
- <1a7746a7-af17-43f9-805f-fd1cbd24e607@huawei.com>
+	s=arc-20240116; t=1725893388; c=relaxed/simple;
+	bh=PokKRPH0sVJjet6Uv3//pus9g7SlpW03MFOQJoFD4Ns=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IPH78t5/QPd12qWQOdN2Hp6C1adx5p6ise+I93Xbuwoeq6JRIoQyJPCnWyuT4M8SVypeoQcLitwBfTsb+Flbs3OSoXxpPs5/DdIQepTzxOruQInoDngE2rsiTbzjaz//mVrRDl8tkuPTQpZAc2dl8w/EyDBz6MkEW8VG6cVp2iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B23C7C4CEC5;
+	Mon,  9 Sep 2024 14:49:41 +0000 (UTC)
+Date: Mon, 9 Sep 2024 10:49:40 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Andreas Larsson <andreas@gaisler.com>, Andy
+ Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Borislav
+ Petkov <bp@alien8.de>, Brian Cain <bcain@quicinc.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Christoph Hellwig <hch@infradead.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Dinh Nguyen <dinguyen@kernel.org>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, Guo Ren <guoren@kernel.org>, Helge
+ Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
+ <mingo@redhat.com>, Johannes Berg <johannes@sipsolutions.net>, John Paul
+ Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Kent Overstreet
+ <kent.overstreet@linux.dev>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Matt Turner <mattst88@gmail.com>,
+ Max Filippov <jcmvbkbc@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Richard Weinberger <richard@nod.at>, Russell
+ King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>, Stafford Horne
+ <shorne@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Thomas
+ Gleixner <tglx@linutronix.de>, Uladzislau Rezki <urezki@gmail.com>, Vineet
+ Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+ bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-mm@kvack.org,
+ linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+ sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v3 6/8] x86/module: perpare module loading for ROX
+ allocations of text
+Message-ID: <20240909104940.71d8464c@gandalf.local.home>
+In-Reply-To: <Zt8HiAzcaZS8lHT-@kernel.org>
+References: <20240909064730.3290724-1-rppt@kernel.org>
+	<20240909064730.3290724-7-rppt@kernel.org>
+	<20240909092923.GB4723@noisy.programming.kicks-ass.net>
+	<Zt8HiAzcaZS8lHT-@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1a7746a7-af17-43f9-805f-fd1cbd24e607@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> No, HBG_NIC_STATE_OPEN is not intended to ensure that hbg_net_open() and
-> hbg_net_stop() are mutually exclusive.
+On Mon, 9 Sep 2024 17:34:48 +0300
+Mike Rapoport <rppt@kernel.org> wrote:
+
+> > This is insane, just force BUILDTIME_MCOUNT_SORT  
 > 
-> Actually, when the driver do reset or self-test(ethtool -t or ethtool --reset or FLR).
-> We hope that no other data is transmitted or received at this time.
+> The comment in ftrace.c says "... while mcount loc in modules can not be
+> sorted at build time"
+>  
+> I don't know enough about objtool, but I'd presume it's because the sorting
+> should happen after relocations, no?
+> 
 
-That is an invalid assumption. You could be receiving line rate
-broadcast traffic for example, because there is a broadcast storm
-happening.
+IIRC, the sorting at build time uses scripts/sorttable.c, which from what I
+can tell, only gets called on vmlinux.
 
-I assume for testing, you are configuring a loopback somewhere? PHY
-loopback or PCS loopback? I've seen some PHYs do 'broken' loopback
-where egress traffic is looped back, but ingress traffic is also still
-received. Is this true for your hardware? Is this why you make this
-assumption?
-
-What is your use case for ethtool --reset? Are you working around
-hardware bugs? Why not simply return -EBUSY if the user tries to use
---reset when the interface is admin up. You then know the interface is
-down, you don't need open/close to be re-entrant safe.
-
-Same for testing. Return -ENETDOWN if the user tries to do self test
-on an interface which is admin down.
-
-	Andrew
+-- Steve
 
