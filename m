@@ -1,176 +1,218 @@
-Return-Path: <linux-kernel+bounces-320493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657C8970B3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:31:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC35A970B3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25A00281F00
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E11E1F2193C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AD017555;
-	Mon,  9 Sep 2024 01:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408F410A2A;
+	Mon,  9 Sep 2024 01:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MLiaaWnj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RyghEpJr"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DEA1CF9A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 01:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D12712E75;
+	Mon,  9 Sep 2024 01:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725845425; cv=none; b=E4gW+6sjRC1T5QdeqhNqVQFu+l6I3gtM06uq6R8SE7Z60yExmAzuWYtyYKAA1NP6xCqW0owcPEBiTbHyFg4TQnNfC3OLwEd5F6VSp8H2jhwkBZhENHwxCyfVloUjYcV3aMhspt6oQA6Q7lqlc/K5AxiboGS90pJegCzcgCHlc18=
+	t=1725845492; cv=none; b=qkCEun0OxviKdFyWrpjB43OoG6rTAe6zXpWBE3wW7SjD9jfInBEvjyXi+ttLh3ZIGYvZ9qPxY7vDaNOGa82MErk6WJSF02fqiQKXEvGU92kX/C5p1Hm/Hf8oGAN8TU5Tx6aoxSwrnSo89VmiJSPguHK9xjrNEQ/wn+B8+tMzYf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725845425; c=relaxed/simple;
-	bh=Ol5TUqWkU7uvIyG026mGuFtpsR/rEt0g9LWcDZDc0MM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LdK0Dr7+wgBgT1scDvl8s9fHoIarc0MJkiDtxbPhL0x5Jb2JwfCR0UAuguZ4bS06LP5rlknwf1eHlplCtUvB4sepw68/9GyNDJZsn0eBAFvY9S+zOXEpopPqYdoVnm8ZLeMScdXZAPPf9UAVd2/AQ7ooRKP1nSdJePc06/KO19Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MLiaaWnj; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725845424; x=1757381424;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Ol5TUqWkU7uvIyG026mGuFtpsR/rEt0g9LWcDZDc0MM=;
-  b=MLiaaWnjz/qlMjstOwedT7w+GHAVqaxijuYmEZFoZ6NTFqpRG3Ux7alx
-   +QlOJv7lWICUPNMowS43ZEY2gYQREob2TGAUyKjmzH/K4m5yo0YFq/EXR
-   BvvKEcTcHm53x3CNZheSzcLYEw9/5BqnDu7qtB4KXGrQB/sZCGvNRVW3b
-   B0+KJ+jJE67GWCPOGRZ7MycyFFH55cI82Csw+HoY50t2M5qtBlc6V29JT
-   sugZakY7Qwo+iUIJh7eXWubLHjWod8w4qPXcBhQfHhsC9w2KbUIJdDEEz
-   yD/HhVXSIubM6f9SvShySuQ+f1Ri6e80izT0finuReRIFANcnuJ2Lbxno
-   Q==;
-X-CSE-ConnectionGUID: rRtHkNVER7aFJL+IF6PMmw==
-X-CSE-MsgGUID: 1zuBpFx/QGmifuMkK9BKHw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="28258160"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="28258160"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 18:30:24 -0700
-X-CSE-ConnectionGUID: ROdRq+r4T9WF2KAQcT/Xlg==
-X-CSE-MsgGUID: DV/YFBNgQQa1SpiY83zezA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="66486541"
-Received: from feng-clx.sh.intel.com ([10.239.159.50])
-  by orviesa009.jf.intel.com with ESMTP; 08 Sep 2024 18:30:19 -0700
-From: Feng Tang <feng.tang@intel.com>
-To: Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Marco Elver <elver@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	David Gow <davidgow@google.com>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: linux-mm@kvack.org,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	Feng Tang <feng.tang@intel.com>
-Subject: [PATCH 5/5] mm/slub, kunit: Add testcase for krealloc redzone and zeroing
-Date: Mon,  9 Sep 2024 09:29:58 +0800
-Message-Id: <20240909012958.913438-6-feng.tang@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240909012958.913438-1-feng.tang@intel.com>
-References: <20240909012958.913438-1-feng.tang@intel.com>
+	s=arc-20240116; t=1725845492; c=relaxed/simple;
+	bh=bnaigO9qi7VOENv6qOORQzcdulMA57bYtrmKZ4ngcd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oOTRcpBV/jSvml6+z2knt9rmukWgMbA9DfRRp6ZFlhPHgXvZ1lOGqbUGClI6LaAuCmJJJjK/bRDq2VR4jg9U2kvy8c6JY8MMbXZsUs+bv1QJmgBJnXxeclTPc4/Gxb0bEjuCwFM5jpHqxEMOZylyjLcF/+PvvmmGSdD8EubRgB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RyghEpJr; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-718816be6cbso2373841b3a.1;
+        Sun, 08 Sep 2024 18:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725845490; x=1726450290; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1G6NznUd8tvil9HDGLund5Jsk5xX7QfPpNeHwJyevK0=;
+        b=RyghEpJrNRy7T34sxOg52dmpxkgTWis91SwEwFbiucuJP+yVMaUMlqEiBWpKfc2u1Z
+         lKAmEjCtKqj/IAPAa9ckYdNXei+iq2uafF9ARoHnCDNCoHDpCgS1vryTXfDgVUnBQYKN
+         sxiWw6WCCumQRgi+ExL+k35hIF7WZbJqt8+2cAoc7+Io42onrj4A0iaOu10VPhgcqWj4
+         1aqGL1UwUpv5INVGhsbXUqNJHc8p3goprSzYkdsZI1pO7ntVLmFa77ASNMql5S9KTMcw
+         HD0LQ2L9zYzmMpmF7nonnHMXNy/dDO/hJ9w6Tm6zhzhPd3zRQ1ac+DQL+o2aqCaK8tWt
+         fRbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725845490; x=1726450290;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1G6NznUd8tvil9HDGLund5Jsk5xX7QfPpNeHwJyevK0=;
+        b=EAdi/8o01Yo3LP0lfR4u7PGeIIbRLcNC/PrHSc61KslwEXTQbrEMOnUGVGhshJX6ye
+         B+8ksoygdEsBuhDjlFgoNpk9+xTdcH/sydd9YaOhKrd1QWanjXcamNtfHTqyV7X8G/tB
+         ezduWjNP3KMidqIMisHDfJCUh8N6OwwxhByVQ4fv0DXyzs2AsaNLNKYNoIPNJLcj5wKq
+         j0JYLl7Ak1oLVtiBBpsvE/XqfHGU8cwCKtbgBm/MGGknWLRoRnLT7oINtR/hJA0SCUvl
+         2kuDtMQ0TFgzjotnX1ut2LMvxG7DRYletjBjy1ZMqckpddJ8+RSWWPMLEBOtV9U+8lN5
+         03fA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQL8NvXG5BjkLdf66SkARFgZNjlpmV7lTMnoAwVDwyDQGSQ93ki9bDsVKo4LbongN9Nt4ZB0O6zWKudbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxb5YAiYiWO8toX7hradSTL2wItBHsoEr0WjJkw6e4PdxxcVD8
+	sp1PInpcaXwFrWqHICDyu6IjjIVQE6jWP1sVPtdRrE6o8ec2nE5E
+X-Google-Smtp-Source: AGHT+IF/SLy7Apo/hBUKShmEsPjroC+JII7bcD5FP5mFYDry9nFWsazgWO8Y8J1OoGV6bQhDDPkGlQ==
+X-Received: by 2002:a05:6a00:1489:b0:717:9754:4ade with SMTP id d2e1a72fcca58-718e404ba42mr10020934b3a.22.1725845490222;
+        Sun, 08 Sep 2024 18:31:30 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:33:e151:4d73:1aa7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e58cd003sm2529213b3a.73.2024.09.08.18.31.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 18:31:29 -0700 (PDT)
+Date: Sun, 8 Sep 2024 18:31:26 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Jeff LaBundy <jeff@labundy.com>
+Cc: linux-input@vger.kernel.org,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Ville Syrjala <syrjala@sci.fi>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Eddie James <eajames@linux.ibm.com>,
+	Andrey Moiseev <o2g.org.ru@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 14/22] Input: iqs626a - use cleanup facility for fwnodes
+Message-ID: <Zt5P7hlg-uhRHnCc@google.com>
+References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
+ <20240904044814.1048062-1-dmitry.torokhov@gmail.com>
+ <Zt47Ic059YbOSbGy@nixie71>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt47Ic059YbOSbGy@nixie71>
 
-Danilo Krummrich raised issue about krealloc+GFP_ZERO [1], and Vlastimil
-suggested to add some test case which can sanity test the kmalloc-redzone
-and zeroing by utilizing the kmalloc's 'orig_size' debug feature.
+Hi Jeff,
 
-It covers the grow and shrink case of krealloc() re-using current kmalloc
-object, and the case of re-allocating a new bigger object.
+On Sun, Sep 08, 2024 at 07:02:41PM -0500, Jeff LaBundy wrote:
+> Hi Dmitry,
+> 
+> On Tue, Sep 03, 2024 at 09:48:13PM -0700, Dmitry Torokhov wrote:
+> > Use __free(fwnode_handle) cleanup facility to ensure that references to
+> > acquired fwnodes are dropped at appropriate times automatically.
+> > 
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> >  drivers/input/misc/iqs626a.c | 22 ++++++----------------
+> >  1 file changed, 6 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/drivers/input/misc/iqs626a.c b/drivers/input/misc/iqs626a.c
+> > index 0dab54d3a060..7a6e6927f331 100644
+> > --- a/drivers/input/misc/iqs626a.c
+> > +++ b/drivers/input/misc/iqs626a.c
+> > @@ -462,7 +462,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+> >  {
+> >  	struct iqs626_sys_reg *sys_reg = &iqs626->sys_reg;
+> >  	struct i2c_client *client = iqs626->client;
+> > -	struct fwnode_handle *ev_node;
+> >  	const char *ev_name;
+> >  	u8 *thresh, *hyst;
+> >  	unsigned int val;
+> > @@ -501,6 +500,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+> >  		if (!iqs626_channels[ch_id].events[i])
+> >  			continue;
+> >  
+> > +		struct fwnode_handle *ev_node __free(fwnode_handle) = NULL;
+> 
+> This seems to deviate from what I understand to be a more conventional
+> style of declaring variables at the top of the scope, and separate from
+> actual code, like below:
 
-User can add "slub_debug" kernel cmdline parameter to test it.
+This is follows Linus' guidance on combining declaration and
+initialization for variables using __free() cleanup annotations (where
+possible). These annotations are the reason for dropping
+-Wdeclaration-after-statement from our makefiles. See b5ec6fd286df
+("kbuild: Drop -Wdeclaration-after-statement") and discussion in
+https://lore.kernel.org/all/CAHk-=wi-RyoUhbChiVaJZoZXheAwnJ7OO=Gxe85BkPAd93TwDA@mail.gmail.com
 
-[1]. https://lore.kernel.org/lkml/20240812223707.32049-1-dakr@kernel.org/
+> 
+> 
+> 	for (i = 0; i < ARRAY_SIZE(iqs626_events); i++) {
+> 		struct fwnode_handle *ev_node __free(fwnode_handle);
+> 
+> 		if (!iqs626_channels[ch_id].events[i])
+> 			continue;
 
-Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Feng Tang <feng.tang@intel.com>
----
- lib/slub_kunit.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+This will result in attempt to "put" a garbage pointer if we follow
+"continue" code path. In general __free() pointers have to be
+initialized, either to NULL or to a valid object (assuming that cleanup
+function can deal with NULLs).
 
-diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
-index 6e3a1e5a7142..03e0089149ad 100644
---- a/lib/slub_kunit.c
-+++ b/lib/slub_kunit.c
-@@ -186,6 +186,51 @@ static void test_leak_destroy(struct kunit *test)
- 	KUNIT_EXPECT_EQ(test, 1, slab_errors);
- }
- 
-+static void test_krealloc_redzone_zeroing(struct kunit *test)
-+{
-+	char *p;
-+	int i;
-+
-+	KUNIT_TEST_REQUIRES(test, __slub_debug_enabled());
-+
-+	/* Allocate a 64B kmalloc object */
-+	p = kzalloc(48, GFP_KERNEL);
-+	if (unlikely(is_kfence_address(p))) {
-+		kfree(p);
-+		return;
-+	}
-+	memset(p, 0xff, 48);
-+
-+	kasan_disable_current();
-+	OPTIMIZER_HIDE_VAR(p);
-+
-+	/* Test shrink */
-+	p = krealloc(p, 40, GFP_KERNEL | __GFP_ZERO);
-+	for (i = 40; i < 64; i++)
-+		KUNIT_EXPECT_EQ(test, p[i], SLUB_RED_ACTIVE);
-+
-+	/* Test grow within the same 64B kmalloc object */
-+	p = krealloc(p, 56, GFP_KERNEL | __GFP_ZERO);
-+	for (i = 40; i < 56; i++)
-+		KUNIT_EXPECT_EQ(test, p[i], 0);
-+	for (i = 56; i < 64; i++)
-+		KUNIT_EXPECT_EQ(test, p[i], SLUB_RED_ACTIVE);
-+
-+	/* Test grow with allocating a bigger 128B object */
-+	p = krealloc(p, 112, GFP_KERNEL | __GFP_ZERO);
-+	if (unlikely(is_kfence_address(p)))
-+		goto exit;
-+
-+	for (i = 56; i < 112; i++)
-+		KUNIT_EXPECT_EQ(test, p[i], 0);
-+	for (i = 112; i < 128; i++)
-+		KUNIT_EXPECT_EQ(test, p[i], SLUB_RED_ACTIVE);
-+
-+exit:
-+	kfree(p);
-+	kasan_enable_current();
-+}
-+
- static int test_init(struct kunit *test)
- {
- 	slab_errors = 0;
-@@ -196,6 +241,7 @@ static int test_init(struct kunit *test)
- }
- 
- static struct kunit_case test_cases[] = {
-+	KUNIT_CASE(test_krealloc_redzone_zeroing),
- 	KUNIT_CASE(test_clobber_zone),
- 
- #ifndef CONFIG_KASAN
+> 
+> I also did not see any reason to explicitly declare the variable as NULL;
+> let me know in case I have misunderstood.
+
+See the above. Yes, in this particular case it will get a value in both
+branches, but I feel it is too fragile and may get messed up if someone
+refactors code.
+
+> 
+> >  		if (ch_id == IQS626_CH_TP_2 || ch_id == IQS626_CH_TP_3) {
+> >  			/*
+> >  			 * Trackpad touch events are simply described under the
+> > @@ -530,7 +530,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+> >  					dev_err(&client->dev,
+> >  						"Invalid input type: %u\n",
+> >  						val);
+> > -					fwnode_handle_put(ev_node);
+> >  					return -EINVAL;
+> >  				}
+> >  
+> > @@ -545,7 +544,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+> >  				dev_err(&client->dev,
+> >  					"Invalid %s channel hysteresis: %u\n",
+> >  					fwnode_get_name(ch_node), val);
+> > -				fwnode_handle_put(ev_node);
+> >  				return -EINVAL;
+> >  			}
+> >  
+> > @@ -566,7 +564,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+> >  				dev_err(&client->dev,
+> >  					"Invalid %s channel threshold: %u\n",
+> >  					fwnode_get_name(ch_node), val);
+> > -				fwnode_handle_put(ev_node);
+> >  				return -EINVAL;
+> >  			}
+> >  
+> > @@ -575,8 +572,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+> >  			else
+> >  				*(thresh + iqs626_events[i].th_offs) = val;
+> >  		}
+> > -
+> > -		fwnode_handle_put(ev_node);
+> >  	}
+> >  
+> >  	return 0;
+> > @@ -774,12 +769,12 @@ static int iqs626_parse_trackpad(struct iqs626_private *iqs626,
+> >  	for (i = 0; i < iqs626_channels[ch_id].num_ch; i++) {
+> >  		u8 *ati_base = &sys_reg->tp_grp_reg.ch_reg_tp[i].ati_base;
+> >  		u8 *thresh = &sys_reg->tp_grp_reg.ch_reg_tp[i].thresh;
+> > -		struct fwnode_handle *tc_node;
+> >  		char tc_name[10];
+> >  
+> >  		snprintf(tc_name, sizeof(tc_name), "channel-%d", i);
+> >  
+> > -		tc_node = fwnode_get_named_child_node(ch_node, tc_name);
+> > +		struct fwnode_handle *tc_node __free(fwnode_handle) =
+> > +				fwnode_get_named_child_node(ch_node, tc_name);
+> 
+> Same here.
+
+Yes, combining declaration and initialization is preferred for such
+pointers.
+
+Thanks.
+
 -- 
-2.34.1
-
+Dmitry
 
