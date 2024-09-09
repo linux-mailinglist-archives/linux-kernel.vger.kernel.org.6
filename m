@@ -1,132 +1,113 @@
-Return-Path: <linux-kernel+bounces-321648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6851C971D94
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:09:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8037E971D9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDAC0B234BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:09:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA112845B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9AF1CA9F;
-	Mon,  9 Sep 2024 15:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B62364DC;
+	Mon,  9 Sep 2024 15:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="G4wz0bIa"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GginV7mD"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219171BC39
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 15:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75951C683
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 15:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725894575; cv=none; b=MmODU7YIq0z8B/KdPbcjuVnPqIXd1L24fAyYCW3KiTabNKMXugLFB4xIkyhGQEkxgz9GOGQc0iapry2H8Ckjm2SQMs6OIrYNBHDvuY/EUZ2aILUPChvSSG7IzS4iKpHcz0kKpL6uZLD4dOJBuknpWvnIQ+1ok9Wu11ejZiLvOgM=
+	t=1725894582; cv=none; b=mTvTplSR3WgWtuiiWTRG/DfbPfghzI/jbAa2gQizYta00EPG4MKyt8FbCODaMPjoXURiLlRxJBGSeLLoKAauQWotS454mLgRPvk7xgxK5z3KG1P++91dfd94joMlBlwerJaV2M+7WzeCk+KTnC4UK8H2kE1Hc46HE0LL0I8dGOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725894575; c=relaxed/simple;
-	bh=07N6SiRmOYuNHHxX4ivbyLFP9ApQoHSaE85MMSxTG8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FsWoGpF7yTHrIvp9O2POC0WJg2GIGSLrytTGlW24qbpRIIei19ncQjGNVdH0nw/mrC7Fa14HQRWD35z8ZscY3RFtocz4TFpUgSm5vZ4m6VjSvbyENj8nxT+XB44Q/vZDkfPgU8HaJOGaGV/yFdI/cZNsZgiWzlwxlcC+8pIOmlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=G4wz0bIa; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6c3567a143eso25856116d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 08:09:33 -0700 (PDT)
+	s=arc-20240116; t=1725894582; c=relaxed/simple;
+	bh=mVq9S72lk5b5xTO/FfOh3PUK79hfKisoPxEm6dY2/Zk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ADz9z/Q2jYehqHjEJs4Tqv34DFAS91TXRUO6SJeEKKrBKGBpXMcy+xCfKICe8mJO+c95YH+v4TYIvpHfLtVdMx0kSArQfqEZhq0a6ky0kSqzhfL6hnQ+PecgMcIGcLqZzYj+tFSVxqdARwURUW/vyjfG6/atI613FXQGykS0mLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GginV7mD; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71798661a52so2663116b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 08:09:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1725894573; x=1726499373; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=waUjsUKAdPr4sGhzkMI+SGKybRx5CZeB0ueTsXysiJo=;
-        b=G4wz0bIazcP1U9zzSyoWgNRWLsPCqKCnlIotTslZx8OS6+WdtDAyIRuGh5RGLKOml4
-         cqJh+5Q6tTkvmS5s6F/Xk0256rnenSZyHdZbHlyFkn1+ADTm1QRya8V2LCK14EHyXgxc
-         ahLP/61d52je+MUsc6pWxzGJCjh7OMSK47FE9r6jaCz+CKlHi4sSwjppAIiM/i6ULioW
-         e1nUstLDvEqwIOiuhVvn1ASRgPaq6AFxy+rOVxKQEXSdFElKlENURDyy8hTnMk76qPE7
-         1i3iw8jvkjgadcF8qANF6RUUS2UV7zXOLGudflEQxXx1vgrwkCF4LFjfSuZOVRs8Zg2n
-         9KFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725894573; x=1726499373;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725894580; x=1726499380; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=waUjsUKAdPr4sGhzkMI+SGKybRx5CZeB0ueTsXysiJo=;
-        b=BBrSpiV8UjTVBiexqcaUHsIY3rv+etq4nOkGHr7Zw8Qa/y4WjfgzPDLjAlIIr5W93t
-         Mv3+bJm9bpmF9IbzXolx1LCWhnncxnoFfu8287O9giyyuZasBKKdfcdJa7YJUG5CuV00
-         Hyhd7UeQ8fGj+fVPp7X00wF/9+/LRZrSN6GPE29Sn/shASnrjJwn3qvZONW/YToS5kTp
-         bvLLIpZo10V5ZFuKxT8WdE/MIpjQG/OmVYCKtN9q8+6MYq00QcfyGIVCJ5pti50k2Lto
-         0B28tjR4KxdtNPfx/K0/QgJ+YB3S0JzJredfPuy5/NNbieYz6RRYxLmo7cYDUr+ky9jI
-         27vg==
-X-Forwarded-Encrypted: i=1; AJvYcCXN7mttGF6LOBuUXz81qdC34IsUgVPIJp6BlfmsSAc+sYqFwWGStFjH25gWgjRfKzGLbpgDOgrB45MERZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8h9sIwd3af/e9eK42tZsP9t4cs3/2kkGEuFkb1XFIDmkiVqX+
-	EEUp0aXvOzuvYIblN1PxuD335iyO8vSW6kMLsbZY79aWCWbQxtbIGrZwA/etreU=
-X-Google-Smtp-Source: AGHT+IFXbI4pkfj2zzQDpe+nrQAE2U6JhDRKNqVKMw5E88ab40PSJcYxYvTv45q9kssBAzmhPO6O6A==
-X-Received: by 2002:a05:6214:5681:b0:6c3:5f00:8cbe with SMTP id 6a1803df08f44-6c52850dceamr153764456d6.38.1725894573060;
-        Mon, 09 Sep 2024 08:09:33 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c5347747b3sm21599526d6.122.2024.09.09.08.09.32
+        bh=jXq1QAWAAsQrYNlJmOFWR9qiaSyJPA0zyCX7aY9ZQ1w=;
+        b=GginV7mDlum/PUuoJf13Wlfvv01cS3gr+aqN0e263izKQuL8U9nn0vG9gQIwykX1Jb
+         uRB0y84NuBUfcQOmZTjgvsvNZHRcsHRn24j4aGIiD90RPj1oJDTxIAGkdRgIcyrY6LTT
+         +Z2jChAARIITpoHdsctmhWyePoup4v7Jx+UXRsBfB8BxdBvNVv9ec2S/1mQk3PWj8/pg
+         5a3qMDvZIi85yKz4LVioXGlg6FXtM3R9DpKHY4s7wpkiKAYH90RzZThnNCGUjNjzwvcx
+         6g+o0T7YVWQzKh7YYBPzFShE4xzSaJJm3bOckmgnGpQy7W/hWSL0zlCYESmdY4as9LUN
+         fFeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725894580; x=1726499380;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jXq1QAWAAsQrYNlJmOFWR9qiaSyJPA0zyCX7aY9ZQ1w=;
+        b=qUiBVFd5fOrF/4MkJecOLp1nUrilBP5frqvHkCeUdXDJl5k/a85wl/2sDBn0pJt/rf
+         uafbBWevk8g4yveSrSAiukQG18Tx+wihOH3n5/RkVhj71nrnwPUi8RqKykrdoVcOctyw
+         BZ63Ln2CXxr6LUi1RT/9BjLaUUvhDiirHBwlIS/bQCuJOaLFsyw2RJFylx7CFYvbInpu
+         7nHwlEySu70jhnRQaTd8i17hNSUq331uh/ZKiECuHySh3n4b8qQgTXM4L5jepYc9hHaE
+         NqlUqjnu9wnHqtjWUPSQxaOBEOrOKApgm73D0TIsKwk7xWb+2SGkz3O0Bmj/2LyVbVCd
+         g8Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCX6pp4PFPpdeebbe7BQ6zs8wuWXKRJqpHzsAMqZtF/6pw3owujTyVNOLiY5hoD7oD7shlYOM3sd97dDK+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUnAspvDbIFBWazaadwwtDm9HEi/1kNoyBRjT44sA6S6+ECcNW
+	965hapVClc+aXyR2RGOXncpFKwLUeVNZbla10IiPkbdooGPHy4PkU+pYhm59mUI=
+X-Google-Smtp-Source: AGHT+IEvd2jWK6AbqOEXtcOcRMgffXGRbsFWC1ymbvQmWwpnadQlLSPtVyBn+FRcmaDqcgaSeIBSdA==
+X-Received: by 2002:a05:6a00:3213:b0:717:83bc:6df3 with SMTP id d2e1a72fcca58-71783bc6f5cmr23496474b3a.11.1725894580245;
+        Mon, 09 Sep 2024 08:09:40 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e58c1d6esm3632805b3a.75.2024.09.09.08.09.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 08:09:32 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sng1E-000ieN-3t;
-	Mon, 09 Sep 2024 12:09:32 -0300
-Date: Mon, 9 Sep 2024 12:09:32 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Rob Clark <robdclark@gmail.com>
-Cc: amhetre@nvidia.com, "open list:IOMMU DRIVERS" <iommu@lists.linux.dev>,
-	Joerg Roedel <joro@8bytes.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"open list:TEGRA IOMMU DRIVERS" <linux-tegra@vger.kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>,
-	Rob Clark <robdclark@chromium.org>,
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH V4] iommu/io-pgtable-arm: Optimise non-coherent unmap
-Message-ID: <20240909150932.GB105117@ziepe.ca>
-References: <CAF6AEGvAEgFeoaxpkNw52fkt73RFg4g8+nhdR++m0ZhVsis=mA@mail.gmail.com>
+        Mon, 09 Sep 2024 08:09:39 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Felix Moessbauer <felix.moessbauer@siemens.com>
+Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org, 
+ io-uring@vger.kernel.org, cgroups@vger.kernel.org, dqminh@cloudflare.com, 
+ longman@redhat.com, adriaan.schmidt@siemens.com, 
+ florian.bezdeka@siemens.com, stable@vger.kernel.org
+In-Reply-To: <20240909150036.55921-1-felix.moessbauer@siemens.com>
+References: <20240909150036.55921-1-felix.moessbauer@siemens.com>
+Subject: Re: [PATCH 1/1] io_uring/sqpoll: do not allow pinning outside of
+ cpuset
+Message-Id: <172589457900.297669.16381515839828801822.b4-ty@kernel.dk>
+Date: Mon, 09 Sep 2024 09:09:39 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAF6AEGvAEgFeoaxpkNw52fkt73RFg4g8+nhdR++m0ZhVsis=mA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On Wed, Sep 04, 2024 at 09:24:34AM -0700, Rob Clark wrote:
-> Btw, this seems to be causing iommu faults for me for what (according
-> to a sw pgtable walk) should be a valid mapping, indicating
-> missing/incomplete tlb invalidation.  This is with drm/msm (which
-> probably matters, since it implements it's own iommu_flush_ops) on
-> x1e80100 (which probably doesn't matter.. but it is an mmu-500 in case
-> it does).
+
+On Mon, 09 Sep 2024 17:00:36 +0200, Felix Moessbauer wrote:
+> The submit queue polling threads are userland threads that just never
+> exit to the userland. When creating the thread with IORING_SETUP_SQ_AFF,
+> the affinity of the poller thread is set to the cpu specified in
+> sq_thread_cpu. However, this CPU can be outside of the cpuset defined
+> by the cgroup cpuset controller. This violates the rules defined by the
+> cpuset controller and is a potential issue for realtime applications.
 > 
-> I _think_ what is causing this is the change in ordering of
-> __arm_lpae_clear_pte() (dma_sync_single_for_device() on the pgtable
-> memory) and io_pgtable_tlb_flush_walk().  I'm not entirely sure how
-> this patch is supposed to work correctly in the face of other
-> concurrent translations (to buffers unrelated to the one being
-> unmapped(), because after the io_pgtable_tlb_flush_walk() we can have
-> stale data read back into the tlb.
+> [...]
 
-You mean this?
+Applied, thanks!
 
- 			if (!iopte_leaf(pte, lvl, iop->fmt)) {
-+				__arm_lpae_clear_pte(&ptep[i], &iop->cfg, 1);
-+
- 				/* Also flush any partial walks */
- 				io_pgtable_tlb_flush_walk(iop, iova + i * size, size,
- 							  ARM_LPAE_GRANULE(data));
- 				__arm_lpae_free_pgtable(data, lvl + 1, iopte_deref(pte, data));
+[1/1] io_uring/sqpoll: do not allow pinning outside of cpuset
+      commit: f011c9cf04c06f16b24f583d313d3c012e589e50
 
-I would say it should work because
- 1) The pte is cleared and cache flushed before the iotlb is cleared
-    by the added __arm_lpae_clear_pte()
- 2) This is not a 'shared table' since it is fully covered by the
-    size being unmapped. The caller must ensure there are no
-    inersecting concurrent map/unmaps.
- 3) The double zeroing doesn't matter because of #2, no races are
-    permitted.
+Best regards,
+-- 
+Jens Axboe
 
-Jason
+
+
 
