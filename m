@@ -1,104 +1,120 @@
-Return-Path: <linux-kernel+bounces-321823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743B2971FFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:07:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF560971FFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A06CF1C2347E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:07:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86B02B235AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE94170A16;
-	Mon,  9 Sep 2024 17:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8516D17BB34;
+	Mon,  9 Sep 2024 17:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c8En3dO+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kcd1KsfP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B05A16EBEC
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE4D17BB17;
+	Mon,  9 Sep 2024 17:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725901558; cv=none; b=pJyxZ2XzYiNXuMpjUt+wrDT6UjBxj5hf/TeoBXjzkOL0lHZJtFZNx7csmDvtZNdD8IDVPm8QjZgFwBtVT0yXTO06RyOHK/s5rO/GLpHLAB20UO3Y3GZzmo+zqJEBiVfM/kazYpKDkwvSZVNuXGlk2Mg7yjj0RB5fa9C3lowhbdw=
+	t=1725901536; cv=none; b=Oujhn46xRci/Zm0qGFULEsfHQvbQ9Rmnw0LGUb0Zoe9tWy4x9jXraTUBp90Ao2S5VIxjSi1Mf62STNhXxDECyzqhyuHOR4ADHrRZGv7XnLpJ38s9+KO2WjvxD8bVCyONH2j2gRVtyzl7lUB02REeoSRsWYXWU6L1H9Q4IbKVs9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725901558; c=relaxed/simple;
-	bh=6kQ3JvaFS9hvCUg6LnR8HGaf5xa+WyNzPdLMPLg91uM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aRsJK1BII29aVyV/t+3hHF7VuNRBOR6G1IjHgEbTgcUZaAoq0J6Opq+sKX9OUM4pauUtZfS/6jZ5PwP3uQBrpraqz/EiiN45bznD+3aUjX7kJ0MVcY6MFO4VBFGLXhRcJtYETf19iVMCUKEGlNic8wBGWgYdpsyqnHHWaqwfC5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c8En3dO+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725901555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6kQ3JvaFS9hvCUg6LnR8HGaf5xa+WyNzPdLMPLg91uM=;
-	b=c8En3dO+Fg3jC3rIqCMu+bK5QDCRebafZ4w/EPPRTjkIdyPxgcwLv8hBmM3AQNy3gGEeEW
-	24ueQddnZ+ZBti/x7vs+M6Hr1oNsNEhnly07pWpoXVAX2F/SSMuq7ZE1PQrqIVtkT/Sz6w
-	WA4rWye9RnYVW7EoYOErwFuSZVR1Doc=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-663-e1_T39_QPUKhGkS3PRiZfw-1; Mon,
- 09 Sep 2024 13:05:49 -0400
-X-MC-Unique: e1_T39_QPUKhGkS3PRiZfw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DF1491955F45;
-	Mon,  9 Sep 2024 17:05:47 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.74])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D780C1956048;
-	Mon,  9 Sep 2024 17:05:42 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon,  9 Sep 2024 19:05:36 +0200 (CEST)
-Date: Mon, 9 Sep 2024 19:05:30 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Roman Kisel <romank@linux.microsoft.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, apais@microsoft.com,
-	benhill@microsoft.com, ssengar@microsoft.com,
-	sunilmut@microsoft.com, vdso@hexbites.dev
-Subject: Re: [PATCH 1/1] ptrace: Get tracer PID without reliance on the proc
- FS
-Message-ID: <20240909170529.GB14058@redhat.com>
-References: <20240905212741.143626-1-romank@linux.microsoft.com>
- <20240905212741.143626-2-romank@linux.microsoft.com>
- <20240906112345.GA17874@redhat.com>
- <CAHk-=wjtMKmoC__NJ5T18TaRCqXL-3VFc6uADJv_MzgR1ZWPJQ@mail.gmail.com>
- <da4baf5b-19e9-474c-90f6-fe17dd934333@linux.microsoft.com>
- <CAHk-=wiSN1NWzG2W1KCQKoG7mM+RmP+dZ0nWNfEagTwPPiDxXQ@mail.gmail.com>
- <61713c72-bd86-4694-9c06-49579a33d8f3@linux.microsoft.com>
- <87ed5ser6i.fsf@email.froward.int.ebiederm.org>
+	s=arc-20240116; t=1725901536; c=relaxed/simple;
+	bh=F2CbpEX98qGe7LvwhLE0VH3uSYFDGmAg68m7O9KJ7jU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Q1tX1A3u5fEaEYpw655cnmpn1dQX2A+FMWlp+v9FZKxptr5cV0QPZKDpui37qLQ0k+lMv/H9mb5i28Qm5GCNGiiJ6nbvpcQUAZBrPzZ8rwNjeIzkT3MB0331/mPleBBDJOHT5qQgIfcxWS09tf2NTkzQzU7vdPvA+za7ahdsoxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kcd1KsfP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ACFCC4CEC7;
+	Mon,  9 Sep 2024 17:05:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725901535;
+	bh=F2CbpEX98qGe7LvwhLE0VH3uSYFDGmAg68m7O9KJ7jU=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=kcd1KsfPQOOreESZYjRqrk2Z6FGVonu4Gvhektb30EYY0s+1FIPTZVNvedTPpBe3r
+	 /Mb4eSTi24YgSe40d8kchFhaBSeWfnKhaNweN/vaw2bHIAWEQbayNpg4h/fqR+GRQD
+	 Fqh0HihDSZ3FfpsCmb1vdIx68z0fTFVO6rU6xngYDMOH4LYJQBp3LUG+wVrU99DF0e
+	 tVoOp7DapCqhIjNKeqekHtbG164fqYjSzOFeowqdMwRo/iifyhs3H6A6MVDDyPkL2o
+	 UWte9lO81UEuz0ayoRDBe3ikJ+3LcPAUF6SX4movrFNhH+f4MiorvhkiconyuIaiTr
+	 OuUfLewwqn3Bg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ed5ser6i.fsf@email.froward.int.ebiederm.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 09 Sep 2024 20:05:31 +0300
+Message-Id: <D41X15Z6ZQ4K.3HGVA7H9C6PJ5@kernel.org>
+Cc: <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ "Stefan Berger" <stefanb@linux.ibm.com>
+Subject: Re: [PATCH RFC 1/2] tpm: tpm_tis_spi: Ensure SPI mode 0
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Stefan Wahren" <wahrenst@gmx.net>, "Peter Huewe" <peterhuewe@gmx.de>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>
+X-Mailer: aerc 0.18.2
+References: <20240906060947.4844-1-wahrenst@gmx.net>
+ <20240906060947.4844-2-wahrenst@gmx.net>
+ <D3Z3UFHWQ3MG.N8JU7ZHX3XHN@kernel.org>
+ <e7d402f4-0463-4bb2-b1ea-afb36a58e59a@gmx.net>
+In-Reply-To: <e7d402f4-0463-4bb2-b1ea-afb36a58e59a@gmx.net>
 
-On 09/09, Eric W. Biederman wrote:
->
-> I suspect the best way to support breakpoint_if_debugging (in the
-> general case) is to make them nop functions,
+On Fri Sep 6, 2024 at 5:46 PM EEST, Stefan Wahren wrote:
+> Am 06.09.24 um 11:47 schrieb Jarkko Sakkinen:
+> > On Fri Sep 6, 2024 at 9:09 AM EEST, Stefan Wahren wrote:
+> >> According to TCG PC Client Platform TPM Profile (PTP) Specification
+> >> only SPI mode 0 is supported. In order to ensure the SPI controller
+> >> supports the necessary settings, call spi_setup() and bail out
+> >> as soon as possible in error case.
+> >>
+> >> This change should affect all supported TPM SPI devices, because
+> >> tpm_tis_spi_probe is either called direct or indirectly.
+> >>
+> >> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+> >> ---
+> >>   drivers/char/tpm/tpm_tis_spi_main.c | 11 +++++++++++
+> >>   1 file changed, 11 insertions(+)
+> >>
+> >> diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tp=
+m_tis_spi_main.c
+> >> index 61b42c83ced8..e62d297b040e 100644
+> >> --- a/drivers/char/tpm/tpm_tis_spi_main.c
+> >> +++ b/drivers/char/tpm/tpm_tis_spi_main.c
+> >> @@ -248,6 +248,17 @@ static int tpm_tis_spi_write_bytes(struct tpm_tis=
+_data *data, u32 addr,
+> >>   int tpm_tis_spi_init(struct spi_device *spi, struct tpm_tis_spi_phy =
+*phy,
+> >>   		     int irq, const struct tpm_tis_phy_ops *phy_ops)
+> >>   {
+> >> +	int ret;
+> >> +
+> >> +	spi->mode &=3D ~SPI_MODE_X_MASK;
+> >> +	spi->mode |=3D SPI_MODE_0;
+> >> +
+> >> +	ret =3D spi_setup(spi);
+> >> +	if (ret < 0) {
+> >> +		dev_err(&spi->dev, "SPI setup failed: %d\n", ret);
+> >> +		return ret;
+> >> +	}
+> >> +
+> >>   	phy->iobuf =3D devm_kmalloc(&spi->dev, SPI_HDRSIZE + MAX_SPI_FRAMES=
+IZE, GFP_KERNEL);
+> >>   	if (!phy->iobuf)
+> >>   		return -ENOMEM;
+> >> --
+> >> 2.34.1
+> >
+> > Why?
+> SPI protocol driver usually call spi_setup to verify that the SPI
+> controller accept the settings (SPI mode, bit, clock rate ...). Bailing
+> out early is more helpful for debugging issues.
 
-or may be make it call a single function which can be used as a
-breakpoint placeholder.
+What problem has this patch solved for you? I think it makes the code
+only less robust and more error prone.
 
-Either way, at least the program with breakpoint_if_debugging() will
-survive under /usr/bin/strace.
-
-Oleg.
-
+BR, Jarkko
 
