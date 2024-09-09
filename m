@@ -1,156 +1,181 @@
-Return-Path: <linux-kernel+bounces-321806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26DE8971FB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:57:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81270971FC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4236D1C21D10
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:57:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B171F23E07
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D735F16DECB;
-	Mon,  9 Sep 2024 16:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19E516F0E8;
+	Mon,  9 Sep 2024 17:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GEzNWPKn"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="6VEsaTz+"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93277494;
-	Mon,  9 Sep 2024 16:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1671218C31;
+	Mon,  9 Sep 2024 17:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725901063; cv=none; b=V5qp05bfeEcW/IYaoZwlKzBm5assmXtqlj5Y0aF8h7ejG6h9FuEl+GfjDEmsjsLdrBRHzF55d5GKs6YNDO3u/1MM4kCA4FnHG3wOBYSiyiJ3M9N92RGfobZ6wktc1oIUe2/IsdZHhsMcY3moWwv8UvS3yO1T4mqqVtUKJy2vvg4=
+	t=1725901249; cv=none; b=e6mY8/4xoeh7F81AHMvBzqT55szvSI1AbIDibAtO8JfBgUpz4R2oxZog/CAeMnqn8F5KMR5OSfu1tf0lIsBM6c1+5+TP+j5ajTRQCYellb+hSaHEY7Y++NDe6WP9TbeLseL2ma2caHym0gx6BSBpuQq7ci63Ssvbnc3xP0H3J50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725901063; c=relaxed/simple;
-	bh=QCNK9zP8bGz5ckOaJiJWjF8Cds6zTixKftz7aBjGHbk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W/ieZzXrLma1zfxDttBHakl2M/XUnv513UuFvg8I0CHZAEwaYUfQ+nRTEP2ws1Q4XdaCGA+t1enoIAqQifXxEazfHJvi1CyzbBZiOn/pzbwkGxDrDclcTLiDGSq7GwMkfEXEEPrpbkiiaX8eu+uvSZuklIbczc9yrXzGeoWbCQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GEzNWPKn; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-718d8d6af8fso2695442b3a.3;
-        Mon, 09 Sep 2024 09:57:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725901061; x=1726505861; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QCNK9zP8bGz5ckOaJiJWjF8Cds6zTixKftz7aBjGHbk=;
-        b=GEzNWPKnhda+7UYcbHt14VTzefK0iV0QT72GIHwiU5no/aD/17joBclnOunHrttXJ/
-         Hj4ZRQo8GlESM9c7dC84EIdaCqx66gfai2YWADQsQlBhTkq8dBPKRZpc31OpLsYcq/R3
-         m7bKZCr1elrW9OWDa4/kV4hWxq/imzbFLFz939GRO+otihrWztibt3+gPNZMQEqMk6GZ
-         qCMSpZ+sysiA69catX9RYCbdIc0pTOB4qrbEsPWGN/uJy0QU9uS9t/TqmvSXI68CzPjR
-         ODZJpsPClDDN9yIo0X5qj3M5HnSH0rD5PQGLcrUF/3ApIDWwUAc2lSo8IDDS3pz0foVZ
-         xh3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725901061; x=1726505861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QCNK9zP8bGz5ckOaJiJWjF8Cds6zTixKftz7aBjGHbk=;
-        b=XybfCGkGhW0d00DU2vpVPPoJCNY24tI7a8HFaBSgxiSGZezrPwx7YwNVtHARaxelN4
-         mF0QwEJgYBX+EHHdlkKlAPvdJuOgKBsg3cEXYvIfG9zUYOP56yhkJumhkTZUYLaMSthG
-         dGx7pHmW/abou/0iVqyXUEeNDzeFtOELkVC7OsiDcePzM5MWWfyf4FSQ0r5iBl4YuG3p
-         JEj29+svfPh+OhO15FwOvMqPmhmwX6/4D3Zh3JGNZ6KGW56p5a/DxdRUh5gflmYERPgF
-         PaWT3HXQLv8xsgW/5oP8b1TdH/KBacPh9fBavvyTcBrrQ/LXEuGsnp8vu/onL5Nnwy/C
-         /4tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwj+n5HZdOCDEjMSMnzrHWnjm37vUswY3j6XpQTum4L8QrBplhmJmoTEVXs+42Ips6nuzRSpb6cotcoHZT@vger.kernel.org, AJvYcCWC7kaBdrrt/hO4OQK+cqCbhUeNyi69f679axjrEiCVLbMRyA/gRlJUGXqw+QUmB5YV2TA=@vger.kernel.org, AJvYcCWXFQJBUAumX+rAOOKqqswHk8aH4Xs94y4ZUwJ1gzrSx4eG6B+4tYb7KdmyIRM8byraNIAqczsPL1PekTA1+kCbK7nN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHGZRSouHhDlWmTKDeUrbnwrLog3gRHPb60xlztwgHnT09j2pn
-	DxevqwQOxilTR+BciODhC7l/2tATmi37Y7eqpx/hHmG9xo1RJqMnnmyFIzUMuHqW/7xkZiK3vPs
-	1F2xuyI9FRa4mfLfKbACsYeUPDl2SCg==
-X-Google-Smtp-Source: AGHT+IFApPizW7xqNkTHSmiNEWQUS+OJNd1Gro6foYoJ+rcZwtGDgWdsEDvQSdwD9lVR0uoBUsshIirR3/BtJEzYuFs=
-X-Received: by 2002:a05:6a21:3a94:b0:1cf:4ea4:17c with SMTP id
- adf61e73a8af0-1cf4ea40234mr815722637.15.1725901060848; Mon, 09 Sep 2024
- 09:57:40 -0700 (PDT)
+	s=arc-20240116; t=1725901249; c=relaxed/simple;
+	bh=0F99EAMggZ7bVwLZxp3FQPd3x+WbTU0lTTF3YgclEeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ABxbg5vBY9WTtzJ3d/rF6USjOQjAGXOP9uhfr67JiAnosLQBaKcMP6zzcVQu3blYNobrlIWG6cdM9eDZ+phn1wpmjrnMNp1NgOSvMSbv/fL0i37sjj3eHVCdS1V2OFvAmtQbv2WRi5Tje1ygbH1Yf6RSLqxa5hRGVwzApjPIyh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=6VEsaTz+; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=SeXTB0UFigKuByTesi4WYdQQrB66kXq7eQyBV2wgCsQ=; b=6VEsaTz+LhZNoVAt3x0hhiyCd0
+	yEReHlp40emTquf7EAZy6XnOF9EbCGBx4qPQVzIZ0MpGW7TkZIpJiaitN2PiVtiz4hYrefIyIE3GL
+	LN6ECWba3Hd9hg0fcP66EQtBHP/+ihDLJ0SS6hmzChK5wEUkZWeN1D0qFEovuqPRdqF0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1snhkg-0071oz-Fu; Mon, 09 Sep 2024 19:00:34 +0200
+Date: Mon, 9 Sep 2024 19:00:34 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rob Herring <robh@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/2] dt-bindings: net: ethernet-phy: Add
+ master-slave role property for SPE PHYs
+Message-ID: <c2e4539f-34ba-4fcf-a319-8fb006ee0974@lunn.ch>
+References: <20240909124342.2838263-1-o.rempel@pengutronix.de>
+ <20240909124342.2838263-2-o.rempel@pengutronix.de>
+ <20240909162009.GA339652-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814080356.2639544-1-liaochang1@huawei.com>
- <Zr3RN4zxF5XPgjEB@J2N7QTR9R3> <f95fc55b-2f17-7333-2eae-52caae46f8b2@huawei.com>
- <8cc13794-30a7-a30b-2ac9-4d151499d184@huawei.com> <ZtrN4eWwrSWTMGmD@J2N7QTR9R3>
- <CAEf4BzYn3EkVVk4dnWMBMKa16y_ZFvQp3ZcdM44a2LeS08S6FQ@mail.gmail.com> <Zt7LWaoZ0PTFqVLF@J2N7QTR9R3>
-In-Reply-To: <Zt7LWaoZ0PTFqVLF@J2N7QTR9R3>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 9 Sep 2024 09:57:28 -0700
-Message-ID: <CAEf4BzbWnGiRQm+eZAYSsHzy5+9jbZ87=m0sg5zxAjVDSkPFiA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: insn: Simulate nop and push instruction for better
- uprobe performance
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: "Liao, Chang" <liaochang1@huawei.com>, catalin.marinas@arm.com, will@kernel.org, 
-	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org, 
-	puranjay@kernel.org, ast@kernel.org, andrii@kernel.org, xukuohai@huawei.com, 
-	revest@chromium.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909162009.GA339652-robh@kernel.org>
 
-On Mon, Sep 9, 2024 at 3:18=E2=80=AFAM Mark Rutland <mark.rutland@arm.com> =
-wrote:
->
-> On Fri, Sep 06, 2024 at 10:46:00AM -0700, Andrii Nakryiko wrote:
-> > On Fri, Sep 6, 2024 at 2:39=E2=80=AFAM Mark Rutland <mark.rutland@arm.c=
-om> wrote:
-> > >
-> > > On Tue, Aug 27, 2024 at 07:33:55PM +0800, Liao, Chang wrote:
-> > > > Hi, Mark
-> > > >
-> > > > Would you like to discuss this patch further, or do you still belie=
-ve emulating
-> > > > STP to push FP/LR into the stack in kernel is not a good idea?
-> > >
-> > > I'm happy with the NOP emulation in principle, so please send a new
-> > > version with *just* the NOP emulation, and I can review that.
-> >
-> > Let's definitely start with that, this is important for faster USDT tra=
-cing.
-> >
-> > > Regarding STP emulation, I stand by my earlier comments, and in addit=
-ion
-> > > to those comments, AFAICT it's currently unsafe to use any uaccess
-> > > routine in the uprobe BRK handler anyway, so that's moot. The uprobe =
-BRK
-> > > handler runs with preemption disabled and IRQs (and all other maskabl=
-e
-> > > exceptions) masked, and faults cannot be handled. IIUC
-> > > CONFIG_DEBUG_ATOMIC_SLEEP should scream about that.
-> >
-> > This part I don't really get, and this might be some very
-> > ARM64-specific issue, so I'm sorry ahead of time.
-> >
-> > But in general, at the lowest level uprobes work in two logical steps.
-> > First, there is a breakpoint that user space hits, kernel gets
-> > control, and if VMA which hit breakpoint might contain uprobe, kernel
-> > sets TIF_UPROBE thread flag and exits. This is the only part that's in
-> > hard IRQ context. See uprobe_notify_resume() and comments around it.
-> >
-> > Then uprobe infrastructure gets called in user context on the way back
-> > to user space. This is where we confirm that this is uprobe/uretprobe
-> > hit, and, if supported, perform instruction emulation.
-> >
-> > So I'm wondering if your above comment refers to instruction emulation
-> > within the first part of uprobe handling? If yes, then, no, that's not
-> > where emulation will happen.
->
-> You're right -- I had misunderstood that the emulation happened during
-> handling of the breakpoint, rather than on the return-to-userspace path.
-> Looking at the arm64 entry code, the way uprobe_notify_resume() is
-> plumbed in is safe as it happens after we've re-enabled preemption and
-> unmasked other exceptions.
->
-> Sorry about that.
->
-> For the moment I'd still prefer to get the NOP case out of the way
-> first, so I'll review the NOP-only patch shortly.
->
+On Mon, Sep 09, 2024 at 11:20:09AM -0500, Rob Herring wrote:
+> On Mon, Sep 09, 2024 at 02:43:40PM +0200, Oleksij Rempel wrote:
+> > Introduce a new `master-slave` string property in the ethernet-phy
+> > binding to specify the link role for Single Pair Ethernet
+> > (1000/100/10Base-T1) PHYs. This property supports the values
+> > `forced-master` and `forced-slave`, which allow the PHY to operate in a
+> > predefined role, necessary when hardware strap pins are unavailable or
+> > wrongly set.
+> > 
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > ---
+> > changes v2:
+> > - use string property instead of multiple flags
+> > ---
+> >  .../devicetree/bindings/net/ethernet-phy.yaml      | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> > index d9b62741a2259..025e59f6be6f3 100644
+> > --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> > +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> > @@ -158,6 +158,20 @@ properties:
+> >        Mark the corresponding energy efficient ethernet mode as
+> >        broken and request the ethernet to stop advertising it.
+> >  
+> > +  master-slave:
+> 
+> Outdated terminology and kind of vague what it is for...
+> 
+> The usual transformation to 'controller-device' would not make much
+> sense though. I think a better name would be "spe-link-role" or
+> "spe-link-mode".
 
-Yep, one step at a time makes sense, thanks! Regardless, I'm glad we
-clarified the confusion.
+This applies to more than Single Pair Ethernet. This property could
+also be used for 2 and 4 pair cables. So spe-link-mode would be wrong.
 
-> Mark.
+Also:
+
+https://grouper.ieee.org/groups/802/3/dc/comments/P8023_D2p0_comments_final_by_cls.pdf
+
+On 3 December 2020, the IEEE SA Standard Board passed the following resolution. (See
+<https://standards.ieee.org/about/sasb/resolutions.html>.)
+
+  "IEEE standards (including recommended practices and guides) shall
+  be written in such a way as to unambiguously communicate the
+  technical necessities, preferences, and options of the standard to
+  best enable market adoption, conformity assessment,
+  interoperability, and other technical aspirations of the developing
+  standards committee. IEEE standards should be written in such a way
+  as to avoid non-inclusive and insensitive terminology (see IEEE
+  Policy 9.27) and other deprecated terminology (see clause 10 of the
+  IEEE SA Style Manual) except when required by safety, legal,
+  regulatory, and other similar considerations.  Terms such as
+  master/slave, blacklist, and whitelist should be avoided."
+
+  In IEEE Std 802.3, 1000BASE-T, 10BASE-T1L, 100BASE-T1, 1000BASE-T1,
+  and MultiGBASE-T PHYs use the terms "master" and "slave" to indicate
+  whether the clock is derived from an external source or from the
+  received signal. In these cases, the terms appear in the text,
+  figures, state names, variable names, register/bit names, etc. A
+  direct substitution of terms will create disconnects between the
+  standard and the documentation for devices in the field (e.g., the
+  register interface) and also risks the introduction of technical
+  errors. Note that "master" and "slave" are also occasionally used to
+  describe the relationship between an ONT and an ONU for EPON and
+  between a CNT and a CNU for EPoC.
+
+  The approach that other IEEE standards are taking to address this
+  issue have been considered. For example, IEEE P1588g proposes to
+  define "optional alternative suitable and inclusive terminology" but
+  not replace the original terms. (See
+  <https://development.standards.ieee.org/myproject-web/public/view.html#pardetail/8858>.)
+  It is understood that an annex to the IEEE 1588 standard has been
+  proposed that defines the inclusive terminology. It is also
+  understood that the inclusive terminology has been chosen to be
+  "leader" and "follower".
+
+  The IEEE P802.1ASdr project proposes to align to the IEEE P1588g
+  inclusive terminology.  (See
+  <https://development.standards.ieee.org/myprojectweb/public/view.html#pardetail/9009>.)
+  Based on this, it seems reasonable to include an annex that defines
+  optional alternative inclusive terminology and, for consistency, to
+  use the terms "leader" and "follower" as the inclusive terminology
+
+The 2022 revision of 802.3 still has master/slave when describing the
+registers, but it does have Annex K as described above saying "leader"
+and "follower" are optional substitutions.
+
+The Linux code has not changed, and the uAPI has not changed. It seems
+like the best compromise would be to allow both 'force-master' and
+'force-leader', as well as 'force-slave' and 'force-follower', and a
+reference to 802.3 Annex K.
+
+As to you comment about it being unclear what it means i would suggest
+a reference to 802.3 section 1.4.389:
+
+  1.4.389 master Physical Layer device (PHY): Within IEEE 802.3, in a
+  100BASE-T2, 1000BASE-T, 10BASE-T1L, 100BASE-T1, 1000BASE-T1, or any
+  MultiGBASE-T link containing a pair of PHYs, the PHY that uses an
+  external clock for generating its clock signals to determine the
+  timing of transmitter and receiver operations. It also uses the
+  master transmit scrambler generator polynomial for side-stream
+  scrambling. Master and slave PHY status is determined during the
+  Auto-Negotiation process that takes place prior to establishing the
+  transmission link, or in the case of a PHY where Auto-Negotiation is
+  optional and not used, master and slave PHY status
+
+	Andrew
 
