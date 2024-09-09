@@ -1,134 +1,82 @@
-Return-Path: <linux-kernel+bounces-320478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA61970AE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:09:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E47DB970AE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3D01F21804
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C3BA1C2163C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B77DF6C;
-	Mon,  9 Sep 2024 01:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nSc4HkXp"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94719DF6C;
+	Mon,  9 Sep 2024 01:10:11 +0000 (UTC)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B3828EF;
-	Mon,  9 Sep 2024 01:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0A3B641;
+	Mon,  9 Sep 2024 01:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725844133; cv=none; b=Nu7o8GQT/lOvZOhc9Zko5+gUqI7KN9g32plPzIE6GyTta/OfDQdqd+4kKg02yWctUEWHdfjJp5wjK5S6IU3nht2SAewuGLrCObvx7rZkgWWL2bqzVmNoSCGlHrZRYiPVzDt71UhTDah65PYZLRJUgT8WdKj/OXCL2hxiEJr20qc=
+	t=1725844211; cv=none; b=qtdEtFUhu3ppWiXcUY1xHJsjLBNXwWm8e7NUtJijlAZk6yHt6wIC7fLOD82ahPvPKnoqAGRh2Awln7qqD9VtxiEsw5p7FFcJGxwu0Nk00lMW93ij9n8KKRqdK1jajEAb+AX3VIYt/wLk5fOC4orrxEcy+aNuw5uo/DuYgNAIDFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725844133; c=relaxed/simple;
-	bh=IxC6Z/GdaomlvqgADd6jb6fWI0AkCA513Vec7jMJuKk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=I2KmP9MNSW07RORxPh+x5JZGY3f3eWzuc8bRPqNiRvseaM/qpRh3/BuYFEqTsQP/jpgSDEGczqSXogVMZQ9XFmelNLo57YZ0yW4UTybcLkt8oMksVbApprkOihxNpyxwk6V6+UbZuOWrOcnyXnNWdpKW4pbSgV0uWfhoriojSk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nSc4HkXp; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1725844211; c=relaxed/simple;
+	bh=k22W9rvOfyp2pgn8d+UY6+c0sRNYgfX4OQYILH+Pwg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hMX1J8oUraPVm0pKRWHsVNIEigr0DYXGwZEsOptH8wcWtgLf7GUb0uqpCjuwl59shjOZ1qE3XbzFBB3nti57txuLo/UYD0Lwl8htGk0gXbVAZoejob5qo14DjoAfXqOLgz7dSr0stlIZOI3hEDm2BlJFePrS6FjCxw8v8I4YmsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7d4f9e39c55so2550499a12.2;
-        Sun, 08 Sep 2024 18:08:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725844131; x=1726448931; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aKNbVeIN4E1J7b6asuuyRn99aGJZxDfyfdXFbSw1yAU=;
-        b=nSc4HkXpSBIXHwKMDbNCtZxVjkv2/DiVrsJCM+fG7DZxyoII43lQX9gIVsSmPxF3rW
-         C/nPSUgZaHm42+Np496UM2GMFs4R5Bd8vh1SK77gcFSiL436WatmSNN+RAHhkTMM021p
-         SpsZpqedvjzf/V70u3DxNCulFGThr0j6S4/Nx9mWOzHEjNjIDjPKSBlvjPKQEH3la1lW
-         7pj5pPaSozq2ESMnJXxWn0UUsblZo/SO1r1VBKNWjSPkiDBAFTBmJXUltTqpSE/p5g4i
-         HfottV0FyLhCnylhx8PydGlFhhhI8SGQhPkM5jQ7il6KlUxz3VvCzsNDk3rQ143RBlGL
-         ls7A==
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20570b42f24so44635115ad.1;
+        Sun, 08 Sep 2024 18:10:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725844131; x=1726448931;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aKNbVeIN4E1J7b6asuuyRn99aGJZxDfyfdXFbSw1yAU=;
-        b=qbycVILplyluqu4xqtET1dMR0FW5rg1ZIxLHWBbrj+sVy/+sud4MIghcFkunw7pzJs
-         aYDFZsvPIlnc9FtCuwj5XGbac/Wzi2g4OGc/DWyMZGDuAQu8KMqbBXYtEmOI04ETN3pA
-         Ys6iANXQMfsv7DVXyi+8XUebQzK94iq4h3SeMAriYfS1yTC34GFb7rW6n10yAT+UHWCW
-         JHnhQIhhpytViPdB33sSsWAVHJ0S0moq3Yldmjeg+uENBV79T2/q7nVVgB6WmlBTpD1l
-         RVwATkP+FG8ziGx4KI9Jq4ht/zjKAuNA0qdiEgdY/ZKvVanj5On5KMn/wPvHw3Un34Iq
-         HwlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEJVRT02D0SdfwyruotogYAGKXBnGdHiH1XjGzGy9oNzzxMWdjUYv5OkCEHwEqAgBZ3XM5RzK63fGwziLJaUc8YEDl@vger.kernel.org, AJvYcCX2CYuOsGpxzpfXHC3Rjat+nqcFsCg6KFctWd+bs+Mg8Lp8IARQ6nyrIu0l4mnkRrxtSHl+x7pCQtbTJjh2@vger.kernel.org, AJvYcCXU8/SGGlRgc+uP5mnfqXYxtSFivABTZeii+ZtA38FbDxSmsQGbhoy50wCi+kda/sfNBqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ3VJd86uttL+gb3Z3aHO23HbMCLjk2zPzFBQmjDKrVEmBAXyG
-	QR0i/B7u1l+tf/cpmJKJua5mfse7oQlg/fqB1PL86XeDSAw4RjUjCSdXJuwK5gcCLW0ESYuTHBN
-	GoRFBXnkzf8lKxI7DBIDfRGojeOA=
-X-Google-Smtp-Source: AGHT+IHviyd+MztZHLZ1PONgr8WHid8/FvS/G7KWLzX3Evvawum9LD2znLZsH3oJJGDbwpitRHcujJMf5zch9B8SpsI=
-X-Received: by 2002:a17:90b:3504:b0:2d8:d254:6cdd with SMTP id
- 98e67ed59e1d1-2daffe28fadmr7420121a91.38.1725844131190; Sun, 08 Sep 2024
- 18:08:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725844209; x=1726449009;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YpfN7cT+vudV1ElYDWl15FOqor4a98PEwIzYGObH2+c=;
+        b=ZpX88xr/dpq384HEPRA55qBfwBhiuDX0hBEZdSFRhx2Kjz+Zg6AVjOFBf7Y77jSU0O
+         Z046XcEKpvPC6QScEy9Trmg2fEPmwy4uDFAUTk30rLoXuTGEmlBMyepN0c7ToCB67kzg
+         qV5rqEdLXrP5Qxu22fhuwgfcZqYyGSNyRRFHVG94rHzUivFALsWbODxYcr1WPoLBsPmC
+         7QKMhs7wMN0cpi4emB0UxpvoE7cj4nT1pzfSV8DE+Pf+CgyKo46Zscp7aY/KRXX13Z1/
+         yDoYUlOat5CkZcrMaSOxP3E5EzZU8cP/3J9imw/WRu6/0rL286OJHqAMEZrVidPHk6lx
+         MiSg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkXT/ScLXGsQFstAAPEovcMoAl3e0RlWDlHLGTaqw6flj+LkilUj51MpOLu7aRIEWcGXSbO5/GRaO5WP4=@vger.kernel.org, AJvYcCXgYGNy3CU3YImCQd5SCdXUvFi/OwvNYbk09p7nLmmnMck9HLwiPYGv/KjHOeGxZkvSUbVXUXTmICG4tFP9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqi7lEYvSfTP7/ltmkWLajCL5wAsRIzKzYnt9sMVcITfJdMME5
+	Irpo9gkJJSrkeESXyRRTpXbIPtDjhyEbQbOvdhWs7NfRx3BKf5MY
+X-Google-Smtp-Source: AGHT+IEsbzAyJ73On8efEO8PyuACLSyPfTQ0ckYZSrS1cuoyv6XHHKrM7vtETUpr10ElLU6LGKtYXw==
+X-Received: by 2002:a17:903:32ce:b0:207:6fb:b04f with SMTP id d9443c01a7336-20706fbb21fmr40618045ad.17.1725844208534;
+        Sun, 08 Sep 2024 18:10:08 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e10eb4sm24434845ad.7.2024.09.08.18.10.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 18:10:08 -0700 (PDT)
+Date: Mon, 9 Sep 2024 01:09:49 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: decui@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+	wei.liu@kernel.org, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] tools/hv: Add memory allocation check in
+ hv_fcopy_start
+Message-ID: <Zt5K3Y7afzCt2Nvv@liuwe-devbox-debian-v2>
+References: <20240906091333.11419-1-zhujun2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906051205.530219-1-andrii@kernel.org> <20240906051205.530219-3-andrii@kernel.org>
- <u2artc4iwuoo5y5rutseqlvnq4i44mcxne2ufwg3ya2hyonv45@v2ob54ci6ky7>
-In-Reply-To: <u2artc4iwuoo5y5rutseqlvnq4i44mcxne2ufwg3ya2hyonv45@v2ob54ci6ky7>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Sun, 8 Sep 2024 18:08:39 -0700
-Message-ID: <CAEf4BzbjiHjW7PTd2ONNkpU9CR68o8Wizuo0Y2MwmTSv6zw4JA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] uprobes: add speculative lockless VMA-to-inode-to-uprobe
- resolution
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com, 
-	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
-	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, mjguzik@gmail.com, brauner@kernel.org, jannh@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906091333.11419-1-zhujun2@cmss.chinamobile.com>
 
-On Sat, Sep 7, 2024 at 6:22=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracle=
-.com> wrote:
->
-> * Andrii Nakryiko <andrii@kernel.org> [240906 01:12]:
->
-> ...
->
-> > ---
-> >  kernel/events/uprobes.c | 51 +++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 51 insertions(+)
-> >
-> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > index a2e6a57f79f2..b7e0baa83de1 100644
-> ...
->
-> > @@ -2088,6 +2135,10 @@ static struct uprobe *find_active_uprobe_rcu(uns=
-igned long bp_vaddr, int *is_swb
->
-> I'm having issues locating this function in akpm/mm-unstable.  What
-> tree/commits am I missing to do a full review of this code?
+On Fri, Sep 06, 2024 at 02:13:33AM -0700, Zhu Jun wrote:
+> Added error handling for memory allocation failures
+> of file_name and path_name.
+> 
+> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
 
-Hey Liam,
-
-These patches are based on tip/perf/core, find_active_uprobe_rcu()
-just landed a few days ago. See [0].
-
-  [0] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=3D=
-perf/core
-
->
-> >       struct uprobe *uprobe =3D NULL;
-> >       struct vm_area_struct *vma;
-> >
-> > +     uprobe =3D find_active_uprobe_speculative(bp_vaddr);
-> > +     if (uprobe)
-> > +             return uprobe;
-> > +
-> >       mmap_read_lock(mm);
-> >       vma =3D vma_lookup(mm, bp_vaddr);
-> >       if (vma) {
-> > --
-> > 2.43.5
-> >
-> >
+Applied to hyperv-next, thanks.
 
