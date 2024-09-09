@@ -1,70 +1,95 @@
-Return-Path: <linux-kernel+bounces-321186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81FA097159E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:46:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 655B59715A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310B71F23E64
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:46:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1C43B2215B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B68D1B4C5B;
-	Mon,  9 Sep 2024 10:46:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362FE191;
-	Mon,  9 Sep 2024 10:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624A71B4C40;
+	Mon,  9 Sep 2024 10:53:01 +0000 (UTC)
+Received: from smtp134-31.sina.com.cn (smtp134-31.sina.com.cn [180.149.134.31])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1CE12B17C
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 10:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725878776; cv=none; b=r7xONBjsYzd6O9BYFw7Bbnaq2P4UQsvQPf2vs6j0KV2hW7NPlZ5YhZsXYE0noNVBR83wLW6f43uHQA10cbfkeeuMs3KgTlDoyIZLlNsbJge3Aat+YSCHzYWDrtSCfkstXJK3LNw0NAlPYlP4ivnTFSs1Y6TbDlORbTtYXnYwEEU=
+	t=1725879181; cv=none; b=CFzC+Rvqbad8cy8JdYNMx6u7IUkjwPw/qXL0Biq6W4C4ka+u9x+YYZMkWFgKC8FZgETew3a5S99ePbsXgNjhcoq4gqIFSjK/TDu/MPP6/ErVdTM+QP7CpUbXFrrpOJgXlJikhuxo8sHc1jmu1r7jI59+ZTQHIRhKEYu7dj0TC9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725878776; c=relaxed/simple;
-	bh=QmlBIFpFsQ98urNXZuP2OSPX7p9ga2galSnpHluKEs0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JlvggMG0aDYFHSFd3DHiUNq6cjczrGMj9SKcnRrJvqFDwY/45k8fjSuycUDpF3WJSn7jbl/XUJGmQYL5hHQ9Wm5a35euYQLHi1qBZg4S/NpzbTihsmdyGwUbH8HqUMTeMXOZ/0RRnUFPv1dnKIz6TNNQe5HOBv/JZhvL8apff5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0ECBFFEC;
-	Mon,  9 Sep 2024 03:46:42 -0700 (PDT)
-Received: from [10.162.43.35] (e116581.arm.com [10.162.43.35])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DEDF23F66E;
-	Mon,  9 Sep 2024 03:46:08 -0700 (PDT)
-Message-ID: <af0ca290-82bd-44b7-b66f-f05a91e7afff@arm.com>
-Date: Mon, 9 Sep 2024 16:16:05 +0530
+	s=arc-20240116; t=1725879181; c=relaxed/simple;
+	bh=k6rzkPhOo6lj4rSMToLU4dfqNi1A2723OsN/cGNSVqI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=E1Vn3/Umn5eOXGcuYqxCCZ4S5eeQxYR3s+W5NeS4+fcvV82rUBGIuabse+sv9Sui6yCdupmvasroikFnjnYKTpjxAXLuZQ6EKPMlhSISYCAHx7inZNx/b5SZJcwOkGAL6WB0N9+aHY247mk2nsQWKIbQIUkn/V+LvIUhFeanrBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.50.122])
+	by sina.com (10.185.250.21) with ESMTP
+	id 66DED35700006845; Mon, 9 Sep 2024 18:52:10 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9132623408182
+X-SMAIL-UIID: E5A1A39DA601451EA2E93BE98ABAF976-20240909-185210-1
+From: Hillf Danton <hdanton@sina.com>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+	yosryahmed@google.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm: introduce per-node proactive reclaim interface
+Date: Mon,  9 Sep 2024 18:51:57 +0800
+Message-Id: <20240909105157.2663-1-hdanton@sina.com>
+In-Reply-To: <Zt6fw4ibDq_XA_0q@tiehlicka>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm/mm: fix typos
-To: Andrew Kreimer <algonell@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Russell King <rmk+kernel@armlinux.org.uk>,
- Linus Walleij <linus.walleij@linaro.org>,
- Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Sami Tolvanen <samitolvanen@google.com>, Peter Xu <peterx@redhat.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>,
- Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-References: <20240909102907.9187-1-algonell@gmail.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20240909102907.9187-1-algonell@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-On 9/9/24 15:58, Andrew Kreimer wrote:
-> Fix typos in comments.
+On Date: Mon, 9 Sep 2024 09:12:03 +0200 Michal Hocko <mhocko@suse.com>
+> On Fri 06-09-24 19:04:19, Hillf Danton wrote:
+> > On Thu, 5 Sep 2024 16:29:41 -0700 Davidlohr Bueso <dave@stgolabs.net>
+> > > On Fri, 06 Sep 2024, Hillf Danton wrote:\n
+> > > >The proactive reclaim on the cmdline looks like waste of cpu cycles before
+> > > >the cases where kswapd fails to work are spotted. It is not correct to add
+> > > >it because you can type the code.
+> > > 
+> > > Are you against proactive reclaim altogether (ie: memcg) or this patch in
+> > > particular, which extends its availability?
+> > > 
+> > The against makes no sense to me because I know your patch is never able to
+> > escape standing ovation.
+> 
+> I fail to understand your reasoning. Do you have any actual technical
+> arguments why this is a bad idea?
+> 
+> > > The benefits of proactive reclaim are well documented, and the community has
+> > > been overall favorable towards it. This operation is not meant to be generally
+> > > used, but there are real latency benefits to be had which are completely
+> > > unrelated to watermarks. Similarly, we have 'compact' as an alternative to
+> > > kcompactd (which was once upon a time part of kswapd).
+> > >
+> > Because kswapd is responsible for watermark instead of high order pages,
+> > compact does not justify proactive reclaim from the begining.
+> 
+> What do you mean? How does keeping a global watermark helps to trigger
+> per NUMA node specific aging - e.g. demotion?
 >
-> Reported-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-
-Reviewed-by: Dev Jain <dev.jain@arm.com>
-
+In addition to the cost of pro/demorion, the percpu pages prevent random aging
+from making any sense without memory pressue, because I think it is aging that
+rolls out red carpet for multi-gen lru.
 
