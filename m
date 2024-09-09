@@ -1,55 +1,73 @@
-Return-Path: <linux-kernel+bounces-321838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68595972021
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:16:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA5D6972027
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 247A6284767
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:16:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 966AE2846C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E23E16F907;
-	Mon,  9 Sep 2024 17:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40EB6170A01;
+	Mon,  9 Sep 2024 17:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="KPlyNgRU"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JY3sl1qn"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3CB168BD;
-	Mon,  9 Sep 2024 17:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675F3282E2;
+	Mon,  9 Sep 2024 17:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902187; cv=none; b=SUp7kktRRzSvp0xKPo5ewnd8LRwQqjCINgFWQ+D7dodeNiXr2/5IhtQLkLp+WENZXtqcm8m9HmpXDGIk17dBXdYQtC6MkUsOMzY1kOC5OdpYD+fp08PLKCLjNVk2vh75+VvmSNGS+5fttMH/h33NCsCroFAiU7Qk/x9MlKVuk2c=
+	t=1725902222; cv=none; b=ox8wiu3NJeCJu8x+DLd8S752APE9BG5qAAuZN1sUxiO5vq6laR+bMgOcPAA1CVRBqxBxkV71bPRCmHXa+Xz3ObOj5dktieKl/LNYhhAV/lac6JMpjDvxWNj3bhSRfaNQ/h/4vGk+lvT5hfxNUPgBBuvP8ivpFEYWQ30ezLWFGbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902187; c=relaxed/simple;
-	bh=WdtjfJfFax49BUXe0J2NEx13L4l5Io4Wb1Jd8zgQ8i4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y+VI/OrJXOdX4w5n4t2nqSV0uKTrx58VLE3wYIuNyZ+rjCQqg05bndr1Ldh5Tpw1/3aPVjrbtOhhXX8MCqtMWCAcNsMpc631qTfJsaoHraQ9B5FAbHRM8hKNZDKcf37QWjm1mywRwarj1DjA+q+tG7q4F8Hg9X7rQ3nfyD/TS+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=KPlyNgRU; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1725902175; x=1726506975; i=wahrenst@gmx.net;
-	bh=419wjomNzniGm9B42Dz+raTwDB9f2lxhiCspgj9PUqE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=KPlyNgRUZwGhIPnyJsLZFLwuMuDEEYebaB+CU5pm07GuE+HMuqCLQYrV9Rl0vf2G
-	 7AN8WNPv3yA1zTYdENOVI3vEq+DV/AqYTVoYGeWVEWXZEb8/ajXsxur4vxRwZpT9X
-	 TL2FakbroHnzz0JncHu6k6mtgU9Xd3bdaDMqoX5yFTOgi6fM+fVbIMhQ/PYxQb2hv
-	 xtR4/JDBldSRLDIXRhZLds2ELAVsT+qEFx+KHs3+FRJpWUgn33SN+UmaeUEoeNOMy
-	 N+wAux3ItkDoRptK3cnpe9kPi0j4GpCRwGHMI9OW1zWPrPnJyjZI+9NPZ4pHie2eo
-	 f6mSedNGj5xaarlNnw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.128] ([37.4.248.43]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mt79P-1rudMs1oOv-015Vsj; Mon, 09
- Sep 2024 19:16:15 +0200
-Message-ID: <2e3f270e-4c18-490f-8f18-87a422818cb6@gmx.net>
-Date: Mon, 9 Sep 2024 19:16:14 +0200
+	s=arc-20240116; t=1725902222; c=relaxed/simple;
+	bh=J7ZxKBd8GNjoUAMjkac/WKKJV8okz4PGJYbZ3Y3ZgkY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=avZw4+A9J/4aQYo2I5ib3LMtSBOWEcd5ut0/qIoOg/1lntqjnsDcZ31cBsCFXSYh+v4yfXAFWcVGyT4HSU7eirU1N+7cbPC37o5fsFMb+uv5EBsawRdFzNU2KErWMA1FdBOEjNMozgylahL3DNBpMV4IhhHFz1nEaJ5rhk+lJ1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JY3sl1qn; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2068acc8a4fso43325395ad.1;
+        Mon, 09 Sep 2024 10:17:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725902221; x=1726507021; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hauHXk0UHvL9WIL9OJwYkRJrxeJ42bwu7guvi9wUyZ0=;
+        b=JY3sl1qnjLg4/r0ntWouCd3WpY6GppXlx7hP2US9/VU584jvVDDxGbXMp1FyZMnUWo
+         u77ji/zmcuV+Ht5XwvQK0rEnwb3x7MFuz53Q9jh2ur7ElNGIlv6OCNEmxx/JROojhLFt
+         YXKIYFXRV8LIjAX6OS/go5ey9rYvtQr6iV+j492LWMm3e6L1HBPTgHlRy41xaaib8SMa
+         BrTSK/mmx2nPKfT9gu35IE34sOapUlPSHBmWKx09CTLG787B8B4TyLLhdwuLIsKoAHnS
+         tjNPSpyb5jRu29bAFSecb3eiYoJ0SnaVvWz/r1SE4pHLMxEMJHsGSOs4nYTBn9tVraxv
+         oHuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725902221; x=1726507021;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hauHXk0UHvL9WIL9OJwYkRJrxeJ42bwu7guvi9wUyZ0=;
+        b=IsFA5TrjJD1bOO8Zm9m+acIxCxZOk2YuXKFp8te2+7Ih4sAmLQMcvg81sWDnoxvWrL
+         VjdJmUGLqsm5FrUFD23h7vjUOYPqTxt+itsWLyx3ngQgK4fmHI4jIJ7xFEPDbJyUvgj8
+         vrP8thmGJXVqMd1h26GWrb6vfBaSGAtv4VXMq5+Y0p3eJt52i4MMiF+jpGYrt3y8avIc
+         4xragrImeDAP2o+evEj0VZiUyMKlqMknmkD0Vw85ARqyTsQXzKaF4x93id+YXQob5Vlt
+         ruqEkkdVe6oLP2I0ZOMOc1SJ/nKoaWj2gV5CFjuPPL3U4ZnZGraM/vc15tC+kLwnaqPi
+         jM/w==
+X-Forwarded-Encrypted: i=1; AJvYcCULs+ix832Mk2eoGb7l7AlJANgr76nQO4wJuhygM78F9QD6CgwUh9fv6IF3+CmOjGsw7MVBHQhK+s0=@vger.kernel.org, AJvYcCVNOhC5/C7VxrZC/UEMv9StGpphYo6rW9ciOv/q8wJR0OIuc9f4dYpQ/NObGC/G9uicjyvTwAI9cTNS@vger.kernel.org, AJvYcCW+fBVEoeWHSO9mtClJ8+Oupb00Lxg+ve+kz+3+z6ZgYjajb5dX5ptZ/DeYNyD0TykLJCtV202bK+brfLOu@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRrgs2HVLGn49fqyalsvTjwtoGJB2HNakjO8hofUa7nw9BVSKC
+	FZ6sxyt6JlCLdcizJ5JVV42e9AXeIwUO7nW3k2TdXa/gJRA4x+b2
+X-Google-Smtp-Source: AGHT+IHnNeEvODa1Qt6cj+F9ZMmq0nJBVXi/m6bl9hffcSzJHoVbOj9/wfPZtg6NqY9graxO1THDuw==
+X-Received: by 2002:a17:903:120d:b0:205:866d:174f with SMTP id d9443c01a7336-207070002e8mr83668675ad.44.1725902220449;
+        Mon, 09 Sep 2024 10:17:00 -0700 (PDT)
+Received: from ?IPV6:2601:1c2:c184:dc00:6c38:4539:e063:d0ba? ([2601:1c2:c184:dc00:6c38:4539:e063:d0ba])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f31729sm36233705ad.261.2024.09.09.10.16.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 10:16:59 -0700 (PDT)
+Message-ID: <08466bb0-4306-4941-97e1-e62ba07d8ea2@gmail.com>
+Date: Mon, 9 Sep 2024 10:16:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,99 +75,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] tpm: tpm_tis_spi: Ensure SPI mode 0
-To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
- Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
- Stefan Berger <stefanb@linux.ibm.com>
-References: <20240906060947.4844-1-wahrenst@gmx.net>
- <20240906060947.4844-2-wahrenst@gmx.net>
- <D3Z3UFHWQ3MG.N8JU7ZHX3XHN@kernel.org>
- <e7d402f4-0463-4bb2-b1ea-afb36a58e59a@gmx.net>
- <D41X15Z6ZQ4K.3HGVA7H9C6PJ5@kernel.org>
+From: Sam Edwards <cfsworks@gmail.com>
+Subject: Re: [PATCH v6 3/3] riscv: dts: allwinner: d1: Add thermal sensor
+To: bigunclemax@gmail.com
+Cc: anarsoul@gmail.com, andre.przywara@arm.com, aou@eecs.berkeley.edu,
+ conor+dt@kernel.org, contact@jookia.org, cristian.ciocaltea@collabora.com,
+ daniel.lezcano@linaro.org, devicetree@vger.kernel.org,
+ jernej.skrabec@gmail.com, krzysztof.kozlowski+dt@linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, lukasz.luba@arm.com, mkl@pengutronix.de,
+ palmer@dabbelt.com, paul.walmsley@sifive.com, rafael@kernel.org,
+ robh+dt@kernel.org, rui.zhang@intel.com, samuel@sholland.org,
+ tiny.windzz@gmail.com, wens@csie.org
+References: <20231217210629.131486-4-bigunclemax@gmail.com>
 Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <D41X15Z6ZQ4K.3HGVA7H9C6PJ5@kernel.org>
+In-Reply-To: <20231217210629.131486-4-bigunclemax@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DZX4RHmuZ66cfpVGYRE8AlnbNEFL/vQbMXJgKiJ0x13FeB0xyRM
- xd+51E/Wb6dktCTZ7B4XnjUrybpN7Fuu2qhAna58FIUP0A5WGKW1jEhr18Oja3zDSmxYBIB
- B+h9xndcVLLXucWad/XaZoYp+4mhbZYCiFglLxTnXt9m0JkFbvQmLj+SE9+7hROeCpv1x88
- /2q8ITitFf6bDLYdAahSg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:rPgDiUKqz2E=;BS/1AaBoKLBHsnNHswKYEeUNra6
- VJCkFMl5B9CRWOGUCMIXPBCWY/F6SXDGl43ofiMbRN/ht1Ji2GeE85rvL3OI/aLMnewRwbhyM
- XsLkFfkF4jhLN84CzfbwcIRdmuvjfoRc7Z+Y6IJzQu2QFrUaqPsbN1yYzHbhp34WQUGAuSsmp
- rXSpVthbtx7mHEU5W3P5Kwjd3dEW6+NzJ4rLeb3HN5hAXNdpLlCVwGSt/zUA0SfyMINTCrRLl
- 8Rwrp/oLi6AFmt24OPHLXQqbosCIh/q7/Z4qoKb9L/bEvaKUjws3uCMZCscIoU+0T1tnWmpIX
- mOlFPNRon6j99113bTevKawukwztCEBQ08/eXL/eVXJq+l2Cr8KaSHgV826v/b4EDsRefNE6w
- 7Cy1CfKeCsCgrcCOOr8+KgkC2NuG0a2EZWadB4m8JeEWYWI2QuQclssugHKIm8iTJt1QQQZu0
- 8XvdjYy6nk1fBqxB3dh0Zb5UrYm72lEphFLvikxFJijDt4miWyfDLznWw42oTEF3hQBpyMCw+
- 6z0jbU612J5PG831KKrZ0flFAreXwSPIAVLbqFnTqlaustJ5aDKGfmXqj1Uh3Lpx0+OhNyDsY
- Nh8vejCzFXQaU1dGScx7+E/hKN2zV6AqRBzdoeL+ICdBZ0Q3aTh10P1gg9tEclf4/3W1hROVy
- n4yhB3sV4YXOgNghOPSCve6xMZ5pIuRBRBYMF5kM7JX39ufRj3ghPVlrdhyE57zRtCQ45Dr6l
- xUfzlJ1JSvDhNqeIC/r3iQIBc/TCz3Bu2jn/Y6ABis//h+0lxGycuD9rbHboICfnvsZlao4If
- 9YisP5qPEIfhGQg8XI3u1kXg==
+Content-Transfer-Encoding: 7bit
 
-Hi Jarkko,
+Hi Maksim,
 
-Am 09.09.24 um 19:05 schrieb Jarkko Sakkinen:
-> On Fri Sep 6, 2024 at 5:46 PM EEST, Stefan Wahren wrote:
->> Am 06.09.24 um 11:47 schrieb Jarkko Sakkinen:
->>> On Fri Sep 6, 2024 at 9:09 AM EEST, Stefan Wahren wrote:
->>>> According to TCG PC Client Platform TPM Profile (PTP) Specification
->>>> only SPI mode 0 is supported. In order to ensure the SPI controller
->>>> supports the necessary settings, call spi_setup() and bail out
->>>> as soon as possible in error case.
->>>>
->>>> This change should affect all supported TPM SPI devices, because
->>>> tpm_tis_spi_probe is either called direct or indirectly.
->>>>
->>>> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
->>>> ---
->>>>    drivers/char/tpm/tpm_tis_spi_main.c | 11 +++++++++++
->>>>    1 file changed, 11 insertions(+)
->>>>
->>>> diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/t=
-pm_tis_spi_main.c
->>>> index 61b42c83ced8..e62d297b040e 100644
->>>> --- a/drivers/char/tpm/tpm_tis_spi_main.c
->>>> +++ b/drivers/char/tpm/tpm_tis_spi_main.c
->>>> @@ -248,6 +248,17 @@ static int tpm_tis_spi_write_bytes(struct tpm_ti=
-s_data *data, u32 addr,
->>>>    int tpm_tis_spi_init(struct spi_device *spi, struct tpm_tis_spi_ph=
-y *phy,
->>>>    		     int irq, const struct tpm_tis_phy_ops *phy_ops)
->>>>    {
->>>> +	int ret;
->>>> +
->>>> +	spi->mode &=3D ~SPI_MODE_X_MASK;
->>>> +	spi->mode |=3D SPI_MODE_0;
->>>> +
->>>> +	ret =3D spi_setup(spi);
->>>> +	if (ret < 0) {
->>>> +		dev_err(&spi->dev, "SPI setup failed: %d\n", ret);
->>>> +		return ret;
->>>> +	}
->>>> +
->>>>    	phy->iobuf =3D devm_kmalloc(&spi->dev, SPI_HDRSIZE + MAX_SPI_FRAM=
-ESIZE, GFP_KERNEL);
->>>>    	if (!phy->iobuf)
->>>>    		return -ENOMEM;
->>>> --
->>>> 2.34.1
->>> Why?
->> SPI protocol driver usually call spi_setup to verify that the SPI
->> controller accept the settings (SPI mode, bit, clock rate ...). Bailing
->> out early is more helpful for debugging issues.
-> What problem has this patch solved for you? I think it makes the code
-> only less robust and more error prone.
-this is not a fix for an issue i was experiencing.
+Apologies if I have failed to find a v7 of this patch in my searching, 
+but I'm seeing that patch #3 here was never applied, so Linux still does 
+not enable the thermal sensor in these chips. I just thought I'd give 
+you a heads-up in case you weren't aware. :)
 
-It is just an improvement to catch possible invalid settings which has
-been passed via DT device for example or the SPI controller doesn't
-support SPI mode 0.
->
-> BR, Jarkko
-
+Thanks for all your hard work,
+Sam
 
