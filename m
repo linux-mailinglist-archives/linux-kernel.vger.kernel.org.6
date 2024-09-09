@@ -1,219 +1,124 @@
-Return-Path: <linux-kernel+bounces-320580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7321970C2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:13:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE2D9970C30
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F58F2837B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:13:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D09571C208D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3ECE1ACDE4;
-	Mon,  9 Sep 2024 03:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCE01AC886;
+	Mon,  9 Sep 2024 03:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYe6j1fo"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="QvCZNBGz"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5E44C81;
-	Mon,  9 Sep 2024 03:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728A51400A
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 03:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725851604; cv=none; b=YEY4GcnlMnv2PmGMh3M/3ITOPyFQwkWYanpOLRFQNEwvJt+IYMlxphj+m/uK19SGnx+RSM9NTiF/K2UzfQd5qJTncsgqm96C0odmGzVq0hwjM8HSjKwJ5rVNK3GMnPCd7P/2bsPcZpdNwEE+lKT0pwawIVNee+7dJtDZD60GsfQ=
+	t=1725851962; cv=none; b=LvY7cIJ+9EU1nVp0MExPU43fv0Chvhs6vdPnQLbaJFvB6VDF3ZTFkg75kiBkgggYP/AUCxEUDySQqEcBo8jiAkJM0UUT+DvMRFJKKJma/m3qEBcHfQ7L47FWlXYDNOJ5lUSvFvLRCv7H20bXSpkXIDtA9GdSU2btYdUmUwPG+Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725851604; c=relaxed/simple;
-	bh=HJxQSpdQ2Sar8wCHVwwgQqdCfmbMUxcd7uizAdrvU5A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UXZR3XV9eo3xs7YoUMCrUd0xXBizhZTq6VSqSuauc15QM2khRBywQ4E9xWXqkExX67EjTZ4t4I8289dFIdvkraXo+S90i2IAyH7yx8IXNTyD/VQvAexsuQKMWoIDEuEidhv91QQKAh+zRG8rN7WY0H0tzivqs92Hp1JtsFF/H0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYe6j1fo; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c260b19f71so3777928a12.1;
-        Sun, 08 Sep 2024 20:13:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725851601; x=1726456401; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CcQx4vSk1WDBIFdGJdgeYgWLIddU3+oNu6pAPjOlvI4=;
-        b=KYe6j1fofJVMat7Pl9jGOIRz9eaGAA8MqrR7/16J2YmuG0tlkXO8ptIf1n3N8TGkli
-         SrZ4Y1lCPlXdTPumGNYyR/klwayoVdnb8D+S4oFGg0AzvNKyci1d/q5dSuoxz/bWU65z
-         FyVqmEW9wl3Vzfu/cW8Ht3OP7KnoGovWKidUI3G6pX8ozBttEPG/JnpalYe07zuACMcu
-         jLGeIfJYv2nztuCX+KvTHrK+faJ5qGAv//1m9GvUiQNTg4jWPF6iZi2qdhtunIvij4kD
-         dHECqG/FHxdl/Rxag9h2EKePakRzXfuxaAUkx2M2OT39H3xziQDxdj5D0lP/XI3yNXS8
-         d5rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725851601; x=1726456401;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CcQx4vSk1WDBIFdGJdgeYgWLIddU3+oNu6pAPjOlvI4=;
-        b=qKiKrDNlJZauRbRQG6sANgp3ea6s5q+/LZ+2ZckPjeglQ+k/TaiH8yXg++CPINVyio
-         +LOZkl7ikEVyRrzxwwXa5zMC6QGY0BqIF0giHwvirRnDm6rl34rWsJiFjadbEVm8RU5H
-         hEf2BFY2bJ8wzxVWE+h9FpPvFyZH4w3rU7Ydh3IsPXzJidp7Jqvm0spm9mYbQCf018jD
-         sdI7VFnKLfqj0ERLPrbEIjb8F+BnW0Uhke8KhbazDGiouYf9JgyJcOUJasKgm/iuTjMg
-         0NoF8ODMNUjsTNTSg1BmjtEo3ms/LJRbzDGkXp78x2GJDWLUVM78RrECYGEzt6djArvr
-         oxEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYg69v81ZYaGunsonjFdeAO6e1BmYjh7gi0TyYZBpa1z1ZVHaFYNvumWThWoPHIUW6thYM2tmcQJPfLdesDsdxla+v@vger.kernel.org, AJvYcCWjZY75dfeDHfJqqmWCzWFAdD2pbhZfk42DC1wtj8i9rJvEi9qWIHuMoGYZWS2v2JU4dnI=@vger.kernel.org, AJvYcCXlrM7MXvsgHGDcgYki3QKtgfKbiJRlYFa/N4+lJ3CJELPZfw0/PV8WTIaHD+HlSn8LLqwnFQZhQd/cZVQm@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMaisZYGvwiw9OUmfYgYMzu9S+Uhh1YmzRGE8Sf/zIAX7ZaOXc
-	J/Zs9gDR1Dl50jCssEpVow3DDGpkwvAlen8Wg6q7ds5cHPDPgIWdGvlB0pt+xLvmQKnUE9F+95v
-	7BOKx3Zcpo0JQgDbi/WwH5Ij9gck=
-X-Google-Smtp-Source: AGHT+IGaCZWvfZnq0huibOAYFMtLB/ByxZ0cAq1YXvND6Fb8vPtEgadkVGpblgM1NGP4MTMGBCO+xWcTKzlewwbHqV0=
-X-Received: by 2002:a05:6402:3514:b0:5c3:2440:856f with SMTP id
- 4fb4d7f45d1cf-5c3dc7bb513mr7657627a12.27.1725851600380; Sun, 08 Sep 2024
- 20:13:20 -0700 (PDT)
+	s=arc-20240116; t=1725851962; c=relaxed/simple;
+	bh=OsrKyfi2v5wJpSQFdTckhJDKuI+HNyokIGLwr1fzFig=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MR7GUZseXKlnmv+AhkLLrgNqD+cSvMGsiSG0YLvHacF8UkNeMbMFupGrhvEc0DOFLP7MWLec9KG77GEDWrE56mfmN27gKOzgCWqj2S6lFTTLlyPNNqmeNW48MiNLbVN4tBwZ+Mq168DSm5zxtcXEgnjeJmasWs/o6rVIj8yJAiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=QvCZNBGz; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725851956; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=f1xp5p0CJfo1Mj+ACRPp8EkDOPZ2/JavyzqzS5tmiWE=;
+	b=QvCZNBGz4DZ6yXooswbnt+eEZuPRHRRUb8cJmU9HhNSvDbvVsYzjY2P8Cex14idFEMoFfSvdcEiLf/O1MW7lr+orv3wWu7tCpLqbOjXbKRKUhXBrYKhhdIdQPvdt5N3gqmDqK9N+zpubL8VsZt/bfcq/2CNkqMEG9Z9LN18b3HM=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WEWAiPT_1725851952)
+          by smtp.aliyun-inc.com;
+          Mon, 09 Sep 2024 11:19:16 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Colin Walters <walters@verbum.org>
+Subject: [PATCH v2] erofs: fix incorrect symlink detection in fast symlink
+Date: Mon,  9 Sep 2024 11:19:11 +0800
+Message-ID: <20240909031911.1174718-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20240909022811.1105052-1-hsiangkao@linux.alibaba.com>
+References: <20240909022811.1105052-1-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904065908.1009086-1-svens@linux.ibm.com> <20240904065908.1009086-5-svens@linux.ibm.com>
-In-Reply-To: <20240904065908.1009086-5-svens@linux.ibm.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Mon, 9 Sep 2024 11:13:05 +0800
-Message-ID: <CAErzpmugJ3Uz=YF9k-OBHehd3RrKQ4CrORsNXbngRWbQ_yoELw@mail.gmail.com>
-Subject: Re: [PATCH 4/7] Add print_function_args()
-To: Sven Schnelle <svens@linux.ibm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 4, 2024 at 2:59=E2=80=AFPM Sven Schnelle <svens@linux.ibm.com> =
-wrote:
->
-> Add a function to decode argument types with the help of BTF. Will
-> be used to display arguments in the function and function graph
-> tracer.
->
-> Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
-> ---
->  kernel/trace/trace_output.c | 68 +++++++++++++++++++++++++++++++++++++
->  kernel/trace/trace_output.h |  9 +++++
->  2 files changed, 77 insertions(+)
->
-> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-> index d8b302d01083..70405c4cceb6 100644
-> --- a/kernel/trace/trace_output.c
-> +++ b/kernel/trace/trace_output.c
-> @@ -12,8 +12,11 @@
->  #include <linux/sched/clock.h>
->  #include <linux/sched/mm.h>
->  #include <linux/idr.h>
-> +#include <linux/btf.h>
-> +#include <linux/bpf.h>
->
->  #include "trace_output.h"
-> +#include "trace_btf.h"
->
->  /* must be a power of 2 */
->  #define EVENT_HASHSIZE 128
-> @@ -669,6 +672,71 @@ int trace_print_lat_context(struct trace_iterator *i=
-ter)
->         return !trace_seq_has_overflowed(s);
->  }
->
-> +#ifdef CONFIG_FUNCTION_TRACE_ARGS
-> +void print_function_args(struct trace_seq *s, struct ftrace_regs *fregs,
-> +                        unsigned long func)
-> +{
-> +       const struct btf_param *param;
-> +       const struct btf_type *t;
-> +       const char *param_name;
-> +       char name[KSYM_NAME_LEN];
-> +       unsigned long arg;
-> +       struct btf *btf;
-> +       s32 tid, nr =3D 0;
-> +       int i;
-> +
-> +       trace_seq_printf(s, "(");
-> +
-> +       if (!ftrace_regs_has_args(fregs))
-> +               goto out;
-> +       if (lookup_symbol_name(func, name))
-> +               goto out;
-> +
-> +       btf =3D bpf_get_btf_vmlinux();
-> +       if (IS_ERR_OR_NULL(btf))
-> +               goto out;
-> +
-> +       t =3D btf_find_func_proto(name, &btf);
+Fast symlink can be used if the on-disk symlink data is stored
+in the same block as the on-disk inode, so we don’t need to trigger
+another I/O for symlink data.  However, correctly fs correction could be
+reported _incorrectly_ if inode xattrs are too large.
 
-This is an excellent feature, and I am crafting a series of patches aimed
- at enhancing the search performance for locating the btf by its name.
+In fact, these should be valid images although they cannot be handled as
+fast symlinks.
 
-> +       if (IS_ERR_OR_NULL(t))
-> +               goto out;
-> +
-> +       param =3D btf_get_func_param(t, &nr);
-> +       if (!param)
-> +               goto out_put;
-> +
-> +       for (i =3D 0; i < nr; i++) {
-> +               arg =3D ftrace_regs_get_argument(fregs, i);
-> +
-> +               param_name =3D btf_name_by_offset(btf, param[i].name_off)=
-;
-> +               if (param_name)
-> +                       trace_seq_printf(s, "%s =3D ", param_name);
-> +               t =3D btf_type_skip_modifiers(btf, param[i].type, &tid);
-> +               if (!t)
-> +                       continue;
-> +               switch (BTF_INFO_KIND(t->info)) {
-> +               case BTF_KIND_PTR:
-> +                       trace_seq_printf(s, "0x%lx", arg);
-> +                       break;
-> +               case BTF_KIND_INT:
-> +                       trace_seq_printf(s, "%ld", arg);
-> +                       break;
-> +               case BTF_KIND_ENUM:
-> +                       trace_seq_printf(s, "%ld", arg);
-> +                       break;
-> +               default:
-> +                       trace_seq_printf(s, "0x%lx (%d)", arg, BTF_INFO_K=
-IND(param[i].type));
-> +                       break;
-> +               }
-> +               if (i < nr - 1)
-> +                       trace_seq_printf(s, ", ");
-> +       }
-> +out_put:
-> +       btf_put(btf);
-> +out:
-> +       trace_seq_printf(s, ")");
-> +}
-> +#endif
-> +
->  /**
->   * ftrace_find_event - find a registered event
->   * @type: the type of event to look for
-> diff --git a/kernel/trace/trace_output.h b/kernel/trace/trace_output.h
-> index dca40f1f1da4..a21d8ce606f7 100644
-> --- a/kernel/trace/trace_output.h
-> +++ b/kernel/trace/trace_output.h
-> @@ -41,5 +41,14 @@ extern struct rw_semaphore trace_event_sem;
->  #define SEQ_PUT_HEX_FIELD(s, x)                                \
->         trace_seq_putmem_hex(s, &(x), sizeof(x))
->
-> +#ifdef CONFIG_FUNCTION_TRACE_ARGS
-> +void print_function_args(struct trace_seq *s, struct ftrace_regs *fregs,
-> +                        unsigned long func);
-> +#else
-> +static inline void print_function_args(struct trace_seq *s, struct ftrac=
-e_regs *fregs,
-> +                                      unsigned long func) {
-> +       trace_seq_puts(s, "()");
-> +}
-> +#endif
->  #endif
->
-> --
-> 2.43.0
->
->
+Many thanks to Colin for reporting this!
+
+Reported-by: Colin Walters <walters@verbum.org>
+Fixes: 431339ba9042 ("staging: erofs: add inode operations")
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+v2:
+ - sent out a wrong version (`m_pofs += vi->xattr_isize` was missed).
+
+ fs/erofs/inode.c | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
+
+diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+index 5f6439a63af7..f2cab9e4f3bc 100644
+--- a/fs/erofs/inode.c
++++ b/fs/erofs/inode.c
+@@ -178,12 +178,14 @@ static int erofs_fill_symlink(struct inode *inode, void *kaddr,
+ 			      unsigned int m_pofs)
+ {
+ 	struct erofs_inode *vi = EROFS_I(inode);
+-	unsigned int bsz = i_blocksize(inode);
++	loff_t off;
+ 	char *lnk;
+ 
+-	/* if it cannot be handled with fast symlink scheme */
+-	if (vi->datalayout != EROFS_INODE_FLAT_INLINE ||
+-	    inode->i_size >= bsz || inode->i_size < 0) {
++	m_pofs += vi->xattr_isize;
++	/* check if it cannot be handled with fast symlink scheme */
++	if (vi->datalayout != EROFS_INODE_FLAT_INLINE || inode->i_size < 0 ||
++	    check_add_overflow(m_pofs, inode->i_size, &off) ||
++	    off > i_blocksize(inode)) {
+ 		inode->i_op = &erofs_symlink_iops;
+ 		return 0;
+ 	}
+@@ -192,16 +194,6 @@ static int erofs_fill_symlink(struct inode *inode, void *kaddr,
+ 	if (!lnk)
+ 		return -ENOMEM;
+ 
+-	m_pofs += vi->xattr_isize;
+-	/* inline symlink data shouldn't cross block boundary */
+-	if (m_pofs + inode->i_size > bsz) {
+-		kfree(lnk);
+-		erofs_err(inode->i_sb,
+-			  "inline data cross block boundary @ nid %llu",
+-			  vi->nid);
+-		DBG_BUGON(1);
+-		return -EFSCORRUPTED;
+-	}
+ 	memcpy(lnk, kaddr + m_pofs, inode->i_size);
+ 	lnk[inode->i_size] = '\0';
+ 
+-- 
+2.43.5
+
 
