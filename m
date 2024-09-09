@@ -1,121 +1,143 @@
-Return-Path: <linux-kernel+bounces-320768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4BC970FFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:40:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31253971001
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D11001F228E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E350C281B8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B823A1AF4EB;
-	Mon,  9 Sep 2024 07:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268871AF4F1;
+	Mon,  9 Sep 2024 07:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0Ozy5wPo"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Df+yyUuj"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53ADB1AE055
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 07:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBF01AE055
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 07:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725867624; cv=none; b=gCx2XRQp9K96S4sqr8oMAqNSFhDhsZFGhN/ZKd1nx1+N/sg6sfjhX8odVUadkHw170OMZFzgv3UeDBMrmGxIem5xZTeVKzOTiNARto4u0JnDIPzsphKMkTE5OXiZoI7jlsyyi0JNGNU0mKWf10m3ICfqUHJ+1cb7UyD60M+qZo4=
+	t=1725867642; cv=none; b=B4CAKYwt1GBFDBiOZZ88xar4NEdJYiLs3mer0fGlJDlzuXh2aFRSD277IsVDsdhsj6G0h4ZjKnb4WJgvzwdcJ3GQbZitWCsCyVqx2/sp+AKVZFUvXnv0muAmOU8fUWYvtoySB1d15TJuSeXNuuBXGpj+H8qvg4rThIMNreFLO8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725867624; c=relaxed/simple;
-	bh=cYz4PuhSNVrc+9Fq9A0L2xKgaLVQuJFXyFAuQyZ0fuk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oFwdTvuK+3jAF/n48A8QDiikEPFSzXQ676TE+sOl2k/uDAlg8nzVM56I9kUQOpa0GqiRc8xgcOSUlwhJOEnGD5suInYD052l+OR6OoEsGZ7umjGyCCuEjZdytDUpkBos4GIJuwhpH3t/fbaiqg2YtSM6QPabN/lybZ/ftQk0K5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0Ozy5wPo; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso13635155e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 00:40:22 -0700 (PDT)
+	s=arc-20240116; t=1725867642; c=relaxed/simple;
+	bh=UxNG104SdunqMkFngXFGvHzSLaLcGrl3Ka4Dw3p5Z5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fOY9HV83l3soYCwQ/X3k5QCWOB8Q5UJPXJSlpkPIp7NYcxoUmk0q34pirK167XNqjHYhvfBfUv9VvF4ijvgE2w7j75g1A60lIK75NH0fJ0hYmzAZgK30z9EJP6uMVCsyMDssLFSJUV4+0jWcwVaNZ+zMh/PFhnaNhdSkfB1xpfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Df+yyUuj; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cb58d810eso4188545e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 00:40:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725867620; x=1726472420; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wxk+0HV3ie5ca2PMas8a05vKnaU5pacSMpokYxPfcBg=;
-        b=0Ozy5wPo2PJV9slXvxiuIzrsACtQb1A4SKebHusrRfmgvdAWBahWqfDxcMgZX9g+U2
-         QOK/2Q2EbZ72xsAIB/fMMWcDOU0zZbUIzGOiVYE5BWVq0PBO6y3RIC5kArtpnKLxCfYB
-         dZ4vEAWM9/2PrFalXL8eUefuouMP+5x6xju705LricNSNyGNtTjfcq80tr+YfVf3l7uf
-         lbSs6P7u0sKJdiXVNiamkguSXXPxHwDBxTJBDSvXp4g/ICOb1sMzcNiqyVdCdYNvqIT+
-         0IFnxrEgHgqj1Ci696NvPvIu0NHE5pHdMI9B4Cqs2YWb0NBS1r9Yb2eYXcr2I0ZHEg0l
-         aikw==
+        d=google.com; s=20230601; t=1725867639; x=1726472439; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pSRoG8tK9Qzdn5ZF5Thjq6HAamLJOlkqFyKHUb902Ao=;
+        b=Df+yyUujmD6BG36HLJH1xGBmAuTWCLEZKsYN7N+IS4fdLQ5RxiM+48LjPHz5aTe5vX
+         pIh9qWzSA5vQx79IS26lS6OkuMVRwGXCWGiCLJlsgncBDbCF0SVwRXyP73UET2YcxJ7e
+         IhV52OAwBPtAxnpVPdWkyLYEeiDslOFJ5xJUs8/hKWrHCd599LVHGBRXQnMglK8euy6I
+         kh+m7XIN1Zlz1GVyIcXCIMAZU1SH7OCXvdQt1KtmOSL1HQ/GNCDtzwxmFaJquAK8ix/D
+         XY1ZT6M8nRbyNUEINOofhlSRpIPLYLjfiK4qb5cpzGMN0RxQsSxNyawM+PwUSwZQYHS4
+         rt3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725867621; x=1726472421;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wxk+0HV3ie5ca2PMas8a05vKnaU5pacSMpokYxPfcBg=;
-        b=JQfGK47Yju8LR4dCY7DNgCRYbzBkJcgEbqxtVN4jwZ/NyAhgjY82rcgnFwk9aMUcUu
-         umLqjXCYkKb3bBRKgy4AD9kK94Atjw+E0ZByeSkS7COicEnIhf7sDhE4DchnxkdcPrgy
-         lII3VeClv5oeY8npBfXYY4sTRnrsviSGXsFUc4U5iQy8UCFRZiRPO6ACuEqDgi910RJG
-         iY2iKt/6Pefg2t85w/MiD+My6ZWLNp3jOjketkrzxQJb0Y1mLx5nbau2MRY4Jx5T7u3T
-         q6z/pbFKNzuPhmMmmRk0UVJYqvQhRtSvUuY12B9IpDIlDlk6U0tSt/jFjdou9RhT1jJo
-         6CLw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNoewg7GQyBYojT+QtcT1slRU4kQhvEBSo8gvGWejvtUuLfxru7nRtLh6UN5DmWCKEj0px1uCzx6t/JYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+Ese0r2zDh8LcYN5hnGPtLVDUFZAdMgeRTz+6NtYM+SZQFktF
-	qW6WRVNOMNVWqtaC8SbopNxAzplro8wvMfNlB3YkR9oOTlXEIabICyF08hqhk1k=
-X-Google-Smtp-Source: AGHT+IGLe1vcw8K+nWAka8XMIewFAvdqJjh2hBlCRr5j7xHSNC6LsISkBqOfC1/aAZ5SBH2fbxKxOg==
-X-Received: by 2002:a05:600c:3b18:b0:42c:b697:a62c with SMTP id 5b1f17b1804b1-42cb697a7a6mr16044445e9.5.1725867619791;
-        Mon, 09 Sep 2024 00:40:19 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:788a:4542:ae86:67f4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb8182dsm68716935e9.36.2024.09.09.00.40.19
+        d=1e100.net; s=20230601; t=1725867639; x=1726472439;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pSRoG8tK9Qzdn5ZF5Thjq6HAamLJOlkqFyKHUb902Ao=;
+        b=CUkTKb/dDsyOgdyGexW4Kv3tbnha/vqvDS+rsicEGrZDdHxFcxTSs0cROmiwShJaug
+         mKvP9BmNCAb6pG6XBkZrtfUFTE8qKxm8e0G3yFhLyKonHEM9AeIZRDNeJBqu4NuIDzYM
+         MPEmf0fN2yukQwZKu+ACPJ7ZNRV05KBjNPNVzgOoxuhDqNq+FBIkAyA7MdA177gX9FxA
+         6nsU3w0gYeEMT5KjlWii95pTvwEtGP5zz4zUqBT9216jMPPsoaYLikbW1TbGBpzAYunO
+         QvCfpahWqs1knL3orSVZY1Z3aL5b8lipS8HUGfqxtk+cEgoC5VTibxBt9LWPMMMy5CxI
+         d63A==
+X-Forwarded-Encrypted: i=1; AJvYcCW66quX+frTl0lPu5VmW0EUFlDzbAOFiqCiy76m+GX0285KW9F+uf1IRqcdqttPDT98d8AqBPSRvOn4hdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0Yp4fguKx5rIGkc7HDq0YIMCf38QjJAoEl9UJvzN/UTh2ksja
+	lq3K3k+Os4n1N0lvWpfBnnJwQ6IQK3b/OWo4DFD+rHO/vgryGLn09mRmJkVchg==
+X-Google-Smtp-Source: AGHT+IGQ/ZFD3mkNZDTh6saUtZfGvLfnY0CjLqXgpaKRFJwBWYtBgPQqa4vfHxZ3vJl18MzgOgP5DA==
+X-Received: by 2002:adf:fa81:0:b0:374:c33d:377d with SMTP id ffacd0b85a97d-3779bd187acmr10031803f8f.28.1725867638858;
+        Mon, 09 Sep 2024 00:40:38 -0700 (PDT)
+Received: from google.com (109.36.187.35.bc.googleusercontent.com. [35.187.36.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb21a73sm68386085e9.3.2024.09.09.00.40.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 00:40:19 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,  Neil
- Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] clk: meson: Support PLL with fixed fractional
- denominators
-In-Reply-To: <46c55bd0-0076-4eaa-8b12-0e28f650e5bd@amlogic.com> (Chuan Liu's
-	message of "Mon, 9 Sep 2024 09:55:16 +0800")
-References: <20240906-fix_clk-v2-0-7a3941eb2cdf@amlogic.com>
-	<20240906-fix_clk-v2-1-7a3941eb2cdf@amlogic.com>
-	<1jjzfpqb5a.fsf@starbuckisacylon.baylibre.com>
-	<46c55bd0-0076-4eaa-8b12-0e28f650e5bd@amlogic.com>
-Date: Mon, 09 Sep 2024 09:40:18 +0200
-Message-ID: <1jmskhtgv1.fsf@starbuckisacylon.baylibre.com>
+        Mon, 09 Sep 2024 00:40:38 -0700 (PDT)
+Date: Mon, 9 Sep 2024 08:40:34 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: mcgrof@kernel.org, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH] module: Refine kmemleak scanned areas
+Message-ID: <Zt6mcvkzPI8WNgHl@google.com>
+References: <20240906153856.22204-1-vdonnefort@google.com>
+ <ZtxenHsGPyDoYnzY@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtxenHsGPyDoYnzY@arm.com>
 
-On Mon 09 Sep 2024 at 09:55, Chuan Liu <chuan.liu@amlogic.com> wrote:
+On Sat, Sep 07, 2024 at 03:12:13PM +0100, Catalin Marinas wrote:
+> On Fri, Sep 06, 2024 at 04:38:56PM +0100, Vincent Donnefort wrote:
+> > commit ac3b43283923 ("module: replace module_layout with module_memory")
+> > introduced a set of memory regions for the module layout sharing the
+> > same attributes but didn't update the kmemleak scanned areas which
+> > intended to limit kmemleak scan to sections containing writable data.
+> > This means sections such as .text and .rodata are scanned by kmemleak.
+> > 
+> > Refine the scanned areas for modules by limiting it to MOD_TEXT and
+> > MOD_INIT_TEXT mod_mem regions.
+> > 
+> > CC: Song Liu <song@kernel.org>
+> > CC: Catalin Marinas <catalin.marinas@arm.com>
+> > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> > 
+> > diff --git a/kernel/module/debug_kmemleak.c b/kernel/module/debug_kmemleak.c
+> > index 12a569d361e8..b4cc03842d70 100644
+> > --- a/kernel/module/debug_kmemleak.c
+> > +++ b/kernel/module/debug_kmemleak.c
+> > @@ -12,19 +12,9 @@
+> >  void kmemleak_load_module(const struct module *mod,
+> >  			  const struct load_info *info)
+> >  {
+> > -	unsigned int i;
+> > -
+> > -	/* only scan the sections containing data */
+> > -	kmemleak_scan_area(mod, sizeof(struct module), GFP_KERNEL);
+> > -
+> > -	for (i = 1; i < info->hdr->e_shnum; i++) {
+> > -		/* Scan all writable sections that's not executable */
+> > -		if (!(info->sechdrs[i].sh_flags & SHF_ALLOC) ||
+> > -		    !(info->sechdrs[i].sh_flags & SHF_WRITE) ||
+> > -		    (info->sechdrs[i].sh_flags & SHF_EXECINSTR))
+> > -			continue;
+> > -
+> > -		kmemleak_scan_area((void *)info->sechdrs[i].sh_addr,
+> > -				   info->sechdrs[i].sh_size, GFP_KERNEL);
+> > +	/* only scan writable, non-executable sections */
+> > +	for_each_mod_mem_type(type) {
+> > +		if (type != MOD_DATA && type != MOD_INIT_DATA)
+> > +			kmemleak_no_scan(mod->mem[type].base);
+> >  	}
+> >  }
+> 
+> I lost track of how module memory allocation works. Is struct module
+> still scanned after this change?
 
-> Sorry, I don't quite understand this one. Is it because you suggest keeping
->
-> "(1 << pll->frac_max)" here, followed by "if" to determine whether to assign
->
-> "pll->frac_max"?
->
->
-> "unlikely" is used here. My idea is that it will be possible to determine
-> the value
->
-> of "frac_max" at compile time, which will result in one less "if" judgment
-> and
->
-> slightly improve drive performance.
+That section being RW, it will be part of the MOD_DATA vmalloc and scanned.
 
-I'll rephrase.
+-- 
+Vincent
 
-Please drop the 'unlikely()' call.
-
-You may add that :
- * in a separate change
- * if you really really wish to
- * if you provide profiling numbers for the different supported
-   platforms and PLLs, not just the one targeted by this patchset.
-
+> 
+> -- 
+> Catalin
 
