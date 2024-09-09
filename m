@@ -1,508 +1,206 @@
-Return-Path: <linux-kernel+bounces-322090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A5AB9723CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:38:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68E29723CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D35BAB23F1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F902283CA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBAB18B468;
-	Mon,  9 Sep 2024 20:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8BC18A937;
+	Mon,  9 Sep 2024 20:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0A+5zuQj"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rwv21oB9"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A87A18C006
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 20:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06057175D20;
+	Mon,  9 Sep 2024 20:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725914279; cv=none; b=reyqCQI9ecx+/Mty1HVax7RJbHMoLMyKON6lzxuA171hj6j5tcXaCxmOpb+L6H29wJHbAh4sjKSfYsEJ/HsLiAQCKCddbg11Gh0jroaIPGXnfDtIEXQFDAkS4PYbQu+qmPrBVWGlm/aPqrav26+gaVqjmoVMoDfgNfzT4vrfMCY=
+	t=1725914266; cv=none; b=AhsVFoIs0IS7b0lHZFyDaTLUOkm0Nllmt0K9gPV8dX4LcUFKQHqlI/QsW1SfOCtNHybdYoLNEpg9JKvsXSyW8mAlqfkD4qM4iEZYsMujQezFe8qLalSrk6unllTUEUOkbjPl4i6ETz84NYRpEUTezEgxEvD1l04hMSSEF5PvOVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725914279; c=relaxed/simple;
-	bh=HptkHQHuvQDj1d3rSs7Sbbf5fWJ/fColrJrJTFzngig=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=QZ2rCdhW760jyMU3EA/fXmjz4HZjFN/dn7PxLPW2jx6i62G5gWNg52fvOqrLtZi8oED0kps5XdCIsy0rTQlYE0iJfsTR+MSYE6MYtXV4uNXmojqCYZUIk09zCqGeChYE7ZRXpBGk4CEvO51oZgytmS4+JYFLvgRblRyTFQx6Jfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0A+5zuQj; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d34c57a88eso152625877b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 13:37:57 -0700 (PDT)
+	s=arc-20240116; t=1725914266; c=relaxed/simple;
+	bh=FQwp55THaOFhoWri431V+DCooTQ8FjRChY6nZiZeZTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eBP89tZlJqLEOkU3PUFWvlXSHWCPyZ0NIhJK5Hzb+iZfC3lTT9hh8nBn7m/T+YFCHh5GD8cDT3zYieJkAFxPgk2u8u0bzmIrIi8qBui2mTfhYIl+fN4B6dLrxSdfp1HLoIeJdMU0AE81z4MePfoXiYZ4dUIOrjapsvHy/hDRnNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rwv21oB9; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-206e614953aso37812575ad.1;
+        Mon, 09 Sep 2024 13:37:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725914277; x=1726519077; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+        d=gmail.com; s=20230601; t=1725914264; x=1726519064; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ReastPPbfrF1K+IO0MgSOanwMg0WzDPxfwAbYOVYAmc=;
-        b=0A+5zuQjvWBAXaUm+hUXKt97y3j6Xqjd1Gg/XuNc6MTzeFb6Ud3k6+iBctfrPzaBfc
-         2uE+iLkEL6jxkeg6vORuT/eQ5WGd/3cOYmnGuFmY/UaRGEER/BRJVwKatQ5fg+dd+xKH
-         xe4T7PjqCWuVmkO0lu8+ChhcrGOOxfHK17wGJ+IMR+rL9gTKhQaD/s+dBMIdzTV8WR3u
-         buPQ4bPV9mqbzGwg7lRM1HeGbASWdYlbbyylS+qkZHKQLHD/+0sG76WUTcLR9sBTAmw5
-         qgEE2k9KrNAxB+a5MVYoe9os2x04XXBqLh8rVOn3S6T8FM4d+QJ9l5wPg1sRlouUFBCZ
-         /L4w==
+        bh=2b3pN5NY3MIDf/Bhko9EttmVHICHvYF86oIt9ZDjsOE=;
+        b=Rwv21oB9Y1rUuAkdpJ+q3EIqjAiCcoCRWprgt4646g20AV6znHUDL3EGtSzI8dymQC
+         N89P45T2mUR0KkesrblcDqZscs0fSPsunhJnnWX8pRvKtIVNLTkkpVI/+DQ3ISsWTQ6u
+         +01esj9nN5AmB0+qsAUy3pZ/uRqWjV72TFwSnPGWSIK6FD4/d1Yb8UFMSqxIIQCdWDeY
+         pYT1k4F5hwBEFTXaYOQcVianuUSAQdfFeXp+uK2fn1GXpAH2DrWIZaJqXwFopk0psRn1
+         s2gmLGMbGUd3VqIzdglmoZQkr4pN8mlE0n3VcelyuD/ZG7EtqIqBxak5Bj9NuOC7k12u
+         chzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725914277; x=1726519077;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+        d=1e100.net; s=20230601; t=1725914264; x=1726519064;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ReastPPbfrF1K+IO0MgSOanwMg0WzDPxfwAbYOVYAmc=;
-        b=ftipVFVw2UOdfeT+BpAtAYRfHS8ob8/293Z4nY0Kk7opuv4WnekEPonrAK3mOGHPxG
-         b/N/mFDjIo31RUhNY66Ct/OGTkzmp9vSbxn+Boot5q/Nw++V4GwOt2uOvCfXksjBfqMp
-         WR/bSxl88k3jkhizedjXd2z5xURMdO+0gRS23dTDZIVfRlzcH4lYyAxB+ZaF5ka+2gvE
-         MaAmdas5zu1zBOb8W41FTCrZ/xwNWV3miOMrtlkCtUlA2MAJpxMxSxUeNn0pUJSPOzhT
-         LPvDfzeKuyPoZIh0MtYjPGVe7nlWQ2HLP/cm+nDcO451hOG93MnnctN9S08qOd06M8wm
-         +1XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqM55SlXKtPwyPXx2lqHX3FBGGlnhjlb05tuczYiYq6SWO+3ibZpCiw4BrGsPsxFg9KBedzS/FPZ38FJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFvEtOsjawMgvipV9PwE4WAlmPqDucpdwA1wl9HbxgwjKAbwiw
-	NcaX/EsoOSj4Yrv8bGpC66LWCZhyCTNUYaqoLbz+/FyuO2saFsHu6PqsvKgcdMyHrDidpo/tgE4
-	8HOmzPA==
-X-Google-Smtp-Source: AGHT+IEEO133mN0FLFV4W3AzE2rRP0msPowiLmvYMo3WDwZfY4rTrb7anK0cThA4Tw2iJw2eCeKbdObKrndc
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:b7b9:f9a0:1197:ff33])
- (user=irogers job=sendgmr) by 2002:a05:6902:4d1:b0:e0e:a784:2957 with SMTP id
- 3f1490d57ef6-e1d34865f70mr32011276.1.1725914276607; Mon, 09 Sep 2024 13:37:56
- -0700 (PDT)
-Date: Mon,  9 Sep 2024 13:37:40 -0700
-In-Reply-To: <20240909203740.143492-1-irogers@google.com>
-Message-Id: <20240909203740.143492-5-irogers@google.com>
+        bh=2b3pN5NY3MIDf/Bhko9EttmVHICHvYF86oIt9ZDjsOE=;
+        b=WhCzl+/m+hkNYA7EwxmWWHOqs26tCozeGvLLCzqQNubokGP9NeJxKz74wQCqUk3+qt
+         w59OUQ+AzhtYPZ4330JZnNjy1z0J7BvT+Y+4FCUleENNV75wCum4cVgjFMtro8ICfCn0
+         JbMJs4t5gK/Geeq5G+VJM86ShPGHluQ7b3ya2w6a1SgjArcFi09+OmA9kT96QxI2ofvt
+         qvrxNCfgtaUOwVYTumdTQUA+sX3nzOFMEXot7QZwl9p5cNiMd5SLWvNEo+jjFGQWuPh+
+         Sk8dRTvPXsatzC7En4qHpUr7FKR16qb4DOL60Cafqc5CJpbupVRzcRJsNf/578078mTp
+         /Q2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVspeXQHFwHor1rM6U23uGFvQK/BjePoP1JAmfw0WdW0CJECEQ6o4akWj/qfJ7hDT/36Xpu9rF9MPihWzzz@vger.kernel.org, AJvYcCWoEebIT933O2qEEb2PDUMJ3Ue/m7REFVc10ALLbMWkpVsSOEVC5+xD5SevIG6DlwtwlRijdimziaW6pQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDQ4qxda/gfdHlo76EGxHrBHmkxSAlp6Ej3TnswIDXTciWhBov
+	NocdMj9dewTujecNoIF/0ff0hjxabSWctJRMSk2b7u9LX6Wzw2AoHFi4Cw==
+X-Google-Smtp-Source: AGHT+IEqhh4L/9hi+bp+FibU2F0yYTwo7DxYg7VJMKY6lCr2XtIZ6O+EazUPzg10ch5+v1VZVv5rsw==
+X-Received: by 2002:a17:903:2b05:b0:207:232f:36dc with SMTP id d9443c01a7336-207232f3760mr92767885ad.50.1725914263979;
+        Mon, 09 Sep 2024 13:37:43 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:e257:6de2:7d45:59cb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f1f608sm37642345ad.222.2024.09.09.13.37.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 13:37:43 -0700 (PDT)
+Date: Mon, 9 Sep 2024 13:37:40 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	". Benjamin Tissoires" <bentiss@kernel.org>
+Cc: Douglas Anderson <dianders@chromium.org>,
+	Hans de Goede <hdegoede@redhat.com>, Kenny Levinsen <kl@kl.wtf>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: i2c-hid: ensure various commands do not interfere with
+ each other
+Message-ID: <Zt9clAu04BinzIcd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240909203740.143492-1-irogers@google.com>
-X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
-Subject: [PATCH v2 4/4] perf callchain: Allow symbols to be optional when
- resolving a callchain
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	Casey Chen <cachen@purestorage.com>, Anne Macedo <retpolanne@posteo.net>, 
-	Sun Haiyong <sunhaiyong@loongson.cn>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In uses like perf inject it is not necessary to gather the symbol for
-each call chain location, the map for the sample IP is wanted so that
-build IDs and the like can be injected. Make gathering the symbol in
-the callchain_cursor optional.
+i2c-hid uses 2 shared buffers: command and "raw" input buffer for
+sending requests to peripherals and read data from peripherals when
+executing variety of commands. Such commands include reading of HID
+registers, requesting particular power mode, getting and setting
+reports and so on. Because all such requests use the same 2 buffers
+they should not execute simultaneously.
 
-For a perf inject -B command this lowers the peak RSS from 54.1MB to
-29.6MB by avoiding loading symbols.
+Fix this by introducing "cmd_lock" mutex and acquire it whenever
+we needs to access ihid->cmdbuf or idid->rawbuf.
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- tools/perf/builtin-inject.c |  2 +-
- tools/perf/util/callchain.c |  8 ++--
- tools/perf/util/callchain.h |  2 +-
- tools/perf/util/machine.c   | 92 +++++++++++++++++++++----------------
- tools/perf/util/machine.h   | 33 ++++++++++---
- 5 files changed, 85 insertions(+), 52 deletions(-)
+ drivers/hid/i2c-hid/i2c-hid-core.c | 42 +++++++++++++++++++-----------
+ 1 file changed, 27 insertions(+), 15 deletions(-)
 
-diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-index 9eb72ff48d88..d6989195a061 100644
---- a/tools/perf/builtin-inject.c
-+++ b/tools/perf/builtin-inject.c
-@@ -942,7 +942,7 @@ int perf_event__inject_buildid(const struct perf_tool *tool, union perf_event *e
- 	}
+diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+index 632eaf9e11a6..2f8a9d3f1e86 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-core.c
++++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+@@ -105,6 +105,7 @@ struct i2c_hid {
  
- 	sample__for_each_callchain_node(thread, evsel, sample, PERF_MAX_STACK_DEPTH,
--					mark_dso_hit_callback, &args);
-+					/*symbols=*/false, mark_dso_hit_callback, &args);
+ 	wait_queue_head_t	wait;		/* For waiting the interrupt */
  
- 	thread__put(thread);
- repipe:
-diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-index 0d608e875fe9..0c7564747a14 100644
---- a/tools/perf/util/callchain.c
-+++ b/tools/perf/util/callchain.c
-@@ -1800,7 +1800,7 @@ s64 callchain_avg_cycles(struct callchain_node *cnode)
++	struct mutex		cmd_lock;	/* protects cmdbuf and rawbuf */
+ 	struct mutex		reset_lock;
  
- int sample__for_each_callchain_node(struct thread *thread, struct evsel *evsel,
- 				    struct perf_sample *sample, int max_stack,
--				    callchain_iter_fn cb, void *data)
-+				    bool symbols, callchain_iter_fn cb, void *data)
+ 	struct i2chid_ops	*ops;
+@@ -220,6 +221,8 @@ static int i2c_hid_xfer(struct i2c_hid *ihid,
+ static int i2c_hid_read_register(struct i2c_hid *ihid, __le16 reg,
+ 				 void *buf, size_t len)
  {
- 	struct callchain_cursor *cursor = get_tls_callchain_cursor();
- 	int ret;
-@@ -1809,9 +1809,9 @@ int sample__for_each_callchain_node(struct thread *thread, struct evsel *evsel,
- 		return -ENOMEM;
++	guard(mutex)(&ihid->cmd_lock);
++
+ 	*(__le16 *)ihid->cmdbuf = reg;
  
- 	/* Fill in the callchain. */
--	ret = thread__resolve_callchain(thread, cursor, evsel, sample,
--					/*parent=*/NULL, /*root_al=*/NULL,
--					max_stack);
-+	ret = __thread__resolve_callchain(thread, cursor, evsel, sample,
-+					  /*parent=*/NULL, /*root_al=*/NULL,
-+					  max_stack, symbols);
+ 	return i2c_hid_xfer(ihid, ihid->cmdbuf, sizeof(__le16), buf, len);
+@@ -252,6 +255,8 @@ static int i2c_hid_get_report(struct i2c_hid *ihid,
+ 
+ 	i2c_hid_dbg(ihid, "%s\n", __func__);
+ 
++	guard(mutex)(&ihid->cmd_lock);
++
+ 	/* Command register goes first */
+ 	*(__le16 *)ihid->cmdbuf = ihid->hdesc.wCommandRegister;
+ 	length += sizeof(__le16);
+@@ -342,6 +347,8 @@ static int i2c_hid_set_or_send_report(struct i2c_hid *ihid,
+ 	if (!do_set && le16_to_cpu(ihid->hdesc.wMaxOutputLength) == 0)
+ 		return -ENOSYS;
+ 
++	guard(mutex)(&ihid->cmd_lock);
++
+ 	if (do_set) {
+ 		/* Command register goes first */
+ 		*(__le16 *)ihid->cmdbuf = ihid->hdesc.wCommandRegister;
+@@ -384,6 +391,8 @@ static int i2c_hid_set_power_command(struct i2c_hid *ihid, int power_state)
+ {
+ 	size_t length;
+ 
++	guard(mutex)(&ihid->cmd_lock);
++
+ 	/* SET_POWER uses command register */
+ 	*(__le16 *)ihid->cmdbuf = ihid->hdesc.wCommandRegister;
+ 	length = sizeof(__le16);
+@@ -440,25 +449,27 @@ static int i2c_hid_start_hwreset(struct i2c_hid *ihid)
  	if (ret)
  		return ret;
  
-diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
-index 76891f8e2373..86ed9e4d04f9 100644
---- a/tools/perf/util/callchain.h
-+++ b/tools/perf/util/callchain.h
-@@ -315,6 +315,6 @@ typedef int (*callchain_iter_fn)(struct callchain_cursor_node *node, void *data)
+-	/* Prepare reset command. Command register goes first. */
+-	*(__le16 *)ihid->cmdbuf = ihid->hdesc.wCommandRegister;
+-	length += sizeof(__le16);
+-	/* Next is RESET command itself */
+-	length += i2c_hid_encode_command(ihid->cmdbuf + length,
+-					 I2C_HID_OPCODE_RESET, 0, 0);
++	scoped_guard(mutex, &ihid->cmd_lock) {
++		/* Prepare reset command. Command register goes first. */
++		*(__le16 *)ihid->cmdbuf = ihid->hdesc.wCommandRegister;
++		length += sizeof(__le16);
++		/* Next is RESET command itself */
++		length += i2c_hid_encode_command(ihid->cmdbuf + length,
++						 I2C_HID_OPCODE_RESET, 0, 0);
  
- int sample__for_each_callchain_node(struct thread *thread, struct evsel *evsel,
- 				    struct perf_sample *sample, int max_stack,
--				    callchain_iter_fn cb, void *data);
-+				    bool symbols, callchain_iter_fn cb, void *data);
+-	set_bit(I2C_HID_RESET_PENDING, &ihid->flags);
++		set_bit(I2C_HID_RESET_PENDING, &ihid->flags);
  
- #endif	/* __PERF_CALLCHAIN_H */
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 5783b96fb988..fad227b625d1 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2060,7 +2060,8 @@ static int add_callchain_ip(struct thread *thread,
- 			    bool branch,
- 			    struct branch_flags *flags,
- 			    struct iterations *iter,
--			    u64 branch_from)
-+			    u64 branch_from,
-+			    bool symbols)
- {
- 	struct map_symbol ms = {};
- 	struct addr_location al;
-@@ -2099,7 +2100,8 @@ static int add_callchain_ip(struct thread *thread,
- 			}
- 			goto out;
- 		}
--		thread__find_symbol(thread, *cpumode, ip, &al);
-+		if (symbols)
-+			thread__find_symbol(thread, *cpumode, ip, &al);
- 	}
+-	ret = i2c_hid_xfer(ihid, ihid->cmdbuf, length, NULL, 0);
+-	if (ret) {
+-		dev_err(&ihid->client->dev,
+-			"failed to reset device: %d\n", ret);
+-		goto err_clear_reset;
+-	}
++		ret = i2c_hid_xfer(ihid, ihid->cmdbuf, length, NULL, 0);
++		if (ret) {
++			dev_err(&ihid->client->dev,
++				"failed to reset device: %d\n", ret);
++			break;
++		}
  
- 	if (al.sym != NULL) {
-@@ -2228,7 +2230,8 @@ static int lbr_callchain_add_kernel_ip(struct thread *thread,
- 				       struct symbol **parent,
- 				       struct addr_location *root_al,
- 				       u64 branch_from,
--				       bool callee, int end)
-+				       bool callee, int end,
-+				       bool symbols)
- {
- 	struct ip_callchain *chain = sample->callchain;
- 	u8 cpumode = PERF_RECORD_MISC_USER;
-@@ -2238,7 +2241,8 @@ static int lbr_callchain_add_kernel_ip(struct thread *thread,
- 		for (i = 0; i < end + 1; i++) {
- 			err = add_callchain_ip(thread, cursor, parent,
- 					       root_al, &cpumode, chain->ips[i],
--					       false, NULL, NULL, branch_from);
-+					       false, NULL, NULL, branch_from,
-+					       symbols);
- 			if (err)
- 				return err;
- 		}
-@@ -2248,7 +2252,8 @@ static int lbr_callchain_add_kernel_ip(struct thread *thread,
- 	for (i = end; i >= 0; i--) {
- 		err = add_callchain_ip(thread, cursor, parent,
- 				       root_al, &cpumode, chain->ips[i],
--				       false, NULL, NULL, branch_from);
-+				       false, NULL, NULL, branch_from,
-+				       symbols);
- 		if (err)
- 			return err;
- 	}
-@@ -2291,7 +2296,8 @@ static int lbr_callchain_add_lbr_ip(struct thread *thread,
- 				    struct symbol **parent,
- 				    struct addr_location *root_al,
- 				    u64 *branch_from,
--				    bool callee)
-+				    bool callee,
-+				    bool symbols)
- {
- 	struct branch_stack *lbr_stack = sample->branch_stack;
- 	struct branch_entry *entries = perf_sample__branch_entries(sample);
-@@ -2324,7 +2330,7 @@ static int lbr_callchain_add_lbr_ip(struct thread *thread,
- 		err = add_callchain_ip(thread, cursor, parent,
- 				       root_al, &cpumode, ip,
- 				       true, flags, NULL,
--				       *branch_from);
-+				       *branch_from, symbols);
- 		if (err)
- 			return err;
+-	return 0;
++		return 0;
++	}
  
-@@ -2349,7 +2355,7 @@ static int lbr_callchain_add_lbr_ip(struct thread *thread,
- 			err = add_callchain_ip(thread, cursor, parent,
- 					       root_al, &cpumode, ip,
- 					       true, flags, NULL,
--					       *branch_from);
-+					       *branch_from, symbols);
- 			if (err)
- 				return err;
- 			save_lbr_cursor_node(thread, cursor, i);
-@@ -2364,7 +2370,7 @@ static int lbr_callchain_add_lbr_ip(struct thread *thread,
- 		err = add_callchain_ip(thread, cursor, parent,
- 				       root_al, &cpumode, ip,
- 				       true, flags, NULL,
--				       *branch_from);
-+				       *branch_from, symbols);
- 		if (err)
- 			return err;
- 		save_lbr_cursor_node(thread, cursor, i);
-@@ -2378,7 +2384,7 @@ static int lbr_callchain_add_lbr_ip(struct thread *thread,
- 		err = add_callchain_ip(thread, cursor, parent,
- 				root_al, &cpumode, ip,
- 				true, flags, NULL,
--				*branch_from);
-+				*branch_from, symbols);
- 		if (err)
- 			return err;
- 	}
-@@ -2545,7 +2551,8 @@ static int resolve_lbr_callchain_sample(struct thread *thread,
- 					struct symbol **parent,
- 					struct addr_location *root_al,
- 					int max_stack,
--					unsigned int max_lbr)
-+					unsigned int max_lbr,
-+					bool symbols)
- {
- 	bool callee = (callchain_param.order == ORDER_CALLEE);
- 	struct ip_callchain *chain = sample->callchain;
-@@ -2587,12 +2594,12 @@ static int resolve_lbr_callchain_sample(struct thread *thread,
- 		/* Add kernel ip */
- 		err = lbr_callchain_add_kernel_ip(thread, cursor, sample,
- 						  parent, root_al, branch_from,
--						  true, i);
-+						  true, i, symbols);
- 		if (err)
- 			goto error;
- 
- 		err = lbr_callchain_add_lbr_ip(thread, cursor, sample, parent,
--					       root_al, &branch_from, true);
-+					       root_al, &branch_from, true, symbols);
- 		if (err)
- 			goto error;
- 
-@@ -2609,14 +2616,14 @@ static int resolve_lbr_callchain_sample(struct thread *thread,
- 				goto error;
- 		}
- 		err = lbr_callchain_add_lbr_ip(thread, cursor, sample, parent,
--					       root_al, &branch_from, false);
-+					       root_al, &branch_from, false, symbols);
- 		if (err)
- 			goto error;
- 
- 		/* Add kernel ip */
- 		err = lbr_callchain_add_kernel_ip(thread, cursor, sample,
- 						  parent, root_al, branch_from,
--						  false, i);
-+						  false, i, symbols);
- 		if (err)
- 			goto error;
- 	}
-@@ -2630,7 +2637,7 @@ static int find_prev_cpumode(struct ip_callchain *chain, struct thread *thread,
- 			     struct callchain_cursor *cursor,
- 			     struct symbol **parent,
- 			     struct addr_location *root_al,
--			     u8 *cpumode, int ent)
-+			     u8 *cpumode, int ent, bool symbols)
- {
- 	int err = 0;
- 
-@@ -2640,7 +2647,7 @@ static int find_prev_cpumode(struct ip_callchain *chain, struct thread *thread,
- 		if (ip >= PERF_CONTEXT_MAX) {
- 			err = add_callchain_ip(thread, cursor, parent,
- 					       root_al, cpumode, ip,
--					       false, NULL, NULL, 0);
-+					       false, NULL, NULL, 0, symbols);
- 			break;
- 		}
- 	}
-@@ -2662,7 +2669,8 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 					    struct perf_sample *sample,
- 					    struct symbol **parent,
- 					    struct addr_location *root_al,
--					    int max_stack)
-+					    int max_stack,
-+					    bool symbols)
- {
- 	struct branch_stack *branch = sample->branch_stack;
- 	struct branch_entry *entries = perf_sample__branch_entries(sample);
-@@ -2682,7 +2690,8 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 
- 		err = resolve_lbr_callchain_sample(thread, cursor, sample, parent,
- 						   root_al, max_stack,
--						   !env ? 0 : env->max_branches);
-+						   !env ? 0 : env->max_branches,
-+						   symbols);
- 		if (err)
- 			return (err < 0) ? err : 0;
- 	}
-@@ -2747,13 +2756,14 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 					       root_al,
- 					       NULL, be[i].to,
- 					       true, &be[i].flags,
--					       NULL, be[i].from);
-+					       NULL, be[i].from, symbols);
- 
--			if (!err)
-+			if (!err) {
- 				err = add_callchain_ip(thread, cursor, parent, root_al,
- 						       NULL, be[i].from,
- 						       true, &be[i].flags,
--						       &iter[i], 0);
-+						       &iter[i], 0, symbols);
-+			}
- 			if (err == -EINVAL)
- 				break;
- 			if (err)
-@@ -2769,7 +2779,7 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- check_calls:
- 	if (chain && callchain_param.order != ORDER_CALLEE) {
- 		err = find_prev_cpumode(chain, thread, cursor, parent, root_al,
--					&cpumode, chain->nr - first_call);
-+					&cpumode, chain->nr - first_call, symbols);
- 		if (err)
- 			return (err < 0) ? err : 0;
- 	}
-@@ -2791,7 +2801,7 @@ static int thread__resolve_callchain_sample(struct thread *thread,
-                        ++nr_entries;
- 		else if (callchain_param.order != ORDER_CALLEE) {
- 			err = find_prev_cpumode(chain, thread, cursor, parent,
--						root_al, &cpumode, j);
-+						root_al, &cpumode, j, symbols);
- 			if (err)
- 				return (err < 0) ? err : 0;
- 			continue;
-@@ -2818,8 +2828,8 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 			if (leaf_frame_caller && leaf_frame_caller != ip) {
- 
- 				err = add_callchain_ip(thread, cursor, parent,
--					       root_al, &cpumode, leaf_frame_caller,
--					       false, NULL, NULL, 0);
-+						root_al, &cpumode, leaf_frame_caller,
-+						false, NULL, NULL, 0, symbols);
- 				if (err)
- 					return (err < 0) ? err : 0;
- 			}
-@@ -2827,7 +2837,7 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 
- 		err = add_callchain_ip(thread, cursor, parent,
- 				       root_al, &cpumode, ip,
--				       false, NULL, NULL, 0);
-+				       false, NULL, NULL, 0, symbols);
- 
- 		if (err)
- 			return (err < 0) ? err : 0;
-@@ -2907,7 +2917,7 @@ static int thread__resolve_callchain_unwind(struct thread *thread,
- 					    struct callchain_cursor *cursor,
- 					    struct evsel *evsel,
- 					    struct perf_sample *sample,
--					    int max_stack)
-+					    int max_stack, bool symbols)
- {
- 	/* Can we do dwarf post unwind? */
- 	if (!((evsel->core.attr.sample_type & PERF_SAMPLE_REGS_USER) &&
-@@ -2919,17 +2929,21 @@ static int thread__resolve_callchain_unwind(struct thread *thread,
- 	    (!sample->user_stack.size))
- 		return 0;
- 
-+	if (!symbols)
-+		pr_debug("Not resolving symbols with an unwinder isn't currently supported\n");
-+
- 	return unwind__get_entries(unwind_entry, cursor,
- 				   thread, sample, max_stack, false);
- }
- 
--int thread__resolve_callchain(struct thread *thread,
--			      struct callchain_cursor *cursor,
--			      struct evsel *evsel,
--			      struct perf_sample *sample,
--			      struct symbol **parent,
--			      struct addr_location *root_al,
--			      int max_stack)
-+int __thread__resolve_callchain(struct thread *thread,
-+				struct callchain_cursor *cursor,
-+				struct evsel *evsel,
-+				struct perf_sample *sample,
-+				struct symbol **parent,
-+				struct addr_location *root_al,
-+				int max_stack,
-+				bool symbols)
- {
- 	int ret = 0;
- 
-@@ -2942,22 +2956,22 @@ int thread__resolve_callchain(struct thread *thread,
- 		ret = thread__resolve_callchain_sample(thread, cursor,
- 						       evsel, sample,
- 						       parent, root_al,
--						       max_stack);
-+						       max_stack, symbols);
- 		if (ret)
- 			return ret;
- 		ret = thread__resolve_callchain_unwind(thread, cursor,
- 						       evsel, sample,
--						       max_stack);
-+						       max_stack, symbols);
- 	} else {
- 		ret = thread__resolve_callchain_unwind(thread, cursor,
- 						       evsel, sample,
--						       max_stack);
-+						       max_stack, symbols);
- 		if (ret)
- 			return ret;
- 		ret = thread__resolve_callchain_sample(thread, cursor,
- 						       evsel, sample,
- 						       parent, root_al,
--						       max_stack);
-+						       max_stack, symbols);
- 	}
- 
+-err_clear_reset:
++	/* Clean up if sending reset command failed */
+ 	clear_bit(I2C_HID_RESET_PENDING, &ihid->flags);
+ 	i2c_hid_set_power(ihid, I2C_HID_PWR_SLEEP);
  	return ret;
-diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-index a687876e3453..2e5a4cb342d8 100644
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -178,13 +178,32 @@ struct mem_info *sample__resolve_mem(struct perf_sample *sample,
+@@ -1200,6 +1211,7 @@ int i2c_hid_core_probe(struct i2c_client *client, struct i2chid_ops *ops,
+ 	ihid->is_panel_follower = drm_is_panel_follower(&client->dev);
  
- struct callchain_cursor;
+ 	init_waitqueue_head(&ihid->wait);
++	mutex_init(&ihid->cmd_lock);
+ 	mutex_init(&ihid->reset_lock);
+ 	INIT_WORK(&ihid->panel_follower_prepare_work, ihid_core_panel_prepare_work);
  
--int thread__resolve_callchain(struct thread *thread,
--			      struct callchain_cursor *cursor,
--			      struct evsel *evsel,
--			      struct perf_sample *sample,
--			      struct symbol **parent,
--			      struct addr_location *root_al,
--			      int max_stack);
-+int __thread__resolve_callchain(struct thread *thread,
-+				struct callchain_cursor *cursor,
-+				struct evsel *evsel,
-+				struct perf_sample *sample,
-+				struct symbol **parent,
-+				struct addr_location *root_al,
-+				int max_stack,
-+				bool symbols);
-+
-+static inline int thread__resolve_callchain(struct thread *thread,
-+					    struct callchain_cursor *cursor,
-+					    struct evsel *evsel,
-+					    struct perf_sample *sample,
-+					    struct symbol **parent,
-+					    struct addr_location *root_al,
-+					    int max_stack)
-+{
-+	return __thread__resolve_callchain(thread,
-+					   cursor,
-+					   evsel,
-+					   sample,
-+					   parent,
-+					   root_al,
-+					   max_stack,
-+					   /*symbols=*/true);
-+}
- 
- /*
-  * Default guest kernel is defined by parameter --guestkallsyms
 -- 
 2.46.0.598.g6f2099f65c-goog
 
+
+-- 
+Dmitry
 
