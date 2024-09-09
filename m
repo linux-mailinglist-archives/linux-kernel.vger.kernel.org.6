@@ -1,156 +1,178 @@
-Return-Path: <linux-kernel+bounces-320895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50DDC9711B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:23:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D5949711BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF36BB21DBC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:22:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BDB51C22734
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75F21B250D;
-	Mon,  9 Sep 2024 08:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF401B253B;
+	Mon,  9 Sep 2024 08:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W+ZSEvoV"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJmCaXTz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259DF1509AE;
-	Mon,  9 Sep 2024 08:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DB11509AE
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725869836; cv=none; b=VPJoVRS0maxUbFKrAN/NtjEBtiSS7INWjMXHpdg2CoIMsltDOk3CXV33o2aCJTvAaaGHwzTbMd08SHCLYZKnesmZmuMK/JRq7hBBzunNC4Pu4CEjq9O8avuknN6BR3ohiCcMhN6aZc+o4NQMQZGM0FtMBlNBgDw+Bqc0H4tnwuE=
+	t=1725869914; cv=none; b=Hyv9utvwgnb3GjbhZIeOVo2SSWI441kZ6ODtxn9LUZ5GCUgivbLhnPuzfLmP/rENnVmwjq3VMONqNQ3YDLif8M9FhGQCLyE+QSRFleGUPzzik0R+TdZoH+UYJcNgQxjQkOYdE40X7GeblStD7dPz7aRfyTRxuVdXqV7l8gGcgmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725869836; c=relaxed/simple;
-	bh=GRxevNuPMu1MgCyhaA3tBQBh8Ap4Vrj4anC2Bl8rHus=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LDMhYQH/dKrXQF/+djhOOK9yfGdqjHJ4c8fgjItjl1mxwx0uXCSIu9pfl8owC5IqXdtmeeCK5u9NAXafdzRob+5UIk/JHZiFiPpBUWoOhD9IG56WNLodVVD8628G0uTyuNCl9FXdT1En6rVsqzrjlnZxIDtC86ACNRxhUHFdBgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W+ZSEvoV; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 488NrD4f017225;
-	Mon, 9 Sep 2024 08:16:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:in-reply-to:references:date:message-id
-	:mime-version:content-type; s=pp1; bh=Ff50iY574PIFtn6sDdnGnoLINv
-	8P5HvooDUmf0KyjIQ=; b=W+ZSEvoVwAW9btce7GmEmsuCOB6/2dJWreXtcopSxT
-	Jwon2mcziGy84O/u1oXsumdQ7nO5RQRLk21tuv8ddj/ToaSEoJqDf4lzw+46LJch
-	0yWWhpPILFivhvzpIep9IFW/r5ObIrZ5yaTUiKbD1G8vDhLPYhi+ORfRbBu0opoZ
-	l1ZtpZLZ4cdx1kj8pny9ZI4LBzD4ixJJ4GP7WkOfHYvt2UvtVwZ5mHfCqsxNTSEJ
-	Sn4BPkzTzNev2w8H0zacGqrm6xcEMg26LYbvCsCb15OJconaCXwWPJtGf5pPS9A+
-	SLP0la/O6xsXWHarInB3Tp32HMJTwYLKuKITZvKCjMQQ==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefy8jf8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 08:16:58 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4897oD6w032103;
-	Mon, 9 Sep 2024 08:16:58 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41h2nmdddt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 08:16:58 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4898Gu7U34079358
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Sep 2024 08:16:56 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3F2C82004B;
-	Mon,  9 Sep 2024 08:16:56 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 071BA20040;
-	Mon,  9 Sep 2024 08:16:56 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  9 Sep 2024 08:16:55 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Cc: Zheng Yejian <zhengyejian@huaweicloud.com>,
-        Steven Rostedt
- <rostedt@goodmis.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] tracing: add config option for print arguments in
- ftrace
-In-Reply-To: <20240908223048.8bd6961dbc741d971f57b5c2@kernel.org> (Masami
-	Hiramatsu's message of "Sun, 8 Sep 2024 22:30:48 +0900")
-References: <20240904065908.1009086-1-svens@linux.ibm.com>
-	<20240904065908.1009086-6-svens@linux.ibm.com>
-	<69b78634-3295-c22e-c09c-e41aa4554df3@huaweicloud.com>
-	<20240908223048.8bd6961dbc741d971f57b5c2@kernel.org>
-Date: Mon, 09 Sep 2024 10:16:55 +0200
-Message-ID: <yt9dcylddyx4.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1725869914; c=relaxed/simple;
+	bh=6pIhKBMX99ed6ZhOuprT0MWJ+i/32rCsFoA36gmoqC4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Q65RJxmTTHQmYtdgy/ycMB4lMiSiZ4AfFFTFD6mC3zlE0p/HqwG09vEhBWq0jJJwTSQMmMH9yZgIZnby7mLGZX0EqTGuifWFaF5ONSnE4UR3qCgfWrODRL4ZX+hZOVr1hy3+uLchg0Knf4TyqJ68wcHTAtu/akdKhvtmEubf/yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJmCaXTz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E770C4CEC5;
+	Mon,  9 Sep 2024 08:18:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725869913;
+	bh=6pIhKBMX99ed6ZhOuprT0MWJ+i/32rCsFoA36gmoqC4=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=YJmCaXTz9zqdihJDqbF7BWQPA7eMOtVvg7N4NoTsQcHTVt0kfD2AMqIh4gXJqgsIw
+	 ObbXUku90wH2+Z2EN5p+q+PZ2XWEq0mnI9wXE3IROvgq3OCjdPepGKiO8g4fy8aduv
+	 iq6bxkjnzw9cy3jQri1xxue64Wwym2Z+tH5d9B25CmrZBd/Zde2OZljRpAzVJAX5lS
+	 yXMdd2y2QqBBsI6FgpLERDUchAGIbZTiPdr3RSIyQf7QRwG3s+sAYDRkts4unqZvkq
+	 Ebw/aD2uUV+5673peA79lFatZlT4gJEO+cxj0YXZIPQCLb86gt1mH72p2Y5AC7csv4
+	 xMnDysPg7MOAQ==
+Message-ID: <7559a11a-f234-418c-880b-34a0ecd1c9a9@kernel.org>
+Date: Mon, 9 Sep 2024 16:18:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: dL4bbYGfjc6JMytpqv5Jnl0CY_Mv3G7M
-X-Proofpoint-ORIG-GUID: dL4bbYGfjc6JMytpqv5Jnl0CY_Mv3G7M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-09_02,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=991 priorityscore=1501
- adultscore=0 clxscore=1011 spamscore=0 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409090062
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com,
+ Daeho Jeong <daehojeong@google.com>
+Subject: Re: [f2fs-dev] [PATCH 2/7] f2fs: read summary blocks with the correct
+ amount for migration_granularity
+To: Daeho Jeong <daeho43@gmail.com>
+References: <20240829215242.3641502-1-daeho43@gmail.com>
+ <20240829215242.3641502-2-daeho43@gmail.com>
+ <501416af-b08c-448b-881d-0915575e22f5@kernel.org>
+ <CACOAw_wgTOAQGJ3vbvp_Dqi_J0ZEsqWRFny-iczpyMD=kpxG-w@mail.gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <CACOAw_wgTOAQGJ3vbvp_Dqi_J0ZEsqWRFny-iczpyMD=kpxG-w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Masami Hiramatsu (Google) <mhiramat@kernel.org> writes:
+On 2024/9/7 4:23, Daeho Jeong wrote:
+> On Thu, Sep 5, 2024 at 7:56 PM Chao Yu <chao@kernel.org> wrote:
+>>
+>> On 2024/8/30 5:52, Daeho Jeong wrote:
+>>> From: Daeho Jeong <daehojeong@google.com>
+>>>
+>>> Now we do readahead for a full section by not considering
+>>> migration_granularity and it triggers unnecessary read. So, make it read
+>>> with the correct amount.
+>>>
+>>> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+>>> ---
+>>>    fs/f2fs/gc.c | 33 ++++++++++++++++++++-------------
+>>>    1 file changed, 20 insertions(+), 13 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index 46e3bc26b78a..b5d3fd40b17a 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -1708,24 +1708,33 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>>>        struct blk_plug plug;
+>>>        unsigned int segno = start_segno;
+>>>        unsigned int end_segno = start_segno + SEGS_PER_SEC(sbi);
+>>> +     unsigned int sec_end_segno;
+>>>        int seg_freed = 0, migrated = 0;
+>>>        unsigned char type = IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
+>>>                                                SUM_TYPE_DATA : SUM_TYPE_NODE;
+>>>        unsigned char data_type = (type == SUM_TYPE_DATA) ? DATA : NODE;
+>>>        int submitted = 0;
+>>>
+>>> -     if (__is_large_section(sbi))
+>>> -             end_segno = rounddown(end_segno, SEGS_PER_SEC(sbi));
+>>> +     if (__is_large_section(sbi)) {
+>>> +             sec_end_segno = rounddown(end_segno, SEGS_PER_SEC(sbi));
+>>>
+>>> -     /*
+>>> -      * zone-capacity can be less than zone-size in zoned devices,
+>>> -      * resulting in less than expected usable segments in the zone,
+>>> -      * calculate the end segno in the zone which can be garbage collected
+>>> -      */
+>>> -     if (f2fs_sb_has_blkzoned(sbi))
+>>> -             end_segno -= SEGS_PER_SEC(sbi) -
+>>> +             /*
+>>> +              * zone-capacity can be less than zone-size in zoned devices,
+>>> +              * resulting in less than expected usable segments in the zone,
+>>> +              * calculate the end segno in the zone which can be garbage
+>>> +              * collected
+>>> +              */
+>>> +             if (f2fs_sb_has_blkzoned(sbi))
+>>> +                     sec_end_segno -= SEGS_PER_SEC(sbi) -
+>>>                                        f2fs_usable_segs_in_sec(sbi, segno);
+>>>
+>>> +             if (gc_type == BG_GC)
+>>> +                     end_segno = start_segno + sbi->migration_granularity;
+>>> +
+>>> +             if (end_segno > sec_end_segno)
+>>> +                     end_segno = sec_end_segno;
+>>> +     }
+>>> +
+>>>        sanity_check_seg_type(sbi, get_seg_entry(sbi, segno)->type);
+>>>
+>>>        /* readahead multi ssa blocks those have contiguous address */
+>>> @@ -1762,9 +1771,6 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>>>
+>>>                if (get_valid_blocks(sbi, segno, false) == 0)
+>>>                        goto freed;
+>>> -             if (gc_type == BG_GC && __is_large_section(sbi) &&
+>>> -                             migrated >= sbi->migration_granularity)
+>>
+>> It seems we change the logic from migrating "migration_granularity" segments which
+>> has valid blocks to scanning "migration_granularity" segments and try migrating
+>> valid blocks in those segments.
+>>
+>> IIUC, when background GC recycle sparse zone, it will take gc thread more round,
+>> it seems low efficient. How do you think of keeping previous implementation?
+> 
+> I got your point. However, with zoned devices having 1GB sections, per
+> every round, we should
+> touch almost 2MB size of ssa block pages, even though we didn't need
+> to do it. Maybe, we can introduce
 
-> On Fri, 6 Sep 2024 11:36:11 +0800
-> Zheng Yejian <zhengyejian@huaweicloud.com> wrote:
->
->> On 2024/9/4 14:58, Sven Schnelle wrote:
->> > Add a config option to disable/enable function argument
->> > printing support during runtime.
->> > 
->> > Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
->> > ---
->> >   kernel/trace/Kconfig | 12 ++++++++++++
->> >   1 file changed, 12 insertions(+)
->> > 
->> > diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
->> > index 721c3b221048..8b9b6cdf39ac 100644
->> > --- a/kernel/trace/Kconfig
->> > +++ b/kernel/trace/Kconfig
->> > @@ -242,6 +242,18 @@ config FUNCTION_GRAPH_RETVAL
->> >   	  enable it via the trace option funcgraph-retval.
->> >   	  See Documentation/trace/ftrace.rst
->> >   
->> > +config FUNCTION_TRACE_ARGS
->> > +	bool "Kernel Function Tracer Arguments"
->> > +	depends on HAVE_FUNCTION_ARG_ACCESS_API
->> > +	depends on DEBUG_INFO_BTF && BPF_SYSCALL
->> 
->> Nice feature!
->> 
->> Just a nit, DEBUG_INFO_BTF currently depends on BPF_SYSCALL,
->> so BPF_SYSCALL may not be necessary here. This feature
->> also doesn't seem to depend on bpf.
->
-> Indeed. Sven, you can check the PROBE_EVENTS_BTF_ARGS as
-> an example.
->
-> config PROBE_EVENTS_BTF_ARGS
->         depends on HAVE_FUNCTION_ARG_ACCESS_API
->         depends on FPROBE_EVENTS || KPROBE_EVENTS
->         depends on DEBUG_INFO_BTF && BPF_SYSCALL
->         bool "Support BTF function arguments for probe events"
+Yes, or can we:
+a) just read SSA block for segment which has valid blocks;
+b) limit readahead size to a threshold as you proposed.
 
-Now i'm confused - Zheng wrote that DEBUG_INFO_BTF depends on
-BPF_SYSCALL. I just verified that. So i could just remove BPF_SYSCALL
-from the dependencies - but your example also has BPF_SYSCALL listed.
+Thanks,
 
-Regards
-Sven
+> another sysfs node like migration_window_limit, which can be set as
+> double as migration_granuality by default,
+> limiting the size of scanning.
+> 
+>>
+>> Thanks,
+>>
+>>> -                     goto skip;
+>>>                if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi)))
+>>>                        goto skip;
+>>>
+>>> @@ -1803,7 +1809,8 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>>>
+>>>                if (__is_large_section(sbi))
+>>>                        sbi->next_victim_seg[gc_type] =
+>>> -                             (segno + 1 < end_segno) ? segno + 1 : NULL_SEGNO;
+>>> +                             (segno + 1 < sec_end_segno) ?
+>>> +                                     segno + 1 : NULL_SEGNO;
+>>>    skip:
+>>>                f2fs_put_page(sum_page, 0);
+>>>        }
+>>
+
 
