@@ -1,207 +1,87 @@
-Return-Path: <linux-kernel+bounces-321779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3604971F52
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:34:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E679E971F56
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09A36288579
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:33:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CC5CB21399
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C1D161326;
-	Mon,  9 Sep 2024 16:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGUvtzYL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEAE16A957;
+	Mon,  9 Sep 2024 16:34:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362EF1758F;
-	Mon,  9 Sep 2024 16:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD4B161326
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725899601; cv=none; b=W0qjLjlbI3sRyldPLaN+QXkBKecLF+M+UdGj3Crt06pc3De3909AI0Ro4HCveXhTr2xmzIDCe5cIc1Wf+OZsqmKH5yhfSXTDhzeYYpNMOCpQpzLpzvhpNQv4OVXRdppMbDaHSozKs+uJ8yEqQW2Pbr1LLm1HkHbHbvjfW9MXVMU=
+	t=1725899645; cv=none; b=Belw0sx5OdLYQ+62a321iYJvmiO3pdWQ//FYFvfU1ptkdLcODyRviV5rdFsM7gDxgFzDn2EwF7IFUiYcV7LV7o41Uk6jecJFIYWSfQMqd2G2/PL2PTJ9gfjepJ+xOirsTrKxg9oVrZ2DdPPSEU87vaertkvKMOlTXuQHuyD+nio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725899601; c=relaxed/simple;
-	bh=9ADpIw6RxMCzXJM3i+IHKdReWXkmBWSBvzb5YR35yOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ClrKBNJUT+DhyDrrVnGAC2IK3Qf4PfAgrqOjVlo8fmAZTacvffUkDkhJS7ZtOiCPn6WVHvpwsU1rYOO178s9fN0U3l+BFKVFGpzYCyy/1mFD/1B0+7uJ7uhaypT6jdp4r7vJjmQw3TTsk4F2fSvaQOKGKSz9H3QfIDFj8ChamKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGUvtzYL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6269AC4CEC5;
-	Mon,  9 Sep 2024 16:33:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725899600;
-	bh=9ADpIw6RxMCzXJM3i+IHKdReWXkmBWSBvzb5YR35yOQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hGUvtzYLjH+vawSouE8nPwb74khn+JKdaBXGltYTRJZH0T0ENEticcjZNbgChIhJ8
-	 WCqpb/z9HcXrFMhaGzc0GB1wD5XztHPux0kyiUWEuXg41J8l1ZnYHh/zLbFWb+2sNx
-	 SvAn0ttA9g9YDHhkYqjp02QGcBREOeQsMfvr9G70TFM2Tm+aAuKiZJaPXFj8eqtndX
-	 QbJXc2g5ATxkAuqlLoUkT5trBdlKZb0NRNXgJw9Mg/Ut8Gn+GRIAxkbu56f/tXfek7
-	 Ra/TuP7SwULWSzizLqRX1g8n+uatTP3lE3XknqyD97b1GUBip3gZm6dkTwp+MrNOCh
-	 ADnmF7SLWbFPg==
-Date: Mon, 9 Sep 2024 13:33:17 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH v3 5/8] perf trace: Pretty print buffer data
-Message-ID: <Zt8jTfzDYgBPvFCd@x1>
-References: <20240824163322.60796-1-howardchu95@gmail.com>
- <20240824163322.60796-6-howardchu95@gmail.com>
+	s=arc-20240116; t=1725899645; c=relaxed/simple;
+	bh=bMm8nUIUhcEHUYKUu/zCWqgYuxv3KlDMXvGmBOnbsJ0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=c1l3bNJMUQtdKJaVo1GRidw/L/IWTuHNdi9pv2fdvCmlOPlTH5lUnbug8vaUNmcgyN5Qu5GDMpzXVCjcmultAhnqzgz01bPDIu9mPK5TV0ng6fsEx4m/SdhUyJA1N3KN+hN4I50bK1gEBVrnPwbf7VU6w9Iq6E6fvucKL9Oumf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39f53b1932aso84804265ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:34:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725899642; x=1726504442;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LKcArl0aleLbq7//pws5EB69V+31Dkl1QLyi4LU7uXc=;
+        b=Beu4t3iO/S8STN2ob0fnX1EUC24zlDliLxSPliq6OTXPPASMuIRy2KOjqqp4RFf6c4
+         2uug+FgaxFoO5MixYW1PLn1RJFDxwCTERMaC7KUKnmSUJ86U/PH1lQRG2FWlXlGhRPbt
+         mI/ZLQ2p4HjLpCNb2kQym9lbu7skB6RWYAqLT3ivQK5Xoh0GSXHpsxjB1jUUeYxlbf2f
+         TdLY1d5Ywa9xZOiVzWtLBZGQDfPPU2AqdI3e2YB7/paoCJtVzgHBzJBmVcnwqszXRIgV
+         RyTo4ClSD9p4C4+rOpfFZUIo3y7KARu6d0M4J83H0o51kd2Uroi92JrJpICQy6lKPndZ
+         x+qg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYtXO2VnVP9b7QOOjT1L8CiNJEjm3fp7Gj6FYuFOCPWFLQrlkcd8dgtrSb6FnsD+WMGFnCJfAIOmmzidI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn4C3UZfFaP0wb1Lk1ArpRq7HdEap70ek0pfTdX/IRGHynIhkr
+	yHuIgaYctDRL4RSgvl33Ox19HWd6bHm6GsFCJVXz1BAmsdrggDthI55ioZviI+NMNFkFAEzLKyF
+	iewaNafA0jvV76LmKPIupNYglrGp+E5/mbyoFGrhtFYqbQcmKGRZszDk=
+X-Google-Smtp-Source: AGHT+IE3i2CcjujjVRQP+NueJTkbEhuNV0cRlopfSe6mtHn25Tn4pCgRpqlLw4vzmMYCi4pHH2nu/8Xr2MaZqRuJ3B+9x4epeBxa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240824163322.60796-6-howardchu95@gmail.com>
+X-Received: by 2002:a05:6e02:1a2f:b0:376:1cf6:6be4 with SMTP id
+ e9e14a558f8ab-3a04f08ba31mr152557585ab.14.1725899642770; Mon, 09 Sep 2024
+ 09:34:02 -0700 (PDT)
+Date: Mon, 09 Sep 2024 09:34:02 -0700
+In-Reply-To: <20240909151305.7057-1-almaz.alexandrovich@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000020284e0621b2537e@google.com>
+Subject: Re: [syzbot] [ntfs3?] INFO: trying to register non-static key in mark_as_free_ex
+From: syzbot <syzbot+3bfd2cc059ab93efcdb4@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Aug 25, 2024 at 12:33:19AM +0800, Howard Chu wrote:
-> Define TRACE_AUG_MAX_BUF in trace_augment.h data, which is the maximum
-> buffer size we can augment. BPF will include this header too.
-> 
-> Print buffer in a way that's different than just printing a string, we
-> print all the control characters in \digits (such as \0 for null, and
-> \10 for newline, LF).
-> 
-> For character that has a bigger value than 127, we print the digits
-> instead of the character itself as well.
-> 
-> Committer notes:
-> 
-> Simplified the buffer scnprintf to avoid using multiple buffers as
-> discussed in the patch review thread.
-> 
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Link: https://lore.kernel.org/r/20240815013626.935097-8-howardchu95@gmail.com
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/builtin-trace.c      | 33 +++++++++++++++++++++++++++++++++
->  tools/perf/util/trace_augment.h |  6 ++++++
->  2 files changed, 39 insertions(+)
->  create mode 100644 tools/perf/util/trace_augment.h
-> 
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index 048bcb92624c..470d74e3f875 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -65,6 +65,7 @@
->  #include "syscalltbl.h"
->  #include "rb_resort.h"
->  #include "../perf.h"
-> +#include "trace_augment.h"
->  
->  #include <errno.h>
->  #include <inttypes.h>
-> @@ -852,6 +853,10 @@ static size_t syscall_arg__scnprintf_filename(char *bf, size_t size,
->  
->  #define SCA_FILENAME syscall_arg__scnprintf_filename
->  
-> +static size_t syscall_arg__scnprintf_buf(char *bf, size_t size, struct syscall_arg *arg);
-> +
-> +#define SCA_BUF syscall_arg__scnprintf_buf
-> +
->  static size_t syscall_arg__scnprintf_pipe_flags(char *bf, size_t size,
->  						struct syscall_arg *arg)
->  {
-> @@ -1745,6 +1750,32 @@ static size_t syscall_arg__scnprintf_filename(char *bf, size_t size,
->  	return 0;
->  }
->  
-> +#define MAX_CONTROL_CHAR 31
-> +#define MAX_ASCII 127
-> +
-> +static size_t syscall_arg__scnprintf_buf(char *bf, size_t size, struct syscall_arg *arg)
-> +{
-> +	struct augmented_arg *augmented_arg = arg->augmented.args;
-> +	unsigned char *orig = (unsigned char *)augmented_arg->value;
-> +	size_t printed = 0;
-> +	int consumed;
-> +
-> +	if (augmented_arg == NULL)
-> +		return 0;
-> +
-> +	for (int j = 0; j < augmented_arg->size; ++j) {
-> +		bool control_char = orig[j] <= MAX_CONTROL_CHAR || orig[j] >= MAX_ASCII;
-> +		/* print control characters (0~31 and 127), and non-ascii characters in \(digits) */
-> +		printed += scnprintf(bf + printed, size - printed, control_char ? "\\%d" : "%c", (int)orig[j]);
-> +	}
-> +
-> +	consumed = sizeof(*augmented_arg) + augmented_arg->size;
-> +	arg->augmented.args = ((void *)arg->augmented.args) + consumed;
-> +	arg->augmented.size -= consumed;
-> +
-> +	return printed;
-> +}
-> +
->  static bool trace__filter_duration(struct trace *trace, double t)
->  {
->  	return t < (trace->duration_filter * NSEC_PER_MSEC);
-> @@ -1956,6 +1987,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
->  		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
->  		     strstr(field->name, "path") != NULL))
->  			arg->scnprintf = SCA_FILENAME;
-> +		else if (strstr(field->type, "char *") && strstr(field->name, "buf"))
-> +			arg->scnprintf = SCA_BUF;
+Hello,
 
-You can't really do this for things like 'read' as we would be printing
-whatever is in the buffer when we enter the syscall, right? As we can
-see testing after applying the following patch:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-root@number:~# perf trace -e read,write cat /etc/passwd > /dev/null
-     0.000 ( 0.004 ms): cat/291442 read(fd: 3, buf: \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0, count: 832) = 832
-     0.231 ( 0.004 ms): cat/291442 read(fd: 3, buf: , count: 131072)                                     = 3224
-     0.236 ( 0.001 ms): cat/291442 write(fd: 1, buf: root:x:0:0:Super User:/root:/bin, count: 3224)      = 3224
-     0.239 ( 0.001 ms): cat/291442 read(fd: 3, buf: root:x:0:0:Super User:/root:/bin, count: 131072)     = 0
-root@number:~#
+Reported-by: syzbot+3bfd2cc059ab93efcdb4@syzkaller.appspotmail.com
+Tested-by: syzbot+3bfd2cc059ab93efcdb4@syzkaller.appspotmail.com
 
-So we can't really do it at this point, we have to do it, for now, by
-doing it on that syscall table initialization, for instance, for the
-'write' syscall:
+Tested on:
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 5f0877e891c2047d..1bcb45e737d830bf 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1379,6 +1379,8 @@ static const struct syscall_fmt syscall_fmts[] = {
- 	  .arg = { [2] = { .scnprintf = SCA_WAITID_OPTIONS, /* options */ }, }, },
- 	{ .name	    = "waitid",	    .errpid = true,
- 	  .arg = { [3] = { .scnprintf = SCA_WAITID_OPTIONS, /* options */ }, }, },
-+	{ .name	    = "write",	    .errpid = true,
-+	  .arg = { [1] = { .scnprintf = SCA_BUF, /* buf */ }, }, },
- };
- 
- static int syscall_fmt__cmp(const void *name, const void *fmtp)
-@@ -1987,8 +1989,6 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
- 		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
- 		     strstr(field->name, "path") != NULL))
- 			arg->scnprintf = SCA_FILENAME;
--		else if (strstr(field->type, "char *") && strstr(field->name, "buf"))
--			arg->scnprintf = SCA_BUF;
- 		else if ((field->flags & TEP_FIELD_IS_POINTER) || strstr(field->name, "addr"))
- 			arg->scnprintf = SCA_PTR;
- 		else if (strcmp(field->type, "pid_t") == 0)
+commit:         689ecd06 fs/ntfs3: Rename ntfs3_setattr into ntfs_seta..
+git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b0449f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ad2d7cb7797ccc55
+dashboard link: https://syzkaller.appspot.com/bug?extid=3bfd2cc059ab93efcdb4
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10c52200580000
 
-With that we get:
-
-root@number:~# perf trace -e read,write cat /etc/passwd > /dev/null
-     0.000 ( 0.005 ms): cat/296870 read(fd: 3, buf: 0x7ffe9cb8df98, count: 832)                          = 832
-     0.268 ( 0.004 ms): cat/296870 read(fd: 3, buf: 0x7fa7d700a000, count: 131072)                       = 3224
-     0.273 ( 0.002 ms): cat/296870 write(fd: 1, buf: root:x:0:0:Super User:/root:/bin, count: 3224)      = 
-     0.276 ( 0.001 ms): cat/296870 read(fd: 3, buf: 0x7fa7d700a000, count: 131072)                       = 0
-root@number:~#
-
-After the following patch is applied.
-
-- Arnaldo
+Note: testing is done by a robot and is best-effort only.
 
