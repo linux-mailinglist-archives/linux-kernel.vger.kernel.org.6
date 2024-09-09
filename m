@@ -1,217 +1,79 @@
-Return-Path: <linux-kernel+bounces-320551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9D14970BE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 493E6970BE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 035DD1C219F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:37:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74F8C1C21A42
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B236618951A;
-	Mon,  9 Sep 2024 02:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BBC16D9AE;
+	Mon,  9 Sep 2024 02:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gTC7grNA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="OJaD7E19"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC59C1422A8;
-	Mon,  9 Sep 2024 02:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08A9125DE
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 02:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725849448; cv=none; b=hDKu9XIjLMr77TYOb82szkmt7znIfYSI6VIFlzviuV0C51MQ0u/r9W8EJejqqQt2NJvrT+clqP5YsrivKdDSTJ3jLnVW+ocjQxBbbvFwQO/UA8VaUdFJV5z5T1Z3RPY6Uk9a89LpPASXr0kpeNO0llvBVf7s7UWRNbRHscHZta0=
+	t=1725849469; cv=none; b=EJs8EKu2qEDAsmm5oOGRZtjiiXrvEoQlLxKyLnl825c0B+CPYH56MaVB4rT0/SgJVbbD7bhAx+uwCI3/52GIeS1Uaio2SRPcSVfX64CPPCX+iZHeRYtn6+ioy+bJVqvOIE0GvmOUCoscwTBxNGkvQH+uRR6gl+3uh/Dk0y2oDvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725849448; c=relaxed/simple;
-	bh=O+0mjkCthsATG7MeX0u3pNw32ndnergdq01LWGku7oo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uIiHZMmvtyvvLsP5de3CvwWKQbLJiYngAVMUaRBKN80MhrTwuzZDu2OgwaSkwVwyP7UYin9RhxGvCTcgNtRUCEd8u2T3+vXKkCbFfmnm9Xil7dX5DwQJA2KgF9ZS19WOnkttX+B4VMWjPyaYLiRMjld1xxUZkK/hzQOLcIwKajY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gTC7grNA; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725849446; x=1757385446;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O+0mjkCthsATG7MeX0u3pNw32ndnergdq01LWGku7oo=;
-  b=gTC7grNA1vlB7yNoIYi7KwZCIY0kArnqzQxt9y+wO6LYv1YXkTc1R5fg
-   TLiNtMPUYhMKvlTQK6qjwxdCmDxga9tdfNe+NmrWJzmChC3v0mX+Ue2PH
-   RAt/58rq2m1AgOgwpquzRYxKY+yl5FujZ8SK9nA6UPgqB8roFWE61O+Fh
-   ajtLZro3jXyKA4cnpLkTfVfcw4ewNhRf8pvXF139kBndjjBNvUz4aSy5m
-   +9FJtYgG4xQGRMRJ79uU9CXgzg+Wclze2RzfS3HVmTKCvR2AWwqM34va3
-   dGxS66Y4/FufdX5A47sxKt5lVfkW5VkXs7a/xRKt7OrTpzZw2KrgQo8kN
-   A==;
-X-CSE-ConnectionGUID: y4/1RfehSESzRjtwrB8Qtw==
-X-CSE-MsgGUID: MAYxHBOqR769yiPTPhxLDw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="35116338"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="35116338"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 19:37:25 -0700
-X-CSE-ConnectionGUID: Hn3HVCeLScqiIBMtNxxKEQ==
-X-CSE-MsgGUID: 12+elI1BSBqCKsDT8dkM9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="66511125"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 08 Sep 2024 19:37:18 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1snUHE-000EDZ-1I;
-	Mon, 09 Sep 2024 02:37:16 +0000
-Date: Mon, 9 Sep 2024 10:36:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Asutosh Das <quic_asutoshd@quicinc.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	"Theodore Y. Ts'o" <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Gaurav Kashyap <quic_gaurkash@quicinc.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dm-devel@lists.linux.dev
-Subject: Re: [PATCH v6 11/17] soc: qcom: ice: add support for generating,
- importing and preparing keys
-Message-ID: <202409091043.FwxHoaRd-lkp@intel.com>
-References: <20240906-wrapped-keys-v6-11-d59e61bc0cb4@linaro.org>
+	s=arc-20240116; t=1725849469; c=relaxed/simple;
+	bh=4y8OHxSXfXvx45QMmCaNWRezZdLmAW268HqLsogE39M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=efo+PxdT4V/xyWw8qYG+hYkYJ6txmWM3E1g4K01RtGgYQFal1v7hyzF4LwW2POAsaaSVlxsBJw5McQYw4ZrWSYRi8uKFokcrUzSlDuNsVHOHwR8RaWjeomW0FikxH2M9CJcqne10u9n5X0/VKcg2KKM6KOixKl0mZheByWAZnrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=OJaD7E19; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725849458; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=euI2G4wjW/uK4MBJgA0dtsOY2vg04Pc1/WMCn0Xhk/c=;
+	b=OJaD7E19mYX9EwdSKDx4f+54+aIXqHWmJFQnvAIIG1hNXM0bcLyUvg9M312y0YlLSNOHM0z4QCyvfl9cR4EkEEz7iHx8Q7AAMmzjyXt/zFCa0Pb2qVy1uQZczLLJKjC+7SeYqF5qcslTvZ1Lxz1/eaFDlp/Fw/a8vNvZVmAOI3w=
+Received: from 30.221.130.133(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WEW772T_1725849457)
+          by smtp.aliyun-inc.com;
+          Mon, 09 Sep 2024 10:37:37 +0800
+Message-ID: <fa6f1972-aa03-47e9-8984-50b57bbf9500@linux.alibaba.com>
+Date: Mon, 9 Sep 2024 10:37:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906-wrapped-keys-v6-11-d59e61bc0cb4@linaro.org>
-
-Hi Bartosz,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on ad40aff1edffeccc412cde93894196dca7bc739e]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/blk-crypto-add-basic-hardware-wrapped-key-support/20240907-023147
-base:   ad40aff1edffeccc412cde93894196dca7bc739e
-patch link:    https://lore.kernel.org/r/20240906-wrapped-keys-v6-11-d59e61bc0cb4%40linaro.org
-patch subject: [PATCH v6 11/17] soc: qcom: ice: add support for generating, importing and preparing keys
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240909/202409091043.FwxHoaRd-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240909/202409091043.FwxHoaRd-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409091043.FwxHoaRd-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/soc/qcom/ice.c:470: warning: Function parameter or struct member 'ice' not described in 'qcom_ice_generate_key'
->> drivers/soc/qcom/ice.c:495: warning: Function parameter or struct member 'ice' not described in 'qcom_ice_prepare_key'
->> drivers/soc/qcom/ice.c:519: warning: Function parameter or struct member 'ice' not described in 'qcom_ice_import_key'
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
-   Depends on [n]: MAILBOX [=y] && (ARCH_OMAP2PLUS || ARCH_K3)
-   Selected by [y]:
-   - TI_K3_M4_REMOTEPROC [=y] && REMOTEPROC [=y] && (ARCH_K3 || COMPILE_TEST [=y])
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] erofs: fix incorrect symlink detection in fast symlink
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Colin Walters <walters@verbum.org>
+References: <20240909022811.1105052-1-hsiangkao@linux.alibaba.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240909022811.1105052-1-hsiangkao@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-vim +470 drivers/soc/qcom/ice.c
 
-   457	
-   458	/**
-   459	 * qcom_ice_generate_key() - Generate a wrapped key for inline encryption
-   460	 * @lt_key: long-term wrapped key to be generated, which is
-   461	 *          BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE in size.
-   462	 *
-   463	 * Make a scm call into trustzone to generate a wrapped key for storage
-   464	 * encryption using hwkm.
-   465	 *
-   466	 * Returns: 0 on success, -errno on failure.
-   467	 */
-   468	int qcom_ice_generate_key(struct qcom_ice *ice,
-   469				  u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
- > 470	{
-   471		size_t wk_size = QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(ice->hwkm_version);
-   472	
-   473		if (!qcom_scm_generate_ice_key(lt_key, wk_size))
-   474			return wk_size;
-   475	
-   476		return 0;
-   477	}
-   478	EXPORT_SYMBOL_GPL(qcom_ice_generate_key);
-   479	
-   480	/**
-   481	 * qcom_ice_prepare_key() - Prepare a long-term wrapped key for inline encryption
-   482	 * @lt_key: longterm wrapped key that was generated or imported.
-   483	 * @lt_key_size: size of the longterm wrapped_key
-   484	 * @eph_key: wrapped key returned which has been wrapped with a per-boot ephemeral key,
-   485	 *           size of which is BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE in size.
-   486	 *
-   487	 * Make a scm call into trustzone to prepare a wrapped key for storage
-   488	 * encryption by rewrapping the longterm wrapped key with a per boot ephemeral
-   489	 * key using hwkm.
-   490	 *
-   491	 * Return: 0 on success; -errno on failure.
-   492	 */
-   493	int qcom_ice_prepare_key(struct qcom_ice *ice, const u8 *lt_key, size_t lt_key_size,
-   494				 u8 eph_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
- > 495	{
-   496		size_t wk_size = QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(ice->hwkm_version);
-   497	
-   498		if (!qcom_scm_prepare_ice_key(lt_key, lt_key_size, eph_key, wk_size))
-   499			return wk_size;
-   500	
-   501		return 0;
-   502	}
-   503	EXPORT_SYMBOL_GPL(qcom_ice_prepare_key);
-   504	
-   505	/**
-   506	 * qcom_ice_import_key() - Import a raw key for inline encryption
-   507	 * @imp_key: raw key that has to be imported
-   508	 * @imp_key_size: size of the imported key
-   509	 * @lt_key: longterm wrapped key that is imported, which is
-   510	 *          BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE in size.
-   511	 *
-   512	 * Make a scm call into trustzone to import a raw key for storage encryption
-   513	 * and generate a longterm wrapped key using hwkm.
-   514	 *
-   515	 * Return: 0 on success; -errno on failure.
-   516	 */
-   517	int qcom_ice_import_key(struct qcom_ice *ice, const u8 *imp_key, size_t imp_key_size,
-   518				u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
- > 519	{
-   520		size_t wk_size = QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(ice->hwkm_version);
-   521	
-   522		if (!qcom_scm_import_ice_key(imp_key, imp_key_size, lt_key, wk_size))
-   523			return wk_size;
-   524	
-   525		return 0;
-   526	}
-   527	EXPORT_SYMBOL_GPL(qcom_ice_import_key);
-   528	
+On 2024/9/9 10:28, Gao Xiang wrote:
+> Fast symlink can be used if the on-disk symlink data is stored
+> in the same block as the on-disk inode, so we don’t need to trigger
+> another I/O for symlink data.  However, correctly fs correction could be
+> reported _incorrectly_ if inode xattrs are too large.
+> 
+> In fact, these should be valid images although they cannot be handled as
+> fast symlinks.
+> 
+> Many thanks to Colin for reporting this!
+> 
+> Reported-by: Colin Walters <walters@verbum.org>
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Fixes: 431339ba9042 ("staging: erofs: add inode operations")
+
+Thanks,
+Gao Xiang
 
