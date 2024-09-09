@@ -1,168 +1,226 @@
-Return-Path: <linux-kernel+bounces-321809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A59C971FD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:03:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED17971FD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:03:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F33FF1F241FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:03:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 286D51F23E61
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86F916F0E8;
-	Mon,  9 Sep 2024 17:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2D516EBED;
+	Mon,  9 Sep 2024 17:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TdjcOUBh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pORiRXtS"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2066.outbound.protection.outlook.com [40.107.244.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F8116DED5;
-	Mon,  9 Sep 2024 17:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725901422; cv=none; b=BN6ZnKo00uRIUil0gH9F2mrK053rsGQD+ogkesURQlt+IxeNNIXglNygrEbzmpFWJgE4p+AHfB3qwA9nMo0DM8PbtCPPIu64MJQsLDmduAu+4Aebl9KRB73ku8AffJXl95PnP1NLDpsenlRj9hNctQ92n0zYrvEGOeSlnrASLro=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725901422; c=relaxed/simple;
-	bh=z2f2zMXr032Lrm+l7qqrSHc0CLC2s9dIbQt/a78PVfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j/85VksMEm+JXK92o004NHS3/vCnrKoHBUdc2y09IHrPBsVAmqyMtl62EkhdiPqlRaWaNLJAhPMzQh2eR6eNbriICqju4Ll2jR+7+34OkAKD0PEkPx2UmYhAB84cC4a8Kz7jm3lMtwhLUupLZTPyzY0pIrNxGngjK/npD9YzrBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TdjcOUBh; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725901421; x=1757437421;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=z2f2zMXr032Lrm+l7qqrSHc0CLC2s9dIbQt/a78PVfI=;
-  b=TdjcOUBhb9TDJ3nAsDKwYUw0rwxvw/3+z3JyrFhGUlomBF0J54u4MXFp
-   F2sBiR0x1TX/QY7hY4RzhxI87JNHH8lQ/msMmq5L5XFJLeJ/2GeAkSe/5
-   ZxcwvQeRWC5YGqdpIx8f7eINZzImxELtxUgM8rew/PKqk6bdl194LWRwL
-   d5Hux7NenSTBe3nK1SAgVzeSnBa3V7f6EjUvZnV8PUrYhipItqoY/dAmf
-   ECUnGouCuu2eE7Eab2XlNQX9TyhqqHynlesqZf4U/nRFkXomlU1G6eXoj
-   SuZ4Qh5xCOa0B7iy9QBPtKcUflGFFcwk9z4wUtbMqtKmaND4mefwjx3ZF
-   w==;
-X-CSE-ConnectionGUID: y76JqmwATBWw2biECmZ24A==
-X-CSE-MsgGUID: s5YhtjDdRU2Y/M6QeyjiOw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24722634"
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="24722634"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 10:03:40 -0700
-X-CSE-ConnectionGUID: Grq5JGftRl2YhAd2ZBNVBQ==
-X-CSE-MsgGUID: EbBA92hXS/mAaNEtpWDONg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="66790757"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 09 Sep 2024 10:03:36 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1snhnZ-000F0S-2f;
-	Mon, 09 Sep 2024 17:03:33 +0000
-Date: Tue, 10 Sep 2024 01:03:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alex Lanzano <lanzano.alex@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jagath Jog J <jagathjog1996@gmail.com>,
-	Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
-	Nuno Sa <nuno.sa@analog.com>
-Cc: oe-kbuild-all@lists.linux.dev, skhan@linuxfoundation.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] iio: imu: Add i2c driver for bmi270 imu
-Message-ID: <202409100026.17N3K11W-lkp@intel.com>
-References: <20240909043254.611589-3-lanzano.alex@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51FE1531E6;
+	Mon,  9 Sep 2024 17:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725901395; cv=fail; b=euHYDW8Ltf9OIq7B2vA5oLzfPkW4GqLHfcud+dmsBjZXAT6qDpA3/Nl9kAWDI59m/OyR5VT8u/hcni9sngIycQP5MqJz7kS9mDJbFcaZGUSzZxT2jwqxj6osHUHckK2w5qxXJvsN+HWn/st3QweNv9NNfLRNkLS6c1Mv4XaSmB0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725901395; c=relaxed/simple;
+	bh=ibip/6eHABVeinkbBMO1yAKm9exZ964yij1ak6YFACc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ECY7AQNzNtvhiSc3nVpPW+yqNA2PeB3XPBdIpsO+YOSZsT7MApuq5CNPrLDPlgPDqmRIazlbZ4KFjtJ4eYaxrNTA0KvTdkdhn2Ft1mc/nDEYFq8OIRnuMi1sf6Rdvsr0Le/Z9aQb4aMhaJ6uj8KzAAW2shKGaHGxOuGuriyMjTI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pORiRXtS; arc=fail smtp.client-ip=40.107.244.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tDc4qgD7EELM8pAEJqvw/WlXQ2EXPp8DIP8Ij/b1QnlT/Jh98/m8lwZztUDoPZha/Cw1JdYSCAqD2l3JHUkGBZpGJt9LAWlfDJr9jMNI2lxCasaCBM1ZeU5PomLI2cKWZXDkEz5OtBAgiNw+h6xXBIFaK0XCxvXzZP3LM9uYnErf+5XdmtBoaLctqD6m6aAm4DX5nZ5iKOO+pTMVk7oY943Wh+7Q15zHOI7wDWxh4wvf2Xa2306pXt/uiKbj+7UiowkDDqXH/P12Cq5G2HmVejVLk/BTHcokF7ImXW196G9OK8I0CUlYKSuYQVCmvIvCs6xkV1FbJpF/zjKWnP6pIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mh90kGoOmb5PKB71fv5QwkiF38rKOvH0Y8t44s8Fo24=;
+ b=fwXY0b9poSfwxhvOFbGJm+UzXqOzhE8GOeeLJTRhLS3an2ZO1c/63NxuFG82BlLe+er57K/l2zIf2jSo1S0aOjqJstIOZB/7cxYytn66r8ysbx7VqyktFq2Nv1gI9tunk1OIBfsvjiup7XpfGWXHp43whyIzVfrZjdhLeSrns/t0dtzNcJBOEPhKNKMDACtv1+qQ9bdrKgQyEfBJlT8TbZIEBxwP9v/PaL5Md8NcUzmB4gTyKWmmi9RMJ2k+mLMNJie5LmEYfS+bxfmCGEl697rDASplf2MP2E+2pg2f+GEWSh2tsuWistWHYUbeE5UtDTNAm6kqWYyv8cShABtykw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mh90kGoOmb5PKB71fv5QwkiF38rKOvH0Y8t44s8Fo24=;
+ b=pORiRXtSUCDoCbYshnXgVbDaoDMXEbbAEM3gAxyeI6lS5rT3Dzp2vJutrb9Y747+1SIE7J3Q9gLp8QUwq1livjsNIMcqBK57Ck2DINCUbKiuAy1cYusfUWtui9cw2aQfl517bxycmq/rFgMxggfwl8aVIQ27ByP5wyausXC/Uy4=
+Received: from LV3PR12MB9260.namprd12.prod.outlook.com (2603:10b6:408:1b4::21)
+ by LV8PR12MB9230.namprd12.prod.outlook.com (2603:10b6:408:186::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Mon, 9 Sep
+ 2024 17:03:10 +0000
+Received: from LV3PR12MB9260.namprd12.prod.outlook.com
+ ([fe80::e5c3:25dc:f93:cb99]) by LV3PR12MB9260.namprd12.prod.outlook.com
+ ([fe80::e5c3:25dc:f93:cb99%3]) with mapi id 15.20.7918.024; Mon, 9 Sep 2024
+ 17:03:10 +0000
+From: "Thangaraj, Senthil Nathan" <SenthilNathan.Thangaraj@amd.com>
+To: "Potthuri, Sai Krishna" <sai.krishna.potthuri@amd.com>, Linus Walleij
+	<linus.walleij@linaro.org>, "Simek, Michal" <michal.simek@amd.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, "Buddhabhatti, Jay" <jay.buddhabhatti@amd.com>,
+	"Kundanala, Praveen Teja" <praveen.teja.kundanala@amd.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "saikrishna12468@gmail.com"
+	<saikrishna12468@gmail.com>, "git (AMD-Xilinx)" <git@amd.com>, "Potthuri, Sai
+ Krishna" <sai.krishna.potthuri@amd.com>
+Subject: RE: [PATCH v5 2/3] firmware: xilinx: Add Pinctrl Get Attribute ID
+Thread-Topic: [PATCH v5 2/3] firmware: xilinx: Add Pinctrl Get Attribute ID
+Thread-Index: AQHbAEyJrT3v9unufkywBhnPEm58+rJPsvOw
+Date: Mon, 9 Sep 2024 17:03:10 +0000
+Message-ID:
+ <LV3PR12MB92605EC32BE4F5AFA2949359E2992@LV3PR12MB9260.namprd12.prod.outlook.com>
+References: <20240906110113.3154327-1-sai.krishna.potthuri@amd.com>
+ <20240906110113.3154327-3-sai.krishna.potthuri@amd.com>
+In-Reply-To: <20240906110113.3154327-3-sai.krishna.potthuri@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV3PR12MB9260:EE_|LV8PR12MB9230:EE_
+x-ms-office365-filtering-correlation-id: 95e3d8f0-9782-4993-93fd-08dcd0f1487d
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?TsAeiKO4daqY3ItDT32FILg7TDnP8lZ57Kfvy7xA2K6+3vahIvhuDbM1vTtH?=
+ =?us-ascii?Q?ALRKev1tzmTWCYhJRaEk+D0JL1PVDJarlGamt6NnEoSzc7X+QVrs6FAfHcar?=
+ =?us-ascii?Q?BarWIR9LH91NG1aqrCR3VPb1KHynyv/FbuIIn3dmuPOqx816kddWQohHPH0h?=
+ =?us-ascii?Q?h9Hh94rvY4o0uzfBJhNDAFU1j/RYa+o4L2OevJPrszb1YfIVjs0JH16m/8+K?=
+ =?us-ascii?Q?JPoJj5zNIBZSincKWBPcgB8jUnBs5Yw+2eb1v1oqJq6WM9ggf8vIEivJuhDG?=
+ =?us-ascii?Q?kqeoiGXhpxmZJE6RtLA6XYEKu50rHjinmWkVAX+N4KbL3dAaCoBrge7Zox7a?=
+ =?us-ascii?Q?YwnNYyrfpQ5lU4WdHRn/zF03TDQuwa05ZwC6X9FIZVQx73tFHuGaYqFn9EE5?=
+ =?us-ascii?Q?Uh8Nugv3qolbnHVirGkC8w4ZF9r+g+0LJ9TfuFV+vJIhTL6m0nOHaFnVtVKV?=
+ =?us-ascii?Q?9/XUtMYkL9l2wNZSDHbwovr+t99KBc232xBhQ4rv4xEHdlmwAhiFEJvO+oEP?=
+ =?us-ascii?Q?vkiNimf/Ojz7KKSXlb8bah+TJjVLRQPhgiGsxpBoFHt+V5Vcfa4n5g2cnnEG?=
+ =?us-ascii?Q?ekggFzBwZgUOYA4b9zvaDAYJIZDQPWcTGG10L/CvzKuMbx1tPj4ZDgTW2UNG?=
+ =?us-ascii?Q?vDk5M7joVxCbhlXjDeFMO5wpdUmoQSgCOqZqg9txW1o98npukbDT8L+zeP0Z?=
+ =?us-ascii?Q?1g2MlTiwcYRP/QS+JM9Azjo3LG19hNLCZf2+anAZuotS+xN70SkogyyS/mMk?=
+ =?us-ascii?Q?6e89B1kxlLibtbeFf6h0ASuQrkglkuMbi98PDOJ4Sfkui+2zToI1SjWYv8TI?=
+ =?us-ascii?Q?n2xVeAfl3axfr4n3Za7MSVGBUksuVlNKmX8Sllh2y6I6lPv6rzJiSF1TOm+C?=
+ =?us-ascii?Q?G3q2hPdkhsgFSq1S0JocSlMrFHHGrZYtbrrYbBtKKUeWFvCGNTGeC2cOXgcJ?=
+ =?us-ascii?Q?sVMhWcOmF5dpIBjSCCRgWmsJMo8Y67Adf2aq9j26kE2I38fm7sIsXrdoEVMS?=
+ =?us-ascii?Q?X4BKsLPTqryrrZFIXzrfi3HmEEnIDM7QyAu6+43rfv+gGVa/DTGpLQquURUD?=
+ =?us-ascii?Q?p39CXW3+IlGkOHiq/OHlintm/632q98W8ZROvRWnn0opK6FN2zt5jeulNbHe?=
+ =?us-ascii?Q?csN3v0T0NVMjVZtxsG1BwSnjYhq7wCgp+wwCyIaKRd5VqsOznN2dmKB7ds9H?=
+ =?us-ascii?Q?WZ1muBbG5BaIeY+9fARoRHbsOm5gOrfnxj6l3KxEDLw8/Ip4cLmZjipNw0S7?=
+ =?us-ascii?Q?BaH2e1yU50iUfRSsaJTJXcH06Rv3WgUsQs+ymhOy23StUw9y3i0tjIHJkkcN?=
+ =?us-ascii?Q?Y33qC/JLlqWpBdhi7IrBAjkaDQ9EScqCxUfeIprWf+cx+ykO+GnkJGwEakhH?=
+ =?us-ascii?Q?6VphCQNkoQ0L1mfs+i2ZxwooRuYj+vd9cHLHrHvz8/lcYqJn3yvTwAQAUBGs?=
+ =?us-ascii?Q?G4xY07iZwA8=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9260.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?S1KfsJV4+zVl/+plN2LetxO1p+WCQQ8XrTcem1XSdspbgSF0jynX02D6aO4Z?=
+ =?us-ascii?Q?yEhXkwatTMXEzTAsiAxbRQeFzgSJ+/dxRplvbEw3RUjcnRzD1h+KiY1nwode?=
+ =?us-ascii?Q?3qLnmNwNsyn9lCCPo9+wVHxumwvvVpOlD+rUdVvRF6LdXrVaDzE4StOWsZme?=
+ =?us-ascii?Q?ETpqBNMHuVpIUBIFgwceCvz9liCckD1gBmKsUITNubsFXpXapeqrKeChpnf/?=
+ =?us-ascii?Q?g4w5WMnotGEoywL+v8byLz60kCaSsH9LADWGvrit424rI0Zb63/eXTzTF2cB?=
+ =?us-ascii?Q?BjNTi0L/mzZB1mns+xNZL0Trp4KJTMkKgkXokq2QJrV2sNP6eT3FU+igHykv?=
+ =?us-ascii?Q?VzBuCfoNs9ibqQ/qynEZSA9EdQJrsaBYzFT5TmsZ+c6raN/NOxilQ6O+AbsW?=
+ =?us-ascii?Q?YMJxQJyzJF+7LM6wMpmJz+ZCdUZJSd/eeQhwssxqvmjL/wc0a51eEzfiQ/za?=
+ =?us-ascii?Q?u2RoXZ9aKfOdQ3lIllsSI5TUoxTWFHEoeKH+3w8v8rbp4cK8H0pNLYz+g2kh?=
+ =?us-ascii?Q?siQ6xzNodEffM/4NU5lTvXm5HtglFkLaQzj0FmHB3VVzcdw4XfzgYSWlS0UU?=
+ =?us-ascii?Q?NSs3N/1yky77dqaXvSfHT25dRtWesb2veUy7C9BBgSNMZH8pH5u0crbRy+0w?=
+ =?us-ascii?Q?bHahxxti/vD9ywZLm0LWgLpK4tsq/AQHDEWEKhVNhgzSJt3JZcEcNp7/wAni?=
+ =?us-ascii?Q?cRGAqBzwUPAKoFttUc+bJ8AwUMWtNib+hZls0O8Y23W8/CRgiZw2GOu5yHxX?=
+ =?us-ascii?Q?wkrm/7+MLwNGzgnQWRk6GL1RgqfytgVBBCmdk4keMiXo5AQJQoXncLxJU1hb?=
+ =?us-ascii?Q?FGx+fNKB3H5xxFozrHQAjXMJuCR84US6XrtGfKj8jSMRXxTDnkaH6BlzEGeV?=
+ =?us-ascii?Q?9fH7XGE0xoqdmKZvtz863OJcs6ZSACKUOqhuVgPFgV3U4U6At8YxFrbeCHKU?=
+ =?us-ascii?Q?4rmq8D2SrE+ZpceRMhHb0OfyNh3VeaFgB7HA/4WX4fZ/voDBCXQ4bKVY2XNy?=
+ =?us-ascii?Q?p7F70O2mcFR/Cw7tv3pvCl/xqPh1OFptPPJqE179iB8/y+X2jTx3Kw85wSkn?=
+ =?us-ascii?Q?WpuX3mGI3I7qVzwkfhbbdD6mKHM9LrZhfZaTCpjtuyKh9+IksUcVR9q/vRT5?=
+ =?us-ascii?Q?qe8zZ4fV9T4L/UPGVATPgDTLWNyTzW6z20OPzXa0vxKdQeoxzwP71zsMKxZd?=
+ =?us-ascii?Q?1ZvNMTeobMmjzD2jawFs2vJpPB3g/+zmN0jV3wR8HBI3c09HCSogl/7GP+8R?=
+ =?us-ascii?Q?4Iwj33so24/OoEhDkj9XjTh07h13PZ9eIwMcPbdtz5K37pwC6SxlFKpNsoAz?=
+ =?us-ascii?Q?2sa2KjtNgS4EqM1LbKXU2AAA892lifXqXU5Jx7KL2JIekdyZ25kBFwbRV/Xp?=
+ =?us-ascii?Q?kS0q9zNv9TMWGRiYjKO/ZLHnYGVTa3PaxSH/cFFOrko7qu7rskROpfbG+ymD?=
+ =?us-ascii?Q?etMOGdFubEw8i+1gUfzQ8pdK4ZyYj0+cboXFlbtTq62mxhOuQXlgzs0ScOek?=
+ =?us-ascii?Q?5HEmiEiXsGpgcrwowK3M8Kt+MVj8qjLkAbX6hm6voGfBAAypjx2sgonzSej8?=
+ =?us-ascii?Q?c1IGAQ3FQALfzSb7/40=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909043254.611589-3-lanzano.alex@gmail.com>
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9260.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95e3d8f0-9782-4993-93fd-08dcd0f1487d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2024 17:03:10.1149
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YT9SwOpxi8ZAtxrFCb7P8cNpJNenKK66TzAxElenatMReQclUIYmt5+r8onl8EMqMC96EqSwTk+h1uoGhvIIIw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9230
 
-Hi Alex,
+Hi Sai Krishna,
 
-kernel test robot noticed the following build errors:
+Please find my review below.
 
-[auto build test ERROR on jic23-iio/togreg]
-[also build test ERROR on robh/for-next linus/master v6.11-rc7 next-20240909]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks,
+Senthil
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alex-Lanzano/dt-bindings-iio-imu-add-bmi270-bindings/20240909-123509
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20240909043254.611589-3-lanzano.alex%40gmail.com
-patch subject: [PATCH v3 2/2] iio: imu: Add i2c driver for bmi270 imu
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240910/202409100026.17N3K11W-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240910/202409100026.17N3K11W-lkp@intel.com/reproduce)
+> -----Original Message-----
+> From: linux-arm-kernel <linux-arm-kernel-bounces@lists.infradead.org> On
+> Behalf Of Sai Krishna Potthuri
+> Sent: Friday, September 6, 2024 4:01 AM
+> To: Linus Walleij <linus.walleij@linaro.org>; Simek, Michal
+> <michal.simek@amd.com>; Rob Herring <robh@kernel.org>; Krzysztof
+> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>;
+> Buddhabhatti, Jay <jay.buddhabhatti@amd.com>; Kundanala, Praveen Teja
+> <praveen.teja.kundanala@amd.com>; Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org>
+> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; l=
+inux-
+> gpio@vger.kernel.org; devicetree@vger.kernel.org;
+> saikrishna12468@gmail.com; git (AMD-Xilinx) <git@amd.com>; Potthuri, Sai
+> Krishna <sai.krishna.potthuri@amd.com>
+> Subject: [PATCH v5 2/3] firmware: xilinx: Add Pinctrl Get Attribute ID
+>=20
+> Caution: This message originated from an External Source. Use proper caut=
+ion
+> when opening attachments, clicking links, or responding.
+>=20
+>=20
+> Add Pinctrl Get Attribute ID to the query ids list.
+>=20
+> Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+> ---
+>  include/linux/firmware/xlnx-zynqmp.h | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/include/linux/firmware/xlnx-zynqmp.h
+> b/include/linux/firmware/xlnx-zynqmp.h
+> index d7d07afc0532..3b4ce4ec5d3f 100644
+> --- a/include/linux/firmware/xlnx-zynqmp.h
+> +++ b/include/linux/firmware/xlnx-zynqmp.h
+> @@ -238,6 +238,7 @@ enum pm_query_id {
+>         PM_QID_PINCTRL_GET_PIN_GROUPS =3D 11,
+>         PM_QID_CLOCK_GET_NUM_CLOCKS =3D 12,
+>         PM_QID_CLOCK_GET_MAX_DIVISOR =3D 13,
+> +       PM_QID_PINCTRL_GET_ATTRIBUTES =3D 15,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409100026.17N3K11W-lkp@intel.com/
+Any reason why do you need to skip 14 and use 15 here ?
 
-All errors (new ones prefixed by >>):
+>  };
+>=20
+>  enum rpu_oper_mode {
+> --
+> 2.25.1
+>=20
 
-   drivers/iio/imu/bmi270/bmi270_core.c: In function 'bmi270_configure_imu':
->> drivers/iio/imu/bmi270/bmi270_core.c:180:31: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
-     180 |                               FIELD_PREP(BMI270_ACC_CONF_ODR_MSK,
-         |                               ^~~~~~~~~~
-
-
-vim +/FIELD_PREP +180 drivers/iio/imu/bmi270/bmi270_core.c
-
-   165	
-   166	static int bmi270_configure_imu(struct bmi270_data *bmi270_device)
-   167	{
-   168		int ret;
-   169		struct device *dev = bmi270_device->dev;
-   170		struct regmap *regmap = bmi270_device->regmap;
-   171	
-   172		ret = regmap_set_bits(regmap, BMI270_PWR_CTRL_REG,
-   173				      BMI270_PWR_CTRL_AUX_EN_MSK |
-   174				      BMI270_PWR_CTRL_GYR_EN_MSK |
-   175				      BMI270_PWR_CTRL_ACCEL_EN_MSK);
-   176		if (ret)
-   177			return dev_err_probe(dev, ret, "Failed to enable accelerometer and gyroscope");
-   178	
-   179		ret = regmap_set_bits(regmap, BMI270_ACC_CONF_REG,
- > 180				      FIELD_PREP(BMI270_ACC_CONF_ODR_MSK,
-   181						 BMI270_ACC_CONF_ODR_100HZ) |
-   182				      FIELD_PREP(BMI270_ACC_CONF_BWP_MSK,
-   183						 BMI270_ACC_CONF_BWP_NORMAL_MODE) |
-   184				      BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
-   185		if (ret)
-   186			return dev_err_probe(dev, ret, "Failed to configure accelerometer");
-   187	
-   188		ret = regmap_set_bits(regmap, BMI270_GYR_CONF_REG,
-   189				      FIELD_PREP(BMI270_GYR_CONF_ODR_MSK,
-   190						 BMI270_GYR_CONF_ODR_200HZ) |
-   191				      FIELD_PREP(BMI270_GYR_CONF_BWP_MSK,
-   192						 BMI270_GYR_CONF_BWP_NORMAL_MODE) |
-   193				      BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
-   194		if (ret)
-   195			return dev_err_probe(dev, ret, "Failed to configure gyroscope");
-   196	
-   197		/* Enable FIFO_WKUP, Disable ADV_PWR_SAVE and FUP_EN */
-   198		ret = regmap_write(regmap, BMI270_PWR_CONF_REG,
-   199				   BMI270_PWR_CONF_FIFO_WKUP_MSK);
-   200		if (ret)
-   201			return dev_err_probe(dev, ret, "Failed to set power configuration");
-   202	
-   203		return 0;
-   204	}
-   205	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
