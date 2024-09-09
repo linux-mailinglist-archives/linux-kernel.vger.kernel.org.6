@@ -1,300 +1,280 @@
-Return-Path: <linux-kernel+bounces-320829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F317C971122
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:06:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A5B971124
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46A72B22818
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:06:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0C3C1C223BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A561B29D7;
-	Mon,  9 Sep 2024 08:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F631B2EEF;
+	Mon,  9 Sep 2024 08:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jkMqUL2p"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dI3X6XmA"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00EB1B1429;
-	Mon,  9 Sep 2024 08:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BE41B1429
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725868957; cv=none; b=Uf5ktHjPodBRtbBSQeCxYLIzqKtP1OVVD8lS3s5xstqFpJb7nTCID0w4iqFJWpakpzu0w4vBTVgOQ5uguYUoWVAsO3fLyySN91g2cmCKVMiFjgrsDeqJHN82K0L4lasRgoSC9MQIpkv6QLn95r8J2iP662kHF3gl9ozWBU6worM=
+	t=1725868994; cv=none; b=vGEHMu5acYNOm1zWuyHoMK1ksuW9HMFRQFDqoyz2c6GJavnkV7/wGXerakA4Op6Ch29DuXr7rVZMH4e6HRqMFxPXvuHjdkxoLQXC45qwpk95/FvmkULnYs+kVZ5sWpJEw+C54jQLwf/bsV1EWrzI1XgDZ6jpeJo8q74KMH4Ksm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725868957; c=relaxed/simple;
-	bh=ytRkeTlmX47xgE5z+ryf8DfSbFZAeaxEumWqDo97RlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Grr71RvmbdKYDWhEEWjuh4wBVQ6fm2mgvy0WeJicVdriw6SjZyeWGdclFeYJcm4f5899dLc5y5vpfvePfxjHPDl98qc/87Sb0Fvr7Kn3h3zL2vqJwSiSBvdYwKlGkuMhdEcTE7jl2FBPf8492q21HN9VIhdlI//z24Bsg8sJr7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jkMqUL2p; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D4C8240E0284;
-	Mon,  9 Sep 2024 08:02:30 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id BubQY1UG0zYB; Mon,  9 Sep 2024 08:02:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1725868944; bh=z3avvgf0RPSwKTwCWWF/4sM2ZNrDEy7cyjOWOIK1NG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jkMqUL2pn4sM+04ZqI3ZX+K3H4IbKgDImk8IaBVMxdfs1ph0JbWJjmMf+yJD+yVkY
-	 l7D5eR9HZ7shm5PvrcEYD6B4IAOytj0Pj0P185GbFKZ2hZTCu0+bQfrO23Y6rbtVKl
-	 u08GNg4Svn5rvW+aYu0YaCpfAdyouCjrhswZVdVXfTRrHvdczKZFxnNuvGXssW0mDs
-	 5g9yncujn+Jc0lMStaSszMnJhost3vk8JTDz3sLgh2JFJMOfoGv4EtsIk5U6LinwoN
-	 LhuOKXQ/dswn2JJDj74FSRMpn0hJiEJqYjiZ/0S02GvADaMVFWtWgnV7jVxWpvAsyD
-	 3+2POqtkrNrZbFD8URiG4rmQup37zReSD+X76JagfDh9Xj7UayKPK24rHqPK8mERvB
-	 54bA16wXWuuHiF0KFgbco8sH1eR4Olrizzs7fM1rCKdI28U57NdMfCCEy9Lorwdh7Y
-	 P1UHdZEE0WcAVK5NkPpyQQvbzWgjiDuyqWPnbsfl2BVOrtZPtfAaNLY9DzOwbj3R1n
-	 0R7BKj1k+HPQoePR/XQk7iwjHV0wK2pjKz+VZQxnvbMuVWQDEKXt2A01x/lZlL1YL7
-	 QPMiqH0wFcw2t7bT0/Pb2dw6LIB0zDXl/ntNDGkKl1dks217ueT6KarHPxI/ROGK6i
-	 +1XN6NhXhT7RLo3NxaFQtmgM=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9D80F40E0198;
-	Mon,  9 Sep 2024 08:02:07 +0000 (UTC)
-Date: Mon, 9 Sep 2024 10:02:00 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Hugues Bruant <hugues.bruant@gmail.com>
-Cc: stable@vger.kernel.org, regressions@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Tony Luck <tony.luck@intel.com>, Tzung-Bi Shih <tzungbi@kernel.org>,
-	Brian Norris <briannorris@chromium.org>,
-	Julius Werner <jwerner@chromium.org>,
-	chrome-platform@lists.linux.dev,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [REGRESSION] soft lockup on boot starting with kernel 6.10 /
- commit 5186ba33234c9a90833f7c93ce7de80e25fac6f5
-Message-ID: <20240909080200.GAZt6reI9c98c9S_Xc@fat_crate.local>
-References: <CALvjV29jozswRtmYxDur2TuEQ=1JSDrM+uWVHmghW3hG5Y9F+w@mail.gmail.com>
+	s=arc-20240116; t=1725868994; c=relaxed/simple;
+	bh=L0hohc3csRPqlhpsA/7CFpXamY61LYCnBD2Jby731mw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n1oCfibYYT3Z23kGJ+GfJsIQqq6JYb1vs4bp2GrEp2K5upBBWQY6O7ZWmDzhKVCnI19TrwgK5AZhdoFgwry5yTDHn8zbmMTXAs9tfBWr8j6spf3/4TaqnuhVgnqF7PPovGTiFwXD1soOeIKV7Xef2sjKO6yzPpfv6kess4dMCZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dI3X6XmA; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5365b6bd901so2648706e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 01:03:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725868991; x=1726473791; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cPPk0TDYYzm2xt2bFl0UC0M7dNTFBvwSqsGyjtReLrc=;
+        b=dI3X6XmAdzp+Lxkstzwo9dSBvi4wNtLm515/IFiDU2qqys2Vur4euvxh/MpSQitLgj
+         8ZeNIPYn7milRcBe8F+iu0yUYxqUzRYt3zOG1YC9hHrBc4q7bKn0cz1djM4vYaNXHU0d
+         in0aZZoOKzFs/TX1Ftoh4g8rQVn95qxMEdy+h5b+FTvGo76XZrrACawr/btyAH4+ILYb
+         3dnrfrGTzJR35FZjaOwYuLEtAhqitKh9BgnTo03WH57JsepmCekQ99HDuM4G0t2qZ+PR
+         Dfh6T9+8jZ4F4uzvvtyATn286t9NfDlfG8xuJOL0pNaWb801sARg9rXfI224S2dLNBk1
+         ZWVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725868991; x=1726473791;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cPPk0TDYYzm2xt2bFl0UC0M7dNTFBvwSqsGyjtReLrc=;
+        b=dVJfkuaTMRcLkE9LirEIlwF2nJXu5DkA9ez2RT+ECbM7UYNjmFfiqzdQOIy2+MSFJU
+         Q6OX5PZe28hJCzfvrRuBs6DIhAq9UuiiS1uAQHDRMLVdRzrV9tKjQ+ggolFdaRvLLOGM
+         3K2aR7J/agksrVvCu5+0Y8EWyxJtJ943YJ1kllzN3+CX1OC9YFudHyrBA8g8vDlV+lwh
+         r/tEUECIzsLI6s+nmmGlwkDUvY/PEhqDGpBtrMikyZSK+DzaO8+p2LAgJgCwOxL8lqWL
+         lA3MwHJ0dYvcP6Abl6I9m7bjJymmpXNP7AaI2dTe8DLYiWzg71M8KAk7JlSddelzVmo6
+         lhQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXG0gTXsPdU0JFqs55RslRiIdY8lxT+lg7EY8fh0/r1x284mp/rezB8ngplnxAb4UJCZ4Gk1MYpWR060kY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+ZlTcIV2TvoX/X7Pp47+nxc6DYMTOyQ14f9vsNIR7KLvAWgHs
+	+aYrgRCRM7AyRjO5zVzSfqeY7zPEyXhxJZnMxMXYjL0U8nBet7c0e7E8ifIZyvdDJXKAtmVvoQH
+	cRY9JAFYuiP9o2hEWILqsAifZDc7d+J9ehYSp
+X-Google-Smtp-Source: AGHT+IGevTrumeB14D+HR+GB884L8lvx1LTcCsqiv+IlGdkhOr28skbKiW0TNF4r7PfBeqFHvoec35w/kiJOOJ296TE=
+X-Received: by 2002:a05:6512:239d:b0:535:67d9:c4b3 with SMTP id
+ 2adb3069b0e04-536587aa4dfmr5077214e87.11.1725868989987; Mon, 09 Sep 2024
+ 01:03:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <0000000000000311430620013217@google.com> <0000000000005d1b320621973380@google.com>
+In-Reply-To: <0000000000005d1b320621973380@google.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 9 Sep 2024 10:02:59 +0200
+Message-ID: <CANn89iJGw2EVw0V5HUs9-CY4f8FucYNgQyjNXThE6LLkiKRqUA@mail.gmail.com>
+Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
+To: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>, 
+	"D. Wythe" <alibuda@linux.alibaba.com>, Wenjia Zhang <wenjia@linux.ibm.com>, 
+	Dust Li <dust.li@linux.alibaba.com>
+Cc: davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CALvjV29jozswRtmYxDur2TuEQ=1JSDrM+uWVHmghW3hG5Y9F+w@mail.gmail.com>
 
-On Sun, Sep 08, 2024 at 11:53:56PM -0700, Hugues Bruant wrote:
-> Hi,
->=20
-> I have discovered a 100% reliable soft lockup on boot on my laptop:
-> Purism Librem 14, Intel Core i7-10710U, 48Gb RAM, Samsung Evo Plus 970
-> SSD, CoreBoot BIOS, grub bootloader, Arch Linux.
->=20
-> The last working release is kernel 6.9.10, every release from 6.10
-> onwards reliably exhibit the issue, which, based on journalctl logs,
-> seems to be triggered somewhere in systemd-udev:
-> https://gitlab.archlinux.org/-/project/42594/uploads/04583baf22189a0a8bb2=
-f8773096e013/lockup.log
->=20
-> Bisect points to commit 5186ba33234c9a90833f7c93ce7de80e25fac6f5
+On Sun, Sep 8, 2024 at 10:12=E2=80=AFAM syzbot
+<syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has found a reproducer for the following issue on:
+>
+> HEAD commit:    df54f4a16f82 Merge branch 'for-next/core' into for-kernel=
+ci
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux=
+.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D12bdabc798000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Ddde5a5ba8d41e=
+e9e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D51cf7cc5f9ffc10=
+06ef2
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1798589f980=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10a30e0058000=
+0
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/aa2eb06e0aea/dis=
+k-df54f4a1.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/14728733d385/vmlinu=
+x-df54f4a1.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/99816271407d/I=
+mage-df54f4a1.gz.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> WARNING: possible circular locking dependency detected
+> 6.11.0-rc5-syzkaller-gdf54f4a16f82 #0 Not tainted
+> ------------------------------------------------------
+> syz-executor272/6388 is trying to acquire lock:
+> ffff8000923b6ce8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x20/0x2c net/co=
+re/rtnetlink.c:79
+>
+> but task is already holding lock:
+> ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsoc=
+kopt+0x178/0x10fc net/smc/af_smc.c:3064
+>
+> which lock already depends on the new lock.
+>
+>
+> the existing dependency chain (in reverse order) is:
+>
+> -> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
+>        __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+>        __mutex_lock kernel/locking/mutex.c:752 [inline]
+>        mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+>        smc_switch_to_fallback+0x48/0xa80 net/smc/af_smc.c:902
+>        smc_sendmsg+0xfc/0x9f8 net/smc/af_smc.c:2779
+>        sock_sendmsg_nosec net/socket.c:730 [inline]
+>        __sock_sendmsg net/socket.c:745 [inline]
+>        __sys_sendto+0x374/0x4f4 net/socket.c:2204
+>        __do_sys_sendto net/socket.c:2216 [inline]
+>        __se_sys_sendto net/socket.c:2212 [inline]
+>        __arm64_sys_sendto+0xd8/0xf8 net/socket.c:2212
+>        __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+>        invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+>        el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+>        do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+>        el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+>        el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:73=
+0
+>        el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+>
+> -> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
+>        lock_sock_nested net/core/sock.c:3543 [inline]
+>        lock_sock include/net/sock.h:1607 [inline]
+>        sockopt_lock_sock+0x88/0x148 net/core/sock.c:1061
+>        do_ip_setsockopt+0x1438/0x346c net/ipv4/ip_sockglue.c:1078
+>        ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
+>        raw_setsockopt+0x100/0x294 net/ipv4/raw.c:845
+>        sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
+>        do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
+>        __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
+>        __do_sys_setsockopt net/socket.c:2356 [inline]
+>        __se_sys_setsockopt net/socket.c:2353 [inline]
+>        __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
+>        __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+>        invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+>        el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+>        do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+>        el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+>        el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:73=
+0
+>        el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+>
+> -> #0 (rtnl_mutex){+.+.}-{3:3}:
+>        check_prev_add kernel/locking/lockdep.c:3133 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+>        validate_chain kernel/locking/lockdep.c:3868 [inline]
+>        __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
+>        lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
+>        __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+>        __mutex_lock kernel/locking/mutex.c:752 [inline]
+>        mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+>        rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
+>        do_ip_setsockopt+0xe8c/0x346c net/ipv4/ip_sockglue.c:1077
+>        ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
+>        tcp_setsockopt+0xcc/0xe8 net/ipv4/tcp.c:3768
+>        sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
+>        smc_setsockopt+0x204/0x10fc net/smc/af_smc.c:3072
+>        do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
+>        __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
+>        __do_sys_setsockopt net/socket.c:2356 [inline]
+>        __se_sys_setsockopt net/socket.c:2353 [inline]
+>        __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
+>        __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+>        invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+>        el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+>        do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+>        el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+>        el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:73=
+0
+>        el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+>
+> other info that might help us debug this:
+>
+> Chain exists of:
+>   rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
+>
+>  Possible unsafe locking scenario:
+>
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&smc->clcsock_release_lock);
+>                                lock(sk_lock-AF_INET);
+>                                lock(&smc->clcsock_release_lock);
+>   lock(rtnl_mutex);
+>
+>  *** DEADLOCK ***
+>
+> 1 lock held by syz-executor272/6388:
+>  #0: ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_s=
+etsockopt+0x178/0x10fc net/smc/af_smc.c:3064
+>
+> stack backtrace:
+> CPU: 1 UID: 0 PID: 6388 Comm: syz-executor272 Not tainted 6.11.0-rc5-syzk=
+aller-gdf54f4a16f82 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 08/06/2024
+> Call trace:
+>  dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+>  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+>  __dump_stack lib/dump_stack.c:93 [inline]
+>  dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
+>  dump_stack+0x1c/0x28 lib/dump_stack.c:128
+>  print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2059
+>  check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2186
+>  check_prev_add kernel/locking/lockdep.c:3133 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+>  validate_chain kernel/locking/lockdep.c:3868 [inline]
+>  __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
+>  lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
+>  __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+>  __mutex_lock kernel/locking/mutex.c:752 [inline]
+>  mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+>  rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
+>  do_ip_setsockopt+0xe8c/0x346c net/ipv4/ip_sockglue.c:1077
+>  ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
+>  tcp_setsockopt+0xcc/0xe8 net/ipv4/tcp.c:3768
+>  sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
+>  smc_setsockopt+0x204/0x10fc net/smc/af_smc.c:3072
+>  do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
+>  __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
+>  __do_sys_setsockopt net/socket.c:2356 [inline]
+>  __se_sys_setsockopt net/socket.c:2353 [inline]
+>  __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
+>  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+>  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+>  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+>  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+>  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+>  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+>  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+>
+>
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
-That's a merge commit. Meaning, the bisection likely went into the wrong
-direction.
-
-Looking at your log, the first warn is in framebuffer_coreboot. Some mess in
-the sysfs platform devices registration.
-
-Adding the relevant people for that:
-
-Aug 20 20:29:36 luna kernel: sysfs: cannot create duplicate filename '/bus/=
-platform/devices/simple-framebuffer.0'
-Aug 20 20:29:36 luna kernel: CPU: 5 PID: 571 Comm: (udev-worker) Tainted: G=
-           OE      6.10.6-arch1-1 #1 703d152c24f1971e36f16e505405e456fc9e23=
-f8
-Aug 20 20:29:36 luna kernel: Hardware name: Purism Librem 14/Librem 14, BIO=
-S 4.14-Purism-1 06/18/2021
-Aug 20 20:29:36 luna kernel: Call Trace:
-Aug 20 20:29:36 luna kernel:  <TASK>
-Aug 20 20:29:36 luna kernel:  dump_stack_lvl+0x5d/0x80
-Aug 20 20:29:36 luna kernel:  sysfs_warn_dup.cold+0x17/0x23
-Aug 20 20:29:36 luna kernel:  sysfs_do_create_link_sd+0xcf/0xe0
-Aug 20 20:29:36 luna kernel:  bus_add_device+0x6b/0x130
-Aug 20 20:29:36 luna kernel:  device_add+0x3b3/0x870
-Aug 20 20:29:36 luna kernel:  platform_device_add+0xed/0x250
-Aug 20 20:29:36 luna kernel:  platform_device_register_full+0xbb/0x140
-Aug 20 20:29:36 luna kernel:  platform_device_register_resndata.constprop.0=
-+0x54/0x80 [framebuffer_coreboot a587d2fc243ebaa0205c3badd33442a004d284e0]
-Aug 20 20:29:36 luna kernel:  framebuffer_probe+0x165/0x1b0 [framebuffer_co=
-reboot a587d2fc243ebaa0205c3badd33442a004d284e0]
-Aug 20 20:29:36 luna kernel:  really_probe+0xdb/0x340
-Aug 20 20:29:36 luna kernel:  ? pm_runtime_barrier+0x54/0x90
-Aug 20 20:29:36 luna kernel:  ? __pfx___driver_attach+0x10/0x10
-Aug 20 20:29:36 luna kernel:  __driver_probe_device+0x78/0x110
-Aug 20 20:29:36 luna kernel:  driver_probe_device+0x1f/0xa0
-Aug 20 20:29:36 luna kernel:  __driver_attach+0xba/0x1c0
-Aug 20 20:29:36 luna kernel:  bus_for_each_dev+0x8c/0xe0
-Aug 20 20:29:36 luna kernel:  bus_add_driver+0x112/0x1f0
-Aug 20 20:29:36 luna kernel:  driver_register+0x72/0xd0
-Aug 20 20:29:36 luna kernel:  ? __pfx_framebuffer_driver_init+0x10/0x10 [fr=
-amebuffer_coreboot a587d2fc243ebaa0205c3badd33442a004d284e0]
-Aug 20 20:29:36 luna kernel:  do_one_initcall+0x58/0x310
-Aug 20 20:29:36 luna kernel:  do_init_module+0x60/0x220
-Aug 20 20:29:36 luna kernel:  init_module_from_file+0x89/0xe0
-Aug 20 20:29:36 luna kernel:  idempotent_init_module+0x121/0x320
-Aug 20 20:29:36 luna kernel:  __x64_sys_finit_module+0x5e/0xb0
-Aug 20 20:29:36 luna kernel:  do_syscall_64+0x82/0x190
-Aug 20 20:29:36 luna kernel:  ? __do_sys_newfstatat+0x3c/0x80
-Aug 20 20:29:36 luna kernel:  ? syscall_exit_to_user_mode+0x72/0x200
-Aug 20 20:29:36 luna kernel:  ? do_syscall_64+0x8e/0x190
-Aug 20 20:29:36 luna kernel:  ? do_sys_openat2+0x9c/0xe0
-Aug 20 20:29:36 luna kernel:  ? syscall_exit_to_user_mode+0x72/0x200
-Aug 20 20:29:36 luna kernel:  ? do_syscall_64+0x8e/0x190
-Aug 20 20:29:36 luna kernel:  ? clear_bhb_loop+0x25/0x80
-Aug 20 20:29:36 luna kernel:  ? clear_bhb_loop+0x25/0x80
-Aug 20 20:29:36 luna kernel:  ? clear_bhb_loop+0x25/0x80
-Aug 20 20:29:36 luna kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-Aug 20 20:29:36 luna kernel: RIP: 0033:0x7b1bee2f81fd
-
-The real issue is in i915 however.
-
-However, you have out-of-tree modules. Try reproducing it without them.
-
-Adding i915 people too.
-
-Aug 20 20:29:37 luna kernel: resource: Trying to free nonexistent resource =
-<0x00000000a0000000-0x00000000a0257fff>
-Aug 20 20:29:37 luna kernel: BUG: unable to handle page fault for address: =
-0000000300000031
-Aug 20 20:29:37 luna kernel: #PF: supervisor read access in kernel mode
-Aug 20 20:29:37 luna kernel: #PF: error_code(0x0000) - not-present page
-Aug 20 20:29:37 luna kernel: PGD 0 P4D 0=20
-Aug 20 20:29:37 luna kernel: Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
-Aug 20 20:29:37 luna kernel: CPU: 9 PID: 552 Comm: (udev-worker) Tainted: G=
-           OE      6.10.6-arch1-1 #1 703d152c24f1971e36f16e505405e456fc9e23=
-f8
-Aug 20 20:29:37 luna kernel: Hardware name: Purism Librem 14/Librem 14, BIO=
-S 4.14-Purism-1 06/18/2021
-Aug 20 20:29:37 luna kernel: RIP: 0010:__release_resource+0x34/0xb0
-Aug 20 20:29:37 luna kernel: Code: 8d 50 38 48 8b 40 38 48 85 c0 75 27 eb 6=
-a 66 66 2e 0f 1f 84 00 00 00 00 00 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 4=
-8 8d 50 30 <48> 8b 40 30 48 85 c0 74 45 48 39 c7 75 ee 40 84 f6 75 45 48 8b=
- 4f
-Aug 20 20:29:37 luna kernel: RSP: 0018:ffffb30dc207f930 EFLAGS: 00010296
-Aug 20 20:29:37 luna kernel: RAX: 0000000300000001 RBX: ffff8fa34616e900 RC=
-X: ffff8fa3424aac50
-Aug 20 20:29:37 luna kernel: RDX: 0000000300000031 RSI: 0000000000000001 RD=
-I: ffff8fa34616e900
-Aug 20 20:29:37 luna kernel: RBP: ffff8fa3460e1400 R08: ffff8fa3424a97b8 R0=
-9: 0000000000000000
-Aug 20 20:29:37 luna kernel: R10: 0000000000000000 R11: 0000000000000000 R1=
-2: ffff8fa341671000
-Aug 20 20:29:37 luna kernel: R13: 0000000000000000 R14: ffff8fa3416710c8 R1=
-5: ffff8fa341671000
-Aug 20 20:29:37 luna kernel: FS:  00007b1bee0eb880(0000) GS:ffff8fae6e48000=
-0(0000) knlGS:0000000000000000
-Aug 20 20:29:37 luna kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050=
-033
-Aug 20 20:29:37 luna kernel: CR2: 0000000300000031 CR3: 0000000103924002 CR=
-4: 00000000003706f0
-Aug 20 20:29:37 luna kernel: Call Trace:
-Aug 20 20:29:37 luna kernel:  <TASK>
-Aug 20 20:29:37 luna kernel:  ? __die_body.cold+0x19/0x27
-Aug 20 20:29:37 luna kernel:  ? page_fault_oops+0x15a/0x2d0
-Aug 20 20:29:37 luna kernel:  ? exc_page_fault+0x81/0x190
-Aug 20 20:29:37 luna kernel:  ? asm_exc_page_fault+0x26/0x30
-Aug 20 20:29:37 luna kernel:  ? __release_resource+0x34/0xb0
-Aug 20 20:29:37 luna kernel:  release_resource+0x26/0x40
-Aug 20 20:29:37 luna kernel:  platform_device_del+0x51/0x90
-Aug 20 20:29:37 luna kernel:  platform_device_unregister+0x12/0x30
-Aug 20 20:29:37 luna kernel:  sysfb_disable+0x2f/0x80
-Aug 20 20:29:37 luna kernel:  aperture_remove_conflicting_pci_devices+0x8c/=
-0xa0
-Aug 20 20:29:37 luna kernel:  i915_driver_probe+0x7c8/0xac0 [i915 6caac5d02=
-e3122d822ca0c852e7e5ed826a3aaea]
-Aug 20 20:29:37 luna kernel:  local_pci_probe+0x42/0x90
-Aug 20 20:29:37 luna kernel:  pci_device_probe+0xbd/0x290
-Aug 20 20:29:37 luna kernel:  ? sysfs_do_create_link_sd+0x6e/0xe0
-Aug 20 20:29:37 luna kernel:  really_probe+0xdb/0x340
-Aug 20 20:29:37 luna kernel:  ? pm_runtime_barrier+0x54/0x90
-Aug 20 20:29:37 luna kernel:  ? __pfx___driver_attach+0x10/0x10
-Aug 20 20:29:37 luna kernel:  __driver_probe_device+0x78/0x110
-Aug 20 20:29:37 luna kernel:  driver_probe_device+0x1f/0xa0
-Aug 20 20:29:37 luna kernel:  __driver_attach+0xba/0x1c0
-Aug 20 20:29:37 luna kernel:  bus_for_each_dev+0x8c/0xe0
-Aug 20 20:29:37 luna kernel:  bus_add_driver+0x112/0x1f0
-Aug 20 20:29:37 luna kernel:  driver_register+0x72/0xd0
-Aug 20 20:29:37 luna kernel:  i915_init+0x23/0x90 [i915 6caac5d02e3122d822c=
-a0c852e7e5ed826a3aaea]
-Aug 20 20:29:37 luna kernel:  ? __pfx_i915_init+0x10/0x10 [i915 6caac5d02e3=
-122d822ca0c852e7e5ed826a3aaea]
-Aug 20 20:29:37 luna kernel:  do_one_initcall+0x58/0x310
-Aug 20 20:29:37 luna kernel:  do_init_module+0x60/0x220
-Aug 20 20:29:37 luna kernel:  init_module_from_file+0x89/0xe0
-Aug 20 20:29:37 luna kernel:  idempotent_init_module+0x121/0x320
-Aug 20 20:29:37 luna kernel:  __x64_sys_finit_module+0x5e/0xb0
-Aug 20 20:29:37 luna kernel:  do_syscall_64+0x82/0x190
-Aug 20 20:29:37 luna kernel:  ? switch_fpu_return+0x4e/0xd0
-Aug 20 20:29:37 luna kernel:  ? syscall_exit_to_user_mode+0x72/0x200
-Aug 20 20:29:37 luna kernel:  ? do_syscall_64+0x8e/0x190
-Aug 20 20:29:37 luna kernel:  ? syscall_exit_to_user_mode+0x72/0x200
-Aug 20 20:29:37 luna kernel:  ? do_syscall_64+0x8e/0x190
-Aug 20 20:29:37 luna kernel:  ? clear_bhb_loop+0x25/0x80
-Aug 20 20:29:37 luna kernel:  ? clear_bhb_loop+0x25/0x80
-Aug 20 20:29:37 luna kernel:  ? clear_bhb_loop+0x25/0x80
-Aug 20 20:29:37 luna kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-Aug 20 20:29:37 luna kernel: RIP: 0033:0x7b1bee2f81fd
-Aug 20 20:29:37 luna kernel: Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f=
-3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 2=
-4 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e3 fa 0c 00 f7 d8 64 89 01=
- 48
-Aug 20 20:29:37 luna kernel: RSP: 002b:00007ffe062c2ac8 EFLAGS: 00000246 OR=
-IG_RAX: 0000000000000139
-Aug 20 20:29:37 luna kernel: RAX: ffffffffffffffda RBX: 000056171c8d0a00 RC=
-X: 00007b1bee2f81fd
-Aug 20 20:29:37 luna kernel: RDX: 0000000000000004 RSI: 00007b1bee0e5061 RD=
-I: 0000000000000026
-Aug 20 20:29:37 luna kernel: RBP: 00007ffe062c2b80 R08: 0000000000000001 R0=
-9: 00007ffe062c2b10
-Aug 20 20:29:37 luna kernel: R10: 0000000000000040 R11: 0000000000000246 R1=
-2: 00007b1bee0e5061
-Aug 20 20:29:37 luna kernel: R13: 0000000000020000 R14: 000056171c8d18c0 R1=
-5: 000056171c8d31e0
-Aug 20 20:29:37 luna kernel:  </TASK>
-Aug 20 20:29:37 luna kernel: Modules linked in: intel_powerclamp ath9k(+) s=
-nd_compress coretemp ac97_bus ath9k_common snd_pcm_dmaengine kvm_intel snd_=
-hda_intel ath9k_hw joydev snd_intel_dspcfg mousedev ath snd_intel_sdw_acpi =
-i915(+) kvm snd_hda_codec iTCO_wdt mac80211 snd_hda_core processor_thermal_=
-device_pci_legacy intel_pmc_bxt snd_hwdep processor_thermal_device hid_mult=
-itouch ee1004 iTCO_vendor_support processor_thermal_wt_hint drm_buddy snd_p=
-cm rapl processor_thermal_rfim hid_generic spi_nor r8169 i2c_i801 i2c_algo_=
-bit libarc4 memconsole_coreboot processor_thermal_rapl snd_timer intel_csta=
-te intel_rapl_msr framebuffer_coreboot memconsole cbmem intel_uncore snd in=
-tel_rapl_common realtek ttm i2c_smbus cfg80211 mtd processor_thermal_wt_req=
- psmouse mdio_devres pcspkr soundcore i2c_mux processor_thermal_power_floor=
- drm_display_helper intel_lpss_pci libphy processor_thermal_mbox intel_lpss=
- cec rfkill int340x_thermal_zone intel_pmc_core i2c_hid_acpi idma64 intel_g=
-tt intel_soc_dts_iosf intel_pch_thermal i2c_hid intel_vsec intel_hid video
-Aug 20 20:29:37 luna kernel:  pmt_telemetry pmt_class pinctrl_cannonlake wm=
-i sparse_keymap coreboot_table mac_hid pkcs8_key_parser crypto_user loop ac=
-pi_call(OE) nfnetlink ip_tables x_tables ext4 crc32c_generic crc16 mbcache =
-jbd2 uas usb_storage dm_crypt cbc encrypted_keys trusted asn1_encoder tee d=
-m_mod crct10dif_pclmul crc32_pclmul crc32c_intel polyval_clmulni polyval_ge=
-neric gf128mul ghash_clmulni_intel serio_raw sha512_ssse3 atkbd sha256_ssse=
-3 sha1_ssse3 libps2 aesni_intel vivaldi_fmap nvme crypto_simd nvme_core spi=
-_intel_pci cryptd xhci_pci spi_intel i8042 nvme_auth xhci_pci_renesas serio=
- librem_ec_acpi(OE)
-Aug 20 20:29:37 luna kernel: CR2: 0000000300000031
-Aug 20 20:29:37 luna kernel: ---[ end trace 0000000000000000 ]---
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Please SMC folks, can you take a look ?
 
