@@ -1,186 +1,181 @@
-Return-Path: <linux-kernel+bounces-321272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569DB9716BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:24:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A3A9716BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F39028324F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:24:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6AF91C230CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D961B78F7;
-	Mon,  9 Sep 2024 11:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1787F1B5302;
+	Mon,  9 Sep 2024 11:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIxa7MfC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h41vfkGp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBF21AF4E4;
-	Mon,  9 Sep 2024 11:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBD21B3F24
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 11:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725881033; cv=none; b=aAQnIIIJZzudhpLL1BrY2wHeUFhITBw4JqxxO1z79R1A/C8IHC77QS2poP3Vcuvh2FQW8T3clhbxTfHfU5vxZtkHQIAi1Z4zwS45rRiPyR9RCGPUWvlae8KkGB4BuclkORdG0Myvttx5clDh8Cy0xK+rwi5TYmlWzvNXKNwZUYI=
+	t=1725881063; cv=none; b=P5l8U4gCYKpT5PFeju2B0ld5kUZ7HemALBvG4Y6dWQV0qCimCF7xYddL2cDS53UFVBaq8yo0I2ThSmFMfNSMtcSq21WTdFcgBqIoh11izKjHnJoISm9mBvo9eaLWk/UMk5NakreuBgKLp9XtRedT5Xsuwhhm9W6oQ8pJottmKEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725881033; c=relaxed/simple;
-	bh=AQzT3bAV2JDDv98lxn2LYC9mXTmymBsjkG6LCRpyPxU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gVZttwQ8tMcHh9fKPkulXvK/6ruxXE/VKglyyEKUkAr85jIpNTU1klaEgQDyGt9z/wMCzEE0SEzab4AJA4M44M45T/3IMwMUXxR0RYaoaWvokRBYvsCnpPwwv+iSo/EqPCYeZymUTMZ7GjDdSNtFTGtgK8QOTjqs+vQU507MhaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIxa7MfC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E05C4CEC5;
-	Mon,  9 Sep 2024 11:23:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725881032;
-	bh=AQzT3bAV2JDDv98lxn2LYC9mXTmymBsjkG6LCRpyPxU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fIxa7MfCpT2NrhKQOzTCEcsR2Jj//3XNpMa32fzJWiV2Se2PY0rkOeaEEQI9zn5Cd
-	 bVsbJiFRXl6JbG9+j1hSknxLqbm5Igqm0wLyebgDU+ilL1yFpOEshwYSpF8xphZ0fO
-	 pNrGlj1uDMqDVJ2+SwefLeb3jg3dR9LLurP23ztS+FGFZfkneaPXMHZPiagCedVUCM
-	 Bex8xTF362cqZPzzT3DONjUW0lcaPkrjok9ogTrD3B9FWo2oEKB49ixdHuLsEY61OU
-	 Z3O+NUB4VeUdkFz666hVip30pCIEHrNJ0BJcP3eQLCGXlwkvY65VmEio0tued3SUtz
-	 dyippi+O8W0Kg==
-Message-ID: <fc780dc2-5a69-48d8-8caa-ca2ee97d10ef@kernel.org>
-Date: Mon, 9 Sep 2024 13:23:38 +0200
+	s=arc-20240116; t=1725881063; c=relaxed/simple;
+	bh=wd6Nk7S+2T3/Atm+VQX4FwDBMc4gtF4Iy1UQRcnPkmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mw9Y4pe22ovXjJU2F7oOc0yLoVczadT8shSBQ7IMjr27hQP7mPQMl5001sD5xCQlb0kGsaDa9POsmx9otfel4OCRl8YOYE/x3jh0gA5Ejw5YA7bJPC4y1bCkpFRhwRH+xHDPDHufzdhqY/M6+JQburBh0aY1MvjniprsuHPerVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h41vfkGp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725881060;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G7iY+WqYMudiSPSlxZTFwaK/Tqzc2dsg6fefulIkGrE=;
+	b=h41vfkGpfoOwftNcJ0fhaTw3PGIiMQJWKGImT84jSe7GZa8U7sKFXdkqTDfdnS4vsiY+jJ
+	hnqR3xlZHgtMr2LTgecBIvlsc0r3K109pUymx5BglVHoGECFSyo7w40j3JRLUyc5C55QZO
+	3LCqRlroxewBjLgKKOVE6w+UwkVwSqM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-407-IMh2R6-RNMirn25-ihum-Q-1; Mon,
+ 09 Sep 2024 07:24:16 -0400
+X-MC-Unique: IMh2R6-RNMirn25-ihum-Q-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DF9961956088;
+	Mon,  9 Sep 2024 11:24:13 +0000 (UTC)
+Received: from aion.redhat.com (unknown [10.22.64.160])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8124A1956086;
+	Mon,  9 Sep 2024 11:24:11 +0000 (UTC)
+Received: by aion.redhat.com (Postfix, from userid 1000)
+	id 7EB011F1B27; Mon,  9 Sep 2024 07:24:09 -0400 (EDT)
+Date: Mon, 9 Sep 2024 07:24:09 -0400
+From: Scott Mayhew <smayhew@redhat.com>
+To: David Laight <David.Laight@aculab.com>
+Cc: Li Lingfeng <lilingfeng3@huawei.com>,
+	"chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+	"jlayton@kernel.org" <jlayton@kernel.org>,
+	"neilb@suse.de" <neilb@suse.de>,
+	"okorniev@redhat.com" <okorniev@redhat.com>,
+	"Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>,
+	"tom@talpey.com" <tom@talpey.com>,
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"yukuai1@huaweicloud.com" <yukuai1@huaweicloud.com>,
+	"houtao1@huawei.com" <houtao1@huawei.com>,
+	"yi.zhang@huawei.com" <yi.zhang@huawei.com>,
+	"yangerkun@huawei.com" <yangerkun@huawei.com>,
+	"lilingfeng@huaweicloud.com" <lilingfeng@huaweicloud.com>
+Subject: Re: [PATCH] nfsd: return -EINVAL when namelen is 0
+Message-ID: <Zt7a2XO-ze1aAM-d@aion>
+References: <20240903111446.659884-1-lilingfeng3@huawei.com>
+ <ZthzJiKF6TY0Nv32@aion>
+ <cccdc13066204448af7f0fd550f34586@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 06/17] firmware: qcom: scm: add a call for deriving the
- software secret
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
- Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Asutosh Das <quic_asutoshd@quicinc.com>,
- Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Gaurav Kashyap <quic_gaurkash@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
- <20240906-wrapped-keys-v6-6-d59e61bc0cb4@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240906-wrapped-keys-v6-6-d59e61bc0cb4@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cccdc13066204448af7f0fd550f34586@AcuMS.aculab.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 6.09.2024 8:07 PM, Bartosz Golaszewski wrote:
-> From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> 
-> Inline storage encryption may require deriving a software secret from
-> storage keys added to the kernel.
-> 
-> For raw keys, this can be directly done in the kernel as keys are not
-> encrypted in memory.
-> 
-> However, hardware wrapped keys can only be unwrapped by the HW wrapping
-> entity. In case of Qualcomm's wrapped key solution, this is done by the
-> Hardware Key Manager (HWKM) from Trustzone.
-> 
-> Add a new SCM call which provides a hook to the software secret crypto
-> profile API provided by the block layer.
-> 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/firmware/qcom/qcom_scm.c       | 65 ++++++++++++++++++++++++++++++++++
->  drivers/firmware/qcom/qcom_scm.h       |  1 +
->  include/linux/firmware/qcom/qcom_scm.h |  2 ++
->  3 files changed, 68 insertions(+)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index 10986cb11ec0..ad3f9e9ed35d 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -1252,6 +1252,71 @@ int qcom_scm_ice_set_key(u32 index, const u8 *key, u32 key_size,
->  }
->  EXPORT_SYMBOL_GPL(qcom_scm_ice_set_key);
->  
-> +/**
-> + * qcom_scm_derive_sw_secret() - Derive software secret from wrapped key
-> + * @wkey: the hardware wrapped key inaccessible to software
-> + * @wkey_size: size of the wrapped key
-> + * @sw_secret: the secret to be derived which is exactly the secret size
-> + * @sw_secret_size: size of the sw_secret
-> + *
-> + * Derive a software secret from a hardware wrapped key for software crypto
-> + * operations.
-> + * For wrapped keys, the key needs to be unwrapped, in order to derive a
-> + * software secret, which can be done in the hardware from a secure execution
-> + * environment.
-> + *
-> + * For more information on sw secret, please refer to "Hardware-wrapped keys"
-> + * section of Documentation/block/inline-encryption.rst.
-> + *
-> + * Return: 0 on success; -errno on failure.
-> + */
-> +int qcom_scm_derive_sw_secret(const u8 *wkey, size_t wkey_size,
-> +			      u8 *sw_secret, size_t sw_secret_size)
-> +{
-> +	struct qcom_scm_desc desc = {
-> +		.svc = QCOM_SCM_SVC_ES,
-> +		.cmd =  QCOM_SCM_ES_DERIVE_SW_SECRET,
-> +		.arginfo = QCOM_SCM_ARGS(4, QCOM_SCM_RW,
-> +					 QCOM_SCM_VAL, QCOM_SCM_RW,
-> +					 QCOM_SCM_VAL),
-> +		.args[1] = wkey_size,
-> +		.args[3] = sw_secret_size,
-> +		.owner = ARM_SMCCC_OWNER_SIP,
-> +	};
-> +
-> +	int ret;
-> +
-> +	void *wkey_buf __free(qcom_tzmem) = qcom_tzmem_alloc(__scm->mempool,
-> +							    wkey_size,
-> +							    GFP_KERNEL);
-> +	if (!wkey_buf)
-> +		return -ENOMEM;
-> +
-> +	void *secret_buf __free(qcom_tzmem) = qcom_tzmem_alloc(__scm->mempool,
-> +							       sw_secret_size,
-> +							       GFP_KERNEL);
-> +	if (!secret_buf) {
-> +		ret = -ENOMEM;
-> +		goto out_free_wrapped;
-> +	}
-> +
-> +	memcpy(wkey_buf, wkey, wkey_size);
-> +	desc.args[0] = qcom_tzmem_to_phys(wkey_buf);
-> +	desc.args[2] = qcom_tzmem_to_phys(secret_buf);
-> +
-> +	ret = qcom_scm_call(__scm->dev, &desc, NULL);
-> +	if (!ret)
-> +		memcpy(sw_secret, secret_buf, sw_secret_size);
-> +
-> +	memzero_explicit(secret_buf, sw_secret_size);
-> +
-> +out_free_wrapped:
+On Sun, 08 Sep 2024, David Laight wrote:
 
-Is there a reason to zero out the buffer that's being zero-allocated?
+> From: Scott Mayhew 
+> > Sent: 04 September 2024 15:48
+> > 
+> > On Tue, 03 Sep 2024, Li Lingfeng wrote:
+> > 
+> > > When we have a corrupted main.sqlite in /var/lib/nfs/nfsdcld/, it may
+> > > result in namelen being 0, which will cause memdup_user() to return
+> > > ZERO_SIZE_PTR.
+> > > When we access the name.data that has been assigned the value of
+> > > ZERO_SIZE_PTR in nfs4_client_to_reclaim(), null pointer dereference is
+> > > triggered.
+> > >
+> > > [ T1205] ==================================================================
+> > > [ T1205] BUG: KASAN: null-ptr-deref in nfs4_client_to_reclaim+0xe9/0x260
+> > > [ T1205] Read of size 1 at addr 0000000000000010 by task nfsdcld/1205
+> > > [ T1205]
+> > > [ T1205] CPU: 11 PID: 1205 Comm: nfsdcld Not tainted 5.10.0-00003-g2c1423731b8d #406
+> > > [ T1205] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20190727_073836-buildvm-
+> > ppc64le-16.ppc.fedoraproject.org-3.fc31 04/01/2014
+> > > [ T1205] Call Trace:
+> > > [ T1205]  dump_stack+0x9a/0xd0
+> > > [ T1205]  ? nfs4_client_to_reclaim+0xe9/0x260
+> > > [ T1205]  __kasan_report.cold+0x34/0x84
+> > > [ T1205]  ? nfs4_client_to_reclaim+0xe9/0x260
+> > > [ T1205]  kasan_report+0x3a/0x50
+> > > [ T1205]  nfs4_client_to_reclaim+0xe9/0x260
+> > > [ T1205]  ? nfsd4_release_lockowner+0x410/0x410
+> > > [ T1205]  cld_pipe_downcall+0x5ca/0x760
+> > > [ T1205]  ? nfsd4_cld_tracking_exit+0x1d0/0x1d0
+> > > [ T1205]  ? down_write_killable_nested+0x170/0x170
+> > > [ T1205]  ? avc_policy_seqno+0x28/0x40
+> > > [ T1205]  ? selinux_file_permission+0x1b4/0x1e0
+> > > [ T1205]  rpc_pipe_write+0x84/0xb0
+> > > [ T1205]  vfs_write+0x143/0x520
+> > > [ T1205]  ksys_write+0xc9/0x170
+> > > [ T1205]  ? __ia32_sys_read+0x50/0x50
+> > > [ T1205]  ? ktime_get_coarse_real_ts64+0xfe/0x110
+> > > [ T1205]  ? ktime_get_coarse_real_ts64+0xa2/0x110
+> > > [ T1205]  do_syscall_64+0x33/0x40
+> > > [ T1205]  entry_SYSCALL_64_after_hwframe+0x67/0xd1
+> > > [ T1205] RIP: 0033:0x7fdbdb761bc7
+> > > [ T1205] Code: 0f 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f 1e fa 64 8b 04 25 18
+> > 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 514
+> > > [ T1205] RSP: 002b:00007fff8c4b7248 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> > > [ T1205] RAX: ffffffffffffffda RBX: 000000000000042b RCX: 00007fdbdb761bc7
+> > > [ T1205] RDX: 000000000000042b RSI: 00007fff8c4b75f0 RDI: 0000000000000008
+> > > [ T1205] RBP: 00007fdbdb761bb0 R08: 0000000000000000 R09: 0000000000000001
+> > > [ T1205] R10: 0000000000000000 R11: 0000000000000246 R12: 000000000000042b
+> > > [ T1205] R13: 0000000000000008 R14: 00007fff8c4b75f0 R15: 0000000000000000
+> > > [ T1205] ==================================================================
+> > >
+> > > Fix it by checking namelen.
+> > >
+> > > Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> > > ---
+> > >  fs/nfsd/nfs4recover.c | 8 ++++++++
+> > >  1 file changed, 8 insertions(+)
+> > >
+> > > diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+> > > index 67d8673a9391..69a3a84e159e 100644
+> > > --- a/fs/nfsd/nfs4recover.c
+> > > +++ b/fs/nfsd/nfs4recover.c
+> > > @@ -809,6 +809,10 @@ __cld_pipe_inprogress_downcall(const struct cld_msg_v2 __user *cmsg,
+> > >  			ci = &cmsg->cm_u.cm_clntinfo;
+> > >  			if (get_user(namelen, &ci->cc_name.cn_len))
+> > >  				return -EFAULT;
+> > > +			if (!namelen) {
+> > > +				dprintk("%s: namelen should not be zero", __func__);
+> > > +				return -EINVAL;
+> > > +			}
+> > >  			name.data = memdup_user(&ci->cc_name.cn_id, namelen);
+> 
+> Don't you also want an upper bound sanity check?
+> (or is cn_len only 8 bit?)
 
-Konrad
+Yeah, actually it should probably be checking for namelen >
+NFS4_OPAQUE_LIMIT.
 
-> +	memzero_explicit(wkey_buf, wkey_size);
+-Scott
+> 
+> 	David
+> 
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
+> 
+
 
