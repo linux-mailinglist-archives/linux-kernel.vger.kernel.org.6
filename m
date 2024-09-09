@@ -1,123 +1,95 @@
-Return-Path: <linux-kernel+bounces-321271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0049716B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:24:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5802F9716B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C25C128197E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:24:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E24E1F23015
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C761B5EC8;
-	Mon,  9 Sep 2024 11:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498B91B5833;
+	Mon,  9 Sep 2024 11:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ItBs81DN"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="c+7K95Wn"
+Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B500B38DD4;
-	Mon,  9 Sep 2024 11:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2070F38DD4;
+	Mon,  9 Sep 2024 11:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725881009; cv=none; b=jq2AsCCMwzco0S/QyMRSYxJa0HM16sZgxQqaqdEJlixusYnRqR/yOyPJMwrmgJm3FyNERpq2FCx9HMqQ8pEpgAglavZB2eq5J32TxCW04h9YATl/YSydraeJ6bwDcIoz/gkgsV05rSUKxSxw89HeaOvmuOj8oylQ0JNUJ2Xgaqk=
+	t=1725880990; cv=none; b=Kv0Lss2OSXQxCaTEJvUIe16CSlqtgnzA+1X0L0JSsqG5Pn74MnIqVnaerI/TJ2Lg/WmTA4okGgNgDN+DsXCFc7PibmCSmNEk73atdfNs4Gp2ljNdry5MllZ+YyiqzxGvgeJGPu9Dydyx6TB1t0nJXKoM3S+Z5hKNqdPh0WtsbLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725881009; c=relaxed/simple;
-	bh=zLM7+cMuFs6iukBYw5n+MPt84i4IDbR/JlHH34jlnQU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=le3PCYPDurAyq9bdAuhvLZoxc8CIVHYwsRmNEQ/+5w4pL2SDjzIHyEss3PUTSYlvJF4pQ4F5VysyqBrFc6eFOwjSf7vTxjInppHG0BUW3FHBy03adzhW1st2PyBEJywvHxd2ZnJG5M+/mdokYnYdLUEzMDV9iTX947oE8S03Gi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ItBs81DN; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725881007; x=1757417007;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zLM7+cMuFs6iukBYw5n+MPt84i4IDbR/JlHH34jlnQU=;
-  b=ItBs81DN06x40gbP3RQuO1/nJTXRhc2OrgPr4Meo5d/qHJr9+Cbo06be
-   pDgr9b1CrnT3d3HeGT1WqFiC1RTH1fqsRMi8u2JL0fbNmkPpigrVDBX8S
-   CMdfMZ2tgxGo+mPk0WgSBOHHXvwrs2Xg6YTzksHiiRxByQR2ZIi92zVDh
-   L8BpW/mL4867y+xFO7barfjs/y7AzpKD2KjD3NA4+EH69T9s8wBxFJCIB
-   zjwFidVi9+VtW2kzkjRlD7WUGcFxZS9xsW5UpKrDXQXCxdcTA55MEsyPm
-   pN0lRGUqHa112lky1an97ppUA5RaZ9BVMiNh06QvBSji54rpa1uNJYc6s
-   A==;
-X-CSE-ConnectionGUID: ROYUbOWeSBCl9l3tx7dRMQ==
-X-CSE-MsgGUID: nBNhi4ddSa20nViLHtbeSQ==
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="asc'?scan'208";a="198945806"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 04:23:26 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 9 Sep 2024 04:22:56 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Mon, 9 Sep 2024 04:22:54 -0700
-Date: Mon, 9 Sep 2024 12:22:22 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-CC: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Jarkko Nikula
-	<jarkko.nikula@linux.intel.com>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Mika Westerberg
-	<mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>,
-	<linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 7/7] i2c: designware: Group all DesignWare drivers
- under a single option
-Message-ID: <20240909-jugular-cucumber-b7d9bc614f74@wendy>
-References: <20240903142506.3444628-1-heikki.krogerus@linux.intel.com>
- <20240903142506.3444628-8-heikki.krogerus@linux.intel.com>
- <o4bks5pxn5olnvobln3z2axi6jx57vz5pq2kazyzxemptbp6fb@p7qsppr7ks55>
+	s=arc-20240116; t=1725880990; c=relaxed/simple;
+	bh=7McYHbJ1rujuzLwEwekgMXJStMtqlaSw8UOc0xF6C4o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MdpD9xA+hYg/AAnCKT59fAOLGZiUYG62r8B+PR/8ygGBvbBXG/MmQEaFqjgXtGqnECngg+zHbaooNI1AtYoF3MQiyqmICaavR+1hEAgafQjB81ijeKBX8coXATZOdSB3iaZQWnwXkMKzWpIGODMuUOEBoSrQZP5l4OEsLtZM+9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=c+7K95Wn; arc=none smtp.client-ip=45.145.95.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
+	t=1725880985; bh=7McYHbJ1rujuzLwEwekgMXJStMtqlaSw8UOc0xF6C4o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=c+7K95WniHvTgDa4mqOmd1ouRCuwKYsziVzgWeqcKRDH89wt2MA0GfWMzESFRjcD1
+	 U9oXuO4rvxNHtosHQU95S4K+tuMKLacOUEspi4hkLixKcROqxSfcvgqptSVQaL8HRI
+	 3Uu6hHbZZJGrJH8N0AIRPe4jpTwK0HLJLIbDXDIXh1XYpMzU2UNeaE/OSivamIV4Tn
+	 2zKJ4LHhvwd5bhOScB4bdr4iA3JOWXH9sN7PsuLpm+WWFcEHZ08YHBB6/ikfIDu+/D
+	 b1NRc/mZLEPL9h47tMGPoEAGg/GXwKU+7+h/tsEKXONJL7GKZStoTxaXhc3pJi6NqT
+	 vtBJ+IJBzuDKw==
+To: Jeongjun Park <aha310510@gmail.com>, kvalo@kernel.org
+Cc: Sujith.Manoharan@atheros.com, senthilkumar@atheros.com,
+ vasanth@atheros.com, linville@tuxdriver.com,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, Jeongjun
+ Park <aha310510@gmail.com>
+Subject: Re: [PATCH v2] wifi: ath9k: add range check for conn_rsp_epid in
+ htc_connect_service()
+In-Reply-To: <20240909103855.68006-1-aha310510@gmail.com>
+References: <20240909103855.68006-1-aha310510@gmail.com>
+Date: Mon, 09 Sep 2024 13:23:04 +0200
+X-Clacks-Overhead: GNU Terry Pratchett
+Message-ID: <87v7z5oyuf.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uxjVq46O5l/YZo1k"
-Content-Disposition: inline
-In-Reply-To: <o4bks5pxn5olnvobln3z2axi6jx57vz5pq2kazyzxemptbp6fb@p7qsppr7ks55>
-
---uxjVq46O5l/YZo1k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 05, 2024 at 10:46:02PM +0200, Andi Shyti wrote:
-> Hi Heikki,
->=20
-> On Tue, Sep 03, 2024 at 05:25:06PM GMT, Heikki Krogerus wrote:
-> > There are quite a few drivers and options for the DesignWare
-> > I2C adapter in the Kconfig. Grouping all of them under the
-> > I2C_DESIGNWARE_CORE. That makes the menuconfig a bit more
-> > easier to understand.
-> >=20
-> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
->=20
-> Thanks for your patch, I can take this only after the other
-> patches have been taken in.
+Jeongjun Park <aha310510@gmail.com> writes:
 
-I assume then that you're expecting the prereqs to go through the
-various arch trees? Is this not trivial enough that you could chuck it
-on a dedicated branch in your tree and if, for some reason, there's a
-non-trivial conflict the affected could pull it in?
+> I found the following bug in my fuzzer:
+>
+>   UBSAN: array-index-out-of-bounds in drivers/net/wireless/ath/ath9k/htc_=
+hst.c:26:51
+>   index 255 is out of range for type 'htc_endpoint [22]'
+>   CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.11.0-rc6-dirty #14
+>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04=
+/01/2014
+>   Workqueue: events request_firmware_work_func
+>   Call Trace:
+>    <TASK>
+>    dump_stack_lvl+0x180/0x1b0
+>    __ubsan_handle_out_of_bounds+0xd4/0x130
+>    htc_issue_send.constprop.0+0x20c/0x230
+>    ? _raw_spin_unlock_irqrestore+0x3c/0x70
+>    ath9k_wmi_cmd+0x41d/0x610
+>    ? mark_held_locks+0x9f/0xe0
+>    ...
+>
+> Since this bug has been confirmed to be caused by insufficient verificati=
+on=20
+> of conn_rsp_epid, I think it would be appropriate to add a range check fo=
+r=20
+> conn_rsp_epid to htc_connect_service() to prevent the bug from occurring.
+>
+> Fixes: fb9987d0f748 ("ath9k_htc: Support for AR9271 chipset.")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 
---uxjVq46O5l/YZo1k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZt7abgAKCRB4tDGHoIJi
-0kbuAP9R+mwXyTEYXLHhGDAg1NcN7IBZ+2d3j9RPRVsfNy14jAD/fW8juYkVOF3i
-TX3M1RBw8CRw8Ws7BOScozP9bKauNAk=
-=XHNm
------END PGP SIGNATURE-----
-
---uxjVq46O5l/YZo1k--
+Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
 
