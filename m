@@ -1,151 +1,121 @@
-Return-Path: <linux-kernel+bounces-321825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B0EA971FFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:07:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BD6972002
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D73721F2452A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:07:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45574B229DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460031741D1;
-	Mon,  9 Sep 2024 17:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100EF1531E6;
+	Mon,  9 Sep 2024 17:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JhKlOU9D"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="etOEbhiF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4DE17332A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EC116DED5
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725901620; cv=none; b=JKJqurNIqah+3I6/UEKiazgN7tgzcVMCI03O9Z+L/RC98rntwm/RmuFphZxDL1nn8IM5Mu5Jgg4hcL+q1Gz5s5mZwq9TqIdN+h6p0ddA6LmLOnJ4rNpDbAoTGjhGrQXmgZkWIER/qE9I6qIDgZ3Ch8rm+Tk+GfZGje+SThMC0TQ=
+	t=1725901680; cv=none; b=bbmEzay99pDKT75R8/MW48dnBla7MCY+Fs4jwPm/ezWGrRgGwnI4boKi7KI/NHfIRN9TuWt8JgihtUPLyr0l9bLm9MPgYR/d5fpblhEvPF9UmiqrGtIlv+FqRfTWeeBnydo4l2cqYdhQMuT/ecrH6mWahLn7me5faRE73EgYN5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725901620; c=relaxed/simple;
-	bh=YvuTEo3gCuN+ih3Ot/4XzfbfkK6jZG1cQi1TwckdPJk=;
+	s=arc-20240116; t=1725901680; c=relaxed/simple;
+	bh=GNkqEFi+I5tZLNi7WyurAexVg1eNtWfNKKjfgTnWPVg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BPYAKMChOGFd10qzPwKaGOTym/wB07mUe3XNahRWbnJtAst4I9TXjQ5O6Fp9uk7Ncndd3J0ZLU00V5mlqirr+mOlKFOv1vPssx9ibq8w1Uq2G4DzzkBy6v6KzvIqkJv29TSGslhxOrW/7hMYjCryaeUbWaaUNIz7/8lR2pWGM84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JhKlOU9D; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c17ef59b-330f-404d-ab03-0c45447305b0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725901616;
+	 In-Reply-To:Content-Type; b=T2a3qZjjm5iOdjjS4EmXrOcLgOjwQK+c555q+l30SmgCqc0gSuhzuAvDlbWshJG9AU7Bj7sjptpIHc+faBXHSftDicaSXWOref1aF3ooJjPhfwe7yRcAPgbpOGPln55PHSgnWQDAe99iSBOZN0OFFoXnZPYxszmWvQ6m0kW2TZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=etOEbhiF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725901677;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dQw1oeHSCvpcH8bA67v30RdZskBj7xtZCGm6aq02Fgc=;
-	b=JhKlOU9DZD19VPD/qu8EGPv2Ho3jMI+5pmfMVbkSPwSOBChpu/1XXURKcNUIeCRLxiKRpN
-	QYxdfllaQ5Adr3+5GQAL3WOJYECof8CrbHSXuF4T7T2CirOhelz5n5jvUPS7FE4iWnJ0rE
-	oB6MR0PzzcFvL4+Z7bFHcY9DWnND1/8=
-Date: Mon, 9 Sep 2024 13:06:52 -0400
+	bh=VRF3dxirgHcKfvRlk9CHgM9zM7W8NPKg7f5/zk/dLNA=;
+	b=etOEbhiFAvF6fPZQCBxZGjgFmV570AXy3RR6IPF0KwxvO//r+4TiTfRS7hEkkuKnKyTl9x
+	BdtcvaAy6vy85TERNDxFqJHtqzZHJxyPHHa3DfDddifT6PmVm4UCAPohx2iyuG5OMMN5Kn
+	T+xAcgnT8+XTq+waJs2L+bQ8j1r8U0Q=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-193-SZjt_tFaM1aIKD8SJ-_gpA-1; Mon,
+ 09 Sep 2024 13:07:53 -0400
+X-MC-Unique: SZjt_tFaM1aIKD8SJ-_gpA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 68AB11953950;
+	Mon,  9 Sep 2024 17:07:49 +0000 (UTC)
+Received: from [10.2.16.126] (unknown [10.2.16.126])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1F8D71956086;
+	Mon,  9 Sep 2024 17:07:45 +0000 (UTC)
+Message-ID: <953607c5-8ba6-4438-bee2-17593ce5be54@redhat.com>
+Date: Mon, 9 Sep 2024 13:07:45 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net] net: dpaa: Pad packets to ETH_ZLEN
-To: Eric Dumazet <edumazet@google.com>
-Cc: Madalin Bucur <madalin.bucur@nxp.com>, netdev@vger.kernel.org,
- Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- linux-kernel@vger.kernel.org, "David S . Miller" <davem@davemloft.net>
-References: <20240909160604.1148178-1-sean.anderson@linux.dev>
- <CANn89i+UHJgx5cp6M=6PidC0rdPdr4hnsDaQ=7srijR3ArM1jw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] cgroup/cpuset: Expose cpuset filesystem with cpuset
+ v1 only
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Chen Ridong <chenridong@huawei.com>
+References: <20240909163223.3693529-1-mkoutny@suse.com>
+ <20240909163223.3693529-3-mkoutny@suse.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <CANn89i+UHJgx5cp6M=6PidC0rdPdr4hnsDaQ=7srijR3ArM1jw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240909163223.3693529-3-mkoutny@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 9/9/24 12:46, Eric Dumazet wrote:
-> On Mon, Sep 9, 2024 at 6:06 PM Sean Anderson <sean.anderson@linux.dev> wrote:
->>
->> When sending packets under 60 bytes, up to three bytes of the buffer following
->> the data may be leaked. Avoid this by extending all packets to ETH_ZLEN,
->> ensuring nothing is leaked in the padding. This bug can be reproduced by
->> running
->>
->>         $ ping -s 11 destination
->>
->> Fixes: 9ad1a3749333 ("dpaa_eth: add support for DPAA Ethernet")
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->> ---
->>
->>  drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
->> index cfe6b57b1da0..e4e8ee8b7356 100644
->> --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
->> +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
->> @@ -2322,6 +2322,12 @@ dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
->>         }
->>  #endif
->>
->> +       /* Packet data is always read as 32-bit words, so zero out any part of
->> +        * the skb which might be sent if we have to pad the packet
->> +        */
->> +       if (__skb_put_padto(skb, ETH_ZLEN, false))
->> +               goto enomem;
->> +
-> 
-> This call might linearize the packet.
-> 
-> @nonlinear variable might be wrong after this point.
-> 
->>         if (nonlinear) {
->>                 /* Just create a S/G fd based on the skb */
->>                 err = skb_to_sg_fd(priv, skb, &fd);
->> --
->> 2.35.1.1320.gc452695387.dirty
->>
-> 
-> Perhaps this instead ?
-> 
-> diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> index cfe6b57b1da0e45613ac1bbf32ddd6ace329f4fd..5763d2f1bf8dd31b80fda0681361514dad1dc307
-> 100644
-> --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> @@ -2272,12 +2272,12 @@ static netdev_tx_t
->  dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
->  {
->         const int queue_mapping = skb_get_queue_mapping(skb);
-> -       bool nonlinear = skb_is_nonlinear(skb);
->         struct rtnl_link_stats64 *percpu_stats;
->         struct dpaa_percpu_priv *percpu_priv;
->         struct netdev_queue *txq;
->         struct dpaa_priv *priv;
->         struct qm_fd fd;
-> +       bool nonlinear;
->         int offset = 0;
->         int err = 0;
-> 
-> @@ -2287,6 +2287,10 @@ dpaa_start_xmit(struct sk_buff *skb, struct
-> net_device *net_dev)
-> 
->         qm_fd_clear_fd(&fd);
-> 
-> +       if (__skb_put_padto(skb, ETH_ZLEN, false))
-> +               goto enomem;
-> +
-> +       nonlinear = skb_is_nonlinear(skb);
->         if (!nonlinear) {
->                 /* We're going to store the skb backpointer at the beginning
->                  * of the data buffer, so we need a privately owned skb
+On 9/9/24 12:32, Michal Koutný wrote:
+> The cpuset filesystem is a legacy interface to cpuset controller with
+> (pre-)v1 features. It makes little sense to co-mount it on systems
+> without cpuset v1, so do no build it when cpuset v1 is not built
+> neither.
+>
+> Signed-off-by: Michal Koutný <mkoutny@suse.com>
+> ---
+>   kernel/cgroup/cgroup.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> index c72e18ffbfd82..90e50d6d3cf39 100644
+> --- a/kernel/cgroup/cgroup.c
+> +++ b/kernel/cgroup/cgroup.c
+> @@ -2331,7 +2331,7 @@ static struct file_system_type cgroup2_fs_type = {
+>   	.fs_flags		= FS_USERNS_MOUNT,
+>   };
+>   
+> -#ifdef CONFIG_CPUSETS
+> +#ifdef CONFIG_CPUSETS_V1
+>   static const struct fs_context_operations cpuset_fs_context_ops = {
+>   	.get_tree	= cgroup1_get_tree,
+>   	.free		= cgroup_fs_context_free,
+> @@ -6236,7 +6236,7 @@ int __init cgroup_init(void)
+>   	WARN_ON(register_filesystem(&cgroup_fs_type));
+>   	WARN_ON(register_filesystem(&cgroup2_fs_type));
+>   	WARN_ON(!proc_create_single("cgroups", 0, NULL, proc_cgroupstats_show));
+> -#ifdef CONFIG_CPUSETS
+> +#ifdef CONFIG_CPUSETS_V1
+>   	WARN_ON(register_filesystem(&cpuset_fs_type));
+>   #endif
+>   
+Reviewed-by: Waiman Long <longman@redhat.com>
 
-Thanks for the suggestion; I was having a hard time figuring out where
-to call this.
-
-Do you have any hints for how to test this for correctness? I'm not sure
-how to generate a non-linear packet under 60 bytes.
-
---Sean
 
