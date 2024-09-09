@@ -1,202 +1,76 @@
-Return-Path: <linux-kernel+bounces-320788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5153497102E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B68F97102C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E70A61F2296B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:49:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44B7E1F228E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D071B0111;
-	Mon,  9 Sep 2024 07:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6A71B252A;
+	Mon,  9 Sep 2024 07:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Zm/zCQIR"
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tLmmBrCA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1505D1B012A;
-	Mon,  9 Sep 2024 07:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D3F1B29AA;
+	Mon,  9 Sep 2024 07:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725868059; cv=none; b=AJup85D+mHoyTcaWYExtelJl4t5jPD8QPjaLf1FiYzKSXm8CvsbwsjedLN/8FEQMXbzFvTi7HZsddMO8QKkeTb+KPcTBtfNPhO08Y2AuvWPPZKQl3T7rMq03KgTAtbtyBiERXPfLBkf4JTASzq442wnL50gmm+d/Q7WoKW2k+3E=
+	t=1725868043; cv=none; b=Kpmf5HnKrACDjNYTt3T0Upfn5Rx+LU2h46JzcIHCic3Kq1KmFMLqpzfgG6eY6c/zhFneM/KfCjRCykUcJaNzSD9HELHjgA831QqgfxWnYePUdhSYFA+yk6RpJBuSfxTP6IvHqwLmaQE+7iqggH/9NvjyE2hn0g486NxOA1DqYbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725868059; c=relaxed/simple;
-	bh=gHoIWe4DshAryM3sWTVzuIt+3nqqVmIKyTTPUBOz6MI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GgtcPaQnxFUmL7hi28qpb9ZEmVXeG/ZUDsjfXXeh+VsF2JruoiN0BiGgH6c9bXFKaz2VDJ14uoDpsZGgaogUnlT1gBupWeeNYyoGniYnnXW37QUQqOlYX2jpLA/Bn3B2wYLZcTQKgsQUHqmstXxG3iyU6GynymgaFvMbozm5xsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Zm/zCQIR; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1725868043;
-	bh=5FdF3iaUoY2lzZR+9NIbIdVYtZtH02F85kfv8IfYqbE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Zm/zCQIRRsqDTHRyD0xI2bKDYLjr4bLTLYfVWDPUgcZRuwhg7llqiEsv9pu9w1lE4
-	 B26P7gqCaUBtQplfMzHwq+OXNmEntiaY8fhy4ylV2u/0akjbGwK8Hdq524ptGUApux
-	 UUaF+FAqKbCSb7JSezkCfNzyg1nYnv/AUA5UiBSA=
-X-QQ-mid: bizesmtpsz13t1725868033tg17wn
-X-QQ-Originating-IP: TzYnNEJLZSXkcsiHg6P6agGU+dL18pXPSJ1Y7rEcoMk=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 09 Sep 2024 15:47:09 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 18407148698930502739
-From: WangYuli <wangyuli@uniontech.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	sashal@kernel.org,
-	william.qiu@starfivetech.com,
-	emil.renner.berthing@canonical.com,
-	conor.dooley@microchip.com,
-	wangyuli@uniontech.com,
-	xingyu.wu@starfivetech.com,
-	walker.chen@starfivetech.com,
-	robh@kernel.org,
-	hal.feng@starfivetech.com
-Cc: kernel@esmil.dk,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	richardcochran@gmail.com,
-	netdev@vger.kernel.org
-Subject: [PATCH 6.6 4/4] riscv: dts: starfive: Add JH7110 PWM-DAC support
-Date: Mon,  9 Sep 2024 15:46:30 +0800
-Message-ID: <37CBC770FBB00E54+20240909074645.1161554-4-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.4
-In-Reply-To: <20240909074645.1161554-1-wangyuli@uniontech.com>
-References: <20240909074645.1161554-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1725868043; c=relaxed/simple;
+	bh=52N3f9o56u1e7uBI7QkITFYHxjCsOHRZkUjtRy+H2i4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lfPEYyU5Za3jFNOlgDqKwAQbzscDiqv1mnm/x6wY+5QKBmGDDNxWShhRKuDbXAWfOe37Ycnadl3LUM4tO0jVNx7ewEiX2ogkaBAY9hcEyDNyOkSTEk3qdMVlUhdvVEhfh6fOKdxHi6rCw7efLM2sam6sWugmicjUTiz5wDpQG0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tLmmBrCA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF63C4CECA;
+	Mon,  9 Sep 2024 07:47:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725868043;
+	bh=52N3f9o56u1e7uBI7QkITFYHxjCsOHRZkUjtRy+H2i4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tLmmBrCA/BLVhPsrIyHp3316xvRbnkGobPystKZyIIJP7MZISFAv+h3hBqr2xW/ra
+	 TqBMuX5X4ielqiIrbLY9Edgfjq0nyqISOgEMIJaW/mEEnkr7aYKROYunB0pCJL9WOA
+	 xoDLw3c5pwuw3PIQnR+sdIjgZzX/GQeJBGHfiMAgefdAmQZBzwSMPps5sy7UvpZM6D
+	 0crB4H4A42/QkjrYdTtGDnuvGoYSs1ZAOOsXD5sB8sZWc0T9k5hdLlQcssG/rq37Zz
+	 06wp65LCBedm8Wzw3hMYmqXfGGc9Aj+j4bHvRQudA3SUteVZCLJxl9zBx2VWoJi2cG
+	 nao3xc/G66Jyg==
+Date: Mon, 9 Sep 2024 09:47:19 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ahci: Marvell controllers prefer DMA for ATAPI
+Message-ID: <Zt6oB7r6k9k2BFvf@ryzen.lan>
+References: <20240908094604.433035-1-chenhuacai@loongson.cn>
+ <Zt6l6DVeDGzb5W7N@ryzen.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt6l6DVeDGzb5W7N@ryzen.lan>
 
-From: Hal Feng <hal.feng@starfivetech.com>
+On Mon, Sep 09, 2024 at 09:38:16AM +0200, Niklas Cassel wrote:
+>
+> Device specific quirks are defined in __ata_dev_quirks in libata-core.c.
 
-Add PWM-DAC support for StarFive JH7110 SoC.
+Side note: the name "__ata_dev_quirks" is so far only queued up in:
+https://git.kernel.org/pub/scm/linux/kernel/git/libata/linux.git/log/?h=for-6.12
 
-Reviewed-by: Walker Chen <walker.chen@starfivetech.com>
-Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- .../jh7110-starfive-visionfive-2.dtsi         | 49 +++++++++++++++++++
- arch/riscv/boot/dts/starfive/jh7110.dtsi      | 13 +++++
- 2 files changed, 62 insertions(+)
+In older versions (and in mainline) it is still called "ata_device_blacklist".
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-index caa59b9b2f19..0e077f2f02d1 100644
---- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-@@ -40,6 +40,33 @@ gpio-restart {
- 		gpios = <&sysgpio 35 GPIO_ACTIVE_HIGH>;
- 		priority = <224>;
- 	};
-+
-+	pwmdac_codec: pwmdac-codec {
-+		compatible = "linux,spdif-dit";
-+		#sound-dai-cells = <0>;
-+	};
-+
-+	sound-pwmdac {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "StarFive-PWMDAC-Sound-Card";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		simple-audio-card,dai-link@0 {
-+			reg = <0>;
-+			format = "left_j";
-+			bitclock-master = <&sndcpu0>;
-+			frame-master = <&sndcpu0>;
-+
-+			sndcpu0: cpu {
-+				sound-dai = <&pwmdac>;
-+			};
-+
-+			codec {
-+				sound-dai = <&pwmdac_codec>;
-+			};
-+		};
-+	};
- };
- 
- &dvp_clk {
-@@ -253,6 +280,12 @@ &mmc1 {
- 	status = "okay";
- };
- 
-+&pwmdac {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwmdac_pins>;
-+	status = "okay";
-+};
-+
- &qspi {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
-@@ -463,6 +496,22 @@ GPOEN_SYS_SDIO1_DATA3,
- 		};
- 	};
- 
-+	pwmdac_pins: pwmdac-0 {
-+		pwmdac-pins {
-+			pinmux = <GPIOMUX(33, GPOUT_SYS_PWMDAC_LEFT,
-+					      GPOEN_ENABLE,
-+					      GPI_NONE)>,
-+				 <GPIOMUX(34, GPOUT_SYS_PWMDAC_RIGHT,
-+					      GPOEN_ENABLE,
-+					      GPI_NONE)>;
-+			bias-disable;
-+			drive-strength = <2>;
-+			input-disable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+	};
-+
- 	spi0_pins: spi0-0 {
- 		mosi-pins {
- 			pinmux = <GPIOMUX(52, GPOUT_SYS_SPI0_TXD,
-diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-index 621b68c02ea8..9f31dec57c0d 100644
---- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-@@ -536,6 +536,19 @@ i2srx: i2s@100e0000 {
- 			status = "disabled";
- 		};
- 
-+		pwmdac: pwmdac@100b0000 {
-+			compatible = "starfive,jh7110-pwmdac";
-+			reg = <0x0 0x100b0000 0x0 0x1000>;
-+			clocks = <&syscrg JH7110_SYSCLK_PWMDAC_APB>,
-+				 <&syscrg JH7110_SYSCLK_PWMDAC_CORE>;
-+			clock-names = "apb", "core";
-+			resets = <&syscrg JH7110_SYSRST_PWMDAC_APB>;
-+			dmas = <&dma 22>;
-+			dma-names = "tx";
-+			#sound-dai-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		usb0: usb@10100000 {
- 			compatible = "starfive,jh7110-usb";
- 			ranges = <0x0 0x0 0x10100000 0x100000>;
--- 
-2.43.4
 
+Kind regards,
+Niklas
 
