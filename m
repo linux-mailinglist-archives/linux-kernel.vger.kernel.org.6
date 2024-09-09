@@ -1,311 +1,223 @@
-Return-Path: <linux-kernel+bounces-320462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FDB970AB2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:03:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87ADD970AB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B260DB212E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 00:03:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFDF6B21394
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 00:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21992C9A;
-	Mon,  9 Sep 2024 00:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=NETORG5796793.onmicrosoft.com header.i=@NETORG5796793.onmicrosoft.com header.b="YGtverik"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2131.outbound.protection.outlook.com [40.107.94.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31526AAD;
+	Mon,  9 Sep 2024 00:10:27 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155BEEC5;
-	Mon,  9 Sep 2024 00:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.131
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725840181; cv=fail; b=ACUiLUJAd3rXCVNRVGVTZSXZ3ilt1fHgsU+sePZ6xrJhQyHS4fyqu3lM/NyVNkVtpYH4CWNiDVdyRxI5wYqc7kjHHOy3qglrNEl58QEJz+LgjUT6jwmq6jzBWyMPoQalB02PiUKTNl6LnLuo05HZdn2DyrAduBgO+9c3fb4t71Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725840181; c=relaxed/simple;
-	bh=BTAB2smLBClBddQKGmYsS31/NQEmqhXlH7zB6iVgcl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gu72CRxaH8bY71mILwliaSTiuR5sIf+1VKsK/QDydNfjswsB8BQ+oUYH0czelTrjL2X7c7BSD0Kh3crwAililTwSvrGffARkEobylQB2JHU3feOhJ00s6E5muYQrf/rp0rz60X+T85mygSjChMGEtwSjuFjXJu2Wam6DHvSGMDM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=labundy.com; spf=pass smtp.mailfrom=labundy.com; dkim=pass (1024-bit key) header.d=NETORG5796793.onmicrosoft.com header.i=@NETORG5796793.onmicrosoft.com header.b=YGtverik; arc=fail smtp.client-ip=40.107.94.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=labundy.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=labundy.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CXfCjQ/4n5TxFp2DvR6Enkb9wRaCaQ6Wo2+ZEPsx2KlQU1u36ujEEYB5JAgFphv2dN4+pFQgh37XdVOesKQ0HIaQ5IKIyWiLVddXaSiTqAwvhh3Wu+Oa5s0tZtEc9KDjFz6Fup6wDSBBFvEoWVqf5XRhOuVMZe3OyfZXexhnpuYSIahkQKOUH78MUKk4kxpbqdjE4PJP12AdAhIxHN6IolHAaczc91OBoI8tXheY4hetdZQRkeV9M1vexhrIZpapiYJOOy9sOYUuMrlYOlQrg78Z0z6H/HSZILplcuFtJVOI2cr15jKQ5WBImcxTxtwijEkpvNQL5C4iGE2ezGLovA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PmJfS/nCAqLH5sIUVC0f3K0g7haTuo8VsILAT5Por2U=;
- b=SGt5tkfISdi2iKyYAnz09CcUwS2rivMj5KrjTX4uDpHOX+nvzpeZDcLWWDMnHJwa1rvojAWIvSPAAjpeVbAUdD+0jaVAbyCh/mHXFws+L7D7FgDeFZf0lQFT7r/4HCLlIzJopj0p0Vpr46qikTgoicpf8vrqcN2vnslA/qlX+0ujI+KMvrFBX6Y6u5WMCM+yhVjg2+TYMzaPM0BaT35o7m2zr8gTKWOQbEpxjTjMzo+onI2nHHnbP3rGDx8NIe97r4MqRcZWnTiz0vv0BpmVA0MOciEffNwOaEanE29MIRMwtGbuDvqy4eS8W+cIzC5abKPg0qK/9br/VH64nzWICQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=labundy.com; dmarc=pass action=none header.from=labundy.com;
- dkim=pass header.d=labundy.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=NETORG5796793.onmicrosoft.com; s=selector1-NETORG5796793-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PmJfS/nCAqLH5sIUVC0f3K0g7haTuo8VsILAT5Por2U=;
- b=YGtverikHTcZbOz9WHdET7WzZv48iESe/om6lQo8XTBRNwxA2p1afGloKKV7s7rcpAuDHLac7/Em0UvzyQcKdSQg4eb38r5ePTLyt8ospyxNDzcuT04i6+yVH/D+fiXe1bqN15cQieu4kbXTREYjdyXsDs6SaJKOPg9qtzPmgkk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=labundy.com;
-Received: from BN7PR08MB3937.namprd08.prod.outlook.com (2603:10b6:406:8f::25)
- by PH7PR08MB8505.namprd08.prod.outlook.com (2603:10b6:510:244::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Mon, 9 Sep
- 2024 00:02:55 +0000
-Received: from BN7PR08MB3937.namprd08.prod.outlook.com
- ([fe80::b729:b21d:93b4:504d]) by BN7PR08MB3937.namprd08.prod.outlook.com
- ([fe80::b729:b21d:93b4:504d%5]) with mapi id 15.20.7918.024; Mon, 9 Sep 2024
- 00:02:49 +0000
-Date: Sun, 8 Sep 2024 19:02:41 -0500
-From: Jeff LaBundy <jeff@labundy.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Ville Syrjala <syrjala@sci.fi>,
-	Support Opensource <support.opensource@diasemi.com>,
-	Eddie James <eajames@linux.ibm.com>,
-	Andrey Moiseev <o2g.org.ru@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 14/22] Input: iqs626a - use cleanup facility for fwnodes
-Message-ID: <Zt47Ic059YbOSbGy@nixie71>
-References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
- <20240904044814.1048062-1-dmitry.torokhov@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904044814.1048062-1-dmitry.torokhov@gmail.com>
-X-ClientProxiedBy: SA1PR02CA0009.namprd02.prod.outlook.com
- (2603:10b6:806:2cf::14) To BN7PR08MB3937.namprd08.prod.outlook.com
- (2603:10b6:406:8f::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C650F28EF
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 00:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725840627; cv=none; b=OZm2X6MsMSIF/yHAAv6vKFgbDNg0LBBHGz9N7XejkWwNCS0EPx9439flVDy/wbuB/CDkYHakZFOiqWGhZIsitW4NzJoKfLXyAJAgDLjJsSJLQD9RS1WPqCS/ooZDYfIpw9SgWh8+1+2kCdjfK57087z6OJk0a79S96dqQfgYdIE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725840627; c=relaxed/simple;
+	bh=gdXA8mdv9/Wt2N4JT/taEM5Rjv7oKk9dwwaTJGj93h4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cI1CKb68VFPEOzHfnpJ2JxAK8YRp2ARwyJ6wuYE83zjOOBafa/KN7dTAlMyPE1cjAX01RxjDtrhUredYmxRipWnMUb4B6gSviiCTMd/Mjz/ZmITGIpPYjxwBwkcc3JGYA12QNes5ALdvFzxUnvOx6cECKeX7qZII/1mQM/Nvba4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-39d2c44422eso60135585ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 17:10:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725840625; x=1726445425;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8YMGwHLqSidkmjKDWpogpRqKoOdeBh1Yx5Vlies0YHU=;
+        b=Pwg9tg1jC4Uc2FLOBt1OuQe9EmN0spC7uZwB3EL8yk289r51X1Iuw+e22Koy+G3+DL
+         iXilMe8gSvrZm4zHe/SZoSdt2744dwvEVwI241g6dbYt7Zesoi7ygJ4Pdqf5wGzxYVur
+         ELqJRIzR0mfg9XDnxTRX0fIpaek8KzWnzBMzQJf31ks5OyAScqcSAnIZgV4bepiEppSi
+         7SPVOx8XR1vtQR3T5U74JzmLhDQn2OVeRoM3kmtXCYn37ZQJ1L7yXsaCuEP+ytBoCMF0
+         50Vao8wriQCKV7x3qWD4GeM8My3p1FuvA2PEUgGGFAtAQuz61ZfX2lWjzPDiWc3GLDcK
+         q/0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVhCPJGDe1W9x/AXyIPoz+Zbta9DuiyYif7OKK/Bw4xk422QCjN+zenHk27rn3JA89lA8t+mLepp1oa1gE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmafFJ1XuSI1IWKCpp3ydPfz6jGsDlKCO7xc6g2dYbZlaBJuUg
+	FDiX7Ersjf0OVNuU600iVMjiNVzUFmSZZ39EBW9ZriKCmD04r0uFH5oBTxhkn2NmEwfUdXyL5wk
+	NZ44sK4xfakK/ythp7NzPoc5CNidEuuI/aa8cQ1h9OnUEVzOd9K7Fgqc=
+X-Google-Smtp-Source: AGHT+IH00w4Kg+tsfr8fLDMpUFza9Z96V2kwo2YniuJyIWsjrr7eS/chyIEuZyk1h1BmK7ZkMmRNdbeQ381GjimXyHDX7Q2uI7GU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN7PR08MB3937:EE_|PH7PR08MB8505:EE_
-X-MS-Office365-Filtering-Correlation-Id: 138060ca-1950-4b40-92d5-08dcd062bda8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?o1N8XnE+nYI2kMbdZJbFVhIHSLfuLFus6NusobD0/cYuDEGmxBarwyjoLUut?=
- =?us-ascii?Q?vnwuyatwsZaefSv2SraRJtqwHsZNmjTE2PxSGgVs/j2aOTk8QihLpiQahM0r?=
- =?us-ascii?Q?SbUxnMYRp/POWX43oPWZoRpLrUJiJvALnzuIVX8uor8fdh7mF54Zuil+J/KU?=
- =?us-ascii?Q?Ql5XBF9WcdMeHTmFdC2/cZjQq8528hGGVqCRdqry5l/fVI3dCB6Tv+QS/gGJ?=
- =?us-ascii?Q?wcfeAqXcnkZ1aSHGcZdHYsxCF8UI7gXVhbgtxFQEytiHcrdKQEcOBKKOE8hn?=
- =?us-ascii?Q?LfD7tClfWKIzKyAeKQKZeqQ1lSeaexBw63P3505tBEK1aZAoBKa3yANYp5+f?=
- =?us-ascii?Q?tYRkd/GhS3LRDAgzQ/iWIW4v7WYriE1ExY00TUeGGpSW7Q0T92S8O5jBnQcs?=
- =?us-ascii?Q?kTO7t9W/X6bDs7owJ8CwzSjES8/0FMEfnl+bw8IchZBps4SwEZQSqtIhW2SX?=
- =?us-ascii?Q?an7on2uMSE/vCAFytVw+c3wUEu3N+Dg5M8o8agPKtCJkcFdzlTOgWWxTNQDD?=
- =?us-ascii?Q?tuQ7SzH256bzXUolGys1XD5gnZRhfTACwVdhswqyhbo9iF/QoP2uHJ0E7Sgg?=
- =?us-ascii?Q?1Fli5jWZIofqslwERq2mD6VJXk+BoQsinWZ333WggNxVB0SBzMlrH7N8GrRS?=
- =?us-ascii?Q?LnPz3bx53xl0F00oBcGJp5HyeIy6Bn9+2AjXr8UBNIvC5qdFzKLf7DegfaTP?=
- =?us-ascii?Q?fx5qlCvw/p+Ba+HCzGn1lD2L4vpwzv5YB+yNRAAGsJBhcScMMtmyXHdEy2ki?=
- =?us-ascii?Q?28mA7fU4z/uwiZMI89hpKcnZ9ultp10TUHzmHmegmK44zasmcfNYLVnIWfUK?=
- =?us-ascii?Q?+gzOQP/5Ltyc8YoP/WuogFmKdOsCOGZC0sXRlmQ6lskwjNJJXvbb4ZgQKoAJ?=
- =?us-ascii?Q?2sTdbFMREzjyFcD1OqxlzN4wdOfFjqaYXBtw3ctl6py4ffQelCrSZYqMjrYt?=
- =?us-ascii?Q?hWWVDgf5tsyYCBRbcmQStYgbjlcsHDJ4kEWNi24Bfmz5Sjt8iHeYrwpp+3wC?=
- =?us-ascii?Q?yJi1yNnW48oa6zeNyZeqa4ZJ+dwsmp4x0Jgl2MXvE+CLd7nvJIU4+EzAjTnN?=
- =?us-ascii?Q?zHEe5x3K5h5xT16NpdmnC1vLlMnrr/mK5mQRWnFYD++TZOwvrWv6mlwY4ctr?=
- =?us-ascii?Q?yxoHFpBtdfO+YJu8SCxMEdakaa3gi5hQfP/zg5tzm9mbgzGwDRFAt5DyvKvl?=
- =?us-ascii?Q?isf6xvZx1fPMs0Z4Aahp8gNlCNMjfX/+OTMa1gxdF6uge/Ije0moIYbHnJmx?=
- =?us-ascii?Q?C19Wyv/8isEGWIij4jowLh1eC8KP53Gs052Mmanc6Bod6jlU8x2Cg2O0XBYL?=
- =?us-ascii?Q?2FmX7L3sfTFdsYo1eSoQFPP0RBGXO8V3mxZ3yBWBrmSsJg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN7PR08MB3937.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3AQ/wpYYAQYnVUwoDVe7Xa5AEcS5wN4po1Y5wfr1wsdp6rY7wflJ9pzYPq//?=
- =?us-ascii?Q?sugkm4LHZ34ZXhN1Juw4lmjR+toe2p+hXcwFOda9+jgbbakXdlULoIekU3sD?=
- =?us-ascii?Q?iT94U1bKJHsmLqKszNG9o5TfrYlEt5dfI46BTf6dzXB/QVogdRTVs9lDjBrg?=
- =?us-ascii?Q?suutbqFLnmermKsmc8ZocFy4v/jq8YJzNUidf3CAFXl92u6kdfD+CffRfodg?=
- =?us-ascii?Q?ClyukqdcG7Xy0vuo0LemNBETxTLg4S3b5OM87IFZtBGOkuhwzzsvjVbih1Q4?=
- =?us-ascii?Q?RnDZSC/6SOyvwFxo1KkSunO+kpSOBXgJjyx1uma/aJ43JvBBPT+P2eGBPNJq?=
- =?us-ascii?Q?Uk+hpx2lau56ocDTmhftsFGxSoz+hnHARcswjn8ZFn2PXAtqaGzkOFtqO4M4?=
- =?us-ascii?Q?CJXtwhha69o22BOLbe4NThjK6SkXF5ndrbkCqUIPOBUfXjPR8To5aZudeDC8?=
- =?us-ascii?Q?qPXtqH557IcYMFninyuYGGHvypoKAsFhCsikuwWgUdCFuwvnyAiDGDkT+gRj?=
- =?us-ascii?Q?1H8qEcLA3PEj44NDB/uWyA6AOqYI0KoctAppag0g0rfJV+cZ9o8RYex8ugb3?=
- =?us-ascii?Q?fIopkXe6XOBTOIHYQVLTHrFxqzH3MNLUG+Xp6xurdEsipeSe/nI4IDsjb2TN?=
- =?us-ascii?Q?8n8CH/j32XAhOvsMIyeTYHDsPCP7raykcCDFNNcQtcrd1IqlWTo0fNZLW/CY?=
- =?us-ascii?Q?ONS8zJkmaDO99Hi38U/TzqG9OMdla90MvQ+0eHQRDPY2QfB6JAQOZt8KHKXE?=
- =?us-ascii?Q?beq6wz2rL6MqG+tzgJ1OiyeyhXW0/wyWqNjBnDvkwYk5L3f+JJBRLWHZdGrJ?=
- =?us-ascii?Q?nSJsWK9xtLYz73urcm2qt+q5RpmNslthwJUIsfkfJ5Sh2bFfQW0NMgG4nm8E?=
- =?us-ascii?Q?sK+qkaWUiuga0D9bIN0ZfDCZHIFliC3g7kMxZmcXfX+eAw2tIvgb/huxBnY/?=
- =?us-ascii?Q?yQKxpclR2bRHsLKZim+Kk1fWRAv7FatjIPY0tw5l7Bdx/PUarUAHL2GE0BO7?=
- =?us-ascii?Q?THRyEHTr7lPwG9CNTX5WeQaE7jiyfoz+K60Sm20no5uYgojaY3oB7M8Lxjw4?=
- =?us-ascii?Q?aHm8hMuVBxLdSTdxj5uj1jnhk51H1uLAmS4arjSRBxvOVG5r/F8Ff+ZM1HeE?=
- =?us-ascii?Q?M6rsLFXbXY9xNuo4Oj+Mz2Kr99CwSkR57Q5YKC3pTJ6EP20Yzsr993FlY6lu?=
- =?us-ascii?Q?0m5EDHLpFBL4jzHF7HDyal0sn/MQoqJAwL4GPVq8kVVrx9TK2/Y/fzt2ncxA?=
- =?us-ascii?Q?STZQyHyIbrG4uCoGTknZfdkDTdoDeKy33xaCS6nfTVYLioZ7FndEhnS5do/m?=
- =?us-ascii?Q?o0d7tRwwK57AK3IcyW6QCla51LPups5aMosg30Ltil99rOs92Cj0CUmzE4sj?=
- =?us-ascii?Q?VnsaLD+t/eLDOUA60lM5wKjfiGcmHRVNygNENERs/7Fz00NItaxacR97QXI3?=
- =?us-ascii?Q?NwPou/1MjVssZJyorBXgGY+gKiKlugBVUoJrcuTQPtopoEMEjDzqAouIRyWj?=
- =?us-ascii?Q?4GzNknmZvArw4HS93JTpYWgbTAyPB+d6RzfLFo3Ak1y4I7Dmfs/LpPW6K3YL?=
- =?us-ascii?Q?ksEzvBS9PxzB4m4KFjvQqWN9lOivzdwzqWvOFa//?=
-X-OriginatorOrg: labundy.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 138060ca-1950-4b40-92d5-08dcd062bda8
-X-MS-Exchange-CrossTenant-AuthSource: BN7PR08MB3937.namprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 00:02:48.9227
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 00b69d09-acab-4585-aca7-8fb7c6323e6f
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vx0xqqx/vrCwz0x7s2ViyRb+vsiqolOky34giv2Co77wv2gWl5nek2o8KmilWs9Kq5yD79VrzqgRJ5HWRq6Dgw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR08MB8505
+X-Received: by 2002:a05:6e02:1aa4:b0:397:6dfc:993a with SMTP id
+ e9e14a558f8ab-3a04f0fdd80mr115191015ab.21.1725840624880; Sun, 08 Sep 2024
+ 17:10:24 -0700 (PDT)
+Date: Sun, 08 Sep 2024 17:10:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000062a2960621a49519@google.com>
+Subject: [syzbot] [wireless?] WARNING in ieee80211_rx_list (3)
+From: syzbot <syzbot+b4aa2b672b18f1d4dc5f@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Dmitry,
+Hello,
 
-On Tue, Sep 03, 2024 at 09:48:13PM -0700, Dmitry Torokhov wrote:
-> Use __free(fwnode_handle) cleanup facility to ensure that references to
-> acquired fwnodes are dropped at appropriate times automatically.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/misc/iqs626a.c | 22 ++++++----------------
->  1 file changed, 6 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/input/misc/iqs626a.c b/drivers/input/misc/iqs626a.c
-> index 0dab54d3a060..7a6e6927f331 100644
-> --- a/drivers/input/misc/iqs626a.c
-> +++ b/drivers/input/misc/iqs626a.c
-> @@ -462,7 +462,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
->  {
->  	struct iqs626_sys_reg *sys_reg = &iqs626->sys_reg;
->  	struct i2c_client *client = iqs626->client;
-> -	struct fwnode_handle *ev_node;
->  	const char *ev_name;
->  	u8 *thresh, *hyst;
->  	unsigned int val;
-> @@ -501,6 +500,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
->  		if (!iqs626_channels[ch_id].events[i])
->  			continue;
->  
-> +		struct fwnode_handle *ev_node __free(fwnode_handle) = NULL;
+syzbot found the following issue on:
 
-This seems to deviate from what I understand to be a more conventional
-style of declaring variables at the top of the scope, and separate from
-actual code, like below:
+HEAD commit:    b6ecc6620376 net: mana: Fix error handling in mana_create_..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b5ecab980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
+dashboard link: https://syzkaller.appspot.com/bug?extid=b4aa2b672b18f1d4dc5f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c4574f06e044/disk-b6ecc662.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/305e39881a39/vmlinux-b6ecc662.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/14c5c8efb32e/bzImage-b6ecc662.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b4aa2b672b18f1d4dc5f@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 14994 at net/mac80211/rx.c:5375 ieee80211_rx_list+0x2a07/0x3780 net/mac80211/rx.c:5375
+Modules linked in:
+CPU: 1 UID: 0 PID: 14994 Comm: syz.0.2232 Not tainted 6.11.0-rc5-syzkaller-00192-gb6ecc6620376 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:ieee80211_rx_list+0x2a07/0x3780 net/mac80211/rx.c:5375
+Code: 90 e9 21 da ff ff e8 f8 1e 64 f6 e9 17 da ff ff e8 ee 1e 64 f6 e9 0d da ff ff e8 e4 1e 64 f6 e9 03 da ff ff e8 da 1e 64 f6 90 <0f> 0b 90 e9 f5 d9 ff ff e8 cc 1e 64 f6 31 c0 48 89 44 24 60 e9 e5
+RSP: 0018:ffffc90000a189a0 EFLAGS: 00010246
+RAX: ffffffff8b2f6d56 RBX: 0000000000000000 RCX: ffff888061fc8000
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90000a18bf0 R08: ffffffff8b2f4592 R09: 1ffffffff283c708
+R10: dffffc0000000000 R11: fffffbfff283c709 R12: dffffc0000000000
+R13: ffff88806d804640 R14: ffff88805f0c0e40 R15: ffff88805f0c30c8
+FS:  0000000000000000(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f251b600020 CR3: 000000006190e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ ieee80211_rx_napi+0x18a/0x3c0 net/mac80211/rx.c:5485
+ ieee80211_rx include/net/mac80211.h:5124 [inline]
+ ieee80211_handle_queued_frames+0xe7/0x1e0 net/mac80211/main.c:439
+ tasklet_action_common+0x321/0x4d0 kernel/softirq.c:785
+ handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x70 kernel/kcov.c:209
+Code: 89 fb e8 23 00 00 00 48 8b 3d dc 76 96 0c 48 89 de 5b e9 83 9d 5b 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 <f3> 0f 1e fa 48 8b 04 24 65 48 8b 0c 25 00 d7 03 00 65 8b 15 c0 4a
+RSP: 0018:ffffc900039bf290 EFLAGS: 00000246
+RAX: 0000000000000000 RBX: ffffea0001c6b388 RCX: ffff888061fc8000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000013115 R08: ffffffff81ea2868 R09: 1ffffd400038d678
+R10: dffffc0000000000 R11: fffff9400038d679 R12: ffffea0001c6b3c0
+R13: ffffea0001c6b3c0 R14: 0000000000000001 R15: 0000000000000000
+ arch_static_branch arch/x86/include/asm/jump_label.h:27 [inline]
+ page_fixed_fake_head include/linux/page-flags.h:203 [inline]
+ _compound_head include/linux/page-flags.h:244 [inline]
+ __folio_rmap_sanity_checks+0x11f/0x670 include/linux/rmap.h:216
+ __folio_remove_rmap mm/rmap.c:1518 [inline]
+ folio_remove_rmap_ptes+0x3d/0x490 mm/rmap.c:1599
+ zap_present_folio_ptes mm/memory.c:1517 [inline]
+ zap_present_ptes mm/memory.c:1576 [inline]
+ zap_pte_range mm/memory.c:1618 [inline]
+ zap_pmd_range mm/memory.c:1736 [inline]
+ zap_pud_range mm/memory.c:1765 [inline]
+ zap_p4d_range mm/memory.c:1786 [inline]
+ unmap_page_range+0x1b93/0x42c0 mm/memory.c:1807
+ unmap_vmas+0x3cc/0x5f0 mm/memory.c:1897
+ exit_mmap+0x264/0xc80 mm/mmap.c:3412
+ __mmput+0x115/0x390 kernel/fork.c:1345
+ exit_mm+0x220/0x310 kernel/exit.c:571
+ do_exit+0x9b2/0x27f0 kernel/exit.c:869
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1031
+ get_signal+0x16a1/0x1740 kernel/signal.c:2917
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6654f7cef9
+Code: Unable to access opcode bytes at 0x7f6654f7cecf.
+RSP: 002b:00007f6655e5b0e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007f6655135f88 RCX: 00007f6654f7cef9
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f6655135f88
+RBP: 00007f6655135f80 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6655135f8c
+R13: 0000000000000000 R14: 00007fffa4ac5d00 R15: 00007fffa4ac5de8
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	89 fb                	mov    %edi,%ebx
+   2:	e8 23 00 00 00       	call   0x2a
+   7:	48 8b 3d dc 76 96 0c 	mov    0xc9676dc(%rip),%rdi        # 0xc9676ea
+   e:	48 89 de             	mov    %rbx,%rsi
+  11:	5b                   	pop    %rbx
+  12:	e9 83 9d 5b 00       	jmp    0x5b9d9a
+  17:	0f 1f 00             	nopl   (%rax)
+  1a:	90                   	nop
+  1b:	90                   	nop
+  1c:	90                   	nop
+  1d:	90                   	nop
+  1e:	90                   	nop
+  1f:	90                   	nop
+  20:	90                   	nop
+  21:	90                   	nop
+  22:	90                   	nop
+  23:	90                   	nop
+  24:	90                   	nop
+  25:	90                   	nop
+  26:	90                   	nop
+  27:	90                   	nop
+  28:	90                   	nop
+  29:	90                   	nop
+* 2a:	f3 0f 1e fa          	endbr64 <-- trapping instruction
+  2e:	48 8b 04 24          	mov    (%rsp),%rax
+  32:	65 48 8b 0c 25 00 d7 	mov    %gs:0x3d700,%rcx
+  39:	03 00
+  3b:	65                   	gs
+  3c:	8b                   	.byte 0x8b
+  3d:	15                   	.byte 0x15
+  3e:	c0                   	.byte 0xc0
+  3f:	4a                   	rex.WX
 
 
-	for (i = 0; i < ARRAY_SIZE(iqs626_events); i++) {
-		struct fwnode_handle *ev_node __free(fwnode_handle);
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-		if (!iqs626_channels[ch_id].events[i])
-			continue;
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-I also did not see any reason to explicitly declare the variable as NULL;
-let me know in case I have misunderstood.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
->  		if (ch_id == IQS626_CH_TP_2 || ch_id == IQS626_CH_TP_3) {
->  			/*
->  			 * Trackpad touch events are simply described under the
-> @@ -530,7 +530,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
->  					dev_err(&client->dev,
->  						"Invalid input type: %u\n",
->  						val);
-> -					fwnode_handle_put(ev_node);
->  					return -EINVAL;
->  				}
->  
-> @@ -545,7 +544,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
->  				dev_err(&client->dev,
->  					"Invalid %s channel hysteresis: %u\n",
->  					fwnode_get_name(ch_node), val);
-> -				fwnode_handle_put(ev_node);
->  				return -EINVAL;
->  			}
->  
-> @@ -566,7 +564,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
->  				dev_err(&client->dev,
->  					"Invalid %s channel threshold: %u\n",
->  					fwnode_get_name(ch_node), val);
-> -				fwnode_handle_put(ev_node);
->  				return -EINVAL;
->  			}
->  
-> @@ -575,8 +572,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
->  			else
->  				*(thresh + iqs626_events[i].th_offs) = val;
->  		}
-> -
-> -		fwnode_handle_put(ev_node);
->  	}
->  
->  	return 0;
-> @@ -774,12 +769,12 @@ static int iqs626_parse_trackpad(struct iqs626_private *iqs626,
->  	for (i = 0; i < iqs626_channels[ch_id].num_ch; i++) {
->  		u8 *ati_base = &sys_reg->tp_grp_reg.ch_reg_tp[i].ati_base;
->  		u8 *thresh = &sys_reg->tp_grp_reg.ch_reg_tp[i].thresh;
-> -		struct fwnode_handle *tc_node;
->  		char tc_name[10];
->  
->  		snprintf(tc_name, sizeof(tc_name), "channel-%d", i);
->  
-> -		tc_node = fwnode_get_named_child_node(ch_node, tc_name);
-> +		struct fwnode_handle *tc_node __free(fwnode_handle) =
-> +				fwnode_get_named_child_node(ch_node, tc_name);
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Same here.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
->  		if (!tc_node)
->  			continue;
->  
-> @@ -790,7 +785,6 @@ static int iqs626_parse_trackpad(struct iqs626_private *iqs626,
->  				dev_err(&client->dev,
->  					"Invalid %s %s ATI base: %u\n",
->  					fwnode_get_name(ch_node), tc_name, val);
-> -				fwnode_handle_put(tc_node);
->  				return -EINVAL;
->  			}
->  
-> @@ -803,14 +797,11 @@ static int iqs626_parse_trackpad(struct iqs626_private *iqs626,
->  				dev_err(&client->dev,
->  					"Invalid %s %s threshold: %u\n",
->  					fwnode_get_name(ch_node), tc_name, val);
-> -				fwnode_handle_put(tc_node);
->  				return -EINVAL;
->  			}
->  
->  			*thresh = val;
->  		}
-> -
-> -		fwnode_handle_put(tc_node);
->  	}
->  
->  	if (!fwnode_property_present(ch_node, "linux,keycodes"))
-> @@ -1233,7 +1224,6 @@ static int iqs626_parse_prop(struct iqs626_private *iqs626)
->  {
->  	struct iqs626_sys_reg *sys_reg = &iqs626->sys_reg;
->  	struct i2c_client *client = iqs626->client;
-> -	struct fwnode_handle *ch_node;
->  	unsigned int val;
->  	int error, i;
->  	u16 general;
-> @@ -1375,13 +1365,13 @@ static int iqs626_parse_prop(struct iqs626_private *iqs626)
->  	sys_reg->active = 0;
->  
->  	for (i = 0; i < ARRAY_SIZE(iqs626_channels); i++) {
-> -		ch_node = device_get_named_child_node(&client->dev,
-> -						      iqs626_channels[i].name);
-> +		struct fwnode_handle *ch_node __free(fwnode_handle) =
-> +			device_get_named_child_node(&client->dev,
-> +						    iqs626_channels[i].name);
->  		if (!ch_node)
->  			continue;
->  
->  		error = iqs626_parse_channel(iqs626, ch_node, i);
-> -		fwnode_handle_put(ch_node);
->  		if (error)
->  			return error;
->  
-> -- 
-> 2.46.0.469.g59c65b2a67-goog
-> 
-
-Kind regards,
-Jeff LaBundy
+If you want to undo deduplication, reply with:
+#syz undup
 
