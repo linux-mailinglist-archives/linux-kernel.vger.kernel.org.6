@@ -1,196 +1,308 @@
-Return-Path: <linux-kernel+bounces-322008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D9D9722AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:30:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 047039722CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3712E283834
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:30:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ED67B22E5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1A6189F47;
-	Mon,  9 Sep 2024 19:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4646B18C32D;
+	Mon,  9 Sep 2024 19:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULUkcW/T"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Dero/V+N"
+Received: from msa.smtpout.orange.fr (smtp-66.smtpout.orange.fr [80.12.242.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883DD3BB47;
-	Mon,  9 Sep 2024 19:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7ED18C00C
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 19:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725910223; cv=none; b=sPJ1hIJ9RaZhtcTFTIND5wRN2FqIE0CMCnYtGo6+oSXO69VQiUO/3ivtLe9tK7BpkCv+RyR7EMUDnTHCJIVMhyimnxlK5moVnB/LogOlNDLqJxKOM9hrEuKwCEdOyR7eAeuMXvpmNCllQvxvFRMuK/EhvyaZ1pdU6gX2C1QUDxw=
+	t=1725910271; cv=none; b=iatvlxTqQy0QMmpOQ3h/jCX3+FlvILt56E2/BQeDIfT+e6jFYkWqoeG7tWVrzb/hDO/ilgc8AKnVT7puzKLQWJsNOSARcK/xZUBQz9XcdtK1jTDMBhbEhNdNAtdttqxYlW42mvumRCZPw7chgeMcdOGW2JjzsmDfi3FgT+nd+D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725910223; c=relaxed/simple;
-	bh=b6OUbZ3BeHYLYkH/EG1gwVc1JeKidM3XMH3k1TlcRSk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ctkY2VjS6VoRSA9p4PKvyFrfJafdyc6ZPioWVaE7miFDVDHqtOntdN06waPJx4BXDSai1Yvuey/TzxWC5xnjxokNxJLB4rYm7haE9w7B+gDXPkRLKWiUUX9rwOeJIN0ZsKi10x/LJycmaeTrv3iq2Nxa09YdEJuSFmpfdQqdMJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ULUkcW/T; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f7529203ddso32291041fa.0;
-        Mon, 09 Sep 2024 12:30:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725910220; x=1726515020; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=woE07RMIM4YJ88QTc1ZNc52E+GbLSESAkfn/9qs5W1Y=;
-        b=ULUkcW/Tyq4KqCECB1ruZOR6QLr/CvsNjbWjzoxyCcU/WhgIWArNgD6Hrw1yhGPll4
-         BbZrZgIEZXqbrTyCz5p+C+9Tbi+X0PFqI41IrlA72G7t6jcMWBlXn1hl/BZg+SCsuh2c
-         oFKCu0rUDejsyES3ag6UhjvEcR2W1GTzr5kbg0wXWhMPvHEvpxtOwpBcXBjvHTzzGBbu
-         sqnxB1pvOEKsPJKaQzg3grdZ0/Uu8bags0D135h3don4qXSmUBQRCU3QRtzVQMfkooF1
-         HlLPFTAJvjpI6h/TMpxY4yeeRPn6kNraImImFM5Mm8KKJ4wPN/m+v6YW+2Qfak+UP1R/
-         BGAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725910220; x=1726515020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=woE07RMIM4YJ88QTc1ZNc52E+GbLSESAkfn/9qs5W1Y=;
-        b=RuCISbepDlc2qBedARrKfy9NIxagwPi9nXmTanbwLrflCXWQRuuhhuWCjQakny5EQ6
-         dVVn4dHptaOm7sOC82F3tHTdP09ER5e3SmzGl5ZsrP6YG5scw8HWfaKD0b2EM3uZTBVb
-         zNDZ/FRSyRBl/NdqnyDsOVKriOmc3oSg8E0zyIeTs26kUabND98HVKFO4c8bvAy5MmSY
-         /2xrIABIyFHJhBCOpicOAc60XfsH0bzYbIbEzZArOYzZD4ZlOrDPYY+bpmUCULTgjo8A
-         +8ZspDKPaUIxdWTXnRLt+LcwKTXf1A9B9LG3W6t6t+qk4MMhhspHquyIsUy4pyFfRnSJ
-         ISzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWZUWg7h9uqj9H8UJt+bwPgqkz9ZgkEOsaRy9Xy/aV2qKsy+8XQnqzcGCWExklp6l99ypYNpXZjk7A/aY=@vger.kernel.org, AJvYcCVkJBaNvChDqj/ocGvutebX7/uNaojYcx+LCrAzQhZGySAJ5CPLHkLG6JhcOXl+Vqw4ljIl7p+ksTeulYhm@vger.kernel.org, AJvYcCVqSOkSR2NOsReuF7N46EAo+BkFxVNvQTb681abDP6RU50sup1uhTf8Ee9V+GUKaWVR+1s=@vger.kernel.org, AJvYcCW6RDHjvzcTnYUkHiG60PmsMlEL+1K0aIG96VywbwJj+PaH+/MplxHinXKs/VXnOE2RLgbIMHW6lmTayqbgcA==@vger.kernel.org, AJvYcCW7z4bLWIPfIUODOf27F4UUlvJqNNFr+ZCdIzE/r5h8c9z25IpLQMyTsmxQpVR+oJq/Bp60H/RMJQCeFA==@vger.kernel.org, AJvYcCX5yDF3sYA1ZtYht2kOSYOyf041BrFFM9nGnDK/pI8ASZzNgc2DLtVJIRC8fr37XuQplQIvQKnZxgodi9ra@vger.kernel.org, AJvYcCXxIBg5WFf32p7sF9babSrlC+lI60uayhIVZYEUGSYkcS+MLafgewbmBH08LKkYo7url+riZjAx/AQdBlRA0jzf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo6WQkItdOOzWO3D2oL6Li7uG1OEjihi2C2zNBMMOYUAliiV+W
-	zAM9ur2Hpy2RdE/NkwMHvKLS96g7Gqy7U6vBMVuM55hGKWLsCrvhjmlAgd9E0fFYyIeL0ZHI5/Z
-	6ffmXiWf2tXPkYBMHWvjEikHVEDs=
-X-Google-Smtp-Source: AGHT+IHGDlZWsmVxtU6Y46aEXfBA2sgXqI4naIhOyyLQHvnhEyR7+3HqFvBi8W+gcZkb/4A25yABw4d/bXms0qX89pY=
-X-Received: by 2002:a05:651c:549:b0:2f7:6277:f2be with SMTP id
- 38308e7fff4ca-2f7727190f4mr2037391fa.22.1725910218656; Mon, 09 Sep 2024
- 12:30:18 -0700 (PDT)
+	s=arc-20240116; t=1725910271; c=relaxed/simple;
+	bh=1QL1CKNNveStwudW9s95TeycLNIw95+S1ITVaXHJm24=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GAcvDzXlMoOZnCGUrakrA+QpM4l7/wD4ZE60psMMglQ3UDzil3MxRtENrGLZJ5ZjK6QM2GeEEDCgAKgHz5Sw8rmGo1T/Pz+PtGcAd1nPFhmz44PYf7HAzU5Sjp6CPNyi2dZCyvSfaUxah0X0mMOPvtQO+8zKJcvQosUwZwH2a60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Dero/V+N; arc=none smtp.client-ip=80.12.242.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id nk6BsbkpIZ40ank6Bsl9Br; Mon, 09 Sep 2024 21:31:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725910260;
+	bh=iXQbrMHrxHSsX1BIEgauoIbcXr4RNqpN6V0TKtKeNgY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Dero/V+Nn56UiP8TXbdhd2Mid3Y4q9TTnyWnO47DHpqp2h8oLcIo4K8/qh74cD1Hr
+	 z6VtB/H2fsu2D9d9LkkccSKuOYFUJMGAYeMdUvU+lsypRrcyS3jDemg5l6V+zQ1cwN
+	 /wm4kruDwyt1L6wTgAWR2qYKkjKQp6vj66YXvTPng0SZJKYRLscCpQ6ApeLi+T7w/X
+	 EDpFfV4JNav8Cbc3hiDmUB3JhhBEW2pu75YGIpiQcsGkOB2Bwc3XIhWVhugW/uiGDk
+	 b6Lzs8Cp9LrgATwiLfVpvyU2xz0Ii9hvPeCGRd7thi+FrVsvaU1PDSbQgJwjRsUvqJ
+	 t2YPrYk5kf8aQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 09 Sep 2024 21:31:00 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: markuss.broks@gmail.com,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] regulator: sm5703: Remove because it is unused and fails to build
+Date: Mon,  9 Sep 2024 21:30:51 +0200
+Message-ID: <0f5da91a05e7343d290c88e3c583b674cf6219ac.1725910247.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909075641.258968-1-ubizjak@gmail.com> <Zt8a6_RwLG2pEnZ6@zx2c4.com>
-In-Reply-To: <Zt8a6_RwLG2pEnZ6@zx2c4.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Mon, 9 Sep 2024 21:30:06 +0200
-Message-ID: <CAFULd4ak3n1x0tGrqiNoxvDBRw6AWgchfBO_k4aKps34DomPvA@mail.gmail.com>
-Subject: Re: [PATCH RESEND v2 00/19] random: Resolve circular include
- dependency and include <linux/percpu.h>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: x86@kernel.org, linux-crypto@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-fscrypt@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Eric Biggers <ebiggers@kernel.org>, 
-	"Theodore Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Hannes Reinecke <hare@suse.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Stephen Hemminger <stephen@networkplumber.org>, Jamal Hadi Salim <jhs@mojatatu.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 9, 2024 at 5:57=E2=80=AFPM Jason A. Donenfeld <Jason@zx2c4.com>=
- wrote:
+This file does not compile because <linux/mfd/sm5703.h> is missing.
+In KConfig, it depends on MFD_SM5703.
 
-> On Mon, Sep 09, 2024 at 09:53:43AM +0200, Uros Bizjak wrote:
-> > a) Substitutes the inclusion of <linux/random.h> with the
-> > inclusion of <linux/prandom.h> where needed (patches 1 - 17).
-> >
-> > b) Removes legacy inclusion of <linux/prandom.h> from
-> > <linux/random.h> (patch 18).
-> >
-> > c) Includes <linux/percpu.h> in <linux/prandom.h> (patch 19).
->
-> Thanks for doing this. That seems like a fine initiative to me. (I'm
-> also curious about the future percpu changes you've got planned.)
+Both MFD_SM5703 and the missing include rely on another patch that never
+got merged. The last iteration related to this patch is [1].
 
-As explained in the cover letter, recent GCCs are able to track
-address space of variables in percpu address space from the
-declaration to its usage site. There are certain rules regarding casts
-of variables and their pointers (when this named address space is not
-considered a subspace of the generic address space), so it is possible
-to create much more effective checks for cast-from-as type casts than
-what sparse can achieve.
+So remove this dead-code and undo commit e8858ba89ca3 ("regulator:
+sm5703-regulator: Add regulators support for SM5703 MFD")
 
-Besides GCC, clang can define various named address space via
-address_space attribute:
+[1]: https://lore.kernel.org/lkml/20220423085319.483524-5-markuss.broks@gmail.com/
 
---cut here--
-#define __as(N) __attribute__((address_space(N)))
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Apparently, discussion to include the needed other patch ended 2 years ago.
 
-void *foo(void __as(1) *x) { return x; }         // error
+Could this be useful for something else with the other driver, at least
+<linux/mfd/sm5703.h> should be merged and Kconfig modified.
 
-void *bar(void __as(1) *x) { return (void *)x; } // fine
---cut here--
+So not sure if removing is the best way to go, but at least, in the
+current state, it is unusable.
 
-When compiling this, the compiler returns:
 
-clang-as.c:3:37: error: returning '__as(1) void *' from a function
-with result type 'void *' changes address space of pointer
+Note: spotted while looking for opportunities to constify some struct
+regulator_desc.
+---
+ drivers/regulator/Kconfig            |   7 --
+ drivers/regulator/Makefile           |   1 -
+ drivers/regulator/sm5703-regulator.c | 170 ---------------------------
+ 3 files changed, 178 deletions(-)
+ delete mode 100644 drivers/regulator/sm5703-regulator.c
 
-Although clang currently errors out when __seg_gs and __seg_fs named
-address space designators are used, we can explore its named address
-spaces functionality to implement percpu checks for all targets. The
-percpu address space checks patchset, referred to in the cover letter,
-also supports this functionality when per_cpu_qual is defined to
-__attribute__((address_space(N))).
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 4b411a09c1a6..39297f7d8177 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -1373,13 +1373,6 @@ config REGULATOR_SLG51000
+ 	  The SLG51000 is seven compact and customizable low dropout
+ 	  regulators.
+ 
+-config REGULATOR_SM5703
+-	tristate "Silicon Mitus SM5703 regulators"
+-	depends on MFD_SM5703
+-	help
+-	  This driver provides support for voltage regulators of SM5703
+-	  multi-function device.
+-
+ config REGULATOR_STM32_BOOSTER
+ 	tristate "STMicroelectronics STM32 BOOSTER"
+ 	depends on ARCH_STM32 || COMPILE_TEST
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index a61fa42b13c4..3d5a803dce8a 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -160,7 +160,6 @@ obj-$(CONFIG_REGULATOR_S5M8767) += s5m8767.o
+ obj-$(CONFIG_REGULATOR_SC2731) += sc2731-regulator.o
+ obj-$(CONFIG_REGULATOR_SKY81452) += sky81452-regulator.o
+ obj-$(CONFIG_REGULATOR_SLG51000) += slg51000-regulator.o
+-obj-$(CONFIG_REGULATOR_SM5703) += sm5703-regulator.o
+ obj-$(CONFIG_REGULATOR_STM32_BOOSTER) += stm32-booster.o
+ obj-$(CONFIG_REGULATOR_STM32_VREFBUF) += stm32-vrefbuf.o
+ obj-$(CONFIG_REGULATOR_STM32_PWR) += stm32-pwr.o
+diff --git a/drivers/regulator/sm5703-regulator.c b/drivers/regulator/sm5703-regulator.c
+deleted file mode 100644
+index 702461cf075e..000000000000
+--- a/drivers/regulator/sm5703-regulator.c
++++ /dev/null
+@@ -1,170 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-
+-#include <linux/mfd/sm5703.h>
+-#include <linux/module.h>
+-#include <linux/mod_devicetable.h>
+-#include <linux/platform_device.h>
+-#include <linux/regmap.h>
+-#include <linux/regulator/driver.h>
+-#include <linux/regulator/of_regulator.h>
+-
+-enum sm5703_regulators {
+-	SM5703_BUCK,
+-	SM5703_LDO1,
+-	SM5703_LDO2,
+-	SM5703_LDO3,
+-	SM5703_USBLDO1,
+-	SM5703_USBLDO2,
+-	SM5703_VBUS,
+-	SM5703_MAX_REGULATORS,
+-};
+-
+-static const int sm5703_ldo_voltagemap[] = {
+-	1500000, 1800000, 2600000, 2800000, 3000000, 3300000,
+-};
+-
+-static const int sm5703_buck_voltagemap[] = {
+-	1000000, 1000000, 1000000, 1000000,
+-	1000000, 1000000, 1000000, 1000000,
+-	1000000, 1000000, 1000000, 1100000,
+-	1200000, 1300000, 1400000, 1500000,
+-	1600000, 1700000, 1800000, 1900000,
+-	2000000, 2100000, 2200000, 2300000,
+-	2400000, 2500000, 2600000, 2700000,
+-	2800000, 2900000, 3000000, 3000000,
+-};
+-
+-#define SM5703USBLDO(_name, _id)					\
+-	[SM5703_USBLDO ## _id] = {					\
+-		.name = _name,						\
+-		.of_match = _name,					\
+-		.regulators_node = "regulators",			\
+-		.type = REGULATOR_VOLTAGE,				\
+-		.id = SM5703_USBLDO ## _id,				\
+-		.ops = &sm5703_regulator_ops_fixed,			\
+-		.n_voltages = 1,					\
+-		.fixed_uV = SM5703_USBLDO_MICROVOLT,			\
+-		.enable_reg = SM5703_REG_USBLDO12,			\
+-		.enable_mask = SM5703_REG_EN_USBLDO ##_id,		\
+-		.owner			= THIS_MODULE,			\
+-	}
+-
+-#define SM5703VBUS(_name)						\
+-	[SM5703_VBUS] = {						\
+-		.name = _name,						\
+-		.of_match = _name,					\
+-		.regulators_node = "regulators",			\
+-		.type = REGULATOR_VOLTAGE,				\
+-		.id = SM5703_VBUS,					\
+-		.ops = &sm5703_regulator_ops_fixed,			\
+-		.n_voltages = 1,					\
+-		.fixed_uV = SM5703_VBUS_MICROVOLT,			\
+-		.enable_reg = SM5703_REG_CNTL,				\
+-		.enable_mask = SM5703_OPERATION_MODE_MASK,		\
+-		.enable_val = SM5703_OPERATION_MODE_USB_OTG_MODE,	\
+-		.disable_val = SM5703_OPERATION_MODE_CHARGING_ON,	\
+-		.owner			= THIS_MODULE,			\
+-	}
+-
+-#define SM5703BUCK(_name)						\
+-	[SM5703_BUCK] = {						\
+-		.name = _name,						\
+-		.of_match = _name,					\
+-		.regulators_node = "regulators",			\
+-		.type = REGULATOR_VOLTAGE,				\
+-		.id = SM5703_BUCK,					\
+-		.ops = &sm5703_regulator_ops,				\
+-		.n_voltages = ARRAY_SIZE(sm5703_buck_voltagemap),	\
+-		.volt_table = sm5703_buck_voltagemap,			\
+-		.vsel_reg = SM5703_REG_BUCK,				\
+-		.vsel_mask = SM5703_BUCK_VOLT_MASK,			\
+-		.enable_reg = SM5703_REG_BUCK,				\
+-		.enable_mask = SM5703_REG_EN_BUCK,			\
+-		.owner			= THIS_MODULE,			\
+-	}
+-
+-#define SM5703LDO(_name, _id)						\
+-	[SM5703_LDO ## _id] = {						\
+-		.name = _name,						\
+-		.of_match = _name,					\
+-		.regulators_node = "regulators",			\
+-		.type = REGULATOR_VOLTAGE,				\
+-		.id = SM5703_LDO ## _id,				\
+-		.ops = &sm5703_regulator_ops,				\
+-		.n_voltages = ARRAY_SIZE(sm5703_ldo_voltagemap),	\
+-		.volt_table = sm5703_ldo_voltagemap,			\
+-		.vsel_reg = SM5703_REG_LDO ##_id,			\
+-		.vsel_mask = SM5703_LDO_VOLT_MASK,			\
+-		.enable_reg = SM5703_REG_LDO ##_id,			\
+-		.enable_mask = SM5703_LDO_EN,				\
+-		.owner			= THIS_MODULE,			\
+-	}
+-
+-static const struct regulator_ops sm5703_regulator_ops = {
+-	.enable			= regulator_enable_regmap,
+-	.disable		= regulator_disable_regmap,
+-	.is_enabled		= regulator_is_enabled_regmap,
+-	.list_voltage		= regulator_list_voltage_table,
+-	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
+-	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
+-};
+-
+-static const struct regulator_ops sm5703_regulator_ops_fixed = {
+-	.enable			= regulator_enable_regmap,
+-	.disable		= regulator_disable_regmap,
+-	.is_enabled		= regulator_is_enabled_regmap,
+-};
+-
+-static struct regulator_desc sm5703_regulators_desc[SM5703_MAX_REGULATORS] = {
+-	SM5703BUCK("buck"),
+-	SM5703LDO("ldo1", 1),
+-	SM5703LDO("ldo2", 2),
+-	SM5703LDO("ldo3", 3),
+-	SM5703USBLDO("usbldo1", 1),
+-	SM5703USBLDO("usbldo2", 2),
+-	SM5703VBUS("vbus"),
+-};
+-
+-static int sm5703_regulator_probe(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct regulator_config config = { NULL, };
+-	struct regulator_dev *rdev;
+-	struct sm5703_dev *sm5703 = dev_get_drvdata(pdev->dev.parent);
+-	int i;
+-
+-	config.dev = dev->parent;
+-	config.regmap = sm5703->regmap;
+-
+-	for (i = 0; i < SM5703_MAX_REGULATORS; i++) {
+-		rdev = devm_regulator_register(dev,
+-					       &sm5703_regulators_desc[i],
+-					       &config);
+-		if (IS_ERR(rdev))
+-			return dev_err_probe(dev, PTR_ERR(rdev),
+-					     "Failed to register a regulator\n");
+-	}
+-
+-	return 0;
+-}
+-
+-static const struct platform_device_id sm5703_regulator_id[] = {
+-	{ "sm5703-regulator", 0 },
+-	{}
+-};
+-MODULE_DEVICE_TABLE(platform, sm5703_regulator_id);
+-
+-static struct platform_driver sm5703_regulator_driver = {
+-	.driver = {
+-		.name = "sm5703-regulator",
+-		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+-	},
+-	.probe	= sm5703_regulator_probe,
+-	.id_table	= sm5703_regulator_id,
+-};
+-
+-module_platform_driver(sm5703_regulator_driver);
+-
+-MODULE_DESCRIPTION("Silicon Mitus SM5703 LDO/Buck/USB regulator driver");
+-MODULE_AUTHOR("Markuss Broks <markuss.broks@gmail.com>");
+-MODULE_LICENSE("GPL");
+-- 
+2.46.0
 
-Perhaps we can use different address spaces to also handle __user,
-__iomem and __rcu address spaces. This way the compiler will be able
-to handle address space checks instead of sparse.
-
-> Tree-wise, were you expecting me to take this through random.git? And if
-> so, what timeframe did you have in mind? For 6.12 next week (can you
-> poke folks for acks in time?), or punt it for 6.13? Or did you have a
-> different tree in mind for treewide changes (in which case, I'll send
-> you an ack for the [p]random.h changes).
-
-I think that the best approach is to target this patchset for linux
-6.13 via random.git tree. I will prepare a v3 after 6.12rc1, so when
-committed to random.git, the patchset will be able to spend some time
-in linux-next. This way, there will be plenty of time for CI robots to
-do additional checks also for some less popular targets (although
-individual patches are dead simple, removing these kinds of "legacy"
-includes can be tricky), and I will also be able to collect Acked-by:s
-in the meantime.
-
-While the patchset is an improvement by itself, its inclusion is not
-time sensitive. The follow up percpu named address checking
-functionality requires a very recent feature (__typeof_unqual__
-keyword), which is only supported in recent compilers (gcc-14 and
-clang-20). Besides compiler support, sparse doesn't know about
-__typeof_unqual__, resulting in broken type tracing and hundreds of
-sparse errors with C=3D1 due to unknown keyword.
-
-So, I think we are not in a hurry and can take the slow and safe path.
-
-Thanks and best regards,
-Uros.
 
