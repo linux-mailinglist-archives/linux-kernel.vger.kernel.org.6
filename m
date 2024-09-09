@@ -1,150 +1,125 @@
-Return-Path: <linux-kernel+bounces-321512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ABFE971B7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:47:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03979971B82
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62651F24205
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:47:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80E94B23439
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B56E1BAECA;
-	Mon,  9 Sep 2024 13:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4CD1BA26E;
+	Mon,  9 Sep 2024 13:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="seVRIdNv"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q/Tppn1v"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5ADD1BA898
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785A61B1403;
+	Mon,  9 Sep 2024 13:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725889563; cv=none; b=Qv8cjuaAGs8nXQiLbhpl9HIEjtoi9+t1Q0FKIdccl8SFxxhSFTKCqrBzwUxrqg/tMSA58vzm6ONfgJxHumAk5dxmvlziREqZh1Jf92nBRy7ZEyXElsapPmJZXfSs31dS9irVS1g0X5W8WXLhgfvtQGbPHUor7l7Mjx1sA7MAox8=
+	t=1725889577; cv=none; b=bRMwj6mlQs/OXhwYaEOADO1h8XPM3asZBQMImJCia2kf7PGwQ9WbXl1Kpl/W8kiwwL17dtOVuQ3ebEnVcKR9/Ms0wwgAxRKFUj7ar90NQdR8xsx1oM+N7PtO6ZTcUha7vCMw6W7NvBu/r+XQZFerNdmccTGMLiaZ7lft228kr+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725889563; c=relaxed/simple;
-	bh=jzihi3AAHohMCS8Dgz06LgVPmIDnmeWhSRP3zVQyAG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bopT8mbSxx8Jsthm1Dz7MscEG4LhYRWdHBHLy1xwVwfOd4Vei/r1b+Z5sxV1TotcpiRa4KsWTlORnHxeEPFeOwEPgIgtBS9CQ1P9aCvOWxE+16XLX8Di+OHZrrSH6uEuuFuDQ6x/EIbqkpfYbJG+NDuocIf6vJiA/d2l2CHpEQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=seVRIdNv; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d43657255so191005766b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 06:45:59 -0700 (PDT)
+	s=arc-20240116; t=1725889577; c=relaxed/simple;
+	bh=iplRYtL2g0wea0iqy6D251Yydb/Pl3OdQS9g51XRlFg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=WsgBx2CjfILZJCJRDDrf4GU/+Wpi5fRn4eIzjPtV5bI2RY03bIlY5pPiyBaMb8i1B/ymk9/q/NKFhjknlJfHFzpEtr1QzkAatCJrCiughAoUz65Afr4bdKjVWF5SqFGZLlssz5/K6PRZwefkjIvbGwmv/KsIWhuBPvPg0aFRsYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q/Tppn1v; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-374bd059b12so2654780f8f.1;
+        Mon, 09 Sep 2024 06:46:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725889558; x=1726494358; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ICHhUdve8YGyfEsZ3J3BPheEBsB760qWMEEBxUepSFk=;
-        b=seVRIdNvLmKA0h7bIqZTZ0OrjfVDSdOaKIkLt2MYRdj3bh9YzwqsVN9NuneIiJ1mjc
-         j1F0FtkC3PNqxChLIbnEbx8fCF0Qnu6L/1vVmz3kXnZyVmFxj8OWoSs1jc1lUhTB9tGU
-         i6KC0/VxTH2nmZfcrvWFYkL+SlRHpA/uRqwbxbZRSeWexCn+8yoZyNo+mYVi5MBwW3iO
-         JuIG6IfN8U5CKW2P6xI8ITaDRe5sAs9slIpOYi/fZfsLg2YVWtfOyg5w4DSp+QDwfy+m
-         cvuQq3ORtWUsDpkkj43c+JQvfpF54GLe2Q3Or4/RD/iBo0SWzFriah0G+aHMhETq8G0W
-         HA0A==
+        d=gmail.com; s=20230601; t=1725889575; x=1726494375; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jsb1hW5HiIcqNhuIYoIU21k0XvWHTUUsVMgaYZ6WuUQ=;
+        b=Q/Tppn1v4Zf031qbiID8NTsyLP9iSatVbXgjbj9riPyNrRFRUitv8gAiYs7PYqoFZF
+         9VvddGu+mBSaMNQOM0DlxqvVPCx7KdCCwLpjU3bY4MQ3luLAPznWPtUx7CxYAQHNHJMV
+         JBVmHzR5llkUtaKyzIkxnXLenDnAo4CyRJLEBUuGtnnNTZ9+e9QTI45u7em3GyypT+17
+         ABUqKnAzJ0PhwpMNzKUDMJvCVi2KYIZunVCDhfPfnQH+c3IXJNbLQM9jLgkAzOp0/W6F
+         iNA/xxTtYhv8/oDxhVuobMaBShDuzqmdoPJHZfSprOpkKY07EN43ZyXs7/nook1+6val
+         NeNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725889558; x=1726494358;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ICHhUdve8YGyfEsZ3J3BPheEBsB760qWMEEBxUepSFk=;
-        b=Ua2BEh0Dk/M0WaBNrUY1znxMrEeZhUD5Qaft/gPOxbj2P9u59dOFSkTXYB4JTlU5oS
-         eqmI/dEvcb8wZCRsc6uciDe5Mz+Hxs6nCDSRARKjTJuk+G6iMsu7oi15WXuclIN9ljUK
-         X43TpCx0bZ9TZd0/fp784PSh6jVms+JUBiZRvz62P/SHkmSmVxh6egf5BSLUf98grKCg
-         kKceVyy+VmHm9SGLFDDuC78h2+YiEE+F6WDAFgZgzGT4LRQC9JyIv9W2ox6pN2PYjEcx
-         gszG6BQIOHKZvvTYrHduaNjgJ/oIMk45mYglZpjihTOqGcIkCBXiuJ/+0jKCpQGAPuOi
-         R6Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+fLkg58Go+jkOtwhW1i4y+1QYwPfqW7rvFl3ikpfeBvg/fWvATj/BqKdMvnZ4WFnvef1Xowyk2L1l4mM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyXd0p9Hwy1WGQdH7bW3E//5RpnvMD0Q02CPLV3Ubyrt52ak6Y
-	tQtBaZzfQstaCf2NpMR89VTBBXPbiye8o7ggeXamMeu68r52F+wFEj9ncdQQIG0=
-X-Google-Smtp-Source: AGHT+IFSoHDLd5CxoOPYrLPB59BFyKQbFAvz3qMC62eNkL9xiTGIxxXZg05l93GHxJb2ToC1z/SlNQ==
-X-Received: by 2002:a17:907:2d9e:b0:a8a:91f4:fd30 with SMTP id a640c23a62f3a-a8d2494b9d8mr642973166b.56.1725889557837;
-        Mon, 09 Sep 2024 06:45:57 -0700 (PDT)
-Received: from blmsp ([2001:4091:a247:83d8:caa7:e645:3612:56b6])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c80a24sm345022366b.137.2024.09.09.06.45.56
+        d=1e100.net; s=20230601; t=1725889575; x=1726494375;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jsb1hW5HiIcqNhuIYoIU21k0XvWHTUUsVMgaYZ6WuUQ=;
+        b=j8FwiLWj4ND5Vk2ggYGj3nlQQBHMYIdufBywJS55S7RfZrABntF5E8NASbeTao0Rgt
+         1OoZAd7i/Yl8Ui+LcPeSfa0k1IAsfnnOZiKn/lOWbUTFvh7HugUvYxDL19yX8scN5CYo
+         pfpeQ5aANIEBJVrmiJEapxAyQ91Cml6ccyHHXfkB0PF6k3dHeSNGDUBDGf2swhpdcmLE
+         NhNX01O+Zvj1hRRwHmjJKdKbanjbMujaOf0RrdlFH3+OAxPWxQJFjFPtTCNF07CI48EZ
+         tIW38PKcQ6lmJ/NbRi7CcqnDyWc6wciioxOai3FHLDdvDxl+Sg0RHSiWUmx5dRVk12Wz
+         YZ4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVCa6O8deJSj5BEJFmobqgcw5y+5Xfl4hLz0RA74Ct4qy0Z0EkImjZ6BMDkpCdfoEibc3OBOFrEVEhgkwY=@vger.kernel.org, AJvYcCWeUWL9QWO87QZOyQJ6Rrts3qADTYlNLLihL2aGGlJeY0+nTpOmhmfUZa/WKCu7BLsAHiiqqLgK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww/Jf5nzNdy9TmAFv1TyodIDIpOrKRb2mA05Qf5/SBADTRy5ik
+	ck6xRsWZ9ekFXTcDk7Zbb2G3m8DTuHnjn03uGz667rBFyeKtSepK
+X-Google-Smtp-Source: AGHT+IFQL7agCuie4HPQrXUIGOQjmrOE9UbJfjjzFxKEnCpDAmCZFKVP1sYMkgzhBgJ4uOWfFjOQoQ==
+X-Received: by 2002:a05:6000:1f0b:b0:374:c793:7bad with SMTP id ffacd0b85a97d-378949f7bfbmr4708962f8f.16.1725889574563;
+        Mon, 09 Sep 2024 06:46:14 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb73ab096sm39270425e9.22.2024.09.09.06.46.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 06:45:57 -0700 (PDT)
-Date: Mon, 9 Sep 2024 15:45:56 +0200
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org, 
-	Nishanth Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>, 
-	Akashdeep Kaur <a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] pmdomain: ti_sci: add wakeup constraint management
-Message-ID: <rtdegcb5ypszuoqgc4rwcp4vo6wpkybfreo5of4pxxw3lr2qrk@uvhwbiq4mmmy>
-References: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
- <20240906-lpm-v6-10-constraints-pmdomain-v4-2-4055557fafbc@baylibre.com>
+        Mon, 09 Sep 2024 06:46:13 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Justin Lai <justinlai0215@realtek.com>,
+	Larry Chiu <larry.chiu@realtek.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] rtase: Fix spelling mistake: "tx_underun" -> "tx_underrun"
+Date: Mon,  9 Sep 2024 14:46:12 +0100
+Message-Id: <20240909134612.63912-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240906-lpm-v6-10-constraints-pmdomain-v4-2-4055557fafbc@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 06, 2024 at 09:14:50AM GMT, Kevin Hilman wrote:
-> During system-wide suspend, check all devices connected to PM domain
-> to see if they are wakeup-enabled.  If so, set a TI SCI device
-> constraint.
-> 
-> Note: DM firmware clears all constraints on resume.
-> 
-> Co-developed-by: Vibhore Vardhan <vibhore@ti.com>
-> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Tested-by: Dhruva Gole <d-gole@ti.com>
-> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+There is a spelling mistake in the struct field tx_underun, rename
+it to tx_underrun.
 
-Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/realtek/rtase/rtase_main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Best
-Markus
+diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+index 7882f2c0e1a4..869183e1565e 100644
+--- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
++++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+@@ -98,7 +98,7 @@ struct rtase_counters {
+ 	__le64 rx_broadcast;
+ 	__le32 rx_multicast;
+ 	__le16 tx_aborted;
+-	__le16 tx_underun;
++	__le16 tx_underrun;
+ } __packed;
+ 
+ static void rtase_w8(const struct rtase_private *tp, u16 reg, u8 val8)
+@@ -1619,8 +1619,8 @@ static void rtase_dump_state(const struct net_device *dev)
+ 		   le32_to_cpu(counters->rx_multicast));
+ 	netdev_err(dev, "tx_aborted %d\n",
+ 		   le16_to_cpu(counters->tx_aborted));
+-	netdev_err(dev, "tx_underun %d\n",
+-		   le16_to_cpu(counters->tx_underun));
++	netdev_err(dev, "tx_underrun %d\n",
++		   le16_to_cpu(counters->tx_underrun));
+ }
+ 
+ static void rtase_tx_timeout(struct net_device *dev, unsigned int txqueue)
+-- 
+2.39.2
 
-> ---
->  drivers/pmdomain/ti/ti_sci_pm_domains.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> index bb95c40ab3ea..1ab1e46924ab 100644
-> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> @@ -74,6 +74,21 @@ static void ti_sci_pd_set_lat_constraint(struct device *dev, s32 val)
->  			pd->idx, val);
->  }
->  
-> +static inline void ti_sci_pd_set_wkup_constraint(struct device *dev)
-> +{
-> +	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-> +	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
-> +	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
-> +	int ret;
-> +
-> +	if (device_may_wakeup(dev)) {
-> +		ret = ti_sci->ops.pm_ops.set_device_constraint(ti_sci, pd->idx,
-> +							       TISCI_MSG_CONSTRAINT_SET);
-> +		if (!ret)
-> +			dev_dbg(dev, "ti_sci_pd: ID:%d set device constraint.\n", pd->idx);
-> +	}
-> +}
-> +
->  /*
->   * ti_sci_pd_power_off(): genpd power down hook
->   * @domain: pointer to the powerdomain to power off
-> @@ -115,6 +130,8 @@ static int ti_sci_pd_suspend(struct device *dev)
->  	if (ti_sci_pd_is_valid_constraint(val))
->  		ti_sci_pd_set_lat_constraint(dev, val);
->  
-> +	ti_sci_pd_set_wkup_constraint(dev);
-> +
->  	return 0;
->  }
->  
-> 
-> -- 
-> 2.46.0
-> 
 
