@@ -1,116 +1,126 @@
-Return-Path: <linux-kernel+bounces-321917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD99B97210C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:39:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE63972117
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F675B23ED4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:39:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EE9E285388
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C6C17D8A9;
-	Mon,  9 Sep 2024 17:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50B0188CDC;
+	Mon,  9 Sep 2024 17:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MbPmw/Jp"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Q4gJ2hDZ"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CB0178CE4
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63A2188CC5
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902945; cv=none; b=a5RSEfmLScTxy6JKeu0XvKObbwydPtpQwN/DZ5z/5zqsqPIQX4eZyNH+bz5BitrU+WBsV398jnPmJ35X0RNlYcWwVjzUVjGXTdGOcVH2HmF/nTZzNyf8+PUAJVu0lI1xBaBLBbOcT6B510pcSnYHF7CKN32Eodymn2EOdacqhQU=
+	t=1725903070; cv=none; b=jBGtzhsNm96pbgJ+b9jVEDP6lZKcYF+AQrL/8PWfKzY1xFYzOcCMzkZOCws0VyInE0oZR4IgJS8UzYy5aoLCrSiUZdrSsGoQpzlCBihZbYBDY9lYk75eTKkA5jiHLHukmEgHa0LeFGzIiFpA3vHbBiyl5IiRm0Urgq+0CTzn7aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902945; c=relaxed/simple;
-	bh=04f/NG7uG8xJCYrjo8eeFixG+3G6Lz5sLV0VFuL28jA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kBGL9tX6ZoXl8URbwWIauaSwVpevwLOQ8bqYnzI+sAxPOPY8JTbx6xY374DxLO4ae4ghDCv59mxO87dlE0UvdrwMrntzXu00TlFDPf0o8KEVaI3kU6sBDi2NIml1qIk8AW+dmhCIlixiheZ6MrRZ681n4d5AVAbr9pdRekxbzSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MbPmw/Jp; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4581cec6079so20461cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 10:29:03 -0700 (PDT)
+	s=arc-20240116; t=1725903070; c=relaxed/simple;
+	bh=Z6mJvcZe2MesBZofy1uPkQhd+aKfwut11jWDOz6Jc3Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=agwvonlQTXp0AkVcng4TF+1rPhXwWPc0zlAYduB8iDzgaNQdywcorelZU2kRyDkS9Dj1XWaEEpIUZKeKJfXZNG0rdeKtOv0OwzK42dBa5sll+B95IO/3DLugqVOr8QmKIK+OFPj+kQtefDiHHqTwADPqb+JbN+Ylvf6gAMPHQz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Q4gJ2hDZ; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-374c326c638so3464275f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 10:31:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725902943; x=1726507743; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=04f/NG7uG8xJCYrjo8eeFixG+3G6Lz5sLV0VFuL28jA=;
-        b=MbPmw/JpVKUFwXLmfyJ4Nh07KD7KT6CtaXUcyZfs5ZmWjMZdwn984Mv361WxQQK+G9
-         FVWYADMPRfzzvUVquWl1O9Jp3iezSQvgs4jQpiOfBo61Oc2nXRIlPqKnY+8v/U47tmmB
-         OZ/AbNs3ZNkKilj01Qsrzs4skJeSUEINu1wHsJnRrLuJpjVI/yDpQkwDfcIuVe7Xaavs
-         JTfkhJ78CEGL67LbsszismNs1ZFdLmjk9apQpQv/I4raTrUdHCBhBK4K9fHOm9WShpKm
-         MtGxgUP2xAfHFc6tuQ+uz1m628avK8ubDR7Z90EgrzoA/NR8sjVR1cjaicWVQ1wdazpK
-         2Qgg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725903066; x=1726507866; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8PiS3BCPtpO9F22HA9pONA15SeMVWRie+tAa6W5csc4=;
+        b=Q4gJ2hDZm4QV5jruPcIYGowIuPA5zqvXQD77QazYDXBemlx34qMjgKyFuS+LLLscfS
+         hjqzm3rR7DQYYSqxpRkv/MBN9857V7BBnU3f5SmBagpSBhXq6+LQuY23KPnLv/L4kSRH
+         ENzHh+XFAUnCeBEQeWVIfQf2plmUnDy/sJZIzoTHVrsYjEHU754FVUkC6JMLXhTIA8p7
+         29hGvz1l63NoldD0jIJaWCQGuUR/tx0ApLGUuyeqAZ9ryvScWAUNs9OBNhDbPpkoJ+J3
+         +lAkSk6F3VHPthh1zuKoUCp/kFwon384tjLC5TeC0OPzRRAVwrG0fX/yqMmIoTaEvW6Y
+         rhyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725902943; x=1726507743;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=04f/NG7uG8xJCYrjo8eeFixG+3G6Lz5sLV0VFuL28jA=;
-        b=Yn2TE9pgFAr99UNe50ncduqAYzahNeO2qYTEITXn1FVMAnx6arVhBzPgrz2geX+KOl
-         Dz6Hnbi8meI82A+ovDM0A6qTWYJjyz+ZR94ebB1T2dYUpN5rhn1Y2lF0iBNF0zrThuD7
-         V/9sVDCkiCwGvg3jEHUyB3XcM9DLVjJ85T9RQXYXCtqmhv/Kf7+I47+a7Kx4x9gHBmWi
-         DUTdamdYoYZllixhrSScw4UGE4Ev7sOkbXZqrsuoao4VWb9BVQPATahvG8LCneTberg/
-         bSeESTg33q2auCQ7WSOjdFCWw6NYUuaomfu0bsJ7yE49Zvhc7ddXLYsn3mR7dDERXtsK
-         zBnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMlik4dw5F5i5a/kPVZ4zTbj89zjoPl71vXxfhFkROi62No/XdtCfPYAsyTGRvlld5i9+h6jtkCoFCF34=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh0Fy6B/bdPJl+hyStqDFIblIGOq9iOAf2kdmdRTAFRMHjfTnb
-	NuSts28j1baoZdn71hpHOptm7KKgVhf+usTtFa5ds+bbjdrwSXpjyRst+7RX5pVEAuJTUDm90hv
-	cGDxkTuXoj5G2octGviZulB5bqxMytOstnwAX
-X-Google-Smtp-Source: AGHT+IFnxYeNUTaiJzioMhpfJmPbKwXRc8/Ury8YtqFEElFUIOmLINaQJV62PuA8eYbmnaR2d40uOsCUMUEG9M7B2Yc=
-X-Received: by 2002:ac8:5910:0:b0:456:7d9f:2af8 with SMTP id
- d75a77b69052e-4582147f7a7mr5005451cf.7.1725902942736; Mon, 09 Sep 2024
- 10:29:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725903066; x=1726507866;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8PiS3BCPtpO9F22HA9pONA15SeMVWRie+tAa6W5csc4=;
+        b=fkClGWaFLgHhowLEHwS08762AJmc0CXZ3ec6+jGfNIQIJ736ZxWlRIC89/GZNfddLe
+         s0d7e5Y5krAgnFFM/oj/xrpylGg+hU9ymRL0oqI1iyEeUydVYqIRu0F0iODDuzpR0xZK
+         2so27RTtys5E+Idqdt7yE3PdGIsvYlAqf3DVDxKerPWwHAonn4y4lhRDjwl7hfF/uNpA
+         iWrhZ7U8jhZBDiNMS75TO/54ZyDLsdpwv8Wi/HwWOZo/58Fjb8A03kX8slw6U8wXJgRZ
+         kyBb8WeMBDWOuUrs3dYhGvGtSjt5po69df6i4cJ94eGalikTUCZRZpGYrO5z77c+e2MZ
+         OAHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVryco6K4yX8lmPTOYfGcP9VqG3hAzgaXaZcSPLiNg/3ZOWfP+nyoIIveRAe2F3iG/2GNH3v9vGzqZUNrM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPpXEu9Sikmi8wcYcxh5jW+QK70BsdhgOylUttIBs0e+SR4n5Z
+	qDMPzsxPFYTQI1+Bk5H/FqRAFSB1QeZCFrOUyBpbIwvEtBWhKgVRiLfO8lBK/Q0=
+X-Google-Smtp-Source: AGHT+IG8YCZKd3Jy5v0Ys8OrH5RGLNJOThDfAM6nb3KaRMGZlBu7kgyv93neGwHauSgA7m/I2pKL9w==
+X-Received: by 2002:a5d:5e12:0:b0:378:89d8:8242 with SMTP id ffacd0b85a97d-37889d88432mr6208872f8f.26.1725903065445;
+        Mon, 09 Sep 2024 10:31:05 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:788a:4542:ae86:67f4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a340sm6544029f8f.24.2024.09.09.10.31.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 10:31:04 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,  Stephen Boyd
+ <sboyd@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin
+ Hilman <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  Jiucheng Xu
+ <jiucheng.xu@amlogic.com>,  oe-kbuild-all@lists.linux.dev,
+  linux-arm-kernel@lists.infradead.org,  linux-amlogic@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 9/9] reset: amlogic: add auxiliary reset driver support
+In-Reply-To: <202409100033.EPfBtwfK-lkp@intel.com> (kernel test robot's
+	message of "Tue, 10 Sep 2024 00:42:47 +0800")
+References: <20240906-meson-rst-aux-v4-9-08824c3d108b@baylibre.com>
+	<202409100033.EPfBtwfK-lkp@intel.com>
+Date: Mon, 09 Sep 2024 19:31:04 +0200
+Message-ID: <1jcylcu42v.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909091913.987826-1-linyunsheng@huawei.com>
-In-Reply-To: <20240909091913.987826-1-linyunsheng@huawei.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 9 Sep 2024 10:28:48 -0700
-Message-ID: <CAHS8izNfLYQFgZYkRPJFonq8LH6SnV70B4pfC_cQ5gyz780cZA@mail.gmail.com>
-Subject: Re: [PATCH net-next] page_pool: add a test module for page_pool
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: hawk@kernel.org, ilias.apalodimas@linaro.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Sep 9, 2024 at 2:25=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.com=
-> wrote:
+On Tue 10 Sep 2024 at 00:42, kernel test robot <lkp@intel.com> wrote:
+
+> Hi Jerome,
 >
-> The testing is done by ensuring that the page allocated from
-> the page_pool instance is pushed into a ptr_ring instance in
-> a kthread/napi binded to a specified cpu, and a kthread/napi
-> binded to a specified cpu will pop the page from the ptr_ring
-> and free it back to the page_pool.
+> kernel test robot noticed the following build errors:
 >
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> [auto build test ERROR on 487b1b32e317b85c2948eb4013f3e089a0433d49]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Jerome-Brunet/reset-amlogic-convert-driver-to-regmap/20240906-213857
+> base:   487b1b32e317b85c2948eb4013f3e089a0433d49
+> patch link:    https://lore.kernel.org/r/20240906-meson-rst-aux-v4-9-08824c3d108b%40baylibre.com
+> patch subject: [PATCH v4 9/9] reset: amlogic: add auxiliary reset driver support
+> config: parisc-randconfig-r123-20240909 (https://download.01.org/0day-ci/archive/20240910/202409100033.EPfBtwfK-lkp@intel.com/config)
+> compiler: hppa-linux-gcc (GCC) 14.1.0
+> reproduce: (https://download.01.org/0day-ci/archive/20240910/202409100033.EPfBtwfK-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202409100033.EPfBtwfK-lkp@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>    hppa-linux-ld: drivers/reset/amlogic/reset-meson-aux.o: in function `meson_reset_aux_probe':
+>>> (.text+0xc): undefined reference to `meson_reset_controller_register'
+>>> hppa-linux-ld: drivers/reset/amlogic/reset-meson-aux.o:(.rodata+0x88): undefined reference to `meson_reset_toggle_ops'
+>    hppa-linux-ld: drivers/reset/amlogic/reset-meson-aux.o:(.rodata+0x9c): undefined reference to `meson_reset_toggle_ops'
 
-It seems this test is has a correctness part and a performance part.
-For the performance test, Jesper has out of tree tests for the
-page_pool:
-https://github.com/netoptimizer/prototype-kernel/blob/master/kernel/lib/ben=
-ch_page_pool_simple.c
+In the config the COMMON part is built as module while the AUX part is
+built-in. Of course, this should not be allowed. The error was
+introduced in the last patchset version due to another renaming.
+Will be fixed this next one.
 
-I have these rebased on top of net-next and use them to verify devmem
-& memory-provider performance:
-https://github.com/mina/linux/commit/07fd1c04591395d15d83c07298b4d37f6b5615=
-7f
-
-My preference here (for the performance part) is to upstream the
-out-of-tree tests that Jesper (and probably others) are using, rather
-than adding a new performance test that is not as battle-hardened.
-
---
-Thanks,
-Mina
+-- 
+Jerome
 
