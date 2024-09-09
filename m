@@ -1,105 +1,121 @@
-Return-Path: <linux-kernel+bounces-322136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D98972495
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:35:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3277D97249A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE1E28557C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:35:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89275B22C06
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D76618C936;
-	Mon,  9 Sep 2024 21:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66EB18C90B;
+	Mon,  9 Sep 2024 21:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLfXetRZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGox7BV3"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D8018C91D;
-	Mon,  9 Sep 2024 21:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01521836D9
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 21:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725917731; cv=none; b=r1E2WjfFH8dWm2fYA4jUneTaY8hnkK5wLr1JkVnR34L78ojsAxWzUZYlFWLdTfTgWUVDCj4AXAxwK1qL6aswQfiB4mgJH7sbUR3xy6UzESC8WKHLepAed69TkBUTjtaedhyW2jlI6tTya6Lfvm+a6fi6bgcT9ZAoNZxbyohooVg=
+	t=1725917918; cv=none; b=MLcb7nvZoxx+QW/rgwAyYWq2076ufaDguRxz3WfcMlghkMw3OSs54yiMVMlDQKrG1pzzRsS53XzVJUSkHfT8OMn9aHgR8rBLoTIo4dG/1wkQlrgy6D8SKlQQe411249pW1YL15c4cRmQb9iE8ELyd5N62xU6UB+wf0MEGRXsnf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725917731; c=relaxed/simple;
-	bh=ABb+ZfLdlG2gN2f3g7xwpoPiZYnjKAV1QkEg+j4S0Ao=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OvYsgebwpPaITYz2P40XN0wt/h7dbteYnqFmqvYTcfRbYplIKfTpPLuYm6GUSob+5yLMlA+bc/i8w9xFJBhZUy7mwWDR1j6lqJa2R2rVB9ECjehi5BAhtFLAq47urK25xkqnQ/zc82BM8ptZRT/Z2+gQjLNXmAFYBeje5gsrc7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLfXetRZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3B1C4CEC5;
-	Mon,  9 Sep 2024 21:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725917731;
-	bh=ABb+ZfLdlG2gN2f3g7xwpoPiZYnjKAV1QkEg+j4S0Ao=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YLfXetRZaE+IlnMKFzAHZRjZcgvbDyjuJ9meGmHoDLtuxxMwv50dWZZLfudtNl819
-	 CagTeOSoc2ORs4UpMDtZ9U6F44rUrPM1YY4pJ9iGzkUA4z31djT4bu6dHEoA71rz2H
-	 VkVhmccyf2r32Wb+BAnechbw2JtMSNV6vgMhp1UWllrmdMMVdowYpXm90QKVf5P+Ne
-	 0OOBFtpx2ky9pGNT2ISEVGCXuY4mq3sjg9t/n+ASxqDMaXvwip7M631UhPl0FBm/nr
-	 VFnek6n2mUHuXAiThTgA2APL50SKBJI1SL5bCvJfjZswSpwDjYlvmIRADJJAlzte3b
-	 ibktNe/S9VYDA==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <7727e493490d37775a653905dfe0cc1d8478f8e0.1725908163.git.christophe.jaillet@wanadoo.fr>
-References: <7727e493490d37775a653905dfe0cc1d8478f8e0.1725908163.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] regulator: tps6287x: Constify struct regulator_desc
-Message-Id: <172591772999.144124.1097678117910341898.b4-ty@kernel.org>
-Date: Mon, 09 Sep 2024 22:35:29 +0100
+	s=arc-20240116; t=1725917918; c=relaxed/simple;
+	bh=/7/v+K92vmdZpMfKKUS8N2xkxGQSmXLfm6PNgOLKnvY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J0kbxiciwsFAZyWHF4JHqGL9MYhdkIsjyQPeMIyxFAn0KvuLLw5YZt8cG9Yu0vfHpu3dB+cmye6qh9mjtwkoufFFknp8F3ryre4ualBGwuDK989AfpGHQCBVQq/JbLLMLBfhA5yTzjxhSgyvzSi1kPzUbcv7kkVzpFq+0ZZXCpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGox7BV3; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d86f713557so3162674a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 14:38:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725917916; x=1726522716; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8/YshQpzW9k3lt1mfESjTp63HexH096NDFAn0wVw4Ug=;
+        b=kGox7BV3rDeTAkRJ7YajjDJuVqeEdbYxvMVKdJl3/Mu1NjMpXxPvDetht+IGI07W0l
+         3wOQb+U3yCZD5cLqr4RYX3WmZsnMbrI4XJzgKCSIUsTUnzeurGpuD009vSKM/L/0XILj
+         zjGlHy4sZgbL/5lM+ypnd5akK3KH3PJriTggWTnTNe1c1JQvuz2dpnniOJiWGbhf1d4w
+         bcSKIOWgdyO2YLo/M7OCV0N3RRLCRohs3E8Cqd/qZa2C4yidl40Y16cjCZrR7Uwwn0ax
+         N0GRZkmFUWcLuYY9/N2v+5Vk/924yIgT1j+EsnSllaMoZiJU+itWmQDLaburkkbRMAeI
+         7IrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725917916; x=1726522716;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8/YshQpzW9k3lt1mfESjTp63HexH096NDFAn0wVw4Ug=;
+        b=P9O6fX7XGnB4C+A6bNprCYjzKHs3peBOS/xFOD/T6vTp93KN6cH7N/5pXfBMfcVt5Y
+         GX7daDL3AZ7lrOnejQSgUe40sv7Pe3IhS8bMy0+9UbZEAbNHt9VYvWc2G6yw8nmuerKn
+         9LYY3GiApiGh/jyfFsktOmS30JmgYVWKKaf+TpyuvNoYm1eIJQbwrxzISES4/G3YmpV3
+         34norYKqXe4bV2hU71R2kOinOX71EQabszyfTrq5X3/W8A5wET/XejXXwj+BdiV+LEcc
+         LL4GFuSPf8nceNBFHV05KdbuGHQxOZ+iOfQHm3DVGMHFstMyq94tOLlKY01aEObprIy2
+         iX2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVxgC06VHZFKM4AZYOaYVYFVPB2rG4+qAUBEf5gmdd8MkWqngpzjE6FNS/NqDvI+IQCbRraIjXoazawf+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtVy/+TG34Kk4LWeiY8tnqMk99LRABo+DsKBwiiMq7/gLJFKES
+	aCMs4zXp3SP4bbGtjBoMrkpniPLIR2QwW/Kw+5umak7gABV5TRGh
+X-Google-Smtp-Source: AGHT+IGrOVTK6wZShZQSP2xltoODwGJpYytnvla3nrL8GsuPex3p977aNFbfq7McIsjRNhh/2I+iEQ==
+X-Received: by 2002:a17:90a:5802:b0:2c9:5c67:dd9e with SMTP id 98e67ed59e1d1-2dad50139d8mr14574504a91.19.1725917915951;
+        Mon, 09 Sep 2024 14:38:35 -0700 (PDT)
+Received: from localhost.localdomain (111-240-106-94.dynamic-ip.hinet.net. [111.240.106.94])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db0419ae89sm5067016a91.13.2024.09.09.14.38.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 14:38:35 -0700 (PDT)
+From: Min-Hua Chen <minhuadotchen@gmail.com>
+To: Nick Terrell <terrelln@fb.com>
+Cc: Min-Hua Chen <minhuadotchen@gmail.com>,
+	Nick Terrell <terrelln@meta.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] zstd: use NULL instead of 0 for NULL pointer
+Date: Tue, 10 Sep 2024 05:38:08 +0800
+Message-ID: <20240909213811.192532-1-minhuadotchen@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Transfer-Encoding: 8bit
 
-On Mon, 09 Sep 2024 20:56:19 +0200, Christophe JAILLET wrote:
-> 'struct regulator_desc' is not modified in this driver.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increases overall security, especially when the structure holds some
-> function pointers.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->    4974	    736	     16	   5726	   165e	drivers/regulator/tps6287x-regulator.o
-> 
-> [...]
+Use NULL instead of 0 for NULL pointer to fix the
+following sparse warning:
+lib/zstd/compress/zstd_fast.c:726:28: sparse: warning: Using plain integer as NULL pointer
 
-Applied to
+No functional changes intended.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Fixes: 98988fc8e9ed ("zstd: import upstream v1.5.5")
+Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
+---
+ lib/zstd/compress/zstd_fast.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks!
-
-[1/1] regulator: tps6287x: Constify struct regulator_desc
-      commit: 63a68ee1c27f5d1a17b78a2c937b86b0fb1fd99a
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/lib/zstd/compress/zstd_fast.c b/lib/zstd/compress/zstd_fast.c
+index 3399b39c5dbc..b0dbe0db3310 100644
+--- a/lib/zstd/compress/zstd_fast.c
++++ b/lib/zstd/compress/zstd_fast.c
+@@ -723,7 +723,7 @@ static size_t ZSTD_compressBlock_fast_extDict_generic(
+     U32 offcode;
+     const BYTE* match0;
+     size_t mLength;
+-    const BYTE* matchEnd = 0; /* initialize to avoid warning, assert != 0 later */
++    const BYTE* matchEnd = NULL; /* initialize to avoid warning, assert != NULL later */
+ 
+     size_t step;
+     const BYTE* nextStep;
+@@ -895,7 +895,7 @@ static size_t ZSTD_compressBlock_fast_extDict_generic(
+ _match: /* Requires: ip0, match0, offcode, matchEnd */
+ 
+     /* Count the forward length. */
+-    assert(matchEnd != 0);
++    assert(matchEnd != NULL);
+     mLength += ZSTD_count_2segments(ip0 + mLength, match0 + mLength, iend, matchEnd, prefixStart);
+ 
+     ZSTD_storeSeq(seqStore, (size_t)(ip0 - anchor), anchor, iend, offcode, mLength);
+-- 
+2.43.0
 
 
