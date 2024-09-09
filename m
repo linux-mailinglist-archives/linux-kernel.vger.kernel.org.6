@@ -1,151 +1,121 @@
-Return-Path: <linux-kernel+bounces-321758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDF9D971EFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:21:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168A4971EF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84C102850B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:21:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4083B1C22992
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3F013C812;
-	Mon,  9 Sep 2024 16:20:58 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A79613CFBC;
+	Mon,  9 Sep 2024 16:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zm7V0rmx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721FF136350
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3C313A879;
+	Mon,  9 Sep 2024 16:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725898858; cv=none; b=b82/OlO8+p72DZPkuVoB1TcwZNLkRBeCusfHhpg3DvHzWbvk0sBWzttUTfdGmMqdT9KF2xrUAWaq29SV11lYypE8G0Wkh/4X6DPahPKYPcc0v2Yu1dbh7Fn57vyjx91ZlYLFKw/YrP8SxhwCazFDpUvPXS6Aotltt5giPWY3tys=
+	t=1725898810; cv=none; b=FbL83yWmjr9hUXaYiuBygtLmwmOGXfUaI9dcESGp2d25W3g5j0ngTG1CUbbuWWbHRIQtYUnb0pfXLL0rT3tCodrM2+OK+ARWrs2Y+KI3jj5cXoN03/kSsCm/dbc0cmcP8GXohLx8ok8NKmco6i29aWOl2dzzTxmN3VjZ0jWsy14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725898858; c=relaxed/simple;
-	bh=FJpHA0amwFa8fwMqJbpZ6J7qECXZWoFy2ADPLU+Pipc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=CY8m5/7EgkCyOf6O5xJEeV1MqB+LjIv9uB+ART3NdTapYaU68ObJ4rVXJpuKFVfBwMsnYwnkp4iA3FZom/koALmsi+Yp28IDGfbrttWjKQwpb9MFT+6LqY1jcUGL931Ypx8WlLY1NKpoYgnxifg/CqEue4+86tMk6dUydw8fWYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-117-77voFV8_M_GOh6WcdcqWzg-1; Mon, 09 Sep 2024 17:20:49 +0100
-X-MC-Unique: 77voFV8_M_GOh6WcdcqWzg-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 9 Sep
- 2024 17:19:55 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 9 Sep 2024 17:19:55 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Vincent Mailhol' <mailhol.vincent@wanadoo.fr>, Kees Cook
-	<kees@kernel.org>
-CC: "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] overflow: optimize struct_size() calculation
-Thread-Topic: [PATCH] overflow: optimize struct_size() calculation
-Thread-Index: AQHbAq7chQPnkDLYlEibiVH2n79D27JPn5pQ
-Date: Mon, 9 Sep 2024 16:19:55 +0000
-Message-ID: <20d6a62f083d47828b3d5f49000d5e2b@AcuMS.aculab.com>
-References: <20240909115221.1298010-1-mailhol.vincent@wanadoo.fr>
-In-Reply-To: <20240909115221.1298010-1-mailhol.vincent@wanadoo.fr>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1725898810; c=relaxed/simple;
+	bh=TS/pSz1uD3dN1/wXh7XIMM8S8qVOA+/r9H0LYbQw3Mc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qoQqRND9FZET7vuHV7oKKz0PehICs7+gVonw1QWFu3pASy2O0CSYchshyT+9AMLdW8cr2I6JCLcs92SLwcPVtkC2XQCezx+fCg2x59uX8rPVxoqmu1Mg2ht0P8UXN9KanMclm3hQQHcYuIlgeMbAE3boU9AVlm6bLTg3HjWNKR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zm7V0rmx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25BC2C4CEC5;
+	Mon,  9 Sep 2024 16:20:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725898810;
+	bh=TS/pSz1uD3dN1/wXh7XIMM8S8qVOA+/r9H0LYbQw3Mc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zm7V0rmxhwjWgkzWrThPJEsFRUDqWvq+1iX2K8gqArj2yYKcaWSZ/iSEzLx+829cf
+	 uSvLFRpjPcofMUYkvhheUgVBHXiJl8cxbl0bBSopOM/WAxzMfBVnnb//ysEw0Ud/Oa
+	 HtLsJy0AxBBHGFqqSQD7sTaGIREmQJ65ZO+SYq9l9zyQSoYpdGM07295TOTNdipeP8
+	 +zRdjXCgCu1I7nnWQJoSds6af8lNvlqPJLGwcF7NRCaO1sJ1tdSM8gkGeOgoLp8fw7
+	 WJo10TsVsiqAJzW19QeQbbLiubZmuOZqvOfaE9Ar8ZNEyPer3gJR2onSpgOpPrYTFk
+	 tWe/WP1baRfoA==
+Date: Mon, 9 Sep 2024 11:20:09 -0500
+From: Rob Herring <robh@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/2] dt-bindings: net: ethernet-phy: Add
+ master-slave role property for SPE PHYs
+Message-ID: <20240909162009.GA339652-robh@kernel.org>
+References: <20240909124342.2838263-1-o.rempel@pengutronix.de>
+ <20240909124342.2838263-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909124342.2838263-2-o.rempel@pengutronix.de>
 
-RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDA5IFNlcHRlbWJlciAyMDI0IDEyOjUyDQo+
-IA0KPiBJZiB0aGUgb2Zmc2V0b2YoKSBvZiBhIGdpdmVuIGZsZXhpYmxlIGFycmF5IG1lbWJlciAo
-ZmFtKSBpcyBzbWFsbGVyDQo+IHRoYW4gdGhlIHNpemVvZigpIG9mIHRoZSBjb250YWluaW5nIHN0
-cnVjdCwgdGhlbiB0aGUgc3RydWN0X3NpemUoKQ0KPiBtYWNybyByZXBvcnRzIGEgc2l6ZSB3aGlj
-aCBpcyB0b28gYmlnLg0KPiANCj4gVGhpcyBvY2N1cnMgd2hlbiB0aGUgdHdvIGNvbmRpdGlvbnMg
-YmVsb3cgYXJlIG1ldDoNCj4gDQo+ICAgLSB0aGVyZSBhcmUgcGFkZGluZyBieXRlcyBhZnRlciB0
-aGUgcGVudWx0aW1hdGUgbWVtYmVyICh0aGUgbWVtYmVyDQo+ICAgICBwcmVjZWRpbmcgdGhlIGZh
-bSkNCj4gICAtIHRoZSBhbGlnbm1lbnQgb2YgdGhlIGZhbSBpcyBsZXNzIHRoYW4gdGhlIHBlbnVs
-dGltYXRlIG1lbWJlcidzDQo+ICAgICBhbGlnbm1lbnQNCj4gDQo+IEluIHRoYXQgY2FzZSwgdGhl
-IGZhbSBvdmVybGFwcyB3aXRoIHRoZSBwYWRkaW5nIGJ5dGVzIG9mIHRoZQ0KPiBwZW51bHRpbWF0
-ZSBtZW1iZXIuIFRoaXMgYmVoYXZpb3VyIGlzIG5vdCBjYXB0dXJlZCBpbiB0aGUgY3VycmVudA0K
-PiBzdHJ1Y3Rfc2l6ZSgpIG1hY3JvLCBwb3RlbnRpYWxseSByZXN1bHRpbmcgaW4gYW4gb3ZlcmVz
-dGltYXRlZCBzaXplLg0KPiANCj4gQmVsb3cgZXhhbXBsZSBpbGx1c3RyYXRlcyB0aGUgaXNzdWU6
-DQo+IA0KPiAgIHN0cnVjdCBzIHsNCj4gICAJdTY0IGZvbzsNCj4gICAJdTMyIGNvdW50Ow0KPiAg
-IAl1OCBmYW1bXSBfX2NvdW50ZWRfYnkoY291bnQpOw0KPiAgIH07DQo+IA0KPiBBc3N1bWluZyBh
-IDY0IGJpdHMgYXJjaGl0ZWN0dXJlOg0KPiANCj4gICAtIHRoZXJlIGFyZSA0IGJ5dGVzIG9mIHBh
-ZGRpbmcgYWZ0ZXIgcy5jb3VudCAodGhlIHBlbnVsdGltYXRlDQo+ICAgICBtZW1iZXIpDQo+ICAg
-LSBzaXplb2Yoc3RydWN0IHMpIGlzIDE2IGJ5dGVzDQo+ICAgLSB0aGUgb2Zmc2V0IG9mIHMuZmFt
-IGlzIDEyIGJ5dGVzDQo+ICAgLSB0aGUgYWxpZ25tZW50IG9mIHMuZmFtIGlzIDEgYnl0ZQ0KPiAN
-Cj4gVGhlIHNpemVzIGFyZSBhcyBiZWxvdzoNCj4gDQo+ICAgIHMuY291bnQJY3VycmVudCBzdHJ1
-Y3Rfc2l6ZSgpCWFjdHVhbCBzaXplDQo+ICAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gICAgMAkJMTYJCQkx
-Ng0KPiAgICAxCQkxNwkJCTE2DQo+ICAgIDIJCTE4CQkJMTYNCj4gICAgMwkJMTkJCQkxNg0KPiAg
-ICA0CQkyMAkJCTE2DQo+ICAgIDUJCTIxCQkJMTcNCj4gICAgLgkJLgkJCS4NCj4gICAgLgkJLgkJ
-CS4NCj4gICAgLgkJLgkJCS4NCj4gICAgbgkJc2l6ZW9mKHN0cnVjdCBzKSArIG4JbWF4KHNpemVv
-ZihzdHJ1Y3QgcyksDQo+IAkJCQkJICAgIG9mZnNldG9mKHN0cnVjdCBzLCBmYW0pICsgbikNCg0K
-SSBhY3R1YWxseSBzdXNwZWN0IHRoYXQgaXQgbWF0dGVycyBzbyBpbmZyZXF1ZW50bHkgaXQgaXNu
-J3Qgd29ydGggdGhlIGVmZm9ydC4NCk5vdCBvbmx5IGRvIHlvdSBuZWVkIGEgc3RydWN0dXJlIHdp
-dGggJ3RhaWwgcGFkZGluZycgYnV0IHlvdSBhbHNvIG5lZWQNCnRoZSBzaXplIHRvIGdvIGZyb20g
-b25lIGttYWxsb2MoKSBidWNrZXQgdG8gYW5vdGhlci4NCg0KPiANCj4gQ2hhbmdlIHN0cnVjdF9z
-aXplKCkgZnJvbSB0aGlzIHBzZXVkbyBjb2RlIGxvZ2ljOg0KPiANCj4gICBzaXplb2Yoc3RydWN0
-IHMpICsgc2l6ZW9mKCpzLmZhbSkgKiBzLmNvdW50DQo+IA0KPiB0byB0aGF0IHBzZXVkbyBjb2Rl
-IGxvZ2ljOg0KPiANCj4gICBtYXgoc2l6ZW9mKHN0cnVjdCBzKSwgb2Zmc2V0b2Yoc3RydWN0IHMs
-IGZhbSkgKyBzaXplb2YoKnMuZmFtKSAqIHMuY291bnQpDQo+IA0KPiBIZXJlLCB0aGUgbG93ZXJj
-YXNlIG1heCooKSBtYWNyb3MgY2FuIGNhdXNlIHN0cnVjdF9zaXplKCkgdG8gcmV0dXJuIGENCj4g
-bm9uIGNvbnN0YW50IGludGVnZXIgZXhwcmVzc2lvbiB3aGljaCB3b3VsZCBicmVhayB0aGUgREVG
-SU5FX0ZMRVgoKQ0KPiBtYWNybyBieSBtYWtpbmcgaXQgZGVjbGFyZSBhIHZhcmlhYmxlIGxlbmd0
-aCBhcnJheS4gQmVjYXVzZSBvZiB0aGF0LA0KPiB1c2UgdGhlIHVuc2FmZSBNQVgoKSBtYWNybyBv
-bmx5IGlmIHRoZSBleHByZXNzaW9uIGlzIGNvbnN0YW50IGFuZCB1c2UNCj4gdGhlIHNhZmVyIG1h
-eF90KCkgb3RoZXJ3aXNlLg0KPiANCj4gUmVmZXJlbmNlOiBJU08vSUVDIDk4OTk6MjAxOCDCpzYu
-Ny4yLjEgIlN0cnVjdHVyZSBhbmQgdW5pb24gc3BlY2lmaWVycyIgwrYxOA0KPiANCj4gU2lnbmVk
-LW9mZi1ieTogVmluY2VudCBNYWlsaG9sIDxtYWlsaG9sLnZpbmNlbnRAd2FuYWRvby5mcj4NCj4g
-LS0tDQo+IA0KPiBJIGFsc28gdHJpZWQgdG8gdGhpbmsgb2Ygd2hldGhlciB0aGUgY3VycmVudCBz
-dHJ1Y3Rfc2l6ZSgpIG1hY3JvIGNvdWxkDQo+IGJlIGEgc2VjdXJpdHkgaXNzdWUuDQo+IA0KPiBU
-aGUgb25seSBleGFtcGxlIEkgY2FuIHRoaW5rIG9mIGlzIGlmIHNvbWVvbmUgbWFudWFsbHkgYWxs
-b2NhdGVzIHRoZQ0KPiBleGFjdCBzaXplIGJ1dCB0aGVuIHVzZSB0aGUgY3VycmVudCBzdHJ1Y3Rf
-c2l6ZSgpIG1hY3JvLg0KPiANCj4gRm9yIGV4YW1wbGUgKHJldXNpbmcgdGhlIHN0cnVjdCBzIGZy
-b20gYWJvdmUpOg0KPiANCj4gICB1MzIgY291bnQgPSA1Ow0KPiAgIHN0cnVjdCBzICpzID0ga2Fs
-bG9jKG9mZnNldG9mKHR5cGVvZigqcyksIGZhbSkgKyBjb3VudCk7DQo+ICAgcy0+Y291bnQgPSBj
-b3VudDsNCj4gICBtZW1zZXQocywgMCwgc3RydWN0X3NpemUocywgZmFtLCBjb3VudCkpOyAvKiA0
-IGJ5dGVzIGJ1ZmZlciBvdmVyZmxvdyAqLw0KPiANCj4gSWYgd2UgaGF2ZSBjb25jZXJucyB0aGF0
-IGFib3ZlIHBhdHRlcm4gbWF5IGFjdHVhbGx5IGV4aXN0LCB0aGVuIHRoaXMNCj4gcGF0Y2ggc2hv
-dWxkIGFsc28gZ28gdG8gc3RhYmxlLiBJIHBlcnNvbmFsbHkgdGhpbmsgdGhhdCB0aGUgYWJvdmUg
-aXMgYQ0KPiBiaXQgY29udm9sdXRlZCBhbmQsIGFzIHN1Y2gsIEkgb25seSBzdWdnZXN0IHRoaXMg
-cGF0Y2ggdG8gZ28gdG8gbmV4dC4NCj4gLS0tDQo+ICBpbmNsdWRlL2xpbnV4L292ZXJmbG93Lmgg
-fCA5ICsrKysrKystLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMiBkZWxl
-dGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L292ZXJmbG93LmggYi9p
-bmNsdWRlL2xpbnV4L292ZXJmbG93LmgNCj4gaW5kZXggMGM3ZTNkY2ZlODY3Li4xMzg0ODg3ZjM2
-ODQgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvb3ZlcmZsb3cuaA0KPiArKysgYi9pbmNs
-dWRlL2xpbnV4L292ZXJmbG93LmgNCj4gQEAgLTUsNiArNSw3IEBADQo+ICAjaW5jbHVkZSA8bGlu
-dXgvY29tcGlsZXIuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9saW1pdHMuaD4NCj4gICNpbmNsdWRl
-IDxsaW51eC9jb25zdC5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L21pbm1heC5oPg0KPiANCj4gIC8q
-DQo+ICAgKiBXZSBuZWVkIHRvIGNvbXB1dGUgdGhlIG1pbmltdW0gYW5kIG1heGltdW0gdmFsdWVz
-IHJlcHJlc2VudGFibGUgaW4gYSBnaXZlbg0KPiBAQCAtMzY5LDggKzM3MCwxMiBAQCBzdGF0aWMg
-aW5saW5lIHNpemVfdCBfX211c3RfY2hlY2sgc2l6ZV9zdWIoc2l6ZV90IG1pbnVlbmQsIHNpemVf
-dCBzdWJ0cmFoZW5kKQ0KPiAgICovDQo+ICAjZGVmaW5lIHN0cnVjdF9zaXplKHAsIG1lbWJlciwg
-Y291bnQpCQkJCQlcDQo+ICAJX19idWlsdGluX2Nob29zZV9leHByKF9faXNfY29uc3RleHByKGNv
-dW50KSwJCQlcDQo+IC0JCXNpemVvZigqKHApKSArIGZsZXhfYXJyYXlfc2l6ZShwLCBtZW1iZXIs
-IGNvdW50KSwJXA0KPiAtCQlzaXplX2FkZChzaXplb2YoKihwKSksIGZsZXhfYXJyYXlfc2l6ZShw
-LCBtZW1iZXIsIGNvdW50KSkpDQo+ICsJCU1BWChzaXplb2YoKihwKSksCQkJCQlcDQo+ICsJCSAg
-ICBvZmZzZXRvZih0eXBlb2YoKihwKSksIG1lbWJlcikgKwkJCVwNCj4gKwkJCWZsZXhfYXJyYXlf
-c2l6ZShwLCBtZW1iZXIsIGNvdW50KSksCQlcDQo+ICsJCW1heF90KHNpemVfdCwgc2l6ZW9mKCoo
-cCkpLAkJCQlcDQo+ICsJCSAgICAgIHNpemVfYWRkKG9mZnNldG9mKHR5cGVvZigqKHApKSwgbWVt
-YmVyKSwJCVwNCj4gKwkJCSAgICAgICBmbGV4X2FycmF5X3NpemUocCwgbWVtYmVyLCBjb3VudCkp
-KSkNCg0KSSBkb24ndCB0aGluayB5b3UgbmVlZCBtYXhfdCgpIGhlcmUsIGEgcGxhaW4gbWF4KCkg
-c2hvdWxkIHN1ZmZpY2UuDQoNCglEYXZpZA0KDQo+IA0KPiAgLyoqDQo+ICAgKiBzdHJ1Y3Rfc2l6
-ZV90KCkgLSBDYWxjdWxhdGUgc2l6ZSBvZiBzdHJ1Y3R1cmUgd2l0aCB0cmFpbGluZyBmbGV4aWJs
-ZSBhcnJheQ0KPiAtLQ0KPiAyLjI1LjENCj4gDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtl
-c2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBV
-Sw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On Mon, Sep 09, 2024 at 02:43:40PM +0200, Oleksij Rempel wrote:
+> Introduce a new `master-slave` string property in the ethernet-phy
+> binding to specify the link role for Single Pair Ethernet
+> (1000/100/10Base-T1) PHYs. This property supports the values
+> `forced-master` and `forced-slave`, which allow the PHY to operate in a
+> predefined role, necessary when hardware strap pins are unavailable or
+> wrongly set.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+> changes v2:
+> - use string property instead of multiple flags
+> ---
+>  .../devicetree/bindings/net/ethernet-phy.yaml      | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> index d9b62741a2259..025e59f6be6f3 100644
+> --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> @@ -158,6 +158,20 @@ properties:
+>        Mark the corresponding energy efficient ethernet mode as
+>        broken and request the ethernet to stop advertising it.
+>  
+> +  master-slave:
 
+Outdated terminology and kind of vague what it is for...
+
+The usual transformation to 'controller-device' would not make much
+sense though. I think a better name would be "spe-link-role" or
+"spe-link-mode".
+
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum:
+> +      - forced-master
+> +      - forced-slave
+> +    description: |
+> +      Specifies the predefined link role for the PHY in Single Pair Ethernet
+> +      (1000/100/10Base-T1).  This property is required for setups where the link
+> +      role must be assigned by the device tree due to limitations in using
+> +      hardware strap pins.
+> +
+> +      - 'forced-master': The PHY is forced to operate as a master.
+> +      - 'forced-slave': The PHY is forced to operate as a slave.
+> +
+>    pses:
+>      $ref: /schemas/types.yaml#/definitions/phandle-array
+>      maxItems: 1
+> -- 
+> 2.39.2
+> 
 
