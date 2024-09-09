@@ -1,205 +1,137 @@
-Return-Path: <linux-kernel+bounces-320608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C4B970CB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 06:22:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 801BA970CBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 06:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79D94281CBE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:22:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FA53B21DE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C288C1ACDF6;
-	Mon,  9 Sep 2024 04:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909C51ACDF6;
+	Mon,  9 Sep 2024 04:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="F2mFOroM"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="noIk1YfC"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771A716D30B
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 04:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5774C74;
+	Mon,  9 Sep 2024 04:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725855746; cv=none; b=Br9CGmOa1ZMqFiHza8uOWLvyUPlye992A9HrIQlSRj8ThsNqn5CGje7osIH4M70f/O1MrMo/zLRDYKclrrsqDOqkBMfzXzpQzytUltT1tAz8QrYR16KSTAXALQT9hWl4lybbOH2u+bEHFPvYFYhIDAzHuJXCSFvifxGJBxF+bW4=
+	t=1725856384; cv=none; b=G9PYxEiqgeryCGX5fOOtYfmoeikW1vgziHbxFeqCLpO0gC7ZdFjjy2FV2vM0JE3rrnoFXbuAlvfYD+OJWv7CZdw+UK9SxvF2j8tWdmanZcBccxjfTqkxHpmeDxBoEXDTudzdu17mX+B6RkMA70cd77yZ+00YotOPBcPwd/TU5i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725855746; c=relaxed/simple;
-	bh=ibiaLRZeKK3LN/VKABOyZIK4jr6zzymam1O+aNILctg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QxnQQKmzSBiYqPsdsG2Dp1fAzl5fgIMvJ6SCG6k/Fv5KXzloDW6HlBoPdA5ajfQLZO70rWqMPEaN9kiMbZJCs+YoQJZo1h5C8jUluA0iLsXla0nV5ftfOHSJcimLLQek7NdLfC4C/yEe+hBwtgr/DC86ff6L6ClZTeI4oVDcdVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=F2mFOroM; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d8b68bddeaso2780784a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 21:22:24 -0700 (PDT)
+	s=arc-20240116; t=1725856384; c=relaxed/simple;
+	bh=EVZPIUSsZjGZMeUpN7YnAFV0A0x6X3t6d3gx9BOiXBI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KVQzmVSEo/NtRmkWuAyT/4OADZA4e4rVcvF/z8KFy3CouWFzKQYOn36I/KgxPIoYeTM1XEObDLOIMTDFjTs5SJveXzyg0hM6RkDfc1hWXy01iUg/f1QcxwZHR6Y9xHelRma4ZDD2b2uCXNXUwjckICiTacxwx1TCj/qEa/fMUNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=noIk1YfC; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a99d23e036so164818585a.1;
+        Sun, 08 Sep 2024 21:33:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725855744; x=1726460544; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kR9R+bKGZEb9j1oOgIpA0sRRBoKyW58HQ3+m69umv2U=;
-        b=F2mFOroMxQYpAcuTzARKwaJBsXSffaTT2R+Cej+3calJKdmEhmwXPUWtA1Pw12nO2q
-         xBz7JC/GO52r4tUL+QCHjdIZpqf7tJUNC+0WFqShDjHtWrR/7OKNAmNc90PBeuZFX7GV
-         COf4DC1t21I4Ya3N62owBWby8CKaVt7pFaSKY=
+        d=gmail.com; s=20230601; t=1725856381; x=1726461181; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8QdOMMhx1gpxvBS/wfDoSKFubKp0egWivBQSYQQOJaA=;
+        b=noIk1YfCQwsDgnDcPp3X5141fmjEeNqRC7IVoYKAfS+rlXzrYuuLzy0QuEaapJe/rK
+         IUPrDx3krhf4eSsZ7s0MkNy91FvvK7jWBrIs3LByvecxupi0N20t2Fh4ri9MsfHvnjkH
+         jpZOAyqS1oEYGEt4bi4LCIDAVDeTbHrv9swyv3FUxQomWj5hawr0ybgqfdMaHrTGZOlI
+         L8wGEUGgdf23U1KezWUClPzH6Wr5sLxY5YuNy8xgldtltZZsAmhZRUY27RedJP3XkxoS
+         2xwxLd15BMe0U0otGNiEYVSNqhUCJ309/jSaQuhisYi5tvN8A3spxncrBzGzrK53B5rr
+         ahVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725855744; x=1726460544;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1725856381; x=1726461181;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kR9R+bKGZEb9j1oOgIpA0sRRBoKyW58HQ3+m69umv2U=;
-        b=X2/xW+P+0yOGJv3u/8FF8O1d9Dt0eEvc5/+5aYEGA2mDs2TMskX7zRuovgYoI2aOlM
-         LuJLznBWnqBdPNBVtbMrEzSxf2VNIoPV3cxH2YYvW+7Z5kwIVkzn83VamF/k6cWF0z4l
-         Zi1+JYmO82vZCl+d6HrUJZTyj5vQp2vjhxjfcYo5JfdKtO3g7eg0OTnZXdrZR3ARSFMF
-         xtRxccmDKBOUgKbRuGpOUXafiUnOoEOTA2e+tes7jdkGDkl7l1YjYb131sNecuWMi5io
-         IeqeSoWaNxCdhrAGsjRiQ6EUHmWVVFTYo1pNoJZVCCikBST9tmg69bQkfdh8A8Nnsoo+
-         TsCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXn/P8jnzYuBmqUs5yWZOvcwDGBgfACp/MeV/eCwhH9mBDjeWebsLT/5nkPEagMS58D8HZiqspNbjkuMH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFhGTcBkh5D9cqmezOgRUkTsz6zvOKIGasaqX+pmAUOJpUHqY2
-	r75U96mUOzj6QJbMc7SZ/Km4yR2uEcKnbw1g1KMkoSe9sPD9aXxIKb5Ku2o+TkYW7WOZLPgGMGl
-	zbCfcT+B9BeoHFPa+l4GViRfxr8sUpxSqpidZ
-X-Google-Smtp-Source: AGHT+IH0+pba8X6hC1ApiWlDyZGVzJ5qT03YlsGgq9xfnzh7mwgmlSMmBIhHfnPYqpGI5DOO3tNzrqZJ6nkhbu4iACY=
-X-Received: by 2002:a17:90b:3c83:b0:2c9:6a2d:b116 with SMTP id
- 98e67ed59e1d1-2dad4dde0bemr10335413a91.7.1725855743569; Sun, 08 Sep 2024
- 21:22:23 -0700 (PDT)
+        bh=8QdOMMhx1gpxvBS/wfDoSKFubKp0egWivBQSYQQOJaA=;
+        b=huFiq0bUq6Jg0JMu+Hz82SVcSOODmYehmF+OsOQPsu/ZD+MUqTxJiqkKP8kP2zS+Si
+         ueLVrN7SoyVeGRqpTXWl+7HH6ElcVCnC+wRLk2D3BhjDuAB7gFxDz9VliRqtO9Gf70j9
+         d+D3WAApV4KTy2jxyz17PWtdLmDZBVK00VncuUlcF1ZE0G0CsHR9DX4rPMiOIEYXB9mX
+         tyHUPn5uudXK86+inHj4xLMx34Jea569fbsexCOZdsvJlsXFmlIp8TK7FSFfs8WlX1o4
+         gzWGwLbbouT/mO8jtKVK9WLD+hEdqjr0MLFSjvFSgEP/KbYsWbnlLNR+zODVLpA84LYK
+         HxIA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/U3TEZcbQVFOREnRRgVjVO8LODaJhch6kzS0i8vs2E9rG7+zLVqe8Evk2GLDQMSujosBJ/GW4gQjAoqGe@vger.kernel.org, AJvYcCWYR+gowHg7Zj/5UX5f+nGGn5AupSvPthns7Zb9jRBY00Mh3IaslK0EuseZocmj09HAqAMjY+8ELSQo@vger.kernel.org, AJvYcCXbceBLS63k0gnhWHX9cj3KEktl96INBD7JDeyM81LoH0ua0RucFHbasMmR1XWD7G3FZpeJV++QVKZT@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiysXm3R9gTFtkNXjJ6ntwhvxOONF8iWxSjGEzGfOWsJWj8Sm3
+	b6tjivgbp2S4YQrXIUjw6Dc6siFjICG4z9JUehkV8oeBi3PzsLi0
+X-Google-Smtp-Source: AGHT+IEh1QEywJsPJHkyFDksMeTinTFmR0iWFLZH3H5xDpwkYQocnQsExUxTRmOubpBbdi4NOakRNg==
+X-Received: by 2002:a05:620a:4543:b0:79f:197d:fe6e with SMTP id af79cd13be357-7a99735e832mr1260685385a.45.1725856380836;
+        Sun, 08 Sep 2024 21:33:00 -0700 (PDT)
+Received: from localhost.localdomain (ool-1826d901.dyn.optonline.net. [24.38.217.1])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a794559bsm180791685a.6.2024.09.08.21.32.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 21:32:59 -0700 (PDT)
+From: Alex Lanzano <lanzano.alex@gmail.com>
+To: Alex Lanzano <lanzano.alex@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
+	Nuno Sa <nuno.sa@analog.com>,
+	Jagath Jog J <jagathjog1996@gmail.com>
+Cc: skhan@linuxfoundation.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Add I2C driver for Bosch BMI270 IMU
+Date: Mon,  9 Sep 2024 00:32:22 -0400
+Message-ID: <20240909043254.611589-1-lanzano.alex@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240908213554.11979-1-rosenp@gmail.com>
-In-Reply-To: <20240908213554.11979-1-rosenp@gmail.com>
-From: Pavan Chebbi <pavan.chebbi@broadcom.com>
-Date: Mon, 9 Sep 2024 09:52:12 +0530
-Message-ID: <CALs4sv1zEtdmdnOaxMUHRHPFL44pN5zdV0K9m1nDfr-up-eFzg@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: gianfar: fix NVMEM mac address
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	linux-kernel@vger.kernel.org, claudiu.manoil@nxp.com, mail@david-bauer.net
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000008f16e50621a81a9c"
+Content-Transfer-Encoding: 8bit
 
---0000000000008f16e50621a81a9c
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Add basic I2C support for the Bosch BMI270 IMU.
 
-On Mon, Sep 9, 2024 at 3:06=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wrote=
-:
->
-> If nvmem loads after the ethernet driver, mac address assignments will
-> not take effect. of_get_ethdev_address returns EPROBE_DEFER in such a
-> case so we need to handle that to avoid eth_hw_addr_random.
->
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
+References:
+https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi270/
 
-What is the issue you are facing with a random MAC address?
-If there is a real problem, this patch should go to the net, with a
-proper description and fixes tag.
+Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+---
+Changes in v3:
+- Remove code pertaining to buffer / triggered buffer
+- Move register definitions from struct to defines
+- Add bit mask defines for registers and replace hardcoded values
+- Create macros for accel and gryo channels
+- Code style cleanup
 
->  drivers/net/ethernet/freescale/gianfar.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ether=
-net/freescale/gianfar.c
-> index 634049c83ebe..9755ec947029 100644
-> --- a/drivers/net/ethernet/freescale/gianfar.c
-> +++ b/drivers/net/ethernet/freescale/gianfar.c
-> @@ -716,6 +716,8 @@ static int gfar_of_init(struct platform_device *ofdev=
-, struct net_device **pdev)
->                 priv->device_flags |=3D FSL_GIANFAR_DEV_HAS_BUF_STASHING;
->
->         err =3D of_get_ethdev_address(np, dev);
-> +       if (err =3D=3D -EPROBE_DEFER)
-> +               return err;
->         if (err) {
->                 eth_hw_addr_random(dev);
->                 dev_info(&ofdev->dev, "Using random MAC address: %pM\n", =
-dev->dev_addr);
-> --
-> 2.46.0
->
->
+Changes in v2:
+- Remove spi example in binding documentation
+- Add more properties to i2c example in binding documentation
+---
 
---0000000000008f16e50621a81a9c
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+Alex Lanzano (2):
+  dt-bindings: iio: imu: add bmi270 bindings
+  iio: imu: Add i2c driver for bmi270 imu
 
-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
-OltyqaGBuzv+bJTUL+bmV7E4QBLIqGt4jVr1R9hJdH6KxXwJdyfHZ9C6qXmoe2NQhiFUyBOJ0wgk
-dB9Z1IU7nCwvNKYg2JMoJs93tIgbhPJg/D7pqW8gabkCAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
-BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
-HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUEV6y/89alKPoFbKUaJXsvWu5
-fdowDQYJKoZIhvcNAQELBQADggEBAEHSIB6g652wVb+r2YCmfHW47Jo+5TuCBD99Hla8PYhaWGkd
-9HIyD3NPhb6Vb6vtMWJW4MFGQF42xYRrAS4LZj072DuMotr79rI09pbOiWg0FlRRFt6R9vgUgebu
-pWSH7kmwVXcPtY94XSMMak4b7RSKig2mKbHDpD4bC7eGlwl5RxzYkgrHtMNRmHmQor5Nvqe52cFJ
-25Azqtwvjt5nbrEd81iBmboNTEnLaKuxbbCtLaMEP8xKeDjAKnNOqHUMps0AsQT8c0EGq39YHpjp
-Wn1l67VU0rMShbEFsiUf9WYgE677oinpdm0t2mdCjxr35tryxptoTZXKHDxr/Yy6l6ExggJtMIIC
-aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
-EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwV/XkICjVscn4SNZMw
-DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIMiGatN/PTDrIrUwCbUy5uw0I7JwI5II
-YmDUN8KL9yjkMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDkw
-OTA0MjIyNFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
-ATANBgkqhkiG9w0BAQEFAASCAQAPkTBL3HcTDhWVMxTvinuGSA1oGA9hz263AXOFRvaSvLZjGYeJ
-/zgJRdnhs2XHW6fX/FSTyAfcnKnIqUi9Efx3n7orN3xoV8UIdfXw0BD2ZndFKoTAsdV31dkqb2zZ
-hWMrjNaSKzhTdGrcfIfqacAkhA38fE8BvAjNsNClLvgG7Wsi+u7BSlddy8QvbApEdN59lB4AVNvW
-wEkGXLfhlCdc1qgYA2iaq2nVWHkhxS8wj8fgwfwk+F33O6eDjb8Hheb2UN0P/96rLqKNop0edvVZ
-UsbuSt6HVgRlD4hF3rcjsdnRds6nhn0BGMLOUJWLvODnRFHy3HjqxmDRdCNBaUPk
---0000000000008f16e50621a81a9c--
+ .../bindings/iio/imu/bosch,bmi270.yaml        |  77 ++++++
+ MAINTAINERS                                   |   7 +
+ drivers/iio/imu/Kconfig                       |   1 +
+ drivers/iio/imu/Makefile                      |   1 +
+ drivers/iio/imu/bmi270/Kconfig                |  21 ++
+ drivers/iio/imu/bmi270/Makefile               |   6 +
+ drivers/iio/imu/bmi270/bmi270.h               |  62 +++++
+ drivers/iio/imu/bmi270/bmi270_core.c          | 251 ++++++++++++++++++
+ drivers/iio/imu/bmi270/bmi270_i2c.c           |  48 ++++
+ 9 files changed, 474 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/imu/bosch,bmi270.yaml
+ create mode 100644 drivers/iio/imu/bmi270/Kconfig
+ create mode 100644 drivers/iio/imu/bmi270/Makefile
+ create mode 100644 drivers/iio/imu/bmi270/bmi270.h
+ create mode 100644 drivers/iio/imu/bmi270/bmi270_core.c
+ create mode 100644 drivers/iio/imu/bmi270/bmi270_i2c.c
+
+-- 
+2.46.0
+
 
