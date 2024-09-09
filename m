@@ -1,171 +1,127 @@
-Return-Path: <linux-kernel+bounces-321802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C21971FA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:54:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B769C971FA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0734283F0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:54:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3B981C21C50
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A334716FF4E;
-	Mon,  9 Sep 2024 16:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47A3172773;
+	Mon,  9 Sep 2024 16:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QmGG9vc0"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DAN795Mw"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B289165F05
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D046F16E863;
+	Mon,  9 Sep 2024 16:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725900873; cv=none; b=CZPKL0I8Xrk2ogqo9+BrMt7musYCaUJR1SYf5sJhZY6kc89Oy8Q1MpzC71Eq0OCzRGpjWByBnlQk5/sErPP9uDNWDUOTLjJqisGwoyOhUtdGdnlLO2UkOvHy1zjNRlyx4guKG81fnHX28Sk/l0T21/OJEu4zXG0D8YjtVKyQoL0=
+	t=1725900878; cv=none; b=SITAtPsxFqdBDWN8rUIapdr9ctclCU+rNPO4gWiCjTHUGzuX1wd+bS9sDBVNcLnZJN9M8FpkW7uHvckXBDAb1rzrqM3a+/m/wA24v0bWMk48dQmK90+e+b1B7Vc0wFOT+w5Ue87TcgJkwzlKZqx78mNYi22UcvZArZkkCtnY3p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725900873; c=relaxed/simple;
-	bh=6Q+C9ogz7U8bywbJQGcpiixXLogu0mto8kJ/rFDq1hM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WffoepbwHP8BBbcaBtmYs+L8YaU2B3r/lRnS/QREPdKyulYfF7dQnsoRdCqTKwYEWgr/vDXKePo9w4CO9iqMVK8E2fTnwFBBEXb0hICnr1+bUqRWTX7gzG90evcszPptVGkwu0yt4msoHGjHYNDWBbG/E1BiIgXzv6dnEUIBx8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QmGG9vc0; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4582fa01090so6391cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:54:30 -0700 (PDT)
+	s=arc-20240116; t=1725900878; c=relaxed/simple;
+	bh=Uc4oqx8r89F4d4+RzZSNlTAqTVmyJPYUt1v3A7TkYQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OrP1Uzz03EonYkfXyfOAVt0GhqwW5fC+B9Y3pyN0CUfDLxYhl0FKNqhNGqvqb+JFqPU+Ugb982ODuTDrvTP01FnmTBp2SsJLCyIDSLDfJOhHac4M1F1axab2cQIS2a/sTqjjtTxEKH658NxSzk5Lu0axOkRrWUWHVoge2vfFEhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DAN795Mw; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-206aee40676so37684645ad.0;
+        Mon, 09 Sep 2024 09:54:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725900870; x=1726505670; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Q+C9ogz7U8bywbJQGcpiixXLogu0mto8kJ/rFDq1hM=;
-        b=QmGG9vc0nhkLy0w0zYwEd7A5RFfoCjhO6KVGF74iZBUTYnCq89BJaSnYQI/7BesZNZ
-         h4EeT/jSr43u25UIRt1bstO8ypcwTN54tVuGa1E5vpxEfGK5j2nRZs/kULnGbef81vtc
-         s7Tl0t5+0byiG9xhgjJPfjIUYfbli7wTWWg8VV43bCNI1/2gZqUHvrjntcmLJ7dCKmnp
-         hTZpiDkReDheZhrifHBblwvClX2bD+dHbg4M5LiikipoGAKdgI0nabigwiKE28uiD6dx
-         mTZy2gtSKFlxAo+0AXR+dTdX8euM1Cn2Na8if/623tpFaGFo1dSxdezHAg34D5d4LuRw
-         H8kw==
+        d=gmail.com; s=20230601; t=1725900875; x=1726505675; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=34uAdb11uQLhNV94N8X2Oy4kl9xBRHlRVWNj3wha+FI=;
+        b=DAN795MwzAtTD2JnD5h7MHeA4VzNrJAQxKsTtqkKGHYjlQNKMOjlgYmij5aXsgQOAZ
+         8k4a+dYZ8sjJa05lu9ZEKy/GuP5TXsl8lKbZzawwF3hqiOXYo8W2cT77UMzMR/sLVmu0
+         8loivxPE1ODfFANS8Z3pVkV5MdAqtEznjCQsCRjXn4wVdPvy7lAMKNS2wMnPcBT+BUIX
+         VzD6umy3VL3n59aewcIiFX/TVWl0MMM5b0mbY9SUA5KHpw1xLLD6qmENhbZ5WV5RzpjK
+         c2vZ/A5WYqfbF4UCSKE0p6+nkgKiez7TpCKfJ9mG/Q47NUNb8/BCb/LVrnpEk5O+9MHx
+         n0RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725900870; x=1726505670;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1725900875; x=1726505675;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6Q+C9ogz7U8bywbJQGcpiixXLogu0mto8kJ/rFDq1hM=;
-        b=dO/F1Ag8xnWo48HW7/xAveBKa+bFX0d90JFG38VAm7boX0EyvkaBDyUuio2BbrWcZw
-         nKVI6yhhZ9vMfIQnQlxxZ8zFha8XNCZCQvm9AheJJzp+lHU0Xy/IKZ/gr3VmJBUV8S8F
-         kEGJxAekM83Zi4nF1ZqUtvLdD/kxLKPA1DtPHq1Fj2bGyAFZKduLpew02nJJOmrr4OpE
-         RKu7hSgrlbyWTrvAbN1gI0br2YL3+Bh0yotFvXs3TRHVbzxTb++7WDrrpFHJX1I/Kj7+
-         rE8QUSSzsvGmVTT1M//Lz17msgNaHzUfjbqTAPXFN++YrnI1dQAB9K0yhnpGZ0vydGnL
-         /cIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMBJobwXvEWntZqSVsStnpoGQk5dOEHTMtZqywm/mYM8ptPTTi1GtbycPGTod0lcJrV/jzcD/Nkl5RWRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVM9iZ8TikZS9E8+QuLtKur3MXBVawZgsboUxXS9ax6PR9Gv44
-	onbS6yaQ1We7AIDxnrHXtzCdaxmBeqBeKixf801gX/Vion1q81VQ4LyZi1Ko4vmvmjzB6NR1BBB
-	ephmj+kebOyA9JOhzshjmYMFuzJOP1lpObDQT
-X-Google-Smtp-Source: AGHT+IH5CAMa7jyagoL/SPMKxnbKYwRciBwcTHNa9+5fhr4aw1DzDFUIylCWU3J1Sf54qZeykPAuKVr/EjpKtXIeTYU=
-X-Received: by 2002:ac8:7f0f:0:b0:456:7501:7c4d with SMTP id
- d75a77b69052e-458214943fbmr5401741cf.9.1725900869141; Mon, 09 Sep 2024
- 09:54:29 -0700 (PDT)
+        bh=34uAdb11uQLhNV94N8X2Oy4kl9xBRHlRVWNj3wha+FI=;
+        b=Py9F10rzGULkwaEhDfJGAU3HAhJC7oTy5t7D5yZ96IJsEtLbrXzAO7deVxhmad7t6c
+         x/Ma7zKB6kgvv59Sbckd6kJ3PAx/Y2eMJM/si/dU7mOULBQPUuLnXWMyID7JoYO9RHVV
+         tIKeQRc1cp/4O8yO6KYV3eyCmiSMlahSKxCga25TZIqwW4Agtc1cqoXzBpUEFcr4ERc8
+         niAt6gRi+hTN2orWXuHKtGCnWt1wHvWkAnEXWP2V1GP4Z8gd5tsbGmwJ/QvXtwbEUiB3
+         sv6cQKTGn8lBO6oyKqmPJpRkm/ShqWoDMaO0ZQTPMyTcfL8+e4S0rjT1InJXDzgVV+Sm
+         nbOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzjSYDbLcWI3Hljz7betE+wpOwkhoEneejqTT4cqWMPD32uLKeWXiyHb945IIpWEqeA9lVDr2xLb8kVq0D@vger.kernel.org, AJvYcCVkejobCo/vcaBZmaWeETDC7tuep2TsGKVVp2evMUk8yn5MwfLHOYX3D3y9bAu83q9Udob9ZFiL9e4bLw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd1W8tZM7Rm1FpXHmbV6VdVRMTmk2Q3utCnmEZpt2Fh860gKpi
+	DRkWPdDw6pH47sR2gt14F9YzXIfQzvdkzFdBwW7QLDqEOdhQGOBGxSIZGg==
+X-Google-Smtp-Source: AGHT+IEPGGj4yMntuV1n5JimriAHUvZB61rHZ3WiOJ2P4bbZxHRSqeTpyEm6nDPkscapEuRKR3ODeA==
+X-Received: by 2002:a17:902:d503:b0:206:9caf:1e00 with SMTP id d9443c01a7336-20706f44b7bmr93553475ad.25.1725900874983;
+        Mon, 09 Sep 2024 09:54:34 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e3276asm35888465ad.64.2024.09.09.09.54.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 09:54:34 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 9 Sep 2024 09:54:32 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Patryk Biel <pbiel7@gmail.com>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: Conditionally clear individual status bits for
+ pmbus rev >= 1.2
+Message-ID: <43cfe2e7-6b53-4ac0-8dbd-aad6d34a1ba8@roeck-us.net>
+References: <20240909-pmbus-status-reg-clearing-v1-1-f1c0d68c6408@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909054318.1809580-1-almasrymina@google.com> <42c202e6-8c4c-494f-8c28-17d66ed75880@huawei.com>
-In-Reply-To: <42c202e6-8c4c-494f-8c28-17d66ed75880@huawei.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 9 Sep 2024 09:54:16 -0700
-Message-ID: <CAHS8izMX+9F1NngbPx6w7ikKR9TgPvm+jMwZ8168NJYhFC7sVQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v25 00/13] Device Memory TCP
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>, 
-	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
-	Magnus Karlsson <magnus.karlsson@intel.com>, 
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
-	Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Bagas Sanjaya <bagasdotme@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909-pmbus-status-reg-clearing-v1-1-f1c0d68c6408@gmail.com>
 
-On Mon, Sep 9, 2024 at 4:21=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.com=
-> wrote:
->
-> On 2024/9/9 13:43, Mina Almasry wrote:
->
-> >
-> > Perf - page-pool benchmark:
-> > ---------------------------
-> >
-> > bench_page_pool_simple.ko tests with and without these changes:
-> > https://pastebin.com/raw/ncHDwAbn
-> >
-> > AFAIK the number that really matters in the perf tests is the
-> > 'tasklet_page_pool01_fast_path Per elem'. This one measures at about 8
-> > cycles without the changes but there is some 1 cycle noise in some
-> > results.
-> >
-> > With the patches this regresses to 9 cycles with the changes but there
-> > is 1 cycle noise occasionally running this test repeatedly.
-> >
-> > Lastly I tried disable the static_branch_unlikely() in
-> > netmem_is_net_iov() check. To my surprise disabling the
-> > static_branch_unlikely() check reduces the fast path back to 8 cycles,
-> > but the 1 cycle noise remains.
->
-> Sorry for the late report, as I was adding a testing page_pool ko basing
-> on [1] to avoid introducing performance regression when fixing the bug in
-> [2].
-> I used it to test the performance impact of devmem patchset for page_pool
-> too, it seems there might be some noticable performance impact quite stab=
-ly
-> for the below testcases, about 5%~16% performance degradation as below in
-> the arm64 system:
->
+On Mon, Sep 09, 2024 at 11:30:28AM +0200, Patryk Biel wrote:
+> This change adds fetching PMBus revision and using it to conditionally
+> clear individual status bits while calling pmbus_show_boolean, only if
+> the device is compliant with PMBus specs >= 1.2.
+> 
+> Signed-off-by: Patryk Biel <pbiel7@gmail.com>
+> ---
+> Current implementation of pmbus_show_boolean assumes that all devices
+> support write-back operation of status register so as to clear pending
+> warning or faults. Since clearing individual bits in the status registers
+> was introduced in PMBus specification 1.2, this operation may not be 
+> supported by some older devices, thus resulting in error while reading 
+> boolean attributes like e.g. temp1_max_alarm. 
+> 
+> This change adds fetching PMBus revision supported by device and
+> modifies pmbus_show_boolean so that it only tries to clear individual
+> status bits if the device is compilant with PMBus specs >= 1.2.
+> 
+Most of the above should have been in the description, and "This change
+adds" should be "Add ...". See the "submitting Patches" document for
+rationale.
 
-Correct me if I'm wrong here, but on the surface here it seems that
-you're re-reporting a known issue. Consensus seems to be that it's a
-non-issue.
+> +	ret = i2c_smbus_read_byte_data(client, PMBUS_REVISION);
+> +	if (ret > 0)
 
-In v6 I reported that the bench_page_pool_simple.ko test reports a 1
-cycle regression with these patches, from 8->9 cycles. That is roughly
-consistent with the 5-15% you're reporting.
+	>= 0 for consistency
 
-I root caused the reason for the regression to be the
-netmem_is_net_iov() check in the fast path. I removed this regression
-in v7 (see the change log) by conditionally compiling the check in
-that function.
+> +		data->revision = ret;
+> +
 
-In v8, Pavel/Jens/David pushed back on the ifdef check. See this
-entire thread, but in particular this response from Jens:
+The code needs to be be further up, ahead of clearing faults, to have the
+faults cleared if the command failed.
 
-https://lore.kernel.org/lkml/11f52113-7b67-4b45-ba1d-29b070050cec@kernel.dk=
-/
+Never mind, though, I made those changes and applied the patch (I want to
+make sure this patch is upstream in v6.11 final).
 
-Seems consensus that it's 'not really worth it in this scenario'.
-
---=20
 Thanks,
-Mina
+Guenter
 
