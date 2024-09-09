@@ -1,113 +1,169 @@
-Return-Path: <linux-kernel+bounces-320596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C0D6970C6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:47:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A69C970C72
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8A711F2246C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:47:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F25742822C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9DA18E025;
-	Mon,  9 Sep 2024 03:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FD31ACDFC;
+	Mon,  9 Sep 2024 03:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="TFQBUcrR"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2047.outbound.protection.outlook.com [40.92.23.47])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="D+pvAa9O"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2050.outbound.protection.outlook.com [40.107.92.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC73193
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 03:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.23.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FBC18633;
+	Mon,  9 Sep 2024 03:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.50
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725853650; cv=fail; b=tCJiu0c6V/ydjmZFrYgkcTgd2JuD417hH6Faw9vDANkQgk6ysAa3L+r7fRUugYVRABCZczZzHcuo9F9fpj/3ZcfLe7SftkVrqHb65UR+ygnrrRDd+ILsnOHZPywn3xRbkTs+OtjZppCvsynCDKHsosrK3fLCOFusSLT4q6a3C8E=
+	t=1725854192; cv=fail; b=kXCtWxRI57+LvevAKiR+4QKp5GS3NNnjptFwAPW6uCUvCHTc49wZ1F6CpUw8n18fFYeZKrTPp7YKU3deYaTb4BTXiMKazCbp282iXsHtufYkCRiJ74qQcmv+AOUgrlA8W4OSridnfOvTiqtTX+JRTucNafl2QSAZQswVLRaT50s=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725853650; c=relaxed/simple;
-	bh=NhCYT1E5NQ2k4cPDBXcLvxWbCI2R4xUkFMC4T4RVlmw=;
+	s=arc-20240116; t=1725854192; c=relaxed/simple;
+	bh=6ia/i6rrF3Y2ocXqQZH1nsk5ydssc63BFpWVmIJpsdc=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=mfmBoDRixvSvHHzFlJeCPPD9a5fVTkppvXoKokkdcDBJm6g86nVz16yjlwEWF2+y5RW9tf+47x5vfw3VAZyzORZkutrIfnOnmtK+Ud5d+3CCQUs4cEj6nifHB9Esw2LK6xtUHbwa1w32FHrI89z6ec+w1hMmqo4xDeS9nDyXDbc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=TFQBUcrR; arc=fail smtp.client-ip=40.92.23.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	 Content-Type:MIME-Version; b=ZAo8b3kOB8Y3Qb85oaKzR/N4oB+AnGDzKsji/2lPtUi0Ct0Fm59nK33TzKsq3muLShZ9/DYELIkl3LqaLxz54y+0vzmSM7p6qOnHPBppWms2IhZPGQfim9kbOzfFiBa/ZRubKd5aVA3Uue0ooLV/cFBOrq/m8GGb1unIWGzgOIQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=D+pvAa9O; arc=fail smtp.client-ip=40.107.92.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=knnW0azLRFRdcDZ9nTE3Jy/ZFBPL0hlhyAsezcB/nRizJbSeMo2zgWq4f9VXix0AEtv8kzjulW2BCk48V5Cao2PzkGNBHz5iG5x7yesVWAMAiC3QXwF6uOeMon4CC6i82BkqPEm1ooCMtCa/aQXgUpWU87IBpUaaWyUeHOM82ZjnV+R/RxDxEIJSHlWRrUhVHcLAxGykRBTqWbCBTzLdfO57sn9DOC4oENpb7WAB+L/iP6N6eFtlHrnCFK0F3c+vZZHgDswpjenX9SWJATyY9xZ1jae3iGnLddRCIS1ExpLE4y+gGTqRcEMxEA25xhMghJISz4Jj0/6I5gcV0XHynQ==
+ b=j50eJ6trcSz3w7aPBNU2OHsE96gXDYCZknllgKPy+1JoXauEjnQtM/3GZlIBM7GrutK/hBo48HGQDHxiLhN1CC8KUQcX+a3M3dZ2wNmiRDz+E8jjB4ciUNyWmcDhdCNaq56cswAiiOi7ciZ7KpBBV1jVdUn3y7Y8wjBU67HgDt4aFQ7dydJRNSctGaoCJbbT5OP4VSwSZ1zD7bLWnNsZmC8U83YKfk2XtKQkT9mSxBLjZyZm1whfV/Q2ptGx7hJxZ0XVCi49qQeoUy2QhquHLXdBd97zIoLaP+Kjq9H7S3jQeVUMSi9ackZiglmwGUHQfrtLM1mPa2YHmEkCvgxVTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4HuQ7J54si+A8+wyfjtHFU4D2JTmAGc10IoSN7cTwAs=;
- b=OI8ki5FeiX9jLg32WySV187RzKz8SMSXXxzO5ewJOGmLbUhXf7SkudGbZkhjxM6PsXgzQ/jj6QKk4lSgdxlsQJNsGXGPpELclhXGbKHiVKsAzlc8sQCtKpEtkk2eLaeklvPMGcEAWPA6Mq3XiIbAnH5ljLmhoofwaFNBF6tEv9w+lHW/lSTLaiIGSqbFeS2M91b1KJLVrKIitw44+3/UR3Nnq7s2PCKWLDIlO7ObGAOh1FR2iU0MLnGbjgM2rvO7TB8eqw/mlk3O32AkEiijjZhYdDaJUWA7Ree9BLkCIXoI3qAWg4pfqQw4S/6ZcmU6d6s+HPn9uTOgdqOrLYLkdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
+ bh=6ia/i6rrF3Y2ocXqQZH1nsk5ydssc63BFpWVmIJpsdc=;
+ b=NW2aW9XS6lCkl0fDpeTZtfnfAGovOYfAnTwxvbJ2D7hJalzTaUPea1k6bW28X7Rni7ip7XobdpaMkd10pevjPevTgiAT4rNhgYx+447kQypLtaDXLm0HATWt3voyvEBNG8v4IRzLpih1EOvthwvsmbcpAQPIpFoeyydbgdAHqJALr0rYNB1yFt/KBCaPdVT5hMdmmkjA+MbYjE5MsvLfQ0VzMXcIxwy5ziYUiA/RUBemH1kXf6puyVatyPlRkfdw6fU6swkq8JAUnXOkb8yh4BlH749bi9XTuMluEiAbrXmb1bcEIvTFza8/yxi8Bqfi2HG+SZniz2nKWPLGBjJ7GA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4HuQ7J54si+A8+wyfjtHFU4D2JTmAGc10IoSN7cTwAs=;
- b=TFQBUcrR1/xaFsNc4yK6xdddtdLSEuQvQHvflvWHa9whyhyFGyn1sa1r6L3f2AtwHaUDGp2Pr6xZ5diwLCLUZgtr9pK2HH9llpUW7Su3Dx0yLzwfMmj5AlNL1PbNjZlNjOot4X1XRDRfei15KC93Nvqco+NGz4hGSGFXrBIyHP1gju5m5RJQmuyWFtgCexU4iOW1jp5qkdD/rfZH7R96f3HFc0iKqfgG7jQh6GS4yH5XpswVZcaDxDOO1I19F+VS78PH825ezKeRGh2xpSAx7mvMrAtQQXazZo9y56i/CHbQOmuh4GyajEVrRgPq42/nASQgKrVzVpUbvDqBdqxFvg==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by DS0PR02MB9273.namprd02.prod.outlook.com (2603:10b6:8:14b::10) with
+ bh=6ia/i6rrF3Y2ocXqQZH1nsk5ydssc63BFpWVmIJpsdc=;
+ b=D+pvAa9OWfo+kwrmtxlZcuQclrPx7o3no6VCpPJgbVf1GnFMOhzcjBdLlT4UBnFYiyhpWwkCoAHZFo6I++kRR2Vr+I6Qomp5aMNW4dXj9sEe4yBRj4ttCUm0dAkGuuQ1X8SZAbuwGykjF8YjZdDRgkHj2gV3tjgtFFW3MM99aLYIcvy8NXv+BF15db8J6GTvhskqTsErFr6wjtCWzFsALaUl+IOB6TRYGM0rTuFoMCQnNm1ET7NAYAmLKHc/X9hxWxMwv6QpeNlDGr4kvgxci9HrLdEbIYjhMIHRHUbZd/s4Ksxd/wwgI5XhOKuW9mjXydqwsyzxHpn/0W7g7OgHxQ==
+Received: from SA1PR12MB7199.namprd12.prod.outlook.com (2603:10b6:806:2bc::21)
+ by SN7PR12MB8001.namprd12.prod.outlook.com (2603:10b6:806:340::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Mon, 9 Sep
- 2024 03:47:26 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.7918.024; Mon, 9 Sep 2024
- 03:47:26 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Steven Price <steven.price@arm.com>, Marc Zyngier <maz@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Will Deacon <will@kernel.org>, Suzuki K
- Poulose <suzuki.poulose@arm.com>
-Subject: RE: [PATCH 1/2] irqchip/gic-v3-its: Share ITS tables with a
- non-trusted hypervisor
-Thread-Topic: [PATCH 1/2] irqchip/gic-v3-its: Share ITS tables with a
- non-trusted hypervisor
-Thread-Index: AQHa/3SMIKEwXnQ2HUGvGeXE6k0H7LJO0ieQ
-Date: Mon, 9 Sep 2024 03:47:26 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.22; Mon, 9 Sep
+ 2024 03:56:27 +0000
+Received: from SA1PR12MB7199.namprd12.prod.outlook.com
+ ([fe80::ae1b:d89a:dfb6:37c2]) by SA1PR12MB7199.namprd12.prod.outlook.com
+ ([fe80::ae1b:d89a:dfb6:37c2%4]) with mapi id 15.20.7918.024; Mon, 9 Sep 2024
+ 03:56:27 +0000
+From: Ankit Agrawal <ankita@nvidia.com>
+To: Jiaqi Yan <jiaqiyan@google.com>, Jason Gunthorpe <jgg@nvidia.com>
+CC: Peter Xu <peterx@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	Gavin Shan <gshan@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	"x86@kernel.org" <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, Dave
+ Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Alistair Popple <apopple@nvidia.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Sean Christopherson
+	<seanjc@google.com>, Oscar Salvador <osalvador@suse.de>, Borislav Petkov
+	<bp@alien8.de>, Zi Yan <ziy@nvidia.com>, Axel Rasmussen
+	<axelrasmussen@google.com>, David Hildenbrand <david@redhat.com>, Yan Zhao
+	<yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>, Kefeng Wang
+	<wangkefeng.wang@huawei.com>, Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH v2 00/19] mm: Support huge pfnmaps
+Thread-Topic: [PATCH v2 00/19] mm: Support huge pfnmaps
+Thread-Index:
+ AQHa9/i4MxIUuFc0iEilM2ZdWpqZPrI7sxKAgAAF7oCAAB1XgIAA5asAgAAdrACAAIBbAIABR12AgAkzbYCAAAzxAIAAAWgAgAAEVQCAAAB/gIAAAduAgAb7kAQ=
+Date: Mon, 9 Sep 2024 03:56:27 +0000
 Message-ID:
- <SN6PR02MB41579C5C46B4F5F72A888743D4992@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240905091738.28544-1-steven.price@arm.com>
- <20240905091738.28544-2-steven.price@arm.com>
-In-Reply-To: <20240905091738.28544-2-steven.price@arm.com>
+ <SA1PR12MB71990BC307D76C84BA68E3E9B0992@SA1PR12MB7199.namprd12.prod.outlook.com>
+References: <Zs5Z0Y8kiAEe3tSE@x1n>
+ <CACw3F52_LtLzRD479piaFJSePjA-DKG08o-hGT-f8R5VV94S=Q@mail.gmail.com>
+ <20240828142422.GU3773488@nvidia.com>
+ <CACw3F53QfJ4anR0Fk=MHJv8ad_vcG-575DX=bp7mfPpzLgUxbQ@mail.gmail.com>
+ <20240828234958.GE3773488@nvidia.com>
+ <CACw3F52dyiAyo1ijKfLUGLbh+kquwoUhGMwg4-RObSDvqxreJw@mail.gmail.com>
+ <20240904155203.GJ3915968@nvidia.com>
+ <CACw3F52qyX-Ea99zV4c8NjyWKgtqAKtNc8GP0JTcLOCOjnEajg@mail.gmail.com>
+ <20240904164324.GO3915968@nvidia.com>
+ <CACw3F53ojc+m9Xq_2go3Fdn8aVumxwmBvPgiUJgmrQP3ExdT-g@mail.gmail.com>
+ <20240904170041.GR3915968@nvidia.com>
+ <CACw3F51F9J0UYva56TYo4pVbM0XrtHnx9AkBbfUVL1rnHzhaHA@mail.gmail.com>
+In-Reply-To:
+ <CACw3F51F9J0UYva56TYo4pVbM0XrtHnx9AkBbfUVL1rnHzhaHA@mail.gmail.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
-x-tmn: [ToNriqxlV5Eqn6sSdz5BydDvgTO8S7gm]
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DS0PR02MB9273:EE_
-x-ms-office365-filtering-correlation-id: 509ebd53-b320-45c1-f037-08dcd0821ee9
+x-ms-traffictypediagnostic: SA1PR12MB7199:EE_|SN7PR12MB8001:EE_
+x-ms-office365-filtering-correlation-id: ae2cd67a-62a0-4052-e910-08dcd083616e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|15080799006|19110799003|8060799006|3412199025|440099028|102099032;
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
 x-microsoft-antispam-message-info:
- dTnGzGVnTtI07VdDjOPoug7APhfS/TRHtSekWNmEXQdc69yJrfLHISpoXu6zf/8tFuZvPkGoDNQSFCvY8WMz7rEXoHc84v/HAHDnc1onJhtu4B/ApJ5d5DVopikTeAiFachqcS61zzPo+Ny0RNVnKE9n5Lin0aXuRKtDg8tjAy2rMV0Ryxq6ZzIIjMkFniQGR8fW032Z/c6NqN8OBe34KbogIbNGpvK0UmmQWmZAexROHMRBGamL8DYyyZZ31R7IkrLhK7hv95A/BmD09vrny4BQatp3g6XUwiYHYS2yvB7Y0oWSn/qp4YO9Qu6leN5t4MHORS8qv1jMtVpofcQxQAwYpGb1xIi/zF44pxGntXJzNTletm4lbdTQdRf+tOEqhJrAQvNMCVmXHKAwi/QWqMUTRQoRVws5vQ780dOBrw4IkQnm/C03qtStvW3/Pvv99gWkkTRWr2OAAVmOmKhDOaJif+dCIztW3iBan21UQoTS3zpO4lpxhx2hWc/cM1rH7IU6O1XBXJBRY+VqPW4M537G+DnRGC4hfjvtX2mQPkE3SC7qYHnU5LD4Y4Nv+k5HKpcelv8/rF9DrFgDdL3x5N8eyBlaJZaSjlcMy8IpDfkBnAbup0q8wpzt7ir25Zc0EFDSpYLhEjacWRGypdAF39Hv5U0UylI5IvvbQHlvJitpnO6Yp3of0g8UrfZqWdrN
+ =?iso-8859-1?Q?hQNUi4RkKZ3HuRgTYI5TW8SZTcVcuC9TAFEtmspAe4fZAV2pDgWcUA6zQV?=
+ =?iso-8859-1?Q?9dVE6hEZb5W1jo/+1PciLyC0QYisCZaTb9x9wfSds7BpqXUeYYlAJXhgBO?=
+ =?iso-8859-1?Q?S1/+ab3qiPnFrDEWZ0EUzjyMpXf+QLyY1Hh2A6E8xI2fRVyglXRkfRbTau?=
+ =?iso-8859-1?Q?QWOxYlyIG7iN1rEHuXVIHHM3I+wn7xstpHEZtwyPrqX2qp22SNzJBScwBH?=
+ =?iso-8859-1?Q?UN6uLn4rsXPSMPFhva74iUclFnZmRzgp4E9l2AYhpH8DRs2VTLMPWL3rRp?=
+ =?iso-8859-1?Q?reBtdD8SCa7EqVlNpgDvCo/homCXZJ0ZXug8rHrNqvxcZjzb9H6fw37C14?=
+ =?iso-8859-1?Q?FRY82WmKmekxKL1alzDkYXSCwvib7e9Y6p79rL9YKKT9UgiWTA7aPluBHP?=
+ =?iso-8859-1?Q?xoF7GsUGVoJpwlCbs2fOKU2nJR7eBK3A3UNxlTN3t4sNWKOVRXt7uZeUed?=
+ =?iso-8859-1?Q?DUDhn6ibpQZOGjM/jTmrig04zpjbjb3rz15g3jWSXE4ornM25j6aNb3dN9?=
+ =?iso-8859-1?Q?RhWsIOCBTLbjgayBAI/C4uggdkX3pm8BGlzuWnc7YG+4yMMHn+ZhcYH0Ko?=
+ =?iso-8859-1?Q?2/8at9k6xLYRSQXxw5e7LmTiLVxKV0PzFYVDou/DkrR+JdFA2QNNrOokWG?=
+ =?iso-8859-1?Q?kKTHg3kD31zESGUHzWAQdqtw23rgaP2WQjOMvZgD5ba3RVulIZXX4FcbVl?=
+ =?iso-8859-1?Q?BG4SGn/UQy3eXnR/Oaq6fm/gNdSKnzQrXz8yb8Wa0XuuNOdvPNAY+GaAMD?=
+ =?iso-8859-1?Q?lgmTFsKX8CJ3h0n4hU6GXWuOSSvjXlQopIUKNOwbm9BzAlcPS47XdqDztv?=
+ =?iso-8859-1?Q?ZaZMicllDIs8rZTsHZa0bZ+1ZXapGCawwivebW8tS8fzFL6ThEe/Yc9057?=
+ =?iso-8859-1?Q?q7ImmXmK6FTbUCMLVvUmi5YDew4ydmboRXg1+NTNTqcbXixaM6AAU78dio?=
+ =?iso-8859-1?Q?3ApQOYqDKnoSwjkS1HRq/AENX2fbA5yauyB1hbpWc2Tr+wj3veEunsQSHK?=
+ =?iso-8859-1?Q?0hXzRn/EoPPDfgfHc3Ge1VVXCmDhJ+GHDyC3iV5p2RN6jSQgfrvF/wD0Kl?=
+ =?iso-8859-1?Q?6DkXLkaUPpmynaDDEqnkqKWBoWHXP9L1B6np275vLjT/CafcAd/NcPnqhJ?=
+ =?iso-8859-1?Q?uytgsgQ3pkJhogAx4oIE42508fLk9sR9hzMBQg6P6mkunRhLfRfZiabmMW?=
+ =?iso-8859-1?Q?vQ6icVOt16gyhZXLA/LbKAVhKUmxCGbt8Va7wM/sTrjznhg2Pz4ri1C9Er?=
+ =?iso-8859-1?Q?S/nXBxeWLGU8Zoezl70DisD1VW7Or1UYbWvZz9s5Ap2XxxPwEV9Y8Tar+4?=
+ =?iso-8859-1?Q?VPLyF8ks6bGavsB4iKNHV8RN3gulTwNiyilUWhh8ZH72WlXuo9vPxDCRs4?=
+ =?iso-8859-1?Q?wDvIBqDbQHugAeMmV+EfoZlSgULtOHUUPTbgMCh3rHl4A42lNcgFgvDAIk?=
+ =?iso-8859-1?Q?h+2VzGlgxjY4KFpZQ8y0xwyexAu5szPQnzTM+Q=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB7199.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?uGaOsCTN/fv6bTeh1wM4ruS2KO22JpuqBrBiSmG4sunIqPcUmzdiowRMNsKL?=
- =?us-ascii?Q?iHSDWg3vnQwT3/5TC+eUNJr/kcS9PxOHzyXvoZmScbv8sHRZIIFOFZKb9Jy+?=
- =?us-ascii?Q?8fdgilLwg/M8sHwh145COct/aAhoMsrHDmbd3c+rR09U8Q2J/G+yqhmLFomS?=
- =?us-ascii?Q?9uXza5qYoyZbFJ4rr7jxzvOihQJNodqfHRc8TBNgN8MSQgOjJXWiKhz0fqNO?=
- =?us-ascii?Q?WBcnRChXdCNIScdLvOkQCwMg4tiLCW4YSGC4Bhwrc7A8mlNlwqGIuPtS9mq9?=
- =?us-ascii?Q?RIjUOv1A4g6FgYaK9aZ3OTDEWwOh+oRjiTnGirUS6SH9RFoQ4Tvi/SmFvM7/?=
- =?us-ascii?Q?eHhL5xgp6VOTC/9YbJCpGA1VjEcWUhMLgS1Hgg7yD3hXtWgq7ajza+1KA40t?=
- =?us-ascii?Q?rOF7VX/zWUjOFuUoCSiJSb6xW4zmsAbfjis/32jgmQzwn0CVU3KJEIekzI2Q?=
- =?us-ascii?Q?2QKyom1hLzODAOrCYDMEmkJ6kOw5pa3kugqiesKcy+Z6wEfXyBgr4aK68yVR?=
- =?us-ascii?Q?XHMGJeXOdXZZ0tc+wKS6QGdZY13KAiSGP57Y0McfTmjtpxJnGKxPd73OTVut?=
- =?us-ascii?Q?v7thbih23Qlx5W4Q/82MtAKrEURcLgTwAPuV5j1SLuUJKIbQTiupOUULhes+?=
- =?us-ascii?Q?i4V7cyzo8YRrWejECtQOEl4/FSZs3i4hL3CSU+gBSTQIyMqn1sobvlQZFQ24?=
- =?us-ascii?Q?ojuEeqnBeKxpLQIc7dtZYRKKz+p8YKXPQVqb9ihPBDlJyujaaP8BoyPY2SyC?=
- =?us-ascii?Q?Z8V9ytyO9EpgjKWOEJF8yuRljDgBr9UEBmJYSS2WxNT7OArkPM3lrjDT4Im+?=
- =?us-ascii?Q?BvfoJtnf1sfcFZKL35HHnuLHUm3CI6N3p8JYA7kALCfxcFNsTHeePDMJnQTO?=
- =?us-ascii?Q?e36WZw29gHgF58HJbLT0ArxMcKTDpUC5vwG+Ux5G9jnbhvKEhCjd8LuHcQo1?=
- =?us-ascii?Q?quBq98t7zxfwbakHCUKpl2D2J3mM2oabqsXWhTKpe85HbMoJTauvKxHZBWIs?=
- =?us-ascii?Q?OWw9+cnGxN0MSWK1T3HArzdgU5OWZXJfMQYxdqfw0PJK7eRNKMUBRZ9jIPBU?=
- =?us-ascii?Q?+VwrEG5lj50r0emfPgHyACzsktwaK2TNwSSOCPn0ZUM4jH86hQvlmun6OD6e?=
- =?us-ascii?Q?9PQIrrmMloZFSVCOlFtgH/cmiwaNDF+1I20Z0GYL6YN/6MkFhODKXF/f/VSK?=
- =?us-ascii?Q?wgWMYsWl3BfjOA6vR+P8hBaTPDlOXAYl38fPsyIoW5oxitknzGctNhmr66A?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
+ =?iso-8859-1?Q?J9BPkwQRyA+uVYIIEr4FFSERPil839g+7yUnrUPNELLcte7ZmL04e4qxoE?=
+ =?iso-8859-1?Q?BUK37B0b6fSIhF8PXbQO16wJzRC4SFLVq3iOWiH+BmpIfL4QKSfk0j5mJX?=
+ =?iso-8859-1?Q?DAr2hSgBYA12XiuqDAFwIm7nc0CewTs/3YdpNYk8QdphPWysLlxq5WD+IJ?=
+ =?iso-8859-1?Q?tzJuB3CK78nyN8rHFWv7X0rbr4cgrtVar3SapXjUMt20g0S2m3S3bVT+Bp?=
+ =?iso-8859-1?Q?T7d5edSjb2NAjgQ+4CTQTMJApjayUu56UOHqSTEXXYUD+Ez67znvtt2H24?=
+ =?iso-8859-1?Q?g4WCrXxd8dVy6NafMLdUMc/cerdGgjTrOC07LY2kGquva+sMT0+7PF+s0p?=
+ =?iso-8859-1?Q?buQZa/af5DRswHQg56y/KcsAuRsZ6gu9li6OJ7Wq34AFaJItkEZLW75AQF?=
+ =?iso-8859-1?Q?fAlKTwrUQ8Edb/NATRh2qXd24iMBLTcIFj8YTF3stoI6hgaDOv8dBiKaVY?=
+ =?iso-8859-1?Q?vt0p/TvxDB7AVEeWadVhRDigWV3lTAfC1AZYExOjiLW6samkpul8/re8Ns?=
+ =?iso-8859-1?Q?Q5yc+NhhL3NdnB8qwaN/Ht4DitJI5Yg35f0gXw1/Fjuk6SIopscrVySRrx?=
+ =?iso-8859-1?Q?Ir7GA70r0C2Hku+0Zv0EGnKbjecnNXqugsZPfrD+fsHEI41EM3860/NPce?=
+ =?iso-8859-1?Q?GAyVU5csJdN+usYmMkqf0/u1hW+FIyq4ls9lrm+ksr6+vDdn2olgiufHi2?=
+ =?iso-8859-1?Q?gcfStsnYSwMuUJYLXNKZfoPt5rtwhUGGf4mlDGhOnxcDLiYTyng9PNL2Xh?=
+ =?iso-8859-1?Q?soEqbLo/vghqChxNhYSDKv379/4MLAHNbsBF64c4vniERozf9WOvZuxFD6?=
+ =?iso-8859-1?Q?IfeqqGxZWMYBBxNoXCu4sOkpDIxQyFxLvrrCHC74D00GtslLXjZKLf9ilJ?=
+ =?iso-8859-1?Q?ZP+oZ5pLkmGCGQptqGnfOW245mkaz2bOLzIlWI0aquZ0ujpySjTva2NZpV?=
+ =?iso-8859-1?Q?G9EchoGv9J6oAtJCqS9GScoEGpAFjvDX/pzrk097jdUfCDVRQgO4JzL9Kp?=
+ =?iso-8859-1?Q?Px0l+Kn6fOvv6f5Pzx7GfF+z+TAlUcSBjxCjtR35fUPqKL1k93dUqDe77P?=
+ =?iso-8859-1?Q?Qluf38Ug/2Dq+KtLYT5Fw0Y8zhmSCaGCn+8Rd12Egl3w40u/l334ywvmiX?=
+ =?iso-8859-1?Q?lcjeaBH2DVEZymPLrw97YUAHavdBsPQD8WNlMIR5+79StppYy2Cv4rcf3r?=
+ =?iso-8859-1?Q?eVtGlGYFJvlDaNCBbdBsqoIyU4HU+KmPK3z8WbpbNXtvcOLZ00DKiq8z85?=
+ =?iso-8859-1?Q?aFhpTgz0v0Yem9P7SGFT5+OIPh+MV7Y83Zp0oA8+r10FQpgZuh2FhTVyVY?=
+ =?iso-8859-1?Q?u2/6RUtQ37O5H6c1EHn+XOYCe/kSg89Anf9FkvM8MOFe89C8NA0DnOiwZG?=
+ =?iso-8859-1?Q?Cp4F+VEgPFH5xzGQNwwlxaiKG6VJw3viU6bEnsfnjuMBzuc88m8RqqiCcd?=
+ =?iso-8859-1?Q?dtvfpa98xoewHdOZV+hsNkMmkaNQVmDo3/Fpx1OwnG83UJU+2PL+lbuET9?=
+ =?iso-8859-1?Q?K0ikFgnf8asDiBQtZ9QA0mo8lQpaRLsp6LHHRX9RlEeA2W7ZntSDoijYBe?=
+ =?iso-8859-1?Q?fKywG8443xOFvGt10BMrpvNkfT7PUzIH4xM7Tk9nTv5jdjXstG6UG7PSZG?=
+ =?iso-8859-1?Q?ZoWI8sd5enCL0=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -115,405 +171,30 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
+X-OriginatorOrg: Nvidia.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 509ebd53-b320-45c1-f037-08dcd0821ee9
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2024 03:47:26.2438
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB7199.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae2cd67a-62a0-4052-e910-08dcd083616e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2024 03:56:27.3167
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR02MB9273
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: nNySrTvox0eNCK3iKz25F0X0Ejkfzkrn/PEosyNQxo6xon5Q841VN3ovFTJXAxWbIrrF+i8BSpRpzAaM+dLAew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8001
 
-From: Steven Price <steven.price@arm.com> Sent: Thursday, September 5, 2024=
- 2:18 AM
->=20
-> Within a realm guest the ITS is emulated by the host. This means the
-> allocations must have been made available to the host by a call to
-> set_memory_decrypted(). Introduce an allocation function which performs
-> this extra call.
->=20
-> For the ITT use a custom genpool-based allocator that calls
-> set_memory_decrypted() for each page allocated, but then suballocates
-> the size needed for each ITT. Note that there is no mechanism
-> implemented to return pages from the genpool, but it is unlikely the
-> peak number of devices will so much larger than the normal level - so
-> this isn't expected to be an issue.
->=20
-> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Tested-by: Will Deacon <will@kernel.org>
-> Reviewed-by: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->  drivers/irqchip/irq-gic-v3-its.c | 139 ++++++++++++++++++++++++++-----
->  1 file changed, 116 insertions(+), 23 deletions(-)
->=20
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v=
-3-its.c
-> index 9b34596b3542..557214c774c3 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -12,12 +12,14 @@
->  #include <linux/crash_dump.h>
->  #include <linux/delay.h>
->  #include <linux/efi.h>
-> +#include <linux/genalloc.h>
->  #include <linux/interrupt.h>
->  #include <linux/iommu.h>
->  #include <linux/iopoll.h>
->  #include <linux/irqdomain.h>
->  #include <linux/list.h>
->  #include <linux/log2.h>
-> +#include <linux/mem_encrypt.h>
->  #include <linux/memblock.h>
->  #include <linux/mm.h>
->  #include <linux/msi.h>
-> @@ -27,6 +29,7 @@
->  #include <linux/of_pci.h>
->  #include <linux/of_platform.h>
->  #include <linux/percpu.h>
-> +#include <linux/set_memory.h>
->  #include <linux/slab.h>
->  #include <linux/syscore_ops.h>
->=20
-> @@ -164,6 +167,7 @@ struct its_device {
->  	struct its_node		*its;
->  	struct event_lpi_map	event_map;
->  	void			*itt;
-> +	u32			itt_sz;
->  	u32			nr_ites;
->  	u32			device_id;
->  	bool			shared;
-> @@ -199,6 +203,81 @@ static DEFINE_IDA(its_vpeid_ida);
->  #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
->  #define gic_data_rdist_vlpi_base()	(gic_data_rdist_rd_base() + SZ_128K)
->=20
-> +static struct page *its_alloc_pages_node(int node, gfp_t gfp,
-> +					 unsigned int order)
-> +{
-> +	struct page *page;
-> +	int ret =3D 0;
-> +
-> +	page =3D alloc_pages_node(node, gfp, order);
-> +
-> +	if (!page)
-> +		return NULL;
-> +
-> +	ret =3D set_memory_decrypted((unsigned long)page_address(page),
-> +				   1 << order);
-> +	if (WARN_ON(ret))
-
-On the x86 side, the WARN is done in the implementation of
-set_memory_decrypted()/encrypted() so that each call site doesn't
-need to do the WARN. Each call site must only leak the memory
-if the return value indicates other than success. There are call sites
-in architecture neutral code (such as for swiotlb and DMA direct)
-that expect the WARN is in set_memory_decrypted()/encrypted().
-To recap a previous discussion, we want the WARN for notification,
-but also so the most security-conscious users can set
-kernel.panic_on_warn=3D1 to stop further processing if there are
-problems in the decryption/encryption operation.
-
-> +		return NULL;
-> +
-> +	return page;
-> +}
-> +
-> +static struct page *its_alloc_pages(gfp_t gfp, unsigned int order)
-> +{
-> +	return its_alloc_pages_node(NUMA_NO_NODE, gfp, order);
-> +}
-> +
-> +static void its_free_pages(void *addr, unsigned int order)
-> +{
-> +	if (WARN_ON(set_memory_encrypted((unsigned long)addr, 1 << order)))
-
-Same here.
-
-Michael
-
-> +		return;
-> +	free_pages((unsigned long)addr, order);
-> +}
-> +
-> +static struct gen_pool *itt_pool;
-> +
-> +static void *itt_alloc_pool(int node, int size)
-> +{
-> +	unsigned long addr;
-> +	struct page *page;
-> +
-> +	if (size >=3D PAGE_SIZE) {
-> +		page =3D its_alloc_pages_node(node,
-> +					    GFP_KERNEL | __GFP_ZERO,
-> +					    get_order(size));
-> +
-> +		return page_address(page);
-> +	}
-> +
-> +	do {
-> +		addr =3D gen_pool_alloc(itt_pool, size);
-> +		if (addr)
-> +			break;
-> +
-> +		page =3D its_alloc_pages_node(node, GFP_KERNEL | __GFP_ZERO, 1);
-> +		if (!page)
-> +			break;
-> +
-> +		gen_pool_add(itt_pool, (unsigned long)page_address(page),
-> +			     PAGE_SIZE, node);
-> +	} while (!addr);
-> +
-> +	return (void *)addr;
-> +}
-> +
-> +static void itt_free_pool(void *addr, int size)
-> +{
-> +	if (!addr)
-> +		return;
-> +
-> +	if (size >=3D PAGE_SIZE) {
-> +		its_free_pages(addr, get_order(size));
-> +		return;
-> +	}
-> +
-> +	gen_pool_free(itt_pool, (unsigned long)addr, size);
-> +}
-> +
->  /*
->   * Skip ITSs that have no vLPIs mapped, unless we're on GICv4.1, as we
->   * always have vSGIs mapped.
-> @@ -2187,7 +2266,8 @@ static struct page *its_allocate_prop_table(gfp_t g=
-fp_flags)
->  {
->  	struct page *prop_page;
->=20
-> -	prop_page =3D alloc_pages(gfp_flags, get_order(LPI_PROPBASE_SZ));
-> +	prop_page =3D its_alloc_pages(gfp_flags,
-> +				    get_order(LPI_PROPBASE_SZ));
->  	if (!prop_page)
->  		return NULL;
->=20
-> @@ -2198,8 +2278,8 @@ static struct page *its_allocate_prop_table(gfp_t g=
-fp_flags)
->=20
->  static void its_free_prop_table(struct page *prop_page)
->  {
-> -	free_pages((unsigned long)page_address(prop_page),
-> -		   get_order(LPI_PROPBASE_SZ));
-> +	its_free_pages(page_address(prop_page),
-> +		       get_order(LPI_PROPBASE_SZ));
->  }
->=20
->  static bool gic_check_reserved_range(phys_addr_t addr, unsigned long siz=
-e)
-> @@ -2321,7 +2401,8 @@ static int its_setup_baser(struct its_node *its, st=
-ruct
-> its_baser *baser,
->  		order =3D get_order(GITS_BASER_PAGES_MAX * psz);
->  	}
->=20
-> -	page =3D alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO, orde=
-r);
-> +	page =3D its_alloc_pages_node(its->numa_node,
-> +				    GFP_KERNEL | __GFP_ZERO, order);
->  	if (!page)
->  		return -ENOMEM;
->=20
-> @@ -2334,7 +2415,7 @@ static int its_setup_baser(struct its_node *its, st=
-ruct
-> its_baser *baser,
->  		/* 52bit PA is supported only when PageSize=3D64K */
->  		if (psz !=3D SZ_64K) {
->  			pr_err("ITS: no 52bit PA support when psz=3D%d\n", psz);
-> -			free_pages((unsigned long)base, order);
-> +			its_free_pages(base, order);
->  			return -ENXIO;
->  		}
->=20
-> @@ -2390,7 +2471,7 @@ static int its_setup_baser(struct its_node *its, st=
-ruct
-> its_baser *baser,
->  		pr_err("ITS@%pa: %s doesn't stick: %llx %llx\n",
->  		       &its->phys_base, its_base_type_string[type],
->  		       val, tmp);
-> -		free_pages((unsigned long)base, order);
-> +		its_free_pages(base, order);
->  		return -ENXIO;
->  	}
->=20
-> @@ -2529,8 +2610,8 @@ static void its_free_tables(struct its_node *its)
->=20
->  	for (i =3D 0; i < GITS_BASER_NR_REGS; i++) {
->  		if (its->tables[i].base) {
-> -			free_pages((unsigned long)its->tables[i].base,
-> -				   its->tables[i].order);
-> +			its_free_pages(its->tables[i].base,
-> +				       its->tables[i].order);
->  			its->tables[i].base =3D NULL;
->  		}
->  	}
-> @@ -2796,7 +2877,8 @@ static bool allocate_vpe_l2_table(int cpu, u32 id)
->=20
->  	/* Allocate memory for 2nd level table */
->  	if (!table[idx]) {
-> -		page =3D alloc_pages(GFP_KERNEL | __GFP_ZERO, get_order(psz));
-> +		page =3D its_alloc_pages(GFP_KERNEL | __GFP_ZERO,
-> +				       get_order(psz));
->  		if (!page)
->  			return false;
->=20
-> @@ -2915,7 +2997,8 @@ static int allocate_vpe_l1_table(void)
->=20
->  	pr_debug("np =3D %d, npg =3D %lld, psz =3D %d, epp =3D %d, esz =3D %d\n=
-",
->  		 np, npg, psz, epp, esz);
-> -	page =3D alloc_pages(GFP_ATOMIC | __GFP_ZERO, get_order(np * PAGE_SIZE)=
-);
-> +	page =3D its_alloc_pages(GFP_ATOMIC | __GFP_ZERO,
-> +			       get_order(np * PAGE_SIZE));
->  	if (!page)
->  		return -ENOMEM;
->=20
-> @@ -2961,8 +3044,8 @@ static struct page *its_allocate_pending_table(gfp_=
-t
-> gfp_flags)
->  {
->  	struct page *pend_page;
->=20
-> -	pend_page =3D alloc_pages(gfp_flags | __GFP_ZERO,
-> -				get_order(LPI_PENDBASE_SZ));
-> +	pend_page =3D its_alloc_pages(gfp_flags | __GFP_ZERO,
-> +				    get_order(LPI_PENDBASE_SZ));
->  	if (!pend_page)
->  		return NULL;
->=20
-> @@ -2974,7 +3057,7 @@ static struct page *its_allocate_pending_table(gfp_=
-t
-> gfp_flags)
->=20
->  static void its_free_pending_table(struct page *pt)
->  {
-> -	free_pages((unsigned long)page_address(pt), get_order(LPI_PENDBASE_SZ))=
-;
-> +	its_free_pages(page_address(pt), get_order(LPI_PENDBASE_SZ));
->  }
->=20
->  /*
-> @@ -3309,8 +3392,9 @@ static bool its_alloc_table_entry(struct its_node *=
-its,
->=20
->  	/* Allocate memory for 2nd level table */
->  	if (!table[idx]) {
-> -		page =3D alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO,
-> -					get_order(baser->psz));
-> +		page =3D its_alloc_pages_node(its->numa_node,
-> +					    GFP_KERNEL | __GFP_ZERO,
-> +					    get_order(baser->psz));
->  		if (!page)
->  			return false;
->=20
-> @@ -3405,7 +3489,6 @@ static struct its_device *its_create_device(struct =
-its_node
-> *its, u32 dev_id,
->  	if (WARN_ON(!is_power_of_2(nvecs)))
->  		nvecs =3D roundup_pow_of_two(nvecs);
->=20
-> -	dev =3D kzalloc(sizeof(*dev), GFP_KERNEL);
->  	/*
->  	 * Even if the device wants a single LPI, the ITT must be
->  	 * sized as a power of two (and you need at least one bit...).
-> @@ -3413,7 +3496,11 @@ static struct its_device *its_create_device(struct=
- its_node
-> *its, u32 dev_id,
->  	nr_ites =3D max(2, nvecs);
->  	sz =3D nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1)=
-;
->  	sz =3D max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
-> -	itt =3D kzalloc_node(sz, GFP_KERNEL, its->numa_node);
-> +
-> +	itt =3D itt_alloc_pool(its->numa_node, sz);
-> +
-> +	dev =3D kzalloc(sizeof(*dev), GFP_KERNEL);
-> +
->  	if (alloc_lpis) {
->  		lpi_map =3D its_lpi_alloc(nvecs, &lpi_base, &nr_lpis);
->  		if (lpi_map)
-> @@ -3425,9 +3512,9 @@ static struct its_device *its_create_device(struct =
-its_node
-> *its, u32 dev_id,
->  		lpi_base =3D 0;
->  	}
->=20
-> -	if (!dev || !itt ||  !col_map || (!lpi_map && alloc_lpis)) {
-> +	if (!dev || !itt || !col_map || (!lpi_map && alloc_lpis)) {
->  		kfree(dev);
-> -		kfree(itt);
-> +		itt_free_pool(itt, sz);
->  		bitmap_free(lpi_map);
->  		kfree(col_map);
->  		return NULL;
-> @@ -3437,6 +3524,7 @@ static struct its_device *its_create_device(struct =
-its_node
-> *its, u32 dev_id,
->=20
->  	dev->its =3D its;
->  	dev->itt =3D itt;
-> +	dev->itt_sz =3D sz;
->  	dev->nr_ites =3D nr_ites;
->  	dev->event_map.lpi_map =3D lpi_map;
->  	dev->event_map.col_map =3D col_map;
-> @@ -3464,7 +3552,7 @@ static void its_free_device(struct its_device *its_=
-dev)
->  	list_del(&its_dev->entry);
->  	raw_spin_unlock_irqrestore(&its_dev->its->lock, flags);
->  	kfree(its_dev->event_map.col_map);
-> -	kfree(its_dev->itt);
-> +	itt_free_pool(its_dev->itt, its_dev->itt_sz);
->  	kfree(its_dev);
->  }
->=20
-> @@ -5112,8 +5200,9 @@ static int __init its_probe_one(struct its_node *it=
-s)
->  		}
->  	}
->=20
-> -	page =3D alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO,
-> -				get_order(ITS_CMD_QUEUE_SZ));
-> +	page =3D its_alloc_pages_node(its->numa_node,
-> +				    GFP_KERNEL | __GFP_ZERO,
-> +				    get_order(ITS_CMD_QUEUE_SZ));
->  	if (!page) {
->  		err =3D -ENOMEM;
->  		goto out_unmap_sgir;
-> @@ -5177,7 +5266,7 @@ static int __init its_probe_one(struct its_node *it=
-s)
->  out_free_tables:
->  	its_free_tables(its);
->  out_free_cmd:
-> -	free_pages((unsigned long)its->cmd_base, get_order(ITS_CMD_QUEUE_SZ));
-> +	its_free_pages(its->cmd_base, get_order(ITS_CMD_QUEUE_SZ));
->  out_unmap_sgir:
->  	if (its->sgir_base)
->  		iounmap(its->sgir_base);
-> @@ -5663,6 +5752,10 @@ int __init its_init(struct fwnode_handle *handle, =
-struct
-> rdists *rdists,
->  	bool has_v4_1 =3D false;
->  	int err;
->=20
-> +	itt_pool =3D gen_pool_create(get_order(ITS_ITT_ALIGN), -1);
-> +	if (!itt_pool)
-> +		return -ENOMEM;
-> +
->  	gic_rdists =3D rdists;
->=20
->  	lpi_prop_prio =3D irq_prio;
-> --
-> 2.34.1
->=20
-
+> Yes, whether a VM gets into a memory-error-consumption loop=0A=
+> maliciously or accidentally, a reasonable VMM should have means to=0A=
+> detect and break it.=0A=
+Agreed we need a way to handle it. I suppose it can easily happen if=0A=
+a malicious app in the VM handles the SIGBUS to say read/write again=0A=
+among other ways.=0A=
+=0A=
+Regarding the following two ways discussed..=0A=
+> 1. remove pud and rely on the driver to re-fault PFNs that it knows=0A=
+> are not poisoned (what Peter suggested), or 2. keep the pud and=0A=
+> allow access to both good and bad PFNs.=0A=
+As mentioned, 2. have the advantage from the performance POV.=0A=
+For my understanding, what are the pros for the mechanism 1 vs 2?=0A=
+Wondering it is a choice out of some technical constraints.=
 
