@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-320982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487669712FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:09:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA619712FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07383287D16
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:09:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C1A81C227CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AE61B2EE0;
-	Mon,  9 Sep 2024 09:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71FC1B29DB;
+	Mon,  9 Sep 2024 09:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RthFmalh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HmovxtfS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54341B14FB
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449241B14FB
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725872954; cv=none; b=YGVfgqhcQWwg92R7Jw83VU/ecviPq8bKDWJUWfxAXDbbbhGDU/q5/xQ+cCqDthsKlJKu/YRMwPGrTZVQCCqYdOv5k3v/KjqFpRIle+Ynh3gdIEgp7+hQ5XkKljDGIMTnwVRu6k7ZDmJ2d0NgF0ifaQDozIVZhq0av2Usp0sozAI=
+	t=1725872999; cv=none; b=XMQi1rBY3v5HdQKg+WHRxAxroTR/tIR14p8mcb9R9ujyHRIbs6Ebe0DpNrfUrkQJxscIml3ziKANyGct+2YoY1zDHA8aGWNfIfFvc0vgWFgiyCKjZWQKW/f3kDl8kqipKOYgTqrDgUohMLWd/ANyZc/uwEDUQxFmLIZoGGycAX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725872954; c=relaxed/simple;
+	s=arc-20240116; t=1725872999; c=relaxed/simple;
 	bh=fQ8Bq1F9OXzG4iPevCpwDBqQjYesBe5uPmyI+M/cVmU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aMny8NFz2GqCa2J8ruecuuVW1+4eCTFX7f3mP6QURibtCA7iUkjhXwfSRwOLCTDTxaP3aDgZOFgifVWaHrVWMBvIigfQR7cBffF+ggwV9yIRe9MToL+fGXUjYjvsCzTSmGDkKoVNdcZhwclQc7MTa6mx/7NlZT6nlR3Tp2J1IA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RthFmalh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCB8DC4CEC5;
-	Mon,  9 Sep 2024 09:09:12 +0000 (UTC)
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RhvEpSq+1M/PbUg/rsWv/5/gJGrmQt4sTWGNDatnnNciSgFn9uP7ujtb5h0rcdh493zJs4gx4FbB9W5D6lxUQpi4VHpwvdeMZjRY4vxjNur4UAVVzio7LvwS0pQFG+2EwD1qBCDv5K/B2CbWbVp3PDWcX8NqCJXwTJbt2kXdl/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HmovxtfS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D291C4CEC5;
+	Mon,  9 Sep 2024 09:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725872954;
+	s=k20201202; t=1725872998;
 	bh=fQ8Bq1F9OXzG4iPevCpwDBqQjYesBe5uPmyI+M/cVmU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=RthFmalhEtdBVXTRCy4QLe1Z57VQK3yfHEnKvJIi0wIUQPa/ZJrulhusricxDKkPS
-	 l2i0Y3lUEjjX5d5Ex2iOKTuhv+VqOOFA0uL27H3unAaYITSJl5sf/bl/Hy3wmr5ZWq
-	 ivBwnwjeW8zBIyIE0t49f+8jBqX0ykKtPA6yF8FHqewHTuc3OGn/J5hqPuOVLQy9g7
-	 tqA1tQF7pZAK1p1ICUijqxc/CE6vghEmW4ajAwSKwr9931ea8Yj9FXxawqnp1YC/54
-	 EmRd0KDwCklC12YOAXhBh3+/HKao9/+ftTaB+gssxxwnNPet3MdakEc2h/P1/ufv3w
-	 q8J32hWTywf6A==
+	b=HmovxtfSJlFXdTT4c965EOv+RUXltuPyRNc4Idn6x2ZoBFrQmLqzk781MXosQN30U
+	 shUk63obARmxyQY3ZYqayCmYy7/6lrc07rc42OjHbmZsZ9na1yepUkwy8ClrF97OXm
+	 DvOXHh9kMUdh8YWk2eSDdyYb0dj5i9I95FpVD8O2PApIJUmaxMqM4Jhfp9BH6TPxSS
+	 FAwWqqMjKEEAzq0dVeShe+FJobXFEO8HhKbuoon1hHR7f66vhD1RXxuNPVddeVDs9V
+	 gJqwWsu0iuxEAdo3P4osa5VsdTo+Y8Ke1KNtBU9momzI+Stc6xj5uFdgeDxUltt5j8
+	 uXer5mEnmoTjA==
 From: Arnd Bergmann <arnd@kernel.org>
 To: Sudeep Holla <sudeep.holla@arm.com>
 Cc: Arnd Bergmann <arnd@arndb.de>,
@@ -47,8 +47,8 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
 Subject: [PATCH] firmware: arm_ffa: avoid string-fortify warningn in export_uuid()
-Date: Mon,  9 Sep 2024 11:09:05 +0000
-Message-Id: <20240909110909.247937-1-arnd@kernel.org>
+Date: Mon,  9 Sep 2024 11:09:24 +0000
+Message-Id: <20240909110938.247976-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
