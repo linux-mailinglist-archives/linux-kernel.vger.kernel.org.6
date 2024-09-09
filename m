@@ -1,86 +1,293 @@
-Return-Path: <linux-kernel+bounces-321278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A5DE9716D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:26:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3C49716E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB2E1B26C06
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021AC1F23BCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034131B3F3E;
-	Mon,  9 Sep 2024 11:26:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F931B2ED0
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 11:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEE71B5833;
+	Mon,  9 Sep 2024 11:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fOmJ4eCR"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768E81B2ED0
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 11:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725881196; cv=none; b=nJ7dOvoDUoK57X8FUvbK2CXMlzmTuncAf8FNxmxF7LpeTa2eMdh4a/r2y66T3bZSDekarPRdcdanfH2diN2OruIeVkLqEMxAN/6D46ONQnc5ndNbRp7XFDPkXEKDXc03scLg7XFhZNmcRxJcvg4V3R2htSk636BbSS3j7oLuNig=
+	t=1725881374; cv=none; b=oqJfqNSseGsANBx0waEUh/1CjiWc6qjYHq/hMoFYMkChV0WuUPqboO+M7cqX3YxIX0kmF1PP74sbLHijIhzh4AKvXX2TsHco3KVPJSEz3lOqGQnpqJX5yx6HUpfR5Y0m79ONJ0r6vrvcdhYDqqRQh0IdPOhESFklRqRLmBAnqX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725881196; c=relaxed/simple;
-	bh=5ASkjyfsJ994farGDOqj1cdlbIlZ/Y5QxiuOkbMGvHk=;
+	s=arc-20240116; t=1725881374; c=relaxed/simple;
+	bh=h9uvuHJtAEfett+JZRlDTHmYC+8YTREKfGVzpB/kOKo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=or3lexyGmJUX/a7ZD5skrheM74O1EX5EwOJNJN6zOLS+vnNJ09hHaLbl0fMjJp77EZMLrAMGG6su4VpEjdHC1aLUc6qg8wxt4IW5z6YDeDddvLvfwau2fD8baKwWg3JX9UXoq2GEGAHI06yz0KJL5H9FtCW3Nx/y35z6s2BUn5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6D45FEC;
-	Mon,  9 Sep 2024 04:27:01 -0700 (PDT)
-Received: from [10.1.39.38] (e127648.arm.com [10.1.39.38])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7EFBB3F73B;
-	Mon,  9 Sep 2024 04:26:31 -0700 (PDT)
-Message-ID: <a04070a1-39d5-4362-a28c-39b9b910eaac@arm.com>
-Date: Mon, 9 Sep 2024 12:26:29 +0100
+	 In-Reply-To:Content-Type; b=mdXICT1ZC4DWT9oQfxv1O3UZFSAb1nz83kzPWloaV1c/2BxC1x/lbBhOA2t+MpDHVKXN8qHcSzjnP86xW0iZCYZwaLvJ8hYJt/Vv+gKxNoiuaeXK/0zs1osbRZt1XiRFIbwKy0d7FeX4becKArxd/+4WA84a/1HkRGDV2dFd/O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fOmJ4eCR; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8d2b4a5bf1so208720866b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 04:29:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725881371; x=1726486171; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ktNPaZ1KCv6Ld2rAfA4PfuySfO5io0j80rdw8Alh41g=;
+        b=fOmJ4eCR1j1050JVUxneiRQ8wdwdfjgbxWwKVPKh8WCt+d81hG4X+uNdD2aXdG/RxN
+         jqB3PLcha43bnr54oJDDrmFrbNIHEId3HRoSBExqdt90pzM3jL/+qYe5pxKCSWTilZb8
+         ySlqK2BupvrA2WZSRSYdWGPtrd5Ed7f/oU5UQzWhIPLsgcbkJhJpxu0WI8xK0K4AaxvT
+         q0DtOMqAn6g13ntPr9sjZv3ZV+179en0QPUlse8gUpltqYP3btvdFgEg4f7Ou1E+mEAT
+         i+HcjEdX9GSWqnOklXixmThvVbDoHqPyU1aGPwz37e4TomVFzSZe0Q3y4UB2w68l776t
+         YAmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725881371; x=1726486171;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ktNPaZ1KCv6Ld2rAfA4PfuySfO5io0j80rdw8Alh41g=;
+        b=W8bqVmztTS5dcT7Rr2nbpj19cRQdzDdtd6L0hzQpubvFEwfgn2Bk4ewasyv2BkI8Q3
+         gQxhf49wjlVNR1WyV4VAxAaqA3Uq1SAT6DhRNS7JHQbon7S97q9o2bZSvNdIg0QYW6js
+         ziByuRBJU52WUCGq3g/UPd+QWxDbF4xz9b/at1mn2IErxX6AhVZu2gXMhmt+rOhv+jg+
+         aAPXqsy1TH28Qa7fIqewptweUnp9Qsir4ODWFzjz2Zoloqgjlo/S5crif0mCkq37Y/Mb
+         M6B32TBW22zOp3mFS66r5mZX02SMk1LqCAyeAdeNrAyP548M3O8oojUEXGeEfeQKwkeX
+         Y0ig==
+X-Forwarded-Encrypted: i=1; AJvYcCVa94OCDyTNmVt9FUlUrbaRgK/+/V6uqN7L5aEvopC52h7qMImKuXG5asJt9eoiLaudJfkPmiUYtMdyt3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNsInJFM+Lzmpnb5D3NRmkqEh1ek3iN71AGxyPngMKM1N+e+Xi
+	UJpL/nThJmj+FNNfYIGkUi29NBsYdILVNsX+m12eL4UkXpPnb0gy0ArblhS88NM=
+X-Google-Smtp-Source: AGHT+IHbyHiLLgCYAMG5Cp2xwyx3SxxsX41JowYhZLgV7ph6A6W/CyNOjt92TccFXBfzecj10YSGFg==
+X-Received: by 2002:a17:907:5083:b0:a8a:926a:d024 with SMTP id a640c23a62f3a-a8a926ad4e4mr481677066b.26.1725881370683;
+        Mon, 09 Sep 2024 04:29:30 -0700 (PDT)
+Received: from ?IPV6:2a02:8109:aa0d:be00::8db? ([2a02:8109:aa0d:be00::8db])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c61240sm327835766b.133.2024.09.09.04.29.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 04:29:30 -0700 (PDT)
+Message-ID: <1932646a-b138-48f3-99bc-17354a773586@linaro.org>
+Date: Mon, 9 Sep 2024 13:29:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC/PATCH] sched/fair: Remove unnecessary judgment in
- pick_next_task_fair()
-To: Benjamin Tang <tangsong8264@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org
-References: <3d9e48ab-869e-4633-8874-b2899c8cc8ce@gmail.com>
+User-Agent: Betterbird (Linux)
+Subject: Re: [PATCH v2 3/8] arm64: dts: qcom: qcs6490-rb3gen2: Add node for
+ qps615
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <3d9e48ab-869e-4633-8874-b2899c8cc8ce@gmail.com>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ cros-qcom-dts-watchers@chromium.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Jingoo Han <jingoohan1@gmail.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: andersson@kernel.org, quic_vbadigan@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
+ <20240803-qps615-v2-3-9560b7c71369@quicinc.com>
+From: Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <20240803-qps615-v2-3-9560b7c71369@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 9/9/24 06:13, Benjamin Tang wrote:
-> sched/fair: Remove unnecessary judgment in pick_next_task_fair()
+Hi Krishna,
+
+On 03/08/2024 05:22, Krishna chaitanya chundru wrote:
+> Add QPS615 PCIe switch node which has 3 downstream ports and in one
+> downstream port two embedded ethernet devices are present.
 > 
-> Since 'curr' argument is no longer needed in pick_next_entity(),
-> remove unnecessary judgment.
+> Power to the QPS615 is supplied through two LDO regulators, controlled
+> by two GPIOs, these are added as fixed regulators.
 > 
-> Signed-off-by: Benjamin Tang <tangsong8264@gmail.com>
+> Add i2c device node which is used to configure the switch.
+> 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 > ---
->  kernel/sched/fair.c | 2 --
->  1 file changed, 2 deletions(-)
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 121 +++++++++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi         |   2 +-
+>  2 files changed, 122 insertions(+), 1 deletion(-)
 > 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 9057584ec06d..92f8ad778205 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -8492,8 +8492,6 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
->         if (curr) {
->             if (curr->on_rq)
->                 update_curr(cfs_rq);
-> -           else
-> -               curr = NULL;
-> 
->             /*
->              * This call to check_cfs_rq_runtime() will do the
+> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> index 0d45662b8028..59d209768636 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> @@ -202,6 +202,30 @@ vph_pwr: vph-pwr-regulator {
+>  		regulator-min-microvolt = <3700000>;
+>  		regulator-max-microvolt = <3700000>;
+>  	};
+> +
+> +	vdd_ntn_0p9: regulator-vdd-ntn-0p9 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VDD_NTN_0P9";
+> +		gpio = <&pm8350c_gpios 2 GPIO_ACTIVE_HIGH>;
+> +		regulator-min-microvolt = <899400>;
+> +		regulator-max-microvolt = <899400>;
+> +		enable-active-high;
+> +		pinctrl-0 = <&ntn_0p9_en>;
+> +		pinctrl-names = "default";
+> +		regulator-enable-ramp-delay = <4300>;
+> +	};
+> +
+> +	vdd_ntn_1p8: regulator-vdd-ntn-1p8 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VDD_NTN_1P8";
+> +		gpio = <&pm8350c_gpios 3 GPIO_ACTIVE_HIGH>;
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		enable-active-high;
+> +		pinctrl-0 = <&ntn_1p8_en>;
+> +		pinctrl-names = "default";
+> +		regulator-enable-ramp-delay = <10000>;
+> +	};
+>  };
+>  
+>  &apps_rsc {
+> @@ -595,6 +619,12 @@ lt9611_out: endpoint {
+>  			};
+>  		};
+>  	};
+> +
+> +	qps615_switch: pcie-switch@77 {
+> +		compatible = "qcom,qps615";
+> +		reg = <0x77>;
+> +		status = "okay";
+> +	};
+>  };
+>  
+>  &i2c1 {
+> @@ -688,6 +718,75 @@ &pmk8350_rtc {
+>  	status = "okay";
+>  };
+>  
+> +&pcie1 {
+> +	status = "okay";
+> +};
 
-This has been reworked on tip/sched/core and is no longer needed:
-[PATCH 05/24] sched/fair: Unify pick_{,next_}_task_fair()
-https://lore.kernel.org/all/20240727105028.725062368@infradead.org/
+Isn't it also necessary to configure the phy as well? It's also default
+disabled and has two regulators.
+
+Kind regards,
+> +
+> +&pcieport {
+> +	pcie@0,0 {
+> +		compatible = "pci1179,0623";
+> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
+> +		#address-cells = <3>;
+> +		#size-cells = <2>;
+> +
+> +		device_type = "pci";
+> +		ranges;
+> +
+> +		vddc-supply = <&vdd_ntn_0p9>;
+> +		vdd18-supply = <&vdd_ntn_1p8>;
+> +		vdd09-supply = <&vdd_ntn_0p9>;
+> +		vddio1-supply = <&vdd_ntn_1p8>;
+> +		vddio2-supply = <&vdd_ntn_1p8>;
+> +		vddio18-supply = <&vdd_ntn_1p8>;
+> +
+> +		qcom,qps615-controller = <&qps615_switch>;
+> +
+> +		reset-gpios = <&pm8350c_gpios 1 GPIO_ACTIVE_LOW>;
+> +
+> +		pcie@1,0 {
+> +			reg = <0x20800 0x0 0x0 0x0 0x0>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			device_type = "pci";
+> +			ranges;
+> +		};
+> +
+> +		pcie@2,0 {
+> +			reg = <0x21000 0x0 0x0 0x0 0x0>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			device_type = "pci";
+> +			ranges;
+> +		};
+> +
+> +		pcie@3,0 {
+> +			reg = <0x21800 0x0 0x0 0x0 0x0>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +			device_type = "pci";
+> +			ranges;
+> +
+> +			pcie@0,0 {
+> +				reg = <0x50000 0x0 0x0 0x0 0x0>;
+> +				#address-cells = <3>;
+> +				#size-cells = <2>;
+> +				device_type = "pci";
+> +				ranges;
+> +			};
+> +
+> +			pcie@0,1 {
+> +				reg = <0x50100 0x0 0x0 0x0 0x0>;
+> +				#address-cells = <3>;
+> +				#size-cells = <2>;
+> +				device_type = "pci";
+> +				ranges;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+>  &qupv3_id_0 {
+>  	status = "okay";
+>  };
+> @@ -812,6 +911,28 @@ lt9611_rst_pin: lt9611-rst-state {
+>  	};
+>  };
+>  
+> +&pm8350c_gpios {
+> +	ntn_0p9_en: ntn-0p9-en-state {
+> +		pins = "gpio2";
+> +		function = "normal";
+> +
+> +		bias-disable;
+> +		input-disable;
+> +		output-enable;
+> +		power-source = <0>;
+> +	};
+> +
+> +	ntn_1p8_en: ntn-1p8-en-state {
+> +		pins = "gpio3";
+> +		function = "normal";
+> +
+> +		bias-disable;
+> +		input-disable;
+> +		output-enable;
+> +		power-source = <0>;
+> +	};
+> +};
+> +
+>  &tlmm {
+>  	lt9611_irq_pin: lt9611-irq-state {
+>  		pins = "gpio24";
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> index 3d8410683402..3840f056b7f2 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> @@ -2279,7 +2279,7 @@ pcie1: pcie@1c08000 {
+>  
+>  			status = "disabled";
+>  
+> -			pcie@0 {
+> +			pcieport: pcie@0 {
+>  				device_type = "pci";
+>  				reg = <0x0 0x0 0x0 0x0 0x0>;
+>  				bus-range = <0x01 0xff>;
+> 
+
+-- 
+// Caleb (they/them)
 
