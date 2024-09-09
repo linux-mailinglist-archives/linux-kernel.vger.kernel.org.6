@@ -1,72 +1,89 @@
-Return-Path: <linux-kernel+bounces-321096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB3997146A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:51:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAAFD971469
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 666A41C2307D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:51:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88383280F29
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3741F1B374E;
-	Mon,  9 Sep 2024 09:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8761B3B0F;
+	Mon,  9 Sep 2024 09:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q5JIgqs8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rs1AWpvM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC031B2EF7
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F391B14F3;
+	Mon,  9 Sep 2024 09:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725875458; cv=none; b=mue7ilwurUkwI1zRxhukixBomWunC+fad32IlOFUuNilWIrII+aIhQ+GV+H4kzoPaAQ6HGdarFMKTJyvmJkHC+uywQCca7gyuLOg7t4ZuldwPf5AKfuy0NeIqhK8r3bK0vDlNY8jjx+o45Ns5VZ21jxy6TGwsbKDIJ/8EroaE2o=
+	t=1725875439; cv=none; b=TyU5Y4+oXKws94UtV5vRAgRlF4pjNhdBvWVYo1cvvBzgyD4PAIu3OL/sixER5RNO8P2Ze+wbGo0u002G37dbadLiOU8iV3zbk7bJnMpNL16XHBzRS5y8qd4kdBGh9B1qPktEY8tZTxEL5Zg5NGkLUfQKpCVjJ7tq4r/CAofgwe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725875458; c=relaxed/simple;
-	bh=Q/pk0bz01Cc1a3LW0szlwHGr2S70S9mTAznC9QRAaf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PZUhZV3lwMUok/D+NZVXSjOlJ9Y09EbxPe+CTI722wvAu7WjGbYNznIXpl4p+6dGjZ8ulxmanTlJImRovZprqfcbnllYHTm+4Xk8Q4MlVMsQ4uKO4oyZao5gUP4c/sWX0qhKYV7WEoq6zZ1HAMGQ9KjP+h93M/udFZO8ykpNJXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q5JIgqs8; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1725875439; c=relaxed/simple;
+	bh=o4rOS0CzQ5rPhhDK/93V5f1NvBFIKfEtauA5bUn6VVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uR0Sl1okVIZMSqArrS+InKG5m8lMCVbpMwsH/fjNwP6h1vjgh9YX5VtrRnGzxmFegb2tW6G8HTNDWwMnocqY5x2rJcRmhhcoUepnO/WIoeo5UNkFdGLPjGSQhFX2WCidz5DcwN7VFXASMLl9u5lE3X7TebkeAo3MFoJ9bHRfd5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rs1AWpvM; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725875457; x=1757411457;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Q/pk0bz01Cc1a3LW0szlwHGr2S70S9mTAznC9QRAaf8=;
-  b=Q5JIgqs8FKTQ6VF5nmSOwiCjafpA/L3uuwenrpkp43szw9oDMuaaLSnX
-   YTVr7kLfq34cPzzwRxJWYmPvGaajcWZnagtW8Mjx/6fs/AQF7GZwki2fx
-   nTXmHsB9/0bKUaEeM3je2VaAzrwtWita8y0aZcUM9qII/P7BKcMAwpB0J
-   3Q4BgCmYl+Hh+dgT/vtpEepQ9wj23VbWkFjsrvTdAcsQwU8snaN2KcY3U
-   mQmmortELnlHp2xwU0pNChRl5YqEkkOYeUWwUToHbbgcBc1RTvNc9D2Ta
-   mG7RJZxq6nMMYpY3hYVlzbnax1TrDRakGARgR87ix5HO1jPKWormwbr9K
-   w==;
-X-CSE-ConnectionGUID: IldcxF6zS8+Tn3c5zU3FPA==
-X-CSE-MsgGUID: 4b9DR7zxTUyBHLpYOcfnrw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="24361711"
+  t=1725875438; x=1757411438;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=o4rOS0CzQ5rPhhDK/93V5f1NvBFIKfEtauA5bUn6VVs=;
+  b=Rs1AWpvMLeVr1SICpBja1jVKsTTiAIYmnPI+AgcP+bhuDLf0swqtX3Vu
+   2uz7zhLnAQjUtqP25GTljRJaBu2FnHR4vt2jvX1SUVlwXCGAmUYBdqdJj
+   G1ZVmdc0KoYWYtmw/vmQf2jYyLmq74PEXcqd96hn+SA0GBhedjV9/mQU4
+   nMtj00qgcRCSpVAklPz9Tpc8/jnG8vCI3R9Au/9ey9+rI54QQeJvjUCtz
+   rxlxK21Mb5F3vqQUB9hAcV7UChfeEfbiHmkk989bv3x6G9vIXl/VRKBsY
+   RaEjNnina4A2+oKuVurZB2UpI+oqGOGxljtkRwtYk6VEa59+AeHVqcyfb
+   g==;
+X-CSE-ConnectionGUID: bUbqCJo6QhWnRuaGujk9qw==
+X-CSE-MsgGUID: tGD8oeWoRK+nGEnrGv7jeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="28305244"
 X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="24361711"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 02:50:56 -0700
-X-CSE-ConnectionGUID: 1ygYQyQeQq2vc8lZhzZV5g==
-X-CSE-MsgGUID: sXAUfpXvSJi0xrs/YiECKA==
+   d="scan'208";a="28305244"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 02:50:36 -0700
+X-CSE-ConnectionGUID: AVP+6Ok/T3yKJibYd1mFZg==
+X-CSE-MsgGUID: B1mzV0whTr+EAHsgexMlvA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="67357832"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 09 Sep 2024 02:50:56 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1snb2r-000EaY-1A;
-	Mon, 09 Sep 2024 09:50:53 +0000
-Date: Mon, 9 Sep 2024 17:50:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: fs/bcachefs/btree_trans_commit.o: warning: objtool:
- __bch2_trans_commit+0x88: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-16
-Message-ID: <202409091745.jFnZrkPl-lkp@intel.com>
+   d="scan'208";a="89901639"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 02:50:32 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1snb2S-00000006jxH-3uhm;
+	Mon, 09 Sep 2024 12:50:28 +0300
+Date: Mon, 9 Sep 2024 12:50:28 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Petr Mladek <pmladek@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Rengarajan S <rengarajan.s@microchip.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH next v1 1/2] serial: 8250: Switch to nbcon console
+Message-ID: <Zt7E5DrlPiXLNXXH@smile.fi.intel.com>
+References: <20240905134719.142554-1-john.ogness@linutronix.de>
+ <20240905134719.142554-2-john.ogness@linutronix.de>
+ <Ztr3f8M2FaT2Rz1c@pathway.suse.cz>
+ <87mskkdhwd.fsf@jogness.linutronix.de>
+ <87jzfod9f2.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,28 +92,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <87jzfod9f2.fsf@jogness.linutronix.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   da3ea35007d0af457a0afc87e84fddaebc4e0b63
-commit: 1d16c605cc55ef26f0c65b362665a6c99080ccbc bcachefs: Disk space accounting rewrite
-date:   8 weeks ago
-config: loongarch-randconfig-001-20240907 (https://download.01.org/0day-ci/archive/20240909/202409091745.jFnZrkPl-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240909/202409091745.jFnZrkPl-lkp@intel.com/reproduce)
+On Fri, Sep 06, 2024 at 06:44:41PM +0206, John Ogness wrote:
+> On 2024-09-06, John Ogness <john.ogness@linutronix.de> wrote:
+> >> Wait! This makes the rs485 consoles much less usable for debugging.
+> >> They might have troubles to see the emergency and panic messages.
+> >>
+> >> Is this acceptable? Why?
+> >
+> > It is not acceptable. I am looking into making the atomic part work for
+> > RS485 as well.
+> 
+> So there are 2 things _not_ supported by the write_atomic() callback:
+> 
+> 1. RS485 mode. This is due to the need to start up TX for the
+> write, which can lead to:
+> 
+> up->rs485_start_tx()
+>   serial8250_em485_start_tx()
+>     serial8250_stop_rx()
+>       serial8250_rpm_get()
+>         pm_runtime_get_sync()
+>           __pm_runtime_resume()
+>             spin_lock_irqsave()
+> 
+> Taking a spin lock is not safe from NMI and thus disqualifies this call
+> chain for write_atomic().
+> 
+> If UART_CAP_RPM is not set, the pm_runtime_get_sync() is avoided. So I
+> could only disable atomic RS485 if UART_CAP_RPM is set. But the OMAP
+> variant of the 8250 does set this capability.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409091745.jFnZrkPl-lkp@intel.com/
+Please, don't add a new code which relies on UART_CAP_RPM.
+The idea is to enable runtime PM for all users who provides respective
+callbacks. Rather, you should ask runtime PM for this information.
 
-All warnings (new ones prefixed by >>):
-
->> fs/bcachefs/btree_trans_commit.o: warning: objtool: __bch2_trans_commit+0x88: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-16
-
-
-objdump-func vmlinux.o __bch2_trans_commit:
+> 2. Modem control. This is due to waiting for inputs, which can lead to:
+> 
+> serial8250_modem_status()
+>   wake_up_interruptible()
+> 
+> Performing wakes is not safe from scheduler or NMI and thus disqualifies
+> this call chain for write_atomic().
+> 
+> It would probably be acceptable to move serial8250_modem_status() into
+> an irq_work.
+> 
+> I would be grateful for any insights on how best to handle these 2
+> issues if we want full write_atomic() support for all 8250 variants.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With Best Regards,
+Andy Shevchenko
+
+
 
