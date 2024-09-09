@@ -1,226 +1,173 @@
-Return-Path: <linux-kernel+bounces-321808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED17971FD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:03:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6740D971FE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 286D51F23E61
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:03:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 955C6B22EBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2D516EBED;
-	Mon,  9 Sep 2024 17:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2533174EFC;
+	Mon,  9 Sep 2024 17:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pORiRXtS"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2066.outbound.protection.outlook.com [40.107.244.66])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="dkxEF00M"
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51FE1531E6;
-	Mon,  9 Sep 2024 17:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725901395; cv=fail; b=euHYDW8Ltf9OIq7B2vA5oLzfPkW4GqLHfcud+dmsBjZXAT6qDpA3/Nl9kAWDI59m/OyR5VT8u/hcni9sngIycQP5MqJz7kS9mDJbFcaZGUSzZxT2jwqxj6osHUHckK2w5qxXJvsN+HWn/st3QweNv9NNfLRNkLS6c1Mv4XaSmB0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725901395; c=relaxed/simple;
-	bh=ibip/6eHABVeinkbBMO1yAKm9exZ964yij1ak6YFACc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ECY7AQNzNtvhiSc3nVpPW+yqNA2PeB3XPBdIpsO+YOSZsT7MApuq5CNPrLDPlgPDqmRIazlbZ4KFjtJ4eYaxrNTA0KvTdkdhn2Ft1mc/nDEYFq8OIRnuMi1sf6Rdvsr0Le/Z9aQb4aMhaJ6uj8KzAAW2shKGaHGxOuGuriyMjTI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pORiRXtS; arc=fail smtp.client-ip=40.107.244.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tDc4qgD7EELM8pAEJqvw/WlXQ2EXPp8DIP8Ij/b1QnlT/Jh98/m8lwZztUDoPZha/Cw1JdYSCAqD2l3JHUkGBZpGJt9LAWlfDJr9jMNI2lxCasaCBM1ZeU5PomLI2cKWZXDkEz5OtBAgiNw+h6xXBIFaK0XCxvXzZP3LM9uYnErf+5XdmtBoaLctqD6m6aAm4DX5nZ5iKOO+pTMVk7oY943Wh+7Q15zHOI7wDWxh4wvf2Xa2306pXt/uiKbj+7UiowkDDqXH/P12Cq5G2HmVejVLk/BTHcokF7ImXW196G9OK8I0CUlYKSuYQVCmvIvCs6xkV1FbJpF/zjKWnP6pIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mh90kGoOmb5PKB71fv5QwkiF38rKOvH0Y8t44s8Fo24=;
- b=fwXY0b9poSfwxhvOFbGJm+UzXqOzhE8GOeeLJTRhLS3an2ZO1c/63NxuFG82BlLe+er57K/l2zIf2jSo1S0aOjqJstIOZB/7cxYytn66r8ysbx7VqyktFq2Nv1gI9tunk1OIBfsvjiup7XpfGWXHp43whyIzVfrZjdhLeSrns/t0dtzNcJBOEPhKNKMDACtv1+qQ9bdrKgQyEfBJlT8TbZIEBxwP9v/PaL5Md8NcUzmB4gTyKWmmi9RMJ2k+mLMNJie5LmEYfS+bxfmCGEl697rDASplf2MP2E+2pg2f+GEWSh2tsuWistWHYUbeE5UtDTNAm6kqWYyv8cShABtykw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mh90kGoOmb5PKB71fv5QwkiF38rKOvH0Y8t44s8Fo24=;
- b=pORiRXtSUCDoCbYshnXgVbDaoDMXEbbAEM3gAxyeI6lS5rT3Dzp2vJutrb9Y747+1SIE7J3Q9gLp8QUwq1livjsNIMcqBK57Ck2DINCUbKiuAy1cYusfUWtui9cw2aQfl517bxycmq/rFgMxggfwl8aVIQ27ByP5wyausXC/Uy4=
-Received: from LV3PR12MB9260.namprd12.prod.outlook.com (2603:10b6:408:1b4::21)
- by LV8PR12MB9230.namprd12.prod.outlook.com (2603:10b6:408:186::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Mon, 9 Sep
- 2024 17:03:10 +0000
-Received: from LV3PR12MB9260.namprd12.prod.outlook.com
- ([fe80::e5c3:25dc:f93:cb99]) by LV3PR12MB9260.namprd12.prod.outlook.com
- ([fe80::e5c3:25dc:f93:cb99%3]) with mapi id 15.20.7918.024; Mon, 9 Sep 2024
- 17:03:10 +0000
-From: "Thangaraj, Senthil Nathan" <SenthilNathan.Thangaraj@amd.com>
-To: "Potthuri, Sai Krishna" <sai.krishna.potthuri@amd.com>, Linus Walleij
-	<linus.walleij@linaro.org>, "Simek, Michal" <michal.simek@amd.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, "Buddhabhatti, Jay" <jay.buddhabhatti@amd.com>,
-	"Kundanala, Praveen Teja" <praveen.teja.kundanala@amd.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "saikrishna12468@gmail.com"
-	<saikrishna12468@gmail.com>, "git (AMD-Xilinx)" <git@amd.com>, "Potthuri, Sai
- Krishna" <sai.krishna.potthuri@amd.com>
-Subject: RE: [PATCH v5 2/3] firmware: xilinx: Add Pinctrl Get Attribute ID
-Thread-Topic: [PATCH v5 2/3] firmware: xilinx: Add Pinctrl Get Attribute ID
-Thread-Index: AQHbAEyJrT3v9unufkywBhnPEm58+rJPsvOw
-Date: Mon, 9 Sep 2024 17:03:10 +0000
-Message-ID:
- <LV3PR12MB92605EC32BE4F5AFA2949359E2992@LV3PR12MB9260.namprd12.prod.outlook.com>
-References: <20240906110113.3154327-1-sai.krishna.potthuri@amd.com>
- <20240906110113.3154327-3-sai.krishna.potthuri@amd.com>
-In-Reply-To: <20240906110113.3154327-3-sai.krishna.potthuri@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9260:EE_|LV8PR12MB9230:EE_
-x-ms-office365-filtering-correlation-id: 95e3d8f0-9782-4993-93fd-08dcd0f1487d
-x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?TsAeiKO4daqY3ItDT32FILg7TDnP8lZ57Kfvy7xA2K6+3vahIvhuDbM1vTtH?=
- =?us-ascii?Q?ALRKev1tzmTWCYhJRaEk+D0JL1PVDJarlGamt6NnEoSzc7X+QVrs6FAfHcar?=
- =?us-ascii?Q?BarWIR9LH91NG1aqrCR3VPb1KHynyv/FbuIIn3dmuPOqx816kddWQohHPH0h?=
- =?us-ascii?Q?h9Hh94rvY4o0uzfBJhNDAFU1j/RYa+o4L2OevJPrszb1YfIVjs0JH16m/8+K?=
- =?us-ascii?Q?JPoJj5zNIBZSincKWBPcgB8jUnBs5Yw+2eb1v1oqJq6WM9ggf8vIEivJuhDG?=
- =?us-ascii?Q?kqeoiGXhpxmZJE6RtLA6XYEKu50rHjinmWkVAX+N4KbL3dAaCoBrge7Zox7a?=
- =?us-ascii?Q?YwnNYyrfpQ5lU4WdHRn/zF03TDQuwa05ZwC6X9FIZVQx73tFHuGaYqFn9EE5?=
- =?us-ascii?Q?Uh8Nugv3qolbnHVirGkC8w4ZF9r+g+0LJ9TfuFV+vJIhTL6m0nOHaFnVtVKV?=
- =?us-ascii?Q?9/XUtMYkL9l2wNZSDHbwovr+t99KBc232xBhQ4rv4xEHdlmwAhiFEJvO+oEP?=
- =?us-ascii?Q?vkiNimf/Ojz7KKSXlb8bah+TJjVLRQPhgiGsxpBoFHt+V5Vcfa4n5g2cnnEG?=
- =?us-ascii?Q?ekggFzBwZgUOYA4b9zvaDAYJIZDQPWcTGG10L/CvzKuMbx1tPj4ZDgTW2UNG?=
- =?us-ascii?Q?vDk5M7joVxCbhlXjDeFMO5wpdUmoQSgCOqZqg9txW1o98npukbDT8L+zeP0Z?=
- =?us-ascii?Q?1g2MlTiwcYRP/QS+JM9Azjo3LG19hNLCZf2+anAZuotS+xN70SkogyyS/mMk?=
- =?us-ascii?Q?6e89B1kxlLibtbeFf6h0ASuQrkglkuMbi98PDOJ4Sfkui+2zToI1SjWYv8TI?=
- =?us-ascii?Q?n2xVeAfl3axfr4n3Za7MSVGBUksuVlNKmX8Sllh2y6I6lPv6rzJiSF1TOm+C?=
- =?us-ascii?Q?G3q2hPdkhsgFSq1S0JocSlMrFHHGrZYtbrrYbBtKKUeWFvCGNTGeC2cOXgcJ?=
- =?us-ascii?Q?sVMhWcOmF5dpIBjSCCRgWmsJMo8Y67Adf2aq9j26kE2I38fm7sIsXrdoEVMS?=
- =?us-ascii?Q?X4BKsLPTqryrrZFIXzrfi3HmEEnIDM7QyAu6+43rfv+gGVa/DTGpLQquURUD?=
- =?us-ascii?Q?p39CXW3+IlGkOHiq/OHlintm/632q98W8ZROvRWnn0opK6FN2zt5jeulNbHe?=
- =?us-ascii?Q?csN3v0T0NVMjVZtxsG1BwSnjYhq7wCgp+wwCyIaKRd5VqsOznN2dmKB7ds9H?=
- =?us-ascii?Q?WZ1muBbG5BaIeY+9fARoRHbsOm5gOrfnxj6l3KxEDLw8/Ip4cLmZjipNw0S7?=
- =?us-ascii?Q?BaH2e1yU50iUfRSsaJTJXcH06Rv3WgUsQs+ymhOy23StUw9y3i0tjIHJkkcN?=
- =?us-ascii?Q?Y33qC/JLlqWpBdhi7IrBAjkaDQ9EScqCxUfeIprWf+cx+ykO+GnkJGwEakhH?=
- =?us-ascii?Q?6VphCQNkoQ0L1mfs+i2ZxwooRuYj+vd9cHLHrHvz8/lcYqJn3yvTwAQAUBGs?=
- =?us-ascii?Q?G4xY07iZwA8=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9260.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?S1KfsJV4+zVl/+plN2LetxO1p+WCQQ8XrTcem1XSdspbgSF0jynX02D6aO4Z?=
- =?us-ascii?Q?yEhXkwatTMXEzTAsiAxbRQeFzgSJ+/dxRplvbEw3RUjcnRzD1h+KiY1nwode?=
- =?us-ascii?Q?3qLnmNwNsyn9lCCPo9+wVHxumwvvVpOlD+rUdVvRF6LdXrVaDzE4StOWsZme?=
- =?us-ascii?Q?ETpqBNMHuVpIUBIFgwceCvz9liCckD1gBmKsUITNubsFXpXapeqrKeChpnf/?=
- =?us-ascii?Q?g4w5WMnotGEoywL+v8byLz60kCaSsH9LADWGvrit424rI0Zb63/eXTzTF2cB?=
- =?us-ascii?Q?BjNTi0L/mzZB1mns+xNZL0Trp4KJTMkKgkXokq2QJrV2sNP6eT3FU+igHykv?=
- =?us-ascii?Q?VzBuCfoNs9ibqQ/qynEZSA9EdQJrsaBYzFT5TmsZ+c6raN/NOxilQ6O+AbsW?=
- =?us-ascii?Q?YMJxQJyzJF+7LM6wMpmJz+ZCdUZJSd/eeQhwssxqvmjL/wc0a51eEzfiQ/za?=
- =?us-ascii?Q?u2RoXZ9aKfOdQ3lIllsSI5TUoxTWFHEoeKH+3w8v8rbp4cK8H0pNLYz+g2kh?=
- =?us-ascii?Q?siQ6xzNodEffM/4NU5lTvXm5HtglFkLaQzj0FmHB3VVzcdw4XfzgYSWlS0UU?=
- =?us-ascii?Q?NSs3N/1yky77dqaXvSfHT25dRtWesb2veUy7C9BBgSNMZH8pH5u0crbRy+0w?=
- =?us-ascii?Q?bHahxxti/vD9ywZLm0LWgLpK4tsq/AQHDEWEKhVNhgzSJt3JZcEcNp7/wAni?=
- =?us-ascii?Q?cRGAqBzwUPAKoFttUc+bJ8AwUMWtNib+hZls0O8Y23W8/CRgiZw2GOu5yHxX?=
- =?us-ascii?Q?wkrm/7+MLwNGzgnQWRk6GL1RgqfytgVBBCmdk4keMiXo5AQJQoXncLxJU1hb?=
- =?us-ascii?Q?FGx+fNKB3H5xxFozrHQAjXMJuCR84US6XrtGfKj8jSMRXxTDnkaH6BlzEGeV?=
- =?us-ascii?Q?9fH7XGE0xoqdmKZvtz863OJcs6ZSACKUOqhuVgPFgV3U4U6At8YxFrbeCHKU?=
- =?us-ascii?Q?4rmq8D2SrE+ZpceRMhHb0OfyNh3VeaFgB7HA/4WX4fZ/voDBCXQ4bKVY2XNy?=
- =?us-ascii?Q?p7F70O2mcFR/Cw7tv3pvCl/xqPh1OFptPPJqE179iB8/y+X2jTx3Kw85wSkn?=
- =?us-ascii?Q?WpuX3mGI3I7qVzwkfhbbdD6mKHM9LrZhfZaTCpjtuyKh9+IksUcVR9q/vRT5?=
- =?us-ascii?Q?qe8zZ4fV9T4L/UPGVATPgDTLWNyTzW6z20OPzXa0vxKdQeoxzwP71zsMKxZd?=
- =?us-ascii?Q?1ZvNMTeobMmjzD2jawFs2vJpPB3g/+zmN0jV3wR8HBI3c09HCSogl/7GP+8R?=
- =?us-ascii?Q?4Iwj33so24/OoEhDkj9XjTh07h13PZ9eIwMcPbdtz5K37pwC6SxlFKpNsoAz?=
- =?us-ascii?Q?2sa2KjtNgS4EqM1LbKXU2AAA892lifXqXU5Jx7KL2JIekdyZ25kBFwbRV/Xp?=
- =?us-ascii?Q?kS0q9zNv9TMWGRiYjKO/ZLHnYGVTa3PaxSH/cFFOrko7qu7rskROpfbG+ymD?=
- =?us-ascii?Q?etMOGdFubEw8i+1gUfzQ8pdK4ZyYj0+cboXFlbtTq62mxhOuQXlgzs0ScOek?=
- =?us-ascii?Q?5HEmiEiXsGpgcrwowK3M8Kt+MVj8qjLkAbX6hm6voGfBAAypjx2sgonzSej8?=
- =?us-ascii?Q?c1IGAQ3FQALfzSb7/40=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF1D16EBEC
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725901447; cv=none; b=RJ2U7vAl/3u7HOn6z819VLjJuW/akPSlau57o9g1H6YH9miQ6oPgLzEd8iTAyNdMXJldhvTffm/aBXN6RCAmgrQVmh0psEbjBiMq3WMmzx8Oyb5lEsRBVBKBJ1NJFomKsINqutGRT4nvw08aZl3pdju7nRl80XW2/U2YIMaEbgE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725901447; c=relaxed/simple;
+	bh=B0JXziQ+mjss6TqCnA0okPgS+sSm1J3gMSu3cM1o6yw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QmJdUHrz7roxwDc91Xh7ptMMqvPQ2ww2z4EpqZOfmcrzajG691cRKMbgvPWUJXnOwDFPorQ4AFka2cb/vT1A96CqvuhjMkwlVk5yJXZmCCwatfDmV/YwGSS8xGH+Ju7O9LJ1iPxoAgYET5duc5Ix6MlFkCTgiKaIeM7v8IANPag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=dkxEF00M; arc=none smtp.client-ip=185.136.64.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20240909170401c52913624c12f066d8
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 09 Sep 2024 19:04:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=jan.kiszka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=+IMJaH4Y488cxMrbbzQw5ZPi7CFHeJol2NGr8fzTx7o=;
+ b=dkxEF00MQXR61RbV6uQIrVK0CafNTE9gFjgHUeK+0coC1gYXa8GchjLkUusJAqcJ1+lZ1y
+ c6qZQaYvIISzt8KQVVU2fCD5H74vxTBKHD50PgWla++NoA52caQUILecXDqyzLiY4eMr2TIn
+ YVsecPwvYtA0BDG5hpYajeuBuAncPTKMgDaps9Yrx9JD0oy3pmfpp5CUBu7xWUxLhwIfRQL5
+ dBWB7MikOa3Lr5ojUjVxqTdopoUlRk2EO5kftd8KmZbalY9taAK9uBmr9YY4XNtEsLHg9tlw
+ 3Mmdah/HFADb7KRcLQfnrzNX5oIg+O1JpD7K1PoP6epnI4tfcgwYwFLw==;
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Nishanth Menon <nm@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Bao Cheng Su <baocheng.su@siemens.com>,
+	Hua Qian Li <huaqian.li@siemens.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>
+Subject: [PATCH v6 0/7] soc: ti: Add and use PVU on K3-AM65 for DMA isolation
+Date: Mon,  9 Sep 2024 19:03:53 +0200
+Message-ID: <cover.1725901439.git.jan.kiszka@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9260.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95e3d8f0-9782-4993-93fd-08dcd0f1487d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2024 17:03:10.1149
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YT9SwOpxi8ZAtxrFCb7P8cNpJNenKK66TzAxElenatMReQclUIYmt5+r8onl8EMqMC96EqSwTk+h1uoGhvIIIw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9230
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-294854:519-21489:flowmailer
 
-Hi Sai Krishna,
+Changes in v6:
+ - make restricted DMA memory-region available to all pci-keystone
+   devices, moving property to unconditional section (patch 2)
 
-Please find my review below.
+Changes in v5:
+ - resolve review comments on pci-host bindings
+ - reduce DMA memory regions to 1 - swiotlb does not support more
+ - move activation into overlay (controlled via firmware)
+ - use ks_init_vmap helper instead of loop in
+   rework ks_init_restricted_dma
+ - add more comments to pci-keystone
+ - use 2 chained TLBs of PVU to support maximum of swiotlb (320 MB)
 
-Thanks,
-Senthil
+Changes in v4:
+ - reorder patch queue, moving all DTS changes to the back
+ - limit activation to IOT2050 Advanced variants
+ - move DMA pool to allow firmware-based expansion it up to 512M
 
-> -----Original Message-----
-> From: linux-arm-kernel <linux-arm-kernel-bounces@lists.infradead.org> On
-> Behalf Of Sai Krishna Potthuri
-> Sent: Friday, September 6, 2024 4:01 AM
-> To: Linus Walleij <linus.walleij@linaro.org>; Simek, Michal
-> <michal.simek@amd.com>; Rob Herring <robh@kernel.org>; Krzysztof
-> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>;
-> Buddhabhatti, Jay <jay.buddhabhatti@amd.com>; Kundanala, Praveen Teja
-> <praveen.teja.kundanala@amd.com>; Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org>
-> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; l=
-inux-
-> gpio@vger.kernel.org; devicetree@vger.kernel.org;
-> saikrishna12468@gmail.com; git (AMD-Xilinx) <git@amd.com>; Potthuri, Sai
-> Krishna <sai.krishna.potthuri@amd.com>
-> Subject: [PATCH v5 2/3] firmware: xilinx: Add Pinctrl Get Attribute ID
->=20
-> Caution: This message originated from an External Source. Use proper caut=
-ion
-> when opening attachments, clicking links, or responding.
->=20
->=20
-> Add Pinctrl Get Attribute ID to the query ids list.
->=20
-> Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
-> ---
->  include/linux/firmware/xlnx-zynqmp.h | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/include/linux/firmware/xlnx-zynqmp.h
-> b/include/linux/firmware/xlnx-zynqmp.h
-> index d7d07afc0532..3b4ce4ec5d3f 100644
-> --- a/include/linux/firmware/xlnx-zynqmp.h
-> +++ b/include/linux/firmware/xlnx-zynqmp.h
-> @@ -238,6 +238,7 @@ enum pm_query_id {
->         PM_QID_PINCTRL_GET_PIN_GROUPS =3D 11,
->         PM_QID_CLOCK_GET_NUM_CLOCKS =3D 12,
->         PM_QID_CLOCK_GET_MAX_DIVISOR =3D 13,
-> +       PM_QID_PINCTRL_GET_ATTRIBUTES =3D 15,
+Changes in v3:
+ - fix ti,am654-pvu.yaml according to review comments
+ - address review comments on ti,am65-pci-host.yaml
+ - differentiate between different compatibles in ti,am65-pci-host.yaml
+ - move pvu nodes to k3-am65-main.dtsi
+ - reorder patch series, pulling bindings and generic DT bits to the front
 
-Any reason why do you need to skip 14 and use 15 here ?
+Changes in v2:
+ - fix dt_bindings_check issues (patch 1)
+ - address first review comments (patch 2)
+ - extend ti,am65-pci-host bindings for PVU (new patch 3)
 
->  };
->=20
->  enum rpu_oper_mode {
-> --
-> 2.25.1
->=20
+Only few of the K3 SoCs have an IOMMU and, thus, can isolate the system
+against DMA-based attacks of external PCI devices. The AM65 is without
+an IOMMU, but it comes with something close to it: the Peripheral
+Virtualization Unit (PVU).
+
+The PVU was originally designed to establish static compartments via a
+hypervisor, isolate those DMA-wise against each other and the host and
+even allow remapping of guest-physical addresses. But it only provides
+a static translation region, not page-granular mappings. Thus, it cannot
+be handled transparently like an IOMMU.
+
+Now, to use the PVU for the purpose of isolated PCI devices from the
+Linux host, this series takes a different approach. It defines a
+restricted-dma-pool for the PCI host, using swiotlb to map all DMA
+buffers from a static memory carve-out. And to enforce that the devices
+actually follow this, a special PVU soc driver is introduced. The driver
+permits access to the GIC ITS and otherwise waits for other drivers that
+detect devices with constrained DMA to register pools with the PVU.
+
+For the AM65, the first (and possibly only) driver where this is
+introduced is the pci-keystone host controller. Finally, this series
+provides a DT overlay for the IOT2050 Advanced devices (all have
+MiniPCIe or M.2 extension slots) to make use of this protection scheme.
+Application of this overlay will be handled by firmware.
+
+Due to the cross-cutting nature of these changes, multiple subsystems
+are affected. However, I wanted to present the whole thing in one series
+to allow everyone to review with the complete picture in hands. If
+preferred, I can also split the series up, of course.
+
+Jan
+
+CC: Bjorn Helgaas <bhelgaas@google.com>
+CC: "Krzysztof Wilczyński" <kw@linux.com>
+CC: linux-pci@vger.kernel.org
+CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
+
+Jan Kiszka (7):
+  dt-bindings: soc: ti: Add AM65 peripheral virtualization unit
+  dt-bindings: PCI: ti,am65: Extend for use with PVU
+  soc: ti: Add IOMMU-like PVU driver
+  PCI: keystone: Add support for PVU-based DMA isolation on AM654
+  arm64: dts: ti: k3-am65-main: Add PVU nodes
+  arm64: dts: ti: k3-am65-main: Add VMAP registers to PCI root complexes
+  arm64: dts: ti: iot2050: Add overlay for DMA isolation for devices
+    behind PCI RC
+
+ .../bindings/pci/ti,am65-pci-host.yaml        |  28 +-
+ .../bindings/soc/ti/ti,am654-pvu.yaml         |  51 ++
+ arch/arm64/boot/dts/ti/Makefile               |   5 +
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi      |  38 +-
+ ...am6548-iot2050-advanced-dma-isolation.dtso |  33 ++
+ drivers/pci/controller/dwc/pci-keystone.c     | 108 ++++
+ drivers/soc/ti/Kconfig                        |   4 +
+ drivers/soc/ti/Makefile                       |   1 +
+ drivers/soc/ti/ti-pvu.c                       | 500 ++++++++++++++++++
+ include/linux/ti-pvu.h                        |  16 +
+ 10 files changed, 777 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,am654-pvu.yaml
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-dma-isolation.dtso
+ create mode 100644 drivers/soc/ti/ti-pvu.c
+ create mode 100644 include/linux/ti-pvu.h
+
+-- 
+2.43.0
 
 
