@@ -1,122 +1,220 @@
-Return-Path: <linux-kernel+bounces-322011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03CB99722D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:36:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB8BB9722D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90D16B22326
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:36:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CEA91F24484
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC2C189B80;
-	Mon,  9 Sep 2024 19:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2D61898F7;
+	Mon,  9 Sep 2024 19:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vMnIz3gY"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b="UmuN7coi"
+Received: from smtp1.math.uni-bielefeld.de (smtp1.math.uni-bielefeld.de [129.70.45.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56ED200AF;
-	Mon,  9 Sep 2024 19:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EDE200AF
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 19:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.70.45.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725910569; cv=none; b=giSVg5jlu2d7ECnH/81FZXvIKfEgpFfV59PZikHTIhgy+tCF+9U8muhCk/qKJGqbWuDl2ra/bQ0rWtbSbgxxU3op509hXjSYrtbOcq6YOAoUgyJ3NSqDxzQPK4mbum4Hs6G7Q+tJtKAfk0nDUQ0TsVRzuurgqQfwqERip4/TAk0=
+	t=1725910626; cv=none; b=nnVglQLlVllUbNHwdyXY6oHybOikuhNIigxiB2pHnVy7PeY1DrEvge7ETaP/6g2FY454PSryaZGdUv1nQzA67vF+Ph87kuh27UszkXuODk73xJk385J/Wzof1WycqZymcFVG4EeFGHRT8w7i6ZT81X3CXUhBjfdtTOfTaXTstCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725910569; c=relaxed/simple;
-	bh=BX+/MaXTvDjTfi5O/xqF/oW4u0uKBlWCm8bfqwI3qoA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ogMvEKeCrTIAaS51e9TbJx89vVl98rHo0Y3hxlSGKv3taMMY5ICasEGezIEyNkILr4621QV3vJT2xld2yih6DWIPAquCY8lUP009k7RfntZKiaQvQzqleIYiKB35PsG/iKCLCIl1avD3Hijgz0DR6fpXKEKz1VWSqN5JC2JzlTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vMnIz3gY; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=/l8900RWbPmYjq3b+TLQg0cSZw4LqMuDhLsLEMWJlZQ=; b=vMnIz3gY1KXOGHG+O63lW4eynk
-	BwiiICYSi/jPJFBQV7KfsO1nXaOjvrZcem6HS7zQrujD8+iYOo3PmD6jlZqeU+99+xY15ZwRO1qzw
-	txMIPgOGUYb30c4+vFe+oYZ7F77Q3km9Zu72uWfljGDDlSfJgWPoZNkA5iJAngcIPYbA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1snkAt-0072OP-Gu; Mon, 09 Sep 2024 21:35:47 +0200
-Date: Mon, 9 Sep 2024 21:35:47 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jeff Daly <jeffd@silicom-usa.com>
-Cc: "anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>,
-	"przemyslaw.kitszel@intel.com" <przemyslaw.kitszel@intel.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ixgbe: Manual AN-37 for troublesome link partners for
- X550 SFI
-Message-ID: <da850961-d6ac-46f5-8afb-66e83e33095e@lunn.ch>
-References: <20240906104145.9587-1-jeffd@silicom-usa.com>
- <becaaeaf-e76a-43d2-b6e1-e7cc330d8cae@lunn.ch>
- <VI1PR04MB5501C2A00D658115EF4E7845EA9E2@VI1PR04MB5501.eurprd04.prod.outlook.com>
- <ac2faac2-a946-4052-9f61-b0c1c644ee59@lunn.ch>
- <VI1PR04MB5501658A227BFC1A832B2627EA992@VI1PR04MB5501.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1725910626; c=relaxed/simple;
+	bh=mSQgJPqiylWbdaZR6PEX6uW04UWGMTefCiZptqVbuaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QCtEN+/n6dFGfTvR3GIl45Ou0GTht2ipM5ipfP/Ozl1zGIRkZI26oNoQZP3QY3Wn8xDbuMk712YqG/j1P4PkIwHpclJgH8R8ALtlc8eL4eMm0Vy6t+uHqOmsr641kIQqssGL9sQKkODAUY9+bLbIuGOSXN0MVFgKw2GKRac9sWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de; spf=pass smtp.mailfrom=math.uni-bielefeld.de; dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b=UmuN7coi; arc=none smtp.client-ip=129.70.45.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=math.uni-bielefeld.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=math.uni-bielefeld.de; s=default; t=1725910611;
+	bh=mSQgJPqiylWbdaZR6PEX6uW04UWGMTefCiZptqVbuaQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UmuN7coihcW9EkGIwAvvPDfHChJ11ukWg7IbWd5vln0iklQBnnfxXBhvxX50kW1az
+	 Ac1SpUIDWOxYz/dbCuA5LHZhzxbPxF8lvicLkLqhtTyi0kJnY4wWqDvl/cyjbDcIKG
+	 06ql32+PCixZ9F1Rs9Dsx402ddQBrssuuh63tc2CeXiRQnhRz/XT74beawJcYz5V+N
+	 j7d9ABFyQLG4m3KJ19tPFGqcMB+GGnPn7TtoP14PfgcYL1rvX3gwdUCg6oH9BoRUIC
+	 NSUkJP1Gdx2ZPfwNf6ZifLHxTmOh0RR/7X4/fouDm9pGMi/h4UUp4k/EhczzsJR+ZC
+	 HX8kvG9ysd9AQ==
+Received: from [192.168.0.106] (dslb-088-074-203-146.088.074.pools.vodafone-ip.de [88.74.203.146])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp1.math.uni-bielefeld.de (Postfix) with ESMTPSA id 5C6972028F;
+	Mon,  9 Sep 2024 21:36:50 +0200 (CEST)
+Message-ID: <80c80db1-1935-492c-94e4-8d5c1681c0db@math.uni-bielefeld.de>
+Date: Mon, 9 Sep 2024 21:36:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VI1PR04MB5501658A227BFC1A832B2627EA992@VI1PR04MB5501.eurprd04.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] drm/amd: fix VRR race condition during IRQ handling
+To: Harry Wentland <harry.wentland@amd.com>,
+ Alex Deucher <alexdeucher@gmail.com>
+Cc: Christopher Snowhill <chris@kode54.net>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <cover.1725269643.git.tjakobi@math.uni-bielefeld.de>
+ <D40Q9ZLDQIZF.3OERFS0AYREN0@kode54.net>
+ <deb6d962-f24e-4769-b313-be3b0efb873b@math.uni-bielefeld.de>
+ <CADnq5_PMnCUYsUq_SPS8woi20KxaW2+teMzhmmOyFJRaq3YVQQ@mail.gmail.com>
+ <c2653b61-eca8-4209-9d50-771cf1a9fe35@amd.com>
+Content-Language: en-US
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Autocrypt: addr=tjakobi@math.uni-bielefeld.de; keydata=
+ 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
+ JRHWPGCL3BhOxQ==
+In-Reply-To: <c2653b61-eca8-4209-9d50-771cf1a9fe35@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> This was originally worked out by Doug Boom at Intel.  It had to do
-> with autonegotiation not being the part of the SFP optics when the
-> Denverton X550 Si was released and was thus not POR for DNV.  The
-> Juniper switches however won't exit their AN sequence unless an AN37
-> transaction is seen.
+On 9/9/24 19:18, Harry Wentland wrote:
 
-I wounder what 802.3 says about this. I suspect the Juniper switch is
-within the standard here, and the x550 is broken.
+>
+> On 2024-09-09 13:11, Alex Deucher wrote:
+>> On Sun, Sep 8, 2024 at 7:23 AM Tobias Jakobi
+>> <tjakobi@math.uni-bielefeld.de> wrote:
+>>> On 9/8/24 09:35, Christopher Snowhill wrote:
+>>>
+>>>> On Mon Sep 2, 2024 at 2:40 AM PDT, tjakobi wrote:
+>>>>> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>>>>>
+>>>>> Hello,
+>>>>>
+>>>>> this fixes a nasty race condition in the set_drr() callbacks for DCN10
+>>>>> and DCN35 that has existed now since quite some time, see this GitLab
+>>>>> issue for reference.
+>>>>>
+>>>>> https://gitlab.freedesktop.org/drm/amd/-/issues/3142
+>>>>>
+>>>>> The report just focuses von DCN10, but the same problem also exists in
+>>>>> the DCN35 code.
+>>>> Does the problem not exist in the following references to funcs->set_drr?
+>>>>
+>>>> drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c:      if (pipe_ctx->stream_res.tg->funcs->set_drr)
+>>>> drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c:              pipe_ctx->stream_res.tg->funcs->set_drr(
+>>>> drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c:              pipe_ctx[i]->stream_res.tg->funcs->set_drr(
+>>>> drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:        if (pipe_ctx->stream_res.tg->funcs->set_drr)
+>>>> drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:                pipe_ctx->stream_res.tg->funcs->set_drr(
+>>>> drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:                if (pipe_ctx->stream_res.tg->funcs->set_drr)
+>>>> drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:                        pipe_ctx->stream_res.tg->funcs->set_drr(
+>>>> drivers/gpu/drm/amd/display/dc/hwss/dcn31/dcn31_hwseq.c:        if (pipe_ctx->stream_res.tg->funcs->set_drr)
+>>>> drivers/gpu/drm/amd/display/dc/hwss/dcn31/dcn31_hwseq.c:                pipe_ctx->stream_res.tg->funcs->set_drr(
+>>>> drivers/gpu/drm/amd/display/dc/hwss/dcn401/dcn401_hwseq.c:      if (pipe_ctx->stream_res.tg->funcs->set_drr)
+>>>> drivers/gpu/drm/amd/display/dc/hwss/dcn401/dcn401_hwseq.c:              pipe_ctx->stream_res.tg->funcs->set_drr(
+>>> Maybe. But the big difference I see here, is that in this code there
+>>> isn't even any kind of NULL check applied to tg. Or most of the members
+>>> of *pipe_ctx. If there really is the same kind of problem here, then one
+>>> would need to rewrite a bit more code to fix stuff.
+>>>
+>>> E.g. in the case of  dcn31_hwseq.c, the questionable code is in
+>>> dcn31_reset_back_end_for_pipe(), which is static and only called from
+>>> dcn31_reset_hw_ctx_wrap(). Which is assigned to the .reset_hw_ctx_wrap
+>>> callback. And this specific callback, from what I can see, is only
+>>> called from dce110_reset_hw_ctx_wrap(). Which is then assigned to the
+>>> .apply_ctx_to_hw callback. The callback is only called from
+>>> dc_commit_state_no_check(). That one is static again, and called from
+>>> dc_commit_streams().
+>>>
+>>> I could trace this even further. My point is: I don't think this is
+>>> called from any IRQ handler code. And given the depth and complexity of
+>>> the callgraph, I have to admit, that, at least at this point, this is a
+>>> bit over my head.
+>>>
+>>> Sure, I could now sprinkle a bunch of x != NULL in the code, but that
+>>> would be merely voodoo. And I usually try to have a theoretical basis
+>>> when I apply changes to code.
+>>>
+>>> Maybe if someone from the AMD display team could give some insight if
+>>> there still is potentially vulnerable code in some of the instances that
+>>> Christopher has posted, then I would gladly take a look.
+>> @Wentland, Harry can you confirm this?
+>>
+> As Tobias said, without extensive analysis and trace of the code in all
+> possible use-case it's hard to say there's no possible way the other
+> set_drr calls could potentially have a similar issue.
+>
+> I think Tobias' analysis is sound and this fixes a number of issues, hence
+> my RB.
+In fact one user pointed out another potentially vulnerable callback:
+https://gitlab.freedesktop.org/drm/amd/-/issues/3142#note_2560109
 
-> Other switch vendors recover gracefully when the right encoding is
-> discovered, not using AN37 transactions, but not Juniper.
+Which is set_drr() in dce110_hwseq.c -- from which we know that it's 
+called from IRQ handler code. Also the backtrace that he posted confirms 
+this. That code seems to be a bit older than the DCN10/DCN25 code, as it 
+lacks any kind of NULL-check. I have posted a patch that more or less 
+copies over the DCN10/35 code. Still waiting for conclusive feedback if 
+the patch does something.
 
-We have seen similar things in the Linux core PHY handling, but mostly
-around 2500BaseX MAC and PHY drivers. A lot of vendors implement what
-they call over clocked SGMII, rather than 2500BaseX. But SGMII
-signalling makes no sense when overclocked to 2.5GHz, so they just
-disable it, leaving no signalling at all. Some 25000BaseX PHYs handle
-this, they gracefully fall back to sensible defaults when they
-discover they are connected to a broken MAC. Others need telling they
-are connected to a broken MAC which does not perform signalling. But
-it is easier for a MAC-PHY relationship, everything is on one board,
-we know all the details, and can work around the issues.
+If it does, I'm going to post it to amd-gfx as well.
 
-> Since DNV doesn't do AN37 in SFP auto mode, there's an endless loop.
-> (Technically, the switches *could* be updated to new firmware that
-> should have this capability, but apparently a logistical issue for
-> at least one of our customers.)
-
-I would say that is the wrong solution, i don't think the switch is
-doing anything wrong. But the devil is in the details, check 802.3.
-
-> Going back through my emails, Doug did mention that it would possibly cause issues with other switches, but it wasn't anything we, or (until just recently) anyone else had observed.  A quote from Doug:  
-> 
-> "that AN37 fix pretty much only works with the Juniper switches, and can cause problems with other switches."
-
-LOS from the from the SFP cage will tell you there is something on the
-other end of the link. It is not a particularly reliable signal, since
-it just means there is light. Is there any indication the link is not
-usable? You could wait 10 seconds after LOS is inactive, and if there
-is no usable link kick off the workaround. If after 10 seconds the
-link is still not usable, turn the workaround off again. Flip flop
-every 10 seconds.
-
-Hopefully the initial 10 seconds delay means you won't upset switches
-which currently work, and after 10 seconds, you gain a link to
-switches that really do expect AN37.
-
-	Andrew
+With best wishes,
+Tobias
+>
+> Harry
+>
+>> Alex
+>>
+>>> With best wishes,
+>>> Tobias
+>>>
+>>>>> With best wishes,
+>>>>> Tobias
+>>>>>
+>>>>> Tobias Jakobi (2):
+>>>>>     drm/amd/display: Avoid race between dcn10_set_drr() and
+>>>>>       dc_state_destruct()
+>>>>>     drm/amd/display: Avoid race between dcn35_set_drr() and
+>>>>>       dc_state_destruct()
+>>>>>
+>>>>>    .../amd/display/dc/hwss/dcn10/dcn10_hwseq.c   | 20 +++++++++++--------
+>>>>>    .../amd/display/dc/hwss/dcn35/dcn35_hwseq.c   | 20 +++++++++++--------
+>>>>>    2 files changed, 24 insertions(+), 16 deletions(-)
 
