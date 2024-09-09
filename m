@@ -1,106 +1,92 @@
-Return-Path: <linux-kernel+bounces-321798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784DB971F8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:50:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9368E971F94
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 232BF1F23C3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:50:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB031F240C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B436215F41F;
-	Mon,  9 Sep 2024 16:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30B616D9AE;
+	Mon,  9 Sep 2024 16:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NER6Tu4e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="uhQdZ1fg"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6481758F;
-	Mon,  9 Sep 2024 16:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E6F136E37;
+	Mon,  9 Sep 2024 16:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725900644; cv=none; b=HvHlyx6175U7BfZEof3w8LDqpGBwt9cfxUmqLkqXyuUdnfNlhwekal2ZxvkeyI/gtJFDg0t9ED/bWHtT8f7RUlzjsl/IlBgPrrYALyoR1DrsxZK9dNDF1H1rpG2JkOVAoDMcpS4GTKk+VSxtNNexUH1dLX1dBVuB9VRSTJ9Izic=
+	t=1725900733; cv=none; b=cGN2NLu/ItaLR+vPeeKVJFC7DjHsiEKHdDbxb76JYnQaMRmzzW07IluwJgByeNDkUfckzY2RoNc9Ws08PTQ0uwXliclqzcAMxUCjJDEfs6RoO+/abJO9pDnUIdJvhBtP8K642lWULVpVG/G0F1qg+OQ+lAcy8jUofp0AuR0SdvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725900644; c=relaxed/simple;
-	bh=tsHYHAglC2N91wzrIXaHd+3oArT6Uv0VkqBALZWibIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Us6Y1NwzOnM4DkdKyk4pFqlCmk9D6iprtN7sZ5z1Qe0gfsLtKAzx9g950ctbQKK+hLNc28PCvUp8mOMrlmfrZDqhKYgZ81oHCjyNF+z9b+R3CBK/2YIGEz5unX/vJGtR9yLtABrG3Ax091yLZ55CrJj9HuxFRnVOunZ//RALQBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NER6Tu4e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DDC0C4CEC5;
-	Mon,  9 Sep 2024 16:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725900643;
-	bh=tsHYHAglC2N91wzrIXaHd+3oArT6Uv0VkqBALZWibIM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NER6Tu4ekT0kS05ta0vIBgiSGLbOUoGJLKP0/75wdv+rJMHBhzyBcDq3vR11G+S+4
-	 d6F7Y3JSXWWZJlRbTsfH2r3xKN2COzof+aRFsNZ4VXHmnH9fqK2UNGS+nyaFUe6BQc
-	 Mwjz1idSxyH616dCRIyxgbR5IzlvV0CINWRjvN6WAxeO8YsXrtNDqtvDhx5hVH7eIN
-	 nk1xMS4Fl2a1+5OwpgJfCPqs82MUNTEoD2MT/vZTcpHV66gmCXUdD+4tnjm57n75dF
-	 8+W+r02OaYDb9iYjEsGglVGPf1cuU0lMXfGna/wGmjp7aEbczNzJbdVd5bLs/Idvp/
-	 362tpLt+ydNgw==
-Date: Mon, 9 Sep 2024 13:50:40 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH v3 5/8] perf trace: Pretty print buffer data
-Message-ID: <Zt8nYG3_24Eal4-y@x1>
-References: <20240824163322.60796-1-howardchu95@gmail.com>
- <20240824163322.60796-6-howardchu95@gmail.com>
- <Zt8jTfzDYgBPvFCd@x1>
- <Zt8mMB7rkgSY1VSD@x1>
+	s=arc-20240116; t=1725900733; c=relaxed/simple;
+	bh=twImTYifiOWU6J6qkPtgprLRCj3s9lXxqb+u+SA5QWw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bWDhEXXyx5KHxQS2jCd/joUukVExiIBhB5I5vrbbfHyF6TT7BuoTH2NmNYQHK5kP7Xd/GJzM6zxEDSgiX98ONP7Nr3Qs+Kb6Mh5wTHn1g2WRlARgdmUJEcXLZi7e56tRntbbxTaRlqwiocMePgvuM6jLDdJaW54Is3DkPVPMC5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=uhQdZ1fg; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4X2Xtg2vKZz6ClY8p;
+	Mon,  9 Sep 2024 16:52:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1725900729; x=1728492730; bh=twImTYifiOWU6J6qkPtgprLR
+	Cj3s9lXxqb+u+SA5QWw=; b=uhQdZ1fgD4AGgldTzjznraRBq+8bALTTd68791eT
+	PUg2uDX3I8yPSvp/jrsif9/rA9jFeQXbAEFDLE/WfHwkSq8WUsNAzYUS9tqsJnGV
+	t11Cuy289KSzOrjX5vfJWBQlNcIwGQYVzeN78H6+6zCm9DFryieAobKwOMByplw3
+	JDjw1whKjj0DmbN5Fw/2KmeoGQQayE1t9VUNsb+Smxe3lE7i+D23RAT8hlPkHAiq
+	5sipOBJjus7QgP+euNg83xyPD8D19zoaB3l64GPPNbHIQ20XUjFJlnxE581XAuKp
+	HCBJKNIsJtyIaHRM3BX05CPhZYH8e1XcQnwcZsjoQK8LMg==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id jnAtApQPnDD6; Mon,  9 Sep 2024 16:52:09 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4X2Xtc4bb6z6ClbFf;
+	Mon,  9 Sep 2024 16:52:08 +0000 (UTC)
+Message-ID: <de761b4d-bf11-48a4-be2b-6312d5f383c6@acm.org>
+Date: Mon, 9 Sep 2024 09:52:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zt8mMB7rkgSY1VSD@x1>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: Use pre-calculated offsets in ufshcd_init_lrb
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240909095646.3756308-1-avri.altman@wdc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240909095646.3756308-1-avri.altman@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 09, 2024 at 01:45:41PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Mon, Sep 09, 2024 at 01:33:17PM -0300, Arnaldo Carvalho de Melo wrote:
-> > >  static bool trace__filter_duration(struct trace *trace, double t)
-> > >  {
-> > >  	return t < (trace->duration_filter * NSEC_PER_MSEC);
-> > > @@ -1956,6 +1987,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
-> > >  		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
-> > >  		     strstr(field->name, "path") != NULL))
-> > >  			arg->scnprintf = SCA_FILENAME;
-> > > +		else if (strstr(field->type, "char *") && strstr(field->name, "buf"))
-> > > +			arg->scnprintf = SCA_BUF;
+On 9/9/24 2:56 AM, Avri Altman wrote:
+> Replace manual offset calculations for response_upiu and prd_table in
+> ufshcd_init_lrb() with pre-calculated offsets already stored in the
+> utp_transfer_req_desc structure. The pre-calculated offsets are set
+> differently in ufshcd_host_memory_configure() based on the
+> UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk, ensuring correct alignment and
+> access.
 
-> > You can't really do this for things like 'read' as we would be printing
-> > whatever is in the buffer when we enter the syscall, right? As we can
-> > see testing after applying the following patch:
- 
-> This is also valid for the struct dumper, where I'll have to add some
-> indication in the syscall_fmt table when the pointer should be read in
-> the BPF augmenter, and thus we shouldn't bother to get it in the
-> sys_enter if it is, say, fstat().
+Please add Fixes: and Cc: stable tags.
 
-BTW, what I have so far, without addressing this last comment about the
-struct pretty printing/collection is at the tmp.perf-tools-next branch:
+Thanks,
 
-⬢[acme@toolbox perf-tools-next]$ git log --oneline perf-tools-next/perf-tools-next..
-14053de1be2bf3b1 (HEAD -> perf-tools-next, x1/perf-tools-next, perf-tools-next/tmp.perf-tools-next, acme/tmp.perf-tools-next) perf trace: Collect augmented data using BPF
-3f060c2fe93b8298 perf trace: Pretty print buffer data
-01ca0102b80c7b5c perf trace: Pretty print struct data
-bb0819cf7392b797 perf trace: Add trace__bpf_sys_enter_beauty_map() to prepare for fetching data in BPF
-6b22c2b502a1c21b perf trace: Use a common encoding for augmented arguments, with size + error + payload
-5d9cd24924f57066 perf trace augmented_syscalls.bpf: Move the renameat aumenter to renameat2, temporarily
-⬢[acme@toolbox perf-tools-next]$
+Bart.
 
-⬢[acme@toolbox perf-tools-next]$ git remote -v | grep ^perf-tools-next
-perf-tools-next	https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git (fetch)
-perf-tools-next	https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git (push)
-⬢[acme@toolbox perf-tools-next]$
- 
-- Arnaldo
 
