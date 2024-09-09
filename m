@@ -1,158 +1,117 @@
-Return-Path: <linux-kernel+bounces-321014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9419E971358
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:23:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC57971354
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 519AB2834B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:23:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB68E1F22933
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995871B5EDE;
-	Mon,  9 Sep 2024 09:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2F81B3732;
+	Mon,  9 Sep 2024 09:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FIZrgtIx"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XdxysrSu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC031B3B2F;
-	Mon,  9 Sep 2024 09:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93037172BD0;
+	Mon,  9 Sep 2024 09:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725873661; cv=none; b=gTZKtE0wawTNSQzKJt85hEHyYFPHqzpcD8s1L9m95zsP4BRHD8go69u0OKVXCa+h01cCrcK9FH+YINLf79oEbO/Db9+qBn0NBy5hAFbgWu8+UK/X/1EeSYzp+GXXLT5hVGgWjc+Cpo1Q2fJyjO1mA9tymbUfpBLPfbepkxmSyRw=
+	t=1725873649; cv=none; b=TF3YsWa9w29rnlg1exkK/EsGSNufxkW2HbElk45JRrKsOV6MlEhRrKsn1wSe2xmVNQlpgmEFRXG8rptD/GyFr5/Otow6tPluIZghoNOraiN9KNzXbt34G8fDvUJIOnfBPcrrRK6oUFGFHurZffWeBs75fDaiHmZHpd+Li1Aw+tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725873661; c=relaxed/simple;
-	bh=TJq1nvR0rf3j+JkErKdsYvqOcBWi6G4yVRoLRKv6cV4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gd7zWAZ8VVymF/p5zt3gzH2zyM/bRpCZBthLJy8o4+UOQmSPfmNwAOLtGj5Tw5QBMX8V0AabizA4c5/ZP7Uv3/y/Zca09ZA80lzkykrM7pcGGCy5jKoZauISHQkoaxGgIceVZzJSTrQKluOKTKIwBJ8QvODV/CpiNfL7Wd6R4rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FIZrgtIx; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-20573eb852aso33979145ad.1;
-        Mon, 09 Sep 2024 02:20:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725873659; x=1726478459; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=c8oJcgmLJj/vtZTNDCjHyX3EWWzSoBqFkOBi+RgnpsA=;
-        b=FIZrgtIx4IYROxwGj/eRL+88mDQ4xAE31ZqIBdTvdTCeSSEgEutez9Umu2qAOSoaiU
-         QWhVW/tteEJm0DpD/f906iCuGa4e6zLSV7C58nXPE5kmCbog5tZWgGqYy0GRE0jKShX0
-         nyfGnzFC5sGKUnraWZd11ky4r5qQLjUuPxIMFgjLDofWtw7kzKMdLZMCbocJwWP1HOdj
-         PwRmx8uOKPRcbuR29BbAHfAay0B4qXEqesYXAHiexIFAkJrduZWwxVyd+sr5GksLfXsy
-         LpcOUi+3LvtO54fGVnQYzgphHsl+Xa1vMyMP1DoBooWnCzliYSz0c0GtBA2R+TnV7Ljq
-         /HbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725873659; x=1726478459;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c8oJcgmLJj/vtZTNDCjHyX3EWWzSoBqFkOBi+RgnpsA=;
-        b=dPmpN75cSQ0QIp6rRQgTwlh5JsZxoeE8w1WPZLoA+cBNB4B801+wzISAIe8bkLMqLZ
-         FUM2jhr6wic9QmqLcckFVxDf4OMS5nf2JodcqSDYuJKA6ihmJj5B5TyHVWCFaUR6Ar/P
-         O4U/umeNIFsa0Tczv3phqkVVW6p7KR98lhLyxngH29tTHGbsdCwWDoczmCRoAv6d10bO
-         etK9t6RTbq9aABZ2alp9VRzpH5HtIQoGfUbW69QXsm8jcG3heWjaIiNCpwGexexbrDZb
-         2QInzhRZcRalYrOBDYYkjKmeycK9DWmteuveIrLzWk9PZuSXfwogC9lOmlCEOw8Yqj9e
-         uSdA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiYuSShI9uINiG+bAAcLNUjrzsV6V5tLXk9VQUSvnCzWbJJ7pEBCg/oDwrreK6Hd8k9Hy7ySo+RURjLos=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj5ZuwwfsI6j5hgAy7bWEQsQjzLpTQbDF/L3nyLfN4jfNdma6F
-	6lPf2qhFWiD2HYWnkJ9GT8Lt6KGTTIxntyZoUzRldBSlCVHTfzD+zevp0MtxKWrPWw==
-X-Google-Smtp-Source: AGHT+IHSLSuKhFpOhxjR4Jw7h+UXkXnwGndUpE57b1vk6Nt2lt3ZBV77mon2JQgxoq8gN08E/K+Keg==
-X-Received: by 2002:a17:903:22ca:b0:205:5a3f:76b2 with SMTP id d9443c01a7336-206b848994fmr251370545ad.29.1725873658471;
-        Mon, 09 Sep 2024 02:20:58 -0700 (PDT)
-Received: from localhost.localdomain ([223.104.134.124])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d8241be93asm3589403a12.42.2024.09.09.02.20.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 02:20:58 -0700 (PDT)
-From: luzhixing12345 <luzhixing12345@gmail.com>
-To: linux-cxl@vger.kernel.org
-Cc: luzhixing12345 <luzhixing12345@gmail.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] test: add cxl region test template
-Date: Mon,  9 Sep 2024 17:19:38 +0800
-Message-Id: <20240909091938.27647-1-luzhixing12345@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725873649; c=relaxed/simple;
+	bh=hZmEM2eZJrU1S7rE/hRXrfP0Atc4JKeEEEEEj0mN2Ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pX6pKjQqlQwrMGOXlSgZTcZixZS66Orm9Z/zmBhYDjQGozyepifQYm/XYTrwWwjZzBlXaOKc8BTT/OYGp6kWZbHNa6oSdRwigN2z/WjM/ywonPsYPKVgdAkYPL0x9TLxKJiiTft+5XwXtXjv3a+anzlzvi9Q27BQ95TUknsKYtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XdxysrSu; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725873647; x=1757409647;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hZmEM2eZJrU1S7rE/hRXrfP0Atc4JKeEEEEEj0mN2Ao=;
+  b=XdxysrSuBIEhsmJdBXzKvVc45ldasWFNi6vSajbhVcDbOBQZTOEbsbNU
+   MC+6VCdUNYpSkfmMv6h/3CIN6n/yyXYmvR42k6WNy9Ic1lZCIPw8vmr4h
+   QEaI12byh1nyaHd2amhAUOAi7FxQdUcNAECw1o+NEp+xNrWJufx6HtBNM
+   e/83QYScPyyw+r4DtDHj3ooMvH/klKNdUOVviEutDXsZ5L/VbhfoNRBOv
+   6HtPpnwOUiiIJ0i4q2Fp9DVwJsIll+neE0XT3UMiqyrh4NnFMyVlNZOXf
+   djD8IBYc6B8GqVVsCMhS/ER+nppts9/G2YLlwlC6JwNxGx4xIHActu8Y4
+   A==;
+X-CSE-ConnectionGUID: ki+l7nZcTBq9qbeYByFHSw==
+X-CSE-MsgGUID: XE33DZgFQnGJ2Go7X3irLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="49969732"
+X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
+   d="scan'208";a="49969732"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 02:20:44 -0700
+X-CSE-ConnectionGUID: 1orrsdTPQwWIvijqGIDG5w==
+X-CSE-MsgGUID: HewxhwmmQqSOOnAJQwIkVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
+   d="scan'208";a="66597783"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 02:20:41 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1snaZa-00000006jPU-2UkH;
+	Mon, 09 Sep 2024 12:20:38 +0300
+Date: Mon, 9 Sep 2024 12:20:38 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+	linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: Re: [PATCH v2 0/3] iio: Introduce and use aligned_s64 type
+Message-ID: <Zt695hJRwiT2RSJT@smile.fi.intel.com>
+References: <20240903180218.3640501-1-andriy.shevchenko@linux.intel.com>
+ <20240907163752.2eb3be6a@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240907163752.2eb3be6a@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-CXL2.0 support dynamic provisioning of new memory region,
-add cxl region test template
+On Sat, Sep 07, 2024 at 04:37:52PM +0100, Jonathan Cameron wrote:
+> On Tue,  3 Sep 2024 20:59:03 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > Instead of having open coded idea of aligned member, use
+> > a newly defined type like it's done in, e.g., u64 case.
+> > Update a few IIO drivers to show how to use it.
+> > 
+> > v2 (took only one year from v1, not bad!):
+> :)
+> 
+> Applied with that tweak for patch 2 that you called out.
 
-Signed-off-by: luzhixing12345 <luzhixing12345@gmail.com>
----
- MAINTAINERS                         | 1 +
- tools/testing/cxl/Kbuild            | 6 ++++++
- tools/testing/cxl/cxl_region_test.c | 6 ++++++
- tools/testing/cxl/test/cxl.c        | 1 +
- 4 files changed, 14 insertions(+)
- create mode 100644 tools/testing/cxl/cxl_region_test.c
+Please, also do
+s/__aligned_s64/aligned_s64/
+in the commit message there.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 10430778c998..708407d34584 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5616,6 +5616,7 @@ M:	Alison Schofield <alison.schofield@intel.com>
- M:	Vishal Verma <vishal.l.verma@intel.com>
- M:	Ira Weiny <ira.weiny@intel.com>
- M:	Dan Williams <dan.j.williams@intel.com>
-+M:	luzhixing12345 <luzhixing12345@gmail.com>
- L:	linux-cxl@vger.kernel.org
- S:	Maintained
- F:	Documentation/driver-api/cxl
-diff --git a/tools/testing/cxl/Kbuild b/tools/testing/cxl/Kbuild
-index 3d1ca9e38b1f..8b430274a1ad 100644
---- a/tools/testing/cxl/Kbuild
-+++ b/tools/testing/cxl/Kbuild
-@@ -67,6 +67,12 @@ cxl_core-y += config_check.o
- cxl_core-y += cxl_core_test.o
- cxl_core-y += cxl_core_exports.o
- 
-+obj-m += cxl_region.o
-+
-+cxl_region-y += $(CXL_CORE_SRC)/region.o
-+cxl_region-y += config_check.o
-+cxl_region-y += cxl_region_test.o
-+
- KBUILD_CFLAGS := $(filter-out -Wmissing-prototypes -Wmissing-declarations, $(KBUILD_CFLAGS))
- 
- obj-m += test/
-diff --git a/tools/testing/cxl/cxl_region_test.c b/tools/testing/cxl/cxl_region_test.c
-new file mode 100644
-index 000000000000..c5859a96e35b
---- /dev/null
-+++ b/tools/testing/cxl/cxl_region_test.c
-@@ -0,0 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright(c) 2022 Intel Corporation. All rights reserved. */
-+
-+#include "watermark.h"
-+
-+cxl_test_watermark(cxl_region);
-diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
-index 90d5afd52dd0..320aaed2df17 100644
---- a/tools/testing/cxl/test/cxl.c
-+++ b/tools/testing/cxl/test/cxl.c
-@@ -1304,6 +1304,7 @@ static __init int cxl_test_init(void)
- 	cxl_mem_test();
- 	cxl_pmem_test();
- 	cxl_port_test();
-+	cxl_region_test();
- 
- 	register_cxl_mock_ops(&cxl_mock_ops);
- 
+> Will probably be next cycle though before these go upstream
+> (so think of this as queuing them up very early for 6.13 :)
+
+Sure, thanks!
+
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
