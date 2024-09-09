@@ -1,178 +1,338 @@
-Return-Path: <linux-kernel+bounces-321398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F65B9719FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:52:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A41FC9719FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EACD286E2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:52:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F0AE285D2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEDC1B81AE;
-	Mon,  9 Sep 2024 12:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9849A1B86CB;
+	Mon,  9 Sep 2024 12:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DGalyXbX"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HwMhmnhN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AD91B81B6
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C341B81C7;
+	Mon,  9 Sep 2024 12:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725886356; cv=none; b=GzlycqfICfq+cz5j4qdTasYtZqXyWCpTK5M8ophjxKQdmOixc3XqIECzZCjntpSra9hWloCXLfSB64mn1aS/aOL/1jKdyy3U8AlmQopwu+DvrHTMsJlc+qMMvfQu5QV+17F56IJ30KfgbQ3c9f15R7IMUuZE+1A/q2pyZl0YNQs=
+	t=1725886381; cv=none; b=C9vRq/c5P8z/Nu+9L3V+lAZVCT+ak/DEWSC1Jt+dT5Xqh6OxepIF9oQJ4bMRM/g8WwrbrjEoxBZHVjI7qNRh0wYslgzcpKwWX+VEuTgRe9L3u/PgBPKKOoo3LzeLS+8do5E15gi2H8hMzDpiK7DdsKVe4nhavFFnpGcgrJf2BYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725886356; c=relaxed/simple;
-	bh=gbLhjuLOV4dSl5SZR0/h4W+ihlZ414WDToIIW5JUPE8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W6YnPyBwK0SsRah7WkLVSatuRWi/tzUjCcVHymP0hjdw/3gdMohJK0Jv6fZoFujTrT/fXRfLNlURF+AoP/VaVl8Sw0AyN6I3NAwlmJtaR5qfFi4byLje7kNsGVuThnLBeieoCxahZeGlpXSBIIymVgxhi9a/WGBwhEYfg6N98tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DGalyXbX; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so36980905e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 05:52:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725886353; x=1726491153; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KFicSaqQ6o1dPU2dGyJmmfBGCV2JI71YgMB0tplFuwY=;
-        b=DGalyXbX3Gpj892CKKG8qOT9zPbeP+PKv/kGs8fhx/SR7VSt4xIR0Se0lPWignvNHI
-         DBi0tUPxN8luCBM96HZmMBTKCzgQLQtkqVkF3eZ+L9y/8fVgudmM8Er10rx+gfb4tV84
-         0BL8itSuR+OlXXNjpuqvQ8B1hdWhicRlJdJ5j8psR35e4u1aGyPOMSxR2EizQlcsyRIT
-         JbAczzMTHjQ5bRsTCOPH0FiD1UaTozTLLwm8YXzO9SAS0bCT4oMNrCJnJfKUZZDC64z3
-         70RWaub94bqe9N+fMbMSRYYb9P1pnJZszku/BNcUnXHGwYFuWDlTu30OmUy4m7oSJWEK
-         ezjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725886353; x=1726491153;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KFicSaqQ6o1dPU2dGyJmmfBGCV2JI71YgMB0tplFuwY=;
-        b=xPy6jDR8RjYrOK0ExVb3YNNs7MwTsDWpoltk4xUHue9p0SwVqdr2WY9O37mwKnLnrE
-         JF4JoBwCi5ZPWQq/DbZW5c9MckMHdQc4jQ7d1kUjXh2cxqIhugbyqjdlnhK827Td3tR0
-         Gh1U1kzwfr6Uy9/JRtNyMtGUeplX+wXcfwEww9TFkF6yvFU0pi7lKL4qyMU1NIB/aGdg
-         FlpRACHmG5sGg4DAjw9uNb3anc6s9lq/a3VSk93KAfc+BCp//UsGoug49tzLwSehYVjJ
-         dQe8hhIO4JPWEwjjompBAeVs+2Y/GbwHjcj95vPmmRj3cvZJtRJtKkE3cA3n8nIO6fQZ
-         wzNw==
-X-Forwarded-Encrypted: i=1; AJvYcCX4pVs5Fotf81xtqG8wiua2D7q9qvOsFUokwu1PuszsHp4/K2a5WAr6X85V85rEJhY9eC7eEH9D4HI7lTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg/TG+mGI+pEveMl7tMsNlxBsvdUfyYgTd4+i4SktWFnCOHlX+
-	AQFTe4a+UtChW+V9qAV0PQomRJny3n7RzlXmVKHjbYUULbmsc6CIMt/qyBEhhac=
-X-Google-Smtp-Source: AGHT+IFTcy0mxR3YY6Sm3HpQ9Kysw5PbxY5CGwt/HKjrLl33HsGAZy2gqrlfBru7RTJbn6lfqIoOwQ==
-X-Received: by 2002:a05:600c:1c06:b0:42c:ba0d:c766 with SMTP id 5b1f17b1804b1-42cba0dca47mr11409125e9.6.1725886353012;
-        Mon, 09 Sep 2024 05:52:33 -0700 (PDT)
-Received: from [192.168.0.172] (88-127-185-239.subs.proxad.net. [88.127.185.239])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb742d0a1sm37550115e9.2.2024.09.09.05.52.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 05:52:32 -0700 (PDT)
-Message-ID: <95cab48e-989f-42b4-8f31-0fdffbaface4@baylibre.com>
-Date: Mon, 9 Sep 2024 14:52:31 +0200
+	s=arc-20240116; t=1725886381; c=relaxed/simple;
+	bh=7nv1PLXPaH11yhcv951on+oerPpfcq1MzqcNeXBAFHQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bYJjyACFa120D6JSmUURH7gDgrr8M7iXa5h2BqKx9KUAT7b1rCIfmEi8oshbXs/hMRVOqln73BvVzCOWVLOAyVbVuzyduqRgRHyeE/LsNzqAHI4PBAzWFvs7iC5Wl82TuwJ+UoTNOfbDGzEPkx0Mtt4EJgBXok9DX5lNT0MYGwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HwMhmnhN; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725886380; x=1757422380;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=7nv1PLXPaH11yhcv951on+oerPpfcq1MzqcNeXBAFHQ=;
+  b=HwMhmnhNErfxSkK3g+W2qZ5CnyBZUL650nofSc0FLMLoyv6K/c64XRHl
+   u5os2ULJwxS2Zamx1WY26xrlrDRQwXglR2tpcekxYJ1D3G3xDkVVjoArJ
+   QPiS3FD8Z3lXAduKvUaHZvgyJXAKziUQFsHjetUYHq5vzOT4MmbRY1QN7
+   chj/TE7yJL8g2Bnk9ZihFf475+7jnEOI/WvzqO6hzUrIdhEtU3YB8K9lk
+   35Wq7CuASa7VfkX8xL94JXHJIjD7dDzT0Nmvln9xekVtVAdfgNvC8bRqC
+   GCxxqGpUBz4kiGmvZhtGEEUMKeEXzFnBVnbEPQWgi4dsbwsB77dN1w4vP
+   w==;
+X-CSE-ConnectionGUID: zxycrpQlS+2WYykpGAFhJA==
+X-CSE-MsgGUID: yhv4SP6HR/KjOUKYBMfJRQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24773876"
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="24773876"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 05:52:58 -0700
+X-CSE-ConnectionGUID: LfECcp0xRWKduoy5d4AYTw==
+X-CSE-MsgGUID: 34cuTLk9TbGzBNkCVgrZeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="66445004"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.60])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 05:52:55 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 9 Sep 2024 15:52:49 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
+    peternewman@google.com, babu.moger@amd.com, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/6] selftests/resctrl: Ensure measurements skip
+ initialization of default benchmark
+In-Reply-To: <3325de04-6e59-4c7a-ae44-c245c8edb93f@intel.com>
+Message-ID: <ccc7579f-2633-adda-2a8e-235021c5c785@linux.intel.com>
+References: <cover.1724970211.git.reinette.chatre@intel.com> <a0fe2be86f3e868a5f908ac4f2c76e71b4d08d4f.1724970211.git.reinette.chatre@intel.com> <3add783b-74cf-23c0-a301-aa203efdd0f6@linux.intel.com> <0ae6d28f-0646-48b2-a4e7-17e2d14f6dd5@intel.com>
+ <85a11091-3c61-2d8b-28d4-2a251f3b8ffe@linux.intel.com> <156ad739-3f80-456f-92df-74da9266dca0@intel.com> <da06ea9d-5081-b81f-5d2b-28200527f419@linux.intel.com> <86ca3bcd-de60-4784-8a32-8df360a4ceda@intel.com> <0e5078b5-509f-38ef-fa71-821c5f7b5944@linux.intel.com>
+ <3325de04-6e59-4c7a-ae44-c245c8edb93f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] ASoC: mt8365: Make non-exported functions static
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20240907-asoc-fix-mt8365-build-v1-0-7ad0bac20161@kernel.org>
- <20240907-asoc-fix-mt8365-build-v1-4-7ad0bac20161@kernel.org>
-Content-Language: en-US
-From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <20240907-asoc-fix-mt8365-build-v1-4-7ad0bac20161@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323328-1286384385-1725886369=:1029"
 
-Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 07/09/2024 02:53, Mark Brown wrote:
-> The compilers warn if functions without a prototype are not static so add
-> appropriate static declarations.
-> 
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->   sound/soc/mediatek/mt8365/mt8365-afe-clk.c |  4 ++--
->   sound/soc/mediatek/mt8365/mt8365-afe-pcm.c | 12 ++++++------
->   2 files changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/sound/soc/mediatek/mt8365/mt8365-afe-clk.c b/sound/soc/mediatek/mt8365/mt8365-afe-clk.c
-> index 300d1f0ae660..8a0af2ea8546 100644
-> --- a/sound/soc/mediatek/mt8365/mt8365-afe-clk.c
-> +++ b/sound/soc/mediatek/mt8365/mt8365-afe-clk.c
-> @@ -295,7 +295,7 @@ int mt8365_afe_disable_afe_on(struct mtk_base_afe *afe)
->   	return 0;
->   }
->   
-> -int mt8365_afe_hd_engen_enable(struct mtk_base_afe *afe, bool apll1)
-> +static int mt8365_afe_hd_engen_enable(struct mtk_base_afe *afe, bool apll1)
->   {
->   	if (apll1)
->   		regmap_update_bits(afe->regmap, AFE_HD_ENGEN_ENABLE,
-> @@ -307,7 +307,7 @@ int mt8365_afe_hd_engen_enable(struct mtk_base_afe *afe, bool apll1)
->   	return 0;
->   }
->   
-> -int mt8365_afe_hd_engen_disable(struct mtk_base_afe *afe, bool apll1)
-> +static int mt8365_afe_hd_engen_disable(struct mtk_base_afe *afe, bool apll1)
->   {
->   	if (apll1)
->   		regmap_update_bits(afe->regmap, AFE_HD_ENGEN_ENABLE,
-> diff --git a/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c b/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
-> index df6dd8c5bbe5..54d2112d2e92 100644
-> --- a/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
-> +++ b/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
-> @@ -170,7 +170,7 @@ bool mt8365_afe_channel_supported(unsigned int channel, unsigned int id)
->   	return false;
->   }
->   
-> -bool mt8365_afe_clk_group_44k(int sample_rate)
-> +static bool mt8365_afe_clk_group_44k(int sample_rate)
->   {
->   	if (sample_rate == 11025 ||
->   	    sample_rate == 22050 ||
-> @@ -182,7 +182,7 @@ bool mt8365_afe_clk_group_44k(int sample_rate)
->   		return false;
->   }
->   
-> -bool mt8365_afe_clk_group_48k(int sample_rate)
-> +static bool mt8365_afe_clk_group_48k(int sample_rate)
->   {
->   	return (!mt8365_afe_clk_group_44k(sample_rate));
->   }
-> @@ -496,8 +496,8 @@ static int mt8365_afe_configure_cm(struct mtk_base_afe *afe,
->   	return 0;
->   }
->   
-> -int mt8365_afe_fe_startup(struct snd_pcm_substream *substream,
-> -			  struct snd_soc_dai *dai)
-> +static int mt8365_afe_fe_startup(struct snd_pcm_substream *substream,
-> +				 struct snd_soc_dai *dai)
->   {
->   	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
->   	struct mtk_base_afe *afe = snd_soc_dai_get_drvdata(dai);
-> @@ -714,8 +714,8 @@ static int mt8365_afe_fe_prepare(struct snd_pcm_substream *substream,
->   	return 0;
->   }
->   
-> -int mt8365_afe_fe_trigger(struct snd_pcm_substream *substream, int cmd,
-> -			  struct snd_soc_dai *dai)
-> +static int mt8365_afe_fe_trigger(struct snd_pcm_substream *substream, int cmd,
-> +				 struct snd_soc_dai *dai)
->   {
->   	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
->   	struct mtk_base_afe *afe = snd_soc_dai_get_drvdata(dai);
-> 
+--8323328-1286384385-1725886369=:1029
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
--- 
-Regards,
-Alexandre
+On Fri, 6 Sep 2024, Reinette Chatre wrote:
+> On 9/6/24 3:00 AM, Ilpo J=C3=A4rvinen wrote:
+> > On Thu, 5 Sep 2024, Reinette Chatre wrote:
+> > > On 9/5/24 5:10 AM, Ilpo J=C3=A4rvinen wrote:
+> > > > On Wed, 4 Sep 2024, Reinette Chatre wrote:
+> > > > > On 9/4/24 4:57 AM, Ilpo J=C3=A4rvinen wrote:
+> > > > > > On Fri, 30 Aug 2024, Reinette Chatre wrote:
+> > > > > > > On 8/30/24 3:56 AM, Ilpo J=C3=A4rvinen wrote:
+> > > > > > > > On Thu, 29 Aug 2024, Reinette Chatre wrote:
+> > > >=20
+> > > > > > > > > @@ -699,111 +639,80 @@ int resctrl_val(const struct
+> > > > > > > > > resctrl_test
+> > > > > > > > > *test,
+> > > > > > > > >      =09=09return ret;
+> > > > > > > > >      =09}
+> > > > > > > > >      -=09/*
+> > > > > > > > > -=09 * If benchmark wasn't successfully started by child,
+> > > > > > > > > then
+> > > > > > > > > child
+> > > > > > > > > should
+> > > > > > > > > -=09 * kill parent, so save parent's pid
+> > > > > > > > > -=09 */
+> > > > > > > > >      =09ppid =3D getpid();
+> > > > > > > > >      -=09if (pipe(pipefd)) {
+> > > > > > > > > -=09=09ksft_perror("Unable to create pipe");
+> > > > > > > > > +=09/* Taskset test to specified CPU. */
+> > > > > > > > > +=09ret =3D taskset_benchmark(ppid, uparams->cpu,
+> > > > > > > > > &old_affinity);
+> > > > > > > >=20
+> > > > > > > > Previously only CPU affinity for bm_pid was set but now it'=
+s set
+> > > > > > > > before
+> > > > > > > > fork(). Quickly checking the Internet, it seems that CPU
+> > > > > > > > affinity
+> > > > > > > > gets
+> > > > > > > > inherited on fork() so now both processes will have the sam=
+e
+> > > > > > > > affinity
+> > > > > > > > which might make the other process to interfere with the
+> > > > > > > > measurement.
+> > > > > > >=20
+> > > > > > > Setting the affinity is intended to ensure that the buffer
+> > > > > > > preparation
+> > > > > > > occurs in the same topology as where the runtime portion will=
+ run.
+> > > > > > > This preparation is done before the work to be measured start=
+s.
+> > > > > > >=20
+> > > > > > > This does tie in with the association with the resctrl group =
+and I
+> > > > > > > will elaborate more below ...
+> > > > > >=20
+> > > > > > Okay, that's useful to retain but thinking this further, now we=
+'re
+> > > > > > also
+> > > > > > going do non-trivial amount of work in between the setup and th=
+e
+> > > > > > test by
+> > > > >=20
+> > > > > Could you please elaborate how the amount of work during setup ca=
+n be
+> > > > > an
+> > > > > issue? I have been focused on the measurements that are done
+> > > > > afterwards
+> > > > > that do have clear boundaries from what I can tell.
+> > > >=20
+> > > > Well, you used it as a justification: "Setting the affinity is inte=
+nded
+> > > > to ensure that the buffer preparation occurs in the same topology a=
+s
+> > > > where
+> > > > the runtime portion will run." So I assumed you had some expectatio=
+ns
+> > > > about
+> > > > "preparations" done outside of those "clear boundaries" but now you=
+ seem
+> > > > to take entirely opposite stance?
+> > >=20
+> > > I do not follow you here. With the "clear boundaries" I meant the
+> > > measurements and associated variables that have  a clear start/init a=
+nd
+> > > stop/read while the other task sleeps. Yes, preparations are done out=
+side
+> > > of this since that should not be measured.
+> >=20
+> > Of course the preparations are not measured (at least not after this
+> > patch :-)).
+> >=20
+> > But that's not what I meant. You said the preparations are to be done
+> > using the same topology as the test but if it's outside of the measurem=
+ent
+> > period, the topology during preparations only matters if you make some
+> > hidden assumption that some state carries from preparations to the actu=
+al
+> > test. If no state carry-over is assumed, the topology during preparatio=
+ns
+> > is not important. So which way it is? Is the topology during preparatio=
+ns
+> > important or not?
+>=20
+> Topology during preparations is important.
+>=20
+> In the CMT test this is more relevant with the transition to using
+> memflush =3D false. The preparation phase and measure phase uses the same
+> cache alloc configuration and just as importantly, the same monitoring
+> configuration. During preparation the cache portion that will be
+> used during measurement will be filled with the contents of the buffer.
+> During measurement it will be the same cache portion into which any new r=
+eads
+> will be allocated and measured. In fact, the preparation phase will thus =
+form
+> part of the measurement. If preparation was done with different
+> configuration, then I see a problem whether memflush =3D true as well as =
+when
+> memflush =3D false. In the case of memflush =3D true it will have the fam=
+iliar
+> issue of the test needing to "guess" the workload settle time. In the cas=
+e
+> of memflush =3D false the buffer will remain allocated into the cache por=
+tion
+> used during preparation phase, when the workload runs it will read the
+> data from a cache portion that does not belong to it and since it does
+> not need to allocate into its own cache portion its LLC occupancy counts =
+will
+> not be accurate (the LLC occupancy associated with the buffer will be
+> attributed
+> to prepare portion).
+>=20
+> I am not familiar with the details of memory allocation but as I understa=
+nd
+> Linux does attempt to satisfy memory requests from the node to which the
+> requesting CPU is assigned. For the MBM and MBA tests I thus believe it i=
+s
+> important to allocate the memory from where it will be used. I have
+> encountered
+> systems where CPU0 and CPU1 are on different sockets and by default the
+> workload
+> is set to run on CPU1. If the preparation phase runs on CPU0 then it may =
+be
+> that memory could be allocated from a different NUMA node than where the
+> workload will
+> be running. By doing preparation within the same topology as what the
+> workload will be running I believe that memory will be allocated appropri=
+ate
+> to workload and thus result in more reliable measurements.
+>=20
+> >=20
+> > You used the topology argument to justify why both parent and child are
+> > now in the same resctrl group unlike before when only the actual test w=
+as.
+> >=20
+> > > You stated "now we're also going
+> > > do non-trivial amount of work in between the setup and the test" ...
+> > > could you clarify what the problem is with this? Before this work
+> > > the "non-trivial amount of work" (for "fill_buf") was done as part of=
+ the
+> > > test with (wrong) guesses about how long it takes. This work aims to
+> > > improve
+> > > this.
+> >=20
+> > I understand why you're trying to do with this change.
+> >=20
+> > However, I was trying to say that before preparations occurred right
+> > before the test which is no longer the case because there's fork() in
+> > between.
+>=20
+> If by "test" you mean the measurement phase then in the case of "fill_buf=
+"
+> preparations only now reliably occur before the measurement. Original beh=
+avior
+> is maintained with user provided benchmark.
+>=20
+> >=20
+> > Does that extra work impact the state carry-over from preparations to t=
+he
+> > test?
+>=20
+> It is not clear to me what extra work or state you are referring to.
+>=20
+> >=20
+> > > > fork() quite heavy operation as it has to copy various things inclu=
+ding
+> > > > the address space which you just made to contain a huge mem blob. :=
+-)
+> > >=20
+> > > As highlighted in a comment found in the patch, the kernel uses
+> > > copy-on-write
+> > > and all tests only read from the buffer after fork().
+> >=20
+> > Write test is possible using -b fill_buf ... as mentioned in comments t=
+o
+> > the other patch.
+>=20
+> Yes, it is theoretically possible, but looking closer it is not supported=
+=2E
+> Note
+> how measure_mem_bw() is always called with hardcoded "reads". Reading thr=
+ough
+> the history of commits I do not believe modifying fill_buf parameters was
+> ever intended to be a use case for the "-b" parameter. It seems intended
+> to provide an alternate benchmark to fill_buf.
+>=20
+> I am not interested in adding support for the write test because I do not=
+ see
+> how it helps us to improve resctrl subsystem health. Considering that
+> nobody has ever complained about the write test being broken I think all
+> that dead code should just be removed instead.
+>=20
+> I prefer the focus be on the health of the resctrl subsystem instead of
+> additional
+> hardware performance testing. I do not think it is energy well spent to
+> further
+> tune these performance tests unless it benefits resctrl subsystem health.
+> These
+> performance tests are difficult to maintain and I have not yet seen how t=
+hey
+> benefit the resctrl subsystem.
+>=20
+> > > > BTW, perhaps we could use some lighter weighted fork variant in the
+> > > > resctrl selftests, the processes don't really need to be that separ=
+ated
+> > > > to justify using full fork() (and custom benchmarks will do execvp(=
+)).
+> > >=20
+> > > Are you thinking about pthreads? It is not clear to me that this is
+> > > necessary. It is also not clear to me what problem you are describing=
+ that
+> > > needs this solution. When I understand that better it will be easier =
+to
+> > > discuss solutions.
+> >=20
+> > I was trying to say I see advantage of retaining the address space whic=
+h
+> > is not possible with fork(), so perhaps using clone() with CLONE_VM wou=
+ld
+> > be useful and maybe some other flags too. I think this would solve the
+> > write test case.
+>=20
+> clone() brings with it the complexity of needing to manage the child's
+> stack. This again aims for a performance improvement. What does this fix?
+> What is the benefit to resctrl health? I would prefer that our energy
+> instead be focused on improving resctrl subsystem health.
+
+Fair enough.
+
+--=20
+ i.
+
+--8323328-1286384385-1725886369=:1029--
 
