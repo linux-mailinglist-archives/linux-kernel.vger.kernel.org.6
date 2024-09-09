@@ -1,133 +1,88 @@
-Return-Path: <linux-kernel+bounces-320549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828DC970BD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:35:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585DB970BDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407C82829ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:35:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F08331F2142B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58FE18C35D;
-	Mon,  9 Sep 2024 02:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C94614F135;
+	Mon,  9 Sep 2024 02:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RetZ0NgE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WZPRA0GE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1CC42A8A;
-	Mon,  9 Sep 2024 02:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2355125DE
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 02:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725849296; cv=none; b=eD2Rutgz69yGb374uiWeabZQVNTHfHODLLi1R2IQWYmCB0ZAX6obWwEjODb4JlVHX9f+1ybJn0iEQVuEMwIz8vwQSfqHZERYUYR1uB0MqXI/JiPCswsiiuxDmm3w+uGe1Jl4izkUmSnGFNfj7Hxd0ML3QiCGW2BUQUqszy0rAaE=
+	t=1725849343; cv=none; b=hFzUq9kof0gEdV30lIQMy232dNVeF4TL0wOjbqadgYvddIgY+6PQDTvnoP2paTZtlvgsGaki1SY613tIAjrcp1L8zgsoT+wfpTCK/FkrE1hAyk1Ay25Hu80XwFCQVa6jLWrwiJnpjKaxoNN10sNz7/oviRi2B9lzZ1KigjTSNiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725849296; c=relaxed/simple;
-	bh=EiOjDPobUg58X61kTYvvizyZ8wDCC5yuIxRnPX8Y0xs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rUNGGw/3POgFYj9akSZLb19GFOIW8g1V62tKBFpjdqwEDv4htXEW8owS90SVp/jOXje13+3e6wfYhms+8yYT9dW/IWgk0HmXJvi/CROFECHMhU0v5hQVtFzLuuYR74K8FficsN1oivhFf17dqsTkkQHcehuoVaYmFCnX2kxHOZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RetZ0NgE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDD28C4AF0B;
-	Mon,  9 Sep 2024 02:34:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725849295;
-	bh=EiOjDPobUg58X61kTYvvizyZ8wDCC5yuIxRnPX8Y0xs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RetZ0NgEguPLE/Vp+kx9ZgKr3r+ylEIkdHnOjFvVV5GYUd3YsuaaEhQ+5+jMjbnbk
-	 5xZMnf8QNL2T1w1z/NWGFZkliPkef46Wm48Cp8V77kHsMzMCUD9RGkkB24FI7ykdYl
-	 99xAcAuW9DeRJj3P3aqdKToyikywNQifbiJD65Vbbe7P+bKbp2rArJC3esh1d4PjAJ
-	 LJfD/44h2iHWXT1ltr93U7gkeFbkWj0bvEKRXJLGU7/B/wdRNFJenT3wJmHjwYE5G0
-	 XebFaNmDYPEhEp/aEWex2VIH4VN6GvnSytYsN9K/+YBs9Pz/UMRhQ/EJRE7adblHTN
-	 hFXEtHrofkBgA==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f759b87f83so15312131fa.2;
-        Sun, 08 Sep 2024 19:34:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV+JvWSKR4AXwY95pfY0h/7veR0gohTRm5X7mE/uIOfi788hZLLeFCG2h0I5EE7yYxQmcHwd0pqIifg@vger.kernel.org, AJvYcCXzJsLtn4kLqmXA/kvPHTvUjAur9JOEyGRAHo6N+Q2kHcYuKb7Ky1rcDfYtcK4k8L9SI6Vy3GA+5+HSkJhK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPaQt2m1YsRaqRJIZOxXhXbYwzG5ZnjqaK72aqp3GEvxgtunRh
-	Cw6dwiiylcc/EfvqAXfQjRvH8T8Uk3pQmEtxmh9lCR6W+6yyiM1/bpZOyi8TzU5f/jHLkKUSnBt
-	n7JSCHx/G/m93tTFlTYHEuaHpVjU=
-X-Google-Smtp-Source: AGHT+IGcZ1Nc4erQMEN94hYI31vIZJJ4Rg80cIvzXQEIPGSlkuZGdx3yCmGUGIGEulY4ozSvH/XDB4JbRyKom4fSnro=
-X-Received: by 2002:a2e:b8c7:0:b0:2f3:e2f0:2b74 with SMTP id
- 38308e7fff4ca-2f751f8289amr52804841fa.36.1725849294181; Sun, 08 Sep 2024
- 19:34:54 -0700 (PDT)
+	s=arc-20240116; t=1725849343; c=relaxed/simple;
+	bh=ZjtEHt8bSvmRde39BXklX+Lti/JhyV/GdXZeYzGRgUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RxRO13woOnqd2wvnWZwpWm+TTlZ84y55oPw0n920a2LfffcNdfZCtltVm0/VG8A8wGNo3ntSZvfkKtbr0DKx4aEhle+5UUIdfEKEgAsizZ61JaOZ4XInvDTzXG5Y8yLn+AjTjGRfbRiwGs3znQBSSa4/Cl7nHUcSzffGvIJojdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WZPRA0GE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725849340;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZjtEHt8bSvmRde39BXklX+Lti/JhyV/GdXZeYzGRgUo=;
+	b=WZPRA0GEhAmhH89Vad4rDhnXXXh2sMMtA2ryzw2Jjmn9WaqF99IFXqpLn3abFr6WtOcGhZ
+	8lj7fQ5a+B4WyoyHjPzSVUwdJmhJddQn9ZY53P7QdiwWLJa3KqVUZdqwVd1vYq9iH6MSrs
+	XIpeVmIE3/kjuL8MU5EnVU9G5sykDdA=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-608-stwFWWh1NuS5XhhFDaflqA-1; Sun,
+ 08 Sep 2024 22:35:37 -0400
+X-MC-Unique: stwFWWh1NuS5XhhFDaflqA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 24C7119560A5;
+	Mon,  9 Sep 2024 02:35:35 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.58])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0DB3C1956086;
+	Mon,  9 Sep 2024 02:35:32 +0000 (UTC)
+Date: Mon, 9 Sep 2024 10:35:27 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Dave Vasilevsky <dave@vasilevsky.ca>
+Cc: glaubitz@physik.fu-berlin.de, linuxppc-dev@lists.ozlabs.org,
+	linux-sh@vger.kernel.org, mpe@ellerman.id.au,
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Reimar =?iso-8859-1?Q?D=F6ffinger?= <Reimar.Doeffinger@gmx.de>
+Subject: Re: [PATCH] crash: Default to CRASH_DUMP=n when support for it is
+ unlikely
+Message-ID: <Zt5e72DEl0K8cQe9@MiWiFi-R3L-srv>
+References: <20240823125156.104775-1-dave@vasilevsky.ca>
+ <c04fe24a-26e6-44b5-a2dd-00eac589e36b@vasilevsky.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909015514.597253-1-maobibo@loongson.cn>
-In-Reply-To: <20240909015514.597253-1-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 9 Sep 2024 10:34:42 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6NQLKEORZvhvNr=iORNzA+WG=cX4zxAx+Vit714ST+4A@mail.gmail.com>
-Message-ID: <CAAhV-H6NQLKEORZvhvNr=iORNzA+WG=cX4zxAx+Vit714ST+4A@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: Enable ACPI BGRT handling
-To: Bibo Mao <maobibo@loongson.cn>, Jianmin Lv <lvjianmin@loongson.cn>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c04fe24a-26e6-44b5-a2dd-00eac589e36b@vasilevsky.ca>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi, Jianmin,
+On 09/08/24 at 03:57pm, Dave Vasilevsky wrote:
+> I received a notification from Patchwork that my patch is now in the state "Handled Elsewhere".[0] Does that mean someone merged it somewhere? Or that I should be using a different mailing list? Or something else?
 
-On Mon, Sep 9, 2024 at 9:55=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> wrote=
-:
->
-> Add ACPI BGRT support on LoongArch so it can display image provied by
-> acpi table at boot stage and switch to graphical UI smoothly.
-This patch seems very useful, could you please confirm it on real
-machines? Or you can only provide me with a BIOS with BGRT.
+I guess it's powerpc dev's patchwork which automatically grabs this
+patch to do some testing? Becuase ppc list is added in the CC. I don't
+think this patch has been picked by people because this is an old v1 and
+there's concern about it.
 
-Huacai
-
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
->  arch/loongarch/kernel/acpi.c | 4 ++++
->  drivers/acpi/Kconfig         | 2 +-
->  2 files changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
-> index 929a497c987e..f1a74b80f22c 100644
-> --- a/arch/loongarch/kernel/acpi.c
-> +++ b/arch/loongarch/kernel/acpi.c
-> @@ -9,6 +9,7 @@
->
->  #include <linux/init.h>
->  #include <linux/acpi.h>
-> +#include <linux/efi-bgrt.h>
->  #include <linux/irq.h>
->  #include <linux/irqdomain.h>
->  #include <linux/memblock.h>
-> @@ -212,6 +213,9 @@ void __init acpi_boot_table_init(void)
->         /* Do not enable ACPI SPCR console by default */
->         acpi_parse_spcr(earlycon_acpi_spcr_enable, false);
->
-> +       if (IS_ENABLED(CONFIG_ACPI_BGRT))
-> +               acpi_table_parse(ACPI_SIG_BGRT, acpi_parse_bgrt);
-> +
->         return;
->
->  fdt_earlycon:
-> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-> index e3a7c2aedd5f..d67f63d93b2a 100644
-> --- a/drivers/acpi/Kconfig
-> +++ b/drivers/acpi/Kconfig
-> @@ -451,7 +451,7 @@ config ACPI_HED
->
->  config ACPI_BGRT
->         bool "Boottime Graphics Resource Table support"
-> -       depends on EFI && (X86 || ARM64)
-> +       depends on EFI && (X86 || ARM64 || LOONGARCH)
->         help
->           This driver adds support for exposing the ACPI Boottime Graphic=
-s
->           Resource Table, which allows the operating system to obtain
->
-> base-commit: b31c4492884252a8360f312a0ac2049349ddf603
-> --
-> 2.39.3
->
 
