@@ -1,110 +1,99 @@
-Return-Path: <linux-kernel+bounces-320469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 998CB970ACD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:30:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56685970ACE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1389F1F215F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 00:30:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC327B20B4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 00:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92439A933;
-	Mon,  9 Sep 2024 00:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1671AD55;
+	Mon,  9 Sep 2024 00:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aR9v31CI"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TW78uOL3"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9AC193
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 00:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDC4193
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 00:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725841811; cv=none; b=IkUHZcV8U3WXW3o3m1mtmOs7u6lSKxWgMrQyH/6KIHh1TJcZjBaWznXlMuqZhis5lyb3fnd1ja7ttJMfMq/L6L00yivYJFCr1xRYPgxz2lsRRidoyKIYDYSFPPGtSb+8Z3x4/763gNJIGYK+9rrfDYj7gairkspbxjjtiVNBC3M=
+	t=1725841850; cv=none; b=Xo1FBT5GP4wP/1IPz/QN08iITnfSdDnUbrP/5g83A9claZKMNTiDTsBiGNvxR1oBy4qt5mW7BNIuISd8EGNhcWPCZ8XOuoN0yNqSVmdWoPc6OLNAimKNymEaNeKG4XU363U7XBg2OjbkY38hW0PcJKwtuqtFJna4Ex0siX/sFr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725841811; c=relaxed/simple;
-	bh=WKgDTUCCgtaz7HK/6klsNdbV5jsdqfsckL/4sEAMpOE=;
+	s=arc-20240116; t=1725841850; c=relaxed/simple;
+	bh=wPV8YEoYLGqTx9bO1llFaMyCiCsTU5XfDU4kupMd/c0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nTxm2aiGWyRPOsMC2aH82tNGeb2eFesx9OVWlp7iWu3GqRELGX/BNWs7HppioreKHs5JXErghAOZ4HnPA9rEYwEb2MjGlymVZmU9k9mHrObJ4P0bdgxiCvVzc05fcW6nJoCeZHOr8oTnEbUaq7zMsCX8iCc2T/Ru55S5x0G6Aj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aR9v31CI; arc=none smtp.client-ip=209.85.166.177
+	 To:Cc:Content-Type; b=Bu6q2iCIBZ0PWM1JjO1wN/a70Zz+WNh7kQ60NSaCoPLH7l85jJsvxzWB+/3+8sHplnqGnKY7Ol8RpVPXIf8Qg5xPjk1eW983nKR/0yT7P0GDmpFWwJhGSCOKJ/5hDf+yNLKua/qKepYbKe1GAbjYvTZP4JIFftO4xDLwTSXhTuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TW78uOL3; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39d41b61178so422455ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 17:30:08 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20546b8e754so261585ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 17:30:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725841808; x=1726446608; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1725841848; x=1726446648; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vzWtczCuQJEE//3oD8ytfGgUcpGMdIcjSJ+8lWxc07M=;
-        b=aR9v31CIihHOIJALbkSSzzxek/F+LvbferEc4p8LSLcOX7mnv4cN9I/E+p91rjdyWa
-         k+b7ssNQBSMZliS0WE0BpJtiIIWVDPHuKexETNgQJJT2RNNEswf8pxsrLSw8hov6Dvz+
-         xntXmanoYl8Qx3Ym3OZeMT0Jxt6KCraQwvDujw4i7qk1ziECToS6RJAuiYToUtlNPtBy
-         ldSozB86XjWPsG9SlkDGvR1mw1+zEvL76pkgyev4kNPg1hyAhPOKNkDYrA68Z+zQ/ion
-         iSPaT0EQSa2g+p4xzi2OtbEMyhfrVOG9lyjuIGt8QB+AGw4sS3x194LLz8VjqQGMC96I
-         7yyA==
+        bh=pJjhNLbpnc53C/tv3mczouRD8+CJs7f+bOzNSZ5DZtA=;
+        b=TW78uOL3GeTLI+Hxjui4q3GiWM5unwxfp0CbM7cgFCkzqhf5JVL3rk9eQOTHCF47Y5
+         NXEzcMmUX6rfCV38Iv0lVQOeOGFY3CuH/DfT+SaSNS81+r2eTEtsx9+ArPSPduWSJwWC
+         SVFumkZzfhudHieEDWSsH4z+uL9+g4Q6JYsav6LylfpBIa/nqtyB+w+n57UG3COrypw+
+         jMCSstM5n9bHDMozwIC5suAmmaAHUU+KJ6+HO0sQ43X2eq0KtzULt3D+yr2Ap0HVfPWC
+         qi3XnU4GpfluU0Iyk7ANcPNjNhx5+AHH2/rGSY7kz4/l59klmDBMqpguFGSMU9gz27l7
+         cK8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725841808; x=1726446608;
+        d=1e100.net; s=20230601; t=1725841848; x=1726446648;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vzWtczCuQJEE//3oD8ytfGgUcpGMdIcjSJ+8lWxc07M=;
-        b=GRnfCwEsrB8binO3A32tcSGsr472n2yjjI9brhH4zfwU8oIyhrXosXvvWii1DH2HbP
-         Su7HiikxH+XfbUWJhoLpd14ajbEuYBdfCI5T0rgMJAGGB9mbG44PiqmEAdIvEunSLS6w
-         3+ETqOOWt+Deo+1ROxx1n1rS693cSqzbJ+URgUiGRfFKIkQFjkZ2S+SSjSoro/5Wn3K0
-         SzMxAsDKLaXpcjCDsbtFMJfvaz9xiwy9/Mev0M5w5gW8xfQ/U2tJPjVKiNhQZMt8ejkx
-         ZewRNLJBuxtEYc54CWJHxOkbm7VwHzAPQmQmzOxujZZVSWXNW/BjbW3jiXqh4WChp5TO
-         uMTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWW81ou+2+zRfF6B9JwC2PQSbFJKnqHHmwZkwi0T/fWpBoM9G69lJYqGxvO1lc55PyWx6xF3q5dXR3ozdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsgKCB/YRdkHA/RhcWG5b7CE/CBgVfgzlqsLqVVQiQ2vT+Mpii
-	K/yOckIg+y1pxmjyJfVpOwEA61JpdwUbhUIx68CaSCOXzIzkYiElaBBZkCLvYYeRfutrNlteFgM
-	5N+YEZ0c1b9cikjc0sIe/Kop7yGVLY5WtzFSb
-X-Google-Smtp-Source: AGHT+IHOI75SbCP2ecalhMEuqj0tZIDEkkGR2qFHnHxzn1IVb0IipPvs9HPoy2IMKDUvyhRHHypRGtSPLWf/oCMOZvo=
-X-Received: by 2002:a05:6e02:1c2e:b0:39e:68d8:2891 with SMTP id
- e9e14a558f8ab-3a0576c3222mr3552395ab.6.1725841807625; Sun, 08 Sep 2024
- 17:30:07 -0700 (PDT)
+        bh=pJjhNLbpnc53C/tv3mczouRD8+CJs7f+bOzNSZ5DZtA=;
+        b=DEaWm4LItlaWA+NQuusYRukvx2d1Q631SkQ78R3CgK0UqDZwIIjBPoW757N0G/wY19
+         yIIj8g3baDmyNcBxrRdNln8s60Dl4IaolJvJ74qzS/qKhNiPSKYV7hu+o/gqgjB5BcID
+         LAXSzQFSjdsXdsWpUeu+sMBLjQIWe52wa/fBvn07oFfFLTOVPuzIMWZjBl6tnbdrFPln
+         LkxahAh6cegKhmuJKmSRrWxsaXCBRZ1mrY8Fs6VQlHyVA98guWUngAM95Bwr3MejkiPP
+         wTxmA1Y2ezZrA2TvGD0XGIl+JDCvAhjw1e9OnaykCzkYNot4SaXoAZG3YNeGsNM+Rp8J
+         OXyw==
+X-Forwarded-Encrypted: i=1; AJvYcCWs7vopy2Jq1Zn9/51yGRt56C0jjAoYu59VGozsuoldGn7KxD43OO+1fIqbyNBh5fWaBZIEkZhedgA7+K8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDxgjVgHAS7V6Gs1zVi+vsDrah6lua0wUSr+wgK49P2eRYuZUH
+	ThpYn5rMw3/iZrRm3M9hT5EukHCZG91BGDM2EA2QvOdTTdLP3KcN8mCN4BkRbz0F6lldq9T85wo
+	k7DhNwTSUq5VaHPlHlW5ZTUlA0XehRIJ3qK+O
+X-Google-Smtp-Source: AGHT+IGowZzSEmTKRevgtTKEx/JN1+vLY4SrQ8bcDLX5CnwXX5QhslEZ/rC448FW8Ec5061Ba82Z65wAVG0P2JfReNo=
+X-Received: by 2002:a17:902:c401:b0:1eb:3f4f:6f02 with SMTP id
+ d9443c01a7336-2070a839333mr3341795ad.12.1725841847501; Sun, 08 Sep 2024
+ 17:30:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4f01524fa4ea91c7146a41e26ceaf9dae4c127e4.1725821201.git.sam@gentoo.org>
-In-Reply-To: <4f01524fa4ea91c7146a41e26ceaf9dae4c127e4.1725821201.git.sam@gentoo.org>
+References: <20240907131006.18510-1-algonell@gmail.com>
+In-Reply-To: <20240907131006.18510-1-algonell@gmail.com>
 From: Ian Rogers <irogers@google.com>
-Date: Sun, 8 Sep 2024 17:29:56 -0700
-Message-ID: <CAP-5=fXz81LOZA+vTGixT26R9vNSpxnCj0=0ieg8E3G4DidGdQ@mail.gmail.com>
-Subject: Re: [PATCH] tools: drop nonsensical -O6
-To: Sam James <sam@gentoo.org>
+Date: Sun, 8 Sep 2024 17:30:36 -0700
+Message-ID: <CAP-5=fUW1z++JdFHke8X8Ou-grBRK_8rYPgd+CNjVLB9iZ5csA@mail.gmail.com>
+Subject: Re: [PATCH] perf tools: Fix a typo
+To: Andrew Kreimer <algonell@gmail.com>
 Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
 	Mark Rutland <mark.rutland@arm.com>, 
 	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev
+	Adrian Hunter <adrian.hunter@intel.com>, Liang Kan <kan.liang@linux.intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 8, 2024 at 11:47=E2=80=AFAM Sam James <sam@gentoo.org> wrote:
+On Sat, Sep 7, 2024 at 6:10=E2=80=AFAM Andrew Kreimer <algonell@gmail.com> =
+wrote:
 >
-> -O6 is very much not-a-thing. Really, this should've been dropped
-> entirely in 49b3cd306e60b9d889c775cb2ebb709f80dd8ae9 instead of just
-> passing it for not-Clang.
+> Fix a typo in comments.
 >
-> Just collapse it down to -O3, instead of "-O6 unless Clang, in which case
-> -O3".
->
-> GCC interprets > -O3 as -O3. It doesn't even interpret > -O3 as -Ofast,
-> which is a good thing, given -Ofast has specific (non-)requirements for
-> code built using it. So, this does nothing except look a bit daft.
->
-> Remove the silliness and also save a few lines in the Makefiles according=
-ly.
->
-> Signed-off-by: Sam James <sam@gentoo.org>
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 
 Reviewed-by: Ian Rogers <irogers@google.com>
 
@@ -112,83 +101,22 @@ Thanks,
 Ian
 
 > ---
-> I promise I'm not completely humourless, but given it's caused
-> actual workarounds to be added for Clang, I don't think this is worth kee=
-ping.
+>  tools/perf/builtin-help.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Plus it sort of propagates a silly myth that -O6 does anything.
+> diff --git a/tools/perf/builtin-help.c b/tools/perf/builtin-help.c
+> index b2a368ae295a..0854d3cd9f6a 100644
+> --- a/tools/perf/builtin-help.c
+> +++ b/tools/perf/builtin-help.c
+> @@ -417,7 +417,7 @@ static void open_html(const char *path)
+>  static int show_html_page(const char *perf_cmd)
+>  {
+>         const char *page =3D cmd_to_page(perf_cmd);
+> -       char *page_path; /* it leaks but we exec bellow */
+> +       char *page_path; /* it leaks but we exec below */
 >
->  tools/lib/api/Makefile     | 4 ----
->  tools/lib/subcmd/Makefile  | 4 +---
->  tools/lib/symbol/Makefile  | 4 ----
->  tools/perf/Makefile.config | 6 +-----
->  4 files changed, 2 insertions(+), 16 deletions(-)
->
-> diff --git a/tools/lib/api/Makefile b/tools/lib/api/Makefile
-> index 044860ac1ed1c..7f6396087b467 100644
-> --- a/tools/lib/api/Makefile
-> +++ b/tools/lib/api/Makefile
-> @@ -31,11 +31,7 @@ CFLAGS :=3D $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
->  CFLAGS +=3D -ggdb3 -Wall -Wextra -std=3Dgnu99 -U_FORTIFY_SOURCE -fPIC
->
->  ifeq ($(DEBUG),0)
-> -ifeq ($(CC_NO_CLANG), 0)
->    CFLAGS +=3D -O3
-> -else
-> -  CFLAGS +=3D -O6
-> -endif
->  endif
->
->  ifeq ($(DEBUG),0)
-> diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
-> index b87213263a5e0..6717b82fc5876 100644
-> --- a/tools/lib/subcmd/Makefile
-> +++ b/tools/lib/subcmd/Makefile
-> @@ -38,10 +38,8 @@ endif
->
->  ifeq ($(DEBUG),1)
->    CFLAGS +=3D -O0
-> -else ifeq ($(CC_NO_CLANG), 0)
-> -  CFLAGS +=3D -O3
->  else
-> -  CFLAGS +=3D -O6
-> +  CFLAGS +=3D -O3
->  endif
->
->  # Treat warnings as errors unless directed not to
-> diff --git a/tools/lib/symbol/Makefile b/tools/lib/symbol/Makefile
-> index 13d43c6f92b4a..426b845edfacc 100644
-> --- a/tools/lib/symbol/Makefile
-> +++ b/tools/lib/symbol/Makefile
-> @@ -31,11 +31,7 @@ CFLAGS :=3D $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
->  CFLAGS +=3D -ggdb3 -Wall -Wextra -std=3Dgnu11 -U_FORTIFY_SOURCE -fPIC
->
->  ifeq ($(DEBUG),0)
-> -ifeq ($(CC_NO_CLANG), 0)
->    CFLAGS +=3D -O3
-> -else
-> -  CFLAGS +=3D -O6
-> -endif
->  endif
->
->  ifeq ($(DEBUG),0)
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index fa679db61f622..5d6b08a896150 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -238,11 +238,7 @@ endif
->
->  ifeq ($(DEBUG),0)
->  CORE_CFLAGS +=3D -DNDEBUG=3D1
-> -ifeq ($(CC_NO_CLANG), 0)
-> -  CORE_CFLAGS +=3D -O3
-> -else
-> -  CORE_CFLAGS +=3D -O6
-> -endif
-> +CORE_CFLAGS +=3D -O3
->  else
->    CORE_CFLAGS +=3D -g
->    CXXFLAGS +=3D -g
+>         if (get_html_page_path(&page_path, page) < 0)
+>                 return -1;
 > --
 > 2.46.0
 >
