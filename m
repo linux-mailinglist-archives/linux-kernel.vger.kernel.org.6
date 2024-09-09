@@ -1,125 +1,144 @@
-Return-Path: <linux-kernel+bounces-321367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AAC19719AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:40:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2154C9719F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352631C23032
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:40:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DC90B2300C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49C41B7909;
-	Mon,  9 Sep 2024 12:40:30 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D466D1B9B4B;
+	Mon,  9 Sep 2024 12:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZafzdWSQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0158A1B375C;
-	Mon,  9 Sep 2024 12:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CDF1B86D3;
+	Mon,  9 Sep 2024 12:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725885630; cv=none; b=UBoTkCiTY0uCxfPhYWQA/5C/qdiLvFB2Aq4GmbFDAp8QH5QzI2z4L9VRgXgNzN7fhnvrQS1gyI63/4ncPM7pBEZTZBIbsMKxFkHhY4lOscoFZzEkDC6Rzgtw65xvpYcxSie7LZo3by0L7aIHd7Rr89l8CrIt6LfYq0QCU3r55H8=
+	t=1725886224; cv=none; b=LxDNZwwH/KTp93qwOimuk9PuGwfuTT2pPjqCkpBRk7nm6ej+oB8bE90xPPk57CQB/v1IiZpp02fIM7VdjgGAND9s7BmvvDBl3PaPtAlAYKb4PqlVCi+6+HtSvg3P/vRE01W7XDqnWrjRtC5vdhwuKe/G6FIFf5W/eZRTPoqIiAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725885630; c=relaxed/simple;
-	bh=avLcO7PKE2LaQ9TnVodcfdEGPe+Kj9ffz1kmZQ3Rn6I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qp5Qn6Sv2Bp4EQ1SbdgiWJP0RApBxiiyv9sSXvkxLLSDy6Wsf/kVbh32WfJuj1y8m6SbUqAAUsc9FgN4G+9zWl5iPiKVGEpQ6mlnoZtVAXt0ms7FzOz6dzsGavtwHspC04iR2MHwEiDV/MALKXAkhDggC0UAKVr3qp5+n/ioIjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [10.16.9.194] (hh-wlan-01.rz-berlin.mpg.de [141.14.51.17])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 8492661E64862;
-	Mon,  9 Sep 2024 14:40:10 +0200 (CEST)
-Message-ID: <6a993f00-ee3a-41fe-89f4-eeb604c3c880@molgen.mpg.de>
-Date: Mon, 9 Sep 2024 14:40:09 +0200
+	s=arc-20240116; t=1725886224; c=relaxed/simple;
+	bh=KWYespF+mcQwqISVVXzv9T2zQplfsj431bxXbvKt39o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GEaWhTatHMPTXQBls71j8afFJN6EiStVgYH5wG8sczFOG4CtJJ+qaLFXT6MQ2WaQBEXu6idjWV+8eqSnySPZFyKpm5xO8mxtPUFLBgE4vLqX1Of5GJS+Q6VOVJ8eEcLfFBnZi0kciaEPiwlheQM0Pyzut3qOq7dry4lWvXlqtGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZafzdWSQ; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725886223; x=1757422223;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=KWYespF+mcQwqISVVXzv9T2zQplfsj431bxXbvKt39o=;
+  b=ZafzdWSQF+zEWjDUDmTmf85z5kkdw+s1pKV2/FBJP/n0Nn/K2KY5sA1Z
+   IEUXCM68FYRrJ+KU7HrexCx/vZBmM30+sSvp0OwDdLhOtJv+8Pzv/mEtq
+   ugGyyVnZ9YptSWlfRu3+fQjF+3PJUVFFxOnYtGMyS5WtB55AkltaGnrko
+   MDgdRBMor33D7g3yrizD2HrjscZqIJxHIezAODFs0A1cc5ik6Y5e9EvZu
+   3wBwSSLJjDQOK8p7hEWzcMXHBXO1UOMxuLJTsXY7Ik5mn5w4ebqLrAzAM
+   1QxgveusaG7XtORXu5hlRuPq3iGs4w8WSUk+JUJSKhzxh5lLLZ0ELNj/t
+   g==;
+X-CSE-ConnectionGUID: 1BMZ9U31SPm44MxQXT3x6A==
+X-CSE-MsgGUID: ZWVytuzpSPuuaQws/4WGmQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24079104"
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="24079104"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 05:50:05 -0700
+X-CSE-ConnectionGUID: vx5aSnBRQneWiQsSzpk30A==
+X-CSE-MsgGUID: Hc3TVcRKRKK+K5Fxc3MKGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="97470243"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 09 Sep 2024 05:49:59 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id E351C321; Mon, 09 Sep 2024 15:49:56 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Utkarsh Patel <utkarsh.h.patel@intel.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-watchdog@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Zha Qipeng <qipeng.zha@intel.com>,
+	Lee Jones <lee@kernel.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: [PATCH v2 0/3] platform/x86: intel_scu: Move headers to x86 subfolder
+Date: Mon,  9 Sep 2024 15:41:03 +0300
+Message-ID: <20240909124952.1152017-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] Bluetooth: mgmt: Verify cmd pending status before
- removing it
-To: Jiayang Mao <quic_jiaymao@quicinc.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240909030906.26375-1-quic_jiaymao@quicinc.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20240909030906.26375-1-quic_jiaymao@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Dear Jiayang,
+Add the record to the MAINTAINERS to follow what is going on with the
+Intel MID platform related code and drivers.
 
+With that, clean up a bit a couple of headers, i.e. move them to x86
+subfolder of include/linux/platform_data where they belong to.
 
-Thank you for your patch.
+No functional changes intended.
 
-Am 09.09.24 um 05:09 schrieb Jiayang Mao:
-> From: jiaymao <quic_jiaymao@quicinc.com>
+Taking into account nature of this change it's supposed to go via PDx86
+tree, please Ack.
 
-Please use your full name:
+v2:
+- Maintained --> Supported (Dave)
+- added two cleanup patches (Mika and me)
 
-     $ git config --global user.name "Jiayang Mao"
-     $ git commit -s --amend --author="Jiayang Mao 
-<quic_jiaymao@quicinc.com>"
+Andy Shevchenko (2):
+  MAINTAINERS: Add Intel MID section
+  platform/x86: intel_scu_wdt: Move intel_scu_wdt.h to x86 subfolder
 
-> Add a verification step to ensure that a command is still in the pending
-> list before attempting to remove it. A crash may occur during the boot
-> process when Bluetooth is enabled and then immediately disabled. In a
-> race condition, mgmt_index_removed() might free the pending command
-> before mgmt_add_adv_patterns_monitor_complete() is called, leading to a
-> double free scenario.
-> 
-> Part of the crash call trace:
-> 0x0000053D: __list_del_entry_valid_or_report+0x98/0xdc
-> 0x0000053D: mgmt_pending_remove+0x18/0x58 [bluetooth]
-> 0x0000053E: mgmt_remove_adv_monitor_complete+0x80/0x108 [bluetooth]
-> 0x0000053E: hci_cmd_sync_work+0xbc/0x164 [bluetooth]
+Mika Westerberg (1):
+  platform/x86: intel_scu_ipc: Move intel_scu_ipc.h out of
+    arch/x86/include/asm
 
-What is your test environment? Please document it.
+ MAINTAINERS                                   | 20 ++++++++++++++++++-
+ arch/x86/include/asm/intel_telemetry.h        |  2 +-
+ arch/x86/platform/intel-mid/intel-mid.c       |  3 ++-
+ drivers/mfd/intel_pmc_bxt.c                   |  3 +--
+ drivers/mfd/intel_soc_pmic_bxtwc.c            |  3 +--
+ drivers/mfd/intel_soc_pmic_mrfld.c            |  3 +--
+ drivers/platform/x86/intel_scu_ipc.c          |  2 +-
+ drivers/platform/x86/intel_scu_ipcutil.c      |  2 +-
+ drivers/platform/x86/intel_scu_pcidrv.c       |  2 +-
+ drivers/platform/x86/intel_scu_pltdrv.c       |  2 +-
+ drivers/platform/x86/intel_scu_wdt.c          |  3 ++-
+ drivers/usb/typec/mux/intel_pmc_mux.c         |  3 +--
+ drivers/watchdog/intel-mid_wdt.c              |  5 ++---
+ .../platform_data/{ => x86}/intel-mid_wdt.h   |  6 +++---
+ .../linux/platform_data/x86}/intel_scu_ipc.h  |  4 ++--
+ 15 files changed, 39 insertions(+), 24 deletions(-)
+ rename include/linux/platform_data/{ => x86}/intel-mid_wdt.h (74%)
+ rename {arch/x86/include/asm => include/linux/platform_data/x86}/intel_scu_ipc.h (96%)
 
-> Signed-off-by: jiaymao <quic_jiaymao@quicinc.com>
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-Ditto.
-
-> ---
->   net/bluetooth/mgmt.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-> index 25979f4283a6..9d019db92043 100644
-> --- a/net/bluetooth/mgmt.c
-> +++ b/net/bluetooth/mgmt.c
-> @@ -5428,6 +5428,9 @@ static void mgmt_remove_adv_monitor_complete(struct hci_dev *hdev,
->   
->   	hci_dev_lock(hdev);
->   
-> +	if (cmd != pending_find(MGMT_OP_REMOVE_ADV_MONITOR, hdev))
-> +		goto done;
-> +
->   	rp.monitor_handle = cp->monitor_handle;
->   
->   	if (!status)
-> @@ -5437,6 +5440,7 @@ static void mgmt_remove_adv_monitor_complete(struct hci_dev *hdev,
->   			  mgmt_status(status), &rp, sizeof(rp));
->   	mgmt_pending_remove(cmd);
->   
-> +done:
->   	hci_dev_unlock(hdev);
->   	bt_dev_dbg(hdev, "remove monitor %d complete, status %d",
->   		   rp.monitor_handle, status);
-
-
-Kind regards,
-
-Paul
 
