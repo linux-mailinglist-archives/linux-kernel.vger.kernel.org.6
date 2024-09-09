@@ -1,155 +1,138 @@
-Return-Path: <linux-kernel+bounces-322030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B16A972311
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:00:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 982CD972312
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B133EB22F20
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:00:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2086B2311E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2176D18A6AF;
-	Mon,  9 Sep 2024 20:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4020717C9B8;
+	Mon,  9 Sep 2024 20:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iuS79stn"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v2jVB5ST"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67D9189916;
-	Mon,  9 Sep 2024 19:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C165638DD4
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 20:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725912001; cv=none; b=OJZBLDHGVk+GHKdjfLm+Mq9402Fg9wrW8rbNZOtFmQjlvf0Z6Fvwp0Wu0j7tv8rQWwS8vEpyTl+cdmkAvrWNkW5pSwCorr1++Jci9sFXArMq2mUtgMHLrWXnHXq/nrfvA6i5YOyycLqBSc7P83Az8a3MyqowuBFgNyu/zYhniYs=
+	t=1725912021; cv=none; b=aGWKyK2hA+/RB9sN8QclH2cfwnG1HiQX8SEcuI/rJWJ+SVXCzjDaifhPLhMa3NAEamsVGoOGUOo9f69db/cbYCxCKtb093X62rJKpKcbqA5DOuY4C378T+aDrkLqk6y9CpxntoXll8Xxz0vYbIR6wJBJzKTfJS3+FCfBrKVyQqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725912001; c=relaxed/simple;
-	bh=l7i6/G6s1XgwR6CraJLZ1dYAyWMhrgsrsxiaVxOPklE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=u+6/+ICMPRQUM5y7yE7Em5X8wcn60mQHEYYcEl7DqXAq5Be4mach6iIDgEBFuWZ2tCrJkt5H0Yw4DiqBXT82phWFXIwv3bUDI/ovdZ6UEoh2dGUmD8ITTWThdQFOiH+CJeFMMsfDKH4TBI+jHvJ+Uip4yjVmXvALE+x6K3Pq7rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iuS79stn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 489DRtFk013606;
-	Mon, 9 Sep 2024 19:59:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	J72WK2RGCwvG9VPFYBPuwiDSYDaAZDqHxKz7l3oggHc=; b=iuS79stn5b0ZUKo/
-	e68naM2k0+HLQQk72bfrnMdtZFz9m86vZN70DPen5khiviClmJ+fykH3CAHgWEuQ
-	jriK2shU8aIrjqd463SuvSjZu1vy76cpPfDtB0hDfVgh+HY8VrjVPBgARRi5Lz0K
-	wTx+tuOWVlJvchW742CXZjoV0lXxvpVzhrWklSHCWdAx5QdAIKuYhvpGdOI5UVeE
-	ZP36gJBWKHPXZ3OeUn7G184vXu1iAgB0MQakL1S9pC2N44/rHm9NLaqFFFIKu35F
-	7j42mq2NDkbk/2OyWedIlje7syDh0oJGVgHtDP2LlOvK5lCcfz/CpxuqSeV+k1oY
-	dCSaFA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6skx4v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 19:59:49 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 489JxmCh001320
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Sep 2024 19:59:48 GMT
-Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Sep 2024
- 12:59:48 -0700
-Message-ID: <33f29f1c-157a-424e-89c6-c1549a2d6403@quicinc.com>
-Date: Mon, 9 Sep 2024 12:59:47 -0700
+	s=arc-20240116; t=1725912021; c=relaxed/simple;
+	bh=8/TvT9oqjC1ec3RS1uICF4xbEfMJ/Z619X5P9ftS19k=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=noyPOOPqhIkI1kMJrbg2T5BOl9LKclAFyvlbi6yVPenwE3ixCD9X5dWWcY1fErK2cLTYkzVsjZHmAHsO2GG9TSMv97++eFF3rf93vlM74jTwFBn4g7lvlhA7Ybm8tifAlXZlrJBIs//qmtERqp+PRnfKNpjYY9H/Pdkd+5L67+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v2jVB5ST; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-49bddfd1edeso1179707137.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 13:00:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725912018; x=1726516818; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=X1fic4sP1/AOMVZz4qd8YT8V8vbZenqvKDIWb9R8kEY=;
+        b=v2jVB5STqSLbWNQxHRk5aA3zatCkC8OeozAC1jIYg+tgIGgcB8JbQ6uXQyKq9fAzGM
+         8Ts4iKF8AoXZ7+jkR6qYy5EP83em7fK7iDDwoDNze+fhYBxB6UeRnfOQhL4b4leWAgkn
+         v2dRwxkqqc2JMlZUNE29DO/rwXs9tmgKq1UHizZumRM+LCQcxCVckYbCwY7BRHXPe1BG
+         NkCUoCqKvnYGEFvcz9P/B+ipW+lSeWQZnaDWDS6FuDnuFJFCL1nM98GyHCblbr/S0n0y
+         R69DRTRqwyWrWqOpDmTftXH66pbF/oP/VWTQRrsrKZtYu/Mdzz5Gvw+E4bbwzkLPPmbW
+         V8vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725912018; x=1726516818;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=X1fic4sP1/AOMVZz4qd8YT8V8vbZenqvKDIWb9R8kEY=;
+        b=R88hW8QB90V0WI2P1iJOHUWQckaGz/k9jcPEcXgaUrft95IPPtZgMIc8TRon2D+lHp
+         Q1Qb/BqzJDolFcbj6qSr/n3vU+Kl9FFH1ewsJIroXUWZ4zM/MfwJ9VzALEIZXv6Br86d
+         CDPrzsQTgGpawwIr9BaWOOdCegGvC5ZPA62YJ94SPgjJkZARs9MKyd93ZrYl2hUHKUdE
+         /e5kDbVJPgH05pfk3hDIlebsvn/cTY483uLS5b0kgOeTYBLuKZeo6fSwZeiouNXWcVoG
+         dn3K2cTAkj+06d5qax0Ro8VB3zwetkldhF37A0CWtBvCGMVeN/foHZeithh4/NCe/+iy
+         HLvw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/iGYcFF3/tlrO1HaaG+5f0WBBS0OJs1HdZAcddrQGNwDimWkgQYN4SaHJPlbdpot0V44wiF6oD1Be+ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxvzj4Mg/5ySY9J9TmoiZCZZ83qWNH4IhCSlTC0ov+18wqq4vN
+	2f1+eVH96zqSF+erLk6PG0/d9hdmImB85u9TJgDossjSopCJs+H4I9lS6paE0Idv2A1vzOUMke0
+	rIEc5VxFsHKA1iv9t7zcL67/g+pUba85KKjEW6w==
+X-Google-Smtp-Source: AGHT+IGP43RBA5eyKycvnHSNqXqrTDpLKjI3rv0f/8HsS7OeZmw2PbOwMp8W8C6mPmFZWI5uAiLsegmx8AF+4IR+fT4=
+X-Received: by 2002:a05:6102:c50:b0:49b:ccfc:6b5 with SMTP id
+ ada2fe7eead31-49bde178c60mr14776967137.9.1725912018466; Mon, 09 Sep 2024
+ 13:00:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] drm: allow encoder mode_set even when connectors
- change for crtc
-To: Maxime Ripard <mripard@kernel.org>
-CC: <dri-devel@lists.freedesktop.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
-        <robdclark@gmail.com>, <dmitry.baryshkov@linaro.org>,
-        <quic_jesszhan@quicinc.com>, <linux-kernel@vger.kernel.org>
-References: <20240905221124.2587271-1-quic_abhinavk@quicinc.com>
- <20240909-neat-stoic-hamster-cbbe42@houat>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20240909-neat-stoic-hamster-cbbe42@houat>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4z2wR5P7p1xx7a__05Xp-CkQo0SrqxiQ
-X-Proofpoint-ORIG-GUID: 4z2wR5P7p1xx7a__05Xp-CkQo0SrqxiQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- suspectscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 bulkscore=0
- adultscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409090157
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 10 Sep 2024 01:30:07 +0530
+Message-ID: <CA+G9fYtNY+S0Ls2f3atJS_Y9Nh3V01EKO5jbPtVYbgch0TYsFA@mail.gmail.com>
+Subject: Kunit: kernel/resource.c: In function 'gfr_start':
+ include/linux/mm.h:101:35: error: 'MAX_PHYSMEM_BITS' undeclared (first use in
+ this function)
+To: kunit-dev@googlegroups.com, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	David Gow <davidgow@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Maxime
+The arm kunit builds failed on the Linux next-20240909 due to following
+build warnings / errors with gcc-13 and clang-19 with extra Kconfigs
 
-On 9/9/2024 6:37 AM, Maxime Ripard wrote:
-> Hi,
-> 
-> On Thu, Sep 05, 2024 at 03:11:24PM GMT, Abhinav Kumar wrote:
->> In certain use-cases, a CRTC could switch between two encoders
->> and because the mode being programmed on the CRTC remains
->> the same during this switch, the CRTC's mode_changed remains false.
->> In such cases, the encoder's mode_set also gets skipped.
->>
->> Skipping mode_set on the encoder for such cases could cause an issue
->> because even though the same CRTC mode was being used, the encoder
->> type could have changed like the CRTC could have switched from a
->> real time encoder to a writeback encoder OR vice-versa.
->>
->> Allow encoder's mode_set to happen even when connectors changed on a
->> CRTC and not just when the mode changed.
->>
->> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> 
-> The patch and rationale looks sane to me, but we should really add kunit
-> tests for that scenarii.
-> 
+  CONFIG_OF_KUNIT_TEST=y
+  CONFIG_KASAN=y
+  CONFIG_KUNIT=y
+  CONFIG_KUNIT_ALL_TESTS=y
 
-Thanks for the review.
+First seen on next-20240909
+  Good: next-20240906
+  BAD:  next-20240909
 
-We have a IGT for recreating this scenario and thats how this issue was 
-captured
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-kms_writeback --run-subtest writeback-check-output -c <primary display mode>
+build log:
+--------
+In file included from  include/linux/ioport.h:15,
+                 from  kernel/resource.c:15:
+kernel/resource.c: In function 'gfr_start':
+include/linux/mm.h:101:35: error: 'MAX_PHYSMEM_BITS' undeclared (first
+use in this function)
+  101 | # define PHYSMEM_END    ((1ULL << MAX_PHYSMEM_BITS) - 1)
+      |                                   ^~~~~~~~~~~~~~~~
 
-We had added an option ( 'c' - custom mode) a couple of yrs ago to allow 
-writeback to be tested using any mode the user passes in 
-(https://lore.kernel.org/r/all/YuJhGkkxah9U6FGx@platvala-desk.ger.corp.intel.com/T/)
+Build Log links,
+--------
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240909/testrun/25079447/suite/build/test/gcc-13-lkftconfig-kunit/log
 
-If we pass in the same resolution as the primary RT display, this 
-scenario always happens as the CRTC switches between RT encoder and WB 
-encoder. Hope that addresses some of the concern.
+Build failed comparison:
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240909/testrun/25079447/suite/build/test/gcc-13-lkftconfig-kunit/history/
 
-Regarding KUnit tests, I have a couple of questions:
+metadata:
+----
+  git describe: next-20240909
+  git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git sha: 100cc857359b5d731407d1038f7e76cd0e871d94
+  kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2lpXzTGrlTRMzsi0ZQdQUUn8rKy/config
+  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2lpXzTGrlTRMzsi0ZQdQUUn8rKy/
+  toolchain: gcc-13, clang-19 and clang-nightly
+  config: multi_v5_defconfig + kunit
+  arch: arm
 
-1) This is more of a run-time scenario where CRTC switch happens, does 
-this qualify for a KUnit or perhaps I am missing something.
+Steps to reproduce:
+---------
+ - # tuxmake --runtime podman --target-arch arm --toolchain gcc-13
+--kconfig https://storage.tuxsuite.com/public/linaro/lkft/builds/2lpXzTGrlTRMzsi0ZQdQUUn8rKy/config
+ - # tuxmake --runtime podman --target-arch arm --toolchain gcc-13
+--kconfig multi_v5_defconfig --kconfig-add CONFIG_KUNIT=y
+--kconfig-add CONFIG_KUNIT_ALL_TESTS=y
 
-2) Is there any existing KUnit test file under drm/tests for validating 
-drm_atomic_helper_commit_modeset_disables() / 
-drm_atomic_helper_commit_modeset_enables() path because this will fall 
-under that bucket. I didnt find any matching case where we can extend this.
-
-Thanks
-
-Abhinav
-
-> Maxime
+--
+Linaro LKFT
+https://lkft.linaro.org
 
