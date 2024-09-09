@@ -1,93 +1,109 @@
-Return-Path: <linux-kernel+bounces-322020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E0A89722F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:42:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3D39722F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46EC3280FBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:42:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B9B0283E79
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEE7189BA6;
-	Mon,  9 Sep 2024 19:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E25189BAC;
+	Mon,  9 Sep 2024 19:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZhV0vgjR"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2073.outbound.protection.outlook.com [40.107.22.73])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fCs05su1";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="jfOwtdIQ"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468F53CF51;
-	Mon,  9 Sep 2024 19:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB143CF51;
+	Mon,  9 Sep 2024 19:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725910913; cv=fail; b=m/cIv995M81M7mlTkUZndcFp2eWfH59EohOuiLeaS4I6ZXtJd/Cn+DJhs+tLvFzJ2RQ6/Cq6ep1WV3rHUV4uTb8dElG9qyAPh7eJwsotwQ3EDeXzBdKLeatZG+AkeM2UEFGZBzETIA8n14RnOIlSe+xaOMLwQqFfHIpguKxw30I=
+	t=1725911039; cv=fail; b=vF9hCgECzdZftf+nS6dCDEd5bDuE2cpSutHg07nxMrzt4x56McUV6sR9BejOTHpXLPbZ3uOVIKld1Tw4HWFDMjYJB5WRqUFdOifvvA0Rk3WWfi9hJ59NFQglcbQseRhKVk0brLpNIoAXH+TgskUUE7B22cXnt9o/4SKL+IiqbJo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725910913; c=relaxed/simple;
-	bh=FXL8qBOutVPkVoPEmA/QPyAyRxQAhXyj9rmoB1BNcpU=;
+	s=arc-20240116; t=1725911039; c=relaxed/simple;
+	bh=YGFAesBOHjFHb3xrCL2m2nCebo/n8BjyIWe4BMZ0pac=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SItT51BQfm+mMetk1uQIQowHwbjTCnXwg8lQN565Zworj4ymf+rNsVkerxuS4vMQYCnZnqB6EZQdTcWdgXniEae2acjDs02d1F0UKJhfZXGgJ6yqvLERRATi4CUBIBtxpx6fG3RVXYtRdjw9zMXhNxQYMvLioNbZ4IOau2v9cas=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZhV0vgjR; arc=fail smtp.client-ip=40.107.22.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MruxFYOGlWaldsh4oq1uciRvL0qb/Fs68fPdIqXJBSHAXJ+kKRgT0xVTy32AIWOOVfGqqccqbO/hY6K7wwszyldi7V7vAU/X4b4SnlYdd2908WZUmHUTJydTihNjyxTX7ijLXz7Ta4Z9+fesQZoONftT9td/uAzQsKEws2c8sfY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fCs05su1; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=jfOwtdIQ; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 489HBTkP024339;
+	Mon, 9 Sep 2024 19:43:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=PA0KbdFYBRpJcL8
+	SlssyTeb8949jBg8Rbj1wZb922Lc=; b=fCs05su1Ok+UIUpqIM7ByZa4U2xHtqE
+	sqS1hR0lXiEFkmh0jnb+NxyYbhvnpbQEqm6o1Ex17u7sJ28pFGg+QeY/IyeGghzw
+	VO0JSZE2HEiivv6lZT2BHjKEKjaVfMinmrHUoH76BK5eHnz/32GPd9XHE6MnqTt/
+	WUIUafev+3czdKLOZC4eTVZJCEWlry02KZq6YJBccw2wp0fzvhSIs2G1ya52pUuD
+	yZczltGSNd5jNEcQCOix5AGnc3gAFFIittnpAgB3miXbXNW6nDfB6bzyCDhjMTOG
+	sgMCEJIKTTF0YKB+GDabeOPCDHa0v/JLCCrjYrjgIXjMWC0ZKd99Z1w==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41gfctbuqx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 09 Sep 2024 19:43:43 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 489J9tAd005070;
+	Mon, 9 Sep 2024 19:43:41 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2040.outbound.protection.outlook.com [104.47.57.40])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41gd97mt2d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 09 Sep 2024 19:43:41 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lYX1kRIfMGFWk1p5dX94XdEs+gxYO8WyeX6v8GCZ4GR4VbUVTfL4LeHiVXl0A7EH1bGGEShdEHEqClBoK0niNsCZ6M+mKcRh6zigb5Hbajx363RlDlC1tVm8bs4CsPNnWg8qfwB4/3WzXJXU40YAaMv2GFuD4yV89B0OYL200n81mncBgWkSXRKY9E18Hb48JqX+zs7p/LXAJMhPGPM0SItNcPjeCbz8QarFnhdsPrsV/pVRKtFCkhsiSIOfOYH1vB/KeO4zAhQ8dAfKv4tPL5z+MITMAN8I7+k9UjFDWjnkla9DmKx54yKVgMC5NAs2qz5O+CVcmUgAIPfohNRYCA==
+ b=ULlZaAN0P1/bq+W1762URxpJUkAiJ23DUj6f6aaAckY6THhm5bDU8OiXvN71MuqkG0orHhqjYX3JIijsN4JMNqc7ULs/VM49wqnIjjbQj9D/4FyoGF7PPO3pIGruvsk+kY2igz0KQVNVpYqSeufwJBFRiGPjS9tyd+pq3L7i1mPCtfcCGF23fg5XjJ8S1GKuIHZBavZGeEAfeAGUK/lSDkHFZfDMyW/7x3YESx64azR9ouX+3ljOCXT3ErUvMRkQAbMac7YFkcPhU0j+rgsISAAVrADnAyO3D4Jbz4JrvbbwrhJIcmnno1SBr35RyHSKcgKMCTCZzCGI1avQMkKAQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xVk/rVPkNgfoeZEaziQJxaIO5kwFPfS7iNG3Sml5Kto=;
- b=i4tC9bzxQiGI+P8oM+aIwH5VIDplXkpIVAsOr90cSAzkJ3DpzNXEAjR/6pevR8RscFXNSHFI0lvG4n8ZEdNx6dHq8tXkID7etr1m1a/BAjpwB4fQW/wFl7HkJ0EmdsoFivYUBNlsmRynZ9CzzwOS2Fv+Qsn57i9dG5ChxcZ0Lv0Peb0Dh7oNXokoOH+sAauVqpmPDTyVQx8FGcPe56I1x6f8z2/mlu+TNyyaKkJ09q7f3deRsK/Noww1yBkbICaT1UiKLT7hk7zm4CTmG5gtZkzpvcRt/i3zmmYD22oEMQY5Ayl32KqCZQysrFRHqjkAtrgJygIBFwVY2vjkVT/O0g==
+ bh=PA0KbdFYBRpJcL8SlssyTeb8949jBg8Rbj1wZb922Lc=;
+ b=uX8cvsYNrksoQInB6iKkDk0KhEbrOPGMhvTZ/NdpEZmfMH6WMJTTPlK8ZmuiasdjDxZdhiUubHgJhLVkpNHNAuYD8BLbeIVLNbE6TZVmW6EBIHCil3i9M2xYHvibBkDT0yc5Zar8ftHKYOHS7bQPZRQqxqXmMWzT3e32wrc5fkkN6GwWSJQrsoL3/5BbhwOx3V1lUWg6/8uHYusdRV67WYQANBK6HxO23O60uZnBdkmiL6xRMF4jf4+YP6Z37X2JIvkdHG7zxsvzpYUHCaDGPHtlzxPZAknNdFJkfWJp/tdo/wZ5vb9yS4ERZ+phLHK5IKBzPFARm6aoKYPqlvBebQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xVk/rVPkNgfoeZEaziQJxaIO5kwFPfS7iNG3Sml5Kto=;
- b=ZhV0vgjRpt0XTT8G3XhktYBlnbuSXQgQrui/Nn7c/Fi1qGVoSsmghwbakuggSVIZNaezPCHV6WrnoEAR7WugZsFEOB79h2+W6UbKYsWpCeoH/0Hxoewp15w1wJdokyf88GR4At2AKHKtcalkg8or9u74bNVfxqtUwhS5mMkppwEVT+0x1wDhUBXpbg7/9XV1b9zQ49LQe4k4j8k79xsx1UXTY0MkQZg53s5KkPLEZ13jh30TPZcGmyxnHqk9CR2UtLqPwxvhLqxxnHqESlbAxvv/uIXONffdKZ/mphSctnKtfukSocOQzE3b2QxD8I54qNjVatUBhvRmu0/9l41wTw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM9PR04MB7716.eurprd04.prod.outlook.com (2603:10a6:20b:280::11) with
+ bh=PA0KbdFYBRpJcL8SlssyTeb8949jBg8Rbj1wZb922Lc=;
+ b=jfOwtdIQl0hnzCKyxvAPh6YC+3b0CwImUUmgVwZKi4FU7yci32mg+YMJ3e8CmrRRDjfuapf+5l/m08qQHp6DfcRCUWGQlplZWTtNGGFen4HokdHO1EJqRr9PZlIZj1XNjwmnUtD89zns9TgtxOcQx8IASZv8SSBftfHc3vD9HOg=
+Received: from SN7PR10MB6287.namprd10.prod.outlook.com (2603:10b6:806:26d::14)
+ by MN6PR10MB8022.namprd10.prod.outlook.com (2603:10b6:208:4f7::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Mon, 9 Sep
- 2024 19:41:48 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7939.022; Mon, 9 Sep 2024
- 19:41:48 +0000
-Date: Mon, 9 Sep 2024 15:41:38 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Marek Vasut <marex@denx.de>
-Cc: Fabio Estevam <festevam@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	pratikmanvar09@gmail.com, francesco@dolcini.it,
-	Clark Wang <xiaoning.wang@nxp.com>, Jun Li <jun.li@nxp.com>
-Subject: Re: [PATCH v2 3/3] pwm: imx27: workaround of the pwm output bug when
- decrease the duty cycle
-Message-ID: <Zt9PcsUg4CdMbpov@lizhi-Precision-Tower-5810>
-References: <20240715-pwm-v2-0-ff3eece83cbb@nxp.com>
- <20240715-pwm-v2-3-ff3eece83cbb@nxp.com>
- <CAOMZO5DNmHfHWbLoPj9P=_+JiLLQ4tiDd_90+UX+_psN2o+Knw@mail.gmail.com>
- <ac922fd5-9438-4f73-9a3d-08cceb1d7409@denx.de>
- <Ztn+SiBUp0BC5lzy@lizhi-Precision-Tower-5810>
- <1a5114c5-92d1-4f5a-9ad6-616475f3ba56@denx.de>
- <ZtoWowx1Vja3yjXc@lizhi-Precision-Tower-5810>
- <e14fba9a-87e9-42a3-9be8-b2b48ed08cd0@denx.de>
-Content-Type: text/plain; charset=utf-8
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.16; Mon, 9 Sep
+ 2024 19:43:39 +0000
+Received: from SN7PR10MB6287.namprd10.prod.outlook.com
+ ([fe80::5a47:2d75:eef9:1d29]) by SN7PR10MB6287.namprd10.prod.outlook.com
+ ([fe80::5a47:2d75:eef9:1d29%6]) with mapi id 15.20.7939.010; Mon, 9 Sep 2024
+ 19:43:39 +0000
+Date: Mon, 9 Sep 2024 15:43:34 -0400
+From: Kris Van Hees <kris.van.hees@oracle.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Kris Van Hees <kris.van.hees@oracle.com>, linux-kernel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org,
+        Nick Alcock <nick.alcock@oracle.com>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Sam James <sam@gentoo.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jiri Olsa <olsajiri@gmail.com>,
+        Elena Zannoni <elena.zannoni@oracle.com>
+Subject: Re: [PATCH v10 2/4] kbuild: generate offset range data for builtin
+ modules
+Message-ID: <Zt9P5p6XGBp2Uwde@oracle.com>
+References: <20240906144506.1151789-1-kris.van.hees@oracle.com>
+ <20240906144506.1151789-3-kris.van.hees@oracle.com>
+ <CAK7LNAQtuqBwheX6SLWMyKE0h2wLzApii1xyMBqNs3ge_JSUvg@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e14fba9a-87e9-42a3-9be8-b2b48ed08cd0@denx.de>
-X-ClientProxiedBy: SJ0PR03CA0007.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::12) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+In-Reply-To: <CAK7LNAQtuqBwheX6SLWMyKE0h2wLzApii1xyMBqNs3ge_JSUvg@mail.gmail.com>
+X-ClientProxiedBy: SJ0PR03CA0018.namprd03.prod.outlook.com
+ (2603:10b6:a03:33a::23) To SN7PR10MB6287.namprd10.prod.outlook.com
+ (2603:10b6:806:26d::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,350 +111,242 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM9PR04MB7716:EE_
-X-MS-Office365-Filtering-Correlation-Id: ca940c11-5ff4-4882-037a-08dcd1077167
+X-MS-TrafficTypeDiagnostic: SN7PR10MB6287:EE_|MN6PR10MB8022:EE_
+X-MS-Office365-Filtering-Correlation-Id: b200bd14-382c-4852-b12f-08dcd107b3e8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|7416014|1800799024|38350700014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ekRMQ1V5Q2xlSnZQVEwwTy94bkJpazhnazJXTEcwWlFEWG9DTkt1NGxTQjZV?=
- =?utf-8?B?dEt6ZXZuMWczOWptcU5HTUtzMEZyK0s2Q1piZUJqcHJvU3prNmpEMnZ1Q0lr?=
- =?utf-8?B?YmIvTk5lc1hUMHJTWDJKMWRwalZYTlUzWHpBSnBOK2txQU9vZC9HSHBBZ3JD?=
- =?utf-8?B?NVlleExhSi90U3NtelBmVVNRU01QTEJkQ2pvUnJUUncwRXZYRDdVTWxmMGVD?=
- =?utf-8?B?K0VaTEM5Rk4wakt2dlR6VUl1OVRLOFJqaEVGYkYveEdURDFaOTY3eG1hUE1u?=
- =?utf-8?B?ZlN3Q1E5VmZsNUdXQ1JvOXFUQkNNN0VSbWJoVlFHa3k3WDlqaXVla3B2eW5v?=
- =?utf-8?B?ZDF4R2lMckg2U1hqb2FyOGxzYlYvQzZyaVdqcnFCeEtpdWMvc25sRVlodVRJ?=
- =?utf-8?B?RHBLR01HNGpFVzMxak5EZEJndGdjVGQyNGwrMTl2TC9zNVdjUFlIb1d2YmpL?=
- =?utf-8?B?VHYvcTN3b0JSQjByUFZrMW01d2s1cGJhMEU3SXlUanZ6N3hJV0ltSHZFa2Nr?=
- =?utf-8?B?eHZLM1NMU25sVStkMmh6Z24wUUpoc1FuSHlrelptMC9ZaTYvMnZGTmRJcUJ4?=
- =?utf-8?B?dGdjZzZ5Sk4vQ0F5Mm1jY3cwNDJwd2VUbnYyUjRGdDF6Wk12QXVzZ2dhSkJv?=
- =?utf-8?B?OTluc2RnMlFuRUF3eUNrWDI1aVdtU3dWOGdGMVZRdFEvVmtXL1J3cjl0QlYx?=
- =?utf-8?B?K3EwVzJBOFdHYXVKTHRYa1F5d3VQMktobFJzZFgzU2FXK3NmeE5jbU5nTzFW?=
- =?utf-8?B?emtMSXhiUXJ2bm9iN3dZeGh5aW4rSmE2dTMwUTdNMkRLNHNSYVFBVlNOYjRp?=
- =?utf-8?B?V2dUelBjRk1BOVMwNFZ4Y0kwUHVNODZVWDlRN0RKZ0loTXJNeUZjb01TN0Jv?=
- =?utf-8?B?a0dCd2QxOVlkOVlkQlliUVdBYU9zeXRrN2FRWDlDUlY1L3gyUmp3RjFtbXNN?=
- =?utf-8?B?ZytUTXFDclpJQ2VmZTNxUlFmN0xudlQvMytTU1BSMFI0ZTNKaWEzTzF4dmFG?=
- =?utf-8?B?WnZJSkptaGFqUTVBL3dmTzVNdm5hd2lZV28vUVI2blpvdEY2S2FlQ0dISUd3?=
- =?utf-8?B?SDBpZ1ErNDArY2FXckx1WG1IT0tONWZyN2N4ckljRmdUSVZrODl5Qm45NUpw?=
- =?utf-8?B?anRDbklYbnZSbGJKRzQ1LzM2dzhKcmJITXNMK2lid3kySjNsZ3dKYm81UXhX?=
- =?utf-8?B?dE80VjhwL0g3SWVHblhsWk41SlpaODI1UGFyUnpOWlBPQUo2RTVZMlJ6V1FU?=
- =?utf-8?B?TUlmUW05cFppdWhvZGpkRmhUaUFXa1VtNnkyUkxlUVlaaVg0YjhaQ0dkQy8z?=
- =?utf-8?B?dEtkTUQ4ZlRWOURpbEVLSHdibnhSZHh4Z29FbWE2VU1zNGlGTkprc2U1ZVZV?=
- =?utf-8?B?VW1kamJjZUJXalVWZEdrWFJQdWxydUtRU0hvN09WSy9ZUkthaVM3MVZPbTRB?=
- =?utf-8?B?RjBHamJwNGRzRHI0Ris2R09UYkM1Mm1jQVJOYXRVSlIwZmk1c3pnUWxzbjMx?=
- =?utf-8?B?U2MxY2FzZUhXaGRSVGpDOVJNb1l0MkgzbjZtbStueW41WnlHYWFxRGhSdWtE?=
- =?utf-8?B?UUFrcE9JNUUrbUJMYVBEQXpyaEJnUFFySU5mbEdBZnhKZlNob0szbzNpSDU5?=
- =?utf-8?B?RmZuWlVoK0JwTnBvMUFMNFhSa1cxa3h6NWlxdURFU1lISjFnazFSNFk2Umd1?=
- =?utf-8?B?bHZTZ3lxaW02T1Q4Rkw3YVEyelB4Y0VudXpIVVdvWFZYYlh6L3hTbU1JVzdj?=
- =?utf-8?B?WlhZUnREVW1zbTJqZkIwam9mSkxVR2srQ3V4WHIwMDI5WnN5OWp3MG5RM3I4?=
- =?utf-8?B?WTZvQ1BvSlJscks5R3JQempENVNnMEtOZ1FVdkFNNmRmY25kd1NsblFWWXVx?=
- =?utf-8?B?N0RGbGlham03bjU1OUNIMFpLV3c0QXV1Y3EyZ0F4OUZOUGc9PQ==?=
+	=?us-ascii?Q?ZYLEcXz4uaOWbIkRz2jygSRtn2jujgjIpcleQvfUg5/Xk7SeXl0nqLMM3BtX?=
+ =?us-ascii?Q?GRcs77RchiKykRaOwyz2Jq9OG2iofHf+ZYoKLuYuYtVjB88buSrhfMguOSI9?=
+ =?us-ascii?Q?xeOyXMtibpJqmR3MBJmUYXdTJJhlLjaUUa5H48xNsO29PbEDaRXw6f0MWNkq?=
+ =?us-ascii?Q?eDcYdcRtj6YO5rUtsue+bfSRG/jRGYC0cqxapkhiTjemql3KeN9Q78dwdqId?=
+ =?us-ascii?Q?7QexnZy2c1tupoxNlYZP58LiWl3J/e/yS7/sGEdMg8tE6RqKMArYTfskBuA8?=
+ =?us-ascii?Q?kFais5Ep+FcbNDAKbwrBYNZ5pgm9sipKJkdl15m4HqLR7PZl7NN9JsqWjAXi?=
+ =?us-ascii?Q?LiyMDyEzDRQPZAtqRlyfIao+/9gG4roU2FbwxSX30cBoUTuX7nzgEySEYiW1?=
+ =?us-ascii?Q?Yf0NRxs01vEpSvXdZPUDUieJfNSim3P2aBS4SLcf3rd5aa/pu8EL/zn+NUnY?=
+ =?us-ascii?Q?MYhOdByBHSsh8V/V8UqUV60Cg+ieMnDMo7JM51bHRmfXv15WzA8BFGywGl6F?=
+ =?us-ascii?Q?dHE9sYFKHmcMDm6wk1wfQTRWIrFekDzDB1ir6zL7vKKOkVhVS6SuW2f8uk3N?=
+ =?us-ascii?Q?46ldx+iFhB2fN61AtFvvHpMg8Kq91UmWdJgFZ6cn0j2bs48TEaKZ4ho0ncuQ?=
+ =?us-ascii?Q?jRTD3zPETZDQTK6Y5h2IuuOxTKL8zyEKjdjtBFZHZTj5zep3Mevr57rXjaSu?=
+ =?us-ascii?Q?cYYtkxkHzNWk7Wu0uxcyJJwaKqiu19wc1TItioRGS1ciqlAa05rlAiCCX6vg?=
+ =?us-ascii?Q?NyucanI9lX+Rnkp8nQckv9pwtQpw8oJxOd7m5PlxF5hhtFXN9ABm2Xg2jNu3?=
+ =?us-ascii?Q?x1B5mPuNsH8Gefv+np6NkSdDyG0MBclTjrH7Itv5CRi2jT5aR4GHgmS7/gN6?=
+ =?us-ascii?Q?yVVP7PF8DtqkGBMkzVm2OAAstVHr1jIWbJa14JTO6IFm0uF7+PtgJJtByWHl?=
+ =?us-ascii?Q?RIl64d4qU5pnwjJ1EcOlXijT0vP7Z7hBQA7iKvj9aemGzecQD5FPmad/WHfz?=
+ =?us-ascii?Q?1JY26F7mRlq4acfWlvHu53CcWP8ngBI4Nu3xvRrwVqXYKjlcabA5vTsHZ1DQ?=
+ =?us-ascii?Q?umDFy8jH+JH7o1Otr4gxka+N/dwgAvBHZvXpw+7cwj54XH8EffzMnLfvG5ns?=
+ =?us-ascii?Q?NQ8CAtR0nlfU5Q6LWKleI9MIyTAf34ofV+8J3/yFPMV7C08tG7sYbttnSrEf?=
+ =?us-ascii?Q?pjarMeH0IP0iXFw+/HnqBOJQs7LbiG/ItKwNeZ972QJZzV8nB/GVQQDE9X1K?=
+ =?us-ascii?Q?1zDm5PLkFckdYEoW6rmsNZmPGS/K/nJYfs+jRBP+75Soa+3y9rFzgnQF5/Xq?=
+ =?us-ascii?Q?qcJUCmsvzLwUQ+bHI2elcvCoRBAdCehXv47fMg8WlwZTMA=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(7416014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR10MB6287.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YW5uZkZBNGdrTSs3RlZxb1duTGl4bzRaU1VYR2xTZXVEVWdGYmhoTjBQSTNR?=
- =?utf-8?B?RWpZWkw5eDIyN2k3NVhGdHdwNFpRcGFxc3pabURZRWFhNmg5NHMrejZjei85?=
- =?utf-8?B?ZUhCREtBN3FBUmRMeTIwUHVLcksvaUhjWWF6RytxQ1U3cHMvZEtzRDRwY0Yz?=
- =?utf-8?B?NnZXQ05oU2M0SitxYTQyNU5CKzZKQkp2SGNsVXJBUFBObGJSOUI3QysyZmZM?=
- =?utf-8?B?K1YzS2dsbVdveWNCZjV3YlZvZWZRbWpWUXJqMlpTRGxuR05HQi9LRjRXcyt3?=
- =?utf-8?B?Uyt1Nk4yVzFCV0NkQXFzR1BJVHAySmpiS2FLbDhpM1A4T0ZsYlBkRVV2Rkps?=
- =?utf-8?B?b2cwS0lNWEg1R1o0NDJ4RUJJVFlpR1ZDaHNTdDZtNWZrUnMxOHppcXJuejEr?=
- =?utf-8?B?S1A3by9xdkd0K0FUUXpLN0lRRm9DMXJCZk1uaVY5Vk1UemxBTVFIOFRyQ3pr?=
- =?utf-8?B?Ky84aU1ydHBUMEg3K3FGY05tMWlJMWJsS3pFVW4zMmE5a1E0QTJVUkFYdk8x?=
- =?utf-8?B?NWNtdVgxeHhieW5YTGl5ajM2eFJTa3k2bmowY3VzaVAzOENvbk5JTUx5czU5?=
- =?utf-8?B?blQ1aEhGSmtkb3JZNXg4QXNXNGlXQXNDVStPSWUxcVJxcklENVgreXVTVWM1?=
- =?utf-8?B?WjkxQ1BXUkMxRmdScWtkVy9rVVpJemZ6UHRXay8xc0k0cTFTMTZqRVN5WFFV?=
- =?utf-8?B?NGZ1VmVZaERxMFNhWGJzK1d6c1ovU3U1VEU2WjArL2QvSUtrMS91L3pKOWln?=
- =?utf-8?B?N3V6T01iY2Z5YWlnVHZ6SXYxZ0VhTGt3YWVkS3pFMmlrT2x3QzJVWjdQc3pH?=
- =?utf-8?B?QXdpQVd5UHVoSHM4TUZuMXNCeDFUY01lV2xSdmJRejN0WmdUaWd6NzZXV1FP?=
- =?utf-8?B?YmhSQjNZZGx6d29MMTJaOTRSR0VxdWMzc3FRUzN1Ymd0NWJMd213eEVTQ2hI?=
- =?utf-8?B?dHVPNkMvTkhXNzlJbE8wVlJFUERxNjE4ZUhaTTVjYTRMeVE5M2xsbVdzdXUz?=
- =?utf-8?B?aDR5OE9RZmkvcVhMQWY4bThYSzRUK04vNzRNSG1JMU1uYmRXbnZnTzJtTzRz?=
- =?utf-8?B?Y0o1bkxtWnRySFhITHBXdmxFRE5CSWlHN1BnaUF5K3hpRmd5U29DcWhPMk96?=
- =?utf-8?B?Y3VmK0s1V0Z2Ky9lMi9VemM2VXpSR2lVY3R0QUdzTlVYTElyeHM1QnphbDlj?=
- =?utf-8?B?TUJKZ1FHV2JIRlNIZlB4ZEFTckdTOHBJSU5oMWpKUGx5N3NPcVJLbkp1cmJ3?=
- =?utf-8?B?cklKMTd1bzc1OFpXMFl0SFQ1bnJXWTBydmpuK0cxZnRJRUxYZzhoZ0NXWDVv?=
- =?utf-8?B?Z3JNY0R4c0ZZZGtNUGZMcDVBUFgzdmxvMVJzalFJQng1eGs1MTdTRnc2TjJK?=
- =?utf-8?B?MldWczdmZ1g1ZXhDSlErNFJBT2owOW9IVC9HMmZrb2wzcUVnZkNJSk1vd0to?=
- =?utf-8?B?RUs5WVl6Y1ZRa2pBUlFneFNvYXZQS2lWWnpYN0cyMWVwTVdEY0FiVzgyMTMy?=
- =?utf-8?B?dVJUengxUmc0MXZSbERZbFVTSWhJbkVZb1JIZ3NYLzVOQkFpSGI2cUFBWHBo?=
- =?utf-8?B?ek1KbjZSOUo5RmRuOEM5bDNQUktFdFRZT2RDSXE2TlFRRHQ2UW9qeFF4cmh5?=
- =?utf-8?B?ZmlBQnUxNm9LZGx2QzFBZHFEa0tuazFkUGRlMjhPZlNRb1pZQ2xVaFlHMzRO?=
- =?utf-8?B?NEsvbnQvNVJZWWlSTWNhN3orc0dMZmNPSzQwZ3dnNlBIcmVsUmEvaUhTem05?=
- =?utf-8?B?VkVLWDJsYnhRa0dLZ1NmMkQ2b0dYSkJBa0ZhSERUNXNXVEdlMFlBSkZnSUhE?=
- =?utf-8?B?UUIyS2lEWjFOZkxvcytJNjRBRUtNeWJGQjhiNWQxNDBmQ1gyYkJMam5tSFE3?=
- =?utf-8?B?Vmh2c0x2cWxMR2hEZGc1bG9rMnA3aHJlNVpmTHBLd3NEdjJNaWcrbGo0UkJh?=
- =?utf-8?B?OVBwSFZvTWV4RHZWUnFTbEZnL0FHZUlUQi9EY015VklYSFpRV1NCY2Vmclg2?=
- =?utf-8?B?TCtzUU1UZG9NV215VktNRU9aaGxSeGNodzhKNFJXejFTT1BwNS9XZkY4WUJU?=
- =?utf-8?B?UVN3a0creVZ3VWJIcnpUampYNzViY0J3VHZHanc0S3R2a0JjNGFlQ1oxT0dW?=
- =?utf-8?Q?Op5I=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca940c11-5ff4-4882-037a-08dcd1077167
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+	=?us-ascii?Q?WERRCYcM/z/G1fTHbsNaOIkpTbgtUbdUtjKbpP+lRxUejJkec0s4H5l2uHmY?=
+ =?us-ascii?Q?cUhM+tuyx8tPW1Zk6XmcKepJTMFoyKcBfr1LWiY+g37CA01rFR3G8+orjlts?=
+ =?us-ascii?Q?OFf0yYv3bnJGXUJ17uU5qlUqyACFkR7PUCKuZi1MYF4lswlo/zBtvjBe8jJa?=
+ =?us-ascii?Q?wm4/9B1fBeRUx1N3ROsux0t419jp/LKQZKHbsMND1ZLJ7Pr15KDNYjYhrvOm?=
+ =?us-ascii?Q?DL2D4ZDutg58JKV2e7jDzpeAxol0Ji04OMn50jeP5SY3adeOz9ObZ0cyLo30?=
+ =?us-ascii?Q?m3+YKhgNKZcF4uThwVQggvR24B2jfmmimxjVi2wnciL6YOLz5LafbwXfPjK2?=
+ =?us-ascii?Q?Y70NQ1GEcJ2PAybjaBi5ja2cVxiq8CpxqLhc02BxGsRBzqBWCALUc0j67Cm6?=
+ =?us-ascii?Q?9EultY45UF1WwS+WB2mSFDTFpQtSMsRn931Rp6HmYDz0J25gf1ITJMUA3Uxe?=
+ =?us-ascii?Q?KQQirrlAg11tmMMEc53hwH3kqhSM+pSxsT47FlO+FImMpgLLCKAhcE6+LC40?=
+ =?us-ascii?Q?XFuKILR0H3Mjk9R9bh00cDbCHlVAW/2yBiv1camQv7lT4WaLH5YtoeJDjkRG?=
+ =?us-ascii?Q?gVN5yhVe3h12phUhk/j1uggjKrChE5FhbmHCQLlbY37vuJUZHK5UnQP6GPyh?=
+ =?us-ascii?Q?oTiw9MBPX6/0fMTRKZl1BnmQCse7dmomqLWY2nFdc/bM6f4+s25AEH2R8lil?=
+ =?us-ascii?Q?r4pOl3um8KoTUrKiYseBcoNLIx9zjesEPA4WpKscPc/7u2NVa66cy0PyQImW?=
+ =?us-ascii?Q?0Eg0Aensg4i5TjRWjlqlDicr+l+82oxxNvmPZuHn7bXsWWNFqAvVf1Hmnqnz?=
+ =?us-ascii?Q?ku8ZuZkcG/2Wya7T+gWxaSqTpyhPkYRMoFsL4NhI09HCua+yePwLeDbnfXaC?=
+ =?us-ascii?Q?B12yQIkr2lPs2tSp0rh85NAvSgso8e41sfsEfhboFJvMR3E4+ywJmWe2dybJ?=
+ =?us-ascii?Q?obGDtRaiVqoQGiFMcUOWxuRnFQXFXzHlqryU7400GTSpeKoC2sL3ktS2Bs4t?=
+ =?us-ascii?Q?dGCW6SusWHklXdBaJ40HkzcsQcxujSr+FNiMb1PTIAq2INz+DsbRVtIrbJ/h?=
+ =?us-ascii?Q?Nv/J28Y/pvi45tu2EM1QomPRlhUwWOz3wTquWXuP+dHUw+AG7G/ZYnBLwTR/?=
+ =?us-ascii?Q?H+UZOF0Bx9lXOlwvxItEgSYdgUbFqhzxBxT4bihZTXZ2DKg3aaz+JWIliyaj?=
+ =?us-ascii?Q?6jerW5Yfi98EL1x+4fd5g3xfaVoHbPXyOqvFCt82+UVmTWT7cYJ2ZCHtDPbU?=
+ =?us-ascii?Q?Oky+Vj90PXe+OnuVvrIQXl8tYu2Mcuq5wWuAhzhHZTi5itYP1CycpIykpBS7?=
+ =?us-ascii?Q?8NUcEj88bWWQhGdBuo7Bl6aZrhSMs4986x0b5F20MnOS9mT3QYNjmwGYYEMh?=
+ =?us-ascii?Q?CFQ8eaB25pEQcSvBpnqaxA8ek7D3VfpmnXGl+JCvs58F2mJuBQGu+eL6+AtM?=
+ =?us-ascii?Q?iRWYei8yXNluNP1q99WnAvtdNcbQYFwTp14OZxVhKwqPpCTLwVzgylYBIBT8?=
+ =?us-ascii?Q?npqIWiAp3iSr8SH+JFA2Wecs63GQplb2G9Sys/veqmYyzQDzMCWaI9fa7AuG?=
+ =?us-ascii?Q?k4DiGP1CN01qZs92DccpZ/w0zUkiTH3kbiyO7J/fAqrkP58/kkqmOA8eU6mr?=
+ =?us-ascii?Q?wQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	ysJcGQrsHGoF+SJKfMxoYVhrmSykdiNvu/BhNAXOS1QTOZjFOW3KRV54HAyrR/kpCqhMq3plcKz9Puy4+9HgcFTCOYHhaPam5Ks39MCWvhWlLPUvkkCB6LwvjF+qf1qrAxps8CljMlMKDSCeBgTkHkYkZlqQ+JBGL5rGxVQ5E3+PsamrCfQkhJwi7gruNjKCXXxEE1KbJWBWmNsnNUGQ0c5lXLszaUbeUyu3b7wAUw9PknvGlJ0JXh1F38IvpOdXef/jb76O3dwUw4cVHCRHTzk2SORetXb4klNM193JdSVa0p+lp69mg/fTepAizNQ1vYTJOAqqzmWc0hotnh/R4nrtTnyVSUK7KOvod6g86WV6Q1Hb600bVLi82/gwxjL+GyI1KTwwrvan0WbN8kB5gYVV/ippEkJdi8qqMO1NTXeb7NqoEXp5BSKKMbGhOOufC5nbAByMnIeeIoJG0xCA4uao6ul30/bRfmPrmjTaOnZLr68+HnvTz2+TI8PQBxaPsHgAyRZWmwoclux099G3A69qauZbHhq4Ap2eWEfGArvdW59LdciDANSEdmDnhZdzGCecsxYexDhoi5ktLNqqAU0DsZqpdsEoHT2ARc1Evgo=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b200bd14-382c-4852-b12f-08dcd107b3e8
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR10MB6287.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 19:41:47.9076
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 19:43:39.5357
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: V4cr0LvkUpXgPFYf5cIuXyv+vOZdJdwk0u9PoyMXvQERPgzP5Ee3GVJik/D0ztTU+Ukz7HJZGX/9/f29ouzZLA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7716
+X-MS-Exchange-CrossTenant-UserPrincipalName: D8Vgjby/5XnxhwkBMZNbm//rKlLUzJsSMydpkA4aqd12xv8F0Mu0iaTA+7yLND5J7R2sALdbs0HigW7r02RTarsvQT6K0rUYQ5SrNxsRhjk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR10MB8022
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-09_10,2024-09-09_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0
+ mlxlogscore=999 bulkscore=0 adultscore=0 phishscore=0 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2408220000 definitions=main-2409090155
+X-Proofpoint-GUID: bH-etw0aVYpkNS5WQGQTAZjv0g1ECVH4
+X-Proofpoint-ORIG-GUID: bH-etw0aVYpkNS5WQGQTAZjv0g1ECVH4
 
-On Fri, Sep 06, 2024 at 06:33:45AM +0200, Marek Vasut wrote:
-> On 9/5/24 10:37 PM, Frank Li wrote:
-> > On Thu, Sep 05, 2024 at 09:01:06PM +0200, Marek Vasut wrote:
-> > > On 9/5/24 8:54 PM, Frank Li wrote:
-> > > > On Thu, Sep 05, 2024 at 08:26:34PM +0200, Marek Vasut wrote:
-> > > > > On 9/5/24 7:12 PM, Fabio Estevam wrote:
-> > > > > > Adding Marek.
-> > > > > >
-> > > > > > On Mon, Jul 15, 2024 at 5:30 PM Frank Li <Frank.Li@nxp.com> wrote:
-> > > > > > >
-> > > > > > > From: Clark Wang <xiaoning.wang@nxp.com>
-> > > > > > >
-> > > > > > > Implement workaround for ERR051198
-> > > > > > > (https://www.nxp.com/docs/en/errata/IMX8MN_0N14Y.pdf)
-> > > > > > >
-> > > > > > > PWM output may not function correctly if the FIFO is empty when a new SAR
-> > > > > > > value is programmed
-> > > > > > >
-> > > > > > > Description:
-> > > > > > >      When the PWM FIFO is empty, a new value programmed to the PWM Sample
-> > > > > > >      register (PWM_PWMSAR) will be directly applied even if the current timer
-> > > > > > >      period has not expired. If the new SAMPLE value programmed in the
-> > > > > > >      PWM_PWMSAR register is less than the previous value, and the PWM counter
-> > > > > > >      register (PWM_PWMCNR) that contains the current COUNT value is greater
-> > > > > > >      than the new programmed SAMPLE value, the current period will not flip
-> > > > > > >      the level. This may result in an output pulse with a duty cycle of 100%.
-> > > > > > >
-> > > > > > > Workaround:
-> > > > > > >      Program the current SAMPLE value in the PWM_PWMSAR register before
-> > > > > > >      updating the new duty cycle to the SAMPLE value in the PWM_PWMSAR
-> > > > > > >      register. This will ensure that the new SAMPLE value is modified during
-> > > > > > >      a non-empty FIFO, and can be successfully updated after the period
-> > > > > > >      expires.
-> > > > >
-> > > > > Frank, could you submit this patch separately ? The 1/3 and 2/3 are
-> > > > > unrelated as far as I can tell ?
-> > > > >
-> > > > > > > ---
-> > > > > > > Change from v1 to v2
-> > > > > > > - address comments in https://lore.kernel.org/linux-pwm/20211221095053.uz4qbnhdqziftymw@pengutronix.de/
-> > > > > > >      About disable/enable pwm instead of disable/enable irq:
-> > > > > > >      Some pmw periphal may sensitive to period. Disable/enable pwm will
-> > > > > > > increase period, althouhg it is okay for most case, such as LED backlight
-> > > > > > > or FAN speed. But some device such servo may require strict period.
-> > > > > > >
-> > > > > > > - address comments in https://lore.kernel.org/linux-pwm/d72d1ae5-0378-4bac-8b77-0bb69f55accd@gmx.net/
-> > > > > > >      Using official errata number
-> > > > > > >      fix typo 'filp'
-> > > > > > >      add {} for else
-> > > > > > >
-> > > > > > > I supposed fixed all previous issues, let me know if I missed one.
-> > > > > > > ---
-> > > > > > >     drivers/pwm/pwm-imx27.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++-
-> > > > > > >     1 file changed, 51 insertions(+), 1 deletion(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
-> > > > > > > index 253afe94c4776..e12eaaebe3499 100644
-> > > > > > > --- a/drivers/pwm/pwm-imx27.c
-> > > > > > > +++ b/drivers/pwm/pwm-imx27.c
-> > > > > > > @@ -27,6 +27,7 @@
-> > > > > > >     #define MX3_PWMSR                      0x04    /* PWM Status Register */
-> > > > > > >     #define MX3_PWMSAR                     0x0C    /* PWM Sample Register */
-> > > > > > >     #define MX3_PWMPR                      0x10    /* PWM Period Register */
-> > > > > > > +#define MX3_PWMCNR                     0x14    /* PWM Counter Register */
-> > > > > > >
-> > > > > > >     #define MX3_PWMCR_FWM                  GENMASK(27, 26)
-> > > > > > >     #define MX3_PWMCR_STOPEN               BIT(25)
-> > > > > > > @@ -232,8 +233,11 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-> > > > > > >     {
-> > > > > > >            unsigned long period_cycles, duty_cycles, prescale;
-> > > > > > >            struct pwm_imx27_chip *imx = to_pwm_imx27_chip(chip);
-> > > > > > > +       void __iomem *reg_sar = imx->mmio_base + MX3_PWMSAR;
-> > > > > > >            unsigned long long c;
-> > > > > > >            unsigned long long clkrate;
-> > > > > > > +       unsigned long flags;
-> > > > > > > +       int val;
-> > > > > > >            int ret;
-> > > > > > >            u32 cr;
-> > > > > > >
-> > > > > > > @@ -274,7 +278,53 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-> > > > > > >                    pwm_imx27_sw_reset(chip);
-> > > > > > >            }
-> > > > > > >
-> > > > > > > -       writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
-> > > > > > > +       /*
-> > > > > > > +        * This is a limited workaround. When the SAR FIFO is empty, the new
-> > > > > > > +        * write value will be directly applied to SAR even the current period
-> > > > > > > +        * is not over.
-> > > > > > > +        *
-> > > > > > > +        * If the new SAR value is less than the old one, and the counter is
-> > > > > > > +        * greater than the new SAR value, the current period will not filp
-> > > > > > > +        * the level. This will result in a pulse with a duty cycle of 100%.
-> > > > > > > +        * So, writing the current value of the SAR to SAR here before updating
-> > > > > > > +        * the new SAR value can avoid this issue.
-> > > > > > > +        *
-> > > > > > > +        * Add a spin lock and turn off the interrupt to ensure that the
-> > > > > > > +        * real-time performance can be guaranteed as much as possible when
-> > > > > > > +        * operating the following operations.
-> > > > > > > +        *
-> > > > > > > +        * 1. Add a threshold of 1.5us. If the time T between the read current
-> > > > > > > +        * count value CNR and the end of the cycle is less than 1.5us, wait
-> > > > > > > +        * for T to be longer than 1.5us before updating the SAR register.
-> > > > > > > +        * This is to avoid the situation that when the first SAR is written,
-> > > > > > > +        * the current cycle just ends and the SAR FIFO that just be written
-> > > > > > > +        * is emptied again.
-> > > > > > > +        *
-> > > > > > > +        * 2. Use __raw_writel() to minimize the interval between two writes to
-> > > > > > > +        * the SAR register to increase the fastest pwm frequency supported.
-> > > > > > > +        *
-> > > > > > > +        * When the PWM period is longer than 2us(or <500KHz), this workaround
-> > > > > > > +        * can solve this problem.
-> > > > > > > +        */
-> > > > > > > +       val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
-> > > > > > > +       if (duty_cycles < imx->duty_cycle && val < MX3_PWMSR_FIFOAV_2WORDS) {
-> > > > > > > +               c = clkrate * 1500;
-> > > > > > > +               do_div(c, NSEC_PER_SEC);
-> > > > > > > +
-> > > > > > > +               local_irq_save(flags);
-> > > > > > > +               if (state->period >= 2000)
-> > > > > > > +                       readl_poll_timeout_atomic(imx->mmio_base + MX3_PWMCNR, val,
-> > > > > > > +                                                 period_cycles - val >= c, 0, 10);
-> > > > > > > +
-> > > > > > > +               val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
-> > > > > > > +               if (!val)
-> > > > > > > +                       writel_relaxed(imx->duty_cycle, reg_sar);
-> > > > > > > +               writel_relaxed(duty_cycles, reg_sar);
-> > > > > > > +               local_irq_restore(flags);
-> > > > > > > +       } else {
-> > > > > > > +               writel_relaxed(duty_cycles, reg_sar);
-> > > > > > > +       }
-> > > > >
-> > > > > Why so complicated ? Can't this be simplified to this ?
-> > > > >
-> > > > > const u32 sar[3] = { old_sar, old_sar, new_sar };
-> > > > >
-> > > > > val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base +
-> > > > > MX3_PWMSR));
-> > > > >
-> > > > > switch (val) {
-> > > > > case MX3_PWMSR_FIFOAV_EMPTY:
-> > > > > case MX3_PWMSR_FIFOAV_1WORD:
-> > > > >     writesl(duty_cycles, sar, 3);
-> > > > >     break;
-> > > > > case MX3_PWMSR_FIFOAV_2WORDS:
-> > > > >     writesl(duty_cycles, sar + 1, 2);
-> > > > >     break;
-> > > > > default: // 3 words in FIFO
-> > > > >     writel(new_sar, duty_cycles);
-> > > > > }
-> > > > >
-> > > > > The MX3_PWMSR_FIFOAV_EMPTY/MX3_PWMSR_FIFOAV_1WORD case will effectively
-> > > > > trigger three consecutive 'str' instructions:
-> > > > >
-> > > > > 1: str PWMSAR, old_sar
-> > > > > 2: str PWMSAR, old_sar
-> > > > > 3: str PWMSAR, new_sar
-> > > > >
-> > > > > If the PWM cycle ends before 1:, then PWM will reload old value, then pick
-> > > > > old value from 1:, 2: and then new value from 3: -- the FIFO will never be
-> > > > > empty.
-> > > > >
-> > > > > If the PWM cycle ends after 1:, then PWM will pick up old value from 1:
-> > > > > which is now in FIFO, 2: and then new value from 3: -- the FIFO will never
-> > > > > be empty.
-> > > > >
-> > > > > The MX3_PWMSR_FIFOAV_2WORDS and default: case is there to prevent FIFO
-> > > > > overflow which may lock up the PWM. In case of MX3_PWMSR_FIFOAV_2WORDS there
-> > > > > are two words in the FIFO, write two more, old SAR value and new SAR value.
-> > > > > In case of default, there must be at least one free slot in the PWM FIFO
-> > > > > because pwm_imx27_wait_fifo_slot() which polled the FIFO for free slot
-> > > > > above, so there is no danger of FIFO being empty or FIFO overflow.
-> > > > >
-> > > > > Maybe this can still be isolated to "if (duty_cycles < imx->duty_cycle)" .
-> > > > >
-> > > > > What do you think ?
-> > > >
-> > > > Reasonable. Let me test it.
-> > > Thank you.
-> > >
-> > > I have MX8MN locally, so if you need RB/TB for V3, let me know.
-> > >
-> > > Will I be able to reproduce it on another iMX too? Like MX8MP or MX8MM (they
-> > > are a bit easier to work with for me) ?
-> > >
-> > > Could you include "how to reproduce" in the commit message ? Something easy
-> > > like:
-> > > - Write this and that sysfs attribute file with old value
-> > > - Write this and that sysfs attribute file with new value
-> > > - Observe this on a scope
+On Sun, Sep 08, 2024 at 11:50:51AM +0900, Masahiro Yamada wrote:
+> On Fri, Sep 6, 2024 at 11:45???PM Kris Van Hees <kris.van.hees@oracle.com> wrote:
 > >
-> > I will add it at next version. But I found a problem of your method,
-> > especially when period is quite long, for example 2s. Assume  FIFO is empty.
-> > [old, old, new] will be written to FIFO, new value will takes 2s-6s to make
-> > new value effect.
->
-> You're right, for long PWM periods, the application of changes will take
-> longer.
->
-> As far as I can tell, the method implemented in this patch may still suffer
-> from the problem in case of short PWM periods, is that correct ? I think the
-> writesl() might help cover some of that.
+> > Create file module.builtin.ranges that can be used to find where
+> > built-in modules are located by their addresses. This will be useful for
+> > tracing tools to find what functions are for various built-in modules.
+> >
+> > The offset range data for builtin modules is generated using:
+> >  - modules.builtin: associates object files with module names
+> >  - vmlinux.map: provides load order of sections and offset of first member
+> >     per section
+> >  - vmlinux.o.map: provides offset of object file content per section
+> >  - .*.cmd: build cmd file with KBUILD_MODFILE
+> >
+> > The generated data will look like:
+> >
+> > .text 00000000-00000000 = _text
+> > .text 0000baf0-0000cb10 amd_uncore
+> > .text 0009bd10-0009c8e0 iosf_mbi
+> > ...
+> > .text 00b9f080-00ba011a intel_skl_int3472_discrete
+> > .text 00ba0120-00ba03c0 intel_skl_int3472_discrete intel_skl_int3472_tps68470
+> > .text 00ba03c0-00ba08d6 intel_skl_int3472_tps68470
+> > ...
+> > .data 00000000-00000000 = _sdata
+> > .data 0000f020-0000f680 amd_uncore
+> >
+> > For each ELF section, it lists the offset of the first symbol.  This can
+> > be used to determine the base address of the section at runtime.
+> >
+> > Next, it lists (in strict ascending order) offset ranges in that section
+> > that cover the symbols of one or more builtin modules.  Multiple ranges
+> > can apply to a single module, and ranges can be shared between modules.
+> >
+> > The CONFIG_BUILTIN_MODULE_RANGES option controls whether offset range data
+> > is generated for kernel modules that are built into the kernel image.
+> >
+> > How it works:
+> >
+> >  1. The modules.builtin file is parsed to obtain a list of built-in
+> >     module names and their associated object names (the .ko file that
+> >     the module would be in if it were a loadable module, hereafter
+> >     referred to as <kmodfile>).  This object name can be used to
+> >     identify objects in the kernel compile because any C or assembler
+> >     code that ends up into a built-in module will have the option
+> >     -DKBUILD_MODFILE=<kmodfile> present in its build command, and those
+> >     can be found in the .<obj>.cmd file in the kernel build tree.
+> >
+> >     If an object is part of multiple modules, they will all be listed
+> >     in the KBUILD_MODFILE option argument.
+> >
+> >     This allows us to conclusively determine whether an object in the
+> >     kernel build belong to any modules, and which.
+> >
+> >  2. The vmlinux.map is parsed next to determine the base address of each
+> >     top level section so that all addresses into the section can be
+> >     turned into offsets.  This makes it possible to handle sections
+> >     getting loaded at different addresses at system boot.
+> >
+> >     We also determine an 'anchor' symbol at the beginning of each
+> >     section to make it possible to calculate the true base address of
+> >     a section at runtime (i.e. symbol address - symbol offset).
+> >
+> >     We collect start addresses of sections that are included in the top
+> >     level section.  This is used when vmlinux is linked using vmlinux.o,
+> >     because in that case, we need to look at the vmlinux.o linker map to
+> >     know what object a symbol is found in.
+> >
+> >     And finally, we process each symbol that is listed in vmlinux.map
+> >     (or vmlinux.o.map) based on the following structure:
+> >
+> >     vmlinux linked from vmlinux.a:
+> >
+> >       vmlinux.map:
+> >         <top level section>
+> >           <included section>  -- might be same as top level section)
+> >             <object>          -- built-in association known
+> >               <symbol>        -- belongs to module(s) object belongs to
+> >               ...
+> >
+> >     vmlinux linked from vmlinux.o:
+> >
+> >       vmlinux.map:
+> >         <top level section>
+> >           <included section>  -- might be same as top level section)
+> >             vmlinux.o         -- need to use vmlinux.o.map
+> >               <symbol>        -- ignored
+> >               ...
+> >
+> >       vmlinux.o.map:
+> >         <section>
+> >             <object>          -- built-in association known
+> >               <symbol>        -- belongs to module(s) object belongs to
+> >               ...
+> >
+> >  3. As sections, objects, and symbols are processed, offset ranges are
+> >     constructed in a straight-forward way:
+> >
+> >       - If the symbol belongs to one or more built-in modules:
+> >           - If we were working on the same module(s), extend the range
+> >             to include this object
+> >           - If we were working on another module(s), close that range,
+> >             and start the new one
+> >       - If the symbol does not belong to any built-in modules:
+> >           - If we were working on a module(s) range, close that range
+> >
+> > Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
+> > Reviewed-by: Nick Alcock <nick.alcock@oracle.com>
+> > Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
+> > Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > Tested-by: Sam James <sam@gentoo.org>
+> > ---
+> 
+> 
+> If v10 is the final version, I offer to locally squash the following:
 
-No way can fix very short periods problem because period was shorter then
-register write speed. The register write go through ips bus, which is
-quit slow. writesl is equal to writel_relaxed and avoid a dmb(). This will
-be over1M hz and user generally use pwm around hz to khz.
+Thanks!  That would be great!  v10 is indeed the final version (see bwlow).
 
->
-> Maybe for longer PWM periods (like 500ms and longer?) where we can be sure
-> the FIFO won't quickly consume the written data and underflow, we can do
-> writesl() with only two longwords {old_sar, new_sar}, first longword to make
-> sure the FIFO is not empty, second word with the new PWMSAR value ? That
-> could speed the update up ?
+> diff --git a/.gitignore b/.gitignore
+> index c06a3ef6d6c6..625bf59ad845 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -69,6 +69,7 @@ modules.order
+>  /Module.markers
+>  /modules.builtin
+>  /modules.builtin.modinfo
+> +/modules.builtin.ranges
+>  /modules.nsdeps
+> 
+>  #
+> diff --git a/Documentation/dontdiff b/Documentation/dontdiff
+> index 3c399f132e2d..a867aea95c40 100644
+> --- a/Documentation/dontdiff
+> +++ b/Documentation/dontdiff
+> @@ -180,6 +180,7 @@ modpost
+>  modules-only.symvers
+>  modules.builtin
+>  modules.builtin.modinfo
+> +modules.builtin.ranges
+>  modules.nsdeps
+>  modules.order
+>  modversions.h*
 
-We should use this patch's method to read MX3_PWMCNR, if close enough,
-write two data into fifo instead of wait for new peroid start.
+> If Sami reports more errors and you end up with v11,
+> please remember to fold it.
 
->
-> > The currect method, most time, the new value will effect at next period.
-> Yes, right, I think we may have to handle the longer PWM periods somehow
-> differently.
->
-> I would like to avoid local_irq_save()/readl_poll_timeout_atomic() if
-> possible and let the hardware help avoid this, which I think is possible
-> with creative loading of the FIFO with data, hence the writesl() idea.
+Sami confirmed v10 [0].  Can you squash his reviewed-by and tested-by as well?
 
-I think it hard to avoid local_irq_save() even use writesl(), writesl is
-not atomic,  if irq happen after first raw_write,  FIFO may be empty at
-next write.
+Thanks for all the help!
 
-actually, here have problem
+	Kris
 
-	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
-	^^^ if irq happen here, schedule happen, when schedule back,
-
-	FIFOAV value in hardware may less than MX3_PWMSR_FIFOAV_2WORDS, but
-	previous read it bigger than MX3_PWMSR_FIFOAV_2WORDS, the below check
-	will be false and skip workaround.
-
-	if (duty_cycles < imx->duty_cycle && val < MX3_PWMSR_FIFOAV_2WORDS) {
-
-
-See patch v4
-https://lore.kernel.org/imx/20240909193855.2394830-1-Frank.Li@nxp.com/T/#u
-It should be little bit better.
-
-Frank
-
->
-> What do you think about the option above ?
->
-> My usecase is mainly display PWM backlight dimming, so those periods there
-> are in some 100..2000 Hz or so.
-
-
+[0] https://lore.kernel.org/lkml/20240909191801.GA398180@google.com/
 
