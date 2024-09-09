@@ -1,101 +1,68 @@
-Return-Path: <linux-kernel+bounces-322038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35CEB972326
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:06:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9CF972327
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3AF1B2267F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:06:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45A8A1F259B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2BE189916;
-	Mon,  9 Sep 2024 20:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jY87U5vD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F087189F58;
+	Mon,  9 Sep 2024 20:06:42 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EAB1F95E;
-	Mon,  9 Sep 2024 20:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A226189F33
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 20:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725912401; cv=none; b=QUVyTDemF9wWnKdW890HqkXzkG5SBe+uQE10Y3moPkiFXCsil+fld0ggIj1ySM6rGX08szRkMPAYCRy64v3mRWyWOM3JX2WJWhy0MP7MVj0ARH1vhmHPPr7B/H+x9+aNcnRX+0ISdUog6QT7vgu4nh9Ru/2ATHYh8z4f9ulsRMk=
+	t=1725912402; cv=none; b=FBIQffnSZM+5g5jQMFXW2X2nYxv8kKHOTkXwkvb5gLZFC6CbBZEGZbyG12sYeBW+yWrerTc/MjDP//RIECjo7/4NE+GKkWeaUyGb6cXMg+KKqXmuf6fvX4CKxf27C+7EOajcvD40g1ochnWiApKH9fkHO7axIx9SmsMMDCdaEVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725912401; c=relaxed/simple;
-	bh=Azpac5t4aKzQzRCwhPLHp6adeu4g/s2FxmB9RbTtBiE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KJ3oGnPlAgKTi66fpVzo+6qQWBizFmW4stuPTbtDwDw+a2YvU7EohknHYgoaVv5wTqKFfFf5ZmJLN1uQ7VzwpMPYZAql7lQOL0e2gkogbee1x97M5TZRenrYH+2qLFss+rx4K/9QhnRLwyTBIkPteKG8Ft/5KQDp37eTf+Xkn58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jY87U5vD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2013EC4CEC5;
-	Mon,  9 Sep 2024 20:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725912400;
-	bh=Azpac5t4aKzQzRCwhPLHp6adeu4g/s2FxmB9RbTtBiE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jY87U5vDSeLbZGrNVVCpSsn++zyq2Obt7LoAeLX4OJhXg0OYdojvYhneMlDjbCpMQ
-	 b6qyeyWANvwi1+S87gvml3ehEoVIf6gE1o0IAKEf7kgWO5F5hlQ03hfs9ACk7h/OTm
-	 eekO8U4qAqPLLnQ5c/zj8yy2d0aZHw1SzwgkodgECHgkwmMQxJrjee/A+19vnhaLQt
-	 IU7NnIcwIRBFvSpeCy2CV4bUuzl3ufwolnEwuOeTlyf2s9AcDmi3LGT8wC07GGKvSk
-	 kVXSH4WPjcm0l/QgfoBZhiVX8EOfuZmHLOnDkgvdGFkZQkN4R/OfzRRyeTlBbG/BIk
-	 SYTKGp0lShnbA==
-Message-ID: <9302887d-c98c-4a98-9d68-9de778f1b1ae@kernel.org>
-Date: Mon, 9 Sep 2024 22:06:35 +0200
+	s=arc-20240116; t=1725912402; c=relaxed/simple;
+	bh=5H678IL5QNH4ewNzDLJrDTWhigMMpNFk3rOWSurRlus=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H9z5ikuQAmeMHzyXkBbBL1BF2C+ZXLJ/sFUM6+y8gP0dA51PscLeF7Z6ot9Mgko9QBcDR29r4RYjYj20NuICr44qzI8PHEg8/0nb1PGe8p4mBHqGjIQ40qqCRTy3/PQDSdh0vjTvHFmO8raAfHOLJRPs3gC5ZV3gnQfnATChE0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DBB0C4CECA;
+	Mon,  9 Sep 2024 20:06:41 +0000 (UTC)
+Date: Mon, 9 Sep 2024 16:06:40 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [for-linus][PATCH 0/2] tracing: A couple more fixes for 6.11
+Message-ID: <20240909160640.45be50df@gandalf.local.home>
+In-Reply-To: <20240909155537.7de3ed82@gandalf.local.home>
+References: <20240909195035.533786334@goodmis.org>
+	<20240909155537.7de3ed82@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] firmware: qcom: scm: fix a NULL-pointer dereference
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Andrew Halaney
- <ahalaney@redhat.com>, Elliot Berman <quic_eberman@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Rudraksha Gupta <guptarud@gmail.com>,
- "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240909-tzmem-null-ptr-v1-0-96526c421bac@linaro.org>
- <20240909-tzmem-null-ptr-v1-1-96526c421bac@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240909-tzmem-null-ptr-v1-1-96526c421bac@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 9.09.2024 8:38 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Some SCM calls can be invoked with __scm being NULL (the driver may not
-> have been and will not be probed as there's no SCM entry in device-tree).
-> Make sure we don't dereference a NULL pointer.
-> 
-> Fixes: 449d0d84bcd8 ("firmware: qcom: scm: smc: switch to using the SCM allocator")
-> Reported-by: Rudraksha Gupta <guptarud@gmail.com>
-> Closes: https://lore.kernel.org/lkml/692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com/
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/firmware/qcom/qcom_scm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index 10986cb11ec0..8bac4915c211 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -216,7 +216,7 @@ static DEFINE_SPINLOCK(scm_query_lock);
->  
->  struct qcom_tzmem_pool *qcom_scm_get_tzmem_pool(void)
->  {
-> -	return __scm->mempool;
-> +	return __scm ? __scm->mempool : NULL;
->  }
+On Mon, 9 Sep 2024 15:55:37 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
+> Looks like my system upgrade broke quilt, or at least the send mail portion
+> of it. It went into an infinite loop sending this, and I had to kill it :-p
+> and it didn't send any of the patches.
+> 
+> I'll go and see what broke.
 
-Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
+Although this is the first quilt sendmail I did after an upgrade, it wasn't
+the cause of the breakage. One of my Cc's was missing a '"' where the email
+only had one of them and that confused quilt.
 
-Konrad
+Will send again. Stay tuned.
+
+-- Steve
 
