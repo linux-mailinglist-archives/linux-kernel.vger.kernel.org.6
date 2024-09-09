@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-321192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FFBF9715AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:54:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D82139715B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A6B52855CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:54:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B493B21ED2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348901B5338;
-	Mon,  9 Sep 2024 10:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135521B5836;
+	Mon,  9 Sep 2024 10:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="yAb8Ds2V"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2064.outbound.protection.outlook.com [40.107.117.64])
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="nlznQLXv"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2048.outbound.protection.outlook.com [40.107.215.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B6D1B5311;
-	Mon,  9 Sep 2024 10:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2FE1B580E;
+	Mon,  9 Sep 2024 10:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.48
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725879276; cv=fail; b=IH7ohETc764X+6Gv+jOydsFbQeaDtUel0P2xZcFDmvsTQTUBayuk0xVx6h1gp1cCecwmDfipRxwYOLZx28KtTHAqbSjG3sVVihAY9ThAP8f6CqxBf1DEeK0rgzKkN4CO17+fq8V93lnV0/3Thnjf8Pwapa2m1leE6Mwm/ohKEWA=
+	t=1725879281; cv=fail; b=JTfXIGf2HQZRzAN9jAv1jp4SxnZF7wU/5IThcSjN4xQ0/+ZDAQpRQmPHo9nIyh8qL8DVKurAm+gHbItmPwfgO1gj57cnANBjnB9gyovcrz9tKZhluPcPRyyreJdUnZOHMIJ9ShoYgyHdWuccG5PGL76bZhhXEn+n8PIiNVz11II=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725879276; c=relaxed/simple;
-	bh=yze2INEU/dpx/bRFGiNSCWwwBKGQ/kr8FWF+DMAYJo0=;
+	s=arc-20240116; t=1725879281; c=relaxed/simple;
+	bh=UrQvg69WKZZRPbEAp0Jl0u3tS7wnnDOtSEd/t00srFg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WoReuHr+gDGpyE1MvvxPxJPRAaq6VjCqTTUEyeS9HlXrdkXDftGYjJXDJ6RHbjVjpkDajQ+8RBd1sj8PJyriTXPlK9/1/Um7oCYPtTq9c+tmJjgYMAjB1iJYpnVkJdUBjt4orDqeee6KZTTxO5DinypuT35f4bpo/XuvNwdN+eU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=yAb8Ds2V; arc=fail smtp.client-ip=40.107.117.64
+	 MIME-Version:Content-Type; b=Ri8pOTlE5m0KK1d2PRD9LtXX4Ik7IWwji74zHsJP24ubX+EEuLBeO02oQTGzSoz79Af/zid/0OQJfHwizUB0u8CuXK9YPvrOLKaAC6oAP86cZMIeF0FncXGGYJDSshWCyECW5KsNxP0dbhY9opXbiWHpax0Ahms1csarQ15wuWg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=nlznQLXv; arc=fail smtp.client-ip=40.107.215.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e2sggSh1IwB/yPxMk7kNJnD77+9zOzz6OA3tVFJ+oplh/vmJU5LyFPdjFwhKxfniNqJt6Ft/huWL/f10nZ5GngCeRq1B1Hb1dD8yQARhsjYEDgugsutnuG+EgCBnipPRHhEzqudlWKyNA6OxgwRCkw46n/cQ+Vm2HWvtaFlivMOH4biIWg1GcTDHghLYbeqVKGUQRDNJ4UnLCpQZdp/Mibg1B5PT1FfYejNR7gqM6nFHTSCeM5g4l+NlqJlpnjeDwYqy9RYOnrPNVA5W9UN7O/HkEdqtsgILsa89/W9vwVLKQHRI9Ghr25pOL27bWW/etBNZk4mCxBnUd64YOa7Psg==
+ b=mOQK57rp/aIY2gRsVGI5OELoY0CqcW/I6t9p366esDDC6RkY54Q6brLozeiYHl6L06keI9kJiJSZvNw5aHh7/SLwijsbRmFPLPw/CAk5IcS+5AZ7ijRkMzN8aYN0p49RpPijpFR1zCWkmkan8FTQUpcwuBcS5WzoGKuO4hJhAwtzmuukma0YDC+4xkeSm/qUUJBD8fqy7SRcd//SGUTryQqx5ubr3m1XmmIOhw+H7fVDlXKQaO95X+9Y+VOwAN9R5X6/ZMEBnVyiWwzE5tu5006+z4KJ6vplscoFzvnSuykeZTbGachQdDPVX54WMNIj0MSHqG919TTjmo4Y25Te0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4USzMxeBU9EH3DrSJM49cRXUWi0wRlmxC1ux7rp49ew=;
- b=sQIqyfdDJWz7/LJGL7aK5OIVef6kGEEaj7ct29DkNBq8MBoWJ3E+1ZwA4XHX+Y70bGoOlro67TMMzDvbrEqiZyllC9RlMEspJ2C5bP4oXjp5nc/QZAJEhRtIordV495PFHEsATf//B0ORmVT6f2QhMJ1v5HIiov7r1dQvE5+DIxK0JY21vvWiLmO0eqCohJ7/tTuqsqceqDgqNSbC/muHxL9eih6wKrcJ64Z3yUfkTKnj+QC66wC7gawOG//qG15DAmTAX1bv4Ib+WNj6J2g/BjVfMDTz/5viG0x7jr4ZTn878dwnHTU7asCSQqzGdqlDoCyzrYqaSavDk9Sd5uUDA==
+ bh=nzg41NePDkge44MLYYd7mKZW1SvxZnqJAzXlq5UwtC0=;
+ b=rWkeW1+y3yJGmxz0AXdi8Afm24zRnjwYpGONEHmCqqx/W4Yv+YqBo7OvE5iKyd1vTWY+u6uTZR2MMBkUnRTDCcr3NZTRHRcLS4KFKIILsmm+e9Uyq40aLATCc81+B6w07PLrHNtT/NCQAmetFwJJNSIZFPnWcTjziSmoFNLQb42c8G9VAvz8cuBq6NmyydG8Kvrq6En4AdG5c0tseAKS/nR8A4+fU03N4mAG+nWXvem60qyGckE/qQNpYS6SvSeT9AphUpxtGSVptCGRsJCR+Ja5bZZHvZXDyfmDYmNkEH0UQs3oDvUz7pXsfFubmaHluLTMukm7PbCSbF1W3LHOUA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
  (p=quarantine sp=quarantine pct=100) action=quarantine
@@ -44,17 +44,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4USzMxeBU9EH3DrSJM49cRXUWi0wRlmxC1ux7rp49ew=;
- b=yAb8Ds2VwWBSacinX1sDIoHM0/D9ZuL9zPBE21iMSpZGaSwtatMGMkhMnjA7ZZEHPS/3Muw107/OxpvXnGg8qzON7jiV46pqf4vkWpsV4znzt8WZ9yv2xF23JyrKyim07dQviXeCoPoHsgAt0QxZl6SH8J6Oo1u0n3Y2G9VAjemxSIKTffKRPQlqZXZ15ZNuBR6LTZd6pieRV3Iw2T3DkUp05EIhxe5qrbNnwusbkWUk54MYMLWo1ezww0KC9ZzFjjrdG4tk3J4YGNix+PV/481YhDCcIs/8hX3pMXLHvvRZPJaIsKijDSZ1VuuhENrmKcklCZp4g7J+rfTwBkH6Ag==
-Received: from SG2PR06CA0215.apcprd06.prod.outlook.com (2603:1096:4:68::23) by
- TYSPR04MB8291.apcprd04.prod.outlook.com (2603:1096:405:c5::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.27; Mon, 9 Sep 2024 10:54:28 +0000
+ bh=nzg41NePDkge44MLYYd7mKZW1SvxZnqJAzXlq5UwtC0=;
+ b=nlznQLXvjP6UYlIekV2HiMtQo8/LkWZVCzanLXdSIkjlNlzjMx4d6UXCQfcz64T5piUz2spN1rFsCf1/oH9cty349j64DLbR6378oaQz25SKASjqKSoye9+H+v9EgE91rhjjg/IcY81GQK0sOaVWeZMuRjgYG78y5O7gx6zjHSya5H9QUciX4LHfROIT2sjac6VrMSR5h2qIj+vsIaUwsVY1Hbk8e/ykSAk9zcA8QGWTBx6vHgLc3E6n9dqs7wfj7x0VM0CKo7JQBERoOAhq5w7OHWsr3YjBLcvwzt3iIWYTdT6L11N7uGgZzyae+Dh1Ov7hoxMKPErKC2FS1Fgrgw==
+Received: from SG2PR06CA0212.apcprd06.prod.outlook.com (2603:1096:4:68::20) by
+ SEZPR04MB7339.apcprd04.prod.outlook.com (2603:1096:101:19d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Mon, 9 Sep
+ 2024 10:54:31 +0000
 Received: from HK2PEPF00006FB2.apcprd02.prod.outlook.com
- (2603:1096:4:68:cafe::8a) by SG2PR06CA0215.outlook.office365.com
- (2603:1096:4:68::23) with Microsoft SMTP Server (version=TLS1_2,
+ (2603:1096:4:68:cafe::f4) by SG2PR06CA0212.outlook.office365.com
+ (2603:1096:4:68::20) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23 via Frontend
- Transport; Mon, 9 Sep 2024 10:54:28 +0000
+ Transport; Mon, 9 Sep 2024 10:54:31 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
  smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
@@ -63,7 +64,7 @@ Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
  client-ip=211.20.1.79; helo=localhost.localdomain;
 Received: from localhost.localdomain (211.20.1.79) by
  HK2PEPF00006FB2.mail.protection.outlook.com (10.167.8.8) with Microsoft SMTP
- Server id 15.20.7918.13 via Frontend Transport; Mon, 9 Sep 2024 10:54:27
+ Server id 15.20.7918.13 via Frontend Transport; Mon, 9 Sep 2024 10:54:30
  +0000
 From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
 To: patrick@stwcx.xyz,
@@ -78,9 +79,9 @@ Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v18 2/3] ARM: dts: aspeed: yosemite4: add mctp config and sensors for NIC
-Date: Mon,  9 Sep 2024 18:54:17 +0800
-Message-Id: <20240909105420.441607-3-Delphine_CC_Chiu@wiwynn.com>
+Subject: [PATCH v18 3/3] ARM: dts: aspeed: yosemite4: add fan led config
+Date: Mon,  9 Sep 2024 18:54:18 +0800
+Message-Id: <20240909105420.441607-4-Delphine_CC_Chiu@wiwynn.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240909105420.441607-1-Delphine_CC_Chiu@wiwynn.com>
 References: <20240909105420.441607-1-Delphine_CC_Chiu@wiwynn.com>
@@ -93,167 +94,273 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB2:EE_|TYSPR04MB8291:EE_
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB2:EE_|SEZPR04MB7339:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 0a01817b-dd81-4875-2361-08dcd0bdc6a5
+X-MS-Office365-Filtering-Correlation-Id: 5f388f8f-4435-40ec-fcda-08dcd0bdc862
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|7416014|82310400026|376014;
+	BCL:0;ARA:13230040|1800799024|376014|7416014|36860700013|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?U/YDvLuHuT8ZJPNvYOrftj72DXanPsSmgwlBfG21LElH6EANv5OId9tBEzxa?=
- =?us-ascii?Q?87oY7PmCoK5BZ2ZmFIkPWzIiSmeUPIC3e2o+ZJXHX792yhoeEK9PEpaUOriQ?=
- =?us-ascii?Q?CJqOzvW+XxMr+ilGO2BAGwMO+R0iOC0n4qDh3GFIZEiqW45uTjyzu5Z1DFQc?=
- =?us-ascii?Q?gHWkdNYHB5SL0+jDHS9EOtkMC7g4bhZgk/+0cEpOsUqz86NQiai8SXzSJ0rO?=
- =?us-ascii?Q?LYSNyUWEGzrbNSqnRQy2n4auNHearMRrWwdT1IQUTtT0mKLcFE50REcfXShF?=
- =?us-ascii?Q?HpxJc7j+aMF05ldYkPR48fwTE6d8knNRwsV85/bAET5EjcHrXmcauMy0znQd?=
- =?us-ascii?Q?v5TLypmxxAl3xj2uhOqqFqNg5fPcIG18ZxpB65xpJjE+mCALENvqRNwkzKfF?=
- =?us-ascii?Q?AbsGSG7d75VG/aS6tmhjDVIuGP+cT1LhL1naEmpv4iVxC3OSgt8Jkt8nHVhd?=
- =?us-ascii?Q?ulbExYwnCeJDAqpgdwQD3liGRrU7jjQbdBKSAELO2aop0/4w8U5d6ftvNJoz?=
- =?us-ascii?Q?a+dgT7fNtGWsMy0fUWcEppDu9aE8o9sQrBS9sp+eoAVty2AdL5WOtvOrFfZR?=
- =?us-ascii?Q?wly+y/Eb4g1fMkqRZECkVsUWZce3fsXH3BAly82oYfdloq59FooE+5p/ypZ2?=
- =?us-ascii?Q?P+XfFyskwYyXvcsTWrGcfnGYbhvLUHe3ghI122/Hc+Rxmqepec52oDK9A9mC?=
- =?us-ascii?Q?6bnoAsyxWrL8m3JvoGwFFOaCiBgkZUdIsSUsXkrpFtUymtEx/FSvP7pkQmKj?=
- =?us-ascii?Q?2k0EHYL3XapymLB+d97OJqYPrtG1PAtI5Zg26sX5hegVjOEF3S28BTYePry0?=
- =?us-ascii?Q?OaNKAxms4g354KPaXuSgXLmkHxgcmt20OI7EKyWpY+ln0KEBGUbi7vzxYcvz?=
- =?us-ascii?Q?2cCyph2LB+uD/QD4hUKqhECPz4TugRO9OGecPXXHPLNu+Uk+WqTlZtdx1WgR?=
- =?us-ascii?Q?5axRpq642uZsorY9gUfzrGeXSpRsZaoDrmIbebw/2Btv1mztBCRq1NQOrBPP?=
- =?us-ascii?Q?MpiFbe0RNva/lK0nW+pbuHJW4I/WqGWZ8L5esXoI0hmH01ygRnnzE08LgC1n?=
- =?us-ascii?Q?gKpKu7a+T8ANNWu7FCh1IYkLSxixhDcDk8HLjvthtoO2TQPOgEIsCSVJv3NX?=
- =?us-ascii?Q?pMnGOW/1cPvQ6O+WSHObKsc2kfZ6ZrQqUgREe8aeQ8qj5HeKF5Kv3WAABQ8u?=
- =?us-ascii?Q?O0/XjMVrNZXiRBeSwiW1K+rZVSpOZ8KsIi2Xd3k84Qzrav8sizzWw+Pk1B6z?=
- =?us-ascii?Q?8kFqRUHho0uPTIreuKkGTdr0T7TC1ZsDFX5OJL3A1b7zosV/iYVcGHBrvPpI?=
- =?us-ascii?Q?GlLqV8K+Ius0yUS9BK1Q0wNk9PLvo+7RkhRAe7HAQe5M0OWJ12DzkAf1M5MW?=
- =?us-ascii?Q?Pqy1o9KWmjAHfNitVntqhTGHJmccY1WV0Nw55xkiLXl5i1eNtzIDBVg2cDM/?=
- =?us-ascii?Q?SF/KnU2OHK7VDgUVCwZK4pajsQrjC+sC?=
+	=?us-ascii?Q?3nBnj19E940faTzbITKIseCdB6+ErvHVTTc5SAIMK3Gp4BXLhIqurxe1L0NM?=
+ =?us-ascii?Q?jdpm5wHWzb6K1BicxUqP2bk1RJq9kQEIWaXMRy1e/2dGeO+PRA7rHOAfsJak?=
+ =?us-ascii?Q?ePsP+j4xVBse2KRGz9nhpNf9bl3Quq69PEbh2Agsxizf2tX7sIDKa7DMe9rr?=
+ =?us-ascii?Q?oezHKHSxE3hlZZpNulTT95E9HKN//2iM9+9eib4tMPZQCgrtIVWton9snrGp?=
+ =?us-ascii?Q?o/8ZLGHvWHILWppMpk7sbp3bSyXzq5v+UI82k7wl8+UeF2av95+CN2tNqLf7?=
+ =?us-ascii?Q?mpihKrrwQSQ6kZoJffiH4nl5n6VTbCv4K6Fo3z2AF+x6XXkhewmZbn6QIhGa?=
+ =?us-ascii?Q?atzSff8z1KDOJhPr63ffBxOMJIT7PcZNHrMv4gwstGFGahz1GwH+0rffYwsl?=
+ =?us-ascii?Q?PDPZdqe9gRuy7p9uhr57/v9OLg+MywTIHqqelzSRd2s4W2aTJhHtZtd7L6Jy?=
+ =?us-ascii?Q?mYMI/kTgpQXH/8LfWDvQlVMz7rEAObISWpofLZl28k1GZdKwE9HuSuDw2aBX?=
+ =?us-ascii?Q?xN5CAm+1jvh35TGnqoYVfp1lSJzR/rtj4AIV9k04ocu7qlhMCSC1mP9vYS/1?=
+ =?us-ascii?Q?rk4GiCUhfPEbww3VDdZKYUkXJ2kERhAOq/+Ke/aIeZ7w6VuAAZk5l0Db6g2i?=
+ =?us-ascii?Q?h+qwYV5GJSzS3adtJUoWXcTq9zg/yyY535I5LSL3CuFRwvYk/bg8IZPHsR3S?=
+ =?us-ascii?Q?JCZYhLoqwH6II/AvwELRVKS6kZTpMYZurrfDUBVfQm8m3MTVewyMwT/5imFn?=
+ =?us-ascii?Q?2Qk7JM4yoMvGc0JsTRrwRyF3S0dt78qQi1ql3wm0kWe6kodTyvYgX/VtUxC4?=
+ =?us-ascii?Q?AP/l2YueQ2LqV7BJWCmv3FTSjRVrL1ZQkt+Mipro26Qbh47IukqOee3L6heq?=
+ =?us-ascii?Q?Kf9FFOAfdSiD/vOzx5AgbjfHTWr3PomivttjP1MHfDIsHQBX12Qoe+bVJ4Jg?=
+ =?us-ascii?Q?K9T0CX/uIC7NWpzuzlcsgrMz3zqOxMU9djdn3TZhMscC32rtrXZxAWwtxEf5?=
+ =?us-ascii?Q?o6qMd3OXUFLlmyECySfRjdyjz16bPt6Lo0tnDAvXMbaVYtxSWNj6mCncxYIA?=
+ =?us-ascii?Q?pVkwvFRPEdLWd1G5a3W5VArUFMoaXLom2uKcrO020yzXjBUNbkiY3K1pwtBy?=
+ =?us-ascii?Q?iYfpgu3xgjVY/w5e/LmZwtDWX3UGNfbiZAY2ztoiFuVOwJz3lcRh7H8488PK?=
+ =?us-ascii?Q?HDi0gVHBHSh3fyshkGY2Otso7Ya6vAPwa28r4lxw3LznQdUYMKDZ4/AXEfsq?=
+ =?us-ascii?Q?59Lis7vql829HpmV9GukIynCNXMRbtPVm1VuXN4Qpjvvvs7Lc6VTBrRfbL63?=
+ =?us-ascii?Q?YUjbspS4Y8E73bFBZnJB7RzrC0bpi00THaIq9q7f3iDM5tF/zSVIexoeUPaY?=
+ =?us-ascii?Q?7752i9TTKRdbkm5YNbDm5fzOcbBpdMTDEGVI63dVTJ/aNSWH2z8rc2a+pC28?=
+ =?us-ascii?Q?HOJY4yNYysdSE97MBAnSV2wxYQl7IkRT?=
 X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(82310400026)(376014);DIR:OUT;SFP:1101;
+	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 10:54:27.7531
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 10:54:30.6750
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a01817b-dd81-4875-2361-08dcd0bdc6a5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f388f8f-4435-40ec-fcda-08dcd0bdc862
 X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource:
 	HK2PEPF00006FB2.apcprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR04MB8291
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR04MB7339
 
 From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
 
-- Add MCTP config for NIC and remove the unnecessary MCTP config on bus
-15.
-- Add 2nd source temperature sensors EMC1403 for NIC.
-- Add eeprom for NIC.
+Set fan led config in yosemite4 DTS so that BMC could set different
+color LED according to the status of the Fan.
 
 Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
 Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
 ---
- .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 49 ++++++++++++++++++-
- 1 file changed, 48 insertions(+), 1 deletion(-)
+ .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 177 +++++++++++++++++-
+ 1 file changed, 175 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-index bed6bf695496..7898c4c94b9f 100644
+index 7898c4c94b9f..5399fe22e3ae 100644
 --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
 +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-@@ -938,7 +938,6 @@ &i2c15 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
- 	status = "okay";
--	mctp-controller;
- 	multi-master;
- 	bus-frequency = <400000>;
+@@ -4,6 +4,7 @@
+ /dts-v1/;
+ #include "aspeed-g6.dtsi"
+ #include <dt-bindings/gpio/aspeed-gpio.h>
++#include <dt-bindings/leds/common.h>
+ #include <dt-bindings/leds/leds-pca955x.h>
+ #include <dt-bindings/i2c/i2c.h>
  
-@@ -958,40 +957,88 @@ imux24: i2c@0 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <0>;
-+			mctp-controller;
-+
- 			temperature-sensor@1f {
- 				compatible = "ti,tmp421";
- 				reg = <0x1f>;
- 			};
-+
-+			temperature-sensor@3c {
-+				compatible = "smsc,emc1403";
-+				reg = <0x3c>;
-+			};
-+
-+			eeprom@50 {
-+				compatible = "atmel,24c64";
-+				reg = <0x50>;
-+			};
- 		};
- 
- 		imux25: i2c@1 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <1>;
-+			mctp-controller;
-+
- 			temperature-sensor@1f {
- 				compatible = "ti,tmp421";
- 				reg = <0x1f>;
- 			};
-+
-+			temperature-sensor@3c {
-+				compatible = "smsc,emc1403";
-+				reg = <0x3c>;
-+			};
-+
-+			eeprom@50 {
-+				compatible = "atmel,24c64";
-+				reg = <0x50>;
-+			};
- 		};
- 
- 		imux26: i2c@2 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <2>;
-+			mctp-controller;
-+
- 			temperature-sensor@1f {
- 				compatible = "ti,tmp421";
- 				reg = <0x1f>;
- 			};
-+
-+			temperature-sensor@3c {
-+				compatible = "smsc,emc1403";
-+				reg = <0x3c>;
-+			};
-+
-+			eeprom@50 {
-+				compatible = "atmel,24c64";
-+				reg = <0x50>;
-+			};
- 		};
- 
- 		imux27: i2c@3 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <3>;
-+			mctp-controller;
-+
- 			temperature-sensor@1f {
- 				compatible = "ti,tmp421";
- 				reg = <0x1f>;
- 			};
-+
-+			temperature-sensor@3c {
-+				compatible = "smsc,emc1403";
-+				reg = <0x3c>;
-+			};
-+
-+			eeprom@50 {
-+				compatible = "atmel,24c64";
-+				reg = <0x50>;
-+			};
- 		};
+@@ -57,6 +58,178 @@ iio-hwmon {
+ 				<&adc0 4>, <&adc0 5>, <&adc0 6>, <&adc0 7>,
+ 				<&adc1 0>, <&adc1 1>;
  	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led-fan0-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio0 4 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan0-amber {
++			color = <LED_COLOR_ID_AMBER>;
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio0 5 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan1-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio0 10 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan1-amber {
++			color = <LED_COLOR_ID_AMBER>;
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio0 11 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan2-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio1 4 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan2-amber {
++			color = <LED_COLOR_ID_AMBER>;
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio1 5 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan3-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio1 10 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan3-amber {
++			color = <LED_COLOR_ID_AMBER>;
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio1 11 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan4-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio0 2 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan4-amber {
++			color = <LED_COLOR_ID_AMBER>;
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio0 3 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan5-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio0 8 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan5-amber {
++			color = <LED_COLOR_ID_AMBER>;
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio0 9 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan6-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio1 2 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan6-amber {
++			color = <LED_COLOR_ID_AMBER>;
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio1 3 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan7-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio1 8 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan7-amber {
++			color = <LED_COLOR_ID_AMBER>;
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio1 9 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan8-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio0 0 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan8-amber {
++			color = <LED_COLOR_ID_AMBER>;
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio0 1 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan9-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio0 6 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan9-amber {
++			color = <LED_COLOR_ID_AMBER>;
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio0 7 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan10-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio1 0 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan10-amber {
++			color = <LED_COLOR_ID_AMBER>;
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio1 1 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan11-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio1 6 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-fan11-amber {
++			color = <LED_COLOR_ID_AMBER>;
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio1 7 GPIO_ACTIVE_HIGH>;
++		};
++	};
  };
+ 
+ &uart1 {
+@@ -840,7 +1013,7 @@ eeprom@52 {
+ 				reg = <0x52>;
+ 			};
+ 
+-			gpio@61 {
++			led_gpio1: gpio@61 {
+ 				compatible = "nxp,pca9552";
+ 				reg = <0x61>;
+ 				#address-cells = <1>;
+@@ -892,7 +1065,7 @@ eeprom@52 {
+ 				reg = <0x52>;
+ 			};
+ 
+-			gpio@61 {
++			led_gpio0: gpio@61 {
+ 				compatible = "nxp,pca9552";
+ 				reg = <0x61>;
+ 				#address-cells = <1>;
 -- 
 2.25.1
 
