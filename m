@@ -1,70 +1,54 @@
-Return-Path: <linux-kernel+bounces-321415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE916971A2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:58:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A4EF971A30
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 260861C21C1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:58:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48DF528521E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CCD1B78F7;
-	Mon,  9 Sep 2024 12:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7185D1B81D8;
+	Mon,  9 Sep 2024 12:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bjT1SrN8"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IeckOiqj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCB41B4C4F
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDABD1B81B3;
+	Mon,  9 Sep 2024 12:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725886692; cv=none; b=DAZtFH/sP3KaZtrHYLgQI3hEMIl20C0gOUPG4rA8lomHRFJPbru0gm+t3frKs0rZBqyzEbfLM4u99JjyIF7BefOptdVCx4cE5JdiPRXUaoHc8Kbjdi9RgaQqMc5UVkPak8Hse8tB4woxSg5Y9Sd5ZWLuCKoSjofA3SXUWiO9ZS4=
+	t=1725886757; cv=none; b=CiPVQwr5TGN4L80sc0KDnRxO077mxndNPgwqoBhejpMwGpSYal7aSgTp6ElVx8AFAEYX2yrWiNk/sTVOdQ0kv0L9DcDea0oqW3YRKYUaooMAckJ6dYFr6rEDAjZuU4ccWMyn+POLs8BO4gsyL8QzNLy4o27wHEZ/Wlmi7gvleHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725886692; c=relaxed/simple;
-	bh=ZpnocGD3VaBOcTHVLGeKcx/oLO7/CPdPhguOFHXp8Zk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Gp2pTb/+QJiIOE5QprlVvDQ+wZbr8ecjvYACOtN9atROu2EUXmWQFicGI7tlQwPwTjYn5K9mGVHpBSdzJhmJhT+ArxzU3bFUuFAMFXPJyLTPuVy6l+6NIZzguZ3jvYzjZ6AtgsVMZkYt0BZRlzRHMrTm/L6Wii2JT26T1/nPeck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bjT1SrN8; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 057E240E0284;
-	Mon,  9 Sep 2024 12:58:09 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id PP-SypyLXrOA; Mon,  9 Sep 2024 12:58:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1725886684; bh=k2B8zAy6jgdBzYEuqd4KPdP5XftBCf3jUigky1RDHdw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bjT1SrN8v3diSo6Wd1y6V39+VL77mR190Vt3uNg9fP2M2RJiMcn8MwK8i6HPtvr1q
-	 E8Aj2zQuH+ALKU0FjTa+iqwq/ucbo1m/cgNCGfPdVjE2mZPCAB3AiiGECcuE9SFDB5
-	 Ryp0T+lVvb7OvaCBsYGpzMoQx0HkEvt6vvPavdlUaGfQHtbLVhEOA/jFlgOqqfygzJ
-	 84qzfksjZygX7RqpJ47iMjoYh4lg4RTt0VKPuF6ruL1ZAdbZ6H8kd25kpMzfWWUehM
-	 TeR3uWr0AxtH73N48R/YkveGq2v8DZwM7QzHDrpQxkVEEJTo1MP1U5vhjjgQfxf+fy
-	 2vCDzO5G3FV8Qp9QaSuTSuAF2LT0jaWDl9R/pGeodV/6lw7Dze9/GJPYuxlfgf4GWp
-	 zuhd/Xe1jftFkIf60PCbCTbWApVZIn6DLb32/yxSoDYTXvVzz5ri58Kbr/OvtKriLl
-	 JWTvtAgEkAhzBQtFThbS8DaHVmTO1Rr3XRtbi9Z4G4r0eLIVQBqUfUcVFD2dk0yoKU
-	 KgcomZl+BRmHlVgvMlrBBXLWBpVVZLU6TO0bPdERpPZCxti/iW4BJLhfyp3si4ppoX
-	 Kv+Tne/JausbeFpFqvfh06Qc9F2jL0uOPfWp/QFNd68Ru+YiVTeCl/j+Rv41oCpWIG
-	 BC1WguEIcIIECNW1a1v2cvRg=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B64F540E0185;
-	Mon,  9 Sep 2024 12:58:01 +0000 (UTC)
-Date: Mon, 9 Sep 2024 14:58:00 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/sev for v6.12-rc1
-Message-ID: <20240909125800.GAZt7w2DcMRPncqQ1w@fat_crate.local>
+	s=arc-20240116; t=1725886757; c=relaxed/simple;
+	bh=dllIAoskj63/l7eTQ2o/TraRKUCuPi5qpjotFRb2y4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pqSQybySr0umuNNcxSH+JrTTpR2p2WohalTYJc4GVAaA9++3Tlhn9OWZIpgsMbzxJJ4Brmst2H9i5Dnfq7kf6GFK2oUHsalNspgH9QWM59tvYdfMlzyWAKvnAao1lSbNLdBO8ihpIHBdw101jENxuih1q19K1Ic333GblnsYF4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IeckOiqj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15257C4CEC5;
+	Mon,  9 Sep 2024 12:59:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725886757;
+	bh=dllIAoskj63/l7eTQ2o/TraRKUCuPi5qpjotFRb2y4s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IeckOiqj41XCDDZIUeMP+ut0ZxJpsgx4r29B7y+TzoKqJ/qLGKP3sxA/AC3m/KVlK
+	 bNEJbCpC0hXPM91R8gqVwaHuEnDihVhPaM+QFeDuTo3EWHMN4kp8IAJ75+LNal4mLd
+	 4cGZCkO6cPV0lz2B+5GNz2UDpp2VLri+tjhZrQ3HLgrDH+1FZGwiR2WtcZoKR+ntz2
+	 c0wcmJZlT+dO3bIPTwF7C6ea/w1uAJfhHbwC1OCMN5Vvt/izsONXc/JuT/tl3ZmuU2
+	 h4R+bFnuqzSsO+0YpMDkivNpIuZj4i2q4qEt9r8Od+9wxBSUtvPmA2arkgVl5H+ffq
+	 DhPLXcRuxyXgg==
+Date: Mon, 9 Sep 2024 14:59:13 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: mszeredi@redhat.com, linux-fsdevel@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/3] fs/fuse: convert to use invalid_mnt_idmap
+Message-ID: <20240909-unflexibel-darin-9b3fdd17fe6f@brauner>
+References: <20240906143453.179506-1-aleksandr.mikhalitsyn@canonical.com>
+ <20240906143453.179506-3-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,46 +57,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20240906143453.179506-3-aleksandr.mikhalitsyn@canonical.com>
 
-Hi Linus,
+On Fri, Sep 06, 2024 at 04:34:53PM GMT, Alexander Mikhalitsyn wrote:
+> We should convert fs/fuse code to use a newly introduced
+> invalid_mnt_idmap instead of passing a NULL as idmap pointer.
+> 
+> Suggested-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> ---
 
-please pull some x86 SEV cleanups for v6.12-rc1.
-
-Thx.
-
----
-
-The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
-
-  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_sev_for_v6.12_rc1
-
-for you to fetch changes up to 2b9ac0b84c2cae91bbaceab62df4de6d503421ec:
-
-  virt: sev-guest: Ensure the SNP guest messages do not exceed a page (2024-08-27 10:35:38 +0200)
-
-----------------------------------------------------------------
-- A bunch of cleanups to the sev-guest driver. All in preparation for
-  future SEV work
-
-----------------------------------------------------------------
-Nikunj A Dadhania (4):
-      virt: sev-guest: Replace dev_dbg() with pr_debug()
-      virt: sev-guest: Rename local guest message variables
-      virt: sev-guest: Fix user-visible strings
-      virt: sev-guest: Ensure the SNP guest messages do not exceed a page
-
- arch/x86/include/asm/sev.h              |   2 +-
- drivers/virt/coco/sev-guest/sev-guest.c | 132 ++++++++++++++++----------------
- 2 files changed, 69 insertions(+), 65 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
