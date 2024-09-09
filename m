@@ -1,265 +1,132 @@
-Return-Path: <linux-kernel+bounces-320743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1342970FC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:28:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A135970FD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9947528288A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:28:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75CC11C222F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D541B531A;
-	Mon,  9 Sep 2024 07:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358491B0104;
+	Mon,  9 Sep 2024 07:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdIchWOr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wbnXSlQN"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B711B14FA;
-	Mon,  9 Sep 2024 07:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3131B0109
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 07:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725866680; cv=none; b=amrBRajNRHrZ2CbIpaA9Mp8dK/iAIWgpep4xay4/SNXeU3ms10LjkylGWjK/IKirCzqnvldxZzmn51Z3p2yXtUA90u972pg3wrt1tNy3tvWYvWm4Vy0GsUPpSt5X5OH8gTueYkmcdbgektPu1drS+wKNXtMtFPNB+XBODdbt9oU=
+	t=1725866705; cv=none; b=MYJJVT+vaXkUHJfxUnjxkAK00VR+a1B2xTIXVr6eh/RMCnVWOxYdzJQwJLv6QxwBTZj+bg6BhmlFY+V4N/vIQMtvYKERsltQFrRaMYmCUCQO7j6YgBQqkl5OONlNQ5lbmexvSL2z4JAv/Fzp+go7WnHw4DS/hh5cuqkjXN+qMSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725866680; c=relaxed/simple;
-	bh=Q1fphv/9rcuC2t7jMyj1Iz2PXhOWNXDZDraMQA0XRCs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ts90ZtpFcfYwtsBxzWAkn1tNFgbT8VY+sZf21IOE+NEeXJ6EiZ15+tqpyLTNA5rS/GupngcD2Lq0LQHfcBEeZQhmu4BeJWYPTQDCvjbMZkBvrApYzsPgEb0Nv1mk9fcWx1Z0w6mvqDHhhLEiPaPaQsJg+iGFQ+PdnoesTOmZ92E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdIchWOr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 15478C4CEDF;
-	Mon,  9 Sep 2024 07:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725866680;
-	bh=Q1fphv/9rcuC2t7jMyj1Iz2PXhOWNXDZDraMQA0XRCs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=fdIchWOrkitYVhj3lYmbQ7Gychz7zGQVlc6Kpvd3hfWNu3oMduqa+F08lZ08VZUNl
-	 whVMrlm0VEWNz29aXZNvl2FgFQ5YJvCeyND8jiB4wPwz9BejJTxVLBeoMxEzmxmuxZ
-	 lfYysL/pZq5c7YotVsXx9+W9lKav2aO4p9a353VbNqOjhD6Q15cn8z3Ym+gf3t+m/w
-	 gzFJGC7XQShs/Nfy8ahsKKN5oPnagMmjUPLa2BrddVZxdZdFukmSmzNXPDdkBpJkYH
-	 mAe1or0XF2LPEn13Vc7qSZnyyGdGfDKw5dL2vOhsHBVpiTzzCFYXr/9kb7na3JdXnv
-	 acxtdFmaHZ/Lw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F554ECE57B;
-	Mon,  9 Sep 2024 07:24:40 +0000 (UTC)
-From: Keke Li via B4 Relay <devnull+keke.li.amlogic.com@kernel.org>
-Date: Mon, 09 Sep 2024 15:24:19 +0800
-Subject: [PATCH v2 9/9] Documentation: media: add documentation file
- c3-isp.rst
+	s=arc-20240116; t=1725866705; c=relaxed/simple;
+	bh=BZotEzAdsPB94eiOlgoBZGZBcUmxpW2YmTdHkRGyeUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lv+ChwTD5ckU/uCgBD7Cn6do26DY6sHU3V2J5dAbE0cjNunFmjwzH3Lv+79YcF3dBFFgCS2Hufiy+uWbHRN3MbVdOvP1go2REbDfCHHsGxHOU/TEMzzQfMN7qSOTfiRMUPR6VuMoV+L8j+QJXdnqd5fpdydiVUh/gwWn2C35mYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wbnXSlQN; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7d4ed6158bcso2812310a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 00:25:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725866703; x=1726471503; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0rtKtc8xxmphgoE5GQqKgmgbEHiytNC7qXwrkhYLtAU=;
+        b=wbnXSlQNUX98Ytlx8rfJQJi3M2xgmePSw/t90Qke/hlbxZdfDGogPTzEcY3MiB2SYy
+         q4LZvs+dfK0k8jB9kOlrufwnvXc/UzrTVOElptRUcwf60AbCaKtOOcq/Gpyg6gVJHJSS
+         G5sxo9Wi5DsUCEImBIp/HdT05b4ysiikGgz3mFCZabVu0BBdLh9+owgXFOOBB0Mvho/C
+         zvTjE/fv2SZY6eCd12jNHpNtEkNJGtrwm6oSt7ZuiYvZnS939Xj4wbDvj2S4SakHKtXO
+         1VipXSgmCrAIvjuPAXTH7dcJJpmYKJ8Ajf4YGuSsNu3MO/5XxJsZ4p1JVlU2H6X5Sr9P
+         5xeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725866703; x=1726471503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0rtKtc8xxmphgoE5GQqKgmgbEHiytNC7qXwrkhYLtAU=;
+        b=SfUlhwJ0e2KpBgsY0uoNrYDOULiREZsx6H61BZa9WYnmk/ZSg3Z657/iNaAJ4W5qEC
+         zmTEe5F/3ebrG7swqkW0ApW3DDFRM1rRHLRLOnGRHLM2oiFiq+4/1lUEPJy6ZKTCDL9C
+         T15+I3FrsvuLUg1a6iMESC1xfnx44LsVgJayMBqupPv3JGe/8MMa8Wse/lE5WLIcz0gb
+         OhBKhEl9Zge+xdfTnW2TxVTIAkOHnigoN6PYFv5hxRj2022+b4zG9DLHTMok2VkcEzkj
+         3RBELzE/qiE04JX5wGzHoaoFXOUMcq4hoje7BvdLkzYg5/s84iAcb7Y2n6bmM7syF8GQ
+         vX4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXwCqxVZ0aj1Ixm3qk+a3YGv5ESxNZMdbdnNxhhhmpXeYwT8OTptG9OW3BjaBYwZl6xvRawA0vDYgUN+Ns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnP53EXnngUyst2hGoKdyXnY5kkgAgxREuN6GMM4VCfFnGX9ZT
+	/tsr4cdwZOTJHhBKmkeSRWb4dUCK9Xr+1BY+88q6aBv4YBCYP5mhqZnpLvRi0A2y/n0r0to/Pk2
+	i57GeK8LhLlT58dmtuoK/EfrlUCc6oA0VNC7FqbIYEc0utZMvWQ==
+X-Google-Smtp-Source: AGHT+IHk3xn4SEFbGV8Z445z8HBYrpGc+S7MEpBlNXInTMlAY54YC5wfJaqH9O2o0xnn7hwCBPkBNlNuKiP9EQVDm4U=
+X-Received: by 2002:a05:6a21:4d8a:b0:1cf:37f8:7a23 with SMTP id
+ adf61e73a8af0-1cf37f87d59mr2904160637.41.1725866702955; Mon, 09 Sep 2024
+ 00:25:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240909-c3isp-v2-9-3c866a1cea56@amlogic.com>
-References: <20240909-c3isp-v2-0-3c866a1cea56@amlogic.com>
-In-Reply-To: <20240909-c3isp-v2-0-3c866a1cea56@amlogic.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com, 
- laurent.pinchart@ideasonboard.com, dan.scally@ideasonboard.com, 
- Keke Li <keke.li@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725866660; l=7370;
- i=keke.li@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=YTakAYx84g0TgdRm+4VZZoiQabR9jqtyfMu7f8UQ3P0=;
- b=I8RMk++oabUd+d0burnDCZr5v1o4h0EvVUFOBugBZ4lnw582NMg3/EnWxtx3p1Z6Nw/5jOi7s
- mk9WFuQb+tIDGDMeIGLmURagsjqsSOAuM0ZAewzt7P7gVMfc/01jXNb
-X-Developer-Key: i=keke.li@amlogic.com; a=ed25519;
- pk=XxNPTsQ0YqMJLLekV456eoKV5gbSlxnViB1k1DhfRmU=
-X-Endpoint-Received: by B4 Relay for keke.li@amlogic.com/20240902 with
- auth_id=204
-X-Original-From: Keke Li <keke.li@amlogic.com>
-Reply-To: keke.li@amlogic.com
+References: <20240909-fix_amba-v1-0-4658eed26906@quicinc.com>
+In-Reply-To: <20240909-fix_amba-v1-0-4658eed26906@quicinc.com>
+From: Saravana Kannan <saravanak@google.com>
+Date: Mon, 9 Sep 2024 00:24:26 -0700
+Message-ID: <CAGETcx9X0m3=8PPtVsHp=AAjyCoUZ0-53H5RzVd4HCDtWRS0Fw@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/3] amba: bus: Move reading periphid operation from
+ amba_match() to amba_probe()
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Russell King <linux@armlinux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Isaac Manjarres <isaacmanjarres@google.com>, Lu Baolu <baolu.lu@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Keke Li <keke.li@amlogic.com>
+On Sun, Sep 8, 2024 at 4:38=E2=80=AFPM Zijun Hu <zijun_hu@icloud.com> wrote=
+:
+>
+> This patch series is to make amba_match(), as bus_type @amba_bustype's
+> match(), also follow below ideal rule:
+>
+> bus_type's match() should only return bool type compatible integer 0 or
+> 1 ideally since its main operations are lookup and comparison normally.
+>
+> Which has been followed by match() of all other bus_types in current
+> kernel tree.
 
-Add the file 'c3-isp.rst' that documents the c3-isp driver.
+The intent or need for this patch series is completely unclear. The
+code you are moving around was also pretty delicate and hard to get
+right.
 
-Signed-off-by: Keke Li <keke.li@amlogic.com>
----
- Documentation/admin-guide/media/c3-isp.dot      | 26 +++++++
- Documentation/admin-guide/media/c3-isp.rst      | 96 +++++++++++++++++++++++++
- Documentation/admin-guide/media/v4l-drivers.rst |  1 +
- MAINTAINERS                                     | 10 +++
- 4 files changed, 133 insertions(+)
+Without a much better description for why we need this, I'd like to
+give this a NACK.
 
-diff --git a/Documentation/admin-guide/media/c3-isp.dot b/Documentation/admin-guide/media/c3-isp.dot
-new file mode 100644
-index 000000000000..0cc1b8b96404
---- /dev/null
-+++ b/Documentation/admin-guide/media/c3-isp.dot
-@@ -0,0 +1,26 @@
-+digraph board {
-+	rankdir=TB
-+	n00000001 [label="{{<port0> 0 | <port1> 1} | isp-core\n/dev/v4l-subdev0 | {<port2> 2 | <port3> 3}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000001:port3 -> n00000006:port0 [style=bold]
-+	n00000001:port3 -> n00000009:port0 [style=bold]
-+	n00000001:port3 -> n0000000c:port0 [style=bold]
-+	n00000001:port2 -> n00000020 [style=bold]
-+	n00000006 [label="{{<port0> 0} | isp-resizer0\n/dev/v4l-subdev1 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000006:port1 -> n00000014 [style=bold]
-+	n00000009 [label="{{<port0> 0} | isp-resizer1\n/dev/v4l-subdev2 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000009:port1 -> n00000018 [style=bold]
-+	n0000000c [label="{{<port0> 0} | isp-resizer2\n/dev/v4l-subdev3 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n0000000c:port1 -> n0000001c [style=bold]
-+	n0000000f [label="{{<port0> 0} | mipi-adapter\n/dev/v4l-subdev4 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n0000000f:port1 -> n00000001:port0 [style=bold]
-+	n00000014 [label="isp-video0\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
-+	n00000018 [label="isp-video1\n/dev/video1", shape=box, style=filled, fillcolor=yellow]
-+	n0000001c [label="isp-video2\n/dev/video2", shape=box, style=filled, fillcolor=yellow]
-+	n00000020 [label="isp-stats\n/dev/video3", shape=box, style=filled, fillcolor=yellow]
-+	n00000024 [label="isp-params\n/dev/video4", shape=box, style=filled, fillcolor=yellow]
-+	n00000024 -> n00000001:port1 [style=bold]
-+	n00000038 [label="{{<port0> 0} | mipi-csi2\n/dev/v4l-subdev5 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000038:port1 -> n0000000f:port0 [style=bold]
-+	n0000003d [label="{{} | imx290 2-001a\n/dev/v4l-subdev6 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n0000003d:port0 -> n00000038:port0 [style=bold]
-+}
-diff --git a/Documentation/admin-guide/media/c3-isp.rst b/Documentation/admin-guide/media/c3-isp.rst
-new file mode 100644
-index 000000000000..fab10c962465
---- /dev/null
-+++ b/Documentation/admin-guide/media/c3-isp.rst
-@@ -0,0 +1,96 @@
-+.. SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-+
-+.. include:: <isonum.txt>
-+
-+=================================================
-+Amlogic C3 Image Signal Processing (C3ISP) driver
-+=================================================
-+
-+Introduction
-+============
-+
-+This file documents the Amlogic C3ISP driver located under
-+drivers/media/platform/amlogic/c3-isp.
-+
-+The current version of the driver supports the C3ISP found on
-+Amlogic C308L processor.
-+
-+The driver implements V4L2, Media controller and V4L2 subdev interfaces.
-+Camera sensor using V4L2 subdev interface in the kernel is supported.
-+
-+The driver has been tested on AW419-C308L-Socket platform.
-+
-+Anlogic Camera hardware
-+=======================
-+
-+The Camera hardware found on C308L processors and supported by
-+the driver consists of:
-+
-+- 1 MIPI-CSI2 module. It handle the Physical layer of the CSI2 receivers and
-+  receive MIPI data.
-+  A separate camera sensor can be connected to MIPI-CSi2 module.
-+- 1 MIPI-ADAPTER module. Organize MIPI data to meet ISP input requirements and
-+  send MIPI data to ISP
-+- 1 ISP (Image Signal Processing) module. Contain a pipeline of image processing
-+  hardware blocks.
-+  The ISP pipeline contains three scalers at the end.
-+  The ISP also contains the DMA interface which writes the output data to memory.
-+
-+Supported functionality
-+=======================
-+
-+The current version of the driver supports:
-+
-+- Input from camera sensor via MIPI-CSI2;
-+
-+- Pixel output interface of ISP
-+
-+  - Scaling support. Configuration of the scaler module
-+    for downscalling with ratio up to 8x.
-+
-+Driver Architecture and Design
-+==============================
-+
-+The driver implements the V4L2 subdev interface. With the goal to model the
-+hardware links between the modules and to expose a clean, logical and usable
-+interface, the driver is split into V4L2 sub-devices as follows:
-+
-+- 1 mipi-csi2 sub-device - mipi-csi2 is represented by a single sub-device.
-+- 1 mipi-adapter sub-device - mipi-adapter is represented by a single sub-devices.
-+- 1 isp-core sub-device - isp-core is represented by a single sub-devices.
-+- 3 isp-resizer sub-devices - isp-resizer is represented by a number of sub-devices
-+  equal to the number of capture device.
-+
-+isp-core sub-device is linked to 2 separate video device nodes and
-+3 isp-resizer sub-devices nodes.
-+
-+- 1 capture statistics video device node.
-+- 1 output parameters video device node.
-+- 3 isp-resizer sub-device nodes.
-+
-+isp-resizer sub-device is linked to capture video device node.
-+
-+- isp-resizer0 is linked to isp-cap0
-+- isp-resizer1 is linked to isp-cap1
-+- isp-resizer2 is linked to isp-cap2
-+
-+The media controller pipeline graph is as follows (with connected a
-+IMX290 camera sensor):
-+
-+.. _isp_topology_graph:
-+
-+.. kernel-figure:: c3-isp.dot
-+    :alt:   c3-isp.dot
-+    :align: center
-+
-+    Media pipeline topology
-+
-+Implementation
-+==============
-+
-+Runtime configuration of the hardware via 'isp-params' video device node.
-+Acquiring statistics of ISP hardware via 'isp-stats' video device node.
-+Acquiring output image of ISP hardware via 'isp-video[0, 2]' video device node.
-+
-+The output size of the scaler module in the ISP is configured with
-+the pixel format of 'isp-video[0, 2]' video device node.
-diff --git a/Documentation/admin-guide/media/v4l-drivers.rst b/Documentation/admin-guide/media/v4l-drivers.rst
-index b6af448b9fe9..be0a8a860f39 100644
---- a/Documentation/admin-guide/media/v4l-drivers.rst
-+++ b/Documentation/admin-guide/media/v4l-drivers.rst
-@@ -10,6 +10,7 @@ Video4Linux (V4L) driver-specific documentation
- 	:maxdepth: 2
- 
- 	bttv
-+	c3-isp
- 	cafe_ccic
- 	cx88
- 	fimc
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c682e83dff31..4a9afbc6de1c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4887,6 +4887,16 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/net/can/st,stm32-bxcan.yaml
- F:	drivers/net/can/bxcan.c
- 
-+C3 ISP DRIVER FOR AMLOGIC
-+M:	Keke Li <keke.li@amlogic.com>
-+L:	linux-media@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/admin-guide/media/c3-isp.dot
-+F:	Documentation/admin-guide/media/c3-isp.rst
-+F:	Documentation/devicetree/bindings/media/amlogic,c3-isp.yaml
-+F:	Documentation/userspace-api/media/v4l/metafmt-c3-isp.rst
-+F:	drivers/media/platform/amlogic/c3-isp/
-+
- C3 MIPI ADAPTER DRIVER FOR AMLOGIC
- M:	Keke Li <keke.li@amlogic.com>
- L:	linux-media@vger.kernel.org
+Also, patch 3/3 is not at all easy to understand and seems to be doing
+way more than what the commit message is trying to do.
 
--- 
-2.46.0
+-Saravana
 
-
+>
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+> Zijun Hu (3):
+>       amba: bus: Warn on adding an AMBA device without valid periphid
+>       amba: bus: Move empty @amba_proxy_drv's definition to the front
+>       amba: bus: Move reading periphid operation from amba_match() to amb=
+a_probe()
+>
+>  drivers/amba/bus.c       | 130 ++++++++++++++++++++++++++---------------=
+------
+>  include/linux/amba/bus.h |   1 -
+>  2 files changed, 72 insertions(+), 59 deletions(-)
+> ---
+> base-commit: 888f67e621dda5c2804a696524e28d0ca4cf0a80
+> change-id: 20240829-fix_amba-0f09aa1fc3b1
+>
+> Best regards,
+> --
+> Zijun Hu <quic_zijuhu@quicinc.com>
+>
 
