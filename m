@@ -1,103 +1,115 @@
-Return-Path: <linux-kernel+bounces-321849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C41972057
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:22:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EE0C972052
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:21:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A5301C23719
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:22:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8DFE283D0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46170170A26;
-	Mon,  9 Sep 2024 17:22:09 +0000 (UTC)
-Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9B3172773;
+	Mon,  9 Sep 2024 17:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N1Tyz1gs"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8830116BE0D;
-	Mon,  9 Sep 2024 17:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900A316DC12
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902528; cv=none; b=JIT6azr6NH7A5c8Kwigv+tqnlqx/vEQFkYyBhSCedG/z9zwFknv0BCmffjDcNfp/36unNz9jf2xjqjSf0eUeZavTc64Np92r71Z9jvMq13vztKHKIMNiNq+OLdXgQONVb1LzPLoDgpxhJ5KyiixfSk2Fo2KndEdR8TapY/mZBSw=
+	t=1725902460; cv=none; b=F53TxyefU3y4WNsR5fBChyKHEq2JQp0LeZA7PtLOe6xJsYNZw15w+ySxijy1w7saBdK34pZ8pWOJH8xxJfLR79+tRsfW8VsQbNKSCWoCQ2eoqW+NiPti7Zqyj2T8jIxBr4YSQP6YiQ/jRGL6MTqQokypPpPOt6iO+3hHY30YzGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902528; c=relaxed/simple;
-	bh=DzTpytYGvgdN0PHH7Y9LUIfnfmObdHK1eIzDaF1+Mk0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e5WRXIgxgcJbYOitfPcKN+8AKWNmP+WMW9BjinA15hKYvBkrNh0MNoTLfbQjWDlbn8ehoHoul1+akX3py2RDkOI1/uy4HDdyvD/Al82Fzr80d4FlJpsROu0L9NPBFKuifQiC/hLs6AWGU5L9xzaQphDxQiG6SMTdWL7wtDqtDJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; arc=none smtp.client-ip=43.154.197.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-X-QQ-mid: bizesmtpsz3t1725902448twab10l
-X-QQ-Originating-IP: +5iLoBII1Ivhz94e4UdgQWic1w1egFqCbuPe+rQNgVM=
-Received: from localhost.localdomain ( [183.193.124.18])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 10 Sep 2024 01:20:44 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16883648514648128508
-From: Kaixin Wang <kxwang23@m.fudan.edu.cn>
-To: logang@deltatee.com
-Cc: 21302010073@m.fudan.edu.cn,
-	21210240012@m.fudan.edu.cn,
-	dave.jiang@intel.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kurt.schwemmer@microsemi.com,
-	bhelgaas@google.com,
-	Kaixin Wang <kxwang23@m.fudan.edu.cn>
-Subject: [PATCH] ntb: ntb_hw_switchtec: Fix use after free vulnerability in switchtec_ntb_remove due to race condition
-Date: Tue, 10 Sep 2024 01:20:07 +0800
-Message-Id: <20240909172007.1863-1-kxwang23@m.fudan.edu.cn>
-X-Mailer: git-send-email 2.39.1.windows.1
+	s=arc-20240116; t=1725902460; c=relaxed/simple;
+	bh=CFGndf6+Xj/OcozYle3EJLLaDe3XNlSVsUPxx6tiLjI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DjdvAY45g6AdElp3xWw+mu/rbPa9g/aPjcLFhtdz3vBK3an5BaMc+V4CciYr1LOZRYeZcFKhswO9DzbTMVPxf4Dt7ptzYV2brT7x9bdqeOL9d3KaxE7OjeXH5e1GdlVaQiFE/MfSf76cTw+wg0ak0v4mj4+y4P8/6J1bX4iJmzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N1Tyz1gs; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c26852aff1so5170002a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 10:20:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725902457; x=1726507257; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CFGndf6+Xj/OcozYle3EJLLaDe3XNlSVsUPxx6tiLjI=;
+        b=N1Tyz1gsYTR+RD4N6oP9E3fWeqETO/xWc6Sn1arnbuAL2Z8uvvJ5sfTOcnldIoDLS7
+         jCuqpm4dCm6ejuR+JPLUyKP0JB7Ano9juJeTkBxOZYFGQGDxEdFoZXHH1Fahb4248RRL
+         wB4CKHtrAmffSSe3KFjgdyo251RqCEqMS2k/h+9+b1MHskLjpeiGaN2f+fRd3e+xJDNs
+         Z0UIUMpQBf+yVigkQ1JagBdRqdX8YG3mYNrmm2U6nhCdUcgfZB491jLcf0SOl67O4Rr+
+         kgKy+s3aToc6cAHh8LO8OVSwUAP9V5w31+m/x2WNj3rxHLKZVGiY8RWeFYvnc5YyhtyY
+         LJ1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725902457; x=1726507257;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CFGndf6+Xj/OcozYle3EJLLaDe3XNlSVsUPxx6tiLjI=;
+        b=QCb16U6u7kp78GWSF99winQdevP3hKxY+xuuhDlT2QuTZ5AP1g+PZ01BImesLsnOd4
+         9dJ23axDZzgBfyyV7Y2+2Nw7KAsDAxQyR54xmRpTPPPBbN2PB/KPu4cM1q8e93uScBWb
+         XAzmiQVwbI1G0BzD5rPJ4yBShWWKFyl3pozj/KPloHxCxLJWdLVjUpVfFw8SvfF3xm3o
+         yH26Dlh+t0bQ7dHAG4v1b+W/J7dmgKHUS9Nxmgc3ZW8HyGwtebicc0SgtKyJ++qdg5p2
+         eNZGEW6vSgvG8PzZ4A8Yi9ltUDRJFP37EN8sIEaY+5ll+jFYWJjUBa9J4oC0/U0SdBPB
+         xskA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+3f0EBR2Z1fWuhx0xQaBnDfhI6T7ETK65FoMRCtIjBP1b1V+n8kKdzBQ2TnHkAzcwH0zREVQvnmmbStE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNMvuxgNOIJe7Ol9g6mnV+bnTiNnThdj1vwdxGqnL1WZB1PDu7
+	lSYYCXoBQiaWvBNcSFcmbxfrZHDB1RxI/ioGLtS85mnvAzkfCVauJXHI2Y29rZXs3xHc86wxT+q
+	5ZPjHNRYGmPNeWPGTn/q913wPal6IclFL0Qv2
+X-Google-Smtp-Source: AGHT+IHEMkXRi8Qojfd5ZuTkY9ul6MC80RogKg7lfulxwokHMBECv3XZL6XRA4yYXJEOQGWoOekFvGU/bnyKPClSXW4=
+X-Received: by 2002:a17:907:1c23:b0:a8d:2e3a:5303 with SMTP id
+ a640c23a62f3a-a8d2e3a54c6mr540762566b.39.1725902456088; Mon, 09 Sep 2024
+ 10:20:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:m.fudan.edu.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
+References: <20240905173422.1565480-1-shakeel.butt@linux.dev>
+ <CAJD7tkbWLYG7-G9G7MNkcA98gmGDHd3DgS38uF6r5o60H293rQ@mail.gmail.com>
+ <qk3437v2as6pz2zxu4uaniqfhpxqd3qzop52zkbxwbnzgssi5v@br2hglnirrgx>
+ <572688a7-8719-4f94-a5cd-e726486c757d@suse.cz> <CAJD7tkZ+PYqvq6oUHtrtq1JE670A+kUBcOAbtRVudp1JBPkCwA@mail.gmail.com>
+ <e7ec0800-f551-4b32-ad26-f625f88962f1@suse.cz> <CAJD7tkZNGETjvuA97=PGy-MfmF--n6GdSfOCHboScP+wN1gTag@mail.gmail.com>
+ <bda30291-ab04-4b72-89c1-b4cb4373cfce@suse.cz>
+In-Reply-To: <bda30291-ab04-4b72-89c1-b4cb4373cfce@suse.cz>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 9 Sep 2024 10:20:18 -0700
+Message-ID: <CAJD7tkZpbS-ArHC16sfysKcWjM0BwQCuNoKAQhRoPA-OV5Mv1A@mail.gmail.com>
+Subject: Re: [PATCH v4] memcg: add charging of already allocated slab objects
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Eric Dumazet <edumazet@google.com>, "David S . Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>, 
+	cgroups@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In the switchtec_ntb_add function, it can call switchtec_ntb_init_sndev
-function, then &sndev->check_link_status_work is bound with
-check_link_status_work. switchtec_ntb_link_notification may be called
-to start the work.
+On Mon, Sep 9, 2024 at 12:59=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> On 9/6/24 19:38, Yosry Ahmed wrote:
+> >> But in case of kmalloc() the allocation must have been still attempted=
+ with
+> >> __GFP_ACCOUNT so a kmalloc-cg cache is used even if the charging fails=
+.
+> >
+> > It is still possible that the initial allocation did not have
+> > __GFP_ACCOUNT, but not from a KMALLOC_NORMAL cache (e.g. KMALLOC_DMA
+> > or KMALLOC_RECLAIM). In this case kmem_cache_charge() should still
+> > work, right?
+>
+> Yeah it would work, but that's rather a corner case implementation detail=
+ so
+> it's better to just require __GFP_ACCOUNT for kmalloc() in the comment.
 
-If we remove the module which will call switchtec_ntb_remove to make
-cleanup, it will free sndev through kfree(sndev), while the work
-mentioned above will be used. The sequence of operations that may lead
-to a UAF bug is as follows:
-
-CPU0                                 CPU1
-
-                        | check_link_status_work
-switchtec_ntb_remove    |
-kfree(sndev);           |
-                        | if (sndev->link_force_down)
-                        | // use sndev
-
-Fix it by ensuring that the work is canceled before proceeding with
-the cleanup in switchtec_ntb_remove.
-
-Signed-off-by: Kaixin Wang <kxwang23@m.fudan.edu.cn>
----
- drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-index 31946387badf..ad1786be2554 100644
---- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-+++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-@@ -1554,6 +1554,7 @@ static void switchtec_ntb_remove(struct device *dev)
- 	switchtec_ntb_deinit_db_msg_irq(sndev);
- 	switchtec_ntb_deinit_shared_mw(sndev);
- 	switchtec_ntb_deinit_crosslink(sndev);
-+	cancel_work_sync(&sndev->check_link_status_work);
- 	kfree(sndev);
- 	dev_info(dev, "ntb device unregistered\n");
- }
--- 
-2.39.1.windows.1
-
+Fair enough, thanks!
 
