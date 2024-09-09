@@ -1,116 +1,194 @@
-Return-Path: <linux-kernel+bounces-320544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E15D5970BC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:28:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43940970BE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E60FB20E25
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:28:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF729283D58
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98521400A;
-	Mon,  9 Sep 2024 02:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="i8Wxu5kn"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79DE18C332;
+	Mon,  9 Sep 2024 02:38:24 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7851BC39
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 02:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658601422A8;
+	Mon,  9 Sep 2024 02:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725848909; cv=none; b=P2MzTTrT1R+LUmt2n+9gtgIOGKJo8a4BbDaXfBDUQgzbvbtqE7fYBR8gra0dsMaZr7d0q0LZwd172TBIsbnBxdMMblULHEQGpJBVsFOhaMRSdpiiFN76XTCvErjpzoDtwYEyp0Hgyb5pdwnEPqMmaW4lyjYdBcILJmkhj7XkonE=
+	t=1725849504; cv=none; b=UuX/P+JnxsOCrugSl1tx2d9Pd3V7en9Pfklr76+Fo2JCR/BFjGLfkvv/gCNo5BxGduoRllnIuJxxbdDpfYM/yYvSOSfmk2veQ2fN078ZfiIf3KB0QGlfAt3gSnNBGKcR85Lgl0qgfsRyXrRmMcHY4PPA6bCMR35OknkaMyKqZG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725848909; c=relaxed/simple;
-	bh=dun+b2tS5UwAEUb40fqwlBXAf1LnpOHyiv6gVwM9iWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ef6saiLmRcnCqnkrsOT/80CJ48N5IjYnY/F02g41+z0RTrEVmebLz2KhSFZ0oNnd7uwMGYciG7NF4mIAhTyKGhLNheQS6FggBXMrBk5FclWD8EpkV6sFj3uBO3Ihc0WRsH/hZrdEqjDwQGANYvvVQWhSPxZZPfsjYnLlY7O2yPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=i8Wxu5kn; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725848897; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=m889utn8QsE6CPyNbFisRS2RlR4XYhZBEbtQrDwaS0s=;
-	b=i8Wxu5knzb2rwxmCv09Q55C07/1YaRtreJ9toPMSw/7m9VjNylYDFVRjfFydqSp5HmyVFr3OBARTZwOfILrWvZWZu6MzhwPwH0+dvY50PbbyXvZg8l9mPSObkrgvmE6KS5jTzVOE19r9zPQhxiGkEyPkm9BZUkMiGZbAYrpTFyc=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WEVwP4i_1725848893)
-          by smtp.aliyun-inc.com;
-          Mon, 09 Sep 2024 10:28:17 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Colin Walters <walters@verbum.org>
-Subject: [PATCH] erofs: fix incorrect symlink detection in fast symlink
-Date: Mon,  9 Sep 2024 10:28:11 +0800
-Message-ID: <20240909022811.1105052-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1725849504; c=relaxed/simple;
+	bh=3fps/6kG7RtliHQnZfJOMiJ57MYEIGDZ++CfFy4NmY4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=egVPPu2Ff4GyFgUMlBqWx11+6WIfUCQsmu65+VfupmKSV+VahC+9zBRT1dhhvqlQfa90iW/+7cuTmbTEc62ovXvRF9J/cB69NaCO+hq+r18Q4AuiEARQRo1bIV7Sor4z2buRaT4Qi7nZpdmruD+kTBaqqZIvX3DNptJgtZRHj0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X29xL40zcz69X4;
+	Mon,  9 Sep 2024 10:38:14 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2E8D51400FD;
+	Mon,  9 Sep 2024 10:38:18 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 9 Sep 2024 10:38:17 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>
+CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <shaojijie@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<libaihan@huawei.com>, <zhuyuan@huawei.com>, <forest.zhouchang@huawei.com>,
+	<andrew@lunn.ch>, <jdamato@fastly.com>, <horms@kernel.org>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH V8 net-next 00/11] Add support of HIBMCGE Ethernet Driver
+Date: Mon, 9 Sep 2024 10:31:30 +0800
+Message-ID: <20240909023141.3234567-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-Fast symlink can be used if the on-disk symlink data is stored
-in the same block as the on-disk inode, so we don’t need to trigger
-another I/O for symlink data.  However, correctly fs correction could be
-reported _incorrectly_ if inode xattrs are too large.
+This patch set adds the support of Hisilicon BMC Gigabit Ethernet Driver.
 
-In fact, these should be valid images although they cannot be handled as
-fast symlinks.
+This patch set includes basic Rx/Tx functionality. It also includes
+the registration and interrupt codes.
 
-Many thanks to Colin for reporting this!
+This work provides the initial support to the HIBMCGE and
+would incrementally add features or enhancements.
 
-Reported-by: Colin Walters <walters@verbum.org>
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 ---
- fs/erofs/inode.c | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
+ChangeLog:
+v7 -> v8:
+  - Set netdev->pcpu_stat_type to NETDEV_PCPU_STAT_TSTATS, suggested by Jakub
+  v7: https://lore.kernel.org/all/20240905143120.1583460-1-shaojijie@huawei.com/
+v6 -> v7:
+  - Move the define inside the function body to the top of the .c file,
+    suggested by Paolo and Andrew.
+  - Respect the reverse x-mas tree order, suggested by Paolo.
+  - Add check for netif_txq_maybe_stop(), suggested by Paolo.
+  - Use dev_sw_netstats_tx_add() instead of dev->stats, suggested by Paolo.
+  - Modify net_dev to netdev, suggested by Paolo.
+  v6: https://lore.kernel.org/all/20240830121604.2250904-12-shaojijie@huawei.com/
+v5 -> v6:
+  - Delete netif_carrier_off() in .ndo_open() and .ndo_stop(),
+    suggested by Jakub and Andrew.
+  - Remove hbg_txrx_init() from probe path, alloc ring buffer in .ndo_open(),
+    and release ring buffer in .ndo_stop(), suggested by Jakub and Andrew.
+  v5: https://lore.kernel.org/all/20240827131455.2919051-1-shaojijie@huawei.com/
+v4 -> v5:
+  - Delete unnecessary semicolon, suggested by Jakub.
+  v4: https://lore.kernel.org/all/20240826081258.1881385-1-shaojijie@huawei.com/
+v3 -> v4:
+  - Delete INITED_STATE in priv, suggested by Andrew.
+  - Delete unnecessary defensive code in hbg_phy_start()
+    and hbg_phy_stop(), suggested by Andrew.
+  v3: https://lore.kernel.org/all/20240822093334.1687011-1-shaojijie@huawei.com/
+v2 -> v3:
+  - Add "select PHYLIB" in Kconfig, reported by Jakub.
+  - Use ndo_validate_addr() instead of is_valid_ether_addr()
+    in dev_set_mac_address(), suggested by Jakub and Andrew.
+  v2: https://lore.kernel.org/all/20240820140154.137876-1-shaojijie@huawei.com/
+v1 -> v2:
+  - fix build errors reported by kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202408192219.zrGff7n1-lkp@intel.com/
+    Closes: https://lore.kernel.org/oe-kbuild-all/202408200026.q20EuSHC-lkp@intel.com/
+  v1: https://lore.kernel.org/all/20240819071229.2489506-1-shaojijie@huawei.com/
+RFC v2 -> v1:
+  - Use FIELD_PREP/FIELD_GET instead of union, suggested by Andrew.
+  - Delete unnecessary defensive code, suggested by Andrew.
+  - A few other minor changes.
+  RFC v2: https://lore.kernel.org/all/20240813135640.1694993-1-shaojijie@huawei.com/
+RFC v1 -> RFC v2:
+  - Replace linkmode_copy() with phy_remove_link_mode() to
+    simplify the PHY configuration process, suggested by Andrew.
+  - Delete hbg_get_link_status() from the scheduled task, suggested by Andrew.
+  - Delete validation for mtu in hbg_net_change_mtu(), suggested by Andrew.
+  - Delete validation for mac address in hbg_net_set_mac_address(),
+    suggested by Andrew.
+  - Use napi_complete_done() to simplify the process, suggested by Joe Damato.
+  - Use ethtool_op_get_link(), phy_ethtool_get_link_ksettings(),
+    and phy_ethtool_set_link_ksettings() to simplify the code, suggested by Andrew.
+  - Add the check on the return value of phy_connect_direct(),
+    suggested by Jonathan.
+  - Adjusted the layout to place the fields and register definitions
+    in one place, suggested by Jonathan.
+  - Replace request_irq with devm_request_irq, suggested by Jonathan.
+  - Replace BIT_MASK() with BIT(), suggested by Jonathan.
+  - Introduce irq_handle in struct hbg_irq_info in advance to reduce code changes,
+    suggested by Jonathan.
+  - Delete workqueue for this patch set, suggested by Jonathan.
+  - Support to compile this driver on all arch in Kconfig,
+    suggested by Andrew and Jonathan.
+  - Add a patch to add is_valid_ether_addr check in dev_set_mac_address,
+    suggested by Andrew.
+  - A few other minor changes.
+  RFC v1: https://lore.kernel.org/all/20240731094245.1967834-1-shaojijie@huawei.com/
+---
 
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 5f6439a63af7..79a29841ae1c 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -178,12 +178,13 @@ static int erofs_fill_symlink(struct inode *inode, void *kaddr,
- 			      unsigned int m_pofs)
- {
- 	struct erofs_inode *vi = EROFS_I(inode);
--	unsigned int bsz = i_blocksize(inode);
-+	loff_t off;
- 	char *lnk;
- 
--	/* if it cannot be handled with fast symlink scheme */
--	if (vi->datalayout != EROFS_INODE_FLAT_INLINE ||
--	    inode->i_size >= bsz || inode->i_size < 0) {
-+	/* check if it cannot be handled with fast symlink scheme */
-+	if (vi->datalayout != EROFS_INODE_FLAT_INLINE || inode->i_size < 0 ||
-+	    check_add_overflow(m_pofs + vi->xattr_isize, inode->i_size, &off) ||
-+	    off > i_blocksize(inode)) {
- 		inode->i_op = &erofs_symlink_iops;
- 		return 0;
- 	}
-@@ -192,16 +193,6 @@ static int erofs_fill_symlink(struct inode *inode, void *kaddr,
- 	if (!lnk)
- 		return -ENOMEM;
- 
--	m_pofs += vi->xattr_isize;
--	/* inline symlink data shouldn't cross block boundary */
--	if (m_pofs + inode->i_size > bsz) {
--		kfree(lnk);
--		erofs_err(inode->i_sb,
--			  "inline data cross block boundary @ nid %llu",
--			  vi->nid);
--		DBG_BUGON(1);
--		return -EFSCORRUPTED;
--	}
- 	memcpy(lnk, kaddr + m_pofs, inode->i_size);
- 	lnk[inode->i_size] = '\0';
- 
+Jijie Shao (11):
+  net: hibmcge: Add pci table supported in this module
+  net: hibmcge: Add read/write registers supported through the bar space
+  net: hibmcge: Add mdio and hardware configuration supported in this
+    module
+  net: hibmcge: Add interrupt supported in this module
+  net: hibmcge: Implement some .ndo functions
+  net: hibmcge: Implement .ndo_start_xmit function
+  net: hibmcge: Implement rx_poll function to receive packets
+  net: hibmcge: Implement some ethtool_ops functions
+  net: hibmcge: Add a Makefile and update Kconfig for hibmcge
+  net: hibmcge: Add maintainer for hibmcge
+  net: add ndo_validate_addr check in dev_set_mac_address
+
+ MAINTAINERS                                   |   7 +
+ drivers/net/ethernet/hisilicon/Kconfig        |  16 +-
+ drivers/net/ethernet/hisilicon/Makefile       |   1 +
+ .../net/ethernet/hisilicon/hibmcge/Makefile   |  10 +
+ .../ethernet/hisilicon/hibmcge/hbg_common.h   | 137 ++++++
+ .../ethernet/hisilicon/hibmcge/hbg_ethtool.c  |  17 +
+ .../ethernet/hisilicon/hibmcge/hbg_ethtool.h  |  11 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_hw.c   | 279 ++++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_hw.h   |  59 +++
+ .../net/ethernet/hisilicon/hibmcge/hbg_irq.c  | 125 +++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_irq.h  |  11 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_main.c | 271 +++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_mdio.c | 244 ++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_mdio.h |  12 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_reg.h  | 143 ++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_txrx.c | 430 ++++++++++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_txrx.h |  37 ++
+ net/core/dev.c                                |   5 +
+ 18 files changed, 1814 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/Makefile
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.h
+
 -- 
-2.43.5
+2.33.0
 
 
