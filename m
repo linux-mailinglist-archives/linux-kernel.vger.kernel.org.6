@@ -1,159 +1,117 @@
-Return-Path: <linux-kernel+bounces-321984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C1897226B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:15:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09052972271
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF29E1F23D02
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:15:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C5881C2248F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A80189BAC;
-	Mon,  9 Sep 2024 19:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A7E188CDB;
+	Mon,  9 Sep 2024 19:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/V8sEuE"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FwWJEjJm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC09254278;
-	Mon,  9 Sep 2024 19:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9112210EC;
+	Mon,  9 Sep 2024 19:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725909292; cv=none; b=ksANZ9ChoATGjWQ+Y6IDEdO6z/K0asi+otw04sqTofbnlCw3cNRj6rNK+HJtZzfDTP1DGBLTZS3zT6UoxNmUEqPbBErKqUFkplRfYZLQMD0bsYvl23u5vTtsvnw9pEsT7Z0FGZLqmPnrA4eksqbngtR8K2qvO+iuyXoglAXfnYs=
+	t=1725909392; cv=none; b=mCS39qeMDHUNcp63+0QVjuOkiXgIuM9QL05qNpYGF47pArwZgSRiEQI0x/hHev9bP8pFWuN5doJ9EqNYN3/DBDZcmSd53UniDvsZuEySxT82VHm+lFbpFq3sjYGitCNCQiq33/FFl3UvhNv4rDaMGN3/6nW18EBviVoDMJBQagw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725909292; c=relaxed/simple;
-	bh=EDPpU4CjXdONxAJVx32sMdE9LeQBk9tR2GAaJ2kQOAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gjTPlYVBlccfTv5aJWiKvnlr+RBsvelgxOTLZumEiNS6YkTIK5dfO0uLd4sGeIiXSWBn2zi23fjt5RPojii++loV2vdEOWzJ3ibDRHUCl4AlDIqEehrNIkJKWpCMhbomR9rqA/Z9PqRBrzf4Sk0Y5z/rN9SdVXm8AByRfDZkdJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R/V8sEuE; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6bada443ffeso35205707b3.0;
-        Mon, 09 Sep 2024 12:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725909289; x=1726514089; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oXpPhEAkazUKV9cAwnL8D8r9ewqpmxLEV7GBLQ29Enw=;
-        b=R/V8sEuEYVtgFW1B/G5HUqvH4OpZw0HUKefSX8k6K7SlsaaKxeaJVwH7RV1L0w5Jmz
-         rMBABNNwEhRgtmvT4mSS9z4N0yVy+L8hnmVA6Rn+rZPfyXwVLhfnOGYStJ2FWXnBYXqo
-         WGiH9frX0LwpOiQXIKYCW8kFw56Rzupukgz2PVUOYPeS5iBcdmJMMJtFRlomewuF82FF
-         nR41i6S1tZrsk1EHJgvS3vbSe1j08knOXtO2UcEgvHjokORMBvxWNs2bA9OLyVumCTNv
-         b2Llw+Uk31Y/RoaWgbtWdZo//gVOJuOHWHrSyuhpRYTmEquLBGGw2RdtrEzdjRcdVWB1
-         BMcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725909289; x=1726514089;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oXpPhEAkazUKV9cAwnL8D8r9ewqpmxLEV7GBLQ29Enw=;
-        b=EY4B6OAHAvtAIJ4DGKpIV1ON+Fjtmr3oEYrNqxoXsdapimQoHlDn/2UN7IPvHxSsQ7
-         Th6NhgD4wQ0k964AWAiqCQDI1PswuJpKiNKqRXkDrSnIrQm/TVKym5qGGPn47qHUyQug
-         TPts29rmn4XYhRgax24A6Jgq/mPKaO9AHDDpVQruLtxiKSaRfFjgo+e/kDdw/SooAzQI
-         UtIbKx/V8s0ZIrDeTx509tPTqHd7mETCpnAbSvYtWL9H1XJiZjVt7tdqb6V4DpoVPV7T
-         utxLQyfHeGVaQZx8FpN+4iutoHEQn14qAduWMOvjvlanDVkIC+1wQnNdl8TRRauE6/fA
-         YFPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUE7j0ZHBpZZsPBwKnzXUEP0FJLMWKEYj7r7SR83dzpGqVRzU+BXRfzzlVWExeohvWiwxilCKspOjsdTo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCJtFNJBvjAY+DDyJZxT/lbCUaauY+K4R+QP3ajiEfW9h/Kt/H
-	nGRWPcrIJvWdLlP6qkSEZRmYAcV1W2ojZP6lgW4gKlXSIZrjiYd7u4f0L6KGY6KJMIhBtLtQkIR
-	Xsi8T5G/BxEnJQ9bFp4ANnNj2zo0mqbNY
-X-Google-Smtp-Source: AGHT+IFu8THfw/BxASPvGEBO7vTugahGZMyAP29Unmk6DgR5hr+vNrn1EW+gi4zJ7wAJ9SuQKez6duDcCA5TDQdnnDk=
-X-Received: by 2002:a05:690c:6281:b0:618:691b:d261 with SMTP id
- 00721157ae682-6db95383df6mr6444727b3.13.1725909289633; Mon, 09 Sep 2024
- 12:14:49 -0700 (PDT)
+	s=arc-20240116; t=1725909392; c=relaxed/simple;
+	bh=MqYZtOzr+xyINDrpQoCb1CSGseIhFZ2oocZhQDmUqS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cPohUY4kTGb045pjSO7mUE/n9ZCDZHrX+REP/n0yGiRlWgn9n5jusmqOdnm2dJ5cKFFJbz1qNh269R8rnE+g8Ae/WCldcKMBlzHIHFZZPCccTzKZuK1FpESug219kGLiDpWD/HF097Kiwso2wMkIyITY0Ba4bXzMZ3oUTXP/u+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FwWJEjJm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C8CC4CEC5;
+	Mon,  9 Sep 2024 19:16:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725909390;
+	bh=MqYZtOzr+xyINDrpQoCb1CSGseIhFZ2oocZhQDmUqS0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FwWJEjJmE+p4Sj9E1d+dv3yYbUyGEx/WBf69zDLj5US3R+6cafx1iU4hq7EEyqu76
+	 xxJb+rFFqVhdFTs1E6Wr+l3GpUNk6rw6sqAeiqKS9tx8RMKblMgEWUXl8rjv3Bce3u
+	 +l21qvvsHeVqhJD33Uw29E8vK3G/zljhN9ucRAGMwv1SpBo4WeMmQ9UL0xX8OcQNGV
+	 1MkK/Kz/kU1E/fTc1an9Hu2A7h+kgWXyYq0q/OtAy8JkjD2zpFRO5kh9JaNoyLdmaI
+	 Z+nHGDH0BD45pm22v7O30fvd343YY2KuOd4dAVz+WOKVwHKjyQd16NB/AFLioZgtne
+	 wGqULG+T76kiw==
+Date: Mon, 9 Sep 2024 20:16:21 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, David Lechner
+ <dlechner@baylibre.com>
+Subject: Re: [PATCH v2 1/9] dt-bindings: iio: dac: ad3552r: add io-backend
+ property
+Message-ID: <20240909201621.31bdca1a@jic23-huawei>
+In-Reply-To: <be279b0f-8337-4d3b-87c2-f426ddb302e3@baylibre.com>
+References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+	<20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-1-87d669674c00@baylibre.com>
+	<20240908132925.331c5175@jic23-huawei>
+	<be279b0f-8337-4d3b-87c2-f426ddb302e3@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240908213554.11979-1-rosenp@gmail.com> <20240909085542.GV2097826@kernel.org>
- <CAKxU2N_1t5osUc53p=G2tRLRctwbxQr3p3fScR-N1kgoNxc80Q@mail.gmail.com>
- <CAKxU2N9kgnqAgo2mHxExjgZos+MvhZw40LWCr4pYOL5DUcJJWg@mail.gmail.com> <20240909184850.GG2097826@kernel.org>
-In-Reply-To: <20240909184850.GG2097826@kernel.org>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Mon, 9 Sep 2024 12:14:38 -0700
-Message-ID: <CAKxU2N_y9CM=P3ki2XGDV+9nZ9SCQwC3y2qWRHbiEZzKK_t62Q@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: gianfar: fix NVMEM mac address
-To: Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	linux-kernel@vger.kernel.org, claudiu.manoil@nxp.com, mail@david-bauer.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 9, 2024 at 11:48=E2=80=AFAM Simon Horman <horms@kernel.org> wro=
-te:
->
-> On Mon, Sep 09, 2024 at 11:20:20AM -0700, Rosen Penev wrote:
-> > On Mon, Sep 9, 2024 at 11:11=E2=80=AFAM Rosen Penev <rosenp@gmail.com> =
-wrote:
-> > >
-> > > On Mon, Sep 9, 2024 at 1:55=E2=80=AFAM Simon Horman <horms@kernel.org=
-> wrote:
-> > > >
-> > > > On Sun, Sep 08, 2024 at 02:35:54PM -0700, Rosen Penev wrote:
-> > > > > If nvmem loads after the ethernet driver, mac address assignments=
- will
-> > > > > not take effect. of_get_ethdev_address returns EPROBE_DEFER in su=
-ch a
-> > > > > case so we need to handle that to avoid eth_hw_addr_random.
-> > > > >
-> > > > > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > > > > ---
-> > > > >  drivers/net/ethernet/freescale/gianfar.c | 2 ++
-> > > > >  1 file changed, 2 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/n=
-et/ethernet/freescale/gianfar.c
-> > > > > index 634049c83ebe..9755ec947029 100644
-> > > > > --- a/drivers/net/ethernet/freescale/gianfar.c
-> > > > > +++ b/drivers/net/ethernet/freescale/gianfar.c
-> > > > > @@ -716,6 +716,8 @@ static int gfar_of_init(struct platform_devic=
-e *ofdev, struct net_device **pdev)
-> > > > >               priv->device_flags |=3D FSL_GIANFAR_DEV_HAS_BUF_STA=
-SHING;
-> > > > >
-> > > > >       err =3D of_get_ethdev_address(np, dev);
-> > > > > +     if (err =3D=3D -EPROBE_DEFER)
-> > > > > +             return err;
-> > > >
-> > > > To avoid leaking resources, I think this should be:
-> > > >
-> > > >                 goto err_grp_init;
-> > > will do in v2. Unfortunately net-next closes today AFAIK.
-> > On second thought, where did you find this?
+On Mon, 9 Sep 2024 13:39:26 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
+
+> On 08/09/24 2:29 PM, Jonathan Cameron wrote:
+> > On Thu, 05 Sep 2024 17:17:31 +0200
+> > Angelo Dureghello <adureghello@baylibre.com> wrote:
+> >  
+> >> From: Angelo Dureghello <adureghello@baylibre.com>
+> >>
+> >> There is a version AXI DAC IP block (for FPGAs) that provides
+> >> a physical bus for AD3552R and similar chips. This can be used
+> >> instead of a typical SPI controller to be able to use the chip
+> >> in ways that typical SPI controllers are not capable of.
+> >>
+> >> The binding is modified so that either the device is a SPI
+> >> peripheral or it uses an io-backend.
+> >>
+> >> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> >>   
+> >>   required:
+> >>     - compatible
+> >> -  - reg
+> >> -  - spi-max-frequency  
+> > Sort of feels like both reg and spi-max-frequency
+> > are valid things to specify.  
+> 
+> This specific backend IP generates a fixed non-configurable clock
+> frequency, so i don't think the spi-max-frequency is needed.
+Ah fair enough.
+> 
+> 
+> > Maybe we have an excellent IP and dodgy wiring so want
+> > to clamp the frequency (long term - don't need to support
+> > in the driver today).
 > >
-> > git grep err_grp_init
-> >
-> > returns nothing.
-> >
-> > Not only that, this function has no goto.
->
-> Maybe we are looking at different things for some reason.
-Well that's embarrassing. Locally I seem to have a commit that adds a
-bunch of devm and as a result these gotos. Unfortunately I don't have
-the hardware to test those changes. I'll be doing a v2 for when
-net-next opens.
->
-> I'm looking at this:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/=
-drivers/net/ethernet/freescale/gianfar.c?id=3Dbfba7bc8b7c2c100b76edb3a646fd=
-ce256392129#n814
->
-> > > >
-> > > > Flagged by Smatch.
-> > > >
-> > > > >       if (err) {
-> > > > >               eth_hw_addr_random(dev);
-> > > > >               dev_info(&ofdev->dev, "Using random MAC address: %p=
-M\n", dev->dev_addr);
-> > > >
-> > > > --
-> > > > pw-bot: cr
-> >
+> > Maybe we have an axi_dac IP that supports multiple
+> > front end devices?  So maybe just keep reg?  
+> 
+> yes, this is what i am wondering now too, i simplified with just one
+> frontend node, are multimple frontends (and so reg property) needed ?
+It does little harm to have one. So I'd say keep it as required.
+
+Detection of what is required should be based on something more
+specific than reg being there or not.
+
+Jonathan
 
