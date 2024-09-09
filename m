@@ -1,322 +1,134 @@
-Return-Path: <linux-kernel+bounces-320577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287D9970C23
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:09:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C52970C25
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C7F1C218F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:09:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4FCE1F2254A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57ED71AC8BF;
-	Mon,  9 Sep 2024 03:09:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0682D1AC8BF;
+	Mon,  9 Sep 2024 03:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a2j8b43m"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E759B1581EB
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 03:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F4B4C81;
+	Mon,  9 Sep 2024 03:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725851345; cv=none; b=pcRCC/ahYyC0tHFnWEFUqLpsUwJzkMbAEEEI6AMxDhmY78U3C8SrBdgDe9nzI5Q1HLjnuMzfyKZq3qzSa85HhP5HglKKz4ghIsv3Ukpv43h39vAFqVk8Bz8Qq5YsRkU+g3Gds85cg5PkdqbtyxJE6n2U95w76hQe1ML0iHtPUP8=
+	t=1725851379; cv=none; b=E2ONXfOHRFl5hF+xoG3Wdd5+WaMbatmv/cTOvUKN5oakjt5rwNsKD6uS5syPBl48ME0Fobwvm/eaqKec8cbH2bOnoMQYTsx63I3FHlnjA3xZ0wh8dEh3S3kNoSie3royG+byA7ZB4K/lQFqnROJWxXyIlM1vjVHoHbmYGGecBMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725851345; c=relaxed/simple;
-	bh=gRPGL8iQF1p6XDSkNxB/jIh6hUVw/Yr+tohP8MVTy+c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LsvB5/yBzZR4MDd5ONJOGKE8i7ygxlfu4E+GV/fNv1Ewdn97O5xDjVYiuP3aYbbHs5bwRGfMzvjzFHOvkvWTTDmD5cw1alDwcpPen8TozXQTfokpnFgy+s2IShHhVWFEVXw3zXZ6RVWepZcyBZL9slKHeMeB65gMVLTGE8iuhR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82ad9fca5fcso211007139f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 20:09:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725851343; x=1726456143;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ogX9ioynseCZNLkk8HgEb3jMvON/X7SNvzmEgruOw2Q=;
-        b=VC9IIRc8OeNtkm2LigBd/a5LP4qv2f6orcv/lPWVxTuzb2W7BXftcWyA20epFV+RFo
-         aHQjWDpwgzMwXv/cjn5UgUGqTRCxqZBqN63VrZMzMbhYeqZMQ/v88MylPorKghQtTc9f
-         kZvxwqPdR1IGitDxWu0iIPaV3zpLuc9vFkLfhnbmYvoIEWeb7ZCYJwtRudzTcuPixLVJ
-         o86siSUUELGb+Gv+EqsDUM4xEjzsxGzAV0dr+tv8hdlEns7QHtiA6g5xGsSQXIawXBUL
-         zAz0DPnT7n98fjVw4d6vddHlU0x4ZJ9f1DRhQBJKyXSPHTPmsMPwE7343WROCnQlbZeW
-         ubJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIbiSIiQQwumYBZZr7TRvrfqB58CQewRPqU+NM3q7iFVKwI8EaibU+dCZ8YvU9h98aXVWgQ/ypFr3YsPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM7AJQMDlJ/aB/mZHMiWn8XQAhPsAw4YlOQ5jAriFpYQtPbeKt
-	3ri4pyGF79Ty4AevUWZHKj/Kp3Cu+HHu385B8bpkUR4JpjjeDcRMWDTTFkMG8twfHi6jkLyJuPZ
-	of3JqpqnpG/+Nwc648qQzMZcoH4KGlh6ELXsnumbcqfSdM2MzUGa4Gts=
-X-Google-Smtp-Source: AGHT+IHSkpstj/vxyYcVH23wJMxnv+Vk4pA0yrLT5fnVnCks9y0rlpxZaQf62X68EKiPYhjgwaOJG2ErIqWfUhNLhu/Hjqz4Uttd
+	s=arc-20240116; t=1725851379; c=relaxed/simple;
+	bh=Qn1xwmbieFJo2P3HZjsMlyrGYEfUrw7eYRCJ9Cvtkgc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U0yXc/F9fMc3FCo1tJzI7Xg0RStShrj2Fsw6dGWC9dNDAL0fyBph/cFrwui09eRXebDQpIsBGjkY6eSqcWUmkbYSNJY/qGFRpAL70GmSMCgyBVK60bhpwGSsWQppNw4incKavAsUxwCUEytcvtEpIBr22uUvk9tINX4yYVpB1Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a2j8b43m; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 488NWEhJ018316;
+	Mon, 9 Sep 2024 03:09:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=A0mZDBa1peMp6ysKu0Owbb
+	dmW7yzG9XZzXBo4iYrJXI=; b=a2j8b43mc2aEYxNGPOWnqdxLKgZo9V8f1Q7Stx
+	30vrQ7aGe+osbKbHcRSdcgDHurIxSvKBwSa8PQLTW0GPDWXych+RP0SuWVa931cs
+	l9pNcUs5CfRTo/rYsSLmi/1JnGEQoGkrJVg6JZN6wTvyQhwVaiWwiBcUg6xOhHN9
+	134C7UcpQEG/kKa7uchPybPV2cCpYvrnYsj6E/Rygwrg7h9LPWcXn1xAMaG2Eqvd
+	lCsPBXOd0Cqo626Ie5txmRbJnXnIWRAlKr1gU62n3DyqPaO6Wy7wrXR0VyOThZaz
+	ZyAqsKERkEqzagVWxWHgFVcur/TfVZvjdcmfG8oKldQ1Z0Aw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6shhcs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 03:09:28 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48939S6e009707
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Sep 2024 03:09:28 GMT
+Received: from jiaymao-gv.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 8 Sep 2024 20:09:26 -0700
+From: Jiayang Mao <quic_jiaymao@quicinc.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg
+	<johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1] Bluetooth: mgmt: Verify cmd pending status before removing it
+Date: Mon, 9 Sep 2024 11:09:06 +0800
+Message-ID: <20240909030906.26375-1-quic_jiaymao@quicinc.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:26c6:b0:82a:23b4:4c90 with SMTP id
- ca18e2360f4ac-82aa456c0a8mr618142139f.1.1725851342978; Sun, 08 Sep 2024
- 20:09:02 -0700 (PDT)
-Date: Sun, 08 Sep 2024 20:09:02 -0700
-In-Reply-To: <48435cf7-8c2d-4d3e-8b26-f8814f9a6338@kylinos.cn>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003bd3d10621a714f0@google.com>
-Subject: Re: [syzbot] [crypto?] [ntfs3?] KMSAN: uninit-value in sw842_compress
-From: syzbot <syzbot+17cae3c0a5b0acdc327d@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, davem@davemloft.net, 
-	haren@us.ibm.com, herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com, zhaomengmeng@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9nkBzS1_BC_8i9d2NyzykCA4_i2Il0zA
+X-Proofpoint-ORIG-GUID: 9nkBzS1_BC_8i9d2NyzykCA4_i2Il0zA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 bulkscore=0
+ adultscore=0 clxscore=1011 priorityscore=1501 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409090025
 
-Hello,
+From: jiaymao <quic_jiaymao@quicinc.com>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in sw842_compress
+Add a verification step to ensure that a command is still in the pending
+list before attempting to remove it. A crash may occur during the boot
+process when Bluetooth is enabled and then immediately disabled. In a
+race condition, mgmt_index_removed() might free the pending command
+before mgmt_add_adv_patterns_monitor_complete() is called, leading to a
+double free scenario.
 
-=====================================================
-BUG: KMSAN: uninit-value in check_template lib/842/842_compress.c:391 [inline]
-BUG: KMSAN: uninit-value in process_next lib/842/842_compress.c:456 [inline]
-BUG: KMSAN: uninit-value in sw842_compress+0x15eb/0x5990 lib/842/842_compress.c:543
- check_template lib/842/842_compress.c:391 [inline]
- process_next lib/842/842_compress.c:456 [inline]
- sw842_compress+0x15eb/0x5990 lib/842/842_compress.c:543
- crypto842_scompress+0x4f/0x70 crypto/842.c:78
- scomp_acomp_comp_decomp+0x7c6/0xb90
- scomp_acomp_compress+0x32/0x40 crypto/scompress.c:187
- crypto_acomp_compress include/crypto/acompress.h:251 [inline]
- zswap_compress+0x368/0xad0 mm/zswap.c:927
- zswap_store+0x1af3/0x2dd0 mm/zswap.c:1459
- swap_writepage+0x11f/0x470 mm/page_io.c:198
- shmem_writepage+0x1a75/0x1f70 mm/shmem.c:1536
- pageout mm/vmscan.c:680 [inline]
- shrink_folio_list+0x577f/0x7cb0 mm/vmscan.c:1360
- evict_folios+0x9a49/0xbb30 mm/vmscan.c:4560
- try_to_shrink_lruvec+0x13a3/0x1750 mm/vmscan.c:4755
- lru_gen_shrink_lruvec mm/vmscan.c:4897 [inline]
- shrink_lruvec+0x4a3/0x46c0 mm/vmscan.c:5652
- shrink_node_memcgs mm/vmscan.c:5888 [inline]
- shrink_node+0x104e/0x50f0 mm/vmscan.c:5928
- shrink_zones mm/vmscan.c:6172 [inline]
- do_try_to_free_pages+0x820/0x2550 mm/vmscan.c:6234
- try_to_free_mem_cgroup_pages+0x3f7/0xae0 mm/vmscan.c:6566
- try_charge_memcg+0x72c/0x1830 mm/memcontrol.c:2210
- try_charge mm/memcontrol-v1.h:20 [inline]
- charge_memcg mm/memcontrol.c:4438 [inline]
- __mem_cgroup_charge+0x11d/0x3f0 mm/memcontrol.c:4453
- mem_cgroup_charge include/linux/memcontrol.h:672 [inline]
- shmem_alloc_and_add_folio+0xe83/0x1ca0 mm/shmem.c:1792
- shmem_get_folio_gfp+0x10bd/0x24c0 mm/shmem.c:2188
- shmem_read_folio_gfp+0x80/0x140 mm/shmem.c:5201
- drm_gem_get_pages+0x3cf/0x1440 drivers/gpu/drm/drm_gem.c:568
- drm_gem_shmem_get_pages drivers/gpu/drm/drm_gem_shmem_helper.c:177 [inline]
- drm_gem_shmem_vmap+0x2dc/0xca0 drivers/gpu/drm/drm_gem_shmem_helper.c:337
- drm_gem_shmem_object_vmap+0x35/0x40 include/drm/drm_gem_shmem_helper.h:229
- drm_gem_vmap drivers/gpu/drm/drm_gem.c:1205 [inline]
- drm_gem_vmap_unlocked+0xc6/0x200 drivers/gpu/drm/drm_gem.c:1247
- drm_gem_fb_vmap+0x11b/0x590 drivers/gpu/drm/drm_gem_framebuffer_helper.c:365
- vkms_prepare_fb+0x12f/0x170 drivers/gpu/drm/vkms/vkms_plane.c:176
- drm_atomic_helper_prepare_planes+0x436/0x10b0 drivers/gpu/drm/drm_atomic_helper.c:2601
- drm_atomic_helper_commit+0x1f3/0xe80 drivers/gpu/drm/drm_atomic_helper.c:2029
- drm_atomic_commit+0x30a/0x380 drivers/gpu/drm/drm_atomic.c:1522
- drm_atomic_helper_update_plane+0x42b/0x600 drivers/gpu/drm/drm_atomic_helper.c:3190
- __setplane_atomic+0x33d/0x3f0 drivers/gpu/drm/drm_plane.c:1074
- drm_mode_cursor_universal drivers/gpu/drm/drm_plane.c:1229 [inline]
- drm_mode_cursor_common+0x171a/0x1e80 drivers/gpu/drm/drm_plane.c:1288
- drm_mode_cursor_ioctl+0x97/0xd0 drivers/gpu/drm/drm_plane.c:1338
- drm_ioctl_kernel+0x4ea/0x560 drivers/gpu/drm/drm_ioctl.c:745
- drm_ioctl+0xd13/0x15a0 drivers/gpu/drm/drm_ioctl.c:842
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0x261/0x450 fs/ioctl.c:893
- __x64_sys_ioctl+0x96/0xe0 fs/ioctl.c:893
- x64_sys_call+0x18bf/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:17
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Part of the crash call trace:
+0x0000053D: __list_del_entry_valid_or_report+0x98/0xdc
+0x0000053D: mgmt_pending_remove+0x18/0x58 [bluetooth]
+0x0000053E: mgmt_remove_adv_monitor_complete+0x80/0x108 [bluetooth]
+0x0000053E: hci_cmd_sync_work+0xbc/0x164 [bluetooth]
 
-<Zero or more stacks not recorded to save memory>
+Signed-off-by: jiaymao <quic_jiaymao@quicinc.com>
+---
+ net/bluetooth/mgmt.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Uninit was stored to memory at:
- memcpy_from_iter lib/iov_iter.c:73 [inline]
- iterate_bvec include/linux/iov_iter.h:122 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:249 [inline]
- iterate_and_advance include/linux/iov_iter.h:271 [inline]
- __copy_from_iter lib/iov_iter.c:249 [inline]
- copy_page_from_iter_atomic+0x12bb/0x2ae0 lib/iov_iter.c:481
- copy_folio_from_iter_atomic include/linux/uio.h:186 [inline]
- generic_perform_write+0x896/0x12e0 mm/filemap.c:4032
- shmem_file_write_iter+0x2bd/0x2f0 mm/shmem.c:3074
- do_iter_readv_writev+0x8a1/0xa40
- vfs_iter_write+0x459/0xd50 fs/read_write.c:895
- lo_write_bvec drivers/block/loop.c:243 [inline]
- lo_write_simple drivers/block/loop.c:264 [inline]
- do_req_filebacked drivers/block/loop.c:511 [inline]
- loop_handle_cmd drivers/block/loop.c:1910 [inline]
- loop_process_work+0x15ec/0x3750 drivers/block/loop.c:1945
- loop_rootcg_workfn+0x2b/0x40 drivers/block/loop.c:1976
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was stored to memory at:
- ntfs_write_bh+0x652/0xdb0 fs/ntfs3/fsntfs.c:1450
- indx_write fs/ntfs3/index.c:1027 [inline]
- indx_update_dup+0xd81/0xf80 fs/ntfs3/index.c:2694
- ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
- ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
- ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
- write_inode fs/fs-writeback.c:1497 [inline]
- __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
- writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
- __writeback_inodes_wb+0x14c/0x440 fs/fs-writeback.c:2018
- wb_writeback+0x50b/0xea0 fs/fs-writeback.c:2129
- wb_check_background_flush fs/fs-writeback.c:2199 [inline]
- wb_do_writeback fs/fs-writeback.c:2287 [inline]
- wb_workfn+0x122c/0x1940 fs/fs-writeback.c:2314
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was stored to memory at:
- ntfs_read_run_nb+0x786/0x1070 fs/ntfs3/fsntfs.c:1252
- ntfs_read_bh+0x64/0xde0 fs/ntfs3/fsntfs.c:1313
- indx_read+0x44e/0x17b0 fs/ntfs3/index.c:1067
- indx_find+0xd12/0x1440 fs/ntfs3/index.c:1181
- indx_update_dup+0x607/0xf80 fs/ntfs3/index.c:2666
- ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
- ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
- ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
- write_inode fs/fs-writeback.c:1497 [inline]
- __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
- writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
- __writeback_inodes_wb+0x14c/0x440 fs/fs-writeback.c:2018
- wb_writeback+0x50b/0xea0 fs/fs-writeback.c:2129
- wb_check_background_flush fs/fs-writeback.c:2199 [inline]
- wb_do_writeback fs/fs-writeback.c:2287 [inline]
- wb_workfn+0x122c/0x1940 fs/fs-writeback.c:2314
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was stored to memory at:
- ntfs_write_bh+0x652/0xdb0 fs/ntfs3/fsntfs.c:1450
- indx_write fs/ntfs3/index.c:1027 [inline]
- indx_update_dup+0xd81/0xf80 fs/ntfs3/index.c:2694
- ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
- ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
- ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
- write_inode fs/fs-writeback.c:1497 [inline]
- __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
- writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
- __writeback_inodes_wb+0x14c/0x440 fs/fs-writeback.c:2018
- wb_writeback+0x50b/0xea0 fs/fs-writeback.c:2129
- wb_check_background_flush fs/fs-writeback.c:2199 [inline]
- wb_do_writeback fs/fs-writeback.c:2287 [inline]
- wb_workfn+0x122c/0x1940 fs/fs-writeback.c:2314
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was stored to memory at:
- ntfs_read_run_nb+0x786/0x1070 fs/ntfs3/fsntfs.c:1252
- ntfs_read_bh+0x64/0xde0 fs/ntfs3/fsntfs.c:1313
- indx_read+0x44e/0x17b0 fs/ntfs3/index.c:1067
- indx_find+0xd12/0x1440 fs/ntfs3/index.c:1181
- indx_update_dup+0x607/0xf80 fs/ntfs3/index.c:2666
- ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
- ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
- ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
- write_inode fs/fs-writeback.c:1497 [inline]
- __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
- writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
- __writeback_inodes_wb+0x14c/0x440 fs/fs-writeback.c:2018
- wb_writeback+0x50b/0xea0 fs/fs-writeback.c:2129
- wb_check_background_flush fs/fs-writeback.c:2199 [inline]
- wb_do_writeback fs/fs-writeback.c:2287 [inline]
- wb_workfn+0x122c/0x1940 fs/fs-writeback.c:2314
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was stored to memory at:
- ntfs_write_bh+0x652/0xdb0 fs/ntfs3/fsntfs.c:1450
- indx_write fs/ntfs3/index.c:1027 [inline]
- indx_insert_into_buffer+0xd8f/0x2010 fs/ntfs3/index.c:1811
- indx_insert_entry+0xa3c/0xee0 fs/ntfs3/index.c:1988
- ni_add_name+0xe5d/0x10d0 fs/ntfs3/frecord.c:3123
- ntfs_link_inode+0x265/0x310 fs/ntfs3/inode.c:1768
- ntfs_link+0x21d/0x500 fs/ntfs3/namei.c:150
- vfs_link+0x93d/0xb70 fs/namei.c:4692
- do_linkat+0x4f5/0xfd0 fs/namei.c:4762
- __do_sys_link fs/namei.c:4796 [inline]
- __se_sys_link fs/namei.c:4794 [inline]
- __x64_sys_link+0xe8/0x140 fs/namei.c:4794
- x64_sys_call+0x2853/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:87
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- hdr_insert_de fs/ntfs3/index.c:838 [inline]
- indx_insert_into_buffer+0xcdf/0x2010 fs/ntfs3/index.c:1807
- indx_insert_entry+0xa3c/0xee0 fs/ntfs3/index.c:1988
- ni_add_name+0xe5d/0x10d0 fs/ntfs3/frecord.c:3123
- ntfs_link_inode+0x265/0x310 fs/ntfs3/inode.c:1768
- ntfs_link+0x21d/0x500 fs/ntfs3/namei.c:150
- vfs_link+0x93d/0xb70 fs/namei.c:4692
- do_linkat+0x4f5/0xfd0 fs/namei.c:4762
- __do_sys_link fs/namei.c:4796 [inline]
- __se_sys_link fs/namei.c:4794 [inline]
- __x64_sys_link+0xe8/0x140 fs/namei.c:4794
- x64_sys_call+0x2853/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:87
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3998 [inline]
- slab_alloc_node mm/slub.c:4041 [inline]
- kmem_cache_alloc_noprof+0x637/0xb20 mm/slub.c:4048
- ntfs_link_inode+0x8f/0x310 fs/ntfs3/inode.c:1756
- ntfs_link+0x21d/0x500 fs/ntfs3/namei.c:150
- vfs_link+0x93d/0xb70 fs/namei.c:4692
- do_linkat+0x4f5/0xfd0 fs/namei.c:4762
- __do_sys_link fs/namei.c:4796 [inline]
- __se_sys_link fs/namei.c:4794 [inline]
- __x64_sys_link+0xe8/0x140 fs/namei.c:4794
- x64_sys_call+0x2853/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:87
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 UID: 0 PID: 6036 Comm: syz.0.15 Not tainted 6.11.0-rc7-syzkaller-gda3ea35007d0-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-=====================================================
-
-
-Tested on:
-
-commit:         da3ea350 Linux 6.11-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17a0e567980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ea008021530b2de3
-dashboard link: https://syzkaller.appspot.com/bug?extid=17cae3c0a5b0acdc327d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11514e00580000
+diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+index 25979f4283a6..9d019db92043 100644
+--- a/net/bluetooth/mgmt.c
++++ b/net/bluetooth/mgmt.c
+@@ -5428,6 +5428,9 @@ static void mgmt_remove_adv_monitor_complete(struct hci_dev *hdev,
+ 
+ 	hci_dev_lock(hdev);
+ 
++	if (cmd != pending_find(MGMT_OP_REMOVE_ADV_MONITOR, hdev))
++		goto done;
++
+ 	rp.monitor_handle = cp->monitor_handle;
+ 
+ 	if (!status)
+@@ -5437,6 +5440,7 @@ static void mgmt_remove_adv_monitor_complete(struct hci_dev *hdev,
+ 			  mgmt_status(status), &rp, sizeof(rp));
+ 	mgmt_pending_remove(cmd);
+ 
++done:
+ 	hci_dev_unlock(hdev);
+ 	bt_dev_dbg(hdev, "remove monitor %d complete, status %d",
+ 		   rp.monitor_handle, status);
+-- 
+2.46.0
 
 
