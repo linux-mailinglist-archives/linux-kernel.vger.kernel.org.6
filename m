@@ -1,164 +1,120 @@
-Return-Path: <linux-kernel+bounces-322122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C51C3972464
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:18:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A11BF97246C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 494BCB22C08
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:18:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68821284F0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DFD18C923;
-	Mon,  9 Sep 2024 21:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DBA18C356;
+	Mon,  9 Sep 2024 21:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YXSkttQG"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/6I3CbD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E2818C351;
-	Mon,  9 Sep 2024 21:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A966189F2F;
+	Mon,  9 Sep 2024 21:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725916690; cv=none; b=XvytmOCWtSciqo4YnMqwcOfwOod5607zLMngv1ox7DKc24ykLHeTRTxW73MiGg6D6/p/ybAErWb29jdHBctox5VqOApv0CD2wW+KwFKLWPN4IRr5KHylpPyLn/f+uHzO0am27ENcOaKe1FV07fS8iZ9s6HYDxXo1bdmZMS4NBCc=
+	t=1725916727; cv=none; b=tXDRrHq2jLLOICQlOW2L4d6QT+SVkHuqBebpRVgVnEIEF4dS63s/igVK2SAXvDnslC7iV3ioyCvYH6i/jbHsgnCwFKOP5A57kNTe0tBgYBVGSn6jL3SPAWAmZSedH7B0092CFWDx8FsIlw7vMpiO9Frv++p05Wp0C70s9+fYbp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725916690; c=relaxed/simple;
-	bh=iZXEicXf2JMTARYTOOY+s6HNBfaRa9aGSN/7vqWjwDA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p0vT6K3PMjQdURjJlHDWDQLvupyMCl3RuHNn4MeQeKAIYhgSnq8xsxSxh//eOesKo9oE39eRC6zXPkGj8fLayXRlx9eeCBYiZHDuUieVy6GE0GpiGDWdbRyWHCxaG4DMaeVBJVZ4a8TTlG2bpaPcCZiDkY1Rqn7h38LqdkFjCNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YXSkttQG; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A32DC60005;
-	Mon,  9 Sep 2024 21:18:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725916685;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HXH7SELfdOSStCN609S/Bql3tY3XiIjnrc2Xlvt1w2o=;
-	b=YXSkttQGYgp/+sep7xbSgg7rzLebLQOddl9eY/m5cTXsKUu4rcwfY7QwOWlv9wht6umnzL
-	07wrjt531H405o4Lszl5ytE+BwOCYDPh7z3R0nTlJYdBGa4XyvaBw7YNTQDylKV/NJk0/j
-	YXtltBjyIHhmL1oUv2QhTBppfQDIVPqRiTyrh9MNm92wClJQgZtnteNr6ZanoeWCMcfMbO
-	fPif8C/v1sXbg8yhgrGMn7nCIVde5YzssJpn7iVFnrUHuDyFsOeVMV1EqbG/3Cwk2CDTWs
-	xlmnFkmxj1xXwCwYDQ8ED1Rx3rgXiboXc/84zeuybsie0lk3Y9N+zpsfxKxdNw==
-Date: Mon, 9 Sep 2024 23:18:00 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Alexis =?UTF-8?B?TG90aG9yw6k=?= (eBPF Foundation)"
- <alexis.lothore@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan
- <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski
- <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, Lorenzo
- Bianconi <lorenzo@kernel.org>, ebpf@linuxfoundation.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next] selftests/bpf: convert test_xdp_features.sh to
- test_progs
-Message-ID: <20240909231800.72b6b328@fedora.home>
-In-Reply-To: <20240909-convert_xdp_tests-v1-1-925be5fbee3c@bootlin.com>
-References: <20240909-convert_xdp_tests-v1-1-925be5fbee3c@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1725916727; c=relaxed/simple;
+	bh=m+5SkT5EybNjaxvCRkvBg5O1miTtGMUqFVea2R19J2w=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=GYtYtvSUffIBQuSO2tOO92BduLTylFAciEfui1jS7b7FkNocPLrexWvoP67uqzNi3pbDzoj0BoZqSz9WsvZYDQokJYup8AHTKgpf7n9SIGI01MsI6kbZ0KtrR1T5ZRg4Yp8ZYH1rWcTk0jw8lQVA3vU9w3qTle2nPSsk3Rdh97s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/6I3CbD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7BE8C4CEC5;
+	Mon,  9 Sep 2024 21:18:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725916725;
+	bh=m+5SkT5EybNjaxvCRkvBg5O1miTtGMUqFVea2R19J2w=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=J/6I3CbDnNTKmJ3L2IF152M/ltoPcO5pFmy+gkca+OT1rP4WbrlaYXtr58+Vpxw87
+	 LkrpSj8boSoQSpmNL4d4en/VfCIwyWsyw50l7ejeJV7+aAbdCKlA18NULD1Baf7kXd
+	 S0lxQHfWWmtae2GQAMPVFzv0YAzZnctIsOUZ0rxlY4GYs5e1/uLhp8xZIqAealnVFs
+	 +pLWI0oWIP6iw1X14AyJJMEw5svZsWbKqJNh4a5Tget9R2dCRPlzCCRkVjWkh6OSoN
+	 x22OuX5oJfC3eM6+/L+GY9AJ1Isiu3gIqMebsuGdobnrLvdcNx/5VxgesPEt7kApwM
+	 +cN69JplcUIig==
+Message-ID: <8fa43530daa941b059b2de1e15dd7773.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: maxime.chevallier@bootlin.com
+In-Reply-To: <CAMuHMdWBT6AaH2_5qj+j4s8JeeO3qrhYUTCVG=s_J13nSzYPsQ@mail.gmail.com>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com> <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com> <83fac884d749bda0cf0b346e4e869bc8.sboyd@kernel.org> <d8303146-89e0-4229-a3fe-9f3c42434045@tuxon.dev> <c744cf7a70a3f97722146215a7620cfb.sboyd@kernel.org> <CAMuHMdX40ROk2vZe9VHoiPDJCvtrjto+swkicv29LFyQ7zoVng@mail.gmail.com> <951b5c09c3ca2de3f0a28a078084f7dd.sboyd@kernel.org> <CAMuHMdWBT6AaH2_5qj+j4s8JeeO3qrhYUTCVG=s_J13nSzYPsQ@mail.gmail.com>
+Subject: Re: [PATCH v3 07/12] arm64: dts: renesas: r9a08g045: Add VBATTB node
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: alexandre.belloni@bootlin.com, claudiu beznea <claudiu.beznea@tuxon.dev>, conor+dt@kernel.org, krzk+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 09 Sep 2024 14:18:43 -0700
+User-Agent: alot/0.10
 
-Hi Alexis,
-
-On Mon, 09 Sep 2024 22:02:07 +0200
-Alexis Lothor=C3=A9 (eBPF Foundation) <alexis.lothore@bootlin.com> wrote:
-
-> test_xdp_features.sh is a shell script allowing to test that xdp features
-> advertised by an interface are indeed delivered. The test works by starti=
-ng
-> two instance of the same program, both attaching specific xdp programs to
-> each side of a veth link, and then make those programs manage packets and
-> collect stats to check whether tested XDP feature is indeed delivered or
-> not. However this test is not integrated in test_progs framework and so c=
-an
-> not run automatically in CI.
+Quoting Geert Uytterhoeven (2024-09-09 05:11:03)
+> Hi Stephen,
 >=20
-> Rewrite test_xdp_features to integrate it in test_progs so it can run
-> automatically in CI. The main changes brought by the rewrite are the
-> following:
-> - instead of running to separated processes (each one managing either the
->   tester veth or the DUT vet), run a single process
-> - slightly change testing direction (v0 is the tester in local namespace,
->   v1 is the Device Under Test in remote namespace)
-> - group all tests previously managed by test_xdp_features as subtests (one
->   per tested XDP feature). As a consequence, run only once some steps
->   instead of once per subtest (eg: starting/stopping the udp server). On
->   the contrary, make sure that each subtest properly cleans up its state
->   (ie detach xdp programs, reset test stats, etc)
-> - since there is now a single process, get rid of the "control" tcp chann=
-el
->   used to configure DUT. Configuring the DUT now only consists in switchi=
-ng
->   to DUT network namespace and run the relevant commands
-> - since there is no more control channel, get rid of TLVs, keep only the
->   CMD_ECHO packet type, and set it as a magic
-> - simplify network setup: use only ipv6 instead of both ipv4 and ipv6,
->   force static neighbours instead of waiting for autoconfiguration, do not
->   force gro (fetch xdp features only once xdp programs are loaded instead)
+> On Sat, Sep 7, 2024 at 1:01=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wr=
+ote:
+> > Quoting Geert Uytterhoeven (2024-09-06 00:28:38)
+> > >
+> > > My main objections are that (1) this approach is different than the o=
+ne used
+> > > for all other external clock inputs on Renesas SoCs, and (2) this req=
+uires
+> > > duplicating part of the clocks property in all board DTS files.
+> >
+> > Can 'clock-ranges' be used here? Leave the cell as null in the SoC dtsi
+> > file and then fill it in with clocks property at the parent node. I
+> > think you'd have to use clock-names for this though.
 >=20
-> The existing XDP programs are reused, with some minor changes:
-> - tester and dut stats maps are converted to global variables for easier
->   usage
-> - programs do not use TLV struct anymore but the magic replacing the echo
->   command
-> - avoid to accidentally make tests pass: drop packets instead of forwardi=
-ng
->   them to userspace when they do not match the expected payload
+> "clock-ranges" does not seem to be well-documented...
+
+Yeah, I wasn't aware of it for years!
+
 >=20
-> Signed-off-by: Alexis Lothor=C3=A9 (eBPF Foundation) <alexis.lothore@boot=
-lin.com>
+> IUIC, your suggestion is to:
+>   1. Add "clock-ranges" to the /soc subnode,
+>   2. Completely leave out the "rtx" clock from the clocks property
+>      of the vbattb@1005c000 node,
+>   3. Add the following to the board DTS:
+>=20
+>         &soc {
+>                 clocks =3D <&vbattb_xtal>;
+>                 clock-names =3D "rtx";
+>         };
+>=20
+> Then, when resolving "rtx" for the vbattb@1005c000 node,
+> of_parse_clkspec() would iterate up and find the proper vbattb_xtal.
+> Is that correct? And probably that should be done for other external
+> clock inputs as well?
 
-I'm far for having reviewed the whole patch, but I do have one comment
-below :)
+Sounds about right.
 
-[...]
+>=20
+> Still, it looks a bit complicated and un-intuitive. And what about
+> e.g. carrier boards with a SoM, where some clocks are provided by
+> the SoM, and some by the carrier? In that case you still have to
+> override the clock and clock-names properties in the carrier .dts,
+> thus duplicating all clocks provided by the SoM.
 
-> +static void *run_dut_echo_thread(void *arg)
-> +{
-> +	struct test_data *t =3D (struct test_data *)arg;
-> +	__u32 magic;
-> +
-> +	while (!t->quit_dut_echo_thread) {
-> +		struct sockaddr_storage addr;
-> +		socklen_t addrlen;
-> +		size_t n;
-> +
-> +		n =3D recvfrom(t->echo_server_sock, &magic, sizeof(magic),
-> +			     MSG_WAITALL, (struct sockaddr *)&addr, &addrlen);
-> +		if (n !=3D sizeof(magic)) {
-> +			usleep(LOOP_DELAY_US);
-> +			continue;
-> +		}
-> +
-> +		if (htonl(magic) !=3D CMD_ECHO)
-> +			continue;
+This is the same case as the board wanting to override the soc node?
+When it's a SoM is there a node for the SoM? Is the clock on the SoM?
+Does this case exist? Hopefully this isn't a straw man.
 
-Shouldn't it be ntohl here ? The former code used the ntohs helper for
-that command, and you're sending the magic in send_echo_msg with a
-htonl() so I guess here you might want to convert the value back to
-host endianness.
+>=20
+> So I prefer the original approach, like is done for all other external
+> SoC clock inputs on Renesas SoCs.
+>=20
 
-Thanks,
-
-Maxime
+Sure. I'm just suggesting to follow the preferred approach by DT
+maintainers. I don't feel strongly either way and I'm not the SoC
+maintainer so feel free to do what you want.
 
