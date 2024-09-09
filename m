@@ -1,86 +1,113 @@
-Return-Path: <linux-kernel+bounces-321705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67460971E57
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:44:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87942971E5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBB1FB235AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:44:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B42731C23331
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A504D44375;
-	Mon,  9 Sep 2024 15:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BECF60EC4;
+	Mon,  9 Sep 2024 15:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="HAuuLHH3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ISAoSvwy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DCB1BC39
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 15:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBBA22EED;
+	Mon,  9 Sep 2024 15:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725896651; cv=none; b=Xipzzo5nakD3FgxaIwvtpVX/KCqBJq6XsE9dVihh5aK+1F88wDh1PoYkpegWB/p5u45cWSMPGg8sbdEsdk8bCz5e75g5aAhw9ilQRX2/a8WEfpZc3evZKlmFsHGqUkwFBsyYrHEkrIaW7/SJlxBEcFJDjGVDdK5/0+lt3DNqo6E=
+	t=1725896718; cv=none; b=mhUUdcKtNOYy4YzZZMiZZZI/y2bj4UMptSA6Gvz5yLszcDq1WgTnvyaa/ZVTeepyIp4iOV6irxJrSeOGmu6QBrV3r77bAU/FVoaNn+h3PlxuS3map9n6f2pIj7iU4CmYzznrwPaRsBclB1Uz18TSxTd/rjxM/VBP43rtEiR67M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725896651; c=relaxed/simple;
-	bh=GWrMWmwL9o2ROtectZpGV79uursoTc4LFervW2EwbGo=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cx/SHsrxv+xNm5KZcxvpkivzoxmdja1LkRYZzaAGmE7/0TTp1dJM4ha/4LL5j/MJdiiVlm8aZJxpwtCzZJ291NHPyT1xQc0efds6JxTlmBeWqJn1vWm560zyuDsO5iHvkJz9tNNYDLXGaeVDVvrkGW5V/yhBUS7a+g+pGti+KGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=HAuuLHH3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C8EEC4CEC5;
-	Mon,  9 Sep 2024 15:44:10 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="HAuuLHH3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725896648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RkuPp9W5/TQRbtH9WylYk70MKARzGJFtdzqLeOX6YXc=;
-	b=HAuuLHH3yFN4Nr7lrkX0EFgrhoFdQI2/B06gYK3fM06S/LHFZag/1yizPXNy69fIBJZJnx
-	Nyf50aU3ODNyTjWVf+J2gj9QfudRIJ/rdjZ0/f/dNstXYCbFglWUhSZYxl6qrlt1BNexwQ
-	OF2qiC7A5cVmB4SaS+QH7tu9r1xlBCw=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id f58e9301 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 9 Sep 2024 15:44:07 +0000 (UTC)
-Date: Mon, 9 Sep 2024 17:44:06 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH tip] x86: vdso: Compute timens page offset statically
-Message-ID: <Zt8XxiQrma1R2a70@zx2c4.com>
-References: <20240906190655.2777023-1-Jason@zx2c4.com>
+	s=arc-20240116; t=1725896718; c=relaxed/simple;
+	bh=YgYd4UDRaHUx/I4aBI/a5xRLjPGeXP51J3gubakkuJk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tLaqmpUqKfREiIjVixV9fYglheFuxFyuPXYn3L5E4yMJzZ50MRrUsUA/Qqr9knpww/4ENi2SBSDNZsaJeMnHkLlxDHzKUK9Se0F9dUq33O3oNH5iCfpk5KU+fn8Ic2dcoH2E8cmejjIFA8Lsgl34qX+si63L2WDraTQs01LRq90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ISAoSvwy; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725896717; x=1757432717;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=YgYd4UDRaHUx/I4aBI/a5xRLjPGeXP51J3gubakkuJk=;
+  b=ISAoSvwyt04S2ToQfbTMGO9bxjmxwTz+og0cEYi3HVYiXxaa0Y+sTToO
+   AgfKc5L2qb552jiZ9nFlv7g5bHObuCSOGeNL91bCOA0nVeUCx4adSticw
+   RdIPUs27Lk23bd3h2IxI0c7gX/eU8JxeFfJ/5Xy9YsLim65UU+dCaUjPV
+   nKSeVRYxB66/wEas0NfOZRsY1VKnZNMde1joLtLT2Q2OzJpnAIkqqg3wU
+   M1uVZyLETKCPPeERRmwgyA/z9UCTjGDuaM9hF0O5Uc6vVQuLr4x0BwcD6
+   9MYLl1HyT6fbHPPusYn/M51dhJrgRUFeqgXH2KWl+0AgxExeewHlB+5vx
+   g==;
+X-CSE-ConnectionGUID: CH36O9WCQrSOEK5ydiW+vw==
+X-CSE-MsgGUID: E7KKY8weRzqsSrywTYu8KA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24149204"
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="24149204"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 08:45:17 -0700
+X-CSE-ConnectionGUID: 1F/bI0RxRoKO7kAoUB8ykA==
+X-CSE-MsgGUID: 9w46N3gdQ5KYPrVn7LS6tA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="67014967"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO [10.245.246.241]) ([10.245.246.241])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 08:45:15 -0700
+Message-ID: <8462d322-a40a-4d6c-99c5-3374d7f3f3a0@linux.intel.com>
+Date: Mon, 9 Sep 2024 17:45:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240906190655.2777023-1-Jason@zx2c4.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soundwire: stream: Revert "soundwire: stream: fix
+ programming slave ports for non-continous port maps"
+To: Charles Keepax <ckeepax@opensource.cirrus.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Bard Liao
+ <yung-chuan.liao@linux.intel.com>, Sanyog Kale <sanyog.r.kale@intel.com>,
+ alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20240904145228.289891-1-krzysztof.kozlowski@linaro.org>
+ <Zt8H530FkqBMiYX+@opensource.cirrus.com>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <Zt8H530FkqBMiYX+@opensource.cirrus.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hey tglx,
 
-On Fri, Sep 06, 2024 at 09:06:55PM +0200, Jason A. Donenfeld wrote:
-> The expression `((void *)&__timens_vdso_data - (void *)&__vdso_data)`
-> seems harmless, but it actually results in quite a bit of code and two
-> jumps, in a place that's supposed to be somewhat lean on code. The value
-> of that calculation is always 3*PAGE_SIZE, as it turns out. Changing it
-> to that results in a more modest cmov instruction being emitted. It also
-> makes it a bit more clear what's happening.
+
+On 9/9/24 16:36, Charles Keepax wrote:
+> On Wed, Sep 04, 2024 at 04:52:28PM +0200, Krzysztof Kozlowski wrote:
+>> This reverts commit ab8d66d132bc8f1992d3eb6cab8d32dda6733c84 because it
+>> breaks codecs using non-continuous masks in source and sink ports.  The
+>> commit missed the point that port numbers are not used as indices for
+>> iterating over prop.sink_ports or prop.source_ports.
+>>
+>> Soundwire core and existing codecs expect that the array passed as
+>> prop.sink_ports and prop.source_ports is continuous.  The port mask still
+>> might be non-continuous, but that's unrelated.
+>>
+>> Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+>> Closes: https://lore.kernel.org/all/b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com/
+>> Fixes: ab8d66d132bc ("soundwire: stream: fix programming slave ports for non-continous port maps")
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> ---
 > 
-> To accomplish this, define offset macros in vvar.h, which can be shared
-> by C code and by the linker script that decides where these pages will
-> actually go.
+> Would be good to merge this as soon as we can, this is causing
+> soundwire regressions from rc6 onwards.
 
-I noticed we've only got a week left til the merge window opens, so I
-thought I should poke you about this, if you want to take this through
-tip. I can also take it through my random.git tree with your ack, if
-that's easier for you. (Assuming, of course, that this patch is actually
-correct.) Let me know.
+the revert also needs to happen in -stable. 6.10.8 is broken as well.
 
-Jason
+https://github.com/thesofproject/linux/issues/5168
+
+
 
