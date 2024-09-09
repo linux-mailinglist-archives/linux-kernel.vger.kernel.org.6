@@ -1,223 +1,158 @@
-Return-Path: <linux-kernel+bounces-321147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F180971530
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:19:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE5DF971532
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63E14B24667
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:19:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F21EB24A3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C261B3F36;
-	Mon,  9 Sep 2024 10:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C541B3F2D;
+	Mon,  9 Sep 2024 10:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pl3o/gwO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/zKvRDnO";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pl3o/gwO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/zKvRDnO"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJbb1KU5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752501B29D9;
-	Mon,  9 Sep 2024 10:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF48B1AC8BF;
+	Mon,  9 Sep 2024 10:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725877169; cv=none; b=alNsSYrbL4QwbX3YWifEV0T5LL9f3wevOpnW55DcWxF0c7KlGZ8jcsBPCpMszYZjuLpnNmglvplWmmUuxFCXjWJjRZ8g5wJDIL5KWdBkrXdbLuKCWPLn8tpk9JLwfIE9TcVg5CfO8oR2Cvi48ndUUFsKpR3oeLOBeVXnWWfRC2o=
+	t=1725877237; cv=none; b=uKn50GPM9ycBkq5jblacHxDeHQ/xDbcKoDcJLYwg6k71aIB1feUzXwLIuRcC9sV+wLA/LHxM1f5re6gqEtxS7FWPxFrA4Lb1DJpNsoGuJwToVJh+mPEz/UVHcqEB1W9oFQ9X3YKweShm/VlKdFgqiEUBemxixBpwGR7EbTeXBl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725877169; c=relaxed/simple;
-	bh=nktx9psnkiSgrQC9PaDaFqG/X6eskWDGPU8zQULZuP0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vC/l3HX4Os2+GVfk/6LU/k/hfuxCs80JjgwWCjeMOIpaCZQZgRCvwY4aVjJvw25tKl1bP9iWcUOdh/SunzBRJUI5EpYf3Z7+2o91JLGfq+MN7MMgX7IOc+DRMaLzGZymD0xBazXC5fMiTxZm6omAE/xKAwOXhMKqmP5VqI1s7xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pl3o/gwO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/zKvRDnO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pl3o/gwO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/zKvRDnO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 79D851F7B1;
-	Mon,  9 Sep 2024 10:19:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725877165; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ge4RyWVgdMZL2wY1i1d/yWakoPPEvu7cjtu60MmlWPU=;
-	b=pl3o/gwOpZvAGnh7xWgBVpEP4H7qDEGavkWHS6iO0mJdaXaZHWOhCwAJfDSdjuF8e1qNfm
-	gL1e8uedAR2ASbombXwCpW/aE4qMXclA9c7ite9oubXwdtryoTh0A/UShbA157EZz1f5lT
-	wHA7czJKN6z37R18q0H2XNdbtsuGoIA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725877165;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ge4RyWVgdMZL2wY1i1d/yWakoPPEvu7cjtu60MmlWPU=;
-	b=/zKvRDnO1gGVC7ryS2ttlJJXl6S1bNXZnEXR9incO+YmLTj4sIpSQabQYwRhMjMuTxck8V
-	OaU6CHZD21I7yMDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="pl3o/gwO";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="/zKvRDnO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725877165; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ge4RyWVgdMZL2wY1i1d/yWakoPPEvu7cjtu60MmlWPU=;
-	b=pl3o/gwOpZvAGnh7xWgBVpEP4H7qDEGavkWHS6iO0mJdaXaZHWOhCwAJfDSdjuF8e1qNfm
-	gL1e8uedAR2ASbombXwCpW/aE4qMXclA9c7ite9oubXwdtryoTh0A/UShbA157EZz1f5lT
-	wHA7czJKN6z37R18q0H2XNdbtsuGoIA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725877165;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ge4RyWVgdMZL2wY1i1d/yWakoPPEvu7cjtu60MmlWPU=;
-	b=/zKvRDnO1gGVC7ryS2ttlJJXl6S1bNXZnEXR9incO+YmLTj4sIpSQabQYwRhMjMuTxck8V
-	OaU6CHZD21I7yMDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4A5F413312;
-	Mon,  9 Sep 2024 10:19:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id h7bPEK3L3mYRFQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 09 Sep 2024 10:19:25 +0000
-Date: Mon, 09 Sep 2024 12:20:12 +0200
-Message-ID: <875xr5b02r.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Leo Tsai <antivirus621@gmail.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	leo.tsai@cmedia.com.tw,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda: Add a new CM9825 standard driver.
-In-Reply-To: <20240909022340.7808-1-antivirus621@gmail.com>
-References: <20240909022340.7808-1-antivirus621@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1725877237; c=relaxed/simple;
+	bh=Kq25RLAno8aXZmniDwbQJZfY/cwwpscIS991weREbgo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MoAIXvtLX/JTwJ/FK5tZUnLGc4T65V5fbU1SErvgYTVCk0eXQVypy5UeFZC4AgtehYfmeUqVH15laI0jjDbjQKjoJ/ergFsmO+sDJzhC6lI13sRHBzEWoYjL7l+bFD/cpZJiVbtjkAGf8gWE8zrnriQVPalQQoK4J7ymqc30x/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJbb1KU5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E5CC4CEC8;
+	Mon,  9 Sep 2024 10:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725877236;
+	bh=Kq25RLAno8aXZmniDwbQJZfY/cwwpscIS991weREbgo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XJbb1KU5868WjsjULo326asarA9meQg8yw11LeDoT+p44FiV7A1oHFEDfn5N2d0Ll
+	 md/cIMHb3Rp/nM7iiYU0YO5pJ53Bc16Sx3gjHwyVR6TVwcbD69LM4XwIc+/wGVjyo/
+	 dZ7IF3FUIxvoblezEzMPCt6twPd5e0x1f/KUu2PoMlR0rHFqQfO+YS9DT7H25gnZPc
+	 wWr4DFJfsRyPUrtIGDlNP5gelLk6nwco+GwSeRtgsmb/4mbWvhjsCYF9dOSyWOkZ3v
+	 eCRw4gUUZyq+u6lTanVVO6QhPpiFFX6c12qPfI1w4JJXrK30ezuDDVkGJGEIS5Vw3z
+	 WOP+Yr1mWy/qQ==
+Message-ID: <c969880d-02b8-4b53-b364-04adcd31cb4b@kernel.org>
+Date: Mon, 9 Sep 2024 19:20:33 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 79D851F7B1
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
-X-Spam-Flag: NO
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] block: Fix validation of ioprio level
+To: Ajay Kaher <ajay.kaher@broadcom.com>
+Cc: axboe@kernel.dk, niklas.cassel@wdc.com, hare@suse.de,
+ martin.petersen@oracle.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alexey.makhalov@broadcom.com,
+ vasavi.sirnapalli@broadcom.com, vamsi-krishna.brahmajosyula@broadcom.com
+References: <1724833695-22194-1-git-send-email-ajay.kaher@broadcom.com>
+ <a5609ba3-cc35-41c5-98f1-52063f8a6eec@kernel.org>
+ <CAD2QZ9Z_rpDAyeJGBDxx8vqq7nSAuiktTTCxYHUu1QtA42afew@mail.gmail.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <CAD2QZ9Z_rpDAyeJGBDxx8vqq7nSAuiktTTCxYHUu1QtA42afew@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 09 Sep 2024 04:23:40 +0200,
-Leo Tsai wrote:
+On 9/9/24 17:59, Ajay Kaher wrote:
+> On Wed, Aug 28, 2024 at 2:15 PM Damien Le Moal <dlemoal@kernel.org> wrote:
+>>
+>> On 8/28/24 17:28, Ajay Kaher wrote:
+>>> The commit eca2040972b4 introduced a backward compatibility issue in
+>>> the function ioprio_check_cap.
+>>>
+>>> Before the change, if ioprio contains a level greater than 0x7, it was
+>>> treated as -EINVAL:
+>>>
+>>>     data = ioprio & 0x1FFF
+>>>     if data >= 0x7, return -EINVAL
+>>>
+>>> Since the change, if ioprio contains a level greater than 0x7 say 0x8
+>>> it is calculated as 0x0:
+>>>
+>>>     level = ioprio & 0x7
+>>>
+>>> To maintain backward compatibility the kernel should return -EINVAL in
+>>> the above case as well.
+>>>
+>>> Fixes: eca2040972b4 ("scsi: block: ioprio: Clean up interface definition")
+>>> Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
+>>> ---
+>>>  block/ioprio.c | 11 ++++++++++-
+>>>  1 file changed, 10 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/block/ioprio.c b/block/ioprio.c
+>>> index 73301a2..f08e76b 100644
+>>> --- a/block/ioprio.c
+>>> +++ b/block/ioprio.c
+>>> @@ -30,6 +30,15 @@
+>>>  #include <linux/security.h>
+>>>  #include <linux/pid_namespace.h>
+>>>
+>>> +static inline int ioprio_check_level(int ioprio, int max_level)
+>>> +{
+>>> +     int data = IOPRIO_PRIO_DATA(ioprio);
+>>> +
+>>> +     if (IOPRIO_BAD_VALUE(data, max_level))
+>>> +             return -EINVAL;
+>>
+>> No, this cannot possibly work correctly because the prio level part of the prio
+>> data is only 3 bits, so 0 to 7. The remaining 10 bits of the prio data are used
+>> for priority hints (IOPRIO_HINT_XXX).
+>>
+>> Your change will thus return an error for cases where the prio data has a level
+>> AND also a hint (e.g. for command duration limits). This change would break
+>> command duration limits. So NACK.
+>>
+>> The userspace header file has the ioprio_value() that a user should use to
+>> construct an ioprio. Bad values are checked in that function and errors will be
+>> returned if an invalid level is passed.
+>>
 > 
-> The CM9825 is a High Definition Audio Codec.
-> There are 2 independent stereo outputs, one of the stereo
-> outputs is cap-less with HP AMP, and the other is line out to
-> connect the active speaker. The inputs can be Line-in and MIC-in.
+> OK. Thanks for the detailed explanation.
 > 
-> Signed-off-by: Leo Tsai <antivirus621@gmail.com>
-> ---
->  sound/pci/hda/patch_cmedia.c | 268 +++++++++++++++++++++++++++++++++++
->  1 file changed, 268 insertions(+)
->  mode change 100644 => 100755 sound/pci/hda/patch_cmedia.c
-> 
-> diff --git a/sound/pci/hda/patch_cmedia.c b/sound/pci/hda/patch_cmedia.c
-> old mode 100644
-> new mode 100755
+> I agree, to use unused bits, functionality (return value in this case)
+> will be changed. If applications are built using Kernel headers of
+> v6.1 (doesn't include eca2040972b4) and later only upgrading Kernel to
+> v6.6, because of the changes in return values applications may have
+> some sort of regression.
 
-You changed the file permission mistakenly here?
+Which would mean that the application was not first fixed to handle the error
+return, and so it would still being doing the wrong thing on 6.6 as well as on
+6.1. So I do not see any regression here...
 
-> index 2ddd33f8dd6c..3195261a7d2c
-> --- a/sound/pci/hda/patch_cmedia.c
-> +++ b/sound/pci/hda/patch_cmedia.c
-(snip)
-> +	{0x3C, AC_VERB_SET_AMP_GAIN_MUTE | 0x0a0, 0x2d},	/* Gain set */
-> +	{0x3C, AC_VERB_SET_AMP_GAIN_MUTE | 0x090, 0x2d},	/* Gain set */
+> To make the software backward compatible I believe, unused bits should
+> always be ignored. So that if in future someone uses it, it should not
+> change the behaviour (return values) of existing software.
 
-FWIW, those are equivalent with:
-	{0x3C, AC_VERB_SET_AMP_GAIN_MUTE, AC_AMP_SET_OUTPUT | AC_AMP_SET_RIGHT | 0x2d},	/* Gain set */
-	{0x3C, AC_VERB_SET_AMP_GAIN_MUTE, AC_AMP_SET_OUTPUT | AC_AMP_SET_LEFT | 0x2d},	/* Gain set */
+There are no unused bits anymore since kernel 6.5: hints = 10 bits, level = 3
+bits, and class = 3 bits, for a total of 16-bits for the entire ioprio.
 
-> +static void cm9825_unsol_hp_delayed(struct work_struct *work)
-> +{
-> +	struct cmi_spec *spec =
-> +	    container_of(to_delayed_work(work), struct cmi_spec, unsol_hp_work);
-> +	struct hda_jack_tbl *jack;
-> +	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
-> +	bool hp_jack_plugin = false;
-> +	int err = 0;
+So if an application attempt to set an invalid level that uses more than 3-bits,
+the extra bits will be ignored in the kernel and such bad level value can be
+caught only if the application uses the ioprio_value() helper defined in
+include/uapi/linux/ioprio.h.
 
-Both are unnecessary initializations.
+And note that before 6.5, checking the prio level was also far from perfect: if
+the user tried to set the prio level to a value using more than 13-bits, the
+extra bits would be ignored too and the bad value would NOT necessarily cause an
+error (e.g. using 1 << 13 = 8192 as the level would result in the kernel seeing
+level = 0 and not throw an error). The introduction of ioprio_value() allows
+catching these issues, if the application use it.
 
-> +static int cm9825_resume(struct hda_codec *codec)
-> +{
-> +	struct cmi_spec *spec = codec->spec;
-> +	hda_nid_t hp_pin = 0;
-> +	bool hp_jack_plugin = false;
-> +	int err;
-> +
-> +	err =
-> +	    snd_hda_codec_write(spec->codec, 0x42, 0,
-> +				AC_VERB_SET_PIN_WIDGET_CONTROL, 0x00);
-> +	if (err)
-> +		codec_dbg(codec, "codec_write err %d\n", err);
-> +
-> +	/* hibernation resume needs the full chip initialization */
-> +	if (cmi_is_s4_resume(codec))
-> +		codec_dbg(spec->codec, "resume from S4\n");
+-- 
+Damien Le Moal
+Western Digital Research
 
-Is the comment above correct?
-It only shows a debug print and does nothing else, no?
-
-> @@ -32,6 +252,53 @@ static const struct hda_codec_ops cmi_auto_patch_ops = {
->  	.unsol_event = snd_hda_jack_unsol_event,
->  };
->  
-> +static int patch_cm9825(struct hda_codec *codec)
-> +{
-(snip)
-> +	INIT_DELAYED_WORK(&spec->unsol_hp_work, cm9825_unsol_hp_delayed);
-
-If you use the delayed work, it has to be cleared at the destructor
-via cancel_delayed_work().  That is, you'd need the own ops.free
-callback implementation.
-
-And if doing so, it's better to put this initialization earlier (right
-after the alloc of spec and its field initializations), so that you
-can call cancel_delayed_work() unconditionally.
-
-
-thanks,
-
-Takashi
 
