@@ -1,125 +1,200 @@
-Return-Path: <linux-kernel+bounces-321154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F482971547
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:26:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B898971586
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C1E7B24F15
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:26:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B92A21F227C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA521B3F3F;
-	Mon,  9 Sep 2024 10:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657791B3735;
+	Mon,  9 Sep 2024 10:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2IQvUu1"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0u6d7mzk"
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA161AC8BF;
-	Mon,  9 Sep 2024 10:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD3F14A0A7
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 10:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725877572; cv=none; b=H1i+VMtHWJ4Uz8iaoFou5afujhPqbdtG8ZL+2KgFcoeuSC1MzHSkmlum4c/sQAA84L6eIEqjxljTYz9dIWfIN9+AvihX/OKJLs2m2ItXy7Vt8h3dbMKRirVyREgsc1nKxdv1zfeHhEJQEh97dnU9uKtGHG48y+x5vwwq0cnlu3M=
+	t=1725878414; cv=none; b=EeMQLwjLliFu74HsUMF2vO10kc365RdKP2V+x2MgkGIGfipREl17hCukSq+AXzCjm3g/vPeoOdKxRJ6Nxf7wOYfF7cK1NOTGT8cJMDLbBClFT1Ph1bCnJDWyGQmvjpmAI+TE+SGeIFKb42opxDMgms2UJhWUjNZu0EalDEwncM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725877572; c=relaxed/simple;
-	bh=vjRysiKxyGdGA4AY0ytCy+i5GAF/On6Gr0J08cUMKDk=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Pm1S2sByojc1GQp6C6zXPvVcoXx+zi63EAc9ECxhrVvOA/S8JaBAtROCNI7oMcU0QWXe8NrJ6bAcPb5BrEExLDNxVg8KUsy7086wCOuyGEEN35ojCf0dGgGRmM9MAQdggFc5XFaqvtms8TAOeMHnAYrXe7a92Jj53wlDjPVEuqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2IQvUu1; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-371941bbfb0so2480416f8f.0;
-        Mon, 09 Sep 2024 03:26:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725877569; x=1726482369; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ISibUxuI97oG6O4QKOeX0myJkEm0PAQbIlWNwEF4zn8=;
-        b=m2IQvUu140F9HVv/JPWkAjMoZ9XmpSC5sMxBRa2hgNLrrv70BblE+EArux7UG2Mg5B
-         JqJ0WErmVdnaom0KN7l7FWQd1Oh8WJmdSZbVNhCDshZGN0iccdXM/vpkrKmt6v0jn+eR
-         dZNEsN4LmYVArDlLbjTJVkNz1T5QYl5ceYOQBp8nyeswxPdcckxNcFhh6wmu51mEgL6K
-         LixwhxNZgMBxfHYQHku28FYAgD3enuafxJOOWwm16obnABGz93uLvXANtQJofQfqebyt
-         sEQzLyuq5Zqpr+JJWeAPJCCLplvWrYUeylRNj3RTyjHZFOyXjqswqyuJdd6KEfwv6B/b
-         vHAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725877569; x=1726482369;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ISibUxuI97oG6O4QKOeX0myJkEm0PAQbIlWNwEF4zn8=;
-        b=fA3u+FHGpIZ9YR9shwsSSKFx77vHQXeiwnmf58jv9jPNkBFYxTmIk/hEN/k2IOLfWi
-         HS3R6Te0cT+ST5LEVuxsK3211z050UkPg3cdqO4DSpDcw4qzqYlP4XHnN2DOZVvF32I/
-         /Nri7pkomn6rEUPs/kmUh396KRhoRQICp0tZv90fX8WJEJIKMH/pvyHJ+cvcoe9sH378
-         cYlgBwKfrnzg4CzLnRRicRMWZ10xVQAW8m+hiLLMYtbr2uJf70/dXS3G476xE3CWErdA
-         HKpcGw2IcrUgkR7xENpChhIjYJH1wcyB3VYpeLABAPTQl+EiyBXag8pa94Y9eo2DQn9e
-         3cCw==
-X-Forwarded-Encrypted: i=1; AJvYcCURdAI3M602erfQtVSHFgtFS6qkLibQ6w93X37G+0uUykctcBAOzQLMf2SWXPahlBzfd63CybnScLhreSZI@vger.kernel.org, AJvYcCUmb/B0HpezQvCg/QqSbUF61lP2cQOD3UEj0AD1dG6iy6wYeFz97j7RD0BC6ENyWKXVzxQpZ9Hpdz3Q@vger.kernel.org, AJvYcCWgGtQtq2w9CihIUwndf3iHGE8Zki8VZwCawSHhKSOQFwZSElakVYXGufh0on+Lp7pNPfzkm4mlUL69@vger.kernel.org, AJvYcCX+baSUJEozkYTnQoDPGlFx687ddZ9ggqi5TUWQHUZ37vou1XD5BOYgVZ6YF8swPoEKSCsWH1Vvi4P5xWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO4J8/HziY8qf2KkiH0VVMH0gd0jQR3DyqeThTWORZMSibkj5w
-	9IqnDDs+bH+2NAf+bdbCb4mSArOmzOGlh3B8MaNixZ7raMagGTYi
-X-Google-Smtp-Source: AGHT+IGBK9cph81z/hY52nwArccd2p7hMtUV1kAy86UaX3SM3/dXzcfTpymVaLI65YmnG+9CrrYawA==
-X-Received: by 2002:a5d:5547:0:b0:374:c31e:971a with SMTP id ffacd0b85a97d-378922b81f4mr4172859f8f.0.1725877568946;
-        Mon, 09 Sep 2024 03:26:08 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956767c4sm5651474f8f.63.2024.09.09.03.26.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 03:26:08 -0700 (PDT)
-Message-ID: <fd23afc9700089acddec7537133dc96975580b07.camel@gmail.com>
-Subject: Re: [PATCH v3 1/3] input: touchscreem: ad7877: add match table
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michael
- Hennerich <michael.hennerich@analog.com>, Mark Brown <broonie@kernel.org>, 
- linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Date: Mon, 09 Sep 2024 12:30:17 +0200
-In-Reply-To: <20240909093101.14113-1-antoniu.miclaus@analog.com>
-References: <20240909093101.14113-1-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+	s=arc-20240116; t=1725878414; c=relaxed/simple;
+	bh=hw8yQ0VolwvnBmKSF3LNIg7oRvWDO7NrzgXIKv0VxmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R8WbhVKrDk5duORlEZfV1yi4KB0yrGjdQ68BQZHwsPSAaFL2UqNAnTlCbixQa3d/aFJYYu2SgmnvsLMYy2mgsHtykVO0ey7lRqQb4r9xYapOYkDY9Dbq1CuD97BlOne1+dyi0dLXRKrc6LjtK0775RK3gOT9k5IIad5dXdxJTF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0u6d7mzk; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X2NT75smbz105G;
+	Mon,  9 Sep 2024 12:32:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1725877979;
+	bh=USLrcmWGFqTUBjA2tdW0YzQ39cdQX5h4S2o2tNzyS+0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0u6d7mzkBO6aFeKEMuu2IYY0PL7osWBo2Z3PHskcQo/HMlMZmWYjCAGLF0I7wVc/j
+	 fdo33Rz5+78d5pFRDkYqx76o5FSEsDIH5jWr7nV4xkkfOnnLBWIemB41drtOyzw6+O
+	 QKHJF0tm4DVWbCLSWKgSOdo55lYImi8mC4rJtsZQ=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X2NT63tfBzxy;
+	Mon,  9 Sep 2024 12:32:58 +0200 (CEST)
+Date: Mon, 9 Sep 2024 12:32:52 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] selftest/landlock: Test file_send_sigiotask by
+ sending out-of-bound message
+Message-ID: <20240909.aekeexooNo8i@digikod.net>
+References: <cover.1725657727.git.fahimitahera@gmail.com>
+ <50daeed4d4f60d71e9564d0f24004a373fc5f7d5.1725657728.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <50daeed4d4f60d71e9564d0f24004a373fc5f7d5.1725657728.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, 2024-09-09 at 12:30 +0300, Antoniu Miclaus wrote:
-> Add match table for the ad7877 driver and define the compatible string.
->=20
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+This test does not cover hook_file_send_sigiotask(): the is_scoped
+variable is never set to true.
+
+On Fri, Sep 06, 2024 at 03:30:06PM -0600, Tahera Fahimi wrote:
+> This patch adds a test to verify handling the signal scoping mechanism
+> in file_send_sigiotask by triggering SIGURG through receiving an
+> out-of-bound message in UNIX sockets.
+> 
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
 > ---
-> no changes in v3.
-> =C2=A0drivers/input/touchscreen/ad7877.c | 7 +++++++
-> =C2=A01 file changed, 7 insertions(+)
->=20
-> diff --git a/drivers/input/touchscreen/ad7877.c
-> b/drivers/input/touchscreen/ad7877.c
-> index a0598e9c7aff..7886454a19c6 100644
-> --- a/drivers/input/touchscreen/ad7877.c
-> +++ b/drivers/input/touchscreen/ad7877.c
-> @@ -805,10 +805,17 @@ static int ad7877_resume(struct device *dev)
-> =C2=A0
-> =C2=A0static DEFINE_SIMPLE_DEV_PM_OPS(ad7877_pm, ad7877_suspend, ad7877_r=
-esume);
-> =C2=A0
-> +static const struct of_device_id ad7877_of_match[] =3D {
-> +	{ .compatible =3D "adi,ad7877", },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, ad7877_of_match);
+> V4:
+> * Using pipe instead of Poll for synchronization.
+> ---
+>  .../selftests/landlock/scoped_signal_test.c   | 99 +++++++++++++++++++
+>  1 file changed, 99 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
+> index c71fb83b7147..630f3a515731 100644
+> --- a/tools/testing/selftests/landlock/scoped_signal_test.c
+> +++ b/tools/testing/selftests/landlock/scoped_signal_test.c
+> @@ -269,4 +269,103 @@ TEST(signal_scoping_threads)
+>  	EXPECT_EQ(0, close(thread_pipe[1]));
+>  }
+>  
+> +#define SOCKET_PATH "/tmp/unix_sock_test"
+
+We must not create file on absolute paths because concurrent executions
+or previous ones could interfer with the tests.  Why not use an abstract
+unix socket created with set_unix_address()?
+
 > +
-
-Just curious, is there any reason for this patch to be split from patch 2? =
-Also,
-this patch should directly include mod_devicetable.h for 'struct of_device_=
-id'
-(instead of relying in other headers).
-
-- Nuno S=C3=A1
-
+> +const short backlog = 10;
+> +
+> +static volatile sig_atomic_t signal_received;
+> +
+> +static void handle_sigurg(int sig)
+> +{
+> +	if (sig == SIGURG)
+> +		signal_received = 1;
+> +	else
+> +		signal_received = -1;
+> +}
+> +
+> +static int setup_signal_handler(int signal)
+> +{
+> +	struct sigaction sa;
+> +
+> +	sa.sa_handler = handle_sigurg;
+> +	sigemptyset(&sa.sa_mask);
+> +	sa.sa_flags = SA_SIGINFO | SA_RESTART;
+> +	return sigaction(SIGURG, &sa, NULL);
+> +}
+> +
+> +/*
+> + * Sending an out of bound message will trigger the SIGURG signal
+> + * through file_send_sigiotask.
+> + */
+> +TEST(test_sigurg_socket)
+> +{
+> +	int sock_fd, recv_sock;
+> +	struct sockaddr_un addr, paddr;
+> +	socklen_t size;
+> +	char oob_buf, buffer;
+> +	int status;
+> +	int pipe_parent[2], pipe_child[2];
+> +	pid_t child;
+> +
+> +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
+> +	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
+> +
+> +	memset(&addr, 0, sizeof(addr));
+> +	addr.sun_family = AF_UNIX;
+> +	snprintf(addr.sun_path, sizeof(addr.sun_path), "%s", SOCKET_PATH);
+> +	unlink(SOCKET_PATH);
+> +	size = sizeof(addr);
+> +
+> +	child = fork();
+> +	ASSERT_LE(0, child);
+> +	if (child == 0) {
+> +		oob_buf = '.';
+> +
+> +		ASSERT_EQ(0, close(pipe_parent[1]));
+> +		ASSERT_EQ(0, close(pipe_child[0]));
+> +
+> +		sock_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+> +		ASSERT_NE(-1, sock_fd);
+> +
+> +		ASSERT_EQ(1, read(pipe_parent[0], &buffer, 1));
+> +		ASSERT_EQ(0, connect(sock_fd, &addr, sizeof(addr)));
+> +
+> +		ASSERT_EQ(1, read(pipe_parent[0], &buffer, 1));
+> +		ASSERT_NE(-1, send(sock_fd, &oob_buf, 1, MSG_OOB));
+> +		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
+> +
+> +		EXPECT_EQ(0, close(sock_fd));
+> +
+> +		_exit(_metadata->exit_code);
+> +		return;
+> +	}
+> +	ASSERT_EQ(0, close(pipe_parent[0]));
+> +	ASSERT_EQ(0, close(pipe_child[1]));
+> +
+> +	sock_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+> +	ASSERT_NE(-1, sock_fd);
+> +	ASSERT_EQ(0, bind(sock_fd, &addr, size));
+> +	ASSERT_EQ(0, listen(sock_fd, backlog));
+> +
+> +	ASSERT_NE(-1, setup_signal_handler(SIGURG));
+> +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
+> +	recv_sock = accept(sock_fd, &paddr, &size);
+> +	ASSERT_NE(-1, recv_sock);
+> +
+> +	create_scoped_domain(_metadata, LANDLOCK_SCOPED_SIGNAL);
+> +
+> +	ASSERT_NE(-1, fcntl(recv_sock, F_SETOWN, getpid()));
+> +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
+> +	ASSERT_EQ(1, read(pipe_child[0], &buffer, 1));
+> +	ASSERT_EQ(1, recv(recv_sock, &oob_buf, 1, MSG_OOB));
+> +
+> +	ASSERT_EQ(1, signal_received);
+> +	EXPECT_EQ(0, close(sock_fd));
+> +	EXPECT_EQ(0, close(recv_sock));
+> +	ASSERT_EQ(child, waitpid(child, &status, 0));
+> +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
+> +	    WEXITSTATUS(status) != EXIT_SUCCESS)
+> +		_metadata->exit_code = KSFT_FAIL;
+> +}
+> +
+>  TEST_HARNESS_MAIN
+> -- 
+> 2.34.1
+> 
 
