@@ -1,184 +1,155 @@
-Return-Path: <linux-kernel+bounces-321837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35B3397201F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:14:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68595972021
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE00728632A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:14:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 247A6284767
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BAC170A16;
-	Mon,  9 Sep 2024 17:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E23E16F907;
+	Mon,  9 Sep 2024 17:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FDeaAjZh"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="KPlyNgRU"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B3B173328
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3CB168BD;
+	Mon,  9 Sep 2024 17:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902088; cv=none; b=TB3jieu61qsbvmhrEgelShjLlQ79uj1e44JIGjRAf2dCeQ5/I7ob/ap8ZZwD5gjoOwvPAef01Ue9rWUaoFdgPPd6Wm7LkpztqcoihI6+QO8Y4uFytsP0gwUJrdLKnEhGLEg60jTZZYHgTBXBw/BZaEHziujUUGm32tdc4biOch4=
+	t=1725902187; cv=none; b=SUp7kktRRzSvp0xKPo5ewnd8LRwQqjCINgFWQ+D7dodeNiXr2/5IhtQLkLp+WENZXtqcm8m9HmpXDGIk17dBXdYQtC6MkUsOMzY1kOC5OdpYD+fp08PLKCLjNVk2vh75+VvmSNGS+5fttMH/h33NCsCroFAiU7Qk/x9MlKVuk2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902088; c=relaxed/simple;
-	bh=zN/9FwewWB9KQ3atq6S0gc1nfi/dzDgn9bBiYjUhnew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C8x6NcAApZ0nB4mikxGY9O55GcjDi2MM7cUEOCE1Zz7PyVUhcMkSzfOKRuP9jjZTPPpiOsJvfbpjWUmuFvK+MfKMKkUP9J+KPgaNMTLvHJjtpISx4MAscvlrPh+gKaeRzidLGGOqtrwEe7sxHy9ORI+mxVzzzK5ozzDaWxH+Yrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FDeaAjZh; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8d0d0aea3cso387809066b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 10:14:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725902085; x=1726506885; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ALxNN9dRZoFRC9+y/jfUuWDybKDVKqjBEGo398aNo/A=;
-        b=FDeaAjZhE9/OoPNmA9UBDy8HaX9kujwqPipcByAD+s21Q56+6e+R4M56u9ShS+LThn
-         bVagx8zE5VloK+S0wzZDlPspk8WBSr5PbgFwJh+Tp0lhWlrRFdBfHdQ3i/vzERnlzcDP
-         f/33cbJhvR9menI/BG2Z0Qa5eoB2Xo0G8wNdo0PARAZQ3AYH8RPo9du+kGmse3vTXHdt
-         M7CUH9C1lvcZJferG0pDzqIzNHz5LonWzc/X/cK3/bV6ZvS8CYINF8Vg7m+fDsX3z5FU
-         utmf1zz0iOKT+8zHeQgEXZ/OtJV9Q7ExWcUuAWNe3O+yrCyIpPszk9BkACGVxPtGgYEK
-         AY9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725902085; x=1726506885;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ALxNN9dRZoFRC9+y/jfUuWDybKDVKqjBEGo398aNo/A=;
-        b=a6LfpYiL97tO/W+Qv5EADtla6dA3qB3ox/4SpPqCtosroMAJgRVpO2B7pl2oa274IX
-         eDOGBv0FboX8ptfl08kbqKVQ8JXWUrvqf3MCVpkAFjEQHWxBWdenYekVJz3b+Rtiqmq4
-         xVN6OufguDW44JgwZ8GVSI6/1/TnWIEc6d9frfuFIR2hzepOO+SYU2x3VUqYkj/0XI0K
-         ZJfVYt/iFXH4NFxmucLrRVVKjXoMNFD0kh4VBBihDN+nJB86ntgJtzQElaDT48FU6+LX
-         Uco8ApIfBSpN+FF6LhltuP/eQtT+xQOCLZHhwWJh3YJzdEB4X4FnZIy2bdPGisUB2TRO
-         mtkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcuYtZT5YSwRSdXgyFH/qI8fPco1jjibbkf8eenYVBbtWC3G8+6GWPDsU195FdlaEnwrodwINsfrrlv7s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGjZSx0dUF6GBJH7IgACUkr/0PBByp3StlxREDG5vMAA6moAqz
-	swqfOXWvzeqmSTUnDyl7VAycSAewbO6OmmGQP/m5aVTinSZd94JHwiKNMKW22tOWGCRveGIbt6x
-	FHzc20+dPtCoBiIRipm1Ypw0vJg9S0QVmZMLm
-X-Google-Smtp-Source: AGHT+IH0dTzDOVLc7VvGHPOxI/KkLcM1np+lsLFV0QY0GoyCEVa2vNttuQrGJkSAKRrDZzGf9VtlyGjj7VmVmlK627Q=
-X-Received: by 2002:a17:907:1c2a:b0:a8d:29b7:ecf3 with SMTP id
- a640c23a62f3a-a8d29b7ef32mr463884466b.13.1725902084680; Mon, 09 Sep 2024
- 10:14:44 -0700 (PDT)
+	s=arc-20240116; t=1725902187; c=relaxed/simple;
+	bh=WdtjfJfFax49BUXe0J2NEx13L4l5Io4Wb1Jd8zgQ8i4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y+VI/OrJXOdX4w5n4t2nqSV0uKTrx58VLE3wYIuNyZ+rjCQqg05bndr1Ldh5Tpw1/3aPVjrbtOhhXX8MCqtMWCAcNsMpc631qTfJsaoHraQ9B5FAbHRM8hKNZDKcf37QWjm1mywRwarj1DjA+q+tG7q4F8Hg9X7rQ3nfyD/TS+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=KPlyNgRU; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1725902175; x=1726506975; i=wahrenst@gmx.net;
+	bh=419wjomNzniGm9B42Dz+raTwDB9f2lxhiCspgj9PUqE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=KPlyNgRUZwGhIPnyJsLZFLwuMuDEEYebaB+CU5pm07GuE+HMuqCLQYrV9Rl0vf2G
+	 7AN8WNPv3yA1zTYdENOVI3vEq+DV/AqYTVoYGeWVEWXZEb8/ajXsxur4vxRwZpT9X
+	 TL2FakbroHnzz0JncHu6k6mtgU9Xd3bdaDMqoX5yFTOgi6fM+fVbIMhQ/PYxQb2hv
+	 xtR4/JDBldSRLDIXRhZLds2ELAVsT+qEFx+KHs3+FRJpWUgn33SN+UmaeUEoeNOMy
+	 N+wAux3ItkDoRptK3cnpe9kPi0j4GpCRwGHMI9OW1zWPrPnJyjZI+9NPZ4pHie2eo
+	 f6mSedNGj5xaarlNnw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.128] ([37.4.248.43]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mt79P-1rudMs1oOv-015Vsj; Mon, 09
+ Sep 2024 19:16:15 +0200
+Message-ID: <2e3f270e-4c18-490f-8f18-87a422818cb6@gmx.net>
+Date: Mon, 9 Sep 2024 19:16:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909160604.1148178-1-sean.anderson@linux.dev>
- <CANn89i+UHJgx5cp6M=6PidC0rdPdr4hnsDaQ=7srijR3ArM1jw@mail.gmail.com> <c17ef59b-330f-404d-ab03-0c45447305b0@linux.dev>
-In-Reply-To: <c17ef59b-330f-404d-ab03-0c45447305b0@linux.dev>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 9 Sep 2024 19:14:32 +0200
-Message-ID: <CANn89iJp6exvUkDSS6yG7_gLGknYGCyOE5vdkL-q5ZpPktWzqA@mail.gmail.com>
-Subject: Re: [PATCH net] net: dpaa: Pad packets to ETH_ZLEN
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Madalin Bucur <madalin.bucur@nxp.com>, netdev@vger.kernel.org, 
-	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org, 
-	"David S . Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/2] tpm: tpm_tis_spi: Ensure SPI mode 0
+To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+ Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Stefan Berger <stefanb@linux.ibm.com>
+References: <20240906060947.4844-1-wahrenst@gmx.net>
+ <20240906060947.4844-2-wahrenst@gmx.net>
+ <D3Z3UFHWQ3MG.N8JU7ZHX3XHN@kernel.org>
+ <e7d402f4-0463-4bb2-b1ea-afb36a58e59a@gmx.net>
+ <D41X15Z6ZQ4K.3HGVA7H9C6PJ5@kernel.org>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <D41X15Z6ZQ4K.3HGVA7H9C6PJ5@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:DZX4RHmuZ66cfpVGYRE8AlnbNEFL/vQbMXJgKiJ0x13FeB0xyRM
+ xd+51E/Wb6dktCTZ7B4XnjUrybpN7Fuu2qhAna58FIUP0A5WGKW1jEhr18Oja3zDSmxYBIB
+ B+h9xndcVLLXucWad/XaZoYp+4mhbZYCiFglLxTnXt9m0JkFbvQmLj+SE9+7hROeCpv1x88
+ /2q8ITitFf6bDLYdAahSg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:rPgDiUKqz2E=;BS/1AaBoKLBHsnNHswKYEeUNra6
+ VJCkFMl5B9CRWOGUCMIXPBCWY/F6SXDGl43ofiMbRN/ht1Ji2GeE85rvL3OI/aLMnewRwbhyM
+ XsLkFfkF4jhLN84CzfbwcIRdmuvjfoRc7Z+Y6IJzQu2QFrUaqPsbN1yYzHbhp34WQUGAuSsmp
+ rXSpVthbtx7mHEU5W3P5Kwjd3dEW6+NzJ4rLeb3HN5hAXNdpLlCVwGSt/zUA0SfyMINTCrRLl
+ 8Rwrp/oLi6AFmt24OPHLXQqbosCIh/q7/Z4qoKb9L/bEvaKUjws3uCMZCscIoU+0T1tnWmpIX
+ mOlFPNRon6j99113bTevKawukwztCEBQ08/eXL/eVXJq+l2Cr8KaSHgV826v/b4EDsRefNE6w
+ 7Cy1CfKeCsCgrcCOOr8+KgkC2NuG0a2EZWadB4m8JeEWYWI2QuQclssugHKIm8iTJt1QQQZu0
+ 8XvdjYy6nk1fBqxB3dh0Zb5UrYm72lEphFLvikxFJijDt4miWyfDLznWw42oTEF3hQBpyMCw+
+ 6z0jbU612J5PG831KKrZ0flFAreXwSPIAVLbqFnTqlaustJ5aDKGfmXqj1Uh3Lpx0+OhNyDsY
+ Nh8vejCzFXQaU1dGScx7+E/hKN2zV6AqRBzdoeL+ICdBZ0Q3aTh10P1gg9tEclf4/3W1hROVy
+ n4yhB3sV4YXOgNghOPSCve6xMZ5pIuRBRBYMF5kM7JX39ufRj3ghPVlrdhyE57zRtCQ45Dr6l
+ xUfzlJ1JSvDhNqeIC/r3iQIBc/TCz3Bu2jn/Y6ABis//h+0lxGycuD9rbHboICfnvsZlao4If
+ 9YisP5qPEIfhGQg8XI3u1kXg==
 
-On Mon, Sep 9, 2024 at 7:07=E2=80=AFPM Sean Anderson <sean.anderson@linux.d=
-ev> wrote:
->
-> On 9/9/24 12:46, Eric Dumazet wrote:
-> > On Mon, Sep 9, 2024 at 6:06=E2=80=AFPM Sean Anderson <sean.anderson@lin=
-ux.dev> wrote:
-> >>
-> >> When sending packets under 60 bytes, up to three bytes of the buffer f=
-ollowing
-> >> the data may be leaked. Avoid this by extending all packets to ETH_ZLE=
-N,
-> >> ensuring nothing is leaked in the padding. This bug can be reproduced =
-by
-> >> running
-> >>
-> >>         $ ping -s 11 destination
-> >>
-> >> Fixes: 9ad1a3749333 ("dpaa_eth: add support for DPAA Ethernet")
-> >> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> >> ---
-> >>
-> >>  drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 6 ++++++
-> >>  1 file changed, 6 insertions(+)
-> >>
-> >> diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/=
-net/ethernet/freescale/dpaa/dpaa_eth.c
-> >> index cfe6b57b1da0..e4e8ee8b7356 100644
-> >> --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> >> +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> >> @@ -2322,6 +2322,12 @@ dpaa_start_xmit(struct sk_buff *skb, struct net=
-_device *net_dev)
-> >>         }
-> >>  #endif
-> >>
-> >> +       /* Packet data is always read as 32-bit words, so zero out any=
- part of
-> >> +        * the skb which might be sent if we have to pad the packet
-> >> +        */
-> >> +       if (__skb_put_padto(skb, ETH_ZLEN, false))
-> >> +               goto enomem;
-> >> +
-> >
-> > This call might linearize the packet.
-> >
-> > @nonlinear variable might be wrong after this point.
-> >
-> >>         if (nonlinear) {
-> >>                 /* Just create a S/G fd based on the skb */
-> >>                 err =3D skb_to_sg_fd(priv, skb, &fd);
-> >> --
-> >> 2.35.1.1320.gc452695387.dirty
-> >>
-> >
-> > Perhaps this instead ?
-> >
-> > diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> > b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> > index cfe6b57b1da0e45613ac1bbf32ddd6ace329f4fd..5763d2f1bf8dd31b80fda06=
-81361514dad1dc307
-> > 100644
-> > --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> > +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-> > @@ -2272,12 +2272,12 @@ static netdev_tx_t
-> >  dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
-> >  {
-> >         const int queue_mapping =3D skb_get_queue_mapping(skb);
-> > -       bool nonlinear =3D skb_is_nonlinear(skb);
-> >         struct rtnl_link_stats64 *percpu_stats;
-> >         struct dpaa_percpu_priv *percpu_priv;
-> >         struct netdev_queue *txq;
-> >         struct dpaa_priv *priv;
-> >         struct qm_fd fd;
-> > +       bool nonlinear;
-> >         int offset =3D 0;
-> >         int err =3D 0;
-> >
-> > @@ -2287,6 +2287,10 @@ dpaa_start_xmit(struct sk_buff *skb, struct
-> > net_device *net_dev)
-> >
-> >         qm_fd_clear_fd(&fd);
-> >
-> > +       if (__skb_put_padto(skb, ETH_ZLEN, false))
-> > +               goto enomem;
-> > +
-> > +       nonlinear =3D skb_is_nonlinear(skb);
-> >         if (!nonlinear) {
-> >                 /* We're going to store the skb backpointer at the begi=
-nning
-> >                  * of the data buffer, so we need a privately owned skb
->
-> Thanks for the suggestion; I was having a hard time figuring out where
-> to call this.
->
-> Do you have any hints for how to test this for correctness? I'm not sure
-> how to generate a non-linear packet under 60 bytes.
+Hi Jarkko,
 
-I think pktgen can do this, with its frags parameter.
+Am 09.09.24 um 19:05 schrieb Jarkko Sakkinen:
+> On Fri Sep 6, 2024 at 5:46 PM EEST, Stefan Wahren wrote:
+>> Am 06.09.24 um 11:47 schrieb Jarkko Sakkinen:
+>>> On Fri Sep 6, 2024 at 9:09 AM EEST, Stefan Wahren wrote:
+>>>> According to TCG PC Client Platform TPM Profile (PTP) Specification
+>>>> only SPI mode 0 is supported. In order to ensure the SPI controller
+>>>> supports the necessary settings, call spi_setup() and bail out
+>>>> as soon as possible in error case.
+>>>>
+>>>> This change should affect all supported TPM SPI devices, because
+>>>> tpm_tis_spi_probe is either called direct or indirectly.
+>>>>
+>>>> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+>>>> ---
+>>>>    drivers/char/tpm/tpm_tis_spi_main.c | 11 +++++++++++
+>>>>    1 file changed, 11 insertions(+)
+>>>>
+>>>> diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/t=
+pm_tis_spi_main.c
+>>>> index 61b42c83ced8..e62d297b040e 100644
+>>>> --- a/drivers/char/tpm/tpm_tis_spi_main.c
+>>>> +++ b/drivers/char/tpm/tpm_tis_spi_main.c
+>>>> @@ -248,6 +248,17 @@ static int tpm_tis_spi_write_bytes(struct tpm_ti=
+s_data *data, u32 addr,
+>>>>    int tpm_tis_spi_init(struct spi_device *spi, struct tpm_tis_spi_ph=
+y *phy,
+>>>>    		     int irq, const struct tpm_tis_phy_ops *phy_ops)
+>>>>    {
+>>>> +	int ret;
+>>>> +
+>>>> +	spi->mode &=3D ~SPI_MODE_X_MASK;
+>>>> +	spi->mode |=3D SPI_MODE_0;
+>>>> +
+>>>> +	ret =3D spi_setup(spi);
+>>>> +	if (ret < 0) {
+>>>> +		dev_err(&spi->dev, "SPI setup failed: %d\n", ret);
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>>    	phy->iobuf =3D devm_kmalloc(&spi->dev, SPI_HDRSIZE + MAX_SPI_FRAM=
+ESIZE, GFP_KERNEL);
+>>>>    	if (!phy->iobuf)
+>>>>    		return -ENOMEM;
+>>>> --
+>>>> 2.34.1
+>>> Why?
+>> SPI protocol driver usually call spi_setup to verify that the SPI
+>> controller accept the settings (SPI mode, bit, clock rate ...). Bailing
+>> out early is more helpful for debugging issues.
+> What problem has this patch solved for you? I think it makes the code
+> only less robust and more error prone.
+this is not a fix for an issue i was experiencing.
+
+It is just an improvement to catch possible invalid settings which has
+been passed via DT device for example or the SPI controller doesn't
+support SPI mode 0.
+>
+> BR, Jarkko
+
 
