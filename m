@@ -1,89 +1,107 @@
-Return-Path: <linux-kernel+bounces-320962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93CF89712A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:52:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83FBE9712A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFA121C220F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:52:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 398DC1F23438
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D501B2519;
-	Mon,  9 Sep 2024 08:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmGn2G1W"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E6916631C;
+	Mon,  9 Sep 2024 08:53:01 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E356116631C;
-	Mon,  9 Sep 2024 08:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CD61B14E8;
+	Mon,  9 Sep 2024 08:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725871931; cv=none; b=VWSLxAmJV+hOXlaB9K5fKpNPqYZsKU5PrbmjmilCD5MTkXdK2M/jSVqjjHA+v5TFL4lshdZsUpcnC/MMP0SeGc3m4nP15bQrn+lDrTuWg+XS/B+wYMD879GDaLobyvOqlA1RoeX0v5qaJzybUctgHL+nxMIGo4dLTdiJh9UhcpA=
+	t=1725871981; cv=none; b=Dey4jnu5tvnNViwEMRBGXXb5OPPz1BclikTL2pLiO03/N6QuAtya8wDJFcWGikmykMqz8yFMMueF97WXlsYkndqbeBTMEo3E4Ze/c9uKEp/ObgI9/Tg1T97jR76pSE7UMZCitgtYO9jKzwlEoJVRbx7w8sfk7t+MFpLo3tn9FQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725871931; c=relaxed/simple;
-	bh=u9yIhycMRbv+Zz1SiqFnwavJGsdWGzRGAtLbAQfaA1A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VpeSLt4r7ujmkoqBUeT6fGKyDLvhjgn9AX/mCtSe0/yp3B524Aemz8MS04ewA+DfWiU0GRuYq4kdj71GakskqpVzHA43s+6YGsvUUkFQ/AWo7j1+BL9kC6zGkUHqtRJ6c8UYChm+9zBUbHLst0dmD3ypJJmzzp6a0pRaY1ubd54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmGn2G1W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E852EC4CEC5;
-	Mon,  9 Sep 2024 08:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725871930;
-	bh=u9yIhycMRbv+Zz1SiqFnwavJGsdWGzRGAtLbAQfaA1A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AmGn2G1W/LTzv/GiHaPuvj7VC+D3UqzD8mJHLVg418ginsCoh62XLmjJEOxVhubiy
-	 idIKKsgOq3n8wKE++R0jyNtcdi1HnSvjTHL+cuyAdoNgVZruKrW7WoOw0Lsng5rszE
-	 QNSGogl762PBw+J0rfam9Z02v0qMp1UO5gMKpB32Axl3mReOlc4csOAPZ3KNwuZMev
-	 H5weraRqzoL96+i7YRj0dfnzoQD1RZsKTIC+JuOlylfA1+96ZBYv0bEMZ8YkkuDVyJ
-	 AxFkF5z3k8CZh0XUWELH8gS7ZSjGzj+WD7kmdlVVxomxZHq2BQ2lI7U7Lsq39ZFLHu
-	 BKKtcXrjY6uaA==
-From: Christian Brauner <brauner@kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	akpm@linux-foundation.org
-Subject: Re: [PATCH] proc: fold kmalloc() + strcpy() into kmemdup()
-Date: Mon,  9 Sep 2024 10:52:01 +0200
-Message-ID: <20240909-gemocht-klubs-0c62b4db29d0@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <90af27c1-0b86-47a6-a6c8-61a58b8aa747@p183>
-References: <90af27c1-0b86-47a6-a6c8-61a58b8aa747@p183>
+	s=arc-20240116; t=1725871981; c=relaxed/simple;
+	bh=5pYzR9/0mNgcE9oWenX5Qf/q1RYzYHaUwcpqyuXMLk0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lptHCs7Oqwvoznsd08pGB562pzfvVLR6axWEzAMLysyDhZLtP+lbBvtWmoqpIfe9JKzMiN85WlksF64N0bqjQaEz2LXcm5XYLSMW+Q8227MKNv1qNypgNrGQMjdR/aetqv/1AMracEmvs9pe55PHqpYfKdlpD7S7KrlLLlJGWcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84C62C4CEC5;
+	Mon,  9 Sep 2024 08:52:59 +0000 (UTC)
+Date: Mon, 9 Sep 2024 09:52:57 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: mcgrof@kernel.org, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH] module: Refine kmemleak scanned areas
+Message-ID: <Zt63aV2zmkOkwRc3@arm.com>
+References: <20240906153856.22204-1-vdonnefort@google.com>
+ <ZtxenHsGPyDoYnzY@arm.com>
+ <Zt6mcvkzPI8WNgHl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=925; i=brauner@kernel.org; h=from:subject:message-id; bh=u9yIhycMRbv+Zz1SiqFnwavJGsdWGzRGAtLbAQfaA1A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTd2248o6DBXXSj/aGiEqtIcS/1GW2XS+cE//ts9e1Jw NSioNlfOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZSvY3hf/nbLA6VOVEMgolR 0ed7Mx+42Obt/nPirAln+73MNhfxWIZ/Jj1yRodjMpcL8kVWXL0rYXGjTsxc++xW85buDzuNNHb wAgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt6mcvkzPI8WNgHl@google.com>
 
-On Sun, 08 Sep 2024 12:27:45 +0300, Alexey Dobriyan wrote:
-> strcpy() will recalculate string length second time which is
-> unnecessary in this case.
+On Mon, Sep 09, 2024 at 08:40:34AM +0100, Vincent Donnefort wrote:
+> On Sat, Sep 07, 2024 at 03:12:13PM +0100, Catalin Marinas wrote:
+> > On Fri, Sep 06, 2024 at 04:38:56PM +0100, Vincent Donnefort wrote:
+> > > commit ac3b43283923 ("module: replace module_layout with module_memory")
+> > > introduced a set of memory regions for the module layout sharing the
+> > > same attributes but didn't update the kmemleak scanned areas which
+> > > intended to limit kmemleak scan to sections containing writable data.
+> > > This means sections such as .text and .rodata are scanned by kmemleak.
+> > > 
+> > > Refine the scanned areas for modules by limiting it to MOD_TEXT and
+> > > MOD_INIT_TEXT mod_mem regions.
+> > > 
+> > > CC: Song Liu <song@kernel.org>
+> > > CC: Catalin Marinas <catalin.marinas@arm.com>
+> > > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> > > 
+> > > diff --git a/kernel/module/debug_kmemleak.c b/kernel/module/debug_kmemleak.c
+> > > index 12a569d361e8..b4cc03842d70 100644
+> > > --- a/kernel/module/debug_kmemleak.c
+> > > +++ b/kernel/module/debug_kmemleak.c
+> > > @@ -12,19 +12,9 @@
+> > >  void kmemleak_load_module(const struct module *mod,
+> > >  			  const struct load_info *info)
+> > >  {
+> > > -	unsigned int i;
+> > > -
+> > > -	/* only scan the sections containing data */
+> > > -	kmemleak_scan_area(mod, sizeof(struct module), GFP_KERNEL);
+> > > -
+> > > -	for (i = 1; i < info->hdr->e_shnum; i++) {
+> > > -		/* Scan all writable sections that's not executable */
+> > > -		if (!(info->sechdrs[i].sh_flags & SHF_ALLOC) ||
+> > > -		    !(info->sechdrs[i].sh_flags & SHF_WRITE) ||
+> > > -		    (info->sechdrs[i].sh_flags & SHF_EXECINSTR))
+> > > -			continue;
+> > > -
+> > > -		kmemleak_scan_area((void *)info->sechdrs[i].sh_addr,
+> > > -				   info->sechdrs[i].sh_size, GFP_KERNEL);
+> > > +	/* only scan writable, non-executable sections */
+> > > +	for_each_mod_mem_type(type) {
+> > > +		if (type != MOD_DATA && type != MOD_INIT_DATA)
+> > > +			kmemleak_no_scan(mod->mem[type].base);
+> > >  	}
+> > >  }
+> > 
+> > I lost track of how module memory allocation works. Is struct module
+> > still scanned after this change?
 > 
-> 
+> That section being RW, it will be part of the MOD_DATA vmalloc and scanned.
 
-Applied to the vfs.procfs branch of the vfs/vfs.git tree.
-Patches in the vfs.procfs branch should appear in linux-next soon.
+Ah, makes sense. I'm fine with this patch, it simplifies the code now
+that we have mod->mem[type]. I wouldn't say it's a fix, though no
+backporting needed.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.procfs
-
-[1/1] proc: fold kmalloc() + strcpy() into kmemdup()
-      https://git.kernel.org/vfs/vfs/c/4ad5f9a021bd
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
