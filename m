@@ -1,111 +1,139 @@
-Return-Path: <linux-kernel+bounces-321781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10AEE971F5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:36:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB1B971F5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4F891F2287C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:36:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BCB9288BA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C0B166F3D;
-	Mon,  9 Sep 2024 16:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6541F169397;
+	Mon,  9 Sep 2024 16:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oPyu9U4P"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HyMk5ex8"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EECB1758F;
-	Mon,  9 Sep 2024 16:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A13D1758F
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725899782; cv=none; b=tj0ZMcOIcd5sOkTd+s5yioiuYvUjQE6NPgNfIsyowe0S2Q+pNsTzg3WPKEtZKFgYK5P49eKryUhUnjtKuE5UtsTO8XjTSay55INSel2SgNQRGNGtaBE/MTEF5FSTH2DXysAj/DhIm4QnyZR/wkX6vhk1zmjSO3uUgB6jYcoVzLo=
+	t=1725899839; cv=none; b=ZRZjuoZpmVILILNq7xFNYtg/pI5m4TZWiZlBWUPmrJHYsg0HOvPhHQxzyvZrlaOd9GlqugUzn0TALzTbgZK4+8lnsoPaCJRTLRYfoDlfu0s9zfz3g96WUrd500tAc8jxyg85Mwpa3Z9CVTM7xpWi+46AtYKO5RUO7vADbJdayBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725899782; c=relaxed/simple;
-	bh=FclFSf8FsCbG3fQav3OgUtvEsLk1smEIFvpfVk170gU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jWpC2NjTulrP6x/levPTb7f3IB2rYVeDxvzlpxuAAZ2N7cnrwLvp2fozdTOVk0JhXKQlBDf1W7jravWrqLWfivNjRx4SQgnvOQj7+ziLG4+i/55tfr9lYmyLC+BIpsngPttbfQrSqm2J1/PjDxC9VsAW5Xb34ZjK4OEFueNXr3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oPyu9U4P; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725899777;
-	bh=FclFSf8FsCbG3fQav3OgUtvEsLk1smEIFvpfVk170gU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oPyu9U4PgYBX/KN9dZCJ8ufd/krOlZpiQeuq8Mo23NhVMrpsh8Y64Tv/fAd8uTTmN
-	 tMoL2tLhYhwdwLO4QmHJScRo+Tu5N526kVlJXoScWUwGqUeg0KGuL72DApqSWSCz7p
-	 VoOau2YMyUYI2M2TaAW+18AlJP+WWUhht0Wu066TdJvdVpmwBWUiVlKX3j0Cn7Xgab
-	 Jul+9tWGUWgModujrZDgvKovXSQnwVIiSduMjmh8jlK82wAofX2KDSZFTaNSxHW2my
-	 0SOpcF/FopJvZJQrGWhdVNMajsaIIt4NZK/k9/z92J7xnt0t0pc+b6TwNl5T8CBAWI
-	 FjbqWeE0vGjVA==
-Received: from pan.lan (unknown [IPv6:2a00:23c6:c32f:9100::16d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: martyn)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 73D7717E35D9;
-	Mon,  9 Sep 2024 18:36:17 +0200 (CEST)
-From: Martyn Welch <martyn.welch@collabora.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@collabora.com,
-	Martyn Welch <martyn.welch@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: arm64: dts: ls1028a-rdb: Add iio-hwmon compatibility table
-Date: Mon,  9 Sep 2024 17:36:07 +0100
-Message-ID: <20240909163608.80541-1-martyn.welch@collabora.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1725899839; c=relaxed/simple;
+	bh=Vor9A51MY4LbHBQym1omjXXtWBlRMHBeYzCg0Ctn6GE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HDcr9FTaDbjkYk51r1OqGkPY5urdrIkIGsSmVjNnZZ0tlQYEq57kYz48BF4M7Ci7PRlRCdDXavGCrpaZNIFa1bs31FfFszClhuoMhpjUa0Blyn3L7kvUiLclxMrnkDUDOVvc0kyiA4+gjb5/iVWDYe9qNDCapb4G4d/e4NNO3Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HyMk5ex8; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-374b5f27cf2so2645281f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:37:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725899836; x=1726504636; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IVb7FZalp+hymwW1x9wgZGuiq1blreq92SNrbnhzt/U=;
+        b=HyMk5ex8ajDB02NENOTjzqHs6Q87jKZQHT/TsJsGbjSjx+fcVy/wSoRv0pM0LzgoIe
+         Zftjt+EFR9hfpTHdxG23nM64LdlC166ccGN+XKoe5Ehlpgmux2CmYGqZf9bkAElx+u7h
+         OC+Fjo2Ki20yIMaOLZ8FwVB5OtH/ZwEJL7OOf7fI0SQECcTPyVljCaTNbCLgKHBB2wLT
+         jeYZxafML4M5ap1/99RmvoT+RaVHsEryZab00PjxhX+RbMbS9PVF8sm74NaTw5UPWAQG
+         coAmlAMmw70B7daoPIMCXubUbKKDOAr4PENt5yYDL7c7V29vskeGpcakMSQfUEkn1ex4
+         eOFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725899836; x=1726504636;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IVb7FZalp+hymwW1x9wgZGuiq1blreq92SNrbnhzt/U=;
+        b=PdPdqIyIk8iH21uJ/x4OtEqKWTAyvqW3yx/rtItKWqW8uApQNRev4CMdQPt9tHkp6u
+         1d6EK7/po6KgIIeh8CWa1/G5bCzTVmSe0ijTXQ3wy7VElqv4HMtOsRKhZ5TDHq8y4Yql
+         iW6wAViDEc+mJOZWEdsE/kviBnKy3Uie0O1mZvAEPgqr6q09Ev9SKdVgxhl4ialg41Zj
+         EcN1pue+6s2AloBUGxvMtOva/23ug4sJ3nEZQxBWZmXff4FolbGgjIAJbsyEeQTxwLan
+         xr/Sz0aTb/ssR+ECYA4Z63D3u0THCAFSaMED/yn34vVrlxx+pU601Q7CBu5DhRFuVfR3
+         lUEw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzUzrdqsuILKy90n1Lt4I/0csldzDJOA31rukFoEV8Fm6Z3Y5MqhpGjbErxFVxR0Ofs7hrlmFBsWwXsog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJPIgSvhLwfWlChfR7/sMSZIBBqkleiGR5huAqWi5mZULUau0J
+	OwRRtnki0/cu+KnBsZjDiJBZG/V7oNUlfMaX9nsfozHBTE3x85ji2EkAy0Mf9aRa9WuCxx3Zwkd
+	GvuCFy5IC0DY+2Nqargt+3dqowe4w2XMxkdpH
+X-Google-Smtp-Source: AGHT+IFqGpX0VmbgWSC7nk1slW1l+OrKUWEzp/PMlH2GO3N0F90G8DHQsjE9OjeSQ5wBmNMyvA/uZ9VRq3o5WHdPitE=
+X-Received: by 2002:a05:6000:d8d:b0:374:c4e2:3ca7 with SMTP id
+ ffacd0b85a97d-378926858a7mr5320757f8f.5.1725899836155; Mon, 09 Sep 2024
+ 09:37:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240905-rust-lockdep-v1-1-d2c9c21aa8b2@gmail.com>
+In-Reply-To: <20240905-rust-lockdep-v1-1-d2c9c21aa8b2@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 9 Sep 2024 18:37:04 +0200
+Message-ID: <CAH5fLgj6aCNxXfANt-0duhMfujQdOip9AjtX5yRraXQ5QaDReA@mail.gmail.com>
+Subject: Re: [PATCH RFC] rust: lockdep: Use Pin for all LockClassKey usages
+To: levymitchell0@gmail.com
+Cc: Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Trevor Gross <tmgross@umich.edu>, linux-block@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The ls1028ardb uses the TI ina220 power monitor. This device has an IIO and
-hwmon drivers, but can't be used with both at the same time. To enable us
-to utilise the iio framework, but also access power information via the
-hwmon framework, add an iio-hwmon map. This allows the IIO driver to be
-used for the ina220, with the iio-hwmon driver mapping the data from the
-IIO framework into hwmon.
+On Fri, Sep 6, 2024 at 1:13=E2=80=AFAM Mitchell Levy via B4 Relay
+<devnull+levymitchell0.gmail.com@kernel.org> wrote:
+>
+> From: Mitchell Levy <levymitchell0@gmail.com>
+>
+> The current LockClassKey API has soundness issues related to the use of
+> dynamically allocated LockClassKeys. In particular, these keys can be
+> used without being registered and don't have address stability.
+>
+> This fixes the issue by using Pin<&LockClassKey> and properly
+> registering/deregistering the keys on init/drop.
+>
+> Link: https://lore.kernel.org/rust-for-linux/20240815074519.2684107-1-nmi=
+@metaspace.dk/
+> Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
+> ---
+> This change is based on applying the linked patch to the top of
+> rust-next.
+>
+> I'm sending this as an RFC because I'm not sure that using
+> Pin<&'static LockClassKey> is appropriate as the parameter for, e.g.,
+> Work::new. This should preclude using dynamically allocated
+> LockClassKeys here, which might not be desirable. Unfortunately, using
+> Pin<&'a LockClassKey> creates other headaches as the compiler then
+> requires that T and PinImpl<Self> be bounded by 'a, which also seems
+> undesirable. I would be especially interested in feedback/ideas along
+> these lines.
 
-Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+I think what should happen here is split this into two commits:
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-index ecd2c1e..b062de5 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-@@ -94,6 +94,12 @@ simple-audio-card,codec {
- 			system-clock-frequency = <25000000>;
- 		};
- 	};
-+
-+	iio-hwmon {
-+		compatible = "iio-hwmon";
-+		io-channels = <&ina220 0>, <&ina220 1>,
-+			<&ina220 2>, <&ina220 3>;
-+	};
- };
- 
- &can0 {
-@@ -222,8 +228,9 @@ i2c@2 {
- 			#size-cells = <0>;
- 			reg = <0x02>;
- 
--			current-monitor@40 {
-+			ina220: current-monitor@40 {
- 				compatible = "ti,ina220";
-+				#io-channel-cells = <1>;
- 				reg = <0x40>;
- 				shunt-resistor = <500>;
- 			};
+1. Get rid of LockClassKey::new so that the only constructor is the
+`static_lock_class!` macro. Backport this change to stable kernels.
+2. Everything else you have as-is.
+
+Everything that takes a lock class key right now takes it by &'static
+so they technically don't need to be wrapped in Pin (see
+Pin::static_ref), but I don't mind making this change to pave the way
+for LockClassKeys that don't live forever in the future.
+
+The patch *does* introduce the ability to create LockClassKeys, but
+they're only usable if they are leaked.
+
+Alice
+
+> -        T: WorkItem<ID>,
+> +        T: WorkItem<ID>
+
+Spurious change?
 
