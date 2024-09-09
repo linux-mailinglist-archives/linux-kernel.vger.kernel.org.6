@@ -1,90 +1,125 @@
-Return-Path: <linux-kernel+bounces-321366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9919719A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:38:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AAC19719AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1748A1C22FC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:38:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352631C23032
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DFC1B78FD;
-	Mon,  9 Sep 2024 12:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qw9+w+qn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49C41B7909;
+	Mon,  9 Sep 2024 12:40:30 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C171B375C;
-	Mon,  9 Sep 2024 12:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0158A1B375C;
+	Mon,  9 Sep 2024 12:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725885475; cv=none; b=OcyvOh8UD+FypDgdUYbA74DZw4Qwi8/AIP11qOZLDKE2YVEOw4Ns4IZ7xlyt3ZwMbvVjMQCKKoVkCpnbae2GEvI0/hhROkGVxpizPZJ7oi73mM0zoAK/PIa24fjsy2Qr0u1sO9G17xqeUIKSmwL+JGBSCJ7rptSEnUMcZSJqGmo=
+	t=1725885630; cv=none; b=UBoTkCiTY0uCxfPhYWQA/5C/qdiLvFB2Aq4GmbFDAp8QH5QzI2z4L9VRgXgNzN7fhnvrQS1gyI63/4ncPM7pBEZTZBIbsMKxFkHhY4lOscoFZzEkDC6Rzgtw65xvpYcxSie7LZo3by0L7aIHd7Rr89l8CrIt6LfYq0QCU3r55H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725885475; c=relaxed/simple;
-	bh=Ox6Ra08uH73+LfHI4jYwmkiw6hd1NlstdidpzuiK9Ek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKomOAmynRAweMdBjnFDO9vdyWGob7SDgNGV+dN2MHfy/Zti9vny6liPPwoICtckXep/EnQlEegLrowy3dLt5m1aayJ+uPEu6Sqe1IFaiLArhzncAZhocTZOlDI1nMyJSvDkUBOydNHeq4EmcMv/7D6OXvjzuDUEh2owTorD0a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qw9+w+qn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1033C4CEC5;
-	Mon,  9 Sep 2024 12:37:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725885475;
-	bh=Ox6Ra08uH73+LfHI4jYwmkiw6hd1NlstdidpzuiK9Ek=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qw9+w+qn2P+GmP4hQkOwuagekxfeH00ombthTu8tHXs2E+ZB7ueytpfAJoq0O5fmN
-	 bIUs3rop593+rUmgoh5eRQTjH6MzcaeWCiV5LLMs8wm6w6orrocowqrG8ZjGxY9pCO
-	 1NGNwYu6SGHXCa12/t57HpC7yD2mitiGbBYWxZE/cWMoVEN8jZRFjiMl4QKsmUU4Df
-	 kFJ0i7OjVL0LqNA3eF7kPafmG2VCpjFiNNf7LhmrYI54yAZ4Ll1ci2qLxkLP/Tept2
-	 DIqrvWJGq9rchJYeLnNmIssEGicK0xoTQDpqfy6tgwtLeSkDGY16WZssfuL7VOpi51
-	 O3t/18vlCqCYQ==
-Date: Mon, 9 Sep 2024 14:37:50 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Vlastimil Babka <vbabka@suse.cz>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the slab tree
-Message-ID: <20240909-armbinde-klaffen-fc59f67b2279@brauner>
-References: <20240909171220.32e862e3@canb.auug.org.au>
- <af23f1d3-27de-4591-ab0a-02268ef547a3@suse.cz>
- <20240909-organismus-sattbekommen-06332e10fcd1@brauner>
- <5661a983-9875-4cdb-8bdb-fc83e82f0b58@suse.cz>
- <20240909-anvisiert-weltweit-d3b485680666@brauner>
- <ffdcd6ff-b83a-47f6-bb23-e6baca7a3bc2@suse.cz>
- <20240909-missrede-abverlangen-dfccd1414bb2@brauner>
- <20240909-kratzen-holzweg-c1fd7da1f895@brauner>
- <20240909214533.0f8437ef@canb.auug.org.au>
- <20240909-fahren-ansah-1b49bad59efd@brauner>
+	s=arc-20240116; t=1725885630; c=relaxed/simple;
+	bh=avLcO7PKE2LaQ9TnVodcfdEGPe+Kj9ffz1kmZQ3Rn6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qp5Qn6Sv2Bp4EQ1SbdgiWJP0RApBxiiyv9sSXvkxLLSDy6Wsf/kVbh32WfJuj1y8m6SbUqAAUsc9FgN4G+9zWl5iPiKVGEpQ6mlnoZtVAXt0ms7FzOz6dzsGavtwHspC04iR2MHwEiDV/MALKXAkhDggC0UAKVr3qp5+n/ioIjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [10.16.9.194] (hh-wlan-01.rz-berlin.mpg.de [141.14.51.17])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 8492661E64862;
+	Mon,  9 Sep 2024 14:40:10 +0200 (CEST)
+Message-ID: <6a993f00-ee3a-41fe-89f4-eeb604c3c880@molgen.mpg.de>
+Date: Mon, 9 Sep 2024 14:40:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240909-fahren-ansah-1b49bad59efd@brauner>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] Bluetooth: mgmt: Verify cmd pending status before
+ removing it
+To: Jiayang Mao <quic_jiaymao@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240909030906.26375-1-quic_jiaymao@quicinc.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20240909030906.26375-1-quic_jiaymao@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 09, 2024 at 02:19:20PM GMT, Christian Brauner wrote:
-> On Mon, Sep 09, 2024 at 09:45:33PM GMT, Stephen Rothwell wrote:
-> > Hi Christian,
-> > 
-> > On Mon, 9 Sep 2024 13:02:03 +0200 Christian Brauner <brauner@kernel.org> wrote:
-> > >
-> > > Ok, how's it looking now?
-> > 
-> > I just fetched your tree.  The top commit (vfs.all branch) is
-> > 
-> >   a80a1ee241e7 ("Merge branch 'vfs.procfs' into vfs.all Signed-off-by: Christian Brauner <brauner@kernel.org>")
-> > 
-> > and commits
-> > 
-> >   f2b8943e64a8 ("fs: pack struct file")
-> >   c0390d541128 ("fs: pack struct file")
+Dear Jiayang,
+
+
+Thank you for your patch.
+
+Am 09.09.24 um 05:09 schrieb Jiayang Mao:
+> From: jiaymao <quic_jiaymao@quicinc.com>
+
+Please use your full name:
+
+     $ git config --global user.name "Jiayang Mao"
+     $ git commit -s --amend --author="Jiayang Mao 
+<quic_jiaymao@quicinc.com>"
+
+> Add a verification step to ensure that a command is still in the pending
+> list before attempting to remove it. A crash may occur during the boot
+> process when Bluetooth is enabled and then immediately disabled. In a
+> race condition, mgmt_index_removed() might free the pending command
+> before mgmt_add_adv_patterns_monitor_complete() is called, leading to a
+> double free scenario.
 > 
-> Sorry, I just pushed the fixed version now. Thanks for the patience.
+> Part of the crash call trace:
+> 0x0000053D: __list_del_entry_valid_or_report+0x98/0xdc
+> 0x0000053D: mgmt_pending_remove+0x18/0x58 [bluetooth]
+> 0x0000053E: mgmt_remove_adv_monitor_complete+0x80/0x108 [bluetooth]
+> 0x0000053E: hci_cmd_sync_work+0xbc/0x164 [bluetooth]
 
-Incidentally, is there a simple command to detect duplicate commits?
+What is your test environment? Please document it.
+
+> Signed-off-by: jiaymao <quic_jiaymao@quicinc.com>
+
+Ditto.
+
+> ---
+>   net/bluetooth/mgmt.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+> index 25979f4283a6..9d019db92043 100644
+> --- a/net/bluetooth/mgmt.c
+> +++ b/net/bluetooth/mgmt.c
+> @@ -5428,6 +5428,9 @@ static void mgmt_remove_adv_monitor_complete(struct hci_dev *hdev,
+>   
+>   	hci_dev_lock(hdev);
+>   
+> +	if (cmd != pending_find(MGMT_OP_REMOVE_ADV_MONITOR, hdev))
+> +		goto done;
+> +
+>   	rp.monitor_handle = cp->monitor_handle;
+>   
+>   	if (!status)
+> @@ -5437,6 +5440,7 @@ static void mgmt_remove_adv_monitor_complete(struct hci_dev *hdev,
+>   			  mgmt_status(status), &rp, sizeof(rp));
+>   	mgmt_pending_remove(cmd);
+>   
+> +done:
+>   	hci_dev_unlock(hdev);
+>   	bt_dev_dbg(hdev, "remove monitor %d complete, status %d",
+>   		   rp.monitor_handle, status);
+
+
+Kind regards,
+
+Paul
 
