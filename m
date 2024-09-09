@@ -1,132 +1,181 @@
-Return-Path: <linux-kernel+bounces-321831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F70F972012
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:11:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8587972015
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBF961C235C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:11:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D7A01F23D3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282D816C852;
-	Mon,  9 Sep 2024 17:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F54516F907;
+	Mon,  9 Sep 2024 17:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dEZivm//"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QGxPiRA7"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E567D4D8DA
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BC94D8DA
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725901865; cv=none; b=EghnnBFzOiWrWALgBuzqWVn+MrF48SkjpIKxWCaIQ043390KQTHHdpY0+cldv87yIqGo2kIVaGG4UkeosP2bI+fCvy0dBwUi//2pNfNe6M8XQVTqz7pXn+DEdRHcI7llgrZB4BP5fTCs738mWBbC9sbiQer23LI/bQgqtwoZtmU=
+	t=1725901874; cv=none; b=L4twgtHt3bx0Ybl4ZaTQ3kcoi0CBfCYUQJJKfIsxCnrPYy/mqyrJ8v/p675pTCRKeep2L9lHWqNToOH+wrzbvbbymYVzj4WmvP8/3ufSem4JpuShPoD9FDwyyUT6FMAv9m4xkzytulbOllGZyaKczZUcJhsnzZD/p8GRI3IpxCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725901865; c=relaxed/simple;
-	bh=8UPbGsidd1axff78F7nxJdZ5HnQLyKQvMeR0vup2U64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UHfFVZvqxiY2/Ahibw28nCc6VUsxd17AV1S3b5tME0qFxnQ7nH/KR97geZSjzS9rEB1J/Tte42OAkb5In9dRDbF4gggnxq1kPFlyqmBvmtdgSMeKhZ7z24fkZxMp51Uve+J4TrwMiCf6Nni/WqgDBgiUQFTQRvTa3zrV04amy44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dEZivm//; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725901864; x=1757437864;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8UPbGsidd1axff78F7nxJdZ5HnQLyKQvMeR0vup2U64=;
-  b=dEZivm//0OAHU9DGOldvRvIW3Lv+NbfS+oG9D7WbiAAHiHTBFg+Apw5V
-   rDIw2n0McmtwUC4c07lrwnoHCwIsjyUVMAmh/cerpB7iTtZVUd9XJsk9f
-   m9j+MBDJQ04HfS6/Eq71flCcBKINYp1wJ9z0eRI1WfxjKmUUfgyjGuHzB
-   gUAqN8u4fYqfsFiRDxjMenwABgx5z7CyGayRvUnp58KuctX6hJscnsJcE
-   ZvzYgAX8V3NXtXHcoCKTzbiIHMGF8iwbrdFq1qZMuym4k4ab9D9r6J/R6
-   LG5Nvo/L4+71AE9Yg2b8OJk1H5VvNYlZ7tSAaO3hA91/Toped8W3fSA16
-   w==;
-X-CSE-ConnectionGUID: 15tp+x/+T/qWiSASx6aYWA==
-X-CSE-MsgGUID: uMTnK7EnRTSnXCK05OeDNg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="50023477"
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="50023477"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 10:11:03 -0700
-X-CSE-ConnectionGUID: 05fqzdBdRG6sWGu5q12pqQ==
-X-CSE-MsgGUID: lJhxHhpoTm6N2W/zPkXRyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="71144434"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 10:11:03 -0700
-Received: from [10.212.55.50] (kliang2-mobl1.ccr.corp.intel.com [10.212.55.50])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id B5D2520CFED7;
-	Mon,  9 Sep 2024 10:11:01 -0700 (PDT)
-Message-ID: <8c09633c-5bf2-48a2-91a6-a0af9b9f2e8c@linux.intel.com>
-Date: Mon, 9 Sep 2024 13:11:00 -0400
+	s=arc-20240116; t=1725901874; c=relaxed/simple;
+	bh=SaKp0Q7ae/fE6I+7pWzgCXp1MwPG/g+L0Gkjze7UDHk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KUkGBVmfKlw1wfALM/pQ+0RYECWzIZrL1S8iTacvyNM0Kvy/WenKzbn0G54wp3KkSWn/p0h0GMYb2CxgxyiL3bjtdfK9qedBVKG2a4jsu50TQy/+FaBvaY9QbzAh288VF/bruLG4dDA3w/2gB9SxMDiVFPK9SOFSIgW1QPBlbFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QGxPiRA7; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2053f72319fso2169215ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 10:11:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725901872; x=1726506672; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pVftTf/6dppL8th41rroSYqvMXFlN1yv6xhVhcE4Yek=;
+        b=QGxPiRA7yxxojymL6l++coDdjwxIEX6hgeVZlN4PaIFliXAnz/i5cGE4k8cDeH9AM/
+         SD+ah/H//vSRjOfLsM+PKj6jeYkoGc7USkA6o1unVPO7uOmQh9eflluOIYVPQ+DuXp6p
+         b9itrXb9D81Sqvtqox2jXvwOuiEKdnxwbDiM6qJWFLmtLZVXQkZarOdyf+IUT1LaBBaB
+         e69HyyWAtHu8ryim76356U/6F61agsy0E6yvOCCM7uPjB7lQdvXIS+A8qNsGBI4JxBUQ
+         oIedaKnZEuHGLir/fN4FE60bwDsoutkc9+NNP77J5kZ5/MK3Z1nx37kJr1M0QqXY0U+C
+         9EHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725901872; x=1726506672;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pVftTf/6dppL8th41rroSYqvMXFlN1yv6xhVhcE4Yek=;
+        b=liWEOCLi22UHhEWbBkp2+eIm7UojDSzcEoIoMV/vVI1NowABCiw7V9fTk7CNiQAZZ0
+         A5gGbvKEuFKDjrAXsOkKEiFhr6d0pbICaioYCxbYBBG6ycaLalrVNqDbAT9rOuzUH0pD
+         4fL5Tsc7AVUC7+55tb7wL9P6US7+mp7mVPxhOVzjmXoj5d6pyzRlRdzvgUVdauCCzJ9V
+         e2/Wds5mx+TVgP5E2ezIeyTYovKrG5gDHZoY5TsYzhT3nWfOZK7WUMdCSXU9VeH4j5xP
+         Chbk7mHLw/4qi472iAiq4g5TV0Zu7kg48mCpWEqxLg6HLDidspWNwk9HOw4H5eVdrd2t
+         3/rw==
+X-Forwarded-Encrypted: i=1; AJvYcCVooni+1V71BdVD032eenUI2ivObo9asjuXe1/VXqOZc0hR6OKI+9kDtntv5j7I2x4cq4PhZF82oxa6lLg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhHgzoCZT5b61KrLSXpOSb4687D8EKz0kIPVvHQaShi9ZvUsyl
+	NNCee+ON1XmXPy6GFFWxG4FjFgJuXmBO5JOoGCXxTvVCXoAw8qwbFheUQ5YX4lHfAlTvEGiJzFg
+	8kjAjO7CPToxrl1oF0D29WaJDvJw=
+X-Google-Smtp-Source: AGHT+IG6tq0gRvkzZXE20DrtwJfgOOovD9fBBwckWQFdSkiHCtqeKpXQgZwxo2UTje5uc6S+kLw3UDjEzbi2mI3hjqk=
+X-Received: by 2002:a17:902:d2c2:b0:205:76c9:795d with SMTP id
+ d9443c01a7336-206f0605ebbmr59105145ad.6.1725901872296; Mon, 09 Sep 2024
+ 10:11:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] perf/x86/rapl: Move the pmu allocation out of CPU
- hotplug
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, mingo@redhat.com,
- acme@kernel.org, namhyung@kernel.org, irogers@google.com,
- linux-kernel@vger.kernel.org
-References: <20240802151643.1691631-1-kan.liang@linux.intel.com>
- <20240802151643.1691631-7-kan.liang@linux.intel.com>
- <88fa2064-c054-4833-872c-0cf5ff1e3609@amd.com>
- <b9893f4f-c91e-4c83-b785-ad78dc2f67f5@linux.intel.com>
- <20240909132409.GC4723@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240909132409.GC4723@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1725269643.git.tjakobi@math.uni-bielefeld.de>
+ <D40Q9ZLDQIZF.3OERFS0AYREN0@kode54.net> <deb6d962-f24e-4769-b313-be3b0efb873b@math.uni-bielefeld.de>
+In-Reply-To: <deb6d962-f24e-4769-b313-be3b0efb873b@math.uni-bielefeld.de>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 9 Sep 2024 13:11:01 -0400
+Message-ID: <CADnq5_PMnCUYsUq_SPS8woi20KxaW2+teMzhmmOyFJRaq3YVQQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] drm/amd: fix VRR race condition during IRQ handling
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, 
+	"Wentland, Harry" <Harry.Wentland@amd.com>
+Cc: Christopher Snowhill <chris@kode54.net>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, Sep 8, 2024 at 7:23=E2=80=AFAM Tobias Jakobi
+<tjakobi@math.uni-bielefeld.de> wrote:
+>
+> On 9/8/24 09:35, Christopher Snowhill wrote:
+>
+> > On Mon Sep 2, 2024 at 2:40 AM PDT, tjakobi wrote:
+> >> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> >>
+> >> Hello,
+> >>
+> >> this fixes a nasty race condition in the set_drr() callbacks for DCN10
+> >> and DCN35 that has existed now since quite some time, see this GitLab
+> >> issue for reference.
+> >>
+> >> https://gitlab.freedesktop.org/drm/amd/-/issues/3142
+> >>
+> >> The report just focuses von DCN10, but the same problem also exists in
+> >> the DCN35 code.
+> > Does the problem not exist in the following references to funcs->set_dr=
+r?
+> >
+> > drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c:      if (pip=
+e_ctx->stream_res.tg->funcs->set_drr)
+> > drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c:             =
+ pipe_ctx->stream_res.tg->funcs->set_drr(
+> > drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c:             =
+ pipe_ctx[i]->stream_res.tg->funcs->set_drr(
+> > drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:        if (pip=
+e_ctx->stream_res.tg->funcs->set_drr)
+> > drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:               =
+ pipe_ctx->stream_res.tg->funcs->set_drr(
+> > drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:               =
+ if (pipe_ctx->stream_res.tg->funcs->set_drr)
+> > drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:               =
+         pipe_ctx->stream_res.tg->funcs->set_drr(
+> > drivers/gpu/drm/amd/display/dc/hwss/dcn31/dcn31_hwseq.c:        if (pip=
+e_ctx->stream_res.tg->funcs->set_drr)
+> > drivers/gpu/drm/amd/display/dc/hwss/dcn31/dcn31_hwseq.c:               =
+ pipe_ctx->stream_res.tg->funcs->set_drr(
+> > drivers/gpu/drm/amd/display/dc/hwss/dcn401/dcn401_hwseq.c:      if (pip=
+e_ctx->stream_res.tg->funcs->set_drr)
+> > drivers/gpu/drm/amd/display/dc/hwss/dcn401/dcn401_hwseq.c:             =
+ pipe_ctx->stream_res.tg->funcs->set_drr(
+>
+> Maybe. But the big difference I see here, is that in this code there
+> isn't even any kind of NULL check applied to tg. Or most of the members
+> of *pipe_ctx. If there really is the same kind of problem here, then one
+> would need to rewrite a bit more code to fix stuff.
+>
+> E.g. in the case of  dcn31_hwseq.c, the questionable code is in
+> dcn31_reset_back_end_for_pipe(), which is static and only called from
+> dcn31_reset_hw_ctx_wrap(). Which is assigned to the .reset_hw_ctx_wrap
+> callback. And this specific callback, from what I can see, is only
+> called from dce110_reset_hw_ctx_wrap(). Which is then assigned to the
+> .apply_ctx_to_hw callback. The callback is only called from
+> dc_commit_state_no_check(). That one is static again, and called from
+> dc_commit_streams().
+>
+> I could trace this even further. My point is: I don't think this is
+> called from any IRQ handler code. And given the depth and complexity of
+> the callgraph, I have to admit, that, at least at this point, this is a
+> bit over my head.
+>
+> Sure, I could now sprinkle a bunch of x !=3D NULL in the code, but that
+> would be merely voodoo. And I usually try to have a theoretical basis
+> when I apply changes to code.
+>
+> Maybe if someone from the AMD display team could give some insight if
+> there still is potentially vulnerable code in some of the instances that
+> Christopher has posted, then I would gladly take a look.
 
+@Wentland, Harry can you confirm this?
 
-On 2024-09-09 9:24 a.m., Peter Zijlstra wrote:
-> On Mon, Sep 09, 2024 at 09:02:56AM -0400, Liang, Kan wrote:
-> 
->> The patch set has been merged into Peter's perf/core branch. Do you want
->> to post a fix patch to address the issue?
-> 
-> I've not yet pushed out to tip, so I can readily rebase. Send me a delta
-> and indicate what patch it should go into and I'll make it happen.
-> 
+Alex
 
-Thanks Peter. Please fold the below patch into commit 90942140bb6c
-("perf/x86/rapl: Move the pmu allocation out of CPU hotplug").
-
-diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-index b70ad880c5bc..1b38f8771488 100644
---- a/arch/x86/events/rapl.c
-+++ b/arch/x86/events/rapl.c
-@@ -631,8 +632,6 @@ static int __init init_rapl_pmus(void)
- 	if (!rapl_pmus)
- 		return -ENOMEM;
-
--	init_rapl_pmu();
--
- 	rapl_pmus->nr_rapl_pmu		= nr_rapl_pmu;
- 	rapl_pmus->pmu.attr_groups	= rapl_attr_groups;
- 	rapl_pmus->pmu.attr_update	= rapl_attr_update;
-@@ -646,6 +645,9 @@ static int __init init_rapl_pmus(void)
- 	rapl_pmus->pmu.module		= THIS_MODULE;
- 	rapl_pmus->pmu.scope		= PERF_PMU_SCOPE_DIE;
- 	rapl_pmus->pmu.capabilities	= PERF_PMU_CAP_NO_EXCLUDE;
-+
-+	init_rapl_pmu();
-+
- 	return 0;
- }
-
-Thanks,
-Kan
+>
+> With best wishes,
+> Tobias
+>
+> >
+> >> With best wishes,
+> >> Tobias
+> >>
+> >> Tobias Jakobi (2):
+> >>    drm/amd/display: Avoid race between dcn10_set_drr() and
+> >>      dc_state_destruct()
+> >>    drm/amd/display: Avoid race between dcn35_set_drr() and
+> >>      dc_state_destruct()
+> >>
+> >>   .../amd/display/dc/hwss/dcn10/dcn10_hwseq.c   | 20 +++++++++++------=
+--
+> >>   .../amd/display/dc/hwss/dcn35/dcn35_hwseq.c   | 20 +++++++++++------=
+--
+> >>   2 files changed, 24 insertions(+), 16 deletions(-)
 
