@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-321276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D5179716D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:26:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A5DE9716D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0F19284A34
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:26:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB2E1B26C06
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F2F1B7900;
-	Mon,  9 Sep 2024 11:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwV6dHyQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1433B1B3B06;
-	Mon,  9 Sep 2024 11:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034131B3F3E;
+	Mon,  9 Sep 2024 11:26:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F931B2ED0
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 11:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725881114; cv=none; b=EBCb/jLQXMVqZhR9DFYVOl7tm6mWjY3xtUsTohv/U9OX4kBws/wrY+EUgSoaKNhP2NXkKcj+XemKYp43e0Gw/YhbB879nmmnoC48MshU/Nftqa++nVh3y8DuUWKo1VUb1RknXBXjSsrFbnRjukEELGGj3KDgWLUQKW8BC4tfXY8=
+	t=1725881196; cv=none; b=nJ7dOvoDUoK57X8FUvbK2CXMlzmTuncAf8FNxmxF7LpeTa2eMdh4a/r2y66T3bZSDekarPRdcdanfH2diN2OruIeVkLqEMxAN/6D46ONQnc5ndNbRp7XFDPkXEKDXc03scLg7XFhZNmcRxJcvg4V3R2htSk636BbSS3j7oLuNig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725881114; c=relaxed/simple;
-	bh=HqGZDyabs5Coh/PiTfcgyDuQNZQ1J9BORTIRtBnBjbQ=;
+	s=arc-20240116; t=1725881196; c=relaxed/simple;
+	bh=5ASkjyfsJ994farGDOqj1cdlbIlZ/Y5QxiuOkbMGvHk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SLMB98dYnTksCV3Gye5p+zKtPHmY25ASd4tzTMAa1YLMkRWgbySstPRwcb4sJKJ6+tTaxHlREhQPXjH1LB+WrfBONn6jrztrd+x9N2DI5JLMiHTksypLwM/OEHFTRWFrA9a1SsdwzicnQF14VHwKioEYETkLWeHFmebvm8YLs1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwV6dHyQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A7FC4CEC5;
-	Mon,  9 Sep 2024 11:25:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725881113;
-	bh=HqGZDyabs5Coh/PiTfcgyDuQNZQ1J9BORTIRtBnBjbQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BwV6dHyQhvW44eDRtqePqfV8NXHxYZmvKm6ABQGA/Yyl0DtLpAiPJdyReWr9FUwEc
-	 mz4eaiwOB03zRUZaScy/ReKYvleCuwQx1a0i/bdzZjmwesbLtoYe1S5KlvaPCtipJW
-	 W8Xgvtg27VxhVuNcbjxBSABQT/j5lu+GPDHKWmwLgNI3gnI7buZqBI9hGgMCE6GsI1
-	 mRt12AmNsLQ+h3wYu3stDD6sjbUBmg4Yh12cDMPLZPPLqMgJS98bgOWDmBJsOy2YUG
-	 Sjo4MbJjJppW3wEQl9LDp4AcaLIfLS6q78CUtvS0yW0r2dH/TTpgzrz4X0p5ZXGh1D
-	 Kb+C3gR0Gmp8A==
-Message-ID: <7b46f129-2c9c-40ad-9c47-f3183dc33257@kernel.org>
-Date: Mon, 9 Sep 2024 13:25:02 +0200
+	 In-Reply-To:Content-Type; b=or3lexyGmJUX/a7ZD5skrheM74O1EX5EwOJNJN6zOLS+vnNJ09hHaLbl0fMjJp77EZMLrAMGG6su4VpEjdHC1aLUc6qg8wxt4IW5z6YDeDddvLvfwau2fD8baKwWg3JX9UXoq2GEGAHI06yz0KJL5H9FtCW3Nx/y35z6s2BUn5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6D45FEC;
+	Mon,  9 Sep 2024 04:27:01 -0700 (PDT)
+Received: from [10.1.39.38] (e127648.arm.com [10.1.39.38])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7EFBB3F73B;
+	Mon,  9 Sep 2024 04:26:31 -0700 (PDT)
+Message-ID: <a04070a1-39d5-4362-a28c-39b9b910eaac@arm.com>
+Date: Mon, 9 Sep 2024 12:26:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,56 +41,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 08/17] firmware: qcom: scm: add a call for checking
- wrapped key support
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
- Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Asutosh Das <quic_asutoshd@quicinc.com>,
- Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Gaurav Kashyap <quic_gaurkash@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
- <20240906-wrapped-keys-v6-8-d59e61bc0cb4@linaro.org>
+Subject: Re: [RFC/PATCH] sched/fair: Remove unnecessary judgment in
+ pick_next_task_fair()
+To: Benjamin Tang <tangsong8264@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org
+References: <3d9e48ab-869e-4633-8874-b2899c8cc8ce@gmail.com>
 Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240906-wrapped-keys-v6-8-d59e61bc0cb4@linaro.org>
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <3d9e48ab-869e-4633-8874-b2899c8cc8ce@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6.09.2024 8:07 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 9/9/24 06:13, Benjamin Tang wrote:
+> sched/fair: Remove unnecessary judgment in pick_next_task_fair()
 > 
-> Add a helper that allows users to check if wrapped key support is
-> available on the platform by checking if the SCM call allowing to
-> derive the software secret from a wrapped key is enabled.
+> Since 'curr' argument is no longer needed in pick_next_entity(),
+> remove unnecessary judgment.
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Benjamin Tang <tangsong8264@gmail.com>
 > ---
+>  kernel/sched/fair.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 9057584ec06d..92f8ad778205 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8492,8 +8492,6 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
+>         if (curr) {
+>             if (curr->on_rq)
+>                 update_curr(cfs_rq);
+> -           else
+> -               curr = NULL;
+> 
+>             /*
+>              * This call to check_cfs_rq_runtime() will do the
 
-I dearly hope that all firmwares that advertise this call, also
-advertise the other necessary ones
-
-
-Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
-
-Konrad
+This has been reworked on tip/sched/core and is no longer needed:
+[PATCH 05/24] sched/fair: Unify pick_{,next_}_task_fair()
+https://lore.kernel.org/all/20240727105028.725062368@infradead.org/
 
