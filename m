@@ -1,114 +1,108 @@
-Return-Path: <linux-kernel+bounces-321519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D47A971BA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:51:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED626971B33
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 548D71F24219
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:51:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B771F22F32
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B56C1BA28F;
-	Mon,  9 Sep 2024 13:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A111B9B24;
+	Mon,  9 Sep 2024 13:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b="IMmCe9UO"
-Received: from mail.rosalinux.ru (mail.rosalinux.ru [195.19.76.54])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZ5nq96q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA2E1B86E4;
-	Mon,  9 Sep 2024 13:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.19.76.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB751B4C4F;
+	Mon,  9 Sep 2024 13:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725889841; cv=none; b=u1x+tJMvPzOaw69KcGXnCv2saYKcGGHjXLDfUauF7STar1EP04bnmXoTuCCxt9QeitMCe4qxOMaOzl4JPRz7sprhwtRyujsTT2mViFGAWwY/TD6g9yz2H83YhUuDb03iXbQMB8wQtymqpIxB2e00ToupWjvZHdtvKtj1Zzj7lRs=
+	t=1725889076; cv=none; b=ZcIYq90tpjV7ylTvuFpPxs6r95fvKqD9fG3nadYh+J/CRJ4i/JNoZcApxtIXlhGT93ttipzM3o8ddK8JGC7JziiraRp3wxE1G5BiZcAou0bx2T35w3Hbxiu7YZDSaJnPb1egnJ/+EoaMx/eC2eNX54bQnDvZyBruDlRU0H2v62o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725889841; c=relaxed/simple;
-	bh=2D7C10L9qGR1xYUVuRaUwP/lQVaj8GW63TvL3cfW5lw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jPJaymFPa1TkkUZBJLn9EAgwjMuw2a//B/TTQBAnrA7575IshHwHbjNSbUHZ/HaJOaA/JXSfUzoEVk0l/hK1xxLqJyo1a3YPS+tnsRsHVD7L2hbqdwVWs7Sd/OwLmVItxcDjdti7vU6Vdflefooqpavmul05cHV9nhSgbfTtvaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru; spf=pass smtp.mailfrom=rosalinux.ru; dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b=IMmCe9UO; arc=none smtp.client-ip=195.19.76.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosalinux.ru
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rosalinux.ru (Postfix) with ESMTP id 8F129F90A07EC;
-	Mon,  9 Sep 2024 16:40:41 +0300 (MSK)
-Received: from mail.rosalinux.ru ([127.0.0.1])
-	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id UKXrqmmBMBf4; Mon,  9 Sep 2024 16:40:41 +0300 (MSK)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rosalinux.ru (Postfix) with ESMTP id 65003F90A07ED;
-	Mon,  9 Sep 2024 16:40:41 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rosalinux.ru 65003F90A07ED
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosalinux.ru;
-	s=1D4BB666-A0F1-11EB-A1A2-F53579C7F503; t=1725889241;
-	bh=j0w10pqKqsCrw9p4jGmOYSKGwJAYnt8q1qKqtK5tU14=;
-	h=From:To:Date:Message-ID:MIME-Version;
-	b=IMmCe9UOVK5OEKqqUmeRavJNTsDhR3XSBn+T95wfSCkAxcIEbX1Qxz8IrqscPG1QW
-	 UBjvN4VeQ3Rp2xMIa0EO7LVnxxjDc5+yh2tgu+brpqpe6Du4bg/94KvgyBtFpFxXBY
-	 OHrFn9bNsqrrarPwPtO6S/qBzFtMYJMB/AOhMd8RvCSYVfzb2uH1/t9zgL/L9U/2ZX
-	 OCuic9PS9C+SWviPQqWBWN5Szhg5bf2F1Kbcv3+Yua3HFG6eEtLV495RynplbYh1o/
-	 WujCae8+G0v39cGT9ey43xxd4U+aDa6Rz9nLeDHgvF01ejZ3MlW+iHalYSEZ7p7VLt
-	 0f3mbo8+yYfjw==
-X-Virus-Scanned: amavisd-new at rosalinux.ru
-Received: from mail.rosalinux.ru ([127.0.0.1])
-	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id DBj-TN5343t1; Mon,  9 Sep 2024 16:40:41 +0300 (MSK)
-Received: from localhost.localdomain (unknown [89.169.48.235])
-	by mail.rosalinux.ru (Postfix) with ESMTPSA id 27DCEF90A07EC;
-	Mon,  9 Sep 2024 16:40:41 +0300 (MSK)
-From: Mikhail Lobanov <m.lobanov@rosalinux.ru>
-To: Philipp Reisner <philipp.reisner@linbit.com>
-Cc: Mikhail Lobanov <m.lobanov@rosalinux.ru>,
-	Lars Ellenberg <lars.ellenberg@linbit.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	drbd-dev@lists.linbit.com,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH] drbd: Add NULL check for net_conf to prevent dereference in state validation
-Date: Mon,  9 Sep 2024 09:37:36 -0400
-Message-ID: <20240909133740.84297-1-m.lobanov@rosalinux.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725889076; c=relaxed/simple;
+	bh=Pn6nyHvAqcwyfTE4+On2+ckRU7uvzlXW4rA+Pb8MzGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNS2/qatY/eLyao4TyghakQnFWWCDEWkTQkfra4948pkDeBH32bvoP7N5NVWar5EScgJNcsjJTqGkAe9PhMSfl2TRNFMa7U8x+D5w+ksImsfZVO1jaM53cHuNL39ZmgzC3mot/8krF8c7Wl68FZbs8t5nxrCJP7Vtwd8N/8ssN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VZ5nq96q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1B12C4CEC6;
+	Mon,  9 Sep 2024 13:37:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725889075;
+	bh=Pn6nyHvAqcwyfTE4+On2+ckRU7uvzlXW4rA+Pb8MzGY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VZ5nq96qdLQAqHZv5BZdhg6rzvt3M6CBCAvVjvhludVsSxF5ZzSn2JVpFM1mfjMra
+	 sgFBRXfihE0MoxeN/ukaH5cCjyH0SScZvodf2YolXI+3JVXl1BjaaPXObfrcmh0Hro
+	 1Zs2MDPRKcEKd8BMXlumtcep9sck6biQBffhNX1f5A+HsgOVKrlIBx6Wjyvpk8+hjV
+	 IFBcBbq41rC+rTn1MH1bO+qzhAKBNUG4B7QafFvPZUkuotn49h3Z/RTXSaKaaunpC3
+	 FvHjOw+PX6VQqapQkZcfTOUexWqO90HAbcOSddXtRiydeDlA8soNbDudjse7Gq4jkH
+	 nbfvFwLO+OdKg==
+Date: Mon, 9 Sep 2024 15:37:52 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: dri-devel@lists.freedesktop.org, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, robdclark@gmail.com, dmitry.baryshkov@linaro.org, 
+	quic_jesszhan@quicinc.com, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] drm: allow encoder mode_set even when connectors
+ change for crtc
+Message-ID: <20240909-neat-stoic-hamster-cbbe42@houat>
+References: <20240905221124.2587271-1-quic_abhinavk@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="wbqgwzlceddfxscp"
+Content-Disposition: inline
+In-Reply-To: <20240905221124.2587271-1-quic_abhinavk@quicinc.com>
+
+
+--wbqgwzlceddfxscp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-If the net_conf pointer is NULL and the code attempts to access its=20
-fields without a check, it will lead to a null pointer dereference.
-Add a NULL check before dereferencing the pointer.
+Hi,
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+On Thu, Sep 05, 2024 at 03:11:24PM GMT, Abhinav Kumar wrote:
+> In certain use-cases, a CRTC could switch between two encoders
+> and because the mode being programmed on the CRTC remains
+> the same during this switch, the CRTC's mode_changed remains false.
+> In such cases, the encoder's mode_set also gets skipped.
+>=20
+> Skipping mode_set on the encoder for such cases could cause an issue
+> because even though the same CRTC mode was being used, the encoder
+> type could have changed like the CRTC could have switched from a
+> real time encoder to a writeback encoder OR vice-versa.
+>=20
+> Allow encoder's mode_set to happen even when connectors changed on a
+> CRTC and not just when the mode changed.
+>=20
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
-Fixes: 44ed167da748 ("drbd: rcu_read_lock() and rcu_dereference() for tco=
-nn->net_conf")
-Cc: stable@vger.kernel.org
-Signed-off-by: Mikhail Lobanov <m.lobanov@rosalinux.ru>
----
- drivers/block/drbd/drbd_state.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch and rationale looks sane to me, but we should really add kunit
+tests for that scenarii.
 
-diff --git a/drivers/block/drbd/drbd_state.c b/drivers/block/drbd/drbd_st=
-ate.c
-index 287a8d1d3f70..87cf5883078f 100644
---- a/drivers/block/drbd/drbd_state.c
-+++ b/drivers/block/drbd/drbd_state.c
-@@ -876,7 +876,7 @@ is_valid_state(struct drbd_device *device, union drbd=
-_state ns)
- 		  ns.disk =3D=3D D_OUTDATED)
- 		rv =3D SS_CONNECTED_OUTDATES;
-=20
--	else if ((ns.conn =3D=3D C_VERIFY_S || ns.conn =3D=3D C_VERIFY_T) &&
-+	else if (nc && (ns.conn =3D=3D C_VERIFY_S || ns.conn =3D=3D C_VERIFY_T)=
- &&
- 		 (nc->verify_alg[0] =3D=3D 0))
- 		rv =3D SS_NO_VERIFY_ALG;
-=20
---=20
-2.43.0
+Maxime
 
+--wbqgwzlceddfxscp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZt76MAAKCRAnX84Zoj2+
+dg5WAYC20PLU/szVZ6fRkZa73lIx9F2G/5R8TlaLMVQvypgF073JlIs6KT9eIzP/
+spB6dRMBfAoce7Q/2I0P40sMiMLHudvyNXj5ufojY/uW1RXlkW++dChN1qDqF/xC
+ULEQu0JR/A==
+=tV3+
+-----END PGP SIGNATURE-----
+
+--wbqgwzlceddfxscp--
 
