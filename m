@@ -1,197 +1,119 @@
-Return-Path: <linux-kernel+bounces-320719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57195970F7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:21:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D23EC970F5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F285282270
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:21:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DBE21C21EBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF101AF4DA;
-	Mon,  9 Sep 2024 07:21:15 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED5C1AED25;
+	Mon,  9 Sep 2024 07:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cv3EXSVe"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0141AE859;
-	Mon,  9 Sep 2024 07:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE471AE050
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 07:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725866475; cv=none; b=sJ/MCTZ8a4MNjqCZYMrseXv8kVkT+89+wF9UyebCgOwjBwrDiSRj+SwsTxlph2ChrX2YimVW4z3VQE3zlUqVVW4Nf9XdWNIbV06tYRcvlS5xaQRprEj3RqYjdibG7EkpEug9c7RYQ/uVSrlj6Iryo0658euAF1F+pA1iSccFw5U=
+	t=1725865929; cv=none; b=QNpneY6/mF/AC4Vx00RHzU695rV0lyE7S60Q7TaKhURt1/k3pu5JmqZTEXZmNfB1tQFsoXxMY3g3Z2FdLmxSnM2p0yuLIRE5dRoOAM0bVhcUR6VjRR1IebzAdMSAqD1tWwVxbOI7ZzxisIvi6ypHoF8rRRWIPruQMJuv7KAGHRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725866475; c=relaxed/simple;
-	bh=SyW8FxLsJBNl5HQ6QsV4oXouJe7wMWuil6vbtzaKY68=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I6IbA9Lsxkf7S3vEc061QGzIbzpiqLqtdm9xCZ8h2lLF4NszU5LerUCV5GANrVDK5QglG+eFA2SGFkHgp6MuNY++9DNfUatWuzpcRwhjcYkFJKEIO6/SdXrgqW31Gy4WsRjLAhxPdzjtJr7ZNhJq3lq/h8YyFJs6kvZmlVA8lcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X2JBy3Hm1zyRgh;
-	Mon,  9 Sep 2024 15:20:26 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id CE93B1401E9;
-	Mon,  9 Sep 2024 15:21:09 +0800 (CST)
-Received: from huawei.com (10.67.174.28) by kwepemd200013.china.huawei.com
- (7.221.188.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 9 Sep
- 2024 15:21:09 +0800
-From: Liao Chang <liaochang1@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <ast@kernel.org>,
-	<puranjay@kernel.org>, <liaochang1@huawei.com>, <andrii@kernel.org>,
-	<mark.rutland@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
-Subject: [PATCH v2] arm64: insn: Simulate nop instruction for better uprobe performance
-Date: Mon, 9 Sep 2024 07:11:14 +0000
-Message-ID: <20240909071114.1150053-1-liaochang1@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725865929; c=relaxed/simple;
+	bh=3KMrUlZrz/OgJfQcNnFbHDUOETnz1FS3VBAxZc7blM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gq6gE88Cc7csoZzes+HpO2t6RWvWWaEqvO1/5diG4MpjbjuZfFjcOvfs7DA/ZJqDA48SbNIqmljM82/2PvqCefjZexuBhAu6/jR4NSrleMjsOH1UmXZqvk8f2XXzhASsVAi69Pa3gp+2QnWAO4Bj7spoS/6PYtrvQaju7n2zQOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cv3EXSVe; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42bbdf7f860so36186505e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 00:12:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725865925; x=1726470725; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vlTYWtVvC3Cne1dBDJYb0hBguVyLh45bhCTkFwU2JeQ=;
+        b=cv3EXSVe6DtoAbb5qRyL9TuEgl1E1LeYSPkUeDQLjnGRvUDAk2/6bWt1IfKxe/M4Z/
+         Lve1hf81yqH4cGKeG8/x90iCy1ew8CZZUJxHegnXclZ35djZAQLVmWsjD9FKOaagy9YP
+         5aByY6URsUoumIUdVj02jplqbPaVo3eihT9nus5tg7ldtX7Fgj7UkpAxG6Vhjid1va+X
+         9hfhUthKMgqE+TvtNRh+j391BrabfYa34TcCKEKR+U94DjMpC6k1Sc2X23wJvCiCj3b3
+         EDax2iBIK+P1QK/W9iDzr/8cNiJ0jlsVPy/sN6FDE1hHx/vtg4q9qChszLy9kZPGniIX
+         dGiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725865925; x=1726470725;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vlTYWtVvC3Cne1dBDJYb0hBguVyLh45bhCTkFwU2JeQ=;
+        b=Ws5IUGpFulVLzhIGPjzlN79s/V8TMTnBqKs3Jtf72REMXagRiUEBx7vuDQMH0XDnhU
+         tpFkZnJQTRv7euFBHT7OEg+WfHUwsghkXbtIebupgGJ5CfeF725eWYABsM9IoXxH1D0B
+         gQcVgueIjAYvzIHSjQBuom5jKv4dA0uJXp5Lv7peiZt6iTjuCGqN92LXYoFbuREvcaSk
+         flcopuww0K2aM6K2d+mo2vSCDzBafMG9dNz3Dcol9ugMlx6fWavoGDCfbfAFnbU4ZMug
+         s8NDUWfRVEZ4ZavyqixvsbvuMcVTcFTvLR+ddpZLwx6ZVDlmdtPbiJkO+MngakVay+p/
+         L3og==
+X-Forwarded-Encrypted: i=1; AJvYcCXCZhjtJVrWPy9YYcEHxV1WOVXcvzdI5jN2JjPHDuZOTswl1Yda6iDEDxLVwpB2T6g46/8UHdZipdhjtlI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygA0cVdszdqahY8ZpInSSD4z98+3/UTuA9DbkYAkeAgs+twJF0
+	kt3IRVEoEy3M3b2i16qohGmKU7gesAqBy7QICNogES9x9cYushJPGllkbE8mdvI=
+X-Google-Smtp-Source: AGHT+IFngtNyJrOoh2h5MtVKCpb2qCaCLNPXUbMYEkAbhHFc2yZgp3oF5lWSpd1MZ4PUJTDOX3sNJA==
+X-Received: by 2002:a05:600c:c8b:b0:42c:a8f8:1d58 with SMTP id 5b1f17b1804b1-42cae7091cfmr42247485e9.7.1725865924824;
+        Mon, 09 Sep 2024 00:12:04 -0700 (PDT)
+Received: from localhost (109-81-94-251.rct.o2.cz. [109.81.94.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb32318sm66714455e9.17.2024.09.09.00.12.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 00:12:04 -0700 (PDT)
+Date: Mon, 9 Sep 2024 09:12:03 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>, yosryahmed@google.com,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm: introduce per-node proactive reclaim interface
+Message-ID: <Zt6fw4ibDq_XA_0q@tiehlicka>
+References: <jw5skccxwi3u7i2ieb2l5gamekobbiankxbdzcxtctd636fh4v@wrfgdmkomiu3>
+ <20240906110419.2079-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906110419.2079-1-hdanton@sina.com>
 
-v2->v1:
-1. Remove the simuation of STP and the related bits.
-2. Use arm64_skip_faulting_instruction for single-stepping or FEAT_BTI
-   scenario.
+On Fri 06-09-24 19:04:19, Hillf Danton wrote:
+> On Thu, 5 Sep 2024 16:29:41 -0700 Davidlohr Bueso <dave@stgolabs.net>
+> > On Fri, 06 Sep 2024, Hillf Danton wrote:\n
+> > >The proactive reclaim on the cmdline looks like waste of cpu cycles before
+> > >the cases where kswapd fails to work are spotted. It is not correct to add
+> > >it because you can type the code.
+> > 
+> > Are you against proactive reclaim altogether (ie: memcg) or this patch in
+> > particular, which extends its availability?
+> > 
+> The against makes no sense to me because I know your patch is never able to
+> escape standing ovation.
 
-As Andrii pointed out, the uprobe/uretprobe selftest bench run into a
-counterintuitive result that nop and push variants are much slower than
-ret variant [0]. The root cause lies in the arch_probe_analyse_insn(),
-which excludes 'nop' and 'stp' from the emulatable instructions list.
-This force the kernel returns to userspace and execute them out-of-line,
-then trapping back to kernel for running uprobe callback functions. This
-leads to a significant performance overhead compared to 'ret' variant,
-which is already emulated.
+I fail to understand your reasoning. Do you have any actual technical
+arguments why this is a bad idea?
 
-Typicall uprobe is installed on 'nop' for USDT and on function entry
-which starts with the instrucion 'stp x29, x30, [sp, #imm]!' to push lr
-and fp into stack regardless kernel or userspace binary. In order to
-improve the performance of handling uprobe for common usecases. This
-patch supports the emulation of Arm64 equvialents instructions of 'nop'
-and 'push'. The benchmark results below indicates the performance gain
-of emulation is obvious.
+> > The benefits of proactive reclaim are well documented, and the community has
+> > been overall favorable towards it. This operation is not meant to be generally
+> > used, but there are real latency benefits to be had which are completely
+> > unrelated to watermarks. Similarly, we have 'compact' as an alternative to
+> > kcompactd (which was once upon a time part of kswapd).
+> >
+> Because kswapd is responsible for watermark instead of high order pages,
+> compact does not justify proactive reclaim from the begining.
 
-On Kunpeng916 (Hi1616), 4 NUMA nodes, 64 Arm64 cores@2.4GHz.
-
-xol (1 cpus)
-------------
-uprobe-nop:  0.916 ± 0.001M/s (0.916M/prod)
-uprobe-push: 0.908 ± 0.001M/s (0.908M/prod)
-uprobe-ret:  1.855 ± 0.000M/s (1.855M/prod)
-uretprobe-nop:  0.640 ± 0.000M/s (0.640M/prod)
-uretprobe-push: 0.633 ± 0.001M/s (0.633M/prod)
-uretprobe-ret:  0.978 ± 0.003M/s (0.978M/prod)
-
-emulation (1 cpus)
--------------------
-uprobe-nop:  1.862 ± 0.002M/s  (1.862M/prod)
-uprobe-push: 1.743 ± 0.006M/s  (1.743M/prod)
-uprobe-ret:  1.840 ± 0.001M/s  (1.840M/prod)
-uretprobe-nop:  0.964 ± 0.004M/s  (0.964M/prod)
-uretprobe-push: 0.936 ± 0.004M/s  (0.936M/prod)
-uretprobe-ret:  0.940 ± 0.001M/s  (0.940M/prod)
-
-As shown above, the performance gap between 'nop/push' and 'ret'
-variants has been significantly reduced. Due to the emulation of 'push'
-instruction needs to access userspace memory, it spent more cycles than
-the other.
-
-As Mark suggested [1], it is painful to emulate the correct atomicity
-and ordering properties of STP, especially when it interacts with MTE,
-POE, etc. So this patch just focus on the simuation of 'nop'. The
-simluation of STP and related changes will be addressed in a separate
-patch.
-
-[0] https://lore.kernel.org/all/CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com/
-[1] https://lore.kernel.org/all/Zr3RN4zxF5XPgjEB@J2N7QTR9R3/
-
-CC: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-CC: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Liao Chang <liaochang1@huawei.com>
----
- arch/arm64/include/asm/insn.h            |  6 ++++++
- arch/arm64/kernel/probes/decode-insn.c   |  9 +++++++++
- arch/arm64/kernel/probes/simulate-insn.c | 11 +++++++++++
- arch/arm64/kernel/probes/simulate-insn.h |  1 +
- 4 files changed, 27 insertions(+)
-
-diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
-index 8c0a36f72d6f..dd530d5c3d67 100644
---- a/arch/arm64/include/asm/insn.h
-+++ b/arch/arm64/include/asm/insn.h
-@@ -549,6 +549,12 @@ static __always_inline bool aarch64_insn_uses_literal(u32 insn)
- 	       aarch64_insn_is_prfm_lit(insn);
- }
- 
-+static __always_inline bool aarch64_insn_is_nop(u32 insn)
-+{
-+	return aarch64_insn_is_hint(insn) &&
-+	       ((insn & 0xFE0) == AARCH64_INSN_HINT_NOP);
-+}
-+
- enum aarch64_insn_encoding_class aarch64_get_insn_class(u32 insn);
- u64 aarch64_insn_decode_immediate(enum aarch64_insn_imm_type type, u32 insn);
- u32 aarch64_insn_encode_immediate(enum aarch64_insn_imm_type type,
-diff --git a/arch/arm64/kernel/probes/decode-insn.c b/arch/arm64/kernel/probes/decode-insn.c
-index 968d5fffe233..be54539e309e 100644
---- a/arch/arm64/kernel/probes/decode-insn.c
-+++ b/arch/arm64/kernel/probes/decode-insn.c
-@@ -75,6 +75,15 @@ static bool __kprobes aarch64_insn_is_steppable(u32 insn)
- enum probe_insn __kprobes
- arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *api)
- {
-+	/*
-+	 * While 'nop' instruction can execute in the out-of-line slot,
-+	 * simulating them in breakpoint handling offers better performance.
-+	 */
-+	if (aarch64_insn_is_nop(insn)) {
-+		api->handler = simulate_nop;
-+		return INSN_GOOD_NO_SLOT;
-+	}
-+
- 	/*
- 	 * Instructions reading or modifying the PC won't work from the XOL
- 	 * slot.
-diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
-index 22d0b3252476..5e4f887a074c 100644
---- a/arch/arm64/kernel/probes/simulate-insn.c
-+++ b/arch/arm64/kernel/probes/simulate-insn.c
-@@ -200,3 +200,14 @@ simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs)
- 
- 	instruction_pointer_set(regs, instruction_pointer(regs) + 4);
- }
-+
-+void __kprobes
-+simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
-+{
-+	/*
-+	 * Compared to instruction_pointer_set(), it offers better
-+	 * compatibility with single-stepping and execution in target
-+	 * guarded memory.
-+	 */
-+	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
-+}
-diff --git a/arch/arm64/kernel/probes/simulate-insn.h b/arch/arm64/kernel/probes/simulate-insn.h
-index e065dc92218e..efb2803ec943 100644
---- a/arch/arm64/kernel/probes/simulate-insn.h
-+++ b/arch/arm64/kernel/probes/simulate-insn.h
-@@ -16,5 +16,6 @@ void simulate_cbz_cbnz(u32 opcode, long addr, struct pt_regs *regs);
- void simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs);
- void simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *regs);
- void simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs);
-+void simulate_nop(u32 opcode, long addr, struct pt_regs *regs);
- 
- #endif /* _ARM_KERNEL_KPROBES_SIMULATE_INSN_H */
+What do you mean? How does keeping a global watermark helps to trigger
+per NUMA node specific aging - e.g. demotion? Or do you dispute the
+overall idea and have a different idea how to achieve those usecases?
 -- 
-2.34.1
-
+Michal Hocko
+SUSE Labs
 
