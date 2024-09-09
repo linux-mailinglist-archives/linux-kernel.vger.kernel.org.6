@@ -1,129 +1,250 @@
-Return-Path: <linux-kernel+bounces-321852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC598972060
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:24:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C428972068
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E89C41C236D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:24:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D06EF1F245A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE51117799F;
-	Mon,  9 Sep 2024 17:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFFE17A582;
+	Mon,  9 Sep 2024 17:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="Sv8zAjiU"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DZ2l1zNU"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DD41865C;
-	Mon,  9 Sep 2024 17:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A2E178CC8;
+	Mon,  9 Sep 2024 17:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902643; cv=none; b=A0yOXWgF/Xwhi/kgz7AcU3ujcU1Tfl/D9vUj3NriozMma+g85/ZhiQCAJx/ImLAAAZFs2kaRs8heBTNHDKWDMmUTsRlJuyUAdx0sHT6glrQ95p13W9stOuYMcIxJeu4qc6J0s3BC/6YHh4xnGM+vUDxFTZgjeMQkW3UWtmsRJa0=
+	t=1725902664; cv=none; b=RnTyghTsYTP7AO+mwvcGPurb5bn3GaZiCi8X3cWzKbGoFBFGezIYQBH/GRJtnEkk5/43EAAW2+E8kAT/CesgQ6rFZ8wHMaQCt7HVl/r7Hka6VsGYvo4lWKBimNqFyrW2Sem7M82O/QbTCPeRgsg/6PXK/y/AWEQ6WNauF6WqBaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902643; c=relaxed/simple;
-	bh=5qMUKIBrpr+qfmua466C+pCDFtS1UV+POsM6DOPF2S4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nwFTedGa+zKUa7DyUeZIwCY3Z9a4L2E9gNs5BZkdr1pE8Sy7Kuwd01xjKOuk3uraWstw3Y4zEFNnJwmSKIXZxVXidcGG3Azh7IU+zOmVJkIQzlVPm1z2J6WybpON8Wy2mX6uE0ZKkzwQm9LP/UYOEoywZ/Z1zuZodSDjhC+jNd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=Sv8zAjiU; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+	s=arc-20240116; t=1725902664; c=relaxed/simple;
+	bh=7jiSeWv8650EDek+o8j6WiWCPM2M1ozrJNSg8x76fhs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kd93qcDm9mvSPnuUwSVOi95raQkceBIjoSWnY2U431YboNXsuJqNw+0QrUBIfjo5VUFU50FmuqIDN4Ps2YHzwv+f7vW0d52pm6q02/Rk7uLkamt0fvXY228OrJPG9Y/+D48QrFe8/jtbQivlL/4kCxtRayjldt7OKJbuZdNaviI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DZ2l1zNU; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f760f7e25bso17700501fa.2;
-        Mon, 09 Sep 2024 10:24:01 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5365c512b00so3913269e87.3;
+        Mon, 09 Sep 2024 10:24:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03; t=1725902640; x=1726507440; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x50KnwCqfXWFW8bmwgvpdcdT/VQCHrCJ+7RAYLNl1Jc=;
-        b=Sv8zAjiUBMDrdhvPpZCgpNWM46qFn4vLNk2NC0UmgLhl43+jJzaa0/0hDDtXGf3kp/
-         QBMM/6eIBveHvoNVNku1Kiya02EEizpGUWzej2YpITgw8Ks5Ni9zytT+8nAZpftgMAno
-         mXUxNaFh3HFCIgKCKw4OEetllm0sYtj36Cc/ulugkpPKO8tEjqPcobg5nmHSpoM2DcyK
-         q6VbaJCWNe8gvKF/lUOmCBupn2ireowUYYVP0u1+fHT+8pmt4BnkjLlGHF4Az82DYB97
-         TjalQKb/lYV6x2ZdqLgk0QdbslUFSWGlYIcAUNJXUSYMKWMrRE95hKp07aFNtkCHY0SA
-         cupA==
+        d=gmail.com; s=20230601; t=1725902660; x=1726507460; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SzINnm2Ya0afTbpAAfgnl7iTn2CTj7St4+vT2jNDuJQ=;
+        b=DZ2l1zNUlOYQzUy7ZPy99rFnxiwb3SPEs2pkP61q+f7IppUlOQhj7ITkzgz91BBUY7
+         jCk5WLHM4/VT6gxleDKOGj6MIJk5GMiQ6NkpLha+FgS6jdaYN0tRrn74pkU0vnXlZUqd
+         qn9U6EwZPw7SqDUBDaKP7a1WsbOoii9Ys5fwbfsxZeOkXAldZMAAgkh7v5PEkeqq/tPD
+         hyrDadJdXISmFmlZN+jM0B8efMtELRQTHjJiWEAQC68RDf/o4MXYq0r/swRNCHu2fQj0
+         UlWj6L7DUR+VLQeC433klcUfjXHEWH2OsQP5KYcqjPhbryeZut/L7xE8LLEBVQPFiPLf
+         NMZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725902640; x=1726507440;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x50KnwCqfXWFW8bmwgvpdcdT/VQCHrCJ+7RAYLNl1Jc=;
-        b=Q5IUIKn9u4I/L6ah+colBqzFIenvTOe8o+nRratGH6hyW24C+HPfey+as9MxXN0at7
-         Yw6/raeYIPZqgvC/LXo/QALe8kijv0m50mTf86d/vnSweqAGUV2UFQTZhAwGuHZwn/68
-         ME9dYrsK2AtJektCgkVmlsscVxa5p6fhhJPLgLMBHR+Tice21OmcLqyHZ5GfiIbzBwwE
-         TnthHQtGxcfvTtwmhogiLNFhpOT+xcfMAi5ioqW0z129/wZLIWjMXuLrMtA1QKsGJI/G
-         P7GGoqU5ednxSWt18Dk3v5m4NKT3jPDqdKS7PLgEGVPZ9TTxxyECxT7ZKlMGCN4o1BRT
-         svOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCViEfeDLxfSAa8e3nSTUfBC+N8geGLjx5WGqUcmevlsQ/rpRHOatbUS1MZ906XE5PLYZI1XT4ZB6x096z8=@vger.kernel.org, AJvYcCWM8+9sicCxhPNNJ3XAMsW7kbixRHU/iIPYePZVv5RDtJDNB9ejI8xdG+Aomb8BB2nvkQKitNnRWvhn@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJCgdUOAK2sAS2AYhovdeECgUiiwT6i9IWTbrd4BOehjlJES6T
-	BF5VlE+6DNXxzm3d6hqAqNn6+zQqBg/kPyUQgSDxx8L4BMW9jEdsb0R71RHgqiuIIXySzTQEj0j
-	VycspMaNVoODepFb+H1vPgS1rjgM=
-X-Google-Smtp-Source: AGHT+IE6rCV/4aF114iDIj1kkIzkyn9wNoEOeAL2BBd+QL1ZEEYMwzMvVt2ZxZGLQfYfPoR9MpZQ5Xg9XLgqcD44um0=
-X-Received: by 2002:a2e:f0a:0:b0:2f3:a06a:4c5 with SMTP id 38308e7fff4ca-2f754a6b7cbmr47255071fa.29.1725902639166;
- Mon, 09 Sep 2024 10:23:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725902660; x=1726507460;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SzINnm2Ya0afTbpAAfgnl7iTn2CTj7St4+vT2jNDuJQ=;
+        b=MRpBTfLqNI/k3Lf5qbWHqNN+BaztcHjGKH5YhWrGSjK6ARE17L9EQTrhjvGvDBy068
+         zjebBqqBAAUWxrYo+UXho/HF4HEMo2ijorT6BEsUj+SEXhOtUqzS1UNxoiBinN5RBgsY
+         i7mHdPnfOiRBZ9+C8JpcgprA/6Oww94HoiJSdhkuXRR+Wqwr/XmtyTuSPgH5SsR29N9n
+         TvXg2dwLu6xEnaYe/uZBEBF9esv55vFIWnE5w/Mu0vwYXJSytcHn5wycm05thI4o3xg+
+         xGjAElH7zvJTs62NEbQQGxmayD3keycjXz6odmJVaUb9L+Q/DdyYXT/0x2QeJqHkTNTq
+         bmMg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1V5AGnBJHTtybw2zJi5HrDQEhAInR+FR866AVxpLqJ1xdgW7yepYQ02FQuaQRkFKKIn9HeeG9IUHzeobh@vger.kernel.org, AJvYcCX7Na98hunSYXus5/kbVzGkDH2ZoZG37Sv9kfPdVdWcmBJl1TNAQN1Nddy3qyQduesxarzu+fDb47G+@vger.kernel.org, AJvYcCXTsq0gfnTeNKvaj3z99wEnnEvZbWxw81W2CopfHgPbpcymt5ipLmZYOYlGylcade4VLm8ej2vHetnpEsp7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+y7prkY6tuNU01LS22aYlw2HZEe+xKRlTpGZJVl5Ii5QRFvXU
+	WNdfTCHrECWkxBtBGWalhPzGA8FcaEiKoLrDQNANiGAC/rscSnAC
+X-Google-Smtp-Source: AGHT+IFkmOYlKeogDazf8XMnSUXgNmiAwvfoh3FwHyhTcsMIT75dT3NSUUQNHfQeSC4vcrbssokFxg==
+X-Received: by 2002:a05:6512:b24:b0:535:3d15:e718 with SMTP id 2adb3069b0e04-536587fcf0fmr8663373e87.50.1725902659411;
+        Mon, 09 Sep 2024 10:24:19 -0700 (PDT)
+Received: from [192.168.1.17] (host-95-246-172-178.retail.telecomitalia.it. [95.246.172.178])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd52010sm3275587a12.43.2024.09.09.10.24.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 10:24:17 -0700 (PDT)
+Message-ID: <86b02057-3e25-45c4-afaf-597394132a37@gmail.com>
+Date: Mon, 9 Sep 2024 19:24:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826-nfsd-cb-v1-0-82d3a4e5913b@kernel.org> <20240826-nfsd-cb-v1-1-82d3a4e5913b@kernel.org>
-In-Reply-To: <20240826-nfsd-cb-v1-1-82d3a4e5913b@kernel.org>
-From: Olga Kornievskaia <aglo@umich.edu>
-Date: Mon, 9 Sep 2024 13:23:47 -0400
-Message-ID: <CAN-5tyFQ9sdb-L8YQXiGsUXDbVR9QbdNNK7QOi5XVJaggnVFBg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] nfsd: add more info to WARN_ON_ONCE on failed callbacks
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/10] drm/msm/A6xx: Implement preemption for A7XX
+ targets
+From: Antonino Maniscalco <antomani103@gmail.com>
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Jonathan Corbet <corbet@lwn.net>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ Sharat Masetty <smasetty@codeaurora.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+References: <20240905-preemption-a750-t-v3-0-fd947699f7bc@gmail.com>
+ <20240905-preemption-a750-t-v3-4-fd947699f7bc@gmail.com>
+ <20240906195444.owz4eralirekr7r7@hu-akhilpo-hyd.qualcomm.com>
+ <df85bf24-651c-4a35-929b-4de6c05555a1@gmail.com>
+Content-Language: en-US
+In-Reply-To: <df85bf24-651c-4a35-929b-4de6c05555a1@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 26, 2024 at 8:54=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> Currently, you get the warning and stack trace, but nothing is printed
-> about the relevant error codes. Add that in.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/nfsd/nfs4callback.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
-> index d756f443fc44..dee9477cc5b5 100644
-> --- a/fs/nfsd/nfs4callback.c
-> +++ b/fs/nfsd/nfs4callback.c
-> @@ -1333,7 +1333,8 @@ static void nfsd4_cb_done(struct rpc_task *task, vo=
-id *calldata)
->                 return;
->
->         if (cb->cb_status) {
-> -               WARN_ON_ONCE(task->tk_status);
-> +               WARN_ONCE(task->tk_status, "cb_status=3D%d tk_status=3D%d=
-",
-> +                         cb->cb_status, task->tk_status);
->                 task->tk_status =3D cb->cb_status;
->         }
+On 9/9/24 3:15 PM, Antonino Maniscalco wrote:
+> On 9/6/24 9:54 PM, Akhil P Oommen wrote:
+>> On Thu, Sep 05, 2024 at 04:51:22PM +0200, Antonino Maniscalco wrote:
+>>> This patch implements preemption feature for A6xx targets, this allows
+>>> the GPU to switch to a higher priority ringbuffer if one is ready. A6XX
+>>> hardware as such supports multiple levels of preemption granularities,
+>>> ranging from coarse grained(ringbuffer level) to a more fine grained
+>>> such as draw-call level or a bin boundary level preemption. This patch
+>>> enables the basic preemption level, with more fine grained preemption
+>>> support to follow.
+>>>
+>>> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+>>> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+>>> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+>>> ---
+>>>   drivers/gpu/drm/msm/Makefile              |   1 +
+>>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 293 +++++++++++++++++++++-
+>>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 161 ++++++++++++
+> ...
+>>
+>> we can use the lighter smp variant here.
+>>
+>>> +
+>>> +        if (a6xx_gpu->cur_ring == ring)
+>>> +            gpu_write(gpu, REG_A6XX_CP_RB_WPTR, wptr);
+>>> +        else
+>>> +            ring->skip_inline_wptr = true;
+>>> +    } else {
+>>> +        ring->skip_inline_wptr = true;
+>>> +    }
+>>> +
+>>> +    spin_unlock_irqrestore(&ring->preempt_lock, flags);
+>>>   }
+>>>   static void get_stats_counter(struct msm_ringbuffer *ring, u32 
+>>> counter,
+>>> @@ -138,12 +231,14 @@ static void a6xx_set_pagetable(struct a6xx_gpu 
+>>> *a6xx_gpu,
+>>
+>> set_pagetable checks "cur_ctx_seqno" to see if pt switch is needed or
+>> not. This is currently not tracked separately for each ring. Can you
+>> please check that?
+> 
+> I totally missed that. Thanks for catching it!
+> 
+>>
+>> I wonder why that didn't cause any gpu errors in testing. Not sure if I
+>> am missing something.
+>>
+> 
+> I think this is because, so long as a single context doesn't submit to 
+> two different rings with differenr priorities, we will only be incorrect 
+> in the sense that we emit more page table switches than necessary and 
+> never less. However untrusted userspace could create a context that 
+> submits to two different rings and that would lead to execution in the 
+> wrong context so we must fix this.
+> 
+>>>       /*
+>>>        * Write the new TTBR0 to the memstore. This is good for 
+>>> debugging.
+>>> +     * Needed for preemption
+>>>        */
+>>> -    OUT_PKT7(ring, CP_MEM_WRITE, 4);
+>>> +    OUT_PKT7(ring, CP_MEM_WRITE, 5);
+>>>       OUT_RING(ring, CP_MEM_WRITE_0_ADDR_LO(lower_32_bits(memptr)));
+>>>       OUT_RING(ring, CP_MEM_WRITE_1_ADDR_HI(upper_32_bits(memptr)));
+>>>       OUT_RING(ring, lower_32_bits(ttbr));
+>>> -    OUT_RING(ring, (asid << 16) | upper_32_bits(ttbr));
+>>> +    OUT_RING(ring, upper_32_bits(ttbr));
+>>> +    OUT_RING(ring, ctx->seqno);
+>>>       /*
+>>>        * Sync both threads after switching pagetables and enable BR only
+>>> @@ -268,6 +363,43 @@ static void a6xx_submit(struct msm_gpu *gpu, 
+>>> struct msm_gem_submit *submit)
+>>>       a6xx_flush(gpu, ring);
+>>>   }
+> ...
+>>> +    struct a6xx_preempt_record *record_ptr =
+>>> +        a6xx_gpu->preempt[ring->id] + PREEMPT_OFFSET_PRIV_NON_SECURE;
+>>> +    u64 ttbr0 = ring->memptrs->ttbr0;
+>>> +    u32 context_idr = ring->memptrs->context_idr;
+>>> +
+>>> +    smmu_info_ptr->ttbr0 = ttbr0;
+>>> +    smmu_info_ptr->context_idr = context_idr;
+>>> +    record_ptr->wptr = get_wptr(ring);
+>>> +
+>>> +    /*
+>>> +     * The GPU will write the wptr we set above when we preempt. Reset
+>>> +     * skip_inline_wptr to make sure that we don't write WPTR to the 
+>>> same
+>>> +     * thing twice. It's still possible subsequent submissions will 
+>>> update
+>>> +     * wptr again, in which case they will set the flag to true. 
+>>> This has
+>>> +     * to be protected by the lock for setting the flag and updating 
+>>> wptr
+>>> +     * to be atomic.
+>>> +     */
+>>> +    ring->skip_inline_wptr = false;
+>>> +
+>>> +    spin_unlock_irqrestore(&ring->preempt_lock, flags);
+>>> +
+>>> +    gpu_write64(gpu,
+>>> +        REG_A6XX_CP_CONTEXT_SWITCH_SMMU_INFO,
+>>> +        a6xx_gpu->preempt_iova[ring->id] + PREEMPT_OFFSET_SMMU_INFO);
+>>> +
+>>> +    gpu_write64(gpu,
+>>> +        REG_A6XX_CP_CONTEXT_SWITCH_PRIV_NON_SECURE_RESTORE_ADDR,
+>>> +        a6xx_gpu->preempt_iova[ring->id] + 
+>>> PREEMPT_OFFSET_PRIV_NON_SECURE);
+>>> +
+>>> +    preempt_offset_priv_secure =
+>>> +        
+>>> PREEMPT_OFFSET_PRIV_SECURE(adreno_gpu->info->preempt_record_size);
+>>> +    gpu_write64(gpu,
+>>> +        REG_A6XX_CP_CONTEXT_SWITCH_PRIV_SECURE_RESTORE_ADDR,
+>>> +        a6xx_gpu->preempt_iova[ring->id] + preempt_offset_priv_secure);
+>>
+>> Secure buffers are not supported currently, so we can skip this and the
+>> context record allocation. Anyway this has to be a separate buffer
+>> mapped in secure pagetable which don't currently have. We can skip the
+>> same in pseudo register packet too.
+>>
+> 
+> Mmm it would appear that not setting it causes an hang very early. I'll 
+> see if I can find out more about what is going on.
 
-Educational question: why is this warning there in the first place? I
-can appreciate the value of information. Does knfsd expect that a
-callback should never fail with an error and thus tries to always
-catch it? A tracepoint can log an rpc tasks status but I realize that
-it doesn't capture attention like a WARN_ON.
+Actually it was a mistake I had made when testing. The secure record 
+will be gone from the next revision.
 
-I have a report with this warn_on which I'm trying to figure out why
-is happening but I was surprised to find nfsd cares so much about the
-callback status.
+> 
+>>> +
+>>> +    a6xx_gpu->next_ring = ring;
+>>> +
+> ...
+>>>   struct msm_ringbuffer *msm_ringbuffer_new(struct msm_gpu *gpu, int id,
+>>>
+>>> -- 
+>>> 2.46.0
+>>>
+> 
+> Best regards,
 
-Thank you.
->
->
-> --
-> 2.46.0
->
->
+Best regards,
+-- 
+Antonino Maniscalco <antomani103@gmail.com>
+
 
