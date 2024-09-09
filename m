@@ -1,108 +1,120 @@
-Return-Path: <linux-kernel+bounces-321275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84D79716CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:25:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B38819716D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 000161C2311B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:25:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71DB028322A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B741B652E;
-	Mon,  9 Sep 2024 11:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84BA1B3B0F;
+	Mon,  9 Sep 2024 11:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dI0c6nn7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hj2gR8Gq"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719A61B5ED8;
-	Mon,  9 Sep 2024 11:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6E31B3F32
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 11:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725881083; cv=none; b=hBIqZAutvtqQYLXo8b6REx84qp8ezAlbz9oYC6LYiiLkEH5PoaUidE/qnsiFaW+EHIcIsKHEpLjstPNDk6oEy39W+O197BlDFIidtDkytABCQY3IwTcWnC9FKhgg73fLZijoqqul+pZLzepvuHo4TuDrtVlhLF4aI3+w08pJsuc=
+	t=1725881114; cv=none; b=CsXNAxC3omNXuYCCXF3IZWLuQgSkrj/CkKMWeHXh95yVMnCDErnt3gkZfvpmY24dsxXQ9Uw8GYdigm88QTRRBMTrDyCQg0r+2kv5JSFUI5Y+RnEU6B6Zk1VeFM+r4P35GEw7oyxbO+JkrtvGWWAqsPz/qX15D1ytV4q4qgNsFL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725881083; c=relaxed/simple;
-	bh=ZnHPFe2fwIxePToIasZRpCel4w9o2a9xvZOFvjDcjFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vf4YfX4IhFtxL4v+h/kh3LGb48WCD/qK8q2CYdTbRYRCGeMu/QzE5r+GnB3tABvHty2zt2Ar3f4Ai63ntFaKQLMwsf02RxyK+tAipPwtPN286rQq2Z3eU6dZJCwKgljsExIaYrjtLOxdg+GYa+aDxu9CorDLfzQVmoTDjV91TSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dI0c6nn7; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725881082; x=1757417082;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ZnHPFe2fwIxePToIasZRpCel4w9o2a9xvZOFvjDcjFA=;
-  b=dI0c6nn7kby01z2Taglmf4TjG4L6E2dgwwF/j5uC5dkc+fCL7dVccgfv
-   UkHBUgwZ5hkFVKmZ7C3+yE0NtOQwdfgZDcbfn14kk4TEuaWjjtTCUzymx
-   AcPhUwdZOLyvw9Efm7L6Tf1YlRmPOJp1I/N+8bt4+JoYQxIW9WnuU3/kZ
-   miRCMmrOELQLuyrkePlfZooj4zvvMcSHcOWqKcS92HzyIrMayKEULdweI
-   UuhZRnnLBAct+ENj2p+i+ho+MvgUvEMFJfL7mOiRNZBZOxgdKPgvzhFfr
-   JDm3xZdW3fTSis7udLyyL4qPF8yhmUJyGdh8+5rz8/+scEsmwt3oGQNxF
-   w==;
-X-CSE-ConnectionGUID: jJBJGgy1SOG4yO752SaIVw==
-X-CSE-MsgGUID: l1TG8rRESROrUKPfvQShsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="24732875"
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="24732875"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 04:24:31 -0700
-X-CSE-ConnectionGUID: fcgDdeyhTW64bIsEl8dGcw==
-X-CSE-MsgGUID: K2LS0eo5TiOHIjfkxupmGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="71423923"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa003.jf.intel.com with ESMTP; 09 Sep 2024 04:24:28 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 9A8C8321; Mon, 09 Sep 2024 14:24:26 +0300 (EEST)
-Date: Mon, 9 Sep 2024 14:24:26 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Kai Huang <kai.huang@intel.com>, stable@vger.kernel.org
-Subject: Re: [PATCHv6 2/4] x86/tdx: Rename tdx_parse_tdinfo() to tdx_setup()
-Message-ID: <q5yhj3hpe74h6payob6sw2agr6mlfjqe3b7g6hqehjgivpmvbd@5w3tl3gjjlbf>
-References: <20240828093505.2359947-1-kirill.shutemov@linux.intel.com>
- <20240828093505.2359947-3-kirill.shutemov@linux.intel.com>
- <e042faa6-91be-49bb-ae59-e87792756fa4@suse.com>
+	s=arc-20240116; t=1725881114; c=relaxed/simple;
+	bh=BFlzT05PQJJDS6WUMpHqs1A1QFrjjs5SQdN2X9/eAcA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MyBq8KS3uIPfAy0e3Av2InH/qw3CIGm8c1zKOt5c9KCKjNoUdc9EIt0mCuJp09wbEDP12PDM0k5dB0seBVT30tx19mmu9lt8ipB6nqCCRlmhUvQkviH7n+E1JEbjaxIAW3KrfSOJA9jzBKWWyvBQ7Z9TIju77eqC7N0r+YL8grg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hj2gR8Gq; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-68518bc1407so46039527b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 04:25:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725881112; x=1726485912; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OpDNkm0dS8Pmjc3q7OtWCuq9xNsSuYsSijjbAHrD43k=;
+        b=hj2gR8Gq6+DHmJJQLsaMPkx7vJkWHinonkdgjy8lQfE0dG7MwdKgcTZGoN8lspOlGo
+         MVm1jIPegd9BPWuGZU5UeYmJRq5Lbl0ffCwOfYvxEKpUBXVqq1Q8Ijg1h5DiRSkKndTe
+         oQpqe3BDT/wvT3Xlh5CpI4S1IkWoC5BkECuTnT0+g7/8CvIAV5SvcWrTAIpsmLmsHe2v
+         pAerH+IJvrSkGJYLEwpwxiGN95rfx1bGDQYROOEiR5IQlARUugovN1HP/1VaMdWZieap
+         XOfPekt10J+hAMOYoKvmre3Y2tX+LiMCqKbhDRTn6zlmWn2O839beUokBmpNx+OW/ROa
+         Ag8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725881112; x=1726485912;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OpDNkm0dS8Pmjc3q7OtWCuq9xNsSuYsSijjbAHrD43k=;
+        b=gOvRF5kUJ8KrCjlChU6HR5KGcgLfYXJWWTTXjukNCqiMEZkngiBx5Gi1pOfW3cbJQP
+         8iSBgGdy7L8L05Vr6HgJ+6/SNtuxpjk2wBMTaugeZClo45KsAk3soGYVMWsRnBnz1HtB
+         QH0vLXAkVqFpY0DZCX/LFIxMkLePT8s2FdmvD5XkwrUuZw4JlgWrCFlA1dispwKj352m
+         hcyLmm5rUyGB4kDYLMvUP9NiuLqa0uvmdLlDUGqG8Iv7OUa43YfPmSfY7dQd9r5IcSGO
+         VX9xTlBgGxk2hIoV1VhTEifGUzmgSHnf+nRnWpWn8qhjdvaWqAz5MxobGusFY+yY9ypM
+         D0uA==
+X-Forwarded-Encrypted: i=1; AJvYcCUR4LknsPaXVrlglfN8q1JhlUhwI7MVmzX4JD8cGYZ1Xfpvzh+aXg0DICy8UUTWLwxs1cQJF0QP8kWvkBc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7rMzeoPgl+aAZY+R49CQa4DE6lf+rQVtfFLnufSTvBb5Dxhpy
+	24is1PEFweqv7pNgcfxPYyL1xlv32HneamrPtXmpZ43R7S/ei818IqC7eJaveVhQQzytTL6nsO4
+	gq4gffUk6xSv9hRvqlVZ3OucmHS66HTgoWs24xQ==
+X-Google-Smtp-Source: AGHT+IGVWKFrtsCq0XAJNDTpJCkeUpuZkVj85lqCpCtbm1eC6mA7YuhdlDQM5pTaOZwXdhStu1bIUwPbyKm4Z7k9kso=
+X-Received: by 2002:a05:690c:67c1:b0:6d9:90f3:1a79 with SMTP id
+ 00721157ae682-6db451544f3mr141002197b3.32.1725881111691; Mon, 09 Sep 2024
+ 04:25:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e042faa6-91be-49bb-ae59-e87792756fa4@suse.com>
+References: <20240908-adreno-fix-cpas-v1-1-57697a0d747f@linaro.org> <c77ab7a8-49aa-447b-b7ac-18dd5c2eeecb@kernel.org>
+In-Reply-To: <c77ab7a8-49aa-447b-b7ac-18dd5c2eeecb@kernel.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 9 Sep 2024 14:25:00 +0300
+Message-ID: <CAA8EJpr4sMEmywD3qO8co1ZN3jG5w=dsfDYYmY90baRne3dHSA@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm: allow returning NULL from crete_address_space
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Bjorn Andersson <andersson@kernel.org>, Jordan Crouse <jordan@cosmicpenguin.net>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 28, 2024 at 04:53:57PM +0300, Nikolay Borisov wrote:
-> 
-> 
-> On 28.08.24 г. 12:35 ч., Kirill A. Shutemov wrote:
-> > Rename tdx_parse_tdinfo() to tdx_setup() and move setting NOTIFY_ENABLES
-> > there.
-> > 
-> > The function will be extended to adjust TD configuration.
-> 
-> <offtopic>
-> Since this deals with renaming, I think it will make sense to rename
-> tdx_early_init() to tdx_guest_init/tdx_guest_early_init as it becomes
-> confusing as to which parts of the TDX pertain to the host and which to the
-> guest. Right now we only have the guest portions under arch/x86/coco/tdx but
-> when the kvm/vmx stuff land things will become somewhat messy..
-> </offtopic>
+On Mon, 9 Sept 2024 at 13:34, Konrad Dybcio <konradybcio@kernel.org> wrote:
+>
+> On 8.09.2024 7:59 PM, Dmitry Baryshkov wrote:
+> > Under some circumstance
+>
+> Under what circumstances?
+>
+> This branch is only taken if there's a .create_private_address_space
+> callback and it only seems to be there on a[67]xx.
 
-I don't see a problem with the current state. KVM side will land under
-arch/x86/virt/vmx/tdx, so the path will give it away.
+Existing code doesn't. I stumbled upon it while debugging private
+address space translation. And that's why I wrote 'it might be
+required' rather than 'the function returns'.
+So yes, there is no issue with the current code. And at the same time
+not having this in place makes debugging more difficult.
+
+
+> a6xx_create_address_space returns:
+>
+> - an ERR_PTR if msm_iommu_pagetable_create() fails
+> - retval of msm_gem_address_space_create() otherwise
+>    - retval of msm_iommu_pagetable_create() is nullchecked here
+>      again because we apparently we want to be double sure
+>    - err_ptr(-enomem) is returned if allocating aspace fails
+>    - otherwise aspace is allocated somewhere
+>
+> Konrad
+
+
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+With best wishes
+Dmitry
 
