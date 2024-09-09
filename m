@@ -1,134 +1,135 @@
-Return-Path: <linux-kernel+bounces-320578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C52970C25
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:09:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05CC970C28
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4FCE1F2254A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:09:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC04A1C21A9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0682D1AC8BF;
-	Mon,  9 Sep 2024 03:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486E51AC8B8;
+	Mon,  9 Sep 2024 03:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a2j8b43m"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HzwSmNtI"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F4B4C81;
-	Mon,  9 Sep 2024 03:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A96C4C81;
+	Mon,  9 Sep 2024 03:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725851379; cv=none; b=E2ONXfOHRFl5hF+xoG3Wdd5+WaMbatmv/cTOvUKN5oakjt5rwNsKD6uS5syPBl48ME0Fobwvm/eaqKec8cbH2bOnoMQYTsx63I3FHlnjA3xZ0wh8dEh3S3kNoSie3royG+byA7ZB4K/lQFqnROJWxXyIlM1vjVHoHbmYGGecBMA=
+	t=1725851489; cv=none; b=lrIcLbPwxablKoi+Bc6vSGPxYIZDSgy+oBJxfyJnSewGt9+XigwLYbBJmPoSKx/QE/CQVJkGXtTOHFpbIL4/HAwRed3v1PSExFaVy9PlhevFKqYJw+VsagHzfAFR3jc8qqC3Vr8hIbPOzMZZ+knSFliycE0hUcE62tK/ml24eJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725851379; c=relaxed/simple;
-	bh=Qn1xwmbieFJo2P3HZjsMlyrGYEfUrw7eYRCJ9Cvtkgc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U0yXc/F9fMc3FCo1tJzI7Xg0RStShrj2Fsw6dGWC9dNDAL0fyBph/cFrwui09eRXebDQpIsBGjkY6eSqcWUmkbYSNJY/qGFRpAL70GmSMCgyBVK60bhpwGSsWQppNw4incKavAsUxwCUEytcvtEpIBr22uUvk9tINX4yYVpB1Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a2j8b43m; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 488NWEhJ018316;
-	Mon, 9 Sep 2024 03:09:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=A0mZDBa1peMp6ysKu0Owbb
-	dmW7yzG9XZzXBo4iYrJXI=; b=a2j8b43mc2aEYxNGPOWnqdxLKgZo9V8f1Q7Stx
-	30vrQ7aGe+osbKbHcRSdcgDHurIxSvKBwSa8PQLTW0GPDWXych+RP0SuWVa931cs
-	l9pNcUs5CfRTo/rYsSLmi/1JnGEQoGkrJVg6JZN6wTvyQhwVaiWwiBcUg6xOhHN9
-	134C7UcpQEG/kKa7uchPybPV2cCpYvrnYsj6E/Rygwrg7h9LPWcXn1xAMaG2Eqvd
-	lCsPBXOd0Cqo626Ie5txmRbJnXnIWRAlKr1gU62n3DyqPaO6Wy7wrXR0VyOThZaz
-	ZyAqsKERkEqzagVWxWHgFVcur/TfVZvjdcmfG8oKldQ1Z0Aw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6shhcs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 03:09:28 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48939S6e009707
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Sep 2024 03:09:28 GMT
-Received: from jiaymao-gv.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sun, 8 Sep 2024 20:09:26 -0700
-From: Jiayang Mao <quic_jiaymao@quicinc.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg
-	<johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1] Bluetooth: mgmt: Verify cmd pending status before removing it
-Date: Mon, 9 Sep 2024 11:09:06 +0800
-Message-ID: <20240909030906.26375-1-quic_jiaymao@quicinc.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725851489; c=relaxed/simple;
+	bh=h1OmK4hxiuEh6+8aSSIjBkORlrnFntePQiwMmHs3Nls=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=V2pr8tr6u/+59R/FH5MUWGsvJjw2BQ+6rqZO8vkv+lIuFXoHJrNxrxekJ5lZpcpygKWReNqNYxQj3ESj85VGqU8LMGvRJbT0U0xOX+tYsC2uKi0hkzxDqgNPw7baUCVdH146r3nL4FGtKhOdmB7i/0kJA4XyqYDEYgMrRQVfU+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HzwSmNtI; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725851481;
+	bh=1v72/rcYDS0zRktF/YD11IjuRHLtXhb86rJRmWyRvrY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HzwSmNtIQZfq7cykQ8/GQjInkwf4LBqXZ9xWyksTatIJuvBEp+hFi4l4qMD/naN3b
+	 kc+zdtv0p5PwAtT6eEzSJfMRyLijMJLNu3kZYa5e/jJ1GHZbKlyz+/PJfCufHdW4nz
+	 dTV41jkbnd/IOVnS8lFTbsEWXRVgC9Q7iBMmVkgJ1LuO+GWj+yl5a6MB1TAoby5Oey
+	 Ho+7r7eQweirYCcwhg5efcKqVd950T7twBcchvfFW0aDG9gryggkNI0ccXH/vdKMg4
+	 G6AOk7C8Zas53QLtEKK611tMKl2n33HlVzSnDvPlMaFMVyvv3IK9ptZ1f+qiSAk1Tc
+	 l+rb1JG2YfIrA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X2BgX4zjpz4wb0;
+	Mon,  9 Sep 2024 13:11:20 +1000 (AEST)
+Date: Mon, 9 Sep 2024 13:11:20 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Jani Nikula <jani.nikula@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Message-ID: <20240909131120.030c1d6f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9nkBzS1_BC_8i9d2NyzykCA4_i2Il0zA
-X-Proofpoint-ORIG-GUID: 9nkBzS1_BC_8i9d2NyzykCA4_i2Il0zA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- suspectscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 bulkscore=0
- adultscore=0 clxscore=1011 priorityscore=1501 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409090025
+Content-Type: multipart/signed; boundary="Sig_/iVcqoWFXbHt=imaJWxm7oC_";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: jiaymao <quic_jiaymao@quicinc.com>
+--Sig_/iVcqoWFXbHt=imaJWxm7oC_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Add a verification step to ensure that a command is still in the pending
-list before attempting to remove it. A crash may occur during the boot
-process when Bluetooth is enabled and then immediately disabled. In a
-race condition, mgmt_index_removed() might free the pending command
-before mgmt_add_adv_patterns_monitor_complete() is called, leading to a
-double free scenario.
+Hi all,
 
-Part of the crash call trace:
-0x0000053D: __list_del_entry_valid_or_report+0x98/0xdc
-0x0000053D: mgmt_pending_remove+0x18/0x58 [bluetooth]
-0x0000053E: mgmt_remove_adv_monitor_complete+0x80/0x108 [bluetooth]
-0x0000053E: hci_cmd_sync_work+0xbc/0x164 [bluetooth]
+Today's linux-next merge of the drm tree got a conflict in:
 
-Signed-off-by: jiaymao <quic_jiaymao@quicinc.com>
----
- net/bluetooth/mgmt.c | 4 ++++
- 1 file changed, 4 insertions(+)
+  drivers/gpu/drm/xe/display/xe_display.c
 
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index 25979f4283a6..9d019db92043 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -5428,6 +5428,9 @@ static void mgmt_remove_adv_monitor_complete(struct hci_dev *hdev,
- 
- 	hci_dev_lock(hdev);
- 
-+	if (cmd != pending_find(MGMT_OP_REMOVE_ADV_MONITOR, hdev))
-+		goto done;
-+
- 	rp.monitor_handle = cp->monitor_handle;
- 
- 	if (!status)
-@@ -5437,6 +5440,7 @@ static void mgmt_remove_adv_monitor_complete(struct hci_dev *hdev,
- 			  mgmt_status(status), &rp, sizeof(rp));
- 	mgmt_pending_remove(cmd);
- 
-+done:
- 	hci_dev_unlock(hdev);
- 	bt_dev_dbg(hdev, "remove monitor %d complete, status %d",
- 		   rp.monitor_handle, status);
--- 
-2.46.0
+between commit:
 
+  4bfc9c553f5e ("drm/xe/display: Avoid encoder_suspend at runtime suspend")
+
+from Linus' tree and commit:
+
+  769b081c18b9 ("drm/i915/opregion: convert to struct intel_display")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/xe/display/xe_display.c
+index c860fda410c8,710b1e2170c1..000000000000
+--- a/drivers/gpu/drm/xe/display/xe_display.c
++++ b/drivers/gpu/drm/xe/display/xe_display.c
+@@@ -331,12 -345,12 +345,12 @@@ void xe_display_pm_suspend(struct xe_de
+ =20
+  	intel_hpd_cancel_work(xe);
+ =20
+ -	if (!runtime && has_display(xe))
+ +	if (!runtime && has_display(xe)) {
+  		intel_display_driver_suspend_access(xe);
+ -
+ -	intel_encoder_suspend_all(&xe->display);
+ +		intel_encoder_suspend_all(&xe->display);
+ +	}
+ =20
+- 	intel_opregion_suspend(xe, s2idle ? PCI_D1 : PCI_D3cold);
++ 	intel_opregion_suspend(display, s2idle ? PCI_D1 : PCI_D3cold);
+ =20
+  	intel_dmc_suspend(xe);
+  }
+
+--Sig_/iVcqoWFXbHt=imaJWxm7oC_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbeZ1gACgkQAVBC80lX
+0Gzf3wf8CZjsTcUuiP77Xy7iDHdwAFNHY0XIxXJY9sA4X3kCwqXPN76O3aRHPA2x
+3h66J7KyDQH0RKJlat353yL6+742h8nwHDhcahQpG1NuY8yREt8zzfb53sUDff7o
+ZLPIgI6wFUDvy5EuZkRsVvueJg2l9iYQRWGzTx7YhD9E/RPofSVLXyMZIhq96xX0
+QrNXIuVh2nETV9jsBMunZmM+Nd4/9yL4yJP/LUd9RLPPX+wjAn264Wxbm7bvB5qV
+jabkFODKwVuF7cYZMwtIwsQQnD1BVmX6bDFD7r6BwhxHn0A+8d1nRL+WksKiGiOG
+SGfOvtz/vtuaAOwhtFqXEl0fWpO/4A==
+=J+cB
+-----END PGP SIGNATURE-----
+
+--Sig_/iVcqoWFXbHt=imaJWxm7oC_--
 
