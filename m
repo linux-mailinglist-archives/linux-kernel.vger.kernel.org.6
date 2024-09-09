@@ -1,358 +1,218 @@
-Return-Path: <linux-kernel+bounces-321115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843059714BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:04:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 735E0971490
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0CA51C22F24
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:04:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91F251C22E8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5254A1B3B33;
-	Mon,  9 Sep 2024 10:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C331B3B39;
+	Mon,  9 Sep 2024 09:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gLlTAyNk"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHlZCiGz"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B201B3B28
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 10:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1413F175D21;
+	Mon,  9 Sep 2024 09:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725876230; cv=none; b=u85ihW/Fiyeh8EvDnEwqy4Sqg3HnuN4q5r4NmKXgqhVsUTc39Ud8UowFDdSpXKkgLgN3wjxMwr+25IX++g3MxqgBJRGJ+RYGuakx+uzyvgY+Gtjo8QO3y5MOTNk4H4V3+kqjiZH+7sepxSBFP4dK4DLD6StrFkYUOhcyWJGGCx8=
+	t=1725875909; cv=none; b=FqoPtGsI+V2N8SlvAp1r6a9UIK5thc6OjIGLoAIdx0TPKIgQfbwBo5X9XGtCZHmZGqK1lj52PfkJt/qC2a8IJkuNGKCNvl3OneBi0x39B7xDmxuGr+Bb3PLoaLigIaya01E2Tq0YhhZDHd4Ys8rBPfycDhDl6xQtzfIzyQFtLTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725876230; c=relaxed/simple;
-	bh=g1rgv9z71Z4JSfej6bKgwsEyHubHqyqrKtrS/GkEjzw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=qZEXYQz6Bv97/7CPJKowB53gTxcdYjNVW33BOxcD9MG6qqOberVur0lHeaF4fhG8cgObrg1pi+gWIjm+I+PETCekywS8s5keDWFP7mc+8qPo5u4U/eJDGxVIGN3Rp19NXp9wIAxZn5i7wVQ1Dlx0/DQm/lBaaSwNqvyhjPJy5L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gLlTAyNk; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725876225;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qdyzVfPVjydqExBy0aGzBe7378k4S6tR2ved6qxOpRc=;
-	b=gLlTAyNkQHSpLJpl+2hnwGImpzuotespll0/IIWrYYqNO6HlRbn7YPd2nI12xaryvKWEpV
-	gciq8wpscq94c9KT6sKWF24x3po0EM2buzxApF31wVwef8TsIZnMqgXV523htH0pjheb6p
-	meaW35gHz8M2nA0dwC255j5+Vs8QG7c=
+	s=arc-20240116; t=1725875909; c=relaxed/simple;
+	bh=LVIvggWx9okkjphgwe8v15SEynfFwX8oqWrkOSgdIo0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l4XjiCGiPFFM8ObzfhPDjU8Iv29ZqscEvYwmiuQSOp5pRpa0TR34u0nqTTNThZyk6Jd24pNBU+8rSrIhGnr+iGOtVDB8yy4cjI6mXUdtgeR7ISmZtVO7WE/AhEvWGQibuNVsrmQjDhej+s384W7eUt4kHbbpUpuQU3hus2NKFj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHlZCiGz; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5011af337d4so1008910e0c.2;
+        Mon, 09 Sep 2024 02:58:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725875906; x=1726480706; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+vXr5MYP3MaCznj178+QFs36rLC7YPn0W4A/1x+u4iA=;
+        b=IHlZCiGzb9XnFUdxKgMd76hj7J/L0uzuJvQLPh/YV937kQqtMi4YaNNrgf+QNDSdsU
+         EjKu+YXP2Qn6AJ4pfC7ME1LFIAGyHD+WLGIu3EoRfz/P22IojSFZ0wO4zkQqewgvank/
+         7zPwR8LdOS6KnXYyOc24pep1iFuqfZSzxlyEP/hJeOTtJaxZt63UEDLkORFly64XggU6
+         +BQKM1NMIwQCUWLxepxwRsqfliRU0dIlqyfyPKvVTlZV9VoXsi9Gz8oL7RTEDDXfZm2v
+         AUhXxCOQNcyklWM54RSxaEifQj5d+ilp/PddBH9A2Q7Bnu19WpXzmRHja2jSEggyVgcZ
+         Xtyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725875906; x=1726480706;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+vXr5MYP3MaCznj178+QFs36rLC7YPn0W4A/1x+u4iA=;
+        b=l4p2NyaO7aC2NAkxPSuBs3e0fUXpDkKV74JuY91CG/7Wr5C2GrQreieEQt87lJtcet
+         4L9hfLOt+fmQ76Q4tTJoWdKSh4H6Y2rK2Fi136n08ik4z9FWKIEYjyDZqg3+izxxVLiM
+         0V9EM1J3vcaBVthezBOUDM6Xa8ArunqJuxPGYdsv/xhmcRFMjIt97VA2k6M8At696JHO
+         ccj2Qv0bqwOgSsOmWiGJeibwN0Zlbp4ywgteK1Mpq25lgHYboXLg2XsHsGC9nJB6WATo
+         TRcR+DkcjWdtmsPb6zut7TH5H7+8awpB362eCP9aakAshiNxGR86AgEYdUVyECHbgZyM
+         stPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqJUhkveMm5qHjU4lqwa1hZCE0xeH2OHVQGCUkC2cPnp3w8QDC5VrBAM/haK3CMM3hcJ0Bx2tXZRTPEpM=@vger.kernel.org, AJvYcCV/2YMQFtILAb/4KF33gZihb0g6S66L5O5862PJ5Xg7WW9RROOFae6kYOxRoFMuv7YZ/IMZLhh2aemn9Po=@vger.kernel.org, AJvYcCWeHj9s2LtTzqW0W6vlcckHWMp5eG2Yiq74kpZ1cqxdG+bm5zZ8B5O79pvdQcCRa2Gi2wGGWWpFrkgXVHJR9p0563E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9UxPQ4QEfECDKkEaYgyHYB1YChmAkr+Zzi1OYQOAOV82WOyw8
+	WF5MTMyeatxjn16XtmqyXuowwrJDZ+FyyPZTG+0HgOErwyoaNPS8S/xg1e8kgDEzxidwVFLeiew
+	+exs6ehhLDGTeQSkIbmG5pL9Cjxmw63Xzego=
+X-Google-Smtp-Source: AGHT+IHWUNk6PSIpHRo/S6Q6vUcYhzUZqQeoS4TJrOOJdeT6aKW89Wd7vzflrxrozR9H4bP1QStHecV8aEjgi5wXqaY=
+X-Received: by 2002:a05:6122:2a01:b0:502:b056:f4a with SMTP id
+ 71dfb90a1353d-502be91a0b7mr3816926e0c.8.1725875905751; Mon, 09 Sep 2024
+ 02:58:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in hugetlb_fault
- (2)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <00000000000067c20b06219fbc26@google.com>
-Date: Mon, 9 Sep 2024 17:57:52 +0800
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Linux Memory Management List <linux-mm@kvack.org>,
- syzkaller-bugs@googlegroups.com,
- Vishal Moola <vishal.moola@gmail.com>
+MIME-Version: 1.0
+References: <20240906173947.282402-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240906173947.282402-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240906231038.GC12915@pendragon.ideasonboard.com> <CA+V-a8vsmYSOWgoiHnO5xWdn-wo-eda6hdxGz5X_Hc5s-yVv6g@mail.gmail.com>
+ <20240908223905.GG15491@pendragon.ideasonboard.com>
+In-Reply-To: <20240908223905.GG15491@pendragon.ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 9 Sep 2024 10:57:59 +0100
+Message-ID: <CA+V-a8sEgOmL5P=YDZB4EnFy=RSFWjCVVPuBFYr39qSB83D_qQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] media: platform: rzg2l-cru: rzg2l-video: Retrieve
+ virtual channel information
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <0CCD30A0-6EB0-4019-90B3-9418A179EADD@linux.dev>
-References: <00000000000067c20b06219fbc26@google.com>
-To: syzbot <syzbot+2dab93857ee95f2eeb08@syzkaller.appspotmail.com>
-X-Migadu-Flow: FLOW_OUT
 
+Hi Laurent,
 
+On Sun, Sep 8, 2024 at 11:39=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Prabhakar,
+>
+> On Sat, Sep 07, 2024 at 10:09:10PM +0100, Lad, Prabhakar wrote:
+> > On Sat, Sep 7, 2024 at 12:10=E2=80=AFAM Laurent Pinchart wrote:
+> > > On Fri, Sep 06, 2024 at 06:39:46PM +0100, Prabhakar wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > The RZ/G2L CRU needs to configure the ICnMC.VCSEL bits to specify w=
+hich
+> > > > virtual channel should be processed from the four available VCs. To
+> > > > retrieve this information from the connected subdevice, the
+> > > > .get_frame_desc() function is called.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+> > > > ---
+> > > >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 29 +++++++++++++++=
+++++
+> > > >  1 file changed, 29 insertions(+)
+> > > >
+> > > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c=
+ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > index bbf4674f888d..6101a070e785 100644
+> > > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > @@ -433,12 +433,41 @@ void rzg2l_cru_stop_image_processing(struct r=
+zg2l_cru_dev *cru)
+> > > >       spin_unlock_irqrestore(&cru->qlock, flags);
+> > > >  }
+> > > >
+> > > > +static int rzg2l_cru_get_virtual_channel(struct rzg2l_cru_dev *cru=
+)
+> > > > +{
+> > > > +     struct v4l2_mbus_frame_desc fd =3D { };
+> > > > +     struct media_pad *pad;
+> > > > +     int ret;
+> > > > +
+> > > > +     pad =3D media_pad_remote_pad_unique(&cru->ip.pads[1]);
+> > >
+> > > It would be nice to use RZG2L_CRU_IP_SOURCE here instead of hardcodin=
+g
+> > > the pad number. That would require moving rzg2l_csi2_pads to the shar=
+ed
+> > > header. You can do that on top.
+> >
+> > With the below comment we dont need to move rzg2l_csi2_pads into the
+> > shared header.
+> >
+> > > An now that I've said that, is it really the source pad you need here=
+ ?
+> >
+> > Ouch you are right.
+> >
+> > > > +     if (IS_ERR(pad))
+> > > > +             return PTR_ERR(pad);
+> > >
+> > > Can this happen, or would the pipeline fail to validate ? I think you
+> > > can set the MUST_CONNECT flag on the sink pad, then you'll have a
+> > > guarantee something will be connected.
+> >
+> > After adding the MUST_CONNECT flag, I wouldn't need the  above
+> > media_pad_remote_pad_unique()...
+> >
+> > > > +
+> > > > +     ret =3D v4l2_subdev_call(cru->ip.remote, pad, get_frame_desc,
+> > > > +                            pad->index, &fd);
+> >
+> > ... and here I can use '0' instead
+>
+> Can you ? You need to call the operation on the pad of the connected
+> entity that is connected to tbe sink pad of the IP entity. That would be
+> the source pad of the CSI-2 RX in this case, but it can't be hardcoded
+> as it could also bethe source pad of a parallel sensor (once support for
+> that will be implemented). I think you therefore need to keep the
+> media_pad_remote_pad_unique() call.
+>
+media pipeline for RZ/G2L is [0].
 
-> On Sep 9, 2024, at 02:23, syzbot =
-<syzbot+2dab93857ee95f2eeb08@syzkaller.appspotmail.com> wrote:
->=20
-> Hello,
->=20
-> syzbot found the following issue on:
->=20
-> HEAD commit:    88fac17500f4 Merge tag 'fuse-fixes-6.11-rc7' of =
-git://git...
-> git tree:       upstream
-> console output: =
-https://syzkaller.appspot.com/x/log.txt?x=3D13291d97980000
-> kernel config:  =
-https://syzkaller.appspot.com/x/.config?x=3D660f6eb11f9c7dc5
-> dashboard link: =
-https://syzkaller.appspot.com/bug?extid=3D2dab93857ee95f2eeb08
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
-Debian) 2.40
->=20
-> Unfortunately, I don't have any reproducer for this issue yet.
->=20
-> Downloadable assets:
-> disk image: =
-https://storage.googleapis.com/syzbot-assets/6dfa1c637f53/disk-88fac175.ra=
-w.xz
-> vmlinux: =
-https://storage.googleapis.com/syzbot-assets/7a322b491698/vmlinux-88fac175=
-.xz
-> kernel image: =
-https://storage.googleapis.com/syzbot-assets/edc9184a3a97/bzImage-88fac175=
-.xz
->=20
-> IMPORTANT: if you fix the issue, please add the following tag to the =
-commit:
-> Reported-by: syzbot+2dab93857ee95f2eeb08@syzkaller.appspotmail.com
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: slab-use-after-free in __vma_shareable_lock =
-include/linux/hugetlb.h:1278 [inline]
+Calling media_pad_remote_pad_unique() with sink pad of IP entity will
+return source pad of CSI-Rx, where the pad index will be '1', passing
+pad index '1' to .get_frame_desc to CSI subdev and then OV5645 subdev
+would return -EINVAL.
 
-This is accessing vma structure.
+I need to update patch [1] instead of just forwarding the pad index to
+remote subdev I'll need to do the same as done IP subdev ie in CSI
+subdev call media_pad_remote_pad_unique() on sink pad of CSI which
+will return OV5465 source pad, and this will have a pad index of '0'.
+The CSI get_frame_desc() will look something like below:
 
-> BUG: KASAN: slab-use-after-free in hugetlb_vma_unlock_read =
-mm/hugetlb.c:281 [inline]
-> BUG: KASAN: slab-use-after-free in hugetlb_no_page mm/hugetlb.c:6380 =
-[inline]
-> BUG: KASAN: slab-use-after-free in hugetlb_fault+0xfaf/0x3770 =
-mm/hugetlb.c:6485
-> Read of size 8 at addr ffff88807c17f9d0 by task syz.0.4558/26998
->=20
-> CPU: 1 UID: 0 PID: 26998 Comm: syz.0.4558 Not tainted =
-6.11.0-rc6-syzkaller-00026-g88fac17500f4 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, =
-BIOS Google 08/06/2024
-> Call Trace:
-> <TASK>
-> __dump_stack lib/dump_stack.c:93 [inline]
-> dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
-> print_address_description mm/kasan/report.c:377 [inline]
-> print_report+0x169/0x550 mm/kasan/report.c:488
-> kasan_report+0x143/0x180 mm/kasan/report.c:601
-> __vma_shareable_lock include/linux/hugetlb.h:1278 [inline]
-> hugetlb_vma_unlock_read mm/hugetlb.c:281 [inline]
+static int rzg2l_csi2_get_frame_desc(struct v4l2_subdev *sd, unsigned int p=
+ad,
+                     struct v4l2_mbus_frame_desc *fd)
+{
+    struct rzg2l_csi2 *csi2 =3D sd_to_csi2(sd);
+    struct media_pad *remote_pad;
 
-I think vma is freed before this call of hugetlb_vma_unlock_read()
-but after hugetlb_vma_lock_read() in hugetlb_fault(). I found a
-possible scenario to cause this problem.
+    if (!csi2->remote_source)
+        return -ENODEV;
 
-hugetlb_no_page()
-	ret =3D vmf_anon_prepare()
-		if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
-			if (!mmap_read_trylock(vma->vm_mm)) {
-				vma_end_read(vma);
-				// VMA lock is released, which could be =
-freed before the call of hugetlb_vma_unlock_read().
-				return VM_FAULT_RETRY;
-			}
-		}
-	if (unlikely(ret))
-		goto out;
-out:
-	hugetlb_vma_unlock_read(vma); // UAF of VMA
+    remote_pad =3D media_pad_remote_pad_unique(&csi2->pads[RZG2L_CSI2_SINK]=
+);
+    if (IS_ERR(remote_pad)) {
+        dev_err(csi2->dev, "can't get source pad of %s (%ld)\n",
+            csi2->remote_source->name, PTR_ERR(remote_pad));
+        return PTR_ERR(remote_pad);
+    }
+    return v4l2_subdev_call(csi2->remote_source, pad, get_frame_desc,
+remote_pad->index, fd);
+}
 
-The culprit commit should be
-=09
-	7c43a553792a1 ("hugetlb: allow faults to be handled under the =
-VMA lock").
+For the parallel input case I plan to implement something similar to
+R-Car vin with bool flag 'is_csi' where we skip calling
+'rzg2l_cru_get_virtual_channel'.
 
-I will take a closer look at the solution tomorrow. And Cc the author of =
-the
-above commit, maybe have some comments on this.
+[0] https://postimg.cc/rz0vSMLC
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/2024090617=
+3947.282402-2-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-Muchun,
-Thanks.
-
-> hugetlb_no_page mm/hugetlb.c:6380 [inline]
-> hugetlb_fault+0xfaf/0x3770 mm/hugetlb.c:6485
-> handle_mm_fault+0x1901/0x1bc0 mm/memory.c:5830
-> do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
-> handle_page_fault arch/x86/mm/fault.c:1481 [inline]
-> exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
-> asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-> RIP: 0033:0x7f2b63744998
-> Code: fc 89 37 c3 c5 fa 6f 06 c5 fa 6f 4c 16 f0 c5 fa 7f 07 c5 fa 7f =
-4c 17 f0 c3 66 0f 1f 84 00 00 00 00 00 48 8b 4c 16 f8 48 8b 36 <48> 89 =
-37 48 89 4c 17 f8 c3 c5 fe 6f 54 16 e0 c5 fe 6f 5c 16 c0 c5
-> RSP: 002b:00007f2b63a5fb88 EFLAGS: 00010206
-> RAX: 00000000200002c0 RBX: 0000000000000004 RCX: 00676e7277682f76
-> RDX: 000000000000000b RSI: 7277682f7665642f RDI: 00000000200002c0
-> RBP: 00007f2b63937a80 R08: 00007f2b63600000 R09: 0000000000000001
-> R10: 0000000000000001 R11: 0000000000000009 R12: 000000000014aa5e
-> R13: 00007f2b63a5fc90 R14: 0000000000000032 R15: fffffffffffffffe
-> </TASK>
->=20
-> Allocated by task 27000:
-> kasan_save_stack mm/kasan/common.c:47 [inline]
-> kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
-> unpoison_slab_object mm/kasan/common.c:312 [inline]
-> __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
-> kasan_slab_alloc include/linux/kasan.h:201 [inline]
-> slab_post_alloc_hook mm/slub.c:3988 [inline]
-> slab_alloc_node mm/slub.c:4037 [inline]
-> kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4044
-> vm_area_alloc+0x24/0x1d0 kernel/fork.c:471
-> mmap_region+0xc3d/0x2090 mm/mmap.c:2944
-> do_mmap+0x8f9/0x1010 mm/mmap.c:1468
-> vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
-> ksys_mmap_pgoff+0x544/0x720 mm/mmap.c:1514
-> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
->=20
-> Freed by task 26255:
-> kasan_save_stack mm/kasan/common.c:47 [inline]
-> kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
-> kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
-> poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
-> __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
-> kasan_slab_free include/linux/kasan.h:184 [inline]
-> slab_free_hook mm/slub.c:2252 [inline]
-> slab_free mm/slub.c:4473 [inline]
-> kmem_cache_free+0x145/0x350 mm/slub.c:4548
-> rcu_do_batch kernel/rcu/tree.c:2569 [inline]
-> rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2843
-
-VMA structure is freed via rcu, so it is really a UAF problem.
-
-> handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
-> do_softirq+0x11b/0x1e0 kernel/softirq.c:455
-> __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
-> spin_unlock_bh include/linux/spinlock.h:396 [inline]
-> __fib6_clean_all+0x327/0x4b0 net/ipv6/ip6_fib.c:2277
-> rt6_sync_down_dev net/ipv6/route.c:4908 [inline]
-> rt6_disable_ip+0x164/0x7e0 net/ipv6/route.c:4913
-> addrconf_ifdown+0x15d/0x1bd0 net/ipv6/addrconf.c:3856
-> addrconf_notify+0x3cb/0x1020
-> notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
-> call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
-> call_netdevice_notifiers net/core/dev.c:2046 [inline]
-> dev_close_many+0x33c/0x4c0 net/core/dev.c:1587
-> unregister_netdevice_many_notify+0x50b/0x1c40 net/core/dev.c:11327
-> unregister_netdevice_many net/core/dev.c:11414 [inline]
-> default_device_exit_batch+0xa0f/0xa90 net/core/dev.c:11897
-> ops_exit_list net/core/net_namespace.c:178 [inline]
-> cleanup_net+0x89d/0xcc0 net/core/net_namespace.c:640
-> process_one_work kernel/workqueue.c:3231 [inline]
-> process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
-> worker_thread+0x86d/0xd10 kernel/workqueue.c:3389
-> kthread+0x2f0/0x390 kernel/kthread.c:389
-> ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-> ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->=20
-> Last potentially related work creation:
-> kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
-> __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
-> __call_rcu_common kernel/rcu/tree.c:3106 [inline]
-> call_rcu+0x167/0xa70 kernel/rcu/tree.c:3210
-> remove_vma mm/mmap.c:189 [inline]
-> remove_mt mm/mmap.c:2415 [inline]
-> do_vmi_align_munmap+0x155c/0x18c0 mm/mmap.c:2758
-> do_vmi_munmap+0x261/0x2f0 mm/mmap.c:2830
-> mmap_region+0x72f/0x2090 mm/mmap.c:2881
-> do_mmap+0x8f9/0x1010 mm/mmap.c:1468
-> vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
-> ksys_mmap_pgoff+0x544/0x720 mm/mmap.c:1514
-> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
->=20
-> The buggy address belongs to the object at ffff88807c17f9b0
-> which belongs to the cache vm_area_struct of size 184
-> The buggy address is located 32 bytes inside of
-> freed 184-byte region [ffff88807c17f9b0, ffff88807c17fa68)
->=20
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 =
-pfn:0x7c17f
-> memcg:ffff888028997401
-> anon flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
-> page_type: 0xfdffffff(slab)
-> raw: 00fff00000000000 ffff88801bafdb40 ffffea0001f89e00 =
-000000000000000d
-> raw: 0000000000000000 0000000000100010 00000001fdffffff =
-ffff888028997401
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 0, migratetype Unmovable, gfp_mask =
-0x152cc0(GFP_USER|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 26741, =
-tgid 26741 (dhcpcd-run-hook), ts 1341391347767, free_ts 1341166373745
-> set_page_owner include/linux/page_owner.h:32 [inline]
-> post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
-> prep_new_page mm/page_alloc.c:1501 [inline]
-> get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3439
-> __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4695
-> __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
-> alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
-> alloc_slab_page+0x5f/0x120 mm/slub.c:2321
-> allocate_slab+0x5a/0x2f0 mm/slub.c:2484
-> new_slab mm/slub.c:2537 [inline]
-> ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
-> __slab_alloc+0x58/0xa0 mm/slub.c:3813
-> __slab_alloc_node mm/slub.c:3866 [inline]
-> slab_alloc_node mm/slub.c:4025 [inline]
-> kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4044
-> vm_area_dup+0x27/0x290 kernel/fork.c:486
-> dup_mmap kernel/fork.c:695 [inline]
-> dup_mm kernel/fork.c:1672 [inline]
-> copy_mm+0xc7b/0x1f30 kernel/fork.c:1721
-> copy_process+0x187a/0x3dc0 kernel/fork.c:2374
-> kernel_clone+0x226/0x8f0 kernel/fork.c:2781
-> __do_sys_clone kernel/fork.c:2924 [inline]
-> __se_sys_clone kernel/fork.c:2908 [inline]
-> __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2908
-> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> page last free pid 26730 tgid 26718 stack trace:
-> reset_page_owner include/linux/page_owner.h:25 [inline]
-> free_pages_prepare mm/page_alloc.c:1094 [inline]
-> free_unref_page+0xd22/0xea0 mm/page_alloc.c:2612
-> __folio_put+0x2c8/0x440 mm/swap.c:128
-> migrate_folio_move mm/migrate.c:1330 [inline]
-> migrate_pages_batch+0x2a76/0x3560 mm/migrate.c:1818
-> migrate_pages_sync mm/migrate.c:1884 [inline]
-> migrate_pages+0x1f59/0x3460 mm/migrate.c:1993
-> do_mbind mm/mempolicy.c:1388 [inline]
-> kernel_mbind mm/mempolicy.c:1531 [inline]
-> __do_sys_mbind mm/mempolicy.c:1605 [inline]
-> __se_sys_mbind+0x1490/0x19f0 mm/mempolicy.c:1601
-> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
->=20
-> Memory state around the buggy address:
-> ffff88807c17f880: fc fc fc fc fc fc fc 00 00 00 00 00 00 00 00 00
-> ffff88807c17f900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc
->> ffff88807c17f980: fc fc fc fc fc fc fa fb fb fb fb fb fb fb fb fb
->                                                 ^
-> ffff88807c17fa00: fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc
-> ffff88807c17fa80: fc fc fc fc fc 00 00 00 00 00 00 00 00 00 00 00
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
->=20
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->=20
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->=20
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->=20
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->=20
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->=20
-> If you want to undo deduplication, reply with:
-> #syz undup
-
+Cheers,
+Prabhakar
 
