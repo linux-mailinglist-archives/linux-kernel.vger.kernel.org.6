@@ -1,78 +1,55 @@
-Return-Path: <linux-kernel+bounces-322137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3277D97249A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:38:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BD697249D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89275B22C06
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:38:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2C621F242C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66EB18C90B;
-	Mon,  9 Sep 2024 21:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGox7BV3"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFAE18C915;
+	Mon,  9 Sep 2024 21:41:20 +0000 (UTC)
+Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01521836D9
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 21:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9331217C9E8;
+	Mon,  9 Sep 2024 21:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725917918; cv=none; b=MLcb7nvZoxx+QW/rgwAyYWq2076ufaDguRxz3WfcMlghkMw3OSs54yiMVMlDQKrG1pzzRsS53XzVJUSkHfT8OMn9aHgR8rBLoTIo4dG/1wkQlrgy6D8SKlQQe411249pW1YL15c4cRmQb9iE8ELyd5N62xU6UB+wf0MEGRXsnf8=
+	t=1725918080; cv=none; b=bjnS8j72JXkVgLZSi8CbJAS48HLQqmwuH7Vn1LjHkUwMwgQooWTWH9Wz0dmcHTsP0iGM9LxRdduq+sDIbASvdsXwry4NaoIW9p2whkQ/ErU+NV96VbMcojIYVg35HIDbVMtfZVXbQ0FeneYWkr0Q2JbVwqD4WTGlO4GRiidn1+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725917918; c=relaxed/simple;
-	bh=/7/v+K92vmdZpMfKKUS8N2xkxGQSmXLfm6PNgOLKnvY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J0kbxiciwsFAZyWHF4JHqGL9MYhdkIsjyQPeMIyxFAn0KvuLLw5YZt8cG9Yu0vfHpu3dB+cmye6qh9mjtwkoufFFknp8F3ryre4ualBGwuDK989AfpGHQCBVQq/JbLLMLBfhA5yTzjxhSgyvzSi1kPzUbcv7kkVzpFq+0ZZXCpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGox7BV3; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d86f713557so3162674a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 14:38:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725917916; x=1726522716; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8/YshQpzW9k3lt1mfESjTp63HexH096NDFAn0wVw4Ug=;
-        b=kGox7BV3rDeTAkRJ7YajjDJuVqeEdbYxvMVKdJl3/Mu1NjMpXxPvDetht+IGI07W0l
-         3wOQb+U3yCZD5cLqr4RYX3WmZsnMbrI4XJzgKCSIUsTUnzeurGpuD009vSKM/L/0XILj
-         zjGlHy4sZgbL/5lM+ypnd5akK3KH3PJriTggWTnTNe1c1JQvuz2dpnniOJiWGbhf1d4w
-         bcSKIOWgdyO2YLo/M7OCV0N3RRLCRohs3E8Cqd/qZa2C4yidl40Y16cjCZrR7Uwwn0ax
-         N0GRZkmFUWcLuYY9/N2v+5Vk/924yIgT1j+EsnSllaMoZiJU+itWmQDLaburkkbRMAeI
-         7IrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725917916; x=1726522716;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8/YshQpzW9k3lt1mfESjTp63HexH096NDFAn0wVw4Ug=;
-        b=P9O6fX7XGnB4C+A6bNprCYjzKHs3peBOS/xFOD/T6vTp93KN6cH7N/5pXfBMfcVt5Y
-         GX7daDL3AZ7lrOnejQSgUe40sv7Pe3IhS8bMy0+9UbZEAbNHt9VYvWc2G6yw8nmuerKn
-         9LYY3GiApiGh/jyfFsktOmS30JmgYVWKKaf+TpyuvNoYm1eIJQbwrxzISES4/G3YmpV3
-         34norYKqXe4bV2hU71R2kOinOX71EQabszyfTrq5X3/W8A5wET/XejXXwj+BdiV+LEcc
-         LL4GFuSPf8nceNBFHV05KdbuGHQxOZ+iOfQHm3DVGMHFstMyq94tOLlKY01aEObprIy2
-         iX2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVxgC06VHZFKM4AZYOaYVYFVPB2rG4+qAUBEf5gmdd8MkWqngpzjE6FNS/NqDvI+IQCbRraIjXoazawf+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtVy/+TG34Kk4LWeiY8tnqMk99LRABo+DsKBwiiMq7/gLJFKES
-	aCMs4zXp3SP4bbGtjBoMrkpniPLIR2QwW/Kw+5umak7gABV5TRGh
-X-Google-Smtp-Source: AGHT+IGrOVTK6wZShZQSP2xltoODwGJpYytnvla3nrL8GsuPex3p977aNFbfq7McIsjRNhh/2I+iEQ==
-X-Received: by 2002:a17:90a:5802:b0:2c9:5c67:dd9e with SMTP id 98e67ed59e1d1-2dad50139d8mr14574504a91.19.1725917915951;
-        Mon, 09 Sep 2024 14:38:35 -0700 (PDT)
-Received: from localhost.localdomain (111-240-106-94.dynamic-ip.hinet.net. [111.240.106.94])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db0419ae89sm5067016a91.13.2024.09.09.14.38.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 14:38:35 -0700 (PDT)
-From: Min-Hua Chen <minhuadotchen@gmail.com>
-To: Nick Terrell <terrelln@fb.com>
-Cc: Min-Hua Chen <minhuadotchen@gmail.com>,
-	Nick Terrell <terrelln@meta.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] zstd: use NULL instead of 0 for NULL pointer
-Date: Tue, 10 Sep 2024 05:38:08 +0800
-Message-ID: <20240909213811.192532-1-minhuadotchen@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725918080; c=relaxed/simple;
+	bh=GTVDmWxvB819jdsoUGb5a3UvxVpzRPws0zKvOkvRCdc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D5jozNDjIb9UiHFEKtiAFtcn7IFRGSXbabohROrIO1dBceOgVkWQIbRBHiDpQ3bwJhcZND1RM5dHV/s5aGzo4OUUAVtHgx7VU2mfi0+cXt88NYCMmQx5Ro7aKdcF497tVE7+BXjQM7LmadEaxaESLz3fDCfiXPCusP5Pg0He7EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
+	by finn.localdomain with esmtp (Exim 4.95)
+	(envelope-from <tharvey@gateworks.com>)
+	id 1snm86-00E27X-Sm;
+	Mon, 09 Sep 2024 21:41:03 +0000
+From: Tim Harvey <tharvey@gateworks.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Li Yang <leoyang.li@nxp.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Cc: Tim Harvey <tharvey@gateworks.com>
+Subject: [PATCH] arm64: dts: imx8mp-venice-gw74xx: add M2SKT_GPIO10 gpio configuration
+Date: Mon,  9 Sep 2024 14:41:00 -0700
+Message-Id: <20240909214100.777927-1-tharvey@gateworks.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,41 +58,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use NULL instead of 0 for NULL pointer to fix the
-following sparse warning:
-lib/zstd/compress/zstd_fast.c:726:28: sparse: warning: Using plain integer as NULL pointer
+The GW74xx D revision has added a M2SKT_GPIO10 GPIO which routes to the
+GPIO10 pin of the M.2 socket for compatibility with certain devices.
 
-No functional changes intended.
+Add the iomux and a line name for this.
 
-Fixes: 98988fc8e9ed ("zstd: import upstream v1.5.5")
-Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
+Signed-off-by: Tim Harvey <tharvey@gateworks.com>
 ---
- lib/zstd/compress/zstd_fast.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/lib/zstd/compress/zstd_fast.c b/lib/zstd/compress/zstd_fast.c
-index 3399b39c5dbc..b0dbe0db3310 100644
---- a/lib/zstd/compress/zstd_fast.c
-+++ b/lib/zstd/compress/zstd_fast.c
-@@ -723,7 +723,7 @@ static size_t ZSTD_compressBlock_fast_extDict_generic(
-     U32 offcode;
-     const BYTE* match0;
-     size_t mLength;
--    const BYTE* matchEnd = 0; /* initialize to avoid warning, assert != 0 later */
-+    const BYTE* matchEnd = NULL; /* initialize to avoid warning, assert != NULL later */
- 
-     size_t step;
-     const BYTE* nextStep;
-@@ -895,7 +895,7 @@ static size_t ZSTD_compressBlock_fast_extDict_generic(
- _match: /* Requires: ip0, match0, offcode, matchEnd */
- 
-     /* Count the forward length. */
--    assert(matchEnd != 0);
-+    assert(matchEnd != NULL);
-     mLength += ZSTD_count_2segments(ip0 + mLength, match0 + mLength, iend, matchEnd, prefixStart);
- 
-     ZSTD_storeSeq(seqStore, (size_t)(ip0 - anchor), anchor, iend, offcode, mLength);
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts
+index d765b7972841..9885948952b4 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts
+@@ -299,7 +299,7 @@ &gpio2 {
+ &gpio3 {
+ 	gpio-line-names =
+ 		"", "", "", "", "", "", "m2_rst", "",
+-		"", "", "", "", "", "", "", "",
++		"", "", "", "", "", "", "m2_gpio10", "",
+ 		"", "", "", "", "", "", "", "",
+ 		"", "", "", "", "", "", "", "";
+ };
+@@ -816,6 +816,7 @@ MX8MP_IOMUXC_SD2_CLK__GPIO2_IO13	0x40000150 /* PCIE1_WDIS# */
+ 			MX8MP_IOMUXC_SD2_CMD__GPIO2_IO14	0x40000150 /* PCIE3_WDIS# */
+ 			MX8MP_IOMUXC_SD2_DATA3__GPIO2_IO18	0x40000150 /* PCIE2_WDIS# */
+ 			MX8MP_IOMUXC_NAND_DATA00__GPIO3_IO06	0x40000040 /* M2SKT_RST# */
++			MX8MP_IOMUXC_NAND_DQS__GPIO3_IO14	0x40000040 /* M2SKT_GPIO10 */
+ 			MX8MP_IOMUXC_SAI3_TXD__GPIO5_IO01	0x40000104 /* UART_TERM */
+ 			MX8MP_IOMUXC_SAI3_TXFS__GPIO4_IO31	0x40000104 /* UART_RS485 */
+ 			MX8MP_IOMUXC_SAI3_TXC__GPIO5_IO00	0x40000104 /* UART_HALF */
 -- 
-2.43.0
+2.25.1
 
 
