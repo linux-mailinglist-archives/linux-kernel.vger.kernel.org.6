@@ -1,535 +1,322 @@
-Return-Path: <linux-kernel+bounces-320576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B45970C20
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:06:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 287D9970C23
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ECC0B20CD8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:06:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C7F1C218F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F49A1AC8B8;
-	Mon,  9 Sep 2024 03:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="RsQEnCJf"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57ED71AC8BF;
+	Mon,  9 Sep 2024 03:09:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969471581EB
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 03:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E759B1581EB
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 03:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725851169; cv=none; b=RmYoMHoHyNCnDdimSyhxtLthWwBDT1nsBhwimukb+1l8mFd3DJMCM0G1jF4TTpsPTZSUCkQ0qDwPgLT6Wzxa4ov635IPpJ9xnY0o/g9MzqwtWgDllzLApUgdG2mK5djp9/VR2Dvb5c8TYTgX1+4c0QXKU3n2ykSRt3oq068e8+I=
+	t=1725851345; cv=none; b=pcRCC/ahYyC0tHFnWEFUqLpsUwJzkMbAEEEI6AMxDhmY78U3C8SrBdgDe9nzI5Q1HLjnuMzfyKZq3qzSa85HhP5HglKKz4ghIsv3Ukpv43h39vAFqVk8Bz8Qq5YsRkU+g3Gds85cg5PkdqbtyxJE6n2U95w76hQe1ML0iHtPUP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725851169; c=relaxed/simple;
-	bh=T7CTvA6ZdV/q3nAR400kL5spl/OAlB6QFy59qgdPwOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HveYGNKfqDqjTv0MEGbJvhKaz2ewzdWFOpCz3+LZ7u0qIuMrcCsfOza4w2Te3EeccRDhgmTWyYqJb4vVrfpDYndj8LGmCbidi0Du07JUxlTtr0VQ1u0uaUaHwPfzoQIf8YNt6lr4Dt06mgmB+UGR6GN6yFLszOYkMY6uZ0fwISI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=RsQEnCJf; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f754d4a6e4so25309241fa.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 20:06:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725851166; x=1726455966; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NunL4FtEDXKisEYA948gVftt0anHfmcYKmJnpT8WCZk=;
-        b=RsQEnCJfQFs6LUL7AyBoh8i0Hrje78/xHcEqz69llw7Zq8kEzRtB/qi5NycMdOJxDF
-         pMyE8LYGipxeIw/oU6wQFI4DE2Cn6Kp40OH296jBQA3ljkmuE+ttfYVMeFrOaLukInnz
-         JzIS7ExtXZpElxza0czH4jdphj8lo1o1B31bk=
+	s=arc-20240116; t=1725851345; c=relaxed/simple;
+	bh=gRPGL8iQF1p6XDSkNxB/jIh6hUVw/Yr+tohP8MVTy+c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=LsvB5/yBzZR4MDd5ONJOGKE8i7ygxlfu4E+GV/fNv1Ewdn97O5xDjVYiuP3aYbbHs5bwRGfMzvjzFHOvkvWTTDmD5cw1alDwcpPen8TozXQTfokpnFgy+s2IShHhVWFEVXw3zXZ6RVWepZcyBZL9slKHeMeB65gMVLTGE8iuhR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82ad9fca5fcso211007139f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 20:09:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725851166; x=1726455966;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NunL4FtEDXKisEYA948gVftt0anHfmcYKmJnpT8WCZk=;
-        b=UQ1ptIoRowoSFvSbIZ6iNcb8ZHb57yYLHlMvGWdgfpDyzXG10uYBscqtf6j5l068vb
-         VT5Cn9NaVd7hozri+QtlUkxRa+TFU79Yl25iOW51ik5+Q64VD4cLL02xbf4/uBcbqPtE
-         jwlALQFBnB7+rz6eX1KR1ah6/m9USgwXEGRGBTVOZ0iJo3lQUlJB1Ea5DBN7XUzQR/eG
-         w4nl7zVoIAmS+FgJsxa9ny3HWRBG0tXZXavkZceR8eIm+oVGeNV/qWed9cqNAyaReySB
-         VZvfnvQNe182yjVM9OaGnUYFVC0sqzChnSNNgRasqZUAi2UfmAIdrvE5YQVJvR+elBsg
-         +COA==
-X-Forwarded-Encrypted: i=1; AJvYcCVca9lwXhz+kBKsq/1VyPYW+04+G1Ap6+ySRoQVgivGwj4GxK7gUgYOQy594UkjM2gp1jFq8eYS5ELFMe0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFGQGdzQmq7aFIAIl1wvMokGiu/2HAjehVQ+FVN7Lh+/U10hhK
-	CqWnsepzmh/DdmnLE141QSpA5KL7qH/e1SDBha8yHl5rXDkQNLEgCYWii9J8FvbpT2A9SDWNdgf
-	Rd4464LC4yC4U9WzKVoJJtNdan1QXARKBDuWr
-X-Google-Smtp-Source: AGHT+IGAcaJ1b5EUxgWYLADPmecdiuoYsyt3auXo/aJmtrMW0Mgi3uDG18B4FbPW25VxHULjwFZV9eCQt37+IYS4QEM=
-X-Received: by 2002:a05:6512:3983:b0:536:53fc:e8fc with SMTP id
- 2adb3069b0e04-536587ac031mr4734000e87.16.1725851165375; Sun, 08 Sep 2024
- 20:06:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725851343; x=1726456143;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ogX9ioynseCZNLkk8HgEb3jMvON/X7SNvzmEgruOw2Q=;
+        b=VC9IIRc8OeNtkm2LigBd/a5LP4qv2f6orcv/lPWVxTuzb2W7BXftcWyA20epFV+RFo
+         aHQjWDpwgzMwXv/cjn5UgUGqTRCxqZBqN63VrZMzMbhYeqZMQ/v88MylPorKghQtTc9f
+         kZvxwqPdR1IGitDxWu0iIPaV3zpLuc9vFkLfhnbmYvoIEWeb7ZCYJwtRudzTcuPixLVJ
+         o86siSUUELGb+Gv+EqsDUM4xEjzsxGzAV0dr+tv8hdlEns7QHtiA6g5xGsSQXIawXBUL
+         zAz0DPnT7n98fjVw4d6vddHlU0x4ZJ9f1DRhQBJKyXSPHTPmsMPwE7343WROCnQlbZeW
+         ubJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIbiSIiQQwumYBZZr7TRvrfqB58CQewRPqU+NM3q7iFVKwI8EaibU+dCZ8YvU9h98aXVWgQ/ypFr3YsPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM7AJQMDlJ/aB/mZHMiWn8XQAhPsAw4YlOQ5jAriFpYQtPbeKt
+	3ri4pyGF79Ty4AevUWZHKj/Kp3Cu+HHu385B8bpkUR4JpjjeDcRMWDTTFkMG8twfHi6jkLyJuPZ
+	of3JqpqnpG/+Nwc648qQzMZcoH4KGlh6ELXsnumbcqfSdM2MzUGa4Gts=
+X-Google-Smtp-Source: AGHT+IHSkpstj/vxyYcVH23wJMxnv+Vk4pA0yrLT5fnVnCks9y0rlpxZaQf62X68EKiPYhjgwaOJG2ErIqWfUhNLhu/Hjqz4Uttd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909023141.3234567-1-shaojijie@huawei.com> <20240909023141.3234567-6-shaojijie@huawei.com>
-In-Reply-To: <20240909023141.3234567-6-shaojijie@huawei.com>
-From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Mon, 9 Sep 2024 08:35:52 +0530
-Message-ID: <CAH-L+nOxj1_wHdSacC5R9WG5GeMswEQDXa4xgVFxyLHM7xjycg@mail.gmail.com>
-Subject: Re: [PATCH V8 net-next 05/11] net: hibmcge: Implement some .ndo functions
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, shenjian15@huawei.com, wangpeiyang1@huawei.com, 
-	liuyonglong@huawei.com, chenhao418@huawei.com, sudongming1@huawei.com, 
-	xujunsheng@huawei.com, shiyongbang@huawei.com, libaihan@huawei.com, 
-	zhuyuan@huawei.com, forest.zhouchang@huawei.com, andrew@lunn.ch, 
-	jdamato@fastly.com, horms@kernel.org, jonathan.cameron@huawei.com, 
-	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000b082190621a709ac"
-
---000000000000b082190621a709ac
+X-Received: by 2002:a05:6602:26c6:b0:82a:23b4:4c90 with SMTP id
+ ca18e2360f4ac-82aa456c0a8mr618142139f.1.1725851342978; Sun, 08 Sep 2024
+ 20:09:02 -0700 (PDT)
+Date: Sun, 08 Sep 2024 20:09:02 -0700
+In-Reply-To: <48435cf7-8c2d-4d3e-8b26-f8814f9a6338@kylinos.cn>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003bd3d10621a714f0@google.com>
+Subject: Re: [syzbot] [crypto?] [ntfs3?] KMSAN: uninit-value in sw842_compress
+From: syzbot <syzbot+17cae3c0a5b0acdc327d@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, davem@davemloft.net, 
+	haren@us.ibm.com, herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com, zhaomengmeng@kylinos.cn
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 9, 2024 at 8:11=E2=80=AFAM Jijie Shao <shaojijie@huawei.com> wr=
-ote:
->
-> Implement the .ndo_open() .ndo_stop() .ndo_set_mac_address()
-> .ndo_change_mtu functions() and ndo.get_stats64()
-> And .ndo_validate_addr calls the eth_validate_addr function directly
->
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-> ---
-> ChangeLog:
-> v6 -> v7:
->   - Add implement ndo.get_stats64(), suggested by Paolo.
->   v6: https://lore.kernel.org/all/20240830121604.2250904-6-shaojijie@huaw=
-ei.com/
-> v5 -> v6:
->   - Delete netif_carrier_off() in .ndo_open() and .ndo_stop(),
->     suggested by Jakub and Andrew.
->  v5: https://lore.kernel.org/all/20240827131455.2919051-1-shaojijie@huawe=
-i.com/
-> v3 -> v4:
->   - Delete INITED_STATE in priv, suggested by Andrew.
->   - Delete unnecessary defensive code in hbg_phy_start()
->     and hbg_phy_stop(), suggested by Andrew.
->   v3: https://lore.kernel.org/all/20240822093334.1687011-1-shaojijie@huaw=
-ei.com/
-> RFC v1 -> RFC v2:
->   - Delete validation for mtu in hbg_net_change_mtu(), suggested by Andre=
-w.
->   - Delete validation for mac address in hbg_net_set_mac_address(),
->     suggested by Andrew.
->   - Add a patch to add is_valid_ether_addr check in dev_set_mac_address,
->     suggested by Andrew.
->   RFC v1: https://lore.kernel.org/all/20240731094245.1967834-1-shaojijie@=
-huawei.com/
-> ---
->  .../ethernet/hisilicon/hibmcge/hbg_common.h   |   3 +
->  .../net/ethernet/hisilicon/hibmcge/hbg_hw.c   |  39 +++++++
->  .../net/ethernet/hisilicon/hibmcge/hbg_hw.h   |   3 +
->  .../net/ethernet/hisilicon/hibmcge/hbg_main.c | 104 ++++++++++++++++++
->  .../net/ethernet/hisilicon/hibmcge/hbg_reg.h  |  11 +-
->  5 files changed, 159 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h b/driver=
-s/net/ethernet/hisilicon/hibmcge/hbg_common.h
-> index e94ae2be5c4c..d11ef081f4da 100644
-> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
-> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
-> @@ -17,8 +17,11 @@
->
->  enum hbg_nic_state {
->         HBG_NIC_STATE_EVENT_HANDLING =3D 0,
-> +       HBG_NIC_STATE_OPEN,
->  };
->
-> +#define hbg_nic_is_open(priv) test_bit(HBG_NIC_STATE_OPEN, &(priv)->stat=
-e)
-> +
->  enum hbg_hw_event_type {
->         HBG_HW_EVENT_NONE =3D 0,
->         HBG_HW_EVENT_INIT, /* driver is loading */
-> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c b/drivers/ne=
-t/ethernet/hisilicon/hibmcge/hbg_hw.c
-> index 8e971e9f62a0..97fee714155a 100644
-> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-> @@ -15,6 +15,7 @@
->   * ctrl means packet description, data means skb packet data
->   */
->  #define HBG_ENDIAN_CTRL_LE_DATA_BE     0x0
-> +#define HBG_PCU_FRAME_LEN_PLUS 4
->
->  static bool hbg_hw_spec_is_valid(struct hbg_priv *priv)
->  {
-> @@ -129,6 +130,44 @@ void hbg_hw_irq_enable(struct hbg_priv *priv, u32 ma=
-sk, bool enable)
->         hbg_reg_write(priv, HBG_REG_CF_INTRPT_MSK_ADDR, value);
->  }
->
-> +void hbg_hw_set_uc_addr(struct hbg_priv *priv, u64 mac_addr)
-> +{
-> +       hbg_reg_write64(priv, HBG_REG_STATION_ADDR_LOW_2_ADDR, mac_addr);
-> +}
-> +
-> +static void hbg_hw_set_pcu_max_frame_len(struct hbg_priv *priv,
-> +                                        u16 max_frame_len)
-> +{
-> +       max_frame_len =3D max_t(u32, max_frame_len, HBG_DEFAULT_MTU_SIZE)=
-;
-> +
-> +       /* lower two bits of value must be set to 0. Otherwise, the value=
- is ignored */
-> +       max_frame_len =3D round_up(max_frame_len, HBG_PCU_FRAME_LEN_PLUS)=
-;
-> +
-> +       hbg_reg_write_field(priv, HBG_REG_MAX_FRAME_LEN_ADDR,
-> +                           HBG_REG_MAX_FRAME_LEN_M, max_frame_len);
-> +}
-> +
-> +static void hbg_hw_set_mac_max_frame_len(struct hbg_priv *priv,
-> +                                        u16 max_frame_size)
-> +{
-> +       hbg_reg_write_field(priv, HBG_REG_MAX_FRAME_SIZE_ADDR,
-> +                           HBG_REG_MAX_FRAME_LEN_M, max_frame_size);
-> +}
-> +
-> +void hbg_hw_set_mtu(struct hbg_priv *priv, u16 mtu)
-> +{
-> +       hbg_hw_set_pcu_max_frame_len(priv, mtu);
-> +       hbg_hw_set_mac_max_frame_len(priv, mtu);
-> +}
-> +
-> +void hbg_hw_mac_enable(struct hbg_priv *priv, u32 enable)
-> +{
-> +       hbg_reg_write_field(priv, HBG_REG_PORT_ENABLE_ADDR,
-> +                           HBG_REG_PORT_ENABLE_TX_B, enable);
-> +       hbg_reg_write_field(priv, HBG_REG_PORT_ENABLE_ADDR,
-> +                           HBG_REG_PORT_ENABLE_RX_B, enable);
-> +}
-> +
->  void hbg_hw_adjust_link(struct hbg_priv *priv, u32 speed, u32 duplex)
->  {
->         hbg_reg_write_field(priv, HBG_REG_PORT_MODE_ADDR,
-> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h b/drivers/ne=
-t/ethernet/hisilicon/hibmcge/hbg_hw.h
-> index 4d09bdd41c76..0ce500e907b3 100644
-> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h
-> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h
-> @@ -49,5 +49,8 @@ u32 hbg_hw_get_irq_status(struct hbg_priv *priv);
->  void hbg_hw_irq_clear(struct hbg_priv *priv, u32 mask);
->  bool hbg_hw_irq_is_enabled(struct hbg_priv *priv, u32 mask);
->  void hbg_hw_irq_enable(struct hbg_priv *priv, u32 mask, bool enable);
-> +void hbg_hw_set_mtu(struct hbg_priv *priv, u16 mtu);
-> +void hbg_hw_mac_enable(struct hbg_priv *priv, u32 enable);
-> +void hbg_hw_set_uc_addr(struct hbg_priv *priv, u64 mac_addr);
->
->  #endif
-> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c b/drivers/=
-net/ethernet/hisilicon/hibmcge/hbg_main.c
-> index 29e0513fa836..f4e9f6205f04 100644
-> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
-> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
-> @@ -2,6 +2,7 @@
->  // Copyright (c) 2024 Hisilicon Limited.
->
->  #include <linux/etherdevice.h>
-> +#include <linux/if_vlan.h>
->  #include <linux/netdevice.h>
->  #include <linux/pci.h>
->  #include "hbg_common.h"
-> @@ -9,6 +10,104 @@
->  #include "hbg_irq.h"
->  #include "hbg_mdio.h"
->
-> +static void hbg_all_irq_enable(struct hbg_priv *priv, bool enabled)
-> +{
-> +       struct hbg_irq_info *info;
-> +       u32 i;
-> +
-> +       for (i =3D 0; i < priv->vectors.info_array_len; i++) {
-> +               info =3D &priv->vectors.info_array[i];
-> +               hbg_hw_irq_enable(priv, info->mask, enabled);
-> +       }
-> +}
-> +
-> +static int hbg_net_open(struct net_device *netdev)
-> +{
-> +       struct hbg_priv *priv =3D netdev_priv(netdev);
-> +
-> +       if (test_and_set_bit(HBG_NIC_STATE_OPEN, &priv->state))
-> +               return 0;
-[Kalesh] Is there a possibility that dev_open() can be invoked twice?
-> +
-> +       hbg_all_irq_enable(priv, true);
-> +       hbg_hw_mac_enable(priv, HBG_STATUS_ENABLE);
-> +       netif_start_queue(netdev);
-> +       hbg_phy_start(priv);
-> +
-> +       return 0;
-> +}
-> +
-> +static int hbg_net_stop(struct net_device *netdev)
-> +{
-> +       struct hbg_priv *priv =3D netdev_priv(netdev);
-> +
-> +       if (!hbg_nic_is_open(priv))
-> +               return 0;
-[Kalesh] Is there any reason to not check HBG_NIC_STATE_OPEN here?
-> +
-> +       clear_bit(HBG_NIC_STATE_OPEN, &priv->state);
-> +
-> +       hbg_phy_stop(priv);
-> +       netif_stop_queue(netdev);
-> +       hbg_hw_mac_enable(priv, HBG_STATUS_DISABLE);
-> +       hbg_all_irq_enable(priv, false);
-> +
-> +       return 0;
-> +}
-> +
-> +static int hbg_net_set_mac_address(struct net_device *netdev, void *addr=
-)
-> +{
-> +       struct hbg_priv *priv =3D netdev_priv(netdev);
-> +       u8 *mac_addr;
-> +
-> +       mac_addr =3D ((struct sockaddr *)addr)->sa_data;
-> +
-> +       hbg_hw_set_uc_addr(priv, ether_addr_to_u64(mac_addr));
-> +       dev_addr_set(netdev, mac_addr);
-> +
-> +       return 0;
-> +}
-> +
-> +static void hbg_change_mtu(struct hbg_priv *priv, int new_mtu)
-> +{
-> +       u32 frame_len;
-> +
-> +       frame_len =3D new_mtu + VLAN_HLEN * priv->dev_specs.vlan_layers +
-> +                   ETH_HLEN + ETH_FCS_LEN;
-> +       hbg_hw_set_mtu(priv, frame_len);
-> +}
-> +
-> +static int hbg_net_change_mtu(struct net_device *netdev, int new_mtu)
-> +{
-> +       struct hbg_priv *priv =3D netdev_priv(netdev);
-> +       bool is_opened =3D hbg_nic_is_open(priv);
-> +
-> +       hbg_net_stop(netdev);
-[Kalesh] Do you still need to call stop when NIC is not opened yet?
-Instead of a new variable, I think you can check netif_running here.
-> +
-> +       hbg_change_mtu(priv, new_mtu);
-> +       WRITE_ONCE(netdev->mtu, new_mtu);
-> +
-> +       dev_dbg(&priv->pdev->dev,
-> +               "change mtu from %u to %u\n", netdev->mtu, new_mtu);
-> +       if (is_opened)
-> +               hbg_net_open(netdev);
-> +       return 0;
-> +}
-> +
-> +static void hbg_net_get_stats64(struct net_device *netdev,
-> +                               struct rtnl_link_stats64 *stats)
-> +{
-> +       netdev_stats_to_stats64(stats, &netdev->stats);
-> +       dev_fetch_sw_netstats(stats, netdev->tstats);
-> +}
-> +
-> +static const struct net_device_ops hbg_netdev_ops =3D {
-> +       .ndo_open               =3D hbg_net_open,
-> +       .ndo_stop               =3D hbg_net_stop,
-> +       .ndo_validate_addr      =3D eth_validate_addr,
-> +       .ndo_set_mac_address    =3D hbg_net_set_mac_address,
-> +       .ndo_change_mtu         =3D hbg_net_change_mtu,
-> +       .ndo_get_stats64        =3D hbg_net_get_stats64,
-> +};
-> +
->  static int hbg_init(struct hbg_priv *priv)
->  {
->         int ret;
-> @@ -73,6 +172,7 @@ static int hbg_probe(struct pci_dev *pdev, const struc=
-t pci_device_id *ent)
->         priv =3D netdev_priv(netdev);
->         priv->netdev =3D netdev;
->         priv->pdev =3D pdev;
-> +       netdev->netdev_ops =3D &hbg_netdev_ops;
->
->         netdev->tstats =3D devm_netdev_alloc_pcpu_stats(&pdev->dev,
->                                                       struct pcpu_sw_nets=
-tats);
-> @@ -88,6 +188,10 @@ static int hbg_probe(struct pci_dev *pdev, const stru=
-ct pci_device_id *ent)
->         if (ret)
->                 return ret;
->
-> +       netdev->max_mtu =3D priv->dev_specs.max_mtu;
-> +       netdev->min_mtu =3D priv->dev_specs.min_mtu;
-> +       hbg_change_mtu(priv, HBG_DEFAULT_MTU_SIZE);
-> +       hbg_net_set_mac_address(priv->netdev, &priv->dev_specs.mac_addr);
->         ret =3D devm_register_netdev(dev, netdev);
->         if (ret)
->                 return dev_err_probe(dev, ret, "failed to register netdev=
-\n");
-> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h b/drivers/n=
-et/ethernet/hisilicon/hibmcge/hbg_reg.h
-> index b0991063ccba..63bb1bead8c0 100644
-> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
-> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
-> @@ -37,18 +37,24 @@
->  #define HBG_REG_SGMII_BASE                     0x10000
->  #define HBG_REG_DUPLEX_TYPE_ADDR               (HBG_REG_SGMII_BASE + 0x0=
-008)
->  #define HBG_REG_DUPLEX_B                       BIT(0)
-> +#define HBG_REG_MAX_FRAME_SIZE_ADDR            (HBG_REG_SGMII_BASE + 0x0=
-03C)
->  #define HBG_REG_PORT_MODE_ADDR                 (HBG_REG_SGMII_BASE + 0x0=
-040)
->  #define HBG_REG_PORT_MODE_M                    GENMASK(3, 0)
-> +#define HBG_REG_PORT_ENABLE_ADDR               (HBG_REG_SGMII_BASE + 0x0=
-044)
-> +#define HBG_REG_PORT_ENABLE_RX_B               BIT(1)
-> +#define HBG_REG_PORT_ENABLE_TX_B               BIT(2)
->  #define HBG_REG_TRANSMIT_CONTROL_ADDR          (HBG_REG_SGMII_BASE + 0x0=
-060)
->  #define HBG_REG_TRANSMIT_CONTROL_PAD_EN_B      BIT(7)
->  #define HBG_REG_TRANSMIT_CONTROL_CRC_ADD_B     BIT(6)
->  #define HBG_REG_TRANSMIT_CONTROL_AN_EN_B       BIT(5)
->  #define HBG_REG_CF_CRC_STRIP_ADDR              (HBG_REG_SGMII_BASE + 0x0=
-1B0)
-> -#define HBG_REG_CF_CRC_STRIP_B                 BIT(0)
-> +#define HBG_REG_CF_CRC_STRIP_B                 BIT(1)
->  #define HBG_REG_MODE_CHANGE_EN_ADDR            (HBG_REG_SGMII_BASE + 0x0=
-1B4)
->  #define HBG_REG_MODE_CHANGE_EN_B               BIT(0)
->  #define HBG_REG_RECV_CONTROL_ADDR              (HBG_REG_SGMII_BASE + 0x0=
-1E0)
->  #define HBG_REG_RECV_CONTROL_STRIP_PAD_EN_B    BIT(3)
-> +#define HBG_REG_STATION_ADDR_LOW_2_ADDR                (HBG_REG_SGMII_BA=
-SE + 0x0210)
-> +#define HBG_REG_STATION_ADDR_HIGH_2_ADDR       (HBG_REG_SGMII_BASE + 0x0=
-214)
->
->  /* PCU */
->  #define HBG_REG_CF_INTRPT_MSK_ADDR             (HBG_REG_SGMII_BASE + 0x0=
-42C)
-> @@ -72,6 +78,8 @@
->  #define HBG_INT_MSK_RX_B                       BIT(0) /* just used in dr=
-iver */
->  #define HBG_REG_CF_INTRPT_STAT_ADDR            (HBG_REG_SGMII_BASE + 0x0=
-434)
->  #define HBG_REG_CF_INTRPT_CLR_ADDR             (HBG_REG_SGMII_BASE + 0x0=
-438)
-> +#define HBG_REG_MAX_FRAME_LEN_ADDR             (HBG_REG_SGMII_BASE + 0x0=
-444)
-> +#define HBG_REG_MAX_FRAME_LEN_M                        GENMASK(15, 0)
->  #define HBG_REG_RX_BUF_SIZE_ADDR               (HBG_REG_SGMII_BASE + 0x0=
-4E4)
->  #define HBG_REG_RX_BUF_SIZE_M                  GENMASK(15, 0)
->  #define HBG_REG_BUS_CTRL_ADDR                  (HBG_REG_SGMII_BASE + 0x0=
-4E8)
-> @@ -86,6 +94,7 @@
->  #define HBG_REG_RX_PKT_MODE_ADDR               (HBG_REG_SGMII_BASE + 0x0=
-4F4)
->  #define HBG_REG_RX_PKT_MODE_PARSE_MODE_M       GENMASK(22, 21)
->  #define HBG_REG_CF_IND_TXINT_MSK_ADDR          (HBG_REG_SGMII_BASE + 0x0=
-694)
-> +#define HBG_REG_IND_INTR_MASK_B                        BIT(0)
->  #define HBG_REG_CF_IND_TXINT_STAT_ADDR         (HBG_REG_SGMII_BASE + 0x0=
-698)
->  #define HBG_REG_CF_IND_TXINT_CLR_ADDR          (HBG_REG_SGMII_BASE + 0x0=
-69C)
->  #define HBG_REG_CF_IND_RXINT_MSK_ADDR          (HBG_REG_SGMII_BASE + 0x0=
-6a0)
-> --
-> 2.33.0
->
->
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in sw842_compress
+
+=====================================================
+BUG: KMSAN: uninit-value in check_template lib/842/842_compress.c:391 [inline]
+BUG: KMSAN: uninit-value in process_next lib/842/842_compress.c:456 [inline]
+BUG: KMSAN: uninit-value in sw842_compress+0x15eb/0x5990 lib/842/842_compress.c:543
+ check_template lib/842/842_compress.c:391 [inline]
+ process_next lib/842/842_compress.c:456 [inline]
+ sw842_compress+0x15eb/0x5990 lib/842/842_compress.c:543
+ crypto842_scompress+0x4f/0x70 crypto/842.c:78
+ scomp_acomp_comp_decomp+0x7c6/0xb90
+ scomp_acomp_compress+0x32/0x40 crypto/scompress.c:187
+ crypto_acomp_compress include/crypto/acompress.h:251 [inline]
+ zswap_compress+0x368/0xad0 mm/zswap.c:927
+ zswap_store+0x1af3/0x2dd0 mm/zswap.c:1459
+ swap_writepage+0x11f/0x470 mm/page_io.c:198
+ shmem_writepage+0x1a75/0x1f70 mm/shmem.c:1536
+ pageout mm/vmscan.c:680 [inline]
+ shrink_folio_list+0x577f/0x7cb0 mm/vmscan.c:1360
+ evict_folios+0x9a49/0xbb30 mm/vmscan.c:4560
+ try_to_shrink_lruvec+0x13a3/0x1750 mm/vmscan.c:4755
+ lru_gen_shrink_lruvec mm/vmscan.c:4897 [inline]
+ shrink_lruvec+0x4a3/0x46c0 mm/vmscan.c:5652
+ shrink_node_memcgs mm/vmscan.c:5888 [inline]
+ shrink_node+0x104e/0x50f0 mm/vmscan.c:5928
+ shrink_zones mm/vmscan.c:6172 [inline]
+ do_try_to_free_pages+0x820/0x2550 mm/vmscan.c:6234
+ try_to_free_mem_cgroup_pages+0x3f7/0xae0 mm/vmscan.c:6566
+ try_charge_memcg+0x72c/0x1830 mm/memcontrol.c:2210
+ try_charge mm/memcontrol-v1.h:20 [inline]
+ charge_memcg mm/memcontrol.c:4438 [inline]
+ __mem_cgroup_charge+0x11d/0x3f0 mm/memcontrol.c:4453
+ mem_cgroup_charge include/linux/memcontrol.h:672 [inline]
+ shmem_alloc_and_add_folio+0xe83/0x1ca0 mm/shmem.c:1792
+ shmem_get_folio_gfp+0x10bd/0x24c0 mm/shmem.c:2188
+ shmem_read_folio_gfp+0x80/0x140 mm/shmem.c:5201
+ drm_gem_get_pages+0x3cf/0x1440 drivers/gpu/drm/drm_gem.c:568
+ drm_gem_shmem_get_pages drivers/gpu/drm/drm_gem_shmem_helper.c:177 [inline]
+ drm_gem_shmem_vmap+0x2dc/0xca0 drivers/gpu/drm/drm_gem_shmem_helper.c:337
+ drm_gem_shmem_object_vmap+0x35/0x40 include/drm/drm_gem_shmem_helper.h:229
+ drm_gem_vmap drivers/gpu/drm/drm_gem.c:1205 [inline]
+ drm_gem_vmap_unlocked+0xc6/0x200 drivers/gpu/drm/drm_gem.c:1247
+ drm_gem_fb_vmap+0x11b/0x590 drivers/gpu/drm/drm_gem_framebuffer_helper.c:365
+ vkms_prepare_fb+0x12f/0x170 drivers/gpu/drm/vkms/vkms_plane.c:176
+ drm_atomic_helper_prepare_planes+0x436/0x10b0 drivers/gpu/drm/drm_atomic_helper.c:2601
+ drm_atomic_helper_commit+0x1f3/0xe80 drivers/gpu/drm/drm_atomic_helper.c:2029
+ drm_atomic_commit+0x30a/0x380 drivers/gpu/drm/drm_atomic.c:1522
+ drm_atomic_helper_update_plane+0x42b/0x600 drivers/gpu/drm/drm_atomic_helper.c:3190
+ __setplane_atomic+0x33d/0x3f0 drivers/gpu/drm/drm_plane.c:1074
+ drm_mode_cursor_universal drivers/gpu/drm/drm_plane.c:1229 [inline]
+ drm_mode_cursor_common+0x171a/0x1e80 drivers/gpu/drm/drm_plane.c:1288
+ drm_mode_cursor_ioctl+0x97/0xd0 drivers/gpu/drm/drm_plane.c:1338
+ drm_ioctl_kernel+0x4ea/0x560 drivers/gpu/drm/drm_ioctl.c:745
+ drm_ioctl+0xd13/0x15a0 drivers/gpu/drm/drm_ioctl.c:842
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0x261/0x450 fs/ioctl.c:893
+ __x64_sys_ioctl+0x96/0xe0 fs/ioctl.c:893
+ x64_sys_call+0x18bf/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:17
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+<Zero or more stacks not recorded to save memory>
+
+Uninit was stored to memory at:
+ memcpy_from_iter lib/iov_iter.c:73 [inline]
+ iterate_bvec include/linux/iov_iter.h:122 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:249 [inline]
+ iterate_and_advance include/linux/iov_iter.h:271 [inline]
+ __copy_from_iter lib/iov_iter.c:249 [inline]
+ copy_page_from_iter_atomic+0x12bb/0x2ae0 lib/iov_iter.c:481
+ copy_folio_from_iter_atomic include/linux/uio.h:186 [inline]
+ generic_perform_write+0x896/0x12e0 mm/filemap.c:4032
+ shmem_file_write_iter+0x2bd/0x2f0 mm/shmem.c:3074
+ do_iter_readv_writev+0x8a1/0xa40
+ vfs_iter_write+0x459/0xd50 fs/read_write.c:895
+ lo_write_bvec drivers/block/loop.c:243 [inline]
+ lo_write_simple drivers/block/loop.c:264 [inline]
+ do_req_filebacked drivers/block/loop.c:511 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x15ec/0x3750 drivers/block/loop.c:1945
+ loop_rootcg_workfn+0x2b/0x40 drivers/block/loop.c:1976
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was stored to memory at:
+ ntfs_write_bh+0x652/0xdb0 fs/ntfs3/fsntfs.c:1450
+ indx_write fs/ntfs3/index.c:1027 [inline]
+ indx_update_dup+0xd81/0xf80 fs/ntfs3/index.c:2694
+ ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
+ ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
+ ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
+ write_inode fs/fs-writeback.c:1497 [inline]
+ __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
+ writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
+ __writeback_inodes_wb+0x14c/0x440 fs/fs-writeback.c:2018
+ wb_writeback+0x50b/0xea0 fs/fs-writeback.c:2129
+ wb_check_background_flush fs/fs-writeback.c:2199 [inline]
+ wb_do_writeback fs/fs-writeback.c:2287 [inline]
+ wb_workfn+0x122c/0x1940 fs/fs-writeback.c:2314
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was stored to memory at:
+ ntfs_read_run_nb+0x786/0x1070 fs/ntfs3/fsntfs.c:1252
+ ntfs_read_bh+0x64/0xde0 fs/ntfs3/fsntfs.c:1313
+ indx_read+0x44e/0x17b0 fs/ntfs3/index.c:1067
+ indx_find+0xd12/0x1440 fs/ntfs3/index.c:1181
+ indx_update_dup+0x607/0xf80 fs/ntfs3/index.c:2666
+ ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
+ ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
+ ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
+ write_inode fs/fs-writeback.c:1497 [inline]
+ __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
+ writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
+ __writeback_inodes_wb+0x14c/0x440 fs/fs-writeback.c:2018
+ wb_writeback+0x50b/0xea0 fs/fs-writeback.c:2129
+ wb_check_background_flush fs/fs-writeback.c:2199 [inline]
+ wb_do_writeback fs/fs-writeback.c:2287 [inline]
+ wb_workfn+0x122c/0x1940 fs/fs-writeback.c:2314
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was stored to memory at:
+ ntfs_write_bh+0x652/0xdb0 fs/ntfs3/fsntfs.c:1450
+ indx_write fs/ntfs3/index.c:1027 [inline]
+ indx_update_dup+0xd81/0xf80 fs/ntfs3/index.c:2694
+ ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
+ ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
+ ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
+ write_inode fs/fs-writeback.c:1497 [inline]
+ __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
+ writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
+ __writeback_inodes_wb+0x14c/0x440 fs/fs-writeback.c:2018
+ wb_writeback+0x50b/0xea0 fs/fs-writeback.c:2129
+ wb_check_background_flush fs/fs-writeback.c:2199 [inline]
+ wb_do_writeback fs/fs-writeback.c:2287 [inline]
+ wb_workfn+0x122c/0x1940 fs/fs-writeback.c:2314
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was stored to memory at:
+ ntfs_read_run_nb+0x786/0x1070 fs/ntfs3/fsntfs.c:1252
+ ntfs_read_bh+0x64/0xde0 fs/ntfs3/fsntfs.c:1313
+ indx_read+0x44e/0x17b0 fs/ntfs3/index.c:1067
+ indx_find+0xd12/0x1440 fs/ntfs3/index.c:1181
+ indx_update_dup+0x607/0xf80 fs/ntfs3/index.c:2666
+ ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
+ ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
+ ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
+ write_inode fs/fs-writeback.c:1497 [inline]
+ __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
+ writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
+ __writeback_inodes_wb+0x14c/0x440 fs/fs-writeback.c:2018
+ wb_writeback+0x50b/0xea0 fs/fs-writeback.c:2129
+ wb_check_background_flush fs/fs-writeback.c:2199 [inline]
+ wb_do_writeback fs/fs-writeback.c:2287 [inline]
+ wb_workfn+0x122c/0x1940 fs/fs-writeback.c:2314
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was stored to memory at:
+ ntfs_write_bh+0x652/0xdb0 fs/ntfs3/fsntfs.c:1450
+ indx_write fs/ntfs3/index.c:1027 [inline]
+ indx_insert_into_buffer+0xd8f/0x2010 fs/ntfs3/index.c:1811
+ indx_insert_entry+0xa3c/0xee0 fs/ntfs3/index.c:1988
+ ni_add_name+0xe5d/0x10d0 fs/ntfs3/frecord.c:3123
+ ntfs_link_inode+0x265/0x310 fs/ntfs3/inode.c:1768
+ ntfs_link+0x21d/0x500 fs/ntfs3/namei.c:150
+ vfs_link+0x93d/0xb70 fs/namei.c:4692
+ do_linkat+0x4f5/0xfd0 fs/namei.c:4762
+ __do_sys_link fs/namei.c:4796 [inline]
+ __se_sys_link fs/namei.c:4794 [inline]
+ __x64_sys_link+0xe8/0x140 fs/namei.c:4794
+ x64_sys_call+0x2853/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:87
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ hdr_insert_de fs/ntfs3/index.c:838 [inline]
+ indx_insert_into_buffer+0xcdf/0x2010 fs/ntfs3/index.c:1807
+ indx_insert_entry+0xa3c/0xee0 fs/ntfs3/index.c:1988
+ ni_add_name+0xe5d/0x10d0 fs/ntfs3/frecord.c:3123
+ ntfs_link_inode+0x265/0x310 fs/ntfs3/inode.c:1768
+ ntfs_link+0x21d/0x500 fs/ntfs3/namei.c:150
+ vfs_link+0x93d/0xb70 fs/namei.c:4692
+ do_linkat+0x4f5/0xfd0 fs/namei.c:4762
+ __do_sys_link fs/namei.c:4796 [inline]
+ __se_sys_link fs/namei.c:4794 [inline]
+ __x64_sys_link+0xe8/0x140 fs/namei.c:4794
+ x64_sys_call+0x2853/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:87
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3998 [inline]
+ slab_alloc_node mm/slub.c:4041 [inline]
+ kmem_cache_alloc_noprof+0x637/0xb20 mm/slub.c:4048
+ ntfs_link_inode+0x8f/0x310 fs/ntfs3/inode.c:1756
+ ntfs_link+0x21d/0x500 fs/ntfs3/namei.c:150
+ vfs_link+0x93d/0xb70 fs/namei.c:4692
+ do_linkat+0x4f5/0xfd0 fs/namei.c:4762
+ __do_sys_link fs/namei.c:4796 [inline]
+ __se_sys_link fs/namei.c:4794 [inline]
+ __x64_sys_link+0xe8/0x140 fs/namei.c:4794
+ x64_sys_call+0x2853/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:87
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 6036 Comm: syz.0.15 Not tainted 6.11.0-rc7-syzkaller-gda3ea35007d0-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+=====================================================
 
 
---=20
-Regards,
-Kalesh A P
+Tested on:
 
---000000000000b082190621a709ac
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+commit:         da3ea350 Linux 6.11-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a0e567980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea008021530b2de3
+dashboard link: https://syzkaller.appspot.com/bug?extid=17cae3c0a5b0acdc327d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11514e00580000
 
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
-BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
-JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
-aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
-FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
-T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
-o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
-aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
-YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
-cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
-ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
-HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
-Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
-LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
-zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
-4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
-cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
-u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
-a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
-x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
-VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
-bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIMDyV7vcnQl10OgYYX09klqQk+u9vzFXwfMT0zbcBthHMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDkwOTAzMDYwNlowaQYJKoZIhvcNAQkPMVwwWjAL
-BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAoEY3UK1gd
-hJQHdYIzbkEWOCaoxkhEjW2HnO6Y6K9rWPTby2kK50KD4Gs4EYvkadPQn9nqroMzo3mM+M2NOfyo
-voYNlt1jC/SAIL8o8QVMVh8QPSrwWgi8fbgLWnPBG/J1CkOkNE7yhok9DoJlttDY31+dEHp+CqzP
-6ssSvtxNSD/b2tCVK2zEuj9lGyI54cfTA4Zu27oyaItV4c1t+q1I8+R6BIOFMJxb8Z+HoO0JBzzK
-pq2FK5Ae4m280zcU/kDfmt9FWutAdk+q4HPfmc1psaXmtd835OIvFGMvmE45yjp0fhmxKSSoWpkz
-y2VH9RmPI1DaCvq0TqMenohdOnHu
---000000000000b082190621a709ac--
 
