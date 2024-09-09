@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-321896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 345219720EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:34:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570F29720ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2B36284B08
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:34:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83B071C23A25
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B8418E37C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9F018E365;
 	Mon,  9 Sep 2024 17:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VL9KSNq7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pb0wzIwA"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KR/YBU7h";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LMepkBKz"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD3D18B467;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABA318B474;
 	Mon,  9 Sep 2024 17:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902878; cv=none; b=Qp/+funhZZ9Zar1IUInVcb8F597byMcDX1POewZpBURagE7t55Ia5ROmCtePWIbNTzs0AHedTjrjET2iX3YG2OVqOVGzpUDr7gpA6ikjrvgqFd8u++eZtXz/ZeSG6CVzr+waPgB8v0RR/NsXD5qMXyNfo1tOMj+TC8UX3o0Srww=
+	t=1725902879; cv=none; b=b452qw4LnKTfs++y2zjKt34dFiVJuePKx+p6ebzjhCXS75J0bFM4Xl3UDIvwx8FhcB71pRzDKYIY0hPr4Zrd7nIYdXLOttNkcb/r5b3wtqMFbnJaztGlORJUJENowb/H5hCirjfRNppjb1lBrKVe+PmTCfCwzCTLTH4Wggw1pnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902878; c=relaxed/simple;
-	bh=pct4dL4eaZfDblBX99WCOLwMb655gzQDQ5ViIAd12yw=;
+	s=arc-20240116; t=1725902879; c=relaxed/simple;
+	bh=iFlUUl8n7mo4Y7L9GJDHErUVhBN5vb1T+9F2OnNU0MY=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Gkj7nUI1khRXD2H93OTQJPT8+9MpZJxO/J9XT1yyH2VRd40SxNk0GpPaTuDi334x9sQPFxnO/xHLCVrZT0TLSHK++qE6xNTtkV2J8SMKSsKyd45QTbLp2uvTMOjG9Vv7KwdWVYKUW/KhUCTNN5n4wFBsEWHjN48GtHde5CfvrPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VL9KSNq7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pb0wzIwA; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=X7GjqOUlxLWVCnmu6ZpGqssOT6aTJCWHpyygzfHgX4Em1JqTBoenZ/povDJ5asRFdReZe3TOm+QbXQlHLw0g3CbjIW0S/Njjy4YcGF0HmwEkx+jJ5kPACMBmvDINR9VvPu8hip0UkQzEZnVyCOtOtffHuFKISYeIWse1dLemhsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KR/YBU7h; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LMepkBKz; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Mon, 09 Sep 2024 17:27:54 -0000
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ng8i/ioIDlzNK0X/BZQQxIyDIt1yA+1O44yyaW5TxPg=;
-	b=VL9KSNq79SZr5DdWkxWmmn/meUPFBo6GHZ35wofSNeaZRLwFQrWDUy/1Nr9PVSDB7gNQGB
-	w3h4tTwNXF61oc+w0EZG5qZAob8b7pz5VDYsjOZjIUPTLfKh4nJx80bf4on4nDbW82aDCf
-	qML184VQPJXO7zOZgpz7mQ1YHjUutYVAgBcLmzdXVmSX/ETtMbG2J/HZ5uPHaJtlnpRInK
-	LP//VTdNNokPIkLqcroe2dtObQQ0PYfJ3eXlSlrEIdfEVhsS3OVWz5mIW/FWS0oh635nbt
-	FQajYDoaBG9FtkRgMhWJvcKDAExaTuI1S/Uh9ApwowhSj+sH4n55gf1qXFh84A==
+	bh=jBuiJ0/75+XDEusRqwhmf9ywozZzK2Ef4TsWZTgSmJY=;
+	b=KR/YBU7hGntr3jWBt0Knju5LrhAy16aACsDoh7/w7EHJ4Izldj0QelZrOio7gJm7jZon4G
+	FopWTnk/CTbYRk7cVte9HJNDsVjMWMZICEyakBwScaCUMpAw+WS3QG2IJ7ITu2p+qTyfUe
+	MdZh9yOibCWVPQkK+WK7ySQ/kS3CLq+3t9+nQ3OB+x4LiB8zG7Gy4kuGlX3/LQaBe1ggVU
+	Oc3D/kCUhjYOpKH+wVqg2T5WrMhmLRBvuWGGlMf9LK3qXuSSqjjaELmL0rZ5lCrI1+ED5U
+	TzaeI5Sm5Ww6elV+IPGH47rz8LM/DCYbbSpjr/l/XVFGRraOFl8rDJpfeL2BSA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1725902874;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,25 +52,25 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ng8i/ioIDlzNK0X/BZQQxIyDIt1yA+1O44yyaW5TxPg=;
-	b=pb0wzIwALTGGCKEmME9da62UmHhzZe3oXjPmRdKx01mjSAxmx4cRB47na0ol1ayHXrOB+V
-	r2RzNVqkVbv/jXCg==
+	bh=jBuiJ0/75+XDEusRqwhmf9ywozZzK2Ef4TsWZTgSmJY=;
+	b=LMepkBKzdHQu/puU5fvRqbGJwI5JYww8I7SJvbh+7z9yW+qcZdN5HFz33Hi5lMZzR4Z6Gj
+	LKMJrrDhNoTp1UCA==
 From: "tip-bot2 for John Ogness" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/rt] printk: Add @flags argument for console_is_usable()
+Subject: [tip: sched/rt] printk: Let console_is_usable() handle nbcon
 Cc: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240820063001.36405-19-john.ogness@linutronix.de>
-References: <20240820063001.36405-19-john.ogness@linutronix.de>
+In-Reply-To: <20240820063001.36405-18-john.ogness@linutronix.de>
+References: <20240820063001.36405-18-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172590287405.2215.13378354005682548786.tip-bot2@tip-bot2>
+Message-ID: <172590287439.2215.6043727995385637145.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -80,80 +80,54 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/rt branch of tip:
 
-Commit-ID:     fc400d5f63570afdadd718ae962cf5aa0feeace6
-Gitweb:        https://git.kernel.org/tip/fc400d5f63570afdadd718ae962cf5aa0feeace6
+Commit-ID:     20846d1ce2adacd2b1f8672e24d6acb26b2e757b
+Gitweb:        https://git.kernel.org/tip/20846d1ce2adacd2b1f8672e24d6acb26b2e757b
 Author:        John Ogness <john.ogness@linutronix.de>
-AuthorDate:    Tue, 20 Aug 2024 08:35:44 +02:06
+AuthorDate:    Tue, 20 Aug 2024 08:35:43 +02:06
 Committer:     Petr Mladek <pmladek@suse.com>
 CommitterDate: Wed, 21 Aug 2024 14:56:24 +02:00
 
-printk: Add @flags argument for console_is_usable()
+printk: Let console_is_usable() handle nbcon
 
-The caller of console_is_usable() usually needs @console->flags
-for its own checks. Rather than having console_is_usable() read
-its own copy, make the caller pass in the @flags. This also
-ensures that the caller saw the same @flags value.
+The nbcon consoles use a different printing callback. For nbcon
+consoles, check for the write_atomic() callback instead of
+write().
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 Reviewed-by: Petr Mladek <pmladek@suse.com>
-Link: https://lore.kernel.org/r/20240820063001.36405-19-john.ogness@linutronix.de
+Link: https://lore.kernel.org/r/20240820063001.36405-18-john.ogness@linutronix.de
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- kernel/printk/internal.h | 8 ++------
- kernel/printk/printk.c   | 5 +++--
- 2 files changed, 5 insertions(+), 8 deletions(-)
+ kernel/printk/internal.h | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-index 448a5fc..fe8d84d 100644
+index 5d9deb5..448a5fc 100644
 --- a/kernel/printk/internal.h
 +++ b/kernel/printk/internal.h
-@@ -89,13 +89,9 @@ void nbcon_free(struct console *con);
-  * records. Note that this function does not consider the current context,
-  * which can also play a role in deciding if @con can be used to print
+@@ -86,6 +86,8 @@ void nbcon_free(struct console *con);
+ 
+ /*
+  * Check if the given console is currently capable and allowed to print
++ * records. Note that this function does not consider the current context,
++ * which can also play a role in deciding if @con can be used to print
   * records.
-- *
-- * Requires the console_srcu_read_lock.
-  */
--static inline bool console_is_usable(struct console *con)
-+static inline bool console_is_usable(struct console *con, short flags)
- {
--	short flags = console_srcu_read_flags(con);
--
- 	if (!(flags & CON_ENABLED))
+  *
+  * Requires the console_srcu_read_lock.
+@@ -100,8 +102,13 @@ static inline bool console_is_usable(struct console *con)
+ 	if ((flags & CON_SUSPENDED))
  		return false;
  
-@@ -141,7 +137,7 @@ static inline void nbcon_seq_force(struct console *con, u64 seq) { }
- static inline bool nbcon_alloc(struct console *con) { return false; }
- static inline void nbcon_free(struct console *con) { }
+-	if (!con->write)
+-		return false;
++	if (flags & CON_NBCON) {
++		if (!con->write_atomic)
++			return false;
++	} else {
++		if (!con->write)
++			return false;
++	}
  
--static inline bool console_is_usable(struct console *con) { return false; }
-+static inline bool console_is_usable(struct console *con, short flags) { return false; }
- 
- #endif /* CONFIG_PRINTK */
- 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index b9c8fff..ffb56c2 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -3012,9 +3012,10 @@ static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handove
- 
- 		cookie = console_srcu_read_lock();
- 		for_each_console_srcu(con) {
-+			short flags = console_srcu_read_flags(con);
- 			bool progress;
- 
--			if (!console_is_usable(con))
-+			if (!console_is_usable(con, flags))
- 				continue;
- 			any_usable = true;
- 
-@@ -3925,7 +3926,7 @@ static bool __pr_flush(struct console *con, int timeout_ms, bool reset_on_progre
- 			 * that they make forward progress, so only increment
- 			 * @diff for usable consoles.
- 			 */
--			if (!console_is_usable(c))
-+			if (!console_is_usable(c, flags))
- 				continue;
- 
- 			if (flags & CON_NBCON) {
+ 	/*
+ 	 * Console drivers may assume that per-cpu resources have been
 
