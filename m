@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-321922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE6797212E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:41:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7011972135
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B99AB1F253CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:41:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDB101C213C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73819189F42;
-	Mon,  9 Sep 2024 17:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5FD18A6B1;
+	Mon,  9 Sep 2024 17:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NhLDNHS/"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ampqhYo5"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE5017ADEB
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EFC18A6A8
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725903415; cv=none; b=ofvW/dUTxS4Lt1Ux4iJiQMqoq1FzM0Tc8L7pWK4mMsBmi+jqQWfTpZxzU5nuXBsujdHMduIPQiM/zZPVcpzVY1kVtVhrppP5Ujq67aGdk1NoUX1SmiohcoXOK8Vlz7Pxxp1VC9kMqRQeMB/EpP6kgVQesv4VDFuPaAmyC/8cyBk=
+	t=1725903494; cv=none; b=jYZYY+wCwe/vckv0cHtq2vkDxtVcrkLl/2zUqEGUpwWoSUN2M0cA01HrTA9g9Fg3CkxeMJvAryX7eCyPnpLcl1UCMV+S0VYLnwXZTEApAkl9OVFhRjspupPPSvc3bngQjjxHuiV10lmEUito4LLFHGgwDCwPozFYy1GgpUAc3DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725903415; c=relaxed/simple;
-	bh=MTxKqsw5IqC4HqkVbXDcQ1y6sW/Td5RdD7+PeHVBnWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nouDcnwCXQ3xX8isL0nLtyvKpXIm7lQEnu3F4vOWSrJ1IsJW9KzR2oGMTVjgZHImLpjjGFyKBDMDfpb5Yp0U+3Dvr+qkUhEex/A9I1qy6YqFa4rzbrBgO9gU/UbfYG8S1EBxumePJmZ0krKPVMEi3srSGQyqz9IdruTOmjLtxSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NhLDNHS/; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so18739335e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 10:36:53 -0700 (PDT)
+	s=arc-20240116; t=1725903494; c=relaxed/simple;
+	bh=WbWWVfRpGuhjamU1qUKt81WyI8s0sfQnhEh8cj7og34=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GUCrQbnzupXKBvy5yDryI9MWbRqaLkzardC5W29so5pFpXKTjCi87qi+fnvD2XhFQETc1oXX24DG88sMh/ZHAmv6RLGPjn/s/+9i30t8ehge2hQKX0NM4MNxyGs5lzTyygY2aWCTkiBgIe2q+YDrV7jgpnGiDZmC28Jh+GLASeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ampqhYo5; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5e174925b7bso2916207eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 10:38:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725903412; x=1726508212; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=edu62SKFx/YpyglOioE6A1hLunOx30kHckG0mJ2Eplk=;
-        b=NhLDNHS/O4Qk355Nu0acgtonAtf6UPLWlO0+I+jhEYnAAJzwJYc/b81dvDyuGW0NK3
-         izVNXyEr+jvv83vAPXEWaPLoKewJwPTKxA7fY/4bwSW6qsQqScN2gVfZ718oZt+uV3F9
-         Z8BP6bhZO0ij61pPWkMUBvpgWYjRG14L5/hP8rthpfD8iCHJIavPYziy2tMeKTGS0Fp3
-         RveDXjLrIYBq01AZxYR5GHTme9puYxv6LUFyoZsyooDacJ9oS4ItUqdyrm5xgBNh+AxW
-         42VjB/iof3ELlUznBTv4lwQDAmyTM07COmZ60uUzlhk4LViw8BLELhpyBY9PXd3R+U6E
-         fUrw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725903490; x=1726508290; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fGQ69uvIsUs2suBhED3lxyPOvEHdFXoc0/H/gcmAqkI=;
+        b=ampqhYo5HvIIkeA2jVsD3FSVxYg9xfUTRDoInQIfFe5KePhX6MsjUH5QsL6OSx3f8y
+         xlrvPM3zcirlGfSBnnhkqOUWo5Sopac8FUkP2mEETum4uO5mPrihPK+dSr7lAQJFMpIt
+         NUkKrA6hjYUzjz8//U+Xuvv/6SWVAhp4I0hl+TTDTt3eralbfnX0oF4JKpxD2ey3oKPU
+         HWooeLjyDTEiB859q/XOC2m35qkCLvSB2gXVr9+5uW05w6+rYLckHfk8h6I9hEsg9rvS
+         sgZuPk14U89qxsNdzIxUwEo1Zjfa9lOHQJMAJTGogqH9iQePTgaw2MhCDhWwAUQdBaaR
+         nx/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725903412; x=1726508212;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1725903490; x=1726508290;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=edu62SKFx/YpyglOioE6A1hLunOx30kHckG0mJ2Eplk=;
-        b=SJYrw/tp0RltWgo9Qx8rxMEDvabqQoYSBXkqjVqqDgPADpY0zUPO3/DylUxcTI+WFY
-         5QktFELsyRfxCvkJxxOTC/iiv87xDDw5KJ9J3GnjEx7AGtowiK5opvaMNn2CM+o02V/F
-         uy5CBHwEpukO+S1QAhKJGdv6HXbap5uaCL/9E4fLF1Pzh3qjaI6Wdg+3h6pU/vhkBljT
-         WL9YRuppAJ4wXq+33GCXZEjvoroiUIuJcXXee7wLNjfKpR1kdT+S275y9xYvZYGrj2w9
-         z6vMmB4fITPI8ro+UMi3UjBYEoeaxz9g4CfwPuKiYENv51TikpWZ/H4F39vObuW5IyJV
-         T0ig==
-X-Forwarded-Encrypted: i=1; AJvYcCUGds9ILCKOsHk6j00ouWR/T2vvNtGLo8/WkWOS5+i3eYgWMaLgrb3VallxhzzrJ8DaCa9EHM9SojJ3u6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqo6Wsvmm7rA54FxCF5Fbqm3tPTjMr4XC0gw56GZxdkEILdbHh
-	z9rhJe6zNm3iayhgsggKUWXaHKUPbVL6BsLGnjuM6Sn66IiAJZr2rnNj48JL
-X-Google-Smtp-Source: AGHT+IGrv5H+Lpsi965fERLzo//PdNn+OI+QnPSNR7zzAfkc9COJPnDwsUHRN5xXW1Kiu0i+PmDaJQ==
-X-Received: by 2002:a5d:5547:0:b0:374:c8eb:9b18 with SMTP id ffacd0b85a97d-378922b690emr6684131f8f.24.1725903412165;
-        Mon, 09 Sep 2024 10:36:52 -0700 (PDT)
-Received: from ?IPV6:2003:c7:8f2a:8598:2e4a:77ed:cf1f:2f2b? (p200300c78f2a85982e4a77edcf1f2f2b.dip0.t-ipconnect.de. [2003:c7:8f2a:8598:2e4a:77ed:cf1f:2f2b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ceb1ffsm373610366b.146.2024.09.09.10.36.51
+        bh=fGQ69uvIsUs2suBhED3lxyPOvEHdFXoc0/H/gcmAqkI=;
+        b=ZHi0GMMWpVusdLEgxrxeOlFUFsmiSOqQddadclWve2k5Fvk0y27ZI/wKxn7vZQkCin
+         k1HhPmH4wJTg0mJbP8WHiP92U5YBqWJpLtCXUa4Y3JTZf8zImteS4/N9WJmVf0qbSkl2
+         RvW16sEuGB9zx71kZRk3fPNLHKGkh54ppNRsk0eg36rBOPvGIgN4jRoZAyys1EeKEcBj
+         8F2Rqr+ROdg8Hz1wj3zSxOEuf82d3cARsYfmVPEuqwckcHheaQ/nM3IR8fp7UIa0qt4R
+         CNVl+mHIRQ94zrvb0CaKbL6aojWqbcCAGl1aLSYQIim+a/jS1e5C5ZeOFFev1+TmHtSV
+         ls5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWrrv409IKwSr5X4HjFYfsM9OyXGeqct4Pbnlr56FuI3FqPjUR0QuJ6aD5i1VpcaN+ZpEkr/uIkrg8RWEI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq7exKnwvyOq/rGIxmpjSii6LVSTf74AEv4JG7K7/4et6pk13n
+	sjLbOrQTDrE8wEO9kX5xrX7BDhZzYdkeuXP5isEXiMa/hSc+1e0f7U5ZS9FJXQE=
+X-Google-Smtp-Source: AGHT+IH/WyRKaYOd8X7b6GH/oF12KinaObeDKCQ9HSr3LpS/BoxdEXxo17+jW8sJ1n5TGyUfLl8pow==
+X-Received: by 2002:a05:6870:af47:b0:27b:5abb:7def with SMTP id 586e51a60fabf-27b82e11008mr11946198fac.20.1725903490312;
+        Mon, 09 Sep 2024 10:38:10 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-27ba40b0d70sm1566578fac.44.2024.09.09.10.38.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 10:36:51 -0700 (PDT)
-Message-ID: <0de6807e-c6d1-47c7-8f01-000800880c7f@gmail.com>
-Date: Mon, 9 Sep 2024 19:36:51 +0200
+        Mon, 09 Sep 2024 10:38:09 -0700 (PDT)
+Message-ID: <e5310b63-9dc4-43af-9fbe-0cc3b604ab8b@baylibre.com>
+Date: Mon, 9 Sep 2024 12:38:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,62 +75,202 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] staging: rtl8723bs: include: Fix spelling mistake
- in rtw_xmit.h
-To: Roshan Khatri <topofeverest8848@gmail.com>, gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240909041352.2392-1-topofeverest8848@gmail.com>
+Subject: Re: [PATCH v2 1/9] dt-bindings: iio: dac: ad3552r: add io-backend
+ property
+From: David Lechner <dlechner@baylibre.com>
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Jonathan Cameron <jic23@kernel.org>
+Cc: Angelo Dureghello <adureghello@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+ <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-1-87d669674c00@baylibre.com>
+ <20240908132925.331c5175@jic23-huawei>
+ <20240909-dwelled-specimen-949f44c8d04d@wendy>
+ <1dca9ce52e7c701c7fb6cbbc723e9dff5d0ace8b.camel@gmail.com>
+ <66090d3e-bf6c-43ee-9dc8-7bca449d448f@baylibre.com>
 Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240909041352.2392-1-topofeverest8848@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <66090d3e-bf6c-43ee-9dc8-7bca449d448f@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 9/9/24 06:13, Roshan Khatri wrote:
-> This patch fixes spelling mistake to increase code readability
-> and searching.
+On 9/9/24 12:19 PM, David Lechner wrote:
+> On 9/9/24 9:03 AM, Nuno Sá wrote:
+>> On Mon, 2024-09-09 at 13:46 +0100, Conor Dooley wrote:
+>>> On Sun, Sep 08, 2024 at 01:29:25PM +0100, Jonathan Cameron wrote:
+>>>> On Thu, 05 Sep 2024 17:17:31 +0200
+>>>> Angelo Dureghello <adureghello@baylibre.com> wrote:
+>>>>
+>>>>> From: Angelo Dureghello <adureghello@baylibre.com>
+>>>>>
+>>>>> There is a version AXI DAC IP block (for FPGAs) that provides
+>>>>> a physical bus for AD3552R and similar chips. This can be used
+>>>>> instead of a typical SPI controller to be able to use the chip
+>>>>> in ways that typical SPI controllers are not capable of.
+>>>>>
+>>>>> The binding is modified so that either the device is a SPI
+>>>>> peripheral or it uses an io-backend.
+>>>>>
+>>>>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+>>>>
+>>>>>  
+>>>>>  required:
+>>>>>    - compatible
+>>>>> -  - reg
+>>>>> -  - spi-max-frequency
+>>>> Sort of feels like both reg and spi-max-frequency
+>>>> are valid things to specify. 
+>>>>
+>>>> Maybe we have an excellent IP and dodgy wiring so want
+>>>> to clamp the frequency (long term - don't need to support
+>>>> in the driver today).
+>>>>
+>>>> Maybe we have an axi_dac IP that supports multiple
+>>>> front end devices?  So maybe just keep reg?
+>>>
+>>> I'd like to be convinced that this incarnation of the AXI DAC IP is not
+>>> a spi controller and that a ref to spi-controller.yaml is not out of
+>>> place here. It may not be something that you'd ever use generally, given
+>>> the "weird" interface to it, but it does seem to be one regardless.
+>>>
+>>
+>> Agreed.. As weird as it get's, it's acting as a spi controller.
+>>
+>>> I'd also really like to know how this fits in with spi-offloads. It
+>>> /feels/, and I'd like to reiterate the word feels, like a rather similar
+>>> idea just applied to a DAC instead of an ADC.
+>>
+>> The offload main principle is to replay a spi transfer periodically given an
+>> input trigger. I'm not so sure we have that same principle in here. In here I
+>> guess we stream data over the qspi interface based on SCLK which can look
+>> similar. The difference is that this IP does not need any trigger for any spi
+>> transfer replay (I think). 
+>>
 > 
-> Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
-> ---
-> v2: Created patch series as suggested by Phillip
-> v1: https://lore.kernel.org/all/20240906141024.10021-1-topofeverest8848@gmail.com/
+> Looking at the AD3552R from a SPI offload perspective of triggered SPI
+> messages, I think it still works.
 > 
->   drivers/staging/rtl8723bs/include/rtw_xmit.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> The trigger doesn't have to be a clock/PWM. In this case, the trigger would
+> be whenever the IIO buffer is full and ready to send a burst of data (not
+> sure if this would be a hardware or software trigger - but it works either
+> way).
 > 
-> diff --git a/drivers/staging/rtl8723bs/include/rtw_xmit.h b/drivers/staging/rtl8723bs/include/rtw_xmit.h
-> index a3b4310caddf..544468f57692 100644
-> --- a/drivers/staging/rtl8723bs/include/rtw_xmit.h
-> +++ b/drivers/staging/rtl8723bs/include/rtw_xmit.h
-> @@ -15,7 +15,7 @@
->   
->   #define XMITBUF_ALIGN_SZ 512
->   
-> -/*  xmit extension buff defination */
-> +/*  xmit extension buff definition */
->   #define MAX_XMIT_EXTBUF_SZ	(1536)
->   #define NR_XMIT_EXTBUFF	(32)
->   
+> Also, the DAC_CUSTOM_CTRL::ADDRESS register field in the AXI DAC IP core
+> acts as an offload to record and play back a SPI write transfer.
+> 
+> If we were using the AXI SPI Engine, this would be one SPI message with
+> two xfers, one for the address write followed by one for the data write.
+> The size of the data write would be the size of the IIO buffer - or in
+> the case of a cyclic DMA, the size of the write data would be channel
+> data size * num channels and the xfer would have a special cyclic offload
+> flag set.
+> 
+> So I think we could make a single binding that works for the the AXI DAC
+> backend/offload and the AXI SPI Engine offload. (I don't think it would
+> be so easy to integrate the AXI DAC into the SPI framework on the driver
+> side - and hopefully we won't have to, but the DT still could use the
+> proposed SPI offload bindings.)
+> 
+>     axi_dac: spi@44a70000 {
+>         compatible = "adi,axi-ad3225r";
+>         reg = <0x44a70000 0x1000>;
+>         dmas = <&dac_tx_dma_1 0>;
+>         dma-names = "tx";
+>         clocks = <&ref_clk>;
+>         #spi-offload-cells = <0>;
+
+One thing I forgot...
+
+The AXI AD3552R IP core can be wired up as a loopback to pipe
+data directly from some ADC instead of using DMA.
+
+In the case of the ADC loopback, we would also have
+
+	io-channels = <&adc1>, <&adc2>;
+
+here in the controller.
+
+And we would need #spi-offload-cell = <1>; to have a cell to
+specify the data source.
+
+> 
+>         #address-cells = <1>;
+>         #size-cells = <0>;
+> 
+>         dac@0 {
+>             compatible = "adi,ad3552r";
+>             reg = <0>;
+> 
+>             spi-max-frequency = <30000000>;
+>             spi-3-wire;
+>             spi-tx-bus-width = <4>;
+>             spi-rx-bus-width = <4>;
+> 
+>             reset-gpios = <&gpio0 92 GPIO_ACTIVE_LOW>;
+>             spi-offloads = <&axi_dac>;
+
+And then here I guess it would be:
+
+	spi-offloads = <&axi_dac 0>, <&axi_dac 1>;
+	spi-offload-names = "dma", "adc";
+
+where 0 would select the DMA stream and 1 would select the ADC stream.
+
+Or of the ADC part wasn't wired up, just:
+
+	spi-offloads = <&axi_dac 0>;
+	spi-offload-names = "dma";
 
 
-Hi Roshan,
+> 
+>             #address-cells = <1>;
+>             #size-cells = <0>;
+> 
+>             channel@0 {
+>                 reg = <0>;
+>                 adi,output-range-microvolt = <(-10000000) (10000000)>;
+>             };
+>         };
+>     };
+> 
+>     axi_spi_engine: spi@44a80000 {
+>         compatible = "adi,axi-spi-engine-1.00.a";
+>         reg = <0x44a80000 0x1000>;
+>         dmas = <&dac_tx_dma_2 0>;
+>         dma-names = "offload0-tx";
+>         clocks = <&ref_clk>;
+>         #spi-offload-cells = <1>;
+> 
+>         #address-cells = <1>;
+>         #size-cells = <0>;
+> 
+>         dac@0 {
+>             compatible = "adi,ad3552r";
+>             reg = <0>;
+> 
+>             spi-max-frequency = <30000000>;
+>             spi-3-wire;
+>             spi-tx-bus-width = <4>;
+>             spi-rx-bus-width = <4>;
+> 
+>             reset-gpios = <&gpio0 92 GPIO_ACTIVE_LOW>;
+>             spi-offloads = <&axi_spi_engine 0>;
+> 
+>             #address-cells = <1>;
+>             #size-cells = <0>;
+> 
+>             channel@0 {
+>                 reg = <0>;
+>                 adi,output-range-microvolt = <(-10000000) (10000000)>;
+>             };
+>         };
+>     };
+> 
 
-something is wrong with your patch series.
-
-When you look here you will see it is not a real series:
-https://lore.kernel.org/linux-staging/
-
-The command I use looks like this:
-git format-patch -o ~/Documents/kernel/patches/ --cover-letter -n 
---thread=shallow --to="Greg Kroah-Hartman 
-<gregkh@linuxfoundation.org>,linux-staging@lists.linux.dev,linux-kernel@vger.kernel.org" 
-74d21cf6062fc65c61ca2c91b81a3a98a646a4f2^..HEAD
-
-Hope this helps...
-
-No need to call may name in the change history.
-
-Thanks for your support.
-
-Bye Philipp
 
