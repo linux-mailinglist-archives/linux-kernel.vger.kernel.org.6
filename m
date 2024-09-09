@@ -1,107 +1,91 @@
-Return-Path: <linux-kernel+bounces-321043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AC939713B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:31:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9AA971357
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DD5A1C22576
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:31:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86AF51C22973
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4C11B5322;
-	Mon,  9 Sep 2024 09:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="lvZPoacw"
-Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381F21B3B1C;
+	Mon,  9 Sep 2024 09:20:59 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D661B3746;
-	Mon,  9 Sep 2024 09:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B205D1B375C;
+	Mon,  9 Sep 2024 09:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725874185; cv=none; b=sv5rde9WAdJKzEohA1+/Sc4xSZQN2RJAxMWMfaaswzC8TOqZH2D0J7iMskZm8QYpLHfM5pjzUN/rpBweBNYdp3iG3vykrxAnquEJrRmafyN5N5Two2E2sJMDw/nl4+uXRMuCdlqrQPZY7oTtaiYHdsJ+SNqHYCwjkH87k8WjW4M=
+	t=1725873658; cv=none; b=AieL/j4dJ7ua03qp5y73o7abV39qYpkWd4+cIiUJgP/P/iJCZPAmF4C/NFcaZUTONlZlYDbwjaZMPrs5LtAIPAo8mog4etvLf5ldBcDxCj54YDGfzJPsrDTOVu1ttyRkKEUSmsAMri+zxJv1xuIofg3x959gHyWOGvUlsMfFiNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725874185; c=relaxed/simple;
-	bh=muUEXAvbIq0DbFUN2mAlt0pOR9Csq+RMxXJJ+FkpbGw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gFNkTHedN4fdGqQvBydY9eSaYv7mjneX26bInLs4ClF8TsIFsi/10WoUkwiQQSPBcW/o1yhyfzP35G8jgEmq4xSUFLxwhvNCT0R2cvxpNZ4C09k5eNHYFFG6lTY5ahXnUmMz21JwHvC8oBtdIcIo+t9pAE3E3sXfFnHRpG0Z/1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=lvZPoacw; arc=none smtp.client-ip=45.145.95.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
-	t=1725874170; bh=muUEXAvbIq0DbFUN2mAlt0pOR9Csq+RMxXJJ+FkpbGw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=lvZPoacwobMjIrF/0XTNZIFuM+STgRZd+DJXgtSx/9WGndgLv4BVhFig9fI3yCSYD
-	 /s2skfVAPHpUDKx34zcURIdNUChrRIieLJeDRDA4iDtawvYA41mhh+sxJymLlKV2rK
-	 hPinZj3plzxiIBwdV3Iehtx60KXVu4Vyz5y999mmKIuzaIwy6/WOr8/AEHo/AbdeCB
-	 vSQcb2/0y1XwHN6UPSH6qMn3jAH8Zs/P9g+WBQSj5pKpTIAGwIPHLnKmGDqjOPFvRk
-	 7CnsKYNv+oUE/3ShgBrf8zJBEXE/bfqEQ89OSU6g2x/+SFBbfC1xINwydYtx1LE+NP
-	 uNPpNmO+ZdF1A==
-To: Jeongjun Park <aha310510@gmail.com>, kvalo@kernel.org
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, Jeongjun
- Park <aha310510@gmail.com>
-Subject: Re: [PATCH] wifi: ath9k: add range check for conn_rsp_epid in
- htc_connect_service()
-In-Reply-To: <20240906142452.144525-1-aha310510@gmail.com>
-References: <20240906142452.144525-1-aha310510@gmail.com>
-Date: Mon, 09 Sep 2024 11:29:30 +0200
-X-Clacks-Overhead: GNU Terry Pratchett
-Message-ID: <875xr5qio5.fsf@toke.dk>
+	s=arc-20240116; t=1725873658; c=relaxed/simple;
+	bh=2zfASHFrciNzyPWs2bg0H0ZiGBMnkQxcJqjUQ4crK3A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uaAGhuAiJwPA3iuuyH5vMcLQSmLM3o12iY3vsUG8sa2ZqhAzt9eg6qYmOKxPDcT6E93t6wcBynCo2GFyk8SHIMLLX3vajU112vYACak0LmI0kEd0kb67hdTSje6oOtHUmCVOiMX2Ew91MgrD5ROGREcMYNx7Ocnz8m3cay3AXgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4X2Lrj1vLYz1BNDl;
+	Mon,  9 Sep 2024 17:19:49 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 283391402CF;
+	Mon,  9 Sep 2024 17:20:53 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 9 Sep
+ 2024 17:20:52 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <vz@mleia.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew@lunn.ch>,
+	<alexandre.belloni@bootlin.com>, <linux-arm-kernel@lists.infradead.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] net: ethernet: nxp: Fix a possible memory leak in lpc_mii_probe()
+Date: Mon, 9 Sep 2024 17:29:48 +0800
+Message-ID: <20240909092948.1118381-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-Jeongjun Park <aha310510@gmail.com> writes:
+of_phy_find_device() calls bus_find_device(), which calls get_device()
+on the returned struct device * to increment the refcount. The current
+implementation does not decrement the refcount, which causes memory leak.
 
-> I found the following bug in my fuzzer:
->
->   UBSAN: array-index-out-of-bounds in drivers/net/wireless/ath/ath9k/htc_hst.c:26:51
->   index 255 is out of range for type 'htc_endpoint [22]'
->   CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.11.0-rc6-dirty #14
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
->   Workqueue: events request_firmware_work_func
->   Call Trace:
->    <TASK>
->    dump_stack_lvl+0x180/0x1b0
->    __ubsan_handle_out_of_bounds+0xd4/0x130
->    htc_issue_send.constprop.0+0x20c/0x230
->    ? _raw_spin_unlock_irqrestore+0x3c/0x70
->    ath9k_wmi_cmd+0x41d/0x610
->    ? mark_held_locks+0x9f/0xe0
->    ...
->
-> Since this bug has been confirmed to be caused by insufficient verification 
-> of conn_rsp_epid, I think it would be appropriate to add a range check for 
-> conn_rsp_epid to htc_connect_service() to prevent the bug from occurring.
->
-> Fixes: fb9987d0f748 ("ath9k_htc: Support for AR9271 chipset.")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->  drivers/net/wireless/ath/ath9k/htc_hst.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/net/wireless/ath/ath9k/htc_hst.c b/drivers/net/wireless/ath/ath9k/htc_hst.c
-> index eb631fd3336d..aedba5f79bfb 100644
-> --- a/drivers/net/wireless/ath/ath9k/htc_hst.c
-> +++ b/drivers/net/wireless/ath/ath9k/htc_hst.c
-> @@ -293,6 +293,8 @@ int htc_connect_service(struct htc_target *target,
->  			service_connreq->service_id);
->  		return -ETIMEDOUT;
->  	}
-> +	if (target->conn_rsp_epid < 0 || target->conn_rsp_epid >= ENDPOINT_MAX) 
-> +		return -EINVAL;
+So add the missing phy_device_free() call to decrement the
+refcount via put_device() to balance the refcount.
 
-nit: please add a blank line after the }, and get rid of the extra space
-at the end of the line with the if statement.
+Fixes: 3503bf024b3e ("net: lpc_eth: parse phy nodes from device tree")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/net/ethernet/nxp/lpc_eth.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Otherwise, the patch LGTM.
+diff --git a/drivers/net/ethernet/nxp/lpc_eth.c b/drivers/net/ethernet/nxp/lpc_eth.c
+index dd3e58a1319c..8bff394991e4 100644
+--- a/drivers/net/ethernet/nxp/lpc_eth.c
++++ b/drivers/net/ethernet/nxp/lpc_eth.c
+@@ -768,6 +768,9 @@ static int lpc_mii_probe(struct net_device *ndev)
+ 		return -ENODEV;
+ 	}
+ 
++	if (pldat->phy_node)
++		phy_device_free(phydev);
++
+ 	phydev = phy_connect(ndev, phydev_name(phydev),
+ 			     &lpc_handle_link_change,
+ 			     lpc_phy_interface_mode(&pldat->pdev->dev));
+-- 
+2.34.1
 
--Toke
 
