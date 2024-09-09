@@ -1,80 +1,73 @@
-Return-Path: <linux-kernel+bounces-321790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F91971F70
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:43:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B996C971F6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A831C1F23517
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:43:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D661F234CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636C716A957;
-	Mon,  9 Sep 2024 16:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B40166F07;
+	Mon,  9 Sep 2024 16:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VfUuu8/l"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J4GHBLUG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C1F165EE8
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1922B1487E2
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725900218; cv=none; b=rcB2Ihkjs06G/amlqgO/qA1xCtNLS45cVcLQ3BkljbY0LOWPltC3YdEWKNJVtg+OqFWCGksD7eUPVCefnZUnBxPI5eFUq71rNDKOob5gWRlHmhvN45tk8HJoW+uLGR5mjZhO1Ztv3WnP0xfBD7Rq77O4ABXlkOZ1hHZR4IYFAGk=
+	t=1725900198; cv=none; b=HoehxRQfTNlp1mYGFfMkCgALBvDQc/WRUMH7bEQkDHuaghIYAwM2wgbMDpNDLM3prW7Tq9EimKHodidSvrtXEx4mCo0+yWT/oz3c/lHu6XmxTj4dsRCrErbJ7hybO6ggsKR8poL+LOkhIvscfps6tkozdqN2wPULBwXfBU1tQIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725900218; c=relaxed/simple;
-	bh=SPDkgjp1iESRpLEN0olg4YNX8g5J0heZpCZbWFhRj84=;
+	s=arc-20240116; t=1725900198; c=relaxed/simple;
+	bh=S1kbf0phCb48MWSXgkXfEpcXC/gNa49fODrt+nrAW0M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PZIkaVdY4Zhi8MFkzYZ4iGmAj5Ylr6Ge9MRexisj2a+9AD9JGdh3XFhHf3ILWlqinXxQZBOnUMo33VZ8QO15P5s0QNOqJhVMpJact8qx4oSH7tt4tIJwSD2UYJPFmOrSQzadykZ+4xKBqNXaNn2bVLf+lR9J9W1pG0+qj70UjG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VfUuu8/l; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725900217; x=1757436217;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SPDkgjp1iESRpLEN0olg4YNX8g5J0heZpCZbWFhRj84=;
-  b=VfUuu8/luUkRTxC4OsmXpTtA0Cvbr7XsNUxLP3N3lmN41AEXiUyp4+fN
-   rY+3uleo4cq38KT03URqTrKfeRcsEXjpBNC6CsHDETWpjzKi5VqUiC82e
-   ZtDaV1I6Vg7TJLFxgplnmFuPzGTLFOrbQucq+7YMvZ44K75d27GPRQeW5
-   dP01Y71lV1W4R5oShoxcwHkJ81URWVvZ6ypvp3r0wTw8uYnqUxFHMYcBR
-   TiKoDebaNs2Qcz0s55Z7822zgrVIuESJHDEktCzYQsMRrmrZw4Bsn8gbx
-   dWp5XFGNMx/1OAKKSFHC+QNvrju95Tz4k32pxiOl5wcmJig1lZdKuzBNe
-   g==;
-X-CSE-ConnectionGUID: EiDTtOAcQmyLAZVnNFqzrw==
-X-CSE-MsgGUID: KtvyCHSBTb2Hm1DiNE7Z0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="35989346"
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="35989346"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 09:43:37 -0700
-X-CSE-ConnectionGUID: DWYCUyg7QCmuCnaxSp+y9A==
-X-CSE-MsgGUID: m8k4tGKdSOWS4YW9oVOxWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="71139328"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 09 Sep 2024 09:43:34 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1snhUB-000EzC-31;
-	Mon, 09 Sep 2024 16:43:31 +0000
-Date: Tue, 10 Sep 2024 00:42:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jerome Brunet <jbrunet@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Jiucheng Xu <jiucheng.xu@amlogic.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 9/9] reset: amlogic: add auxiliary reset driver support
-Message-ID: <202409100033.EPfBtwfK-lkp@intel.com>
-References: <20240906-meson-rst-aux-v4-9-08824c3d108b@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rXhHvAgRtImJ1gIOVRaYrR8pGBnz3mdv/BZrSZD6+njjYPk9QPaZMes6R/2c03zfxaxub9xn5ipa8Lam274sX4PCKgjE1tBOXl3/m2RwhvJ2Jn+cCS8Y3JTtU5MS0J5PfdqiGrVqokPUkiMoor/fBVqamsGQoOkYFw+/Z6p/Rsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J4GHBLUG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725900196;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pbH/T4X4Z14PtQAR2gn/t9qdJNLYFFSA99p6UVt3HUg=;
+	b=J4GHBLUGRs1sKIHFpuQTdJ+TIHW0AiXnH50vRC+KjJgy0BNSmlrCHdJJqQSSrthtv8QhuU
+	RCgmM8AuvuZsCTbqKFh2I+lS+28nX03huLZSQIv4EgfdxdlBZ3+aFyzlio7BwwvZT59UH6
+	yuaEsKS/1PzzjrqveZI9uuMcxr2X5To=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-56-wC5ljZ1JN2mAG-1VWczGWw-1; Mon,
+ 09 Sep 2024 12:43:10 -0400
+X-MC-Unique: wC5ljZ1JN2mAG-1VWczGWw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3C3A19560BF;
+	Mon,  9 Sep 2024 16:43:08 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.74])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 98AA71956048;
+	Mon,  9 Sep 2024 16:43:04 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon,  9 Sep 2024 18:42:57 +0200 (CEST)
+Date: Mon, 9 Sep 2024 18:42:52 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: akpm@linux-foundation.org, apais@microsoft.com, benhill@microsoft.com,
+	ebiederm@xmission.com, linux-kernel@vger.kernel.org,
+	ssengar@microsoft.com, sunilmut@microsoft.com,
+	torvalds@linux-foundation.org, vdso@hexbites.dev
+Subject: Re: [PATCH 1/1] ptrace: Get tracer PID without reliance on the proc
+ FS
+Message-ID: <20240909164251.GA14058@redhat.com>
+References: <20240908140838.GB21236@redhat.com>
+ <20240909151946.1108962-1-romank@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,35 +76,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240906-meson-rst-aux-v4-9-08824c3d108b@baylibre.com>
+In-Reply-To: <20240909151946.1108962-1-romank@linux.microsoft.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi Jerome,
+On 09/09, Roman Kisel wrote:
+>
+> On 9/8/2024, Oleg Nesterov wrote:
+>
+> > But you can safely ignore me, I do not pretend I understand the userspace's
+> > needs.
+> >
+> > And I guess people will use it anyway, so I won't argue with, say, a trivial
+> > patch which just adds
+> >
+> > case PR_GET_PTRACED:
+> >     error = !!current->ptrace;
+> >     break;
+> >
+> > into sys_prctl(), even if I agree that this probably just makes bad behavior
+> > easier.
+>
+> Very kind of you trying to build a longer table rather than a taller fence,
+> I appreciate that very much! Your aproach looks very neat indeed,
 
-kernel test robot noticed the following build errors:
+Well, you didn't answer my question in
+https://lore.kernel.org/all/20240906114819.GA20831@redhat.com/
+so I decided that a simpler change which returns !!current->ptrace instead
+of the tracer's pid might work as well.
 
-[auto build test ERROR on 487b1b32e317b85c2948eb4013f3e089a0433d49]
+Sorry for annoying you.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jerome-Brunet/reset-amlogic-convert-driver-to-regmap/20240906-213857
-base:   487b1b32e317b85c2948eb4013f3e089a0433d49
-patch link:    https://lore.kernel.org/r/20240906-meson-rst-aux-v4-9-08824c3d108b%40baylibre.com
-patch subject: [PATCH v4 9/9] reset: amlogic: add auxiliary reset driver support
-config: parisc-randconfig-r123-20240909 (https://download.01.org/0day-ci/archive/20240910/202409100033.EPfBtwfK-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20240910/202409100033.EPfBtwfK-lkp@intel.com/reproduce)
+Oleg.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409100033.EPfBtwfK-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   hppa-linux-ld: drivers/reset/amlogic/reset-meson-aux.o: in function `meson_reset_aux_probe':
->> (.text+0xc): undefined reference to `meson_reset_controller_register'
->> hppa-linux-ld: drivers/reset/amlogic/reset-meson-aux.o:(.rodata+0x88): undefined reference to `meson_reset_toggle_ops'
-   hppa-linux-ld: drivers/reset/amlogic/reset-meson-aux.o:(.rodata+0x9c): undefined reference to `meson_reset_toggle_ops'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
