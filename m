@@ -1,321 +1,188 @@
-Return-Path: <linux-kernel+bounces-322106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2482297241F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:03:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DB4972420
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D9A11C2293D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:03:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394AD1C226BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4009F18B468;
-	Mon,  9 Sep 2024 21:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6E318A939;
+	Mon,  9 Sep 2024 21:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d89yswmY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YoLGblid"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC046AB8;
-	Mon,  9 Sep 2024 21:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725915802; cv=fail; b=DZdlE293C9UUXcId8UrTds4DqSD8WUMLTV6IPvufZb6c/CKmqUGTG2mk1DkBRacOwqk09b84TXatxxWejeNRZRhBtEpOcwdPSZeLFc4gtinCQ7d9TgSpCEnVKOcH8yIYG7EVpMrxeP3AHdjPNwMTnQwvOAB4+pwpKsE+RxwAqQw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725915802; c=relaxed/simple;
-	bh=pCfidbB6IaaJe3NEqodDQ1Ea2vCJdkm1evLbVtB7jHI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HUZbRDjHxgHvyIjPybe+xkpzEu+UDy21v8C5ngR4Z37RsCPTtqxYteeYgIlw5L+S/U6a77/r5TUbcQWJvU1MiV72NyvYo2/T0EzfQxz5fv6cH/Om/CWQ7p2/IXaGnXYEpf6YHbHocM0g4IqBYivpUX3645p2tBpfe4or1tlaDJE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d89yswmY; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725915801; x=1757451801;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=pCfidbB6IaaJe3NEqodDQ1Ea2vCJdkm1evLbVtB7jHI=;
-  b=d89yswmYfunAEoIwSl50L/ofl2LITKg1F0Zjn8nXZIiamAhs8GHUdDru
-   BF+zvMY5rCkOA0XTdjAOVeO1mTUSVl2SzdpApfd69AXoH6SfHMlZbOsnJ
-   QD3z/Cot5AI68XMko3ZUXUFoqnH7cIK7w5zap3dB5KvFWdeNgUtWgJH2o
-   08FuLseeq+HinMWcZIzeUlY2zPG0KiQ1p8s3URv05xV1XRjVKEXv4EH7a
-   qNzzBokpP2s/KQzWHq/0yNRMD8ZGBAaYPkPMfRmwpNLm6RbgL5p4MtVO7
-   TPt9u2umZXKWRl8omvqDNVpCEiQWoVXfidtHhwd2pYeEDKCmvvDnCXLdN
-   A==;
-X-CSE-ConnectionGUID: qAX8eS5dR7+MmR1xbngaXg==
-X-CSE-MsgGUID: gBFWQYZFSKK9qUqauaYuYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24136646"
-X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="24136646"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 14:03:20 -0700
-X-CSE-ConnectionGUID: YeV2wyd4TdGNzVtH7dQYVQ==
-X-CSE-MsgGUID: orYi+dtQS0eiXircu+Mt2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="66417566"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Sep 2024 14:03:19 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 9 Sep 2024 14:03:19 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 9 Sep 2024 14:03:18 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 9 Sep 2024 14:03:18 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.44) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 9 Sep 2024 14:03:17 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ml8lE8w1oCh/RCANxovGYv/IX0qawAMpLOAeStKG4B8dPxU+gHNq69RLBWQpioMp++rvM/kulqB6wFtOQ/awzsjyTrAlVZ3sCOFiwJ8emnLxU7Lz7jx6mvKzGzCG8EfTO3HGNY/eGXUIXrNCOt/3xqHj++Xp7UosiJ0n8zZSUoh06ar21/PqnK5Qy4ulyddbpVz95FyccS/mVTi0J7qntwK+7IqGb0XpyICOvWsiymn2hDn6FT+I26mqgdlOTzgSNlUvOXwstx3bU/gv/qfBvt4EDcHeAlWl8+aPjgWWLeeOH+bEZ/7bIRnfMgdv3oX8Z1D+PULqcN8nS9e2/0YMtA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t0ttfIvJYprtjymt9swsoJjwd0YcMkUxneYVZYAQpWg=;
- b=j4FcvFBDR3dVE9eUJGkc7WuNwF7ZUJ5DDXPFRK8x7QeBRYP1uNE5nmyLyoYpvc/dqqLogcMqzLR88LBtGuOxFcoLb+vDboZipQg5Hwn5VZ0fbh0XLUTLUbTn4xyYhBJa4s42K68ieiCOITNFLstVS9U/daiIJeaPcG9xc3pO4obOd9vvkAVzqKUOzaVznKFzja8KR9BqqAPOMFhGHFPCq0lgaIcbjD9VX2n4XG33zu7qb/cpLhwqmmJEO3bvIUNf7gsyJS49Zylb4CvlTPMsbno6uipdOqlI7NuHwYyC5pZZhXenx+Pfq284c/fiepJZVlipvppmWhY3h/8YIaxxFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by PH7PR11MB5886.namprd11.prod.outlook.com (2603:10b6:510:135::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.20; Mon, 9 Sep
- 2024 21:03:11 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%7]) with mapi id 15.20.7918.024; Mon, 9 Sep 2024
- 21:03:10 +0000
-Date: Mon, 9 Sep 2024 16:03:07 -0500
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-CC: Tvrtko Ursulin <tursulin@ursulin.net>, <intel-gfx@lists.freedesktop.org>,
-	<linux-perf-users@vger.kernel.org>, Tvrtko Ursulin
-	<tvrtko.ursulin@linux.intel.com>, <dri-devel@lists.freedesktop.org>, "Ingo
- Molnar" <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/7] drm/i915/pmu: Lazy unregister
-Message-ID: <s6r3lvcejptm7pflxknuoghn6nossopvgvnicmnj7mob7mdxhb@gq2juj4lvgw4>
-References: <20240722210648.80892-1-lucas.demarchi@intel.com>
- <20240722210648.80892-7-lucas.demarchi@intel.com>
- <be3871bd-fc25-482e-b4d4-91afc4d5b5a5@ursulin.net>
- <xsuzfv4rzb4c25sibt5gjskn7xyfwf33wgwaw4nkz5jlnvl2ke@ekur5xvhec3z>
- <20240724124105.GB13387@noisy.programming.kicks-ass.net>
- <6n2zgfqn5sn6borrd7hfbbavq75ht66u646sdxlq44spbirzru@yv3bxtd2x55t>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <6n2zgfqn5sn6borrd7hfbbavq75ht66u646sdxlq44spbirzru@yv3bxtd2x55t>
-X-ClientProxiedBy: MW4PR04CA0206.namprd04.prod.outlook.com
- (2603:10b6:303:86::31) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352296AB8
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 21:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725915814; cv=none; b=DHNXTC1rL1rVKTRQH1Q+Wzh4oOSuhDgl/LSrGg7ERWwfWCJk6Z7eqwFkr7ossM+ldZHszeZGBvEL5r2xSt1lz+KQcbl8/irLG+a5IXFUMu73fb2h8IyFVGTz9iRZhYzQS0l8AOSoh0uIkyVV+bLxST58Eo65xsG9BdnvOFXj9iQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725915814; c=relaxed/simple;
+	bh=OGwFIBfkQZPm7Mn2DYOWykrTRecZ7Tp+roVH+JLWTbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0mzqAgjnpwGFGUajb4aiCtyJP9gCAQYJPxCupOTAYCFzt0s74VT0Nx1IRr2yuJBrkU0NYEDgPV1i6oWKpp1sEsljP2xVxQv4nbALWPHvlv9PZUknQf4Eufopl64XNWvuu0WUiXtKdh1sNW1bby2CFpC4mwcdg84grRILzEPew4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YoLGblid; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 380EA1BF208;
+	Mon,  9 Sep 2024 21:03:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725915810;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C94iueCtkgJZqwdOpqmnG2jA8jBtTJ3vB4jL9HoEEOY=;
+	b=YoLGblidTwXhZDm/vQcmx5P989eRq14+XupMbGnNV9Nm4xUQQEFGszO9XU4U4HRIaFAiwF
+	Xyg1V/uhxk0WyPddL8awBSeyTJf9HnUn47Rts9TSnrHRsY3isBJZkqU3tpAR6jbpaG06uM
+	rnHX2QqvrHi/50RLmzh7VSLcIIooxi9Xw2J5+Bn6rTDACmOBUbTUyCbyCM3FX762duKD2U
+	286Y6Vx4z03mM3wcyS5wreWH3uv/Sas+PskIrDv2OrchsGiu506SeMJVF1+hUGu9Brcq40
+	34nD8SXvBupMX7k09h7YNDwPmv/3kP5OOwumhZxKRKWfuai8g0Vf4ZGR+gzP8w==
+Date: Mon, 9 Sep 2024 23:03:29 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Carlos Song <carlos.song@nxp.com>, miquel.raynal@bootlin.com,
+	conor.culhane@silvaco.com, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH V4 1/2] i3c: master: support to adjust first broadcast
+ address speed
+Message-ID: <202409092103290fd1d226@mail.local>
+References: <20240905074557.3810026-1-carlos.song@nxp.com>
+ <Zt9TcLqi34EDlI6b@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|PH7PR11MB5886:EE_
-X-MS-Office365-Filtering-Correlation-Id: a7b16f45-0305-4777-a357-08dcd112cfdc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?TyzAg85Yn6AsiKnX329Htg4DHsKeREdNC/1nowNqzlZgLGNTo3Cw9zhQ6LT8?=
- =?us-ascii?Q?tjNrOMQdrgEgVH9vyQcWXxwdkvFVXJywpbh8lFZi4/yHBS+R6Liit8MHm1F1?=
- =?us-ascii?Q?S6AAGIkCp9pA2xEcLva7kSxhoM9jb9VWjk5pR1+v18DcUDjzfwTaccGvVS2q?=
- =?us-ascii?Q?3XS+ztrOYe/o4aJHFUwgnQo+//z39DxVF5WJ6AtjkGXrQW1GOSARVzz0fmb4?=
- =?us-ascii?Q?jgwM/Cz2+xbyUbcafhqGVhHpcQ/Tip8ZiKHpZ+1TfdDGzqorEFUuqKX+NjbG?=
- =?us-ascii?Q?euaJhmdCau3oIvTOM+qHAxO5nN0WvE0QqimyU/G4KwQ9hPDjxYwOlwJQOAyo?=
- =?us-ascii?Q?iUFPCicJdNwfys49uNQxQLqRmPWjMJV2DbuvYwZt7GVi5H2PeRgbuYwG3Hby?=
- =?us-ascii?Q?HKIotc3XXH82jSPxgFS2oxQ2RUW3YTM0QBILYGgXXYuh/zeYiiiM/TjBiGD2?=
- =?us-ascii?Q?JdUf4IY2/KkgYNIUjCxnd5l6WBQtuZcQfhSfC/qC8xns6RTNtY2me205VqaE?=
- =?us-ascii?Q?SUnmxElbwtYJzWyUhLRqrn+azZE182O8uEgqt9OwVXVFQ+uvs/0zw6HDBls6?=
- =?us-ascii?Q?Dm0lXzYw4RhtXzmYlIE0xfYO6pSSIbUQ9BlD/oo0p5K5QiNgrjLNYioaNjJN?=
- =?us-ascii?Q?VJxgHfl+T4w7q5VivILIMcgsdzcSIkvVjG4IixUfilXDel0AkKx7AbcC/rcC?=
- =?us-ascii?Q?qrp7BYJ8K4ri4OwSAVdoybtjm+HCooJpDqc7OhfBC9XBp2DljChGmb0WCtrJ?=
- =?us-ascii?Q?plmT9K8QKzgrQ/csdCT5TCYWNmbMJRpvchVkfgWF8W+Cijhk0601zLvi95kq?=
- =?us-ascii?Q?+C5Yhnw1Lj/d0UmzB/l7PzhRjdz6nrDVUgfEfxr6G4zUfC73nE1apDjQ/mh6?=
- =?us-ascii?Q?QGUpBop7efp05RpJxyUg+4i0WBs1XjzctMpjwlpfhjfG/KIk1UjSRiHZVMon?=
- =?us-ascii?Q?615vVFiTEQyCphMfKeIvVK1dhhBxRr832tngPD/nXzB5rO9cKRMgHPslOk7g?=
- =?us-ascii?Q?Bm8sSSzH3j53kDqEivpLxJsULbT6i+WNdde6ue/GMNgSwumvvYNbGjo1D/gb?=
- =?us-ascii?Q?C5XlPmM0VGme0qUhB7BskUFbGCrdyTB7mb51jJaQDHJ0mcpnoWNgvPuCxiOi?=
- =?us-ascii?Q?e5pNceofMZJGh1D1uGoCIbB4s08OFB+63GRQ6MaJTmtqvUtMvethHz01x7Zv?=
- =?us-ascii?Q?VJ72bG0E5kimEEc9fyEkRxICRDspz8uWfR1VXmJEVNpvVNv3akC1V7k26EJz?=
- =?us-ascii?Q?C6PN6sUCO74rHaTBOeKliloPWbGUeJ+Xs/dLnEnEQWhNmjfFgJpTMuRbnEye?=
- =?us-ascii?Q?JPqi6VFQbSLUOef1WnW8qbc9bveSXo8VHn35k060Y6ZgKg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?06ir7efkmCGqDSrei1kVvM84G+wlGRZh16rFmZJuDW4/j9/MbQBYTJOrs+/H?=
- =?us-ascii?Q?FmGNkhOlE2U21H3WhwQUtpee1efasvXWeUvbzuwLnVumLmEuCAVzIfCcIa2E?=
- =?us-ascii?Q?aZikQcWkLAwk96+w4cRp8WhF5UR+hhNTwhIfqMS/QPXX6gXvxlQS95LkhZ/K?=
- =?us-ascii?Q?l9/D4HlUt4wgtthmbM7SguMu5wfGT/TlKFTcJgIQEA7iShsnNSQiKX5A4bPg?=
- =?us-ascii?Q?1wszd8Ni7I/yyuLr7zb3QUMnRzUud7HZJieZvN/0hRsT/iZqxIJaa4Urtpb9?=
- =?us-ascii?Q?YMyKxPe3zoQcpL7f9sb8KThTnu/RE9GCc0wFzI3fSmqaDTMhmpfURCWfIYDx?=
- =?us-ascii?Q?77Qm4buQHabEM9fyYWWvNyMkf3+2+8CvD6YhH/NteE7lB5UgOcdSZZLgNXa5?=
- =?us-ascii?Q?Q7jtLKG4CSfth/7OFkDciBAP1G1WzAG64OOU24caQVp4lBpe1i4RrvyfwYt4?=
- =?us-ascii?Q?l8ZgC//k0aj1hACiUqgxf6Ypyx/5NWyX5J15qI74RS460lb/AycKUfq19KX7?=
- =?us-ascii?Q?xnMoSFv1F1UNQ53sMM2V0njRvf7GmdH0z1WqLb98kOKJXfIGRCHAskecwuYD?=
- =?us-ascii?Q?9YBL7xGx3oBoPt48JXQIX+14L/5+CCm7C00EmZ3mS/5lprFoLPkR82MpfFWM?=
- =?us-ascii?Q?jUnXPoAmzJoxW09guhmmT+YzUBEvAiVsflUK6//e0KjmJN+H7z7smNHtaN3F?=
- =?us-ascii?Q?41hma3qjDYf4F+l+gIqy2o9tLDq2rfaQDb1k6A687hkLV5wN9J3opU/IxAoH?=
- =?us-ascii?Q?UYeP7WWHFpoWWRcNNYnE2mQd9aFwuibmwljqkbTfvA6TeSARNbGsKxyh7H9A?=
- =?us-ascii?Q?y+XYcsNKwWLM5D/6Rydyy4dDsBCRkdCPpr9oXrpLaFFE19oRr7UbXt1L7uRE?=
- =?us-ascii?Q?voaOfS2gFriamum+VqsIPnPLHjiBMfY7GwfZroki6bY9H8c6/l5qJ7JRDaWP?=
- =?us-ascii?Q?K1H+fpEBD4/z577v5WG8634HxkEq0CQfzZsaajClvhpxmJXOfBBfM52AcoAD?=
- =?us-ascii?Q?FtUssCNcE7XBQYLwmuYpKPLB5Zte/Z8rjYguYKENjzH2WZ8wBwTb88rDTXHa?=
- =?us-ascii?Q?49H8j1WDZsds2DzQtYTjWEy0HItJZM0uvkXANSNfpcuGxn/fcgg5IoXHed+5?=
- =?us-ascii?Q?GPOIjkI/UbK5PneUMm6rtGwEuXYksm+8ezA6O4L1AUsBeMA4Y9F33ioAiqP7?=
- =?us-ascii?Q?ra4o9ILTzdEYZZvimrKeqgV8iZNAxjVREAgD9sQe1nyJUWEQO66tElRMc08O?=
- =?us-ascii?Q?qlpQGgGmchwZcfTnCBbFtRyjPwP5unT0ufoBkb0RDNd3VLhDA7/zYlChkiq7?=
- =?us-ascii?Q?RJHiew77ClcXbGTOBCIGHanxNjkG0W3VZZ8oJKXn46EYDn6fPjJqgT7jn08U?=
- =?us-ascii?Q?jxkbZ1XxEzVdyX4ueQmPWvfzkUoYwNRqJJXu+/3WY2xF2D76FFdWh+HLwEnJ?=
- =?us-ascii?Q?23Jx8rwlSaHetgnCI3VF1ZnTlYaaomWDSFfNVIriOHRVhlyfhE0521rYmzIz?=
- =?us-ascii?Q?EdNbP28yxhqeIKxyiY5ZHaD9WwAtts80DK/rz42HO5qOnNr+s85rqO/ZsAZ0?=
- =?us-ascii?Q?YWOOZUm+ygYnyAokZLX2b+1roN9T0YLlE2z9D7/ty53mo8d4M2meW+s/buVD?=
- =?us-ascii?Q?3w=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7b16f45-0305-4777-a357-08dcd112cfdc
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 21:03:10.8761
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XkPPRvWCVjdcm8rNTlz6c6k6KEhRiYkGcwLBtKoa0M0dL/4IlbcSq2gt0rmJ8Eba46ps/ln5eoXzEi9vB98uquv/i4QMJ/06tqPdJV+WoBI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5886
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt9TcLqi34EDlI6b@lizhi-Precision-Tower-5810>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hi Peter,
+On 09/09/2024 15:58:40-0400, Frank Li wrote:
+> On Thu, Sep 05, 2024 at 03:45:56PM +0800, Carlos Song wrote:
+> > According to I3C spec 6.2 Timing Specification, the Open Drain High Period
+> > of SCL Clock timing for first broadcast address should be adjusted to 200ns
+> > at least. I3C device working as i2c device will see the broadcast to close
+> > its Spike Filter then change to work at I3C mode. After that I3C open drain
+> > SCL high level should be adjusted back.
+> >
+> > Signed-off-by: Carlos Song <carlos.song@nxp.com>
+> > Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> 
+> Alexandre Belloni:
+> 
+> 	I have not seen these in patch work
+> 	https://patchwork.kernel.org/project/linux-i3c/list/
+> 
+> 	Any thing wrong. These two patches is critial for some boards.
+> Could you please take care it?
 
-On Wed, Jul 24, 2024 at 10:39:57AM GMT, Lucas De Marchi wrote:
->On Wed, Jul 24, 2024 at 02:41:05PM GMT, Peter Zijlstra wrote:
->>On Tue, Jul 23, 2024 at 10:30:08AM -0500, Lucas De Marchi wrote:
->>>On Tue, Jul 23, 2024 at 09:03:25AM GMT, Tvrtko Ursulin wrote:
->>>>
->>>> On 22/07/2024 22:06, Lucas De Marchi wrote:
->>>> > Instead of calling perf_pmu_unregister() when unbinding, defer that to
->>>> > the destruction of i915 object. Since perf itself holds a reference in
->>>> > the event, this only happens when all events are gone, which guarantees
->>>> > i915 is not unregistering the pmu with live events.
->>>> >
->>>> > Previously, running the following sequence would crash the system after
->>>> > ~2 tries:
->>>> >
->>>> > 	1) bind device to i915
->>>> > 	2) wait events to show up on sysfs
->>>> > 	3) start perf  stat -I 1000 -e i915/rcs0-busy/
->>>> > 	4) unbind driver
->>>> > 	5) kill perf
->>>> >
->>>> > Most of the time this crashes in perf_pmu_disable() while accessing the
->>>> > percpu pmu_disable_count. This happens because perf_pmu_unregister()
->>>> > destroys it with free_percpu(pmu->pmu_disable_count).
->>>> >
->>>> > With a lazy unbind, the pmu is only unregistered after (5) as opposed to
->>>> > after (4). The downside is that if a new bind operation is attempted for
->>>> > the same device/driver without killing the perf process, i915 will fail
->>>> > to register the pmu (but still load successfully). This seems better
->>>> > than completely crashing the system.
->>>>
->>>> So effectively allows unbind to succeed without fully unbinding the
->>>> driver from the device? That sounds like a significant drawback and if
->>>> so, I wonder if a more complicated solution wouldn't be better after
->>>> all. Or is there precedence for allowing userspace keeping their paws on
->>>> unbound devices in this way?
->>>
->>>keeping the resources alive but "unplunged" while the hardware
->>>disappeared is a common thing to do... it's the whole point of the
->>>drmm-managed resource for example. If you bind the driver and then
->>>unbind it while userspace is holding a ref, next time you try to bind it
->>>will come up with a different card number. A similar thing that could be
->>>done is to adjust the name of the event - currently we add the mangled
->>>pci slot.
->>>
->>>That said, I agree a better approach would be to allow
->>>perf_pmu_unregister() to do its job even when there are open events. On
->>>top of that (or as a way to help achieve that), make perf core replace
->>>the callbacks with stubs when pmu is unregistered - that would even kill
->>>the need for i915's checks on pmu->closed (and fix the lack thereof in
->>>other drivers).
->>>
->>>It can be a can of worms though and may be pushed back by perf core
->>>maintainers, so it'd be good have their feedback.
->>
->>I don't think I understand the problem. I also don't understand drivers
->>much -- so that might be the problem.
->
->We can bind/unbind the driver to/from the pci device. Example:
->
->	echo -n "0000:00:02.0" > /sys/bus/pci/drivers/i915/unbind
->
->This is essentially unplugging the HW from the kernel.  This will
->trigger the driver to deinitialize and free up all resources use by that
->device.
->
->So when the driver is binding it does:
->
->	perf_pmu_register();
->
->When it's unbinding:
->
->	perf_pmu_unregister();
->	
->Reasons to unbind include:
->
->	- driver testing so then we can unload the module and load it
->	  again
->	- device is toast - doing an FLR and rebinding may
->	  fix/workaround it
->	- For SR-IOV, in which we are exposing multiple instances of the
->	  same underlying PCI device, we may need to bind/unbind
->	  on-demand  (it's not yet clear if perf_pmu_register() would be
->	  called on the VF instances, but listed here just to explain
->	  the bind/unbind)
->	- Hotplug
->
->>
->>So the problem appears to be that the device just disappears without
->>warning? How can a GPU go away like that?
->>
->>Since you have a notion of this device, can't you do this stubbing you
->>talk about? That is, if your internal device reference becomes NULL, let
->>the PMU methods preserve the state like no-ops.
->
->It's not clear if you are suggesting these stubs to be in each driver or
->to be assigned by perf in perf_pmu_unregister(). Some downsides
->of doing it in the driver:
->
->	- you can't remove the module as perf will still call module
->	  code
->	- need to replicate the stubs in every driver (or the
->	  equivalent of pmu->closed checks in i915_pmu.c)
->
->I *think* the stubs would be quiet the same for every device, so could
->be feasible to share them inside perf. Alternatively it could simply
->shortcut the call, without stubs, by looking at event->hw.state and
->a new pmu->state. I can give this a try.
+They didn't make it to the list, please subscribe and resend. Also, it
+is very very difficult to keep track of all the patches you sent s I'm
+not sure what actually needs to be applied and what has been dropped r
+superseded.
 
-trying to revive these patches to get this fixed. Are you ok with one of
-those approaches, i.e. a) either add the stub in the perf side or b)
-shortcut the calls after perf_pmu_unregister() is called ?
+> 
+> best regards
+> Frank Li
+> 
+> > ---
+> > Change for V4:
+> > - No change. Send this patch with svc-i3c-master.c fix patch.
+> > Change for V3:
+> > - Modify comments from Miquel's suggestion
+> > Chnage for V2:
+> > - Fix set_speed description from Frank's comment
+> > ---
+> >  drivers/i3c/master.c       | 12 ++++++++++++
+> >  include/linux/i3c/master.h | 16 ++++++++++++++++
+> >  2 files changed, 28 insertions(+)
+> >
+> > diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+> > index 7028f03c2c42..6f3eb710a75d 100644
+> > --- a/drivers/i3c/master.c
+> > +++ b/drivers/i3c/master.c
+> > @@ -1868,6 +1868,12 @@ static int i3c_master_bus_init(struct i3c_master_controller *master)
+> >  		goto err_bus_cleanup;
+> >  	}
+> >
+> > +	if (master->ops->set_speed) {
+> > +		ret = master->ops->set_speed(master, I3C_OPEN_DRAIN_SLOW_SPEED);
+> > +		if (ret)
+> > +			goto err_bus_cleanup;
+> > +	}
+> > +
+> >  	/*
+> >  	 * Reset all dynamic address that may have been assigned before
+> >  	 * (assigned by the bootloader for example).
+> > @@ -1876,6 +1882,12 @@ static int i3c_master_bus_init(struct i3c_master_controller *master)
+> >  	if (ret && ret != I3C_ERROR_M2)
+> >  		goto err_bus_cleanup;
+> >
+> > +	if (master->ops->set_speed) {
+> > +		master->ops->set_speed(master, I3C_OPEN_DRAIN_NORMAL_SPEED);
+> > +		if (ret)
+> > +			goto err_bus_cleanup;
+> > +	}
+> > +
+> >  	/* Disable all slave events before starting DAA. */
+> >  	ret = i3c_master_disec_locked(master, I3C_BROADCAST_ADDR,
+> >  				      I3C_CCC_EVENT_SIR | I3C_CCC_EVENT_MR |
+> > diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
+> > index 074f632868d9..2a1ed05d5782 100644
+> > --- a/include/linux/i3c/master.h
+> > +++ b/include/linux/i3c/master.h
+> > @@ -277,6 +277,20 @@ enum i3c_bus_mode {
+> >  	I3C_BUS_MODE_MIXED_SLOW,
+> >  };
+> >
+> > +/**
+> > + * enum i3c_open_drain_speed - I3C open-drain speed
+> > + * @I3C_OPEN_DRAIN_SLOW_SPEED: Slow open-drain speed for sending the first
+> > + *				broadcast address. The first broadcast address at this speed
+> > + *				will be visible to all devices on the I3C bus. I3C devices
+> > + *				working in I2C mode will turn off their spike filter when
+> > + *				switching into I3C mode.
+> > + * @I3C_OPEN_DRAIN_NORMAL_SPEED: Normal open-drain speed in I3C bus mode.
+> > + */
+> > +enum i3c_open_drain_speed {
+> > +	I3C_OPEN_DRAIN_SLOW_SPEED,
+> > +	I3C_OPEN_DRAIN_NORMAL_SPEED,
+> > +};
+> > +
+> >  /**
+> >   * enum i3c_addr_slot_status - I3C address slot status
+> >   * @I3C_ADDR_SLOT_FREE: address is free
+> > @@ -436,6 +450,7 @@ struct i3c_bus {
+> >   *		      NULL.
+> >   * @enable_hotjoin: enable hot join event detect.
+> >   * @disable_hotjoin: disable hot join event detect.
+> > + * @set_speed: adjust I3C open drain mode timing.
+> >   */
+> >  struct i3c_master_controller_ops {
+> >  	int (*bus_init)(struct i3c_master_controller *master);
+> > @@ -464,6 +479,7 @@ struct i3c_master_controller_ops {
+> >  				 struct i3c_ibi_slot *slot);
+> >  	int (*enable_hotjoin)(struct i3c_master_controller *master);
+> >  	int (*disable_hotjoin)(struct i3c_master_controller *master);
+> > +	int (*set_speed)(struct i3c_master_controller *master, enum i3c_open_drain_speed speed);
+> >  };
+> >
+> >  /**
+> > --
+> > 2.34.1
+> >
 
-
-Lucas De Marchi
-
->
->thanks
->Lucas De Marchi
->
->>
->>And then when the last event goes away, tear down the whole thing.
->>
->>Again, I'm not sure I'm following.
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
