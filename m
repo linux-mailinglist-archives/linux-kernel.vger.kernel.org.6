@@ -1,119 +1,228 @@
-Return-Path: <linux-kernel+bounces-321074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCCC97141D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:44:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE784971416
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC963285200
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:44:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16E861C22D52
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CAD1B3B30;
-	Mon,  9 Sep 2024 09:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032051B2EE8;
+	Mon,  9 Sep 2024 09:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="HA1fYfiy"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="erF4b8WV"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBCC1B3740;
-	Mon,  9 Sep 2024 09:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D1C1B2EFA
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725875051; cv=none; b=gEZ1Q5sUQy9CQld+tmtFVNvEFDKVYLTxfWNPBnlQLOIvHrZ/0Os4e0Bv9m9iykcxzcN0RHsCsX0uWc7LKipfRx4eZZ35NTXz0zybV+ut192Wye5rhtiloxtxNwP1zxl7Va6aDnnoLzkePizHBweazgo/HYq+zrqpea9aNd63Kfk=
+	t=1725875049; cv=none; b=KmKj8byHsOdADWrYh7Ckj2oLQnYgKnsERMKee0POL9ncvPJBJc90wZg8wcqaeCCJ4cff4sOLpr+VhnEisbRFVhDKuvtb5/hb3g0kmDNSu8bc4O7LtqFn9H9c/pcECAZKJ+exDSxTFLLnbBKKTwtmINaiwRHMXMZ+4SZcMJHWhbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725875051; c=relaxed/simple;
-	bh=h5LA/enNgw1sNFYXeart0ZorY5rVj4crVb/Vfqx8aUI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lP7TkxGkwmaYG3OWHslPTLnAgEo1lp8N8oiHHqohpHNQhD2kHBJ7cVGV5hCxwd6UtKSptZb5vYkQq7KVYysUptmmXxwOaWAfRPpb4ApcX6Lr3WgtnL0D9Ld1SbFE4kFD3fsPQ6C9jhTfUoPe+oXGGM4aR4RTg0Xp1F4nO7WXFV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=HA1fYfiy; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725875050; x=1757411050;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=h5LA/enNgw1sNFYXeart0ZorY5rVj4crVb/Vfqx8aUI=;
-  b=HA1fYfiypLp2Xd0x+Tbo5DuzRn63fI5PiZz7WFnXD/MfgwWppH/ou7IA
-   K/mPqBbMe13EpuzQdojyXUt5d+GKEkwrbWAlXDLIPC1TWBCNR1qimNE61
-   Ik5yQqA04nYhh5orvoQRVNuGyr2uIFlwnvxH8qXUdOAlsLR6tgErTQ6xw
-   YpGWcobcwdU5UNCouyj97VuY4lRYcGSK0TqXQqMixm+Wb93DEDleZXHES
-   aoR1jzcqr6puAQl0DxHA8/MO8Y8/IJ/s5NR8U3XlBvCjgdKKuPzpvo8ND
-   b9/LEFHUnxZjyURkh/RVMpmaX3vcmRJ6nu8wuCKUOh/w7JmsSD23TzqM/
-   A==;
-X-CSE-ConnectionGUID: L5CatC7qR+24yrk0PqV2lQ==
-X-CSE-MsgGUID: JW9LqD7NTV6izxZSQ6janA==
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="262473465"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 02:44:09 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 9 Sep 2024 02:43:27 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 9 Sep 2024 02:43:25 -0700
-Date: Mon, 9 Sep 2024 09:43:24 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-	Lars Povlsen <lars.povlsen@microchip.com>, Steen Hegelund
-	<Steen.Hegelund@microchip.com>, <UNGLinuxDriver@microchip.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, <linux-phy@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH 8/9] dt-bindings: phy: sparx5: document lan969x in sparx5
- dt-bindings
-Message-ID: <20240909094324.u2aahgnrmxkxt7fc@DEN-DL-M70577>
-References: <20240906-sparx5-lan969x-serdes-driver-v1-0-8d630614c58a@microchip.com>
- <20240906-sparx5-lan969x-serdes-driver-v1-8-8d630614c58a@microchip.com>
- <c0aa5342-a2af-4ac4-bc33-b6dbfff77f63@kernel.org>
- <20240909082241.hvw3a7yig3pujrsk@DEN-DL-M70577>
- <ee4d4375-873b-4b9c-b694-f0191e5c2c54@kernel.org>
+	s=arc-20240116; t=1725875049; c=relaxed/simple;
+	bh=bX5jM3kyQKkVdtMEpnz0qCHRxu0QYubOxMm9Z4e9e5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZmaPe7rrX3bjmDw0RNF4jkhSdmRwY98K0Ky7YxffPlyXRBsaqqE5CJCSnR83HT3Yg3/tJpI9/lgWE5OvDcq7v+UFMZw+XBcdMPl1Olle5L0J5mr8XcLVmdCOtiSZMyBGELyeHU7BSeYtFeFc2KPVbQCieYgZC/L4jOQ8ITYuboM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=erF4b8WV; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f75b13c2a8so23618201fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 02:44:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725875045; x=1726479845; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ayxt9tW30pARsBtY4uNjtVx6woJrfLpJGoVganqLqLs=;
+        b=erF4b8WVYYjPBBInFSA5pdPTCmm8ktqbUjqKsGrppLo+LC/gX4YB7cVT4dQW2zbSEF
+         DJOPr4Ckb++NmzuVVxl68oxyc/taBSqCauZCybvuWvTWOXye+G1jDEkGV91kse94tmFm
+         1lX1V4F78W789A4wMYkQjlnji0+hQd6E6UgzqPZO9DXTLhBAU73OFA1JwyJtBR8GTahL
+         Lw5Y7XjgZNses3QmN47MGQwHcQa0rqLOvbU7MwF0QVhuw7Rmu+UCS7/+kpsZLGkklWH7
+         2/wSiLvpXI4WdvIXhtBPeWMO7EZDAiH8TsD24RbVyl8wq6uvQzoyenekgvRmY/D9uG2/
+         8bXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725875045; x=1726479845;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ayxt9tW30pARsBtY4uNjtVx6woJrfLpJGoVganqLqLs=;
+        b=iZfdluEQE9YBNvgd0eMxWwhsyn+pFW+rcICaHxjc3YyDxKjbDTK1+3LOOAaEZhClSq
+         gqdiwoij9Vg4cd31AG+an6SlHOL7hpipDeKap206nB2VxRBYVaHKHv+QjqnoUZJ5uSUb
+         dKc8A867jcaarGiVQ1gNcxRe/p9zYa0kPEtIs6KpKJIqgIq9k+uZB/E5hTv5O8+acvkn
+         0ppGzXIdQ2ry1SxoK2/Wpz8U68RNA4EyJ9pRUkdfc7FIpR49bdNE11mU+5AtVA85Dxgu
+         BP+Pkqi84+5pDbZnraUMCZSLldwYbPVlAtdwPHo6GvdQo/iXfNsoBwK9aNWMvoHVSgCP
+         1uTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViAbDpbrNE+1PZKYR6WAvVPnKawh7xjofbwDeX7GTQEEy7r8YD7MNNDyzipVnA985FnlGFClc1KwbWkPQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNWO4kIDqJjtfFabVaQq6Hg8CJzuZtRogWeLYT6noyyGASgxKo
+	rKMpWLWc2bvuaGPKnCnTje/MV4absHW0Hq1BNKxIAiVarWas825RX8ER0BWJGoQ=
+X-Google-Smtp-Source: AGHT+IFfJZf4aCicpleqZE+fxLlnGBGZEfKHivmNdx0kcBfFkbzhf0hjKD5P+CTHE0X5P4PgDl4WVQ==
+X-Received: by 2002:a05:651c:211e:b0:2ef:251f:785 with SMTP id 38308e7fff4ca-2f751eb30d8mr74440981fa.1.1725875044071;
+        Mon, 09 Sep 2024 02:44:04 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75c098cd3sm7416661fa.113.2024.09.09.02.44.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 02:44:03 -0700 (PDT)
+Date: Mon, 9 Sep 2024 12:44:02 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>, 
+	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>, 
+	Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Asutosh Das <quic_asutoshd@quicinc.com>, 
+	Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
+	Bart Van Assche <bvanassche@acm.org>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Eric Biggers <ebiggers@kernel.org>, 
+	"Theodore Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Gaurav Kashyap <quic_gaurkash@quicinc.com>, 
+	linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dm-devel@lists.linux.dev, linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v6 09/17] soc: qcom: ice: add HWKM support to the ICE
+ driver
+Message-ID: <ivibs6qqxhbikaevys3iga7s73xq6dzq3u43gwjri3lozkrblx@jxlmwe5wiq7e>
+References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
+ <20240906-wrapped-keys-v6-9-d59e61bc0cb4@linaro.org>
+ <7uoq72bpiqmo2olwpnudpv3gtcowpnd6jrifff34ubmfpijgc6@k6rmnalu5z4o>
+ <66953e65-2468-43b8-9ccf-54671613c4ab@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ee4d4375-873b-4b9c-b694-f0191e5c2c54@kernel.org>
+In-Reply-To: <66953e65-2468-43b8-9ccf-54671613c4ab@linaro.org>
 
-> >>>    compatible:
-> >>> -    const: microchip,sparx5-serdes
-> >>> +    enum:
-> >>> +      - microchip,sparx5-serdes
-> >>> +      - microchip,lan969x-serdes
-> >>
-> >> It seems there is no lan969x SoC/chip. Are you sure you are using
-> >> correct naming, matching what kernel is using? Maybe you just sent
-> >> whatever you had in downstream (hint: that's never a good idea).
-> >
-> > You are right. There is no upstream support for lan969x SoC yet. The
-> > upstreaming of the lan969x SoC has just begun, and this series is part
-> > of that upstreaming effort. The lan969x switch driver (not submitted
-> > yet) will depend on this SERDES driver, however, their functionality is
-> > really independent of each other. That is why I am also upstreaming the
-> > SERDES- and switch driver series independent of each other.
+On Mon, Sep 09, 2024 at 10:58:30AM GMT, Neil Armstrong wrote:
+> On 07/09/2024 00:07, Dmitry Baryshkov wrote:
+> > On Fri, Sep 06, 2024 at 08:07:12PM GMT, Bartosz Golaszewski wrote:
+> > > From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> > > 
+> > > Qualcomm's ICE (Inline Crypto Engine) contains a proprietary key
+> > > management hardware called Hardware Key Manager (HWKM). Add HWKM support
+> > > to the ICE driver if it is available on the platform. HWKM primarily
+> > > provides hardware wrapped key support where the ICE (storage) keys are
+> > > not available in software and instead protected in hardware.
+> > > 
+> > > When HWKM software support is not fully available (from Trustzone), there
+> > > can be a scenario where the ICE hardware supports HWKM, but it cannot be
+> > > used for wrapped keys. In this case, raw keys have to be used without
+> > > using the HWKM. We query the TZ at run-time to find out whether wrapped
+> > > keys support is available.
+> > > 
+> > > Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > > Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > ---
+> > >   drivers/soc/qcom/ice.c | 152 +++++++++++++++++++++++++++++++++++++++++++++++--
+> > >   include/soc/qcom/ice.h |   1 +
+> > >   2 files changed, 149 insertions(+), 4 deletions(-)
+> > > 
+> > >   int qcom_ice_enable(struct qcom_ice *ice)
+> > >   {
+> > > +	int err;
+> > > +
+> > >   	qcom_ice_low_power_mode_enable(ice);
+> > >   	qcom_ice_optimization_enable(ice);
+> > > -	return qcom_ice_wait_bist_status(ice);
+> > > +	if (ice->use_hwkm)
+> > > +		qcom_ice_enable_standard_mode(ice);
+> > > +
+> > > +	err = qcom_ice_wait_bist_status(ice);
+> > > +	if (err)
+> > > +		return err;
+> > > +
+> > > +	if (ice->use_hwkm)
+> > > +		qcom_ice_hwkm_init(ice);
+> > > +
+> > > +	return err;
+> > >   }
+> > >   EXPORT_SYMBOL_GPL(qcom_ice_enable);
+> > > @@ -150,6 +282,10 @@ int qcom_ice_resume(struct qcom_ice *ice)
+> > >   		return err;
+> > >   	}
+> > > +	if (ice->use_hwkm) {
+> > > +		qcom_ice_enable_standard_mode(ice);
+> > > +		qcom_ice_hwkm_init(ice);
+> > > +	}
+> > >   	return qcom_ice_wait_bist_status(ice);
+> > >   }
+> > >   EXPORT_SYMBOL_GPL(qcom_ice_resume);
+> > > @@ -157,6 +293,7 @@ EXPORT_SYMBOL_GPL(qcom_ice_resume);
+> > >   int qcom_ice_suspend(struct qcom_ice *ice)
+> > >   {
+> > >   	clk_disable_unprepare(ice->core_clk);
+> > > +	ice->hwkm_init_complete = false;
+> > >   	return 0;
+> > >   }
+> > > @@ -206,6 +343,12 @@ int qcom_ice_evict_key(struct qcom_ice *ice, int slot)
+> > >   }
+> > >   EXPORT_SYMBOL_GPL(qcom_ice_evict_key);
+> > > +bool qcom_ice_hwkm_supported(struct qcom_ice *ice)
+> > > +{
+> > > +	return ice->use_hwkm;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(qcom_ice_hwkm_supported);
+> > > +
+> > >   static struct qcom_ice *qcom_ice_create(struct device *dev,
+> > >   					void __iomem *base)
+> > >   {
+> > > @@ -240,6 +383,7 @@ static struct qcom_ice *qcom_ice_create(struct device *dev,
+> > >   		engine->core_clk = devm_clk_get_enabled(dev, NULL);
+> > >   	if (IS_ERR(engine->core_clk))
+> > >   		return ERR_CAST(engine->core_clk);
+> > > +	engine->use_hwkm = qcom_scm_has_wrapped_key_support();
+> > 
+> > This still makes the decision on whether to use HW-wrapped keys on
+> > behalf of a user. I suppose this is incorrect. The user must be able to
+> > use raw keys even if HW-wrapped keys are available on the platform. One
+> > of the examples for such use-cases is if a user prefers to be able to
+> > recover stored information in case of a device failure (such recovery
+> > will be impossible if SoC is damaged and HW-wrapped keys are used).
 > 
-> That's not exactly my point. Becayse lan969x appears. I claim you use
-> incorrect name, so are you sure you do not use wildcards?
-> Best regards,
-> Krzysztof
+> Isn't that already the case ? the BLK_CRYPTO_KEY_TYPE_HW_WRAPPED size is
+> here to select HW-wrapped key, otherwise the ol' raw key is passed.
+> Just look the next patch.
+> 
+> Or did I miss something ?
 
-Ahh.
+That's a good question. If use_hwkm is set, ICE gets programmed to use
+hwkm (see qcom_ice_hwkm_init() call above). I'm not sure if it is
+expected to work properly if after such a call we pass raw key.
 
-So the problem is the 'x' in lan969x, right? I think we have a habbit of
-documenting compatible strings like this in bindings. Anyway, what I can
-do is document the different part numbers in the bindings: lan9691,
-lan9692, lan9693, lan9694, lan9696 and lan9698.
+> 
+> Neil
+> 
+> > 
+> > >   	if (!qcom_ice_check_supported(engine))
+> > >   		return ERR_PTR(-EOPNOTSUPP);
+> > > diff --git a/include/soc/qcom/ice.h b/include/soc/qcom/ice.h
+> > > index 9dd835dba2a7..1f52e82e3e1c 100644
+> > > --- a/include/soc/qcom/ice.h
+> > > +++ b/include/soc/qcom/ice.h
+> > > @@ -34,5 +34,6 @@ int qcom_ice_program_key(struct qcom_ice *ice,
+> > >   			 const struct blk_crypto_key *bkey,
+> > >   			 u8 data_unit_size, int slot);
+> > >   int qcom_ice_evict_key(struct qcom_ice *ice, int slot);
+> > > +bool qcom_ice_hwkm_supported(struct qcom_ice *ice);
+> > >   struct qcom_ice *of_qcom_ice_get(struct device *dev);
+> > >   #endif /* __QCOM_ICE_H__ */
+> > > 
+> > > -- 
+> > > 2.43.0
+> > > 
+> > 
+> 
 
-/Daniel
-
+-- 
+With best wishes
+Dmitry
 
