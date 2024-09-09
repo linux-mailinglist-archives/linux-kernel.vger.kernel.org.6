@@ -1,261 +1,145 @@
-Return-Path: <linux-kernel+bounces-321602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E2B9971CB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:34:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE846971CB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BA02830C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:34:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A65BB218FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA86D1BAEF9;
-	Mon,  9 Sep 2024 14:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4858B1BAED7;
+	Mon,  9 Sep 2024 14:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JkkGe4fw";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="KXQG/KNe"
-Received: from a7-29.smtp-out.eu-west-1.amazonses.com (a7-29.smtp-out.eu-west-1.amazonses.com [54.240.7.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="E6A9u6bp"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4701BAEDB;
-	Mon,  9 Sep 2024 14:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E121BAEC0;
+	Mon,  9 Sep 2024 14:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725892479; cv=none; b=lOBwWI7nXMnVh+3MZvMizQ4ajsFMMxBZzkWxT15aQV+s0AP6Lk4oo8gHT6tipCVmHheVwZTtyYIk+qAwWOmEY2fhfNUAeyMHcIIcQlafZCve9r6hjkUiXv93LUEVYgRHzhld6TZ/qzPBzpmJtKtY8/mEx4quD5+u5pBXTVr5yTM=
+	t=1725892514; cv=none; b=UnbgI9crd8hB4xyjxAeVHBtEeI2NmH4iTHr6vK0VrK86Lh1Uye2Ylgq7eIuhoKR6w444lyj5d71DDb12efV1AKC/TeLvnyKgMWH+znhfwEx+u225sGCkMrUsEGf4o5sctaISmuHvOBS+G97FIbhnAJhyJvRYyi449611NgvXUOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725892479; c=relaxed/simple;
-	bh=jXdZd1nxFVpn9kF95ZTOmNkylHuRPykng36i8DK7+Z8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PfElStihLzNGQkYVunf0BrsuAHgCpV4+hK723JM99fFhDvcUMdKOwUQySGVsL5OL6hrRPofMFAARsa5liuNxefNmGexwIBYbKMzd2E1m8Cwcni7jufF80ft2Ys1iwx/QMzob2kK7qDxJJcPekA//ZtNfVkBV6eyyaa3LhFr5v74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JkkGe4fw; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=KXQG/KNe; arc=none smtp.client-ip=54.240.7.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1725892475;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=jXdZd1nxFVpn9kF95ZTOmNkylHuRPykng36i8DK7+Z8=;
-	b=JkkGe4fwOjSMlldzBxkXecc8UDlfDJP5j8GlDNl4lCKkV2yZE0JTFVf7Eaao6mXZ
-	3zi5l5QXjA/oSCPGRJKKQNsx8C6wNGR5UoBK6daAMRFqakZBIxrp0SE84Sgn+xn4ndj
-	pB1KMLY6F31pgALbc5hx8fs2feUadEPFsq7xFk1vv9cy2dL4PqhCL3BZ3xsEbEbKbwK
-	nFwDRRKv1PYfCxWmkWGjaHUn6U38wZRWQNVLC+5StumVSCjK2OR387It3uFYoOhtGp4
-	Aqk3zfEDyg1h1kjbKGqkyg6IfCQqkSHlDmdZTorf2OO6303/+aivlQ+yHHMGvz22U1v
-	1OFmmMXaNQ==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1725892475;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=jXdZd1nxFVpn9kF95ZTOmNkylHuRPykng36i8DK7+Z8=;
-	b=KXQG/KNeV5n/CTYFm+n1hNTTFPhukwIytvBx3kvJfenFH9bDHzysCn2GKrlCvvXT
-	OUYOnjvbuUzeUv3ZBTiPqikszKneJiH3kKoHLK4M+H8GBbjiPiI3NEwAPOtIbI/CN3M
-	dkgbr5fW9wxrcNCubmj5ZaQ3BXLYCp1WtgprHjSs=
-Message-ID: <01020191d7353903-ef7f28db-4285-473b-af03-38d1cc663042-000000@eu-west-1.amazonses.com>
-Date: Mon, 9 Sep 2024 14:34:35 +0000
+	s=arc-20240116; t=1725892514; c=relaxed/simple;
+	bh=C7bXknGyFxyMitrh31Cr/MolSopclgYoGfO3FYZG1hw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MZl1t1g8Wc9Y58t81P5/uSSizFmJb0NsCOzXtNnIJ5QvxjCCIzD61jIB56DcTetye+KUszXLbb26L5SLXXLxm597SuYmKOIZj/Ant8ncKm7gUwQGov/+WPdwJkDrh5kmhQN1Sb6C2M2rPqfvYgxnkGz25qLQxx8R67MBgE3HPLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=E6A9u6bp; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4895uBUC005605;
+	Mon, 9 Sep 2024 09:34:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=T2HTchzqKQv0cV3UAK
+	mPXN4bhD8dnPssptBbdVsRfM0=; b=E6A9u6bpbdKagTlFrP/TR7JNkNBv4pGKUb
+	cl+FhT2GJhmeWwTestkjQeJxUZL2BJedjwBX6vsWmKydKhkmLUC64ILDaXc+J2c+
+	KkK02nHkB01TlzkndKERix3xqVcvbQnL8X73xkWDIgRQyaoAv0OCNxlIuMzLmX92
+	29xte2ewKtCwwkuSJsGEPyWuLryQ1clBrSpC/LNEdDj5VvAFhGe6jtg75uqJ8V3r
+	Y5LDSMVmmqEOuEOfs/NJNhx5z2+KPXIinywyBcN12JGjTa7z6KGVFWjXmWiPj8/H
+	+62wpDTmBp1wBZ+Xb91+CZvKqd0YJhYU+7QrbpGmW4aQsWCgkZWQ==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 41gm7x1qaa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 09:34:52 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Sep 2024
+ 15:34:50 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 9 Sep 2024 15:34:49 +0100
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id DAC1F820249;
+	Mon,  9 Sep 2024 14:34:49 +0000 (UTC)
+Date: Mon, 9 Sep 2024 15:34:48 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: "Liao, Bard" <bard.liao@intel.com>,
+        "Liao, Bard"
+	<yung-chuan.liao@linux.intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        "Kale, Sanyog R"
+	<sanyog.r.kale@intel.com>,
+        Shreyas NC <shreyas.nc@intel.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] soundwire: stream: fix programming slave ports for
+ non-continous port maps
+Message-ID: <Zt8HiDW0gs6hXDPY@opensource.cirrus.com>
+References: <20240729140157.326450-1-krzysztof.kozlowski@linaro.org>
+ <095d7119-8221-450a-9616-2df6a0df4c77@linux.intel.com>
+ <ZqngD56bXkx6vGma@matsya>
+ <b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com>
+ <f5110f23-6d73-45b5-87a3-380bb70b9ac8@linaro.org>
+ <SJ2PR11MB84242BC3EAED16BEE6B46F85FF932@SJ2PR11MB8424.namprd11.prod.outlook.com>
+ <acec443c-f9ab-4c1d-b1ab-b8620dfef77f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] arm64: dts: mediatek: Add MT8186 Ponyta
- Chromebooks
-To: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>, 
-	hsinyi@chromium.org
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, hsinyi@google.com, 
-	knoxchiou@google.com, krzk+dt@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	matthias.bgg@gmail.com, robh@kernel.org
-References: <CAJMQK-imYrDTuycVzQxkfbkZuHehE8uwc+qS2w=UDShETsBvEw@mail.gmail.com>
- <20240909023148.1677936-1-cengjianeng@huaqin.corp-partner.google.com>
- <20240909023148.1677936-3-cengjianeng@huaqin.corp-partner.google.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240909023148.1677936-3-cengjianeng@huaqin.corp-partner.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.09.09-54.240.7.29
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <acec443c-f9ab-4c1d-b1ab-b8620dfef77f@linaro.org>
+X-Proofpoint-GUID: McJ1BWxhzIXMwKxx7Iw_lx2naU0oC6P7
+X-Proofpoint-ORIG-GUID: McJ1BWxhzIXMwKxx7Iw_lx2naU0oC6P7
+X-Proofpoint-Spam-Reason: safe
 
-Il 09/09/24 04:31, Jianeng Ceng ha scritto:
-> MT8186 ponyta, known as huaqin custom label, is a
-> MT8186 based laptop. It is based on the "corsola" design.
-> It includes LTE, touchpad combinations.
+On Wed, Sep 04, 2024 at 01:43:50PM +0200, Krzysztof Kozlowski wrote:
+> On 03/09/2024 17:17, Liao, Bard wrote:
 > 
-> Signed-off-by: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
-> ---
-> Changes in v5:
-> - PATCH 2/2: Remove sku2147483647.
-> - Link to v4:https://lore.kernel.org/all/20240906085739.1322676-3-cengjianeng@huaqin.corp-partner.google.com/
+> >>>
+> >>> then dpn_prop[0].num = 1 and dpn_prop[1].num = 3. And we need to go
+> >>>
+> >>> throuth dpn_prop[0] and dpn_prop[1] instead of dpn_prop[1] and
+> >> dpn_prop[3].
+> >>>
+> >>
+> >> What are the source or sink ports in your case? Maybe you just generate
+> >> wrong mask?
+> > 
+> > I checked my mask is 0xa when I do aplay and it matches the sink_ports of
+> > the rt722 codec.
+> > 
+> >>
+> >> It's not only my patch which uses for_each_set_bit(). sysfs_slave_dpn
+> >> does the same.
+> > 
+> > What sysfs_slave_dpn does is 
+> >         i = 0;                          
+> >         for_each_set_bit(bit, &mask, 32) {
+> >                 if (bit == N) {
+> >                         return sprintf(buf, format_string,
+> >                                        dpn[i].field);
+> >                 }
+> >                 i++;
+> >         }                         
+> > It uses a variable "i" to represent the array index of dpn[i].
+> > But, it is for_each_set_bit(i, &mask, 32) in your patch and the variable "i"
+> > which represents each bit of the mask is used as the index of dpn_prop[i].
+> > 
+> > Again, the point is that the bits of mask is not the index of the dpn_prop[]
+> > array.
 > 
-> Chage since v3:
-> - No change.
+> Yes, you are right. I think I cannot achieve my initial goal of using
+> same dpn array with different indices. My patch should be reverted, I
+> believe.
 > 
-> Changes in v2:
-> - PATCH 2/2: Modify the dtb name without rev2.
-> - Link to v1:https://lore.kernel.org/all/20240902125502.1844374-1-cengjianeng@huaqin.corp-partner.google.com/
+> I'll send a revert, sorry for the mess.
 > 
-> ---
->   arch/arm64/boot/dts/mediatek/Makefile         |  2 +
->   .../mediatek/mt8186-corsola-ponyta-sku0.dts   | 23 ++++++++++
->   .../mediatek/mt8186-corsola-ponyta-sku1.dts   | 27 ++++++++++++
->   .../dts/mediatek/mt8186-corsola-ponyta.dtsi   | 44 +++++++++++++++++++
->   4 files changed, 96 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts
->   create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts
->   create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-> index 8fd7b2bb7a15..50b5cf04d3ae 100644
-> --- a/arch/arm64/boot/dts/mediatek/Makefile
-> +++ b/arch/arm64/boot/dts/mediatek/Makefile
-> @@ -58,6 +58,8 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-pumpkin.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-magneton-sku393216.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-magneton-sku393217.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-magneton-sku393218.dtb
-> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-ponyta-sku0.dtb
-> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-ponyta-sku1.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-rusty-sku196608.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-steelix-sku131072.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-steelix-sku131073.dtb
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts b/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts
-> new file mode 100644
-> index 000000000000..f6448e91436a
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts
-> @@ -0,0 +1,23 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright 2023 Google LLC
-> + */
-> +
-> +/dts-v1/;
-> +#include "mt8186-corsola-ponyta.dtsi"
-> +
-> +/ {
-> +	model = "Google Ponyta sku0/unprovisioned board";
 
-Is this a prototype that will never go into the wild?!
-Those machines will anyway be unavailable in the following months, so it looks
-like it's really useless to add them.
+Hi, apologies for being late to the party (was on holiday), but yeah
+this is breaking things for me as well and is clearly wrong.
+Agree probably best to revert.
 
-If that's not just a prototype, then nevermind, we can add it.
-
-> +	compatible = "google,ponyta-sku0", "google,ponyta", "mediatek,mt8186";
-> +};
-> +
-> +&i2c2 {
-> +	touchpad@2c {
-
-This is already inherited from mt8186-corsola-steelix.dtsi, so you simply need
-to disable the other trackpad.
-
-	trackpad@15 {
-		status = "disabled";
-	};
-
-> +		compatible = "hid-over-i2c";
-> +		reg = <0x2c>;
-> +		hid-descr-addr = <0x20>;
-> +		interrupts-extended = <&pio 11 IRQ_TYPE_LEVEL_LOW>;
-> +		vcc-supply = <&pp3300_s3>;
-> +		wakeup-source;
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts b/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts
-> new file mode 100644
-> index 000000000000..203ee109bbf7
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts
-> @@ -0,0 +1,27 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright 2023 Google LLC
-> + */
-> +
-> +/dts-v1/;
-> +#include "mt8186-corsola-ponyta.dtsi"
-> +
-> +/ {
-> +	model = "Google Ponyta sku1 board";
-> +	compatible = "google,ponyta-sku1", "google,ponyta", "mediatek,mt8186";
-> +};
-> +
-> +&i2c2 {
-> +	touchpad@15 {
-
-Same comment as the other one.... but here it will be
-
-	trackpad@2c {
-		status = "disabled";
-	};
-
-
-Regards,
-Angelo
-
-> +		compatible = "elan,ekth3000";
-> +		reg = <0x15>;
-> +		interrupt-parent = <&pio>;
-> +		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-> +		vcc-supply = <&pp3300_s3>;
-> +		wakeup-source;
-> +	};
-> +};
-> +
-> +&usb_c1 {
-> +	status = "disabled";
-> +};
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi b/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi
-> new file mode 100644
-> index 000000000000..59594022331e
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi
-> @@ -0,0 +1,44 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright 2023 Google LLC
-> + */
-> +
-> +/dts-v1/;
-> +#include "mt8186-corsola-steelix.dtsi"
-> +
-> +&keyboard_controller {
-> +	function-row-physmap = <
-> +		MATRIX_KEY(0x00, 0x02, 0)	/* T1 */
-> +		MATRIX_KEY(0x03, 0x02, 0)	/* T2 */
-> +		MATRIX_KEY(0x02, 0x02, 0)	/* T3 */
-> +		MATRIX_KEY(0x01, 0x02, 0)	/* T4 */
-> +		MATRIX_KEY(0x03, 0x04, 0)	/* T5 */
-> +		MATRIX_KEY(0x02, 0x04, 0)	/* T6 */
-> +		MATRIX_KEY(0x01, 0x04, 0)	/* T7 */
-> +		MATRIX_KEY(0x00, 0x04, 0)	/* T8 */
-> +		MATRIX_KEY(0x00, 0x01, 0)	/* T9 */
-> +		MATRIX_KEY(0x02, 0x09, 0)	/* T10 */
-> +		MATRIX_KEY(0x01, 0x09, 0)	/* T11 */
-> +		MATRIX_KEY(0x01, 0x05, 0)	/* T12 */
-> +	>;
-> +
-> +	linux,keymap = <
-> +		CROS_STD_MAIN_KEYMAP
-> +		MATRIX_KEY(0x00, 0x02, KEY_BACK)
-> +		MATRIX_KEY(0x03, 0x02, KEY_REFRESH)
-> +		MATRIX_KEY(0x02, 0x02, KEY_ZOOM)
-> +		MATRIX_KEY(0x01, 0x02, KEY_SCALE)
-> +		MATRIX_KEY(0x03, 0x04, KEY_SYSRQ)
-> +		MATRIX_KEY(0x02, 0x04, KEY_BRIGHTNESSDOWN)
-> +		MATRIX_KEY(0x01, 0x04, KEY_BRIGHTNESSUP)
-> +		MATRIX_KEY(0x00, 0x04, KEY_PLAYPAUSE)
-> +		MATRIX_KEY(0x00, 0x01, KEY_MICMUTE)
-> +		MATRIX_KEY(0x02, 0x09, KEY_MUTE)
-> +		MATRIX_KEY(0x01, 0x09, KEY_VOLUMEDOWN)
-> +		MATRIX_KEY(0x01, 0x05, KEY_VOLUMEUP)
-> +	>;
-> +};
-> +
-> +&mt6366codec {
-> +	mediatek,dmic-mode = <1>; /* one-wire */
-> +};
-
-
+Thanks,
+Charles
 
