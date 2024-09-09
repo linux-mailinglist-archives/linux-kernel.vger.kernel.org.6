@@ -1,152 +1,115 @@
-Return-Path: <linux-kernel+bounces-320952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB6497126C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:45:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AB6971271
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 831C61C22AAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:45:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E920B1F233F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014F91B251C;
-	Mon,  9 Sep 2024 08:45:37 +0000 (UTC)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F1C1B1D7E;
+	Mon,  9 Sep 2024 08:46:30 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614B38248D;
-	Mon,  9 Sep 2024 08:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985738248D;
+	Mon,  9 Sep 2024 08:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725871536; cv=none; b=o4VRWAhfebsuvrYv2/sAwYVFIqKderk0XB/FfIUojGpkmgDtsCSPmyr/oqJl5JJue7Dj5MmLGOO+cTs5I4AzuCn8t3H91uUxyNhkBedctrdYBArXUPLoPt3wiyHLYPGeA7oE6EBvDncRKBajK47qSR7ItdQINgLJGfKQv5U/Ppw=
+	t=1725871590; cv=none; b=LiugymLk0EJyW4oDyy/mOtnMaMrP7Cf9/vNx0H9soPNLPAJsKjRoNkQVV83xCvpLs9gPzRVOQ39guCErjHbzDL+NUZBQe6a5QaYpHUDfiuhE1pOpQcNtYK02dte0wkgIclvYhEsfizlgtwODCK8Heq2rHcMIfHYTe/pquoG1fRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725871536; c=relaxed/simple;
-	bh=Hjz+O50xaShzsCzJW4dtU4OnYeaMBQRxnhVWq8j2+HA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aa4f+Uhtxtgtzvs7QO8yqtoxwZYV5AtwBuVsmN6c0+bDCVWY0NBBZJ40ReZN61pwyJQ5NpAbX+mL/O0YGNpOnKmLqFX7TUI+t8wjPeP3u+crw5+QNfMPVL72ZALEEvP0YN1UZljrcZ/nejDQpe6PUk25aCymjwJrEL+PfI3Iu9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1725871590; c=relaxed/simple;
+	bh=tcUl2hCs4k0Q7H9hc2H77LL+imHUhLH4tI42YObtmwI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jGVCplIFLmjniYTuNRl1c8j9sDVc7YfZfKaOKHAaSR/bE653BFAVX6lFmMTf1wOK4QBwHNoFLK3YnrINajZft0cAW+0CuxD9HC71Yn/xiz669+FaHdDSiWGvg5wixaCNfzg9Nfqup1T4gykxJMqL2V+D7AfkvGLoTUi8LSPAcXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6c49c9018ebso36300287b3.3;
-        Mon, 09 Sep 2024 01:45:34 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a80eab3945eso376854066b.1;
+        Mon, 09 Sep 2024 01:46:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725871533; x=1726476333;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OClx8FdjyQ2dYCnYDOmUx9fSX8zEhQ05R0o7VQeRBrI=;
-        b=ZiKNMaA8NsDgq8HkhVPz9KIWExFmAZxnMeA7ATPJ9vz8MIdToMrKP4M3aSYY73c8Ap
-         56BXt/EgXm6/IkdIKTVgcFSJx3yG6zH+JxmuovDRr6rgp3C9Gctah6UwFz0zk1PIromN
-         lKMx2nfvgIamwOsJh76ofwMV/11X3Ta+1ERbkCW/9hzzOcCJmZcEf0Htic0ECFM6ZWW6
-         86IhqxHnN5TFeuJfMTpc4hxv21/8lj9d1pukHxT7K2i7NM66TjIcY60YEYFy3O036Ls6
-         L7zw7gflfg1hcoSGzbcx+xS4LCWflSxllp/B0yIgTTfZPoD7R/kAbgFEXTZre3U8/3zv
-         /0mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLmVhBhptRs/9do85g+ztSXZe4++RxAM/NCJu2VwRDc9VgwpiQnK9w2XTczgpKwmr1GIPxMWoNoL6XRk49@vger.kernel.org, AJvYcCWW8WpJBHwQumkdDzUmqTTQjao7qYax7mwGfIpsUIEzcdHsMg0tKqnnatHBPcLdgcaL4IL5WagFnT48@vger.kernel.org, AJvYcCXqeDV/gXlab/1u9mApLiQp4L8EjCgA/tkq/+/2sJCPf1vHnNnEc8lX/rAYiuF26URQac5aIJgQI5rn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSVzh++tCxgWn6oXrAcqs6Ig4/xcaKLDhKK+y2CIyuJMoN6sLF
-	q22yKNzi174tPctYKbJmORJLpdSfC9Pt6YhADRd8Xpe3Iw/vR6/q+sKGlege
-X-Google-Smtp-Source: AGHT+IGb9gqXqKIN9fIUjDtAcew9X5va5dHZFxhuGA86ZEXsNGRocZ9KPLZ13REy0m/66vLNKPCBHA==
-X-Received: by 2002:a05:690c:2b10:b0:6d3:c634:f5eb with SMTP id 00721157ae682-6db44dc362bmr64560687b3.14.1725871532813;
-        Mon, 09 Sep 2024 01:45:32 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6db6ea880a8sm5739467b3.114.2024.09.09.01.45.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 01:45:31 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6d3c10af2efso37150937b3.0;
-        Mon, 09 Sep 2024 01:45:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU/5+KcGSF/B5mfjAZntafFkOc6xnWN3CewGIg01UjO5DoMHHNvoruFCjBLqW5NZLn/iLvzjT5hFdAV@vger.kernel.org, AJvYcCVjaRuaIhcDO14CrBdEk2cuiwECr07tOAFiZeqLICtEA82C8iR/SBwT0TduUtU8AtsID39Jj/EsD5jc@vger.kernel.org, AJvYcCWt5eubhF6bNBqNBIUI062bnoZv8ROV404VLp32vML36M1i9qJ1jYoTLrZFMM5vw+nUUweARfOqijA+YHdK@vger.kernel.org
-X-Received: by 2002:a05:690c:113:b0:64a:7040:2d8a with SMTP id
- 00721157ae682-6db44f10494mr80803477b3.23.1725871531566; Mon, 09 Sep 2024
- 01:45:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725871587; x=1726476387;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SmgQkL3g7cnLq/WT19j17mFChxgwR1TulLJx2sAHcA8=;
+        b=ZpnxW/Ks/Ju9PGXWywNOzd2UfjZtP6/IXl0Xczlv7NE7pEtrh076iyP10VERT8UWNa
+         Hu1ufptFwGKVyl5O4y/K7h6tQVVSLP0sumwBb/QGqldnpi2lYMeL7TQizd0+Z1BrsLC8
+         SjngvtgZIi3UCYzucl72f1tABHl2X6bXIh7qyv5PqSa5NknbxxRBAFUJkHtlnUDTcnn9
+         jUKyRKNSHZ+AeQE1iWAchKakouH6A87VvNeb50IS1d7TzD20u6/zXtwTIoETBDbyNbzP
+         tivD0xDrc6tNeLYi/0CVXppDh/SmpXdhehEzguHzHI9gIX79yo5vaWWRjWD7NcZkVFcy
+         yX+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCViTyrAkt5GI6wItwncyriN4kuJKU13L581BgkkntEwTVNHPxUTN8En9A60ur2vr2Aa2JaKx6rWonYwGbAxt6+a@vger.kernel.org, AJvYcCXLO97f9/+Vy6bOAJXpV7O+sDm/kM6jtWp+XfSWelbH1jbeMX8BfW6RrMZw1fTbpb9doHW4ovxW@vger.kernel.org, AJvYcCXkagtEgfZQOf3/mnr4qz2ajM1YuL9tgqXWbmNI9VxlIxfjGOiZldm+JcAa3+qkHaHnKyrkKW5nA99McK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSSXNRHdjG9DVGfZmTlRnbMHnGmqWQN8W3Ps0EMNqfXzWi6uRF
+	qrt7aCbgWlKjfM/MBsTUIyxtLN3U9iasqXpDHwvGZM5Gs7pj/qOw
+X-Google-Smtp-Source: AGHT+IHxHadVd7VvU1e32hlaXMljf9Ap9vwWQBYo9425NNaSR/MUDpXF1PwjCPOtWnO2AoT8TNlpKw==
+X-Received: by 2002:a17:907:3189:b0:a86:743e:7a08 with SMTP id a640c23a62f3a-a8a88667f0amr776575466b.31.1725871586044;
+        Mon, 09 Sep 2024 01:46:26 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25952632sm311706866b.60.2024.09.09.01.46.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 01:46:25 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: fw@strlen.de,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	pablo@netfilter.org
+Cc: rbc@meta.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org
+Subject: [PATCH nf-next v5 0/2] netfilter: Make IP_NF_IPTABLES_LEGACY selectable
+Date: Mon,  9 Sep 2024 01:46:17 -0700
+Message-ID: <20240909084620.3155679-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3985690b29340982a45314bdcc914c554621e909.1725536870.git.unicorn_wang@outlook.com>
- <202409080100.h6lX5Asm-lkp@intel.com> <MA0P287MB28225ECCF1D263A20917AD5DFE992@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-In-Reply-To: <MA0P287MB28225ECCF1D263A20917AD5DFE992@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Sep 2024 10:45:19 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXOAmCsdcvdo41qD9f4L=K2uZa6nJN7D5YOTTuCnBHtWA@mail.gmail.com>
-Message-ID: <CAMuHMdXOAmCsdcvdo41qD9f4L=K2uZa6nJN7D5YOTTuCnBHtWA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pwm: sophgo: add driver for Sophgo SG2042 PWM
-To: Chen Wang <unicorn_wang@outlook.com>
-Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, 
-	Chen Wang <unicornxw@gmail.com>, ukleinek@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, inochiama@outlook.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	chao.wei@sophgo.com, haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, 
-	chunzhi.lin@sophgo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Chen,
+These two patches make IP_NF_IPTABLES_LEGACY and IP6_NF_IPTABLES_LEGACY
+Kconfigs user selectable, avoiding creating an extra dependency by
+enabling some other config that would select IP{6}_NF_IPTABLES_LEGACY.
 
-On Mon, Sep 9, 2024 at 10:26=E2=80=AFAM Chen Wang <unicorn_wang@outlook.com=
-> wrote:
-> I wonder why CONFIG_PWM_SOPHGO_SG2042 is enabeld for m68k? Please remove
-> this.
+Changelog:
 
-Because it depends on ARCH_SOPHGO || COMPILE_TEST.
-So it can be enabled on all architectures when compile-testing.
+v5:
+ * Change the description of the legacy Kconfig (Pablo)
 
-> On 2024/9/8 1:58, kernel test robot wrote:
-> > kernel test robot noticed the following build warnings:
-> >
-> > [auto build test WARNING on 431c1646e1f86b949fa3685efc50b660a364c2b6]
-> >
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Wang/dt-bin=
-dings-pwm-sophgo-add-bindings-for-sg2042/20240905-201303
-> > base:   431c1646e1f86b949fa3685efc50b660a364c2b6
-> > patch link:    https://lore.kernel.org/r/3985690b29340982a45314bdcc914c=
-554621e909.1725536870.git.unicorn_wang%40outlook.com
-> > patch subject: [PATCH 2/2] pwm: sophgo: add driver for Sophgo SG2042 PW=
-M
-> > config: m68k-randconfig-r133-20240907 (https://download.01.org/0day-ci/=
-archive/20240908/202409080100.h6lX5Asm-lkp@intel.com/config)
-> > compiler: m68k-linux-gcc (GCC) 14.1.0
-> > reproduce: (https://download.01.org/0day-ci/archive/20240908/2024090801=
-00.h6lX5Asm-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
-rsion of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202409080100.h6lX5Asm-l=
-kp@intel.com/
-> >
-> > All warnings (new ones prefixed by >>):
-> >
-> >>> drivers/pwm/pwm-sophgo-sg2042.c:99:34: warning: 'sg2042_pwm_match' de=
-fined but not used [-Wunused-const-variable=3D]
-> >        99 | static const struct of_device_id sg2042_pwm_match[] =3D {
-> >           |                                  ^~~~~~~~~~~~~~~~
-> >
-> >
-> > vim +/sg2042_pwm_match +99 drivers/pwm/pwm-sophgo-sg2042.c
-> >
-> >      98
-> >    > 99       static const struct of_device_id sg2042_pwm_match[] =3D {
-> >     100               { .compatible =3D "sophgo,sg2042-pwm" },
-> >     101               { },
-> >     102       };
-> >     103       MODULE_DEVICE_TABLE(of, sg2042_pwm_match);
-> >     104
+v4:
+ * Remove the "depends on" part, which may come later in a separate
+   change, given its intrusive on how to configure selftests
+ * https://lore.kernel.org/all/20240829161656.832208-1-leitao@debian.org/
 
-Gr{oetje,eeting}s,
+v3:
+ * Make sure that the generate from  tools/testing/selftests/net/config
+   look the same before and after. (Jakub)
+ * https://lore.kernel.org/all/20240827145242.3094777-1-leitao@debian.org/
 
-                        Geert
+v2:
+ * Added the new configuration in the selftest configs (Jakub)
+ * Added this simple cover letter
+ * https://lore.kernel.org/all/20240823174855.3052334-1-leitao@debian.org/
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+v1:
+ * https://lore.kernel.org/all/20240822175537.3626036-1-leitao@debian.org/
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Breno Leitao (2):
+  netfilter: Make IP6_NF_IPTABLES_LEGACY selectable
+  netfilter: Make IP_NF_IPTABLES_LEGACY selectable
+
+ net/ipv4/netfilter/Kconfig | 8 +++++++-
+ net/ipv6/netfilter/Kconfig | 9 ++++++++-
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+-- 
+2.43.5
+
 
