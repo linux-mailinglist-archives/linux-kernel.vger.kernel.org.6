@@ -1,128 +1,130 @@
-Return-Path: <linux-kernel+bounces-321913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11287972104
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:37:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 618C8972109
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82655B235F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:37:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D60A1C23025
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541F4192B88;
-	Mon,  9 Sep 2024 17:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RTWnDtmh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I4T4gaW4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED0E198A38;
+	Mon,  9 Sep 2024 17:28:10 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291F718E02F;
-	Mon,  9 Sep 2024 17:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3810F192B74;
+	Mon,  9 Sep 2024 17:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902884; cv=none; b=EHLktguibw00IfqxlNm7F+NmHRDyjoseMp1O6lHYMWVhhFb2uUvX8DPwHaER0UBgSbtqlowf2xD1qL/4iF5j0JaFiRfmwuDWpJkX8WPfg9OPzZMZBeGeWaySCD3qgdaVjG0Wmj+yPf2HPcuNuEE8IW7J5BbkKdK3B96LDv/L5Es=
+	t=1725902889; cv=none; b=b5bCfC6tX3fvhq+UU0E55E7D4JOIsAxdzVxDgyy7D++piVy307U5yP7vhi5rSYJmiTGPfxpxNeYJzdruLlDDIM65DcoVfv0Ol47c+fWYOWz2fmoDLEiaHm04P5ts48uaLUcHddKt/QLh766q5qxsWyZnT/9RXZJqWGL9CZraTP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902884; c=relaxed/simple;
-	bh=aSAM4YOy+HTnclWr3Fnft6JvmjDRC5i0Oh3rGJe3sUo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=OnQ1UOznlfaRuJ1wNAlFlCCmMknORF0bk975K4EgXOYTPRuOkfH4EtGW7UXTtqqM62g0CsqgCG+5+UnUeKMmivUgZdnJ8i0vK8/Qowtb03dGaQoBE/aitrJFrU3+fvoGxRPly2v0SnoTg/R6DoTc3JDDrZuGHfQ/zEjzakpQGmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RTWnDtmh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I4T4gaW4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 09 Sep 2024 17:28:00 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725902880;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4v3BvG5qrI0wueZV5CJJEru4ls0gBnBXvmnya0hMswY=;
-	b=RTWnDtmhnUF9VBImxXeqPnlyo8JCZbtuonTZ6xmfKSj79MCeq7s0lho6RgqwxNcBTfFS4J
-	Mm3cmEy+ClUluab8+gjw3aJESQNdKvdBFz9ji24lqEnKIR5AdX/+taRUSXRmx5zlWttKtt
-	yySvNAuYdvDUIjwpAJpODBHASpqzbh0OECGI/vgrpkJ0FtW3L7asopq4QxZlJTZPvyhBpm
-	elzKyaIhhx2h+MpoVUhd827Hfiuj3HQ7s1ZH0/Fp8GvqsVR2Hjj/sTt05+Kj/vD7WuxZiR
-	I866FlaJBhjBfHlBH1SOzMStOrEAhy286QGU0WYQQs8wYKApR2ZEkRttDbftqA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725902880;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4v3BvG5qrI0wueZV5CJJEru4ls0gBnBXvmnya0hMswY=;
-	b=I4T4gaW42JYW9GfyjrHdlsUS4s3j2FYucn5W8Y6MhQ1Hm1yUsNYz5SBbiEB3LCNahfMMxW
-	+DQ7zOGTgAcOj/CA==
-From: "tip-bot2 for John Ogness" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/rt] printk: Add notation to console_srcu locking
-Cc: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>,
- "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240820063001.36405-2-john.ogness@linutronix.de>
-References: <20240820063001.36405-2-john.ogness@linutronix.de>
+	s=arc-20240116; t=1725902889; c=relaxed/simple;
+	bh=O4Iz7mP271R9IfVK4+eCyH7d6Ghv9pm1fo9cOAVTweA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ubtk8jNRrfen0afu/aKbFX0BVqcMi8VdsnNHuKRzOGPcXvm8FOV0i3LazQaezu2nqr566CgMUGWhaTpJWdUJuBftoj+097QLlP1D/GkzijoCXCqHlIha/F6D++qlZR7oQmrM6AYxKSyWmz65YHTasDQFzU9SanRTCzLgWe7MrfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4X2Yh44JjTz9sPd;
+	Mon,  9 Sep 2024 19:28:04 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id QisATpZx7e2u; Mon,  9 Sep 2024 19:28:04 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4X2Yh43NNVz9rvV;
+	Mon,  9 Sep 2024 19:28:04 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5EE818B770;
+	Mon,  9 Sep 2024 19:28:04 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id wkH-WeMfTZ0k; Mon,  9 Sep 2024 19:28:04 +0200 (CEST)
+Received: from [192.168.232.154] (PO25124.IDSI0.si.c-s.fr [192.168.232.154])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 03C138B76C;
+	Mon,  9 Sep 2024 19:28:03 +0200 (CEST)
+Message-ID: <b154ab25-70f6-46cd-99db-ccfbe3e13fb7@csgroup.eu>
+Date: Mon, 9 Sep 2024 19:28:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172590288017.2215.17291222253474528955.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the powerpc tree
+To: Masahiro Yamada <masahiroy@kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, "Rob Herring (Arm)"
+ <robh@kernel.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240909200948.70087f49@canb.auug.org.au>
+ <afa6f06a-8d92-4ac1-b5fe-d5b6ade3f740@csgroup.eu>
+ <20240910005808.2e355995@canb.auug.org.au>
+ <CAK7LNARMD=PR9x-OMN5QJHmeDdAzDM=2F47ccqdLHHGTxVq5Jg@mail.gmail.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <CAK7LNARMD=PR9x-OMN5QJHmeDdAzDM=2F47ccqdLHHGTxVq5Jg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the sched/rt branch of tip:
 
-Commit-ID:     eda25860bf6e71932311f1b5acdf8fc05cd84ff3
-Gitweb:        https://git.kernel.org/tip/eda25860bf6e71932311f1b5acdf8fc05cd84ff3
-Author:        John Ogness <john.ogness@linutronix.de>
-AuthorDate:    Tue, 20 Aug 2024 08:35:27 +02:06
-Committer:     Petr Mladek <pmladek@suse.com>
-CommitterDate: Wed, 21 Aug 2024 14:56:22 +02:00
 
-printk: Add notation to console_srcu locking
+Le 09/09/2024 à 18:23, Masahiro Yamada a écrit :
+> On Mon, Sep 9, 2024 at 11:58 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> Hi Christophe,
+>>
+>> On Mon, 9 Sep 2024 16:22:26 +0200 Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
+>>>
+>>> Le 09/09/2024 à 12:09, Stephen Rothwell a écrit :
+>>>> Hi all,
+>>>>
+>>>> After merging the powerpc tree, today's linux-next build (powerpc
+>>>> ppc44x_defconfig) failed like this:
+>>>>
+>>>> make[3]: *** No rule to make target 'arch/powerpc/boot/treeImage.ebony', needed by 'arch/powerpc/boot/zImage'.  Stop.
+>>>> make[2]: *** [/home/sfr/next/next/arch/powerpc/Makefile:236: zImage] Error 2
+>>>> make[1]: *** [/home/sfr/next/next/Makefile:224: __sub-make] Error 2
+>>>> make: *** [Makefile:224: __sub-make] Error 2
+>>>>
+>>>> It is not obvious to me what change caused this, so I have just left
+>>>> the build  broken for today.
+>>>>
+>>>
+>>> Bisected to commit e6abfb536d16 ("kbuild: split device tree build rules into scripts/Makefile.dtbs")
+>>
+>> Thanks for that.
+>>
+>> --
+>> Cheers,
+>> Stephen Rothwell
+> 
+> 
+> I squashed the following fix. Hopefully, it will be ok tomorrow.
+> 
+> 
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index 6385e7aa5dbb..8403eba15457 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -444,7 +444,7 @@ ifneq ($(userprogs),)
+>   include $(srctree)/scripts/Makefile.userprogs
+>   endif
+> 
+> -ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb.o %.dtbo.o,$(targets)),)
+> +ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb %.dtb.o
+> %.dtbo.o,$(targets)),)
+>   include $(srctree)/scripts/Makefile.dtbs
+>   endif
+> 
 
-kernel/printk/printk.c:284:5: sparse: sparse: context imbalance in
-'console_srcu_read_lock' - wrong count at exit
-include/linux/srcu.h:301:9: sparse: sparse: context imbalance in
-'console_srcu_read_unlock' - unexpected unlock
-
-Fixes: 6c4afa79147e ("printk: Prepare for SRCU console list protection")
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
-Link: https://lore.kernel.org/r/20240820063001.36405-2-john.ogness@linutronix.de
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
- kernel/printk/printk.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index c22b070..93c67eb 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -282,6 +282,7 @@ EXPORT_SYMBOL(console_list_unlock);
-  * Return: A cookie to pass to console_srcu_read_unlock().
-  */
- int console_srcu_read_lock(void)
-+	__acquires(&console_srcu)
- {
- 	return srcu_read_lock_nmisafe(&console_srcu);
- }
-@@ -295,6 +296,7 @@ EXPORT_SYMBOL(console_srcu_read_lock);
-  * Counterpart to console_srcu_read_lock()
-  */
- void console_srcu_read_unlock(int cookie)
-+	__releases(&console_srcu)
- {
- 	srcu_read_unlock_nmisafe(&console_srcu, cookie);
- }
+The build of ppc44x_defconfig is ok with this change
+on top of next-20240909
 
