@@ -1,98 +1,123 @@
-Return-Path: <linux-kernel+bounces-320995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFD7971323
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:17:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D620971326
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C5BB1C2275B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:17:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E24BC281A08
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E09E1B2EDC;
-	Mon,  9 Sep 2024 09:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9AF1B372B;
+	Mon,  9 Sep 2024 09:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AImWo+aX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eBSqrw4/"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45C5176251;
-	Mon,  9 Sep 2024 09:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9790C1B2ED8;
+	Mon,  9 Sep 2024 09:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725873423; cv=none; b=AagxjGSGNMRsGX0pAZ0VhpcjTPtm6kQruzOwsRlDDGc9Jhjw0gEBg6Az7IksdaqehE3N0aPjza2v5qf9YIkooUxkCQxdf6qXs5mII6xe/yEF8exUKcDh3hZKodKIBMBG/0cVBI/lT4aT8Lw8OvOfOOJ7nHVb4+bfY6ZgrgXacvc=
+	t=1725873474; cv=none; b=YSLekTqOX8r8HsBOu8okL3mdsAdkvqKGdA8etcLa6k3U2ozCbXh7S/XA6Mh/tnFnTzMla40bTJBGITnxw9MmmFBg3l+0Hiaj3jXgxK6bqCRYLeVxu+Lqd0pA2dhFQFivlMVMBA6xw7VJZ9XaF5MZHYBZy6FB8sAbfXGdwDeqneQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725873423; c=relaxed/simple;
-	bh=UCclFN4DSuU1jgt9Ttymvx9iX/xdLRTfLdT7a53xE/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvXR0VRBtAUgLTb8MuDWEScoLCXtznjw9O3Vtzje6gTuGFwn8l82YV7zxBPtgG+lWzq0K2vKLTfgdGi3ecfaALErqAIW/FA9XulD3BRBnUBCTcM94UqW1Q7hQUbdB1jo6IJwfHdf6DGHBVH2gFXZ/k3+w4P5xFsjLPKq/TS6B7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AImWo+aX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE47C4CEC6;
-	Mon,  9 Sep 2024 09:17:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725873423;
-	bh=UCclFN4DSuU1jgt9Ttymvx9iX/xdLRTfLdT7a53xE/8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AImWo+aXG41BsTu9O9/XCvxNdY2Ux8mrQHze/dgvhRV0/b5f8lbikvlwC9xRX4/4Z
-	 5LK4H2pcYkRAeoOumgT/qRaycHFkMWh5ly7zzULMiTnd6n3e6yXZKrdnhYulklPyeu
-	 gv7ckVU7NnFsxGMC7z96oXVGu4j9qtnHmCtF3fZQJjzoSz26lsTPXgdmU6dPQkTNpq
-	 61wscV02GNR3s+nsSrUK4kK4QSgGKZl567tPe6eUtv5ZWaP3bHzq9SrEAmPJywk7Sa
-	 SnPu7O2s21iTbenMyvbWZWGzdKfh//uu7DzRF+D5I8HelW0rn1OuX9jTupSC6CI40R
-	 Y3W0t13OVBkIQ==
-Date: Mon, 9 Sep 2024 11:16:59 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the slab tree
-Message-ID: <20240909-organismus-sattbekommen-06332e10fcd1@brauner>
-References: <20240909171220.32e862e3@canb.auug.org.au>
- <af23f1d3-27de-4591-ab0a-02268ef547a3@suse.cz>
+	s=arc-20240116; t=1725873474; c=relaxed/simple;
+	bh=ehrj6/zILCe2VFbgx75mcaB5/hqaA9rzJieiqddh2ok=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=og+e945e218rvVTBN2ltqOPv6/+6S59mWLCMcA8K/NHwBcnfXVHfLYpMuepM84VNVLuZRC1LdjBdFqgohCqSUbaXa3An7XcMu9iglcBJOSI9UoMyfbLvbIbrvfnjcQAH2mMqTy2/6Zfkrv84B9gh3/izKoP1/4/HlAWHajoRShs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eBSqrw4/; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso47595895e9.1;
+        Mon, 09 Sep 2024 02:17:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725873471; x=1726478271; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HKXxK01BvPn3tPSYq0qYq1pxCR24sh+Mj4fZq1TzNLI=;
+        b=eBSqrw4/tgyF+oF2um8JLEIFO5fZcmQxMmLBElV89dVHwnBQTXbL269rGQhyXisSXl
+         TifRKKG59+N5Uf42BSEWXocYsM9ffh0w8SIWPTaCLNKf78wg2ysrcVZLvy0luSXV+edk
+         wBfTnqmZXPzB56JY0cqFT0iMb4GIOLrYZdf6hl5BE4EUSHiaC+nAeM00fSnS2UUa9T/2
+         UR7NXy3wB4GV1T1rgCQWIEaXF20zht6QnpbHsKFX7VdvP6JdkJGU6e7+ypjn7LHRTaGG
+         NNrJZqa8QtDZ6EXAkOXG2c1KnZxK0JNBCzcSsIc2LD+jggTcnP63q47pII+3WGGB7i0h
+         wnOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725873471; x=1726478271;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HKXxK01BvPn3tPSYq0qYq1pxCR24sh+Mj4fZq1TzNLI=;
+        b=EFznStmwdh12y5DxYKraKLk0BUwPt8j+OFHjV0ifcIDDRs/rLhR3mlpiL+QviAfJd0
+         M8EvAWNjFQhZ9+3xgRaKOAKSMTXTX4ph/TUlkOz0lEhAgp91R0Bj8Ivw70xdaiN7TuiX
+         khGjlVBfFcGpd3ZUO0I//Zc7r+kyJ8hztqx9oU58BUpfoej31ClvjvcvsnYnQKNNH0Tk
+         RyrRwpWyMrg3zlllRlrHXZrVNm9TaScbP4hvae7PgF4+jigVc6gi/u3piMridnS2QdSW
+         9q0vV2qEaESaIKQ+KOtuHhNnhtT25j+P2nCmxMshVvSs39HoEv/JllizIcFhFOVETvjy
+         TZxg==
+X-Forwarded-Encrypted: i=1; AJvYcCXL0ZNe5f/EmZwlbEk4hB7/nX4RV/TCWjKy8ezD8wmW1E2MLjzIfZmRA/ZzSOhJNSk3lVs=@vger.kernel.org, AJvYcCXTItiFnwqwLDat9783J2leSw9LddwhkcfK0yh5e+zh6/BGwGBXIeihOKMGuNL3rD5BCLj/TM9Q8jWKX99m@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN6LMTtBBdqV64BeLoloxD7mBq0Eti4RJWyLBkrLj1jVSVZjfZ
+	gA4Z7OD72ecOwD+iWqxIeBdQohDHxWRoEanbLrF558VEmNYjRn8I
+X-Google-Smtp-Source: AGHT+IFB2RG9lizAutfv6eDf132uOfQfkLQjPZI3jBzSEws56H95lG6uitH0gpxpoVuK9XGNJBriaQ==
+X-Received: by 2002:a05:600c:1d0e:b0:42c:bae0:f05f with SMTP id 5b1f17b1804b1-42cbae0f237mr6068655e9.13.1725873470507;
+        Mon, 09 Sep 2024 02:17:50 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb21a7esm70580955e9.4.2024.09.09.02.17.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 02:17:50 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 9 Sep 2024 11:17:48 +0200
+To: Tao Chen <chen.dylane@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Hou Tao <houtao1@huawei.com>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH bpf-next 0/2] bpf: Add percpu map value size check
+Message-ID: <Zt69PODgEkg3F1x9@krava>
+References: <20240909071346.1300093-1-chen.dylane@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <af23f1d3-27de-4591-ab0a-02268ef547a3@suse.cz>
+In-Reply-To: <20240909071346.1300093-1-chen.dylane@gmail.com>
 
-On Mon, Sep 09, 2024 at 09:18:57AM GMT, Vlastimil Babka wrote:
-> On 9/9/24 09:12, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > The following commits are also in the vfs-brauner tree as different
-> > commits (but the same patches):
-> > 
-> >   c0390d541128 ("fs: pack struct file")
-> >   ea566e18b4de ("fs: use kmem_cache_create_rcu()")
-> >   d345bd2e9834 ("mm: add kmem_cache_create_rcu()")
-> >   e446f18e98e8 ("mm: remove unused argument from create_cache()")
-> >   0f389adb4b80 ("mm: Removed @freeptr_offset to prevent doc warning")
-> > 
-> > These are commits
-> > 
-> >   f2b8943e64a8 ("fs: pack struct file")
-> >   d1e381aa30cb ("fs: use kmem_cache_create_rcu()")
-> >   ba8108d69e5b ("mm: add kmem_cache_create_rcu()")
-> >   a85ba9858175 ("mm: remove unused argument from create_cache()")
-> >   6e016babce7c ("mm: Removed @freeptr_offset to prevent doc warning")
-> > 
-> > in the vfs-brauner tree.
-> > 
-> > These duplicates are causing unnecessary comflicts ...
+On Mon, Sep 09, 2024 at 03:13:44PM +0800, Tao Chen wrote:
+> Check percpu map value size first and add the test case in selftest.
 > 
-> Thanks,
+> Change list:
+> - v1 -> v2:
+>     - round up map value size with 8 bytes in patch 1
+>     - add selftest case in patch 2
 > 
-> Christian told me merging the vfs.file branch (a necessary prerequisity for
-> one series in slab) would be ok as it was stable at that point. What
-> happened? If I do redo with a new merge, will that stay unchanged until the
-> merge window?
+> Tao Chen (2):
+>   bpf: Check percpu map value size first
+>   bpf/selftests: Check errno when percpu map value size exceeds
 
-Hm, that's very odd that the IDs changed. The only thing that I did was
-b4 trailers -u on the branch to quickly check whether I missed an RvBs
-or Acks. But there were none so I assumed that the commit ids wouldn't
-change. Let me check and rollback if that was the case.
+lgtm
+
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+
+jirka
+
+> 
+>  kernel/bpf/arraymap.c                         |  3 ++
+>  kernel/bpf/hashtab.c                          |  3 ++
+>  .../selftests/bpf/prog_tests/map_init.c       | 32 +++++++++++++++++++
+>  .../selftests/bpf/progs/test_map_init.c       |  6 ++++
+>  4 files changed, 44 insertions(+)
+> 
+> -- 
+> 2.25.1
+> 
+> 
 
