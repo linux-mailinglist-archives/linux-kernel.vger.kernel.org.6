@@ -1,229 +1,159 @@
-Return-Path: <linux-kernel+bounces-321150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7289D971536
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:21:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24EC797153D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE50AB24E7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:21:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25FDC1C20A0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67BD1B3F20;
-	Mon,  9 Sep 2024 10:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7B91B3F2C;
+	Mon,  9 Sep 2024 10:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cQnnboIV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AAJn5MOa";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cQnnboIV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AAJn5MOa"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vb+wSYzn"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7EF1AC8BF;
-	Mon,  9 Sep 2024 10:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CF81AC8BF
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 10:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725877299; cv=none; b=I5Tno9SVHaQC8rqm45TpAyPnYqRFgKAE51//EZYOcdMan6vKnFIZNhg6D/nJ/+ezz9kI/9uhuq9UqCWnKnGl7VkWX/vLuBi9UcBttME/pXbGxSHq9ETiQpTLpxKiXkN/6ku7EFi9uI6LS3GH4AUeQPwIE4M+zNbgZyUC4V1BnB0=
+	t=1725877445; cv=none; b=J+DOdAXPL8LSJ0yMqrYpPRwiXuPDtMSkZBGFG9pG5ctzG5kK+uxu0c1twitph6PK43SkV6dHkKpxb25UDB89SVxefelbEogPnXO6N9lXyjjItk+LSovHVDyNLDwe5uOKwJXr2gipTawAgxM72uAl732I5i5qVu6ALWux2jirsfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725877299; c=relaxed/simple;
-	bh=ejK0GbtAF+GSVLIFnAP+sjR3J5oxAOAx8bemhH4f7CE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BJ/7hW6+PI5/385JhsPvAI4tNvXvrLZxDrtHdEnuzgcdEcuPeD3f1OrHygDJhZdfs9g5qyew6zirdVAQfAjy6bbkSDV6ehTK8LnO24GBQOU+VbRF1ZId2oUfE/VL5a0kvm1rKYVBy6BGluzMp+y3ioR8QWT3z83A/2rxWaTJNoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cQnnboIV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AAJn5MOa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cQnnboIV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AAJn5MOa; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8252A1F7B0;
-	Mon,  9 Sep 2024 10:21:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725877295; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ez3YO4IDzShoayvYusyxy01T+IMorgiexfzzsj2ELEA=;
-	b=cQnnboIVh5x4b83VCBtKbm7fL9ifS/OFJWry9R7N8WCAdnl/C3H7+55O7ONp2DSNGdiFy1
-	Z+aJWgacGhZVOtEGElAmwG61Spip1DUNaPsuPX2hT7L3e4aHhXsa07lPtvsAwBbm/F/EzL
-	9MygEBLgjI6hAqEQhvDqOB7JBjbu5Zg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725877295;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ez3YO4IDzShoayvYusyxy01T+IMorgiexfzzsj2ELEA=;
-	b=AAJn5MOaE3ju8ZdR8NGWcIGYuI+MBAGOXkCOcEHvmjbyBEXe4mFmrpLTyFVt3IEcm2mI1c
-	BASMa36x/eFmELAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=cQnnboIV;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=AAJn5MOa
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725877295; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ez3YO4IDzShoayvYusyxy01T+IMorgiexfzzsj2ELEA=;
-	b=cQnnboIVh5x4b83VCBtKbm7fL9ifS/OFJWry9R7N8WCAdnl/C3H7+55O7ONp2DSNGdiFy1
-	Z+aJWgacGhZVOtEGElAmwG61Spip1DUNaPsuPX2hT7L3e4aHhXsa07lPtvsAwBbm/F/EzL
-	9MygEBLgjI6hAqEQhvDqOB7JBjbu5Zg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725877295;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ez3YO4IDzShoayvYusyxy01T+IMorgiexfzzsj2ELEA=;
-	b=AAJn5MOaE3ju8ZdR8NGWcIGYuI+MBAGOXkCOcEHvmjbyBEXe4mFmrpLTyFVt3IEcm2mI1c
-	BASMa36x/eFmELAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 53F4B13312;
-	Mon,  9 Sep 2024 10:21:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TXVVEy/M3mbOFQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 09 Sep 2024 10:21:35 +0000
-Date: Mon, 09 Sep 2024 12:22:22 +0200
-Message-ID: <874j6pazz5.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Leo Tsai <antivirus621@gmail.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	leo.tsai@cmedia.com.tw,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda: Add a new CM9825 standard driver.
-In-Reply-To: <875xr5b02r.wl-tiwai@suse.de>
-References: <20240909022340.7808-1-antivirus621@gmail.com>
-	<875xr5b02r.wl-tiwai@suse.de>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1725877445; c=relaxed/simple;
+	bh=vPREka0m2x4nHThAppIIysvM7KHGqmf5j2K3rxcXMW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g4IN/pzHiwMvSeOeA5xaLvH4o+ez8+6XmGpPUeMo9eHQ7oPYDd4SrR+/V79+WCIvEBHHM4wmQ5d3JvBTHVFs3XhsQvbPEHVpH61OFDq1jHBhM8OvUUWOSr4b4+DzXWaV/wUrn6SbUjshi+Cx1IO4J+stBUmVzE9MV3s/klsK4PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vb+wSYzn; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cba0dc922so3169925e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 03:24:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725877442; x=1726482242; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QQ5WQoxsyWzldYFB3jlr0SD6So4oXuBDifYXDyaGqRw=;
+        b=vb+wSYzn0cQ90uQPyxhV29fCWuks4EfFvgx/Nz7QN9Zw6Fz2fY8g+Dy7vDG00iDRGP
+         uk5obytghTlgttFlj1oLUemnSkazwWJ9aw766u+vF4vahi0U5vs4W0rA/G1Nf/Ol+Pdh
+         5O+CeNdDxsQ+z4uRgLsMhJ88AGHpege4k2cvMwJKKOhe30L/g6QaPZQyRmiItl60wyfF
+         gQYe2zFKhzQgSnqlIPlvASX3UDaYSmfmV7VRZaeiPMcCRviX+tQZA2nyKTCmm9Ura9+/
+         R4P1WpLXW+DKeKVAt2WZjkHX0hW2v7YCjFRbayTufRXnqep/uKQSVvh+uxQlYKlNebll
+         sI2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725877442; x=1726482242;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QQ5WQoxsyWzldYFB3jlr0SD6So4oXuBDifYXDyaGqRw=;
+        b=uK3s+P7ePf7ueiRsSpye6uvtvWexWX6tJ2Sl0ilKZ1MEt9J7vGpjtKOrfIMS5MRwn+
+         79hA83xiY8Lu4i/PD49pXMOpZ2RpAfqfIKoMeoasU7KOtQJC/Z+fMqccbJSvG6xfVFHw
+         xrpELCoCFYgSVjHUMscMdflrzB6iEzLTLsjUf70jZiAfpCLMeUIjaHAWM1PIFm845Qk7
+         Y4WFMszFHoxrrOdnb2ZXxKRoZfSOpmS6Xuq050ar8fsVgdKO6272jfebdispW7DAhRSp
+         3zghNuNhh/Hyv5gP9ElzmxpBnnH3mkEK40F3htGaAT9Zm/1lKoXj5Ci5Q8CBnYgfRQ7Z
+         ozoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGWqFOP5nT6rwjvrvUiQdLgncxB5Zfk7m43amvlNVeDDXbj1YxvnzALGvW7AseJBZVWmy6BXmLSwEI3RE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8p5//y3ubqh4zXMTvmQxILdhtYJ+nCDsjCEngIesxhI0qfKWP
+	kuHktSrbFz11+ucE7S4Zn6hQjb3y0iH7lpKJvINikz++mo9yjJQkRiJpnCvEXg==
+X-Google-Smtp-Source: AGHT+IHfxKW3kRyJln3ueSC5yVk7PxFQiVDNAL1/cpHkbHaLPgQ69SPDToYoOPL3BJYr8OQzW92e9A==
+X-Received: by 2002:a05:600c:3d88:b0:428:ec2a:8c94 with SMTP id 5b1f17b1804b1-42cad760ed1mr61712105e9.10.1725877441253;
+        Mon, 09 Sep 2024 03:24:01 -0700 (PDT)
+Received: from google.com (109.36.187.35.bc.googleusercontent.com. [35.187.36.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cadda5a07sm76931645e9.0.2024.09.09.03.24.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 03:24:00 -0700 (PDT)
+Date: Mon, 9 Sep 2024 11:23:56 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: mcgrof@kernel.org, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH] module: Refine kmemleak scanned areas
+Message-ID: <Zt7MvByqVqgQ8CSz@google.com>
+References: <20240906153856.22204-1-vdonnefort@google.com>
+ <ZtxenHsGPyDoYnzY@arm.com>
+ <Zt6mcvkzPI8WNgHl@google.com>
+ <Zt63aV2zmkOkwRc3@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 8252A1F7B0
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt63aV2zmkOkwRc3@arm.com>
 
-On Mon, 09 Sep 2024 12:20:12 +0200,
-Takashi Iwai wrote:
-> 
-> On Mon, 09 Sep 2024 04:23:40 +0200,
-> Leo Tsai wrote:
+On Mon, Sep 09, 2024 at 09:52:57AM +0100, Catalin Marinas wrote:
+> On Mon, Sep 09, 2024 at 08:40:34AM +0100, Vincent Donnefort wrote:
+> > On Sat, Sep 07, 2024 at 03:12:13PM +0100, Catalin Marinas wrote:
+> > > On Fri, Sep 06, 2024 at 04:38:56PM +0100, Vincent Donnefort wrote:
+> > > > commit ac3b43283923 ("module: replace module_layout with module_memory")
+> > > > introduced a set of memory regions for the module layout sharing the
+> > > > same attributes but didn't update the kmemleak scanned areas which
+> > > > intended to limit kmemleak scan to sections containing writable data.
+> > > > This means sections such as .text and .rodata are scanned by kmemleak.
+> > > > 
+> > > > Refine the scanned areas for modules by limiting it to MOD_TEXT and
+> > > > MOD_INIT_TEXT mod_mem regions.
+> > > > 
+> > > > CC: Song Liu <song@kernel.org>
+> > > > CC: Catalin Marinas <catalin.marinas@arm.com>
+> > > > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> > > > 
+> > > > diff --git a/kernel/module/debug_kmemleak.c b/kernel/module/debug_kmemleak.c
+> > > > index 12a569d361e8..b4cc03842d70 100644
+> > > > --- a/kernel/module/debug_kmemleak.c
+> > > > +++ b/kernel/module/debug_kmemleak.c
+> > > > @@ -12,19 +12,9 @@
+> > > >  void kmemleak_load_module(const struct module *mod,
+> > > >  			  const struct load_info *info)
+> > > >  {
+> > > > -	unsigned int i;
+> > > > -
+> > > > -	/* only scan the sections containing data */
+> > > > -	kmemleak_scan_area(mod, sizeof(struct module), GFP_KERNEL);
+> > > > -
+> > > > -	for (i = 1; i < info->hdr->e_shnum; i++) {
+> > > > -		/* Scan all writable sections that's not executable */
+> > > > -		if (!(info->sechdrs[i].sh_flags & SHF_ALLOC) ||
+> > > > -		    !(info->sechdrs[i].sh_flags & SHF_WRITE) ||
+> > > > -		    (info->sechdrs[i].sh_flags & SHF_EXECINSTR))
+> > > > -			continue;
+> > > > -
+> > > > -		kmemleak_scan_area((void *)info->sechdrs[i].sh_addr,
+> > > > -				   info->sechdrs[i].sh_size, GFP_KERNEL);
+> > > > +	/* only scan writable, non-executable sections */
+> > > > +	for_each_mod_mem_type(type) {
+> > > > +		if (type != MOD_DATA && type != MOD_INIT_DATA)
+> > > > +			kmemleak_no_scan(mod->mem[type].base);
+> > > >  	}
+> > > >  }
+> > > 
+> > > I lost track of how module memory allocation works. Is struct module
+> > > still scanned after this change?
 > > 
-> > The CM9825 is a High Definition Audio Codec.
-> > There are 2 independent stereo outputs, one of the stereo
-> > outputs is cap-less with HP AMP, and the other is line out to
-> > connect the active speaker. The inputs can be Line-in and MIC-in.
-> > 
-> > Signed-off-by: Leo Tsai <antivirus621@gmail.com>
-> > ---
-> >  sound/pci/hda/patch_cmedia.c | 268 +++++++++++++++++++++++++++++++++++
-> >  1 file changed, 268 insertions(+)
-> >  mode change 100644 => 100755 sound/pci/hda/patch_cmedia.c
-> > 
-> > diff --git a/sound/pci/hda/patch_cmedia.c b/sound/pci/hda/patch_cmedia.c
-> > old mode 100644
-> > new mode 100755
+> > That section being RW, it will be part of the MOD_DATA vmalloc and scanned.
 > 
-> You changed the file permission mistakenly here?
-> 
-> > index 2ddd33f8dd6c..3195261a7d2c
-> > --- a/sound/pci/hda/patch_cmedia.c
-> > +++ b/sound/pci/hda/patch_cmedia.c
-> (snip)
-> > +	{0x3C, AC_VERB_SET_AMP_GAIN_MUTE | 0x0a0, 0x2d},	/* Gain set */
-> > +	{0x3C, AC_VERB_SET_AMP_GAIN_MUTE | 0x090, 0x2d},	/* Gain set */
-> 
-> FWIW, those are equivalent with:
-> 	{0x3C, AC_VERB_SET_AMP_GAIN_MUTE, AC_AMP_SET_OUTPUT | AC_AMP_SET_RIGHT | 0x2d},	/* Gain set */
-> 	{0x3C, AC_VERB_SET_AMP_GAIN_MUTE, AC_AMP_SET_OUTPUT | AC_AMP_SET_LEFT | 0x2d},	/* Gain set */
-> 
-> > +static void cm9825_unsol_hp_delayed(struct work_struct *work)
-> > +{
-> > +	struct cmi_spec *spec =
-> > +	    container_of(to_delayed_work(work), struct cmi_spec, unsol_hp_work);
-> > +	struct hda_jack_tbl *jack;
-> > +	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
-> > +	bool hp_jack_plugin = false;
-> > +	int err = 0;
-> 
-> Both are unnecessary initializations.
-> 
-> > +static int cm9825_resume(struct hda_codec *codec)
-> > +{
-> > +	struct cmi_spec *spec = codec->spec;
-> > +	hda_nid_t hp_pin = 0;
-> > +	bool hp_jack_plugin = false;
-> > +	int err;
-> > +
-> > +	err =
-> > +	    snd_hda_codec_write(spec->codec, 0x42, 0,
-> > +				AC_VERB_SET_PIN_WIDGET_CONTROL, 0x00);
-> > +	if (err)
-> > +		codec_dbg(codec, "codec_write err %d\n", err);
-> > +
-> > +	/* hibernation resume needs the full chip initialization */
-> > +	if (cmi_is_s4_resume(codec))
-> > +		codec_dbg(spec->codec, "resume from S4\n");
-> 
-> Is the comment above correct?
-> It only shows a debug print and does nothing else, no?
-> 
-> > @@ -32,6 +252,53 @@ static const struct hda_codec_ops cmi_auto_patch_ops = {
-> >  	.unsol_event = snd_hda_jack_unsol_event,
-> >  };
-> >  
-> > +static int patch_cm9825(struct hda_codec *codec)
-> > +{
-> (snip)
-> > +	INIT_DELAYED_WORK(&spec->unsol_hp_work, cm9825_unsol_hp_delayed);
-> 
-> If you use the delayed work, it has to be cleared at the destructor
-> via cancel_delayed_work().  That is, you'd need the own ops.free
-> callback implementation.
-> 
-> And if doing so, it's better to put this initialization earlier (right
-> after the alloc of spec and its field initializations), so that you
-> can call cancel_delayed_work() unconditionally.
+> Ah, makes sense. I'm fine with this patch, it simplifies the code now
+> that we have mod->mem[type]. I wouldn't say it's a fix, though no
+> backporting needed.
 
-And last but not least: don't forget to put v2 prefix to the subject
-at the next submission, e.g.
-  Subject: [PATCH v2] ALSA: hda: ....
+Agreed, it's "fixing" because it was scanning unecessary regions, but it's not
+worth any backport.
 
+Aside, judging by the size of this function, I am not sure it's worth to keep
+a separated file, but the patch that introduced it didn't really explain why so
+I kept it that way.
 
-Takashi
+> 
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+
+Cheers!
+
+-- 
+Vincent
 
