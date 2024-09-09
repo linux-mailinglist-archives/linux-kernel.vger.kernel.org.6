@@ -1,120 +1,83 @@
-Return-Path: <linux-kernel+bounces-320475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38FE2970ADF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:01:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1A5970ADD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E51E8281DD1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:01:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 461BE281E82
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 00:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0560B641;
-	Mon,  9 Sep 2024 01:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAEDBA42;
+	Mon,  9 Sep 2024 00:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m1SKlNPW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="m9SMqLH/"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B3D184F;
-	Mon,  9 Sep 2024 01:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526064C8D;
+	Mon,  9 Sep 2024 00:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725843680; cv=none; b=NqJccD+vNo+bkVz+E+5m6jS6KUyLtFFWHJPAXBBUytUnOOQa85F5H+ZedBvLIGLujotLz8UmCDBjq4FAnx1Fz8au5uS89bqIyUdX4YTzHxpuSPK5vmvvWEfxy25mp3/AuqMd3UkP3cuMpuJLWz+YXx3z4DhAfHo6+RRdb1zqbmY=
+	t=1725843497; cv=none; b=YWNbJdT4xITvKSABPapZlW4J8jhWc2lpltiMaD5m3rdl3hNNyiBNKTaAAODLzKYWaH7T6uHE4aXRPuJ8JZaHOCDmfn26OllIF/d3BQ2SMtLQUBmhRcrGfe3a4Eblz2+ULRVNmKTks2Y5+liTwiAcKmLc/oBfCMFhnIDY/Hl8H8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725843680; c=relaxed/simple;
-	bh=Cfif+2grFsAgkHSxIqtVjnMKRz859fMvwDOX+OGEQa0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=M97K7M/F6qt2CEoIOJMFs1/j0ZJV7nFPTD2i0DocdUeW2MLiCE7n5mB7oWRxZtgAtMjhPSCcLfBLEOR8vZME1RJjwa6yiu5+wTvkqB2r0dyHIY9L8/SfG13peqG3dcREoqIA3TpbzA0hOgbMF5F8oj680Fjvt407nsH0UfzTR20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m1SKlNPW; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725843678; x=1757379678;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=Cfif+2grFsAgkHSxIqtVjnMKRz859fMvwDOX+OGEQa0=;
-  b=m1SKlNPWS8c4259RGMByKsb+hVEE43AOVEiXIm0VITLpfwiM9HGM4C1Y
-   pC94x9l2n4FhA9O781bv+k+jQL3qCvXEo/HosqZPwkuFbfeMyLilukn8F
-   LsAxBk872KS/vHZUPocgnfPJ2iCuKG7uiVKo29Ngws5meAXbRPgonfRwS
-   nQB3pQvEoP9sknxS8+dQan8lTEKT8tjjTSYQYE5PimmEHEenOkIWLDYMH
-   RXby3lNS/25/DZgqQ021FeZIqQMpOCEr+2bkCDv7XqOkUNNdpQZXlLtqA
-   5rkdqBMgWpBkazJthZGXkyyQeW9nRJ53UpEbJ2yju0lmoAOU+mzjOb0mC
-   w==;
-X-CSE-ConnectionGUID: 3jsTfUAGSzq0C4XnaBmOJQ==
-X-CSE-MsgGUID: MHGURW1jRoKhYflba03Mmg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="13433168"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="13433168"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 18:01:17 -0700
-X-CSE-ConnectionGUID: NdfFDBWRRW6RUDsVFOZwZQ==
-X-CSE-MsgGUID: IY2cAeqqTEuJRe1/9/hxWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="66296717"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 18:01:14 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  linux-cxl@vger.kernel.org,  Dan Williams <dan.j.williams@intel.com>,
-  David Hildenbrand <david@redhat.com>,  Davidlohr Bueso
- <dave@stgolabs.net>,  Jonathan Cameron <jonathan.cameron@huawei.com>,
-  Dave Jiang <dave.jiang@intel.com>,  Alison Schofield
- <alison.schofield@intel.com>,  Vishal Verma <vishal.l.verma@intel.com>,
-  Ira Weiny <ira.weiny@intel.com>,  Alistair Popple <apopple@nvidia.com>,
-  Andy Shevchenko <andriy.shevchenko@linux.intel.com>,  Bjorn Helgaas
- <bhelgaas@google.com>,  Baoquan He <bhe@redhat.com>
-Subject: Re: [PATCH -v3 1/3] resource: Fix region_intersects() vs
- add_memory_driver_managed()
-In-Reply-To: <20240907202458.dfe90bfee071021706af91eb@linux-foundation.org>
-	(Andrew Morton's message of "Sat, 7 Sep 2024 20:24:58 -0700")
-References: <20240906030713.204292-1-ying.huang@intel.com>
-	<20240906030713.204292-2-ying.huang@intel.com>
-	<20240907202458.dfe90bfee071021706af91eb@linux-foundation.org>
-Date: Mon, 09 Sep 2024 08:57:40 +0800
-Message-ID: <87le011w57.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1725843497; c=relaxed/simple;
+	bh=iE+6ZVQEpduPJZ0EQWoxP4+QOWd4RQ2I7AxeVxCK/B0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Dzh1taZXSPhStqta0XczppCCTpT8HI4tzgxUjDcnEAos9DLGgzWCREsPox6Fuo4ueABnaE/0fcCWx0Y9XLn32GGESDlQu2NIZs0QcKWopyepk5qxj6gbDaKZJgianlCFCzO55ZZ5d4Ri2Y7hcKl4Pl2xLo1abqwnckx0LW+RFCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=m9SMqLH/; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725843486; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=e7NFhvT4ecuuBq5k6KKrq/vr6KQwGdLAJzyV/MhRLD0=;
+	b=m9SMqLH/RNUTSbK0qZ41OacqVGvrqI26gXqRtsG0M1YVnIWZGL/gp6Fc9mRshzTdSlbDC32VihUZLytlQgOSmDPfVwBbYxvmHti0kik3snoj7qa1nkvFiJwSDUmx134f82kFof4TpyLElY1ue3G8tQ8YTcv1Lf6r0kbfZZs9co0=
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0WEVePk1_1725843485)
+          by smtp.aliyun-inc.com;
+          Mon, 09 Sep 2024 08:58:05 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] bcachefs: Remove duplicated include in backpointers.c
+Date: Mon,  9 Sep 2024 08:58:02 +0800
+Message-Id: <20240909005802.14125-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
 
-Andrew Morton <akpm@linux-foundation.org> writes:
+The header files bbpos.h is included twice in backpointers.c,
+so one inclusion of each can be removed.
 
-> On Fri,  6 Sep 2024 11:07:11 +0800 Huang Ying <ying.huang@intel.com> wrote:
->
->> On a system with CXL memory, the resource tree (/proc/iomem) related
->> to CXL memory may look like something as follows.
->> 
->> 490000000-50fffffff : CXL Window 0
->>   490000000-50fffffff : region0
->>     490000000-50fffffff : dax0.0
->>       490000000-50fffffff : System RAM (kmem)
->> 
->> Because drivers/dax/kmem.c calls add_memory_driver_managed() during
->> onlining CXL memory, which makes "System RAM (kmem)" a descendant of
->> "CXL Window X".  This confuses region_intersects(), which expects all
->> "System RAM" resources to be at the top level of iomem_resource.  This
->> can lead to bugs.
->> 
->> ...
->> 
->> Fixes: c221c0b0308f ("device-dax: "Hotplug" persistent memory for use like normal RAM")
->
-> Do you believe this should be fixed in earlier (-stable) kernels?
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=10783
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ fs/bcachefs/backpointers.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Yes.  I think that we should fix this in -stable kernels.  Although no
-severe bug will be triggered on x86 in the earlier kernels, it may be a
-real bug for some other architectures.
+diff --git a/fs/bcachefs/backpointers.c b/fs/bcachefs/backpointers.c
+index 21fdcde7e522..974f3464cd14 100644
+--- a/fs/bcachefs/backpointers.c
++++ b/fs/bcachefs/backpointers.c
+@@ -3,7 +3,6 @@
+ #include "bbpos.h"
+ #include "alloc_background.h"
+ #include "backpointers.h"
+-#include "bbpos.h"
+ #include "bkey_buf.h"
+ #include "btree_cache.h"
+ #include "btree_update.h"
+-- 
+2.32.0.3.g01195cf9f
 
---
-Best Regards,
-Huang, Ying
 
