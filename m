@@ -1,143 +1,209 @@
-Return-Path: <linux-kernel+bounces-320789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96871971033
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:49:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6496697103A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F33F1F227F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:49:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0EC8B20CD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCEA1B151D;
-	Mon,  9 Sep 2024 07:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661961B140B;
+	Mon,  9 Sep 2024 07:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D0YWHXAD"
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6G35EI4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70EE1B150B;
-	Mon,  9 Sep 2024 07:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B83176237;
+	Mon,  9 Sep 2024 07:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725868097; cv=none; b=AudAyrAmQi/Gd+qTICvOzhxUveRJ2CJNi/n6+eyENin0RmwKEmG6PQVfMosB4VNdc2QO1RIIiBx83pnRDcVoWZM9vSvYQcVZO7s9sS16AL1/ZpuVJIal187dqP/I9gVWkJP+xkHHWKsOzsURlE+tboiDpM+7o4yWM/uYWP5Zb44=
+	t=1725868170; cv=none; b=aym+sJeBrQTfcfuq3R65YAeJKgdQZsTxKUk4o0nx0CIHQBuoiapVPpQP5SaQJ8HA3Hb12TPF4ntT78NHLv1X25pjcgSaf9X5mkIPI63/Y11seJYmddz5CFgckW5BK/dmwtfIcmBOaZ1Mn7p8z5P9CykAsCcQKtvs5/WbfomILZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725868097; c=relaxed/simple;
-	bh=RCblciRLmG9vwIGMPBDV32VowG4pF6LjK3qZle6qcVI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jEyYo4+6W85NeWIr8c8pr7s5TCLtIrXlyHgxjpZvQ5XfSFE9GEYiLJq+RUyAq6vsDOAPgYZPWcPhNNFqeQk3dUyfqlkc3SdO2EbKxyA1DnVsw+y/CTHtdaVEGICjPKwUyetvk4WBcvi/3v47zvvfKc7y7CNKqihegYvCW11NVvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D0YWHXAD; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-84876d069acso1066330241.3;
-        Mon, 09 Sep 2024 00:48:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725868095; x=1726472895; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A9C1TrwRuNl2V3GdBORwdTZyl/hPud0NNpEnj3t5Hu0=;
-        b=D0YWHXADo8ECBmnz/ZTZ2yhNVTE569SJKPYclvx5KpStwYJ3l6WgK9iYmV1Z8MU/++
-         PkUTXQWG3M6hU7OSidujHRovcSA+wk4OALkly5sGs4daR7n00c9MBc7hOftFyij/0dL4
-         wajbiPPehSSnvPBQXKiutYpgZjaSh0p1wBCzH5I66gPKc51yocxrKxuWS8m3qdWkDrYU
-         S3qneWtcWEerxZt8jJ/LXKS1JmFc2h/EvxYDUSWJ0M1MDFLN8Je46lquY5tUjigA4UT0
-         a1Zkvk/WA0rurOpd/AnM/xg/ITxaYNL/88+sBN1RB/Buh2vRrPquyQA1YD8NCtX1iLH6
-         EX1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725868095; x=1726472895;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A9C1TrwRuNl2V3GdBORwdTZyl/hPud0NNpEnj3t5Hu0=;
-        b=PCENI+H1nWZ5DOel4WJcY1Jz+u5AQsdWnnIV6i8CbL+nZsV6oAUMf6wdrPkrdWnvKP
-         6KIL3XX4oADi8xKBwzQZL1+UEJv+iv4ESaMaBKSralXEn86yz8UbDGmY4C9CLNwTUf1W
-         LoOTvrtnsvq+V85MufzxhFl09vRdfnvMKmIJkHgwNzecQxsy962+ZBjAf21zZVS82rqo
-         SjxrkjKKyn7zf1D/eI411BHpjYvSrZXumvZBtlJ7OLTegBImdjAqZsPp6Ld8XiyXqWXI
-         vl+RY+mjCYNceXSF05FPKejU+36rU7D+3H+CFWfRWM8917t0a35C1ZmkOMhkik79qd5R
-         /EnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpYkKUPEXRL5JBjOeJfZ27JLZXHwY8AsxsyZFdGFd55roei2nffMyb77dxTne7rVJ60tvIFSqBWC2JSCAW@vger.kernel.org, AJvYcCWl390D6pnwMg40n0mbFtWQ+bwXtTcd6wRFTwa/8RSBhp6L/BJXUi7DaiEX8gjMnjTYxc78UqpfK58L0m+sVLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiCp78W/20kyEhUIIPiqiBTYoXXxWuw9quoGu6NlREamOD+Aga
-	C2BajFYY8Xg6ni30a8nf12ZupY3rQ9q2c9ARpxyEnabkzvensJ+yvARsjwIrC8oo9XOpbIY8USi
-	ImcL7L2nuyyQ9Re1aIaU1/dyC+Lo=
-X-Google-Smtp-Source: AGHT+IHiWIxeOUfdstmRt3zKkEtldlv+HPEGhxFdfwRbfddLjqQ4CbgWfszpdINyzfVt+SIxOKtfIyXhSXbma0f1ztw=
-X-Received: by 2002:a05:6102:3f44:b0:48f:89cc:dd2b with SMTP id
- ada2fe7eead31-49bde1960d3mr7916750137.11.1725868094457; Mon, 09 Sep 2024
- 00:48:14 -0700 (PDT)
+	s=arc-20240116; t=1725868170; c=relaxed/simple;
+	bh=FTuoSXELtLCOh5BnCjC8lJ3uQ2EFiM4zfdhfD7OGYyk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R1B61nTy15gabvjXa5hD6yMH2xy6ImZ1mwRtOlG3kPy/SXTQiUG+ncrs9pZSlq2IIKp/esibxkh3QFaBfGhyGP61mwz4i7WEF3EU4pHGEyb65U616ooFW9wgVSF9IL5lCiCTccLByu3Gq/wIpl5MTd/sZNRL3/klOf9JHR6wul0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6G35EI4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1A87C4CEC5;
+	Mon,  9 Sep 2024 07:49:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725868170;
+	bh=FTuoSXELtLCOh5BnCjC8lJ3uQ2EFiM4zfdhfD7OGYyk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=P6G35EI4u9pRe1w/qM1qhBsFQ5L+4nUO5mxTSi7q8deEABj0BreLIGiRUxCek6yOB
+	 16DLDRpng9/uy7Rc+PlJv+WRJz/bbtzEFMn0FXxubt6I9W++6UM0DBQTttM9c0vXtC
+	 O7V0tmKDmqYvEfS4mt068NW/MxmHVQcifhs/ClyW3+J5KSCDPTZ41WYPyj9EgNrU45
+	 fbtPv1AR/pjFcECOVOkhaz7ufTSehpmE/+IArHLP6TgEKWOWcjfLWWoFuFy8A0GdAF
+	 nE88UgpmQq+qwUzRxfja5RjO+Ej/+Zvx4BfebMol8dc11A6SstD7M6TwI9+F3NVU7e
+	 eCTgVaudPHhvA==
+Message-ID: <91f9c0fc-c9bc-43ac-917c-b1aa86f53f97@kernel.org>
+Date: Mon, 9 Sep 2024 09:49:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1725791361.git.christophe.jaillet@wanadoo.fr> <1aaff0efb601832cd11949653d5872e7e39fbd7f.1725791361.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1aaff0efb601832cd11949653d5872e7e39fbd7f.1725791361.git.christophe.jaillet@wanadoo.fr>
-From: Iskren Chernev <iskren.chernev@gmail.com>
-Date: Mon, 9 Sep 2024 10:48:03 +0300
-Message-ID: <CAL7jhicmTD5Ukwjwdpp14L9aoe4PeqNAUijGnhHZ+DDhetZxiA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] regulator: max77826: Constify struct regulator_desc
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: lgirdwood@gmail.com, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/7] dt-bindings: PCI: ti,am65: Extend for use with PVU
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-pci@vger.kernel.org, Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Bao Cheng Su <baocheng.su@siemens.com>, Hua Qian Li
+ <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Bjorn Helgaas <bhelgaas@google.com>
+References: <cover.1725816753.git.jan.kiszka@siemens.com>
+ <33d08f61fe9bd692da0eceab91209832bf16e804.1725816753.git.jan.kiszka@siemens.com>
+ <n5l36lo6at3yfbexqc5wcxgxop5wwfzldhhm43rwr6qy2epf7a@jq7l6wiyvydc>
+ <0f2c79b5-2aa8-4d4c-b568-e74876fd6ecd@siemens.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <0f2c79b5-2aa8-4d4c-b568-e74876fd6ecd@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Reviewed-by: Iskren Chernev <iskren.chernev@gmail.com>
+On 09/09/2024 08:48, Jan Kiszka wrote:
+> On 09.09.24 08:22, Krzysztof Kozlowski wrote:
+>> On Sun, Sep 08, 2024 at 07:32:28PM +0200, Jan Kiszka wrote:
+>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>>
+>>> The PVU on the AM65 SoC is capable of restricting DMA from PCIe devices
+>>> to specific regions of host memory. Add the optional property
+>>> "memory-regions" to point to such regions of memory when PVU is used.
+>>>
+>>> Since the PVU deals with system physical addresses, utilizing the PVU
+>>> with PCIe devices also requires setting up the VMAP registers to map the
+>>> Requester ID of the PCIe device to the CBA Virtual ID, which in turn is
+>>> mapped to the system physical address. Hence, describe the VMAP
+>>> registers which are optional unless the PVU shall be used for PCIe.
+>>>
+>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>>> ---
+>>> CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
+>>> CC: "Krzysztof Wilczyński" <kw@linux.com>
+>>> CC: Bjorn Helgaas <bhelgaas@google.com>
+>>> CC: linux-pci@vger.kernel.org
+>>> ---
+>>>  .../bindings/pci/ti,am65-pci-host.yaml        | 29 +++++++++++++++++--
+>>>  1 file changed, 26 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>> index 0a9d10532cc8..0c297d12173c 100644
+>>> --- a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>> +++ b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>> @@ -20,14 +20,18 @@ properties:
+>>>        - ti,keystone-pcie
+>>>  
+>>>    reg:
+>>> -    maxItems: 4
+>>> +    minItems: 4
+>>> +    maxItems: 6
+>>>  
+>>>    reg-names:
+>>> +    minItems: 4
+>>>      items:
+>>>        - const: app
+>>>        - const: dbics
+>>>        - const: config
+>>>        - const: atu
+>>> +      - const: vmap_lp
+>>> +      - const: vmap_hp
+>>>  
+>>>    interrupts:
+>>>      maxItems: 1
+>>> @@ -83,13 +87,30 @@ if:
+>>>      compatible:
+>>>        enum:
+>>>          - ti,am654-pcie-rc
+>>> +
+>>>  then:
+>>> +  properties:
+>>> +    memory-region:
+>>
+>> I think I said it two times already. You must define properties in
+>> top-level. That's how we expect, that's how dtschema works (even if it
+>> works fine otherwise, it's not always that case), that's how almost all
+>> bindings are written.
+> 
+> Look, if you have such rules, also enhance the checker, or people like
+> me will continue to work intuitively. Add reasoning along that as well,
 
-On Sun, Sep 8, 2024 at 2:41=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> 'struct regulator_desc' is not modified in this driver.
->
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security, especially when the structure holds some
-> function pointers.
->
-> On a x86_64, with allmodconfig:
-> Before:
-> =3D=3D=3D=3D=3D=3D
->    text    data     bss     dec     hex filename
->    3906    5808      16    9730    2602 drivers/regulator/max77826-regula=
-tor.o
->
-> After:
-> =3D=3D=3D=3D=3D
->    text    data     bss     dec     hex filename
->    9218     496      16    9730    2602 drivers/regulator/max77826-regula=
-tor.o
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> --
-> Compile tested only
-> ---
->  drivers/regulator/max77826-regulator.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/regulator/max77826-regulator.c b/drivers/regulator/m=
-ax77826-regulator.c
-> index 5590cdf615b7..376e3110c695 100644
-> --- a/drivers/regulator/max77826-regulator.c
-> +++ b/drivers/regulator/max77826-regulator.c
-> @@ -153,7 +153,7 @@ enum max77826_regulators {
->
->  struct max77826_regulator_info {
->         struct regmap *regmap;
-> -       struct regulator_desc *rdesc;
-> +       const struct regulator_desc *rdesc;
->  };
->
->  static const struct regmap_config max77826_regmap_config =3D {
-> @@ -187,7 +187,7 @@ static const struct regulator_ops max77826_buck_ops =
-=3D {
->         .set_voltage_time_sel   =3D max77826_set_voltage_time_sel,
->  };
->
-> -static struct regulator_desc max77826_regulators_desc[] =3D {
-> +static const struct regulator_desc max77826_regulators_desc[] =3D {
->         MAX77826_LDO(1, NMOS),
->         MAX77826_LDO(2, NMOS),
->         MAX77826_LDO(3, NMOS),
-> --
-> 2.46.0
->
+That would be ideal, but I also asked to do this twice. It does not
+matter if dtschema  or me tells you this, if you do not implement it.
+
+> would help further to reduce your review effort. The current situation
+> with rather fuzzy results from the checker and strange mechanisms inside
+> (see my maxItems finding) is not very helpful IMHO.
+> 
+> I this concrete case, I would add this item top-level, just to set
+> maxItems to 0 for ti,keystone-pcie? Not a pattern I'm finding anywhere.
+> Or do we have to allow memory-regions for all compatibles now?
+
+Is it really not suitable for all the compatibles? Maybe these are quite
+different devices in such case?
+
+But if it is not really suitable, then you can disallow it for other
+variants with :false. This is also explicitly documented in example-schema:
+https://elixir.bootlin.com/linux/v5.19/source/Documentation/devicetree/bindings/example-schema.yaml#L212
+
+> 
+> Sorry for all these iterations, but you should see from my questions and
+> actions where the problems in the concepts are.
+
+Best regards,
+Krzysztof
+
 
