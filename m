@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-321859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7148B972078
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:27:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4AA97207A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 790921C238DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:27:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87A751F246B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3016E17AE0C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410D517AE19;
 	Mon,  9 Sep 2024 17:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bHUPf8DW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1lyhCiQQ"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1UNT2jBN";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wPAZsjXo"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D35E16D4EF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3C816EB65;
 	Mon,  9 Sep 2024 17:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902864; cv=none; b=lAsZKTO62FJLq1/8vLE4lulPrc57X6fX9C5Qa9AMApRKucnpbnf3oM6Hi2Yn/10P7DPYeQWcREQuj+uA664734x/sDgcax26obi3Zy3/nuGkREKksdBSM8Mn/nz2Akz9fP9Tf9onM4ZJBS+wJyMKYcvp2oDiwK0vz8MvL4PulEg=
+	t=1725902864; cv=none; b=krI0aqRnkPB94P4AlRa0z8ykYod/p3NsYHUrTpIdGqfSkRt41oTCW9DjLJDfXBfA+WxbVRjR5m4D0QWiAWleIdB0ou9Eg8U92QmZ9CnNh+U6CYkbSNrR8tVQgvYfnk3qfZQl1bv9O3j4rwMrBtVt2gjQJKDhyEgBogB1D4VZ6f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725902864; c=relaxed/simple;
-	bh=e3SlZ48Ug/qyBlwz4BagnX1S1HA0L7fRwXOmN1MnTMY=;
+	bh=B/73IEAPLayYpPfWqYg+q4C3ZbnnOWHkVTEAilIiyVs=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=OMIhaePEU5i3+3OMZvsw+K0ugJzsx+UNfMfyOpNKYgXjSiYGvnvDkfx60K4GYi6NXMg28tQlHZ87hkN6ZiJCjTgzPkgQvBhGUqvijwyhh9pzMs4NC4KAjdl4JRkM/2qTAWB6M3g0qdpYaPalZTi86Hzxky0Q3fLHMtA30UZB4F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bHUPf8DW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1lyhCiQQ; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=XMRYmC1VnRk4N+avCrLSQK/KDpwfjpnOR3eHDynMVA5BctL/nLPhDHPjQffV4lUmqcMx6i8poJIKBHnlr4v3O2++v1GdEjA8uMScEhH3ZtJYa/JpA/fOtOrjG9l+zn4+cjCRDmtG2J8BOkCBHto7Ekf0Pi/iZLMDZ0E9cv53yOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1UNT2jBN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wPAZsjXo; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 09 Sep 2024 17:27:40 -0000
+Date: Mon, 09 Sep 2024 17:27:41 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1725902861;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rJPv4heQVyXkrdUR08FGZjgq5S7V/gSBJone79Y5OO0=;
-	b=bHUPf8DWZvq9bzOw+AGpdaeGpsWSeTMihOuXxj67vjswxo2+5yDU5ilXyHcfXq3AFQJF2s
-	vVlZyLbvByl7YQp7J+uEV0Bay0kdsoUK1zFZHS5iLKIOHq6yTOPrlhbFJujIgt9B216AO7
-	ctKqNBePU9KqIuNjhWdCK0yd2CbTtjARSO7+jrsB2Org0p+7ntpiNESXCKg8n5DFayUYBZ
-	80HeIhWnrrCTcRaetv1wIhfVsIT3OH8iOYVhMRi/tmjq3YWZZylI1V6RbvdtutrDOKDcGR
-	51l7xsJ1+umtjY0JuRKV+R2x008CcMkqyBV0uv32uwuwprKeg1sXM0E4K2PzLA==
+	bh=h5im82oGiUFihike5/eRPnXdi7Z+l4zd4Dc6yJCIw5A=;
+	b=1UNT2jBN89H6NtJSlsRpFz1dHtA28O7yfKLw/l0c8i5C1vqEg/Q8CZ91az3gzwz+LWH+MB
+	+D4FjhhPGMAQ/3F8K93Em/RKNbgHgPCGpMhGUQpEIyV90qszMR73urpmCNp86Y16636ayJ
+	GBDHAFgLj2cfFaty1xbyoIIsK7GhhXrYsEh1b3h8B4m1H8xIAfRa4yX4+gX++zRxCVZhib
+	qboxSe7LvUsrzEMax/6N3KR5yArXi98i0PSZHkDlZFiu/crRFc83gc5KP8ZvaunJ/xzopx
+	w3wtJnr7CR1fN62Ge0ZXvoj43ElLH5ZzGPL47DQQiGFRBNHxGIdEOidgan/NYw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1725902861;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,26 +52,26 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rJPv4heQVyXkrdUR08FGZjgq5S7V/gSBJone79Y5OO0=;
-	b=1lyhCiQQMT6TE40g+4ld4+AnqOYi9P1eMgczpCgWS0+aS/qThkHk3WB7yZkCezpsq7cNWp
-	QR7c23ghi3agHpDQ==
+	bh=h5im82oGiUFihike5/eRPnXdi7Z+l4zd4Dc6yJCIw5A=;
+	b=wPAZsjXoI8Bz5+c1hnSG0uAjzoojA0v7f7FB2NCDyeq730TPAiKYOmkMNyHRNJdn4gZ6LF
+	XsKlirdjxG05UODw==
 From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/rt] arm64: Allow to enable PREEMPT_RT.
+Subject: [tip: sched/rt] x86: Allow to enable PREEMPT_RT.
 Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240906111841.562402-3-bigeasy@linutronix.de>
-References: <20240906111841.562402-3-bigeasy@linutronix.de>
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240906111841.562402-2-bigeasy@linutronix.de>
+References: <20240906111841.562402-2-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172590286080.2215.12021157816973502206.tip-bot2@tip-bot2>
+Message-ID: <172590286111.2215.4810009143872895730.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,42 +81,41 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/rt branch of tip:
 
-Commit-ID:     699fd9104967cc3b0826bb0b64a9f1a496121786
-Gitweb:        https://git.kernel.org/tip/699fd9104967cc3b0826bb0b64a9f1a496121786
+Commit-ID:     70c5e36c0f431cab9059477c6b7d3ba02b289cd9
+Gitweb:        https://git.kernel.org/tip/70c5e36c0f431cab9059477c6b7d3ba02b289cd9
 Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate:    Fri, 06 Sep 2024 12:59:05 +02:00
+AuthorDate:    Fri, 06 Sep 2024 12:59:04 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Mon, 09 Sep 2024 19:24:11 +02:00
 
-arm64: Allow to enable PREEMPT_RT.
+x86: Allow to enable PREEMPT_RT.
 
 It is really time.
 
-arm64 has all the required architecture related changes, that have been
+x86 has all the required architecture related changes, that have been
 identified over time, in order to enable PREEMPT_RT. With the recent
 printk changes, the last known road block has been addressed.
 
-Allow to enable PREEMPT_RT on arm64.
+Allow to enable PREEMPT_RT on x86.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Will Deacon <will@kernel.org>
-Link: https://lore.kernel.org/all/20240906111841.562402-3-bigeasy@linutronix.de
+Link: https://lore.kernel.org/all/20240906111841.562402-2-bigeasy@linutronix.de
 
 ---
- arch/arm64/Kconfig | 1 +
+ arch/x86/Kconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a2f8ff3..e68ea64 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -99,6 +99,7 @@ config ARM64
- 	select ARCH_SUPPORTS_NUMA_BALANCING
- 	select ARCH_SUPPORTS_PAGE_TABLE_CHECK
- 	select ARCH_SUPPORTS_PER_VMA_LOCK
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 007bab9..8768d38 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -122,6 +122,7 @@ config X86
+ 	select ARCH_USES_CFI_TRAPS		if X86_64 && CFI_CLANG
+ 	select ARCH_SUPPORTS_LTO_CLANG
+ 	select ARCH_SUPPORTS_LTO_CLANG_THIN
 +	select ARCH_SUPPORTS_RT
- 	select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
- 	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION if COMPAT
- 	select ARCH_WANT_DEFAULT_BPF_JIT
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_CMPXCHG_LOCKREF		if X86_CMPXCHG64
+ 	select ARCH_USE_MEMTEST
 
