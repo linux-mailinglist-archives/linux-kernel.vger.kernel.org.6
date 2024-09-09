@@ -1,116 +1,169 @@
-Return-Path: <linux-kernel+bounces-320842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB54897113C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:09:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF70497113A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60707B22591
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:09:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BF4D1F25ACF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0C21B3B0F;
-	Mon,  9 Sep 2024 08:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC6F1B3750;
+	Mon,  9 Sep 2024 08:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="flXp6vxt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K6XxuNPB"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B8B1B2ED9
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB811B2EC9;
+	Mon,  9 Sep 2024 08:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725869227; cv=none; b=h5Pv67swv3a4srN5uOBQRNxslPb5BJFcsOfinERlSSnKX9j33Pb2vW3nzoy3iSyvg9oaEk54UnHVxKXFjSmfYoLSzpo4JxTK0G8UIjXwTtZQC9qX/iJkzOuOXtzi2WLTpUPbS+maF5DPCAP54RhNKIgMph7lekA9gvVUpd4cd/g=
+	t=1725869226; cv=none; b=efjiWxAS52gXBF93pL+nicxxiSXbhUO2baz6EIet2TI8UBIA1U59tkpHNVxgg/jLtfZ3ALMTZKWvaJBZKbIf+ljS5kJ/CF9HE3Y+SzlqzE1zUbJflxS296xFXzxYc04QwH25DdKgYIO+DfORjyKcrjDFF4im9A68cTnQNiQw/Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725869227; c=relaxed/simple;
-	bh=ynMS14lA2B7Xh4ng+Fh0LXLrThwwbRF5QeEvUeRiZX8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MLZik1LEK+DKBmYoiBjYAg6Y8Eq5xwOYkJ27yRtoWP7v3G5AwmXfFU0+apXR5frXyoiHbt91zLAhqogOrrlDbKyFVZ+oxcQIyr1rULYYlwPsOAu/mc7ZG1XPMt8aq+HikKTgVdr7aUvc9IQPqlBvIeiNkgae5y8cirIVb71Gctg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=flXp6vxt; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725869226; x=1757405226;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ynMS14lA2B7Xh4ng+Fh0LXLrThwwbRF5QeEvUeRiZX8=;
-  b=flXp6vxtfN9EiG7feuzIwGsstAMlvcgwfErI6vwoNkioywuMzOsjPkQX
-   wt1xoM4JmKmPkaH4wSZot2BxGwPNGsbMHwMxDfMdXV7iLKoD3x3o0j3Bm
-   /Phb2m/2iIyXzVo5c/DxND1Ixa9avWTbyOt0GqPORTztFLSC/agvd0w8G
-   U1ipWcV211EJxVfcxbdJNDn3HUuVTbqbJ2RlNK8kdhWTuJyMslo7MdOE/
-   KM0EFTEr4ytSQwZIryk+xxF5UwgDkvWOqQZafx2uHMYZDpRTsQJnT6j1L
-   phq1+KJ2M0AsHkMxKxJWXXGIgkGm+8M4cmE4Ik+kYH9RJ8vXxfJENVoh6
-   Q==;
-X-CSE-ConnectionGUID: bG2CwGcTQ8WKkQaWPQLNbw==
-X-CSE-MsgGUID: wyHgxN1dQNKG5W08pVVfqQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="24410620"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="24410620"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 01:07:06 -0700
-X-CSE-ConnectionGUID: naf7TqEaRQyhHEKh0xVieQ==
-X-CSE-MsgGUID: DYuxD+UNTbGoI1D6+UvZpQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="67327078"
-Received: from rfrazer-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.222.253])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 01:07:03 -0700
-From: Kai Huang <kai.huang@intel.com>
-To: dave.hansen@intel.com,
-	bp@alien8.de,
-	tglx@linutronix.de,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	hpa@zytor.com,
-	kirill.shutemov@linux.intel.com
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	pbonzini@redhat.com,
-	seanjc@google.com,
-	dan.j.williams@intel.com,
-	thomas.lendacky@amd.com,
-	rick.p.edgecombe@intel.com,
-	isaku.yamahata@intel.com,
-	ashish.kalra@amd.com,
-	bhe@redhat.com,
-	nik.borisov@suse.com,
-	sagis@google.com
-Subject: [PATCH v6 5/5] x86/virt/tdx: Remove the !KEXEC_CORE dependency
-Date: Mon,  9 Sep 2024 20:06:27 +1200
-Message-ID: <1280a4b722f34e92d4036c09998f927f2643055f.1725868065.git.kai.huang@intel.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1725868065.git.kai.huang@intel.com>
-References: <cover.1725868065.git.kai.huang@intel.com>
+	s=arc-20240116; t=1725869226; c=relaxed/simple;
+	bh=wQOWDq+q3g/E+MT+1ZFhrRuB4cfJ35DEN24egc4ZF0g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QYgbslYMZf/GBn1tTgyb3AygkSo958i0aQVVc+FgGvf2s5VFJSgXTB06dFSi4vcpJm19pu2pLfOnAJNAnBvlP7t4I9VjO7BiIxE8a2ZdWoOw2gyjvS9JJ10hb+WocZ0Ndp6E34rDj6EnvzudkCmbjPJ6HYwBs2stViC7ZRmtGXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K6XxuNPB; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71798a15ce5so2419562b3a.0;
+        Mon, 09 Sep 2024 01:07:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725869225; x=1726474025; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pZupFonouWROtHS3HaWQjpxjzwx+Zlawq9bnaKu7Dck=;
+        b=K6XxuNPBZ9jbJVY9BTIUddiVvdEC3pfQydl4qw71jfV8e8hszVCF/3HcP/9Z4N4wto
+         K8Ev94AiYe3Ue6YevQIe5j/Hl9YUWDX9D1tN8YvMPQ9vbmlWoAUST/Pzw4pA+ebBsycT
+         iowJGy1G3oeB7bqFA6B4NwdacjbxxEfxUuYoxUQnQKG+g1RmA3ro5icLMJGmj0z1DiDa
+         VEZ77txQKNjFszrTqv6sJ8NJo/KKdnE4ara2IyblKA0f/C4d28o2u80oz8ievOm2LT/Z
+         JRkAWE83RtNgAAb2kilLvrmEGVo/8+legYCmLFI1284Vwffi3DBARwa9BPuClfmDCW0C
+         Ma0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725869225; x=1726474025;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pZupFonouWROtHS3HaWQjpxjzwx+Zlawq9bnaKu7Dck=;
+        b=Iq/PtcHwC833CXxYrIQLKlCxlfChFlymKadYsiD5eKZFF9KnvSHjv8F9dUcg3iEZl0
+         AdesGbivKFSFyI26CAPB2+bgDTH7HhPBkw6AP9DGAeHIkusFYVEAZQgdbJTSUDq42wnM
+         fT/N4W3hws5/+M5OHMi/NQahalzW5s0EZK55SWZis2X/E8w7UOucfXS6LtRwP7KmrZf/
+         dyILsf2ciClJJ3fluNPmNx6RZPXKbammi6QHx39I9NI51moJuyQMmBSesy1pWd8PbCff
+         2yfFFZQeOGRE8KR7Qye/7LfOia8PX+0zSzQddKLS2XOXpawzfdZSZyHWrcemt2fhIAaf
+         /YRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVl7jneGuEJG9omCfGRoR2GaS4hejTXAWnWmp9ytOQDXPrEa1XuMDi/aw5X4GlipW03QpFM/kgaZV2ikw==@vger.kernel.org, AJvYcCWn716W03wthWCeOnIT8OI2bGU/elQkHe+S69fgQPT4dmzkw44R08x691iceGo6oDI4586ePJhuEzlRKIf1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsYGd2GyqWpK9zZy7VL9Dt9Wv3Il1CQmBnx0XqPgjDS2Yxggv8
+	xbkF8plqozqrs6SzlIYt8TUP7wzYPx+2lNaUoI3AZx9gFx2tFLXkH+1O740v9W6pI//OmeE+ViZ
+	GBHaF0DovSiOWHso9K6bHDxCpFgU=
+X-Google-Smtp-Source: AGHT+IHde/PTJ8kcNC5dNzzwyXIOZ8aI5c8r+w+iDb2GRZrsYJ/DA2HWSUZXWcjBfuIeTXjF35EzJF2B1B8inx/Cv1A=
+X-Received: by 2002:a05:6a20:9f0a:b0:1c8:de01:e7e5 with SMTP id
+ adf61e73a8af0-1cf1c0cce08mr16930698637.15.1725869224443; Mon, 09 Sep 2024
+ 01:07:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240908151742.2453402-1-sayyad.abid16@gmail.com>
+ <sllpurhdxfgducp5hb3rs7u5db76vy2wtmyha7uspskvvek463@tq2aq65qqw4x>
+ <CACVUEBmCBW7a3gyZ78ZyEtxHiFkie=3wuMz-+Oq_FfTjQX6AVw@mail.gmail.com> <edf29295-d360-4038-a490-3a5cbb8c28cd@kernel.org>
+In-Reply-To: <edf29295-d360-4038-a490-3a5cbb8c28cd@kernel.org>
+From: Sayyad Abid <sayyad.abid16@gmail.com>
+Date: Mon, 9 Sep 2024 13:36:29 +0530
+Message-ID: <CACVUEB=eQUFbDV80D7sPkK84FmnR7j66gRGvB8eusV_cz-QmAQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-binding: touchscreen: fix x-plat-ohm missing type definition
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marek Vasut <marex@denx.de>, Michael Welling <mwelling@ieee.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sayyad Abid <sayyad.abid16@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now TDX host can work with kexec().  Remove the !KEXEC_CORE dependency.
+On Mon, Sep 9, 2024 at 1:21=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On 09/09/2024 09:48, Sayyad Abid wrote:
+> > On Mon, Sep 9, 2024 at 12:02=E2=80=AFPM Krzysztof Kozlowski <krzk@kerne=
+l.org> wrote:
+> >>
+> >> On Sun, Sep 08, 2024 at 08:47:43PM +0530, Sayyad Abid wrote:
+> >>> This patch fixes the issue with x-plat-ohm missing a type definition.
+> >>> The patch adds the fix for this issue by adding value of this propert=
+y
+> >>
+> >> You repeated twice the same while it is unclear why this is missing.
+> > I must have overlooked it, my bad.
+>
+> Keep discussion public.
+I am away form my desktop and trying to reply with Gmail's client,
+I use mutt otherwise hence the trouble. I hit 'reply' instead of 'reply all=
+'.
+>
+> >>
+> >> Also:
+> >> Please do not use "This commit/patch/change", but imperative mood. See
+> >> longer explanation here:
+> >> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/=
+submitting-patches.rst#L95
+> > Okay, I'll refer to this article for any further patches. Thank you!
+> >>
+> >>
+> >>> should be a 32-bit unsigned integer.
+> >>>
+> >>> Signed-off-by: Sayyad Abid <sayyad.abid16@gmail.com>
+> >>>
+> >>> ---
+> >>>  .../devicetree/bindings/input/touchscreen/ti,tsc2005.yaml       | 2 =
+++
+> >>>  1 file changed, 2 insertions(+)
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/input/touchscreen/ti,t=
+sc2005.yaml b/Documentation/devicetree/bindings/input/touchscreen/ti,tsc200=
+5.yaml
+> >>> index 7187c390b2f5..98ff65cf9f9f 100644
+> >>> --- a/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.=
+yaml
+> >>> +++ b/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.=
+yaml
+> >>> @@ -38,6 +38,8 @@ properties:
+> >>>
+> >>>    ti,x-plate-ohms:
+> >>>      description: resistance of the touchscreen's X plates in ohm (de=
+faults to 280)
+> >>
+> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>
+> >> $ref should not be needed, so what is exactly missing? Provide some
+> >> sort of proof that you are fixing real issue.
+> > I ran dt_bindings_check on the file which resulted in a warning
+> > "x-plate-ohm : missing type definition", to resolve this warning I
+> > looked at the other yaml files in the ti,txc2005.yaml directory
+> > (/Documentation/devicetree/bindings/input/touchscreen/), Where I found
+> > out that one of the TI's touchscreen (ti,am3359) binding used $ref
+> > property for the similar "x-plate-resistance" property.
+> >
+> > Adding the $ref resolved the warnings.
+>
+> You run some older dtschema.
+I'll update this and check again.
+>
+> Anyway, each commit must explain why you are doing this. Whatever
+> warning you fix, you should mention it in the commit msg, because that's
+> the answer to "why?" part.
+>
+Yes, will keep this in mind for any further patches.
+> Best regards,
+> Krzysztof
+>
+Thank you for your time and input.
 
-Signed-off-by: Kai Huang <kai.huang@intel.com>
----
- arch/x86/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index d422247b2882..2da088202969 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1979,7 +1979,6 @@ config INTEL_TDX_HOST
- 	depends on X86_X2APIC
- 	select ARCH_KEEP_MEMBLOCK
- 	depends on CONTIG_ALLOC
--	depends on !KEXEC_CORE
- 	depends on X86_MCE
- 	help
- 	  Intel Trust Domain Extensions (TDX) protects guest VMs from malicious
--- 
-2.46.0
-
+--=20
+Abid
 
