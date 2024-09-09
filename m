@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-320476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 849CA970AE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:03:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7694970AE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D448CB2118C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:03:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4881F21688
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D693CA932;
-	Mon,  9 Sep 2024 01:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0C1B641;
+	Mon,  9 Sep 2024 01:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RmE0I9MK"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M+ao+fkS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D65101C8
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 01:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF20B184F
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 01:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725843788; cv=none; b=G0D73+qkv6ISQu7xVErKEB7oYhJT4RweATJvjiGwnUE/hfjtNwGZKfLuN9jD13IM2HU3XLNZr81aaLjWkGAtiaTsrvvkGlSHZfFvis2q0/Gvlou8w0mUdFqSH5kc1mIXSNQlD9nfFytrtwkZyIggrkGa1YRPskALD0sJ5Zy8lyg=
+	t=1725843929; cv=none; b=Sn2vt1gXFzx6fn7F6qY5607oWKscQmutuizpgAetb/Aoae0O7Fseufsumws6T8VCyERRfgyqJVpvRhPCbj5db/CwOIGimP+6F4RekhNFkZXPJxM/At5rKeesJ2ExPgZKV7aary/MPe62gb3F14eetw0avJJPuMYgiKNM+Pu/sFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725843788; c=relaxed/simple;
-	bh=khk30wY3xXyR9sRYV8s5FHMtDbhrQkXYCwdpJoT8eiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rRsNuY2Deb6NvLTKRXwYVee3b1qRLBY0alNDFVDYxHTxwOhx8ZyFf/4X0iAgl3Eic4Vp/3bo0eWavqg9a3Z4/BuOJ+vOzZ9bxFr0UGOfdnfq8InbqvC5KrokjYIM+8i4VuWHxBFq8CsUMWTvz8j3yN1UhZHLTzR9k73TBldWsfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RmE0I9MK; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cb1866c8fso1810945e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 18:03:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725843784; x=1726448584; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OV7VGKDNa+MYCPDaH3eYbggjB6/nkG30q/dMutycMh8=;
-        b=RmE0I9MKt9IrP4cELbF5MOoE1MKRs0+5B0DzxCD/Bi7/TeU31zFdvuwgC3IwE0s6xh
-         h6qWwkByJjFnnifO0Wldl1eIqI9GgseKtjU6PXeiyjVSq6f79a/dFTRBjqm1EwgoF0tv
-         q0/tzKVpdS7JEomTl1FvZj2YC+k3F4oYhfrIodZrPLU7Pqwx3dT6GBgIOonI6kM0p4hY
-         Pex36gk4Yr6JNLkRPeu/2CJcuoPMj2LPmY718qgO7+orCpcq6qKzxSKbgURK+LIGFOGS
-         EVQVyo7FAYIDHu7JBTSCTQyJwbTMmD3mtKBawre+wEbOyWkjAG5I4v2zvIkh8SAAnr8c
-         LaSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725843784; x=1726448584;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OV7VGKDNa+MYCPDaH3eYbggjB6/nkG30q/dMutycMh8=;
-        b=PGiLvD7/qhsRwmvsIyY/bDKz3X7p1dA9oWSUpY+ipGS6QdbxA8VJKGZHfAbtD/qPFD
-         ynY5wK8Ti4OprUY63R8riygi9pZnNkaviqUwmOd3CxXfl77PwzDGbg/QF4D2hKutzNBp
-         lH+0K/BmY/ho3zbVQ/eSrLvNOtW0A2h5Kdn3MEiwoV0XZJM4Npz7fcTQUbF9l3b23BvI
-         VawsuE5JZkppbo6x6C038Rq9eEMXda/foFY5p7HIB5aB7fjIKBMoj1daMAnC+ic38e3k
-         AeWXFR4EZdVp8H1RAvw61cotjmonXfY+smosbhRYdupEn6BmxD3cTHsP5nb1lmrCB5Wk
-         yNmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSdV9FZANZwYmfSyh8buKWgDbw4n6Un5UnGSNg1n8U5qfswtnMfMsN57YUD0aRaZHhh8ob+T6tQVvzddY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUNXCDX9UsDJxvsQnOekauiNRDczlormpKV07cPcrrhxO3a4NQ
-	V1W9xzr+9YzelKmsq1qpQZoAZa5dMY4VrtnMKKumu1x6JhEkjn5a4j6rlruSENk=
-X-Google-Smtp-Source: AGHT+IG+Q3rwxK84PkFA2rjUi4Xr9PUnKPR3t9AIPNqqCub9ivi56tLrKglxADx78f/P33lxOLQ8xg==
-X-Received: by 2002:a5d:6d08:0:b0:374:d088:476f with SMTP id ffacd0b85a97d-37889659481mr2967933f8f.5.1725843783325;
-        Sun, 08 Sep 2024 18:03:03 -0700 (PDT)
-Received: from [10.202.0.23] ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e58c6a3csm2497871b3a.65.2024.09.08.18.03.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Sep 2024 18:03:02 -0700 (PDT)
-Message-ID: <094ef45c-3268-4155-b867-56d06e80ba69@suse.com>
-Date: Mon, 9 Sep 2024 09:02:59 +0800
+	s=arc-20240116; t=1725843929; c=relaxed/simple;
+	bh=KbGXoddUMv8tVgpHOzuLsp1Y9f2+g1Z2mKD35eOsmG4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gf5cAuAmDoH9XnhTNlQjoP4uLBlxwg/fVjbKg/uvcXip0Q0igSNc3Na1R/M2WmCLyVhCxwEAuTWtBwV7HLvLsEYSDNyI4fTM0rsa9dNnkTZI5dujhIKb48brrQKPp6E0CO2Ttrm8ZyyxQfCHV757+bty69U0MVyEir+EXdaIOAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M+ao+fkS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 878A4C4CEC3
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 01:05:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725843928;
+	bh=KbGXoddUMv8tVgpHOzuLsp1Y9f2+g1Z2mKD35eOsmG4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=M+ao+fkSdbvSR1LKrZhO5JYsBGM7L2G4woKI9M6bYrJ3527PG/YSKr0xbTcavU5zl
+	 Cb3Fy8yAdtBpHOA1AwHwconcskAKU6YAgmbeA5EIQ1Hx4/zA74INMf0U198kNzVfRI
+	 tbGWYs7yhEa9a8JpdzAB+TohVbKJc0IPHeCu+F6QGKJQWHEtT0t8vHkGOpV/s5pldh
+	 pOROC+YtPORF6OZZcAdxBrclpgh2WPnFYqOcOLDK4VlhbVwpmrkuJ7MJy/HiqJp+Hr
+	 7g1/SGn6XOrIcsdCRZ9iANpbyIL7R0r4gBlpd//Wlib+qN3FXmchRMqh1CAbLMsymn
+	 YB29ezBnj5Udg==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c24ebaa427so7374736a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 18:05:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUhNl7XvtVvTqz+CJo334+HNl594iYPqw6ERkpLxr6S2yi2uTSUyuPGkXYvS2PJ6Tz/XBNwUCeD/0qhPVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy57v7oizfty+GRqSuiHnoGDSbJIiyJu17iIOo5hHzXUsDOv2HL
+	wIrYKEBUAeZvKyy3DNuZUyXvdwb9AUmdu/wCvC6P6o2ygblfPigdBvTLATrjt7+9JSQNC49BVLP
+	BfktRv6xOJuLHeN+NMDpoP0XO8rk=
+X-Google-Smtp-Source: AGHT+IH8AH63UqVrIu0Y9NxMorp0PRx7ZvVEGeC9k+LaQZ5PSWisHqpL3cJh9I7v5UvkrtJwSJlAEEBiruEGhQgMYJY=
+X-Received: by 2002:a05:6402:2808:b0:5bf:256a:a19e with SMTP id
+ 4fb4d7f45d1cf-5c3c1f74315mr19393826a12.4.1725843927158; Sun, 08 Sep 2024
+ 18:05:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] ocfs2: give ocfs2 the ability to reclaim suballoc
- free bg
-To: joseph.qi@linux.alibaba.com, glass.su@suse.com
-Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240908140705.19169-1-heming.zhao@suse.com>
- <20240908140705.19169-2-heming.zhao@suse.com>
-Content-Language: en-US
-From: Heming Zhao <heming.zhao@suse.com>
-In-Reply-To: <20240908140705.19169-2-heming.zhao@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240807085906.27397-1-yangtiezhu@loongson.cn>
+ <20240807085906.27397-4-yangtiezhu@loongson.cn> <c75a2de763dc8ea42a734490936f198a6ad07349.camel@xry111.site>
+In-Reply-To: <c75a2de763dc8ea42a734490936f198a6ad07349.camel@xry111.site>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 9 Sep 2024 09:04:58 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H79ToM4t_=b-teWT=2HVF8JcrwHYC+OeepXm51QjTw_eA@mail.gmail.com>
+Message-ID: <CAAhV-H79ToM4t_=b-teWT=2HVF8JcrwHYC+OeepXm51QjTw_eA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] LoongArch: Set AS_HAS_THIN_ADD_SUB as y if AS_IS_LLVM
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/8/24 22:07, Heming Zhao wrote:
-> The current ocfs2 code can't reclaim suballocator block group space.
-> This cause ocfs2 to hold onto a lot of space in some cases. for example,
-> when creating lots of small files, the space is held/managed by
-> '//inode_alloc'. After the user deletes all the small files, the space
-> never returns to '//global_bitmap'. This issue prevents ocfs2 from
-> providing the needed space even when there is enough free space in a
-> small ocfs2 volume.
-> This patch gives ocfs2 the ability to reclaim suballoc free space when
-> the block group is freed. For performance reasons, this patch keeps
-> the first suballocator block group.
-> 
-> Signed-off-by: Heming Zhao <heming.zhao@suse.com>
-> Reviewed-by: Su Yue <glass.su@suse.com>
-> ---
->   fs/ocfs2/suballoc.c | 302 ++++++++++++++++++++++++++++++++++++++++++--
->   1 file changed, 292 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
-> index f7b483f0de2a..d62010166c34 100644
-> --- a/fs/ocfs2/suballoc.c
-> +++ b/fs/ocfs2/suballoc.c
-> ... ...
->   
-> +/*
-> + * Reclaim the suballocator managed space to main bitmap.
-> + * This function first works on the suballocator then switch to the
-> + * main bitmap.
+On Sun, Sep 8, 2024 at 10:43=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
+>
+> On Wed, 2024-08-07 at 16:59 +0800, Tiezhu Yang wrote:
+> > When building kernel with "make CC=3Dclang defconfig", LLVM Assembler
+> > is used due to LLVM_IAS=3D0 is not specified, then AS_HAS_THIN_ADD_SUB
+> > is not set, thus objtool can not be built after enable it for Clang.
+> >
+> > config AS_HAS_THIN_ADD_SUB is to check whether -mthin-add-sub option is
+> > available to know R_LARCH_{32,64}_PCREL are supported for GNU Assembler=
+,
+> > there is no this option for LLVM Assembler. The minimal version of Clan=
+g
+> > is 18 for building LoongArch kernel, and Clang >=3D 17 already supports
+> > R_LARCH_{32,64}_PCREL, that is to say, there is no need to depend on
+> > AS_HAS_THIN_ADD_SUB for Clang, so just set AS_HAS_THIN_ADD_SUB as y if
+> > AS_IS_LLVM.
+> >
+> > Fixes: 120dd4118e58 ("LoongArch: Only allow OBJTOOL & ORC unwinder if t=
+oolchain supports -mthin-add-sub")
+> > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+>
+> This is what I wanted in
+> https://lore.kernel.org/all/20240604150741.30252-1-xry111@xry111.site/.
+Then which one is better?  AS_IS_LLVM or CC_IS_CLANG?
 
-need to revise above comment:
-This function first works on the suballocator to perform the
-cleanup rec/alloc_inode job, then switches to the main bitmap
-to reclaim released space.
+Huacai
 
--Heming
-
-> + *
-> + * handle: The transaction handle
-> + * alloc_inode: The suballoc inode
-> + * alloc_bh: The buffer_head of suballoc inode
-> + * group_bh: The group descriptor buffer_head of suballocator managed.
-> + *           Caller should release the input group_bh.
-> + */
-> +static int _reclaim_to_main_bm(handle_t *handle,
-> +			struct inode *alloc_inode,
-> +			struct buffer_head *alloc_bh,
-> +			struct buffer_head *group_bh)
-> +{
-
+>
+> Reviewed-by: Xi Ruoyao <xry111@xry111.site>
+>
+> > ---
+> >  arch/loongarch/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> > index 70f169210b52..e1b6cb306d4d 100644
+> > --- a/arch/loongarch/Kconfig
+> > +++ b/arch/loongarch/Kconfig
+> > @@ -265,7 +265,7 @@ config AS_HAS_FCSR_CLASS
+> >       def_bool $(as-instr,movfcsr2gr \$t0$(comma)\$fcsr0)
+> >
+> >  config AS_HAS_THIN_ADD_SUB
+> > -     def_bool $(cc-option,-Wa$(comma)-mthin-add-sub)
+> > +     def_bool $(cc-option,-Wa$(comma)-mthin-add-sub) || AS_IS_LLVM
+> >
+> >  config AS_HAS_LSX_EXTENSION
+> >       def_bool $(as-instr,vld \$vr0$(comma)\$a0$(comma)0)
+>
+> --
+> Xi Ruoyao <xry111@xry111.site>
+> School of Aerospace Science and Technology, Xidian University
 
