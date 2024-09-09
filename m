@@ -1,231 +1,271 @@
-Return-Path: <linux-kernel+bounces-321834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B473972019
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:12:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F01BB97201C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D86E92899D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:12:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39DE4B23162
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CD916EB5D;
-	Mon,  9 Sep 2024 17:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE65170A16;
+	Mon,  9 Sep 2024 17:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Hs+SOynR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TxTYXfrH";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pS0riaUn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Rn9sN7HI"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TLEU2dGl"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4310FA939
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC69B16D9AA;
+	Mon,  9 Sep 2024 17:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725901957; cv=none; b=KwfecFVpSTMoEsH4MHcez97yHD0+UMo5VpziVwLk9o1LGu+ZVDCBUxMKQa/bjy7ozoAL/rlADymfqTKU15/2TpTcaI8dztzxNv0GGiMhSwnuaVYkRhB39iQyggIstmzbSyWM2H1JiDLJWl911d6eAIWpQpP/CbmHD0Qb9SfABUs=
+	t=1725902055; cv=none; b=O1vufhHHV8hGEMOdz6qFyZgwe5ZxIWMB6JAX19vLVa7dgsmVxSeTzqXxScXg6+VWIMFzRl/YoyIesVwbXuLVSIpXXKhf0/MJ/EppsFww5mrH41FZJ92L+qYHpfGYLlhXlXP5PVXVq9w50lkGZaUR3BNGzgFp2P5RaCkhyMwp5Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725901957; c=relaxed/simple;
-	bh=sUuoU6yofeZMnKZGXwDazGdhgMWgg1ws3PCHyq1hH1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OSabNY+RSN3RuGgChx0o8qN44glaKTlHShB1E9uuGyVizzVrIdpodsHEsZLk3SltvPBvJjjgfMQgUjjWr2N9n0a12ECqzzkckZCl/KtGTHvHxbNMowgq+csTwqCUDp/l2msI43oHZ0oI8ioa1sv87BWXNp1hhbD+GBnIxIpsStY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Hs+SOynR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TxTYXfrH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pS0riaUn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Rn9sN7HI; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 123E01F7CB;
-	Mon,  9 Sep 2024 17:12:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725901953; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GujdpzXwQLob4MAahamAEEmRJyiFm/Q7cuWc1AY/HRo=;
-	b=Hs+SOynR3yqEuOdl1NTlQUdkDl3aJ7d4spzd41FnJAhmVROfKBIOnWIK1HAfn9Lo40Qqwc
-	fyQAItWaqPY4UrHGrrJGw46UbptdYm8acJsYqBrzexzHsH4MM/m7NbXj4cAqv3FuqemYN3
-	40ScaVQ9SIx1hP6uG8YB7oCbdGYjOuE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725901953;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GujdpzXwQLob4MAahamAEEmRJyiFm/Q7cuWc1AY/HRo=;
-	b=TxTYXfrHp6YtSCLXz2CKh/XVKZelQseSAvF/3UWznlcQukWhDvFfc0LP7RvQxWEw4vofH2
-	nDRGun25eGk+X6Cg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725901952; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GujdpzXwQLob4MAahamAEEmRJyiFm/Q7cuWc1AY/HRo=;
-	b=pS0riaUnDEYnU8s9B0kMA3f78svbkplWLEoCf2RYdBLjhkdcnJGNOkiXYvgNHVfiCz4Q/v
-	bZearu6nZIUkxjQ5xZcqty8oYf4L49XOyd+/C1Xpr7Ym1q7Y2TzquMLl7BZcbxt7XZT3RK
-	q6Sh/EuR1DZEAmPEAFuVleCu1RxfclA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725901952;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GujdpzXwQLob4MAahamAEEmRJyiFm/Q7cuWc1AY/HRo=;
-	b=Rn9sN7HIfOnoilr+WmsvO9ENCmbS3ClybmQXDdZ14bltlOAfueVoWW8knQTIjzVzFHXdby
-	cws2XmHQFPATBjAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E450013A3A;
-	Mon,  9 Sep 2024 17:12:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id H8w2N38s32YfRAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 09 Sep 2024 17:12:31 +0000
-Message-ID: <edd4e139-363b-4a8a-a4bb-b5625acac33f@suse.cz>
-Date: Mon, 9 Sep 2024 19:12:31 +0200
+	s=arc-20240116; t=1725902055; c=relaxed/simple;
+	bh=S426bUPARsq9NTxJ0DBKNwTgDZfR9yF4Kid7pwY/gWI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kDpCzJ5kHzWwHxWQin7eGGtlIkPPGKAnDS7mvEEF9Ct8Eh81eR0LiLI1zFdy1XEHsN0mivWdp7hDbqosld3LEjcFZnG66ucnkvx37c75vvxSzKcGYH8vGiEeRNQL1Wq7HpIwsJmGSGTAPK6vmIg6UPDloKjS0uKNbEceRU87TRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TLEU2dGl; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e1d4368ad91so1685986276.0;
+        Mon, 09 Sep 2024 10:14:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725902053; x=1726506853; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8JIKKnEcR3APl+8mXJT7DcVCSwdv8kgxqoW4SkrHcUQ=;
+        b=TLEU2dGlgl5UP+5gBHpzXrusguExW7U4bf/nCs0eaY7hDpNI7h7j3acus3FCn6f9ci
+         /zmnBpjwDQmqyQGDWT/to4PPhn3fx1nroyDU/X94mpTgkHrVYYcX4cLCpKfQBJI+heqD
+         y4kjSeeisuP4abKncRWirnJ2LpIou0f23DGfdO6rdjnLxeY4tTodGbkaHahLj2gDFsRk
+         MMRXfiZTMmuVTYv3WYaZjhOq+j4nUSud4jTUVNL2ykIIdF5Y2ytDtkNTgQYsfd//I7lD
+         X4/C0/yzuUzYeMtSpFPM5nlO5SJf9nmU6sz0dVyjZnsPeaNymVRG8ubAruD396yTZCZo
+         rxKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725902053; x=1726506853;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8JIKKnEcR3APl+8mXJT7DcVCSwdv8kgxqoW4SkrHcUQ=;
+        b=YUHCdWwQQvYe3XzXyWuR2ZqaXUBW/D/ym1qAQ0qKbMecpj0phEUplPZBxtJFEXdLvO
+         HKbvuqyx0U2HziKi2GoaMubQUxDtOn4LtrTdLlryIAC+pRpBCcGR4Su9dGNpgjFbvHsK
+         mwu36+iBLXUVL9qBMv1COAHiLFVWF4kFhCrYmFz9HE3QCbvSAWTd4SqWUhWr4oScXHVv
+         mwZmk+Q7CT2arTZDnUgJslw3jEPBYsrhYtdBZ1ZDkQXLb7ZfFBSpxB9HbuR02ZIlr0lN
+         UnfMzUl8Hxb13teV/iFrJuAOsoKuSKeAG7jOB1kpgcnF5KbpXwYAfxHhcCq0OqrXdXFO
+         m02w==
+X-Forwarded-Encrypted: i=1; AJvYcCURVxgEnhCm7EA3ZQUmOIK9nhlnpGEaFCpnyL5AYWoaZPkakaLKGs7VKmRAlQQx3IQatwcK9va/howJWBd0mTWjCg==@vger.kernel.org, AJvYcCXwdBnAXRPynZX3bj0w58827cSg33SIMQkL3xmkLFOvmv6IDAbPm7wcGx0u0bh7cpmsc4pKTNIiYuGHpkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeV06U634mEb0G5F2gY28VAai+6vM4rOsB8IOqEEMJsBUWhwzl
+	70GHCIkr9K1RxU/7fJJvBs3NXTVP4DibsV9FZgHU7a82LF5LtNa8w354NxO4mSyN0zgl455z8aw
+	UCTgexkXI/2KNzrWj6toB7OlWVyh84POyylI=
+X-Google-Smtp-Source: AGHT+IEqt2nPf52OGV27M7hbOr/ogyuPioekY3brdJkm3tsrnwmseXjRnIa0ezGPgBYrDGytHBwT6QcQHeeuBIbkmjs=
+X-Received: by 2002:a05:690c:4a12:b0:6d6:c5cd:bde0 with SMTP id
+ 00721157ae682-6db9541615cmr3471797b3.15.1725902052607; Mon, 09 Sep 2024
+ 10:14:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] mm/slub: Improve data handling of krealloc() when
- orig_size is enabled
-Content-Language: en-US
-To: Feng Tang <feng.tang@intel.com>, Andrew Morton
- <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
- Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Andrey Konovalov
- <andreyknvl@gmail.com>, Marco Elver <elver@google.com>,
- Shuah Khan <skhan@linuxfoundation.org>, David Gow <davidgow@google.com>,
- Danilo Krummrich <dakr@kernel.org>
-Cc: linux-mm@kvack.org, kasan-dev@googlegroups.com,
- linux-kernel@vger.kernel.org
-References: <20240909012958.913438-1-feng.tang@intel.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240909012958.913438-1-feng.tang@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[intel.com,linux-foundation.org,linux.com,kernel.org,google.com,lge.com,linux.dev,gmail.com,linuxfoundation.org];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+References: <20240824163322.60796-1-howardchu95@gmail.com> <20240824163322.60796-6-howardchu95@gmail.com>
+ <Zt8jTfzDYgBPvFCd@x1>
+In-Reply-To: <Zt8jTfzDYgBPvFCd@x1>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Mon, 9 Sep 2024 10:14:01 -0700
+Message-ID: <CAH0uvohT6+d9uF=rDCgv6vTOWgsfoed=9R0Dt=kkctogJaqsEg@mail.gmail.com>
+Subject: Re: [PATCH v3 5/8] perf trace: Pretty print buffer data
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org, 
+	kan.liang@linux.intel.com, namhyung@kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/9/24 03:29, Feng Tang wrote:
-> Danilo Krummrich's patch [1] raised one problem about krealloc() that
-> its caller doesn't know what's the actual request size, say the object
-> is 64 bytes kmalloc one, but the original caller may only requested 48
-> bytes. And when krealloc() shrinks or grows in the same object, or
-> allocate a new bigger object, it lacks this 'original size' information
-> to do accurate data preserving or zeroing (when __GFP_ZERO is set).
-> 
-> And when some slub debug option is enabled, kmalloc caches do have this
-> 'orig_size' feature. As suggested by Vlastimil, utilize it to do more
-> accurate data handling, as well as enforce the kmalloc-redzone sanity check.
-> 
-> To make the 'orig_size' accurate, we adjust some kasan/slub meta data
-> handling. Also add a slub kunit test case for krealloc().
-> 
-> This patchset has dependency over patches in both -mm tree and -slab
-> trees, so it is written based on linux-next tree '20240905' version.
+Hello Arnaldo,
 
-Thanks, given the timing with merge window opening soon, I would take this
-into the slab tree after the merge window, when the current -next becomes
-6.12-rc1.
+On Mon, Sep 9, 2024 at 9:33=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
+l.org> wrote:
+>
+> On Sun, Aug 25, 2024 at 12:33:19AM +0800, Howard Chu wrote:
+> > Define TRACE_AUG_MAX_BUF in trace_augment.h data, which is the maximum
+> > buffer size we can augment. BPF will include this header too.
+> >
+> > Print buffer in a way that's different than just printing a string, we
+> > print all the control characters in \digits (such as \0 for null, and
+> > \10 for newline, LF).
+> >
+> > For character that has a bigger value than 127, we print the digits
+> > instead of the character itself as well.
+> >
+> > Committer notes:
+> >
+> > Simplified the buffer scnprintf to avoid using multiple buffers as
+> > discussed in the patch review thread.
+> >
+> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > Cc: Ian Rogers <irogers@google.com>
+> > Cc: Jiri Olsa <jolsa@kernel.org>
+> > Cc: Kan Liang <kan.liang@linux.intel.com>
+> > Cc: Namhyung Kim <namhyung@kernel.org>
+> > Link: https://lore.kernel.org/r/20240815013626.935097-8-howardchu95@gma=
+il.com
+> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > ---
+> >  tools/perf/builtin-trace.c      | 33 +++++++++++++++++++++++++++++++++
+> >  tools/perf/util/trace_augment.h |  6 ++++++
+> >  2 files changed, 39 insertions(+)
+> >  create mode 100644 tools/perf/util/trace_augment.h
+> >
+> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > index 048bcb92624c..470d74e3f875 100644
+> > --- a/tools/perf/builtin-trace.c
+> > +++ b/tools/perf/builtin-trace.c
+> > @@ -65,6 +65,7 @@
+> >  #include "syscalltbl.h"
+> >  #include "rb_resort.h"
+> >  #include "../perf.h"
+> > +#include "trace_augment.h"
+> >
+> >  #include <errno.h>
+> >  #include <inttypes.h>
+> > @@ -852,6 +853,10 @@ static size_t syscall_arg__scnprintf_filename(char=
+ *bf, size_t size,
+> >
+> >  #define SCA_FILENAME syscall_arg__scnprintf_filename
+> >
+> > +static size_t syscall_arg__scnprintf_buf(char *bf, size_t size, struct=
+ syscall_arg *arg);
+> > +
+> > +#define SCA_BUF syscall_arg__scnprintf_buf
+> > +
+> >  static size_t syscall_arg__scnprintf_pipe_flags(char *bf, size_t size,
+> >                                               struct syscall_arg *arg)
+> >  {
+> > @@ -1745,6 +1750,32 @@ static size_t syscall_arg__scnprintf_filename(ch=
+ar *bf, size_t size,
+> >       return 0;
+> >  }
+> >
+> > +#define MAX_CONTROL_CHAR 31
+> > +#define MAX_ASCII 127
+> > +
+> > +static size_t syscall_arg__scnprintf_buf(char *bf, size_t size, struct=
+ syscall_arg *arg)
+> > +{
+> > +     struct augmented_arg *augmented_arg =3D arg->augmented.args;
+> > +     unsigned char *orig =3D (unsigned char *)augmented_arg->value;
+> > +     size_t printed =3D 0;
+> > +     int consumed;
+> > +
+> > +     if (augmented_arg =3D=3D NULL)
+> > +             return 0;
+> > +
+> > +     for (int j =3D 0; j < augmented_arg->size; ++j) {
+> > +             bool control_char =3D orig[j] <=3D MAX_CONTROL_CHAR || or=
+ig[j] >=3D MAX_ASCII;
+> > +             /* print control characters (0~31 and 127), and non-ascii=
+ characters in \(digits) */
+> > +             printed +=3D scnprintf(bf + printed, size - printed, cont=
+rol_char ? "\\%d" : "%c", (int)orig[j]);
+> > +     }
+> > +
+> > +     consumed =3D sizeof(*augmented_arg) + augmented_arg->size;
+> > +     arg->augmented.args =3D ((void *)arg->augmented.args) + consumed;
+> > +     arg->augmented.size -=3D consumed;
+> > +
+> > +     return printed;
+> > +}
+> > +
+> >  static bool trace__filter_duration(struct trace *trace, double t)
+> >  {
+> >       return t < (trace->duration_filter * NSEC_PER_MSEC);
+> > @@ -1956,6 +1987,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fm=
+t *arg, struct tep_format_field
+> >                   ((len >=3D 4 && strcmp(field->name + len - 4, "name")=
+ =3D=3D 0) ||
+> >                    strstr(field->name, "path") !=3D NULL))
+> >                       arg->scnprintf =3D SCA_FILENAME;
+> > +             else if (strstr(field->type, "char *") && strstr(field->n=
+ame, "buf"))
+> > +                     arg->scnprintf =3D SCA_BUF;
+>
+> You can't really do this for things like 'read' as we would be printing
+> whatever is in the buffer when we enter the syscall, right? As we can
 
-> 
-> [1]. https://lore.kernel.org/lkml/20240812223707.32049-1-dakr@kernel.org/
-> 
-> Thanks,
-> Feng
-> 
-> Feng Tang (5):
->   mm/kasan: Don't store metadata inside kmalloc object when
->     slub_debug_orig_size is on
->   mm/slub: Consider kfence case for get_orig_size()
->   mm/slub: Improve redzone check and zeroing for krealloc()
->   kunit: kfence: Make KFENCE_TEST_REQUIRES macro available for all kunit
->     case
->   mm/slub, kunit: Add testcase for krealloc redzone and zeroing
-> 
->  include/kunit/test.h    |   6 ++
->  lib/slub_kunit.c        |  46 +++++++++++++++
->  mm/kasan/generic.c      |   5 +-
->  mm/kfence/kfence_test.c |   9 +--
->  mm/slab.h               |   6 ++
->  mm/slab_common.c        |  84 ---------------------------
->  mm/slub.c               | 125 ++++++++++++++++++++++++++++++++++------
->  7 files changed, 171 insertions(+), 110 deletions(-)
-> 
+No, we can't do it just now. Same with 'read family' such as
+readlinkat, and getrandom.
 
+> see testing after applying the following patch:
+>
+> root@number:~# perf trace -e read,write cat /etc/passwd > /dev/null
+>      0.000 ( 0.004 ms): cat/291442 read(fd: 3, buf: \0\0\0\0\0\0\0\0\0\0\=
+0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0, count: 832) =3D 832
+>      0.231 ( 0.004 ms): cat/291442 read(fd: 3, buf: , count: 131072)     =
+                                =3D 3224
+>      0.236 ( 0.001 ms): cat/291442 write(fd: 1, buf: root:x:0:0:Super Use=
+r:/root:/bin, count: 3224)      =3D 3224
+>      0.239 ( 0.001 ms): cat/291442 read(fd: 3, buf: root:x:0:0:Super User=
+:/root:/bin, count: 131072)     =3D 0
+> root@number:~#
+>
+> So we can't really do it at this point, we have to do it, for now, by
+> doing it on that syscall table initialization, for instance, for the
+> 'write' syscall:
+>
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 5f0877e891c2047d..1bcb45e737d830bf 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -1379,6 +1379,8 @@ static const struct syscall_fmt syscall_fmts[] =3D =
+{
+>           .arg =3D { [2] =3D { .scnprintf =3D SCA_WAITID_OPTIONS, /* opti=
+ons */ }, }, },
+>         { .name     =3D "waitid",     .errpid =3D true,
+>           .arg =3D { [3] =3D { .scnprintf =3D SCA_WAITID_OPTIONS, /* opti=
+ons */ }, }, },
+> +       { .name     =3D "write",      .errpid =3D true,
+> +         .arg =3D { [1] =3D { .scnprintf =3D SCA_BUF, /* buf */ }, }, },
+>  };
+>
+>  static int syscall_fmt__cmp(const void *name, const void *fmtp)
+> @@ -1987,8 +1989,6 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt =
+*arg, struct tep_format_field
+>                     ((len >=3D 4 && strcmp(field->name + len - 4, "name")=
+ =3D=3D 0) ||
+>                      strstr(field->name, "path") !=3D NULL))
+>                         arg->scnprintf =3D SCA_FILENAME;
+> -               else if (strstr(field->type, "char *") && strstr(field->n=
+ame, "buf"))
+> -                       arg->scnprintf =3D SCA_BUF;
+>                 else if ((field->flags & TEP_FIELD_IS_POINTER) || strstr(=
+field->name, "addr"))
+>                         arg->scnprintf =3D SCA_PTR;
+>                 else if (strcmp(field->type, "pid_t") =3D=3D 0)
+>
+> With that we get:
+>
+> root@number:~# perf trace -e read,write cat /etc/passwd > /dev/null
+>      0.000 ( 0.005 ms): cat/296870 read(fd: 3, buf: 0x7ffe9cb8df98, count=
+: 832)                          =3D 832
+>      0.268 ( 0.004 ms): cat/296870 read(fd: 3, buf: 0x7fa7d700a000, count=
+: 131072)                       =3D 3224
+>      0.273 ( 0.002 ms): cat/296870 write(fd: 1, buf: root:x:0:0:Super Use=
+r:/root:/bin, count: 3224)      =3D
+>      0.276 ( 0.001 ms): cat/296870 read(fd: 3, buf: 0x7fa7d700a000, count=
+: 131072)                       =3D 0
+> root@number:~#
+>
+> After the following patch is applied.
+
+Thank you so much!
+>
+> - Arnaldo
+
+Thanks,
+Howard
 
