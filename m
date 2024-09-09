@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-321441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC25B971A73
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:11:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E128971A72
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62A4D1F24CC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:11:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3140E1F24BD5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE9C1BC064;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484E61BBBFC;
 	Mon,  9 Sep 2024 13:08:30 +0000 (UTC)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ed1QGc1h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A5E1BBBD0;
-	Mon,  9 Sep 2024 13:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34AF1BBBE3;
+	Mon,  9 Sep 2024 13:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725887310; cv=none; b=qTnGkD2xuAyKZynJalFY75a5ATPC82tRuM/SYCoC/ULYYj8MnJa6TQGyTQAAuSSm1+Dvuum7OcYY9Zb0y9O0oG8PFzKKTwqnFPQwb0OIdSY6Af0jD7FJ58cknwmPD9r/6zT1qrgkrMsfD4PFTZxIJrGkexo6fwEv9rCoLSWwmv4=
+	t=1725887309; cv=none; b=AjcoFdtmwtXT5eBktyJ82of4Z8+tJQTCdm0vRqyVyq2A0hh48EcK4zVQqYadpaFY1MW1cRxmqEmkfz6rhtR8qSEUUXA12P8IfsoCqSm/UGzb0cXK2QsymuKlPMKCNTQZo1h2+8XNrTqE0Y/4sinRCmz2Av/heUhqhJeIt3X1Cdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725887310; c=relaxed/simple;
-	bh=1G+O70kQlgUjlXyCifi2cYhG6zmRThen8fxju0O3iPw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IhkdjD58dKSal+p0JV+DPRtr+X5Xdz20VIuv/hWZm2nXGouiwGLZJyZvcNOf1LM24OJ9YAApFHgKoAaCr9rgo3xMUt573/QM3lWM/WRUlUnoyadVpGG7LyV3wYIvaT/sS48psvgr2nOPUQe6U55xDb+5J9ju0ivHBP843KNEEG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c3d209da98so404906a12.1;
-        Mon, 09 Sep 2024 06:08:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725887307; x=1726492107;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kAJypcMSdNG3RzgBifEDQ+E+OlrCHokwMoz1N9CXNp0=;
-        b=qVHBvWqMucKH0DHQ2B9LBcN7Iqh1LuHK/K/6QIFLTvNNJuDsz8iYIIhjt/47q+NV77
-         gvTocqanwiyj2fHbyJHceN5Hx25noEduzfKVM5KKAuui9DNDnO2zFpjh7eOt5gpAbYD3
-         SF04SvOyXVdWF7EkljV1AxGgIdIs18a2zMS1d7qUDikgyAXgn0i/GbPIJV/icmUefqko
-         iyLuPHngmAqSTQN+ok/alCfldJndGBeg0R8C/0XrWkMICgj1QWj07eps2YR0jNfnoO/J
-         OufAaPa+GB9CUYaA8fiWAcpzKrjz9nP04nB3/a570DpF3rtotDKqN0llfHita8MFVIio
-         RgPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfHqAhjEIEy24CuSEDfmJOSc+F4B5XkK+xwzqjeXHJNJ0UhajbD2tqyns+uA6l/Z7zMg1EYiJ8@vger.kernel.org, AJvYcCXdjmEis2bR6od/igsRLR+HIVx6f/PFBpswCkfVmSzRHaKQkHof9OtR2J3p+t+444QRyFiYfwV5tLG5i9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMKihNG0IbaGlzMCc0ywSgebVbmKuiovs02W3Xf+Itx0ANU5jM
-	0TPksUHGxDIPXb7w90p+iljYefvQ5U+bAVBOQSxi2xIPb5jTcyLF2fyMUA==
-X-Google-Smtp-Source: AGHT+IFDjqJL8rCosrnIxltP0D1c+uxNMUZLBADnfw22+kPu9o41pUDMhEHzF8fTQGGYQ/zn//Z7XA==
-X-Received: by 2002:a05:6402:4316:b0:5c2:1014:295a with SMTP id 4fb4d7f45d1cf-5c3c1f742d6mr20151664a12.2.1725887306580;
-        Mon, 09 Sep 2024 06:08:26 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd5245dsm3038743a12.52.2024.09.09.06.08.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 06:08:26 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: kuba@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	Matthew Wood <thepacketgeek@gmail.com>
-Cc: horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	davej@codemonkey.org.uk,
-	vlad.wing@gmail.com,
-	max@kutsevol.com
-Subject: [PATCH net-next v2 10/10] net: netconsole: fix wrong warning
-Date: Mon,  9 Sep 2024 06:07:51 -0700
-Message-ID: <20240909130756.2722126-11-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240909130756.2722126-1-leitao@debian.org>
-References: <20240909130756.2722126-1-leitao@debian.org>
+	s=arc-20240116; t=1725887309; c=relaxed/simple;
+	bh=EgMs+TbVTeQGo2kimjC1q99O6NPUAD9k97y6im6JB8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B1S8nMTzEn5I8GwyaCskMUmH7tNR8nDUsk3WwKmMNJ19wvC/yL0PTxj7R0TFNNJ9/HCNBjWPndvLCuq+XT0elwWF8Uu5QNBjIdyj0Is5xjCMAiOlxtsCKUVmbPpzcefvHCaZAYxLtkUeKAY/XQuNwryKowI8KDDpIjUFWUI7Ifc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ed1QGc1h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2367C4CEC7;
+	Mon,  9 Sep 2024 13:08:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725887309;
+	bh=EgMs+TbVTeQGo2kimjC1q99O6NPUAD9k97y6im6JB8c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ed1QGc1h6aTtYmiBuwJbQJm6rxM3VY/jX6mn6ksD/QB37N+osWcz8rFoXCr2QNmEv
+	 bEPOlxkaRdidGYyfp7GOvy4ZF09lSLz0YUdJ2sPpC5C6OUZHYKujipxJ7Vg0E6qkee
+	 xcBA0ndIsNYugrVOIS8G9lQPVR0jjccmT5NUumA6ePS9DU3zYNSmfcC614e+vocM0a
+	 IffogVlqBq5MeRFRt6BfWPPpesgTm8yARmV0Gqcf64i8nzao3pQ0EQzOT5YeIBSxDy
+	 GVa3lnsl5YUe6TSOz9lWqBGpNQ9/hxAvycpRLOQMyxdsDQqMY3vX5uOebH96kEyWJr
+	 5AncAhFKAxqzg==
+Date: Mon, 9 Sep 2024 15:08:25 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Kimriver Liu <kimriver.liu@siengine.com>
+Cc: jarkko.nikula@linux.intel.com, andriy.shevchenko@linux.intel.com, 
+	mika.westerberg@linux.intel.com, jsd@semihalf.com, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7] i2c: designware: fix master is holding SCL low while
+ ENABLE bit is disabled
+Message-ID: <traj5uhqbny5yro3hf72k2qpga7ez7cuqv2mesvl73fku2b5xq@uw5dqjdc6mms>
+References: <20240909015646.2285-1-kimriver.liu@siengine.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909015646.2285-1-kimriver.liu@siengine.com>
 
-A warning is triggered when there is insufficient space in the buffer
-for userdata. However, this is not an issue since userdata will be sent
-in the next iteration.
+Hi Kimriver,
 
-Current warning message:
+On Mon, Sep 09, 2024 at 09:56:46AM GMT, Kimriver Liu wrote:
+> It was observed issuing ABORT bit(IC_ENABLE[1]) will not work when
+> IC_ENABLE is already disabled.
+> 
+> Check if ENABLE bit(IC_ENABLE[0]) is disabled when the master is
+> holding SCL low. If ENABLE bit is disabled, the software need
+> enable it before trying to issue ABORT bit. otherwise,
+> the controller ignores any write to ABORT bit.
+> 
+> Signed-off-by: Kimriver Liu <kimriver.liu@siengine.com>
 
-    ------------[ cut here ]------------
-     WARNING: CPU: 13 PID: 3013042 at drivers/net/netconsole.c:1122 write_ext_msg+0x3b6/0x3d0
-      ? write_ext_msg+0x3b6/0x3d0
-      console_flush_all+0x1e9/0x330
+You forgot:
 
-The code incorrectly issues a warning when this_chunk is zero, which is
-a valid scenario. The warning should only be triggered when this_chunk
-is negative.
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Fixes: 1ec9daf95093 ("net: netconsole: append userdata to fragmented netconsole messages")
----
- drivers/net/netconsole.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+> ---
+> V6->V7:
+> 	1. add Subject versioning [PATCH v7]
+> 	2. change fsleep(25) to usleep_range(25, 250)
+> 	3. Add macro definition DW_iC_ENABLE_ENABLE to fix compile errors
+> 	4. base: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=master
 
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index 6a778a8690c3..7d2e021f04f4 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -1165,8 +1165,14 @@ static void send_fragmented_body(struct netconsole_target *nt, char *buf,
- 
- 			this_chunk = min(userdata_len - sent_userdata,
- 					 MAX_PRINT_CHUNK - preceding_bytes);
--			if (WARN_ON_ONCE(this_chunk <= 0))
-+			if (WARN_ON_ONCE(this_chunk < 0))
-+				/* this_chunk could be zero if all the previous
-+				 * message used all the buffer. This is not a
-+				 * problem, userdata will be sent in the next
-+				 * iteration
-+				 */
- 				return;
-+
- 			memcpy(buf + this_header + this_offset,
- 			       userdata + sent_userdata,
- 			       this_chunk);
--- 
-2.43.5
+Thanks a lot for following up! :-)
 
+> V5->V6: restore i2c_dw_is_master_idling() function checking
+> V4->V5: delete master idling checking
+> V3->V4:
+> 	1. update commit messages and add patch version and changelog
+> 	2. move print the error message in i2c_dw_xfer
+> V2->V3: change (!enable) to (!(enable & DW_IC_ENABLE_ENABLE))
+> V1->V2: used standard words in function names and addressed review comments
+> 
+> link to V1:
+> https://lore.kernel.org/lkml/20240904064224.2394-1-kimriver.liu@siengine.com/
+> ---
+
+...
+
+> --- a/drivers/i2c/busses/i2c-designware-common.c
+> +++ b/drivers/i2c/busses/i2c-designware-common.c
+> @@ -453,6 +453,18 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
+>  
+>  	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
+>  	if (abort_needed) {
+> +		if (!(enable & DW_IC_ENABLE_ENABLE)) {
+> +			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
+> +			enable |= DW_IC_ENABLE_ENABLE;
+> +			/*
+> +			 * Need two ic_clk delay when enabling the I2C to ensure ENABLE bit
+> +			 * is already set. Wait 10 times the signaling period of the highest
+> +			 * I2C transfer supported by the driver(for 400KHz this is 25us)
+> +			 * as described in the DesignWare I2C databook.
+> +			 */
+> +			usleep_range(25, 250);
+
+I think there is a misunderstanding here. Andy asked you to use
+flseep and improve the calculation: "Please, calculate this delay
+based on the actual speed in use (or about to be in use)."[*]
+
+Andy can you please clarify with Kimriver here?
+
+Thanks,
+Andi
+
+[*] Message-ID: <6392ecd3f9934e9d8641b5f608ee6d60@siengine.com>
 
