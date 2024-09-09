@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-321926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA928972142
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:44:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4384097214E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6195284385
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:44:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A027B20DA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC35C178CC8;
-	Mon,  9 Sep 2024 17:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4E317C9B6;
+	Mon,  9 Sep 2024 17:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nkt4zzUo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvjU6cht"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395E520B04;
-	Mon,  9 Sep 2024 17:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA6116F0E8;
+	Mon,  9 Sep 2024 17:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725903860; cv=none; b=K91pgl8j3yojmRT2/4IW8kn73/fEWA18hjtv2/98cmKpnDgOkBt3DdPJWNHwptdVhlzwoxSNE2gCt3r6jp2QNe6S5kq4zyzChxL3O1sHeAmrCe4OHUNtJ6kKpNZBCoB89grAJpAV2A5nVXM3J0rx2MoTZE+CkiC6n1JGHrb0gkA=
+	t=1725904027; cv=none; b=gkKAzg5UtbVT3sujbUs1w2yrz0+nl0yvujzmE9rIgii43HgV7uPxjv9FixcdvOfZGezzO2/1v5AoDcmWR5ossjDLtOpK/GJG56xZ0WLuVe3lksOn3iWG8mUr+Rzv26vwjF0KjyzcU2R2DpMUDenroiSf5Z4Ru30i+lFJdBnF7PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725903860; c=relaxed/simple;
-	bh=NLsIy3jEfG4mEvJQhkNjt+eFEgFvsyD+f+COYEf5vWw=;
+	s=arc-20240116; t=1725904027; c=relaxed/simple;
+	bh=d5MQ6P0P6PSk7ZUlMTuS+1vmsGp+cPoQ1jmGFxw4P7c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c5D0r3HU9I2cNj2JYsXx/5uSj2X+lf0bbceAJtJb2u2cVAKjt08y62+Tq2OSVIxgZVAnv3euC7LNsH3AlfSiY+pqvKUqzlg5xTnPCgs2hN4IevY4SECPkFtuuWrQZ+Zc5HAtN7/1IRYlaDBFkqM9mk37puRnPIOeN4RlhSRHp3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nkt4zzUo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6707C4CEC5;
-	Mon,  9 Sep 2024 17:44:14 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=DQo185QI/fAYcixsQAkJA0AXDw225Huukjqyxat7jKJAMve7AtrsCUWHrELMDFL2h/ZQlOQaSyCXUUioFb6khgGs7fRfTQ+5PfzoCLMeFlOPHw20RnilkAqYc2bqyDtP5s5ajqWVOoBIsqBLqb/KGl2HH2iTJN0X2HLBOyZvdyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvjU6cht; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCE8AC4CEC8;
+	Mon,  9 Sep 2024 17:47:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725903859;
-	bh=NLsIy3jEfG4mEvJQhkNjt+eFEgFvsyD+f+COYEf5vWw=;
+	s=k20201202; t=1725904026;
+	bh=d5MQ6P0P6PSk7ZUlMTuS+1vmsGp+cPoQ1jmGFxw4P7c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Nkt4zzUot2WuUoHdZHH4eAOQp9ThZaRZzI5m5XFwcIm42vLcm3yUkIMiRSkT1f0zV
-	 iMkUKRNcErppSpUJW9ouiY9YBMnMQptU357JPJ6pGTTYqRw0jhtLVyvmx2BaWgJ4Ni
-	 TSY2txIoyZWtiIMVFl/4rrrA2s3sr+ZUA5ZpMbK5Bjve9AEzw/Oe64HV1Tf+klBi7e
-	 7Na2zBIxKszm3tBnwk5sV8XxBgHuZWAbQOKjLeC+BW+7uwTQoIu81+HbpMeVz2as5w
-	 FhPfBHV9O3kfxDruIfhJoQBSnLVHw/IH42aSDm9LZGOLMx5lhdu2u7/dVwmsUHo97d
-	 /XHtThK36PrkQ==
-Message-ID: <c856ab91-2011-470e-84da-1ba08569844d@kernel.org>
-Date: Mon, 9 Sep 2024 19:44:12 +0200
+	b=bvjU6cht362onuC87em4aUt8sWaFGl3zfD07QULlAvFMt0rFPE/xT+L/AjOxT3fsS
+	 V61ZFLEMD18uM7gBroeBLgsujPW/BsBOpKLBT7WmWJFIkRaK15UhimPB02HO6BbFEQ
+	 saRumcLXByrefl4c1C4sW8fSB/qFgSNFehNUHwK/X49zlEH5ftSzX+oH3nU4EC0FU+
+	 2ZGYFKxQjeedzflGRk+t1eeDbMH69U+9c2sHq4beEdrqSsAN2CqoF6ltywlC7FY7tW
+	 mQtFXZwQbb0W938G483nSbu6mN86KdVU+KxqNNI++CINltXbo8UWDfEc615mMHKAcX
+	 42vFouSCSpnpQ==
+Message-ID: <a3eb6224-b355-4477-9d24-fee96f00e593@kernel.org>
+Date: Mon, 9 Sep 2024 19:47:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] ARM: dts: imx6qdl-apalis: Update audio card name
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Hiago De Franco <hiagofranco@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+Subject: Re: [PATCH] dt-binding: touchscreen: fix x-plat-ohm missing type
+ definition
+To: Sayyad Abid <sayyad.abid16@gmail.com>
+Cc: devicetree@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Hiago De Franco <hiago.franco@toradex.com>
-References: <20240909114902.82380-1-hiagofranco@gmail.com>
- <20240909114902.82380-2-hiagofranco@gmail.com>
- <25873dfa-fe70-4ef6-b840-795faaec1f07@kernel.org>
- <20240909125419.GA33114@francesco-nb>
-Content-Language: en-US
+ Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
+ Michael Welling <mwelling@ieee.org>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240908151742.2453402-1-sayyad.abid16@gmail.com>
+ <sllpurhdxfgducp5hb3rs7u5db76vy2wtmyha7uspskvvek463@tq2aq65qqw4x>
+ <CACVUEBmCBW7a3gyZ78ZyEtxHiFkie=3wuMz-+Oq_FfTjQX6AVw@mail.gmail.com>
+ <edf29295-d360-4038-a490-3a5cbb8c28cd@kernel.org>
+ <CACVUEB=eQUFbDV80D7sPkK84FmnR7j66gRGvB8eusV_cz-QmAQ@mail.gmail.com>
+ <CACVUEB=UBQ=qnEGHodXjYNcMicOW6dGb1Z-V1CPkBV15+OdmwA@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -107,39 +108,79 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240909125419.GA33114@francesco-nb>
+In-Reply-To: <CACVUEB=UBQ=qnEGHodXjYNcMicOW6dGb1Z-V1CPkBV15+OdmwA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/09/2024 14:54, Francesco Dolcini wrote:
-> Hello Krzysztof,
-> thanks for the review/feedback.
-> 
-> On Mon, Sep 09, 2024 at 02:09:11PM +0200, Krzysztof Kozlowski wrote:
->> On 09/09/2024 13:49, Hiago De Franco wrote:
->>> diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi
->>> index edf55760a5c1..1c72da417011 100644
->>> --- a/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi
->>> +++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi
->>> @@ -191,7 +191,7 @@ sound {
->>>  			"MIC_IN", "Mic Jack",
->>>  			"Mic Jack", "Mic Bias",
->>>  			"Headphone Jack", "HP_OUT";
->>> -		model = "imx6q-apalis-sgtl5000";
->>> +		model = "apalis-imx6";
+On 09/09/2024 14:48, Sayyad Abid wrote:
+> On Mon, Sep 9, 2024 at 1:36 PM Sayyad Abid <sayyad.abid16@gmail.com> wrote:
 >>
->> Doesn't this break all the users? E.g. ALSA UCM and whatever
->> user-space-parsing stuff you have?
-> 
-> I am not sure about "all" users, but for sure it's a breaking change.
-> There is no ALSA UCM for this board (and also not for the other twos in
-> this series), we just worked on it and we thought that if we want to do
-> such a change the moment is now.
-> 
-> What should we do?
+>> On Mon, Sep 9, 2024 at 1:21 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>
+>>> On 09/09/2024 09:48, Sayyad Abid wrote:
+>>>> On Mon, Sep 9, 2024 at 12:02 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>>
+>>>>> On Sun, Sep 08, 2024 at 08:47:43PM +0530, Sayyad Abid wrote:
+>>>>>> This patch fixes the issue with x-plat-ohm missing a type definition.
+>>>>>> The patch adds the fix for this issue by adding value of this property
+>>>>>
+>>>>> You repeated twice the same while it is unclear why this is missing.
+>>>> I must have overlooked it, my bad.
+>>>
+>>> Keep discussion public.
+>> I am away form my desktop and trying to reply with Gmail's client,
+>> I use mutt otherwise hence the trouble. I hit 'reply' instead of 'reply all'.
+>>>
+>>>>>
+>>>>> Also:
+>>>>> Please do not use "This commit/patch/change", but imperative mood. See
+>>>>> longer explanation here:
+>>>>> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+>>>> Okay, I'll refer to this article for any further patches. Thank you!
+>>>>>
+>>>>>
+>>>>>> should be a 32-bit unsigned integer.
+>>>>>>
+>>>>>> Signed-off-by: Sayyad Abid <sayyad.abid16@gmail.com>
+>>>>>>
+>>>>>> ---
+>>>>>>  .../devicetree/bindings/input/touchscreen/ti,tsc2005.yaml       | 2 ++
+>>>>>>  1 file changed, 2 insertions(+)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.yaml b/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.yaml
+>>>>>> index 7187c390b2f5..98ff65cf9f9f 100644
+>>>>>> --- a/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.yaml
+>>>>>> +++ b/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2005.yaml
+>>>>>> @@ -38,6 +38,8 @@ properties:
+>>>>>>
+>>>>>>    ti,x-plate-ohms:
+>>>>>>      description: resistance of the touchscreen's X plates in ohm (defaults to 280)
+>>>>>
+>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>>>
+>>>>> $ref should not be needed, so what is exactly missing? Provide some
+>>>>> sort of proof that you are fixing real issue.
+>>>> I ran dt_bindings_check on the file which resulted in a warning
+>>>> "x-plate-ohm : missing type definition", to resolve this warning I
+>>>> looked at the other yaml files in the ti,txc2005.yaml directory
+>>>> (/Documentation/devicetree/bindings/input/touchscreen/), Where I found
+>>>> out that one of the TI's touchscreen (ti,am3359) binding used $ref
+>>>> property for the similar "x-plate-resistance" property.
+>>>>
+>>>> Adding the $ref resolved the warnings.
+>>>
+>>> You run some older dtschema.
+>> I'll update this and check again.
+> So I did a full clean clone of the kernel repo and followed the
+> dtschema installation
+> as mentioned in the Linux Kernel Documentation.
+> Running the dt_binding_check resulted in the same warning.
 
-For me is enough to explain in commit msg such expected (or lack of it)
-impact.
+The dtschema change fixing this ("schemas: property-units: Exclude some
+non-conforming properties") is not yet in a released version, so I
+suggest do nothing or try the latest dtschema from master. But in any
+case this change does not look good. ohms should not have a ref, so even
+if this warning is legitimate, the fix should be probably different.
 
 Best regards,
 Krzysztof
