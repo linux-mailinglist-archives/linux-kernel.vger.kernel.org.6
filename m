@@ -1,108 +1,133 @@
-Return-Path: <linux-kernel+bounces-321794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CDE971F7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:46:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C57971F79
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB162B21C95
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:46:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8B971F234BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFACB16E863;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2A016DC0E;
 	Mon,  9 Sep 2024 16:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0EKdzH6"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Io48P0/A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4898376F1
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3F213B58B;
+	Mon,  9 Sep 2024 16:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725900342; cv=none; b=cuhu1wPY9sjXoUS2Ces9brv7CVr0MLJ4SZ9lRkBXBuSbG3hrI1qFQ/MdNe6n0MoRfY8YltdxkkIkq/BWqHrJeNucQmOrm2X2I9DM/JEHea+p2Xqa9tiRQ0ZZPH+fEl/DbjqhKAUIGVrxVCZZb70FnADQKdwAlN5TR2CSKsO5ZGw=
+	t=1725900341; cv=none; b=rbiG6EJPKUY0CkGv8QWATmIzsgdJts2sAElc5qhEBp51eUAJtsw+EoL2m3EPP8TmbBC+9UhO3xXGHLwHjahyZwa5mJo9+ZqOCThBeS2zSAqjl98PNWnoOseVlBec0uQQKxQ9VayK8O1o9cvcL0ft2NFqr5j/E4vULlQK4RTzOxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725900342; c=relaxed/simple;
-	bh=kVnFcNZOECZaaqideRC1BgIz04IzNKgOIR6ic418eFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J/iwhRLBwypIzGLEE/JHx9E+FtJ2Uas8UOigG+s4UUsZcap99ODZMvnZm7eRDKEZ7HWI6uhUpVjJ6fAlPYSP4lj0XMccw5LLTOKRk4HpkPWk7/Zy2pWZCXQsSJ8zcB35WrZ0Cm3ccbaCSjgZWmGZfbBBjpoe2ytOFG6GaGEeask=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O0EKdzH6; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7163489149eso3662929a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725900340; x=1726505140; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AhF2unESHOHNXtsHs//IUH+u17vTyKFOAwToWScirFo=;
-        b=O0EKdzH6dKPcKGu7oN0dbHtJaBCxSQNOo0+kKBa94rugFOlW4P8keaBw6EEBg2GB/Y
-         RssCPImCRjBXOTb7p3U4ukgakkuKyqCm53UGN/JiBvHt/YUjDqP5YQQRRA34lo9qhVf2
-         DrPOK/c+W83b0Pg/joS+vegmbtHovQ+ObhdwNZHxzljRrPJvjihFCN7bk21Gh7HTAgx7
-         t6IxiDa2HHbaKgzxdPGhpbXHKlpZeqysOcSXenRIUwefu4tPK9wjTjHnX9N3PwRybgiK
-         fBYumOnzr9mip3RbHQB4f0+bdGk9IQyUOWPoDg0XFUhXH4F8vQsU1CQ8ZgGCK6bxlAF5
-         bomg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725900340; x=1726505140;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AhF2unESHOHNXtsHs//IUH+u17vTyKFOAwToWScirFo=;
-        b=h47MEEsABvquhG/aiGfG7on82fmxDhhlGHTHi3SVnA6nw9Z1fD8wb/pMYGuPH8nWpY
-         WWkbGQXryebr+HAUuL9YOM7hJD64crm4R61pLTAq0xtXKgpLmbhKr/FRcIwuSOR/bmU8
-         6XZNoiZyY0CrzpG83U2kA9dHQiJq+5VFTcWiK1Y7m1BbStrARZ+FoSXiDf87NEmo2z/R
-         /uQNlWEMPRPNNyD9zcL+uAAIAV2KLbLzN4CVFfTcRdrTMCsfz1LNibayUO0Bet5jQEKK
-         nr9SA6i8Q3Y9pBmD2fShhoaEkhy+SanvBDfNqdDLBVauxNWEstvGu2ZSSzHmEH6W6tP7
-         Sy/A==
-X-Gm-Message-State: AOJu0YzaQj1Uia24DxZaKvnNzBDDFzzeSVer8lRv/h9qUaJ3Y9KdxX4R
-	ha3JmeGA/DF6yxOhO1dqG5O5wkKa1ng+Bm0N25anE4JoMsK/GmKf8hUA6w==
-X-Google-Smtp-Source: AGHT+IEr+bb071DTjycAg7TSxqG/Ztfnz2xO3//P7l7cKrCJY00ajS86UpgnKNvJg0cjU/A7X7KRCA==
-X-Received: by 2002:a05:6a21:1706:b0:1c6:ed5e:241 with SMTP id adf61e73a8af0-1cf1d0acadcmr11707917637.15.1725900339894;
-        Mon, 09 Sep 2024 09:45:39 -0700 (PDT)
-Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:ed56:14c3:db02:6c66])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e5968a6csm3718026b3a.125.2024.09.09.09.45.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 09:45:39 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	kernel-team@android.com
-Cc: Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH] fsck.f2fs: remove redundant i_ext.len set to zero
-Date: Mon,  9 Sep 2024 09:45:35 -0700
-Message-ID: <20240909164535.1926830-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
+	s=arc-20240116; t=1725900341; c=relaxed/simple;
+	bh=hpq8YITmQraxqj6xdNLOt80XvHmKvfAEgvJlnbW3QXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LfFSrC51Eh0r6aqvRKVhnKLbgBa3fv2vBFk2Wcd8q+52ybmCAruu87YuF1xLyjQQGAMSaMgcogttAvq2a1pDUIsxx5gtEJDud8Iysirqokc0RET7ToObXXnoE1CsPoA+yMNE4L/fOjgLMUvkObalTmBDjJ95ZqyQ6crV1eJ9v78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Io48P0/A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D7B7C4CEC5;
+	Mon,  9 Sep 2024 16:45:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725900341;
+	bh=hpq8YITmQraxqj6xdNLOt80XvHmKvfAEgvJlnbW3QXw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Io48P0/A89vA2jnpH3wkeM/81HeAUY0Yt3/qsdbnxXR4zkyszwwzcoQooCS4gC/g+
+	 d0VK3IiSVwz5XA5+AFG/GYYw7ILTN6hfNFvFjCMCA0DT7fSAwEy/RRxlcwAxyHwPDB
+	 PDNbrP0RATDLE9vyEKI0hco/4ESYmUo2TFLmMuQuLxX2l4aupdT5JQEpyB+bS0skXA
+	 26m7qa+Ie/TIRAT6jecUeAjOd62Zv+NJolLC2S3dDSSwUNitL21UDPI9MSelxsz+9j
+	 dPKVdFlRLFPxkGK4agkNElkV+gJ9hS8sS2QAztRH4TJwftf9zAMBuypPYv2sB8Qv1Z
+	 gKrjmPqH+mr0A==
+Date: Mon, 9 Sep 2024 13:45:36 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
+	kan.liang@linux.intel.com, namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH v3 5/8] perf trace: Pretty print buffer data
+Message-ID: <Zt8mMB7rkgSY1VSD@x1>
+References: <20240824163322.60796-1-howardchu95@gmail.com>
+ <20240824163322.60796-6-howardchu95@gmail.com>
+ <Zt8jTfzDYgBPvFCd@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt8jTfzDYgBPvFCd@x1>
 
-From: Daeho Jeong <daehojeong@google.com>
+On Mon, Sep 09, 2024 at 01:33:17PM -0300, Arnaldo Carvalho de Melo wrote:
+> >  static bool trace__filter_duration(struct trace *trace, double t)
+> >  {
+> >  	return t < (trace->duration_filter * NSEC_PER_MSEC);
+> > @@ -1956,6 +1987,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+> >  		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
+> >  		     strstr(field->name, "path") != NULL))
+> >  			arg->scnprintf = SCA_FILENAME;
+> > +		else if (strstr(field->type, "char *") && strstr(field->name, "buf"))
+> > +			arg->scnprintf = SCA_BUF;
+> 
+> You can't really do this for things like 'read' as we would be printing
+> whatever is in the buffer when we enter the syscall, right? As we can
+> see testing after applying the following patch:
 
-Removed a redundant code to set i_ext.len to zero.
+This is also valid for the struct dumper, where I'll have to add some
+indication in the syscall_fmt table when the pointer should be read in
+the BPF augmenter, and thus we shouldn't bother to get it in the
+sys_enter if it is, say, fstat().
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
----
- fsck/fsck.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 7400dcf..f8607fd 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1400,8 +1400,6 @@ skip_blkcnt_fix:
- 	}
+- Arnaldo
  
- 	if (need_fix && f2fs_dev_is_writable()) {
--		if (c.zoned_model == F2FS_ZONED_HM)
--			node_blk->i.i_ext.len = 0;
- 		ret = update_block(sbi, node_blk, &ni->blk_addr, NULL);
- 		ASSERT(ret >= 0);
- 	}
--- 
-2.46.0.598.g6f2099f65c-goog
-
+> root@number:~# perf trace -e read,write cat /etc/passwd > /dev/null
+>      0.000 ( 0.004 ms): cat/291442 read(fd: 3, buf: \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0, count: 832) = 832
+>      0.231 ( 0.004 ms): cat/291442 read(fd: 3, buf: , count: 131072)                                     = 3224
+>      0.236 ( 0.001 ms): cat/291442 write(fd: 1, buf: root:x:0:0:Super User:/root:/bin, count: 3224)      = 3224
+>      0.239 ( 0.001 ms): cat/291442 read(fd: 3, buf: root:x:0:0:Super User:/root:/bin, count: 131072)     = 0
+> root@number:~#
+> 
+> So we can't really do it at this point, we have to do it, for now, by
+> doing it on that syscall table initialization, for instance, for the
+> 'write' syscall:
+> 
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 5f0877e891c2047d..1bcb45e737d830bf 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -1379,6 +1379,8 @@ static const struct syscall_fmt syscall_fmts[] = {
+>  	  .arg = { [2] = { .scnprintf = SCA_WAITID_OPTIONS, /* options */ }, }, },
+>  	{ .name	    = "waitid",	    .errpid = true,
+>  	  .arg = { [3] = { .scnprintf = SCA_WAITID_OPTIONS, /* options */ }, }, },
+> +	{ .name	    = "write",	    .errpid = true,
+> +	  .arg = { [1] = { .scnprintf = SCA_BUF, /* buf */ }, }, },
+>  };
+>  
+>  static int syscall_fmt__cmp(const void *name, const void *fmtp)
+> @@ -1987,8 +1989,6 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+>  		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
+>  		     strstr(field->name, "path") != NULL))
+>  			arg->scnprintf = SCA_FILENAME;
+> -		else if (strstr(field->type, "char *") && strstr(field->name, "buf"))
+> -			arg->scnprintf = SCA_BUF;
+>  		else if ((field->flags & TEP_FIELD_IS_POINTER) || strstr(field->name, "addr"))
+>  			arg->scnprintf = SCA_PTR;
+>  		else if (strcmp(field->type, "pid_t") == 0)
+> 
+> With that we get:
+> 
+> root@number:~# perf trace -e read,write cat /etc/passwd > /dev/null
+>      0.000 ( 0.005 ms): cat/296870 read(fd: 3, buf: 0x7ffe9cb8df98, count: 832)                          = 832
+>      0.268 ( 0.004 ms): cat/296870 read(fd: 3, buf: 0x7fa7d700a000, count: 131072)                       = 3224
+>      0.273 ( 0.002 ms): cat/296870 write(fd: 1, buf: root:x:0:0:Super User:/root:/bin, count: 3224)      = 
+>      0.276 ( 0.001 ms): cat/296870 read(fd: 3, buf: 0x7fa7d700a000, count: 131072)                       = 0
+> root@number:~#
+> 
+> After the following patch is applied.
+> 
+> - Arnaldo
 
