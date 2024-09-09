@@ -1,252 +1,218 @@
-Return-Path: <linux-kernel+bounces-321564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69157971C11
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:03:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED71F971C0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1A50B26730
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:03:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 172391C21BFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705961B3F23;
-	Mon,  9 Sep 2024 14:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA0B1BA28B;
+	Mon,  9 Sep 2024 14:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Gja6Y9sN"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6jGEmzq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E74F1BA877
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 14:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0B722095
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 14:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725890584; cv=none; b=j69qf+cf+n1z+PUF73DlT55WG6itIgjlRK/O6c6S1J5JJ8oW4NaUvmpXtz5CN3Kr/sKM1znxCoyLHHiEwwqlA2zPC4TLBuCW6r8GSHwNyuiODTREMgNpfgaX244ym47vjNh0aeqRPRFineB2pdpgRI1/2yhSE+GyLRTG79VyQe4=
+	t=1725890567; cv=none; b=OGQqgIjaqGlRQIF439vygy3YNwLatbr86I5WB9Nk9+I/GoA5U956svq1VTlNjW/BEyMwgYAqXycJgslJ5CsLUlhFXw3hWIp/miW/IpiI5mzZDsKoux6kACmD1cdIZtF3g3hr5zmjxhMzgwe9APQWrDGIzzTRblrEvyZdekcgf3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725890584; c=relaxed/simple;
-	bh=5QEY87rZ0OM45XYC6BOnqQ0HiMorhfvmCoqqKRt+c1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l+BLBnwFxAWUZ+Ipl8uLxso61gktHYEhNdSQIre+vVZWiw2dh/BF6sXN5GxNd50kV4K5zbYzBh+s5e3AVuXdBfBIqS+68S4DDAhAqn8aqtKXAMu+zO8U/4ZDgWZtRy1CCFV5r5FawKNDO92ddFp5Jg4dd84SLHOaXF22n7WX/BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Gja6Y9sN; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 489DwMKB000802;
-	Mon, 9 Sep 2024 14:02:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:content-transfer-encoding
-	:mime-version; s=pp1; bh=yqo72ZH3uwBBeekmo7QfA6R2nWE3Fj2bj3GZAzl
-	5R0c=; b=Gja6Y9sNjP2+G2vDqbh4FstDcoNiKXsdSRh58ImTP6ZONXvI51UBJQc
-	/6SUHJHbAcgZcyj2Cjqnt9ti2hSmJPZsVkmxGOVfjfZBgkP0CICzl4UOTqwcalWn
-	tsEwCH/aTtJ4CzJ2MVob368ioEqH31N2pB0qJsDuKAoqF6jVRcrYpDcQshTIUeDS
-	gwhWHrB7dQuB+OR2P4dB/U8JAn6dNnLm1GZ+l8H3ijlIEHIvhdunhL52TZwGxbVK
-	/6pMpYGkXo4uv76E7KxiXeIsw/BZ4IcDmZkj+tKEmEH3pX4J5GIfsWJmnHVYNI53
-	ioZ/ixnhLokS7H5z5VwKYJuB8E0BzMQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gegwj6v9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 14:02:47 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 489E2kg8012058;
-	Mon, 9 Sep 2024 14:02:46 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gegwj6uw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 14:02:46 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 489Bg1j2032109;
-	Mon, 9 Sep 2024 14:02:44 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41h2nmempq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 14:02:44 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 489E2fIW21037540
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Sep 2024 14:02:41 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F11D92004B;
-	Mon,  9 Sep 2024 14:02:40 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3565520043;
-	Mon,  9 Sep 2024 14:02:39 +0000 (GMT)
-Received: from ltcrain34-lp2.aus.stglabs.ibm.com (unknown [9.3.101.41])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  9 Sep 2024 14:02:39 +0000 (GMT)
-From: Narayana Murty N <nnmlinux@linux.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
-        linux-kernel@vger.kernel.org
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, vaibhav@linux.ibm.com,
-        ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
-Subject: [PATCH v3] powerpc/pseries/eeh: Fix pseries_eeh_err_inject
-Date: Mon,  9 Sep 2024 09:02:20 -0500
-Message-ID: <20240909140220.529333-1-nnmlinux@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: tvjZ2tSnPZLGSzcn3ImH8zDHTJu3Sl3W
-X-Proofpoint-ORIG-GUID: qiUD1P0MQK4xkHwyNr-kHOZCYUHjUgRH
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1725890567; c=relaxed/simple;
+	bh=wnLgePkGM9YiICg864sAXY6woeBp8cqEKUTOstcrdgQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=RuVqAPN/2nvqJOLou+LOI+oSmDr0PG1dbYSF+UNC0pS59zMHfC05YJ3cjGOPJS3haW1weCmjEmvl07vBSsHPH7As3ujFqNmYs6OKRpmY9hiIWqaDVL2ktp+zm37Z4RuTjlJ9Ta531V2oX/f6UUytcKRLp5VdqQWVeTeAu6x+HB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6jGEmzq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61C08C4CEC5;
+	Mon,  9 Sep 2024 14:02:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725890565;
+	bh=wnLgePkGM9YiICg864sAXY6woeBp8cqEKUTOstcrdgQ=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=R6jGEmzqAQFHlf/HNC+pTLDu6UgUfXUvMzohZ9A2cU0lxbEoTQlWgN7piut0QkNCG
+	 qPJCvX1oAbHlzuFWzwTCMF9CjAQFBKvetuAcVfQOpMRYbxL//89rBCnqdat3Tnqxtp
+	 Shv+te5fWKfmvoh6nF93QWs1cbr28eiQAK+HyYlqYW9iTfBJDTPesIHO0y4WxK4MMM
+	 hDl0GWrImmAYFaO4cVjXwwLRrStpSi5Vk5huX5mgV1Bs/mSaGz84xWILYl9SJf4yzQ
+	 Qxh2ZvybJ+JbnnPiBWRvmihaCDO+CM7hBuO2+O9lubLlKrMaybn4+pkigIypfdo7Br
+	 kV5XW0GN+ODBg==
+Message-ID: <2f736900-9642-4824-9e41-e304c250857a@kernel.org>
+Date: Mon, 9 Sep 2024 22:02:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-09_06,2024-09-09_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
- adultscore=0 impostorscore=0 clxscore=1011 malwarescore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409090113
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org
+Subject: Re: [syzbot] [f2fs?] kernel BUG in new_curseg
+To: syzbot <syzbot+341e5f32ebafbb46b81c@syzkaller.appspotmail.com>,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <000000000000f0ee5b0621ab694b@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+Autocrypt: addr=chao@kernel.org; keydata=
+ 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
+In-Reply-To: <000000000000f0ee5b0621ab694b@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-VFIO_EEH_PE_INJECT_ERR ioctl is currently failing on pseries
-due to missing implementation of err_inject eeh_ops for pseries.
-This patch implements pseries_eeh_err_inject in eeh_ops/pseries
-eeh_ops. Implements support for injecting MMIO load/store error
-for testing from user space.
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
 
-The check on PCI error type (bus type) code is moved to platform
-code, since the eeh_pe_inject_err can be allowed to more error
-types depending on platform requirement. Removal of the check for
-'type' in eeh_pe_inject_err() doesn't impact PowerNV as
-pnv_eeh_err_inject() already has an equivalent check in place.
-
-Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
-Reviewed-by: Vaibhav Jain <vaibhav@linux.ibm.com>
-
----
-
-Testing:
-========
-vfio-test [1] by Alex Willamson, was forked and updated to add
-support inject error on pSeries guest and used to test this
-patch[2].
-
-References:
-===========
-[1] https://github.com/awilliam/tests
-[2] https://github.com/nnmwebmin/vfio-ppc-tests/tree/vfio-ppc-ex
-
-================
-Changelog:
-V2: https://lore.kernel.org/all/20240823151158.92602-1-nnmlinux@linux.ibm.com/
-- Updated patch description explicitly mentioning about similar checks
-in place for PoweRNV as suggested.
-- eeh_pe_inject_mmio_error wrapper function removed because CONFIG_EEH
-is always enabled built for PPC_PSERIES when PPC_PSERIES=y.
-V1: https://lore.kernel.org/all/20240822082713.529982-1-nnmlinux@linux.ibm.com/
-- Resolved build issues for ppc64|le_defconfig by moving the
-pseries_eeh_err_inject() definition outside of the CONFIG_PCI_IOV
-code block.
-- New eeh_pe_inject_mmio_error wrapper function added to avoid
-CONFIG_EEH is not set.
----
- arch/powerpc/include/asm/eeh.h               |  2 +-
- arch/powerpc/kernel/eeh.c                    |  9 +++--
- arch/powerpc/platforms/pseries/eeh_pseries.c | 39 +++++++++++++++++++-
- 3 files changed, 44 insertions(+), 6 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/eeh.h b/arch/powerpc/include/asm/eeh.h
-index 91a9fd53254f..317b12fc1fe4 100644
---- a/arch/powerpc/include/asm/eeh.h
-+++ b/arch/powerpc/include/asm/eeh.h
-@@ -308,7 +308,7 @@ int eeh_pe_reset(struct eeh_pe *pe, int option, bool include_passed);
- int eeh_pe_configure(struct eeh_pe *pe);
- int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
- 		      unsigned long addr, unsigned long mask);
--
-+int eeh_pe_inject_mmio_error(struct pci_dev *pdev);
- /**
-  * EEH_POSSIBLE_ERROR() -- test for possible MMIO failure.
-  *
-diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
-index d03f17987fca..49ab11a287a3 100644
---- a/arch/powerpc/kernel/eeh.c
-+++ b/arch/powerpc/kernel/eeh.c
-@@ -1537,10 +1537,6 @@ int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
- 	if (!eeh_ops || !eeh_ops->err_inject)
- 		return -ENOENT;
- 
--	/* Check on PCI error type */
--	if (type != EEH_ERR_TYPE_32 && type != EEH_ERR_TYPE_64)
--		return -EINVAL;
--
- 	/* Check on PCI error function */
- 	if (func < EEH_ERR_FUNC_MIN || func > EEH_ERR_FUNC_MAX)
- 		return -EINVAL;
-@@ -1851,6 +1847,11 @@ static const struct file_operations eeh_dev_break_fops = {
- 	.read   = eeh_debugfs_dev_usage,
- };
- 
-+int eeh_pe_inject_mmio_error(struct pci_dev *pdev)
-+{
-+	return eeh_debugfs_break_device(pdev);
-+}
-+
- static ssize_t eeh_dev_can_recover(struct file *filp,
- 				   const char __user *user_buf,
- 				   size_t count, loff_t *ppos)
-diff --git a/arch/powerpc/platforms/pseries/eeh_pseries.c b/arch/powerpc/platforms/pseries/eeh_pseries.c
-index b1ae0c0d1187..1893f66371fa 100644
---- a/arch/powerpc/platforms/pseries/eeh_pseries.c
-+++ b/arch/powerpc/platforms/pseries/eeh_pseries.c
-@@ -784,6 +784,43 @@ static int pseries_notify_resume(struct eeh_dev *edev)
- }
- #endif
- 
-+/**
-+ * pseries_eeh_err_inject - Inject specified error to the indicated PE
-+ * @pe: the indicated PE
-+ * @type: error type
-+ * @func: specific error type
-+ * @addr: address
-+ * @mask: address mask
-+ * The routine is called to inject specified error, which is
-+ * determined by @type and @func, to the indicated PE
-+ */
-+static int pseries_eeh_err_inject(struct eeh_pe *pe, int type, int func,
-+				  unsigned long addr, unsigned long mask)
-+{
-+	struct	eeh_dev	*pdev;
-+
-+	/* Check on PCI error type */
-+	if (type != EEH_ERR_TYPE_32 && type != EEH_ERR_TYPE_64)
-+		return -EINVAL;
-+
-+	switch (func) {
-+	case EEH_ERR_FUNC_LD_MEM_ADDR:
-+	case EEH_ERR_FUNC_LD_MEM_DATA:
-+	case EEH_ERR_FUNC_ST_MEM_ADDR:
-+	case EEH_ERR_FUNC_ST_MEM_DATA:
-+		/* injects a MMIO error for all pdev's belonging to PE */
-+		pci_lock_rescan_remove();
-+		list_for_each_entry(pdev, &pe->edevs, entry)
-+			eeh_pe_inject_mmio_error(pdev->pdev);
-+		pci_unlock_rescan_remove();
-+		break;
-+	default:
-+		return -ERANGE;
-+	}
-+
-+	return 0;
-+}
-+
- static struct eeh_ops pseries_eeh_ops = {
- 	.name			= "pseries",
- 	.probe			= pseries_eeh_probe,
-@@ -792,7 +829,7 @@ static struct eeh_ops pseries_eeh_ops = {
- 	.reset			= pseries_eeh_reset,
- 	.get_log		= pseries_eeh_get_log,
- 	.configure_bridge       = pseries_eeh_configure_bridge,
--	.err_inject		= NULL,
-+	.err_inject		= pseries_eeh_err_inject,
- 	.read_config		= pseries_eeh_read_config,
- 	.write_config		= pseries_eeh_write_config,
- 	.next_error		= NULL,
--- 
-2.45.2
+On 2024/9/9 16:19, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    89f5e14d05b4 Merge tag 'timers_urgent_for_v6.11_rc7' of gi..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14085f29980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=58a85aa6925a8b78
+> dashboard link: https://syzkaller.appspot.com/bug?extid=341e5f32ebafbb46b81c
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1614c807980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13854e00580000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-89f5e14d.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/dfc310daee41/vmlinux-89f5e14d.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/a92f22c06568/bzImage-89f5e14d.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/c7aaf1741c93/mount_1.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+341e5f32ebafbb46b81c@syzkaller.appspotmail.com
+> 
+> F2FS-fs (loop0): inject no free segment in get_new_segment of __allocate_new_segment+0x1ce/0x940 fs/f2fs/segment.c:3167
+> F2FS-fs (loop0): Stopped filesystem due to reason: 7
+> ------------[ cut here ]------------
+> kernel BUG at fs/f2fs/segment.c:2748!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> CPU: 0 UID: 0 PID: 5109 Comm: syz-executor304 Not tainted 6.11.0-rc6-syzkaller-00363-g89f5e14d05b4 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:get_new_segment fs/f2fs/segment.c:2748 [inline]
+> RIP: 0010:new_curseg+0x1f61/0x1f70 fs/f2fs/segment.c:2836
+> Code: 24 58 e8 12 b9 f2 ff eb 05 e8 4b 71 96 fd 48 8b 7c 24 70 e8 91 ac c6 07 48 8b 7c 24 10 31 f6 ba 07 00 00 00 e8 50 1e f6 ff 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90
+> RSP: 0018:ffffc9000179f548 EFLAGS: 00010246
+> RAX: 8fb07c62f860e300 RBX: 00000000000002b2 RCX: 8fb07c62f860e300
+> RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+> RBP: ffff8880125250c8 R08: ffffffff817401bc R09: 1ffff920002f3e20
+> R10: dffffc0000000000 R11: fffff520002f3e21 R12: ffff8880008c2700
+> R13: ffff8880125250cc R14: 1ffff110024a4a19 R15: 00000000000002b2
+> FS:  0000555593e0e380(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f6cf8cb40f8 CR3: 000000001255a000 CR4: 0000000000350ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   <TASK>
+>   __allocate_new_segment+0x1ce/0x940 fs/f2fs/segment.c:3167
+>   f2fs_allocate_new_section fs/f2fs/segment.c:3181 [inline]
+>   f2fs_allocate_pinning_section+0xfa/0x4e0 fs/f2fs/segment.c:3195
+>   f2fs_expand_inode_data+0x5d6/0xbb0 fs/f2fs/file.c:1799
+>   f2fs_fallocate+0x448/0x960 fs/f2fs/file.c:1903
+>   vfs_fallocate+0x553/0x6c0 fs/open.c:334
+>   do_vfs_ioctl+0x2592/0x2e50 fs/ioctl.c:886
+>   __do_sys_ioctl fs/ioctl.c:905 [inline]
+>   __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f6cf8c37229
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffeb5036b58 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f6cf8c37229
+> RDX: 00000000200000c0 RSI: 0000000040305828 RDI: 0000000000000004
+> RBP: 0000000000000000 R08: 00007ffeb5036b90 R09: 00007ffeb5036b90
+> R10: 00007ffeb5036b90 R11: 0000000000000246 R12: 00007ffeb5036b7c
+> R13: 0000000000000002 R14: 431bde82d7b634db R15: 00007ffeb5036bb0
+>   </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:get_new_segment fs/f2fs/segment.c:2748 [inline]
+> RIP: 0010:new_curseg+0x1f61/0x1f70 fs/f2fs/segment.c:2836
+> Code: 24 58 e8 12 b9 f2 ff eb 05 e8 4b 71 96 fd 48 8b 7c 24 70 e8 91 ac c6 07 48 8b 7c 24 10 31 f6 ba 07 00 00 00 e8 50 1e f6 ff 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90
+> RSP: 0018:ffffc9000179f548 EFLAGS: 00010246
+> RAX: 8fb07c62f860e300 RBX: 00000000000002b2 RCX: 8fb07c62f860e300
+> RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+> RBP: ffff8880125250c8 R08: ffffffff817401bc R09: 1ffff920002f3e20
+> R10: dffffc0000000000 R11: fffff520002f3e21 R12: ffff8880008c2700
+> R13: ffff8880125250cc R14: 1ffff110024a4a19 R15: 00000000000002b2
+> FS:  0000555593e0e380(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f6cf8cb40f8 CR3: 000000001255a000 CR4: 0000000000350ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
 
