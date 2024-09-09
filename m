@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-321843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C4C3972030
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:18:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1518B972031
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8F0D1F244CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:18:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DAF9B22F5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80352170A37;
-	Mon,  9 Sep 2024 17:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52813176AB6;
+	Mon,  9 Sep 2024 17:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKXTNXXJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jAh2/l39"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2C916EB65;
-	Mon,  9 Sep 2024 17:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1FF175D4C;
+	Mon,  9 Sep 2024 17:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902329; cv=none; b=ZoPoCq2A2ANtMT1Epuh4i4z74ebKLwy0Igzcz0eyshhullfX2RsOiZWvGJN7upbRqq8R06IzILDEX6nWlz6mTrgjSSt2I3UzUGk2Fhzovpvs+1iad6Qb+0vt+PGhIDHUPMdmrV8BrgDxZQgq7qxZ+E0y81d2kibzCxaVXOIrKi4=
+	t=1725902331; cv=none; b=t4JtMBxDSF+8OUU3M4yQxZpa4aVQDIFrrSFHiNiWwVBE8CqfeCV/sWSTYe97mtoAUHOpg0zh/P9HQQRClNoQyIh+aWEldULST+qXKn1bNZ0Oka98NFU5eNydQsLQIJY4ntHzoW4nJuJySGp7Hf2ildHjbOY35MMKda5r5Q+cS+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902329; c=relaxed/simple;
-	bh=mMa4F2Ikpxl+0XWDHV62Rd8ajny+lL3xWQ2nZtgMGXs=;
+	s=arc-20240116; t=1725902331; c=relaxed/simple;
+	bh=0my6CiCfO1YSLi/x8EJebBhnlxug1KH7Le/Dp6Hn1rI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jHL4QBGYEpRGhzXLX2o7wotFX8TAVoN3z3lk/LgOEUrRw9NNeMm8eKg5ZN7dVFse1gDS7fHgKo/++somy7zBdd2xTq3MnxQJwR28eJQpKR9jO+e+LhYtOlGvgF08ZHxGVZoyKYnp44hyugYGrdgqb5OgEDTliCJC12jWpV4O2Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKXTNXXJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E703DC4CEC7;
-	Mon,  9 Sep 2024 17:18:45 +0000 (UTC)
+	 MIME-Version:Content-Type; b=CWgzMqy7a9Jbg7ShjQ9MFw3aqwAmarGuQhnq1wM903f1MiINIeYhwpfBRk2t3MaP824nYSv5clkQaBBJc5LSjSJ5lhH1XIApsgZgVV9gmgFdBZYwO+gZOLGQpl34I7yDR9knAvigS1Kj+diDGGYdBSSdgxWpFlJ9ZVCaKhcIGak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAh2/l39; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFE17C4CEC8;
+	Mon,  9 Sep 2024 17:18:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725902328;
-	bh=mMa4F2Ikpxl+0XWDHV62Rd8ajny+lL3xWQ2nZtgMGXs=;
+	s=k20201202; t=1725902331;
+	bh=0my6CiCfO1YSLi/x8EJebBhnlxug1KH7Le/Dp6Hn1rI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=cKXTNXXJ+wCRMVeJpXJUj+lamG1WOtkAxx+hxoIRKIEEPmLUruNOIKNoXVnWIK1Tg
-	 nGgi4theZDC1UgqAxfaQ4kvA0ooejTuByshEZ/Fn1Pu1ZE5ISsENdv3KpVzvjOHGrm
-	 taEBdx70XuwkT3J+zyt7UnhqX8mrZJf+Q4w1zVfheMX3fnO000nB1meWA86w4aVpSm
-	 4XH7B4cygUp77+Nvd+kX6hnTJI9i+1d6q7PbIapvgOlWZPSQALEXUbJj/mAtsUEUE5
-	 A7VGRwzcv2FMFhfuAfapWLVvSufq+AHX06oGjJnq/ZvDiCr4Ksy0EPFVxcZ+EXytdV
-	 ChcwUDp7jMb8w==
+	b=jAh2/l396k5GbqfjNSaQBy3Jg/M415D6WaNic28NqN6ztZY8NtKkWpPtdeuUSedUt
+	 dqkxeuQytTySmAQGoW2SS4Uy3WoBhaavUZP4QaZtEjGeGMLPkR8BClNcFuhH2wJ4vH
+	 bdfTI4rv626NwLhGgae9ILHX85IGVthJ0E6EY1ICS/lQ0Eyg9wNFyVGfiTFsRdwFQ9
+	 99VzDnoAaa4/FzpNhPL7jz+hk6p2PoCfu8sPBYtpcrjFoNTudw4/tcVkW/91zmwiDL
+	 uK57Q/UWQ6MoAS/z8OMre954Of2e2QSOJoFb1pY5z67geJu2IWWc5nvzRVUJ6cb1kH
+	 UvLW8+V0HRcJA==
 From: Mark Brown <broonie@kernel.org>
-To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
- Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>, 
  Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Romain Gantois <romain.gantois@bootlin.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240906-tlv320-filter-v1-1-6955f53ff435@bootlin.com>
-References: <20240906-tlv320-filter-v1-1-6955f53ff435@bootlin.com>
-Subject: Re: [PATCH] ASoC: tlv320aic31xx: Add support for loading filter
- coefficients
-Message-Id: <172590232308.1707146.7048822902174477472.b4-ty@kernel.org>
-Date: Mon, 09 Sep 2024 18:18:43 +0100
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Alexandre Mergnat <amergnat@baylibre.com>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org
+In-Reply-To: <20240907200053.3027553-1-arnd@kernel.org>
+References: <20240907200053.3027553-1-arnd@kernel.org>
+Subject: Re: [PATCH] ASoC: mediatek: mt8365: remove unused
+ mt8365_i2s_hd_str
+Message-Id: <172590232608.1707146.10719220040805343879.b4-ty@kernel.org>
+Date: Mon, 09 Sep 2024 18:18:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,15 +65,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-99b12
 
-On Fri, 06 Sep 2024 14:20:58 +0200, Romain Gantois wrote:
-> The TLV320DAC3100 Audio DAC has 25 built-in digital audio processing blocks
-> (PRBs). Each of these PRBs has a static filter structure with programmable
-> coefficients. Once a PRB is selected for use by the DAC, its filter
-> coefficients can be configured via a dedicated set of registers.
+On Sat, 07 Sep 2024 20:00:38 +0000, Arnd Bergmann wrote:
+> The mt8365_i2s_enum and mt8365_i2s_hd_str variables are not
+> used anywhere, but cause a warning when building with C=1
+> or when enabling -Wunused-const-variable:
 > 
-> Define a new optional firmware which can be loaded by the TLV320DAC driver.
-> This firmware describes a full set of filter coefficients for all blocks
-> used by the various PRBs.
+> sound/soc/mediatek/mt8365/mt8365-dai-i2s.c:781:27: error: 'mt8365_i2s_hd_str' defined but not used [-Werror=unused-const-variable=]
+>   781 | static const char * const mt8365_i2s_hd_str[] = {
+>       |                           ^~~~~~~~~~~~~~~~~
 > 
 > [...]
 
@@ -82,8 +82,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: tlv320aic31xx: Add support for loading filter coefficients
-      commit: 77b696f489d2fd83bbcffeed363baac8f2f6ed4b
+[1/1] ASoC: mediatek: mt8365: remove unused mt8365_i2s_hd_str
+      commit: 876dec03fdfb7eeb592d01a95ba292c9e53b324b
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
