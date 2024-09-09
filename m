@@ -1,169 +1,178 @@
-Return-Path: <linux-kernel+bounces-321791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B67971F73
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:44:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B80C971F78
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CB1C1C235A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:44:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E97421F23780
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE9616C854;
-	Mon,  9 Sep 2024 16:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0786316D9AF;
+	Mon,  9 Sep 2024 16:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dspXmpuu"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="blVo2zYL"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247861758F
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D16F1758F
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725900269; cv=none; b=gOy7Px5oASCY0kVjhLM0Or7UM5Hi1NHRm95ahHaWnnRNmbPJKIXXjiTKm9oaUfPpAV4PklIfNJVlGIVih0fTUYNJWVXTWxYdb0HJlEDIPtrBjdBSWl1D5cuKj2dpClROjHa364zLXwscDy+o60oSbOzBd3FaSbunSZftv4VTKkQ=
+	t=1725900341; cv=none; b=GcDTKZXJYmEdXNjt7eRF/c4TB6ki/nUFH0coK1w+oREsVgggj2fTw/Vb6AeO/Kq55Y/w9lj/hac4fp7NNxbyxPGMZyfuxtc1skFregH5Svs8f61Pup/NUz1zdaZTJ/xI0orpG3zyZuPgzeYETjQ0hefM1U25K3G4M7+aHSAthcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725900269; c=relaxed/simple;
-	bh=V5SufoawHf+c/KapMgHuCcvMRxuPqRJLaGR2qrGPwSs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s+Vh70Bh4z0WX32GFNEJCvQcAX1oiUVaQwnmo9KFqQ84OMcxED2O4lvb21h8LQPJFn7GkjoD3eBjder/27MEyheawSlAgF4hWM0f9s+b1Zz8WTTyE8xsZSPi9LoKZMbjCswvVkYxBJrQVnwyw5W8lhBhnslJHMgrm8AhAwcWegE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dspXmpuu; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e02b79c6f21so5182336276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:44:27 -0700 (PDT)
+	s=arc-20240116; t=1725900341; c=relaxed/simple;
+	bh=aypj3AwzTBOrw+k/CCAxDywSoAK4r/5l7M6JJLd8etY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MgwLBjNoZTTtE9QeCHyZQkEErR3iPZdnWS3kQuaClcFB+Z/48Lve4ObxaiSLLdr/pfD7RPscgSZpQYGfkbKsyskjWBTSIXxKd6IZ+H84iwpJtjSGc+0rJTSg/HUxZsK6cHDNckvN0tCQZZTmgO8AlIhIp14szeRRwFk6KNXXWg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=blVo2zYL; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cad67ae7eso3645465e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:45:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1725900267; x=1726505067; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hxOwYLSJGdDaOpYEoZbgLMtvbt8O5f37ZwwE3/MPh0Y=;
-        b=dspXmpuu4CctlS61i0tk0zQTTIlNCINnKPgMSeR1uu7BWRsWVYOv76U5KIpLlmU9Ih
-         AcdQI03S0sU4hGMI9M1S7aAXFv7TQfzhvOzSW2duHWMFzDhKZKksQSUrL1WTVjPwBc6J
-         HQVLegnpMEjwut/snWK5QSKKoWqaNamFF0z+p6P09xLAhGMj9sejtH4bE0BpkggLi2Bp
-         W7hLpm379O2xF016SyU9YHzsFUoDMUy++fjVmfYRxB3R6xZA4ev+VlOmQbcM7yhipp2/
-         U1rlvAyB/SFUua6ZjS7DUyVF4VUWKxtEpqK1jwo9PSdkceWTcgL3je0nGrebxYs9WSC2
-         1CaQ==
+        d=linaro.org; s=google; t=1725900338; x=1726505138; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=eMsoOURx1kT61a6viyi10a0/CZlrMyenlU3TId0O9kA=;
+        b=blVo2zYLgrJAK9x8b0zcmKIKrw5GJIgM+PJ5sllX1+JK6HTezPnT/pbfSc6c7K6d7Y
+         y4N5pWId+1jpm0JxiE/IKYu4i3tLiebjxc0V8kHn3ylRIBnlhZoubiN8c47DhLFpB6XK
+         A+D8x/Y6s11R4Pwm9IiYFuurklgZO3cm3hAGfaIF8gUWY9NK9Z0hMPcxWkXnYu9bOGAm
+         QwrDRqMx0ff4FR80AdtHklqAS8NXCbhELm9a7XnEA7erVdK698tvtKnk3Ba1Sr5A8L1B
+         UvL4IwM1XXW8JqW1ErUJpC06/ufnt8N1QYUzqNieQsyUTwp1BZ8/ejKsaiHuN9+FxpI3
+         AaTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725900267; x=1726505067;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hxOwYLSJGdDaOpYEoZbgLMtvbt8O5f37ZwwE3/MPh0Y=;
-        b=o6Q7sOCJma/OkkHOpab1G5zRHk3GYq1iWkdHMCrxTrJ85r2KBzJZkFYtIHdI/w+qxH
-         SM9fjjie2+C7K3BL0K4B1iny7Yr1Aocg9gByYRgo8LNYhgAbuVv7fb20iww9ymdxh29K
-         RTrrO1Qly4t1CyNPBrD0DBrcnFQA+E3kYIhTNYU2qPFpyCQ9r8cLvdTKjAjgbCpoNszL
-         uZH6iKr0EzHvBU7RIq1fNKFQ3jE1ZM+NhoOMCZNJl58vQty8o9YcFb3BhSSQeum8P86p
-         x40kYYjX8AX2fOeADtznsMFbSdKxWSrumaHiLIwagGFGzwdWKNfPn7qOACYK86fHKhxx
-         rkLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXtzmekDl8J/AvxCE/msvPHdMQl69bKxAV0/aE4jzZGWD0V2POSaAoRfOBf9I++Cgrlqokm29SCkcffUnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/QXj0zZuNphOj99/QV1/IYHMgM6WNRM7HqLRfDLqrW1ATQBe1
-	53zs3vOUeM7W9LhcQ/YRdo7RcqHG67V2L7RrhgOk0DK/SP1ummLhYjPZickvfVXT3k9LbbnS3VR
-	PuKJ6wpiJdBCq/qISRLRDHSOjq30fZ8ne+qWA
-X-Google-Smtp-Source: AGHT+IG7ZtUx+p0eIcFiA2aT/49RI9azAwsEGWfUBykItgqPxBanhFUfYeMZLMxZBjYL9zvoU+ThTDKRjel2opLiwVA=
-X-Received: by 2002:a05:690c:338c:b0:6b3:f01c:9a57 with SMTP id
- 00721157ae682-6db4516cd86mr141309817b3.35.1725900267026; Mon, 09 Sep 2024
- 09:44:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725900338; x=1726505138;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eMsoOURx1kT61a6viyi10a0/CZlrMyenlU3TId0O9kA=;
+        b=tGoItlb+gh7GL3S2Tfr9SLSIa9eKlTXiap2FwRpneFWyxYzLuBxZdhm0oOAvM5CKbB
+         7/BJ+QhccE+YOnqmybj2Stijmht4tJ2XCGKFIC7avxp9LZuYa0aRrAd9lx5l/CFe+Cde
+         vuwaCQhiJgCjjxs94c09BQxiU9UKYzOT0AxWmFL1faAGCorRfsLk/9+ufSmoLQr+YA+G
+         5/FCpSDT+yb6tlsGujh1cqglH/kcvxK76orrooT3ZrvYxhi4jcsPSFKw0Jpo7pfL5OK3
+         PlEsridvlu4Sqywk9gGApUjRt7Qf6ryynYQ9YcNYzxTIgKxgh6oOMx8M2mo5Mv3vGoUM
+         aggA==
+X-Forwarded-Encrypted: i=1; AJvYcCUm7tcbZvX0Kv8gFCfABiRU9RSoWsZNRFNXJye+52pab9+0zFzwEB0aVyWnKrV3Pb0goH8EzNq6gQQ27uE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsQpeVsHuPp0KYqsp/QrUb+PUe60Sa6BMoCvO8dzGYyZxthBhb
+	iKSwZDMeVs1BoQ8dnxQ0QHCdkj+7bFuANNVVh02II7zRnHEmMF1OHXKv8B8yu10=
+X-Google-Smtp-Source: AGHT+IFW9IMEyKpdaJtbCqeR2BfZUGVbj5qq4s89gkF2dIQ1hZCkg5BprfSbih9wBltACm/FIFWYiA==
+X-Received: by 2002:a05:600c:4186:b0:42c:aeee:e605 with SMTP id 5b1f17b1804b1-42caeeee6f8mr24097205e9.9.1725900336995;
+        Mon, 09 Sep 2024 09:45:36 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789567625esm6480948f8f.64.2024.09.09.09.45.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 09:45:36 -0700 (PDT)
+Message-ID: <1944839e-306f-4881-b430-9837ce62cded@linaro.org>
+Date: Mon, 9 Sep 2024 18:45:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821095609.365176-1-mic@digikod.net> <CAHC9VhQ7e50Ya4BNoF-xM2y+MDMW3i_SRPVcZkDZ2vdEMNtk7Q@mail.gmail.com>
- <20240908.jeim4Aif3Fee@digikod.net> <CAHC9VhSGTOv9eiYCvbY67PJwtuBKWtv6nBgy_T=SMr-JPBO+SA@mail.gmail.com>
-In-Reply-To: <CAHC9VhSGTOv9eiYCvbY67PJwtuBKWtv6nBgy_T=SMr-JPBO+SA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 9 Sep 2024 12:44:16 -0400
-Message-ID: <CAHC9VhTck26ogxtTK-Z_gxhhdfYR4MgHystKdWttjsXcydyB9A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] fs: Fix file_set_fowner LSM hook inconsistencies
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soundwire: stream: Revert "soundwire: stream: fix
+ programming slave ports for non-continous port maps"
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+ Charles Keepax <ckeepax@opensource.cirrus.com>, Vinod Koul
+ <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org, "stable@vger.kernel.org"
+ <stable@vger.kernel.org>
+References: <20240904145228.289891-1-krzysztof.kozlowski@linaro.org>
+ <Zt8H530FkqBMiYX+@opensource.cirrus.com>
+ <8462d322-a40a-4d6c-99c5-3374d7f3f3a0@linux.intel.com>
+ <adb3d03f-0cd2-47a7-9696-bc2e28d0e587@linaro.org>
+ <2024090943-retiree-print-14ba@gregkh>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <2024090943-retiree-print-14ba@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 9, 2024 at 12:03=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Sun, Sep 8, 2024 at 2:11=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
-> >
-> > On Wed, Aug 21, 2024 at 12:32:17PM -0400, Paul Moore wrote:
-> > > On Wed, Aug 21, 2024 at 5:56=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic=
-@digikod.net> wrote:
-> > > >
-> > > > The fcntl's F_SETOWN command sets the process that handle SIGIO/SIG=
-URG
-> > > > for the related file descriptor.  Before this change, the
-> > > > file_set_fowner LSM hook was always called, ignoring the VFS logic =
-which
-> > > > may not actually change the process that handles SIGIO (e.g. TUN, T=
-TY,
-> > > > dnotify), nor update the related UID/EUID.
-> > > >
-> > > > Moreover, because security_file_set_fowner() was called without loc=
-k
-> > > > (e.g. f_owner.lock), concurrent F_SETOWN commands could result to a=
- race
-> > > > condition and inconsistent LSM states (e.g. SELinux's fown_sid) com=
-pared
-> > > > to struct fown_struct's UID/EUID.
-> > > >
-> > > > This change makes sure the LSM states are always in sync with the V=
-FS
-> > > > state by moving the security_file_set_fowner() call close to the
-> > > > UID/EUID updates and using the same f_owner.lock .
-> > > >
-> > > > Rename f_modown() to __f_setown() to simplify code.
-> > > >
-> > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> > > > Cc: Christian Brauner <brauner@kernel.org>
-> > > > Cc: James Morris <jmorris@namei.org>
-> > > > Cc: Jann Horn <jannh@google.com>
-> > > > Cc: Ondrej Mosnacek <omosnace@redhat.com>
-> > > > Cc: Paul Moore <paul@paul-moore.com>
-> > > > Cc: Serge E. Hallyn <serge@hallyn.com>
-> > > > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > > > ---
-> > > >
-> > > > Changes since v2:
-> > > > https://lore.kernel.org/r/20240812174421.1636724-1-mic@digikod.net
-> > > > - Only keep the LSM hook move.
-> > > >
-> > > > Changes since v1:
-> > > > https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
-> > > > - Add back the file_set_fowner hook (but without user) as
-> > > >   requested by Paul, but move it for consistency.
-> > > > ---
-> > > >  fs/fcntl.c | 14 ++++----------
-> > > >  1 file changed, 4 insertions(+), 10 deletions(-)
-> > >
-> > > This looks reasonable to me, and fixes a potential problem with
-> > > existing LSMs.  Unless I hear any strong objections I'll plan to merg=
-e
-> > > this, and patch 2/2, into the LSM tree tomorrow.
-> >
-> > I didn't see these patches in -next, did I miss something?
-> > Landlock will use this hook really soon and it would make it much easie=
-r
-> > if these patches where upstream before.
->
-> Ah!  My apologies, I'll do that right now and send another update once
-> it's done.  FWIW, I'm going to tag 1/2 for stable, but since we are at
-> -rc7 presently I'll just plan to send it during the next merge window.
+On 09/09/2024 18:23, Greg KH wrote:
+>>>>> Soundwire core and existing codecs expect that the array passed as
+>>>>> prop.sink_ports and prop.source_ports is continuous.  The port mask still
+>>>>> might be non-continuous, but that's unrelated.
+>>>>>
+>>>>> Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+>>>>> Closes: https://lore.kernel.org/all/b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com/
+>>>>> Fixes: ab8d66d132bc ("soundwire: stream: fix programming slave ports for non-continous port maps")
+>>>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>>>
+>>>>> ---
+>>>>
+>>>> Would be good to merge this as soon as we can, this is causing
+>>>> soundwire regressions from rc6 onwards.
+>>>
+>>> the revert also needs to happen in -stable. 6.10.8 is broken as well.
+>>
+>> It will happen. You do not need to Cc-stable (and it will not help, will
+>> not be picked), because this is marked as fix for existing commit.
+> 
+> No, "Fixes:" tags only do not guarantee anything going to stable, you
+> have to explicitly tag it Cc: stable to do so, as per the documentation.
 
-Merged into lsm/dev, thanks for the nudge :)
+Then anyway cc-stable not in body won't work.
 
---=20
-paul-moore.com
+> 
+> Yes, we often pick up "Fixes:" only tags, when we have the time, but
+> again, never guaranteed at all.
+
+Hm, I assumed you are still taking fixes for the fixes automatically.
+That's the case here. I will resend with cc-stable in such case.
+
+Best regards,
+Krzysztof
+
 
