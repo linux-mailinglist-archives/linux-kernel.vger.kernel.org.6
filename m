@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-321534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E1D971BC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:55:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4601971BCA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33B9FB25151
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:54:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BA6F283FA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EA91BD008;
-	Mon,  9 Sep 2024 13:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8381BD4EB;
+	Mon,  9 Sep 2024 13:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HnsuNF9u"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wtNEPAOA"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38751BC09E
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE591BCA05
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725889917; cv=none; b=bKxSMZjPJDRD7OLK7kkJGN9qlv1jiyCFA4h76uMqjeOsBJ/9fnMY/VTeSOMa2egpBCpMj/noF10DIPmejTmzoFMK6v8EGR8HMHkI4gnMNFNlBeXKuocEeFI8tdf0UJMkhrgoA6balgQlqg5gUTRy1w2aDK/vXM7PtcggsVm9Z8I=
+	t=1725889919; cv=none; b=nPb+RwryObkwiKAbOpjyoORwO4AeOVfRlXc8uGKa3ewci+0T/C9jcYL80104m0lQWz/DJp03KDQzyA8OU7FikDFvZDqr5NuXdZ1I3HHkOYGGelPiHH8vEuRSIdtOPlsGREqOf6hgW+eD0CXs7vIfJqRMZxAgsR/XaWgFAHWc3kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725889917; c=relaxed/simple;
-	bh=zfZGJPZ+7n/u+R7h1aiFdsdkEzudbMyrWwt0mCMNVy8=;
+	s=arc-20240116; t=1725889919; c=relaxed/simple;
+	bh=MS4Vn8NDElkbWDEAQWJiCHTN4oDL8ETlvc4aO5xEqXE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BW/PSg3vtm6v124woVRheF8iM69lLgXBLndtElRd5uw342IT+CLp9fnWqcYuYwX9F3YcbERwtkK6G9a0uHtKM3b5doh8YpjEq8IqmuBENzwMMw8L+UAJkt7sng36NXhjiU5XcR4RHRdbskbLHnWEttFwTvofGut3+dVGaMF3t1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HnsuNF9u; arc=none smtp.client-ip=209.85.128.50
+	 In-Reply-To:To:Cc; b=Au3iKqGGeXqvKzMsDJawaOAMe1ub8nhZNs7K5uTDcJqvuP0TbQ5KjThDu5wIZyP1JOMNmH8XRopoaU7VDRTLF9gI7BF+1fuIsfq826lNxEluLIUJb59qi4BhepdscGxzJLJqyaszown0yKVRxx7mPW+HedJQXH2mmmRc3FaInNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wtNEPAOA; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb1e3b449so2531205e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 06:51:55 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8a91c8cdd5so22186966b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 06:51:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725889914; x=1726494714; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1725889915; x=1726494715; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2Ca+bwI9Pu7F3YUoAaUsqSsRV8VpFvNoCThNciak41Q=;
-        b=HnsuNF9uTiZz2KD36y4vGRhG/UVM2phfhdiPAuKuD65LaqZkhdxaZSA9R+8agSAhoJ
-         EHSCt45YtgBi5Pc3N3qtjJkixOtVo6DdwQZp1qRL3iGXRg/XzR4PIgqaMXVojPSSnK8V
-         OL8rz7NSaEvl8zlExlCwG5J04JHKFaF3QOhsi5nMp2l8QAB2Jc1Q+i7gdg3Pj0hj8TvS
-         Z/1PWM0EwqXoThYVNfjDBMDfQhvAzymMoKZLS7PMeIN3XbL+SBkMXoygI/4PXiQwEu6H
-         hBXO+V6MB5vqoHdP9em3KOO9wviRLN1SToi6Di2WMo1PNuAlDHG+41nipJ2PXmGXTJEE
-         KTew==
+        bh=yX0ieRX3qt7UlOSEcKeb4ov5m9CKVjYZ6v64GoSji2o=;
+        b=wtNEPAOA8zPTggjNZsJmPNtm8uCjNQ2aZXUEDuka0sq6uCH9TGvCY4vcxK4bjIyJdP
+         ffqgD615pvGgV5j5CiN0BHZCFRpHAOzQsrXeugEcBoeEfoteVqypF+B9fD/CtPOXymXf
+         Miuhc6NQi6uAzemHP/iq1DLB6//9g7Wq02djKqHK/iaWOGxb4LUSMC6qdypg2esKTQIA
+         4nn23nR/MOwYdi461IfZ7IAmTqbMMJLbhGy5shWgRFRg1IC/aVkzU70xJv3CQncNCsuN
+         yBdt8SVNi/+60khZoKZ6BYEyveJxWUvIm+YUr8fM8A3dTxQukcd+EL8ISlAWPT3sv9+d
+         b9VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725889914; x=1726494714;
+        d=1e100.net; s=20230601; t=1725889915; x=1726494715;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2Ca+bwI9Pu7F3YUoAaUsqSsRV8VpFvNoCThNciak41Q=;
-        b=jO8Jwb5QT1ejSleakB/RmIvL2LY424adn7cg3/WFtrF8OkrYuwUlQxiCv1HHDlCFzN
-         jfDKZBmVk5lyY9qdYNhvRGCYv75u0rW/xBeyww06squN0ou/zA4YjfnWR3xiC6LcQ+C6
-         EY8rBxALQO7J6apDoRgdnjZOyqPJ58F3vBQpBQB/4GG43qnMIxjHo6CaMtobmaTdu8Jz
-         7SqxlEX1fCOObResgji14NbHYR5BnSy3VQ0SpqnC4l4uaTp6sxO/eB15dXT6sm+Zn0On
-         rYMK53hqeTVT21SaP3fDiyU+BozUece28yns1+Wpkm+XmxI+c8esgFS2cy8CtyiV9+IB
-         TiPg==
-X-Gm-Message-State: AOJu0Yy+sjA8veYoMOMk/0qxC6jB5EQ5jJARgkQMiMVqvn5tbPNVLMje
-	42gBwItjqZQIevTr6niW5AomVQ65gd95xucGNOvR3GLV341AWNTCzvxWMOXg8ko=
-X-Google-Smtp-Source: AGHT+IHwSOk/fpUD97Xcan+P+CIOyJe34rmyJqYvmDhNziRzvW/wcrZnoC+6JMIT/uTXpLghlRozEQ==
-X-Received: by 2002:a05:6000:18a5:b0:378:955f:d242 with SMTP id ffacd0b85a97d-378955fd30emr2248356f8f.12.1725889913898;
-        Mon, 09 Sep 2024 06:51:53 -0700 (PDT)
+        bh=yX0ieRX3qt7UlOSEcKeb4ov5m9CKVjYZ6v64GoSji2o=;
+        b=GA5ue/paFmZfIue6oSBxTaK5TvaeS9IvpWeOVqAJlL2kdzxy1r92WqgDNlMaLp6PRw
+         LFMd3oO2dvztdZQgq9fOsUuKZj8b6liIfmlYkb0E2Wit7U5U7CmqBbqQwc/cmIQlhSYW
+         oHlLRYpgU8EOLd4b/PwK9cKZ8oCp975pcS+f+zldsglOizsTuUSKFx87rtnswRINKV6o
+         1JLuMrhSdom+PHUjYAOV4Slc8oWFgUXA0aCtynSZ06MMAn71UZY3SXdufP8xENZL8/iN
+         TNv4f+PHEQnIdRcmrJh2f25ZOlpGa6Oo9nze2dm+zUyuDvkXfHmgqAhfq7EKoh3xgBDH
+         NbPw==
+X-Gm-Message-State: AOJu0YzhJ40ZFO1l1V///MoAii85VX52T7fgMcrySeGo419D49PJbLUm
+	QskKyOIkKrd40GGzN/R00vZs87ImRpsIwCUN/8cfEOcqC6676jstdzr4lIrTrlw=
+X-Google-Smtp-Source: AGHT+IHCG4aOhWEoDHhp4VlM/hSRsuN52yWkPHfFAEGYdvVImYzvsFpKRpyVze8PsPQZpSmUk8de4A==
+X-Received: by 2002:a17:907:7212:b0:a80:ed7e:8468 with SMTP id a640c23a62f3a-a8a882725e1mr381160866b.0.1725889915394;
+        Mon, 09 Sep 2024 06:51:55 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25cf3ad6sm345344566b.148.2024.09.09.06.51.52
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25cf3ad6sm345344566b.148.2024.09.09.06.51.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 06:51:53 -0700 (PDT)
+        Mon, 09 Sep 2024 06:51:54 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 09 Sep 2024 15:51:22 +0200
-Subject: [PATCH 11/17] regulator: mtk-dvfsrc: Constify static data
+Date: Mon, 09 Sep 2024 15:51:23 +0200
+Subject: [PATCH 12/17] regulator: pcap: Constify static data
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240909-regulator-const-v1-11-8934704a5787@linaro.org>
+Message-Id: <20240909-regulator-const-v1-12-8934704a5787@linaro.org>
 References: <20240909-regulator-const-v1-0-8934704a5787@linaro.org>
 In-Reply-To: <20240909-regulator-const-v1-0-8934704a5787@linaro.org>
 To: Support Opensource <support.opensource@diasemi.com>, 
@@ -88,86 +88,90 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2139;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2714;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=zfZGJPZ+7n/u+R7h1aiFdsdkEzudbMyrWwt0mCMNVy8=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBm3v1iyrWzON70Cq7VuXn8aYsCpNlvo+gCyF8zr
- /RcPqSw97WJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZt79YgAKCRDBN2bmhouD
- 1yTND/9Kx2lZ3eCZZI46T755Vu5pa+AVNHwPIjhtgawTn9QLWZU4dx/nKarepxpIrJmJoAiNmef
- l9zUCIQ7tTRLh08J5eaODQJjDqqHS9iKGibJ1szkjME/jAk8tK2AuujylmN7rFF6OnjGZRy1hIX
- +MEkXzQnCsG3sWC79oLxmePYDAS9w79DyLnc+Y2VG416EUBy0sWemV843d/iP/ImkgfSQ8Z+rF0
- NqNl+VSGgnBY0WeVjDR5J/LugNaoWcKIOo9oL0JPMMyqLCIbAyXKnZNOKH1RgJohboAaKvvRWcj
- pvqFAWqbP+cDOVyuibuNXPW57C0G9xz0AdR5CEvDaxMCzVsog/Mp3P+IPNH0DsLfNaLxMcub5pO
- 7uG43TuDc8R7IV6+0Kwgq6NsaOT+kBsDFBWodE0Kh2TzOv2uZ2COlbSO4fhWQ4xD+D4oOwxNtVa
- tkUbOckx0oRsGIXgLDv4DqJxJrzypzsLm12PnHbgKcTSps9z5zMpn193f6UCX6fJO9G6V5/GbFg
- sqWqNLxaDkdNgDua3Pl4lXKyL+90l4ssXiY9uwL788ThSvGGxE4eazeXMUmZ54lNbDvsDYJVzVj
- ozpmtPHcblf+kCN45ItBbo+Di94pYfYELDshUwux8NWiV61d+WNWYfAV21pMl+w6F26s8fo25Qh
- ymgij+ek/OQx8QQ==
+ bh=MS4Vn8NDElkbWDEAQWJiCHTN4oDL8ETlvc4aO5xEqXE=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBm3v1ipR0PFario11XiOMREeg6br4HZqWH6heoy
+ GID0BAwI3aJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZt79YgAKCRDBN2bmhouD
+ 1+kjD/4yE+PIP+59j+gU/cUsfasMKH6r1asR/aM3IqmfKNUATk6MFUoNDDqUNZZnvEQ2gXzj2kL
+ ThFAHRQoOCDMk/5me0Qil5BYYCS7NVWojWcIA/GVUsB90Zc4bYWmSZxs4UijN3cVkqmqT4ddIHK
+ tBcOZmJ9sibK9TVjWT5DjKslzyWfB1WjU2v0w42c6pFD5D4OOdrXMHg1EhcEgb+DsObz20hKhTD
+ JH+rPF33xMlY6zwl0/fcmgxM4uQv2+yLuyhGKg9OFDdcYtXICXhc3Uk7+Uky79VqwLP9hnoyGll
+ Ps0YHrHaeFLkVFErLkBvJtfe8C0+z0LvhmyM8Hwu8OICUSQ1SImwdzggxP/8aIGVSmYCTIxUhmM
+ fEgimd1EJZxM9199uNr2fXFFSw7+2jgiOoVcYC18cQieDZU6mkhTkysZeY7YcVrzF49oNuYSONr
+ GIDEw65D1QWqcpSwx7HEXOwfROB8RgQgoo2D41EYaE1hrqLob34BEAhOqAVZhAWAfUiOYhMkz3O
+ ENspkvf9K2h/6v13cIsrsKnUqjA0C49v0h5EG375HB3awPv3EBQHxCN3ZeDcSWT8qoMJ646n+qC
+ aPfIJZXhcERGnaRZVS6MtRl5WezHcyJ71zGeqitfhtptvvt9rfqHlRQ+fLDtqjjy03WFiT05ZGr
+ a4zrHL0vlDmpXiA==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
 Driver does not modify static data with regulator description (struct
-regulator_desc), so make it const for code safety.
+pcap_regulator), so make it const for code safety.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
 ---
+ drivers/regulator/pcap-regulator.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Have in mind that to compile this code, you need pending (off-tree)
-patches, which I applied.
----
- drivers/regulator/mtk-dvfsrc-regulator.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/regulator/mtk-dvfsrc-regulator.c b/drivers/regulator/mtk-dvfsrc-regulator.c
-index 9bf4163221f1..f5662c569464 100644
---- a/drivers/regulator/mtk-dvfsrc-regulator.c
-+++ b/drivers/regulator/mtk-dvfsrc-regulator.c
-@@ -19,7 +19,7 @@ enum dvfsrc_regulator_id {
- };
+diff --git a/drivers/regulator/pcap-regulator.c b/drivers/regulator/pcap-regulator.c
+index 319a88412154..441c9344aef7 100644
+--- a/drivers/regulator/pcap-regulator.c
++++ b/drivers/regulator/pcap-regulator.c
+@@ -105,7 +105,7 @@ struct pcap_regulator {
+ 		.lowpwr		= _lowpwr,				\
+ 	}
  
- struct dvfsrc_regulator_pdata {
--	struct regulator_desc *descs;
-+	const struct regulator_desc *descs;
- 	u32 size;
- };
+-static struct pcap_regulator vreg_table[] = {
++static const struct pcap_regulator vreg_table[] = {
+ 	VREG_INFO(V1,    PCAP_REG_VREG1,   1,  2,  18, 0),
+ 	VREG_INFO(V2,    PCAP_REG_VREG1,   5,  6,  19, 22),
+ 	VREG_INFO(V3,    PCAP_REG_VREG1,   7,  8,  20, 23),
+@@ -141,7 +141,7 @@ static struct pcap_regulator vreg_table[] = {
+ static int pcap_regulator_set_voltage_sel(struct regulator_dev *rdev,
+ 					  unsigned selector)
+ {
+-	struct pcap_regulator *vreg = &vreg_table[rdev_get_id(rdev)];
++	const struct pcap_regulator *vreg = &vreg_table[rdev_get_id(rdev)];
+ 	void *pcap = rdev_get_drvdata(rdev);
  
-@@ -107,7 +107,7 @@ static const unsigned int mt6873_voltages[] = {
- 	725000,
- };
+ 	/* the regulator doesn't support voltage switching */
+@@ -155,7 +155,7 @@ static int pcap_regulator_set_voltage_sel(struct regulator_dev *rdev,
  
--static struct regulator_desc mt6873_regulators[] = {
-+static const struct regulator_desc mt6873_regulators[] = {
- 	MTK_DVFSRC_VREG("dvfsrc-vcore", VCORE, mt6873_voltages),
- 	MTK_DVFSRC_VREG("dvfsrc-vscp", VSCP, mt6873_voltages),
- };
-@@ -122,7 +122,7 @@ static const unsigned int mt8183_voltages[] = {
- 	800000,
- };
+ static int pcap_regulator_get_voltage_sel(struct regulator_dev *rdev)
+ {
+-	struct pcap_regulator *vreg = &vreg_table[rdev_get_id(rdev)];
++	const struct pcap_regulator *vreg = &vreg_table[rdev_get_id(rdev)];
+ 	void *pcap = rdev_get_drvdata(rdev);
+ 	u32 tmp;
  
--static struct regulator_desc mt8183_regulators[] = {
-+static const struct regulator_desc mt8183_regulators[] = {
- 	MTK_DVFSRC_VREG("dvfsrc-vcore", VCORE, mt8183_voltages),
- };
+@@ -169,7 +169,7 @@ static int pcap_regulator_get_voltage_sel(struct regulator_dev *rdev)
  
-@@ -138,7 +138,7 @@ static const unsigned int mt8195_voltages[] = {
- 	750000,
- };
+ static int pcap_regulator_enable(struct regulator_dev *rdev)
+ {
+-	struct pcap_regulator *vreg = &vreg_table[rdev_get_id(rdev)];
++	const struct pcap_regulator *vreg = &vreg_table[rdev_get_id(rdev)];
+ 	void *pcap = rdev_get_drvdata(rdev);
  
--static struct regulator_desc mt8195_regulators[] = {
-+static const struct regulator_desc mt8195_regulators[] = {
- 	MTK_DVFSRC_VREG("dvfsrc-vcore", VCORE, mt8195_voltages),
- 	MTK_DVFSRC_VREG("dvfsrc-vscp", VSCP, mt8195_voltages),
- };
-@@ -159,7 +159,7 @@ static int dvfsrc_vcore_regulator_probe(struct platform_device *pdev)
- 		return -EINVAL;
+ 	if (vreg->en == NA)
+@@ -180,7 +180,7 @@ static int pcap_regulator_enable(struct regulator_dev *rdev)
  
- 	for (i = 0; i < pdata->size; i++) {
--		struct regulator_desc *vrdesc = &pdata->descs[i];
-+		const struct regulator_desc *vrdesc = &pdata->descs[i];
- 		struct regulator_dev *rdev;
+ static int pcap_regulator_disable(struct regulator_dev *rdev)
+ {
+-	struct pcap_regulator *vreg = &vreg_table[rdev_get_id(rdev)];
++	const struct pcap_regulator *vreg = &vreg_table[rdev_get_id(rdev)];
+ 	void *pcap = rdev_get_drvdata(rdev);
  
- 		rdev = devm_regulator_register(&pdev->dev, vrdesc, &config);
+ 	if (vreg->en == NA)
+@@ -191,7 +191,7 @@ static int pcap_regulator_disable(struct regulator_dev *rdev)
+ 
+ static int pcap_regulator_is_enabled(struct regulator_dev *rdev)
+ {
+-	struct pcap_regulator *vreg = &vreg_table[rdev_get_id(rdev)];
++	const struct pcap_regulator *vreg = &vreg_table[rdev_get_id(rdev)];
+ 	void *pcap = rdev_get_drvdata(rdev);
+ 	u32 tmp;
+ 
 
 -- 
 2.43.0
