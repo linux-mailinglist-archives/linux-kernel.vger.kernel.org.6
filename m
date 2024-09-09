@@ -1,272 +1,252 @@
-Return-Path: <linux-kernel+bounces-321527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B93971BBA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:53:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADE37971BB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D690D284B10
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:53:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C9F41F24325
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4051BB68E;
-	Mon,  9 Sep 2024 13:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pr1Ry8Xs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2CA1BAEF3;
+	Mon,  9 Sep 2024 13:51:49 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42B31B3F23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328E31BA28F
 	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725889909; cv=none; b=ZXIz0Ma3uQfk/Gk+S05rE6T2+cqsZ2s1NcXg2bAliaV8FCQiF9Isl49bbvqwdW4i5o0l4AfA+sWUwmhr0pkIN1BTzlRXFeuNM/zXgNAya+qv5QN9GdUx1C+a1dwBtxmHgKy1zx1qgRVHFN+rdxKAkdBXvjYAVGdAhUzYR5dGoVs=
+	t=1725889908; cv=none; b=gDxzd7WWsZWIHLCWSxEVKnm0skbN9zCTzaYkpzOgx39IwY6ulRFeVmOP4HiBar/vEZ00pCC3SA7aSCcx43t5esXjUuO5HRmMb/cDtn97kAMgDdrvjEfeQclZ9i5WM5/iCAjtSjDgROvT62nHFEq6e3L8hnjGWkJZiRNKbXYiMg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725889909; c=relaxed/simple;
-	bh=0qbnXvkzmhga39KKgbR31l0OB8fM8okXecKZNPmMmY0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WIYolGLDqM0b01c3rne6i/3sKj1RJF/EcE0ZFXGWHSSMBQeJJWXSy5qjT8BzqRFrfNtofHHOAeYZG3rCDjk6YZouv6enMyIF1fZ4tRxQ8BHOjnJmlJzyb8mR9DoIAeKI8ecLlzUZy9tXpl/hN4BW+DdWZcLwyDFHURx5U1tsgrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pr1Ry8Xs; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725889905;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Y0tZEvsZterp2aqnAF3GcnqbGD9ikKZZm7hI4RTRcxk=;
-	b=Pr1Ry8XsGCV62p2PBv0gpgCaXPjNKaUXhub/H9Os68B5S6b+LTHlCmSBMmgH+6qrT13esD
-	HOelbz6qV2GrfqbzQ8QgJlIttItQYoGu5PHG8QPR8nL1DjF9W3CGMAavuFQvLL9KSUk1pn
-	l4DZ0QbgNlbPiSSImkCZSnjCoo6HOLQ=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-180-pR1VYr-0PQOpItgUzBBaWg-1; Mon, 09 Sep 2024 09:51:43 -0400
-X-MC-Unique: pR1VYr-0PQOpItgUzBBaWg-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cb99afa97so5869865e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 06:51:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725889902; x=1726494702;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y0tZEvsZterp2aqnAF3GcnqbGD9ikKZZm7hI4RTRcxk=;
-        b=ptrvmTT3RsmuEyDAeEJF/YPRfsmpTP2lT9x4hBSQtl/05VIoCgoAreZJpOYcg/yDjC
-         H6IeiZnWZ+vL2ffhz3/I0xysmBbjefuu5/uhMPlHDsFjCJ8sq0iG9TM3PO2c/ExEf3Rp
-         GTNe4lZBg3knIscsv//vYzIBBrH9ipvVx+qV06iz+IzvykDMCHj3847wk39d1yMs5t8I
-         xDrwADVPTdfni8XqXXCmncmq1uAmEiNYa4Zm32WeYhLwrKZLs42xMczueSP8ao0OXb1W
-         knSIxUYWyh3BAeMxvrjdCeJ5jUNEWFusSD00z1gHLeVUqn6T+HtRD7HyqxSaigs/fZ6O
-         Suig==
-X-Forwarded-Encrypted: i=1; AJvYcCWNOyySdi6denTkF1RHE7wBOfcPag81hiGYo6Lk5W7xamShJpJvHukOvpT7eKVeY18YOqkuJrufMiMCjCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvLWYeJxc0Bj6Gepkv88GEfjFurP+SpsMYCXV/+l6/fWVu9ZLF
-	P8pubcg9JlFEFYbOp8bttHSM814OdF7NA2vxCytfUdkjK4vH3J66jZI694Et178JR7x6wKCzy+Q
-	f0aN9wwUYC3Vqt1kMk8RoEmMbwL40hBhsaDmyE8t6T43POBB4j4MBKrK9wruSlIO1+RKtIxkd
-X-Received: by 2002:adf:e84a:0:b0:374:c92e:f69f with SMTP id ffacd0b85a97d-378895caf24mr7229055f8f.16.1725889901770;
-        Mon, 09 Sep 2024 06:51:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEDfIgsMO6NLNmoe2gXmS+oP/AsxfqL24bcUlxSPiMg6y6PqpLe7sOx2QTJodRnKO68Qy7p9g==
-X-Received: by 2002:adf:e84a:0:b0:374:c92e:f69f with SMTP id ffacd0b85a97d-378895caf24mr7229033f8f.16.1725889900970;
-        Mon, 09 Sep 2024 06:51:40 -0700 (PDT)
-Received: from [192.168.10.81] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-378956650fdsm6120284f8f.25.2024.09.09.06.51.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 06:51:40 -0700 (PDT)
-Message-ID: <d8dc1d89-4f23-41c8-bddf-ebbc41f579d5@redhat.com>
-Date: Mon, 9 Sep 2024 15:51:39 +0200
+	s=arc-20240116; t=1725889908; c=relaxed/simple;
+	bh=jSlSEWw5SA2Xl/21zpZ93/2yeRbgqUqz9Uk8Ns7dM1g=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=LNXs1JM4Nkx8jbpgP9WPBy6etn28aVwoRD1hq7PvntaCuPxr647fvwFaoT56QCsNzNcH+vUY49S8FzK9X0MbyqGkV4nYbBKmPN9Z3YEMtrGq56WwMrpa8rraiBAv0/KJSCZW+aLrUxxMEDeYMA7m9KY84vmhF7yDMp5zCh+75FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X2Ssw36mdz2Dbq9;
+	Mon,  9 Sep 2024 21:51:16 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5F2611400DC;
+	Mon,  9 Sep 2024 21:51:43 +0800 (CST)
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 9 Sep 2024 21:51:43 +0800
+Subject: Re: [PATCH v2 4/6] debugobjects: Don't start fill if there are
+ remaining nodes locally
+To: Thomas Gleixner <tglx@linutronix.de>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
+References: <20240904133944.2124-1-thunder.leizhen@huawei.com>
+ <20240904133944.2124-5-thunder.leizhen@huawei.com>
+ <336109d9-2eea-4d67-ee22-ed218b9504c3@huawei.com>
+ <7613ce35-0c65-341f-c6ed-412de79890e6@huawei.com> <87ed5tchc6.ffs@tglx>
+ <87bk0xc9iy.ffs@tglx>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <32bd93ec-747f-b5a1-917f-f885b87600a5@huawei.com>
+Date: Mon, 9 Sep 2024 21:51:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/21] KVM: x86/tdp_mmu: Add a helper function to walk
- down the TDP MMU
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
- kvm@vger.kernel.org
-Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
- yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-3-rick.p.edgecombe@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
+In-Reply-To: <87bk0xc9iy.ffs@tglx>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240904030751.117579-3-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-On 9/4/24 05:07, Rick Edgecombe wrote:
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
+
+
+On 2024/9/9 20:10, Thomas Gleixner wrote:
+> On Mon, Sep 09 2024 at 11:22, Thomas Gleixner wrote:
+>> On Thu, Sep 05 2024 at 11:45, Leizhen wrote:
+>>> +               obj = kmem_cache_zalloc(obj_cache, __GFP_HIGH | GFP_NOWAIT);
+>>> +               if (!obj)
+>>> +                       return NULL;
+>>
+>> No. That fails on RT. See debug_object_fill_pool().
 > 
-> Export a function to walk down the TDP without modifying it and simply
-> check if a PGA is mapped.
+> Some more thoughts on this. The goal is to reduce contention on pool
+> lock. At the same time, this needs to ensure that the opportunistic fill
+> mechanism actually works reliably.
 > 
-> Future changes will support pre-populating TDX private memory. In order to
-> implement this KVM will need to check if a given GFN is already
-> pre-populated in the mirrored EPT. [1]
+> debug_object_fill_pool() is invoked from
 > 
-> There is already a TDP MMU walker, kvm_tdp_mmu_get_walk() for use within
-> the KVM MMU that almost does what is required. However, to make sense of
-> the results, MMU internal PTE helpers are needed. Refactor the code to
-> provide a helper that can be used outside of the KVM MMU code.
+>     - debug_object_init()
+>     - debug_object_assert_init()
+>     - debug_object_activate()
 > 
-> Refactoring the KVM page fault handler to support this lookup usage was
-> also considered, but it was an awkward fit.
+> debug_object_init() is usually invoked from preemptible context. It will
+> most of the time consume a tracking object from the per CPU or the
+> global pool because re-initialization of a tracked object is rather
+> rare.
 > 
-> kvm_tdp_mmu_gpa_is_mapped() is based on a diff by Paolo Bonzini.
+> debug_object_assert_init() and debug_object_activate() only consume a
+> tracking object, when the to be tracked object is statically
+> initialized or the call site failed to initialize the object. Both can
+> be called from arbitrary contexts even under PREEMPT_RT, where
+> preemptible context is a prerequisite for pool refill via allocations.
 > 
-> Link: https://lore.kernel.org/kvm/ZfBkle1eZFfjPI8l@google.com/ [1]
-> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> Co-developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> And of course any CPU which sits in fill_pool() can be preempted if the
+> calling context is preemptible. And no, we can't disable preemption
+> accross the whole thing due to RT.
+> 
+> So something like the uncompiled below should reduce lock contention
+> significantly with a reasonable safety net.
+
+It looks very good. Especially flexible use of 'state' and 'cpus_allocating'.
+In this way, there is almost no conflict of lock 'pool_lock', and the more
+cores, the less possible conflict.
+
+Hi Thomas Gleixner:
+  Do you plan to post this patch? But this patch will conflict with my patch 5/6.
+If you're going to merge my patch 5/6, hopefully yours will be applied after mine.
+  By the way, Do you have time to review the patches in the link below?
+  https://lkml.org/lkml/2024/9/4/1094
+
+> 
+> Thanks,
+> 
+>         tglx
 > ---
-> TDX MMU part 2 v1:
->   - Change exported function to just return of GPA is mapped because "You
->     are executing with the filemap_invalidate_lock() taken, and therefore
->     cannot race with kvm_gmem_punch_hole()" (Paolo)
->     https://lore.kernel.org/kvm/CABgObfbpNN842noAe77WYvgi5MzK2SAA_FYw-=fGa+PcT_Z22w@mail.gmail.com/
->   - Take root hpa instead of enum (Paolo)
-> 
-> TDX MMU Prep v2:
->   - Rename function with "mirror" and use root enum
-> 
-> TDX MMU Prep:
->   - New patch
-> ---
->   arch/x86/kvm/mmu.h         |  3 +++
->   arch/x86/kvm/mmu/mmu.c     |  3 +--
->   arch/x86/kvm/mmu/tdp_mmu.c | 37 ++++++++++++++++++++++++++++++++-----
->   3 files changed, 36 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
-> index 8f289222b353..5faa416ac874 100644
-> --- a/arch/x86/kvm/mmu.h
-> +++ b/arch/x86/kvm/mmu.h
-> @@ -254,6 +254,9 @@ extern bool tdp_mmu_enabled;
->   #define tdp_mmu_enabled false
->   #endif
->   
-> +bool kvm_tdp_mmu_gpa_is_mapped(struct kvm_vcpu *vcpu, u64 gpa);
-> +int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level);
-> +
->   static inline bool kvm_memslots_have_rmaps(struct kvm *kvm)
->   {
->   	return !tdp_mmu_enabled || kvm_shadow_root_allocated(kvm);
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 7e66d7c426c1..01808cdf8627 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -4713,8 +4713,7 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
->   	return direct_page_fault(vcpu, fault);
->   }
->   
-> -static int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code,
-> -			    u8 *level)
-> +int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level)
->   {
->   	int r;
->   
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> index 37b3769a5d32..019b43723d90 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> @@ -1911,16 +1911,13 @@ bool kvm_tdp_mmu_write_protect_gfn(struct kvm *kvm,
->    *
->    * Must be called between kvm_tdp_mmu_walk_lockless_{begin,end}.
->    */
-> -int kvm_tdp_mmu_get_walk(struct kvm_vcpu *vcpu, u64 addr, u64 *sptes,
-> -			 int *root_level)
-> +static int __kvm_tdp_mmu_get_walk(struct kvm_vcpu *vcpu, u64 addr, u64 *sptes,
-> +				  struct kvm_mmu_page *root)
->   {
-> -	struct kvm_mmu_page *root = root_to_sp(vcpu->arch.mmu->root.hpa);
->   	struct tdp_iter iter;
->   	gfn_t gfn = addr >> PAGE_SHIFT;
->   	int leaf = -1;
->   
-> -	*root_level = vcpu->arch.mmu->root_role.level;
+> --- a/lib/debugobjects.c
+> +++ b/lib/debugobjects.c
+> @@ -125,14 +125,10 @@ static const char *obj_states[ODEBUG_STA
+>  	[ODEBUG_STATE_NOTAVAILABLE]	= "not available",
+>  };
+>  
+> -static void fill_pool(void)
+> +static void fill_pool_from_freelist(void)
+>  {
+> -	gfp_t gfp = __GFP_HIGH | __GFP_NOWARN;
+> +	static unsigned long state;
+>  	struct debug_obj *obj;
+> -	unsigned long flags;
 > -
->   	tdp_mmu_for_each_pte(iter, vcpu->kvm, root, gfn, gfn + 1) {
->   		leaf = iter.level;
->   		sptes[leaf] = iter.old_spte;
-> @@ -1929,6 +1926,36 @@ int kvm_tdp_mmu_get_walk(struct kvm_vcpu *vcpu, u64 addr, u64 *sptes,
->   	return leaf;
->   }
->   
-> +int kvm_tdp_mmu_get_walk(struct kvm_vcpu *vcpu, u64 addr, u64 *sptes,
-> +			 int *root_level)
-> +{
-> +	struct kvm_mmu_page *root = root_to_sp(vcpu->arch.mmu->root.hpa);
-> +	*root_level = vcpu->arch.mmu->root_role.level;
+> -	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
+> -		return;
+>  
+>  	/*
+>  	 * Reuse objs from the global obj_to_free list; they will be
+> @@ -141,25 +137,57 @@ static void fill_pool(void)
+>  	 * obj_nr_tofree is checked locklessly; the READ_ONCE() pairs with
+>  	 * the WRITE_ONCE() in pool_lock critical sections.
+>  	 */
+> -	if (READ_ONCE(obj_nr_tofree)) {
+> -		raw_spin_lock_irqsave(&pool_lock, flags);
+> -		/*
+> -		 * Recheck with the lock held as the worker thread might have
+> -		 * won the race and freed the global free list already.
+> -		 */
+> -		while (obj_nr_tofree && (obj_pool_free < debug_objects_pool_min_level)) {
+> -			obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+> -			hlist_del(&obj->node);
+> -			WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
+> -			hlist_add_head(&obj->node, &obj_pool);
+> -			WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
+> -		}
+> -		raw_spin_unlock_irqrestore(&pool_lock, flags);
+> +	if (!READ_ONCE(obj_nr_tofree))
+> +		return;
 > +
-> +	return __kvm_tdp_mmu_get_walk(vcpu, addr, sptes, root);
+> +	/*
+> +	 * Prevent the context from being scheduled or interrupted after
+> +	 * setting the state flag;
+> +	 */
+> +	guard(irqsave)();
+> +
+> +	/*
+> +	 * Avoid lock contention on &pool_lock and avoid making the cache
+> +	 * line exclusive by testing the bit before attempting to set it.
+> +	 */
+> +	if (test_bit(0, &state) || test_and_set_bit(0, &state))
+> +		return;
+> +
+> +	guard(raw_spinlock)(&pool_lock);
+> +	/*
+> +	 * Recheck with the lock held as the worker thread might have
+> +	 * won the race and freed the global free list already.
+> +	 */
+> +	while (obj_nr_tofree && (obj_pool_free < debug_objects_pool_min_level)) {
+> +		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+> +		hlist_del(&obj->node);
+> +		WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
+> +		hlist_add_head(&obj->node, &obj_pool);
+> +		WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
+>  	}
+> +	clear_bit(0, &state);
 > +}
 > +
-> +bool kvm_tdp_mmu_gpa_is_mapped(struct kvm_vcpu *vcpu, u64 gpa)
+> +static void fill_pool(void)
 > +{
-> +	struct kvm *kvm = vcpu->kvm;
-> +	bool is_direct = kvm_is_addr_direct(kvm, gpa);
-> +	hpa_t root = is_direct ? vcpu->arch.mmu->root.hpa :
-> +				 vcpu->arch.mmu->mirror_root_hpa;
-> +	u64 sptes[PT64_ROOT_MAX_LEVEL + 1], spte;
-> +	int leaf;
+> +	gfp_t gfp = __GFP_HIGH | __GFP_NOWARN;
+> +	static atomic_t cpus_allocating;
+>  
+>  	if (unlikely(!obj_cache))
+>  		return;
+>  
+> +	/*
+> +	 * Avoid allocation and lock contention when
+> +	 *
+> +	 *   - the CPU local pool has at least 2 objects left
+> +	 *   - another CPU is already in the allocation path
+> +	 *   - the global pool has not reached the critical level yet
+> +	 */
+> +	if (this_cpu_read(percpu_obj_pool.obj_free) > 1 && atomic_read(&cpus_allocating) &&
+> +	    READ_ONCE(obj_pool_free) > (debug_objects_pool_min_level / 2))
+> +		return;
 > +
-> +	lockdep_assert_held(&kvm->mmu_lock);
-> +	rcu_read_lock();
-> +	leaf = __kvm_tdp_mmu_get_walk(vcpu, gpa, sptes, root_to_sp(root));
-> +	rcu_read_unlock();
-> +	if (leaf < 0)
-> +		return false;
+> +	atomic_inc(&cpus_allocating);
+>  	while (READ_ONCE(obj_pool_free) < debug_objects_pool_min_level) {
+>  		struct debug_obj *new[ODEBUG_BATCH_SIZE];
+>  		int cnt;
+> @@ -172,14 +200,14 @@ static void fill_pool(void)
+>  		if (!cnt)
+>  			return;
+>  
+> -		raw_spin_lock_irqsave(&pool_lock, flags);
+> +		guard(raw_spinlock_irqsave)(&pool_lock);
+>  		while (cnt) {
+>  			hlist_add_head(&new[--cnt]->node, &obj_pool);
+>  			debug_objects_allocated++;
+>  			WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
+>  		}
+> -		raw_spin_unlock_irqrestore(&pool_lock, flags);
+>  	}
+> +	atomic_dec(&cpus_allocating);
+>  }
+>  
+>  /*
+> @@ -598,6 +626,15 @@ static struct debug_obj *lookup_object_o
+>  
+>  static void debug_objects_fill_pool(void)
+>  {
+> +	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
+> +		return;
 > +
-> +	spte = sptes[leaf];
-> +	return is_shadow_present_pte(spte) && is_last_spte(spte, leaf);
-> +}
-> +EXPORT_SYMBOL_GPL(kvm_tdp_mmu_gpa_is_mapped);
+> +	/* Try reusing objects from obj_to_free_list */
+> +	fill_pool_from_freelist();
 > +
->   /*
->    * Returns the last level spte pointer of the shadow page walk for the given
->    * gpa, and sets *spte to the spte value. This spte may be non-preset. If no
+> +	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
+> +		return;
+> +
+>  	/*
+>  	 * On RT enabled kernels the pool refill must happen in preemptible
+>  	 * context -- for !RT kernels we rely on the fact that spinlock_t and
+> .
+> 
 
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-
-I will take another look at the locking after I see some callers.
-
-Paolo
-
+-- 
+Regards,
+  Zhen Lei
 
