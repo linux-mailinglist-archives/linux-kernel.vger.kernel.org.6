@@ -1,178 +1,140 @@
-Return-Path: <linux-kernel+bounces-320460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27DF6970AAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:56:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A572D970AB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C33CB212D2
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2024 23:56:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFC6E1C2160B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 00:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7667B179958;
-	Sun,  8 Sep 2024 23:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289B03D76;
+	Mon,  9 Sep 2024 00:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BJs0hktg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Sdcv1/kc"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4A117624F
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2024 23:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887D9193;
+	Mon,  9 Sep 2024 00:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725839795; cv=none; b=WAxBp17BEUNwySZaAgdsAD9udZVKMLZDDHJr+tw9hgsXm2PRnu8qC2DgWvsqc5L8HK8If49NKwm/V1ZVcc6/g9HgVwfVFCgIJ8M6qA/S0tHo22mQDJehAS1bxc/gGvtzdEpgKo+g4k1IC2Pyj6C6xF1nO0mx3pEdcUrH7VeUS/k=
+	t=1725840051; cv=none; b=sIJgF+W1jP2hnf5v/IEFAR0nclNhE8s7foY0OxAa3jKRqRLVbdauHdlMdmLSAt/JXWHbNwWmr8CH5nNfKB8qDyi0nRIu7F4yeYClMOSjPQp/lISIxtoNKRIgp8qQl6nq7+hCX0EIKk+4B7/O33ml75DlzAKVZHbYjD/Tgn91b38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725839795; c=relaxed/simple;
-	bh=xnBhG1htVsYmmeqg4KhLhGhJm+4eFBxJoyGWnxUjqow=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jsYTC2e66j7qxQRmuVil+tHiG5f21ic2IMDRmU9vvuBUNPGmjn9J6ucG1fbZm9LrESWK6DA/f+iaENLW2nolcgb3rQktynmhRBF8018Bdd9rAHESbv+1jsqRXjrpTLIALK3fsnMa0vpdXbtGMcx5nNzGXb3256KkGuK+TyLbUik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BJs0hktg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725839793;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Eay2AcB10eOA0g7b1zM6F5JSavvwWWINu74NLyTeAA=;
-	b=BJs0hktgKxAiWXWtfjRHMi7LNey9OMtST6XU0eU8d/nZr1OVBMDrTzTNS9yDxhfT62bHHe
-	bHSt/ybJIwAQXAKYsQCEO0QJyr3VUfZXC8Z89P7i0f8Al3WEbJJAf8soyHZWNDul+YQMLL
-	Thra1np/SGSloBPwcBr3318XTiR8Jck=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-153-CAuinfI9PZGxh6iEw3l6QQ-1; Sun, 08 Sep 2024 19:56:32 -0400
-X-MC-Unique: CAuinfI9PZGxh6iEw3l6QQ-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-718e82769aeso1798192b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 16:56:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725839791; x=1726444591;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Eay2AcB10eOA0g7b1zM6F5JSavvwWWINu74NLyTeAA=;
-        b=IikbRB+ySzREklQpZoenVrkTH1un3H5/MAtE2WVU+F2d6SgiyOfWxop5hL890GV50m
-         RvALP6+8c0GJvX4IEAFwSQr9wMSEtHoNvk5RvEnqVKoEACHdMweAHNUckc0YPPh0QfMG
-         X5yjm2uQwvOrBABjQMlTJ/jAVQxOJKULGdSfqTa/K7KrRsY6vj17xqFinEn4P8BQIT0s
-         MeBTTep+d0mS+TWdDTmbCh9+0Ngdb0K3LO2P2BBYXWcsav/i85o/KbbaA4soQ7QyUkYq
-         oNcGVfsOwrXykQxp1Aaz17USos+JfMEQvOO4L45mCaCKcbqy/DtXscSUaLNoEiq9ea/P
-         EOrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqIrXsvlVn5CVRtEpf2Bzxs6yJ04FcVxOdbHIYkTfFOvhqLVHcRo/1CiCvsvuCmEW+ddgwCW9MSsnio/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznUYf9X4xIgw0oe8MU/RSsD9RajAeE5lCwQ5AiJEzuUj5DYASM
-	4JjrATbO2ubq+sK+r55JRMET0LBFgNHrxcIehh2V48GxOGym10rjy57HS0h7fJ9Fd8rYE3mqP0T
-	E0XAI2tyed6wTTad5i8SyWhESacz6LYg1ZFaeK+QBlJve1H6KY8AwJIgdY0P7aA==
-X-Received: by 2002:a05:6a21:1796:b0:1cc:e3a1:b9e3 with SMTP id adf61e73a8af0-1cf2a0b0411mr6502659637.25.1725839790891;
-        Sun, 08 Sep 2024 16:56:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHHG8rnmzacFhD7eXK/M1BWkW92PLgR0E8PqBkp5IEXjFxmE+Aw+DEcmm9s8X9PHOrtvGDYEA==
-X-Received: by 2002:a05:6a21:1796:b0:1cc:e3a1:b9e3 with SMTP id adf61e73a8af0-1cf2a0b0411mr6502634637.25.1725839790369;
-        Sun, 08 Sep 2024 16:56:30 -0700 (PDT)
-Received: from [192.168.68.54] ([103.210.27.31])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e58966efsm2486357b3a.34.2024.09.08.16.56.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Sep 2024 16:56:29 -0700 (PDT)
-Message-ID: <a71de00f-6f66-420f-91fe-e3b918163f70@redhat.com>
-Date: Mon, 9 Sep 2024 09:56:21 +1000
+	s=arc-20240116; t=1725840051; c=relaxed/simple;
+	bh=pwGgOI2wDfUrC1hyxA9nM3nIhscmZnB5DH8HwG5qAyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=iqC0jNSgLDGZQ1hLXGzcWR7rdOKTRrUr0uuRwy2QbHVuJb0JyCp9jSLG/BOpLL4br7AKB8DF7uMSA75BXTyP4OHqAc8B+jGbzJvx7/ftJmQnvmh9lbxGxg3YeH+9Ppww1Lp9R2jqMlPOngWiBvaRk9ZLzlh2BiGCFLAKeb4FB98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Sdcv1/kc; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725840045;
+	bh=KiBELdtECV9LopBjdRHBIoP4BHcubUyvwYKIl9h+OXQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Sdcv1/kcJDiklWz7YUb8XgOd25gbM6XpC46bIYY6lvHjI+UhSaTlc4O3lXjUyFxwe
+	 Sln9r9Vz0SBfl7L/6EdIhGtvYM3ZO8pWvNwVwJScUllFdOXYOGwOVRid1OB5rgtuJB
+	 iUynI9f2N9Sotrdr6bGrXf9Jy6NLolB2OFCWzzPkLD7bFuhA74mOAPAhZiq+2qsnfS
+	 ZytmQ1KRxzYaEhDOTM1ZjKCUAoa8aiaHjKdcOvVi070TZws7oQ+kClir+gDXOOnb0A
+	 qZuxiw3QHAhFoFeOO5tBtnCrOHzUKiNg4mGiByg4mKsQjsMIZ7KcJ3C1T0vL0k2Muh
+	 TQYievBGJbQ+g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X26Rc3lbpz4wcL;
+	Mon,  9 Sep 2024 10:00:44 +1000 (AEST)
+Date: Mon, 9 Sep 2024 10:00:43 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Huang, Ying" <ying.huang@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Subject: linux-next: manual merge of the mm tree with Linus' tree
+Message-ID: <20240909100043.60668995@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/43] arm64: RME: Add SMC definitions for calling the
- RMM
-From: Gavin Shan <gshan@redhat.com>
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun <alpergun@google.com>
-References: <20240821153844.60084-1-steven.price@arm.com>
- <20240821153844.60084-6-steven.price@arm.com>
- <fc168fe2-2b19-4930-85cf-047260aeaef0@redhat.com>
-Content-Language: en-US
-In-Reply-To: <fc168fe2-2b19-4930-85cf-047260aeaef0@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/k5G0qsI4EUk8hol+T5uFomt";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 9/6/24 10:11 AM, Gavin Shan wrote:
-> On 8/22/24 1:38 AM, Steven Price wrote:
->> The RMM (Realm Management Monitor) provides functionality that can be
->> accessed by SMC calls from the host.
->>
->> The SMC definitions are based on DEN0137[1] version 1.0-rel0-rc1
->>
->> [1] https://developer.arm.com/-/cdn-downloads/permalink/PDF/Architectures/DEN0137_1.0-rel0-rc1_rmm-arch_external.pdf
->>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes since v3:
->>   * Update to match RMM spec v1.0-rel0-rc1.
->> Changes since v2:
->>   * Fix specification link.
->>   * Rename rec_entry->rec_enter to match spec.
->>   * Fix size of pmu_ovf_status to match spec.
->> ---
->>   arch/arm64/include/asm/rmi_smc.h | 253 +++++++++++++++++++++++++++++++
->>   1 file changed, 253 insertions(+)
->>   create mode 100644 arch/arm64/include/asm/rmi_smc.h
->>
-> 
-> [...]
-> 
->> +
->> +#define RMI_FEATURE_REGISTER_0_S2SZ        GENMASK(7, 0)
->> +#define RMI_FEATURE_REGISTER_0_LPA2        BIT(8)
->> +#define RMI_FEATURE_REGISTER_0_SVE_EN        BIT(9)
->> +#define RMI_FEATURE_REGISTER_0_SVE_VL        GENMASK(13, 10)
->> +#define RMI_FEATURE_REGISTER_0_NUM_BPS        GENMASK(19, 14)
->> +#define RMI_FEATURE_REGISTER_0_NUM_WPS        GENMASK(25, 20)
->> +#define RMI_FEATURE_REGISTER_0_PMU_EN        BIT(26)
->> +#define RMI_FEATURE_REGISTER_0_PMU_NUM_CTRS    GENMASK(31, 27)
->> +#define RMI_FEATURE_REGISTER_0_HASH_SHA_256    BIT(32)
->> +#define RMI_FEATURE_REGISTER_0_HASH_SHA_512    BIT(33)
->> +#define RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS    GENMASK(37, 34)
->> +#define RMI_FEATURE_REGISTER_0_MAX_RECS_ORDER    GENMASK(41, 38)
->> +
-> 
-> Those definitions aren't consistent to tf-rmm at least. For example, the latest tf-rmm
-> has bit-28 and bit-29 for RMI_FEATURE_REGISTER_0_HASH_SHA_{256, 512}. I didn't check the
-> specification yet, but they need to be corrected in Linux host or tf-rmm.
-> 
->    git@github.com:TF-RMM/tf-rmm.git
->    head: 258b7952640b Merge "fix(tools/clang-tidy): ignore header include check" into integration
-> 
->    [gshan@gshan tf-rmm]$ git grep RMI_FEATURE_REGISTER_0_HASH_SHA.*_SHIFT
->    lib/smc/include/smc-rmi.h:#define RMI_FEATURE_REGISTER_0_HASH_SHA_256_SHIFT     UL(28)
->    lib/smc/include/smc-rmi.h:#define RMI_FEATURE_REGISTER_0_HASH_SHA_512_SHIFT     UL(29)
-> 
-> Due to the inconsistent definitions, I'm unable to start a guest with the following
-> combination: linux-host/cca-host/v4, linux-guest/cca-guest/v5, kvmtool/cca/v2.
-> 
->    # ./start_guest.sh
->    Info: # lkvm run -k Image -m 256 -c 2 --name guest-152
->    [  145.894085] config_realm_hash_algo: unsupported ALGO_SHA256 by rmm_feat_reg0=0x0000000034488e30
->    KVM_CAP_RME(KVM_CAP_ARM_RME_CONFIG_REALM) hash_algo: Invalid argument
-> 
+--Sig_/k5G0qsI4EUk8hol+T5uFomt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Please ignore above comments. As Steven pointed out in another thread, the TF-RMM needs to
-be something other than the latest upstream one. With the TF-RMM, I'm able to boot the guest
-with cca/host-v4 and cca/guest-v5.
+Hi all,
 
-   git fetch https://git.trustedfirmware.org/TF-RMM/tf-rmm.git \
-   refs/changes/85/30485/11
+Today's linux-next merge of the mm tree got a conflict in:
 
-Thanks,
-Gavin
+  kernel/resource.c
 
+between commit:
+
+  ea72ce5da228 ("x86/kaslr: Expose and use the end of the physical memory a=
+ddress space")
+
+from Linus' tree and commit:
+
+  e2941fe697c8 ("resource, kunit: add test case for region_intersects()")
+
+from the mm-unstable branch of the mm tree.
+
+I fixed it up (I just used the former - and see below) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc kernel/resource.c
+index 1ac30110b5b3,2ee143fff1af..000000000000
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@@ -1817,8 -1859,18 +1859,12 @@@ EXPORT_SYMBOL(resource_list_free)
+  #ifdef CONFIG_GET_FREE_REGION
+  #define GFR_DESCENDING		(1UL << 0)
+  #define GFR_REQUEST_REGION	(1UL << 1)
+- #define GFR_DEFAULT_ALIGN (1UL << PA_SECTION_SHIFT)
++ #ifdef PA_SECTION_SHIFT
++ #define GFR_DEFAULT_ALIGN	(1UL << PA_SECTION_SHIFT)
++ #else
++ #define GFR_DEFAULT_ALIGN	PAGE_SIZE
++ #endif
+ =20
+ -#ifdef MAX_PHYSMEM_BITS
+ -#define MAX_PHYS_ADDR		((1ULL << MAX_PHYSMEM_BITS) - 1)
+ -#else
+ -#define MAX_PHYS_ADDR		(-1ULL)
+ -#endif
+ -
+  static resource_size_t gfr_start(struct resource *base, resource_size_t s=
+ize,
+  				 resource_size_t align, unsigned long flags)
+  {
+
+--Sig_/k5G0qsI4EUk8hol+T5uFomt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbeOqsACgkQAVBC80lX
+0GwP+Af/cPyIQNa7QaKq/3r+ySrjbr/EO8EOQ2ekhR6d+LOxrQSIzi9TJGtMFTJX
+BCY5x3cdqiEx/lXCohlbJtnyCo0CNvWHFu1iO/BOO6d5fEnNZ//jtB6lnyQXAk5O
+HFydtUDEWZR7FWznEMlZ0Kf8wEnW2KMqJca2XGMv+OdtPG2kN1v+cwevhbqHrOAf
+4KS/qWfGlExzi2c3kHSHj9GGoYyHiwnJDXnpBvGc8DtPcJa7tC13LwkA9i3XFiqK
+X80c2WlGnjTFkAvhKzvqpxPfBMXKSZWV54pcPkEjIxLY259BrefPmkUpvU9DQNly
+mpuH6NSx79agxbuhJN4xussBF9SxdQ==
+=hl8N
+-----END PGP SIGNATURE-----
+
+--Sig_/k5G0qsI4EUk8hol+T5uFomt--
 
