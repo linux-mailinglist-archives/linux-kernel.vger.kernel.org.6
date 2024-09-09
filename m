@@ -1,109 +1,192 @@
-Return-Path: <linux-kernel+bounces-321786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5F20971F69
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:39:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B71F0971F6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9486B1F22D2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:39:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF21282B22
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4324F168488;
-	Mon,  9 Sep 2024 16:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF05416BE01;
+	Mon,  9 Sep 2024 16:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sK9YhJUn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="fDAcWZDQ"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F871758F;
-	Mon,  9 Sep 2024 16:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9209D1758F;
+	Mon,  9 Sep 2024 16:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725899979; cv=none; b=YSG88dHBOQEvTpeS/WqHnIwNVwL69xtL3wQC32wo/8fJhanMPTjXKv5vcRckm7+TXnJ5dhXmVyE1KgsDsMnmaPYo/n7EkqNFMxrRsObzy+RiIjVsOzKDYbZN6G2gFH/AHt0q/yc+DdpibhlFoTakbUP7GFw7mz1+rXo10Og5bo8=
+	t=1725900146; cv=none; b=jXAOiWAWJEpUPD/HTL5prgrL7QUC4EJV/uRJTWCEZIw7pu0l5tVBl5aiuoDDVLhrGot2IbbGsyKXNrqsVGmPLXXLacJgmWvRdAqrSWn/+i9sEVJQpDWQrij/xsRNZn728vtgsxO7es7S2rGaIVv3ydwW1Q0oHhGdm2l7lSwuT6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725899979; c=relaxed/simple;
-	bh=BBBQHKs07gowSF4qrKQ1rEREPDQYmNrpskFmijSyLvg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oC4Rlfbu2//M03qm1OUUUdu9YcfZTeetcs1WS6lvP+s4Euny+Fp7xiOrRxVdFvHmTRV7v37GCFbqvvwG8vzcHeX9/gufUW9HJCMRvtLtJPH4RPOb4WT4rd1dEru53uoEyThsK2s8QrHiYzc+xp75s6GJXtld3xhHkLeJ2U5+8+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sK9YhJUn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38DF7C4CECA;
-	Mon,  9 Sep 2024 16:39:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725899979;
-	bh=BBBQHKs07gowSF4qrKQ1rEREPDQYmNrpskFmijSyLvg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sK9YhJUnd2ub+UCWoScloiyz3u41HIfaBA3tFTgDw5/z9qz29Rez+fYpRX24RqElR
-	 MbuDcKXFG78+oCplumhji7eVrD+2RBHGlo76+cXpjzsQlJz9F+oSuiYbRpJ+khPlqo
-	 3j9kbVrC9McW3wCFWdzdiCIy+C0lNvHh5ld8EWyd+26boReclLIexaM8eWFHXZqWdZ
-	 JWCJ/cumOQ8jq4EhGfXEg97Ul79WWpddi3LoP/rVL34tpTL7goZ9t3WwRp3hg6/ZIo
-	 pbyHrdhAQdWNRM3uVaTDHK0gje3N1V9T2SUd2djSoOFqvBvMRICslXUWR3uzXJiyn1
-	 kKcmJUf1DwE7w==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-277fa3de06fso2339664fac.0;
-        Mon, 09 Sep 2024 09:39:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWL2srnmx7RklGxF3Q3wbwIkHFUXOr/MA7Qj6qc+ahGCEZxPnrUDqSP/IZnMciv210KjjyK3LgLqhLtPdI=@vger.kernel.org, AJvYcCWtI/yaH3yD9e2ttGeLbC3hhxw6Rja/YFcMoRI5JpPo7fTMz715F+imvFWHhf9zs9lqO5mXX6Ke/V4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvInTyNN4YLbaW6zqR4XZa+p4td96sgIG0jqe8t4zYOkQmVDSY
-	cDVtj1yUsJ6SNxyYAtZ29EtfEEli24I93HjQGjCuPehwjxJoMPiQy//acB36TVkMmZKNRn+G/IZ
-	OBO02OTEUgybI6x6w8YzYwC3jzlg=
-X-Google-Smtp-Source: AGHT+IFlSv9sF6npnQK8II34iFK5F5tASfgXCuvaog4txdLUUgB71YhiB2kNAWFSdGb5sjI7Ohv2ISzySyuAMzb7sXA=
-X-Received: by 2002:a05:6870:658d:b0:277:fdce:6759 with SMTP id
- 586e51a60fabf-27b82fac1demr12746899fac.31.1725899978551; Mon, 09 Sep 2024
- 09:39:38 -0700 (PDT)
+	s=arc-20240116; t=1725900146; c=relaxed/simple;
+	bh=XTZTLbfkrFn8eGE+mb01dKeACFbL9fsMmu/AoZt0qjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QP4EfDmEAShukxBdft6N9ihGJo0/p/0fj8YFk1m/EL3g+SYBxOD4JxAtDHJxYAxm2UeycwqrSjcnat8cdj+CZV9ZbSAFwGKzKbh4McuwkZEn/a5CVHR691WcrdjOU9NOsQ1398fKrnamKjjPL6SEhDNtUN99LkulEJq2vhQ076o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=fDAcWZDQ; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id D17AB1F920;
+	Mon,  9 Sep 2024 18:42:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1725900139;
+	bh=F4Z0ciAphJr4eiTAbYQt1G1nPVPW+UUp+e88qVm1zN0=;
+	h=Received:From:To:Subject;
+	b=fDAcWZDQzEAsns2xWVsDs6vPob1bDsIm/eV4hZdYvVOJKXTspY9XLDKI1IkTqMu/C
+	 fmcP6ZcFHLnWrKkR2JKImcDszcqrtross/tskIleyPU+s8N/LEJXtISgIvKvdmh48e
+	 OLC8zZQjf5c5CwyruEsI8wOeRe61ct1NITqrFkQDr4Ys1PTFJZu/eMmFuIn9PBZxH4
+	 xM61JFrsMHThJrSyQq1OkC4EB8TgvxiHsv5o+SSrRWUqi90f9/AcLNVzM64HKrA+4b
+	 +bZUw/RdGgV0vb29UKjDByaw05bI1u2kndJ7zMCR2e+eBPftO4QAmad0bbiSxOKCzF
+	 zfbzT587qZeUA==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id 83AAD7F94E; Mon,  9 Sep 2024 18:42:18 +0200 (CEST)
+Date: Mon, 9 Sep 2024 18:42:18 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Sascha Hauer <s.hauer@pengutronix.de>, David Lin <yu-hao.lin@nxp.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Brian Norris <briannorris@chromium.org>,
+	Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 02/12] wifi: mwifiex: fix MAC address handling
+Message-ID: <Zt8lat15eNgnPm6x@gaggiata.pivistrello.it>
+References: <20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de>
+ <20240826-mwifiex-cleanup-1-v1-2-56e6f8e056ec@pengutronix.de>
+ <20240906144036.GA45399@francesco-nb>
+ <Zt6tPcCI5Ov81md8@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813144348.1180344-1-christian.loehle@arm.com>
- <ZruDkw2XB8iXMepz@jlelli-thinkpadt14gen4.remote.csb> <1f5f7643-8743-40f4-80ac-0534affd70cd@arm.com>
- <20240909132508.GD4723@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240909132508.GD4723@noisy.programming.kicks-ass.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 9 Sep 2024 18:39:23 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h7DTW=MVyVa0JXKgHrBJN9duRaPjOZdhZLNNH5-61dFw@mail.gmail.com>
-Message-ID: <CAJZ5v0h7DTW=MVyVa0JXKgHrBJN9duRaPjOZdhZLNNH5-61dFw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] sched/deadline: nanoseconds clarifications
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Christian Loehle <christian.loehle@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	vincent.guittot@linaro.org, qyousef@layalina.io, daniel.lezcano@linaro.org, 
-	rostedt@goodmis.org, dietmar.eggemann@arm.com, 
-	Juri Lelli <juri.lelli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt6tPcCI5Ov81md8@pengutronix.de>
 
-On Mon, Sep 9, 2024 at 3:25=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
-> wrote:
->
-> On Mon, Sep 09, 2024 at 02:01:38PM +0100, Christian Loehle wrote:
-> > On 8/13/24 17:02, Juri Lelli wrote:
-> > > Hi,
-> > >
-> > > On 13/08/24 15:43, Christian Loehle wrote:
-> > >> A couple of clarifications about the time units for the deadline
-> > >> parameters uncovered in the discussion around
-> > >> https://lore.kernel.org/lkml/3c726cf5-0c94-4cc6-aff0-a453d840d452@ar=
-m.com/
-> > >>
-> > >> While at it I changed the documentation example to chrt instead
-> > >> of the schedtool fork.
-> > >>
-> > >> No functional changes.
-> > >
-> > > Looks good to me!
-> > >
-> > > At least for docs/uapi,
-> > >
-> > > Acked-by: Juri Lelli <juri.lelli@redhat.com>
-> >
-> > (gentle ping)
-> > Peter, do you want to take {1,2} and Rafael {3,4}?
->
-> I'll queue the lot if that is okay with Rafael.
+On Mon, Sep 09, 2024 at 10:09:33AM +0200, Sascha Hauer wrote:
+> On Fri, Sep 06, 2024 at 04:40:36PM +0200, Francesco Dolcini wrote:
+> > On Mon, Aug 26, 2024 at 01:01:23PM +0200, Sascha Hauer wrote:
+> > > The mwifiex driver tries to derive the MAC addresses of the virtual
+> > > interfaces from the permanent address by adding the bss_num of the
+> > > particular interface used. It does so each time the virtual interface
+> > > is changed from AP to station or the other way round. This means that
+> > > the devices MAC address changes during a change_virtual_intf call which
+> > > is pretty unexpected by userspace.
+> > 
+> > Is this the only reason for this patch or there are other reasons?
+> > I'd like to understand the whole impact, to be sure the backport to
+> > stable is what we want.
+> > 
+> > > Furthermore the driver doesn't use the permanent address to add the
+> > > bss_num to, but instead the current MAC address increases each time
+> > > we do a change_virtual_intf.
+> > > 
+> > > Fix this by initializing the MAC address once from the permanent MAC
+> > > address during creation of the virtual interface and never touch it
+> > > again. This also means that userspace can set a different MAC address
+> > > which then stays like this forever and is not unexpectedly changed
+> > > by the driver.
+> > > 
+> > > It is not clear how many (if any) MAC addresses after the permanent MAC
+> > > address are reserved for a device, so set the locally admistered
+> > > bit for all MAC addresses modified from the permanent address.
+> > 
+> > I wonder if we should not just use the same permanent mac address whatever
+> > the virtual interface is. Do we have something similar in other wireless
+> > drivers?
+> 
+> Yes, there are at least four driver that generate different MAC
+> addresses for different vifs:
 
-It is, thank you!
+Ok, fine for me. It seems like there is some real use case requiring to have
+different MAC addresses for each virtual interface, and given that mwifiex is
+already like that, we should keep it that way.
 
-And please feel free to add my ACKs to the patches.
+It would be interesting to know from NXP if they do provide some guidance on
+this topic to whoever is using their chips or the reality is what you
+implemented here that we cannot assume anything on how many MAC addresses are
+available is just the way it is.
+
+David?
+
+> > > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> > > Cc: stable@vger.kernel.org
+> > > ---
+> > >  drivers/net/wireless/marvell/mwifiex/cfg80211.c |  4 +-
+> > >  drivers/net/wireless/marvell/mwifiex/init.c     |  1 -
+> > >  drivers/net/wireless/marvell/mwifiex/main.c     | 54 ++++++++++++-------------
+> > >  drivers/net/wireless/marvell/mwifiex/main.h     |  5 ++-
+> > >  4 files changed, 30 insertions(+), 34 deletions(-)
+> > > 
+> > ...
+> > 
+> > > diff --git a/drivers/net/wireless/marvell/mwifiex/main.c b/drivers/net/wireless/marvell/mwifiex/main.c
+> > > index 96d1f6039fbca..46acddd03ffd1 100644
+> > > --- a/drivers/net/wireless/marvell/mwifiex/main.c
+> > > +++ b/drivers/net/wireless/marvell/mwifiex/main.c
+> > > @@ -971,34 +971,16 @@ mwifiex_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
+> > >  }
+> > >  
+> > >  int mwifiex_set_mac_address(struct mwifiex_private *priv,
+> > > -			    struct net_device *dev, bool external,
+> > > -			    u8 *new_mac)
+> > > +			    struct net_device *dev, u8 *new_mac)
+> > >  {
+> > >  	int ret;
+> > > -	u64 mac_addr, old_mac_addr;
+> > > +	u64 old_mac_addr;
+> > >  
+> > > -	old_mac_addr = ether_addr_to_u64(priv->curr_addr);
+> > > +	netdev_info(dev, "%s: old: %pM new: %pM\n", __func__, priv->curr_addr, new_mac);
+> > >  
+> > > -	if (external) {
+> > > -		mac_addr = ether_addr_to_u64(new_mac);
+> > > -	} else {
+> > > -		/* Internal mac address change */
+> > > -		if (priv->bss_type == MWIFIEX_BSS_TYPE_ANY)
+> > > -			return -EOPNOTSUPP;
+> > this was the only usage of MWIFIEX_BSS_TYPE_ANY, correct? Did it had any
+> > reason before?
+> 
+> I haven't found a path to get here with priv->bss_type ==
+> MWIFIEX_BSS_TYPE_ANY. This function is called from
+
+Ok, so maybe we can kill the MWIFIEX_BSS_TYPE_ANY in this patch also?
+
+> > > @@ -1364,10 +1366,6 @@ void mwifiex_init_priv_params(struct mwifiex_private *priv,
+> > >  	priv->assocresp_idx = MWIFIEX_AUTO_IDX_MASK;
+> > >  	priv->gen_idx = MWIFIEX_AUTO_IDX_MASK;
+> > >  	priv->num_tx_timeout = 0;
+> > > -	if (is_valid_ether_addr(dev->dev_addr))
+> > > -		ether_addr_copy(priv->curr_addr, dev->dev_addr);
+> > > -	else
+> > > -		ether_addr_copy(priv->curr_addr, priv->adapter->perm_addr);
+> > 
+> > With this change, when mfg_mode is true, priv->curr_addr will be not
+> > initialized. Wanted?
+> 
+> Not wanted, just me being ignorant. Let's have a look:
+> 
+> priv->adapter->perm_addr is initialized in the response handling of the
+> HostCmd_CMD_GET_HW_SPEC command. This command is only issued when
+> mfg_mode is false, so in mfg mode priv->adapter->perm_addr will be the
+> zero address.
+> 
+> The only documentation we have for mfg_mode is:
+> 
+> manufacturing mode enable:1, disable:0
+> 
+> I don't know what this really is about, but I could imagine that this
+> is for initial factory bringup when the chip is not parametrized and thus
+> doesn't have a permanent MAC address yet.
+
+Not sure even myself, but I would advise to not break it.
+
+Francesco
+
 
