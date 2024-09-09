@@ -1,94 +1,83 @@
-Return-Path: <linux-kernel+bounces-322193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6367972584
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:00:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3DE7972588
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EDB2284B81
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 902A92849CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C8918E05C;
-	Mon,  9 Sep 2024 23:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7602618DF66;
+	Mon,  9 Sep 2024 23:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCu9h0bw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qTSN3TEX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAD318E029;
-	Mon,  9 Sep 2024 23:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19D3189909;
+	Mon,  9 Sep 2024 23:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725922831; cv=none; b=jhQRCMZvQyS0ZQ+u+a0F2ti1rEZmn29yAtdl7ubg3AVHuFT9+G0+CMyh6XDO62dsXqu8oeElZCpV6VEBNdUMcG4t3YXhky7QoMJ6W0GUxPO1YDcat1WM+FfMfY647o/GkmnoxcABzdOCdy4QP6OrF+A5mhZA4PU/Xa+AVBgXkgQ=
+	t=1725922986; cv=none; b=d8+/vlkESqg+IJg/R+CjPqb1/bDDQXZaeJPWqbKcu3V+e7Tp36oN84Jp88Rvj/mKGqxzPuOrMKJzIwvzKyjcOkDJFXUccrIIKhXMOTSW4IJOWkaBShbfc70Z2eMJ81RUuUak+Q5OAI6bkbc9gDgj6kWFEfzvyvEtRs4n1/M72wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725922831; c=relaxed/simple;
-	bh=pf7xzqP7Y1hsXvR+kYPtuMst3jnXUpiYLj5ZARh5Zao=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=vBrCb9aNmzrPrhtcfmpMQClEv/ygL+/W1U3lbWUCw2qVZVZX618/Lx2CU8nqioJAvYCRjHaF7NqF+OVGzADh7vRTLnxQvUkGUM7sr/VZ0w4gJ7pNW+tbRwc0gKFbdn5WnZci+H1buXO9w73doj2RApAJyoij9Y/OFuHCoVZ7Dyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZCu9h0bw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C6E0C4CECA;
-	Mon,  9 Sep 2024 23:00:30 +0000 (UTC)
+	s=arc-20240116; t=1725922986; c=relaxed/simple;
+	bh=5V1xxEvmq13W3EhLwz1aD6fBYRvzjjSLr0TTedOltgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RCxtMT8B3YUCWKzIvXXAn5dXCR0UXnAucGROdU5ulOxI+lr19rn1MMfKmQe9PusP7lbeMZeuOnlSFl1XfjXP3rdK/qfXLEajIBCd/vkWQo+Q7GF5elJZlRBns3p9bNR5I47UjIhfsnQMqLwBNL+qKtr+p0pm50OY+xoOLAg/vWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qTSN3TEX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBD8DC4CEC5;
+	Mon,  9 Sep 2024 23:03:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725922830;
-	bh=pf7xzqP7Y1hsXvR+kYPtuMst3jnXUpiYLj5ZARh5Zao=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ZCu9h0bwTASNqqTCcK9ADR++pqNCxqT+3R3uZ19QWQ2OtpzQ6ThhsKIj+rPD2scdG
-	 OBNZct0I+lA4/I4Vsp3gxH/01f7VoyD2KDAhTcbZT6sAKeFnFte3VmK8vj1KVHjJt+
-	 FXppGqFp42cSnhDdDWvy9dEXDKIceMSjKYGnXICpDgO4ZRkmZwBTP/TAjMouQTx5ji
-	 YQQTh+g1EbA++vWz6YjXPXUtLBew03kDS5FMyeRGUByCQur1N6+/eMmIbm/hsqXMIz
-	 DFOaEDuBk6p2dMft4E8is5MoYmvmgF3Ct84zBexKmLjI6mn558h3nNKLaHGHEe/eki
-	 CjKuCOG0pLL2A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7105B3806654;
-	Mon,  9 Sep 2024 23:00:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1725922986;
+	bh=5V1xxEvmq13W3EhLwz1aD6fBYRvzjjSLr0TTedOltgs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qTSN3TEXpPka1pcnYOVZ5xMeUZZTYp7HH78NmxsR9c5UFFD6YEtV3zgkT4Qpp6jOK
+	 IaCb0PvF6tW/lCH3DZ7S6GMhh3uxqPcK0MvIAdkSbXT/SVcEt9eULf6mBzBHjlGgMi
+	 FJZ0hfMmGIKQ8w1b1epvnPkAJ8GZyc23BSqCFt7AzN/uTj2bs5Sz2GdfSBkXSZ1oba
+	 Dakk9IT+Jdgyl60gEZQCLmdPhWAlyxhceOPsEuWK2C07yEXyaJSYveZeWMtHyXlhJp
+	 EcM907pJF7lJD0p6AtcGVosPHai/WYZ1aL+2QYRbYj/fQgGbGXOMgVXjjIem9G6hql
+	 8Wbd3sc1OPTxQ==
+Date: Mon, 9 Sep 2024 16:03:04 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
+ edumazet@google.com, amritha.nambiar@intel.com,
+ sridhar.samudrala@intel.com, bjorn@rivosinc.com, hch@infradead.org,
+ willy@infradead.org, willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+ Martin Karsten <mkarsten@uwaterloo.ca>, Donald Hunter
+ <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, Paolo
+ Abeni <pabeni@redhat.com>, Jesper Dangaard Brouer <hawk@kernel.org>, Xuan
+ Zhuo <xuanzhuo@linux.alibaba.com>, Daniel Jurgens <danielj@nvidia.com>,
+ open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 5/5] netdev-genl: Support setting per-NAPI
+ config values
+Message-ID: <20240909160304.5cf07038@kernel.org>
+In-Reply-To: <Zt3JYp5Ltz5Imnq8@LQ3V64L9R2.homenet.telecomitalia.it>
+References: <20240829131214.169977-1-jdamato@fastly.com>
+	<20240829131214.169977-6-jdamato@fastly.com>
+	<20240829153105.6b813c98@kernel.org>
+	<ZtGiNF0wsCRhTtOF@LQ3V64L9R2>
+	<20240830142235.352dbad5@kernel.org>
+	<ZtXuJ3TMp9cN5e9h@LQ3V64L9R2.station>
+	<Ztjv-dgNFwFBnXwd@mini-arch>
+	<20240904165417.015c647f@kernel.org>
+	<Zt3JYp5Ltz5Imnq8@LQ3V64L9R2.homenet.telecomitalia.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] bpftool: Fix typos
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172592283100.3949024.11403579453952470139.git-patchwork-notify@kernel.org>
-Date: Mon, 09 Sep 2024 23:00:31 +0000
-References: <20240909092452.4293-1-algonell@gmail.com>
-In-Reply-To: <20240909092452.4293-1-algonell@gmail.com>
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- willy@infradead.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Sun, 8 Sep 2024 17:57:22 +0200 Joe Damato wrote:
+> I hope that is OK.
 
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
-
-On Mon,  9 Sep 2024 12:24:41 +0300 you wrote:
-> Fix typos in documentation.
-> 
-> Reported-by: Matthew Wilcox <willy@infradead.org>
-> Reported-by: Quentin Monnet <qmo@kernel.org>
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> ---
->  tools/bpf/bpftool/Documentation/bpftool-gen.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Here is the summary with links:
-  - [v2] bpftool: Fix typos
-    https://git.kernel.org/bpf/bpf-next/c/f028d7716cde
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+I'll comment on the RFC but FWIW, yes, sharing the code with discussion
+point / TODOs listed in the cover letter is the right way of moving
+things forward, thanks :)
 
