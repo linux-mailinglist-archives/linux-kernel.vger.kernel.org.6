@@ -1,94 +1,135 @@
-Return-Path: <linux-kernel+bounces-321770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E328971F3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:30:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851AC971F43
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB5B286195
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:30:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 309231F2395C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918B215B54B;
-	Mon,  9 Sep 2024 16:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D4C15CD7F;
+	Mon,  9 Sep 2024 16:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVoKh7Bt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="DBiSk+Uo"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72002771C;
-	Mon,  9 Sep 2024 16:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C6D15748B;
+	Mon,  9 Sep 2024 16:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725899444; cv=none; b=aKwHBHpfUZvXQCLLoj+RePRL0O9QtlIlU740VFXwXPPNzoM53tTRGf47ve5pMkZ+7QJWTJlf8SFbKllrYj2lV75PvCKk9y4FLkiLWyHiv3CVi1wr+fGDtZw0nKTfAWJmgsCAPS68vVIgPGGEjTZAaoL7Dxp9a4mhq/oNzARb4sQ=
+	t=1725899476; cv=none; b=AVIKdAvvTMeu6MeB2dqdJgtGVaC9niC652cXMe71Aq5xoTrkHPmPBrK9cIOArWPXWqDlpVI8031aUflFp36Y3+pd6rxQzIz3Dy+i3WF2c6P0jbX2Pa5vHdYjwcx+VJZe4ZrM2nsUuPurf601NPMpnMDDc6XHqoCmA9g9BQSiNic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725899444; c=relaxed/simple;
-	bh=SijMxlPS2d+y1Q8eTo8Td1dmzevGnURxE5EkxDDjDjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bDURaWiYv/xBlzdyTagOp1VkN2aASQ3NHB9D1wj7+fV0jnlaMmfWfauiq3cu4r7q+ZBfyZKkh0UtwPdTVtJGaY+4ujUlkSreGKVWO9ERORYBzjPa+8AaHxYm8+a7OSVxQ/tU7rDoaSel5OzhtHbj+fGZLrRy7xc/dJJp9Ppt7Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVoKh7Bt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2360C4CEC7;
-	Mon,  9 Sep 2024 16:30:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725899443;
-	bh=SijMxlPS2d+y1Q8eTo8Td1dmzevGnURxE5EkxDDjDjU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iVoKh7BtDABa4TTEUYl0bfbva4OeD+0ythCEfgZUnHLQqMkxLheT263aYiFhhx678
-	 pu7Qc++6CJRxThHZeJHmK1YSf4M9dCGtMiFy5mZKLzk0iuljH+/93rd1CWVtCYnyf2
-	 KEwAZ1Ydq11k7sUW7+g/eSqldyAsDw9v62mLylhjU/RiirgNxbYAbyBFsbvNc5HS7s
-	 sIweFNbnwxMrStZGYnX/ZrzGT/7hcJtH+gS2H6fHmAo3K5AyXe04K/U3+QTv0bTEMG
-	 014JGGm1utlAEcv44sVX7kUX0KRetGBwD+6iOoG3d2H0aQ3GNn3uCBPVQ4eMnNz/CS
-	 hJQoWv5iGHvcA==
-Date: Mon, 9 Sep 2024 17:30:38 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Michal Simek <monstr@monstr.eu>, Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>
-Subject: Re: [PATCH 06/15] riscv: migrate to the generic rule for built-in DTB
-Message-ID: <20240909-trial-composer-83d5f5cc4fc6@spud>
-References: <20240904234803.698424-1-masahiroy@kernel.org>
- <20240904234803.698424-7-masahiroy@kernel.org>
+	s=arc-20240116; t=1725899476; c=relaxed/simple;
+	bh=GUDL2TE371GbyE5n1pNlV2wQ1gYkMczH7tLNOGHFQIc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=caFOf9pO4bkFlNNrW5vAvTbFvyOYcA67R3/ceS+VSG4BxaqKdBeGRA2pL4WuCdAxUAShqgfQDZoQSUY1uGRE5ONBM3lhOj963pKtLd+Od00FeKES9uy2aHun4l5sJwmCARkmQXInpmmVnni0PTg0SgyPIKSmDMXMAjiTXPxHDVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=DBiSk+Uo; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 489ApF4e013877;
+	Mon, 9 Sep 2024 11:30:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=6U6qZUIO+sUMJTVje+
+	G598Zd4h5A4XVzroJm81aghfk=; b=DBiSk+UoAnEWIx1O2j/uIljsq0kfRknJiY
+	lCG5jWwliVsZVqXpTpxnX6SCU+JmQ9oZrxENAeXdIrneKzhZ7obYRfTxYTW3magv
+	BgKJkwDh1v2SZDjlOoA2ac4HkppLlzl+PhacmbG6M2/QltrKe+ZbsV9pH88lp1k4
+	K4NU7RzzbQaQCqYntxP54HFLSrT4Lo382m6ZeRBLeiFB3dJNJM/YKnYhq1m05gfg
+	N4XVlGeuHupRdGYavPiK9WUEWWIk1D0VIGmfEqAsAr6sG+XfMu7qb6YyvpMSTGxh
+	AaPDauQTGaclAglzdrD5TpPusAiCGM7/wjtzxR7qklC/Fr+Lwl/w==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 41gk8hsxp1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 11:30:51 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Sep 2024
+ 17:30:49 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 9 Sep 2024 17:30:49 +0100
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 9CBB7820249;
+	Mon,  9 Sep 2024 16:30:49 +0000 (UTC)
+Date: Mon, 9 Sep 2024 17:30:48 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+CC: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        "David
+ Rhodes" <david.rhodes@cirrus.com>,
+        Richard Fitzgerald
+	<rf@opensource.cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood
+	<liam.r.girdwood@linux.intel.com>,
+        Peter Ujfalusi
+	<peter.ujfalusi@linux.intel.com>,
+        Bard Liao
+	<yung-chuan.liao@linux.intel.com>,
+        Ranjani Sridharan
+	<ranjani.sridharan@linux.intel.com>,
+        Kai Vehmanen
+	<kai.vehmanen@linux.intel.com>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>, <linux-sound@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <alsa-devel@alsa-project.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>
+Subject: Re: [PATCH 01/13] ALSA: pcm: add more sample rate definitions
+Message-ID: <Zt8iuGXyBC3NoYYN@opensource.cirrus.com>
+References: <20240905-alsa-12-24-128-v1-0-8371948d3921@baylibre.com>
+ <20240905-alsa-12-24-128-v1-1-8371948d3921@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="1zmht3JeO8heTtkb"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240904234803.698424-7-masahiroy@kernel.org>
+In-Reply-To: <20240905-alsa-12-24-128-v1-1-8371948d3921@baylibre.com>
+X-Proofpoint-GUID: YPCWMWTx_zWDnZTmxJDrF_5U1tHpWoN7
+X-Proofpoint-ORIG-GUID: YPCWMWTx_zWDnZTmxJDrF_5U1tHpWoN7
+X-Proofpoint-Spam-Reason: safe
 
+On Thu, Sep 05, 2024 at 04:12:52PM +0200, Jerome Brunet wrote:
+> This adds a sample rate definition for 12kHz, 24kHz and 128kHz.
+> 
+> Admittedly, just a few drivers are currently using these sample
+> rates but there is enough of a recurrence to justify adding a definition
+> for them and remove some custom rate constraint code while at it.
+> 
+> The new definitions are not added to the interval definitions, such as
+> SNDRV_PCM_RATE_8000_44100, because it would silently add new supported
+> rates to drivers that may or may not support them. For sure the drivers
+> have not been tested for these new rates so it is better to leave them out
+> of interval definitions.
+> 
+> That being said, the added rates are multiples of well know rates families,
+> it is very likely that a lot of devices out there actually supports them.
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
 
---1zmht3JeO8heTtkb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Almost wonder if a comment with the SNDRV_PCM_RATE_8000_xxx
+defines might also be an idea to warn they don't include all the
+rates, although it is I guess easily seen from the define itself
+so not sure if it might be over kill. But I am happy either way.
 
-On Thu, Sep 05, 2024 at 08:47:42AM +0900, Masahiro Yamada wrote:
-> Select GENERIC_BUILTIN_DTB when built-in DTB support is enabled.
->=20
-> To keep consistency across architectures, this commit also renames
-> CONFIG_BUILTIN_DTB_SOURCE to CONFIG_BUILTIN_DTB_NAME.
->=20
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---1zmht3JeO8heTtkb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZt8irgAKCRB4tDGHoIJi
-0trhAQDqKRWWntMPCunsAaxopzU2jYVbAtsCUiJEW/z2j58/yAD7BJE6vqDg5O7Y
-VqGnVulUhYdkydfA4mgszdVz6GVWzQQ=
-=QBvD
------END PGP SIGNATURE-----
-
---1zmht3JeO8heTtkb--
+Thanks,
+Charles
 
