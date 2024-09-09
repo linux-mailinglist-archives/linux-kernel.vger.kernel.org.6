@@ -1,223 +1,174 @@
-Return-Path: <linux-kernel+bounces-321046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A4D9713BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:32:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C1909713C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56FCC1C22C17
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:32:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3214C285004
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76381B5EAB;
-	Mon,  9 Sep 2024 09:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430D41B81AB;
+	Mon,  9 Sep 2024 09:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Up0FovtO"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2051.outbound.protection.outlook.com [40.107.223.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7TzRFwa"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0677D1B5EAC;
-	Mon,  9 Sep 2024 09:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725874232; cv=fail; b=h8UOFjmxNsv7l/jVvyd5/dDn7B0FxsH95PI8unoxj7w9mgdthcDM0EIAXV5bYlHJNWM5DlVG1PqsSJpiXacSfL7qxVygNzgq0mDCh3Ayhkz0PH9Db/SZFVp/L2lVBkAZM6CC/YPeU6R+ujalYvH+2QpVqHxM9XS9nZ2YNljJuIE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725874232; c=relaxed/simple;
-	bh=bP6YCOAsPYE4h1Aa7lH++DdMn4BYf6ENEqqdcvtGJDU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=QDrphODiW31BgULg1WyDThOL5KsLl6x1ncUUNCIBSQiv0AnFdEot/ECEf5R5fF++MDL/vjLP6egQkMfXhKPzVimUyIbzdF6bdUhH45y1F4mz5+yFPkXkFPkuQV43k+YPUgDDQpFciJ2P+bR58mu/9uCq/KEb4yHjP5tJe7kGU2Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Up0FovtO; arc=fail smtp.client-ip=40.107.223.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QT1k19LOmcJ6yP6AElIykW0k1YcFM8rseucMlxqFr7skvC4R7Ft3e8j9Z2kdLetJ3rAd2Jj7lgOU88LXOGxNiq6N5zxEvK/zC7yHqJzrbCwGkv/MjGsq4IECnh9BDoAczSypeYhZkRPC/tD13aFV/zgiZ6vzAvyuQa2qzTJXSZFKZEuZcYTlA4Rt5xZohBIWYUMZ7+0VgQk6i6ZES7whtjJTMBeCVluyGQzJcHTqOx6hUHpg3llrH6UlqPn9EE2El84VzGZbuKiDG2vvm5ZnZsimddFdS6H9MFAF/zppmLqzG5nDLm4IXCTAolegG9jRoivMejEkWguoMI1r7K01tA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XpSTtGFKVHszoY32cW8uaxmAuGvtJgcPXMAcv+2jsPo=;
- b=cmJ3/ehuoMEd5Egy8gKStWkOv8hSHaJNvfph0SRmwde8uGcwZHl5tyvWDo/9GfR6O3Jkk7DQrRV1H/5ss2olB7Z56erTuvfS4oYiIuqmyHbJ1w/nClLN4JMKvLKE7aldjHAaUyck+HrDXCtJy0LMdaoTzK+IQUDXCAPVklS4MFyxF/CZlT4XF0qAACv8b+gaS1VciFKADJ/TrZBOx6zpmOMGyueLi+q/J6aT944lQ0X44KQxQroRmGpOh4AKm7v218r4jSLHjRjynqx3DDWi1Grka/hkhNDsvvOhB5QF1n0urp2Ep042+SyvvpZGarx7Jx3lVH7ph49/fS4C9k8Lfg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XpSTtGFKVHszoY32cW8uaxmAuGvtJgcPXMAcv+2jsPo=;
- b=Up0FovtO3YXZGozQ67j9V2gyljhSlQsRLVKP/kstF4w9K0ho9x2RtlXfJ+13fXbzzptbbyOPKrStHL3PIw4E2kS6aLeOlVOWBG/gy/L2gKy21DB5PUEls8X981ArprIZhERqhOJUL7MmHZj3VghSHApUhRG3kNd3a3pWurwCcpHpCt8urbc8DYCqdRmEeh81nkfDYPs8DJQpzkhGEfAvSuDxgYrCFVMJxO+vmYNtx/deZZRFf1jBrcw2PirKxYMUL3HA0euPe9W46Pt7hh6661JUt668L4lqsG0pd+pYhA/RUeowzmITh464asTr7GaS3BeWKLm+ZkTk5nV89//awA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY8PR12MB8297.namprd12.prod.outlook.com (2603:10b6:930:79::18)
- by PH7PR12MB7428.namprd12.prod.outlook.com (2603:10b6:510:203::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Mon, 9 Sep
- 2024 09:30:27 +0000
-Received: from CY8PR12MB8297.namprd12.prod.outlook.com
- ([fe80::b313:73f4:6e6b:74a4]) by CY8PR12MB8297.namprd12.prod.outlook.com
- ([fe80::b313:73f4:6e6b:74a4%5]) with mapi id 15.20.7918.024; Mon, 9 Sep 2024
- 09:30:27 +0000
-Message-ID: <fb6b1d3d-c200-479a-941e-1b994757b049@nvidia.com>
-Date: Mon, 9 Sep 2024 11:30:22 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH vhost v2 0/7] vdpa/mlx5: Optimze MKEY operations
-To: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Eugenio Perez Martin <eperezma@redhat.com>,
- Si-Wei Liu <si-wei.liu@oracle.com>, virtualization@lists.linux.dev,
- Gal Pressman <gal@nvidia.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Parav Pandit <parav@nvidia.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-References: <20240830105838.2666587-2-dtatulea@nvidia.com>
-Content-Language: en-US
-From: Dragos Tatulea <dtatulea@nvidia.com>
-In-Reply-To: <20240830105838.2666587-2-dtatulea@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR0P278CA0203.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:6a::28) To CY8PR12MB8297.namprd12.prod.outlook.com
- (2603:10b6:930:79::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E458F1B78FB;
+	Mon,  9 Sep 2024 09:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725874238; cv=none; b=En08b5fFupVpGP9jqZAg/q6ZA6M7xbfYoPn5dtKAzvZu/+y1m7BqFePU19VJtr1euLEvDFDfD3/v53JE4gazV/laJH9XoO5HjWDQT2lsilyMc0mPBzhi/WcBQuAwY90VMR8mXJzi6qEdOyGVUJyBSJA40bgfHsSWuCo7Pjpm6wc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725874238; c=relaxed/simple;
+	bh=J94kJzZ8E42k12Z+YhHnbi9azY+Almhby4JZF/3alTQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cWQosraB10X1jfi9HuYW0AKa3bgM4nxkOIJSuyiUD8pQpJXB9sDK2o7sQ4qoVrBfPXI07cIA+802P3yySjBfFTfWn2xbKC1Z3ZfwGPi7mI45XvBDU+edrFXjLFP17KzgZJ7tSFL2kf6Q1hLvY7wz6abxfdkLspQSNTFG5kuUbUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7TzRFwa; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f754d4a6e4so28631241fa.3;
+        Mon, 09 Sep 2024 02:30:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725874235; x=1726479035; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UQ2eI4KsB/nkJtqPX6qlu7odSncURe2VJXt3h6n1Reo=;
+        b=V7TzRFwaOyckuZMj0LLY2pwpyAz+AbMO/tDwsXEeQ0dD1/eRNFsqEmY9J6pp7Wyh1g
+         CeT9x+AjiB1WumUXSu1rzsVwoWEsTFG4eANXmWba9r0YQCQD1B1bGRfzbqobN2i/ggsU
+         1ha/P/Bq7o7jLV4751Jll1Nz56m0oW3jb5/JCbJDh2WieZJbaRMEgcBw3Ja2OxUaBz/U
+         pHpfPcC9VaNzsU8r68FUdzusJlUuTPrLclhSrY0SdJcN5eIxmcQil+Ka5n6az5RYmobj
+         I9dPm8Zo/2evdmAK+uGsrV0M/oq2jaKHNTVHpJPd0XYEcPfC+jLvwijlRQG6xuqcW15d
+         Tywg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725874235; x=1726479035;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UQ2eI4KsB/nkJtqPX6qlu7odSncURe2VJXt3h6n1Reo=;
+        b=LfSpXOGmRq7Ua8+AuijEAkRTtYxue9a4YwX9WtLodULhhjYZL6wSQZsSV+b6XWvgmJ
+         N5ICK9kkuQHexVr4BGVLiYm/Ff0UOiPwNW3blq1AJNY4WxnxZidML04aNExo8MirDjYQ
+         V8d6oBl8uwx9CG1KfI2ZlOhd8Frjy+27eWOP9mBmQxFYnStR105WxrCSHL5VZC3NbCET
+         ZoO++vMaZwelrtnXhDvvmdxTXIYyaal4cXLsGbOV+lsihPRcozcQmzybbQWpQy4/WwJB
+         2DXf7jlMHL/QGRU+M2xe5btd01Nl0tZfR24502vs2lgkBURIfcE2uDjpxVI0bSlAnLHJ
+         rqFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPGOxmLoF2DXD/IT4xG34tQ96gNzJIQh5gnfJ9gYMJ3J63zemaSc+Ju0hwVgms2hEDkEc/h32zx5Itwns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCn49IpaRSn/SB/qHL1ot8XZREn4+uoGLpMv7p0b/38MMHW3kZ
+	+/4X+U65X5UadCkYBs8pKo7qhsAe1Lbib4sTTsi5m2NxhywETg25zR83/Msz
+X-Google-Smtp-Source: AGHT+IHcnXUQnUdoUdukMDLLVxf/MuLoflA+Fa4uqh+5TL4/r9kwh12u2meoYQjDl8FTMR8/ruwbsg==
+X-Received: by 2002:a2e:bc12:0:b0:2f0:1f06:2b43 with SMTP id 38308e7fff4ca-2f751fa9403mr41166311fa.41.1725874234049;
+        Mon, 09 Sep 2024 02:30:34 -0700 (PDT)
+Received: from localhost (89-73-120-30.dynamic.chello.pl. [89.73.120.30])
+        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-2f75c098e9esm7586441fa.116.2024.09.09.02.30.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 02:30:33 -0700 (PDT)
+From: Patryk Biel <pbiel7@gmail.com>
+Date: Mon, 09 Sep 2024 11:30:28 +0200
+Subject: [PATCH] hwmon: Conditionally clear individual status bits for
+ pmbus rev >= 1.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR12MB8297:EE_|PH7PR12MB7428:EE_
-X-MS-Office365-Filtering-Correlation-Id: 11ae9375-7abd-4560-c3a3-08dcd0b20a2e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dVJBNFZhbFNzVUdna2xRd3hsT2J5anllZlJCc0lzVWpBN3JjdE1uenJOdWJU?=
- =?utf-8?B?cWc0YTVBdGd0Z2p2MlMvZWg3WkFBVHozc3hwUHRaVXBKVmRIdUZkOWdFUDBW?=
- =?utf-8?B?REJDWjJvRWdndk9CTTRxR2dQSHdubnFmTHo1OVhWd2FSKzZVS0ZVaTBJNnc2?=
- =?utf-8?B?U2ZUeEdqUXNRZXVEQUpwcWR0dGgwTWhUYW14bEhTMnFvbjVhdkN3RUx2SWNS?=
- =?utf-8?B?a2FmZmcwS2VvM3g0QTV1Tk52by94SVFyTmlTdFZ0a2VYMGdwUk0wc01COXVK?=
- =?utf-8?B?Y29NVWdmSVloa0dGMXAxamtjNkJQMTV0endBT3RBQ1NXRWFPMHowTGRrVzJi?=
- =?utf-8?B?Nm1mUGpzbVNXdlk3MEhmOFdraXJWakVSMkZRWXlsck1tbU9PNUpMZGZDYTQ4?=
- =?utf-8?B?dHNFenE5d3VGMXBhdTZBNUJYN0x6cWJ6WDg5cXhoMDkyTm50K3dWT1U1TnZq?=
- =?utf-8?B?Y21pTm9qR0VyYkhDTlJqWkRSdVBlYmNVSGgrbGJyT2RlOURwa2pxTU9ORUpq?=
- =?utf-8?B?WHBjSm1pSHdTRnpRUXhRMVlUU1JnZFlzejhxcjJjUW81YnZFbDNrM3lhcjg4?=
- =?utf-8?B?UzlueGNpN1p6WUNWaXVPRjlnaitqMlNwNWtZZ1BwMkZUT3Y5eGZrMll0TWs4?=
- =?utf-8?B?NmdEQ1U5ZnNNRnEzelFSaDJtOWRmRXFwRWZYaGJ4eEhMdEpEZW1rTklvRExq?=
- =?utf-8?B?NGpYcVBYc3YzTnJ4TFNGU21oQnJ2U0hFZTR1ZjlKaEdjcEVEdEpKQi9TL2wy?=
- =?utf-8?B?WFpZY0VPTjJXdElrU21lQjBZWHJmQ2YycDV3aWJUbk5RMVYrZ2hrRjZLMGlU?=
- =?utf-8?B?M3JlckVBNWxPK3VmeHNndHVCRU9pNGh2cmZuQVlvM09OcThCNUVDSk84QWVy?=
- =?utf-8?B?NW5obVdBeDV3SGZETlNUSnpINEs5WHMxNEdhUnd3bzJsR1hlZlFkcC8rMStB?=
- =?utf-8?B?TDlpakRyeDBmQ0E2VkJGbEZOeGwxZkNJVVh5aHV2SW43N2dlVzJtQjFNWlpL?=
- =?utf-8?B?enJ6NTlwY2FrQlk2NFFIQzFoQUV0M1paRWtFVi9wT0FTL2JMZ1g0RHdramlM?=
- =?utf-8?B?VWFUTzNWZkVxYnQyRGo5YnpCbE9kc01tRmRFeTF1RWFNRGU3WExyUVEwS3NK?=
- =?utf-8?B?UVh5d1VLQnpxUGRoVkJlbzNRSHRJbWdnd21RdGpRVnZiQnp6TWVoTnNuZlR2?=
- =?utf-8?B?OHVIOUMvaEtYTzREaFd1YWNmRzJFR3FxQk9ITEE5Zm5HQnErVE5XODh6d0Ra?=
- =?utf-8?B?ZVdSSytVaEFKdWpFc3ZTZUp1ZDZvVXBZaGh4RFYreCswUEZqYWZ3ODZRWWNJ?=
- =?utf-8?B?UDlVWk1HZzBHVFNmNXd2UmNOY3hJYmN4bk9lNE8xdW14c0VTdU43YzdOSVh1?=
- =?utf-8?B?QWMxbUEwM0R5ZXVtRDFmWnRtMGswelk5eExVYXNJeHI1R0FlQWlRUzBvVTBh?=
- =?utf-8?B?Slk1ZTg3R0orSGpuM0c4U0ErTUF4VjNHaWw1ZU85b0Y0QTU2MjNxbTZzOWpJ?=
- =?utf-8?B?M1dOYVF3cmJJNVloYzdPWmpMZytURW0wYnhzMWdXakdOcGprZ2d0dThyT01r?=
- =?utf-8?B?UFk1amt5azZGLy9UbzBvZXRjckdjN2xCQ3JGeWtVUFdCeHg0MkZLQ0RORkU3?=
- =?utf-8?B?Kzd4RUJHb3pmanRmMm1UT2hzeFgrVG0xOERQbWh6QnlwWGVVK1k3YlFlVEY5?=
- =?utf-8?B?K3NlcHVZN1YvTmFQRUV2RUNuK3FHYXRRcS8yQlF3UllaVWt6TG5Za0s1YUV3?=
- =?utf-8?B?SERVYWo3RFgxMzBxa2hxMFJ4TjVEQVVVTXpxc3N5VkIwZVVVVXNpMTVBdFBi?=
- =?utf-8?B?RnE3LzNTWUMwYVNjNStIdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB8297.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?a1hHZUVaUFpmMTNtWWl0WnNZbkh1SVAycmNWQU83bUdUNTdOcFhiaXN1NTdZ?=
- =?utf-8?B?REU3VlVTVS9GV1krVHpvak1zdEtCN3NZZENDVFREMU1TYkhaNFpUdWVtd1VR?=
- =?utf-8?B?MS9MOXV3Rm9JUnpYYzJQRWluaXpqd0Jnd2Zkay9xTHI4KzdjRjVNMzkwNU1Q?=
- =?utf-8?B?eWNmVmJ2OTlRaEV1NzJuYnhZT01UVWFGS0Z6Uk9PTmVZMmNpVjdZSkhWajhp?=
- =?utf-8?B?SHl0RHFhQlJIZS9oSHVVcDNFSnhERXBmNTFDTnphbjI0THpkRUttNk1pU3FW?=
- =?utf-8?B?WGJzaXNkQmdUWGxVUDJRU0ZUMkNwbFg3UU1qWHJtdUNha2hVMm52VEJKNHBl?=
- =?utf-8?B?dnRjZXFsZnNZaTN1K05OVEtmSmEvd0NZL0RrQjc3M2ZmbzBwZGVxUEl6cUls?=
- =?utf-8?B?SEVxRlowTXdGR01jQXlOZnMrVjdMMXpoSjVnSkRhL1hHeVJHTDU2VlVzT3F0?=
- =?utf-8?B?YmhqQVI4N2xRQmx2SjNjT0F2WHdFVG96Sk9UWnA1cDVwVnUreHpqV3lhcHdv?=
- =?utf-8?B?NlhFSnhOWnQ5aWN3YXFVQzRzUWpkS1pyemlWY2VDUnlncjQ0UUoyUzR3cDIw?=
- =?utf-8?B?VUFYY1NrVmREbWRXTnA5bjc1OFBNUkRkUXExRTBNWWFtdnBrNzZRTG53cjRP?=
- =?utf-8?B?ZUE3MVdRRXNmOUZ2NmdUd2pCSmVPeXh2b2NyMm45dU9mKzFRUEdIUGUrUG5Z?=
- =?utf-8?B?eUsxL1R1UllXSXRrZndMYUZCQXhiRkh4Y2c0dmExVGswVEZuOUVuSmt0am1x?=
- =?utf-8?B?eWlpeWFQZjRLWVZLR2VOSm41WTNoSUtpNklLc2Rib0NJcW9zYzlhRHhqMlRp?=
- =?utf-8?B?T1lTS0ZuUmdvUllOUXd4SVl0Tm5FSTYrN0xMLzhrbzM4L04yTVE2WVNSUDg4?=
- =?utf-8?B?ZVlhcFA5eWZDRWRibTBNQ21YRGE3WEE2L05zbHlCaVkzUFlhM0M3ODJmODcy?=
- =?utf-8?B?MXg0UEpEK0pQZmlHdGlscWsxSnhobEJ0MHg3S0JTL1MwSERUZU94aXhObnpx?=
- =?utf-8?B?YUZTcGU4VE5OV2FOa0dJbFQvZHFIWnNMZGxuQTA3akhERnIrK3ZKQ3doQjF4?=
- =?utf-8?B?TWhIbDJpVnVTaXNieHY0dFVrVEZWc2JPL3ByUVd0N1pHVzBHaDB0NUliZ0pz?=
- =?utf-8?B?MUlVcTBDOWZnS0hIU3lGRENnQU0wRXRuVnJtTEVzZEdGRmlsTXdGcTQwcTFG?=
- =?utf-8?B?SFNqdHNVRjlKOEtrMTlJZDhZc21kWlhKNXFoc0F6OVRJc1k1ZVpDUTEyNkZ0?=
- =?utf-8?B?TnRzTm1pVi82TkRwelBjWUZ3WlZtVkF4UXBFYWlybXZ6cmRsbTBpNTNNK3Ix?=
- =?utf-8?B?U2ZMYlZCcWF3dGJrQnZDRElOTEtjaFRlSFZneVBqQTNkZEI4SWw1RDJvUDdV?=
- =?utf-8?B?NXA0Q0Q2cW5ISjlwRmhTeGVVNWZTckMySlhBYVhQeWF2ejQzeG5CM2NWSHM4?=
- =?utf-8?B?UTVCSS9qZlk1NnE0SG1ySVVtd0FmTThxbFJWTWVjekpqdTQxZXVxVHM4TjBh?=
- =?utf-8?B?dWpxRXJkdjVHdElLK1NsUFUreTJJOXRtNFZmV1crclFzM2wwZEx0TGs5dG5Z?=
- =?utf-8?B?SFdpL3NxK2JZR1ZySGRlVHJqVjRHVGxBeTJvYUNtZ0RsOWprU1VGWXNiRWQ4?=
- =?utf-8?B?ejhWbEViVTVxdS9aMzAxMVl6TU1PTmpFdzJEUmcrblVJNkI3Z3NYQkRKRVZ2?=
- =?utf-8?B?K0pZak5uaUhMSnBxLzdIRGkzUGRUU0kvclMxYjdmZDVVMG1NQzVBRDNkTWN3?=
- =?utf-8?B?Q2FBZ2d3UTN5V2NwUlluMk16TitIai9EelpJR251T25HbUF6ZVZRQi9zSFoz?=
- =?utf-8?B?cjN1VWJyS3RPU1I0bjlRSkxud1dmV0Q2aFZIQzBuT2l3Nm4wbDFyZGhvMFRL?=
- =?utf-8?B?dk1MOTRlek4vbXpNbTJHQXVXek1JaUJXM3MzZXBsbkhhWlNtV1gzVnRMaTUz?=
- =?utf-8?B?TlY2SzZrUXFhMUNKSmxtajdlRGpRVm14dXQxV1VJTWRvSTBFeExPcTBPdFNE?=
- =?utf-8?B?bVRCcmM1dXVuUXhXejNjSDRoSU1BeVNtWi93VzhMOGdWK2NzMzFMRkVTVG42?=
- =?utf-8?B?YXVreDlEVzNCbHp6UkM1Z3VUK2xCRXRRS2w3elMvY1hITFlyU044V3JkUGNa?=
- =?utf-8?Q?HlJOqymZnsLhHopfjzC6SFxSF?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11ae9375-7abd-4560-c3a3-08dcd0b20a2e
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB8297.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 09:30:27.5632
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: b5liJmVe7oLWC9/NK0lwfzj3jdm1FjDHd9mywELb9A0L+nX93Fgw9TQetw1/7NzZas0UXaYvkRHz2sj/rP6YTw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7428
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240909-pmbus-status-reg-clearing-v1-1-f1c0d68c6408@gmail.com>
+X-B4-Tracking: v=1; b=H4sIADPA3mYC/x2MywqEMAwAf0Vy3kB9ge6vyB7aGGvArZK4iyD+u
+ 8XTMIeZE4xV2OBdnKD8F5M1ZSlfBdDsU2SUMTtUrmpc71rcvuFnaLvfM5Qj0sJeJUX0gXpyZdd
+ QHSD3m/Ikx/MePtd1A45R/axrAAAA
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Patryk Biel <pbiel7@gmail.com>
+X-Mailer: b4 0.14.1
 
+This change adds fetching PMBus revision and using it to conditionally
+clear individual status bits while calling pmbus_show_boolean, only if
+the device is compliant with PMBus specs >= 1.2.
 
+Signed-off-by: Patryk Biel <pbiel7@gmail.com>
+---
+Current implementation of pmbus_show_boolean assumes that all devices
+support write-back operation of status register so as to clear pending
+warning or faults. Since clearing individual bits in the status registers
+was introduced in PMBus specification 1.2, this operation may not be 
+supported by some older devices, thus resulting in error while reading 
+boolean attributes like e.g. temp1_max_alarm. 
 
-On 30.08.24 12:58, Dragos Tatulea wrote:
-> This series improves the time of .set_map() operations by parallelizing
-> the MKEY creation and deletion for direct MKEYs. Looking at the top
-> level MKEY creation/deletion functions, the following improvement can be
-> seen:
-> 
-> |-------------------+-------------|
-> | operation         | improvement |
-> |-------------------+-------------|
-> | create_user_mr()  | 3-5x        |
-> | destroy_user_mr() | 8x          |
-> |-------------------+-------------|
-> 
-> The last part of the series introduces lazy MKEY deletion which
-> postpones the MKEY deletion to a later point in a workqueue.
-> 
-> As this series and the previous ones were targeting live migration,
-> we can also observe improvements on this front:
-> 
-> |-------------------+------------------+------------------|
-> | Stage             | Downtime #1 (ms) | Downtime #2 (ms) |
-> |-------------------+------------------+------------------|
-> | Baseline          | 3140             | 3630             |
-> | Parallel MKEY ops | 1200             | 2000             |
-> | Deferred deletion | 1014             | 1253             |
-> |-------------------+------------------+------------------|
-> 
-> Test configuration: 256 GB VM, 32 CPUs x 2 threads per core, 4 x mlx5
-> vDPA devices x 32 VQs (16 VQPs)
-> 
-> This series must be applied on top of the parallel VQ suspend/resume
-> series [0].
-> 
-> [0] https://lore.kernel.org/all/20240816090159.1967650-1-dtatulea@nvidia.com/
-> 
-> ---
-> v2:
-> - Swapped flex array usage for plain zero length array in first patch.
-> - Updated code to use Scope-Based Cleanup Helpers where appropriate
->   (only second patch).
-> - Added macro define for MTT alignment in first patch.
-> - Improved commit messages/comments based on review comments.
-> - Removed extra newlines.
-Gentle ping for the remaining patches in v2.
+This change adds fetching PMBus revision supported by device and
+modifies pmbus_show_boolean so that it only tries to clear individual
+status bits if the device is compilant with PMBus specs >= 1.2.
 
-Thanks,
-Dragos
+Tested on: LTC2971, LTC2971-1, LTC2974, LTC2977.
+---
+ drivers/hwmon/pmbus/pmbus.h      |  6 ++++++
+ drivers/hwmon/pmbus/pmbus_core.c | 12 +++++++++++-
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/hwmon/pmbus/pmbus.h b/drivers/hwmon/pmbus/pmbus.h
+index fb442fae7b3e..0bea603994e7 100644
+--- a/drivers/hwmon/pmbus/pmbus.h
++++ b/drivers/hwmon/pmbus/pmbus.h
+@@ -418,6 +418,12 @@ enum pmbus_sensor_classes {
+ enum pmbus_data_format { linear = 0, ieee754, direct, vid };
+ enum vrm_version { vr11 = 0, vr12, vr13, imvp9, amd625mv };
+ 
++/* PMBus revision identifiers */
++#define PMBUS_REV_10 0x00	/* PMBus revision 1.0 */
++#define PMBUS_REV_11 0x11	/* PMBus revision 1.1 */
++#define PMBUS_REV_12 0x22	/* PMBus revision 1.2 */
++#define PMBUS_REV_13 0x33	/* PMBus revision 1.3 */
++
+ struct pmbus_driver_info {
+ 	int pages;		/* Total number of pages */
+ 	u8 phases[PMBUS_PAGES];	/* Number of phases per page */
+diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
+index cb4c65a7f288..50ba093a38e8 100644
+--- a/drivers/hwmon/pmbus/pmbus_core.c
++++ b/drivers/hwmon/pmbus/pmbus_core.c
+@@ -108,6 +108,8 @@ struct pmbus_data {
+ 
+ 	int vout_low[PMBUS_PAGES];	/* voltage low margin */
+ 	int vout_high[PMBUS_PAGES];	/* voltage high margin */
++
++	u8 revision;	/* The PMBus revision the device is compliant with */
+ };
+ 
+ struct pmbus_debugfs_entry {
+@@ -1095,7 +1097,11 @@ static int pmbus_get_boolean(struct i2c_client *client, struct pmbus_boolean *b,
+ 
+ 	regval = status & mask;
+ 	if (regval) {
+-		ret = _pmbus_write_byte_data(client, page, reg, regval);
++		if (data->revision >= PMBUS_REV_12)
++			ret = _pmbus_write_byte_data(client, page, reg, regval);
++		else
++			pmbus_clear_fault_page(client, page);
++
+ 		if (ret)
+ 			goto unlock;
+ 	}
+@@ -2653,6 +2659,10 @@ static int pmbus_init_common(struct i2c_client *client, struct pmbus_data *data,
+ 		}
+ 	}
+ 
++	ret = i2c_smbus_read_byte_data(client, PMBUS_REVISION);
++	if (ret > 0)
++		data->revision = ret;
++
+ 	if (info->pages <= 0 || info->pages > PMBUS_PAGES) {
+ 		dev_err(dev, "Bad number of PMBus pages: %d\n", info->pages);
+ 		return -ENODEV;
+
+---
+base-commit: c763c43396883456ef57e5e78b64d3c259c4babc
+change-id: 20240905-pmbus-status-reg-clearing-abc9c0184c3b
+
+Best regards,
+-- 
+Patryk Biel <pbiel7@gmail.com>
+
 
