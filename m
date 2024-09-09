@@ -1,272 +1,134 @@
-Return-Path: <linux-kernel+bounces-320977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353A29712EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:05:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A80CA9712EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E22FF28616C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:05:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 546AD1F23399
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDC11B29D9;
-	Mon,  9 Sep 2024 09:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08A01B29D7;
+	Mon,  9 Sep 2024 09:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzQXqEOz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S9nIJuEM"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38ECD1B29CA
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9706B1B29BE
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725872696; cv=none; b=rubPE6HfLcvEhyTxX4EpmemY3GggvajitbIiAT65m6m1nr5K2GoQWidV5EPT3wBTI5RTVivI92TOXdu7TQvRFEOr21m/8vhU1cyWZaXJ+5LcNEqeHdSVpITO+Z7y1PFpA0p5GqrPdYtxxGZ3eyzN6n/jPymmSr87n8uKQf7UiIA=
+	t=1725872737; cv=none; b=NjleSy38SbhJ3gcbSBljYmayKP9QwYkxEYaTul9ACrRQ5XBTE55l6wdkuumr4nx7/xzgN8FK2nYdP3BSlwAhU1hzHTQoUQYlNupeWrNJ97yn3QwDcDFAgQRWJjHkbv57Q6lTh0COYPUkcrpCi6eJBFD/7RL2uzMJFyZDgWhvb+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725872696; c=relaxed/simple;
-	bh=lCsruMSp1KOiTzsHB5Spv5z72CjumY9SnOeQbIfyNpk=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=k2MYdgQ8SONALnaYyqj+sVahj267K0SgO3p5J19JQJBZ13I46f/tKTflXZyndMstED1221qfsBQl965iiVMmyxRxUSl5982GWFtkNfy6ZUtDhaPsE7axuHh7xh1veLIuyUQF1udCo5gNSDyZUO0f7StUuG3MGSYPbf4JxF6Bmic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzQXqEOz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 821FFC4CECB;
-	Mon,  9 Sep 2024 09:04:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725872695;
-	bh=lCsruMSp1KOiTzsHB5Spv5z72CjumY9SnOeQbIfyNpk=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=rzQXqEOzHmW/R+YiWvu/UKQXQWZJesupXQ5nHfVCiAwFbbAhgtw+6unhe+gEiOIP1
-	 FABGwHcDzZ52yNyhTcIFUwFUlYy61mNhopYTsMtaL0YnDdedNdEM9rN94eytOm4UHj
-	 q5P/AeLmu0vDMJVwmwqW2BkacLeSJs1hu45OB7S626vRAjnJMRB6IdoolsYO/rYoul
-	 lO7SnZN+et1eSHjuDxwKPVrB9W2LFsW76TR5LzcQHI371WR8Kewv8/RUI//US9gJng
-	 TlbkiCl1Ss2iSanw9t4+z1S+jw860v7Os6h60QzcliyXytXmkKi5irMzntdYilajLT
-	 mf10btu/RAXPA==
-Message-ID: <f1bc191e-98fa-4a75-a2a6-0ee8a76c4637@kernel.org>
-Date: Mon, 9 Sep 2024 17:04:52 +0800
+	s=arc-20240116; t=1725872737; c=relaxed/simple;
+	bh=BB3/H5ySqRyu6/77CobU02zoSYGnRaT8/VTpD8q1nkM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mJ0w/nrufCn79pxNwkxb1bJWfMgEV9nIaBZSsngWn5MtbiwjOIBkS9QFViZBk5l+gqphJvQKHpYPzQ0PNi0Ey3SobRNjj8/vm9+aGzxFjiBXM4SQXMjrsfRi9CYRAtTLjQiCSRXXsQkBpNtJRsud5qIrVMy8XAnaWpb9AYbgH5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S9nIJuEM; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6b747f2e2b7so38049667b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 02:05:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725872734; x=1726477534; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=j2t8R4xfnSC9w9Cn08xrD7PLm+PTwWMORf6NFYOH81c=;
+        b=S9nIJuEMT4dVh0P4tUIwaCATrYrzoRETQ4/HdZTDqoglVs+gMU8OSXQPwyLkbDZ8BJ
+         DmTUaLUaLnqXeY5BeTOfLsgqymqUAKYot214KfI3u7Vluk8m8vdg4b2VY6IeiqmHS9vq
+         7g6ZxYs83syCWeaCd4phgJ/Wz/fwLrA5qioLfMdTDaZazgvkTHmuHzOjI6KiAoFlCGmC
+         wpl8zLxamWt00ctZCTSq1F2p3bNkf1NaRcU0zqfWXTGmNFh1ADHCk1vECGL0vBeL5x0c
+         wZetgMZpeRPTFq0Vhzk7k5ubgKOKWXTILIM5SMaqCu82fO0Ui4zLfel95u4k1AmEL0y1
+         SdzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725872734; x=1726477534;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j2t8R4xfnSC9w9Cn08xrD7PLm+PTwWMORf6NFYOH81c=;
+        b=M5tz12Zi51C3ztLjatJPh0jkybZwnYdi9ELJVggJ2RsF42qH7hk4HC2oA/oRY7z8Wm
+         ZGNLDpvW094ozWBOqhEXgG6Bfniz9/H5+z1Upq7dSUYYZoSb8QI5jAS0lMNs2reomWmV
+         8Hv+jTJJRVN3ZjPmFWQ7/kQen3xxSC9tW2Ycdducjla5L8jLQuUhoKQoibgy6xC/yz2o
+         tbtOQNCoMkiy1f0SEQbX0yAplpZkV7OnGHZ3oG1IJ7HlXq6FZov7zhJuEXOSSOpMywaA
+         s7yE4fsS+kS+Ix5lcu8LHSOLqZpfOczwgHYJl7J1+cJS4LAiRQfFJpnoDB2Ds6liGR8I
+         AyCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2ii6XljS+J8EE+Afey6qvJ6MXEH65+xZjTz1Bvc9QEJUl8QdbgJDZEW5VSlBlb+R6g5v+idTnxJjqOsg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIzC81QsNTawryNSKUIPVVw3pxty4CmWdmxaeZhPkT+rnhmfp2
+	txG2wt4z7aJONMMWwneN6IqwjG06Mti2cotwbvT5mB98jaK1KNWB6+GXe3ZhNd8A87eX0/hM2dC
+	XB6QJgoptePAKXeL36+1k7wvKyGsRgYOICwOFCA==
+X-Google-Smtp-Source: AGHT+IG0rmU+PJ1sUsI9xaYzlyO0fuHlZgEClWUHvIo++2qG8J7dLhkan6PH1kB/kHCDTDrPTR3yTt3ldtPN97UpiV0=
+X-Received: by 2002:a05:690c:d1a:b0:6db:2753:cd9c with SMTP id
+ 00721157ae682-6db45273f36mr119317517b3.44.1725872734530; Mon, 09 Sep 2024
+ 02:05:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [f2fs-dev] [RFC PATCH] f2fs: don't set SBI_QUOTA_NEED_REPAIR flag
- if receive SIGKILL
-To: wangzijie <wangzijie1@honor.com>
-References: <55f6fdba-f505-4557-8074-6bfa942c275d@kernel.org>
- <20240909040600.2371098-1-wangzijie1@honor.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240909040600.2371098-1-wangzijie1@honor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com>
+ <CACMJSes4cnCNUHiZUr4CF-K2c8-1VYzuh=T8JDi_erqfShkuZA@mail.gmail.com>
+ <1f889bba-0c89-45db-b360-b21d6bba7772@gmail.com> <68b0476f-dfa1-44cb-a01a-f4afbaaa98e5@gmail.com>
+ <vtdrxh57zxpu6xktzehcpx7hkaqclg5kya5jojrbkmo76yswxx@libmc5evobkb>
+In-Reply-To: <vtdrxh57zxpu6xktzehcpx7hkaqclg5kya5jojrbkmo76yswxx@libmc5evobkb>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Mon, 9 Sep 2024 11:05:23 +0200
+Message-ID: <CACMJSeuONLsWy3rQnLsOxm-Qqgcmd67XNhCMPvTd=UtgYoPfzg@mail.gmail.com>
+Subject: Re: [REGRESSION] firmware: qcom: scm: smc: switch to using the SCM allocator
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rudraksha Gupta <guptarud@gmail.com>, regressions@lists.linux.dev, brgl@bgdev.pl, 
+	andersson@kernel.org, konrad.dybcio@linaro.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, robimarko@gmail.com, 
+	quic_gurus@quicinc.com, luzmaximilian@gmail.com, catalin.marinas@arm.com, 
+	will@kernel.org, srinivas.kandagatla@linaro.org, arnd@arndb.de, 
+	quic_eberman@quicinc.com, elder@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kernel@quicinc.com, ahalaney@redhat.com, 
+	quic_djaggi@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/9/9 12:06, wangzijie wrote:
->> On 2024/9/8 12:12, wangzijie wrote:
->>>>> From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
->>>>>
->>>>>> On 2024/8/27 14:22, wangzijie wrote:
->>>>>>> Thread A
->>>>>>> -dquot_initialize
->>>>>>>     -dqget
->>>>>>>      -f2fs_dquot_acquire
->>>>>>>       -v2_read_dquot
->>>>>>>        -qtree_read_dquot
->>>>>>>         -find_tree_dqentry
->>>>>>>          -f2fs_quota_read
->>>>>>>           -read_cache_page_gfp
->>>>>>>            -do_read_cache_folio
->>>>>>>             -fiemap_read_folio
->>>>>>>              -folio_wait_locked_killable
->>>>>>>               -receive SIGKILL : return -EINTR
->>>>>>>           -set SBI_QUOTA_NEED_REPAIR
->>>>>>>       -set SBI_QUOTA_NEED_REPAIR
->>>>>>>
->>>>>>> When calling read_cache_page_gfp in quota read, thread may receive SIGKILL and
->>>>>>> set SBI_QUOTA_NEED_REPAIR, should we set SBI_QUOTA_NEED_REPAIR in this error path?
->>>>>>
->>>>>> f2fs_quota_read() can be called in a lot of contexts, can we just ignore -EINTR
->>>>>> for f2fs_dquot_initialize() case?
->>>>>>
->>>>>> Thanks,
->>>>>
->>>>> Yes, in many contexts f2fs_quota_read() can be called and may return -EINTR, we need to ignore this errno for more cases. If we need to do so, I will check it and resend patch.
->>>>> Or do you have other suggestions to avoid unnecessary SBI_QUOTA_NEED_REPAIR flag set?
->>>>
->>>> How about this?
->>>>
->>>> ---
->>>>    fs/f2fs/f2fs.h  |  1 +
->>>>    fs/f2fs/inode.c |  3 +--
->>>>    fs/f2fs/super.c | 17 +++++++++++++----
->>>>    3 files changed, 15 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>> index dfed1974eda5..a1704a19dfe9 100644
->>>> --- a/fs/f2fs/f2fs.h
->>>> +++ b/fs/f2fs/f2fs.h
->>>> @@ -810,6 +810,7 @@ enum {
->>>>    	FI_ATOMIC_DIRTIED,	/* indicate atomic file is dirtied */
->>>>    	FI_ATOMIC_REPLACE,	/* indicate atomic replace */
->>>>    	FI_OPENED_FILE,		/* indicate file has been opened */
->>>> +	FI_INIT_DQUOT,		/* indicate it's initializing dquot */
->>>>    	FI_MAX,			/* max flag, never be used */
->>>>    };
->>>>
->>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->>>> index 008f01348afa..b1dbaeda306f 100644
->>>> --- a/fs/f2fs/inode.c
->>>> +++ b/fs/f2fs/inode.c
->>>> @@ -827,8 +827,7 @@ void f2fs_evict_inode(struct inode *inode)
->>>>
->>>>    	err = f2fs_dquot_initialize(inode);
->>>>    	if (err) {
->>>> -		if (err != -EINTR)
->>>> -			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>>> +		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>>>    		err = 0;
->>>>    	}
->>>>
->>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>> index 8e29aba4b7a4..e774bdf875b2 100644
->>>> --- a/fs/f2fs/super.c
->>>> +++ b/fs/f2fs/super.c
->>>> @@ -2644,8 +2644,11 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
->>>>    			if (PTR_ERR(page) == -ENOMEM) {
->>>>    				memalloc_retry_wait(GFP_NOFS);
->>>>    				goto repeat;
->>>> -			} else if (PTR_ERR(page) != -EINTR)
->>>> -				set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>>> +			} else if (PTR_ERR(page) == -EINTR &&
->>>> +				is_inode_flag_set(inode, FI_INIT_DQUOT)) {
->>>> +				return PTR_ERR(page);
->>>> +			}
->>>> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>>>    			return PTR_ERR(page);
->>>>    		}
->>>>
->>>> @@ -2721,10 +2724,16 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
->>>>
->>>>    int f2fs_dquot_initialize(struct inode *inode)
->>>>    {
->>>> +	int ret;
->>>> +
->>>>    	if (time_to_inject(F2FS_I_SB(inode), FAULT_DQUOT_INIT))
->>>>    		return -ESRCH;
->>>>
->>>> -	return dquot_initialize(inode);
->>>> +	set_inode_flag(inode, FI_INIT_DQUOT);
->>>> +	ret = dquot_initialize(inode);
->>>> +	clear_inode_flag(inode, FI_INIT_DQUOT);
->>>> +
->>>> +	return ret;
->>>>    }
->>>>
->>>>    static struct dquot __rcu **f2fs_get_dquots(struct inode *inode)
->>>> @@ -3064,7 +3073,7 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
->>>>
->>>>    	f2fs_down_read(&sbi->quota_sem);
->>>>    	ret = dquot_acquire(dquot);
->>>> -	if (ret < 0 && ret != -EINTR)
->>>> +	if (ret < 0)
->>>>    		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>>>    	f2fs_up_read(&sbi->quota_sem);
->>>>    	return ret;
->>>> -- 
->>>> 2.40.1
->>>
->>> Hi, Chao
->>> If we dont't ignore -EINTR in f2fs_dquot_acquire(), we will still set SBI_QUOTA_NEED_REPAIR flag
->>> in f2fs_dquot_acquire() if f2fs_quota_read return -EINTR. I think we need more cases in addition to
->>> dquot initializing and I will check it again.
->>
->> Maybe we can cover this case w/ below diff?
->>
->> ---
->>   fs/f2fs/super.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index e774bdf875b2..7fc970121a3f 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -3073,7 +3073,8 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
->>
->>   	f2fs_down_read(&sbi->quota_sem);
->>   	ret = dquot_acquire(dquot);
->> -	if (ret < 0)
->> +	if (ret < 0 &&
->> +		(ret != -EINTR || !is_inode_flag_set(inode, FI_INIT_DQUOT)))
->>   		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>   	f2fs_up_read(&sbi->quota_sem);
->>   	return ret;
->> -- 
->> 2.40.1
->>
->> Thanks,
-> 
-> Yes, I think it can cover initializing dquot case.
+On Sat, 7 Sept 2024 at 11:57, Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Sat, Sep 07, 2024 at 01:49:02AM GMT, Rudraksha Gupta wrote:
+> > > Looks like qcom_scm_get_tzmem_pool() returns NULL. Not sure how this
+> > > happens. Can you confirm that the QCom SCM driver probed correctly?
+> >
+> > Thanks for looking into this! Please let me know how I can help!
+> >
+> >
+> > I've been building the driver into the kernel I believe. Here's the relevant
+> > line in the config:
+> >
+> > $ rg -i "scm"
+> > samsung/expressatt/linux.defconfig
+> > 1615:# CONFIG_ARM_SCMI_PROTOCOL is not set
+> > 1627:CONFIG_QCOM_SCM=y
+> > 1628:# CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT is not set
+> >
+> >
+> > It seems like the scm driver is being probed:
+> >
+> > ~ # dmesg | grep scm
+> > [    0.066438] qcom_scm: convention: smc legacy
+> > [    0.362543] bus: 'platform': add driver qcom_scm
+>
+> The scm driver is added, but it is not probed as there is no SCM node in
+> DT. I'll send and RFT patch to add it. However the issue still persists:
+> the driver should not crash if there is no SCM device on a system.
+> qcom_scm_*_alloc should fall back if there is no SCM.
+>
 
-Oops, please ignore this, as we can not get inode pointer in
-f2fs_dquot_acquire() context...
+Ugh, so some SCM calls seem to expect that they can get called without
+the SCM driver. It's not very intuitive, I would expect that the
+driver must be up for SCM to work at all.
 
-Thanks,
+I think we should fall back to using kzalloc() in such cases as
+there's no struct device to use with the DMA alloc APIs. I'll prepare
+a patch.
 
-> 
->>
->>> Thank you for your suggestion!
->>>
->>>>>
->>>>> Thank you for review.
->>>>>
->>>>>>>
->>>>>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
->>>>>>> ---
->>>>>>>     fs/f2fs/inode.c | 3 ++-
->>>>>>>     fs/f2fs/super.c | 6 +++---
->>>>>>>     2 files changed, 5 insertions(+), 4 deletions(-)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->>>>>>> index ed629dabb..2af98e2b7 100644
->>>>>>> --- a/fs/f2fs/inode.c
->>>>>>> +++ b/fs/f2fs/inode.c
->>>>>>> @@ -837,8 +837,9 @@ void f2fs_evict_inode(struct inode *inode)
->>>>>>>         err = f2fs_dquot_initialize(inode);
->>>>>>>         if (err) {
->>>>>>> +        if (err != -EINTR)
->>>>>>> +            set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>>>>>>             err = 0;
->>>>>>> -        set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>>>>>>         }
->>>>>>>         f2fs_remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
->>>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>>>>> index 1f1b3647a..f99a36ff3 100644
->>>>>>> --- a/fs/f2fs/super.c
->>>>>>> +++ b/fs/f2fs/super.c
->>>>>>> @@ -2650,8 +2650,8 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
->>>>>>>                 if (PTR_ERR(page) == -ENOMEM) {
->>>>>>>                     memalloc_retry_wait(GFP_NOFS);
->>>>>>>                     goto repeat;
->>>>>>> -            }
->>>>>>> -            set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>>>>>> +            } else if (PTR_ERR(page) != -EINTR)
->>>>>>> +                set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>>>>>>                 return PTR_ERR(page);
->>>>>>>             }
->>>>>>> @@ -3070,7 +3070,7 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
->>>>>>>         f2fs_down_read(&sbi->quota_sem);
->>>>>>>         ret = dquot_acquire(dquot);
->>>>>>> -    if (ret < 0)
->>>>>>> +    if (ret < 0 && ret != -EINTR)
->>>>>>>             set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>>>>>>         f2fs_up_read(&sbi->quota_sem);
->>>>>>>         return ret;
->>>>>
->>>>>
->>>
->>>
-> 
-> 
-
+Bart
 
