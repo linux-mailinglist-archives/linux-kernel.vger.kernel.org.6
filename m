@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-321411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C29971A25
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:57:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C2B971A27
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 385EBB24B68
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:57:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153C92839F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237641B86E2;
-	Mon,  9 Sep 2024 12:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21C51B9B22;
+	Mon,  9 Sep 2024 12:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="l0C8vqO6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4NVS6Sl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4493D1B2529
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF901B86EE;
+	Mon,  9 Sep 2024 12:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725886626; cv=none; b=Bj3nftJsYnXICsLRSEP2TwBGXoczcxkKdSEaE5FCv3kCj/L+5yeBMGavfeUxAjI3nrbJiu7SYLT3REhyMqpmzatb3DO6c4L0Hou3qlCXkei6nTsbeED/N2cTYKPPu1QJLCCqpof9Ntr4S4oALnT+p4K4uzgrO+z42WCTm1BOpiQ=
+	t=1725886628; cv=none; b=GbcBUSnqsxR4/daWnMu7NsU8bGnlacAsvaFSd3OUjVQHMC4krrVWJuIsrbLiGuo2H9EmlWsXcXjzzJppsvFeLjXJ8cv/0N9ABLf/fQYBSkUMUQE0kpnjkNoOm/2w03E9c2d9ooUBN8yum8A64EiYYH0l6IYC75HnFS5QZBU/Cro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725886626; c=relaxed/simple;
-	bh=Cd0tRbBC8z/SXozT4nfhpxNkfjK4Qb93NiYph6UqVsI=;
+	s=arc-20240116; t=1725886628; c=relaxed/simple;
+	bh=n1LtFgen2lM9wDK2rBgOQxPzxNJOXud50nqNizGKKoA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AMHa5E329Lmy4RvwkLjXkOPn7eoGNWfSE8pv1FabGul9tuevol8SjRHRGUzfE2R2zd9DnIuxDtW1JtXoqvzKkU5jojVsLjxyiQBa/zgQcqm0RlKm/OpXPNkmsTQ403PWn0h/bootyO4CAWMgq19Ft/lxMQZSBv+f8LefYSWySXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=l0C8vqO6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64A14C4CEC5;
-	Mon,  9 Sep 2024 12:57:05 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="l0C8vqO6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725886623;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tjj9pMckNrZn7r06sJTn7WWtsAUED56WaVUDPWPH3ug=;
-	b=l0C8vqO6Gwe6lzG9ejUc1Q+n2IZ0YfrmZl4bW5PGpgsbjbZ+3DRhYejrEYCalmaPy9ulJa
-	ZNV4wKxQLmaJlCVMnbzvSgi+r9vprfjMuk3GG6yommoBZhSXFK6ZEvJd9ZmeV/nGUJ/Tjb
-	uoizrUVuJRC+aRbInvuftlg4oItv+T4=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 827428f2 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 9 Sep 2024 12:57:02 +0000 (UTC)
-Date: Mon, 9 Sep 2024 14:57:01 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linux-kernel@vger.kernel.org, adhemerval.zanella@linaro.org,
-	xry111@xry111.site
-Subject: Re: [PATCH] selftests: vDSO: ensure vgetrandom works in a time
- namespace
-Message-ID: <Zt7wndSBTuqGlViB@zx2c4.com>
-References: <ZtnnZMa_Yi-UwhHT@zx2c4.com>
- <20240905173220.2243959-1-Jason@zx2c4.com>
- <6c84d516-a3fd-4b9f-a27d-8da8ff117c92@csgroup.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NkNlh4FGckyHdeZC133HuYNihjb/tVYnhRlHHQB3PAWFtmW7tNoAOHtXnHq210Cx12cBZIyTwCDWBjGnsFyB1Ud+CpKTWbSVDwo02dkF1oiPiT0G/rwxTn29sgnTInADjxxWjIds4LJAT2jhqjm3LN1vTBrMLf9jP8Yj613xgNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4NVS6Sl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0746EC4CEC5;
+	Mon,  9 Sep 2024 12:57:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725886627;
+	bh=n1LtFgen2lM9wDK2rBgOQxPzxNJOXud50nqNizGKKoA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g4NVS6Sl/mpDVc76o61sNyZZWAnteT9uMb/RNeRdfJMDPr/i7R6sQ/le8t+iGghoC
+	 dmzDrVBEBII2dyxxWUS7ygw5EDxMAYDz8S+NLvHDL36wt8P8omaajqyFvtT5dKJySP
+	 mQlLpZWZ+e7xXfjHdX95O/WBpOQSS+5TxP/Gporh3hVZIUaF1mR5cR43a5TJrKdTUj
+	 B+B4kp6dmJ1tlUfRjFyycyB5thY5R+24dftbTIu6BTE11D4UCrCggI9VIlNU0oSsgd
+	 xbRlQDkcpWUp1bo9LuVOUEBKPphoGNAQQaOXB/zWv6olrAv1sCAtKukMUYyJMRAQwz
+	 Dnm+0POZAVqqQ==
+Date: Mon, 9 Sep 2024 14:57:03 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Tyrone Ting <warp5tw@gmail.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com, 
+	tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com, 
+	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] i2c: npcm: use i2c frequency table
+Message-ID: <2kqhf2ad3omx3dsjucrqhtnonnox7ghtp7vkogrwrdfh3dgg2o@4cpa4gfg6c3f>
+References: <20240830034640.7049-1-kfting@nuvoton.com>
+ <20240830034640.7049-7-kfting@nuvoton.com>
+ <3wz36hrpicogoakqhmveppcrt6s52zmlcgjpio3wwpil3rdwdi@ft7tloqqf2zt>
+ <CACD3sJYFNV9Vxmq1Ydp=+wh-52DOCMsECO+RmP_K6t4B8wzbmA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,33 +63,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6c84d516-a3fd-4b9f-a27d-8da8ff117c92@csgroup.eu>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACD3sJYFNV9Vxmq1Ydp=+wh-52DOCMsECO+RmP_K6t4B8wzbmA@mail.gmail.com>
 
-On Mon, Sep 09, 2024 at 12:42:01PM +0200, Christophe Leroy wrote:
-> > +	assert(unshare(CLONE_NEWUSER) == 0 && unshare(CLONE_NEWTIME) == 0);
+On Mon, Sep 09, 2024 at 09:56:25AM GMT, Tyrone Ting wrote:
+> Hi Andi:
 > 
-> ~# ./vdso_test_getrandom
-> TAP version 13
-> 1..2
-> ok 1 getrandom: PASS
-> vdso_test_getrandom: vdso_test_getrandom.c:276: kselftest: Assertion 
-> `ret == 0' failed.
-> Aborted
+> Thank you for your review.
 > 
-> That's too strong. When unshare() returns EINVAL it means the kernel is 
-> not built with CONFIG_TIME_NS. In that case the test should be SKIPPED.
+> Andi Shyti <andi.shyti@kernel.org> 於 2024年9月6日 週五 上午5:43寫道：
+> >
+> > Hi,
+> >
+> > On Fri, Aug 30, 2024 at 11:46:39AM GMT, Tyrone Ting wrote:
+> > > Modify i2c frequency from table parameters
+> > > for NPCM i2c modules.
+> > >
+> > > Supported frequencies are:
+> > >
+> > > 1. 100KHz
+> > > 2. 400KHz
+> > > 3. 1MHz
+> >
+> > I agree with Andy, please add a good explanation for this change.
+> >
+> > > Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
+> > > ---
+> > >  drivers/i2c/busses/i2c-npcm7xx.c | 230 +++++++++++++++++++------------
+> > >  1 file changed, 144 insertions(+), 86 deletions(-)
+> > >
+> > > diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-npcm7xx.c
+> > > index 67d156ed29b9..cac4ea0b69b8 100644
+> > > --- a/drivers/i2c/busses/i2c-npcm7xx.c
+> > > +++ b/drivers/i2c/busses/i2c-npcm7xx.c
+> > > @@ -263,6 +263,121 @@ static const int npcm_i2caddr[I2C_NUM_OWN_ADDR] = {
+> > >  #define I2C_FREQ_MIN_HZ                      10000
+> > >  #define I2C_FREQ_MAX_HZ                      I2C_MAX_FAST_MODE_PLUS_FREQ
+> > >
+> > > +struct SMB_TIMING_T {
+> >
+> > Please run checkpatch.pl before sending the patches.
+> I did run the checkpatch.pl against this patch.
+> Here is the log from the checkpatch.pl:
+> -------------------------------------------------------------
+> ./patch_i2c_v2/v2-0006-i2c-npcm-use-i2c-frequency-table.patch
+> -------------------------------------------------------------
+> total: 0 errors, 0 warnings, 265 lines checked
 > 
-> And when unshare() returns EPERM, it means the user is not authorised to 
-> use unshare(), that's an expected error that shouldn't lead to an assert 
-> either, instead it should gracefully says FAILED I think.
+> ./patch_i2c_v2/v2-0006-i2c-npcm-use-i2c-frequency-table.patch has no
+> obvious style problems and is ready for submission.
 
-Generally those assertions are for when the test itself or the test
-environment is broken, rather than the thing the test is testing for.
+mmhhh... I thought checkpatch hated capital letter declarations.
 
-The CLONE_NEWUSER can be split into a separate unshare statement,
-though, and then the return value can be ignored. The only point of it
-is to make it less likely that the CLONE_NEWTIME will fail. I'll fix
-that up.
+Please, then, use only lower character names for declarations.
 
-Jason
+Thanks,
+Andi
 
