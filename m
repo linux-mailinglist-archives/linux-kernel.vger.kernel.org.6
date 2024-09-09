@@ -1,296 +1,111 @@
-Return-Path: <linux-kernel+bounces-321303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 725D9971887
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:45:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCE5D971888
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E87511F231B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:45:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 401DCB24022
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0FB1B6548;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896AB1B78E1;
 	Mon,  9 Sep 2024 11:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="brtpyPGb"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lrAuFObq"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8868113BAF1;
-	Mon,  9 Sep 2024 11:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367BE1B5EC3
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 11:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725882301; cv=none; b=lldn25x2syvRBF9GYVYoy8MNXk8IeXfV0Dhf7nXcJaCZxpnHaFsrpQRD9ZWVTdtXeMsYFyn1j1kzIfTyRfjz4mS4Hf48dDDhYluLiBzuqgQlKGguCYtJs9QOsRmehEVbMjw8eDSEB1YhiUhhyhBefU5ETJ/z+HyHCHx94052MRE=
+	t=1725882302; cv=none; b=Qf5lciXgJmSK0rsIsAJqOGGANYgWEiYb02ou+QfbyMPyLqu8PJH7ox9bZcIUl2o01s/Ao3YdapksQJLyj/hQokDcIy3FSSNnnhcUAGQpQ+MgIUVcsVgpoIPMj1zBmsrpq/71QGw/6vRlBdjmue7K34L1a54p/L5bZmy91hwxKsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725882301; c=relaxed/simple;
-	bh=cpxa115dSKPJK+fxDv23U7BAWj+yTmH1FnJt+cImBy0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=SXy/ntFwk3A5bOjOipnesPAbxDoq/mjLFneYUqeYIpAx8SNViA53MhO6jcn89pBK1ovlfJWlPxdRUNe+wkOZ6crZHaVPBWPR5/SXouwpI0I7MBVCrmIgjR6HPqojDtvEzxn1BsOaTZ8EN6ILVFCuTdcwi/4IdS546DOXkl39dRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=brtpyPGb; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4895bkeo026280;
-	Mon, 9 Sep 2024 11:44:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	EKpZJnWA+z1QHjipQrYWcV9tDnVXfz75oAnSOQxVmmk=; b=brtpyPGbWKM6eAiP
-	sppUVne+hVHPTMgK1uGInJUWQKi3w7fIDoVBl9k7HE7duTuLIypq7ICr6+Gf35/n
-	MHlG0VUl7kU2eXGsfNd6rg8tVvC/U2/CeYi5JGN4vL1zLcFOOV4WUPNy1PpuiXjQ
-	RPLr2dJ82Xu4hvHssPj5PNkILABasnf1W41ESdmBz+tbsQfVN0TDIuOdrz26rqwP
-	Zq1IUvbmXyrbabogE33/tkUIjgK1rebKYbOy+cz+lbUrLsm1ZPXH7IE3DenFVrNE
-	tGJQH3WkacATD2/Ex4qsKaeVNXQiCQ2XfbPwBGdvhVpeceLTKyKFvcpidm4aXuyN
-	n5/K1Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gc8q1upe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 11:44:49 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 489BinZ6027781;
-	Mon, 9 Sep 2024 11:44:49 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gc8q1up8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 11:44:49 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4897knen032088;
-	Mon, 9 Sep 2024 11:44:48 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41h2nme3nd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 11:44:48 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 489BilL342533362
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Sep 2024 11:44:47 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9EB395805A;
-	Mon,  9 Sep 2024 11:44:47 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0FA1358051;
-	Mon,  9 Sep 2024 11:44:46 +0000 (GMT)
-Received: from [9.179.2.30] (unknown [9.179.2.30])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  9 Sep 2024 11:44:45 +0000 (GMT)
-Message-ID: <17dc89d6-5079-4e99-9058-829a07eb773f@linux.ibm.com>
-Date: Mon, 9 Sep 2024 13:44:45 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-To: Eric Dumazet <edumazet@google.com>,
-        syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>,
-        "D. Wythe" <alibuda@linux.alibaba.com>,
-        Dust Li <dust.li@linux.alibaba.com>
-Cc: davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, pabeni@redhat.com,
-        syzkaller-bugs@googlegroups.com
-References: <0000000000000311430620013217@google.com>
- <0000000000005d1b320621973380@google.com>
- <CANn89iJGw2EVw0V5HUs9-CY4f8FucYNgQyjNXThE6LLkiKRqUA@mail.gmail.com>
-Content-Language: en-US
-From: Wenjia Zhang <wenjia@linux.ibm.com>
-In-Reply-To: <CANn89iJGw2EVw0V5HUs9-CY4f8FucYNgQyjNXThE6LLkiKRqUA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 2pM3rl-ohOAC40ugpepdRdaOxNFS284f
-X-Proofpoint-ORIG-GUID: 6BeQvvT677gVLb45C7THT4SZo4cg_ojM
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1725882302; c=relaxed/simple;
+	bh=1XtdwS1BuwHLaOGGl2Ezr7HD5CSRgpRjz3svsCD0J4w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uBwsrJ5TNnzN3WcJAAj6Cr3Wg01NpXJBsf19y0eBzySRwVDV6JLx+ixNEBkausCKrFqUfkJZKo0BWWjhMbwbURZvJEakWMxiVkYWcbqonxAlj35NiK2Cw4Zt8ykwPw/h80RIIYeElg2gOCsWVUpeWM9YiKnjNKdkjiNvs3jlC9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lrAuFObq; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-690aabe2600so37330457b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 04:44:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725882298; x=1726487098; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rHMp7t8px+6AxUX4EfGUZ1CrgCIutR7qR3goerY320s=;
+        b=lrAuFObqWrCybUc0Y0NVQW/NADWuu3z65/0+/jL0xPbWu83IEqNNUkGuCgc5CK0vkd
+         T7tnSRm81Wxbj7tkTzzd4LnETt/29cD9IddeA3klA6EKJavnVRnsMeXElqsB4Db7DfrP
+         BK38e1CVI57e9g8joV7NVVcUiRehW1eF0smPZZmnrC7Znpi7y12InpsTAbAImW3CpXra
+         dg+P9rWC3DgbrsQCz2VNafKREUmd4CbXi+jtRwrzDSPfhZvkNx30IoBRs72C3eZF3xBH
+         2a0qixUXxrBfTouM9rSKa41s9UYQmNFE2vgDNGMNe4KYGf6aQDT/e5Xaa73OBOAluPbI
+         JldQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725882298; x=1726487098;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rHMp7t8px+6AxUX4EfGUZ1CrgCIutR7qR3goerY320s=;
+        b=jzLIfHqNm6O6EVbJCkIYHAuNYlFBMn63voG2iO607p0YHA6fL6d/Teu+oclvaXmr4l
+         G5jtV5bAcNJcyMABUMaCrcAtV96e9N+t+H4aGIgtlT202PUJjMIF7vDhNgT7S2BeZPXw
+         y1aZvJAjZsixtvMvTr8IUa6ZT1TxKYonjmOwIEeqEN1CTkLyD5fclEZhWoAmSNUNilUZ
+         2mmodlyDMD+Vd6WDup3cz91pWZISoAmFnlKLF6hvO6QEPnvMJdOoAGXkV4Y/yEQYNGAY
+         KloFsxsDgxJptf8V+3h0g6Ct+ncYpllA714Pl5Ys/gNYixNvads/vpNTfJHwc+Z+Rbsx
+         NomA==
+X-Forwarded-Encrypted: i=1; AJvYcCVW9RIIV1fMh475Gw0AqDmC0UKbjnq5XuzaZXFkSKZCR6yBmVeDQmWcd9qorplab6I0kX1/ZOohDO4dVB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmUnFnMtkvO+V3k4Dm8p21botMek7CwGdKBVJlSUYA5ljhJNIl
+	2BzlqyQhR7V1oA/iNKHzd4f0HmYdxtEEuUCmVfnCaMMaJMDDJ8dI4shi9lEENwR9RpI70Tr0D//
+	6tkkBVQqGKp2X8qqFt6VN8yW5eeyeUmbOJkC3DA==
+X-Google-Smtp-Source: AGHT+IEL2EB9obdWluFvUFILah+EafTsx4pRuQJ41qUmDh0QV0Y+XJMMqLn2APcG9JQzxHLZUWbt/TqBjiz6G5VpUJ4=
+X-Received: by 2002:a05:690c:5605:b0:6d3:98b1:e3bc with SMTP id
+ 00721157ae682-6db4516d21fmr130640627b3.32.1725882298275; Mon, 09 Sep 2024
+ 04:44:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-09_04,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 impostorscore=0 priorityscore=1501
- malwarescore=0 adultscore=0 clxscore=1011 mlxlogscore=999 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409090092
+References: <20240907-sdm660-wifi-v1-0-e316055142f8@linaro.org>
+ <20240907-sdm660-wifi-v1-3-e316055142f8@linaro.org> <7265e8fd-0e0c-479e-b949-b374ce561386@kernel.org>
+In-Reply-To: <7265e8fd-0e0c-479e-b949-b374ce561386@kernel.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 9 Sep 2024 14:44:47 +0300
+Message-ID: <CAA8EJppN+fbWh4Rb41kdOLnJJ7XZ0U+GApEjQ=58HuL8LdU9BQ@mail.gmail.com>
+Subject: Re: [PATCH 3/7] arm64: dts: qcom: sda660-ifc6560: enable GPU
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, iommu@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+On Mon, 9 Sept 2024 at 13:55, Konrad Dybcio <konradybcio@kernel.org> wrote:
+>
+> On 7.09.2024 8:48 PM, Dmitry Baryshkov wrote:
+> > Enable Adreno GPU on the Inforce IFC6560 SBC. It requires the Zap shader
+> > binary that was provided by the vendor.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+>
+> Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
+>
+> May I ask you to rename adreno_gpu to gpu for consistency
+> with other DTs?
+
+Yeah, I thought about it, but it would also require reworking existing DTs.
+
+I'll do it.
 
 
-
-On 09.09.24 10:02, Eric Dumazet wrote:
-> On Sun, Sep 8, 2024 at 10:12 AM syzbot
-> <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com> wrote:
->>
->> syzbot has found a reproducer for the following issue on:
->>
->> HEAD commit:    df54f4a16f82 Merge branch 'for-next/core' into for-kernelci
->> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
->> console output: https://syzkaller.appspot.com/x/log.txt?x=12bdabc7980000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=dde5a5ba8d41ee9e
->> dashboard link: https://syzkaller.appspot.com/bug?extid=51cf7cc5f9ffc1006ef2
->> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->> userspace arch: arm64
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1798589f980000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a30e00580000
->>
->> Downloadable assets:
->> disk image: https://storage.googleapis.com/syzbot-assets/aa2eb06e0aea/disk-df54f4a1.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/14728733d385/vmlinux-df54f4a1.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/99816271407d/Image-df54f4a1.gz.xz
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com
->>
->> ======================================================
->> WARNING: possible circular locking dependency detected
->> 6.11.0-rc5-syzkaller-gdf54f4a16f82 #0 Not tainted
->> ------------------------------------------------------
->> syz-executor272/6388 is trying to acquire lock:
->> ffff8000923b6ce8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
->>
->> but task is already holding lock:
->> ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x178/0x10fc net/smc/af_smc.c:3064
->>
->> which lock already depends on the new lock.
->>
->>
->> the existing dependency chain (in reverse order) is:
->>
->> -> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
->>         __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
->>         __mutex_lock kernel/locking/mutex.c:752 [inline]
->>         mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
->>         smc_switch_to_fallback+0x48/0xa80 net/smc/af_smc.c:902
->>         smc_sendmsg+0xfc/0x9f8 net/smc/af_smc.c:2779
->>         sock_sendmsg_nosec net/socket.c:730 [inline]
->>         __sock_sendmsg net/socket.c:745 [inline]
->>         __sys_sendto+0x374/0x4f4 net/socket.c:2204
->>         __do_sys_sendto net/socket.c:2216 [inline]
->>         __se_sys_sendto net/socket.c:2212 [inline]
->>         __arm64_sys_sendto+0xd8/0xf8 net/socket.c:2212
->>         __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->>         invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->>         el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->>         do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->>         el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
->>         el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->>         el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
->>
->> -> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
->>         lock_sock_nested net/core/sock.c:3543 [inline]
->>         lock_sock include/net/sock.h:1607 [inline]
->>         sockopt_lock_sock+0x88/0x148 net/core/sock.c:1061
->>         do_ip_setsockopt+0x1438/0x346c net/ipv4/ip_sockglue.c:1078
->>         ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
->>         raw_setsockopt+0x100/0x294 net/ipv4/raw.c:845
->>         sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
->>         do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
->>         __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
->>         __do_sys_setsockopt net/socket.c:2356 [inline]
->>         __se_sys_setsockopt net/socket.c:2353 [inline]
->>         __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
->>         __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->>         invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->>         el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->>         do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->>         el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
->>         el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->>         el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
->>
->> -> #0 (rtnl_mutex){+.+.}-{3:3}:
->>         check_prev_add kernel/locking/lockdep.c:3133 [inline]
->>         check_prevs_add kernel/locking/lockdep.c:3252 [inline]
->>         validate_chain kernel/locking/lockdep.c:3868 [inline]
->>         __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
->>         lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
->>         __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
->>         __mutex_lock kernel/locking/mutex.c:752 [inline]
->>         mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
->>         rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
->>         do_ip_setsockopt+0xe8c/0x346c net/ipv4/ip_sockglue.c:1077
->>         ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
->>         tcp_setsockopt+0xcc/0xe8 net/ipv4/tcp.c:3768
->>         sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
->>         smc_setsockopt+0x204/0x10fc net/smc/af_smc.c:3072
->>         do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
->>         __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
->>         __do_sys_setsockopt net/socket.c:2356 [inline]
->>         __se_sys_setsockopt net/socket.c:2353 [inline]
->>         __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
->>         __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->>         invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->>         el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->>         do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->>         el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
->>         el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->>         el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
->>
->> other info that might help us debug this:
->>
->> Chain exists of:
->>    rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
->>
->>   Possible unsafe locking scenario:
->>
->>         CPU0                    CPU1
->>         ----                    ----
->>    lock(&smc->clcsock_release_lock);
->>                                 lock(sk_lock-AF_INET);
->>                                 lock(&smc->clcsock_release_lock);
->>    lock(rtnl_mutex);
->>
->>   *** DEADLOCK ***
->>
->> 1 lock held by syz-executor272/6388:
->>   #0: ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x178/0x10fc net/smc/af_smc.c:3064
->>
->> stack backtrace:
->> CPU: 1 UID: 0 PID: 6388 Comm: syz-executor272 Not tainted 6.11.0-rc5-syzkaller-gdf54f4a16f82 #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
->> Call trace:
->>   dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
->>   show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
->>   __dump_stack lib/dump_stack.c:93 [inline]
->>   dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
->>   dump_stack+0x1c/0x28 lib/dump_stack.c:128
->>   print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2059
->>   check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2186
->>   check_prev_add kernel/locking/lockdep.c:3133 [inline]
->>   check_prevs_add kernel/locking/lockdep.c:3252 [inline]
->>   validate_chain kernel/locking/lockdep.c:3868 [inline]
->>   __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
->>   lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
->>   __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
->>   __mutex_lock kernel/locking/mutex.c:752 [inline]
->>   mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
->>   rtnl_lock+0x20/0x2c net/core/rtnetlink.c:79
->>   do_ip_setsockopt+0xe8c/0x346c net/ipv4/ip_sockglue.c:1077
->>   ip_setsockopt+0x80/0x128 net/ipv4/ip_sockglue.c:1417
->>   tcp_setsockopt+0xcc/0xe8 net/ipv4/tcp.c:3768
->>   sock_common_setsockopt+0xb0/0xcc net/core/sock.c:3735
->>   smc_setsockopt+0x204/0x10fc net/smc/af_smc.c:3072
->>   do_sock_setsockopt+0x2a0/0x4e0 net/socket.c:2324
->>   __sys_setsockopt+0x128/0x1a8 net/socket.c:2347
->>   __do_sys_setsockopt net/socket.c:2356 [inline]
->>   __se_sys_setsockopt net/socket.c:2353 [inline]
->>   __arm64_sys_setsockopt+0xb8/0xd4 net/socket.c:2353
->>   __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->>   invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->>   el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->>   do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->>   el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
->>   el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->>   el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
->>
->>
->> ---
->> If you want syzbot to run the reproducer, reply with:
->> #syz test: git://repo/address.git branch-or-commit-hash
->> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> Please SMC folks, can you take a look ?
-
-Hi Eric,
-
-Thank you for the reminder! We'll look into it ASAP!
-
-Thanks,
-Wenjia
+-- 
+With best wishes
+Dmitry
 
