@@ -1,181 +1,199 @@
-Return-Path: <linux-kernel+bounces-321429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F5E2971A59
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:07:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E12971A55
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D05A1C227FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070BD1F237FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B721B9B37;
-	Mon,  9 Sep 2024 13:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7331B86E4;
+	Mon,  9 Sep 2024 13:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Y1dafvuv"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UJ4WSlJF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838FC1B9B24;
-	Mon,  9 Sep 2024 13:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8051B3B19
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725887254; cv=none; b=XSoZkEtsTUWBxrebhaYmlZITJZYBl2hApfB6s/MqmBvQ3Urs5HfDw1ocqghRJd4VJBIl00z+aLMR5DMp+x7JtAoiVZTMro8AA/oMA+gd4bdsyWxkXrkWH1QbsxvDqxs1pqF7bTtP//46s5PkpGISgR4j+k0WQT9gfunHjOTofkA=
+	t=1725887249; cv=none; b=jH8y1X1EXsFNhkzRi7xXKooEOU1IfciBdXBm83a0wXP4HwPL7Lmcw8u9AV/Y633Wa8ZDIXzunuSVJvwmPm6qKbZ/9s+ajdSHbAN2Hr1uhbcf0WWcese0qvVTFsPHIVTGJ/wbcfa1x8VyuVCgsWzLP3RuO68VEysLjlGFcS1yAPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725887254; c=relaxed/simple;
-	bh=E4RRuE/i/qRg5/oov9kgzW8yHUJaA1SH34naXvnk51U=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fxnuDp6PkG+ZU+ivPyYsuJHR7QidUOusrGUuPpWeOkSh2xeCbFlLm5z0+TuGLFdT0qIDNsOaHO6aCvjEDHFqIm3QzNMesUfqiQXGj0VXqZeAMNBKfvm4ur+lFxtxcOzEdsdhQnT4VOeEOO8OCLCQtmQbpOik4xqoIi2Yx9IZ+Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Y1dafvuv; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725887252; x=1757423252;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=E4RRuE/i/qRg5/oov9kgzW8yHUJaA1SH34naXvnk51U=;
-  b=Y1dafvuvBV5oGZ+mxyrVRjj3mBIwaiVLKdLvxfCkVmWL9ia89vgyZHUC
-   nJ1XJQVD7iRfRDuZxzQN9+mQsrEOzYnwxiOehaAGXUgXCoa6ammTX0pvz
-   Vva4qujIlCWDXMMh5xYamXbL7mARYL2PmtzIFeuenPVVPm69lk5ku4QrG
-   bEiPBMG2va9GhyjObW5FrusD6UDnCxMDmIzTVNBXsogKD8KbxIyyDTREW
-   g49flZmrofK1g8E+3ma53bcD9q1g6KukQTpoj4L+GwAZC0crMza3SjK3e
-   r8XFmgdatr7nATUiy8SCwGXSCX/mgw1cvnRWWdMaqDNVt7Qlzr9vhkB7m
-   A==;
-X-CSE-ConnectionGUID: 3dr8ppBdTSqlMqiZcvwtew==
-X-CSE-MsgGUID: 7eQd4TXpT4qDo4RNMd5DoA==
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="asc'?scan'208";a="198949684"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 06:07:30 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 9 Sep 2024 06:07:25 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Mon, 9 Sep 2024 06:07:21 -0700
-Date: Mon, 9 Sep 2024 14:06:48 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Celeste Liu <coelacanthushex@gmail.com>
-CC: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
-	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren
-	<guoren@kernel.org>, Anup Patel <anup@brainfault.org>, Heinrich Schuchardt
-	<heinrich.schuchardt@canonical.com>, Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz
-	<glaubitz@physik.fu-berlin.de>, Russell King <linux@armlinux.org.uk>, Florian
- Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review
- list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>, Tony Lindgren <tony@atomide.com>,
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
-	<jonathanh@nvidia.com>, Palmer Dabbelt <palmer@rivosinc.com>,
-	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<loongarch@lists.linux.dev>, <linux-sh@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-rpi-kernel@lists.infradead.org>, <linux-omap@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] riscv: defconfig: drop RT_GROUP_SCHED=y
-Message-ID: <20240909-arguable-detection-02445bd1cc89@wendy>
-References: <20240823-fix-riscv-rt_group_sched-v2-0-e4dbae24f7e1@gmail.com>
- <20240823-fix-riscv-rt_group_sched-v2-1-e4dbae24f7e1@gmail.com>
- <20240909-gave-celtic-af2ea8bc38d5@wendy>
- <9e364ae4-dc2c-4efa-8611-462218402a5d@gmail.com>
+	s=arc-20240116; t=1725887249; c=relaxed/simple;
+	bh=CHbpMMgrI2xFY2pHl/Kg9xkP9E8Jysrml3rFwxJwjB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SnBH5z34e0+hy4LtQ0Z3On8cyvffWlC/j2TveoWrI1Rc96yezFzjxdqNVxIwZmLBQizXMWFgI8FN/HG52Q8aU5WNGbxZzJNrysSb2+izKzgsOXj5rKU0NDn+DkTD9oqE54pauUgfQI3G5u82Ci098IprIhqt4u6ULEmC3ONmgQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UJ4WSlJF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725887247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JyZBj0EVD3PSNBPRSECSDTeknIIQ/mA6Gy6EUmKX6vY=;
+	b=UJ4WSlJFNEPGTLaF6/+SkEBEonvDmA8bz4cM9XgW94fogoLpfptayrDTK6KhAXOvA9/k/9
+	g0Q5K0m2oCnC87wpr+OFTCMEFL1k3Y/4JVsUHdOCs0bXbgsRCI8Rsb0DFqSDn7EJfFyC6A
+	iQa5jiaUXXCatqZ5bDpOgkqoeO09Ias=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-477-a8eGDhgLO9aS0_dtS_YEkA-1; Mon, 09 Sep 2024 09:07:25 -0400
+X-MC-Unique: a8eGDhgLO9aS0_dtS_YEkA-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-5365cd47e2eso1735946e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 06:07:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725887244; x=1726492044;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JyZBj0EVD3PSNBPRSECSDTeknIIQ/mA6Gy6EUmKX6vY=;
+        b=cwyx5GHN/7lZYuyaAsotF+5ANmgUDTITkdVpp+LtVBuxJjwbFE1BxOg8mEs/8B6yFM
+         +hj/epT0iQZeip04Pe4sqd2BisOnk9hYT3MBEBMbHowIWZbcumbelmJPUa0iNF1ZAnyP
+         Rj9ffKJOnejzPQJfPuVLothnNgQjLAHneznfatNNDSuAp30Vb+K/Ns+UQwlKaTrLHjRi
+         wrvOf+plCEcFItmcK8CFPQCy3pIMmJRGDQbQ89FS11EQZXHKuzSy+mEBFWrQ7XpvmZuL
+         QQbecA0OdH+Da9HqGRJkAeozDTxWPy6Pmnox28/u36BzvsS+Sr7y8sUS/FEVba7Fvn51
+         aq/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVhOcwz2cQDW1F5EMrDQf1CPH49YEwr/Ya5jGAYJrd/ukqFe2q7PkhXjcyzJ9sHzjzvw1o01XBQsxpX8Wk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyxHrAZ2Iiuxq/tGqMcParMFVnzxEYCc8DJL40vtBnufWq0CaO
+	ba3jVcapOK28HdP/k/H9faMAOxhvHvfzS+dj+kDE8iLUccI7fGQ4JqQLORPjg4kWnPQfL7GIgbr
+	xuvtL52jDK5/dEib3tZ06TxSm8QtgFtnywAA3XuwD6G95YAVIhWbuS8FAzfJOQA==
+X-Received: by 2002:a05:6512:3a85:b0:536:55b3:470e with SMTP id 2adb3069b0e04-536587ac230mr7673699e87.19.1725887244039;
+        Mon, 09 Sep 2024 06:07:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFrEiK+GlRfgFHvybT+tm+AdL0oMjLeOS3CiaqtMSqNP6YCmiedgWU9dh7LOXLTK74rlvza6Q==
+X-Received: by 2002:a05:6512:3a85:b0:536:55b3:470e with SMTP id 2adb3069b0e04-536587ac230mr7673667e87.19.1725887243418;
+        Mon, 09 Sep 2024 06:07:23 -0700 (PDT)
+Received: from [192.168.88.27] (146-241-69-130.dyn.eolo.it. [146.241.69.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb21d3asm77098165e9.5.2024.09.09.06.07.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 06:07:22 -0700 (PDT)
+Message-ID: <4e74f641-a4a0-4668-b77a-94082f0ea6f1@redhat.com>
+Date: Mon, 9 Sep 2024 15:07:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0hp6eR1gUAB5lPpR"
-Content-Disposition: inline
-In-Reply-To: <9e364ae4-dc2c-4efa-8611-462218402a5d@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3] mptcp: pm: Fix uaf in __timer_delete_sync
+To: Edward Adam Davis <eadavis@qq.com>, matttbe@kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, geliang@kernel.org,
+ kuba@kernel.org, linux-kernel@vger.kernel.org, martineau@kernel.org,
+ mptcp@lists.linux.dev, netdev@vger.kernel.org,
+ syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+References: <e4a13002-f471-4951-9180-14f0f8b30bd2@kernel.org>
+ <tencent_F85DEC5DED99554FB28DEF258F8DB8120D07@qq.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <tencent_F85DEC5DED99554FB28DEF258F8DB8120D07@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---0hp6eR1gUAB5lPpR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 9/5/24 14:27, Edward Adam Davis wrote:
+> There are two paths to access mptcp_pm_del_add_timer, result in a race
+> condition:
+> 
+>       CPU1				CPU2
+>       ====                               ====
+>       net_rx_action
+>       napi_poll                          netlink_sendmsg
+>       __napi_poll                        netlink_unicast
+>       process_backlog                    netlink_unicast_kernel
+>       __netif_receive_skb                genl_rcv
+>       __netif_receive_skb_one_core       netlink_rcv_skb
+>       NF_HOOK                            genl_rcv_msg
+>       ip_local_deliver_finish            genl_family_rcv_msg
+>       ip_protocol_deliver_rcu            genl_family_rcv_msg_doit
+>       tcp_v4_rcv                         mptcp_pm_nl_flush_addrs_doit
+>       tcp_v4_do_rcv                      mptcp_nl_remove_addrs_list
+>       tcp_rcv_established                mptcp_pm_remove_addrs_and_subflows
+>       tcp_data_queue                     remove_anno_list_by_saddr
+>       mptcp_incoming_options             mptcp_pm_del_add_timer
+>       mptcp_pm_del_add_timer             kfree(entry)
+> 
+> In remove_anno_list_by_saddr(running on CPU2), after leaving the critical
+> zone protected by "pm.lock", the entry will be released, which leads to the
+> occurrence of uaf in the mptcp_pm_del_add_timer(running on CPU1).
+> 
+> Keeping a reference to add_timer inside the lock, and calling
+> sk_stop_timer_sync() with this reference, instead of "entry->add_timer".
+> 
+> Fixes: 00cfd77b9063 ("mptcp: retransmit ADD_ADDR when timeout")
+> Cc: stable@vger.kernel.org
+> Reported-and-tested-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=f3a31fb909db9b2a5c4d
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
+>   net/mptcp/pm_netlink.c | 14 ++++++++++----
+>   1 file changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
+> index 3e4ad801786f..7ddb373cc6ad 100644
+> --- a/net/mptcp/pm_netlink.c
+> +++ b/net/mptcp/pm_netlink.c
+> @@ -329,17 +329,21 @@ struct mptcp_pm_add_entry *
+>   mptcp_pm_del_add_timer(struct mptcp_sock *msk,
+>   		       const struct mptcp_addr_info *addr, bool check_id)
+>   {
+> -	struct mptcp_pm_add_entry *entry;
+>   	struct sock *sk = (struct sock *)msk;
+> +	struct timer_list *add_timer = NULL;
+> +	struct mptcp_pm_add_entry *entry;
+>   
+>   	spin_lock_bh(&msk->pm.lock);
+>   	entry = mptcp_lookup_anno_list_by_saddr(msk, addr);
+> -	if (entry && (!check_id || entry->addr.id == addr->id))
+> +	if (entry && (!check_id || entry->addr.id == addr->id)) {
+>   		entry->retrans_times = ADD_ADDR_RETRANS_MAX;
+> +		add_timer = &entry->add_timer;
+> +	}
+>   	spin_unlock_bh(&msk->pm.lock);
+>   
+> -	if (entry && (!check_id || entry->addr.id == addr->id))
+> -		sk_stop_timer_sync(sk, &entry->add_timer);
+> +	/* no lock, because sk_stop_timer_sync() is calling del_timer_sync() */
+> +	if (add_timer)
+> +		sk_stop_timer_sync(sk, add_timer);
+>   
+>   	return entry;
+>   }
+> @@ -1430,8 +1434,10 @@ static bool remove_anno_list_by_saddr(struct mptcp_sock *msk,
+>   
+>   	entry = mptcp_pm_del_add_timer(msk, addr, false);
+>   	if (entry) {
+> +		spin_lock_bh(&msk->pm.lock);
+>   		list_del(&entry->list);
+>   		kfree(entry);
+> +		spin_unlock_bh(&msk->pm.lock);
 
-On Mon, Sep 09, 2024 at 08:14:16PM +0800, Celeste Liu wrote:
-> On 2024-09-09 19:53, Conor Dooley wrote:
->=20
-> > On Fri, Aug 23, 2024 at 01:43:26AM +0800, Celeste Liu wrote:
-> >> Commit ba6cfef057e1 ("riscv: enable Docker requirements in defconfig")
-> >> introduced it because of Docker, but Docker has removed this requireme=
-nt
-> >> since [1] (2023-04-19).
-> >>
-> >> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hiera=
-rchy it
-> >> needs an RT budget assigned, otherwise the processes in it will not be=
- able to
-> >> get RT at all. The problem with RT group scheduling is that it require=
-s the
-> >> budget assigned but there's no way we could assign a default budget, s=
-ince the
-> >> values to assign are both upper and lower time limits, are absolute, a=
-nd need to
-> >> be sum up to < 1 for each individal cgroup. That means we cannot reall=
-y come up
-> >> with values that would work by default in the general case.[2]
-> >>
-> >> For cgroup v2, it's almost unusable as well. If it turned on, the cpu =
-controller
-> >> can only be enabled when all RT processes are in the root cgroup. But =
-it will
-> >> lose the benefits of cgroup v2 if all RT process were placed in the sa=
-me cgroup.
-> >>
-> >> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also do=
-esn't
-> >> support it.[3]
-> >>
-> >> [1]: https://github.com/moby/moby/commit/005150ed69c540fb0b5323e0f2208=
-608c1204536
-> >> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=3D1229700
-> >> [3]: https://github.com/systemd/systemd/issues/13781#issuecomment-5491=
-64383
-> >>
-> >> Fixes: ba6cfef057e1 ("riscv: enable Docker requirements in defconfig")
-> >=20
-> > I don't think this fixes tag is suitable, the commit you cite in
-> > moby/docker is a year younger than the one in the fixes tag, so it was
-> > correct at the time it was written. I think the fixes tag should just be
-> > removed, since that commit was not wrong. Or am I missing something?
->=20
-> The Docker commit I cited introduce the fix, not the bug. So it should be=
- later
-> than commit in fixes tag, otherwise Heinrich Schuchardt won't pick the wr=
-ong
-> config from upstream.
->=20
-> Timeline is:
-> 1) 2015-06-19 Qiang Huang introduce RT_GROUP_SCHED check in Docker.[1]
-> 2) 2022-06-08 Heinrich Schuchardt pick this to defconfig in commit
->               in fixes tag.
-> 3) 2023-04-19 Florian Schmaus remove this requirement from Docker in
->               commit I cited.
+I'm sorry for the late feedback.
 
-Yes, this is the way I understood things to be. IOW, when Heinrich wrote
-ba6cfef057e1 ("riscv: enable Docker requirements in defconfig"), it was
-a requirement for docker. The requirement later being removed doesn't
-make his patch incorrect, which is why I don't think this is a fix.
+I think this is not enough to fix races for good, i.e.
 
---0hp6eR1gUAB5lPpR
-Content-Type: application/pgp-signature; name="signature.asc"
+mptcp_nl_remove_subflow_and_signal_addr() -> mptcp_pm_remove_anno_addr()
+-> remove_anno_list_by_saddr()
 
------BEGIN PGP SIGNATURE-----
+could race with:
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZt7y6AAKCRB4tDGHoIJi
-0iy2AQDO+J8hujJIKzDG3Tt61SU7uY4jZrPVSF7Wt04GvnnrUAD/R5bugsa3nUum
-Fkt27iTRmJcCAdjr+VwrO5JvzhczMQo=
-=mCFv
------END PGP SIGNATURE-----
+mptcp_pm_remove_addrs() -> remove_anno_list_by_saddr()
 
---0hp6eR1gUAB5lPpR--
+and both CPUs could see the same 'entry' returned by
+mptcp_pm_del_add_timer().
+
+I think the list_del() in remove_anno_list_by_saddr() should moved under
+the pm lock protection inside mptcp_pm_del_add_timer(), and no need to 
+add spin_lock_bh() around the kfree call.
+
+Thanks,
+
+Paolo
+
 
