@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-321077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C3F971429
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:45:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C15797142C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD168B256EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:45:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D042B2840B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F067C1B3F18;
-	Mon,  9 Sep 2024 09:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E61C1B2EF7;
+	Mon,  9 Sep 2024 09:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IF/Qz2rK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfDFa6AI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D901B3B3F;
-	Mon,  9 Sep 2024 09:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4B81B3F30;
+	Mon,  9 Sep 2024 09:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725875110; cv=none; b=iLNsshFitPK40dYmwLSn0xQzomOCV+QgcZIAMoIwN9x/cqvdOTl2GhE+1wUFK53Twotz7ggXHGtnFUM4QD/IqK5CaAntSlb3FckTQcvLlvRQ0zM5GinTXeVH7/9NIAZEeY/jiOiEne/xCV3opXIu2Hw6F+bdQvOkQgA8jAkx61I=
+	t=1725875111; cv=none; b=PlFp64nJY7Dk64gIg1qO6OdhHrFC7eWGBWmX8B0i9k6lgTYhDOPmwoMVhVHTb5UYZaoZ3vbELq4LEp4vihe7mcbDGoc/DjzjCpsXRkKm594H1Tr7SkTnTFYRbqUPGak+OwMiPTyM2MHPcw8quu7RaNHQtrZXyEnQNOk0xL+VSR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725875110; c=relaxed/simple;
-	bh=+tBUPMWdi7XKGaq0cur7BT3ayJpmy1rXgipiK4N0NsU=;
+	s=arc-20240116; t=1725875111; c=relaxed/simple;
+	bh=54pbPtwtXy7p6NyZnaXUwbtA2kzEgPEHVmssnBQsqY0=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=N94PCaL4bmnZxFYOS5O56Q3XmEL+02uV5lcvXONAn8aMM+v9ixJ/XoENQvFwASoy3Y698/5RUtW6aKPdZuqs9V2KkzX6FEaOw82JQygwAZstDb9ZJmTgycmnnT9q6QiDM8+GFYMFj7U+a+O6MBSMCcEk+deex0uf11N5Rc2dJPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IF/Qz2rK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF1FC4CEC8;
-	Mon,  9 Sep 2024 09:45:09 +0000 (UTC)
+	 Message-Id:Subject; b=GHXVibiS6a3SavyuIIa2PiNVheC7K410ofv84uHy+hdO9+ln1/BBHf86mJ+STXOJeLVJxZuWr1QkIOBvObJ7e1OVXtDQ2av1/GS9Q1KI6TiCJ4LWhLOATTx3rX/NXGSuu9GOhpCsvPEYaNfUfLnNnodYiDPSPLA1ZxeR7WVIk+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfDFa6AI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13DA0C4CEC5;
+	Mon,  9 Sep 2024 09:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725875109;
-	bh=+tBUPMWdi7XKGaq0cur7BT3ayJpmy1rXgipiK4N0NsU=;
+	s=k20201202; t=1725875111;
+	bh=54pbPtwtXy7p6NyZnaXUwbtA2kzEgPEHVmssnBQsqY0=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=IF/Qz2rKZXLCJGzZwkVe3KYQRWyuQn09jWwVEMfvzAbPn4a453Z/ZUPLBBH+D2rEl
-	 /Ao3JkqgRbzIOgWl3ifl48a/THijrm2A6iYTdHVP4uktW+b0IzyUoa6t0HQizty1kO
-	 gmjw5q5rItj7SfhMujfhqnlh8nEaLlSjBCKnBRD70O+0ZIaSIKKHnbbFUk/F55plv+
-	 FVQKF2dHIa7an8yCLfnQV66f/y5g7m4s61K97hBJsAisqBF61tm5aWTtr4bAvjt10o
-	 N1GTCwNU8C26tnVWoeUaFndBhW1oB1AnCs8GIOklKAxvaG/q3elIIuW8TNQUpLIi09
-	 WJkYqENIeL3Kw==
-Date: Mon, 09 Sep 2024 04:45:08 -0500
+	b=ZfDFa6AISd4yyMVsoU9jEz3uUKGOtbSmFfyqm8Pm5sBlGso8zzXhXXFD0aAEOeP/j
+	 kroeZitO5SlEsJvrUL/yr80tnmkaWNRRbnPwoKCKR9tj4bsfgwcCioGbs+XwXjkKtB
+	 Sgg4btysp1xpT/vmlceZYVBfjvdpxLUk8LfBoirW+O07fJSrHOIp6MVUsNKnqMf91i
+	 YB8QBXvg7GK7fFlDkjkShT76ZTOypR6+jC3tDQq8zmt725xO3FHWxlsV5vR0Sl3iG7
+	 3pRtUvUgdoE1KOQ5zZeGepglksrd1NYFL7SFEW5LiB1byr5zivwTRvpT+kvcyVYy4+
+	 zFBGtZXrVokjQ==
+Date: Mon, 09 Sep 2024 04:45:10 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -51,28 +51,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Nikita Shubin <nikita.shubin@maquefel.me>
-Cc: Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+Cc: Paolo Abeni <pabeni@redhat.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>
-In-Reply-To: <20240909-ep93xx-v12-14-e86ab2423d4b@maquefel.me>
+ netdev@vger.kernel.org, Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ "David S. Miller" <davem@davemloft.net>, devicetree@vger.kernel.org, 
+ Eric Dumazet <edumazet@google.com>
+In-Reply-To: <20240909-ep93xx-v12-16-e86ab2423d4b@maquefel.me>
 References: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
- <20240909-ep93xx-v12-14-e86ab2423d4b@maquefel.me>
-Message-Id: <172587509922.3289122.15017920373921987693.robh@kernel.org>
-Subject: Re: [PATCH v12 14/38] dt-bindings: spi: Add Cirrus EP93xx
+ <20240909-ep93xx-v12-16-e86ab2423d4b@maquefel.me>
+Message-Id: <172587510035.3289162.6115111158359186923.robh@kernel.org>
+Subject: Re: [PATCH v12 16/38] dt-bindings: net: Add Cirrus EP93xx
 
 
-On Mon, 09 Sep 2024 11:10:39 +0300, Nikita Shubin wrote:
-> Add YAML bindings for ep93xx SoC SPI.
+On Mon, 09 Sep 2024 11:10:41 +0300, Nikita Shubin wrote:
+> Add YAML bindings for ep93xx SoC Ethernet Controller.
 > 
 > Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
 > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Mark Brown <broonie@kernel.org>
 > ---
->  .../devicetree/bindings/spi/cirrus,ep9301-spi.yaml | 70 ++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
+>  .../devicetree/bindings/net/cirrus,ep9301-eth.yaml | 59 ++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -80,11 +80,13 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-
+Documentation/devicetree/bindings/spi/cirrus,ep9301-spi.example.dts:25:18: fatal error: dt-bindings/clock/cirrus,ep9301-syscon.h: No such file or directory
+   25 |         #include <dt-bindings/clock/cirrus,ep9301-syscon.h>
+make[2]: *** [scripts/Makefile.lib:442: Documentation/devicetree/bindings/spi/cirrus,ep9301-spi.example.dtb] Error 1
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240909-ep93xx-v12-14-e86ab2423d4b@maquefel.me
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240909-ep93xx-v12-16-e86ab2423d4b@maquefel.me
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
