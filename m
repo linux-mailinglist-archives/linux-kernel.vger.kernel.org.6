@@ -1,214 +1,186 @@
-Return-Path: <linux-kernel+bounces-322468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A140972947
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:07:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C85BA97296A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B45287A0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:07:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10DA7284594
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDDC17622D;
-	Tue, 10 Sep 2024 06:07:00 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93944175D5A;
+	Tue, 10 Sep 2024 06:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gUgUACYR"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87002172773
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9319217965E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725948419; cv=none; b=Jz/eX5ratZL5OsCvzGogi0iumk8dwtqsda4GaLc6xI/rGdSdcmZ/NWpTGQhNDPYqWtbZEhtieZoy4gmeTLD0yiUn74oG/iCfKsG8j1R+Y7pwtfwv65IESAyYJ8mM7oFwpR2XT2y4HRsL7FY+swZF5DwasUKlukPnYwU8oGRJL2A=
+	t=1725949190; cv=none; b=lsGFidVbq+ttMcZxMpuhO3KLInrMV/9we9XSgCaSLxPXPwhXTjE5gWE8Y3eD7L1uuXfjLf+LSK4it/kiRvtDVKcRLXtudZSmbedeUwKxI3XGxcTuRpE5213Tie35FuLWvFZISy27afDZK2FyNQ1tKnLlY+KyatSLL1Bm0vbJO2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725948419; c=relaxed/simple;
-	bh=0u0Ic82teMPVdI77mCAypb2Gawhi8xTU7RiSGEjStsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FCS20PxH1fq8yeQxGVq037qCWE6TsQGqxAm9GIHrsHc7iTKl5i4neUxy3eroNw/SnOk6tMF9cpO3FtI8RVXzuCnLDncOauqfesF82uQafVqoC6WItqYZUGJOtw6ZWxg0PBWnjohqpuABfBWxoSNWwcJsKSLIUmSrLL6lj5gnpco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1snu1f-0003bB-Rv; Tue, 10 Sep 2024 08:06:55 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1snu1e-006pVN-VD; Tue, 10 Sep 2024 08:06:54 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1snu1e-00HWSG-2m;
-	Tue, 10 Sep 2024 08:06:54 +0200
-Date: Tue, 10 Sep 2024 08:06:54 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"briannorris@chromium.org" <briannorris@chromium.org>,
-	"kvalo@kernel.org" <kvalo@kernel.org>,
-	"francesco@dolcini.it" <francesco@dolcini.it>,
-	Pete Hsieh <tsung-hsien.hsieh@nxp.com>
-Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
- different channel
-Message-ID: <Zt_h_mW4nFWKu2SI@pengutronix.de>
-References: <20240902084311.2607-1-yu-hao.lin@nxp.com>
- <ZtWHhSQlPVMekW1I@pengutronix.de>
- <PA4PR04MB9638EC10C0B656B750D922ADD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt9blTxk88Opujsk@pengutronix.de>
- <PA4PR04MB963813D69B4D87B7147704A5D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt_fZEJyiCyanf7X@pengutronix.de>
- <PA4PR04MB9638C8978D9C6360A9B214E4D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1725949190; c=relaxed/simple;
+	bh=gBSpn0+a/kGfSVjDSYxy6KPnKqHkaFUodo08onrpc7A=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=FHKwtMf5S/PcbtFYzs0Z731AANV/Iktt0il5EY5uMTutlXOHkn2ixJpwungsMBdi6pocURmXt+IbLtuFqMCotCd6QNG2GrvGGBCIr/SAqgAsbIj+mDhO3a6+rOeB/Ob1N1PYL+b+xfRvY2ZptQPOOS51pFRZHcwwJTc+4TwwVEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gUgUACYR; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240910061938euoutp016f27d9dd3ffe282f81e15ff80d477d02~zzaI5auZc0573805738euoutp01j
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:19:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240910061938euoutp016f27d9dd3ffe282f81e15ff80d477d02~zzaI5auZc0573805738euoutp01j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725949178;
+	bh=Um/elcx0Nv3kpTzyB5+UQQqdSo4Gc94HySx+FZ1SXmw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=gUgUACYRCVaMdTx5I5Em31zhLCKJuRo0zXjo5EK4beIquqwfma5CqWuccWWNgyd8h
+	 nPhqoPncO77pVW+rjEjIeqSpu1+MsPgmBEbtiPFOgh3dxDpfSHfXR87XQBpJCyp+zK
+	 Gz1MLldbOvDtScdDNfJQxFk62mJhBhRYPIrvGCGI=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240910061938eucas1p25e8fa38df93e8d1813a9ef4019682711~zzaIm2cRC2717127171eucas1p2s;
+	Tue, 10 Sep 2024 06:19:38 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 4D.F6.09875.AF4EFD66; Tue, 10
+	Sep 2024 07:19:38 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240910061938eucas1p10fa941904d238a03d5817d79800355ad~zzaILyH071849618496eucas1p1B;
+	Tue, 10 Sep 2024 06:19:37 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240910061937eusmtrp23614bf6da9e8186f89d06d86f06f14ef~zzaIDuAbl2136121361eusmtrp2D;
+	Tue, 10 Sep 2024 06:19:37 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-e6-66dfe4fae8b4
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 77.D9.14621.9F4EFD66; Tue, 10
+	Sep 2024 07:19:37 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240910061937eusmtip26590695d27fedfa04a4455516d64bee8~zzaH28iIO2703027030eusmtip2L;
+	Tue, 10 Sep 2024 06:19:37 +0000 (GMT)
+Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Tue, 10 Sep 2024 07:19:33 +0100
+Date: Mon, 9 Sep 2024 16:46:23 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: Klaus Jensen <its@irrelevant.dk>, David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
+ Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Kevin Tian
+	<kevin.tian@intel.com>, Minwoo Im <minwoo.im@samsung.com>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>, Klaus Jensen
+	<k.jensen@samsung.com>
+Subject: Re: [PATCH RFC PREVIEW 0/6] iommu: enable user space iopfs in
+ non-nested and non-svm cases
+Message-ID: <20240909144623.kunm4xg4sglv77wb@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <PA4PR04MB9638C8978D9C6360A9B214E4D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20240904161350.GE1909087@ziepe.ca>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGKsWRmVeSWpSXmKPExsWy7djP87q/ntxPM1jVIGWxeeJWNouJKycz
+	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
+	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRXDYpqTmZZalF+nYJ
+	XBnP93WyFfzir1h6djFrA+MGni5GTg4JAROJ5a8fsHQxcnEICaxglHh/azIbhPOFUeLFglYm
+	COczo8SFH/cZYVq2fu9lhUgsZ5S482wPQtXe/WvZIZzNjBLbHxxhBmlhEVCR+LN0IiuIzSag
+	I3H+zR2wuIiAksS+XRPBGpgFWpgldr9tZgNJCAukSixZuYEJxOYVcJDYuv8OI4QtKHFy5hMW
+	EJsZaNCC3Z+A6jmAbGmJ5f84QExOAQOJ1+t9IS5VlPi6+B4LhF0rcWrLLbBDJQRmc0psu7CY
+	EaReQsBF4sqndIgaYYlXx7ewQ9gyEv93zoeqn8wosf/fB3YIZzWjxLLGr0wQVdYSLVeesEMM
+	cpR4cjMCwuSTuPFWEOJKPolJ26YzQ4R5JTrahCAa1SRW33vDMoFReRaSv2Yh+WsWwl8LGJlX
+	MYqnlhbnpqcWG+WllusVJ+YWl+al6yXn525iBCat0/+Of9nBuPzVR71DjEwcjIcYJTiYlUR4
+	++3upQnxpiRWVqUW5ccXleakFh9ilOZgURLnVU2RTxUSSE8sSc1OTS1ILYLJMnFwSjUwtXz2
+	lT91PFYznfP2ac5Nqo+8l977IW07Z973kroF/9WibSd4NTjaxd6e2RUjd0rgkUzRArUdjuee
+	RfC9ebtt+rR8e7PuqT9n7l99dNd+xp6PzZXFFx8Xys60+fRmbcZF0dmtph0OXqHCF++pCkkq
+	b/ZR6cqseKrSyRQzu6RvnY3Sj+86xi2Hfu8udn3QVPRdwFXlzVzj1ElaLAtnKm3d0cUUnZhs
+	w5ezdK1Kbde3TUd+7Hy98cecbR6Fkkendd6r0ynPPrUzc9OR6dGHltccW3XSzCP2lv+PKAt1
+	lv+/vMpWGr28P2FD/Wrx8DsLg1vMO8o0pptrt8h+cGt3rcvyP+ZWHbb4xg/3T3fLc6Y9V2Ip
+	zkg01GIuKk4EAKHWelfJAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xe7o/n9xPM1jXa2yxeeJWNouJKycz
+	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
+	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRejZF+aUlqQoZ+cUl
+	tkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehnP93WyFfzir1h6djFrA+MG
+	ni5GTg4JAROJrd97WbsYuTiEBJYySuxdeZUZIiEjsfHLVVYIW1jiz7UuNoiij4wS53cehurY
+	zChx/cNiFpAqFgEViT9LJ4J1sAnoSJx/cwdskoiAksS+XRPZQRqYBVqYJXa/bWYDSQgLpEos
+	WbmBCcTmFXCQ2Lr/DiPE1BlMElP7tzBCJAQlTs58AraBGWjqgt2fgJo5gGxpieX/OEBMTgED
+	idfrfSEuVZT4uvgeC4RdK/H57zPGCYzCs5AMmoVk0CyEQQsYmVcxiqSWFuem5xYb6hUn5haX
+	5qXrJefnbmIERu+2Yz8372Cc9+qj3iFGJg7GQ4wSHMxKIrz9dvfShHhTEiurUovy44tKc1KL
+	DzGaAoNiIrOUaHI+MH3klcQbmhmYGpqYWRqYWpoZK4nzul0+nyYkkJ5YkpqdmlqQWgTTx8TB
+	KdXAlLCp+X9cM/eeezOso0MyTbtbPbZZMf8Iuell3vT4z44tq69w1259ZaR1ZoGW90ame/Xm
+	QRYTNj9IUDzvvWJWgL+lgx/b6vqE/h//OHwmz3Ff2Fw9OeRybJ+W/THGxJj306/E/uu7epqH
+	eW/4i5Vdt2xVp6Ypta56ym06tZP1wpW7SbbLXr7IO2UjqsdXz/PaK6PDwjJmxbUvhrHRc1ed
+	ftHLznq/pPq7tMGUWQ4PXO0vsRcc8naNazD6uPGShtvH76/XZGur5HNnLbqurth8rq/n0v/G
+	BSpORWYlYvzrby/cOvmHXyvjrgwRQ/6eKg9jv4t35Kda9H3/d2Sienjmhp6JLKpcfhnXO4Ot
+	nkxXYinOSDTUYi4qTgQAeSmB2GcDAAA=
+X-CMS-MailID: 20240910061938eucas1p10fa941904d238a03d5817d79800355ad
+X-Msg-Generator: CA
+X-RootMTR: 20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97
+References: <20240826-iopf-for-all-v1-0-59174e6a7528@samsung.com>
+	<CGME20240826140000eucas1p2b422169d0d2c633f64461b2152e9ae97@eucas1p2.samsung.com>
+	<20240826135955.GI3468552@ziepe.ca>
+	<20240902104819.a2jto6l3tv2h5wvq@joelS2.panther.com>
+	<20240904161350.GE1909087@ziepe.ca>
 
-On Tue, Sep 10, 2024 at 05:56:58AM +0000, David Lin wrote:
-> > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > Sent: Tuesday, September 10, 2024 1:56 PM
-> > To: David Lin <yu-hao.lin@nxp.com>
-> > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
-> > Hsieh <tsung-hsien.hsieh@nxp.com>
-> > Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
-> > different channel
-> > 
-> > Caution: This is an external email. Please take care when clicking links or
-> > opening attachments. When in doubt, report the message using the 'Report
-> > this email' button
-> > 
-> > 
-> > On Tue, Sep 10, 2024 at 01:55:14AM +0000, David Lin wrote:
-> > > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > > Sent: Tuesday, September 10, 2024 4:33 AM
-> > > > To: David Lin <yu-hao.lin@nxp.com>
-> > > > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it;
-> > > > Pete Hsieh <tsung-hsien.hsieh@nxp.com>
-> > > > Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA
-> > > > running on different channel
-> > > >
-> > > > Caution: This is an external email. Please take care when clicking
-> > > > links or opening attachments. When in doubt, report the message
-> > > > using the 'Report this email' button
-> > > >
-> > > >
-> > > > On Mon, Sep 02, 2024 at 10:35:01AM +0000, David Lin wrote:
-> > > > > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > > > > Sent: Monday, September 2, 2024 5:38 PM
-> > > > > > To: David Lin <yu-hao.lin@nxp.com>
-> > > > > > Cc: linux-wireless@vger.kernel.org;
-> > > > > > linux-kernel@vger.kernel.org; briannorris@chromium.org;
-> > > > > > kvalo@kernel.org; francesco@dolcini.it; Pete Hsieh
-> > > > > > <tsung-hsien.hsieh@nxp.com>
-> > > > > > Subject: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA
-> > > > > > running on different channel
-> > > > > >
-> > > > > > On Mon, Sep 02, 2024 at 04:43:11PM +0800, David Lin wrote:
-> > > > > > > Current firmware doesn't support AP and STA running on
-> > > > > > > different channels simultaneously.
-> > > > > >
-> > > > > > As mentioned here:
-> > > > > >
-> > > > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%
-> > > > > >
-> > 2Flo%2F&data=05%7C02%7Cyu-hao.lin%40nxp.com%7Cd0a1e3797a0d4acd7a
-> > > > > >
-> > 9c08dcd15d3ddb%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638
-> > 6
-> > > > > >
-> > 15445620612026%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJ
-> > QI
-> > > > > >
-> > joiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=5yC
-> > > > > > jjIqxpV%2BJxlPdrCH0gRTQ%2FCQZKr%2FDc0S1cjkaIA8%3D&reserved=0
-> > > > > >
-> > > >
-> > re.kern%2F&data=05%7C02%7Cyu-hao.lin%40nxp.com%7C7712df39ac37414fd
-> > > > a7
-> > > > > >
-> > > >
-> > e08dcd10eac35%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6386
-> > > > 15108
-> > > > > >
-> > > >
-> > 157502805%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV
-> > > > 2luMz
-> > > > > >
-> > > >
-> > IiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=URNJPJE17iRY
-> > > > Tu4i
-> > > > > > rx7eQAC97tE5OE6a4kUfjUwuaVU%3D&reserved=0
-> > > > > >
-> > > >
-> > el.org%2Fall%2FZtGnWC7SPHt7Vbbp%40pengutronix.de%2F&data=05%7C02%
-> > > > > >
-> > > >
-> > 7Cyu-hao.lin%40nxp.com%7Cce9b7d4e417c41113c7d08dccb32fc49%7C686ea
-> > > > > >
-> > > >
-> > 1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638608667089710854%7CUnkn
-> > > > > >
-> > > >
-> > own%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1h
-> > > > > >
-> > > >
-> > aWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=nMZO565xCUO%2BwxD4tIfi
-> > > > > > w6cGyYrinaEsi7XLfqyxgXg%3D&reserved=0
-> > > > > >
-> > > > > > AP and STA can indeed have different channels when DRCS is
-> > > > > > enabled, so I think you have to check this in your patch.
-> > > > > >
-> > > > > > Maybe the same question here again: Wouldn't it make sense to
-> > > > > > enable DRCS by default?
-> > > > > >
-> > > > > > Sascha
-> > > > > >
-> > > > >
-> > > > > I will look into DRCS support later after current tasks on hand.
-> > > > > This patch is a quick fix to avoid firmware crash in the specific scenario.
-> > > >
-> > > > With DRCS support enabled AP and STA actually can run on different
-> > > > channels with the current code. You are breaking this scenario with this
-> > patch.
-> > > >
-> > > > Sascha
-> > > >
-> > >
-> > > DRCS will be checked in the future.
-> > 
-> > By future you mean v3 of this patch?
-> > 
-> > Sascha
-> > 
+On Wed, Sep 04, 2024 at 01:13:50PM -0300, Jason Gunthorpe wrote:
+> On Mon, Sep 02, 2024 at 12:48:19PM +0200, Joel Granados wrote:
+> > > >   Supplementary repositories supporting this patchset:
+> > > >     1. A user space library libvfn [1] which is used for testing and
+> > > >        verification (see examples/iopf.c), and
+> > > 
+> > > That's pretty neat, I've been wanting to see some kind of IOMMU test
+> > > suite based around a capable widely available device. This is the
+> > > closest I've seen..
+> >
+> > Yes! This is an obvious application of libvfn. Do you see it as a
+> > something that can be included in tools/selftests/iommu?
 > 
-> No schedule now.
+> Maybe? What would it look like in-kernel?
+Having it in-kernel with libvfn might be a bit too much because we would
+have to bring libvfn into the kernel sources. But we can have some sort
+of DMA test suit that runs as CI. Similar to what fstests or blktest do
+(dmatests?). And we can automate it all with kdevops.
 
-I am getting confused now. You want us to abandon my patch in favour of
-yours, but you have no plans to update your patch to avoid a regression
-that you introduce with your patch?
+Here is a very rough run down of the idea.
+1. We create (or use if there is one already) a DMA test suit. That has
+can run on its own
+2. Use libvfn to create commands that poke at the iommu{,fd}, intel)
+amd, arm drivers.
+3. Use qemu iommu implementation as well as pci dma enabled devices as
+the test devices.
+4. Can use hardware if it is detected.
+5. Can use kdevops to bring up the different environments (e.g. kernel and
+qemu branch combinations) needed for the test.
+6. And finally put the kdevops test targets into some existing kernel CI
+like linux-next or 0day (or whatever makes sense).
 
-Sascha
+> 
+> I've been thinking the same thing with mlx5
+Not too familiar with this driver, but if it makes sense to reuse it (or
+part of it) to make the test happen, I'm all for that.
+
+> 
+> Maybe some kind of test runner with a plugin driver that has some kind
+> of 'do dma', 'generate interrupt', etc sort of operations, IDK.
+Yes. If you are up for it, we can maybe discuss it a bit in LPC and
+flesh it out a bit more?
+
+Best
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+Joel Granados
 
