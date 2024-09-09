@@ -1,175 +1,140 @@
-Return-Path: <linux-kernel+bounces-321769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB816971F37
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:29:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E425B971F32
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12FE7B23CD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:29:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70998B22BC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D17415099E;
-	Mon,  9 Sep 2024 16:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB21C1531D6;
+	Mon,  9 Sep 2024 16:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="0mCeY7U9"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="maX7j6w8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0980914B957
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E91C2C87A;
+	Mon,  9 Sep 2024 16:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725899334; cv=none; b=jpafmbpkvs0rgBTw7/lKCq3eOpMS+sYgw/W8sPt3Cv0SZIwshkHWdA/xclng3xhKaBfahuwuVDDqf97j4J8HZKFbZ8WDfXOypGvLtw9rPJMyb52q7mgvRScR7/rcDNsBYWmY5t3897+HlFJzyrSlkeccJEF0W8kz93oRX6mJDN4=
+	t=1725899261; cv=none; b=lP0JSPnf1GHeOBqwEEhu4C1bpSQDR/ZbA1uIdtKL/5dlo3AR5L6oR9awJRjfes2spaswy6xzVJMsXl3iFZCR1gL4WFwddGfxe/AUdDlNBOHadgBccI0mFW03rE3d75fcPlc7bZrGZnK0MIrsYKXqkXlS4VJqtImRWn5ze2kzKj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725899334; c=relaxed/simple;
-	bh=8RdcJvVv3gShrKDsP0JLU8Wsg0kuGNpupzjo7uvrHe8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RbA68lLI4YSpoMTnuyUBxU6kPTlEFm6FtcvgpHp2QGMYpvPPMkA+9WVNLBlBE2smYO61FYBZ1A7Bue0BtpK8BFUe3tNWlNZV+o35rME1Q+GuOARNF69LRis7XpVW52EqVmS80x5UkgrqmMFAj5FMZetgI37xYuluR/AHaNVcLls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=0mCeY7U9; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42ca5447142so4718905e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:28:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1725899329; x=1726504129; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rjrTEbgn235rhvAj96iSdJKR0hzx2vUIB4UjFS1NRO8=;
-        b=0mCeY7U9+v8Yaxk+q7lB5Ts7Hc1XKx75LhJs4qILill8Ly9ZDkqZfrcgSzkXDTB5fz
-         dPJErt0l4vGGLZYOnfk+HVbBs15fxIKR/Oc64B96oWiWKT/AGY9dOTWnGm98/M7rMLd5
-         7Y2+XoYvpgnf7N5Lbfj+AtlYC8kOmcSm05hJt6IBGfVI5EiKV4PYxhTFV6ijZKZvNoW0
-         MJeL+crYTJBSxHGcYgmqTDjp+Kz3L0fWzF/uEjuyT+cqAs/+PKL4xMkjUSfXEwtG3yry
-         k7GapwyGu7p47uWwd/6MAUd9TlIxNjhRCL6kH5vBvznE6BmkeNOPq8rjz90XC2nstxrM
-         yHBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725899329; x=1726504129;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rjrTEbgn235rhvAj96iSdJKR0hzx2vUIB4UjFS1NRO8=;
-        b=ksk+7X9Pu0h2H8irsP4CykD/Gd/fONni/aCubQvzEyu51bQfP/fPqzgTPMyejTCLT9
-         4a0+mUSw9GQ3vQkm9UzBAtldTxyaS64B083JiGL3lFYdOJ0NUQ6uQfz59qxl+SgfZqX7
-         VHc1gf+SmW2Ep4Ab44t6xq7tNNeVTlAa2k67VN2CoCpTsbEJ+y0IPelFR+klXPmnWd0G
-         vVGjqceA5wVw/8tU5XL8A2W6DNwSsi14S9e8IMF5rds6GHWyzAu/cxAz+JtIQIuVi7mk
-         EZr2aEh+zRmLFXREI1WlRY3uYbveCXQRGqQ3QjSo3dU0lS5ZE6EAZM4mwb2y5TcMztea
-         Jznw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEeb4/wY/veOyWXMNdUc07plmm5nvWH+JX3o3/6Gi/Ia74TlL7qbU7tO8CJlUK1RdoZGtnF/2r0XnAVhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK54KXsAAs4H/NVH+GOjKATSZhRc/2kexa3P/HtTnEyVfw/RNH
-	wvonOSI9vCuNREyyc8vxzl+uOI/TaETKWI+psKFJcq4dtw5C2qdtIFq8py+bAXFrFWHUpjg3TEH
-	L
-X-Google-Smtp-Source: AGHT+IHMA7sheFihP/wz+0UUpBWh26J4I+Iug17IMwFpurdhQTex0X62Km8uClHjOvSiTwLEzsQfGg==
-X-Received: by 2002:a05:600c:4707:b0:426:6fc0:5910 with SMTP id 5b1f17b1804b1-42c9f97bde0mr41860165e9.1.1725899329044;
-        Mon, 09 Sep 2024 09:28:49 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-120.dynamic.mnet-online.de. [62.216.208.120])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb8182dsm82078765e9.36.2024.09.09.09.28.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 09:28:48 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: kees@kernel.org,
-	gustavoars@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	mcgrof@kernel.org
-Cc: linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [RESEND PATCH v2] params: Annotate struct module_param_attrs with __counted_by()
-Date: Mon,  9 Sep 2024 18:27:26 +0200
-Message-ID: <20240909162725.1805-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725899261; c=relaxed/simple;
+	bh=gReMfDfyQxK0TNX+VbTFEwbiTxD2pt6LzymgTSl1Vi0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=k52jn3zo+Ocf2j0JjXlxMMFYvbLHafLVsQQoGqViuUeHvZ+Q7/+5vrQed/Y+Luq9uKKSc5dGcnToZFoftEBG9yGc69OskWhRPbD0xI3aj3mzrVG34LncVHZNk5QP9QKN0xi6bMHjYsQQ3yx9/tub9cFw0OqTzFLIGB3y3di2w5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=maX7j6w8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 489DRSHV024830;
+	Mon, 9 Sep 2024 16:27:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+QEnHSC22Ligfn27HbKmLaJnl2aanTUvxvtU0qRFqNk=; b=maX7j6w8BxPDGEMc
+	QswnA7mdRwzT+aCa7v9Y77d99cRaIzi013VH0pQhp1iq3/0Y6LunMiSsUwMeaE8l
+	j/xcQnrNqhw1D8RrrjMgOy7stQDl/qafOukBO75MF+h2nYpMKneebBkdEoJguhYA
+	0oxDze4TzIR1ndUOnGF1bDcXe8wqGuQtyTUWvsIOhAz89DTf73T4N0TAPJx46+CE
+	GxqlBuGgT90p0YDXwtmdFsvr8HrN0EpgrSzNR2u282DAgesFophR8F8kPNkvClVj
+	f/Pz98x7IyBJqWYOYTmUG8Q4mrp5cpwdnY4lctvsf8S1xGmeMbD0o83IeiphUXfL
+	UJgGag==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy5rbdra-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 16:27:35 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 489GRYT6013497
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Sep 2024 16:27:34 GMT
+Received: from [10.110.76.134] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Sep 2024
+ 09:27:31 -0700
+Message-ID: <3f4bfa7b-c365-4fcb-a818-18e2f9351475@quicinc.com>
+Date: Mon, 9 Sep 2024 09:27:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dt-bindings: arm: GIC: add ESPI and EPPI specifiers
+To: Rob Herring <robh@kernel.org>
+CC: <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>
+References: <20240908010205.863701-1-quic_nkela@quicinc.com>
+ <20240909155431.GA207498-robh@kernel.org>
+Content-Language: en-US
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <20240909155431.GA207498-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sQ4O9qt3Gn1LRs0oXduX4kD6-FmdVpha
+X-Proofpoint-ORIG-GUID: sQ4O9qt3Gn1LRs0oXduX4kD6-FmdVpha
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ clxscore=1015 malwarescore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ mlxscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=751 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409090130
 
-Add the __counted_by compiler attribute to the flexible array member
-attrs to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
 
-Increment num before adding a new param_attribute to the attrs array and
-adjust the array index accordingly. Increment num immediately after the
-first reallocation such that the reallocation for the NULL terminator
-only needs to add 1 (instead of 2) to mk->mp->num.
+On 9/9/2024 8:54 AM, Rob Herring wrote:
+> On Sat, Sep 07, 2024 at 06:02:05PM -0700, Nikunj Kela wrote:
+>> Add interrupt specifier for extended SPI and extended PPI interrupts.
+> Are extended SPI and PPI a GIC defined thing? What version of GIC?
+>
+> Yes, I think I already asked these questions, but I only remember what 
+> you put into the commit message.
 
-Use struct_size() instead of manually calculating the size for the
-reallocation.
+Got it, let me add those details in the commit description. Thanks
 
-Use krealloc_array() for the additional NULL terminator.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
-Changes in v2:
-- Use krealloc_array() as suggested by Andy Shevchenko
-- Link to v1: https://lore.kernel.org/linux-kernel/20240823123300.37574-1-thorsten.blum@toblux.com/
----
- kernel/params.c | 29 +++++++++++++----------------
- 1 file changed, 13 insertions(+), 16 deletions(-)
-
-diff --git a/kernel/params.c b/kernel/params.c
-index 2e447f8ae183..5f6643676697 100644
---- a/kernel/params.c
-+++ b/kernel/params.c
-@@ -551,7 +551,7 @@ struct module_param_attrs
- {
- 	unsigned int num;
- 	struct attribute_group grp;
--	struct param_attribute attrs[];
-+	struct param_attribute attrs[] __counted_by(num);
- };
- 
- #ifdef CONFIG_SYSFS
-@@ -651,35 +651,32 @@ static __modinit int add_sysfs_param(struct module_kobject *mk,
- 	}
- 
- 	/* Enlarge allocations. */
--	new_mp = krealloc(mk->mp,
--			  sizeof(*mk->mp) +
--			  sizeof(mk->mp->attrs[0]) * (mk->mp->num + 1),
-+	new_mp = krealloc(mk->mp, struct_size(mk->mp, attrs, mk->mp->num + 1),
- 			  GFP_KERNEL);
- 	if (!new_mp)
- 		return -ENOMEM;
- 	mk->mp = new_mp;
-+	mk->mp->num++;
- 
- 	/* Extra pointer for NULL terminator */
--	new_attrs = krealloc(mk->mp->grp.attrs,
--			     sizeof(mk->mp->grp.attrs[0]) * (mk->mp->num + 2),
--			     GFP_KERNEL);
-+	new_attrs = krealloc_array(mk->mp->grp.attrs, mk->mp->num + 1,
-+				   sizeof(mk->mp->grp.attrs[0]), GFP_KERNEL);
- 	if (!new_attrs)
- 		return -ENOMEM;
- 	mk->mp->grp.attrs = new_attrs;
- 
- 	/* Tack new one on the end. */
--	memset(&mk->mp->attrs[mk->mp->num], 0, sizeof(mk->mp->attrs[0]));
--	sysfs_attr_init(&mk->mp->attrs[mk->mp->num].mattr.attr);
--	mk->mp->attrs[mk->mp->num].param = kp;
--	mk->mp->attrs[mk->mp->num].mattr.show = param_attr_show;
-+	memset(&mk->mp->attrs[mk->mp->num - 1], 0, sizeof(mk->mp->attrs[0]));
-+	sysfs_attr_init(&mk->mp->attrs[mk->mp->num - 1].mattr.attr);
-+	mk->mp->attrs[mk->mp->num - 1].param = kp;
-+	mk->mp->attrs[mk->mp->num - 1].mattr.show = param_attr_show;
- 	/* Do not allow runtime DAC changes to make param writable. */
- 	if ((kp->perm & (S_IWUSR | S_IWGRP | S_IWOTH)) != 0)
--		mk->mp->attrs[mk->mp->num].mattr.store = param_attr_store;
-+		mk->mp->attrs[mk->mp->num - 1].mattr.store = param_attr_store;
- 	else
--		mk->mp->attrs[mk->mp->num].mattr.store = NULL;
--	mk->mp->attrs[mk->mp->num].mattr.attr.name = (char *)name;
--	mk->mp->attrs[mk->mp->num].mattr.attr.mode = kp->perm;
--	mk->mp->num++;
-+		mk->mp->attrs[mk->mp->num - 1].mattr.store = NULL;
-+	mk->mp->attrs[mk->mp->num - 1].mattr.attr.name = (char *)name;
-+	mk->mp->attrs[mk->mp->num - 1].mattr.attr.mode = kp->perm;
- 
- 	/* Fix up all the pointers, since krealloc can move us */
- 	for (i = 0; i < mk->mp->num; i++)
--- 
-2.46.0
-
+>
+>> Qualcomm SA8255p platform uses extended SPI for SCMI 'a2p' doorbells.
+>>
+>> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+>> ---
+>>
+>> Changes in v3:
+>> 	- Removed the patch from original series[1]
+>>
+>> Changes in v2:
+>> 	- Modified subject line and description
+>> 	- Added EPPI macro
+>>
+>> [1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
+>> ---
+>>  include/dt-bindings/interrupt-controller/arm-gic.h | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/include/dt-bindings/interrupt-controller/arm-gic.h b/include/dt-bindings/interrupt-controller/arm-gic.h
+>> index 35b6f69b7db6..887f53363e8a 100644
+>> --- a/include/dt-bindings/interrupt-controller/arm-gic.h
+>> +++ b/include/dt-bindings/interrupt-controller/arm-gic.h
+>> @@ -12,6 +12,8 @@
+>>  
+>>  #define GIC_SPI 0
+>>  #define GIC_PPI 1
+>> +#define GIC_ESPI 2
+>> +#define GIC_EPPI 3
+>>  
+>>  /*
+>>   * Interrupt specifier cell 2.
+>> -- 
+>> 2.34.1
+>>
 
