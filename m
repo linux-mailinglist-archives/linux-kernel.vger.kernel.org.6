@@ -1,255 +1,152 @@
-Return-Path: <linux-kernel+bounces-321206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D68E9715D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:58:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF1D9715DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 246151F24139
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:58:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BBBD283C74
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF861B5313;
-	Mon,  9 Sep 2024 10:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC021B5803;
+	Mon,  9 Sep 2024 10:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qffQQga7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LVHjulL7"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2EC1B4C4A;
-	Mon,  9 Sep 2024 10:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12CB1B5309;
+	Mon,  9 Sep 2024 10:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725879510; cv=none; b=gh5eUuH3bIiJ0ScEp+YDPeQ7Ql438CXuHS9wGP8a+D1RAirNHeQN577i3HA5e06uk0bcpLqAD78SUEA89ilgW0KnOA9ncIkcLImHlcr6jhNhwaMIlA/JDeQjUX5ib/1RJk4wIlby5eH9tWKZR4Cy4B/mFOy0rQ1JTK++L2U5Xug=
+	t=1725879517; cv=none; b=tZJyT2FNYxFceQ6w3dxfnb/O7tgRLsZV8YDpcahRn1aTHPeAIT5oHdADcf6KQvL+bAlkWIO8uOtIm2pF9ePnv7RwoKwc80rwwAMLZumRhItepg58yAb1YuX76tgUUVjJQPOayKPa91doPOeca98JE5WFBqijqkm9QuHxll/RAdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725879510; c=relaxed/simple;
-	bh=uziYmtq37+Z6zrJILw3P2Hf7wc6u5U+5m+2Q4a9lW0E=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lqd1WjuTcRdTb28l24jk4wAnF4pUc3EWCzh2cxwwfzO96o3m1JQDRYStL8bfcn5e/u8MwBLWep2zFWd/ddL8tXr4Sk6P+SpM2SsobdWGqo2wUnMc8GOcK57wt0dPWoslLSHepa1ZekWWAYxNWRKNG4T9miWQHRjbIejpER3IRNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qffQQga7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90409C4CEC5;
-	Mon,  9 Sep 2024 10:58:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725879509;
-	bh=uziYmtq37+Z6zrJILw3P2Hf7wc6u5U+5m+2Q4a9lW0E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qffQQga7/SG35bqfaVeksLac24dsmrxzJxAEEqumjUCyUf4Gj+5yMly0tKAWri7Lq
-	 LGH9/6BQe2VBgsp6ho6ZubAwbpbm+FEM7L381+GytW+K/6lNBLHYWhc183KB02VlPj
-	 IHPsl4HNopDwU0HLtJjq0Yk/6pIW8RXkSYOsi55m8Al1S/+nouoGCTwu3+V2Lm7NK7
-	 YAeH/56EdSrhWwIXIMJeJmHuE/fTVHl5qq1FrueLhcoL9EMJTnbedF2/2ngDAjrubn
-	 uocnuJ0s89oAUunHYLfDHCVONaMJshQKyPNPEnwbTLtH7X5KSjtSnGYXVwIo8Ykk2T
-	 VVypRZWtxyBPA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1snc6D-00B0FE-OV;
-	Mon, 09 Sep 2024 11:58:27 +0100
-Date: Mon, 09 Sep 2024 11:58:04 +0100
-Message-ID: <865xr5856r.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anastasia Belova <abelova@astralinux.ru>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: KVM: prevent overflow in inject_abt64
-In-Reply-To: <20240909103828.16699-2-abelova@astralinux.ru>
-References: <20240909103828.16699-1-abelova@astralinux.ru>
-	<20240909103828.16699-2-abelova@astralinux.ru>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1725879517; c=relaxed/simple;
+	bh=sw3VHlMQq/cC9AvQC1DvEOM0QpRdIHMXSXQTnNz6RE8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jxEk2VKuoximMy8l3x4qMdbmPde3RX8kW2km7vnx0lg2DCmj0FatB8FvNyJCs84c9vGMVIA8ET+Un8F0oVosfyYKUyHeILGsILSEwMbABYEnpCuQmxOi7+c8Zx95JP86JxbUT6WNKCkLfj067mo/dlFN6blxJ4FmXqsLQp0bjnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LVHjulL7; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8a7929fd64so506286266b.0;
+        Mon, 09 Sep 2024 03:58:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725879514; x=1726484314; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4+VabnlfFbekRCvdKNnxfFp0FWhubNQMhQcPys4Q4q0=;
+        b=LVHjulL7LB+oTNGVN9LNpQBr9neVtHnw35JPNu8EpN+t/cak5ze/goErDxAqYLL1+k
+         P95w9CR8vlx1VS9bjwHiKV2rFVZL4Ej/U10z7D2RXIacRY0vBPDCfH80DOaSAc4XeLHb
+         NBbMunWDhYfASg7CBWZ5lK7mL+ENeSwM7yLuEgMoQaOBqm06ZiNz5plFw4oYqmYCWCYH
+         xjLh0H9HfFDd58YCjWVLqhYNxlnuu1AsZlWmcX0ie85M/oQiH3qmTvknEQqxRwfVV6o4
+         ahCSAMME/RRp095WJ+dijCPgXMRsVn6xulHUoOvJnZgvId0yVJo/MVnlU/DvSYY8X7+I
+         Ec0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725879514; x=1726484314;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4+VabnlfFbekRCvdKNnxfFp0FWhubNQMhQcPys4Q4q0=;
+        b=tjUkcL2ntN+el22mksi0o1OMAYxwEHMEH63G9jE8gqb5g1YclcfurEfPZ7JWctdroz
+         sott2k2BI3FCe4yLkuRGVD/IIUEooey0XkNzEqHeJyuJYahp289Aj2IKMjf+z7pLnjk1
+         gBZzLLdRem78zl4bhAFoQ81pIMArLU8z1v0B3ABCN1SFbxL6kL+HazH8lRWlm7na+8op
+         2pVjKuCX63Tnf/qq3ngH2VoD80ufD35s8CwMPBnw9NOYgaQItcBgirJkrtJscCTW9yco
+         aOzcYrSz9vpcPmXA/+FZHCUFAA/pgAST3GhLIeHFL1R2IMa0IB+1IoQw3iubJTLap1KI
+         ILxA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3z09qRf5LlsJpqiqr3w8CYEuLkxiIOSb/hNDQmUvN1bFgOllfADCJXK/6rV+rBrLhVCoPphc30AXisTM=@vger.kernel.org, AJvYcCVx62IjlLcghBgjSPZcAY8p0KKJpzL3SxPgGVJgEPHTQpMQqUiAfGYjUee0Opm8foobMGRKa8llYk9sPxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr8X/at1NIfy3kemfkQvJ6AZhPnInxA4PLV/X6blpTdJBRDYin
+	kVNzeZjSv5a2WnYH0Cb9jHzrTThzQmug+fd85Mk28xdSDM+QjD3n
+X-Google-Smtp-Source: AGHT+IFNxUJYpEsCJCXM7xpjgJSvO4TVSto/4vsBImL63N5dDFBUG7uokxcYSfDuiGmAA9oqRgRm3A==
+X-Received: by 2002:a17:907:9487:b0:a8d:67d5:5e16 with SMTP id a640c23a62f3a-a8d67d56038mr69208966b.57.1725879513327;
+        Mon, 09 Sep 2024 03:58:33 -0700 (PDT)
+Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation.station (net-188-217-48-58.cust.vodafonedsl.it. [188.217.48.58])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25a2b281sm328281366b.92.2024.09.09.03.58.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 03:58:32 -0700 (PDT)
+From: Tommaso Merciai <tomm.merciai@gmail.com>
+To: 
+Cc: sakari.ailus@linux.intel.com,
+	laurent.pinchart@ideasonboard.com,
+	tomm.merciai@gmail.com,
+	mhecht73@gmail.com,
+	michael.roeder@avnet.eu,
+	hverkuil@xs4all.nl,
+	Martin Hecht <martin.hecht@avnet.eu>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] media: i2c: alvium: add camera sysfs attributes
+Date: Mon,  9 Sep 2024 12:58:29 +0200
+Message-Id: <20240909105831.684371-1-tomm.merciai@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: abelova@astralinux.ru, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, stable@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-[dropping Christoffer and Matt from the list, as these addresses are
-pretty obsolete and I doubt they actually care]
+Hi All,
+With this patch I'm going to add some sysfs attributes to the alvium-csi2 driver.
+This patch adds the following sysfs attributes:
 
-Anastasia,
+ - cci_register_layout_version:
+   Shows current cci regs layout version of the camera.
 
-On Mon, 09 Sep 2024 11:38:27 +0100,
-Anastasia Belova <abelova@astralinux.ru> wrote:
-> 
-> ESR_ELx_EC_IABT_LOW << ESR_ELx_EC_SHIFT = 0x20 << 26.
-> ESR_ELx_EC_IABT_CUR << ESR_ELx_EC_SHIFT = 0x21 << 26.
-> There operations' results are int with 1 in 32th bit.
-> While casting these values into u64 (esr is u64) 1
-> fills 32 highest bits.
-> 
-> Add explicit casting to prevent it.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: aa8eff9bfbd5 ("arm64: KVM: fault injection into a guest")
-> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
-> ---
->  arch/arm64/kvm/inject_fault.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/inject_fault.c b/arch/arm64/kvm/inject_fault.c
-> index a640e839848e..b6b2cfff6629 100644
-> --- a/arch/arm64/kvm/inject_fault.c
-> +++ b/arch/arm64/kvm/inject_fault.c
-> @@ -74,9 +74,9 @@ static void inject_abt64(struct kvm_vcpu *vcpu, bool is_iabt, unsigned long addr
->  	 * an AArch32 fault, it means we managed to trap an EL0 fault.
->  	 */
->  	if (is_aarch32 || (cpsr & PSR_MODE_MASK) == PSR_MODE_EL0t)
-> -		esr |= (ESR_ELx_EC_IABT_LOW << ESR_ELx_EC_SHIFT);
-> +		esr |= ((u64)ESR_ELx_EC_IABT_LOW << ESR_ELx_EC_SHIFT);
->  	else
-> -		esr |= (ESR_ELx_EC_IABT_CUR << ESR_ELx_EC_SHIFT);
-> +		esr |= ((u64)ESR_ELx_EC_IABT_CUR << ESR_ELx_EC_SHIFT);
->  
->  	if (!is_iabt)
->  		esr |= ESR_ELx_EC_DABT_LOW << ESR_ELx_EC_SHIFT;
+ - csi_clock_mhz:
+   Shows current alvium camera csi2 freq.
 
-Thanks for this. Although correct, this is a point fix that leaves
-plenty of opportunities for problems.
+ - device_capabilities:
+   Show the capabilities of the current camera.
 
-I'd rather you update all the ESR_ELx_EC_* constants to be defined as
-UL(0x..) instead of (0x..), which will allow us to forget this
-forever. Something like this (based on my working tree and won't apply
-on upstream, but you will hopefully get the idea):
+ - device_guid:
+   Shows the current device guid as programmed by the vendor during production.
 
-diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
-index cc1b0ec7a51be..47799a7f95cf8 100644
---- a/arch/arm64/include/asm/esr.h
-+++ b/arch/arm64/include/asm/esr.h
-@@ -10,64 +10,64 @@
- #include <asm/memory.h>
- #include <asm/sysreg.h>
- 
--#define ESR_ELx_EC_UNKNOWN	(0x00)
--#define ESR_ELx_EC_WFx		(0x01)
-+#define ESR_ELx_EC_UNKNOWN	UL(0x00)
-+#define ESR_ELx_EC_WFx		UL(0x01)
- /* Unallocated EC: 0x02 */
--#define ESR_ELx_EC_CP15_32	(0x03)
--#define ESR_ELx_EC_CP15_64	(0x04)
--#define ESR_ELx_EC_CP14_MR	(0x05)
--#define ESR_ELx_EC_CP14_LS	(0x06)
--#define ESR_ELx_EC_FP_ASIMD	(0x07)
--#define ESR_ELx_EC_CP10_ID	(0x08)	/* EL2 only */
--#define ESR_ELx_EC_PAC		(0x09)	/* EL2 and above */
--#define ESR_ELx_EC_LS64B	(0x0A)
-+#define ESR_ELx_EC_CP15_32	UL(0x03)
-+#define ESR_ELx_EC_CP15_64	UL(0x04)
-+#define ESR_ELx_EC_CP14_MR	UL(0x05)
-+#define ESR_ELx_EC_CP14_LS	UL(0x06)
-+#define ESR_ELx_EC_FP_ASIMD	UL(0x07)
-+#define ESR_ELx_EC_CP10_ID	UL(0x08)	/* EL2 only */
-+#define ESR_ELx_EC_PAC		UL(0x09)	/* EL2 and above */
-+#define ESR_ELx_EC_LS64B	UL(0x0A)
- /* Unallocated EC: 0x0B */
--#define ESR_ELx_EC_CP14_64	(0x0C)
--#define ESR_ELx_EC_BTI		(0x0D)
--#define ESR_ELx_EC_ILL		(0x0E)
-+#define ESR_ELx_EC_CP14_64	UL(0x0C)
-+#define ESR_ELx_EC_BTI		UL(0x0D)
-+#define ESR_ELx_EC_ILL		UL(0x0E)
- /* Unallocated EC: 0x0F - 0x10 */
--#define ESR_ELx_EC_SVC32	(0x11)
--#define ESR_ELx_EC_HVC32	(0x12)	/* EL2 only */
--#define ESR_ELx_EC_SMC32	(0x13)	/* EL2 and above */
-+#define ESR_ELx_EC_SVC32	UL(0x11)
-+#define ESR_ELx_EC_HVC32	UL(0x12)	/* EL2 only */
-+#define ESR_ELx_EC_SMC32	UL(0x13)	/* EL2 and above */
- /* Unallocated EC: 0x14 */
--#define ESR_ELx_EC_SVC64	(0x15)
--#define ESR_ELx_EC_HVC64	(0x16)	/* EL2 and above */
--#define ESR_ELx_EC_SMC64	(0x17)	/* EL2 and above */
--#define ESR_ELx_EC_SYS64	(0x18)
--#define ESR_ELx_EC_SVE		(0x19)
--#define ESR_ELx_EC_ERET		(0x1a)	/* EL2 only */
-+#define ESR_ELx_EC_SVC64	UL(0x15)
-+#define ESR_ELx_EC_HVC64	UL(0x16)	/* EL2 and above */
-+#define ESR_ELx_EC_SMC64	UL(0x17)	/* EL2 and above */
-+#define ESR_ELx_EC_SYS64	UL(0x18)
-+#define ESR_ELx_EC_SVE		UL(0x19)
-+#define ESR_ELx_EC_ERET		UL(0x1a)	/* EL2 only */
- /* Unallocated EC: 0x1B */
--#define ESR_ELx_EC_FPAC		(0x1C)	/* EL1 and above */
--#define ESR_ELx_EC_SME		(0x1D)
-+#define ESR_ELx_EC_FPAC		UL(0x1C)	/* EL1 and above */
-+#define ESR_ELx_EC_SME		UL(0x1D)
- /* Unallocated EC: 0x1E */
--#define ESR_ELx_EC_IMP_DEF	(0x1f)	/* EL3 only */
--#define ESR_ELx_EC_IABT_LOW	(0x20)
--#define ESR_ELx_EC_IABT_CUR	(0x21)
--#define ESR_ELx_EC_PC_ALIGN	(0x22)
-+#define ESR_ELx_EC_IMP_DEF	UL(0x1f)	/* EL3 only */
-+#define ESR_ELx_EC_IABT_LOW	UL(0x20)
-+#define ESR_ELx_EC_IABT_CUR	UL(0x21)
-+#define ESR_ELx_EC_PC_ALIGN	UL(0x22)
- /* Unallocated EC: 0x23 */
--#define ESR_ELx_EC_DABT_LOW	(0x24)
--#define ESR_ELx_EC_DABT_CUR	(0x25)
--#define ESR_ELx_EC_SP_ALIGN	(0x26)
--#define ESR_ELx_EC_MOPS		(0x27)
--#define ESR_ELx_EC_FP_EXC32	(0x28)
-+#define ESR_ELx_EC_DABT_LOW	UL(0x24)
-+#define ESR_ELx_EC_DABT_CUR	UL(0x25)
-+#define ESR_ELx_EC_SP_ALIGN	UL(0x26)
-+#define ESR_ELx_EC_MOPS		UL(0x27)
-+#define ESR_ELx_EC_FP_EXC32	UL(0x28)
- /* Unallocated EC: 0x29 - 0x2B */
--#define ESR_ELx_EC_FP_EXC64	(0x2C)
-+#define ESR_ELx_EC_FP_EXC64	UL(0x2C)
- /* Unallocated EC: 0x2D - 0x2E */
--#define ESR_ELx_EC_SERROR	(0x2F)
--#define ESR_ELx_EC_BREAKPT_LOW	(0x30)
--#define ESR_ELx_EC_BREAKPT_CUR	(0x31)
--#define ESR_ELx_EC_SOFTSTP_LOW	(0x32)
--#define ESR_ELx_EC_SOFTSTP_CUR	(0x33)
--#define ESR_ELx_EC_WATCHPT_LOW	(0x34)
--#define ESR_ELx_EC_WATCHPT_CUR	(0x35)
-+#define ESR_ELx_EC_SERROR	UL(0x2F)
-+#define ESR_ELx_EC_BREAKPT_LOW	UL(0x30)
-+#define ESR_ELx_EC_BREAKPT_CUR	UL(0x31)
-+#define ESR_ELx_EC_SOFTSTP_LOW	UL(0x32)
-+#define ESR_ELx_EC_SOFTSTP_CUR	UL(0x33)
-+#define ESR_ELx_EC_WATCHPT_LOW	UL(0x34)
-+#define ESR_ELx_EC_WATCHPT_CUR	UL(0x35)
- /* Unallocated EC: 0x36 - 0x37 */
--#define ESR_ELx_EC_BKPT32	(0x38)
-+#define ESR_ELx_EC_BKPT32	UL(0x38)
- /* Unallocated EC: 0x39 */
--#define ESR_ELx_EC_VECTOR32	(0x3A)	/* EL2 only */
-+#define ESR_ELx_EC_VECTOR32	UL(0x3A)	/* EL2 only */
- /* Unallocated EC: 0x3B */
--#define ESR_ELx_EC_BRK64	(0x3C)
-+#define ESR_ELx_EC_BRK64	UL(0x3C)
- /* Unallocated EC: 0x3D - 0x3F */
--#define ESR_ELx_EC_MAX		(0x3F)
-+#define ESR_ELx_EC_MAX		UL(0x3F)
- 
- #define ESR_ELx_EC_SHIFT	(26)
- #define ESR_ELx_EC_WIDTH	(6)
+ - device_version:
+   Shows the version of the alvium hardware.
 
-Could you please respin this quickly so that it can be taken in v6.12?
+ - family_name:
+   Shows the Alvium family name, like Alvium CSI-2, GM2, FP3, ...
 
-Thanks,
+ - genio:
+   Generic camera input/output xfer for using user programmable part of the flash.
+   Reading and writing camera's user programmable flash memory.
 
-	M.
+ - lane_count:
+   Shows device current CSI2 camera's lanes number.
+
+ - manufacturer_info:
+   Shows manufacturer info as programmed by the vendor during production.
+
+ - manufacturer_name:
+   Shows manufacturer name as programmed by the vendor during production.
+
+ - mode:
+   As stated by the BCRM Ref Manual camera can work in 2 modes BCM/GENCP.
+   This attribute is responsible for switching the camera mode and check the current mode.
+
+ - model_name:
+   Shows model name as programmed by the vendor during production.
+
+ - serial_number:
+   Shows camera serial number as programmed by the vendor during production.
+
+ - user_defined_name:
+   Shows camera user defined name as programmed by the vendor during production.
+
+Thanks & Regards,
+Tommaso
+
+Tommaso Merciai (1):
+  media: i2c: alvium: add camera sysfs attributes
+
+ drivers/media/i2c/alvium-csi2.c | 484 ++++++++++++++++++++++++++++++++
+ drivers/media/i2c/alvium-csi2.h |  25 ++
+ 2 files changed, 509 insertions(+)
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.34.1
+
 
