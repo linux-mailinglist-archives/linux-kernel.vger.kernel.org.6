@@ -1,162 +1,102 @@
-Return-Path: <linux-kernel+bounces-322102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F06D972405
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:55:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D71897240A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00EA52839AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:55:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1B21F247E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0CF18B469;
-	Mon,  9 Sep 2024 20:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F6318B474;
+	Mon,  9 Sep 2024 20:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="qzrb3Bc0"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (2048-bit key) header.d=tvisioninsights.com header.i=@tvisioninsights.com header.b="UGl0DmRF"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EEA18A937;
-	Mon,  9 Sep 2024 20:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B58718A94C
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 20:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725915336; cv=none; b=Od6jutp+Uuz1urfpS6DP94p3lb2FH+d9jowgEfXf4NF9rzMEWODAMTcOdH7uE7B1EKyJKViPn93cCd9dxDHBHNCJ0j+aMWDdCymZFNcOxCPbhtVUpvKbikqfxaaCO8hc+/1U3YCZnt9zO3Y0XNo3aUnKJuGfWqfDq7+m7vNB+Mk=
+	t=1725915482; cv=none; b=pPX1yR7YWo7FuQ2hnYjiYVhDxZY8AADxDoiPZ+l37jae94F/K1kpA3magYbgOdrXZhpsm2IvhMxUtjZbg+I9RbNPuP5fXnBUfZmLBs3SRvI8W/55I3vT0wduV/scJjS+iV6VW+9wsinCgz2rXMPbUhLF1akNI+B9NogMUbbaJdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725915336; c=relaxed/simple;
-	bh=VeBte4Hk/bSsPKA+NLFx686zngoHrq/S/DH0gseidn0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=QVcbZ9ettkNTNaw96Qv5lRnyVkBx6JkGSx0PS17Lkm0SaBTR5D/e7d0J6n6R8QTEqsBbUgfdudqWnP5yBMpEfcoQVbEGlDuW35XISa0q9L2B0pTRgqfS53Bb7EMtfJj08XgxYAh0hAiBZFhwaIAge5rb033sgpI4PcKCiSWwsiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=qzrb3Bc0; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from [127.0.0.1] (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 1EFBA1F9CA;
-	Mon,  9 Sep 2024 22:55:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1725915329;
-	bh=ha+UjDZ4cSJCf/e8Vp6EQ5ssSEtu7b+FJNVTZqCXUqM=; h=From:To:Subject;
-	b=qzrb3Bc0qXYqaiFv9IL1EwHsC01fNlIEm/uPBFRxGV+9KrzEDnrcadQDZmPjquvWO
-	 +xTJjzs0Kt7xDCNJtA/EgmiN9jPTZZx6PekGezEaFb6V6M+Q0fBMoGEwWGCOV+jeqg
-	 bw1u2iV64+FjxQzkn5pBzz86RRF6Ir/zUUNrn6aKQRTtDUDpVkrfF/Kv88s+8wuVTI
-	 ZYJTU5mznOvZc4v9hd5NsiU9Fx1iwdI3hyqXi2UFQMkAHjRyO9mah9rE8UOk4LRDf8
-	 3xDd47HJ6lxPA3GGC+BKhbKxQKdoSDzv1k31+Eh/NZv2jpd8N+gq/H+3n/nD7FJycs
-	 44rs4NLSXegrg==
-Date: Mon, 09 Sep 2024 22:55:27 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-CC: Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_11/12=5D_wifi=3A_mwifiex=3A_mov?=
- =?US-ASCII?Q?e_common_settings_out_of_switch/case?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <Zt9Y1fe-Q9cHY_s5@pengutronix.de>
-References: <20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de> <20240826-mwifiex-cleanup-1-v1-11-56e6f8e056ec@pengutronix.de> <Zt8rv-nOERIac4T9@gaggiata.pivistrello.it> <Zt9Y1fe-Q9cHY_s5@pengutronix.de>
-Message-ID: <A4592F41-FC96-4F0A-B6B3-911683773833@dolcini.it>
+	s=arc-20240116; t=1725915482; c=relaxed/simple;
+	bh=lGLdY1ylT3wRFiKmV/y6n60Cr/2cy7pdFUH8q8cqxfA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=JlY8KsxMwFNUE5ZK6gofvmHlmjL7fMAuzFRv3SjtE3EBxzunRO2A2YUtFi98+kRTzJs/+FZtc0MqzalCFjNBhyKrrIQjCE/pEakWqrgjkJUV4BprnOF+LkqgIqXkVsWBBaszZjtLiXwAW0P6g4X+bAuxlWwZaBqiyGhBusHYysc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tvisioninsights.com; spf=pass smtp.mailfrom=tvisioninsights.com; dkim=pass (2048-bit key) header.d=tvisioninsights.com header.i=@tvisioninsights.com header.b=UGl0DmRF; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tvisioninsights.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tvisioninsights.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6c49c9018ebso43037217b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 13:58:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tvisioninsights.com; s=google; t=1725915479; x=1726520279; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lGLdY1ylT3wRFiKmV/y6n60Cr/2cy7pdFUH8q8cqxfA=;
+        b=UGl0DmRFxCNwB1JVwsFN/vmEU6zhBo/D4G/0+E4ZGl1IIHUpWT7w7+rVm42q1VUqm2
+         DJUL36J7VYF/ee2DmrU8dm3ResKUo3NqsXifEONj7P8v+Lpn2UAnndT+PYRLyfBM/xAV
+         xJUaC4+4ISMnDjVS5e+i1XbpuXO897jyChLC/pHZ8BUc76qdr+R/Ij719AqNSDRzIBlu
+         VBOmZIzIyrN0C6E4vwEYupTJ7cRl7OOMNO5jB06/QrQMCClFf6fnTfkcoISudfMyq8hk
+         ZfkU1ibZubboxkHaBoZYs0ImJ31it5wzYG14P2yp4qJJKEcjHuoixWJcp8v/3IOtCCMD
+         bQzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725915479; x=1726520279;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lGLdY1ylT3wRFiKmV/y6n60Cr/2cy7pdFUH8q8cqxfA=;
+        b=lSuHWMlr7LNfIW2gyY3cgmXrpxwyyCMEwUalHCpOcftmoI91PntsqbaBCJ+Fk6FnBC
+         uqMppR0nl3G6lR82MHolzZx/cfqSaNXzzgXMTYGb9Y/Y6xyyJo7HTc8NlAzE7ISTZVYq
+         cqH1WUeMv3T2PT2i8VdrF/axy4v5SNCYqP5XiASydR/0w4r/X726Rpofn0bbeBwurU6y
+         aNqb8ckiaqMvHqv8WFZgqYryuVJoxOfZlTPlhOpwto/W7CSFDEFwy1Me1/mhDKuebi7B
+         7QUjQu02RaqwojGYdMnDSp4vVZnUkgUwgDoabqFXosSCddSrVxw18aGiZB0ZMtIeBaq3
+         wLCA==
+X-Gm-Message-State: AOJu0Ywr+lTmGc2wCECu2LSOEs6pom0kaU98juyboPXRKAo6E0aIzM4S
+	z68EkfeS+loZ+Auy1rEi2ivxtdtOh+P8I/z6TOUVbhKWDsW8Rex+qp9xcLcM8/zR8P9CCiitnLy
+	ATN6npXbWq/u9yMPvlnPQYmvY94qmYmpRroDXC0S3cBx8lFuEO5c=
+X-Google-Smtp-Source: AGHT+IF1orA8emKndjOJ/2i/tad6xxCgsRxmQyBlQGvdH9F9sv7UvwrvEA/tsy5zVBWAnjAOG13yOWajqFxSY0gauFU=
+X-Received: by 2002:a05:690c:6a88:b0:64a:4161:4f94 with SMTP id
+ 00721157ae682-6db44dfe5damr115813387b3.20.1725915479053; Mon, 09 Sep 2024
+ 13:57:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From: Julio Lajara <julio@tvisioninsights.com>
+Date: Mon, 9 Sep 2024 16:57:23 -0400
+Message-ID: <CAOrC7GfMagHXiZ3GzxmPMRgguWi0g1rUgcpgQFYHstfkaSstBw@mail.gmail.com>
+Subject: Initializing bluetooth using socket.c userland functions broken after
+ upgrade from 6.5 to 6.8 (and mainline 6.9, 6.10)
+To: linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Il 9 settembre 2024 22:21:41 CEST, Sascha Hauer <s=2Ehauer@pengutronix=2Ede=
-> ha scritto:
->On Mon, Sep 09, 2024 at 07:09:19PM +0200, Francesco Dolcini wrote:
->> On Mon, Aug 26, 2024 at 01:01:32PM +0200, Sascha Hauer wrote:
->> > In mwifiex_add_virtual_intf() several settings done in a switch/case
->> > are the same in all cases=2E Move them out of the switch/case to
->> > deduplicate the code=2E
->> >=20
->> > Signed-off-by: Sascha Hauer <s=2Ehauer@pengutronix=2Ede>
->> > ---
->> >  drivers/net/wireless/marvell/mwifiex/cfg80211=2Ec | 16 +++++--------=
----
->> >  1 file changed, 5 insertions(+), 11 deletions(-)
->> >=20
->> > diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211=2Ec b/driv=
-ers/net/wireless/marvell/mwifiex/cfg80211=2Ec
->> > index 8746943c17788=2E=2E2ce54a3fc32f8 100644
->> > --- a/drivers/net/wireless/marvell/mwifiex/cfg80211=2Ec
->> > +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211=2Ec
->> > @@ -3005,7 +3005,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(s=
-truct wiphy *wiphy,
->> >  			return ERR_PTR(-EFAULT);
->> >  		}
->> > =20
->> > -		priv->wdev=2Ewiphy =3D wiphy;
->> >  		priv->wdev=2Eiftype =3D NL80211_IFTYPE_STATION;
->> > =20
->> >  		if (type =3D=3D NL80211_IFTYPE_UNSPECIFIED)
->> > @@ -3014,8 +3013,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(s=
-truct wiphy *wiphy,
->> >  			priv->bss_mode =3D type;
->> > =20
->> >  		priv->bss_type =3D MWIFIEX_BSS_TYPE_STA;
->> > -		priv->frame_type =3D MWIFIEX_DATA_FRAME_TYPE_ETH_II;
->> > -		priv->bss_priority =3D 0;
->> >  		priv->bss_role =3D MWIFIEX_BSS_ROLE_STA;
->> > =20
->> >  		break;
->> > @@ -3035,14 +3032,10 @@ struct wireless_dev *mwifiex_add_virtual_intf=
-(struct wiphy *wiphy,
->> >  			return ERR_PTR(-EFAULT);
->> >  		}
->> > =20
->> > -		priv->wdev=2Ewiphy =3D wiphy;
->> >  		priv->wdev=2Eiftype =3D NL80211_IFTYPE_AP;
->> > =20
->> >  		priv->bss_type =3D MWIFIEX_BSS_TYPE_UAP;
->> > -		priv->frame_type =3D MWIFIEX_DATA_FRAME_TYPE_ETH_II;
->> > -		priv->bss_priority =3D 0;
->> >  		priv->bss_role =3D MWIFIEX_BSS_ROLE_UAP;
->> > -		priv->bss_started =3D 0;
->> >  		priv->bss_mode =3D type;
->> > =20
->> >  		break;
->> > @@ -3062,7 +3055,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(s=
-truct wiphy *wiphy,
->> >  			return ERR_PTR(-EFAULT);
->> >  		}
->> > =20
->> > -		priv->wdev=2Ewiphy =3D wiphy;
->> >  		/* At start-up, wpa_supplicant tries to change the interface
->> >  		 * to NL80211_IFTYPE_STATION if it is not managed mode=2E
->> >  		 */
->> > @@ -3075,10 +3067,7 @@ struct wireless_dev *mwifiex_add_virtual_intf(=
-struct wiphy *wiphy,
->> >  		 */
->> >  		priv->bss_type =3D MWIFIEX_BSS_TYPE_P2P;
->> > =20
->> > -		priv->frame_type =3D MWIFIEX_DATA_FRAME_TYPE_ETH_II;
->> > -		priv->bss_priority =3D 0;
->> >  		priv->bss_role =3D MWIFIEX_BSS_ROLE_STA;
->> > -		priv->bss_started =3D 0;
->> > =20
->> >  		if (mwifiex_cfg80211_init_p2p_client(priv)) {
->> >  			memset(&priv->wdev, 0, sizeof(priv->wdev));
->> > @@ -3092,6 +3081,11 @@ struct wireless_dev *mwifiex_add_virtual_intf(=
-struct wiphy *wiphy,
->> >  		return ERR_PTR(-EINVAL);
->> >  	}
->> > =20
->> > +	priv->wdev=2Ewiphy =3D wiphy;
->> > +	priv->bss_priority =3D 0;
->> > +	priv->bss_started =3D 0;
->>=20
->> This was not set before in all the 3 cases=2E Irrelevant? Worth checkin=
-g and/or
->> mentioning in the commit message?
->
->bss_started is only used in AP mode, its value is irrelevant in station
->or adhoc mode=2E I'll add that to the commit message=2E
+My company uses pybleno to initialize bluetooth LE devices on our IOT
+devices as GATT servers.
+This has worked fine from 4.x kernels on Ubuntu 18.04 up to 6.5.0 on
+Ubuntu 22.04 for us. The Python code interfaces
+with the socket.c userland functions AFAICT.
 
-ack=2E
+After upgrading from 6.5 to 6.8 kernel on Ubuntu 22.04, the kernel is
+now returning
 
-With this clarified in the commit message adds my reviewed-by
+"[Errno 22] Invalid Argument" from the socket.c setsockopt function.
 
+I have outline as best I can what I checked in the downstream pybleno
+ticket here: https://github.com/Adam-Langley/pybleno/issues/63
 
+I could use some input on whether on not any of the recent socket.c
+changes between 6.5 to 6.8 changes could have caused this and if
+this is a regression or whether not the Python calls to these socket.c
+functions which have worked since 4.x need to be rewritten as a result
+of an expected interface change on the kernel side.
+
+This problem exists for us as well when we tested with mainline 6.9
+and 6.10 kernels last week and our only current solution is
+downgrading to 6.5 .
+
+Thank you,
 
