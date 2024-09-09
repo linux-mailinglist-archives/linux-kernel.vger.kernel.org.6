@@ -1,249 +1,494 @@
-Return-Path: <linux-kernel+bounces-322125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF759972471
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:20:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09EB097247C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ED2B1F241B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:20:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C345D284BF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BBD18C358;
-	Mon,  9 Sep 2024 21:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B0418C90B;
+	Mon,  9 Sep 2024 21:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I51/ahsD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJsGXwku"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D93178CC8;
-	Mon,  9 Sep 2024 21:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725916794; cv=fail; b=N1d3NiWknGfBsVFQdkrZJADt9odaEIt4cC0ZhsobzcqI00I7JlhYhqe+CceKngzCbSt9LrVoz9qTn4uxBva8xPoP9DGWzwtm6rifEh3VvmvxOyYjcriF523BnGsnKDx/RXRyDLGFC0slja8hx/GdVyGvPL+39xnxAcY7TwYM65g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725916794; c=relaxed/simple;
-	bh=zt3Gzti3KxTklJjMHVexeZgyhr17x114l3swpbpE0v0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=upmxsHTMTxxS87N/zHDfuUuKTBiqgUDp2clqd6B3Qo6LJOEVQcyyPe/IU7kfWhvksBfNiy7Yj7KKANKiVS3vP+MojRUUJOdeN6Y3pOWmQVljw9sxY49NuUc7AUU8zDxtTxaNKv1sv2RsOzHL93lx9R/6H2lRWptpM3Xta282Tfk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I51/ahsD; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725916793; x=1757452793;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=zt3Gzti3KxTklJjMHVexeZgyhr17x114l3swpbpE0v0=;
-  b=I51/ahsDpVvzwwPDhpPMx77EChR18FzbNn99PWtuWBGxlhen1akmpdAB
-   pZQLAiTW3tbXkcVmnvq0WEI+0kfyngcYViOW/QHwsgnA+MjYC0rf9mxgt
-   hPR3tznmQlqWfJxyka6tgaZoVh0opPtMteAEjjxhAqqVlE17uGg+L6Q0k
-   bD60xphs/SKThdQbSzcqVwVdvciKLtE20EM31Qo/RV0D3TLQlru/hJfzO
-   Tcb4j0ySSqQlCofG+V/A/JhfJNQGyJTANUSfJLew1uIp5Ml4OCjNN+umS
-   rhicnIkTfPCgoSLhhXEt0ah9I4uDWKrnxEYGGKgcvoPVT0401L98/XIdW
-   g==;
-X-CSE-ConnectionGUID: vQ6SpmqzTbu9asedZxu9Lw==
-X-CSE-MsgGUID: 8lqruPaGRK2CWdbFSc9nQg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="36018720"
-X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="36018720"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 14:19:52 -0700
-X-CSE-ConnectionGUID: OSwVO/jbRiyUMPAsSfuI+g==
-X-CSE-MsgGUID: nuJ5k7znSyeGeDM1VlIooQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="90082924"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Sep 2024 14:19:51 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 9 Sep 2024 14:19:50 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 9 Sep 2024 14:19:50 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.175)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 9 Sep 2024 14:19:50 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MDLzz9KHGJhLfmid8uVeEc2xCG7KGePfnlhdOoZ8/IQ4HdSr2oLm9v55/GOIzcKUI493v/tIRp1WwuZ0a8qkuDV0JSrAUX7/vrmxpz5AQuFKE/uBEjb8Vi2Yex4clAD/CPj0jQEXgbtlkN9xOr35Wcv0X8xg0atz7i70o8keFORq5CSSl12mLu6Qqw5+ZrPV7OFojLKc+lJaQcxTQ3YNNc3Bx7NUcvkHp8CJBE+pdCg4m6EE6Hygu/JxEVLwC/8v4Fttnp2wTc41UlUvL11NLg7DttNFWcrtnQDC5p1jKyUxp+/4UgSWUIiudx1ftnTh68oU3+dPydyr5G4CNdsGaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WSwBnFLSRYtLqPa1A1DU/mmbTJUY+FPlofbAZ6Nktvs=;
- b=knVt+pXgBiC3GS6WGSP7frMIn7TYfrOzKOVlnbnBtgbbYa139dDqqNM4xcMJzdzn+8hZuiBuqq7jQ+CbyFvGNEFdtsnJyWnLzdTlDkwgDQ/E1ngEP9KNDIZTLqxjHOpmEavvDnK6yFknf0xQnd8MfeZ5B7AY8vn/rZo1PbztGkey1CDL1tL+8FUVmyzPhsCYITt1r5UApkbDZMnaloNRqzRHA7ARbIIAR/megSTb9mSpqED2JPJYJcO3axI6gaMc2FdslVkweMOOYPZ+GgFKbv1j7+WMSPRqtDyenvX7GgwxFT4WEDjxT4YWD7m8BuaviYzHa0cI8RKbaHmk8Z5FPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by MN6PR11MB8220.namprd11.prod.outlook.com (2603:10b6:208:478::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Mon, 9 Sep
- 2024 21:19:47 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%6]) with mapi id 15.20.7939.017; Mon, 9 Sep 2024
- 21:19:47 +0000
-Date: Mon, 9 Sep 2024 16:19:42 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Zijun Hu
-	<zijun_hu@icloud.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang
-	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
-	"Vishal Verma" <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	"Dan Williams" <dan.j.williams@intel.com>, Takashi Sakamoto
-	<o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<netdev@vger.kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v3 2/3] cxl/region: Find free cxl decoder by
- device_for_each_child()
-Message-ID: <66df666ded3f7_3c80f229439@iweiny-mobl.notmuch>
-References: <20240824-const_dfc_prepare-v3-0-32127ea32bba@quicinc.com>
- <20240824-const_dfc_prepare-v3-2-32127ea32bba@quicinc.com>
- <20240827123006.00004527@Huawei.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240827123006.00004527@Huawei.com>
-X-ClientProxiedBy: MW4PR04CA0228.namprd04.prod.outlook.com
- (2603:10b6:303:87::23) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF98189F2F;
+	Mon,  9 Sep 2024 21:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725916976; cv=none; b=SubtHjJy17abSHX+IxGjkjsgJODFgz0RkWIyP7hQpyxcSouxdGB98HpozkJ1ObWy8Qg/eBMzTtGFkxfmwQol/k2vAAdEtOe4zJ/6G9DmSBix2hxPnzVEcAGDZt6ZSBWNEDUWbHAxK//mewkmSHeAsBxjxY+W8RngLJpqZDfTG70=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725916976; c=relaxed/simple;
+	bh=DHoBHitf6XqutCBUKBaXtWsNw566Wkx2sWsCIpIA5kg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hu5iRoMNW6t4qKXthz79U2FylndGp9/yCy9YQ4tkISBKcUW7JP2A542EYoAGrHYfioao+2DNxwWkEw8TqK6c/MUJ/Pm1CZZeqjdHUcKw/5lbrMmkmdR77cCkwXVwUUzUwgarAHD7twEynTMJaehxaV1yPNI+8KXYt5EJN2E7qT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJsGXwku; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 572A0C4CECC;
+	Mon,  9 Sep 2024 21:22:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725916976;
+	bh=DHoBHitf6XqutCBUKBaXtWsNw566Wkx2sWsCIpIA5kg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LJsGXwkujv9FcaUCCoYZ1vb9KTSfWqsJj5ePQ1LmXJQcHAWA3W79P2JrqFeV2s/jv
+	 zNpo7fEkKTXdoeSE8pIwdUfkTDHUyGup96gAcEv8vcsFbzEJEdgJXB1bNHnHAoIdba
+	 79vNjt/214TimJH42afhMYFVIvEzsLuYsCmn5ovpua0UPfyX77+b8QBUGPNn+lqQiE
+	 UHgwigS7Ul8uJCa39r5p86jkELBsywN76Cy37sEQvhooGcOXXZRtIvp3UNN13g7MyK
+	 PGxRHlybeKE/Q2FRal8JAYjGqygbYThYS6i8M/3QPrO+dtYYbNnxt0UWDVzbTitAB3
+	 PwgfqJ860nxiw==
+Date: Mon, 9 Sep 2024 23:22:51 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Carlos Song <carlos.song@nxp.com>
+Cc: aisheng.dong@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, sumit.semwal@linaro.org, 
+	christian.koenig@amd.com, linux-i2c@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, Frank Li <frank.li@nxp.com>
+Subject: Re: [PATCH V4] i2c: imx-lpi2c: add eDMA mode support for LPI2C
+Message-ID: <7czathanmppyyw5bbno6gmsfqtn75py33lccyfu6klreh74n6o@d6347uzrxwj4>
+References: <20240829093157.2714736-1-carlos.song@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|MN6PR11MB8220:EE_
-X-MS-Office365-Filtering-Correlation-Id: 602a0445-3cd6-4041-943f-08dcd11521ea
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?kSom1jz1WNOnj0ZQ23tn2/wvZFUU6FfzmqPtIejTysuKtrICtDKnP9Ye1ypM?=
- =?us-ascii?Q?6trTDYRP1UixgoZjCzQLff18E6/hfgj78HNI/pLOk8Mpd3erbanJjTnaZrJk?=
- =?us-ascii?Q?n7h5mk5H97I9SxE+95/wGivz4qQjz1vk2gblD8oDzMqO3aGmUoUtlLRjKIof?=
- =?us-ascii?Q?cnVzeEoyuh3QnoGhQe6Lmng17lMMVaq58iQzy1ZdgklC6KcaWbKrZ3qUI03G?=
- =?us-ascii?Q?YN+hNlXULaLnuvf4ZhppTRVnmHmkJO3Thp9LAPw5MvccmuN7/HtQnC4ln94p?=
- =?us-ascii?Q?/4YVRqCBdRfefOZTecz5f8g7NxC9tLolM2MXpBVOFVQnRHbZxScLSlLWPO7Y?=
- =?us-ascii?Q?kksSXHeQ5AbiSn5U4zWBt5s4xLOTuLnrnCfneau9XVXnHbruq14azBJwJpeP?=
- =?us-ascii?Q?2Kj93OcCVsbI5o0xcVBcV7TzbN7XCcpFtfup3ay3/qJuGj46Gd7J9nwMkjvk?=
- =?us-ascii?Q?tiHbsrsQPm0v9EakMsX8S62lgcQ0Mn9pbQnvmsASnMfDi1kyrcMKiI43X8sK?=
- =?us-ascii?Q?uKrh4rZHtBaCtVcLW9J8235xt9xxWtVSSsxEpQIJowr8bB/TyM370hvIKR9p?=
- =?us-ascii?Q?Wp+Mk8UGxezDdOdTrXgqlqd5OXxynfQetQTuzD3TfNOA1vIHR+RQmVvoAnzY?=
- =?us-ascii?Q?QN4xouUk+xkAR/msfEEsKtmMkAVQ353bMrVNdGZGFl5HGTxd8PrN0WrqejtU?=
- =?us-ascii?Q?KgkW3Y6UlZdTJng6PT+Zc7rbIJL9i3BGF6YP5DSmqf4WtFmyA+aKWuVeu7uV?=
- =?us-ascii?Q?lJVQMPE9pNRi5PLFp/T6OU2QSfJ1KjXwvSQThsmImynwyxUQXBPoOGxO2kYt?=
- =?us-ascii?Q?bM7KteBLilOL/vlRRehYlfJ1dHrJ8EgoiO+7U4ON5s3XgVd8PN1gWI3MLFj5?=
- =?us-ascii?Q?0uhkXZJKVKQo/vdkTNpULW3T6QX1D8iMyJwYDuRv2drw1dsveYYultdYpwR8?=
- =?us-ascii?Q?M/Am9CTqJvkc0nOHz7mhVovVW2IkYB/WFBBNyZ3h5crX+i7ibngZZH6r0YQA?=
- =?us-ascii?Q?eLZ60ol2a3eLPLt/foZG1cSt4RsTipqiuZwzmk/zaZgc4DF6fMhJ8zO0XXzA?=
- =?us-ascii?Q?E8klacDiuJW/iVg2x30TRDrJHLW5WY7DA5gl9CQQrOxrHa2+IP3sjMd4B/q8?=
- =?us-ascii?Q?cxAi4Il1BA1ffUFSy8xrb8in7OmLqxRyWbzAjDNXiKOgeS4UeEw45Nwq9q8+?=
- =?us-ascii?Q?yRU1NU6zqh6L8mQAL/2CcPm3l+CCc24RbrvyTs8yPCp2EHj6R0OejH649dyc?=
- =?us-ascii?Q?ow983B6Y7A5hSuUNCvA8eWQqSMs1Hf3N0LK9A6krvm+pcXAT96y5rFkZmEpO?=
- =?us-ascii?Q?m55yrkjecXxUOtEqYsJHIpx4vBMkpthEfTxnrf4XHd/Vog=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ccOfRvZwMhSLFIAo+yi3G9AQF4dvQlsi2dUBfb+mWb+7SlsQaQ8Mrx1olSvI?=
- =?us-ascii?Q?FFfM7DhFQkh9TADeVpOReHFXXhGoxCH9xLJmpWwAbXu/jXfagul9AHb/Dr9p?=
- =?us-ascii?Q?LO6c2HDax1N3lXzZb+GOrDwk3ubelbVoiK5jyknIQjvfGkbG1gLZr2u2DNW7?=
- =?us-ascii?Q?adiKfsez1nMO/GZYqNVQVioF0Innu9J5mz3O7u+Gfyf1JIzIQP1oOUo8kXtZ?=
- =?us-ascii?Q?lARTzS2LZrm7mAZXz7b6tUxVOOHBWZNyXgJ1g2OBYKSXJJewfauVDXF83O/X?=
- =?us-ascii?Q?ARinykGISJRYJ0pqjBZGRRU1jbltPHJd/hNndpSLXFUXcn4vcHtCEtCYjo4X?=
- =?us-ascii?Q?2n0Y0+hjplXMeHUg5L2WXmhk+tjRJ00caT8MTT7u/YjZxpVUFr2g4JDwVDyF?=
- =?us-ascii?Q?bVxGEE1kgfeA5yKmviAAoyANPJqlhxYwkFYPv/nhou0czWG4VrgUMGm3QsvM?=
- =?us-ascii?Q?MFxawn0Aggyl3T6mJ/dWaWWXFdNWh9xri2r4bG7fnKTpzKcn7dZQMNekY0NM?=
- =?us-ascii?Q?wC/VQMuwPnms05Z+GP+pwJEI1dgxbv7MINb17M2Hsc/bQqC8k9E0/tTjcBZQ?=
- =?us-ascii?Q?qzIh1c761aDxMJf5phRDLk0cS3U6d/tceVQlPGmO+jVb+RTB5gMLkHFcQpxF?=
- =?us-ascii?Q?PFzWylQPL0/c5Qlx65wOvO7KeWuLZ1nBs8iaq5A/ouRh10eNDdGihfa8h2u8?=
- =?us-ascii?Q?OUj+/rb0pL3AIjFWMv1nipcaQp0e8TW174af8yMfO5b6mPfdR1fijCsSal6b?=
- =?us-ascii?Q?zKwcLhAk50hnhiWQB3NDBbfW7F3lDKQP4Vl/SUNWE1nNH4fSEsKlHaVWj20f?=
- =?us-ascii?Q?6k5hlhCsplLCOivUPqJCiWbWf6nWvZeVNiMagwQi7mwzgZETP8m7NpvPh7DL?=
- =?us-ascii?Q?vtH48Mj7YfxpLaNuVdZXFBuJlHm9bi/FQ9vDWq+rBVZHZcq1/opE5MvpF+NL?=
- =?us-ascii?Q?wmR/uitJERodZpdnTo8LpQagMB2jR9LYbhWPxnFOzw/O4gs5ITBFr0Cd6z+e?=
- =?us-ascii?Q?mC+xyntcZq+O7g611Aw/cmMkMLwUsJgSvGQwCNoMy2WCfYo/CMr3elty+a8r?=
- =?us-ascii?Q?yp5NiDBYvoSVtoetIVwvsrrHSIe9j9BSULrI++vdWZk9i7IuzfoRgyj2JNwb?=
- =?us-ascii?Q?G92gFGeGHzCNiYs4VYwTGq82hDfDHHDqd5FmP9Twfn1z0QrgWev3Kze2dvdl?=
- =?us-ascii?Q?nA1pAm4UznUyT5p3Hgqup8yf7TZS5bNc4cSwM1yexicCW9zOOXv8Z/985XB8?=
- =?us-ascii?Q?9NxDJAxmRnO/qZfdpjGZNhgonPXW1/ioD0gSRMKd8uhABG4V5WzMzvkz+kr5?=
- =?us-ascii?Q?0oDaCo3BevEq5inJ4YWBvPLn2ITMpnUpMunA/PuXntD//Tg7n3/KnHpFPCX4?=
- =?us-ascii?Q?ShTzFSlWAEUSUS0KCwh3HGKSPZGOG2ECr5IoGAKiZ00gh05aLTIHw+kL3UOu?=
- =?us-ascii?Q?ChKdvpwMN13mj3x46DiWFG9GkhXAYN90sCO5DZPPbcQJLGY4/SqKXYVbFcCD?=
- =?us-ascii?Q?+Q1ZekMleZ7X1lk40nMg3gUAwlK0QY3V8wQpkbcQiOmf4naDzTe8G62XTtI2?=
- =?us-ascii?Q?PbVEN02I7w7oLvaI+Cq1Y34saEAEjxoHbcKAgWJg?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 602a0445-3cd6-4041-943f-08dcd11521ea
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 21:19:47.7382
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TiuQhA1Txg7JYRBbtdBMObfxnwCbt+0d6JAX1oOfaRcLKFwDbpnvstR26HJkUQaJoBdWfVMySHTyX0JjQG187w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8220
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829093157.2714736-1-carlos.song@nxp.com>
 
-Jonathan Cameron wrote:
-> On Sat, 24 Aug 2024 17:07:44 +0800
-> Zijun Hu <zijun_hu@icloud.com> wrote:
-> 
+Hi Carlos,
 
-[snip]
+Thanks for your patch, sorry for having taken so much time, looks
+good, just some nitpicks.
 
-> >  
-> > +struct cxld_match_data {
-> > +	int id;
-> > +	struct device *target_device;
-> > +};
-> > +
-> >  static int match_free_decoder(struct device *dev, void *data)
-> >  {
-> > +	struct cxld_match_data *match_data = data;
-> >  	struct cxl_decoder *cxld;
-> > -	int *id = data;
-> >  
-> >  	if (!is_switch_decoder(dev))
-> >  		return 0;
-> > @@ -805,17 +810,31 @@ static int match_free_decoder(struct device *dev, void *data)
-> >  	cxld = to_cxl_decoder(dev);
-> >  
-> >  	/* enforce ordered allocation */
-> > -	if (cxld->id != *id)
-> > +	if (cxld->id != match_data->id)
-> 
-> Why do we carry on in this case?
-> Conditions are:
-> 1. Start match_data->id == 0
-> 2. First pass cxld->id == 0 (all good) or
->    cxld->id == 1 say (and we skip until we match
->    on cxld->id == 0 (perhaps on the second child if they are
->    ordered (1, 0, 2) etc. 
-> 
-> If we skipped and then matched on second child but it was
-> already in use (so region set), we will increment match_data->id to 1
-> but never find that as it was the one we skipped.
-> 
-> So this can only work if the children are ordered.
-> So if that's the case and the line above is just a sanity check
-> on that, it should be noisier (so an error print) and might
-> as well fail as if it doesn't match all bets are off.
-> 
+...
 
-I've worked through this with Dan and the devices are added in order in
-devm_cxl_enumerate_decoders().
+> diff --git a/drivers/i2c/busses/i2c-imx-lpi2c.c b/drivers/i2c/busses/i2c-imx-lpi2c.c
+> index 976d43f73f38..530ca5d76403 100644
+> --- a/drivers/i2c/busses/i2c-imx-lpi2c.c
+> +++ b/drivers/i2c/busses/i2c-imx-lpi2c.c
+> @@ -8,6 +8,8 @@
+>  #include <linux/clk.h>
+>  #include <linux/completion.h>
+>  #include <linux/delay.h>
+> +#include <linux/dmaengine.h>
+> +#include <linux/dma-mapping.h>
 
-So I don't think there is an issue with converting the code directly.
+please sort in alphabetical order
 
-Sorry for the noise Jijun,
-Ira
+>  #include <linux/err.h>
+>  #include <linux/errno.h>
+>  #include <linux/i2c.h>
+
+...
+
+> +struct lpi2c_imx_dma {
+> +	bool			using_pio_mode;
+> +	u8			rx_cmd_buf_len;
+> +	u8			*dma_buf;
+> +	u16			*rx_cmd_buf;
+> +	unsigned int	dma_len;
+> +	unsigned int	tx_burst_num;
+> +	unsigned int	rx_burst_num;
+> +	unsigned long	dma_msg_flag;
+> +	resource_size_t		phy_addr;
+> +	dma_addr_t		dma_tx_addr;
+> +	dma_addr_t		dma_addr;
+> +	enum dma_data_direction dma_direction;
+> +	struct dma_chan		*chan_tx;
+> +	struct dma_chan		*chan_rx;
+> +};
+
+The alignment here is a bit off
+
+...
+
+> +static bool is_use_dma(struct lpi2c_imx_struct *lpi2c_imx, struct i2c_msg *msg)
+> +{
+> +	if (!lpi2c_imx->can_use_dma)
+> +		return false;
+> +
+> +	/*
+> +	 * When the length of data is less than I2C_DMA_THRESHOLD,
+> +	 * cpu mode is used directly to avoid low performance.
+> +	 */
+> +	if (msg->len < I2C_DMA_THRESHOLD)
+> +		return false;
+> +
+> +	return true;
+
+You could do
+
+	return !(msg->len < I2C_DMA_THRESHOLD);
+
+Just a matter of taste, your choice.
+
+> +}
+> +
+> +static int lpi2c_imx_pio_xfer(struct lpi2c_imx_struct *lpi2c_imx,
+> +				 struct i2c_msg *msg)
+> +{
+> +	int ret;
+> +
+> +	reinit_completion(&lpi2c_imx->complete);
+> +
+> +	if (msg->flags & I2C_M_RD)
+> +		lpi2c_imx_read(lpi2c_imx, msg);
+> +	else
+> +		lpi2c_imx_write(lpi2c_imx, msg);
+> +
+> +	ret = lpi2c_imx_pio_msg_complete(lpi2c_imx);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+
+You could do
+
+	return lpi2c_imx_pio_msg_complete(lpi2c_imx);
+
+Purely taste, your choice, still.
+
+> +}
+
+...
+
+> +static void lpi2c_cleanup_rx_cmd_dma(struct lpi2c_imx_dma *dma)
+> +{
+> +	dmaengine_terminate_sync(dma->chan_tx);
+> +	dma_unmap_single(dma->chan_tx->device->dev, dma->dma_tx_addr,
+> +				dma->rx_cmd_buf_len, DMA_TO_DEVICE);
+
+alignment
+
+> +}
+
+...
+
+> +static int lpi2c_dma_rx_cmd_submit(struct lpi2c_imx_struct *lpi2c_imx)
+> +{
+> +	struct lpi2c_imx_dma *dma = lpi2c_imx->dma;
+> +	struct dma_chan *txchan = dma->chan_tx;
+> +	struct dma_async_tx_descriptor *rx_cmd_desc;
+> +	dma_cookie_t cookie;
+> +
+> +	dma->dma_tx_addr = dma_map_single(txchan->device->dev,
+> +						 dma->rx_cmd_buf,
+> +						 dma->rx_cmd_buf_len, DMA_TO_DEVICE);
+> +	if (dma_mapping_error(txchan->device->dev, dma->dma_tx_addr)) {
+> +		dev_err(&lpi2c_imx->adapter.dev, "dma map failed, use pio\n");
+
+/dma/DMA/ and it's valid for every time you have used "dma".
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	rx_cmd_desc = dmaengine_prep_slave_single(txchan, dma->dma_tx_addr,
+> +				 dma->rx_cmd_buf_len, DMA_MEM_TO_DEV,
+> +				 DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+
+alignment.
+
+> +	if (!rx_cmd_desc) {
+> +		dma_unmap_single(txchan->device->dev, dma->dma_tx_addr,
+> +				 dma->rx_cmd_buf_len, DMA_TO_DEVICE);
+
+put dma_unmap_single() in a goto exit path.
+
+> +		dev_err(&lpi2c_imx->adapter.dev, "dma prep slave sg failed, use pio\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	cookie = dmaengine_submit(rx_cmd_desc);
+> +	if (dma_submit_error(cookie)) {
+> +		dma_unmap_single(txchan->device->dev, dma->dma_tx_addr,
+> +				 dma->rx_cmd_buf_len, DMA_TO_DEVICE);
+> +		dmaengine_desc_free(rx_cmd_desc);
+> +		dev_err(&lpi2c_imx->adapter.dev, "submitting dma failed, use pio\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	dma_async_issue_pending(txchan);
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpi2c_dma_submit(struct lpi2c_imx_struct *lpi2c_imx)
+> +{
+> +	struct lpi2c_imx_dma *dma = lpi2c_imx->dma;
+> +	bool read = dma->dma_msg_flag & I2C_M_RD;
+> +	enum dma_data_direction dir = read ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
+> +	struct dma_chan *chan = read ? dma->chan_rx : dma->chan_tx;
+
+I generally prefer the assignment to be done after the
+declaration. It looks more clear.
+
+> +	struct dma_async_tx_descriptor *desc;
+> +	dma_cookie_t cookie;
+> +
+> +	dma->dma_direction = dir;
+> +	dma->dma_addr = dma_map_single(chan->device->dev,
+> +					     dma->dma_buf,
+> +					     dma->dma_len, dir);
+
+alignment is off.
+
+> +	if (dma_mapping_error(chan->device->dev, dma->dma_addr)) {
+> +		dev_err(&lpi2c_imx->adapter.dev, "dma map failed, use pio\n");
+
+/dma/DMA/
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	desc = dmaengine_prep_slave_single(chan, dma->dma_addr,
+> +					 dma->dma_len, read ?
+> +					 DMA_DEV_TO_MEM : DMA_MEM_TO_DEV,
+> +					 DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+
+alignment off.
+
+> +	if (!desc) {
+> +		dev_err(&lpi2c_imx->adapter.dev, "dma prep slave sg failed, use pio\n");
+> +		lpi2c_dma_unmap(dma);
+
+put lpi2c_dma_unmape under a goto exit path.
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	reinit_completion(&lpi2c_imx->complete);
+> +	desc->callback = lpi2c_dma_callback;
+> +	desc->callback_param = (void *)lpi2c_imx;
+
+the cast is not needed.
+
+> +	cookie = dmaengine_submit(desc);
+> +	if (dma_submit_error(cookie)) {
+> +		dev_err(&lpi2c_imx->adapter.dev, "submitting dma failed, use pio\n");
+> +		lpi2c_dma_unmap(dma);
+> +		dmaengine_desc_free(desc);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Can't switch to PIO mode when DMA have started transfer */
+> +	dma->using_pio_mode = false;
+> +
+> +	dma_async_issue_pending(chan);
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpi2c_imx_find_max_burst_num(unsigned int fifosize, unsigned int len)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = fifosize / 2; i > 0; i--) {
+> +		if (!(len % i))
+> +			break;
+> +	}
+
+braces are not needed
+
+> +
+> +	return i;
+> +}
+> +
+> +/*
+> + * For a highest DMA efficiency, tx/rx burst number should be calculated according
+> + * to the FIFO depth.
+> + */
+> +static void lpi2c_imx_dma_burst_num_calculate(struct lpi2c_imx_struct *lpi2c_imx)
+> +{
+> +	struct lpi2c_imx_dma *dma = lpi2c_imx->dma;
+> +	unsigned int cmd_num;
+> +
+> +	if (dma->dma_msg_flag & I2C_M_RD) {
+> +		/*
+> +		 * One RX cmd word can trigger DMA receive no more than 256 bytes.
+> +		 * The number of RX cmd words should be calculated based on the data
+> +		 * length.
+> +		 */
+> +		cmd_num = DIV_ROUND_UP(dma->dma_len, CHUNK_DATA);
+> +		dma->tx_burst_num = lpi2c_imx_find_max_burst_num(lpi2c_imx->txfifosize,
+> +				 cmd_num);
+> +		dma->rx_burst_num = lpi2c_imx_find_max_burst_num(lpi2c_imx->rxfifosize,
+> +				 dma->dma_len);
+> +	} else {
+> +		dma->tx_burst_num = lpi2c_imx_find_max_burst_num(lpi2c_imx->txfifosize,
+> +				 dma->dma_len);
+
+Alignment is off.
+
+> +	}
+> +}
+
+...
+
+> +/*
+> + * When lpi2c in TX DMA mode we can use one DMA TX channel to write
+
+/in/is in/
+
+> + * data word into TXFIFO, but in RX DMA mode it is different.
+> + *
+> + * LPI2C MTDR register is a command data and transmit data register.
+
+/LPI2C/The LPI2C/
+
+> + * Bit 8-10 is command data field and Bit 0-7 is transmit data field.
+
+/Bit 8-10 is/Bits 8-10 are the/
+/Bit 0-7 is/ Bits 0-7 are the/
+
+> + * When the LPI2C master needs to read data, the data number to read
+
+/data number/number of bytes/
+
+> + * should be set in transmit data field and RECV_DATA should be set
+> + * into the command data field to receive (DATA[7:0] + 1) bytes. The
+> + * recv data command word is made of RECV_DATA in command data field
+
+/in command/in the command/
+
+> + * and the data number to read in transmit data field. When the length
+
+/data number/number of bytes/
+
+> + * of data that needs to be read exceeds 256 bytes, recv data command
+
+/data that needs to be read/data to be read/
+
+> + * word needs to be written to TXFIFO multiple times.
+> + *
+> + * So when in RX DMA mode, the TX channel also needs to be configured
+> + * additionally to send RX command words and the RX command word need
+
+/additionally//
+/need/must/
+
+> + * be set in advance before transmitting.
+> + */
+> +static int lpi2c_imx_dma_xfer(struct lpi2c_imx_struct *lpi2c_imx,
+> +			 struct i2c_msg *msg)
+
+The alignemnt here is off (did you run checkpatch.pl?)
+
+> +{
+> +	struct lpi2c_imx_dma *dma = lpi2c_imx->dma;
+> +	int ret;
+> +
+> +	/* When DMA mode failed before transferring, CPU mode can be used. */
+
+/failed/fails/
+
+> +	dma->using_pio_mode = true;
+> +
+> +	dma->dma_len = msg->len;
+> +	dma->dma_msg_flag = msg->flags;
+> +	dma->dma_buf = i2c_get_dma_safe_msg_buf(msg, I2C_DMA_THRESHOLD);
+> +	if (!dma->dma_buf)
+> +		return -ENOMEM;
+> +
+> +	ret = lpi2c_dma_config(lpi2c_imx);
+> +	if (ret) {
+> +		dev_err(&lpi2c_imx->adapter.dev, "DMA Config Fail, error %d\n", ret);
+
+Please rephrase as:
+
+	... "Failed to configure DMA (%d)\n", ret);
+
+> +		goto disable_dma;
+> +	}
+> +
+> +	lpi2c_dma_enable(lpi2c_imx);
+> +
+> +	ret = lpi2c_dma_submit(lpi2c_imx);
+> +	if (ret) {
+> +		dev_err(&lpi2c_imx->adapter.dev, "DMA submit Fail, error %d\n", ret);
+
+Please rephrase as:
+
+	... "DMA submission failed (%d)\n", ret);
+
+> +		goto disable_dma;
+> +	}
+> +
+> +	if (dma->dma_msg_flag & I2C_M_RD) {
+> +		ret = lpi2c_imx_alloc_rx_cmd_buf(lpi2c_imx);
+> +		if (ret) {
+> +			lpi2c_cleanup_dma(dma);
+> +			goto disable_dma;
+> +		}
+> +
+> +		ret = lpi2c_dma_rx_cmd_submit(lpi2c_imx);
+> +		if (ret) {
+> +			lpi2c_cleanup_dma(dma);
+> +			goto disable_dma;
+> +		}
+> +	}
+> +
+> +	ret = lpi2c_imx_dma_msg_complete(lpi2c_imx);
+> +	if (ret) {
+> +		if (dma->dma_msg_flag & I2C_M_RD)
+> +			lpi2c_cleanup_rx_cmd_dma(dma);
+> +		lpi2c_cleanup_dma(dma);
+> +		goto disable_dma;
+> +	}
+> +
+> +	/* When meet NACK in transfer, cleanup all DMA transfer */
+
+Please rephrase as:
+
+/* When encountering NACK in transfer, clean up all DMA transfers */
+
+> +	if ((readl(lpi2c_imx->base + LPI2C_MSR) & MSR_NDF) && !ret) {
+> +		if (dma->dma_msg_flag & I2C_M_RD)
+> +			lpi2c_cleanup_rx_cmd_dma(dma);
+> +		lpi2c_cleanup_dma(dma);
+> +		ret = -EIO;
+> +		goto disable_dma;
+> +	}
+> +
+> +	if (dma->dma_msg_flag & I2C_M_RD)
+> +		dma_unmap_single(dma->chan_tx->device->dev, dma->dma_tx_addr,
+> +					 dma->rx_cmd_buf_len, DMA_TO_DEVICE);
+> +	lpi2c_dma_unmap(dma);
+> +
+
+you could add here:
+
+disable_cleanup_dma:
+	lpi2c_cleanup_dma(dma);
+
+and goto here instead of calling lpi2c_cleanup_dma(dma) at each
+phase.
+
+> +disable_dma:
+> +	/* Disable I2C DMA function */
+> +	writel(0, lpi2c_imx->base + LPI2C_MDER);
+> +
+> +	if (dma->dma_msg_flag & I2C_M_RD)
+> +		kfree(dma->rx_cmd_buf);
+> +
+> +	if (ret)
+> +		i2c_put_dma_safe_msg_buf(dma->dma_buf, msg, false);
+> +	else
+> +		i2c_put_dma_safe_msg_buf(dma->dma_buf, msg, true);
+
+I could leave a blank line here to put some space between
+if...else and return.
+
+> +	return ret;
+> +}
+
+...
+
+Thanks,
+Andi
 
