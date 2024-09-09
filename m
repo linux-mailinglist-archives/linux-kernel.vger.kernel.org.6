@@ -1,369 +1,106 @@
-Return-Path: <linux-kernel+bounces-321759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3866971EFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:21:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85055971F02
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D391F2373D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:21:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32EBC1F23595
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D94B13C3DD;
-	Mon,  9 Sep 2024 16:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934A51422B1;
+	Mon,  9 Sep 2024 16:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UPZ+WiDk"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BGd443is"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4C74963A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85C88528F;
+	Mon,  9 Sep 2024 16:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725898900; cv=none; b=nN/Drb81zhpF2fqy5mV5pqC73yyNbra0MIJjGSggpjB3qJh+YIpUyiJE7OoQJwncEYHfPiZcVtPLKu5tSJy6Cva5Ul8fzRmbUvnfWkd+gQJeugmkCEwVwg4x1Ru0R2GO+bBz5gokZhyS6pN0MDppH+2v6nm2TfRxACUEDsYtm6A=
+	t=1725899013; cv=none; b=Ed7yAxZTp1JVfFkWn4XB/o02aFwU++d+A5WrqvKlbcaup1Wl1yH8r7DAzjt46hAgF99sLOVux30YbuzYaRzvSjEpR6Uwq16d67CTR9n831PVBPSbbT4cePbOVDeQrcdpzna2kzFjiD8UkAjhe8Os110oYpSua9EDKnJFJ8tqpuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725898900; c=relaxed/simple;
-	bh=uuq0C4U5f/Bzf4EsN7Tau2CdpeRDI0QD/ltRYC5QK+8=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=fJXT2pjD7OPoZ1f2kwxWTnw8yUEADCOH1amjYJjPJ3SRkEhrBR2D+z9iSOWVkkwUFUgsGOu9SNNjHJDIm2Us9eYr2LP8uN7C6O1pVeZxzEXhD8u8gkHT3fY8lhGFcJgMs/I+Y3Wn58ZPoZciRXPR+RvMwtMUHynVLlZ/vRnJ/+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UPZ+WiDk; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1725899013; c=relaxed/simple;
+	bh=WRwiIPHmTeJtjKiM0uEFDyOO1OuvjK+ZW7u4+BlRtL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JVUrHhzms+/d8acD9T7lveb7/4d0PcPxYHGSDLTZFMtw/urxnV6AJE1mBSJs/Qb+4/jCCiy0HKbsqCZdAD75lOWPXL3+HPF8aUCrrB2mo/WlK+HT0frbJDjZSFhPLaS+HhXFm+EeHgZMGoDdTqwsnpV0W5xdoZIHWan1uuYD8kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BGd443is; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C65C4CEC7;
+	Mon,  9 Sep 2024 16:23:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725899012;
+	bh=WRwiIPHmTeJtjKiM0uEFDyOO1OuvjK+ZW7u4+BlRtL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BGd443is2ZWEkDiDKn/Cu0D8OJTtiCl8vRfF8REtAROexcxqmZZ/bwuz3AcVcnwwL
+	 xU2YvsX7V/xRi9GrYQDmd/Bh2aLGKg4irR00Jt7MUt7GNUxClmt/cMrjwG5R8tson0
+	 giyrOqVMWMaN7y4j1lzV3o0Chbxj9d4fXYkVqhQs=
+Date: Mon, 9 Sep 2024 18:23:28 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] soundwire: stream: Revert "soundwire: stream: fix
+ programming slave ports for non-continous port maps"
+Message-ID: <2024090943-retiree-print-14ba@gregkh>
+References: <20240904145228.289891-1-krzysztof.kozlowski@linaro.org>
+ <Zt8H530FkqBMiYX+@opensource.cirrus.com>
+ <8462d322-a40a-4d6c-99c5-3374d7f3f3a0@linux.intel.com>
+ <adb3d03f-0cd2-47a7-9696-bc2e28d0e587@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725898896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7Da/Nmr/FA0UMU9mIgOfNoroXS/egxOOczdI7Qzrbo0=;
-	b=UPZ+WiDk2adEvDlHYo0VjAS3mDtR5RMrhbr+gTui0l2b/8KgntyFWv94zYT/Io0zjW3C4a
-	LQDV0UHzLhU5gKSVwdTHDcAb3R45Zw38uOzb0V5iE9r8iMATYr91bdJdTn97BT6Dev3KVr
-	+MjwdlEjWNR04MK6xkM4OAzxVtSEmqo=
-Date: Mon, 09 Sep 2024 16:21:33 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: jeff.xie@linux.dev
-Message-ID: <4aeb59e2ea195542458b069be4afb5e2c53c8b55@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH v2] ftrace: Get the true parent ip for function tracer
-To: "Masami Hiramatsu" <mhiramat@kernel.org>
-Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- xiehuan09@gmail.com
-In-Reply-To: <20240910001326.87f27e6b312f1d956cf352a2@kernel.org>
-References: <20240821233021.2785584-1-jeff.xie@linux.dev>
- <20240910001326.87f27e6b312f1d956cf352a2@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <adb3d03f-0cd2-47a7-9696-bc2e28d0e587@linaro.org>
 
-September 9, 2024 at 11:13 PM, "Masami Hiramatsu" <mhiramat@kernel.org> w=
-rote:
+On Mon, Sep 09, 2024 at 06:08:14PM +0200, Krzysztof Kozlowski wrote:
+> On 09/09/2024 17:45, Pierre-Louis Bossart wrote:
+> > 
+> > 
+> > On 9/9/24 16:36, Charles Keepax wrote:
+> >> On Wed, Sep 04, 2024 at 04:52:28PM +0200, Krzysztof Kozlowski wrote:
+> >>> This reverts commit ab8d66d132bc8f1992d3eb6cab8d32dda6733c84 because it
+> >>> breaks codecs using non-continuous masks in source and sink ports.  The
+> >>> commit missed the point that port numbers are not used as indices for
+> >>> iterating over prop.sink_ports or prop.source_ports.
+> >>>
+> >>> Soundwire core and existing codecs expect that the array passed as
+> >>> prop.sink_ports and prop.source_ports is continuous.  The port mask still
+> >>> might be non-continuous, but that's unrelated.
+> >>>
+> >>> Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+> >>> Closes: https://lore.kernel.org/all/b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com/
+> >>> Fixes: ab8d66d132bc ("soundwire: stream: fix programming slave ports for non-continous port maps")
+> >>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >>>
+> >>> ---
+> >>
+> >> Would be good to merge this as soon as we can, this is causing
+> >> soundwire regressions from rc6 onwards.
+> > 
+> > the revert also needs to happen in -stable. 6.10.8 is broken as well.
+> 
+> It will happen. You do not need to Cc-stable (and it will not help, will
+> not be picked), because this is marked as fix for existing commit.
 
-Hi Masami,
+No, "Fixes:" tags only do not guarantee anything going to stable, you
+have to explicitly tag it Cc: stable to do so, as per the documentation.
 
+Yes, we often pick up "Fixes:" only tags, when we have the time, but
+again, never guaranteed at all.
 
->=20
->=20On Thu, 22 Aug 2024 07:30:21 +0800
->=20
->=20Jeff Xie <jeff.xie@linux.dev> wrote:
->=20
->=20>=20
->=20> Currently, when using both function tracer and function graph simul=
-taneously,
-> >=20
->=20>  it is found that function tracer sometimes captures a fake parent =
-ip(return_to_handler)
-> >=20
->=20>  instead of the true parent ip.
-> >=20
->=20>=20=20
->=20>=20
->=20>  This issue is easy to reproduce. Below are my reproduction steps:
-> >=20
->=20>=20=20
->=20>=20
->=20>  jeff-labs:~/bin # ./trace-net.sh
-> >=20
->=20>=20=20
->=20>=20
->=20>  jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trac=
-e | grep return_to_handler
-> >=20
->=20>  trace-net.sh-405 [001] ...2. 31.859501: avc_has_perm+0x4/0x190 <-r=
-eturn_to_handler+0x0/0x40
-> >=20
->=20>  trace-net.sh-405 [001] ...2. 31.859503: simple_setattr+0x4/0x70 <-=
-return_to_handler+0x0/0x40
-> >=20
->=20>  trace-net.sh-405 [001] ...2. 31.859503: truncate_pagecache+0x4/0x6=
-0 <-return_to_handler+0x0/0x40
-> >=20
->=20>  trace-net.sh-405 [001] ...2. 31.859505: unmap_mapping_range+0x4/0x=
-140 <-return_to_handler+0x0/0x40
-> >=20
->=20>  trace-net.sh-405 [001] ...3. 31.859508: _raw_spin_unlock+0x4/0x30 =
-<-return_to_handler+0x0/0x40
-> >=20
->=20>  [...]
-> >=20
->=20
-> Can you also add=20
+thanks,
 
-Was=20there more you intended to say after this?
-
->=20
->=20>=20
->=20> The following is my simple trace script:
-> >=20
->=20>=20=20
->=20>=20
->=20>  <snip>
-> >=20
->=20>  jeff-labs:~/bin # cat ./trace-net.sh
-> >=20
->=20>  TRACE_PATH=3D"/sys/kernel/debug/tracing"
-> >=20
->=20>=20=20
->=20>=20
->=20>  set_events() {
-> >=20
->=20>  echo 1 > $1/events/net/enable
-> >=20
->=20>  echo 1 > $1/events/tcp/enable
-> >=20
->=20>  echo 1 > $1/events/sock/enable
-> >=20
->=20>  echo 1 > $1/events/napi/enable
-> >=20
->=20>  echo 1 > $1/events/fib/enable
-> >=20
->=20>  echo 1 > $1/events/neigh/enable
-> >=20
->=20>  }
-> >=20
->=20>=20=20
->=20>=20
->=20>  set_events ${TRACE_PATH}
-> >=20
->=20>  echo 1 > ${TRACE_PATH}/options/sym-offset
-> >=20
->=20>  echo 1 > ${TRACE_PATH}/options/funcgraph-tail
-> >=20
->=20>  echo 1 > ${TRACE_PATH}/options/funcgraph-proc
-> >=20
->=20>  echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
-> >=20
->=20>=20=20
->=20>=20
->=20>  echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
-> >=20
->=20>  echo function_graph > ${TRACE_PATH}/current_tracer
-> >=20
->=20>=20=20
->=20>=20
->=20>  INSTANCE_FOO=3D${TRACE_PATH}/instances/foo
-> >=20
->=20>  if [ ! -e $INSTANCE_FOO ]; then
-> >=20
->=20>  mkdir ${INSTANCE_FOO}
-> >=20
->=20>  fi
-> >=20
->=20>  set_events ${INSTANCE_FOO}
-> >=20
->=20>  echo 1 > ${INSTANCE_FOO}/options/sym-offset
-> >=20
->=20>  echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
-> >=20
->=20>  echo function > ${INSTANCE_FOO}/current_tracer
-> >=20
->=20>=20=20
->=20>=20
->=20>  echo 1 > ${TRACE_PATH}/tracing_on
-> >=20
->=20>  echo 1 > ${INSTANCE_FOO}/tracing_on
-> >=20
->=20>=20=20
->=20>=20
->=20>  echo > ${TRACE_PATH}/trace
-> >=20
->=20>  echo > ${INSTANCE_FOO}/trace
-> >=20
->=20>  </snip>
-> >=20
->=20>=20=20
->=20>=20
->=20>  Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
-> >=20
->=20>  ---
-> >=20
->=20>  v2:
-> >=20
->=20>  - Adding __always_inline to function_get_true_parent_ip suggested =
-by Steve
-> >=20
->=20>=20=20
->=20>=20
->=20>  kernel/trace/trace_functions.c | 18 ++++++++++++++++++
-> >=20
->=20>  1 file changed, 18 insertions(+)
-> >=20
->=20>=20=20
->=20>=20
->=20>  diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_f=
-unctions.c
-> >=20
->=20>  index 3b0cea37e029..d989e927c898 100644
-> >=20
->=20>  --- a/kernel/trace/trace_functions.c
-> >=20
->=20>  +++ b/kernel/trace/trace_functions.c
-> >=20
->=20>  @@ -176,6 +176,19 @@ static void function_trace_start(struct trace=
-_array *tr)
-> >=20
->=20>  tracing_reset_online_cpus(&tr->array_buffer);
-> >=20
->=20>  }
-> >=20
->=20>=20=20
->=20>=20
->=20>  +static __always_inline unsigned long
-> >=20
->=20>  +function_get_true_parent_ip(unsigned long parent_ip, struct ftrac=
-e_regs *fregs)
-> >=20
->=20>  +{
-> >=20
->=20>  + unsigned long true_parent_ip;
-> >=20
->=20>  + int idx =3D 0;
-> >=20
->=20>  +
-> >=20
->=20>  + true_parent_ip =3D parent_ip;
-> >=20
->=20>  + if (unlikely(parent_ip =3D=3D (unsigned long)&return_to_handler)=
-)
-> >=20
->=20>  + true_parent_ip =3D ftrace_graph_ret_addr(current, &idx, parent_i=
-p,
-> >=20
->=20>  + (unsigned long *)fregs->regs.sp);
-> >=20
->=20>  + return true_parent_ip;
-> >=20
->=20>  +}
-> >=20
->=20
-> Can this work without CONFIG_FUNCTION_GRAPH_TRACER? Maybe it cause a bu=
-ild error
->=20
->=20because return_to_handler is not defined.
->=20
->=20Could you check it?
-
-
-I believed I had checked it before, but I actually found a build error. I=
- will fix it. ;-)
-
-
->=20
->=20Thank you,
->=20
->=20>=20
->=20> +
-> >=20
->=20>  static void
-> >=20
->=20>  function_trace_call(unsigned long ip, unsigned long parent_ip,
-> >=20
->=20>  struct ftrace_ops *op, struct ftrace_regs *fregs)
-> >=20
->=20>  @@ -193,6 +206,8 @@ function_trace_call(unsigned long ip, unsigned=
- long parent_ip,
-> >=20
->=20>  if (bit < 0)
-> >=20
->=20>  return;
-> >=20
->=20>=20=20
->=20>=20
->=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
-> >=20
->=20>  +
-> >=20
->=20>  trace_ctx =3D tracing_gen_ctx();
-> >=20
->=20>=20=20
->=20>=20
->=20>  cpu =3D smp_processor_id();
-> >=20
->=20>  @@ -241,6 +256,7 @@ function_stack_trace_call(unsigned long ip, un=
-signed long parent_ip,
-> >=20
->=20>  * recursive protection is performed.
-> >=20
->=20>  */
-> >=20
->=20>  local_irq_save(flags);
-> >=20
->=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
-> >=20
->=20>  cpu =3D raw_smp_processor_id();
-> >=20
->=20>  data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
-> >=20
->=20>  disabled =3D atomic_inc_return(&data->disabled);
-> >=20
->=20>  @@ -309,6 +325,7 @@ function_no_repeats_trace_call(unsigned long i=
-p, unsigned long parent_ip,
-> >=20
->=20>  if (bit < 0)
-> >=20
->=20>  return;
-> >=20
->=20>=20=20
->=20>=20
->=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
-> >=20
->=20>  cpu =3D smp_processor_id();
-> >=20
->=20>  data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
-> >=20
->=20>  if (atomic_read(&data->disabled))
-> >=20
->=20>  @@ -356,6 +373,7 @@ function_stack_no_repeats_trace_call(unsigned =
-long ip, unsigned long parent_ip,
-> >=20
->=20>  * recursive protection is performed.
-> >=20
->=20>  */
-> >=20
->=20>  local_irq_save(flags);
-> >=20
->=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
-> >=20
->=20>  cpu =3D raw_smp_processor_id();
-> >=20
->=20>  data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
-> >=20
->=20>  disabled =3D atomic_inc_return(&data->disabled);
-> >=20
->=20>  --=20
->=20>=20
->=20>  2.34.1
-> >=20
->=20
-> --=20
->=20
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
->
+greg k-h
 
