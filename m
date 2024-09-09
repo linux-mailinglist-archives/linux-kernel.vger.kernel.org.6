@@ -1,161 +1,255 @@
-Return-Path: <linux-kernel+bounces-321209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B14099715E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:59:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D68E9715D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22BF0B2579E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:59:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 246151F24139
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E411B5803;
-	Mon,  9 Sep 2024 10:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF861B5313;
+	Mon,  9 Sep 2024 10:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="SDq3bFHz"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qffQQga7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AC51B5338;
-	Mon,  9 Sep 2024 10:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2EC1B4C4A;
+	Mon,  9 Sep 2024 10:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725879547; cv=none; b=Yz0JrCEO7FzICPG9ka5b0yro6DqOL0RkxJuEdtyfzQ02VBER3vu6y40isAjlblNjFLXDyX8zeT14TGIuExNW7rIMrO2xqwK0BP74dZfHav0gJG7bDGV1U5SdVGEmWQCXwc53Xu6ChZhDwZISMc61FAdEofDZsN6181mxnyw6ces=
+	t=1725879510; cv=none; b=gh5eUuH3bIiJ0ScEp+YDPeQ7Ql438CXuHS9wGP8a+D1RAirNHeQN577i3HA5e06uk0bcpLqAD78SUEA89ilgW0KnOA9ncIkcLImHlcr6jhNhwaMIlA/JDeQjUX5ib/1RJk4wIlby5eH9tWKZR4Cy4B/mFOy0rQ1JTK++L2U5Xug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725879547; c=relaxed/simple;
-	bh=t3Rf1MeA3cyYGLppiLzQ0ZvIDTirQffgCL6XpYhVB3A=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ISppXEl8Y+72D0kaAacWMPr14bT4NVvoTeCQdr5s0AzOFvDVAWrxms6bDTb6gGP0KHuZ+Fgq6zZ3nY5qBpM+pMzZ9W+15W4xgrfNbgrpyMvb94+TJfFoFW+OvUpPgEfE1uYGjLSZUjYx3Q+fO4OAx08KAV5TlbEKRBMsbJ1sSMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=SDq3bFHz; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725879544; x=1757415544;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=t3Rf1MeA3cyYGLppiLzQ0ZvIDTirQffgCL6XpYhVB3A=;
-  b=SDq3bFHz6+9/tsurpgKQYGC20ycnERx4265rHDSiNsLsnnBiFAV7mI+j
-   J1AeJGsmiLLBy66Nf4ykskXmFaHlmshh/QQsdakwPW0Y2ZhiRPLqDwzQP
-   Yviw9WmvvHChgqMQ0elY4TNr3VgvaaQk9hUJKQKs8qmJMwPrVqalnfL57
-   yW5S1gFpb5LXNfCzG8SqAVBUCxF+iQF7lTGALBRzumazXhYn7kNW7Xo6o
-   wMFsuijGGjTvb5+0F486ANFD915dfsFbneS8fero6tTJMAMfKrQHr66e8
-   TrUZ9eIzBkOls82RORqN02AVN3wdRWCNqsJ9eU8VHGGieibxT1+qdBiof
-   Q==;
-X-CSE-ConnectionGUID: Fq4UIs45Smiz1mW+q5x7cA==
-X-CSE-MsgGUID: e+e1WZbtSqmzJSCwPJBKhA==
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="asc'?scan'208";a="34626940"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 03:59:03 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 9 Sep 2024 03:58:38 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Mon, 9 Sep 2024 03:58:36 -0700
-Date: Mon, 9 Sep 2024 11:58:04 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Rob Herring <robh@kernel.org>
-CC: Conor Dooley <conor@kernel.org>, <devicetree@vger.kernel.org>,
-	<cyril.jean@microchip.com>, <valentina.fernandezalanis@microchip.com>,
-	<nitin.deshpande@microchip.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC v1] dt-bindings: add IP versioning document for Microchip
- FPGAs
-Message-ID: <20240909-fernlike-thickness-98b8c0566a0a@wendy>
-References: <20240830-culinary-cautious-2c2c19902dcb@spud>
- <20240903145943.GA1002295-robh@kernel.org>
+	s=arc-20240116; t=1725879510; c=relaxed/simple;
+	bh=uziYmtq37+Z6zrJILw3P2Hf7wc6u5U+5m+2Q4a9lW0E=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Lqd1WjuTcRdTb28l24jk4wAnF4pUc3EWCzh2cxwwfzO96o3m1JQDRYStL8bfcn5e/u8MwBLWep2zFWd/ddL8tXr4Sk6P+SpM2SsobdWGqo2wUnMc8GOcK57wt0dPWoslLSHepa1ZekWWAYxNWRKNG4T9miWQHRjbIejpER3IRNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qffQQga7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90409C4CEC5;
+	Mon,  9 Sep 2024 10:58:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725879509;
+	bh=uziYmtq37+Z6zrJILw3P2Hf7wc6u5U+5m+2Q4a9lW0E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qffQQga7/SG35bqfaVeksLac24dsmrxzJxAEEqumjUCyUf4Gj+5yMly0tKAWri7Lq
+	 LGH9/6BQe2VBgsp6ho6ZubAwbpbm+FEM7L381+GytW+K/6lNBLHYWhc183KB02VlPj
+	 IHPsl4HNopDwU0HLtJjq0Yk/6pIW8RXkSYOsi55m8Al1S/+nouoGCTwu3+V2Lm7NK7
+	 YAeH/56EdSrhWwIXIMJeJmHuE/fTVHl5qq1FrueLhcoL9EMJTnbedF2/2ngDAjrubn
+	 uocnuJ0s89oAUunHYLfDHCVONaMJshQKyPNPEnwbTLtH7X5KSjtSnGYXVwIo8Ykk2T
+	 VVypRZWtxyBPA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1snc6D-00B0FE-OV;
+	Mon, 09 Sep 2024 11:58:27 +0100
+Date: Mon, 09 Sep 2024 11:58:04 +0100
+Message-ID: <865xr5856r.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anastasia Belova <abelova@astralinux.ru>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: KVM: prevent overflow in inject_abt64
+In-Reply-To: <20240909103828.16699-2-abelova@astralinux.ru>
+References: <20240909103828.16699-1-abelova@astralinux.ru>
+	<20240909103828.16699-2-abelova@astralinux.ru>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KAW/k6vNVrLCa629"
-Content-Disposition: inline
-In-Reply-To: <20240903145943.GA1002295-robh@kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: abelova@astralinux.ru, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
---KAW/k6vNVrLCa629
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[dropping Christoffer and Matt from the list, as these addresses are
+pretty obsolete and I doubt they actually care]
 
-On Tue, Sep 03, 2024 at 09:59:43AM -0500, Rob Herring wrote:
-> On Fri, Aug 30, 2024 at 05:00:40PM +0100, Conor Dooley wrote:
-> > From: Conor Dooley <conor.dooley@microchip.com>
-> >=20
-> > This is a pretty rough document I conjured up in 5 minutes, to document
-> > my expectations for compatible strings for both our FPGA IP blocks and
-> > reference designs that we ship, a la the one that exists for SiFive IPs.
-> > There's been some internal conversations lately about this naming etc,
-> > so good to have something written down.
-> >=20
-> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> > ---
-> > cc: cyril.jean@microchip.com
-> > CC: valentina.fernandezalanis@microchip.com
-> > CC: nitin.deshpande@microchip.com
-> > CC: Rob Herring <robh@kernel.org>
-> > CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> > CC: Conor Dooley <conor+dt@kernel.org>
-> > CC: devicetree@vger.kernel.org
-> > CC: linux-kernel@vger.kernel.org
-> > ---
-> >  .../bindings/microchip/ip-versioning.txt      | 34 +++++++++++++++++++
-> >  1 file changed, 34 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/microchip/ip-vers=
-ioning.txt
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/microchip/ip-versioning.=
-txt b/Documentation/devicetree/bindings/microchip/ip-versioning.txt
-> > new file mode 100644
-> > index 000000000000..4a4e0e74c4e6
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/microchip/ip-versioning.txt
-> > @@ -0,0 +1,34 @@
-> > +Devicetree compatible string versioning for Microchip FPGA IP blocks a=
-nd reference designs
-> > +
-> > +This document describes the versioning guidelines for compatible strin=
-gs
-> > +used on Microchip FPGA IP blocks and reference designs.
-> > +
-> > +IP block-specific compatible strings are in the form:
-> > +"microchip,<ip-block-name>-rtl-v<major version number>"
-> > +or optionally:
-> > +"microchip,<ip-block-name>-rtl-v<major version number>.<minor version =
-number>"
-> > +
-> > +<ip-block-name> should be the name of the IP in Libero's IP catalog.
-> > +In most cases a major version should be sufficient, as breaking change=
-s are
-> > +intended to be accompanied by a version update, but if not, the option=
-al minor
-> > +version should be used,
->=20
-> Please cover where do version numbers come from?
+Anastasia,
 
-=46rom the IP itself, it's either listed in the catalog entry or in the
-information for the instance. I'll have to double check exactly where it
-can be found, but that is the source.
+On Mon, 09 Sep 2024 11:38:27 +0100,
+Anastasia Belova <abelova@astralinux.ru> wrote:
+> 
+> ESR_ELx_EC_IABT_LOW << ESR_ELx_EC_SHIFT = 0x20 << 26.
+> ESR_ELx_EC_IABT_CUR << ESR_ELx_EC_SHIFT = 0x21 << 26.
+> There operations' results are int with 1 in 32th bit.
+> While casting these values into u64 (esr is u64) 1
+> fills 32 highest bits.
+> 
+> Add explicit casting to prevent it.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: aa8eff9bfbd5 ("arm64: KVM: fault injection into a guest")
+> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+> ---
+>  arch/arm64/kvm/inject_fault.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/inject_fault.c b/arch/arm64/kvm/inject_fault.c
+> index a640e839848e..b6b2cfff6629 100644
+> --- a/arch/arm64/kvm/inject_fault.c
+> +++ b/arch/arm64/kvm/inject_fault.c
+> @@ -74,9 +74,9 @@ static void inject_abt64(struct kvm_vcpu *vcpu, bool is_iabt, unsigned long addr
+>  	 * an AArch32 fault, it means we managed to trap an EL0 fault.
+>  	 */
+>  	if (is_aarch32 || (cpsr & PSR_MODE_MASK) == PSR_MODE_EL0t)
+> -		esr |= (ESR_ELx_EC_IABT_LOW << ESR_ELx_EC_SHIFT);
+> +		esr |= ((u64)ESR_ELx_EC_IABT_LOW << ESR_ELx_EC_SHIFT);
+>  	else
+> -		esr |= (ESR_ELx_EC_IABT_CUR << ESR_ELx_EC_SHIFT);
+> +		esr |= ((u64)ESR_ELx_EC_IABT_CUR << ESR_ELx_EC_SHIFT);
+>  
+>  	if (!is_iabt)
+>  		esr |= ESR_ELx_EC_DABT_LOW << ESR_ELx_EC_SHIFT;
 
---KAW/k6vNVrLCa629
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks for this. Although correct, this is a point fix that leaves
+plenty of opportunities for problems.
 
------BEGIN PGP SIGNATURE-----
+I'd rather you update all the ESR_ELx_EC_* constants to be defined as
+UL(0x..) instead of (0x..), which will allow us to forget this
+forever. Something like this (based on my working tree and won't apply
+on upstream, but you will hopefully get the idea):
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZt7UuwAKCRB4tDGHoIJi
-0i3pAQDYB/GCqhU85G2zrGx98WK2fKYBVhbIFiyGAGjtzR8LwwD/eWvsdSSzEhvW
-H33lggGHia//bGtutzSr7fY6MIbRjwE=
-=iJ0Z
------END PGP SIGNATURE-----
+diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
+index cc1b0ec7a51be..47799a7f95cf8 100644
+--- a/arch/arm64/include/asm/esr.h
++++ b/arch/arm64/include/asm/esr.h
+@@ -10,64 +10,64 @@
+ #include <asm/memory.h>
+ #include <asm/sysreg.h>
+ 
+-#define ESR_ELx_EC_UNKNOWN	(0x00)
+-#define ESR_ELx_EC_WFx		(0x01)
++#define ESR_ELx_EC_UNKNOWN	UL(0x00)
++#define ESR_ELx_EC_WFx		UL(0x01)
+ /* Unallocated EC: 0x02 */
+-#define ESR_ELx_EC_CP15_32	(0x03)
+-#define ESR_ELx_EC_CP15_64	(0x04)
+-#define ESR_ELx_EC_CP14_MR	(0x05)
+-#define ESR_ELx_EC_CP14_LS	(0x06)
+-#define ESR_ELx_EC_FP_ASIMD	(0x07)
+-#define ESR_ELx_EC_CP10_ID	(0x08)	/* EL2 only */
+-#define ESR_ELx_EC_PAC		(0x09)	/* EL2 and above */
+-#define ESR_ELx_EC_LS64B	(0x0A)
++#define ESR_ELx_EC_CP15_32	UL(0x03)
++#define ESR_ELx_EC_CP15_64	UL(0x04)
++#define ESR_ELx_EC_CP14_MR	UL(0x05)
++#define ESR_ELx_EC_CP14_LS	UL(0x06)
++#define ESR_ELx_EC_FP_ASIMD	UL(0x07)
++#define ESR_ELx_EC_CP10_ID	UL(0x08)	/* EL2 only */
++#define ESR_ELx_EC_PAC		UL(0x09)	/* EL2 and above */
++#define ESR_ELx_EC_LS64B	UL(0x0A)
+ /* Unallocated EC: 0x0B */
+-#define ESR_ELx_EC_CP14_64	(0x0C)
+-#define ESR_ELx_EC_BTI		(0x0D)
+-#define ESR_ELx_EC_ILL		(0x0E)
++#define ESR_ELx_EC_CP14_64	UL(0x0C)
++#define ESR_ELx_EC_BTI		UL(0x0D)
++#define ESR_ELx_EC_ILL		UL(0x0E)
+ /* Unallocated EC: 0x0F - 0x10 */
+-#define ESR_ELx_EC_SVC32	(0x11)
+-#define ESR_ELx_EC_HVC32	(0x12)	/* EL2 only */
+-#define ESR_ELx_EC_SMC32	(0x13)	/* EL2 and above */
++#define ESR_ELx_EC_SVC32	UL(0x11)
++#define ESR_ELx_EC_HVC32	UL(0x12)	/* EL2 only */
++#define ESR_ELx_EC_SMC32	UL(0x13)	/* EL2 and above */
+ /* Unallocated EC: 0x14 */
+-#define ESR_ELx_EC_SVC64	(0x15)
+-#define ESR_ELx_EC_HVC64	(0x16)	/* EL2 and above */
+-#define ESR_ELx_EC_SMC64	(0x17)	/* EL2 and above */
+-#define ESR_ELx_EC_SYS64	(0x18)
+-#define ESR_ELx_EC_SVE		(0x19)
+-#define ESR_ELx_EC_ERET		(0x1a)	/* EL2 only */
++#define ESR_ELx_EC_SVC64	UL(0x15)
++#define ESR_ELx_EC_HVC64	UL(0x16)	/* EL2 and above */
++#define ESR_ELx_EC_SMC64	UL(0x17)	/* EL2 and above */
++#define ESR_ELx_EC_SYS64	UL(0x18)
++#define ESR_ELx_EC_SVE		UL(0x19)
++#define ESR_ELx_EC_ERET		UL(0x1a)	/* EL2 only */
+ /* Unallocated EC: 0x1B */
+-#define ESR_ELx_EC_FPAC		(0x1C)	/* EL1 and above */
+-#define ESR_ELx_EC_SME		(0x1D)
++#define ESR_ELx_EC_FPAC		UL(0x1C)	/* EL1 and above */
++#define ESR_ELx_EC_SME		UL(0x1D)
+ /* Unallocated EC: 0x1E */
+-#define ESR_ELx_EC_IMP_DEF	(0x1f)	/* EL3 only */
+-#define ESR_ELx_EC_IABT_LOW	(0x20)
+-#define ESR_ELx_EC_IABT_CUR	(0x21)
+-#define ESR_ELx_EC_PC_ALIGN	(0x22)
++#define ESR_ELx_EC_IMP_DEF	UL(0x1f)	/* EL3 only */
++#define ESR_ELx_EC_IABT_LOW	UL(0x20)
++#define ESR_ELx_EC_IABT_CUR	UL(0x21)
++#define ESR_ELx_EC_PC_ALIGN	UL(0x22)
+ /* Unallocated EC: 0x23 */
+-#define ESR_ELx_EC_DABT_LOW	(0x24)
+-#define ESR_ELx_EC_DABT_CUR	(0x25)
+-#define ESR_ELx_EC_SP_ALIGN	(0x26)
+-#define ESR_ELx_EC_MOPS		(0x27)
+-#define ESR_ELx_EC_FP_EXC32	(0x28)
++#define ESR_ELx_EC_DABT_LOW	UL(0x24)
++#define ESR_ELx_EC_DABT_CUR	UL(0x25)
++#define ESR_ELx_EC_SP_ALIGN	UL(0x26)
++#define ESR_ELx_EC_MOPS		UL(0x27)
++#define ESR_ELx_EC_FP_EXC32	UL(0x28)
+ /* Unallocated EC: 0x29 - 0x2B */
+-#define ESR_ELx_EC_FP_EXC64	(0x2C)
++#define ESR_ELx_EC_FP_EXC64	UL(0x2C)
+ /* Unallocated EC: 0x2D - 0x2E */
+-#define ESR_ELx_EC_SERROR	(0x2F)
+-#define ESR_ELx_EC_BREAKPT_LOW	(0x30)
+-#define ESR_ELx_EC_BREAKPT_CUR	(0x31)
+-#define ESR_ELx_EC_SOFTSTP_LOW	(0x32)
+-#define ESR_ELx_EC_SOFTSTP_CUR	(0x33)
+-#define ESR_ELx_EC_WATCHPT_LOW	(0x34)
+-#define ESR_ELx_EC_WATCHPT_CUR	(0x35)
++#define ESR_ELx_EC_SERROR	UL(0x2F)
++#define ESR_ELx_EC_BREAKPT_LOW	UL(0x30)
++#define ESR_ELx_EC_BREAKPT_CUR	UL(0x31)
++#define ESR_ELx_EC_SOFTSTP_LOW	UL(0x32)
++#define ESR_ELx_EC_SOFTSTP_CUR	UL(0x33)
++#define ESR_ELx_EC_WATCHPT_LOW	UL(0x34)
++#define ESR_ELx_EC_WATCHPT_CUR	UL(0x35)
+ /* Unallocated EC: 0x36 - 0x37 */
+-#define ESR_ELx_EC_BKPT32	(0x38)
++#define ESR_ELx_EC_BKPT32	UL(0x38)
+ /* Unallocated EC: 0x39 */
+-#define ESR_ELx_EC_VECTOR32	(0x3A)	/* EL2 only */
++#define ESR_ELx_EC_VECTOR32	UL(0x3A)	/* EL2 only */
+ /* Unallocated EC: 0x3B */
+-#define ESR_ELx_EC_BRK64	(0x3C)
++#define ESR_ELx_EC_BRK64	UL(0x3C)
+ /* Unallocated EC: 0x3D - 0x3F */
+-#define ESR_ELx_EC_MAX		(0x3F)
++#define ESR_ELx_EC_MAX		UL(0x3F)
+ 
+ #define ESR_ELx_EC_SHIFT	(26)
+ #define ESR_ELx_EC_WIDTH	(6)
 
---KAW/k6vNVrLCa629--
+Could you please respin this quickly so that it can be taken in v6.12?
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
