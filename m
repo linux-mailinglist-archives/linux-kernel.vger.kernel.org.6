@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-321230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E592C97162F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:05:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716EC971637
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 908E81F228D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:05:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE55AB228B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201C41B5ED1;
-	Mon,  9 Sep 2024 11:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FD51B6548;
+	Mon,  9 Sep 2024 11:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGT/dnK5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HfEq4KrQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74474167271;
-	Mon,  9 Sep 2024 11:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7711B6531;
+	Mon,  9 Sep 2024 11:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725879848; cv=none; b=aZCoLn4mOWhx/sfD1pGD8kZfXl9ANjKgz/If3uqipV25WCS9ma78EedldWraqMVbybV2Qb8T8akbPTfJvNllGN9et0jtFl4AhPkKypMMomwV2eTcxsCfpv3fPjOumELQyJ0Ci5LhR2LhoZCGJQG7kb84Ep1Tz04M0UR95X5vDUw=
+	t=1725879898; cv=none; b=ux5CAR0C4OgYsicr1RYJDC0w/QViAhp7efQMLjjbCSI7ExStwBaXRgWVPSwmjwJ6ippaEMks67HGYeWMJcnxy+0vOLURMm1gEaU2GnI1dW5TdprJ5Hz8xBwj+nqtS2q/PNIdWjjeSlFxUjrmpSos16qU3b4SHDSo+C7LnLg22Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725879848; c=relaxed/simple;
-	bh=rQG+71X5dMYuzukcNsFCsP7U8YiVjahwLWlqQFcqFpo=;
+	s=arc-20240116; t=1725879898; c=relaxed/simple;
+	bh=JhdcST/hfvcZje5fcQEi3mhflcQK3zcQtBCQP4PQLYg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i/p+ob5PWQKdXRv2AYzYiIq3p82/WA6spxGC5mEs2KiAmNFGIRMQ5yYxVh0gtATMS7bWq7HBqFwsL1J8vn4ntmYvpnCeDvtJoi5vqbrNUeo/fJagA552aAB8xrE/pXQbu1srJ0o64RCeK76yJRpWJ4LsnSr734Q+/jKxjQpQnwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGT/dnK5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDAC3C4CEC6;
-	Mon,  9 Sep 2024 11:04:04 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Lbu7y/LxfK6F4WU68APgc8+9y/qiqo5RD7hufi7rSwwJqOYK82sRK672fuNvtKVQ3vVgfgSGJsRG6w+8cnmvkuUkrocxkzFEXPQjGGqtsW+PBTjG/LzFjkaE+vRyGY/DG6+aqjARns9yur1wamZ0vxQ4aKn/0v4w3gD2+0EhQR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HfEq4KrQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 916AFC4CEC5;
+	Mon,  9 Sep 2024 11:04:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725879847;
-	bh=rQG+71X5dMYuzukcNsFCsP7U8YiVjahwLWlqQFcqFpo=;
+	s=k20201202; t=1725879898;
+	bh=JhdcST/hfvcZje5fcQEi3mhflcQK3zcQtBCQP4PQLYg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qGT/dnK5BVF9Kfm6immjZp1idHoqUjF2w4Cipl2HU6e8SO7EQUadc8PoA6BdG119t
-	 Xhx8L5JLNOKOvqIICqH9iJTcujHmvFk13+Y9W3Sln0nswakhv2WXVYVJv/K3lfLElP
-	 yUE6Y/LGmi+r3YoU/32zpJs+OWqntlzux4oYWLCnfQIdtLsfqNv0RZ+vfd6b13uu7z
-	 CQW8Svp+473bfYe90O6ys/WtxuQGlJzS7Mx+/7axmIjJwU+mqXlYk4AKuvAGYfKSUM
-	 SfTIdQbiYji8KKmRvZqHqBiJqhNhjUnSElp0KnKkoy+79DvAMBOuoZ+2PRSbXSU2U6
-	 BpV/p2xc9H87w==
-Message-ID: <6b9c2261-ae09-4068-ab5a-6ee819c031e0@kernel.org>
-Date: Mon, 9 Sep 2024 13:04:02 +0200
+	b=HfEq4KrQENJ2A9NjhC10p5iHHo7Ft3wSbLCMWpDv5aVCaklFMj8zJMLfRaKFReye5
+	 2YRT3YHL6JnqUuUQTZx+c6k4LhTMbEbi1kx4NgEduYyUGD/zmf8H/Q6UevbJP+elr3
+	 haKZ7YLm7qtOhu480rsqkI3+v70j+GsGqhoY9l4M3BwekOMyRtAJBv5X4gRxjQuwBB
+	 IuTlHQQqN+lvAqKNUm10dsRa1Mu5TA623dybtwjbnoEOnSeFvYsv57z2SIH8TmP8Ov
+	 PPh992ukjJf6VgKM+xhBvRm4XqEn+RoruMPJK6sJQ11xiHn1YkTaMiqUWC20FQPnPo
+	 gYJJKy4Nh0Rcw==
+Message-ID: <98c48a3a-1593-44bc-a448-51850bce7b1e@kernel.org>
+Date: Mon, 9 Sep 2024 13:04:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] arm64: dts: qcom: qcs6390-rb3gen2: use modem.mbn for
- modem DSP
+Subject: Re: [PATCH 2/4] arm64: dts: qcom: sc7280: don't enable GPU on
+ unsupported devices
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
  Bjorn Andersson <andersson@kernel.org>,
  Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -60,19 +60,21 @@ To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
 Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20240907-rb3g2-fixes-v1-0-eb9da98e9f80@linaro.org>
- <20240907-rb3g2-fixes-v1-1-eb9da98e9f80@linaro.org>
+ <20240907-rb3g2-fixes-v1-2-eb9da98e9f80@linaro.org>
 Content-Language: en-US
 From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240907-rb3g2-fixes-v1-1-eb9da98e9f80@linaro.org>
+In-Reply-To: <20240907-rb3g2-fixes-v1-2-eb9da98e9f80@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 7.09.2024 2:51 PM, Dmitry Baryshkov wrote:
-> Newer boards should always use squashed MBN firmware instead of split
-> MDT+bNN. Use qcom/qcs6490/modem.mbn as the firmware for the modem on
-> RB3gen2.
+> On SC7280 and derivative platforms GPU by default requires a signed
+> binary, a660_zap.mbn. Disable GPU by default and enable it only when
+> the binary is actually available (QCM6490-IDP, RB3gen2). ChromeOS
+> devices do not use TrustZone, so GPU can be enabled by default in
+> sc7280-chrome-common.dtsi. FairPhone5 and SHIFTphone8 DTS already
+> enable GPU (even though it wasn't required beforehand).
 > 
-> Fixes: ac6d35b9b74c ("arm64: dts: qcom: qcs6490-rb3gen2: Enable various remoteprocs")
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
 
