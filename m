@@ -1,50 +1,47 @@
-Return-Path: <linux-kernel+bounces-321653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E191C971DA7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:12:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E534D971DB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C785B22DEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:12:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51DBCB223F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB5F1CAA6;
-	Mon,  9 Sep 2024 15:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E535E20B35;
+	Mon,  9 Sep 2024 15:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Sc/IMzhX"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="MIqkl1aN"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CAC81C683;
-	Mon,  9 Sep 2024 15:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8D21C286
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 15:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725894725; cv=none; b=EOswOc9siYnk1tNLiCagJGH2HNtrJ6nVzVBeecZAycuPn2p7WgHql5eA1JAgOlzr6J/ZPWC/czLZXQ+8X7RgGoAAtSH6qy02ctfoxK0UjX1kK2Sx5/3py1rKngQ8HQtCYerEUpJ23LxF8J+Ad9leWeauEm+nno6qiTMFHPloTko=
+	t=1725894773; cv=none; b=nQostCWuI6gnkhB+eoFQ5qRKeQQ6QpJky61IILeSbs0Bg9p0nveSu13fwy/Q3va9SkFnF0DmPtc2qMu+cvLr2UnXU0pgilXf4cCOVv3tu9NwBGbXSikYmt5AE8Q5BtJd+BOLXekOCkxAitcSFWLFx8lnvJ005AN7H/PCxGy+x48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725894725; c=relaxed/simple;
-	bh=c7YvUH84AlumiDtIrio1hThdvteHMEAg8VTnwNP3vHc=;
+	s=arc-20240116; t=1725894773; c=relaxed/simple;
+	bh=sTpCcO1r9uldwT1ZLNILYgRSbmtWwZ+jFO/v7iD+6dU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xuk+KOp8PeZYwDMxJiSodXy/EBZmP+jpCxwYEdQlalNj+G+X+lHRh75DwzPa9yWHo/IuNx8hu+4dPdNyeUZYHLU3h/vOxElHweNk4yrrXwvOZj+37IzO2JL2jd/U+hi3eEb3fuX7pw9B0R2/ivR1DxRcEOtSnCA4YWic4IGOB/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Sc/IMzhX; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1725894714;
-	bh=c7YvUH84AlumiDtIrio1hThdvteHMEAg8VTnwNP3vHc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Sc/IMzhXLu36YaYhkAE3zpwxZxsmgRydJSMBgXazLABBcFdivkUQcX/Nky1m9Okst
-	 2cPsii6n9FN5ymmfrlOZ6FmTdZvBmD9+eReLdo396pjv8WMvPAmkStNH/pNWehd9Gl
-	 K7ibQ1yB2kUfmhK1E3d7uphByCYfVooQWr7qmIM9soWZnkOaE/oD6e3CErp6CZFjb2
-	 xGffIACes2q1NoEm0Yn9iZCFh70omRIpJpWB1ShoZ4ToC0FkUPnlqRUjamtiqt24c+
-	 aC7vWHqojzbsw5uudYx9+/iz/GuvSakBt5tRX5IvUm3fus3SUx38BGoyxuZMo6oQ6g
-	 TNRzodG4zDgeg==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4X2Vfx67y3z1KWR;
-	Mon,  9 Sep 2024 11:11:53 -0400 (EDT)
-Message-ID: <1f442f99-92cd-41d6-8dd2-1f4780f2e556@efficios.com>
-Date: Mon, 9 Sep 2024 11:11:39 -0400
+	 In-Reply-To:Content-Type; b=TvuGipG1s8LNnEH1vFgkIiA+eCDbXl/8mIUGevpyTnKWBdPcJTtuHaIvgFX7Osl7CNgPIpSrEyONCLKNd+gfqtZhBn4lbW6GtmTYTWKJiTaVIADE2zNpmqusRN8cQXNLwPPD8aAeO7k0tKBZpPF5PmFTwIXJR14f15RpWzmm5iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=MIqkl1aN; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1725894747;
+ bh=FXnPDua9oM/F12XvXaMhSoJTKFM3q06IAOZGjPkHFmo=;
+ b=MIqkl1aN/8T3im1dX1soziq8GA6pmwat9BiZDsmcsvx0koHbaQqPYdTzAO2B0ORiDMypeeY3D
+ eJFCy3i0+21GFeJFpQFtuVFWtFGvyEQ5zp33XvPjebX9D3NZwoAf7osh9VxoVRlCTbCY5Uxp/NN
+ 4sNfPNM0CTJblZhnXo/dEMGkA1wYr9y53MaaJoeINEChbFv7tpUvqNrnBPaUKzzVPysMhW43x1Z
+ DQBtQeI4u53d8fBEzJGTo57InOgT9VqdL1RZ2f4eOsaD08z5xHm7QxDo2ZlbzpMCimD06kM6Qyp
+ 9TGhRcpA+aZLELZ19nndamH8FxibujyVuJbuvxNEtCfQ==
+Message-ID: <250d8e1e-20dd-4741-8cf7-c3b4ff9e82a8@kwiboo.se>
+Date: Mon, 9 Sep 2024 17:12:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,196 +49,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/5] tracing/bpf-trace: Add support for faultable
- tracepoints
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>
-References: <20240828144153.829582-1-mathieu.desnoyers@efficios.com>
- <20240828144153.829582-4-mathieu.desnoyers@efficios.com>
- <CAEf4BzZERq7qwf0TWYFaXzE6d+L+Y6UY+ahteikro_eugJGxWw@mail.gmail.com>
+Subject: Re: [PATCH v2 02/10] drm: bridge: dw_hdmi: Only notify connected
+ status on HPD interrupt
+To: neil.armstrong@linaro.org
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Lucas Stach <l.stach@pengutronix.de>,
+ Christian Hewitt <christianshewitt@gmail.com>,
+ Diederik de Haas <didi.debian@cknow.org>, dri-devel@lists.freedesktop.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240908132823.3308029-1-jonas@kwiboo.se>
+ <20240908132823.3308029-3-jonas@kwiboo.se>
+ <bc0b47d9-ad8d-4beb-aad4-6dff79f48842@linaro.org>
 Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <CAEf4BzZERq7qwf0TWYFaXzE6d+L+Y6UY+ahteikro_eugJGxWw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <bc0b47d9-ad8d-4beb-aad4-6dff79f48842@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 66df105755874e972a5d499f
 
-On 2024-09-04 21:21, Andrii Nakryiko wrote:
-> On Wed, Aug 28, 2024 at 7:42 AM Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
+Hi Neil,
+
+On 2024-09-09 15:16, Neil Armstrong wrote:
+> On 08/09/2024 15:28, Jonas Karlman wrote:
+>> drm_helper_hpd_irq_event() and drm_bridge_hpd_notify() may incorrectly
+>> be called with a connected status when HPD is high and RX sense is
+>> changed. This typically happen when the HDMI cable is unplugged, shortly
+>> before the HPD is changed to low.
 >>
->> In preparation for converting system call enter/exit instrumentation
->> into faultable tracepoints, make sure that bpf can handle registering to
->> such tracepoints by explicitly disabling preemption within the bpf
->> tracepoint probes to respect the current expectations within bpf tracing
->> code.
+>> Fix this by only notify connected status on the HPD interrupt when HPD
+>> is going high, not on the RX sense interrupt when RX sense is changed.
 >>
->> This change does not yet allow bpf to take page faults per se within its
->> probe, but allows its existing probes to connect to faultable
->> tracepoints.
->>
->> Link: https://lore.kernel.org/lkml/20231002202531.3160-1-mathieu.desnoyers@efficios.com/
->> Co-developed-by: Michael Jeanson <mjeanson@efficios.com>
->> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
->> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->> Cc: Steven Rostedt <rostedt@goodmis.org>
->> Cc: Masami Hiramatsu <mhiramat@kernel.org>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Alexei Starovoitov <ast@kernel.org>
->> Cc: Yonghong Song <yhs@fb.com>
->> Cc: Paul E. McKenney <paulmck@kernel.org>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->> Cc: Namhyung Kim <namhyung@kernel.org>
->> Cc: bpf@vger.kernel.org
->> Cc: Joel Fernandes <joel@joelfernandes.org>
+>> Fixes: da09daf88108 ("drm: bridge: dw_hdmi: only trigger hotplug event on link change")
+>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 >> ---
->> Changes since v4:
->> - Use DEFINE_INACTIVE_GUARD.
->> - Add brackets to multiline 'if' statements.
->> Changes since v5:
->> - Rebased on v6.11-rc5.
->> - Pass the TRACEPOINT_MAY_FAULT flag directly to tracepoint_probe_register_prio_flags.
+>> v2: New patch
 >> ---
->>   include/trace/bpf_probe.h | 21 ++++++++++++++++-----
->>   kernel/trace/bpf_trace.c  |  2 +-
->>   2 files changed, 17 insertions(+), 6 deletions(-)
+>>   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
 >>
->> diff --git a/include/trace/bpf_probe.h b/include/trace/bpf_probe.h
->> index a2ea11cc912e..cc96dd1e7c3d 100644
->> --- a/include/trace/bpf_probe.h
->> +++ b/include/trace/bpf_probe.h
->> @@ -42,16 +42,27 @@
->>   /* tracepoints with more than 12 arguments will hit build error */
->>   #define CAST_TO_U64(...) CONCATENATE(__CAST, COUNT_ARGS(__VA_ARGS__))(__VA_ARGS__)
->>
->> -#define __BPF_DECLARE_TRACE(call, proto, args)                         \
->> +#define __BPF_DECLARE_TRACE(call, proto, args, tp_flags)               \
->>   static notrace void                                                    \
->>   __bpf_trace_##call(void *__data, proto)                                        \
->>   {                                                                      \
->> -       CONCATENATE(bpf_trace_run, COUNT_ARGS(args))(__data, CAST_TO_U64(args));        \
->> +       DEFINE_INACTIVE_GUARD(preempt_notrace, bpf_trace_guard);        \
->> +                                                                       \
->> +       if ((tp_flags) & TRACEPOINT_MAY_FAULT) {                        \
->> +               might_fault();                                          \
->> +               activate_guard(preempt_notrace, bpf_trace_guard)();     \
->> +       }                                                               \
->> +                                                                       \
->> +       CONCATENATE(bpf_trace_run, COUNT_ARGS(args))(__data, CAST_TO_U64(args)); \
->>   }
->>
->>   #undef DECLARE_EVENT_CLASS
->>   #define DECLARE_EVENT_CLASS(call, proto, args, tstruct, assign, print) \
->> -       __BPF_DECLARE_TRACE(call, PARAMS(proto), PARAMS(args))
->> +       __BPF_DECLARE_TRACE(call, PARAMS(proto), PARAMS(args), 0)
->> +
->> +#undef DECLARE_EVENT_CLASS_MAY_FAULT
->> +#define DECLARE_EVENT_CLASS_MAY_FAULT(call, proto, args, tstruct, assign, print) \
->> +       __BPF_DECLARE_TRACE(call, PARAMS(proto), PARAMS(args), TRACEPOINT_MAY_FAULT)
->>
->>   /*
->>    * This part is compiled out, it is only here as a build time check
->> @@ -105,13 +116,13 @@ static inline void bpf_test_buffer_##call(void)                           \
->>
->>   #undef DECLARE_TRACE
->>   #define DECLARE_TRACE(call, proto, args)                               \
->> -       __BPF_DECLARE_TRACE(call, PARAMS(proto), PARAMS(args))          \
->> +       __BPF_DECLARE_TRACE(call, PARAMS(proto), PARAMS(args), 0)       \
->>          __DEFINE_EVENT(call, call, PARAMS(proto), PARAMS(args), 0)
->>
->>   #undef DECLARE_TRACE_WRITABLE
->>   #define DECLARE_TRACE_WRITABLE(call, proto, args, size) \
->>          __CHECK_WRITABLE_BUF_SIZE(call, PARAMS(proto), PARAMS(args), size) \
->> -       __BPF_DECLARE_TRACE(call, PARAMS(proto), PARAMS(args)) \
->> +       __BPF_DECLARE_TRACE(call, PARAMS(proto), PARAMS(args), 0) \
->>          __DEFINE_EVENT(call, call, PARAMS(proto), PARAMS(args), size)
->>
->>   #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
->> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
->> index c77eb80cbd7f..ed07283d505b 100644
->> --- a/kernel/trace/bpf_trace.c
->> +++ b/kernel/trace/bpf_trace.c
->> @@ -2473,7 +2473,7 @@ int bpf_probe_register(struct bpf_raw_event_map *btp, struct bpf_raw_tp_link *li
->>
->>          return tracepoint_probe_register_prio_flags(tp, (void *)btp->bpf_func,
->>                                                      link, TRACEPOINT_DEFAULT_PRIO,
->> -                                                   TRACEPOINT_MAY_EXIST);
->> +                                                   TRACEPOINT_MAY_EXIST | (tp->flags & TRACEPOINT_MAY_FAULT));
->>   }
->>
->>   int bpf_probe_unregister(struct bpf_raw_event_map *btp, struct bpf_raw_tp_link *link)
->> --
->> 2.39.2
->>
->>
+>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> index 9e7f86a0bf5c..055fc9848df4 100644
+>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> @@ -3123,7 +3123,8 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+>>   			mutex_unlock(&hdmi->cec_notifier_mutex);
+>>   		}
+>>   
+>> -		if (phy_stat & HDMI_PHY_HPD)
+>> +		if ((intr_stat & HDMI_IH_PHY_STAT0_HPD) &&
+>> +		    (phy_stat & HDMI_PHY_HPD))
+>>   			status = connector_status_connected;
+>>   
+>>   		if (!(phy_stat & (HDMI_PHY_HPD | HDMI_PHY_RX_SENSE)))
 > 
-> I wonder if it would be better to just do this, instead of that
-> preempt guard. I think we don't strictly need preemption to be
-> disabled, we just need to stay on the same CPU, just like we do that
-> for many other program types.
+> Perhaps this should be also checked for the other lines checking HDMI_PHY_HPD ?
 
-I'm worried about introducing any kind of subtle synchronization
-change in this series, and moving from preempt-off to migrate-disable
-definitely falls under that umbrella.
+I think this is the only place we need to check to match the original
+intent of da09daf88108 ("drm: bridge: dw_hdmi: only trigger hotplug
+event on link change").
 
-I would recommend auditing all uses of this_cpu_*() APIs to make sure
-accesses to per-cpu data structures are using atomics and not just using
-operations that expect use of preempt-off to prevent concurrent threads
-from updating to the per-cpu data concurrently.
+The interrupt pattern I can see when physically unplugging are:
+- RX interrupt:  HPD=high RX=low  -> triggered connected event
+- HPD interrupt: HPD=low  RX=low  -> trigger disconnected event
 
-So what you are suggesting may be a good idea, but I prefer to leave
-this kind of change to a separate bpf-specific series, and I would
-leave this work to someone who knows more about ebpf than me.
+Based on the commit message the intent was to trigger hotplug event:
+- when HPD goes high (plugin)
+- when both HPD and RX sense has gone low (plugout)
 
-Thanks,
+For plugin we should only trigger when HPD=high at HPD interrupt, as is
+done after this patch, to avoid unnecessary events when RX changes.
 
-Mathieu
+For plugout the event should be triggered when both HPD=low and RX=low,
+that can happen at either HPD or RX interrupt.
+
+This should probably be revisited in future, I think we should ignore
+RX sense and instead use a work queue and a small debounce timeout after
+HPD interrupt or similar, to better support EDID refresh. Something for
+a future series.
+
+Regards,
+Jonas
 
 > 
-> We'll need some more BPF-specific plumbing to fully support faultable
-> (sleepable) tracepoints, but this should unblock your work, unless I'm
-> missing something. And we can take it from there, once your patches
-> land, to take advantage of faultable tracepoints in the BPF ecosystem.
-> 
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index b69a39316c0c..415639b7c7a4 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -2302,7 +2302,8 @@ void __bpf_trace_run(struct bpf_raw_tp_link
-> *link, u64 *args)
->          struct bpf_run_ctx *old_run_ctx;
->          struct bpf_trace_run_ctx run_ctx;
-> 
-> -       cant_sleep();
-> +       migrate_disable();
-> +
->          if (unlikely(this_cpu_inc_return(*(prog->active)) != 1)) {
->                  bpf_prog_inc_misses_counter(prog);
->                  goto out;
-> @@ -2318,6 +2319,8 @@ void __bpf_trace_run(struct bpf_raw_tp_link
-> *link, u64 *args)
->          bpf_reset_run_ctx(old_run_ctx);
->   out:
->          this_cpu_dec(*(prog->active));
-> +
-> +       migrate_enable();
->   }
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+> Neil
 
 
