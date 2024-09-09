@@ -1,142 +1,95 @@
-Return-Path: <linux-kernel+bounces-321394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A729719F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:52:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65729719F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ED2EB23ACF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:52:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DFE91F23FBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69C31B9B45;
-	Mon,  9 Sep 2024 12:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8466D1B9B43;
+	Mon,  9 Sep 2024 12:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vNBYQkup"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAScQvSu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADAA1B81AE
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80ED1B9B51;
+	Mon,  9 Sep 2024 12:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725886275; cv=none; b=RyMB0ott01f7jb33NHi15vdrYZCFbsqsv7q+csJ16fZE+JToFg6f1XmhnO//zbm+XFt2lXUCuf6PSZeclg7DqyKXToCngLiAd6f1sSI+27eGqCfXvOMTEQR8vgGXB8Ugu5W6Xj2RhXB9IecWoBzS/uhKiIlx76z1rLv0hUqGs2I=
+	t=1725886276; cv=none; b=mujwR20aQ4p5EGNZ2ppuZX0bahjv0fiJRppU00foM6EVEdOoJCGjlg45tABEOWzJLYUVRBB7gK8t8dT6Sqs1PpOM8InIl1IXHocN/cpqALI8OcIiGoy6aHY0ISnohRzKRMJpJ/R7osAAeOO/38QRChISwLGRzNRYJ/1piwOakHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725886275; c=relaxed/simple;
-	bh=lcPgoVo3a2tHQWwBFLfuyr6TwNwy7++H7R/IbpHaKBY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o9CKNvOlXoJcbpcmMz77Gkb+dB5YpCtXPp+7AGlDLrpEEF7Y4V1pADCMzJ5Sz8UmDKUH/LgB4JgV4Da+70nrXvCPScQDbTKGGGslJLQ8GTA2Hz6dUhavSYbYnQ5ClgzcRYxdg3ZPL3HzwU/xqzMi+v1loxSuN5K6k8lFsXTRIT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vNBYQkup; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374c7d14191so2942905f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 05:51:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725886272; x=1726491072; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yj5yLv/ZZH1FRnKgAiHYKIRr56LuHNVkVtzMQnax5UE=;
-        b=vNBYQkupGnFATCi9U/AJjAiLosV/dc5kdqJrylDpiQ6kSZGAscICKMkaSaeSNOl/ba
-         c7CWXfe+Mul7p0LKqf58xmqxi2ZwS5PsJCfQ1J4GZBW96+Aode/Mq2R5PhQh60gzcAHw
-         2CbXF38CAV8sbffQ6HVlxQH6vo2/OziItJLeznNeojukx31sZT6F7tnkqq/RbDhuZXE1
-         lK21XkPoqCpZcBVgwd7OSj02qrN5IN9VX8rbWUZCyeLCP4lD133QYzZaDxQWUVGPELaN
-         U9S6tARNfFx12aNUDJS1qSpaITFsJtRf0vW1XiG397PKM4nUP1xYW8/ySCtCokFqsiUE
-         yTKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725886272; x=1726491072;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yj5yLv/ZZH1FRnKgAiHYKIRr56LuHNVkVtzMQnax5UE=;
-        b=oRZMRanRz4IbdmX6AbVOwTxbR3Pkaziu2nE/qdZ7EP59FZDXb+5xCMny8L4/r4YZ7F
-         EdqgDzFede7wZJyte4Ynn9TmHc2NPwoEY5TQBAmnRAJ27sPlDMr9zYc7LcJg3Jx4lfHs
-         gzhVZeFytUU28uS6QhqbsPY7PHBHOx2LmhqpF3nzj+ubcqC0j7YoCWxDoQBi8rd6dHcB
-         6SHMNW7SQei0oiM7dcNPfNwhA4uP3viEARUG0dKATq9ax4LqAOGbJI+xDX2f2R+/PeAK
-         QpfGdwBC4uFMM9ZNL1rQhLMrbInnb3ZSUrRTuzRHIprSJgLrtIU15+kx29hwLDtOz3hn
-         Z9YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVW65BkztwDDW1Dmvl2l3sUmoVYrtiCBSlHB3f6Ug8KUGKXATE65Y4sw6zqogOcD6SwghRwVfEdSAHALa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJTUOOqVrPr7LEEkppXM35kZJX+Vq2jShGBcfFoRFVIE5ty85i
-	HKTPfayi5gCCgJCSQjOCaZCDGWp1YkwMIrJCzNyCTOHZ1mtNUNrw55EKkBHPpek=
-X-Google-Smtp-Source: AGHT+IF7+n0ukNJJ1C8zj6VSJDueCV3USNDHumSPWy7hUUSWu75cFlU2nX0q/4jHTWZ6HrRjePiq5w==
-X-Received: by 2002:a05:6000:2c5:b0:374:badf:3017 with SMTP id ffacd0b85a97d-37888b34ca8mr8233636f8f.33.1725886271596;
-        Mon, 09 Sep 2024 05:51:11 -0700 (PDT)
-Received: from [192.168.0.172] (88-127-185-239.subs.proxad.net. [88.127.185.239])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d2ec2sm5998400f8f.75.2024.09.09.05.51.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 05:51:11 -0700 (PDT)
-Message-ID: <5db7058c-79d8-4fc8-8f37-89cdde68984a@baylibre.com>
-Date: Mon, 9 Sep 2024 14:51:10 +0200
+	s=arc-20240116; t=1725886276; c=relaxed/simple;
+	bh=FCM7QUxF9t/5Rbr8bek4qbmnESDmM8rDLSdHDKwEgno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QbDOH7fn16YN7VEuO1ntgaN11mTy1lcWfXvLDGeNB76dkOlpmPH9M7jR7N1Olo08maVf8ExvPcICGTMsX12875RVB0sTrEje+S/7i72nLpJr/OWSLUUSCfEeFvNa9+PROYGifJpKNK3EBqrhkjzUlBSjcRiyOTB0gXjje/D7vO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAScQvSu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A81DCC4CEC5;
+	Mon,  9 Sep 2024 12:51:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725886276;
+	bh=FCM7QUxF9t/5Rbr8bek4qbmnESDmM8rDLSdHDKwEgno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XAScQvSufGoYBm7kSUi1tNRWrLNLp+MKttudG2dHKPATAroOkBSx51RMy7INbdP9h
+	 849/nG9qnTKY8Wp4V8ccsBen7SCtAbQJurjvodcTH7NZdMj9IZdME3kgHkb2bxDVNS
+	 fkbUx9a9oNMM0+3ODFNWgV+o/Uix6bQwcrkRjLg4yMxjcImtmvWkIDk8dwLMPRvEV8
+	 +BU6Lu/ElDAK87+EzM5YizeMi5jr2pYdlGEfvcLyi4o+xe1Mks9eOsUoqiUHyPzcWQ
+	 wWhcG3lyM2EKKAXYamu+9HJQOLrgBDEuwOXtRHco5VllEKrh3QXbTkfTAuMjXcKrTf
+	 4UzFoPmdiT6Zw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sndrh-000000002SN-3uNj;
+	Mon, 09 Sep 2024 14:51:33 +0200
+Date: Mon, 9 Sep 2024 14:51:33 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Steven Davis <goldside000@outlook.com>
+Cc: gregkh@linuxfoundation.org, hvaibhav.linux@gmail.com, elder@kernel.org,
+	vireshk@kernel.org, rmfrfs@gmail.com, dtwlin@gmail.com,
+	greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: greybus: Fix capitalization and punctuation
+ inconsistencies
+Message-ID: <Zt7vVaxF2XP-_ZMA@hovoldconsulting.com>
+References: <SJ2P223MB102660087EA9382BE5287FDBF7912@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] ASoC: mt8365: Remove spurious unsigned long casts
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20240907-asoc-fix-mt8365-build-v1-0-7ad0bac20161@kernel.org>
- <20240907-asoc-fix-mt8365-build-v1-2-7ad0bac20161@kernel.org>
-Content-Language: en-US
-From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <20240907-asoc-fix-mt8365-build-v1-2-7ad0bac20161@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SJ2P223MB102660087EA9382BE5287FDBF7912@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
 
-Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
-
-On 07/09/2024 02:53, Mark Brown wrote:
-> The regmap APIs take unsigned ints not unsigned longs so casting their
-> arguments to unsigned longs is not a good choice, the constants being
-> cast here are all unsigned ints anyway.
+On Sun, Sep 01, 2024 at 05:18:59PM -0400, Steven Davis wrote:
+> There were a lot of inconsistencies in outputs and
+> comments, some were properly formatted and
+> capitalized, and some weren't. This patch resolves
+> this by properly formatting the inconsistent comments
+> and outputs.
 > 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Steven Davis <goldside000@outlook.com>
 > ---
->   sound/soc/mediatek/mt8365/mt8365-dai-i2s.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/mediatek/mt8365/mt8365-dai-i2s.c b/sound/soc/mediatek/mt8365/mt8365-dai-i2s.c
-> index 5003fe5e5ccf..6b4d8b7e24ca 100644
-> --- a/sound/soc/mediatek/mt8365/mt8365-dai-i2s.c
-> +++ b/sound/soc/mediatek/mt8365/mt8365-dai-i2s.c
-> @@ -385,7 +385,7 @@ static int mt8365_afe_set_2nd_i2s_asrc(struct mtk_base_afe *afe,
->   		/* disable IIR coeff SRAM access */
->   		regmap_update_bits(afe->regmap, AFE_ASRC_2CH_CON0,
->   				   COEFF_SRAM_CTRL,
-> -				   (unsigned long)~COEFF_SRAM_CTRL);
-> +				   ~COEFF_SRAM_CTRL);
->   		regmap_update_bits(afe->regmap, AFE_ASRC_2CH_CON2,
->   				   CLR_IIR_HISTORY | IIR_EN | IIR_STAGE_MASK,
->   				   CLR_IIR_HISTORY | IIR_EN |
-> @@ -393,7 +393,7 @@ static int mt8365_afe_set_2nd_i2s_asrc(struct mtk_base_afe *afe,
->   	} else {
->   		/* disable IIR */
->   		regmap_update_bits(afe->regmap, AFE_ASRC_2CH_CON2,
-> -				   IIR_EN, (unsigned long)~IIR_EN);
-> +				   IIR_EN, ~IIR_EN);
->   	}
->   
->   	/* CON3 setting (RX OFS) */
-> @@ -456,7 +456,7 @@ static int mt8365_afe_set_2nd_i2s_asrc_enable(struct mtk_base_afe *afe,
->   				   ASM_ON, ASM_ON);
->   	else
->   		regmap_update_bits(afe->regmap, AFE_ASRC_2CH_CON0,
-> -				   ASM_ON, (unsigned long)~ASM_ON);
-> +				   ASM_ON, ~ASM_ON);
->   	return 0;
->   }
->   
-> 
+>  drivers/staging/greybus/arche-platform.c | 38 ++++++++++++------------
+>  drivers/staging/greybus/authentication.c |  6 ++--
+>  drivers/staging/greybus/bootrom.c        | 16 +++++-----
+>  drivers/staging/greybus/light.c          | 26 ++++++++--------
+>  drivers/staging/greybus/log.c            | 10 +++----
+>  5 files changed, 48 insertions(+), 48 deletions(-)
 
--- 
-Regards,
-Alexandre
+I didn't have time to reply here before Greg picked this one up, but I'm
+gonna ask for this one to be reverted.
+
+The (core) greybus code uses lower case error messages so this patch is
+introducing an inconsistency instead of addressing one.
+
+I just sent a revert here:
+
+	https://lore.kernel.org/20240909124853.9213-1-johan@kernel.org
+
+Johan
 
