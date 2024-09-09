@@ -1,85 +1,111 @@
-Return-Path: <linux-kernel+bounces-320614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3612F970CC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 06:48:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 762B9970CCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D97531F225A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:48:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BB331F22591
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D9B17277F;
-	Mon,  9 Sep 2024 04:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E15F1ACDEB;
+	Mon,  9 Sep 2024 05:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="bN8OB00/"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E83136A;
-	Mon,  9 Sep 2024 04:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="U/jGcGoO"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4519461
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 05:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725857298; cv=none; b=GKeaaXXi4tYdjBelMYPLgV1O8Y7tn1GWRigb+t16apo+OLQsvBj/z+mdtNnYwcvvgy8LXOvRPGFnwgqtNfZ7NMLN7c6R5KwjviBaV4i36+q8nJPusF8faauO9fuFd9xoG+toj4Ias6NcrMEwjGDE3dl0jJv9xBlG2pgemQTxSBw=
+	t=1725858190; cv=none; b=pachhvCAJC/50v6pPcizgzKZoSs/aq/7stymVWUw8Irs50G/BvW4z8uNN6GHZejVGqrDXpwhb6zgm+Sx80QVVmWdAwnhNC/MPPTDftf28MUHm29n+XxcyfwZCfjwkc+O4u5BMx564AAlz5Kcce1u5gtJzMMvU9klEE8Pmrf03cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725857298; c=relaxed/simple;
-	bh=JdC2s9reCpdh5GCXboPwMMIj7X0SAwyOF7XGfxe2r5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=NAAlbvM+DAPkoXUranVzMGUU+pDdW2l+ZQAG+Ia2HLdphQEz57i/SnL5WVMyNaCUG4C2XRXJzg6l570Z/6L8CCkok0gOsn0IlqU4P0cOI29XKveVKbT7RaRbqhGQ+OamfGj3Gh2N7gLdxJQbOHnGL2tp38MWfDLY1Gep/vn3GLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=bN8OB00/; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Cc:From:References:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=qwEkeTcVc7zpbCn2RYLTfGsdfSlZzqQCcwvEwhFQqjg=;
-	t=1725857296; x=1726289296; b=bN8OB00/yKYbFoPSz//AhCgJVai+mI//aD7C9WavvdhMUI+
-	71eMSIHKocBvLTd6vkxR49qZocu01of98WEcgHATvgSOjJJhVlt8ooo4+POdVPob2Jr8r5UVefu54
-	zBb/Oo5KyXqkdZGKQg6iRYAR2vcnWrv5whUs/ZGCGoUFDx/LJ40x+IBz2dLJzs+6KCngxKHUsk45t
-	HD3jMjd14zxM3gl+D2Rf2C+8frD+JNjOoq9WDcJhokOxHNnuXGgIzMZkfNJtAnwpCB3JFC+qWcBqp
-	HYDzWYGtwc6wDnS45WpsNU3eQajvONnP1+ctBPLGDUJ41q6s59RRQERb9iHxyMGg==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1snWJy-0000ch-7S; Mon, 09 Sep 2024 06:48:14 +0200
-Message-ID: <67481fc6-7eab-470b-8d5c-1d7a50782f66@leemhuis.info>
-Date: Mon, 9 Sep 2024 06:48:13 +0200
+	s=arc-20240116; t=1725858190; c=relaxed/simple;
+	bh=X8VeZeARKf1dKca6XgKSeleJlx0jaAmgoW4BxJkIA3k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hAjs1tQ9+d04j6qW/b/dIiOoMk7X+wBrIZO2eK4/8P7XDbQ9TnOlPMEw6PAAapGeO6xAdlSop2xtYjWrR2pK+O8m/1VrKpAfoMV1lFtH4jDJYCDf+Ha3NnUwBR4huRt1JxfeX8Ys+k199T+WpVLWJB4mAE5EME9RNWxNwPxEVaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=U/jGcGoO; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=JBh9g
+	Ffx3heYPcoalbCGHCAhXyXUQUzmDtHwdRpGsi4=; b=U/jGcGoOG7tos2kQllbc6
+	h9/6GvWlPOf7GtDU345cjLcRzZ9eqVVLukbcetnKBx+omyLifVQzjYzi/fkS+ske
+	0psRZ2uUnx1M5bUR5eqCj+maDb+w8xbu3inI80PWTr3o4Q8/JIQls0pRpzHnugnB
+	pjiyuru8b1Vx1R7+YmzCgw=
+Received: from fedora40-vm.. (unknown [106.133.130.25])
+	by gzga-smtp-mta-g2-2 (Coremail) with SMTP id _____wCXzkZkgd5mru5JGQ--.57674S2;
+	Mon, 09 Sep 2024 13:02:30 +0800 (CST)
+From: Xiao Yang <ice_yangxiao@163.com>
+To: Liam.Howlett@Oracle.com,
+	linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	ltp@lists.linux.it,
+	oliver.sang@intel.com,
+	Xiao Yang <ice_yangxiao@163.com>
+Subject: [PATCH] mm/vma: Return the exact errno for __split_vma() and mas_store_gfp()
+Date: Mon,  9 Sep 2024 14:02:26 +0900
+Message-ID: <20240909050226.2053-1-ice_yangxiao@163.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: Can we get a bootable 6.11-rc kernel?
-To: Bob Gill <gillb5@telus.net>
-References: <96030dde-6c02-4308-b41b-48aeeba670f3@telus.net>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Cc: Linux kernel regressions list <regressions@lists.linux.dev>,
- linux-kernel@vger.kernel.org
-In-Reply-To: <96030dde-6c02-4308-b41b-48aeeba670f3@telus.net>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1725857296;d657008a;
-X-HE-SMSGID: 1snWJy-0000ch-7S
+X-CM-TRANSID:_____wCXzkZkgd5mru5JGQ--.57674S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uFy8Xw4fXr1fGr1kWrykKrg_yoW8WFy5pr
+	93Ww1DXFZ5Xr1Sg3WYqF1jvw1Yqas5X3WrCrWUWFn3Z3Z0qws8trW5tryrZr92grZ7uF9I
+	vr4DJF1fW3Z8KaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pinqXkUUUUU=
+X-CM-SenderInfo: 5lfhs5xdqj5xldr6il2tof0z/1tbiMwpVXmXAnu2fxwAAs8
 
-On 09.09.24 06:04, Bob Gill wrote:
-> Hi.  It would be nice to have a 6.11-rc kernel that doesn't crash.  I
-> have an AMD video card.  I can boot into recovery, but any time I try to
-> run "service lightdm start" or startx, I get a nice black screen, and a
-> within a second or 2 my keyboard doesn't even let me type the caps-lock
-> key.
-> 
-> My hardware: (taken from kernel 6.10.0)
+__split_vma() and mas_store_gfp() returns several types of errno on
+failure so don't ignore them in vms_gather_munmap_vmas(). For example,
+__split_vma() returns -EINVAL when an unaligned huge page is unmapped.
+This issue is reproduced by ltp memfd_create03 test.
 
-So 6.10.y worked for you, but 6.11 did not? Can you please share the
-dmesg output for both these kernels? FWIW, you might want to compare
-them yourself, if you are luck that will already tell you what's wrong.
+Fixes: 6898c9039bc8 ("mm/vma: extract the gathering of vmas from do_vmi_align_munmap()")
+Signed-off-by: Xiao Yang <ice_yangxiao@163.com>
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202409081536.d283a0fb-oliver.sang@intel.com
+---
+ mm/vma.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Ciao, Thorsten
+diff --git a/mm/vma.c b/mm/vma.c
+index 8d1686fc8d5a..3feeea9a8c3d 100644
+--- a/mm/vma.c
++++ b/mm/vma.c
+@@ -1200,7 +1200,8 @@ int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
+ 			goto start_split_failed;
+ 		}
+ 
+-		if (__split_vma(vms->vmi, vms->vma, vms->start, 1))
++		error = __split_vma(vms->vmi, vms->vma, vms->start, 1);
++		if (error)
+ 			goto start_split_failed;
+ 	}
+ 	vms->prev = vma_prev(vms->vmi);
+@@ -1220,12 +1221,14 @@ int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
+ 		}
+ 		/* Does it split the end? */
+ 		if (next->vm_end > vms->end) {
+-			if (__split_vma(vms->vmi, next, vms->end, 0))
++			error = __split_vma(vms->vmi, next, vms->end, 0);
++			if (error)
+ 				goto end_split_failed;
+ 		}
+ 		vma_start_write(next);
+ 		mas_set(mas_detach, vms->vma_count++);
+-		if (mas_store_gfp(mas_detach, next, GFP_KERNEL))
++		error = mas_store_gfp(mas_detach, next, GFP_KERNEL);
++		if (error)
+ 			goto munmap_gather_failed;
+ 
+ 		vma_mark_detached(next, true);
+-- 
+2.46.0
+
 
