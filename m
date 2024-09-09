@@ -1,356 +1,972 @@
-Return-Path: <linux-kernel+bounces-320634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D7D970D08
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:41:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4441970D31
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B52381C21AFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:41:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E279F1C21C61
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9299A1AD3E8;
-	Mon,  9 Sep 2024 05:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD68D1AD3EE;
+	Mon,  9 Sep 2024 05:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4V1IAKJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f/V1Vbgp"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E8C1741C3;
-	Mon,  9 Sep 2024 05:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737911ACDE0
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 05:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725860490; cv=none; b=Ns3BAQoFYZPvEyH1fXDQ4dBfwP8/S1CrcsU5mBOX6y4vMNwCYK/4eqFT5LbgWLnTRQQPJVtNKOr4sL4dmyv/9VeilDvzmls9bLcPotUZ1INrAWsWlNSPxglXm2C1yOflhRfx8y4xnVEArWiXJTMbQxPnWJrqjcMXyzYi/cen0Cs=
+	t=1725860607; cv=none; b=t3I3HA4thGYZRGaia9kBrBiBMkLnt1/j51/Dt0Rzw8VzvAa1aNBERRcfagYfVPoE9uxsZYoXV/Rqk7q+cW8V1vLIHx61pIRP4w48J+Cw1y+yQ3E3mF4yDFxKy252x3NmrKYnY2g9ItolriIqajpmEPyURCYg+Y3tss6sWALWApc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725860490; c=relaxed/simple;
-	bh=OTGCX2VKTWNg7JAPpYr9MFc9b3r06DZVg97o1hSt/ng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QuNO36ReXSY5+4kL8NQd0AE+8+Z5W1UyKkag8a0gtP+2axwfpBDcDFIGiO5MTp1kLS/5syLe2e5TUlXUJqJ3iWPFaqNGhkUY8zY2I58sByRBDgW+FC617OMUr2SKrI4uEfBGzELb2Q52lEMgo2CPJoLt2Md+A32BELbFJHtu6Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4V1IAKJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E75F5C4CED8;
-	Mon,  9 Sep 2024 05:41:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725860490;
-	bh=OTGCX2VKTWNg7JAPpYr9MFc9b3r06DZVg97o1hSt/ng=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=f4V1IAKJIpX4Rvaz2H2X7xqKiSTyq7ukodz2zX0TBSNji13HCicMFzYCpaH5j2zYZ
-	 YPszECNMNLzDkrCqNQYTany6zlUk0fbJlWBtz4HZMZCTKEEWm3Pk8XlTzJLrypGLLG
-	 DLqnyt4aAJ4PDsFLrjRKzCfovQpnQhS86CAWWSBK4TuRv8HBCjQQ/aH9eFU8S1Hfxk
-	 HhrGI+vVEgCrdaY+sFDsWAbooALZxTQIB7p2r6Ggwxulf7hlXEhxo6ByrvIdWxaUzZ
-	 rKJZ7XGonnAiXKG33iKW6OybC/uu3TY6sueNH6Uix0yEeB/YZPyScT5lYz8QU/Bc+l
-	 cDzXOI7ZCQ0Lg==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso6874558e87.2;
-        Sun, 08 Sep 2024 22:41:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVAv/VSXCsH1v6s62hRjR9ZZKA7nG1wN3q/lneNsrly6ZqBzN6TVo6EtpySkl8FucfeufUy5WNd5njZ5Ck=@vger.kernel.org, AJvYcCVkY1feoR5Ppkj2faksXl2Gc6gh+16Mw//3Nr409DYEvBv7UHxx7FiikXmQqwhWTfjr7r89fJNphrGKjXXe@vger.kernel.org, AJvYcCXBJGublogdwwEfNHDzD3amRO47eo2XLF2YA5/d1e23CRqeynnLzpGr991socV2P2QqvcxeZl8o6A==@vger.kernel.org, AJvYcCXkK9SjYT3bliV+Bnv4yEL6APAwieMGmSo/ocIPpjiD0N/yJlpm/ABTP/OR1A6JqllppZrQOydEfKMMK+qn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCqBH+1+S20jkQMmBMHYLaDWJd+cDCCRmOqSck3/DkN5INDBUG
-	HvChZNoQg8Pin4qr0Vxo0ZgUElNR5sUr6c7YGKqn/g4FxBjYRq8kQF1SO+lsSj94eu5W5qyOlaw
-	CLeJaTPy0WzgcGW5mWFA6X2y6DGM=
-X-Google-Smtp-Source: AGHT+IE/eeAL3wg4+8lM40atumui+ijWmakaqLgAR4P5hoc1oVKlVHlObEKIEHv2t3Afuag93sP746lU4PC9rYvIgVg=
-X-Received: by 2002:a05:6512:3e27:b0:536:5529:f718 with SMTP id
- 2adb3069b0e04-5365880c60bmr7800264e87.54.1725860488188; Sun, 08 Sep 2024
- 22:41:28 -0700 (PDT)
+	s=arc-20240116; t=1725860607; c=relaxed/simple;
+	bh=BQHkXRb4SkX9bcuNkjCzVJo1FnkVSA3Fi/J2wC+c//Q=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nZDQ3RPLpcWQDE3Qc56pFACdWyPiv/kdDE0Ag1Egu92wKbJJ6XNjzy/TCS+faLopqyKGkm35xoZ8ydkJQ+FSmvt1tCEjYsi/nUCphMa3V8VxrX+TZgPT0WlMqsDHK6pNZ9KzygNtcOqQwNemd2DmthT6O7DpAskERhwUACQdFao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f/V1Vbgp; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1a892d8438so8838986276.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 22:43:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725860602; x=1726465402; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VSzZ9/B1SlVaizAkOUaIaBETrEK+3O9/EEMGiwxlTfQ=;
+        b=f/V1VbgpyHlHN1KAU6JBQlauEsOmunpKkqqYbFc/i8kWkiLknmcEbKx02E9HVcVmJ6
+         L78Chfd3MsTTCfVjCweW6yK6jUn9iJ/Gie9Zrmbwv5oNuvbOqhCMyqcyeIgL+Kfcq/TO
+         SQ0i8/jDKX2u9/Q9bVetNDc6AJX2H5nGrGVxT+4pQ4FNeh3g9esWNk1Y4FRxwuDG1wEp
+         Gvhop8UAV8WG1aONNgtYU54jCHLx1vlILwS/MPykGwIS55SwNQkHynS6v9vVJTdMFjVo
+         oD8stN2vSq9wCNYDv972GZ34xpwCc+kxj48oLpKtirca7rx+G6qjlL7wpmJI9Q2FSBXz
+         T8uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725860602; x=1726465402;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VSzZ9/B1SlVaizAkOUaIaBETrEK+3O9/EEMGiwxlTfQ=;
+        b=Qqmrd4WuD/QllP4fUOjqiKWsXe6ukJbNHePJUXaLSTe/MIWp4wtyhgdWEdZiEUP4KB
+         RAnNR/cwVhi+LCeQl1b2z18O7ugd8EvgXhI+e2tdtKNgZFCrRxtMvlwIoIGvQ0HhOMd0
+         dQ/0E+gU0MKh1NtCqudtKAC9H5VHGMr3lEVzCkuV3G+95tgTTv+Xym1UP314o2m0vB7i
+         RM2253hhgdCbj8sBHxxfJ+L4PfYSRgFTHdHB8NLO6QhSzn7SHhVkElyo3GQbr5kERQYP
+         jVQdHuW3GZBThYwQ58vFHFTQvq0/5GST3G8AKEaUWr51RdPHPDLPljl6B3bCt8ekFJhM
+         ycRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVC43swfrFafQocUwTJ+2Fye0087cVOEKcjAPxWQ2/5URhzIFGmft9qhYQU6lZCEL8NUlipwgHv+Hv+ZAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzBoMfTTXAJL66GiyhXqst8k8ONE+xMW62aN0aZPKleoYPw3m/
+	AObV665BUpp6iUHqmEn/ncKwSI6+RgrpK5ianOX7FxO2kXAOPM2JKGdOgrq5Ux7q5LyRHuV8rtl
+	dq08kj/GoT/gawp3bFJAGRQ==
+X-Google-Smtp-Source: AGHT+IHFYMJ0RZJOsEtiTENln/iSRmnHEPe/xIpWTvfg1LkRaYwcJcrDdziXg4G5CIJmBRPKtC2h01Zwjw6KgN2DGQ==
+X-Received: from almasrymina.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:4bc5])
+ (user=almasrymina job=sendgmr) by 2002:a25:ec02:0:b0:e03:3cfa:1aa7 with SMTP
+ id 3f1490d57ef6-e1d348639c7mr16791276.1.1725860602366; Sun, 08 Sep 2024
+ 22:43:22 -0700 (PDT)
+Date: Mon,  9 Sep 2024 05:43:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240906-macos-build-support-v2-0-06beff418848@samsung.com>
- <20240906-macos-build-support-v2-2-06beff418848@samsung.com>
- <CAK7LNARw-7uwJB7ibmSYE5nYUtPXcr4J9cHBQqm9BnNS=SRUhQ@mail.gmail.com> <CABj0suCHeWGDXX-S6U9X5iCzwMqn9pq=i84PSKwKtUXhGxaBjQ@mail.gmail.com>
-In-Reply-To: <CABj0suCHeWGDXX-S6U9X5iCzwMqn9pq=i84PSKwKtUXhGxaBjQ@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 9 Sep 2024 14:40:51 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATPS2cdRso_zHt1Z0Gyugc4KOhZVYAFP35f=Eaoy6-8Cg@mail.gmail.com>
-Message-ID: <CAK7LNATPS2cdRso_zHt1Z0Gyugc4KOhZVYAFP35f=Eaoy6-8Cg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/8] file2alias: fix uuid_t definitions for macos
-To: "Daniel Gomez (Samsung)" <d+samsung@kruces.com>
-Cc: da.gomez@samsung.com, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Lucas De Marchi <lucas.demarchi@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
-	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
-	Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Simona Vetter <simona.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, 
-	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
-	Finn Behrens <me@kloenk.dev>, gost.dev@samsung.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Message-ID: <20240909054318.1809580-1-almasrymina@google.com>
+Subject: [PATCH net-next v25 00/13] Device Memory TCP
+From: Mina Almasry <almasrymina@google.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org
+Cc: Mina Almasry <almasrymina@google.com>, Donald Hunter <donald.hunter@gmail.com>, 
+	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?=" <bjorn@kernel.org>, Magnus Karlsson <magnus.karlsson@intel.com>, 
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
+	Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, 
+	"=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>, Pavel Begunkov <asml.silence@gmail.com>, 
+	David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
+	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>, Bagas Sanjaya <bagasdotme@gmail.com>, 
+	Christoph Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 9, 2024 at 2:41=E2=80=AFAM Daniel Gomez (Samsung)
-<d+samsung@kruces.com> wrote:
->
-> On Sun, Sep 8, 2024 at 1:56=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
-> >
-> > On Fri, Sep 6, 2024 at 8:01=E2=80=AFPM Daniel Gomez via B4 Relay
-> > <devnull+da.gomez.samsung.com@kernel.org> wrote:
-> > >
-> > > From: Daniel Gomez <da.gomez@samsung.com>
-> > >
-> > > The uuid_t struct defined in sys/types.h on macOS hosts conflicts wit=
-h
-> > > the one defined in file2alias, resulting in the typedef redefinition
-> > > error below. To resolve this conflict, define the _UUID_T and
-> > > __GETHOSTUUID_ in file2alias HOSTCFLAGS.
-> > >
-> > > Error:
-> > >   HOSTCC  scripts/mod/file2alias.o scripts/mod/file2alias.c:45:3:
-> > > error: typedef redefinition with different types ('struct uuid_t' vs
-> > > '__darwin_uuid_t' (aka 'unsigned char[16]'))    45 | } uuid_t;       =
-|
-> > > ^
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    sys/_types/_uuid_t.h:31:25: note: previous definition is here 31 |
-> > >    typedef __darwin_uuid_t uuid_t;    |                         ^
-> > > scripts/mod/file2alias.c:1354:7: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1354 |
-> > >  uuid->b[0], uuid->b[1], uuid->b[2], uuid->b[3], uuid->b[4],      |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1354:19: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1354 |
-> > >  uuid->b[0], uuid->b[1], uuid->b[2], uuid->b[3], uuid->b[4],      |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1354:31: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1354 |
-> > >  uuid->b[0], uuid->b[1], uuid->b[2], uuid->b[3], uuid->b[4],      |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1354:43: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1354 |
-> > >  uuid->b[0], uuid->b[1], uuid->b[2], uuid->b[3], uuid->b[4],      |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1354:55: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1354 |
-> > >  uuid->b[0], uuid->b[1], uuid->b[2], uuid->b[3], uuid->b[4],      |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1355:7: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1355 |
-> > >  uuid->b[5], uuid->b[6], uuid->b[7], uuid->b[8], uuid->b[9],      |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1355:19: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1355 |
-> > >  uuid->b[5], uuid->b[6], uuid->b[7], uuid->b[8], uuid->b[9],      |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1355:31: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1355 |
-> > >  uuid->b[5], uuid->b[6], uuid->b[7], uuid->b[8], uuid->b[9],      |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1355:43: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1355 |
-> > >  uuid->b[5], uuid->b[6], uuid->b[7], uuid->b[8], uuid->b[9],      |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1355:55: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1355 |
-> > >  uuid->b[5], uuid->b[6], uuid->b[7], uuid->b[8], uuid->b[9],      |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1356:7: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1356 |
-> > >  uuid->b[10], uuid->b[11], uuid->b[12], uuid->b[13], uuid->b[14],    =
-  |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1356:20: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1356 |
-> > >  uuid->b[10], uuid->b[11], uuid->b[12], uuid->b[13], uuid->b[14],    =
-  |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1356:33: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1356 |
-> > >  uuid->b[10], uuid->b[11], uuid->b[12], uuid->b[13], uuid->b[14],    =
-  |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1356:46: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1356 |
-> > >  uuid->b[10], uuid->b[11], uuid->b[12], uuid->b[13], uuid->b[14],    =
-  |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1356:59: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1356 |
-> > >  uuid->b[10], uuid->b[11], uuid->b[12], uuid->b[13], uuid->b[14],    =
-  |
-> > >  ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > scripts/mod/file2alias.c:1357:7: error: member reference base
-> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
-> > >  'unsigned char[16]') is not a structure or union 1357 |
-> > >  uuid->b[15]);      |                 ~~~~^ ~
-> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
-> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
-> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
-> > >    |                                                        ^~~~~~~~~=
-~~
-> > > 17 errors generated.
-> > >
-> > > Suggested-by: Nicolas Schier <nicolas@fjasle.eu>
-> > > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> > > ---
-> > >  scripts/mod/Makefile     | 2 ++
-> > >  scripts/mod/file2alias.c | 3 +++
-> > >  2 files changed, 5 insertions(+)
-> > >
-> > > diff --git a/scripts/mod/Makefile b/scripts/mod/Makefile
-> > > index c729bc936bae..75c12c045f21 100644
-> > > --- a/scripts/mod/Makefile
-> > > +++ b/scripts/mod/Makefile
-> > > @@ -8,6 +8,8 @@ modpost-objs    :=3D modpost.o file2alias.o sumversio=
-n.o symsearch.o
-> > >
-> > >  devicetable-offsets-file :=3D devicetable-offsets.h
-> > >
-> > > +HOSTCFLAGS_file2alias.o +=3D -D_UUID_T -D__GETHOSTUUID_H
-> > > +
-> > >  $(obj)/$(devicetable-offsets-file): $(obj)/devicetable-offsets.s FOR=
-CE
-> > >         $(call filechk,offsets,__DEVICETABLE_OFFSETS_H__)
-> > >
-> > > diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-> > > index 99dce93a4188..ab743f6d60ef 100644
-> > > --- a/scripts/mod/file2alias.c
-> > > +++ b/scripts/mod/file2alias.c
-> > > @@ -11,6 +11,9 @@
-> > >   */
-> > >
-> > >  #include "modpost.h"
-> > > +#ifdef __APPLE__
-> > > +#define uuid_t sys_uuid_t
-> > > +#endif
-> > >  #include "devicetable-offsets.h"
-> >
-> >
-> >
-> >
-> > Is this what Nicolas suggested?
-> > https://lore.kernel.org/lkml/20240807-sexy-roadrunner-of-acceptance-a84=
-bbf@lindesnes/
-> >
-> >
-> > I thought he suggested replacing #ifdef __APPLE__
-> > with -D_UUID_T -D__GETHOSTUUID_H.
-> >
-> >
-> > You added -D_UUID_T -D__GETHOSTUUID_H,
-> > keeping #ifdef __APPLE__.
->
-> I forgot to remove this.
->
-> Based on your suggestion in the other thread to use/overwrite
-> HOSTCFLAGS via the command line, it seems I should drop this patch.
-> Can you confirm?
+v25: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D885396&s=
+tate=3D*
+=3D=3D=3D
+
+Major changes:
+- Moved devmem.h and mp_dmabuf_devmem.h to internal header files.
+- Changed the page_pool_params to take in a queue_idx rather than
+  a struct netdev_rx_queue.
+- Added WARN_ON_ONCE around __skb_checksum readability check and added
+  check to skb_checksum_help().
+
+Other more minor feedback addressed as well.
+
+v24: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D884556&s=
+tate=3D*
+=3D=3D=3D=3D
+
+No major changes. Mostly addressing issues in the error paths of dmabuf
+binding, and code cleanups/improvements from reviewers:
+
+Changes:
+- Fix failing ynl regen error.
+- Error path fixes & extack error messages in dmabuf binding.
+- Code cleanup in introspection.
+- gitignore ynl.d generated file.
+
+Full devmem TCP changes including the full GVE driver implementation is
+here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v24/
+
+v23: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D882978&s=
+tate=3D*
+=3D=3D=3D=3D
+
+Fixing relatively minor issues called out in v22. (thanks again!)
+
+Mostly code cleanups, extack error messages, and minor reworks. Nothing
+major really changed, so the exact changes per commit is called in the
+commit messages.
+
+Full devmem TCP changes including the full GVE driver implementation is
+here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v23/
+
+v22: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D881158&s=
+tate=3D*
+=3D=3D=3D=3D
+
+v22 aims to resolve the pending issue pointed to in v21, which is the
+interaction with xdp. In this series I rebase on top of the minor
+refactor which refactors propagating xdp configuration to slave devices:
+
+https://patchwork.kernel.org/project/netdevbpf/list/?series=3D881994&state=
+=3D*
+
+I then disable setting xdp on devices using memory providers, and
+propagating xdp configuration to devices using memory providers.
+
+Full devmem TCP changes including the full GVE driver implementation is
+here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v22/
+
+v21: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D880735&s=
+tate=3D*
+=3D=3D=3D=3D
+
+v20 addressed some comments and resolved a test failure, but introduced
+an unfortunate build error with a config edge case I wasn't testing. v21
+simply resolves that error.
+
+Major Changes:
+- Resolve build error with CONFIG_PAGE_POOL=3Dn && CONFIG_NET=3Dy
+
+Full devmem TCP changes including the full GVE driver implementation is
+here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v21/
+
+v20: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D879373&s=
+tate=3D*
+=3D=3D=3D=3D
+
+v20 aims to resolve a couple of bug reports against v19, and addresses
+some review comments around the page_pool_check_memory_provider
+mechanism.
+
+Major changes:
+- Test edge cases such as header split disabled in selftest.
+- Change `offset =3D 0` back to `offset =3D offset - start` to resolve issu=
+e
+  found in RX path by Taehee (thanks!)
+- Address a few comments around page_pool_check_memory_provider() from
+  Pavel & Jakub.
+- Removed some unnecessary includes across various patches in the
+  series.
+- Removed unnecessary EXPORT_SYMBOL(page_pool_mem_providers) (Jakub).
+- Fix regression caused by incorrect dev_get_max_mp_channel check, along
+  with rename (Jakub).
+
+Full devmem TCP changes including the full GVE driver implementation is
+here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v20/
+
+v19: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D876852&s=
+tate=3D*
+=3D=3D=3D=3D
+
+v18 got a thorough review (thanks!), and this iteration addresses the
+feedback.
+
+Major changes:
+- Prevent deactivating mp bound queues.
+- Prevent installing xdp on mp bound netdevs, or installing mps on xdp
+  installed netdevs.
+- Fix corner cases in netlink API vis-a-vis missing attributes.
+- Iron out the unreadable netmem driver support story. To be honest, the
+  conversation with Jakub & Pavel got a bit confusing for me. I've
+  implemented an approach in this set that makes sense to me, and
+  AFAICT, addresses the requirements. It may be good as-is, or it
+  may be a conversation starter/continuer. To be honest IMO there
+  are many ways to skin this cat and I don't see an extremely strong
+  reason to go for one approach over another. Here is one approach you
+  may like.
+- Don't reset niov dma_addr on allocation & free.
+- Add some tests to the selftest that catches some of the issues around
+  missing netlink attributes or deactivating mp-bound queues.
+
+Full devmem TCP changes including the full GVE driver implementation is
+here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v19/
+
+v18: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D874848&s=
+tate=3D*
+=3D=3D=3D=3D
+
+v17 got minor feedback: (a) to beef up the description on patch 1 and (b)
+to remove the leading underscores in the header definition.
+
+I applied (a). (b) seems to be against current conventions so I did not
+apply before further discussion.
+
+Full devmem TCP changes including the full GVE driver implementation is
+here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v17/
+
+v17: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D869900&s=
+tate=3D*
+=3D=3D=3D=3D
+
+v16 also got a very thorough review and some testing (thanks again!).
+Thes version addresses all the concerns reported on v15, in terms of
+feedback and issues reported.
+
+Major changes:
+- Use ASSERT_RTNL.
+- Moved around some of the page_pool helpers definitions so I can hide
+  some netmem helpers in private files as Jakub suggested.
+- Don't make every net_iov hold a ref on the binding as Jakub suggested.
+- Fix issue reported by Taehee where we access queues after they have
+  been freed.
+
+Full devmem TCP changes including the full GVE driver implementation is
+here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v17/
+
+v16: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D866353&s=
+tate=3D*
+=3D=3D=3D=3D
+
+v15 got a thorough review and some testing, and this version addresses almo=
+st
+all the feedback. Some more minor comments where the authors said it
+could be done later, I left out.
+
+Major changes:
+- Addition of dma-buf introspection to page-pool-get and queue-get.
+- Fixes to selftests suggested by Taehee.
+- Fixes to documentation suggested by Donald.
+- A couple of suggestions and fixes to TCP patches by Eric and David.
+- Fixes to number assignements suggested by Arnd.
+- Use rtnl_lock()ing to guard against queue reconfiguration while the
+  page_pool initialization is happening. (Jakub).
+- Fixes to a few warnings reproduced by Taehee.
+- Fixes to dma-buf binding suggested by Taehee and Jakub.
+- Fixes to netlink UAPI suggested by Jakub
+- Applied a number of Reviewed-bys and Acked-bys (including ones I lost
+  from v13+).
+
+Full devmem TCP changes including the full GVE driver implementation is
+here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v16/
+
+One caveat: Taehee reproduced a KASAN warning and reported it here:
+
+https://lore.kernel.org/netdev/CAMArcTUdCxOBYGF3vpbq=3DeBvqZfnc44KBaQTN7H-w=
+qdUxZdziw@mail.gmail.com/
+
+I estimate the issue to be minor and easily fixable:
+
+https://lore.kernel.org/netdev/CAHS8izNgaqC--GGE2xd85QB=3DutUnOHmioCsDd1TNx=
+JWKemaD_g@mail.gmail.com/
+
+I hope to be able to follow up with a fix to net tree as net-next closes
+imminently, but if this iteration doesn't make it in, I will repost with
+a fix squashed after net-next reopens, no problem.
+
+v15: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D865481&s=
+tate=3D*
+=3D=3D=3D=3D
+
+No material changes in this version, only a fix to linking against
+libynl.a from the last version. Per Jakub's instructions I've pulled one
+of his patches into this series, and now use the new libynl.a correctly,
+I hope.
+
+As usual, the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v15/
+
+v14: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D865135&a=
+rchive=3Dboth&state=3D*
+=3D=3D=3D=3D
+
+No material changes in this version. Only rebase and re-verification on
+top of net-next. v13, I think, raced with commit ebad6d0334793
+("net/ipv4: Use nested-BH locking for ipv4_tcp_sk.") being merged to
+net-next that caused a patchwork failure to apply. This series should
+apply cleanly on commit c4532232fa2a4 ("selftests: net: remove unneeded
+IP_GRE config").
+
+I did not wait the customary 24hr as Jakub said it's OK to repost as soon
+as I build test the rebased version:
+
+https://lore.kernel.org/netdev/20240625075926.146d769d@kernel.org/
+
+v13: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D861406&a=
+rchive=3Dboth&state=3D*
+=3D=3D=3D=3D
+
+Major changes:
+--------------
+
+This iteration addresses Pavel's review comments, applies his
+reviewed-by's, and seeks to fix the patchwork build error (sorry!).
+
+As usual, the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v13/
+
+v12: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D859747&s=
+tate=3D*
+=3D=3D=3D=3D
+
+Major changes:
+--------------
+
+This iteration only addresses one minor comment from Pavel with regards
+to the trace printing of netmem, and the patchwork build error
+introduced in v11 because I missed doing an allmodconfig build, sorry.
+
+Other than that v11, AFAICT, received no feedback. There is one
+discussion about how the specifics of  plugging io uring memory through
+the page pool, but not relevant to content in this particular patchset,
+AFAICT.
+
+As usual, the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v12/
+
+v11: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D857457&s=
+tate=3D*
+=3D=3D=3D=3D
+
+Major Changes:
+--------------
+
+v11 addresses feedback received in v10. The major change is the removal
+of the memory provider ops as requested by Christoph. We still
+accomplish the same thing, but utilizing direct function calls with if
+statements rather than generic ops.
+
+Additionally address sparse warnings, bugs and review comments from
+folks that reviewed.
+
+As usual, the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v11/
+
+Detailed changelog:
+-------------------
+
+- Fixes in netdev_rx_queue_restart() from Pavel & David.
+- Remove commit e650e8c3a36f5 ("net: page_pool: create hooks for
+custom page providers") from the series to address Christoph's
+feedback and rebased other patches on the series on this change.
+- Fixed build errors with CONFIG_DMA_SHARED_BUFFER &&
+  !CONFIG_GENERIC_ALLOCATOR build.
+- Fixed sparse warnings pointed out by Paolo.
+- Drop unnecessary gro_pull_from_frag0 checks.
+- Added Bagas reviewed-by to docs.
+
+v10: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D852422&s=
+tate=3D*
+=3D=3D=3D=3D
+
+Major Changes:
+--------------
+
+v9 was sent right before the merge window closed (sorry!). v10 is almost
+a re-send of the series now that the merge window re-opened. Only
+rebased to latest net-next and addressed some minor iterative comments
+received on v9.
+
+As usual, the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v10/
+
+Detailed changelog:
+-------------------
+
+- Fixed tokens leaking in DONTNEED setsockopt (Nikolay).
+- Moved net_iov_dma_addr() to devmem.c and made it a devmem specific
+  helpers (David).
+- Rename hook alloc_pages to alloc_netmems as alloc_pages is now
+  preprocessor macro defined and causes a build error.
+
+v9:
+=3D=3D=3D
+
+Major Changes:
+--------------
+
+GVE queue API has been merged. Submitting this version as non-RFC after
+rebasing on top of the merged API, and dropped the out of tree queue API
+I was carrying on github. Addressed the little feedback v8 has received.
+
+Detailed changelog:
+------------------
+- Added new patch from David Wei to this series for
+  netdev_rx_queue_restart()
+  - Fixed sparse error.
+  - Removed CONFIG_ checks in netmem_is_net_iov()
+  - Flipped skb->readable to skb->unreadable
+  - Minor fixes to selftests & docs.
+
+RFC v8:
+=3D=3D=3D=3D=3D=3D=3D
+
+Major Changes:
+--------------
+
+- Fixed build error generated by patch-by-patch build.
+- Applied docs suggestions from Randy.
+
+RFC v7:
+=3D=3D=3D=3D=3D=3D=3D
+
+Major Changes:
+--------------
+
+This revision largely rebases on top of net-next and addresses the feedback
+RFCv6 received from folks, namely Jakub, Yunsheng, Arnd, David, & Pavel.
+
+The series remains in RFC because the queue-API ndos defined in this
+series are not yet implemented. I have a GVE implementation I carry out
+of tree for my testing. A upstreamable GVE implementation is in the
+works. Aside from that, in my estimation all the patches are ready for
+review/merge. Please do take a look.
+
+As usual the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v7/
+
+Detailed changelog:
+
+- Use admin-perm in netlink API.
+- Addressed feedback from Jakub with regards to netlink API
+  implementation.
+- Renamed devmem.c functions to something more appropriate for that
+  file.
+- Improve the performance seen through the page_pool benchmark.
+- Fix the value definition of all the SO_DEVMEM_* uapi.
+- Various fixes to documentation.
+
+Perf - page-pool benchmark:
+---------------------------
+
+Improved performance of bench_page_pool_simple.ko tests compared to v6:
+
+https://pastebin.com/raw/v5dYRg8L
+
+      net-next base: 8 cycle fast path.
+      RFC v6: 10 cycle fast path.
+      RFC v7: 9 cycle fast path.
+      RFC v7 with CONFIG_DMA_SHARED_BUFFER disabled: 8 cycle fast path,
+                                                     same as baseline.
+
+Perf - Devmem TCP benchmark:
+---------------------
+
+Perf is about the same regardless of the changes in v7, namely the
+removal of the static_branch_unlikely to improve the page_pool benchmark
+performance:
+
+189/200gbps bi-directional throughput with RX devmem TCP and regular TCP
+TX i.e. ~95% line rate.
+
+RFC v6:
+=3D=3D=3D=3D=3D=3D=3D
+
+Major Changes:
+--------------
+
+This revision largely rebases on top of net-next and addresses the little
+feedback RFCv5 received.
+
+The series remains in RFC because the queue-API ndos defined in this
+series are not yet implemented. I have a GVE implementation I carry out
+of tree for my testing. A upstreamable GVE implementation is in the
+works. Aside from that, in my estimation all the patches are ready for
+review/merge. Please do take a look.
+
+As usual the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v6/
+
+This version also comes with some performance data recorded in the cover
+letter (see below changelog).
+
+Detailed changelog:
+
+- Rebased on top of the merged netmem_ref changes.
+
+- Converted skb->dmabuf to skb->readable (Pavel). Pavel's original
+  suggestion was to remove the skb->dmabuf flag entirely, but when I
+  looked into it closely, I found the issue that if we remove the flag
+  we have to dereference the shinfo(skb) pointer to obtain the first
+  frag to tell whether an skb is readable or not. This can cause a
+  performance regression if it dirties the cache line when the
+  shinfo(skb) was not really needed. Instead, I converted the skb->dmabuf
+  flag into a generic skb->readable flag which can be re-used by io_uring
+  0-copy RX.
+
+- Squashed a few locking optimizations from Eric Dumazet in the RX path
+  and the DEVMEM_DONTNEED setsockopt.
+
+- Expanded the tests a bit. Added validation for invalid scenarios and
+  added some more coverage.
+
+Perf - page-pool benchmark:
+---------------------------
+
+bench_page_pool_simple.ko tests with and without these changes:
+https://pastebin.com/raw/ncHDwAbn
+
+AFAIK the number that really matters in the perf tests is the
+'tasklet_page_pool01_fast_path Per elem'. This one measures at about 8
+cycles without the changes but there is some 1 cycle noise in some
+results.
+
+With the patches this regresses to 9 cycles with the changes but there
+is 1 cycle noise occasionally running this test repeatedly.
+
+Lastly I tried disable the static_branch_unlikely() in
+netmem_is_net_iov() check. To my surprise disabling the
+static_branch_unlikely() check reduces the fast path back to 8 cycles,
+but the 1 cycle noise remains.
+
+Perf - Devmem TCP benchmark:
+---------------------
+
+189/200gbps bi-directional throughput with RX devmem TCP and regular TCP
+TX i.e. ~95% line rate.
+
+Major changes in RFC v5:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+1. Rebased on top of 'Abstract page from net stack' series and used the
+   new netmem type to refer to LSB set pointers instead of re-using
+   struct page.
+
+2. Downgraded this series back to RFC and called it RFC v5. This is
+   because this series is now dependent on 'Abstract page from net
+   stack'[1] and the queue API. Both are removed from the series to
+   reduce the patch # and those bits are fairly independent or
+   pre-requisite work.
+
+3. Reworked the page_pool devmem support to use netmem and for some
+   more unified handling.
+
+4. Reworked the reference counting of net_iov (renamed from
+   page_pool_iov) to use pp_ref_count for refcounting.
+
+The full changes including the dependent series and GVE page pool
+support is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-rfcv5/
+
+[1] https://patchwork.kernel.org/project/netdevbpf/list/?series=3D810774
+
+Major changes in v1:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+1. Implemented MVP queue API ndos to remove the userspace-visible
+   driver reset.
+
+2. Fixed issues in the napi_pp_put_page() devmem frag unref path.
+
+3. Removed RFC tag.
+
+Many smaller addressed comments across all the patches (patches have
+individual change log).
+
+Full tree including the rest of the GVE driver changes:
+https://github.com/mina/linux/commits/tcpdevmem-v1
+
+Changes in RFC v3:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+1. Pulled in the memory-provider dependency from Jakub's RFC[1] to make the
+   series reviewable and mergeable.
+
+2. Implemented multi-rx-queue binding which was a todo in v2.
+
+3. Fix to cmsg handling.
+
+The sticking point in RFC v2[2] was the device reset required to refill
+the device rx-queues after the dmabuf bind/unbind. The solution
+suggested as I understand is a subset of the per-queue management ops
+Jakub suggested or similar:
+
+https://lore.kernel.org/netdev/20230815171638.4c057dcd@kernel.org/
+
+This is not addressed in this revision, because:
+
+1. This point was discussed at netconf & netdev and there is openness to
+   using the current approach of requiring a device reset.
+
+2. Implementing individual queue resetting seems to be difficult for my
+   test bed with GVE. My prototype to test this ran into issues with the
+   rx-queues not coming back up properly if reset individually. At the
+   moment I'm unsure if it's a mistake in the POC or a genuine issue in
+   the virtualization stack behind GVE, which currently doesn't test
+   individual rx-queue restart.
+
+3. Our usecases are not bothered by requiring a device reset to refill
+   the buffer queues, and we'd like to support NICs that run into this
+   limitation with resetting individual queues.
+
+My thought is that drivers that have trouble with per-queue configs can
+use the support in this series, while drivers that support new netdev
+ops to reset individual queues can automatically reset the queue as
+part of the dma-buf bind/unbind.
+
+The same approach with device resets is presented again for consideration
+with other sticking points addressed.
+
+This proposal includes the rx devmem path only proposed for merge. For a
+snapshot of my entire tree which includes the GVE POC page pool support &
+device memory support:
+
+https://github.com/torvalds/linux/compare/master...mina:linux:tcpdevmem-v3
+
+[1] https://lore.kernel.org/netdev/f8270765-a27b-6ccf-33ea-cda097168d79@red=
+hat.com/T/
+[2] https://lore.kernel.org/netdev/CAHS8izOVJGJH5WF68OsRWFKJid1_huzzUK+hpKb=
+LcL4pSOD1Jw@mail.gmail.com/T/
+
+Changes in RFC v2:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+The sticking point in RFC v1[1] was the dma-buf pages approach we used to
+deliver the device memory to the TCP stack. RFC v2 is a proof-of-concept
+that attempts to resolve this by implementing scatterlist support in the
+networking stack, such that we can import the dma-buf scatterlist
+directly. This is the approach proposed at a high level here[2].
+
+Detailed changes:
+1. Replaced dma-buf pages approach with importing scatterlist into the
+   page pool.
+2. Replace the dma-buf pages centric API with a netlink API.
+3. Removed the TX path implementation - there is no issue with
+   implementing the TX path with scatterlist approach, but leaving
+   out the TX path makes it easier to review.
+4. Functionality is tested with this proposal, but I have not conducted
+   perf testing yet. I'm not sure there are regressions, but I removed
+   perf claims from the cover letter until they can be re-confirmed.
+5. Added Signed-off-by: contributors to the implementation.
+6. Fixed some bugs with the RX path since RFC v1.
+
+Any feedback welcome, but specifically the biggest pending questions
+needing feedback IMO are:
+
+1. Feedback on the scatterlist-based approach in general.
+2. Netlink API (Patch 1 & 2).
+3. Approach to handle all the drivers that expect to receive pages from
+   the page pool (Patch 6).
+
+[1] https://lore.kernel.org/netdev/dfe4bae7-13a0-3c5d-d671-f61b375cb0b4@gma=
+il.com/T/
+[2] https://lore.kernel.org/netdev/CAHS8izPm6XRS54LdCDZVd0C75tA1zHSu6jLVO8n=
+zTLXCc=3DH7Nw@mail.gmail.com/
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+* TL;DR:
+
+Device memory TCP (devmem TCP) is a proposal for transferring data to and/o=
+r
+from device memory efficiently, without bouncing the data to a host memory
+buffer.
+
+* Problem:
+
+A large amount of data transfers have device memory as the source and/or
+destination. Accelerators drastically increased the volume of such transfer=
+s.
+Some examples include:
+- ML accelerators transferring large amounts of training data from storage =
+into
+  GPU/TPU memory. In some cases ML training setup time can be as long as 50=
+% of
+  TPU compute time, improving data transfer throughput & efficiency can hel=
+p
+  improving GPU/TPU utilization.
+
+- Distributed training, where ML accelerators, such as GPUs on different ho=
+sts,
+  exchange data among them.
+
+- Distributed raw block storage applications transfer large amounts of data=
+ with
+  remote SSDs, much of this data does not require host processing.
+
+Today, the majority of the Device-to-Device data transfers the network are
+implemented as the following low level operations: Device-to-Host copy,
+Host-to-Host network transfer, and Host-to-Device copy.
+
+The implementation is suboptimal, especially for bulk data transfers, and c=
+an
+put significant strains on system resources, such as host memory bandwidth,
+PCIe bandwidth, etc. One important reason behind the current state is the
+kernel=E2=80=99s lack of semantics to express device to network transfers.
+
+* Proposal:
+
+In this patch series we attempt to optimize this use case by implementing
+socket APIs that enable the user to:
+
+1. send device memory across the network directly, and
+2. receive incoming network packets directly into device memory.
+
+Packet _payloads_ go directly from the NIC to device memory for receive and=
+ from
+device memory to NIC for transmit.
+Packet _headers_ go to/from host memory and are processed by the TCP/IP sta=
+ck
+normally. The NIC _must_ support header split to achieve this.
+
+Advantages:
+
+- Alleviate host memory bandwidth pressure, compared to existing
+ network-transfer + device-copy semantics.
+
+- Alleviate PCIe BW pressure, by limiting data transfer to the lowest level
+  of the PCIe tree, compared to traditional path which sends data through t=
+he
+  root complex.
+
+* Patch overview:
+
+** Part 1: netlink API
+
+Gives user ability to bind dma-buf to an RX queue.
+
+** Part 2: scatterlist support
+
+Currently the standard for device memory sharing is DMABUF, which doesn't
+generate struct pages. On the other hand, networking stack (skbs, drivers, =
+and
+page pool) operate on pages. We have 2 options:
+
+1. Generate struct pages for dmabuf device memory, or,
+2. Modify the networking stack to process scatterlist.
+
+Approach #1 was attempted in RFC v1. RFC v2 implements approach #2.
+
+** part 3: page pool support
+
+We piggy back on page pool memory providers proposal:
+https://github.com/kuba-moo/linux/tree/pp-providers
+
+It allows the page pool to define a memory provider that provides the
+page allocation and freeing. It helps abstract most of the device memory
+TCP changes from the driver.
+
+** part 4: support for unreadable skb frags
+
+Page pool iovs are not accessible by the host; we implement changes
+throughput the networking stack to correctly handle skbs with unreadable
+frags.
+
+** Part 5: recvmsg() APIs
+
+We define user APIs for the user to send and receive device memory.
+
+Not included with this series is the GVE devmem TCP support, just to
+simplify the review. Code available here if desired:
+https://github.com/mina/linux/tree/tcpdevmem
+
+This series is built on top of net-next with Jakub's pp-providers changes
+cherry-picked.
+
+* NIC dependencies:
+
+1. (strict) Devmem TCP require the NIC to support header split, i.e. the
+   capability to split incoming packets into a header + payload and to put
+   each into a separate buffer. Devmem TCP works by using device memory
+   for the packet payload, and host memory for the packet headers.
+
+2. (optional) Devmem TCP works better with flow steering support & RSS supp=
+ort,
+   i.e. the NIC's ability to steer flows into certain rx queues. This allow=
+s the
+   sysadmin to enable devmem TCP on a subset of the rx queues, and steer
+   devmem TCP traffic onto these queues and non devmem TCP elsewhere.
+
+The NIC I have access to with these properties is the GVE with DQO support
+running in Google Cloud, but any NIC that supports these features would suf=
+fice.
+I may be able to help reviewers bring up devmem TCP on their NICs.
+
+* Testing:
+
+The series includes a udmabuf kselftest that show a simple use case of
+devmem TCP and validates the entire data path end to end without
+a dependency on a specific dmabuf provider.
+
+** Test Setup
+
+Kernel: net-next with this series and memory provider API cherry-picked
+locally.
+
+Hardware: Google Cloud A3 VMs.
+
+NIC: GVE with header split & RSS & flow steering support.
+
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: David Wei <dw@davidwei.uk>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Shailend Chand <shailend@google.com>
+Cc: Harshitha Ramamurthy <hramamurthy@google.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Jeroen de Borst <jeroendb@google.com>
+Cc: Praveen Kaligineedi <pkaligineedi@google.com>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Nikolay Aleksandrov <razor@blackwall.org>
+Cc: Taehee Yoo <ap420073@gmail.com>
+Cc: Donald Hunter <donald.hunter@gmail.com>
 
 
-Yes, I think this patch is unnecessary because:
 
- [1] You can feed "-D_UUID_T -D__GETHOSTUUID_H"
-     from the HOSTCFLAGS env variable
- [2] uuid_t may be dropped if I succeed in
-     refactoring modpost in the future
+Mina Almasry (13):
+  netdev: add netdev_rx_queue_restart()
+  net: netdev netlink api to bind dma-buf to a net device
+  netdev: support binding dma-buf to netdevice
+  netdev: netdevice devmem allocator
+  page_pool: devmem support
+  memory-provider: dmabuf devmem memory provider
+  net: support non paged skb frags
+  net: add support for skbs with unreadable frags
+  tcp: RX path for devmem TCP
+  net: add SO_DEVMEM_DONTNEED setsockopt to release RX frags
+  net: add devmem TCP documentation
+  selftests: add ncdevmem, netcat for devmem TCP
+  netdev: add dmabuf introspection
 
-
-
-
+ Documentation/netlink/specs/netdev.yaml |  61 +++
+ Documentation/networking/devmem.rst     | 269 +++++++++++
+ Documentation/networking/index.rst      |   1 +
+ arch/alpha/include/uapi/asm/socket.h    |   6 +
+ arch/mips/include/uapi/asm/socket.h     |   6 +
+ arch/parisc/include/uapi/asm/socket.h   |   6 +
+ arch/sparc/include/uapi/asm/socket.h    |   6 +
+ include/linux/netdevice.h               |   2 +
+ include/linux/skbuff.h                  |  61 ++-
+ include/linux/skbuff_ref.h              |   9 +-
+ include/linux/socket.h                  |   1 +
+ include/net/netdev_rx_queue.h           |   5 +
+ include/net/netmem.h                    | 132 +++++-
+ include/net/page_pool/helpers.h         |  39 +-
+ include/net/page_pool/types.h           |  23 +-
+ include/net/sock.h                      |   2 +
+ include/net/tcp.h                       |   3 +-
+ include/trace/events/page_pool.h        |  12 +-
+ include/uapi/asm-generic/socket.h       |   6 +
+ include/uapi/linux/netdev.h             |  13 +
+ include/uapi/linux/uio.h                |  17 +
+ net/Kconfig                             |   5 +
+ net/core/Makefile                       |   2 +
+ net/core/datagram.c                     |   6 +
+ net/core/dev.c                          |  33 +-
+ net/core/devmem.c                       | 389 ++++++++++++++++
+ net/core/devmem.h                       | 180 ++++++++
+ net/core/gro.c                          |   3 +-
+ net/core/mp_dmabuf_devmem.h             |  44 ++
+ net/core/netdev-genl-gen.c              |  23 +
+ net/core/netdev-genl-gen.h              |   6 +
+ net/core/netdev-genl.c                  | 139 +++++-
+ net/core/netdev_rx_queue.c              |  81 ++++
+ net/core/netmem_priv.h                  |  31 ++
+ net/core/page_pool.c                    | 120 +++--
+ net/core/page_pool_priv.h               |  46 ++
+ net/core/page_pool_user.c               |  32 +-
+ net/core/skbuff.c                       |  77 +++-
+ net/core/sock.c                         |  68 +++
+ net/ethtool/common.c                    |   8 +
+ net/ipv4/esp4.c                         |   3 +-
+ net/ipv4/tcp.c                          | 263 ++++++++++-
+ net/ipv4/tcp_input.c                    |  13 +-
+ net/ipv4/tcp_ipv4.c                     |  16 +
+ net/ipv4/tcp_minisocks.c                |   2 +
+ net/ipv4/tcp_output.c                   |   5 +-
+ net/ipv6/esp6.c                         |   3 +-
+ net/packet/af_packet.c                  |   4 +-
+ net/xdp/xsk_buff_pool.c                 |   5 +
+ tools/include/uapi/linux/netdev.h       |  13 +
+ tools/net/ynl/lib/.gitignore            |   1 +
+ tools/testing/selftests/net/.gitignore  |   1 +
+ tools/testing/selftests/net/Makefile    |   9 +
+ tools/testing/selftests/net/ncdevmem.c  | 570 ++++++++++++++++++++++++
+ 54 files changed, 2757 insertions(+), 124 deletions(-)
+ create mode 100644 Documentation/networking/devmem.rst
+ create mode 100644 net/core/devmem.c
+ create mode 100644 net/core/devmem.h
+ create mode 100644 net/core/mp_dmabuf_devmem.h
+ create mode 100644 net/core/netdev_rx_queue.c
+ create mode 100644 net/core/netmem_priv.h
+ create mode 100644 tools/testing/selftests/net/ncdevmem.c
 
 --=20
-Best Regards
-Masahiro Yamada
+2.46.0.469.g59c65b2a67-goog
+
 
