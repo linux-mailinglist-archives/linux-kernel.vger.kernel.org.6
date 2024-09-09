@@ -1,147 +1,133 @@
-Return-Path: <linux-kernel+bounces-321827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88E2972007
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:09:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F44972009
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 102EF1C231AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:09:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EB821C22181
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263AD16F907;
-	Mon,  9 Sep 2024 17:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E74416F8F5;
+	Mon,  9 Sep 2024 17:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="BGn1XHNc"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4KtyCy2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F98128DCC;
-	Mon,  9 Sep 2024 17:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A0342AA1;
+	Mon,  9 Sep 2024 17:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725901764; cv=none; b=Kpwvfpi4X1+8ljRCVFnPS9MJauCQzqDWBeu/W2rVikt0Civ4iDFP9fZkzWnounRaKF/cd9gi/+CIf+bufi+xbpMENvDR9YnNJxAyPW2S2q/nx8bPTl5MUrwk1ZgPEffi1lWSMdhwkNBcDQjoQtHEe0ePGvFXpb0+7r4fHaR8y/8=
+	t=1725901775; cv=none; b=brwg9Y0QYdOV5embbFYKDrAwIYH3MltovZA40qW65Nr477s5kRwqE696xzofvYywUGUOPblZBcwP1KAyqbzUmz6BwEDJ0RBAacKX7NhJI52HnqV6EFgqNCWcGNktLG1gVqgnvU+CamaefQDSm/TM+Vvs8DxbJX1TU5a2+J+tGsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725901764; c=relaxed/simple;
-	bh=GeYdtGmtuupdKlXGnYcI3TrQjSqMMfue7WxCA9SbBN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nYJyutMiGR0XYCs552PQ+OoR4LDgRVPrRCh1Pg7HDhyXbJGba1Wj9yGvGEgw3hx6O71bpwkkODxzQ11nIVfOq1MeIv/OdLQ0ndHPamnU4LVhgx/lHcN8RyVqurxdJBR1Q90nMAvNsNGk1f4TgRMVgh82AtWnkiZC2a7KYmBdy2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=BGn1XHNc; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 427921F920;
-	Mon,  9 Sep 2024 19:09:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1725901760;
-	bh=Iw4k1tFhUrrwCXvcI5EjjTTYC8kHB6xyuuK5DqJmF8g=;
-	h=Received:From:To:Subject;
-	b=BGn1XHNcU2BKKG6U7Q+dMe1qtNxYHZw1nRHneXyPU/QwFBRd8Ztol3mRm8qt8jGIc
-	 mtkjL6Un4n9DRa7bGlYY7Au5AT+bpuTjJdmtb/2Q0NZP9QDMgMuv9Upl6iI11w8k+Z
-	 qK/MFo8rFu6YkC7dkRP0siNyN0WvabmplYz+6ltaRwbZoy63WIPUKE+Vt5eODoeSzM
-	 fP5X4fPuHf++N+QNcuvmyXPiC2DrR82i8tj38mwlExX0MABo0Z1nLvpyFSCAgLbqMp
-	 Z+ELRtZOt/8Qd91CB49klMAjjY9n6bVDkgiKzgxTF63PCrJkhE/RWiU18BqyWtA4z6
-	 s7DyMVhV16B/g==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id D78167F971; Mon,  9 Sep 2024 19:09:19 +0200 (CEST)
-Date: Mon, 9 Sep 2024 19:09:19 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/12] wifi: mwifiex: move common settings out of
- switch/case
-Message-ID: <Zt8rv-nOERIac4T9@gaggiata.pivistrello.it>
-References: <20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de>
- <20240826-mwifiex-cleanup-1-v1-11-56e6f8e056ec@pengutronix.de>
+	s=arc-20240116; t=1725901775; c=relaxed/simple;
+	bh=/qV0P6xJzrMSUVsz7Z1CsIbU69skcya/dmYXKueZ/lU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=oBl1BWnM0T2m22z1roLNa50QwmJ6jfH8s4WjjIQ2DUGq7kjH1yukp6d7AoF8//Z5XvumS1+z/FLCe8pcvX+eN+yDsmG89E0Js7ea0qI+jX8cwGf7UUDyxH2tWRGyBo3ckSRX5bZ0uBG9rzq4kTZ68mG26ktVNi64DB3B376TkDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4KtyCy2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 184E7C4CEC5;
+	Mon,  9 Sep 2024 17:09:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725901774;
+	bh=/qV0P6xJzrMSUVsz7Z1CsIbU69skcya/dmYXKueZ/lU=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=e4KtyCy2WiCK98F3bH7l2m9CUia2bzqaID9ICtWdqJTNuSR67C61vg2hEyDg/8ngo
+	 T9IUVXNXNfBMZapo4Gj6LOtBeZB/LOm6Mfrs3aadbj2EEtt78Bbx4OuHDiNNtKcbAS
+	 eaY667XHP8he708UdopD2mFkn28mW+HSwG14hdHCsfAvb1G1cKMItNykSJlzkVZG31
+	 lcpqA1Ic0fh5k7bqZ/7Ax+XY59vSc0ik+E6v4Hgw4OD3GiaU/1FbCUCzcUkYWulm3X
+	 U6SZznf4jupfh1R2tn/JEkD4dKU6wjTJYmPeYpb68HnL2eRU2gaCYuOR8pI7JW4BpH
+	 713bWSZ6kVGAA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826-mwifiex-cleanup-1-v1-11-56e6f8e056ec@pengutronix.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 09 Sep 2024 20:09:30 +0300
+Message-Id: <D41X47S8U93M.IDL1ES4DB1Y9@kernel.org>
+Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Philipp Rudo" <prudo@redhat.com>
+Cc: "Ard Biesheuvel" <ardb@kernel.org>, "Pingfan Liu" <piliu@redhat.com>,
+ "Jan Hendrik Farr" <kernel@jfarr.cc>, "Lennart Poettering"
+ <mzxreary@0pointer.de>, "Eric Biederman" <ebiederm@xmission.com>, "Baoquan
+ He" <bhe@redhat.com>, "Dave Young" <dyoung@redhat.com>, "Mark Rutland"
+ <mark.rutland@arm.com>, "Will Deacon" <will@kernel.org>, "Catalin Marinas"
+ <catalin.marinas@arm.com>, <kexec@lists.infradead.org>,
+ <linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20240819145417.23367-1-piliu@redhat.com>
+ <CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
+ <20240906125438.1e54c5f6@rotkaeppchen>
+ <D400L4YN4K7K.264IDL4O8374F@kernel.org>
+ <D400OHF2ODNK.3JF7DJ87Q4BYI@kernel.org>
+ <D400W37FR01S.CLFIKA98YWX7@kernel.org>
+ <20240909155555.257e13eb@rotkaeppchen>
+In-Reply-To: <20240909155555.257e13eb@rotkaeppchen>
 
-On Mon, Aug 26, 2024 at 01:01:32PM +0200, Sascha Hauer wrote:
-> In mwifiex_add_virtual_intf() several settings done in a switch/case
-> are the same in all cases. Move them out of the switch/case to
-> deduplicate the code.
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
->  drivers/net/wireless/marvell/mwifiex/cfg80211.c | 16 +++++-----------
->  1 file changed, 5 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> index 8746943c17788..2ce54a3fc32f8 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> @@ -3005,7 +3005,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
->  			return ERR_PTR(-EFAULT);
->  		}
->  
-> -		priv->wdev.wiphy = wiphy;
->  		priv->wdev.iftype = NL80211_IFTYPE_STATION;
->  
->  		if (type == NL80211_IFTYPE_UNSPECIFIED)
-> @@ -3014,8 +3013,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
->  			priv->bss_mode = type;
->  
->  		priv->bss_type = MWIFIEX_BSS_TYPE_STA;
-> -		priv->frame_type = MWIFIEX_DATA_FRAME_TYPE_ETH_II;
-> -		priv->bss_priority = 0;
->  		priv->bss_role = MWIFIEX_BSS_ROLE_STA;
->  
->  		break;
-> @@ -3035,14 +3032,10 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
->  			return ERR_PTR(-EFAULT);
->  		}
->  
-> -		priv->wdev.wiphy = wiphy;
->  		priv->wdev.iftype = NL80211_IFTYPE_AP;
->  
->  		priv->bss_type = MWIFIEX_BSS_TYPE_UAP;
-> -		priv->frame_type = MWIFIEX_DATA_FRAME_TYPE_ETH_II;
-> -		priv->bss_priority = 0;
->  		priv->bss_role = MWIFIEX_BSS_ROLE_UAP;
-> -		priv->bss_started = 0;
->  		priv->bss_mode = type;
->  
->  		break;
-> @@ -3062,7 +3055,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
->  			return ERR_PTR(-EFAULT);
->  		}
->  
-> -		priv->wdev.wiphy = wiphy;
->  		/* At start-up, wpa_supplicant tries to change the interface
->  		 * to NL80211_IFTYPE_STATION if it is not managed mode.
->  		 */
-> @@ -3075,10 +3067,7 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
->  		 */
->  		priv->bss_type = MWIFIEX_BSS_TYPE_P2P;
->  
-> -		priv->frame_type = MWIFIEX_DATA_FRAME_TYPE_ETH_II;
-> -		priv->bss_priority = 0;
->  		priv->bss_role = MWIFIEX_BSS_ROLE_STA;
-> -		priv->bss_started = 0;
->  
->  		if (mwifiex_cfg80211_init_p2p_client(priv)) {
->  			memset(&priv->wdev, 0, sizeof(priv->wdev));
-> @@ -3092,6 +3081,11 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
->  		return ERR_PTR(-EINVAL);
->  	}
->  
-> +	priv->wdev.wiphy = wiphy;
-> +	priv->bss_priority = 0;
-> +	priv->bss_started = 0;
+On Mon Sep 9, 2024 at 4:55 PM EEST, Philipp Rudo wrote:
+> Hi Jarkko,
+>
+> On Sat, 07 Sep 2024 14:41:38 +0300
+> "Jarkko Sakkinen" <jarkko@kernel.org> wrote:
+>
+> > On Sat Sep 7, 2024 at 2:31 PM EEST, Jarkko Sakkinen wrote:
+> > > On Sat Sep 7, 2024 at 2:27 PM EEST, Jarkko Sakkinen wrote: =20
+> > > > On Fri Sep 6, 2024 at 1:54 PM EEST, Philipp Rudo wrote: =20
+> > > > > Let me throw an other wild idea in the ring. Instead of implement=
+ing
+> > > > > a EFI runtime we could also include a eBPF version of the stub in=
+to the
+> > > > > images. kexec could then extract the eBPF program and let it run =
+just
+> > > > > like any other eBPF program with all the pros (and cons) that com=
+e with
+> > > > > it. That won't be as generic as the EFI runtime, e.g. you couldn'=
+t
+> > > > > simply kexec any OS installer. On the other hand it would make it
+> > > > > easier to port UKIs et al. to non-EFI systems. What do you think?=
+ =20
+> > > >
+> > > > BPF would have some guarantees that are favorable such as programs
+> > > > always end, even faulty ones. It always has implicit "ExitBootServi=
+ces".
+> > > >
+> > > > Just a remark. =20
+> > >
+> > > Some days ago I was thinking could some of the kernel functionality b=
+e
+> > > eBPF at least like in formal theory because most of it is amortized,
+> > > i.e. does a fixed chunk of work. Not going into that rabbit hole but
+> > > I really like this idea and could be good experimentation ground for
+> > > such innovation. =20
+> >=20
+> > E.g. let's imagine there would imaginary eBPF-TPM driver framework.
+> >=20
+> > How I would go doing that would be to take the existing TPM driver
+> > functionality and provide extra functions and resources available for
+> > subsystem specific BPF environment, and have the orhestration code as
+> > eBPF. I pretty much concluded that there is a chance that such could
+> > work out.
+> >=20
+> > Not something in my immediate table but it is still really interesting
+> > idea, as instead of using language to separate "safe" and unsafe"
+> > regions you would use "VM" environments to create the walls. In the
+> > end of the day that would also great venture for Rust in kernel, i.e.
+> > compile that BPF from Rust.
+> >=20
+> > Sorry going of the hook the comment triggered me ;-)
+>
+> I'm glad you like the idea :-)
+>
+> Sounds like an interesting idea you are having there!
 
-This was not set before in all the 3 cases. Irrelevant? Worth checking and/or
-mentioning in the commit message?
+Yeah, if you go forward with this please CC to me any possible
+follow-ups :-)
 
-
+BR, Jarkko
 
