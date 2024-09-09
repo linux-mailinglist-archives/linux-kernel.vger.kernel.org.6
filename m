@@ -1,148 +1,208 @@
-Return-Path: <linux-kernel+bounces-320626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3642970CEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:24:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 471E8970CF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 858AC1C21BBC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:24:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9A8FB215B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4BC1ACDF5;
-	Mon,  9 Sep 2024 05:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344851ACE00;
+	Mon,  9 Sep 2024 05:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="Yhiap7YT"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="aIfRcZo4"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FFB9461
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 05:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A25A9461
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 05:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725859471; cv=none; b=GMEXDwG6FjGpWok+C/vF5eMBJYth0IhkOH/PQx0Z4HSpeIl4QmJmpYGwOtaLIvz5EMb2Yhu7FQy/mxaGXtjfGzFxS0Gf75hA+5Ozxs0DlzO2ZXe8v1ey17buPKowlvIesy1LDVQincPiPTtccbrfxMZVpevRbS6K+W+kzgJtZUI=
+	t=1725859525; cv=none; b=fm2OC8z1siVJ5Rsl05zIsMyu+oyHcwZkGSDMkBKEWh5j3HH+3+E5bnk1UojUT6LaNIGK2ARr9/R7CkaafZ5lTARduxBWwdNhpLfeQtFyrHRmNrHijfiSoL9P9o9tKtdCZKzsSuNgjFRAcbTAQ0kUvLhhtNilEid0m5m5AUfh+AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725859471; c=relaxed/simple;
-	bh=Y527Ohyqvz8/XLNDPIPbIzEfsmR6Hmkp9At61pb8/TQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CdN/M4Ig8iNt26qlxIaN0x4na0LBK4vN5VxzlzzowMZgJieSTR6tNRAfFim1yyDoFeR1gI+rlznxAu3xfw8W0QhuDZBlN+/zS2p3ExnU4EczNfPewn+eaTTPEPAGiKrRwAWAGMb/u7iBaxX8Oj3QwMs0kP692TO5S624sw3Z4yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=Yhiap7YT; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1725859464;
-	bh=cCB2L1cnVASHPDdYnubQAwM90zr1eiMtQbm3lIYAbsU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Yhiap7YT8DMkQCE5NEM6VwqNiNrlpYt9iT43aLwv/I5088EUSl3+e4hU6TuJI07gA
-	 YhFr51nQo5X2W6qoR3BhfGoYwnbU4ZVgz0ttNTTPT42FVovr/ICVrYDNCU+nQfqQVM
-	 iiojpGsILZ9nMPWx3Ns+HHmw6DM6KnfA0oB9Fm1AojoAVLoKF+xWrZQpG1+blcbQg5
-	 UDUyx3LHDHpRVojuudCq07A/oy5aQwunEXU+AZKeQVyBSYbyzpQQON2I/UHm4kU4uG
-	 iBckHx8VgsMNhbJ2ZW5JLrNk2YrfWns2x4ERI7sGGxbgzMYsE8acOp/KdyHWdf+hfv
-	 1LkaFvkkFbgQg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1725859525; c=relaxed/simple;
+	bh=lt+OdRciJs/mbejZWkEBMLSMKdCLgvDG/+2V0adw8WI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jlbm2HzM2pFqj6s2mv3U/gCYSJqxbLUViUpaz6b6DWTJzdCGESTnolGwU7WnuZzXVJQdIUgzlrPXaa9WrVBDsmuB0+jIl6g6+5JIzU4l4vgojfeoWwdzLngIndG2EsrJOnRPu1vVevVfJLOaXjfVbE/Jm/ho2UjRjCzgtm+vRew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=aIfRcZo4; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X2Fd34vXgz4wb0;
-	Mon,  9 Sep 2024 15:24:23 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Nicholas
- Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Vincenzo
- Frascino <vincenzo.frascino@arm.com>, Andrei Vagin <avagin@gmail.com>
-Subject: Re: [PATCH 1/2] powerpc/vdso: Fix VDSO data access when running in
- a non-root time namespace
-In-Reply-To: <ZtsKW3LLfwmz7icC@zx2c4.com>
-References: <700dbf296d02e32376329774be35cfbead08041d.1725611321.git.christophe.leroy@csgroup.eu>
- <87r09x3r9v.fsf@mail.lhotse> <ZtsG9Q6vKD9XOsZN@zx2c4.com>
- <ZtsKW3LLfwmz7icC@zx2c4.com>
-Date: Mon, 09 Sep 2024 15:24:21 +1000
-Message-ID: <87jzfl4cxm.fsf@mail.lhotse>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 90F623F62B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 05:25:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1725859520;
+	bh=IAvfaTdfZpA+q/X0iFHezyi7oVQNx0sFqSrEiTlhudg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=aIfRcZo4uXKz3De7hIEyT2ir098alN+S002BrdZ3kcyUJwCiU9hVLJBIHLrHys/tt
+	 DqJZ9NsXE2Hzn73doWso6AMpE/bdYPx4/BCGUR3B0Sfv/uWwoOtQB0trRI9LuIkyI/
+	 EQ/eNBYOMxWefqP92qgBqL3+ZEIqgtDFH+0Ho2GjRZ9AeFW/mq/1wP8avAzOrfMoFI
+	 zLPRGCVUCEs08cGgMKMYOqqhjPERBOMQSgiO7erq/bMCw2oFRZUnvOqt4eMyIgnveY
+	 tnjmgvfZsVAlbv9P3aNCJ+N8bNtCV1A8EcOMAW8pp+joi11VRRMnjve8m4mlv04RG7
+	 G9F0S3aj4lnnA==
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-374b69e65e8so2309842f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 22:25:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725859519; x=1726464319;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IAvfaTdfZpA+q/X0iFHezyi7oVQNx0sFqSrEiTlhudg=;
+        b=SoH5cpyhBXneW7+nH1pIxGtAtUW3MFbVXijx3Lyalth/FYiSv5UAWTIBYTWhandbJl
+         M3Ce0H6KMBtO6fSpdLXoHbgUKgA6acW9ocNA/XxJIOsHDH4SHdJe8Lw1PBmRiq2nKXA5
+         f8ebed9U6zu6PpDXhhVIcQgAxxdWrZkZDm6/cASlCv1n4MU5+8cBAnHJFQ0Zx2wL0HSe
+         1fx1WhRuxJbuem1+FJKP8NcWUE42dg39D1MYVoj27prVBdZnz/Efl09u5gM1nYSH5haz
+         hT7XJWlfgEYrXN9vQ+LiLd8tXb/sTHyAD5PYssuNPuvhj7QGD1zVp1DEF+RmcmsNuiJg
+         7mBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJR+DdMogeEKabdTDoH+YH77NchtYATV0Vbzq0z2piJ6QjdP2xzSmYwf/Ece5cZzvoC2iiOMOKajpLbfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm43gULh+5yIdRl57353sgLYHI5dARRsCKWNKRpdoozvWuZVb1
+	oaGW3V5ZTtqX0lg3qnwg07NqEd9AaFaSXikT5uXC5LyIAoCtezl269NwaxgIsE5EAkDLtZm5x3c
+	URkBFER0oNF98+/bsdcjzWb4HFuoStRzmJj/iYoBuFfccIWGFoOaHXNraFav2ZsBHzTyS/H7B+l
+	dch31+STQIZ3rK7FcxKMmRwfOa5nQtukB3+C2BEOBjU9eALbLMgpv9
+X-Received: by 2002:a5d:6184:0:b0:374:b6f2:5f30 with SMTP id ffacd0b85a97d-3788960cf44mr7308360f8f.27.1725859519022;
+        Sun, 08 Sep 2024 22:25:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEIPPCybN2BiTI2xpSNXMCruJnTb4YO1MBV8kg20InRqKER78xtzV66i461GGVGHG/iBXDgZu9RDbVImAg8yOE=
+X-Received: by 2002:a5d:6184:0:b0:374:b6f2:5f30 with SMTP id
+ ffacd0b85a97d-3788960cf44mr7308345f8f.27.1725859518349; Sun, 08 Sep 2024
+ 22:25:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240906083539.154019-1-en-wei.wu@canonical.com> <8707a2c6-644d-4ccd-989f-1fb66c48d34a@gmail.com>
+In-Reply-To: <8707a2c6-644d-4ccd-989f-1fb66c48d34a@gmail.com>
+From: En-Wei WU <en-wei.wu@canonical.com>
+Date: Mon, 9 Sep 2024 13:25:07 +0800
+Message-ID: <CAMqyJG0FcY0hymX6xyZwiWbD8zdsYwWG7GMu2zcL9-bMkq-pMw@mail.gmail.com>
+Subject: Re: [PATCH net] r8169: correct the reset timing of RTL8125 for
+ link-change event
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: nic_swsd@realtek.com, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kuan-ying.lee@canonical.com, 
+	kai.heng.feng@canonical.com, me@lagy.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-"Jason A. Donenfeld" <Jason@zx2c4.com> writes:
-> On Fri, Sep 06, 2024 at 03:43:17PM +0200, Jason A. Donenfeld wrote:
->> On Fri, Sep 06, 2024 at 10:23:08PM +1000, Michael Ellerman wrote:
->> > Christophe Leroy <christophe.leroy@csgroup.eu> writes:
->> > > When running in a non-root time namespace, the global VDSO data page
->> > > is replaced by a dedicated namespace data page and the global data
->> > > page is mapped next to it. Detailed explanations can be found at
->> > > commit 660fd04f9317 ("lib/vdso: Prepare for time namespace support").
->> > >
->> > > When it happens, __kernel_get_syscall_map and __kernel_get_tbfreq
->> > > and __kernel_sync_dicache don't work anymore because they read 0
->> > > instead of the data they need.
->> > >
->> > > To address that, clock_mode has to be read. When it is set to
->> > > VDSO_CLOCKMODE_TIMENS, it means it is a dedicated namespace data page
->> > > and the global data is located on the following page.
->> > >
->> > > Add a macro called get_realdatapage which reads clock_mode and add
->> > > PAGE_SIZE to the pointer provided by get_datapage macro when
->> > > clock_mode is equal to VDSO_CLOCKMODE_TIMENS. Use this new macro
->> > > instead of get_datapage macro except for time functions as they handle
->> > > it internally.
->> > >
->> > > Fixes: 74205b3fc2ef ("powerpc/vdso: Add support for time namespaces")
->> > > Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
->> >  
->> > Oops.
->> > 
->> > I guess it should also have:
->> > 
->> >   Cc: stable@vger.kernel.org # v5.13+
->> >   Reported-by: Jason A. Donenfeld <Jason@zx2c4.com>
->> >   Closes: https://lore.kernel.org/all/ZtnYqZI-nrsNslwy@zx2c4.com/
->> > 
->> > Jason how do you want to handle this?
->> > 
->> > I can put patch 1 in a topic branch that we both merge? Then you can
->> > apply patch 2 on top of that merge in your tree.
->> > 
->> > Or we could both apply patch 1 to our trees, it might lead to a conflict
->> > but it wouldn't be anything drastic.
->> 
->> The merge window for 6.12 is pretty soon. Why don't I just take this in
->> my random.git tree (with your ack) as a prereq to the ppc vDSO work.
->> It'll slide in _before_ Christophe's other commits, and then the
->> separate vgetrandom fixup will be squashed in the right place there.
->> 
->> And then it'll hit stable when that's submitted for 6.12. It's an old
->> bug that nobody noticed, and time namespaces are kind of obscure, so I
->> think waiting a week and a half for the merge window to open is probably
->> fine.
+Hi Heiner,
+
+Thank you for the quick response.
+
+On Sat, 7 Sept 2024 at 05:17, Heiner Kallweit <hkallweit1@gmail.com> wrote:
 >
-> So I've just done this (preliminarily, pending Michael's approval), and
-> it comes out decently clean and everything works fine.
-
-Sorry, didn't check email over the weekend.
-
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
-
-> The commit
-> sequence becomes:
+> On 06.09.2024 10:35, En-Wei Wu wrote:
+> > The commit 621735f59064 ("r8169: fix rare issue with broken rx after
+> > link-down on RTL8125") set a reset work for RTL8125 in
+> > r8169_phylink_handler() to avoid the MAC from locking up, this
+> > makes the connection broken after unplugging then re-plugging the
+> > Ethernet cable.
+> >
+> > This is because the commit mistakenly put the reset work in the
+> > link-down path rather than the link-up path (The commit message says
+> > it should be put in the link-up path).
+> >
+> That's not what the commit message is saying. It says vendor driver
+> r8125 does it in the link-up path.
+> I moved it intentionally to the link-down path, because traffic may
+> be flowing already after link-up.
 >
-> ...
-> c206cd11e7f2 selftests: vDSO: ensure vgetrandom works in a time namespace
-> ...
-> e59cc170924c powerpc/vdso: Fix VDSO data access when running in a non-root time namespace
-> 887e7a77dc99 mm: Define VM_DROPPABLE for powerpc/32
-> f2ee39ec52c2 powerpc/vdso32: Add crtsavres
-> 994148e87080 powerpc/vdso: Refactor CFLAGS for CVDSO build
-> c49ec121a6dd powerpc/vdso: Wire up getrandom() vDSO implementation on VDSO32 <-- fixed up
-> a8a5e16cde32 powerpc/vdso: Wire up getrandom() vDSO implementation on VDSO64
+> > Moving the reset work from the link-down path to the link-up path fixes
+> > the issue. Also, remove the unnecessary enum member.
+> >
+> The user who reported the issue at that time confirmed that the original
+> change fixed the issue for him.
+> Can you explain, from the NICs perspective, what exactly the difference
+> is when doing the reset after link-up?
+> Including an explanation how the original change suppresses the link-up
+> interrupt. And why that's not the case when doing the reset after link-up=
+.
+
+The host-plug test under original change does have the link-up
+interrupt and r8169_phylink_handler() called. There is not much clue
+why calling reset in link-down path doesn't work but in link-up does.
+
+After several new tests, I found that with the original change, the
+link won't break if I unplug and then plug the cable within about 3
+seconds. On the other hand, the connections always break if I re-plug
+the cable after a few seconds.
+
+With this new patch (reset in link-up path), both of the tests work
+without any error.
+
 >
-> So I'm happy with this.
+> I simply want to be convinced enough that your change doesn't break
+> behavior for other users.
+>
+> > Fixes: 621735f59064 ("r8169: fix rare issue with broken rx after link-d=
+own on RTL8125")
+> > Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
+> > ---
+> >  drivers/net/ethernet/realtek/r8169_main.c | 11 +++++------
+> >  1 file changed, 5 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/et=
+hernet/realtek/r8169_main.c
+> > index 3507c2e28110..632e661fc74b 100644
+> > --- a/drivers/net/ethernet/realtek/r8169_main.c
+> > +++ b/drivers/net/ethernet/realtek/r8169_main.c
+> > @@ -590,7 +590,6 @@ struct rtl8169_tc_offsets {
+> >  enum rtl_flag {
+> >       RTL_FLAG_TASK_ENABLED =3D 0,
+> >       RTL_FLAG_TASK_RESET_PENDING,
+> > -     RTL_FLAG_TASK_RESET_NO_QUEUE_WAKE,
+> >       RTL_FLAG_TASK_TX_TIMEOUT,
+> >       RTL_FLAG_MAX
+> >  };
+> > @@ -4698,8 +4697,6 @@ static void rtl_task(struct work_struct *work)
+> >  reset:
+> >               rtl_reset_work(tp);
+> >               netif_wake_queue(tp->dev);
+> > -     } else if (test_and_clear_bit(RTL_FLAG_TASK_RESET_NO_QUEUE_WAKE, =
+tp->wk.flags)) {
+> > -             rtl_reset_work(tp);
+> >       }
+> >  out_unlock:
+> >       rtnl_unlock();
+> > @@ -4729,11 +4726,13 @@ static void r8169_phylink_handler(struct net_de=
+vice *ndev)
+> >       if (netif_carrier_ok(ndev)) {
+> >               rtl_link_chg_patch(tp);
+> >               pm_request_resume(d);
+> > -             netif_wake_queue(tp->dev);
+> > -     } else {
+> > +
+> >               /* In few cases rx is broken after link-down otherwise */
+> >               if (rtl_is_8125(tp))
+> > -                     rtl_schedule_task(tp, RTL_FLAG_TASK_RESET_NO_QUEU=
+E_WAKE);
+> > +                     rtl_schedule_task(tp, RTL_FLAG_TASK_RESET_PENDING=
+);
+> > +             else
+> > +                     netif_wake_queue(tp->dev);
+>
+> This call to netif_wake_queue() isn't needed any longer, it was introduce=
+d with
+> the original change only.
+>
+> > +     } else {
+> >               pm_runtime_idle(d);
+> >       }
+> >
+>
 
-Thanks.
+CC. Martin Kj=C3=A6r J=C3=B8rgensen  <me@lagy.org>, could you kindly test i=
+f
+this new patch works on your environment? Thanks!
 
-cheers
+En-Wei,
+Best regards.
 
