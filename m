@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-320832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F0A97112A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:07:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D4A97112D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 733C41F2491C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:07:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 452EC282FF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0977D1B013D;
-	Mon,  9 Sep 2024 08:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9267F172BD0;
+	Mon,  9 Sep 2024 08:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HxiriWh+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/UJ7aFe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C54CFC19;
-	Mon,  9 Sep 2024 08:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC141B1415;
+	Mon,  9 Sep 2024 08:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725869176; cv=none; b=nay4VkY6XxjehMmFjffLqo+IEZArI/bjBOT5YdGYYiwQ1GVWqLdagizUteCdxiMb1QedYjFI9TEZBMSEqKMoSgsB6bloTczgHFSYqjBzOOJ9G7KrA0g9OZq38TtLzhjWN5CTFMu+OSV87/kSAJS6yoI06XmfS2HNWI7aaGumFRY=
+	t=1725869179; cv=none; b=Ylohote8t4gj+cyYzkfV7UlzoU8pFw5TCyJoFJravuyMRzCjugNLFAeyeN9fLiqU4fiR2WDsQKVNH1Nhwuc2Qf0v78UXR9gCyaN1Oax6tQ+bnCaSE4kXUCjKRQItWqPnVKTDcdPmzcDIw/3UWCFcOcJpnjseBzPQmFg4vpTunxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725869176; c=relaxed/simple;
-	bh=nqAEbMu0Hl4E+fzQxzAhsUXW7dpGrcqreqBLb5Fu30w=;
+	s=arc-20240116; t=1725869179; c=relaxed/simple;
+	bh=B8NIFss8+EtPkMmzo2Nx5NiyDNM9fZn2i4sHvg3qmOw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Aepy7ckK8JrrVbhaZloG2I/+es4wVMXoWxU5LnlDh7U1dmz5E1Bmu4DlGv2ZlW2KR1xEzd9NSpV66Elpg5XXiQVNLpOMZgZDOgrhEAbINnf/LPNOKa5RcmwpXl59dFr5L1TojMqvYdqyR0meD4pJwEfnGZUOEd0p4CUDuU0ULK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HxiriWh+; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725869175; x=1757405175;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=nqAEbMu0Hl4E+fzQxzAhsUXW7dpGrcqreqBLb5Fu30w=;
-  b=HxiriWh+vu7hlZA4Uaoe1alMOsGEfwTJ/ZeYtbzRNtIWIr806gH7PopW
-   lhERfRVFl2GU5AyaJukRaAFkHZVHyWFkTzo7rXV1k5gkfXWK5ACpggvBr
-   GqHYgW1f3wLaH16g7nEdf9v+79rgpo4HZ/DkpjaoOHg/a9iAdNxR3cRaQ
-   iH7FqgrBDxXxnT6blGBhsJrN+JAAzfoZI5GXSeFvZuZKT+BCYEw2HERse
-   hBB9fmTfkHQgEeLkwtKrYGS+nAEe19A3Zev32y+h2RcOusq9ZnTxwhYvq
-   XEtlIHdc+NnQspzL0MNZ547MiIuMAb9PqMG8SqvqMo4+HbuNXUW5I5ig7
-   g==;
-X-CSE-ConnectionGUID: XHBAcfkjQAGkyLPDhEzFzQ==
-X-CSE-MsgGUID: uOrwGLAiTMyeybVNnMzixA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="24697352"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="24697352"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 01:06:14 -0700
-X-CSE-ConnectionGUID: vYlnByAHRSuDY1BYsVO0zg==
-X-CSE-MsgGUID: 3FVEY5IUTIyuliY7Z/Ytpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="97302281"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.96.163])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 01:06:10 -0700
-Message-ID: <5ab812d6-da62-4337-8495-3a906c60a2a0@intel.com>
-Date: Mon, 9 Sep 2024 11:06:04 +0300
+	 In-Reply-To:Content-Type; b=JdTea4/jVeG/Ii8ZZ6/+dJgEcQcyXTt9WMSg5TsOKpFxU2VDuyHcdQFe3hwXmDXVdrTM/CQeKc7T2vXpqmwKfa82l22ZU2mK5g5T+ZEEgzjWwkXMJXH39MS1vdKJ7EFeF7c7OfjTzpKJii8YzcrCoPJd0jcEwPeqyXmwc1YKNs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/UJ7aFe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5937C4CEC5;
+	Mon,  9 Sep 2024 08:06:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725869178;
+	bh=B8NIFss8+EtPkMmzo2Nx5NiyDNM9fZn2i4sHvg3qmOw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a/UJ7aFe0LodUgl/tMzzllQMhUugMeXS0yDHBkCfGHlIiwWMIaKiQXIVUym8JydgS
+	 e4v4TmYud/S5bLu723trd9AHQMmJ2QMbb+XaxsLvtIJTaWEdfb7g3Wc4rLFgfnsdgn
+	 ohpjiGQgHxGa9QZhSdZ/VMzJbkw39oNs3y4XhKukX4h4khZqh/hGnUKfj1AiGpbah6
+	 VK7/2DbbE6BZ4E+aQm+UieGAIbkglhEKxLN9+Ou+rttOHp4puSc4lSolDgunUX8MT+
+	 o7UkdFdNlGErqyPNbPTZA5ltzbAzTXQ4vGmYKSHhGfz88NQd79Hth3q4XCS6LcBFYJ
+	 nWWxPb4QE3zcQ==
+Message-ID: <6842b2d4-0d6b-4c32-a32b-2eee53dc7fce@kernel.org>
+Date: Mon, 9 Sep 2024 10:06:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,156 +49,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V21 09/22] mmc: sdhci: add UHS-II module and add a kernel
- configuration
-To: Victor Shih <victorshihgli@gmail.com>, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
- benchuanggli@gmail.com, Lucas.Lai@genesyslogic.com.tw,
- HL.Liu@genesyslogic.com.tw, Greg.tu@genesyslogic.com.tw,
- dlunev@chromium.org, Ben Chuang <ben.chuang@genesyslogic.com.tw>,
- AKASHI Takahiro <takahiro.akashi@linaro.org>,
- Victor Shih <victor.shih@genesyslogic.com.tw>
-References: <20240906102049.7059-1-victorshihgli@gmail.com>
- <20240906102049.7059-10-victorshihgli@gmail.com>
+Subject: Re: [PATCH 2/2] mips: dts: realtek: Add syscon-reboot node
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, lee@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ tsbogend@alpha.franken.de
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org
+References: <20240909014707.2003091-1-chris.packham@alliedtelesis.co.nz>
+ <20240909014707.2003091-3-chris.packham@alliedtelesis.co.nz>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240906102049.7059-10-victorshihgli@gmail.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240909014707.2003091-3-chris.packham@alliedtelesis.co.nz>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 6/09/24 13:20, Victor Shih wrote:
-> From: Victor Shih <victor.shih@genesyslogic.com.tw>
+On 09/09/2024 03:47, Chris Packham wrote:
+> The board level reset on systems using the RTL9302 can be driven via the
+> switch. Use a syscon-reboot node to represent this.
 > 
-> This patch adds sdhci-uhs2.c as a module for UHS-II support.
-> This is a skeleton for further development in this patch series.
-> 
-> This kernel configuration, CONFIG_MMC_SDHCI_UHS2, will be used
-> in the following commits to indicate UHS-II specific code in sdhci
-> controllers.
-> 
-> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
-Doesn't compile:
-
-drivers/mmc/host/sdhci-uhs2.c:28:12: error: ‘sdhci_uhs2_host_ops_init’ defined but not used [-Werror=unused-function]
-   28 | static int sdhci_uhs2_host_ops_init(struct sdhci_host *host)
-      |            ^~~~~~~~~~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
-make[5]: *** [scripts/Makefile.build:244: drivers/mmc/host/sdhci-uhs2.o] Error 1
-make[4]: *** [scripts/Makefile.build:485: drivers/mmc/host] Error 2
-make[3]: *** [scripts/Makefile.build:485: drivers/mmc] Error 2
-make[3]: *** Waiting for unfinished jobs....
-make[2]: *** [scripts/Makefile.build:485: drivers] Error 2
-make[1]: *** [/home/ahunter/git/review/Makefile:1925: .] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
-
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 > ---
+>  .../dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts    |  3 +++
+>  arch/mips/boot/dts/realtek/rtl930x.dtsi               | 11 +++++++++++
+>  2 files changed, 14 insertions(+)
 > 
-> Updates in V9:
->  - Modify the commit message.
-> 
-> Updates in V8:
->  - Modify MODULE_LICENSE from "GPL v2" to "GPL".
-> 
-> Updates in V6:
->  - Merage V5 of patch[7] and patch[9] in to V6 of patch[8].
-> 
-> ---
-> 
->  drivers/mmc/host/Kconfig      |  9 +++++++
->  drivers/mmc/host/Makefile     |  1 +
->  drivers/mmc/host/sdhci-uhs2.c | 46 +++++++++++++++++++++++++++++++++++
->  3 files changed, 56 insertions(+)
->  create mode 100644 drivers/mmc/host/sdhci-uhs2.c
-> 
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 7199cb0bd0b9..f636af8a98df 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -98,6 +98,15 @@ config MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER
->  
->  	  This is the case for the Nintendo Wii SDHCI.
->  
-> +config MMC_SDHCI_UHS2
-> +	tristate "UHS2 support on SDHCI controller"
-> +	depends on MMC_SDHCI
-> +	help
-> +	  This option is selected by SDHCI controller drivers that want to
-> +	  support UHS2-capable devices.
-> +
-> +	  If you have a controller with this feature, say Y or M here.
-> +
->  config MMC_SDHCI_PCI
->  	tristate "SDHCI support on PCI bus"
->  	depends on MMC_SDHCI && PCI
-> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-> index 3ccffebbe59b..5147467ec825 100644
-> --- a/drivers/mmc/host/Makefile
-> +++ b/drivers/mmc/host/Makefile
-> @@ -11,6 +11,7 @@ obj-$(CONFIG_MMC_PXA)		+= pxamci.o
->  obj-$(CONFIG_MMC_MXC)		+= mxcmmc.o
->  obj-$(CONFIG_MMC_MXS)		+= mxs-mmc.o
->  obj-$(CONFIG_MMC_SDHCI)		+= sdhci.o
-> +obj-$(CONFIG_MMC_SDHCI_UHS2)	+= sdhci-uhs2.o
->  obj-$(CONFIG_MMC_SDHCI_PCI)	+= sdhci-pci.o
->  sdhci-pci-y			+= sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o \
->  				   sdhci-pci-dwc-mshc.o sdhci-pci-gli.o
-> diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
-> new file mode 100644
-> index 000000000000..608f8ad5aaed
-> --- /dev/null
-> +++ b/drivers/mmc/host/sdhci-uhs2.c
-> @@ -0,0 +1,46 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + *  linux/drivers/mmc/host/sdhci_uhs2.c - Secure Digital Host Controller
-> + *  Interface driver
-> + *
-> + *  Copyright (C) 2014 Intel Corp, All Rights Reserved.
-> + *  Copyright (C) 2020 Genesys Logic, Inc.
-> + *  Authors: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-> + *  Copyright (C) 2020 Linaro Limited
-> + *  Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> + */
-> +
-> +#include <linux/module.h>
-> +
-> +#include "sdhci.h"
-> +#include "sdhci-uhs2.h"
-> +
-> +#define DRIVER_NAME "sdhci_uhs2"
-> +#define DBG(f, x...) \
-> +	pr_debug(DRIVER_NAME " [%s()]: " f, __func__, ## x)
-> +
-> +/*****************************************************************************\
-> + *                                                                           *
-> + * Driver init/exit                                                          *
-> + *                                                                           *
-> +\*****************************************************************************/
-> +
-> +static int sdhci_uhs2_host_ops_init(struct sdhci_host *host)
-> +{
-> +	return 0;
-> +}
-> +
-> +static int __init sdhci_uhs2_mod_init(void)
-> +{
-> +	return 0;
-> +}
-> +module_init(sdhci_uhs2_mod_init);
-> +
-> +static void __exit sdhci_uhs2_mod_exit(void)
-> +{
-> +}
-> +module_exit(sdhci_uhs2_mod_exit);
-> +
-> +MODULE_AUTHOR("Intel, Genesys Logic, Linaro");
-> +MODULE_DESCRIPTION("MMC UHS-II Support");
-> +MODULE_LICENSE("GPL");
+> diff --git a/arch/mips/boot/dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts b/arch/mips/boot/dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts
+> index 77d2566545f2..a517135446a3 100644
+> --- a/arch/mips/boot/dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts
+> +++ b/arch/mips/boot/dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts
+> @@ -71,3 +71,6 @@ partition@1180000 {
+>  		};
+>  	};
+>  };
+> +&switch0 {
+> +	status = "okay";
+> +};
+
+Drop, redundant.
+
+Best regards,
+Krzysztof
 
 
