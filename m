@@ -1,132 +1,202 @@
-Return-Path: <linux-kernel+bounces-320942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F6097124E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:41:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04ED1971266
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E2E5B237F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B34AA283A39
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900BA1B250D;
-	Mon,  9 Sep 2024 08:41:08 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517511B2528;
+	Mon,  9 Sep 2024 08:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="qNNuh/NS"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56261B1422;
-	Mon,  9 Sep 2024 08:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC15B1B1D7A;
+	Mon,  9 Sep 2024 08:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725871268; cv=none; b=VqT8N7bbcb/RBAnXcRZ+UgQMcYki8hxZndvi2ILb2yCK25gU4VwuRv4mpmZg6M/c0S8SCHC8sPLR7oYMD6G6YbcgLfk9qbw6DWs3q9r0T/mav3Lfy4fUSN8J771s49o3mKynqeYt5rvlXJZ8oOIc+7vSULBL3Fdkjri6od1ZodM=
+	t=1725871503; cv=none; b=GY7fuCnIYY3tULP+I0yVKuhRhsirEtuAwAlty0cqg1G8GPFqi1Omf02iJe0DogSB4dHfDHfHvmGeDy/KWB6FFvnA7knZ21A/2l643Imb2iaT4Ub5L1345YMTODQ/crgUoZg1FsaDjSNIsh+2OWXd2Xl2WK84vsM/02k1CetBB1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725871268; c=relaxed/simple;
-	bh=fWyICjDd1PoFRPTRlpA/ItjmGw253USiJyPAJ22M/4I=;
+	s=arc-20240116; t=1725871503; c=relaxed/simple;
+	bh=s+xlewCctMaDsFweMYj/4diRQjW82za84FW+swoCSDI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ntFMiNvFWwNpiNlNIBXX5dH0EBWf485Z471dpFBP8ktGeG/HGrJ66EdzyjXGfDbrRd8DAs0QhFtjr8PodAe8wkFwRFScQdc3Ul5cy9CyDpyYpf7s85EerwtcULdzll5Txyh9tJSzpbPbvCfrAHnvm0pe0/JW9F1IqaifeJ2GPTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4X2Kyk0wrHz1P9Nh;
-	Mon,  9 Sep 2024 16:39:58 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id F2F571402CF;
-	Mon,  9 Sep 2024 16:41:01 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 9 Sep 2024 16:41:01 +0800
-Message-ID: <d76dd514-aceb-b7cb-705a-298fc905fae3@hisilicon.com>
-Date: Mon, 9 Sep 2024 16:41:00 +0800
+	 In-Reply-To:Content-Type; b=h2GFQcDbrVcqZh4CGALTrTWVen5aZtJwjZaQuTXfWmIsHoCCtDpXKDPSINbtI1RvrSFD/YT7BTdb3h5Dod2zvF5BdItcSucFglv1DYsRFe06IOetD2RtTdyYfYHvoCc+oioqE/byb3dO1NlwKcL1xYxrHixoBjOPWaM4qEjhS54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=qNNuh/NS; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48986X8W022718;
+	Mon, 9 Sep 2024 10:44:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	IOm4ThO68sZ/MvSmIYIo32o7N2x0/3KIu3jjeSGhrfw=; b=qNNuh/NSwbUHYh/2
+	sAmk4jT3EuhQ+Qprw8LdvXJHKc4Zm1iShImlwC7kHV8TDPsrzIWcsRdwAWV+tiVA
+	J7WPCfFx2LjeuFKOKRl0u1822YLjnNtpmTHWeBc8ifXnHKN+ory/ZnuDFUChfsHi
+	/AOlfM+I3M+QPrGCN/9UhEIICYner1UKOvTRE7eoMetsE23MZsphw91WBaWNWmeE
+	hu693aUCUHX+TGavdnVBKuNRvrBs8WBGHwOqLEt6wOd9HipL1R6vSCq5H1OGnHSy
+	o6JzTzg/P4bxMRYQhAo0b9C+zRfFpTmAzamptvKrMiwFZxcT0/PLL+zeizsMG9ll
+	mr5kmg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41gyaum1s0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 10:44:51 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3544340048;
+	Mon,  9 Sep 2024 10:43:54 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0916A24F388;
+	Mon,  9 Sep 2024 10:42:18 +0200 (CEST)
+Received: from [10.131.140.24] (10.131.140.24) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 9 Sep
+ 2024 10:42:17 +0200
+Message-ID: <4b37dccd-bfc6-4355-847f-f613a4a87263@foss.st.com>
+Date: Mon, 9 Sep 2024 10:42:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH v4 for-next 1/2] RDMA/core: Provide
- rdma_user_mmap_disassociate() to disassociate mmap pages
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] media: i2c: Add driver for ST VD56G3 camera sensor
+To: Sakari Ailus <sakari.ailus@iki.fi>
+CC: <benjamin.mugnier@foss.st.com>, <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240521162950.6987-1-sylvain.petinot@foss.st.com>
+ <20240521162950.6987-3-sylvain.petinot@foss.st.com>
+ <ZlXEvR3yKe0W8X_q@valkosipuli.retiisi.eu>
+ <ecccf332-66e5-43c0-8a48-d49b0aa1e5a9@foss.st.com>
+ <Zt6ei2-orFC4Jq1g@valkosipuli.retiisi.eu>
+From: Sylvain Petinot <sylvain.petinot@foss.st.com>
 Content-Language: en-US
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: <leon@kernel.org>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20240905131155.1441478-1-huangjunxian6@hisilicon.com>
- <20240905131155.1441478-2-huangjunxian6@hisilicon.com>
- <ZtxDF7EMY13tYny2@ziepe.ca>
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-In-Reply-To: <ZtxDF7EMY13tYny2@ziepe.ca>
+In-Reply-To: <Zt6ei2-orFC4Jq1g@valkosipuli.retiisi.eu>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
+Hello Sakari,
 
+Thanks for your feedback, no worries about the delay ...
 
-On 2024/9/7 20:12, Jason Gunthorpe wrote:
-> On Thu, Sep 05, 2024 at 09:11:54PM +0800, Junxian Huang wrote:
+On 9/9/2024 9:06 AM, Sakari Ailus wrote:
+> Hi Sylwain,
 > 
->> @@ -698,11 +700,20 @@ static int ib_uverbs_mmap(struct file *filp, struct vm_area_struct *vma)
->>  	ucontext = ib_uverbs_get_ucontext_file(file);
->>  	if (IS_ERR(ucontext)) {
->>  		ret = PTR_ERR(ucontext);
->> -		goto out;
->> +		goto out_srcu;
->>  	}
->> +
->> +	mutex_lock(&file->disassociation_lock);
->> +	if (file->disassociated) {
->> +		ret = -EPERM;
->> +		goto out_mutex;
->> +	}
+> Apologies for the delay...
 > 
-> What sets disassociated back to false once the driver reset is
-> completed?
+> On Mon, Jun 03, 2024 at 11:59:29AM +0200, Sylvain Petinot wrote:
+>>>> +/*
+>>>> + * The VD56G3 pixel array is organized as follows:
+>>>> + *
+>>>> + * +--------------------------------+
+>>>> + * |                                | \
+>>>> + * |   +------------------------+   |  |
+>>>> + * |   |                        |   |  |
+>>>> + * |   |                        |   |  |
+>>>> + * |   |                        |   |  |
+>>>> + * |   |                        |   |  |
+>>>> + * |   |                        |   |  |
+>>>> + * |   |   Default resolution   |   |  | Native height (1364)
+>>>
+>>> What's outside the default resolution? It doesn't appear the driver would
+>>> allow capturing pixels out side this area.
+>>
+>> Well both native and default resolutions are supported in the
+>> 'vd56g3_supported_modes' below.
+>> However this quite exotic resolution (1364 x 1124) isn't well supported
+>> by csi receivers, ISPs. That's why the default resolution of the driver
+>> is 1120 x 1360 (multiple of 16).
 > 
-> I think you should probably drop this and instead add a lock and test
-> inside the driver within its mmap op. While reset is ongoing fail all
-> new mmaps.
+> Ack.
+> 
+> I'd still keep the native resolution as the default and allow configuring
+> something else if the user space wants to.
+> 
+> The desired resolution really depends on the use case (as well as the ISP).
+
+Sure, I can change the default to the native... The choice I made was
+more a way to simplify (my) life (several times we went into debugging
+before realizing that it was the exotic resolution causing the unwanted
+behavior).
+But, that's probably better, I'll change it for V4.
+
+> 
+>>>> +		break;
+>>>> +	case V4L2_CID_EXPOSURE_AUTO:
+>>>> +		is_auto = (ctrl->val == V4L2_EXPOSURE_AUTO);
+>>>> +		__v4l2_ctrl_grab(sensor->ae_lock_ctrl, !is_auto);
+>>>> +		__v4l2_ctrl_grab(sensor->ae_bias_ctrl, !is_auto);
+>>>> +		break;
+>>>> +	default:
+>>>> +		break;
+>>>
+>>> You could omit default here.
+>>
+>> I don't really like switch case without default. For sure I can omit,
+>> but I prefer making it explicit.
+> 
+> I'm ok with that.
+> 
+> ...
+> 
+>>>> +static int vd56g3_power_off(struct vd56g3 *sensor)
+>>>> +{
+>>>> +	clk_disable_unprepare(sensor->xclk);
+>>>> +	gpiod_set_value_cansleep(sensor->reset_gpio, 1);
+>>>> +	regulator_bulk_disable(ARRAY_SIZE(sensor->supplies), sensor->supplies);
+>>>> +	return 0;
+>>>
+>>> You can make the return type void.
+>>>
+>>> Do you need two pairs of functions doing the same, or could you call
+>>> vd56g3_runtime_resume and vd56g3_runtime_suspend from driver's probe and
+>>> remove functions, too?
+>>
+>> "Well, in fact, I tested both options before submitting V2 (I mean the
+>> unification of vd56g3_runtime_resume/suspend functions with
+>> vd56g3_power_on/off).
+>>
+>> The unification option has the advantage of simplifying the code and
+>> removing two "useless" functions. The only drawback is that I had to
+>> call v4l2_i2c_subdev_init() earlier in the probe() function, whereas
+>> it's currently called in vd56g3_subdev_init() (currently at the end of
+>> the probe()). OK, it's not a big deal, but I find that the resulting
+>> code is not as well structured/divided (thus readable).
+>>
+>> I'm interested to get your feedback to decide wich option to push for V3.
+> 
+> I'd prefer calling v4l2_i2c_subdev_init() earlier, in order to set the
+> device context. These are usually among those things that should be done as
+> early as possible, in order to avoid invalid pointers where much of the
+> driver code expects something else.
+
+Yes, the V3 I pushed include this modification.
+
+> 
+> Btw. if you're not in too much hurry (I guess so?), we're just about to
+> rework the sensor API, to include internal pads and embedded data, for
+> better sensor configurability. It'll take a while before we're there
+> though, but when this driver is merged, the existing API must continue to
+> work.
 > 
 
-disassociated won't be set back to false. This is to stop new mmaps on
-this ucontext even after reset is completed, because during hns reset,
-all resources will be destroyed, and the ucontexts will become unavailable.
+I have a few branches with stream API (notably for the support of status
+lines), but I need a to test a bit more before pushing.
 
-But of course, other drivers may handle this case differently from hns, so
-I will remove disassociated here and put it in hns driver.
 
->>  	/*
->>  	 * Disassociation already completed, the VMA should already be zapped.
->>  	 */
->> -	if (!ufile->ucontext)
->> +	if (!ufile->ucontext || ufile->disassociated)
->>  		goto out_unlock;
-> 
-> Is this needed? It protects agains fork, but since the driver is still
-> present I wonder if it is OK
-> 
-
-Will remove it too.
-
->> @@ -822,6 +837,8 @@ void uverbs_user_mmap_disassociate(struct ib_uverbs_file *ufile)
->>  	struct rdma_umap_priv *priv, *next_priv;
->>  
->>  	lockdep_assert_held(&ufile->hw_destroy_rwsem);
->> +	mutex_lock(&ufile->disassociation_lock);
->> +	ufile->disassociated = true;
-> 
-> I think this doesn't need the hw_destroy_rwsem anymore since you are
-> using this new disassociation_lock instead. It doesn't make alot of
-> sense to hold the hw_destroy_rwsem for read here, it was ment to be
-> held for write.
-> 
-
-Then it seems we should remove the lockdep_assert_held() here?
-
-Junxian
-
-> Jason
+--
+Sylvain
 
