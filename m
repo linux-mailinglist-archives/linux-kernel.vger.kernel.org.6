@@ -1,133 +1,157 @@
-Return-Path: <linux-kernel+bounces-321828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52F44972009
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:09:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 552A697200E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EB821C22181
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:09:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80A891C22C3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E74416F8F5;
-	Mon,  9 Sep 2024 17:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA809170A26;
+	Mon,  9 Sep 2024 17:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4KtyCy2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8Fb4OXs"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A0342AA1;
-	Mon,  9 Sep 2024 17:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C151C28DCC;
+	Mon,  9 Sep 2024 17:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725901775; cv=none; b=brwg9Y0QYdOV5embbFYKDrAwIYH3MltovZA40qW65Nr477s5kRwqE696xzofvYywUGUOPblZBcwP1KAyqbzUmz6BwEDJ0RBAacKX7NhJI52HnqV6EFgqNCWcGNktLG1gVqgnvU+CamaefQDSm/TM+Vvs8DxbJX1TU5a2+J+tGsM=
+	t=1725901824; cv=none; b=EHLeemiiHEK5bi+PY5rgojkJNI6p6OBWItO7RmZQgzeh7Mx//4g2gJaZg27kGNRtiV01mreGvj9Kk6WJX0qDtsvdFK66VpkFYoqjTOUAXoGNU4GiNajYI6lC3BEb39WdupnIJrP83WtZgPfKi8g+rPRlzk0T03Fjw1mCsgpnwKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725901775; c=relaxed/simple;
-	bh=/qV0P6xJzrMSUVsz7Z1CsIbU69skcya/dmYXKueZ/lU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=oBl1BWnM0T2m22z1roLNa50QwmJ6jfH8s4WjjIQ2DUGq7kjH1yukp6d7AoF8//Z5XvumS1+z/FLCe8pcvX+eN+yDsmG89E0Js7ea0qI+jX8cwGf7UUDyxH2tWRGyBo3ckSRX5bZ0uBG9rzq4kTZ68mG26ktVNi64DB3B376TkDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4KtyCy2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 184E7C4CEC5;
-	Mon,  9 Sep 2024 17:09:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725901774;
-	bh=/qV0P6xJzrMSUVsz7Z1CsIbU69skcya/dmYXKueZ/lU=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=e4KtyCy2WiCK98F3bH7l2m9CUia2bzqaID9ICtWdqJTNuSR67C61vg2hEyDg/8ngo
-	 T9IUVXNXNfBMZapo4Gj6LOtBeZB/LOm6Mfrs3aadbj2EEtt78Bbx4OuHDiNNtKcbAS
-	 eaY667XHP8he708UdopD2mFkn28mW+HSwG14hdHCsfAvb1G1cKMItNykSJlzkVZG31
-	 lcpqA1Ic0fh5k7bqZ/7Ax+XY59vSc0ik+E6v4Hgw4OD3GiaU/1FbCUCzcUkYWulm3X
-	 U6SZznf4jupfh1R2tn/JEkD4dKU6wjTJYmPeYpb68HnL2eRU2gaCYuOR8pI7JW4BpH
-	 713bWSZ6kVGAA==
+	s=arc-20240116; t=1725901824; c=relaxed/simple;
+	bh=qKdYi20L8c3yuVMWrbqPAZ/XZ6RyXtp8jHo7w/aIqxU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iGg9IgmsnvDIz8zCIPZzSACjrDg4S9B2kcsDGqry4ipTbx1gzkwuDCQM3rS6h4p3O/1ROCXWB64kWFWdMThHQ9GBmeWXkjt1qtIiIfgdOS5eyTGSRpvD040eG1DiHH68rRIXnLCm+kHrbpagJKC6u4l/g38IvY+2yBz9v2SkM6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8Fb4OXs; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2daaa9706a9so3544221a91.1;
+        Mon, 09 Sep 2024 10:10:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725901822; x=1726506622; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=daNjFnuTcCmEpOoIZjhoH91whn7ag3w5EoRvU+yWxhg=;
+        b=Q8Fb4OXsLuSmht5WFGD7XLgvbCIvOrc42EBmbvdjDu9/4ks3j4N7VxZzlwuGNB9rNt
+         30TGAHovSGdKN2/Ct6W4dlIdejj8KLbSnp/iaXuAg/mjwA+UsOXGhkKawse8u0ocUKFj
+         qHhNwubGCVu65Er0AGgqfYVCoSvveq4SKmw9J2l8ZR7i7OqpeLsWcSG2U+JQ9Q4RLdqA
+         tc5nH83EwgigsCVNN/Ii/1J/TMPaeeHa8vRgoEqokiUkhE8AC0rSUKFe3WBPcmvYMFMF
+         TBYggB1BAv7nCp+0nqkIGxWkqbEkga7tbmtqlycg2gMssCTBorNU469EBWlIYXHCXs3Y
+         +O2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725901822; x=1726506622;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=daNjFnuTcCmEpOoIZjhoH91whn7ag3w5EoRvU+yWxhg=;
+        b=OhAhfRYpt5r09eUmB/9pbjkuf0z95ODOsufIjMsKdsKxRUZ0vRdLpUqaqOo8m38zmx
+         oEhaJZynmYLz6h/XNyukr+PsRbF6Uw9WCXoL8EBT5NR95X6VbH6ITZqAisY22ylN8LAw
+         rZMXDkn/dUBB/EIk/4dTprS++gw0sPfnEBoOzunN8MGH2HiAayc213rBa1ks5CstHH2T
+         f6b/0v/M0QY54nT5wtGPytYTx7yk2QXZcMuGcuxA3LeYxSyWXG6Fu/OyZ8wlDuTwDIb3
+         V4qORdJ2GHW0eU6Y9CDZ3pG373CPSeVVB2rrsNYJGILlFN9pwEXqmH5LUKTTFVgMKWek
+         Mlgg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6HeoBF09KyZWIsYASRaA1blntr2Z0vI3wMBcoOjLZDsNvMiEciDdrY3yxHlxG5ZtcYIrZVSywHh6Xl3UZ@vger.kernel.org, AJvYcCUVgQk72gardvm/YuLKq1sEyvJA/16boAlXwCA8RYxhztNYyD5ZKVI43WgyxOqDP3U8dUdpj8GEKzYqF9sBQ1QrMw==@vger.kernel.org, AJvYcCUhZsGTw/ry+NQQg1CgLpOsQulAuM6qE/5fa0N4Ku2yYMsl9dWeSpk3gqzxNmOv07B+IRSh08DE@vger.kernel.org, AJvYcCVrtcn/E0gBvvyOSR68sxX00l5H4Hqvw7skF5cxip7bITukPJ2AHrbOFILi7tGwCTgoZPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysiM1ZYYyxmoJkwiWhiDaX3wchFF/mBOFFZEBm08FOy0IqcX4C
+	vR9A63s21FfICO+Lb6xHAKLtPza6TyopaH+SO4g4U+fwQay8L9c0smWXRmXvYzHCygNu/NKZbMc
+	NNjBGjzf4vmVqcBOdxULATzcpzCk=
+X-Google-Smtp-Source: AGHT+IHkXfv32KdkJ4x1MewUfjbF8ld5lIdHroVrl/Ktu0a82EfNshwMxovWSljn73/6at59mD5SKScqAPjBVdNQp5w=
+X-Received: by 2002:a17:90b:388b:b0:2cb:5112:740 with SMTP id
+ 98e67ed59e1d1-2dad50e87a8mr10745443a91.26.1725901821855; Mon, 09 Sep 2024
+ 10:10:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20240909155848.326640-1-kan.liang@linux.intel.com>
+In-Reply-To: <20240909155848.326640-1-kan.liang@linux.intel.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 9 Sep 2024 10:10:09 -0700
+Message-ID: <CAEf4Bza+CTNW9G2Bv5vKG0YP_X-41T+D3N0Ly2p8G+SFX-MyRA@mail.gmail.com>
+Subject: Re: [PATCH] perf/x86/intel: Allow to setup LBR for counting event for BPF
+To: kan.liang@linux.intel.com
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 09 Sep 2024 20:09:30 +0300
-Message-Id: <D41X47S8U93M.IDL1ES4DB1Y9@kernel.org>
-Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Philipp Rudo" <prudo@redhat.com>
-Cc: "Ard Biesheuvel" <ardb@kernel.org>, "Pingfan Liu" <piliu@redhat.com>,
- "Jan Hendrik Farr" <kernel@jfarr.cc>, "Lennart Poettering"
- <mzxreary@0pointer.de>, "Eric Biederman" <ebiederm@xmission.com>, "Baoquan
- He" <bhe@redhat.com>, "Dave Young" <dyoung@redhat.com>, "Mark Rutland"
- <mark.rutland@arm.com>, "Will Deacon" <will@kernel.org>, "Catalin Marinas"
- <catalin.marinas@arm.com>, <kexec@lists.infradead.org>,
- <linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20240819145417.23367-1-piliu@redhat.com>
- <CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
- <20240906125438.1e54c5f6@rotkaeppchen>
- <D400L4YN4K7K.264IDL4O8374F@kernel.org>
- <D400OHF2ODNK.3JF7DJ87Q4BYI@kernel.org>
- <D400W37FR01S.CLFIKA98YWX7@kernel.org>
- <20240909155555.257e13eb@rotkaeppchen>
-In-Reply-To: <20240909155555.257e13eb@rotkaeppchen>
 
-On Mon Sep 9, 2024 at 4:55 PM EEST, Philipp Rudo wrote:
-> Hi Jarkko,
+On Mon, Sep 9, 2024 at 8:58=E2=80=AFAM <kan.liang@linux.intel.com> wrote:
 >
-> On Sat, 07 Sep 2024 14:41:38 +0300
-> "Jarkko Sakkinen" <jarkko@kernel.org> wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
 >
-> > On Sat Sep 7, 2024 at 2:31 PM EEST, Jarkko Sakkinen wrote:
-> > > On Sat Sep 7, 2024 at 2:27 PM EEST, Jarkko Sakkinen wrote: =20
-> > > > On Fri Sep 6, 2024 at 1:54 PM EEST, Philipp Rudo wrote: =20
-> > > > > Let me throw an other wild idea in the ring. Instead of implement=
-ing
-> > > > > a EFI runtime we could also include a eBPF version of the stub in=
-to the
-> > > > > images. kexec could then extract the eBPF program and let it run =
-just
-> > > > > like any other eBPF program with all the pros (and cons) that com=
-e with
-> > > > > it. That won't be as generic as the EFI runtime, e.g. you couldn'=
-t
-> > > > > simply kexec any OS installer. On the other hand it would make it
-> > > > > easier to port UKIs et al. to non-EFI systems. What do you think?=
- =20
-> > > >
-> > > > BPF would have some guarantees that are favorable such as programs
-> > > > always end, even faulty ones. It always has implicit "ExitBootServi=
-ces".
-> > > >
-> > > > Just a remark. =20
-> > >
-> > > Some days ago I was thinking could some of the kernel functionality b=
-e
-> > > eBPF at least like in formal theory because most of it is amortized,
-> > > i.e. does a fixed chunk of work. Not going into that rabbit hole but
-> > > I really like this idea and could be good experimentation ground for
-> > > such innovation. =20
-> >=20
-> > E.g. let's imagine there would imaginary eBPF-TPM driver framework.
-> >=20
-> > How I would go doing that would be to take the existing TPM driver
-> > functionality and provide extra functions and resources available for
-> > subsystem specific BPF environment, and have the orhestration code as
-> > eBPF. I pretty much concluded that there is a chance that such could
-> > work out.
-> >=20
-> > Not something in my immediate table but it is still really interesting
-> > idea, as instead of using language to separate "safe" and unsafe"
-> > regions you would use "VM" environments to create the walls. In the
-> > end of the day that would also great venture for Rust in kernel, i.e.
-> > compile that BPF from Rust.
-> >=20
-> > Sorry going of the hook the comment triggered me ;-)
+> The BPF subsystem may capture LBR data on a counting event. However, the
+> current implementation assumes that LBR can/should only be used with
+> sampling events.
 >
-> I'm glad you like the idea :-)
+> For instance, retsnoop tool ([0]) makes an extensive use of this
+> functionality and sets up perf event as follows:
 >
-> Sounds like an interesting idea you are having there!
+>         struct perf_event_attr attr;
+>
+>         memset(&attr, 0, sizeof(attr));
+>         attr.size =3D sizeof(attr);
+>         attr.type =3D PERF_TYPE_HARDWARE;
+>         attr.config =3D PERF_COUNT_HW_CPU_CYCLES;
+>         attr.sample_type =3D PERF_SAMPLE_BRANCH_STACK;
+>         attr.branch_sample_type =3D PERF_SAMPLE_BRANCH_KERNEL;
+>
+> To limit the LBR for a sampling event is to avoid unnecessary branch
+> stack setup for a counting event in the sample read. Because LBR is only
+> read in the sampling event's overflow.
+>
+> Although in most cases LBR is used in sampling, there is no HW limit to
+> bind LBR to the sampling mode. Allow an LBR setup for a counting event
+> unless in the sample read mode.
+>
+> Fixes: 85846b27072d ("perf/x86: Add PERF_X86_EVENT_NEEDS_BRANCH_STACK fla=
+g")
+> Reported-by: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> Closes: https://lore.kernel.org/lkml/20240905180055.1221620-1-andrii@kern=
+el.org/
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  arch/x86/events/intel/core.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
 
-Yeah, if you go forward with this please CC to me any possible
-follow-ups :-)
+LGTM, thanks! Tested and verified that this fixes the issue:
 
-BR, Jarkko
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Tested-by: Andrii Nakryiko <andrii@kernel.org>
+
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index 605ed19043ed..2b5ff112d8d1 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -3981,8 +3981,12 @@ static int intel_pmu_hw_config(struct perf_event *=
+event)
+>                         x86_pmu.pebs_aliases(event);
+>         }
+>
+> -       if (needs_branch_stack(event) && is_sampling_event(event))
+> -               event->hw.flags  |=3D PERF_X86_EVENT_NEEDS_BRANCH_STACK;
+> +       if (needs_branch_stack(event)) {
+> +               /* Avoid branch stack setup for counting events in SAMPLE=
+ READ */
+> +               if (is_sampling_event(event) ||
+> +                   !(event->attr.sample_type & PERF_SAMPLE_READ))
+> +                       event->hw.flags |=3D PERF_X86_EVENT_NEEDS_BRANCH_=
+STACK;
+> +       }
+>
+>         if (branch_sample_counters(event)) {
+>                 struct perf_event *leader, *sibling;
+> --
+> 2.38.1
+>
 
