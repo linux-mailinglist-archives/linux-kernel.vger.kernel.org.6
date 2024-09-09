@@ -1,178 +1,108 @@
-Return-Path: <linux-kernel+bounces-321792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B80C971F78
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:45:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51CDE971F7B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E97421F23780
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:45:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB162B21C95
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0786316D9AF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFACB16E863;
 	Mon,  9 Sep 2024 16:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="blVo2zYL"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0EKdzH6"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D16F1758F
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4898376F1
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725900341; cv=none; b=GcDTKZXJYmEdXNjt7eRF/c4TB6ki/nUFH0coK1w+oREsVgggj2fTw/Vb6AeO/Kq55Y/w9lj/hac4fp7NNxbyxPGMZyfuxtc1skFregH5Svs8f61Pup/NUz1zdaZTJ/xI0orpG3zyZuPgzeYETjQ0hefM1U25K3G4M7+aHSAthcQ=
+	t=1725900342; cv=none; b=cuhu1wPY9sjXoUS2Ces9brv7CVr0MLJ4SZ9lRkBXBuSbG3hrI1qFQ/MdNe6n0MoRfY8YltdxkkIkq/BWqHrJeNucQmOrm2X2I9DM/JEHea+p2Xqa9tiRQ0ZZPH+fEl/DbjqhKAUIGVrxVCZZb70FnADQKdwAlN5TR2CSKsO5ZGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725900341; c=relaxed/simple;
-	bh=aypj3AwzTBOrw+k/CCAxDywSoAK4r/5l7M6JJLd8etY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MgwLBjNoZTTtE9QeCHyZQkEErR3iPZdnWS3kQuaClcFB+Z/48Lve4ObxaiSLLdr/pfD7RPscgSZpQYGfkbKsyskjWBTSIXxKd6IZ+H84iwpJtjSGc+0rJTSg/HUxZsK6cHDNckvN0tCQZZTmgO8AlIhIp14szeRRwFk6KNXXWg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=blVo2zYL; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cad67ae7eso3645465e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:45:39 -0700 (PDT)
+	s=arc-20240116; t=1725900342; c=relaxed/simple;
+	bh=kVnFcNZOECZaaqideRC1BgIz04IzNKgOIR6ic418eFE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J/iwhRLBwypIzGLEE/JHx9E+FtJ2Uas8UOigG+s4UUsZcap99ODZMvnZm7eRDKEZ7HWI6uhUpVjJ6fAlPYSP4lj0XMccw5LLTOKRk4HpkPWk7/Zy2pWZCXQsSJ8zcB35WrZ0Cm3ccbaCSjgZWmGZfbBBjpoe2ytOFG6GaGEeask=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O0EKdzH6; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7163489149eso3662929a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:45:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725900338; x=1726505138; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=eMsoOURx1kT61a6viyi10a0/CZlrMyenlU3TId0O9kA=;
-        b=blVo2zYLgrJAK9x8b0zcmKIKrw5GJIgM+PJ5sllX1+JK6HTezPnT/pbfSc6c7K6d7Y
-         y4N5pWId+1jpm0JxiE/IKYu4i3tLiebjxc0V8kHn3ylRIBnlhZoubiN8c47DhLFpB6XK
-         A+D8x/Y6s11R4Pwm9IiYFuurklgZO3cm3hAGfaIF8gUWY9NK9Z0hMPcxWkXnYu9bOGAm
-         QwrDRqMx0ff4FR80AdtHklqAS8NXCbhELm9a7XnEA7erVdK698tvtKnk3Ba1Sr5A8L1B
-         UvL4IwM1XXW8JqW1ErUJpC06/ufnt8N1QYUzqNieQsyUTwp1BZ8/ejKsaiHuN9+FxpI3
-         AaTw==
+        d=gmail.com; s=20230601; t=1725900340; x=1726505140; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AhF2unESHOHNXtsHs//IUH+u17vTyKFOAwToWScirFo=;
+        b=O0EKdzH6dKPcKGu7oN0dbHtJaBCxSQNOo0+kKBa94rugFOlW4P8keaBw6EEBg2GB/Y
+         RssCPImCRjBXOTb7p3U4ukgakkuKyqCm53UGN/JiBvHt/YUjDqP5YQQRRA34lo9qhVf2
+         DrPOK/c+W83b0Pg/joS+vegmbtHovQ+ObhdwNZHxzljRrPJvjihFCN7bk21Gh7HTAgx7
+         t6IxiDa2HHbaKgzxdPGhpbXHKlpZeqysOcSXenRIUwefu4tPK9wjTjHnX9N3PwRybgiK
+         fBYumOnzr9mip3RbHQB4f0+bdGk9IQyUOWPoDg0XFUhXH4F8vQsU1CQ8ZgGCK6bxlAF5
+         bomg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725900338; x=1726505138;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1725900340; x=1726505140;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=eMsoOURx1kT61a6viyi10a0/CZlrMyenlU3TId0O9kA=;
-        b=tGoItlb+gh7GL3S2Tfr9SLSIa9eKlTXiap2FwRpneFWyxYzLuBxZdhm0oOAvM5CKbB
-         7/BJ+QhccE+YOnqmybj2Stijmht4tJ2XCGKFIC7avxp9LZuYa0aRrAd9lx5l/CFe+Cde
-         vuwaCQhiJgCjjxs94c09BQxiU9UKYzOT0AxWmFL1faAGCorRfsLk/9+ufSmoLQr+YA+G
-         5/FCpSDT+yb6tlsGujh1cqglH/kcvxK76orrooT3ZrvYxhi4jcsPSFKw0Jpo7pfL5OK3
-         PlEsridvlu4Sqywk9gGApUjRt7Qf6ryynYQ9YcNYzxTIgKxgh6oOMx8M2mo5Mv3vGoUM
-         aggA==
-X-Forwarded-Encrypted: i=1; AJvYcCUm7tcbZvX0Kv8gFCfABiRU9RSoWsZNRFNXJye+52pab9+0zFzwEB0aVyWnKrV3Pb0goH8EzNq6gQQ27uE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsQpeVsHuPp0KYqsp/QrUb+PUe60Sa6BMoCvO8dzGYyZxthBhb
-	iKSwZDMeVs1BoQ8dnxQ0QHCdkj+7bFuANNVVh02II7zRnHEmMF1OHXKv8B8yu10=
-X-Google-Smtp-Source: AGHT+IFW9IMEyKpdaJtbCqeR2BfZUGVbj5qq4s89gkF2dIQ1hZCkg5BprfSbih9wBltACm/FIFWYiA==
-X-Received: by 2002:a05:600c:4186:b0:42c:aeee:e605 with SMTP id 5b1f17b1804b1-42caeeee6f8mr24097205e9.9.1725900336995;
-        Mon, 09 Sep 2024 09:45:36 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789567625esm6480948f8f.64.2024.09.09.09.45.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 09:45:36 -0700 (PDT)
-Message-ID: <1944839e-306f-4881-b430-9837ce62cded@linaro.org>
-Date: Mon, 9 Sep 2024 18:45:35 +0200
+        bh=AhF2unESHOHNXtsHs//IUH+u17vTyKFOAwToWScirFo=;
+        b=h47MEEsABvquhG/aiGfG7on82fmxDhhlGHTHi3SVnA6nw9Z1fD8wb/pMYGuPH8nWpY
+         WWkbGQXryebr+HAUuL9YOM7hJD64crm4R61pLTAq0xtXKgpLmbhKr/FRcIwuSOR/bmU8
+         6XZNoiZyY0CrzpG83U2kA9dHQiJq+5VFTcWiK1Y7m1BbStrARZ+FoSXiDf87NEmo2z/R
+         /uQNlWEMPRPNNyD9zcL+uAAIAV2KLbLzN4CVFfTcRdrTMCsfz1LNibayUO0Bet5jQEKK
+         nr9SA6i8Q3Y9pBmD2fShhoaEkhy+SanvBDfNqdDLBVauxNWEstvGu2ZSSzHmEH6W6tP7
+         Sy/A==
+X-Gm-Message-State: AOJu0YzaQj1Uia24DxZaKvnNzBDDFzzeSVer8lRv/h9qUaJ3Y9KdxX4R
+	ha3JmeGA/DF6yxOhO1dqG5O5wkKa1ng+Bm0N25anE4JoMsK/GmKf8hUA6w==
+X-Google-Smtp-Source: AGHT+IEr+bb071DTjycAg7TSxqG/Ztfnz2xO3//P7l7cKrCJY00ajS86UpgnKNvJg0cjU/A7X7KRCA==
+X-Received: by 2002:a05:6a21:1706:b0:1c6:ed5e:241 with SMTP id adf61e73a8af0-1cf1d0acadcmr11707917637.15.1725900339894;
+        Mon, 09 Sep 2024 09:45:39 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:ed56:14c3:db02:6c66])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e5968a6csm3718026b3a.125.2024.09.09.09.45.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 09:45:39 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-team@android.com
+Cc: Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH] fsck.f2fs: remove redundant i_ext.len set to zero
+Date: Mon,  9 Sep 2024 09:45:35 -0700
+Message-ID: <20240909164535.1926830-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soundwire: stream: Revert "soundwire: stream: fix
- programming slave ports for non-continous port maps"
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Charles Keepax <ckeepax@opensource.cirrus.com>, Vinod Koul
- <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>,
- Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
- linux-kernel@vger.kernel.org, "stable@vger.kernel.org"
- <stable@vger.kernel.org>
-References: <20240904145228.289891-1-krzysztof.kozlowski@linaro.org>
- <Zt8H530FkqBMiYX+@opensource.cirrus.com>
- <8462d322-a40a-4d6c-99c5-3374d7f3f3a0@linux.intel.com>
- <adb3d03f-0cd2-47a7-9696-bc2e28d0e587@linaro.org>
- <2024090943-retiree-print-14ba@gregkh>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <2024090943-retiree-print-14ba@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/09/2024 18:23, Greg KH wrote:
->>>>> Soundwire core and existing codecs expect that the array passed as
->>>>> prop.sink_ports and prop.source_ports is continuous.  The port mask still
->>>>> might be non-continuous, but that's unrelated.
->>>>>
->>>>> Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
->>>>> Closes: https://lore.kernel.org/all/b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com/
->>>>> Fixes: ab8d66d132bc ("soundwire: stream: fix programming slave ports for non-continous port maps")
->>>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>>
->>>>> ---
->>>>
->>>> Would be good to merge this as soon as we can, this is causing
->>>> soundwire regressions from rc6 onwards.
->>>
->>> the revert also needs to happen in -stable. 6.10.8 is broken as well.
->>
->> It will happen. You do not need to Cc-stable (and it will not help, will
->> not be picked), because this is marked as fix for existing commit.
-> 
-> No, "Fixes:" tags only do not guarantee anything going to stable, you
-> have to explicitly tag it Cc: stable to do so, as per the documentation.
+From: Daeho Jeong <daehojeong@google.com>
 
-Then anyway cc-stable not in body won't work.
+Removed a redundant code to set i_ext.len to zero.
 
-> 
-> Yes, we often pick up "Fixes:" only tags, when we have the time, but
-> again, never guaranteed at all.
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ fsck/fsck.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Hm, I assumed you are still taking fixes for the fixes automatically.
-That's the case here. I will resend with cc-stable in such case.
-
-Best regards,
-Krzysztof
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 7400dcf..f8607fd 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -1400,8 +1400,6 @@ skip_blkcnt_fix:
+ 	}
+ 
+ 	if (need_fix && f2fs_dev_is_writable()) {
+-		if (c.zoned_model == F2FS_ZONED_HM)
+-			node_blk->i.i_ext.len = 0;
+ 		ret = update_block(sbi, node_blk, &ni->blk_addr, NULL);
+ 		ASSERT(ret >= 0);
+ 	}
+-- 
+2.46.0.598.g6f2099f65c-goog
 
 
