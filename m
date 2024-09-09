@@ -1,138 +1,189 @@
-Return-Path: <linux-kernel+bounces-320536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF416970BAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:03:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A80ED970BB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A4361F21D18
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:03:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5CF61C21A12
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69451CF9B;
-	Mon,  9 Sep 2024 02:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874C017C91;
+	Mon,  9 Sep 2024 02:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EhRTLLsU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="Bk5lpu29";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AiMcD2ed"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67A11CAA4
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 02:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0BD4C81;
+	Mon,  9 Sep 2024 02:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725847378; cv=none; b=mP46iElrD8j82P0M+n1Wmo4cPEgKzt/GqYxIrOluwHKQNkjts+sRllt49SYz7iDqzWLHirnuhQA5X6KhCwLjcNAad5sZKHHEDuCjBHnk/Q1L6SgtVfwxBIqSNAU9PETCL/I0PapqzIca4Wka/xZCqsJPCPM4CooFHJhz9but+mI=
+	t=1725847423; cv=none; b=K++CqWaoKgwhPewL7DTAScqb0qR9LeBR0CwCeBA0E6rmDg0CYqjHSe2o6RY/FZJqEeyld9qSVZlVdqrY/ciH0DclYbY2hYMKizF15fsYd21KEtF6DTshDFvKvojl3rksgDb3v95bE2qBTVgxm0sb/kkZNatgIsVWmDH0DxGj7tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725847378; c=relaxed/simple;
-	bh=7/6gyxcweF78Fjvy/O/QlpRmVVa60Z+0o2DI85aQcUo=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tI54ohe0KyDlKlBHIkDWt/YBEQ3l0QXDhmNr0jN2jZ73aGwUw0gix/mLVz5wCwzEf9faUAqRWBAYSe9lHY7mLBQuYAeFE3zKHkOnVItEy3IRvtN7y1DrHMRi5CtfkjLxYVKm+UKe+eMQ3NTUy835bTFD3tQMNFfWEn7hEEHqkSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EhRTLLsU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725847374;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HUQqKbxzWXipVdkbA2+5Zzkiohl4zLF2jPmYXNJwL9s=;
-	b=EhRTLLsUR2UMVy0E62Ug0TjXy/rlPA3I7f0E1kr+6TWT066ZyUe9cF5CNFA1WOm0/8VgR3
-	p6fiehAei3SYQj7At3l8ND+3GY4p6+TooXE/dJQxfOL8oi5hI/VGSqzGKwVm4ZYuqqUxW0
-	mS2BfoJty4tcavZQozbMTzGpagnodbU=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-358-dbXyhr2mNs2jntQsUSC6Xw-1; Sun,
- 08 Sep 2024 22:02:52 -0400
-X-MC-Unique: dbXyhr2mNs2jntQsUSC6Xw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 53BBB19560BC;
-	Mon,  9 Sep 2024 02:02:50 +0000 (UTC)
-Received: from server.redhat.com (unknown [10.72.112.25])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 321CE1956086;
-	Mon,  9 Sep 2024 02:02:45 +0000 (UTC)
-From: Cindy Lu <lulu@redhat.com>
-To: lulu@redhat.com,
-	jasowang@redhat.com,
-	mst@redhat.com,
-	michael.christie@oracle.com,
-	linux-kernel@vger.kernel.org,
-	virtualization@lists.linux-foundation.org
-Subject: [RESEND PATCH v1 7/7] vhost: Add new UAPI to support change to task mode
-Date: Mon,  9 Sep 2024 10:00:45 +0800
-Message-ID: <20240909020138.1245873-8-lulu@redhat.com>
-In-Reply-To: <20240909020138.1245873-1-lulu@redhat.com>
-References: <20240909020138.1245873-1-lulu@redhat.com>
+	s=arc-20240116; t=1725847423; c=relaxed/simple;
+	bh=iq3nvBmfllRTiJyTA94ksSdjaG4lbdwMfupgOFpV+nk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=QspLAUOXl2hRilSQCmnoKoX9K+egiv5UrL3GSeey4urTkDnWQ8/6Zsbs4Ri3UYEBo1qEWCtO2M1Vz8YQc5bg4WSIAKYBt1Gn+rGDSYoiD2+4qFGuRbHEEvEz81x0SAJPAu5wdjwxRsavo01Pkrhp1FgNz68aD+7yTWVURJjaMco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=Bk5lpu29; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AiMcD2ed; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id AA4701380204;
+	Sun,  8 Sep 2024 22:03:40 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-09.internal (MEProxy); Sun, 08 Sep 2024 22:03:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1725847420;
+	 x=1725933820; bh=q7tWMu/BR29AlMFdHva1ZVq5cMfk2jme775waWAHW4I=; b=
+	Bk5lpu29vUgR/3Yn+f0b5v7DMMh0IzJ/nuAymzxv9M6NlzFcmgIQSk4PHOfdnGI0
+	5YDNexb9uJJl0C9xYm3R0A1Own2HWMHuacJRBynPJ/vc1pxEBB6YWDv1hERcSNFu
+	YD3RJmNUAHLOMeuJx/mYmLdI05rqDslLRSrZNN73CaEW7Jqchs0qvzNXOzVXJRYc
+	HFMtM12CTC2svJYGvroc3YHDCRsIFWwHw036986plVOpUFBH075vrz9stlx6uI9Z
+	Ye30mY4T2D4Ahf79p9IbuQT9PB4/kXjtyeX9H2wgcxHpiqA5C1E6tp6ZOwBVcoZT
+	h0p+uSjlwrBL0u51wAzlRA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725847420; x=
+	1725933820; bh=q7tWMu/BR29AlMFdHva1ZVq5cMfk2jme775waWAHW4I=; b=A
+	iMcD2edf/MFm2reD7Pe+RDelZuG6Af9igc3mlePjx6rRBlIP720RhVqIrLm5goo2
+	0sDpFNUPjTcPk6jvO+rHmWookXLeBF40nhmGTUVWbTbj0ppFyIBkkeQ8ZM4rJ0CO
+	OrSkoa1M69vVOwbVQO5dRRyoQKg1t4qFG9py/KOUjC7KvbTzN2Qd+NTql/atqMLo
+	zK+xRokwW36er0DVdFNWPBKEc2v2Se+kDzQ7MJ6c4PUw8GXuhnL1+4Q9m/WpN86r
+	kUp3Vf3+lQj2dKf1uzqbRMPVZ+7+UbLGAFQ6YWtVLOw21zW+HpZKbx26ggHGadsQ
+	TukFb3B2I+I0jcrcy9z5g==
+X-ME-Sender: <xms:eVfeZga7McnadKJCaQQWsb2eJcqBlYfKCjYh9WXuqj4pFtNXHIfy9A>
+    <xme:eVfeZrYhsj0Kpuysh4j38emYhQh2PihN-Pt_4hoycuAN625NgrynsstYDZRWrbSKr
+    65R7PfRgQjMqLiY4_E>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiiedgheeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
+    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
+    thdrtghomhdpnhgspghrtghpthhtohepgedtpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopehtshgsohhgvghnugesrghl
+    phhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhguse
+    grrhhmrdgtohhmpdhrtghpthhtoheprghnthhonhdrihhvrghnohhvsegtrghmsghrihgu
+    ghgvghhrvgihshdrtghomhdprhgtphhtthhopehnihgtohhlrghssehfjhgrshhlvgdrvg
+    hupdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtoheprghl
+    vgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopegsohhquhhnrdhfvg
+    hnghesghhmrghilhdrtghomhdprhgtphhtthhopeifvggushhonhgrfhesghhmrghilhdr
+    tghomh
+X-ME-Proxy: <xmx:eVfeZq82Si7Ov1P0ceKc9b73LdRBt8tM9bl11ajO0H9HMSey8fBmew>
+    <xmx:eVfeZqru8dIgbxqlpz6eU85vngqVk1J42POs9tLH2koG0mcEdAphlw>
+    <xmx:eVfeZroea9p-6eaSAdAFy43eTiDrsJXCZGdRMaWD7ztowxSVvv0I9A>
+    <xmx:eVfeZoTNlV0UHz4H3XGfD6_2zkin4Y6FcnMzKZjcMDfcQ0AoycKivQ>
+    <xmx:fFfeZr5uL035KrNYQjYTCr3GGysD5Rwts1Yq1o6WsVSlM70w6h-BuAyR>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id CAC1D1C20065; Sun,  8 Sep 2024 22:03:37 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Date: Mon, 09 Sep 2024 03:01:45 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: "Masahiro Yamada" <masahiroy@kernel.org>,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Nicolas Schier" <nicolas@fjasle.eu>,
+ "Richard Weinberger" <richard@nod.at>,
+ "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Wedson Almeida Filho" <wedsonaf@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@samsung.com>,
+ "Alice Ryhl" <aliceryhl@google.com>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Steven Rostedt" <rostedt@goodmis.org>,
+ "Masami Hiramatsu" <mhiramat@kernel.org>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Jonathan Corbet" <corbet@lwn.net>, "Alex Shi" <alexs@kernel.org>,
+ "Yanteng Si" <siyanteng@loongson.cn>,
+ "Nick Desaulniers" <ndesaulniers@google.com>,
+ "Bill Wendling" <morbo@google.com>,
+ "Justin Stitt" <justinstitt@google.com>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+ rust-for-linux@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ llvm@lists.linux.dev
+Message-Id: <035ccfe5-c368-4cd9-8e0d-34e0e355cb05@app.fastmail.com>
+In-Reply-To: <alpine.DEB.2.21.2409082138160.60835@angie.orcam.me.uk>
+References: <20240905-mips-rust-v2-0-409d66819418@flygoat.com>
+ <20240905-mips-rust-v2-3-409d66819418@flygoat.com>
+ <alpine.DEB.2.21.2409082138160.60835@angie.orcam.me.uk>
+Subject: Re: [PATCH v2 3/3] rust: Enable for MIPS
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Add a new UAPI to support setting the vhost device to
-use task mode. The user space application needs to use
-VHOST_SET_ENFORCE_TASK to set the mode. This setting must
-be set before VHOST_SET_OWNER is set.
 
-Signed-off-by: Cindy Lu <lulu@redhat.com>
----
- drivers/vhost/vhost.c      | 16 +++++++++++++++-
- include/uapi/linux/vhost.h |  2 ++
- 2 files changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 838bce29a98b..8fd19a1489e0 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -2340,14 +2340,28 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp)
- {
- 	struct eventfd_ctx *ctx;
- 	u64 p;
--	long r;
-+	long r = 0;
- 	int i, fd;
-+	bool enforce_task;
- 
- 	/* If you are not the owner, you can become one */
- 	if (ioctl == VHOST_SET_OWNER) {
- 		r = vhost_dev_set_owner(d);
- 		goto done;
- 	}
-+	if (ioctl == VHOST_SET_ENFORCE_TASK) {
-+		/* Is there an owner already? */
-+		if (vhost_dev_has_owner(d)) {
-+			r = -EBUSY;
-+			goto done;
-+		}
-+		if (copy_from_user(&enforce_task, argp, sizeof(enforce_task))) {
-+			r = -EFAULT;
-+			goto done;
-+		}
-+		enforce_kthread = !enforce_task;
-+		goto done;
-+	}
- 
- 	/* You must be the owner to do anything else */
- 	r = vhost_dev_check_owner(d);
-diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-index b95dd84eef2d..9853d62d2d34 100644
---- a/include/uapi/linux/vhost.h
-+++ b/include/uapi/linux/vhost.h
-@@ -235,4 +235,6 @@
-  */
- #define VHOST_VDPA_GET_VRING_SIZE	_IOWR(VHOST_VIRTIO, 0x82,	\
- 					      struct vhost_vring_state)
-+
-+#define VHOST_SET_ENFORCE_TASK _IOW(VHOST_VIRTIO, 0x83, bool)
- #endif
--- 
-2.45.0
+=E5=9C=A82024=E5=B9=B49=E6=9C=888=E6=97=A5=E4=B9=9D=E6=9C=88 =E4=B8=8B=E5=
+=8D=889:43=EF=BC=8CMaciej W. Rozycki=E5=86=99=E9=81=93=EF=BC=9A
+> On Thu, 5 Sep 2024, Jiaxun Yang wrote:
+>
+>> diff --git a/scripts/generate_rust_target.rs b/scripts/generate_rust_=
+target.rs
+>> index 863720777313..bbdf8a4dd169 100644
+>> --- a/scripts/generate_rust_target.rs
+>> +++ b/scripts/generate_rust_target.rs
+> [...]
+>> +        } else {
+>> +            ts.push("arch", "mips");
+>> +            cfg.get("TARGET_ISA_REV").map(|isa_rev| {
+>> +                let feature =3D match isa_rev.as_str() {
+>> +                    "1" =3D> ",+mips32",
+>> +                    "2" =3D> ",+mips32r2",
+>> +                    "5" =3D> ",+mips32r5",
+>> +                    "6" =3D> ",+mips32r6",
+>> +                    _ =3D> ",+mips2",
+>
+>  What's the consequence of using `mips2' rather than `mips1' here?  Ho=
+w=20
+> about other ISA revisions, e.g. `mips4' (that also applies to the 64BI=
+T=20
+> leg)?
 
+LLVM's mips1 backend is a little bit broken beyond repair, so I tried to=
+ use mips2
+as a baseline. I should probably let HAVE_RUST depend on !CPU_R3000 to g=
+et it covered.
+
+We have no good way to tell ISA reversion prior to R1 just from Kconfig =
+TARGET_ISA_REV,
+valid numbers for TARGET_ISA_REV are only 1, 2, 5, 6 from Kconfig.
+
+Given that mips 2 and 3 binaries (Rust object files) can link run flawle=
+ssly on all pre-R6
+(despite R3000) hardware with matching bitness, they were chosen as fall=
+back here.
+
+Thanks
+>
+>   Maciej
+
+--=20
+- Jiaxun
 
