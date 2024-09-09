@@ -1,93 +1,102 @@
-Return-Path: <linux-kernel+bounces-321749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5521971EDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:14:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B6F971EE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D701D1C21AE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:14:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 793AC1C2296C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682B013A3EC;
-	Mon,  9 Sep 2024 16:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3D713C675;
+	Mon,  9 Sep 2024 16:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0UioKsM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1Il1hia"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DB91BC44;
-	Mon,  9 Sep 2024 16:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF27C156;
+	Mon,  9 Sep 2024 16:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725898473; cv=none; b=iaH9dCyP7ybFvY3DCIaZrPi4LDEdSD7qSqZVp791EOss39Sqh0EgbpoR9b0xHbjvip47kiijWgUAIS97Wgh41Mr9qDvfXIXIGwWu/5LyCtu6SsOtD1PLM2evb4q2J1raPmYSoH5g9twuyKyM+pYXKJpwehB87eFXq1IdzJ64mOM=
+	t=1725898563; cv=none; b=Xh/e5DzdqgF3OMYb09TVefZfDYTvwo/O9MHRKduNtBsU/JCRmgMIuk0sQTrDz5iMuztHr3r0DYakvBo1he7k2Pus+yP1ij2ki7ee/oVQhNckf9V6Xef4MDSsJ2ZO1MSFUpDf2UcjkOXU5MBBw3rkEnzYJYRm0EqlyC4hHlVyANs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725898473; c=relaxed/simple;
-	bh=o/SuPZXr/C+udjYl73B0JYb0XneMaCtDYYTZC1RoxxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qe0TJMIdIvUqy3XesXbdO0LNs0lQNrL607bj0XMpLB+l6JBq2zL8hRal+bkMaR1dpUnSwHlzzlJqbEh636x7crpnagMRQWn67t0nuJ/0RVotLjAUjWfvgdaF+huX4kmXDkqB0uc2UkvhdbV7jpoOKDPrIfJ0AUofzA9HLp04FIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0UioKsM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41A28C4CEC5;
-	Mon,  9 Sep 2024 16:14:33 +0000 (UTC)
+	s=arc-20240116; t=1725898563; c=relaxed/simple;
+	bh=Ls7yNYiJTmMO2LUOs5edmUDMG2W06CnY5cBWHeqDVh8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hmGVIzVPU7DXJnwx5UIi+UHFYn5pAPkdGnWrg2AcM/Yg8b4SvMWd8Uh+WOh+8E8Rc+2wD2MPAKsknS9O278j0a+ii/RiXBGP9pP8XR/q9SX+Q3sBiE1b6DwYDHH87elgS1ZFeaaAPwdtXIuaGq65XVW+GnquBlNVyWpn6Xq4Zzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1Il1hia; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BAABC4CEC5;
+	Mon,  9 Sep 2024 16:15:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725898473;
-	bh=o/SuPZXr/C+udjYl73B0JYb0XneMaCtDYYTZC1RoxxM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l0UioKsMstyYQHNJKE/TW5OgM/SFftNOHJVs3xmDDCKXgXCzLEuHJBqL0/185llQH
-	 fvXsX91di30TRDGOyFWCbDV1vLRBMMxw2eLTN7SEflZEs8IBOsA2OqenUoJRu0bdEa
-	 094JtI9gl36ktHE9vAegXsAhLbg6yXZB9r6VkWwAMmmyu6ovx9/iExNVZc2hCErPMi
-	 KapRmBlNUHcPuCKhQVHc7L5JX9kPHb4uCyLPTIZZSCH/jQsbFGy+eMdqyw28b1vpxI
-	 cnrgnMEVJ2EUj3E1KN/lfxxO7tkxS/ClaKVteK8LOkafJqmBZeu5kd+nHMm285xX64
-	 uazBPd9uZXwKg==
-Date: Mon, 9 Sep 2024 11:14:32 -0500
-From: Rob Herring <robh@kernel.org>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>, Michael Walle <mwalle@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: arm: Document the btt3 i.MX28 based board
-Message-ID: <20240909161432.GA328353-robh@kernel.org>
-References: <20240909113858.359112-1-lukma@denx.de>
+	s=k20201202; t=1725898562;
+	bh=Ls7yNYiJTmMO2LUOs5edmUDMG2W06CnY5cBWHeqDVh8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=c1Il1hiaDR85pEccsSxKJx4hwcoizwSgnKS/STKWucygQg3CRqCAoVLH0KGEPT0ot
+	 /k+T8Ed20mV46zrf5iBAm31+kQfMLeaiqFSRz2Rk60P5RYZe7k8djYPSjbLA5XC+0d
+	 LrFVap4Kyrf/avuR0ABliJ4fEI8YZbmrXVJ3u1rav+SY3m5sEstYHZ7al1eWVPw8fV
+	 c50JhN8Or5dtRjg0WVd3TcaANC4hfy8SuWhi4dLSSLM0foi9+jxq6Zrkj2fKbN3R8W
+	 U0jV2L1RBKdlTmXIsRJzFzm5mtWM3VKILKlPJzA0keX7u1sR+X2J/9tQx3iHz9rJl/
+	 s2PPsi2mfaTnw==
+From: Will Deacon <will@kernel.org>
+To: Rob Clark <robdclark@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	iommu@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	ath11k@lists.infradead.org,
+	Kalle Valo <kvalo@kernel.org>
+Subject: Re: [PATCH 0/7] arm64: qcom: sda660-ifc6560: enable GPU and WiFi support
+Date: Mon,  9 Sep 2024 17:15:44 +0100
+Message-Id: <172589162139.2623853.11488233830217103643.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20240907-sdm660-wifi-v1-0-e316055142f8@linaro.org>
+References: <20240907-sdm660-wifi-v1-0-e316055142f8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909113858.359112-1-lukma@denx.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 09, 2024 at 01:38:58PM +0200, Lukasz Majewski wrote:
-> The imx287 based btt3 board is very similar to xea in terms of used SOM
-> module.
+On Sat, 07 Sep 2024 21:48:11 +0300, Dmitry Baryshkov wrote:
+> Follow the MSM8998 example and limit num_context_banks on SDM630 /
+> SDM660 platforms. This allows Linux to make use of the A2NOC and KGSL
+> SMMU, making it possible to enable GPU and WiFi on those platforms, and,
+> in particular, Inforce IFC6560 SBC.
+> 
+> Note, while WiFI starts up and can work for a short amount of time, MSS
+> starts crashing with the following message:
+> 
+> [...]
 
-One series with the dts changes please.
+Applied SMMU driver change to will (for-joerg/arm-smmu/updates), thanks!
 
-> 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> ---
->  Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-> index 80747d79418a..f290c824a91b 100644
-> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> @@ -97,6 +97,7 @@ properties:
->                - i2se,duckbill
->                - i2se,duckbill-2
->                - karo,tx28                 # Ka-Ro electronics TX28 module
-> +              - lwn,imx28-btt3
->                - lwn,imx28-xea
->                - msr,m28cu3                # M28 SoM with custom base board
->                - schulercontrol,imx28-sps1
-> -- 
-> 2.39.2
-> 
+[1/7] iommu/arm-smmu-qcom: apply num_context_bank fixes for SDM630 / SDM660
+      https://git.kernel.org/will/c/19eb465c969f
+
+Cheers,
+-- 
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
