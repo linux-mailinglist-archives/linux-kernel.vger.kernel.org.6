@@ -1,71 +1,114 @@
-Return-Path: <linux-kernel+bounces-322149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E279724BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:59:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BCB09724DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97F641C2333D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5642842FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A2918C91D;
-	Mon,  9 Sep 2024 21:59:16 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA388F5A;
-	Mon,  9 Sep 2024 21:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576AA18CBED;
+	Mon,  9 Sep 2024 22:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQxyacZq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1CC17085C;
+	Mon,  9 Sep 2024 22:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725919156; cv=none; b=lqatT8N62N4qiypqWMyfO8Wt9leQNUPg8UVvch6iM6hyUAP1KF97yxYmUrkK3s6FIOt5o9tHHNwThKDeDXhFBIsW/CofA3WmNk9hn9ry9/iQytLIV9ZgrpB7C+xr0G/dmaH4ZeDnOisQlc++NNlXlonffme0C3m2dFL456ej6ZQ=
+	t=1725919241; cv=none; b=KPI93kEssoG1zSpMEpEmXPquuB49ToTcgYOnFbjV6CBt7qYLKb5MEsIRnep6IRz9AJv+FFIM2dtCvGbfgEdJPhZZc0oO+44ucFxC7OdQPrXXdTEGPGlGjWmvoegdnlRy13Nn7XSM6+l+//4YRHkqKYjGu+xGaBDK1nmY/IlEOuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725919156; c=relaxed/simple;
-	bh=jByGLbh2GqBcqZ7FHhORlpa01vEbWbVw4J0VN8uBDNs=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=JywcwmTRDl3Wk+2qJiT8B/zsj+JqpYptgWRoncDji+BhNEE9MT4DZetBtzDnBcvF8T/Hks3GBkMjPOwWXeP3WJJgUVTZbGUfQwBTC9fkkfJ2SZnIBcIWpxDkzNd75fKAmvrQWfNfZIFaVTww31zS4qthibd+cAl7GiHsczz2HBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 18A0C92009C; Mon,  9 Sep 2024 23:59:06 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 1553492009B;
-	Mon,  9 Sep 2024 22:59:06 +0100 (BST)
-Date: Mon, 9 Sep 2024 22:59:06 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] MIPS: ftrace: Mark ftrace_get_parent_ra_addr as
- static
-In-Reply-To: <20240908-mips-chore-v1-1-9239c783f233@flygoat.com>
-Message-ID: <alpine.DEB.2.21.2409092258440.60835@angie.orcam.me.uk>
-References: <20240908-mips-chore-v1-0-9239c783f233@flygoat.com> <20240908-mips-chore-v1-1-9239c783f233@flygoat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1725919241; c=relaxed/simple;
+	bh=JGqxWA1KpqkAc55m1tTC6BCwYiBtn9t2WlYbKLNP9PA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t7LTXBUPaCpQdJxHG8SxPM471MOStfjEMmgVhfFTSHGkq3ACgq+APyboa9FzIZJAnDgICCdN7sBdIXBRuqtHIIF6zuSXMC7Co2tinYkIw12v9oaz/whXBOcG0cs26YHEwJYV7Hf4pZIBUOTM39HeTvDnDITYrucP8n4HGZAeJFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQxyacZq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22797C4CEC5;
+	Mon,  9 Sep 2024 22:00:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725919241;
+	bh=JGqxWA1KpqkAc55m1tTC6BCwYiBtn9t2WlYbKLNP9PA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NQxyacZqx2mx4EIfylMDD80N8nKpi6Z4sD/6j/wb42m457LVQ7pSUYuqK9GwJ591u
+	 PbP+1nkeIN/X9dNDZ+QlCx7QuEuRErypeBcRu04QZcCVboJCDgqIAoCZlUQIoaZ3ry
+	 7yEiOmZB03zKzR2vJjhBoA1r0BTUqVtYhw9gX5VdjH7qmXrvgfaT7Ux6Om8uea3lgk
+	 k3uIZrrYN8N0cpQA3ftiduW3sSUipu5n8RYtU192usneRZ8bZN3ZxBrr1R26ApGpSO
+	 22OhK7XfNoCuee+oiepdl8ebEpfvTsT05+vRXrdkfbAMAYGjE2ObeU03mP7wkJrL0L
+	 3oNMpguap45Qw==
+Date: Mon, 9 Sep 2024 23:00:30 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Nikunj Kela <quic_nkela@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, andersson@kernel.org,
+	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
+	will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+	jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
+	amitk@kernel.org, thara.gopinath@gmail.com,
+	cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
+	wim@linux-watchdog.org, linux@roeck-us.net,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+	iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, kernel@quicinc.com,
+	quic_psodagud@quicinc.com,
+	Praveen Talari <quic_ptalari@quicinc.com>
+Subject: Re: [PATCH v2 16/21] dt-bindings: spi: document support for SA8255p
+Message-ID: <70673636-5b44-4b61-865c-83f9c5d3501d@sirena.org.uk>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-17-quic_nkela@quicinc.com>
+ <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
+ <b369bd73-ce2f-4373-8172-82c0cca53793@quicinc.com>
+ <9a655c1c-97f6-4606-8400-b3ce1ed3c8bf@kernel.org>
+ <d206e315-3324-4814-b98d-027c3af6ebb6@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+4FsY8uVcR5U7FtS"
+Content-Disposition: inline
+In-Reply-To: <d206e315-3324-4814-b98d-027c3af6ebb6@quicinc.com>
+X-Cookie: Anything is possible, unless it's not.
 
-On Sun, 8 Sep 2024, Jiaxun Yang wrote:
 
-> diff --git a/arch/mips/kernel/ftrace.c b/arch/mips/kernel/ftrace.c
-> index 8c401e42301c..96016eb1c476 100644
-> --- a/arch/mips/kernel/ftrace.c
-> +++ b/arch/mips/kernel/ftrace.c
-> @@ -248,8 +248,8 @@ int ftrace_disable_ftrace_graph_caller(void)
->  #define S_R_SP	(0xafb0 << 16)	/* s{d,w} R, offset(sp) */
->  #define OFFSET_MASK	0xffff	/* stack offset range: 0 ~ PT_SIZE */
->  
-> -unsigned long ftrace_get_parent_ra_addr(unsigned long self_ra, unsigned long
-> -		old_parent_ra, unsigned long parent_ra_addr, unsigned long fp)
-> +static unsigned long ftrace_get_parent_ra_addr(unsigned long self_ra, unsigned long old_parent_ra,
-> +					       unsigned long parent_ra_addr, unsigned long fp)
+--+4FsY8uVcR5U7FtS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- Overlong lines.
+On Mon, Sep 09, 2024 at 01:29:37PM -0700, Nikunj Kela wrote:
 
-  Maciej
+> Now I am confused which prefix format shall I use? first spi or first
+> dt-bindings?
+
+spi: first.
+
+--+4FsY8uVcR5U7FtS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbfb/0ACgkQJNaLcl1U
+h9DmmAf9G79iJqbIo+rLvhxVQG/V00Xz3Y1hZjGbPTyKNQIuiSThwS/ZexjpAnky
+dxPN6CKinfv2CcaHSqAfTaiOX7e41E6yQe0MhZRHgvnp9GWDwzFR+vo/Jkf7vOvk
+FdHkgDxP+8DqOEk/JvSsuUbeWBm8+6SYmz3aY49ZDdTM/AWXoLpfIuRG9HHI4oC0
+pcewKeElbb4mm8XtAESmg+SfofXpaXXqWnzrqGfKnG2Jhz2SYaDIbLUzRrIcMyQC
+UkUJzcsdp019ZGJl0xUhb05YlxUPnZ2vQ1OJaDh/15NkTWCoSTdDX1WTWjHtmjfB
+soCaA83E+/cUHrHnZjH7ZOZFfA0F2A==
+=OtuN
+-----END PGP SIGNATURE-----
+
+--+4FsY8uVcR5U7FtS--
 
