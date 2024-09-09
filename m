@@ -1,218 +1,174 @@
-Return-Path: <linux-kernel+bounces-320494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC35A970B3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:31:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDD6970B42
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E11E1F2193C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:31:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C727F1C209FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408F410A2A;
-	Mon,  9 Sep 2024 01:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RyghEpJr"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDDC10A19;
+	Mon,  9 Sep 2024 01:32:42 +0000 (UTC)
+Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D12712E75;
-	Mon,  9 Sep 2024 01:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADFCBA42
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 01:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725845492; cv=none; b=qkCEun0OxviKdFyWrpjB43OoG6rTAe6zXpWBE3wW7SjD9jfInBEvjyXi+ttLh3ZIGYvZ9qPxY7vDaNOGa82MErk6WJSF02fqiQKXEvGU92kX/C5p1Hm/Hf8oGAN8TU5Tx6aoxSwrnSo89VmiJSPguHK9xjrNEQ/wn+B8+tMzYf4=
+	t=1725845561; cv=none; b=M3MYapurRtC8WQdPvqnEjoOi53a52tvrEyExq2rqDKUmZGK0iUDp+3Jr8wA4mCBoS7ecHs18DPX9zNu40WMV35I2JqlEXfHo61S4c6DpR37hfvQCaCTW5/qnGbSKMBshHc1eRH6ntSVBdvAgnXouj54+6Mwk20ejm6cqla985wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725845492; c=relaxed/simple;
-	bh=bnaigO9qi7VOENv6qOORQzcdulMA57bYtrmKZ4ngcd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oOTRcpBV/jSvml6+z2knt9rmukWgMbA9DfRRp6ZFlhPHgXvZ1lOGqbUGClI6LaAuCmJJJjK/bRDq2VR4jg9U2kvy8c6JY8MMbXZsUs+bv1QJmgBJnXxeclTPc4/Gxb0bEjuCwFM5jpHqxEMOZylyjLcF/+PvvmmGSdD8EubRgB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RyghEpJr; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-718816be6cbso2373841b3a.1;
-        Sun, 08 Sep 2024 18:31:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725845490; x=1726450290; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1G6NznUd8tvil9HDGLund5Jsk5xX7QfPpNeHwJyevK0=;
-        b=RyghEpJrNRy7T34sxOg52dmpxkgTWis91SwEwFbiucuJP+yVMaUMlqEiBWpKfc2u1Z
-         lKAmEjCtKqj/IAPAa9ckYdNXei+iq2uafF9ARoHnCDNCoHDpCgS1vryTXfDgVUnBQYKN
-         sxiWw6WCCumQRgi+ExL+k35hIF7WZbJqt8+2cAoc7+Io42onrj4A0iaOu10VPhgcqWj4
-         1aqGL1UwUpv5INVGhsbXUqNJHc8p3goprSzYkdsZI1pO7ntVLmFa77ASNMql5S9KTMcw
-         HD0LQ2L9zYzmMpmF7nonnHMXNy/dDO/hJ9w6Tm6zhzhPd3zRQ1ac+DQL+o2aqCaK8tWt
-         fRbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725845490; x=1726450290;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1G6NznUd8tvil9HDGLund5Jsk5xX7QfPpNeHwJyevK0=;
-        b=EAdi/8o01Yo3LP0lfR4u7PGeIIbRLcNC/PrHSc61KslwEXTQbrEMOnUGVGhshJX6ye
-         B+8ksoygdEsBuhDjlFgoNpk9+xTdcH/sydd9YaOhKrd1QWanjXcamNtfHTqyV7X8G/tB
-         ezduWjNP3KMidqIMisHDfJCUh8N6OwwxhByVQ4fv0DXyzs2AsaNLNKYNoIPNJLcj5wKq
-         j0JYLl7Ak1oLVtiBBpsvE/XqfHGU8cwCKtbgBm/MGGknWLRoRnLT7oINtR/hJA0SCUvl
-         2kuDtMQ0TFgzjotnX1ut2LMvxG7DRYletjBjy1ZMqckpddJ8+RSWWPMLEBOtV9U+8lN5
-         03fA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQL8NvXG5BjkLdf66SkARFgZNjlpmV7lTMnoAwVDwyDQGSQ93ki9bDsVKo4LbongN9Nt4ZB0O6zWKudbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxb5YAiYiWO8toX7hradSTL2wItBHsoEr0WjJkw6e4PdxxcVD8
-	sp1PInpcaXwFrWqHICDyu6IjjIVQE6jWP1sVPtdRrE6o8ec2nE5E
-X-Google-Smtp-Source: AGHT+IF/SLy7Apo/hBUKShmEsPjroC+JII7bcD5FP5mFYDry9nFWsazgWO8Y8J1OoGV6bQhDDPkGlQ==
-X-Received: by 2002:a05:6a00:1489:b0:717:9754:4ade with SMTP id d2e1a72fcca58-718e404ba42mr10020934b3a.22.1725845490222;
-        Sun, 08 Sep 2024 18:31:30 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:33:e151:4d73:1aa7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e58cd003sm2529213b3a.73.2024.09.08.18.31.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 18:31:29 -0700 (PDT)
-Date: Sun, 8 Sep 2024 18:31:26 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Jeff LaBundy <jeff@labundy.com>
-Cc: linux-input@vger.kernel.org,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Ville Syrjala <syrjala@sci.fi>,
-	Support Opensource <support.opensource@diasemi.com>,
-	Eddie James <eajames@linux.ibm.com>,
-	Andrey Moiseev <o2g.org.ru@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 14/22] Input: iqs626a - use cleanup facility for fwnodes
-Message-ID: <Zt5P7hlg-uhRHnCc@google.com>
-References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
- <20240904044814.1048062-1-dmitry.torokhov@gmail.com>
- <Zt47Ic059YbOSbGy@nixie71>
+	s=arc-20240116; t=1725845561; c=relaxed/simple;
+	bh=OV7RsPTtf5jTdNH+X7jXGLv6MDzHIDOCnPqNISKgzbQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MO5xUhOwE0fQtJ9I1X6IjUnk3Yt3skdT8eHKS0LYynLO82w6hlXd7O94lfKjt0ubyQLmdfeD8QfQrCuaii1IfE9psJ7atK1lL+FnjOPDGUVDoOfaZSWLdViExioN+dI9xbMZ+LFXYUToLAWFHjWMOb7xwj89h4/0XafoLnNDFu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
+Received: from dsgsiengine01.siengine.com ([10.8.1.61])
+	by mail03.siengine.com with ESMTPS id 4891VkE9085406
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 9 Sep 2024 09:31:46 +0800 (+08)
+	(envelope-from kimriver.liu@siengine.com)
+Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
+	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4X28Sd20r8z7ZMjf;
+	Mon,  9 Sep 2024 09:31:45 +0800 (CST)
+Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
+ SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Mon, 9 Sep 2024 09:31:45 +0800
+Received: from SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe]) by
+ SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe%16]) with mapi id
+ 15.02.1544.011; Mon, 9 Sep 2024 09:31:45 +0800
+From: =?gb2312?B?TGl1IEtpbXJpdmVyL8H1vfC60w==?= <kimriver.liu@siengine.com>
+To: kernel test robot <lkp@intel.com>,
+        "jarkko.nikula@linux.intel.com"
+	<jarkko.nikula@linux.intel.com>
+CC: "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
+        "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "jsd@semihalf.com" <jsd@semihalf.com>,
+        "andi.shyti@kernel.org"
+	<andi.shyti@kernel.org>,
+        "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] i2c: designware: fix master is holding SCL low while
+ ENABLE bit is disabled
+Thread-Topic: [PATCH] i2c: designware: fix master is holding SCL low while
+ ENABLE bit is disabled
+Thread-Index: AQHa/2duFR8zehOY/kSHdEPBwRT+f7JNYfWAgAFJ+9A=
+Date: Mon, 9 Sep 2024 01:31:45 +0000
+Message-ID: <d37f51a15b454217936c423512de6e39@siengine.com>
+References: <20240905074211.2278-1-kimriver.liu@siengine.com>
+ <202409082011.9JF6aYsk-lkp@intel.com>
+In-Reply-To: <202409082011.9JF6aYsk-lkp@intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zt47Ic059YbOSbGy@nixie71>
+X-DKIM-Results: [10.8.1.61]; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:mail03.siengine.com 4891VkE9085406
 
-Hi Jeff,
-
-On Sun, Sep 08, 2024 at 07:02:41PM -0500, Jeff LaBundy wrote:
-> Hi Dmitry,
-> 
-> On Tue, Sep 03, 2024 at 09:48:13PM -0700, Dmitry Torokhov wrote:
-> > Use __free(fwnode_handle) cleanup facility to ensure that references to
-> > acquired fwnodes are dropped at appropriate times automatically.
-> > 
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > ---
-> >  drivers/input/misc/iqs626a.c | 22 ++++++----------------
-> >  1 file changed, 6 insertions(+), 16 deletions(-)
-> > 
-> > diff --git a/drivers/input/misc/iqs626a.c b/drivers/input/misc/iqs626a.c
-> > index 0dab54d3a060..7a6e6927f331 100644
-> > --- a/drivers/input/misc/iqs626a.c
-> > +++ b/drivers/input/misc/iqs626a.c
-> > @@ -462,7 +462,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> >  {
-> >  	struct iqs626_sys_reg *sys_reg = &iqs626->sys_reg;
-> >  	struct i2c_client *client = iqs626->client;
-> > -	struct fwnode_handle *ev_node;
-> >  	const char *ev_name;
-> >  	u8 *thresh, *hyst;
-> >  	unsigned int val;
-> > @@ -501,6 +500,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> >  		if (!iqs626_channels[ch_id].events[i])
-> >  			continue;
-> >  
-> > +		struct fwnode_handle *ev_node __free(fwnode_handle) = NULL;
-> 
-> This seems to deviate from what I understand to be a more conventional
-> style of declaring variables at the top of the scope, and separate from
-> actual code, like below:
-
-This is follows Linus' guidance on combining declaration and
-initialization for variables using __free() cleanup annotations (where
-possible). These annotations are the reason for dropping
--Wdeclaration-after-statement from our makefiles. See b5ec6fd286df
-("kbuild: Drop -Wdeclaration-after-statement") and discussion in
-https://lore.kernel.org/all/CAHk-=wi-RyoUhbChiVaJZoZXheAwnJ7OO=Gxe85BkPAd93TwDA@mail.gmail.com
-
-> 
-> 
-> 	for (i = 0; i < ARRAY_SIZE(iqs626_events); i++) {
-> 		struct fwnode_handle *ev_node __free(fwnode_handle);
-> 
-> 		if (!iqs626_channels[ch_id].events[i])
-> 			continue;
-
-This will result in attempt to "put" a garbage pointer if we follow
-"continue" code path. In general __free() pointers have to be
-initialized, either to NULL or to a valid object (assuming that cleanup
-function can deal with NULLs).
-
-> 
-> I also did not see any reason to explicitly declare the variable as NULL;
-> let me know in case I have misunderstood.
-
-See the above. Yes, in this particular case it will get a value in both
-branches, but I feel it is too fragile and may get messed up if someone
-refactors code.
-
-> 
-> >  		if (ch_id == IQS626_CH_TP_2 || ch_id == IQS626_CH_TP_3) {
-> >  			/*
-> >  			 * Trackpad touch events are simply described under the
-> > @@ -530,7 +530,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> >  					dev_err(&client->dev,
-> >  						"Invalid input type: %u\n",
-> >  						val);
-> > -					fwnode_handle_put(ev_node);
-> >  					return -EINVAL;
-> >  				}
-> >  
-> > @@ -545,7 +544,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> >  				dev_err(&client->dev,
-> >  					"Invalid %s channel hysteresis: %u\n",
-> >  					fwnode_get_name(ch_node), val);
-> > -				fwnode_handle_put(ev_node);
-> >  				return -EINVAL;
-> >  			}
-> >  
-> > @@ -566,7 +564,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> >  				dev_err(&client->dev,
-> >  					"Invalid %s channel threshold: %u\n",
-> >  					fwnode_get_name(ch_node), val);
-> > -				fwnode_handle_put(ev_node);
-> >  				return -EINVAL;
-> >  			}
-> >  
-> > @@ -575,8 +572,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> >  			else
-> >  				*(thresh + iqs626_events[i].th_offs) = val;
-> >  		}
-> > -
-> > -		fwnode_handle_put(ev_node);
-> >  	}
-> >  
-> >  	return 0;
-> > @@ -774,12 +769,12 @@ static int iqs626_parse_trackpad(struct iqs626_private *iqs626,
-> >  	for (i = 0; i < iqs626_channels[ch_id].num_ch; i++) {
-> >  		u8 *ati_base = &sys_reg->tp_grp_reg.ch_reg_tp[i].ati_base;
-> >  		u8 *thresh = &sys_reg->tp_grp_reg.ch_reg_tp[i].thresh;
-> > -		struct fwnode_handle *tc_node;
-> >  		char tc_name[10];
-> >  
-> >  		snprintf(tc_name, sizeof(tc_name), "channel-%d", i);
-> >  
-> > -		tc_node = fwnode_get_named_child_node(ch_node, tc_name);
-> > +		struct fwnode_handle *tc_node __free(fwnode_handle) =
-> > +				fwnode_get_named_child_node(ch_node, tc_name);
-> 
-> Same here.
-
-Yes, combining declaration and initialization is preferred for such
-pointers.
-
-Thanks.
-
--- 
-Dmitry
+SEmjrHJvYm90LA0KIFRvZGF5IEkgd2lsbCByZXNlbmQgYSB2ZXJzaW9uIHY3IHBhdGNoKFtQQVRD
+SCBWN10gaTJjOiBkZXNpZ253YXJlOiBmaXggbWFzdGVyIGlzIGhvbGRpbmcgU0NMIGxvdyB3aGls
+ZSBFTkFCTEUgYml0IGlzIGRpc2FibGVkKQ0KIGJhc2VkIG9uIHRoZSBsYXRlc3QgTGludXggbWFz
+dGVyIGJyYW5jaCB0byByZXNvbHZlIGNvbXBpbGUgZXJyb3JzLg0KDQotLS0tLS0tLS0tLS0tDQpC
+ZXN0IFJlZ2FyZHMsDQpLaW1yaXZlciBMaXUNCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
+CkZyb206IGtlcm5lbCB0ZXN0IHJvYm90IDxsa3BAaW50ZWwuY29tPiANClNlbnQ6IDIwMjTE6jnU
+wjjI1SAyMTozMg0KVG86IExpdSBLaW1yaXZlci/B9b3wutMgPGtpbXJpdmVyLmxpdUBzaWVuZ2lu
+ZS5jb20+OyBqYXJra28ubmlrdWxhQGxpbnV4LmludGVsLmNvbQ0KQ2M6IG9lLWtidWlsZC1hbGxA
+bGlzdHMubGludXguZGV2OyBhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb207IG1pa2Eu
+d2VzdGVyYmVyZ0BsaW51eC5pbnRlbC5jb207IGpzZEBzZW1paGFsZi5jb207IGFuZGkuc2h5dGlA
+a2VybmVsLm9yZzsgbGludXgtaTJjQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIu
+a2VybmVsLm9yZzsgTGl1IEtpbXJpdmVyL8H1vfC60yA8a2ltcml2ZXIubGl1QHNpZW5naW5lLmNv
+bT4NClN1YmplY3Q6IFJlOiBbUEFUQ0hdIGkyYzogZGVzaWdud2FyZTogZml4IG1hc3RlciBpcyBo
+b2xkaW5nIFNDTCBsb3cgd2hpbGUgRU5BQkxFIGJpdCBpcyBkaXNhYmxlZA0KDQpIaSBraW1yaXZl
+ciwNCg0Ka2VybmVsIHRlc3Qgcm9ib3Qgbm90aWNlZCB0aGUgZm9sbG93aW5nIGJ1aWxkIGVycm9y
+czoNCg0KW2F1dG8gYnVpbGQgdGVzdCBFUlJPUiBvbiBhbmRpLXNoeXRpL2kyYy9pMmMtaG9zdF0N
+ClthbHNvIGJ1aWxkIHRlc3QgRVJST1Igb24gbGludXMvbWFzdGVyIHY2LjExLXJjNiBuZXh0LTIw
+MjQwOTA2XQ0KW0lmIHlvdXIgcGF0Y2ggaXMgYXBwbGllZCB0byB0aGUgd3JvbmcgZ2l0IHRyZWUs
+IGtpbmRseSBkcm9wIHVzIGEgbm90ZS4NCkFuZCB3aGVuIHN1Ym1pdHRpbmcgcGF0Y2gsIHdlIHN1
+Z2dlc3QgdG8gdXNlICctLWJhc2UnIGFzIGRvY3VtZW50ZWQgaW4NCmh0dHBzOi8vZ2l0LXNjbS5j
+b20vZG9jcy9naXQtZm9ybWF0LXBhdGNoI19iYXNlX3RyZWVfaW5mb3JtYXRpb25dDQoNCnVybDog
+ICAgaHR0cHM6Ly9naXRodWIuY29tL2ludGVsLWxhYi1sa3AvbGludXgvY29tbWl0cy9raW1yaXZl
+ci1saXUvaTJjLWRlc2lnbndhcmUtZml4LW1hc3Rlci1pcy1ob2xkaW5nLVNDTC1sb3ctd2hpbGUt
+RU5BQkxFLWJpdC1pcy1kaXNhYmxlZC8yMDI0MDkwNS0xNTQ3MTENCmJhc2U6ICAgaHR0cHM6Ly9n
+aXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvYW5kaS5zaHl0aS9saW51eC5n
+aXQgaTJjL2kyYy1ob3N0DQpwYXRjaCBsaW5rOiAgICBodHRwczovL2xvcmUua2VybmVsLm9yZy9y
+LzIwMjQwOTA1MDc0MjExLjIyNzgtMS1raW1yaXZlci5saXUlNDBzaWVuZ2luZS5jb20NCnBhdGNo
+IHN1YmplY3Q6IFtQQVRDSF0gaTJjOiBkZXNpZ253YXJlOiBmaXggbWFzdGVyIGlzIGhvbGRpbmcg
+U0NMIGxvdyB3aGlsZSBFTkFCTEUgYml0IGlzIGRpc2FibGVkDQpjb25maWc6IHNoLWFsbG1vZGNv
+bmZpZyAoaHR0cHM6Ly9kb3dubG9hZC4wMS5vcmcvMGRheS1jaS9hcmNoaXZlLzIwMjQwOTA4LzIw
+MjQwOTA4MjAxMS45SkY2YVlzay1sa3BAaW50ZWwuY29tL2NvbmZpZykNCmNvbXBpbGVyOiBzaDQt
+bGludXgtZ2NjIChHQ0MpIDE0LjEuMA0KcmVwcm9kdWNlICh0aGlzIGlzIGEgVz0xIGJ1aWxkKTog
+KGh0dHBzOi8vZG93bmxvYWQuMDEub3JnLzBkYXktY2kvYXJjaGl2ZS8yMDI0MDkwOC8yMDI0MDkw
+ODIwMTEuOUpGNmFZc2stbGtwQGludGVsLmNvbS9yZXByb2R1Y2UpDQoNCklmIHlvdSBmaXggdGhl
+IGlzc3VlIGluIGEgc2VwYXJhdGUgcGF0Y2gvY29tbWl0IChpLmUuIG5vdCBqdXN0IGEgbmV3IHZl
+cnNpb24gb2YNCnRoZSBzYW1lIHBhdGNoL2NvbW1pdCksIGtpbmRseSBhZGQgZm9sbG93aW5nIHRh
+Z3MNCnwgUmVwb3J0ZWQtYnk6IGtlcm5lbCB0ZXN0IHJvYm90IDxsa3BAaW50ZWwuY29tPg0KfCBD
+bG9zZXM6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL29lLWtidWlsZC1hbGwvMjAyNDA5MDgyMDEx
+LjlKRjZhWXNrLWxrcEBpbnRlbC5jb20vDQoNCkFsbCBlcnJvcnMgKG5ldyBvbmVzIHByZWZpeGVk
+IGJ5ID4+KToNCg0KICAgZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1kZXNpZ253YXJlLWNvbW1vbi5j
+OiBJbiBmdW5jdGlvbiAnX19pMmNfZHdfZGlzYWJsZSc6DQo+PiBkcml2ZXJzL2kyYy9idXNzZXMv
+aTJjLWRlc2lnbndhcmUtY29tbW9uLmM6NTM4OjMyOiBlcnJvcjogJ0RXX0lDX0VOQUJMRV9FTkFC
+TEUnIHVuZGVjbGFyZWQgKGZpcnN0IHVzZSBpbiB0aGlzIGZ1bmN0aW9uKTsgZGlkIHlvdSBtZWFu
+ICdEV19JQ19FTkFCTEVfU1RBVFVTJz8NCiAgICAgNTM4IHwgICAgICAgICAgICAgICAgIGlmICgh
+KGVuYWJsZSAmIERXX0lDX0VOQUJMRV9FTkFCTEUpKSB7DQogICAgICAgICB8ICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBefn5+fn5+fn5+fn5+fn5+fn5+DQogICAgICAgICB8ICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBEV19JQ19FTkFCTEVfU1RBVFVTDQogICBkcml2ZXJz
+L2kyYy9idXNzZXMvaTJjLWRlc2lnbndhcmUtY29tbW9uLmM6NTM4OjMyOiBub3RlOiBlYWNoIHVu
+ZGVjbGFyZWQgaWRlbnRpZmllciBpcyByZXBvcnRlZCBvbmx5IG9uY2UgZm9yIGVhY2ggZnVuY3Rp
+b24gaXQgYXBwZWFycyBpbg0KDQoNCnZpbSArNTM4IGRyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtZGVz
+aWdud2FyZS1jb21tb24uYw0KDQogICA1MjMJDQogICA1MjQJdm9pZCBfX2kyY19kd19kaXNhYmxl
+KHN0cnVjdCBkd19pMmNfZGV2ICpkZXYpDQogICA1MjUJew0KICAgNTI2CQl1bnNpZ25lZCBpbnQg
+cmF3X2ludHJfc3RhdHM7DQogICA1MjcJCXVuc2lnbmVkIGludCBlbmFibGU7DQogICA1MjgJCWlu
+dCB0aW1lb3V0ID0gMTAwOw0KICAgNTI5CQlib29sIGFib3J0X25lZWRlZDsNCiAgIDUzMAkJdW5z
+aWduZWQgaW50IHN0YXR1czsNCiAgIDUzMQkJaW50IHJldDsNCiAgIDUzMgkNCiAgIDUzMwkJcmVn
+bWFwX3JlYWQoZGV2LT5tYXAsIERXX0lDX1JBV19JTlRSX1NUQVQsICZyYXdfaW50cl9zdGF0cyk7
+DQogICA1MzQJCXJlZ21hcF9yZWFkKGRldi0+bWFwLCBEV19JQ19FTkFCTEUsICZlbmFibGUpOw0K
+ICAgNTM1CQ0KICAgNTM2CQlhYm9ydF9uZWVkZWQgPSByYXdfaW50cl9zdGF0cyAmIERXX0lDX0lO
+VFJfTVNUX09OX0hPTEQ7DQogICA1MzcJCWlmIChhYm9ydF9uZWVkZWQpIHsNCiA+IDUzOAkJCWlm
+ICghKGVuYWJsZSAmIERXX0lDX0VOQUJMRV9FTkFCTEUpKSB7DQogICA1MzkJCQkJcmVnbWFwX3dy
+aXRlKGRldi0+bWFwLCBEV19JQ19FTkFCTEUsIERXX0lDX0VOQUJMRV9FTkFCTEUpOw0KICAgNTQw
+CQkJCWVuYWJsZSB8PSBEV19JQ19FTkFCTEVfRU5BQkxFOw0KICAgNTQxCQ0KICAgNTQyCQkJCS8q
+DQogICA1NDMJCQkJICogV2FpdCB0d28gaWNfY2xrIGRlbGF5IHdoZW4gZW5hYmxpbmcgdGhlIGky
+YyB0byBlbnN1cmUgRU5BQkxFIGJpdA0KICAgNTQ0CQkJCSAqIGlzIGFscmVhZHkgc2V0IGJ5IHRo
+ZSBkcml2ZXIgKGZvciA0MDBLSHogdGhpcyBpcyAyNXVzKQ0KICAgNTQ1CQkJCSAqIGFzIGRlc2Ny
+aWJlZCBpbiB0aGUgRGVzaWduV2FyZSBJMkMgZGF0YWJvb2suDQogICA1NDYJCQkJICovDQogICA1
+NDcJCQkJZnNsZWVwKDI1KTsNCiAgIDU0OAkJCX0NCiAgIDU0OQkNCiAgIDU1MAkJCXJlZ21hcF93
+cml0ZShkZXYtPm1hcCwgRFdfSUNfRU5BQkxFLCBlbmFibGUgfCBEV19JQ19FTkFCTEVfQUJPUlQp
+Ow0KICAgNTUxCQkJcmV0ID0gcmVnbWFwX3JlYWRfcG9sbF90aW1lb3V0KGRldi0+bWFwLCBEV19J
+Q19FTkFCTEUsIGVuYWJsZSwNCiAgIDU1MgkJCQkJCSAgICAgICAhKGVuYWJsZSAmIERXX0lDX0VO
+QUJMRV9BQk9SVCksIDEwLA0KICAgNTUzCQkJCQkJICAgICAgIDEwMCk7DQogICA1NTQJCQlpZiAo
+cmV0KQ0KICAgNTU1CQkJCWRldl9lcnIoZGV2LT5kZXYsICJ0aW1lb3V0IHdoaWxlIHRyeWluZyB0
+byBhYm9ydCBjdXJyZW50IHRyYW5zZmVyXG4iKTsNCiAgIDU1NgkJfQ0KICAgNTU3CQ0KICAgNTU4
+CQlkbyB7DQogICA1NTkJCQlfX2kyY19kd19kaXNhYmxlX25vd2FpdChkZXYpOw0KICAgNTYwCQkJ
+LyoNCiAgIDU2MQkJCSAqIFRoZSBlbmFibGUgc3RhdHVzIHJlZ2lzdGVyIG1heSBiZSB1bmltcGxl
+bWVudGVkLCBidXQNCiAgIDU2MgkJCSAqIGluIHRoYXQgY2FzZSB0aGlzIHRlc3QgcmVhZHMgemVy
+byBhbmQgZXhpdHMgdGhlIGxvb3AuDQogICA1NjMJCQkgKi8NCiAgIDU2NAkJCXJlZ21hcF9yZWFk
+KGRldi0+bWFwLCBEV19JQ19FTkFCTEVfU1RBVFVTLCAmc3RhdHVzKTsNCiAgIDU2NQkJCWlmICgo
+c3RhdHVzICYgMSkgPT0gMCkNCiAgIDU2NgkJCQlyZXR1cm47DQogICA1NjcJDQogICA1NjgJCQkv
+Kg0KICAgNTY5CQkJICogV2FpdCAxMCB0aW1lcyB0aGUgc2lnbmFsaW5nIHBlcmlvZCBvZiB0aGUg
+aGlnaGVzdCBJMkMNCiAgIDU3MAkJCSAqIHRyYW5zZmVyIHN1cHBvcnRlZCBieSB0aGUgZHJpdmVy
+IChmb3IgNDAwS0h6IHRoaXMgaXMNCiAgIDU3MQkJCSAqIDI1dXMpIGFzIGRlc2NyaWJlZCBpbiB0
+aGUgRGVzaWduV2FyZSBJMkMgZGF0YWJvb2suDQogICA1NzIJCQkgKi8NCiAgIDU3MwkJCXVzbGVl
+cF9yYW5nZSgyNSwgMjUwKTsNCiAgIDU3NAkJfSB3aGlsZSAodGltZW91dC0tKTsNCiAgIDU3NQkN
+CiAgIDU3NgkJZGV2X3dhcm4oZGV2LT5kZXYsICJ0aW1lb3V0IGluIGRpc2FibGluZyBhZGFwdGVy
+XG4iKTsNCiAgIDU3Nwl9DQogICA1NzgJDQoNCi0tIA0KMC1EQVkgQ0kgS2VybmVsIFRlc3QgU2Vy
+dmljZQ0KaHR0cHM6Ly9naXRodWIuY29tL2ludGVsL2xrcC10ZXN0cy93aWtpDQo=
 
