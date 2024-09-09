@@ -1,67 +1,71 @@
-Return-Path: <linux-kernel+bounces-320515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 541B3970B72
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:45:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A27970B7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02C74281A62
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:45:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F2B7282099
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814E71097B;
-	Mon,  9 Sep 2024 01:45:18 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE57617C8B;
+	Mon,  9 Sep 2024 01:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="blWGlbXG"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A31E4A3C;
-	Mon,  9 Sep 2024 01:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB9812E48
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 01:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725846318; cv=none; b=JiJRTqAe4gs1dyyAojj9bBcXFIhvTpw00hxLQYkkzK+6FaEFbC1PUFVb8iPZnSvAcGj7eiUMhkeIWXSgcS0Bx5LEE5TYTf+EpOY50RY2Eo+twUj4Y/4TZnREdUrgiopzO//BRgG2+vANFSC5X+uIvEWF0b5au+45US/41mo5flU=
+	t=1725846447; cv=none; b=m5Nz2dsc3SWCbeHACwiyLgHtHRIgh5XWy6ftwLhNk2EpxQILL1oUGk2U7BpLWiBD7g97xXmN2R49S+AaT8wIqn++HMgkj2qbZuihS2Eqsvx8nTnArC83+vPOY2mGGlYEPmYNGdq7wG1qoL+DodwE5n+SXtHbvkC9k40ogU9VJ7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725846318; c=relaxed/simple;
-	bh=+a6Be4S3xeBgg2YZiCzRhWMc5GDwehvdk/8vNlrHdic=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EV9iB3wdyQANr36JfSdph9NhP6/D8onN//adreizpIh4kFkveR8m/bII03tP/02zapbM6KxViDenBt2dm4HibWV9dpNHG+Y6SJhthCfDdrkti1CEvt73E4MMoQV+UUCyPsKqqzwEdXNMmBhS3oaV9bXjXa+ktILPU95uP1g6Jpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 2116cc4a6e4d11efa216b1d71e6e1362-20240909
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:8dda0dab-a5cd-46eb-8f2b-21d70412469c,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:2a627d5d7faf7d2c516b31f888c610e5,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:0
-	,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:
-	NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 2116cc4a6e4d11efa216b1d71e6e1362-20240909
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <zenghongling@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 364132354; Mon, 09 Sep 2024 09:45:01 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id AB5C4B803C9D;
-	Mon,  9 Sep 2024 09:45:01 +0800 (CST)
-X-ns-mid: postfix-66DE531D-556247296
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by node2.com.cn (NSMail) with ESMTPA id 99870B803C9D;
-	Mon,  9 Sep 2024 01:45:00 +0000 (UTC)
-From: zenghongling <zenghongling@kylinos.cn>
-To: linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	zhongling0719@126.com,
-	zenghongling <zenghongling@kylinos.cn>
-Subject: [PATCH v2] ALSA: hda/cs8409: Support new Dell Dolphin for device
-Date: Mon,  9 Sep 2024 09:44:57 +0800
-Message-ID: <20240909014457.610682-1-zenghongling@kylinos.cn>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1725846447; c=relaxed/simple;
+	bh=2y5wdO/3iwmTpC+Dy9a9hYLcpu4lddQbsEvTgSxsVLI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WQe7436HElF+/+MXNHNajUM3PcK70W0ByCSy+U3VdQ7BKkk6rADATS+tDoWdR8xa7aNRY8ooRt7j5ZXPje1IgLL6IfTw9lGKygL+kh0ejyTVOAQcI1Lz1tsOIQhmg1pZkkeq1oJqbfYlQSWsYaKVt9qJEGrMFKf1AJ9hxSN6dGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=blWGlbXG; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 862DE2C044C;
+	Mon,  9 Sep 2024 13:47:16 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1725846436;
+	bh=wScFrkueH43PqDrIo0UYjYFE3sn2heYMZ39Nmu3m3pw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=blWGlbXGTrIYbXGUMsvURemgUBrUuPIsBjDJpdWNvU488JoYVG4W+Bb3cGm3hmyMY
+	 VpUWJY7J6rT2y4SbSNKacLEaZyl1XmO3DGYZwPIt0I0onfcCqY9ZZNKi6zxQreHN1x
+	 iX0Ot2+K+8wdIkjgD67FJdxqn/lx0/JHcdSkK/FtCzoP977DYrOq5h/VMoBQmhMhLI
+	 0jOpLv7lBV5kDsSNIBl7OJgvqPKc9UZGwepxUJUwX2TBVmNf2PZcRwQuIGEVUWBGIA
+	 NTzFRHY3CUBU3Sc0Xt85MrHdoH9shMtv9kQ60sgqtm+eV7hWdlho03YFU+5lWEyM2m
+	 68xtaEQOdvOJQ==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B66de53a40000>; Mon, 09 Sep 2024 13:47:16 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 4240213ED8D;
+	Mon,  9 Sep 2024 13:47:16 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 3C446280534; Mon,  9 Sep 2024 13:47:16 +1200 (NZST)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: lee@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	tsbogend@alpha.franken.de
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 0/2] mips: realtek: Add reboot support
+Date: Mon,  9 Sep 2024 13:47:05 +1200
+Message-ID: <20240909014707.2003091-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,30 +73,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=KIj5D0Fo c=1 sm=1 tr=0 ts=66de53a4 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=EaEq8P2WXUwA:10 a=Mt1HfaXHmOUzYFHI898A:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-Add 1 new Dell Dolphin Systems, same configuration as older systems.
+The system reboot on the cameo-rtl9302c (and presumably many other boards=
+ based
+on the realtek reference design) is connected via the switch reset regist=
+er
+(RST_GLB_CTRL_0). This adds a basic ethernet-switch node with a reboot no=
+de so
+we can make uses of the syscon-reboot register.
 
-Signed-off-by: zenghongling <zenghongling@kylinos.cn>
----
- sound/pci/hda/patch_cs8409-tables.c | 1 +
- 1 file changed, 1 insertion(+)
+Chris Packham (2):
+  dt-bindings: mfd: Add Realtek switch
+  mips: dts: realtek: Add syscon-reboot node
 
-diff --git a/sound/pci/hda/patch_cs8409-tables.c b/sound/pci/hda/patch_cs=
-8409-tables.c
-index 36b411d1..be0cc48 100644
---- a/sound/pci/hda/patch_cs8409-tables.c
-+++ b/sound/pci/hda/patch_cs8409-tables.c
-@@ -541,6 +541,7 @@ const struct snd_pci_quirk cs8409_fixup_tbl[] =3D {
- 	SND_PCI_QUIRK(0x1028, 0x0BBB, "Warlock MLK Dual Mic", CS8409_WARLOCK_ML=
-K_DUAL_MIC),
- 	SND_PCI_QUIRK(0x1028, 0x0BBC, "Warlock MLK", CS8409_WARLOCK_MLK),
- 	SND_PCI_QUIRK(0x1028, 0x0BBD, "Warlock MLK Dual Mic", CS8409_WARLOCK_ML=
-K_DUAL_MIC),
-+	SND_PCI_QUIRK(0x1028, 0x0BAA, "Dolphin", CS8409_DOLPHIN),
- 	SND_PCI_QUIRK(0x1028, 0x0BD4, "Dolphin", CS8409_DOLPHIN),
- 	SND_PCI_QUIRK(0x1028, 0x0BD5, "Dolphin", CS8409_DOLPHIN),
- 	SND_PCI_QUIRK(0x1028, 0x0BD6, "Dolphin", CS8409_DOLPHIN),
+ .../bindings/mfd/realtek,switch.yaml          | 50 +++++++++++++++++++
+ .../cameo-rtl9302c-2x-rtl8224-2xge.dts        |  3 ++
+ arch/mips/boot/dts/realtek/rtl930x.dtsi       | 11 ++++
+ 3 files changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/realtek,switch.=
+yaml
+
 --=20
-2.1.0
+2.46.0
 
 
