@@ -1,123 +1,106 @@
-Return-Path: <linux-kernel+bounces-321558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78870971C05
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:01:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A1C971C0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D4B61F2386B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:01:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1BB81C2312F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE321BA894;
-	Mon,  9 Sep 2024 14:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16A81BA268;
+	Mon,  9 Sep 2024 14:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZECbhG/N"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UBzoAhqW"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E4417837E;
-	Mon,  9 Sep 2024 14:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707F822095;
+	Mon,  9 Sep 2024 14:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725890426; cv=none; b=dCKNGc9YV0lYvDav1W9XdkTxoR9omlc+tbTTwpAORL5qo2nWJL5gzqek7al0nX0KB7W6ZkRy7zBJKMpDD4CqFBn+ssoctPJaDvzEO5fViwM+sYaBTfNkeGKQkqDuH0khWvh3TPmS9c35aglWs7wejbJyBDaX1YJMDd7RAFmzGTk=
+	t=1725890539; cv=none; b=Y9nD3VuC+IjlHjDI0lmL+sZHFjk4FbmV9up3VGxq8ASrD21H28SFSHzSN9yp1YCmt74OOJ2nJK3ZtNLLRdhg316L8+unXkXdA6LpObIqJR50NFCZYJEwpTecSXx1acuiIJkfaGLO0AlXGG+ENfNdbnEKDex9CX1w80W5H37L7UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725890426; c=relaxed/simple;
-	bh=gNnTh3LDR404ka1WYkhWiCpwzdp+4c52j69G32URQw8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=sdPYP5rkuoz3ixVPqSopc25ELIZsKfv4IInJeQZbM3DJWO2FKoxLLHgVJoDs441CrRLT1ijOeRuhZx3N7ZKoof9XLbP72A2KfxbDh4fU7F37dCBf+ZtYrq/OAy+sqTWIX1RRy89s0b7MQ2cj+c1dn63apPVwvM+M3u1l3LxCyWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZECbhG/N; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so20379065e9.0;
-        Mon, 09 Sep 2024 07:00:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725890423; x=1726495223; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oUU8OesX2mRNuKc6ApWuC7lB5t5F5qw1rMRsMoepUzI=;
-        b=ZECbhG/NwGbY4zL9QlvwqeiEEdAUlWrajvvkp2YePsl7lbeGHeJKqEk+UX3KwSlVW5
-         1MqPGEdurh4ypDJMeGI5xDK2GL7HW2VGhWN2sBn2jEOt4pb4qNzYkFlv4sFTNhyfKF2L
-         0frW9jK153Vf6+vl8Vb1Kz7hmZkeAO65PiPWnX6XBgexixbSColOI8wwXM0zNYAP0IrO
-         u1KW704TebLIzQENVF27tuW4m/Va632Mq/uu4MuusLpMsozIVlrA56M+rS5dzt3a32vB
-         Q7uIaPkRSCIpAoi5Uew7FL6RFjGEvk40IIzCR0ZqiH/5ymSKnEvHHEDg9xj2ANhVNNiS
-         TiSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725890423; x=1726495223;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oUU8OesX2mRNuKc6ApWuC7lB5t5F5qw1rMRsMoepUzI=;
-        b=INNs4gInZvHFmoLuoRWUSYJzLBM3KrzuApw8I2t8+ZC2dKWBcoBpQbIZr9CEZ+pAAc
-         nf3cfGeZQpiLYg89cyyllyzwsV58LvefiSxic3UfB5VaXqCzga8cwU2I63SZ3ssGB0oc
-         NfbYNFofhtejXRQPivF8skJ9lzctQKU1NJ2tTzX/tyNeKpIixK0E9uz5R7CjMUxff746
-         sQEVMeu8XPJm9HeucFxSboxtzfaLzFY/q3Mp5mIxnR3PzfvXumUKBvIziFy8ZbEC196I
-         KpcbmmZVQPK3P7o0h1mFN1LM+PNu/7KZtv2Kb2+zeaFBEc5Fin2XkdIj6tX7w7/8Z1Jr
-         uZmg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9kUAdHfeho70aG2YfWNBGYcqo2YBnsZSRUGeaT0KO/TX3hB0y4M/wjxmYudyYBUhMQ3MTyVccr4VueMM=@vger.kernel.org, AJvYcCXx++BPQPNc/s6y4+2j73WnimsREBVBbpuM0LIyErbHj7EMoDxuPacYa78MtngqQGhkjujCellh@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNzn5QJsezbsWoCsY8xU7z7mg69k4td5S+FiEhYszpdeTHWGds
-	GPg9dpNnZI30zWTrCRVdMPlG1tzrzm06f7Su7YztbBUgD9y2yfS1
-X-Google-Smtp-Source: AGHT+IEbnLVlRBkcSRuNlfSSwfwARQeoDY1+UfMGncemGENczAtqCu1y2uoRqpDMrd8K+NOj4+HXkg==
-X-Received: by 2002:a05:600c:54e7:b0:42c:acb0:ddb6 with SMTP id 5b1f17b1804b1-42cacb0e00bmr60323505e9.9.1725890422761;
-        Mon, 09 Sep 2024 07:00:22 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cadda5a07sm81807995e9.0.2024.09.09.07.00.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 07:00:22 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Heiner Kallweit <hkallweit1@gmail.com>,
-	nic_swsd@realtek.com,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] r8169: Fix spelling mistake: "tx_underun" -> "tx_underrun"
-Date: Mon,  9 Sep 2024 15:00:21 +0100
-Message-Id: <20240909140021.64884-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1725890539; c=relaxed/simple;
+	bh=xum1qOjhia15louJx6W5b4NX406RjIXWWRyiJhR8ls8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QJSzYdfQu6oy0lJ7AfWk59t+wDwGUFNHIsoC2RKzEswQCytymXqbpR6w7T9wqE3WRnUDvkVX/8AUfrruLsppiOVAA94Oe9gius6+H4odXzXGo9tDIeYFe20V28UzAdWYm6rinzJJr8Q82FvyR0stz6uPPa2rcflvULs4G4pjFIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UBzoAhqW; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=12agmP5MPf/vordx5z3gGnxZlErbDBTiMxQw78nVX/Y=; b=UBzoAhqWincIFyUxJgKzrUfjcg
+	ZU+AMbT4Vx0J5Vo31ZK1f+b3uFLa2Z+3OnQVlAC0CTyf5wjjA7F5sBKwLRkeaHOEh2VRC7mDHLc67
+	hf4GK7fEhnq8/yiGnSTSaReRJ/gZp2458BfydvtFe1JjMRR9UqDQaFr1QtaIeF51g1Zw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1snexy-0070sm-7q; Mon, 09 Sep 2024 16:02:06 +0200
+Date: Mon, 9 Sep 2024 16:02:06 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Alexandra Diupina <adiupina@astralinux.ru>
+Cc: Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH] clk: mvebu: Prevent division by zero in
+ clk_double_div_recalc_rate()
+Message-ID: <e2d1e181-f094-4d6d-b77e-8d7c0ecd8270@lunn.ch>
+References: <20240909133807.19403-1-adiupina@astralinux.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909133807.19403-1-adiupina@astralinux.ru>
 
-There is a spelling mistake in the struct field tx_underun, rename
-it to tx_underrun.
+On Mon, Sep 09, 2024 at 04:38:07PM +0300, Alexandra Diupina wrote:
+> get_div() may return zero, so it is necessary to check
+> before calling DIV_ROUND_UP_ULL().
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
+> Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
+> ---
+>  drivers/clk/mvebu/armada-37xx-periph.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+> index 8701a58a5804..d0e1d591e4f2 100644
+> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> @@ -343,7 +343,10 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
+>  	div = get_div(double_div->reg1, double_div->shift1);
+>  	div *= get_div(double_div->reg2, double_div->shift2);
+>  
+> -	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+> +	if (!div)
+> +		return 0;
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/realtek/r8169_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Looking at this code, it seems to me some fundamental assumption has
+gone wrong here, if the dividers are 0. We want to know about this,
+and a kernel taking a / 0 exception would be a good way to indicate
+something is very wrong. Won't returning 0 just hide the problem, not
+make it obvious?
 
-diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
-index 3cb1c4f5c91a..45ac8befba29 100644
---- a/drivers/net/ethernet/realtek/r8169_main.c
-+++ b/drivers/net/ethernet/realtek/r8169_main.c
-@@ -578,7 +578,7 @@ struct rtl8169_counters {
- 	__le64	rx_broadcast;
- 	__le32	rx_multicast;
- 	__le16	tx_aborted;
--	__le16	tx_underun;
-+	__le16	tx_underrun;
- };
- 
- struct rtl8169_tc_offsets {
-@@ -1843,7 +1843,7 @@ static void rtl8169_get_ethtool_stats(struct net_device *dev,
- 	data[9] = le64_to_cpu(counters->rx_broadcast);
- 	data[10] = le32_to_cpu(counters->rx_multicast);
- 	data[11] = le16_to_cpu(counters->tx_aborted);
--	data[12] = le16_to_cpu(counters->tx_underun);
-+	data[12] = le16_to_cpu(counters->tx_underrun);
- }
- 
- static void rtl8169_get_strings(struct net_device *dev, u32 stringset, u8 *data)
--- 
-2.39.2
+Checking for a /0 on user input makes a lot of sense, but here, i
+think you are just hiding bugs. Please consider this when making
+similar changes in other parts of the kernel. Why has a /0 happened?
 
+Tools like SVACE just point at possible problems. You then need to
+look at them in detail, understand the context, and decide on the
+proper fix, which might actually be, a /0 is good.
+
+	Andrew
 
