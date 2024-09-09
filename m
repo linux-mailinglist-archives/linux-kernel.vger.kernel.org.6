@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-320975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D409712E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:04:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 123449712E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D2F285E56
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:04:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 455CEB23BF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253201B29CF;
-	Mon,  9 Sep 2024 09:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426651B29CC;
+	Mon,  9 Sep 2024 09:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rEN+7gAN"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vdwVWQz1"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5B08F5A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26161B2539
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725872683; cv=none; b=eM4zUl0aL0eXDnyrw1vOmZWTAOirE3QIaBKC5ZoEdSMOb0poTJDS4M38bVWIeZCdB67N87Ydn/h/avlrxj7Q3kDvCDqJifkGDDdFjJkaVjp8dmaZ1Ck0cVZxb3ZgWESfUzOZ2pIZ6+THq+G2UnJzkA859RbmvJAGqfOsvdVOK3Y=
+	t=1725872695; cv=none; b=XfVqhQyS+HGZVckYT/Fd1Y7M6TzTfCqX0Rf1Wt2MJbnCaVImpq5JQsDhMb8AKf3bEwSabq9NNgozJsfcSO8alDSLPMOJwjdnHque3iwqcMUcWbh8FqPPw4EZVpSYfHNn4vgrH2Eu3jvvfur+frEmH53MbtZG560IHONED1013BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725872683; c=relaxed/simple;
-	bh=Rewu0rWpeaq9kuSLDUzF3u43GVDwgPHTp7/q499Gegg=;
+	s=arc-20240116; t=1725872695; c=relaxed/simple;
+	bh=jtfEvdWMWYJDUR9ajlhD1W6nHGA5oS72IvPdwonWuvE=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KgupVpSPmG1CB2adoYELFtnyBb2EzHy62KOSCUnkV7V+72TGniPNd+tKS6pp0kavfhCNuy+Oabk42RuqZCZK06OqaFdKXsMY7oDZznLA1NsZabl5WwF35464ZNWhHoxSTTG670Xx96lcL7ZuyiIQXCy5w9yDA4F9AGkfZ2+2h5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rEN+7gAN; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:Content-Type; b=rLmuXvfmo1rWwjohzar1oczhfcUlAho0xq/CGF/XWQlIEppK7FbzyK0+rWXiu6NvHUza8ccBeuf8tJSYj2tKom1btlYp/cGwNYLmO26V/RagGAw7I1hMQdqrDLvP3/8EWAbJ1+/gqXTssNw88IsIIeQoccGpe8ay3VNoIu2nXgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vdwVWQz1; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso47434285e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 02:04:41 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cb60aff1eso8355975e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 02:04:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725872680; x=1726477480; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1725872692; x=1726477492; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/quyWb8vumcbT1XTiobNYayKAU49ZoNqv4TkV+Bl12Y=;
-        b=rEN+7gANEtHwSTDSuZl9cp3h7IAgpEPavIjRYHxK/M9qob1onjQIlMyWw9j4QlYg5t
-         SIUVOT5u9v0yAH/icU9TUBP9mxIJx/Lu52Ndji7TO22gWjQoNo6RtonaYa/s0NJiJ4PJ
-         p9ZVMtR/O4ujpBbfoxkz9/NT/gdbBa3lkTiDxATK8a8Z9Hy2faNCVvXH7EEtP3PcTCjv
-         T2eRkWmlkEf5zOISwwM0xIHt6nVfk+46uF/+HUYJ/KDJIEgMTLtsyncfdXAdLUWBMn6G
-         elDczUbvyy0ubfgNDpGJ+nzauA+BWd6HrdWvoiNoPnlunFaSYGALPvAq1diBpfWGRiJ4
-         OKHA==
+        bh=p3dhfZNbro0Q8a0edsgm4VI2lp9WiWYPxhOHG+Trz+Y=;
+        b=vdwVWQz1RRQI4qzJ934DiqM9DvoCHcqkMyo+8yK5+IZg1JFk+ARB10X/bifVB4cESC
+         RINVTkcJ//8hwfYa50/VvT1YDTWiNggLxnJZ6khAk75DnIVFDthHiP0aeJjrBB0xo12h
+         QT0pzX3Gk+WrpsvP3KbvRb9QPk18k171u03ZadCQyLsy9SBgiGzOkmUG1YtCgjCS6NkQ
+         2bxIG9HR2emxb5RWWhPCorIawBg68zbpIO1VosO2UnKAcCB29b1LdnOHAnDFAKKIuqao
+         yec2epSqLO7saBCZP3WtB1wMC5vtuxqjVBTaY2QQnZ+QXoYMQpFCja+gifj60kEXlw8a
+         J4HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725872680; x=1726477480;
+        d=1e100.net; s=20230601; t=1725872692; x=1726477492;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=/quyWb8vumcbT1XTiobNYayKAU49ZoNqv4TkV+Bl12Y=;
-        b=mNAo0C35OOb69DjGeDpX61Q265/dnEudi/YMjJJSlNleZYMwecv7YUdz67m9d057l0
-         dMkTk3opEl0KV/+vQkQd2Hg2xY9JlrcCFSfPM8rvoSqVqWpHPRNHiJPgtAE1WAK3HtJ5
-         S7PMd4NzPgrKf3EQ4cofe7D/zxnWGR6002YzEGM+QiYRTXFU6GJUU2S2UE3gdwb16Y/8
-         oSn692xpTCBT2UMbdQGEunOy9+Hctop+JFjy/SuIkJ4jigdQTb0RiBMrGzwW69OCcfS5
-         2bLYpcXoAnf78P3NnStY5H8D7TVCwrq/ovFDpl0KUpKLGe4cZXO35sygOKfVnOTiJnnN
-         o/jg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDtmoyMb/v59H4EKYOx3wLavvltEMoTNsoNn/3ksrH6ZZFW72144ZxWIFHOAQGiP9E8cbzIgvk0KkuvPg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUM52T89VwcQL16OOgh3oah8T0KxwhtoVrS3d+um93kG3+K1IC
-	GTRHqwNT+YtYl3ucmDlY8Wd4IgQLPl8NGn13fewqsjVsT3Zw3+oxCjnUYHGGDIM=
-X-Google-Smtp-Source: AGHT+IHPyFzNJJ9CK/CbxvRhF0zXZqmiSax9i+YVPGOKwyfg6lpCSe5AQQrFB9PmBhsPgB8jUkq+yA==
-X-Received: by 2002:a5d:5081:0:b0:374:c9f0:7533 with SMTP id ffacd0b85a97d-3789243fbb9mr5688124f8f.41.1725872679665;
-        Mon, 09 Sep 2024 02:04:39 -0700 (PDT)
+        bh=p3dhfZNbro0Q8a0edsgm4VI2lp9WiWYPxhOHG+Trz+Y=;
+        b=aqWJWSxQrgfcqz6jkEB79M49AqDsv2GYsxIOmN6PJci04AugqhpWOaQhLts9PaGMIX
+         murCbCEdzwFwoNV0/Q/O2CPUyDAsgCofwWWJrkeulDw40tYCFLQAA1ujEf6/VmFZz5SM
+         os3FCpKajfJkRC2pmRImruLPxMDybRSH29L7yNyvvw8vySJvEDYhbI4kR/3RRjkPA4Tc
+         30lNL7ynlVEshOFtbE1RN8VbN5Vw5MQ6FCCzq2tDC2HMgLkecn3jagp1XCgpn2aIUJbx
+         LHMCw8l5Xt6c63ToC6SD1ual5CbEsNseK9pxIbeqexQlZSS52ukgqscO9Xdi6C7EVBEw
+         bAww==
+X-Forwarded-Encrypted: i=1; AJvYcCXQCNbd4Dpo8MMIJeRbot0ej8/xu3kPbOSa6aL8sajPHcw5SETN3RqSXLk6mTSW7tR1SzRZevpS3eo07Ao=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2vTAzkytHS6m8Oukllh7Ib6q1vrhrsGxluGOoTirKJrlMHi0t
+	gsOK46xNVwt5+yWBN3f3n3nTGHpbYfw3oalskLncqPyZ0S8v9Ljhb5dNoUiR6fM=
+X-Google-Smtp-Source: AGHT+IFVcYzwIVmzAqMmvKKM3ciORGaJKpx4XVnUJN5ODieQEuio3vvRs+LhSli5Ag9nEDPTPH5piw==
+X-Received: by 2002:adf:cf09:0:b0:374:c651:4abf with SMTP id ffacd0b85a97d-3788969feb9mr6129034f8f.52.1725872691962;
+        Mon, 09 Sep 2024 02:04:51 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:63a3:6883:a358:b850? ([2a01:e0a:982:cbb0:63a3:6883:a358:b850])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895675c40sm5467200f8f.51.2024.09.09.02.04.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956de3d4sm5457312f8f.108.2024.09.09.02.04.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 02:04:39 -0700 (PDT)
-Message-ID: <b4ac3e8e-1d0c-4a6e-97de-482a77a3a3aa@linaro.org>
-Date: Mon, 9 Sep 2024 11:04:37 +0200
+        Mon, 09 Sep 2024 02:04:51 -0700 (PDT)
+Message-ID: <81392013-5dda-424f-b185-c350b163c82d@linaro.org>
+Date: Mon, 9 Sep 2024 11:04:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +79,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 1/5] drm/meson: drop unused staitc dw_hdmi_dwc_write_bits
+Subject: Re: [PATCH 2/5] drm/meson: constify regmap_config
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
@@ -99,7 +99,7 @@ Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  linux-mediatek@lists.infradead.org
 References: <20240908-regmap-config-const-v1-0-28f349004811@linaro.org>
- <20240908-regmap-config-const-v1-1-28f349004811@linaro.org>
+ <20240908-regmap-config-const-v1-2-28f349004811@linaro.org>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -126,45 +126,32 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20240908-regmap-config-const-v1-1-28f349004811@linaro.org>
+In-Reply-To: <20240908-regmap-config-const-v1-2-28f349004811@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 08/09/2024 16:21, Krzysztof Kozlowski wrote:
-> static inline dw_hdmi_dwc_write_bits() function is not used at all:
-> 
->    drivers/gpu/drm/meson/meson_dw_hdmi.c:276:20: error: unused function 'dw_hdmi_dwc_write_bits' [-Werror,-Wunused-function]
+> Mark local static 'struct regmap_config' as const for safer and more
+> obvious code.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->   drivers/gpu/drm/meson/meson_dw_hdmi.c | 14 --------------
->   1 file changed, 14 deletions(-)
+>   drivers/gpu/drm/meson/meson_drv.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> index 5565f7777529..b75db829b1da 100644
-> --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> @@ -272,20 +272,6 @@ static inline void dw_hdmi_g12a_dwc_write(struct meson_dw_hdmi *dw_hdmi,
->   	writeb(data, dw_hdmi->hdmitx + addr);
+> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+> index 4bd0baa2a4f5..6c8677d1f562 100644
+> --- a/drivers/gpu/drm/meson/meson_drv.c
+> +++ b/drivers/gpu/drm/meson/meson_drv.c
+> @@ -126,7 +126,7 @@ static bool meson_vpu_has_available_connectors(struct device *dev)
+>   	return false;
 >   }
 >   
-> -/* Helper to change specific bits in controller registers */
-> -static inline void dw_hdmi_dwc_write_bits(struct meson_dw_hdmi *dw_hdmi,
-> -					  unsigned int addr,
-> -					  unsigned int mask,
-> -					  unsigned int val)
-> -{
-> -	unsigned int data = dw_hdmi->data->dwc_read(dw_hdmi, addr);
-> -
-> -	data &= ~mask;
-> -	data |= val;
-> -
-> -	dw_hdmi->data->dwc_write(dw_hdmi, addr, data);
-> -}
-> -
->   /* Bridge */
->   
->   /* Setup PHY bandwidth modes */
+> -static struct regmap_config meson_regmap_config = {
+> +static const struct regmap_config meson_regmap_config = {
+>   	.reg_bits       = 32,
+>   	.val_bits       = 32,
+>   	.reg_stride     = 4,
 > 
 
 Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
