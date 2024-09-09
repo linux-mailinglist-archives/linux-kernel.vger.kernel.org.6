@@ -1,404 +1,152 @@
-Return-Path: <linux-kernel+bounces-320893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271119711B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:22:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D24E9711B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3E0B1F22F57
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:22:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFF0BB21073
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED02F1B1D44;
-	Mon,  9 Sep 2024 08:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB051B013F;
+	Mon,  9 Sep 2024 08:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nfgEEqbr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vdHgOCHh"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020304A1D;
-	Mon,  9 Sep 2024 08:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244DB1509AE;
+	Mon,  9 Sep 2024 08:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725869605; cv=none; b=oB1qqJjbPt6W+LEQ8sywNfIujdfDF2vQLjAXPnTS8ejecNBcuEfKkGAw/gaUbvwdjho5E3FkHOX85kPooJ0+wh+jVUvvtYVEYX6BBUiYgLf26beDyX8w6igO0PlFeKz4zWz44oPdnUDJiqJ2Xg7R1kAZkqeUZQGnOB8FYqocG18=
+	t=1725869737; cv=none; b=ucI1eeYrCkLNanWZKly9chkJTxbvQnAuIId/rA0jzMegqIDfvuC8F08CaJ15Sypo78+fYuXvxzabvXfDUv+voFY+SvVQ6v+jSnCpK0sgNkn3Jr0wNQoXyCWQ7DJ6nNhkLYf8kL1+vTAyzYRW+s6tjWTn2+BqBRhbUCbCC6oFd3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725869605; c=relaxed/simple;
-	bh=MVL8uSiv4H6d8aAzZvcrDZfw5iP5Jdgx3/mHm8To2Tw=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=adMNA3OtSSG6NO1onj5+Z+EqAzuK/+cv/M81c8mtwMysbOzEUAVACstaQ4MV46FkWKtlCaQCcxrPKgErr98GXv13womOiTtf+tbELMGYIz5mMpe6H4q/Duoilj1Y+9/kNFWYaa2XZQhMN2AKBtbkU8WinLXDLFjylhacJao0CEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nfgEEqbr; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725869603; x=1757405603;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=MVL8uSiv4H6d8aAzZvcrDZfw5iP5Jdgx3/mHm8To2Tw=;
-  b=nfgEEqbrQxeZfa8h8mJSFhLAlryzem/tv2l1wR4wRuasSUxU1NUGIctF
-   0ojhxDkr2qnvRLuCwPjMDwFIW9KJhbtoWMwz18/eTEk/a0FUIhZKBef14
-   lwcXfEYkNqN6fJ6i3f3w8KMdhC/pn+MJk/GsjAZ0PPKAhbJ/6pp6YYqi0
-   h6RLOhs0xFxmr3zr44XElsUK7GpjqgiaLOVddNoFGJWTeNRL3YYBdiDGu
-   GMEh0bsYmZung4vPjMxvpRrHTuwwSzsb6Vzotx41qFun84K3eJJCGn0lV
-   x3s6waOZLZIJSZ/NVrXNR+zuFzc1iY0HMO2YzwKfhVhXTfi09Xcc6YAl3
-   Q==;
-X-CSE-ConnectionGUID: 5SAlcr+ARQiE3faqBIv+1g==
-X-CSE-MsgGUID: 2aviwsKQSR6HRTnBWySd+Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="13436049"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="13436049"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 01:13:22 -0700
-X-CSE-ConnectionGUID: 510FffOISEayvvtFIG3GJw==
-X-CSE-MsgGUID: ANyXW6DPTgChDNgWqmL+Ug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="71156822"
-Received: from dhhellew-desk2.ger.corp.intel.com.ger.corp.intel.com (HELO localhost) ([10.245.245.60])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 01:13:19 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 9 Sep 2024 11:13:13 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
-    peternewman@google.com, babu.moger@amd.com, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/6] selftests/resctrl: Do not compare performance counters
- and resctrl at low bandwidth
-In-Reply-To: <a2c7baf1-1c69-45a5-8755-38d152d33fae@intel.com>
-Message-ID: <ded15734-f112-e03c-a26a-6ba3a41ca905@linux.intel.com>
-References: <cover.1724970211.git.reinette.chatre@intel.com> <9bbefa3b9a62319698907d10e8b78f1b999c311b.1724970211.git.reinette.chatre@intel.com> <5d063290-9da4-c9ca-e5c5-cb0083d7483f@linux.intel.com> <87e4788c-6407-41a8-b201-e3f05064e5a6@intel.com>
- <238af9fe-0d7b-9bc1-9923-35ef74aad360@linux.intel.com> <9b2da518-89ce-4f9b-92f2-d317ed892886@intel.com> <1903ac13-5c9c-ef8d-78e0-417ac34a971b@linux.intel.com> <43b71606-be6a-495f-bec7-279bb812d4c8@intel.com> <c3aa4289-40aa-c158-8fde-8a35a6002783@linux.intel.com>
- <a2c7baf1-1c69-45a5-8755-38d152d33fae@intel.com>
+	s=arc-20240116; t=1725869737; c=relaxed/simple;
+	bh=mLxIOmnUfTWHKDy0RraF2PSz1kY2vALX8CG3SWnHtaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aTDXD+v2/j8esAEFkN+qKhwqDUsBv8L5lxqzU7x4B8zhWNiiTlchH3uzvzZDnCZpezS6dX+Z4lPZRq27h/RagasYNb+IEmXfHlLvm8PTlFUEiTVdIBzwOWe7KWbU8BsFVlM9EvzWAAVPLC4Si00Mci1PTAypkxs/W9hvHqKD2kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vdHgOCHh; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BA3DD3EA;
+	Mon,  9 Sep 2024 10:14:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1725869657;
+	bh=mLxIOmnUfTWHKDy0RraF2PSz1kY2vALX8CG3SWnHtaA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vdHgOCHhan2TIGa+DjdOzgyplnNWIObqllHvJPXLvVFM0A81u4GcLZhu51Bt8b8xd
+	 VVy/FZG3FJ3KBzosP/EkfOw97y/H3IdNqZbDZH5inpO4DG4ShXWkNgfYTmxSEGC7bQ
+	 NGi1WfM0nfhruANQelXOkrncv0QRmT3H7WJJimPs=
+Message-ID: <c60d518b-ace4-48a8-87e5-35de13bc426a@ideasonboard.com>
+Date: Mon, 9 Sep 2024 11:15:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1741678480-1725869593=:1029"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/4] drm/tidss: Add OLDI bridge support
+To: Francesco Dolcini <francesco@dolcini.it>,
+ Aradhya Bhatia <a-bhatia1@ti.com>, max.krummenacher@toradex.com
+Cc: Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ DRI Development List <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>, Nishanth Menon
+ <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+ Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+ Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20240716084248.1393666-1-a-bhatia1@ti.com>
+ <20240906114311.GA32916@francesco-nb>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20240906114311.GA32916@francesco-nb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi,
 
---8323328-1741678480-1725869593=:1029
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+On 06/09/2024 14:43, Francesco Dolcini wrote:
+> +Max
+> 
+> Hello Aradhya,
+> 
+> On Tue, Jul 16, 2024 at 02:12:44PM +0530, Aradhya Bhatia wrote:
+>> The addition of the 2nd OLDI TX (and a 2nd DSS in AM62Px) creates a need
+>> for some major changes for a full feature experience.
+>>
+>> 1. The OF graph needs to be updated to accurately show the data flow.
+>> 2. The tidss and OLDI drivers now need to support the dual-link and the
+>>     cloned single-link OLDI video signals.
+>> 3. The drivers also need to support the case where 2 OLDI TXes are
+>>     connected to 2 different VPs - thereby creating 2 independent streams
+>>     of single-link OLDI outputs.
+> 
+> Have you considered/tested the use case in which only single link is used?
+> You do not mention it here and to me this is a relevant use case.
+> 
+> There is a workaround for this (use option 2, cloned, even if nothing is
+> connected to the second link), but this seems not correct.
+> 
+> We (Max in Cc here) noticed that this specific use case is broken on
+> your downstream v6.6 TI branch.
 
-On Fri, 6 Sep 2024, Reinette Chatre wrote:
-> On 9/6/24 1:44 AM, Ilpo J=C3=A4rvinen wrote:
-> > On Thu, 5 Sep 2024, Reinette Chatre wrote:
-> > > On 9/5/24 4:45 AM, Ilpo J=C3=A4rvinen wrote:
-> > > > On Wed, 4 Sep 2024, Reinette Chatre wrote:
-> > > > > On 9/4/24 4:43 AM, Ilpo J=C3=A4rvinen wrote:
-> > > > > > On Fri, 30 Aug 2024, Reinette Chatre wrote:
-> > > > > > > On 8/30/24 4:42 AM, Ilpo J=C3=A4rvinen wrote:
-> > > > > > > > On Thu, 29 Aug 2024, Reinette Chatre wrote:
-> > > > > > > >=20
-> > > > > > > > > The MBA test incrementally throttles memory bandwidth, ea=
-ch
-> > > > > > > > > time
-> > > > > > > > > followed by a comparison between the memory bandwidth obs=
-erved
-> > > > > > > > > by the performance counters and resctrl respectively.
-> > > > > > > > >=20
-> > > > > > > > > While a comparison between performance counters and resct=
-rl is
-> > > > > > > > > generally appropriate, they do not have an identical view=
- of
-> > > > > > > > > memory bandwidth. For example RAS features or memory
-> > > > > > > > > performance
-> > > > > > > > > features that generate memory traffic may drive accesses =
-that
-> > > > > > > > > are
-> > > > > > > > > counted differently by performance counters and MBM
-> > > > > > > > > respectively,
-> > > > > > > > > for instance generating "overhead" traffic which is not
-> > > > > > > > > counted
-> > > > > > > > > against any specific RMID. As a ratio, this different vie=
-w of
-> > > > > > > > > memory
-> > > > > > > > > bandwidth becomes more apparent at low memory bandwidths.
-> > > > > > > >=20
-> > > > > > > > Interesting.
-> > > > > > > >=20
-> > > > > > > > I did some time back prototype with a change to MBM test su=
-ch
-> > > > > > > > that
-> > > > > > > > instead
-> > > > > > > > of using once=3Dfalse I changed fill_buf to be able to run =
-N
-> > > > > > > > passes
-> > > > > > > > through
-> > > > > > > > the buffer which allowed me to know how many reads were
-> > > > > > > > performed by
-> > > > > > > > the
-> > > > > > > > benchmark. This yielded numerical difference between all th=
-ose 3
-> > > > > > > > values
-> > > > > > > > (# of reads, MBM, perf) which also varied from arch to anot=
-her
-> > > > > > > > so it
-> > > > > > > > didn't end up making an usable test.
-> > > > > > > >=20
-> > > > > > > > I guess I now have an explanation for at least a part of th=
-e
-> > > > > > > > differences.
-> > > > > > > >=20
-> > > > > > > > > It is not practical to enable/disable the various feature=
-s
-> > > > > > > > > that
-> > > > > > > > > may generate memory bandwidth to give performance counter=
-s and
-> > > > > > > > > resctrl an identical view. Instead, do not compare perfor=
-mance
-> > > > > > > > > counters and resctrl view of memory bandwidth when the me=
-mory
-> > > > > > > > > bandwidth is low.
-> > > > > > > > >=20
-> > > > > > > > > Bandwidth throttling behaves differently across platforms
-> > > > > > > > > so it is not appropriate to drop measurement data simply =
-based
-> > > > > > > > > on the throttling level. Instead, use a threshold of 750M=
-iB
-> > > > > > > > > that has been observed to support adequate comparison bet=
-ween
-> > > > > > > > > performance counters and resctrl.
-> > > > > > > > >=20
-> > > > > > > > > Signed-off-by: Reinette Chatre <reinette.chatre@intel.com=
->
-> > > > > > > > > ---
-> > > > > > > > >      tools/testing/selftests/resctrl/mba_test.c | 7 +++++=
-++
-> > > > > > > > >      tools/testing/selftests/resctrl/resctrl.h  | 6 +++++=
-+
-> > > > > > > > >      2 files changed, 13 insertions(+)
-> > > > > > > > >=20
-> > > > > > > > > diff --git a/tools/testing/selftests/resctrl/mba_test.c
-> > > > > > > > > b/tools/testing/selftests/resctrl/mba_test.c
-> > > > > > > > > index cad473b81a64..204b9ac4b108 100644
-> > > > > > > > > --- a/tools/testing/selftests/resctrl/mba_test.c
-> > > > > > > > > +++ b/tools/testing/selftests/resctrl/mba_test.c
-> > > > > > > > > @@ -96,6 +96,13 @@ static bool show_mba_info(unsigned lon=
-g
-> > > > > > > > > *bw_imc,
-> > > > > > > > > unsigned long *bw_resc)
-> > > > > > > > >        =09=09avg_bw_imc =3D sum_bw_imc / (NUM_OF_RUNS - 1=
-);
-> > > > > > > > >      =09=09avg_bw_resc =3D sum_bw_resc / (NUM_OF_RUNS - 1=
-);
-> > > > > > > > > +=09=09if (avg_bw_imc < THROTTLE_THRESHOLD ||
-> > > > > > > > > avg_bw_resc <
-> > > > > > > > > THROTTLE_THRESHOLD) {
-> > > > > > > > > +=09=09=09ksft_print_msg("Bandwidth below
-> > > > > > > > > threshold (%d
-> > > > > > > > > MiB).
-> > > > > > > > > Dropping results from MBA schemata %u.\n",
-> > > > > > > > > +=09=09=09=09=09THROTTLE_THRESHOLD,
-> > > > > > > > > +=09=09=09=09=09ALLOCATION_MAX -
-> > > > > > > > > ALLOCATION_STEP *
-> > > > > > > > > allocation);
-> > > > > > > >=20
-> > > > > > > > The second one too should be %d.
-> > > > > > > >=20
-> > > > > > >=20
-> > > > > > > hmmm ... I intended to have it be consistent with the
-> > > > > > > ksft_print_msg()
-> > > > > > > that
-> > > > > > > follows. Perhaps allocation can be made unsigned instead?
-> > > > > >=20
-> > > > > > If you go that way, then it would be good to make the related
-> > > > > > defines
-> > > > > > and
-> > > > > > allocation in mba_setup() unsigned too, although the latter is =
-a bit
-> > > > > > scary
-> > > > >=20
-> > > > > Sure, will look into that.
-> > > > >=20
-> > > > > > because it does allocation -=3D ALLOCATION_STEP which could und=
-erflow
-> > > > > > if
-> > > > > > the
-> > > > > > defines are ever changed.
-> > > > > >=20
-> > > > >=20
-> > > > > Is this not already covered in the following check:
-> > > > > =09if (allocation < ALLOCATION_MIN || allocation >
-> > > > > ALLOCATION_MAX)
-> > > > > =09=09return END_OF_TESTS;
-> > > > >=20
-> > > > > We are talking about hardcoded constants though.
-> > > >=20
-> > > > Borderline yes. It is "covered" by the allocation > ALLOCATION_MAX =
-but
-> > > > it's also very non-intuitive to let the value underflow and then ch=
-eck
-> > > > for
-> > > > that with the > operator.
-> > >=20
-> > > My understanding is that this is the traditional way of checking over=
-flow
-> > > (or more accurately wraparound). There are several examples of this
-> > > pattern
-> > > in the kernel and it is also the pattern that I understand Linus refe=
-rred
-> > > to as "traditional" in [1]. Even the compiler's intrinsic overflow
-> > > checkers
-> > > do checking in this way (perform the subtraction and then check if it
-> > > overflowed) [2].
-> >=20
-> > Fair enough. I've never come across that kind of claim before.
-> >=20
-> > > > You're correct that they're constants so one would need to tweak th=
-e
-> > > > source to end up into this condition in the first place.
-> > > >=20
-> > > > Perhaps I'm being overly pendantic here but I in general don't like
-> > > > leaving trappy and non-obvious logic like that lying around because=
- one
-> > > > day one of such will come back biting.
-> > >=20
-> > > It is not clear to me what is "trappy" about this. The current checks=
- will
-> > > catch the wraparound if somebody changes ALLOCATION_STEP in your scen=
-ario,
-> > > no?
-> > >=20
-> > > > So, if a variable is unsigned and we ever do subtraction (or adding
-> > > > negative numbers to it), I'd prefer additional check to prevent eve=
-r
-> > > > underflowing it unexpectedly. Or leave them signed.
-> > >=20
-> > > To support checking at the time of subtraction we either need to chan=
-ge
-> > > the
-> > > flow of that function since it cannot exit with failure if that
-> > > subtraction
-> > > fails because of overflow/wraparound, or we need to introduce more st=
-ate
-> > > that
-> > > will be an additional check that the existing
-> > > "if (allocation < ALLOCATION_MIN || allocation > ALLOCATION_MAX)"
-> > > would have caught anyway.
-> > >=20
-> > > In either case, to do this checking at the time of subtraction the id=
-eal
-> > > way
-> > > would be to use check_sub_overflow() ... but it again does exactly wh=
-at
-> > > you find to be non-intuitive since the implementation in
-> > > tools/include/linux/overflow.h uses the gcc intrinsics that does
-> > > subtraction
-> > > first and then checks if overflow occurred.
-> >=20
-> > It's trappy because by glance, that check looks unnecessary since
-> > allocation starts from max and goes downwards. Also worth to note,
-> > the check is not immediately after the decrement but done on the next
-> > iteration.
->=20
-> Right. This is probably what causes most confusion.
->=20
-> Considering that, what do you think of below that avoids wraparound entir=
-ely:
->=20
-> ---8<---
-> From: Reinette Chatre <reinette.chatre@intel.com>
-> Subject: [PATCH] selftests/resctrl: Make wraparound handling obvious
->=20
-> Within mba_setup() the programmed bandwidth delay value starts
-> at the maximum (100, or rather ALLOCATION_MAX) and progresses
-> towards ALLOCATION_MIN by decrementing with ALLOCATION_STEP.
->=20
-> The programmed bandwidth delay should never be negative, so
-> representing it with an unsigned int is most appropriate. This
-> may introduce confusion because of the "allocation > ALLOCATION_MAX"
-> check used to check wraparound of the subtraction.
->=20
-> Modify the mba_setup() flow to start at the minimum, ALLOCATION_MIN,
-> and incrementally, with ALLOCATION_STEP steps, adjust the
-> bandwidth delay value. This avoids wraparound while making the purpose
-> of "allocation > ALLOCATION_MAX" clear and eliminates the
-> need for the "allocation < ALLOCATION_MIN" check.
->=20
-> Reported-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-> ---
-> Changes since V1:
-> - New patch
-> ---
->  tools/testing/selftests/resctrl/mba_test.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
->=20
-> diff --git a/tools/testing/selftests/resctrl/mba_test.c
-> b/tools/testing/selftests/resctrl/mba_test.c
-> index ab8496a4925b..947d5699f0c8 100644
-> --- a/tools/testing/selftests/resctrl/mba_test.c
-> +++ b/tools/testing/selftests/resctrl/mba_test.c
-> @@ -39,7 +39,8 @@ static int mba_setup(const struct resctrl_test *test,
->  =09=09     const struct user_params *uparams,
->  =09=09     struct resctrl_val_param *p)
->  {
-> -=09static int runs_per_allocation, allocation =3D 100;
-> +=09static unsigned int allocation =3D ALLOCATION_MIN;
-> +=09static int runs_per_allocation =3D 0;
->  =09char allocation_str[64];
->  =09int ret;
->  @@ -50,7 +51,7 @@ static int mba_setup(const struct resctrl_test *test,
->  =09if (runs_per_allocation++ !=3D 0)
->  =09=09return 0;
->  -=09if (allocation < ALLOCATION_MIN || allocation > ALLOCATION_MAX)
-> +=09if (allocation > ALLOCATION_MAX)
->  =09=09return END_OF_TESTS;
->   =09sprintf(allocation_str, "%d", allocation);
-> @@ -59,7 +60,7 @@ static int mba_setup(const struct resctrl_test *test,
->  =09if (ret < 0)
->  =09=09return ret;
->  -=09allocation -=3D ALLOCATION_STEP;
-> +=09allocation +=3D ALLOCATION_STEP;
->   =09return 0;
->  }
-> @@ -72,8 +73,9 @@ static int mba_measure(const struct user_params *uparam=
-s,
->   static bool show_mba_info(unsigned long *bw_imc, unsigned long *bw_resc=
-)
->  {
-> -=09int allocation, runs;
-> +=09unsigned int allocation;
->  =09bool ret =3D false;
-> +=09int runs;
->   =09ksft_print_msg("Results are displayed in (MB)\n");
->  =09/* Memory bandwidth from 100% down to 10% */
-> @@ -103,7 +105,7 @@ static bool show_mba_info(unsigned long *bw_imc, unsi=
-gned
-> long *bw_resc)
->  =09=09=09       avg_diff_per > MAX_DIFF_PERCENT ?
->  =09=09=09       "Fail:" : "Pass:",
->  =09=09=09       MAX_DIFF_PERCENT,
-> -=09=09=09       ALLOCATION_MAX - ALLOCATION_STEP * allocation);
-> +=09=09=09       ALLOCATION_MIN + ALLOCATION_STEP * allocation);
->   =09=09ksft_print_msg("avg_diff_per: %d%%\n", avg_diff_per);
->  =09=09ksft_print_msg("avg_bw_imc: %lu\n", avg_bw_imc);
+What if you set "fw_devlink=off" kernel boot parameter?
 
-Looks fine.
+  Tomi
 
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
->=20
->=20
-> >=20
-> > The risk here is that somebody removes allocation > ALLOCATION_MAX chec=
-k.
-> >=20
-> > Something called check_sub_overflow() is not subject to a similar risk
-> > regardless of what operations occur inside it.
->=20
-> Reinette
->=20
-
---8323328-1741678480-1725869593=:1029--
 
