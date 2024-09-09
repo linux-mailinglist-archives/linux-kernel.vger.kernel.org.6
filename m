@@ -1,65 +1,82 @@
-Return-Path: <linux-kernel+bounces-321807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81270971FC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:01:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A59C971FD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B171F23E07
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:01:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F33FF1F241FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19E516F0E8;
-	Mon,  9 Sep 2024 17:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86F916F0E8;
+	Mon,  9 Sep 2024 17:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="6VEsaTz+"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TdjcOUBh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1671218C31;
-	Mon,  9 Sep 2024 17:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F8116DED5;
+	Mon,  9 Sep 2024 17:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725901249; cv=none; b=e6mY8/4xoeh7F81AHMvBzqT55szvSI1AbIDibAtO8JfBgUpz4R2oxZog/CAeMnqn8F5KMR5OSfu1tf0lIsBM6c1+5+TP+j5ajTRQCYellb+hSaHEY7Y++NDe6WP9TbeLseL2ma2caHym0gx6BSBpuQq7ci63Ssvbnc3xP0H3J50=
+	t=1725901422; cv=none; b=BN6ZnKo00uRIUil0gH9F2mrK053rsGQD+ogkesURQlt+IxeNNIXglNygrEbzmpFWJgE4p+AHfB3qwA9nMo0DM8PbtCPPIu64MJQsLDmduAu+4Aebl9KRB73ku8AffJXl95PnP1NLDpsenlRj9hNctQ92n0zYrvEGOeSlnrASLro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725901249; c=relaxed/simple;
-	bh=0F99EAMggZ7bVwLZxp3FQPd3x+WbTU0lTTF3YgclEeQ=;
+	s=arc-20240116; t=1725901422; c=relaxed/simple;
+	bh=z2f2zMXr032Lrm+l7qqrSHc0CLC2s9dIbQt/a78PVfI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ABxbg5vBY9WTtzJ3d/rF6USjOQjAGXOP9uhfr67JiAnosLQBaKcMP6zzcVQu3blYNobrlIWG6cdM9eDZ+phn1wpmjrnMNp1NgOSvMSbv/fL0i37sjj3eHVCdS1V2OFvAmtQbv2WRi5Tje1ygbH1Yf6RSLqxa5hRGVwzApjPIyh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=6VEsaTz+; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=SeXTB0UFigKuByTesi4WYdQQrB66kXq7eQyBV2wgCsQ=; b=6VEsaTz+LhZNoVAt3x0hhiyCd0
-	yEReHlp40emTquf7EAZy6XnOF9EbCGBx4qPQVzIZ0MpGW7TkZIpJiaitN2PiVtiz4hYrefIyIE3GL
-	LN6ECWba3Hd9hg0fcP66EQtBHP/+ihDLJ0SS6hmzChK5wEUkZWeN1D0qFEovuqPRdqF0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1snhkg-0071oz-Fu; Mon, 09 Sep 2024 19:00:34 +0200
-Date: Mon, 9 Sep 2024 19:00:34 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rob Herring <robh@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/85VksMEm+JXK92o004NHS3/vCnrKoHBUdc2y09IHrPBsVAmqyMtl62EkhdiPqlRaWaNLJAhPMzQh2eR6eNbriICqju4Ll2jR+7+34OkAKD0PEkPx2UmYhAB84cC4a8Kz7jm3lMtwhLUupLZTPyzY0pIrNxGngjK/npD9YzrBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TdjcOUBh; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725901421; x=1757437421;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=z2f2zMXr032Lrm+l7qqrSHc0CLC2s9dIbQt/a78PVfI=;
+  b=TdjcOUBhb9TDJ3nAsDKwYUw0rwxvw/3+z3JyrFhGUlomBF0J54u4MXFp
+   F2sBiR0x1TX/QY7hY4RzhxI87JNHH8lQ/msMmq5L5XFJLeJ/2GeAkSe/5
+   ZxcwvQeRWC5YGqdpIx8f7eINZzImxELtxUgM8rew/PKqk6bdl194LWRwL
+   d5Hux7NenSTBe3nK1SAgVzeSnBa3V7f6EjUvZnV8PUrYhipItqoY/dAmf
+   ECUnGouCuu2eE7Eab2XlNQX9TyhqqHynlesqZf4U/nRFkXomlU1G6eXoj
+   SuZ4Qh5xCOa0B7iy9QBPtKcUflGFFcwk9z4wUtbMqtKmaND4mefwjx3ZF
+   w==;
+X-CSE-ConnectionGUID: y76JqmwATBWw2biECmZ24A==
+X-CSE-MsgGUID: s5YhtjDdRU2Y/M6QeyjiOw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24722634"
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="24722634"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 10:03:40 -0700
+X-CSE-ConnectionGUID: Grq5JGftRl2YhAd2ZBNVBQ==
+X-CSE-MsgGUID: EbBA92hXS/mAaNEtpWDONg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="66790757"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 09 Sep 2024 10:03:36 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1snhnZ-000F0S-2f;
+	Mon, 09 Sep 2024 17:03:33 +0000
+Date: Tue, 10 Sep 2024 01:03:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alex Lanzano <lanzano.alex@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org
-Subject: Re: [PATCH net-next v2 1/2] dt-bindings: net: ethernet-phy: Add
- master-slave role property for SPE PHYs
-Message-ID: <c2e4539f-34ba-4fcf-a319-8fb006ee0974@lunn.ch>
-References: <20240909124342.2838263-1-o.rempel@pengutronix.de>
- <20240909124342.2838263-2-o.rempel@pengutronix.de>
- <20240909162009.GA339652-robh@kernel.org>
+	Jagath Jog J <jagathjog1996@gmail.com>,
+	Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
+	Nuno Sa <nuno.sa@analog.com>
+Cc: oe-kbuild-all@lists.linux.dev, skhan@linuxfoundation.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] iio: imu: Add i2c driver for bmi270 imu
+Message-ID: <202409100026.17N3K11W-lkp@intel.com>
+References: <20240909043254.611589-3-lanzano.alex@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,114 +85,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240909162009.GA339652-robh@kernel.org>
+In-Reply-To: <20240909043254.611589-3-lanzano.alex@gmail.com>
 
-On Mon, Sep 09, 2024 at 11:20:09AM -0500, Rob Herring wrote:
-> On Mon, Sep 09, 2024 at 02:43:40PM +0200, Oleksij Rempel wrote:
-> > Introduce a new `master-slave` string property in the ethernet-phy
-> > binding to specify the link role for Single Pair Ethernet
-> > (1000/100/10Base-T1) PHYs. This property supports the values
-> > `forced-master` and `forced-slave`, which allow the PHY to operate in a
-> > predefined role, necessary when hardware strap pins are unavailable or
-> > wrongly set.
-> > 
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > ---
-> > changes v2:
-> > - use string property instead of multiple flags
-> > ---
-> >  .../devicetree/bindings/net/ethernet-phy.yaml      | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > index d9b62741a2259..025e59f6be6f3 100644
-> > --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > @@ -158,6 +158,20 @@ properties:
-> >        Mark the corresponding energy efficient ethernet mode as
-> >        broken and request the ethernet to stop advertising it.
-> >  
-> > +  master-slave:
-> 
-> Outdated terminology and kind of vague what it is for...
-> 
-> The usual transformation to 'controller-device' would not make much
-> sense though. I think a better name would be "spe-link-role" or
-> "spe-link-mode".
+Hi Alex,
 
-This applies to more than Single Pair Ethernet. This property could
-also be used for 2 and 4 pair cables. So spe-link-mode would be wrong.
+kernel test robot noticed the following build errors:
 
-Also:
+[auto build test ERROR on jic23-iio/togreg]
+[also build test ERROR on robh/for-next linus/master v6.11-rc7 next-20240909]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-https://grouper.ieee.org/groups/802/3/dc/comments/P8023_D2p0_comments_final_by_cls.pdf
+url:    https://github.com/intel-lab-lkp/linux/commits/Alex-Lanzano/dt-bindings-iio-imu-add-bmi270-bindings/20240909-123509
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240909043254.611589-3-lanzano.alex%40gmail.com
+patch subject: [PATCH v3 2/2] iio: imu: Add i2c driver for bmi270 imu
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240910/202409100026.17N3K11W-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240910/202409100026.17N3K11W-lkp@intel.com/reproduce)
 
-On 3 December 2020, the IEEE SA Standard Board passed the following resolution. (See
-<https://standards.ieee.org/about/sasb/resolutions.html>.)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409100026.17N3K11W-lkp@intel.com/
 
-  "IEEE standards (including recommended practices and guides) shall
-  be written in such a way as to unambiguously communicate the
-  technical necessities, preferences, and options of the standard to
-  best enable market adoption, conformity assessment,
-  interoperability, and other technical aspirations of the developing
-  standards committee. IEEE standards should be written in such a way
-  as to avoid non-inclusive and insensitive terminology (see IEEE
-  Policy 9.27) and other deprecated terminology (see clause 10 of the
-  IEEE SA Style Manual) except when required by safety, legal,
-  regulatory, and other similar considerations.  Terms such as
-  master/slave, blacklist, and whitelist should be avoided."
+All errors (new ones prefixed by >>):
 
-  In IEEE Std 802.3, 1000BASE-T, 10BASE-T1L, 100BASE-T1, 1000BASE-T1,
-  and MultiGBASE-T PHYs use the terms "master" and "slave" to indicate
-  whether the clock is derived from an external source or from the
-  received signal. In these cases, the terms appear in the text,
-  figures, state names, variable names, register/bit names, etc. A
-  direct substitution of terms will create disconnects between the
-  standard and the documentation for devices in the field (e.g., the
-  register interface) and also risks the introduction of technical
-  errors. Note that "master" and "slave" are also occasionally used to
-  describe the relationship between an ONT and an ONU for EPON and
-  between a CNT and a CNU for EPoC.
+   drivers/iio/imu/bmi270/bmi270_core.c: In function 'bmi270_configure_imu':
+>> drivers/iio/imu/bmi270/bmi270_core.c:180:31: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
+     180 |                               FIELD_PREP(BMI270_ACC_CONF_ODR_MSK,
+         |                               ^~~~~~~~~~
 
-  The approach that other IEEE standards are taking to address this
-  issue have been considered. For example, IEEE P1588g proposes to
-  define "optional alternative suitable and inclusive terminology" but
-  not replace the original terms. (See
-  <https://development.standards.ieee.org/myproject-web/public/view.html#pardetail/8858>.)
-  It is understood that an annex to the IEEE 1588 standard has been
-  proposed that defines the inclusive terminology. It is also
-  understood that the inclusive terminology has been chosen to be
-  "leader" and "follower".
 
-  The IEEE P802.1ASdr project proposes to align to the IEEE P1588g
-  inclusive terminology.  (See
-  <https://development.standards.ieee.org/myprojectweb/public/view.html#pardetail/9009>.)
-  Based on this, it seems reasonable to include an annex that defines
-  optional alternative inclusive terminology and, for consistency, to
-  use the terms "leader" and "follower" as the inclusive terminology
+vim +/FIELD_PREP +180 drivers/iio/imu/bmi270/bmi270_core.c
 
-The 2022 revision of 802.3 still has master/slave when describing the
-registers, but it does have Annex K as described above saying "leader"
-and "follower" are optional substitutions.
+   165	
+   166	static int bmi270_configure_imu(struct bmi270_data *bmi270_device)
+   167	{
+   168		int ret;
+   169		struct device *dev = bmi270_device->dev;
+   170		struct regmap *regmap = bmi270_device->regmap;
+   171	
+   172		ret = regmap_set_bits(regmap, BMI270_PWR_CTRL_REG,
+   173				      BMI270_PWR_CTRL_AUX_EN_MSK |
+   174				      BMI270_PWR_CTRL_GYR_EN_MSK |
+   175				      BMI270_PWR_CTRL_ACCEL_EN_MSK);
+   176		if (ret)
+   177			return dev_err_probe(dev, ret, "Failed to enable accelerometer and gyroscope");
+   178	
+   179		ret = regmap_set_bits(regmap, BMI270_ACC_CONF_REG,
+ > 180				      FIELD_PREP(BMI270_ACC_CONF_ODR_MSK,
+   181						 BMI270_ACC_CONF_ODR_100HZ) |
+   182				      FIELD_PREP(BMI270_ACC_CONF_BWP_MSK,
+   183						 BMI270_ACC_CONF_BWP_NORMAL_MODE) |
+   184				      BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
+   185		if (ret)
+   186			return dev_err_probe(dev, ret, "Failed to configure accelerometer");
+   187	
+   188		ret = regmap_set_bits(regmap, BMI270_GYR_CONF_REG,
+   189				      FIELD_PREP(BMI270_GYR_CONF_ODR_MSK,
+   190						 BMI270_GYR_CONF_ODR_200HZ) |
+   191				      FIELD_PREP(BMI270_GYR_CONF_BWP_MSK,
+   192						 BMI270_GYR_CONF_BWP_NORMAL_MODE) |
+   193				      BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
+   194		if (ret)
+   195			return dev_err_probe(dev, ret, "Failed to configure gyroscope");
+   196	
+   197		/* Enable FIFO_WKUP, Disable ADV_PWR_SAVE and FUP_EN */
+   198		ret = regmap_write(regmap, BMI270_PWR_CONF_REG,
+   199				   BMI270_PWR_CONF_FIFO_WKUP_MSK);
+   200		if (ret)
+   201			return dev_err_probe(dev, ret, "Failed to set power configuration");
+   202	
+   203		return 0;
+   204	}
+   205	
 
-The Linux code has not changed, and the uAPI has not changed. It seems
-like the best compromise would be to allow both 'force-master' and
-'force-leader', as well as 'force-slave' and 'force-follower', and a
-reference to 802.3 Annex K.
-
-As to you comment about it being unclear what it means i would suggest
-a reference to 802.3 section 1.4.389:
-
-  1.4.389 master Physical Layer device (PHY): Within IEEE 802.3, in a
-  100BASE-T2, 1000BASE-T, 10BASE-T1L, 100BASE-T1, 1000BASE-T1, or any
-  MultiGBASE-T link containing a pair of PHYs, the PHY that uses an
-  external clock for generating its clock signals to determine the
-  timing of transmitter and receiver operations. It also uses the
-  master transmit scrambler generator polynomial for side-stream
-  scrambling. Master and slave PHY status is determined during the
-  Auto-Negotiation process that takes place prior to establishing the
-  transmission link, or in the case of a PHY where Auto-Negotiation is
-  optional and not used, master and slave PHY status
-
-	Andrew
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
