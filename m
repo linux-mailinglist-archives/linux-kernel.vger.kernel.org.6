@@ -1,78 +1,132 @@
-Return-Path: <linux-kernel+bounces-321847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C2DF97204D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:20:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9AC972059
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 591E0284413
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:20:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69ECD1C23679
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B662C170A15;
-	Mon,  9 Sep 2024 17:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F53179970;
+	Mon,  9 Sep 2024 17:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBLJTSv4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="o6X76bNb"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D50F282E2;
-	Mon,  9 Sep 2024 17:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3DE170A1B;
+	Mon,  9 Sep 2024 17:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902447; cv=none; b=ttCJZH8gdImoYG3QGeYbiRd9+doJRjcAC55dfeEc0ZlNzLyzYLklMCvDeoBZHWpAlzzy5CXxPZrkxm3EyQhkiZZF5e0aNUx/qU2etOBHOJu+Ji0dD9458ldjs6lvUeJPab7fqGd+3b9HedU1n4LOnd34DH0NctP0n+8JBtDdGqE=
+	t=1725902539; cv=none; b=aRyFcZPLB+DYj656TC2s73u/MpAce19Qc14JohO7QBDg71cX5JJqC55Ho7W5J0iBhqLa0AAK10AwQDUYph7PynuEIdQEH8/VJdbqPtXzp8rMU2cp0iDvPmun9weqnQCXhOiOGKpiYydWBMyKGPDYWognx+eOqHTdcPSLDBe5rcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902447; c=relaxed/simple;
-	bh=rBdBjn0XNlpSEcc4ZAMVvdALnrEyMDqllQKDkkADKBw=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=MgM/3+mq6hR1zT0Iyd4x9d8yiH9GVvy0ntNZNhMegHrPtnfBKe9S9AmltWrGa30tJe8amHPMAC0bIPzrhKIsJ+l62YLdbOxdW3DSEfFab4BhXFkLiQXm9idwPtZlOgEYToYYgF16OPRlU9t0L9lMrS3NbV0jzGVaEeS7UGamHAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBLJTSv4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F286DC4CEC5;
-	Mon,  9 Sep 2024 17:20:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725902447;
-	bh=rBdBjn0XNlpSEcc4ZAMVvdALnrEyMDqllQKDkkADKBw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=OBLJTSv4gNLFub4vNmRSbWeamu9M3t8ugYKeFzEeUbZN0xFWU555U3aGUIHl3xFWs
-	 ktuVAuahwy9wxYZlzNFZ/bP2p73OXvSVabtu86Tg3qRbv4i9hE+xo2ry+D3dGxFTbx
-	 s428mX2gblcXBnj0p4YtdMgMJaiSJegLaURYqYF1n5ibfTgt3gpnyvz2dJSigqxx5N
-	 OOy+Mbi0zy2cDzMwgnZ8guVdjM1Bms9Nw4eizG86tm+I3FztNMIFlrZwXOkXi0UWc+
-	 BN9pmHs5YWlDAsUDAEm37d6nBYVHCaGRuUs59O78QXSv5flLA3pQbn2qXUrJmLmq0B
-	 pBmsXQpVrzG2w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3424E3806654;
-	Mon,  9 Sep 2024 17:20:49 +0000 (UTC)
-Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc8/final
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <uyzlav7jahhammvvx2eymn4thh5vvpo3ngu7tdmkmyygdwim6c@3b7dyx3tbqyo>
-References: <uyzlav7jahhammvvx2eymn4thh5vvpo3ngu7tdmkmyygdwim6c@3b7dyx3tbqyo>
-X-PR-Tracked-List-Id: <linux-bcachefs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <uyzlav7jahhammvvx2eymn4thh5vvpo3ngu7tdmkmyygdwim6c@3b7dyx3tbqyo>
-X-PR-Tracked-Remote: git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-09-09
-X-PR-Tracked-Commit-Id: 16005147cca41a0f67b5def2a4656286f8c0db4a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: bc83b4d1f08695e85e85d36f7b803da58010161d
-Message-Id: <172590244775.3867163.120052155906121188.pr-tracker-bot@kernel.org>
-Date: Mon, 09 Sep 2024 17:20:47 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1725902539; c=relaxed/simple;
+	bh=10DxOvSkp46qzAR/VG9MNEapEr6I90jKHri7LSTULfw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=anQolSozwzZ5muK/NVwVqPDeSSrOrE+1+99QdJUTxs95lUS83PS/ua30vPgdZuynfQcf1Lf+to9V1oJeOOo+LgaQlwpsyjHarUf71imPKRK9NVvA8ghJ0JwTGQYo2F55KhaJzlc0bC/i85NMVC2PDrsELqU5Au75A1vdECDok/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=o6X76bNb; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1725902535;
+	bh=10DxOvSkp46qzAR/VG9MNEapEr6I90jKHri7LSTULfw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=o6X76bNbCxjpRXMqnzFoJ7fUCQeHkUkBi4bjIRGtiWwjELMpDOa4CZoFUdcYdr3ww
+	 LenLZ1yPrteE9+pm2YzdQiaQrljA3GN44y7J9a2SAPnUdHyjodo7y9UXO7NGzvun1B
+	 7moWRc2z2OxBC475VfU5+oQNWjRD8CT9M+YcSt9JrR2hyfg4GPt66iQa15Q4roQyVr
+	 sjyqBpnHnZOK6nVGUPuml64hSZIxPmn5WnOUL+KJtRh+TDCI0BztDKeAf73kMiB1m0
+	 29SPaDURyZvS/zCMty3ALdyfKpk9cJHTujfuv35ehn6ICJ1ON30GJjfmlslDoK0N3C
+	 /dc+cPJ6B1GBg==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4X2YYM1fx4z1KhF;
+	Mon,  9 Sep 2024 13:22:15 -0400 (EDT)
+Message-ID: <279860b4-2f42-463f-bee2-c6c60ec72f29@efficios.com>
+Date: Mon, 9 Sep 2024 13:22:00 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/5] tracing/bpf-trace: Add support for faultable
+ tracepoints
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Namhyung Kim <namhyung@kernel.org>, bpf@vger.kernel.org,
+ Joel Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
+ Michael Jeanson <mjeanson@efficios.com>
+References: <20240828144153.829582-1-mathieu.desnoyers@efficios.com>
+ <20240828144153.829582-4-mathieu.desnoyers@efficios.com>
+ <CAEf4BzZERq7qwf0TWYFaXzE6d+L+Y6UY+ahteikro_eugJGxWw@mail.gmail.com>
+ <1f442f99-92cd-41d6-8dd2-1f4780f2e556@efficios.com>
+ <CAEf4BzbS0TRN1vPzPtSZj+XN7oVUUwyoxHr5p7igH8X-nhZhGw@mail.gmail.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <CAEf4BzbS0TRN1vPzPtSZj+XN7oVUUwyoxHr5p7igH8X-nhZhGw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Mon, 9 Sep 2024 09:52:26 -0400:
+On 2024-09-09 12:53, Andrii Nakryiko wrote:
+> On Mon, Sep 9, 2024 at 8:11 AM Mathieu Desnoyers
+[...]
+>>>
+>>> I wonder if it would be better to just do this, instead of that
+>>> preempt guard. I think we don't strictly need preemption to be
+>>> disabled, we just need to stay on the same CPU, just like we do that
+>>> for many other program types.
+>>
+>> I'm worried about introducing any kind of subtle synchronization
+>> change in this series, and moving from preempt-off to migrate-disable
+>> definitely falls under that umbrella.
+>>
+>> I would recommend auditing all uses of this_cpu_*() APIs to make sure
+>> accesses to per-cpu data structures are using atomics and not just using
+>> operations that expect use of preempt-off to prevent concurrent threads
+>> from updating to the per-cpu data concurrently.
+>>
+>> So what you are suggesting may be a good idea, but I prefer to leave
+>> this kind of change to a separate bpf-specific series, and I would
+>> leave this work to someone who knows more about ebpf than me.
+>>
+> 
+> Yeah, that's ok. migrate_disable() switch is probably going a bit too
+> far too fast, but I think we should just add
+> preempt_disable/preempt_enable inside __bpf_trace_run() instead of
+> leaving it inside those hard to find and follow tracepoint macros. So
+> maybe you can just pass a bool into __bpf_trace_run() and do preempt
+> guard (or explicit disable/enable) there?
+> 
 
-> git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-09-09
+Passing an extra boolean to __bpf_trace_run would impact all tracepoints
+calling into ebpf, adding an extra function argument and extra tests for
+all of those. The impact may be small, but it is non-zero in both code size
+and overhead, so it would not be my preferred approach.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/bc83b4d1f08695e85e85d36f7b803da58010161d
+I have modified the macros to add the guard within __bpf_trace_##call
+following suggestions from Linus:
 
-Thank you!
+   https://lore.kernel.org/lkml/CAHk-=wggDLDeTKbhb5hh--x=-DQd69v41137M72m6NOTmbD-cw@mail.gmail.com/
+
+I'll Cc you on that version of the series.
+
+Thanks,
+
+Mathieu
+
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
