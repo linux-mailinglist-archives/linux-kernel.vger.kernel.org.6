@@ -1,220 +1,105 @@
-Return-Path: <linux-kernel+bounces-322012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8BB9722D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:37:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB539722D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CEA91F24484
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:37:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 759EFB22480
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2D61898F7;
-	Mon,  9 Sep 2024 19:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5171F1898F7;
+	Mon,  9 Sep 2024 19:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b="UmuN7coi"
-Received: from smtp1.math.uni-bielefeld.de (smtp1.math.uni-bielefeld.de [129.70.45.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fT0CGzqQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EDE200AF
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 19:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.70.45.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48111200AF
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 19:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725910626; cv=none; b=nnVglQLlVllUbNHwdyXY6oHybOikuhNIigxiB2pHnVy7PeY1DrEvge7ETaP/6g2FY454PSryaZGdUv1nQzA67vF+Ph87kuh27UszkXuODk73xJk385J/Wzof1WycqZymcFVG4EeFGHRT8w7i6ZT81X3CXUhBjfdtTOfTaXTstCk=
+	t=1725910671; cv=none; b=IE1Qo4y8brkEX1yEigCxiG1lsTH6LbEHEzmt0a98+VLa8yjELv0FkNCu68ldVazQloaJik9dcI1e4VzULcNK+35Ida2QT0LH5v81Zc5vvKHX1MTYPFJnmEM2UbgnRTO/X9YDHan7o1Vu+XMsyvKa+yezgXIrKVewdbW1uIJdxrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725910626; c=relaxed/simple;
-	bh=mSQgJPqiylWbdaZR6PEX6uW04UWGMTefCiZptqVbuaQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QCtEN+/n6dFGfTvR3GIl45Ou0GTht2ipM5ipfP/Ozl1zGIRkZI26oNoQZP3QY3Wn8xDbuMk712YqG/j1P4PkIwHpclJgH8R8ALtlc8eL4eMm0Vy6t+uHqOmsr641kIQqssGL9sQKkODAUY9+bLbIuGOSXN0MVFgKw2GKRac9sWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de; spf=pass smtp.mailfrom=math.uni-bielefeld.de; dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b=UmuN7coi; arc=none smtp.client-ip=129.70.45.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=math.uni-bielefeld.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=math.uni-bielefeld.de; s=default; t=1725910611;
-	bh=mSQgJPqiylWbdaZR6PEX6uW04UWGMTefCiZptqVbuaQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UmuN7coihcW9EkGIwAvvPDfHChJ11ukWg7IbWd5vln0iklQBnnfxXBhvxX50kW1az
-	 Ac1SpUIDWOxYz/dbCuA5LHZhzxbPxF8lvicLkLqhtTyi0kJnY4wWqDvl/cyjbDcIKG
-	 06ql32+PCixZ9F1Rs9Dsx402ddQBrssuuh63tc2CeXiRQnhRz/XT74beawJcYz5V+N
-	 j7d9ABFyQLG4m3KJ19tPFGqcMB+GGnPn7TtoP14PfgcYL1rvX3gwdUCg6oH9BoRUIC
-	 NSUkJP1Gdx2ZPfwNf6ZifLHxTmOh0RR/7X4/fouDm9pGMi/h4UUp4k/EhczzsJR+ZC
-	 HX8kvG9ysd9AQ==
-Received: from [192.168.0.106] (dslb-088-074-203-146.088.074.pools.vodafone-ip.de [88.74.203.146])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	s=arc-20240116; t=1725910671; c=relaxed/simple;
+	bh=RsXgnz/Awu8194XCZziysSI+1w0BvXXdgMewrhU6Q4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ikQu4tA+kneKVhzz1A6wuw6wQ5qldQPmuMQoTm2//xWnOBFXygFi9H0nzJdJgMDLv7NOHqfcjYwy9E/9aoeNu4qln2Rn2+M4RHz62FgewImTDxqO46I5UJaBL9ga1wpK+AqKdt/B+2Bb7PNUBoQv7iu+DZ85ByvKuQSMhsB/BGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fT0CGzqQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725910669;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=76PMED9qVa8H24o7AErFGwfepAPAtA5MZWDkqvtekV0=;
+	b=fT0CGzqQjraxoWaqIxRgEr7NuVIqWb9WwVPZ7daPaoFOmMpgbgl2PXZeb+jmGK2ED7BpjO
+	aAdgjNDukN15dgzRFMc8yz+ie8hODlVZUhA331sFKS4NrOTnMcT9MnHpI24qpPPv848BxM
+	bDr1pFJz61GhK2Wd3yBChz8zoLHZj8E=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-414-V6GzlB0yMd6Y-8EAXNL46A-1; Mon,
+ 09 Sep 2024 15:37:44 -0400
+X-MC-Unique: V6GzlB0yMd6Y-8EAXNL46A-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp1.math.uni-bielefeld.de (Postfix) with ESMTPSA id 5C6972028F;
-	Mon,  9 Sep 2024 21:36:50 +0200 (CEST)
-Message-ID: <80c80db1-1935-492c-94e4-8d5c1681c0db@math.uni-bielefeld.de>
-Date: Mon, 9 Sep 2024 21:36:44 +0200
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6DCC819560B1;
+	Mon,  9 Sep 2024 19:37:42 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.74])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 36C571955F45;
+	Mon,  9 Sep 2024 19:37:37 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon,  9 Sep 2024 21:37:31 +0200 (CEST)
+Date: Mon, 9 Sep 2024 21:37:25 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jubilee Young <workingjubilee@gmail.com>
+Cc: akpm@linux-foundation.org, apais@microsoft.com, benhill@microsoft.com,
+	ebiederm@xmission.com, linux-kernel@vger.kernel.org,
+	romank@linux.microsoft.com, ssengar@microsoft.com,
+	sunilmut@microsoft.com, torvalds@linux-foundation.org,
+	vdso@hexbites.dev
+Subject: Re: [PATCH 1/1] ptrace: Get tracer PID without reliance on the proc
+ FS
+Message-ID: <20240909193725.GD14058@redhat.com>
+References: <CAPNHn3rTjMcbNXRpZTBc-zEkmnnMJO2iem9-eUdBkyaquz88rw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] drm/amd: fix VRR race condition during IRQ handling
-To: Harry Wentland <harry.wentland@amd.com>,
- Alex Deucher <alexdeucher@gmail.com>
-Cc: Christopher Snowhill <chris@kode54.net>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <cover.1725269643.git.tjakobi@math.uni-bielefeld.de>
- <D40Q9ZLDQIZF.3OERFS0AYREN0@kode54.net>
- <deb6d962-f24e-4769-b313-be3b0efb873b@math.uni-bielefeld.de>
- <CADnq5_PMnCUYsUq_SPS8woi20KxaW2+teMzhmmOyFJRaq3YVQQ@mail.gmail.com>
- <c2653b61-eca8-4209-9d50-771cf1a9fe35@amd.com>
-Content-Language: en-US
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Autocrypt: addr=tjakobi@math.uni-bielefeld.de; keydata=
- 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
- JRHWPGCL3BhOxQ==
-In-Reply-To: <c2653b61-eca8-4209-9d50-771cf1a9fe35@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPNHn3rTjMcbNXRpZTBc-zEkmnnMJO2iem9-eUdBkyaquz88rw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 9/9/24 19:18, Harry Wentland wrote:
-
+On 09/07, Jubilee Young wrote:
 >
-> On 2024-09-09 13:11, Alex Deucher wrote:
->> On Sun, Sep 8, 2024 at 7:23 AM Tobias Jakobi
->> <tjakobi@math.uni-bielefeld.de> wrote:
->>> On 9/8/24 09:35, Christopher Snowhill wrote:
->>>
->>>> On Mon Sep 2, 2024 at 2:40 AM PDT, tjakobi wrote:
->>>>> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>>>>
->>>>> Hello,
->>>>>
->>>>> this fixes a nasty race condition in the set_drr() callbacks for DCN10
->>>>> and DCN35 that has existed now since quite some time, see this GitLab
->>>>> issue for reference.
->>>>>
->>>>> https://gitlab.freedesktop.org/drm/amd/-/issues/3142
->>>>>
->>>>> The report just focuses von DCN10, but the same problem also exists in
->>>>> the DCN35 code.
->>>> Does the problem not exist in the following references to funcs->set_drr?
->>>>
->>>> drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c:      if (pipe_ctx->stream_res.tg->funcs->set_drr)
->>>> drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c:              pipe_ctx->stream_res.tg->funcs->set_drr(
->>>> drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c:              pipe_ctx[i]->stream_res.tg->funcs->set_drr(
->>>> drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:        if (pipe_ctx->stream_res.tg->funcs->set_drr)
->>>> drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:                pipe_ctx->stream_res.tg->funcs->set_drr(
->>>> drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:                if (pipe_ctx->stream_res.tg->funcs->set_drr)
->>>> drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c:                        pipe_ctx->stream_res.tg->funcs->set_drr(
->>>> drivers/gpu/drm/amd/display/dc/hwss/dcn31/dcn31_hwseq.c:        if (pipe_ctx->stream_res.tg->funcs->set_drr)
->>>> drivers/gpu/drm/amd/display/dc/hwss/dcn31/dcn31_hwseq.c:                pipe_ctx->stream_res.tg->funcs->set_drr(
->>>> drivers/gpu/drm/amd/display/dc/hwss/dcn401/dcn401_hwseq.c:      if (pipe_ctx->stream_res.tg->funcs->set_drr)
->>>> drivers/gpu/drm/amd/display/dc/hwss/dcn401/dcn401_hwseq.c:              pipe_ctx->stream_res.tg->funcs->set_drr(
->>> Maybe. But the big difference I see here, is that in this code there
->>> isn't even any kind of NULL check applied to tg. Or most of the members
->>> of *pipe_ctx. If there really is the same kind of problem here, then one
->>> would need to rewrite a bit more code to fix stuff.
->>>
->>> E.g. in the case of  dcn31_hwseq.c, the questionable code is in
->>> dcn31_reset_back_end_for_pipe(), which is static and only called from
->>> dcn31_reset_hw_ctx_wrap(). Which is assigned to the .reset_hw_ctx_wrap
->>> callback. And this specific callback, from what I can see, is only
->>> called from dce110_reset_hw_ctx_wrap(). Which is then assigned to the
->>> .apply_ctx_to_hw callback. The callback is only called from
->>> dc_commit_state_no_check(). That one is static again, and called from
->>> dc_commit_streams().
->>>
->>> I could trace this even further. My point is: I don't think this is
->>> called from any IRQ handler code. And given the depth and complexity of
->>> the callgraph, I have to admit, that, at least at this point, this is a
->>> bit over my head.
->>>
->>> Sure, I could now sprinkle a bunch of x != NULL in the code, but that
->>> would be merely voodoo. And I usually try to have a theoretical basis
->>> when I apply changes to code.
->>>
->>> Maybe if someone from the AMD display team could give some insight if
->>> there still is potentially vulnerable code in some of the instances that
->>> Christopher has posted, then I would gladly take a look.
->> @Wentland, Harry can you confirm this?
->>
-> As Tobias said, without extensive analysis and trace of the code in all
-> possible use-case it's hard to say there's no possible way the other
-> set_drr calls could potentially have a similar issue.
+> > Perhaps it makes sense to discuss the alternatives? Say, a process can have a
+> > please_insert_the_breakpoint_here() function implemented in asm which just does
+> > asm(ret).
 >
-> I think Tobias' analysis is sound and this fixes a number of issues, hence
-> my RB.
-In fact one user pointed out another potentially vulnerable callback:
-https://gitlab.freedesktop.org/drm/amd/-/issues/3142#note_2560109
+> There's some merit in having the debuggers recognize this pattern, as that
+> then would save every language that wants to have this power available
+> the trouble of reimplementing it. But first debuggers must recognize it,
+> which would require teaching each of them, which can be... tedious.
 
-Which is set_drr() in dce110_hwseq.c -- from which we know that it's 
-called from IRQ handler code. Also the backtrace that he posted confirms 
-this. That code seems to be a bit older than the DCN10/DCN25 code, as it 
-lacks any kind of NULL-check. I have posted a patch that more or less 
-copies over the DCN10/35 code. Still waiting for conclusive feedback if 
-the patch does something.
+Yet another thing in this discussion I can't understand... sorry, I tried.
+You do not need to teach, say, gdb to recognize this pattern. You can just do
 
-If it does, I'm going to post it to amd-gfx as well.
+	$ gdb -ex 'b please_insert_the_breakpoint_here' ...
 
-With best wishes,
-Tobias
->
-> Harry
->
->> Alex
->>
->>> With best wishes,
->>> Tobias
->>>
->>>>> With best wishes,
->>>>> Tobias
->>>>>
->>>>> Tobias Jakobi (2):
->>>>>     drm/amd/display: Avoid race between dcn10_set_drr() and
->>>>>       dc_state_destruct()
->>>>>     drm/amd/display: Avoid race between dcn35_set_drr() and
->>>>>       dc_state_destruct()
->>>>>
->>>>>    .../amd/display/dc/hwss/dcn10/dcn10_hwseq.c   | 20 +++++++++++--------
->>>>>    .../amd/display/dc/hwss/dcn35/dcn35_hwseq.c   | 20 +++++++++++--------
->>>>>    2 files changed, 24 insertions(+), 16 deletions(-)
+Nevermind, as I have already said you can safely ignore me. I still do not
+see any "real" use-case for breakpoint_if_debugging(), but I guess that is
+due to my ignorance and lack of imagination.
+
+Oleg.
+
 
