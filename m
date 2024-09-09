@@ -1,196 +1,161 @@
-Return-Path: <linux-kernel+bounces-320968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1BF9712B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:58:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9359712BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAAE1282F3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:58:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5A081C22049
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5249E1B29A5;
-	Mon,  9 Sep 2024 08:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E601B29AA;
+	Mon,  9 Sep 2024 08:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ZZr9oMHR"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2086.outbound.protection.outlook.com [40.107.215.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="qrwqWohr"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7599B1B1D7E;
-	Mon,  9 Sep 2024 08:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725872303; cv=fail; b=BeW3YyTT/hapFsYISvGZXp1TtsxNvpXbigpVZpED4Zc2F33A/rI3oNpEANPxRmXx5hcNlUVH9GCRel/++7cVT5GL6t3vgtrSvrJGw1rg1IQ3O6pbahVg5hA76eS2rbysLJlMhX4E/z42ZiKL9sdWiNZGO4zu9bWbb2LT+zVD6cc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725872303; c=relaxed/simple;
-	bh=0QI5slGuwybAn4UmQs7UI5b9EGeFrVyWGlossZfxNSE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bnU1ZvfK/vf+1O6oizGJmJ7gw11coCVbkuB+lOaXZ3bir924R5a4MIHATGUMvaBXFgHwRwLokfQogUcFeC81Pne77ilJFeQ4tuSaWLoDvPTyBIJSLKgbm4wwsysWRl5r+jQh/IiYQKLzuUh2WoSo7O/0mj/CQ2YrHRNwgjhdz54=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ZZr9oMHR; arc=fail smtp.client-ip=40.107.215.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cvVuKbwNYBLkuIGXy53HJXz3DxkJ2QBG8O1UEhdSssCI5ANc2EdXV4tKsx6p6KLsCWZMeAml8NZK9cYUoIM0WAYaWqoSL6xB7uiUMWoccsjtRaZISjgTOMNsQkxaAtwIL8BjmrSu/mvBDzTm+u7HW8FaQLIFXhe3cw81Tr5i5hCumxM6gXOjkwG8j2W57DwkxkmLc1U/opNU4wbtZK53MmNKb6i3AiFFyO8i1PXyUwKJyhbJ/s6iH/3SPhUsZtrO4qybhIJMTWPdgY8YyEgIKrcg6CHqCG5x5TQStQWnItiaemR/6eI7kLKqOM9CdZKExVlIHFhCoW9ncsXYVtBDuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0QI5slGuwybAn4UmQs7UI5b9EGeFrVyWGlossZfxNSE=;
- b=L8RvijMKiuXvEi5h9B1SNqiJ+fPpcKuKggPQDlIGwygfo9BuNepJUwl5Kl8qtjp5Oa2UvIl0wd7UlZApqkDvL7xpVbk/jmk4LtUAgC5Ytr4gRo+bJSFv2+KU6aVSF7VsLAxwpKk/9brEsuFQWkXKdpuoEBdDZ24H0S/Mm5IcErlJ6km9zmbuHujS2Nqz15ykZCrXRq91MnNI6vrZDv9T2U/ufUB5tCbK5LfkeM/fQ7RoGEQpvrLA09yVuVc62myE5f2hkfZqegmrtDkjCuxOJ76nDOlu0DDUBrgx+sXJ9vyFI97QGVbAxjgiFyRZQT52/d+zJICedoA/00p1ou0vlQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0QI5slGuwybAn4UmQs7UI5b9EGeFrVyWGlossZfxNSE=;
- b=ZZr9oMHRTJvNVnPVcu4mUaW5dvYSfyTSDvTXhVN8k+Y3MsdVv/F6ZINQ64Io8pMd4kyWupP5IUla5Q/AbGWluezTQ4vqq1ZFp8M8jdC0NgO63sFAsU4V4oo0hNAskXjQiEzNO3vzeruhhRAQuDseP74Q4DZmFds8LjquYt4SPncjznDxsyr7OERpc4aCEDdWJcjCgTQtJA1oU/67kMd7oO9+ypdmuzprhJfvIi0A8eBw5YAD3N9oKFMII41tApyQwP0IEIHGMYJNO5kiE/BKvDuXL0Ug+jLidHNOVz55083BYHbwkzQ2DCI6XrunRncqm4/yejt/WKn41dMKZt7HEA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- TYZPR06MB7256.apcprd06.prod.outlook.com (2603:1096:405:ab::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7939.23; Mon, 9 Sep 2024 08:58:16 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%6]) with mapi id 15.20.7939.017; Mon, 9 Sep 2024
- 08:58:16 +0000
-Message-ID: <2c666489-a39c-4963-a7bd-688dae666f56@vivo.com>
-Date: Mon, 9 Sep 2024 16:58:10 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] i2c: jz4780: Use dev_err_probe()
-Content-Language: en-US
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: andriy.shevchenko@intel.com, biju.das.jz@bp.renesas.com,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Paul Cercueil <paul@crapouillou.net>, linux-renesas-soc@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, opensource.kernel@vivo.com,
- Rong Qianfeng <rongqianfeng@vivo.com>
-References: <20240827034841.4121-1-rongqianfeng@vivo.com>
- <20240827034841.4121-4-rongqianfeng@vivo.com>
- <aqigucchbgq2tblnu7gdkpiw35ezqbmgbl6a5ptzzezngnihsi@iny4xyzkjyz4>
-From: Rong Qianfeng <11065417@vivo.com>
-In-Reply-To: <aqigucchbgq2tblnu7gdkpiw35ezqbmgbl6a5ptzzezngnihsi@iny4xyzkjyz4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYCPR01CA0095.jpnprd01.prod.outlook.com
- (2603:1096:405:3::35) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1171B150A;
+	Mon,  9 Sep 2024 08:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725872314; cv=none; b=AIAFg6BZMh1d2aIgKCpKB+TSvc1YnF5NrG3m9ILFVAvuGSD4Ul53Sj+yel0f0yExryK4CftIQ5+2gBOocbIzPdAph399/KeGitk78oF94CZzMG0yaDr04hjuYmG45nqo6Ha+jKNgiPiRCu0dWz4wkiW+XZdd+d1uFPRRyHGsAg4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725872314; c=relaxed/simple;
+	bh=BtIb6N/65OadEVbzYDIoljRr+q5odejFkgXYzE+ot9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rscKeRmOl/xShiIqMS+KwVw4eJ4w4IG9uQnfTB0GCGBf3p6LwbUdkns6iDVXhpm21O2W+1YwegbsMa2kdkMSPU5NbNU0w4Ey0+7P709CmUisiZ3umTwNjisjpdErMaH3tm/hW1f21b07D6dhEqvvWkWsgSShrObeMsogyYts6q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=qrwqWohr; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 9273888D08;
+	Mon,  9 Sep 2024 10:58:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1725872304;
+	bh=m6dN1ufqowxfvuhPSE7wesgvmyXMXmsyT3a/MEsiJ9Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qrwqWohr1WXSwj3fE2907xEAa4lTMNBOOpaD3Z5d1XqWP49svEF3VDPq2SprPFqGA
+	 5uTW7JA4MWjcK2tORZwvcPAP3T0h78XLqrbPY4E5D9LYb/4XOI+xUcmjnLsD2bL/3y
+	 OdNskHviflAuF5n0j/RrqDhOLO40QezBmMezOU7D6JzdedNCZra6jYGCADFlcy43Qw
+	 zMZhPPkNwQigYsJvz7hICNqZAYcj5CQw7dRkhSaTegQipF260g6skrGvPdlRccdKtK
+	 31EXV22JFBPDQaG3Z/7inlTcUSGjPhHNSx8eZvLd41rsSPcuznlhPthFDXminaQ1rP
+	 R/an7xFzdd+kg==
+Date: Mon, 9 Sep 2024 10:58:22 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, ricardo@marliere.net,
+ m-karicheri2@ti.com, n.zhandarovich@fintech.ru, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzbot+02a42d9b1bd395cbcab4@syzkaller.appspotmail.com
+Subject: Re: [PATCH net] net: hsr: prevent NULL pointer dereference in
+ hsr_proxy_announce()
+Message-ID: <20240909105822.16362339@wsk>
+In-Reply-To: <20240907190341.162289-1-aha310510@gmail.com>
+References: <20240907190341.162289-1-aha310510@gmail.com>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TYZPR06MB7256:EE_
-X-MS-Office365-Filtering-Correlation-Id: 273a4c4b-ad28-41a4-f7e2-08dcd0ad8b33
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014|81742002;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z2Z5eVFGaExKcmVVSzJINmdsOHA4TUtCVTh0OEF2dldnalNOeCt4RDczTzhX?=
- =?utf-8?B?R2QvSDJ4WndLOWVXbUg5ZmN5bjRwQUhRb3loVGhxbmJPa1FYazRmS3hoRHVG?=
- =?utf-8?B?SnpKU0EzK3ZkMXRqdmxVenZxWlF5ZkhlTDd3TTQxT0xLUmsxWXBNYVV1WUd3?=
- =?utf-8?B?ZTR0OXJVOXBCRjdQMlJhdjJmWDFkQlIyazEvZW5EcnJBeTU4d1F5Vk5jRUNi?=
- =?utf-8?B?QTdSV3ZZUXo2NE9GRXNJaG5JeWZPc2pmNSsvc3M5WUNyaTV2OVMySmZvemNW?=
- =?utf-8?B?OEhqM0VvWjJ6eXpSR1UvM014dVZxbTBIS1FrZHlPbnZGMzJNbUZGS25NQ0VP?=
- =?utf-8?B?dWhIMWR6V0IxL3k3M0xJSUFkZExHdlRiY1ZwbGdjTGlLQlp0MXVnaDZYN012?=
- =?utf-8?B?eFhRY0FHa2orNVU4S2cwWVQ0eUxwMXdUeGpodzNCM3lBTkQzVDZLckxNamZa?=
- =?utf-8?B?RXNyT2pQbFF3UGRNcWFmaHVJQmZtd2h4NGdKQzAveUNmdHF0RHk5U0Jmc3Vm?=
- =?utf-8?B?NkczcDkxQUNIODNGMnlnNG1aNzhOdjVyQStPN3lmYm84TnBjN0NHMlNUbnEr?=
- =?utf-8?B?dHZUZk5Vemt4OXdtLzEwY3g1eCtxbGtHNmpvYy9nVERpTXBjRTB0a2piSllN?=
- =?utf-8?B?dW1wb2paQ2RLM0xObnVzcjIyRThZOVFkcVRFeGhKRVhMTHUvWUQwR2s5dzdw?=
- =?utf-8?B?T04yajlQaWxyOXF4MXN5SEFLNW8yYWRhMEhxTmludHowam9UTzJjbEdPTXN5?=
- =?utf-8?B?Z1Y4VWdjYk4yZVBwbXVmUk1XOTFVclgvcmhlQUtDekRSMW9laVg5S0FJRnd5?=
- =?utf-8?B?anUxcDBFVlVNTlRGVEtMOTF3MDBLc04zKzhTRlg2QzVmdUNHa3FFUkNvZW1F?=
- =?utf-8?B?aGh5UnpITnAwRm1NUDZIM3pFMldOYjBUc25nV01nQ0N6SlpNLzZsKy9DejdH?=
- =?utf-8?B?SC9wMXk5SHZ1WWs5aFJGMCtnbWw1aGtPQWJsc25MTVE2MW9memdCQW9BY1hZ?=
- =?utf-8?B?RENQM0NBSTFOQnVyeVN5b1M4blZHNyt1S3AzYXRTWHlrOE5hMUZlNUhBS05J?=
- =?utf-8?B?YTNmcldtVjZiS2ludG9BeHB2MXB6NXJCZHRHY3lIL1JJejc0Q2JCSVQzcnRY?=
- =?utf-8?B?RUtKMGZzQk93RndpSUdEZFc1S1NWZGVCZXcyeWJMVzVPdzR4UnltQlVMaVlV?=
- =?utf-8?B?SGs1WHovUndnODZldHFRTWpsYW50SWtXUlRYL005eUMwOVFiZ3p5VFdQaG5N?=
- =?utf-8?B?MDg5aENGNEc1YW5pUmEzZnpzL1dUQUpDNzY4OUZTcGRQUXFYRFgwMTFDQW81?=
- =?utf-8?B?K0dxeCsyVVVjMEZmaVlhOFpvNTllVERlUHRsVk15NE1DSE9jLzN6Mk04dW8v?=
- =?utf-8?B?amJkL0RWR3NhdnN1cVJpbnpFR1g4eHNPOFRlRVJBa3VuRkxEWmVSOGJoRmd6?=
- =?utf-8?B?a0UyTnJDckphbStHc3lTbjl0Rk96RG1Yb3E3NC94enNTNUxNblJUOVVrTzZs?=
- =?utf-8?B?VjRNQVVNQ1ordG55Z3pKOHZpZGowVEo5RHpsOWFMSWk5SFhQRkovc1A0bXYx?=
- =?utf-8?B?N2xHQXRSVGszYkoySXpIOTMwOEpmeUlzamZJbmVqWk1URnhMRjRuUFMyU2pI?=
- =?utf-8?B?eHVlK3l1bFlXY0pTTTR1WGpkTjlZYWlISDBGWFpMNGx4WlFZR3hJNC9HeEF3?=
- =?utf-8?B?TFlTTW90ZGdXSVg0OHFiR1FHSVozK3hQQjJNQzQxUkRrTDBYRkhBek8wVSt0?=
- =?utf-8?B?c0x0bm1rTjVwalBQeTZNcGg2TWwxdE5JbHJZOFVuVHpUTnpYbW53bFA1bkhY?=
- =?utf-8?B?VkJNSndtelFZQjJlSmg0NFBiTDNuVnYwQnM5Yk5TVnpzcks1cVREMCtRSzZm?=
- =?utf-8?B?bTV4dmNVSWxrQndDa2kraks0OUs1WUN4ZHVXaVhDdXljVmwyM1loZU5XQUR4?=
- =?utf-8?Q?JCcWOIN863k=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014)(81742002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NUVWdGdLUzdJdW01OUJwKzlPRzdvbVJHUlVsMTBESFgrMmtSV1lES2psWU9G?=
- =?utf-8?B?UXZDaGVQR2lTN3Z4OUU0NkFSYTRvOXNLRGJNazBFUzBkRUxWcWxQNVJXRGZt?=
- =?utf-8?B?dFNjWDZNWGVuQjVjcFZVVEF3TEl4czNHVmFlNzFUMGxMMk1IR1VuaUhuSzVB?=
- =?utf-8?B?dy9GaCtJOGtTTDVsWGJodll0bC81M3RWNU1vanY5ZkFPL24rSUtNWW1uMkpv?=
- =?utf-8?B?WVVWditIN2xaWlU2eW1KdlRvY0IwWHVxMVlhaUNUTXpWVjVNN2ZxK1JlbGtC?=
- =?utf-8?B?OEJHNGhtTjlWc0sybUFTdmtpK2ZFdmI2dU5Lak9CM2FNQ3BHN3RFSnovamJy?=
- =?utf-8?B?aW9jS0lNZkYzTUlUZm9jQndWSnJOdlJYSXZOZ244VjFoS1hya0l2eUFHZHk2?=
- =?utf-8?B?S01wNkVXMCtQbFdEbmMxR04vNGJ5anpSMEtrbGh1TC9KZVhBdjVodGNxcmV6?=
- =?utf-8?B?Wi9zZTYybkZCb3ZRSlRhdjVQSTlBTVU4QTFYZndkV0lvSjdiWWFyUGZOc1pI?=
- =?utf-8?B?bzQvRUdlWHFOLzFiKzUvNlpSdXdmczhqMEpXRHJZYkN0aGo5Mzh2UXk5ZTlV?=
- =?utf-8?B?QllBelRQaHZyY0VXa2NUUk9aVkFScm9MQjN4R1FPWUJ2aHBNT0c4MmE0WnBp?=
- =?utf-8?B?TW4vU2ZmZFpIR08vbGR0Q01CcDZDNmQ1L0JPNFNnem4zemJqRlJKTC9JQXJS?=
- =?utf-8?B?REhrYkExZ1NmVWxORFcyTC9EeHk5QVlySFhNRzg5NEgxUmFkaU5UcE5MM0dN?=
- =?utf-8?B?amVpdXhlcTJZOGc2Y1NtZ1lMSnNvZEtMUTh2eGt5Q1dWUUhRQ09NNGx2RHN5?=
- =?utf-8?B?dUVQMUhWRlpHcFRkQS9zVjVhTDRoYnhlK3dCMnVLVDJJekFYNU9oYUk1WUJx?=
- =?utf-8?B?QWpKMWUxTjlWU1I1dTFKZmpUTWU1MjNTZnRPWS9XR1FGd1lsMWoyREJUYkJP?=
- =?utf-8?B?MTJJWWdlNWRaeEZLQmR5ZmVGcThtSnhjY25CUWNCQmxMaWhUcVNYN0VQeDRD?=
- =?utf-8?B?d3pzT1lXSXRST3VkdFJIV2NweStIZm1CRDBCQmRyWTY5QXpYTUFSSEdYVnAv?=
- =?utf-8?B?VDJ4UXZUT1dqbzYxL2FrVmNUY1ZweEVTWEs1Qk9KTW94MURuaDhiMnVtZllB?=
- =?utf-8?B?YXNkNzlpZGJrZUJQQWpBUmZxZlJReTl2SGFKbjkxUUtYWjJBK2xWSkh6cFV4?=
- =?utf-8?B?WVFVaWUxMWliYldicEIyRG1EeWVILytQTGdzZVB3OXFGZmJsUUJjMDNSTDlr?=
- =?utf-8?B?OHFDTlRnM0UvbkZjeXRmSjhkY052VkpCaWJ5NWtVeFFiSFUzbFlWb0FvdXNp?=
- =?utf-8?B?aTV2Y1RhVitjbVNlZkhlZXBlV3d2dnh3VHlqbkdyK1hxSTF1bnRyejk5M3do?=
- =?utf-8?B?UUhaVlZId0NTYmV2b245WlVPZ3lsbGExa0Z0QUZEQStQb1ZnMDNaSUxmYllN?=
- =?utf-8?B?YkRBeW0vMzVCTkRQcXo5VEh5TmlHV2UxR3k2TTdRNW14NDNWT1FRZXFkR2da?=
- =?utf-8?B?eVo2RFd5eWNOOTFrMEdPaG5DNHQzRStqTEE2a1dKWUpHTE5QZFVTZlBYQlNK?=
- =?utf-8?B?dWtHTTN5NWY5UGptZjNRL2E5K0hDVGZnN3dSMUFqVTJ6bDVKbjJ0TVFmN2xk?=
- =?utf-8?B?bWxqd3VZeXRRUFEwTkgwbkZ4WE5Oejg0aW9QbWl5UG11a2crdFB1UEFta01q?=
- =?utf-8?B?dmpGOHZFMmhGL2pWc1VQNG0vUjVLVG5YMG9ZM2tXWVUrWDVkWTFwaUtEbTZu?=
- =?utf-8?B?dTlRVGRCVHJBOSt6R2JybEVJNmw4R3g3UFU1Y0NRU2w3Q29KUkN0NERYbDY0?=
- =?utf-8?B?Y0drSUpvakJZdWtDSEVQeDlOVFlrTVYvbCt5MEE0elJrTER2WlhKTS9HQ0Z4?=
- =?utf-8?B?SGcvSlNXVTRtYlpKcjhFWFVWM09iei95Nm9vdnRQbHlEdkxqaWVtVFhnSFRQ?=
- =?utf-8?B?UTVkN2sxTHB5RGE5MDUxcDFzdExOeXRaejhsMjJRK3Vac2NldE1OTWI4bkx2?=
- =?utf-8?B?YWJzbEJvdFZ0VE9VSVVwckZxUjNxNGNEOTJXRFE1THYxcndPTTAwRVhVSjZM?=
- =?utf-8?B?biswOTJZdVVYT3ErWmFqaWVnZ3BOMzZRNU5PQVh3YkIrWXNHcXE2QWJqNFV1?=
- =?utf-8?Q?2G8oz1NdkkYbHEk1hhYbN9VuX?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 273a4c4b-ad28-41a4-f7e2-08dcd0ad8b33
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 08:58:16.5567
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yEyJHkh1qXN79xS8T/9wiFXNA2wuaJvO3kSLWv5C7uXQlM3TQljNQhtUQFXQQZHwvxcRNWjkIw5F5zsW4XDsdQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB7256
+Content-Type: multipart/signed; boundary="Sig_/g5vQTmOQi/JcuOEiHPFvrW5";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Hi Andi,
+--Sig_/g5vQTmOQi/JcuOEiHPFvrW5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> I'm not a big fan of this change. There is not much gain in
-> polluting git bisect in order to shorten pdev->dev to a single
-> dev.
->
-> However, I like the /dev_err/dev_err_probe/.
->
-> I will take the first two patches from this series, but I will
-> leave this if anyone else has a stronger opinion. If you want,
-> you can send just this one patch with just the dev_err_probe()
-> change.
-Thanks for taking the time to review my patch!
-Please take the first two patches, I don't plan to submit another
-patch that only modifies dev_err().
+Hi Jeongjun,
 
-Best Regards,
-Qianfeng
+> In the function hsr_proxy_annouance() added in the previous commit=20
+> 5f703ce5c981 ("net: hsr: Send supervisory frames to HSR network=20
+> with ProxyNodeTable data"), the return value of the
+> hsr_port_get_hsr() function is not checked to be a NULL pointer,
+> which causes a NULL pointer dereference.
+
+Thank you for your patch.
+
+The code in hsr_proxy_announcement() is _only_ executed (the timer is
+configured to trigger this function) when hsr->redbox is set, which
+means that somebody has called earlier iproute2 command:
+
+ip link add name hsr1 type hsr slave1 lan4 slave2 lan5 interlink lan3
+supervision 45 version 1
+
+>=20
+> To solve this, we need to add code to check whether the return value=20
+> of hsr_port_get_hsr() is NULL.
+>=20
+> Reported-by: syzbot+02a42d9b1bd395cbcab4@syzkaller.appspotmail.com
+> Fixes: 5f703ce5c981 ("net: hsr: Send supervisory frames to HSR
+> network with ProxyNodeTable data") Signed-off-by: Jeongjun Park
+> <aha310510@gmail.com> ---
+>  net/hsr/hsr_device.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
+> index e4cc6b78dcfc..b3191968e53a 100644
+> --- a/net/hsr/hsr_device.c
+> +++ b/net/hsr/hsr_device.c
+> @@ -427,6 +427,9 @@ static void hsr_proxy_announce(struct timer_list
+> *t)
+>  	 * of SAN nodes stored in ProxyNodeTable.
+>  	 */
+>  	interlink =3D hsr_port_get_hsr(hsr, HSR_PT_INTERLINK);
+> +	if (!interlink)
+> +		goto done;
+> +
+>  	list_for_each_entry_rcu(node, &hsr->proxy_node_db, mac_list)
+> { if (hsr_addr_is_redbox(hsr, node->macaddress_A))
+>  			continue;
+> @@ -441,6 +444,7 @@ static void hsr_proxy_announce(struct timer_list
+> *t) mod_timer(&hsr->announce_proxy_timer, jiffies + interval);
+>  	}
+> =20
+> +done:
+>  	rcu_read_unlock();
+>  }
+> =20
+> --
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/g5vQTmOQi/JcuOEiHPFvrW5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmbeuK4ACgkQAR8vZIA0
+zr3aWQf+LpYtx8KQQR5W5bNOlDJ7ql9rMWJUeO+uDIvvDuLJP8bf7uaJ5+i9RKZW
+HbKqOx7rYgVmqj5Aax91wIDdXY4NB7jqg0BOfCB67E45a/sVLaLqjnhqXgI6EPQ0
+yLHszr6Tte0VxjbjL66BE0jU5HUi5Xm4tyr9rHKywp4b8bz1iVBgStiQNuh2bNTI
+GTo6MBPaiDBHlYLp8Z+ZYGfaASzLxxam3Tw/bqe9o9vFxp50/cqyLdqqqH2z8IsF
+D03sUeqR/6Nshir1tKUWXLNHtY5295NgLQNKHlFNpdJ1+3JAERjXrbT3hrWiQ4SN
+/acWEqui6OstJunaMWX8YxW8xA7Fwg==
+=A/M4
+-----END PGP SIGNATURE-----
+
+--Sig_/g5vQTmOQi/JcuOEiHPFvrW5--
 
