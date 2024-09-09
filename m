@@ -1,265 +1,96 @@
-Return-Path: <linux-kernel+bounces-320661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 820EA970DDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:26:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0877D970DE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F7641C21DE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 06:26:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E25282B16
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 06:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D1A1ACE03;
-	Mon,  9 Sep 2024 06:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79AE1AD3EB;
+	Mon,  9 Sep 2024 06:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Orgms2t8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ej0kJoqF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9DF101F7;
-	Mon,  9 Sep 2024 06:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C99B176FBD;
+	Mon,  9 Sep 2024 06:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725863195; cv=none; b=cib6SEgNrqFjwkxLT+YeUL8UNiWbdYd0BD4RiTKfQHscTaXyKGZb3eiGNsSp4mqgmX3axgR+9z7tXF6WKL3HAwxBPvYgP5dJE2+SvkCaj6LRoy1oqkJ8RW0wLpWOuUYV0fkoey/iBNlNyOYNF3nfR6WiEQQgFFVenIIlPVVfsvs=
+	t=1725863335; cv=none; b=F3M8AdDMArXvsRAkN8Pi/2Fq6DJOiDptp5uBPVEb5Vwik3kH8y2ErV278fqw3dTnWJQyJ6PFH3GIfPOl+5rVGM3YwLmWzIil3VZnDqofDQsoRN45ipcEjsDT+BVxO+grnyd26+tqxR3Rfm+4Z8TA0489kvVJYD1etXZ1AJ7HaFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725863195; c=relaxed/simple;
-	bh=r9GF5bTYzwt295gEuEfOgsQqynHGVnsfKvT03j0jrkg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rdLwzsv02z77S1Hlt5+s2LASxEig08+l/05O/O+vbJowubI1VGh21Xl1VnXkBJZy9t0zc97SGyyMoFyRqJMKC/+vl4TdjfhKtkFD52b9Jg9njOZiFG5HRJNqzInZal5JIweHzhLAQJUwevauLhlGh+iY1RVqiB0VmnGo2cC9xck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Orgms2t8; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725863193; x=1757399193;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=r9GF5bTYzwt295gEuEfOgsQqynHGVnsfKvT03j0jrkg=;
-  b=Orgms2t8Hv24p5F/SEHuZbuH6ahoubKUyNs5bXL90sPfphKTOujuqnVv
-   Srx2zafv3bW7StG51fXFWh12VJTHT7WP6xs55Y6eC5BDfSTcWDXijYtrt
-   0JiyBwpbiHFnLj+weRDWrhjx9XFBn4+DxbJu6mJMrUlPmR9uALq62KA29
-   L+HIo9dreEKuzcnPlnotHGou9luCR8jP9IL45derK4sEKhPWLK24b2iCJ
-   wg9VtfSNM0IwOR1VksQZ+wa/zo6ZxqaZvZhbXsoGAHe7Xb+Bf3LPwDAgv
-   uf3thojr5VVdKa2GdyBUuPhrUlMa+UEl2T31Cb6XaPMUk4nRqliUlP+s7
-   Q==;
-X-CSE-ConnectionGUID: gEieepfNRfKSZmMtoNaNTg==
-X-CSE-MsgGUID: u1OTQHv6S/CIal0g0S3EiA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="35200595"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="35200595"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 23:26:32 -0700
-X-CSE-ConnectionGUID: A/sdtKovTbO2Y87DH2rCrQ==
-X-CSE-MsgGUID: ahr72hEQQdC41kugS3WGhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="104026040"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.96.163])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 23:26:30 -0700
-Message-ID: <068093ed-1ab5-40d6-b709-cd6810825ba3@intel.com>
-Date: Mon, 9 Sep 2024 09:26:24 +0300
+	s=arc-20240116; t=1725863335; c=relaxed/simple;
+	bh=vvELSPvT8UWs+PW7fQc4nobj2xRxzohNYvouiA2zvJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rEIb7uF45OpoAGC3aRacBKeXP0oU6C9tEV9rkF0aDdmQPWBZbtqTZxzs+S8i+IC82b98Vr/fxjEJ/tGyWVAG/8WmM4gPYzoc9GjsEqQtuCa3CHuY501FmEbC3JOXZpt5XYxZlxHDbQu3dkeA8JvOQlWq3GRk0uEbTz97JDXxIDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ej0kJoqF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF6B5C4CEC5;
+	Mon,  9 Sep 2024 06:28:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725863334;
+	bh=vvELSPvT8UWs+PW7fQc4nobj2xRxzohNYvouiA2zvJ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ej0kJoqFnW8EeHSMrviM6zRrldOaL4F5iqMqV1dNwYrbBSXMR9jMr0jBc7NBZMGRE
+	 Xs4Vj+z+etBEWtZ/zC0dYlT2VMATpr3COaUDm1Uwz5XPeJ9+aIzIL3oCsCqtoRVLpS
+	 C55wqkhStBo5jVZ/RTbhsYfpzaXnMEXCZjEVlN87TpEvh3dqZNx/G+UElK5BycqzxR
+	 mC+VWegXfHx7q5MjJSsE9IAlq0sQ4aCbVzLp6QNNor1VuBJ6KPlDXlnEHM+uNd3ONU
+	 hWXXDIzxvvD9JprQ1ZCTgMjoSvQjElgYNy1QZ6GeDxiNVFLW5Bct1CMpgogAwpSYAF
+	 7zYEi3OH7s2Fw==
+Date: Mon, 9 Sep 2024 08:28:50 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Antoni Pokusinski <apokusinski01@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
+	pmeerw@pmeerw.net, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] dt-bindings: iio: temperature: tmp006: document
+ interrupt
+Message-ID: <ccrcxtfn3dvi6hj7j5mxflm7izhjigqb7vrqnzyklewa57nx2t@beuz42fgblmj>
+References: <20240908172153.177406-1-apokusinski01@gmail.com>
+ <20240908172153.177406-3-apokusinski01@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mmc: sdhci_am654: Add
- sdhci_am654_start_signal_voltage_switch
-To: Judith Mendez <jm@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240906175032.1580281-1-jm@ti.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240906175032.1580281-1-jm@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240908172153.177406-3-apokusinski01@gmail.com>
 
-On 6/09/24 20:50, Judith Mendez wrote:
-> The sdhci_start_signal_voltage_switch function sets
-> V1P8_SIGNAL_ENA by default after switching to 1v8 signaling.
-> V1P8_SIGNAL_ENA determines whether to launch cmd/data on neg
-> edge or pos edge of clock.
+On Sun, Sep 08, 2024 at 07:21:55PM +0200, Antoni Pokusinski wrote:
+> TMP006 sensor has a DRDY (data ready) active-low interrupt which
+> indicates that a new measurement is ready to be read.
 > 
-> Due to some eMMC and SD failures seen across am62x platform,
-> do not set V1P8_SIGNAL_ENA by default, only enable the bit
-> for devices that require this bit in order to switch to 1v8
-> voltage for uhs modes.
-> 
-> Signed-off-by: Judith Mendez <jm@ti.com>
+> Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
 > ---
->  drivers/mmc/host/sdhci_am654.c | 86 ++++++++++++++++++++++++++++++++++
->  1 file changed, 86 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-> index 0aa3c40ea6ed8..fb6232e56606b 100644
-> --- a/drivers/mmc/host/sdhci_am654.c
-> +++ b/drivers/mmc/host/sdhci_am654.c
-> @@ -155,6 +155,7 @@ struct sdhci_am654_data {
->  	u32 tuning_loop;
->  
->  #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
-> +#define SDHCI_AM654_QUIRK_SET_V1P8_ENA BIT(1)
+>  .../devicetree/bindings/iio/temperature/ti,tmp006.yaml      | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-It would be better for the quirk to represent the deviation
-from normal i.e. 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-#define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
+---
 
->  };
->  
->  struct window {
-> @@ -356,6 +357,79 @@ static void sdhci_j721e_4bit_set_clock(struct sdhci_host *host,
->  	sdhci_set_clock(host, clock);
->  }
->  
-> +int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
-> +					    struct mmc_ios *ios)
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
 
-Simpler to call sdhci_start_signal_voltage_switch() for the normal
-case e.g.
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
-static int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc, struct mmc_ios *ios)
-{
-	struct sdhci_host *host = mmc_priv(mmc);
-	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
 
-
-	if ((sdhci_am654->quirks & SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) &&
-	    ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
-		ret = mmc_regulator_set_vqmmc(mmc, ios);
-		if (ret < 0) {
-			pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
-				mmc_hostname(mmc));
-			return -EIO;
-		}
-		return 0;
-	}
-
-	return sdhci_start_signal_voltage_switch(mmc, ios);
-}
-
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
-> +	u16 ctrl;
-> +	int ret;
-> +
-> +	if (host->version < SDHCI_SPEC_300)
-> +		return 0;
-> +
-> +	switch (ios->signal_voltage) {
-> +	case MMC_SIGNAL_VOLTAGE_330:
-> +		if (!(host->flags & SDHCI_SIGNALING_330))
-> +			return -EINVAL;
-> +
-> +		ctrl &= ~SDHCI_CTRL_VDD_180;
-> +		sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
-> +
-> +		if (!IS_ERR(mmc->supply.vqmmc)) {
-> +			ret = mmc_regulator_set_vqmmc(mmc, ios);
-> +			if (ret < 0) {
-> +				pr_warn("%s: Switching to 3.3V signalling voltage failed\n",
-> +					mmc_hostname(mmc));
-> +				return -EIO;
-> +			}
-> +		}
-> +
-> +		usleep_range(5000, 5500);
-> +
-> +		ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-> +		if (!(ctrl & SDHCI_CTRL_VDD_180))
-> +			return 0;
-> +
-> +		pr_warn("%s: 3.3V regulator output did not become stable\n",
-> +			mmc_hostname(mmc));
-> +
-> +		return -EAGAIN;
-> +
-> +	case MMC_SIGNAL_VOLTAGE_180:
-> +		if (!(host->flags & SDHCI_SIGNALING_180))
-> +			return -EINVAL;
-> +
-> +		if (!IS_ERR(mmc->supply.vqmmc)) {
-> +			ret = mmc_regulator_set_vqmmc(mmc, ios);
-> +			if (ret < 0) {
-> +				pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
-> +					mmc_hostname(mmc));
-> +				return -EIO;
-> +			}
-> +		}
-> +
-> +		if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_SET_V1P8_ENA) {
-> +			ctrl |= SDHCI_CTRL_VDD_180;
-> +			sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
-> +
-> +			ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-> +			if (ctrl & SDHCI_CTRL_VDD_180)
-> +				return 0;
-> +
-> +			pr_warn("%s: 1.8V regulator output did not become stable\n",
-> +				mmc_hostname(mmc));
-> +
-> +			return -EAGAIN;
-> +		}
-> +		return 0;
-> +
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
->  static u8 sdhci_am654_write_power_on(struct sdhci_host *host, u8 val, int reg)
->  {
->  	writeb(val, host->ioaddr + reg);
-> @@ -801,6 +875,8 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
->  					struct sdhci_am654_data *sdhci_am654)
->  {
->  	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct device_node *node;
->  	int drv_strength;
->  	int ret;
->  
-> @@ -844,6 +920,15 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
->  	if (device_property_read_bool(dev, "ti,fails-without-test-cd"))
->  		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_FORCE_CDTEST;
->  
-> +	node = of_parse_phandle(np, "vmmc-supply", 0);
-> +
-> +	if (node) {
-> +		node = of_parse_phandle(np, "vqmmc-supply", 0);
-> +
-> +		if (!node)
-> +			sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SET_V1P8_ENA;
-> +	}
-
-It would be simpler without 'np' and 'node'.  Not sure
-what the rule is meant to be, but it could be something like:
-
-	if (of_parse_phandle(dev->of_node, "vmmc-supply", 0) &&
-	    of_parse_phandle(dev->of_node, "vqmmc-supply", 0)
-		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA;
-
-> +
->  	sdhci_get_of_property(pdev);
->  
->  	return 0;
-> @@ -940,6 +1025,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
->  		goto err_pltfm_free;
->  	}
->  
-> +	host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
->  	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
->  
->  	pm_runtime_get_noresume(dev);
-> 
-> base-commit: cf6444ba528f043398b112ac36e041a4d8685cb1
+Best regards,
+Krzysztof
 
 
