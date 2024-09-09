@@ -1,157 +1,161 @@
-Return-Path: <linux-kernel+bounces-322222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F339725F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:54:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B360B9725F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF8A81C235D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:54:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC04728567B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BD818FC72;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA62C18FC9C;
 	Mon,  9 Sep 2024 23:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVzaPSNm"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KJEuHZYD"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E704E210EC;
-	Mon,  9 Sep 2024 23:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7402518E76B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 23:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725926032; cv=none; b=WeU4BfA7ByMdg5syKRQ/uNSWBAvkrZ5TZKQVqONVV9U8k87kuBx+MZh7gnKly6JMPp4KFNqsDrR2hwQtDtq/o6BK+VR0ArmlKGCoZnVbH8xbrkyPoCN9/g4lxGKB4piA1prv7sxvjvpyFHoJClo0+tt1TM1jrrUNBjfmJQRUQ2k=
+	t=1725926033; cv=none; b=Z92haJLleViryAQ07O59r+sScszs2F/Rs909gheb6S2b9NEiAN20AfAWeg7FsSu9Q2P1JEeao9aPcgpPUdID5ktIiYLRhdBTtyZkfJJxfMc0JCLBjqVdewEWNcgOA8tG9feaKzDTGWcL23o/rcSD83Jp0n2NAB6Oz4CezuXHvYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725926032; c=relaxed/simple;
-	bh=L+ek0A1OGVp1oYN1ZH/Q/1LDDgscX7DdrYv1BLXqeKs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hFPg1nMyoNnDykNxik3z5zJRHgvqH2+wVV7Q5PonOg5o71NdTtF7qWXU/weEaLfjN9MF2RYz1ewkAcNhqv0JxjB+H1OtCvjaDWq7VCMVCabG6Uf5/FadNPt0NGC0HQrQqWPKnpAimB71ayHobC/CAQ8dlRSyQmS5NMRqzZXjVYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AVzaPSNm; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d889207d1aso3418040a91.3;
-        Mon, 09 Sep 2024 16:53:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725926027; x=1726530827; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5K5RcEf3k2OEiR6pRFXjpmCMTG8fO8xMCj1mjNM55uE=;
-        b=AVzaPSNmpU175J3U1+QXHDgJuwlgjQywns4H4iCR737iW4i2jYt2WBZzc6qW++qEKP
-         u+gYUropStvYS3f9KYSNLScta39r4R2iO3msfvDLGaMwpI5XG2HXxiNw+XCH1j8Gop3L
-         /g9SpXSxtdYuzppcTvtv/hV5A/5wydMp6OGlnbB4YTWCBy/088C+cHV+L20mabjwUZcl
-         +SkHmCKGgv54a56dLCqcG7bAoXigLmzgfbYkTZNajK8yhz+4AQr32uxyIJic8U9cfQ1E
-         YwelH9UY/mrlgITxMvid0FGyBXrWgYCUEeYb2vdedz6J5+dmtLgVBqUIiy17meRu3OEP
-         6iyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725926027; x=1726530827;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5K5RcEf3k2OEiR6pRFXjpmCMTG8fO8xMCj1mjNM55uE=;
-        b=kV96xrvSLeHzsV8FgepByxtOF6W9yIokPoJXH/WQUxw8fuh0kyLwrg3WlCQpBVysdL
-         7dGIgVTaaXvhugfmpuYRfbrYGxTie9JXg+bxe+OQplzvQ12bCZuF3mV4+46BeOSsbo2a
-         iJ9Wu+qeoTq+BhE+1IMqo/ShtPFYs9A7fzPBQEF3tKZAkXcXay70KwVFtcoElmIZJWNA
-         Txnu60+6sC0M0piHBUTZFz1BdCoxFfeWk89stnuMayjf5TYtYfzBtxEfwDMLo4e0kDxT
-         7BwpKhGjsu+7V+1SaMZonC4hwNTThIeDrpVyHraGdrS4BAmMpHhIkgGIAxyS5MRo4RCj
-         ufSA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2c8yKYHO7FMQ4eblhyrWd2/gzhO9EjMDtPNxsZeID+NYrU0tCv0O1wNf0fex4j9hGPRfM9Uw3QrZVXffe@vger.kernel.org, AJvYcCXBpxuolVQdG79PVaFB0Io/ahbknA+nWhsuJ2/bCeJL3I3kvfZQLQU+uFHOTpIVsyBO96UNiqpBj3TdGJV483fxYKEA@vger.kernel.org, AJvYcCXr3XAsoEQ7E+OwxfmwRHg4ApZJYo6moMmQwwDgmS4qIJgH9chEAgErbBGdxFGyePlhQhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpgoZIbu/P8LEY4bMQuS/8gfstNtSGnFPNNhdX4Z3zRGvr9qUf
-	hHKIiq/lsdLc+ZqBEm3afIHaCU4/OYIR339/NrEpLWS/4zQo2+bhys254p2y/JB36t4/d9C9zN0
-	sh3CKj8fRyFGSheU7+N6IOSRpd24=
-X-Google-Smtp-Source: AGHT+IFhiFHEFkJooCujGpp80nM61QY7wIUU77zVsYj1xcxgD4jYZCI0eKkGpw72714pmMDNLFt/IEvkrLKdYriTRxM=
-X-Received: by 2002:a17:90b:1b4b:b0:2c8:64a:5f77 with SMTP id
- 98e67ed59e1d1-2dad5196e14mr12777850a91.37.1725926027080; Mon, 09 Sep 2024
- 16:53:47 -0700 (PDT)
+	s=arc-20240116; t=1725926033; c=relaxed/simple;
+	bh=JEK3htBVwvUaO1imIyiZjFi3195gqFDk1GziVP71OT8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pTxnpoqsSng68+mJ/2L5gGghcjWGbnUtKF2lnIq7IKJz9yYEZylk+Q2oiHq//vukPgfpPzChoT1I0DWnH/7qg42c6QxvsYO8VkGbks2u42RrYTHP85ZZzLIlYOaeQqu0K5ieY+usbKCnsNg4ZewCQ9l7KmYe1OrKiVC4USnFOqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KJEuHZYD; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <dce7dd7e-d5a6-4113-894a-022c1651b6b0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725926028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uApDM6EE9wYD0yo8L2knVMnA0y6Fav4QSIjUi5lz1Y8=;
+	b=KJEuHZYDNOk5AblmtX8ZcnoV47coznn+uzxj7N2bAveERUvDXMigoHvy2pMBAyKgeY8fzv
+	7Khm/z7Kjstz0RS0O5CnRM5SR6hOKx44RFFP1uLlVqOEJOMeIHlzjWZj8VN9RjiCii1t0s
+	Jt3PRJo1iZPFwz420+QTvJkFuP8GSoc=
+Date: Mon, 9 Sep 2024 19:53:43 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909201652.319406-1-mathieu.desnoyers@efficios.com>
-In-Reply-To: <20240909201652.319406-1-mathieu.desnoyers@efficios.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 9 Sep 2024 16:53:34 -0700
-Message-ID: <CAEf4BzaOh6+G3qkPjW7HYkMBhys+=WU=d3cErnm8ykTt2W3y5g@mail.gmail.com>
-Subject: Re: [PATCH 0/8] tracing: Allow system call tracepoints to handle page faults
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	bpf@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net] net: xilinx: axienet: Fix IRQ coalescing packet count
+ overflow
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+To: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "Simek, Michal" <michal.simek@amd.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ Ariane Keller <ariane.keller@tik.ee.ethz.ch>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andy Chiu <andy.chiu@sifive.com>
+References: <20240903180059.4134461-1-sean.anderson@linux.dev>
+ <MN0PR12MB595374F39CB6F68958004A9DB79C2@MN0PR12MB5953.namprd12.prod.outlook.com>
+ <4e0963f5-5c27-4d65-92d2-86249f4f0870@linux.dev>
+Content-Language: en-US
+In-Reply-To: <4e0963f5-5c27-4d65-92d2-86249f4f0870@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 9, 2024 at 1:17=E2=80=AFPM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> Wire up the system call tracepoints with Tasks Trace RCU to allow
-> the ftrace, perf, and eBPF tracers to handle page faults.
->
-> This series does the initial wire-up allowing tracers to handle page
-> faults, but leaves out the actual handling of said page faults as future
-> work.
->
-> This series was compile and runtime tested with ftrace and perf syscall
-> tracing and raw syscall tracing, adding a WARN_ON_ONCE() in the
-> generated code to validate that the intended probes are used for raw
-> syscall tracing. The might_fault() added within those probes validate
-> that they are called from a context where handling a page fault is OK.
->
-> For ebpf, this series is compile-tested only.
+On 9/5/24 10:55, Sean Anderson wrote:
+> On 9/4/24 13:19, Pandey, Radhey Shyam wrote:
+>>> -----Original Message-----
+>>> From: Sean Anderson <sean.anderson@linux.dev>
+>>> Sent: Tuesday, September 3, 2024 11:31 PM
+>>> To: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>; David S .
+>>> Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>;
+>>> Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>;
+>>> netdev@vger.kernel.org
+>>> Cc: Simek, Michal <michal.simek@amd.com>; linux-arm-
+>>> kernel@lists.infradead.org; Ariane Keller <ariane.keller@tik.ee.ethz.ch>;
+>>> linux-kernel@vger.kernel.org; Daniel Borkmann <daniel@iogearbox.net>;
+>>> Andy Chiu <andy.chiu@sifive.com>; Sean Anderson
+>>> <sean.anderson@linux.dev>
+>>> Subject: [PATCH net] net: xilinx: axienet: Fix IRQ coalescing packet count
+>>> overflow
+>>> 
+>>> If coalesce_count is greater than 255 it will not fit in the register and
+>>> will overflow. Clamp it to 255 for more-predictable results.
+>>> 
+>>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>>> Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet
+>>> driver")
+>>> ---
+>>> 
+>>>  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 6 ++++--
+>>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>> 
+>>> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+>>> b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+>>> index 9aeb7b9f3ae4..5f27fc1c4375 100644
+>>> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+>>> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+>>> @@ -252,7 +252,8 @@ static u32 axienet_usec_to_timer(struct axienet_local
+>>> *lp, u32 coalesce_usec)
+>>>  static void axienet_dma_start(struct axienet_local *lp)
+>>>  {
+>>>  	/* Start updating the Rx channel control register */
+>>> -	lp->rx_dma_cr = (lp->coalesce_count_rx <<
+>>> XAXIDMA_COALESCE_SHIFT) |
+>>> +	lp->rx_dma_cr = (min(lp->coalesce_count_rx, 255) <<
+>>> +			 XAXIDMA_COALESCE_SHIFT) |
+>>>  			XAXIDMA_IRQ_IOC_MASK |
+>> 
+>> Instead of every time clamping coalesce_count_rx on read I think better 
+>> to do it place where it set in axienet_ethtools_set_coalesce()? It would
+>> also represent the coalesce count state that is reported by get_coalesce()
+>> and same is being used in programming.
+> 
+> The parameter which will be trickier is the timer, which is also clamped
+> but depends on the (DMA) clock speed. So theoretically it may be
+> different if the clock gets changed at runtime between when we set
+> coalesce and when we apply it. But do we even support dynamic rate
+> changes for that clock?
+> 
+> In either case, I think this will be easier to do as part of [1], since I
+> am already rearranging the calculation in that patch.
 
-What tree/branch was this based on? I can't apply it cleanly anywhere I tri=
-ed...
+Implemented as https://lore.kernel.org/netdev/20240909235208.1331065-6-sean.anderson@linux.dev/
 
->
-> This series replaces the "Faultable Tracepoints v6" series found at [1].
->
-> Thanks,
->
-> Mathieu
->
-> Link: https://lore.kernel.org/lkml/20240828144153.829582-1-mathieu.desnoy=
-ers@efficios.com/ # [1]
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Yonghong Song <yhs@fb.com>
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Cc: bpf@vger.kernel.org
-> Cc: Joel Fernandes <joel@joelfernandes.org>
-> Cc: linux-trace-kernel@vger.kernel.org
->
-> Mathieu Desnoyers (8):
->   tracing: Declare system call tracepoints with TRACE_EVENT_SYSCALL
->   tracing/ftrace: guard syscall probe with preempt_notrace
->   tracing/perf: guard syscall probe with preempt_notrace
->   tracing/bpf: guard syscall probe with preempt_notrace
->   tracing: Allow system call tracepoints to handle page faults
->   tracing/ftrace: Add might_fault check to syscall probes
->   tracing/perf: Add might_fault check to syscall probes
->   tracing/bpf: Add might_fault check to syscall probes
->
->  include/linux/tracepoint.h      | 87 +++++++++++++++++++++++++--------
->  include/trace/bpf_probe.h       | 13 +++++
->  include/trace/define_trace.h    |  5 ++
->  include/trace/events/syscalls.h |  4 +-
->  include/trace/perf.h            | 43 ++++++++++++++--
->  include/trace/trace_events.h    | 61 +++++++++++++++++++++--
->  init/Kconfig                    |  1 +
->  kernel/entry/common.c           |  4 +-
->  kernel/trace/trace_syscalls.c   | 36 ++++++++++++--
->  9 files changed, 218 insertions(+), 36 deletions(-)
->
-> --
-> 2.39.2
+--Sean
+
+> --Sean
+> 
+> [1] https://lore.kernel.org/netdev/20240903192524.4158713-2-sean.anderson@linux.dev/
+> 
+>>> XAXIDMA_IRQ_ERROR_MASK;
+>>>  	/* Only set interrupt delay timer if not generating an interrupt on
+>>>  	 * the first RX packet. Otherwise leave at 0 to disable delay interrupt.
+>>> @@ -264,7 +265,8 @@ static void axienet_dma_start(struct axienet_local
+>>> *lp)
+>>>  	axienet_dma_out32(lp, XAXIDMA_RX_CR_OFFSET, lp->rx_dma_cr);
+>>> 
+>>>  	/* Start updating the Tx channel control register */
+>>> -	lp->tx_dma_cr = (lp->coalesce_count_tx <<
+>>> XAXIDMA_COALESCE_SHIFT) |
+>>> +	lp->tx_dma_cr = (min(lp->coalesce_count_tx, 255) <<
+>>> +			 XAXIDMA_COALESCE_SHIFT) |
+>>>  			XAXIDMA_IRQ_IOC_MASK |
+>>> XAXIDMA_IRQ_ERROR_MASK;
+>>>  	/* Only set interrupt delay timer if not generating an interrupt on
+>>>  	 * the first TX packet. Otherwise leave at 0 to disable delay interrupt.
+>>> --
+>>> 2.35.1.1320.gc452695387.dirty
+>> 
+
 
