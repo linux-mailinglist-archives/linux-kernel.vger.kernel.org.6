@@ -1,96 +1,147 @@
-Return-Path: <linux-kernel+bounces-320794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B6097104B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:52:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F23BF971050
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 471D6281375
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:52:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CDB2B21EC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E121B012F;
-	Mon,  9 Sep 2024 07:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE051B12DC;
+	Mon,  9 Sep 2024 07:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2gHmBit"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Zq6JXZ//"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E323176237;
-	Mon,  9 Sep 2024 07:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832DA1AF4D9;
+	Mon,  9 Sep 2024 07:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725868316; cv=none; b=YxEPDS2cVaA5fC7NT9WubfF+jnHi78i18JK9mtJEZ6Az6ZpaLSfd5wUpj7LA73058d1qpNWnoHVuJNEum71jUJnLwOyG+Q0iIli9x7m/pgn0ut51FdPCxZAywCTfxzRGDsdKzExHvHSkBOZtzwPbEXrGAD9xcSwsxYCc8RUTlBc=
+	t=1725868337; cv=none; b=J86bvj4H6zq+UeUvbcoIsugXo7gJt3+CZeOwPkeML8ki+7PiE+SKBliKU4YrPfIMHEXeTO5KquJSbI2tYBBI52GCkCFX8b8DxAYgiDyKDzW+bl3idQMSwoB/DUfxsoUsYQUrPNTdz2PcTrR8GYUlJrk3J3UFx2b41mZDStzDF2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725868316; c=relaxed/simple;
-	bh=96c4c3wPOJU8suxg0eoF68+PUAPDXmd7MqAJkKJrjV0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u9bfjlSKuhbn7ZMrmu8E+SiXKqLnJzdWU44c5+VuB1Ms+OCMkERiydc8iMlkpSfNLXRMHLT/1k+80xktfU4hbNgFW3w4+BorVvanovmyTw0+eHbaHjNj3uJ0c860WlFqR9LYEw+Y4R8XJZ0Oqwyu6nnqZkLJrCczd2jwrK4g+Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2gHmBit; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9B8CC4CEC5;
-	Mon,  9 Sep 2024 07:51:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725868315;
-	bh=96c4c3wPOJU8suxg0eoF68+PUAPDXmd7MqAJkKJrjV0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=T2gHmBitxf514l0xfai544a0kNK41duKcP83xv4FtdRCGg8wRrnxNNvYex2ydEaaC
-	 u+xt+R0b45iR4iyloAC+HZUJlwfgra15lnqEs5rD8Zcq1duZturu2D6qROAZNeNR6N
-	 ZJJI3pQePpLk9W9KHeXrfb0KedNdk26h13CgwXt2QQVvIFGaHHPX6rcV9CfrjYF03/
-	 pC+vAPq6R+qeMtAIX1rQETwWWWnyoplRaFkq7iUJTYwqQxkwnyS3pMIeD4rRkob218
-	 D83diNnSUfcicIeB6UYxMWVL1nVHfnkcJES0qoz1QrfASfx1rVV2LWrHAs/V9tUKl5
-	 xYiAm1/3+lAHA==
-From: Christian Brauner <brauner@kernel.org>
-To: Yan Zhen <yanzhen@vivo.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	sfr@canb.auug.org.au,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v1] proc: Fix typo in the comment
-Date: Mon,  9 Sep 2024 09:51:41 +0200
-Message-ID: <20240909-frieden-yacht-7b67be6a8a3c@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240909063353.2246419-1-yanzhen@vivo.com>
-References: <20240909063353.2246419-1-yanzhen@vivo.com>
+	s=arc-20240116; t=1725868337; c=relaxed/simple;
+	bh=tYpdgaZCN0lmhTqQidVM517rCDCWKPWudibqWnwydI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hh1/prBYLk43uoaz2bmqoCV5Th/nDoO9kzinaCVpvh5usdH/kuBY8phJ1yignsZOpQktN4NL2exAVU3nUoBIXKA5PnWcgBPupZpFVa7opfUGpFuB8kDJYYNIPMoytyAqO3Mn0VpzEQbPSqDwAQ1kAvxbHYMhPwRK9uWp7Y/KLKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Zq6JXZ//; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 26DFA40005;
+	Mon,  9 Sep 2024 07:52:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725868327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ryHecAjCKFHY5a39/P+GIvh5tYnxD8Fg8PfucobQxhs=;
+	b=Zq6JXZ//+adouwtwkw6boEPhyiUb2gfFl1RlA0RtXhCzJdYB5HfGK1TUuiPkVXECfEwRwo
+	5FksXPPXTfRR/GOVEhY+/BBte1UQQL25WwxYjwMs8hI6zh80c0qZ8lho8BBY9p/4i7aqGx
+	HVeByxhdV3V98xdhXabPHXeeVJJ+ojd/5b5xx4NhZ2xsZZaBgPbGmDkM7S5gBdiuQFAVn4
+	WF17yA5QBKYBiKqL8Q7+2YUgOIzQQwVr5fl42DKQM21/Muj8AIaUrastdmO0NdIpt/nGT+
+	dfkAHGEQdaTjvIEcerwNh6l4fmtvPPZrqc3P4P4ns6/jQPS79ay20fahDCDf3g==
+Date: Mon, 9 Sep 2024 09:52:03 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Lee Jones <lee@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Andy Shevchenko
+ <andy.shevchenko@gmail.com>, Simon Horman <horms@kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Lars Povlsen <lars.povlsen@microchip.com>, Steen
+ Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon
+ <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Rob Herring
+ <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
+ <clement.leger@bootlin.com>
+Subject: Re: [PATCH v5 3/8] mfd: syscon: Add reference counting and device
+ managed support
+Message-ID: <20240909095203.3d6effdb@bootlin.com>
+In-Reply-To: <20240903180116.717a499b@bootlin.com>
+References: <20240808154658.247873-1-herve.codina@bootlin.com>
+	<20240808154658.247873-4-herve.codina@bootlin.com>
+	<20240903153839.GB6858@google.com>
+	<20240903180116.717a499b@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1087; i=brauner@kernel.org; h=from:subject:message-id; bh=96c4c3wPOJU8suxg0eoF68+PUAPDXmd7MqAJkKJrjV0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTdWymy45f8vtzNmd7CGa4m4qsCv4YsnG8fx7XEqF7g7 A851msNHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPxucHIsO70qb12Ql+7HWYd zjfpYJfS2lj3LKF8cnD8D4/5+dd/P2Nk+NThbnX7+cLk+1e2rRX7ESy88jcz6+mvLuUc2xfv50q azQYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Mon, 09 Sep 2024 14:33:53 +0800, Yan Zhen wrote:
-> The deference here confuses me.
+Hi Lee, Arnd,
+
+On Tue, 3 Sep 2024 18:01:16 +0200
+Herve Codina <herve.codina@bootlin.com> wrote:
+
+> Hi Lee,
 > 
-> Maybe here want to say that because show_fd_locks() does not dereference
-> the files pointer, using the stale value of the files pointer is safe.
+> On Tue, 3 Sep 2024 16:38:39 +0100
+> Lee Jones <lee@kernel.org> wrote:
 > 
-> Correctly spelled comments make it easier for the reader to understand
-> the code.
+> > On Thu, 08 Aug 2024, Herve Codina wrote:
+> >   
+> > > From: Clément Léger <clement.leger@bootlin.com>
+> > > 
+> > > Syscon releasing is not supported.
+> > > Without release function, unbinding a driver that uses syscon whether
+> > > explicitly or due to a module removal left the used syscon in a in-use
+> > > state.
+> > > 
+> > > For instance a syscon_node_to_regmap() call from a consumer retrieves a
+> > > syscon regmap instance. Internally, syscon_node_to_regmap() can create
+> > > syscon instance and add it to the existing syscon list. No API is
+> > > available to release this syscon instance, remove it from the list and
+> > > free it when it is not used anymore.
+> > > 
+> > > Introduce reference counting in syscon in order to keep track of syscon
+> > > usage using syscon_{get,put}() and add a device managed version of
+> > > syscon_regmap_lookup_by_phandle(), to automatically release the syscon
+> > > instance on the consumer removal.
+> > > 
+> > > Signed-off-by: Clément Léger <clement.leger@bootlin.com>
+> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > > ---
+> > >  drivers/mfd/syscon.c       | 138 ++++++++++++++++++++++++++++++++++---
+> > >  include/linux/mfd/syscon.h |  16 +++++
+> > >  2 files changed, 144 insertions(+), 10 deletions(-)    
+> > 
+> > This doesn't look very popular.
+> > 
+> > What are the potential ramifications for existing users?
+> >   
 > 
-> [...]
+> Existing user don't use devm_syscon_regmap_lookup_by_phandle() nor
+> syscon_put_regmap().
+> 
+> So refcount is incremented but never decremented. syscon is never
+> released. Exactly the same as current implementation.
+> Nothing change for existing users.
+> 
+> Best regards,
+> Hervé
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+I hope I answered to Lee's question related to possible impacts on
+existing drivers.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Is there anything else that blocks this patch from being applied ?
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] proc: Fix typo in the comment
-      https://git.kernel.org/vfs/vfs/c/698e7d168054
+Best regards,
+Hervé
 
