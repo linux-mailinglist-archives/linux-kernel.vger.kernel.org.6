@@ -1,61 +1,65 @@
-Return-Path: <linux-kernel+bounces-321092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F39B97145C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:50:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05DDD971465
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE38D1F2384C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A511D1F2195E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0351B14F3;
-	Mon,  9 Sep 2024 09:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B681B3F01;
+	Mon,  9 Sep 2024 09:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Gdmvvxhn"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CDmhO7aB"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690981AD9C3
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6778C1B373B;
+	Mon,  9 Sep 2024 09:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725875404; cv=none; b=eddT04rRWwTY15Iq4O5E2KeDdbNnHXRenBLpqwK1R8Ow79UgytNp9BUvxCV/ZxqsrcoRooevshe/Qc79MnKfo8h25paZ0M/hATwmGvU9lySx7W75DdUDh8T03PPnlXz5Ols5hu5vApvPMLcxyhbsukiZg5tQqTRfbI7RP1xW+PI=
+	t=1725875408; cv=none; b=B1Xj+Uxeb/tvEkF0dfUS3hvESCIkPJDWOzGa7Q7xmmhFS3mYYanxl2zQiu1pVjizOy5uGsMNdmxxpQzVO6TWy7xY0ZL8byIosu1y1BJU1McYmJ2CZ5LEMHAU3/A8AhVNpc9eyuOzgdXXdq705Y4e5rL4UCXPfZ9kzHoTYBIiraE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725875404; c=relaxed/simple;
-	bh=WGSfmjP2xpkg9kRW5SbVOyZniCqkxswImo1NnnS+ve8=;
+	s=arc-20240116; t=1725875408; c=relaxed/simple;
+	bh=YNEEoZK0F87nnuxlA8ZOVCpm884g6LkdLyjxpguwzQ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GHEwW7uhm4v6AwNaMVkCc6DYUoLTAW/GLr8eFN7oZ/tYCk7mHqjw31ONHUgv4irHcu6Fzk3CnN4nMnPSNgcsOyuTIzF18MsM6bc/ZT4EMKLJAeJu0gNBaYXXwbbSn3gi7llJod3y+syeh2sa3g0qXU4FAHStcDQkD6Dj6JmUtfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Gdmvvxhn; arc=none smtp.client-ip=217.70.183.195
+	 MIME-Version:Content-Type; b=Z2ZJCYOmD6OfofwX5ZKOUw0rop0BtCpwmVR6KeoT3VsilpCCMUGU/rpPE3hulFEj8hJ9lSEW/WfJmdcbNErtXCc3UVPtsVrsdKD++aRdQPJsj7GbKOgfAo1OdqPVreprDYYzxINUCrhn12tQ9fjup73k/tV6Kx9J7LE8pIxTTTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CDmhO7aB; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4E39A60004;
-	Mon,  9 Sep 2024 09:49:53 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BC657E0009;
+	Mon,  9 Sep 2024 09:50:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725875393;
+	t=1725875403;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WGSfmjP2xpkg9kRW5SbVOyZniCqkxswImo1NnnS+ve8=;
-	b=GdmvvxhnbXhVuPkYO7n179XVJp7AbyHe8ARxaB9MFEmiuv0He1KV7+s4eR8nN5poH/Pqbv
-	G8oRLw1kcLxNNqI/+HTJH2usCsBO6aqQUtpIfch36TlTno0TZN3rb/eiln5vFTcNJ5IOyx
-	KvdUmn/QCstJE/OUH9tyZmmMxau/Er6iFShK2kds9JZzoubHtzxiEODcN4URT1ko7xcLO/
-	hAt1Kq14aY3TnyOO//hdPfnQmECNAokNOXbt8o/p08JT3YJIeyICLXw/bFCtvHh0FrZUZE
-	g7IS3JlxRdYYUkURGlA/kUfMvuFpdB02g7rPa62+wPJHvGa4E6ftaJ0Dz/sSRQ==
-Date: Mon, 9 Sep 2024 11:49:52 +0200
+	bh=+n6jIuUoupEYC9it7jynGsfYtTffkj9K1qGvau67Xdk=;
+	b=CDmhO7aBGHlWdZiCpFPQW01csa4AVN722IUzlJyMVnxEH6+cWYz86FQ8OxAiz2420sGBW8
+	n4mM+Xeiq3XWkr26A66LjKTVKEUcOwxxzuN8fGsnQz+MqezxXXmz8FbHupp2jM5wyNTII+
+	3/91pxDCRwhqKtCdAH7UM0lrmRZqVlt6K8TzvIooik6D1oYcZ1zX5et1JOwT+nQJm6Sr0O
+	ftBYMd31fOBewjDuxkkM8qGAf9Y06pe0J0ErzX7ejhx+ytUd7NOMW8PgcUl1M1pLMJnA/s
+	PTf2WOuAATZlWj1jXZgZy4p/5p8WR6R3Z9x84E9Svbgp4FU5N3qoihxdVLR7wQ==
+Date: Mon, 9 Sep 2024 11:50:01 +0200
 From: Miquel Raynal <miquel.raynal@bootlin.com>
 To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
- Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 05/18] mtd: tests: Include <linux/prandom.h> instead of
- <linux/random.h>
-Message-ID: <20240909114952.580d0c20@xps-13>
-In-Reply-To: <CAFULd4ZwEcv-KZSpoQznMvd2wZBqAvqvr_JzK7fboR_Ec6721g@mail.gmail.com>
-References: <20240905122020.872466-6-ubizjak@gmail.com>
-	<20240906151021.736425-1-miquel.raynal@bootlin.com>
-	<CAFULd4ZwEcv-KZSpoQznMvd2wZBqAvqvr_JzK7fboR_Ec6721g@mail.gmail.com>
+Cc: x86@kernel.org, linux-crypto@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-fscrypt@vger.kernel.org, linux-scsi@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, Richard
+ Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH RESEND v2 06/19] mtd: tests: Include <linux/prandom.h>
+ instead of <linux/random.h>
+Message-ID: <20240909115001.2b05a5ce@xps-13>
+In-Reply-To: <20240909075641.258968-7-ubizjak@gmail.com>
+References: <20240909075641.258968-1-ubizjak@gmail.com>
+	<20240909075641.258968-7-ubizjak@gmail.com>
 Organization: Bootlin
 X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
@@ -70,34 +74,19 @@ X-GND-Sasl: miquel.raynal@bootlin.com
 
 Hi Uros,
 
-ubizjak@gmail.com wrote on Fri, 6 Sep 2024 17:58:39 +0200:
+ubizjak@gmail.com wrote on Mon,  9 Sep 2024 09:53:49 +0200:
 
-> On Fri, Sep 6, 2024 at 5:10=E2=80=AFPM Miquel Raynal <miquel.raynal@bootl=
-in.com> wrote:
-> >
-> > On Thu, 2024-09-05 at 12:17:13 UTC, Uros Bizjak wrote: =20
-> > > Usage of pseudo-random functions requires inclusion of
-> > > <linux/prandom.h> header instead of <linux/random.h>.
-> > >
-> > > Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> > > Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-> > > Cc: Richard Weinberger <richard@nod.at>
-> > > Cc: Vignesh Raghavendra <vigneshr@ti.com>
-> > > Cc: linux-mtd@lists.infradead.org =20
-> >
-> > Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.gi=
-t mtd/next, thanks. =20
+> Substitute the inclusion of <linux/random.h> header with
+> <linux/prandom.h> to allow the removal of legacy inclusion
+> of <linux/prandom.h> from <linux/random.h>.
+
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
 >=20
-> Miquel, is it possible to just ACK the patch for now? The series
-> touches many parts of the kernel, so I guess it is best to harvest
-> Acked-by:s in this stage of development and commit all the patches
-> some time after the merge window. This will avoid merge conflicts with
-> the series.
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: Vignesh Raghavendra <vigneshr@ti.com>
 
-Changing an include with a more specific include didn't look like a
-dangerous change, but I'm fine dropping the patch. Please mention it
-next time, because I didn't see it.
-
-Thanks,
 Miqu=C3=A8l
 
