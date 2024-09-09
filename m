@@ -1,93 +1,177 @@
-Return-Path: <linux-kernel+bounces-322117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B5FD97243E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:10:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69DFD972441
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4897A1F240BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:10:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C2DC1C22930
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A8D18C01D;
-	Mon,  9 Sep 2024 21:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E1C18C029;
+	Mon,  9 Sep 2024 21:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4h6DKHm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T24Ixpgx"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A41189F2F;
-	Mon,  9 Sep 2024 21:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E0A18C004
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 21:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725916238; cv=none; b=jl1cwyYi5tmdwN/VC0jtoLSvJAbU0vWhVRi+KOZ/utrUV+fttjRhMpzjLf4tGtRpAuWI/eyjoeQEMnWYZ05C5YebtYwUjIJ36PXm0eQmtgKDnZnioLOY6YSgqoCiqnX1IViCZEfbIs2lhN0d6x9b1tsRM2flXlES5ORCuXBXY+I=
+	t=1725916317; cv=none; b=SoiTHGeCT2tdgBADTQ5rYAFrAyM5stYswA3HtphUDUNTTKMbjil4pei5bnmw5MWVKTfw7d38d9ImoZZ8kAnSvSP5dVU3jMsDmMfz0mRoyFWFf/wHSOuQ3acSsWDznOtQVGeQqv1l2Ig3ZUve1nCT26HCKRRfQb/GaeMytcu8zI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725916238; c=relaxed/simple;
-	bh=MrtANQVha9P9Lvw9CKpcpRx9xPN484pTQpV1GPE55pg=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=YfL56CBB+o2zOJ6Dk4b/ByfldAPq//SIf3pSQxr1WBpA1s8q4hx5RNX5uyoF2J08hXfWQepdmDwJQA327i8L5nssGVpO9C4d/MPPNnp747+3kshbAzocVACS63IGS9TqJpaXZoVRB5xHDbPh/oLXERNpDAQQ8zx51rWH4wg6VzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4h6DKHm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7133AC4CEC5;
-	Mon,  9 Sep 2024 21:10:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725916237;
-	bh=MrtANQVha9P9Lvw9CKpcpRx9xPN484pTQpV1GPE55pg=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=c4h6DKHmlCr0T/qOShqLVJP/Kvyd2M5/1qtoReBDD/dRwJfzgbmcqVRXvHd8T+Ilq
-	 xz8XHZYVxeN0SAy/WS28yczlCiCUHivOWFGRxR6fSLVxApWDA1wZKe/dwPyvT2cbkm
-	 361kZB3x+A5ucP6YIV/PgLamWC4Eb5OAXFqlkEbsf6gh27rnZ/MIRxqbSvAEa0K6Pj
-	 F4LdOAiwo5evOLOELkhoU0dIfH9qrjlnjXuFsIfm8/QtjmFKqKRRHU/GzMfK2f9dPq
-	 3lcBEW2ene9zeFGRHaozo7puHbqGVxEyDUgyHFbiOD5WRigj9jM3GMjyRovP9K/GzL
-	 Vt8v1wP2i321A==
-Message-ID: <a487389540a0dd6c981257b4939c001a.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725916317; c=relaxed/simple;
+	bh=WPjhjXw2i3ADOwvPMY616fJ0MEFvnnPuvKo/gX5cbu8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=B6EtPhNpCugtOyvgVjBc0PocIxop2S0UPQjyp0mb9RQod8VU6AWOlUKBT5+1D2ltAoY7lB+xqXj0P1oOWt7SCqc04cCUPp43D5MZhFRIvM4Sz97vvJoyATNRHAGMhF9TJmlZum7+5d9W9rMC+ys0dW7xft4PWf2CD9je+4pBqoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T24Ixpgx; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2d87b7618d3so5636027a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 14:11:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725916315; x=1726521115; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d6b34m8WsPSJ4ekRqhLLXv69ERzykEYpuolvxg7g6LM=;
+        b=T24IxpgxOzP/QNER+4+gjAJTdmlRR6uBkScfpDGC7ZAt+7LIRxqetIGnI9P2bt8dj+
+         S1cWeK8PTzwxchJ6rLm4gCn2FMbzh5H4ScOtPYYAerPd6WYjFziiKk9Mq3vQXVVdy18P
+         CdAF9uiqT+Ba+GFbI3fzu8CWtluooWCsi8KdLLg+xtY5DnQi3YEr5Pa6cDa2UXB9GGog
+         sIqB0wBJMqOn1HN1YP8p4AkCLpWrwpDho4Gfjqx1haompEMqfyxNYdJxPiDs2RKGJMS/
+         6NiS4DfHA8y20/9gHh5dMvaRBkbHxJP3+Q7KZlPKgq2esQCpZzmqUdoq99Rf79Pux2ab
+         AG9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725916315; x=1726521115;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=d6b34m8WsPSJ4ekRqhLLXv69ERzykEYpuolvxg7g6LM=;
+        b=jwmwFz2bimELEPOmIvShWOcR6rdFtZNRMexT/377ykjmRCSIU6exT3VDXdUO4qLpPd
+         +U/TTpteoVH2cfcDPnwIwTdTCrjzcGmBjoI7k2q/yKycJXaT6U32z3Mml9m1E/utMnxx
+         NGjYJ+gNNegIV3Q79dLcpraF/6J82fyiQMdERzbx/F/IPbq8y2fI2FHdvThFP5iaawmY
+         QRlJ7y8Bnp2DLmeUjyk+OtpkQ13K7dhKC8I/dwPlh4kcux+KfAYqZHr8RDw5cEc2cF4t
+         IArXHkXVW9P3g0eWN85/7gmiGtmjtvHKHGIqJh3tbfDGj1k+QbGbfdTghkL/F2rhl4c/
+         SGdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIbejIeJ8CwOk30hZ+nN8IvQt3j6CEW+pFMsBOYuEdb9ePVvP8YyMaiwxWefRjH8njt9veM6b30DHZm+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaLzvmW59GYyCfsuT4g6mnMUpDACOwtGQ800vuwvP1hx0dCzlJ
+	3yOdKujFHNL7JJv1kDeTfLgobEbnmvZxgRQtRn1iV8Md6cwupGGh/ukA58K8ay0BLW+CNWTqcPN
+	Kkw==
+X-Google-Smtp-Source: AGHT+IGNURKCQYhJ/Zvei6SYlzyyylDjzeeVTddzmeqAfxmnmG4PFtU5DuvbIKtN4jmXsVwJjhSSo1vpbqI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:55c4:b0:2d8:bf47:947c with SMTP id
+ 98e67ed59e1d1-2dad517760dmr47559a91.3.1725916315112; Mon, 09 Sep 2024
+ 14:11:55 -0700 (PDT)
+Date: Mon, 9 Sep 2024 14:11:53 -0700
+In-Reply-To: <b012360b4d14c0389bcb77fc8e9e5d739c6cc93d.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-10-rick.p.edgecombe@intel.com> <6449047b-2783-46e1-b2a9-2043d192824c@redhat.com>
+ <b012360b4d14c0389bcb77fc8e9e5d739c6cc93d.camel@intel.com>
+Message-ID: <Zt9kmVe1nkjVjoEg@google.com>
+Subject: Re: [PATCH 09/21] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with
+ operand SEPT
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	Yan Y Zhao <yan.y.zhao@intel.com>, Yuan Yao <yuan.yao@intel.com>, 
+	"nik.borisov@suse.com" <nik.borisov@suse.com>, "dmatlack@google.com" <dmatlack@google.com>, 
+	Kai Huang <kai.huang@intel.com>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240909121116.254036-1-arnd@kernel.org>
-References: <20240909121116.254036-1-arnd@kernel.org>
-Subject: Re: [PATCH] clk: rockchip: remove unused mclk_pdm0_p/pdm0_p definitions
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Elaine Zhang <zhangqing@rock-chips.com>, YouMin Chen <cym@rock-chips.com>, Detlev Casanova <detlev.casanova@collabora.com>, Sugar Zhang <sugar.zhang@rock-chips.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Arnd Bergmann <arnd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>
-Date: Mon, 09 Sep 2024 14:10:35 -0700
-User-Agent: alot/0.10
 
-Quoting Arnd Bergmann (2024-09-09 05:11:05)
-> From: Arnd Bergmann <arnd@arndb.de>
+On Mon, Sep 09, 2024, Rick P Edgecombe wrote:
+> On Mon, 2024-09-09 at 17:25 +0200, Paolo Bonzini wrote:
+> > On 9/4/24 05:07, Rick Edgecombe wrote:
+> > > +static inline u64 tdx_seamcall_sept(u64 op, struct tdx_module_args *=
+in)
+> > > +{
+> > > +#define SEAMCALL_RETRY_MAX=C2=A0=C2=A0=C2=A0=C2=A0 16
+> >=20
+> > How is the 16 determined?=C2=A0 Also, is the lock per-VM or global?
 >=20
-> When -Wunused-const-variable is enabled (not the default),
-> there is a warning about two definitions in this file:
+> The lock being considered here is per-TD, but TDX_OPERAND_BUSY in general=
+ can be
+> for other locks. I'm not sure where the 16 came from, maybe Yuan or Isaku=
+ can
+> share the history. In any case, there seems to be some problems with this=
+ patch
+> or justification.
 >=20
-> In file included from drivers/clk/rockchip/clk-rk3576.c:14:
-> drivers/clk/rockchip/clk-rk3576.c:334:7: error: 'mclk_pdm0_p' defined but=
- not used [-Werror=3Dunused-const-variable=3D]
->   334 | PNAME(mclk_pdm0_p)                      =3D { "mclk_pdm0_src_top"=
-, "xin24m" };
->       |       ^~~~~~~~~~~
-> drivers/clk/rockchip/clk.h:564:43: note: in definition of macro 'PNAME'
->   564 | #define PNAME(x) static const char *const x[] __initconst
->       |                                           ^
-> drivers/clk/rockchip/clk-rk3576.c:333:7: error: 'pdm0_p' defined but not =
-used [-Werror=3Dunused-const-variable=3D]
->   333 | PNAME(pdm0_p)                           =3D { "clk_pdm0_src_top",=
- "xin24m" };
->       |       ^~~~~~
-> drivers/clk/rockchip/clk.h:564:43: note: in definition of macro 'PNAME'
->   564 | #define PNAME(x) static const char *const x[] __initconst
->       |                                           ^
+> Regarding the zero-step mitigation, the TDX Module has a mitigation for a=
+n
+> attack where a malicious VMM causes repeated private EPT violations for t=
+he same
+> GPA. When this happens TDH.VP.ENTER will fail to enter the guest. Regardl=
+ess of
+> zero-step detection, these SEPT related SEAMCALLs will exit with the chec=
+ked
+> error code if they contend the mentioned lock. If there was some other (n=
+on-
+> zero-step related) contention for this lock and KVM tries to re-enter the=
+ TD too
+> many times without resolving an EPT violation, it might inadvertently tri=
+gger
+> the zero-step mitigation.=C2=A0I *think* this patch is trying to say not =
+to worry
+> about this case, and do a simple retry loop instead to handle the content=
+ion.
 >=20
-> Remove them for the moment. If they are needed later, they can
-> be added back at that point.
->=20
-> Fixes: cc40f5baa91b ("clk: rockchip: Add clock controller for the RK3576")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+> But why 16 retries would be sufficient, I can't find a reason for. Gettin=
+g this
+> required retry logic right is important because some failures
+> (TDH.MEM.RANGE.BLOCK) can lead to KVM_BUG_ON()s.
 
-Applied to clk-next
+I (somewhat indirectly) raised this as an issue in v11, and at a (very quic=
+k)
+glance, nothing has changed to alleviate my concerns.
+
+In general, I am _very_ opposed to blindly retrying an SEPT SEAMCALL, ever.=
+  For
+its operations, I'm pretty sure the only sane approach is for KVM to ensure=
+ there
+will be no contention.  And if the TDX module's single-step protection spur=
+iously
+kicks in, KVM exits to userspace.  If the TDX module can't/doesn't/won't co=
+mmunicate
+that it's mitigating single-step, e.g. so that KVM can forward the informat=
+ion
+to userspace, then that's a TDX module problem to solve.
+
+> Per the docs, in general the VMM is supposed to retry SEAMCALLs that retu=
+rn
+> TDX_OPERAND_BUSY.
+
+IMO, that's terrible advice.  SGX has similar behavior, where the xucode "m=
+odule"
+signals #GP if there's a conflict.  #GP is obviously far, far worse as it l=
+acks
+the precision that would help software understand exactly what went wrong, =
+but I
+think one of the better decisions we made with the SGX driver was to have a
+"zero tolerance" policy where the driver would _never_ retry due to a poten=
+tial
+resource conflict, i.e. that any conflict in the module would be treated as=
+ a
+kernel bug.
+
+> I think we need to revisit the general question of which
+> SEAMCALLs we should be retrying and how many times/how long. The other
+> consideration is that KVM already has per-VM locking, that would prevent
+> contention for some of the locks. So depending on internal details KVM ma=
+y not
+> need to do any retries in some cases.
+
+Yes, and if KVM can't avoid conflict/retry, then before we go any further, =
+I want
+to know exactly why that is the case.
 
