@@ -1,73 +1,45 @@
-Return-Path: <linux-kernel+bounces-321463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F4C971ABE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:20:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0211971AC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 381E21F23C58
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:20:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787C81F22306
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4B81B9B24;
-	Mon,  9 Sep 2024 13:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D95A1B3F22;
+	Mon,  9 Sep 2024 13:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vQ4ch1Lw"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KHyW9n4y"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471621B7908
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137251B3B15
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725888049; cv=none; b=f77zLoUzY1U5A+hVFdQey5sVFy74YBXBrmo4j0pSz1Fo+dH9yHVYAAOs6esAf8Fluk/+UDlZPWSPozCFGga01zlHfDABijr+O2UlzyNe8y+EIv+NFy5DZKeosvvfHtCCQtSDYDZiCkyF8ZZw5LwXjE7GesFSzKuyNwOqo3XztBE=
+	t=1725888088; cv=none; b=LkcowkZ7Mvg2O8EFoOcULJQfMOVYGputZddXLwPQVxjkI50Cd335N6i4YHhO5gWf/Oc3MHvRyIBimZB8P3R1sn/z3Daf5U+478n6fOiykTUGoYD4hC/I8leDQ+SA5ovKW3yJLJKnTUQDwsq9OlaTWUcB4VQ+508dKO0Bu2XxDc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725888049; c=relaxed/simple;
-	bh=funbdZ7K3B2+UFHyR9wWdMOsW0n+5ztnXHtMLhU8ypQ=;
+	s=arc-20240116; t=1725888088; c=relaxed/simple;
+	bh=X0qRPwDzaSfCNbNRIcg6BWpQHSjWUMLh3C4tUQ7XIqw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dnR9k6hKpFUIRKs4tJeM5XnNplqBQyeyd56f5t5J63llExqt5IIxccT6A28Bu7kr3+y6VWcPd9O1iUzh5CKj9Vfc3d10E6S6c20YL2BA/w0m4FXNPCLQTDiHNWF6NTO5CFV+0P3IPr5H6NPVBSF83JhYueOgkqAPnuvNrlzli0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vQ4ch1Lw; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4581e0ed0f2so19599651cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 06:20:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725888044; x=1726492844; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=funbdZ7K3B2+UFHyR9wWdMOsW0n+5ztnXHtMLhU8ypQ=;
-        b=vQ4ch1LwwodgsYVcX4Vsry9p0aCs6yTDzTXyez9m3eF/rODZieVAp1Zin/LiPcTRS6
-         bga+CdEVhJjD816afCmx47qnl32WwDjWlX9zgemRPveasSPO6HrlP9HOAtd8j+70NbF/
-         vhnU3RKQAFfHdOSD29/GgGJh0nneqkJJ2a18sa4lbPhipWS3VSVFUURHCqFTxdHGnLJZ
-         WYPVZq1KthfXvroRS3EBeKG4UU+jimMLgqttRkyF4jq4CL9CaCo/oRLJtjNfJZJVEgrh
-         x9kiG9IU3D95EFTYs+V8Gh9ypX1UKjxcTPlf7LJISMf/JkA9dPVoVSK7hqUODgjl2i77
-         Xk7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725888044; x=1726492844;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=funbdZ7K3B2+UFHyR9wWdMOsW0n+5ztnXHtMLhU8ypQ=;
-        b=YGxpDxYyY62dcxYGANl9n6Mn3K9Yjvu/C0NHg4xuc/WrQFD9MkVEH9KWednWDiWhk4
-         TSJSkXI76yt/PHha/HHT3VgfUjiW7NAyc0xz6W+NTyWY6hTQWUoxhdyk+0xnNqLTmrJE
-         DDgdRIZZ5bsjF2iFNHzq4X/3UeBPeJ/vt9hMN4DeXbk/f+nV5A9vYwT+TSsAu2a96gEJ
-         TtWZiE8BHsUEHRCYmSEGZBZI4+FOO32E1wIuE0eUDGGsslDEK6H52tb2v9QNoE09rstr
-         9w3F7JyNtVKucQaQW9xnRBa5omIvrwyctYodlY4KTVEX3ZuLPxhEa54aUY0G2YUjIje6
-         Awkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRHdA4lIzCvbGIUWnQlXO4mW5voHANllR7BxLwKibszktQCdD9wftFoL9xJnTeFBzo4Mgv2dIRNnMqSvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD+8EJ3BvC62Qi6JOtBI6/8oBQX2j7zz9WQYGMP9PFBHfnqlyN
-	uf+Lp13x90jxU/GSXcLHlzqTZPNNitCh10CpX+I43lVLd3aW+7x82AXPgXqxBA0=
-X-Google-Smtp-Source: AGHT+IHUG75g9oGUnKbTzwMVD6YxVdew6Qh2TdgFpABqIP1nWkZsjBLY2UDr9LgWMYU21eDVdnM9XQ==
-X-Received: by 2002:a05:622a:178b:b0:446:54f5:3181 with SMTP id d75a77b69052e-457f8c63a2cmr308591541cf.24.1725888043915;
-        Mon, 09 Sep 2024 06:20:43 -0700 (PDT)
-Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822e6152asm20205051cf.4.2024.09.09.06.20.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 06:20:43 -0700 (PDT)
-Message-ID: <1a3e9f90-b5f9-4c12-9ec9-a61f14604b64@baylibre.com>
-Date: Mon, 9 Sep 2024 09:20:40 -0400
+	 In-Reply-To:Content-Type; b=d6vPyk45k7YPln9IVjm51y436AS+40At3DQ3+2A7NsqnD56/S9y4QKvVgNIWFDErm0cPOQnWrUYzmmP24uvAe4MYy9DRT5WFu+qQ2arS9Lx49mkjbOVujyk55Lahn5Ial+QKjkmEYJq1ZQ2mdWee3NyRyiXzgNZ9HhtPAWY+uWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KHyW9n4y; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725888077; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=xtDKlk++b9rEjm2wZIZSJwpvnA+n9QUFgyYlxTYR+c8=;
+	b=KHyW9n4yshyLKxfbyyOAsMR3bO2xn1PgvpfUSt/ifT1Cvkx07CpfGu1Gnz4ICw6kAZ6Cg0nXmhQBjSsg45/am9Gy/mvNsnJ6Xwi4/7cPcNJc/wrVu1JzF9YNmFnEKfzzP+GEpvLcZX00dQmxMd8XuCSF4TCFrK8oaImQmdzcsZU=
+Received: from 192.168.2.29(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WEfKbpz_1725888076)
+          by smtp.aliyun-inc.com;
+          Mon, 09 Sep 2024 21:21:17 +0800
+Message-ID: <25f0356d-d949-483c-8e59-ddc9cace61f6@linux.alibaba.com>
+Date: Mon, 9 Sep 2024 21:21:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,42 +47,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] iio: adc: ad7625: add driver
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- David Lechner <dlechner@baylibre.com>,
- Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20240904-ad7625_r1-v4-0-78bc7dfb2b35@baylibre.com>
- <20240904-ad7625_r1-v4-2-78bc7dfb2b35@baylibre.com>
- <20240908125905.19852719@jic23-huawei>
-Content-Language: en-US
-From: Trevor Gamblin <tgamblin@baylibre.com>
-In-Reply-To: <20240908125905.19852719@jic23-huawei>
+Subject: Re: [PATCH v2] erofs: fix incorrect symlink detection in fast symlink
+To: Colin Walters <walters@verbum.org>, linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240909022811.1105052-1-hsiangkao@linux.alibaba.com>
+ <20240909031911.1174718-1-hsiangkao@linux.alibaba.com>
+ <bb2dd430-7de0-47da-ae5b-82ab2dd4d945@app.fastmail.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <bb2dd430-7de0-47da-ae5b-82ab2dd4d945@app.fastmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Hi Colin,
 
-On 2024-09-08 07:59, Jonathan Cameron wrote:
-> On Wed, 04 Sep 2024 15:14:19 -0400
-> Trevor Gamblin <tgamblin@baylibre.com> wrote:
->
->> Add a driver for the AD762x and AD796x family of ADCs. These are
->> pin-compatible devices using an LVDS interface for data transfer,
->> capable of sampling at rates of 6 (AD7625), 10 (AD7626), and 5
->> (AD7960/AD7961) MSPS, respectively. They also feature multiple voltage
->> reference options based on the configuration of the EN1/EN0 pins, which
->> can be set in the devicetree.
+On 2024/9/9 20:48, Colin Walters wrote:
+> 
+> 
+> On Sun, Sep 8, 2024, at 11:19 PM, Gao Xiang wrote:
+>> Fast symlink can be used if the on-disk symlink data is stored
+>> in the same block as the on-disk inode, so we don’t need to trigger
+>> another I/O for symlink data.  However, correctly fs correction could be
+>> reported _incorrectly_ if inode xattrs are too large.
 >>
->> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
-> I took another look and LGTM (subject to the other review responses)
-Thank you. I'll have a v5 for review shortly to address those.
->
->
-> Jonathan
+>> In fact, these should be valid images although they cannot be handled as
+>> fast symlinks.
+>>
+>> Many thanks to Colin for reporting this!
+> 
+> Yes, though feel free to also add
+> Reported-by: https://honggfuzz.dev/
+> or so...not totally sure how to credit it "kernel style" bit honggfuzz very much helped me find this bug (indirectly).
+
+Ok, it sounds good to me.
+I will add this later.
+
+> 
+> 
+> 
+>>
+>> Reported-by: Colin Walters <walters@verbum.org>
+>> Fixes: 431339ba9042 ("staging: erofs: add inode operations")
+>> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+>> ---
+>> v2:
+>>   - sent out a wrong version (`m_pofs += vi->xattr_isize` was missed).
+>>
+>>   fs/erofs/inode.c | 20 ++++++--------------
+>>   1 file changed, 6 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+>> index 5f6439a63af7..f2cab9e4f3bc 100644
+>> --- a/fs/erofs/inode.c
+>> +++ b/fs/erofs/inode.c
+>> @@ -178,12 +178,14 @@ static int erofs_fill_symlink(struct inode
+>> *inode, void *kaddr,
+>>   			      unsigned int m_pofs)
+>>   {
+>>   	struct erofs_inode *vi = EROFS_I(inode);
+>> -	unsigned int bsz = i_blocksize(inode);
+>> +	loff_t off;
+>>   	char *lnk;
+>>
+>> -	/* if it cannot be handled with fast symlink scheme */
+>> -	if (vi->datalayout != EROFS_INODE_FLAT_INLINE ||
+>> -	    inode->i_size >= bsz || inode->i_size < 0) {
+>> +	m_pofs += vi->xattr_isize;
+>> +	/* check if it cannot be handled with fast symlink scheme */
+>> +	if (vi->datalayout != EROFS_INODE_FLAT_INLINE || inode->i_size < 0 ||
+>> +	    check_add_overflow(m_pofs, inode->i_size, &off) ||
+>> +	    off > i_blocksize(inode)) {
+>>   		inode->i_op = &erofs_symlink_iops;
+>>   		return 0;
+>>   	}
+> 
+> This change LGTM.
+> 
+>> @@ -192,16 +194,6 @@ static int erofs_fill_symlink(struct inode *inode,
+>> void *kaddr,
+>>   	if (!lnk)
+>>   		return -ENOMEM;
+>>
+>> -	m_pofs += vi->xattr_isize;
+>> -	/* inline symlink data shouldn't cross block boundary */
+>> -	if (m_pofs + inode->i_size > bsz) {
+> 
+> It can cross a boundary but it still can't be *bigger* right? IOW do we still need to check here for inode->i_size > bsz or is that handled by something else generic?
+
+It can be bigger.
+
+Like ext4, EROFS supports PAGE_SIZE symlink via page_get_link()
+(non-fastsymlink cases), but mostly consider this as 4KiB though
+regardless of on-disk block sizes.
+
+Thanks,
+Gao Xiang
+
+
+
 
