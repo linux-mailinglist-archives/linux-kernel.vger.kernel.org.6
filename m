@@ -1,136 +1,248 @@
-Return-Path: <linux-kernel+bounces-320619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 908A0970CD8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:09:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D1E8970CD1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CE81282183
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:09:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2338A281C7B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC1F1AC8BF;
-	Mon,  9 Sep 2024 05:09:47 +0000 (UTC)
-Received: from audible.transient.net (audible.transient.net [24.143.126.66])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id BB08A41C79
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 05:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.143.126.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E99146D75;
+	Mon,  9 Sep 2024 05:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BhBH7jtc"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0109C9461
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 05:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725858587; cv=none; b=je4BOlw8lSbdeyR3trIPEIfJ0vgIUeX7VU/QIsHNz+IQ1C6BeT683cv7u2atpilMCQkYoC24GGYpu7muZbQdrAlAxjFtO3J4P4T9Yy8aXpl3x+crH/S8ycC8reZYkygtaJ8CVuZI5THU6I0DbHFn8h3RzZA9w8vIOcb69ocNce4=
+	t=1725858351; cv=none; b=FMGb+IezsXegrOXEEJMOU0C58IVYoQzFiwg6WwY8bwdv2nzARqfzp004Agbk0SaCqVx4ifwUFbTlMPu0nF1akAMzd14HOWwA+lFAIYqSw6p0AhC9JMl41D6EG41IDcMlCZpf79TEGHWKIrc7y+lJXiQInqGRZghuMVfMyztYs9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725858587; c=relaxed/simple;
-	bh=/2kXoqBNQdf7ykw6S13Nf1luYg7cKmioSmSLrJVJFGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DEgmMilc38n4AJ28pouuMQoDJ3Ipws+GqI/fngHl16J8zaVRpu5udpixwzdxw0AupMUX/d5q8Allo+L6g/PBN7WkcXLQLAc1u6h5St7AOQ1BrK/XoR6XvQMrrXgae+SECfYuZGDWAsdeZ64+XpRoqehZXdwifINwqc/A2WxeY7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=audible.transient.net; spf=none smtp.mailfrom=audible.transient.net; arc=none smtp.client-ip=24.143.126.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=audible.transient.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=audible.transient.net
-Received: (qmail 2552 invoked from network); 9 Sep 2024 05:03:04 -0000
-Received: from cucamonga.audible.transient.net (192.168.2.5)
-  by canarsie.audible.transient.net with QMQP; 9 Sep 2024 05:03:04 -0000
-Received: (nullmailer pid 16368 invoked by uid 1000);
-	Mon, 09 Sep 2024 05:03:03 -0000
-Date: Mon, 9 Sep 2024 05:03:03 +0000
-From: Jamie Heilman <jamie@audible.transient.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de
-Subject: regression in 6.6.46; arch/x86/mm/pti.c
-Message-ID: <Zt6Bh2J5xMcCETbb@audible.transient.net>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, peterz@infradead.org,
-	tglx@linutronix.de
+	s=arc-20240116; t=1725858351; c=relaxed/simple;
+	bh=0/UowsAImf7weERteQ0LgjJ5RIz4ptPEoPHV+Vilaeg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gEusvNCBlR1SHUnz+tsdcjJSCIA67YKIwz39eAq7MWfvklfJm/5t5ou53/Ggbnt7HboHLLvmrqULTRa4CT+5wV/vbdIx7vlcOUpgoreVYy0BXYdnZER4AyjPKmUlnp7ReW3qilb8NZHyYxZWWfqv1b3AimKswll8kgsGpcySQ3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BhBH7jtc; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 488NFGne006405;
+	Mon, 9 Sep 2024 05:05:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	GPrmwWnko671No7/Z6IdQjS7SU1lDVNUmv4xVmaX2TY=; b=BhBH7jtcqvwgasbt
+	iohUnWhPwCiUt9yxj7OMdiMGueLVYw4eZoSvNw5C8YsqGNR3f+ZU7cIyUfHJTnko
+	e9Zc1khk95vqNVRyyOP0ZyK6W3fG7AUg17XMOETz1Njnr0WFDWY4OkKlOJr02c0j
+	IlV03iAvNmYmG4qIMiISJ+FbLH55FmeeeYCkHto2PY7Ebj+rhWzDoM9vZo22ykRq
+	JsoAQfsgBBFqP/uSiwlaUN1RD3BOgolkE+g4mRner7Hy0zZqtqWQWE7k+tGkaAd3
+	Yn8tp4rhG7bk8CTCWFsp99VrA0Kimg0Wa9tMxnhC7rPicY/12eDTBgqojS3yKPWN
+	EBZqoQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefy7rxr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 05:05:21 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48955LAq004183;
+	Mon, 9 Sep 2024 05:05:21 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefy7rxm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 05:05:21 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4894D5q8027308;
+	Mon, 9 Sep 2024 05:05:20 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h3v2vgkv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 05:05:20 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48955IZ552101476
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Sep 2024 05:05:19 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DD9AA2004B;
+	Mon,  9 Sep 2024 05:05:18 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5571020040;
+	Mon,  9 Sep 2024 05:05:14 +0000 (GMT)
+Received: from [9.43.108.91] (unknown [9.43.108.91])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Sep 2024 05:05:13 +0000 (GMT)
+Message-ID: <9eba8dc4-ceb3-4234-b352-aeb34c840e70@linux.ibm.com>
+Date: Mon, 9 Sep 2024 10:35:11 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kexec/crash: no crash update when kexec in progress
+To: Baoquan He <bhe@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        Hari Bathini <hbathini@linux.ibm.com>, kexec@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
+References: <20240731152738.194893-1-sourabhjain@linux.ibm.com>
+ <87v80lnf8d.fsf@mail.lhotse>
+ <10c666ae-d528-4f49-82e9-8e0fee7099e0@linux.ibm.com>
+ <355b58b1-6c51-4c42-b6ea-dcd6b1617a18@linux.ibm.com>
+ <ZsLjGJvAUIaxrG6x@MiWiFi-R3L-srv>
+ <1e4a8e18-cda9-45f5-a842-8ffcd725efc9@linux.ibm.com>
+ <ZtGqTSMvx6Ljf5Xi@MiWiFi-R3L-srv>
+ <0dd94920-b13f-4da7-9ea6-4f008af1f4b3@linux.ibm.com>
+ <ZtkkIoUIu8shp/ut@MiWiFi-R3L-srv>
+ <c6f30e31-69fe-4ece-b251-c49f1ab59a04@linux.ibm.com>
+ <Zt18yUCWRK8178uv@MiWiFi-R3L-srv>
+Content-Language: en-US
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+In-Reply-To: <Zt18yUCWRK8178uv@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: L_T2SMdDgcohbwN827nc0vwdNPIo8LnP
+X-Proofpoint-ORIG-GUID: XhV8Ue3GrBekmk7WD7oyGoA-qFgUxvRJ
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-08_10,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
+ adultscore=0 clxscore=1015 spamscore=0 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409090039
 
-3db03fb4995e ("x86/mm: Fix pti_clone_entry_text() for i386") which got
-landed in 6.6.46, has introduced two back to back warnings on boot on
-my 32bit system (found on 6.6.50):
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1 at arch/x86/mm/pti.c:256 pti_clone_pgtable+0x1ba/0x2e8
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper Tainted: G                T  6.6.50 #3
-Hardware name: To Be Filled By O.E.M. To Be Filled By O.E.M./To be filled by O.E.M., BIOS 080014  06/01/2009
-EIP: pti_clone_pgtable+0x1ba/0x2e8
-Code: 00 00 89 f8 e8 57 fd ff ff 85 c0 89 c6 74 1d 8b 08 31 d2 89 55 f0 8b 55 f0 89 c8 25 80 00 00 00 89 45 ec 8b 45 ec 09 d0 74 0e <0f> 0b 0f 0b e9 62 ff ff ff 2e 8d 74 26 00 89 c8 31 d2 89 55 f0 83
-EAX: 00000080 EBX: 00000000 ECX: 014001e3 EDX: 00000000
-ESI: 81c0f050 EDI: 815a4630 EBP: 81caff70 ESP: 81caff44
-DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068 EFLAGS: 00010202
-CR0: 80050033 CR2: ffbff000 CR3: 01830000 CR4: 000006b0
-Call Trace:
- ? show_regs+0x4c/0x5c
- ? __warn+0x6e/0x114
- ? pti_clone_pgtable+0x1ba/0x2e8
- ? pti_clone_pgtable+0x1ba/0x2e8
- ? report_bug+0xd5/0x110
- ? exc_overflow+0x58/0x58
- ? handle_bug+0x31/0x50
- ? exc_invalid_op+0x1b/0x70
- ? handle_exception+0x100/0x100
- ? __SCT__bpf_dispatcher_xdp_call+0x8/0x8
- ? exc_overflow+0x58/0x58
- ? pti_clone_pgtable+0x1ba/0x2e8
- ? exc_overflow+0x58/0x58
- ? pti_clone_pgtable+0x1ba/0x2e8
- ? __SCT__bpf_dispatcher_xdp_call+0x8/0x8
- ? rest_init+0x7c/0x7c
- pti_finalize+0x30/0x4c
- kernel_init+0x49/0x1c4
- ? schedule_tail+0x37/0x40
- ret_from_fork+0x44/0x50
- ? rest_init+0x7c/0x7c
- ret_from_fork_asm+0x12/0x18
- entry_INT80_32+0xef/0xf4
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1 at arch/x86/mm/pti.c:394 pti_clone_pgtable+0x1bc/0x2e8
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper Tainted: G        W       T  6.6.50 #3
-Hardware name: To Be Filled By O.E.M. To Be Filled By O.E.M./To be filled by O.E.M., BIOS 080014  06/01/2009
-EIP: pti_clone_pgtable+0x1bc/0x2e8
-Code: 89 f8 e8 57 fd ff ff 85 c0 89 c6 74 1d 8b 08 31 d2 89 55 f0 8b 55 f0 89 c8 25 80 00 00 00 89 45 ec 8b 45 ec 09 d0 74 0e 0f 0b <0f> 0b e9 62 ff ff ff 2e 8d 74 26 00 89 c8 31 d2 89 55 f0 83 e0 9f
-EAX: 00000080 EBX: 00000000 ECX: 014001e3 EDX: 00000000
-ESI: 81c0f050 EDI: 815a4630 EBP: 81caff70 ESP: 81caff44
-DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068 EFLAGS: 00010202
-CR0: 80050033 CR2: ffbff000 CR3: 01830000 CR4: 000006b0
-Call Trace:
- ? show_regs+0x4c/0x5c
- ? __warn+0x6e/0x114
- ? pti_clone_pgtable+0x1bc/0x2e8
- ? pti_clone_pgtable+0x1bc/0x2e8
- ? report_bug+0xd5/0x110
- ? exc_overflow+0x58/0x58
- ? handle_bug+0x31/0x50
- ? exc_invalid_op+0x1b/0x70
- ? handle_exception+0x100/0x100
- ? __SCT__bpf_dispatcher_xdp_call+0x8/0x8
- ? exc_overflow+0x58/0x58
- ? pti_clone_pgtable+0x1bc/0x2e8
- ? exc_overflow+0x58/0x58
- ? pti_clone_pgtable+0x1bc/0x2e8
- ? __SCT__bpf_dispatcher_xdp_call+0x8/0x8
- ? rest_init+0x7c/0x7c
- pti_finalize+0x30/0x4c
- kernel_init+0x49/0x1c4
- ? schedule_tail+0x37/0x40
- ret_from_fork+0x44/0x50
- ? rest_init+0x7c/0x7c
- ret_from_fork_asm+0x12/0x18
- entry_INT80_32+0xef/0xf4
----[ end trace 0000000000000000 ]---
 
-Reverting that commit removes the warnings (tested against 6.6.50).
-The follow-on commit of c48b5a4cf312 ("x86/mm: Fix PTI for i386 some
-more") doesn't apply cleanly to 6.6.50, but I did try out a build of
-6.11-rc7 and that works fine too with no warnings on boot.
+On 08/09/24 16:00, Baoquan He wrote:
+> On 09/05/24 at 02:07pm, Sourabh Jain wrote:
+>> Hello Baoquan,
+>>
+>> On 05/09/24 08:53, Baoquan He wrote:
+>>> On 09/04/24 at 02:55pm, Sourabh Jain wrote:
+>>>> Hello Baoquan,
+>>>>
+>>>> On 30/08/24 16:47, Baoquan He wrote:
+>>>>> On 08/20/24 at 12:10pm, Sourabh Jain wrote:
+>>>>>> Hello Baoquan,
+>>>>>>
+>>> ......snip...
+>>>>>> 2. A patch to return early from the `crash_handle_hotplug_event()` function
+>>>>>> if `kexec_in_progress` is
+>>>>>>       set to True. This is essentially my original patch.
+>>>>> There's a race gap between the kexec_in_progress checking and the
+>>>>> setting it to true which Michael has mentioned.
+>>>> The window where kernel is holding kexec_lock to do kexec boot
+>>>> but kexec_in_progress is yet not set to True.
+>>>>
+>>>> If kernel needs to handle crash hotplug event, the function
+>>>> crash_handle_hotplug_event()  will not get the kexec_lock and
+>>>> error out by printing error message about not able to update
+>>>> kdump image.
+>>> But you wanted to avoid the erroring out if it's being in
+>>> kernel_kexec().  Now you are seeing at least one the noising
+>>> message, aren't you?
+>> Yes, but it is very rare to encounter.
+>>
+>> My comments on your updated code are inline below.
+>>
+>>>> I think it should be fine. Given that lock is already taken for
+>>>> kexec kernel boot.
+>>>>
+>>>> Am I missing something major?
+>>>>
+>>>>> That's why I think
+>>>>> maybe checking kexec_in_progress after failing to retriving
+>>>>> __kexec_lock is a little better, not very sure.
+>>>> Try for kexec lock before kexec_in_progress check will not solve
+>>>> the original problem this patch trying to solve.
+>>>>
+>>>> You proposed the below changes earlier:
+>>>>
+>>>> -	if (!kexec_trylock()) {
+>>>> +	if (!kexec_trylock() && kexec_in_progress) {
+>>>>    		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
+>>>>    		crash_hotplug_unlock();
+>>> Ah, I meant as below, but wrote it mistakenly.
+>>>
+>>> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+>>> index 63cf89393c6e..e7c7aa761f46 100644
+>>> --- a/kernel/crash_core.c
+>>> +++ b/kernel/crash_core.c
+>>> @@ -504,7 +504,7 @@ int crash_check_hotplug_support(void)
+>>>    	crash_hotplug_lock();
+>>>    	/* Obtain lock while reading crash information */
+>>> -	if (!kexec_trylock()) {
+>>> +	if (!kexec_trylock() && !kexec_in_progress) {
+>>>    		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
+>>>    		crash_hotplug_unlock();
+>>>    		return 0;
+>>>
+>>>
+>>>> Once the kexec_in_progress is set to True there is no way one can get
+>>>> kexec_lock. So kexec_trylock() before kexec_in_progress is not helpful
+>>>> for the problem I am trying to solve.
+>>> With your patch, you could still get the error message if the race gap
+>>> exist. With above change, you won't get it. Please correct me if I am
+>>> wrong.
+>> The above code will print an error message during the race gap. Here's why:
+>>
+>> Let’s say the kexec lock is acquired in the kernel_kexec() function,
+>> but kexec_in_progress is not yet set to True. In this scenario, the code
+>> will print
+>> an error message.
+>>
+>> There is another issue I see with the above code:
+>>
+>> Consider that the system is on the kexec kernel boot path, and
+>> kexec_in_progress
+>> is set to True. If crash_hotplug_unlock() is called, the kernel will not
+>> only update
+>> the kdump image without acquiring the kexec lock, but it will also release
+>> the
+>> kexec lock in the out label. I believe this is incorrect.
+>>
+>> Please share your thoughts.
+> How about this?
+>
+> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+> index 63cf89393c6e..8ba7b1da0ded 100644
+> --- a/kernel/crash_core.c
+> +++ b/kernel/crash_core.c
+> @@ -505,7 +505,8 @@ int crash_check_hotplug_support(void)
+>   	crash_hotplug_lock();
+>   	/* Obtain lock while reading crash information */
+>   	if (!kexec_trylock()) {
+> -		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
+> +		if (!kexec_in_progress)
+> +			pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
+>   		crash_hotplug_unlock();
+>   		return 0;
+>   	}
+> @@ -540,7 +541,8 @@ static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu,
+>   	crash_hotplug_lock();
+>   	/* Obtain lock while changing crash information */
+>   	if (!kexec_trylock()) {
+> -		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
+> +		if (!kexec_in_progress)
+> +			pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
+>   		crash_hotplug_unlock();
+>   		return;
+>   	}
 
--- 
-Jamie Heilman                     http://audible.transient.net/~jamie/
+Yes putting pr_info under kexec in progress check would work.
+
+I will rebase the patch on top on next-20240906 to avoid conflict with
+https://lore.kernel.org/all/20240812041651.703156-1-sourabhjain@linux.ibm.com/T/#u
+and send v2.
+
+Thanks,
+Sourabh Jain
+
 
