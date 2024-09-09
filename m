@@ -1,127 +1,100 @@
-Return-Path: <linux-kernel+bounces-321368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9469719B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:42:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E7F9719B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C580A1C227F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:42:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7994C1C23127
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28F01B78FD;
-	Mon,  9 Sep 2024 12:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W1AAn5Bv"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD391B7909;
+	Mon,  9 Sep 2024 12:44:00 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB161B375C;
-	Mon,  9 Sep 2024 12:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AA21B5ECA
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725885729; cv=none; b=KYPOOBS0GvXUym5m5rSANHoK69kgiYpNRWYda8AqkncOCHVOLvbzWtvRt9Xz2ZAco2NEfLFMFqk5qvjseWpTI35dNrymhsvwe1CaCZ4I4zHR7uVuSdwEF6qJl7Z83wPy7lTe2Ye0IMYX8p19om5dx/U7dRM1pWlsirGh0Th7NIU=
+	t=1725885839; cv=none; b=Mn6x5zvLKQ0w6EmiVHeA5U3xD+dF6TwI6U4japK/HK5WNp4dLEUIvkyhlBU7iJJLXj8MX0Mk7tV6TwtnRo3bBUsScw47/you6589MxdUnDo0Duwz7VgAoL3UHzsZpJ7k2IC1s6XPi4OAaEX/M5akhRD1urr2nYzlxSFwH2ndYlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725885729; c=relaxed/simple;
-	bh=mD25jgVpSojKYJP1OW7gZeq/SChR/xght2GcqNaClro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cBK/NhC/5lnhYDl3O4DmGKUEYqZWeFkTSowhLFsl0jREkQggZ1iNgOoYv5NiqOlvA4hK1tPpFDvSVfe+Y0l5JKKcbvHi9pltsr+eFoWdUGZzB9Gsix8tzoSNzAqc8LswKt59R18ul40lIyol77C4hpLV8e3K1XQSGVcfQwDRvx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W1AAn5Bv; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 489CNVkW015997;
-	Mon, 9 Sep 2024 12:42:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=16V2SJVT6ZTpGSJTi80TnFaPg6g
-	kCcUj/xh4Jk5Q74o=; b=W1AAn5BvawKjMzHhhOtarnyCcQjsO6DUJ3OoI+kxOHQ
-	veAzm+itJCu43OaqbeAeMO4BfbqvfZ/2JqZYhl9xgXIjMbBHhdyhjv3DWqSUSukx
-	rMBeAZpw7ApMn7FRTgfgWDuWNHRCuvo5fvOSjO/bgekD+qpty6wB8olpPD8SE9Ow
-	e2KSk9j3MZaGn/mUQQvZPyqfTtxxzXLUHxpk2TJq3sJSfLGlfJcnOvH03CW2z/j1
-	X33mRHz7KKAME0uj3//HWgspsuTDbDHHQk49Tjc9X7sMwtOYy1evyBrksDTVibrw
-	QMszK+tbV+uZdW5c3e56+KIkMFtk+fvLyDO199oYbpA==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefy9rce-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 12:42:05 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 489Bx7SJ032091;
-	Mon, 9 Sep 2024 12:42:04 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41h2nmeb1b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 12:42:04 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 489Cg0e832309956
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Sep 2024 12:42:01 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E14C220043;
-	Mon,  9 Sep 2024 12:42:00 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8135020040;
-	Mon,  9 Sep 2024 12:42:00 +0000 (GMT)
-Received: from osiris (unknown [9.179.0.95])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  9 Sep 2024 12:42:00 +0000 (GMT)
-Date: Mon, 9 Sep 2024 14:41:59 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: "Jason J. Herne" <jjherne@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        akrowiak@linux.ibm.com, borntraeger@de.ibm.com, agordeev@linux.ibm.com,
-        gor@linux.ibm.com
-Subject: Re: [PATCH] s390/vfio-ap: Driver feature advertisement
-Message-ID: <20240909124159.11471-B-hca@linux.ibm.com>
-References: <20240905124351.14594-1-jjherne@linux.ibm.com>
- <20240906104540.9510-F-hca@linux.ibm.com>
- <d5911cd9-0365-47e8-91e4-f55317b8040b@linux.ibm.com>
+	s=arc-20240116; t=1725885839; c=relaxed/simple;
+	bh=5ZfasuGQecKmB6utM0JJ6TbCaRt7dGK+/kI3kvv6TpU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X0A0hWZAD6WpgZ6cUG7widVMcuUsnuwAmYuhO3oRb+uSdHwOSYvKklRxh2zZkfxRDP648S+2gjgiMSR/+/XxMn1723dDgClN7HJmQa8Ud1iY2AClhp6OeUGTxzk3L/z65Ua9EAw4JRM1NKAAsi1uGaSvv8xubQZerRF+pW+cc2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sndk8-0001rD-Jx; Mon, 09 Sep 2024 14:43:44 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sndk6-006elL-PE; Mon, 09 Sep 2024 14:43:42 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sndk6-00BuMo-2H;
+	Mon, 09 Sep 2024 14:43:42 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org
+Subject: [PATCH net-next v2 0/2] net: phy: Support master-slave config via device tree
+Date: Mon,  9 Sep 2024 14:43:39 +0200
+Message-Id: <20240909124342.2838263-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d5911cd9-0365-47e8-91e4-f55317b8040b@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ZcBhgBPe0R-Bu7HS4v-Fa07Tm2Al24Pz
-X-Proofpoint-ORIG-GUID: ZcBhgBPe0R-Bu7HS4v-Fa07Tm2Al24Pz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-09_04,2024-09-09_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=434 priorityscore=1501
- adultscore=0 clxscore=1015 spamscore=0 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409090101
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Sep 09, 2024 at 08:02:17AM -0400, Jason J. Herne wrote:
-> On 9/6/24 6:45 AM, Heiko Carstens wrote:
-> > On Thu, Sep 05, 2024 at 08:43:51AM -0400, Jason J. Herne wrote:
-> > > Advertise features of the driver for the benefit of automated tooling
-> > > like Libvirt and mdevctl.
-> > > 
-> > > Signed-off-by: Jason J. Herne <jjherne@linux.ibm.com>
-> > > Reviewed-by: Anthony Krowiak <akrowiak@linux.ibm.com>
-> > > ---
-> > >   Documentation/arch/s390/vfio-ap.rst | 34 +++++++++++++++++++++++++++++
-> > >   drivers/s390/crypto/vfio_ap_drv.c   | 13 +++++++++++
-> > >   2 files changed, 47 insertions(+)
-> > 
-> > Via which tree should this go upstream?
-> > 
-> I'm not 100% sure. Would s390 next be appropriate?
+This patch series adds support for configuring the master/slave role of
+PHYs via the device tree. A new `master-slave` property is introduced in
+the device tree bindings, allowing PHYs to be forced into either master
+or slave mode. This is particularly necessary for Single Pair Ethernet
+(SPE) PHYs (1000/100/10Base-T1), where hardware strap pins may not be
+available or correctly configured, but it is applicable to all PHY
+types.
 
-Well that's up to you to decide; no objection from my side.
+Oleksij Rempel (2):
+  dt-bindings: net: ethernet-phy: Add master-slave role property for SPE
+    PHYs
+  net: phy: Add support for master-slave role configuration via device
+    tree
 
-FWIW it would be helpful if for future patches there would be a
-statement in the cover-letter how this should go upstream. Also
-looking at the "To" list of your patch I don't think anybody would
-feel like there is a todo :)
+ .../devicetree/bindings/net/ethernet-phy.yaml | 14 +++++++++
+ drivers/net/phy/phy-core.c                    | 29 +++++++++++++++++++
+ drivers/net/phy/phy_device.c                  |  3 ++
+ include/linux/phy.h                           |  1 +
+ 4 files changed, 47 insertions(+)
 
-That said, you still need to send a v2 which replaces sprintf() with
-sysfs_emit().
+--
+2.39.2
+
 
