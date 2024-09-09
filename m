@@ -1,173 +1,151 @@
-Return-Path: <linux-kernel+bounces-321640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3DA3971D68
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:02:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73606971D6E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BC521C2343B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:02:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297F11F23F19
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2204419BB7;
-	Mon,  9 Sep 2024 15:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B1D1B947;
+	Mon,  9 Sep 2024 15:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="heo2ntQQ"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W2sTnyTy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F54217588
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 15:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61ABA17C8B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 15:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725894160; cv=none; b=YTGZ695sYxT7RMbh6QL2QY6XdA/o6bE2q78DLGI9i96c58We+/p+58Jm5M+fV20SSvQpKxRaECOTdgij0dDAIZ3W8A7IKHbr/A4woWxfSQfufisN+Pe7jmhmDvIcpTaHGLXCXHm8d8yb1Oy1PoRPXrZ/VFgabd7baAqhAlsIaNk=
+	t=1725894198; cv=none; b=raGnP1I/ZI6V20gkjGZ40VEY0lcv4pEW4e42slQ+fLUYfYwhfhWhWgFYPT0Ax5DD9YIh5whPXrglnP2Cz2BvvH49ORsTMK76EYOH+ht+nQx9k+D9p2U/oeo6jHsX4uyQXIAFxgyV8NoD/ZXPwlC20xMUhoeQ8I/yCcJuOvu4Aqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725894160; c=relaxed/simple;
-	bh=yOrzAeJULCp8CNbN800/DZvDmE7I+QRQGaJGd427FOk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LpjKGtgzMdDV4pNtI/WGGtML4jj5gaHsVw7iALUFlI0ZnFSTwM7LTYVG8ByIU2qS2czYklCxE01hbTKICkNCS27btipZ6b0N94p4EZl9mGnwou3EkDeN7YpJCj0LlR3a0NqKXJgQGVTIsILZX6/PNmY3QEGPUQPqQXOwqsq0C7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=heo2ntQQ; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <9d5bf385-2ef0-435d-b6f9-1de55533653b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725894156;
+	s=arc-20240116; t=1725894198; c=relaxed/simple;
+	bh=L0M1mffjiRIPOCuH2OrIjQfgVOyprWyp9psV4eYNvAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lDqgRg5Vh9fzd/3NQhf/4XQqVZ5Ug8CpOiRsNmKCaxIpG5CDHFaOyqB8gDNAZVqKF6eYLc3T1NfnHuY0A4Zu1kfGCqX6pTLyoqAqKj1yIb5XI0a37dQPNtAVGtmdz5xE2Rve7kSSWoIVGr4X7g1bUgk6tjlJHvLOn4s+JYnHCvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W2sTnyTy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725894196;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EBUjCWXMIdE3euI/x+021PTEDizxiCwvnMj/e5Rujcg=;
-	b=heo2ntQQ3tgC68+7TwArPLkMV9HabzTYMWrA7eX0M5pIufYoF/2Spzb6U/1P0X46hpDB+B
-	dl6bLBX0SPNaHx4wM7YqSkd2m+p3iypgwyOzqRJH+IlCfCBYxX/Cao5tbxU6O9KKBanigf
-	/mlJ0BvSIFd9fkEUqgNVIFpiw+aJHJM=
-Date: Mon, 9 Sep 2024 11:02:30 -0400
+	bh=6l+xHNqXTthDlFZ3K9cVgVJ/sPPZ9HvpzFqB6gZQUko=;
+	b=W2sTnyTy2pAfWFx9mHhIKVHryWY2jcJdVWgE8SUOSALoabAxHFkYHiZaGnyIHp0vVWjMBM
+	7jif6mwRqwzZw00vTy+YOADfMGXJ+nQSgQzJLaW0PutWjYGK0cNCamKTuCbCi2nnpf7gMW
+	cnfMf+urSXac5CCEsaJAfSrBpBQLq+0=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-564-ls9EpZ-YMui2cDjE3O252A-1; Mon, 09 Sep 2024 11:03:14 -0400
+X-MC-Unique: ls9EpZ-YMui2cDjE3O252A-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6c3540067b1so54548046d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 08:03:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725894193; x=1726498993;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6l+xHNqXTthDlFZ3K9cVgVJ/sPPZ9HvpzFqB6gZQUko=;
+        b=YWqfBHRSvVkbMvuLtgqWFLRkTlhM5UmwdGaCyehLj3DNsiH3t9FIN7RBmjrUVf3XAV
+         bl6eCQdypGLDUIVclHTArux4atsBezQYoCLzTNowPugV3ApM+OpMGHdSRIPfEZpXwyV4
+         H0qk6jMA7i7OWyt0fKeJH8Qe/5hHmSXBWC4kPDgA4Bi3ChYRuC6UjNhc0kmP1eUYaVt4
+         J9acXJVYnN0T2fxJPJVl3IuqcS+d321ynCb2YfLZLM2k3xLUeISxfCpiPU8YxM/+Uka4
+         ZkwgdxpszZzF4/m1zyBp5icMT6qZpuLg9jA4ttQrRLxeqY7Emb049gsPgdYBNemp4R7o
+         OdOg==
+X-Gm-Message-State: AOJu0YxxMfsIURVzY7FKUXXd7bhC6/8mR+6kxjKBkXGp/QoHiGSqygG6
+	/X4Rtm7bgwgqHoqmjQ+M0s0QxGP6JnuP/gY3EJoLwNwjq67oYaEnbw9JtxdYJ9yYhZrXFusTX1N
+	GEdZfn1rjXOe0R9fjUJjk7Pfk0NywykVVYliRX4EYOuUTQzzwm226pxF6Ww57DLgdFF9nvnvh
+X-Received: by 2002:a05:6214:5b84:b0:6c3:5789:62f8 with SMTP id 6a1803df08f44-6c5323fe2b4mr100989496d6.19.1725894193165;
+        Mon, 09 Sep 2024 08:03:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHXyNgnw3o/IQrxRWaaUJgRseDSr7DTlug9i0O8HD+tnUNFFXmzQMuc9otVGIFfDiIY6ds48Q==
+X-Received: by 2002:a05:6214:5b84:b0:6c3:5789:62f8 with SMTP id 6a1803df08f44-6c5323fe2b4mr100988886d6.19.1725894192696;
+        Mon, 09 Sep 2024 08:03:12 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c53432dfb8sm21272326d6.24.2024.09.09.08.03.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 08:03:12 -0700 (PDT)
+Date: Mon, 9 Sep 2024 11:03:09 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Ankit Agrawal <ankita@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	Gavin Shan <gshan@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	"x86@kernel.org" <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alistair Popple <apopple@nvidia.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
+	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH v2 00/19] mm: Support huge pfnmaps
+Message-ID: <Zt8OLSI3e3K8tFpU@x1n>
+References: <20240826204353.2228736-1-peterx@redhat.com>
+ <SA1PR12MB7199DE6F9F63EEAD93F66249B0992@SA1PR12MB7199.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net] selftests: net: csum: Fix checksums for packets with
- non-zero padding
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc: Willem de Bruijn <willemb@google.com>, linux-kernel@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-References: <20240906210743.627413-1-sean.anderson@linux.dev>
- <66dbb4fcbf560_2af86229423@willemb.c.googlers.com.notmuch>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <66dbb4fcbf560_2af86229423@willemb.c.googlers.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SA1PR12MB7199DE6F9F63EEAD93F66249B0992@SA1PR12MB7199.namprd12.prod.outlook.com>
 
-On 9/6/24 22:05, Willem de Bruijn wrote:
-> Sean Anderson wrote:
->> Padding is not included in UDP and TCP checksums. Therefore, reduce the
->> length of the checksummed data to include only the data in the IP
->> payload. This fixes spurious reported checksum failures like
->> 
->> rx: pkt: sport=33000 len=26 csum=0xc850 verify=0xf9fe
->> pkt: bad csum
+On Mon, Sep 09, 2024 at 04:03:55AM +0000, Ankit Agrawal wrote:
+> > More architectures / More page sizes
+> > ------------------------------------
+> > 
+> > Currently only x86_64 (2M+1G) and arm64 (2M) are supported.  There seems to
+> > have plan to support arm64 1G later on top of this series [2].
+> > 
+> > Any arch will need to first support THP / THP_1G, then provide a special
+> > bit in pmds/puds to support huge pfnmaps.
 > 
-> Are you using this test as receiver for other input?
+> Just to confirm, would this also not support 512M for 64K pages on aarch64
+> with special PMD? Or am I missing something?
+
+I don't think it's properly tested yet, but logically it should be
+supported indeed, as here what matters is "pmd/pud", not the explicit size
+that it uses.
+
 > 
-> The packet builder in the test doesn't generate these, does it?
-
-It's added by the MAC before transmission.
-
-This is permitted by the standard, but in this case it actually appears
-to be due to the MAC using 32-bit reads for the data and not masking off
-the end. Not sure whether this is a bug in the driver/device, since
-technically we may leak up to 3 bytes of memory.
-
-That said, it would be a nice enhancement to generate packets with
-non-zero padding as well, since they are an interesting edge case.
-
-> Just trying to understand if this is a bug fix or a new use for
-> csum.c as receiver.
-
-Bug fix.
-
->> Technically it is possible for there to be trailing bytes after the UDP
->> data but before the Ethernet padding (e.g. if sizeof(ip) + sizeof(udp) +
->> udp.len < ip.len). However, we don't generate such packets.
+> > remap_pfn_range() support
+> > -------------------------
+> > 
+> > Currently, remap_pfn_range() still only maps PTEs.  With the new option,
+> > remap_pfn_range() can logically start to inject either PMDs or PUDs when
+> > the alignment requirements match on the VAs.
+> >
+> > When the support is there, it should be able to silently benefit all
+> > drivers that is using remap_pfn_range() in its mmap() handler on better TLB
+> > hit rate and overall faster MMIO accesses similar to processor on hugepages.
 > 
-> More likely is that L3 and L4 length fields agree, as both are
-> generated at the sender, but that some trailer is attached in the
-> network. Such as a timestamp trailer.
+> Does Peter or other folks know of an ongoing effort/patches to extend
+> remap_pfn_range() to use this?
 
-Yes, as noted above we don't generate packets with differing L3 and L4
-lengths.
+Not away of any from my side.
 
->> Fixes: 91a7de85600d ("selftests/net: add csum offload test")
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->> ---
->> Found while testing for this very bug in hardware checksum offloads.
->> 
->>  tools/testing/selftests/net/lib/csum.c | 16 ++++++++++++++--
->>  1 file changed, 14 insertions(+), 2 deletions(-)
->> 
->> diff --git a/tools/testing/selftests/net/lib/csum.c b/tools/testing/selftests/net/lib/csum.c
->> index b9f3fc3c3426..e0a34e5e8dd5 100644
->> --- a/tools/testing/selftests/net/lib/csum.c
->> +++ b/tools/testing/selftests/net/lib/csum.c
->> @@ -654,10 +654,16 @@ static int recv_verify_packet_ipv4(void *nh, int len)
->>  {
->>  	struct iphdr *iph = nh;
->>  	uint16_t proto = cfg_encap ? IPPROTO_UDP : cfg_proto;
->> +	uint16_t ip_len;
->>  
->>  	if (len < sizeof(*iph) || iph->protocol != proto)
->>  		return -1;
->>  
->> +	ip_len = ntohs(iph->tot_len);
->> +	if (ip_len > len || ip_len < sizeof(*iph))
->> +		return -1;
->> +
->> +	len = ip_len;
->>  	iph_addr_p = &iph->saddr;
->>  	if (proto == IPPROTO_TCP)
->>  		return recv_verify_packet_tcp(iph + 1, len - sizeof(*iph));
->> @@ -669,16 +675,22 @@ static int recv_verify_packet_ipv6(void *nh, int len)
->>  {
->>  	struct ipv6hdr *ip6h = nh;
->>  	uint16_t proto = cfg_encap ? IPPROTO_UDP : cfg_proto;
->> +	uint16_t ip_len;
-> 
-> nit: payload_len, as it never includes sizeof ipv6hdr
+Thanks,
 
-OK
+-- 
+Peter Xu
 
---Sean
-
->>  	if (len < sizeof(*ip6h) || ip6h->nexthdr != proto)
->>  		return -1;
->>  
->> +	ip_len = ntohs(ip6h->payload_len);
->> +	if (ip_len > len - sizeof(*ip6h))
->> +		return -1;
->> +
->> +	len = ip_len;
->>  	iph_addr_p = &ip6h->saddr;
->>  
->>  	if (proto == IPPROTO_TCP)
->> -		return recv_verify_packet_tcp(ip6h + 1, len - sizeof(*ip6h));
->> +		return recv_verify_packet_tcp(ip6h + 1, len);
->>  	else
->> -		return recv_verify_packet_udp(ip6h + 1, len - sizeof(*ip6h));
->> +		return recv_verify_packet_udp(ip6h + 1, len);
->>  }
->>  
->>  /* return whether auxdata includes TP_STATUS_CSUM_VALID */
->> -- 
->> 2.35.1.1320.gc452695387.dirty
->> 
-> 
-> 
 
