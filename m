@@ -1,87 +1,112 @@
-Return-Path: <linux-kernel+bounces-320701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E8C8970EB6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:59:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B58970EA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00C23B2208B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 06:59:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B368928271D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 06:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4CD1AD9F6;
-	Mon,  9 Sep 2024 06:59:29 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613561AD411;
+	Mon,  9 Sep 2024 06:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S7nrBuv7"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF15D1AD5C1;
-	Mon,  9 Sep 2024 06:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB221F95E;
+	Mon,  9 Sep 2024 06:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725865168; cv=none; b=BPoTKG6fjFGbbA1oj2y63/3lkMuPL+OgaQfv1M+7MkJHb0W2akNjU/s/iAyQYqRfXlUzjFrOSOtUctLVvHnDLdc81bBNHpIJ5LrizV2fHF/Z3cJCcefRVY/UaGV23zfDcWSoknmq0Z9JfxUUXV7WKj2lZOcu93cjxQdCHZbj48A=
+	t=1725864849; cv=none; b=EKFa5uTqkEtncdYqU44fnDhRLDFvJxbi3F9gsLpfBE9tnHmixZz7nlK2sBcEOMTF9Ck6wR85O/xbui6phk8er4hbeDcU5DA6PpigXQhEYtqOow4S5FTMtq+p0UeHaW7NKMIQvX5r9S7z1NZ7S2iaIxpHKukLSsJH3fq3KsD+Oro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725865168; c=relaxed/simple;
-	bh=rD4KS31Xa1Mlk3Os2AhVULhgkeLY5lQSq0L6ElwF6pA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OG9Rx3lL+fHQx/PBTfs9py6QFd9L7dRJ9GeeQbnVqpQJd1srNjas6+BM3mribbuLgwt22RNTwUWEA2k06qAdt/vnjHykR7KOpkjjgZ9IwlUd4zzlwC8WufHvX61hi7hZV/dM788Tnpi+sKq17hIoK07Gs3BpJ7b2UUDm2AG3dxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X2Hk80fjRz2Dbxx;
-	Mon,  9 Sep 2024 14:58:56 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id A1F38140134;
-	Mon,  9 Sep 2024 14:59:22 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 9 Sep 2024 14:59:22 +0800
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-To: <jgg@ziepe.ca>, <leon@kernel.org>
-CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <huangjunxian6@hisilicon.com>
-Subject: [PATCH for-next] RDMA/hns: Fix restricted __le16 degrades to integer issue
-Date: Mon, 9 Sep 2024 14:53:31 +0800
-Message-ID: <20240909065331.3950268-1-huangjunxian6@hisilicon.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1725864849; c=relaxed/simple;
+	bh=s90mMIl9Yk0dS3ZxwgoGrwtmHEwr0osOFdbPy6fBLDg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=bdDhRRdV09lnwII1WXs0xMNu/5PoMoYj/eXSZttori9AQfEpl0HPv1GbLqKSySJ8SNzZC7jmMZ5e01g6TwORQQDfhrPYKfc07gwzct9DQA/3ucNhJ8F25mNFWazYaeRs//GBo+cJ+7BYjfrgpBt/veWGqoOZ9oeRgv6pd4EgYoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S7nrBuv7; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6db2a9da800so29441627b3.0;
+        Sun, 08 Sep 2024 23:54:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725864847; x=1726469647; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Q7d8zwumBa2mhTup4zQYqTmBFbEzejGeaSSz2DQo8ts=;
+        b=S7nrBuv7Wd4RCq6XcJqxFRIiauxhIb8v9qD909mhgONYmYcHnrPrjzWT+9DvPfFGfR
+         kQYmUlCT9zDON3gJ23OgKjT11LZ0DeOULUEP79GklmB73s9iythKug/BP63NXxxa510v
+         yW6FD9jBVCuGzozi+qYs2uC45W8UioAs5L1UKfzytl4nJIsd69b5UYAYtb29S0ikMtrt
+         zeS0MQ4AocgXU81MVJgEdd2q9rCt6o7ekHFhiVia4sggJqulbXsK7pbhFgtsdD09I54G
+         XjVWdmyItefW0bst+XHPnRtLyj7NxJoT7lz5eXrx8kB90u7Seq5miv6tdWgPGFjL2Cv2
+         6QEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725864847; x=1726469647;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q7d8zwumBa2mhTup4zQYqTmBFbEzejGeaSSz2DQo8ts=;
+        b=Qi1i2q8gC5Savo+4UDnpyEj+E9oRzZ1OaZdo3KE+CiHlRMS+dpS2yIvqhUW6OwUtaM
+         oVwcxGXUE2vy3pJBieqmjWwFb1MyuRSh2AwPIIpJk/wK1aE8cEv/zkqIt9WmW/TaAAwc
+         2AThN1iMo9LNZVylXVE/Uyd5sk/MCvA8xCnKC+5MAnzpdfzr9SaATLp3pRURQEnf2/XW
+         u3a3sc2VQlC1/oJR2/K2MHVHt1aS5LnJJwn3ed6OO4n+Y7HYkDg+0CR4KhetYDW9i+pO
+         TAETNq95vW9pEGD3Kw+6rw/cipMoIK76z8PbWgnhQLE46j+YcPsrbSowtaOpoJg/elm8
+         60Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsCNCu1ZmIcSpaYlzyUQ8sn52ZBXmcxq9tkwu6UhJ6HzwZUucfoI8cu6mz4exmNb5RUJPfyu7bnmkhyKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4mZfOSuf8h8uyFdkJsk/vLtzqUSfBI0T5OzJJ/9EGhiSLND7r
+	t2SvrAPOqeAsG0/F6tOFQcyca3vvdXqNfwpiDSFq+4AqaRwTFHPuEYN9Afyf+Eh1PbFid9QipDR
+	aqYAuHKisxoF92Vc1PqlFfoelCkAL/j0GdxM=
+X-Google-Smtp-Source: AGHT+IGf+k1Qbf5QZG88Dg+4QfNHq6ywW4JlKCO4pQ/VZyLmq0NSpIL5vgjIjpH3e3gxkgq+6y9vc0izdS8MD1vtfww=
+X-Received: by 2002:a05:690c:28b:b0:6d6:a5b7:3ff with SMTP id
+ 00721157ae682-6db26016c10mr136267497b3.14.1725864847299; Sun, 08 Sep 2024
+ 23:54:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+From: Hugues Bruant <hugues.bruant@gmail.com>
+Date: Sun, 8 Sep 2024 23:53:56 -0700
+Message-ID: <CALvjV29jozswRtmYxDur2TuEQ=1JSDrM+uWVHmghW3hG5Y9F+w@mail.gmail.com>
+Subject: [REGRESSION] soft lockup on boot starting with kernel 6.10 / commit 5186ba33234c9a90833f7c93ce7de80e25fac6f5
+To: stable@vger.kernel.org
+Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Fenghua Yu <fenghua.yu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Fix sparse warnings: restricted __le16 degrades to integer.
+Hi,
 
-Fixes: 5a87279591a1 ("RDMA/hns: Support hns HW stats")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409080508.g4mNSLwy-lkp@intel.com/
-Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
----
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I have discovered a 100% reliable soft lockup on boot on my laptop:
+Purism Librem 14, Intel Core i7-10710U, 48Gb RAM, Samsung Evo Plus 970
+SSD, CoreBoot BIOS, grub bootloader, Arch Linux.
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index 621b057fb9da..78a18608f4c5 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -1681,8 +1681,8 @@ static int hns_roce_hw_v2_query_counter(struct hns_roce_dev *hr_dev,
- 
- 	for (i = 0; i < HNS_ROCE_HW_CNT_TOTAL && i < *num_counters; i++) {
- 		bd_idx = i / CNT_PER_DESC;
--		if (!(desc[bd_idx].flag & HNS_ROCE_CMD_FLAG_NEXT) &&
--		    bd_idx != HNS_ROCE_HW_CNT_TOTAL / CNT_PER_DESC)
-+		if (bd_idx != HNS_ROCE_HW_CNT_TOTAL / CNT_PER_DESC &&
-+		    !(desc[bd_idx].flag & cpu_to_le16(HNS_ROCE_CMD_FLAG_NEXT)))
- 			break;
- 
- 		cnt_data = (__le64 *)&desc[bd_idx].data[0];
--- 
-2.33.0
+The last working release is kernel 6.9.10, every release from 6.10
+onwards reliably exhibit the issue, which, based on journalctl logs,
+seems to be triggered somewhere in systemd-udev:
+https://gitlab.archlinux.org/-/project/42594/uploads/04583baf22189a0a8bb2f8773096e013/lockup.log
 
+Bisect points to commit 5186ba33234c9a90833f7c93ce7de80e25fac6f5
+
+At a glance, I see two potentially problematic changes in this diff.
+Specifically, in the refactoring to move the call to rdt_ctrl_update
+inside the loop that walks over r->domains :
+
+  1. the change from on_each_cpu_mask to smp_call_function_any means
+that preemption is no longer disabled around the call to
+rdt_ctrl_update, which could plausibly be a problem
+
+  2. there's now a race condition on the msr_params struct: afaict
+there's no write barrier, so if the call to rdt_ctrl_update is
+executed on a different CPU, it could plausibly read an outdated value
+of the dom field, which prior to this series of patches wasn't passed
+as an explicit parameter, but derived inside rdt_ctrl_update
+
+For initial report to Arch Linux bugtracker and bisect log see:
+https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issues/74
+
+Best
+Hugues
 
