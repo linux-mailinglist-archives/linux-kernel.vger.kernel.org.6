@@ -1,134 +1,203 @@
-Return-Path: <linux-kernel+bounces-321322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81EC59718B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:53:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7B89718BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE0971C227BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:53:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5891AB26CA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7516E1B86C0;
-	Mon,  9 Sep 2024 11:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37AC1B78F0;
+	Mon,  9 Sep 2024 11:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KDX195re"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOcHa7kT"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35CB1B6525;
-	Mon,  9 Sep 2024 11:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768831B5ED8;
+	Mon,  9 Sep 2024 11:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725882707; cv=none; b=vEkYDnVifbrlJFbFQZ3PaHbo/28viZ2VSvC1gpgfGqCvsjQaI7Q3EhrELd5Yx8kN8kYLXyxJ34XIjJGhfa6rTHT6D/1nX5GL2w/CtiGqMw/FqOJjEmIKnINDzi6iSpqTN+i1b7Ar8nK4zIh5F6cdcpzYeNpeJtQi2QhVzY5z2G8=
+	t=1725882779; cv=none; b=TlTn1aOkFtLaJgwGyyZbex1tM0KAUHOZ6UNioJmOznoeIuw/HvCQP3oMy60XgOJ/CEOlSCdIl3JjffP7ualZYMmo+Q7vKp0+JCybMvsjqq3df6iVe0SP+wIluAnfLaYzVGBpSwzUqb2VmfRIHPCfNJCat1bXkFKHFl5Weqvglo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725882707; c=relaxed/simple;
-	bh=0JyaXQcVV7hV6+TsoSX2pVLz4WSNcsP5lbx3ypUfRNY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QxN7GDkbeXhxYJddC2LU7A2X58mncQB30ZEtkaPkWIHkW3WpWaBif7/Tv6/JC9uzV3K++BAfdV3XlftxzJ90tmZK81kYjH35JNxQtNwdKwQaYOoiNMaDbhMUc1T1ZnoTsZXkqtaSUNUZzpbcaKcsjOlhm/C/xAFAWDU1Zt2h1RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KDX195re; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54DBEC4CEC7;
-	Mon,  9 Sep 2024 11:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725882706;
-	bh=0JyaXQcVV7hV6+TsoSX2pVLz4WSNcsP5lbx3ypUfRNY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KDX195re/Wb8hzBE3AWZJzabPkZjsDHLVwHFV0SCsWdSvZr8I2P7USdXFqva9tP9Y
-	 ukl8bMwjb1RQgdwX1h8f5jCiB7Gl6T+yd7oR3iUcsnjaIR0Z4drxbMybUJO954lZTy
-	 NiyiUeAVKW5bG3A9BE/0+X2hlsloMBfpMREn4TK+4OcFXji4mBrky8LZbBp0qsxh6I
-	 ecrhqKiN2qd3shH3eqmj97oR8JOWtnv16BPizbTJ73Qom+N94JsxSvNsEJKpD5jiLV
-	 p/WtDVZEEGCwezhB9sJ7GKRJf0pks9SdEtDG/LhkffmbzxqP7nby/WGd40bl1l5sI5
-	 BufwvRr/w0RCA==
-Message-ID: <88e20936-0400-47a3-8909-24e3609e714e@kernel.org>
-Date: Mon, 9 Sep 2024 13:51:33 +0200
+	s=arc-20240116; t=1725882779; c=relaxed/simple;
+	bh=iKO5cKYG5fdS5jT5sp0CsoK2vaOm6IX/jwHsmDYwqTY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=kAxVDtRrafrcSYnxCb5j5anRcqmCsNXwdJYvkM4XBg4c8w6ETP7aqv/kzlt8ynOQ/KkohFmUSDHMJGRqdDOj2EstCKoegy/4V5dDK0ax2+O8jebFOlfVlcZgAkGnwXLWU8Pn3Z8TK4jVEdIj6z5MqT+PzRQp6PfAkttzPYQT5V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOcHa7kT; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-206aee40676so34587475ad.0;
+        Mon, 09 Sep 2024 04:52:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725882777; x=1726487577; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=a1hlGxq4Sy4VLXBTxJjiZfV2OnOm9z9n70bsEsEtYNQ=;
+        b=XOcHa7kTwBZi5L2PW6mpMVpzxdMjEjeFycGIVBxn/+N/VnnBpe2kOgNHyN4337mt3k
+         b5pvwPFUy93aHkLCViOxYN4OXEyq/F8RfmqZqbmRNQUgInHy8P0cJ/QRctEeaaFhKM+K
+         Cd+KIRXp06ZZRB+bL7fISdC04glmClSAjKuSZzWhTjTvgAIEgJQiU20tsaHZzHLtzM1R
+         htBq4jdQLcK0rCBXzWA80JCqzJSClKbn1DOQRuk9sYo6Hv8F2VMz7QKMtPEAGi+yigG5
+         8oHB0m/BFsh4vqSsbNlk6HegsUA0TaH9JO3da43ZfPELItFZiZ9DsKwC5q+sQeANi8fo
+         W6sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725882777; x=1726487577;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a1hlGxq4Sy4VLXBTxJjiZfV2OnOm9z9n70bsEsEtYNQ=;
+        b=c+2IFM+54UtimemCg0GFJ6UYizqhGWA7mneWYghKqr8SEriiw3zViL7yCWsvLWnDBy
+         F5UUWQUMf7UnJtc6rvPJ8WfCuFeT3PUCJagiIOZTpu/UeCDPp07Y6L4bm2PF7mou+2j1
+         obnqMjlX9UIBQqF64x/ENNPKREHtA7bbveQu0HKM2KuQviwQ+Kd6F9JsZc2uD3YFUzkh
+         k0I/lQ4Hpt4YntZEyIPEqlEUkUGzxS55BruYV9BynWvO9ppQFXowzRnebRpsMgJ1uM76
+         ctiCuVtPRIHzwJyH1Lz/z5HpgCjVkQgxF4DwlfxbXU1NwOZg8dr/zRvs1E5v8t/8lY6Z
+         M82g==
+X-Forwarded-Encrypted: i=1; AJvYcCW4kiRDOedDCjs8SQz6pCYNPOHMBkDtRuGS1N2DhhO2dRmco8NgRNVicgAv5YQ5cpJMAI3BmEw0TeQ7dUA31i8=@vger.kernel.org, AJvYcCWIIJVLIU/RC+Uu9rOlc0YYtWfSfQ5OsOK5NBKVzFwGsmmempYcuGoTEdVa7pMzwJAEpBcY+a+kjjunUDZl@vger.kernel.org
+X-Gm-Message-State: AOJu0YzihYjDhsBziv5JhB6wxflI+kMd7YQ4XGy/K+Si4JTO796ajp+A
+	gD8Csm9Jl5uEVcAzHaW9HLtWDO6/I2rrqxZCTb9qdJYwSIFbBaTJud8h7g==
+X-Google-Smtp-Source: AGHT+IHyaJtMU8urJ3KQKLy2J0YEpSN0bzKeYyeQ8BNexR1HFkD12B6L6isHyR/D1/89L6tw1Ijgzg==
+X-Received: by 2002:a17:903:18f:b0:202:cbf:2d6f with SMTP id d9443c01a7336-2070701f045mr63675245ad.57.1725882776591;
+        Mon, 09 Sep 2024 04:52:56 -0700 (PDT)
+Received: from XH22050090-L.ad.ts.tri-ad.global ([103.175.111.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f3552bsm32596505ad.289.2024.09.09.04.52.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 04:52:55 -0700 (PDT)
+Sender: Vincent Mailhol <vincent.mailhol@gmail.com>
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+To: Kees Cook <kees@kernel.org>
+Cc: "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Subject: [PATCH] overflow: optimize struct_size() calculation
+Date: Mon,  9 Sep 2024 20:52:21 +0900
+Message-Id: <20240909115221.1298010-1-mailhol.vincent@wanadoo.fr>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 10/17] soc: qcom: ice: add support for hardware wrapped
- keys
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
- Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Asutosh Das <quic_asutoshd@quicinc.com>,
- Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Gaurav Kashyap <quic_gaurkash@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Om Prakash Singh <quic_omprsing@quicinc.com>
-References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
- <20240906-wrapped-keys-v6-10-d59e61bc0cb4@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240906-wrapped-keys-v6-10-d59e61bc0cb4@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6.09.2024 8:07 PM, Bartosz Golaszewski wrote:
-> From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> 
-> Now that HWKM support has been added to ICE, extend the ICE driver to
-> support hardware wrapped keys programming coming in from the storage
-> controllers (UFS and eMMC). This is similar to raw keys where the call is
-> forwarded to Trustzone, however we also need to clear and re-enable
-> CFGE before and after programming the key.
-> 
-> Derive software secret support is also added by forwarding the call to
-> the corresponding SCM API.
-> 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Reviewed-by: Om Prakash Singh <quic_omprsing@quicinc.com>
-> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+If the offsetof() of a given flexible array member (fam) is smaller
+than the sizeof() of the containing struct, then the struct_size()
+macro reports a size which is too big.
 
-[...]
+This occurs when the two conditions below are met:
 
+  - there are padding bytes after the penultimate member (the member
+    preceding the fam)
+  - the alignment of the fam is less than the penultimate member's
+    alignment
 
-> +static int qcom_ice_program_wrapped_key(struct qcom_ice *ice,
-> +					const struct blk_crypto_key *key,
-> +					u8 data_unit_size, int slot)
-> +{
-> +	union crypto_cfg cfg;
-> +	int hwkm_slot;
-> +	int err;
-> +
-> +	hwkm_slot = translate_hwkm_slot(ice, slot);
-> +
-> +	memset(&cfg, 0, sizeof(cfg));
+In that case, the fam overlaps with the padding bytes of the
+penultimate member. This behaviour is not captured in the current
+struct_size() macro, potentially resulting in an overestimated size.
 
-union crypto_cfg cfg = { 0 };
+Below example illustrates the issue:
 
-?
+  struct s {
+  	u64 foo;
+  	u32 count;
+  	u8 fam[] __counted_by(count);
+  };
 
-> +	cfg.dusize = data_unit_size;
-> +	cfg.capidx = QCOM_SCM_ICE_CIPHER_AES_256_XTS;
-> +	cfg.cfge = 0x80;
+Assuming a 64 bits architecture:
 
-Or just partially initialize it at declaration time?
+  - there are 4 bytes of padding after s.count (the penultimate
+    member)
+  - sizeof(struct s) is 16 bytes
+  - the offset of s.fam is 12 bytes
+  - the alignment of s.fam is 1 byte
 
-Also, what's 0x80?
+The sizes are as below:
 
-Konrad
+   s.count	current struct_size()	actual size
+  -----------------------------------------------------------------------
+   0		16			16
+   1		17			16
+   2		18			16
+   3		19			16
+   4		20			16
+   5		21			17
+   .		.			.
+   .		.			.
+   .		.			.
+   n		sizeof(struct s) + n	max(sizeof(struct s),
+					    offsetof(struct s, fam) + n)
+
+Change struct_size() from this pseudo code logic:
+
+  sizeof(struct s) + sizeof(*s.fam) * s.count
+
+to that pseudo code logic:
+
+  max(sizeof(struct s), offsetof(struct s, fam) + sizeof(*s.fam) * s.count)
+
+Here, the lowercase max*() macros can cause struct_size() to return a
+non constant integer expression which would break the DEFINE_FLEX()
+macro by making it declare a variable length array. Because of that,
+use the unsafe MAX() macro only if the expression is constant and use
+the safer max_t() otherwise.
+
+Reference: ISO/IEC 9899:2018 §6.7.2.1 "Structure and union specifiers" ¶18
+
+Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+---
+
+I also tried to think of whether the current struct_size() macro could
+be a security issue.
+
+The only example I can think of is if someone manually allocates the
+exact size but then use the current struct_size() macro.
+
+For example (reusing the struct s from above):
+
+  u32 count = 5;
+  struct s *s = kalloc(offsetof(typeof(*s), fam) + count);
+  s->count = count;
+  memset(s, 0, struct_size(s, fam, count)); /* 4 bytes buffer overflow */
+
+If we have concerns that above pattern may actually exist, then this
+patch should also go to stable. I personally think that the above is a
+bit convoluted and, as such, I only suggest this patch to go to next.
+---
+ include/linux/overflow.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+index 0c7e3dcfe867..1384887f3684 100644
+--- a/include/linux/overflow.h
++++ b/include/linux/overflow.h
+@@ -5,6 +5,7 @@
+ #include <linux/compiler.h>
+ #include <linux/limits.h>
+ #include <linux/const.h>
++#include <linux/minmax.h>
+ 
+ /*
+  * We need to compute the minimum and maximum values representable in a given
+@@ -369,8 +370,12 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+  */
+ #define struct_size(p, member, count)					\
+ 	__builtin_choose_expr(__is_constexpr(count),			\
+-		sizeof(*(p)) + flex_array_size(p, member, count),	\
+-		size_add(sizeof(*(p)), flex_array_size(p, member, count)))
++		MAX(sizeof(*(p)),					\
++		    offsetof(typeof(*(p)), member) +			\
++			flex_array_size(p, member, count)),		\
++		max_t(size_t, sizeof(*(p)),				\
++		      size_add(offsetof(typeof(*(p)), member),		\
++			       flex_array_size(p, member, count))))
+ 
+ /**
+  * struct_size_t() - Calculate size of structure with trailing flexible array
+-- 
+2.25.1
+
 
