@@ -1,95 +1,186 @@
-Return-Path: <linux-kernel+bounces-321270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5802F9716B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:24:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569DB9716BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E24E1F23015
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:24:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F39028324F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498B91B5833;
-	Mon,  9 Sep 2024 11:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D961B78F7;
+	Mon,  9 Sep 2024 11:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="c+7K95Wn"
-Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIxa7MfC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2070F38DD4;
-	Mon,  9 Sep 2024 11:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBF21AF4E4;
+	Mon,  9 Sep 2024 11:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725880990; cv=none; b=Kv0Lss2OSXQxCaTEJvUIe16CSlqtgnzA+1X0L0JSsqG5Pn74MnIqVnaerI/TJ2Lg/WmTA4okGgNgDN+DsXCFc7PibmCSmNEk73atdfNs4Gp2ljNdry5MllZ+YyiqzxGvgeJGPu9Dydyx6TB1t0nJXKoM3S+Z5hKNqdPh0WtsbLE=
+	t=1725881033; cv=none; b=aAQnIIIJZzudhpLL1BrY2wHeUFhITBw4JqxxO1z79R1A/C8IHC77QS2poP3Vcuvh2FQW8T3clhbxTfHfU5vxZtkHQIAi1Z4zwS45rRiPyR9RCGPUWvlae8KkGB4BuclkORdG0Myvttx5clDh8Cy0xK+rwi5TYmlWzvNXKNwZUYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725880990; c=relaxed/simple;
-	bh=7McYHbJ1rujuzLwEwekgMXJStMtqlaSw8UOc0xF6C4o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MdpD9xA+hYg/AAnCKT59fAOLGZiUYG62r8B+PR/8ygGBvbBXG/MmQEaFqjgXtGqnECngg+zHbaooNI1AtYoF3MQiyqmICaavR+1hEAgafQjB81ijeKBX8coXATZOdSB3iaZQWnwXkMKzWpIGODMuUOEBoSrQZP5l4OEsLtZM+9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=c+7K95Wn; arc=none smtp.client-ip=45.145.95.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
-	t=1725880985; bh=7McYHbJ1rujuzLwEwekgMXJStMtqlaSw8UOc0xF6C4o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=c+7K95WniHvTgDa4mqOmd1ouRCuwKYsziVzgWeqcKRDH89wt2MA0GfWMzESFRjcD1
-	 U9oXuO4rvxNHtosHQU95S4K+tuMKLacOUEspi4hkLixKcROqxSfcvgqptSVQaL8HRI
-	 3Uu6hHbZZJGrJH8N0AIRPe4jpTwK0HLJLIbDXDIXh1XYpMzU2UNeaE/OSivamIV4Tn
-	 2zKJ4LHhvwd5bhOScB4bdr4iA3JOWXH9sN7PsuLpm+WWFcEHZ08YHBB6/ikfIDu+/D
-	 b1NRc/mZLEPL9h47tMGPoEAGg/GXwKU+7+h/tsEKXONJL7GKZStoTxaXhc3pJi6NqT
-	 vtBJ+IJBzuDKw==
-To: Jeongjun Park <aha310510@gmail.com>, kvalo@kernel.org
-Cc: Sujith.Manoharan@atheros.com, senthilkumar@atheros.com,
- vasanth@atheros.com, linville@tuxdriver.com,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, Jeongjun
- Park <aha310510@gmail.com>
-Subject: Re: [PATCH v2] wifi: ath9k: add range check for conn_rsp_epid in
- htc_connect_service()
-In-Reply-To: <20240909103855.68006-1-aha310510@gmail.com>
-References: <20240909103855.68006-1-aha310510@gmail.com>
-Date: Mon, 09 Sep 2024 13:23:04 +0200
-X-Clacks-Overhead: GNU Terry Pratchett
-Message-ID: <87v7z5oyuf.fsf@toke.dk>
+	s=arc-20240116; t=1725881033; c=relaxed/simple;
+	bh=AQzT3bAV2JDDv98lxn2LYC9mXTmymBsjkG6LCRpyPxU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gVZttwQ8tMcHh9fKPkulXvK/6ruxXE/VKglyyEKUkAr85jIpNTU1klaEgQDyGt9z/wMCzEE0SEzab4AJA4M44M45T/3IMwMUXxR0RYaoaWvokRBYvsCnpPwwv+iSo/EqPCYeZymUTMZ7GjDdSNtFTGtgK8QOTjqs+vQU507MhaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIxa7MfC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E05C4CEC5;
+	Mon,  9 Sep 2024 11:23:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725881032;
+	bh=AQzT3bAV2JDDv98lxn2LYC9mXTmymBsjkG6LCRpyPxU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fIxa7MfCpT2NrhKQOzTCEcsR2Jj//3XNpMa32fzJWiV2Se2PY0rkOeaEEQI9zn5Cd
+	 bVsbJiFRXl6JbG9+j1hSknxLqbm5Igqm0wLyebgDU+ilL1yFpOEshwYSpF8xphZ0fO
+	 pNrGlj1uDMqDVJ2+SwefLeb3jg3dR9LLurP23ztS+FGFZfkneaPXMHZPiagCedVUCM
+	 Bex8xTF362cqZPzzT3DONjUW0lcaPkrjok9ogTrD3B9FWo2oEKB49ixdHuLsEY61OU
+	 Z3O+NUB4VeUdkFz666hVip30pCIEHrNJ0BJcP3eQLCGXlwkvY65VmEio0tued3SUtz
+	 dyippi+O8W0Kg==
+Message-ID: <fc780dc2-5a69-48d8-8caa-ca2ee97d10ef@kernel.org>
+Date: Mon, 9 Sep 2024 13:23:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 06/17] firmware: qcom: scm: add a call for deriving the
+ software secret
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
+ Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Asutosh Das <quic_asutoshd@quicinc.com>,
+ Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Gaurav Kashyap <quic_gaurkash@quicinc.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
+ <20240906-wrapped-keys-v6-6-d59e61bc0cb4@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240906-wrapped-keys-v6-6-d59e61bc0cb4@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Jeongjun Park <aha310510@gmail.com> writes:
+On 6.09.2024 8:07 PM, Bartosz Golaszewski wrote:
+> From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> 
+> Inline storage encryption may require deriving a software secret from
+> storage keys added to the kernel.
+> 
+> For raw keys, this can be directly done in the kernel as keys are not
+> encrypted in memory.
+> 
+> However, hardware wrapped keys can only be unwrapped by the HW wrapping
+> entity. In case of Qualcomm's wrapped key solution, this is done by the
+> Hardware Key Manager (HWKM) from Trustzone.
+> 
+> Add a new SCM call which provides a hook to the software secret crypto
+> profile API provided by the block layer.
+> 
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/firmware/qcom/qcom_scm.c       | 65 ++++++++++++++++++++++++++++++++++
+>  drivers/firmware/qcom/qcom_scm.h       |  1 +
+>  include/linux/firmware/qcom/qcom_scm.h |  2 ++
+>  3 files changed, 68 insertions(+)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index 10986cb11ec0..ad3f9e9ed35d 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -1252,6 +1252,71 @@ int qcom_scm_ice_set_key(u32 index, const u8 *key, u32 key_size,
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_scm_ice_set_key);
+>  
+> +/**
+> + * qcom_scm_derive_sw_secret() - Derive software secret from wrapped key
+> + * @wkey: the hardware wrapped key inaccessible to software
+> + * @wkey_size: size of the wrapped key
+> + * @sw_secret: the secret to be derived which is exactly the secret size
+> + * @sw_secret_size: size of the sw_secret
+> + *
+> + * Derive a software secret from a hardware wrapped key for software crypto
+> + * operations.
+> + * For wrapped keys, the key needs to be unwrapped, in order to derive a
+> + * software secret, which can be done in the hardware from a secure execution
+> + * environment.
+> + *
+> + * For more information on sw secret, please refer to "Hardware-wrapped keys"
+> + * section of Documentation/block/inline-encryption.rst.
+> + *
+> + * Return: 0 on success; -errno on failure.
+> + */
+> +int qcom_scm_derive_sw_secret(const u8 *wkey, size_t wkey_size,
+> +			      u8 *sw_secret, size_t sw_secret_size)
+> +{
+> +	struct qcom_scm_desc desc = {
+> +		.svc = QCOM_SCM_SVC_ES,
+> +		.cmd =  QCOM_SCM_ES_DERIVE_SW_SECRET,
+> +		.arginfo = QCOM_SCM_ARGS(4, QCOM_SCM_RW,
+> +					 QCOM_SCM_VAL, QCOM_SCM_RW,
+> +					 QCOM_SCM_VAL),
+> +		.args[1] = wkey_size,
+> +		.args[3] = sw_secret_size,
+> +		.owner = ARM_SMCCC_OWNER_SIP,
+> +	};
+> +
+> +	int ret;
+> +
+> +	void *wkey_buf __free(qcom_tzmem) = qcom_tzmem_alloc(__scm->mempool,
+> +							    wkey_size,
+> +							    GFP_KERNEL);
+> +	if (!wkey_buf)
+> +		return -ENOMEM;
+> +
+> +	void *secret_buf __free(qcom_tzmem) = qcom_tzmem_alloc(__scm->mempool,
+> +							       sw_secret_size,
+> +							       GFP_KERNEL);
+> +	if (!secret_buf) {
+> +		ret = -ENOMEM;
+> +		goto out_free_wrapped;
+> +	}
+> +
+> +	memcpy(wkey_buf, wkey, wkey_size);
+> +	desc.args[0] = qcom_tzmem_to_phys(wkey_buf);
+> +	desc.args[2] = qcom_tzmem_to_phys(secret_buf);
+> +
+> +	ret = qcom_scm_call(__scm->dev, &desc, NULL);
+> +	if (!ret)
+> +		memcpy(sw_secret, secret_buf, sw_secret_size);
+> +
+> +	memzero_explicit(secret_buf, sw_secret_size);
+> +
+> +out_free_wrapped:
 
-> I found the following bug in my fuzzer:
->
->   UBSAN: array-index-out-of-bounds in drivers/net/wireless/ath/ath9k/htc_=
-hst.c:26:51
->   index 255 is out of range for type 'htc_endpoint [22]'
->   CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.11.0-rc6-dirty #14
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04=
-/01/2014
->   Workqueue: events request_firmware_work_func
->   Call Trace:
->    <TASK>
->    dump_stack_lvl+0x180/0x1b0
->    __ubsan_handle_out_of_bounds+0xd4/0x130
->    htc_issue_send.constprop.0+0x20c/0x230
->    ? _raw_spin_unlock_irqrestore+0x3c/0x70
->    ath9k_wmi_cmd+0x41d/0x610
->    ? mark_held_locks+0x9f/0xe0
->    ...
->
-> Since this bug has been confirmed to be caused by insufficient verificati=
-on=20
-> of conn_rsp_epid, I think it would be appropriate to add a range check fo=
-r=20
-> conn_rsp_epid to htc_connect_service() to prevent the bug from occurring.
->
-> Fixes: fb9987d0f748 ("ath9k_htc: Support for AR9271 chipset.")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+Is there a reason to zero out the buffer that's being zero-allocated?
 
-Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
+Konrad
+
+> +	memzero_explicit(wkey_buf, wkey_size);
 
