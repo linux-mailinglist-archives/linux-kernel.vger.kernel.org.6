@@ -1,132 +1,103 @@
-Return-Path: <linux-kernel+bounces-321159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01FCD971556
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:29:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B26AE971554
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C9DEB23B3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:29:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E436B23D7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8D01B4C23;
-	Mon,  9 Sep 2024 10:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475511B3F3A;
+	Mon,  9 Sep 2024 10:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kP9Ui+b3"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LfIcKxUW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327F61B3B2A;
-	Mon,  9 Sep 2024 10:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93381B3B2A;
+	Mon,  9 Sep 2024 10:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725877769; cv=none; b=bWgDavHc9oMangpxAatQNV6d6Gg1Sp7F+RSTZTbKUlPZk1hwrYnzoPhqOkkJqZd/T8RCcOHfMc5enjkMpkHywuESMBOc3Ul1pFREC7VpmU9e2mBuztryduXbkxSVF34xyYPMqpFpuTmXC3WDGMhFsMW1YbTdMNZA0JSITR59Ufo=
+	t=1725877741; cv=none; b=Gfy9eNGWXvYo3aBQ0SqurndABM/WVKG9Q+2C1x6Ajj/YQUCLp9FKjtPlMwmD5mwv8VgYlHlTQOwyGmU9vAkJg7Dxxfvf1cF+HuZodaLtnX4rC3sDDcFJwaliIlQYd4Fn3viCt0qsLq2vh14QBbw7QSWXTQCmtkbWKqCjjUYW6Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725877769; c=relaxed/simple;
-	bh=SXu+KN414hj/lwNJJEVMgjiKQvEk/dkZL54sBGNdtaQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vjv6V4ddkB8BHcNW/n4nhk2p0wN8v9YAhcThE9F5EVcfMWVwqagF9vN1PxkJ9Xjpj2kcEufbkUsdyPJVw25mYnZBbPYqYbM3DRrL7crijTV/LAsNU0UhQHaKk7v3igHDF0VFtkFYD+1abalOCOTStk9LKDrjXq2j8P+5xI22M2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kP9Ui+b3; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso9486835e9.2;
-        Mon, 09 Sep 2024 03:29:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725877766; x=1726482566; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FAsp+hsPUDz1Xlxx3Pt4VK/5oi4jWW+27XM18rtoe0s=;
-        b=kP9Ui+b3nzlhwCdEz7nH0dd8Xo3NsAJi/v5hXgg0xiH+KlaRhFW02lsOHntYo1R7KA
-         mJH3Mh0Fa3AqQX3ml0Hp/tpmqMUJa8MZoXx1N0QIsOs4cBLtTiCi8tecKhpgbygbIaR/
-         1SQbwIvoCahfw1tughaPY/NTwPJLQh4f0cRW9onZ0M5DKRq1u8fTAkTvSTZ108Zmfem1
-         rLNeyvPfm0+hbVWFqoMUbErtbtyHAEYl9+DwMWWqa/2rUwUWDz9G7EaOQJFAi5KABkz9
-         VSwBoxO+L1TeAvC8WGIUbMb4Q5qiKM8rTKzv+RwVMDPzL9npTDLSzbne0x9Fxa+2zb8g
-         hAIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725877766; x=1726482566;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FAsp+hsPUDz1Xlxx3Pt4VK/5oi4jWW+27XM18rtoe0s=;
-        b=Y54LPGN4rO8A/a0zFp76xYYY2De3IbiI1jjxrSjCBWxbPJ4Lsalr8ubrIGuq+EPQcb
-         kqjRpE9WHgcSdWdd/MQLEIUHhE+cYE+nIQtqTGbVUvdOgf8BGZ/GricBhVzV4jc9XPvJ
-         Bc7b8Bm5U7nJFBJ5xxlQHAMsjsp6Luv079VmuG/BCxOLSDXA9hDAn4TBUbs/LJi9+0rv
-         qhkVO05go7Sd0fjt2TiUwiGVv/K0LsTgeQqOT750F4lYL8UBGnYc4LBBJvBmrRuNh9Y2
-         0m0vn1pE/Vit4f15RExIrzuDeoFLiffDum4tbAg/TTKL5W8fJjxWBXa5VJsyJJ59qJMJ
-         1+MA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYxIrQWWJUVaQvsP9BA7bI1pzpBOW1WKYY/ghTDSHqJsY3JZKmRXA6keYVChkAykuRccpun4Izg4i37Eby1/A=@vger.kernel.org, AJvYcCXVVabmxHxVDwmOzt00J3MS3ufzlu6KPTPznRNQG5Z0DjyZx1Q5/qM8GDB/J1Fe1KtxP4WbLLessqS36lvx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrieYTTba3IVk3MyQBSUfVryBElq+M73K1ewjkaP9Rv+35evmu
-	OsWXjH/Uf/5bKlKmMQYDWADL/O6okrZDcKSFyFqvxki/CcbM+cb+
-X-Google-Smtp-Source: AGHT+IExMTUofqcguf6fDVu6C3XE4WrbFEN09GsrU/tVFwiMhS7OIZzFORoOXK79ZdwkysUEcI/bPg==
-X-Received: by 2002:a05:600c:3155:b0:426:6455:f124 with SMTP id 5b1f17b1804b1-42c9f8bf258mr75867495e9.0.1725877765782;
-        Mon, 09 Sep 2024 03:29:25 -0700 (PDT)
-Received: from void.void ([141.226.14.150])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d3765sm5677125f8f.74.2024.09.09.03.29.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 03:29:25 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Russell King <linux@armlinux.org.uk>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Peter Xu <peterx@redhat.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] arm/mm: fix typos
-Date: Mon,  9 Sep 2024 13:28:51 +0300
-Message-ID: <20240909102907.9187-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725877741; c=relaxed/simple;
+	bh=j/5zo3J+1syvwV8Fyx6cdd+5FuNkHVAOK/IKOmDoCwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d0+5U9BoeDuMc3R84u59+P5k7+jzxRbY2+fFIUXPd+F2DLmt+2Ecu8TkpKCi10htnuruMi9fYIubcgh3C4mU93o4X3kONtcaPytDeOp+gIkOeLcr0NzbdfvtlMPfw2Jc4xvOZQppWpgHD9kWQZgou3ro4Jh7IIe40Rg06qHPqdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LfIcKxUW; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725877740; x=1757413740;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=j/5zo3J+1syvwV8Fyx6cdd+5FuNkHVAOK/IKOmDoCwU=;
+  b=LfIcKxUWDgnuyPda+ZpnCKxjm6Ck5omu7PC66hZhNi9qmyLDhSzv9WlC
+   xcITsl2I3eBsbIez32ydw0vlYuTZaOS6z55EYudEcI8eNjJBJVHgzYweu
+   yzNPPZjbHkb4+MiqhekPqYChGQt85qgkdSKUuazHSshawdizp2Mphtjwp
+   1d9bafKpx3MtWDSgdwiwxSpFBOvkq8fU3/kSfbPdgQzz/85Yxu7/riyea
+   Zko31/ysxJEqrGO/wDAi2j48LADSc4M4n7CFcIkj7SYvVI6KW6ZfRFzKt
+   OUMYPrmgLR1zi6qNjJJSLFqhFhTUCUY6w2rkwzJdahciVMOqFp7GZugiF
+   g==;
+X-CSE-ConnectionGUID: MZ4pSAWkT9KQVFtOhqRiWQ==
+X-CSE-MsgGUID: vcsToSzCRvqsU/8mbClD1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="28449493"
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="28449493"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 03:28:59 -0700
+X-CSE-ConnectionGUID: wD7fQusdT4GjBsM4MF1GLw==
+X-CSE-MsgGUID: Wb7IZAzdRxW96w+Zv+Hnjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="66868180"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 03:28:58 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1snbdf-00000006kik-3K5V;
+	Mon, 09 Sep 2024 13:28:55 +0300
+Date: Mon, 9 Sep 2024 13:28:55 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: nikita.shubin@maquefel.me
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 13/38] pwm: ep93xx: add DT support for Cirrus EP93xx
+Message-ID: <Zt7N56YRS9u_8zwm@smile.fi.intel.com>
+References: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
+ <20240909-ep93xx-v12-13-e86ab2423d4b@maquefel.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240909-ep93xx-v12-13-e86ab2423d4b@maquefel.me>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Fix typos in comments.
+On Mon, Sep 09, 2024 at 11:10:38AM +0300, Nikita Shubin via B4 Relay wrote:
+> From: Nikita Shubin <nikita.shubin@maquefel.me>
+> 
+> Add OF ID match table.
+> 
+> Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- arch/arm/mm/kasan_init.c | 2 +-
- arch/arm/mm/pmsa-v7.c    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-diff --git a/arch/arm/mm/kasan_init.c b/arch/arm/mm/kasan_init.c
-index 111d4f703136..b394b14838c3 100644
---- a/arch/arm/mm/kasan_init.c
-+++ b/arch/arm/mm/kasan_init.c
-@@ -215,7 +215,7 @@ void __init kasan_init(void)
- 	/*
- 	 * We are going to perform proper setup of shadow memory.
- 	 *
--	 * At first we should unmap early shadow (clear_pgds() call bellow).
-+	 * At first we should unmap early shadow (clear_pgds() call below).
- 	 * However, instrumented code can't execute without shadow memory.
- 	 *
- 	 * To keep the early shadow memory MMU tables around while setting up
-diff --git a/arch/arm/mm/pmsa-v7.c b/arch/arm/mm/pmsa-v7.c
-index 59d916ccdf25..4844ae40d4bc 100644
---- a/arch/arm/mm/pmsa-v7.c
-+++ b/arch/arm/mm/pmsa-v7.c
-@@ -434,7 +434,7 @@ void __init pmsav7_setup(void)
- 		/*
-                  * In case we overwrite RAM region we set earlier in
-                  * head-nommu.S (which is cachable) all subsequent
--                 * data access till we setup RAM bellow would be done
-+                 * data access till we setup RAM below would be done
-                  * with BG region (which is uncachable), thus we need
-                  * to clean and invalidate cache.
- 		 */
+If you need to send a v13, drop one of the above.
+
 -- 
-2.46.0
+With Best Regards,
+Andy Shevchenko
+
 
 
