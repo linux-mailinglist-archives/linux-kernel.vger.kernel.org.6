@@ -1,132 +1,142 @@
-Return-Path: <linux-kernel+bounces-321363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D47971962
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:32:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B399B971967
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07D9E1F2384D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:32:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DECD41C23117
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D622A1B78E2;
-	Mon,  9 Sep 2024 12:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D946C1B7908;
+	Mon,  9 Sep 2024 12:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a78sDkVY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lCWnd3za"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8641DFF0;
-	Mon,  9 Sep 2024 12:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A611B3F32
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725885162; cv=none; b=HWiqhjrzLYKRf+HhZOmAJc4l/GzW4qHSyvbNUbasq4hRz66hh34PhLEsP2Is7dvyOzKj2G+dxIaeKbuhgMZgiN4Zu8ENJ5c9CMMVR1mS1hZ3uHiFumwKowYub4TBjQ3nHMhARg4DCs1ruUrtzSoUFFoMdNvlJuKFoX0UmeYQNgE=
+	t=1725885359; cv=none; b=rPTCTyk0i1KF0R+GBchDudIuMSYP4cDVPUxKEIEMUiluAgxNqPqOel9az3wpw0w5uzrubUjCiv30hfbUxTOXbg0tgSABCZBxDrgaJkCg2Eu4RdkvYjIXRRAGMYd7PfEmKtOyBIWAhsaa+GD812FyxfTnRh6IOg3PzxY7wrBmZtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725885162; c=relaxed/simple;
-	bh=MNxJppAPsE+Xe5YVRAFxO+fktSUiHO0Kg0zOQEvY35M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XgQWP9moTM8Gnb78+AVHqMjmE4InADnYqUS8UQxO/EBGbi2B0ngdZ/sqEnQQ/XFya0nCScF7QWcLo2PzPjVrXbVLzTgPk1ZmoxZ4djjo5QMElkntjC8WEeoFy+FQDsaEWGFTT+mTxz1J0tdmnaGCtZIBWCp+LBQBfJ/4cc97tp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a78sDkVY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D006C4CEC5;
-	Mon,  9 Sep 2024 12:32:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725885162;
-	bh=MNxJppAPsE+Xe5YVRAFxO+fktSUiHO0Kg0zOQEvY35M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a78sDkVYh11C5QY5KAlW15ljRMy6bSy92pGuCEzZ3tCuPMY+6MzjzwklkGlFx+Tzp
-	 XUucl1Z6tDXwMQzeMEpj/1ffkw8NFB8Hj8Pvop06/Iz21goCo5+d7fPN7+yk+9FNQc
-	 cFVBupEvRFYb22477epkNAJALyu16koqNiAB3vlV1R8mBcwy2rcy98yH5eR+6axZSw
-	 TqFv3+mvSl7WO8sMMIPYwmOmGI9FxDEwahkHi8yV4C3u/ixLhTq7CUGqsaRMkTcb+2
-	 zjMeOOiXCsmUBqmcBZVgKZR7HeDl4Zsw3KsTo0K8R5PQYJNlCdJDteJwlwi7G4KL9b
-	 JLCtFqIHtB7Yg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sndZj-0000000023H-1vJ3;
-	Mon, 09 Sep 2024 14:32:59 +0200
-Date: Mon, 9 Sep 2024 14:32:59 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: pl2303: account for deficits of clones
-Message-ID: <Zt7q-5kk5SPgE7P4@hovoldconsulting.com>
-References: <a07922bd-4550-41d8-a7cd-8943baf6f8fb@siemens.com>
+	s=arc-20240116; t=1725885359; c=relaxed/simple;
+	bh=MA+HcgDvLW83Ymxu9IsChq33lTehtLFFHUfEU4mQ44Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WJCbKPW1tlv+LNPhdABuaISF4roIKZdAz+kNeftnsL95RzAReeDyXkYot7gffa9Civ6aKXgcxC0rvcNTi5y9VlNjMD4jxvLDnzHVrLBk4k+GRAMZATwHEcXYy2umM4UMtiyDy/VIBDWbKTZxov3PDpZ1/VfpArLJEvHa5nfJCvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lCWnd3za; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53661d95508so6135e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 05:35:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725885356; x=1726490156; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ItkNpbg3b1iQLTwUvcYvCzK1VuBRAi6YVDO131ItVjs=;
+        b=lCWnd3zarZv4fjZ72QoKr9Lni7taADtD/ZhigDT/oKQ1fmf99uYTKFtN4nQaXpDi3z
+         p+kLijj73kNPgQ16M3HNc1XqgD7m4z+lQqoUeHVQ1bJ+WG0eTl4TDNEjzdPDAwdgc7Hy
+         0BN1XnZ9FbsUC8DmQP8xrWLk1dM8pAo1TZT0NoQwX//Zp6YLmkcsjbeP10oOAqzwFSn+
+         OJjHQiRTXjpPYftezBK3LSFqGj/KfCeQXN4PxaoqBGqCK08Ten/mqs3a05VoRa8pnvip
+         wg7+8DiIuD0hxTleV5fAYziZMQY4EsLeiWC5u1m39W5xTmZTicLnBkYOKQ6IKg0e4jw9
+         g1bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725885356; x=1726490156;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ItkNpbg3b1iQLTwUvcYvCzK1VuBRAi6YVDO131ItVjs=;
+        b=OC58ue85DZhrmYXAXF938pliIpQbxxqGYdYlEG/P8vGvsNZRhNN38MAwpF+GwjHxO7
+         BGtLaD68+SQnIU3K4p+e3UiZsg5DFn7D1ILfQwZOuZhzmc63lrrh4KUqPkoWADYNkzVh
+         L9SGd624xoyfCgh7VkR/pTRE5Tlnvj+OsGsHINBK//nlMcgufogG9CNXiutnskRv579H
+         EfpCue4ZYl7z6xqR/IxnteXYD4lww4GPtNdlk4eI8jRBRV7KXAWazWtLGc1r6P/DmcaX
+         lznq/FwupcHK7FTwR9/9ndRRMOWPDbT3gWH2Vbpsa8ZSZ6fLntC0VEmwKmHrTGBGmIrR
+         os9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWyXks60VHkXDV+m+9OOxJTDny8WokXRlmlqvTTTPWcQjNBoFrMRa995bnA78WG5Fypu3zQGDeweLGHRVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWxpSu+gmNheIjA2JpE7ThAwBY+JxSfwahNx8tB3v0Vy/vBMb7
+	dS48Bwbq5Xza5HyJtnPpmGfR92F1ch7W6R8a9j+ZATKdCQ3qjoGPNtEGJQzVaM1ZEjOD0wuMRTn
+	LynGkRuWayW95yLh84ZDCwCVdtGeMGQoNMwinDQsLCydVkMEPpQQSYP4=
+X-Google-Smtp-Source: AGHT+IGGsTOsKMOzuVujWW/9F9gatm28KzGs7KuJZ0r/H8oFsyXYru+A8pCPf172NNXYDzQoEw6rG6CU7Y501Yf4VYs=
+X-Received: by 2002:a05:6512:23aa:b0:536:52dc:291f with SMTP id
+ 2adb3069b0e04-5365eb6a2f4mr188381e87.1.1725885354776; Mon, 09 Sep 2024
+ 05:35:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a07922bd-4550-41d8-a7cd-8943baf6f8fb@siemens.com>
+References: <20240906051205.530219-1-andrii@kernel.org> <20240906051205.530219-2-andrii@kernel.org>
+In-Reply-To: <20240906051205.530219-2-andrii@kernel.org>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 9 Sep 2024 14:35:17 +0200
+Message-ID: <CAG48ez2hAQBj-VnimJBd3M-ioANVTk+ZQXYWD+j9G+ip2K_nfw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: introduce mmap_lock_speculation_{start|end}
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com, 
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
+	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, mjguzik@gmail.com, brauner@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 01, 2024 at 11:11:29PM +0200, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> There are apparently incomplete clones of the HXD type chip in use.
-> Those return -EPIPE on GET_LINE_REQUEST and BREAK_REQUEST. Avoid
-> flooding the kernel log with those errors. Rather use the
-> line_settings cache for GET_LINE_REQUEST and signal missing support by
-> returning -ENOTTY from pl2303_set_break.
+On Fri, Sep 6, 2024 at 7:12=E2=80=AFAM Andrii Nakryiko <andrii@kernel.org> =
+wrote:
+> +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, int s=
+eq)
+> +{
+> +       /* Pairs with RELEASE semantics in inc_mm_lock_seq(). */
+> +       return seq =3D=3D smp_load_acquire(&mm->mm_lock_seq);
+> +}
 
-This looks mostly fine to me, but could you please try to make these
-changes only apply to the clones or, since those probably cannot be
-detected reliably, HXD?
+A load-acquire can't provide "end of locked section" semantics - a
+load-acquire is a one-way barrier, you can basically use it for
+"acquire lock" semantics but not for "release lock" semantics, because
+the CPU will prevent reordering the load with *later* loads but not
+with *earlier* loads. So if you do:
 
-What is the 'lsusb -v' for these devices?
- 
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
->  drivers/usb/serial/pl2303.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/usb/serial/pl2303.c b/drivers/usb/serial/pl2303.c
-> index d93f5d584557..04cafa819390 100644
-> --- a/drivers/usb/serial/pl2303.c
-> +++ b/drivers/usb/serial/pl2303.c
-> @@ -731,12 +731,13 @@ static int pl2303_get_line_request(struct usb_serial_port *port,
->  				GET_LINE_REQUEST, GET_LINE_REQUEST_TYPE,
->  				0, 0, buf, 7, 100);
->  	if (ret != 7) {
-> -		dev_err(&port->dev, "%s - failed: %d\n", __func__, ret);
-> +		struct pl2303_private *priv = usb_get_serial_port_data(port);
->  
-> -		if (ret >= 0)
-> -			ret = -EIO;
-> +		dev_dbg(&port->dev, "%s - failed, falling back on cache: %d\n",
-> +			__func__, ret);
-> +		memcpy(buf, priv->line_settings, 7);
->  
-> -		return ret;
-> +		return 0;
->  	}
+mmap_lock_speculation_start()
+[locked reads go here]
+mmap_lock_speculation_end()
 
-Looking at the driver, it seems like we could move the only call to this
-function to probe, and perhaps then an error message for cloned devices
-is not such a big deal. But even that could be suppressed based on the
-type.
+then the CPU is allowed to reorder your instructions like this:
 
-Or we could use this call failing to flag the device as a likely clone
-and use that flag to also skip break signalling completely.
+mmap_lock_speculation_start()
+mmap_lock_speculation_end()
+[locked reads go here]
 
->  	dev_dbg(&port->dev, "%s - %7ph\n", __func__, buf);
-> @@ -1078,8 +1079,8 @@ static int pl2303_set_break(struct usb_serial_port *port, bool enable)
->  				 BREAK_REQUEST, BREAK_REQUEST_TYPE, state,
->  				 0, NULL, 0, 100);
->  	if (result) {
-> -		dev_err(&port->dev, "error sending break = %d\n", result);
-> -		return result;
-> +		dev_dbg(&port->dev, "error sending break = %d\n", result);
-> +		return -ENOTTY;
->  	}
+so the lock is broken.
 
-And similar here, the log level could depend on the type, unless the
-function should just bail out early for clones.
+>  static inline void mmap_write_lock(struct mm_struct *mm)
+>  {
+>         __mmap_lock_trace_start_locking(mm, true);
+>         down_write(&mm->mmap_lock);
+> +       inc_mm_lock_seq(mm);
+>         __mmap_lock_trace_acquire_returned(mm, true, true);
+>  }
 
->  
->  	return 0;
+Similarly, inc_mm_lock_seq(), which does a store-release, can only
+provide "release lock" semantics, not "take lock" semantics, because
+the CPU can reorder it with later stores; for example, this code:
 
-Johan
+inc_mm_lock_seq()
+[locked stuff goes here]
+inc_mm_lock_seq()
+
+can be reordered into this:
+
+[locked stuff goes here]
+inc_mm_lock_seq()
+inc_mm_lock_seq()
+
+so the lock is broken.
+
+For "taking a lock" with a memory store, or "dropping a lock" with a
+memory load, you need heavier memory barriers, see
+Documentation/memory-barriers.txt.
 
