@@ -1,147 +1,221 @@
-Return-Path: <linux-kernel+bounces-320467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43C2970AC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:27:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74835970ACC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72666281D0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 00:27:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014751F2160D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 00:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA758F5A;
-	Mon,  9 Sep 2024 00:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7853E848C;
+	Mon,  9 Sep 2024 00:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="NT0ddJSR"
-Received: from mx0a-00190b01.pphosted.com (mx0a-00190b01.pphosted.com [67.231.149.131])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="K4Od1vjg"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2026.outbound.protection.outlook.com [40.92.102.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD2A4C74;
-	Mon,  9 Sep 2024 00:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725841661; cv=none; b=KX/2I1p0JP+HRmKZUczBWd6K7jIjv3aD7xaep80iP3IgKyPY7xIPP12tX91qGgQNB+rKwzcEKm6MRpD/g0CrF3ck2f1xjWiejLk/RirzlDznfVVmNI3Og6zjP1okXDDfqEo2GiOWAyc2E22hYkPnOamRYBVf0RBvrynMeFFQiDw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725841661; c=relaxed/simple;
-	bh=Yoj6ce/vzbmlvzh0ggi2USWzX0BN0pIUtTJPSeil7/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dh8g4UTb4xaGiyOmbRJSVq7ugZEHeW3A4gEQNacvob+vOQ2JNJfFUKAYlGpcc6unbJg85Ns/gERl+tLQ9XF/nv/8dxnGW5vf4rflzRG2O9vmgaS62Xbox36XEops/nVp4HDuUZiSFC97EAx6zQKP6U3ziVolBNQhQYt63emUVDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=NT0ddJSR; arc=none smtp.client-ip=67.231.149.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
-Received: from pps.filterd (m0409409.ppops.net [127.0.0.1])
-	by m0409409.ppops.net-00190b01. (8.18.1.2/8.18.1.2) with ESMTP id 488NDe95002683;
-	Mon, 9 Sep 2024 01:27:19 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=jan2016.eng;
-	 bh=M3bThDj7YBFnnllltlV0H/TI0jClcdEzsz4SPKM3Qu4=; b=NT0ddJSRNyAx
-	wFemg4MaUdxdlRccRnW5yu4SKHvb9/ZenJQqCqIZtAx+5sC0pfPpz6IvO9yuDNws
-	H7uP4GPDC/5JC+g1OOOgRcqCHXrxaif4Nmsj90OHYzmpVT+xnWMn2b8amKg5MvSI
-	CV/044z0WzRd2sS8H1GmMt3o8R0zsWUiuQAf0y27hAiIjmb4VAf6CNzaSUbYJG7c
-	08LFTE1bKodq9vmawjXOv2CShKUUHHBPumiOUeUfrVqE4BW+brAOhFI+uUJs8f4u
-	VepMG9HOWuxjhI+7xRE6baO8jRJ+XeYAKQlrJDvZB/vSMZQPJtlodkydQM/XvPQO
-	PC0xFrQkCw==
-Received: from prod-mail-ppoint6 (prod-mail-ppoint6.akamai.com [184.51.33.61] (may be forged))
-	by m0409409.ppops.net-00190b01. (PPS) with ESMTPS id 41h05qn679-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Sep 2024 01:27:18 +0100 (BST)
-Received: from pps.filterd (prod-mail-ppoint6.akamai.com [127.0.0.1])
-	by prod-mail-ppoint6.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 488Mhd0A027573;
-	Sun, 8 Sep 2024 20:27:16 -0400
-Received: from prod-mail-relay11.akamai.com ([172.27.118.250])
-	by prod-mail-ppoint6.akamai.com (PPS) with ESMTP id 41gj5yrr6s-1;
-	Sun, 08 Sep 2024 20:27:16 -0400
-Received: from [100.64.0.1] (prod-aoa-csiteclt14.bos01.corp.akamai.com [172.27.97.51])
-	by prod-mail-relay11.akamai.com (Postfix) with ESMTP id 24DAE3409B;
-	Mon,  9 Sep 2024 00:27:14 +0000 (GMT)
-Message-ID: <18b091c5-f86c-436b-9890-b755d09e3be6@akamai.com>
-Date: Sun, 8 Sep 2024 17:27:14 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1B979FD;
+	Mon,  9 Sep 2024 00:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725841775; cv=fail; b=VmePLraj5HrYFE5SrMWCggrmQmBmVB2EUNyc1mFxvBS7+9cpHJZ2qtZ09ezcXsHbRefi2Xv+POLhE/WxGcmVp0ypDLPDaRzD66iJUDVtA24hshtgRHqnYhd+aIju55eSS7p1kXAcxykXdeXIx1DjpTl5fHIi7/M8BbQvt7tTD2A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725841775; c=relaxed/simple;
+	bh=AvdRPJDGAivMlhczHbYaG+Mw731I5OY7GADmGWDPjrg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kEOFBEPf6B47fQPb70UG0X1v1jFHi+zfzTZWtJ6JMhgignrrpghQjI3aLk4gXLdxKJG0m///9UgvKOH/RNecfHqtciWGyNdVYpQJNZAwVxbZNb4a66jsyybh48pbJ4cAD6RXiWgCZXPBJdrtlTZwprR+NaZ5Z5u7wd9uRLQvdQU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=K4Od1vjg; arc=fail smtp.client-ip=40.92.102.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mUBzOSRX5zPW4FwWEogWuofsfxTZ7FMbkyHKSu4lvbuOrIIGqjepkjZeuGZC6wAKUdX6oKI5iz+oVTPtSmfEm0UNBzyXwDjpyzTjlmpCGFS8ktiWlbA0kIWA/FmxlcMWQCuJOHdQp8Btj4xrjqXz64+NxVpNhVgY0+UvC02WkkaN5Qzpkc8EPYSnmiDF7aziuW15sqkCjBpuZmcB9OvnXLs+p8fgLfkA3utj2+uu1o/Z3IbfrhlSnZ4Mg0W0VJ7i1eLL6VrYrojC9Gy8JutvzNLZLA2Zas6XxNQspaBVB+R2AOZzLqPZOkcWMzuuLEud8PxW0Z9tXPtyKRFuIvrP9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XBDF3ze7Cj4nScaXHZ6M8qtl688MJuVP0rCq2nuw8yM=;
+ b=FJ3jzQlLwXkHYIJaLCU2F6LKS1DEFZAYBgMcfIr1tcQ25n367Pyrb027k/8kK+CJfrfJhMXRyq0WDF+P056HaTRnuefbSUIaJ4ROndlz4rK6mkv148bKsbGeYZlmeOaox14paLAu8KxTnGHfHj/NgboZ/Me3MhHwN0yhbErtqwqnFSEkjJ4nb4va080p4fjCCh1dqdMz2OGM9ezu3AQ+PlwlG6o6JAp9z00tJlXkofwyeFqUrCYzwvGXWWPtjdoUZZF8pBG6NPTC/HjQOeqSH6xEGnywvcCh60H0XBwYEpo3JBBh9X0nWUtk2XkZxFKoqbmFfQeBu2CJHVQLi5f/XA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XBDF3ze7Cj4nScaXHZ6M8qtl688MJuVP0rCq2nuw8yM=;
+ b=K4Od1vjgNm5gdaSaB2/tRS2h2pChAYBXNnF0gbZTAEYWWgZUl5kguUunISD03lrMUXidPZ/v2xwdZt4oWWKweJccfHdRWJpMXG22v9ERaK9I0xAjN2TRuNq6WW4FC++e4gYQSSQ5nh7L4uqroRhWURJjjyxcN3OyTDm6EGCT6vn4Gor9tCEtsXajhySHIZ8jsPyYEIt3uZUNqRObQVM+v5Fbxd++lm2DibNQExIChVAJam76v1mbLMYhtQtugUoeKEyI2Db399sD1vT6dLwRxnyBMfb4H1Js5mvi6AtNuEF3PWiwzxxFdu//46UzRdiDq90aXU2LV/aVZzgsoNPOkw==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN3P287MB0354.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:d8::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.22; Mon, 9 Sep
+ 2024 00:29:24 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%4]) with mapi id 15.20.7939.022; Mon, 9 Sep 2024
+ 00:29:24 +0000
+Message-ID:
+ <MA0P287MB28227F2A65ADCC493499B7CEFE992@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Mon, 9 Sep 2024 08:29:15 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: pwm: sophgo: add bindings for sg2042
+To: Yixun Lan <dlan@gentoo.org>, Chen Wang <unicornxw@gmail.com>
+Cc: ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, inochiama@outlook.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
+ haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, chunzhi.lin@sophgo.com
+References: <cover.1725536870.git.unicorn_wang@outlook.com>
+ <6e5fb37472b916cb9d9abfbe3bea702d8d0d9737.1725536870.git.unicorn_wang@outlook.com>
+ <20240906024435-GYA153340@gentoo>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20240906024435-GYA153340@gentoo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TMN: [r69EZut5XYbg2Gpv33Dmwx4k7CGMkBGp]
+X-ClientProxiedBy: TYBP286CA0007.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:404:ce::19) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <6fc9c5b7-a69e-48f7-9a88-d416bcc15791@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] tcp: check skb is non-NULL in tcp_rto_delta_us()
-To: Neal Cardwell <ncardwell@google.com>
-Cc: edumazet@google.com, davem@davemloft.net, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20240906231700.2097588-1-johunt@akamai.com>
- <CADVnQynX0yWQA1mqWCueo-yZ1WxTkRAJ9nLjkGAne0QbeM1iZg@mail.gmail.com>
-Content-Language: en-US
-From: Josh Hunt <johunt@akamai.com>
-In-Reply-To: <CADVnQynX0yWQA1mqWCueo-yZ1WxTkRAJ9nLjkGAne0QbeM1iZg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-08_10,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 adultscore=0
- phishscore=0 mlxlogscore=938 suspectscore=0 spamscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
- definitions=main-2409090000
-X-Proofpoint-GUID: yT2xJ2KOAmFS2cO2FPsJdzVOXuxd87xV
-X-Proofpoint-ORIG-GUID: yT2xJ2KOAmFS2cO2FPsJdzVOXuxd87xV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 adultscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=721 mlxscore=0 phishscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409090001
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN3P287MB0354:EE_
+X-MS-Office365-Filtering-Correlation-Id: 68b058eb-6ad0-45c9-691a-08dcd06673eb
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|6090799003|19110799003|5072599009|8060799006|8022599003|15080799006|461199028|1602099012|4302099013|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	jrasYkjBdX39CibHSftUQZF44M5+mMCMcD7UM7ydTOnzOi0DqFD0XQh4ZyylHHi/wBQvZkHC/fYz1rIuOhx5Mgx3Tu6ysxBcuHQwAs+KRqRpV6yvEcFhoQovmQSUiYgQ9vOUmW+Lrxa5sbTHbToSzUxkzykIM+CrMvCUeQYwL8VULSSFkouBEYhRbBmGxblypUo6dNfAUfhrBPfAIK3nG73/HJJK+zTuzejDBrdV0VMYrF1/fyWynxSfpBdymIcgyZAKEHWRDkomTQL0D9gmpH73pE43Yv0lQdgkkvCAYxo2DklK2OzfAkixdgrqdOYs/yc1Fm2B6Lc7405Dpj0jtKdFJ6qcEptY6sftg6vkzJY56Q07RWNJCH8ceH9PVqN4FxkRK9OTgLryyCGjbX0V03Fp5w66qwQl2doV999uPCYVvM/L9ErgkcS1X3AaYjvdSJX880FyLX649W8lIJhENsEqA485a9FXHeLzn5w2z6fBApy3Q3z3Oas7rsXuwu1yXtht3gNU2lyvft12B7s4ZwjemTJfhWnsGSLQpl53LB7SdRXkuV2GXC6h6fOvqXIpCCqb9SNl2VDNfKnKjvUwEYlZN5H8DLCr7LGlkz5f4LxGdAtUZ55Pn+/MyocktTcBVO/9ErJ5M2OmVLztLrk7I7qKgq56L6gDHLETpV6TvGdpDZ9JK4RvkK6MSCgJngFpotDuAXjArirTvKZuTyLUwvleVtcqtKz6gbTmSlLt9qcIqxKN1bSxlTxpFxddnrHyK2Ag2es3vxEdMmbG8bRZTOh2y/5LXg0M6fKOSmArEynrJuaKM4x8DTncSP2Qk+IDLjqaclh+NibRhzpnwLbOWT1CORlDA810MxyLqBX8hxdBAoqq2ta0ZEZkF/d1FPR4
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NlNJbmtNMEgxcGwveVJ3RElUREtFZHpxTWNTcm9OYWQwSElVVzE1UjVvbUY2?=
+ =?utf-8?B?ZVk4TTJLbWhIbnF3eERCSjBHemhhTmNFQjZGdVhiTFNkRDkrV1BLNEJTV0E3?=
+ =?utf-8?B?WDhza1lIQXQvazVCTGpLMFU3NEVUYzRvblNMdENNTkUyTXMxKzRMN2hqeUY0?=
+ =?utf-8?B?a2EvczlsZmNma1AwWDZvSVBvOVY3OVJZYVFZcTdWREIrTW4zNlZrVjY5YkNp?=
+ =?utf-8?B?czFlbllNWCs2MkNZRGY4UzNZZ2FjR0hJdUhSOTZvR3M2Y1VEVkNsTGg4TFJx?=
+ =?utf-8?B?b1ZiQXRZcFdPRE9oaDFLbzhUVFhVVTRnY2VEMkRoSlZ6Y1BBMlc2WmFJTlBE?=
+ =?utf-8?B?b0N1M1F6TmJ6L0VYNmdJeUxrcnBBQzNKck9jbEFwVTVET3VuTlE2dHFERE1i?=
+ =?utf-8?B?dG1OWnIyMkpBTGFjcmRHNXVLR0YwQ3NSbjdMdVRJZHBuMkRTMlVDazVNaGgy?=
+ =?utf-8?B?WXRja0FZVDRxUnhjckdaQlZJbHhVcDlFd1F2MkNUS29iMXdoVzFLWjcrNHd3?=
+ =?utf-8?B?MVloVHkzay9uOCtaY2tNVkVMLzFXYVg3bDVaOTJoRlpLYStObkpCYXNWdEFj?=
+ =?utf-8?B?VG9OL05KMktJckdOSWxXTjFKY0NMUDIvb1M0MjZRNEJ0d1hZZ0FwL2lOL3pa?=
+ =?utf-8?B?V2lXcm14VTNYUzE1VXY0VXNsQnU2ekVwSHRsbFd3bmxwR0tiZUZCZm5vTHZt?=
+ =?utf-8?B?QkNjOE1EQjRtdHBld3hwU2RjUENVVUc4UFJDbUJ0UnIxZXpobFppS1JNajl5?=
+ =?utf-8?B?R3NubkpDenlFT05aUGpzc2U1enpOS2VNdThSSERnY1JsdmhFTXR4WkNUS3Bu?=
+ =?utf-8?B?ZmloZ2tIRnFmWVZFdWhpSVMyaDJNSDJtcnRvMy8vUFl5d29DZXFLL3BDTnNI?=
+ =?utf-8?B?Nmx5a2dFWGg4bW9CVENNcTVvNkJ4UHprUzhrWkVrelg5MzJiWUpxSHlFbUh1?=
+ =?utf-8?B?QWQ0dWd3eGw1azM4QjdSeDFleUQwM1gram50SjE3L3hRUnVsQjM4S2lTR056?=
+ =?utf-8?B?UW5DUUR4dUJPRXdyODNLUnY3MUJ3ZVpxczlFNjJ1S0lwOUQ5RTVrSlU3b3hW?=
+ =?utf-8?B?S0xkMlVVUjNieTJiVG8wTGxoQnc5Smh6aFBJa0hjaktUU3VISkJFcXZVR1Jq?=
+ =?utf-8?B?MjVWUmJPUHc2Y2RhTnhRU09PRkZvYmpPeTBZekY0MUY0M1I1R2JSRTU0bkNJ?=
+ =?utf-8?B?MVUxdm1mOHpyZHZqaDhjcHpqZUpicEZic09WcDlEQXc1aTA0bkk1Mk4zM2NE?=
+ =?utf-8?B?ZTVjN051OHpnU00vKzJSSzFtSkZYNHVpK3JmVXF1OUxsNTZMem5Za1BUalNW?=
+ =?utf-8?B?NFMvQk83UHUzdlFQZjBiS2pUblJ6WExRbGVFMldSc2JZcTlTL05mY2w5bXVm?=
+ =?utf-8?B?cS9rOHYvSjlUR0grK3ByTHQydHJ5VlM4MWRVSytJc0NBRUVBdE43dVFCVlZi?=
+ =?utf-8?B?bW4veXVXNWg5SVczUWZsZnljMHJTLzNtYUdaOHdjL2Fnc2x0Q243TStRNmx4?=
+ =?utf-8?B?Y3RIQWxyaXZjVzdjWENuZUs5SFg3TDN2Y1l3TXp5MEplWEVpL08ycExFdEI2?=
+ =?utf-8?B?UHdhOGRoNG9BNi94UHlsNy9sVDFzbnNodXdxblBmTHBhdXNvb1FFNzAzL096?=
+ =?utf-8?B?czlhTktraTZhYjBXTFR6WUl4V3Rxem5ka2o1cHhnQ1MxaHI0bkd2L1JZa1NS?=
+ =?utf-8?Q?+/NewZ4M9Kl5PCM2x1dz?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68b058eb-6ad0-45c9-691a-08dcd06673eb
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 00:29:24.7576
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB0354
 
-On 9/8/24 10:50 AM, Neal Cardwell wrote:
-> 
-> Since this is targeted to the net branch to fix crashes at least as
-> far back as 5.4, AFAICT it would be good to have a Fixes: footer, so
-> maintainers know how far back in stable release history to apply the
-> fix.
-> 
-> I'd suggest pointing to this linux/v4.13 commit:
-> 
-> Fixes: e1a10ef7fa87 ("tcp: introduce tcp_rto_delta_us() helper for
-> xmit timer fix")
-> 
-> The bug actually predates that commit (the code before that already
-> assumed tcp_write_queue_head() was non-NULL in tcp_rearm_rto() if
-> packets_out is non-zero). But that commit is the first point at which
-> tcp_rto_delta_us() exists as a function and so it's straightforward to
-> apply the patch (albeit with some conflicts in earlier kernels). And
-> that commit is far enough back to imply that the fix should be
-> backported to all "longterm" releases listed at
 
-Thanks Neal. I'll add this fixes tag.
-
-> 
-> IMHO it would be nice to have the WARN_ONCE print more information, to
-> help debug these cases. This seems like some sort of packet counting
-> bug, so IMHO it would be nice to have more information about packet
-> counts and MTU/MSS (since MTU/MSS changes force recalculation of
-> packet counts for skbs and the scoreboard, and have thus been a
-> traditional source of packet-counting bugs). Perhaps something like
-> the following (compiled but not tested):
-> 
-> +               WARN_ONCE(1,
-> +                         "rtx queue empty: "
-> +                         "out:%u sacked:%u lost:%u retrans:%u "
-> +                         "tlp_high_seq:%u sk_state:%u ca_state:%u "
-> +                         "advmss:%u mss_cache:%u pmtu:%u\n",
-> +                         tcp_sk(sk)->packets_out, tcp_sk(sk)->sacked_out,
-> +                         tcp_sk(sk)->lost_out, tcp_sk(sk)->retrans_out,
-> +                         tcp_sk(sk)->tlp_high_seq, sk->sk_state,
-> +                         inet_csk(sk)->icsk_ca_state,
-> +                         tcp_sk(sk)->advmss, tcp_sk(sk)->mss_cache,
-> +                         inet_csk(sk)->icsk_pmtu_cookie);
-> 
-
-Makes sense. I agree more info to help debug is better. I'll review the 
-suggested additions and spin a v3.
-
-Thanks!
-Josh
+On 2024/9/6 10:44, Yixun Lan wrote:
+> On 20:10 Thu 05 Sep     , Chen Wang wrote:
+>> From: Chen Wang <unicorn_wang@outlook.com>
+>>
+>> Add binding document for sophgo,sg2042-pwm.
+>>
+>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+>> ---
+>>   .../bindings/pwm/sophgo,sg2042-pwm.yaml       | 52 +++++++++++++++++++
+>>   1 file changed, 52 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
+>> new file mode 100644
+>> index 000000000000..10212694dd41
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
+>> @@ -0,0 +1,52 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/pwm/sophgo,sg2042-pwm.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Sophgo SG2042 PWM controller
+>> +
+>> +maintainers:
+>> +  - Chen Wang <unicorn_wang@outlook.com>
+>> +
+>> +description: |
+> you can drop | here
+Ack and thanks.
+>> +  This controller contains 4 channels which can generate PWM waveforms.
+>> +
+>> +allOf:
+>> +  - $ref: pwm.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: sophgo,sg2042-pwm
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: apb
+>> +
+>> +  "#pwm-cells":
+> ..
+>> +    # See pwm.yaml in this directory for a description of the cells format.
+> I think you can drop this comment, since no useful information added
+> also it's already refered to standard pwm.yaml
+I add this comment just want to reminder.  Ok, anyway, it can be removed 
+to make doc clear.
+>> +    const: 2
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+> also "#pwm-cells"?
+I think it has been required in pwm.yaml, so no need to required it 
+again here.
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    pwm@7f006000 {
+>> +        compatible = "sophgo,sg2042-pwm";
+>> +        reg = <0x7f006000 0x1000>;
+>> +        #pwm-cells = <2>;
+>> +        clocks = <&clock 67>;
+>> +        clock-names = "apb";
+>> +    };
+>> -- 
+>> 2.34.1
+>>
 
