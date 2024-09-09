@@ -1,102 +1,115 @@
-Return-Path: <linux-kernel+bounces-321227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA0A971627
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:04:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502EC971629
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29A71F2345B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:04:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05CDA1F23AF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4CA1B791A;
-	Mon,  9 Sep 2024 11:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LbRqcZS/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC471B5EAF;
+	Mon,  9 Sep 2024 11:03:40 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EDF1B7909;
-	Mon,  9 Sep 2024 11:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479EE1B5EA1
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 11:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725879788; cv=none; b=NJUwbRqxiurGiG2h9HKAOXMJI691HEsQjut44Y2fWPATn2rwFeFAxgiabQf4NLTs6We0WP16ffOV0dDt8EFd2q55thJ6xA0hk2oXS7sm4ZG/WuLvuynWh5TSJKcS0PYlR1lU5OgHuuV5Aij/mLFlF+lJzuWomDBB9bePVkcXUTs=
+	t=1725879819; cv=none; b=mHYGY9DlO1Ml22w8qVfFiA8/j6jdOGN+NIL7VMLrlWwXXcT2bFTlYHjPr8KvURw9kAQ65yG5TxJxtaSmelC/yAQ9z05xibt2vnGFYhqVBY1QoRGkQMe0gs2ixI2UTWb7edRNTccCq/IDE3lO95HDNnPXXcJRUWhtwaGb49S6HUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725879788; c=relaxed/simple;
-	bh=zsF0vIn3x0rHoU069/VAoTa8W/MZZb7KoYuQdVVkKyA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qcfahx7sX8MsLP9MI53PCsGRUNiJdS/1G2/9Br6INBOrW+zaGq1WTZpapyaJR28gY+LXpSdhDc67QS1X/kB4eYGc80wStHoihMsugkoAoLwvWgiR1Mh3JT6SUgAWtCK8IT7rYYtUJJP7x+btJGmx61iWTBe6LQtliIbGcZjzyBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LbRqcZS/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B00EC4CEC6;
-	Mon,  9 Sep 2024 11:03:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725879787;
-	bh=zsF0vIn3x0rHoU069/VAoTa8W/MZZb7KoYuQdVVkKyA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LbRqcZS/RPwPg4kymD1ouV4V+qEdPsTkXQHtsNWbArrII6eO5WTUCMf9TmcOH4VKP
-	 UGqd1e68wgX7yyG7x8/FeCXZSmtIHW4D5rfedHF7urXtRjwByn3oU7skZuzTbfndGx
-	 TLkQwUbhK+D+ETMR0/vE8SMQK2mFF9SzDd5lBBPB26/6DdbzocmYTpxqnP1kcYrKU0
-	 eY3fjvB2HYDg/jkrLj+7TUaGff4V/zXzXCIneaFEKw6mdEIe8AaXhtHVChZIW16SDo
-	 +dLWPShw3t5VK4XMit8CoxL8rVHjSCoXEnxwn0kDC6+O9Wl6PG3WyGzEmzmC49RXMB
-	 BE2PTsQzIagYA==
-Message-ID: <815f1244-ef5c-4384-81ba-8fd75cd31a1c@kernel.org>
-Date: Mon, 9 Sep 2024 13:03:02 +0200
+	s=arc-20240116; t=1725879819; c=relaxed/simple;
+	bh=TC17ossRNQACYbUYPo0ROZa7ygaNNGgBFMadhOE9NKk=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ebVEtklQl8BVHMWSeiViIfmscWTjGL3x5myWXdRL7onsraRnRtGagV4085NMYHtSbaiuXYuEm8GIPdy6icCwm5tl9Lgg+cfO+6P2KpxAkYu5E6QJLYbRCI2Ev/c02Y8kg/QK+c556xrgHoJ7QTO/JpLQa7q6kpjbvKywlwcQ84o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X2P660s1zzpVXh;
+	Mon,  9 Sep 2024 19:01:34 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5E703180087;
+	Mon,  9 Sep 2024 19:03:34 +0800 (CST)
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 9 Sep 2024 19:03:34 +0800
+Subject: Re: [PATCH v2 4/6] debugobjects: Don't start fill if there are
+ remaining nodes locally
+To: Thomas Gleixner <tglx@linutronix.de>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
+References: <20240904133944.2124-1-thunder.leizhen@huawei.com>
+ <20240904133944.2124-5-thunder.leizhen@huawei.com>
+ <336109d9-2eea-4d67-ee22-ed218b9504c3@huawei.com>
+ <7613ce35-0c65-341f-c6ed-412de79890e6@huawei.com> <87ed5tchc6.ffs@tglx>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <cf687aec-f8fe-c032-e22b-6572edc529a3@huawei.com>
+Date: Mon, 9 Sep 2024 19:03:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] arm64: dts: qcom: sdm630: add WiFI device node
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240907-sdm660-wifi-v1-0-e316055142f8@linaro.org>
- <20240907-sdm660-wifi-v1-6-e316055142f8@linaro.org>
+In-Reply-To: <87ed5tchc6.ffs@tglx>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240907-sdm660-wifi-v1-6-e316055142f8@linaro.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-On 7.09.2024 8:48 PM, Dmitry Baryshkov wrote:
-> Add device node for the WiFi device being a part of the integrated
-> SDM660 / SDM630 platforms.
+
+
+On 2024/9/9 17:22, Thomas Gleixner wrote:
+> On Thu, Sep 05 2024 at 11:45, Leizhen wrote:
+>> On 2024/9/5 11:11, Leizhen (ThunderTown) wrote:
+>>   Seems to need to add an additional patch as follows to be foolproof.
+>> I'll prepare it.
+>>
+>> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+>> index e175cc74f7b7899..d3f8cc7dc1c9291 100644
+>> --- a/lib/debugobjects.c
+>> +++ b/lib/debugobjects.c
+>> @@ -245,6 +245,21 @@ alloc_object(void *addr, struct debug_bucket *b, const struct debug_obj_descr *d
+>>
+>>         raw_spin_lock(&pool_lock);
+>>         obj = __alloc_object(&obj_pool);
+>> +       if (!obj) {
+>> +               raw_spin_unlock(&pool_lock);
+>> +               obj = kmem_cache_zalloc(obj_cache, __GFP_HIGH | GFP_NOWAIT);
+>> +               if (!obj)
+>> +                       return NULL;
+>> +
+>> +               raw_spin_lock(&pool_lock);
+>> +               debug_objects_allocated++;
+>> +
+>> +               /*
+>> +                * It can be understood that obj is allocated immediately after
+>> +                * being added to obj_pool.
+>> +                */
+>> +               obj_pool_used++;
+>> +       }
+>>         if (obj) {
+>>                 int cnt = 0;
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm630.dtsi | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
+> No. That fails on RT. See debug_object_fill_pool().
+
+OK, I got it, thanks.
+
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> index dc8bc63bdc70..4536fa45869a 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> @@ -2412,6 +2412,33 @@ intc: interrupt-controller@17a00000 {
->  			redistributor-stride = <0x0 0x20000>;
->  			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->  		};
-> +
-> +		wifi: wifi@18800000 {
-> +			compatible = "qcom,wcn3990-wifi";
-> +			reg = <0x18800000 0x800000>;
-> +			reg-names = "membase";
-> +			memory-region = <&wlan_msa_mem>;
-> +			clocks = <&rpmcc RPM_SMD_RF_CLK1_PIN>;
-> +			clock-names = "cxo_ref_clk_pin";
-> +			interrupts =
-> +				<GIC_SPI 413 IRQ_TYPE_LEVEL_HIGH>,
+> Thanks,
+> 
+>         tglx
+> .
+> 
 
-Please unbreak this line
-
-Konrad
+-- 
+Regards,
+  Zhen Lei
 
