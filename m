@@ -1,533 +1,155 @@
-Return-Path: <linux-kernel+bounces-320986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC13A971308
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:12:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 993B497130C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385621F22860
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:12:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C19711C21EB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC4F1B2EE7;
-	Mon,  9 Sep 2024 09:12:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BDC1B1500;
-	Mon,  9 Sep 2024 09:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FCC1B2EF5;
+	Mon,  9 Sep 2024 09:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Nm6fxUam"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC131B2ECF;
+	Mon,  9 Sep 2024 09:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725873153; cv=none; b=WcXzJBbqOqJTCinr64DoGWDcxjgsEkOkFq106sBs7PNrcqjnJr/iYoBMnap5j7YERe0GLudrvI6kOludUucKH8csn0vLoF5EmuL6I05HotTDYDSRI3ha1d0+WXRn+uQwCPHZV9RNDoO7bhtBasr1J50u1Wey+laL9768mokHbF8=
+	t=1725873197; cv=none; b=atfKy/w0ytOdmSpWopVi0xwpGy9jywKC+2uCYYXiKKFK9r6hcFVXOjbL4EWNmy7Scuok0VMD3Xfl3JdOA5X4iSwrzd+i/yhEG9xXDSv8R2oD1rHFCReCIRqEO3vq8P7Dq5Y6im+oA8L4xGbvNiNiF8b74LZLBQWWRB/F+XpBgLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725873153; c=relaxed/simple;
-	bh=mZifNs88hExMfQNezko5ETnWOiKsW5xtuzhY2WfF+v0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XSNzr3Hq2r4bskMM+vA+tL8baBGI0XRmGeL2I8Qtmh6IDtWjIEzPGTeFKeH/pF0Cvht4AN46ZPCXvCcLaI8yVBXEG4c4AwSJKuj7n/jySh/QO40P7KIFIUqxZ7Rc2nlCUkJADP435wtG/WfyJQUJ9PDAD94kcmgC2AtbY4Yx02s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D2A1FEC;
-	Mon,  9 Sep 2024 02:12:57 -0700 (PDT)
-Received: from [10.57.74.73] (unknown [10.57.74.73])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2E1733F66E;
-	Mon,  9 Sep 2024 02:12:25 -0700 (PDT)
-Message-ID: <7b9a7d5b-ffd7-4add-88b4-fb5f1242c2ce@arm.com>
-Date: Mon, 9 Sep 2024 10:12:23 +0100
+	s=arc-20240116; t=1725873197; c=relaxed/simple;
+	bh=e2ZtB7/J/dXnRJ3lIbCKVoMI6QBb+RQ9HEmJypzOLus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uw/Oa9GcWnDJLVlace2jF255zNfWTfvt/UNI7Rz3XJo5hfkJh+PMWGWkoqDhVcE+oQOSbKbqjcPnfnQy37fI4PjgAtiWrzirvnZ5A1pZ2Nhg2wf372UVV+YlnWdkrhSGvOom13sqNtlminfmGD4jsTjDnzl77SpHMRx87niGtwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Nm6fxUam; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (unknown [213.208.157.109])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 066356EC;
+	Mon,  9 Sep 2024 11:11:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1725873117;
+	bh=e2ZtB7/J/dXnRJ3lIbCKVoMI6QBb+RQ9HEmJypzOLus=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Nm6fxUamoqf9FVPhR27x5kHHzMJvdy5JYdIx5BAkw7hGYyej0KQTJVwloDyVbkcpI
+	 U10/RsZYyT8ZGr3iwr0TxRDXb96BmbsaQH2rLF9joOMIWfZG+mENhGfrRRfmgU+UsL
+	 2pZrK/V9j8anOzXnwiuA3CYwQwI/jA4/D+JX2+eo=
+Date: Mon, 9 Sep 2024 11:13:07 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Naushir Patuck <naush@raspberrypi.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v4 3/4] media: raspberrypi: Add support for RP1-CFE
+Message-ID: <yib2r4wisxvk3kgogbjqawrpmfq6lcezfk4xjmftj44jzkbclc@icapodv2ffzk>
+References: <20240904-rp1-cfe-v4-3-f1b5b3d69c81@ideasonboard.com>
+ <202409051822.ZzUGw3XQ-lkp@intel.com>
+ <20240905111120.GK16183@pendragon.ideasonboard.com>
+ <40cc1e95-b9fc-4c27-9428-1698d0bf9d25@ideasonboard.com>
+ <763b3147-d7cb-44a7-b73b-8f7f4fd622ab@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 03/19] arm64: rsi: Add RSI definitions
-To: Gavin Shan <gshan@redhat.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun <alpergun@google.com>
-References: <20240819131924.372366-1-steven.price@arm.com>
- <20240819131924.372366-4-steven.price@arm.com>
- <c44e9d4f-9ad2-4ff7-9b18-ede351950149@redhat.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <c44e9d4f-9ad2-4ff7-9b18-ede351950149@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <763b3147-d7cb-44a7-b73b-8f7f4fd622ab@ideasonboard.com>
 
-On 09/09/2024 06:10, Gavin Shan wrote:
-> On 8/19/24 11:19 PM, Steven Price wrote:
->> From: Suzuki K Poulose <suzuki.poulose@arm.com>
->>
->> The RMM (Realm Management Monitor) provides functionality that can be
->> accessed by a realm guest through SMC (Realm Services Interface) calls.
->>
->> The SMC definitions are based on DEN0137[1] version 1.0-rel0-rc1.
->>
->> [1]
->> https://developer.arm.com/-/cdn-downloads/permalink/PDF/Architectures/DEN0137_1.0-rel0-rc1_rmm-arch_external.pdf
->>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes since v4:
->>   * Update to match the latest RMM spec version 1.0-rel0-rc1.
->>   * Make use of the ARM_SMCCC_CALL_VAL macro.
->>   * Cast using (_UL macro) various values to unsigned long.
->> Changes since v3:
->>   * Drop invoke_rsi_fn_smc_with_res() function and call arm_smccc_smc()
->>     directly instead.
->>   * Rename header guard in rsi_smc.h to be consistent.
->> Changes since v2:
->>   * Rename rsi_get_version() to rsi_request_version()
->>   * Fix size/alignment of struct realm_config
->> ---
->>   arch/arm64/include/asm/rsi_cmds.h | 136 +++++++++++++++++++++
->>   arch/arm64/include/asm/rsi_smc.h  | 189 ++++++++++++++++++++++++++++++
->>   2 files changed, 325 insertions(+)
->>   create mode 100644 arch/arm64/include/asm/rsi_cmds.h
->>   create mode 100644 arch/arm64/include/asm/rsi_smc.h
->>
-> 
-> With the following minor comments addressed:
-> 
-> Reviewed-by: Gavin Shan <gshan@redht.com>
+Hi Tomi
 
-Thanks for the review!
+On Mon, Sep 09, 2024 at 08:22:59AM GMT, Tomi Valkeinen wrote:
+> Hi Laurent, Jacopo,
+>
+> On 09/09/2024 08:08, Tomi Valkeinen wrote:
+> > Hi,
+> >
+> > On 05/09/2024 14:11, Laurent Pinchart wrote:
+> > > On Thu, Sep 05, 2024 at 06:50:48PM +0800, kernel test robot wrote:
+> > > > Hi Tomi,
+> > > >
+> > > > kernel test robot noticed the following build warnings:
+> > > >
+> > > > [auto build test WARNING on 431c1646e1f86b949fa3685efc50b660a364c2b6]
+> > > >
+> > > > url:    https://github.com/intel-lab-lkp/linux/commits/Tomi-
+> > > > Valkeinen/media-uapi-Add-meta-formats-for-PiSP-FE-config-and-
+> > > > stats/20240904-192729
+> > > > base:   431c1646e1f86b949fa3685efc50b660a364c2b6
+> > > > patch link:    https://lore.kernel.org/r/20240904-rp1-cfe-v4-3-
+> > > > f1b5b3d69c81%40ideasonboard.com
+> > > > patch subject: [PATCH v4 3/4] media: raspberrypi: Add support
+> > > > for RP1-CFE
+> > > > config: m68k-allmodconfig (https://download.01.org/0day-ci/
+> > > > archive/20240905/202409051822.ZzUGw3XQ-lkp@intel.com/config)
+> > > > compiler: m68k-linux-gcc (GCC) 14.1.0
+> > > > reproduce (this is a W=1 build):
+> > > > (https://download.01.org/0day-ci/
+> > > > archive/20240905/202409051822.ZzUGw3XQ-lkp@intel.com/reproduce)
+> > > >
+> > > > If you fix the issue in a separate patch/commit (i.e. not just a
+> > > > new version of
+> > > > the same patch/commit), kindly add following tags
+> > > > | Reported-by: kernel test robot <lkp@intel.com>
+> > > > | Closes: https://lore.kernel.org/oe-kbuild-
+> > > > all/202409051822.ZzUGw3XQ-lkp@intel.com/
+> > > >
+> > > > All warnings (new ones prefixed by >>):
+> > > >
+> > > > > > drivers/media/platform/raspberrypi/rp1-cfe/cfe.c:2445:12:
+> > > > > > warning: 'cfe_runtime_resume' defined but not used
+> > > > > > [-Wunused-function]
+> > > >      2445 | static int cfe_runtime_resume(struct device *dev)
+> > > >           |            ^~~~~~~~~~~~~~~~~~
+> > > > > > drivers/media/platform/raspberrypi/rp1-cfe/cfe.c:2435:12:
+> > > > > > warning: 'cfe_runtime_suspend' defined but not used
+> > > > > > [-Wunused-function]
+> > > >      2435 | static int cfe_runtime_suspend(struct device *dev)
+> > > >           |            ^~~~~~~~~~~~~~~~~~~
+> > > > vim +/cfe_runtime_resume +2445
+> > > > drivers/media/platform/raspberrypi/ rp1-cfe/cfe.c
+> > >
+> > > The recommended way to fix this is to switch from SET_RUNTIME_PM_OPS()
+> > > to RUNTIME_PM_OPS() and use pm_ptr() to set .driver.pm. This being said,
+> > > the driver won't work on a kernel with !CONFIG_PM given how you
+> > > implemented probe() and remove().
+> > >
+> > > The pisp-be driver suffered from the same issue and Jacopo fixed it in
+> > > the last version. You can have a look at implement something similar.
+> >
+> > I can't right away think of any reason to not just depend on CONFIG_PM
+> > and be done with it without any tricks. Do you know if there's a reason?
 
->> diff --git a/arch/arm64/include/asm/rsi_cmds.h
->> b/arch/arm64/include/asm/rsi_cmds.h
->> new file mode 100644
->> index 000000000000..968b03f4e703
->> --- /dev/null
->> +++ b/arch/arm64/include/asm/rsi_cmds.h
->> @@ -0,0 +1,136 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Copyright (C) 2023 ARM Ltd.
->> + */
->> +
->> +#ifndef __ASM_RSI_CMDS_H
->> +#define __ASM_RSI_CMDS_H
->> +
->> +#include <linux/arm-smccc.h>
->> +
->> +#include <asm/rsi_smc.h>
->> +
->> +#define RSI_GRANULE_SHIFT        12
->> +#define RSI_GRANULE_SIZE        (_AC(1, UL) << RSI_GRANULE_SHIFT)
->> +
->> +enum ripas {
->> +    RSI_RIPAS_EMPTY = 0,
->> +    RSI_RIPAS_RAM = 1,
->> +    RSI_RIPAS_DESTROYED = 2,
->> +    RSI_RIPAS_IO = 3,
->> +};
->> +
-> 
-> The 'RSI_RIPAS_IO' corresponds to 'RIPAS_DEV' defined in
-> tf-rmm/lib/s2tt/include/ripas.h.
-> Shall we rename it to RSI_RIPAS_DEV so that the name is matched with
-> that defined in
-> tf-rmm?
+We had the same discussion, and even if I would be fine depending on
+CONFIG_PM, supporting !CONFIG_PM is not that much work, I kept it as
+an optional dependency (it was suggested during the review as well)
 
-Yes it should be renamed. This was posted based on the v1.0-rel0-rc1
-spec and follows the naming there. But shortly after that spec was
-released the decision to rename to RIPAS_DEV was made (as it's really
-specifying that it's a device not that I/O is happening at an address).
-I kept the naming to match the spec, but the next release of the spec
-should have the RIPAS_DEV so I'll update to match that.
+>
+> Also, I don't think pisp-be is correct. It just calls
+> pispbe_runtime_resume() in probe() to wake the IP up (which only enables
+> pisp clock), without telling the runtime PM about it. This means the parent
+> device and the suppliers may not be powered up.
 
-> ---> tf-rmm/lib/s2tt/include/ripas.h
-> 
-> /*
->  * The RmmRipas enumeration represents realm IPA state.
->  *
->  * Map RmmRipas to RmiRipas to simplify code/decode operations.
->  */
-> enum ripas {
->         RIPAS_EMPTY = RMI_EMPTY,        /* Unused IPA for Realm */
->         RIPAS_RAM = RMI_RAM,            /* IPA used for Code/Data by
-> Realm */
->         RIPAS_DESTROYED = RMI_DESTROYED,/* IPA is inaccessible to the
-> Realm */
->         RIPAS_DEV                       /* Address where memory of an
-> assigned
->                                            Realm device is mapped */
-> };
-> 
->> +static inline unsigned long rsi_request_version(unsigned long req,
->> +                        unsigned long *out_lower,
->> +                        unsigned long *out_higher)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_smc(SMC_RSI_ABI_VERSION, req, 0, 0, 0, 0, 0, 0, &res);
->> +
->> +    if (out_lower)
->> +        *out_lower = res.a1;
->> +    if (out_higher)
->> +        *out_higher = res.a2;
->> +
->> +    return res.a0;
->> +}
->> +
->> +static inline unsigned long rsi_get_realm_config(struct realm_config
->> *cfg)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_smc(SMC_RSI_REALM_CONFIG, virt_to_phys(cfg),
->> +              0, 0, 0, 0, 0, 0, &res);
->> +    return res.a0;
->> +}
->> +
->> +static inline unsigned long rsi_set_addr_range_state(phys_addr_t start,
->> +                             phys_addr_t end,
->> +                             enum ripas state,
->> +                             unsigned long flags,
->> +                             phys_addr_t *top)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_smc(SMC_RSI_IPA_STATE_SET, start, end, state,
->> +              flags, 0, 0, 0, &res);
->> +
->> +    if (top)
->> +        *top = res.a1;
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rsi_attestation_token_init - Initialise the operation to retrieve an
->> + * attestation token.
->> + *
->> + * @challenge:    The challenge data to be used in the attestation token
->> + *        generation.
->> + * @size:    Size of the challenge data in bytes.
->> + *
->> + * Initialises the attestation token generation and returns an upper
->> bound
->> + * on the attestation token size that can be used to allocate an
->> adequate
->> + * buffer. The caller is expected to subsequently call
->> + * rsi_attestation_token_continue() to retrieve the attestation token
->> data on
->> + * the same CPU.
->> + *
->> + * Returns:
->> + *  On success, returns the upper limit of the attestation report size.
->> + *  Otherwise, -EINVAL
->> + */
->> +static inline unsigned long
->> +rsi_attestation_token_init(const u8 *challenge, unsigned long size)
->> +{
->> +    struct arm_smccc_1_2_regs regs = { 0 };
->> +
->> +    /* The challenge must be at least 32bytes and at most 64bytes */
->> +    if (!challenge || size < 32 || size > 64)
->> +        return -EINVAL;
->> +
->> +    regs.a0 = SMC_RSI_ATTESTATION_TOKEN_INIT;
->> +    memcpy(&regs.a1, challenge, size);
->> +    arm_smccc_1_2_smc(&regs, &regs);
->> +
->> +    if (regs.a0 == RSI_SUCCESS)
->> +        return regs.a1;
->> +
->> +    return -EINVAL;
->> +}
->> +
-> 
-> The type of the return value would be 'long' instead of 'unsigned long'
-> since
-> '-EINVAL' can be returned.
+Are you referring to the code currently in the tree or to this patch ?
+https://patchwork.linuxtv.org/project/linux-media/patch/20240904095836.344833-5-jacopo.mondi@ideasonboard.com/
 
-Good spot! The call site is casting back to long, so it "should work",
-but clearly this is the wrong type.
-
->> +/**
->> + * rsi_attestation_token_continue - Continue the operation to
->> retrieve an
->> + * attestation token.
->> + *
->> + * @granule: {I}PA of the Granule to which the token will be written.
->> + * @offset:  Offset within Granule to start of buffer in bytes.
->> + * @size:    The size of the buffer.
->> + * @len:     The number of bytes written to the buffer.
->> + *
->> + * Retrieves up to a RSI_GRANULE_SIZE worth of token data per call.
->> The caller
->> + * is expected to call rsi_attestation_token_init() before calling this
->> + * function to retrieve the attestation token.
->> + *
->> + * Return:
->> + * * %RSI_SUCCESS     - Attestation token retrieved successfully.
->> + * * %RSI_INCOMPLETE  - Token generation is not complete.
->> + * * %RSI_ERROR_INPUT - A parameter was not valid.
->> + * * %RSI_ERROR_STATE - Attestation not in progress.
->> + */
->> +static inline int rsi_attestation_token_continue(phys_addr_t granule,
->> +                         unsigned long offset,
->> +                         unsigned long size,
->> +                         unsigned long *len)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RSI_ATTESTATION_TOKEN_CONTINUE,
->> +                 granule, offset, size, 0, &res);
->> +
->> +    if (len)
->> +        *len = res.a1;
->> +    return res.a0;
->> +}
->> +
->> +#endif /* __ASM_RSI_CMDS_H */
->> diff --git a/arch/arm64/include/asm/rsi_smc.h
->> b/arch/arm64/include/asm/rsi_smc.h
->> new file mode 100644
->> index 000000000000..b76b03a8fea8
->> --- /dev/null
->> +++ b/arch/arm64/include/asm/rsi_smc.h
->> @@ -0,0 +1,189 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Copyright (C) 2023 ARM Ltd.
->> + */
->> +
->> +#ifndef __ASM_RSI_SMC_H_
->> +#define __ASM_RSI_SMC_H_
->> +
->> +#include <linux/arm-smccc.h>
->> +
->> +/*
->> + * This file describes the Realm Services Interface (RSI) Application
->> Binary
->> + * Interface (ABI) for SMC calls made from within the Realm to the
->> RMM and
->> + * serviced by the RMM.
->> + */
->> +
->> +/*
->> + * The major version number of the RSI implementation.  This is
->> increased when
->> + * the binary format or semantics of the SMC calls change.
->> + */
->> +#define RSI_ABI_VERSION_MAJOR        UL(1)
->> +
->> +/*
->> + * The minor version number of the RSI implementation.  This is
->> increased when
->> + * a bug is fixed, or a feature is added without breaking binary
->> compatibility.
->> + */
->> +#define RSI_ABI_VERSION_MINOR        UL(0)
->> +
->> +#define RSI_ABI_VERSION            ((RSI_ABI_VERSION_MAJOR << 16) | \
->> +                     RSI_ABI_VERSION_MINOR)
->> +
->> +#define RSI_ABI_VERSION_GET_MAJOR(_version) ((_version) >> 16)
->> +#define RSI_ABI_VERSION_GET_MINOR(_version) ((_version) & 0xFFFF)
->> +
->> +#define RSI_SUCCESS        UL(0)
->> +#define RSI_ERROR_INPUT        UL(1)
->> +#define RSI_ERROR_STATE        UL(2)
->> +#define RSI_INCOMPLETE        UL(3)
->> +#define RSI_ERROR_UNKNOWN    UL(4)
->> +
->> +#define SMC_RSI_FID(n)       
->> ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,      \
->> +                           ARM_SMCCC_SMC_64,         \
->> +                           ARM_SMCCC_OWNER_STANDARD, \
->> +                           n)
->> +
->> +/*
->> + * Returns RSI version.
->> + *
->> + * arg1 == Requested interface revision
->> + * ret0 == Status /error
->> + * ret1 == Lower implemented interface revision
->> + * ret2 == Higher implemented interface revision
->> + */
->> +#define SMC_RSI_ABI_VERSION    SMC_RSI_FID(0x190)
->> +
->> +/*
->> + * Read feature register.
->> + *
->> + * arg1 == Feature register index
->> + * ret0 == Status /error
->               ^^^^^^^^^^^^^
->               Status / error
-
-Ack
-
->> + * ret1 == Feature register value
->> + */
->> +#define SMC_RSI_FEATURES            SMC_RSI_FID(0x191)
->> +
->> +/*
->> + * Read measurement for the current Realm.
->> + *
->> + * arg1 == Index, which measurements slot to read
->> + * ret0 == Status / error
->> + * ret1 == Measurement value, bytes:  0 -  7
->> + * ret2 == Measurement value, bytes:  7 - 15
->                                          ^^^^^^
->                                          8 - 15
-> 
->> + * ret3 == Measurement value, bytes: 16 - 23
->> + * ret4 == Measurement value, bytes: 24 - 31
->> + * ret5 == Measurement value, bytes: 32 - 39
->> + * ret6 == Measurement value, bytes: 40 - 47
->> + * ret7 == Measurement value, bytes: 48 - 55
->> + * ret8 == Measurement value, bytes: 56 - 63
->> + */
->> +#define SMC_RSI_MEASUREMENT_READ        SMC_RSI_FID(0x192)
->> +
->> +/*
->> + * Extend Realm Extensible Measurement (REM) value.
->> + *
->> + * arg1  == Index, which measurements slot to extend
->> + * arg2  == Size of realm measurement in bytes, max 64 bytes
->> + * arg3  == Measurement value, bytes:  0 -  7
->> + * arg4  == Measurement value, bytes:  7 - 15
->                                           ^^^^^^
->                                           8 - 15
-> 
->> + * arg5  == Measurement value, bytes: 16 - 23
->> + * arg6  == Measurement value, bytes: 24 - 31
->> + * arg7  == Measurement value, bytes: 32 - 39
->> + * arg8  == Measurement value, bytes: 40 - 47
->> + * arg9  == Measurement value, bytes: 48 - 55
->> + * arg10 == Measurement value, bytes: 56 - 63
->> + * ret0  == Status / error
->> + */
->> +#define SMC_RSI_MEASUREMENT_EXTEND        SMC_RSI_FID(0x193)
->> +
->> +/*
->> + * Initialize the operation to retrieve an attestation token.
->> + *
->> + * arg1 == Challenge value, bytes:  0 -  7
->> + * arg2 == Challenge value, bytes:  7 - 15
->                                        ^^^^^^
->                                        8 - 15
-
-One mistake and too much copy/pasting :(
-
->> + * arg3 == Challenge value, bytes: 16 - 23
->> + * arg4 == Challenge value, bytes: 24 - 31
->> + * arg5 == Challenge value, bytes: 32 - 39
->> + * arg6 == Challenge value, bytes: 40 - 47
->> + * arg7 == Challenge value, bytes: 48 - 55
->> + * arg8 == Challenge value, bytes: 56 - 63
->> + * ret0 == Status / error
->> + * ret1 == Upper bound of token size in bytes
->> + */
->> +#define SMC_RSI_ATTESTATION_TOKEN_INIT        SMC_RSI_FID(0x194)
->> +
->> +/*
->> + * Continue the operation to retrieve an attestation token.
->> + *
->> + * arg1 == The IPA of token buffer
->> + * arg2 == Offset within the granule of the token buffer
->> + * arg3 == Size of the granule buffer
->> + * ret0 == Status / error
->> + * ret1 == Length of token bytes copied to the granule buffer
->> + */
->> +#define SMC_RSI_ATTESTATION_TOKEN_CONTINUE    SMC_RSI_FID(0x195)
->> +
->> +#ifndef __ASSEMBLY__
->> +
->> +struct realm_config {
->> +    union {
->> +        struct {
->> +            unsigned long ipa_bits; /* Width of IPA in bits */
->> +            unsigned long hash_algo; /* Hash algorithm */
->> +        };
->> +        u8 pad[0x200];
->> +    };
->> +    union {
->> +        u8 rpv[64]; /* Realm Personalization Value */
->> +        u8 pad2[0xe00];
->> +    };
->> +    /*
->> +     * The RMM requires the configuration structure to be aligned to
->> a 4k
->> +     * boundary, ensure this happens by aligning this structure.
->> +     */
->> +} __aligned(0x1000);
->> +
->> +#endif /* __ASSEMBLY__ */
->> +
->> +/*
->> + * Read configuration for the current Realm.
->> + *
->> + * arg1 == struct realm_config addr
->> + * ret0 == Status / error
->> + */
->> +#define SMC_RSI_REALM_CONFIG            SMC_RSI_FID(0x196)
->> +
->> +/*
->> + * Request RIPAS of a target IPA range to be changed to a specified
->> value.
->> + *
->> + * arg1 == Base IPA address of target region
->> + * arg2 == Top of the region
->> + * arg3 == RIPAS value
->> + * arg4 == flags
->> + * ret0 == Status / error
->> + * ret1 == Top of modified IPA range
->> + */
->> +#define SMC_RSI_IPA_STATE_SET            SMC_RSI_FID(0x197)
->> +
->> +#define RSI_NO_CHANGE_DESTROYED            UL(0)
->> +#define RSI_CHANGE_DESTROYED            UL(1)
->> +
-> 
-> According to the linked specification, the description for the third
-> return value
-> has been missed here.
-> 
-> ret2 == Whether the host accepted or rejected the request
-
-Worse than just a documentation error - I'd completely forgotten to
-check this extra return value in rsi_set_addr_range_state(). Thanks for
-spotting this!
-
-Steve
-
->> +/*
->> + * Get RIPAS of a target IPA range.
->> + *
->> + * arg1 == Base IPA of target region
->> + * arg2 == End of target IPA region
->> + * ret0 == Status / error
->> + * ret1 == Top of IPA region which has the reported RIPAS value
->> + * ret2 == RIPAS value
->> + */
->> +#define SMC_RSI_IPA_STATE_GET            SMC_RSI_FID(0x198)
->> +
->> +/*
->> + * Make a Host call.
->> + *
->> + * arg1 == IPA of host call structure
->> + * ret0 == Status / error
->> + */
->> +#define SMC_RSI_HOST_CALL            SMC_RSI_FID(0x199)
->> +
->> +#endif /* __ASM_RSI_SMC_H_ */
-> 
-> Thanks,
-> Gavin
-> 
-
+>
+>  Tomi
+>
+>
 
