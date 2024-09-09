@@ -1,145 +1,103 @@
-Return-Path: <linux-kernel+bounces-320582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D16970C32
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:20:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B06A3970C35
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62BF41F2249C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67EE528267A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB341AC897;
-	Mon,  9 Sep 2024 03:20:54 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709791400A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 03:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063811ACE00;
+	Mon,  9 Sep 2024 03:21:09 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C287117109B;
+	Mon,  9 Sep 2024 03:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725852053; cv=none; b=WoLXTe3aaL2OT8MMJjjLicOHyODkTFhRyU0JN9nktMW1i773LlwKzHnqsANOnKneN3w3OBTLn933z6MHLl3aOAEsYcbQHhUUcZqThlQSFuszMiUrdZFqPNQRYf+4faSy4tFd7lebnLvblYFI+UoIaj6G97Cbu3dkrS0EhvTcq+s=
+	t=1725852068; cv=none; b=cmO/B258n+nRsrkDa9v5lsj+tL2vv8atzDeiYBJAXt1bWRKaG6HELSxW7YxSQPy4UiNXOzScjnBVLjXMZrCkBwkN0qp6e+vaRllLmzVAhATacMvUbO+ZQvQAexltzwO9rVJINokoHVYL0bw4NePYXXVxTHrLfuiFpA7oH7Kntrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725852053; c=relaxed/simple;
-	bh=vaDqM2punjCmT7Jh0Bq7yjiB+5/tGwkGIkNgMGJSPj4=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=LnBkFC/AQuqRb8ZscIPof66tVlADvl2sBF8tjdE+rgx1SQGXr2VraJ/HSL7xI/D5zesOzw2REFBXNcTXiMzy6KbiL9Vx1UUG6kkRLd8ogrM4tKlf9vHkthzCLN8kat9YE0q+jV274pZqiUS34B2N/o/4v3XtAvnTt9nWPpQVvYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4X2Bsw6Brsz1j8JW;
-	Mon,  9 Sep 2024 11:20:20 +0800 (CST)
-Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0E3CC1A0188;
-	Mon,  9 Sep 2024 11:20:47 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 9 Sep 2024 11:20:46 +0800
-Subject: Re: [PATCH] ubi: wl: Close down wear-leveling before nand is
- suspended
-To: =?UTF-8?Q?M=c3=a5rten_Lindahl?= <marten.lindahl@axis.com>, Richard
- Weinberger <richard@nod.at>, Miquel Raynal <miquel.raynal@bootlin.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<kernel@axis.com>
-References: <20240907-ubi-wl-race-v1-1-6f7f5e0aea7b@axis.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <10beabdf-17e2-8232-0ce9-1b3d1136f6bb@huawei.com>
-Date: Mon, 9 Sep 2024 11:20:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1725852068; c=relaxed/simple;
+	bh=rddMkcO1mxzcbZWcLmTHLUh/bn7ux6X75UAmwH7LezM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=enIruGfg+U94uCiDoUyZejc8R8hjJ8D8tQLJUqArnWUdJfIZy2oABfFU097Vvy9HeC5Zz1wPSoiAu8jdTvLMnbuIOV1naIBeY2tIhwbd50cnC6uAEE9htsrZXr/AyAk4Ms5Dnews/SMNc8Nn+GAOUwj0QqPs5e5hATdd7EJY+Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.40.54.90])
+	by gateway (Coremail) with SMTP id _____8Dxleiead5mAW8CAA--.4567S3;
+	Mon, 09 Sep 2024 11:21:02 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.40.54.90])
+	by front2 (Coremail) with SMTP id qciowMAxa8adad5msCkCAA--.9833S2;
+	Mon, 09 Sep 2024 11:21:01 +0800 (CST)
+From: Zhao Qunqin <zhaoqunqin@loongson.cn>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	chenhuacai@kernel.org
+Cc: linux-edac@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel@xen0n.name,
+	bp@alien8.de,
+	tony.luck@intel.com,
+	james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org,
+	loongarch@lists.linux.dev,
+	Zhao Qunqin <zhaoqunqin@loongson.cn>
+Subject: [PATCH v4 0/2] Add EDAC driver for loongson memory controller
+Date: Mon,  9 Sep 2024 11:21:22 +0800
+Message-Id: <20240909032124.18819-1-zhaoqunqin@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240907-ubi-wl-race-v1-1-6f7f5e0aea7b@axis.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm000013.china.huawei.com (7.193.23.81)
+X-CM-TRANSID:qciowMAxa8adad5msCkCAA--.9833S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7JFyDtrWDJw1rCw4DZF17XFc_yoWxtwb_Ca
+	17Aay8Jr4vya4DJay2qr1xZFWayF4UGas0kF1qgw15Xr4avr13WFykWa43AFy7Jw1DWFn3
+	ZrZ5KryxA3W8tosvyTuYvTs0mTUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbS8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
+	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
+	Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
+	xGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
+	JVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j5fHUUUUUU=
 
-在 2024/9/8 3:28, Mårten Lindahl 写道:
-> If a reboot/shutdown signal with double force (-ff) is triggered when
-> the erase worker or wear-leveling worker function runs we may end up in
-> a race condition since the MTD device gets a reboot notification and
-> suspends the nand flash before the erase or wear-leveling is done. This
-> will reject all accesses to the flash with -EBUSY.
-> 
-> Sequence for the erase worker function:
-> 
->     systemctl reboot -ff           ubi_thread
-> 
->                                  do_work
->   __do_sys_reboot
->     blocking_notifier_call_chain
->       mtd_reboot_notifier
->         nand_shutdown
->           nand_suspend
->                                    __erase_worker
->                                      ubi_sync_erase
->                                        mtd_erase
->                                          nand_erase_nand
-> 
->                                            # Blocked by suspended chip
->                                            nand_get_device
->                                              => EBUSY
-> 
-> Similar sequence for the wear-leveling function:
-> 
->     systemctl reboot -ff           ubi_thread
-> 
->                                  do_work
->   __do_sys_reboot
->     blocking_notifier_call_chain
->       mtd_reboot_notifier
->         nand_shutdown
->           nand_suspend
->                                    wear_leveling_worker
->                                      ubi_eba_copy_leb
->                                        ubi_io_write
->                                          mtd_write
->                                            nand_write_oob
-> 
->                                              # Blocked by suspended chip
->                                              nand_get_device
->                                                => EBUSY
-> 
->   systemd-shutdown[1]: Rebooting.
->   ubi0 error: ubi_io_write: error -16 while writing 2048 bytes to PEB
->   CPU: 1 PID: 82 Comm: ubi_bgt0d Kdump: loaded Tainted: G           O
->   (unwind_backtrace) from [<80107b9f>] (show_stack+0xb/0xc)
->   (show_stack) from [<8033641f>] (dump_stack_lvl+0x2b/0x34)
->   (dump_stack_lvl) from [<803b7f3f>] (ubi_io_write+0x3ab/0x4a8)
->   (ubi_io_write) from [<803b817d>] (ubi_io_write_vid_hdr+0x71/0xb4)
->   (ubi_io_write_vid_hdr) from [<803b6971>] (ubi_eba_copy_leb+0x195/0x2f0)
->   (ubi_eba_copy_leb) from [<803b939b>] (wear_leveling_worker+0x2ff/0x738)
->   (wear_leveling_worker) from [<803b86ef>] (do_work+0x5b/0xb0)
->   (do_work) from [<803b9ee1>] (ubi_thread+0xb1/0x11c)
->   (ubi_thread) from [<8012c113>] (kthread+0x11b/0x134)
->   (kthread) from [<80100139>] (ret_from_fork+0x11/0x38)
->   Exception stack(0x80c43fb0 to 0x80c43ff8)
->   ...
->   ubi0 error: ubi_dump_flash: err -16 while reading 2048 bytes from PEB
->   ubi0 error: wear_leveling_worker: error -16 while moving PEB 246 to PEB
->   ubi0 warning: ubi_ro_mode.part.0: switch to read-only mode
->   ...
->   ubi0 error: do_work: work failed with error code -16
->   ubi0 error: ubi_thread: ubi_bgt0d: work failed with error code -16
+Add a simple EDAC driver which report single bit errors (CE) only on
+loongson platform.
 
-Yes, I noticed these types of messages too before kernel v5.18. Since 
-commit 013e6292aaf5e4b0("mtd: rawnand: Simplify the locking"), the 
-behavior of nand_get_device() is changed. A process who is invoking 
-nand_get_device() during rebooting won't be stucked, it will get an 
-EBUSY error code, that's why we see the above messages from UBI module.
-After commit 8cba323437a49a4("mtd: rawnand: protect access to rawnand 
-devices while in suspend"), the behavior of nand_get_device() is changed 
-back. A process who is invoking nand_get_device() during rebooting will 
-be stucked again, so there should be no error messages in UBI layer.
-So, is your kernel version lower than v5.18?
+Zhao Qunqin (2):
+  dt-bindings: EDAC for ls3a5000 memory controller
+  Loongarch: EDAC driver for loongson memory controller
+
+ .../edac/loongson,ls3a5000-mc-edac.yaml       |  44 +++++
+ MAINTAINERS                                   |   7 +
+ arch/loongarch/Kconfig                        |   1 +
+ drivers/edac/Kconfig                          |   8 +
+ drivers/edac/Makefile                         |   1 +
+ drivers/edac/loongson_edac.c                  | 182 ++++++++++++++++++
+ 6 files changed, 243 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/edac/loongson,ls3a5000-mc-edac.yaml
+ create mode 100644 drivers/edac/loongson_edac.c
+
+
+base-commit: 61124f42dcaa30f58a8b47a2b69ddb80260677c7
+-- 
+2.43.0
 
 
