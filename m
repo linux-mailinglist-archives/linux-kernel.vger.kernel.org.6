@@ -1,114 +1,102 @@
-Return-Path: <linux-kernel+bounces-322150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCB09724DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:00:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4DA9724DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5642842FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:00:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EC862849D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576AA18CBED;
-	Mon,  9 Sep 2024 22:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BC518CC09;
+	Mon,  9 Sep 2024 22:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQxyacZq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j4iGNMnK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1CC17085C;
-	Mon,  9 Sep 2024 22:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CA818CBFE
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 22:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725919241; cv=none; b=KPI93kEssoG1zSpMEpEmXPquuB49ToTcgYOnFbjV6CBt7qYLKb5MEsIRnep6IRz9AJv+FFIM2dtCvGbfgEdJPhZZc0oO+44ucFxC7OdQPrXXdTEGPGlGjWmvoegdnlRy13Nn7XSM6+l+//4YRHkqKYjGu+xGaBDK1nmY/IlEOuA=
+	t=1725919245; cv=none; b=cK92fzWlewbhyWIDZvk8n2kmdj8cXQTr5DdC+9K7V81J9R3erjzWYeefuxxYEDkiamR9R88vlHjw1iudIgyxCKeIjBySqEM9JKU3B+7Hd0hXKJ/xf/GjROociceWTaJUV7ixZHdZPnjeY1Fn1ViV+50fdugvNIvPU/MkxV+nf+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725919241; c=relaxed/simple;
-	bh=JGqxWA1KpqkAc55m1tTC6BCwYiBtn9t2WlYbKLNP9PA=;
+	s=arc-20240116; t=1725919245; c=relaxed/simple;
+	bh=jFmE10NY4nDymrGpFrGQLkUzdd+T1rpk9Y87FgAuX+s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t7LTXBUPaCpQdJxHG8SxPM471MOStfjEMmgVhfFTSHGkq3ACgq+APyboa9FzIZJAnDgICCdN7sBdIXBRuqtHIIF6zuSXMC7Co2tinYkIw12v9oaz/whXBOcG0cs26YHEwJYV7Hf4pZIBUOTM39HeTvDnDITYrucP8n4HGZAeJFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQxyacZq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22797C4CEC5;
-	Mon,  9 Sep 2024 22:00:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725919241;
-	bh=JGqxWA1KpqkAc55m1tTC6BCwYiBtn9t2WlYbKLNP9PA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NQxyacZqx2mx4EIfylMDD80N8nKpi6Z4sD/6j/wb42m457LVQ7pSUYuqK9GwJ591u
-	 PbP+1nkeIN/X9dNDZ+QlCx7QuEuRErypeBcRu04QZcCVboJCDgqIAoCZlUQIoaZ3ry
-	 7yEiOmZB03zKzR2vJjhBoA1r0BTUqVtYhw9gX5VdjH7qmXrvgfaT7Ux6Om8uea3lgk
-	 k3uIZrrYN8N0cpQA3ftiduW3sSUipu5n8RYtU192usneRZ8bZN3ZxBrr1R26ApGpSO
-	 22OhK7XfNoCuee+oiepdl8ebEpfvTsT05+vRXrdkfbAMAYGjE2ObeU03mP7wkJrL0L
-	 3oNMpguap45Qw==
-Date: Mon, 9 Sep 2024 23:00:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, andersson@kernel.org,
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org,
-	herbert@gondor.apana.org.au, davem@davemloft.net,
-	sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
-	will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
-	jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
-	amitk@kernel.org, thara.gopinath@gmail.com,
-	cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
-	wim@linux-watchdog.org, linux@roeck-us.net,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-	iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, kernel@quicinc.com,
-	quic_psodagud@quicinc.com,
-	Praveen Talari <quic_ptalari@quicinc.com>
-Subject: Re: [PATCH v2 16/21] dt-bindings: spi: document support for SA8255p
-Message-ID: <70673636-5b44-4b61-865c-83f9c5d3501d@sirena.org.uk>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-17-quic_nkela@quicinc.com>
- <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
- <b369bd73-ce2f-4373-8172-82c0cca53793@quicinc.com>
- <9a655c1c-97f6-4606-8400-b3ce1ed3c8bf@kernel.org>
- <d206e315-3324-4814-b98d-027c3af6ebb6@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l7QKc77tTvw/W3rDVOxSh22/+gWlmbt4yZr8F6lVDOKzp2541o9A8QEknVeKEh1v3KBNy/rPE8bcwHy3XtDH8xNqQOd1VhvSV9odrTQmVq37cItwuZwAhk/pkq1ShKNdy0kDeqUKVOn/WE5HND2Ie2ETs2di8F1bvZaZ4WmVBX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j4iGNMnK; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725919243; x=1757455243;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jFmE10NY4nDymrGpFrGQLkUzdd+T1rpk9Y87FgAuX+s=;
+  b=j4iGNMnKf8yy8LEeNXjHj+U9GI6iTxacfmAnmFHFdGd2vA5dHp/PvkZY
+   kh3+ITN+UMv6sNg42qG4Olwqxrq922CIoqnIDW3Hzo3p/HFY+gi1ByhMO
+   uySSfC1C1TedpYsgFYRj/VLtOZGNDPr5r1VdLfYb4hFwNlGfTNeZ375/f
+   TtqubxyRsIUde1TasWTzJGkCzVJReN4xfV+TCAr7w5PUuCq1slnjlfeOL
+   XTxrY+w1B8sIikFO0tyblIXQ8mvnetgH7La3Mw8m4wZWJ0xQnfX1ojeE8
+   +pOpXQpSk9IIE/1C17hziF5CIsr/EIVNIJpFf31hEZHd3A3tg84b91+O1
+   A==;
+X-CSE-ConnectionGUID: G3aaWBM+RACN6Vd5AcoQQQ==
+X-CSE-MsgGUID: BMoBiT/bTqat94xLQS0BNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="35782913"
+X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
+   d="scan'208";a="35782913"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 15:00:43 -0700
+X-CSE-ConnectionGUID: KLMWswB7TcqzyMgx7C4r1A==
+X-CSE-MsgGUID: 8fgWyY/8SfqIz3JMXboCbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
+   d="scan'208";a="71603008"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa003.jf.intel.com with ESMTP; 09 Sep 2024 15:00:41 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id F3E831AC; Tue, 10 Sep 2024 01:00:39 +0300 (EEST)
+Date: Tue, 10 Sep 2024 01:00:39 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] mm/page: Drop has_unaccepted_memory() helper
+Message-ID: <3inyypayz63x3zktypqdgzrcsrwoetub4y66r4dleoz2lscmws@ocfmmnc2q5f5>
+References: <20240909081930.748708-1-kirill.shutemov@linux.intel.com>
+ <20240909122558.aa726d312d8b166a515dd751@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+4FsY8uVcR5U7FtS"
-Content-Disposition: inline
-In-Reply-To: <d206e315-3324-4814-b98d-027c3af6ebb6@quicinc.com>
-X-Cookie: Anything is possible, unless it's not.
-
-
---+4FsY8uVcR5U7FtS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240909122558.aa726d312d8b166a515dd751@linux-foundation.org>
 
-On Mon, Sep 09, 2024 at 01:29:37PM -0700, Nikunj Kela wrote:
+On Mon, Sep 09, 2024 at 12:25:58PM -0700, Andrew Morton wrote:
+> On Mon,  9 Sep 2024 11:19:30 +0300 "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
+> 
+> > has_unaccepted_memory() has the only caller -- cond_accept_memory().
+> > 
+> > Remove the helper and check zones_with_unaccepted_pages directly in
+> > cond_accept_memory().
+> > 
+> > It also fixes warning with clang 18 when kernel is compiled without
+> > unaccepted memory support:
+> > 
+> >  mm/page_alloc.c:7043:20: error: unused function 'has_unaccepted_memory' [-Werror,-Wunused-function]
+> > 
+> 
+> Thanks, mm-unstable has a similar fix:
 
-> Now I am confused which prefix format shall I use? first spi or first
-> dt-bindings?
+Works for me.
 
-spi: first.
-
---+4FsY8uVcR5U7FtS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbfb/0ACgkQJNaLcl1U
-h9DmmAf9G79iJqbIo+rLvhxVQG/V00Xz3Y1hZjGbPTyKNQIuiSThwS/ZexjpAnky
-dxPN6CKinfv2CcaHSqAfTaiOX7e41E6yQe0MhZRHgvnp9GWDwzFR+vo/Jkf7vOvk
-FdHkgDxP+8DqOEk/JvSsuUbeWBm8+6SYmz3aY49ZDdTM/AWXoLpfIuRG9HHI4oC0
-pcewKeElbb4mm8XtAESmg+SfofXpaXXqWnzrqGfKnG2Jhz2SYaDIbLUzRrIcMyQC
-UkUJzcsdp019ZGJl0xUhb05YlxUPnZ2vQ1OJaDh/15NkTWCoSTdDX1WTWjHtmjfB
-soCaA83E+/cUHrHnZjH7ZOZFfA0F2A==
-=OtuN
------END PGP SIGNATURE-----
-
---+4FsY8uVcR5U7FtS--
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
