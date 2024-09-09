@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-321079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9404797142E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:46:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF8D971431
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5254C284B2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:46:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA4011C22E42
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32CE1B3B16;
-	Mon,  9 Sep 2024 09:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C391B5335;
+	Mon,  9 Sep 2024 09:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwCz+g3m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFUQW+LN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4121B4C5A;
-	Mon,  9 Sep 2024 09:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF3A1B5313;
+	Mon,  9 Sep 2024 09:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725875113; cv=none; b=AcdTIJ72Bd02+3ISxJz9PRWjbF8XL6umkzc1cwuDq0iYgK8USeUC8F9FuDNT3hTCe2jrm8nTRpfdeogGMhSXv+AttSqRHP+L/mxjMe41oWvGva/Cn20MB/vJLXl+rmKiI7ypRjqnl6yAKlCtnPV7Uc//bIJLu47qeOQQQQgXhik=
+	t=1725875114; cv=none; b=btmrR72PyBJ3EWUHpwmdSWqWb2Ypi33OBzQvqrui8IaWn2ZjYZ3vyo7zLUzHvSkL+7IsAaQHg1pXrlx/gYDUHYZgX2DkcNP8oHL5sPS+scZZyZ0QHtKyBjSATuHZZH8qkbhQdSYG3u3ORVTA63WR5+3lov2cxi/gAMirO63NmkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725875113; c=relaxed/simple;
-	bh=OpoEq4rq2tR/fK1v7ChPxH80mWmyJhcEfy4/a87kMhE=;
+	s=arc-20240116; t=1725875114; c=relaxed/simple;
+	bh=bt5mKiB24t0j0a1fHkKudGsM/fBWfeJBRKzl9gUDXAQ=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=FoDUSWyMLMN+zm/FUNGJOQ5nQbru+rzfkQG24Tg6Ltnta0LYQ10z8CYuPRU/SLd5D4HliEnWp72ZzhPzjDNXcD/qJK7oXybCi583xgj3aRpDKzPLSWgUdBtz08UP80ak/UtbGcddF8B79fZ77O9wJmhx/nWfOa5LFdz985Tlh/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwCz+g3m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F4EEC4CEC8;
-	Mon,  9 Sep 2024 09:45:12 +0000 (UTC)
+	 Message-Id:Subject; b=TtQI137qNoH2FoTZE8nRrz8fCxC+2JRcYMN/3/2yYMVMQUucwsRH/mg40Za6QvCti6oVMMDkJIS0x39DCZ7uqPUxnkMC5si37VxjOSD2WpQB4dDivIY9pLWEb1HW9QzGf/YZ8olXVz2bj2v4DyxNmEa8wWq5am6poBiN4BApZcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFUQW+LN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B22C4CECD;
+	Mon,  9 Sep 2024 09:45:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725875112;
-	bh=OpoEq4rq2tR/fK1v7ChPxH80mWmyJhcEfy4/a87kMhE=;
+	s=k20201202; t=1725875114;
+	bh=bt5mKiB24t0j0a1fHkKudGsM/fBWfeJBRKzl9gUDXAQ=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=VwCz+g3mUFf+nc1DPxX053KtYES3DWrH2oz2tPjikFd0evUqUl3ZOjg9NfG+bZras
-	 9ZALv+uFcbQHW6jKOuh0mjxQr1b+F8NZsYsN4j8r/Yjjj9+OPm1k0MeM1x9koacCW1
-	 8gOd36sELxt06KofkZK6O+clK5jexyGHq8smwUxmWe2mHupGS+FdDOMS+9rnTdLLCD
-	 BLhFzALlfmPGlCJxqC5TpfJCC0xShq9lxMewXlzNVahOfRT5YPCRqEiCghuSqVjTX+
-	 DusYW3ifJ0v+4ApkTFb0Ct8ymahJQRyesAPBDdca0tG2T8Qfs//ny1wUxbhUEM/XCK
-	 4cVcwXJnYbEag==
-Date: Mon, 09 Sep 2024 04:45:11 -0500
+	b=lFUQW+LNIMOwbDWSscwINvfWMqIGXwZS6+xyeBq/HvfluKoHlWuNcbagt9os7zj7q
+	 g1m08dzrigEVy3Ijq2hHAF7yG14n2nRK0xLrXvJ0OTUXJmq0zCINoJShSOnZGIu92C
+	 6uYEwOQnN/+RVUVNKS4TMC5cXr/a0jktrhtIdGVLCLGHczs7daeVx1vr7v7BuxsvXv
+	 fCBaDRtqOoOPAKiuRP4cdwMFOH8oadsN2zZHVYVFjUYNKJjy/A0/0llRYZ3D/0pwbg
+	 HwMiZQD4FxFIRuolx9ZUtcnP6dGVNJ2PHyiukY9cDeT5EwtJ8zh0KM0n7TOPWweIRT
+	 DwiN0FlDe4dkw==
+Date: Mon, 09 Sep 2024 04:45:13 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -51,27 +51,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Nikita Shubin <nikita.shubin@maquefel.me>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+Cc: linux-kernel@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Vignesh Raghavendra <vigneshr@ti.com>, Conor Dooley <conor+dt@kernel.org>
-In-Reply-To: <20240909-ep93xx-v12-18-e86ab2423d4b@maquefel.me>
+ Niklas Cassel <cassel@kernel.org>, linux-ide@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240909-ep93xx-v12-20-e86ab2423d4b@maquefel.me>
 References: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
- <20240909-ep93xx-v12-18-e86ab2423d4b@maquefel.me>
-Message-Id: <172587510150.3289209.1561633350794103525.robh@kernel.org>
-Subject: Re: [PATCH v12 18/38] dt-bindings: mtd: Add ts7200 nand-controller
+ <20240909-ep93xx-v12-20-e86ab2423d4b@maquefel.me>
+Message-Id: <172587510301.3289247.9336315361343642952.robh@kernel.org>
+Subject: Re: [PATCH v12 20/38] dt-bindings: ata: Add Cirrus EP93xx
 
 
-On Mon, 09 Sep 2024 11:10:43 +0300, Nikita Shubin wrote:
-> Add YAML bindings for ts7200 NAND Controller.
+On Mon, 09 Sep 2024 11:10:45 +0300, Nikita Shubin wrote:
+> Add YAML bindings for ep93xx SoC PATA.
 > 
 > Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+> Acked-by: Damien Le Moal <dlemoal@kernel.org>
 > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  .../devicetree/bindings/mtd/technologic,nand.yaml  | 45 ++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
+>  .../bindings/ata/cirrus,ep9312-pata.yaml           | 42 ++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -83,7 +83,7 @@ dtschema/dtc warnings/errors:
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240909-ep93xx-v12-18-e86ab2423d4b@maquefel.me
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240909-ep93xx-v12-20-e86ab2423d4b@maquefel.me
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
