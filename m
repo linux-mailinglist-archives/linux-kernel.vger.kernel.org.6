@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-321867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC4897208A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:28:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F21D972090
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75D3F285BC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:28:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EB5A1F24A9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1345918755F;
-	Mon,  9 Sep 2024 17:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9D9188004;
+	Mon,  9 Sep 2024 17:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2YpH8Dz+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wcEcKN1Q"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="glW8eQmV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RZGjsH4D"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368B117D36A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D6117DFEA;
 	Mon,  9 Sep 2024 17:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902868; cv=none; b=DB496BidbrPbrqdDFDOVRNwqhPvJsEaGbQoD4ADDhOAGK4NbSVKJif0ZyfqDrM8rvBauDI7joSzyEM59WdESuHxFlEfF97w5HNw45Gro4Sqr3Eal3LUJS7PIMKIAF9vScQvWx5wk0zIXqUrZlcn7L4RZy0qYmVhb/MKFpEyVPn0=
+	t=1725902868; cv=none; b=QCKRmbywjKwN6noVSKMsESm/FVLLu8wqjoEfVyI/Cdtc19N0ZTFxWKFcp6Ege56+11l6QRhTFOFpYTEh++DvT5vKbXdTc9KV3ojMrstLUzwTImbMjJxlQlCb3sxc7pbempapQNIZGqssQCws3LhAewPZeoYIxu3nPLf27REUoEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725902868; c=relaxed/simple;
-	bh=UBJjaWNsKxP1rCNF6AI8ASPnX1F8YN8pecZ8vNNPEOU=;
+	bh=nZvx/kA3jPgsZoXIxkZUaLAf9lPIZIXNuByWwup3Qtk=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=CENCcK0PIiGEbPkhqIbRIe+/mul7nVY0gwZSY9ktWc5QLzJUpF6IgzczSocpI1YjuKBTfI8ntaHKAbB0NUschWVyrl0wve4/HGOP6AmDMzTTI8ySNhOcGO6F0THSr0DeroNhigKWXqJjGIABOPFPtGGIJ83q8zXGt2W4VgC7ANI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2YpH8Dz+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wcEcKN1Q; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=a+3BTAWVzB0dw4iWc3OJnTSt+bGn9ViH3j+VdFFHyeGQ01e1ddnOHVkIfMSyFGk6UyL3qW5pvOk28RJZQ5gpacGXHyq3cNe00wQ87fDlPpQk5fxL4IDCa3yhjwOWQBS30Ixr8PNg8I7H/DLofcD8Uz9iANmOozG+WKmszG+Ni/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=glW8eQmV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RZGjsH4D; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 09 Sep 2024 17:27:43 -0000
+Date: Mon, 09 Sep 2024 17:27:44 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1725902864;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qVxbObWKhKKys4HzCDeqK1hsz2VJkn7y9o6rL1jUdlE=;
-	b=2YpH8Dz+0xeZxUr1SaczMuJhRaF1cwDUkWsPbiqm+2I71SdRE2VmXgJKUHzq75slHJGtBA
-	PaDd4Hrx++n3u28qaKThIpQSAsD1CP0iKnoEo1vsxpvQb/wnVQ8L4hwWuy8Hd4LCHXDPaG
-	Hcvxa6jbrGO7BVpbcUwu1BqF4OGdXS/dIEYrXRcDGcpCpnQcNKnMs0BrcnnhRZzhl31h7/
-	PzwYjBDaufOSOksCRXhOgc+bNBO/0SKLGR9FfSTFCXIWmM5d+KkS2bG0utLYCtidKekzrL
-	p0DSdQrNOD+iC48b/nBQh2xR9Oxn5sFuAvou+jYmKFPAvpJq8H54l7VttVt1xw==
+	bh=tBcnyuKpbS4Q9jnPSVZfb1D2MkqjsEwHl6Cx+naJ2sc=;
+	b=glW8eQmV9JeXNr/91CTly2viGbt/5QlDXcvs4igi+TT8ztWuuBQVxYHLOf+QKK4sB1n/AL
+	lXuCBXw79WopD0vSzVPyftX0Zvo3iRwoFpmKhofSJrCvKeZeLE3bpIIoBv85ShMrNmfJJx
+	jUa0V+3LbLcIQMGx5Gowx9drVvv8ESX/vCDhYDLiwtHQ3xDZstnsMgtJ5RxjKUeZcUAikc
+	nvimzrjbwadMggA5e/BOE18ZtSxvVsJ+in/Ho1x86vg6C1pftPiX3EDpCyQ0lR4mQeqQBw
+	ovj6hUMh+JoqvfmvOPMXTpElSIxN2uBRz4fFO0Ul00Ap2X8eUioS8VDStRC41g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1725902864;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,25 +52,25 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qVxbObWKhKKys4HzCDeqK1hsz2VJkn7y9o6rL1jUdlE=;
-	b=wcEcKN1Qspwe58uFm8+jybPdo1/q0pJrrMIGrmQBy0h/eUdK+mkPRVvDGPHAP3O6gGgYph
-	TQag2Jnkmk24nxBA==
+	bh=tBcnyuKpbS4Q9jnPSVZfb1D2MkqjsEwHl6Cx+naJ2sc=;
+	b=RZGjsH4Dt5VOECQsZtfp/WC/qPuneD7irB40oQp3s5GUgCMT0SjDqtu2uwGkKmXpmc3PiY
+	PjjIqXKV6HuB2dDA==
 From: "tip-bot2 for John Ogness" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/rt] printk: nbcon: Show replay message on takeover
+Subject: [tip: sched/rt] printk: nbcon: Rely on kthreads for normal operation
 Cc: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240904120536.115780-12-john.ogness@linutronix.de>
-References: <20240904120536.115780-12-john.ogness@linutronix.de>
+In-Reply-To: <20240904120536.115780-10-john.ogness@linutronix.de>
+References: <20240904120536.115780-10-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172590286383.2215.9109506332328239935.tip-bot2@tip-bot2>
+Message-ID: <172590286449.2215.2579909127602575248.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -80,148 +80,300 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/rt branch of tip:
 
-Commit-ID:     5102981d5e2a5a7a12424b5d26c7524ac2899898
-Gitweb:        https://git.kernel.org/tip/5102981d5e2a5a7a12424b5d26c7524ac2899898
+Commit-ID:     13189fa73afae2b961d29132fd36d9cc0be77ecb
+Gitweb:        https://git.kernel.org/tip/13189fa73afae2b961d29132fd36d9cc0be77ecb
 Author:        John Ogness <john.ogness@linutronix.de>
-AuthorDate:    Wed, 04 Sep 2024 14:11:30 +02:06
+AuthorDate:    Wed, 04 Sep 2024 14:11:28 +02:06
 Committer:     Petr Mladek <pmladek@suse.com>
 CommitterDate: Wed, 04 Sep 2024 15:56:32 +02:00
 
-printk: nbcon: Show replay message on takeover
+printk: nbcon: Rely on kthreads for normal operation
 
-An emergency or panic context can takeover console ownership
-while the current owner was printing a printk message. The
-atomic printer will re-print the message that the previous
-owner was printing. However, this can look confusing to the
-user and may even seem as though a message was lost.
+Once the kthread is running and available
+(i.e. @printk_kthreads_running is set), the kthread becomes
+responsible for flushing any pending messages which are added
+in NBCON_PRIO_NORMAL context. Namely the legacy
+console_flush_all() and device_release() no longer flush the
+console. And nbcon_atomic_flush_pending() used by
+nbcon_cpu_emergency_exit() no longer flushes messages added
+after the emergency messages.
 
-  [3430014.1
-  [3430014.181123] usb 1-2: Product: USB Audio
+The console context is safe when used by the kthread only when
+one of the following conditions are true:
 
-Add a new field @nbcon_prev_seq to struct console to track
-the sequence number to print that was assigned to the previous
-console owner. If this matches the sequence number to print
-that the current owner is assigned, then a takeover must have
-occurred. In this case, print an additional message to inform
-the user that the previous message is being printed again.
+  1. Other caller acquires the console context with
+     NBCON_PRIO_NORMAL with preemption disabled. It will
+     release the context before rescheduling.
 
-  [3430014.1
-  ** replaying previous printk message **
-  [3430014.181123] usb 1-2: Product: USB Audio
+  2. Other caller acquires the console context with
+     NBCON_PRIO_NORMAL under the device_lock.
+
+  3. The kthread is the only context which acquires the console
+     with NBCON_PRIO_NORMAL.
+
+This is satisfied for all atomic printing call sites:
+
+nbcon_legacy_emit_next_record() (#1)
+
+nbcon_atomic_flush_pending_con() (#1)
+
+nbcon_device_release() (#2)
+
+It is even double guaranteed when @printk_kthreads_running
+is set because then _only_ the kthread will print for
+NBCON_PRIO_NORMAL. (#3)
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 Reviewed-by: Petr Mladek <pmladek@suse.com>
-Link: https://lore.kernel.org/r/20240904120536.115780-12-john.ogness@linutronix.de
+Link: https://lore.kernel.org/r/20240904120536.115780-10-john.ogness@linutronix.de
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- include/linux/console.h  |  2 ++
- kernel/printk/internal.h |  1 +
- kernel/printk/nbcon.c    | 26 ++++++++++++++++++++++++++
- kernel/printk/printk.c   | 11 +++++++++++
- 4 files changed, 40 insertions(+)
+ kernel/printk/internal.h | 26 +++++++++++++++++++++-
+ kernel/printk/nbcon.c    | 17 +++++++++-----
+ kernel/printk/printk.c   | 48 ++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 84 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/console.h b/include/linux/console.h
-index 788ce9c..eba367b 100644
---- a/include/linux/console.h
-+++ b/include/linux/console.h
-@@ -325,6 +325,7 @@ struct nbcon_write_context {
-  * @nbcon_state:	State for nbcon consoles
-  * @nbcon_seq:		Sequence number of the next record for nbcon to print
-  * @nbcon_device_ctxt:	Context available for non-printing operations
-+ * @nbcon_prev_seq:	Seq num the previous nbcon owner was assigned to print
-  * @pbufs:		Pointer to nbcon private buffer
-  * @kthread:		Printer kthread for this console
-  * @rcuwait:		RCU-safe wait object for @kthread waking
-@@ -459,6 +460,7 @@ struct console {
- 	atomic_t		__private nbcon_state;
- 	atomic_long_t		__private nbcon_seq;
- 	struct nbcon_context	__private nbcon_device_ctxt;
-+	atomic_long_t           __private nbcon_prev_seq;
- 
- 	struct printk_buffers	*pbufs;
- 	struct task_struct	*kthread;
 diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-index 8166e24..c365d25 100644
+index a96d411..8166e24 100644
 --- a/kernel/printk/internal.h
 +++ b/kernel/printk/internal.h
-@@ -319,4 +319,5 @@ bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
+@@ -113,6 +113,13 @@ static inline bool console_is_usable(struct console *con, short flags, bool use_
+ 		/* The write_atomic() callback is optional. */
+ 		if (use_atomic && !con->write_atomic)
+ 			return false;
++
++		/*
++		 * For the !use_atomic case, @printk_kthreads_running is not
++		 * checked because the write_thread() callback is also used
++		 * via the legacy loop when the printer threads are not
++		 * available.
++		 */
+ 	} else {
+ 		if (!con->write)
+ 			return false;
+@@ -176,6 +183,7 @@ static inline void nbcon_atomic_flush_pending(void) { }
+ static inline bool nbcon_legacy_emit_next_record(struct console *con, bool *handover,
+ 						 int cookie, bool use_atomic) { return false; }
+ static inline void nbcon_kthread_wake(struct console *con) { }
++static inline void nbcon_kthreads_wake(void) { }
  
- #ifdef CONFIG_PRINTK
- void console_prepend_dropped(struct printk_message *pmsg, unsigned long dropped);
-+void console_prepend_replay(struct printk_message *pmsg);
- #endif
+ static inline bool console_is_usable(struct console *con, short flags,
+ 				     bool use_atomic) { return false; }
+@@ -190,6 +198,7 @@ extern bool legacy_allow_panic_sync;
+ /**
+  * struct console_flush_type - Define available console flush methods
+  * @nbcon_atomic:	Flush directly using nbcon_atomic() callback
++ * @nbcon_offload:	Offload flush to printer thread
+  * @legacy_direct:	Call the legacy loop in this context
+  * @legacy_offload:	Offload the legacy loop into IRQ
+  *
+@@ -197,6 +206,7 @@ extern bool legacy_allow_panic_sync;
+  */
+ struct console_flush_type {
+ 	bool	nbcon_atomic;
++	bool	nbcon_offload;
+ 	bool	legacy_direct;
+ 	bool	legacy_offload;
+ };
+@@ -211,6 +221,22 @@ static inline void printk_get_console_flush_type(struct console_flush_type *ft)
+ 
+ 	switch (nbcon_get_default_prio()) {
+ 	case NBCON_PRIO_NORMAL:
++		if (have_nbcon_console && !have_boot_console) {
++			if (printk_kthreads_running)
++				ft->nbcon_offload = true;
++			else
++				ft->nbcon_atomic = true;
++		}
++
++		/* Legacy consoles are flushed directly when possible. */
++		if (have_legacy_console || have_boot_console) {
++			if (!is_printk_legacy_deferred())
++				ft->legacy_direct = true;
++			else
++				ft->legacy_offload = true;
++		}
++		break;
++
+ 	case NBCON_PRIO_EMERGENCY:
+ 		if (have_nbcon_console && !have_boot_console)
+ 			ft->nbcon_atomic = true;
 diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-index 5146ce9..9844088 100644
+index 784e5de..5146ce9 100644
 --- a/kernel/printk/nbcon.c
 +++ b/kernel/printk/nbcon.c
-@@ -946,7 +946,9 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt, bool use_a
- 		.pbufs = ctxt->pbufs,
- 	};
- 	unsigned long con_dropped;
-+	struct nbcon_state cur;
- 	unsigned long dropped;
-+	unsigned long ulseq;
+@@ -1494,6 +1494,7 @@ static int __nbcon_atomic_flush_pending_con(struct console *con, u64 stop_seq,
+ static void nbcon_atomic_flush_pending_con(struct console *con, u64 stop_seq,
+ 					   bool allow_unsafe_takeover)
+ {
++	struct console_flush_type ft;
+ 	unsigned long flags;
+ 	int err;
+ 
+@@ -1523,10 +1524,12 @@ again:
  
  	/*
- 	 * This function should never be called for consoles that have not
-@@ -987,6 +989,29 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt, bool use_a
- 	if (dropped && !is_extended)
- 		console_prepend_dropped(&pmsg, dropped);
- 
-+	/*
-+	 * If the previous owner was assigned the same record, this context
-+	 * has taken over ownership and is replaying the record. Prepend a
-+	 * message to let the user know the record is replayed.
-+	 */
-+	ulseq = atomic_long_read(&ACCESS_PRIVATE(con, nbcon_prev_seq));
-+	if (__ulseq_to_u64seq(prb, ulseq) == pmsg.seq) {
-+		console_prepend_replay(&pmsg);
-+	} else {
-+		/*
-+		 * Ensure this context is still the owner before trying to
-+		 * update @nbcon_prev_seq. Otherwise the value in @ulseq may
-+		 * not be from the previous owner and instead be some later
-+		 * value from the context that took over ownership.
-+		 */
-+		nbcon_state_read(con, &cur);
-+		if (!nbcon_context_can_proceed(ctxt, &cur))
-+			return false;
-+
-+		atomic_long_try_cmpxchg(&ACCESS_PRIVATE(con, nbcon_prev_seq), &ulseq,
-+					__u64seq_to_ulseq(pmsg.seq));
-+	}
-+
- 	if (!nbcon_context_exit_unsafe(ctxt))
- 		return false;
- 
-@@ -1646,6 +1671,7 @@ bool nbcon_alloc(struct console *con)
- 
- 	rcuwait_init(&con->rcuwait);
- 	init_irq_work(&con->irq_work, nbcon_irq_work);
-+	atomic_long_set(&ACCESS_PRIVATE(con, nbcon_prev_seq), -1UL);
- 	nbcon_state_set(con, &state);
+ 	 * If flushing was successful but more records are available, this
+-	 * context must flush those remaining records because there is no
+-	 * other context that will do it.
++	 * context must flush those remaining records if the printer thread
++	 * is not available do it.
+ 	 */
+-	if (prb_read_valid(prb, nbcon_seq_read(con), NULL)) {
++	printk_get_console_flush_type(&ft);
++	if (!ft.nbcon_offload &&
++	    prb_read_valid(prb, nbcon_seq_read(con), NULL)) {
+ 		stop_seq = prb_next_reserve_seq(prb);
+ 		goto again;
+ 	}
+@@ -1754,17 +1757,19 @@ void nbcon_device_release(struct console *con)
  
  	/*
+ 	 * This context must flush any new records added while the console
+-	 * was locked. The console_srcu_read_lock must be taken to ensure
+-	 * the console is usable throughout flushing.
++	 * was locked if the printer thread is not available to do it. The
++	 * console_srcu_read_lock must be taken to ensure the console is
++	 * usable throughout flushing.
+ 	 */
+ 	cookie = console_srcu_read_lock();
++	printk_get_console_flush_type(&ft);
+ 	if (console_is_usable(con, console_srcu_read_flags(con), true) &&
++	    !ft.nbcon_offload &&
+ 	    prb_read_valid(prb, nbcon_seq_read(con), NULL)) {
+ 		/*
+ 		 * If nbcon_atomic flushing is not available, fallback to
+ 		 * using the legacy loop.
+ 		 */
+-		printk_get_console_flush_type(&ft);
+ 		if (ft.nbcon_atomic) {
+ 			__nbcon_atomic_flush_pending_con(con, prb_next_reserve_seq(prb), false);
+ 		} else if (ft.legacy_direct) {
 diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index e945856..c27dc54 100644
+index 55d75db..149c3e0 100644
 --- a/kernel/printk/printk.c
 +++ b/kernel/printk/printk.c
-@@ -2903,6 +2903,17 @@ void console_prepend_dropped(struct printk_message *pmsg, unsigned long dropped)
+@@ -2384,6 +2384,9 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 	if (ft.nbcon_atomic)
+ 		nbcon_atomic_flush_pending();
+ 
++	if (ft.nbcon_offload)
++		nbcon_kthreads_wake();
++
+ 	if (ft.legacy_direct) {
+ 		/*
+ 		 * The caller may be holding system-critical or
+@@ -2732,6 +2735,7 @@ void suspend_console(void)
+ 
+ void resume_console(void)
+ {
++	struct console_flush_type ft;
+ 	struct console *con;
+ 
+ 	if (!console_suspend_enabled)
+@@ -2749,6 +2753,10 @@ void resume_console(void)
+ 	 */
+ 	synchronize_srcu(&console_srcu);
+ 
++	printk_get_console_flush_type(&ft);
++	if (ft.nbcon_offload)
++		nbcon_kthreads_wake();
++
+ 	pr_flush(1000, true);
  }
  
- /*
-+ * Prepend the message in @pmsg->pbufs->outbuf with a "replay message".
-+ * @pmsg->outbuf_len is updated appropriately.
-+ *
-+ * @pmsg is the printk message to prepend.
-+ */
-+void console_prepend_replay(struct printk_message *pmsg)
-+{
-+	console_prepend_message(pmsg, "** replaying previous printk message **\n");
-+}
+@@ -3060,6 +3068,7 @@ static inline void printk_kthreads_check_locked(void) { }
+  */
+ static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handover)
+ {
++	struct console_flush_type ft;
+ 	bool any_usable = false;
+ 	struct console *con;
+ 	bool any_progress;
+@@ -3071,12 +3080,22 @@ static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handove
+ 	do {
+ 		any_progress = false;
+ 
++		printk_get_console_flush_type(&ft);
 +
-+/*
-  * Read and format the specified record (or a later record if the specified
-  * record is not available).
-  *
+ 		cookie = console_srcu_read_lock();
+ 		for_each_console_srcu(con) {
+ 			short flags = console_srcu_read_flags(con);
+ 			u64 printk_seq;
+ 			bool progress;
+ 
++			/*
++			 * console_flush_all() is only responsible for nbcon
++			 * consoles when the nbcon consoles cannot print via
++			 * their atomic or threaded flushing.
++			 */
++			if ((flags & CON_NBCON) && (ft.nbcon_atomic || ft.nbcon_offload))
++				continue;
++
+ 			if (!console_is_usable(con, flags, !do_cond_resched))
+ 				continue;
+ 			any_usable = true;
+@@ -3387,9 +3406,25 @@ EXPORT_SYMBOL(console_stop);
+ 
+ void console_start(struct console *console)
+ {
++	struct console_flush_type ft;
++	bool is_nbcon;
++
+ 	console_list_lock();
+ 	console_srcu_write_flags(console, console->flags | CON_ENABLED);
++	is_nbcon = console->flags & CON_NBCON;
+ 	console_list_unlock();
++
++	/*
++	 * Ensure that all SRCU list walks have completed. The related
++	 * printing context must be able to see it is enabled so that
++	 * it is guaranteed to wake up and resume printing.
++	 */
++	synchronize_srcu(&console_srcu);
++
++	printk_get_console_flush_type(&ft);
++	if (is_nbcon && ft.nbcon_offload)
++		nbcon_kthread_wake(console);
++
+ 	__pr_flush(console, 1000, true);
+ }
+ EXPORT_SYMBOL(console_start);
+@@ -4115,6 +4150,8 @@ static bool __pr_flush(struct console *con, int timeout_ms, bool reset_on_progre
+ 
+ 	/* Flush the consoles so that records up to @seq are printed. */
+ 	printk_get_console_flush_type(&ft);
++	if (ft.nbcon_atomic)
++		nbcon_atomic_flush_pending();
+ 	if (ft.legacy_direct) {
+ 		console_lock();
+ 		console_unlock();
+@@ -4152,8 +4189,10 @@ static bool __pr_flush(struct console *con, int timeout_ms, bool reset_on_progre
+ 			 * that they make forward progress, so only increment
+ 			 * @diff for usable consoles.
+ 			 */
+-			if (!console_is_usable(c, flags, true))
++			if (!console_is_usable(c, flags, true) &&
++			    !console_is_usable(c, flags, false)) {
+ 				continue;
++			}
+ 
+ 			if (flags & CON_NBCON) {
+ 				printk_seq = nbcon_seq_read(c);
+@@ -4629,8 +4668,15 @@ EXPORT_SYMBOL_GPL(kmsg_dump_rewind);
+  */
+ void console_try_replay_all(void)
+ {
++	struct console_flush_type ft;
++
++	printk_get_console_flush_type(&ft);
+ 	if (console_trylock()) {
+ 		__console_rewind_all();
++		if (ft.nbcon_atomic)
++			nbcon_atomic_flush_pending();
++		if (ft.nbcon_offload)
++			nbcon_kthreads_wake();
+ 		/* Consoles are flushed as part of console_unlock(). */
+ 		console_unlock();
+ 	}
 
