@@ -1,122 +1,120 @@
-Return-Path: <linux-kernel+bounces-321772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF401971F45
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:32:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B89B7971F4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBA011C2359A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:32:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62AA31F23FE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9B21662E4;
-	Mon,  9 Sep 2024 16:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADE316DEB2;
+	Mon,  9 Sep 2024 16:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="KNrBinPD"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ObFN8+UA"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2DD15B134;
-	Mon,  9 Sep 2024 16:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3584C165F02
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725899524; cv=none; b=ZaMhQmT3sWg19Pj3C90XVlSbTW8JbJe+phmqkecAvLoELcOfmlVcfDpsAHR1ti2LbMKW6tkC28tbcML7/BdXG5y7AdkE8mHEvCEnBZLYxjUAaTkW9iTUu7fElqsC6qeOfRysnc+zx8rAvv2kZF41BCQwcXjp9TpRv+YyiIsM8XI=
+	t=1725899550; cv=none; b=RrEnedUd3PqtqHyYm+8hpqzANCKrDXqjzwuz/ehsp1SK8E45KSYnIMcoPkc4Of4ECtayTlATcSU0kpG5VXHLe3q+1BhxRT3f5vzhIpCKte604uUDF4w1MiDxvx4NjZkw2zhYwpDJf66MY+EE7gD6hsYuxKl2sL7rtz7uEu+9un0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725899524; c=relaxed/simple;
-	bh=4CZwxJBbWxWCsg5YCXkGI2ewv6grMpHPhj599vj9Axc=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OJydIpoEnO4Yv1T9DNz4D4DDgzEAMn8oswvgS08hNI5EezE7UGdoAHP1muAkiJUViMKCJt+zS4SBZ/5Nm7xc8Z9Ypqg+pPvn+e3ZIVgvMEjjBkHbyFVRfhnRKMyTrTv0M61sSk9B3pjKYijvN/jgJI9uON9Jb/OPffCydvid6qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=KNrBinPD; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1725899521; x=1726158721;
-	bh=pglrHc+owpO38UuwlAlT67y8QX6+R6hVo9C+YIfTMdo=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=KNrBinPDkvuNLlZgUEkImruSSvAJyfAwYiTMDXtQm4JgaeeAlCT6Sm0xbCmcWjYHq
-	 k/ro1ss8glb+8MP1fcjG+QqmUhfOqxEjA3aM8eZwuHb7sEwWVi1luQt8fOtUtfP1b3
-	 W0lsxfbLTFNrTn2bIaDXeXbm5ObMfFAgrJGAv0Q6tTKjbZBsYIEwrflY00IBHSnfkl
-	 0FF3/yrruxmfMLe1BJ7mGGz5knEfyDeXgcvhe4tyJs/XrylAzFbpY2hklO4THBWhm4
-	 r1FywUeXWeGSyTXjRBw5IylwvB/h/HR926IAqFeMj2lhI1OX9kFeSTmxJfpJy/2c23
-	 D7D9XEKS/2w+g==
-Date: Mon, 09 Sep 2024 16:31:58 +0000
-To: Patrick Miller <paddymills@proton.me>, a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, apw@canonical.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dwaipayanray1@gmail.com, gary@garyguo.net, joe@perches.com, linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com, ojeda@kernel.org, rust-for-linux@vger.kernel.org, tmgross@umich.edu, wedsonaf@gmail.com
-From: Benno Lossin <benno.lossin@proton.me>
-Subject: Re: [PATCH 2/2] checkpatch: warn on known non-plural rust doc headers
-Message-ID: <a736d612-7484-4eba-9bcc-f9331e5ed976@proton.me>
-In-Reply-To: <20240906180456.2302688-1-paddymills@proton.me>
-References: <20240906180456.2302688-1-paddymills@proton.me>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 66b1b9f815d45c3002b7e54c7513f94c35266d68
+	s=arc-20240116; t=1725899550; c=relaxed/simple;
+	bh=2dl50MWEQzC24F83Se6WYTJB2+6Ho7Nrx7KziWZ9PfU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BKMm8aRUXY5ckUrEZbjP/yZUJ+zlts6u5Jmv6EU6Hh/5x7puiYvabGY6W2m5GtLIEpfUXiI0AGdBQIASGISr4DkaE9Ij69EHGaLFpZ/FwRk9YKEt2LWztdSBAd/unBbWSpD3PSgyRmiRn9eDd2BkrCFdviCZwOnlsB08Jf3YvgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ObFN8+UA; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb58d810eso8001065e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:32:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725899545; x=1726504345; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=01TvFQ8Q33lZ5OEXLtjKixrpDvHdGUhYpWD+3boosg0=;
+        b=ObFN8+UA/cOYbahX9w7VMKtcrUNj8MwbCEcOEDk975Zos4MI9CdAlrZ0Qs3+xAYaLj
+         ElaWQ20WbCstXDFQqD4wcsxypjNF6RT8/yg53YllAXpYv1xo+PDxnneUwNfGYAJ8qHOJ
+         uAfRMr/eaFMQBE15b2yST3DAI5IZM4Y1z9NKTsj1ePqeaM8Iq+x8wYrNo2c+wjZ0GhZH
+         0ZigccmrPL59vl6FgUbvMmomHFNbfcAZbhLf93LRRMvvSTGCc1pVjyeQxcezg677/fyz
+         aXb9qgOqHdA+AzkIePO4liMP96LF8NWSKNXlx6o/Hs5CR7oz5mUrDWXx9AJe2T2YAOm+
+         0X6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725899545; x=1726504345;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=01TvFQ8Q33lZ5OEXLtjKixrpDvHdGUhYpWD+3boosg0=;
+        b=ldyRp++Xe3WgspneOqss5HYa8Avl4aZk4j6PN25mpK1NFQxIDA24Y7V+Tnnu1fn8rQ
+         Jnfvyy0d1FsLEU4oUOCGLmo5nNkqRTU17zyfhEhCiGQaaG/cll2L+gz1Akiv09KwoE25
+         FF2QZDnNjcwx4zX6QkdDtD7lXrIOh6ttsAo6uZoMkNhaM3aVyeuJ0SDKrY3JQi3k46rx
+         gLIA3gP4a34HzFyF4KYWH8XPWQV75eglT83X29Lqk8s+PpxFrRoqWmyI9QFJL1ZZ04O8
+         VWBMHRIfuuAu+CO1bCDdYrLZ5q7UtwiDAWkkdFcXT1K+HGkH1etL7fYGcH0StfIGEQyv
+         pirw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9Osi3LXMSmIKj4EU4LcrHdGP1adFzJqsg44kppKmymGU2cDcGl10SKeuC8NlrhsyfvCu6ZangpEIdVh4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb7Z2IDOBHZajFRxTsTlspGWEzH7TZEM9jPY3O+ZIQXlN1Fqd4
+	e2gKLUSQaJwdZ+rWVn/ZmDpXsB519JFaXSKLPZZm9dDWSpcums+Ga10BXk4ywqVK3OFVfN+IkaA
+	a
+X-Google-Smtp-Source: AGHT+IEoB20U25poJ8OoF6N2TSMoqHcMm3X67rhrGHHhO2tZ7wzs4+DbWWaBCovC49KP4Vwd5vxErg==
+X-Received: by 2002:a5d:4ec9:0:b0:374:bd00:d1e with SMTP id ffacd0b85a97d-378a89e6350mr137262f8f.3.1725899545364;
+        Mon, 09 Sep 2024 09:32:25 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a072sm6478606f8f.2.2024.09.09.09.32.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 09:32:25 -0700 (PDT)
+From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+To: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chen Ridong <chenridong@huawei.com>
+Subject: [PATCH 0/4] Followups to controllers' v1 compilation
+Date: Mon,  9 Sep 2024 18:32:19 +0200
+Message-ID: <20240909163223.3693529-1-mkoutny@suse.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+The group of patches builds upon recent dissection of memory and cpuset
+controller v1 code to under a separate configuration option. The goal of
+them patches is to produce behavior that appears to v1 controlelr users
+same like if the controller wasn't compiled at all (and no change to v2
+users).
+Plus there are two preceding patches with cleanups I came across when
+looking at the new code.
 
-Thanks for the patch!
+Michal Koutný (4):
+  memcg: Cleanup with !CONFIG_MEMCG_V1
+  cgroup/cpuset: Expose cpuset filesystem with cpuset v1 only
+  cgroup: Disallow mounting v1 hierarchies without controller
+    implementation
+  cgroup: Do not report unavailable v1 controllers in /proc/cgroups
 
-On 06.09.24 20:05, Patrick Miller wrote:
-> Adds a check for documentation in rust file. Warns if certain known
-> documentation headers are not plural. Even though some sections may
-> be singular (i.e. only one example), the header should still be plural
-> so that more examples can be added later without needing to change the
-> header.
->=20
-> Fixed the whitespace issue on my previous patch.
+ kernel/cgroup/cgroup-v1.c | 17 ++++++++++++++---
+ kernel/cgroup/cgroup.c    |  4 ++--
+ mm/memcontrol-v1.h        |  2 --
+ 3 files changed, 16 insertions(+), 7 deletions(-)
 
-This line shouldn't be part of the commit message, as it only makes
-sense if you know there existed a previous version. You can put a
-changelog underneath the `---` line, that part won't be put into the
-final commit message.
 
-I am not familiar with perl, but the regex looks good to me.
-
----
-Cheers,
-Benno
-
-> Signed-off-by: Patrick Miller <paddymills@proton.me>
-> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1110
->=20
-> ---
->  scripts/checkpatch.pl | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 39032224d504..cb5ecdb6df9b 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -3900,6 +3900,13 @@ sub process {
->  =09=09=09     "Avoid using '.L' prefixed local symbol names for denoting=
- a range of code via 'SYM_*_START/END' annotations; see Documentation/core-=
-api/asm-annotations.rst\n" . $herecurr);
->  =09=09}
->=20
-> +# check that document sec
-> tion headers are plural in rust files
-> +=09=09if ($realfile =3D~ /\.rs$/
-> +=09=09=09&& $rawline =3D~ /^\+\s*\/\/\/\s+#+\s+(Example|Invariant|Guaran=
-tee|Panic)\s*$/) {
-> +=09=09=09WARN( "RUST_DOC_HEADER",
-> +=09=09=09=09"Rust doc headers should be plural\n" . $herecurr );
-> +=09=09}
-> +
->  # check we are in a valid source file C or perl if not then ignore this =
-hunk
->  =09=09next if ($realfile !~ /\.(h|c|pl|dtsi|dts)$/);
->=20
-> --
-> 2.46.0
->=20
+base-commit: 8c7e22fc917a0d76794ebf3fcd81f9d91cee4f5d
+-- 
+2.46.0
 
 
