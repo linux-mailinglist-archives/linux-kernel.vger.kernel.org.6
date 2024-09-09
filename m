@@ -1,135 +1,122 @@
-Return-Path: <linux-kernel+bounces-321857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026B5972073
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:26:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C8A972077
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1219E1C238CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:26:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9FC1F246EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A70917C7BF;
-	Mon,  9 Sep 2024 17:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39D117A924;
+	Mon,  9 Sep 2024 17:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQt/TzeU"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pL/s+csx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jB6uvl6s"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A35D168BD;
-	Mon,  9 Sep 2024 17:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EFF168BD;
+	Mon,  9 Sep 2024 17:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902806; cv=none; b=n5lqane4qnYMZlPHjt3whdxdlaV9LP8tpz4lXo3lwqOKptF9Jd5ZKenT2i36GxJ6gIpE4tdXTYKf3rahtvkKq9FhW/Wh/oc02YfcZ60zCgJAMHtwxe4bltQf0VVnAqGKeP+Fo+CXBxCkZ3WEmjqDIROFosaFLxjP9R0lZl9k1dY=
+	t=1725902864; cv=none; b=YaFARzd0GWzwCmWohhIoCKHTL6li3loxJLNP9QfxNAalvkS+8zheoo2+D3VtmxahP87Sot/kcSAvn4MMOKKY89GT4fEcrjAI3qGQ58KHpgMnF5TFpPSHTS054zBgGsWNAn8hmhypjPxjoeQpi0MjxcSxXXUaOy01GTC4ywPJv3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902806; c=relaxed/simple;
-	bh=ef4pbd28HCelXPtMY1fHPeGbPL21l4s6NsCF5v5Xuos=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=AGFCbQ5k3mF2HpGaNzF943DexWEbsC+Y52CszMELTe86pKICWZh6CEGLuo/yAC7Rh9yzKgn8OaI264M+LOq4bpe9gf1L1ClpECUIbTyh2OD9IkiDew6LUUKaHvJBpgfqd/8WzKCqd6sIdPxojdpYrbYeuU2OYWJAl9tlIUFOkNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQt/TzeU; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a9ad15d11bso189884885a.0;
-        Mon, 09 Sep 2024 10:26:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725902804; x=1726507604; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ef4pbd28HCelXPtMY1fHPeGbPL21l4s6NsCF5v5Xuos=;
-        b=XQt/TzeUU6vdCUbQZTvGjwiXvIY5lcyTsHeGOrDvWO+TT9d7wcy67NcPyMUNAvuIAP
-         Dqzffn4UrxKN+7IOqHpAqrtcdyOqDO226r89ZhNVeOsEak9cXXbYQV46SvRc8h2SXJLM
-         YdkT/5JTGBxO8uiOf7JBRkJFdOnhMLRTYIraTAgqxs9i5RkgGe0dzSouC8Nt8PVH1J7E
-         UXhHaaDmHA51CmczUNRZiBy86mEZmPdrcdDi7dYw07edgesYd/3f/f+dNyOy960b4hFJ
-         I0Hv+5WpKEtep2nL2lZHVdpIoBLSHgE7s5uB2xpydAnkbKXELUuJ8WwKpOTf0OgD6LJb
-         1L/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725902804; x=1726507604;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ef4pbd28HCelXPtMY1fHPeGbPL21l4s6NsCF5v5Xuos=;
-        b=jcy2h9ZQXe9YbzP6YSUV6jC013nMAzxnvGp0RqEmbKltMhKAjka1Ion+V7tP4c3tTn
-         KI8gGNNWfWQsex5NdbNO73i+JxrO0Uxj0z47b1P7D1pVXOzPtSTYuYE4K0v1Cn0lpwoe
-         Y1FRCYapBPCj8razCV2uLCiuEL6K9Rnp/t/KZ7xGekmL6xd/yR8ntbMwyn0dDT3HjEVg
-         nmLxe6Sb9OnSK1Ot9lKOxIhVmn1HUgRIwpH9WnHeuwndadLXSLyyC7bfm2jv83B+t3YZ
-         WIQgMBqMjT1qpFI/e4KV/Y2XEgmRjGR7HyXL5gGHLZJpPAANwBN/U2krTkRQothCrG/u
-         m3dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNrHs5Xr/Rf+AH7MdkbgNa/Io3W6bRCsBAlFrkz+IFedf9kI0PZHHipwYMrBl138Snf8v2zPV9b2ROIBwFOisp@vger.kernel.org, AJvYcCVO4qBcSKGx6RhR+1t+vwFh0JSo5VvBZ4zac3IMaA6oZHYDzSSDdryISfM6SjZ3sP5Mo8Nm980c@vger.kernel.org, AJvYcCXuXic75onX/0pwKoLE83bYCIqkL2iVS7I2WRidDldxtK4mqPiXcbdZIwzznIiPBDQgXvTxgU+f12WjosU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCgussg9b72mwqEYRFLWLDpSh9dR1LXLKBHsYBLyGzVojzeTxa
-	e3WIiuj148YqFjuxKBBCoySpgLuq8FB6NmfQ4n9xot8kP22O9hh5
-X-Google-Smtp-Source: AGHT+IFa5bFSMKWSMgGP1PTshWTcfDXcgkyF4EVbIprH+d15pzkEartDDfUKRu5mt5lyIVhJSK7wBA==
-X-Received: by 2002:a05:620a:1722:b0:7a9:a991:f6d7 with SMTP id af79cd13be357-7a9a992067fmr1382889285a.48.1725902803729;
-        Mon, 09 Sep 2024 10:26:43 -0700 (PDT)
-Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a7a1dc91sm235850585a.106.2024.09.09.10.26.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 10:26:43 -0700 (PDT)
-Date: Mon, 09 Sep 2024 13:26:42 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Eric Dumazet <edumazet@google.com>, 
- Sean Anderson <sean.anderson@linux.dev>
-Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- "David S . Miller" <davem@davemloft.net>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- netdev@vger.kernel.org, 
- Willem de Bruijn <willemb@google.com>, 
- linux-kernel@vger.kernel.org, 
- Shuah Khan <shuah@kernel.org>, 
- linux-kselftest@vger.kernel.org
-Message-ID: <66df2fd2d6595_3bff929459@willemb.c.googlers.com.notmuch>
-In-Reply-To: <CANn89iJaXgR6c+moGB5kX6ATbLX6fMP0mUBQN=SAsZfdz5ywNw@mail.gmail.com>
-References: <20240906210743.627413-1-sean.anderson@linux.dev>
- <66dbb4fcbf560_2af86229423@willemb.c.googlers.com.notmuch>
- <9d5bf385-2ef0-435d-b6f9-1de55533653b@linux.dev>
- <CANn89iJaXgR6c+moGB5kX6ATbLX6fMP0mUBQN=SAsZfdz5ywNw@mail.gmail.com>
-Subject: Re: [PATCH net] selftests: net: csum: Fix checksums for packets with
- non-zero padding
+	s=arc-20240116; t=1725902864; c=relaxed/simple;
+	bh=Mc0Fi6BEhn6lYUuvvkv2CviMPN6dQ5nAbI9Xgfd2hG8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=c0i3WKqWF0+vpYEAww6gFMdUcnPZpzZhRbtVsIn2vUNsRnhSNKdJ6bVOpXqUs6wTcuL6/xfgkFtsKlnveUFYsCNrQh3TogP4eIpjYuERscCH+IHxKMw7Yn/heFQaxdq7birbFOmM7A9ynno1C3cc0vCLPRc5kXqkgmjzhtIzmhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pL/s+csx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jB6uvl6s; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 09 Sep 2024 17:27:39 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725902860;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dbuXNKMB1EHzpSzJsrf3bt7z679PpcOxytpSgkDFrPc=;
+	b=pL/s+csxnC+TaNTxayetMAAhAa5tuwOcoJ4735/0FgD6cItrQHk3em+ciRSDdQl+fi5CGj
+	8gTZY9i1kb0L2eLCPlUh4jX1GblUSnB/C3MZq6HbOazF3t1OB+8uXy79ifu/2JUBp5OD1B
+	LNQZxLA/QIbYKKUPG/byqU+MUA6WAPHpEVvtxSnAKAcB6jHQ8UIgevvBLCp50bwGJbfChE
+	IrKt2GqAr3CVpDfmkHIiMX393L/dVrq1xb5ahROmFwks3Jz100SQ3RiD4NWMOqM54Ud741
+	BcCPemtBp0EvUrktuRqENlNgkwSOmyh7aN9O6d/gNcwcFXkjqT89+/8rzEKWJg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725902860;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dbuXNKMB1EHzpSzJsrf3bt7z679PpcOxytpSgkDFrPc=;
+	b=jB6uvl6sD7V/iBCG8Kcn8ekadCyuLeSo1tBtjervwiMtdBvPdzLulux8hGAhyKXkefR3dE
+	ccKv4DVSu7ViPtDQ==
+From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/rt] riscv: Allow to enable PREEMPT_RT.
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Nam Cao <namcao@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240906111841.562402-4-bigeasy@linutronix.de>
+References: <20240906111841.562402-4-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Message-ID: <172590286013.2215.4253522884856320667.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Eric Dumazet wrote:
-> On Mon, Sep 9, 2024 at 5:02=E2=80=AFPM Sean Anderson <sean.anderson@lin=
-ux.dev> wrote:
-> >
-> > On 9/6/24 22:05, Willem de Bruijn wrote:
-> > > Sean Anderson wrote:
-> > >> Padding is not included in UDP and TCP checksums. Therefore, reduc=
-e the
-> > >> length of the checksummed data to include only the data in the IP
-> > >> payload. This fixes spurious reported checksum failures like
-> > >>
-> > >> rx: pkt: sport=3D33000 len=3D26 csum=3D0xc850 verify=3D0xf9fe
-> > >> pkt: bad csum
-> > >
-> > > Are you using this test as receiver for other input?
-> > >
-> > > The packet builder in the test doesn't generate these, does it?
-> >
-> > It's added by the MAC before transmission.
-> >
-> > This is permitted by the standard, but in this case it actually appea=
-rs
-> > to be due to the MAC using 32-bit reads for the data and not masking =
-off
-> > the end. Not sure whether this is a bug in the driver/device, since
-> > technically we may leak up to 3 bytes of memory.
-> =
+The following commit has been merged into the sched/rt branch of tip:
 
-> This seems to be a bug in the driver.
-> =
+Commit-ID:     41639286fd0b2538de8cfe3e99db18ed0df520cd
+Gitweb:        https://git.kernel.org/tip/41639286fd0b2538de8cfe3e99db18ed0df520cd
+Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate:    Fri, 06 Sep 2024 12:59:06 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 09 Sep 2024 19:24:11 +02:00
 
-> A call to skb_put_padto(skb, ETH_ZLEN) should be added.
+riscv: Allow to enable PREEMPT_RT.
 
-In which case this test detecting it may be nice to have, for lack of
-a more targeted test.
+It is really time.
+
+riscv has all the required architecture related changes, that have been
+identified over time, in order to enable PREEMPT_RT. With the recent
+printk changes, the last known road block has been addressed.
+
+Allow to enable PREEMPT_RT on riscv.
+
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Nam Cao <namcao@linutronix.de> # Visionfive 2
+Link: https://lore.kernel.org/all/20240906111841.562402-4-bigeasy@linutronix.de
+
+---
+ arch/riscv/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 0f3cd7c..b03f6d2 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -64,6 +64,7 @@ config RISCV
+ 	select ARCH_SUPPORTS_LTO_CLANG_THIN if LLD_VERSION >= 140000
+ 	select ARCH_SUPPORTS_PAGE_TABLE_CHECK if MMU
+ 	select ARCH_SUPPORTS_PER_VMA_LOCK if MMU
++	select ARCH_SUPPORTS_RT
+ 	select ARCH_SUPPORTS_SHADOW_CALL_STACK if HAVE_SHADOW_CALL_STACK
+ 	select ARCH_USE_CMPXCHG_LOCKREF if 64BIT
+ 	select ARCH_USE_MEMTEST
 
