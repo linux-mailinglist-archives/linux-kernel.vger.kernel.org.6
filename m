@@ -1,107 +1,241 @@
-Return-Path: <linux-kernel+bounces-320963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83FBE9712A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:53:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C21FF9712A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 398DC1F23438
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:53:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE45282DF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E6916631C;
-	Mon,  9 Sep 2024 08:53:01 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515E71B2519;
+	Mon,  9 Sep 2024 08:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wmLUSfCe"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CD61B14E8;
-	Mon,  9 Sep 2024 08:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC9E1B1D76
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725871981; cv=none; b=Dey4jnu5tvnNViwEMRBGXXb5OPPz1BclikTL2pLiO03/N6QuAtya8wDJFcWGikmykMqz8yFMMueF97WXlsYkndqbeBTMEo3E4Ze/c9uKEp/ObgI9/Tg1T97jR76pSE7UMZCitgtYO9jKzwlEoJVRbx7w8sfk7t+MFpLo3tn9FQ8=
+	t=1725872092; cv=none; b=uR8EyNlAOznmcH3J2iuXQIID0YJ+8Qx1BJbCozjBz9ns9oTQXTWM0VgwtswuPJH7E5eh/TUlbLlTCuzlEzpP0PGsSjxEkKN7CFdXYKgcZLw/9nABf9+PvwP8tGnlhZE6t7ivch80rJ3QGVuj+lzyoLe3gyuPan+WlXDneZHXEqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725871981; c=relaxed/simple;
-	bh=5pYzR9/0mNgcE9oWenX5Qf/q1RYzYHaUwcpqyuXMLk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lptHCs7Oqwvoznsd08pGB562pzfvVLR6axWEzAMLysyDhZLtP+lbBvtWmoqpIfe9JKzMiN85WlksF64N0bqjQaEz2LXcm5XYLSMW+Q8227MKNv1qNypgNrGQMjdR/aetqv/1AMracEmvs9pe55PHqpYfKdlpD7S7KrlLLlJGWcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84C62C4CEC5;
-	Mon,  9 Sep 2024 08:52:59 +0000 (UTC)
-Date: Mon, 9 Sep 2024 09:52:57 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: mcgrof@kernel.org, linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com,
-	Song Liu <song@kernel.org>
-Subject: Re: [PATCH] module: Refine kmemleak scanned areas
-Message-ID: <Zt63aV2zmkOkwRc3@arm.com>
-References: <20240906153856.22204-1-vdonnefort@google.com>
- <ZtxenHsGPyDoYnzY@arm.com>
- <Zt6mcvkzPI8WNgHl@google.com>
+	s=arc-20240116; t=1725872092; c=relaxed/simple;
+	bh=9NW2eWgUEPYGMgqTTAJOulDxRDM5ZibU1CDb2TG/UIU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bfpCgNGpgbcbSzWerTFsGeF43ebz6q1RlxTlJxwID7yJ8UMlbW8mRm7q/n/bMxbDutgvLqkAAXcOqR8KZlHYbM4MS9WxPRZ1iNdvsiPUWIgDUFEfs3rLkeb6BM8/KgtptnIilo3bOUS6o5vPExKzkgSF6WBrnymP1xecMtdRnWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wmLUSfCe; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8a7cdfdd80so220387766b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 01:54:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725872089; x=1726476889; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yG/d1qUdxYTFFDjEy58VtD5KHrMD8xW4N/b1u+y2Cz0=;
+        b=wmLUSfCeZfx5N1YW7DQI+Nx8gTyE0MzE5qmzP1M15eOOtXLDV4Hx5iuyOHZLrv2CTq
+         vsHCI4TeqFki44NEgXxIXmP9ciBb3ewhCVw+EVx4pxTVtnwLSjQRu3mxrqJxrbj/NHLr
+         0te7IOIx5G2dFhmGPh69O3s+QYQtLp9NbGDgr71U+pPHHveP8j8XuuT7CRAkXOfQVBXO
+         eP47SrE3tjLWvwXKXmAmoFpmksml42PSF0gMH0GBqRB+G0VKjIUh+9gcneJZ/DJ7PTDa
+         qIjwXMrAQpoAKmMOGw6WdBerr9Mc/KtHoc2hWoMxAy+79FMXt6ScumW+Oa9+YgKUGBru
+         kWqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725872089; x=1726476889;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yG/d1qUdxYTFFDjEy58VtD5KHrMD8xW4N/b1u+y2Cz0=;
+        b=aE1zJwP3Ag6N0NwGa0nk2c36UA90l4qBye7LpKx1gyaN/meRyyjWxgTvGLHkiqw4rr
+         L18wtwKKWMkED6umJa9z7j6nIpsYIUqAgn1Inv2dCQ94TIDwYBkENugoHOe1VnAvP+/d
+         t3lnfs8r7LA9Ujmk7Y7Q0curFX0R28XV2uPwmKvSF3CAPVEMsVGBvk65wwFDH7SxLVhk
+         z695QP2hV63G1YEDWVDYz3qVLCuRccM/giD5g7Onp70BVTQLSb+RJljdWPcJhrhOT5TP
+         QM6cVHDhxsW91a4ehsMEW5CT5xFImsURhDYhPJjxEGglsqyzvQ6a7igk5fzvLqIgd2K8
+         /s6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVcB/kzp4mFxRqF7VxWq8/SqPeFcODQ/jSRMNXu37IEwQJAC6psnZRTcYcKtfrfUFKhups+sp9sY4lCu/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDNLE/i5lLoZMoGOVgybDei85kcGC228WF4KYXLdyIGxfG6kHX
+	+eqp2629f+xk6D/d6fy7UNIuiyd8qTVzYIJl5IZ4IhdkUODT0yALWN1UQKwFPo0=
+X-Google-Smtp-Source: AGHT+IEvfzk/SxAXufH/seMQzMP3N3vvMRUKKCoLzWJKRZt4xOsE+GdEic8FWJngVTj/WRC44oGsQA==
+X-Received: by 2002:a17:906:da85:b0:a7a:9f0f:ab2c with SMTP id a640c23a62f3a-a8a8866090amr889703866b.29.1725872088318;
+        Mon, 09 Sep 2024 01:54:48 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:63a3:6883:a358:b850? ([2a01:e0a:982:cbb0:63a3:6883:a358:b850])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ce96d9sm307445466b.157.2024.09.09.01.54.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 01:54:48 -0700 (PDT)
+Message-ID: <b3a5dd54-90ba-4d75-9650-efbff12cddeb@linaro.org>
+Date: Mon, 9 Sep 2024 10:54:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zt6mcvkzPI8WNgHl@google.com>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
+ between two subsystems
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+ konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
+ linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
+ vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
+ Frank.Li@nxp.com, konradybcio@kernel.org
+Cc: quic_vdadhani@quicinc.com
+References: <20240906191438.4104329-1-quic_msavaliy@quicinc.com>
+ <20240906191438.4104329-5-quic_msavaliy@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240906191438.4104329-5-quic_msavaliy@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 09, 2024 at 08:40:34AM +0100, Vincent Donnefort wrote:
-> On Sat, Sep 07, 2024 at 03:12:13PM +0100, Catalin Marinas wrote:
-> > On Fri, Sep 06, 2024 at 04:38:56PM +0100, Vincent Donnefort wrote:
-> > > commit ac3b43283923 ("module: replace module_layout with module_memory")
-> > > introduced a set of memory regions for the module layout sharing the
-> > > same attributes but didn't update the kmemleak scanned areas which
-> > > intended to limit kmemleak scan to sections containing writable data.
-> > > This means sections such as .text and .rodata are scanned by kmemleak.
-> > > 
-> > > Refine the scanned areas for modules by limiting it to MOD_TEXT and
-> > > MOD_INIT_TEXT mod_mem regions.
-> > > 
-> > > CC: Song Liu <song@kernel.org>
-> > > CC: Catalin Marinas <catalin.marinas@arm.com>
-> > > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
-> > > 
-> > > diff --git a/kernel/module/debug_kmemleak.c b/kernel/module/debug_kmemleak.c
-> > > index 12a569d361e8..b4cc03842d70 100644
-> > > --- a/kernel/module/debug_kmemleak.c
-> > > +++ b/kernel/module/debug_kmemleak.c
-> > > @@ -12,19 +12,9 @@
-> > >  void kmemleak_load_module(const struct module *mod,
-> > >  			  const struct load_info *info)
-> > >  {
-> > > -	unsigned int i;
-> > > -
-> > > -	/* only scan the sections containing data */
-> > > -	kmemleak_scan_area(mod, sizeof(struct module), GFP_KERNEL);
-> > > -
-> > > -	for (i = 1; i < info->hdr->e_shnum; i++) {
-> > > -		/* Scan all writable sections that's not executable */
-> > > -		if (!(info->sechdrs[i].sh_flags & SHF_ALLOC) ||
-> > > -		    !(info->sechdrs[i].sh_flags & SHF_WRITE) ||
-> > > -		    (info->sechdrs[i].sh_flags & SHF_EXECINSTR))
-> > > -			continue;
-> > > -
-> > > -		kmemleak_scan_area((void *)info->sechdrs[i].sh_addr,
-> > > -				   info->sechdrs[i].sh_size, GFP_KERNEL);
-> > > +	/* only scan writable, non-executable sections */
-> > > +	for_each_mod_mem_type(type) {
-> > > +		if (type != MOD_DATA && type != MOD_INIT_DATA)
-> > > +			kmemleak_no_scan(mod->mem[type].base);
-> > >  	}
-> > >  }
-> > 
-> > I lost track of how module memory allocation works. Is struct module
-> > still scanned after this change?
+Hi,
+
+On 06/09/2024 21:14, Mukesh Kumar Savaliya wrote:
+> Add support to share I2C SE by two Subsystems in a mutually exclusive way.
+> Use  "qcom,shared-se" flag in a particular i2c instance node if the
+> usecase requires i2c controller to be shared.
 > 
-> That section being RW, it will be part of the MOD_DATA vmalloc and scanned.
+> I2C driver just need to mark first_msg and last_msg flag to help indicate
+> GPI driver to  take lock and unlock TRE there by protecting from concurrent
+> access from other EE or Subsystem.
+> 
+> gpi_create_i2c_tre() function at gpi.c will take care of adding Lock and
+> Unlock TRE for the respective transfer operations.
+> 
+> Since the GPIOs are also shared for the i2c bus between two SS, do not
+> touch GPIO configuration during runtime suspend and only turn off the
+> clocks. This will allow other SS to continue to transfer the data
+> without any disturbance over the IO lines.
 
-Ah, makes sense. I'm fine with this patch, it simplifies the code now
-that we have mod->mem[type]. I wouldn't say it's a fix, though no
-backporting needed.
+This doesn't answer my question about what would be the behavior if one
+use uses, for example, GPI DMA, and the Linux kernel FIFO mode or SE DMA ?
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Because it seems to "fix" only the GPI DMA shared case.
+
+Neil
+
+> 
+> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> ---
+>   drivers/i2c/busses/i2c-qcom-geni.c | 29 ++++++++++++++++++++++-------
+>   1 file changed, 22 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+> index eebb0cbb6ca4..ee2e431601a6 100644
+> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+> @@ -1,5 +1,6 @@
+>   // SPDX-License-Identifier: GPL-2.0
+>   // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+> +// Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>   
+>   #include <linux/acpi.h>
+>   #include <linux/clk.h>
+> @@ -99,6 +100,7 @@ struct geni_i2c_dev {
+>   	struct dma_chan *rx_c;
+>   	bool gpi_mode;
+>   	bool abort_done;
+> +	bool is_shared;
+>   };
+>   
+>   struct geni_i2c_desc {
+> @@ -602,6 +604,7 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>   	peripheral.clk_div = itr->clk_div;
+>   	peripheral.set_config = 1;
+>   	peripheral.multi_msg = false;
+> +	peripheral.shared_se = gi2c->is_shared;
+>   
+>   	for (i = 0; i < num; i++) {
+>   		gi2c->cur = &msgs[i];
+> @@ -612,6 +615,8 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>   		if (i < num - 1)
+>   			peripheral.stretch = 1;
+>   
+> +		peripheral.first_msg = (i == 0);
+> +		peripheral.last_msg = (i == num - 1);
+>   		peripheral.addr = msgs[i].addr;
+>   
+>   		ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
+> @@ -631,8 +636,11 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>   		dma_async_issue_pending(gi2c->tx_c);
+>   
+>   		time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
+> -		if (!time_left)
+> +		if (!time_left) {
+> +			dev_err(gi2c->se.dev, "I2C timeout gpi flags:%d addr:0x%x\n",
+> +						gi2c->cur->flags, gi2c->cur->addr);
+>   			gi2c->err = -ETIMEDOUT;
+> +		}
+>   
+>   		if (gi2c->err) {
+>   			ret = gi2c->err;
+> @@ -800,6 +808,11 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>   		gi2c->clk_freq_out = KHZ(100);
+>   	}
+>   
+> +	if (of_property_read_bool(pdev->dev.of_node, "qcom,shared-se")) {
+> +		gi2c->is_shared = true;
+> +		dev_dbg(&pdev->dev, "Shared SE Usecase\n");
+> +	}
+> +
+>   	if (has_acpi_companion(dev))
+>   		ACPI_COMPANION_SET(&gi2c->adap.dev, ACPI_COMPANION(dev));
+>   
+> @@ -962,14 +975,16 @@ static int __maybe_unused geni_i2c_runtime_suspend(struct device *dev)
+>   	struct geni_i2c_dev *gi2c = dev_get_drvdata(dev);
+>   
+>   	disable_irq(gi2c->irq);
+> -	ret = geni_se_resources_off(&gi2c->se);
+> -	if (ret) {
+> -		enable_irq(gi2c->irq);
+> -		return ret;
+> -
+> +	if (gi2c->is_shared) {
+> +		geni_se_clks_off(&gi2c->se);
+>   	} else {
+> -		gi2c->suspended = 1;
+> +		ret = geni_se_resources_off(&gi2c->se);
+> +		if (ret) {
+> +			enable_irq(gi2c->irq);
+> +			return ret;
+> +		}
+>   	}
+> +	gi2c->suspended = 1;
+>   
+>   	clk_disable_unprepare(gi2c->core_clk);
+>   
+
 
