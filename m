@@ -1,132 +1,121 @@
-Return-Path: <linux-kernel+bounces-321761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 595BB971F09
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:24:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 669F2971F13
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 748141C234C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:24:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 104B41F24291
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C79146A96;
-	Mon,  9 Sep 2024 16:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14DB146D42;
+	Mon,  9 Sep 2024 16:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+P59sb5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="YpBd1XgC"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E6613CFBB;
-	Mon,  9 Sep 2024 16:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5466149E14;
+	Mon,  9 Sep 2024 16:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725899052; cv=none; b=hSsJaVfCDcKAhap9Jz+aa0G7ztz2hv5JnlIDF5umhjSJNEOf/d8J+deWo0lpD6SZz3ixFp7YU1TuRVkmk9qIIClcCuVFpRWrSYYGvH5xA8fKs9TZ3Tr2G27pzFTi/6ffIkXSBlcB7OQKkS6fc3VnDIRsj33LJ6l/VEDtRG55KRg=
+	t=1725899073; cv=none; b=ez5/3AxLGRALYaphIemTB31lhc2ISCe8uAEsotA7Dxa61EpniWTbYvoWlFgjDxX0cbejs9jn2sfPVE0hzfB/PzPjKE1/TCqeR3edTO5IoPNrf6TRztBANr1c8iJ/mUxxFdkXOOZSYenO3sTs4k58wt9Bt+37XsegNOZaqJdfv7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725899052; c=relaxed/simple;
-	bh=LbCGfF+2m+6VIM4/rf1dX5mKKA/cBJhEjzC0d57stTQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZYmTcPm56xCjFIYj4NKddrzxebK0ri2Jft8+EsPRY+r4yiaRQCv55PBYg1xeXjysaKGguXx9tLoNDMqc02kVXz9JjhhLdjLr4h2upx20I2kc9adusUAC0vm/HNxxSgOVD3bFRbkHhNKrgQdFcIGAe5JtzZLfg1SvCcvd+dqG4uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+P59sb5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 015F1C4CECC;
-	Mon,  9 Sep 2024 16:24:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725899052;
-	bh=LbCGfF+2m+6VIM4/rf1dX5mKKA/cBJhEjzC0d57stTQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=d+P59sb5aVKQU5kcEpCuXp1agRU/Al7LtsqIdJtHuZI8hHA3mBYGhobUgS2oJaRPP
-	 Fdpxpnjv76IR0ZioJNB/w06PZw07U5r4uSAuRP+M4KSTeGFcDADgXoOsc0nWILSGx4
-	 lWTLYpY5MBGYlmVUK0wnR14VH7XgEw4+RI6GVjAzAhZlRoc1GC6vOibG9CspSrTYYf
-	 QfR7v+DBjKG24uLijD/HxMZbqUxYlwT0VKWGifBTPUaCJPgzY/n0djLNXTjpeLQdTM
-	 XFIHS6N9AwH7qFtauNH9ydDZbhMXKq2sgtfqg5X+aubj/f8azi5mPEkRr+PPOiRzUe
-	 tmhNw7ugee4HQ==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5344ab30508so5159774e87.0;
-        Mon, 09 Sep 2024 09:24:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUOkd8IIw+K4f+gL+ysr15cPq6U8zFGkTA4Gi0QrQ4aMCt47ij4F8bwpl5YRQQwxD48XQhqm380wtFzRw==@vger.kernel.org, AJvYcCUeCDZRzs9JVlITRavo08jKSUtAsdAERLXuNi/Zx6Nqh8Corv7LcF5iTasXl+yR/YiQwXcnWCgx/1bSGtQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3G+HirDshqjyNQj3lS3k4hQUP0PNUaMfFy+1u+ooPDpRb+/17
-	iEbn3PpI2hYeFTYijhnA9YxuhslXlK84da129U4eVDTz+eBQN6Xc9h4UWg9IyzdwxrFhdYpvQ+x
-	GriyIYFM1KGojTcixSFfZZDf+H9M=
-X-Google-Smtp-Source: AGHT+IE67j1JHzjul6rP31wPGUDLic05CGTRENXlixjze+8lcgkyMsz6aPX0su5fl7/N3udW7A13ohbWWjCDoLv9HHY=
-X-Received: by 2002:a05:6512:1255:b0:535:639d:e3e0 with SMTP id
- 2adb3069b0e04-5366bb2b692mr49338e87.24.1725899050649; Mon, 09 Sep 2024
- 09:24:10 -0700 (PDT)
+	s=arc-20240116; t=1725899073; c=relaxed/simple;
+	bh=0Rh4KmqChPzqTEwbrGqXfSqb6i9rs9C8GBy9+jQDHQw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UqtgRK6CksBnLwwG71MdeyacAuMbMk/em7wfW06WGB2L39XjCt8MRYvRx+BiY42UwPTkwk6jhGyiHDbNQITJ1vVXyACHfLHQ6MdZ851lvK3Rvm2YpwT/lWOImPnCyT2bIeMhJddRDAVB4Py6a7Hyn60SK3RLJNURUFlMKELB4Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=YpBd1XgC; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4896dwsf001006;
+	Mon, 9 Sep 2024 11:24:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=iJQ6QpbXlFmFTrokEH
+	XawRi6AwzM3shtaMUFaKsiIKQ=; b=YpBd1XgCh84u0CRKwzEoYhHgOoOwIEDlal
+	jr2P0DnO2t4R5SevDkUDcYEfZ3/j91BxhkTD1qLELjfgfN9bLIc71ky5vwlcmKj9
+	9Ymufg2t5/hM+zQm2iocLgLwCG3YjC8XprR6IfO12n7a3ZUkPqZdAfR1bCdRgyak
+	1w5Ky2tZDqCFyGIO+CXxdO4pyPnth8nKnlHN6aKhh9MDbhcTcRHse9bE7oQy4AfD
+	kLNZsqMVGsUYKBEeVGF3eB00me34r+z7FmYMc6aN9s5y7m48rHkLS+jmpc7Ymqv8
+	rRrQwm0hudv2tbDIgC1cadkZjyzBRxrHsMdYgcgUUXVa+HOhevMg==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 41gm7x1uny-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 11:24:03 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Sep 2024
+ 17:24:01 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 9 Sep 2024 17:24:01 +0100
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 8DEA0820249;
+	Mon,  9 Sep 2024 16:24:01 +0000 (UTC)
+Date: Mon, 9 Sep 2024 17:24:00 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+CC: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        "David
+ Rhodes" <david.rhodes@cirrus.com>,
+        Richard Fitzgerald
+	<rf@opensource.cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood
+	<liam.r.girdwood@linux.intel.com>,
+        Peter Ujfalusi
+	<peter.ujfalusi@linux.intel.com>,
+        Bard Liao
+	<yung-chuan.liao@linux.intel.com>,
+        Ranjani Sridharan
+	<ranjani.sridharan@linux.intel.com>,
+        Kai Vehmanen
+	<kai.vehmanen@linux.intel.com>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>, <linux-sound@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <alsa-devel@alsa-project.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>
+Subject: Re: [PATCH 06/13] ASoC: cs35l36: drop SNDRV_PCM_RATE_KNOT
+Message-ID: <Zt8hIGzvPIsmZho/@opensource.cirrus.com>
+References: <20240905-alsa-12-24-128-v1-0-8371948d3921@baylibre.com>
+ <20240905-alsa-12-24-128-v1-6-8371948d3921@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909200948.70087f49@canb.auug.org.au> <afa6f06a-8d92-4ac1-b5fe-d5b6ade3f740@csgroup.eu>
- <20240910005808.2e355995@canb.auug.org.au>
-In-Reply-To: <20240910005808.2e355995@canb.auug.org.au>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 10 Sep 2024 01:23:34 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARMD=PR9x-OMN5QJHmeDdAzDM=2F47ccqdLHHGTxVq5Jg@mail.gmail.com>
-Message-ID: <CAK7LNARMD=PR9x-OMN5QJHmeDdAzDM=2F47ccqdLHHGTxVq5Jg@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the powerpc tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
-	"Rob Herring (Arm)" <robh@kernel.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240905-alsa-12-24-128-v1-6-8371948d3921@baylibre.com>
+X-Proofpoint-GUID: YzC5zK9-HLCkV04WUzI1FtnUinHTtgDV
+X-Proofpoint-ORIG-GUID: YzC5zK9-HLCkV04WUzI1FtnUinHTtgDV
+X-Proofpoint-Spam-Reason: safe
 
-On Mon, Sep 9, 2024 at 11:58=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> Hi Christophe,
->
-> On Mon, 9 Sep 2024 16:22:26 +0200 Christophe Leroy <christophe.leroy@csgr=
-oup.eu> wrote:
-> >
-> > Le 09/09/2024 =C3=A0 12:09, Stephen Rothwell a =C3=A9crit :
-> > > Hi all,
-> > >
-> > > After merging the powerpc tree, today's linux-next build (powerpc
-> > > ppc44x_defconfig) failed like this:
-> > >
-> > > make[3]: *** No rule to make target 'arch/powerpc/boot/treeImage.ebon=
-y', needed by 'arch/powerpc/boot/zImage'.  Stop.
-> > > make[2]: *** [/home/sfr/next/next/arch/powerpc/Makefile:236: zImage] =
-Error 2
-> > > make[1]: *** [/home/sfr/next/next/Makefile:224: __sub-make] Error 2
-> > > make: *** [Makefile:224: __sub-make] Error 2
-> > >
-> > > It is not obvious to me what change caused this, so I have just left
-> > > the build  broken for today.
-> > >
-> >
-> > Bisected to commit e6abfb536d16 ("kbuild: split device tree build rules=
- into scripts/Makefile.dtbs")
->
-> Thanks for that.
->
-> --
-> Cheers,
-> Stephen Rothwell
+On Thu, Sep 05, 2024 at 04:12:57PM +0200, Jerome Brunet wrote:
+> The custom rate constraint list was necessary to support 12kHz and 24kHz.
+> These rates are now available through SNDRV_PCM_RATE_12000 and
+> SNDRV_PCM_RATE_24000.
+> 
+> Use them and drop the custom rate constraint rule.
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
 
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-I squashed the following fix. Hopefully, it will be ok tomorrow.
-
-
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index 6385e7aa5dbb..8403eba15457 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -444,7 +444,7 @@ ifneq ($(userprogs),)
- include $(srctree)/scripts/Makefile.userprogs
- endif
-
--ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb.o %.dtbo.o,$(targets)=
-),)
-+ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb %.dtb.o
-%.dtbo.o,$(targets)),)
- include $(srctree)/scripts/Makefile.dtbs
- endif
-
-
---=20
-Best Regards
-Masahiro Yamada
+Thanks,
+Charles
 
