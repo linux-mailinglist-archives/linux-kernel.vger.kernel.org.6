@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-321263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01503971695
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:22:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59434971699
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8A028370F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:22:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1232D2816E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895F21B3F32;
-	Mon,  9 Sep 2024 11:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7FB1B653E;
+	Mon,  9 Sep 2024 11:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VLdsIuSs"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fD6/D+xd"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9D01B6545;
-	Mon,  9 Sep 2024 11:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D5B1B78E8;
+	Mon,  9 Sep 2024 11:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725880719; cv=none; b=eLfc8DzsTP/Gw5uMLAwuFe6suWSXaxn2MTs/YsGtzEdcTAp1AyIPXyS+cjz2fol/PZiMOF5+vi142kJ9HoanJBRdU0b4KMIfc40UoQhmgJHOfBUREIAqIoY3dtzUeH0X14v/CQgb0xruFbzfzXobQf0ivQvTppMtYVoDdE805Tc=
+	t=1725880730; cv=none; b=sNJ24lU56FY99VXqJhmo9VBDmt6lzaiAjlLQsHTQOWLlMvrBvOKbsNq2UMaA54TtvQKuhkQDYofM6Y3NAh3wUqcqC3JvcrqTUyibvtA4z2D/e9HNb39hcD4jH7yeXA3tSI7dEzIQoIJGzwXIE8nCkZ18Ty03lelPyX3OiicWFxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725880719; c=relaxed/simple;
-	bh=Szjijxb3e1oJzVXT4iZoPcd1aGR0FjISfJtOiaqDC4s=;
+	s=arc-20240116; t=1725880730; c=relaxed/simple;
+	bh=8F13Oq1vTNNyq7jRh8XnYi0x+Z00WNGmMU8YOHuX2cM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cyOXHvPo72GosUEQt7uL/IMoLDSBPVuVfjV9t8Qzj2hMUgR6lkloAzMAUlGpK6LdLb+ShyADM6Xaex7Ib6QG8AMwkRw5LW/tMbrB3YCgMgKDGVtdR8x0VVX0tOhDt6TezHZYLlpR+QeSD71WMuyoQGFuiPhd/VwVPRJjjBI+jE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VLdsIuSs; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:Content-Type; b=ZsQlhh5GhbaKmSYuSGOiiO2E/WGh9oujuwNN8mP8D3Ex+a0rvXTc4ZGcBjyNPwDkIGG7sYETLNAoS49JnSgUAHz/quyYRjIDeCAvEUz1b3tyMbOhwftxMbKG5M1kZ/l5m2xTdq2OZYqCBNufC/sk+rcEttGnw2vQopWRpKYV5cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fD6/D+xd; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so6481305e9.3;
-        Mon, 09 Sep 2024 04:18:37 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cb806623eso8090745e9.2;
+        Mon, 09 Sep 2024 04:18:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725880716; x=1726485516; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725880728; x=1726485528; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=OuO693xDxpcBtCeCPFg6NYzQpuCCq+xMFk+Gdje7vu4=;
-        b=VLdsIuSsxemKVrC2UjEdekJ1sM1bUN5vitRDJiDeJWSue+RMw/0mcywNpv3gcJzTk/
-         wCDjZHiTiHNdo63gaUxnM8cOo2FaGlR112Ksz4IxCkceLM9lh8EPK5WqX7cEPObRpjJq
-         m2RzbZTGNVhSPzgJ6sS3qBEdb/tF3+AL4LYVQsoJlkgyaRUqR1J7hd/652kHhq+L0DHC
-         iYcUfIhHkQ/XSQh5Z6MaP/Iu7bhWc/LuVoksDAECf1FxUdV8Ha6ry6jw0stJPRFrHLJC
-         n4KgZtR0cFF+zZQ3DX3Zv1QkDi4ZZnEZ4kv/EDN8sNB6UQT/maxFlUBcMlmzLivYxQY/
-         nytQ==
+        bh=6G+JGSqnaSCmD/h+CX0bavz4T0upTphKGU3mEBW/Pcw=;
+        b=fD6/D+xdX/+WJKyrgnMcZdY1xgiYchiRFJ1ip5NHqUnyhqUJrLPYLhGPNRy8o4etLz
+         oaS03xKrAGH/7qFefFfBB4392xY1ivCptB63GxxGsHouBmWv8BBZFyyonWY6rL9BRiz3
+         k3aBFGFQ1vDLyg4aNNsOAsbWQsTqfHIfgKlbBOWyncHeT0mFvpJxqBp6V8EvWeUN7VdR
+         z3B9wBMuCm/aH/H+pWlG0kdt1VdY1NGOy1d2NSgHBg8AL/D2Ul50GQumoNMNdZatOyFu
+         Wcg6V7L3BakDdexECMJLqsEtM1abQ5/KlC+y/ZVy5LQo760kvMuunfM4sTKJ1VJRXveQ
+         5BZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725880716; x=1726485516;
+        d=1e100.net; s=20230601; t=1725880728; x=1726485528;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OuO693xDxpcBtCeCPFg6NYzQpuCCq+xMFk+Gdje7vu4=;
-        b=v+pzIVMuYrdFsfSspVMxPLRhOuHNwFBPrUL8iU52+owUFXJ3MrPKrDgS+uEsPWm4sI
-         yqA3OCf5rsgWCzcKt/UFRMiBtyjNn4jN87AsWtVtqaEZvzBWQH0DD4x2tPoyvgEopYPK
-         X85Ic6rRtNl6RBG1jFX3kwLdVXeygJ2Yz+9qBTHR+YIg1SC+XxnOTXVWvmmUpb1UxGFs
-         KeMqXwRehag+BUamOC++BL77qecm9s0bbggOT0w0rZ2BzXt/UPCuawO+L0hT5spm2ian
-         2xcsaBqDvjG6gT5eYjE0MINdq7HDhyMD90QMDHZ9C/bOY4i1DhMVZVyuFlyYSewN4PUS
-         wdfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOkCsP3W+VDIcqNu3BOjKLfITiTXDDVvMX2krrL/l6qzOEtMESa1PQ73Z6eLe4CJydGe6B1TR2f95lYSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf8UoAYEgnaQYk83DeEDWqX7CiljtJBgKz1V8sfn6UMXfBm6Dz
-	MjzY8VKLjwIQKUMHjkN7mvCPoB4olgnK8DfLu0ttl4itku1hEFl2
-X-Google-Smtp-Source: AGHT+IGv8BOAf8eajWlh3TYCfdd2+gH32sYlqXSszlldWyeSGJFS2XxNbCGjQOXnYZtyT2YZng2pPw==
-X-Received: by 2002:a05:600c:154c:b0:426:5416:67de with SMTP id 5b1f17b1804b1-42c9f9d7059mr79844225e9.30.1725880715608;
-        Mon, 09 Sep 2024 04:18:35 -0700 (PDT)
+        bh=6G+JGSqnaSCmD/h+CX0bavz4T0upTphKGU3mEBW/Pcw=;
+        b=s95UPRH/Q9jJa5n6TCaMLLIO7jnvr+DGRk1gBRy/qFk1uEOLyPfhI7jA54ZyXFj95D
+         fQvNnhb2EEUQzIky/ObmEYtm1FdKMbRmoA4M11u5dWBwVWlz3hXGXf71/4eTqbPaNn7v
+         MMv3GGfOqi5SD9muVU1iH5uEDeS+oS4gnjW702EXqFVddlvIVU7rwqRUmeOaFZ06Gcf+
+         PiHvrjoup7jlz3leIzchFwYCU48hz8iKCii78x7Ph/Ul0tWXROJ5byqy91ZyofLzaHSZ
+         oPG0hf5ldxRbR5jMamVhxsqUV+2QMM/RIGk/RnwZQg0TUGwjVw2gYJlncNSnpE3ONq0S
+         dg3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUuFzAdDeeVEc3qfdWzcb+fY6ekIqCiYWE8n9EWeX12ah7m0zMEYk3LRdrlq3xHgjAzHGz9sLg58DsLI5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMeKcXlmAqE3k2TXXmkX7St6sDsRZg0ylyJN7sZ+vYGAAEVVz9
+	5IoaTvDPLL4BD9bhhr2G5RswkwdDLOK7qYMvtNzVLCaUUbyKAlXE
+X-Google-Smtp-Source: AGHT+IHLCrmF9H9WFbqMqJjwlPU+iWHBGYMATOXbE8EfRhGKYVPrhPWzTjmn+DPqhqhE+EWC/3HbjA==
+X-Received: by 2002:a5d:4851:0:b0:371:8e0d:c1d9 with SMTP id ffacd0b85a97d-378895ca826mr7835657f8f.19.1725880727590;
+        Mon, 09 Sep 2024 04:18:47 -0700 (PDT)
 Received: from [192.168.2.177] ([81.0.7.156])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb8181csm73773095e9.33.2024.09.09.04.18.34
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb334bd00sm52323175e9.41.2024.09.09.04.18.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 04:18:34 -0700 (PDT)
-Message-ID: <7d1b36fc-463c-47d7-b5e2-ddca744e1c05@gmail.com>
-Date: Mon, 9 Sep 2024 13:18:33 +0200
+        Mon, 09 Sep 2024 04:18:46 -0700 (PDT)
+Message-ID: <af3bf83e-8bd5-4349-8647-a2cbafb5d7ec@gmail.com>
+Date: Mon, 9 Sep 2024 13:18:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: mt8183: cozmo: add i2c2's
+Subject: Re: [PATCH 4/4] arm64: dts: mt8183: Damu: add i2c2's
  i2c-scl-internal-delay-ns
 To: Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -88,7 +88,7 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
  Daolong Zhu <jg_daolongzhu@mediatek.corp-partner.google.com>
 References: <20240909-i2c-delay-v1-0-4b406617a5f5@chromium.org>
- <20240909-i2c-delay-v1-3-4b406617a5f5@chromium.org>
+ <20240909-i2c-delay-v1-4-4b406617a5f5@chromium.org>
 Content-Language: en-US, ca-ES, es-ES
 From: Matthias Brugger <matthias.bgg@gmail.com>
 Autocrypt: addr=matthias.bgg@gmail.com; keydata=
@@ -134,7 +134,7 @@ Autocrypt: addr=matthias.bgg@gmail.com; keydata=
  +zFJv9fVUpo/bjePOL4PMP1y+PYrp4PmPmRwoklBpy1ep8m8XURv46fGUHUEIsTwPWs2Q87k
  7vjYyrcyAOarX2X5pvMQvpAMADGf2Z3wrCsDdG25w2HztweUNd9QEprtJG8GNNzMOD4cQ82T
  a7eGvPWPeXauWJDLVR9jHtWT9Ot3BQgmApLxACvwvD1a69jaFKov28SPHxUCQ9Y1Y/Ct
-In-Reply-To: <20240909-i2c-delay-v1-3-4b406617a5f5@chromium.org>
+In-Reply-To: <20240909-i2c-delay-v1-4-4b406617a5f5@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -145,27 +145,25 @@ On 09/09/2024 09:29, Hsin-Te Yuan wrote:
 > 
 > Add i2c2's i2c-scl-internal-delay-ns.
 > 
-> Fixes: 52e84f233459 ("arm64: dts: mt8183: Add kukui-jacuzzi-cozmo board")
+> Fixes: cabc71b08eb5 ("arm64: dts: mt8183: Add kukui-jacuzzi-damu board")
 > Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
 
 Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
 > ---
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts | 2 ++
->   1 file changed, 2 insertions(+)
+>   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts | 3 +++
+>   1 file changed, 3 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts
-> index f34964afe39b5353de7b17e82d14d1fba88551ab..83bbcfe620835ab6d34cd2f4c2183fbdf11d0909 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts
-> @@ -18,6 +18,8 @@ &i2c_tunnel {
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
+> index 0b45aee2e29953b6117b462034a00dff2596b9ff..65860b33c01fe832f3a4b2e21d24ea6b4f0cba2b 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
+> @@ -30,3 +30,6 @@ &qca_wifi {
+>   	qcom,ath10k-calibration-variant = "GO_DAMU";
 >   };
 >   
->   &i2c2 {
-> +	i2c-scl-internal-delay-ns = <25000>;
-> +
->   	trackpad@2c {
->   		compatible = "hid-over-i2c";
->   		reg = <0x2c>;
+> +&i2c2 {
+> +	i2c-scl-internal-delay-ns = <20000>;
+> +};
 > 
 
