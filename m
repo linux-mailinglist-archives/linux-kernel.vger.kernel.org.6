@@ -1,154 +1,81 @@
-Return-Path: <linux-kernel+bounces-321110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1BC5971498
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:59:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6996397149C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B0172817E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:59:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11F4A1F23F02
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC0A1B3B1A;
-	Mon,  9 Sep 2024 09:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TfFswYtU"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F1B1B29A3;
-	Mon,  9 Sep 2024 09:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FAA1B3F24;
+	Mon,  9 Sep 2024 09:59:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253CE1B3F1B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725875985; cv=none; b=sYwP7+c1Wy/O7dDnypgzZd0ORL/4Mc0MWFI0xfLCjGZ4a47ZcL29w1Qeutn3t398iREP3aRBxgHXhGPY4UtD3i68iH73e33qpjels4+f5DewbEJYt7VZRRgRFdCEJY7yCm2L8uGMY/l6XizoAm8rayLyE7Y4RZh41Dg2pOwwgE0=
+	t=1725875995; cv=none; b=MpLkLu08JbrAwPmZ1PlnXtXV52R/dz3v2JIsGBo1/O2uj3kDtassgTCVVsbEpjCz0bVlLyOOO5J3tfS4NwG/e8kQUn669040cCpqGtaWYDmXm42If9rfpNapmKsLCOLCsZQo9O98k26SyvB/bv0dXD0W097Ex8bZHNdWtWkysqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725875985; c=relaxed/simple;
-	bh=gLL8NoQ6DBWP80ccZZUoMaHmDnJFg+tgLibfVok5q7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=g3ytsOnhEJw8O+k47Eh29rgqRwyjD/luXa/B0+I7r4fKJHmm2N140MYC9JRaCTlITuOS9nWdC1SvsLLqCcakLCWAq/iIMxS5Ml1aCdAtxTFE6LqPbU3r+zeCv48cL8txUF++2skVEi0XEVogkz015vnaSRGZwWF/kOrTSkr7EYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TfFswYtU; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725875980;
-	bh=Yj0ed46tsvdzgqrgty6WnxjpOflU7XY0odRrgln/Q0M=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TfFswYtUC71gAOk6xpyLPIneelV8OQ8wOZJJzQMFP/XLfZng9V+FdELSeX7d1yDqu
-	 qxb1hdtzk6IMiu4Dv8B7/uA+DoKXEZ0D30VPeo86np+huYHaAZsJwu2Sb6UxqjgQS/
-	 bMqzX9tqfiDTBo/GtD0RWrEmcFYkgUxVJbZ7beLXjACW22Je26SnK/GZNopOeolw6F
-	 eDSZ08lqtKSDDIpMnNwXv3zzZA4qA16xW6imwiDIYQdVwwHoOTqQNZhuzqNbdj1it+
-	 JkAhM0pUriuhj9yenEoOLK9iHkjwoUFdTxebpJjMMiQtqdcRYYh0cC9BfiYWV1ho8x
-	 zHV70VhHf4Pqw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X2Mkh09X1z4wcl;
-	Mon,  9 Sep 2024 19:59:40 +1000 (AEST)
-Date: Mon, 9 Sep 2024 19:59:39 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kees Cook <kees@kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>,
- Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?= <thomas.hellstrom@linux.intel.com>
-Cc: Riana Tauro <riana.tauro@intel.com>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Michal Wajdeczko <michal.wajdeczko@intel.com>,
- DRM XE List <intel-xe@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the kspp tree
-Message-ID: <20240909195939.067c1c13@canb.auug.org.au>
+	s=arc-20240116; t=1725875995; c=relaxed/simple;
+	bh=fNsV9KPy/Su8oKYzgoxcA9eTFlPxXiz7sPQZDWshyqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z+vlrf+T7+O+BBEfIs5GrdZdjYjcf9TVd8GLEDmAQaVWAXAtj+CRnzlYhy7RcQCcKK0WcexZRnX8C6JhOjVj6ubjaJLWylraPz+54b57UaWTuF+jG0Q7d+Gc1MsHApM4MeogK/10m0k+Sc57i3tVn1jwNSWBA8givgMNqkVq8U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 05971FEC;
+	Mon,  9 Sep 2024 03:00:22 -0700 (PDT)
+Received: from [10.1.39.38] (e127648.arm.com [10.1.39.38])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EF8B3F66E;
+	Mon,  9 Sep 2024 02:59:51 -0700 (PDT)
+Message-ID: <73756bc3-5de0-4559-99a3-704db78433f5@arm.com>
+Date: Mon, 9 Sep 2024 10:59:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Ix6NSMvjqjGtk=XWkZda_/x";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 5/5] sched/fair: Add push task callback for EAS
+To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, lukasz.luba@arm.com, rafael.j.wysocki@intel.com,
+ linux-kernel@vger.kernel.org
+Cc: qyousef@layalina.io, hongyan.xia2@arm.com
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+ <20240830130309.2141697-6-vincent.guittot@linaro.org>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20240830130309.2141697-6-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/Ix6NSMvjqjGtk=XWkZda_/x
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 8/30/24 14:03, Vincent Guittot wrote:
+> EAS is based on wakeup events to efficiently place tasks on the system, but
+> there are cases where a task will not have wakeup events anymore or at a
+> far too low pace. For such situation, we can take advantage of the task
+> being put back in the enqueued list to check if it should be migrated on
+> another CPU. When the task is the only one running on the CPU, the tick
+> will check it the task is stuck on this CPU and should migrate on another
+> one.
+> 
+> Wake up events remain the main way to migrate tasks but we now detect
+> situation where a task is stuck on a CPU by checking that its utilization
+> is larger than the max available compute capacity (max cpu capacity or
+> uclamp max setting)
 
-Hi all,
-
-After merging the kspp tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/gpu/drm/xe/xe_gt_idle.c:56:27: error: redefinition of 'str_up_down'
-   56 | static inline const char *str_up_down(bool v)
-      |                           ^~~~~~~~~~~
-In file included from include/linux/string_helpers.h:7,
-                 from drivers/gpu/drm/xe/xe_assert.h:9,
-                 from drivers/gpu/drm/xe/xe_force_wake.h:9,
-                 from drivers/gpu/drm/xe/xe_gt_idle.c:8:
-include/linux/string_choices.h:62:27: note: previous definition of 'str_up_=
-down' with type 'const char *(bool)' {aka 'const char *(_Bool)'}
-   62 | static inline const char *str_up_down(bool v)
-      |                           ^~~~~~~~~~~
-
-Caused by commit
-
-  a98ae7f045b2 ("lib/string_choices: Add str_up_down() helper")
-
-interacting with commit
-
-  0914c1e45d3a ("drm/xe/xe_gt_idle: add debugfs entry for powergating info")
-
-from the drm-xe tree.
-
-I have applied the following patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 9 Sep 2024 19:40:17 +1000
-Subject: [PATCH] fix up for "lib/string_choices: Add str_up_down() helper"
-
-interacting wit commit "drm/xe/xe_gt_idle: add debugfs entry for
-powergating info" from the drm-xe tree.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/xe/xe_gt_idle.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/xe/xe_gt_idle.c b/drivers/gpu/drm/xe/xe_gt_idl=
-e.c
-index 85a35ed153a3..0f98c1539c64 100644
---- a/drivers/gpu/drm/xe/xe_gt_idle.c
-+++ b/drivers/gpu/drm/xe/xe_gt_idle.c
-@@ -53,11 +53,6 @@ pc_to_xe(struct xe_guc_pc *pc)
- 	return gt_to_xe(gt);
- }
-=20
--static inline const char *str_up_down(bool v)
--{
--	return v ? "up" : "down";
--}
--
- static const char *gt_idle_state_to_string(enum xe_gt_idle_state state)
- {
- 	switch (state) {
---=20
-2.45.2
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Ix6NSMvjqjGtk=XWkZda_/x
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbexwsACgkQAVBC80lX
-0GxNogf/fhjVLMYEVJncKhoKQTh+bbbygsbiNCT+zU1kAQ80Z7BXoCmS/A9ygNZ6
-sHfIhwsZaUup9JLKEtE5zds3E7nFqrFzPO6sLo0Pfmvq7berzLjoP4nKcb960WGa
-czyefDKobG6B72m3XpSQt7sBghPWKphSIlzLa/Lbbw2jWXO19qbekbnteRttjNiR
-/FpfQz+BiQ4cTgjlw6p/Ay+grYQwaXA3MIiF4AObI22A+bcgMQYEJTQ1qySfESIv
-I53Ky2SRN1CzZStp7C+rN73zvpqyU2wDbx9KPduQZ3x7MdP3cE5i/jMZg16Pi1f0
-5KANPJt2btORBrFlLs+2JNESRa353g==
-=PgpG
------END PGP SIGNATURE-----
-
---Sig_/Ix6NSMvjqjGtk=XWkZda_/x--
+Let me think out loud about this and feel free to object:
+If there's other tasks on the rq we don't have that problem, if it is the
+only one running it's utilization should be 1024, misfit should take care
+of the upmigration on the way up.
+If the task utilization is 1024 it needs to be alone on the rq, why would
+another CPU be more efficient in that case (which presumably is an idle
+CPU of the same PD)?
+Or is this patch just for UCLAMP_MAX < 1024 cases altogether?
 
