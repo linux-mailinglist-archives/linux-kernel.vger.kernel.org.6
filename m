@@ -1,89 +1,97 @@
-Return-Path: <linux-kernel+bounces-322154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 188A29724E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:03:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78ECF9724EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE1A2858A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:03:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A990C1C219AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECE618C92B;
-	Mon,  9 Sep 2024 22:02:58 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EEE20DC4;
-	Mon,  9 Sep 2024 22:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33BC18C930;
+	Mon,  9 Sep 2024 22:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="p6ZDHUoS"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7E320DC4;
+	Mon,  9 Sep 2024 22:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725919378; cv=none; b=q9TmwTRZVwI74HDwOWfErzZYaW3Ite1t/OwMIzfQ1UhBayoiU8oK2LVkd00qddf+5wiCKx28Q+Fpfjg8rPbmMfwhEYjiTaF8o9vg9IP08QQtEf+HH+//lRBOrSQlWdrk6WrdVg2fePxIbpanzffIyG6/Z/JAEa/S5bv2RXrfTX8=
+	t=1725919571; cv=none; b=kz3WAE50WskWGoQ8WQOqlCG//abLGFX9ptj3CTEazPX0XD5qR+gNxXkEIBiHZE1cWVTy/o+r4ePy6dzIG2/6pBdxHQWhVPNSv7ep0HsZDHgY4s/Mxwh31b1QGHMS1jIGY9oOa59037/OAWu+FqJNb++NvO+UkRFHrJvEuNb7uyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725919378; c=relaxed/simple;
-	bh=NL2lwh6OhJuuIMqnWWsMzVHb4/X/BStI/j9zVfXjIOE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=qrwoICcAumC5MPY7ghzXy/pZ3+lvAjd/fDfNFDTDxRF7f0U4bGy7BlXDLkWTRpYev2mjljJ+p4ulXrgKrH+tqhPs+e271g+33wijToA7EQ4AtZ9FOZhK7lGMOicF8LL5Tbzyn0Nq0/indTmXJyUHKMtKOX9nR9mMnajqw6WzZX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 1512392009C; Tue, 10 Sep 2024 00:02:54 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 0F2E992009B;
-	Mon,  9 Sep 2024 23:02:54 +0100 (BST)
-Date: Mon, 9 Sep 2024 23:02:53 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] MIPS: kprobes: Massage previous delay slot
- detection
-In-Reply-To: <20240908-mips-chore-v1-2-9239c783f233@flygoat.com>
-Message-ID: <alpine.DEB.2.21.2409092259110.60835@angie.orcam.me.uk>
-References: <20240908-mips-chore-v1-0-9239c783f233@flygoat.com> <20240908-mips-chore-v1-2-9239c783f233@flygoat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1725919571; c=relaxed/simple;
+	bh=TV9xltLIXfOqTKTOtI40aZUKDvAgoZRXs9dWaxtPnAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=D2L8YHvbEes71r/8zt5pwg0uYOHrmc0FUMevHttN1u/BjJwj2vektmwLsGfkFvnFW76kbiiyvcHe0SNRUapaUBIALIiadhxDOFrU9qTNvGm3Uh6lJLTum6c4uppqQd0AEo69DzuV7QTdIUseVKXfeRMmlsZqw26tRPS79bl9SlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=p6ZDHUoS; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725919567;
+	bh=3Ah1qPxPDxay7QaR1ao0aEWYJAdok+Dj4TF2V9duJuc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=p6ZDHUoScPzpuzV46CWiPIxRdtaEhgPgW4GD78orWwZWBQh45413YVmtelaajyjb+
+	 D2JWoNQ3CR/ASokmZn+se4mVzVmaDJ+5tFd9P/3YcWFfjRuteS2cklwXqvGSIBtRtn
+	 09zdwEoT3Yzz1rd0B4/AxDBbGfKnjcY59sRV9mhJPPERvQMNXmY5eH7YA4qizePFmN
+	 lGBn8BZwbVPklqDf+tOwUoYcsn5HwNAOJ0D7w+L9XjmHWBZQjCFW31hN5FBHG+QlXz
+	 SryIaR6xupaeI6xfpr2H1C7nsW4/sEUn6mUyrlk9yVio83M1a0wL1AypKShjwCzPvD
+	 6rVUZC8Cko+7Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X2grv0cJKz4x8C;
+	Tue, 10 Sep 2024 08:06:06 +1000 (AEST)
+Date: Tue, 10 Sep 2024 08:06:05 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the block tree
+Message-ID: <20240910080605.4f26649d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/juIJttypMZ8lsbo5zJUgk8E";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/juIJttypMZ8lsbo5zJUgk8E
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 8 Sep 2024, Jiaxun Yang wrote:
+Hi all,
 
-> Expand the if condition into cascaded ifs to make code
-> readable.
+Commit
 
- Apart from broken formatting what's making original code unreadable?
+  da22f537db72 ("block: introduce blk_validate_byte_range()")
 
-> Also use sizeof(union mips_instruction) instead of
-> sizeof(mips_instruction) to match the code context.
+is missing a Signed-off-by from its committer.
 
- That has to be a separate change.
+--=20
+Cheers,
+Stephen Rothwell
 
-> diff --git a/arch/mips/kernel/kprobes.c b/arch/mips/kernel/kprobes.c
-> index dc39f5b3fb83..96139adefad2 100644
-> --- a/arch/mips/kernel/kprobes.c
-> +++ b/arch/mips/kernel/kprobes.c
-> @@ -89,12 +89,12 @@ int arch_prepare_kprobe(struct kprobe *p)
->  		goto out;
->  	}
->  
-> -	if (copy_from_kernel_nofault(&prev_insn, p->addr - 1,
-> -			sizeof(mips_instruction)) == 0 &&
-> -	    insn_has_delayslot(prev_insn)) {
-> -		pr_notice("Kprobes for branch delayslot are not supported\n");
-> -		ret = -EINVAL;
-> -		goto out;
-> +	if (!copy_from_kernel_nofault(&prev_insn, p->addr - 1, sizeof(union mips_instruction))) {
+--Sig_/juIJttypMZ8lsbo5zJUgk8E
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
- Overlong line.
+-----BEGIN PGP SIGNATURE-----
 
-> +		if (insn_has_delayslot(prev_insn)) {
-> +			pr_notice("Kprobes for branch delayslot are not supported\n");
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbfcU0ACgkQAVBC80lX
+0GwGiwgAmVjJ8MwteU5b0vKEw5aQ6LqYij4YW6UjCoAQG4fM/DoNtjiDBmrXhxJr
+MXry09glrQnl2TnpOqdSBaNpLZtmbBWZ8beeY6HQKwCkwiVToJwsxC7uSy61FL9C
+lH8fgAFd55M5y8OsTRXNIE1YBePemorHLlzYSD9KZVuXTJUiDBH8pms097cfzAPz
+75hrfmqmPKswC1g13yPATyzlddV33817VV8fzigZvH6LJEtO6eJr+5pwr0WuPtDH
+19lAmrEXL1vPyIrRPzK4YmIpM5+ALEv/Pw8jPyD8U3ajtBlnE8+CCRkTHvvcbIMA
+6TZvPxQjdolnKEIIdmA/xjZewvDNXA==
+=rH6/
+-----END PGP SIGNATURE-----
 
- This now overruns 80 columns making code *less* readable.
-
-  Maciej
+--Sig_/juIJttypMZ8lsbo5zJUgk8E--
 
