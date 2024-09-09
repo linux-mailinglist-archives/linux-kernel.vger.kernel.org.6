@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-320884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B5F79711A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:18:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F90B9711AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34DA8B2051A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:18:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 397771F22837
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7C81BA28E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E701BA29E;
 	Mon,  9 Sep 2024 08:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOegIA55"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OToHoqLM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0C41B2EFA
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1123B1B3725;
+	Mon,  9 Sep 2024 08:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725869538; cv=none; b=aegsxurxA+nbptCl7k+r/PpCj8SXLagiwgISK+kU9DmmmwQOtCmo0n5s0T1X75VJVdA27FJktWVO8hED3Uh9RZKvDb5+oW7wUFZeyQdDcp2LY5p5s9FvNWuKpM0kawq8et7+KAwhzyztbzB2W2g5OOYxkkrUE9RhpGP7tCkkGWs=
+	t=1725869538; cv=none; b=W5IBULHFhGzCHSZr7Iob1/JjYSAEzi64v5p1TY7/8PNoiPF0IFd5oevH4RrjINIGG4CJjMbj5bZBbDwmE46s5f9aFSu4Cqh/iDT2VhHaCldkKDp5W8P7Bwznb+odOe1CF2TzSrN4kBSNT4+WoMlj/ivifguT6EJFsq7MDn/H5Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725869538; c=relaxed/simple;
-	bh=FD/OOqH3zJS8nlVwHYANth0Q9YjcU3BgLDcnnwTz1xc=;
+	bh=TLn4iY9WirIpra11C90u3n8gyc+H+7TAKuLu1AUc2WY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YzKHqNw/H4Qdsrc/1rvH7dtwEzuEcDmWFtR+uhGG+rxqxU2S9smc2b2unzesSZ03m7kPZAI6dTvj+fn3xfLdEQZ5AqNFO+jxxqCdC67oedm9fEbSJ8WvBoLZXboQi6N8GPD68s/u4KILXjN92/EqBMh1jT0yB4u4CF9KhjG2swM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOegIA55; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 25AACC4CEC8;
+	 In-Reply-To:To:Cc; b=rBNPLrs/nK93MppdrU2xbBRkxUPbks8hwi8DOU24DbZS518IU952Xy+nS/8YConJeNV77ySAG92sZXKdsv4Qj8JK0TlmZZ+jM6ik6lWMW2oUyLabZeL1wnvat7X/XSLhVmypNqPz1cF8/SpRVDU74zLp3doqs7GAUOSKs6b/rVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OToHoqLM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3518FC4E672;
 	Mon,  9 Sep 2024 08:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1725869537;
-	bh=FD/OOqH3zJS8nlVwHYANth0Q9YjcU3BgLDcnnwTz1xc=;
+	bh=TLn4iY9WirIpra11C90u3n8gyc+H+7TAKuLu1AUc2WY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=TOegIA55sl7GQUvTPN9E+JKE+LpesczPez36PRFBowFC2fkaLXmX852ozsU97f6MD
-	 zt2Af3yXxw1R02P1yJms4EIbNmnyu/uPD6A+k/10Cd05WBnzd/SXzuyZvzJ2mzE0SU
-	 3mUgRxuoOG09ZsyE/AIEcQaQLnSFhX4+/tsz8NluKhW0GetGsLsDMbwZuGXDeZaXq9
-	 ewbInxnLkdw+uAkaE6Vo2H9fheay5AexW/4K+7dxaaZQdJSi3M6Ru9W5N6d9irbxwK
-	 HH4HEfxbk68c/wsSylj94BKYDFnjFTaFg4BI192uy2ZKiqW0qyXkUUtPALiP1S8P3a
-	 oJO82y6Dr4SHg==
+	b=OToHoqLM+u5Gib54fnJrTCx+jlrlDjsumYsl9c103GPie36vvyLyGdtCoL9NZeVcx
+	 VO/3f/u6vgy83Bgs3W0RzkKrLfkpgarC+WEDpUPMeTiiCd3k9eoMVOmxCZg14oII1U
+	 Dhyfv6GCIjbfx3kQ/JGNBrVnBFT4aSJ1vhp7Kc1CiSHHmbwRn0vfxbvraTW3qmDs02
+	 h0KVhYFINf6mCT+OwhifJLG0ja5t8/SE1ZTSMjy7OEkLp2Qg5amsKizNGYD2ets79Z
+	 nF3hHZ/niSavmYQMGSxe1al4SMHpOrwsDZHtCRquaaF+zp3oqdgGolKM5nLUzwO0uU
+	 269wvYcHkyZpA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F38FECE57B;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1A2ECE581;
 	Mon,  9 Sep 2024 08:12:17 +0000 (UTC)
 From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Mon, 09 Sep 2024 11:10:57 +0300
-Subject: [PATCH v12 32/38] ARM: ep93xx: DT for the Cirrus ep93xx SoC
- platforms
+Date: Mon, 09 Sep 2024 11:10:58 +0300
+Subject: [PATCH v12 33/38] pwm: ep93xx: drop legacy pinctrl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,29 +53,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240909-ep93xx-v12-32-e86ab2423d4b@maquefel.me>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240909-ep93xx-v12-33-e86ab2423d4b@maquefel.me>
 References: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
 In-Reply-To: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
-To: Russell King <linux@armlinux.org.uk>, 
- Hartley Sweeten <hsweeten@visionengravers.com>, 
+To: Hartley Sweeten <hsweeten@visionengravers.com>, 
  Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
- Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@arndb.de>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Masahiro Yamada <masahiroy@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Nikita Shubin <nikita.shubin@maquefel.me>
-Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+ Russell King <linux@armlinux.org.uk>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Nikita Shubin <nikita.shubin@maquefel.me>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Sergey Shtylyov <s.shtylyov@omp.ru>, Stephen Boyd <sboyd@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-pwm@vger.kernel.org
 X-Mailer: b4 0.13-dev-e3e53
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725869532; l=3110;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725869532; l=4449;
  i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=MU0azT5lNnulLeP5AfbO0wMy6289MR0wM0qk0K+/fy8=;
- b=z7mt8ZsZw1L4VQRwH0UtATvP+b9vQI8XflGSsXma++7DMFAnVqGxlerCCY0NtkJgSlK3rxUrZPoQ
- MRUyJ/pmDRytliiGdt+VKvTS4V8RiQ5TMuFoW/RJe9g8a/wfyNCZ
+ bh=9tWs5wPLeKECQlcQ9rkIh26LRGvwgfxOpMK+JfxreaE=;
+ b=8LlTCVgPwNsuMNMFBtSmyyqLFJZVVqR2DwHE8HswXjGfrC8A2R3wAp5Ea2ISPfQDyWCSkb2lS+xA
+ 2KNXZtXxAnlcC76YYTFNWCmroeQBTVwj8dgcwrSgQpkVWpKYZ9X9
 X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
  pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
 X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
@@ -86,104 +83,137 @@ Reply-To: nikita.shubin@maquefel.me
 
 From: Nikita Shubin <nikita.shubin@maquefel.me>
 
-Add compulsory device tree support to the Cirrus ep93xx ARMv4 platform.
+Drop legacy gpio request/free since we are using
+pinctrl for this now.
 
-- select PINCTRL_EP93xx
-- select COMMON_CLK_EP93XX, as clock driver moved out of platform code
-- select ARCH_HAS_RESET_CONTROLLER
-
-Select ARM_ATAG_DTB_COMPAT to update device tree with information
-about memory passed from bootloader.
-
-We have to leave all MACH options as they are used for board checking
-before decomp, to turn off watchdog and ethernet DMA.
-
-Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Acked-by: Thierry Reding <thierry.reding@gmail.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/Makefile             |  1 -
- arch/arm/mach-ep93xx/Kconfig  | 20 ++++++++++----------
- arch/arm/mach-ep93xx/Makefile | 11 -----------
- 3 files changed, 10 insertions(+), 22 deletions(-)
+ arch/arm/mach-ep93xx/core.c       | 42 ---------------------------------------
+ drivers/pwm/pwm-ep93xx.c          | 18 -----------------
+ include/linux/soc/cirrus/ep93xx.h |  4 ----
+ 3 files changed, 64 deletions(-)
 
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index 71afdd98ddf2..aafebf145738 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -183,7 +183,6 @@ machine-$(CONFIG_ARCH_CLPS711X)		+= clps711x
- machine-$(CONFIG_ARCH_DAVINCI)		+= davinci
- machine-$(CONFIG_ARCH_DIGICOLOR)	+= digicolor
- machine-$(CONFIG_ARCH_DOVE)		+= dove
--machine-$(CONFIG_ARCH_EP93XX)		+= ep93xx
- machine-$(CONFIG_ARCH_EXYNOS)		+= exynos
- machine-$(CONFIG_ARCH_FOOTBRIDGE)	+= footbridge
- machine-$(CONFIG_ARCH_GEMINI)		+= gemini
-diff --git a/arch/arm/mach-ep93xx/Kconfig b/arch/arm/mach-ep93xx/Kconfig
-index 703f3d232a60..812b71dcf60e 100644
---- a/arch/arm/mach-ep93xx/Kconfig
-+++ b/arch/arm/mach-ep93xx/Kconfig
-@@ -3,27 +3,27 @@ menuconfig ARCH_EP93XX
- 	bool "EP93xx-based"
- 	depends on ATAGS
- 	depends on ARCH_MULTI_V4T
-+	# CONFIG_ARCH_MULTI_V7 is not set
- 	depends on CPU_LITTLE_ENDIAN
-+	select ARCH_HAS_RESET_CONTROLLER
- 	select ARCH_SPARSEMEM_ENABLE
- 	select ARM_AMBA
- 	select ARM_VIC
-+	select ARM_APPENDED_DTB # Old Redboot bootloaders deployed
-+	select ARM_ATAG_DTB_COMPAT # we need this to update dt memory node
-+	select COMMON_CLK_EP93XX
-+	select EP93XX_TIMER
- 	select CLKSRC_MMIO
- 	select CPU_ARM920T
- 	select GPIOLIB
-+	select PINCTRL
-+	select PINCTRL_EP93XX
- 	help
- 	  This enables support for the Cirrus EP93xx series of CPUs.
+diff --git a/arch/arm/mach-ep93xx/core.c b/arch/arm/mach-ep93xx/core.c
+index b99c46d22c4d..4ddf1a4cba33 100644
+--- a/arch/arm/mach-ep93xx/core.c
++++ b/arch/arm/mach-ep93xx/core.c
+@@ -577,48 +577,6 @@ void __init ep93xx_register_pwm(int pwm0, int pwm1)
+ 		platform_device_register(&ep93xx_pwm1_device);
+ }
  
- if ARCH_EP93XX
- 
--menu "Cirrus EP93xx Implementation Options"
+-int ep93xx_pwm_acquire_gpio(struct platform_device *pdev)
+-{
+-	int err;
 -
--config EP93XX_SOC_COMMON
--	bool
--	default y
--	select SOC_BUS
--	select LEDS_GPIO_REGISTER
+-	if (pdev->id == 0) {
+-		err = 0;
+-	} else if (pdev->id == 1) {
+-		err = gpio_request(EP93XX_GPIO_LINE_EGPIO14,
+-				   dev_name(&pdev->dev));
+-		if (err)
+-			return err;
+-		err = gpio_direction_output(EP93XX_GPIO_LINE_EGPIO14, 0);
+-		if (err)
+-			goto fail;
 -
--comment "EP93xx Platforms"
-+# menu "EP93xx Platforms"
- 
- config MACH_BK3
- 	bool "Support Liebherr BK3.1"
-@@ -103,6 +103,6 @@ config MACH_VISION_EP9307
- 	  Say 'Y' here if you want your kernel to support the
- 	  Vision Engraving Systems EP9307 SoM.
- 
--endmenu
-+# endmenu
- 
- endif
-diff --git a/arch/arm/mach-ep93xx/Makefile b/arch/arm/mach-ep93xx/Makefile
-deleted file mode 100644
-index 62e37403df14..000000000000
---- a/arch/arm/mach-ep93xx/Makefile
-+++ /dev/null
-@@ -1,11 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--#
--# Makefile for the linux kernel.
--#
--obj-y			:= core.o clock.o timer-ep93xx.o
+-		/* PWM 1 output on EGPIO[14] */
+-		ep93xx_devcfg_set_bits(EP93XX_SYSCON_DEVCFG_PONG);
+-	} else {
+-		err = -ENODEV;
+-	}
 -
--obj-$(CONFIG_EP93XX_DMA)	+= dma.o
+-	return err;
 -
--obj-$(CONFIG_MACH_EDB93XX)	+= edb93xx.o
--obj-$(CONFIG_MACH_TS72XX)	+= ts72xx.o
--obj-$(CONFIG_MACH_VISION_EP9307)+= vision_ep9307.o
+-fail:
+-	gpio_free(EP93XX_GPIO_LINE_EGPIO14);
+-	return err;
+-}
+-EXPORT_SYMBOL(ep93xx_pwm_acquire_gpio);
+-
+-void ep93xx_pwm_release_gpio(struct platform_device *pdev)
+-{
+-	if (pdev->id == 1) {
+-		gpio_direction_input(EP93XX_GPIO_LINE_EGPIO14);
+-		gpio_free(EP93XX_GPIO_LINE_EGPIO14);
+-
+-		/* EGPIO[14] used for GPIO */
+-		ep93xx_devcfg_clear_bits(EP93XX_SYSCON_DEVCFG_PONG);
+-	}
+-}
+-EXPORT_SYMBOL(ep93xx_pwm_release_gpio);
+-
+-
+ /*************************************************************************
+  * EP93xx video peripheral handling
+  *************************************************************************/
+diff --git a/drivers/pwm/pwm-ep93xx.c b/drivers/pwm/pwm-ep93xx.c
+index 67c3fdbf7ae3..994f89ac43b4 100644
+--- a/drivers/pwm/pwm-ep93xx.c
++++ b/drivers/pwm/pwm-ep93xx.c
+@@ -27,8 +27,6 @@
+ 
+ #include <asm/div64.h>
+ 
+-#include <linux/soc/cirrus/ep93xx.h>	/* for ep93xx_pwm_{acquire,release}_gpio() */
+-
+ #define EP93XX_PWMx_TERM_COUNT	0x00
+ #define EP93XX_PWMx_DUTY_CYCLE	0x04
+ #define EP93XX_PWMx_ENABLE	0x08
+@@ -44,20 +42,6 @@ static inline struct ep93xx_pwm *to_ep93xx_pwm(struct pwm_chip *chip)
+ 	return pwmchip_get_drvdata(chip);
+ }
+ 
+-static int ep93xx_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+-{
+-	struct platform_device *pdev = to_platform_device(pwmchip_parent(chip));
+-
+-	return ep93xx_pwm_acquire_gpio(pdev);
+-}
+-
+-static void ep93xx_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+-{
+-	struct platform_device *pdev = to_platform_device(pwmchip_parent(chip));
+-
+-	ep93xx_pwm_release_gpio(pdev);
+-}
+-
+ static int ep93xx_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			    const struct pwm_state *state)
+ {
+@@ -156,8 +140,6 @@ static int ep93xx_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ }
+ 
+ static const struct pwm_ops ep93xx_pwm_ops = {
+-	.request = ep93xx_pwm_request,
+-	.free = ep93xx_pwm_free,
+ 	.apply = ep93xx_pwm_apply,
+ };
+ 
+diff --git a/include/linux/soc/cirrus/ep93xx.h b/include/linux/soc/cirrus/ep93xx.h
+index 8942bfaf1545..f6376edc1b33 100644
+--- a/include/linux/soc/cirrus/ep93xx.h
++++ b/include/linux/soc/cirrus/ep93xx.h
+@@ -37,8 +37,6 @@ struct ep93xx_regmap_adev {
+ 	container_of((_adev), struct ep93xx_regmap_adev, adev)
+ 
+ #ifdef CONFIG_ARCH_EP93XX
+-int ep93xx_pwm_acquire_gpio(struct platform_device *pdev);
+-void ep93xx_pwm_release_gpio(struct platform_device *pdev);
+ int ep93xx_ide_acquire_gpio(struct platform_device *pdev);
+ void ep93xx_ide_release_gpio(struct platform_device *pdev);
+ int ep93xx_i2s_acquire(void);
+@@ -46,8 +44,6 @@ void ep93xx_i2s_release(void);
+ unsigned int ep93xx_chip_revision(void);
+ 
+ #else
+-static inline int ep93xx_pwm_acquire_gpio(struct platform_device *pdev) { return 0; }
+-static inline void ep93xx_pwm_release_gpio(struct platform_device *pdev) {}
+ static inline int ep93xx_ide_acquire_gpio(struct platform_device *pdev) { return 0; }
+ static inline void ep93xx_ide_release_gpio(struct platform_device *pdev) {}
+ static inline int ep93xx_i2s_acquire(void) { return 0; }
 
 -- 
 2.43.2
