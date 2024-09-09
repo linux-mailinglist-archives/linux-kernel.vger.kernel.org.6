@@ -1,160 +1,130 @@
-Return-Path: <linux-kernel+bounces-321989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05FE297227D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:22:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7027B97227E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDB202843CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:22:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0662E283F18
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6497A189BBA;
-	Mon,  9 Sep 2024 19:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="NTUjHPgI"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2AD189B81;
+	Mon,  9 Sep 2024 19:23:34 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A860F3B791;
-	Mon,  9 Sep 2024 19:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969B03B791
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 19:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725909728; cv=none; b=ohgYmsmDzCSlyDZqnJDCAVDQxdEFNpGTUGJ6q8dqzj/88+wa4pKm4f7txdXtgY2Z6TW88aD+gXNKc1Wznk3LMpsFyfL2eou0MYH60vhBuZh3qSN8gpgnVDT/SP1pa3hjXBtGQiBag4/w38tfDbo17+FsVVmeV1whDgIhj/aXjck=
+	t=1725909814; cv=none; b=TmXb1RyePiwA8ob+LKKiqGLw/y0YI26tbCvIVo//naabd6XH6ZhU+hU+rxxI2lFh5YQTchZTGHUO1cotxW/QF81bnEOT7gL8sXPx1Y6oYNANGEgUZ+oTykin14xEbIJIygNjOOAng2KfXKNEo5+lTLI1pt4Px3NO80I1qfmOFjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725909728; c=relaxed/simple;
-	bh=iAYIIHRt18lg9w7vLJijk467AYA5AqKTOUwAyqj4X70=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aUTY0Ecnn0ZhY+ikG/RQ95OjQvdt58vlU8o9ZFCiEorlYktse8pQ8h+56ize8XuVpWk+ogkOYTn46jC6Dg034nCUGd8dmQsVAPtdzXcznKcdlljrROeR6pEZiQ1uVor1LBdnjEU6WEEMZ91aAr/PLFZvf+CWNu3NJQdC4MeWGsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=NTUjHPgI; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1725909718; x=1726168918;
-	bh=BbaACj++wGC+vRsUotK63/Ncake27cvpWE5Gb9nDHk4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=NTUjHPgIQPf5vTU4Jngyz3XAXuh17LUo/R0KnLULVTgb2YxCtJG32rMQ4QfFln4hc
-	 kulE6IxIgZnAt8I+RdgKxknS3yz5CcGtGrwmJ3IDWhHQl4wCP56ICT1jqHJrq0rMPE
-	 x8+o6jizpZ4FJWtO/qy+Q5VXjnhjrcgk7jqAQh8+katU0Ys3MAaivkSCodup2AxdFM
-	 x+vtAfyiw2ZWjavr6tWZHL6EATN6pEuAZgticrqxvcDPeeZDDqr3pJO58wlMUXBRCa
-	 fHF4T0jlfRhl/RzMSa4CFdyT/kEtr9MqZMKbxo3IX4hzcXPLdPkZlKYXEjTYSKURsn
-	 f3R2207MBx1Pg==
-Date: Mon, 09 Sep 2024 19:21:54 +0000
-To: hridesh <hridesh699@gmail.com>, linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?=27Bj=C3=B6rn_Roy_Baron=27?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Jens Axboe <axboe@kernel.dk>, Matt Gilbride <mattgilbride@google.com>, Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH] docs: rust: clean up empty `\\\` lines and improve rustdoc formatting
-Message-ID: <7b98dbcc-318d-49e7-b71a-f64cc611c2ad@proton.me>
-In-Reply-To: <20240909161749.147076-1-hridesh699@gmail.com>
-References: <20240909161749.147076-1-hridesh699@gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: dc0c0f0bf0835221911e1df6237157ff7ae24ed3
+	s=arc-20240116; t=1725909814; c=relaxed/simple;
+	bh=WxYA18Z9ULzrNShVdG9IgXbo4QUfxmI5AbCPKxUpit8=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=DJ1qubapscAcWvB6no5uZeyay0NX1pIGWnANOzPGggOe7ZxNRlBkncFWBm6pnOnzhyg1FqbV9zsLLhJdE8pnNt/9JS4cMjt3O+WUM4GuJjlQ9ImCNEHTaMP+Xq4ZJV/O4pSBCB2kEIH4q21SGytoH9iuIUVn3FR+p/Gt6bmKbCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.106] (31.173.81.96) by msexch01.omp.ru (10.188.4.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 9 Sep
+ 2024 22:23:22 +0300
+Subject: Re: [PATCH] irqchip/gic: prevent buffer overflow in
+ gic_ipi_send_mask()
+To: Thomas Gleixner <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>, Marc
+ Zyngier <maz@kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <048ff3bb-09d1-2e60-4f3b-611e2bfde7aa@omp.ru>
+ <87cyli5zj7.ffs@tglx>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <d1c2f362-da11-b17a-40ff-daecb5abf909@omp.ru>
+Date: Mon, 9 Sep 2024 22:23:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <87cyli5zj7.ffs@tglx>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/09/2024 18:56:08
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 187638 [Sep 09 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.1.5
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 32 0.3.32
+ 766319f57b3d5e49f2c79a76e7d7087b621090df
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.81.96 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.81.96 in (user) dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.81.96
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/09/2024 19:00:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/9/2024 4:30:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-Hi,
+On 9/5/24 10:29 AM, Thomas Gleixner wrote:
+[...]
 
-I see that this is your first kernel contribution, welcome!
-I have left a couple comments below; before you send a new version,
-please wait a couple days for other people to also leave their feedback.
-You then create a new version (add `-v2` to `git format-patch`) and send
-it to the list. You can put a changelog underneath the `---`, it will
-not be included int the commit message, but for people reading the mail
-it is rather helpful.
+>> ARM GIC arch v2 spec claims support for just 8 CPU interfaces.  However,
+>> looking at the GIC driver's irq_set_affinity() method, it seems that the
+>> passed CPU mask may contain the logical CPU #s beyond 8, and that method
 
-On 09.09.24 18:17, hridesh wrote:
-> Remove unnecessary empty `\\\` lines in the rust docs. Also add linebreak=
-s
+   s/8/7/, of course... :-<
 
-You wrote backslashes here, but it should be forward slashes instead.
-Please also fix it in the title.
+>> filters them out before reading gic_cpu_map[], bailing out with
+>> -EINVAL.
+> 
+> The reasoning is correct in theory, but in reality it's a non problem.
 
-I don't know if the commit title should start with `docs`, maybe we want
-to do `rust: docs` when changing rustdocs? (This is a question to the
-other Rust reviewers)
+   Frankly, before finalizing this patch I had tried to ascertain whether
+cpumask could contain CPUs with the logical #s higher than 8 but that was
+taking way too much time and I gave up... :-)
 
-I think the title doesn't need to mention the exact cleanup, just
-something along the lines "clean up docs" should suffice.
+> Simply because processors which use this GIC version cannot have more
+> than 8 cores.
 
-> in kernel::block::mq::Request to fix formatting
->=20
-> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1109
+   And big.LITTLE not involved?
 
-The issue also mentions that you should implement a `checkpatch.pl`
-check in an additional patch:
+> That means num_possible_cpus() <= 8 so the cpumask handed in cannot have
+> bits >= 8 set. Ergo for_each_cpu() can't return a bit which is >= 8.
 
-> Clean up consecutive empty `///` lines and implement a checkpatch.pl
-> check for it. These should be two different patches.
+   Perhaps adding WARN_ON() would make some sense though? :-)
 
-Please include that patch in your series.
+> Thanks
+> 
+>         tglx
 
-> Signed-off-by: hridesh <hridesh699@gmail.com>
-> ---
->  rust/kernel/block/mq/request.rs | 7 +++----
->  rust/kernel/rbtree.rs           | 1 -
->  2 files changed, 3 insertions(+), 5 deletions(-)
->=20
-> diff --git a/rust/kernel/block/mq/request.rs b/rust/kernel/block/mq/reque=
-st.rs
-> index a0e22827f3f4..3ab2917c9d25 100644
-> --- a/rust/kernel/block/mq/request.rs
-> +++ b/rust/kernel/block/mq/request.rs
-> @@ -22,15 +22,14 @@
->  ///
->  /// There are four states for a request that the Rust bindings care abou=
-t:
->  ///
-> -/// A) Request is owned by block layer (refcount 0)
-> +/// A) Request is owned by block layer (refcount 0)\
-
-Instead of adding these backslashes, I personally would prefer if we
-make this a normal markdown list using `1.`, `2.` etc.
-Of course only if Andreas is OK with that though.
-
----
-Cheers,
-Benno
-
->  /// B) Request is owned by driver but with zero `ARef`s in existence
-> -///    (refcount 1)
-> +///    (refcount 1)\
->  /// C) Request is owned by driver with exactly one `ARef` in existence
-> -///    (refcount 2)
-> +///    (refcount 2)\
->  /// D) Request is owned by driver with more than one `ARef` in existence
->  ///    (refcount > 2)
->  ///
-> -///
->  /// We need to track A and B to ensure we fail tag to request conversion=
-s for
->  /// requests that are not owned by the driver.
->  ///
-> diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-> index 25eb36fd1cdc..006f6e03aba5 100644
-> --- a/rust/kernel/rbtree.rs
-> +++ b/rust/kernel/rbtree.rs
-> @@ -1031,7 +1031,6 @@ fn next(&mut self) -> Option<Self::Item> {
->=20
->  /// A memory reservation for a red-black tree node.
->  ///
-> -///
->  /// It contains the memory needed to hold a node that can be inserted in=
-to a red-black tree. One
->  /// can be obtained by directly allocating it ([`RBTreeNodeReservation::=
-new`]).
->  pub struct RBTreeNodeReservation<K, V> {
-> --
-> 2.46.0
->=20
-
+MBR, Sergey
 
