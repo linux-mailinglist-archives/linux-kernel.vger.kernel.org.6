@@ -1,172 +1,155 @@
-Return-Path: <linux-kernel+bounces-321738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16767971EC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:08:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00BF0971EC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33C581C23858
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:08:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 704DFB23B13
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B490B139CF6;
-	Mon,  9 Sep 2024 16:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42760139D05;
+	Mon,  9 Sep 2024 16:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UG5ypbNa"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="goPPREXd"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD461BC39
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F043D38E
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725898102; cv=none; b=FYUVLQIIWIMI1zfNzZfyc7Dbc3Cd8M2vVKyAM/7s9d6CRHTW6kAMXiHwi+Uk6t6MDCTkjRVlj82c/VBdzBtWoMAenP96HVNMZ54hOSh3/2xfMqvEdq+BAkJRWH9aEmeo97H/a6y2zl7cA376uQ+WAeRNwKxziVfqhQX5j2xd8oY=
+	t=1725898162; cv=none; b=OIiTrE8CxiBjriCB4f//xlwYzZ893zcZzofTjEBN5mijMIv6mpnumqh/jzpHVlAdyRpiOzxytkiw0Z3kKcRJRdM5PygI1zx0iPEVI9hy2dmqfGqaX9MuyH8HPVz2onaMi1/yQIMqk+0IvV4czhPavnf2xkjU+/TRA2kyocL2qnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725898102; c=relaxed/simple;
-	bh=oedIX6uAWwQ5NPlDFPjLpUk46TfdFMO2UIdsrGksh+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KlFUb0ke1o1yfRdB1Z2OYtplHKC40faJ5glGHKwGtwsAI8hd9qZ1ExVIs5qzyyeikPZ4GHc8OkOxI4m6CDWsxlMUykb/Uj8cA/jxN8koljblvqbFi/vnwoaLV1A88F+V3IBYaZ87bwbNh+u4KIbZDaxYBhzcvXJRKbh1migMCPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UG5ypbNa; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-374c6eb1d44so123090f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:08:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725898097; x=1726502897; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=XT5l8P6NzbjGGFiTNVLcXv6l+wRZ27lZ2toZJg0ywbE=;
-        b=UG5ypbNaxHv3+5WRhTirKgAaWUYP8d9MTR9IMWeIBLSJYfImYWL8L6awR5BHLZyGzF
-         YLRKubwni93MJ37ZfsxyN5WW3no4b4TXzhNF09KMSNN84H8Vw0pcKumAe0kFOSPddiKW
-         SmTCEAJpWiN85l6/VOuvMGz+haaA+Rnu9VAN4ojHq1W15rj8XvOs/eeGlNfWf0F3HCmh
-         O8uTzU1f0rh7GpJH51W4xOlZObv06FoHUn+wOMQNEMB1xVEbmAkZ0r/wQ0V7HyYgWPIx
-         pEhdgsjVh3RcAiPxS75RVL/GUR1qbp3hCSvPE8GiGuZNCWJvCvKZZTsb45n2o7KrupJE
-         Nhtg==
+	s=arc-20240116; t=1725898162; c=relaxed/simple;
+	bh=KO216CVLRph9nCQrhGA5ZJFpbAsAr3U67xWLzLBcg8g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WIMf6hrehdiy1+kAbd45EfwIkLkHT3RlUHnrZzCPd9wo/shj4eUmhmqGabcDDDbMcnWx1oHds1CEvvnnpdKPUuNCuIykOCkTlHMTKSIwztbYGQLoagysQ2bpAC+OOyqJHn+wjbaW+VsmGj+2QkzQorWltVVZuVRc0a+RncnvbAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=goPPREXd; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 134093F5B5
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:09:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1725898158;
+	bh=cNmpVkq4Fpi+AIwt2yz0c7jLv0EtSIXXBwFhX1ECq/E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=goPPREXdhoqpd8NQSS77RnvKDEaR3vpi5jKdscos6BaRUHpHRmBFHVzB/s9OtEd0j
+	 YuQe7We+yx1CLtJIFvJhgpg+8lPIVicCjFYi41hMiq8kODN7FXtYnkiwBrnX8HzVd9
+	 3OILh8+xNgts8qDdPZTWg/1jgqB1IxU83I+amXCNoPbsQxIPh478aBW1qjHQNlQV6d
+	 jKLlC09oN4DMM9wAg+KlBqIhbwRawjMJTMrCldQxu6xAXYzOJPuCJGTNsZJFO6ArVj
+	 NvE9GeA3ofXO25G3ounugmVbRWFNx1zSXyFAmMA37kmyYM26TSImSW+zEzG3GgNmbs
+	 aNQa27Ea4t/5g==
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5e1beceb2cbso2736273eaf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:09:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725898097; x=1726502897;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XT5l8P6NzbjGGFiTNVLcXv6l+wRZ27lZ2toZJg0ywbE=;
-        b=gTOtsGbEd1IELwefyjH+F3YpwEBcOa/rpc0lm8dsY2Nuui9uDirLKS29yhUrGtzP78
-         d+3suYHrTM1zPtHp7ayXqAvkMBn9cpXDrKGa9IMrUCV6WHg+oRbrBwi8Z5fxYeZfvwco
-         +EF0e/BLnSFQXWLaemZoV2YsdxmhHY/iP5Y8SWnJwmwJKWSUPquX193PNCMJdodcN86C
-         muDQVFiLCH2Rw8Q7q+w8JnQ0f9mTywn64qcTSL7aZFSfmp/LD/2QAl873zn6KzIbpRqj
-         Lx+JrToX1lLRu/TCBzGmqtNosYso2u0HlaxgMzqx9Wl6Ziio9LsZQRQmIuETUGDEnr+v
-         fevQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVU6skA7F5oNu9MnxW6pusNuxxROD1a2J1bL5lamWkiT6q337D8Qjm2zsh0SWfKN5t48Qu95gHXo/clL2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7GvFXRQuzl2K0ESBJE0z8Hz0T5dd2DAwuFVivMDjNNPoA1ifx
-	mlgYZ2kbDg4aCLK9lkf2nBRPO5B4MGxoOf/+aO6HdmPz+r9WBWqs8xoV0EWlBtA=
-X-Google-Smtp-Source: AGHT+IGMTZqgOJO2exltKV8g17LnzhtBMAzSkWU0AQcVhbO6zcCCl+H5Zok6BiW3wg3dWxEGKIHLCQ==
-X-Received: by 2002:a5d:6d08:0:b0:378:955f:d243 with SMTP id ffacd0b85a97d-378955fd2damr2224248f8f.13.1725898096574;
-        Mon, 09 Sep 2024 09:08:16 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d3700sm6396046f8f.88.2024.09.09.09.08.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 09:08:15 -0700 (PDT)
-Message-ID: <adb3d03f-0cd2-47a7-9696-bc2e28d0e587@linaro.org>
-Date: Mon, 9 Sep 2024 18:08:14 +0200
+        d=1e100.net; s=20230601; t=1725898156; x=1726502956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cNmpVkq4Fpi+AIwt2yz0c7jLv0EtSIXXBwFhX1ECq/E=;
+        b=LuVBrSbLcOhblhjuH21h7YdIYyI9vqk71Rj3SixAHzA/AzWdCTYaHyPqMB5ZrZqZh0
+         yBzBwAoStdMPkpu3ajm0+YLrF2QpDcYT6zEkJtQOr3bcwc26ycNT3fWh+D/QNGT3UH55
+         D2hUEet85EbrntdXpmQKRDhg3tyjsr0Jsx3eKQvu5ZrMKB5wqnelSI5URBS84hIuvutW
+         vkd/89u9sM+xglnfFEP1jb/UP14/1KKE1/U1FaMoxaTWHgiTjOHzYGSL2YF4isSxRId5
+         RHwGhPbM5wfTt2IE7/FKq7Y92PrvappqhlVC23MpiYYxjkh6G4u334+yhBx0TQEAuUnB
+         V47A==
+X-Forwarded-Encrypted: i=1; AJvYcCUcae5OEpo6vSHP5W1WaBCmk9nL6kFucSDJ1Zt2oQwp9xPR9S7pMDELjWT31sVU+U/0EGEskR45NNoMYPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxshmC3DdF635nM6RKosRBxTKOp7MGSdvvDQtx6Ei1OEvXkoZA7
+	qHfFvHO/isqHdkAUEQPMA7FSedNVEAxhAiR2njwS8q21fc7LuPfltNq3GY0AFhDuCyIgo06Xl9d
+	sevjyI342qIfn6a1PIh10/gmzky+Xwc5fgVmb16PGJrgTR7UTcJkkAT71rHxQe6X+qNtAExrgJO
+	UpjkO2GtG0kieTnI6pjx/iqmZ5fzAnpvDCq489UMnVRH3KA+HpINQm
+X-Received: by 2002:a05:6359:4c09:b0:1af:1b40:5357 with SMTP id e5c5f4694b2df-1b8386efd32mr536499055d.24.1725898155961;
+        Mon, 09 Sep 2024 09:09:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGssdkcz6Do9xmtEwjdhYkf1iEQ/Z1pq4QSQQR4MEbhxzTfTXO+AVt/VjieiPcw5MrNhgqbn4QBYfvcEHdTGZY=
+X-Received: by 2002:a05:6359:4c09:b0:1af:1b40:5357 with SMTP id
+ e5c5f4694b2df-1b8386efd32mr536496655d.24.1725898155678; Mon, 09 Sep 2024
+ 09:09:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soundwire: stream: Revert "soundwire: stream: fix
- programming slave ports for non-continous port maps"
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Bard Liao
- <yung-chuan.liao@linux.intel.com>, Sanyog Kale <sanyog.r.kale@intel.com>,
- alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20240904145228.289891-1-krzysztof.kozlowski@linaro.org>
- <Zt8H530FkqBMiYX+@opensource.cirrus.com>
- <8462d322-a40a-4d6c-99c5-3374d7f3f3a0@linux.intel.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <8462d322-a40a-4d6c-99c5-3374d7f3f3a0@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240906143453.179506-1-aleksandr.mikhalitsyn@canonical.com>
+ <20240906143453.179506-2-aleksandr.mikhalitsyn@canonical.com> <20240909-moosbedeckt-landnahme-61cecf06e530@brauner>
+In-Reply-To: <20240909-moosbedeckt-landnahme-61cecf06e530@brauner>
+From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date: Mon, 9 Sep 2024 18:09:04 +0200
+Message-ID: <CAEivzxdT+Dy7McjfebYLTk8cXNdBJAe9Wze4NSys20Fyd7LOEQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] fs/mnt_idmapping: introduce an invalid_mnt_idmap
+To: Christian Brauner <brauner@kernel.org>
+Cc: mszeredi@redhat.com, linux-fsdevel@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Seth Forshee <sforshee@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/09/2024 17:45, Pierre-Louis Bossart wrote:
-> 
-> 
-> On 9/9/24 16:36, Charles Keepax wrote:
->> On Wed, Sep 04, 2024 at 04:52:28PM +0200, Krzysztof Kozlowski wrote:
->>> This reverts commit ab8d66d132bc8f1992d3eb6cab8d32dda6733c84 because it
->>> breaks codecs using non-continuous masks in source and sink ports.  The
->>> commit missed the point that port numbers are not used as indices for
->>> iterating over prop.sink_ports or prop.source_ports.
->>>
->>> Soundwire core and existing codecs expect that the array passed as
->>> prop.sink_ports and prop.source_ports is continuous.  The port mask still
->>> might be non-continuous, but that's unrelated.
->>>
->>> Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
->>> Closes: https://lore.kernel.org/all/b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com/
->>> Fixes: ab8d66d132bc ("soundwire: stream: fix programming slave ports for non-continous port maps")
->>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>
->>> ---
->>
->> Would be good to merge this as soon as we can, this is causing
->> soundwire regressions from rc6 onwards.
-> 
-> the revert also needs to happen in -stable. 6.10.8 is broken as well.
+On Mon, Sep 9, 2024 at 2:57=E2=80=AFPM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
+> On Fri, Sep 06, 2024 at 04:34:52PM GMT, Alexander Mikhalitsyn wrote:
+> > Link: https://lore.kernel.org/linux-fsdevel/20240904-baugrube-erhoben-b=
+3c1c49a2645@brauner/
+> > Suggested-by: Christian Brauner <brauner@kernel.org>
+> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
+om>
+> > ---
+> >  fs/mnt_idmapping.c            | 22 ++++++++++++++++++++--
+> >  include/linux/mnt_idmapping.h |  1 +
+> >  2 files changed, 21 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
+> > index 3c60f1eaca61..cbca6500848e 100644
+> > --- a/fs/mnt_idmapping.c
+> > +++ b/fs/mnt_idmapping.c
+> > @@ -32,6 +32,15 @@ struct mnt_idmap nop_mnt_idmap =3D {
+> >  };
+> >  EXPORT_SYMBOL_GPL(nop_mnt_idmap);
+> >
+> > +/*
+> > + * Carries the invalid idmapping of a full 0-4294967295 {g,u}id range.
+> > + * This means that all {g,u}ids are mapped to INVALID_VFS{G,U}ID.
+> > + */
+> > +struct mnt_idmap invalid_mnt_idmap =3D {
+> > +     .count  =3D REFCOUNT_INIT(1),
+> > +};
+> > +EXPORT_SYMBOL_GPL(invalid_mnt_idmap);
+> > +
+> >  /**
+> >   * initial_idmapping - check whether this is the initial mapping
+> >   * @ns: idmapping to check
+> > @@ -75,6 +84,8 @@ vfsuid_t make_vfsuid(struct mnt_idmap *idmap,
+> >
+> >       if (idmap =3D=3D &nop_mnt_idmap)
+> >               return VFSUIDT_INIT(kuid);
+> > +     if (idmap =3D=3D &invalid_mnt_idmap)
+> > +             return INVALID_VFSUID;
+>
+> Could possibly deserve an:
+>
+> if (unlikely(idmap =3D=3D &invalid_mnt_idmap))
+>         return INVALID_VFSUID;
+>
+> and technically I guess we could also do:
+>
+> if (likely(idmap =3D=3D &nop_mnt_idmap))
+>         return VFSUIDT_INIT(kuid);
+>
+> but not that relevant for this patch.
 
-It will happen. You do not need to Cc-stable (and it will not help, will
-not be picked), because this is marked as fix for existing commit.
+Yeah, I'm happy to submit that change (if you don't mind) a bit later
+when this will be merged,
+cause in this case we can add this likely()/unlikely() at once for
+both nop_mnt_idmap/invalid_mnt_idmap.
 
-Best regards,
-Krzysztof
-
+Kind regards,
+Alex
 
