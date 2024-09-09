@@ -1,112 +1,129 @@
-Return-Path: <linux-kernel+bounces-321550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6586A971BEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:59:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46722971BED
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9861B25EB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:59:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB6D91F2221F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A281BC9EF;
-	Mon,  9 Sep 2024 13:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6101B9B5F;
+	Mon,  9 Sep 2024 13:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QfxSyHaS"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GkSWKcNb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3A61BBBF8;
-	Mon,  9 Sep 2024 13:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2797F1B86E3
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725890227; cv=none; b=DxNzH1pS9et1P41IcHHfB+Nz6y2ML6YmKTbqiegFOavLMOtRLcUulvf/io+doa657ZqoweGxTsmVT0fLNkJ1htjmoHRp0PTUPMl/P2Dyyk9S8AVtlIRnfV3WQ2sBZFURz2pAWcv9gxKL9NU8pXFdon5bLRJdejN3O4L13IUPorY=
+	t=1725890262; cv=none; b=gEjp10WtQM9X/3t3yInnFNrDfQxyAT6WcZbvIt7Q4YpEp4kChXXABltmy9WlITxHcsZb7u5simIvYDODTaRFWUJFNRrPupCTaSajgZSeFYtMxcfA8qV0AQDkDNw3a2ym90x63BMIRS45b1CVlS2/Jzga+41st7hzVh9upV6kFQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725890227; c=relaxed/simple;
-	bh=K/YF07QvVB4pjMrCY5CC3H2YEBaImarIAH3FFuhYvTI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vw0ALKS2excCGxWKlBK84pIM7IQLOOsXBSbspHEWJ/GIsNzmvdmeXsfVJcwB4oy1z+ZrZQFJYiiHe+kpx2qDjv9HXtBrzahrkkGfjjArTE5Fo1k2tuRG16etopu+Kd+O+HsG0ZRTH4NXbnRcoYnbAZq2PQ4CVhfP/w7NCl47Fhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QfxSyHaS; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cba6cdf32so5266695e9.1;
-        Mon, 09 Sep 2024 06:57:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725890224; x=1726495024; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7+QMbzautmlcHBhreHHmtbMmq5qanob45DDspc/nC+0=;
-        b=QfxSyHaSDbP8LWxj3suo0X8xanDyDnQdmj1w41j+9TiCMUxqFRvIwkGsGku1qdinGl
-         dk1APH6OmqeATD4P1Jn4DliOAqP3boRiAc03vjQHK7cghA9rTfu1uSym9lOr+YJjOhoO
-         w8HZpqM/MOTiWGN7ILXXFGPUHmHGm1hZESiX8wEwU/+7qO4j3B5hThz85qJiCuaVT+3t
-         LaXPDoSNTGll1RvcDJ0ZV4/dKjTleNNlDhYTXoUyPYHcbqaRe9fR5FVMqG6kF0f5qCFO
-         zo3Rc+bQElqWzTGtyPF+u3WjnRyLcUlhK12x5Q03jgsUQnangQWQ8l8GzlbFzxGWTQoR
-         KkOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725890224; x=1726495024;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7+QMbzautmlcHBhreHHmtbMmq5qanob45DDspc/nC+0=;
-        b=WKHqJJ3edkU3aROMDYwrPjD18WWR0b3uAJFYJr3eaXxdckyW0Ku5kdZlYc2eEcq6IG
-         sOX5h6UwYkA/2j62tkYe3GtyUGo4FGIHTaTP5KhLLFYxaC61rXZt06kgRE8u4/UbBvj+
-         xT60Y9Cnj/wOpAaezsCtOCqLJ1ZDTdLDP3rLvAYibNIhJtwisyUhE2qG1mCMq4L5UlFv
-         I6JgCzOjC14tmOGkmp3lskJIa1Eq99f2UE2fR7pyB4NvdUG3wsZsIaJRrkIP2wrGxuss
-         wUQXoeL3jZCIHKHdPkendddFxDEk9hOHkd3QUxV7bAM8I+64DU6Xs0+m34as+peZrcW+
-         FW0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWPk/c+EhpU2k4kEvT8oTzE79gvTX0YFXgAVpB6e/tNNaNJpldwE6UA5bc24tshZKFIrImk4SWsZdsa3nKQGjs=@vger.kernel.org, AJvYcCXix3cHzy+JGPvl9TX0qCZXpo6UZh6zBM7h/X9/Y1k7DPW/VPNhos3KpzicxgZM54JpiNlJ6eo7Vc3dOaHF@vger.kernel.org
-X-Gm-Message-State: AOJu0YziT+DP/+ODrjnVe+34rhY9kWtKVm0HKIZfKm6sNSt93G5QwHmp
-	BeKVKZ8xSQ4VWa6fgpoH6eAP5R3FTGjX7irVJw4WCrso/50G5ijb
-X-Google-Smtp-Source: AGHT+IGNiwsklAcwJsZ31JpPrYhy+/GxiLBGkeOy+QCaF9wlyRktASdo5P3FRt0YHXiCITrSxdhrHg==
-X-Received: by 2002:a05:6000:136e:b0:371:8ed6:663f with SMTP id ffacd0b85a97d-3788967492emr7094167f8f.37.1725890223631;
-        Mon, 09 Sep 2024 06:57:03 -0700 (PDT)
-Received: from void.void ([141.226.14.150])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d3743sm6147963f8f.79.2024.09.09.06.57.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 06:57:03 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	Oded Gabbay <ogabbay@kernel.org>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] accel/ivpu: Fix a typo
-Date: Mon,  9 Sep 2024 16:56:38 +0300
-Message-ID: <20240909135655.45938-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725890262; c=relaxed/simple;
+	bh=q/tNtIyfCdRY6XfwelsHm0yk8u5ChMUVArQ6qqsoLi4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZtHJELrrHnzrlrc8G+IA/Q0V3WBnm5V5PS8PmXuR/Ja6UHcMv4Cbs1UMf26ER9wET0uQHPhEASifz73b5DaPQQiiOvoyi4JdOqTMJxcCsOAljDjz/kiPJBWpz6FJjB5kfijLiroQ61OrrvzVqOZdcRj9rS3+KqjN2gbZxOAcLJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GkSWKcNb; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725890261; x=1757426261;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=q/tNtIyfCdRY6XfwelsHm0yk8u5ChMUVArQ6qqsoLi4=;
+  b=GkSWKcNbB3PGRIfF0o6oDj84bacEcxzdmmrxKydGOwzaJgmlRW+iY6Lo
+   xSxgNHyOzSJRMLaGTD/WEFJymEBRXFpQfV5Qm7x/U/1d2Rq6QbK9Sb4sQ
+   fiSW+Qv6HZ0HL8vOlV553/45+8x8Ek1G+1XDpGzukiHa6v66lWWtsi/ie
+   cI8X5b0Xtn84fB/8HxU6hXm1dqMxnUzaIpt2ZAdaxjmn8MlaKk2aXynEe
+   RBBQOiGwBNbC9m7uPrGHqS4LzSCFmHVnBjj49S9XQafGW9IX+xsOMTog0
+   CxqbSoMQtUs5k7DDh1g9iy4YinFYiSlG2Ymsc3F8aQsrp9Gwn/soTlS9/
+   Q==;
+X-CSE-ConnectionGUID: 1KojktmQTxKI7+ht/ikDuw==
+X-CSE-MsgGUID: /VMiyDO7RkuzCs1mp7XldQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24749510"
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="24749510"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 06:57:41 -0700
+X-CSE-ConnectionGUID: TG4k6iiPQyugxqb20JQswQ==
+X-CSE-MsgGUID: U9s4ZGILQiazlOofvYe99Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="97488731"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 06:57:39 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1snetb-00000006oTg-0UmU;
+	Mon, 09 Sep 2024 16:57:35 +0300
+Date: Mon, 9 Sep 2024 16:57:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH v1 1/1] locking/rwsem: Mark inline helpers with
+ __maybe_unused
+Message-ID: <Zt7-zhkwxy7E-KGb@smile.fi.intel.com>
+References: <20240909115839.1022530-1-andriy.shevchenko@linux.intel.com>
+ <20240909132941.GE4723@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909132941.GE4723@noisy.programming.kicks-ass.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Fix a typo in comments.
+On Mon, Sep 09, 2024 at 03:29:41PM +0200, Peter Zijlstra wrote:
+> On Mon, Sep 09, 2024 at 02:58:39PM +0300, Andy Shevchenko wrote:
+> > When one or more inline heplers are unused, it prevents kernel builds
+> > with clang, `make W=1` and CONFIG_WERROR=y:
+> > 
+> > kernel/locking/rwsem.c:187:20: error: unused function 'is_rwsem_reader_owned' [-Werror,-Wunused-function]
+> >   187 | static inline bool is_rwsem_reader_owned(struct rw_semaphore *sem)
+> >       |                    ^~~~~~~~~~~~~~~~~~~~~
+> > kernel/locking/rwsem.c:271:35: error: unused function 'rwsem_owner' [-Werror,-Wunused-function]
+> >   271 | static inline struct task_struct *rwsem_owner(struct rw_semaphore *sem)
+> >       |                                   ^~~~~~~~~~~
+> > 
+> > Fix this by marking inline helpers with __maybe_unused.
+> > 
+> > See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+> > inline functions for W=1 build").
+> 
+> :-(
+> 
+> And now you're back to the exact situation that people tried to avoid.
+> The moment one of these functions goes unused it will no longer scream
+> about it.
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- drivers/accel/ivpu/vpu_boot_api.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yeah... The problem is that I don't know well this code. This is, of course,
+just a quickfix, the proper one should probably locate the function under
+the proper guards (here all of them are used only for debugging AFAICS).
+But I'm not sure. Hence consider this as
+Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-diff --git a/drivers/accel/ivpu/vpu_boot_api.h b/drivers/accel/ivpu/vpu_boot_api.h
-index 82954b91b748..d474bc7b15c0 100644
---- a/drivers/accel/ivpu/vpu_boot_api.h
-+++ b/drivers/accel/ivpu/vpu_boot_api.h
-@@ -8,7 +8,7 @@
- 
- /*
-  * =========== FW API version information beginning ================
-- *  The bellow values will be used to construct the version info this way:
-+ *  The below values will be used to construct the version info this way:
-  *  fw_bin_header->api_version[VPU_BOOT_API_VER_ID] = (VPU_BOOT_API_VER_MAJOR << 16) |
-  *  VPU_BOOT_API_VER_MINOR;
-  *  VPU_BOOT_API_VER_PATCH will be ignored. KMD and compatibility is not affected if this changes
+> I'm for reverting the above commit, that gets all static inline on the
+> same footing, it should not matter if code is from a header file or not.
+
+Is it the case? Because to me it seems to complain only on C files.
+
 -- 
-2.46.0
+With Best Regards,
+Andy Shevchenko
+
 
 
