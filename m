@@ -1,158 +1,126 @@
-Return-Path: <linux-kernel+bounces-321950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0CF9721DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:29:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B1D9721DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0FC5285122
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:29:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D75671F23DC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B4C188CDE;
-	Mon,  9 Sep 2024 18:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E8E1891DA;
+	Mon,  9 Sep 2024 18:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YgPGmB33"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JcfrvxY3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777CB17C9B6
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 18:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E871CAA6;
+	Mon,  9 Sep 2024 18:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725906581; cv=none; b=b0GEMch4zvU0GMbVJnoDveSDthWTxcs9Do7BQHh0OZgOT/VxRD8aGAQuf/mFKOiE72HRMmhizLYbm3ORqkvvZhG9KEtGU1nfHRie2nGIKWuA+yC+BUfDZSK2pistN+VXkgYOcVP1IjEjW/VXIFlm0O7gNZ/esW0e+Nm/brOOfIo=
+	t=1725906649; cv=none; b=LIoKUrFIJol7r68ahjrn3yHp9n2RRPA1SZ6RTQ7gr1cU6GZq1Hum/feygovk9UCnk7PktTuGro0ePiJnCBmmNfC3ntqJFkhkt2fue7Eyks5JqINfTnAWRu9iMNKJ73ek/q5527GGs4TPoDcofAMeMf5DP+hCN3zZNC4d0AsioRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725906581; c=relaxed/simple;
-	bh=8n3tGnSsaS8Ef5btUal4XH/5jEMt+x/gKgan0/azNhs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r+16BKumR793v9VmqVtUzdGT8e3WJ4aIbyaJX7/aA39aiO/FRBjSel6J7xt2gZyK+bRrNgBX8MRr8rrp5xsIeSoZfBeRPVUNEq/ZnYe3BlOuxqYYtTeSi9uUq7WbGuw8uySclA3K8QeLKXMsxMEEMfAjOwB2EFhPl0FHzO3NOzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YgPGmB33; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725906578;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=v6cW4IEecTFnIMvpjFYXEq2ZsoJICYtcdAcWwNGgLhg=;
-	b=YgPGmB338Zc6wusrtBZABYS5fwai+DKF7Zc4YRIdwXXVbGMXXxCq4pLvjBCcfUwDYLKrB8
-	dVcE1eWLIpwSbsnKvoMro10QBOjNrsmKFrkuEC+xj58yTVvp4wJe3tidxDUxZh4YGmwM8y
-	9PdRQALb5pvPIYyWk6NXop1SCekYrNc=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-OK7VbwbbPwCk7GjI4CGE9A-1; Mon,
- 09 Sep 2024 14:29:33 -0400
-X-MC-Unique: OK7VbwbbPwCk7GjI4CGE9A-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A0BD31944D1A;
-	Mon,  9 Sep 2024 18:29:30 +0000 (UTC)
-Received: from llong.com (unknown [10.2.16.126])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 05E631955F65;
-	Mon,  9 Sep 2024 18:29:22 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
+	s=arc-20240116; t=1725906649; c=relaxed/simple;
+	bh=f+cNg6Y/JZEaSDG9EamgmiQzQ33gJhjd1g2B3Oa2+po=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vAAvA4pAm1xuKZj6oqFyz8akpxhd6hQYQZvybifZQPC3uCRNg9qVhpQ5IQaLSh9zeHcIDcowoiF4NLTtxaTZ2u0dp2LSksxVVK2d1bsLWA6Zg814eswzFKGJfYrvG++i+D4X7r95mD0l04QVBZxmV67NSe2GWuqwt04SyAdb5ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JcfrvxY3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB93FC4CEC5;
+	Mon,  9 Sep 2024 18:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725906649;
+	bh=f+cNg6Y/JZEaSDG9EamgmiQzQ33gJhjd1g2B3Oa2+po=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JcfrvxY3mvCXtn0YuYrZvN2FRtkIlKEZs374pTatmcWofWq551EyoENxNOyd8jiEW
+	 wXb+kO+C4wDO30qc1tNw+D15eW0U6vj8HcccaGNzPDylyYPeGgMOKNdNJdohFWCAoM
+	 YQiSsaM9/0ixdFCO0CSbIP/5UHcO53pVcx1ga4G1DGjxvLoaRzbjTHeresx+3iCuli
+	 s0KT+xOmHE5HUvt3HDqfNTMMZZSQHRPoRZ4KgSYHLRY9Ks4rAGKS2GF8tdAJrqllvM
+	 6+VIewKBQZSSn0WiIjfR1D8TN89QI/PCb4XHk3Nlq+hu+2Vf+txchpNClDh0Wim+5x
+	 DJ6EKd+Wlj7Lg==
+Date: Mon, 9 Sep 2024 19:30:43 +0100
+From: Simon Horman <horms@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Felix Huettner <felix.huettner@mail.schwarz>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	Nathan Chancellor <nathan@kernel.org>,
 	Nick Desaulniers <ndesaulniers@google.com>,
 	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH] locking/rwsem: Move is_rwsem_reader_owned() and rwsem_owner() under CONFIG_DEBUG_RWSEMS
-Date: Mon,  9 Sep 2024 14:29:05 -0400
-Message-ID: <20240909182905.161156-1-longman@redhat.com>
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH net v1 1/1] netfilter: conntrack: Guard possoble unused
+ functions
+Message-ID: <20240909183043.GE2097826@kernel.org>
+References: <20240905203612.333421-1-andriy.shevchenko@linux.intel.com>
+ <20240906162938.GH2097826@kernel.org>
+ <Zt7B79Q3O7mNqrOl@smile.fi.intel.com>
+ <20240909151712.GZ2097826@kernel.org>
+ <Zt8V5xjrZaEvR8K5@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt8V5xjrZaEvR8K5@smile.fi.intel.com>
 
-Both is_rwsem_reader_owned() and rwsem_owner() are currently only used when
-CONFIG_DEBUG_RWSEMS is defined. This causes a compilation error with clang
-when `make W=1` and CONFIG_WERROR=y:
+On Mon, Sep 09, 2024 at 06:36:07PM +0300, Andy Shevchenko wrote:
+> On Mon, Sep 09, 2024 at 04:17:12PM +0100, Simon Horman wrote:
+> > On Mon, Sep 09, 2024 at 12:37:51PM +0300, Andy Shevchenko wrote:
+> > > On Fri, Sep 06, 2024 at 05:29:38PM +0100, Simon Horman wrote:
+> > > > On Thu, Sep 05, 2024 at 11:36:12PM +0300, Andy Shevchenko wrote:
+> > > 
+> > > > Local testing seems to show that the warning is still emitted
+> > > > for ctnetlink_label_size if CONFIG_NETFILTER_NETLINK_GLUE_CT is enabled
+> 
+> Hold on, this is not related to the patch.
+> It might be another issue.
 
-kernel/locking/rwsem.c:187:20: error: unused function 'is_rwsem_reader_owned' [-Werror,-Wunused-function]
-  187 | static inline bool is_rwsem_reader_owned(struct rw_semaphore *sem)
-      |                    ^~~~~~~~~~~~~~~~~~~~~
-kernel/locking/rwsem.c:271:35: error: unused function 'rwsem_owner' [-Werror,-Wunused-function]
-  271 | static inline struct task_struct *rwsem_owner(struct rw_semaphore *sem)
-      |                                   ^~~~~~~~~~~
+Yes, sorry, I see that now too.
 
-Fix this by moving these two functions under the CONFIG_DEBUG_RWSEMS define.
+Perhaps it can be fixed separately, something like this:
 
-Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/locking/rwsem.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 33cac79e3994..4b041e9c408f 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -181,12 +181,21 @@ static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
- 	__rwsem_set_reader_owned(sem, current);
- }
+diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
+index 8fd2b9e392a7..fcd1b800b2c1 100644
+--- a/net/netfilter/nf_conntrack_netlink.c
++++ b/net/netfilter/nf_conntrack_netlink.c
+@@ -383,6 +383,7 @@ static int ctnetlink_dump_secctx(struct sk_buff *skb, const struct nf_conn *ct)
+ #endif
  
-+#ifdef CONFIG_DEBUG_RWSEMS
-+/*
-+ * Return just the real task structure pointer of the owner
-+ */
-+static inline struct task_struct *rwsem_owner(struct rw_semaphore *sem)
-+{
-+	return (struct task_struct *)
-+		(atomic_long_read(&sem->owner) & ~RWSEM_OWNER_FLAGS_MASK);
-+}
-+
- /*
-  * Return true if the rwsem is owned by a reader.
-  */
- static inline bool is_rwsem_reader_owned(struct rw_semaphore *sem)
+ #ifdef CONFIG_NF_CONNTRACK_LABELS
++#ifdef CONFIG_NETFILTER_NETLINK_GLUE_CT
+ static inline int ctnetlink_label_size(const struct nf_conn *ct)
  {
--#ifdef CONFIG_DEBUG_RWSEMS
- 	/*
- 	 * Check the count to see if it is write-locked.
- 	 */
-@@ -194,11 +203,9 @@ static inline bool is_rwsem_reader_owned(struct rw_semaphore *sem)
- 
- 	if (count & RWSEM_WRITER_MASK)
- 		return false;
--#endif
- 	return rwsem_test_oflags(sem, RWSEM_READER_OWNED);
+ 	struct nf_conn_labels *labels = nf_ct_labels_find(ct);
+@@ -391,6 +392,7 @@ static inline int ctnetlink_label_size(const struct nf_conn *ct)
+ 		return 0;
+ 	return nla_total_size(sizeof(labels->bits));
  }
++#endif
  
--#ifdef CONFIG_DEBUG_RWSEMS
- /*
-  * With CONFIG_DEBUG_RWSEMS configured, it will make sure that if there
-  * is a task pointer in owner of a reader-owned rwsem, it will be the
-@@ -265,15 +272,6 @@ static inline bool rwsem_write_trylock(struct rw_semaphore *sem)
- 	return false;
- }
- 
--/*
-- * Return just the real task structure pointer of the owner
-- */
--static inline struct task_struct *rwsem_owner(struct rw_semaphore *sem)
--{
--	return (struct task_struct *)
--		(atomic_long_read(&sem->owner) & ~RWSEM_OWNER_FLAGS_MASK);
--}
--
- /*
-  * Return the real task structure pointer of the owner and the embedded
-  * flags in the owner. pflags must be non-NULL.
--- 
-2.43.5
+ static int
+ ctnetlink_dump_labels(struct sk_buff *skb, const struct nf_conn *ct)
 
+> 
+> > > > but CONFIG_NF_CONNTRACK_EVENTS is not.
+> > > 
+> > > Can you elaborate on this, please?
+> > > I can not reproduce.
+> > 
+> > Sure, let me retest and get back to you.
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
