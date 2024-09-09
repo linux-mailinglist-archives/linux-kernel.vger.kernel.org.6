@@ -1,140 +1,119 @@
-Return-Path: <linux-kernel+bounces-321330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169C79718DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:01:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0679718DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70DDDB226D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:01:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 445E3B21FF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C071B5EC7;
-	Mon,  9 Sep 2024 12:01:10 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D891B29C7;
+	Mon,  9 Sep 2024 12:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WzNvkvl1"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066FA1531E0;
-	Mon,  9 Sep 2024 12:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773861531E0;
+	Mon,  9 Sep 2024 12:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725883270; cv=none; b=m2yhDV+3qUuMTbISFi/iKr8+jTnEwo82lhLRE25Tu57A533llSQ5xm6yAdZeYbQyvYPXWTfBqmnZabWGnpGp/mILfCElkYaPoeYq3exE5yx9niV3hkMM7Px8VKt8qldqJmuEPGoRXcG/CUhAWfk98QWLXNpBx9BHKrRXoAQpeLA=
+	t=1725883344; cv=none; b=nbmxmo/UK1F1334N10Id+Memkm+fbsp6sNeqqJvXp/5ajWNphfxjLtC6eUqTe3Rw6ah29lXt0VJ89EE8O9ZGrXx4hMFD6TInA9AQpJVOw/NxbfX5czCrkqpgPmhOy2sFoa7Ef6K+BuzgN2EnxoVYsyNvpnwtj7irOENt+ueE2oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725883270; c=relaxed/simple;
-	bh=QEkWlOa9N1d1NpCDAXD30Izdi7PSKFUJNb7W0U0Ec7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YOFnBssvn4wYmZD+8fQbdMllYljox2jJLj4zP41ALMC/8yFk8I+TeFES+GKO/17jIXWDylwdJN7DldzGh2KCjYTtF7GY6SSWAAkbzl8mx4Fu/JgkhmUBVOnJHbs0CsBAgNP5wY8SNJSLLao/oPc8M8vBSp2w/KPPB5bXunzglPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X2QQF12l5z2Dbw1;
-	Mon,  9 Sep 2024 20:00:37 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id EF3DD18002B;
-	Mon,  9 Sep 2024 20:01:03 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 9 Sep 2024 20:01:03 +0800
-Message-ID: <57b11c6e-8b19-b722-f842-b99aed9fdd42@huawei.com>
-Date: Mon, 9 Sep 2024 20:01:02 +0800
+	s=arc-20240116; t=1725883344; c=relaxed/simple;
+	bh=ueCToDbZid8JX2C3swPgzCSjf3onHxH3q5gmhRXImbw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m2hNtoOZHRiWsW18QhEoSC6CyelCMn0TRsq9b3nkswBKsNckgwiHY/kcxq2Ns/zrz2f2wS4ienSegFu/TpipvX1sctKDnHXyDfLcgJBV+R+EmLJBz8+DLkjdhxftNejwItZ03h2LLgLY8/LgQlD1k+VukSKlTjj6kmNbQaO8RF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WzNvkvl1; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48937mZr021934;
+	Mon, 9 Sep 2024 12:02:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=1
+	WK8zaUvTuTLbZmPQBkOXWqV+PiywjNoHX+KbhBAL5I=; b=WzNvkvl1CZxKwyZk5
+	gvW29+pPPtGLAiOa0ZjCWqsmJvrBLZwD2PFRVxMTAMPjccIyE7ZEwdU5Xhq92k5c
+	OY8CzXDuXehLicdewCrchXIViX23k8z1x7El83L6LNzX6zdmwI/hvK4VbpUo+xGX
+	pVgkcVsXUL5e+X+ZIudMaiPFvAmm7YO8fvBzlSp4wOSbcYG9ywnMcbIEfH7MKPKs
+	6CT4G6bRDQDjxT8Z//Wq+CpSZl09UJNiqBAZRDXAavWhYFlvXqvUXDH8cliXwtJ9
+	xnI30iASLB3qj/IDUm25zLFIgSQlzTlVm0mmYPpUG87K0Qs1QYExdioGQFIb4d2x
+	X5Ydg==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41geja9m2j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 12:02:20 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 489BNtNe019843;
+	Mon, 9 Sep 2024 12:02:19 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41h25ppa5j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 12:02:19 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 489C2I8628836484
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Sep 2024 12:02:18 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 37C735805D;
+	Mon,  9 Sep 2024 12:02:18 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 813E458043;
+	Mon,  9 Sep 2024 12:02:17 +0000 (GMT)
+Received: from [9.61.94.68] (unknown [9.61.94.68])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Sep 2024 12:02:17 +0000 (GMT)
+Message-ID: <d5911cd9-0365-47e8-91e4-f55317b8040b@linux.ibm.com>
+Date: Mon, 9 Sep 2024 08:02:17 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v3 3/3] spi: geni-qcom: Use devm functions to simplify
- code
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] s390/vfio-ap: Driver feature advertisement
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        akrowiak@linux.ibm.com, borntraeger@de.ibm.com, agordeev@linux.ibm.com,
+        gor@linux.ibm.com
+References: <20240905124351.14594-1-jjherne@linux.ibm.com>
+ <20240906104540.9510-F-hca@linux.ibm.com>
 Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <broonie@kernel.org>, <akashast@codeaurora.org>, <dianders@chromium.org>,
-	<vkoul@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240909073141.951494-1-ruanjinjie@huawei.com>
- <20240909073141.951494-4-ruanjinjie@huawei.com>
- <45m7oruivszoiesijmdr66oeatvr3ff6ores4lx4kbus2ti552@5sobv4hk7laa>
- <5487bcb2-7792-e3b3-5972-d224df61b9da@huawei.com>
- <CAA8EJpp2H4uGieVXj8varne2H3sAJhponApj0-baM1rcaOTCBA@mail.gmail.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <CAA8EJpp2H4uGieVXj8varne2H3sAJhponApj0-baM1rcaOTCBA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+From: "Jason J. Herne" <jjherne@linux.ibm.com>
+In-Reply-To: <20240906104540.9510-F-hca@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 2sGJE3oXWHeW4qFWGRM--t6f6XkUDZmR
+X-Proofpoint-GUID: 2sGJE3oXWHeW4qFWGRM--t6f6XkUDZmR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-09_04,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ phishscore=0 mlxlogscore=714 spamscore=0 impostorscore=0 adultscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409090092
 
-
-
-On 2024/9/9 19:51, Dmitry Baryshkov wrote:
-> On Mon, 9 Sept 2024 at 14:46, Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+On 9/6/24 6:45 AM, Heiko Carstens wrote:
+> On Thu, Sep 05, 2024 at 08:43:51AM -0400, Jason J. Herne wrote:
+>> Advertise features of the driver for the benefit of automated tooling
+>> like Libvirt and mdevctl.
 >>
->>
->>
->> On 2024/9/9 17:49, Dmitry Baryshkov wrote:
->>> On Mon, Sep 09, 2024 at 03:31:41PM GMT, Jinjie Ruan wrote:
->>>> Use devm_pm_runtime_enable(), devm_request_irq() and
->>>> devm_spi_register_controller() to simplify code.
->>>>
->>>> And also register a callback spi_geni_release_dma_chan() with
->>>> devm_add_action_or_reset(), to release dma channel in both error
->>>> and device detach path, which can make sure the release sequence is
->>>> consistent with the original one.
->>>>
->>>> 1. Unregister spi controller.
->>>> 2. Free the IRQ.
->>>> 3. Free DMA chans
->>>> 4. Disable runtime PM.
->>>>
->>>> So the remove function can also be removed.
->>>>
->>>> Suggested-by: Doug Anderson <dianders@chromium.org>
->>>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->>>> ---
->>>> v3:
->>>> - Land the rest of the cleanups afterwards.
->>>> ---
->>>>  drivers/spi/spi-geni-qcom.c | 37 +++++++++++++------------------------
->>>>  1 file changed, 13 insertions(+), 24 deletions(-)
->>>>
->>>> diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
->>>> index 6f4057330444..8b0039d14605 100644
->>>> --- a/drivers/spi/spi-geni-qcom.c
->>>> +++ b/drivers/spi/spi-geni-qcom.c
->>>> @@ -632,8 +632,10 @@ static int spi_geni_grab_gpi_chan(struct spi_geni_master *mas)
->>>>      return ret;
->>>>  }
->>>>
->>>> -static void spi_geni_release_dma_chan(struct spi_geni_master *mas)
->>>> +static void spi_geni_release_dma_chan(void *data)
->>>>  {
->>>> +    struct spi_geni_master *mas = data;
->>>> +
->>>>      if (mas->rx) {
->>>>              dma_release_channel(mas->rx);
->>>>              mas->rx = NULL;
->>>> @@ -1132,6 +1134,12 @@ static int spi_geni_probe(struct platform_device *pdev)
->>>>      if (ret)
->>>>              return ret;
->>>>
->>>> +    ret = devm_add_action_or_reset(dev, spi_geni_release_dma_chan, spi);
->>>
->>> This should be mas, not spi.
->>>
->>> Doesn't looks like this was tested. Please correct me if I'm wrong.
->>
->> Yes, you are right, the data should be struct spi_geni_master, which is
->> mas. Sorry, only compile passed.
+>> Signed-off-by: Jason J. Herne <jjherne@linux.ibm.com>
+>> Reviewed-by: Anthony Krowiak <akrowiak@linux.ibm.com>
+>> ---
+>>   Documentation/arch/s390/vfio-ap.rst | 34 +++++++++++++++++++++++++++++
+>>   drivers/s390/crypto/vfio_ap_drv.c   | 13 +++++++++++
+>>   2 files changed, 47 insertions(+)
 > 
-> Please perform a runtime test or mention it in the cover letter that
-> it was only compile-tested.
+> Via which tree should this go upstream?
+> 
 
-Thank you! I'll add this information next version.
-
-> 
-> 
-> 
+I'm not 100% sure. Would s390 next be appropriate?
 
