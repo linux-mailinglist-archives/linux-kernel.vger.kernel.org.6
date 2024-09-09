@@ -1,259 +1,267 @@
-Return-Path: <linux-kernel+bounces-322201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E29459725BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:28:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF729725BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07B0F1C23264
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:28:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EBA91F2443B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F8418DF8F;
-	Mon,  9 Sep 2024 23:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A126A18DF84;
+	Mon,  9 Sep 2024 23:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ico9HHff"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o7P9mr9u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB912130495;
-	Mon,  9 Sep 2024 23:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F05189909
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 23:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725924529; cv=none; b=GPEJ0wSXFrB0joePxrXJ/3591zq/nmGYQOjYguELEUSVHVQMmjUgumS8jJ/rpi3/EPwPCNtrZsGWI5z09j5C9x9EGkgU6vBe9rMMaInjaQfROoONWL02PRD+uEHq1tZQ097podNu5pVpxmZVYYy09GMqXccii6ZUYwqMJwY7EKw=
+	t=1725924584; cv=none; b=ESwe1JxbwHEd9wl7X+iJVGEyjifBPpEqhHt9vlBtFf8OZdZfYT/qr6akK6daJBDBNA+SZoeEaf1y3zqjZQNFU/OMyqZ/iQ2UrWcdgV6dK6rAtt8lp6JsU6PkpJ9Y2/N5KpjPBFo/SQ/qeW+dnpv8qJsDfj/UstK77KqBZ4siBCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725924529; c=relaxed/simple;
-	bh=f0VHQU73xeHnXfPxJX4dESj3StMiXQPugv1d/lnGwEo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=qgn9+BIuRXDOH9FJd7YpNoAvmUNzwNfCfMfhCyyAACalYQc+MapQTj7PyKHGYDccdwYs4YrOJr1MGcn5nZ6hUvmLAD3w7pRd3TuyPO3RAkVeOmsEUw3J5wNE3firMop1gnIeH4A5aPKi9mBwAQMnKz08rOp4THfIhL97vLPYzFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ico9HHff; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725924527; x=1757460527;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=f0VHQU73xeHnXfPxJX4dESj3StMiXQPugv1d/lnGwEo=;
-  b=ico9HHffL3DfOOWED60IEKvFM4Y+49e6gnWr8so8U6bpd6iB2iK3Z4LG
-   WR+3f7lUlN+8kWveBetwiNYoiCIYJqKjwupZ0l5s+HXGCPc8k92vUPJ6B
-   ZQfMGvVg8wlMIQHHlfgLym/f124BQKAM/nMP9chUxxK+scDsdq6EdHUQI
-   g6C/Qd8YZY96z9B1MpV4XNCdYLAg1YdCc/y/ae4N/vwGLwjNe0TDTxAvz
-   IO7zSm2aLHL/tHm/ibpTTUqRKTiuNC7240McyVMkrTzGBEGU6F3pVwGzH
-   tounl0og3ZQ1JCzsS3YZz7E0/uCDu6uPoMYd4Ke1JlYMwwOAszzBxBX2M
-   Q==;
-X-CSE-ConnectionGUID: RuJeMw01T964VANzeM3T7g==
-X-CSE-MsgGUID: wzJ/rcBjTg+n+ER2v6iTnQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="47164118"
-X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="47164118"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 16:28:47 -0700
-X-CSE-ConnectionGUID: S8AM3VkhSQioi7EXuePXiw==
-X-CSE-MsgGUID: Uv4BJMqHSUSCALOfIzI84g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="66850786"
-Received: from daliomra-mobl3.amr.corp.intel.com (HELO rjingar-desk5.intel.com) ([10.124.223.50])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 16:28:46 -0700
-From: Rajvi Jingar <rajvi.jingar@linux.intel.com>
-To: xi.pardee@linux.intel.com,
-	irenic.rajneesh@gmail.com,
-	david.e.box@linux.intel.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH] platform/x86/intel/pmc: Add Arrow Lake U/H support to intel_pmc_core driver
-Date: Mon,  9 Sep 2024 16:28:42 -0700
-Message-ID: <20240909232842.2896965-1-rajvi.jingar@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725924584; c=relaxed/simple;
+	bh=FUu/z1CQYv3oi5zSAh2onH+hx9mS6Wr7Z4kDT4b5clE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cCXwfC3p9tyouFHQrWyAf3jJHDousYante6OMksEsBYTMfCHQTGM574Ep/rlH9q7rrQY9oMWSsTWhSMX1hTD5RhjPBs9S7LRPsXFDlg6kszP8YfvgfisNKKQ7SWC8K//PyIIVYDUWqqIPqLJVqf93G5XhxLbXqUzndecLZRSSfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o7P9mr9u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CEC0C4CEC5;
+	Mon,  9 Sep 2024 23:29:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725924583;
+	bh=FUu/z1CQYv3oi5zSAh2onH+hx9mS6Wr7Z4kDT4b5clE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o7P9mr9uP1/5OXHe90TXAs8P2TUZ+2qtB4cKl8bOofRNo4kQw+M4wPEPYnZ0ivAfL
+	 UjQZW6MYuSCjGD6M4yGOxtOcQhku6y3Jad9W6Zd2iKbjOQ7Jrp5E7PzTGBRX5ZpZxB
+	 ewcrUNhv4ygSyAgSLZBS1wYBbWR/x2lAhHB0wA4zrMa4jRD1U5Ho/fTG1UI9XOYAJm
+	 hcSI2D9qM/AP8GipKtfvgju7/5ve9FuRjFx/xkKu9hx46q5gbn36ocMR7nZD7jM62U
+	 mXeoL77lU4YEqNof/7Lru2qUklkaoNhLczPQFsEQDfBn5kc8ZIjLsFEZm74cNR2tm/
+	 VWjG/u0+wH/mA==
+Date: Mon, 9 Sep 2024 13:29:42 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: [PATCH v2 sched_ext/for-6.12] sched_ext: Synchronize bypass state
+ changes with rq lock
+Message-ID: <Zt-E5mwbfoJgcBtX@slm.duckdns.org>
+References: <Zt9pIAw06q_TZBoY@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt9pIAw06q_TZBoY@slm.duckdns.org>
 
-Add Arrow Lake U and Arro Lake H support in intel_pmc_core driver
+While the BPF scheduler is being unloaded, the following warning messages
+trigger sometimes:
 
-Signed-off-by: Rajvi Jingar <rajvi.jingar@linux.intel.com>
+ NOHZ tick-stop error: local softirq work is pending, handler #80!!!
+
+This is caused by the CPU entering idle while there are pending softirqs.
+The main culprit is the bypassing state assertion not being synchronized
+with rq operations. As the BPF scheduler cannot be trusted in the disable
+path, the first step is entering the bypass mode where the BPF scheduler is
+ignored and scheduling becomes global FIFO.
+
+This is implemented by turning scx_ops_bypassing() true. However, the
+transition isn't synchronized against anything and it's possible for enqueue
+and dispatch paths to have different ideas on whether bypass mode is on.
+
+Make each rq track its own bypass state with SCX_RQ_BYPASSING which is
+modified while rq is locked.
+
+This removes most of the NOHZ tick-stop messages but not completely. I
+believe the stragglers are from the sched core bug where pick_task_scx() can
+be called without preceding balance_scx(). Once that bug is fixed, we should
+verify that all occurrences of this error message are gone too.
+
+v2: scx_enabled() test moved inside the for_each_possible_cpu() loop so that
+    the per-cpu states are always synchronized with the global state.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: David Vernet <void@manifault.com>
 ---
- drivers/platform/x86/intel/pmc/arl.c  | 65 ++++++++++++++++++++++-----
- drivers/platform/x86/intel/pmc/core.c |  2 +
- drivers/platform/x86/intel/pmc/core.h |  7 +++
- 3 files changed, 64 insertions(+), 10 deletions(-)
+ kernel/sched/ext.c   |   63 +++++++++++++++++++++++++++++----------------------
+ kernel/sched/sched.h |    1 
+ 2 files changed, 38 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/platform/x86/intel/pmc/arl.c b/drivers/platform/x86/intel/pmc/arl.c
-index e10527c4e3e0..964f5f040dd9 100644
---- a/drivers/platform/x86/intel/pmc/arl.c
-+++ b/drivers/platform/x86/intel/pmc/arl.c
-@@ -16,6 +16,7 @@
- #define IOEP_LPM_REQ_GUID	0x5077612
- #define SOCS_LPM_REQ_GUID	0x8478657
- #define PCHS_LPM_REQ_GUID	0x9684572
-+#define SOCM_LPM_REQ_GUID	0x2625030
- 
- static const u8 ARL_LPM_REG_INDEX[] = {0, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20};
- 
-@@ -650,6 +651,7 @@ const struct pmc_reg_map arl_pchs_reg_map = {
- 	.etr3_offset = ETR3_OFFSET,
- };
- 
-+#define PMC_DEVID_SOCM 0x777f
- #define PMC_DEVID_SOCS 0xae7f
- #define PMC_DEVID_IOEP 0x7ecf
- #define PMC_DEVID_PCHS 0x7f27
-@@ -669,11 +671,17 @@ static struct pmc_info arl_pmc_info_list[] = {
- 		.devid	= PMC_DEVID_PCHS,
- 		.map	= &arl_pchs_reg_map,
- 	},
-+	{
-+		.guid	= SOCM_LPM_REQ_GUID,
-+		.devid	= PMC_DEVID_SOCM,
-+		.map	= &mtl_socm_reg_map,
-+	},
- 	{}
- };
- 
- #define ARL_NPU_PCI_DEV			0xad1d
- #define ARL_GNA_PCI_DEV			0xae4c
-+#define ARL_H_GNA_PCI_DEV 		0x774c
- /*
-  * Set power state of select devices that do not have drivers to D3
-  * so that they do not block Package C entry.
-@@ -684,6 +692,12 @@ static void arl_d3_fixup(void)
- 	pmc_core_set_device_d3(ARL_GNA_PCI_DEV);
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -1397,9 +1397,9 @@ static bool scx_ops_tryset_enable_state(
+ 	return atomic_try_cmpxchg(&scx_ops_enable_state_var, &from_v, to);
  }
  
-+static void arl_h_d3_fixup(void)
-+{
-+	pmc_core_set_device_d3(ARL_NPU_PCI_DEV);
-+	pmc_core_set_device_d3(ARL_H_GNA_PCI_DEV);
-+}
-+
- static int arl_resume(struct pmc_dev *pmcdev)
+-static bool scx_ops_bypassing(void)
++static bool scx_rq_bypassing(struct rq *rq)
  {
- 	arl_d3_fixup();
-@@ -692,16 +706,47 @@ static int arl_resume(struct pmc_dev *pmcdev)
- 	return pmc_core_resume_common(pmcdev);
+-	return unlikely(atomic_read(&scx_ops_bypass_depth));
++	return unlikely(rq->scx.flags & SCX_RQ_BYPASSING);
  }
  
-+static int arl_h_resume(struct pmc_dev *pmcdev)
-+{
-+	arl_h_d3_fixup();
-+	pmc_core_send_ltr_ignore(pmcdev, 3, 0);
-+
-+	return pmc_core_resume_common(pmcdev);
-+}
-+
-+int arl_h_core_init(struct pmc_dev *pmcdev)
-+{
-+	arl_h_d3_fixup();
-+
-+	return arl_core_generic_init(pmcdev, SOC_M);
-+}
-+
- int arl_core_init(struct pmc_dev *pmcdev)
- {
--	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_SOC];
-+	arl_d3_fixup();
-+
-+	return arl_core_generic_init(pmcdev, SOC_S);
-+}
-+
-+int arl_core_generic_init(struct pmc_dev *pmcdev, int soc_tp)
-+{
- 	int ret;
--	int func = 0;
-+	int func;
- 	bool ssram_init = true;
-+	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_SOC];
+ /**
+@@ -1932,7 +1932,7 @@ static void do_enqueue_task(struct rq *r
+ 	if (!scx_rq_online(rq))
+ 		goto local;
  
--	arl_d3_fixup();
- 	pmcdev->suspend = cnl_suspend;
--	pmcdev->resume = arl_resume;
-+
-+	if (soc_tp == SOC_M) {
-+		func = 2;
-+		pmcdev->resume = arl_h_resume;
-+	} else if (soc_tp == SOC_S) {
-+		func = 0;
-+		pmcdev->resume = arl_resume;
-+	} else {
-+		return -EINVAL;
-+	}
-+
- 	pmcdev->regmap_list = arl_pmc_info_list;
+-	if (scx_ops_bypassing())
++	if (scx_rq_bypassing(rq))
+ 		goto global;
+ 
+ 	if (p->scx.ddsp_dsq_id != SCX_DSQ_INVALID)
+@@ -2620,7 +2620,7 @@ static int balance_one(struct rq *rq, st
+ 		 * bypassing test.
+ 		 */
+ 		if ((prev->scx.flags & SCX_TASK_QUEUED) &&
+-		    prev->scx.slice && !scx_ops_bypassing()) {
++		    prev->scx.slice && !scx_rq_bypassing(rq)) {
+ 			rq->scx.flags |= SCX_RQ_BAL_KEEP;
+ 			goto has_tasks;
+ 		}
+@@ -2633,7 +2633,7 @@ static int balance_one(struct rq *rq, st
+ 	if (consume_dispatch_q(rq, &scx_dsq_global))
+ 		goto has_tasks;
+ 
+-	if (!SCX_HAS_OP(dispatch) || scx_ops_bypassing() || !scx_rq_online(rq))
++	if (!SCX_HAS_OP(dispatch) || scx_rq_bypassing(rq) || !scx_rq_online(rq))
+ 		goto no_tasks;
+ 
+ 	dspc->rq = rq;
+@@ -2679,7 +2679,8 @@ no_tasks:
+ 	 * %SCX_OPS_ENQ_LAST is in effect.
+ 	 */
+ 	if ((prev->scx.flags & SCX_TASK_QUEUED) &&
+-	    (!static_branch_unlikely(&scx_ops_enq_last) || scx_ops_bypassing())) {
++	    (!static_branch_unlikely(&scx_ops_enq_last) ||
++	     scx_rq_bypassing(rq))) {
+ 		rq->scx.flags |= SCX_RQ_BAL_KEEP;
+ 		goto has_tasks;
+ 	}
+@@ -2871,7 +2872,7 @@ static void put_prev_task_scx(struct rq
+ 		 * forcing a different task. Leave it at the head of the local
+ 		 * DSQ.
+ 		 */
+-		if (p->scx.slice && !scx_ops_bypassing()) {
++		if (p->scx.slice && !scx_rq_bypassing(rq)) {
+ 			dispatch_enqueue(&rq->scx.local_dsq, p, SCX_ENQ_HEAD);
+ 			return;
+ 		}
+@@ -2936,7 +2937,7 @@ static struct task_struct *pick_task_scx
+ 			return NULL;
+ 
+ 		if (unlikely(!p->scx.slice)) {
+-			if (!scx_ops_bypassing() && !scx_warned_zero_slice) {
++			if (!scx_rq_bypassing(rq) && !scx_warned_zero_slice) {
+ 				printk_deferred(KERN_WARNING "sched_ext: %s[%d] has zero slice in pick_next_task_scx()\n",
+ 						p->comm, p->pid);
+ 				scx_warned_zero_slice = true;
+@@ -2974,7 +2975,7 @@ bool scx_prio_less(const struct task_str
+ 	 * calling ops.core_sched_before(). Accesses are controlled by the
+ 	 * verifier.
+ 	 */
+-	if (SCX_HAS_OP(core_sched_before) && !scx_ops_bypassing())
++	if (SCX_HAS_OP(core_sched_before) && !scx_rq_bypassing(task_rq(a)))
+ 		return SCX_CALL_OP_2TASKS_RET(SCX_KF_REST, core_sched_before,
+ 					      (struct task_struct *)a,
+ 					      (struct task_struct *)b);
+@@ -3333,7 +3334,7 @@ static void task_tick_scx(struct rq *rq,
+ 	 * While disabling, always resched and refresh core-sched timestamp as
+ 	 * we can't trust the slice management or ops.core_sched_before().
+ 	 */
+-	if (scx_ops_bypassing()) {
++	if (scx_rq_bypassing(rq)) {
+ 		curr->scx.slice = 0;
+ 		touch_core_sched(rq, curr);
+ 	} else if (SCX_HAS_OP(tick)) {
+@@ -3672,7 +3673,7 @@ bool scx_can_stop_tick(struct rq *rq)
+ {
+ 	struct task_struct *p = rq->curr;
+ 
+-	if (scx_ops_bypassing())
++	if (scx_rq_bypassing(rq))
+ 		return false;
+ 
+ 	if (p->sched_class != &ext_sched_class)
+@@ -4265,16 +4266,8 @@ static void scx_ops_bypass(bool bypass)
+ 	}
  
  	/*
-@@ -711,7 +756,10 @@ int arl_core_init(struct pmc_dev *pmcdev)
- 	ret = pmc_core_ssram_init(pmcdev, func);
- 	if (ret) {
- 		ssram_init = false;
--		pmc->map = &arl_socs_reg_map;
-+		if (soc_tp == SOC_M)
-+			pmc->map = &mtl_socm_reg_map;
-+		else
-+			pmc->map = &arl_socs_reg_map;
+-	 * We need to guarantee that no tasks are on the BPF scheduler while
+-	 * bypassing. Either we see enabled or the enable path sees the
+-	 * increased bypass_depth before moving tasks to SCX.
+-	 */
+-	if (!scx_enabled())
+-		return;
+-
+-	/*
+ 	 * No task property is changing. We just need to make sure all currently
+-	 * queued tasks are re-queued according to the new scx_ops_bypassing()
++	 * queued tasks are re-queued according to the new scx_rq_bypassing()
+ 	 * state. As an optimization, walk each rq's runnable_list instead of
+ 	 * the scx_tasks list.
+ 	 *
+@@ -4288,6 +4281,24 @@ static void scx_ops_bypass(bool bypass)
  
- 		ret = get_primary_reg_base(pmc);
- 		if (ret)
-@@ -721,11 +769,8 @@ int arl_core_init(struct pmc_dev *pmcdev)
- 	pmc_core_get_low_power_modes(pmcdev);
- 	pmc_core_punit_pmt_init(pmcdev, ARL_PMT_DMU_GUID);
+ 		rq_lock_irqsave(rq, &rf);
  
--	if (ssram_init)	{
--		ret = pmc_core_ssram_get_lpm_reqs(pmcdev);
--		if (ret)
--			return ret;
--	}
-+	if (ssram_init)
-+		return pmc_core_ssram_get_lpm_reqs(pmcdev);
- 
- 	return 0;
- }
-diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-index 01ae71c6df59..046791f21619 100644
---- a/drivers/platform/x86/intel/pmc/core.c
-+++ b/drivers/platform/x86/intel/pmc/core.c
-@@ -1319,6 +1319,8 @@ static const struct x86_cpu_id intel_pmc_core_ids[] = {
- 	X86_MATCH_VFM(INTEL_RAPTORLAKE_S,	adl_core_init),
- 	X86_MATCH_VFM(INTEL_METEORLAKE_L,	mtl_core_init),
- 	X86_MATCH_VFM(INTEL_ARROWLAKE,		arl_core_init),
-+	X86_MATCH_VFM(INTEL_ARROWLAKE_H,	arl_h_core_init),
-+	X86_MATCH_VFM(INTEL_ARROWLAKE_U,	arl_h_core_init),
- 	X86_MATCH_VFM(INTEL_LUNARLAKE_M,	lnl_core_init),
- 	{}
- };
-diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
-index ea04de7eb9e8..5771f40185c2 100644
---- a/drivers/platform/x86/intel/pmc/core.h
-+++ b/drivers/platform/x86/intel/pmc/core.h
-@@ -365,6 +365,11 @@ struct pmc_info {
- 	const struct pmc_reg_map *map;
- };
- 
-+enum soc_type {
-+	SOC_M,
-+	SOC_S
-+};
++		if (bypass) {
++			WARN_ON_ONCE(rq->scx.flags & SCX_RQ_BYPASSING);
++			rq->scx.flags |= SCX_RQ_BYPASSING;
++		} else {
++			WARN_ON_ONCE(!(rq->scx.flags & SCX_RQ_BYPASSING));
++			rq->scx.flags &= ~SCX_RQ_BYPASSING;
++		}
 +
- /**
-  * struct pmc - pmc private info structure
-  * @base_addr:		contains pmc base address
-@@ -599,6 +604,8 @@ int tgl_core_generic_init(struct pmc_dev *pmcdev, int pch_tp);
- int adl_core_init(struct pmc_dev *pmcdev);
- int mtl_core_init(struct pmc_dev *pmcdev);
- int arl_core_init(struct pmc_dev *pmcdev);
-+int arl_h_core_init(struct pmc_dev *pmcdev);
-+int arl_core_generic_init(struct pmc_dev *pmcdev, int pch_tp);
- int lnl_core_init(struct pmc_dev *pmcdev);
++		/*
++		 * We need to guarantee that no tasks are on the BPF scheduler
++		 * while bypassing. Either we see enabled or the enable path
++		 * sees scx_rq_bypassing() before moving tasks to SCX.
++		 */
++		if (!scx_enabled()) {
++			rq_unlock_irqrestore(rq, &rf);
++			continue;
++		}
++
+ 		/*
+ 		 * The use of list_for_each_entry_safe_reverse() is required
+ 		 * because each task is going to be removed from and added back
+@@ -6191,17 +6202,17 @@ __bpf_kfunc void scx_bpf_kick_cpu(s32 cp
+ 	if (!ops_cpu_valid(cpu, NULL))
+ 		return;
  
- void cnl_suspend(struct pmc_dev *pmcdev);
--- 
-2.43.0
-
++	local_irq_save(irq_flags);
++
++	this_rq = this_rq();
++
+ 	/*
+ 	 * While bypassing for PM ops, IRQ handling may not be online which can
+ 	 * lead to irq_work_queue() malfunction such as infinite busy wait for
+ 	 * IRQ status update. Suppress kicking.
+ 	 */
+-	if (scx_ops_bypassing())
+-		return;
+-
+-	local_irq_save(irq_flags);
+-
+-	this_rq = this_rq();
++	if (scx_rq_bypassing(this_rq))
++		goto out;
+ 
+ 	/*
+ 	 * Actual kicking is bounced to kick_cpus_irq_workfn() to avoid nesting
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -750,6 +750,7 @@ enum scx_rq_flags {
+ 	SCX_RQ_ONLINE		= 1 << 0,
+ 	SCX_RQ_CAN_STOP_TICK	= 1 << 1,
+ 	SCX_RQ_BAL_KEEP		= 1 << 2, /* balance decided to keep current */
++	SCX_RQ_BYPASSING	= 1 << 3,
+ 
+ 	SCX_RQ_IN_WAKEUP	= 1 << 16,
+ 	SCX_RQ_IN_BALANCE	= 1 << 17,
 
