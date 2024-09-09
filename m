@@ -1,160 +1,151 @@
-Return-Path: <linux-kernel+bounces-321824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BECB972022
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:16:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0EA971FFF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A815C1F242BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:16:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D73721F2452A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4FD170A1B;
-	Mon,  9 Sep 2024 17:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460031741D1;
+	Mon,  9 Sep 2024 17:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qQt+mYg/"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JhKlOU9D"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460D416EBED
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4DE17332A
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725901572; cv=none; b=YvbYiDltooyLiycn0B9eiQVpgNQFSNEFE/rA4nni5x1MpXA9eJf09QuInMdOpuRq7HNGaptf8mlXIYGaQv5Hf+xmDue4vU83a20sDw6P1yUCR4YUoX1IS3nXwjMupx9W6LwWPdh79fH1n9BqqLlrz44iDkpD5RXt/d2X5yASC7g=
+	t=1725901620; cv=none; b=JKJqurNIqah+3I6/UEKiazgN7tgzcVMCI03O9Z+L/RC98rntwm/RmuFphZxDL1nn8IM5Mu5Jgg4hcL+q1Gz5s5mZwq9TqIdN+h6p0ddA6LmLOnJ4rNpDbAoTGjhGrQXmgZkWIER/qE9I6qIDgZ3Ch8rm+Tk+GfZGje+SThMC0TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725901572; c=relaxed/simple;
-	bh=p8PHlMcU/4iuWXpyhjdwBHlCib0xBPg6mxHXlta9jbU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f13HYU3Ne+fOtJqGLUXNEqh0XOqBG/q8oyQ/376hm1lMTOaPY3RujfltiMnTXTXwrL0sW/lJKzY1l8R2eLtPIgrYIfiRwmbcR8iO2ccoJ4XGnYhol/28ez+47VlqCeNBm1R+7hKTdtguLeEcVC2BULj2AVTuJMA7QK7Sw0Yc8i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qQt+mYg/; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-39d3ad05f8eso6995ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 10:06:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725901570; x=1726506370; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DBnTDAYEC9QTzWNDw7caNJD5CpXdhvSAd1qYJUnxR7U=;
-        b=qQt+mYg/SkPhH/1Wdw03GtKf/YS5gQYcxBAAaSEZMEsolTSU0zy42UZnOAV8nft6OZ
-         5hRwyg/wo9S3VzSdYy7ZFZIg2as9FpNIYLh/7SkCDMirK1fdKm4l43MlH/LmI11UvRtA
-         xscC2KIute9IKr85oB3XfL9ONNrezImPQXNZnIZyyKmphOvEbTJhIvDtybuPmGgnONQO
-         6te1lOqb7b+5RRv5jaV++Rais1XdXZy9SrpU6GoEhdXAZied7flMQgGvSP9WQ7pwPQ0T
-         UaQP1A2zgfK5RVKIjKoHMEHiqJOJ3OBTEhAPmwipmMgjSmSLQL1fY3Y++7l3vzTRCdxD
-         TreQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725901570; x=1726506370;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DBnTDAYEC9QTzWNDw7caNJD5CpXdhvSAd1qYJUnxR7U=;
-        b=XQyOZYalNGte45WUASKJ2fWyQoSZkbe1ssj9Xq6Dfc/W9ynw7kmRcAGr151D4VhDau
-         8NogJclBkJQFB1YQUTR7esU3Q98kWS+WPpx+tEddtfLQAxb7xTIWg46VbhvhWuL3v+qq
-         sUedMMc0Lu65m0SvAESYto6vpbssO5hz6zeyIknPl95CohuwqJ1yGlrsJ9vyM5EbNhSq
-         5zkolzKL4BQ7yvANnfjxYwbbORyXqfLzyuWZwXNFwf9kKgzyHZHxXGxLYXqm+Nn1Qokd
-         zAp7tM8MH/ASn1heTi+wCFn4oiBpKQv3w5PS7mEyA4uVgc88We1rt+N7GST1KDhTJC0F
-         hq9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWG2ncL0rX8aHgW6g/pZsUbzlGF9dmcU+NZzNvUQfYMoBm3tmOd9PcMtO2MDFwwN+wlgHKhvEwEAp8lZgE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTnN2Hc5VK5iwX2ToA05LeDmiMXVWQYzAZU8g0cjiVp2V4vfY+
-	HZgyIwzSxZUQ8okCtxzP4ttJNrr2lzSOqzuvyvwJz2I0pBI19RTdCggvKkhqw1+oBpJraJUKstY
-	nSaAQ+UknPC9GmR2kjEY51rWh3qds7rVwKF7I
-X-Google-Smtp-Source: AGHT+IGRn7vU9U4274lGR4Q3UHsE6SuaSPZ/mwqf3eoGvQukw+BUiGPf4QpV8fNONkqS+RsWuGguOXXEd9pfaChaAFQ=
-X-Received: by 2002:a05:6e02:1a41:b0:3a0:46b4:6fe7 with SMTP id
- e9e14a558f8ab-3a057ed111cmr6482565ab.5.1725901570018; Mon, 09 Sep 2024
- 10:06:10 -0700 (PDT)
+	s=arc-20240116; t=1725901620; c=relaxed/simple;
+	bh=YvuTEo3gCuN+ih3Ot/4XzfbfkK6jZG1cQi1TwckdPJk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BPYAKMChOGFd10qzPwKaGOTym/wB07mUe3XNahRWbnJtAst4I9TXjQ5O6Fp9uk7Ncndd3J0ZLU00V5mlqirr+mOlKFOv1vPssx9ibq8w1Uq2G4DzzkBy6v6KzvIqkJv29TSGslhxOrW/7hMYjCryaeUbWaaUNIz7/8lR2pWGM84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JhKlOU9D; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c17ef59b-330f-404d-ab03-0c45447305b0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725901616;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dQw1oeHSCvpcH8bA67v30RdZskBj7xtZCGm6aq02Fgc=;
+	b=JhKlOU9DZD19VPD/qu8EGPv2Ho3jMI+5pmfMVbkSPwSOBChpu/1XXURKcNUIeCRLxiKRpN
+	QYxdfllaQ5Adr3+5GQAL3WOJYECof8CrbHSXuF4T7T2CirOhelz5n5jvUPS7FE4iWnJ0rE
+	oB6MR0PzzcFvL4+Z7bFHcY9DWnND1/8=
+Date: Mon, 9 Sep 2024 13:06:52 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906195020.481841-1-acme@kernel.org> <20240906195020.481841-2-acme@kernel.org>
-In-Reply-To: <20240906195020.481841-2-acme@kernel.org>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 9 Sep 2024 10:05:57 -0700
-Message-ID: <CAP-5=fXjGYs=tpBgETK-P9U-CuXssytk9pSnTXpfphrmmOydWA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] perf trace augmented_syscalls.bpf: Move the renameat
- augmenter to renameat2, temporarily
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	Alan Maguire <alan.maguire@oracle.com>, Howard Chu <howardchu95@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net] net: dpaa: Pad packets to ETH_ZLEN
+To: Eric Dumazet <edumazet@google.com>
+Cc: Madalin Bucur <madalin.bucur@nxp.com>, netdev@vger.kernel.org,
+ Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ linux-kernel@vger.kernel.org, "David S . Miller" <davem@davemloft.net>
+References: <20240909160604.1148178-1-sean.anderson@linux.dev>
+ <CANn89i+UHJgx5cp6M=6PidC0rdPdr4hnsDaQ=7srijR3ArM1jw@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <CANn89i+UHJgx5cp6M=6PidC0rdPdr4hnsDaQ=7srijR3ArM1jw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Sep 6, 2024 at 12:50=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
->
-> While trying to shape Howard Chu's generic BPF augmenter transition into
-> the codebase I got stuck with the renameat2 syscall.
->
-> Until I noticed that the attempt at reusing augmenters were making it
-> use the 'openat' syscall augmenter, that collect just one string syscall
-> arg, for the 'renameat2' syscall, that takes two strings.
->
-> So, for the moment, just to help in this transition period, since
-> 'renameat2' is what is used these days in the 'mv' utility, just make
-> the BPF collector be associated with the more widely used syscall,
-> hopefully the transition to Howard's generic BPF augmenter will cure
-> this, so get this out of the way for now!
-
-Should any of this be captured in a comment next to the code?
-
-> So now we still have that odd "reuse", but for something we're not
-> testing so won't get in the way anymore:
->
->   root@number:~# rm -f 987654 ; touch 123456 ; perf trace -vv -e rename* =
-mv 123456 987654 |& grep renameat
->   Reusing "openat" BPF sys_enter augmenter for "renameat"
->        0.000 ( 0.079 ms): mv/1158612 renameat2(olddfd: CWD, oldname: "123=
-456", newdfd: CWD, newname: "987654", flags: NOREPLACE) =3D 0
->   root@number:~#
->
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Howard Chu <howardchu95@gmail.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Andrii Nakryiko <andrii@kernel.org>
-> Cc: Alan Maguire <alan.maguire@oracle.com>
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-Reviewed-by: Ian Rogers <irogers@google.com>
-
-Thanks,
-Ian
-
-> ---
->  tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tool=
-s/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> index 0acbd74e8c760956..0f9bd2690d4e5295 100644
-> --- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> @@ -260,8 +260,8 @@ int sys_enter_rename(struct syscall_enter_args *args)
->         return augmented__output(args, augmented_args, len);
->  }
->
-> -SEC("tp/syscalls/sys_enter_renameat")
-> -int sys_enter_renameat(struct syscall_enter_args *args)
-> +SEC("tp/syscalls/sys_enter_renameat2")
-> +int sys_enter_renameat2(struct syscall_enter_args *args)
+On 9/9/24 12:46, Eric Dumazet wrote:
+> On Mon, Sep 9, 2024 at 6:06 PM Sean Anderson <sean.anderson@linux.dev> wrote:
+>>
+>> When sending packets under 60 bytes, up to three bytes of the buffer following
+>> the data may be leaked. Avoid this by extending all packets to ETH_ZLEN,
+>> ensuring nothing is leaked in the padding. This bug can be reproduced by
+>> running
+>>
+>>         $ ping -s 11 destination
+>>
+>> Fixes: 9ad1a3749333 ("dpaa_eth: add support for DPAA Ethernet")
+>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> ---
+>>
+>>  drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+>> index cfe6b57b1da0..e4e8ee8b7356 100644
+>> --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+>> +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+>> @@ -2322,6 +2322,12 @@ dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+>>         }
+>>  #endif
+>>
+>> +       /* Packet data is always read as 32-bit words, so zero out any part of
+>> +        * the skb which might be sent if we have to pad the packet
+>> +        */
+>> +       if (__skb_put_padto(skb, ETH_ZLEN, false))
+>> +               goto enomem;
+>> +
+> 
+> This call might linearize the packet.
+> 
+> @nonlinear variable might be wrong after this point.
+> 
+>>         if (nonlinear) {
+>>                 /* Just create a S/G fd based on the skb */
+>>                 err = skb_to_sg_fd(priv, skb, &fd);
+>> --
+>> 2.35.1.1320.gc452695387.dirty
+>>
+> 
+> Perhaps this instead ?
+> 
+> diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+> b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+> index cfe6b57b1da0e45613ac1bbf32ddd6ace329f4fd..5763d2f1bf8dd31b80fda0681361514dad1dc307
+> 100644
+> --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+> +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+> @@ -2272,12 +2272,12 @@ static netdev_tx_t
+>  dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
 >  {
->         struct augmented_args_payload *augmented_args =3D augmented_args_=
-payload();
->         const void *oldpath_arg =3D (const void *)args->args[1],
-> --
-> 2.46.0
->
+>         const int queue_mapping = skb_get_queue_mapping(skb);
+> -       bool nonlinear = skb_is_nonlinear(skb);
+>         struct rtnl_link_stats64 *percpu_stats;
+>         struct dpaa_percpu_priv *percpu_priv;
+>         struct netdev_queue *txq;
+>         struct dpaa_priv *priv;
+>         struct qm_fd fd;
+> +       bool nonlinear;
+>         int offset = 0;
+>         int err = 0;
+> 
+> @@ -2287,6 +2287,10 @@ dpaa_start_xmit(struct sk_buff *skb, struct
+> net_device *net_dev)
+> 
+>         qm_fd_clear_fd(&fd);
+> 
+> +       if (__skb_put_padto(skb, ETH_ZLEN, false))
+> +               goto enomem;
+> +
+> +       nonlinear = skb_is_nonlinear(skb);
+>         if (!nonlinear) {
+>                 /* We're going to store the skb backpointer at the beginning
+>                  * of the data buffer, so we need a privately owned skb
+
+Thanks for the suggestion; I was having a hard time figuring out where
+to call this.
+
+Do you have any hints for how to test this for correctness? I'm not sure
+how to generate a non-linear packet under 60 bytes.
+
+--Sean
 
