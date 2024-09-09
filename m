@@ -1,126 +1,108 @@
-Return-Path: <linux-kernel+bounces-321951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34B1D9721DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:31:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 159229721E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D75671F23DC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:30:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41E801C230CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E8E1891DA;
-	Mon,  9 Sep 2024 18:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E8F188CDF;
+	Mon,  9 Sep 2024 18:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JcfrvxY3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fwIzJDZM"
+Received: from msa.smtpout.orange.fr (out-71.smtpout.orange.fr [193.252.22.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E871CAA6;
-	Mon,  9 Sep 2024 18:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD17BBA42
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 18:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725906649; cv=none; b=LIoKUrFIJol7r68ahjrn3yHp9n2RRPA1SZ6RTQ7gr1cU6GZq1Hum/feygovk9UCnk7PktTuGro0ePiJnCBmmNfC3ntqJFkhkt2fue7Eyks5JqINfTnAWRu9iMNKJ73ek/q5527GGs4TPoDcofAMeMf5DP+hCN3zZNC4d0AsioRE=
+	t=1725906923; cv=none; b=N1+3NyboDGJyFm93qlxEazQ3KSoyGV1bB+315fa/HkD1ahKc1yZfFATlYZI5GR1tSBiy2PcVB76AbkItCkUQCVshNdUmLSXKpSLNFKpQrYWFwALHmDfV4ij6LTE1E5RubsVcnKd4Ij9T9Q+exfDdpWBYb+OWXnP303AJ4Y7Vfnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725906649; c=relaxed/simple;
-	bh=f+cNg6Y/JZEaSDG9EamgmiQzQ33gJhjd1g2B3Oa2+po=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vAAvA4pAm1xuKZj6oqFyz8akpxhd6hQYQZvybifZQPC3uCRNg9qVhpQ5IQaLSh9zeHcIDcowoiF4NLTtxaTZ2u0dp2LSksxVVK2d1bsLWA6Zg814eswzFKGJfYrvG++i+D4X7r95mD0l04QVBZxmV67NSe2GWuqwt04SyAdb5ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JcfrvxY3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB93FC4CEC5;
-	Mon,  9 Sep 2024 18:30:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725906649;
-	bh=f+cNg6Y/JZEaSDG9EamgmiQzQ33gJhjd1g2B3Oa2+po=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JcfrvxY3mvCXtn0YuYrZvN2FRtkIlKEZs374pTatmcWofWq551EyoENxNOyd8jiEW
-	 wXb+kO+C4wDO30qc1tNw+D15eW0U6vj8HcccaGNzPDylyYPeGgMOKNdNJdohFWCAoM
-	 YQiSsaM9/0ixdFCO0CSbIP/5UHcO53pVcx1ga4G1DGjxvLoaRzbjTHeresx+3iCuli
-	 s0KT+xOmHE5HUvt3HDqfNTMMZZSQHRPoRZ4KgSYHLRY9Ks4rAGKS2GF8tdAJrqllvM
-	 6+VIewKBQZSSn0WiIjfR1D8TN89QI/PCb4XHk3Nlq+hu+2Vf+txchpNClDh0Wim+5x
-	 DJ6EKd+Wlj7Lg==
-Date: Mon, 9 Sep 2024 19:30:43 +0100
-From: Simon Horman <horms@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
-	Felix Huettner <felix.huettner@mail.schwarz>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH net v1 1/1] netfilter: conntrack: Guard possoble unused
- functions
-Message-ID: <20240909183043.GE2097826@kernel.org>
-References: <20240905203612.333421-1-andriy.shevchenko@linux.intel.com>
- <20240906162938.GH2097826@kernel.org>
- <Zt7B79Q3O7mNqrOl@smile.fi.intel.com>
- <20240909151712.GZ2097826@kernel.org>
- <Zt8V5xjrZaEvR8K5@smile.fi.intel.com>
+	s=arc-20240116; t=1725906923; c=relaxed/simple;
+	bh=28Vh0FDQd5/QA5SXE5lLz7s8CGcA02HisBIGph5waW4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KHbEuEDBYPtgV8yqu4nFr2cPceISLTOqPASHfIvdGICuL2a5k+Y1fjvUm95L2PSMgFRylaIx4wsCyzuI0NQRoucC5pUZrD4LvOo/C2JjfkT93XZUIreVExR6suREyS5A3yf9XhGVMlFY64t4uzkDKAW5rYDFcQiNqTTvAlqlIfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fwIzJDZM; arc=none smtp.client-ip=193.252.22.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id njEGsHZy04lSjnjEGs0dic; Mon, 09 Sep 2024 20:35:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725906913;
+	bh=K2hlH2ab5/0XKaw9GaNDmz2ys+LddPEedIbMg1S8VjY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=fwIzJDZMp0/cRKG8GpuH3zdwai+tZHSQzebtinF+P8/4F68Gij3iKk+JaoGF+M+Vy
+	 01a9375enLKB4KDWR4uOCDLTZi1AjkucYQ4fpeHGLxvONh9s2ZPdCtHHyjikFy1tty
+	 Z/PMlmXesgzsJWKt2GfCpzZw3TLvIRl/BjRlMGLOX4VO4XcG+cDweonojLhigVxZ7Z
+	 +W9rqcf9bf6Ye/81ol8/YQTbPXwhn0SNotSsO1eVzCaFB8O7El8RVug/rNqtadgHMF
+	 hZwZ3vzyVE7FiZ9nYitXz+D4QEYGq+SGFCUwpwndnJHZwcSfefaX8n00jyfzTydu3f
+	 1EmkcDBjBm+yQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 09 Sep 2024 20:35:13 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	patches@opensource.cirrus.com
+Subject: [PATCH] regulator: wm8400: Constify struct regulator_desc
+Date: Mon,  9 Sep 2024 20:35:08 +0200
+Message-ID: <fde33ecfd9bbdbdc1da1620c9f3b1b7a72f9d805.1725906876.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zt8V5xjrZaEvR8K5@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 09, 2024 at 06:36:07PM +0300, Andy Shevchenko wrote:
-> On Mon, Sep 09, 2024 at 04:17:12PM +0100, Simon Horman wrote:
-> > On Mon, Sep 09, 2024 at 12:37:51PM +0300, Andy Shevchenko wrote:
-> > > On Fri, Sep 06, 2024 at 05:29:38PM +0100, Simon Horman wrote:
-> > > > On Thu, Sep 05, 2024 at 11:36:12PM +0300, Andy Shevchenko wrote:
-> > > 
-> > > > Local testing seems to show that the warning is still emitted
-> > > > for ctnetlink_label_size if CONFIG_NETFILTER_NETLINK_GLUE_CT is enabled
-> 
-> Hold on, this is not related to the patch.
-> It might be another issue.
+'struct regulator_desc' is not modified in this driver.
 
-Yes, sorry, I see that now too.
+Constifying this structure moves some data to a read-only section, so
+increases overall security, especially when the structure holds some
+function pointers.
 
-Perhaps it can be fixed separately, something like this:
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   4419	   2512	      0	   6931	   1b13	drivers/regulator/wm8400-regulator.o
 
-diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
-index 8fd2b9e392a7..fcd1b800b2c1 100644
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -383,6 +383,7 @@ static int ctnetlink_dump_secctx(struct sk_buff *skb, const struct nf_conn *ct)
- #endif
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   6307	    624	      0	   6931	   1b13	drivers/regulator/wm8400-regulator.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+--
+Compile tested only
+---
+ drivers/regulator/wm8400-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/wm8400-regulator.c b/drivers/regulator/wm8400-regulator.c
+index c4a229f66dec..fb3ca7956d00 100644
+--- a/drivers/regulator/wm8400-regulator.c
++++ b/drivers/regulator/wm8400-regulator.c
+@@ -112,7 +112,7 @@ static const struct regulator_ops wm8400_dcdc_ops = {
+ 	.get_optimum_mode = wm8400_dcdc_get_optimum_mode,
+ };
  
- #ifdef CONFIG_NF_CONNTRACK_LABELS
-+#ifdef CONFIG_NETFILTER_NETLINK_GLUE_CT
- static inline int ctnetlink_label_size(const struct nf_conn *ct)
- {
- 	struct nf_conn_labels *labels = nf_ct_labels_find(ct);
-@@ -391,6 +392,7 @@ static inline int ctnetlink_label_size(const struct nf_conn *ct)
- 		return 0;
- 	return nla_total_size(sizeof(labels->bits));
- }
-+#endif
- 
- static int
- ctnetlink_dump_labels(struct sk_buff *skb, const struct nf_conn *ct)
+-static struct regulator_desc regulators[] = {
++static const struct regulator_desc regulators[] = {
+ 	{
+ 		.name = "LDO1",
+ 		.id = WM8400_LDO1,
+-- 
+2.46.0
 
-> 
-> > > > but CONFIG_NF_CONNTRACK_EVENTS is not.
-> > > 
-> > > Can you elaborate on this, please?
-> > > I can not reproduce.
-> > 
-> > Sure, let me retest and get back to you.
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
 
