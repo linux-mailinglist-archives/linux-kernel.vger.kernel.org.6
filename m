@@ -1,198 +1,95 @@
-Return-Path: <linux-kernel+bounces-321966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC4D97221C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:52:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 046A6972222
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66C371C23A9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:52:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94EF6B23546
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED2E1898EF;
-	Mon,  9 Sep 2024 18:51:55 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C0618990C;
+	Mon,  9 Sep 2024 18:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n56NqTLN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18E814B06C;
-	Mon,  9 Sep 2024 18:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F94114B06C;
+	Mon,  9 Sep 2024 18:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725907915; cv=none; b=WKtmtOd0XUrJZO0EaKO+1LUTZm17PNKISXqzV7ZU66A/ogMU5TAnyt+zi7lwY25y2WDI4AsyG82E7SHNymcAuKNf68640a2igI8zB4+OBRVpingMW3vE/mzgkLqMsDe89AnryKT/FVY8CfKPG5pY+sSum+hFM1EWEnaxDrZMAjo=
+	t=1725908090; cv=none; b=Fub7x8vs6Xp+sqAXc1vruomkwkY80ONHPRSnPRmSo8zfzFe4f6T2CyRmGf9tDTY2Js26o/Cgt/iwEC4iL/Jxlkpii/DxUTRgz8Sk/WdF4o1hfAmB8SDG+zEDlMkuqCN37gik5CCRigc5oxkjzyoG1+HnGVrgXx8J4aG1IVlx3FQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725907915; c=relaxed/simple;
-	bh=CrCefix7HM2ao+Rd4VzDYmJ9W2K1egmuhqgLJjj2hiM=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=cO0Dm3R08SrHrvbtSi0cb8RoP0Yt/M737Wy8qbQX59FhNJa6JqDZ/EcG+c1Zz7BgwaKTtr+s60S7JNudDJCLEF1DlXruD3mg2wbOm7YX+a3iPDg0ul0HREoe6DFJM6jkflWJs+BVEsHVnH/FfgUdtVY604YFWv1+bnv/n40Ib+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.106] (31.173.81.96) by msexch01.omp.ru (10.188.4.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 9 Sep
- 2024 21:51:40 +0300
-Subject: Re: [PATCH] KEYS: prevent NULL pointer dereference in
- find_asymmetric_key()
-To: Jarkko Sakkinen <jarkko@kernel.org>, Roman Smirnov <r.smirnov@omp.ru>,
-	David Howells <dhowells@redhat.com>, Herbert Xu
-	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
-	Andrew Zaborowski <andrew.zaborowski@intel.com>
-CC: <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-References: <20240315103320.18754-1-r.smirnov@omp.ru>
- <CZX9T3TU6YU0.3JE9M7M3ENUE0@kernel.org>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <1b7e4576-7b64-aba1-9e23-e58605b1f5bd@omp.ru>
-Date: Mon, 9 Sep 2024 21:51:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1725908090; c=relaxed/simple;
+	bh=1SjYNS+Gnxohf1/QLOdFsJAnTKBfVS66HOjnBtSpeaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XmTYmLGVbSxP7ynhJ+0n0KOXp0QtCcpI7YT347D46AtRp9AdLFcz67ITGa5IQPbLyHVHj14CzcqEmgT9r/kFxtDgwxXOU6/ME1J0mz3/goHNVL631O3Z2FZoVCk+IUd831u/+Il/CoSJgeraApQvaQ1tDZwNS7wT2AuGGuDJEMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n56NqTLN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D7A3C4CEC5;
+	Mon,  9 Sep 2024 18:54:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725908089;
+	bh=1SjYNS+Gnxohf1/QLOdFsJAnTKBfVS66HOjnBtSpeaY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n56NqTLNOlk8S5um8v/ocDpKErEGp+Wm6uFh/NM0eACc1z6xp0rQ4BGV01uHUOLmC
+	 pp5CA6/Det9PK0Avz7a9DHI5NZBUUbfllY4kEsAq1nZ1INB94telg446y0SfQGMS6H
+	 HyYxOj1E0sgXjfcr3wF5bLuKQ6KylEnnyTFnhDOTeLxkDKPAk8iS4aSQh4Zaf8/COu
+	 ydrWKYlMxk4mqpdG7yLafXgxi5UlsyWjoAnQz9oKm7D2O7Xw40YLXYP52B7Dhq1olG
+	 gVhB+RbYplJvttIBdl9Nj/ZLLTt0O34353GD4yZaA5xGTaaBuKXYcL3tFwykkQTUa3
+	 HgqjP5kkhMDgA==
+Date: Mon, 9 Sep 2024 20:54:45 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, 
+	"Chen, Jian Jun" <jian.jun.chen@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, virtualization@lists.linux.dev
+Subject: Re: [PATCH] i2c: virtio: Constify struct i2c_algorithm and struct
+ virtio_device_id
+Message-ID: <cnetcfge6r7votsarnvk3dlqec4ufz3uyfkkf4wuhkxhlhw5wu@ckkns42r5psi>
+References: <b98c3fa7072bf519ce8a9bc771e9d18c091b3509.1725778305.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CZX9T3TU6YU0.3JE9M7M3ENUE0@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/09/2024 18:32:10
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 187637 [Sep 09 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.1.5
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 32 0.3.32
- 766319f57b3d5e49f2c79a76e7d7087b621090df
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.81.96 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.81.96 in (user) dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.81.96
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/09/2024 18:36:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/9/2024 4:30:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b98c3fa7072bf519ce8a9bc771e9d18c091b3509.1725778305.git.christophe.jaillet@wanadoo.fr>
 
-On 3/19/24 2:39 AM, Jarkko Sakkinen wrote:
-[...]
+Hi Christophe,
 
->> With the current code, in case all NULLs are passed in id_{0,1,2},
+On Sun, Sep 08, 2024 at 08:52:07AM GMT, Christophe JAILLET wrote:
+> 'struct i2c_algorithm' and 'struct virtio_device_id' are not modified in
+> this driver.
 > 
-> "current code" is not unambigious reference of any part of the kernel
-> tree. Please just write down the function name instead.
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers, which is the case for struct i2c_algorithm.
 > 
->> the kernel will first print out a WARNING and then have an oops
->> because id_2 gets dereferenced anyway.
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    6663	    568	     16	   7247	   1c4f	drivers/i2c/busses/i2c-virtio.o
 > 
-> Would be more exact":
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>    6735	    472	     16	   7223	   1c37	drivers/i2c/busses/i2c-virtio.o
 > 
-> s/print out a WARNING/emit WARN/
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> --
+> Compile tested only
 
-   Well, technically calling WARN_ON() it prints out WARNING: ... --
-hence the wording... :-)
+Makes sense to me... if this works, you could pioneer a sequence
+of simiar changes :-)
 
->> Note that WARN_ON() is also considered harmful by Greg Kroah-
->> Hartman since it causes the Android kernels to panic as they
->> get booted with the panic_on_warn option.
+Merged to i2c/i2c-host.
 
-   As it turns out, not all Android kernels really do this thging
-(at least the Samsung's ones do, according to Greg)...
-
-> Despite full respect to Greg, and agreeing what he had said about
-> the topic (which you are lacking lore link meaning that in all
-> cases the current description is incomplete), the only thing that
-> should be documented should be that since WARN_ON() can emit
-> panic when panic_on_warn is set in the *kernel command-line*
-> (not "option") this condition should be relaxed.
-
-   Linus' opinion seems to be that the people using panic_on_warn
-get what they deserve -- see:
-
-https://lore.kernel.org/all/CAHk-=wgF7K2gSSpy=m_=K3Nov4zaceUX9puQf1TjkTJLA2XC_g@mail.gmail.com/
-
->> Found by Linux Verification Center (linuxtesting.org) with Svace.
-> 
-> I'm not sure if this should be part of the commit message.
-> 
->>
->> Fixes: 7d30198ee24f ("keys: X.509 public key issuer lookup without AKID")
->> Suggested-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-> 
-> Should be reported-by.
-> 
->> Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
->> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
->> ---
->>  crypto/asymmetric_keys/asymmetric_type.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
->> index a5da8ccd353e..f5cbd6ff14e2 100644
->> --- a/crypto/asymmetric_keys/asymmetric_type.c
->> +++ b/crypto/asymmetric_keys/asymmetric_type.c
->> @@ -60,17 +60,17 @@ struct key *find_asymmetric_key(struct key *keyring,
->>  	char *req, *p;
->>  	int len;
->>  
->> -	WARN_ON(!id_0 && !id_1 && !id_2);
->> -
-> 
-> Weird, I recall discussing about this issue in the past. Unfortunately
-> could not find the thread from lore.
-
-   There was also that (denied) patch:
-
-https://lore.kernel.org/all/20240414170850.148122-1-elder@linaro.org/
-
-> Anyway I agree with the code change.
-> 
->>  	if (id_0) {
->>  		lookup = id_0->data;
->>  		len = id_0->len;
->>  	} else if (id_1) {
->>  		lookup = id_1->data;
->>  		len = id_1->len;
->> -	} else {
->> +	} else if (id_2) {
->>  		lookup = id_2->data;
->>  		len = id_2->len;
->> +	} else {
-
-   We can perhaps place the WARN_ON(1) call here instead of where it
-is now...
-
->> +		return ERR_PTR(-EINVAL);
->>  	}
->>  
->>  	/* Construct an identifier "id:<keyid>". */
-
-> BR, Jarkko
-
-MBR, Sergey
+Thanks,
+Andi
 
