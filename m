@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-321137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A330971516
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:15:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FFA397159A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB7862835CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:15:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EBF82856E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0202B1B3F36;
-	Mon,  9 Sep 2024 10:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021FD1B4C4F;
+	Mon,  9 Sep 2024 10:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqoyAXHV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="N3Jbr3qp"
+Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594B61AC8BF;
-	Mon,  9 Sep 2024 10:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F89179658;
+	Mon,  9 Sep 2024 10:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725876913; cv=none; b=s9QuZk6aLn5D4JA6hkqztGjDWTuaEAJ1ZK2DFqcXcwX3HbnQtlmamM4UhkyGT3ytUfVZZknCfVy4BgHgt931x3xgUhOABaupSvUYJxG2Y5ReGhqJiGmiGv4aQrTele3oQlvOwFWnXl4WXT/XKMn8z/oD+5J2d17LrAXR9vXKnZ4=
+	t=1725878735; cv=none; b=nZo5Fw3Tdnlp6MydX7y3wTr7WCdwixMqfarC5ei8R8s25D00E5PdXyem0AlTwYaCsYGc7r06Kpu2RJ5CxCJ8ua1lzBqLB8pU+9YFYmuj4qi7Xg2LAUJTCOeC2eDNzdh5p3tF+785NUIkF7REDdst3hKXkjO/jm+qeuc1YmQbwPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725876913; c=relaxed/simple;
-	bh=JvPjEY9H1xzob0l1t98pW0PA/og5aOm+LDRIetXTdH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SV2suAGjqLfuwKrYcBoWzUL1YSFwudP8mlbSJc2YHMb5R8PKKXybFKaK0wmi9lAY4OAExXG3Uuo71ka/zRAb/C8FLK7krcVazzGPr9sqhb64muXkug/VbT0Qvr/pJTpWfSD2XahqF6CdHbv3k/xiQeY7OEoPcjC03duv4+xSUSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqoyAXHV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73D9EC4CEC5;
-	Mon,  9 Sep 2024 10:15:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725876912;
-	bh=JvPjEY9H1xzob0l1t98pW0PA/og5aOm+LDRIetXTdH0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FqoyAXHVBBHzd6uVo1/5XEAELYoYUDMcFfXhwvVyw9p7ZIk6YW1mYXslDYxFzG30p
-	 0X6ugtAszkHMhpSljXdWAJgp9gOK7/bwIkLUiF5r7qvS3nwi4p/fHT192XTQwc6HXD
-	 ER1NFm4pNf1mfAyc16KdNbnKSDqgLZzTElMyBI936IVxG8xY3qfQtoaLzotwT51+Rq
-	 dqPuAZWLdwf12+ouc6d+2ZrpwS+kaNtpsiEtrB8GEe36Tyi3ZZ7fShsb387lRSxMju
-	 zaYFGuprt7D5kGYPcHwzdjEjzfS6D7lQX1/pu4KjP4SprpcK3SywtRH8ilw5splfvq
-	 PDTXIBrP9KteQ==
-Date: Mon, 9 Sep 2024 12:15:09 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Keke Li <keke.li@amlogic.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com, 
-	laurent.pinchart@ideasonboard.com, dan.scally@ideasonboard.com
-Subject: Re: [PATCH v2 5/9] dt-bindings: media: Add amlogic,c3-isp.yaml
-Message-ID: <el2p23rs3p4ng5qqljdc6vr5exvpveoda3rimq3pax7l5rwlju@2ebdcjzf7ju4>
-References: <20240909-c3isp-v2-0-3c866a1cea56@amlogic.com>
- <20240909-c3isp-v2-5-3c866a1cea56@amlogic.com>
+	s=arc-20240116; t=1725878735; c=relaxed/simple;
+	bh=5Ta/4DSgQoX8eSaZBH8uX7f7kA1cIdCF5+cIjyuspMo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:To:From:
+	 References:In-Reply-To; b=Zf9Dz49W4CZcGqmUYcAYXhLryRmB9k8FdKkcvljkfcj9FNXRwTOvTVtpXCc77O5Ia8fGloVu0FCOlzuqSyD0iGEm5Jie+tWVVKirMa59s5C2LkEoDuValhma8uSLmBjnWlIu8nkOFmllKsCvodKu4NMvlYw/PMENH1MfZEZ3FLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=N3Jbr3qp; arc=none smtp.client-ip=195.113.20.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
+	s=submission; t=1725877000; x=1727177000;
+	bh=09mAxXk5yZQ1FHGrWz6yzqQxvAU0gLKA91bNZ0jSFDQ=; h=From;
+	b=N3Jbr3qplkKFBNIhWyfhI0/ftYyX1QYS8sQtNXWbN6B4OTsw0dTznEX6ZRLyoymWo
+	 HblPc/hQ2j7f/kU05dM76Ik8FCzMapfz6qEOyYqq3X+0XuFnGXZvbZaUl/zTBQKuc+
+	 NLQS4o9zMk8yn42kiCou+9ZO+6PP7jqHIU6Gy1GwJ3tG/S6mRISTDhH4tIIhLeSUUr
+	 ADQlUMLkfgTwGfaEvtDCHp4v/jX4iTP5h935D9Jio6oEigV7QYS+lbkGbvWmVx+j3t
+	 BXLsZh4manj+XP55OuTvas4SmbtfP9DxzzFxW49mHtfA2pq/rum70p67GUJJlR+U+Z
+	 kto3xhVBsrzZQ==
+Received: from localhost (internet5.mraknet.com [185.200.108.250])
+	(authenticated)
+	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 489AGc2d025308
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Mon, 9 Sep 2024 12:16:40 +0200 (CEST)
+	(envelope-from balejk@matfyz.cz)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240909-c3isp-v2-5-3c866a1cea56@amlogic.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 09 Sep 2024 12:16:38 +0200
+Message-Id: <D41OC3PTUHE6.1V0FU4PAW4O9Q@matfyz.cz>
+Cc: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Liam
+ Girdwood" <lgirdwood@gmail.com>,
+        "Mark Brown" <broonie@kernel.org>
+Subject: Re: [PATCH] regulator: 88pm886: Constify struct regulator_desc
+To: "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>
+From: "Karel Balej" <balejk@matfyz.cz>
+References: <0261f8b951a489859ee0fa41c584804b2e3f1557.1725783921.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <0261f8b951a489859ee0fa41c584804b2e3f1557.1725783921.git.christophe.jaillet@wanadoo.fr>
 
-On Mon, Sep 09, 2024 at 03:24:15PM +0800, Keke Li wrote:
-> c3-isp is used to process raw image.
-> 
-> Signed-off-by: Keke Li <keke.li@amlogic.com>
+Christophe JAILLET, 2024-09-08T10:25:56+02:00:
+> 'struct regulator_desc' is not modified in this driver.
+>
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+
+"increases"?
+
+> function pointers.
+>
+> On a x86_64, with allmodconfig:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+>    text	   data	    bss	    dec	    hex	filename
+>    3251	   6928	     16	  10195	   27d3	drivers/regulator/88pm886-regulat=
+or.o
+>
+> After:
+> =3D=3D=3D=3D=3D
+>    text	   data	    bss	    dec	    hex	filename
+>    9795	    360	     16	  10171	   27bb	drivers/regulator/88pm886-regulat=
+or.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> --
+> Compile tested only
 > ---
->  .../devicetree/bindings/media/amlogic,c3-isp.yaml  | 98 ++++++++++++++++++++++
->  1 file changed, 98 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/amlogic,c3-isp.yaml b/Documentation/devicetree/bindings/media/amlogic,c3-isp.yaml
-> new file mode 100644
-> index 000000000000..dfa439cdc380
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/amlogic,c3-isp.yaml
-> @@ -0,0 +1,98 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/amlogic,c3-isp.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Amlogic C3 Image Signal Processing Unit
-> +
-> +maintainers:
-> +  - Keke Li <keke.li@amlogic.com>
-> +
-> +description:
-> +  Amlogic ISP is the RAW image processing module
-> +  and supports three channels image output.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - amlogic,c3-isp
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  reg-names:
-> +    items:
-> +      - const: isp
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: vapb
-> +      - const: isp0
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
+>  drivers/regulator/88pm886-regulator.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/regulator/88pm886-regulator.c b/drivers/regulator/88=
+pm886-regulator.c
+> index a38bd4f312b7..68c83a4ebda8 100644
+> --- a/drivers/regulator/88pm886-regulator.c
+> +++ b/drivers/regulator/88pm886-regulator.c
+> @@ -56,7 +56,7 @@ static const struct linear_range pm886_buck_volt_ranges=
+2[] =3D {
+>  	REGULATOR_LINEAR_RANGE(1600000, 80, 114, 50000),
+>  };
+> =20
+> -static struct regulator_desc pm886_regulators[] =3D {
+> +static const struct regulator_desc pm886_regulators[] =3D {
+>  	{
+>  		.name =3D "LDO1",
+>  		.regulators_node =3D "regulators",
+> @@ -340,9 +340,9 @@ static struct regulator_desc pm886_regulators[] =3D {
+>  static int pm886_regulator_probe(struct platform_device *pdev)
+>  {
+>  	struct pm886_chip *chip =3D dev_get_drvdata(pdev->dev.parent);
+> +	const struct regulator_desc *rdesc;
+>  	struct regulator_config rcfg =3D { };
+>  	struct device *dev =3D &pdev->dev;
+> -	struct regulator_desc *rdesc;
+>  	struct regulator_dev *rdev;
+>  	struct i2c_client *page;
+>  	struct regmap *regmap;
+> --=20
+> 2.46.0
 
-Only one port? Then use "port" instead of "ports".
+Reviewed-by: Karel Balej <balejk@matfyz.cz>
 
-Best regards,
-Krzysztof
-
+Thanks,
+K. B.
 
