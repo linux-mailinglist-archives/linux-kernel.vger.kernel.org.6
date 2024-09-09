@@ -1,126 +1,134 @@
-Return-Path: <linux-kernel+bounces-320477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7694970AE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:05:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA61970AE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4881F21688
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3D01F21804
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0C1B641;
-	Mon,  9 Sep 2024 01:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B77DF6C;
+	Mon,  9 Sep 2024 01:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M+ao+fkS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nSc4HkXp"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF20B184F
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 01:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B3828EF;
+	Mon,  9 Sep 2024 01:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725843929; cv=none; b=Sn2vt1gXFzx6fn7F6qY5607oWKscQmutuizpgAetb/Aoae0O7Fseufsumws6T8VCyERRfgyqJVpvRhPCbj5db/CwOIGimP+6F4RekhNFkZXPJxM/At5rKeesJ2ExPgZKV7aary/MPe62gb3F14eetw0avJJPuMYgiKNM+Pu/sFc=
+	t=1725844133; cv=none; b=Nu7o8GQT/lOvZOhc9Zko5+gUqI7KN9g32plPzIE6GyTta/OfDQdqd+4kKg02yWctUEWHdfjJp5wjK5S6IU3nht2SAewuGLrCObvx7rZkgWWL2bqzVmNoSCGlHrZRYiPVzDt71UhTDah65PYZLRJUgT8WdKj/OXCL2hxiEJr20qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725843929; c=relaxed/simple;
-	bh=KbGXoddUMv8tVgpHOzuLsp1Y9f2+g1Z2mKD35eOsmG4=;
+	s=arc-20240116; t=1725844133; c=relaxed/simple;
+	bh=IxC6Z/GdaomlvqgADd6jb6fWI0AkCA513Vec7jMJuKk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gf5cAuAmDoH9XnhTNlQjoP4uLBlxwg/fVjbKg/uvcXip0Q0igSNc3Na1R/M2WmCLyVhCxwEAuTWtBwV7HLvLsEYSDNyI4fTM0rsa9dNnkTZI5dujhIKb48brrQKPp6E0CO2Ttrm8ZyyxQfCHV757+bty69U0MVyEir+EXdaIOAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M+ao+fkS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 878A4C4CEC3
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 01:05:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725843928;
-	bh=KbGXoddUMv8tVgpHOzuLsp1Y9f2+g1Z2mKD35eOsmG4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=M+ao+fkSdbvSR1LKrZhO5JYsBGM7L2G4woKI9M6bYrJ3527PG/YSKr0xbTcavU5zl
-	 Cb3Fy8yAdtBpHOA1AwHwconcskAKU6YAgmbeA5EIQ1Hx4/zA74INMf0U198kNzVfRI
-	 tbGWYs7yhEa9a8JpdzAB+TohVbKJc0IPHeCu+F6QGKJQWHEtT0t8vHkGOpV/s5pldh
-	 pOROC+YtPORF6OZZcAdxBrclpgh2WPnFYqOcOLDK4VlhbVwpmrkuJ7MJy/HiqJp+Hr
-	 7g1/SGn6XOrIcsdCRZ9iANpbyIL7R0r4gBlpd//Wlib+qN3FXmchRMqh1CAbLMsymn
-	 YB29ezBnj5Udg==
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c24ebaa427so7374736a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 18:05:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUhNl7XvtVvTqz+CJo334+HNl594iYPqw6ERkpLxr6S2yi2uTSUyuPGkXYvS2PJ6Tz/XBNwUCeD/0qhPVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy57v7oizfty+GRqSuiHnoGDSbJIiyJu17iIOo5hHzXUsDOv2HL
-	wIrYKEBUAeZvKyy3DNuZUyXvdwb9AUmdu/wCvC6P6o2ygblfPigdBvTLATrjt7+9JSQNC49BVLP
-	BfktRv6xOJuLHeN+NMDpoP0XO8rk=
-X-Google-Smtp-Source: AGHT+IH8AH63UqVrIu0Y9NxMorp0PRx7ZvVEGeC9k+LaQZ5PSWisHqpL3cJh9I7v5UvkrtJwSJlAEEBiruEGhQgMYJY=
-X-Received: by 2002:a05:6402:2808:b0:5bf:256a:a19e with SMTP id
- 4fb4d7f45d1cf-5c3c1f74315mr19393826a12.4.1725843927158; Sun, 08 Sep 2024
- 18:05:27 -0700 (PDT)
+	 To:Content-Type; b=I2KmP9MNSW07RORxPh+x5JZGY3f3eWzuc8bRPqNiRvseaM/qpRh3/BuYFEqTsQP/jpgSDEGczqSXogVMZQ9XFmelNLo57YZ0yW4UTybcLkt8oMksVbApprkOihxNpyxwk6V6+UbZuOWrOcnyXnNWdpKW4pbSgV0uWfhoriojSk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nSc4HkXp; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7d4f9e39c55so2550499a12.2;
+        Sun, 08 Sep 2024 18:08:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725844131; x=1726448931; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aKNbVeIN4E1J7b6asuuyRn99aGJZxDfyfdXFbSw1yAU=;
+        b=nSc4HkXpSBIXHwKMDbNCtZxVjkv2/DiVrsJCM+fG7DZxyoII43lQX9gIVsSmPxF3rW
+         C/nPSUgZaHm42+Np496UM2GMFs4R5Bd8vh1SK77gcFSiL436WatmSNN+RAHhkTMM021p
+         SpsZpqedvjzf/V70u3DxNCulFGThr0j6S4/Nx9mWOzHEjNjIDjPKSBlvjPKQEH3la1lW
+         7pj5pPaSozq2ESMnJXxWn0UUsblZo/SO1r1VBKNWjSPkiDBAFTBmJXUltTqpSE/p5g4i
+         HfottV0FyLhCnylhx8PydGlFhhhI8SGQhPkM5jQ7il6KlUxz3VvCzsNDk3rQ143RBlGL
+         ls7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725844131; x=1726448931;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aKNbVeIN4E1J7b6asuuyRn99aGJZxDfyfdXFbSw1yAU=;
+        b=qbycVILplyluqu4xqtET1dMR0FW5rg1ZIxLHWBbrj+sVy/+sud4MIghcFkunw7pzJs
+         aYDFZsvPIlnc9FtCuwj5XGbac/Wzi2g4OGc/DWyMZGDuAQu8KMqbBXYtEmOI04ETN3pA
+         Ys6iANXQMfsv7DVXyi+8XUebQzK94iq4h3SeMAriYfS1yTC34GFb7rW6n10yAT+UHWCW
+         JHnhQIhhpytViPdB33sSsWAVHJ0S0moq3Yldmjeg+uENBV79T2/q7nVVgB6WmlBTpD1l
+         RVwATkP+FG8ziGx4KI9Jq4ht/zjKAuNA0qdiEgdY/ZKvVanj5On5KMn/wPvHw3Un34Iq
+         HwlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEJVRT02D0SdfwyruotogYAGKXBnGdHiH1XjGzGy9oNzzxMWdjUYv5OkCEHwEqAgBZ3XM5RzK63fGwziLJaUc8YEDl@vger.kernel.org, AJvYcCX2CYuOsGpxzpfXHC3Rjat+nqcFsCg6KFctWd+bs+Mg8Lp8IARQ6nyrIu0l4mnkRrxtSHl+x7pCQtbTJjh2@vger.kernel.org, AJvYcCXU8/SGGlRgc+uP5mnfqXYxtSFivABTZeii+ZtA38FbDxSmsQGbhoy50wCi+kda/sfNBqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ3VJd86uttL+gb3Z3aHO23HbMCLjk2zPzFBQmjDKrVEmBAXyG
+	QR0i/B7u1l+tf/cpmJKJua5mfse7oQlg/fqB1PL86XeDSAw4RjUjCSdXJuwK5gcCLW0ESYuTHBN
+	GoRFBXnkzf8lKxI7DBIDfRGojeOA=
+X-Google-Smtp-Source: AGHT+IHviyd+MztZHLZ1PONgr8WHid8/FvS/G7KWLzX3Evvawum9LD2znLZsH3oJJGDbwpitRHcujJMf5zch9B8SpsI=
+X-Received: by 2002:a17:90b:3504:b0:2d8:d254:6cdd with SMTP id
+ 98e67ed59e1d1-2daffe28fadmr7420121a91.38.1725844131190; Sun, 08 Sep 2024
+ 18:08:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807085906.27397-1-yangtiezhu@loongson.cn>
- <20240807085906.27397-4-yangtiezhu@loongson.cn> <c75a2de763dc8ea42a734490936f198a6ad07349.camel@xry111.site>
-In-Reply-To: <c75a2de763dc8ea42a734490936f198a6ad07349.camel@xry111.site>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 9 Sep 2024 09:04:58 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H79ToM4t_=b-teWT=2HVF8JcrwHYC+OeepXm51QjTw_eA@mail.gmail.com>
-Message-ID: <CAAhV-H79ToM4t_=b-teWT=2HVF8JcrwHYC+OeepXm51QjTw_eA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] LoongArch: Set AS_HAS_THIN_ADD_SUB as y if AS_IS_LLVM
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
+References: <20240906051205.530219-1-andrii@kernel.org> <20240906051205.530219-3-andrii@kernel.org>
+ <u2artc4iwuoo5y5rutseqlvnq4i44mcxne2ufwg3ya2hyonv45@v2ob54ci6ky7>
+In-Reply-To: <u2artc4iwuoo5y5rutseqlvnq4i44mcxne2ufwg3ya2hyonv45@v2ob54ci6ky7>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Sun, 8 Sep 2024 18:08:39 -0700
+Message-ID: <CAEf4BzbjiHjW7PTd2ONNkpU9CR68o8Wizuo0Y2MwmTSv6zw4JA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] uprobes: add speculative lockless VMA-to-inode-to-uprobe
+ resolution
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com, 
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
+	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, mjguzik@gmail.com, brauner@kernel.org, jannh@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 8, 2024 at 10:43=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
-e:
+On Sat, Sep 7, 2024 at 6:22=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracle=
+.com> wrote:
 >
-> On Wed, 2024-08-07 at 16:59 +0800, Tiezhu Yang wrote:
-> > When building kernel with "make CC=3Dclang defconfig", LLVM Assembler
-> > is used due to LLVM_IAS=3D0 is not specified, then AS_HAS_THIN_ADD_SUB
-> > is not set, thus objtool can not be built after enable it for Clang.
-> >
-> > config AS_HAS_THIN_ADD_SUB is to check whether -mthin-add-sub option is
-> > available to know R_LARCH_{32,64}_PCREL are supported for GNU Assembler=
-,
-> > there is no this option for LLVM Assembler. The minimal version of Clan=
-g
-> > is 18 for building LoongArch kernel, and Clang >=3D 17 already supports
-> > R_LARCH_{32,64}_PCREL, that is to say, there is no need to depend on
-> > AS_HAS_THIN_ADD_SUB for Clang, so just set AS_HAS_THIN_ADD_SUB as y if
-> > AS_IS_LLVM.
-> >
-> > Fixes: 120dd4118e58 ("LoongArch: Only allow OBJTOOL & ORC unwinder if t=
-oolchain supports -mthin-add-sub")
-> > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> * Andrii Nakryiko <andrii@kernel.org> [240906 01:12]:
 >
-> This is what I wanted in
-> https://lore.kernel.org/all/20240604150741.30252-1-xry111@xry111.site/.
-Then which one is better?  AS_IS_LLVM or CC_IS_CLANG?
-
-Huacai
-
->
-> Reviewed-by: Xi Ruoyao <xry111@xry111.site>
+> ...
 >
 > > ---
-> >  arch/loongarch/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >  kernel/events/uprobes.c | 51 +++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 51 insertions(+)
 > >
-> > diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> > index 70f169210b52..e1b6cb306d4d 100644
-> > --- a/arch/loongarch/Kconfig
-> > +++ b/arch/loongarch/Kconfig
-> > @@ -265,7 +265,7 @@ config AS_HAS_FCSR_CLASS
-> >       def_bool $(as-instr,movfcsr2gr \$t0$(comma)\$fcsr0)
-> >
-> >  config AS_HAS_THIN_ADD_SUB
-> > -     def_bool $(cc-option,-Wa$(comma)-mthin-add-sub)
-> > +     def_bool $(cc-option,-Wa$(comma)-mthin-add-sub) || AS_IS_LLVM
-> >
-> >  config AS_HAS_LSX_EXTENSION
-> >       def_bool $(as-instr,vld \$vr0$(comma)\$a0$(comma)0)
+> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > index a2e6a57f79f2..b7e0baa83de1 100644
+> ...
 >
-> --
-> Xi Ruoyao <xry111@xry111.site>
-> School of Aerospace Science and Technology, Xidian University
+> > @@ -2088,6 +2135,10 @@ static struct uprobe *find_active_uprobe_rcu(uns=
+igned long bp_vaddr, int *is_swb
+>
+> I'm having issues locating this function in akpm/mm-unstable.  What
+> tree/commits am I missing to do a full review of this code?
+
+Hey Liam,
+
+These patches are based on tip/perf/core, find_active_uprobe_rcu()
+just landed a few days ago. See [0].
+
+  [0] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=3D=
+perf/core
+
+>
+> >       struct uprobe *uprobe =3D NULL;
+> >       struct vm_area_struct *vma;
+> >
+> > +     uprobe =3D find_active_uprobe_speculative(bp_vaddr);
+> > +     if (uprobe)
+> > +             return uprobe;
+> > +
+> >       mmap_read_lock(mm);
+> >       vma =3D vma_lookup(mm, bp_vaddr);
+> >       if (vma) {
+> > --
+> > 2.43.5
+> >
+> >
 
