@@ -1,130 +1,146 @@
-Return-Path: <linux-kernel+bounces-320517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59EBD970B76
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:47:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A77970B80
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 865F31C2011E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:47:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7421F1F210D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3434611CA1;
-	Mon,  9 Sep 2024 01:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954D51173F;
+	Mon,  9 Sep 2024 01:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="CNHcsxLv"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lm5CkVAz"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E45D12B64
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 01:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58101200AF;
+	Mon,  9 Sep 2024 01:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725846446; cv=none; b=giZEQQu8RWaphhPZjuxhfm5Es/LLYcDegEV3wi3duqM9WjaZZseHJF4Gst5QyLWTKtbT20Kpcaq+rhJhHVa5RV3wNMoiHRyqyX83Xb7ef7NKZpudR5mR6C4bIHkuLWt2Ijgv0UZ9xNP/9tlI9LkP9TJTFwzIC7TXdpruVFo1o1o=
+	t=1725846472; cv=none; b=UjwSa13CJrxJWuqWCHNDLvkNizefxm1ecLZd6dnoz6QWTdKKMM9Bc8ewhSW5CtyANBRB+SNotdrjnEoWtpcAsN+P9HzcsYqT8I9v0JYgTTPgHVBmvju52s+ciUit1/X6a6FIVLdj59XU7Imzy60nOUizCrHx13UnVpAq8ILg5HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725846446; c=relaxed/simple;
-	bh=L9TNAtnBy3nR64TFNqaXVI/oToOp2YKmFJxlvG3+790=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NtLEIyRfmermftorB2IyFzWtLWNqBqSHi0UdEfGhb9SqZGWzSLh+XclKkCp30IoKzVACYzsuNT8wBZeRRdsmNQmS/Iw8tI1m/cLjZkQfbRe6HfW8hClVgPXCEtOGCiFoUthEWF5ndD8WNbqIljao95qSTkPVRlVX5DvPdOVhNbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=CNHcsxLv; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 903F12C0517;
-	Mon,  9 Sep 2024 13:47:16 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1725846436;
-	bh=gpkGo77cm18FSmg2ftRjYbF+hAbg60pgDNCScLTabCk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CNHcsxLvGlXkLcsuoRKfSgbfzCyeSF7oGxoVF1UNYjG7GkM4KgaVrpyXcyVr+9fUF
-	 1OVaq6hPAxE9RmoUcjhsgxRUWbQzXmsa/ixpEuRJR4n1ACWXWcWfPQ6+yliyVM1UnM
-	 4AXJGdPlZVCueqIDiV0eatXCD5ovCNuJeo58CFPsIrf9WwRckejbdnv0FQKX7xpUqD
-	 8w8DIWfS2cvTopX3+tGG5vUnghUUn1Is0s0umpecfCLe1/UEK5swG4+dJVAK1cC+0x
-	 UQTyHJxC6YEPtzhNzqe3yJ4sc859emIiWj4txsNEpW1MSLvdkxgSRU8q1EF+xK7+F0
-	 +7qIHNMnFz3/A==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B66de53a40002>; Mon, 09 Sep 2024 13:47:16 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 451C213EE84;
-	Mon,  9 Sep 2024 13:47:16 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id 4227A28056E; Mon,  9 Sep 2024 13:47:16 +1200 (NZST)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: lee@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	tsbogend@alpha.franken.de
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 2/2] mips: dts: realtek: Add syscon-reboot node
-Date: Mon,  9 Sep 2024 13:47:07 +1200
-Message-ID: <20240909014707.2003091-3-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240909014707.2003091-1-chris.packham@alliedtelesis.co.nz>
-References: <20240909014707.2003091-1-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1725846472; c=relaxed/simple;
+	bh=sMBcjmTPkiGqMm9iJQ9qc2+UW2td00ShQaRS9ZKW8X0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uf1T7oUBtdHxRsH/7JhSBXedlWUlsdzrhxO04VEecQegeszQ6PqE+GASS6fsrj6f3LKQWa6lyAkySxam/i1qFYPxS2i7Ebp7noO+JrlxVb/3eL08vGt6wt1EUutEuhMBWYf8zF7xLv9xm3h8Psvh4AJPaDpmqqsMl92D4CedBZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lm5CkVAz; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f74b6e1810so32561021fa.2;
+        Sun, 08 Sep 2024 18:47:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725846468; x=1726451268; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sMBcjmTPkiGqMm9iJQ9qc2+UW2td00ShQaRS9ZKW8X0=;
+        b=lm5CkVAz8todWqy3/iiDROsNPAB5NAACGnISNcRg1JWn9x+lPnmB2maVcgPUIOlm61
+         vwrTOTVlkPZZDc4ZO6Omo/TgfCKiIJiQK6+MVD7ASe6KcoN4mqmchDurnleVhaCopjuN
+         2qcFiYpjEwV+OKJbgBIQlAZnveW68B86X6E8Z344K04fyuQGNJHgYZNUW/Wf/3X71Vom
+         BdEu/SieuPTyRgA+DebrUTf+7NAaP7ly7Q2rwpGFT9nqp7iYYeLCYhN39/CA2J32tmWG
+         cDnQeCHBXccHnz7n7EA/pP9hRI6KnANVGXyxKAmUC9eV5qLQPkte+LE3Gm6B1wC7eG+T
+         8aUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725846468; x=1726451268;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sMBcjmTPkiGqMm9iJQ9qc2+UW2td00ShQaRS9ZKW8X0=;
+        b=jHqG/RUWQBayqlm6Sjer7I79wzc++T6g1vYOHZ50lP6/AruKh7i+HnD6CNB+9uQgag
+         9c01Dd8a+l7P9KbVTPgHe1Esh6nGnhkhJC3gV0Rk1r3vnGbqY6qf2Xg8mxT8DXgpl9qH
+         5wWn4gAzC51byzjeTD2DY6xuojSlX0LFU/fV2vHuIqPsl1QhJncfgUuQKkpJo5YmVAB+
+         +e813pFMlDSEzLwkoybSDdi7w4oUzQofu2etRd10/y3+5bVbC/GlvuXFnVRz14jeB9Co
+         WjZOJe8ihQoFZSK8PBeuYXgATLm+3vwmlRQp3tcijbqQIFI9WysrWHtv92yHIgQokP7T
+         6bNw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8+hk5r8gP6p097pUsu726bG8MFv0rXEMjMzKZ5S/Cm0rMVny8FGqrKqAom5N3cy1DKR0UN9eK2w4=@vger.kernel.org, AJvYcCXBLU+7dysYtlEVbqajKKymFJAYQpT310GWQv9GZ4YyL26EuYogWIAXc8KLccG5DhKDRarksX0tpZEBrTtg@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZLxDyUJp06Xqa2s4qULtJfRYy4B6nn+v6x83CzeSPSUT9Yj8L
+	P7iS7Q0fecDN35aovZTVbKXJwtrRr/K2Mdz7ZEezwpGd5+TEouTGCn801UAEK8ql2vo3Bn1n8Jl
+	qttaHwL5J92M0mFlY5jKIIXoYqA==
+X-Google-Smtp-Source: AGHT+IHDjA5SvJpZ7TekDlfF9Vtbes/OHdwckVDtaVtHJqTYfJbJlBpPHzMU6b/3YNIwh1UPdH6a36f8y29yhDpu85o=
+X-Received: by 2002:a05:6512:3b07:b0:536:569b:a59c with SMTP id
+ 2adb3069b0e04-536587a407bmr5596365e87.4.1725846467556; Sun, 08 Sep 2024
+ 18:47:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240830034640.7049-1-kfting@nuvoton.com> <20240830034640.7049-5-kfting@nuvoton.com>
+ <stnyjmnqdobzq2f2ntq32tu4kq6ohsxyevjn5rgz3uu2qncuzl@nt4ifscgokgj> <CAHb3i=vSUqbsoRhnnyMOoteKP3GCoXmCd+UKQSN_QWqkRweuiA@mail.gmail.com>
+In-Reply-To: <CAHb3i=vSUqbsoRhnnyMOoteKP3GCoXmCd+UKQSN_QWqkRweuiA@mail.gmail.com>
+From: Tyrone Ting <warp5tw@gmail.com>
+Date: Mon, 9 Sep 2024 09:47:35 +0800
+Message-ID: <CACD3sJZunRChkWBfntJP=w=8crLB2Afkb4hKz_5ntmiAXCGJQw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] i2c: npcm: Modify timeout evaluation mechanism
+To: Tali Perry <tali.perry1@gmail.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, avifishman70@gmail.com, tmaimon77@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
+	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=KIj5D0Fo c=1 sm=1 tr=0 ts=66de53a4 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=EaEq8P2WXUwA:10 a=oSNYpAVFohJLBMLz1HQA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
 
-The board level reset on systems using the RTL9302 can be driven via the
-switch. Use a syscon-reboot node to represent this.
+Hi Andi:
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
- .../dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts    |  3 +++
- arch/mips/boot/dts/realtek/rtl930x.dtsi               | 11 +++++++++++
- 2 files changed, 14 insertions(+)
+Thank you for your review.
 
-diff --git a/arch/mips/boot/dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dt=
-s b/arch/mips/boot/dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts
-index 77d2566545f2..a517135446a3 100644
---- a/arch/mips/boot/dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts
-+++ b/arch/mips/boot/dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts
-@@ -71,3 +71,6 @@ partition@1180000 {
- 		};
- 	};
- };
-+&switch0 {
-+	status =3D "okay";
-+};
-diff --git a/arch/mips/boot/dts/realtek/rtl930x.dtsi b/arch/mips/boot/dts=
-/realtek/rtl930x.dtsi
-index f271940f82be..cf1b38b6c353 100644
---- a/arch/mips/boot/dts/realtek/rtl930x.dtsi
-+++ b/arch/mips/boot/dts/realtek/rtl930x.dtsi
-@@ -29,6 +29,17 @@ lx_clk: clock-175mhz {
- 		#clock-cells =3D <0>;
- 		clock-frequency  =3D <175000000>;
- 	};
-+
-+	switch0: switch@1b000000 {
-+		compatible =3D "realtek,rtl9302c-switch", "syscon", "simple-mfd";
-+		reg =3D <0x1b000000 0x10000>;
-+
-+		reboot {
-+			compatible =3D "syscon-reboot";
-+			offset =3D <0x0c>;
-+			value =3D <0x01>;
-+		};
-+	};
- };
-=20
- &soc {
---=20
-2.46.0
+Tali Perry <tali.perry1@gmail.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=888=E6=97=
+=A5 =E9=80=B1=E6=97=A5 =E4=B8=8B=E5=8D=886:48=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> Hi Andi,
+>
+> On Fri, Sep 6, 2024 at 12:39=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org=
+> wrote:
+> >
+> > Hi Tyrone,
+> >
+> > On Fri, Aug 30, 2024 at 11:46:37AM GMT, Tyrone Ting wrote:
+> > > Increase the timeout and treat it as the total timeout, including ret=
+ries.
+> > > The total timeout is 2 seconds now.
+> >
+> > Why?
+>
+> The users want to connect a lot of masters on the same bus.
+> This timeout is used to determine the time it takes to take bus ownership=
+.
+> The transactions are very long, so waiting 35ms is not enough.
+>
+> >
+> > > The i2c core layer will have chances to retry to call the i2c driver
+> > > transfer function if the i2c driver reports that the bus is busy and
+> > > returns EAGAIN.
+> > >
+> > > Fixes: 48acf8292280 ("i2c: Remove redundant comparison in npcm_i2c_re=
+g_slave")
+> >
+> > What is the bug you are fixing?
+> >
 
+I'll remove the Fixes tag in the next patch set.
+
+> > > Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
+> >
+> > Still... can someone from the nuvoton supporters/reviewers check
+> > this patch?
+> >
+> > Thanks,
+> > Andi
+>
+> Thanks,
+> Tali Perry,
+> Nuvoton Technologies.
+
+Thank you.
+
+Regards,
+Tyrone
 
