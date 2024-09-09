@@ -1,161 +1,164 @@
-Return-Path: <linux-kernel+bounces-321458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20375971AA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:18:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B47D971A9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA015B210B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:18:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BF801C22BF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A408B1B86F4;
-	Mon,  9 Sep 2024 13:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8E91B81C7;
+	Mon,  9 Sep 2024 13:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nvydEuWP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NQGpz/s+"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B1D176259;
-	Mon,  9 Sep 2024 13:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA18282481
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725887924; cv=none; b=gGatsHpyyMMtjbZtprzCIhN3AKh9f7jdntSbC5aRiHaaHmA+QdCj99W17ho51P7WRWbsSMrSguwrst5VxJR4tcKDMrovw9nXJ8GiqPNWjTk7yCzsqBd29y2v5v5BeA/EufJTJx+IihjPdbq5FvCmx+t6rDPJ+/n/LMN2l+sCDCA=
+	t=1725887821; cv=none; b=WX5dyhN0g/5CF379ldrBxBGsDMbsG7regeQAYe1HE0kkscKz9wQf0+60EqNZCqgR+OEPHOUy0JEppffQojcXLvhXOZhPchvvHKBp9l8QSre717XXACP7dWJUVAVrTxefZrgcfYUkLQ2sNb3VSnYo1gUKUM0+cR3k+CcPviLCn8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725887924; c=relaxed/simple;
-	bh=LaS630GWSJUP5/OlzQClgenx4KF+6YVTc43cjcpFnEE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ozO4k5lW6yhtQ/RRyi3KcCLO3y5AGGgpCMrRBsDqyUQ2Bfi9ujCvFe/nNmIieMwcy2ZFdz8P7clNnM+B9bcVoVhbAFXbLCWRXp/nVfECd9AJVNSp7rvn4aAv6HBnIqPdA2n++M4oUhQbdrhyPoDMoCv9XT6gOZYwOVXo7aHBNcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nvydEuWP; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725887922; x=1757423922;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=LaS630GWSJUP5/OlzQClgenx4KF+6YVTc43cjcpFnEE=;
-  b=nvydEuWPzPtP7vERkOJV/Fzjzpm429tssi/gsHmRD54obWQgs6wS5/VA
-   XNnY1lTrCHUTsR3+Dm3kJllD8AWIMMSe8tlI5U+/zJpw7K65qmj+uQMB3
-   By3vAfkimRPr3v/Rzl20tjWImQ70HWg1+IroGOrOxm1v4XjBpJeHaB/sr
-   tIC34E0zibfypV6reclcjkV6jjjeGoCAt3TNM70uEKvSZ0EwtAov3M9nw
-   n7IHllIEuoIw3ZDEry1Hk1dKHrjMalu4+Ay9dEPVjHXcxEe9G9rV7dXss
-   2DeORF1G4BYxRRLgc+YdfNZBL1Irlhlf1r93C60F6xErm8Uy3OxIV9EHy
-   A==;
-X-CSE-ConnectionGUID: 0bjkHbjZRayxlKZ9aP3oUw==
-X-CSE-MsgGUID: 9lhC6qTbQfWwtrP8dR20RQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="28363546"
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="28363546"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 06:18:41 -0700
-X-CSE-ConnectionGUID: y9IAZPafTayJLBL4nz5pOw==
-X-CSE-MsgGUID: 0VC8m7WDSiqzEP0MrMRAvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="104127985"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 06:18:37 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: kraxel@redhat.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	virtualization@lists.linux.dev,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: pbonzini@redhat.com,
-	seanjc@google.com,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Kevin Tian <kevin.tian@intel.com>
-Subject: [PATCH v2] drm/bochs: use devm_ioremap_wc() to map framebuffer
-Date: Mon,  9 Sep 2024 21:16:43 +0800
-Message-ID: <20240909131643.28915-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1725887821; c=relaxed/simple;
+	bh=t2DE0tVlTgerMzK1w7AVeBcCUo3EclfAubiOY6ZywIE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=uxNLwt+rdoCIp7j7qyhIKP2OYv4WK/APqrO+XDsMy2EgHNdzj1mcHU3djj3EmOS7qHLLrTplfVCHNdtT4qsNtn1zhTuH2uoDZZeVmB6BVnDS3F9TdNmjdjVbXStFuEuk+93j6cL9YYzfBgaXDKXGjLd7ZEZGihypdZ/17dvyrro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NQGpz/s+; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso11221625e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 06:16:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725887818; x=1726492618; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sg3XnbABoZRPJGRGcZWLT0fiHtFn27fHJD7M1+IXq9Y=;
+        b=NQGpz/s+ov2c70UzqiYbN8JTnTiE2PfqTBeO4FX1dRe44074kkMpiUNnRezBfd0kYr
+         CYe/lU0ricotnGASLAcV5qsRui827N4eYpgqN5W1wO0hjgULSYhPgHnoCXD5YVNPFF4P
+         WR6POMQDFA8qS9Tw5Iz/GAeejuPYkPO8T3+PYpS8ILjnDFT0b8dKnfF2onPrfQSHwBxB
+         TA23sRnbMjymheXp+3s6jqg7p/h5CE4LEg3bkUqKNSnzCmkuwSqYaLAD+HN0FhDvzC1P
+         Bz0+POLjciUNVV+ZlpNzbTk58nvAxp8NZad3Kq4ZhruIQOmuiyMLHYijfK9VZZ9W3Z9T
+         pERw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725887818; x=1726492618;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Sg3XnbABoZRPJGRGcZWLT0fiHtFn27fHJD7M1+IXq9Y=;
+        b=Kkc0GhkdEWUrQhhagydmteKYyAgWgOo5BAClx9WmSs3mHSwQZ3XMnhMnIvdJzlZXnB
+         DyR1uAF90KBEtxINIvHMdUhCC9Kjt+IVu46hq2WLTWt2v0PRQd55yb1stNFutUyohw9A
+         UohTaMi+Cx2zy5p//8Oul0+RmVQqVGdP8nY8nJ3Np8Hdd7bWQYI44NjZsMlzcnFFzzNV
+         HCZTyA8AWArUTzOOoarESggmx8HT1ck6sDIFW8CVwPvmOH7b3JRsxvFaK0mvthbdskXu
+         1zdnFOO41hYcW9W8U4duzGeGS6BkVcshkyA1QwyPj37utK5QVxJKayp0sHOEIgRdJIAh
+         0h+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUuF0w86ULaQ5H2c6e/KKXyWYrfpIDfEMDL8pnFIxkRUkYW+O3zs7Est7ukPppgO4mwpovFho+YufJggB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0YmAwCLHuODVmvCqcBTls+t3uimzpxqJDa/KaEEjSWq3N3EmT
+	4RvWJacn5AkZ2dQGr4x0o4OO5sMcLaJofuLmLU+n2I44R4qmC1SGRmDIDRAlLfc=
+X-Google-Smtp-Source: AGHT+IHLaFRmjXq7bnm5y4AJSqSjgdR4U2OGsCo8bfREbnp9ZgT2lMllHdorREM+yqOr4qBpHp+aLQ==
+X-Received: by 2002:a05:600c:548a:b0:42c:bae0:f057 with SMTP id 5b1f17b1804b1-42cbae0f29fmr9879275e9.8.1725887817701;
+        Mon, 09 Sep 2024 06:16:57 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:63a3:6883:a358:b850? ([2a01:e0a:982:cbb0:63a3:6883:a358:b850])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca05c2656sm109292335e9.7.2024.09.09.06.16.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 06:16:57 -0700 (PDT)
+Message-ID: <bc0b47d9-ad8d-4beb-aad4-6dff79f48842@linaro.org>
+Date: Mon, 9 Sep 2024 15:16:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 02/10] drm: bridge: dw_hdmi: Only notify connected
+ status on HPD interrupt
+To: Jonas Karlman <jonas@kwiboo.se>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Robert Foss <rfoss@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Lucas Stach <l.stach@pengutronix.de>
+Cc: Christian Hewitt <christianshewitt@gmail.com>,
+ Diederik de Haas <didi.debian@cknow.org>,
+ Christopher Obbard <chris.obbard@collabora.com>,
+ dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240908132823.3308029-1-jonas@kwiboo.se>
+ <20240908132823.3308029-3-jonas@kwiboo.se>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240908132823.3308029-3-jonas@kwiboo.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Opt for devm_ioremap_wc() over devm_ioremap() when mapping the framebuffer.
+On 08/09/2024 15:28, Jonas Karlman wrote:
+> drm_helper_hpd_irq_event() and drm_bridge_hpd_notify() may incorrectly
+> be called with a connected status when HPD is high and RX sense is
+> changed. This typically happen when the HDMI cable is unplugged, shortly
+> before the HPD is changed to low.
+> 
+> Fix this by only notify connected status on the HPD interrupt when HPD
+> is going high, not on the RX sense interrupt when RX sense is changed.
+> 
+> Fixes: da09daf88108 ("drm: bridge: dw_hdmi: only trigger hotplug event on link change")
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> ---
+> v2: New patch
+> ---
+>   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> index 9e7f86a0bf5c..055fc9848df4 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> @@ -3123,7 +3123,8 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+>   			mutex_unlock(&hdmi->cec_notifier_mutex);
+>   		}
+>   
+> -		if (phy_stat & HDMI_PHY_HPD)
+> +		if ((intr_stat & HDMI_IH_PHY_STAT0_HPD) &&
+> +		    (phy_stat & HDMI_PHY_HPD))
+>   			status = connector_status_connected;
+>   
+>   		if (!(phy_stat & (HDMI_PHY_HPD | HDMI_PHY_RX_SENSE)))
 
-Using devm_ioremap() results in the VA being mapped with PAT=UC-, which
-considerably slows down drm_fb_memcpy(). In contrast, devm_ioremap_wc()
-maps the VA with PAT set to WC, leading to better performance on platforms
-where access to UC memory is much slower than WC memory.
+Perhaps this should be also checked for the other lines checking HDMI_PHY_HPD ?
 
-Here's the performance data measured in a guest on the physical machine
-"Sapphire Rapids XCC".
-With host KVM honors guest PAT memory types, the effective memory type
-for this framebuffer range is
-- WC when devm_ioremap_wc() is used
-- UC- when devm_ioremap() is used.
-
-The data presented is an average from 10 execution runs.
-
-Cycles: Avg cycles of executed bochs_primary_plane_helper_atomic_update()
-        from VM boot to GDM show up
-Cnt:    Avg cnt of executed bochs_primary_plane_helper_atomic_update()
-        from VM boot to GDM show up
-T:      Avg time of each bochs_primary_plane_helper_atomic_update().
-
- -------------------------------------------------
-|            | devm_ioremap() | devm_ioremap_wc() |
-|------------|----------------|-------------------|
-|  Cycles    |    211.545M    |   0.157M          |
-|------------|----------------|-------------------|
-|  Cnt       |     142        |   1917            |
-|------------|----------------|-------------------|
-|  T         |    0.1748s     |   0.0004s         |
- -------------------------------------------------
-
-Note:
-Following the rebase to [3], the previously reported GDM failure on the
-VGA device [1] can no longer be reproduced, thanks to the memory management
-improvements made in [2]. Despite this, I have proceeded to submit this
-patch because of the noticeable performance improvements it provides.
-
-Reported-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Closes: https://lore.kernel.org/all/87jzfutmfc.fsf@redhat.com/#t
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-Link: https://lore.kernel.org/all/87jzfutmfc.fsf@redhat.com/#t [1]
-Link: https://patchwork.freedesktop.org/series/138086 [2]
-Link: https://gitlab.freedesktop.org/drm/misc/kernel/-/tree/drm-misc-next [3]
----
-v2:
-- Rebased to the latest drm-misc-next branch. [2]
-- Updated patch log to match the base code.
-
-v1: https://lore.kernel.org/all/20240909051529.26776-1-yan.y.zhao@intel.com
----
- drivers/gpu/drm/tiny/bochs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
-index 69c5f65e9853..9055b1dd66df 100644
---- a/drivers/gpu/drm/tiny/bochs.c
-+++ b/drivers/gpu/drm/tiny/bochs.c
-@@ -268,7 +268,7 @@ static int bochs_hw_init(struct bochs_device *bochs)
- 	if (!devm_request_mem_region(&pdev->dev, addr, size, "bochs-drm"))
- 		DRM_WARN("Cannot request framebuffer, boot fb still active?\n");
- 
--	bochs->fb_map = devm_ioremap(&pdev->dev, addr, size);
-+	bochs->fb_map = devm_ioremap_wc(&pdev->dev, addr, size);
- 	if (bochs->fb_map == NULL) {
- 		DRM_ERROR("Cannot map framebuffer\n");
- 		return -ENOMEM;
--- 
-2.43.2
-
+Neil
 
