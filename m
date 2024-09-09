@@ -1,72 +1,144 @@
-Return-Path: <linux-kernel+bounces-321156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F33697154E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:28:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC93971550
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9549B225AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:28:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2249E1F25663
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E225A1B3F3F;
-	Mon,  9 Sep 2024 10:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J751lDQN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D30B1B3F3A;
+	Mon,  9 Sep 2024 10:28:29 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B32E1B3F2A;
-	Mon,  9 Sep 2024 10:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEBF1B3F2A
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 10:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725877698; cv=none; b=MmHaiNgAQcp36nIH3BLdoPRdP8CN788IhDmtiT8lIYL/lZyGGxmvVkw/c2uGcJELE1WYKEFOhR0hwFEBLPAF/KY1EHxG7qXaApAx3FFRFrTJECFmMh8FyrQ3MGE2s/uzCM763PgdowWGU5nWOvxePJaUQz8hddvcbHt033rwPhI=
+	t=1725877708; cv=none; b=sMl9fiOItVw7xP2Qzs+8KxW/9FhnoPcAP27/IjOSEHw8Am/d4zVvXi6S71cmGHZXxpdTpPiQ4LFbYp5v3rDxOnT/vVnh0UvJaWDW1bP370Fgj6YK5dUKshQ7tWtSvBp3NPYJawGrIqQIIY/OSxkEiMR5hFuJB8uQrbDI250kDPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725877698; c=relaxed/simple;
-	bh=MQmyCM8nJb59bEm7bwBPRufGAZdgvLjJKGoRFfYogEY=;
+	s=arc-20240116; t=1725877708; c=relaxed/simple;
+	bh=rwTU4OBCrj5FyIBE23hhrSCcr1FAJSZ6vhDKt8u/RBE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NyyM7pjiprzbBkB07M/4IrsELad/dlkVZGO3N7s/HELVnAknSX954tlhAn93eZJOHeNkpgfSp3i5lL9FWKTZV3ljLITt2nIjJvnWt361o584ZU28Q3e3iM8j5szG/MneBfZPWOzURhEijSxoynvH3zBds0HKTJ3+xcN2bLidqMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J751lDQN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C79C4CEC5;
-	Mon,  9 Sep 2024 10:28:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725877697;
-	bh=MQmyCM8nJb59bEm7bwBPRufGAZdgvLjJKGoRFfYogEY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J751lDQN3+hw22TYpGwk0j2O3u5nVwdu0F5wZ0qXNqgup/cPcGuIVb/J4Fj4/1Ps6
-	 S/tSQzKbbHTqdbe8rsAEUyxggUGsqkd+ZX216attrZifkRSTjiv8QXTc6lTEOwQF4x
-	 7/UAvSw5Hw0Q/9GVPNJIfLwn8COgriIeTHOc5fVRRlqENuOAXjiB8WBmSmH2DHLx/M
-	 N3Rk9urf3mdJ2JnC7fjAi8sTEmGG6Rxx7eKBHFovpfBPwJ0jBxx/bZln3FoAN6wdJa
-	 0J831IXjKfeogoIpYVqBFPJB2CzGjl6vguYFL4dsKnWJGCtf8JTVpdv0DPlxd53w6N
-	 1GxY8n7CPVohg==
-Date: Mon, 9 Sep 2024 12:28:14 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the vfs-brauner
- tree
-Message-ID: <20240909-gewaschen-aushebeln-380fbad43cec@brauner>
-References: <20240909074745.2767f0dd@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ul/rkXhphLEfqhZjgnbeaC1sYsTWQfUdHJ11IPWw957UEa2qo9XtYFtcVv6Myt5Bs93v6vjaTo8BvTahE7B+JJ9qdFq+JoGLkTlwfZVmnNly+zdcOEDiNaaB2KUvjbt9CjdK4R0Yyse0sqkT5MwdrO24PrdV9D/ZKhj4HWKGmDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1snbd7-0008Cq-CC; Mon, 09 Sep 2024 12:28:21 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1snbd6-006d5V-Qw; Mon, 09 Sep 2024 12:28:20 +0200
+Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 78E3733682B;
+	Mon, 09 Sep 2024 10:28:20 +0000 (UTC)
+Date: Mon, 9 Sep 2024 12:28:20 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: "Hamby, Jake (US)" <Jake.Hamby@teledyne.com>
+Cc: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] can: m_can: Enable NAPI before enabling interrupts
+Message-ID: <20240909-furry-spectral-guan-bb27d4-mkl@pengutronix.de>
+References: <DM8PR14MB5221D9DD3A7F2130EF161AF7EF9E2@DM8PR14MB5221.namprd14.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="atvafioyx2obuspf"
+Content-Disposition: inline
+In-Reply-To: <DM8PR14MB5221D9DD3A7F2130EF161AF7EF9E2@DM8PR14MB5221.namprd14.prod.outlook.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--atvafioyx2obuspf
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240909074745.2767f0dd@canb.auug.org.au>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 09, 2024 at 07:47:45AM GMT, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->   785de7deb1e5 ("9p: Fix missing set of NETFS_SREQ_HIT_EOF")
-> 
-> is missing a Signed-off-by from its committer.  Rebased?
+On 06.09.2024 23:19:51, Hamby, Jake (US) wrote:
+> If any error flags are set when bringing up the CAN device, e.g. due to
+> CAN bus traffic before initializing the device, when m_can_start is
+> called and interrupts are enabled, m_can_isr is called immediately,
+> which disables all CAN interrupts and calls napi_schedule.
+>=20
+> Because napi_enable isn't called until later in m_can_open, the call to
+> napi_schedule never schedules the m_can_poll callback and the device is
+> left with interrupts disabled and can't receive any CAN packets until
+> rebooted. This can be verified by running "cansend" from another device
+> before setting the bitrate and calling "ip link set up can0" on the test
+> device. Adding debug lines to m_can_isr shows it's called with flags
+> (IR_EP | IR_EW | IR_CRCE), which calls m_can_disable_all_interrupts and
+> napi_schedule, and then m_can_poll is never called.
+>=20
+> Move the call to napi_enable above the call to m_can_start to enable any
+> initial interrupt flags to be handled by m_can_poll so that interrupts
+> are reenabled. Add a call to napi_disable in the error handling section
+> of m_can_open, to handle the case where later functions return errors.
+>=20
+> Also, in m_can_close, move the call to napi_disable below the call to
+> m_can_stop to ensure all interrupts are handled when bringing down the
+> device. This race condition is much less likely to occur.
+>=20
+> While testing, I noticed that IR_TSW (timestamp wraparound) fires at
+> about 1 Hz, but the driver doesn't care about it. Add it to the list of
+> interrupts to disable in m_can_chip_config to reduce unneeded wakeups.
+>=20
+> Tested on a Microchip SAMA7G54 MPU. The fix should be applicable to any
+> SoC with a Bosch M_CAN controller.
 
-Nope, forgot to fold into a previous commit. I've done that now. Thank you!
+Thank you very much for your contribution! I believe you have solved the
+problem I was investigating last Friday. I still need to test it with
+your solution though.
+
+This patch does not contain your Signed-off-by [1]. Add it to your next
+patches; "git commit -s" will add it automatically. For this patch, you
+can reply and include it in your email!
+
+[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#=
+sign-your-work-the-developer-s-certificate-of-origin
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--atvafioyx2obuspf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbezcEACgkQKDiiPnot
+vG/lvgf8CfGCe8ElfbP4xj3EhaeSLMh2VbgJr7KMJF4FL89rVrjTgsFYU/G+XLMn
+ynlNRjvGHKPVHyDm93bRrYlIjG61x5JbRZ3Q1ohODpjAE9iMhDBY5mNTLEs5/h9R
+ilE+1700Y+UglDgT5Utx/ZoOq2g6R/C46MEZ2x4hk8nAF7acoiBa+iUtBB9Km5cV
+boxpjOhhHtm/tEmPKxVK3sAGSsMjMgaCD6Odu7h/Ec/1Mt97T9a9T1Nlp9XgFkB3
+Fz03apAos9d0iztKyNYfPeZOSe/LHfwViZ7GNeCmfF0j1QCJ+5wpMlDE5XuixIQk
+Gc5n2e6bxlZTo9s2itWXnINzp+Jukw==
+=Vucm
+-----END PGP SIGNATURE-----
+
+--atvafioyx2obuspf--
 
