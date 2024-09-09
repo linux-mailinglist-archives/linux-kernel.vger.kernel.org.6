@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-321920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23228972128
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:41:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7E697212C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EC481C23B5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:41:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BEFE1C23C03
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBE3189B97;
-	Mon,  9 Sep 2024 17:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129A0189BAF;
+	Mon,  9 Sep 2024 17:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fEvNWv72"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PvQeDOMo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C042189B82
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9FB17A924;
+	Mon,  9 Sep 2024 17:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725903357; cv=none; b=EG8flG0aGC7LPFA9yLKtmM659QzLvYC8MQbhQI6hiGtgIz53QZTqTbW+Iw3BFm12APSXiCeWrRflGaf7XrfurOmvsWLb6Q6hZorx1bisynTCzErmEoPt9ylZV1t4cu8+SvgohnQa2JcjJLGLO6p9g3B0Q7Y8sw4MkcLU3oKLklM=
+	t=1725903410; cv=none; b=dYml9vPKPAN3Lf8nt8f0mNVgT0MsQ/BTm3qoAfb3V0Er5W+1ffabGUKc6nLbabWH76/A2YjHIp0oNaWKVSDcL+HabfyGMizDp4IQiVdzUjJcmCtf3MCTVGSDtgJML3pWdPebaZA+4e/uGCAwKPgBK20P3BPDdTthdQmAe6BM5nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725903357; c=relaxed/simple;
-	bh=9aw8PX64D6pSR+Ia9H9ANt7478SV+HKrI2YmwF/5mhk=;
+	s=arc-20240116; t=1725903410; c=relaxed/simple;
+	bh=QIq02CEQ3sFJNx83g6r2WJLTGuQ7Zbmg9wwdFQA6m/8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kDCKQ78iLe8wI/LbFT3kPEsTPYM/1hUEfAZWcmBAGTrMTsRtQgXTHGC5GIE1x3hC1r4soB8ZDJFOrLVVgK2PWzGtqR0PIM6ab1JcNlc05aBEviqFXP6U0jz5AnGhGah1iXDUaLpNGaGt6oecGZdwaPb8bej71zb0vDMrLPyLo8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fEvNWv72; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 9 Sep 2024 10:35:46 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725903353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bmKGYO/dpVEt+1a6FmkaafuRmzIOS9aVPE12GwYuRE4=;
-	b=fEvNWv72S5tUhzNe5wF1JK4/WPod8FcE1f8TVrEx0SOovu43xmmBOPRZ3zfUmhcqm5a1Yl
-	8tpbYrLKAvarjZPqv6f5fbSbduXmlhZg6ZQSHHMM2iuJimAItIXQHPT4EzmJfzaCsWRi88
-	9FpH3+8srxHeTsH2u/fSM6UbbNoW6jE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Andrew Morton <akpm@linux-foundation.org>, Chen Ridong <chenridong@huawei.com>
-Subject: Re: [PATCH 1/4] memcg: Cleanup with !CONFIG_MEMCG_V1
-Message-ID: <qbx65gqigbmohnrmrdi2bx3mfl7posce4salvuoaqsm2y4kyz6@lb62sbxapqqp>
-References: <20240909163223.3693529-1-mkoutny@suse.com>
- <20240909163223.3693529-2-mkoutny@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u0sZFvfpZlYULnuNGDAfN8mbtrM74GayzjcVM1ENWuVxrnzznHNL+xEm9CiZnx/jj9UJC41jxRehg1drMeda+CY1bz8pnBheOv7vK+L/1BeTK9JOMv37U85/CHFUurBJl6ZYC3A4i4l9LwYIPGzYBMvOORGtMlV+lrrNbCu3tsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PvQeDOMo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36EA8C4CEC5;
+	Mon,  9 Sep 2024 17:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725903409;
+	bh=QIq02CEQ3sFJNx83g6r2WJLTGuQ7Zbmg9wwdFQA6m/8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PvQeDOMorLgrbcotGFIcvW1BzYziAlVcuA2SNuBFHbLiJCqJ2DlM17I7Sl72xyIB5
+	 bNb9OpUahhr3NIRZrMULFHx+P02IaxDLYnitPBV1DWNP2lr32D34KiNbcqfmyuu+OC
+	 55VAu/TKRo/guYOPw+Md0hctSLRXaf6RIZl4zGmDNnTd3uohvtQaDbjJJ8KQHcdLBe
+	 Wn9qOMGX1RP+JSagbE2IKIoY042vcr31EYKHwoRx+Kb8a8zzzdz2MUeJ3F14kZ4sxN
+	 Xl/qYdtxAwmm8URQFDuKRBoCf37ftNNuWJX+YUg5OXOCT2/RKxQepdlQUWihYawymA
+	 RjVIX4mvmLsoA==
+Date: Mon, 9 Sep 2024 19:36:45 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Liu =?utf-8?B?S2ltcml2ZXIv5YiY6YeR5rKz?= <kimriver.liu@siengine.com>
+Cc: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, 
+	"mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>, "jsd@semihalf.com" <jsd@semihalf.com>, 
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>
+Subject: Re: [PATCH v7] i2c: designware: fix master is holding SCL low while
+ ENABLE bit is disabled
+Message-ID: <zr3kwfko3ibotqivmszpthbulcre5iofw4ihc3nwnks3or5mje@pkiynzbboxpn>
+References: <9B8C909B-AF7A-4F0F-BD75-ED368BE71E28@siengine.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,15 +60,50 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240909163223.3693529-2-mkoutny@suse.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <9B8C909B-AF7A-4F0F-BD75-ED368BE71E28@siengine.com>
 
-On Mon, Sep 09, 2024 at 06:32:20PM GMT, Michal Koutný wrote:
-> Extern declarations have no definitions with !CONFIG_MEMCG_V1 and no
-> users, drop them altogether.
+Hi Kimriver,
+
+On Mon, Sep 09, 2024 at 02:26:30PM GMT, Liu Kimriver/刘金河 wrote:
 > 
-> Signed-off-by: Michal Koutný <mkoutny@suse.com>
+> HI andi
+> 
+> Due to a 12 time difference，I had been off work.
+> I am very sorry that I can't reply email in time. I will reply to your email  immediately after going to work tomorrow.
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+It's not a problem, take your time! :-)
 
+> >> --- a/drivers/i2c/busses/i2c-designware-common.c
+> >> +++ b/drivers/i2c/busses/i2c-designware-common.c
+> >> @@ -453,6 +453,18 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
+> >>  
+> >>  	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
+> >>  	if (abort_needed) {
+> >> +		if (!(enable & DW_IC_ENABLE_ENABLE)) {
+> >> +			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
+> >> +			enable |= DW_IC_ENABLE_ENABLE;
+> >> +			/*
+> >> +			 * Need two ic_clk delay when enabling the I2C to ensure ENABLE bit
+> >> +			 * is already set. Wait 10 times the signaling period of the highest
+> >> +			 * I2C transfer supported by the driver(for 400KHz this is 25us)
+> >> +			 * as described in the DesignWare I2C databook.
+> >> +			 */
+> >> +			usleep_range(25, 250);
+> 
+> >I think there is a misunderstanding here. Andy asked you to use
+> >flseep and improve the calculation: "Please, calculate this delay
+> >based on the actual speed in use (or about to be in use)."[*]
+> 
+> >Andy can you please clarify with Kimriver here?
+> 
+>  if we use 400kHz ,need setting flseep(25);
+>  if we use 100kHz ,need setting flseep(100);
+>  Overall, take the maximum value:flseep(100);
+
+Thanks for clarifying, then this is what Andy asked to do,
+instead of waiting an average random amount from 25 to 250us.
+Does it make sense to you?
+
+Thanks,
+Andi
 
