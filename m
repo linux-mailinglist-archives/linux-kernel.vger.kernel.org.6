@@ -1,162 +1,144 @@
-Return-Path: <linux-kernel+bounces-321071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578B997140E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:43:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B0597140C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9D7FB223E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:43:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC8F1F23D9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190811B3B08;
-	Mon,  9 Sep 2024 09:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C10D1B2EE8;
+	Mon,  9 Sep 2024 09:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jRuMaP3k"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ecEvKZXu"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF33C2B9B7;
-	Mon,  9 Sep 2024 09:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392F8161916;
+	Mon,  9 Sep 2024 09:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725874989; cv=none; b=ImWq2EBb5kN7wyg4xwjHMizI3H74eeaLkUB499yevxJHEMaglTkQ22ilPAJpENeeISaJ0wJWIbDR0wQQl2CRDf6E/z4MrUhpFPdKBEunVulNZVyk3mJzIGddf3aJBWmVSvQtlZvaSbGdJQMu4D1ueI66QEyHSAeHb1CibUFIn6A=
+	t=1725874986; cv=none; b=s58E5ruLV89B1mPnBmq4qc1ETmzyZvHKZTfybTCKG9TDeT03gA0dCwE5D1GiMGfJC0BMCWal4nR8UNnEKfwJpXb04262IQTJfEJZsYmdzP+r7VmjbvnfKA3E/SWycusvwuu3HVOfwqxPwB5ICAPspF2J3MNit2UPrpupvlKdyl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725874989; c=relaxed/simple;
-	bh=oaQTAchEaBkSQcwrLccybjUtspKB7+exoP4r1K4V8Q4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=u1bRmRgpEVanbU/3SLcbcZhAj0HRd+y3NIi52FOcaXudT5FGouDmt4IlRKaDvPif2RKpPSaUxw404FEaszAyvG87chON6Jd0dyGtScqdwYODCBCXyPfSBDmrNrq2JkqTiAex78tzwhOMHiYP++5rQb73cmqhUdYqhcFE38kzXWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jRuMaP3k; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1725874946; x=1726479746; i=markus.elfring@web.de;
-	bh=EBlqzeibcHmLE8jmEMvY/kGvwXFkAdrNBvVf/DUWlqQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=jRuMaP3kv/79914X8WkyFcRufIcKEX1mn6+C3ACulpE1FKCVk4WN2pliQPxLddu5
-	 2iOcXpyeEShRv5pJnxYaV5bQF73LcEBCQRIQhgFcEjrNzPjIG54dqi2N1Xoomm/AF
-	 RAvJHyXe3dbJOnt7OjtZnErFGqo1X5Rrx91P1SHFt5Yz4XQoHgdavxivTw4Wzbc0Q
-	 BUC3P4OHjZ4dXpTpSC1zJwpgeHsv4qNBUMWscFh9iTAiUmCZv8fkKrBUCYY7/sKom
-	 13beFEvK/fSEBlsHH8kyANynfLlsOaA2wX/nYZMmzppU1N9g/maHX1cyfw7+YQb19
-	 WlxX4ZOzuDZHSIzLVg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M1aIB-1sl7o90LFL-00EbI9; Mon, 09
- Sep 2024 11:42:26 +0200
-Message-ID: <d4136720-e6c8-490b-933a-4a884412b38a@web.de>
-Date: Mon, 9 Sep 2024 11:42:23 +0200
+	s=arc-20240116; t=1725874986; c=relaxed/simple;
+	bh=DhIoIebUv4PD3LizG5RpptLQUIEStidCV5UBA3Ms/Ok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d/JVI6vEzKaBQ773a+roYTeveEAuOIURLi1CPHdmRe2+kHhP9pg4V0Vvign8UGQr31Oc8z6eVyRuEhqhnKYgkPfoHEKH7cltqUSYb49so437S0fscE0fCtoZE9I5umEu2Uhz928oy7m4ke0VY4sbCxc2HLakcFdH5Rb4K4QehpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ecEvKZXu; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c26852aff1so4533717a12.3;
+        Mon, 09 Sep 2024 02:43:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725874983; x=1726479783; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ji0IvUtxVUfOYtXesPSGRkrVGhlLL5hSJeqIOnfvC5o=;
+        b=ecEvKZXuj+mWwnAsKVAlFSfuBgum+pqdLLrDXLMCvEUe6UH+vGcrpOXdXMKgxe++Ak
+         GBw0nyvTVmZ0wHAs2ioNMxgBXqiwfriM8laXogJtsWIdb1tqIzdMi9+8r7ztM94Z+SXI
+         BJ9A9r2zzQaDpGgKTdTpK1M7g6dDmh7mvqvOS6JaXEo9FYrRg4148IvNQHB/KsUvtL1w
+         V9BB7Op0M0GCbY3MB+E5SVa1ZFCt634GudSPlKs8Xt7IfgJm3lk/QbTOS7apHuf36jqB
+         YfNnjAgB1K4AwKSvQMYU2XZH6cM+3wWNvELthBeqgHO9doGK4fUfbzQ5phZ7425kBYoa
+         JPYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725874983; x=1726479783;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ji0IvUtxVUfOYtXesPSGRkrVGhlLL5hSJeqIOnfvC5o=;
+        b=fxrOgBP7GJ0Y4CRjMFRHSJgAC1/ZBxT5huy8da/WBC7SwiCyMV+RXj9SNzFo7yS5iM
+         s6KMTesHR9t3W/Su50fU/r9AxoeYiqopz6bgfU75Cn8CzaXoZ/KqeUfSEuyMcvn2y/vk
+         PakvJxqBI+iVYWadnVErgQBTD/H6d5fSg/qX0qyMa4LckV7oJ0Y/Z5ebo6YDw+gUSzwm
+         dkKPr5ktcOScD8Sdch2M2OHropl1wLqAqrdDPSduvR58bVi9dqWFZiv+JU403XMAPo6o
+         usMU9PVmVMhlyD1pOjub0/oxNtZkFd0yftSOvBDj77p2pcvEsJYpoe1F2/j4zYoayHRs
+         w8FA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSV3R4efUnLaBgMLqVMJZJQFzIT9uSFiIo3BUTqh2C0fcE0iaazOA+QnMHyGbEQOLxIvmIs2e1UnbH@vger.kernel.org, AJvYcCWgVulYlezsys/tSe5iPnygXn7hsNZ8gjJ3wAGyRWVzYj8XM10VFLV9fVxCxWE6j0Di/6l7k+TH1udfJGAY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLUKRRmpvqwDTeTUU6DAMcARdnmlAZdWq1bATaTncGU+5E+VGF
+	a0qSjvKLSn6lgxA8VwQN7XIl8GButkRSwiwQMCgzK2u04QqIthy/
+X-Google-Smtp-Source: AGHT+IHsut9MezX+RTKRlovYO1s+sRZbsf5akjJcSm8/w0bQW6T6B9e2Pa66ERuitPaxaEK8jwSRAA==
+X-Received: by 2002:a05:6402:34d6:b0:5c3:1089:ff3c with SMTP id 4fb4d7f45d1cf-5c3e974d9f6mr3460080a12.35.1725874983126;
+        Mon, 09 Sep 2024 02:43:03 -0700 (PDT)
+Received: from toolbox (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd4693fsm2812530a12.37.2024.09.09.02.43.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 02:43:02 -0700 (PDT)
+Date: Mon, 9 Sep 2024 11:43:00 +0200
+From: Max Krummenacher <max.oss.09@gmail.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Aradhya Bhatia <a-bhatia1@ti.com>, max.krummenacher@toradex.com,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	DRI Development List <dri-devel@lists.freedesktop.org>,
+	Devicetree List <devicetree@vger.kernel.org>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+	Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+Subject: Re: [PATCH v3 0/4] drm/tidss: Add OLDI bridge support
+Message-ID: <Zt7DJFM_xxOkhDwX@toolbox>
+References: <20240716084248.1393666-1-a-bhatia1@ti.com>
+ <20240906114311.GA32916@francesco-nb>
+ <c60d518b-ace4-48a8-87e5-35de13bc426a@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] drm/amdgpu: Move a variable assignment behind a null
- pointer check in amdgpu_ras_interrupt_dispatch()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Alan Liu <HaoPing.Liu@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, Alex Hung <alex.hung@amd.com>,
- Alexey Kodanev <aleksei.kodanev@bell-sw.com>,
- Aurabindo Pillai <aurabindo.pillai@amd.com>,
- Bhanuprakash Modem <bhanuprakash.modem@intel.com>,
- Candice Li <candice.li@amd.com>, Charlene Liu <charlene.liu@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- David Tadokoro <davidbtadokoro@usp.br>, Eryk Brol <eryk.brol@amd.com>,
- Felix Kuehling <felix.kuehling@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hamza Mahfooz <hamza.mahfooz@amd.com>,
- Harry Wentland <harry.wentland@amd.com>,
- Hawking Zhang <Hawking.Zhang@amd.com>, hersen wu <hersenxs.wu@amd.com>,
- Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, Jun Lei <jun.lei@amd.com>,
- Leo Li <sunpeng.li@amd.com>, Lijo Lazar <lijo.lazar@amd.com>,
- Ma Jun <Jun.Ma2@amd.com>, Mikita Lipski <mikita.lipski@amd.com>,
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Stanley Yang <Stanley.Yang@amd.com>, Tao Zhou <tao.zhou1@amd.com>,
- Tom Rix <trix@redhat.com>, Victor Zhao <Victor.Zhao@amd.com>,
- Wayne Lin <Wayne.Lin@amd.com>, Wenjing Liu <wenjing.liu@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, YiPeng Chai <YiPeng.Chai@amd.com>,
- Zhan Liu <zhan.liu@amd.com>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <2258ce64-2a14-6778-8319-b342b06a1f33@web.de>
- <0d4b92ab-f7c2-4f18-f3c3-c0f82ba47fc8@web.de>
-Content-Language: en-GB
-In-Reply-To: <0d4b92ab-f7c2-4f18-f3c3-c0f82ba47fc8@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0FinRSsoYLcUBzW5CselKtDxWi72MFZcC3KilliEKBsQUeKXYei
- FR2I8NrqAgdIr7ze6KALJPaM7wknBcUXSmvlGyO7sm9JokMjRgJonKx2kUM2LDr2R2qlBew
- oHpIeeJnmJltdTUQ2q2AREeQHxSuBS/F94J2yTpY+UIAZtqw2TB5gH2spYfpgruDPCjvV+f
- dPM9jIAK7/z0nl5PCkokg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4mNfO0uCz2s=;QgAKWGK+oCVd1C58nJsisjfUumH
- UMZmClwq9WwbmEwKs0+o3InvaH49mHbVoA43aHpnciXuMv++wM97ehl85Nab5/LXN0js53AiO
- EzYUt9sYSBwxlWlR+9nFnwyG/TDN73Kv8BkgsREn3EA7hFIbppbXE+zmt+MabpUhiIK66iJ03
- aXjpemLGO7cZhg5mcC2VGg1tf/bs2hdO0PmiGFxOATsywO80kwExz8zHnPHQAZrsvG0i7a+sA
- xSjvaCOz5t84lyOuaL7csvkuQ7lp2PghHkcDb0ZfpBlN/J1zmj+62HIPRyWS7HwGWYFJcZFpg
- k+FAOoQ7JazBLKMLigp+yG2X6dO7PVjV4uGwAwkWNCvrrnGtNfHQQGjg0bD+resJXlx2Voqjv
- OXRlDX5OPmmPXiDJrqk/sLY8LVVTphwEXblDdXb9RqoyRlmYxusqGpcF+SUiPpAOIAe5xGo8+
- 5TCdEqgocUXf2JbtOgJ9ayZ8JrLKFbYe6TPdJpyOrI7nyxTG6HKgi9dE/Gnw4KG8/4kWZPy6k
- Pw+99s3sXF0SR0OxlIP+Fkl4DRslS1Vui5yj4jzEwiZaVoNp/jPG4SRBkdzWycNAlIPr8h7pB
- AiUokGue70Z16SqzBH+ZJNWb7CwJu9whs/ZITLd1cShfdDaXav+gEVWBa4EtRNMprGrKZsQwO
- oGpFqHnJSf0ZYOP+xNVgjLETz0/LvRK5H9LcsqiXRaB0K7sx1IH6hgEixESofMowET5qtP8BN
- DnvYQwP227HLP4OM7L50krSK+sVZ0p2IGxOMUUtgTaUvVJY2vP7dORRcd8kx3dyEcCov491na
- 5yIA4CEHwoVpxpFHGIbbbRMA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c60d518b-ace4-48a8-87e5-35de13bc426a@ideasonboard.com>
 
-> Date: Tue, 11 Apr 2023 10:52:48 +0200
->
-> The address of a data structure member was determined before
-> a corresponding null pointer check in the implementation of
-> the function =E2=80=9Camdgpu_ras_interrupt_dispatch=E2=80=9D.
->
-> Thus avoid the risk for undefined behaviour by moving the assignment
-> for the variable =E2=80=9Cdata=E2=80=9D behind the null pointer check.
->
-> This issue was detected by using the Coccinelle software.
->
-> Fixes: c030f2e4166c3f5597c7e7a70bcd9ab383695de4 ("drm/amdgpu: add amdgpu=
-_ras.c to support ras (v2)")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/a=
-md/amdgpu/amdgpu_ras.c
-> index 4069bce9479f..a920c7888d07 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-> @@ -1730,11 +1730,12 @@ int amdgpu_ras_interrupt_dispatch(struct amdgpu_=
-device *adev,
->  		struct ras_dispatch_if *info)
->  {
->  	struct ras_manager *obj =3D amdgpu_ras_find_obj(adev, &info->head);
-> -	struct ras_ih_data *data =3D &obj->ih_data;
-> +	struct ras_ih_data *data;
->
->  	if (!obj)
->  		return -EINVAL;
->
-> +	data =3D &obj->ih_data;
->  	if (data->inuse =3D=3D 0)
->  		return 0;
->
+On Mon, Sep 09, 2024 at 11:15:28AM +0300, Tomi Valkeinen wrote:
+> Hi,
+> 
+> On 06/09/2024 14:43, Francesco Dolcini wrote:
+> > +Max
+> > 
+> > Hello Aradhya,
+> > 
+> > On Tue, Jul 16, 2024 at 02:12:44PM +0530, Aradhya Bhatia wrote:
+> > > The addition of the 2nd OLDI TX (and a 2nd DSS in AM62Px) creates a need
+> > > for some major changes for a full feature experience.
+> > > 
+> > > 1. The OF graph needs to be updated to accurately show the data flow.
+> > > 2. The tidss and OLDI drivers now need to support the dual-link and the
+> > >     cloned single-link OLDI video signals.
+> > > 3. The drivers also need to support the case where 2 OLDI TXes are
+> > >     connected to 2 different VPs - thereby creating 2 independent streams
+> > >     of single-link OLDI outputs.
+> > 
+> > Have you considered/tested the use case in which only single link is used?
+> > You do not mention it here and to me this is a relevant use case.
+> > 
+> > There is a workaround for this (use option 2, cloned, even if nothing is
+> > connected to the second link), but this seems not correct.
+> > 
+> > We (Max in Cc here) noticed that this specific use case is broken on
+> > your downstream v6.6 TI branch.
+> 
+> What if you set "fw_devlink=off" kernel boot parameter?
 
-I would like to point out that another software adjustment got the desired
-development attention (on 2024-05-11).
+Hi Tomi
 
-See also:
-Commit 4c11d30c95576937c6c35e6f29884761f2dddb43 ("drm/amdgpu:
-Fix the null pointer dereference to ras_manager")
+My overlay specifing a single link which did not work by default
+results in a working panel with "fw_devlink=off" on the cmdline.
 
-Regards,
-Markus
+Max
+> 
+>  Tomi
+> 
 
