@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-321901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159759720F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:35:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 066A1972103
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C25BE1F23829
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:35:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2141F24859
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E7F18F2F1;
-	Mon,  9 Sep 2024 17:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F9B1922F3;
+	Mon,  9 Sep 2024 17:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f8ZevcmX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/BfTvwvx"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kFnoSNdW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nS2B99ij"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4708F17C7BF;
-	Mon,  9 Sep 2024 17:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AAB18C903;
+	Mon,  9 Sep 2024 17:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902880; cv=none; b=GAv6zGtWoEeBGABVx1+x/ZFTN8ah6HB7JPKG/6sMhE2MRjjeDksyZYdX0VGGeVAjKjKzCFnw2CiwxJSjtZ0jNttpgetCHaDZUhMAE5gg0+AdPTx1wl9bflyW27/umg4mwKp7OevdduNc10utN3Dzj2ngTWkz02VAC1DDm4zlI4w=
+	t=1725902883; cv=none; b=mXCO8vFSZAiN6kxcXvHjWG4mseWDEmJKl8UoOACH8jqn1704x4rUVZu4qlgZewp9JaBKwQF/mOnZHNtn4yJUaog8yOiRSSjd27gaTCp+wD4evZZwzS7XJWAPrEjHZ2/QQO2BqeIIuRBbs7qJaSgQASNzQWohqtSMkbdzCEDGlxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902880; c=relaxed/simple;
-	bh=Z7CqZicZ909bjuNnYUZdkfKAY/NZZQFXg77ZAn0s7Ko=;
+	s=arc-20240116; t=1725902883; c=relaxed/simple;
+	bh=MuED1RBkG/FNLxUIpKlhLvPd6MzP95GCYSnTSM/odFY=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=CUHXwDpwyktN40ZQhWOszuVZs4LZ8Q5J9KCTjliZTov9ezoMngzOlsOyUb6V/EhRdzjsgEztMM/jp4eJE0OPp+T85F4mZ5JXJlkO3NRnp6sasNBxeBsZ6lD3ISvPAnQhqlLpTMXPmZti2/0Q/gLih2OLg+vItp0qKL87hFIRrDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f8ZevcmX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/BfTvwvx; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=NPjuRtFb0UBSYRPzSq/eOQ0YcHMeJqo238xQGNM6pthe56mYJJ5PWSwxg7W77i/Ebf7npb+g43X2VzpIeZmrdXvCX2A0vi5qWA5aXRpBBVY3y1eH7aa81ZxB+QHHQcRqh4PTevo+mxJS4HijUTZhzkhZ7bwHqEZvXByXPunWE/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kFnoSNdW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nS2B99ij; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 09 Sep 2024 17:27:56 -0000
+Date: Mon, 09 Sep 2024 17:27:57 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725902876;
+	s=2020; t=1725902877;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MnZvR6dbT5qXe8yNj6Za/v9QDXrIZ8GuEfWeVZP4jZY=;
-	b=f8ZevcmXmJmo278q0s/u8wFlWtcyPrdbf8x6DKJ9vAQwmMFswhN9QpRPMXLzAWkBxkGZ+D
-	M1wisHr0XMXggb7FMHuNsEznn3EHm1L7rKCawIm46T1nspAqqo/UQNHKuc4aR0xVa/vXtL
-	haCQ9FkCAO9GJTLzXKmpJuACyEGUaFe0sVXTkfkB0TLM5Z9nuTcE/1/MoQlIhiw3ZFMyS1
-	U+hKpdnX24lHq58J5+Zgux9olaKezvrl97AmlpIpTq2dgFJ0GlYKqVI6HVm8SiYpGmSyfk
-	KKHzSOcO07VohiF9RdGxPq5rtgVJeJ8TTrgnuozt/OhzYzt1jsBdQOQmFH3jvw==
+	bh=JeiLqdph7vwKbqeZFyPOdBzaqNFQtvo0FTF2SXh+TQk=;
+	b=kFnoSNdWOxTPFofNybXIHAtmvzW6jfloEVFJMUcH9IBY5BDICdHFmeDEyHoV2aRlVHms3m
+	8S9dp6ydRZ0cYMseUJb4+W6vn9/atyXWQ69rAnSOZpailXrLUtCiKW/l4+8Lm/ytpdrE+K
+	13LmZRPAAxAk4h+JE7E8/gw2rxllFCcuivQQ1l8XHDyINuUbDBVaKqbiKg71pFc2QVTPeA
+	Euit3WuWi5npkeIEnycmROowkWfl3qnHIwFAe15J6kzoQeGdDqy9w8mwkRRFrJrX9yZOrP
+	73GT9z4w4c6bEl+H176mV+sQMj3C9QaUziBvGwAmgFxkjY6TBmpIsWpS3N2/cg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725902876;
+	s=2020e; t=1725902877;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MnZvR6dbT5qXe8yNj6Za/v9QDXrIZ8GuEfWeVZP4jZY=;
-	b=/BfTvwvxgiUjw6KpHBk671zy8h5iNCqVdH+r9YGS6U+GN70UHB1Uk1RiqNALoPAWY6ZmhE
-	p/nrof+3W7I42KDQ==
+	bh=JeiLqdph7vwKbqeZFyPOdBzaqNFQtvo0FTF2SXh+TQk=;
+	b=nS2B99ijHPdJTyR5jhJbSiOTo7PYU1rcnYbQTWPDRN0gtS5CUwLlyTCSHSwjF6UxIOh1Ng
+	6uZcneECYRgDRPCg==
 From: "tip-bot2 for John Ogness" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/rt] console: Improve console_srcu_read_flags() comments
+Subject: [tip: sched/rt] printk: nbcon: Use driver synchronization while
+ (un)registering
 Cc: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240820063001.36405-13-john.ogness@linutronix.de>
-References: <20240820063001.36405-13-john.ogness@linutronix.de>
+In-Reply-To: <20240820063001.36405-10-john.ogness@linutronix.de>
+References: <20240820063001.36405-10-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172590287631.2215.15361748969145767135.tip-bot2@tip-bot2>
+Message-ID: <172590287740.2215.13042263784032670438.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -80,84 +81,132 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/rt branch of tip:
 
-Commit-ID:     dc219d8d858d95549543aa7a41b6e64a0da9e406
-Gitweb:        https://git.kernel.org/tip/dc219d8d858d95549543aa7a41b6e64a0da9e406
+Commit-ID:     e55c3bcf380c7593d768f31994eff63935081d06
+Gitweb:        https://git.kernel.org/tip/e55c3bcf380c7593d768f31994eff63935081d06
 Author:        John Ogness <john.ogness@linutronix.de>
-AuthorDate:    Tue, 20 Aug 2024 08:35:38 +02:06
+AuthorDate:    Tue, 20 Aug 2024 08:35:35 +02:06
 Committer:     Petr Mladek <pmladek@suse.com>
 CommitterDate: Wed, 21 Aug 2024 14:56:23 +02:00
 
-console: Improve console_srcu_read_flags() comments
+printk: nbcon: Use driver synchronization while (un)registering
 
-It was not clear when exactly console_srcu_read_flags() must be
-used vs. directly reading @console->flags.
+Console drivers typically have to deal with access to the
+hardware via user input/output (such as an interactive login
+shell) and output of kernel messages via printk() calls.
 
-Refactor and clarify that console_srcu_read_flags() is only
-needed if the console is registered or the caller is in a
-context where the registration status of the console may change
-(due to another context).
+They use some classic driver-specific locking mechanism in most
+situations. But console->write_atomic() callbacks, used by nbcon
+consoles, are synchronized only by acquiring the console
+context.
 
-The function requires the caller holds @console_srcu, which will
-ensure that the caller sees an appropriate @flags value for the
-registered console and that exit/cleanup routines will not run
-if the console is in the process of unregistration.
+The synchronization via the console context ownership is possible
+only when the console driver is registered. It is when a
+particular device driver is connected with a particular console
+driver.
+
+The two synchronization mechanisms must be synchronized between
+each other. It is tricky because the console context ownership
+is quite special. It might be taken over by a higher priority
+context. Also CPU migration must be disabled. The most tricky
+part is to (dis)connect these two mechanisms during the console
+(un)registration.
+
+Use the driver-specific locking callbacks: device_lock(),
+device_unlock(). They allow taking the device-specific lock
+while the device is being (un)registered by the related console
+driver.
+
+For example, these callbacks lock/unlock the port lock for
+serial port drivers.
+
+Note that the driver-specific locking is only needed during
+(un)register if it is an nbcon console with the write_atomic()
+callback implemented. If write_atomic() is not implemented, the
+driver should never attempt to access the hardware without
+first acquiring its driver-specific lock.
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 Reviewed-by: Petr Mladek <pmladek@suse.com>
-Link: https://lore.kernel.org/r/20240820063001.36405-13-john.ogness@linutronix.de
+Link: https://lore.kernel.org/r/20240820063001.36405-10-john.ogness@linutronix.de
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- include/linux/console.h | 28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+ kernel/printk/printk.c | 33 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/console.h b/include/linux/console.h
-index 46b3c21..aafe312 100644
---- a/include/linux/console.h
-+++ b/include/linux/console.h
-@@ -446,28 +446,34 @@ extern void console_list_unlock(void) __releases(console_mutex);
- extern struct hlist_head console_list;
- 
- /**
-- * console_srcu_read_flags - Locklessly read the console flags
-+ * console_srcu_read_flags - Locklessly read flags of a possibly registered
-+ *				console
-  * @con:	struct console pointer of console to read flags from
-  *
-- * This function provides the necessary READ_ONCE() and data_race()
-- * notation for locklessly reading the console flags. The READ_ONCE()
-- * in this function matches the WRITE_ONCE() when @flags are modified
-- * for registered consoles with console_srcu_write_flags().
-+ * Locklessly reading @con->flags provides a consistent read value because
-+ * there is at most one CPU modifying @con->flags and that CPU is using only
-+ * read-modify-write operations to do so.
-  *
-- * Only use this function to read console flags when locklessly
-- * iterating the console list via srcu.
-+ * Requires console_srcu_read_lock to be held, which implies that @con might
-+ * be a registered console. The purpose of holding console_srcu_read_lock is
-+ * to guarantee that the console state is valid (CON_SUSPENDED/CON_ENABLED)
-+ * and that no exit/cleanup routines will run if the console is currently
-+ * undergoing unregistration.
-+ *
-+ * If the caller is holding the console_list_lock or it is _certain_ that
-+ * @con is not and will not become registered, the caller may read
-+ * @con->flags directly instead.
-  *
-  * Context: Any context.
-+ * Return: The current value of the @con->flags field.
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 20c3950..4cd2c50 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -3548,9 +3548,11 @@ static int unregister_console_locked(struct console *console);
   */
- static inline short console_srcu_read_flags(const struct console *con)
+ void register_console(struct console *newcon)
  {
- 	WARN_ON_ONCE(!console_srcu_read_lock_is_held());
+-	struct console *con;
++	bool use_device_lock = (newcon->flags & CON_NBCON) && newcon->write_atomic;
+ 	bool bootcon_registered = false;
+ 	bool realcon_registered = false;
++	struct console *con;
++	unsigned long flags;
+ 	u64 init_seq;
+ 	int err;
+ 
+@@ -3638,6 +3640,19 @@ void register_console(struct console *newcon)
+ 	}
  
  	/*
--	 * Locklessly reading console->flags provides a consistent
--	 * read value because there is at most one CPU modifying
--	 * console->flags and that CPU is using only read-modify-write
--	 * operations to do so.
-+	 * The READ_ONCE() matches the WRITE_ONCE() when @flags are modified
-+	 * for registered consoles with console_srcu_write_flags().
++	 * If another context is actively using the hardware of this new
++	 * console, it will not be aware of the nbcon synchronization. This
++	 * is a risk that two contexts could access the hardware
++	 * simultaneously if this new console is used for atomic printing
++	 * and the other context is still using the hardware.
++	 *
++	 * Use the driver synchronization to ensure that the hardware is not
++	 * in use while this new console transitions to being registered.
++	 */
++	if (use_device_lock)
++		newcon->device_lock(newcon, &flags);
++
++	/*
+ 	 * Put this console in the list - keep the
+ 	 * preferred driver at the head of the list.
  	 */
- 	return data_race(READ_ONCE(con->flags));
- }
+@@ -3661,6 +3676,10 @@ void register_console(struct console *newcon)
+ 	 * register_console() completes.
+ 	 */
+ 
++	/* This new console is now registered. */
++	if (use_device_lock)
++		newcon->device_unlock(newcon, flags);
++
+ 	console_sysfs_notify();
+ 
+ 	/*
+@@ -3689,6 +3708,8 @@ EXPORT_SYMBOL(register_console);
+ /* Must be called under console_list_lock(). */
+ static int unregister_console_locked(struct console *console)
+ {
++	bool use_device_lock = (console->flags & CON_NBCON) && console->write_atomic;
++	unsigned long flags;
+ 	int res;
+ 
+ 	lockdep_assert_console_list_lock_held();
+@@ -3707,8 +3728,18 @@ static int unregister_console_locked(struct console *console)
+ 	if (!console_is_registered_locked(console))
+ 		return -ENODEV;
+ 
++	/*
++	 * Use the driver synchronization to ensure that the hardware is not
++	 * in use while this console transitions to being unregistered.
++	 */
++	if (use_device_lock)
++		console->device_lock(console, &flags);
++
+ 	hlist_del_init_rcu(&console->node);
+ 
++	if (use_device_lock)
++		console->device_unlock(console, flags);
++
+ 	/*
+ 	 * <HISTORICAL>
+ 	 * If this isn't the last console and it has CON_CONSDEV set, we
 
