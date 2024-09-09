@@ -1,77 +1,76 @@
-Return-Path: <linux-kernel+bounces-321861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4936597207C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:28:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB37972085
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EF8B1C2389C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:28:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AE191F247C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA5617C9B9;
-	Mon,  9 Sep 2024 17:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7491862B5;
+	Mon,  9 Sep 2024 17:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0mm6jS+g";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6qMKj825"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BOEE4FT0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="05A2JUMX"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6D3175D3F;
-	Mon,  9 Sep 2024 17:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70F117CA0B;
+	Mon,  9 Sep 2024 17:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902865; cv=none; b=qruaNS3yQRGZdqAUNfbjSZ5qh9G6qpakJmmjQ/SEf8v87VTPKgPWV5Kj8gFK+t2aKB9849XHX/oyoJmV+OeJrR5JzEJM3sw54ZaoV0pmtl3bnUqtJ8aN8exSaljr9U9ehQTMgWL2x3e8nleqfvTH/SIoQiRAlq4sKXCKkvd01is=
+	t=1725902867; cv=none; b=HP1qbwlOaC+/eMvH0h4f5VxRRs9hqIWbVCZCLXtDN5/7u5gplcRgCZy2EPCtdmvaYfkMEZq0Kgr++EYbcLL3JCCVY2TYcqtybtry77fZFvyD7SSiHKMpdm8ciw+CLJWiAFagVoTofDcODfDIR1EF+koEcvnG9AdZ1roCuJfNoeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902865; c=relaxed/simple;
-	bh=cU0Gn9sCPhn27DhSoQtW5t8gUKA6yyviDF+JUxv2v+I=;
+	s=arc-20240116; t=1725902867; c=relaxed/simple;
+	bh=fbKOl/C4Kftn4/Q21T3tGdYIbkfDl34OkmTSl8wxGTk=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Uw0H9kFlnI64QYBiGLlvMj0rjiuIg6WkFI86GbgMb6JsVE069asjSj/9oE5KuOV/YBNNfzy2wmsuFhC1AkvGonBrGK1nUR3fHjyHuVngUqq1uXWDFKY+TQ3AkdileXRft00w3ZG1X//kCNO54NXFbgIgbH7ObfPB898QNOVgzBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0mm6jS+g; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6qMKj825; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=WezdptedUNfaI9MEuHdYrQMal6c0fRoNX1aECJy8VTq3PbDFNw3X4K6b42vSrUk8vfP1ZNmo1yAkKvlTTOck52DpYainqoIiBLOuS4pscnyxrRVxz+sOO9LjwssfxPWUS98+LNgzRmN1icPYFeoEmvSt6xdcACI588BtkxxwJvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BOEE4FT0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=05A2JUMX; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 09 Sep 2024 17:27:41 -0000
+Date: Mon, 09 Sep 2024 17:27:42 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725902861;
+	s=2020; t=1725902862;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vtRAPQichhKi1fZ8OzdFVSxK1lYL64dAR8OYMwUFOnM=;
-	b=0mm6jS+g203oKebEGYO9q3QTTCeHTIhCm3OVn2xMxLUC2T96SQbjJunc9vpG4MHpLmda2Q
-	vybnSQOiJIJwUBeByxrbvshk6punU8TXHKiBQhHZg9k2II6HkeOSMaZFrLmqW6Hf7pkFRp
-	m15Lfllrp1zFIVi/qb3UE7YIjulh8x1zL2exi8uTNhQezXTtEwK7JyFFqoWTPUBzHIBnhZ
-	5RRWp57oDXpiCcLq+9gJgdxlRju7N+Ar48hm//MvtBOX8Bj8ZNcglHLJxeyCQjuzPzenwQ
-	3R67xKHEyS83mpsDi+EGs6pKBnRhfuMINvyvPKUQP0Ny65j2nFN2oSsTGHXkMg==
+	bh=RmiThMGIbB4Y3ccQYcpYXFpuQM+Yu/ThvBvjnjLjOxs=;
+	b=BOEE4FT0/tFrSMGOIqhiGL2UbKOMRRkY+VTqPoEXt1GvWuUbFNkoZ9CZJm7V/eJtNCt7Eg
+	aextezJSK+RU6WhePECgsEhF6+U4aRhdSUc1DSOLecEuvt4OrtatsuxqOQyKRJMbRzeSXn
+	Yads2lqtBX2AF5IvC3DyVUwHEIvLTDtLrEDLuhN/pSd3SM+NkXCF7D8qi9S1vEIa9jtBBP
+	PcoCoVa8n4ZmjrlN9O+j26eihyJ82ibGhKRsY8OH4RFoQMbNyDTEdLYhBvfPeByUPxwmmN
+	ASSgAPLZSJ4Z/TwVWDZK+FVfin88emkZ3ArLVobRolVLs4vR9qMYilJIeNkAFQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725902861;
+	s=2020e; t=1725902862;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vtRAPQichhKi1fZ8OzdFVSxK1lYL64dAR8OYMwUFOnM=;
-	b=6qMKj825GmC9Iz52D6YkkIcQmINl4Bn4U+tvX0aIQMBiUwMIl13ivYGtacWJ3hnrUAWRqn
-	4lBrbga47aL3HQAw==
-From: "tip-bot2 for Yu Liao" <tip-bot2@linutronix.de>
+	bh=RmiThMGIbB4Y3ccQYcpYXFpuQM+Yu/ThvBvjnjLjOxs=;
+	b=05A2JUMXi8zRRdned1vsZj6kypz6y8OYioj+A53+XvnmLq1tsWHlU0uZFMeKGSstunhlZx
+	tT7BQhr/U4EkIgCA==
+From: "tip-bot2 for John Ogness" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: sched/rt] printk: Export match_devname_and_update_preferred_console()
-Cc: kernel test robot <lkp@intel.com>, Yu Liao <liaoyu15@huawei.com>,
- Petr Mladek <pmladek@suse.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240909075652.747370-1-liaoyu15@huawei.com>
-References: <20240909075652.747370-1-liaoyu15@huawei.com>
+Subject: [tip: sched/rt] printk: nbcon: Assign nice -20 for printing threads
+Cc: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240904120536.115780-17-john.ogness@linutronix.de>
+References: <20240904120536.115780-17-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172590286143.2215.6212348745263745888.tip-bot2@tip-bot2>
+Message-ID: <172590286208.2215.581312913346730259.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,43 +80,59 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/rt branch of tip:
 
-Commit-ID:     3e5b2e81f17f176a4d451c1dd1794e64644319c4
-Gitweb:        https://git.kernel.org/tip/3e5b2e81f17f176a4d451c1dd1794e64644319c4
-Author:        Yu Liao <liaoyu15@huawei.com>
-AuthorDate:    Mon, 09 Sep 2024 15:56:52 +08:00
+Commit-ID:     1529bbb6e2619495f146dd519a196b67837fdfa6
+Gitweb:        https://git.kernel.org/tip/1529bbb6e2619495f146dd519a196b67837fdfa6
+Author:        John Ogness <john.ogness@linutronix.de>
+AuthorDate:    Wed, 04 Sep 2024 14:11:35 +02:06
 Committer:     Petr Mladek <pmladek@suse.com>
-CommitterDate: Mon, 09 Sep 2024 17:35:06 +02:00
+CommitterDate: Wed, 04 Sep 2024 15:56:33 +02:00
 
-printk: Export match_devname_and_update_preferred_console()
+printk: nbcon: Assign nice -20 for printing threads
 
-When building serial_base as a module, modpost fails with the following
-error message:
+It is important that console printing threads are scheduled
+shortly after a printk call and with generous runtime budgets.
 
-  ERROR: modpost: "match_devname_and_update_preferred_console"
-  [drivers/tty/serial/serial_base.ko] undefined!
-
-Export the symbol to allow using it from modules.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409071312.qlwtTOS1-lkp@intel.com/
-Fixes: 12c91cec3155 ("serial: core: Add serial_base_match_and_update_preferred_console()")
-Signed-off-by: Yu Liao <liaoyu15@huawei.com>
-Link: https://lore.kernel.org/r/20240909075652.747370-1-liaoyu15@huawei.com
+Signed-off-by: John Ogness <john.ogness@linutronix.de>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Link: https://lore.kernel.org/r/20240904120536.115780-17-john.ogness@linutronix.de
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- kernel/printk/printk.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/printk/nbcon.c  | 6 ++++++
+ kernel/printk/printk.c | 6 ++++++
+ 2 files changed, 12 insertions(+)
 
+diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+index 9844088..fd12efc 100644
+--- a/kernel/printk/nbcon.c
++++ b/kernel/printk/nbcon.c
+@@ -1321,6 +1321,12 @@ bool nbcon_kthread_create(struct console *con)
+ 
+ 	con->kthread = kt;
+ 
++	/*
++	 * It is important that console printing threads are scheduled
++	 * shortly after a printk call and with generous runtime budgets.
++	 */
++	sched_set_normal(con->kthread, -20);
++
+ 	return true;
+ }
+ 
 diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index c22b070..6ff8d47 100644
+index 66cfe7b..afd9266 100644
 --- a/kernel/printk/printk.c
 +++ b/kernel/printk/printk.c
-@@ -2620,6 +2620,7 @@ int match_devname_and_update_preferred_console(const char *devname,
+@@ -3555,6 +3555,12 @@ static bool legacy_kthread_create(void)
  
- 	return -ENOENT;
+ 	printk_legacy_kthread = kt;
+ 
++	/*
++	 * It is important that console printing threads are scheduled
++	 * shortly after a printk call and with generous runtime budgets.
++	 */
++	sched_set_normal(printk_legacy_kthread, -20);
++
+ 	return true;
  }
-+EXPORT_SYMBOL_GPL(match_devname_and_update_preferred_console);
  
- bool console_suspend_enabled = true;
- EXPORT_SYMBOL(console_suspend_enabled);
 
