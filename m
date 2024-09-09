@@ -1,112 +1,113 @@
-Return-Path: <linux-kernel+bounces-320708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 149B3970F5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:12:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227C4970F5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B24991F22A7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:12:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCCA01F22685
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F209A1AE840;
-	Mon,  9 Sep 2024 07:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F471AE05B;
+	Mon,  9 Sep 2024 07:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XAd2gK2t"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PcEHPB9x"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B545541C69;
-	Mon,  9 Sep 2024 07:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E344E749C;
+	Mon,  9 Sep 2024 07:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725865948; cv=none; b=BrEym4BSGxX3AZOnghHPAQ2Ia3i2bcgMUMcZvIEjq9qG4KH7YkPlIuvig+CFSI4uWhFBv05wgG+kg2r93jBvQV3TiHbmpMjT38F7b8LjN6XwDeh0UEUk/gozGkTng+a4ce4mVRPJMiF2BXFuVOj662jx9LrJcG8edtWRBoxz4YU=
+	t=1725866064; cv=none; b=YGkwc+7Cr+mz43LC+n4PvRpYupyCUbMZOMfwCsMOXGKZf6ZCQlOCJtIx9Ca6VfhbLoSIBMVEXKy3J8q8C/V0h/tK/7B8eWk3ODveMYGcuoOTzqiCe8AZYTC9n3ocp8Hue2dRRYq8wtMoZkE/dW89oSIiwwD87J7tZSvvbMj4Z2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725865948; c=relaxed/simple;
-	bh=rAjIxexzHpxFUBZyW6mQg/Om93aOi5auuBMwrQuPYZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UVHSJbwACqFz9rJAR2f+DTheYjEpz07LKEDAdEMveed/I6dTgZBDjHl7/OR/08FPCKIYZ+3xPARL4Pv5uJ9SYuX4FnntAEnrQZPageMkHePOTW9ePdppEajqKqTRIpZ2c6JAag+9zfzdQmYq2/jtDiguS7T7ZYEofpbb6QS+ey0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XAd2gK2t; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725865942;
-	bh=m4rCD94CoWLVB7CnApt4cxyYM27pcGRyAgpIg7H3QM4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=XAd2gK2thnyRqAH/AwUtz8ZMFoogjyxqJrG06hQYyy/ecXYuQdtbI6Qw0/GeKuSSd
-	 VB2s6xIgugd/6LFkp+PEZAoMlsd1g60sl7Rg8lLXmMw010W/5xeBqC7AyExCRyrBpJ
-	 VL2PuC+ORwtJCVA9VDQLvMmWnxJrUcPnMoS0XVBi3u2rMgqx4T6ewipU0ZoPXHWhVw
-	 AEKHgoWwdq9gO7lh43h8bPBRUtgOHBpRrm4gsGl+KnHg75e4EknE4bOsVn2inhEj61
-	 9TViMF0gkDyPMVIYkEN8ljTEzp9/CkBQJHujZffwojIwtGvfnwMT2bDY1TeBHo5+B/
-	 tRQK9saUM3tTw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X2J1f2HBNz4w2N;
-	Mon,  9 Sep 2024 17:12:21 +1000 (AEST)
-Date: Mon, 9 Sep 2024 17:12:20 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the slab tree
-Message-ID: <20240909171220.32e862e3@canb.auug.org.au>
+	s=arc-20240116; t=1725866064; c=relaxed/simple;
+	bh=CBPUPDOVpzx6z0r/nl7mM7J2sfWwKNsZg0v2ospXTv8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BRvxfxagSD3D2+bzTFCKEEOhkOCoCkYtJOLI3KSU+RGzViWdYiSvGzFL96esPr7Ck/JXnUhjQfHs6DrFBmbk477aGna7ZVwjZq1VEIgZGeB9YiCnfa4yTFsyvR4HeO5Q1sjSLza+Y6w/k5ijwSuI/jAKyhUs2eb+kQZzAAma6dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PcEHPB9x; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7d50b3a924bso1047248a12.0;
+        Mon, 09 Sep 2024 00:14:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725866062; x=1726470862; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B0Jnk7guILOVk0UM9YilEhJX10GeNSESAwsusvAnavo=;
+        b=PcEHPB9x9qnGYZMwj55sOcE5EZLt4G0rQQJuz7SVrYLNiKJDbpmFPY6k6ejd1J/zYG
+         X6yrLIadd56OmgrQ9LJ7tNQh5xxWDqP0qRrl+Qc+qnoQmlU+7LoPmb8wVB6rdgdu7Vln
+         GzSTOGXuS77hK9gdlfuV/VDMu+ZuWD8VCM6ZCYa7TnR4SOPyewfwrAyJTBI73ye3jlC3
+         NT41Ae43e7j6SMSzJqSGJHFuGXmWqA183gr2V3ZD/OyjbamJ1a95jtiWEcESbE+/QFjr
+         dkc4Zzw1YsNr5u7IhdO4+xmmdFqzriu3R3XMuGP5oKp8ksra/DhA5W1OMtlJYCkP9Tin
+         qX7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725866062; x=1726470862;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B0Jnk7guILOVk0UM9YilEhJX10GeNSESAwsusvAnavo=;
+        b=mNCCIZqKic8x0NX1bMQeGs81wAftrKCNxnUjQ2tmU3RAPWUjlVhBj7XsgJi2nq0pHi
+         TG60GUyfeMQ4fgCiQSGwSHkNeVAZDoOnFOSj8D+E3nYalLJypJUADO7oEFbFBfDLeQSD
+         eEmbtP3ebOKWmJtdvDCNN7jDgfVZVZVnmQHYEin48A7oSZTSnC4vwntocpsWfZ9LB6sw
+         HNWV5mLXpTzsB9mDEu+p9pOOotZmvRzML08AC757aFmAYg0fTgBwTi8V1BJWw5QmmD0S
+         lITbL2a4+EIOLKq5/iM3M1g+ECXyav4lTyFh9V2Dyl8ec+YZuOs78w2ZqJaWueKEgeJL
+         ZjZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpqdQidTlFyLfGj7pKfJBdBhUpKIvIglEdfMGm8kbUgs76bkWsSF+4ew2ZbdrFFvznS4m1C9IkhhVBJEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyz1oU1Y4iJ0jgSAitjZktOefUKhh3bIc/TnL92tqO4Bz04t3K
+	jRTBOoZHm1KkIy5eU/S0+ktkd6qojd4PuzI7gm0FBnjx7vj/9um+
+X-Google-Smtp-Source: AGHT+IF4uNErT+/HzeKd8MW/9gUo6eVz3u8EnWX2vHWp73GVONz70XuCTGceuKX1OUPPuqtC63sj7g==
+X-Received: by 2002:a05:6a21:6b0b:b0:1cf:2df6:453f with SMTP id adf61e73a8af0-1cf2df6485amr3777126637.0.1725866061881;
+        Mon, 09 Sep 2024 00:14:21 -0700 (PDT)
+Received: from localhost ([116.198.225.81])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e11e19sm28397705ad.34.2024.09.09.00.14.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 00:14:21 -0700 (PDT)
+From: Tao Chen <chen.dylane@gmail.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Hou Tao <houtao1@huawei.com>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tao Chen <chen.dylane@gmail.com>
+Subject: [v2 PATCH bpf-next 0/2] bpf: Add percpu map value size check
+Date: Mon,  9 Sep 2024 15:13:44 +0800
+Message-Id: <20240909071346.1300093-1-chen.dylane@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/DB7LHX2LecSCHK9KqMEoV8u";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/DB7LHX2LecSCHK9KqMEoV8u
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Check percpu map value size first and add the test case in selftest.
 
-Hi all,
+Change list:
+- v1 -> v2:
+    - round up map value size with 8 bytes in patch 1
+    - add selftest case in patch 2
 
-The following commits are also in the vfs-brauner tree as different
-commits (but the same patches):
+Tao Chen (2):
+  bpf: Check percpu map value size first
+  bpf/selftests: Check errno when percpu map value size exceeds
 
-  c0390d541128 ("fs: pack struct file")
-  ea566e18b4de ("fs: use kmem_cache_create_rcu()")
-  d345bd2e9834 ("mm: add kmem_cache_create_rcu()")
-  e446f18e98e8 ("mm: remove unused argument from create_cache()")
-  0f389adb4b80 ("mm: Removed @freeptr_offset to prevent doc warning")
+ kernel/bpf/arraymap.c                         |  3 ++
+ kernel/bpf/hashtab.c                          |  3 ++
+ .../selftests/bpf/prog_tests/map_init.c       | 32 +++++++++++++++++++
+ .../selftests/bpf/progs/test_map_init.c       |  6 ++++
+ 4 files changed, 44 insertions(+)
 
-These are commits
+-- 
+2.25.1
 
-  f2b8943e64a8 ("fs: pack struct file")
-  d1e381aa30cb ("fs: use kmem_cache_create_rcu()")
-  ba8108d69e5b ("mm: add kmem_cache_create_rcu()")
-  a85ba9858175 ("mm: remove unused argument from create_cache()")
-  6e016babce7c ("mm: Removed @freeptr_offset to prevent doc warning")
-
-in the vfs-brauner tree.
-
-These duplicates are causing unnecessary comflicts ...
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/DB7LHX2LecSCHK9KqMEoV8u
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmben9UACgkQAVBC80lX
-0GyGVAf+JrTB7CzJgGsIhojTgE8t/s5NGdp22OZqdn7SEA2CJ4IneJypxXod77ql
-SLWyjJOWDp731B1PcQvjyzQdLcwJg/I+3kbcbHAEwfheRU5yZr9dHoMZQd9t31qG
-yp84xdS0SzLgY4UF+ukBUN0gqBVZ6V4HON4nU1VA/OrlaSz8enfkUgma8ZPRSpkc
-Fod/ZWrrtw1cPv0Ghd0jpzax+2U+/TqnHS5w9sEEYtZImL4egYDh5A6I4Hlp2mFt
-/w1B7yswtE2ZSpFFjECG4CJb67VGMKZyQ+oim1fo4OHwKhTxTAqP6+lzXdNkMEEj
-nGJmcLeJrvOEy+v2DQyYUe/1iXp+2Q==
-=XaoI
------END PGP SIGNATURE-----
-
---Sig_/DB7LHX2LecSCHK9KqMEoV8u--
 
