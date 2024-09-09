@@ -1,69 +1,74 @@
-Return-Path: <linux-kernel+bounces-321340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8EB9718FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:11:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4884E971903
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A828284FB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:11:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7A511F22FB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC091B654D;
-	Mon,  9 Sep 2024 12:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B471B654F;
+	Mon,  9 Sep 2024 12:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rycXDLLY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3kpz3Uu2"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FECj/lhO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NrBI3X9G"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53DD172BCE
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20A682481;
+	Mon,  9 Sep 2024 12:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725883897; cv=none; b=IN3bU6q0yURk0CtGmrXrEEsPE016Y8Y2XTV/500tDe23LmY6xNWzEJ4ugIl3V/0ssXRUhnX8PXz8keKM8GNAayFtz2z1gL98hnHMJlKW1bzCugsC7ckWJKxSGeYXOiyvISOCCZz0RGdT66mWvhnBeqJL+6nY0+CRaGrpRYOR/lo=
+	t=1725884026; cv=none; b=iTsGObX5Nqf0M6T2/elu+gYlxGAvG4i8HDStnPoppyf3m4xfHZg8kdy71nei+mOZx2draRh1tJF8Hns+Yut4EpRuTK/nYqwWKuu6s2aQKwgP8wxCUT1EglUAUNEOkX9V2THLcBjCzY7ho6gK0wdbMMpWrVFsLYdNNNFEIWR+6Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725883897; c=relaxed/simple;
-	bh=3I/YkrkQvgYdjJsfIEoCKAECk08H8/S3f6PqAZZGja0=;
+	s=arc-20240116; t=1725884026; c=relaxed/simple;
+	bh=t47CccqHr/DHgoJgcqrfHM5zObVL3KmsSeDr4bAPynY=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=i6bzdhKl8oAzSIFRTqIfscwD15IodKgt2JEnB9/63C8q/H5T7OU/XGPkkgsBXOxOOn7oECvoZqLSjLN0ADpks33SuCjmhoORNPD+so0dokzZJZWlypLLJQzM9bCTWdDVChcP6lUqEDKTp49flVttqfuNgz9lKtekt2427z6c+qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rycXDLLY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3kpz3Uu2; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version:Content-Type; b=Kos8Bt+PF1Gtq9VcTFLSq1XrFy78PS1kPvTjLd5aVoN5Y+HjMiPkhhbpAx/AG/n/9gcb7/LzMtvIsls1+zsvXHPTI9sJVGWXwpTV2cuR/TB2SaZeQ9Q4Ml/hLU4n545efqP4XpTLqN+cgLFtTqWW5aNt96k7oHLqm1cz2Ah7QK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FECj/lhO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NrBI3X9G; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725883894;
+	s=2020; t=1725884022;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3I/YkrkQvgYdjJsfIEoCKAECk08H8/S3f6PqAZZGja0=;
-	b=rycXDLLY8pOWyiUq/AaRuOmnRrhnu8R6HfQ85PV/enqf5+MH+B+IV54ag49p+hl81laNQ9
-	RgpewCJBZJ7KNU1dobPnN/2sRnQKvjOnIQn6edOEaEJr6XQPfXn2iu54XlLdZvWLvpRcPv
-	6QBE3tKAmQaqzs/IPwxuMFFSSNPeYcRV+HM2kqizadDwJftilrAQ0LGaXjKltO5G8w+iz8
-	iOyGZki7RK7x8bAloYHBSUio/o+lY4SN++ELojGqZcW47zib0T3k9p/tfpX2YOh4ve1liQ
-	H9PeSSkM2Geh8Pevun6VbI968LhwP/Bb1vrC4eTjy78ouvG2LwyR1vWA8GxuJQ==
+	bh=XIG1cGBt+ym2uX13tn/UdRrvQEpGjYbA+c7n0ENDLNw=;
+	b=FECj/lhOKYjJ6flkqb6lvQGG4FSgAGDozv7YgLU8C2Fs/Gbwev3mn6AZdzjAqHloa2ENCB
+	Mj2l9w15Vy30RGNjW92SaF3jeEHKZdZqGupdMWGTubdO1SwL4kTfSnFpfoJVsJracAdFOx
+	mvXMPlMg4XONErwnu544+EsOvcVRLgaGkjfFY4tVcWvOgQ0hqaf0YPzLu9EKyIydMiZl1w
+	lkGhatT2/RwJ0MkNViuLjsgOQ0mBzTjJy9dhTl3ubOgelotSg78Ll5xxSf1Wapgb2Rytak
+	D+khITwGpVHGO3xt6YpxQ7LNFklTAgYs81w8yHAPBISQFXUzlGvMkhWAL2NW0Q==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725883894;
+	s=2020e; t=1725884022;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3I/YkrkQvgYdjJsfIEoCKAECk08H8/S3f6PqAZZGja0=;
-	b=3kpz3Uu2WKnMPPmUcSI9RJDnhr8Skave2kXQ+eCUS56+cbkrQGiJzlSbOYCV3QgStFLM93
-	rOzxDUi68nSRPjDg==
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org, Len
- Brown <len.brown@intel.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 04/15] timers: Move *sleep*() and timeout functions into
- a separate file
-In-Reply-To: <87h6ap1c47.fsf@somnus>
-References: <20240904-devel-anna-maria-b4-timers-flseep-v1-0-e98760256370@linutronix.de>
- <20240904-devel-anna-maria-b4-timers-flseep-v1-4-e98760256370@linutronix.de>
- <ZtsGwgatGpFRQerw@pavilion.home> <87h6ap1c47.fsf@somnus>
-Date: Mon, 09 Sep 2024 14:11:33 +0200
-Message-ID: <878qw1c9hm.ffs@tglx>
+	bh=XIG1cGBt+ym2uX13tn/UdRrvQEpGjYbA+c7n0ENDLNw=;
+	b=NrBI3X9Gq7AlZJarU8wsCJQBFozXbVZWtkmSh2xG/z2fW9y9izo1R0eIthUyg+D5ZQIDWj
+	q2uT+u4Hhx0rdUBA==
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Steven Rostedt <rostedt@goodmis.org>, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, "Paul E.
+ McKenney" <paulmck@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@pengutronix.de>, Ilpo =?utf-8?Q?J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, Serge Semin <fancer.lancer@gmail.com>,
+ Rengarajan S <rengarajan.s@microchip.com>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>
+Subject: Re: [PATCH next v1 1/2] serial: 8250: Switch to nbcon console
+In-Reply-To: <Zt7FstSsthuxtpEz@smile.fi.intel.com>
+References: <87jzfod9f2.fsf@jogness.linutronix.de> <8734mbdwrf.ffs@tglx>
+ <Zt7FstSsthuxtpEz@smile.fi.intel.com>
+Date: Mon, 09 Sep 2024 14:13:42 +0200
+Message-ID: <875xr5c9e1.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,14 +77,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On Mon, Sep 09 2024 at 10:10, Anna-Maria Behnsen wrote:
-> Frederic Weisbecker <frederic@kernel.org> writes:
->> I don't mind sometimes having several logical changes within a same
->> patch if that makes sense but the delay is MAINTAINERS is pretty off-topic
->> and should move to its own patch.
+On Mon, Sep 09 2024 at 12:53, Andy Shevchenko wrote:
+> On Sat, Sep 07, 2024 at 10:39:00PM +0200, Thomas Gleixner wrote:
+>> On Fri, Sep 06 2024 at 18:44, John Ogness wrote:
 >
-> Ack. But, I was too slow to provide a v2. It's already applied in
-> tip. Should we change tip, or is ok for you?
+> ...
+>
+>> I'm 100% that this is just a problem of blindly sharing this with the
+>> regular uart code and not because there is a requirement. See what
+>> serial8250_console_setup() does at the end:
+>> 
+>>         if (port->dev)
+>>                 pm_runtime_get_sync(port->dev);
+>> 
+>> The corresponding put() is in serial8250_console_exit(). So there is
+>> absolutely zero reason for power management in the console write
+>> functions. It's the usual voodoo programming which nobody noticed
+>> because it did not immediately blow up in their face.
+>
+> It might be historical, but yes, the above is for a reason.
+> And if somebody needs a kernel console to be shutdown, they should remove
+> it from the active consoles.
 
-Zapped it already
+Correct, because you cant do PM from arbitrary contexts.
+
+Ergo the code which does PM in the context of the console write function
+is bogus.
+
+Thanks,
+
+        tglx
+
+
 
