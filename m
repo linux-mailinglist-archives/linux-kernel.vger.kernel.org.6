@@ -1,184 +1,164 @@
-Return-Path: <linux-kernel+bounces-320714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB61970F6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:16:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B441970F80
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83260B20B04
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:16:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA8D1B20EFF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCCC1AE842;
-	Mon,  9 Sep 2024 07:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E8D1AF4DD;
+	Mon,  9 Sep 2024 07:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DxfeGGJM"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="naqR62h3"
+Received: from mail-oi1-f193.google.com (mail-oi1-f193.google.com [209.85.167.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE42F2AD00
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 07:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59501AED55;
+	Mon,  9 Sep 2024 07:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725866180; cv=none; b=hIGLrTYCJWT7D095MkCnRj5LWe6xCE4JHbB/QxtcdeGPnCRnK0rXhtDtg6b4Frx8gvbEIG+uDuD3GVnzgEyDSrZEhc3+evvcF5jUZRYbf/h45/V+UsuZAJ+GjIgpjG/bguA5EHrF8rqxhYBY1rVP+HeM92cbBPC+oVeo6zUZ7/0=
+	t=1725866586; cv=none; b=sQKPaoViwLfIYH+3nv1TTRgv/UPAXfBMDWQppSrJvIyMMsVBDc8YDPfkP0brkYauos7uLeg5xFwvASYeGDqP7sDjxcMXfCWEoafGvhEoYL6JkJi4qfpFs9QzAJ9ww7EhYVFWGkvtNLptQ+e+5Qp28ZSelql8gzOcYQstgDJxLdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725866180; c=relaxed/simple;
-	bh=BjXsP4Mp690AnYXVBtGi2BkMgGrtsmKJ2olHdnk1un4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ODMnGFV3cCVNAfqCsNv1Yi433B9gDOijswp3A4xZe6sQkWrbnOK5AGZsZ5gixyBzFwSIdWUqlqixvYhR7VN/EoBVSMHGyYf2/6123go3MwL3Kr8dZ/P/sh9E0QZnyVaNFQdCHMCt5coGW/bSJLfJRcS+BsvU2NDFfmpTax3OeyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DxfeGGJM; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42ba8928f1dso58045e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 00:16:17 -0700 (PDT)
+	s=arc-20240116; t=1725866586; c=relaxed/simple;
+	bh=Iw00dCIosptPue61ucrUgNPeEO95wQZSZBJoQTKTOG0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wn7Ju4waMNcdAxE49CJjaX1KLHLgjIcCVocUUNkjVCaetQycRY+rp6XaPl1B31aEWFMTvbHwQC6u3KtZELKZAmJS7kjopwEQI4D9JQJNcM7R8rtqJkH++aRz+aemTQfDMOoefCg7znajrzvUMi4UHnQIo1AsSODr+QUbdkdGCQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=naqR62h3; arc=none smtp.client-ip=209.85.167.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f193.google.com with SMTP id 5614622812f47-3e03e9d1f8dso631730b6e.2;
+        Mon, 09 Sep 2024 00:23:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725866176; x=1726470976; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VftkMC5+mYm3QQ3dWBsLEgURQE/0zJC3ZLx2ECmB1zs=;
-        b=DxfeGGJMxOJvH4MbnucdhWwRaDM64KzH+fmtpW1NJsVuMsEPXnVoZdbdy2V/8ox+kj
-         TTCqKzySOOBaz6lWjBoYZFEHPGTLAiFdZkii8nJYWJ9ImOnulszPMMkByd5s7VDbrdvD
-         /wHnLuQu1QvR6voaR2lG6KPwicwMjx6kyN98X6PnmbAgwDhuf9z/o/qDtTrGF0yQc8N0
-         Ox1XOyPlIBLXo/5FG4mIQPYTiTdhQ9rHSlC4UGA+pfDyczx/94y66HAuW8O+cYKKhFLI
-         Edltq8fjBaBW8NnCzT6vW2gYSJOYL3U7LDYVwSCGZL80XSKou9rCJ+2woa6dWkWiKPmr
-         LN0w==
+        d=gmail.com; s=20230601; t=1725866584; x=1726471384; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0v7ViIgmPVp2A4QfqOy1Yh+f9LsV+Zd4QgrjtNP7Ze4=;
+        b=naqR62h3+HIlPbISKnfjuHPFh4x4B/jZxEN8iiAU3oHCNPMErViXqmdLQa7FzR9lk1
+         yfWHAyrfIQhlO4MQug5gG9hp4bQhnO1oi2gAxb2/ZbyTi/MjmPppN71yXbMWRGD+ZW2Q
+         Dte4RpTlnmAmvXWm1Pyu6mLPkrPJqybqjhrg4R+Sy2h0i2ebr9F4sE3sHaWlt0YbOYxs
+         U/JSkXranfJivPAE0FDt0CT14hMPOn5VdCUslsrB4Bhv4E88QcSpr+kmOHWBpwjYowj7
+         lPcwKxrsq2NDglgsELKPMhqw34pmV0lNWgQApmQH/mdp1IDUup6Lh4YLSpWZplS5fTkq
+         m3QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725866176; x=1726470976;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VftkMC5+mYm3QQ3dWBsLEgURQE/0zJC3ZLx2ECmB1zs=;
-        b=rQMW7+4mCWlWsYEjjOwf/d4jebU4qL/dEUoUR28VEvmpK/3XnOiFj4jv7E9CqeGm2H
-         bhBCXCNCFDole210rBB1N3Pm8qoFPh8cyHgTNZY13XvxLZm1eBD54LWrdwx1YtO+zd9C
-         6GhsyoS+AIvAaQdSlv5GlqRqwDysfqGXZUurhnQRqPXmXk7xKnh0fkS96DZ0778eltXn
-         LgYssVRt25M3cA+DXx0cwDhwuPP/2po6GgeSHpr1fV65BaHleutfG3KsxfzPzbyXlFzO
-         bqRNf4STCyM+5mq0+FejYVODgAKTKDCvGvUAag/PKUSY0od2c2Kyrs0VgifMT/ibpvp7
-         P8nA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgQWgVFd8Og/cUXp4EuCYGLiFubM5WP1vyJn1FoRu2FhdkTmxnn/jvdo1SUe6VvT5D8nP9oGvmF4l+6/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV/n2otuDiJPVAWHTtmtL6iMGM25Zfj946nrLlewSLJtyx6Yrc
-	ctBhc9MRlYxX/IPv3O0dfyhw0pP6OYmzoS5ywM543sZT/KxQEwyWPQHhAoHreQ==
-X-Google-Smtp-Source: AGHT+IGOIkTSaWnXjE2bwYgTX4o/x860SYJOr8Q/IVHIUjLL5fLSHy00YIBudEH8NGk3Gpb6Mxcv4g==
-X-Received: by 2002:a05:600c:3d17:b0:426:68ce:c97a with SMTP id 5b1f17b1804b1-42cae4bc174mr1825485e9.7.1725866175872;
-        Mon, 09 Sep 2024 00:16:15 -0700 (PDT)
-Received: from google.com (93.20.140.34.bc.googleusercontent.com. [34.140.20.93])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caf33e9b2sm65999675e9.14.2024.09.09.00.16.15
+        d=1e100.net; s=20230601; t=1725866584; x=1726471384;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0v7ViIgmPVp2A4QfqOy1Yh+f9LsV+Zd4QgrjtNP7Ze4=;
+        b=DwL8DR0WURQxC/h0hnuzDKt8HlhvsCf2B2P9cTBBcVN2L+Zgx6Q3vYLa8VShoUMRhJ
+         v67CQgddl/7399i0zN5MxJV9DsWjmDlv3JT2zq1giLwwKEoXEBPwEAHwMxl3tXVELn5i
+         gCZrutNKYAhywqejfZUq1Szue7fq3gVaERjGfl4C9RdfnOtT4RWX65ASoZ56v6zKpJZV
+         +dIvUB/DMfaAPstyPrPmBNo7kKGWpNtDoBznLWVJVL9EsdIZG5qoaQuyVDKzHj/95YTr
+         jKJfZcwaBrif0u5DzfHPgJ2sP+5Z8EJlWID1POQDskRbtmJJz9QcE1i1TEasCJ0y8Q4R
+         oqQw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7lJkFZKUWWHYod0Ym46PDCTj8G2jIWh2p1CrZhDkPi1vTyuYOm5lNGysW7jIwgW7z3RnDV5I9@vger.kernel.org, AJvYcCXx9dHqcgODSfcyr02pEw8Q9qOYBhVnUz4AmoIGHbjF9iFTimbrvIZAfCu10hXkMWFUb1EX1IT33/05O/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIuzkDuLNJEhFCXNmS1MvqwgcPqidqUjzVLpFjA21XbvXv7zEv
+	HdJsYQ5QcTWDiYWuvpcXTUm9yGmmiFHTyHG1IvWC9zWiTE7mrW2s
+X-Google-Smtp-Source: AGHT+IEGVCcArknxw6s5Mso314Z0OqD1T0xycKR7OadYggEpu31/Opg+U42gv0osPO8M5L2SaS6shQ==
+X-Received: by 2002:a05:6808:1a2a:b0:3e0:c13:9837 with SMTP id 5614622812f47-3e037ae4bddmr3341401b6e.37.1725866583606;
+        Mon, 09 Sep 2024 00:23:03 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.25.208])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e58965bdsm2962094b3a.29.2024.09.09.00.22.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 00:16:15 -0700 (PDT)
-Date: Mon, 9 Sep 2024 07:16:13 +0000
-From: Sebastian Ene <sebastianene@google.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Snehal Koukuntla <snehalreddy@google.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
-	Vincent Donnefort <vdonnefort@google.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Add memory length checks before it is xfered
-Message-ID: <Zt6gvd4NwMmjS8JB@google.com>
-References: <20240906092732.113152-1-snehalreddy@google.com>
- <86ed5wvixw.wl-maz@kernel.org>
+        Mon, 09 Sep 2024 00:23:03 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: idosch@nvidia.com,
+	kuba@kernel.org,
+	aleksander.lobakin@intel.com,
+	horms@kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	dsahern@kernel.org,
+	dongml2@chinatelecom.cn,
+	amcohen@nvidia.com,
+	gnault@redhat.com,
+	bpoirier@nvidia.com,
+	b.galvani@gmail.com,
+	razor@blackwall.org,
+	petrm@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next v3 00/12] net: vxlan: add skb drop reasons support
+Date: Mon,  9 Sep 2024 15:16:40 +0800
+Message-Id: <20240909071652.3349294-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86ed5wvixw.wl-maz@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 06, 2024 at 05:35:39PM +0100, Marc Zyngier wrote:
+In this series, we add skb drop reasons support to VXLAN, and following
+new skb drop reasons are introduced:
 
-Hi,
+  SKB_DROP_REASON_VXLAN_INVALID_HDR
+  SKB_DROP_REASON_VXLAN_VNI_NOT_FOUND
+  SKB_DROP_REASON_VXLAN_INVALID_SMAC
+  SKB_DROP_REASON_VXLAN_ENTRY_EXISTS
+  SKB_DROP_REASON_VXLAN_NO_REMOTE
+  SKB_DROP_REASON_IP_TUNNEL_ECN
+  SKB_DROP_REASON_TUNNEL_TXINFO
+  SKB_DROP_REASON_LOCAL_MAC
 
-> Hi Snehal,
-> 
-> On Fri, 06 Sep 2024 10:27:32 +0100,
-> Snehal Koukuntla <snehalreddy@google.com> wrote:
-> > 
-> > From: Snehal <snehalreddy@google.com>
-> > 
-> > Check size during allocation to fix discrepancy in memory reclaim path.
-> > Currently only happens during memory reclaim, inconsistent with mem_xfer
-> 
-> Can you please elaborate? It doesn't seem to fail at allocation time
-> here, as everything is pre-allocated. Some context would greatly help,
-> as my FFA-foo is as basic as it gets (I did read the spec once and ran
-> away screaming).
-> 
+We add some helper functions in this series, who will capture the drop
+reasons from pskb_may_pull_reason and return them:
 
-Right, I think what happens is that we use the fragmentation API to
-transfer memory to Trustzone that normally won't fit on the reclaim path
-where we use an auxiliary buffer to store the descriptors.
+  pskb_network_may_pull_reason()
+  pskb_inet_may_pull_reason()
+  skb_vlan_inet_prepare_reason()
 
-All the descriptors are identified by the same handle and the reclaim
-will try to store them into the ffa_desc_buf before nuking the FF-A
-annotation from the stage-2.
+And we also make the following functions return skb drop reasons:
 
-> >
-> > Signed-off-by: Snehal Koukuntla <snehalreddy@google.com>
-> 
-> The From: and Signed-off-by: tags do not match. You may want to add a
-> [user] section to your .gitconfig with your full name so that this
-> issue is sorted once and for all.
-> 
-> > ---
-> >  arch/arm64/kvm/hyp/nvhe/ffa.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > index e715c157c2c4..e9223cc4f913 100644
-> > --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > @@ -461,6 +461,11 @@ static __always_inline void do_ffa_mem_xfer(const u64 func_id,
-> 
-> /facepalm: why do we have this __always_inline here? Nothing to do
-> with your patch, but definitely worth understanding why it is
-> required.
->
+  vxlan_remcsum()
+  vxlan_snoop()
+  vxlan_set_mac()
 
-I don't think it is needed, we can drop it. Maybe as part of this patch
-?
+Changes since v2:
+- move all the drop reasons of VXLAN to the "core", instead of introducing
+  the VXLAN drop reason subsystem
+- add the 6th patch, which capture the drop reasons from vxlan_snoop()
+- move the commits for vxlan_remcsum() and vxlan_set_mac() after
+  vxlan_rcv() to update the call of them accordingly
+- fix some format problems
 
-> >  		goto out_unlock;
-> >  	}
-> >  
-> > +	if (len > ffa_desc_buf.len) {
-> > +		ret = FFA_RET_NO_MEMORY;
-> > +		goto out_unlock;
-> > +	}
-> > +
-> 
-> It took some digging to understand how the various queues are sized,
-> and a comment explaining the relation between ffa_desc_buf and the
-> other queues would be very welcome.
-> 
-> I also notice that we have other places (apparently dealing with
-> fragments) that do not have such checks. Do they need anything else?
->
+Changes since v1:
+- document all the drop reasons that we introduce
+- rename the drop reasons to make them more descriptive, as Ido advised
+- remove the 2nd patch, which introduce the SKB_DR_RESET
+- add the 4th patch, which adds skb_vlan_inet_prepare_reason() helper
+- introduce the 6th patch, which make vxlan_set_mac return drop reasons
+- introduce the 10th patch, which uses VXLAN_DROP_NO_REMOTE as the drop
+  reasons, as Ido advised
 
-I think we don't need that check in other parts.
+Menglong Dong (12):
+  net: skb: add pskb_network_may_pull_reason() helper
+  net: tunnel: add pskb_inet_may_pull_reason() helper
+  net: tunnel: add skb_vlan_inet_prepare_reason() helper
+  net: vxlan: add skb drop reasons to vxlan_rcv()
+  net: vxlan: make vxlan_remcsum() return drop reasons
+  net: vxlan: make vxlan_snoop() return drop reasons
+  net: vxlan: make vxlan_set_mac() return drop reasons
+  net: vxlan: use kfree_skb_reason() in vxlan_xmit()
+  net: vxlan: add drop reasons support to vxlan_xmit_one()
+  net: vxlan: use kfree_skb_reason() in vxlan_mdb_xmit()
+  net: vxlan: use kfree_skb_reason() in vxlan_encap_bypass()
+  net: vxlan: use kfree_skb_reason() in encap_bypass_if_local()
 
-> >  	buf = hyp_buffers.tx;
-> >  	memcpy(buf, host_buffers.tx, fraglen);
-> >  
-> 
-> Finally, this probably deserves a Fixes: tag and a Cc: stable so that
-> it can be backported.
-> 
-> Thanks,
-> 
-> 	M.
->
+ drivers/net/vxlan/vxlan_core.c | 111 +++++++++++++++++++++------------
+ drivers/net/vxlan/vxlan_mdb.c  |   2 +-
+ include/linux/skbuff.h         |   8 ++-
+ include/net/dropreason-core.h  |  37 +++++++++++
+ include/net/ip_tunnels.h       |  32 +++++++---
+ 5 files changed, 140 insertions(+), 50 deletions(-)
 
-Seb
+-- 
+2.39.2
 
-> -- 
-> Without deviation from the norm, progress is not possible.
 
