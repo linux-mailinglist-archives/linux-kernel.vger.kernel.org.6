@@ -1,138 +1,138 @@
-Return-Path: <linux-kernel+bounces-320507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB967970B5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:38:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D28970B44
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95F981F21DF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:38:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F35BFB20C88
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84647208A5;
-	Mon,  9 Sep 2024 01:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7C110A2A;
+	Mon,  9 Sep 2024 01:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bs1+pRh+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EeGIbf/a"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3102263A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 01:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6423617BAF;
+	Mon,  9 Sep 2024 01:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725845812; cv=none; b=GZ7/4Kvl4c1hdGQ3RiWi90Qt5H6La4+6cKLGRwXepL+AqWVJuX/Kj5pn983pOcc9zbSei37zf/LJWUdTEpuk6EGOYxxWcsgEyLHEnxx8ULZOvRAK5Ygd2scxEtJi+0dH7vh1EN4rarogCEmGHHqn5nrlAfkFd5CG1s3hPZpBtMA=
+	t=1725845666; cv=none; b=SuZB3UwJzl7WrLRsFWL8ZFhA4Wru2Dj+lLak1fUakto7u556dNgsmMivfB/eM9iw8bNLX1fdejpbyANUg8lCEk7Vt+OOSCXYnYNjdkyObL+ZEL257xPdAAiI+ii72Vq5QY688AGCUX0bR0fFVMy9lpJbIYWMfTkOZeWVBTwh+zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725845812; c=relaxed/simple;
-	bh=oE3m8E6nH9UMyhDIkgGxy8s79NH/H0CVrWS1/6DOtq4=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=StaNph4LfeVqPh0gJdbIubML7D59T+Z5AY5uY3zNOnbtnawPYfvo0JZ7cMKOBWnAViuHoI2bPpKayy/oIHWBUN/YhLft8BIq9QTzQnBfER2khWx8cRLbrQbnZde35OA86SOn5Qt1i+yr6jHlwy9w9YHoGeG83P3YWhCIT6+MdAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bs1+pRh+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725845809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QC3M+l8iJWZEevnljOoIIP4I/7torTZh9gwIfyPDAYw=;
-	b=bs1+pRh+wiSlhAVf2zcDgypysy8Yv5Re76tsQvtqDqpmQifZtaEkhb265vsb1+CBK1dqkv
-	uqKN53fqKFPgYUvn+QrAIRxxgjpfk6jfXvbr0TmmXWh0JPer187aT5t5OiWJMFFpyOU7BD
-	Q1/P+D4R52ElpoY6OGEjphriNRHn8mc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-153-FWjPIzHgOE2K4k17QLnMUw-1; Sun,
- 08 Sep 2024 21:36:45 -0400
-X-MC-Unique: FWjPIzHgOE2K4k17QLnMUw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B2F641977009;
-	Mon,  9 Sep 2024 01:36:44 +0000 (UTC)
-Received: from server.redhat.com (unknown [10.72.112.25])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C482819560AA;
-	Mon,  9 Sep 2024 01:36:39 +0000 (UTC)
-From: Cindy Lu <lulu@redhat.com>
-To: lulu@redhat.com,
-	jasowang@redhat.com,
-	mst@redhat.com,
-	michael.christie@oracle.com,
-	linux-kernel@vger.kernel.org,
-	virtualization@lists.linux-foundation.org
-Subject: [PATCH v1 7/7] vhost: Add new UAPI to support change to task mode
-Date: Mon,  9 Sep 2024 09:33:46 +0800
-Message-ID: <20240909013531.1243525-8-lulu@redhat.com>
-In-Reply-To: <20240909013531.1243525-1-lulu@redhat.com>
-References: <20240909013531.1243525-1-lulu@redhat.com>
+	s=arc-20240116; t=1725845666; c=relaxed/simple;
+	bh=XvDIra9pB5f3TU2zneiyVuV/yGokHJjdkaUWMgFjGV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q7PcqIKHJlC3we4WKygq99TsguFjof0JrskshpURTsiZ2uZGfmfxsrFoxzSe3eeR5thrn62Z+ezTh8c9Q4bMBBC/hs9l/0r02sc8eTwl7tinu6+tkbpwfOAvzy/IlTm48jaIgU+zD/Rjb6SHsyBApMV600eM2HKAH/1awTAhGaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EeGIbf/a; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d87176316eso3423562a91.0;
+        Sun, 08 Sep 2024 18:34:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725845665; x=1726450465; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7W2zBLYt9fnaVSezdXrLCnx8e6dUclGBys6MZN+Qx/s=;
+        b=EeGIbf/aDWztRuNrUy+FFxmycouCG51me6NqqbCdaplATkYlJuMNMp9xhIkQfKN361
+         RnBxeQmGyhrRI0lkAeh8H9mNtK53WvoZQWM4b/3ERyjyjh0jE41inXrUJeEtfWlaT+IF
+         2u2lCeXAGnG+hhmS4DMoaeWkeaUDpDhVNJMX4KvXTm54smlA4ogAJdEsnl6LssEHB6s0
+         9e997J7e9/UnPTHA8SPkTU7Sgml/3v4ndphGZz160IEnusDWYFMsduBbA04jVtaTQ9u5
+         VEm1WTRJprK3C9TXEjQRo04L9X/QV8t0c49+eC6ZvyEWpiIqLi7jdNOFXuZJ0SItAGy1
+         UbOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725845665; x=1726450465;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7W2zBLYt9fnaVSezdXrLCnx8e6dUclGBys6MZN+Qx/s=;
+        b=LF3+I3CghBdmjJcv0Z13RXAa15C9NpejtLdz6txQwS5gAO4E6dyl3qV5MEcxbTlcVv
+         AM8/kYyrYOdoxzp606ae4pavOvmnVGD4V3aiLd1/vQQgAjQOj4xERBb9KupLsYxsd0kL
+         kTwmjdcYfsk6b+q/N+FmFiHjguWck0f4818umqj5kgddMyuYx1si4yq3xi7/bAS8RPCJ
+         SRjmTRRCRepkH701fsb8h+bOpZ+70dKmJO/oE1euFYBVxv9GDOEazj6pf5BnwKF4Qa32
+         pMA+81EZCm4XUMJhpHykGeQIcae42fgCTCGBmSlH/2mlFC93c/oT87AgF5Z9G6kgrmpH
+         Hv9A==
+X-Forwarded-Encrypted: i=1; AJvYcCW35VaHv0ucMh2jNjpGdbP6Y9VNEOh0/LrlWAcRv+2n3PrutB/5uxoEEjWZUXE+zI6vbZVD/1WZXKCwj+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqBgjGJKnlna6UWI6szkOOLai5qjEB33NVYdS6QaAGPup5jsi+
+	trTyDUvIE0oOUPwU3sfzojpj9jd72GMoPl2epJlSORUjmrFxTDwt
+X-Google-Smtp-Source: AGHT+IFM9bD6v0D1u75QP30Eno60Hv9Ae+0JzFw21ZrhOw+rKyC4uIB6TTZRwgJhfhODbi4u6ffdcA==
+X-Received: by 2002:a17:90b:4a83:b0:2d8:d096:3005 with SMTP id 98e67ed59e1d1-2da8eceed2cmr25374791a91.9.1725845664529;
+        Sun, 08 Sep 2024 18:34:24 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:33:e151:4d73:1aa7])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d823736208sm2881949a12.19.2024.09.08.18.34.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 18:34:24 -0700 (PDT)
+Date: Sun, 8 Sep 2024 18:34:21 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Jeff LaBundy <jeff@labundy.com>
+Cc: linux-input@vger.kernel.org,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Ville Syrjala <syrjala@sci.fi>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Eddie James <eajames@linux.ibm.com>,
+	Andrey Moiseev <o2g.org.ru@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 15/22] Input: iqs7222 - use cleanup facility for fwnodes
+Message-ID: <Zt5QnS_eM9xt8XNa@google.com>
+References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
+ <20240904044825.1048256-1-dmitry.torokhov@gmail.com>
+ <Zt49WnZBar2D822M@nixie71>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt49WnZBar2D822M@nixie71>
 
-Add a new UAPI to support setting the vhost device to
-use task mode. The user space application needs to use
-VHOST_SET_ENFORCE_TASK to set the mode. This setting must
-be set before VHOST_SET_OWNER is set.
+Hi Jeff,
 
-Signed-off-by: Cindy Lu <lulu@redhat.com>
----
- drivers/vhost/vhost.c      | 16 +++++++++++++++-
- include/uapi/linux/vhost.h |  2 ++
- 2 files changed, 17 insertions(+), 1 deletion(-)
+On Sun, Sep 08, 2024 at 07:12:10PM -0500, Jeff LaBundy wrote:
+> Hi Dmitry,
+> 
+> On Tue, Sep 03, 2024 at 09:48:25PM -0700, Dmitry Torokhov wrote:
+> > Use __free(fwnode_handle) cleanup facility to ensure that references to
+> > acquired fwnodes are dropped at appropriate times automatically.
+> > 
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> >  drivers/input/misc/iqs7222.c | 30 ++++++++++++++----------------
+> >  1 file changed, 14 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/drivers/input/misc/iqs7222.c b/drivers/input/misc/iqs7222.c
+> > index 9ca5a743f19f..d9b87606ff7a 100644
+> > --- a/drivers/input/misc/iqs7222.c
+> > +++ b/drivers/input/misc/iqs7222.c
+> > @@ -2385,9 +2385,9 @@ static int iqs7222_parse_chan(struct iqs7222_private *iqs7222,
+> >  	for (i = 0; i < ARRAY_SIZE(iqs7222_kp_events); i++) {
+> >  		const char *event_name = iqs7222_kp_events[i].name;
+> >  		u16 event_enable = iqs7222_kp_events[i].enable;
+> > -		struct fwnode_handle *event_node;
+> >  
+> > -		event_node = fwnode_get_named_child_node(chan_node, event_name);
+> > +		struct fwnode_handle *event_node __free(fwnode_handle) =
+> > +			fwnode_get_named_child_node(chan_node, event_name);
+> 
+> This leaves a newline amongst the declarations, but not in between the
+> declarations and code. I don't feel strongly against this, but it's
+> opposite of what I understand to be more common; please let me know in
+> case I have misunderstood. This comment applies to the other chunks as
+> well.
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index bf1e971cb06f..8ed6b3a947a9 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -2340,14 +2340,28 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp)
- {
- 	struct eventfd_ctx *ctx;
- 	u64 p;
--	long r;
-+	long r = 0;
- 	int i, fd;
-+	bool enforce_task;
- 
- 	/* If you are not the owner, you can become one */
- 	if (ioctl == VHOST_SET_OWNER) {
- 		r = vhost_dev_set_owner(d);
- 		goto done;
- 	}
-+	if (ioctl == VHOST_SET_ENFORCE_TASK) {
-+		/* Is there an owner already? */
-+		if (vhost_dev_has_owner(d)) {
-+			r = -EBUSY;
-+			goto done;
-+		}
-+		if (copy_from_user(&kthread, argp, sizeof(enforce_task))) {
-+			r = -EFAULT;
-+			goto done;
-+		}
-+		use_kthread = enforce_task;
-+		goto done;
-+	}
- 
- 	/* You must be the owner to do anything else */
- 	r = vhost_dev_check_owner(d);
-diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-index b95dd84eef2d..9853d62d2d34 100644
---- a/include/uapi/linux/vhost.h
-+++ b/include/uapi/linux/vhost.h
-@@ -235,4 +235,6 @@
-  */
- #define VHOST_VDPA_GET_VRING_SIZE	_IOWR(VHOST_VIRTIO, 0x82,	\
- 					      struct vhost_vring_state)
-+
-+#define VHOST_SET_ENFORCE_TASK _IOW(VHOST_VIRTIO, 0x83, bool)
- #endif
+Right, so this is actually combining declaration and initialization case
+that I mentioned in the other email, and it is closer in spirit to the
+code and the allocation check below. That is why it is separated from
+the declaration block.
+
+Thanks.
+
 -- 
-2.45.0
-
+Dmitry
 
