@@ -1,268 +1,119 @@
-Return-Path: <linux-kernel+bounces-321645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A72971D82
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:08:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8901C971DA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2BC9B22B77
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:08:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1557FB23604
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC2C1B970;
-	Mon,  9 Sep 2024 15:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E557F1CFBE;
+	Mon,  9 Sep 2024 15:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dP2uS1O3"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b="kVoQM5LI"
+Received: from mail.rosalinux.ru (mail.rosalinux.ru [195.19.76.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7AA17588;
-	Mon,  9 Sep 2024 15:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927251CD3F;
+	Mon,  9 Sep 2024 15:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.19.76.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725894469; cv=none; b=aGhQcZzoX/g8nrYLeKvgGXQ+8l2d4kvKCCA+rXuRNYqfcKtcmdLmACTFbmJgFzFXu47WYV9ygJCG0GxzfB04n9/HEmMzg2BKcvNY758eRm6tEgDTAxbOvuRAnA3VO4itgODkti5kDOcQQ27yPokTOJ/WLOoomAjsUF6iT+m1+dI=
+	t=1725894593; cv=none; b=YH6xnx8sWLzBdfLBppPKnwY0yrnaxXQSa25SZtbWAfNFCDe38xb8qKJRpRa+3eFJUekBDxXOLbNH//9eCEp6CVd/jrFmaIWjKtV8ti9erbdkrzPq0TTF16Kf0eYOWQ4C4Zd9o3y6Jl0O8GMxRYyZJANmdo2qHApVVgxwgokFwFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725894469; c=relaxed/simple;
-	bh=875Y4VjyHmXMs+IK0RMM4p2xYMb4iej5Rh1Oje6xBFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZORuryfoNIwsrYgGYco4TKOTaDRaWuZc1TyoAdiagsoJJIL83DzUlbZ6qByUGaO0r5pI3YwO2sWwxApdIRZ8t97m50n7cFxurzHlyeW3kN0PobXoDoflY2/xk8Vg2ANHcVmkBiDryptAttUa5Iv7+lqw+Yc29e8b1rBsx9QmRDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dP2uS1O3; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c3c3b63135so4736830a12.3;
-        Mon, 09 Sep 2024 08:07:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725894466; x=1726499266; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0e3VQB4mtZmgnW0q+EBl348gw10/94LT4bRkiM7OfK4=;
-        b=dP2uS1O3OdOApWueEWUvhzFlIZ0jTX8XfzynFSAN+Qku2MoXtrcvYIwLsSUXfyxCEv
-         4sQ6Yc8jkHMu3hS8usJCH5SXRgCriGpgpOPHDZiXz2zgoHQYjR4A5SUPsXIQuTxYwarh
-         iNkWVw5/ep2+cLGOr6w9jvxcLmVBwmtPSHKninCV/r2iWZlovs987NbxLbKUxGT/a37J
-         bsky+zBXq4PePJ/JmmYJONYdxeoaN3g4HJDwpTUpkeyz3K5m3dluMquzN6Vtm74GGXp0
-         B+UsxRHNH6jDvOSIMlbRxg2SO8WrjibZrnxBy/f9xw3eVr3MuSk/z/SvmeXIN2uMXC8M
-         yjnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725894466; x=1726499266;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0e3VQB4mtZmgnW0q+EBl348gw10/94LT4bRkiM7OfK4=;
-        b=UN8NBEN7VByLIz27AqN5veqDRdJpEgfdWwTVZ2a0QvEwdFUAXVY0C7/HfFZP5dGR3U
-         eCZJ5i9eyUZvG5VMQQW9CEkzT207XIf5hcgcwszxbCn87Ws2M3znqQJEu8nkwOkh5cg+
-         gjzyDZd2FtGuTCmdTfccnM7za1qS78Czg7Sl4Qcq7ckq4dD7cBW39PDKka8awiX75SjK
-         4m/8SbYGzb4hkNDCFgAdbvO24/YVW+T3w0z9EYtpnayEPfjQrO1tSlI9pkMqG6+/usQK
-         dNf6IVZtT7DRl/CbG0BNq+9Ha2iAj4G8s1qp2ihD8m9fmZZDS5N2/a1JGkez5/Mo0HVe
-         93NA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBxrkdSzJMPTHGg21JRCBoNFyqdMVnY36LEVDd1zNHPXIt/AyXcCJQ+iuRrJknSTdHcZdYNCvj03zGK+8+@vger.kernel.org, AJvYcCUQl+/tLKfxmhlGjsliHe3wHN37/zqkL8+i4fMiMQQAJp1JWClrk43L6scxBngUabXEWruMZ+D09pncwagG@vger.kernel.org, AJvYcCXIU19t0Rgr9BMPGwX05xxA2y4PNDtQNw3PxB74/GN8r0UBjWCeJqiXow1RnNE99xT1KZwGCTt+9lPI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi17Yt3eujers9ZzOF2wsWvZPV/KgOShfBW3aqyTUzOknLIwRL
-	b4G62HUYY8svGgIZPAuYqkBd95Y/PhOo+g+glyTkzng8rrUO3LVX
-X-Google-Smtp-Source: AGHT+IGJinPXTnmtg2jvdQUT+IkSTQKqrBpThwnTKU/zEfWtEF1nJMRSz7qtzC1Q2lBU0r0PDBhmNg==
-X-Received: by 2002:a05:6402:5409:b0:5c3:3f6a:9767 with SMTP id 4fb4d7f45d1cf-5c3dc7904d8mr9809150a12.9.1725894465215;
-        Mon, 09 Sep 2024 08:07:45 -0700 (PDT)
-Received: from [192.168.1.17] (host-95-246-172-178.retail.telecomitalia.it. [95.246.172.178])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd4680esm3109614a12.21.2024.09.09.08.07.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 08:07:44 -0700 (PDT)
-Message-ID: <69efbf90-7ce1-429f-bf3a-d19acd7d649d@gmail.com>
-Date: Mon, 9 Sep 2024 17:07:42 +0200
+	s=arc-20240116; t=1725894593; c=relaxed/simple;
+	bh=j0YQ1JsT6Sl6v2u3HZJN1LUN5o+6fe/pgLKSj6VCpHo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WMJfmoCuK+Q5Qb5OJcJ1/ynaBzn+4W/ilUzh0lBBvhRjJqoNISdEkBdeRUKe8fx0P81hn2/Otsk0SQTNMBVs/4Ka/nFfBZeaVteg5gFRRyvBbxm+1fjP2e80B5laQypObbT8BW2EnDQ6wgZFu2NZkHr40CXWaHrJmQyooG5qMkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru; spf=pass smtp.mailfrom=rosalinux.ru; dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b=kVoQM5LI; arc=none smtp.client-ip=195.19.76.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosalinux.ru
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rosalinux.ru (Postfix) with ESMTP id DE719F96D6A8A;
+	Mon,  9 Sep 2024 18:09:41 +0300 (MSK)
+Received: from mail.rosalinux.ru ([127.0.0.1])
+	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id UotMJwDW5c-o; Mon,  9 Sep 2024 18:09:41 +0300 (MSK)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rosalinux.ru (Postfix) with ESMTP id B1366F96D6A8E;
+	Mon,  9 Sep 2024 18:09:41 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rosalinux.ru B1366F96D6A8E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosalinux.ru;
+	s=1D4BB666-A0F1-11EB-A1A2-F53579C7F503; t=1725894581;
+	bh=qSyQ4pSfZEnrTREXFvnropqxg0UKjf2Lm16mH1Y1mlc=;
+	h=From:To:Date:Message-ID:MIME-Version;
+	b=kVoQM5LIZeuKaFX+8V0CIgPFP8tp6Xzg+KdSRB5Ws0aZAx7HkpIX6ksZMyyM3sQ0N
+	 FaXsOHy+WWpe+pK7oNnI9IT2qF2wmX13bRQL9my6D5QuosNnuo2X/Xyh7k9XYwfEbS
+	 6+7HTgEX/G8A7e1QR3WpI8zE8MtMjFX37puTP7TSCrhKK93PMK0Nhsdy2SPCPF11i+
+	 ZM3r67zof3Md0EoqlXvVVCO0HaujJ9gKcjx8EP3qwkWr5/b3SPIxWcVNyLdpUaBynh
+	 ItlN9woC0zk9vr4WvyauXBPOumvz0Cm0pz9tUlvo8QWaX8z+AS8so5AgWJ1ZrGsEqT
+	 YuWjoJe2lW5iQ==
+X-Virus-Scanned: amavisd-new at rosalinux.ru
+Received: from mail.rosalinux.ru ([127.0.0.1])
+	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id IhIZLQJ360Z7; Mon,  9 Sep 2024 18:09:41 +0300 (MSK)
+Received: from localhost.localdomain (unknown [213.87.137.230])
+	by mail.rosalinux.ru (Postfix) with ESMTPSA id D52C1F96D6A8A;
+	Mon,  9 Sep 2024 18:09:40 +0300 (MSK)
+From: Mikhail Lobanov <m.lobanov@rosalinux.ru>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Mikhail Lobanov <m.lobanov@rosalinux.ru>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Govindaraj Saminathan <quic_gsamin@quicinc.com>,
+	Miles Hu <milehu@codeaurora.org>,
+	Sven Eckelmann <seckelmann@datto.com>,
+	Rajkumar Manoharan <rmanohar@codeaurora.org>,
+	John Crispin <john@phrozen.org>,
+	linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] ath11k: modify null check logic in ath11k_ce_rx_post_pipe()
+Date: Mon,  9 Sep 2024 11:08:20 -0400
+Message-ID: <20240909150824.28195-1-m.lobanov@rosalinux.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/10] drm/msm/A6xx: Use posamble to reset counters on
- preemption
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Jonathan Corbet <corbet@lwn.net>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20240905-preemption-a750-t-v3-0-fd947699f7bc@gmail.com>
- <20240905-preemption-a750-t-v3-6-fd947699f7bc@gmail.com>
- <20240906200847.ajcrpikzl65fwbjz@hu-akhilpo-hyd.qualcomm.com>
-Content-Language: en-US
-From: Antonino Maniscalco <antomani103@gmail.com>
-In-Reply-To: <20240906200847.ajcrpikzl65fwbjz@hu-akhilpo-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 9/6/24 10:08 PM, Akhil P Oommen wrote:
-> On Thu, Sep 05, 2024 at 04:51:24PM +0200, Antonino Maniscalco wrote:
->> Use the postamble to reset perf counters when switching between rings,
->> except when sysprof is enabled, analogously to how they are reset
->> between submissions when switching pagetables.
->>
->> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
->> ---
->>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 20 ++++++++++++++++++-
->>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  5 +++++
->>   drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 32 +++++++++++++++++++++++++++++++
->>   drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  7 +++++--
->>   4 files changed, 61 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->> index ed0b138a2d66..710ec3ce2923 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->> @@ -366,7 +366,8 @@ static void a6xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
->>   static void a6xx_emit_set_pseudo_reg(struct msm_ringbuffer *ring,
->>   		struct a6xx_gpu *a6xx_gpu, struct msm_gpu_submitqueue *queue)
->>   {
->> -	u64 preempt_offset_priv_secure;
->> +	bool sysprof = refcount_read(&a6xx_gpu->base.base.sysprof_active) > 1;
->> +	u64 preempt_offset_priv_secure, preempt_postamble;
->>   
->>   	OUT_PKT7(ring, CP_SET_PSEUDO_REG, 15);
->>   
->> @@ -398,6 +399,23 @@ static void a6xx_emit_set_pseudo_reg(struct msm_ringbuffer *ring,
->>   	/* seems OK to set to 0 to disable it */
->>   	OUT_RING(ring, 0);
->>   	OUT_RING(ring, 0);
->> +
->> +	/* if not profiling set postamble to clear perfcounters, else clear it */
->> +	if (!sysprof && a6xx_gpu->preempt_postamble_len) {
->> +		preempt_postamble = a6xx_gpu->preempt_postamble_iova;
->> +
->> +		OUT_PKT7(ring, CP_SET_AMBLE, 3);
->> +		OUT_RING(ring, lower_32_bits(preempt_postamble));
->> +		OUT_RING(ring, upper_32_bits(preempt_postamble));
->> +		OUT_RING(ring, CP_SET_AMBLE_2_DWORDS(
->> +					a6xx_gpu->preempt_postamble_len) |
->> +				CP_SET_AMBLE_2_TYPE(KMD_AMBLE_TYPE));
->> +	} else {
-> 
-> Why do we need this else part?
+The previous logic in ath11k_ce_rx_post_pipe() incorrectly required both=20
+dest_ring and status_ring to be NULL in order to exit the function.=20
+This caused the function to continue even if only one of the pointers=20
+was NULL, potentially leading to null pointer dereferences in=20
+ath11k_ce_rx_buf_enqueue_pipe().
 
-Wouldn't the postmable remain set if we don't explicitly set it to 0?
+Fix the condition by modifying the logic so that the function returns=20
+early if either dest_ring or status_ring is NULL.
 
-> 
->> +		OUT_PKT7(ring, CP_SET_AMBLE, 3);
->> +		OUT_RING(ring, 0);
->> +		OUT_RING(ring, 0);
->> +		OUT_RING(ring, CP_SET_AMBLE_2_TYPE(KMD_AMBLE_TYPE));
->> +	}
->>   }
->>   
->>   static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
->> index da10060e38dc..b009732c08c5 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
->> @@ -71,6 +71,11 @@ struct a6xx_gpu {
->>   	bool uses_gmem;
->>   	bool skip_save_restore;
->>   
->> +	struct drm_gem_object *preempt_postamble_bo;
->> +	void *preempt_postamble_ptr;
->> +	uint64_t preempt_postamble_iova;
->> +	uint64_t preempt_postamble_len;
->> +
->>   	struct a6xx_gmu gmu;
->>   
->>   	struct drm_gem_object *shadow_bo;
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
->> index 1caff76aca6e..ec44f44d925f 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
->> @@ -346,6 +346,28 @@ static int preempt_init_ring(struct a6xx_gpu *a6xx_gpu,
->>   	return 0;
->>   }
->>   
->> +static void preempt_prepare_postamble(struct a6xx_gpu *a6xx_gpu)
->> +{
->> +	u32 *postamble = a6xx_gpu->preempt_postamble_ptr;
->> +	u32 count = 0;
->> +
->> +	postamble[count++] = PKT7(CP_REG_RMW, 3);
->> +	postamble[count++] = REG_A6XX_RBBM_PERFCTR_SRAM_INIT_CMD;
->> +	postamble[count++] = 0;
->> +	postamble[count++] = 1;
->> +
->> +	postamble[count++] = PKT7(CP_WAIT_REG_MEM, 6);
->> +	postamble[count++] = CP_WAIT_REG_MEM_0_FUNCTION(WRITE_EQ);
->> +	postamble[count++] = CP_WAIT_REG_MEM_1_POLL_ADDR_LO(
->> +				REG_A6XX_RBBM_PERFCTR_SRAM_INIT_STATUS);
->> +	postamble[count++] = CP_WAIT_REG_MEM_2_POLL_ADDR_HI(0);
->> +	postamble[count++] = CP_WAIT_REG_MEM_3_REF(0x1);
->> +	postamble[count++] = CP_WAIT_REG_MEM_4_MASK(0x1);
->> +	postamble[count++] = CP_WAIT_REG_MEM_5_DELAY_LOOP_CYCLES(0);
-> 
-> Isn't it better to just replace this with NOP packets when sysprof is
-> enabled, just before triggering preemption? It will help to have an
-> immediate effect.
-> 
-> -Akhil
-> 
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Mmm, this being a postamble I wonder whether we have the guarantee that 
-it finishes execution before the IRQ is called so updating it doesn't 
-race with the CP executing it.
+Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+Signed-off-by: Mikhail Lobanov <m.lobanov@rosalinux.ru>
+---
+ drivers/net/wireless/ath/ath11k/ce.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> +
->> +	a6xx_gpu->preempt_postamble_len = count;
->> +}
->> +
->>   void a6xx_preempt_fini(struct msm_gpu *gpu)
->>   {
->>   	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
->> @@ -376,6 +398,16 @@ void a6xx_preempt_init(struct msm_gpu *gpu)
->>   	a6xx_gpu->uses_gmem = 1;
->>   	a6xx_gpu->skip_save_restore = 1;
->>   
->> +	a6xx_gpu->preempt_postamble_ptr  = msm_gem_kernel_new(gpu->dev,
->> +			PAGE_SIZE, MSM_BO_WC | MSM_BO_MAP_PRIV,
->> +			gpu->aspace, &a6xx_gpu->preempt_postamble_bo,
->> +			&a6xx_gpu->preempt_postamble_iova);
->> +
->> +	preempt_prepare_postamble(a6xx_gpu);
->> +
->> +	if (IS_ERR(a6xx_gpu->preempt_postamble_ptr))
->> +		goto fail;
->> +
->>   	timer_setup(&a6xx_gpu->preempt_timer, a6xx_preempt_timer, 0);
->>   
->>   	return;
->> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
->> index 6b1888280a83..87098567483b 100644
->> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
->> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
->> @@ -610,12 +610,15 @@ OUT_PKT4(struct msm_ringbuffer *ring, uint16_t regindx, uint16_t cnt)
->>   	OUT_RING(ring, PKT4(regindx, cnt));
->>   }
->>   
->> +#define PKT7(opcode, cnt) \
->> +	(CP_TYPE7_PKT | (cnt << 0) | (PM4_PARITY(cnt) << 15) | \
->> +		((opcode & 0x7F) << 16) | (PM4_PARITY(opcode) << 23))
->> +
->>   static inline void
->>   OUT_PKT7(struct msm_ringbuffer *ring, uint8_t opcode, uint16_t cnt)
->>   {
->>   	adreno_wait_ring(ring, cnt + 1);
->> -	OUT_RING(ring, CP_TYPE7_PKT | (cnt << 0) | (PM4_PARITY(cnt) << 15) |
->> -		((opcode & 0x7F) << 16) | (PM4_PARITY(opcode) << 23));
->> +	OUT_RING(ring, PKT7(opcode, cnt));
->>   }
->>   
->>   struct msm_gpu *a2xx_gpu_init(struct drm_device *dev);
->>
->> -- 
->> 2.46.0
->>
-
-Best regards,
--- 
-Antonino Maniscalco <antomani103@gmail.com>
+diff --git a/drivers/net/wireless/ath/ath11k/ce.c b/drivers/net/wireless/=
+ath/ath11k/ce.c
+index e66e86bdec20..9d4246d65d68 100644
+--- a/drivers/net/wireless/ath/ath11k/ce.c
++++ b/drivers/net/wireless/ath/ath11k/ce.c
+@@ -324,7 +324,7 @@ static int ath11k_ce_rx_post_pipe(struct ath11k_ce_pi=
+pe *pipe)
+ 	dma_addr_t paddr;
+ 	int ret =3D 0;
+=20
+-	if (!(pipe->dest_ring || pipe->status_ring))
++	if (!pipe->dest_ring || !pipe->status_ring)
+ 		return 0;
+=20
+ 	spin_lock_bh(&ab->ce.ce_lock);
+--=20
+2.43.0
 
 
