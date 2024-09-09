@@ -1,102 +1,111 @@
-Return-Path: <linux-kernel+bounces-321605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B04A971CB7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:35:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40092971CBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 105CD283B44
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:35:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D831C231EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFCC1BAEC6;
-	Mon,  9 Sep 2024 14:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0301BAECD;
+	Mon,  9 Sep 2024 14:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s94maB6x";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xIc23Af9"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="Ye20z4xF"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F80E1BAEC0
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 14:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2095A1B3B11
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 14:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725892545; cv=none; b=Tmsog8ZDnC5RgXhWz/kJ3EAWI2DIbi3FZh8eKmrg9cpFCauG6Vq7bd62LsSzu/lcp532p2yawiyguIWtMi4dZVwbrysoOy4Ypp83GAWCirOViYufOb4sabHtI3zl5VvDzDei/PlqFxLqOoA01qq3Bx4PQaYSxvoXIOjyHwPwX44=
+	t=1725892595; cv=none; b=lvAxAihjsyTijPh3j7m3SJqYR6ws5RzpJG4sS/5XhQ1u+njHVeh2RKuBoDmq85C4lOUmTA6nZFJ9xY5JwEkh7IRdu4xwIHyAhr63YnxLKZVswi7TV8KvFmulECnjvN/gK8Qjez1WuogBgWIdaZM3IyL/NxX1vQTh+KKUnPAox7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725892545; c=relaxed/simple;
-	bh=8BooXKx+0NMVyYcENQHrkHCr3S5WhZLvm5MskPnbwZY=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZmtH7z2uoNtgSt18SHZVKP6870VW8ZWLpIPr/qL/P5fwIQTAa7Ork17LW78VVFt8EgNqnTPmDki87z8UW4TPvor3nZc19458jkgEi6k1uNl0OIPl3YxXpDl1iyv2p4nIkhZdGoEipT4g3+eCLHvyyveyHh2OnHJjZUMVZYwvKPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s94maB6x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xIc23Af9; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725892542;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cXWVXbsPAOgMbGglFMBRssrA39dzXM6BIm/pJcSgIk4=;
-	b=s94maB6xQmjgULZMRDcrHTi1No7N4VwQOGOIAb/h8k/OfCCW3gSSsBplotDMHSwTeDHseP
-	zbjeNG4GczLTEF3LZwfCF9booWUMGKjdoWVAfehFsWwQxO3cS5U6jnqp378gVJFJfv77Nw
-	xsrpAUAvcpu2IsPYeoq7yIGcBCllOEwoD8Q6lGKHgZIKWT7PblWr4iEgbZrnJQBwFwEbvB
-	njUsBQuouu3WvxSQS58ulpquuA54G32nybzj22URMf2qN/2Sr5FwPUl6+KbbnJFMXzCaeO
-	XKDQXAT7tteO75BHhZffnauHwt4v9o2R7oA2ygY9ydv5XgZEpDtK0uuoXqkTsg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725892542;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cXWVXbsPAOgMbGglFMBRssrA39dzXM6BIm/pJcSgIk4=;
-	b=xIc23Af9nDS6hocFcmqZ3dw1pdQUoeVNDonn4EpQjvA4BOvRUYdKCQw5/6hJC4EVJ7O+vZ
-	r858lWrYEIDGrZCA==
-To: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] debugobjects: Don't start fill if there are
- remaining nodes locally
-In-Reply-To: <32bd93ec-747f-b5a1-917f-f885b87600a5@huawei.com>
-References: <20240904133944.2124-1-thunder.leizhen@huawei.com>
- <20240904133944.2124-5-thunder.leizhen@huawei.com>
- <336109d9-2eea-4d67-ee22-ed218b9504c3@huawei.com>
- <7613ce35-0c65-341f-c6ed-412de79890e6@huawei.com> <87ed5tchc6.ffs@tglx>
- <87bk0xc9iy.ffs@tglx> <32bd93ec-747f-b5a1-917f-f885b87600a5@huawei.com>
-Date: Mon, 09 Sep 2024 16:35:41 +0200
-Message-ID: <87wmjkc2te.ffs@tglx>
+	s=arc-20240116; t=1725892595; c=relaxed/simple;
+	bh=2p1aBZqsUmCuXQ3jiGz0sZlXSSmxwwNLGq3tOI53ZZA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DeqwLdbgvxv9tkU8THuHas6sqAY7h5xu7C6Q40bxM9QiQEt7LV6ukbVuzyP2THwr00t6zKlaFWoSDBh4RDTayqs8jnwJt6LSb7kFks2cNek00aYFiiZRdgsn/7i8Qdevp8Sf8cKmbjSUdb8lHFJVYBrX9nsFUnvX6H7bTpv5EfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=Ye20z4xF; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4895bCw5012744;
+	Mon, 9 Sep 2024 09:36:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=9tHyNH/L4dVK8ecBDE
+	2nZgXN5xeNAU1JDx+oAdHfNpw=; b=Ye20z4xFy8uOsE9ahafBpm8JfZKh5Nui/K
+	oLuSts1jvOi2YDbruSgNoMn4X4tMkADO2gDYdsK/3BF20y5Vz5iVevIJOzkiD84W
+	C1COTjSiM/rvARPNit0Je9225+X9jafXgHi96GsLCMlW10OvaD42Z+B1cWBBnEUc
+	HMI9yd85llVYl0kZCe6M8+RqAD+4C/3Et/K4LFHlDS98smjAPF8LDQtdaTt5ZoMZ
+	j86sjBTBCe38VrZ5NpUveqADJWDA0ChMTprWzAx0c2oCWTgT/BeNFOcufGRRV+Rr
+	9xkHuXYHNsSI/Xz6cRtVVGTkNx+gh48hYLJE5yOQKFE6Cd9m5S3Q==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 41gm7x1qcb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 09:36:26 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Sep 2024
+ 15:36:24 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 9 Sep 2024 15:36:24 +0100
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 9B557820249;
+	Mon,  9 Sep 2024 14:36:24 +0000 (UTC)
+Date: Mon, 9 Sep 2024 15:36:23 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Vinod Koul <vkoul@kernel.org>,
+        Bard Liao
+	<yung-chuan.liao@linux.intel.com>,
+        Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.intel.com>,
+        Sanyog Kale
+	<sanyog.r.kale@intel.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] soundwire: stream: Revert "soundwire: stream: fix
+ programming slave ports for non-continous port maps"
+Message-ID: <Zt8H530FkqBMiYX+@opensource.cirrus.com>
+References: <20240904145228.289891-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240904145228.289891-1-krzysztof.kozlowski@linaro.org>
+X-Proofpoint-GUID: UWsB2DbKv8vFLqSDML-G28WGcjBtvHa_
+X-Proofpoint-ORIG-GUID: UWsB2DbKv8vFLqSDML-G28WGcjBtvHa_
+X-Proofpoint-Spam-Reason: safe
 
-On Mon, Sep 09 2024 at 21:51, Leizhen wrote:
-> On 2024/9/9 20:10, Thomas Gleixner wrote:
->> So something like the uncompiled below should reduce lock contention
->> significantly with a reasonable safety net.
->
-> It looks very good. Especially flexible use of 'state' and 'cpus_allocating'.
-> In this way, there is almost no conflict of lock 'pool_lock', and the more
-> cores, the less possible conflict.
->
-> Hi Thomas Gleixner:
->   Do you plan to post this patch? But this patch will conflict with my patch 5/6.
-> If you're going to merge my patch 5/6, hopefully yours will be applied
-> after mine.
+On Wed, Sep 04, 2024 at 04:52:28PM +0200, Krzysztof Kozlowski wrote:
+> This reverts commit ab8d66d132bc8f1992d3eb6cab8d32dda6733c84 because it
+> breaks codecs using non-continuous masks in source and sink ports.  The
+> commit missed the point that port numbers are not used as indices for
+> iterating over prop.sink_ports or prop.source_ports.
+> 
+> Soundwire core and existing codecs expect that the array passed as
+> prop.sink_ports and prop.source_ports is continuous.  The port mask still
+> might be non-continuous, but that's unrelated.
+> 
+> Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+> Closes: https://lore.kernel.org/all/b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com/
+> Fixes: ab8d66d132bc ("soundwire: stream: fix programming slave ports for non-continous port maps")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
 
-I'm short of cycles, so the best way is when you pick it up and
-integrate it instead of 4/6 and post a v3.
+Would be good to merge this as soon as we can, this is causing
+soundwire regressions from rc6 onwards.
 
->   By the way, Do you have time to review the patches in the link below?
->   https://lkml.org/lkml/2024/9/4/1094
-
-Please use lore.kernel.org links. I've seen it but did not come around
-to it yet because I was staring at this one. I'm single threaded :)
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
 Thanks,
-
-        tglx
-
-
+Charles
 
