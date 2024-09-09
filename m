@@ -1,132 +1,171 @@
-Return-Path: <linux-kernel+bounces-321851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E9AC972059
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:22:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30025972058
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69ECD1C23679
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:22:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A553F1F24566
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F53179970;
-	Mon,  9 Sep 2024 17:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECA4175D34;
+	Mon,  9 Sep 2024 17:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="o6X76bNb"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3DE170A1B;
-	Mon,  9 Sep 2024 17:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SCbB9KIK"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D4016BE0D
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 17:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725902539; cv=none; b=aRyFcZPLB+DYj656TC2s73u/MpAce19Qc14JohO7QBDg71cX5JJqC55Ho7W5J0iBhqLa0AAK10AwQDUYph7PynuEIdQEH8/VJdbqPtXzp8rMU2cp0iDvPmun9weqnQCXhOiOGKpiYydWBMyKGPDYWognx+eOqHTdcPSLDBe5rcQ=
+	t=1725902532; cv=none; b=nC20/AwASKNmDH7/laRryNFYdrUQKX1r/S1/pBHkV8rPpFqYOlDHp4CSjHwLYmJ5jf9e9ivXIdBFVHuZsZ6J/eBjctpDREzOOjm6HwlX+C5qRjOBsFHZSt0xkkMVIV87AIfRSXehxoGqNvzj45hstkyPCV9NZn/g/az8cu5r17M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725902539; c=relaxed/simple;
-	bh=10DxOvSkp46qzAR/VG9MNEapEr6I90jKHri7LSTULfw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=anQolSozwzZ5muK/NVwVqPDeSSrOrE+1+99QdJUTxs95lUS83PS/ua30vPgdZuynfQcf1Lf+to9V1oJeOOo+LgaQlwpsyjHarUf71imPKRK9NVvA8ghJ0JwTGQYo2F55KhaJzlc0bC/i85NMVC2PDrsELqU5Au75A1vdECDok/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=o6X76bNb; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1725902535;
-	bh=10DxOvSkp46qzAR/VG9MNEapEr6I90jKHri7LSTULfw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=o6X76bNbCxjpRXMqnzFoJ7fUCQeHkUkBi4bjIRGtiWwjELMpDOa4CZoFUdcYdr3ww
-	 LenLZ1yPrteE9+pm2YzdQiaQrljA3GN44y7J9a2SAPnUdHyjodo7y9UXO7NGzvun1B
-	 7moWRc2z2OxBC475VfU5+oQNWjRD8CT9M+YcSt9JrR2hyfg4GPt66iQa15Q4roQyVr
-	 sjyqBpnHnZOK6nVGUPuml64hSZIxPmn5WnOUL+KJtRh+TDCI0BztDKeAf73kMiB1m0
-	 29SPaDURyZvS/zCMty3ALdyfKpk9cJHTujfuv35ehn6ICJ1ON30GJjfmlslDoK0N3C
-	 /dc+cPJ6B1GBg==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4X2YYM1fx4z1KhF;
-	Mon,  9 Sep 2024 13:22:15 -0400 (EDT)
-Message-ID: <279860b4-2f42-463f-bee2-c6c60ec72f29@efficios.com>
-Date: Mon, 9 Sep 2024 13:22:00 -0400
+	s=arc-20240116; t=1725902532; c=relaxed/simple;
+	bh=6FQaxn46EwsSZOKjM4ZkkoQdqVrRILhdk0emY5OYN3I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ZL3c9hb8JgdCcizMYnMWinKel6rLCyzfh6aOkMHKqjmRlR0UTxH8+UFRceLU1qS19u+5kRJy6dBgv1iSok8lYyqTzYyRc7HicKN6NhO9HE1L8kylUvWxv6pT8VW5lO+77ZTjTr11aPj8U+On8zR7wD8FYVZpSaH9w0UyJF3YO1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SCbB9KIK; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from romank-3650.corp.microsoft.com (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 8C39420B7D7F;
+	Mon,  9 Sep 2024 10:22:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8C39420B7D7F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1725902530;
+	bh=7WYhILwU4beH56tsdRfuJ+hGUP/FGyg2t4cCaZiEzps=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=SCbB9KIKUq/GTqbIYldk7vgv9jxSyR0EG+X3WoHmMvv3TGSQzBTM0CgT+yBoel5RX
+	 eKubGCA9SoG+eT9Un09EoA5m5RxnZfztI0c9rnHB+zDnhOZne8u1nQyioQOq1qXjNh
+	 BlSTwS2d3tHETR6aFAGggNtIXfcOurB4lGQhzVO0=
+From: Roman Kisel <romank@linux.microsoft.com>
+To: ebiederm@xmission.com
+Cc: akpm@linux-foundation.org,
+	apais@microsoft.com,
+	benhill@microsoft.com,
+	linux-kernel@vger.kernel.org,
+	oleg@redhat.com,
+	romank@linux.microsoft.com,
+	ssengar@microsoft.com,
+	sunilmut@microsoft.com,
+	torvalds@linux-foundation.org,
+	vdso@hexbites.dev
+Subject: Re: [PATCH 1/1] ptrace: Get tracer PID without reliance on the proc FS
+Date: Mon,  9 Sep 2024 10:22:10 -0700
+Message-Id: <20240909172210.1116122-1-romank@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <87ed5ser6i.fsf@email.froward.int.ebiederm.org>
+References: <87ed5ser6i.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/5] tracing/bpf-trace: Add support for faultable
- tracepoints
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>
-References: <20240828144153.829582-1-mathieu.desnoyers@efficios.com>
- <20240828144153.829582-4-mathieu.desnoyers@efficios.com>
- <CAEf4BzZERq7qwf0TWYFaXzE6d+L+Y6UY+ahteikro_eugJGxWw@mail.gmail.com>
- <1f442f99-92cd-41d6-8dd2-1f4780f2e556@efficios.com>
- <CAEf4BzbS0TRN1vPzPtSZj+XN7oVUUwyoxHr5p7igH8X-nhZhGw@mail.gmail.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <CAEf4BzbS0TRN1vPzPtSZj+XN7oVUUwyoxHr5p7igH8X-nhZhGw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2024-09-09 12:53, Andrii Nakryiko wrote:
-> On Mon, Sep 9, 2024 at 8:11 AM Mathieu Desnoyers
-[...]
->>>
->>> I wonder if it would be better to just do this, instead of that
->>> preempt guard. I think we don't strictly need preemption to be
->>> disabled, we just need to stay on the same CPU, just like we do that
->>> for many other program types.
->>
->> I'm worried about introducing any kind of subtle synchronization
->> change in this series, and moving from preempt-off to migrate-disable
->> definitely falls under that umbrella.
->>
->> I would recommend auditing all uses of this_cpu_*() APIs to make sure
->> accesses to per-cpu data structures are using atomics and not just using
->> operations that expect use of preempt-off to prevent concurrent threads
->> from updating to the per-cpu data concurrently.
->>
->> So what you are suggesting may be a good idea, but I prefer to leave
->> this kind of change to a separate bpf-specific series, and I would
->> leave this work to someone who knows more about ebpf than me.
->>
+On 9/9/2024, Eric wrote:
+
+> > On 9/6/2024 1:26 PM, Linus Torvalds wrote:
+> >> On Fri, 6 Sept 2024 at 13:08, Roman Kisel <romank@linux.microsoft.com> wrote:
+> >>>
+> >>> When the process has run into a fatal error and is about to exit, having
+> >>> a way to break into the debugger at this exact moment wouldn't change
+> >>> anything about the logic of the data processing happening in the process.
+> >>> What's so horrible in that to have a way to land in the debugger to see
+> >>> what exactly is going on?
+> >> I don't buy it.
+> >> If you want to debug some fatal behavior, and a debugger *isn't*
+> >> attached, you want it to create a core-dump.
+> >> And if a debugger *is* attached, it will catch that.
+> >> This is basically how abort() has always worked, and it very much is
+> >> *not* doing some "let's check if we're being debugged" stuff. Exactly
+> >> because that would be a bad idea and an anti-pattern.
+> >> The other very traditional model - for example if you do *not* want to
+> >> do core-dumps for some reason, and just exit with an error message -
+> >> is to just put a breakpoint on the "fatal()" function (or whatever
+> >> your "fatal error happened" situation is) using the debugger.
+> >> Then the target will behave differently depending on whether it is
+> >> being debugged or not BECAUSE THE DEBUGGER ASKED FOR IT, not because
+> >> the program decided to act differently when debugged.
+> >> In other words, this is a long-solved problem with solid solutions
+> >> from before Linux even existed.
+> >
+> >
+> > Writing a core-dump might not be an option as you have pointed out
+> > hence the "fatal()" function might not be permitted to fault.
 > 
-> Yeah, that's ok. migrate_disable() switch is probably going a bit too
-> far too fast, but I think we should just add
-> preempt_disable/preempt_enable inside __bpf_trace_run() instead of
-> leaving it inside those hard to find and follow tracepoint macros. So
-> maybe you can just pass a bool into __bpf_trace_run() and do preempt
-> guard (or explicit disable/enable) there?
+> For that you just need to set core file size rlimit to 0.
+> Then you can safely raise SIGABRT to terminate your process.
 > 
+> A debugger can also stop at PTRACE_EVENT_EXIT.  The process
+> is still available (not cleaned up), but already fatally dead.
+> 
+> So I think the scenario of a process exiting is safely handled.
+> 
+> So if that is the case you care about I would say please look at
+> PTRACE_EVENT_EXIT.
+> 
+> > Breaking into the debugger if it is attached saves a step of setting
+> > a breakpoint and doesn't require the knowledge of the guts of the
+> > standard library and/or the journey of the trap exception from the
+> > CPU to the debugger. The very name of the "fatal()" function is a
+> > tight contract, and something akin to the onion in the varnish for
+> > the uninitiated.
+> >
+> > Libraries like Google Breakpad, Boost.Test, C++ std, AWS C SDK,
+> > Unreal Engine have that "breakpoint_if_debugging" facility, folks
+> > find that useful. They all read and parse the "/proc/self/status" file,
+> > where as it may seem, just the ptrace syscall one liner could save
+> > the trouble of that. The kernel helps the user space do work as I
+> > understand, why police it? There is "fork()", and threads can deadlock.
+> > Quite horrible, still the user space has access to that. Here,
+> > there is evidence folks do want to detect if a debugger is present,
+> > there is evidence how the kernel can help the user space compute that
+> > with so much less effort, the patch is trivial. Why don't let the
+> > userspace burn less electricity?
+> 
+> If you want more than just stopping at when a process exits, such as the
+> not yet standardized std:is_debugger_present and
+> std:breakpoint_if_debugging calls.  Then a real world justification
+> needs to be shown why the kernel should optimize for the uncommon case.
+> 
+> Especially because it will take time and energy and maintenance to keep
+> that going, all for to support a set of facilities that seem highly
+> dubious.
+> 
+> I suspect the best way to support breakpoint_if_debugging (in the
+> general case) is to make them nop functions, and then have something
+> scan the source code collect those locations, and feed those locations
+> into the debugger as break points.  Perhaps the compiler can be that
+> scanner and record the list of suggest break points somewhere that
+> a debugger can read.
+> 
+> As for std:is_debugger_present I suspect the best way to handle that
+> is to keep the current implementation, making it expensive to use so
+> people won't use it unthinkingly.  If people are using this facility
+> enough that they are wasting electricity, an expensive operation at
+> least has the potential to make people to stop and think about what they
+> are doing.
+> 
+> From a don't introduce heisenbug's perspective I think optimizing any of
+> this in the kernel looks like a bad idea.
+> 
+> Am I missing something?
 
-Passing an extra boolean to __bpf_trace_run would impact all tracepoints
-calling into ebpf, adding an extra function argument and extra tests for
-all of those. The impact may be small, but it is non-zero in both code size
-and overhead, so it would not be my preferred approach.
+This part "people won't use it unthinkingly" does not look too convincing
+to me: why not add an expensive spin loop or a 1 second wait to all parts
+of the kernel that must be used with caution? I am imagining flashing
+L.E.D.s in the modern smartphone, sorry, couldn't help but imagine that :D.
+I believe that's a matter of documentation and perfromance evaluation.
 
-I have modified the macros to add the guard within __bpf_trace_##call
-following suggestions from Linus:
+I see that the vote has been 3:1 in favor of not merging anything like that,
+and no new ideas have surfaced so far to change this. Looks like could close
+on this. Appreciate helping me see your points!
 
-   https://lore.kernel.org/lkml/CAHk-=wggDLDeTKbhb5hh--x=-DQd69v41137M72m6NOTmbD-cw@mail.gmail.com/
+> 
+> Eric
 
-I'll Cc you on that version of the series.
-
-Thanks,
-
-Mathieu
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+Roman
 
