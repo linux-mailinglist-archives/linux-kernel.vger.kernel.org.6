@@ -1,122 +1,103 @@
-Return-Path: <linux-kernel+bounces-322053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30199972366
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:15:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D111C972368
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7721F237B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:15:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5BD1F228E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E92189F58;
-	Mon,  9 Sep 2024 20:15:09 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80F217D34D;
+	Mon,  9 Sep 2024 20:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="JanhGMzk"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B170D152790
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 20:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827A43CF51;
+	Mon,  9 Sep 2024 20:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725912908; cv=none; b=D6XRDhOqJ095byc9w2k1Az42XLXFygkBk9StoVfjnleBmRLV52rjqvRzVCpTDMYKzoEni1h49RCs/gL7eZ7Ne0xMWPIBjXz0SMSUx0otKDJiURiGedVaEl8gyYaw/5Iryh/aqYESJqBe8Pg+Ca0PWf6gNu4oDPpdyuGt4BduCXQ=
+	t=1725912949; cv=none; b=tSXiXVhp4c0usPgnZJmhA3LT5Narw+HMxFundoze5hE4RuS7gHOM62IIwTTRArGTrJ7H5Q/QK++7VkYIh3sLmOmYHhUNcVdYP22vAArwqGEfvkoBb5Hu0iU6JYtQ2hSdGjbsGrznwuwu/fNQMG5A6z0mKUmCyhvu+mGn0mxmJTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725912908; c=relaxed/simple;
-	bh=w1ZHnNttzigHIHgU3HoX7VsXdlnd/+MdjNaNiG/viAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dX4gY7RB21y5RpNOaKegOwqAFnwzbKfKJrVnaqEwzsbgEIJQAbsaU+k+8iDmP/+x3J0DNOZiwucrgTeMwc0tHvnMuTgo+umx+cX6J1ApKMKg7yuAsEAMAC3n78cYPfdiWQ/hqEGgSkOtJ/WsUkx84ZDWlzI/MQQ//62CLYGlP+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1snkmn-0004zD-Jb; Mon, 09 Sep 2024 22:14:57 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1snkmm-006jWb-RV; Mon, 09 Sep 2024 22:14:56 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1snkmm-00Fo7L-2Q;
-	Mon, 09 Sep 2024 22:14:56 +0200
-Date: Mon, 9 Sep 2024 22:14:56 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/12] wifi: mwifiex: drop asynchronous init waiting code
-Message-ID: <Zt9XQNnrdgwly0yO@pengutronix.de>
-References: <20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de>
- <20240826-mwifiex-cleanup-1-v1-12-56e6f8e056ec@pengutronix.de>
- <Zt8s4xEun6VL-pHW@gaggiata.pivistrello.it>
+	s=arc-20240116; t=1725912949; c=relaxed/simple;
+	bh=VcR2FbwmPv0Gj9qmkH9BdXMgSSSwUnB+WT2o/Sfe8uY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=srcvFhQmUVsP49/V+OqRYCxB6wifXzhGgm1KkeLbUUQAE/ayj2rkYTCHHxwyOltvsP6klZ6Nv9hg8x+ekrEGNPGYJamnRe6PozqP1Q+puwCuEvmz1KmVqt5EkLF3nz9MPukkeTqKxyz0L+16/QMdZIVzdDDw3OR9yByYVAFTuc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=JanhGMzk; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 72BA84188F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1725912946; bh=XF5+qiqDiKQFsBWRRA9xBf5qeeLlXYgufgEO4/vQZmc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=JanhGMzk/8/zKfpNu4Ja1MFiPTyV8umxI15SBUsbmfF4QJvvg2V3kydaLHS7HMNbx
+	 lfriljO0VTh49cJbmEEdXcSD9+ykDKrvEG7VD7p1B0hzjAL5YJzfHEfl8Xx0h3IiLQ
+	 X6DXiYgFzrP9nt0LrKLtO+PwHbi+9tBhHWC/ShPQzSiMRmggkP39xWN5I+v+Q+5GAC
+	 ZTCBKx+hZL5xVO6h5LC+g6vI7ieM9mddfrmUvkRacFTK/eJrWKpBiswbsq8egbX/P9
+	 +aR3vEVQZH8FUOylBDkIt5xPnGo3i+l1fpNWd0gFVhsnooiRp585RDzGctkWMRTlbP
+	 gxg0/xPwCmFMA==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 72BA84188F;
+	Mon,  9 Sep 2024 20:15:46 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: cvam <cvam0000@gmail.com>, kbusch@kernel.org, axboe@kernel.dk
+Cc: hch@lst.de, sagi@grimberg.me, linux-nvme@lists.infradead.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, cvam
+ <cvam0000@gmail.com>
+Subject: Re: [PATCH] Typo in the file 'feature-and-quirk-policy.rst'.
+In-Reply-To: <20240909200253.19818-1-cvam0000@gmail.com>
+References: <20240909200253.19818-1-cvam0000@gmail.com>
+Date: Mon, 09 Sep 2024 14:15:45 -0600
+Message-ID: <8734m8h9ce.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zt8s4xEun6VL-pHW@gaggiata.pivistrello.it>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
 
-On Mon, Sep 09, 2024 at 07:14:11PM +0200, Francesco Dolcini wrote:
-> On Mon, Aug 26, 2024 at 01:01:33PM +0200, Sascha Hauer wrote:
-> > Historically all commands sent to the mwifiex driver have been
-> > asynchronous. For this reason there is code that waits for the
-> > last initialization command to complete before going on. Nowadays the
-> > commands can be sent synchronously, meaning that they are completed
-> > when the command call returns. This makes all the waiting code
-> > unnecessary. It is removed in this patch.
-> 
-> I am not sure to understand this. Is the code to have asynchronous command gone
-> or it is just not used anymore? In the code here you remove waiting for the
-> firmware init to be complete, but from the patch is not clear why this is not
-> needed anymore.  Maybe a specific commit you can reference in which such
-> support was removed?
+Thanks for working to improve our documentation.  Some notes...
 
-Commands can still be sent asynchronously by passing sync=false to
-mwifiex_send_cmd(), but this is no longer done in the initialization
-phase as of:
+cvam <cvam0000@gmail.com> writes:
 
-| commit 7bff9c974e1a70819c30c37d8ec0d84d456f8237
-| Author: Stone Piao <piaoyun@marvell.com>
-| Date:   Tue Sep 25 20:23:39 2012 -0700
-| 
-|     mwifiex: send firmware initialization commands synchronously
-| 
-|     The driver will send some commands to firmware during the
-|     initialization. Currently these commands are sent asynchronously,
-|     which means that we firstly insert all of them to a pre-allocated
-|     command queue, and then start to process them one by one. The
-|     command queue will soon be exhausted if we keep adding new
-|     initialization commands.
-| 
-|     This issue can be resolved by sending initialization commands
-|     synchronously because each command is consumed and the buffer is
-|     recycled before queuing next command.
-| 
-|     Signed-off-by: Stone Piao <piaoyun@marvell.com>
-|     Signed-off-by: Bing Zhao <bzhao@marvell.com>
-|     Signed-off-by: John W. Linville <linville@tuxdriver.com>
+> location: 'Documentation/nvme/feature-and-quirk-policy.rst'
+> tested: Not breaking anything.
 
-I'll mention this commit in the commit message next round.
+I don't stress a lot over changelogs for simple tweaks like this, but
+you could still try to write something in our normal imperative style.
 
-Sascha
+> Signed-off-by: cvam <cvam0000@gmail.com>
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+There needs to be a blank line before the signed-off-by, and it should
+have a full name in it please.
+
+> ---
+>  Documentation/nvme/feature-and-quirk-policy.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/nvme/feature-and-quirk-policy.rst b/Documentation/nvme/feature-and-quirk-policy.rst
+> index c01d836d8e41..b5461aa303a4 100644
+> --- a/Documentation/nvme/feature-and-quirk-policy.rst
+> +++ b/Documentation/nvme/feature-and-quirk-policy.rst
+> @@ -1,7 +1,7 @@
+>  .. SPDX-License-Identifier: GPL-2.0
+>  
+>  =======================================
+> -Linux NVMe feature and and quirk policy
+> +Linux NVMe feature and quirk policy
+>  =======================================
+
+A nice touch would be to adjust the width of the "====" lines to match.
+
+Thanks,
+
+jon
 
