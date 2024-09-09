@@ -1,267 +1,89 @@
-Return-Path: <linux-kernel+bounces-322153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E239724E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:02:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 188A29724E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CD6C1F24A34
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:02:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE1A2858A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0F718C936;
-	Mon,  9 Sep 2024 22:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I5uEwTjG"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2441720DC4
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 22:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECE618C92B;
+	Mon,  9 Sep 2024 22:02:58 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EEE20DC4;
+	Mon,  9 Sep 2024 22:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725919367; cv=none; b=NhOTcoqLmEcnbBzoTrOfaoD4lRKkCVwD0Fhq3TLXr/VQgoPKpXjr/3WOYvNOPcmQ2uXtFQ5Z1hyixFg1IIS+G6D3tp57DjKcL4EZwqr6OWuQ+sl2uy53XaD8GDH3mXip3FHjIscwdir7G2q/D43o+mbHNC7f4CwaS432aW+GpLo=
+	t=1725919378; cv=none; b=q9TmwTRZVwI74HDwOWfErzZYaW3Ite1t/OwMIzfQ1UhBayoiU8oK2LVkd00qddf+5wiCKx28Q+Fpfjg8rPbmMfwhEYjiTaF8o9vg9IP08QQtEf+HH+//lRBOrSQlWdrk6WrdVg2fePxIbpanzffIyG6/Z/JAEa/S5bv2RXrfTX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725919367; c=relaxed/simple;
-	bh=DUFY+DZfO7+AqwuFLy5LudZkwjfnVz4AclZWLG53KJU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Hk1WQ4Z32slVaM20BZHpPk3vTq1Awpb2PhZkI+lh21ENqFpI41HYvQwJ6YKYOFYEYyukOup04TML08eXYg5paZgVp3qA2cv7VhhZ4GRI7328t5N1qwJFiqgDCh/EUb+vX7Cse9FqM+QdWoI8oYowamNPwXoR4ALxf42bRiabxyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I5uEwTjG; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-6507e2f0615so5757231a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 15:02:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725919365; x=1726524165; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eDN/fD1fWlVYUsfWFNeY11plKSbG6eNq65vUSIIaXZo=;
-        b=I5uEwTjG4JUhXMY02AlABDcsXKPqn0Eu+mKJNBT/QqHgJY6aOX20q5K/if7igaRUtV
-         RZpTif3kEL6LCjYB3OQduF4DKewuejab+5AwRKhb7tByrE7dToce1mK9jZq5LSt4IUaZ
-         3aVCEo3SRpz7xG/66ymnNFT0NZOHVurQgt27NatEVK1xWfWqeY1kgLeuQndZxdutEBUR
-         0NW7HeEFHlDRlBapjd/tqqY2NY/fQl26dl4QeoF0S7ptUWglLl9TKtV6uZ23gxSay6rr
-         xX9sifGgTyeCUlamYzaWY8FXl8xhMNaHghuduKj3PvptB3B5yHK56chGJT5rf56OPV6r
-         NFdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725919365; x=1726524165;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eDN/fD1fWlVYUsfWFNeY11plKSbG6eNq65vUSIIaXZo=;
-        b=K2jE92JL+hZohIww5tE9nrKyVkSeeyF39NaqPheGA5lonhCNt0eniqwH27G+zAf/w0
-         HA7ks4BHndcV+nFZTxAm93RZKhK9Y4U68G9Bcndfq792wVhEqI6TSQ43DMx4ftk8iDV0
-         gQmsIHPJz9gamWsNuYUw06oTfunvTJvKKmaY8ZoKklnHshb1VDb6Kw5eMfQ4M/NQOzAY
-         La7xcU37cDAh0+dKste0U6RzmPGBs6kvrvmQX3CnIpYkfZCT7URSnvSuR1uiINxfVksg
-         Qs0qP+JyH6QW50CPZdXXvKBMq/TlIH+1tY2IjiCtf02pT9YdL/DQSzZwJ+LQXY/i3phq
-         Sb7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXQYSyjluPZK0+V/ydc9hNJ3rwFOwrmSMpSuFppA26/wdqsQ4KvgRkT4h1UCvAGp7qos9DlbxrGv976cNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrtxow+VoqFxjRBh9kcc2pL5aUSq2HBURX0sEIC8u+rGvkO4Vk
-	KocvbsBfj5MpqCaL5/Rnkvb/X69A57w23ccYalJ7nlo+sdTugTgB3Jza2ebx4zMzLCUFyPaOkfV
-	eXg==
-X-Google-Smtp-Source: AGHT+IGGtNJ9J2pBPzXxJKnIWU60VR/rN6PzOzfLZuYkuT2leAPAotkJrTHJr1E+W8UKZjnsjesbS347OZw=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:9517:0:b0:718:da6:277e with SMTP id
- 41be03b00d2f7-7d79f5b5f0fmr37096a12.2.1725919365275; Mon, 09 Sep 2024
- 15:02:45 -0700 (PDT)
-Date: Mon, 9 Sep 2024 15:02:43 -0700
-In-Reply-To: <CADrL8HW-mOAyF0Gcw7UbkvEvEfcHDxEir0AiStkqYzD5x8ZGpg@mail.gmail.com>
+	s=arc-20240116; t=1725919378; c=relaxed/simple;
+	bh=NL2lwh6OhJuuIMqnWWsMzVHb4/X/BStI/j9zVfXjIOE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=qrwoICcAumC5MPY7ghzXy/pZ3+lvAjd/fDfNFDTDxRF7f0U4bGy7BlXDLkWTRpYev2mjljJ+p4ulXrgKrH+tqhPs+e271g+33wijToA7EQ4AtZ9FOZhK7lGMOicF8LL5Tbzyn0Nq0/indTmXJyUHKMtKOX9nR9mMnajqw6WzZX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 1512392009C; Tue, 10 Sep 2024 00:02:54 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 0F2E992009B;
+	Mon,  9 Sep 2024 23:02:54 +0100 (BST)
+Date: Mon, 9 Sep 2024 23:02:53 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] MIPS: kprobes: Massage previous delay slot
+ detection
+In-Reply-To: <20240908-mips-chore-v1-2-9239c783f233@flygoat.com>
+Message-ID: <alpine.DEB.2.21.2409092259110.60835@angie.orcam.me.uk>
+References: <20240908-mips-chore-v1-0-9239c783f233@flygoat.com> <20240908-mips-chore-v1-2-9239c783f233@flygoat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240809194335.1726916-1-seanjc@google.com> <20240809194335.1726916-20-seanjc@google.com>
- <CADrL8HWACwbzraG=MbDoORJ8ramDxb-h9yb0p4nx9-wq4o3c6A@mail.gmail.com>
- <Zt9UT74XkezVpTuK@google.com> <CADrL8HW-mOAyF0Gcw7UbkvEvEfcHDxEir0AiStkqYzD5x8ZGpg@mail.gmail.com>
-Message-ID: <Zt9wg6h_bPp8BKtd@google.com>
-Subject: Re: [PATCH 19/22] KVM: x86/mmu: Add infrastructure to allow walking
- rmaps outside of mmu_lock
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Peter Xu <peterx@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Sep 09, 2024, James Houghton wrote:
-> On Mon, Sep 9, 2024 at 1:02=E2=80=AFPM Sean Christopherson <seanjc@google=
-.com> wrote:
-> >
-> > On Mon, Sep 09, 2024, James Houghton wrote:
-> > > On Fri, Aug 9, 2024 at 12:44=E2=80=AFPM Sean Christopherson <seanjc@g=
-oogle.com> wrote:
-> > > > + */
-> > > > +#define KVM_RMAP_LOCKED        BIT(1)
-> > > > +
-> > > > +static unsigned long kvm_rmap_lock(struct kvm_rmap_head *rmap_head=
-)
-> > > > +{
-> > > > +       unsigned long old_val, new_val;
-> > > > +
-> > > > +       old_val =3D READ_ONCE(rmap_head->val);
-> > > > +       if (!old_val)
-> > > > +               return 0;
-> > > > +
-> > > > +       do {
-> > > > +               /*
-> > > > +                * If the rmap is locked, wait for it to be unlocke=
-d before
-> > > > +                * trying acquire the lock, e.g. to bounce the cach=
-e line.
-> > > > +                */
-> > > > +               while (old_val & KVM_RMAP_LOCKED) {
-> > > > +                       old_val =3D READ_ONCE(rmap_head->val);
-> > > > +                       cpu_relax();
-> > > > +               }
-> > > > +
-> > > > +               /*
-> > > > +                * Recheck for an empty rmap, it may have been purg=
-ed by the
-> > > > +                * task that held the lock.
-> > > > +                */
-> > > > +               if (!old_val)
-> > > > +                       return 0;
-> > > > +
-> > > > +               new_val =3D old_val | KVM_RMAP_LOCKED;
-> > > > +       } while (!try_cmpxchg(&rmap_head->val, &old_val, new_val));
-> > >
-> > > I think we (technically) need an smp_rmb() here. I think cmpxchg
-> > > implicitly has that on x86 (and this code is x86-only), but should we
-> > > nonetheless document that we need smp_rmb() (if it indeed required)?
-> > > Perhaps we could/should condition the smp_rmb() on `if (old_val)`.
-> >
-> > Hmm, no, not smp_rmb().  If anything, the appropriate barrier here woul=
-d be
-> > smp_mb__after_spinlock(), but I'm pretty sure even that is misleading, =
-and arguably
-> > even wrong.
->=20
-> I don't think smp_mb__after_spinlock() is right either. This seems to
-> be used following the acquisition of a spinlock to promote the memory
-> ordering from an acquire barrier (that is implicit with the lock
-> acquisition, e.g. [1]) to a full barrier. IIUC, we have no need for a
-> stronger-than-usual barrier. But I guess I'm not really sure.
->=20
-> In this case, I'm complaining that we don't have the usual memory
-> ordering restrictions that come with a spinlock.
+On Sun, 8 Sep 2024, Jiaxun Yang wrote:
 
-What makes you think that?
+> Expand the if condition into cascaded ifs to make code
+> readable.
 
-> > For the !old_val case, there is a address/data dependency that can't be=
- broken by
-> > the CPU without violating the x86 memory model (all future actions with=
- relevant
-> > memory loads depend on rmap_head->val being non-zero).  And AIUI, in th=
-e Linux
-> > kernel memory model, READ_ONCE() is responsible for ensuring that the a=
-ddress
-> > dependency can't be morphed into a control dependency by the compiler a=
-nd
-> > subsequently reordered by the CPU.
-> >
-> > I.e. even if this were arm64, ignoring the LOCK CMPXCHG path for the mo=
-ment, I
-> > don't _think_ an smp_{r,w}mb() pair would be needed, as arm64's definit=
-ion of
-> > __READ_ONCE() promotes the operation to an acquire.
-> >
-> > Back to the LOCK CMPXCHG path, KVM_RMAP_LOCKED implements a rudimentary=
- spinlock,
-> > hence my smp_mb__after_spinlock() suggestion.  Though _because_ it's a =
-spinlock,
-> > the rmaps are fully protected by the critical section.
->=20
-> I feel like a spinlock must include the appropriate barriers for it to
-> correctly function as a spinlock, so I'm not sure I fully understand
-> what you mean here.
+ Apart from broken formatting what's making original code unreadable?
 
-On TSO architectures, the atomic _is_ the barrier.  E.g. atomic_try_cmpxchg=
-_acquire()
-eventually resolves to atomic_try_cmpxchg() on x86.  And jumping back to th=
-e
-"we don't have the usual memory ordering restrictions that come with a spin=
-lock",
-x86's virt_spin_lock() uses atomic_try_cmpxchg().  So while using the acqui=
-re
-variant here is obviously not wrong, it also feels somewhat weird.  Though =
-some
-of that is undoubtedly due to explicit "acquire" semantics being rather rar=
-e in
-x86.
+> Also use sizeof(union mips_instruction) instead of
+> sizeof(mips_instruction) to match the code context.
 
-> > And for the SPTEs, there is no required ordering.  The reader (aging
-> > thread) can observe a !PRESENT or a PRESENT SPTE, and must be prepared =
-for
-> > either.  I.e. there is no requirement that the reader observe a PRESENT
-> > SPTE if there is a valid rmap.
->=20
-> This makes sense.
->=20
-> > So, unless I'm missing something, I would prefer to not add a smp_mb__a=
-fter_spinlock(),
-> > even though it's a nop on x86 (unless KCSAN_WEAK_MEMORY=3Dy), because i=
-t suggests
-> > an ordering requirement that doesn't exist.
->=20
-> So we have: the general kvm_rmap_lock() and the read-only
-> kvm_rmap_lock_readonly(), as introduced by the next patch[2]. I'll use
-> those names (sorry if it's confusing).
->=20
-> For kvm_rmap_lock(), we are always holding mmu_lock for writing. So
-> any changes we make to the rmap will be properly published to other
-> threads that subsequently grab kvm_rmap_lock() because we had to
-> properly release and then re-acquire mmu_lock, which comes with the
-> barriers I'm saying we need.
->=20
-> For kvm_rmap_lock_readonly(), we don't hold mmu_lock, so there is no
-> smp_rmb() or equivalent. Without an smp_rmb() somewhere, I claim that
-> it is possible that there may observe external changes to the
-> pte_list_desc while we are in this critical section (for a
-> sufficiently weak architecture). The changes that the kvm_rmap_lock()
-> (mmu_lock) side made were half-published with an smp_wmb() (really
-> [3]), but the read side didn't use a load-acquire or smp_rmb(), so it
-> hasn't held up its end of the deal.
->=20
-> I don't think READ_ONCE() has the guarantees we need to be a
-> sufficient replacement for smp_rmb() or a load-acquire that a real
-> lock would use, although I agree with you that, on arm64, it
-> apparently *is* a sufficient replacement.
->=20
-> Now this isn't a problem if the kvm_rmap_lock_readonly() side can
-> tolerate changes to pte_list_desc while in the critical section. I
-> don't think this is true (given for_each_rmap_spte_lockless),
-> therefore an smp_rmb() or equivalent is (technically) needed.
->=20
-> Am I confused?
+ That has to be a separate change.
 
-Yes, I think so.  kvm_rmap_lock_readonly() creates a critical section that =
-prevents
-any pte_list_desc changes.  rmap_head->val, and every pte_list_desc that is=
- pointed
-at by rmap_head->val in the KVM_RMAP_MULTI case, is protected and cannot ch=
-ange.
+> diff --git a/arch/mips/kernel/kprobes.c b/arch/mips/kernel/kprobes.c
+> index dc39f5b3fb83..96139adefad2 100644
+> --- a/arch/mips/kernel/kprobes.c
+> +++ b/arch/mips/kernel/kprobes.c
+> @@ -89,12 +89,12 @@ int arch_prepare_kprobe(struct kprobe *p)
+>  		goto out;
+>  	}
+>  
+> -	if (copy_from_kernel_nofault(&prev_insn, p->addr - 1,
+> -			sizeof(mips_instruction)) == 0 &&
+> -	    insn_has_delayslot(prev_insn)) {
+> -		pr_notice("Kprobes for branch delayslot are not supported\n");
+> -		ret = -EINVAL;
+> -		goto out;
+> +	if (!copy_from_kernel_nofault(&prev_insn, p->addr - 1, sizeof(union mips_instruction))) {
 
-The SPTE _value_ that is pointed at by rmap_head->val or pte_list_desc.spte=
-s[]
-can change, but the pointers themselves cannot.  And with aging, the code i=
-s
-completely tolerant of an instable SPTE _value_ because test-only doesn't c=
-are
-about false negatives/positives, and test-and-clear is itself an atomic acc=
-ess
-i.e. won't corrupt a SPTE (and is also tolerant of false positives/negative=
-s).
+ Overlong line.
 
->=20
-> (Though all of this works just fine as written on x86.)
->=20
-> [1]: https://elixir.bootlin.com/linux/v6.11-rc7/source/kernel/locking/rwb=
-ase_rt.c#L62
-> [2]: https://lore.kernel.org/kvm/20240809194335.1726916-21-seanjc@google.=
-com/
-> [3]: https://elixir.bootlin.com/linux/v6.11-rc7/source/kernel/locking/rwb=
-ase_rt.c#L190
+> +		if (insn_has_delayslot(prev_insn)) {
+> +			pr_notice("Kprobes for branch delayslot are not supported\n");
+
+ This now overruns 80 columns making code *less* readable.
+
+  Maciej
 
