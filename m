@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-321548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2747971BE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:58:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6586A971BEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC61F1C208A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:58:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9861B25EB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9D31BBBC6;
-	Mon,  9 Sep 2024 13:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A281BC9EF;
+	Mon,  9 Sep 2024 13:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+8areK0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QfxSyHaS"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B561BB6BE;
-	Mon,  9 Sep 2024 13:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3A61BBBF8;
+	Mon,  9 Sep 2024 13:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725890179; cv=none; b=jPBQEMzL3OxJD1DYU5byqjjLat8doVgeKnXXhVLrvVSdnRo8joon7q/oRhstQBTiQadj3mRX8yUhqyHV6LN16gQ7mCduyuhGjGVtCkw1Neaplvn6qLYlnw/2oHH0yRZhDWWVvDTcincdn929P3jJv5ZJXowkMYUJIiHlUJniaoA=
+	t=1725890227; cv=none; b=DxNzH1pS9et1P41IcHHfB+Nz6y2ML6YmKTbqiegFOavLMOtRLcUulvf/io+doa657ZqoweGxTsmVT0fLNkJ1htjmoHRp0PTUPMl/P2Dyyk9S8AVtlIRnfV3WQ2sBZFURz2pAWcv9gxKL9NU8pXFdon5bLRJdejN3O4L13IUPorY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725890179; c=relaxed/simple;
-	bh=ziCNmukqSoa9NT917TReyruuvMtETI5Xgy5zWsDcB/o=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=G+YcrGQQmmDuD88l2bNnvTomAW3QIe9QESOMCSMD60AZf6u4QPxG3jCCMuoH76BY4i54mp/8fOMU9iDS07Cf0mUUETsQdmQ0TJy79PGZHFIwati/lSCPi21hZJj1nmJXEvBlOplK9bkO55SbncppnJ30AOFawdShC4VPivzr8I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+8areK0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1AEEC4CEC5;
-	Mon,  9 Sep 2024 13:56:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725890178;
-	bh=ziCNmukqSoa9NT917TReyruuvMtETI5Xgy5zWsDcB/o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=T+8areK0Mx0oT7YCzbvUb849ygLqRMa624fTVjsD1OBpI9HgfkOEKNDjmRC8XVTMX
-	 xsEto2R9oBzNulxYD2t2Mq5gtqy7dven94GQJTW+7o+7JcaS0FCXUH1c/tnrCCgYoy
-	 2Xsd5XUwwFvQR1flLKZGBnQSbFHe2w0chsEvmrICU73W4TVJMIXm/mYafwEKe54H6k
-	 z3Nl0tvAFYvOmPgnfJcxF2tuk9lPDqupRj2Lk7WRzocwOvYJmrpcTC2GBC1oFk8gC+
-	 8i1Urcje+93yzV007O16IOZcjSN09MvU4oeAEcNT/GdAaUD/redY0jr3Vvk32eBuaP
-	 69T07pFDbEiOg==
-Date: Mon, 9 Sep 2024 22:56:14 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Sven Schnelle <svens@linux.ibm.com>
-Cc: Zheng Yejian <zhengyejian@huaweicloud.com>, Steven Rostedt
- <rostedt@goodmis.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] tracing: add config option for print arguments in
- ftrace
-Message-Id: <20240909225614.4f6d022e58f1276113c8492b@kernel.org>
-In-Reply-To: <yt9dcylddyx4.fsf@linux.ibm.com>
-References: <20240904065908.1009086-1-svens@linux.ibm.com>
-	<20240904065908.1009086-6-svens@linux.ibm.com>
-	<69b78634-3295-c22e-c09c-e41aa4554df3@huaweicloud.com>
-	<20240908223048.8bd6961dbc741d971f57b5c2@kernel.org>
-	<yt9dcylddyx4.fsf@linux.ibm.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725890227; c=relaxed/simple;
+	bh=K/YF07QvVB4pjMrCY5CC3H2YEBaImarIAH3FFuhYvTI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vw0ALKS2excCGxWKlBK84pIM7IQLOOsXBSbspHEWJ/GIsNzmvdmeXsfVJcwB4oy1z+ZrZQFJYiiHe+kpx2qDjv9HXtBrzahrkkGfjjArTE5Fo1k2tuRG16etopu+Kd+O+HsG0ZRTH4NXbnRcoYnbAZq2PQ4CVhfP/w7NCl47Fhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QfxSyHaS; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cba6cdf32so5266695e9.1;
+        Mon, 09 Sep 2024 06:57:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725890224; x=1726495024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7+QMbzautmlcHBhreHHmtbMmq5qanob45DDspc/nC+0=;
+        b=QfxSyHaSDbP8LWxj3suo0X8xanDyDnQdmj1w41j+9TiCMUxqFRvIwkGsGku1qdinGl
+         dk1APH6OmqeATD4P1Jn4DliOAqP3boRiAc03vjQHK7cghA9rTfu1uSym9lOr+YJjOhoO
+         w8HZpqM/MOTiWGN7ILXXFGPUHmHGm1hZESiX8wEwU/+7qO4j3B5hThz85qJiCuaVT+3t
+         LaXPDoSNTGll1RvcDJ0ZV4/dKjTleNNlDhYTXoUyPYHcbqaRe9fR5FVMqG6kF0f5qCFO
+         zo3Rc+bQElqWzTGtyPF+u3WjnRyLcUlhK12x5Q03jgsUQnangQWQ8l8GzlbFzxGWTQoR
+         KkOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725890224; x=1726495024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7+QMbzautmlcHBhreHHmtbMmq5qanob45DDspc/nC+0=;
+        b=WKHqJJ3edkU3aROMDYwrPjD18WWR0b3uAJFYJr3eaXxdckyW0Ku5kdZlYc2eEcq6IG
+         sOX5h6UwYkA/2j62tkYe3GtyUGo4FGIHTaTP5KhLLFYxaC61rXZt06kgRE8u4/UbBvj+
+         xT60Y9Cnj/wOpAaezsCtOCqLJ1ZDTdLDP3rLvAYibNIhJtwisyUhE2qG1mCMq4L5UlFv
+         I6JgCzOjC14tmOGkmp3lskJIa1Eq99f2UE2fR7pyB4NvdUG3wsZsIaJRrkIP2wrGxuss
+         wUQXoeL3jZCIHKHdPkendddFxDEk9hOHkd3QUxV7bAM8I+64DU6Xs0+m34as+peZrcW+
+         FW0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWPk/c+EhpU2k4kEvT8oTzE79gvTX0YFXgAVpB6e/tNNaNJpldwE6UA5bc24tshZKFIrImk4SWsZdsa3nKQGjs=@vger.kernel.org, AJvYcCXix3cHzy+JGPvl9TX0qCZXpo6UZh6zBM7h/X9/Y1k7DPW/VPNhos3KpzicxgZM54JpiNlJ6eo7Vc3dOaHF@vger.kernel.org
+X-Gm-Message-State: AOJu0YziT+DP/+ODrjnVe+34rhY9kWtKVm0HKIZfKm6sNSt93G5QwHmp
+	BeKVKZ8xSQ4VWa6fgpoH6eAP5R3FTGjX7irVJw4WCrso/50G5ijb
+X-Google-Smtp-Source: AGHT+IGNiwsklAcwJsZ31JpPrYhy+/GxiLBGkeOy+QCaF9wlyRktASdo5P3FRt0YHXiCITrSxdhrHg==
+X-Received: by 2002:a05:6000:136e:b0:371:8ed6:663f with SMTP id ffacd0b85a97d-3788967492emr7094167f8f.37.1725890223631;
+        Mon, 09 Sep 2024 06:57:03 -0700 (PDT)
+Received: from void.void ([141.226.14.150])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d3743sm6147963f8f.79.2024.09.09.06.57.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 06:57:03 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+	Oded Gabbay <ogabbay@kernel.org>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] accel/ivpu: Fix a typo
+Date: Mon,  9 Sep 2024 16:56:38 +0300
+Message-ID: <20240909135655.45938-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 09 Sep 2024 10:16:55 +0200
-Sven Schnelle <svens@linux.ibm.com> wrote:
+Fix a typo in comments.
 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> writes:
-> 
-> > On Fri, 6 Sep 2024 11:36:11 +0800
-> > Zheng Yejian <zhengyejian@huaweicloud.com> wrote:
-> >
-> >> On 2024/9/4 14:58, Sven Schnelle wrote:
-> >> > Add a config option to disable/enable function argument
-> >> > printing support during runtime.
-> >> > 
-> >> > Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
-> >> > ---
-> >> >   kernel/trace/Kconfig | 12 ++++++++++++
-> >> >   1 file changed, 12 insertions(+)
-> >> > 
-> >> > diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> >> > index 721c3b221048..8b9b6cdf39ac 100644
-> >> > --- a/kernel/trace/Kconfig
-> >> > +++ b/kernel/trace/Kconfig
-> >> > @@ -242,6 +242,18 @@ config FUNCTION_GRAPH_RETVAL
-> >> >   	  enable it via the trace option funcgraph-retval.
-> >> >   	  See Documentation/trace/ftrace.rst
-> >> >   
-> >> > +config FUNCTION_TRACE_ARGS
-> >> > +	bool "Kernel Function Tracer Arguments"
-> >> > +	depends on HAVE_FUNCTION_ARG_ACCESS_API
-> >> > +	depends on DEBUG_INFO_BTF && BPF_SYSCALL
-> >> 
-> >> Nice feature!
-> >> 
-> >> Just a nit, DEBUG_INFO_BTF currently depends on BPF_SYSCALL,
-> >> so BPF_SYSCALL may not be necessary here. This feature
-> >> also doesn't seem to depend on bpf.
-> >
-> > Indeed. Sven, you can check the PROBE_EVENTS_BTF_ARGS as
-> > an example.
-> >
-> > config PROBE_EVENTS_BTF_ARGS
-> >         depends on HAVE_FUNCTION_ARG_ACCESS_API
-> >         depends on FPROBE_EVENTS || KPROBE_EVENTS
-> >         depends on DEBUG_INFO_BTF && BPF_SYSCALL
-> >         bool "Support BTF function arguments for probe events"
-> 
-> Now i'm confused - Zheng wrote that DEBUG_INFO_BTF depends on
-> BPF_SYSCALL. I just verified that. So i could just remove BPF_SYSCALL
-> from the dependencies - but your example also has BPF_SYSCALL listed.
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ drivers/accel/ivpu/vpu_boot_api.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Ah, sorry for confusion. In this case, just need DEBUG_INFO_BTF.
-Hmm, I think I also need to remove BPF_SYSCALL.
-
-Thanks,
-
-> 
-> Regards
-> Sven
-
-
+diff --git a/drivers/accel/ivpu/vpu_boot_api.h b/drivers/accel/ivpu/vpu_boot_api.h
+index 82954b91b748..d474bc7b15c0 100644
+--- a/drivers/accel/ivpu/vpu_boot_api.h
++++ b/drivers/accel/ivpu/vpu_boot_api.h
+@@ -8,7 +8,7 @@
+ 
+ /*
+  * =========== FW API version information beginning ================
+- *  The bellow values will be used to construct the version info this way:
++ *  The below values will be used to construct the version info this way:
+  *  fw_bin_header->api_version[VPU_BOOT_API_VER_ID] = (VPU_BOOT_API_VER_MAJOR << 16) |
+  *  VPU_BOOT_API_VER_MINOR;
+  *  VPU_BOOT_API_VER_PATCH will be ignored. KMD and compatibility is not affected if this changes
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.46.0
+
 
