@@ -1,129 +1,125 @@
-Return-Path: <linux-kernel+bounces-322006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2337997229F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:29:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F9F397228E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2D281F22C03
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:29:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4432A1F2404A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 19:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806CB18C93A;
-	Mon,  9 Sep 2024 19:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A90189F3B;
+	Mon,  9 Sep 2024 19:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="BkI6+NS0"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [207.246.76.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="McQhAUrL"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741F018A93C
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 19:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.246.76.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5C418A933
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 19:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725910009; cv=none; b=BanHuylrb5KbAhzFJExx8+/tYzHSzhTvBvEpf0LhGn7l1+HB8NgkTJKlwpDO7gLB6tcnnzgqEhHlnASGFaOyYnW8PU3OWlP33r12iobT8oFO4lElSybjq7mCaMXRmzHlMZqSXayqxe4ECzOR27OOGwmfbgOc6CPOWKQEFQBYGFA=
+	t=1725909962; cv=none; b=diXXaep4hfSbwaayh1H3CawZMyxAX7H9m/EBjmyK59o76M2qZJX5tlN+lm6wTTm7oC227FlJb4K/pXosHsXXr8TdAbF6uFeMr2Avlz5R2WtaeDr69a7//f4AMOU32n2r7eMDy3Bal96pZO6D9prWbjOsIuBwKXBd7iV8MaMfIqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725910009; c=relaxed/simple;
-	bh=Uu832Uk5b4LaQN5ScMnX63a/5a+C3Dkjxd06KyW/bfE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kLBZrdzrqIBxZqkfzz04NxeKuPGZ2F/VMZTbJBDZIqbvuA+wyEUUBnkU+GG0bPNmZKHe1lL8JriAoRI5T4a4z/yOsuJqRn+YwP7+A4RAncKAPCCiGszmIcBIJLzGYaUkjung/Iatrz9unW2psmzlOlf1C4qovoztTV7hb/aO11U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=BkI6+NS0; arc=none smtp.client-ip=207.246.76.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1725909996; bh=MqUj8A8o8xViBmolQgigKvVukl8yo9wbPYV1IfunL50=;
- b=BkI6+NS0Cv+Q4HJESeMcK2GKj8uSaSQlI+BZUklvGzn6xy0bjIaMvaWK+UEV3kyLw/wSyIRK6
- o0LQC1TZgocH9jGzYrjMNJ2CaJxM5mEsMjNFgFBHFJnl8IEKkVMups63wxBAgRZNT4N46dmEM6c
- hcoiZBOQRYfrnu/yjDp3eDcqv5V1WHudpcysncazfnJl2qLYbxgg701fA80ujV2Rw3Ae7kFpstJ
- YWKdpPlHufvhfZ9VSNLwozdgLuUymFzznUqv38wCuqe4Rahv6O38x68j47wK+VMlq6SE4BpO+kU
- VU7AZJekqHxEDwKYV8BswFm8uxI3gEKwwXGS92aWL8fw==
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Alex Bee <knaerzche@gmail.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH v6 11/11] media: rkvdec: Fix enumerate frame sizes
-Date: Mon,  9 Sep 2024 19:25:09 +0000
-Message-ID: <20240909192522.1076704-12-jonas@kwiboo.se>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240909192522.1076704-1-jonas@kwiboo.se>
-References: <20240909192522.1076704-1-jonas@kwiboo.se>
+	s=arc-20240116; t=1725909962; c=relaxed/simple;
+	bh=S4Ygl1q4oE/nlsw28pJGGexRStDbpMtSh4YiL/SHCPU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=QFeT22jdUbv+ZNh16xBPPUVdK/WMUYz8hJCaJ220U3jIR5Qdyv/xhRUVHidZwkdg7CMBsL1TEXuWRpC/kQfLjqaCGpDcmZ667bxmYaFhYwAEX4RBS2HYTCiAAR8KptS2kMiXuQd2UqSIqEo4GtZ57HRF3IAEHpxqxOkPz5iFI98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=McQhAUrL; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5011af33774so1494707e0c.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 12:26:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725909960; x=1726514760; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pBpee4AHaJe65pM2kNypO8RGjnF5LmfGxGgPOtmOqKo=;
+        b=McQhAUrLy5EV8sXr9hL6eT+fZ09dPKL/D50ns4PyCyTo4NpTB3NrOH36xLYaZ4T+xq
+         SANa/cJ7nzMEJbIIq+Nf3scBQK1dWyAKW/rq+gZ2t8IWS8qwpoPRsj2Q5o8SEtScdIzX
+         J8gL5QgZ0Gdn0A+aNrxU3MjJrg96+CwTIP49B54OkvRx928dR6/ATII3RFcayUYNRtDC
+         zTrsALgZsJQZwzYIVKFhS/aCTdXLfAGp2i1l6uEA2qr3DMuTm42L/8sXA83mGMuAbion
+         /G1TsDiW7erKtPcRRQnfomCJxAw9m1Vdd972+ER61hZzXWji5e8FVzsAYsyK6NclNHF/
+         Heag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725909960; x=1726514760;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pBpee4AHaJe65pM2kNypO8RGjnF5LmfGxGgPOtmOqKo=;
+        b=CQ3dkdiLzoWQDhLDXkNJM2O4aiWUTA2KfDdGCPecT+vFpbIi8wbdeAx+Lzf+F4YvOh
+         SyrcKuEqMrrVRSoiVqudiKK+NUf5f5Xdhf9PfbSgqPDB2/IQ/zjLtDmxFS7TUlWkuGL5
+         neVR339VwlPyPn0NXnWZLN0bobP8cQsoP3c50L9UYyaPRefPwW9fRzsqv74mSZpPBIEl
+         exvwORn9gTl+9xyPCqW9KLU34WEhNysNQhH2Fg+VKamndCDEjVRAdm7IYlqwMYHSAj1E
+         dlVdA5XtUWFgy2B4aELizwwIRWtAxBzOl92eMy9gQrNYVLt+KlAs4vdIWFJibDqXNOtX
+         OmWw==
+X-Gm-Message-State: AOJu0Yxbh8Zd7Axc+Y6gN2fmqvW9qNmpyf/s2Obqt4Gsc019+NDhuH3L
+	L8XUUa3CKX3w+tViCK4kevYgwkKHhCnAMuI9tb/RbqVM1EcNQYF60+YOPFx/KDMPsja4btTp+cY
+	DlQZR/QyEJu8F4eQ6riutMHK4EhIg/FLTsU6AXlBBUXP5+c1fO9A=
+X-Google-Smtp-Source: AGHT+IEuduoGf6I4eJ+GJljoEMZ5wo3n99jpHThb2kz/K2C5nP569Myd6UaP/RNPBRmaqTmAcfa+nDK0fFyCJafEFIg=
+X-Received: by 2002:a05:6122:168d:b0:4ed:145:348f with SMTP id
+ 71dfb90a1353d-50220c7bb1emr14141759e0c.12.1725909959674; Mon, 09 Sep 2024
+ 12:25:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 207.246.76.47
-X-ForwardEmail-ID: 66df4beac680cb8b7d2dc270
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 10 Sep 2024 00:55:48 +0530
+Message-ID: <CA+G9fYvG3Tv-Gk6f6oSTuY4=sJWMcF5oRc9Qe1otFvetysm4zw@mail.gmail.com>
+Subject: No rule to make target 'arch/powerpc/boot/dtbImage.ps3', needed by 'arch/powerpc/boot/zImage'.
+To: open list <linux-kernel@vger.kernel.org>, 
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Arnd Bergmann <arnd@arndb.de>, 
+	Anders Roxell <anders.roxell@linaro.org>, naveen@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The VIDIOC_ENUM_FRAMESIZES ioctl should return all frame sizes (i. e.
-width and height in pixels) that the device supports for the given pixel
-format.
+The Powerpc cell_defconfig and mpc83xx_defconfig builds failed on the
+Linux next-20240909 due to following build warnings / errors with gcc-13 and
+clang-19.
 
-For coded format returning the frame size used to enforce HW alignment
-requirements for CAPTURE buffers does not make fully sense.
+First seen on next-20240909
+  Good: next-20240906
+  BAD:  next-20240909
 
-Instead, signal applications what the maximum frame size that is
-supported by the HW decoder using a frame size of continuous type.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Fixes: cd33c830448b ("media: rkvdec: Add the rkvdec driver")
-Suggested-by: Alex Bee <knaerzche@gmail.com>
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
----
-v6:
-- New patch
+build log:
+--------
+make[3]: *** No rule to make target 'arch/powerpc/boot/dtbImage.ps3',
+needed by 'arch/powerpc/boot/zImage'.
+make[3]: Target 'arch/powerpc/boot/zImage' not remade because of errors.
 
-With this change FFmpeg V4L2 Request API hwaccels can implement a strict
-check if frame size is supported by the video device:
-https://ffmpeg.org/pipermail/ffmpeg-devel/2024-August/332037.html
----
- drivers/staging/media/rkvdec/rkvdec.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/media/rkvdec/rkvdec.c b/drivers/staging/media/rkvdec/rkvdec.c
-index c8c14f35ac44..9002eb3a59e5 100644
---- a/drivers/staging/media/rkvdec/rkvdec.c
-+++ b/drivers/staging/media/rkvdec/rkvdec.c
-@@ -334,8 +334,14 @@ static int rkvdec_enum_framesizes(struct file *file, void *priv,
- 	if (!fmt)
- 		return -EINVAL;
- 
--	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
--	fsize->stepwise = fmt->frmsize;
-+	fsize->type = V4L2_FRMSIZE_TYPE_CONTINUOUS;
-+	fsize->stepwise.min_width = 1;
-+	fsize->stepwise.max_width = fmt->frmsize.max_width;
-+	fsize->stepwise.step_width = 1;
-+	fsize->stepwise.min_height = 1;
-+	fsize->stepwise.max_height = fmt->frmsize.max_height;
-+	fsize->stepwise.step_height = 1;
-+
- 	return 0;
- }
- 
--- 
-2.46.0
+Build Log links,
+--------
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240909/testrun/25078675/suite/build/test/clang-19-cell_defconfig/log
 
+Build failed comparison:
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240909/testrun/25078675/suite/build/test/clang-19-cell_defconfig/history/
+
+metadata:
+----
+  git describe: next-20240909
+  git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git sha: 100cc857359b5d731407d1038f7e76cd0e871d94
+  kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2lpXzh3wwbuC6nYpMV2nPNA0IpF/config
+  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2lpXzh3wwbuC6nYpMV2nPNA0IpF/
+  toolchain: gcc-13, clang-19 and clang-nightly
+  config: cell_defconfig and mpc83xx_defconfig
+
+Steps to reproduce:
+---------
+ - # tuxmake --runtime podman --target-arch powerpc --toolchain
+clang-19 --kconfig cell_defconfig LLVM_IAS=0
+ - # tuxmake --runtime podman --target-arch powerpc --toolchain gcc-13
+--kconfig mpc83xx_defconfig
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
