@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-321952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159229721E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:35:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C4E89721E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41E801C230CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:35:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A31E1F24294
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E8F188CDF;
-	Mon,  9 Sep 2024 18:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E538318951A;
+	Mon,  9 Sep 2024 18:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fwIzJDZM"
-Received: from msa.smtpout.orange.fr (out-71.smtpout.orange.fr [193.252.22.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XOfecqm3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD17BBA42
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 18:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400F4BA42;
+	Mon,  9 Sep 2024 18:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725906923; cv=none; b=N1+3NyboDGJyFm93qlxEazQ3KSoyGV1bB+315fa/HkD1ahKc1yZfFATlYZI5GR1tSBiy2PcVB76AbkItCkUQCVshNdUmLSXKpSLNFKpQrYWFwALHmDfV4ij6LTE1E5RubsVcnKd4Ij9T9Q+exfDdpWBYb+OWXnP303AJ4Y7Vfnc=
+	t=1725906952; cv=none; b=DuaoZ74AxXBLGMueaYdi7VxWaKcblsJhOFO9Dw0THJT6ADBEdcGf/y6+4AdDJ+u9bOk9Gz4g2L7lnozqdzy6nhM9Tkvnqy0R8Q6z/LiU5fMqe9bNo36VNyzvlLAmgmIEkx0EHS0CLGwP9Dub7yydUNGgbajfVWQVQoynlSDN6xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725906923; c=relaxed/simple;
-	bh=28Vh0FDQd5/QA5SXE5lLz7s8CGcA02HisBIGph5waW4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KHbEuEDBYPtgV8yqu4nFr2cPceISLTOqPASHfIvdGICuL2a5k+Y1fjvUm95L2PSMgFRylaIx4wsCyzuI0NQRoucC5pUZrD4LvOo/C2JjfkT93XZUIreVExR6suREyS5A3yf9XhGVMlFY64t4uzkDKAW5rYDFcQiNqTTvAlqlIfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fwIzJDZM; arc=none smtp.client-ip=193.252.22.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id njEGsHZy04lSjnjEGs0dic; Mon, 09 Sep 2024 20:35:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725906913;
-	bh=K2hlH2ab5/0XKaw9GaNDmz2ys+LddPEedIbMg1S8VjY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=fwIzJDZMp0/cRKG8GpuH3zdwai+tZHSQzebtinF+P8/4F68Gij3iKk+JaoGF+M+Vy
-	 01a9375enLKB4KDWR4uOCDLTZi1AjkucYQ4fpeHGLxvONh9s2ZPdCtHHyjikFy1tty
-	 Z/PMlmXesgzsJWKt2GfCpzZw3TLvIRl/BjRlMGLOX4VO4XcG+cDweonojLhigVxZ7Z
-	 +W9rqcf9bf6Ye/81ol8/YQTbPXwhn0SNotSsO1eVzCaFB8O7El8RVug/rNqtadgHMF
-	 hZwZ3vzyVE7FiZ9nYitXz+D4QEYGq+SGFCUwpwndnJHZwcSfefaX8n00jyfzTydu3f
-	 1EmkcDBjBm+yQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 09 Sep 2024 20:35:13 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	patches@opensource.cirrus.com
-Subject: [PATCH] regulator: wm8400: Constify struct regulator_desc
-Date: Mon,  9 Sep 2024 20:35:08 +0200
-Message-ID: <fde33ecfd9bbdbdc1da1620c9f3b1b7a72f9d805.1725906876.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725906952; c=relaxed/simple;
+	bh=ABrxZeQuIquezOEOvPL3bfj6o77d72AIM0y4FRAbwlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bihx1YwjiRyrMBXJYOIzp+aMHO6j00z6ZrrFOJw/v0VzlTPt80OYBcO/Fb4gWRskwT4FFurBHJ1o2UJizcBcwI0M6tZPiwWHNoBQwC5+H5YK6ffjdp2tQkYeugdRTjAZvCaNJy2Z/oc41IqiLv+QpXzn3+o87mKRrtkGM3JaNrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XOfecqm3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F29EC4CEC5;
+	Mon,  9 Sep 2024 18:35:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725906951;
+	bh=ABrxZeQuIquezOEOvPL3bfj6o77d72AIM0y4FRAbwlc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XOfecqm32u0vSbd1kZYM+v0aYOgu7guw/lAPuOaDp6BGG4faRyi1vd+E5GwtqXZl/
+	 Zy73QPaARu+s9e2O58u9nlZNgeXODfaEp3zZuvGd9k1Zw4UoCNUYeOot+aCmEszm7V
+	 aNEVh6mwH7LCH5mlOM3084RZZjDOSnG1XONOUL0kq4/wkzkxN0iTJI5CnZvA8baRbB
+	 Q1y3xPZ3iDFA54lVTo5fMPNCvo05mAN9lZRADaSs/meCBrRRObK939zTenttNuuJoe
+	 E5EHUDj9C3ycqiDka8bVxI0VVth1WpP7Xn6m8kCuDQJZQdTFhmomniNBRgxVyUGlCO
+	 /9HSXqQTLZLEg==
+Date: Mon, 9 Sep 2024 19:35:46 +0100
+From: Simon Horman <horms@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Felix Huettner <felix.huettner@mail.schwarz>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH net-next v2 1/1] netfilter: conntrack: Guard possible
+ unused functions
+Message-ID: <20240909183546.GF2097826@kernel.org>
+References: <20240909154043.1381269-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909154043.1381269-2-andriy.shevchenko@linux.intel.com>
 
-'struct regulator_desc' is not modified in this driver.
+On Mon, Sep 09, 2024 at 06:39:56PM +0300, Andy Shevchenko wrote:
+> Some of the functions may be unused, it prevents kernel builds
+> with clang, `make W=1` and CONFIG_WERROR=y:
+> 
+> net/netfilter/nf_conntrack_netlink.c:657:22: error: unused function 'ctnetlink_acct_size' [-Werror,-Wunused-function]
+>   657 | static inline size_t ctnetlink_acct_size(const struct nf_conn *ct)
+>       |                      ^~~~~~~~~~~~~~~~~~~
+> net/netfilter/nf_conntrack_netlink.c:667:19: error: unused function 'ctnetlink_secctx_size' [-Werror,-Wunused-function]
+>   667 | static inline int ctnetlink_secctx_size(const struct nf_conn *ct)
+>       |                   ^~~~~~~~~~~~~~~~~~~~~
+> net/netfilter/nf_conntrack_netlink.c:683:22: error: unused function 'ctnetlink_timestamp_size' [-Werror,-Wunused-function]
+>   683 | static inline size_t ctnetlink_timestamp_size(const struct nf_conn *ct)
+>       |                      ^~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Fix this by guarding possible unused functions with ifdeffery.
 
-Constifying this structure moves some data to a read-only section, so
-increases overall security, especially when the structure holds some
-function pointers.
+I think it would be worth mentioning, that
+the condition is that neither CONFIG_NETFILTER_NETLINK_GLUE_CT
+nor CONFIG_NF_CONNTRACK_EVENTS are defined (enabled).
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   4419	   2512	      0	   6931	   1b13	drivers/regulator/wm8400-regulator.o
+> 
+> See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+> inline functions for W=1 build").
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> v2: fixed typo, dropped Fixes (Simon), optimised by reusing existing ifdeffery
+>  net/netfilter/nf_conntrack_netlink.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   6307	    624	      0	   6931	   1b13	drivers/regulator/wm8400-regulator.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
---
-Compile tested only
----
- drivers/regulator/wm8400-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/wm8400-regulator.c b/drivers/regulator/wm8400-regulator.c
-index c4a229f66dec..fb3ca7956d00 100644
---- a/drivers/regulator/wm8400-regulator.c
-+++ b/drivers/regulator/wm8400-regulator.c
-@@ -112,7 +112,7 @@ static const struct regulator_ops wm8400_dcdc_ops = {
- 	.get_optimum_mode = wm8400_dcdc_get_optimum_mode,
- };
- 
--static struct regulator_desc regulators[] = {
-+static const struct regulator_desc regulators[] = {
- 	{
- 		.name = "LDO1",
- 		.id = WM8400_LDO1,
--- 
-2.46.0
-
+...
 
