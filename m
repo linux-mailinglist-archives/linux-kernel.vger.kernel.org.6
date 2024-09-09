@@ -1,204 +1,193 @@
-Return-Path: <linux-kernel+bounces-321510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD26971B75
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:46:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62CD1971B79
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C733282A11
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42D31F24249
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221BE1BA293;
-	Mon,  9 Sep 2024 13:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674461BA890;
+	Mon,  9 Sep 2024 13:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LrzOPLuN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gukUyOix"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7431BA281
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1745D1BA27C;
+	Mon,  9 Sep 2024 13:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725889507; cv=none; b=kU0cFTqJcviqaMUyDc6vgKtFC7TKN2jvtG4mLf5MfRwUJZPUtfYdKLdQMcFqejA5pHJ7uu3QrKxGrSOzK0PHfvjuYXAZihkhvvHKg4QdDw7kuN1UPaOJ3Fz8jsGJaR17z28bo7GTERZMwG3lKf9lwWICNMqkgzD//3aq0vMKLuc=
+	t=1725889523; cv=none; b=u5fKdIivIBrIeGkaBS6G/e0fq4miLP8onN2APCOrDtmkpQ4CKNF+n+xN4iOpasc3ivOkdIwjUvCPQT/S0Pe0ki6HJ8jWeIe4DPbKRgDFtPvuYIcOKY19EXabjm+mgugp6QrL1d0iaoG2rB+qnH9cOeXF/mQmbEo0VZep81Ecd8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725889507; c=relaxed/simple;
-	bh=+9F3uKNMboa1SgybT1etH6wDb2f1GTpwoZhVE0ms3UM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dl9SmsvxCevxjeaDB3Rtiy4DROf48onnwKDrXoc316EH8hIpeVVqfcLjBkenA+2l9md9ieiBajuc40esT9DE6SWyCTpJKq63gmnbtNSpHJ0S4UB8cjiLjO30RXP/bXdLYOECxWnLtMZcfuPpLGFOkRP3tDqu4Rm4cohAPRCweYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LrzOPLuN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725889504;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ylw46X/xkXMlviR3Hl2ecKDrkpKoQWtNAOjrdUUapm4=;
-	b=LrzOPLuNcbNHr+i6BofUl58Yldw1kNzvXgzMv0fut8cnobiIrSEUYKOKVeL5g0j+340eKA
-	guW8uZUG+uHXY+SNBWLpqCyjb38FXAAK+MA2VOY+1mBPjqat4v9ElVCCp4oRZ4uHAD5r2F
-	bATc2906uCdOAff7zumK8dGtW7Itn8Q=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-618-mMYfDCa3P3OT1XT3a2DqvA-1; Mon, 09 Sep 2024 09:45:03 -0400
-X-MC-Unique: mMYfDCa3P3OT1XT3a2DqvA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42caca7215dso17372115e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 06:45:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725889502; x=1726494302;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ylw46X/xkXMlviR3Hl2ecKDrkpKoQWtNAOjrdUUapm4=;
-        b=ejJAHKWVF0DrWfF4ydt7MMvZpIPKPPAueCGdNqu97/8B0A5PRxhBpLuPhOviPA2oF5
-         2f8SGF0BvY6orBHZcly7SRewvgg8w8V9laCHgfH6ju4mDDyR0NIiAYJks0UAP+Vsmc15
-         nUitsxACCnrtCQ0S5z0MNLHJS3Ku1/bqxU7bVNNc91G0VTdUdrvF3/qXtOjolFbFa8Xq
-         Ek6PmSjRCkuAM/t8dRAa6G82MPnf+ApeDj+yLBrmwNUZaiUonXV2J05tgfQCCZJZ4e9/
-         PkZ7Yb++W6GbOiJVSifpQjF12ta9vyGAPeF2GjFTQ9deUK2skJbuhZNCOS3K3kO8sDm3
-         YRnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3Bf/J9HEJ5/JRmoa3VpH+ax9HsxciyZg5hwXvaH3PuwYh9byk3Sc5vH1623WaMycfl7gmkPiZuq94DR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGimt6Q1qPQ2OweecWVfyQCblUoU4+EL2RrlJX+Wt+rwPZhL/+
-	LLcdhTaBvYpfIzMiDAc3q8VWYaf6zDnSHlsdwdsNOE24wIfFxXz8pwan6/zVO+KYWo7W86GUI6s
-	mFHwQAPR/S7bPTZ+O8AIvImErysmLuwI6NeeQBVCxLhw9ZjnPRbo7j8Bczjbkzg==
-X-Received: by 2002:a05:600c:4f16:b0:42c:a72a:e8f4 with SMTP id 5b1f17b1804b1-42cad760ee2mr62757785e9.14.1725889502083;
-        Mon, 09 Sep 2024 06:45:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFF/95U9vbW29MTrTQs2Nva4ge2R5MZvBC10txmNSECUK5cgpTJ7gCxCL3V/RbNxVpoohqTOA==
-X-Received: by 2002:a05:600c:4f16:b0:42c:a72a:e8f4 with SMTP id 5b1f17b1804b1-42cad760ee2mr62757525e9.14.1725889501607;
-        Mon, 09 Sep 2024 06:45:01 -0700 (PDT)
-Received: from [192.168.10.81] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-378956767c4sm6079302f8f.63.2024.09.09.06.45.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 06:45:01 -0700 (PDT)
-Message-ID: <d4e07759-c9fc-49db-8b99-0b5798644fcc@redhat.com>
-Date: Mon, 9 Sep 2024 15:44:59 +0200
+	s=arc-20240116; t=1725889523; c=relaxed/simple;
+	bh=DIgINnfFNQiU0BeYyQfLH/SdoJ0HKoSPauy5k5X5lJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NEwgRMB5ToB6mDhZqPO3MXt4iV3w6h+1iEuG26+CNZdTjfcAmkRYepchMkKGqWwiUMwiqBkJl2Y1jgTXpecIzDDax8lQPFBHIZyphF+Dm8RQ5peiXKimJqTwogvClTw+cySWp4uWcP/1KxKxGnf+G+Zde7oQ01OpFouMmItDhuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gukUyOix; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (213-229-8-243.static.upcbusiness.at [213.229.8.243])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 542F95A4;
+	Mon,  9 Sep 2024 15:44:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1725889443;
+	bh=DIgINnfFNQiU0BeYyQfLH/SdoJ0HKoSPauy5k5X5lJI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gukUyOixUwMCQa0c/DYH1Su6z3uDYM0EV12q70+qrExNSRaTa2OSu0LuZgHQIIVB2
+	 PrN55ehOPvvzSOruRl53NJNP00g710Ac0R2a20O4z4w/kPDZH2uT27HO+8ho61CQHU
+	 0NqQFwWWTLZWyUwFHi9ttZfGwn1bsGbbtDhOobkI=
+Date: Mon, 9 Sep 2024 16:45:16 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Naushir Patuck <naush@raspberrypi.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v4 3/4] media: raspberrypi: Add support for RP1-CFE
+Message-ID: <20240909134516.GA9448@pendragon.ideasonboard.com>
+References: <20240904-rp1-cfe-v4-3-f1b5b3d69c81@ideasonboard.com>
+ <202409051822.ZzUGw3XQ-lkp@intel.com>
+ <20240905111120.GK16183@pendragon.ideasonboard.com>
+ <40cc1e95-b9fc-4c27-9428-1698d0bf9d25@ideasonboard.com>
+ <763b3147-d7cb-44a7-b73b-8f7f4fd622ab@ideasonboard.com>
+ <yib2r4wisxvk3kgogbjqawrpmfq6lcezfk4xjmftj44jzkbclc@icapodv2ffzk>
+ <d5188c0a-4a52-4378-89b1-48f606e448cc@ideasonboard.com>
+ <ggtlreq5gyhzfdv6yzeuia46y7fxpuyvg236prig52t43xsl2a@crlqks2nhfpe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/21] KVM: x86/mmu: Implement memslot deletion for TDX
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
- kvm@vger.kernel.org
-Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
- yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-2-rick.p.edgecombe@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240904030751.117579-2-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ggtlreq5gyhzfdv6yzeuia46y7fxpuyvg236prig52t43xsl2a@crlqks2nhfpe>
 
-On 9/4/24 05:07, Rick Edgecombe wrote:
-> Force TDX VMs to use the KVM_X86_QUIRK_SLOT_ZAP_ALL behavior.
+On Mon, Sep 09, 2024 at 03:29:30PM +0200, Jacopo Mondi wrote:
+> On Mon, Sep 09, 2024 at 01:04:35PM GMT, Tomi Valkeinen wrote:
+> > On 09/09/2024 12:13, Jacopo Mondi wrote:
+> > > On Mon, Sep 09, 2024 at 08:22:59AM GMT, Tomi Valkeinen wrote:
+> > > > On 09/09/2024 08:08, Tomi Valkeinen wrote:
+> > > > > On 05/09/2024 14:11, Laurent Pinchart wrote:
+> > > > > > On Thu, Sep 05, 2024 at 06:50:48PM +0800, kernel test robot wrote:
+> > > > > > > Hi Tomi,
+> > > > > > >
+> > > > > > > kernel test robot noticed the following build warnings:
+> > > > > > >
+> > > > > > > [auto build test WARNING on 431c1646e1f86b949fa3685efc50b660a364c2b6]
+> > > > > > >
+> > > > > > > url:    https://github.com/intel-lab-lkp/linux/commits/Tomi-
+> > > > > > > Valkeinen/media-uapi-Add-meta-formats-for-PiSP-FE-config-and-
+> > > > > > > stats/20240904-192729
+> > > > > > > base:   431c1646e1f86b949fa3685efc50b660a364c2b6
+> > > > > > > patch link:    https://lore.kernel.org/r/20240904-rp1-cfe-v4-3-
+> > > > > > > f1b5b3d69c81%40ideasonboard.com
+> > > > > > > patch subject: [PATCH v4 3/4] media: raspberrypi: Add support
+> > > > > > > for RP1-CFE
+> > > > > > > config: m68k-allmodconfig (https://download.01.org/0day-ci/
+> > > > > > > archive/20240905/202409051822.ZzUGw3XQ-lkp@intel.com/config)
+> > > > > > > compiler: m68k-linux-gcc (GCC) 14.1.0
+> > > > > > > reproduce (this is a W=1 build):
+> > > > > > > (https://download.01.org/0day-ci/
+> > > > > > > archive/20240905/202409051822.ZzUGw3XQ-lkp@intel.com/reproduce)
+> > > > > > >
+> > > > > > > If you fix the issue in a separate patch/commit (i.e. not just a
+> > > > > > > new version of
+> > > > > > > the same patch/commit), kindly add following tags
+> > > > > > > | Reported-by: kernel test robot <lkp@intel.com>
+> > > > > > > | Closes: https://lore.kernel.org/oe-kbuild-
+> > > > > > > all/202409051822.ZzUGw3XQ-lkp@intel.com/
+> > > > > > >
+> > > > > > > All warnings (new ones prefixed by >>):
+> > > > > > >
+> > > > > > > > > drivers/media/platform/raspberrypi/rp1-cfe/cfe.c:2445:12:
+> > > > > > > > > warning: 'cfe_runtime_resume' defined but not used
+> > > > > > > > > [-Wunused-function]
+> > > > > > >       2445 | static int cfe_runtime_resume(struct device *dev)
+> > > > > > >            |            ^~~~~~~~~~~~~~~~~~
+> > > > > > > > > drivers/media/platform/raspberrypi/rp1-cfe/cfe.c:2435:12:
+> > > > > > > > > warning: 'cfe_runtime_suspend' defined but not used
+> > > > > > > > > [-Wunused-function]
+> > > > > > >       2435 | static int cfe_runtime_suspend(struct device *dev)
+> > > > > > >            |            ^~~~~~~~~~~~~~~~~~~
+> > > > > > > vim +/cfe_runtime_resume +2445
+> > > > > > > drivers/media/platform/raspberrypi/ rp1-cfe/cfe.c
+> > > > > >
+> > > > > > The recommended way to fix this is to switch from SET_RUNTIME_PM_OPS()
+> > > > > > to RUNTIME_PM_OPS() and use pm_ptr() to set .driver.pm. This being said,
+> > > > > > the driver won't work on a kernel with !CONFIG_PM given how you
+> > > > > > implemented probe() and remove().
+> > > > > >
+> > > > > > The pisp-be driver suffered from the same issue and Jacopo fixed it in
+> > > > > > the last version. You can have a look at implement something similar.
+> > > > >
+> > > > > I can't right away think of any reason to not just depend on CONFIG_PM
+> > > > > and be done with it without any tricks. Do you know if there's a reason?
+> > >
+> > > We had the same discussion, and even if I would be fine depending on
+> > > CONFIG_PM, supporting !CONFIG_PM is not that much work, I kept it as
+> > > an optional dependency (it was suggested during the review as well)
+> > >
+> > > >
+> > > > Also, I don't think pisp-be is correct. It just calls
+> > > > pispbe_runtime_resume() in probe() to wake the IP up (which only enables
+> > > > pisp clock), without telling the runtime PM about it. This means the parent
+> > > > device and the suppliers may not be powered up.
+> > >
+> > > Are you referring to the code currently in the tree or to this patch ?
+> > > https://patchwork.linuxtv.org/project/linux-media/patch/20240904095836.344833-5-jacopo.mondi@ideasonboard.com/
+> >
+> > Ah, I missed that one.
+> >
+> > I don't think it fixes the issue I mentioned. If we have PM enabled, and the
+> > parent device requires powering up for the child device (BE) to be
+> > accessible, the driver will crash when calling pispbe_hw_init(). I think you
+> > should call pm_runtime_set_active() before calling pispbe_runtime_resume().
 > 
-> TDs cannot use the fast zapping operation to implement memslot deletion for
-> a couple reasons:
-> 1. KVM cannot fully zap and re-build TDX private PTEs without coordinating
->     with the guest. This is due to the TDs needing to "accept" memory. So
->     an operation to delete a memslot needs to limit the private zapping to
->     the range of the memslot.
-> 2. For reason (1), kvm_mmu_zap_all_fast() is limited to direct (shared)
->     roots. This means it will not zap the mirror (private) PTEs. If a
->     memslot is deleted with private memory mapped, the private memory would
->     remain mapped in the TD. Then if later the gmem fd was whole punched,
->     the pages could be freed on the host while still mapped in the TD. This
->     is because that operation would no longer have the memslot to map the
->     pgoff to the gfn.
+> As discussed, this is not a problem currently for BE, but indeed you
+> have a point.
 > 
-> To handle the first case, userspace could simply set the
-> KVM_X86_QUIRK_SLOT_ZAP_ALL quirk for TDs. This would prevent the issue in
-> (1), but it is not sufficient to resolve (2) because the problems there
-> extend beyond the userspace's TD, to affecting the rest of the host. So the
-> zap-leafs-only behavior is required for both
+> Sad note: most of all the occurrences of "grep set_active" in
+> drivers/media/platform/ show that set_active() is used as I've done in
+> my patch
 > 
-> A couple options were considered, including forcing
-> KVM_X86_QUIRK_SLOT_ZAP_ALL to always be on for TDs, however due to the
-> currently limited quirks interface (no way to query quirks, or force them
-> to be disabled), this would require developing additional interfaces. So
-> instead just do the simple thing and make TDs always do the zap-leafs
-> behavior like when KVM_X86_QUIRK_SLOT_ZAP_ALL is disabled.
-> 
-> While at it, have the new behavior apply to all non-KVM_X86_DEFAULT_VM VMs,
-> as the previous behavior was not ideal (see [0]). It is assumed until
-> proven otherwise that the other VM types will not be exposed to the bug[1]
-> that derailed that effort.
-> 
-> Memslot deletion needs to zap both the private and shared mappings of a
-> GFN, so update the attr_filter field in kvm_mmu_zap_memslot_leafs() to
-> include both.
-> 
-> Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
-> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Link: https://lore.kernel.org/kvm/20190205205443.1059-1-sean.j.christopherson@intel.com/ [0]
-> Link: https://patchwork.kernel.org/project/kvm/patch/20190205210137.1377-11-sean.j.christopherson@intel.com [1]
-> ---
-> TDX MMU part 2 v1:
->   - Clarify TDX limits on zapping private memory (Sean)
-> 
-> Memslot quirk series:
->   - New patch
-> ---
->   arch/x86/kvm/mmu/mmu.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index a8d91cf11761..7e66d7c426c1 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -7104,6 +7104,7 @@ static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *s
->   		.start = slot->base_gfn,
->   		.end = slot->base_gfn + slot->npages,
->   		.may_block = true,
-> +		.attr_filter = KVM_FILTER_PRIVATE | KVM_FILTER_SHARED,
->   	};
->   	bool flush = false;
->   
+> > However, you said above that "supporting !CONFIG_PM is not that much work".
+> > Maybe not. But how much work is it to get it right (for both PM and !PM),
+> > and make sure it stays right? =).
+> >
+> > Just my opinion, but if there are zero use cases for the !PM, I would just
+> > go with "depends on PM" to keep the driver simpler, less bug-prone, and
+> > easier to maintain.
 
-Stale commit message, I guess.
+I'm fine with that, and for platform drivers, that's my preferred
+option. Sakari ?
 
-Paolo
+> I don't see a use case for !PM and we confirmed with RPi they don't
+> need to support it. During the review of a previous version of the BE
+> driver iirc I've been asked to support !PM but I'm not sure I recall
+> the reasons.
 
+I hope it wasn't me :-)
+
+-- 
+Regards,
+
+Laurent Pinchart
 
