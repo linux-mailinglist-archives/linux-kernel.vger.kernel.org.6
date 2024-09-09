@@ -1,72 +1,60 @@
-Return-Path: <linux-kernel+bounces-321752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B6F971EE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:16:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1706E971EE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 793AC1C2296C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:16:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93171B22895
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3D713C675;
-	Mon,  9 Sep 2024 16:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1895148841;
+	Mon,  9 Sep 2024 16:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1Il1hia"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="edQtmdIL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF27C156;
-	Mon,  9 Sep 2024 16:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4A413DDA3
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725898563; cv=none; b=Xh/e5DzdqgF3OMYb09TVefZfDYTvwo/O9MHRKduNtBsU/JCRmgMIuk0sQTrDz5iMuztHr3r0DYakvBo1he7k2Pus+yP1ij2ki7ee/oVQhNckf9V6Xef4MDSsJ2ZO1MSFUpDf2UcjkOXU5MBBw3rkEnzYJYRm0EqlyC4hHlVyANs=
+	t=1725898565; cv=none; b=gMA8IKa64/bE1TyWLB63hZv8inHeoauJ4dal8RUcB9DFrBfclCsnw0DwdLmOPXO+Q4y+8+tmMtVtKUqJCNq8hv6DjvjSNEuvM8nA0rEVq4EvAZLO0308XL+jNz0BAg1Yy5DeDdudJZI6zZj92SC8VWjbIdwiFDY5o/FoP19r+Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725898563; c=relaxed/simple;
-	bh=Ls7yNYiJTmMO2LUOs5edmUDMG2W06CnY5cBWHeqDVh8=;
+	s=arc-20240116; t=1725898565; c=relaxed/simple;
+	bh=meu7haalnve314o2vBN3hToN6hjtT5v/tdytDzKYBEE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hmGVIzVPU7DXJnwx5UIi+UHFYn5pAPkdGnWrg2AcM/Yg8b4SvMWd8Uh+WOh+8E8Rc+2wD2MPAKsknS9O278j0a+ii/RiXBGP9pP8XR/q9SX+Q3sBiE1b6DwYDHH87elgS1ZFeaaAPwdtXIuaGq65XVW+GnquBlNVyWpn6Xq4Zzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1Il1hia; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BAABC4CEC5;
-	Mon,  9 Sep 2024 16:15:59 +0000 (UTC)
+	 MIME-Version:Content-Type; b=YQFJzc3T+TmQ6KPfrvj89/0SiNrQ8QDWp88MbJ2X+KshxlLMd99KWMqJYBq3SZJhUeDhAqD08A7k3ULL5YQhXjomC7Js1pvoABZTlY3yawWSOvez4Pf5KpFXgHp0uA6QqzlkG6BdfJA9pqqIftDzW9eSJaX6OgV1Mva5Inepe9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=edQtmdIL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3837CC4CECE;
+	Mon,  9 Sep 2024 16:16:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725898562;
-	bh=Ls7yNYiJTmMO2LUOs5edmUDMG2W06CnY5cBWHeqDVh8=;
+	s=k20201202; t=1725898564;
+	bh=meu7haalnve314o2vBN3hToN6hjtT5v/tdytDzKYBEE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=c1Il1hiaDR85pEccsSxKJx4hwcoizwSgnKS/STKWucygQg3CRqCAoVLH0KGEPT0ot
-	 /k+T8Ed20mV46zrf5iBAm31+kQfMLeaiqFSRz2Rk60P5RYZe7k8djYPSjbLA5XC+0d
-	 LrFVap4Kyrf/avuR0ABliJ4fEI8YZbmrXVJ3u1rav+SY3m5sEstYHZ7al1eWVPw8fV
-	 c50JhN8Or5dtRjg0WVd3TcaANC4hfy8SuWhi4dLSSLM0foi9+jxq6Zrkj2fKbN3R8W
-	 U0jV2L1RBKdlTmXIsRJzFzm5mtWM3VKILKlPJzA0keX7u1sR+X2J/9tQx3iHz9rJl/
-	 s2PPsi2mfaTnw==
+	b=edQtmdILdozE8NKyE39+MJMrGzG5CnsUa1AyNUG6jbVNWBnngyTN5RLo5OPloE8Gn
+	 SndcDDbQlY6k5wu/rHS9iLyUf7XC+i2NM4I3aT4VmMOJJg835v96qx7aBBy3pteM1/
+	 ltAdZQbEeOz736/+L4NryNIfBXqu3H/0kDAND6GOUr1GzSzhGrQYwT25wMg9rLbDKT
+	 BldglAdi4pa9FiZIsCjWzKXg/wC7YQXMRv/45vlTmCBauLgl70r5gYRvZm5lCxicOU
+	 cN/tpdyHz32QTLahPelYOEz9ZZXJzIAgqtkvu+CqSedDNsiG0uOJp540jU7zgur9ds
+	 Tca3KPuFq/qZg==
 From: Will Deacon <will@kernel.org>
-To: Rob Clark <robdclark@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>
 Cc: catalin.marinas@arm.com,
 	kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	iommu@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	ath11k@lists.infradead.org,
-	Kalle Valo <kvalo@kernel.org>
-Subject: Re: [PATCH 0/7] arm64: qcom: sda660-ifc6560: enable GPU and WiFi support
-Date: Mon,  9 Sep 2024 17:15:44 +0100
-Message-Id: <172589162139.2623853.11488233830217103643.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf: arm_pmuv3: Use BR_RETIRED for HW branch event if enabled
+Date: Mon,  9 Sep 2024 17:15:45 +0100
+Message-Id: <172589208379.2624830.5787093091293049008.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240907-sdm660-wifi-v1-0-e316055142f8@linaro.org>
-References: <20240907-sdm660-wifi-v1-0-e316055142f8@linaro.org>
+In-Reply-To: <20240906191539.4847-1-ilkka@os.amperecomputing.com>
+References: <20240906191539.4847-1-ilkka@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,21 +64,20 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Sat, 07 Sep 2024 21:48:11 +0300, Dmitry Baryshkov wrote:
-> Follow the MSM8998 example and limit num_context_banks on SDM630 /
-> SDM660 platforms. This allows Linux to make use of the A2NOC and KGSL
-> SMMU, making it possible to enable GPU and WiFi on those platforms, and,
-> in particular, Inforce IFC6560 SBC.
+On Fri, 06 Sep 2024 12:15:39 -0700, Ilkka Koskinen wrote:
+> The PMU driver attempts to use PC_WRITE_RETIRED for the HW branch event,
+> if enabled. However, PC_WRITE_RETIRED counts only taken branches,
+> whereas BR_RETIRED counts also non-taken ones.
 > 
-> Note, while WiFI starts up and can work for a short amount of time, MSS
-> starts crashing with the following message:
+> Furthermore, perf uses HW branch event to calculate branch misses ratio,
+> implying BR_RETIRED is the correct event to count.
 > 
 > [...]
 
-Applied SMMU driver change to will (for-joerg/arm-smmu/updates), thanks!
+Applied to will (for-next/perf), thanks!
 
-[1/7] iommu/arm-smmu-qcom: apply num_context_bank fixes for SDM630 / SDM660
-      https://git.kernel.org/will/c/19eb465c969f
+[1/1] perf: arm_pmuv3: Use BR_RETIRED for HW branch event if enabled
+      https://git.kernel.org/will/c/5967a19f1c2f
 
 Cheers,
 -- 
