@@ -1,112 +1,96 @@
-Return-Path: <linux-kernel+bounces-320966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 208F69712AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:56:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13871971400
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4334282B03
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:56:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B23861F22A57
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423821B1D49;
-	Mon,  9 Sep 2024 08:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EE91B2EF3;
+	Mon,  9 Sep 2024 09:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="JJbm2UWh"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="a/qR3uOJ"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBFE14B94A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2711741C8;
+	Mon,  9 Sep 2024 09:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725872175; cv=none; b=a4hqOx4Z57zPtorYLP4zw95n454SbyIDgrpuTREU91kKfiiTNsj/cK01B+8/qYKy/IO2fJIQcEmVmbYRlL+XsO4zPKQhK+017Jcs3qj4ig/hP8ws+gK1UjmWGh/FunfBjAET5p1Rbw8KjiKGRbwf8jcPunrE85DYXzxFr2dkJn0=
+	t=1725874869; cv=none; b=g+Ip87ArXzWc5sjm/51uur3PeNAke3T9uzGta012jMbe9BcIZHsU/63Wbu2WpPNFINa2ULwDPDpBVyZwVj5lqZwqTaf63fUc73OiwOYM/xnoHSNbr+RWxl2Tjs9QjDOLTqvyvQBpil2yquo4LHpnR0M/twswDTUbcIFKh0eOP9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725872175; c=relaxed/simple;
-	bh=M2gjDYhW0Lq1cfzzc7G73pLRwWKz7XUt96Bt/m9lFyg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jTifZIpwzAGZGB60kgNfA4/ILuFV4pRNHTzz4wW7Rv8CqPWNVt1kYnCTZO5qEIHjhtbdslxK+dnQsxdImbbbRWNP5HGk/K0dubUxfs7Wp0GDn2hEcANU1TATg4seL20dsrr5EkJ5XrAJYaiykMs1IJe05mCIFrbXelim4W9UMXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=JJbm2UWh; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso36648605e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 01:56:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1725872172; x=1726476972; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uv2AR1woNQLYJ0Fp1iRI0UhGVzR3YfrOcxidNB7ijGc=;
-        b=JJbm2UWhdtr2C6xQyY6GeDfyoxBHonGEr4hYwl6dEwghBc8LaKJ/nzCSIwiKBPgdGK
-         jpEePulJS3RMoXasNdgt+DcsawOei6vScsB3m9wrDlCN0pGl0e3MNr3KLT0QdAif5xcT
-         oGlb+xwWvxGjA7GCic/Nl+UaGov4pvfej7FGsm+wSavsCF488TV5aq25ouzAUOqrB43+
-         zs8NEbtOUi7Kt9s6AzbJqMzhxlKvj1j9moBeKpJvw8HwjVoyEuKfcdeAJFZR7vylPgp/
-         XpscX6zxD0PiYV1khM5Cgo0gSxPfj7lGikKJBqa2aIW+lZpk3fjq42YpMX5huiVwj+t0
-         a8zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725872172; x=1726476972;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Uv2AR1woNQLYJ0Fp1iRI0UhGVzR3YfrOcxidNB7ijGc=;
-        b=kgaXO2uCDszhZApFMnbzP36T8AQgEG/te2xfDa4r2Fr7PuOP9ITctLJDg2WZXBTn9L
-         Dj1FTeJq0xMFM9prpNSptdhqiiABC7cYEr/oIuHE6oY7YKOlmpTpOGSoMt+xVu4VLnag
-         iM0YOO00ZBb4jKWA0cCM/DicbctvWpPKUaCPNYoYg/o1/PXoF1Qu3NkwgGHT14x83CNs
-         bCyddpbmUGUx7FUX6/0v7LUg72NZ9xavk3yjDhJg0trinesx8h1zIbvnTVUQUTTzTYPb
-         jDJQpLS8o+MCbeWdab71GTADPgZHfvcDUgaIOTEQMSTUrQ7eULAgP/isQOjtoOTr7ZoP
-         X53g==
-X-Forwarded-Encrypted: i=1; AJvYcCXCebFa2/E8irY/Jm/vxSlk2yTaNPYeTIKR0Z1I5pC6LtccYQ9TEla4aJ/kTNz8u6WXG2vPj7SwBgQXz3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwaONzs/0dA74sz0gSLlcXt+pyB2knN6Quz2Tq9Va/qZ+KKuIn
-	yprrNO1v+Vn4ElpvNappvIszxestexG1y/kuZIQBU8guDxljCGx9LKyeB40JF18=
-X-Google-Smtp-Source: AGHT+IFXzJCsb3FQafzENF2vACJ7ZcGkiKnDKQ091lFVFb0euHttZG/dYayGyB4fQORiKo5lMDqVRg==
-X-Received: by 2002:a05:600c:1c06:b0:42c:b95c:65b7 with SMTP id 5b1f17b1804b1-42cb95c693amr10352915e9.8.1725872171244;
-        Mon, 09 Sep 2024 01:56:11 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb2a08a1dsm50929395e9.1.2024.09.09.01.56.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 01:56:10 -0700 (PDT)
-From: Andrew Jones <ajones@ventanamicro.com>
-To: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: anup@brainfault.org,
-	tglx@linutronix.de,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu
-Subject: [PATCH] irqchip/riscv-imsic: Fix output text of base address
-Date: Mon,  9 Sep 2024 10:56:11 +0200
-Message-ID: <20240909085610.46625-2-ajones@ventanamicro.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725874869; c=relaxed/simple;
+	bh=3N42rW920d6Vugk4DbxBfxF+GZkBmGZde1OUtyetVwE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oMuU/gfrxwY3vxZR0RZ3cHqciUcxye0Mn3OFBzb633IDoTNbYJrauhRf8rQHnslDdoCxsTNDDP0kVgSQl75OTZ+qdAjGTu03xpodAh1HFhhdmbzYK4lS4BXmh/5IgDfk2UCHSXJC19obMlV4bwkaN9kexLPKvZiqNGhUBtjJDpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=a/qR3uOJ; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=3rF3U3vmHpfPcmokJPPRhAa75wEQKBtpcfNTesoYMyU=;
+	t=1725874863; x=1727084463; b=a/qR3uOJUb3aWpbUQkI6Vc5NIUlzeVgK6gbFD1A2IL2MJsT
+	dcSsnzpy75lJY6qb0/a3dygL91yh03Dy7/3qKOd6iDYP4RxUn7TGcohNMjdqL3OP8MMj0D6YDTzgt
+	aDrfpqzUpTY+tGbHhQex3/IA1MD1mZTjqMQmMIXjNCILxY98DYFTqwOR2Tq5Q8lf+vUcpuKz8Aztt
+	hlr9eQH7upJa/93oaNciJFH3QVGw9iXXWJi7HYAZl9rD1vsdlIzpY9Ayxe/79xN7V+IwjXMaGYoIb
+	ERCFnxuVlNClBqdZ6J3qMOfRjMFUoUdSOFXh2ur8fwyGxJMtzYi4Wh2zLL5Am1Kg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1snaDC-00000002I2K-201P;
+	Mon, 09 Sep 2024 10:57:30 +0200
+Message-ID: <dac6bfc0a0d5b92fdcb0d330d5e4839d2e119154.camel@sipsolutions.net>
+Subject: Re: linux-next: build warnings after merge of the wireless-next tree
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Kalle Valo <kvalo@kernel.org>
+Cc: Aditya Kumar Singh <quic_adisi@quicinc.com>, Wireless
+	 <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List
+	 <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	 <linux-next@vger.kernel.org>
+Date: Mon, 09 Sep 2024 10:57:29 +0200
+In-Reply-To: <20240909183924.73c3c91d@canb.auug.org.au>
+References: <20240909183924.73c3c91d@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-malware-bazaar: not-scanned
 
-The "per-CPU IDs ... at base ..." info log is outputting a physical
-address, not a PPN.
+On Mon, 2024-09-09 at 18:39 +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the wireless-next tree, today's linux-next build (htmldocs)
+> produced these warnings:
+>=20
+> next/Documentation/driver-api/80211/cfg80211:14: next/include/net/cfg8021=
+1.h:6219: WARNING: Inline strong start-string without end-string.
+> next/Documentation/driver-api/80211/cfg80211:14: next/include/net/cfg8021=
+1.h:6219: WARNING: Inline strong start-string without end-string.
+> next/Documentation/driver-api/80211/cfg80211:14: next/include/net/cfg8021=
+1.h:6219: WARNING: Inline strong start-string without end-string.
+>=20
+> Introduced by commit
+>=20
+>   62c16f219a73 ("wifi: cfg80211: move DFS related members to links[] in w=
+ireless_dev")
+>=20
 
-Fixes: 027e125acdba ("irqchip/riscv-imsic: Add device MSI domain support for platform devices")
-Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
----
- drivers/irqchip/irq-riscv-imsic-platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the report. kernel-doc htmldocs isn't part of the process I
+usually do.
 
-diff --git a/drivers/irqchip/irq-riscv-imsic-platform.c b/drivers/irqchip/irq-riscv-imsic-platform.c
-index 11723a763c10..c5ec66e0bfd3 100644
---- a/drivers/irqchip/irq-riscv-imsic-platform.c
-+++ b/drivers/irqchip/irq-riscv-imsic-platform.c
-@@ -340,7 +340,7 @@ int imsic_irqdomain_init(void)
- 		imsic->fwnode, global->hart_index_bits, global->guest_index_bits);
- 	pr_info("%pfwP: group-index-bits: %d, group-index-shift: %d\n",
- 		imsic->fwnode, global->group_index_bits, global->group_index_shift);
--	pr_info("%pfwP: per-CPU IDs %d at base PPN %pa\n",
-+	pr_info("%pfwP: per-CPU IDs %d at base address %pa\n",
- 		imsic->fwnode, global->nr_ids, &global->base_addr);
- 	pr_info("%pfwP: total %d interrupts available\n",
- 		imsic->fwnode, num_possible_cpus() * (global->nr_ids - 1));
--- 
-2.46.0
-
+I don't even really know what this means, but I'll try to figure out a
+way to fix it. Looks like it's due to the @ references there, which I'm
+not sure are correct anyway, so I guess I'll just remove those.
+johannes
 
