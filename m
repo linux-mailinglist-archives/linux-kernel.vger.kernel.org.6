@@ -1,55 +1,73 @@
-Return-Path: <linux-kernel+bounces-321957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86DA59721F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:39:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C6709721FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B1E51F24AD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:39:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECD441F24FAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD33B18953C;
-	Mon,  9 Sep 2024 18:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435CE18990D;
+	Mon,  9 Sep 2024 18:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VpO41KD6"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="2NhEjDn8"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D8B189BAA;
-	Mon,  9 Sep 2024 18:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4F818951E
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 18:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725907104; cv=none; b=qwTc6s83cIl5o7+Cm/RQgCAcedIf/jukL9hevmvivhJ22dsuAju45Rm7XqN+C9qalEH/JGksmmmuWCdS211ncREIrlnvdeXGy05tu6Fo7bD7eD7e4gSQSRVIZSJDOb1TEfbE33SZpiGX4jWbjd3Iv3WmSeNpFWXXrs3UK7/8KZw=
+	t=1725907158; cv=none; b=TYI2aN+s6pd2DOYjBJCE/THxeWdPZOvokJPAyCRRgnBkIZbXv8o5Fby8YKWTgkvSGpVIqPtF3nsx2F8nttXnUPgA+dtYKdktTRXUyL5G+7aZcSLANsv64YtbY+/1I1RHBzfsJWrxRgterjY3qFqwnD3Zc0ofY4y2GdBZkFARBrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725907104; c=relaxed/simple;
-	bh=06a+4+u7GgI0QOGqHjtSNwrz0XvKnxfVsRzsa0GxZXA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VoxzQp42VfqOUviAhrl36LXueFvbrM29/wcv2E8rI+/VQE49uChAAxlMm1OwxJcsJIwQe5tqppIqaKXc2Ytfkt7xm5Y9nU0caB3mhE4KqcgsQ0qI3j2zKTzzr3Ne9TeoHSXI1rrDlASKtCY0OKFEsuo45uwgfEl0DmBgaoFUJoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VpO41KD6; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725907100;
-	bh=06a+4+u7GgI0QOGqHjtSNwrz0XvKnxfVsRzsa0GxZXA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=VpO41KD6gqD1fnD/XmWiO/f9v/wYAB7kZzmGbisUcBxy8NsZbKkfSvao9jsKWT9fZ
-	 ZIKN+L5pq03dlswz3a760hJF7mmvKLXPVoDcjh6BAsJyo5pGlQfxWB7yGWDnhA8QRL
-	 OxgjItYSkoJt5i4YbXbhUJNZfae6AjQQ6SLBV27E6Efg1FaRX+K2dhgiA1wGnyG0f+
-	 7glAFNub8F75u6FM6NpyfZ887qKLrCSkOL2m0CTQoaajUdQwo1eEsFNFH4bcJPvRtA
-	 fpvdWwICebJtMlZVUgD/ciJnUrexoSsgyyXEauSuD9fmejysE6yZhhTXeqckSYWyAd
-	 cm1AqwQQZsukw==
-Received: from [192.168.1.95] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6937217E35FB;
-	Mon,  9 Sep 2024 20:38:18 +0200 (CEST)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Mon, 09 Sep 2024 14:37:34 -0400
-Subject: [PATCH RFC 3/3] selftest: gpio: Add a new set-get config test
+	s=arc-20240116; t=1725907158; c=relaxed/simple;
+	bh=iWrq6UBhR8f6M7tXQeXFemZD3ZNgfCl7tLXN1WTI6zw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dO0OM4j3ZBhCmIddkqSlF49PCE/U+FSF6pdkN0GDImUkMpWHrNKY9diZGZqDmFZDSBnMjXburawuPJqnBvTBnqorz+NI9FmFncS41oJ5d2boPbOCSlxEMtaXLEt4mLDMgRS/P2huzqpSQsKa+ii6w1dc5nWv2OHoCFc8Qd0WD+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=2NhEjDn8; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3770320574aso2863368f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 11:39:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725907154; x=1726511954; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1MO+4DRAhaFYMqm8lS+Q2X93z6fwY26MweaD0Xnwgks=;
+        b=2NhEjDn8q24wtMbpyLGglwnRUsYJsVYldzPkQhDvwHuuUrK/qWQc+FHWYnU16IJXhF
+         WQJkx1fzn22pBuG26Jl988gGqzt2gsoaS3VzOREHrot33EBblBtntMxHk7u5BSrMzfrA
+         tG0ZF0SIp1dl3+fzW29VtxNEEdIWx7TWiDExqlCP68l+Od5tFTe4XM3HUjvBnU4ClBBN
+         nTg7yJUKZnaHvoGHydibeGbBQWT6ZWXu/bNXBxxVCHYDTsLRIvDyoppj2Ep/GB4r5HWV
+         7nqlHRm63vfQeK5eqCjUAGuOqgx71M+IW+YWsjByqVJSSCrP0c+kk+jr5SElFfJysxZs
+         SaUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725907154; x=1726511954;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1MO+4DRAhaFYMqm8lS+Q2X93z6fwY26MweaD0Xnwgks=;
+        b=NhTej232clCoR/o8VOQjymzfYBQNP0IJmJVISWGOhkrHsBE8oy9c6x2Mi4SEApllWJ
+         TOehGl/lgio7TwPVHI1QyZf2NsnGZOJe1Y5v2jetnPz/0DYRruLrl1h0lnOxM4W53TrN
+         cLzcpq5FnNRDfUcH2244pdt9GINPfe3DyY1xX7B3OHrA8NZYf2/zs8l+AG8KbxZKHOpM
+         3/YEphXLhLQoPxI9fnuuDjQhd84gzCGdKjeIIlbuulx26kdBBXfrRgNR1E2byC9CUZwW
+         OZTmgrmSy23W0kUSXMR9TkPZgHilD58UqYfyEpZYVJv4FHlLJguPtrnzeobQ8F7lt3SV
+         I4iA==
+X-Forwarded-Encrypted: i=1; AJvYcCXq32G1zcxupZUcy06Ta+dUmOlvalaQZeeUevxquIB7IIRXBzJdyJ22erzsUy4w6dPIjeDvwnuss5wG35Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlc+PX2EWQSOze8Cp0WKpGPZbq8/jS7tSUEBQ7v1n0FnqLFTNt
+	r6YrW319dCb3KxRHxvdB2JwD8u9Duhidk7Xj4sYu5xLkfeDd9uj+8EvAQU/WnPk=
+X-Google-Smtp-Source: AGHT+IHWFSg11GYuEIC6afVJ27rnkhJSb1qtAvUyBztND7hgenH8trtr0vhUefpAiCF5RLzozlT0CA==
+X-Received: by 2002:a5d:54ca:0:b0:376:5234:403f with SMTP id ffacd0b85a97d-3788954e720mr7658633f8f.0.1725907153487;
+        Mon, 09 Sep 2024 11:39:13 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:9c15:247b:9be3:37a7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956653b0sm6731721f8f.44.2024.09.09.11.39.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 11:39:13 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/2] firmware: qcom: scm: fix SMC calls on ARM32
+Date: Mon, 09 Sep 2024 20:38:43 +0200
+Message-Id: <20240909-tzmem-null-ptr-v1-0-96526c421bac@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,263 +75,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240909-kselftest-gpio-set-get-config-v1-3-16a065afc3c1@collabora.com>
-References: <20240909-kselftest-gpio-set-get-config-v1-0-16a065afc3c1@collabora.com>
-In-Reply-To: <20240909-kselftest-gpio-set-get-config-v1-0-16a065afc3c1@collabora.com>
-To: Sean Wang <sean.wang@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Bamvor Jian Zhang <bamv2005@gmail.com>, Shuah Khan <shuah@kernel.org>
-Cc: kernel@collabora.com, linux-mediatek@lists.infradead.org, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
- kernelci@lists.linux.dev, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.1
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALNA32YC/x3MQQqAIBBA0avErBswadF0lWghOdVAWmhFJN49a
+ fkW/yeIHIQj9FWCwLdE2X1BU1cwrcYvjGKLQSvdKlKE5+vYob+2DY8zoDZkraWuI2OgREfgWZ5
+ /OIw5f8ZktBRgAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Andrew Halaney <ahalaney@redhat.com>, 
+ Elliot Berman <quic_eberman@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Rudraksha Gupta <guptarud@gmail.com>, 
+ "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=739;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=iWrq6UBhR8f6M7tXQeXFemZD3ZNgfCl7tLXN1WTI6zw=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBm30DM6sEnSwIi4smIyF6fBYRN4ITvPFKsc4uiR
+ RAgOrwU1VuJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZt9AzAAKCRARpy6gFHHX
+ cqXWEACND4Ezln2MdDnGK8+H7+VG1cpX4vqfcSdao26HtdmQE9tQ/FEcF5V0Gb0EoYO4gCnRR4s
+ un4/d/ee4eicWilunZxSw1npLB/4TMXj3DS1M2YEZaanO3dgkaFMI6VYFFGE32ZhUViEQU6xLie
+ 97GDLYgXLLyFyrinsaWRZvreCdq0s2XyFi7mpYxmN5VqfhpFFQqxmv+vEkciHDsm7gmY7CSeHQr
+ l9iQhaoiG46WIsAWo3+/UxrVUQml4xR7u6LSKlyZ4iHHBuoj+OKDvl3chbnMiKIHvxdMq4RzKcP
+ 5H9FqlVf2PwogVnT/SGVt9852IKCWMhC+ihI6p/qCva7qGP8jCYDV41/x/Yjd0ESDUo16ctXY5H
+ HEADhUxTtwrUuBWLVXWwOsuTSsZMJjvvbNhagEIP+ORRXOLrVayU4/MUwfciJJ6Xq2ro3gojpZm
+ CTFJANNTsyuKIG5fesJjvdc2PpGO9rqU9kRgGU/SObA4BaOmIzSAaFuP8XCTHUHSGMO4amf5rPW
+ RRsnuYoxCX8+M7EpTU6bjIIiDfS8WuFehsJg9tIvpZdugn4uD+bwnE+C06iydwdRtFnxQUzSGNT
+ ocAWjxHYGMvbhO+fNfQjt3hWa9kfc0XCdqX3qHjIAjbjom6/wJHavL2DYQ/R/R/IGoJwlXEnL3l
+ B8qOFmN/OiuPf/A==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Add a new kselftest that sets a configuration to a GPIO line and then
-gets it back to verify that it was correctly carried out by the driver.
+The new TZ Mem allocator assumes the SCM driver is always probed which
+apparently isn't the case on older platforms. Add a proper workaround.
 
-Setting a configuration is done through the GPIO uAPI, but retrieving it
-is done through the debugfs interface since that is the only place where
-it can be retrieved from userspace.
-
-The test reads the test plan from a YAML file, which includes the chips
-and pin settings to set and validate.
-
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- tools/testing/selftests/gpio/Makefile              |   2 +-
- .../gpio-set-get-config-example-test-plan.yaml     |  15 ++
- .../testing/selftests/gpio/gpio-set-get-config.py  | 183 +++++++++++++++++++++
- 3 files changed, 199 insertions(+), 1 deletion(-)
+Bartosz Golaszewski (2):
+      firmware: qcom: scm: fix a NULL-pointer dereference
+      firmware: qcom: scm: fall back to kcalloc() for no SCM device bound
 
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index e0884390447d..bdfeb0c9aadd 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--TEST_PROGS := gpio-mockup.sh gpio-sim.sh
-+TEST_PROGS := gpio-mockup.sh gpio-sim.sh gpio-set-get-config.py
- TEST_FILES := gpio-mockup-sysfs.sh
- TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info gpio-line-name
- CFLAGS += -O2 -g -Wall $(KHDR_INCLUDES)
-diff --git a/tools/testing/selftests/gpio/gpio-set-get-config-example-test-plan.yaml b/tools/testing/selftests/gpio/gpio-set-get-config-example-test-plan.yaml
-new file mode 100644
-index 000000000000..3b749be3c8dc
---- /dev/null
-+++ b/tools/testing/selftests/gpio/gpio-set-get-config-example-test-plan.yaml
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# Top-level contains a list of the GPIO chips that will be tested. Each one is
-+# chosen based on the GPIO chip's info label.
-+- label: "gpiochip_device_label"
-+  # For each GPIO chip, multiple pin configurations can be tested, which are
-+  # listed under 'tests'
-+  tests:
-+  # pin indicates the pin number to test
-+  - pin: 34
-+    # bias can be 'pull-up', 'pull-down', 'disabled'
-+    bias: "pull-up"
-+  - pin: 34
-+    bias: "pull-down"
-+  - pin: 34
-+    bias: "disabled"
-diff --git a/tools/testing/selftests/gpio/gpio-set-get-config.py b/tools/testing/selftests/gpio/gpio-set-get-config.py
-new file mode 100755
-index 000000000000..6f1444c8d46b
---- /dev/null
-+++ b/tools/testing/selftests/gpio/gpio-set-get-config.py
-@@ -0,0 +1,183 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2024 Collabora Ltd
-+
-+#
-+# This test validates GPIO pin configuration. It takes a test plan in YAML (see
-+# gpio-set-get-config-example-test-plan.yaml) and sets and gets back each pin
-+# configuration described in the plan and checks that they match in order to
-+# validate that they are being applied correctly.
-+#
-+# When the file name for the test plan is not provided through --test-plan, it
-+# will be guessed based on the platform ID (DT compatible or DMI).
-+#
-+
-+import time
-+import os
-+import sys
-+import argparse
-+import re
-+import subprocess
-+import glob
-+import signal
-+
-+import yaml
-+
-+# Allow ksft module to be imported from different directory
-+this_dir = os.path.dirname(os.path.realpath(__file__))
-+sys.path.append(os.path.join(this_dir, "../kselftest/"))
-+
-+import ksft
-+
-+
-+def config_pin(chip_dev, pin_config):
-+    flags = []
-+    if pin_config.get("bias"):
-+        flags += f"-b {pin_config['bias']}".split()
-+    flags += ["-w", chip_dev, str(pin_config["pin"])]
-+    gpio_mockup_cdev_path = os.path.join(this_dir, "gpio-mockup-cdev")
-+    return subprocess.Popen([gpio_mockup_cdev_path] + flags)
-+
-+
-+def get_bias_debugfs(chip_debugfs_path, pin):
-+    with open(os.path.join(chip_debugfs_path, "pinconf-pins")) as f:
-+        for l in f:
-+            m = re.match(rf"pin {pin}.*bias (?P<bias>(pull )?\w+)", l)
-+            if m:
-+                return m.group("bias")
-+
-+
-+def check_config_pin(chip, chip_debugfs_dir, pin_config):
-+    test_passed = True
-+
-+    if pin_config.get("bias"):
-+        bias = get_bias_debugfs(chip_debugfs_dir, pin_config["pin"])
-+        # Convert "pull up" / "pull down" to "pull-up" / "pull-down"
-+        bias = bias.replace(" ", "-")
-+        if bias != pin_config["bias"]:
-+            ksft.print_msg(
-+                f"Bias doesn't match: Expected {pin_config['bias']}, read {bias}."
-+            )
-+            test_passed = False
-+
-+    ksft.test_result(
-+        test_passed,
-+        f"{chip['label']}.{pin_config['pin']}.{pin_config['bias']}",
-+    )
-+
-+
-+def get_devfs_chip_file(chip_dict):
-+    gpio_chip_info_path = os.path.join(this_dir, 'gpio-chip-info')
-+    for f in glob.glob("/dev/gpiochip*"):
-+        proc = subprocess.run(
-+            f"{gpio_chip_info_path} {f} label".split(), capture_output=True, text=True
-+        )
-+        if proc.returncode:
-+            ksft.print_msg(f"Error opening gpio device {f}: {proc.returncode}")
-+            ksft.exit_fail()
-+
-+        if chip_dict["label"] in proc.stdout:
-+            return f
-+
-+
-+def get_debugfs_chip_dir(chip):
-+    pinctrl_debugfs = "/sys/kernel/debug/pinctrl/"
-+
-+    for name in os.listdir(pinctrl_debugfs):
-+        if chip["label"] in name:
-+            return os.path.join(pinctrl_debugfs, name)
-+
-+
-+def run_test(test_plan_filename):
-+    ksft.print_msg(f"Using test plan file: {test_plan_filename}")
-+
-+    with open(test_plan_filename) as f:
-+        plan = yaml.safe_load(f)
-+
-+    num_tests = 0
-+    for chip in plan:
-+        num_tests += len(chip["tests"])
-+
-+    ksft.set_plan(num_tests)
-+
-+    for chip in plan:
-+        chip_dev = get_devfs_chip_file(chip)
-+        if not chip_dev:
-+            ksft.print_msg("Couldn't find /dev file for GPIO chip")
-+            ksft.exit_fail()
-+        chip_debugfs_dir = get_debugfs_chip_dir(chip)
-+        if not chip_debugfs_dir:
-+            ksft.print_msg("Couldn't find pinctrl folder in debugfs for GPIO chip")
-+            ksft.exit_fail()
-+        for pin_config in chip["tests"]:
-+            proc = config_pin(chip_dev, pin_config)
-+            time.sleep(0.1)  # Give driver some time to update pin
-+            check_config_pin(chip, chip_debugfs_dir, pin_config)
-+            proc.send_signal(signal.SIGTERM)
-+            proc.wait()
-+
-+
-+def get_possible_test_plan_filenames():
-+    filenames = []
-+
-+    dt_board_compatible_file = "/proc/device-tree/compatible"
-+    if os.path.exists(dt_board_compatible_file):
-+        with open(dt_board_compatible_file) as f:
-+            for line in f:
-+                compatibles = [compat for compat in line.split("\0") if compat]
-+                filenames.extend(compatibles)
-+    else:
-+        dmi_id_dir = "/sys/devices/virtual/dmi/id"
-+        vendor_dmi_file = os.path.join(dmi_id_dir, "sys_vendor")
-+        product_dmi_file = os.path.join(dmi_id_dir, "product_name")
-+
-+        with open(vendor_dmi_file) as f:
-+            vendor = f.read().replace("\n", "")
-+        with open(product_dmi_file) as f:
-+            product = f.read().replace("\n", "")
-+
-+        filenames = [vendor + "," + product]
-+
-+    return filenames
-+
-+
-+def get_test_plan_filename(test_plan_dir):
-+    chosen_test_plan_filename = ""
-+    full_test_plan_paths = [
-+        os.path.join(test_plan_dir, f + ".yaml")
-+        for f in get_possible_test_plan_filenames()
-+    ]
-+    for path in full_test_plan_paths:
-+        if os.path.exists(path):
-+            chosen_test_plan_filename = path
-+            break
-+
-+    if not chosen_test_plan_filename:
-+        tried_paths = ",".join(["'" + p + "'" for p in full_test_plan_paths])
-+        ksft.print_msg(f"No matching test plan file found (tried {tried_paths})")
-+        ksft.print_cnts()
-+        sys.exit(4)
-+
-+    return chosen_test_plan_filename
-+
-+
-+parser = argparse.ArgumentParser()
-+parser.add_argument(
-+    "--test-plan-dir", default=".", help="Directory containing the test plan files"
-+)
-+parser.add_argument("--test-plan", help="Test plan file to use")
-+args = parser.parse_args()
-+
-+ksft.print_header()
-+
-+if args.test_plan:
-+    test_plan_filename = os.path.join(args.test_plan_dir, args.test_plan)
-+    if not os.path.exists(test_plan_filename):
-+        ksft.print_msg(f"Test plan file not found: {test_plan_filename}")
-+        ksft.exit_fail()
-+else:
-+    test_plan_filename = get_test_plan_filename(args.test_plan_dir)
-+
-+run_test(test_plan_filename)
-+
-+ksft.finished()
+ drivers/firmware/qcom/qcom_scm-smc.c | 28 ++++++++++++++++++++++++----
+ drivers/firmware/qcom/qcom_scm.c     |  2 +-
+ 2 files changed, 25 insertions(+), 5 deletions(-)
+---
+base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
+change-id: 20240909-tzmem-null-ptr-2a9ddd9889aa
 
+Best regards,
 -- 
-2.46.0
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
