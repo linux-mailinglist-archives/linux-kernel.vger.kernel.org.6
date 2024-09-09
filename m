@@ -1,113 +1,151 @@
-Return-Path: <linux-kernel+bounces-321707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87942971E5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:45:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A60A7971E5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B42731C23331
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:45:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D21A21C2328F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BECF60EC4;
-	Mon,  9 Sep 2024 15:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A874E4963A;
+	Mon,  9 Sep 2024 15:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ISAoSvwy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AhzO145G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBBA22EED;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0662D611;
 	Mon,  9 Sep 2024 15:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725896718; cv=none; b=mhUUdcKtNOYy4YzZZMiZZZI/y2bj4UMptSA6Gvz5yLszcDq1WgTnvyaa/ZVTeepyIp4iOV6irxJrSeOGmu6QBrV3r77bAU/FVoaNn+h3PlxuS3map9n6f2pIj7iU4CmYzznrwPaRsBclB1Uz18TSxTd/rjxM/VBP43rtEiR67M4=
+	t=1725896718; cv=none; b=J8yApYo4GgtjZVbWuv1I8BL51q1KNbXvWN+Id8mA9aEXOe6FSwlhbOr+zJaCiWWJVJkMo6JxIOYYONMBkp9JhNva/iUG2HfX7vJELfRZGM8lcdOShJVaE2I/UU1+X3lp+uyS6CjsOpHHxrvCAM+vOIhgUdmjTJwQl+Hd7U9TI/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725896718; c=relaxed/simple;
-	bh=YgYd4UDRaHUx/I4aBI/a5xRLjPGeXP51J3gubakkuJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tLaqmpUqKfREiIjVixV9fYglheFuxFyuPXYn3L5E4yMJzZ50MRrUsUA/Qqr9knpww/4ENi2SBSDNZsaJeMnHkLlxDHzKUK9Se0F9dUq33O3oNH5iCfpk5KU+fn8Ic2dcoH2E8cmejjIFA8Lsgl34qX+si63L2WDraTQs01LRq90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ISAoSvwy; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725896717; x=1757432717;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=YgYd4UDRaHUx/I4aBI/a5xRLjPGeXP51J3gubakkuJk=;
-  b=ISAoSvwyt04S2ToQfbTMGO9bxjmxwTz+og0cEYi3HVYiXxaa0Y+sTToO
-   AgfKc5L2qb552jiZ9nFlv7g5bHObuCSOGeNL91bCOA0nVeUCx4adSticw
-   RdIPUs27Lk23bd3h2IxI0c7gX/eU8JxeFfJ/5Xy9YsLim65UU+dCaUjPV
-   nKSeVRYxB66/wEas0NfOZRsY1VKnZNMde1joLtLT2Q2OzJpnAIkqqg3wU
-   M1uVZyLETKCPPeERRmwgyA/z9UCTjGDuaM9hF0O5Uc6vVQuLr4x0BwcD6
-   9MYLl1HyT6fbHPPusYn/M51dhJrgRUFeqgXH2KWl+0AgxExeewHlB+5vx
-   g==;
-X-CSE-ConnectionGUID: CH36O9WCQrSOEK5ydiW+vw==
-X-CSE-MsgGUID: E7KKY8weRzqsSrywTYu8KA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24149204"
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="24149204"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 08:45:17 -0700
-X-CSE-ConnectionGUID: 1F/bI0RxRoKO7kAoUB8ykA==
-X-CSE-MsgGUID: 9w46N3gdQ5KYPrVn7LS6tA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="67014967"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO [10.245.246.241]) ([10.245.246.241])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 08:45:15 -0700
-Message-ID: <8462d322-a40a-4d6c-99c5-3374d7f3f3a0@linux.intel.com>
-Date: Mon, 9 Sep 2024 17:45:11 +0200
+	bh=kytQjnfXJeBElN05Ib1j89/8KJHIp2OL0uZJWxHGeDw=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=JwLTyhptZsw0ePDm4EBgM2dFiY+Rp7uspH7VaDUu1nEelWle5epU6ggFF95q3ESCUzfi/EsXB9++0J0bD7/TGOtyBaUK/geYNumu8ngr0I1p5Ngkl+C5ILgcy1teN3ZP4/QFcfvRq3Cqk/5PHIzzaqG+Ra1tysag3l/Ho4RI01Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AhzO145G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6849EC4CEC5;
+	Mon,  9 Sep 2024 15:45:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725896717;
+	bh=kytQjnfXJeBElN05Ib1j89/8KJHIp2OL0uZJWxHGeDw=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=AhzO145GeU9vEI1TCJQVW51z6K3/qmN2HpusMWOLLwm84DA+VJgqVvUhDIFA7jb1J
+	 P2b+AMPmqCdfezi4SkIHPeAoxa1t6LcAe+eMrgw08Oj9YzBab9ZQH7ZsCSZSS+qG+S
+	 7aoafYN4pXQ5/QBFZPX2sNn1+aPobBrIRhLN5o/uqVZqJRM3n8sdDIA6fCes+BTltP
+	 t8P8jMIogVRhoYF/+PL/WLqR1yo5D3+sA6JWX1g4Gm8hobZl/ba43S0AQ/nMQyS2vs
+	 IZxWx33IOpvgT90nJqiRO2vel9Z7VRgQXzDVQTMjz2O5uHLEdp7fr9tymP3AuWB/0e
+	 ws+pWRbV8xKHQ==
+Date: Mon, 09 Sep 2024 10:45:16 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soundwire: stream: Revert "soundwire: stream: fix
- programming slave ports for non-continous port maps"
-To: Charles Keepax <ckeepax@opensource.cirrus.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Bard Liao
- <yung-chuan.liao@linux.intel.com>, Sanyog Kale <sanyog.r.kale@intel.com>,
- alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20240904145228.289891-1-krzysztof.kozlowski@linaro.org>
- <Zt8H530FkqBMiYX+@opensource.cirrus.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <Zt8H530FkqBMiYX+@opensource.cirrus.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
+Cc: linux-mediatek@lists.infradead.org, 
+ angelogioacchino.delregno@collabora.com, devicetree@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, krzk+dt@kernel.org, knoxchiou@google.com, 
+ conor+dt@kernel.org, linux-kernel@vger.kernel.org, hsinyi@google.com, 
+ matthias.bgg@gmail.com, hsinyi@chromium.org
+In-Reply-To: <20240909023148.1677936-1-cengjianeng@huaqin.corp-partner.google.com>
+References: <CAJMQK-imYrDTuycVzQxkfbkZuHehE8uwc+qS2w=UDShETsBvEw@mail.gmail.com>
+ <20240909023148.1677936-1-cengjianeng@huaqin.corp-partner.google.com>
+Message-Id: <172589660972.199140.1860414842334878111.robh@kernel.org>
+Subject: Re: [PATCH v5 0/2] arm64: dts: mediatek: Add MT8186 Ponyta
 
 
-
-On 9/9/24 16:36, Charles Keepax wrote:
-> On Wed, Sep 04, 2024 at 04:52:28PM +0200, Krzysztof Kozlowski wrote:
->> This reverts commit ab8d66d132bc8f1992d3eb6cab8d32dda6733c84 because it
->> breaks codecs using non-continuous masks in source and sink ports.  The
->> commit missed the point that port numbers are not used as indices for
->> iterating over prop.sink_ports or prop.source_ports.
->>
->> Soundwire core and existing codecs expect that the array passed as
->> prop.sink_ports and prop.source_ports is continuous.  The port mask still
->> might be non-continuous, but that's unrelated.
->>
->> Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
->> Closes: https://lore.kernel.org/all/b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com/
->> Fixes: ab8d66d132bc ("soundwire: stream: fix programming slave ports for non-continous port maps")
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> ---
+On Mon, 09 Sep 2024 10:31:46 +0800, Jianeng Ceng wrote:
+> This is v5 of the MT8186 Chromebook device tree series.
+> ---
+> Changes in v5:
+> - PATCH 1/2: Remove sku2147483647.
+> - PATCH 2/2: Remove sku2147483647.
+> - Link to v4:https://lore.kernel.org/all/20240906085739.1322676-1-cengjianeng@huaqin.corp-partner.google.com/
 > 
-> Would be good to merge this as soon as we can, this is causing
-> soundwire regressions from rc6 onwards.
+> Changes in v4:
+> - PATCH 1/2: Add more info for Ponyta custom label in commit.
+> - Link to v3:https://lore.kernel.org/all/20240904081501.2060933-1-cengjianeng@huaqin.corp-partner.google.com/
+> 
+> Changes in v3:
+> - PATCH 0/2: Add the modify records.
+> - PATCH 1/2: Modify lable to label.
+> - Link to v2:https://lore.kernel.org/all/20240903061603.3007289-1-cengjianeng@huaqin.corp-partner.google.com/
+> 
+> Changes in v2:
+> - PATCH 2/2: Modify the dtb name without rev2.
+> - Link to v1:https://lore.kernel.org/all/20240902125502.1844374-1-cengjianeng@huaqin.corp-partner.google.com/
+> 
+> Jianeng Ceng (2):
+>   dt-bindings: arm: mediatek: Add MT8186 Ponyta Chromebook
+>   arm64: dts: mediatek: Add MT8186 Ponyta Chromebooks
+> 
+>  .../devicetree/bindings/arm/mediatek.yaml     | 10 +++++
+>  arch/arm64/boot/dts/mediatek/Makefile         |  2 +
+>  .../mediatek/mt8186-corsola-ponyta-sku0.dts   | 23 ++++++++++
+>  .../mediatek/mt8186-corsola-ponyta-sku1.dts   | 27 ++++++++++++
+>  .../dts/mediatek/mt8186-corsola-ponyta.dtsi   | 44 +++++++++++++++++++
+>  5 files changed, 106 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi
+> 
+> --
+> 2.34.1
+> 
+> 
+> 
 
-the revert also needs to happen in -stable. 6.10.8 is broken as well.
 
-https://github.com/thesofproject/linux/issues/5168
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y mediatek/mt8186-corsola-ponyta-sku0.dtb mediatek/mt8186-corsola-ponyta-sku1.dtb' for 20240909023148.1677936-1-cengjianeng@huaqin.corp-partner.google.com:
+
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic: failed to match any schema with compatible: ['mediatek,mt6366', 'mediatek,mt6358']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic: failed to match any schema with compatible: ['mediatek,mt6366', 'mediatek,mt6358']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic: failed to match any schema with compatible: ['mediatek,mt6366', 'mediatek,mt6358']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic: failed to match any schema with compatible: ['mediatek,mt6366', 'mediatek,mt6358']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic/codec: failed to match any schema with compatible: ['mediatek,mt6366-sound', 'mediatek,mt6358-sound']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic/codec: failed to match any schema with compatible: ['mediatek,mt6366-sound', 'mediatek,mt6358-sound']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic/codec: failed to match any schema with compatible: ['mediatek,mt6366-sound', 'mediatek,mt6358-sound']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic/codec: failed to match any schema with compatible: ['mediatek,mt6366-sound', 'mediatek,mt6358-sound']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic/rtc: failed to match any schema with compatible: ['mediatek,mt6366-rtc', 'mediatek,mt6358-rtc']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: /soc/pwrap@1000d000/pmic/rtc: failed to match any schema with compatible: ['mediatek,mt6366-rtc', 'mediatek,mt6358-rtc']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic/rtc: failed to match any schema with compatible: ['mediatek,mt6366-rtc', 'mediatek,mt6358-rtc']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: /soc/pwrap@1000d000/pmic/rtc: failed to match any schema with compatible: ['mediatek,mt6366-rtc', 'mediatek,mt6358-rtc']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: touchpad@2c: 'vcc-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/input/hid-over-i2c.yaml
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: dp-bridge@5c: 'extcon' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/ite,it6505.yaml
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: dp-bridge@5c: 'extcon' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/ite,it6505.yaml
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dtb: sound: 'model' is a required property
+	from schema $id: http://devicetree.org/schemas/sound/mt8186-mt6366-rt1019-rt5682s.yaml
+arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dtb: sound: 'model' is a required property
+	from schema $id: http://devicetree.org/schemas/sound/mt8186-mt6366-rt1019-rt5682s.yaml
+
+
+
 
 
 
