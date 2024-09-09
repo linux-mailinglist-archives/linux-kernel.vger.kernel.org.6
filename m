@@ -1,180 +1,187 @@
-Return-Path: <linux-kernel+bounces-320971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257499712C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:59:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D9A39712B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A52701F2166F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:59:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB92A1F233CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4A31B251A;
-	Mon,  9 Sep 2024 08:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E741B253B;
+	Mon,  9 Sep 2024 08:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="OX0nj0dG"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7VT9iYw"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4291B150A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D726B176237;
+	Mon,  9 Sep 2024 08:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725872381; cv=none; b=APmOIhhYsm2zzBYPQ5PXGIxXvtsEtmQbd75rNUUfRGYckTsRnt14uuXFtAsZHVEptHF5jIkNrAdwoQ+zVDC7bBM4BiFkGordTKaMbs7bwNNTH+QjfVPcdwRpSTZDU6GzKjE/EvNm3jPwDm5O9mENBbrPSA7981zdTOZxOcZss/E=
+	t=1725872211; cv=none; b=PI+w3kYK1bGnZKW231BPBnFS4ZFYzRigEfwELRpxwIJ+Awvdn8DG4cbQyKDL5xILxDiGUCbccLd9wV+aHZedRvnOhCODPcxWEH6+2yg3IBYmhD7MdibFY66+/sqJdMEjMmEWTT4C7xeFZUGAY0L5+uKyjE58m3sBGt2wlMg5Qm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725872381; c=relaxed/simple;
-	bh=kYwMWMOUYoJZKPWDz0p/NGGwuUGLl3O/po+hhV/ySR0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VMlxeRBpihRX90T4lbsPlMrQcKLd157ic4YWd387MIpNX/WBtUXPHKMJE5ejbfOflcyMmFlZJgNemMGJOu8X4aoVMPIA0jzaUKW9IJiVPn+y/jscY6UJnxU1d1I/LAuAGHqVwK5q25ayhHes6h/SQ/sUnk6ciBOv5vYDisLmyPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=OX0nj0dG; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5365aa568ceso3352833e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 01:59:38 -0700 (PDT)
+	s=arc-20240116; t=1725872211; c=relaxed/simple;
+	bh=IHVEyXjXEadqqP4bsMBt8xo2VWroQd70mE6fg0tm3MA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pNc8XNeR/lDsFeTbrry8FjMlVTcHfjEp5WmjxbDf6lZOUs9WkAgrycJ7xvlV13AB3LF2aI9MXlxQeoE/2n6RKv8c3IFCibUxAn0d9aSwWwDtZjPU0AZGNi+dMevRAanHIQBz97XUVUq5B6kv1EqD4UbNs0aBPWhaSx8KNlVNZIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U7VT9iYw; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cae102702so17717375e9.0;
+        Mon, 09 Sep 2024 01:56:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725872377; x=1726477177; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6S2UE6lFQFIaK4OtJMbVxXJXe1O9tXNFiR7Twawdri0=;
-        b=OX0nj0dGgRdvSkuZQ5TjOckTvUotgw3dbzW5U2/jndT7AirIr++Fdd96ED4OfWDrNy
-         WUoeckGeo9efcgyrsx/UlCw63zi4fHQG/xR0piYRKX7BfCiEAmyE2RAM8FVwTmyihDBo
-         eSyDR/NVNj9epuYiqN6JC6W88VP/BJlw0YPA8=
+        d=gmail.com; s=20230601; t=1725872208; x=1726477008; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/BmGU95A8hfLAsZCZFz/EirdQEHMm/2AkTfuMxVV4Mo=;
+        b=U7VT9iYwPf1jwOlAjZyhd7UrzU5+46T0QQQFFHeLs1cxLywvlsGZDLAOX5GzEf8/wD
+         rSwtwjPVKCAY5T2rvzQ215RTb0je2Y60AfVV6Z+Txii/DPrd7TEL69Vv2/vvi1s1tcwa
+         lLjZ7dB+MqFxCcLOjYx3/A5121feiAG4qsn9tcLvDpeYbf/tdl37oW2WwIwJaXKLN2UX
+         QofQm/DwONMQJs1uBcY02uU15qmxx91yItHxeGnoQeBbD72LCws38injR6P7EqUhVx6V
+         erPnUd5+4kINrIjHC+7HEfUAY3qm3mJct2o4eeKEXVVnOWVNtyT8wVSuFBy9gOGBdG18
+         OVWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725872377; x=1726477177;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6S2UE6lFQFIaK4OtJMbVxXJXe1O9tXNFiR7Twawdri0=;
-        b=ItFaavWT77e2cUkRolJR85toJYqXLsDsuinezave6FBTPThC53E+XTuSQAhS+HYhoV
-         ZhENaGbmaiWmvTd1bXxmZNth47Oq/NjrAQgX6AQ2GRn0ZVuXU/mB1JSg2gS63D54DVow
-         CNs1vdKn1K7PFY9MIbB5iTAKJal32z+9udjWJBJNrTjHNxGW04TjavtZ75JWEwxYXm2G
-         ixxAk3FJSw6HCuOjyRgZl9UOUxIEbk4WUmhdJOoFXg/on9YKwO52uh41q78KKEO+g/jy
-         YdkJiu906L0EcDw7UuCNiVI5ASe292CSZzvsceQ9TSw7YFMo5cM9PZ157yVbZjqfF4iM
-         2SDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXoDFA/oaDZ7ZCECsyriGTgEvT+DZ88SO+70KjEM6BtMvIus+BYq9rUo2c0DmuBl3oE6i6beDeafqI1bbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylAlylllrmftL/ZU33AfXAtSrnQzDyzJvi5pgonuJyVEqfBK5H
-	mTCnZNcSs8RefK9NZcrOcWp71ZVcASnzs7vpCtGkd1K3yXvrUYRDFReLfW++aB/N9rsJejMK8vk
-	VfABe9xvxqB2xrAFXqVeNadQyuolP9UKmgCHA
-X-Google-Smtp-Source: AGHT+IEV5KHTyM42uPsdDXbjleRs4adAC8RAMwKOrUjz4iDm20YabVneezv8rJGiE6wMjCx8MJoPuYEUF0lSIgN32s0=
-X-Received: by 2002:a05:6512:3d89:b0:52e:933f:f1fa with SMTP id
- 2adb3069b0e04-53658818d02mr6743959e87.61.1725872377196; Mon, 09 Sep 2024
- 01:59:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725872208; x=1726477008;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/BmGU95A8hfLAsZCZFz/EirdQEHMm/2AkTfuMxVV4Mo=;
+        b=Ez0sLgQSbvApG0npKLnhyeM+9JdW4NoLg+hwslOnHl8Uc9gftWhntd8obx0uQB4KW1
+         b8BKEQQs8cd4q5bym4CJAtN607tb3STOy0Je14fz7oe0irZ08w9jM4LNTIVDV4Wv3n15
+         g3PJhw87xSczvMX1U5TGDpdfeyQjuLqZ9Q+fmj+sqCeJp6HydC1sZY200qVxR29eRn5q
+         1Hrb8HKyaVKin3T4NqZVUxoiwk1IbqGn93n9I+9/Vbqn6++7vIEKR1UBBFmJsDJUshou
+         Zqf6/8MwOQHeCrrDVVIJQH4zzfce7ewnZofghDv/VjQ4rItmSY9KH4DFd1Vf1lKfcm3K
+         CtXw==
+X-Forwarded-Encrypted: i=1; AJvYcCURjH6ko4zRKi7vvmbQr/AMO1kyD4tDqAyfgLaDDQMSywa/ssKCrjDHQ9rPhqnVdttkfBTOnE1KaSWa@vger.kernel.org, AJvYcCVOvSQBMJYquus+t2u/W28tA0Qkmv1gdVfcP+p/7k3tlJcx4J67JlDauI+eQcuo1vyiJF5Lqt1Ik8taNjSV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0ScNpQFn78/MP8Oj1i5VFizpbW63vrvcuic9EF6B7NcPZN453
+	h3ZfpPwubdzjqyeYDs7w2gPTuEyOhy8Mp+KnPhFfyQvMS+PhAQ4gKJcUYuKjKKc=
+X-Google-Smtp-Source: AGHT+IEHm1v1khJv8a55IRYehk34lw+ZogsDBIzuQMF7zF1B6HV7gIXGvMxLW8eAqQw5NmagzJCnXg==
+X-Received: by 2002:a05:6000:4597:b0:375:48e6:f30f with SMTP id ffacd0b85a97d-37894a04036mr3606204f8f.30.1725872207167;
+        Mon, 09 Sep 2024 01:56:47 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956654f4sm5443169f8f.43.2024.09.09.01.56.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 01:56:46 -0700 (PDT)
+Message-ID: <d48fa85725b27be77a5542e798c0dcbd4e08765b.camel@gmail.com>
+Subject: Re: [PATCH v2 8/9] iio: dac: ad3552r: add axi platform driver
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Angelo Dureghello
+ <adureghello@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>,  Jonathan Cameron <jic23@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 09 Sep 2024 11:00:55 +0200
+In-Reply-To: <b289a789-0440-4c1f-9f75-6d7e8e04189d@baylibre.com>
+References: 
+	<20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+	 <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-8-87d669674c00@baylibre.com>
+	 <b289a789-0440-4c1f-9f75-6d7e8e04189d@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1724833695-22194-1-git-send-email-ajay.kaher@broadcom.com> <a5609ba3-cc35-41c5-98f1-52063f8a6eec@kernel.org>
-In-Reply-To: <a5609ba3-cc35-41c5-98f1-52063f8a6eec@kernel.org>
-From: Ajay Kaher <ajay.kaher@broadcom.com>
-Date: Mon, 9 Sep 2024 14:29:25 +0530
-Message-ID: <CAD2QZ9Z_rpDAyeJGBDxx8vqq7nSAuiktTTCxYHUu1QtA42afew@mail.gmail.com>
-Subject: Re: [PATCH] block: Fix validation of ioprio level
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: axboe@kernel.dk, niklas.cassel@wdc.com, hare@suse.de, 
-	martin.petersen@oracle.com, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, alexey.makhalov@broadcom.com, 
-	vasavi.sirnapalli@broadcom.com, vamsi-krishna.brahmajosyula@broadcom.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 2:15=E2=80=AFPM Damien Le Moal <dlemoal@kernel.org>=
- wrote:
->
-> On 8/28/24 17:28, Ajay Kaher wrote:
-> > The commit eca2040972b4 introduced a backward compatibility issue in
-> > the function ioprio_check_cap.
-> >
-> > Before the change, if ioprio contains a level greater than 0x7, it was
-> > treated as -EINVAL:
-> >
-> >     data =3D ioprio & 0x1FFF
-> >     if data >=3D 0x7, return -EINVAL
-> >
-> > Since the change, if ioprio contains a level greater than 0x7 say 0x8
-> > it is calculated as 0x0:
-> >
-> >     level =3D ioprio & 0x7
-> >
-> > To maintain backward compatibility the kernel should return -EINVAL in
-> > the above case as well.
-> >
-> > Fixes: eca2040972b4 ("scsi: block: ioprio: Clean up interface definitio=
-n")
-> > Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
-> > ---
-> >  block/ioprio.c | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/block/ioprio.c b/block/ioprio.c
-> > index 73301a2..f08e76b 100644
-> > --- a/block/ioprio.c
-> > +++ b/block/ioprio.c
-> > @@ -30,6 +30,15 @@
-> >  #include <linux/security.h>
-> >  #include <linux/pid_namespace.h>
-> >
-> > +static inline int ioprio_check_level(int ioprio, int max_level)
+Hi all,
+
+Some comments on top of what David already said...
+
+On Thu, 2024-09-05 at 15:40 -0500, David Lechner wrote:
+> On 9/5/24 10:17 AM, Angelo Dureghello wrote:
+>=20
+> ...
+>=20
+> > +
+> > +static int ad3552r_axi_read_raw(struct iio_dev *indio_dev,
+> > +				struct iio_chan_spec const *chan,
+> > +				int *val, int *val2, long mask)
 > > +{
-> > +     int data =3D IOPRIO_PRIO_DATA(ioprio);
+> > +	struct ad3552r_axi_state *st =3D iio_priv(indio_dev);
+> > +	int err, ch =3D chan->channel;
 > > +
-> > +     if (IOPRIO_BAD_VALUE(data, max_level))
-> > +             return -EINVAL;
->
-> No, this cannot possibly work correctly because the prio level part of th=
-e prio
-> data is only 3 bits, so 0 to 7. The remaining 10 bits of the prio data ar=
-e used
-> for priority hints (IOPRIO_HINT_XXX).
->
-> Your change will thus return an error for cases where the prio data has a=
- level
-> AND also a hint (e.g. for command duration limits). This change would bre=
-ak
-> command duration limits. So NACK.
->
-> The userspace header file has the ioprio_value() that a user should use t=
-o
-> construct an ioprio. Bad values are checked in that function and errors w=
-ill be
-> returned if an invalid level is passed.
->
-
-OK. Thanks for the detailed explanation.
-
-I agree, to use unused bits, functionality (return value in this case)
-will be changed. If applications are built using Kernel headers of
-v6.1 (doesn't include eca2040972b4) and later only upgrading Kernel to
-v6.6, because of the changes in return values applications may have
-some sort of regression.
-
-To make the software backward compatible I believe, unused bits should
-always be ignored. So that if in future someone uses it, it should not
-change the behaviour (return values) of existing software.
-
-- Ajay
-
-> > +     return 0;
-> > +}
+> > +	switch (mask) {
+> > +	case IIO_CHAN_INFO_SAMP_FREQ: {
+> > +		int clk_rate;
 > > +
-> >  int ioprio_check_cap(int ioprio)
-> >  {
-> >       int class =3D IOPRIO_PRIO_CLASS(ioprio);
-> > @@ -49,7 +58,7 @@ int ioprio_check_cap(int ioprio)
-> >                       fallthrough;
-> >                       /* rt has prio field too */
-> >               case IOPRIO_CLASS_BE:
-> > -                     if (level >=3D IOPRIO_NR_LEVELS)
-> > +                     if (ioprio_check_level(ioprio, IOPRIO_NR_LEVELS))
-> >                               return -EINVAL;
-> >                       break;
-> >               case IOPRIO_CLASS_IDLE:
->
-> --
-> Damien Le Moal
-> Western Digital Research
->
+> > +		err =3D iio_backend_read_raw(st->back, chan, &clk_rate, 0,
+> > +					=C2=A0=C2=A0 IIO_CHAN_INFO_FREQUENCY);
+>=20
+> This seems odd to me. How does the backend know what frequency we want?
+> It would make more sense to me if this somehow indicated that we were
+> getting the SPI SCLK rate.
+>=20
+
+Yes, this sampling frequency bit seems very wrong atm. And the thing is, we=
+'re
+not even getting SCLK. According to [1], the /4 and /8 is for clk_in which =
+is
+not the same as SCLK (unless I'm missing something).=C2=A0
+
+OTOH, if in the backend patch, that clk_get() is somehow getting sclk, that=
+'s
+wrong because sclk is an output clk of the IP. So we need to get clk_in whi=
+ch
+should be (typically) 133MHz.
+
+> > +		if (err !=3D IIO_VAL_INT)
+>=20
+> Would be better to call the variable ret instead of err if it can hold
+> something besides an error code.
+>=20
+> > +			return err;
+> > +
+> > +		/*
+> > +		 * Data stream SDR/DDR (clk_in/8 or clk_in/4 update rate).
+> > +		 * Samplerate has sense in DDR only.
+>=20
+> We should also mention that this assumes QSPI in addtion to DDR enabled.
+>=20
+
+I understand the QSPI bit but why the DDR part? I just don't understand the
+comment "Samplerate has sense in DDR only.". It needs way more explanation =
+if
+that is true...
+
+> > +		 */
+> > +		if (st->single_channel)
+> > +			clk_rate =3D DIV_ROUND_CLOSEST(clk_rate, 4);
+> > +		else
+> > +			clk_rate =3D DIV_ROUND_CLOSEST(clk_rate, 8);
+> > +
+>=20
+
+This division also looks to be very backend dependent. So it's far from ide=
+al
+being in here...
+
+To me, the way we need to get this done is for the backend to effectively r=
+eport
+back SCLK (in a correct way). Then, depending on the number of bits per clk=
+ (4
+for QSPI), the word size and DDR vs SDR we get the device sample rate. With=
+ it,
+we then choose one of Jonathan's suggestion (a per channel attr might be le=
+ss
+confusing).
+
+All the above said, I probably need to catch up on the above. It might happ=
+en
+that David and Angelo already got some more info from the hdl guys while I =
+was
+on vacation.
+
+[1]: https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
+- Nuno S=C3=A1
+
 
