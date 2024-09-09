@@ -1,87 +1,191 @@
-Return-Path: <linux-kernel+bounces-321731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7041A971EAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:04:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32282971EAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A121C238D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:04:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7926285DE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18461BC39;
-	Mon,  9 Sep 2024 16:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49BF1139587;
+	Mon,  9 Sep 2024 16:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cd7tt4XB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WEpl45L0"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4630913A240;
-	Mon,  9 Sep 2024 16:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0453A13633B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725897842; cv=none; b=ijEpVMDvjEeUZVaZAVXUzH/i4rd3FWGSRSvlIx5Nf7KKO0k+iL78wD+HqvQwQmoUAYn5vxVgN88+QR4EtzZA0++CLuOqrXHT3W7KRP3SGFSoXJXkSHjcs0bjxsw0xLHO52iRUlRW9FWXKNVO1g4ovxzpKHwM6xNlizKSw0u2npE=
+	t=1725897861; cv=none; b=n5nQ8bdBD9l0Pi/R25Dk88Du7UiKLLxL3C9xCdZ+Kto9caul+6QZHzb/d1LamUC7I3BnPPOdzm1GsAsKfEjGWqVprcb9PPvyg4IwnQ93iMkuF4iUCu7zo+B6/EplOYlktljK2l7N5F6KqKOvgGNlNts8aR08jzev4BVXD6RfRtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725897842; c=relaxed/simple;
-	bh=XcUDm/k+911vW3FZtkVePJXLt22j80SWvX41/HfoO3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AIV2fXVoj83cUG6dv3i5zHOjDFA/1L5w7/AwlVbP7Ch0m5d4GlswuiYJdu01ycNWb36UFHA+NIXTe1R0C63F+R2q4c7uF9gMJHEC7yjHGwKRZFlKSZJgyVDQ6jX0OM/1iC8lm3q2iLZ1PIz9DDeQb/7DFg55dElG8BqUa5VjWho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cd7tt4XB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B71B7C4CEC5;
-	Mon,  9 Sep 2024 16:04:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725897841;
-	bh=XcUDm/k+911vW3FZtkVePJXLt22j80SWvX41/HfoO3w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cd7tt4XBxV3SFOwaiRoDq9Bwimf/e2Z6oHXS6IplUIbZRoBGbllmWvj+4TSsOx2yr
-	 poSh9WS6+0+OcteGNXurFGmDxl28P5JVLHJznBh/4lgCSvCd8ErA9LsSLpGb3KGhXi
-	 Z9Qo4SVvIrjEpIOSA0y+oryXRehmY05vLxF2y5BnMYCyt7+UcpEB4hKwJd8CPEmxgU
-	 V4XqCoI47JBNuwM4CO+HyafDV+BhsYilNMCMhVxr3oDhsIDXLa21KAXfLi3RdGirDW
-	 qAEq61fzbhXRUbxR8jaUDCNn2XcEyVkSW8vx8qsj9AqGQNErQtYsVOVAU2IMVfksqF
-	 4TfB4V5q5da6Q==
-Date: Mon, 9 Sep 2024 11:04:00 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: andrew@lunn.ch, devicetree@vger.kernel.org, davem@davemloft.net,
-	conor+dt@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	pabeni@redhat.com, hkallweit1@gmail.com, f.fainelli@gmail.com,
-	krzk+dt@kernel.org
-Subject: Re: [PATCH v2 net] dt-bindings: net: tja11xx: fix the broken binding
-Message-ID: <172589770898.219234.12343458471539869016.robh@kernel.org>
-References: <20240909012152.431647-1-wei.fang@nxp.com>
+	s=arc-20240116; t=1725897861; c=relaxed/simple;
+	bh=SfkXfubgiFx92+7wAeARbv+9+lO6N+ls1vXDEv4upOM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Weh3jMrVceH/Wv3RW25SfEdp0TR5AwYwG3QMLkmyLwRUFT50H96ZkFEeeVUHOzMFH3d8oG6mg9VS2gK1A2lLIkUddQCtKCVlzZQmj1S39LA+wl4TqisoUIpVA0Bb6PQUuTJimE/wB75FEzjgtCbI79T9zXI4ONZUaUBVTjswbe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WEpl45L0; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7c6b192a39bso4426483a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:04:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725897859; x=1726502659; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HIy0EXPmU4w2r9t2Tqb4i5dEPm1PsQzfMKsGrcWIWA8=;
+        b=WEpl45L0itUFdPl0cxkIT0zVGdolwhd9w1Wk7BKBoh2mDRCGLi2PCGaYV8bu56eO+U
+         S+TmH+Amc/ePIMgsZBq5/NOw7vKvfjmGYnxOm5lsBhfNOP9ZXZxABqFDE5Y89wLf99Rb
+         iZuCzYD+dVg2YcprK8CAxrkMy8AJSY/pIUsnr7BCHloUhugslYjVOgJrtIDUgYgosZFm
+         Ybms869aaW9QtAS88w2pzzvRqotFGRz5rb7aNKEoJjJzlpidXM/LL4qL8qMIAgtmXrit
+         hRy4BAalMTL+jI1HVqKvFUDOpjle6brBGb5PS+2pUIxCpc1Kl1I2RAHOSivyaiboOLDI
+         ZLdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725897859; x=1726502659;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HIy0EXPmU4w2r9t2Tqb4i5dEPm1PsQzfMKsGrcWIWA8=;
+        b=Mqu9FkBFs33WTE3mVtq6OeXs/2Pjpux03URJ1gEEw1jZda9hXum/Cy532g3A7Yhn6U
+         8uDaqh2mH5o9nR2jqzA2HpQ6kg9yH1a3lRUsJd5iMeK6VZCkt3UPJCgbu8WRtZS6Q2Lu
+         oJ2xMIJKR5e5ybXFooaVRR/mPZserIVrewo5QRyc3X/LOi5qUgcBc2YpcV+UL378fPnp
+         8Db1qOxvPzTwzyIYeD9UQUGIPp3K9SGy9K2df1P0j0naRhKkdniDkHuU2jcyaFhqIbUe
+         YHPxkPABLxQ8XQeqZ+mKQ8SpnOiXKe66oPBmtixaYSdYnKcvprZ9R0Xc294wJ/+nUa3S
+         /B8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW2TzHC/djebsOdzZOiTEyLiSjhGj06IjvwWOj8oMVKEr4Ru7l6kdm7u8DW3LJUl4pdyiJndo1ngoKx/nc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXeAcUlBOlP4ZivZ+jyF815wGIMqzvjZLGqmR0aCuHGJD22zWh
+	UKW6YB4M0z1ZMtTXazj1Q5OLNHFYN+7mMMuJV74PQRWYbOhuikCK3bcXhpIKevQTxP7OQbHa2Hi
+	WQQ==
+X-Google-Smtp-Source: AGHT+IE4aiCLbBZ14WYzLNSaZH32wjFRVL8mk2TgwQJhNbZlhMrPltFxWEZ5OUqdU3rG1V+9P7yYcAioVaA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:d4c1:b0:205:826e:6a17 with SMTP id
+ d9443c01a7336-206f0364078mr4697215ad.0.1725897859077; Mon, 09 Sep 2024
+ 09:04:19 -0700 (PDT)
+Date: Mon, 9 Sep 2024 09:04:17 -0700
+In-Reply-To: <c1d420ba-13de-48dd-abee-473988172d07@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909012152.431647-1-wei.fang@nxp.com>
+Mime-Version: 1.0
+References: <ZtUYZE6t3COCwvg0@yzhao56-desk.sh.intel.com> <87jzfutmfc.fsf@redhat.com>
+ <Ztcrs2U8RrI3PCzM@google.com> <87frqgu2t0.fsf@redhat.com> <ZtfFss2OAGHcNrrV@yzhao56-desk.sh.intel.com>
+ <ZthPzFnEsjvwDcH+@yzhao56-desk.sh.intel.com> <Ztj-IiEwL3hlRug2@google.com>
+ <Ztl9NWCOupNfVaCA@yzhao56-desk.sh.intel.com> <Zt6H21nzCjr6wipM@yzhao56-desk.sh.intel.com>
+ <c1d420ba-13de-48dd-abee-473988172d07@redhat.com>
+Message-ID: <Zt8cgUASZCN6gP8H@google.com>
+Subject: Re: [PATCH 5/5] KVM: VMX: Always honor guest PAT on CPUs that support self-snoop
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Yan Zhao <yan.y.zhao@intel.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Gerd Hoffmann <kraxel@redhat.com>, kvm@vger.kernel.org, rcu@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kevin Tian <kevin.tian@intel.com>, 
+	Yiwei Zhang <zzyiwei@google.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Josh Triplett <josh@joshtriplett.org>
+Content-Type: text/plain; charset="us-ascii"
 
-
-On Mon, 09 Sep 2024 09:21:52 +0800, Wei Fang wrote:
-> As Rob pointed in another mail thread [1], the binding of tja11xx PHY
-> is completely broken, the schema cannot catch the error in the DTS. A
-> compatiable string must be needed if we want to add a custom propety.
-> So extract known PHY IDs from the tja11xx PHY drivers and convert them
-> into supported compatible string list to fix the broken binding issue.
+On Mon, Sep 09, 2024, Paolo Bonzini wrote:
+> On 9/9/24 07:30, Yan Zhao wrote:
+> > On Thu, Sep 05, 2024 at 05:43:17PM +0800, Yan Zhao wrote:
+> > > On Wed, Sep 04, 2024 at 05:41:06PM -0700, Sean Christopherson wrote:
+> > > > On Wed, Sep 04, 2024, Yan Zhao wrote:
+> > > > > On Wed, Sep 04, 2024 at 10:28:02AM +0800, Yan Zhao wrote:
+> > > > > > On Tue, Sep 03, 2024 at 06:20:27PM +0200, Vitaly Kuznetsov wrote:
+> > > > > > > Sean Christopherson <seanjc@google.com> writes:
+> > > > > > > 
+> > > > > > > > On Mon, Sep 02, 2024, Vitaly Kuznetsov wrote:
+> > > > > > > > > FWIW, I use QEMU-9.0 from the same C10S (qemu-kvm-9.0.0-7.el10.x86_64)
+> > > > > > > > > but I don't think it matters in this case. My CPU is "Intel(R) Xeon(R)
+> > > > > > > > > Silver 4410Y".
+> > > > > > > > 
+> > > > > > > > Has this been reproduced on any other hardware besides SPR?  I.e. did we stumble
+> > > > > > > > on another hardware issue?
+> > > > > > > 
+> > > > > > > Very possible, as according to Yan Zhao this doesn't reproduce on at
+> > > > > > > least "Coffee Lake-S". Let me try to grab some random hardware around
+> > > > > > > and I'll be back with my observations.
+> > > > > > 
+> > > > > > Update some new findings from my side:
+> > > > > > 
+> > > > > > BAR 0 of bochs VGA (fb_map) is used for frame buffer, covering phys range
+> > > > > > from 0xfd000000 to 0xfe000000.
+> > > > > > 
+> > > > > > On "Sapphire Rapids XCC":
+> > > > > > 
+> > > > > > 1. If KVM forces this fb_map range to be WC+IPAT, installer/gdm can launch
+> > > > > >     correctly.
+> > > > > >     i.e.
+> > > > > >     if (gfn >= 0xfd000 && gfn < 0xfe000) {
+> > > > > >     	return (MTRR_TYPE_WRCOMB << VMX_EPT_MT_EPTE_SHIFT) | VMX_EPT_IPAT_BIT;
+> > > > > >     }
+> > > > > >     return MTRR_TYPE_WRBACK << VMX_EPT_MT_EPTE_SHIFT;
+> > > > > > 
+> > > > > > 2. If KVM forces this fb_map range to be UC+IPAT, installer failes to show / gdm
+> > > > > >     restarts endlessly. (though on Coffee Lake-S, installer/gdm can launch
+> > > > > >     correctly in this case).
+> > > > > > 
+> > > > > > 3. On starting GDM, ttm_kmap_iter_linear_io_init() in guest is called to set
+> > > > > >     this fb_map range as WC, with
+> > > > > >     iosys_map_set_vaddr_iomem(&iter_io->dmap, ioremap_wc(mem->bus.offset, mem->size));
+> > > > > > 
+> > > > > >     However, during bochs_pci_probe()-->bochs_load()-->bochs_hw_init(), pfns for
+> > > > > >     this fb_map has been reserved as uc- by ioremap().
+> > > > > >     Then, the ioremap_wc() during starting GDM will only map guest PAT with UC-.
+> > > > > > 
+> > > > > >     So, with KVM setting WB (no IPAT) to this fb_map range, the effective
+> > > > > >     memory type is UC- and installer/gdm restarts endlessly.
+> > > > > > 
+> > > > > > 4. If KVM sets WB (no IPAT) to this fb_map range, and changes guest bochs driver
+> > > > > >     to call ioremap_wc() instead in bochs_hw_init(), gdm can launch correctly.
+> > > > > >     (didn't verify the installer's case as I can't update the driver in that case).
+> > > > > > 
+> > > > > >     The reason is that the ioremap_wc() called during starting GDM will no longer
+> > > > > >     meet conflict and can map guest PAT as WC.
+> > > > 
+> > > > Huh.  The upside of this is that it sounds like there's nothing broken with WC
+> > > > or self-snoop.
+> > > Considering a different perspective, the fb_map range is used as frame buffer
+> > > (vram), with the guest writing to this range and the host reading from it.
+> > > If the issue were related to self-snooping, we would expect the VNC window to
+> > > display distorted data. However, the observed behavior is that the GDM window
+> > > shows up correctly for a sec and restarts over and over.
+> > > 
+> > > So, do you think we can simply fix this issue by calling ioremap_wc() for the
+> > > frame buffer/vram range in bochs driver, as is commonly done in other gpu
+> > > drivers?
+> > > 
+> > > --- a/drivers/gpu/drm/tiny/bochs.c
+> > > +++ b/drivers/gpu/drm/tiny/bochs.c
+> > > @@ -261,7 +261,9 @@ static int bochs_hw_init(struct drm_device *dev)
+> > >          if (pci_request_region(pdev, 0, "bochs-drm") != 0)
+> > >                  DRM_WARN("Cannot request framebuffer, boot fb still active?\n");
+> > > 
+> > > -       bochs->fb_map = ioremap(addr, size);
+> > > +       bochs->fb_map = ioremap_wc(addr, size);
+> > >          if (bochs->fb_map == NULL) {
+> > >                  DRM_ERROR("Cannot map framebuffer\n");
+> > >                  return -ENOMEM;
 > 
-> [1]: https://lore.kernel.org/netdev/31058f49-bac5-49a9-a422-c43b121bf049@kernel.org/T/
-> 
-> Fixes: 52b2fe4535ad ("dt-bindings: net: tja11xx: add nxp,refclk_in property")
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> ---
-> V2 changes:
-> 1. Add more compatible strings based on TJA11xx data sheets.
-> V1 link: https://lore.kernel.org/imx/20240904145720.GA2552590-robh@kernel.org/T/
-> ---
->  .../devicetree/bindings/net/nxp,tja11xx.yaml  | 62 ++++++++++++++-----
->  1 file changed, 46 insertions(+), 16 deletions(-)
-> 
+> While this is a fix for future kernels, it doesn't change the result for VMs
+> already in existence.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+I would prefer to bottom out on exactly whether or not the SPR/CLX behavior is
+working as intended.  Maybe the ~8x slowdown is just a side effect of any Intel
+multi-socket/node system, but I think we should get confirmation (inasmuch as
+possible) that that is indeed the case.  E.g. if this is actually a bug in CLX+,
+then the actions we need to take are different.
 
+> I don't think there's an alternative to putting this behind a quirk.
+
+This gets a bit weird, which is why I want to bottom out on whether or not CLX
+and SPR are working as intended.  If non-coherent DMA is attached to the VM, then
+even before this patch KVM would honor guest PAT.  I agree that we don't want to
+break existing setups, but if CLX+SPR are working as intended, then this is
+inarguably a bochs driver bug, and I would prefer to have the quirk explicitly
+reference bochs-compatible devices, e.g. in the name and documentation, so that
+userspace can disable the quirk by default and only leave it enabled if a bochs
+device is being exposed to the guest.
 
