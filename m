@@ -1,57 +1,64 @@
-Return-Path: <linux-kernel+bounces-321121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8D99714DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:07:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15AA59714DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFCCF283808
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:07:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88B9283E3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068841B3F0A;
-	Mon,  9 Sep 2024 10:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D567C1B3B0F;
+	Mon,  9 Sep 2024 10:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3b4M4HD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gtxEjCzz"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF3DDF58;
-	Mon,  9 Sep 2024 10:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB091B374E;
+	Mon,  9 Sep 2024 10:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725876439; cv=none; b=NSV/RAVpA+n6g7oxyfcaOI2afc35hld5hr57Oc3o/SxopRu4WoBxy2wyC1siELdv5dvaajRzGQ9CPqQurfFYmvCbrHP0Le5JcNoylJu0cMXZylJu9XAStTQp1IkV7nNVHARFDFhgN3Jr/58hoVXdfyVQPavdQ53aWbBOe3G1tfI=
+	t=1725876458; cv=none; b=WNKG/64FuxFn8wNM871FtBn2A001N5cisyXfQ9EKS3YHruvLu0bYNYwiB6YvnSAzVni+yFJ1KKPoCBiLeXqtNdYaZw8kKRZ5FAi1jP0M05A+qVR8heT4dkmEC8cPqOfJZTL6fn6AzXg9tvS4kyfUVNYZhEaaPkPYwIJHfWExXn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725876439; c=relaxed/simple;
-	bh=XHXlbPbsks6inwZT3SBeKc3Emrk6/RBcR1LyiF7/iQc=;
+	s=arc-20240116; t=1725876458; c=relaxed/simple;
+	bh=gGAf8fH+CF7c4deB2V1S6EIMbFGUAOFQEO2Wv26+Bh4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GYKrynbd/rQZ+xFApY7T0W8jtZ5wlqJUPFeZWobYpNjNv4knptH14TJg73EJkDOcpEsVLPzNrIjwCFPsBWUO+SKNsxt/mG/sTZRQeklygcD/jJYGq7wTt1SIivP78zh5+TS7zYcxfkpbjvlIFfHFsfEcKFNR2kpyW7aCR8PiSAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h3b4M4HD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E07DC4CEC5;
-	Mon,  9 Sep 2024 10:07:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725876438;
-	bh=XHXlbPbsks6inwZT3SBeKc3Emrk6/RBcR1LyiF7/iQc=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=YhbuyzSQ0a6P4pB/2qu/sbPg5sSVSSMiou4wROkuFyjkbozfMFLsQ5KMUiO73lbpkeF7Zxm6Vw2KnvNafJaGBURkpZfVfsgKycJBQRi94kerVQSlEKS5lu1P9y/TZn1KMuShVh9HUfb8KgYgIC+Pv8P5gHN9MZkZMu+yqouOOII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gtxEjCzz; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (213-229-8-243.static.upcbusiness.at [213.229.8.243])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0945D2C6;
+	Mon,  9 Sep 2024 12:06:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1725876379;
+	bh=gGAf8fH+CF7c4deB2V1S6EIMbFGUAOFQEO2Wv26+Bh4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h3b4M4HD9I3KXtCYLhNU7FgcE5MJX3gNrHzMr4Nx0znE7XoAlP/e3E+vE/+SMslzD
-	 B6GqWxKxigr/HEZUBf8L7KDOYMnYkaG9YSzcmkNcHHp8Y/DQ6j76iDlZZgMnaCf5Vs
-	 /55Mi9PKXr4e3nkwnB5LGFBkA68mGZy6LfJwJGScZMgALUYPmbAcs1fY3NBOdXZte1
-	 UsPLrkvfDWSk3keBW+pkiHbbn919MwNrLos9UqzGY6s++M8CGQOEVOW3cYImaH8G6q
-	 U+gBvx5sXNkw21p03yWD1dy4nf+jkmEC2HnMjHs63KF+o+h6vsQoZwkQGiCtbQ0I0V
-	 PwqE99YVWxFjg==
-Date: Mon, 9 Sep 2024 12:07:14 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>, 
-	Mark Brown <broonie@kernel.org>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] input: touchscreen: ad7877: add dt support
-Message-ID: <bnndfn3trqenvxd2qydlxadtm7r6kznvydekhukbfii32mwgz5@xpda4cqacgok>
-References: <20240909093101.14113-1-antoniu.miclaus@analog.com>
- <20240909093101.14113-2-antoniu.miclaus@analog.com>
+	b=gtxEjCzzUV++3NzQ3ApD0eIdjAgJTsk3zplsC8NAevhvOAkWpOo52WMh6Zzyz8AEZ
+	 nL3nM0RrK+MFzPBBeJpypsqGRLdyFZ5QXQcTfHkbY1qBXGmBSyBD2FdIHGrIxN7DTI
+	 pASuYchjtVGr4ajR+jRHRyNsO2mUVgML0TkC2WZ8=
+Date: Mon, 9 Sep 2024 13:07:32 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 2/3] media: platform: rzg2l-cru: rzg2l-video: Retrieve
+ virtual channel information
+Message-ID: <20240909100732.GA13983@pendragon.ideasonboard.com>
+References: <20240906173947.282402-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240906173947.282402-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240906231038.GC12915@pendragon.ideasonboard.com>
+ <CA+V-a8vsmYSOWgoiHnO5xWdn-wo-eda6hdxGz5X_Hc5s-yVv6g@mail.gmail.com>
+ <CA+V-a8s4UjjDTrQ4aw3OjQuac8B-oq++KqYf-fJEQvuxD5GodA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,19 +67,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240909093101.14113-2-antoniu.miclaus@analog.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+V-a8s4UjjDTrQ4aw3OjQuac8B-oq++KqYf-fJEQvuxD5GodA@mail.gmail.com>
 
-On Mon, Sep 09, 2024 at 12:30:12PM +0300, Antoniu Miclaus wrote:
-> Add devicetree support within the driver.
+On Sun, Sep 08, 2024 at 09:23:52PM +0100, Lad, Prabhakar wrote:
+> On Sat, Sep 7, 2024 at 10:09 PM Lad, Prabhakar wrote:
+> > On Sat, Sep 7, 2024 at 12:10 AM Laurent Pinchart wrote:
+>
+> <snip>
+>
+> > > > +
+> > > >  int rzg2l_cru_start_image_processing(struct rzg2l_cru_dev *cru)
+> > > >  {
+> > > >       struct v4l2_mbus_framefmt *fmt = rzg2l_cru_ip_get_src_fmt(cru);
+> > > >       unsigned long flags;
+> > > >       int ret;
+> > > >
+> > > > +     ret = rzg2l_cru_get_virtual_channel(cru);
+> > > > +     if (ret < 0)
+> > > > +             return ret;
+> > > > +     cru->csi.channel = ret;
+> > >
+> > > How about passing the value to the function that needs it, instead of
+> > > storing it in cru->csi.channel ? You can do that on top and drop the
+> > > csi.channel field.
+> >
+> > OK, let me check if this can be done.
+>
+> The virtual channel number is programmed in rzg2l_cru_csi2_setup() [0]
+> call, below is the code flow of the call. This code flow is called by
+> spinlock held.
 > 
-> Remove old platform data approach since it is no longer used.
+> rzg2l_cru_start_image_processing()
+>     rzg2l_cru_initialize_image_conv()
+>         rzg2l_cru_csi2_setup()
+> 
+> When rzg2l_cru_get_virtual_channel() is called directly in
+> rzg2l_cru_csi2_setup() function we get "BUG: Invalid wait context"
+> (when PROVE_LOCKING is enabled) this is due to we do a mutex lock as
+> part of v4l2_subdev_lock_and_get_active_state() in get_frame_desc.
 
-What is the point of the previous patch? How can the device work if you
-apply only patch 1?
+I didn't mean calling rzg2l_cru_get_virtual_channel() from
+rzg2l_cru_csi2_setup(), but passing the virtual channel number from
+rzg2l_cru_start_image_processing() to rzg2l_cru_initialize_image_conv()
+and then to rzg2l_cru_csi2_setup().
 
-This is somehow odd split...
+> So probably I'll leave this as it is now.
+> 
+> [0] https://elixir.bootlin.com/linux/v6.10.8/source/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c#L311
 
-Best regards,
-Krzysztof
+-- 
+Regards,
 
+Laurent Pinchart
 
