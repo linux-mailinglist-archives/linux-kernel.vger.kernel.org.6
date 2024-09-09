@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-321088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DF5797144F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:48:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1E7971489
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 599161C22F99
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:48:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89F9C28470C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EE21B3F1D;
-	Mon,  9 Sep 2024 09:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oN9RCjHY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B1B1B2EE8;
+	Mon,  9 Sep 2024 09:56:48 +0000 (UTC)
+Received: from gardel.0pointer.net (gardel.0pointer.net [85.214.157.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1EA1B251C;
-	Mon,  9 Sep 2024 09:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4240D1B3726;
+	Mon,  9 Sep 2024 09:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.157.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725875258; cv=none; b=Fqo8sMMJYP8/+V/0wVmqvIYiyqwN27arJrD6zB0BOXbxOdbD+u86IOVE0OEZDHfZhWCoSTqvI+81n12vwpwyGnzSeIjmDL8tXt1+xjY+jhZ8OBZQxzfy4cxePYi56ODH4nEgldC1ZexYxMxsS3BmVq7MXA+4JR6qNIPlRAjI97E=
+	t=1725875808; cv=none; b=lE9W1kJG00AC98Z8E9cWwETnmmE2epCQH/HRnC/LkXFbxOwe1a0TreCg1CjVgAiHLCSGLzjkucqGXujAPQN6XUj1L9Ib8LR9yoGO7dORfC3ofHcTDwRlYixKRo4Sv74UVwGIODj2/nzeHoIrs76O+3YrkvIkt7Bi7+P05lN60Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725875258; c=relaxed/simple;
-	bh=e/kAlDWa1B1k46xp0WTBhJchLMBaRYr6uKP/spCptIE=;
+	s=arc-20240116; t=1725875808; c=relaxed/simple;
+	bh=MLbbJIq+Zfe089qhtzy1npRgcDSTp273ZtecQnMVJss=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0E+NtzmqgS4fLfhIA/BJkyStulSOY+KW5pVuvQZo6nsvgA6L8ewWmMj4hhOl6qw5B1vEBI31f0N7OrDZH3+XO/Nd8PFfGldweFjM8MTrjDElYPBjV3YeVCiuHwSB4/zpsunU7DOVazuhFm01WzTksM5aovobTCYJpoInDwMmnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oN9RCjHY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 883A8C4CEC5;
-	Mon,  9 Sep 2024 09:47:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725875257;
-	bh=e/kAlDWa1B1k46xp0WTBhJchLMBaRYr6uKP/spCptIE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oN9RCjHY59ny01ykQYc7BNnVvhoJEqc07AgZgtmg9xUTecDSGBcdCEC8QR6DWkDIv
-	 xpC+dWpFrnBmJmdFInBeJlKRAB/3d4P/spU746nnn82LwCBvxmaRDe/SO/TJ6FBkC5
-	 LHpAnzztg4AAEzeSBczY0jS4Uw6ASE6f0MZo6VKt/0/kgydBAL/PPFRKb+3YBPz7+U
-	 EC1QA/nUQ5VB2nVLu3TawqnGnAW21lM3BMHfSi81WLUjzu6iTvXQYy5t6IvAS0Ds/H
-	 njItifi6YZmoHV2ljYEoZ13rYrixfJ+rAlm//SfZ7oQl7hmEwiEn8DU2pAkRCujGVD
-	 NZF2NeGTT2tJg==
-Date: Mon, 9 Sep 2024 11:47:32 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Nikita Shubin <nikita.shubin@maquefel.me>, linux-kernel@vger.kernel.org,
-	Damien Le Moal <dlemoal@kernel.org>, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-ide@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v12 20/38] dt-bindings: ata: Add Cirrus EP93xx
-Message-ID: <Zt7ENCkvBfoX3OVn@ryzen.lan>
-References: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
- <20240909-ep93xx-v12-20-e86ab2423d4b@maquefel.me>
- <172587510301.3289247.9336315361343642952.robh@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g4XRBgPQkPeR3FvxTMZlE5HssavbH6Yg5qenm2ZNKj5aY+Q1K6LgbeAJRMrXl/V46NEGOWGxO2Cd4FrUO/VlP7rruqbE6f/MMMjalCjMcOHYYf7p/F2fOZ2dnj7Y+tlWRN6sN5LBWB0C3qKr5S3ZAjvy+tZ+LFORjqO7pu0jtzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de; spf=pass smtp.mailfrom=0pointer.de; arc=none smtp.client-ip=85.214.157.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0pointer.de
+Received: from gardel-login.0pointer.net (gardel-mail [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
+	by gardel.0pointer.net (Postfix) with ESMTP id EDB21E80261;
+	Mon,  9 Sep 2024 11:48:30 +0200 (CEST)
+Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
+	id 68469160143; Mon,  9 Sep 2024 11:48:30 +0200 (CEST)
+Date: Mon, 9 Sep 2024 11:48:30 +0200
+From: Lennart Poettering <mzxreary@0pointer.de>
+To: Philipp Rudo <prudo@redhat.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Pingfan Liu <piliu@redhat.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>, Baoquan He <bhe@redhat.com>,
+	Dave Young <dyoung@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	kexec@lists.infradead.org, linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
+Message-ID: <Zt7EbvWjF9WPCYfn@gardel-login>
+References: <20240819145417.23367-1-piliu@redhat.com>
+ <CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
+ <20240906125438.1e54c5f6@rotkaeppchen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,52 +58,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <172587510301.3289247.9336315361343642952.robh@kernel.org>
+In-Reply-To: <20240906125438.1e54c5f6@rotkaeppchen>
 
-On Mon, Sep 09, 2024 at 04:45:13AM -0500, Rob Herring (Arm) wrote:
-> 
-> On Mon, 09 Sep 2024 11:10:45 +0300, Nikita Shubin wrote:
-> > Add YAML bindings for ep93xx SoC PATA.
-> > 
-> > Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
-> > Acked-by: Damien Le Moal <dlemoal@kernel.org>
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > ---
-> >  .../bindings/ata/cirrus,ep9312-pata.yaml           | 42 ++++++++++++++++++++++
-> >  1 file changed, 42 insertions(+)
-> > 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> 
-> 
-> doc reference errors (make refcheckdocs):
-> 
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240909-ep93xx-v12-20-e86ab2423d4b@maquefel.me
-> 
-> The base for the series is generally the latest rc1. A different dependency
-> should be noted in *this* patch.
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your schema.
-> 
+On Fr, 06.09.24 12:54, Philipp Rudo (prudo@redhat.com) wrote:
 
-Hello Rob,
+> I mostly agree on what you have wrote. But I see a big problem in
+> running the EFI emulator in user space when it comes to secure boot.
+> The chain of trust ends in the kernel. So it's the kernel that needs to
+> verify that the image to be loaded can be trusted. But when the EFI
+> runtime is in user space the kernel simply cannot do that. Which means,
+> if we want to go this way, we would need to extend the chain of trust
+> to user space. Which will be a whole bucket of worms, not just a
+> can.
 
-The list of warnings/errors is empty,
-so I believe that you have a bug in your bot/scripts.
+May it would be nice to have a way to "zap" userspace away, i.e. allow
+the kernel to get rid of all processes in some way, reliable. And then
+simply start a new userspace, from a trusted definition. Or in other
+words: if you don't want to trust the usual userspace, then let's
+maybe just terminate it, and create it anew, with a clean, pristine
+definition the old userspace cannot get access to.
 
+> Let me throw an other wild idea in the ring. Instead of implementing
+> a EFI runtime we could also include a eBPF version of the stub into the
+> images. kexec could then extract the eBPF program and let it run just
+> like any other eBPF program with all the pros (and cons) that come with
+> it. That won't be as generic as the EFI runtime, e.g. you couldn't
+> simply kexec any OS installer. On the other hand it would make it
+> easier to port UKIs et al. to non-EFI systems. What do you think?
 
-Kind regards,
-Niklas
+ebpf is not turing complete, I am not sure how far you will make it
+with this, in the various implementations of EFI payloads there are
+plenty of loops, sometimes IO loops, sometimes hash loops of huge data
+(for measurements). As I understand ebpf is not really compatible such
+code.
+
+Lennart
+
+--
+Lennart Poettering, Berlin
 
