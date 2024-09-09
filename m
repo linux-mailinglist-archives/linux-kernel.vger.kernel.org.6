@@ -1,223 +1,298 @@
-Return-Path: <linux-kernel+bounces-320463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87ADD970AB6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:10:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CE4F970AB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFDF6B21394
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 00:10:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 848051F214C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 00:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31526AAD;
-	Mon,  9 Sep 2024 00:10:27 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8980B29B0;
+	Mon,  9 Sep 2024 00:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=NETORG5796793.onmicrosoft.com header.i=@NETORG5796793.onmicrosoft.com header.b="VRs0Pgtj"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2125.outbound.protection.outlook.com [40.107.93.125])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C650F28EF
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 00:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725840627; cv=none; b=OZm2X6MsMSIF/yHAAv6vKFgbDNg0LBBHGz9N7XejkWwNCS0EPx9439flVDy/wbuB/CDkYHakZFOiqWGhZIsitW4NzJoKfLXyAJAgDLjJsSJLQD9RS1WPqCS/ooZDYfIpw9SgWh8+1+2kCdjfK57087z6OJk0a79S96dqQfgYdIE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725840627; c=relaxed/simple;
-	bh=gdXA8mdv9/Wt2N4JT/taEM5Rjv7oKk9dwwaTJGj93h4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cI1CKb68VFPEOzHfnpJ2JxAK8YRp2ARwyJ6wuYE83zjOOBafa/KN7dTAlMyPE1cjAX01RxjDtrhUredYmxRipWnMUb4B6gSviiCTMd/Mjz/ZmITGIpPYjxwBwkcc3JGYA12QNes5ALdvFzxUnvOx6cECKeX7qZII/1mQM/Nvba4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-39d2c44422eso60135585ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 17:10:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725840625; x=1726445425;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8YMGwHLqSidkmjKDWpogpRqKoOdeBh1Yx5Vlies0YHU=;
-        b=Pwg9tg1jC4Uc2FLOBt1OuQe9EmN0spC7uZwB3EL8yk289r51X1Iuw+e22Koy+G3+DL
-         iXilMe8gSvrZm4zHe/SZoSdt2744dwvEVwI241g6dbYt7Zesoi7ygJ4Pdqf5wGzxYVur
-         ELqJRIzR0mfg9XDnxTRX0fIpaek8KzWnzBMzQJf31ks5OyAScqcSAnIZgV4bepiEppSi
-         7SPVOx8XR1vtQR3T5U74JzmLhDQn2OVeRoM3kmtXCYn37ZQJ1L7yXsaCuEP+ytBoCMF0
-         50Vao8wriQCKV7x3qWD4GeM8My3p1FuvA2PEUgGGFAtAQuz61ZfX2lWjzPDiWc3GLDcK
-         q/0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVhCPJGDe1W9x/AXyIPoz+Zbta9DuiyYif7OKK/Bw4xk422QCjN+zenHk27rn3JA89lA8t+mLepp1oa1gE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmafFJ1XuSI1IWKCpp3ydPfz6jGsDlKCO7xc6g2dYbZlaBJuUg
-	FDiX7Ersjf0OVNuU600iVMjiNVzUFmSZZ39EBW9ZriKCmD04r0uFH5oBTxhkn2NmEwfUdXyL5wk
-	NZ44sK4xfakK/ythp7NzPoc5CNidEuuI/aa8cQ1h9OnUEVzOd9K7Fgqc=
-X-Google-Smtp-Source: AGHT+IH00w4Kg+tsfr8fLDMpUFza9Z96V2kwo2YniuJyIWsjrr7eS/chyIEuZyk1h1BmK7ZkMmRNdbeQ381GjimXyHDX7Q2uI7GU
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79E94C6D;
+	Mon,  9 Sep 2024 00:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.125
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725840739; cv=fail; b=bsfkiU3EZ238sD0U1KUpg7F9Za8SU5JKZfNdxv3N0dSDiKDXTtb8hrltwQS6Tceg9pJ4jHjgek/Osp5BDBz3WVI0d4mrcOBZu9SjvL3PYs+22+TFfIBCbu1pZyKvA+7o/SkjRUPXQOul+gGnKyPj1JsiUElm/8MKLei8/iyye0A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725840739; c=relaxed/simple;
+	bh=ozqoQZ3TErvCmpXCOLG0O9Gv68YjiAool1MNLCVLom4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rC5uCnKe/mTxCx7fNm9v4kq3YxXo0No5QQF/e1xS/W9J2xyi2Jb/a1blPCneR4rl7EdlWvYvzD/Q8YcovkUiwbbchyWOXF+rd+kbIaYaS5I6nvjUL3fVSNxA198FjrU/ydqmbSa1tFndGvALwmIBF8g99saVx2vVst3wzn+oeWE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=labundy.com; spf=pass smtp.mailfrom=labundy.com; dkim=pass (1024-bit key) header.d=NETORG5796793.onmicrosoft.com header.i=@NETORG5796793.onmicrosoft.com header.b=VRs0Pgtj; arc=fail smtp.client-ip=40.107.93.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=labundy.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=labundy.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iAzULS/bVonSCO47Zd/24eMdrSZt52PKruETeAcTlAeFnrxk59zb/azvA15Vrowlhko+VZCCLYL0jqPIslk5mRQk3DQTWFl6PKagvSfRDKfQtdLnkVGteF+UOeyT4GsysWl7bN+6utT1mXaiMBQhNNtcJqBlHIF+IaUw2fBoQYFiPveciMA2RouqsFzB0U3aJ3vDJVlDl/d8v7voaHUjYbVGzj6htFnGsFZcQo4Ig8BkcFAT+5DYBRWMesoaOSVLBXMdBjZTZUXuBCoWFQaJGcdOThUwTg52LYnKZiYxG1V8yEE1O6m8/1tk7Tr8tMUuw4G3GRH243C8C9reQ4o2fA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bKDWo1cpH7LNZQTyaTA60J/bz9Ldq7u2M5GHpobkLcw=;
+ b=I2EOOCgGLuotXwDSP0f3ndFCFtzWBCXC19cdvYRaKrPMwbvTIGoSxU4S5PrY3u9qpoo/s7/6dOdlhCMszxk2i+cQXn+y6yAwGFx0/XPbEbpyvpk0ajEfhKhQbKYfQBvEdBeQH35iUQE14XG9fIMetJI2Ku4Y5AWwGfcfFPgEFcO9qV1G6/8sX4Oj6kNeONmnUIdWjHmd42aUXgLfQ5cC4gUoTfyCg52Ba50XwMB3npm2u7T3dc2ya/cuOWA2QOsEn916//qeLw1FBuTcoQ0dzST2GKynI/3B6NXC7iBIkdYbIyWe3L4Xn88/kDTpK+S5gmhNP3e6BX7cJkWnnX96oA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=labundy.com; dmarc=pass action=none header.from=labundy.com;
+ dkim=pass header.d=labundy.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=NETORG5796793.onmicrosoft.com; s=selector1-NETORG5796793-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bKDWo1cpH7LNZQTyaTA60J/bz9Ldq7u2M5GHpobkLcw=;
+ b=VRs0Pgtjy+jkR4fElLss4LjYsRDHhDTB2p3AhFMuCEp2a+DwfKzLIZ8opHF/g7VT9A6AeZnU56xCL/MI47BvX/x1/hUfgH8tFBw5HiHoS/JOCjE3iE8T/8Rw86u7ifJpOmITgT5ilOhrPvj2vXQnWbhz6RKefPoird0V98dHiB0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=labundy.com;
+Received: from BN7PR08MB3937.namprd08.prod.outlook.com (2603:10b6:406:8f::25)
+ by SA6PR08MB10549.namprd08.prod.outlook.com (2603:10b6:806:437::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.31; Mon, 9 Sep
+ 2024 00:12:14 +0000
+Received: from BN7PR08MB3937.namprd08.prod.outlook.com
+ ([fe80::b729:b21d:93b4:504d]) by BN7PR08MB3937.namprd08.prod.outlook.com
+ ([fe80::b729:b21d:93b4:504d%5]) with mapi id 15.20.7918.024; Mon, 9 Sep 2024
+ 00:12:14 +0000
+Date: Sun, 8 Sep 2024 19:12:10 -0500
+From: Jeff LaBundy <jeff@labundy.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Ville Syrjala <syrjala@sci.fi>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Eddie James <eajames@linux.ibm.com>,
+	Andrey Moiseev <o2g.org.ru@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 15/22] Input: iqs7222 - use cleanup facility for fwnodes
+Message-ID: <Zt49WnZBar2D822M@nixie71>
+References: <20240904044244.1042174-1-dmitry.torokhov@gmail.com>
+ <20240904044825.1048256-1-dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904044825.1048256-1-dmitry.torokhov@gmail.com>
+X-ClientProxiedBy: SN6PR2101CA0010.namprd21.prod.outlook.com
+ (2603:10b6:805:106::20) To BN7PR08MB3937.namprd08.prod.outlook.com
+ (2603:10b6:406:8f::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa4:b0:397:6dfc:993a with SMTP id
- e9e14a558f8ab-3a04f0fdd80mr115191015ab.21.1725840624880; Sun, 08 Sep 2024
- 17:10:24 -0700 (PDT)
-Date: Sun, 08 Sep 2024 17:10:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000062a2960621a49519@google.com>
-Subject: [syzbot] [wireless?] WARNING in ieee80211_rx_list (3)
-From: syzbot <syzbot+b4aa2b672b18f1d4dc5f@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN7PR08MB3937:EE_|SA6PR08MB10549:EE_
+X-MS-Office365-Filtering-Correlation-Id: 00528c48-eed6-4199-3c83-08dcd0640ed9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uqqG9pvCmTKxt6/zsbKZ3uwUw5RWFEsZ4t6fxgsnDiGJ2OgFpI5Dc8sBMGnh?=
+ =?us-ascii?Q?F2F1s1C8VnbgwhqmGezZpvmR3UYEJqZFQCuYfXkRnraNNohPWO+1pbPfU8tD?=
+ =?us-ascii?Q?kNMcy41+KVoDLoemJN7jvefX3z+eGDUpQiEbiObQJwH3eoFdxOBVElKKeu9I?=
+ =?us-ascii?Q?Vs1osWdrUHp5Mj5xrWmO0xyYtcGNRW0eQE9FJmxBR3bbEwo/M2N/BKgvut0q?=
+ =?us-ascii?Q?zsAdsIwYnrW8io17POlPGZ7mY7Nh/aEf6ztF1Jtd3Zmv0Pzlt9S7uz+IsNXl?=
+ =?us-ascii?Q?KVQAoMI2HKYXYhTYBbLn+q1vkicHEOdllukaQCxTa4cbIRQ4lcNplWICVro2?=
+ =?us-ascii?Q?Z17Qd1rjUZvgwuKqvoae4Fg+kXX8lqQeskVZ4NUphN/jNoGicBClBlHuZcT3?=
+ =?us-ascii?Q?9Xp1quQCOmIlogPMSBZygFJ7qWGHI/IQ4HeOBNBucv6i7l6UOAW75x9A3Do+?=
+ =?us-ascii?Q?g9vswlO4tjInQKwTAP/7qlk+BrayrsoSxUIcPbFXgvzcDFU+hvhmlFQCg4XK?=
+ =?us-ascii?Q?s4yBNmidDGtvsIMSwpbfE/mPtJ3ouak3CGV674tYhgUIGT24FafPf2rCd/aL?=
+ =?us-ascii?Q?uXO+TzvS433WhEoUP1DtMZnepHwp5xFdb1uetyOXYlD6lR8IWh3c9YLtbHr2?=
+ =?us-ascii?Q?RRHYRiE1dqlx0pG7ukJ0C6WdKnt9WSFqsnGUeVA8eoLyC6TU708skZwp1EIr?=
+ =?us-ascii?Q?VNUfyyU2S0CyTwi4ozSHOOSVBxjgO1zVK8Yy+vx1Esvlr03OHZRFJoLAJIAG?=
+ =?us-ascii?Q?70I27+vWx45wGpHPq9Id7lb/giMUL+nMk95YLE/6O+D4Azs0jcKIAkF14Fer?=
+ =?us-ascii?Q?IWpatMWJsddcz4sMB1nn8l+YdqLFDPqlEaCbrBxS1ZOWI3hoQ6SjSLl2h6IM?=
+ =?us-ascii?Q?r5UhEDOwd2BOaPC2a4ieul16ZoDYeYIL253zhyGs35Y+qyyGJPMuP+0s/+Y9?=
+ =?us-ascii?Q?iPYMPl1c3jMQLqH0vcdHeShgnrxuiIWwnrHcZDVnHaePe/WPI/4u0fy07yuZ?=
+ =?us-ascii?Q?EXmR965MzDqSPNCJHr0/2x64u3788yfEYM6kGAttCwVbcjS6b8jTMbX5sZSJ?=
+ =?us-ascii?Q?I/JssfLyrVGONLY1GfFSNSN3/nM4S1n5uXfRrbefjLg6UKKyfn5iFJSBjGdk?=
+ =?us-ascii?Q?4myP2Cn+Jcs7mGKfkzwV2cQHMV+zmCqXWpNsoRJMl08/57KYS9Z6tLlRO1ek?=
+ =?us-ascii?Q?qClsep006ORiTlfKJ3xgU7rIUvcwdulkb1RYh3yWDnEoWypm1f+gT0I8LHET?=
+ =?us-ascii?Q?xCXamC6W9gedQ1OWx/dZ40e2Pmk7vOChT/St4AElQMCl0VLcTqkCP3awPPoz?=
+ =?us-ascii?Q?C0zlSh6qjKSVVCCYsSq1359V8RmQyBAGicSu9aOyFTYkIA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN7PR08MB3937.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?X4pl7ejNOL9uWrBPTQ9szgWKaJLcAGd+5rAZuhTOwIENACGlkWkIBnwdX6Te?=
+ =?us-ascii?Q?3+E2l57YeDJKr08sQYd86eA9fs+Dsb+v5G8OSF+RESSIEp5+Ty0CtNOrxIs4?=
+ =?us-ascii?Q?Kfu8+mfQdxPWLxX7hYBwS0UqDJiYmSNkQiGxuLdheuXIDcXtEhbCWVbmcbzL?=
+ =?us-ascii?Q?Hq3Ep6ESgnyMLZs5yznqXXFC8Ku6WB45dW3f5qIpaLxnBI23c50eBV7JRMCd?=
+ =?us-ascii?Q?ZtWSFqBsrWUhqWXUa3+D0Jr6CJUkruEadVVgBpWTY6ip02g2STiF4Cdfkmmw?=
+ =?us-ascii?Q?2eE78G1GpYOjP0y3V1aZTO2IfXaMhJx5KvUw86f8FZE6O2dCYDk6YAXVEvD3?=
+ =?us-ascii?Q?eqYJKW+WOAHrfFwNzSZvxM5BvLoM1UamXEL83g3BTET0txSkoZ+7CV9DtoTA?=
+ =?us-ascii?Q?A00SDcXElgFGPP/3xU/T64gFIfmLRe19xO891QWb3Q4Vk6UiprNzzv03FhCP?=
+ =?us-ascii?Q?8gjbLxdnX3fjvrWEJqB+aNrO625gNb9naNOCwBe4J60RL30CxTNYC81uYqZN?=
+ =?us-ascii?Q?NCgzer8rPrEQup3JsMGyDQQnDzKs3ilxoxDm9sx5Dj9jGeaHtgDFRMTjQTnE?=
+ =?us-ascii?Q?JqWJz9XHmuv41m2MMHYR5gimkmBjPrVQdlo1wtjBvEAbJoNFbFbD76HHlymA?=
+ =?us-ascii?Q?FTQdGGWEe3lbHWIlNKpa7M4Q6MmfAjYA3BBaQSksXF8+jEXhzULaX5oVP03n?=
+ =?us-ascii?Q?eWonRpqRGMEuTJqaRj615gueVJyBfXyLqGCjEYRtFsTzFB8hJjb0YrzBvGv1?=
+ =?us-ascii?Q?xXkBps+ASptk0ZFBBHGC89kcYrqUX2t23L8qoUR5hJEr/QxOJmuYaAPWFLiX?=
+ =?us-ascii?Q?crZKGMElqzKMlQC3JS7LTXw14gIpWYDbzKIfRK3BO4UsoPxEjJFudxBV+cba?=
+ =?us-ascii?Q?unHvUAbDmmt7gucq9KLZVTNbXLOVNuf4qf1+5AT9TD3S7BRfiCz1AhUZKcYF?=
+ =?us-ascii?Q?ApcdAKUcP8+lFUvSsLIPaAY0/MntCjEXiHwiSrS0z+bddvQXYuJ4pxDBVYmH?=
+ =?us-ascii?Q?tWZr/UXhuJjUaH4Zg5yWtvTdeBBqYKkk8m/+qGS5kMGH/Fjs8iSHRgkFeSo+?=
+ =?us-ascii?Q?Ro+U5kuG2jFGwNHmPizpDgcRvibxeSgzlNTo5SE3rvbjwf56bVREgGHT3E7t?=
+ =?us-ascii?Q?qjxZd5mfzC5mY1/0xtitMmgkPxX4VU+oUJUWq0zefJSy9+KT9V/bb1bW8mzJ?=
+ =?us-ascii?Q?9mitBR3DbDi4mJxmXlCrA9TLW1aANwcUPf1ovGylYhg+pNlXAMX3iNOKvDBo?=
+ =?us-ascii?Q?vTu74Aem1eu4Wuss/GOMiLf9il2vEgD1ICBmh7ophcPzQCe16+jsrlnAMLlV?=
+ =?us-ascii?Q?loxZ2pdhMdTQfptPFZNhhuMHklMslVgiXiZTcPnxqEUOWOurJ5U4nX/xCVpR?=
+ =?us-ascii?Q?LyBksY41sezGuUq2wN/wVnfnM/jovh8Wb6iWGIKH5X/qffdXwI4iHqEET2r5?=
+ =?us-ascii?Q?y+0sqlp/0pKQ58oQvGrdLLjlOuCmdlF4BpYFRanc04V+m7jW3XkvHav0ySJ/?=
+ =?us-ascii?Q?yhjAW4fV0PQ7T/ploGJyZsT78MJOoz4aCgtBTSy3IiUUWVlnl8j2sRgtTV8r?=
+ =?us-ascii?Q?DwP1xS6+/MPmI6LHecmA4ipBLfaUNe7V/WksHSuS?=
+X-OriginatorOrg: labundy.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00528c48-eed6-4199-3c83-08dcd0640ed9
+X-MS-Exchange-CrossTenant-AuthSource: BN7PR08MB3937.namprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 00:12:14.6151
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 00b69d09-acab-4585-aca7-8fb7c6323e6f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WholHZMRUy4W1U6hVV7Khwy62OQ1m54iWq/RMi4lhfaBulNHHDgp4FbSF7AmXXYe+RfSxNWxRWyw8ZOo+URafQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR08MB10549
 
-Hello,
+Hi Dmitry,
 
-syzbot found the following issue on:
+On Tue, Sep 03, 2024 at 09:48:25PM -0700, Dmitry Torokhov wrote:
+> Use __free(fwnode_handle) cleanup facility to ensure that references to
+> acquired fwnodes are dropped at appropriate times automatically.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/input/misc/iqs7222.c | 30 ++++++++++++++----------------
+>  1 file changed, 14 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/input/misc/iqs7222.c b/drivers/input/misc/iqs7222.c
+> index 9ca5a743f19f..d9b87606ff7a 100644
+> --- a/drivers/input/misc/iqs7222.c
+> +++ b/drivers/input/misc/iqs7222.c
+> @@ -2385,9 +2385,9 @@ static int iqs7222_parse_chan(struct iqs7222_private *iqs7222,
+>  	for (i = 0; i < ARRAY_SIZE(iqs7222_kp_events); i++) {
+>  		const char *event_name = iqs7222_kp_events[i].name;
+>  		u16 event_enable = iqs7222_kp_events[i].enable;
+> -		struct fwnode_handle *event_node;
+>  
+> -		event_node = fwnode_get_named_child_node(chan_node, event_name);
+> +		struct fwnode_handle *event_node __free(fwnode_handle) =
+> +			fwnode_get_named_child_node(chan_node, event_name);
 
-HEAD commit:    b6ecc6620376 net: mana: Fix error handling in mana_create_..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b5ecab980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
-dashboard link: https://syzkaller.appspot.com/bug?extid=b4aa2b672b18f1d4dc5f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+This leaves a newline amongst the declarations, but not in between the
+declarations and code. I don't feel strongly against this, but it's
+opposite of what I understand to be more common; please let me know in
+case I have misunderstood. This comment applies to the other chunks as
+well.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+>  		if (!event_node)
+>  			continue;
+>  
+> @@ -2408,7 +2408,6 @@ static int iqs7222_parse_chan(struct iqs7222_private *iqs7222,
+>  				dev_err(&client->dev,
+>  					"Invalid %s press timeout: %u\n",
+>  					fwnode_get_name(event_node), val);
+> -				fwnode_handle_put(event_node);
+>  				return -EINVAL;
+>  			}
+>  
+> @@ -2418,7 +2417,6 @@ static int iqs7222_parse_chan(struct iqs7222_private *iqs7222,
+>  			dev_err(&client->dev,
+>  				"Failed to read %s press timeout: %d\n",
+>  				fwnode_get_name(event_node), error);
+> -			fwnode_handle_put(event_node);
+>  			return error;
+>  		}
+>  
+> @@ -2429,7 +2427,6 @@ static int iqs7222_parse_chan(struct iqs7222_private *iqs7222,
+>  					    dev_desc->touch_link - (i ? 0 : 2),
+>  					    &iqs7222->kp_type[chan_index][i],
+>  					    &iqs7222->kp_code[chan_index][i]);
+> -		fwnode_handle_put(event_node);
+>  		if (error)
+>  			return error;
+>  
+> @@ -2604,10 +2601,10 @@ static int iqs7222_parse_sldr(struct iqs7222_private *iqs7222,
+>  
+>  	for (i = 0; i < ARRAY_SIZE(iqs7222_sl_events); i++) {
+>  		const char *event_name = iqs7222_sl_events[i].name;
+> -		struct fwnode_handle *event_node;
+>  		enum iqs7222_reg_key_id reg_key;
+>  
+> -		event_node = fwnode_get_named_child_node(sldr_node, event_name);
+> +		struct fwnode_handle *event_node __free(fwnode_handle) =
+> +			fwnode_get_named_child_node(sldr_node, event_name);
+>  		if (!event_node)
+>  			continue;
+>  
+> @@ -2639,7 +2636,6 @@ static int iqs7222_parse_sldr(struct iqs7222_private *iqs7222,
+>  					      : sldr_setup[4 + reg_offset],
+>  					    NULL,
+>  					    &iqs7222->sl_code[sldr_index][i]);
+> -		fwnode_handle_put(event_node);
+>  		if (error)
+>  			return error;
+>  
+> @@ -2742,9 +2738,9 @@ static int iqs7222_parse_tpad(struct iqs7222_private *iqs7222,
+>  
+>  	for (i = 0; i < ARRAY_SIZE(iqs7222_tp_events); i++) {
+>  		const char *event_name = iqs7222_tp_events[i].name;
+> -		struct fwnode_handle *event_node;
+>  
+> -		event_node = fwnode_get_named_child_node(tpad_node, event_name);
+> +		struct fwnode_handle *event_node __free(fwnode_handle) =
+> +			fwnode_get_named_child_node(tpad_node, event_name);
+>  		if (!event_node)
+>  			continue;
+>  
+> @@ -2760,7 +2756,6 @@ static int iqs7222_parse_tpad(struct iqs7222_private *iqs7222,
+>  					    iqs7222_tp_events[i].link, 1566,
+>  					    NULL,
+>  					    &iqs7222->tp_code[i]);
+> -		fwnode_handle_put(event_node);
+>  		if (error)
+>  			return error;
+>  
+> @@ -2818,9 +2813,9 @@ static int iqs7222_parse_reg_grp(struct iqs7222_private *iqs7222,
+>  				 int reg_grp_index)
+>  {
+>  	struct i2c_client *client = iqs7222->client;
+> -	struct fwnode_handle *reg_grp_node;
+>  	int error;
+>  
+> +	struct fwnode_handle *reg_grp_node __free(fwnode_handle) = NULL;
+>  	if (iqs7222_reg_grp_names[reg_grp]) {
+>  		char reg_grp_name[16];
+>  
+> @@ -2838,14 +2833,17 @@ static int iqs7222_parse_reg_grp(struct iqs7222_private *iqs7222,
+>  
+>  	error = iqs7222_parse_props(iqs7222, reg_grp_node, reg_grp_index,
+>  				    reg_grp, IQS7222_REG_KEY_NONE);
+> +	if (error)
+> +		return error;
+>  
+> -	if (!error && iqs7222_parse_extra[reg_grp])
+> +	if (iqs7222_parse_extra[reg_grp]) {
+>  		error = iqs7222_parse_extra[reg_grp](iqs7222, reg_grp_node,
+>  						     reg_grp_index);
+> +		if (error)
+> +			return error;
+> +	}
+>  
+> -	fwnode_handle_put(reg_grp_node);
+> -
+> -	return error;
+> +	return 0;
+>  }
+>  
+>  static int iqs7222_parse_all(struct iqs7222_private *iqs7222)
+> -- 
+> 2.46.0.469.g59c65b2a67-goog
+> 
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c4574f06e044/disk-b6ecc662.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/305e39881a39/vmlinux-b6ecc662.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/14c5c8efb32e/bzImage-b6ecc662.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b4aa2b672b18f1d4dc5f@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 14994 at net/mac80211/rx.c:5375 ieee80211_rx_list+0x2a07/0x3780 net/mac80211/rx.c:5375
-Modules linked in:
-CPU: 1 UID: 0 PID: 14994 Comm: syz.0.2232 Not tainted 6.11.0-rc5-syzkaller-00192-gb6ecc6620376 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:ieee80211_rx_list+0x2a07/0x3780 net/mac80211/rx.c:5375
-Code: 90 e9 21 da ff ff e8 f8 1e 64 f6 e9 17 da ff ff e8 ee 1e 64 f6 e9 0d da ff ff e8 e4 1e 64 f6 e9 03 da ff ff e8 da 1e 64 f6 90 <0f> 0b 90 e9 f5 d9 ff ff e8 cc 1e 64 f6 31 c0 48 89 44 24 60 e9 e5
-RSP: 0018:ffffc90000a189a0 EFLAGS: 00010246
-RAX: ffffffff8b2f6d56 RBX: 0000000000000000 RCX: ffff888061fc8000
-RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90000a18bf0 R08: ffffffff8b2f4592 R09: 1ffffffff283c708
-R10: dffffc0000000000 R11: fffffbfff283c709 R12: dffffc0000000000
-R13: ffff88806d804640 R14: ffff88805f0c0e40 R15: ffff88805f0c30c8
-FS:  0000000000000000(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f251b600020 CR3: 000000006190e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- ieee80211_rx_napi+0x18a/0x3c0 net/mac80211/rx.c:5485
- ieee80211_rx include/net/mac80211.h:5124 [inline]
- ieee80211_handle_queued_frames+0xe7/0x1e0 net/mac80211/main.c:439
- tasklet_action_common+0x321/0x4d0 kernel/softirq.c:785
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x70 kernel/kcov.c:209
-Code: 89 fb e8 23 00 00 00 48 8b 3d dc 76 96 0c 48 89 de 5b e9 83 9d 5b 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 <f3> 0f 1e fa 48 8b 04 24 65 48 8b 0c 25 00 d7 03 00 65 8b 15 c0 4a
-RSP: 0018:ffffc900039bf290 EFLAGS: 00000246
-RAX: 0000000000000000 RBX: ffffea0001c6b388 RCX: ffff888061fc8000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000013115 R08: ffffffff81ea2868 R09: 1ffffd400038d678
-R10: dffffc0000000000 R11: fffff9400038d679 R12: ffffea0001c6b3c0
-R13: ffffea0001c6b3c0 R14: 0000000000000001 R15: 0000000000000000
- arch_static_branch arch/x86/include/asm/jump_label.h:27 [inline]
- page_fixed_fake_head include/linux/page-flags.h:203 [inline]
- _compound_head include/linux/page-flags.h:244 [inline]
- __folio_rmap_sanity_checks+0x11f/0x670 include/linux/rmap.h:216
- __folio_remove_rmap mm/rmap.c:1518 [inline]
- folio_remove_rmap_ptes+0x3d/0x490 mm/rmap.c:1599
- zap_present_folio_ptes mm/memory.c:1517 [inline]
- zap_present_ptes mm/memory.c:1576 [inline]
- zap_pte_range mm/memory.c:1618 [inline]
- zap_pmd_range mm/memory.c:1736 [inline]
- zap_pud_range mm/memory.c:1765 [inline]
- zap_p4d_range mm/memory.c:1786 [inline]
- unmap_page_range+0x1b93/0x42c0 mm/memory.c:1807
- unmap_vmas+0x3cc/0x5f0 mm/memory.c:1897
- exit_mmap+0x264/0xc80 mm/mmap.c:3412
- __mmput+0x115/0x390 kernel/fork.c:1345
- exit_mm+0x220/0x310 kernel/exit.c:571
- do_exit+0x9b2/0x27f0 kernel/exit.c:869
- do_group_exit+0x207/0x2c0 kernel/exit.c:1031
- get_signal+0x16a1/0x1740 kernel/signal.c:2917
- arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6654f7cef9
-Code: Unable to access opcode bytes at 0x7f6654f7cecf.
-RSP: 002b:00007f6655e5b0e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00007f6655135f88 RCX: 00007f6654f7cef9
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f6655135f88
-RBP: 00007f6655135f80 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6655135f8c
-R13: 0000000000000000 R14: 00007fffa4ac5d00 R15: 00007fffa4ac5de8
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	89 fb                	mov    %edi,%ebx
-   2:	e8 23 00 00 00       	call   0x2a
-   7:	48 8b 3d dc 76 96 0c 	mov    0xc9676dc(%rip),%rdi        # 0xc9676ea
-   e:	48 89 de             	mov    %rbx,%rsi
-  11:	5b                   	pop    %rbx
-  12:	e9 83 9d 5b 00       	jmp    0x5b9d9a
-  17:	0f 1f 00             	nopl   (%rax)
-  1a:	90                   	nop
-  1b:	90                   	nop
-  1c:	90                   	nop
-  1d:	90                   	nop
-  1e:	90                   	nop
-  1f:	90                   	nop
-  20:	90                   	nop
-  21:	90                   	nop
-  22:	90                   	nop
-  23:	90                   	nop
-  24:	90                   	nop
-  25:	90                   	nop
-  26:	90                   	nop
-  27:	90                   	nop
-  28:	90                   	nop
-  29:	90                   	nop
-* 2a:	f3 0f 1e fa          	endbr64 <-- trapping instruction
-  2e:	48 8b 04 24          	mov    (%rsp),%rax
-  32:	65 48 8b 0c 25 00 d7 	mov    %gs:0x3d700,%rcx
-  39:	03 00
-  3b:	65                   	gs
-  3c:	8b                   	.byte 0x8b
-  3d:	15                   	.byte 0x15
-  3e:	c0                   	.byte 0xc0
-  3f:	4a                   	rex.WX
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Kind regards,
+Jeff LaBundy
 
