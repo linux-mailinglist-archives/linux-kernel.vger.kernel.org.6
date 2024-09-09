@@ -1,178 +1,111 @@
-Return-Path: <linux-kernel+bounces-322067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3563972387
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:20:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22C6972388
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3E081C233B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:20:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7CF6B2398A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE161891BD;
-	Mon,  9 Sep 2024 20:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E579E1891BD;
+	Mon,  9 Sep 2024 20:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="qgXw2ZwI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QpMOZWAE"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0PhXY9y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F40A18C31
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 20:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5439418C31
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 20:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725913247; cv=none; b=uhjNuhbvRF9Mzq4IJZB7L1xc6E6hxlV6wrHsv+z1HRddOEBJCyBRM8KDgf8byoeIitescXd+wctsqsufIOqOfeyHrE7yeN7TCX+7MpCmzEJlrMNZpc5TKFPOMDYCzjKZn/AGIg3NNedjqmLLH+tl9A1x44lIo/dJKJ6vf6g0wJA=
+	t=1725913284; cv=none; b=eLfuCExJpWd86A6yZldDIQVmfxT3UyVTr1FkFKRhqdM/NFVxmYbteRHyix0CVw7ues6TFsYtBkOZu7QFSTjyjn+RwQwZU4+R/yXcANNN/5Nnzrh0le1HQrc8AqEsTBhnV9LlRSjPDCApyQiE7UpaFRSD0KyEuMpHtz5IAj/am0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725913247; c=relaxed/simple;
-	bh=WAIenOSnlCMAek+qiyg/oBTUu7KlnIeZQRNU1EM7gc8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=km4RPd3MP8vZn2zXF1YKYzMJ76Xe/qHlDtZ7pB9cN/iEQD63IJCdfY3rQ0Q9dtS7uWzh9G5ohSw4iuMLgY+3ok67g/cMBOTO4m7iR4q9M8E2TA6pA6t8OKUAzbDyCPut481u1FMa5Tg1VJ1JI71uQLASdHh2v6vKh2O0ypFibWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=qgXw2ZwI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QpMOZWAE; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 058B1138028D;
-	Mon,  9 Sep 2024 16:20:44 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 09 Sep 2024 16:20:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1725913244;
-	 x=1725999644; bh=InVy7eY6xQVGN0FmV0ibHdMoYjwpPNi9D2mYIpSNzmg=; b=
-	qgXw2ZwIbSsY0ieiTLsNTK+OCmFPZrhZa7ZGstAHEaWSO8AYYf1XphNADruBt+Je
-	5Gt7aO4GhODehsuo7x2lSZRGCu8gf2BBmoq2s5D9I/6brzkOuhFhPhmo70rMRI6z
-	sS/TVEVRiTCCqnUNbwJAzO6jm+GGZgWxP2512DvaqQI3e9KUxzOaxH0fzjdaBIeN
-	rhYQUB7rH5IWE2Bj7rj9bGGFVuUGIQFjYOicOVZpR+NWS6dSND1TNFLreL/z+NsX
-	3+fLY2a1LkCWcGDmYJv6RsoFAuSyTcZyL83yWeO5L6B6eu+RATWYCeIgGYj+DuuB
-	qjHLuC1mImLyv9JrnBI/tQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725913244; x=
-	1725999644; bh=InVy7eY6xQVGN0FmV0ibHdMoYjwpPNi9D2mYIpSNzmg=; b=Q
-	pMOZWAEm15z6CQ5KtI2WRH09U4ylO2tRMtFSczHnx4JUlHZP64u/jP7adiHOmiFV
-	EYStA3S6XRKvQkeIcUICT4l31ghUUu71yY5he181xdBUbk4zWU1V2rvOykdFzf6s
-	+oM8n98Wsa4BRklLu0oADTD5kEldpLF5zcIR6uVssXrRTAdM9A7304DmOOqkrzTk
-	2iD4s33x89FUCMyAU8elSebuInMyG6u+5T9eOtP7d/QLvVwnwAI6T8fVxHzLl52R
-	D1T0OeVkeeBaY9MORnbCfGzhFoB9K5/yjYsYDW9ZnqoVswYYh31TRnrWE1Q0RauO
-	nKaitehQCQ4rmSQ3nAB7A==
-X-ME-Sender: <xms:m1jfZvUn9GT-Bne_apuK7SHZhlHjM8_0NHwj4esNn9EKkesfrCdl2Q>
-    <xme:m1jfZnk9retkPIAXGvOcxklns8-vDS85Cqt_wiFMaSu1iq5hnJS4utH3Fq1bOG309
-    CBYXePBRz9YWwUH9ag>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeijedgudefvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeek
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglh
-    gvrdgtohhmpdhrtghpthhtohepuggrvhhiughgohifsehgohhoghhlvgdrtghomhdprhgt
-    phhtthhopehkuhhnihhtqdguvghvsehgohhoghhlvghgrhhouhhpshdrtghomhdprhgtph
-    htthhopegrnhguvghrshdrrhhogigvlhhlsehlihhnrghrohdrohhrghdprhgtphhtthho
-    pehnrghrvghshhdrkhgrmhgsohhjuheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprg
-    hnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgt
-    phhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvg
-    grugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghr
-    nhgvlhdrohhrgh
-X-ME-Proxy: <xmx:m1jfZrY66o7alM44528l96TViDTy9aPmebX5pHIsP5wPNsmztZ8G1g>
-    <xmx:m1jfZqXvJYPvcwMMJMYjNXT_hjD92pIX8Cyy0D3aPbomaUvzUi_bHw>
-    <xmx:m1jfZpkL1SoBVtw35YHMKwBf3UqUZ2fTtjlj2XWIT-yQqmYhO6JHJg>
-    <xmx:m1jfZncCFIW9yt27-yvx4nKPp18HykraoADkvfBxUFRiv3BFfTp-Hw>
-    <xmx:m1jfZvUXtV6NsItB0-zReqsxwCB6VCGEI7_Nv6pQjxQZ0CkqnrtGZkm0>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 5B025222006F; Mon,  9 Sep 2024 16:20:43 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725913284; c=relaxed/simple;
+	bh=XacvQmLHyej2ATwCXc/vBK/JKb6SROxDmmREBXVWFbQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mWezsRjiHROS1niqf9dhPhduRUnNG+SEIs0nJiFJM4WsvqfXXPOE9Vl3GOgRuY4MfVVGZyMgN+4on/hYowwtBMMMH5QjSwnrcnKjzTqb6OyCM8PvyXNXT9w5eFm/YbluZH+n+cC+4qcK5PRP30R5niEotbQgKPA9M+bVAVeRwxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P0PhXY9y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6406C4CEC5;
+	Mon,  9 Sep 2024 20:21:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725913284;
+	bh=XacvQmLHyej2ATwCXc/vBK/JKb6SROxDmmREBXVWFbQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=P0PhXY9yvs/DbpLEGQztlMariq5JE01WSDTNdfTRHbCi09JYGgmgUV+KiSkW3Ymuj
+	 YJTLyAL3IKjsQtFeE/4YZpH+7AnQfHFr1vLx2yky5BK/Hvnv0JuDe5pG/xSwY5KgWm
+	 8Yhi6QuFtV/DiJUhdNgCURJOYues4ftXSFXF7iSOXwarC/4sv2juJfPhQ+XqrrOwi1
+	 riOEJYQbiReqmbrURI1LIPpKowlSj1Un1JTjqXUBIkPIvNQwImZ43a38t4mxgNZOnr
+	 ea1VLXaU6qDdpGIkaf8LpujjgPNVso11LlHlY7vyiEQQwkrUKpTtt4F9j+vCVl9xN2
+	 Rr0ijI7BviNFQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Hannes Reinecke <hare@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	"Shin'ichiro Kawasaki" <shinichiro.kawasaki@wdc.com>,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] nvme-tcp: fix link failure for TCP auth
+Date: Mon,  9 Sep 2024 20:21:09 +0000
+Message-Id: <20240909202118.811697-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 09 Sep 2024 20:20:23 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Naresh Kamboju" <naresh.kamboju@linaro.org>, kunit-dev@googlegroups.com,
- "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
- "open list" <linux-kernel@vger.kernel.org>
-Cc: "Anders Roxell" <anders.roxell@linaro.org>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Bjorn Helgaas" <bhelgaas@google.com>, "David Gow" <davidgow@google.com>
-Message-Id: <aaee4ddb-68a8-42ae-bb68-11ef991ada1c@app.fastmail.com>
-In-Reply-To: 
- <CA+G9fYtNY+S0Ls2f3atJS_Y9Nh3V01EKO5jbPtVYbgch0TYsFA@mail.gmail.com>
-References: 
- <CA+G9fYtNY+S0Ls2f3atJS_Y9Nh3V01EKO5jbPtVYbgch0TYsFA@mail.gmail.com>
-Subject: Re: Kunit: kernel/resource.c: In function 'gfr_start':
- include/linux/mm.h:101:35: error: 'MAX_PHYSMEM_BITS' undeclared (first use in
- this function)
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 9, 2024, at 20:00, Naresh Kamboju wrote:
-> The arm kunit builds failed on the Linux next-20240909 due to following
-> build warnings / errors with gcc-13 and clang-19 with extra Kconfigs
->
->   CONFIG_OF_KUNIT_TEST=y
->   CONFIG_KASAN=y
->   CONFIG_KUNIT=y
->   CONFIG_KUNIT_ALL_TESTS=y
->
-> First seen on next-20240909
->   Good: next-20240906
->   BAD:  next-20240909
->
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->
-
-This patch below addresses the build regression, not sure if that
-is what we want.
-
-        Arnd
-
-From 39601b1274354c710368f5cf40fe9e32540f7591 Mon Sep 17 00:00:00 2001
 From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 9 Sep 2024 13:10:21 +0000
-Subject: [PATCH] resource, kunit: add sparsemem dependency
 
-The testcase now selects CONFIG_GET_FREE_REGION, but that
-is only available for sparsemem configurations:
+The nvme fabric driver calls the nvme_tls_key_lookup() function from
+nvmf_parse_key() when the keyring is enabled, but this is broken in a
+configuration with CONFIG_NVME_FABRICS=y and CONFIG_NVME_TCP=m because
+this leads to the function definition being in a loadable module:
 
-WARNING: unmet direct dependencies detected for GET_FREE_REGION
-  Depends on [n]: SPARSEMEM [=n]
-  Selected by [m]:
-  - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
-In file included from include/linux/ioport.h:15,
-                 from kernel/resource.c:15:
-kernel/resource.c: In function 'gfr_start':
-include/linux/mm.h:101:35: error: 'MAX_PHYSMEM_BITS' undeclared (first use in this function)
-  101 | # define PHYSMEM_END    ((1ULL << MAX_PHYSMEM_BITS) - 1)
-kernel/resource.c:1874:57: note: in expansion of macro 'PHYSMEM_END'
- 1874 |                 end = min_t(resource_size_t, base->end, PHYSMEM_END);
-      |                                                         ^~~~~~~~~~~
+x86_64-linux-ld: vmlinux.o: in function `nvmf_parse_key':
+fabrics.c:(.text+0xb1bdec): undefined reference to `nvme_tls_key_lookup'
 
-It may be better to extend this to non-sparsemem, but a Kconfig
-dependency is the easiest way to address the build failure at the
-moment.
+Move the 'select' up to CONFIG_NVME_FABRICS itself to force this
+part to be built-in as well if needed.
 
-Fixes: e2941fe697c8 ("resource, kunit: add test case for region_intersects()")
+Fixes: 5bc46b49c828 ("nvme-tcp: check for invalidated or revoked key")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+It may alternatively be possible to rework the code so the
+keyring is only referenced when CONFIG_NVME_HOST_AUTH is also
+set, but this version is simpler and leaves the code unchanged.
+---
+ drivers/nvme/host/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index b986050fc7e0..4c081a28fe96 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2632,6 +2632,7 @@ config HASH_KUNIT_TEST
- config RESOURCE_KUNIT_TEST
- 	tristate "KUnit test for resource API" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
-+	depends on SPARSEMEM
- 	default KUNIT_ALL_TESTS
- 	select GET_FREE_REGION
+diff --git a/drivers/nvme/host/Kconfig b/drivers/nvme/host/Kconfig
+index 883aaab2d83e..486afe598184 100644
+--- a/drivers/nvme/host/Kconfig
++++ b/drivers/nvme/host/Kconfig
+@@ -41,6 +41,7 @@ config NVME_HWMON
+ 
+ config NVME_FABRICS
+ 	select NVME_CORE
++	select NVME_KEYRING if NVME_TCP_TLS
+ 	tristate
+ 
+ config NVME_RDMA
+@@ -94,7 +95,6 @@ config NVME_TCP
+ config NVME_TCP_TLS
+ 	bool "NVMe over Fabrics TCP TLS encryption support"
+ 	depends on NVME_TCP
+-	select NVME_KEYRING
+ 	select NET_HANDSHAKE
+ 	select KEYS
  	help
+-- 
+2.39.2
+
 
