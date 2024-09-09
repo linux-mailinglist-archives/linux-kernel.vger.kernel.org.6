@@ -1,121 +1,369 @@
-Return-Path: <linux-kernel+bounces-321757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168A4971EF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:20:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3866971EFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4083B1C22992
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:20:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D391F2373D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A79613CFBC;
-	Mon,  9 Sep 2024 16:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D94B13C3DD;
+	Mon,  9 Sep 2024 16:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zm7V0rmx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UPZ+WiDk"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3C313A879;
-	Mon,  9 Sep 2024 16:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4C74963A
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725898810; cv=none; b=FbL83yWmjr9hUXaYiuBygtLmwmOGXfUaI9dcESGp2d25W3g5j0ngTG1CUbbuWWbHRIQtYUnb0pfXLL0rT3tCodrM2+OK+ARWrs2Y+KI3jj5cXoN03/kSsCm/dbc0cmcP8GXohLx8ok8NKmco6i29aWOl2dzzTxmN3VjZ0jWsy14=
+	t=1725898900; cv=none; b=nN/Drb81zhpF2fqy5mV5pqC73yyNbra0MIJjGSggpjB3qJh+YIpUyiJE7OoQJwncEYHfPiZcVtPLKu5tSJy6Cva5Ul8fzRmbUvnfWkd+gQJeugmkCEwVwg4x1Ru0R2GO+bBz5gokZhyS6pN0MDppH+2v6nm2TfRxACUEDsYtm6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725898810; c=relaxed/simple;
-	bh=TS/pSz1uD3dN1/wXh7XIMM8S8qVOA+/r9H0LYbQw3Mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qoQqRND9FZET7vuHV7oKKz0PehICs7+gVonw1QWFu3pASy2O0CSYchshyT+9AMLdW8cr2I6JCLcs92SLwcPVtkC2XQCezx+fCg2x59uX8rPVxoqmu1Mg2ht0P8UXN9KanMclm3hQQHcYuIlgeMbAE3boU9AVlm6bLTg3HjWNKR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zm7V0rmx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25BC2C4CEC5;
-	Mon,  9 Sep 2024 16:20:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725898810;
-	bh=TS/pSz1uD3dN1/wXh7XIMM8S8qVOA+/r9H0LYbQw3Mc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zm7V0rmxhwjWgkzWrThPJEsFRUDqWvq+1iX2K8gqArj2yYKcaWSZ/iSEzLx+829cf
-	 uSvLFRpjPcofMUYkvhheUgVBHXiJl8cxbl0bBSopOM/WAxzMfBVnnb//ysEw0Ud/Oa
-	 HtLsJy0AxBBHGFqqSQD7sTaGIREmQJ65ZO+SYq9l9zyQSoYpdGM07295TOTNdipeP8
-	 +zRdjXCgCu1I7nnWQJoSds6af8lNvlqPJLGwcF7NRCaO1sJ1tdSM8gkGeOgoLp8fw7
-	 WJo10TsVsiqAJzW19QeQbbLiubZmuOZqvOfaE9Ar8ZNEyPer3gJR2onSpgOpPrYTFk
-	 tWe/WP1baRfoA==
-Date: Mon, 9 Sep 2024 11:20:09 -0500
-From: Rob Herring <robh@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org
-Subject: Re: [PATCH net-next v2 1/2] dt-bindings: net: ethernet-phy: Add
- master-slave role property for SPE PHYs
-Message-ID: <20240909162009.GA339652-robh@kernel.org>
-References: <20240909124342.2838263-1-o.rempel@pengutronix.de>
- <20240909124342.2838263-2-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1725898900; c=relaxed/simple;
+	bh=uuq0C4U5f/Bzf4EsN7Tau2CdpeRDI0QD/ltRYC5QK+8=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=fJXT2pjD7OPoZ1f2kwxWTnw8yUEADCOH1amjYJjPJ3SRkEhrBR2D+z9iSOWVkkwUFUgsGOu9SNNjHJDIm2Us9eYr2LP8uN7C6O1pVeZxzEXhD8u8gkHT3fY8lhGFcJgMs/I+Y3Wn58ZPoZciRXPR+RvMwtMUHynVLlZ/vRnJ/+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UPZ+WiDk; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909124342.2838263-2-o.rempel@pengutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725898896;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7Da/Nmr/FA0UMU9mIgOfNoroXS/egxOOczdI7Qzrbo0=;
+	b=UPZ+WiDk2adEvDlHYo0VjAS3mDtR5RMrhbr+gTui0l2b/8KgntyFWv94zYT/Io0zjW3C4a
+	LQDV0UHzLhU5gKSVwdTHDcAb3R45Zw38uOzb0V5iE9r8iMATYr91bdJdTn97BT6Dev3KVr
+	+MjwdlEjWNR04MK6xkM4OAzxVtSEmqo=
+Date: Mon, 09 Sep 2024 16:21:33 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: jeff.xie@linux.dev
+Message-ID: <4aeb59e2ea195542458b069be4afb5e2c53c8b55@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH v2] ftrace: Get the true parent ip for function tracer
+To: "Masami Hiramatsu" <mhiramat@kernel.org>
+Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ xiehuan09@gmail.com
+In-Reply-To: <20240910001326.87f27e6b312f1d956cf352a2@kernel.org>
+References: <20240821233021.2785584-1-jeff.xie@linux.dev>
+ <20240910001326.87f27e6b312f1d956cf352a2@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 09, 2024 at 02:43:40PM +0200, Oleksij Rempel wrote:
-> Introduce a new `master-slave` string property in the ethernet-phy
-> binding to specify the link role for Single Pair Ethernet
-> (1000/100/10Base-T1) PHYs. This property supports the values
-> `forced-master` and `forced-slave`, which allow the PHY to operate in a
-> predefined role, necessary when hardware strap pins are unavailable or
-> wrongly set.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
-> changes v2:
-> - use string property instead of multiple flags
-> ---
->  .../devicetree/bindings/net/ethernet-phy.yaml      | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> index d9b62741a2259..025e59f6be6f3 100644
-> --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> @@ -158,6 +158,20 @@ properties:
->        Mark the corresponding energy efficient ethernet mode as
->        broken and request the ethernet to stop advertising it.
->  
-> +  master-slave:
+September 9, 2024 at 11:13 PM, "Masami Hiramatsu" <mhiramat@kernel.org> w=
+rote:
 
-Outdated terminology and kind of vague what it is for...
+Hi Masami,
 
-The usual transformation to 'controller-device' would not make much
-sense though. I think a better name would be "spe-link-role" or
-"spe-link-mode".
 
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum:
-> +      - forced-master
-> +      - forced-slave
-> +    description: |
-> +      Specifies the predefined link role for the PHY in Single Pair Ethernet
-> +      (1000/100/10Base-T1).  This property is required for setups where the link
-> +      role must be assigned by the device tree due to limitations in using
-> +      hardware strap pins.
-> +
-> +      - 'forced-master': The PHY is forced to operate as a master.
-> +      - 'forced-slave': The PHY is forced to operate as a slave.
-> +
->    pses:
->      $ref: /schemas/types.yaml#/definitions/phandle-array
->      maxItems: 1
-> -- 
-> 2.39.2
-> 
+>=20
+>=20On Thu, 22 Aug 2024 07:30:21 +0800
+>=20
+>=20Jeff Xie <jeff.xie@linux.dev> wrote:
+>=20
+>=20>=20
+>=20> Currently, when using both function tracer and function graph simul=
+taneously,
+> >=20
+>=20>  it is found that function tracer sometimes captures a fake parent =
+ip(return_to_handler)
+> >=20
+>=20>  instead of the true parent ip.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  This issue is easy to reproduce. Below are my reproduction steps:
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  jeff-labs:~/bin # ./trace-net.sh
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trac=
+e | grep return_to_handler
+> >=20
+>=20>  trace-net.sh-405 [001] ...2. 31.859501: avc_has_perm+0x4/0x190 <-r=
+eturn_to_handler+0x0/0x40
+> >=20
+>=20>  trace-net.sh-405 [001] ...2. 31.859503: simple_setattr+0x4/0x70 <-=
+return_to_handler+0x0/0x40
+> >=20
+>=20>  trace-net.sh-405 [001] ...2. 31.859503: truncate_pagecache+0x4/0x6=
+0 <-return_to_handler+0x0/0x40
+> >=20
+>=20>  trace-net.sh-405 [001] ...2. 31.859505: unmap_mapping_range+0x4/0x=
+140 <-return_to_handler+0x0/0x40
+> >=20
+>=20>  trace-net.sh-405 [001] ...3. 31.859508: _raw_spin_unlock+0x4/0x30 =
+<-return_to_handler+0x0/0x40
+> >=20
+>=20>  [...]
+> >=20
+>=20
+> Can you also add=20
+
+Was=20there more you intended to say after this?
+
+>=20
+>=20>=20
+>=20> The following is my simple trace script:
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  <snip>
+> >=20
+>=20>  jeff-labs:~/bin # cat ./trace-net.sh
+> >=20
+>=20>  TRACE_PATH=3D"/sys/kernel/debug/tracing"
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  set_events() {
+> >=20
+>=20>  echo 1 > $1/events/net/enable
+> >=20
+>=20>  echo 1 > $1/events/tcp/enable
+> >=20
+>=20>  echo 1 > $1/events/sock/enable
+> >=20
+>=20>  echo 1 > $1/events/napi/enable
+> >=20
+>=20>  echo 1 > $1/events/fib/enable
+> >=20
+>=20>  echo 1 > $1/events/neigh/enable
+> >=20
+>=20>  }
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  set_events ${TRACE_PATH}
+> >=20
+>=20>  echo 1 > ${TRACE_PATH}/options/sym-offset
+> >=20
+>=20>  echo 1 > ${TRACE_PATH}/options/funcgraph-tail
+> >=20
+>=20>  echo 1 > ${TRACE_PATH}/options/funcgraph-proc
+> >=20
+>=20>  echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
+> >=20
+>=20>  echo function_graph > ${TRACE_PATH}/current_tracer
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  INSTANCE_FOO=3D${TRACE_PATH}/instances/foo
+> >=20
+>=20>  if [ ! -e $INSTANCE_FOO ]; then
+> >=20
+>=20>  mkdir ${INSTANCE_FOO}
+> >=20
+>=20>  fi
+> >=20
+>=20>  set_events ${INSTANCE_FOO}
+> >=20
+>=20>  echo 1 > ${INSTANCE_FOO}/options/sym-offset
+> >=20
+>=20>  echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
+> >=20
+>=20>  echo function > ${INSTANCE_FOO}/current_tracer
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  echo 1 > ${TRACE_PATH}/tracing_on
+> >=20
+>=20>  echo 1 > ${INSTANCE_FOO}/tracing_on
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  echo > ${TRACE_PATH}/trace
+> >=20
+>=20>  echo > ${INSTANCE_FOO}/trace
+> >=20
+>=20>  </snip>
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
+> >=20
+>=20>  ---
+> >=20
+>=20>  v2:
+> >=20
+>=20>  - Adding __always_inline to function_get_true_parent_ip suggested =
+by Steve
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  kernel/trace/trace_functions.c | 18 ++++++++++++++++++
+> >=20
+>=20>  1 file changed, 18 insertions(+)
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_f=
+unctions.c
+> >=20
+>=20>  index 3b0cea37e029..d989e927c898 100644
+> >=20
+>=20>  --- a/kernel/trace/trace_functions.c
+> >=20
+>=20>  +++ b/kernel/trace/trace_functions.c
+> >=20
+>=20>  @@ -176,6 +176,19 @@ static void function_trace_start(struct trace=
+_array *tr)
+> >=20
+>=20>  tracing_reset_online_cpus(&tr->array_buffer);
+> >=20
+>=20>  }
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  +static __always_inline unsigned long
+> >=20
+>=20>  +function_get_true_parent_ip(unsigned long parent_ip, struct ftrac=
+e_regs *fregs)
+> >=20
+>=20>  +{
+> >=20
+>=20>  + unsigned long true_parent_ip;
+> >=20
+>=20>  + int idx =3D 0;
+> >=20
+>=20>  +
+> >=20
+>=20>  + true_parent_ip =3D parent_ip;
+> >=20
+>=20>  + if (unlikely(parent_ip =3D=3D (unsigned long)&return_to_handler)=
+)
+> >=20
+>=20>  + true_parent_ip =3D ftrace_graph_ret_addr(current, &idx, parent_i=
+p,
+> >=20
+>=20>  + (unsigned long *)fregs->regs.sp);
+> >=20
+>=20>  + return true_parent_ip;
+> >=20
+>=20>  +}
+> >=20
+>=20
+> Can this work without CONFIG_FUNCTION_GRAPH_TRACER? Maybe it cause a bu=
+ild error
+>=20
+>=20because return_to_handler is not defined.
+>=20
+>=20Could you check it?
+
+
+I believed I had checked it before, but I actually found a build error. I=
+ will fix it. ;-)
+
+
+>=20
+>=20Thank you,
+>=20
+>=20>=20
+>=20> +
+> >=20
+>=20>  static void
+> >=20
+>=20>  function_trace_call(unsigned long ip, unsigned long parent_ip,
+> >=20
+>=20>  struct ftrace_ops *op, struct ftrace_regs *fregs)
+> >=20
+>=20>  @@ -193,6 +206,8 @@ function_trace_call(unsigned long ip, unsigned=
+ long parent_ip,
+> >=20
+>=20>  if (bit < 0)
+> >=20
+>=20>  return;
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+> >=20
+>=20>  +
+> >=20
+>=20>  trace_ctx =3D tracing_gen_ctx();
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  cpu =3D smp_processor_id();
+> >=20
+>=20>  @@ -241,6 +256,7 @@ function_stack_trace_call(unsigned long ip, un=
+signed long parent_ip,
+> >=20
+>=20>  * recursive protection is performed.
+> >=20
+>=20>  */
+> >=20
+>=20>  local_irq_save(flags);
+> >=20
+>=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+> >=20
+>=20>  cpu =3D raw_smp_processor_id();
+> >=20
+>=20>  data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
+> >=20
+>=20>  disabled =3D atomic_inc_return(&data->disabled);
+> >=20
+>=20>  @@ -309,6 +325,7 @@ function_no_repeats_trace_call(unsigned long i=
+p, unsigned long parent_ip,
+> >=20
+>=20>  if (bit < 0)
+> >=20
+>=20>  return;
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+> >=20
+>=20>  cpu =3D smp_processor_id();
+> >=20
+>=20>  data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
+> >=20
+>=20>  if (atomic_read(&data->disabled))
+> >=20
+>=20>  @@ -356,6 +373,7 @@ function_stack_no_repeats_trace_call(unsigned =
+long ip, unsigned long parent_ip,
+> >=20
+>=20>  * recursive protection is performed.
+> >=20
+>=20>  */
+> >=20
+>=20>  local_irq_save(flags);
+> >=20
+>=20>  + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+> >=20
+>=20>  cpu =3D raw_smp_processor_id();
+> >=20
+>=20>  data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
+> >=20
+>=20>  disabled =3D atomic_inc_return(&data->disabled);
+> >=20
+>=20>  --=20
+>=20>=20
+>=20>  2.34.1
+> >=20
+>=20
+> --=20
+>=20
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>
 
