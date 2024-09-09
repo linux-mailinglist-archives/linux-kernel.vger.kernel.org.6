@@ -1,120 +1,140 @@
-Return-Path: <linux-kernel+bounces-321061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1879713F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:37:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54D7D971407
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3203F1F276F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:37:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8174D1C22608
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063A71B3725;
-	Mon,  9 Sep 2024 09:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3938F1B2EFA;
+	Mon,  9 Sep 2024 09:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kt4o5tHy"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oA8r1wRg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8EE1B1D4E;
-	Mon,  9 Sep 2024 09:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A31A1B2EE0;
+	Mon,  9 Sep 2024 09:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725874620; cv=none; b=mnstabQgj3P85Axz5cy+FxvjHnunD5qCCuDa3x0O/oGLIek1jEX149p8yvwfH/TpOZvxQ8JlC+Y4NHU70l+01WPgPzEX5nQUEngVmwdNCNBXKOgtElzbearGc5BXhk3sHubg8CdHm7sIX8OqjgHmYHBG9YVSJKIsWh5OMcB0riw=
+	t=1725874878; cv=none; b=XId6mvmb6e7S4vnfEuw6R2ohWciBXRXBf7fB8hrOE8E5lXbx/Y24zkkvlrMTIdEUtDompL46m62J7zBhiaShQtCL3KrkYHr4p8u0W+zt+7fX9Dk/2u00vanfs65L+1/HhDK2dVEunUZY5zynYwPSOG6ekcv9yD8yourVG4tiVp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725874620; c=relaxed/simple;
-	bh=GQEr/9zpRirO1wQsM0VqynSiZInCc24ILWtlBq5o0yQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dvehJkSdUxib6hBpi8Vd9H2I3AVlRFlu669jKoNjYf/49WReRhyrFLRRuPAbDaT9RcVPAsITa1PDRJO/8xJHAGLafCoctZe7E4K3N+wUfRMaQPW9r2NrLo2xHCguKoV3Kj2mINrH4Dykq3XUk4VL608TOlAIDK/rM6xWopxB/Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kt4o5tHy; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4899aPEr114802;
-	Mon, 9 Sep 2024 04:36:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725874585;
-	bh=9rFahbn1qIk8LJHzDYN4y2k/Snsiv71P703icd1KpGI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=kt4o5tHySTtI4MT0ZHZRH5WucoWLVokLdUlABPXgQVIm2Cd3JTDqPhSQvDi4GWvGR
-	 xfSssveZrHUXx8a9VcEoYnYStzA7aw+88XIKPWMPdDWApIYSaun/iKK/FSFQVTBw3v
-	 WPPGGrRsWhseNDS7kv808vtRuQ2mF9uPB47lW9QE=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4899aPTn104813
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 9 Sep 2024 04:36:25 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 9
- Sep 2024 04:36:24 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 9 Sep 2024 04:36:25 -0500
-Received: from [10.250.149.85] ([10.250.149.85])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4899aKaD032721;
-	Mon, 9 Sep 2024 04:36:21 -0500
-Message-ID: <7a7f5870-b74e-4c0e-8d76-b97b45bae963@ti.com>
-Date: Mon, 9 Sep 2024 13:36:19 +0400
+	s=arc-20240116; t=1725874878; c=relaxed/simple;
+	bh=wETrHI/ShVWGV8wbgbyd9KGjFPNCXcYObn24PM2bGgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OVnLkQhmiL1gkLQJYS7LnPTr3kbrhb+mPftMaFDaREcoaktzIbqFKFwlVZhGP7hrP7nEZBve164O8rGymyp+0FhMZ+ip5fN/wnonVBO4v4rXmXK+iEufz+7hbEtJfZsUmbgx3nULLa05W6yemy04h1ztVeySHdnf6yJnr/d2JgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oA8r1wRg; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725874878; x=1757410878;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wETrHI/ShVWGV8wbgbyd9KGjFPNCXcYObn24PM2bGgg=;
+  b=oA8r1wRg5BCZXG/tzb0k8aCCYQxss2NQp0slEKujuBpQSpTHWBEy1vTB
+   7bzKTFiycTG0+2U8MiNMcvvwczv33yTF44DF0qP+MrUCKrpX6lU+A2WnW
+   sc3kShKleZXcNUJrYwYbSz7YHrCfprJ5S1/gc0fgPYPcajkzRzzSghymc
+   0MAxjR7yaNnfEEF3/zdBDpb79HPydhDK1VZBKz347w8PtKulveaUfHOVr
+   jRxBB6fLMcN781RWYpWCl0xPgUzHuGa4Y5K6wdV1tCGMlIwdUDQDKAa+c
+   oQEyrHKQpLVw5EkLVJA0wxoaHrwpPd9qC3Yn9STtIp07sY9kbWCXxGu40
+   Q==;
+X-CSE-ConnectionGUID: KzyqZQ/2SQaLMw7zAtyFnQ==
+X-CSE-MsgGUID: aCQWLV4YRq6rUlS8fxOuug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="35941201"
+X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
+   d="scan'208";a="35941201"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 02:38:11 -0700
+X-CSE-ConnectionGUID: wLrI8P59Scq60Xkr/AfP+A==
+X-CSE-MsgGUID: FnGgWOHURWm9lCW+zHCTiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
+   d="scan'208";a="71021034"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 02:37:54 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1snaqF-00000006jjo-21LH;
+	Mon, 09 Sep 2024 12:37:51 +0300
+Date: Mon, 9 Sep 2024 12:37:51 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Felix Huettner <felix.huettner@mail.schwarz>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH net v1 1/1] netfilter: conntrack: Guard possoble unused
+ functions
+Message-ID: <Zt7B79Q3O7mNqrOl@smile.fi.intel.com>
+References: <20240905203612.333421-1-andriy.shevchenko@linux.intel.com>
+ <20240906162938.GH2097826@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH wireless-next v2 2/3] wifi: wlcore: sdio: Make use of
- irq_get_trigger_type()
-To: Vasileios Amoiridis <vassilisamir@gmail.com>,
-        <arend.vanspriel@broadcom.com>, <kvalo@kernel.org>
-CC: <knaerzche@gmail.com>, <leitao@debian.org>, <linus.walleij@linaro.org>,
-        <javierm@redhat.com>, <linux-wireless@vger.kernel.org>,
-        <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20240904154919.118513-1-vassilisamir@gmail.com>
- <20240904154919.118513-3-vassilisamir@gmail.com>
-Content-Language: en-US
-From: "Khan, Sabeeh" <sabeeh-khan@ti.com>
-In-Reply-To: <20240904154919.118513-3-vassilisamir@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906162938.GH2097826@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Vasileios,
+On Fri, Sep 06, 2024 at 05:29:38PM +0100, Simon Horman wrote:
+> On Thu, Sep 05, 2024 at 11:36:12PM +0300, Andy Shevchenko wrote:
 
-On 9/4/2024 7:49 PM, Vasileios Amoiridis wrote:
-> Convert irqd_get_trigger_type(irq_get_irq_data(irq)) cases to the more
-> simple irq_get_trigger_type(irq).
->
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> ---
->  drivers/net/wireless/ti/wlcore/sdio.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
-> index 92fb5b8dcdae..9e1b644beba9 100644
-> --- a/drivers/net/wireless/ti/wlcore/sdio.c
-> +++ b/drivers/net/wireless/ti/wlcore/sdio.c
-> @@ -324,15 +324,13 @@ static int wl1271_probe(struct sdio_func *func,
->  	memset(res, 0x00, sizeof(res));
->  
->  	res[0].start = irq;
-> -	res[0].flags = IORESOURCE_IRQ |
-> -		       irqd_get_trigger_type(irq_get_irq_data(irq));
-> +	res[0].flags = IORESOURCE_IRQ | irq_get_trigger_type(irq);
->  	res[0].name = "irq";
->  
->  
->  	if (wakeirq > 0) {
->  		res[1].start = wakeirq;
-> -		res[1].flags = IORESOURCE_IRQ |
-> -			       irqd_get_trigger_type(irq_get_irq_data(wakeirq));
-> +		res[1].flags = IORESOURCE_IRQ | irq_get_trigger_type(wakeirq);
->  		res[1].name = "wakeirq";
->  		num_irqs = 2;
->  	} else {
-Reviewed-by: Sabeeh Khan <sabeeh-khan@ti.com>
-Tested-by: Sabeeh Khan <sabeeh-khan@ti.com>
+> Local testing seems to show that the warning is still emitted
+> for ctnetlink_label_size if CONFIG_NETFILTER_NETLINK_GLUE_CT is enabled
+> but CONFIG_NF_CONNTRACK_EVENTS is not.
+
+Can you elaborate on this, please?
+I can not reproduce.
+
+#
+# Core Netfilter Configuration
+#
+CONFIG_NETFILTER_INGRESS=y
+CONFIG_NETFILTER_EGRESS=y
+CONFIG_NETFILTER_SKIP_EGRESS=y
+CONFIG_NETFILTER_NETLINK=y
+CONFIG_NETFILTER_NETLINK_LOG=y
+CONFIG_NF_CONNTRACK=y
+CONFIG_NF_LOG_SYSLOG=m
+CONFIG_NF_CONNTRACK_SECMARK=y
+# CONFIG_NF_CONNTRACK_PROCFS is not set
+# CONFIG_NF_CONNTRACK_LABELS is not set
+CONFIG_NF_CONNTRACK_FTP=y
+CONFIG_NF_CONNTRACK_IRC=y
+# CONFIG_NF_CONNTRACK_NETBIOS_NS is not set
+CONFIG_NF_CONNTRACK_SIP=y
+CONFIG_NF_CT_NETLINK=y
+CONFIG_NETFILTER_NETLINK_GLUE_CT=y
+CONFIG_NF_NAT=y
+CONFIG_NF_NAT_FTP=y
+CONFIG_NF_NAT_IRC=y
+CONFIG_NF_NAT_SIP=y
+CONFIG_NF_NAT_MASQUERADE=y
+# CONFIG_NF_TABLES is not set
+CONFIG_NETFILTER_XTABLES=y
+# CONFIG_NETFILTER_XTABLES_COMPAT is not set
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
