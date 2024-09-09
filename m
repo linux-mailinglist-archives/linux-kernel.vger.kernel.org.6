@@ -1,138 +1,126 @@
-Return-Path: <linux-kernel+bounces-321702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1AC4971E4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:41:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 762A7971E4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F88E28388A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:41:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 865A01C23088
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1451D52F6F;
-	Mon,  9 Sep 2024 15:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC095589C;
+	Mon,  9 Sep 2024 15:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RQqPcnOu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Iqmqpzmm"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2903B791;
-	Mon,  9 Sep 2024 15:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFFB481B4
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 15:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725896472; cv=none; b=bC/dGrU+QWwagHNki/GDONDcJXcT6h2tBDfQ2FNwTOADNJsOsRSPa7WJVTrtWP9gVWzKM5Lj6Tx2VYC4l5bsAmiQSSoJ/DMfV8P/cBqeQaPA3cVMepxbaU1gaAgMuVRqAcFLlorKYdNFcsBQfUw13+2PaHqdZSDjof2UcmPkTRw=
+	t=1725896421; cv=none; b=YFma7S8nwwxXdlKKv5gFwvkKpgEL6Uf5Wgxd8pgkC0IMK4fSmhiDITYQGShCgSWcDdPsXE01Yrv1GeK2t0x6jvcyzCgQPEH3WDaM0M8mJubN1HqzR8hhi64+wdv3eTVPDdH93W1jiLJnb4WuLZNCdEB89jOao4FqXuY/CMc/MiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725896472; c=relaxed/simple;
-	bh=7vzxP9BH5QXEj6ke5NOg3e9aAiXGq0Kzq6rOQrQSMZw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S5tpWHpU8hjj6nXz4eLyAHejXlFV3comfBzYuQoH5r5UJ5YBWk41PUXRrGcHx7/s70FsHaFIM+gzFL10N1JtQ5/LYrENtq9exLmAMpmXmNPg0W6D769Zw6YfWOWAyyX0pcTKRn8HbPOXyCen77nbOAjp3fXdHpsTQ/ks7rMIvcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RQqPcnOu; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725896470; x=1757432470;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=7vzxP9BH5QXEj6ke5NOg3e9aAiXGq0Kzq6rOQrQSMZw=;
-  b=RQqPcnOui7kvrBYtpBxVNyYIjJ1GTyIXhUvYVW88CfQtu86NAYC+Xk5B
-   /wgdLhEBy+GNxJSQdezREQkdu/Gtwn1dOhH48a5rwcKVNgybzNLacjIa5
-   uvCrvaJRkHBHNMAWIu/AdcfUAd33xYrr1Eqn9hBH2B3t49ZOtjsZ5n62U
-   M2FJpFv7uV+N6xBIKI/4RicJZ/XRzobtZHQbkAt1gxqXKck9VaRyLioFV
-   zyajj/8P9wg15HakS8QyarA28XT3izBh6kIORNMvHNUnazgPhnt7hyphm
-   SMycdXUifxkxx/oVbc8RWFZvMOrnER/3YWEylXInJEYHkZx6lDDvaspWk
-   g==;
-X-CSE-ConnectionGUID: jPKw+iZVRQ6qEWVyL8JpwA==
-X-CSE-MsgGUID: djd8DkljRvuMcYwR0KywRA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24476485"
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="24476485"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 08:41:09 -0700
-X-CSE-ConnectionGUID: TeqJXNiRSZesjnMlHYEQ8A==
-X-CSE-MsgGUID: dhkNtVyaR1Gkke20Q2VbRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="66502268"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 09 Sep 2024 08:41:05 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 1876C18D; Mon, 09 Sep 2024 18:41:04 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Pablo Neira Ayuso <pablo@netfilter.org>,
-	Felix Huettner <felix.huettner@mail.schwarz>,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH net-next v2 1/1] netfilter: conntrack: Guard possible unused functions
-Date: Mon,  9 Sep 2024 18:39:56 +0300
-Message-ID: <20240909154043.1381269-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1725896421; c=relaxed/simple;
+	bh=QbYcnWDQCG+6kXwBmBigkExYB0vsUVLpYXji+lR8T6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qmAD/g5Kmm1fm1OS8zpfXbNkU/Evlp1wwEipfa7xEtaAjp2bpAWsCBnLWKNJ9TLFZaoF5MwmFRa+4uNW2bTKd8sg5FuF5LxAvUJkAaYuF5NZOXazrKK3zYfDWVR6+DkThY31S4bXPVsVDq8lxoM9cQfSwR1CmbE2J6KUNIqniSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Iqmqpzmm; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725896416; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=YIYQsQqU7SRbe/99jsN7MhA0jKoE0V/rgii7buJK1JY=;
+	b=IqmqpzmmMIEN3ekoK7/Y/LpmtGn6M6nC3HSM3AuG+G6hf++f413aHFVYpd16DKeD2MdWdbcpGD9Gc179lyzvzlcpS3Vtq1n1Jewmw7nyKTaiX1Qvjvmj7rZ9eIF+EHtZ+yVQZDNe3wpRVA0PoVPbrgziKqbyGunuWnE3gzd3CPM=
+Received: from 192.168.2.29(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WEgzJpI_1725896414)
+          by smtp.aliyun-inc.com;
+          Mon, 09 Sep 2024 23:40:15 +0800
+Message-ID: <f8a965ed-e962-40a8-8287-943e872d238c@linux.alibaba.com>
+Date: Mon, 9 Sep 2024 23:40:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] erofs: fix incorrect symlink detection in fast symlink
+To: Colin Walters <walters@verbum.org>, linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240909022811.1105052-1-hsiangkao@linux.alibaba.com>
+ <20240909031911.1174718-1-hsiangkao@linux.alibaba.com>
+ <bb2dd430-7de0-47da-ae5b-82ab2dd4d945@app.fastmail.com>
+ <25f0356d-d949-483c-8e59-ddc9cace61f6@linux.alibaba.com>
+ <21ddadb7-407d-48b6-9c1b-845ead2eefb4@app.fastmail.com>
+ <df09821e-d7ca-4bfb-8f57-2046c072af62@linux.alibaba.com>
+ <91310d4c-98d5-4a8b-b3db-2043d4a3d533@app.fastmail.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <91310d4c-98d5-4a8b-b3db-2043d4a3d533@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Some of the functions may be unused, it prevents kernel builds
-with clang, `make W=1` and CONFIG_WERROR=y:
 
-net/netfilter/nf_conntrack_netlink.c:657:22: error: unused function 'ctnetlink_acct_size' [-Werror,-Wunused-function]
-  657 | static inline size_t ctnetlink_acct_size(const struct nf_conn *ct)
-      |                      ^~~~~~~~~~~~~~~~~~~
-net/netfilter/nf_conntrack_netlink.c:667:19: error: unused function 'ctnetlink_secctx_size' [-Werror,-Wunused-function]
-  667 | static inline int ctnetlink_secctx_size(const struct nf_conn *ct)
-      |                   ^~~~~~~~~~~~~~~~~~~~~
-net/netfilter/nf_conntrack_netlink.c:683:22: error: unused function 'ctnetlink_timestamp_size' [-Werror,-Wunused-function]
-  683 | static inline size_t ctnetlink_timestamp_size(const struct nf_conn *ct)
-      |                      ^~~~~~~~~~~~~~~~~~~~~~~~
 
-Fix this by guarding possible unused functions with ifdeffery.
+On 2024/9/9 22:46, Colin Walters wrote:
+> 
+> 
+> On Mon, Sep 9, 2024, at 10:14 AM, Gao Xiang wrote:
+>>
+>> Not quite sure about hard limitation in EROFS
+>> runtime, we could define
+>>
+>> #define EROFS_SYMLINK_MAXLEN	4096
+> 
+> Not sure that a new define is needed versus just reusing PATH_MAX, but that's obviously just a style thing that's much more your call than mine.
+> 
+>> But since symlink i_size > 4096 only due to crafted
+>> images (and not generated by mkfs) and not crash, so
+>> either way (to check or not check in kernel) is okay
+>> to me.
+> 
+> Yes, but my understanding was that EROFS (in contrast to other kernel read-write filesystems which are more complicated) was aiming to be robust against potentially malicious images.
 
-See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-inline functions for W=1 build").
+Just my personal opinion, my understanding of rubustness
+is stability and security.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: fixed typo, dropped Fixes (Simon), optimised by reusing existing ifdeffery
- net/netfilter/nf_conntrack_netlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+But whether to check or not check this, it doesn't crash
+the kernel or deadlock or livelock, so IMHO, it's already
+rubustness.
 
-diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
-index 4cbf71d0786b..39430f333f05 100644
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -652,7 +652,6 @@ static size_t ctnetlink_proto_size(const struct nf_conn *ct)
- 
- 	return len + len4;
- }
--#endif
- 
- static inline size_t ctnetlink_acct_size(const struct nf_conn *ct)
- {
-@@ -690,6 +689,7 @@ static inline size_t ctnetlink_timestamp_size(const struct nf_conn *ct)
- 	return 0;
- #endif
- }
-+#endif
- 
- #ifdef CONFIG_NF_CONNTRACK_EVENTS
- static size_t ctnetlink_nlmsg_size(const struct nf_conn *ct)
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Actually, I think EROFS for i_size > PAGE_SIZE, it's an
+undefined or reserved behavior for now (just like CPU
+reserved bits or don't care bits), just Linux
+implementation treats it with PAGE_SIZE-1 trailing '\0',
+but using erofs dump tool you could still dump large
+symlinks.
+
+Since PATH_MAX is a system-defined constant too, currently
+Linux PATH_MAX is 4096, but how about other OSes? I've
+seen some `PATH_MAX 8192` reference but I'm not sure which
+OS uses this setting.
+
+But I think it's a filesystem on-disk limitation, but if
+i_size exceeds that, we return -EOPNOTSUPP or -EFSCORRUPTED?
+For this symlink case, I tend to return -EFSCORRUPTED but
+for other similar but complex cases, it could be hard to
+decide.
+
+Leaving them as undefined behaviors are also an option as
+long as the behavior is secure.
+
+> 
+> Crafted/malicious images aside, there's also the IMO obvious angle here that we should avoid crashes or worse out-of-bound read/write if there happens to be *accidental* on-disk/memory corruption and having high bit(s) flip in a symlink inode size seems like an easy one to handle. Skimming the XFS code for example it looks like it's pretty robust in this area.
+
+Yes, for this case it's much simple and easy so that's
+fine, but I think for some other cases, leaving some
+undefined or reserved behaviors are also good for later
+extendability (again, like CPU register design.) as long
+as it doesn't cause security issues.
+
+Thanks,
+Gao Xiang
 
 
