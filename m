@@ -1,207 +1,356 @@
-Return-Path: <linux-kernel+bounces-320633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB8EB970D02
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:39:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D7D970D08
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92D43282134
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:39:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B52381C21AFA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 05:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CC41ACE1F;
-	Mon,  9 Sep 2024 05:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9299A1AD3E8;
+	Mon,  9 Sep 2024 05:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jNVhyigs"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2233622638;
-	Mon,  9 Sep 2024 05:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4V1IAKJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E8C1741C3;
+	Mon,  9 Sep 2024 05:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725860383; cv=none; b=dJlYkEAnqciohyQwZ1cEPRI45IED9E/KQ4fQ1AtmLYjWv4sDSr/bMcrAEPmmKhw89e+rKWuQLMj+6US74RAqOvWDEMyn+2V199h7bkTWg41rY+H9f5u081ugIjxnYNKuuzc8vE6Lf2YJwr1FbzVaruSJvWhpkIfI5Em63Jqqkn4=
+	t=1725860490; cv=none; b=Ns3BAQoFYZPvEyH1fXDQ4dBfwP8/S1CrcsU5mBOX6y4vMNwCYK/4eqFT5LbgWLnTRQQPJVtNKOr4sL4dmyv/9VeilDvzmls9bLcPotUZ1INrAWsWlNSPxglXm2C1yOflhRfx8y4xnVEArWiXJTMbQxPnWJrqjcMXyzYi/cen0Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725860383; c=relaxed/simple;
-	bh=NSKXGoAg3t9lYYBwq5sMoSLMOJGRbv1VQHzNVtHWTRE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bMhYbnrISyeQRVD2Er80lolurjIIjjTqLdB2VKrO9SAAnFZkDrJ7HJ3Il8fCsZDD9MBYeI21R9AwLt8LrYxJM2JtBa7IMNK0EGP26Z9jfDWGJdEEDRRCfBLl3LkKSHDnpmdecqPLbRaenGMvcVTnhAN+KpsF7iZQAMymTnQBXK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=jNVhyigs; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from namjain-Virtual-Machine.mshome.net (unknown [167.220.238.141])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 86D3420B7D6A;
-	Sun,  8 Sep 2024 22:39:32 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 86D3420B7D6A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1725860375;
-	bh=BLTNsC3QAfdknZXO9uNR/qLcq9EIASe/aBAWDV++BhM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jNVhyigsPLB/bSz4fbfr1wTU+iJGzfFqrl+cjyiZhdV6jC/zakIL1Vg4GVnrS1vcW
-	 G3uZITXyvoXyQKdCZPfmo3x5t6qqEXJRFB2PlPnKbjH4ZGIGZq/phcmJHgZ0brnRND
-	 sNO2KiNDEPyp9ipncoVOK3wz4o1uaabQ98UqFmm4=
-From: Naman Jain <namjain@linux.microsoft.com>
-To: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Kelley <mhklinux@outlook.com>
-Cc: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] clocksource: hyper-v: Fix hv tsc page based sched_clock for hibernation
-Date: Mon,  9 Sep 2024 11:09:23 +0530
-Message-Id: <20240909053923.8512-1-namjain@linux.microsoft.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725860490; c=relaxed/simple;
+	bh=OTGCX2VKTWNg7JAPpYr9MFc9b3r06DZVg97o1hSt/ng=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QuNO36ReXSY5+4kL8NQd0AE+8+Z5W1UyKkag8a0gtP+2axwfpBDcDFIGiO5MTp1kLS/5syLe2e5TUlXUJqJ3iWPFaqNGhkUY8zY2I58sByRBDgW+FC617OMUr2SKrI4uEfBGzELb2Q52lEMgo2CPJoLt2Md+A32BELbFJHtu6Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4V1IAKJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E75F5C4CED8;
+	Mon,  9 Sep 2024 05:41:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725860490;
+	bh=OTGCX2VKTWNg7JAPpYr9MFc9b3r06DZVg97o1hSt/ng=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=f4V1IAKJIpX4Rvaz2H2X7xqKiSTyq7ukodz2zX0TBSNji13HCicMFzYCpaH5j2zYZ
+	 YPszECNMNLzDkrCqNQYTany6zlUk0fbJlWBtz4HZMZCTKEEWm3Pk8XlTzJLrypGLLG
+	 DLqnyt4aAJ4PDsFLrjRKzCfovQpnQhS86CAWWSBK4TuRv8HBCjQQ/aH9eFU8S1Hfxk
+	 HhrGI+vVEgCrdaY+sFDsWAbooALZxTQIB7p2r6Ggwxulf7hlXEhxo6ByrvIdWxaUzZ
+	 rKJZ7XGonnAiXKG33iKW6OybC/uu3TY6sueNH6Uix0yEeB/YZPyScT5lYz8QU/Bc+l
+	 cDzXOI7ZCQ0Lg==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso6874558e87.2;
+        Sun, 08 Sep 2024 22:41:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVAv/VSXCsH1v6s62hRjR9ZZKA7nG1wN3q/lneNsrly6ZqBzN6TVo6EtpySkl8FucfeufUy5WNd5njZ5Ck=@vger.kernel.org, AJvYcCVkY1feoR5Ppkj2faksXl2Gc6gh+16Mw//3Nr409DYEvBv7UHxx7FiikXmQqwhWTfjr7r89fJNphrGKjXXe@vger.kernel.org, AJvYcCXBJGublogdwwEfNHDzD3amRO47eo2XLF2YA5/d1e23CRqeynnLzpGr991socV2P2QqvcxeZl8o6A==@vger.kernel.org, AJvYcCXkK9SjYT3bliV+Bnv4yEL6APAwieMGmSo/ocIPpjiD0N/yJlpm/ABTP/OR1A6JqllppZrQOydEfKMMK+qn@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCqBH+1+S20jkQMmBMHYLaDWJd+cDCCRmOqSck3/DkN5INDBUG
+	HvChZNoQg8Pin4qr0Vxo0ZgUElNR5sUr6c7YGKqn/g4FxBjYRq8kQF1SO+lsSj94eu5W5qyOlaw
+	CLeJaTPy0WzgcGW5mWFA6X2y6DGM=
+X-Google-Smtp-Source: AGHT+IE/eeAL3wg4+8lM40atumui+ijWmakaqLgAR4P5hoc1oVKlVHlObEKIEHv2t3Afuag93sP746lU4PC9rYvIgVg=
+X-Received: by 2002:a05:6512:3e27:b0:536:5529:f718 with SMTP id
+ 2adb3069b0e04-5365880c60bmr7800264e87.54.1725860488188; Sun, 08 Sep 2024
+ 22:41:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240906-macos-build-support-v2-0-06beff418848@samsung.com>
+ <20240906-macos-build-support-v2-2-06beff418848@samsung.com>
+ <CAK7LNARw-7uwJB7ibmSYE5nYUtPXcr4J9cHBQqm9BnNS=SRUhQ@mail.gmail.com> <CABj0suCHeWGDXX-S6U9X5iCzwMqn9pq=i84PSKwKtUXhGxaBjQ@mail.gmail.com>
+In-Reply-To: <CABj0suCHeWGDXX-S6U9X5iCzwMqn9pq=i84PSKwKtUXhGxaBjQ@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 9 Sep 2024 14:40:51 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATPS2cdRso_zHt1Z0Gyugc4KOhZVYAFP35f=Eaoy6-8Cg@mail.gmail.com>
+Message-ID: <CAK7LNATPS2cdRso_zHt1Z0Gyugc4KOhZVYAFP35f=Eaoy6-8Cg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/8] file2alias: fix uuid_t definitions for macos
+To: "Daniel Gomez (Samsung)" <d+samsung@kruces.com>
+Cc: da.gomez@samsung.com, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Lucas De Marchi <lucas.demarchi@intel.com>, 
+	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
+	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
+	Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Simona Vetter <simona.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, 
+	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
+	Finn Behrens <me@kloenk.dev>, gost.dev@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-read_hv_sched_clock_tsc() assumes that the Hyper-V clock counter is
-bigger than the variable hv_sched_clock_offset, which is cached during
-early boot, but depending on the timing this assumption may be false
-when a hibernated VM starts again (the clock counter starts from 0
-again) and is resuming back (Note: hv_init_tsc_clocksource() is not
-called during hibernation/resume); consequently,
-read_hv_sched_clock_tsc() may return a negative integer (which is
-interpreted as a huge positive integer since the return type is u64)
-and new kernel messages are prefixed with huge timestamps before
-read_hv_sched_clock_tsc() grows big enough (which typically takes
-several seconds).
+On Mon, Sep 9, 2024 at 2:41=E2=80=AFAM Daniel Gomez (Samsung)
+<d+samsung@kruces.com> wrote:
+>
+> On Sun, Sep 8, 2024 at 1:56=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.=
+org> wrote:
+> >
+> > On Fri, Sep 6, 2024 at 8:01=E2=80=AFPM Daniel Gomez via B4 Relay
+> > <devnull+da.gomez.samsung.com@kernel.org> wrote:
+> > >
+> > > From: Daniel Gomez <da.gomez@samsung.com>
+> > >
+> > > The uuid_t struct defined in sys/types.h on macOS hosts conflicts wit=
+h
+> > > the one defined in file2alias, resulting in the typedef redefinition
+> > > error below. To resolve this conflict, define the _UUID_T and
+> > > __GETHOSTUUID_ in file2alias HOSTCFLAGS.
+> > >
+> > > Error:
+> > >   HOSTCC  scripts/mod/file2alias.o scripts/mod/file2alias.c:45:3:
+> > > error: typedef redefinition with different types ('struct uuid_t' vs
+> > > '__darwin_uuid_t' (aka 'unsigned char[16]'))    45 | } uuid_t;       =
+|
+> > > ^
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    sys/_types/_uuid_t.h:31:25: note: previous definition is here 31 |
+> > >    typedef __darwin_uuid_t uuid_t;    |                         ^
+> > > scripts/mod/file2alias.c:1354:7: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1354 |
+> > >  uuid->b[0], uuid->b[1], uuid->b[2], uuid->b[3], uuid->b[4],      |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1354:19: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1354 |
+> > >  uuid->b[0], uuid->b[1], uuid->b[2], uuid->b[3], uuid->b[4],      |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1354:31: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1354 |
+> > >  uuid->b[0], uuid->b[1], uuid->b[2], uuid->b[3], uuid->b[4],      |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1354:43: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1354 |
+> > >  uuid->b[0], uuid->b[1], uuid->b[2], uuid->b[3], uuid->b[4],      |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1354:55: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1354 |
+> > >  uuid->b[0], uuid->b[1], uuid->b[2], uuid->b[3], uuid->b[4],      |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1355:7: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1355 |
+> > >  uuid->b[5], uuid->b[6], uuid->b[7], uuid->b[8], uuid->b[9],      |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1355:19: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1355 |
+> > >  uuid->b[5], uuid->b[6], uuid->b[7], uuid->b[8], uuid->b[9],      |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1355:31: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1355 |
+> > >  uuid->b[5], uuid->b[6], uuid->b[7], uuid->b[8], uuid->b[9],      |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1355:43: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1355 |
+> > >  uuid->b[5], uuid->b[6], uuid->b[7], uuid->b[8], uuid->b[9],      |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1355:55: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1355 |
+> > >  uuid->b[5], uuid->b[6], uuid->b[7], uuid->b[8], uuid->b[9],      |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1356:7: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1356 |
+> > >  uuid->b[10], uuid->b[11], uuid->b[12], uuid->b[13], uuid->b[14],    =
+  |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1356:20: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1356 |
+> > >  uuid->b[10], uuid->b[11], uuid->b[12], uuid->b[13], uuid->b[14],    =
+  |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1356:33: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1356 |
+> > >  uuid->b[10], uuid->b[11], uuid->b[12], uuid->b[13], uuid->b[14],    =
+  |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1356:46: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1356 |
+> > >  uuid->b[10], uuid->b[11], uuid->b[12], uuid->b[13], uuid->b[14],    =
+  |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1356:59: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1356 |
+> > >  uuid->b[10], uuid->b[11], uuid->b[12], uuid->b[13], uuid->b[14],    =
+  |
+> > >  ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > scripts/mod/file2alias.c:1357:7: error: member reference base
+> > >  type 'typeof (((struct tee_client_device_id *)0)->uuid)' (aka
+> > >  'unsigned char[16]') is not a structure or union 1357 |
+> > >  uuid->b[15]);      |                 ~~~~^ ~
+> > > /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/
+> > >    secure/_stdio.h:47:56: note: expanded from macro 'sprintf' 47 |
+> > >    __builtin___sprintf_chk (str, 0, __darwin_obsz(str), __VA_ARGS__)
+> > >    |                                                        ^~~~~~~~~=
+~~
+> > > 17 errors generated.
+> > >
+> > > Suggested-by: Nicolas Schier <nicolas@fjasle.eu>
+> > > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> > > ---
+> > >  scripts/mod/Makefile     | 2 ++
+> > >  scripts/mod/file2alias.c | 3 +++
+> > >  2 files changed, 5 insertions(+)
+> > >
+> > > diff --git a/scripts/mod/Makefile b/scripts/mod/Makefile
+> > > index c729bc936bae..75c12c045f21 100644
+> > > --- a/scripts/mod/Makefile
+> > > +++ b/scripts/mod/Makefile
+> > > @@ -8,6 +8,8 @@ modpost-objs    :=3D modpost.o file2alias.o sumversio=
+n.o symsearch.o
+> > >
+> > >  devicetable-offsets-file :=3D devicetable-offsets.h
+> > >
+> > > +HOSTCFLAGS_file2alias.o +=3D -D_UUID_T -D__GETHOSTUUID_H
+> > > +
+> > >  $(obj)/$(devicetable-offsets-file): $(obj)/devicetable-offsets.s FOR=
+CE
+> > >         $(call filechk,offsets,__DEVICETABLE_OFFSETS_H__)
+> > >
+> > > diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+> > > index 99dce93a4188..ab743f6d60ef 100644
+> > > --- a/scripts/mod/file2alias.c
+> > > +++ b/scripts/mod/file2alias.c
+> > > @@ -11,6 +11,9 @@
+> > >   */
+> > >
+> > >  #include "modpost.h"
+> > > +#ifdef __APPLE__
+> > > +#define uuid_t sys_uuid_t
+> > > +#endif
+> > >  #include "devicetable-offsets.h"
+> >
+> >
+> >
+> >
+> > Is this what Nicolas suggested?
+> > https://lore.kernel.org/lkml/20240807-sexy-roadrunner-of-acceptance-a84=
+bbf@lindesnes/
+> >
+> >
+> > I thought he suggested replacing #ifdef __APPLE__
+> > with -D_UUID_T -D__GETHOSTUUID_H.
+> >
+> >
+> > You added -D_UUID_T -D__GETHOSTUUID_H,
+> > keeping #ifdef __APPLE__.
+>
+> I forgot to remove this.
+>
+> Based on your suggestion in the other thread to use/overwrite
+> HOSTCFLAGS via the command line, it seems I should drop this patch.
+> Can you confirm?
 
-Fix the issue by saving the Hyper-V clock counter just before the
-suspend, and using it to correct the hv_sched_clock_offset in
-resume. Override x86_platform.save_sched_clock_state  and
-x86_platform.restore_sched_clock_state so that we don't
-have to touch the common x86 code.
 
-Note: if Invariant TSC is available, the issue doesn't happen because
-1) we don't register read_hv_sched_clock_tsc() for sched clock:
-See commit e5313f1c5404 ("clocksource/drivers/hyper-v: Rework
-clocksource and sched clock setup");
-2) the common x86 code adjusts TSC similarly: see
-__restore_processor_state() ->  tsc_verify_tsc_adjust(true) and
-x86_platform.restore_sched_clock_state().
+Yes, I think this patch is unnecessary because:
 
-Cc: stable@vger.kernel.org
-Fixes: 1349401ff1aa ("clocksource/drivers/hyper-v: Suspend/resume Hyper-V clocksource for hibernation")
-Co-developed-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
----
- drivers/clocksource/hyperv_timer.c | 64 +++++++++++++++++++++++++++++-
- 1 file changed, 63 insertions(+), 1 deletion(-)
+ [1] You can feed "-D_UUID_T -D__GETHOSTUUID_H"
+     from the HOSTCFLAGS env variable
+ [2] uuid_t may be dropped if I succeed in
+     refactoring modpost in the future
 
-diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
-index b2a080647e41..7aa44b8aae2e 100644
---- a/drivers/clocksource/hyperv_timer.c
-+++ b/drivers/clocksource/hyperv_timer.c
-@@ -27,7 +27,10 @@
- #include <asm/mshyperv.h>
- 
- static struct clock_event_device __percpu *hv_clock_event;
--static u64 hv_sched_clock_offset __ro_after_init;
-+
-+/* Can have negative values, after resume from hibernation, so keep them s64 */
-+static s64 hv_sched_clock_offset __read_mostly;
-+static s64 hv_sched_clock_offset_saved;
- 
- /*
-  * If false, we're using the old mechanism for stimer0 interrupts
-@@ -51,6 +54,9 @@ static int stimer0_irq = -1;
- static int stimer0_message_sint;
- static __maybe_unused DEFINE_PER_CPU(long, stimer0_evt);
- 
-+static void (*old_save_sched_clock_state)(void);
-+static void (*old_restore_sched_clock_state)(void);
-+
- /*
-  * Common code for stimer0 interrupts coming via Direct Mode or
-  * as a VMbus message.
-@@ -434,6 +440,39 @@ static u64 noinstr read_hv_sched_clock_tsc(void)
- 		(NSEC_PER_SEC / HV_CLOCK_HZ);
- }
- 
-+/*
-+ * Hyper-V clock counter resets during hibernation. Save and restore clock
-+ * offset during suspend/resume, while also considering the time passed
-+ * before suspend. This is to make sure that sched_clock using hv tsc page
-+ * based clocksource, proceeds from where it left off during suspend and
-+ * it shows correct time for the timestamps of kernel messages after resume.
-+ */
-+static void save_hv_clock_tsc_state(void)
-+{
-+	hv_sched_clock_offset_saved = hv_read_reference_counter();
-+}
-+
-+static void restore_hv_clock_tsc_state(void)
-+{
-+	/*
-+	 * Time passed before suspend = hv_sched_clock_offset_saved
-+	 *                            - hv_sched_clock_offset (old)
-+	 *
-+	 * After Hyper-V clock counter resets, hv_sched_clock_offset needs a correction.
-+	 *
-+	 * New time = hv_read_reference_counter() (future) - hv_sched_clock_offset (new)
-+	 * New time = Time passed before suspend + hv_read_reference_counter() (future)
-+	 *                                       - hv_read_reference_counter() (now)
-+	 *
-+	 * Solving the above two equations gives:
-+	 *
-+	 * hv_sched_clock_offset (new) = hv_sched_clock_offset (old)
-+	 *                             - hv_sched_clock_offset_saved
-+	 *                             + hv_read_reference_counter() (now))
-+	 */
-+	hv_sched_clock_offset -= hv_sched_clock_offset_saved - hv_read_reference_counter();
-+}
-+
- static void suspend_hv_clock_tsc(struct clocksource *arg)
- {
- 	union hv_reference_tsc_msr tsc_msr;
-@@ -456,6 +495,24 @@ static void resume_hv_clock_tsc(struct clocksource *arg)
- 	hv_set_msr(HV_MSR_REFERENCE_TSC, tsc_msr.as_uint64);
- }
- 
-+/*
-+ * Functions to override save_sched_clock_state and restore_sched_clock_state
-+ * functions of x86_platform. The Hyper-V clock counter is reset during
-+ * suspend-resume and the offset used to measure time needs to be
-+ * corrected, post resume.
-+ */
-+static void hv_save_sched_clock_state(void)
-+{
-+	save_hv_clock_tsc_state();
-+	old_save_sched_clock_state();
-+}
-+
-+static void hv_restore_sched_clock_state(void)
-+{
-+	restore_hv_clock_tsc_state();
-+	old_restore_sched_clock_state();
-+}
-+
- #ifdef HAVE_VDSO_CLOCKMODE_HVCLOCK
- static int hv_cs_enable(struct clocksource *cs)
- {
-@@ -539,6 +596,11 @@ static void __init hv_init_tsc_clocksource(void)
- 
- 	hv_read_reference_counter = read_hv_clock_tsc;
- 
-+	old_save_sched_clock_state = x86_platform.save_sched_clock_state;
-+	x86_platform.save_sched_clock_state = hv_save_sched_clock_state;
-+	old_restore_sched_clock_state = x86_platform.restore_sched_clock_state;
-+	x86_platform.restore_sched_clock_state = hv_restore_sched_clock_state;
-+
- 	/*
- 	 * TSC page mapping works differently in root compared to guest.
- 	 * - In guest partition the guest PFN has to be passed to the
 
-base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
--- 
-2.25.1
 
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
