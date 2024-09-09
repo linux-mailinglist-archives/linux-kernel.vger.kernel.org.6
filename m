@@ -1,183 +1,300 @@
-Return-Path: <linux-kernel+bounces-320905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 786FE9711D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:26:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E069711DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 967F71C227F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:26:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FEB11F231B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BF51BC5C;
-	Mon,  9 Sep 2024 08:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86A01B2523;
+	Mon,  9 Sep 2024 08:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="uQqVWGDa"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2076.outbound.protection.outlook.com [40.92.103.76])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="c98UNajL"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBC31AF4EB;
-	Mon,  9 Sep 2024 08:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725870304; cv=fail; b=Cue4Uo50URB+ntFyXERF8bMY+Kdj7G4d66PwRZbpIXu5RJYdSam7YiDpZ6Mt9CaN1S15I4ybup3GkLhjNXV6ocUVG2hSTJBSXPYOUNPGuOJL9LhIIkc5Xc7U5HYiZf6WKsVdAwludZRlqzPrKtzgeGbmYdUBNXuhn5ufCCttyEw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725870304; c=relaxed/simple;
-	bh=lXcMRbY1GX325faGpR4Ay29GtBkVFIgd8yRcKjJHpGo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lEiTFOTbbtyi1ImUo0e+1CiOtWBSBCA0kngpunzUBKT3NM1r5K4g3cyUKBWM3EY8ugHHh7Le9dtuO+QS3BLvwQ4VXCDEEsgIxMVblzz+2KxZ3GiUn+KMDqYy0I8sAzUs38St4RKuCSbiQb6CTya015PIljBS2WKgjl5Kik01FGI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=uQqVWGDa; arc=fail smtp.client-ip=40.92.103.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SenjdaEk7+ec6VyPm7sItsheGwJjC6+HCP6OoPQlGcyM6TxY9hWXGkuQj//oZ4fbbmEAAcZ+IGOyIzs01V3oeTmt3omVniBmBIP7qIzNWloQDNurr/EtvVX04MdKsJh+RMphJAfChIoEvlMZrbPD3s60ndyy/tPGcYnqmDSPydm827lCSMlBrIlbmxv+xLq//rKMXxbUJOqpmO6bx/uEVbl36dwu2Ns9rmbmqQCkgjP79xMTb15cgdTBaLCdDtnmU0806dVHgaXNRzhZTkr32X4Dpq4F0J1QTLegszWvx6K/Bwh3zAQXQTd5aCHSh3srhF/wpzbh3g0whBbn8L7a3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i7F+idI0fLiJXc1a8thWbHsAnjIxRwlnHKF36BTzfyI=;
- b=fgLi5I49KJFgOsXrKphzZFkLuXQZIr4js9L4IHKaH2SenQLeCOz9hzUbG41UCHlMJi4ik7Z/cJXXzTEVovMnP6MmM/FrUk27QSwI6Nt1BD1jRSBDPKR/LuHAwPvMMncZWSB/UFkwU5T6FPOUNQc5jJRcBgD+tZw/YbP1KGUvjwgXuoLh9P29UKL7xkbxnBPKQZf30KwKi6w+C7k4lOCHAn9QPFdYNUpdu0+QtMGvJVqrXfR1PiZXglgqTHZAlhdS7m1Qjsl5LmgTEXYCJ9NxjZOzPzNUt7bGY0SoVDFjGzNSP0d7LDI6zGi1IOho+RpTjiWeRsbp7Wgyku43eoRWQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i7F+idI0fLiJXc1a8thWbHsAnjIxRwlnHKF36BTzfyI=;
- b=uQqVWGDaHh0qJCZ91A3jREzwLjSGu2ZVvk+xhn+CbOE3+iP9ivoVkQSwLm2soqyFNtzxEncdNn2fmr856rpp1IvgWZf/6Of/WLkSvImp37IN2Iqfm9jXQ8Ca/tcGbwIoMA3MCN/c1XC4I0YE7QeKPUs/k0aWDC1mNUlC7vY9afVZeZ1BLa2x0rYCPeJVPWuZwF3GLtRcBdwnevbA3e0+BSmA9HOpkKTdzgWHTSUgalW4SuKsm6l5W64oDxN7GR4LiGjobDmAgm2mKPLDt2lslhhAxFM97lZdMBnHewiPqBC6EQC+eEngkFeXwZwT3HJlcusv/70bPU9Qn8EswxOKlA==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by MA0P287MB0314.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b1::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Mon, 9 Sep
- 2024 08:24:54 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%4]) with mapi id 15.20.7939.022; Mon, 9 Sep 2024
- 08:24:54 +0000
-Message-ID:
- <MA0P287MB28225ECCF1D263A20917AD5DFE992@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Mon, 9 Sep 2024 16:24:48 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] pwm: sophgo: add driver for Sophgo SG2042 PWM
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, Chen Wang <unicornxw@gmail.com>,
- ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, inochiama@outlook.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
- haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, chunzhi.lin@sophgo.com
-References: <3985690b29340982a45314bdcc914c554621e909.1725536870.git.unicorn_wang@outlook.com>
- <202409080100.h6lX5Asm-lkp@intel.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <202409080100.h6lX5Asm-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [F1S1sqjnhUwCAGR9Vq1av/D2K/GB4g9e]
-X-ClientProxiedBy: SI2PR06CA0009.apcprd06.prod.outlook.com
- (2603:1096:4:186::17) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <6657655b-591f-4c52-99ca-0fb1f9ac5c40@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D231B150D;
+	Mon,  9 Sep 2024 08:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725870343; cv=none; b=Gbn6VPiryeIWuwIxBqDBKA7ORAGrEi2LKNzTYI4NY10sBeqOVOZ0IgiW7caX0m2sa5lo7DuSW88isuPAg3wtdJI4EaxBkUFbMGuM5blCZhTfFBd2d1OmYfT7XVcwP8O388sx6KL5CM/V+PLOWHp/DljXzrdXWfHNxezKGdtAq5I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725870343; c=relaxed/simple;
+	bh=uJMK6XsGRdyRUKW9Qg7+dj6NCSzFzCEyazzZgg3gOhg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YkwQ+EhJwqOcvbe8TZCjx/nuMixYaqJdcPOOjIiW3g27ucYO97mWo6UC96lpPwF/0KXyKShefh070rYcWxeqvxXAvaQ4FrD4bvoH2kwWIf7su6NwF13FrZz3bxtR1OhOF1ku9ywmzIeEHXsgIGem8PZAu4fhFMFz7ubFPGATjN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=c98UNajL; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725870342; x=1757406342;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=uJMK6XsGRdyRUKW9Qg7+dj6NCSzFzCEyazzZgg3gOhg=;
+  b=c98UNajLQgmWYDwuXRbUcaDNjs3rKGCZSfKNpZMi5aLS2d5LsCFAm8hp
+   j9eGNxS+sEYKhiwLp6Mg6WKqEx/CmzS1GEqX2yWqiiMwmwNfp7bXbzbxy
+   nkO6/qxMzVLyLsC0PudFcOVSxOWROrIQFHJsAcx0uVOB5xs+PtCHe+W3M
+   B2GOBSBQvt0Y57ALTsGlhtbNvDvIqbXo/4qGaRrdt+2euDMzOG1Ng5Xd0
+   eTl1msRJxjyAj5MCauvnMgQAeM7hVDILbrJ2MMT1ZFRG+7/0eDfQu4K/G
+   Be3jfEAeIGAMoUInJxXq4OZJ6XM31tEZg1yRULkHwicfpXZ8Y6KV76pv8
+   Q==;
+X-CSE-ConnectionGUID: wo5I27+uRra+nyW5j3G73A==
+X-CSE-MsgGUID: gsVJhhRJRUiuBKwXv0RMOQ==
+X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
+   d="scan'208";a="262470554"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 01:25:40 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 9 Sep 2024 01:25:27 -0700
+Received: from che-ll-i17164.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 9 Sep 2024 01:25:17 -0700
+From: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>, <saeedm@nvidia.com>,
+	<anthony.l.nguyen@intel.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <andrew@lunn.ch>, <corbet@lwn.net>,
+	<linux-doc@vger.kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+	<devicetree@vger.kernel.org>, <horatiu.vultur@microchip.com>,
+	<ruanjinjie@huawei.com>, <steen.hegelund@microchip.com>,
+	<vladimir.oltean@nxp.com>
+CC: <parthiban.veerasooran@microchip.com>, <masahiroy@kernel.org>,
+	<alexanderduyck@fb.com>, <krzk+dt@kernel.org>, <robh@kernel.org>,
+	<rdunlap@infradead.org>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<UNGLinuxDriver@microchip.com>, <Thorsten.Kummermehr@microchip.com>,
+	<Pier.Beruto@onsemi.com>, <Selvamani.Rajagopal@onsemi.com>,
+	<Nicolas.Ferre@microchip.com>, <benjamin.bigler@bernformulastudent.ch>,
+	<linux@bigler.io>, <markku.vorne@kempower.com>, Parthiban Veerasooran
+	<Parthiban.Veerasooran@microchip.com>
+Subject: [PATCH net-next v8 00/14] Add support for OPEN Alliance 10BASE-T1x MACPHY Serial Interface
+Date: Mon, 9 Sep 2024 13:55:00 +0530
+Message-ID: <20240909082514.262942-1-Parthiban.Veerasooran@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|MA0P287MB0314:EE_
-X-MS-Office365-Filtering-Correlation-Id: e81a3ff1-48e0-4752-b952-08dcd0a8e183
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|15080799006|461199028|5072599009|6090799003|8060799006|19110799003|3412199025|440099028|4302099013|1602099012;
-X-Microsoft-Antispam-Message-Info:
-	Y725LEHWHC5nkMirIFAjRX0e0ige1pYoZC++5dRu/VGxx8uoUAN225a2UBlofAQm8Yod+tOPP+TDTFfl0P0jwQeuPoC5kVkEarz2yJr+F4vF0fpXnq92EkVaWIJF6to8bLCtUs9WuUQVCxLFtHp6rYhpBY1F+XF6F06U/kTNICVFkHkDAU6guHOz6bnUx0B8eMvPGmQuRv+RUQN7V2EH6FX2AHEYinp2w8q/OXes506FPggvn+4FhlbXBAmx+gS9jTtqSU/IkjNN2U/bNMgIpc4+UbvVfyGqQtC691+6GTwRM9h1z1/Qk8VBHvIK8sd/eC6EkF+OA6ZVKYjZbRYQNGm6iotbAvajiLUjJUqrWUeANLQBM+FxbHNB3ePbEkEFurAYX6Eh0Jel5AcTRVx8HkzNe2AyMTfM/ZBge4LNwnrtR79dsGUYPNNAZX5IMUMoc9nyzbHIxQheEfY7OxSlTU9nsvt5OV0i9C9/fhDYCNKYY9ghMjreftgcujf896VGGtnBXj5XsSfwJB6aHu2forJZiFYtnpi5w0CpJz3uACaY2LaqeusDpJ2AQGwMmEtAHyPVC9H+yDPt1m0xLTPKmF456bsnMJqIVfJ+zbqc7c7kNdEDVyAczriD2NdwG/MZoyef6fwP6ue014AtywuIKaOQFP+6rf62/mT6mwHZdHBRq6oE1CgeiACy7R2GFEYwOjj/DfGUHBynjbbAoga9d0dLX5V92/49s3rwlUzG3Zv5nbIa5NJIBX0/J6N3egOz2zHokOCW3VfvM77AUPV511c2EQLRuv/XptSqLaNq9t79m9Iw8gio8h5K2VW9WjMGZJTOJuP7j7Lj/lTrlV9CBAelF7yM8bP2GlVEGUEVRGo=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dW8zWnpuRFlnYWpOSmJEaTZLN0EwK094ZHN1TDJnR01Ndk02ZmhjL1A2UVVV?=
- =?utf-8?B?MDE4bzZEUHN6NW1kWkExZEl6aEFEdGRoR3p0aHFQQ2xiVWNtTEJTY3RyMC9S?=
- =?utf-8?B?a3Z2eFlLWUU0Q3BtbmR3WFdwMXNMODdCZFNMb1oxOTFCR1FRZTVvQlVWN0dC?=
- =?utf-8?B?TzE2ekNXNTFzVUI2NGFsQ0NodUhLNUZ1T2dLV2lzck9yZzlXZkNiS3oxTWJa?=
- =?utf-8?B?TmN0U3FldHZKM0VnaGFnMGNzQjZkR0xienU5UEp5SU8xZGZGM2tScm5RRHU5?=
- =?utf-8?B?eFF4bGVvclVIdlgyVUdwaEJEVjFoaHRCMEU0dWxNVDJOWnZYMjhtUytMMnli?=
- =?utf-8?B?bVQ4M015NnBNdG5tdG1qTUtlbXBwUXNWeUFGMWFjNGVzR0luekJzVGNDZ3RP?=
- =?utf-8?B?UjBFdXVNZlRVWFRubHVGT3RaMEkrMU5QLzduZFdZbW5VbUFyTjdVRnFrSWJQ?=
- =?utf-8?B?ekFLYUJxOE5Oa2NMMytYUGtVeVkwd281SStFU2M0ZG40a3RHNGJnWU1vRG8r?=
- =?utf-8?B?U0V0azJPS09qdXdTUy82SWoyeFFkamZXQ29WOWdVS2dxcFl0MTlpNkRJRE9D?=
- =?utf-8?B?N2xoU3dDSko1MUY1QzVFWlJ4dmIvSVV6bURTM1B2bUVFWlgzdVc4TWpxaEVI?=
- =?utf-8?B?TG5VRmhKSzUxKzJ2S1pRTk1Ta2Zib2RYV1JJTnhIMko0eE16dnB4cWFFY3k3?=
- =?utf-8?B?c3l1RFVKUnp3eGtyaHd0WWg4VmhLM1J0REkyOTMwTDJFbnlpb0s0ajNZTVZT?=
- =?utf-8?B?a1lyendBTnd1Wnc1bW5oenNkRWZuY004UnZEellBTDBEbU9NbWF2WTVud1lC?=
- =?utf-8?B?OXFhb2J6Z2wwMCtkeUdHRmpESEtGVDUzbTBPUWVBZFNyOW5ucTBMU1RLS1B3?=
- =?utf-8?B?Y1IwS2VhbmFGcFE2UVY2UXZtelgwVmcvWXdiZ3hqVjVUWW1HVmV3SzY1NkRY?=
- =?utf-8?B?WWNRM3BjSmdmdWNPVmZqNTNITmJRMDFHWjFicmVkb00xZGhJNWY2bmNPZS83?=
- =?utf-8?B?RjM0bFZzY2htUEw5bkhxMnUxN2NKeUhaZ2NBcTRxMXBENmdRWkxLM0VsbWZN?=
- =?utf-8?B?ZFlqVGZ1UWVoYWJVZjJIOXA2ZW1NU3ZtQ0Q5bjl3bE02QU1CVXQrOGluVDlq?=
- =?utf-8?B?amoxdXlVSWtxRi9vWU5mT3JqbVEvUjUvWWNlWUkvNlhVRDZNYWhBaEI3aXdB?=
- =?utf-8?B?anVmbjZlZmxMWVE4WktOaWFQcUZkelJidFNqSHJLN2MwYlhhNUFYZFAvOEhj?=
- =?utf-8?B?eDR1YWRjK1UzVHJGVVU5WnVwNGx5QmNxKytYK1lnSmxIQWZFdXVldTNja1Ry?=
- =?utf-8?B?ak9JT1UvUUJIYlBsU0xzaXJxWVB5ZEZWVWxRb2dMUVhHZU1CSXJuOUN0SXRK?=
- =?utf-8?B?aDNXTnVqeGxiYUZxcWdoV2w2MWJ2Vm9CUDdoeUNyMDdwb1ZGNUJjRXhsdTU0?=
- =?utf-8?B?NGdyZERtNHFuZitmbTRReldybERVMHY5ckJPV1JQRmJ1WExqUUtaMzhWMXVW?=
- =?utf-8?B?R3RhU3VxODQ4V1A1aW9rUFlTeGNhTmNGZ0Z0YlRVYmdoR05ER3B0aGUyY0Er?=
- =?utf-8?B?Q0J5OXJQZU9ZUDA1RXdHRHJOVXRJNnF2ZTNqQ3NpbkFFOURMeWtZWTNPTk5a?=
- =?utf-8?B?MkJ3M3RCT21teDhVY0dXb29UVkxxQWRUbVo5aVIyUm5yODlkMFVRZTlCRkRE?=
- =?utf-8?Q?uCZrC7ugcPLfoqb0gOd5?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e81a3ff1-48e0-4752-b952-08dcd0a8e183
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 08:24:54.1243
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB0314
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-hi,
+This patch series contain the below updates,
+- Adds support for OPEN Alliance 10BASE-T1x MACPHY Serial Interface in the
+  net/ethernet/oa_tc6.c.
+  Link to the spec:
+  -----------------
+  https://opensig.org/download/document/OPEN_Alliance_10BASET1x_MAC-PHY_Serial_Interface_V1.1.pdf
 
-I wonder why CONFIG_PWM_SOPHGO_SG2042 is enabeld for m68k? Please remove 
-this.
+- Adds driver support for Microchip LAN8650/1 Rev.B1 10BASE-T1S MACPHY
+  Ethernet driver in the net/ethernet/microchip/lan865x/lan865x.c.
+  Link to the product:
+  --------------------
+  https://www.microchip.com/en-us/product/lan8650
 
-Regards,
+Testing Details:
+----------------
+The driver performance was tested using iperf3 in the below two setups
+separately.
 
-Chen
+Setup 1:
+--------
+Node 0 - Raspberry Pi 4 with LAN8650 MAC-PHY 
+Node 1 - Raspberry Pi 4 with EVB-LAN8670-USB USB Stick
 
-On 2024/9/8 1:58, kernel test robot wrote:
-> Hi Chen,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on 431c1646e1f86b949fa3685efc50b660a364c2b6]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Wang/dt-bindings-pwm-sophgo-add-bindings-for-sg2042/20240905-201303
-> base:   431c1646e1f86b949fa3685efc50b660a364c2b6
-> patch link:    https://lore.kernel.org/r/3985690b29340982a45314bdcc914c554621e909.1725536870.git.unicorn_wang%40outlook.com
-> patch subject: [PATCH 2/2] pwm: sophgo: add driver for Sophgo SG2042 PWM
-> config: m68k-randconfig-r133-20240907 (https://download.01.org/0day-ci/archive/20240908/202409080100.h6lX5Asm-lkp@intel.com/config)
-> compiler: m68k-linux-gcc (GCC) 14.1.0
-> reproduce: (https://download.01.org/0day-ci/archive/20240908/202409080100.h6lX5Asm-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202409080100.h6lX5Asm-lkp@intel.com/
->
-> All warnings (new ones prefixed by >>):
->
->>> drivers/pwm/pwm-sophgo-sg2042.c:99:34: warning: 'sg2042_pwm_match' defined but not used [-Wunused-const-variable=]
->        99 | static const struct of_device_id sg2042_pwm_match[] = {
->           |                                  ^~~~~~~~~~~~~~~~
->
->
-> vim +/sg2042_pwm_match +99 drivers/pwm/pwm-sophgo-sg2042.c
->
->      98	
->    > 99	static const struct of_device_id sg2042_pwm_match[] = {
->     100		{ .compatible = "sophgo,sg2042-pwm" },
->     101		{ },
->     102	};
->     103	MODULE_DEVICE_TABLE(of, sg2042_pwm_match);
->     104	
->
+Setup 2:
+--------
+Node 0 - SAMA7G54-EK with LAN8650 MAC-PHY 
+Node 1 - Raspberry Pi 4 with EVB-LAN8670-USB USB Stick
+
+Achieved maximum of 9.4 Mbps.
+
+Some systems like Raspberry Pi 4 need performance mode enabled to get the
+proper clock speed for SPI. Refer below link for more details.
+
+https://github.com/raspberrypi/linux/issues/3381#issuecomment-1144723750
+
+Changes:
+v2:
+- Removed RFC tag.
+- OA TC6 framework configured in the Kconfig and Makefile to compile as a
+  module.
+- Kerneldoc headers added for all the API methods exposed to MAC driver.
+- Odd parity calculation logic updated from the below link,
+  https://elixir.bootlin.com/linux/latest/source/lib/bch.c#L348
+- Control buffer memory allocation moved to the initial function.
+- struct oa_tc6 implemented as an obaque structure.
+- Removed kthread for handling mac-phy interrupt instead threaded irq is
+  used.
+- Removed interrupt implementation for soft reset handling instead of
+  that polling has been implemented.
+- Registers name in the defines changed according to the specification
+  document.
+- Registers defines are arranged in the order of offset and followed by
+  register fields.
+- oa_tc6_write_register() implemented for writing a single register and
+  oa_tc6_write_registers() implemented for writing multiple registers.
+- oa_tc6_read_register() implemented for reading a single register and
+  oa_tc6_read_registers() implemented for reading multiple registers.
+- Removed DRV_VERSION macro as git hash provided by ethtool.
+- Moved MDIO bus registration and PHY initialization to the OA TC6 lib.
+- Replaced lan865x_set/get_link_ksettings() functions with
+  phy_ethtool_ksettings_set/get() functions.
+- MAC-PHY's standard capability register values checked against the
+  user configured values.
+- Removed unnecessary parameters validity check in various places.
+- Removed MAC address configuration in the lan865x_net_open() function as
+  it is done in the lan865x_probe() function already.
+- Moved standard registers and proprietary vendor registers to the
+  respective files.
+- Added proper subject prefixes for the DT bindings.
+- Moved OA specific properties to a separate DT bindings and corrected the
+  types & mistakes in the DT bindings.
+- Inherited OA specific DT bindings to the LAN865x specific DT bindings.
+- Removed sparse warnings in all the places.
+- Used net_err_ratelimited() for printing the error messages.
+- oa_tc6_process_rx_chunks() function and the content of oa_tc6_handler()
+  function are split into small functions.
+- Used proper macros provided by network layer for calculating the
+  MAX_ETH_LEN.
+- Return value of netif_rx() function handled properly.
+- Removed unnecessary NULL initialization of skb in the
+  oa_tc6_rx_eth_ready() function removed.
+- Local variables declaration ordered in reverse xmas tree notation.
+
+v3:
+- Completely redesigned all the patches.
+- Control and data interface patches are divided into multiple small
+  patches.
+- Device driver APIs added in the oa-tc6-framework.rst file.
+- Code readability improved in all the patches.
+- Defined macros wherever is possible.
+- Changed RESETC to STATUS0_RESETC for improving the readability.
+- Removed OA specific DT bindings.
+- Used default configurations defined in the OA spec.
+- All variables are named properly as per OA spec for more redability.
+- Bigger functions are split into multiple smaller functions.
+- DT binding check is done.
+- Phy mask is removed in phy scanning.
+- Used NET_RX_DROP to compare the rx packet submission status.
+- Indentation in the Kconfig file corrected.
+- Removed CONFIG_OF and CONFIG_ACPI ifdefs.
+- Removed MODULE_ALIAS().
+
+v4:
+- Fixed indentation in oa-tc6-framework.rst file.
+- Replaced ENODEV error code with EPROTO in the
+  oa_tc6_check_ctrl_write_reply and oa_tc6_check_ctrl_read_reply()
+  functions.
+- Renamed oa_tc6_read_sw_reset_status() function as
+  oa_tc6_read_status0().
+- Changed software reset polling delay as 1ms and polling timeout as 1s.
+- Implemented clause 45 registers direct access.
+- Replaced ENODEV error code with ENOMEM in the
+  oa_tc6_mdiobus_register() function.
+- Changed transmit skbs queue size as 2.
+- Added skb_linearize() function to convert contiguous packet data.
+- Checked kthread_should_stop() in the oa_tc6_spi_thread_handler()
+  function before proceeding for the oa_tc6_try_spi_transfer().
+- Removed netdev_err() print in the oa_tc6_allocate_rx_skb() function.
+- Added spi-peripheral-props reference in the dt-bindings.
+- Changed the fallback order in the dt-bindings.
+- Replaced netif_start_queue() with netif_wake_queue().
+- Empty data transfer performed in the oa_tc6_init() function to clear
+  the reset complete interrupt.
+- ZARFE bit in the CONFIG0 register is set to 1 to avoid lan865x halt
+  based on the recommendation in the lan865x errata.
+
+v5:
+- Added base commit info in the cover letter.
+- Fixed all the warnings reported in the oa-tc6-framework.rst file.
+- Fixed kernel-doc reported warnings.
+- Fixed reverse christmas tree notation.
+- Printed error code in case STATUS0 register read is failed.
+- Removed C29 support in the PHY initialization.
+- Returned the same error code from the function instead of replacing
+  with another error code.
+- Used netdev_alloc_skb_ip_align() to allocate receive skb buffer.
+- Enabling zero align receive frame feature moved to OA TC6 framework
+  as a helper function for vendor specific drivers.
+- Replaced eth_hw_addr_set() with eth_commit_mac_addr_change() as it is
+  a better pair for eth_prepare_mac_addr_change().
+- Fixed device tree binding issues in the driver and documentation.
+- Fixed multicast addresses hash value calculation.
+
+v6:
+- Replaced "depends on" with "select" for selecting OA_TC6 library in the
+  lan865x Kconfig file.
+- Fixed multicast address configuration.
+
+v7:
+- Removed tx skb queue handling and introduced two skb pointers to point
+  waiting and ongoing tx skb's.
+- Removed netif_rx() return value check and rx drop statistics update as
+  it is already handled in the dev_core_stats_rx_dropped_inc(skb->dev)
+  function.
+- Removed lan865x_get_drvinfo() function as the core fills this basic
+  info automatically.
+
+v8:
+- Removed unused #address-cells and #size-cells parameters description
+  from microchip,lan8650.yaml file.
+
+Parthiban Veerasooran (14):
+  Documentation: networking: add OPEN Alliance 10BASE-T1x MAC-PHY serial
+    interface
+  net: ethernet: oa_tc6: implement register write operation
+  net: ethernet: oa_tc6: implement register read operation
+  net: ethernet: oa_tc6: implement software reset
+  net: ethernet: oa_tc6: implement error interrupts unmasking
+  net: ethernet: oa_tc6: implement internal PHY initialization
+  net: phy: microchip_t1s: add c45 direct access in LAN865x internal PHY
+  net: ethernet: oa_tc6: enable open alliance tc6 data communication
+  net: ethernet: oa_tc6: implement transmit path to transfer tx ethernet
+    frames
+  net: ethernet: oa_tc6: implement receive path to receive rx ethernet
+    frames
+  net: ethernet: oa_tc6: implement mac-phy interrupt
+  net: ethernet: oa_tc6: add helper function to enable zero align rx
+    frame
+  microchip: lan865x: add driver support for Microchip's LAN865X MAC-PHY
+  dt-bindings: net: add Microchip's LAN865X 10BASE-T1S MACPHY
+
+ .../bindings/net/microchip,lan8650.yaml       |   74 +
+ Documentation/networking/index.rst            |    1 +
+ Documentation/networking/oa-tc6-framework.rst |  497 ++++++
+ MAINTAINERS                                   |   15 +
+ drivers/net/ethernet/Kconfig                  |   11 +
+ drivers/net/ethernet/Makefile                 |    1 +
+ drivers/net/ethernet/microchip/Kconfig        |    1 +
+ drivers/net/ethernet/microchip/Makefile       |    1 +
+ .../net/ethernet/microchip/lan865x/Kconfig    |   19 +
+ .../net/ethernet/microchip/lan865x/Makefile   |    6 +
+ .../net/ethernet/microchip/lan865x/lan865x.c  |  429 ++++++
+ drivers/net/ethernet/oa_tc6.c                 | 1361 +++++++++++++++++
+ drivers/net/phy/microchip_t1s.c               |   30 +
+ include/linux/oa_tc6.h                        |   24 +
+ include/uapi/linux/mdio.h                     |    1 +
+ 15 files changed, 2471 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/microchip,lan8650.yaml
+ create mode 100644 Documentation/networking/oa-tc6-framework.rst
+ create mode 100644 drivers/net/ethernet/microchip/lan865x/Kconfig
+ create mode 100644 drivers/net/ethernet/microchip/lan865x/Makefile
+ create mode 100644 drivers/net/ethernet/microchip/lan865x/lan865x.c
+ create mode 100644 drivers/net/ethernet/oa_tc6.c
+ create mode 100644 include/linux/oa_tc6.h
+
+
+base-commit: c259acab839e57eab0318f32da4ae803a8d59397
+-- 
+2.34.1
+
 
