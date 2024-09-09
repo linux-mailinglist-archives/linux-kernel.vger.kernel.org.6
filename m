@@ -1,68 +1,71 @@
-Return-Path: <linux-kernel+bounces-320840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4499E971137
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:09:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B7997113D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE039280637
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:09:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3221F25543
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC43D1B2ED5;
-	Mon,  9 Sep 2024 08:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F001B2EF3;
+	Mon,  9 Sep 2024 08:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dg4ZCAHC"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dUELvTy6"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0391B29DB;
-	Mon,  9 Sep 2024 08:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3761B2EE6;
+	Mon,  9 Sep 2024 08:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725869225; cv=none; b=ToMixhIUNtghoamJE4ifZwpbmfjh/qowMz8PQ0GmKUMNk6CqbwP0dYQKpjbj9fX6Uc6iIeyjpae1vlnxt0MgJ34wZtjDrTagk4dGAjEfvQpozP4i6KA+GPgIvUUYYrlfuNsNloPcpDNDqSy+qvjpWpos/z6cpvC0DxIeqD+uIyM=
+	t=1725869227; cv=none; b=awz0jrpQNq1mEUrnr37h4CprlrPJz+dQb/i/ZkA4LpST8ieofoLiFcaKGpjIRTQvlsRAEWphmPKADEkTSl4BBX+juJE/q/fFaQCEvAm2RB92hkSEaEexDPYLupkGZzE0ZT/GFweMLGCha5vHGH0xXbwwojtSROot6/l1CnDGCdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725869225; c=relaxed/simple;
-	bh=zIw3F30sM37Fm8BqIZ3U2zAlUIP37CoR2oDGkp8ka2k=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=Ph2SgPpx6rV73AVzPXZb3fYb40RAXA+w9b8oT8A2T5ZJsL+CcgOywMfcO/w0ZNb3P28O1kRxeXOJfCwgiXElwdZuUK6WA1fOkaLBmatWq0sBs/9MqwgyuQboQS39YLBugk66sP1TE8I39FfW1kBlaSoFougWA537CepVWkAJCYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dg4ZCAHC; arc=none smtp.client-ip=209.85.216.45
+	s=arc-20240116; t=1725869227; c=relaxed/simple;
+	bh=zKeP+r4fvJneoNGNPQMbNW1OqefKUqpy3W7f9cHPgaw=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dX0I+xG8EmhzLTiXCaEE94eOUGy9t4rCb5/yrairgwvyvz56wKetue9JGnn3sHFC9d98PXJr6QAbZua9GtRnMHHfkfXj4a+Ov+mx0PuYEVZOtPjtgw7MWohijD5fd3UGtFvHCEYQ2nzqwST6iVGZCMb8FUqe4+qURY934tylbKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dUELvTy6; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2da4ea59658so2886337a91.0;
-        Mon, 09 Sep 2024 01:07:03 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2da4e84c198so2735261a91.0;
+        Mon, 09 Sep 2024 01:07:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725869223; x=1726474023; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XsoTzFsLsOI/w258RMCU0+gqn7DEsQeaEMM3PNeHoEE=;
-        b=dg4ZCAHClwb7kMdWAqXGLww1xjj0hXl+JX7vjZ0Jags7XIFxWpm7WaFjJx9JbOzCtM
-         bk3Y2a9SfvvGkji9f9j5/E8StoXvSkVU5jG1hc+uRpLGr4SBCPr0HfXEwM5TN8olzRQ4
-         QIUXOGe+auO4zOQV/gydMV371Roa/obbsIitwj9E4Kz8u4/31WxQzc3yGKy5YBuwqRNS
-         V2cX9eElPWr6YBVLagwKwsZqyNqUs+PSF5prePPHSZKsKeb9yO/4MuFTFKZSGGRcKQcY
-         fbRVWIj8dTMJSIZx1QVOKdfwH9kUobRp8DAZOzKOkAp1q7M8oeC0ly0D6KyEaVA+LDa4
-         hNsw==
+        d=gmail.com; s=20230601; t=1725869226; x=1726474026; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=24ONLHDIg4IPXcssauearHwBYBXH9GZM3HUtiuvktw0=;
+        b=dUELvTy6F4sjTUtDRUVCCzd7ixVrNJefXujei+5fMtqXpZ+JLwAHLgeG1EaOqxNXR4
+         FgBTggOZPNEZvwgZSPto9oyxtAIMcw498duoX2NW3YdiMHA4af9H5HmtnX0aN9WR2oK/
+         aZ2bO9jtNkZu/hOAVT3ldrSEwe0W0KSJbaXrSAYfPWfFgQhBo3yotkV17gjcVSWl3mXE
+         3HES0QD8UaL/aUssgQdRkYbX+zIqNaZNGPeYxRQ5w+aVjlwQaEVofrjur3oQEUeSAPcZ
+         QgWokTuGUzrd0l2IKB+x4UywnEDqVdVZoBmun1BB1rZ1PVM2dBPCff6ZE1M17/qTxPJq
+         DrLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725869223; x=1726474023;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XsoTzFsLsOI/w258RMCU0+gqn7DEsQeaEMM3PNeHoEE=;
-        b=jpF0TFwF81V8X6ztnjNMMDRydPwVCL4R+7EHJBg+clFPjecCBHE/JBDGxjCMZARpM6
-         5nssQ/t+Gm46J6vFNqBTL+nMiGh2XiVuOX0BSIAtpcG66kZShSv3CwYfcFWxzgJKDxC5
-         R++CaEmeC29tVO6fCS10IkMs8zbfHvWMrnV5ook11NIH2XWCD94NwE9B+TRx/lDFDerv
-         29cXRbrNsgSPsdWv9mZ+t44xFmszrLuwdeql1pzHTcthiqW31tQbAa05MPK2GOfaewZN
-         CXnlXJSlOYpXJcNdnK7UjS1k5JkwPW11lhgVtNneTFjBn05pebzMPdT0TvFcd2ZtQUUb
-         hBRA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8otzTZSM1e0Ky2965jbw37xTaCKzQGt5RGGKKgh88etKUdQ3SSCQew7ohqclREO++Co/ZvV3lW8n7@vger.kernel.org, AJvYcCW0OOuYI0BgYWS733G19OWPyPJbbeNvo0oAssNhpl6NGvB77gCMX/YSjyJKKIk+pQsWUcDiGreQBRsvvHKW@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLjg8nlv/fAYn7w+TuwxAhaQJcq6HZGnleBqoEtmP+O5mMrtYw
-	t6pe2ohuSqQXnd8lnhpmxfWmzRwLRIQYfuT0V5MstQ0r/oahaMaBgDzFOg==
-X-Google-Smtp-Source: AGHT+IF6oXCvfc8VgYNsXQO/2GtRP6QDKcH1+YjF5irjxf2iHlKXOG8pmI561LrKrPwJlXTrMMJ05A==
-X-Received: by 2002:a17:90b:3c83:b0:2c9:6a2d:b116 with SMTP id 98e67ed59e1d1-2dad4dde0bemr10713383a91.7.1725869223170;
-        Mon, 09 Sep 2024 01:07:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725869226; x=1726474026;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=24ONLHDIg4IPXcssauearHwBYBXH9GZM3HUtiuvktw0=;
+        b=Rw3nGyXlvMDHbPMLZsH2VH7agBEqkmc8MVzSkIZwNbRoOzxL8ncYwgoC+CJmiyD2ve
+         zVDhwqNCVSovlW8w4caEbXmCSIAPFNDl6No8FDMq2WzJ+6fgrsTiaNQe1Ptb0fSnTV0l
+         B2wuV/PgnStntzrZrGHkmq0xwAeP4B84hLtU+EQkQVMygQEPwdm52xT38mBvZnlTOoqn
+         nbTA7mgHYTHLssLyFLpDzDDr1ZoBOzVQbmI9mcSLomps0AJ09uduT475FrWRSkBEPQj9
+         dDE+hiXEkHc7gRYqQoL9LwyYyGGm2yjMmxLZPyNL4QdaVNyFF3XMglfFCjTmYjYiWVTT
+         esYg==
+X-Forwarded-Encrypted: i=1; AJvYcCURIIekJHqx5092gbxeNoeyNH/lG5yMZTWZWj7X8Lme396CW58gPt/zNgDkGxlvyAMFAKRsdJZN5SpQ@vger.kernel.org, AJvYcCWYjBfv1nWrBP3kcyhb188D2x4bhhjy/7FgTQbDNNNTlSDPv4Uhv8/nj0VBWKDDWrZ0Y+OjgBD+eCu8asV0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7HIrDhwIsATwRp+XtRN5GyC0yzk38mKz/hvkrY7h5oKTHVosg
+	XgRK1hbvhysSGgKNIQXEo8zGmgMMy0VS7yADxUh6Y8ZmLFgYbmiU
+X-Google-Smtp-Source: AGHT+IEdKA0Mj8kqr2gQb9Emszupt1dYbedGxfzDQBaFa7+PrIovDCecyCTxdD7JFKncezaQB2ahRg==
+X-Received: by 2002:a17:90b:3b87:b0:2d8:9dd2:b8a1 with SMTP id 98e67ed59e1d1-2daffa3a9dfmr7828719a91.9.1725869225521;
+        Mon, 09 Sep 2024 01:07:05 -0700 (PDT)
 Received: from peter-bmc.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db043c4916sm3917541a91.31.2024.09.09.01.07.01
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db043c4916sm3917541a91.31.2024.09.09.01.07.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 01:07:02 -0700 (PDT)
+        Mon, 09 Sep 2024 01:07:05 -0700 (PDT)
 From: Peter Yin <peteryin.openbmc@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -73,10 +76,12 @@ To: Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/2] Revise Meta(Facebook) Harma BMC(AST2600)
-Date: Mon,  9 Sep 2024 16:04:57 +0800
-Message-Id: <20240909080459.3457853-1-peteryin.openbmc@gmail.com>
+Subject: [PATCH v3 1/2] ARM: dts: aspeed: Harma: add rtc device
+Date: Mon,  9 Sep 2024 16:04:58 +0800
+Message-Id: <20240909080459.3457853-2-peteryin.openbmc@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240909080459.3457853-1-peteryin.openbmc@gmail.com>
+References: <20240909080459.3457853-1-peteryin.openbmc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,31 +90,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Summary:
-Revise linux device tree entry related to Meta(Facebook) Harma
-specific devices connected to BMC(AST2600) SoC.
+Add "nxp,pcf8563" device and the slave address is 0x51.
 
-Base on: https://lore.kernel.org/all/799dbd97b09693fba6f837e73d4ef3421d604a8a.camel@codeconstruct.com.au/
+Signed-off-by: Peter Yin <peteryin.openbmc@gmail.com>
+---
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-v2->v3
-  - Revise sgpio line name.
-
-v1->v2
-  - Fixed the mail and author.
-  - Revise presence-cmm to sgpio.
-
-v1
-  - Patch 0001 - add rtc device
-  - Patch 0002 - update sgpio line name
-
-
-Peter Yin (2):
-  ARM: dts: aspeed: Harma: add rtc device
-  ARM: dts: aspeed: Harma: revise sgpio line name
-
- .../dts/aspeed/aspeed-bmc-facebook-harma.dts  | 45 +++++++++----------
- 1 file changed, 21 insertions(+), 24 deletions(-)
-
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
+index cf3f807a38fe..92068c65eae4 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
+@@ -135,10 +135,6 @@ &mac3 {
+ 	use-ncsi;
+ };
+ 
+-&rtc {
+-	status = "okay";
+-};
+-
+ &fmc {
+ 	status = "okay";
+ 
+@@ -506,6 +502,11 @@ imux31: i2c@3 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <3>;
++
++			rtc@51 {
++				compatible = "nxp,pcf8563";
++				reg = <0x51>;
++			};
+ 		};
+ 	};
+ };
 -- 
 2.25.1
 
