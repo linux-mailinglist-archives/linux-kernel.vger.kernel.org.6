@@ -1,131 +1,83 @@
-Return-Path: <linux-kernel+bounces-321418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 821ED971A34
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1699971A80
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 398B91F235B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:00:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56C941F244C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EFC1B81DD;
-	Mon,  9 Sep 2024 13:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC631BA87E;
+	Mon,  9 Sep 2024 13:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="phi5IflI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bens.haus header.i=@bens.haus header.b="xDp38snK"
+Received: from mail.w14.tutanota.de (mail.w14.tutanota.de [185.205.69.214])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE2B1B78F7;
-	Mon,  9 Sep 2024 13:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26391B790E
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.205.69.214
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725886815; cv=none; b=rPQax95a8jSyi82BieCbDTdDcyLtTnVEW5RTuxZ1UlDBFYlDlUJ3PIHFUQpHgiYc2ArC8TUmU+L5FBByq/q41exVgZpUKBg1888Vro22E7ZVybaUloPR9wxTNAN6k6YmGPg0qmiYHU17VDl1A4mEdPevVH+ZEXFlm1FFoDM1s5I=
+	t=1725887459; cv=none; b=odGDNDl8IfV+q7EafwT7k2hmP6x4Tc01/bp7b1HxxTBQxlf7Y6OXTrVIM5qZmlxw/f2OZfbZMyrnYJfu5/oxEE1WL/J6iS5KoRK3OeQ21WnVi/IMiPaBh2jWb4/4ofKBxqNW7yg/0RbVU1mZY6lg3Z1NBK7Y8BriX+rMp2jqGiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725886815; c=relaxed/simple;
-	bh=ruHz9KHuDIKm3cQM/2NT6sIheDvmMycaOm0h2WUqGKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oiF0Ev290ei8GJDRmAHQy20Sm5Oh88umAkYkBqKe/RHmsru0v92JP5/ygaof+o5o8329FUlZxHAyebNzmT5NIpG39/0rEbH8XUccwz8mk0/6JwvN6Hl2xSHCyImz+3a4pfn0ODxWYDibhELNPm3VZLGbVrwyUDMBRjnGbfMjU+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=phi5IflI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 691E6C4CEC5;
-	Mon,  9 Sep 2024 13:00:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725886815;
-	bh=ruHz9KHuDIKm3cQM/2NT6sIheDvmMycaOm0h2WUqGKc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=phi5IflIz+sPJez3pTiHiRXgsY5nGq8Ma8vBQFvAcCj+LdwafZMzpuIILyTSZivgx
-	 l74g2su/9m6h3LjLk8Dv1UXO3TYu9DVmj8l20wYIYy0G2xrsCFoMPc5kxSLGpf4zmJ
-	 d9p43OXT6MDiKdNupoj4LtXuW6w/rEhT3gmt83azYOthj29IATEtux5QrhImdL1j+Y
-	 y4xmYwNi0aPlfGl6e+5IjrQprSiHhkwjAIgOZKUFOvw9UhCmTIW0WLLn49+IPcKRNg
-	 HMezMCXocPpuDsMDa9gU3qoOP23ACS+P1Oq5ys3WTT4+KoniPgLM2HzdUWjkNMAPDY
-	 5YAgJ2AybwUOw==
-Date: Mon, 9 Sep 2024 15:00:11 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Tyrone Ting <warp5tw@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com, 
-	tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com, 
-	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] i2c: npcm: Bug fixes read/write operation,
- checkpatch
-Message-ID: <qr3q7stbuwl3ylcqnfftg43nvnzi5cz2wcrhinlek6kvzb7wyi@uqgq4z5b6ob5>
-References: <20240830034640.7049-1-kfting@nuvoton.com>
+	s=arc-20240116; t=1725887459; c=relaxed/simple;
+	bh=x1Utp4hVLNjK7I0dMVZhgnV3slomHCu9rvIN2emthEs=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=Wxt7TwNZshrOtBXHL1ATaCdCXH2X9+3zFDoIYWlAE74CDfo9iAjqiTikISPxp9JV4BskhyGc1k9GYF0atE6XdL2ogmTwcghVzWo+JZnx/OwXcJ2vG8nrFw6j2kEVV718qwgfgcHUyteKNmyGXHfytCKRbQcs4+bLLY/5de5TvDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bens.haus; spf=pass smtp.mailfrom=bens.haus; dkim=pass (2048-bit key) header.d=bens.haus header.i=@bens.haus header.b=xDp38snK; arc=none smtp.client-ip=185.205.69.214
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bens.haus
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bens.haus
+Received: from tutadb.w10.tutanota.de (w10.api.tuta.com [IPv6:fd:ac::d:10])
+	by mail.w14.tutanota.de (Postfix) with ESMTP id D21771F11B51;
+	Mon,  9 Sep 2024 15:00:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725886835;
+	s=s1; d=bens.haus;
+	h=From:From:To:To:Subject:Subject:Content-Description:Content-ID:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Cc:Cc:Date:Date:In-Reply-To:In-Reply-To:MIME-Version:MIME-Version:Message-ID:Message-ID:Reply-To:References:References:Sender;
+	bh=x1Utp4hVLNjK7I0dMVZhgnV3slomHCu9rvIN2emthEs=;
+	b=xDp38snKZra6MkMbhLMm3ofTuCHaO7laP208U5qHEc9e4kJYa5qa187Q1yvNLKXj
+	dcTcdLSdEE3uGR6K3lHSnBwsOzBmoMNaudb5+h33qKnidndDoOZ7w0b4ce6TeWiIn6K
+	5wrxRcy0Op1p5vTqeuaPY1YfzQWMGUZRT4R0//e3pI8IrW1bpIhwUeBWRBgJIWgKBxY
+	AvlDWy2nzTmxL2SSQwxY0/Sef/yfW8Mfu8BDOuGDRwHjWg9IPDn0z6hQ+bH1vr2tfaJ
+	VmxPB0EMohkH38/JKQVa4M/y0wuiZMVYGkl7hme9/uLpgNnx0ne0Ggeqhh5crl9C6uf
+	BnJYnF6ocw==
+Date: Mon, 9 Sep 2024 15:00:35 +0200 (CEST)
+From: Ben Schneider <ben@bens.haus>
+To: Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	=?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+	Linux Arm Kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>
+Message-ID: <O6LrmTs--R-9@bens.haus>
+In-Reply-To: <87ed7tlnxj.fsf@BLaptop.bootlin.com>
+References: <20240603012804.122215-1-ben@bens.haus> <20240603012804.122215-2-ben@bens.haus> <20240605194422.klxtxgyljrrllkzy@pali> <dce98e50-6b50-4d4e-abe2-8419a675d25e@lunn.ch> <O1XjBTq--3-9@bens.haus> <87ed7tlnxj.fsf@BLaptop.bootlin.com>
+Subject: Re: [PATCH] cpufreq: enable 1200Mhz clock speed for armada-37xx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830034640.7049-1-kfting@nuvoton.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Jul 16, 2024, 01:51 by gregory.clement@bootlin.com:
 
-On Fri, Aug 30, 2024 at 11:46:33AM GMT, Tyrone Ting wrote:
-> This patchset includes the following fixes:
-> 
-> - Restore the npcm_i2caddr array length to fix the smatch warning.
-> - Enable the target functionality in the interrupt handling routine 
->   when the i2c transfer is about to finish.
-> - Correct the read/write operation procedure.
-> - Introduce a software flag to handle the bus error (BER) condition
->   which is not caused by the i2c transfer.
-> - Modify timeout calculation.
-> - Assign the client address earlier logically.
-> - Use an i2c frequency table for the frequency parameters assignment.
-> - Coding style fix.
-> 
-> The NPCM I2C driver is tested on NPCM750 and NPCM845 evaluation boards.
+> You received two "reviewed-by" approvals, and Marek Beh=C3=BAn, who wrote=
+ the
+> patch removing the 1.2GHz limitation, did not object. Therefore, from my
+> point of view, there is no problem merging your change.
+> Acked-by: Gregory CLEMENT <> gregory.clement@bootlin.com> >
+>
 
-first of all, Thanks Tali for your reviews.
+Hi all, please let me know if there is anything else needed from me before =
+this can be merged. The two devices I have continue to be stable while usin=
+g the ondemand scaling policy.
 
-Second, Tyronne, can we please incorporate Tali's comments into
-commit messages and improve the code comments so that we don't
-leave room for more questions?
+Thanks!
 
-Consider that not everyone knows the device and we need good
-reasons for accepting the changes.
-
-Thanks,
-Andi
-
-
-> Addressed comments from:
-> - kernel test robot : https://lore.kernel.org/oe-kbuild-all/
->   202408080319.de2B6PgU-lkp@intel.com/
-> - Dan Carpenter : https://lore.kernel.org/all/202408130818
->   .FgDP5uNm-lkp@intel.com/
-> - Andrew Jeffery : https://lore.kernel.org/lkml/
->   20240807100244.16872-7-kfting@nuvoton.com/T/
->   #m3ed3351bf59675bfe0de89c75aae1fb26cad5567
-> 
-> Changes since version 1:
-> - Restore the npcm_i2caddr array length to fix the smatch warning.
-> - Remove unused variables.
-> - Handle the condition where scl_table_cnt reaches to the maximum value.
-> - Fix the checkpatch warning.
-> 
-> Charles Boyer (1):
->   i2c: npcm: Enable slave in eob interrupt
-> 
-> Tyrone Ting (6):
->   i2c: npcm: restore slave addresses array length
->   i2c: npcm: correct the read/write operation procedure
->   i2c: npcm: use a software flag to indicate a BER condition
->   i2c: npcm: Modify timeout evaluation mechanism
->   i2c: npcm: Modify the client address assignment
->   i2c: npcm: use i2c frequency table
-> 
->  drivers/i2c/busses/i2c-npcm7xx.c | 276 +++++++++++++++++++------------
->  1 file changed, 172 insertions(+), 104 deletions(-)
-> 
-> 
-> base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
-> -- 
-> 2.34.1
-> 
+Ben
 
