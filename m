@@ -1,206 +1,137 @@
-Return-Path: <linux-kernel+bounces-320925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3CC8971221
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:32:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE4297121D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 412311F23298
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:32:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C6BA1C21D3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F3D1B5EAE;
-	Mon,  9 Sep 2024 08:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15BA1B5EDC;
+	Mon,  9 Sep 2024 08:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="a1L81H8R"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPgQkTXw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08A01B375B;
-	Mon,  9 Sep 2024 08:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D671B5ED9
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725870514; cv=none; b=iGnu0zs1rwRMJORrNS70B4lvGkGrKxTTiMM/WxEFWIj2slgArYNGy8Gn1Ep1L+F0GxfoQmgjf5vwld0DewPBFt+XbjbN9qqzZjJHLY/OqbUo4DCOSPa0t+ZAbI+bOEVANmEfd189WbqBWlWrn9zjxwhNhQsbucFb3l7rAGVFOJM=
+	t=1725870503; cv=none; b=YUtaBZyNr0RolL6ukxzrSw1BDZHbaQ7Y2yBi8uSaw0fEx4INsW3VEMnLw0jqhK1uLx4gaUgmuxEWbO8NU/bzd4K9xIHL/ABc3gz722Q0Yrqodut8qhWNcBvj5BoJNmi0mb7/ndwGzDA6EFABRFg+ssk9fznzT0oHlg2yMgTNniQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725870514; c=relaxed/simple;
-	bh=sfvsNr5K/hiEOOk8WIX3Bn/QtJvcLwOU4UcxKthOj3c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OYVqyQqxcKd6KkkoIzR8MEXy74n5a80G3lF+N5lvO1gMElODsNLrvJoACG7G6xOLXHVfJQMaAZFXR9luFi2XWXd7kJq/uy73FniD2igFcjQpxo4t1ehCahSlBVM4v3BjqgcJDB1x3G8cWueKGaXASt4eKV3eeXRC/Pad02ZrJ5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=a1L81H8R; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725870512; x=1757406512;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=sfvsNr5K/hiEOOk8WIX3Bn/QtJvcLwOU4UcxKthOj3c=;
-  b=a1L81H8RKoARe32cd8Z5Fljkbai8RtsLuJDoGEs2QeXU8bXc7XvCgmOz
-   4rxPEcIrzC3UW7oIEM1e5SEzUEYd1EhfY5wSqRG1826frH0GPJ0z2rsVy
-   g7HNDY1kd47rA+GCJ23QiVEMTTm5aeqb917badgIpIZIXeh0C1ls+FwIx
-   tENdLdbq8bOk6pOG4HD+gJacpI7Wh17c6ARWTaghUKlz9+9qE6LG6vVqV
-   mn3CDIByPpAQZYqeMr+n8wrtIYv3xpoU15yBAOGdsgW+64ROx+HLdFY6U
-   WEl1EB+xxxjne1S6PRt0YJIdoNluajDNQxteWKFRy0CsfwEQTzPR6DfTT
-   A==;
-X-CSE-ConnectionGUID: ASzx8kNERhu8wJ4WimobFg==
-X-CSE-MsgGUID: oQQFZyUeT2esqUXJBqlJJg==
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="198940031"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 01:28:30 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 9 Sep 2024 01:28:00 -0700
-Received: from che-ll-i17164.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 9 Sep 2024 01:27:50 -0700
-From: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <saeedm@nvidia.com>,
-	<anthony.l.nguyen@intel.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <andrew@lunn.ch>, <corbet@lwn.net>,
-	<linux-doc@vger.kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-	<devicetree@vger.kernel.org>, <horatiu.vultur@microchip.com>,
-	<ruanjinjie@huawei.com>, <steen.hegelund@microchip.com>,
-	<vladimir.oltean@nxp.com>
-CC: <parthiban.veerasooran@microchip.com>, <masahiroy@kernel.org>,
-	<alexanderduyck@fb.com>, <krzk+dt@kernel.org>, <robh@kernel.org>,
-	<rdunlap@infradead.org>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<UNGLinuxDriver@microchip.com>, <Thorsten.Kummermehr@microchip.com>,
-	<Pier.Beruto@onsemi.com>, <Selvamani.Rajagopal@onsemi.com>,
-	<Nicolas.Ferre@microchip.com>, <benjamin.bigler@bernformulastudent.ch>,
-	<linux@bigler.io>, <markku.vorne@kempower.com>, Parthiban Veerasooran
-	<Parthiban.Veerasooran@microchip.com>, Conor Dooley
-	<conor.dooley@microchip.com>
-Subject: [PATCH net-next v8 14/14] dt-bindings: net: add Microchip's LAN865X 10BASE-T1S MACPHY
-Date: Mon, 9 Sep 2024 13:55:14 +0530
-Message-ID: <20240909082514.262942-15-Parthiban.Veerasooran@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240909082514.262942-1-Parthiban.Veerasooran@microchip.com>
-References: <20240909082514.262942-1-Parthiban.Veerasooran@microchip.com>
+	s=arc-20240116; t=1725870503; c=relaxed/simple;
+	bh=khXHjXx8hRmTU/IZvQEdj6n2m1e+nZBZNshqBcuC64M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YlYQ2aDTbOYj4I9j3779aMmFr3489DmuuU/SSliKIUrY44lRdO9zUZpVQBm4OTw3DUBahsCbVdKkcy2KlQkQZpLndUiM3lppNl2pzaHPGtITL48RMJ3vfoaNokl0o91OLCuxjvJbr7/etG3/5V8UkOCQFeF9cNLZPtid04LVKKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPgQkTXw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECA3CC4CEC8;
+	Mon,  9 Sep 2024 08:28:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725870502;
+	bh=khXHjXx8hRmTU/IZvQEdj6n2m1e+nZBZNshqBcuC64M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sPgQkTXwfphMGS+/ZFhlh4yIOdnDC2/lvd22xOGZvcWRQxKOovtkHeEsXmgUG9Oxu
+	 AU6NL+VAawKzRdIKy/FRbjN6v1EPfdKtyhunnwXmu2iK53p9An4fFhL42Tpc8Z5PFC
+	 0G0SUiNQogt87AvHengOpQsaRXBXK4q0v0fYLH/0tCj3xADNNPMZ2zX0YaTZF2HRoa
+	 6sawlMOWW4CIiPVrdpyfejUUjdOuAni3tWb3/khACbyQrfM4IgintD/K5F+7CgmoBc
+	 Eyw81FcmGTiGsb8H5BGRCi46Lpe557JzTIdVQy3pd0vWy40Fm0Du22pkUZrEs3/cu4
+	 X4Nu2Z4Tcb2ZQ==
+Date: Mon, 9 Sep 2024 11:25:29 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] mm/page: Drop has_unaccepted_memory() helper
+Message-ID: <Zt6w-QADv8kta8UE@kernel.org>
+References: <20240909081930.748708-1-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909081930.748708-1-kirill.shutemov@linux.intel.com>
 
-The LAN8650/1 combines a Media Access Controller (MAC) and an Ethernet
-PHY to enable 10BASE-T1S networks. The Ethernet Media Access Controller
-(MAC) module implements a 10 Mbps half duplex Ethernet MAC, compatible
-with the IEEE 802.3 standard and a 10BASE-T1S physical layer transceiver
-integrated into the LAN8650/1. The communication between the Host and the
-MAC-PHY is specified in the OPEN Alliance 10BASE-T1x MACPHY Serial
-Interface (TC6).
+On Mon, Sep 09, 2024 at 11:19:30AM +0300, Kirill A. Shutemov wrote:
+> has_unaccepted_memory() has the only caller -- cond_accept_memory().
+> 
+> Remove the helper and check zones_with_unaccepted_pages directly in
+> cond_accept_memory().
+> 
+> It also fixes warning with clang 18 when kernel is compiled without
+> unaccepted memory support:
+> 
+>  mm/page_alloc.c:7043:20: error: unused function 'has_unaccepted_memory' [-Werror,-Wunused-function]
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202409061101.Jlx5z2fI-lkp@intel.com/
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
----
- .../bindings/net/microchip,lan8650.yaml       | 74 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 2 files changed, 75 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/microchip,lan8650.yaml
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-diff --git a/Documentation/devicetree/bindings/net/microchip,lan8650.yaml b/Documentation/devicetree/bindings/net/microchip,lan8650.yaml
-new file mode 100644
-index 000000000000..61e11d4a07c4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/microchip,lan8650.yaml
-@@ -0,0 +1,74 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/microchip,lan8650.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Microchip LAN8650/1 10BASE-T1S MACPHY Ethernet Controllers
-+
-+maintainers:
-+  - Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
-+
-+description:
-+  The LAN8650/1 combines a Media Access Controller (MAC) and an Ethernet
-+  PHY to enable 10BASE‑T1S networks. The Ethernet Media Access Controller
-+  (MAC) module implements a 10 Mbps half duplex Ethernet MAC, compatible
-+  with the IEEE 802.3 standard and a 10BASE-T1S physical layer transceiver
-+  integrated into the LAN8650/1. The communication between the Host and
-+  the MAC-PHY is specified in the OPEN Alliance 10BASE-T1x MACPHY Serial
-+  Interface (TC6).
-+
-+allOf:
-+  - $ref: /schemas/net/ethernet-controller.yaml#
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - const: microchip,lan8650
-+      - items:
-+          - const: microchip,lan8651
-+          - const: microchip,lan8650
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    description:
-+      Interrupt from MAC-PHY asserted in the event of Receive Chunks
-+      Available, Transmit Chunk Credits Available and Extended Status
-+      Event.
-+    maxItems: 1
-+
-+  spi-max-frequency:
-+    minimum: 15000000
-+    maximum: 25000000
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - spi-max-frequency
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    spi {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      ethernet@0 {
-+        compatible = "microchip,lan8651", "microchip,lan8650";
-+        reg = <0>;
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&eth0_pins>;
-+        interrupt-parent = <&gpio>;
-+        interrupts = <6 IRQ_TYPE_EDGE_FALLING>;
-+        local-mac-address = [04 05 06 01 02 03];
-+        spi-max-frequency = <15000000>;
-+      };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 89d038c2e94b..1dd3347d8f01 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14983,6 +14983,7 @@ MICROCHIP LAN8650/1 10BASE-T1S MACPHY ETHERNET DRIVER
- M:	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
- L:	netdev@vger.kernel.org
- S:	Maintained
-+F:	Documentation/devicetree/bindings/net/microchip,lan8650.yaml
- F:	drivers/net/ethernet/microchip/lan865x/lan865x.c
- 
- MICROCHIP LAN87xx/LAN937x T1 PHY DRIVER
+> ---
+>  mm/page_alloc.c | 13 +------------
+>  1 file changed, 1 insertion(+), 12 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 91ace8ca97e2..7fc5af7cb387 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -288,7 +288,6 @@ EXPORT_SYMBOL(nr_online_nodes);
+>  static bool page_contains_unaccepted(struct page *page, unsigned int order);
+>  static void accept_page(struct page *page, unsigned int order);
+>  static bool cond_accept_memory(struct zone *zone, unsigned int order);
+> -static inline bool has_unaccepted_memory(void);
+>  static bool __free_unaccepted(struct page *page);
+>  
+>  int page_group_by_mobility_disabled __read_mostly;
+> @@ -6975,7 +6974,7 @@ static bool cond_accept_memory(struct zone *zone, unsigned int order)
+>  	long to_accept;
+>  	bool ret = false;
+>  
+> -	if (!has_unaccepted_memory())
+> +	if (!static_branch_unlikely(&zones_with_unaccepted_pages))
+>  		return false;
+>  
+>  	if (list_empty(&zone->unaccepted_pages))
+> @@ -6997,11 +6996,6 @@ static bool cond_accept_memory(struct zone *zone, unsigned int order)
+>  	return ret;
+>  }
+>  
+> -static inline bool has_unaccepted_memory(void)
+> -{
+> -	return static_branch_unlikely(&zones_with_unaccepted_pages);
+> -}
+> -
+>  static bool __free_unaccepted(struct page *page)
+>  {
+>  	struct zone *zone = page_zone(page);
+> @@ -7040,11 +7034,6 @@ static bool cond_accept_memory(struct zone *zone, unsigned int order)
+>  	return false;
+>  }
+>  
+> -static inline bool has_unaccepted_memory(void)
+> -{
+> -	return false;
+> -}
+> -
+>  static bool __free_unaccepted(struct page *page)
+>  {
+>  	BUILD_BUG();
+> -- 
+> 2.45.2
+> 
+
 -- 
-2.34.1
-
+Sincerely yours,
+Mike.
 
