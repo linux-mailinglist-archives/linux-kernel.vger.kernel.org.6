@@ -1,103 +1,89 @@
-Return-Path: <linux-kernel+bounces-321016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09DEE97135E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:24:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8957B9714C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB2EF1F2364F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:24:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B45291C22937
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757F21B3F38;
-	Mon,  9 Sep 2024 09:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7431B3B33;
+	Mon,  9 Sep 2024 10:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ynqs4s9i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMytIHwH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09821B2EE8;
-	Mon,  9 Sep 2024 09:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D489F1B3B18;
+	Mon,  9 Sep 2024 10:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725873684; cv=none; b=f0Fx8lSR4+xQtQNZQ0LOjn6UNVcV49pHd8fcDn0+SDFNdcm+fKs6UsNXfBo10eOdmlqOJb0pa3iLOBYGj4rjl4ty+FTehcbuxx/U8gpWW2wCSdzUYeTVBnTAvMntVAhOEAqlD2j4VVIrvDjyA2wB3oSJwWjJzFgkX5gqpK4cVXI=
+	t=1725876313; cv=none; b=KQh7jKnY7fGlUkZnsTxjAOikkJdDzVCjsgzffdNSszGwHD9uVghsm/wieK4AFrC37MJuZXQqL39TVDkmZCt6xLM7iBuL+igsFAgbs2RXHV3KNPthcf7Hzx/W1wxCOCXkpRQ+d1MJbG90bxaMzTxrUrjYggzWU3mI3LjuaYrJzk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725873684; c=relaxed/simple;
-	bh=EN0rYz6GhfIyTI+7CtSvs0C+p/rAFAhcpRv46mV8xGg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QR5ShyAifRWWZVVsSgXoa1gMe1QTotdlBuJgbbl/UYfd4rH2gLbwOIjDlvzNp3LiOVXoZ3fWWrUccOt06gjwQw5666LN3lqkSi8tb3EORGIfFKiOWta7wcTaT+MEfz6z8H66BkGfw8N+2tqPICsGMyJkO6LGBbXTSpo0fCSIhI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ynqs4s9i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E32EC4CEC5;
-	Mon,  9 Sep 2024 09:21:21 +0000 (UTC)
+	s=arc-20240116; t=1725876313; c=relaxed/simple;
+	bh=yRFRZqHggJX0yWp4FW2ndlEU7TNI0ICDRu/OuOa5eKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VyGR8w4W0dbmhKHSEuaokRHws/D7vL3w8YO0vi9E6wAK/L0ChvBbOExw8/QaemktBuHqU8cT5qaFwtO+mrl/drDsGS+POl1I7kXMbt3irlLBlRZKhFNEdgtWoMFYvEKXKoxiFdPjq6HCMrCdbAqlTJLVfghGLTsXdTB1oXDhbW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YMytIHwH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A511AC4CEC5;
+	Mon,  9 Sep 2024 10:05:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725873684;
-	bh=EN0rYz6GhfIyTI+7CtSvs0C+p/rAFAhcpRv46mV8xGg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Ynqs4s9i289Kjnz+D0c9Kzwx0R66UgrbNR2HM7qHCC5oRV9i805EeEMRdAb+7xmVB
-	 4faMC9umuh6eSc9KPtO7zCUr9hOGXPnQHUdc0DQDMbRDOxk4tKcLtboAlgSL43UGJy
-	 DLOFJcBdTRmtc7sjcbLfH9cuDkdz6Yz5i20Qc4r71XA8htOEpcS/7UANODsUydoypH
-	 P7SWFWEm4kVLXdMGJYRk9/bm5PIrmIlbZy7uvch0N7xs/fIYPQBK/JuPvNKNEkMUyF
-	 vLQLsFGjza47lSucx/cWzOKELJgL7X7aq2jNE3E+nvTU9SQGMMhvNujWj2zRYTrZJG
-	 rzec96+/ZD/Ig==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	kernel@pengutronix.de,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] can: rockchip_canfd: avoids 64-bit division
-Date: Mon,  9 Sep 2024 11:21:04 +0000
-Message-Id: <20240909112119.249479-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=k20201202; t=1725876312;
+	bh=yRFRZqHggJX0yWp4FW2ndlEU7TNI0ICDRu/OuOa5eKc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YMytIHwHYKP5oJI5+gQ3VuHjybqEB5UzBA7MQ75qt0RDfnORi4pkClux2r88Fqc9t
+	 sHb5RLVSZBP2lacVArUwhbOLOk0JG2hm9OzKoKNDwQ8+BaDj5EcTIVcwuv3fSa7iJD
+	 RcYgkhzyr0we6pbx/UNi+ovvxvJVcmqi4lUKn9piz/LK6jixiSlKNSUjZgZIpFPyow
+	 oyiYzNazMKaMxnjKUhadllr+2QFS83WCHP7NDmY1fgrFBrbmgePW0teAUsu0wq5ZnS
+	 VZaROlKEehWAW5QJCGNFU90u916mSxXdPn6yea14J/t9+MI6tYAIIxHCLSraReoUzE
+	 Jq0yjxi5WIjuA==
+Date: Mon, 9 Sep 2024 12:05:08 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>, 
+	Mark Brown <broonie@kernel.org>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] input: touchscreem: ad7877: add match table
+Message-ID: <amkfwj7etefj7oynjnymnmksva4ocu34fcemw46cyidrfzmnl6@t72ldl2qb6nk>
+References: <20240909093101.14113-1-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240909093101.14113-1-antoniu.miclaus@analog.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Mon, Sep 09, 2024 at 12:30:11PM +0300, Antoniu Miclaus wrote:
+> Add match table for the ad7877 driver and define the compatible string.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> no changes in v3.
+>  drivers/input/touchscreen/ad7877.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/input/touchscreen/ad7877.c b/drivers/input/touchscreen/ad7877.c
+> index a0598e9c7aff..7886454a19c6 100644
+> --- a/drivers/input/touchscreen/ad7877.c
+> +++ b/drivers/input/touchscreen/ad7877.c
+> @@ -805,10 +805,17 @@ static int ad7877_resume(struct device *dev)
+>  
+>  static DEFINE_SIMPLE_DEV_PM_OPS(ad7877_pm, ad7877_suspend, ad7877_resume);
+>  
+> +static const struct of_device_id ad7877_of_match[] = {
+> +	{ .compatible = "adi,ad7877", },
 
-The new driver fails to build on some 32-bit configurations:
+Bindings are before their users.
 
-arm-linux-gnueabi-ld: drivers/net/can/rockchip/rockchip_canfd-timestamp.o: in function `rkcanfd_timestamp_init':
-rockchip_canfd-timestamp.c:(.text+0x14a): undefined reference to `__aeabi_ldivmod'
-
-Rework the delay calculation to only require a single 64-bit
-division.
-
-Fixes: 4e1a18bab124 ("can: rockchip_canfd: add hardware timestamping support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/can/rockchip/rockchip_canfd-timestamp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/can/rockchip/rockchip_canfd-timestamp.c b/drivers/net/can/rockchip/rockchip_canfd-timestamp.c
-index 81cccc5fd838..43d4b5721812 100644
---- a/drivers/net/can/rockchip/rockchip_canfd-timestamp.c
-+++ b/drivers/net/can/rockchip/rockchip_canfd-timestamp.c
-@@ -71,8 +71,8 @@ void rkcanfd_timestamp_init(struct rkcanfd_priv *priv)
- 
- 	max_cycles = div_u64(ULLONG_MAX, cc->mult);
- 	max_cycles = min(max_cycles, cc->mask);
--	work_delay_ns = clocksource_cyc2ns(max_cycles, cc->mult, cc->shift) / 3;
--	priv->work_delay_jiffies = nsecs_to_jiffies(work_delay_ns);
-+	work_delay_ns = clocksource_cyc2ns(max_cycles, cc->mult, cc->shift);
-+	priv->work_delay_jiffies = div_u64(work_delay_ns, 3u * NSEC_PER_SEC / HZ);
- 	INIT_DELAYED_WORK(&priv->timestamp, rkcanfd_timestamp_work);
- 
- 	netdev_dbg(priv->ndev, "clock=%lu.%02luMHz bitrate=%lu.%02luMBit/s div=%u rate=%lu.%02luMHz mult=%u shift=%u delay=%lus\n",
--- 
-2.39.2
+Best regards,
+Krzysztof
 
 
