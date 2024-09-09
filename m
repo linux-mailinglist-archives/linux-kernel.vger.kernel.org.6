@@ -1,77 +1,107 @@
-Return-Path: <linux-kernel+bounces-320655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E586970DC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:15:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5DB970DCA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96361B2218A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 06:15:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A658B1C21DB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 06:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80AC1176255;
-	Mon,  9 Sep 2024 06:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozirto10"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD541101F7
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 06:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89470178376;
+	Mon,  9 Sep 2024 06:17:45 +0000 (UTC)
+Received: from 189.cn (ptr.189.cn [183.61.185.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95AC101F7;
+	Mon,  9 Sep 2024 06:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725862522; cv=none; b=S/hSSbJvZo89MIIUqaOBwGnh4HlkVV89ZoUF+uTkgfMCNgutQGIwRywY53fjEM4MFAH/uC1XhDE1GnvocSEURZDShD6nW5j0hpQzsu/6gtEb/KxU7MC3dva2h01CxnodNA6EbL0MjxH1ai1hBvwW04ucnATe1ldH8zslU4HZY/U=
+	t=1725862665; cv=none; b=ZFieNLztU8xKvO1l/c3uoDxnc+bMefEBVEJ8mtTeqwiQo2RpRxpKbDO0lc9b47aUfCN+eDE3vrw6I8htiqA7tzcwHtzFFvktWENMqh6MFVb837WwECA/WabNbENaJJN55A/RL/BUVLetYcnNcJzZOgEmmV65XfWSKm5cgE1wAFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725862522; c=relaxed/simple;
-	bh=kUW/3P8daJz9MOQ31FwZmx4XcmtHFw1DBdfxm3pzJao=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=i8QFgiT3s439vuOwBlBfL9aNS1Z/KOx4ZUdK9KtFn7nv3S7BbyBdEK6lckHa8pSeeMMaU6ig1vm7s8SlZfupV9OyGWEPFT/SfBtdL2OaQUtxthjFQHg5H7bRwYqoiEoeJZsFW3binTkaBdj4dE+YyCuDuOlbeCNsOfYrrv5z/Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozirto10; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 164FBC4CEC5;
-	Mon,  9 Sep 2024 06:15:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725862521;
-	bh=kUW/3P8daJz9MOQ31FwZmx4XcmtHFw1DBdfxm3pzJao=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=ozirto10lWutEbenUc0d7msd23goaNLIcYA2ZQZS6STgxns0VYUwodjtK2lUrkaZp
-	 3YVS3NH4eBN6IpnX2uMXQcsLiBDQbIRjHFSFz7R7E9CbMlqtFycHIZll+ow45Fq/Pe
-	 LXBJa5rZfcLlP0r3qU62FkY/JSwPBvHTuZyOhg7EbA0GBBufjmEtYhNP3FjV47b33W
-	 dpWvXtAm1q+a2AX4rd2e3yZ3YF8Wuke5BREuwXhj15t8iwJjm3cxv2fcIHI3OthM7/
-	 r7I5X+HFFQjq8wU+BCmkCF5u6drFXOZ1mammtiaZC2Z9UYlApZEGsEHAvtWNmaSKiq
-	 LQlY+U1aY36pw==
-Message-ID: <7ae3a417-19ed-4b02-ae17-c9cfe9c05438@kernel.org>
-Date: Mon, 9 Sep 2024 14:15:13 +0800
+	s=arc-20240116; t=1725862665; c=relaxed/simple;
+	bh=V5nSOAXQRm890+80kRs6becI47NhojlDPCW+3UaHPEQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ixh/HPax+KY8FtSmFqDvblukVKJ9Fw9dgT0Ux5KkEswft3+cuacc1k8Ddrazl9GMY36YcS0bt1kDdqyZmGC9iB/LtOpXEemGVpuopREztxZ3YUAOukJv8lPqm9asPoL9DOjNDqSEXBhbBsqPtm95/SeYNQHPBqNUwDx1avPPFTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.243.220:8405.744959442
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-123.150.8.42 (unknown [10.158.243.220])
+	by 189.cn (HERMES) with SMTP id E365C1002BE;
+	Mon,  9 Sep 2024 14:17:37 +0800 (CST)
+Received: from  ([123.150.8.42])
+	by gateway-153622-dep-68cfdf7599-nkmwn with ESMTP id e80b8439e6f344f8b2eb94403cb88e37 for willy@infradead.org;
+	Mon, 09 Sep 2024 14:17:37 CST
+X-Transaction-ID: e80b8439e6f344f8b2eb94403cb88e37
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 123.150.8.42
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+From: chensong_2000@189.cn
+To: willy@infradead.org,
+	akpm@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Song Chen <chensong_2000@189.cn>
+Subject: [PATCH] mm/filemap: introduce local helper for_each_folio
+Date: Mon,  9 Sep 2024 14:17:35 +0800
+Message-Id: <20240909061735.152421-1-chensong_2000@189.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, hsiangkao@linux.alibaba.com, kernel-team@android.com,
- liujinbao1 <liujinbao1@xiaomi.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] erofs: fix error handling in z_erofs_init_decompressor
-To: Sandeep Dhavale <dhavale@google.com>, linux-erofs@lists.ozlabs.org,
- Gao Xiang <xiang@kernel.org>, Yue Hu <huyue2@coolpad.com>,
- Jeffle Xu <jefflexu@linux.alibaba.com>
-References: <20240905060027.2388893-1-dhavale@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240905060027.2388893-1-dhavale@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024/9/5 14:00, Sandeep Dhavale wrote:
-> If we get a failure at the first decompressor init (i = 0),
-> the clean up while loop could enter infinite loop due to wrong while
-> check. Check the value of i now to see if we need any clean up at all.
-> 
-> Fixes: 5a7cce827ee9 ("erofs: refine z_erofs_{init,exit}_subsystem()")
-> Reported-by: liujinbao1 <liujinbao1@xiaomi.com>
-> Signed-off-by: Sandeep Dhavale <dhavale@google.com>
+From: Song Chen <chensong_2000@189.cn>
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Introduce for_each_folio to iterate folios in xarray for code style
+compliance and better readability.
 
-Thanks,
+Signed-off-by: Song Chen <chensong_2000@189.cn>
+---
+ mm/filemap.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index d62150418b91..5386348acacd 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -62,6 +62,9 @@
+ 
+ #include "swap.h"
+ 
++#define for_each_folio(folio, xas, max)	\
++	for (folio = xas_load(&xas);	\
++		 folio && xas.xa_index <= max; folio = xas_next(&xas))
+ /*
+  * Shared mappings implemented 30.11.1994. It's not fully working yet,
+  * though.
+@@ -2170,8 +2173,7 @@ unsigned filemap_get_folios_contig(struct address_space *mapping,
+ 
+ 	rcu_read_lock();
+ 
+-	for (folio = xas_load(&xas); folio && xas.xa_index <= end;
+-			folio = xas_next(&xas)) {
++	for_each_folio(folio, xas, end) {
+ 		if (xas_retry(&xas, folio))
+ 			continue;
+ 		/*
+@@ -2306,7 +2308,7 @@ static void filemap_get_read_batch(struct address_space *mapping,
+ 	struct folio *folio;
+ 
+ 	rcu_read_lock();
+-	for (folio = xas_load(&xas); folio; folio = xas_next(&xas)) {
++	for_each_folio(folio, xas, ULONG_MAX) {
+ 		if (xas_retry(&xas, folio))
+ 			continue;
+ 		if (xas.xa_index > max || xa_is_value(folio))
+-- 
+2.34.1
+
 
