@@ -1,139 +1,134 @@
-Return-Path: <linux-kernel+bounces-321965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D907972214
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:50:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B14B972210
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE91D2840C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28A89284FA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6363B170A16;
-	Mon,  9 Sep 2024 18:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60E91898F6;
+	Mon,  9 Sep 2024 18:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HbiHCzBi"
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwXZX6QJ"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D73A158521
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 18:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35B017A92E;
+	Mon,  9 Sep 2024 18:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725907814; cv=none; b=EmQ820QfBi9R0EKa6FcvTVXgUPKF4RisWWZKuaLescq6v2hDP/8FPx3B7pLcMNehPvGpLKHZSK9kAdSMo5rrn+D7RiEG4dijGUjymY3tyzpwTDwzaLD/HUpNkZrwUFOyykxabFstKoUNORBiVkAx83gNF9JTZ5qPcITJz+XjBJc=
+	t=1725907717; cv=none; b=oby6xep3kb4h3AkY6TJgL3OYkfALu7o4cKCzSZwiCQvq7vqVd8jfnf+nd17geS2ZBm/zygXKumdBfCCVCcH10qXDRt2fyX0ILP6qvGQ2zDSMrn77WqKdZaEPb0UwsjmMztRZtdpaaZoW1PYa4KjDnHjBtHBwaObCBlH402ZJvVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725907814; c=relaxed/simple;
-	bh=iX6x+X+C2KmnTglmajitY2d8V7n/jwEPwVA+GAC6eiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S6RBPnz6VmKZjvB09ZpFrekTm22PMadU/e0DuTHNPAzK29jJOkWphURNhLjmmd4fRbMPmg0iJCsULaXL6CxdDTs5OuWXVZpBL5cfSw6pG6rWqp+qTS/wzYWTKf0lyIza+TwVC4QWAoZFTd05mMZSchTqpYjlSvd3c0Lxzj5t6+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HbiHCzBi; arc=none smtp.client-ip=84.16.66.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X2bMc50Nvzqk1;
-	Mon,  9 Sep 2024 20:43:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1725907436;
-	bh=oxG77P3NVtf5xxUT9J4SD9IVKFdgoO+cgYyab1/OTdA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HbiHCzBik6ccWXsmUvJQLIqOCgka7Ec894qPRxXTXCbv1YFhdhXr12RHBDKF+f6Nx
-	 qjo2Nl+av5qGDdDVB0Td1Z5NEODrgaFXQ9TP8xDb0lz0870wJJMMElvhHUrhTCjVbk
-	 XFz3brhGV6mpYyowybeg0Qn7/DYLIeQ0hWHoAY/o=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4X2bMb0H3gzvVV;
-	Mon,  9 Sep 2024 20:43:54 +0200 (CEST)
-Date: Mon, 9 Sep 2024 20:43:48 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, Tahera Fahimi <fahimitahera@gmail.com>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: Re: [PATCH v3 1/2] fs: Fix file_set_fowner LSM hook inconsistencies
-Message-ID: <20240909.fea6omu9Ohof@digikod.net>
-References: <20240821095609.365176-1-mic@digikod.net>
- <CAHC9VhQ7e50Ya4BNoF-xM2y+MDMW3i_SRPVcZkDZ2vdEMNtk7Q@mail.gmail.com>
- <20240908.jeim4Aif3Fee@digikod.net>
- <CAHC9VhSGTOv9eiYCvbY67PJwtuBKWtv6nBgy_T=SMr-JPBO+SA@mail.gmail.com>
- <CAHC9VhTck26ogxtTK-Z_gxhhdfYR4MgHystKdWttjsXcydyB9A@mail.gmail.com>
+	s=arc-20240116; t=1725907717; c=relaxed/simple;
+	bh=opDvcsNzBPHx59DExhq/FmozYJ3scDPTECogRp+m2KU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MF2ru6qXw9pwzRY+moTwcnmZ7rFBWgheInRiGG2guzsWAQkilJrNpChgzWra6InOqL4Xlj6NMZqC4psPUtkAbqid2B7TpMnpD10o4mVKpt0ZA5NVlp71QPkpZ4ybOfd7O4mv/m6c718IoHue1CnQgxB7B1nPO6sIRko/HxwvWR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NwXZX6QJ; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-27830bce86bso2623544fac.0;
+        Mon, 09 Sep 2024 11:48:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725907715; x=1726512515; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Evv02wRZtoNC+BDsMRqpz+3iRpxo+7R7AGdDISkteFg=;
+        b=NwXZX6QJ/9he/sBrFaU6bW5tR66qdu5gBZQOkYfGypwh6ut4rB18e7Kd4xMJea1LbQ
+         C5BrtUH50Ou6Rkzpt+qRPSMYY3rNB4GIHjoNevFt5g6c9XpuBhZihFjTE/KVO6igCl/m
+         merQ9dI3fQ+oI/YHYUdhEL6kGj3JaLMrEGEL8XnkjABeecUnYiTcNEHrkfBel32l0hSR
+         erZ12CPz4B1Q2I5wMD5Y/C5zwfCTXRgaEk/+9xHmovwxlpKswwCspUOhEbGJOzrVSmep
+         oj3ppwDs9mx56Rk8q9QXKaaRjPM2wkbw4XT5ZIYzYT3FAQVOdCAv9u/+DDCt9nMNMaSV
+         40Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725907715; x=1726512515;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Evv02wRZtoNC+BDsMRqpz+3iRpxo+7R7AGdDISkteFg=;
+        b=l64KCKnWuYHbsqFmTGbxbAoKa37IauBuaaXAMNKFJeqSLUzVkBf0Gn697E9IWxrvLG
+         TkiLiCzu4SxRDYVFZs/CnY95R98xyuhITv9XCdA50fokBO9vrseBcgJKcycBUGSuHwVE
+         3ourHzcH9c4wjBDH46JsBFDyT51qZxufZsTkZdOggAulivcYujcLJI5caQiQ6k9k+iSL
+         0kgG21nx7v2GnvRXovFM9DqygLHjLJwaucr6eFQmUIC1pccWQeDezROaz51/Oe6BDSBj
+         CIOsHEGsXqUqWHE6TraVzS1PzSOWlfe4w62o5iR+76Al4dlKqRrIbLbe9OzgvpwSc/16
+         /VuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOUFtD1+6PkRAqGTOBxiPmjrxVuSXyALLqQAtGwqA/f2oQAI1ck/i8doicVHh1RXWrQ1HVvvGc@vger.kernel.org, AJvYcCXetRJcQkVLLhtBI2oiMFimsNHR5zkHx7+/Aq5qodAHhbXf28jJCy4ZswQodpOmdCM8456FNqYnc6LMf2M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmCfprqcpmBHgvoUqU72dWS/Uz0sDj+kyCMkIVw9wth8ih8ofD
+	431hlBeSgSXyysJoItsrACH5A6r9PjInyZ3XwWEkT9ZlKoWMvf7w
+X-Google-Smtp-Source: AGHT+IEbSXmGXqSJ/Yl/Tle8iq8bB++evpdiqf0ZOMgr6sl80+BemZ0IXyPtw9UcrwpnoC7xl++uJg==
+X-Received: by 2002:a05:6871:3a24:b0:277:f826:edcc with SMTP id 586e51a60fabf-27b9d7c0c39mr10652504fac.5.1725907714881;
+        Mon, 09 Sep 2024 11:48:34 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d8255dc17esm3645998a12.62.2024.09.09.11.48.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 11:48:34 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: davem@davemloft.net,
+	dsahern@kernel.org
+Cc: edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	kafai@fb.com,
+	weiwan@google.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH net] net: prevent NULL pointer dereference in rt_fibinfo_free() and rt_fibinfo_free_cpus()
+Date: Tue, 10 Sep 2024 03:48:27 +0900
+Message-Id: <20240909184827.123071-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhTck26ogxtTK-Z_gxhhdfYR4MgHystKdWttjsXcydyB9A@mail.gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Mon, Sep 09, 2024 at 12:44:16PM -0400, Paul Moore wrote:
-> On Mon, Sep 9, 2024 at 12:03 PM Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > On Sun, Sep 8, 2024 at 2:11 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > >
-> > > On Wed, Aug 21, 2024 at 12:32:17PM -0400, Paul Moore wrote:
-> > > > On Wed, Aug 21, 2024 at 5:56 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > >
-> > > > > The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGURG
-> > > > > for the related file descriptor.  Before this change, the
-> > > > > file_set_fowner LSM hook was always called, ignoring the VFS logic which
-> > > > > may not actually change the process that handles SIGIO (e.g. TUN, TTY,
-> > > > > dnotify), nor update the related UID/EUID.
-> > > > >
-> > > > > Moreover, because security_file_set_fowner() was called without lock
-> > > > > (e.g. f_owner.lock), concurrent F_SETOWN commands could result to a race
-> > > > > condition and inconsistent LSM states (e.g. SELinux's fown_sid) compared
-> > > > > to struct fown_struct's UID/EUID.
-> > > > >
-> > > > > This change makes sure the LSM states are always in sync with the VFS
-> > > > > state by moving the security_file_set_fowner() call close to the
-> > > > > UID/EUID updates and using the same f_owner.lock .
-> > > > >
-> > > > > Rename f_modown() to __f_setown() to simplify code.
-> > > > >
-> > > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > > > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> > > > > Cc: Christian Brauner <brauner@kernel.org>
-> > > > > Cc: James Morris <jmorris@namei.org>
-> > > > > Cc: Jann Horn <jannh@google.com>
-> > > > > Cc: Ondrej Mosnacek <omosnace@redhat.com>
-> > > > > Cc: Paul Moore <paul@paul-moore.com>
-> > > > > Cc: Serge E. Hallyn <serge@hallyn.com>
-> > > > > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > > > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > > > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > > > > ---
-> > > > >
-> > > > > Changes since v2:
-> > > > > https://lore.kernel.org/r/20240812174421.1636724-1-mic@digikod.net
-> > > > > - Only keep the LSM hook move.
-> > > > >
-> > > > > Changes since v1:
-> > > > > https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
-> > > > > - Add back the file_set_fowner hook (but without user) as
-> > > > >   requested by Paul, but move it for consistency.
-> > > > > ---
-> > > > >  fs/fcntl.c | 14 ++++----------
-> > > > >  1 file changed, 4 insertions(+), 10 deletions(-)
-> > > >
-> > > > This looks reasonable to me, and fixes a potential problem with
-> > > > existing LSMs.  Unless I hear any strong objections I'll plan to merge
-> > > > this, and patch 2/2, into the LSM tree tomorrow.
-> > >
-> > > I didn't see these patches in -next, did I miss something?
-> > > Landlock will use this hook really soon and it would make it much easier
-> > > if these patches where upstream before.
-> >
-> > Ah!  My apologies, I'll do that right now and send another update once
-> > it's done.  FWIW, I'm going to tag 1/2 for stable, but since we are at
-> > -rc7 presently I'll just plan to send it during the next merge window.
-> 
-> Merged into lsm/dev, thanks for the nudge :)
+rt_fibinfo_free() and rt_fibinfo_free_cpus() only check for rt and do not
+verify rt->dst and use it, which will result in NULL pointer dereference.
 
-Thanks!
+Therefore, to prevent this, we need to add a check for rt->dst.
+
+Fixes: 0830106c5390 ("ipv4: take dst->__refcnt when caching dst in fib")
+Fixes: c5038a8327b9 ("ipv4: Cache routes in nexthop exception entries.")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ net/ipv4/fib_semantics.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/net/ipv4/fib_semantics.c b/net/ipv4/fib_semantics.c
+index 2b57cd2b96e2..3a2a92599366 100644
+--- a/net/ipv4/fib_semantics.c
++++ b/net/ipv4/fib_semantics.c
+@@ -153,6 +153,8 @@ static void rt_fibinfo_free(struct rtable __rcu **rtp)
+ 
+ 	if (!rt)
+ 		return;
++	if (!&rt->dst)
++		return;
+ 
+ 	/* Not even needed : RCU_INIT_POINTER(*rtp, NULL);
+ 	 * because we waited an RCU grace period before calling
+@@ -202,10 +204,13 @@ static void rt_fibinfo_free_cpus(struct rtable __rcu * __percpu *rtp)
+ 		struct rtable *rt;
+ 
+ 		rt = rcu_dereference_protected(*per_cpu_ptr(rtp, cpu), 1);
+-		if (rt) {
+-			dst_dev_put(&rt->dst);
+-			dst_release_immediate(&rt->dst);
+-		}
++		if (!rt)
++			continue;
++		if (!&rt->dst)
++			continue;
++
++		dst_dev_put(&rt->dst);
++		dst_release_immediate(&rt->dst);
+ 	}
+ 	free_percpu(rtp);
+ }
+--
 
