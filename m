@@ -1,181 +1,121 @@
-Return-Path: <linux-kernel+bounces-321273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A3A9716BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F12ED9716CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6AF91C230CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:25:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BE851C23187
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1787F1B5302;
-	Mon,  9 Sep 2024 11:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369BA1B81B5;
+	Mon,  9 Sep 2024 11:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h41vfkGp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKjvFpH9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBD21B3F24
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 11:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673501B5EC1;
+	Mon,  9 Sep 2024 11:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725881063; cv=none; b=P5l8U4gCYKpT5PFeju2B0ld5kUZ7HemALBvG4Y6dWQV0qCimCF7xYddL2cDS53UFVBaq8yo0I2ThSmFMfNSMtcSq21WTdFcgBqIoh11izKjHnJoISm9mBvo9eaLWk/UMk5NakreuBgKLp9XtRedT5Xsuwhhm9W6oQ8pJottmKEU=
+	t=1725881068; cv=none; b=qT1EmpALMXIKgqIZfQHQ0doaOMW9uQafSivh77r48WMR4ilH3VUWB3tb5eG3hxqxpjrixxwYBfUB0lUbbd+5/uoGw7FpMFyzI5gWbUCmPOSRcjmPvXyo/W6hedG9Ddt5RMCqN3ANUUMU8b2f9gOK11L8fVw+j+57ruKdmcNgN3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725881063; c=relaxed/simple;
-	bh=wd6Nk7S+2T3/Atm+VQX4FwDBMc4gtF4Iy1UQRcnPkmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mw9Y4pe22ovXjJU2F7oOc0yLoVczadT8shSBQ7IMjr27hQP7mPQMl5001sD5xCQlb0kGsaDa9POsmx9otfel4OCRl8YOYE/x3jh0gA5Ejw5YA7bJPC4y1bCkpFRhwRH+xHDPDHufzdhqY/M6+JQburBh0aY1MvjniprsuHPerVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h41vfkGp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725881060;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G7iY+WqYMudiSPSlxZTFwaK/Tqzc2dsg6fefulIkGrE=;
-	b=h41vfkGpfoOwftNcJ0fhaTw3PGIiMQJWKGImT84jSe7GZa8U7sKFXdkqTDfdnS4vsiY+jJ
-	hnqR3xlZHgtMr2LTgecBIvlsc0r3K109pUymx5BglVHoGECFSyo7w40j3JRLUyc5C55QZO
-	3LCqRlroxewBjLgKKOVE6w+UwkVwSqM=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-407-IMh2R6-RNMirn25-ihum-Q-1; Mon,
- 09 Sep 2024 07:24:16 -0400
-X-MC-Unique: IMh2R6-RNMirn25-ihum-Q-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DF9961956088;
-	Mon,  9 Sep 2024 11:24:13 +0000 (UTC)
-Received: from aion.redhat.com (unknown [10.22.64.160])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8124A1956086;
-	Mon,  9 Sep 2024 11:24:11 +0000 (UTC)
-Received: by aion.redhat.com (Postfix, from userid 1000)
-	id 7EB011F1B27; Mon,  9 Sep 2024 07:24:09 -0400 (EDT)
-Date: Mon, 9 Sep 2024 07:24:09 -0400
-From: Scott Mayhew <smayhew@redhat.com>
-To: David Laight <David.Laight@aculab.com>
-Cc: Li Lingfeng <lilingfeng3@huawei.com>,
-	"chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-	"jlayton@kernel.org" <jlayton@kernel.org>,
-	"neilb@suse.de" <neilb@suse.de>,
-	"okorniev@redhat.com" <okorniev@redhat.com>,
-	"Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>,
-	"tom@talpey.com" <tom@talpey.com>,
-	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"yukuai1@huaweicloud.com" <yukuai1@huaweicloud.com>,
-	"houtao1@huawei.com" <houtao1@huawei.com>,
-	"yi.zhang@huawei.com" <yi.zhang@huawei.com>,
-	"yangerkun@huawei.com" <yangerkun@huawei.com>,
-	"lilingfeng@huaweicloud.com" <lilingfeng@huaweicloud.com>
-Subject: Re: [PATCH] nfsd: return -EINVAL when namelen is 0
-Message-ID: <Zt7a2XO-ze1aAM-d@aion>
-References: <20240903111446.659884-1-lilingfeng3@huawei.com>
- <ZthzJiKF6TY0Nv32@aion>
- <cccdc13066204448af7f0fd550f34586@AcuMS.aculab.com>
+	s=arc-20240116; t=1725881068; c=relaxed/simple;
+	bh=NOXjUpcY8hYNWLF1WhCDUlTQ0y37JVq1LQvC9dM8LHs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I8HZrjdyJlceK4KOe6erMNXYh8uQYjmtsZkWmGjW9PZCJb0bp/lFjAEU0K3FbWNyQlRq4qh1gn+fssYsvl/jW1x0/Gm8u13J/qWpdbTlmv5v0YqWyxI8XIxhSC0QGvogr3imiapOw5I/4y2JXxgpx08DDa0wGzxBtqqAg+29RnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKjvFpH9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDF5C4CEC5;
+	Mon,  9 Sep 2024 11:24:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725881067;
+	bh=NOXjUpcY8hYNWLF1WhCDUlTQ0y37JVq1LQvC9dM8LHs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VKjvFpH9PHRu582HpZ3MNhR/HiW1lNHcyeG+egqQKhQRhFwMFZ7mkzQ3m0pZyMJtN
+	 v0WfQMAk4iHgw3ZgvIEAti7mIQtEsnSBbBC8EUthPwf5rWX0hmNlTm+rCD8zkZ+9dg
+	 +UpcEvfFvJ3UgYZYFiR1bTD7D7AUx9syc8LN/FP9I3pgfCd+/B5ALbOZwqCfPSXKnW
+	 4Ckuh3gV6uidK+H62wvAudqZsFZ2bENjjyvXkbNmfSYw2+wrR6QDpLk80wKejxCiSH
+	 ygDsfHi/Wr/xKSLmyQvsYyz/CJgue4yuOTXev37XuvieL/ZgfP5kdPXGeze8EUJ0jm
+	 ZVJY2fchySb7Q==
+Message-ID: <a79e30d7-1c11-4dc1-bf1a-4a4577b30b0a@kernel.org>
+Date: Mon, 9 Sep 2024 13:24:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cccdc13066204448af7f0fd550f34586@AcuMS.aculab.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 07/17] firmware: qcom: scm: add calls for creating,
+ preparing and importing keys
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
+ Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Asutosh Das <quic_asutoshd@quicinc.com>,
+ Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Gaurav Kashyap <quic_gaurkash@quicinc.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
+ <20240906-wrapped-keys-v6-7-d59e61bc0cb4@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240906-wrapped-keys-v6-7-d59e61bc0cb4@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, 08 Sep 2024, David Laight wrote:
-
-> From: Scott Mayhew 
-> > Sent: 04 September 2024 15:48
-> > 
-> > On Tue, 03 Sep 2024, Li Lingfeng wrote:
-> > 
-> > > When we have a corrupted main.sqlite in /var/lib/nfs/nfsdcld/, it may
-> > > result in namelen being 0, which will cause memdup_user() to return
-> > > ZERO_SIZE_PTR.
-> > > When we access the name.data that has been assigned the value of
-> > > ZERO_SIZE_PTR in nfs4_client_to_reclaim(), null pointer dereference is
-> > > triggered.
-> > >
-> > > [ T1205] ==================================================================
-> > > [ T1205] BUG: KASAN: null-ptr-deref in nfs4_client_to_reclaim+0xe9/0x260
-> > > [ T1205] Read of size 1 at addr 0000000000000010 by task nfsdcld/1205
-> > > [ T1205]
-> > > [ T1205] CPU: 11 PID: 1205 Comm: nfsdcld Not tainted 5.10.0-00003-g2c1423731b8d #406
-> > > [ T1205] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20190727_073836-buildvm-
-> > ppc64le-16.ppc.fedoraproject.org-3.fc31 04/01/2014
-> > > [ T1205] Call Trace:
-> > > [ T1205]  dump_stack+0x9a/0xd0
-> > > [ T1205]  ? nfs4_client_to_reclaim+0xe9/0x260
-> > > [ T1205]  __kasan_report.cold+0x34/0x84
-> > > [ T1205]  ? nfs4_client_to_reclaim+0xe9/0x260
-> > > [ T1205]  kasan_report+0x3a/0x50
-> > > [ T1205]  nfs4_client_to_reclaim+0xe9/0x260
-> > > [ T1205]  ? nfsd4_release_lockowner+0x410/0x410
-> > > [ T1205]  cld_pipe_downcall+0x5ca/0x760
-> > > [ T1205]  ? nfsd4_cld_tracking_exit+0x1d0/0x1d0
-> > > [ T1205]  ? down_write_killable_nested+0x170/0x170
-> > > [ T1205]  ? avc_policy_seqno+0x28/0x40
-> > > [ T1205]  ? selinux_file_permission+0x1b4/0x1e0
-> > > [ T1205]  rpc_pipe_write+0x84/0xb0
-> > > [ T1205]  vfs_write+0x143/0x520
-> > > [ T1205]  ksys_write+0xc9/0x170
-> > > [ T1205]  ? __ia32_sys_read+0x50/0x50
-> > > [ T1205]  ? ktime_get_coarse_real_ts64+0xfe/0x110
-> > > [ T1205]  ? ktime_get_coarse_real_ts64+0xa2/0x110
-> > > [ T1205]  do_syscall_64+0x33/0x40
-> > > [ T1205]  entry_SYSCALL_64_after_hwframe+0x67/0xd1
-> > > [ T1205] RIP: 0033:0x7fdbdb761bc7
-> > > [ T1205] Code: 0f 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f 1e fa 64 8b 04 25 18
-> > 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 514
-> > > [ T1205] RSP: 002b:00007fff8c4b7248 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> > > [ T1205] RAX: ffffffffffffffda RBX: 000000000000042b RCX: 00007fdbdb761bc7
-> > > [ T1205] RDX: 000000000000042b RSI: 00007fff8c4b75f0 RDI: 0000000000000008
-> > > [ T1205] RBP: 00007fdbdb761bb0 R08: 0000000000000000 R09: 0000000000000001
-> > > [ T1205] R10: 0000000000000000 R11: 0000000000000246 R12: 000000000000042b
-> > > [ T1205] R13: 0000000000000008 R14: 00007fff8c4b75f0 R15: 0000000000000000
-> > > [ T1205] ==================================================================
-> > >
-> > > Fix it by checking namelen.
-> > >
-> > > Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
-> > > ---
-> > >  fs/nfsd/nfs4recover.c | 8 ++++++++
-> > >  1 file changed, 8 insertions(+)
-> > >
-> > > diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-> > > index 67d8673a9391..69a3a84e159e 100644
-> > > --- a/fs/nfsd/nfs4recover.c
-> > > +++ b/fs/nfsd/nfs4recover.c
-> > > @@ -809,6 +809,10 @@ __cld_pipe_inprogress_downcall(const struct cld_msg_v2 __user *cmsg,
-> > >  			ci = &cmsg->cm_u.cm_clntinfo;
-> > >  			if (get_user(namelen, &ci->cc_name.cn_len))
-> > >  				return -EFAULT;
-> > > +			if (!namelen) {
-> > > +				dprintk("%s: namelen should not be zero", __func__);
-> > > +				return -EINVAL;
-> > > +			}
-> > >  			name.data = memdup_user(&ci->cc_name.cn_id, namelen);
+On 6.09.2024 8:07 PM, Bartosz Golaszewski wrote:
+> From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
 > 
-> Don't you also want an upper bound sanity check?
-> (or is cn_len only 8 bit?)
-
-Yeah, actually it should probably be checking for namelen >
-NFS4_OPAQUE_LIMIT.
-
--Scott
+> Storage encryption has two IOCTLs for creating, importing and preparing
+> keys for encryption. For wrapped keys, these IOCTLs need to interface
+> with Qualcomm's Trustzone. Add the following keys:
 > 
-> 	David
+> generate_key:
+>   This is used to generate and return a longterm wrapped key. Trustzone
+>   achieves this by generating a key and then wrapping it using the
+>   Hawrdware Key Manager (HWKM), returning a wrapped keyblob.
 > 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
+> import_key:
+>   The functionality is similar to generate, but here: a raw key is
+>   imported into the HWKM and a longterm wrapped keyblob is returned.
 > 
+> prepare_key:
+>   The longterm wrapped key from the import or generate calls is made
+>   further secure by rewrapping it with a per-boot, ephemeral wrapped key
+>   before installing it in the kernel for programming into ICE.
+> 
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> [Bartosz:
+>   improve kerneldocs,
+>   fix hex values coding style,
+>   rewrite commit message]
+> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
+same question as patch 6, lgtm otherwise
+
+Konrad
 
