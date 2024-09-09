@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-321690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24AF6971E17
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:33:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736CE971E18
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12F1285F5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:33:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ED4E1C21998
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D724D47F53;
-	Mon,  9 Sep 2024 15:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A752543AC4;
+	Mon,  9 Sep 2024 15:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F73yS21D"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BJ4npUj4"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12FA20DC4
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 15:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615F26F06B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 15:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725896005; cv=none; b=t/5WHR2d7zYpjUcnR6o4I7blyhaF3rD2f+nMKPB491D07SLBhxqakAL0PL7b3+cgm5kb9dp11hZ4SMvKQ2I/mudVyc4ykWhjZiVXvpik+WF5M9gMSVRGOFKVAOYkdrtxx9vmxJTeOTW/CrCNwLYPVqdfpK/empFjexVpF6ozgs8=
+	t=1725896025; cv=none; b=kIhjpvqBpKmUiwrFjU4xVDSFHE51g5IOUrrkGq+sJ4xBIcKwSvKDqdeoKH4rp9N6U+dADIcspAHcMncGcShc1O5uBjy4d1Oov6nVV58A9F9D1iX90WezrdlfZzU5OBHP7Rn0wlRNiC6POAgSNLnNfVlj/wJcr73Pw+G/7aqMM4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725896005; c=relaxed/simple;
-	bh=RQstpKYBysV0fJEEMraqxwfamzRl6MqPGS9YNkTUTmg=;
+	s=arc-20240116; t=1725896025; c=relaxed/simple;
+	bh=UMQZe0Ltvv2IG2a9wljq7TM3IkBwoLnGQUULyAPtGAk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YkHiM4V1cIP3M7La0tBnkfrkDb85yG3EKijuxsH2fIyzUF74Nf9p+cHdtjTHA1XGR/9+FAtcCNOfDDEtPkeOFo7L/Z4YIh1k4kzW6U3F9o4mCECLM8yJ4P0fdb42jsKjFNgFAtjD9bLaYlqw8TruaK46pDNcrTFJF0NskNG3J0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F73yS21D; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=TE8zxnkOtmD2X4C4XwhDVxuGxYPvMuq1pwWPOMOswxdD9Rl30GLlkqV6UfAWXf3WBBbNoH8TomH7XnoNSY/Py6ebp9BrZvNzcXQjc/ZFHKwbMcFLxmxDcv2h7oCd6XwMQbXeXvpSTgJ4QLNljdI3YVQ1DIOBNgFKnFDPSBmHm00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BJ4npUj4; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725896002;
+	s=mimecast20190719; t=1725896023;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=W4pNeMR/cD4qSUUyt8Fkj7gag9Lbiv2YrjkcbcuIMIs=;
-	b=F73yS21DwNM7aygGYe6cuKdCxfMVp6TNC5eas4TBDNSc8pZylvwM45s8BM31mBPZ+NTPRm
-	LfBRiemgJGiYfgrOer8N5iN6vdgtaQk6ikkwxtPQoZiw4dKYZYJq5O0EHuByMwLPZiirgf
-	jOCDQGodSlk7PJu000TMeo8XoNMeCa4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=WidaePpOhrsaL47Ug1d7ZVUIzC/tXX366e9bJY3o/FY=;
+	b=BJ4npUj4OMdVAo4i9wPaPHSgpAZcvBHbovuEhgdDKjZEjCnrym0K3mJNDOyaRiu9Bd57oA
+	APgvzi5WAHdab5Q+WRW5izTSiEd//t+afD7u9Q6Gbgo5Bj8a4kHo061YLXiu1PBmu6U6+q
+	gi3Uz1kkpv+codF4XBof26Yk0GXiCbY=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-sd-GHo7gNPObwYXQfK1aZg-1; Mon, 09 Sep 2024 11:33:20 -0400
-X-MC-Unique: sd-GHo7gNPObwYXQfK1aZg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb2c5d634so13697805e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 08:33:20 -0700 (PDT)
+ us-mta-79-l4FEynRWPX6IuHr1fiqW3g-1; Mon, 09 Sep 2024 11:33:42 -0400
+X-MC-Unique: l4FEynRWPX6IuHr1fiqW3g-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb0b0514bso16820055e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 08:33:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725895999; x=1726500799;
+        d=1e100.net; s=20230601; t=1725896021; x=1726500821;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=W4pNeMR/cD4qSUUyt8Fkj7gag9Lbiv2YrjkcbcuIMIs=;
-        b=Eu4GCNaIRGWkPwXX+agQNFk8Xqa9hw8KNOPMWPNKsjGPwOWGTr8A73zx5+W6+qyJ2c
-         sCZNufkUJolvtcMDZmTGZ3nEA3m8K+eXWSp2mtG+aYsS4S0WETcGjUQOuDzwDSVcTg35
-         bjRuldQPgPHAi+zEUHaIKO0pNwRR7FRdRaOKTwpa8yaTAJVRsqYWPR4tI9uQreKpaarl
-         JoyC0v01c3Nfmm4zc3jVkeoncHWSsX5zya6oJJSlsgoVc84KiWBkGNqQZi8M10uRD7m/
-         oVErWwegbfNvlydsAKJ5fOYpu9zAas873qWE2IQ2gfTEobA8u1LbMkC8BY5usEGORQf0
-         hIMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPSJs7tKmc4wN/SntKTWCje9EKGB7wycLCm83liJis24e+irPhMmoUoi8z722Zwovx70J8+l+jV5BJjq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8wK0xCOSgNvpdkNWn5lG4F4Ain9Iw3r5ql/I+bz4P7runUtjv
-	r1E+X8GPsRNa8evYXBmYyQVdWFvLXHzhd8AihQRshxaZkGYsizgUsyL6JDw4mwI26/KX8vt06aX
-	xIRRWg6sNNxHlbYKVU1BYs2TF5t7NuHAD93ACoiidAcJ6wo2viCcAO8QnW/mGQg==
-X-Received: by 2002:a05:600c:1f8c:b0:42c:b6db:4270 with SMTP id 5b1f17b1804b1-42cb6db448cmr28843875e9.11.1725895999646;
-        Mon, 09 Sep 2024 08:33:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGaj3y8JQ3aF22TN52GILlj8S4cIebL43Sb8l1rA7fdsZWasSFPvXBy3m4SBuHYEF4OlFNLAg==
-X-Received: by 2002:a05:600c:1f8c:b0:42c:b6db:4270 with SMTP id 5b1f17b1804b1-42cb6db448cmr28843645e9.11.1725895999136;
-        Mon, 09 Sep 2024 08:33:19 -0700 (PDT)
+        bh=WidaePpOhrsaL47Ug1d7ZVUIzC/tXX366e9bJY3o/FY=;
+        b=gkJh9kh1C+PhK5ftFU7yJZxoJCr+NQL3C9O4Iaoa0eenZQDM7ABpouN3LA5zCx9ym5
+         Lz6wTuR8yYQXQUoGuLcHumIpdmrlfBAgvurWpijb9nT7LTR7p+1dTCEqRM8NlzslrtA4
+         9799Kxe8fFOmIhInHCa8b8/dhvKou5i00H8Meus8HQaMFrgUwPW3MIr79b4BadKv9LaS
+         cJmLSVXpTXHJKT2ZnLCEXJYgNm/pbgBvZ26ZN9kGhLt9skwl4JY2ZkBCx0qNxOZc3jJH
+         FRN30vMi8ScfKvJbeBy7YrWU7WgMo1fdDLEqFRya/EOzqkSlxSlMKrP2iYflXZVPMJ+4
+         2z/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVB0ek85PhGsSD82nb0lynvPCL4QOts90630dZlOood3KfsBx2pUSQvi6NUjcGqbYFOmfb8Qo0yYVUhUic=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy9vfIF5oYDEXGSr9kUKJn00IjQI61aAl9O4oSUagr2yDfEsq+
+	c+6PY+Hjfjq/Hz/Bgnon373zEqsi6yJ5Q+LNtglDFTFA4QbwBvRP8Df6h3kY37vzTwWAphYNdnF
+	aIpGHbNfh4eTT0LFWZp4/s6M9HqpKRYF75WKFcvmtwVrLI5ZtSEBgV7hTsq4gHg==
+X-Received: by 2002:a05:600c:5102:b0:42c:bbd5:af60 with SMTP id 5b1f17b1804b1-42cbbd5b298mr10870445e9.24.1725896020798;
+        Mon, 09 Sep 2024 08:33:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF4dw4cu2zgK6ywhn2YqWBHMvf6OtteRJfVRRO50kbxvWZF7bAUiZqNmFhsu/81vGaAeWGxag==
+X-Received: by 2002:a05:600c:5102:b0:42c:bbd5:af60 with SMTP id 5b1f17b1804b1-42cbbd5b298mr10870175e9.24.1725896020281;
+        Mon, 09 Sep 2024 08:33:40 -0700 (PDT)
 Received: from [192.168.10.81] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42caeb8afc9sm80727185e9.44.2024.09.09.08.33.18
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42caeb8181csm80215315e9.33.2024.09.09.08.33.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 08:33:18 -0700 (PDT)
-Message-ID: <436b8525-e4be-4c1e-b2e4-2e4356379cc4@redhat.com>
-Date: Mon, 9 Sep 2024 17:33:17 +0200
+        Mon, 09 Sep 2024 08:33:39 -0700 (PDT)
+Message-ID: <32ab1360-84c4-4eec-b1ee-d3e63cdbee44@redhat.com>
+Date: Mon, 9 Sep 2024 17:33:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,13 +82,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/21] KVM: TDX: Set per-VM shadow_mmio_value to 0
+Subject: Re: [PATCH 11/21] KVM: x86/mmu: Add setter for shadow_mmio_value
 To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
  kvm@vger.kernel.org
 Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
  yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org
 References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-13-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-12-rick.p.edgecombe@intel.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=pbonzini@redhat.com; keydata=
@@ -126,57 +126,56 @@ Autocrypt: addr=pbonzini@redhat.com; keydata=
  JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
  dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
  b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
-In-Reply-To: <20240904030751.117579-13-rick.p.edgecombe@intel.com>
+In-Reply-To: <20240904030751.117579-12-rick.p.edgecombe@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 9/4/24 05:07, Rick Edgecombe wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
+> 
+> Future changes will want to set shadow_mmio_value from TDX code. Add a
+> helper to setter with a name that makes more sense from that context.
+> 
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> [split into new patch]
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+> TDX MMU part 2 v1:
+>   - Split into new patch
+> ---
+>   arch/x86/kvm/mmu.h      | 1 +
+>   arch/x86/kvm/mmu/spte.c | 6 ++++++
+>   2 files changed, 7 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
+> index 5faa416ac874..72035154a23a 100644
+> --- a/arch/x86/kvm/mmu.h
+> +++ b/arch/x86/kvm/mmu.h
+> @@ -78,6 +78,7 @@ static inline gfn_t kvm_mmu_max_gfn(void)
+>   u8 kvm_mmu_get_max_tdp_level(void);
+>   
+>   void kvm_mmu_set_mmio_spte_mask(u64 mmio_value, u64 mmio_mask, u64 access_mask);
+> +void kvm_mmu_set_mmio_spte_value(struct kvm *kvm, u64 mmio_value);
+>   void kvm_mmu_set_me_spte_mask(u64 me_value, u64 me_mask);
+>   void kvm_mmu_set_ept_masks(bool has_ad_bits, bool has_exec_only);
+>   
 > diff --git a/arch/x86/kvm/mmu/spte.c b/arch/x86/kvm/mmu/spte.c
-> index 46a26be0245b..4ab6d2a87032 100644
+> index d4527965e48c..46a26be0245b 100644
 > --- a/arch/x86/kvm/mmu/spte.c
 > +++ b/arch/x86/kvm/mmu/spte.c
-> @@ -94,8 +94,6 @@ u64 make_mmio_spte(struct kvm_vcpu *vcpu, u64 gfn, unsigned int access)
->   	u64 spte = generation_mmio_spte_mask(gen);
->   	u64 gpa = gfn << PAGE_SHIFT;
+> @@ -409,6 +409,12 @@ void kvm_mmu_set_mmio_spte_mask(u64 mmio_value, u64 mmio_mask, u64 access_mask)
+>   }
+>   EXPORT_SYMBOL_GPL(kvm_mmu_set_mmio_spte_mask);
 >   
-> -	WARN_ON_ONCE(!vcpu->kvm->arch.shadow_mmio_value);
-> -
->   	access &= shadow_mmio_access_mask;
->   	spte |= vcpu->kvm->arch.shadow_mmio_value | access;
->   	spte |= gpa | shadow_nonpresent_or_rsvd_mask;
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 0c08062ef99f..9da71782660f 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -6,7 +6,7 @@
->   #include "mmu.h"
->   #include "tdx.h"
->   #include "tdx_ops.h"
-> -
-> +#include "mmu/spte.h"
->   
->   #undef pr_fmt
->   #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> @@ -344,6 +344,19 @@ int tdx_vm_init(struct kvm *kvm)
->   {
->   	kvm->arch.has_private_mem = true;
->   
-> +	/*
-> +	 * Because guest TD is protected, VMM can't parse the instruction in TD.
-> +	 * Instead, guest uses MMIO hypercall.  For unmodified device driver,
-> +	 * #VE needs to be injected for MMIO and #VE handler in TD converts MMIO
-> +	 * instruction into MMIO hypercall.
-> +	 *
-> +	 * SPTE value for MMIO needs to be setup so that #VE is injected into
-> +	 * TD instead of triggering EPT MISCONFIG.
-> +	 * - RWX=0 so that EPT violation is triggered.
-> +	 * - suppress #VE bit is cleared to inject #VE.
-> +	 */
-> +	kvm_mmu_set_mmio_spte_value(kvm, 0);
+> +void kvm_mmu_set_mmio_spte_value(struct kvm *kvm, u64 mmio_value)
+> +{
+> +	kvm->arch.shadow_mmio_value = mmio_value;
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_mmu_set_mmio_spte_value);
 > +
->   	/*
->   	 * This function initializes only KVM software construct.  It doesn't
->   	 * initialize TDX stuff, e.g. TDCS, TDR, TDCX, HKID etc.
+>   void kvm_mmu_set_me_spte_mask(u64 me_value, u64 me_mask)
+>   {
+>   	/* shadow_me_value must be a subset of shadow_me_mask */
 
 Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 
