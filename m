@@ -1,60 +1,91 @@
-Return-Path: <linux-kernel+bounces-320561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC241970BF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:40:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3774970BCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73FDD1F22873
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:40:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FB22B20E1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129B9191F8A;
-	Mon,  9 Sep 2024 02:38:33 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE0F14267;
+	Mon,  9 Sep 2024 02:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="AdQ4vhz9"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BEA19005B;
-	Mon,  9 Sep 2024 02:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D40134A8
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 02:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725849512; cv=none; b=fD8bCe/McRr38ZfFF876xMBD+s5i0aqQgPUIdDxJDY+1Tw+XU3Dm/YzgQbvSdSOfhhI6tkhPh/mgT/nVkHUICKlVXRalF/Vk8E8sxKDAtVEWUKkesDuLZnEQHFOsG89Nm4O6cNZ6BRt011GTlG3dACFcotGZ5QEm8LdClEnj/RQ=
+	t=1725849123; cv=none; b=s3zNSfRVyIJMfboRgDYb9UKNiKGySqkuuKn5nTqmxkCYTsCHgXMf5j0f0ePpSH+Wi2f1FT/J1MJaqB7Jq/82h12uaWWQMy7YsymqlG50wCYNjYhW5RrIzKQk82GV/SliDdXJEExAaN6SsmbiJvfQT1aqps4mG4R8eso92iPuJnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725849512; c=relaxed/simple;
-	bh=j2sFzKHIvZtXIzn+EfS/3JETndR1dfz583G/k3ujcDE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nE1eWuMvS0z+5vGF3mWZd2tweKxqchGBORt+H7RpUQPPGYl7a8YttCw0OKT0n0czeAvGt1h9Ds28rm3yRAft+dKwSXlMnPYPfpHzPhjrHpDvhCfi9EBjsh2ZVz7WVmpKZG6EoovQR1DuIKdlnIZocyBX5AoRyLxx6pl+u4Pjf9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X29x51VHXz2DbyX;
-	Mon,  9 Sep 2024 10:38:01 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 847401A0188;
-	Mon,  9 Sep 2024 10:38:27 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 9 Sep 2024 10:38:26 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <shaojijie@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<libaihan@huawei.com>, <zhuyuan@huawei.com>, <forest.zhouchang@huawei.com>,
-	<andrew@lunn.ch>, <jdamato@fastly.com>, <horms@kernel.org>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH V8 net-next 11/11] net: add ndo_validate_addr check in dev_set_mac_address
-Date: Mon, 9 Sep 2024 10:31:41 +0800
-Message-ID: <20240909023141.3234567-12-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240909023141.3234567-1-shaojijie@huawei.com>
-References: <20240909023141.3234567-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1725849123; c=relaxed/simple;
+	bh=EfOr3VUloNkzyd1jFObX0TIdqDg19AEy0ziFiOQcyQg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OACwJin1WebQUFDDcNP6ZBocKbi+Af3apx8gAYaQm9mk4qjyr2A5LJaJ2hm2dXWyaculFlZ11pyk2eSdjhdnj6Qx4qVEG5QEb0zn6j7WxqAVFd8jNzVpzCI5XLedq37ZiEoD+wCXozOHJ0h5LpvuDueWVgf5rA4pUJmZ515fynA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=AdQ4vhz9; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2da55ea8163so2705146a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 19:32:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1725849121; x=1726453921; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h3jsBoK6osKU+9RLD62g9RUso5s5R8d15TnY03wmQ6c=;
+        b=AdQ4vhz9GncSXqsJ6WKjzNrJdechL23gcPX4X2PxKqvRP+DcF7XW7ufrrCqhVuMo39
+         1vIRwE94ncZM61c+dT0M1lGGsA597V/EP3eQwLVCunxGQKif4hBn8DP2n2n9RxgxOdB/
+         qGJnwXlwHc7nZmaaRaJ1Ra9jITmvjXoroS8sloWZNSu6mkfuVUXmXyXskiSBude8EeT0
+         UMlKA0r/MzU1dHfhFlqntUB0Q8RwQytOCGvOnynyUZNxCYR5Fwtx82bCKxI+yU1WhmY9
+         mW+nIaoGWGNoes5nR4bby7fbF9O1nMW9POKYQDtqvO9t4/Y3qfTcrRzGKEB9EAKwTnTZ
+         IkXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725849121; x=1726453921;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h3jsBoK6osKU+9RLD62g9RUso5s5R8d15TnY03wmQ6c=;
+        b=b43vvEOjhLB1v6VejJDt703s+wkMBAhb+AyrfPSiZPQ0PKWVfnet+dT22iKOmYLVG/
+         TjInP/AMs/4exYKzq2ZvwkVTtMWwghz62OkC2Uh8/HcN/CIQa+HurBN9x9wGWAq9gXvb
+         +h594D4apuqphc5otHmQNC02jibKmDBTiNvBfPIE8WE3Cprok3880mAdPxlFDgX9x7vs
+         1znW37cDGjq/KqePfA1gRETYcbq+x5ZQSN814S4jS9GT3HeiptD3XyK6m3GtCnmYyvWB
+         P6+4/LnzJqef2QNnisKG3BobmptTncB62qaIdMG+Q/DvA+/pqpWaQPoSMwoDL90l0d/r
+         Hybg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyb7ntevg34DIAnyLhMHDXP8YEluUl1L7G4x4kfsyIuWvIEYxko4YJnNoHlNZ5iXZedzRJwAUuybgELuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9Vcfyjr1amhSltboL8yapT2Pu5J8qOUd0Up0RVxnJRMl0Fhqy
+	1cVk2euCkkLYiSugXIiGzVd4dFJM1Qvsgm1mSPolrdHtXozSwHcdoUpuD8h4DVM=
+X-Google-Smtp-Source: AGHT+IFdVpSBGSpWYYHDlsrmgHjef/BjQGNN3o4DAAfwJWFtVeibofNSvovQsC/WeLsU5p/ooe4SLw==
+X-Received: by 2002:a17:90a:be15:b0:2cc:ff56:5be1 with SMTP id 98e67ed59e1d1-2dad50831d1mr8627025a91.7.1725849121016;
+        Sun, 08 Sep 2024 19:32:01 -0700 (PDT)
+Received: from zjn.huaqin.com ([116.66.212.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db049873b0sm3323645a91.47.2024.09.08.19.31.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 19:32:00 -0700 (PDT)
+From: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
+To: hsinyi@chromium.org
+Cc: angelogioacchino.delregno@collabora.com,
+	cengjianeng@huaqin.corp-partner.google.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	hsinyi@google.com,
+	knoxchiou@google.com,
+	krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	robh@kernel.org
+Subject: [PATCH v5 0/2] arm64: dts: mediatek: Add MT8186 Ponyta
+Date: Mon,  9 Sep 2024 10:31:46 +0800
+Message-Id: <20240909023148.1677936-1-cengjianeng@huaqin.corp-partner.google.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CAJMQK-imYrDTuycVzQxkfbkZuHehE8uwc+qS2w=UDShETsBvEw@mail.gmail.com>
+References: <CAJMQK-imYrDTuycVzQxkfbkZuHehE8uwc+qS2w=UDShETsBvEw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,42 +93,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm000007.china.huawei.com (7.193.23.189)
 
-If driver implements ndo_validate_addr,
-core should check the mac address before ndo_set_mac_address.
-
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+This is v5 of the MT8186 Chromebook device tree series.
 ---
-ChangeLog:
-v2 -> v3:
-  - Use ndo_validate_addr() instead of is_valid_ether_addr()
-    in dev_set_mac_address(), suggested by Jakub and Andrew.
-  v2: https://lore.kernel.org/all/20240820140154.137876-1-shaojijie@huawei.com/
----
- net/core/dev.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Changes in v5:
+- PATCH 1/2: Remove sku2147483647.
+- PATCH 2/2: Remove sku2147483647.
+- Link to v4:https://lore.kernel.org/all/20240906085739.1322676-1-cengjianeng@huaqin.corp-partner.google.com/
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 98bb5f890b88..d6ec91ea8043 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -9089,6 +9089,11 @@ int dev_set_mac_address(struct net_device *dev, struct sockaddr *sa,
- 		return -EOPNOTSUPP;
- 	if (sa->sa_family != dev->type)
- 		return -EINVAL;
-+	if (ops->ndo_validate_addr) {
-+		err = ops->ndo_validate_addr(dev);
-+		if (err)
-+			return err;
-+	}
- 	if (!netif_device_present(dev))
- 		return -ENODEV;
- 	err = dev_pre_changeaddr_notify(dev, sa->sa_data, extack);
+Changes in v4:
+- PATCH 1/2: Add more info for Ponyta custom label in commit.
+- Link to v3:https://lore.kernel.org/all/20240904081501.2060933-1-cengjianeng@huaqin.corp-partner.google.com/
+
+Changes in v3:
+- PATCH 0/2: Add the modify records.
+- PATCH 1/2: Modify lable to label.
+- Link to v2:https://lore.kernel.org/all/20240903061603.3007289-1-cengjianeng@huaqin.corp-partner.google.com/
+
+Changes in v2:
+- PATCH 2/2: Modify the dtb name without rev2.
+- Link to v1:https://lore.kernel.org/all/20240902125502.1844374-1-cengjianeng@huaqin.corp-partner.google.com/
+
+Jianeng Ceng (2):
+  dt-bindings: arm: mediatek: Add MT8186 Ponyta Chromebook
+  arm64: dts: mediatek: Add MT8186 Ponyta Chromebooks
+
+ .../devicetree/bindings/arm/mediatek.yaml     | 10 +++++
+ arch/arm64/boot/dts/mediatek/Makefile         |  2 +
+ .../mediatek/mt8186-corsola-ponyta-sku0.dts   | 23 ++++++++++
+ .../mediatek/mt8186-corsola-ponyta-sku1.dts   | 27 ++++++++++++
+ .../dts/mediatek/mt8186-corsola-ponyta.dtsi   | 44 +++++++++++++++++++
+ 5 files changed, 106 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku0.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta-sku1.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-ponyta.dtsi
+
 -- 
-2.33.0
+2.34.1
 
 
