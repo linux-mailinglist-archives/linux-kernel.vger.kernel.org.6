@@ -1,82 +1,140 @@
-Return-Path: <linux-kernel+bounces-321725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADBE7971E92
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:58:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88D51971E90
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9DF01C23728
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:58:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99C0A1C236AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EE41304BA;
-	Mon,  9 Sep 2024 15:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F6F136320;
+	Mon,  9 Sep 2024 15:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjA3HRpc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fWnzVZnU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD5B1BC49;
-	Mon,  9 Sep 2024 15:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEE21BC49;
+	Mon,  9 Sep 2024 15:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725897534; cv=none; b=cY9xrXVBi0lwKGAe7ZhbTCAT72mpfMHrLTvN+NDMwT120tjK7FQF2Gp1pY+sjySy/zc06/5jNNR2lF5JvubR2DrpnxJPsBKzNGflGd4avCUrXQEZwgD0XwadLckg/0x0jAf39WSWpKoRMxVZo8pwjvSFeT+1G69VfJUO9g7I1Xg=
+	t=1725897514; cv=none; b=n/y9pDjQyEmTbz8sG8nVMZLp0IHxsnC74m1y+WfFLCk3fhCR0m/ky2I8eW5UPc/X3n43CgHcL/pEMXaZA+J2QTxeh3rz1MUFinedmvFZzdM68465/JnfZsKhOIMFugbAcMI2rfhOoMvjNx/5gl29sLshDHw0igDl2yJC6cHZl2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725897534; c=relaxed/simple;
-	bh=oyW3IcH0Q70gkJiTRSuXEIiMgreHI1AcqFywZedJgog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M7WLFlv3F/Bp4Cy9CjwBRNu2b4Uz4R1JArH6/fLLXHtDDbcMT/N7J9/8d6bC3vFITf0KrYzIdXWKuvYeyCqG9euGHiDoRiWycH0bIaUtUlyd+rtEfduj1D/sDSl3L8BRjt3fYdsUfJkEo1rs8NDTmtN6eEOjBLAMbK+LZqIFevc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjA3HRpc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 351D7C4CEC5;
-	Mon,  9 Sep 2024 15:58:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725897533;
-	bh=oyW3IcH0Q70gkJiTRSuXEIiMgreHI1AcqFywZedJgog=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bjA3HRpcVTW8JzmURsekASMfahSvX6HxiNmW6Q3c9UaIsscVL5gXjqqkMC9qjzgB7
-	 Men3o4mdmn9kEMQThEQu+ylraG5svSrDwEFJDtjNhVvgX+wvL70ji3hYjKLN3tXIxI
-	 xLTVVj/vRTWaXWIMJe9uhgAgXnabtQD6rPuMCfzjVeXdnyfBw2AZIgqQL2X9XPNbC2
-	 kBSt8VUkNJrgvFmKwa9H5xYVByWBV+MKi9QVXlPrrmEED2f/NuyPUc0mr4uSPDrG2a
-	 t8rNoTGZdZcJyHumfCMoDYGRJINzRHBmc+BxPq9DQ5WNJaaz1ZVO62/caS5oIoVE7A
-	 3Q3ZcxWPM55pQ==
-Date: Mon, 9 Sep 2024 16:58:48 +0100
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, thepacketgeek@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, davej@codemonkey.org.uk,
-	vlad.wing@gmail.com, max@kutsevol.com
-Subject: Re: [PATCH net-next v2 02/10] net: netconsole: split
- send_ext_msg_udp() function
-Message-ID: <20240909155848.GB2097826@kernel.org>
-References: <20240909130756.2722126-1-leitao@debian.org>
- <20240909130756.2722126-3-leitao@debian.org>
+	s=arc-20240116; t=1725897514; c=relaxed/simple;
+	bh=YD8Ll7S6aZmu4BO+6NGny7r/3U5u0DsKB8SRlzq2lgU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SWJcFtt1jidAV6i6uvfKXrpAXcMOl2hR8bOwpANPfvpeH5jkjdj7jdTKw3eWPZ7RW4bN+sXRvwL0OTLJoLzd6s50eBhhVwo4pyAFVeoEqu1B2Kp/5cU7f9RsJZ5HFJfyeJ/cZ6VFpn8sh97VxAeqcD64z1K2OUx+0RUgQiIo94U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fWnzVZnU; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725897508; x=1757433508;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YD8Ll7S6aZmu4BO+6NGny7r/3U5u0DsKB8SRlzq2lgU=;
+  b=fWnzVZnUIfUQFxnuGUjWC1EVD6vUldL3C4IN3Bd7r209nl1WnC1ajkZw
+   W0kpfeNbB25FLtUJoDA7Aa8Snv/fF0Z2xfAz93tuxSX5bR+TkX8lhsUoD
+   f9PyCpGKDas8zOV3qeS1HnpgoVCNdEKx3RHJRN4AFBUCHtOZEksuanqdV
+   2m7vFpmxpP/Xx8HhCHpRxZTmvfEORSnd8T2u13svmFgHphsYahmKIzo35
+   YrTDH+hIZ3AfAkz8Pa2TdoruAkA2F0Gd3lONXi/+meLTe/JHlEIAOdXYX
+   WCrCx74MTvuL3lfmOZffjxMN4KKvc66c7x0Hc3HLkuh7W1XdCNdON8Lpv
+   g==;
+X-CSE-ConnectionGUID: lKG6Wbi5QXCXyW5hy1uEHg==
+X-CSE-MsgGUID: xNQb4RKJSFyn+9ck90R8Bg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="47123196"
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="47123196"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 08:58:28 -0700
+X-CSE-ConnectionGUID: 08EI6PZvQIyHf5KOLhRYtA==
+X-CSE-MsgGUID: 0bHNA+1sSFC9nQ4F/zrvMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="scan'208";a="71500936"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by orviesa003.jf.intel.com with ESMTP; 09 Sep 2024 08:58:28 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: bpf@vger.kernel.org,
+	kernel-team@meta.com,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] perf/x86/intel: Allow to setup LBR for counting event for BPF
+Date: Mon,  9 Sep 2024 08:58:48 -0700
+Message-Id: <20240909155848.326640-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240909130756.2722126-3-leitao@debian.org>
 
-On Mon, Sep 09, 2024 at 06:07:43AM -0700, Breno Leitao wrote:
-> The send_ext_msg_udp() function has become quite large, currently
-> spanning 102 lines. Its complexity, along with extensive pointer and
-> offset manipulation, makes it difficult to read and error-prone.
-> 
-> The function has evolved over time, and it’s now due for a refactor.
-> 
-> To improve readability and maintainability, isolate the case where no
-> message fragmentation occurs into a separate function, into a new
-> send_msg_no_fragmentation() function. This scenario covers about 95% of
-> the messages.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+The BPF subsystem may capture LBR data on a counting event. However, the
+current implementation assumes that LBR can/should only be used with
+sampling events.
+
+For instance, retsnoop tool ([0]) makes an extensive use of this
+functionality and sets up perf event as follows:
+
+	struct perf_event_attr attr;
+
+	memset(&attr, 0, sizeof(attr));
+	attr.size = sizeof(attr);
+	attr.type = PERF_TYPE_HARDWARE;
+	attr.config = PERF_COUNT_HW_CPU_CYCLES;
+	attr.sample_type = PERF_SAMPLE_BRANCH_STACK;
+	attr.branch_sample_type = PERF_SAMPLE_BRANCH_KERNEL;
+
+To limit the LBR for a sampling event is to avoid unnecessary branch
+stack setup for a counting event in the sample read. Because LBR is only
+read in the sampling event's overflow.
+
+Although in most cases LBR is used in sampling, there is no HW limit to
+bind LBR to the sampling mode. Allow an LBR setup for a counting event
+unless in the sample read mode.
+
+Fixes: 85846b27072d ("perf/x86: Add PERF_X86_EVENT_NEEDS_BRANCH_STACK flag")
+Reported-by: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Closes: https://lore.kernel.org/lkml/20240905180055.1221620-1-andrii@kernel.org/
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Cc: stable@vger.kernel.org
+---
+ arch/x86/events/intel/core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 605ed19043ed..2b5ff112d8d1 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3981,8 +3981,12 @@ static int intel_pmu_hw_config(struct perf_event *event)
+ 			x86_pmu.pebs_aliases(event);
+ 	}
+ 
+-	if (needs_branch_stack(event) && is_sampling_event(event))
+-		event->hw.flags  |= PERF_X86_EVENT_NEEDS_BRANCH_STACK;
++	if (needs_branch_stack(event)) {
++		/* Avoid branch stack setup for counting events in SAMPLE READ */
++		if (is_sampling_event(event) ||
++		    !(event->attr.sample_type & PERF_SAMPLE_READ))
++			event->hw.flags |= PERF_X86_EVENT_NEEDS_BRANCH_STACK;
++	}
+ 
+ 	if (branch_sample_counters(event)) {
+ 		struct perf_event *leader, *sibling;
+-- 
+2.38.1
 
 
