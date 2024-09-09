@@ -1,145 +1,261 @@
-Return-Path: <linux-kernel+bounces-320848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE88971149
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:11:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F39397114D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A22B2833F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:11:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70EA9B2281F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F2C1B1D44;
-	Mon,  9 Sep 2024 08:09:03 +0000 (UTC)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1F91B1D78;
+	Mon,  9 Sep 2024 08:09:46 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430721AF4EB
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A571AF4EB
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725869342; cv=none; b=swzt27yjH1oexWu/TQuq9zR7WOGVNo8nPj6v1e+cuvwr06Y0+wVTDrabpkZcwbXfi89jybZ0tqgqvwRlA09PTuYMfIufiO/i0ezu1YT9KDPsZ/Ibv+ZrqbbsstTOV2JhLKfMtqTa4MYI/tmwv9u/GTU6KoRj3VbMu2LZvorkZMk=
+	t=1725869385; cv=none; b=qSP2dTrCgjHQ+CiywpjQMbG1imbd7ECiYKx8Y2ExBjr+CNH6pXPkFd4f3IxMFYnnY6Nm86zqVl6YdpJFujhDOOMQF+F1gbx5Z8uQxUBcLpBDekiyLvyXSwlg+asAMGaxRT/Pj9XvGAjtOKtpuolzgmLX2twszsGjDa3i4B2ww30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725869342; c=relaxed/simple;
-	bh=C9iWBq5U4o1SOT7F5/EySRlPQJIRG43rEx4sDBIv5EA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D1F+xs4gmzWhRsjLo+VjSmM+CFOtuOyYC/CGc8MpWT9iidU9w9K2ZRntdUhViQgnbVRMMuBSG6jW+c1fJbCNrqn83lef4rSDiIZR3RphaPU4YRe5hXIfknWrT4sKo1oCN4n2JEriKP+1xzQM2MurKjSRzuJWXSVoeoK2sS49Zao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5365c512b00so3208624e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 01:08:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725869336; x=1726474136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H1iZIvL68Sxe3qZBnfU/kh1fDv3H2QvFOPZFkgsEqJQ=;
-        b=BxmdURDovyh5IX+8Z8Smi7vT7siLjYvCHwpoo7Fhilv/BEoVE4oEE1PHd3t9h3Ny3T
-         dLeRwQ1Z4tzazdgbPK27xsn4Fx1EtmyEYBz8SXDItYh1X2/4wNtYfb03RrjPb8/zERF7
-         oN2SVAH6REBccqrAG6Obmrh4npVRJKQw/SvK8Co+zMeBBZaWraau3KruKv8mOlwRglkT
-         MkS5krHiErh+p/4wW00KHO3+Eqv9PfGbmKA/yKK4EuRnfMI66LTN/fZAPjxK9o2JqHqu
-         s2cKkflfpS0R+oRyLcVwWyfB4+b9QkBZv2Z8ocLIzd26Wbta12M0S9A3KdTLB8vqFasH
-         Gweg==
-X-Forwarded-Encrypted: i=1; AJvYcCUy7CP25sWYZJbUvK5GW0IJMxMnkJYaaERLZZPqVtZdLgs8XGqkjssBDBzWZb9DZ9bDFTpWwR/5OZJieXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzizVs6ew+lWoWNo/NvPdyOabq4E3PCbOUHuwGVFa3N5COqMtKi
-	atErHM89ccu8NL58NGZLKySkbRVwRXJ1eK8clGgAuFvh+NZvu+KPmb+a3nCJ
-X-Google-Smtp-Source: AGHT+IGai63WrBLanG7iAQin6IRO68K2WpHuaVXlOCzxQ0q4KVOZdUOEMVfC8Bu56xH9Ltxd9E4ttA==
-X-Received: by 2002:a05:6512:124e:b0:533:3268:b959 with SMTP id 2adb3069b0e04-53658805f76mr6934203e87.53.1725869335276;
-        Mon, 09 Sep 2024 01:08:55 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f914c72sm687822e87.305.2024.09.09.01.08.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 01:08:54 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f75c0b78fbso18246961fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 01:08:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVIi9PHrVVu2TBm+rLdXqlbgFywmjqlsylaLlaVkJ4/4bYVC2EAyEoGz3pcCxfTp+PdS0xfgxFSye5F7qg=@vger.kernel.org
-X-Received: by 2002:a2e:e09:0:b0:2ef:2344:deec with SMTP id
- 38308e7fff4ca-2f751f9ec91mr48068811fa.45.1725869333796; Mon, 09 Sep 2024
- 01:08:53 -0700 (PDT)
+	s=arc-20240116; t=1725869385; c=relaxed/simple;
+	bh=1SrsKOmljKg1dqS9QP+GyyaTXlt3wvv/Srb1oslrWE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=om+26rUHSuE/1iuTxsvUGbBmQFjBCJ/z+WLBDcKN4JwYerCTbzNopWUrXFA7N1gzC1Xq8CItlktnrjopPQmcnEQuwlDawvem04iWJ4PthELvMVf5fXZMe1OL01GjonuoQfMihMRFWPiVS7wcH7QBgmsCMo1VQysV4Ay6p59Vaj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1snZSo-00062r-7P; Mon, 09 Sep 2024 10:09:34 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1snZSn-006bZL-Ea; Mon, 09 Sep 2024 10:09:33 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1snZSn-00Fcqb-17;
+	Mon, 09 Sep 2024 10:09:33 +0200
+Date: Mon, 9 Sep 2024 10:09:33 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 02/12] wifi: mwifiex: fix MAC address handling
+Message-ID: <Zt6tPcCI5Ov81md8@pengutronix.de>
+References: <20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de>
+ <20240826-mwifiex-cleanup-1-v1-2-56e6f8e056ec@pengutronix.de>
+ <20240906144036.GA45399@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240908214718.36316-1-andrej.skvortzov@gmail.com> <20240908214718.36316-2-andrej.skvortzov@gmail.com>
-In-Reply-To: <20240908214718.36316-2-andrej.skvortzov@gmail.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 9 Sep 2024 16:08:41 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65Laka+YaPyAecwxEhMkoodrXnDPn+UTwZUS_wsSBMzyg@mail.gmail.com>
-Message-ID: <CAGb2v65Laka+YaPyAecwxEhMkoodrXnDPn+UTwZUS_wsSBMzyg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: sun50i-a64-pinephone: Add AF8133J to PinePhone
-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Shoji Keita <awaittrot@shjk.jp>, 
-	Icenowy Zheng <icenowy@aosc.io>, Andre Przywara <andre.przywara@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906144036.GA45399@francesco-nb>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Sep 9, 2024 at 5:48=E2=80=AFAM Andrey Skvortsov
-<andrej.skvortzov@gmail.com> wrote:
->
-> From: Icenowy Zheng <icenowy@aosc.io>
->
-> New batches of PinePhones switched the magnetometer to AF8133J from
-> LIS3MDL because lack of ST components.
->
-> Both chips use the same PB1 pin, but in different modes.
-> LIS3MDL uses it as an gpio input to handle interrupt.
-> AF8133J uses it as an gpio output as a reset signal.
->
-> It wasn't possible at runtime to enable both device tree nodes and
-> detect supported sensor at probe time, because both drivers try to
-> acquire the same gpio in different modes.
->
-> Device tree fixup will be done in firmware without introducing new board
-> revision and new dts.
+On Fri, Sep 06, 2024 at 04:40:36PM +0200, Francesco Dolcini wrote:
+> On Mon, Aug 26, 2024 at 01:01:23PM +0200, Sascha Hauer wrote:
+> > The mwifiex driver tries to derive the MAC addresses of the virtual
+> > interfaces from the permanent address by adding the bss_num of the
+> > particular interface used. It does so each time the virtual interface
+> > is changed from AP to station or the other way round. This means that
+> > the devices MAC address changes during a change_virtual_intf call which
+> > is pretty unexpected by userspace.
+> 
+> Is this the only reason for this patch or there are other reasons?
+> I'd like to understand the whole impact, to be sure the backport to
+> stable is what we want.
+> 
+> > Furthermore the driver doesn't use the permanent address to add the
+> > bss_num to, but instead the current MAC address increases each time
+> > we do a change_virtual_intf.
+> > 
+> > Fix this by initializing the MAC address once from the permanent MAC
+> > address during creation of the virtual interface and never touch it
+> > again. This also means that userspace can set a different MAC address
+> > which then stays like this forever and is not unexpectedly changed
+> > by the driver.
+> > 
+> > It is not clear how many (if any) MAC addresses after the permanent MAC
+> > address are reserved for a device, so set the locally admistered
+> > bit for all MAC addresses modified from the permanent address.
+> 
+> I wonder if we should not just use the same permanent mac address whatever
+> the virtual interface is. Do we have something similar in other wireless
+> drivers?
 
-FYI I've been working on an in-kernel prober [1] for such alternative
-components. This does not require firmware support.
+Yes, there are at least four driver that generate different MAC
+addresses for different vifs:
 
-[1] https://lore.kernel.org/all/20240904090016.2841572-1-wenst@chromium.org=
-/
+drivers/net/wireless/ath/ath6kl/cfg80211.c:3816
+drivers/net/wireless/ath/wil6210/cfg80211.c:732
+drivers/net/wireless/microchip/wilc1000/netdev.c:983
+drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c:606
 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-> Link: https://patchwork.ozlabs.org/project/uboot/patch/20240211092824.395=
-155-1-andrej.skvortzov@gmail.com/
->
-> ---
->  .../boot/dts/allwinner/sun50i-a64-pinephone.dtsi     | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi b/ar=
-ch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> index 6eab61a12cd8f..66fbb35a7fae9 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> @@ -188,6 +188,18 @@ touchscreen@5d {
->  &i2c1 {
->         status =3D "okay";
->
-> +       /* Alternative magnetometer */
-> +       af8133j: magnetometer@1c {
-> +               compatible =3D "voltafield,af8133j";
-> +               reg =3D <0x1c>;
-> +               reset-gpios =3D <&pio 1 1 GPIO_ACTIVE_LOW>;
-> +               avdd-supply =3D <&reg_dldo1>;
-> +               dvdd-supply =3D <&reg_dldo1>;
-> +
-> +               /* status will be fixed up in firmware */
-> +               status =3D "disabled";
-> +       };
-> +
->         /* Magnetometer */
->         lis3mdl: magnetometer@1e {
->                 compatible =3D "st,lis3mdl-magn";
-> --
-> 2.45.2
->
+(line numbers match 6.11-rc6):
+
+For the mac80211 based drivers there are also tricks played to use
+unique MAC addresses in ieee80211_assign_perm_addr().
+
+For reference in mwifiex setting different MAC addresses for different
+interfaces goes down to:
+
+| commit 864164683678e27c931b5909c72a001b1b943f36
+| Author: Xinming Hu <huxm@marvell.com>
+| Date:   Tue Feb 13 14:10:15 2018 +0800
+| 
+|     mwifiex: set different mac address for interfaces with same bss type
+| 
+|     Multiple interfaces with same bss type could affect each other if
+|     they are sharing the same mac address. In this patch, different
+|     mac address is assigned to new interface which have same bss type
+|     with exist interfaces.
+| 
+|     Signed-off-by: Xinming Hu <huxm@marvell.com>
+|     Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+
+
+> 
+> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> > Cc: stable@vger.kernel.org
+> > ---
+> >  drivers/net/wireless/marvell/mwifiex/cfg80211.c |  4 +-
+> >  drivers/net/wireless/marvell/mwifiex/init.c     |  1 -
+> >  drivers/net/wireless/marvell/mwifiex/main.c     | 54 ++++++++++++-------------
+> >  drivers/net/wireless/marvell/mwifiex/main.h     |  5 ++-
+> >  4 files changed, 30 insertions(+), 34 deletions(-)
+> > 
+> ...
+> 
+> > diff --git a/drivers/net/wireless/marvell/mwifiex/main.c b/drivers/net/wireless/marvell/mwifiex/main.c
+> > index 96d1f6039fbca..46acddd03ffd1 100644
+> > --- a/drivers/net/wireless/marvell/mwifiex/main.c
+> > +++ b/drivers/net/wireless/marvell/mwifiex/main.c
+> > @@ -971,34 +971,16 @@ mwifiex_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
+> >  }
+> >  
+> >  int mwifiex_set_mac_address(struct mwifiex_private *priv,
+> > -			    struct net_device *dev, bool external,
+> > -			    u8 *new_mac)
+> > +			    struct net_device *dev, u8 *new_mac)
+> >  {
+> >  	int ret;
+> > -	u64 mac_addr, old_mac_addr;
+> > +	u64 old_mac_addr;
+> >  
+> > -	old_mac_addr = ether_addr_to_u64(priv->curr_addr);
+> > +	netdev_info(dev, "%s: old: %pM new: %pM\n", __func__, priv->curr_addr, new_mac);
+> >  
+> > -	if (external) {
+> > -		mac_addr = ether_addr_to_u64(new_mac);
+> > -	} else {
+> > -		/* Internal mac address change */
+> > -		if (priv->bss_type == MWIFIEX_BSS_TYPE_ANY)
+> > -			return -EOPNOTSUPP;
+> this was the only usage of MWIFIEX_BSS_TYPE_ANY, correct? Did it had any
+> reason before?
+
+I haven't found a path to get here with priv->bss_type ==
+MWIFIEX_BSS_TYPE_ANY. This function is called from
+mwifiex_init_new_priv_params() and mwifiex_add_virtual_intf(). Both
+functions set priv->bss_type to something else or bail out with an error
+before calling mwifiex_set_mac_address(). It's also called from the
+ndo_set_mac_address method, but for a registered net device the bss_type
+should also be set to something meaningful.
+
+> 
+> > -
+> > -		mac_addr = old_mac_addr;
+> > -
+> > -		if (priv->bss_type == MWIFIEX_BSS_TYPE_P2P) {
+> > -			mac_addr |= BIT_ULL(MWIFIEX_MAC_LOCAL_ADMIN_BIT);
+> > -			mac_addr += priv->bss_num;
+> > -		} else if (priv->adapter->priv[0] != priv) {
+> > -			/* Set mac address based on bss_type/bss_num */
+> > -			mac_addr ^= BIT_ULL(priv->bss_type + 8);
+> > -			mac_addr += priv->bss_num;
+> > -		}
+> > -	}
+> > +	old_mac_addr = ether_addr_to_u64(priv->curr_addr);
+> >  
+> > -	u64_to_ether_addr(mac_addr, priv->curr_addr);
+> > +	ether_addr_copy(priv->curr_addr, new_mac);
+> >  
+> >  	/* Send request to firmware */
+> >  	ret = mwifiex_send_cmd(priv, HostCmd_CMD_802_11_MAC_ADDRESS,
+> > @@ -1015,6 +997,26 @@ int mwifiex_set_mac_address(struct mwifiex_private *priv,
+> >  	return 0;
+> >  }
+> >  
+> > +int mwifiex_set_default_mac_address(struct mwifiex_private *priv,
+> > +				    struct net_device *dev)
+> > +{
+> > +	int priv_num;
+> > +	u8 mac[ETH_ALEN];
+> > +
+> > +	ether_addr_copy(mac, priv->adapter->perm_addr);
+> > +
+> > +	for (priv_num = 0; priv_num < priv->adapter->priv_num; priv_num++)
+> > +		if (priv == priv->adapter->priv[priv_num])
+> > +			break;
+> > +
+> > +	if (priv_num) {
+> > +		eth_addr_add(mac, priv_num);
+> > +		mac[0] |= 0x2;
+> > +	}
+> 
+> Please see my concern on this in the beginning of the email.
+> 
+> > @@ -1364,10 +1366,6 @@ void mwifiex_init_priv_params(struct mwifiex_private *priv,
+> >  	priv->assocresp_idx = MWIFIEX_AUTO_IDX_MASK;
+> >  	priv->gen_idx = MWIFIEX_AUTO_IDX_MASK;
+> >  	priv->num_tx_timeout = 0;
+> > -	if (is_valid_ether_addr(dev->dev_addr))
+> > -		ether_addr_copy(priv->curr_addr, dev->dev_addr);
+> > -	else
+> > -		ether_addr_copy(priv->curr_addr, priv->adapter->perm_addr);
+> 
+> With this change, when mfg_mode is true, priv->curr_addr will be not
+> initialized. Wanted?
+
+Not wanted, just me being ignorant. Let's have a look:
+
+priv->adapter->perm_addr is initialized in the response handling of the
+HostCmd_CMD_GET_HW_SPEC command. This command is only issued when
+mfg_mode is false, so in mfg mode priv->adapter->perm_addr will be the
+zero address.
+
+The only documentation we have for mfg_mode is:
+
+manufacturing mode enable:1, disable:0
+
+I don't know what this really is about, but I could imagine that this
+is for initial factory bringup when the chip is not parametrized and thus
+doesn't have a permanent MAC address yet.
+
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
