@@ -1,171 +1,140 @@
-Return-Path: <linux-kernel+bounces-320720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B595B970F7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:22:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F749970F7B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E596B20E3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:22:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA68E1F21F6E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7411AED5D;
-	Mon,  9 Sep 2024 07:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A99F1AED4E;
+	Mon,  9 Sep 2024 07:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bqeej42w"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GjzcB163"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA0B1AE05B
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 07:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1111AE859
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 07:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725866569; cv=none; b=m3Lc+1cbW9KKfCiakLT9iTOf3z0XRqUclf8vih4NI8l5Oste49rVNvcTIkei39BRPkJ5q1ALx13wkN/bQY+0HH3lyuwIRBI3NIPZLkAAhChSL6p2bf86+kU07SFBz/ttlNjKOlDRQVMs/X5vxz4nccqUxHlLMY9ibw3JuOfDLUE=
+	t=1725866431; cv=none; b=Kje0FflWDrUHkJREXDN7D4EY+1w0KGp/7DKRTaY9Gy/YpURnYtpaYJsjbGERcFB50jI/r3SJseEXucWBaFZOe47O18O2Wd6DOaqgMvMXI8ys/UfshybISj45pAOm6KlQciodsm8jrAA8ukgUAHA+vz3IHUUgJoSUmLHdQx9mosU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725866569; c=relaxed/simple;
-	bh=HHYCMioBl3rZ8NMchmxx02IbaAD4rnswOq1CX26vmWg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=R5MUxPVdlBnubfSBIhuI13uvw97KmCnOiFA2UQNmoCXtMu+k5N+tZLwDwjX4BgAczXwKrRtddzBpjwZkkl7G3SI5uAu/MgYiSzcvdlU2y9pVkmDh0EoAEb3GOChpgn7+xEE0EpjojjSZjyc28rqADgKB5gkHa546Tfpu2BJQPSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bqeej42w; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725866568; x=1757402568;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=HHYCMioBl3rZ8NMchmxx02IbaAD4rnswOq1CX26vmWg=;
-  b=Bqeej42wc83RUNFFXhW4Wb+QqJJUWPW8lhNI+N9DfCDjINhH+T8L017k
-   iE8tyBfd29Kqq56juCmCXDDtglDQXfHovLcmwl1Hmehyy4bNO25nbo3iS
-   TbrfcwxnqLGFO0GjLuE735SQup03OhdmJ3r7TMcOaD0+2Y2kW9YS4/blX
-   xWq2JHvVYn+/0VOQlNMAy+kMYi1M2xmeszZmeohRivoiU5VQYuKBRLym8
-   k2+Y3OCQWDmG2MeQg5eJyC37KPag25vG29vpBdweLKHDlGjRy/iwiJ+UQ
-   DoDAgydonuTg3cdDWPrAUWLQ2rMVJlZwpsrgvxH+Rgdn97dkz6IYPLXl4
-   A==;
-X-CSE-ConnectionGUID: v5i9CYOGTq2rC5aPGh8gmw==
-X-CSE-MsgGUID: YwmxQotGSESHHbI/zOp/aA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="27466234"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="27466234"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 00:22:47 -0700
-X-CSE-ConnectionGUID: VRmB02zvTlmGloW/9qXSHg==
-X-CSE-MsgGUID: jr46ujuNR6eZpe1z4xnnBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="71524171"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 00:22:45 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Kairui Song
- <kasong@tencent.com>,  Hugh Dickins <hughd@google.com>,  Ryan Roberts
- <ryan.roberts@arm.com>,  Kalesh Singh <kaleshsingh@google.com>,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  Barry Song
- <baohua@kernel.org>
-Subject: Re: [PATCH v5 2/9] mm: swap: mTHP allocate swap entries from
- nonfull list
-In-Reply-To: <CACePvbUp1-BsWgYX0hWDVYT+8Q2w_E-0z5up==af_B5KJ7q=VA@mail.gmail.com>
-	(Chris Li's message of "Mon, 26 Aug 2024 14:26:19 -0700")
-References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
-	<20240730-swap-allocator-v5-2-cb9c148b9297@kernel.org>
-	<87bk23250r.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CACePvbX1M8tfqj__nvMwvD0P0abEjbju2gQDEea9BPZ6eUuRuQ@mail.gmail.com>
-	<871q2lhr4s.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CACePvbUp1-BsWgYX0hWDVYT+8Q2w_E-0z5up==af_B5KJ7q=VA@mail.gmail.com>
-Date: Mon, 09 Sep 2024 15:19:11 +0800
-Message-ID: <874j6p1ehc.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1725866431; c=relaxed/simple;
+	bh=YuIxzNfIZ3Yn0pjIGqtgmvpDDa9xlMz2MnTcytszYwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tcuV52nJb0iSA+R2IMiB0689aTkuVKD8cboINgx+FnzejKcjUUkh58YEG9Qc+ILcFomEUrBKkg3j/D/kFpHj6pDzGlvRfP96D5Mrir++TuHmsQ9qiDdcvcUwu6aPdqwFBGP82OEIo7QJT8EFgTsyDVU5pC1zreSz8KutWSeaqT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GjzcB163; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42cb1e623d1so11962745e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 00:20:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725866428; x=1726471228; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PUYgRrt73R/AzDLyM5Jg4uBo6/bxbCoymCk3p5vIpyk=;
+        b=GjzcB163OlHF5FFymVdBW/yI8TiupldbpYA0y95WotUQbQPFD+zvrC+DXBGK6vJ091
+         e9aOxhWexOo87xUcIoQ4hpdFdIQM60Rwh9HO2egRYA0mRw9UBXQ7dC7LwHxAP5NAZ+5M
+         L1Tz2G+PiPbjSkJSWPoWgKaoaRM9k9Apj4pNw64WYJV+Vnxa2Kp+0WMO96VFedDmouA3
+         QSKLpCNIwCQG1mmx+xkIIV7faPGVj46g/aU4ECyGLo0TQnmwvWIz/uUbILg7LTQmUt7R
+         SaAPiov2FwnG8BWXQxpJ2HReywcG8ugHR7P5NJ+Z7gpKX6A8DW8terL49jggVlppSByU
+         TDrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725866428; x=1726471228;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PUYgRrt73R/AzDLyM5Jg4uBo6/bxbCoymCk3p5vIpyk=;
+        b=KEsNp6xRWqn02inOjOQB1IDFgCtJlmpm336ZoEZkZQYy4kZCfBoOdJMnOd5Au4R83h
+         CcAqxlagonE49QHbLPxrNX6AH+8Pw1UFW8T67G51bzo2X9T51/Pnpo9O3vSoE4Rr91Xk
+         2/Yz1NcAgggLIwl3YU2sN0azFkAJurFxjGngoEs57NuUR7C/sHultnt7XnsMwQNaHQ2+
+         b8rPWsV7BXjnF4ij2RmnvB2mLQJjuUsz4IMfvwDXZvFSayEtTg2xZK1M7XWgWLUT/mfn
+         Ltew2yg0F544NweUmv4R2miGUAkBD1hqrxIKXgSKPKH7L3Qn9zFO0azk6oZj31UiQfY9
+         4oIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWGAJ41/SduZdJOk9Xj6x2vh80AhSgRaM7yexCRoZPzr7nGMOB7hGIxBBqGJV17/c1dQIsYbmurrQSBxBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXEINCEEd4DVM+nPntfvtw6ng6CXEc9GbRrzCQKZeKb+Vsvzal
+	Jl/QZhPTXXFxaWenyXaXylZoOqNmoOlhDZoCuWZ6N1GrDWQR4s3U5U6Hoqh56FU=
+X-Google-Smtp-Source: AGHT+IFIiDSRSYeBEcV92W79htAPHfJxh9us1KZqt+JswhX3Is2KoO8v4vNKGbVTCpDoomhtPcTkdw==
+X-Received: by 2002:a05:600c:22cf:b0:42c:a8cb:6a75 with SMTP id 5b1f17b1804b1-42ca8cb6c5amr55206885e9.17.1725866427774;
+        Mon, 09 Sep 2024 00:20:27 -0700 (PDT)
+Received: from localhost (109-81-94-251.rct.o2.cz. [109.81.94.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caf436998sm65861645e9.29.2024.09.09.00.20.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 00:20:27 -0700 (PDT)
+Date: Mon, 9 Sep 2024 09:20:26 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, rientjes@google.com,
+	yosryahmed@google.com, hannes@cmpxchg.org, almasrymina@google.com,
+	roman.gushchin@linux.dev, gthelen@google.com, dseo3@uci.edu,
+	a.manzanares@samsung.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm: introduce per-node proactive reclaim interface
+Message-ID: <Zt6hur2TZJUrJ2IU@tiehlicka>
+References: <20240904162740.1043168-1-dave@stgolabs.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904162740.1043168-1-dave@stgolabs.net>
 
-Chris Li <chrisl@kernel.org> writes:
+On Wed 04-09-24 09:27:40, Davidlohr Bueso wrote:
+> This adds support for allowing proactive reclaim in general on a
+> NUMA system. A per-node interface extends support for beyond a
+> memcg-specific interface, respecting the current semantics of
+> memory.reclaim: respecting aging LRU and not supporting
+> artificially triggering eviction on nodes belonging to non-bottom
+> tiers.
+> 
+> This patch allows userspace to do:
+> 
+>      echo 512M swappiness=10 > /sys/devices/system/node/nodeX/reclaim
+> 
+> One of the premises for this is to semantically align as best as
+> possible with memory.reclaim. During a brief time memcg did
+> support nodemask until 55ab834a86a9 (Revert "mm: add nodes=
+> arg to memory.reclaim"), for which semantics around reclaim
+> (eviction) vs demotion were not clear, rendering charging
+> expectations to be broken.
+> 
+> With this approach:
+> 
+> 1. Users who do not use memcg can benefit from proactive reclaim.
 
-> On Mon, Aug 19, 2024 at 1:11=E2=80=AFAM Huang, Ying <ying.huang@intel.com=
-> wrote:
->> > BTW, what is your take on my  previous analysis of the current SSD
->> > prefer write new cluster can wear out the SSD faster?
->>
->> No.  I don't agree with you on that.  However, my knowledge on SSD
->> wearing out algorithm is quite limited.
->
-> Hi Ying,
->
-> Can you please clarify. You said you have limited knowledge on SSD
-> wearing internals. Does that mean you have low confidence in your
-> verdict?
+It would be great to have some specific examples here. Is there a
+specific reason memcg is not used?
 
-Yes.
+> 2. Proactive reclaim on top tiers will trigger demotion, for which
+> memory is still byte-addressable. Reclaiming on the bottom nodes
+> will trigger evicting to swap (the traditional sense of reclaim).
+> This follows the semantics of what is today part of the aging process
+> on tiered memory, mirroring what every other form of reclaim does
+> (reactive and memcg proactive reclaim). Furthermore per-node proactive
+> reclaim is not as susceptible to the memcg charging problem mentioned
+> above.
+> 
+> 3. Unlike memcg, there should be no surprises of callers expecting
+> reclaim but instead got a demotion. Essentially relying on behavior
+> of shrink_folio_list() after 6b426d071419 (mm: disable top-tier
+> fallback to reclaim on proactive reclaim), without the expectations
+> of try_to_free_mem_cgroup_pages().
 
-> I would like to understand your reasoning for the disagreement.
-> Starting from which part of my analysis you are disagreeing with.
->
-> At the same time, we can consult someone who works in the SSD space
-> and understand the SSD internal wearing better.
+I am not sure I understand. If you demote then you effectively reclaim
+because you free up memory on the specific node. Or do I just misread
+what you mean? Maybe you meant to say that the overall memory
+consumption on all nodes is not affected?
 
-I think that is a good idea.
+Your point 4 and 5 follows up on this so we should better clarify that
+before going there.
 
-> I see this is a serious issue for using SSD as swapping for data
-> center usage cases. In your laptop usage case, you are not using the
-> LLM training 24/7 right? So it still fits the usage model of the
-> occasional user of the swap file. It might not be as big a deal. In
-> the data center workload, e.g. Google's swap write 24/7. The amount of
-> data swapped out is much higher than typical laptop usage as well.
-> There the SSD wearing out issue would be much higher because the SSD
-> is under constant write and much bigger swap usage.
->
-> I am claiming that *some* SSD would have a higher internal write
-> amplification factor if doing random 4K write all over the drive, than
-> random 4K write to a small area of the drive.
-> I do believe having a different swap out policy controlling preferring
-> old vs new clusters is beneficial to the data center SSD swap usage
-> case.
-> It come downs to:
-> 1) SSD are slow to erase. So most of the SSD performance erases at a
-> huge erase block size.
-> 2) SSD remaps the logical block address to the internal erase block.
-> Most of the new data rewritten, regardless of the logical block
-> address of the SSD drive, grouped together and written to the erase
-> block.
-> 3) When new data is overridden to the old logical data address, SSD
-> firmware marks those over-written data as obsolete. The discard
-> command has the similar effect without introducing new data.
-> 4) When the SSD driver runs out of new erase block, it would need to
-> GC the old fragmented erased block and pertectial write out of old
-> data to make room for new erase block. Where the discard command can
-> be beneficial. It tells the SSD firmware which part of the old data
-> the GC process can just ignore and skip rewriting.
->
-> GC of the obsolete logical blocks is a general hard problem for the SSD.
->
-> I am not claiming every SSD has this kind of behavior, but it is
-> common enough to be worth providing an option.
->
->> > I think it might be useful to provide users an option to choose to
->> > write a non full list first. The trade off is more friendly to SSD
->> > wear out than preferring to write new blocks. If you keep doing the
->> > swap long enough, there will be no new free cluster anyway.
->>
->> It depends on workloads.  Some workloads may demonstrate better spatial
->> locality.
->
-> Yes, agree that it may happen or may not happen depending on the
-> workload . The random distribution swap entry is a common pattern we
-> need to consider as well. The odds are against us. As in the quoted
-> email where I did the calculation, the odds of getting the whole
-> cluster free in the random model is very low, 4.4E10-15 even if we are
-> only using 1/16 swap entries in the swapfile.
-
-Do you have real workloads?  For example, some trace?
-
---
-Best Regards,
-Huang, Ying
+-- 
+Michal Hocko
+SUSE Labs
 
