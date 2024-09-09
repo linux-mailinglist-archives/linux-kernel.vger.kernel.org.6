@@ -1,177 +1,278 @@
-Return-Path: <linux-kernel+bounces-321614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E3D971CE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:40:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5122D971CE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D11BE1C2322E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:40:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AA79283EAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16391BB688;
-	Mon,  9 Sep 2024 14:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290081BAEE5;
+	Mon,  9 Sep 2024 14:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e811aRvq"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+V7K4ZS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673071BAEE0;
-	Mon,  9 Sep 2024 14:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C18C1B5EB7;
+	Mon,  9 Sep 2024 14:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725892822; cv=none; b=pA0FnQVwezSiHUSUoEaGjR6DBMV5gkDyPmPmCNwMnfvSnd5z9G8L36V4vqH01LveVDLOPjYpmZs5N8bd7nRE51Ujotgt/PiQsGBhuTnFRiHseJKt++lZYOO0pgMXLX2ZVJfxdG98Cfy7fTwRSizq9kHRc/Ovc278D8pt4fDzVQI=
+	t=1725892814; cv=none; b=YdDjXvxkPZYOkAXU7CBr7i+Hs0MdF7SCMhxiYp1Evy6I670T9IfkoYEoVjBw+yuNxtoYt2iFZsPiQr2xqyXEXGDjsJ8GVUvI9Fz7SdV11zaL5IR8M4r4YsN3Sdq6tXPQAEyW2clqWKLIqE6Q7V56jcjYUr+0WBzj590Y48FZhMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725892822; c=relaxed/simple;
-	bh=Jc+ZsSx86eZg9sUzrN9bm8FO1FtzH3dV9nqloyRxL7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RuZz9epid71T2tek6lAhXZ64V7MFVI2t4hx7rlIMKqrHMF179Mqf3/+eG7hwBFSp01rtBCaWUmwMZ3cSH5bTjbGzXFNYRGHFwqMFrpG+517qXpNbsg/ktL2wXIh1jR9mMBqt9UPjYQwF1Anrg808zsq8zd0QSRg+u/ZTWD+yE3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e811aRvq; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-82ade877fbeso87552539f.0;
-        Mon, 09 Sep 2024 07:40:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725892819; x=1726497619; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yADGgFh0Qr9khviAqSL4T0j/ayR5ihAosN0nFeWJtFw=;
-        b=e811aRvqFQ8cLujjZjd/rCaZL4xPeseRISEj6++0WfqLJl7LKhMX5ndMmZXI9cGnLp
-         S/ITxGYj56RIYmY0PU/dla1oySpIpVnlPwK2UrgLjw0a9PQ7Mn73hRrH4zBF0/4G1Y9C
-         7EuXPcXGqFEo1WVF7JxbQ7N54i2hUK4U41RnLOJR2N3i8G0MZR9Jjz/guw7yUbd7ARwU
-         YMacT+XKN61stEMv3qzcZ0LOiYcMCjBeH4JDGepKmUtHG0JAqBgeUWZBHHbFjTEf2Bgz
-         SO6858VXXgXaVG//kWas0p2UIxbtIW5NPZHGpkfh5s4KIAaF8TXjIlYvTe0sJf34HxOh
-         uxRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725892819; x=1726497619;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yADGgFh0Qr9khviAqSL4T0j/ayR5ihAosN0nFeWJtFw=;
-        b=f5PmAm1cBngFv/0G0SMe/KXB40lbnI2mmcqXlwqM1RPGV4/NiuqxEXg+BpYfGKN6tT
-         4kUaXA3TpA4Jcs8s8KmpDj+1K6iGWAAWzKEnFpl4o89dg4TmXFH6ocn5+N6Ao+yXJvTe
-         /EJWK1o0FF3LFEljrahHMJBke95Z5gBaHRnhrN0lGJWnEI+emgzRxftaQ3iizxoa31Mf
-         immdw5h8AR39bkoOfXnN7iftr9q+29R69kfxk+00upSjlD6BeW/1Qd/cHmLDy5hqXfac
-         COMm5kSK59co+0wQinOPv7fNsNw1RF831jUezj9uWtVK6QkLYibol1tAQ2GAx+LrvKhT
-         ig7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVBu/YFzYIqvGmTl265kGx/ucNUZjK8Nabt9Mw+/SFD6pp6/vnXNpS2LwcUKkubApsHPeRfsp1vTtUWyk4w@vger.kernel.org, AJvYcCVlNB6Z9GQoXNQ/oiosVrEx4bGeGos9lsoLQFkJ9YHFOeH3K7tlWkYn36x58X9qGjXdslFC7fhxzwWRdPFA@vger.kernel.org, AJvYcCWBQRRVGoRSl47mZfxOag7fqif3NlKfzqwFNEkTEP8S0JHgYJO+vm8WXTLnTc7+tG0n99bFgBrpUbYq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTD0r78y0s3bo5lrhLrlAOpSIt/OWrEuLDVFzfwEr3Q58CIqBd
-	RPpyxB11AkL31uKOlVZX/l4x1QRrKlTUB/Z4TIjonAEPsWeizNuVS/LjlEd78eSNL0Yuz+CNsnO
-	3GnB3Ji1wnyeXRtWg7UtsnK5EG8A=
-X-Google-Smtp-Source: AGHT+IG/zidy3pUha3J4vBn+TgE6JlPVQqsYOcZPn1/PZgtYteEn9j/NJ/+ZfxxiFMsg3wdTfHQX1c5/CxyHbAkt+Ic=
-X-Received: by 2002:a05:6e02:1d06:b0:3a0:4a63:e7ac with SMTP id
- e9e14a558f8ab-3a04f0ccccfmr140661735ab.18.1725892819444; Mon, 09 Sep 2024
- 07:40:19 -0700 (PDT)
+	s=arc-20240116; t=1725892814; c=relaxed/simple;
+	bh=151wFbPZm2CYnXfm5jDu3SZ70DfkdMdZsViLXdsDykg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qHP6uzdT7ZOlWYj75Nx7mUUaXfI7H80hsyQSkf7wWTvcplttTw5LNzeep/qJ8lpxkkAYHgeH4u6Xy9GTGwcZMI9OksXGajKl+z/5eJkTRSLO0nI0vLzGLpFHnFlhistdaa4SGCMVaONdxtGgiA7ZH8ixeDKS4g0JnCChAxS+1s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+V7K4ZS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8088AC4CEC5;
+	Mon,  9 Sep 2024 14:40:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725892813;
+	bh=151wFbPZm2CYnXfm5jDu3SZ70DfkdMdZsViLXdsDykg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z+V7K4ZSGetC81I+vJfuM3zeMqzaWCRwDoyfZG6r4rVp8sPnVd7FjUsTkgvZwX4yG
+	 lfqG3JIy9Pjy6viEpS3B5QMCuKOp0uG9gPH3vaEz4+/rTUxc2rX43HR1kJu42Eo8LM
+	 3ZzwfzstoColSjk8bDVDj5wpaEAvv4Rj/QJtal5iliq/Wpk8gm6urJZ+wDcMeK8ree
+	 dUhyow+X0vTiV+7C/rBwC8mlthbo1GBz3+zKjiYSh/HDjPpYfozLX31mG7sYwS7A9b
+	 T/VSF3fhP4RKS5jaZxWsi/Lj+k+o2qnlj3TUkdhVp2xJfy3iZ4adnkT4mJ87WBPlJ/
+	 5np8GSMgvFhQw==
+Date: Mon, 9 Sep 2024 11:40:10 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
+	kan.liang@linux.intel.com, namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH v3 4/8] perf trace: Pretty print struct data
+Message-ID: <Zt8IypiWo0OuK5cR@x1>
+References: <20240824163322.60796-1-howardchu95@gmail.com>
+ <20240824163322.60796-5-howardchu95@gmail.com>
+ <Zs-Q-ZyZKd_NzsIv@x1>
+ <CAH0uvoge5QUsioZ-j8OS+VoxJAXuP9CyXOJbBkJPwUXWhEryMg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905-preemption-a750-t-v3-0-fd947699f7bc@gmail.com>
- <20240905-preemption-a750-t-v3-4-fd947699f7bc@gmail.com> <20240906195444.owz4eralirekr7r7@hu-akhilpo-hyd.qualcomm.com>
- <df85bf24-651c-4a35-929b-4de6c05555a1@gmail.com> <CACu1E7GSMQHa6258hV2OwS5nTGh+kTeZ-qQPMfGTy5YVP5kX3g@mail.gmail.com>
-In-Reply-To: <CACu1E7GSMQHa6258hV2OwS5nTGh+kTeZ-qQPMfGTy5YVP5kX3g@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Mon, 9 Sep 2024 07:40:07 -0700
-Message-ID: <CAF6AEGvv60CS43dCijsUCzELLn=t1PJQVCzMx01cFJsNJ1Uk9g@mail.gmail.com>
-Subject: Re: [PATCH v3 04/10] drm/msm/A6xx: Implement preemption for A7XX targets
-To: Connor Abbott <cwabbott0@gmail.com>
-Cc: Antonino Maniscalco <antomani103@gmail.com>, Akhil P Oommen <quic_akhilpo@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Sharat Masetty <smasetty@codeaurora.org>, Neil Armstrong <neil.armstrong@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH0uvoge5QUsioZ-j8OS+VoxJAXuP9CyXOJbBkJPwUXWhEryMg@mail.gmail.com>
 
-On Mon, Sep 9, 2024 at 6:43=E2=80=AFAM Connor Abbott <cwabbott0@gmail.com> =
-wrote:
->
-> On Mon, Sep 9, 2024 at 2:15=E2=80=AFPM Antonino Maniscalco
-> <antomani103@gmail.com> wrote:
+On Fri, Aug 30, 2024 at 08:16:38AM +0800, Howard Chu wrote:
+> Hello Arnaldo,
+> 
+> On Thu, Aug 29, 2024 at 5:05 AM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
 > >
-> > On 9/6/24 9:54 PM, Akhil P Oommen wrote:
-> > > On Thu, Sep 05, 2024 at 04:51:22PM +0200, Antonino Maniscalco wrote:
-> > >> This patch implements preemption feature for A6xx targets, this allo=
-ws
-> > >> the GPU to switch to a higher priority ringbuffer if one is ready. A=
-6XX
-> > >> hardware as such supports multiple levels of preemption granularitie=
-s,
-> > >> ranging from coarse grained(ringbuffer level) to a more fine grained
-> > >> such as draw-call level or a bin boundary level preemption. This pat=
-ch
-> > >> enables the basic preemption level, with more fine grained preemptio=
-n
-> > >> support to follow.
-> > >>
-> > >> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
-> > >> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> > >> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QR=
-D
-> > >> ---
-> > >>   drivers/gpu/drm/msm/Makefile              |   1 +
-> > >>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 293 ++++++++++++++++++=
-+++-
-> > >>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 161 ++++++++++++
-> > ...
+> > On Sun, Aug 25, 2024 at 12:33:18AM +0800, Howard Chu wrote:
+> > > Change the arg->augmented.args to arg->augmented.args->value to skip the
+> > > header for customized pretty printers, since we collect data in BPF
+> > > using the general augment_sys_enter(), which always adds the header.
 > > >
-> > > we can use the lighter smp variant here.
+> > > Use btf_dump API to pretty print augmented struct pointer.
 > > >
-> > >> +
-> > >> +            if (a6xx_gpu->cur_ring =3D=3D ring)
-> > >> +                    gpu_write(gpu, REG_A6XX_CP_RB_WPTR, wptr);
-> > >> +            else
-> > >> +                    ring->skip_inline_wptr =3D true;
-> > >> +    } else {
-> > >> +            ring->skip_inline_wptr =3D true;
-> > >> +    }
-> > >> +
-> > >> +    spin_unlock_irqrestore(&ring->preempt_lock, flags);
-> > >>   }
-> > >>
-> > >>   static void get_stats_counter(struct msm_ringbuffer *ring, u32 cou=
-nter,
-> > >> @@ -138,12 +231,14 @@ static void a6xx_set_pagetable(struct a6xx_gpu=
- *a6xx_gpu,
+> > > Prefer existed pretty-printer than btf general pretty-printer.
 > > >
-> > > set_pagetable checks "cur_ctx_seqno" to see if pt switch is needed or
-> > > not. This is currently not tracked separately for each ring. Can you
-> > > please check that?
+> > > set compact = true and skip_names = true, so that no newline character
+> > > and argument name are printed.
+> > >
+> > > Committer notes:
+> > >
+> > > Simplified the btf_dump_snprintf callback to avoid using multiple
+> > > buffers, as discussed in the thread accessible via the Link tag below.
+> > >
+> > > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > > Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > > Cc: Ian Rogers <irogers@google.com>
+> > > Cc: Jiri Olsa <jolsa@kernel.org>
+> > > Cc: Kan Liang <kan.liang@linux.intel.com>
+> > > Cc: Namhyung Kim <namhyung@kernel.org>
+> > > Link: https://lore.kernel.org/r/20240815013626.935097-7-howardchu95@gmail.com
+> > > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > > ---
+> > >  tools/perf/builtin-trace.c                | 65 +++++++++++++++++++++--
+> > >  tools/perf/trace/beauty/perf_event_open.c |  2 +-
+> > >  tools/perf/trace/beauty/sockaddr.c        |  2 +-
+> > >  tools/perf/trace/beauty/timespec.c        |  2 +-
+> > >  4 files changed, 63 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > > index 43b1f63415b4..048bcb92624c 100644
+> > > --- a/tools/perf/builtin-trace.c
+> > > +++ b/tools/perf/builtin-trace.c
+> > > @@ -990,6 +990,54 @@ static size_t btf_enum_scnprintf(const struct btf_type *type, struct btf *btf, c
+> > >       return 0;
+> > >  }
+> > >
+> > > +struct trace_btf_dump_snprintf_ctx {
+> > > +     char   *bf;
+> > > +     size_t printed, size;
+> > > +};
+> > > +
+> > > +static void trace__btf_dump_snprintf(void *vctx, const char *fmt, va_list args)
+> > > +{
+> > > +     struct trace_btf_dump_snprintf_ctx *ctx = vctx;
+> > > +
+> > > +     ctx->printed += vscnprintf(ctx->bf + ctx->printed, ctx->size - ctx->printed, fmt, args);
+> > > +}
+> > > +
+> > > +static size_t btf_struct_scnprintf(const struct btf_type *type, struct btf *btf, char *bf, size_t size, struct syscall_arg *arg)
+> > > +{
+> > > +     struct trace_btf_dump_snprintf_ctx ctx = {
+> > > +             .bf   = bf,
+> > > +             .size = size,
+> > > +     };
+> > > +     struct augmented_arg *augmented_arg = arg->augmented.args;
+> > > +     int type_id = arg->fmt->type_id, consumed;
+> > > +     struct btf_dump *btf_dump;
+> > > +
+> > > +     LIBBPF_OPTS(btf_dump_opts, dump_opts);
+> > > +     LIBBPF_OPTS(btf_dump_type_data_opts, dump_data_opts);
+> > > +
+> > > +     if (arg == NULL || arg->augmented.args == NULL)
+> > > +             return 0;
+> > > +
+> > > +     dump_data_opts.compact     = true;
+> > > +     dump_data_opts.skip_names  = true;
+> > > +
+> > > +     btf_dump = btf_dump__new(btf, trace__btf_dump_snprintf, &ctx, &dump_opts);
+> > > +     if (btf_dump == NULL)
+> > > +             return 0;
+> > > +
+> > > +     /* pretty print the struct data here */
+> > > +     if (btf_dump__dump_type_data(btf_dump, type_id, arg->augmented.args->value, type->size, &dump_data_opts) == 0)
+> > > +             return 0;
+> > > +
+> > > +     consumed = sizeof(*augmented_arg) + augmented_arg->size;
+> > > +     arg->augmented.args = ((void *)arg->augmented.args) + consumed;
+> > > +     arg->augmented.size -= consumed;
+> > > +
+> > > +     btf_dump__free(btf_dump);
+> > > +
+> > > +     return ctx.printed;
+> > > +}
+> > > +
+> > >  static size_t trace__btf_scnprintf(struct trace *trace, struct syscall_arg *arg, char *bf,
+> > >                                  size_t size, int val, char *type)
+> > >  {
+> > > @@ -1009,6 +1057,8 @@ static size_t trace__btf_scnprintf(struct trace *trace, struct syscall_arg *arg,
+> > >
+> > >       if (btf_is_enum(arg_fmt->type))
+> > >               return btf_enum_scnprintf(arg_fmt->type, trace->btf, bf, size, val);
+> > > +     else if (btf_is_struct(arg_fmt->type))
+> > > +             return btf_struct_scnprintf(arg_fmt->type, trace->btf, bf, size, arg);
+> > >
+> > >       return 0;
+> > >  }
+> > > @@ -2222,6 +2272,7 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
+> > >               .show_string_prefix = trace->show_string_prefix,
+> > >       };
+> > >       struct thread_trace *ttrace = thread__priv(thread);
+> > > +     void *default_scnprintf;
+> > >
+> > >       /*
+> > >        * Things like fcntl will set this in its 'cmd' formatter to pick the
+> > > @@ -2263,11 +2314,15 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
+> > >                       if (trace->show_arg_names)
+> > >                               printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
+> > >
+> > > -                     btf_printed = trace__btf_scnprintf(trace, &arg, bf + printed,
+> > > -                                                        size - printed, val, field->type);
+> > > -                     if (btf_printed) {
+> > > -                             printed += btf_printed;
+> > > -                             continue;
+> > > +                     default_scnprintf = sc->arg_fmt[arg.idx].scnprintf;
+> > > +
+> > > +                     if (default_scnprintf == NULL || default_scnprintf == SCA_PTR) {
+> > > +                             btf_printed = trace__btf_scnprintf(trace, &arg, bf + printed,
+> > > +                                                                size - printed, val, field->type);
+> > > +                             if (btf_printed) {
+> > > +                                     printed += btf_printed;
+> > > +                                     continue;
+> > > +                             }
 > >
-> > I totally missed that. Thanks for catching it!
+> > Ok, we agreed on this one, and you noted that that in this cset comment,
+> > good.
 > >
-> > >
-> > > I wonder why that didn't cause any gpu errors in testing. Not sure if=
- I
-> > > am missing something.
-> > >
+> > Next time make a note after the cset commit log message and before the
+> > actual patch, something like:
 > >
-> > I think this is because, so long as a single context doesn't submit to
-> > two different rings with differenr priorities, we will only be incorrec=
-t
-> > in the sense that we emit more page table switches than necessary and
-> > never less. However untrusted userspace could create a context that
-> > submits to two different rings and that would lead to execution in the
-> > wrong context so we must fix this.
->
-> FWIW, in Mesa in the future we may want to expose multiple Vulkan
-> queues per device. Then this would definitely blow up.
+> > vN: prefer pre-existing userspace scnprintf if explicitely specified,
+> > only fallbacking to the generic BTF one when none is specified.
+> >
+> > >                       }
+> > >
+> > >                       printed += syscall_arg_fmt__scnprintf_val(&sc->arg_fmt[arg.idx],
+> > > diff --git a/tools/perf/trace/beauty/perf_event_open.c b/tools/perf/trace/beauty/perf_event_open.c
+> > > index 01ee15fe9d0c..632237128640 100644
+> > > --- a/tools/perf/trace/beauty/perf_event_open.c
+> > > +++ b/tools/perf/trace/beauty/perf_event_open.c
+> > > @@ -76,7 +76,7 @@ static size_t perf_event_attr___scnprintf(struct perf_event_attr *attr, char *bf
+> >
+> > But this part will work if we use the old collectors in the BPF skel?
+> >
+> 
+> You are right, it won't. The one scenario is that when a vmlinux file
+> is presented, the general collector (the new one, based on BTF) will
+> fallback to the old collectors, and now we have new
+> consumers(ptr->value). This will break.
+> 
+> > I.e. isn't this a change in the protocol of the BPF colector with the
+> > userpace augmented snprintf routines?
+> >
+> > If I remember we discussed that first you make this change in the
+> > protocol, test it with the pre-existing BPF collector, it works. Ok, now
+> > we have a new protocol and we then use it in the generic BTF-based BPF
+> > collector. This way that option of using the BTF-based collector or the
+> > preexisting BPF collector works.
+> >
+> > I'll try to do this.
+> 
+> Thank you so much.
 
-This will actually be required by future android versions, with the
-switch to vk hwui backend (because apparently locking is hard, the
-solution was to use different queue's for different threads)
+Now that I have:
 
-https://gitlab.freedesktop.org/mesa/mesa/-/issues/11326
+6b22c2b502a1c21b (x1/perf-tools-next, perf-tools-next/tmp.perf-tools-next, acme/tmp.perf-tools-next) perf trace: Use a common encoding for augmented arguments, with size + error + payload
+5d9cd24924f57066 perf trace augmented_syscalls.bpf: Move the renameat aumenter to renameat2, temporarily
 
-BR,
--R
+And also:
+
+7bedcbaefdf5d4f7 perf trace: Pass the richer 'struct syscall_arg' pointer to trace__btf_scnprintf()
+8df1d8c6cbd6825b perf trace: Fix perf trace -p <PID>
+
+I can move to this patch, but then it doesn't build as it uses things
+that will only be available when we get to adding the new BPF components
+in a later patch:
+
+builtin-trace.c: In function ‘trace__init_syscalls_bpf_prog_array_maps’:
+builtin-trace.c:3725:58: error: ‘struct <anonymous>’ has no member named ‘beauty_map_enter’
+ 3725 |         int beauty_map_fd = bpf_map__fd(trace->skel->maps.beauty_map_enter);
+      |                                                          ^
+make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:105: /tmp/build/perf-tools-next/builtin-trace.o] Error 1
+make[3]: *** Waiting for unfinished jobs....
+
+It will only come when we add:
+
+Subject: [PATCH v3 6/8] perf trace: Collect augmented data using BPF
+
+Where we have:
+
++struct beauty_map_enter {
++	__uint(type, BPF_MAP_TYPE_HASH);
++	__type(key, int);
++	__type(value, __u32[6]);
++	__uint(max_entries, 512);
++} beauty_map_enter SEC(".maps");
+
+
+So I'll try to combine the addition of the map with the code that uses
+it in the builtin-trace.c codebase.
+
+- Arnaldo
 
