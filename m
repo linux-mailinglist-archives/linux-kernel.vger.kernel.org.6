@@ -1,368 +1,157 @@
-Return-Path: <linux-kernel+bounces-321348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC5697192E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:19:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20298971931
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F08A1F23294
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:19:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 221141C21675
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BDE1B78F4;
-	Mon,  9 Sep 2024 12:19:49 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473A91B791D;
+	Mon,  9 Sep 2024 12:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xClYYd2x"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557361B3B19
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CB81B78ED;
+	Mon,  9 Sep 2024 12:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725884389; cv=none; b=oqwkUoDZUNNvcoZQSPucmF1LCU8vEZo2Ao87Nsmr354avL7qfra61f1krWP49FGqHvob7uVR/feRN+oMbPgS8u/73FPhvBlH0CNcQxu3xza8scbyug0yfhpF9W1Pu+PpnvYzNtoDYKR+3XcJiI7UvwujS79S6BXE2oi3xhG69+4=
+	t=1725884393; cv=none; b=LfBIQFZDMxzB7FI12/1W2ZYgskgDTIcYX8bdDbPPCb48o38kqeqm5VUxE31cqYlwjPhMB26mqaBVd/3Vjh8i90BoDA5UVnnIiZStfsXuE4bFgn7VebbxrS2h7zpzxBt7TKkBbObdM++t1jloboHJUNSte8Esi033zwLHpcSZQGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725884389; c=relaxed/simple;
-	bh=XaGZJ26DCOzIFIxENjPMinMJ9iBdoY4E+FVtRLbXef0=;
+	s=arc-20240116; t=1725884393; c=relaxed/simple;
+	bh=fjmLr3TZDGOqnkdttEFDKim49sM4rEFcjIzgEstK35Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mFsHKbunnrVh8qMyjpca+/Z62cdLppQl6WrFIHcTUGzoxa0inpMHzBEEOHwwWPBoWDEtmnp6QdMr73mdW8+MybfBq2RFjTLFZ4RD6Plp3EAe3JlBE7dQekHKnTvQ1fAaTxQWEfC3c7aV9X7d7cdDmtvSpPWFCEDDeMnzWYned30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sndMe-0006Tx-V0; Mon, 09 Sep 2024 14:19:29 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sndMe-006ePa-CL; Mon, 09 Sep 2024 14:19:28 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sndMe-00Fhph-0r;
-	Mon, 09 Sep 2024 14:19:28 +0200
-Date: Mon, 9 Sep 2024 14:19:28 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 4/5] firmware: imx: add driver for NXP EdgeLock Enclave
-Message-ID: <Zt7n0AxGEw-ZXbui@pengutronix.de>
-References: <20240904-imx-se-if-v7-0-5afd2ab74264@nxp.com>
- <20240904-imx-se-if-v7-4-5afd2ab74264@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B5g5bXQsj8rEqQjwYLHfMP6e+/y23YVN784yrxyNMKShrchDOb06BhggW+fES90a/lRJU9oESmK/YSfFC/tenZ+RBUYHk5WH6r8ybMxKhnHNP7yNf1SwWu9xOrZfIBl8RLB66Xryz6oNtvECJtNBHPI/7I5nJpXC0Sf4e/Lviss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xClYYd2x; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=z7jI6ptf6cD7dEceLuhoAVuOL2tKiTY6v4hku1BmkD8=; b=xC
+	lYYd2xChA0sCKIE5ZZVguLND4Ff3peWwd6lcQg4RWngSEStfS0qbuhT3gbF6NmlyL19QcuBMJEe5m
+	OOjvG3cJ/SkUx98/CGWcehgAaW3Lhxp2g+H5Jzo64nrt8T72ooBnX65lZEG/qXZboT+tpoAI6FK/a
+	q5xiFwmKZbC3z9o=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sndMp-00708m-9c; Mon, 09 Sep 2024 14:19:39 +0200
+Date: Mon, 9 Sep 2024 14:19:39 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	sudongming1@huawei.com, xujunsheng@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com, zhuyuan@huawei.com,
+	forest.zhouchang@huawei.com, jdamato@fastly.com, horms@kernel.org,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V8 net-next 05/11] net: hibmcge: Implement some .ndo
+ functions
+Message-ID: <fec0a530-64d9-401c-bb43-4c5670587909@lunn.ch>
+References: <20240909023141.3234567-1-shaojijie@huawei.com>
+ <20240909023141.3234567-6-shaojijie@huawei.com>
+ <CAH-L+nOxj1_wHdSacC5R9WG5GeMswEQDXa4xgVFxyLHM7xjycg@mail.gmail.com>
+ <116bff77-f12f-43f0-8325-b513a6779a55@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240904-imx-se-if-v7-4-5afd2ab74264@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <116bff77-f12f-43f0-8325-b513a6779a55@huawei.com>
 
-On Wed, Sep 04, 2024 at 04:21:20PM +0530, Pankaj Gupta wrote:
-> NXP hardware IP(s) for secure-enclaves like Edgelock Enclave(ELE),
-> are embedded in the SoC to support the features like HSM, SHE & V2X,
-> using message based communication interface.
+On Mon, Sep 09, 2024 at 12:04:53PM +0800, Jijie Shao wrote:
 > 
-> The secure enclave FW communicates on a dedicated messaging unit(MU)
-> based interface(s) with application core, where kernel is running.
-> It exists on specific i.MX processors. e.g. i.MX8ULP, i.MX93.
+> on 2024/9/9 11:05, Kalesh Anakkur Purayil wrote:
+> > On Mon, Sep 9, 2024 at 8:11 AM Jijie Shao <shaojijie@huawei.com> wrote:
+> > > +}
+> > > +
+> > > +static int hbg_net_open(struct net_device *netdev)
+> > > +{
+> > > +       struct hbg_priv *priv = netdev_priv(netdev);
+> > > +
+> > > +       if (test_and_set_bit(HBG_NIC_STATE_OPEN, &priv->state))
+> > > +               return 0;
+> > [Kalesh] Is there a possibility that dev_open() can be invoked twice?
 > 
-> This patch adds the driver for communication interface to secure-enclave,
-> for exchanging messages with NXP secure enclave HW IP(s) like EdgeLock
-> Enclave (ELE) from Kernel-space, used by kernel management layers like
-> - DM-Crypt.
+> We want stop NIC when chang_mtu 、self_test or FLR.
+> So, driver will directly invoke hbg_net_stop() not dev_open() if need.
+> Therefore, driver must ensure that hbg_net_open() or hbg_net_stop() can not be invoked twice.
+
+Generally, we don't want defensive programming. You seem to suggest
+hbg_net_open and hbg_net_stop are called in pairs. If this is not
+true, you have a bug? Rather than paper over the bug with a return,
+let bad things happen so the bug is obvious.
+
+> > > +
+> > > +       hbg_all_irq_enable(priv, true);
+> > > +       hbg_hw_mac_enable(priv, HBG_STATUS_ENABLE);
+> > > +       netif_start_queue(netdev);
+> > > +       hbg_phy_start(priv);
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static int hbg_net_stop(struct net_device *netdev)
+> > > +{
+> > > +       struct hbg_priv *priv = netdev_priv(netdev);
+> > > +
+> > > +       if (!hbg_nic_is_open(priv))
+> > > +               return 0;
+> > [Kalesh] Is there any reason to not check HBG_NIC_STATE_OPEN here?
 > 
-> Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
-> ---
->  drivers/firmware/imx/Kconfig        |  12 +
->  drivers/firmware/imx/Makefile       |   2 +
->  drivers/firmware/imx/ele_base_msg.c | 286 ++++++++++++++++++++
->  drivers/firmware/imx/ele_base_msg.h |  95 +++++++
->  drivers/firmware/imx/ele_common.c   | 306 +++++++++++++++++++++
->  drivers/firmware/imx/ele_common.h   |  51 ++++
->  drivers/firmware/imx/se_ctrl.c      | 515 ++++++++++++++++++++++++++++++++++++
->  drivers/firmware/imx/se_ctrl.h      |  99 +++++++
->  include/linux/firmware/imx/se_api.h |  14 +
->  9 files changed, 1380 insertions(+)
+> Actually, hbg_nic_is_open() is used to check HBG_NIC_STATE_OPEN.
+> :
+> #define hbg_nic_is_open(priv) test_bit(HBG_NIC_STATE_OPEN, &(priv)->state)
+
+Which is horrible. Why hide this, when it is in full view in other
+places.
+
+Please take a step back. Take time to understand the driver locking
+with RTNL, look at what state is already available, and try very hard
+to remove priv->state.
+
 > 
-> diff --git a/drivers/firmware/imx/Kconfig b/drivers/firmware/imx/Kconfig
-> index 183613f82a11..0f6877a24f0b 100644
-> --- a/drivers/firmware/imx/Kconfig
-> +++ b/drivers/firmware/imx/Kconfig
-> @@ -22,3 +22,15 @@ config IMX_SCU
->  
->  	  This driver manages the IPC interface between host CPU and the
->  	  SCU firmware running on M4.
-> +
-> +config IMX_SEC_ENCLAVE
-> +	tristate "i.MX Embedded Secure Enclave - EdgeLock Enclave Firmware driver."
-> +	depends on IMX_MBOX && ARCH_MXC && ARM64
-> +	default m if ARCH_MXC
-> +
-> +	help
-> +	  It is possible to use APIs exposed by the iMX Secure Enclave HW IP called:
-> +	  - EdgeLock Enclave Firmware (for i.MX8ULP, i.MX93),
-> +	    like base, HSM, V2X & SHE using the SAB protocol via the shared Messaging
-> +	    Unit. This driver exposes these interfaces via a set of file descriptors
-> +	    allowing to configure shared memory, send and receive messages.
-> diff --git a/drivers/firmware/imx/Makefile b/drivers/firmware/imx/Makefile
-> index 8f9f04a513a8..aa9033e0e9e3 100644
-> --- a/drivers/firmware/imx/Makefile
-> +++ b/drivers/firmware/imx/Makefile
-> @@ -1,3 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_IMX_DSP)		+= imx-dsp.o
->  obj-$(CONFIG_IMX_SCU)		+= imx-scu.o misc.o imx-scu-irq.o rm.o imx-scu-soc.o
-> +sec_enclave-objs		= se_ctrl.o ele_common.o ele_base_msg.o
-> +obj-${CONFIG_IMX_SEC_ENCLAVE}	+= sec_enclave.o
-> diff --git a/drivers/firmware/imx/ele_base_msg.c b/drivers/firmware/imx/ele_base_msg.c
-> new file mode 100644
-> index 000000000000..e3e570a25e85
-> --- /dev/null
-> +++ b/drivers/firmware/imx/ele_base_msg.c
-> @@ -0,0 +1,286 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2024 NXP
-> + */
-> +
-> +#include <linux/types.h>
-> +
-> +#include <linux/completion.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/genalloc.h>
-> +
-> +#include "ele_base_msg.h"
-> +#include "ele_common.h"
-> +
-> +int ele_get_info(struct device *dev, struct ele_dev_info *s_info)
+> > > +
+> > > +       clear_bit(HBG_NIC_STATE_OPEN, &priv->state);
+> > > +
 
-I repeat once again:
+While we are at it, why is there not a race condition here between
+testing and clearing the bit?
 
-The context pointer argument should be struct se_if_priv *.
+> > > +       hbg_phy_stop(priv);
+> > > +       netif_stop_queue(netdev);
+> > > +       hbg_hw_mac_enable(priv, HBG_STATUS_DISABLE);
+> > > +       hbg_all_irq_enable(priv, false);
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static int hbg_net_change_mtu(struct net_device *netdev, int new_mtu)
+> > > +{
+> > > +       struct hbg_priv *priv = netdev_priv(netdev);
+> > > +       bool is_opened = hbg_nic_is_open(priv);
+> > > +
+> > > +       hbg_net_stop(netdev);
+> > [Kalesh] Do you still need to call stop when NIC is not opened yet?
+> > Instead of a new variable, I think you can check netif_running here.
 
-Do not expect foreign code to pass in a struct device * here from which
-you blindly expect that it's the right one.
+Correct. running is used by every driver, it has withstood years of
+testing, so is guaranteed to be set/cleared in race free ways. It
+should be used instead of this racy priv->state.
 
-> +int ele_fetch_soc_info(struct device *dev, u16 *soc_rev, u64 *serial_num)
-
-Also here and all the other functions in this file.
-
-> + *
-> + * Header file for the EdgeLock Enclave Base API(s).
-> + */
-> +
-> +#ifndef ELE_BASE_MSG_H
-> +#define ELE_BASE_MSG_H
-> +
-> +#include <linux/device.h>
-> +#include <linux/types.h>
-> +
-> +#define WORD_SZ				i4
-
-Unused.
-
-> +#define ELE_NONE_VAL			0x0
-> +
-> +#define ELE_GET_INFO_REQ		0xDA
-> +#define ELE_GET_INFO_REQ_MSG_SZ		0x10
-> +#define ELE_GET_INFO_RSP_MSG_SZ		0x08
-> +
-> +#define DEFAULT_IMX_SOC_VER		0xA000
-
-Unused
-
-> +#define SOC_VER_MASK			0xFFFF0000
-
-Unused
-
-> +int ele_msg_send(struct se_if_priv *priv,
-> +		 void *tx_msg,
-> +		 int tx_msg_sz)
-> +{
-> +	struct se_msg_hdr *header;
-> +	int err;
-> +
-> +	header = tx_msg;
-> +
-> +	/*
-> +	 * Check that the size passed as argument matches the size
-> +	 * carried in the message.
-> +	 */
-> +	if (header->size << 2 != tx_msg_sz) {
-> +		err = -EINVAL;
-> +		dev_err(priv->dev,
-> +			"User buf hdr: 0x%x, sz mismatced with input-sz (%d != %d).",
-> +			*(u32 *)header,
-> +			header->size << 2, tx_msg_sz);
-> +		goto exit;
-> +	}
-> +	guard(mutex)(&priv->se_if_lock);
-
-Drop this mutex. All it does is to protect mbox_send_message() which
-already has its own locking.
-
-> +
-> +	err = mbox_send_message(priv->tx_chan, tx_msg);
-> +	if (err < 0) {
-> +		dev_err(priv->dev, "Error: mbox_send_message failure.\n");
-> +		return err;
-> +	}
-> +	err = tx_msg_sz;
-> +
-> +exit:
-> +	return err;
-> +}
-> +
-> +void se_if_rx_callback(struct mbox_client *mbox_cl, void *msg)
-> +{
-> +	struct se_clbk_handle *se_clbk_hdl;
-> +	struct device *dev = mbox_cl->dev;
-> +	struct se_msg_hdr *header;
-> +	struct se_if_priv *priv;
-> +	u32 rx_msg_sz;
-> +
-> +	priv = dev_get_drvdata(dev);
-> +
-> +	/* The function can be called with NULL msg */
-
-You already identified this as a possible case...
-
-> +	if (!msg) {
-> +		dev_err(dev, "Message is invalid\n");
-
-...so why print an error message here?
-
-> +		return;
-> +	}
-> +
-> +	header = msg;
-> +	rx_msg_sz = header->size << 2;
-> +
-> +	/* Incoming command: wake up the receiver if any. */
-> +	if (header->tag == priv->cmd_tag) {
-> +		se_clbk_hdl = &priv->cmd_receiver_clbk_hdl;
-> +		dev_dbg(dev,
-> +			"Selecting cmd receiver for mesg header:0x%x.",
-> +			*(u32 *) header);
-> +
-> +		/* Pre-allocated buffer of MAX_NVM_MSG_LEN
-> +		 * as the NVM command are initiated by FW.
-> +		 * Size is revealed as part of this call function.
-> +		 */
-> +		if (rx_msg_sz > MAX_NVM_MSG_LEN) {
-> +			dev_err(dev,
-> +				"CMD-RCVER NVM: hdr(0x%x) with different sz(%d != %d).\n",
-> +				*(u32 *) header,
-> +				rx_msg_sz, se_clbk_hdl->rx_msg_sz);
-> +
-> +			se_clbk_hdl->rx_msg_sz = MAX_NVM_MSG_LEN;
-> +		}
-> +		se_clbk_hdl->rx_msg_sz = rx_msg_sz;
-> +
-> +	} else if (header->tag == priv->rsp_tag) {
-> +		se_clbk_hdl = &priv->waiting_rsp_clbk_hdl;
-> +		dev_dbg(dev,
-> +			"Selecting resp waiter for mesg header:0x%x.",
-> +			*(u32 *) header);
-> +
-> +		if (rx_msg_sz != se_clbk_hdl->rx_msg_sz
-> +				&& !exception_for_size(priv, header)) {
-> +			dev_err(dev,
-> +				"Rsp to CMD: hdr(0x%x) with different sz(%d != %d).\n",
-> +				*(u32 *) header,
-> +				rx_msg_sz, se_clbk_hdl->rx_msg_sz);
-> +
-> +			se_clbk_hdl->rx_msg_sz = min(rx_msg_sz, se_clbk_hdl->rx_msg_sz);
-> +		}
-> +	} else {
-> +		dev_err(dev, "Failed to select a device for message: %.8x\n",
-> +			*((u32 *) header));
-> +		return;
-> +	}
-> +
-> +	memcpy(se_clbk_hdl->rx_msg, msg, se_clbk_hdl->rx_msg_sz);
-> +
-> +	/* Allow user to read */
-> +	atomic_inc(&se_clbk_hdl->pending_hdr);
-> +
-> +	wake_up_interruptible(&se_clbk_hdl->wq);
-
-You are rebuilding a completion here, why not use a completion then?
-
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/of_reserved_mem.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/string.h>
-> +#include <linux/sys_soc.h>
-> +
-> +#include "ele_base_msg.h"
-> +#include "ele_common.h"
-> +#include "se_ctrl.h"
-> +
-> +#define RESERVED_DMA_POOL		BIT(0)
-
-Unused
-
-> +static void se_load_firmware(const struct firmware *fw, void *context)
-> +{
-> +	struct se_if_priv *priv = context;
-> +	const struct se_if_node_info *info = priv->info;
-> +	phys_addr_t se_fw_phyaddr;
-> +	u8 *se_fw_buf;
-> +	int ret;
-> +
-> +	if (!fw) {
-> +		if (priv->fw_fail > MAX_FW_LOAD_RETRIES)
-> +			dev_dbg(priv->dev,
-> +				 "External FW not found, using ROM FW.\n");
-> +		else {
-> +			/*add a bit delay to wait for firmware priv released */
-> +			msleep(20);
-> +
-> +			/* Load firmware one more time if timeout */
-> +			request_firmware_nowait(THIS_MODULE,
-> +					FW_ACTION_UEVENT, priv->se_img_file_to_load,
-> +					priv->dev, GFP_KERNEL, priv,
-> +					se_load_firmware);
-> +			priv->fw_fail++;
-> +			dev_dbg(priv->dev, "Value of retries = 0x%x.\n",
-> +				priv->fw_fail);
-> +		}
-> +
-> +		return;
-> +	}
-
-Are you continuously trying to load the firmware here in the hope that
-the rootfs is mounted before your retry counter exceeds?
-
-Don't do this.
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+	Andrew
 
