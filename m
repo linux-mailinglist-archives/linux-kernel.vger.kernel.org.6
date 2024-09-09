@@ -1,152 +1,124 @@
-Return-Path: <linux-kernel+bounces-320899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204F49711C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:24:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA84D9711CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF7151F22B33
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:24:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E71E71C22882
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693D71B2EF8;
-	Mon,  9 Sep 2024 08:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74041B1D53;
+	Mon,  9 Sep 2024 08:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="D8u633kz"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eIaxZeQF"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119E71B2ECE
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB081B1518
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725870000; cv=none; b=dF7Nx7WSECUhzrCdS4ZzLpkxZ1suLJwgXmQN2T54rrXzTZQCu30zUU4jIFb85AGoWWL92sRz5+333pYac/0l0oV2DVg0wtTm8YFeobkf6YAJQvgh2KK8cpKyFAqVDiRJhe/zJlBKpFND9/zHhKFyaWCGPEckXSgRyoKwhkDbJcM=
+	t=1725870153; cv=none; b=ljwBp2ie7fCCSfgPc0jHqaYe13M9Nz3P9jhzqiLaH13Iyl7zGz+bLkyAOxalHk8rZ52mZTs00zNh9YHjBdyuLgF5N7PcpIlN08QP/5tbyoD/K5arPjGcFG/lc3h1qbimwz4XzB1wcGto2kGTQWx3vRd4FYBFeqZD9yCaYygmogw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725870000; c=relaxed/simple;
-	bh=nK4KanhWlRZSYU1GucfWC16J4+koH/HjKOEGZSUcp98=;
+	s=arc-20240116; t=1725870153; c=relaxed/simple;
+	bh=/V4qydBMPSM+qqoS9VDNLqSWBi+vTk7nzssfgDPjPqw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dvOtzLBNjWlyFpPy24dG99ksyhXWbVTCPk1iyAaA83i2d/bbAkyyc4naWX9L6YRZU9LSPN2hUiSoQ2A32XTJWTkOsBZLpWiOPZwEWC0eYR6zr13rI0pVfdjn0J207K7jrYuGJGrRLUBydOeXcrjNO9OaIkZYRPyGwvuh0pmpTyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=D8u633kz; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5365b71a6bdso3124418e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 01:19:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=W4sA7qqb4XouZYB9IttwpeHDbwlZIo/aVCufHHvxi+ikqfGluQDI0nLv4uFxZBK6gHxehqlegjmfENct4/EPDxpPTi9KG+EWO2wj3xVDDt0dXn8eznBKtEc9S3i/Zp69s6SXKVT8rEuvbw7fdNcm0UJW45YIL4VnVgvADDsGINE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eIaxZeQF; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d8fa2ca5b1so2877219a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 01:22:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725869997; x=1726474797; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725870151; x=1726474951; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nK4KanhWlRZSYU1GucfWC16J4+koH/HjKOEGZSUcp98=;
-        b=D8u633kzu1BPSXPo/61PD85CTLAP1HGKAfe5cnFXGpm7JjGJhoDPsFewAJCrz/hmDF
-         iL2JOEixPzvULMTJMoOsWEFIT6hQuWOpZ/SjwrnJoWzoKbKWZIlyT4YD+DmyNMqv8VzT
-         lWjW3acONuQk/w7CY7kzxJBAPqKM5Qi/mEiBvlHv0+YFlnlQDwMO/WnVLfYJ4egvvekA
-         KF5+ev9r7DuwKesgIdJUe9hXKRrNap13GK4r+HfygVITh44JCH42CqAu7Dp3nzoghqhE
-         EeWBaDmae7julUJoXqvgigVWHJBMHVQUy6XhBFXzqyc9VODHOfAjYOJtbRu2U0MryjMU
-         MKWA==
+        bh=WEQByQyfl9VluO8qkndWzBDGLo0rdEsiighFqw9cCSA=;
+        b=eIaxZeQFw+hvh7hL8p6Dy1cHwjxauvtIKjEvlrtla3Vhv2d+mwR8A+bq+dQ9jQw8BQ
+         uvvLtQBQ5hMh87ui/93q7ah0RA+CwCL8A6cR2K35XoWTe/L7BbfdjuOBltSTAX3YyIXl
+         lNOLnFu8fnEJS8+s2HGgRbuSPFyRu1NrniqV+zYBW1EZmI9yr8ybew8UcIV6p2CnD86C
+         n6fDrCGiqL+tmvPm2hIPg9MHKTK0tAMRb6CkP11LE2ciatb2TaPFHerhc2ILfyANJ+vY
+         O1zpW0eFYx7ORE0+1Ucs3l5d84DYGjikCmLBXiXHFKVjsbi3ga/hIBFbgippTkgzn6Aj
+         9JWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725869997; x=1726474797;
+        d=1e100.net; s=20230601; t=1725870151; x=1726474951;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nK4KanhWlRZSYU1GucfWC16J4+koH/HjKOEGZSUcp98=;
-        b=G1u3nWMa4VW5oJ2BERjpgm66xkkxxRO7aqOFsLQv0UNO5opJ2xS6jnmh95qkZQOVKi
-         M54NMRo8O0aRIsDBiwX/aH12Dj9Zk19+3ujqTF0gkJrC7lmcdZZu/6yIvB1KMrgMKcbP
-         XLyfcDWoiV+nMMiI2f7kheSuubQ4YIWnHBsFrrm0hVhtIqCVVQH9XTaVOj8ToTZIF2bJ
-         uUR/o6npIOvuqzarsJtKLWfA5+93rPgllKJgBcoLnsDMMxqqpL86lyexeJDOT3zpn4lN
-         9XiyxuDjs+gAQaH0cMovrFfvXAap6siN0nBk882/Sb0P5u4pnNwo0YJqeoWbhfEH2gvc
-         gn2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVK/f7EfgQpxhjwD0p2AWoj7QDegpGGjLLdvWbch3qB/8zXRd/GYxVst76H0oKWvJWT1FoJdGcHYtE+fWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5Hmq83fb8XW/PwdrcvO8BqRzvR/NtOWUFHi7N8ky7mCSJCTG7
-	esILtn4Ivs3rM0sbg2g8Tb8lAjNSznVvbjIQUAv2tN1RvOGkL8m7lE66FhoZAgOFwOhydZoDfz8
-	iW+YZ6AwdacCAPDvvNqy8QBhCvpcaRabxzb1PKA==
-X-Google-Smtp-Source: AGHT+IHxT+bODhO8JSo/tiDz8IhrsZj4aQ7sUddKJwKAAWcGwi3uMKWPvMrXkLnRaBJd7bYB8HRQme7uZiCnsN4k1KI=
-X-Received: by 2002:a05:6512:4023:b0:535:6b9e:bcdd with SMTP id
- 2adb3069b0e04-536587c73f8mr7930705e87.33.1725869996139; Mon, 09 Sep 2024
- 01:19:56 -0700 (PDT)
+        bh=WEQByQyfl9VluO8qkndWzBDGLo0rdEsiighFqw9cCSA=;
+        b=GAWdZzbu0viX6lhLJUCDJjaSCL43hv8W1C8y7W7aXZTXFzcaDqqq36Ogr2IdylAR5B
+         XSnmYblqBjaeyHD03uG4dtamwfSY/THSxa69MWi3p/CvSclwqST8KnX+O3hIDJD6OVA7
+         8yAeVNxQBC+MoQ7mzvelwvX5w8oaLhpq+AuX0bT0Na9kBLBkDW9E/fcLuy/FAj28ZkJy
+         lNs3qVa6VqZZ3HQo0h8fFM92/G4vfMvZ4ZBi1jngeeN9lnFUqnGGm2adcUBCgyy21TG4
+         LD256J3t+LszO8uyCzBtL1MYq54F25yObowDo+s8UKDC1tYwnsSFh43XMEr922h5mbG4
+         dKJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOZV8WNAWPKOQRFXMu4+QZJBA/gyPN6MpGJvuEIDQ4eq0+Q7LKOlYuYrCjZNUA7t+OHcwNlI8jLQSu5dg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw45oi1chq7vAOeKfy4KUHH5j7m5ABEj8d5uqP2Dfu2uNZojPw
+	UR7l8e9Xjh3aeLHp+RgSfXkJaM+dwS8KcBXa0LsaHgvxN4ITKPPeb5s77MEIw4sqP6pFh8JKxkK
+	6uUXCnzGe9is1MfzwE21+lUH5Ke4=
+X-Google-Smtp-Source: AGHT+IGML/D1MIgs1YGLWvOaVA6MYQFn23lROBT43rj2X5ygBWRPiknmmT+ZUwXrrBaeIW24taAdh6UmxIhRwyC6wy0=
+X-Received: by 2002:a17:90b:2707:b0:2d8:89ad:a67e with SMTP id
+ 98e67ed59e1d1-2dad4dde298mr11600582a91.1.1725870150876; Mon, 09 Sep 2024
+ 01:22:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814082301.8091-1-brgl@bgdev.pl> <87a5hcyite.fsf@kernel.org>
- <CAMRc=Mcr7E0dxG09_gYPxg57gYAS4j2+-3x9GCS3wOcM46O=NQ@mail.gmail.com>
- <87y146ayrm.fsf@kernel.org> <CAMRc=Mfes+=59WP8dcMsiUApqjsFrY9iVFEdKU6FbTKAFP1k_A@mail.gmail.com>
- <878qw6hs4s.fsf@kernel.org> <CAMRc=Mc_Qy6-Rgsw_uOweUXtoiZGMR0D22Ou9nXUJDDdPCZqLw@mail.gmail.com>
- <1e77b503-36ff-4a97-993b-f87d658c9970@quicinc.com>
-In-Reply-To: <1e77b503-36ff-4a97-993b-f87d658c9970@quicinc.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 9 Sep 2024 10:19:44 +0200
-Message-ID: <CAMRc=Mc9kzC6PLZM2-kmuC-FtzdM8P9e-YRVxWjg28tAc7BRgg@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the inputs
- of the ath11k on WCN6855
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Kalle Valo <kvalo@kernel.org>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240903013625.1658825-1-linchengming884@gmail.com>
+ <20240903013625.1658825-3-linchengming884@gmail.com> <20240906170439.286e6c55@xps-13>
+In-Reply-To: <20240906170439.286e6c55@xps-13>
+From: Cheng Ming Lin <linchengming884@gmail.com>
+Date: Mon, 9 Sep 2024 16:20:09 +0800
+Message-ID: <CAAyq3SbOR2-_RGEk7dfgU1Lgu3mgKqdmUkmhGw3eS9cTroo27Q@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] mtd: spinand: macronix: Flag parts needing
+ explicit plane select
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: vigneshr@ti.com, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw, 
+	leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 6, 2024 at 8:38=E2=80=AFPM Jeff Johnson <quic_jjohnson@quicinc.=
-com> wrote:
+Hi Miquel,
+
+Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=88=
+6=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=8811:04=E5=AF=AB=E9=81=93=EF=
+=BC=9A
 >
-> On 9/6/2024 12:44 AM, Bartosz Golaszewski wrote:
-> > For upstream - if you're using the WCN6855, you must specify the
-> > inputs for the WLAN module so it's only fair they be described as
-> > "required". For out-of-tree DTS I couldn't care less.
+> Hi Cheng Ming,
+>
+> linchengming884@gmail.com wrote on Tue,  3 Sep 2024 09:36:25 +0800:
+>
+> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 > >
-> > You are not correct saying that "M.2 boards don't need these" because
-> > as a matter of fact: the WLAN module on your M.2 card takes these
-> > inputs from the PMU inside the WCN6855 package.
+> > Macronix serial NAND flash with a two-plane structure requires
+> > insertion of the Plane Select bit into the column address during
+> > the write_to_cache operation.
+> >
+> > Additionally, for MX35{U,F}2G14AC and MX35LF2GE4AB, insertion of
+> > the Plane Select bit into the column address is required during
+> > the read_from_cache operation.
 >
-> Let me start by saying that DT is one area where I'm a newbie, so I hope =
-I can
-> get some education.
+> I tried to apply this patch but it conflicts with the spi-nand
+> continuous read series changes in the macronix driver. Would you mind
+> rebasing and fixing the conflicts (it's just handling correctly the
+> new flags)?
+
+Sure, I will rebase the patches and resolve the conflicts.
+
 >
-> I'd like to start with an observation: I've used both WCN6855 with ath11k=
- and
-> WCN7850 with ath12k on an x86 laptop without any device tree, so from tha=
-t
-> perspective none of the device tree stuff is "required" -- these modules =
-"just
-> work".
+> If you do that early next week I'll merge them right away (please
+> resend the two patches).
 >
+> Thanks and sorry for the inconvenience!
+> Miqu=C3=A8l
 
-Yes. This is what I refer to as "fully dynamic" M.2 cards, where the
-card typically has an on-board PMIC that handles the power-up of the
-device, respecting all timings etc. No custom pins are used. You don't
-need device-tree. DT bindings don't concern this case. Even it this
-was an ARM, DT-based platform, you wouldn't need the DT entry.
-
-> However I also realize that when these are installed on Qualcomm ARM plat=
-forms
-> that there are GPIO pins that control things like XO clock, WLAN enable &
-> Bluetooth enable, as well as voltage regulators, and the device is
-> non-functional without those configured, so the device tree items are req=
-uired
-> in that environment.
->
-> So just from that perspective saying something is "required" is confusing=
- when
-> there are platforms where it isn't required. And perhaps that is what is
-> confusing Kalle as well?
->
-
-The properties are required IF you have a DT representation. Because
-if you're modeling the physical package, this is what it looks like.
-The one on your "fully dynamic" M.2 card is the same - it also has the
-same internal inputs and outputs but you're not modeling the external
-package in the first place so you don't need to care about them. But
-if you do represent the chipset and not as a black box WCN6855 in its
-entirety but its WLAN, BT and PMU modules separately then it warrants
-making the true inputs of the WLAN module mandatory in the schema.
-
-Please let me know if this is enough of an explanation.
-
-Bart
+Thanks,
+Cheng Ming Lin
 
