@@ -1,91 +1,92 @@
-Return-Path: <linux-kernel+bounces-320967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9A39712B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:57:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEE99712DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB92A1F233CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:56:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48B5028580E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E741B253B;
-	Mon,  9 Sep 2024 08:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0301B2ED0;
+	Mon,  9 Sep 2024 09:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7VT9iYw"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="UCKyBw0t"
+Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D726B176237;
-	Mon,  9 Sep 2024 08:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF90113635E;
+	Mon,  9 Sep 2024 09:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725872211; cv=none; b=PI+w3kYK1bGnZKW231BPBnFS4ZFYzRigEfwELRpxwIJ+Awvdn8DG4cbQyKDL5xILxDiGUCbccLd9wV+aHZedRvnOhCODPcxWEH6+2yg3IBYmhD7MdibFY66+/sqJdMEjMmEWTT4C7xeFZUGAY0L5+uKyjE58m3sBGt2wlMg5Qm4=
+	t=1725872578; cv=none; b=fJVTyCkrH6fYJ62XW84FrVUmYMZ6ULZAbuKimWs3DTqrLaAaHN2yigN8C5q98ro35Z6QEhGV/niB+vHBwF2J7ld7noABvguVcmje9ETtydI+bY4929K5AKMhwXwXq8VhmJxKc+CDMvzoWO837qVbQwtDLo9J0IrOhlgUfDeidbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725872211; c=relaxed/simple;
-	bh=IHVEyXjXEadqqP4bsMBt8xo2VWroQd70mE6fg0tm3MA=;
+	s=arc-20240116; t=1725872578; c=relaxed/simple;
+	bh=Qut1EyCSXF5XKk8lrf1jldw5ylJErkj1/nQaI3URoaw=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pNc8XNeR/lDsFeTbrry8FjMlVTcHfjEp5WmjxbDf6lZOUs9WkAgrycJ7xvlV13AB3LF2aI9MXlxQeoE/2n6RKv8c3IFCibUxAn0d9aSwWwDtZjPU0AZGNi+dMevRAanHIQBz97XUVUq5B6kv1EqD4UbNs0aBPWhaSx8KNlVNZIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U7VT9iYw; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cae102702so17717375e9.0;
-        Mon, 09 Sep 2024 01:56:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725872208; x=1726477008; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/BmGU95A8hfLAsZCZFz/EirdQEHMm/2AkTfuMxVV4Mo=;
-        b=U7VT9iYwPf1jwOlAjZyhd7UrzU5+46T0QQQFFHeLs1cxLywvlsGZDLAOX5GzEf8/wD
-         rSwtwjPVKCAY5T2rvzQ215RTb0je2Y60AfVV6Z+Txii/DPrd7TEL69Vv2/vvi1s1tcwa
-         lLjZ7dB+MqFxCcLOjYx3/A5121feiAG4qsn9tcLvDpeYbf/tdl37oW2WwIwJaXKLN2UX
-         QofQm/DwONMQJs1uBcY02uU15qmxx91yItHxeGnoQeBbD72LCws38injR6P7EqUhVx6V
-         erPnUd5+4kINrIjHC+7HEfUAY3qm3mJct2o4eeKEXVVnOWVNtyT8wVSuFBy9gOGBdG18
-         OVWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725872208; x=1726477008;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/BmGU95A8hfLAsZCZFz/EirdQEHMm/2AkTfuMxVV4Mo=;
-        b=Ez0sLgQSbvApG0npKLnhyeM+9JdW4NoLg+hwslOnHl8Uc9gftWhntd8obx0uQB4KW1
-         b8BKEQQs8cd4q5bym4CJAtN607tb3STOy0Je14fz7oe0irZ08w9jM4LNTIVDV4Wv3n15
-         g3PJhw87xSczvMX1U5TGDpdfeyQjuLqZ9Q+fmj+sqCeJp6HydC1sZY200qVxR29eRn5q
-         1Hrb8HKyaVKin3T4NqZVUxoiwk1IbqGn93n9I+9/Vbqn6++7vIEKR1UBBFmJsDJUshou
-         Zqf6/8MwOQHeCrrDVVIJQH4zzfce7ewnZofghDv/VjQ4rItmSY9KH4DFd1Vf1lKfcm3K
-         CtXw==
-X-Forwarded-Encrypted: i=1; AJvYcCURjH6ko4zRKi7vvmbQr/AMO1kyD4tDqAyfgLaDDQMSywa/ssKCrjDHQ9rPhqnVdttkfBTOnE1KaSWa@vger.kernel.org, AJvYcCVOvSQBMJYquus+t2u/W28tA0Qkmv1gdVfcP+p/7k3tlJcx4J67JlDauI+eQcuo1vyiJF5Lqt1Ik8taNjSV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0ScNpQFn78/MP8Oj1i5VFizpbW63vrvcuic9EF6B7NcPZN453
-	h3ZfpPwubdzjqyeYDs7w2gPTuEyOhy8Mp+KnPhFfyQvMS+PhAQ4gKJcUYuKjKKc=
-X-Google-Smtp-Source: AGHT+IEHm1v1khJv8a55IRYehk34lw+ZogsDBIzuQMF7zF1B6HV7gIXGvMxLW8eAqQw5NmagzJCnXg==
-X-Received: by 2002:a05:6000:4597:b0:375:48e6:f30f with SMTP id ffacd0b85a97d-37894a04036mr3606204f8f.30.1725872207167;
-        Mon, 09 Sep 2024 01:56:47 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956654f4sm5443169f8f.43.2024.09.09.01.56.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 01:56:46 -0700 (PDT)
-Message-ID: <d48fa85725b27be77a5542e798c0dcbd4e08765b.camel@gmail.com>
-Subject: Re: [PATCH v2 8/9] iio: dac: ad3552r: add axi platform driver
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Angelo Dureghello
- <adureghello@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>,  Jonathan Cameron <jic23@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 09 Sep 2024 11:00:55 +0200
-In-Reply-To: <b289a789-0440-4c1f-9f75-6d7e8e04189d@baylibre.com>
-References: 
-	<20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
-	 <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-8-87d669674c00@baylibre.com>
-	 <b289a789-0440-4c1f-9f75-6d7e8e04189d@baylibre.com>
+	 Content-Type:MIME-Version; b=eoPfp7uIqQ6qTYo/9DP+LVLc75HHL+IXQ1bVe/76iO2k/R+8uI/cht9VYFVEOOtDni+JkNqsKmxi7rTlGKbBSkdI76+q6tSIaaCnuVmqUXlGxuNbJ6mh2A1HR5HRHHkkQtjoMrvWEw2JTZhw9htM2CCyWciwJdVn8x+SqS023Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=UCKyBw0t; arc=none smtp.client-ip=178.154.239.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
+Received: from mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:5e9c:0:640:b3f4:0])
+	by forward501a.mail.yandex.net (Yandex) with ESMTPS id 36D27613B6;
+	Mon,  9 Sep 2024 12:02:44 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id a2dHS5JKaSw0-Uuowlycf;
+	Mon, 09 Sep 2024 12:02:42 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1725872562; bh=Qut1EyCSXF5XKk8lrf1jldw5ylJErkj1/nQaI3URoaw=;
+	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=UCKyBw0t6OLNpveKLHRyVdH4SZAFS1aM3i5JVQ8KQ5rIHiHlKcQKgkqrfFC6c8Kek
+	 R9zZ3ZAROjskp9kB0OrvKFjT8aa1lyzn42GuLR0RT8850GDMyebxN0ZKhcvu8dixES
+	 a/SqIJj456K3YYiyyxC8j7ouVj9XUUEG0040u5qg=
+Authentication-Results: mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <0e3902c9a42b05b0227e767b227624c6fe8fd2bb.camel@maquefel.me>
+Subject: Re: [PATCH v12 00/38] ep93xx device tree conversion
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Hartley Sweeten
+ <hsweeten@visionengravers.com>, Alexander Sverdlin
+ <alexander.sverdlin@gmail.com>, Russell King <linux@armlinux.org.uk>,
+ Lukasz Majewski <lukma@denx.de>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Sebastian Reichel <sre@kernel.org>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Vinod Koul <vkoul@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Guenter Roeck <linux@roeck-us.net>, Thierry Reding
+ <thierry.reding@gmail.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+ <u.kleine-koenig@pengutronix.de>, Mark Brown <broonie@kernel.org>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh
+ Raghavendra <vigneshr@ti.com>, Damien Le Moal <dlemoal@kernel.org>, Sergey
+ Shtylyov <s.shtylyov@omp.ru>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Ralf Baechle <ralf@linux-mips.org>,  "Wu,
+ Aaron" <Aaron.Wu@analog.com>, Lee Jones <lee@kernel.org>, Olof Johansson
+ <olof@lixom.net>, Niklas Cassel <cassel@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org,  devicetree@vger.kernel.org,
+ dmaengine@vger.kernel.org,  linux-watchdog@vger.kernel.org,
+ linux-pwm@vger.kernel.org,  linux-spi@vger.kernel.org,
+ netdev@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linux-ide@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-sound@vger.kernel.org, Bartosz Golaszewski
+ <bartosz.golaszewski@linaro.org>,  Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Andrew Lunn <andrew@lunn.ch>
+Date: Mon, 09 Sep 2024 12:02:37 +0300
+In-Reply-To: <CAHp75Veusv=f6Xf9-gL3ctoO5Njn7wiWMw-aMN45KbZ=YB=mQw@mail.gmail.com>
+References: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
+	 <CAHp75Veusv=f6Xf9-gL3ctoO5Njn7wiWMw-aMN45KbZ=YB=mQw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,95 +94,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-Hi all,
+Hi Andy!
 
-Some comments on top of what David already said...
-
-On Thu, 2024-09-05 at 15:40 -0500, David Lechner wrote:
-> On 9/5/24 10:17 AM, Angelo Dureghello wrote:
+On Mon, 2024-09-09 at 11:49 +0300, Andy Shevchenko wrote:
+> On Mon, Sep 9, 2024 at 11:12=E2=80=AFAM Nikita Shubin via B4 Relay
+> <devnull+nikita.shubin.maquefel.me@kernel.org> wrote:
+> >=20
+> > The goal is to recieve ACKs for all patches in series to merge it
+> > via Arnd branch.
+> >=20
+> > It was decided from the very beginning of these series, mostly
+> > because
+> > it's a full conversion of platform code to DT and it seemed not
+> > convenient to maintain compatibility with both platform and DT.
+> >=20
+> > Following patches require attention from Stephen Boyd or clk
+> > subsystem:
 >=20
-> ...
+> Does it mean you still have a few patches without tags?
+> What are their respective numbers?
+
+The clk is the last one as i think, all others can be ACKed by
+Alexander or by Arnd himself.
+
 >=20
-> > +
-> > +static int ad3552r_axi_read_raw(struct iio_dev *indio_dev,
-> > +				struct iio_chan_spec const *chan,
-> > +				int *val, int *val2, long mask)
-> > +{
-> > +	struct ad3552r_axi_state *st =3D iio_priv(indio_dev);
-> > +	int err, ch =3D chan->channel;
-> > +
-> > +	switch (mask) {
-> > +	case IIO_CHAN_INFO_SAMP_FREQ: {
-> > +		int clk_rate;
-> > +
-> > +		err =3D iio_backend_read_raw(st->back, chan, &clk_rate, 0,
-> > +					=C2=A0=C2=A0 IIO_CHAN_INFO_FREQUENCY);
+> > - clk: ep93xx: add DT support for Cirrus EP93xx:
+> > =C2=A0 - tristate
+> > =C2=A0 - drop MFD_SYSCON/REGMAP
+> > =C2=A0 - add AUXILIARY_BUS/REGMAP_MMIO
+> > =C2=A0 - prefixed all static with ep9xx_
+> > =C2=A0 - s/clk_hw_register_ddiv()/ep93xx_clk_register_ddiv()/
+> > =C2=A0 - s/clk_register_div()/ep93xx_clk_register_div()/
+> > =C2=A0 - dropped devm_ep93xx_clk_hw_register_fixed_rate_parent_data
+> > macro
+> > =C2=A0 -
+> > s/devm_ep93xx_clk_hw_register_fixed_rate_parent_data()/devm_clk_hw_
+> > register_fixed_rate_parent_data()/
 >=20
-> This seems odd to me. How does the backend know what frequency we want?
-> It would make more sense to me if this somehow indicated that we were
-> getting the SPI SCLK rate.
->=20
-
-Yes, this sampling frequency bit seems very wrong atm. And the thing is, we=
-'re
-not even getting SCLK. According to [1], the /4 and /8 is for clk_in which =
-is
-not the same as SCLK (unless I'm missing something).=C2=A0
-
-OTOH, if in the backend patch, that clk_get() is somehow getting sclk, that=
-'s
-wrong because sclk is an output clk of the IP. So we need to get clk_in whi=
-ch
-should be (typically) 133MHz.
-
-> > +		if (err !=3D IIO_VAL_INT)
->=20
-> Would be better to call the variable ret instead of err if it can hold
-> something besides an error code.
->=20
-> > +			return err;
-> > +
-> > +		/*
-> > +		 * Data stream SDR/DDR (clk_in/8 or clk_in/4 update rate).
-> > +		 * Samplerate has sense in DDR only.
->=20
-> We should also mention that this assumes QSPI in addtion to DDR enabled.
->=20
-
-I understand the QSPI bit but why the DDR part? I just don't understand the
-comment "Samplerate has sense in DDR only.". It needs way more explanation =
-if
-that is true...
-
-> > +		 */
-> > +		if (st->single_channel)
-> > +			clk_rate =3D DIV_ROUND_CLOSEST(clk_rate, 4);
-> > +		else
-> > +			clk_rate =3D DIV_ROUND_CLOSEST(clk_rate, 8);
-> > +
->=20
-
-This division also looks to be very backend dependent. So it's far from ide=
-al
-being in here...
-
-To me, the way we need to get this done is for the backend to effectively r=
-eport
-back SCLK (in a correct way). Then, depending on the number of bits per clk=
- (4
-for QSPI), the word size and DDR vs SDR we get the device sample rate. With=
- it,
-we then choose one of Jonathan's suggestion (a per channel attr might be le=
-ss
-confusing).
-
-All the above said, I probably need to catch up on the above. It might happ=
-en
-that David and Angelo already got some more info from the hdl guys while I =
-was
-on vacation.
-
-[1]: https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
-- Nuno S=C3=A1
 
 
