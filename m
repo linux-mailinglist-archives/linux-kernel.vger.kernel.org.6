@@ -1,169 +1,127 @@
-Return-Path: <linux-kernel+bounces-321030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D845D971387
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:29:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F7249713A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88219283FB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:29:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BD851C22887
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C038F1B3741;
-	Mon,  9 Sep 2024 09:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC4C1B3725;
+	Mon,  9 Sep 2024 09:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pSpMBMoJ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ecqXSOc/"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9ED1B372D;
-	Mon,  9 Sep 2024 09:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43191B583E;
+	Mon,  9 Sep 2024 09:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725874088; cv=none; b=rUXbtVqrDf4LPiFkMLt7Xpgmfc0C+yDiwhypEDfE5jwEFuaGLa4zYDmFODNLY5eHFxoZYo1wiVQThgRbgIt1SLT5FbharnHI71b7bIxDNYTiuIZjILsIaUnNU5eEFt/t2/E+cVk66sfdJOqgEdc2q5V6Wa2sc7OTfEbKBI+DTow=
+	t=1725874113; cv=none; b=AkERejZrvu25/IOq3dyntt8epiF3cLyphygGFqdBJ6gquXcNE6fRllS7tysBkIsSuCyFetN9k3jJHINYtsrAvExxQBNymqnvXBAWUeUlkvb6ccuQD7Yua9UHEmihVzvrJutu7twiXZunnVZC0IyZvvm671cDUDhdz0RDbXtu+/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725874088; c=relaxed/simple;
-	bh=SF4YIUrQdO1i1NEnJpA+mmN4Ugw/aBBkNh/Ne8QB1Fw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L3WfDgjFpTJkq6t18yQJgf3etG5pVgm9LMp/QEeGHB7GKT3EKMs6NrsEp1R0cd5buSE0hG4BS4kEYWZhcSNWO/f1XANbslw4vmAOAHfG32a5t7Pnbeip+z3aoJaO5cWo3chrqaoQ39gOU6Owz9OhVY/FZxDZE9MUMbVFxUThrko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pSpMBMoJ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725874081;
-	bh=iu4DPEp91bVqeyAE0PuH34tHScH4Dpu9wQBO33aKNAE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pSpMBMoJPQaA79+SeOo9vYZbluz3PaPIvA2c6PW1ZMmAD8XO3gUG0Dk4ZHgVWjNGy
-	 oz5KPtKtHPLj5zGm8kH58MRuWnrGPydMatIl1wj1JVJ2G5iPQEdvUWpjoL3jvk6dJP
-	 QeFYQdYOIVMMiVSUhZTCNAW9Zp8XWGDyWAHP6PQesG2HdporON3sM1x97pTJIwRhLA
-	 2wuZWfEK3/t+hkezmlZ0hOZLc4icF/w+X7zwnLZ08ErR8AOTLBWAhBVh5b0GNqAd6E
-	 wjSVI8mPHuK3gH4lppfYSn1cBMg2+qfEYpRc/aVpS60Ai+rH2CKvS3zWc/iCSmlaeq
-	 +ChxBjlBrLGSg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X2M294knwz4wcl;
-	Mon,  9 Sep 2024 19:28:01 +1000 (AEST)
-Date: Mon, 9 Sep 2024 19:28:00 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the slab tree
-Message-ID: <20240909192800.4d60b754@canb.auug.org.au>
-In-Reply-To: <bde596e3-365b-4fdb-8a03-0a4e40a56246@suse.cz>
-References: <20240909171220.32e862e3@canb.auug.org.au>
-	<20240909181035.4ffd7434@canb.auug.org.au>
-	<bde596e3-365b-4fdb-8a03-0a4e40a56246@suse.cz>
+	s=arc-20240116; t=1725874113; c=relaxed/simple;
+	bh=kZH5eo/1uAd5WCreOVMSYm+T3MJidsStra30feYvEUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BbsHLd3Fd1iUCrHqZ49O9Q2hYVHTzGRnFh9d5jvLl21C3OqyWhywUA3k54yXBSxUARFSda5DHXdMulVf7bC17PMyIS5ZYIHigm/yVHbjO4ArVuzCZPFa0mDWNv/9WH8aCJmnuiwpsZFjqV1DGg3OJpK6QVt4iBKfLeJpPC5KMxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ecqXSOc/; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42c79deb7c4so35090305e9.3;
+        Mon, 09 Sep 2024 02:28:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725874110; x=1726478910; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+FFw/GaDw/HIOFJV8gzwucJA51cqMscpFl4auNoY6JM=;
+        b=ecqXSOc/h0B9J4Qeic49MnU0Ek/KMz9onkB+UGmm96Ec7CHr8GvcSc6MkDzK0Ae7pR
+         TDcZtwvwVChajVEQ5vGHkhAveUgmBgyVMJcZCuSKkOYhILFxVo/5Mx7d0JcuSWP48zDV
+         LEXsegFih8rR0cwgAkMC8rj0Q30hAnd8EZBXmaYYiWJvFmTKqIGnqM/ilOMEAY7K+pgS
+         ioYNv3/+lOBQ/HRTCiJK0f5xPB2mYDrqt/qMMZ34RI+KGVc09ZQUhDCEuvgzuVDV0kOK
+         Oq3+jDk/xjlAVgebs2AUjKowx4qx2VFxi970dWZ72AIY23Xd8o7pBF9msVitFBXp6UmY
+         XUKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725874110; x=1726478910;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+FFw/GaDw/HIOFJV8gzwucJA51cqMscpFl4auNoY6JM=;
+        b=adcyaX2VEpOaxhF4W+5klbqTRcu/7Vnfd/d4bldm/0pGc6pcH4btx5y+cPhJgDLadc
+         Brii1jQ+CY0mSbUHahWuH5nG/240MokQeoKHNV+9aENxXIMbg5OG6Y1sA3UyqfMvDY4E
+         ERUy0UaR+ZK+xPM6WC0/ftgN4Fe4+yvutq6ViOvOlfG+dRBKugQsQ3hteetm0FRr9Oxh
+         ygS0Mn/BJRTimNe9+1oP00p7Oif+hAXEv1LKnlLsLqwBbWQNWySp9w08wDzpDETXIdDa
+         3YuJ0f+YNuXOFHIIxGDodCtjPZlIXsVhGsudnAjbLkq3vD1jHEhGZBcrtMriPc1fOU6n
+         DRhw==
+X-Forwarded-Encrypted: i=1; AJvYcCWapHYv3dGR8TfAUWzbgvSVnUJHOlSJdALdTIwcAz+rEKab+wFL9j8k9YrurQri0e3TOSCkkzAMxHSO6tCOavyD@vger.kernel.org, AJvYcCWoBb8gg2g1l4SkFvrnHcPHqaUkvRHitfphrGLCMrF+u3ugnpm3uceESHRPusBM46jZDEo=@vger.kernel.org, AJvYcCXbqSanhPDhPQiXHdw87ZWXcwNSsSvmFxnETWQNGmR2QgZXdGe+7PBgXzmidWgFULAwBzJNTw8uyqhSM2kA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxptj5Ir1Skb3tc9nVVZNP74BAxkITU1EyHfacgzd6Jn6gOuP1Q
+	1K1FSGWguSGGqdKRQ9BOph3tlaniYnc76kvDijiJ0iKwPS+wZx3Q
+X-Google-Smtp-Source: AGHT+IHpORaL/4UNQ1S4rW8l3O60M5C7KaPil4A0ODWWppQcQFsD2mGT2mvaxVw4vxct4diWzTtvGg==
+X-Received: by 2002:a7b:c858:0:b0:42c:af06:71b with SMTP id 5b1f17b1804b1-42caf060978mr41865625e9.28.1725874109169;
+        Mon, 09 Sep 2024 02:28:29 -0700 (PDT)
+Received: from void.void ([141.226.14.150])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d3765sm5522076f8f.74.2024.09.09.02.28.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 02:28:28 -0700 (PDT)
+Date: Mon, 9 Sep 2024 12:28:25 +0300
+From: Andrew Kreimer <algonell@gmail.com>
+To: Quentin Monnet <qmo@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] bpftool: Fix a typo
+Message-ID: <Zt6_uUdXRE33PdFk@void.void>
+References: <20240907231028.53027-1-algonell@gmail.com>
+ <c63c6c0d-80f0-4e44-8e02-b12ff365f4eb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/M5wfpJVWqRMfE6F0rRSkpry";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c63c6c0d-80f0-4e44-8e02-b12ff365f4eb@kernel.org>
 
---Sig_/M5wfpJVWqRMfE6F0rRSkpry
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Sep 08, 2024 at 08:20:01PM +0100, Quentin Monnet wrote:
+> On 08/09/2024 00:10, Andrew Kreimer wrote:
+> > Fix a typo in documentation.
+> > 
+> > Reported-by: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> > ---
+> >  tools/bpf/bpftool/Documentation/bpftool-gen.rst | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+> > index c768e6d4ae09..6c3f98c64cee 100644
+> > --- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+> > +++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+> > @@ -172,7 +172,7 @@ bpftool gen min_core_btf *INPUT* *OUTPUT* *OBJECT* [*OBJECT*...]
+> >      CO-RE based application, turning the application portable to different
+> >      kernel versions.
+> >  
+> > -    Check examples bellow for more information how to use it.
+> > +    Check examples below for more information how to use it.
+> Thanks! Since we're at it, would you mind fixing the rest of the
+> sentence, too?
+> “Check _the_ examples below for more information _on_ how to use it”
 
-Hi Vlastimil,
+Done.
 
-On Mon, 9 Sep 2024 10:32:06 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> I'm confused how did that help if slab tree didn't change since 20240906 =
-and
-> the commit ids meanwhile changed on the vfs side?
-
-$ git grep slab next-20240906:Next/SHA1snext-20240906:Next/SHA1s:slab      =
-     2e0abb33823cd3885e6d9118fccf2a027db9b490
-$ git diff --stat 2e0abb33823cd3885e6d9118fccf2a027db9b490...slab/slab/for-=
-next=20
-warning: 2e0abb33823cd3885e6d9118fccf2a027db9b490...slab/slab/for-next: mul=
-tiple merge bases, using e02147cb703412fa13dd31908c734d7fb2314f55
- drivers/net/tun.c               |   6 +
- drivers/tty/tty_io.c            |   6 +
- fs/fcntl.c                      | 166 +++++++++++++++++-----
- fs/file_table.c                 |  14 +-
- fs/internal.h                   |   1 +
- fs/locks.c                      |   6 +-
- fs/notify/dnotify/dnotify.c     |   6 +-
- include/linux/fs.h              | 102 ++++++++------
- include/linux/kasan.h           |  65 ++++++++-
- include/linux/rcutiny.h         |   5 +
- include/linux/rcutree.h         |   1 +
- include/linux/slab.h            | 163 +++++++++++++++++++---
- io_uring/io_uring.c             |  14 +-
- kernel/rcu/tree.c               | 109 +++++++++++++--
- lib/slub_kunit.c                |  31 +++++
- mm/Kconfig.debug                |  32 +++++
- mm/kasan/common.c               |  64 +++++----
- mm/kasan/kasan_test.c           |  46 +++++++
- mm/slab.h                       |  11 +-
- mm/slab_common.c                | 260 ++++++++++++----------------------
- mm/slub.c                       | 299 ++++++++++++++++++++++++++++--------=
-----
- net/core/sock.c                 |   2 +-
- net/ipv4/inet_connection_sock.c |   5 +-
- security/selinux/hooks.c        |   2 +-
- security/smack/smack_lsm.c      |   2 +-
- 25 files changed, 1005 insertions(+), 413 deletions(-)
-$ git log --oneline 2e0abb33823cd3885e6d9118fccf2a027db9b490..slab/slab/for=
--next=20
-66dcd51a4503 (slab/slab/for-next) Merge branch 'slab/for-6.12/kmem_cache_ar=
-gs' into slab/for-next
-fa9057f66dc8 Merge branch 'slab/for-6.12/rcu_barriers' into slab/for-next
-8f88d16ae7c4 io_uring: port to struct kmem_cache_args
-0745de59907f slab: make __kmem_cache_create() static inline
-c97f071a3e39 slab: make kmem_cache_create_usercopy() static inline
-6d5110520e00 slab: remove kmem_cache_create_rcu()
-212a84da3190 file: port to struct kmem_cache_args
-272d25721a77 slab: create kmem_cache_create() compatibility layer
-7b8e2fe0c4b3 slab: port KMEM_CACHE_USERCOPY() to struct kmem_cache_args
-1f4fcd6cfa1c slab: port KMEM_CACHE() to struct kmem_cache_args
-dda9e30e63eb slab: remove rcu_freeptr_offset from struct kmem_cache
-45bbb06b3ace slab: pass struct kmem_cache_args to do_kmem_cache_create()
-d2ac7d61ed73 slab: pull kmem_cache_open() into do_kmem_cache_create()
-2b7491007d1f slab: pass struct kmem_cache_args to create_cache()
-be9b2ec72e53 slab: port kmem_cache_create_usercopy() to struct kmem_cache_a=
-rgs
-f6ee8439fdad slab: port kmem_cache_create_rcu() to struct kmem_cache_args
-e8ccc4307bb0 slab: port kmem_cache_create() to struct kmem_cache_args
-95c65689ce1f slab: add struct kmem_cache_args
-2a51e14ca2cc memcg: add charging of already allocated slab objects
-432e6080ec7d slab: s/__kmem_cache_create/do_kmem_cache_create/g
-01cc2238ba4a Merge branch 'vfs.file' of gitolite.kernel.org:pub/scm/linux/k=
-ernel/git/vfs/vfs into slab/for-6.12/kmem_cache_args
-0f389adb4b80 mm: Removed @freeptr_offset to prevent doc warning
-dfdc8d2565e8 Merge patch series "fs,mm: add kmem_cache_create_rcu()"
-ea566e18b4de fs: use kmem_cache_create_rcu()
-d345bd2e9834 mm: add kmem_cache_create_rcu()
-e446f18e98e8 mm: remove unused argument from create_cache()
-c0390d541128 fs: pack struct file
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/M5wfpJVWqRMfE6F0rRSkpry
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbev6EACgkQAVBC80lX
-0GwY2gf/Z3b186Kh7YeDpHkWXCOdMxjqy8DK/arPMdUirOl3gYPSM81WT0kchSYy
-0rPTDBzXmwsXWuayf9dCIoPomW+krgztUuZ5CskdT44VAN2L24ogavYvCq2Ol+5U
-AYNFJDykq+U9DgZxcS7yQ3yNhve3mqOrKr0O7XfiGW4rj+z8mxDby6uj6TA2FJ9U
-xAPqjNcxsE1UoIza0BP+4suwgxXE6Cy51LYJTmC3I7DVn3p6mCxM/EdHevuyZoaZ
-MbVd5lHutBTDm7nhI6mFG12h5aCE9+A3BPCBvQC9Dmo055HW4oAT1qmI9rGctodf
-VuWp9YkVJDjrToBFRH2uS0NWKZj1lA==
-=4RV+
------END PGP SIGNATURE-----
-
---Sig_/M5wfpJVWqRMfE6F0rRSkpry--
+> 
+> Quentin
 
