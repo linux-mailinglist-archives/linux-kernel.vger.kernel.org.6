@@ -1,183 +1,222 @@
-Return-Path: <linux-kernel+bounces-320834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECD2971130
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:08:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6018F971131
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C56F1F24C4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E19A01F24FDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FBB1B151C;
-	Mon,  9 Sep 2024 08:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BF11B1409;
+	Mon,  9 Sep 2024 08:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="gCjWGfSG"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2059.outbound.protection.outlook.com [40.107.255.59])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CKjdnb6p"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E121B1409;
-	Mon,  9 Sep 2024 08:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725869198; cv=fail; b=e2geAV7c6EvDTCaatDjcmXHmcueAFS0wWHibGRdJWnMg3zkWxr+Olj4WI5Ge52wfNH497sF1vEF/+pYCjlnHa0FB6LyOaevblCXtZi6eJL3lde/LoNOPdin7D0TI70qhLVHaCi6sBrMRshV1q8hT/5yNG5JjKQKqdTLFPsMr60Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725869198; c=relaxed/simple;
-	bh=R1mexuM7Lu4mk2WGgSCMQPtkTtXWX+c0JLbP8OcXSG4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=OllatJNnGsg2a83CxelNswa/4UmhWQJp2uWp6iibvItklpjoKPHBP9alEdKiqK5xK0fBDkEeHKgDY/4syDwChkGw4CSOb4qNw2uaMXH7wRIQdSv8ne0c7fPz8K6y9FUZc1pLUzLSvpsQnd2brAbGMYCkMc31Vq3jeqd7/gJm9uk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=gCjWGfSG; arc=fail smtp.client-ip=40.107.255.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J69YG6mQz5lmktMPtEW7nPW7j17bgEOBg+80h9jIA7J0QfR7f5TeyZUK9ajnMHfVPOuEcqwov8B3f7PPv4oYMIMx+6aFn2YU0U4S2SQ49Zfq81lhWqAvQkM7JkBxy0O8saD2eJTaIfAb+Q97CxxXSRq+wfVX4cFghPmbyytR0dMAOh7fqyiDtU5xr+pD3g71zQ/VGDUuPINUOT1rTPTuqlYxQoWAhOuldDbyt+Uzu299n5FI8xfQvzQ49Oj2U9PbCCzOZ8f8aZfUYrcXkioH3M8qES7ku9B9T7+OG7K7Urzs+nc3zi/cLM3Fj6/LTy+NoWXUIu82yj+1k0N/iGAkhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QEl0d5Yp1LoVDmRqwC18nPJtFWOQ0PO2uavKQK+hIfs=;
- b=gGReZg8AgHjCN2C7Z6GCn8yibcYndTEMvwg2BJSxiXbj+VulpojRlHKQXhW64RnmTWWvyxumHMC+s0d8N798ggLERNNSSZqgZf5dszm4PSiAxFL5i2HBrXuNTPRAi04IXkA2AMs2hlCnfcqXjFkklbE7CRH/xO+Sc5BvbQZrwyMZaJ+28oRzMO/jQo5prKN8n2ozjL2DTighW0WjEetAWlJda+Z7n5Kv/W3OOkcBdqeLpgL8iSDkD4afmgCUrkbrm6/HdZV4U0cfskbAr3i5kRjCAte2Nc+e3ZoU1BqW8WpJ/ciGShcv7zNeOU9c6f+N5AqV86WVMhgHtxQg4zMy9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QEl0d5Yp1LoVDmRqwC18nPJtFWOQ0PO2uavKQK+hIfs=;
- b=gCjWGfSGZDafx+7qDo7lNxpHpAriWFiE1FULrzGYRJYsZPiirVliTKkICta+cmtxe/ijQW+7KAWOM7BV6AmM23VGssLnJmvvQq2oizc8yOXkTlxJErIs05E2iT2vgVlcY9RXfY0YgQvj2I+zP1ZAHDFG3lxj9/WG9eLCmne5lavGwUbqtW4DBcM5gutBhB223DOtB3Ox398yPvJWtwhq6dWY0lwW835mwus+ah6yoGLotkTtbajaueqDinmwgcfj/VbjBVx/enkcKWg9pER63EoScztKcSb/fUeu29PH2MadXt0nWSxJR7C4I6QfX0IMP9WwgBS5tQPotQsDPeyJsg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
- by TYZPR06MB6328.apcprd06.prod.outlook.com (2603:1096:400:363::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.22; Mon, 9 Sep
- 2024 08:06:32 +0000
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7918.024; Mon, 9 Sep 2024
- 08:06:32 +0000
-From: Shen Lichuan <shenlichuan@vivo.com>
-To: inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	krzk@kernel.org
-Cc: alim.akhtar@samsung.com,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DDE1AED5C
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725869208; cv=none; b=uS+oGY9X413fclm8mvVun5nfVlmApSXIPYmLlI3wRLsb5h2R5HnNdFV0oOmXk7gVW90Q4rwZejVbRg3sL/1H2PxsOmTzArxd/m8H3XyQ7OEdhnZWa6g6C+dwZKR+X/GGkmsl6MMMv0wsWXVtPriex/7hadagtICmvfT0e3fI05I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725869208; c=relaxed/simple;
+	bh=xxtp+6dJQzlsxsFnhFN2UYx1NSVmYNHZGowHsSErYes=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gFDFAnHNKklYs6FOvXg9cUkuhiikYhDxnj3bniqFTExoXJwvtV84U/KYtkrZGAt8qskdsHm9HiNa8xcBcDCd6pg5gMYIDkJTszV5SxQesTxl6PNqWdptTK4yMhyqWAme9C2M4sRBE+0j5x39JRiNh9Hdjhq8uRyY7v+ZFCwER5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CKjdnb6p; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725869207; x=1757405207;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xxtp+6dJQzlsxsFnhFN2UYx1NSVmYNHZGowHsSErYes=;
+  b=CKjdnb6pZko1WM6SoCtdcfiAyGEa1UvXhIZCCKgsTOlRzuEod9DFOauu
+   htoK+mxoGpYBewofAXU4pPZPiyGcBm8deOSkzSiLhrR9HSUQSRt9KDb/R
+   RaPtgUN1OfgH7Ibz1g0N4VkAH61SC6PUGOvsr+rSrLXsfUbDSlJ4dgG7H
+   MicsFKd9zYMb7515ztQRrGd/qmUcVBhl2HHBl6OiDnZTzguYx+tWZEPe8
+   63kdH+eywdIz7HpFwUDG8mShNEwqBUQh+P2UnjFcV2a6WLDoKC+vuJn5f
+   DlClEYZGFMp59Lmi0BxbCeEvjeCK0W+d/NRBqtEmnDmMZ3dXskV1SCp34
+   A==;
+X-CSE-ConnectionGUID: EKRx1Ek9QTypbtToHw9D2w==
+X-CSE-MsgGUID: mGPYvP3hRw6Mj1X9X5HWNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="24410540"
+X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
+   d="scan'208";a="24410540"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 01:06:46 -0700
+X-CSE-ConnectionGUID: UvTKi2i4RCSbYaTkGBFBLg==
+X-CSE-MsgGUID: R0SPUPGkRnaaE+SHBTxIsw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
+   d="scan'208";a="67327010"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.222.253])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 01:06:42 -0700
+From: Kai Huang <kai.huang@intel.com>
+To: dave.hansen@intel.com,
+	bp@alien8.de,
+	tglx@linutronix.de,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	kirill.shutemov@linux.intel.com
+Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Shen Lichuan <shenlichuan@vivo.com>
-Subject: [PATCH v1] drm/exynos: gsc: Fix typo in comment
-Date: Mon,  9 Sep 2024 16:06:20 +0800
-Message-Id: <20240909080620.35245-1-shenlichuan@vivo.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0046.apcprd02.prod.outlook.com
- (2603:1096:4:196::15) To SEZPR06MB5899.apcprd06.prod.outlook.com
- (2603:1096:101:e3::16)
+	pbonzini@redhat.com,
+	seanjc@google.com,
+	dan.j.williams@intel.com,
+	thomas.lendacky@amd.com,
+	rick.p.edgecombe@intel.com,
+	isaku.yamahata@intel.com,
+	ashish.kalra@amd.com,
+	bhe@redhat.com,
+	nik.borisov@suse.com,
+	sagis@google.com
+Subject: [PATCH v6 0/5] TDX host: kexec() support
+Date: Mon,  9 Sep 2024 20:06:22 +1200
+Message-ID: <cover.1725868065.git.kai.huang@intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|TYZPR06MB6328:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7434ca5-e3e3-4983-0ca7-08dcd0a65119
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|376014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hpuMStoWGVaTDlNqkDyGdge4TiAJ60hFDWXku2kqvU2WTpgvahYuph4u7w4m?=
- =?us-ascii?Q?0jnZVrgD8Q6FYl95++gwSgLpQRXC5lhdYNGOLwv9UTYSVY37wYBLioTbw7Ip?=
- =?us-ascii?Q?aJchLH+nSkDFl3RQzqxmWcnwx6zofL6onjyn898sECArojfJXs3sOIO7T4Yv?=
- =?us-ascii?Q?B9ONLW4hM6r5GMojoUMeOrPuQpSidra2vqYypbwk4t1MtHBfu0rlEBGP50zZ?=
- =?us-ascii?Q?fpeQMawXL7KRld7acdbzIc5O5SDjK1Llw6PbdMWC+5itIlPJKxjossVCj8w+?=
- =?us-ascii?Q?7L8LR596I1q39f0jrS7Eo9JFNYLOgcGJpNWOuDI0YtaRTjXgarXcat1CoL5s?=
- =?us-ascii?Q?buRm7ILOdX3xFT+HmO9xYGVvLOPJ2NjfzTWYG2IyhXer3bFj7KWFKXCHwwee?=
- =?us-ascii?Q?gT7a/PROmbTwXjQRVnfjERv8Q+xvvLBTCdPc2WHZzsFjmaMa954yll6xlYFa?=
- =?us-ascii?Q?JVqmzfpgBMnVupeqI4ENmbo6YW3eIb7kTcemfUARX5zWBHKrBxSqI2edJnpA?=
- =?us-ascii?Q?4m4biH/p6GQaXlbusIMg/SEiQRwQx4eOaBchAhiySV+A5k7A7HkOeriU5h9x?=
- =?us-ascii?Q?2Rn+X6nKXCyBAFferPIK2BicBQF7M60grciyg6Z5xGvoDNYN/IwxHYZjZlyx?=
- =?us-ascii?Q?guduFhArJrbSgdfau6XlYn5AJBQwcCLx/S26fIBrnjJiyc9KSGFZD9CBT936?=
- =?us-ascii?Q?gN+0uzciqsFBvqTxAUiTVHIoNGvt8WnpnhmqWkWOlS8Z6km7iSwmh6zjdi35?=
- =?us-ascii?Q?UhP1JSqC4y/af0Yc8UoZO6R+Lfph6htRln/YWauD9SxuLph90L48or/O/xUG?=
- =?us-ascii?Q?E9gmQOmjVzES2rbEal+pfooxKjuW5uzyjPeJ/Q8dK8uuE/ym7blJdLEelNRR?=
- =?us-ascii?Q?PBgWvuVrnxGTWWQX9DL0ZAnW5oh6DUTTgddqWTb4odKX8dt2Cd0dTZQF90HZ?=
- =?us-ascii?Q?XVv4OGT+TrZTNbrMb1r2mJB8bHYU7FXIpsmNkM6gCiD3MoAsfxQIc3sfF5Qe?=
- =?us-ascii?Q?E6GRTgT9ruy5qO0rx97vIVzACk1+z1NuQejEigTVFaV1rcHm/+qcQUoGnXJt?=
- =?us-ascii?Q?Ad3aZI9MEP1Gb5Dl98YQArsx5smoHj/Kcgn5pa6C4jN2gxmOZR0kXlL2BHVa?=
- =?us-ascii?Q?LR/jw1eLAoBEFEdjSt24XYNzSO6w9TGJ4u7O5cRMsPfWuybL0MQkXXli2OvL?=
- =?us-ascii?Q?NnAJG+ZO9GGoB2T23k/u7iXqkGfbL+nc+7E0ecf2hM2JxQ9Bansucujtr7z0?=
- =?us-ascii?Q?p7m1MaiLW+W+vK03cuooL8sVZ4OMYgXVubr9DpXCteu73EbcmUeOcaTl6Y8b?=
- =?us-ascii?Q?vCVXME58hekRch6e5nQ6/yl+ZV0nudHnb0mMnQtZ+qM3GMy9Rw172MyVo1HG?=
- =?us-ascii?Q?urcLNCYo9CmhvYB0rl0G1aAjC5ZZyEtLhaVhN0FNWxkY0LPdRg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JZ4eW/NxY/14DzqhY8T0Y+OJnsiSob0XOiegdmynq46ohy0vVM2SSI0AEhrm?=
- =?us-ascii?Q?XCmQAFWtIPdkDoSMMeQv4HRx5LQp5xKe0tZpib+NCC3LT3Om9s1FRi1yi+ub?=
- =?us-ascii?Q?k7ZsDdWY3+tsZ+kZ/7y0hjQwbnUDSbCiEOq6rExk4XhSYofBMOK6vpnzaAFl?=
- =?us-ascii?Q?+eyPmYOt1VRRh9eFeaxIo6cHcWgPoTjphd4xB2LrJ4RwhSS57Ls4Xc0OidnN?=
- =?us-ascii?Q?dTN7nCNUGKBOqJ79ItLXol+YZ4XLQfezdaVCdzQByvFfUWWIY7rw4NzUEpTr?=
- =?us-ascii?Q?8lcudQeUJp6QWmSoPgif0/OZIQDaDUc6+bQiWpYCI+ONpy8DxPotPBbDF3Am?=
- =?us-ascii?Q?AJHFxLNiBDU8qVF9Vu0XhBkbhqvp72Fkhmf14YTWkXVE7Jhjuw9olpMVvZYw?=
- =?us-ascii?Q?zrfOHrM9rRlGH1G/EGpcINhH1LJBVWQDdxgkF5SCni8w7Tb7dm38x1Ivfdjh?=
- =?us-ascii?Q?benRfGptXE6TF5+bsPbpdw5SsPJzgJWhTx853vZFklFK4RucpcNzTX2DTl6h?=
- =?us-ascii?Q?nbRtQpX8sWQ6W3vfoJwuIj99d6SFSVarcbH8Js/A/fz1pM63Vfg2RUBhLQph?=
- =?us-ascii?Q?dcya9CuaitJCtdLtzTdC1Ny5h9vxxWsroXz3OlQpm1KQRJVCHqqa1sl3zb4x?=
- =?us-ascii?Q?Qv0qGTzmUpQl6ymA1iV0taiL16LN60Xd0/JXNqZnFv1xT79UmbpKFA6gLxGL?=
- =?us-ascii?Q?t7F5EKzjdKaEoq1VZzp2w28US4rPCWk/lBj2A0fAujAUmQtozYs9iNq+lpM5?=
- =?us-ascii?Q?JDx9zZpgwM1Kdb74ukdaz5lNvrwVhyv9sveKs4GPFy5nk6FbZ5NZiI6HRHul?=
- =?us-ascii?Q?RPjMargV2gXubLjuhyNn/HAMh7rCSA6+s58mxpQuTBeMbJFGc5/e8wu6HpaU?=
- =?us-ascii?Q?f9qWtrFo+rXxAkRMwgsWox2+Hd8Ghs5nhyy2xBuld16eA6ptNO+P/CgRLk53?=
- =?us-ascii?Q?ThPKeQWusKv2WSuQZPnIvLIHpXA11nu4RCDEYfubHhwEjILHI2u0k9rvtWCq?=
- =?us-ascii?Q?jgx/Lz+f2xq39EAHk6oNaGw3K6YX0cwwjBEgg87FCqMjh7knPscyeXc4dEiC?=
- =?us-ascii?Q?UbOWEyzgEbkcxYuwUItxk7NFYwlskC56FN1WEv3Cjic3+fux/UxOxF2xu7Rh?=
- =?us-ascii?Q?IO+Wn1g6C+AkFRXk1FsZGobFtzMRyFD63jkGxnLcoj/14BB7fGNbJPLtftIX?=
- =?us-ascii?Q?z5K2XBvsxvOgNP0s0HQeXQxmYqgBC1kjKWfYXtYjkEa+ILMhp5FOWuceUp7b?=
- =?us-ascii?Q?HRylJP9HdINMn7oNqOYJ0kKtLqtefOGKuFII01zX5MI6Dqo9OfRICUyc1N+8?=
- =?us-ascii?Q?WKGDXgfzfI1KJyOhfnUS1k6R/YQ0K7j/WkolNfhNFJc/aD3N6fsnk3IgT0pb?=
- =?us-ascii?Q?GzBRAv5CWVjLqtYwEhRbri9EUYBSC3tThlzh6LbgPKVEvwzqgHd/AE03+ADw?=
- =?us-ascii?Q?aK2F4WCZvpGkrIfxxkmWdU5JpyqmcdD/rt8RkH/gQ816Ask1q2hZDZtfrHB3?=
- =?us-ascii?Q?BinmQVBC+yVGXb7CXAFCTomMe9AMXWynQuujwaXZwdzGce4QhKfRm3AN0ZAW?=
- =?us-ascii?Q?RYZUnVk6Hn2eej6+3XONg+LymEyecIRI5qPJ83de?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7434ca5-e3e3-4983-0ca7-08dcd0a65119
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 08:06:32.5774
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ny0kVSDai1DHscvRezT1iZA2BDslt4JnovkyFAhJOOh2NdnebRk8NWeDI0PqrfNQf/fbMrhQr3+lkyf4tlocRA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6328
+Content-Transfer-Encoding: 8bit
 
-Replace 'initailization' with 'initialization' in the comment.
+Currently kexec() support and TDX host are muturally exclusive in the
+Kconfig.  This series adds the TDX host kexec support so that they can
+be both enabled in Kconfig.
 
-Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
----
- drivers/gpu/drm/exynos/exynos_drm_gsc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+With this series, the user can kexec (including crash kdump) to the new
+kernel at any time regardless of whether TDX has been enabled in the
+first kernel.  One limitation is if the first kernel has ever enabled
+TDX, for now the second kernel cannot use TDX.  This is the future work
+in my TODO list.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-index 1b111e2c3347..fc5fc65823c6 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-@@ -1286,7 +1286,7 @@ static int gsc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	/* context initailization */
-+	/* context initialization */
- 	ctx->id = pdev->id;
- 
- 	platform_set_drvdata(pdev, ctx);
+Hi maintainers,
+
+This series aims to go through the tip tree, but I also CC'ed Sean/Paolo
+due to when KVM TDX comes to play a KVM patch [*] is needed to complete
+the kexec support for TDX.  Also copy Dan for TDX connect.
+
+Thanks for your time!
+
+=== More information ===
+
+If the kernel has ever enabled TDX, part of system memory remains TDX
+private memory when kexec happens.  E.g., the PAMT (Physical Address
+Metadata Table) pages used by the TDX module to track each TDX memory
+page's state are never freed once the TDX module is initialized.  TDX
+guests also have guest private memory and secure-EPT pages.
+
+Similar to AMD SME, to support kexec the kernel needs to flush dirty
+cachelines for TDX private memory before booting to the second kernel.
+Also, the kernel needs to reset TDX private memory to normal (using
+MOVDIR64B) before booting to the second kernel when the platform has
+"partial write machine check" erratum, otherwise the second kernel may
+see unexpected machine check.
+
+The majority code change in this series handles "resetting TDX private
+memory" (flushing cache part is relatively straightforward).  Due to
+currently the kernel doesn't have a unified way to tell whether a given
+page is TDX private or not, this series chooses to only reset PAMT in
+the core-kernel kexec code, but requires the in-kernel TDX users (e.g.,
+KVM to reset the TDX private pages that they manage (see [*]).
+
+This series also covers crash kexec, but no special handling is needed
+for crash kexec:
+
+1) kdump kernel uses reserved memory from the first kernel, but the
+   reserved memory will never be used as TDX memory.
+2) /proc/vmcore in the kdump kernel will only be used for read, but read
+   itself won't poison TDX private memory thus won't cause unexpected
+   machine check (only "partial write" will).
+
+Note, if the first kernel has ever enabled TDX, after kexec the second
+kernel for now cannot use TDX anymore.  This is because when the second
+kernel tries to initialize TDX module it fails on the first SEAMCALL.
+
+More (non-trivial) work will be needed for the second kernel to use TDX,
+e.g., one solution is to just reload the TDX module from the location
+where BIOS loads the TDX module (/boot/efi/EFI/TDX/).  This series
+doesn't cover this, but leave this as future work.
+
+v5 -> v6:
+
+ - Fixed the issue when rebasing to latest tip/master, conflicting with
+   commit 93c1800b3799 ("x86/kexec: Fix bug with call depth tracking").
+ - Use cpu_feature_enabled() instead of boot_cpu_has() -- Boris.
+ - Improve the coverletter to point out if the first kernel has enabled
+   TDX the second kernel cannot use TDX anymore, and this will be a
+   future work (as asked by Sagi in the v5).
+
+ v5: https://lore.kernel.org/all/47dbc3b5dd6bd7cc3fa94ffe770e22419daf1d01.camel@intel.com/T/
+
+v4 -> v5:
+ - Rebase to tip/master.
+ - Remove the TDX-specific callback due to no need to reset TDX private
+   memory for crash kexec.
+ - Add a new patch to make module status immutable in reboot notifier
+   (split from v1) in order to use module status to tell the presence of
+   TDX private memory.
+ - Minor changelog updates, trivial comments improvements.
+ - Add Tom's Reviewed-by tag.
+
+ v4: https://lore.kernel.org/all/cover.1713439632.git.kai.huang@intel.com/
+
+v3 -> v4:
+ - Updated changelog and comments of patch 1/2 per comments from
+   Kirill and Tom (see specific patch for details).
+
+ v3: https://lore.kernel.org/linux-kernel/cover.1712493366.git.kai.huang@intel.com/
+
+v2 -> v3:
+ - Change to only do WBINVD for bare-metal, as Kirill/Tom pointed out
+   WBINVD in TDX guests and SEV-ES/SEV-SNP guests triggers #VE.
+
+ v2: https://lore.kernel.org/linux-kernel/cover.1710811610.git.kai.huang@intel.com/
+
+v1 -> v2:
+ - Do unconditional WBINVD during kexec() -- Boris
+ - Change to cover crash kexec() -- Rick
+ - Add a new patch (last one) to add a mechanism to reset all TDX private
+   pages due to having to cover crash kexec().
+ - Other code improvements  -- Dave
+ - Rebase to latest tip/master.
+
+ v1: https://lore.kernel.org/linux-kernel/cover.1706698706.git.kai.huang@intel.com/
+
+[*]: https://github.com/intel/tdx/commit/f5ef6cf63e34c5364cd88df52f91f05e72cb49b2
+
+
+
+
+
+Kai Huang (5):
+  x86/kexec: do unconditional WBINVD for bare-metal in stop_this_cpu()
+  x86/kexec: do unconditional WBINVD for bare-metal in relocate_kernel()
+  x86/virt/tdx: Make module initializatiton state immutable in reboot
+    notifier
+  x86/kexec: Reset TDX private memory on platforms with TDX erratum
+  x86/virt/tdx: Remove the !KEXEC_CORE dependency
+
+ arch/x86/Kconfig                     |  1 -
+ arch/x86/include/asm/kexec.h         |  2 +-
+ arch/x86/include/asm/tdx.h           |  2 +
+ arch/x86/kernel/machine_kexec_64.c   | 32 ++++++++----
+ arch/x86/kernel/process.c            | 19 ++++---
+ arch/x86/kernel/relocate_kernel_64.S | 19 +++++--
+ arch/x86/virt/vmx/tdx/tdx.c          | 78 ++++++++++++++++++++++++++++
+ 7 files changed, 127 insertions(+), 26 deletions(-)
+
+
+base-commit: d45aab436cf06544abeeffc607110f559a3af3b4
 -- 
-2.17.1
+2.46.0
 
 
