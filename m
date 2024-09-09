@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-321327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81DB59718CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:56:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1452C9718D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3608B28141F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:56:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32ED11C22DAC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4134E1B78E8;
-	Mon,  9 Sep 2024 11:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897381B6547;
+	Mon,  9 Sep 2024 11:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhHzZQ7n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pgCg3Uqk"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD2E13BAF1;
-	Mon,  9 Sep 2024 11:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604601B5ED8
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 11:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725882983; cv=none; b=dbPZW1xjenvgofKT8nolDMas8Ipyv0JevhQmo/y8ojnnLeRRdAXzCwRmO4qPOsEx3S348rGodbb+aYlz1SfdJVxa9++ZAlQIw7+VrHi1YkFo4rIxdlDEMOKPLfjcnPbEn7lLrMAFut0UrD4/KxitYz5u0xrRGPlvJEJdTio0OCw=
+	t=1725883179; cv=none; b=ZeLwrUTzFaRknw0EH4QMTVfAhodoN9bJG07Egg/3J4oWFeSaAqBBNVhU3vdyjRlpYgLbwstwWu9Ff5tV0QtvTPeabr6ZtBW5tdLdLG7KLbX3xYJODcTh+apzDWIKkIoQeu/P45nOW/59vszfV8ThMFvR85KjouCWPtqxdoAleVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725882983; c=relaxed/simple;
-	bh=/YtRu2MORuw03OqntPGRgVqgK255CA2LiMaiIADwXrk=;
+	s=arc-20240116; t=1725883179; c=relaxed/simple;
+	bh=1vjnXPbLxhRpE+whIOcxqFDXdF4eCnvkiq4k65c/DfM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UA1F3fDpM6mGTSYs8+SJjrlTzro/O3if+mFyFnEorj2uFOZdxkvT+l1Hdbbdrjq9Ztl1ShRFavsWk363T8B0+/DV670wZq2A3X7lJ1BkYa9L5dyUCKaWMd2Ton37vBGlY7f+zDgy2pUYb0Ala2CenUng2cIxV4erMNUnNsNf6io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhHzZQ7n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAF93C4CEC5;
-	Mon,  9 Sep 2024 11:56:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725882983;
-	bh=/YtRu2MORuw03OqntPGRgVqgK255CA2LiMaiIADwXrk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bhHzZQ7n7PMR2BNbizOYSxL+P4Zy5IkWjJpzjaiNOE1d+Id4GRkgYxIX2MGfzgt6g
-	 48a53xifmqGRExB/4QwUBAy86hBjnHe+VL9RW6fLIJjIPGM5doT7wWYsq/aTQn485F
-	 007XJGBf3SsAHsDESrFeo2UjYBX+vXAkocffLiKGQLcZTMiWItkSLVVpPAXUnlwka7
-	 s+ET6l0Ls0+jcDCsd9txQ5ii3Qir13AWZ1183IQXF9Dz1U2ySN+zRNIHd8SV+a8vYJ
-	 sV3rj/7D0++1O4uBmTRetLtwCfBOlWys5ApTCypm/5Wgve6bSNXEUb3QEsWA9Cfs6J
-	 xVefcKeJVyzzQ==
-Message-ID: <85cb5092-fbc9-4fa7-99ca-e9b26c7a61b6@kernel.org>
-Date: Mon, 9 Sep 2024 13:56:11 +0200
+	 In-Reply-To:Content-Type; b=AVK0KMxmB1vgnPkw8QQhqFefTyKxBJYqGQcYvpxqsEPgpW10lN92Rx2R0a4Foq/mToygg97bUHp4AebXwogGtexDo14zrBo2flBv/8v2gdrPmYN8uru06t/TFpM3mPhy98jvRu/3lKjhdl3VD1kC3/iMGAl4cP/r2r9HUIKtmOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pgCg3Uqk; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42c79deb7c4so36479585e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 04:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725883175; x=1726487975; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gY+wQ/hbSOiLIo35yrkuPQh1uhW74qHV1z8U7bAiFOs=;
+        b=pgCg3Uqk73JJnlduGEXptoCTuLRMnCgfiVPXAlM5TG/TRwlHmED1ZyPlS2Z4vztfQn
+         XVy1SmmjES9h9UvzcGzAJHYdEn1jY0YGuHA0e60RV0XvmE5fWwROeEKRJGrlZU9aAouC
+         0u7pw6KUQMjmGwnXew9UhNd95C2Gojl9FhL3giChLIkzVWIBDV8s4EGbD2W9JfF17Bc0
+         dy8Cg6k0KpguO6lGke1um2spQpTn6aBVraGZ9qusWY0UUO2MnmolFAVx+HV6BzO4RlSt
+         Snn/uOH6lIuE8TP6ZfvjdVVMJtDFLcmMzG6A2ao7rEJiAjRCCA5z4EOLSqPPQ16TSidM
+         gk4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725883175; x=1726487975;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gY+wQ/hbSOiLIo35yrkuPQh1uhW74qHV1z8U7bAiFOs=;
+        b=r3HA3e3AHoCGPBhzjk7TgOifbmZMU1QZbYEb0ysAKg6craPx6tz2mtO7qiXpUaMg5c
+         UFuPQquBiiNAbrS+oRsXi4JoZcZu4c4hid6/OvJcBLyLvvRa4Ky8MKnAUoKa30rEZKK6
+         pV59D1NC/Lein8GoFdDCUIfiUd6cwoscFRwQ7LG/P3pBIEAm8wm6t9wbx9S46mgGe8kF
+         r0ZRa6QDJKLyiPBcEM6sEvgP4xu2ApPZREdVeTkp3gAoIpZl02bNp0Wc5SSAKIvGUGkR
+         RFj+pf3IN8pvZ1+8mSIQ5u6LVjecRft/C8YywfZKgQZZ22vq48UfsGfMWGFcAZjjxvzp
+         VdMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVG0VaIW9T2fD2XvP7fhnRN2rC4G5KuOctK9pXSYY70Sriy2XyHNzz47V36JUYSSr1UpMCAnGmt2P0SMsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyvj13O4utiZJOIu8RADnjqcIAlqcgjVEePSyMfrwi6aM1jIps0
+	GPf3rOsVhHJofeP8J2HvUe+DsgLBY5BJA+vh7kTMumobfSW0i77CDUa9Wwvd1C4=
+X-Google-Smtp-Source: AGHT+IF2HO2j27LPcok9hfnl2YRG0k6sXxiEdy/SmiEiehzZGfpm1xS7B5hiJtlNIbEpebdfH+HoGA==
+X-Received: by 2002:a05:600c:54c6:b0:42c:b22e:fbfa with SMTP id 5b1f17b1804b1-42cb22effb5mr38710335e9.21.1725883174571;
+        Mon, 09 Sep 2024 04:59:34 -0700 (PDT)
+Received: from [192.168.0.2] (host-79-54-235-146.retail.telecomitalia.it. [79.54.235.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb818b6sm75399365e9.38.2024.09.09.04.59.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 04:59:33 -0700 (PDT)
+Message-ID: <6cb0983b-8bef-4091-b5c4-5734ed97db52@baylibre.com>
+Date: Mon, 9 Sep 2024 13:58:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,87 +75,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 16/17] ufs: host: add a callback for deriving software
- secrets and use it
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
- Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Asutosh Das <quic_asutoshd@quicinc.com>,
- Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Gaurav Kashyap <quic_gaurkash@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
- <20240906-wrapped-keys-v6-16-d59e61bc0cb4@linaro.org>
+Subject: Re: [PATCH v2 2/9] iio: backend: extend features
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ David Lechner <dlechner@baylibre.com>
+References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+ <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-2-87d669674c00@baylibre.com>
+ <20240908133852.2599297a@jic23-huawei>
 Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240906-wrapped-keys-v6-16-d59e61bc0cb4@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+From: Angelo Dureghello <adureghello@baylibre.com>
+In-Reply-To: <20240908133852.2599297a@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6.09.2024 8:07 PM, Bartosz Golaszewski wrote:
-> From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> 
-> Add a new UFS core callback for deriving software secrets from hardware
-> wrapped keys and implement it in QCom UFS.
-> 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/ufs/host/ufs-qcom.c | 15 +++++++++++++++
->  include/ufs/ufshcd.h        |  1 +
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 366fd62a951f..77fb5e66e4be 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -182,9 +182,23 @@ static int ufs_qcom_ice_program_key(struct ufs_hba *hba,
->  		return qcom_ice_evict_key(host->ice, slot);
->  }
->  
-> +/*
-> + * Derive a software secret from a hardware wrapped key. The key is unwrapped in
-> + * hardware from trustzone and a software key/secret is then derived from it.
-> + */
-> +static int ufs_qcom_ice_derive_sw_secret(struct ufs_hba *hba, const u8 wkey[],
-> +					 unsigned int wkey_size,
-> +					 u8 sw_secret[BLK_CRYPTO_SW_SECRET_SIZE])
-> +{
-> +	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-> +
-> +	return qcom_ice_derive_sw_secret(host->ice, wkey, wkey_size, sw_secret);
-> +}
 
-There's platforms with multiple UFS hosts (e.g. 8280 has one with the
-intention to be used for an onboard flash and one for a UFS card (they're
-like microSD except they're UFS and not MMC).. We need to handle that
-somehow too.
+On 08/09/24 2:38 PM, Jonathan Cameron wrote:
+> On Thu, 05 Sep 2024 17:17:32 +0200
+> Angelo Dureghello <adureghello@baylibre.com> wrote:
+>
+>> From: Angelo Dureghello <adureghello@baylibre.com>
+>>
+>> Extend backend features with new calls needed later on this
+>> patchset from axi version of ad3552r.
+>>
+>> A bus type property has been added to the devicetree to
+>> inform the backend about the type of bus (interface) in use
+>> bu the IP.
+>>
+>> The follwoing calls are added:
+>>
+>> iio_backend_ext_sync_enable
+>> 	enable synchronize channels on external trigger
+>> iio_backend_ext_sync_disable
+>> 	disable synchronize channels on external trigger
+>> iio_backend_ddr_enable
+>> 	enable ddr bus transfer
+>> iio_backend_ddr_disable
+>> 	disable ddr bus transfer
+>> iio_backend_set_bus_mode
+>> 	select the type of bus, so that specific read / write
+>> 	operations are performed accordingly
+>> iio_backend_buffer_enable
+>> 	enable buffer
+>> iio_backend_buffer_disable
+>> 	disable buffer
+>> iio_backend_data_transfer_addr
+>> 	define the target register address where the DAC sample
+>> 	will be written.
+>> iio_backend_bus_reg_read
+>> 	generic bus read, bus-type dependent
+>> iio_backend_bus_read_write
+>> 	generic bus write, bus-type dependent
+> The RAMP_16 definition doesn't seem immediately connected to the rest.
+> + I'm not sure what it is from the name.
 
-My uneducated guess would be that the encryption infra is there for the
-primary host only and that it would be the one assumed by SCM calls.
+It's a 16bit ramp that the backend is able to generate internally,
+can be used for testing.
 
-I thiiiink it should be enough not to add a `qcom,ice` property in the
-DT for the secondary slot, but please somebody else take another look
-here
+I changed the name to
 
-Konrad
+IIO_BACKEND_INTERNAL_RAMP_16BIT
+
+
+>
+>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+>> ---
+>>   drivers/iio/industrialio-backend.c | 157 +++++++++++++++++++++++++++++++++++++
+>>   include/linux/iio/backend.h        |  33 ++++++++
+>>   2 files changed, 190 insertions(+)
+>>
+>> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
+>> index 20b3b5212da7..231bef4b560e 100644
+>> --- a/drivers/iio/industrialio-backend.c
+>> +++ b/drivers/iio/industrialio-backend.c
+>> @@ -718,6 +718,163 @@ static int __devm_iio_backend_get(struct device *dev, struct iio_backend *back)
+>>   	return 0;
+>>   }
+>> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+>> index 37d56914d485..eb8c5bb74bb5 100644
+>> --- a/include/linux/iio/backend.h
+>> +++ b/include/linux/iio/backend.h
+>>   
+>>   enum iio_backend_data_source {
+>>   	IIO_BACKEND_INTERNAL_CONTINUOUS_WAVE,
+>>   	IIO_BACKEND_EXTERNAL,
+>> +	IIO_BACKEND_INTERNAL_RAMP_16,
+> Not obvious what this is so maybe this enum needs docs in general.
+>
+>>   	IIO_BACKEND_DATA_SOURCE_MAX
+>>   };
+
+-- 
+  ,,,      Angelo Dureghello
+:: :.     BayLibre -runtime team- Developer
+:`___:
+  `____:
+
 
