@@ -1,200 +1,159 @@
-Return-Path: <linux-kernel+bounces-321424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC7D971A48
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:03:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3182971A51
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B377F1F23AD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B6371C22594
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFC61B86F7;
-	Mon,  9 Sep 2024 13:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41551B86F7;
+	Mon,  9 Sep 2024 13:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZyUn2uu1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="U3VJrk+m"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C441B81DD
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E145C1B81DD;
+	Mon,  9 Sep 2024 13:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725886981; cv=none; b=Xq3r3fMV6OJ3rH2qZSltw3uduf+RYxwn2YbPV162Nu/DCUHSs2tEflxL8NSnNDyamFkzzS2cM/IRUNq0ziAcJFuYUbS3SC8lTO4Z7g7gj0cogC24XUTdj0Uwb3iK4Koa/y9wlaVuOqlxNZI23yThBjVGk10AuPbHZ3K2yrnvGJo=
+	t=1725887103; cv=none; b=ODqXkfhpM52eJ3pJLT+c+C5OyWdb8lpnGOBMGGKbP0brJCq4VWWkNXJZnmJM9WWeY5FmIg2I+WvhA4X6IKRBKvLClGRLEXxOqrM0uNb9pZPnt2nrXBhPdnxx/AcVHHNauvSb2sjlAuO4GhvJyiEbkI/UKxdDo7yItWejRO0ATbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725886981; c=relaxed/simple;
-	bh=JBqdlsCIKoMBFy7z9S2z1fl6qAminneCJYbvI2ku05A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LcO2ENLcufoZX7zAm/y+4p0tmcYo7UdOfw5DW85NygenYv77HoYAtszPJmzRWFbTwmcChn7EZSs3BoaPcKrfeyXmKKbVT602YEUD4LA+P8Z+rXn2kJujObU66vTEWhmwQPYBSc2wYjRSI5EYl4ooPTbQP65mm7C7WAxsQr/MS9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZyUn2uu1; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1725887103; c=relaxed/simple;
+	bh=Y4vbui6vUEaFQJTah1XC7EIdYR+XbRCpzt0LslpcyA8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WhiMAO7KPIqc5F3vNxmTh/fjyUITibm23h3iWaXJMEt7zvtRwxFK+wnow9NVIyDzxuB74aA4HqBYXFW4y5Z3btn+HmjB960SvAAmZc6Bxv3BXg7qpeYbeGKcmvSfw7UVXzO9NEvbuEwfL5mSZtpRzbt3sjRs4xFHKENhrBJATvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=U3VJrk+m; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725886980; x=1757422980;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=JBqdlsCIKoMBFy7z9S2z1fl6qAminneCJYbvI2ku05A=;
-  b=ZyUn2uu17LPTKSRR7Wc2HadG/L1yCDE6yHn/Y9+el1hGRiwgAJ3FXPk5
-   hVD3NLiRlnc9n6x9yrWUXojeDCy0o9TCyzThNXSVqxLO4fKD7u3XNF1qY
-   vLP1mkDSoa7pNyQWcbEQuUSOxaXrm7AkdaSLmtVWNRxSr+frg6G5y5u2e
-   MzWw34dXxlwJkjNeFBiMkpFxaXq3zeM/QgH3T66VlMxyfH7YMicvHiZNl
-   +hiLf1bQQJghwNOEzJIFR4bZXZN9bryJoqjZtg62BHqFhnBITb0yUtpno
-   8Fx2AJ1R+HRvm4Rf39iAuPdh4R192Tdh8FlfnU44SItOahLGC9s1qN40t
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725887101; x=1757423101;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Y4vbui6vUEaFQJTah1XC7EIdYR+XbRCpzt0LslpcyA8=;
+  b=U3VJrk+mif3osptOYoJY+5m+5SLBY0M+AQyZ2jyrv1OC56DMjowuGBoN
+   0z6B/Iny/DALL8fFMF/fC3Av+V4frEAR6SvDtE+/+wDzlP1pPqVPp3zCu
+   kHRuG1p+3TcQZpTDKWH6JpcPQzutx+fhZ82PLrrEjjQGEM2TYXEshpm37
+   WmbSbHY0sUdmeHhg7b56oCLjCfNpk3+CzLJTij+5hhcshGRNy7Fhc3aaR
+   CCla6Jn5KI1aDzuMCjP5F54Ic6L/pQoiZ54fGAxl+fenlGHWTEbV1CP6b
+   uE7a9UcO5nZuHFABk1mtfdrCAqeAvmGFkCyRRr2Q7onn3uIeOdo7S/KYl
    g==;
-X-CSE-ConnectionGUID: ejWaezVhQ/aO5ArW2irAxw==
-X-CSE-MsgGUID: qolNbPaZQ8GOSrxMVN5IGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="35928612"
+X-CSE-ConnectionGUID: lpkNmxu6TAiBZiRkO477XQ==
+X-CSE-MsgGUID: /6PLgnzTSmCqRK6aCJ8PLQ==
 X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="35928612"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 06:02:59 -0700
-X-CSE-ConnectionGUID: jEkILrxRSrq42o6TfXDGlQ==
-X-CSE-MsgGUID: yfF2DsvaTA27nVEU/6COzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="89951354"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 06:02:58 -0700
-Received: from [10.212.55.50] (kliang2-mobl1.ccr.corp.intel.com [10.212.55.50])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 18D2D20CFEDA;
-	Mon,  9 Sep 2024 06:02:56 -0700 (PDT)
-Message-ID: <b9893f4f-c91e-4c83-b785-ad78dc2f67f5@linux.intel.com>
-Date: Mon, 9 Sep 2024 09:02:56 -0400
+   d="asc'?scan'208";a="262480614"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 06:05:00 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 9 Sep 2024 06:04:39 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Mon, 9 Sep 2024 06:04:38 -0700
+Date: Mon, 9 Sep 2024 14:04:05 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+CC: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Jarkko Nikula
+	<jarkko.nikula@linux.intel.com>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Mika Westerberg
+	<mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>,
+	<linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 7/7] i2c: designware: Group all DesignWare drivers
+ under a single option
+Message-ID: <20240909-sandpit-prideful-1d903230ac16@wendy>
+References: <20240903142506.3444628-1-heikki.krogerus@linux.intel.com>
+ <20240903142506.3444628-8-heikki.krogerus@linux.intel.com>
+ <o4bks5pxn5olnvobln3z2axi6jx57vz5pq2kazyzxemptbp6fb@p7qsppr7ks55>
+ <20240909-jugular-cucumber-b7d9bc614f74@wendy>
+ <ushhe5isjiafpiovwfj3pnsnt7th6y2a6utblhb2gsspj5rj64@rahzahx447aj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] perf/x86/rapl: Move the pmu allocation out of CPU
- hotplug
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, peterz@infradead.org,
- mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, irogers@google.com,
- linux-kernel@vger.kernel.org
-References: <20240802151643.1691631-1-kan.liang@linux.intel.com>
- <20240802151643.1691631-7-kan.liang@linux.intel.com>
- <88fa2064-c054-4833-872c-0cf5ff1e3609@amd.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <88fa2064-c054-4833-872c-0cf5ff1e3609@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="z+wvNHNLkpGrdKKQ"
+Content-Disposition: inline
+In-Reply-To: <ushhe5isjiafpiovwfj3pnsnt7th6y2a6utblhb2gsspj5rj64@rahzahx447aj>
 
-Hi Dhananjay,
+--z+wvNHNLkpGrdKKQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-09-09 5:26 a.m., Dhananjay Ugwekar wrote:
-> Hello Kan,
-> 
-> On 8/2/2024 8:46 PM, kan.liang@linux.intel.com wrote:
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> The rapl pmu just needs to be allocated once. It doesn't matter to be
->> allocated at each CPU hotplug, or the global init_rapl_pmus().
->>
->> Move the pmu allocation to the init_rapl_pmus(). So the generic hotplug
->> supports can be applied.
->>
->> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
->> Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
->> ---
->>  arch/x86/events/rapl.c | 43 +++++++++++++++++++++++++++++-------------
->>  1 file changed, 30 insertions(+), 13 deletions(-)
->>
->> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
->> index b985ca79cf97..f8b6d504d03f 100644
->> --- a/arch/x86/events/rapl.c
->> +++ b/arch/x86/events/rapl.c
->> @@ -568,19 +568,8 @@ static int rapl_cpu_online(unsigned int cpu)
->>  	struct rapl_pmu *pmu = cpu_to_rapl_pmu(cpu);
->>  	int target;
->>  
->> -	if (!pmu) {
->> -		pmu = kzalloc_node(sizeof(*pmu), GFP_KERNEL, cpu_to_node(cpu));
->> -		if (!pmu)
->> -			return -ENOMEM;
->> -
->> -		raw_spin_lock_init(&pmu->lock);
->> -		INIT_LIST_HEAD(&pmu->active_list);
->> -		pmu->pmu = &rapl_pmus->pmu;
->> -		pmu->timer_interval = ms_to_ktime(rapl_timer_ms);
->> -		rapl_hrtimer_init(pmu);
->> -
->> -		rapl_pmus->pmus[topology_logical_die_id(cpu)] = pmu;
->> -	}
->> +	if (!pmu)
->> +		return -ENOMEM;
->>  
->>  	/*
->>  	 * Check if there is an online cpu in the package which collects rapl
->> @@ -673,6 +662,32 @@ static const struct attribute_group *rapl_attr_update[] = {
->>  	NULL,
->>  };
->>  
->> +static void __init init_rapl_pmu(void)
->> +{
->> +	struct rapl_pmu *pmu;
->> +	int cpu;
->> +
->> +	cpus_read_lock();
->> +
->> +	for_each_cpu(cpu, cpu_online_mask) {
->> +		pmu = cpu_to_rapl_pmu(cpu);
->> +		if (pmu)
->> +			continue;
->> +		pmu = kzalloc_node(sizeof(*pmu), GFP_KERNEL, cpu_to_node(cpu));
->> +		if (!pmu)
->> +			continue;
->> +		raw_spin_lock_init(&pmu->lock);
->> +		INIT_LIST_HEAD(&pmu->active_list);
->> +		pmu->pmu = &rapl_pmus->pmu;
->> +		pmu->timer_interval = ms_to_ktime(rapl_timer_ms);
->> +		rapl_hrtimer_init(pmu);
->> +
->> +		rapl_pmus->pmus[topology_logical_die_id(cpu)] = pmu;
->> +	}
->> +
->> +	cpus_read_unlock();
->> +}
->> +
->>  static int __init init_rapl_pmus(void)
->>  {
->>  	int nr_rapl_pmu = topology_max_packages() * topology_max_dies_per_package();
->> @@ -681,6 +696,8 @@ static int __init init_rapl_pmus(void)
->>  	if (!rapl_pmus)
->>  		return -ENOMEM;
->>  
->> +	init_rapl_pmu();
->> +
->>  	rapl_pmus->nr_rapl_pmu		= nr_rapl_pmu;
-> 
-> I feel there is one potential bug here, first we are calling init_rapl_pmu() --> cpu_to_rapl_pmu(cpu) --> "return rapl_pmu_idx < rapl_pmus->nr_rapl_pmu ? rapl_pmus->pmus[rapl_pmu_idx] : NULL;"
-> Then we are updating "rapl_pmus->nr_rapl_pmu = nr_rapl_pmu;". This makes the return check in cpu_to_rapl_pmu() ineffective as the rapl_pmus->nr_rapl_pmu value would be falsely zero. 
-> 
+On Mon, Sep 09, 2024 at 02:21:32PM +0200, Andi Shyti wrote:
+> Hi Conor,
+>=20
+> On Mon, Sep 09, 2024 at 12:22:22PM GMT, Conor Dooley wrote:
+> > On Thu, Sep 05, 2024 at 10:46:02PM +0200, Andi Shyti wrote:
+> > > Hi Heikki,
+> > >=20
+> > > On Tue, Sep 03, 2024 at 05:25:06PM GMT, Heikki Krogerus wrote:
+> > > > There are quite a few drivers and options for the DesignWare
+> > > > I2C adapter in the Kconfig. Grouping all of them under the
+> > > > I2C_DESIGNWARE_CORE. That makes the menuconfig a bit more
+> > > > easier to understand.
+> > > >=20
+> > > > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> > >=20
+> > > Thanks for your patch, I can take this only after the other
+> > > patches have been taken in.
+> >=20
+> > I assume then that you're expecting the prereqs to go through the
+> > various arch trees? Is this not trivial enough that you could chuck it
+> > on a dedicated branch in your tree and if, for some reason, there's a
+> > non-trivial conflict the affected could pull it in?
+>=20
+> Thanks for your advice: considering that cross-domain patches are
+> difficult to handle, I appreciate any suggestion on how to deal
+> with them :-)
 
-Ah, right. A pmu will be allocated for each CPU rather than each socket.
-A user wouldn't see a difference, but it wastes memory and may cause
-memory leak.
+It's also helpful if the submitter of a series proposes what path
+patches should take upstream. I find that people all look at something
+like this and see "someone else's problem" written all over it, and
+would be perfectly happy to accept a proposal from a submitter that it
+all goes via I2C.
 
-I think we should move the init_rapl_pmu(); to the end of the function.
+> Are you suggesting to set these up in a different branch and send
+> a pull request out of that branch?
 
-The patch set has been merged into Peter's perf/core branch. Do you want
-to post a fix patch to address the issue?
+What I meant was put them in a dedicated branch (so probably on top of
+-rc1 or similar) and merge that branch into your for-next branch. If
+someone then was to run into a non-trivial conflict you could tag the
+dedicated branch and they could pull it into their tree.
 
-Thanks,
-Kan
+> I don't want here to step into other people branches if they
+> don't ack or express any thought.
 
-> Please let me know if I'm missing something.
-> 
-> Thanks,
-> Dhananjay
-> 
->>  	rapl_pmus->pmu.attr_groups	= rapl_attr_groups;
->>  	rapl_pmus->pmu.attr_update	= rapl_attr_update;
-> 
+Sure, I wouldn't either, but it far from abnormal for driver subsystem
+maintainer to take these sort of rename/dependency addition patches and
+the normal path for 3 of the 5 architectures affected here is via Arnd
+and I figure there's a low probability of the maintainers of those
+architectures having their feels hurt.
+
+Cheers,
+Conor.
+
+--z+wvNHNLkpGrdKKQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZt7yRQAKCRB4tDGHoIJi
+0l7mAP4j6RD0sa22II4b6qc4fqRAbkYt7W4zcByX+NqqAB25XgEA66sQQ0X5mH+y
+ubXc193YpVlipeTttTISbLKeipx7SQs=
+=rN36
+-----END PGP SIGNATURE-----
+
+--z+wvNHNLkpGrdKKQ--
 
