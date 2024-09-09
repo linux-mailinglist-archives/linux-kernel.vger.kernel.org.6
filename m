@@ -1,113 +1,122 @@
-Return-Path: <linux-kernel+bounces-321650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8037E971D9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:10:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA84B971DA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA112845B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:10:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 949A31F2279E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B62364DC;
-	Mon,  9 Sep 2024 15:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED26F1CD2F;
+	Mon,  9 Sep 2024 15:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GginV7mD"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pi0osoIL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75951C683
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 15:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488CC1CD0C;
+	Mon,  9 Sep 2024 15:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725894582; cv=none; b=mTvTplSR3WgWtuiiWTRG/DfbPfghzI/jbAa2gQizYta00EPG4MKyt8FbCODaMPjoXURiLlRxJBGSeLLoKAauQWotS454mLgRPvk7xgxK5z3KG1P++91dfd94joMlBlwerJaV2M+7WzeCk+KTnC4UK8H2kE1Hc46HE0LL0I8dGOM=
+	t=1725894636; cv=none; b=Z7aWSZ8vRy0WmfeXv2L9mQdDXNV8AnGkFGHK1FXtc12kKsnpGKaLguc5ij9IO6uihybx2d33MwMbFrsXkXtW+LeevRYMEMupHINmbFrK05gWIYB/kFOcLd3aejhR/lhav4wCTBxLWGnskWs4QQJsy6/2ZYaqtqmOnMXnP4F5Uzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725894582; c=relaxed/simple;
-	bh=mVq9S72lk5b5xTO/FfOh3PUK79hfKisoPxEm6dY2/Zk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ADz9z/Q2jYehqHjEJs4Tqv34DFAS91TXRUO6SJeEKKrBKGBpXMcy+xCfKICe8mJO+c95YH+v4TYIvpHfLtVdMx0kSArQfqEZhq0a6ky0kSqzhfL6hnQ+PecgMcIGcLqZzYj+tFSVxqdARwURUW/vyjfG6/atI613FXQGykS0mLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GginV7mD; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71798661a52so2663116b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 08:09:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725894580; x=1726499380; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jXq1QAWAAsQrYNlJmOFWR9qiaSyJPA0zyCX7aY9ZQ1w=;
-        b=GginV7mDlum/PUuoJf13Wlfvv01cS3gr+aqN0e263izKQuL8U9nn0vG9gQIwykX1Jb
-         uRB0y84NuBUfcQOmZTjgvsvNZHRcsHRn24j4aGIiD90RPj1oJDTxIAGkdRgIcyrY6LTT
-         +Z2jChAARIITpoHdsctmhWyePoup4v7Jx+UXRsBfB8BxdBvNVv9ec2S/1mQk3PWj8/pg
-         5a3qMDvZIi85yKz4LVioXGlg6FXtM3R9DpKHY4s7wpkiKAYH90RzZThnNCGUjNjzwvcx
-         6g+o0T7YVWQzKh7YYBPzFShE4xzSaJJm3bOckmgnGpQy7W/hWSL0zlCYESmdY4as9LUN
-         fFeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725894580; x=1726499380;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jXq1QAWAAsQrYNlJmOFWR9qiaSyJPA0zyCX7aY9ZQ1w=;
-        b=qUiBVFd5fOrF/4MkJecOLp1nUrilBP5frqvHkCeUdXDJl5k/a85wl/2sDBn0pJt/rf
-         uafbBWevk8g4yveSrSAiukQG18Tx+wihOH3n5/RkVhj71nrnwPUi8RqKykrdoVcOctyw
-         BZ63Ln2CXxr6LUi1RT/9BjLaUUvhDiirHBwlIS/bQCuJOaLFsyw2RJFylx7CFYvbInpu
-         7nHwlEySu70jhnRQaTd8i17hNSUq331uh/ZKiECuHySh3n4b8qQgTXM4L5jepYc9hHaE
-         NqlUqjnu9wnHqtjWUPSQxaOBEOrOKApgm73D0TIsKwk7xWb+2SGkz3O0Bmj/2LyVbVCd
-         g8Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCX6pp4PFPpdeebbe7BQ6zs8wuWXKRJqpHzsAMqZtF/6pw3owujTyVNOLiY5hoD7oD7shlYOM3sd97dDK+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUnAspvDbIFBWazaadwwtDm9HEi/1kNoyBRjT44sA6S6+ECcNW
-	965hapVClc+aXyR2RGOXncpFKwLUeVNZbla10IiPkbdooGPHy4PkU+pYhm59mUI=
-X-Google-Smtp-Source: AGHT+IEvd2jWK6AbqOEXtcOcRMgffXGRbsFWC1ymbvQmWwpnadQlLSPtVyBn+FRcmaDqcgaSeIBSdA==
-X-Received: by 2002:a05:6a00:3213:b0:717:83bc:6df3 with SMTP id d2e1a72fcca58-71783bc6f5cmr23496474b3a.11.1725894580245;
-        Mon, 09 Sep 2024 08:09:40 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e58c1d6esm3632805b3a.75.2024.09.09.08.09.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 08:09:39 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Felix Moessbauer <felix.moessbauer@siemens.com>
-Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org, 
- io-uring@vger.kernel.org, cgroups@vger.kernel.org, dqminh@cloudflare.com, 
- longman@redhat.com, adriaan.schmidt@siemens.com, 
- florian.bezdeka@siemens.com, stable@vger.kernel.org
-In-Reply-To: <20240909150036.55921-1-felix.moessbauer@siemens.com>
-References: <20240909150036.55921-1-felix.moessbauer@siemens.com>
-Subject: Re: [PATCH 1/1] io_uring/sqpoll: do not allow pinning outside of
- cpuset
-Message-Id: <172589457900.297669.16381515839828801822.b4-ty@kernel.dk>
-Date: Mon, 09 Sep 2024 09:09:39 -0600
+	s=arc-20240116; t=1725894636; c=relaxed/simple;
+	bh=+iq8ZuR0xNfhMb6f8AZQy5xUVme4rLtghqLGlbhb6LE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DArp4kEm9JuoLtz+uozYLLas6bGdIE997to2u5ATfFean5Pg4AtkH4Wdol9QO1thg89CMvhHralOgHN4Y/Nm+k4MpxklA1U2qZfAZiHoGVxkLh8Ayl4RlFZ23SraZVYbEqJgy8PFNYyjKA/gg8PSxzQbncQ+Cz8zeGv772/dCN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pi0osoIL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0608C4CEC7;
+	Mon,  9 Sep 2024 15:10:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725894635;
+	bh=+iq8ZuR0xNfhMb6f8AZQy5xUVme4rLtghqLGlbhb6LE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pi0osoILqDfQAZmIUTrsSAIV/aKtDdNvbWcXzcx7nl3NC0WX+PYB075uPOwwRS1hR
+	 VYWy/gqeeF3XYKLdYaHZTCVuwJSWVsxbLidm8thp+q6OqltvvYt0NjsjIjrN52IlKO
+	 GJtcyIQiWegtjExazp3FS3oP6u8QKDJ+S9nTOPw1e61kj1tKEodXVHnPfvk5bOJjXV
+	 DDGTSGQPCbGn620sFJGLJPQeQ790MpHBwE1vgiyuLGlYzZBjamAlG4hdJrOz5oSr1Z
+	 82TaHkrqlFCeajdf94jPTmc9rNbsh6TF7wZDcZSG/wYwH1J1/okQlijxvMl3ou0llk
+	 G9qKJtWhURwYg==
+Date: Mon, 9 Sep 2024 16:10:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Sanyog Kale <sanyog.r.kale@intel.com>,
+	linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com,
+	kernel@quicinc.com, quic_pkumpatl@quicinc.com
+Subject: Re: [PATCH v1 0/4] Add static channel mapping between soundwire
+ master and slave
+Message-ID: <fb137d59-c8ef-4e02-89f6-9abf8a3f12e5@sirena.org.uk>
+References: <20240909105547.2691015-1-quic_mohs@quicinc.com>
+ <Zt8LC4IY7DGq8Qom@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0VQUlaAE/r6Fm+ww"
+Content-Disposition: inline
+In-Reply-To: <Zt8LC4IY7DGq8Qom@opensource.cirrus.com>
+X-Cookie: Anything is possible, unless it's not.
 
 
-On Mon, 09 Sep 2024 17:00:36 +0200, Felix Moessbauer wrote:
-> The submit queue polling threads are userland threads that just never
-> exit to the userland. When creating the thread with IORING_SETUP_SQ_AFF,
-> the affinity of the poller thread is set to the cpu specified in
-> sq_thread_cpu. However, this CPU can be outside of the cpuset defined
-> by the cgroup cpuset controller. This violates the rules defined by the
-> cpuset controller and is a potential issue for realtime applications.
-> 
-> [...]
+--0VQUlaAE/r6Fm+ww
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+On Mon, Sep 09, 2024 at 03:49:47PM +0100, Charles Keepax wrote:
+> On Mon, Sep 09, 2024 at 04:25:43PM +0530, Mohammad Rafi Shaik wrote:
 
-[1/1] io_uring/sqpoll: do not allow pinning outside of cpuset
-      commit: f011c9cf04c06f16b24f583d313d3c012e589e50
+> > Add static channel map support between soundwire master and slave.
+> > This patch series will resolve channel mask mismatch between master and=
+ slave.
 
-Best regards,
--- 
-Jens Axboe
+=2E..
 
+> > For AMIC2 usecase, The Slave need to configure TX2 Port with channel ma=
+sk 1 and
+> > for Master required PORT1 with channel mask 2,
+> >=20
+> > In existing design master and slave configured with same channel mask, =
+it will fail
+> > AMIC2 usecase.
 
+> Apologies but I am not really following what exactly the issue is
+> here? How do these ports map to DAI links? It looks like you are
+> attempting to have AMIC2 produced by one DAI link, but consumed
+> by another?
 
+Yes, and it's also not clear to me why this is device specific.
+
+--0VQUlaAE/r6Fm+ww
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbfD+AACgkQJNaLcl1U
+h9Au7wf/U9b5eAsInNOjUnuTMx81qHdkNyxcwOyRGo9BnLIEeY6WEzH5BIgSkVVj
+kHf250hHlRGglWrR8zCVesc1yH0X66KZ9+rTH+7cW4SH/V9CiWHy1Z69VZie2N3Z
+wi8TPB6W+Zq9m2BrIu+8BUs+UBuwMuVfAkZnrkZhclRJceOkm/wL2dHXSJ+xfFdJ
+cFFYNNsri7IJ4M/+DtefOnrEcvvYEy9mWAO2tEvIYEYT+6pk1wy5Hbeqv9s9BF62
+Mj1DoIUb3iRlKGk/717jqIEXSHoR7Hx9UDphrXZAumPxb0uw5rWYI2l8dmqwKpxL
+wc9eUX2wlWjnRnKGP+2G8j/lMSa/4g==
+=eard
+-----END PGP SIGNATURE-----
+
+--0VQUlaAE/r6Fm+ww--
 
