@@ -1,215 +1,231 @@
-Return-Path: <linux-kernel+bounces-320703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B179F970EBF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:04:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F90970EC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 345AF1F229E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:04:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6A61F2290A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE281AD9F6;
-	Mon,  9 Sep 2024 07:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A771AD9F6;
+	Mon,  9 Sep 2024 07:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B627BVA2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b="Ec7jXltr"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2117.outbound.protection.outlook.com [40.107.105.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E34D1AD9E2
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 07:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725865465; cv=none; b=o196tThPmQLVGDdiKlV+/1DfAhqyJ8yuX29t4PmZeFzUv/8WZUEni4WK58gL3PxAZMmiAZ3JCqItBA1KN1z4uf5kTez3Iyzj8Et3/+q6ycDevRy2H493OtnK905a4un7HTVFhQmNTW4Pk0tcuGX1LsO1RerPV71ivqW/XVdP6Ko=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725865465; c=relaxed/simple;
-	bh=I+ekrEE7N6hPPpVkdnOaxyndxVf84BdMAGWnGPhGJI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ekCYqKb+gyTp3r4KxgD9udwaODEJkw5qS+n5GDvg4trPcd79tBG7iBXciTSeZOFm7ZIJ8MvoGOVEfOImTTOLfuj+yzfb+zUBfsg1uYs35ktzyfinY8v3v/YE7r06zmcTt3p0NHkjtz3PgJs+1f8agiZSVEeN3s3cny1NVDVev/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B627BVA2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725865463;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=W9UntbWfofaIB4YAjR4BroyGAcd6kcCGEM9YX8LZ1XM=;
-	b=B627BVA24mT1+c2Pb0m4Mjr1AjNdb27yiKWx4dPENehHY7ziHnWZ1XI+UlXMTH7zHgafMA
-	UfeGBbVqqXkQPSXU0n+n0KTbihV+JY2S+1OkTty58rPwBRpDHuAhOrXj50bfuyokGXNorx
-	s/KpVkh1oVOC/FjL+r8ge0tU9wNEAQs=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-29-hg_OK5OuP4iphcuggEDOfA-1; Mon, 09 Sep 2024 03:04:21 -0400
-X-MC-Unique: hg_OK5OuP4iphcuggEDOfA-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3789c3541e9so233979f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 00:04:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725865460; x=1726470260;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=W9UntbWfofaIB4YAjR4BroyGAcd6kcCGEM9YX8LZ1XM=;
-        b=fgoKe4OhLurq7i5MzpIXGc9TxFuLBMkRsEBFiDKF4liq89NClHKfCCzakiMaRPq1WI
-         ZB9LWy9Jmi88DQuvnwlQyPCdZAppB2CRdAirt9somrIo/I0i2uLRrHkYOotMCCufdtS0
-         8HS3nZRsG20wkgpQEj8eyuYHH6yknsUT2nVAE+Lc4ZbjCbFDPN/sazVUQkeohvV+LoCq
-         olqmVZc8wvhGQ8+MzwaiADhcfCYEZKImhc9nVxbfkfXaVf2n7EL/mDH+bSlBXYVMoTkh
-         Wz0TpFbg0jzwcg9EtIDnTzNYH6mf8gYoQ8DYm57ZSK99yfYV8ePF9LSBfNstxGbOHPpF
-         zqTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaZ7yexZ8wFVNELng7nIIJm5rz75DkVF5IWxDg2o7/YXXfTMYcgVzMZvQ5+yegX1ikDbrStD5wWHpi+TM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU/6dXQVJlVfNfp2oJY2uqcgk3Hbjh0N1YUp0/HINb/PXEw0bK
-	Et5iCkSG8tF3ElKH50qsxandlhx2F0pv1vlgN7O/3G+orYtIB3ma2RXSCexEk23o8mKGRhCBWAZ
-	VNrh5hDw+C+7WHn/KrjzErUHvrTP5HLUiON8+Tq7MWRg0sBJBeB3BMffAZgF3fA==
-X-Received: by 2002:adf:e90d:0:b0:374:c1a9:b97b with SMTP id ffacd0b85a97d-378895c53fbmr4944117f8f.8.1725865460440;
-        Mon, 09 Sep 2024 00:04:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKsksmYNMM04k9QXoV9gMeEmguq+XHVPA38dE0q3HAPM255o4T33Naj9QX5pZ2FR2FFOfi7g==
-X-Received: by 2002:adf:e90d:0:b0:374:c1a9:b97b with SMTP id ffacd0b85a97d-378895c53fbmr4944058f8f.8.1725865459050;
-        Mon, 09 Sep 2024 00:04:19 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c729:d800:d3b6:a549:7878:a6ee? (p200300cbc729d800d3b6a5497878a6ee.dip0.t-ipconnect.de. [2003:cb:c729:d800:d3b6:a549:7878:a6ee])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956653d1sm5162998f8f.33.2024.09.09.00.04.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 00:04:18 -0700 (PDT)
-Message-ID: <28bbd51b-cc47-4468-9523-45dab25d20dd@redhat.com>
-Date: Mon, 9 Sep 2024 09:04:17 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0071AD9E2
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 07:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.117
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725865594; cv=fail; b=Am6mMrLK4RbZyxUSx7Ku9NUkK8o+MgZXti3t8tvqr3SOwiKfmjoF7WxoiIQDpXDLcgHNbo4jj6qheN2p3/lGxG8YzQpNmpleB8RJwEfTbcolhWCn5m6zw72+Ggj8o39ooNQckCmfUlLg+bZnE1QHBy65kA1NGPnU8yk0cliJ9sg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725865594; c=relaxed/simple;
+	bh=6dvQjq12rtgPW4Pli9cngqpA4TmbZ4ZASAjRLY8k+A0=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=lx/MWTNmFtVmdV9tFwqi474IvX++O2DBigTQ2d/bo+486o7xRahwlm9AaE/BNcRt0uVJIdyfS3EgKiNLTewZ11eTKcXces0xN8VnjZvQHV3/o3pDbY/RTV6zi99Wg8JP9H23+bCkPsK4Mo/pOBDdMI//3UTyEsSWkWG28/ki1xU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de; spf=pass smtp.mailfrom=kontron.de; dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b=Ec7jXltr; arc=fail smtp.client-ip=40.107.105.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kontron.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ly2cFKVoplIThIkG+yFaOq8NGRjqbqMbKtId/Tqjtye/Aj9G+vAXB0gLGCDL9qqT60gLFvqbENuslU+IklA4Foz2P1IY7jUIjRHQr7KEYU2nTXXYz8Z2kOZVf1lblTUhp78mAx7b1GVxQIrhErvz4Fiqoyx2v48jO3+wK/TeI/V10JeAupQBK9WB3LbQIX8TRvIkIL0kXbzv4nmKYP3FWZ6jAUIjF5sLwknmBie1KI4ua9jVStxLFd/oEtkJIp/Vhn4E4XhoPiEGn/sBQnjvrLYnMlaK/Tx+bTxbnnp1USg2ZWsyxC0swS8zkHf2EnMOZ+rFvMg6/aH7zXYF5hhAng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hzpSQPACIgB3vOQG3IcQ8oJtXdzmm0c1QFktU1A9JSU=;
+ b=ljwVFwa5GEshY+1BphiGVzVsepQN1cT6Ag089CFH5P9OqULwvjzM36ITOajpsRpASY5jT7rgZt8SqLlAmqZUnOlS2HjR1Ptqxpqi6hND4ZGcSogjQRVQjHVoGf78DiVAL0HpX9+xL0i7CvxCdzB08pQri/poS162r4MzGuL1mB8FdjUOKHZUs5UOnEGYGRe/Db88POML2zuxtoNxmnXI6KZs89w5gMsRlFaVFxr/4Sj6vbXiDkOie3OAdqXFiXp3+N4rzG9N8iFyTsBbCXO1/Le4LjQdIF15lrE88Ukgz80xU/8x17j7rLZ9gFp5hBapTz7HmzpLYWwzHVAUNJeB4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
+ dkim=pass header.d=kontron.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
+ s=selector2-mysnt-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hzpSQPACIgB3vOQG3IcQ8oJtXdzmm0c1QFktU1A9JSU=;
+ b=Ec7jXltrmgIUebQDNe4u7I/s6m95BfYRPdWQFogK192T/VLGk5r7WhZC8zmnva7bbcTIIVT/+FpPGiwkiskkVdcM7Byh0WfHLzWbxE9BlAmNB4nBwpoGse8fEhheaLCsoPlC+ExEWfYPiIoV3E8LcIqltz5ylzZCvzLsrPQlXhQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kontron.de;
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
+ by AM7PR10MB3858.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:17d::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Mon, 9 Sep
+ 2024 07:06:27 +0000
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19%4]) with mapi id 15.20.7939.022; Mon, 9 Sep 2024
+ 07:06:26 +0000
+Message-ID: <8cfd3052-c85a-4235-b9b8-6d2929e9e455@kontron.de>
+Date: Mon, 9 Sep 2024 09:06:24 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: i.MX8MP IMX-LCDIF Underrun Question(s)
+To: Peng Fan <peng.fan@nxp.com>, Adam Ford <aford173@gmail.com>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>, Marek Vasut <marex@denx.de>,
+ Stefan Agner <stefan@agner.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ arm-soc <linux-arm-kernel@lists.infradead.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Dominique MARTINET <dominique.martinet@atmark-techno.com>
+References: <CAHCN7xLL4hrTK1OqsqUa78cdp9ZcG0sC+cO5QKC3x_Y9-QVzSA@mail.gmail.com>
+ <01d578b9-e42e-4767-a33f-b0892a602e23@kontron.de>
+ <PAXPR04MB84592D4026EE5EBFBCC946A688992@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Content-Language: en-US, de-DE
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
+In-Reply-To: <PAXPR04MB84592D4026EE5EBFBCC946A688992@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0253.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:af::8) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:263::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -v3 2/3] resource: Make alloc_free_mem_region() works for
- iomem_resource
-To: Huang Ying <ying.huang@intel.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Alistair Popple <apopple@nvidia.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>
-References: <20240906030713.204292-1-ying.huang@intel.com>
- <20240906030713.204292-3-ying.huang@intel.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240906030713.204292-3-ying.huang@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|AM7PR10MB3858:EE_
+X-MS-Office365-Filtering-Correlation-Id: 803cb710-5dba-4635-bcff-08dcd09debe5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|366016|1800799024|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d0svb2pjNFIwL0gyb0MzL3E1dlpObVNlYjBBUW5wcFpYb3hNVDJwNldXWUMw?=
+ =?utf-8?B?WmhLanpWZVhaUVlVanZpVEdJSWxhUGhUVVNZVzlCbkZXajJFUHNZdW01cnh0?=
+ =?utf-8?B?eVRTTXpLU2FYVGdMYmVna25yR3NaSHpCZ3M1NS9QUEN5ZVBVQnk1YTljNmN6?=
+ =?utf-8?B?V1ExYldxT25KeDh2K3JjT3NzRnZ2MHg3T205WUZUVVQ3ZkVWK2tDb3MrV0R2?=
+ =?utf-8?B?YVlCY1lVeERIcVdYRWlnOURSWk1mRUpTcXZRRklqWG5LRE9JaHl0TDVhdWda?=
+ =?utf-8?B?VDh2aEVaMDI5RGNlMlR0aS9ESGFPUW5XTGJMWXVzb2Vxbmtia0lCZkdCeXB1?=
+ =?utf-8?B?RVlpMUw4QnBEMTZKNjYwVUVMR0o0N0NSdjMxN0pQRjBQRmZPNTZXejVKMDB3?=
+ =?utf-8?B?MlBHTU5lY0J4ZWh2RDFPUUhtSVlNSmdBcTlJTG5lbzVpNE8yY1krOEFMbytE?=
+ =?utf-8?B?QjMxMHU0QWZPc09hanNrTkZmR1Y2aS9PQUdnak5wUThoTVYyVjRjTzdIQ1Vm?=
+ =?utf-8?B?dmVQa1J3dkFsc1BDQ2ozUUp1UzhxNEorWmNVUXl2TEtMVlVHTXl5aWp1N3lZ?=
+ =?utf-8?B?eS9ZN1JIZHBuODNFcWIyQ1ZmWk9nNHZJMVh0TVBrbTJTZmNmTUZTVWJjcFNY?=
+ =?utf-8?B?U002RmNoeHdKUkVZblhqZGpWZ3RlN3l1QlovY3ExWkFIRk9ZVStxcUM4U2I1?=
+ =?utf-8?B?L0Q1Zjgvc2N5WlZqY3VZdVNoVG5NbTd5eUNHRWx0czM3Z2w0eC9ucDNsaWtY?=
+ =?utf-8?B?bzUwcXF1eGZQQVBhTUw4K0xoY093aWhWWnc2S0k4ZUUxT0FkNGZXMjVWdXpB?=
+ =?utf-8?B?aVJuN2ZSOE9HQkN5TnZHRkxNUm1PdVozamdFTi81eHVJWndCVlBoQXRsWm9J?=
+ =?utf-8?B?ZGhDUW1CNnBwTmpmTEl3N2t4cDRKYUpGb0RCWlRnNXYwZVphczhoaFA1Ylo1?=
+ =?utf-8?B?eU8xeFVycGgvMFM4c3hCU2ZBK0JXZjZmWGdhYVRkZ003QnlaQzdXbFB0OFNK?=
+ =?utf-8?B?cGxqejFZQmt1OWx6Mkd1ZmNZcWp5UVRSbkJENzNSc2tubzJKVzBvUHlDcGpC?=
+ =?utf-8?B?bFk3YzFURlpLcnJuQ0tKUG9KcGExODc5QytpUEIwRnNCMUxlZVEreXc5bk4w?=
+ =?utf-8?B?YXJaVDR3V3g5aHZjLzBXVHhwMVEzUTV2QWxlVHNXVFp1VWk5LzRMdUpVU3Z4?=
+ =?utf-8?B?c1pLbDZOYzNmKzBwaTJVUTc4ekNNUEdXV0VneUdsaTZYOUdtaWNCcy9QNlE0?=
+ =?utf-8?B?QVp4OUdVQ2JRMEhUeGRmandlQW53cC9GMDY5WlJXYkNmYUp2Ylk4WVlGY1JH?=
+ =?utf-8?B?NEVhbUVQd01TYWx2Y0tXbURLckVoSVhYUWNVOWVMRUdPZWtORHlsTldMRFpv?=
+ =?utf-8?B?ZnB0ZFdyM0l2R1UzaEEzZ2NZRE5JVEVtVEZpVFU4RThlYzEyNjEyTWovVW9M?=
+ =?utf-8?B?TU5ldVZYOTlkZWZmaHpJa09FZXZZNUpPd3VqRWpSZTBpT3RDM3UzZVBudzlK?=
+ =?utf-8?B?T09XeWxqQS9ubHRJaVR2MVl1WFcva2QwdG9BSFU0b0laR1BCbkRXZjBlK3hN?=
+ =?utf-8?B?cllYbjBaQUdxaTNhbFBBTy92YkZaeTZOOWJEa2gvWElYeGxvNU1ZRnFEOUZo?=
+ =?utf-8?B?RHY2dDBTNHJxL2U4SUM0RElWL25oczhWSG1PWmgyb1h1MkoreW5GVUhNNXZU?=
+ =?utf-8?B?eGlvSjFnQVZNWit2Y1FNNzViNUM3VThCWGFyTFFaYlNnSEMxc29wOTJxWG9E?=
+ =?utf-8?B?ZVd4OGppdXl1bHYyb2ZRdUNIckVVMlZ1T2Z3a0JHaG1OdVVoWCt4WXFkTUFM?=
+ =?utf-8?B?a01hdEg4N092ajRlSnRnVkU1TGpXSUJRS3JEbEJSdndQSGNiN214eWlZeEt2?=
+ =?utf-8?Q?lDRGCI11dyinX?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WktpbHFmVzY4a0hqMWpBZEFMb3NQMzgyeC8zc0hKcjlDQWhIMDFPT0dYWUlp?=
+ =?utf-8?B?eFNKazMrQURyTjQvOHVjclU4L2F5aGFsOFhLZFE2L3FMb0NLK1pGNEtUc1RB?=
+ =?utf-8?B?KzVNa2tQTlluYkl4eFNldTJocmNBaDczVGFnM3RZSUtEaXdxai8zQVhqTXdp?=
+ =?utf-8?B?TDVYdHZ3azdPVm5IRGxJVWk4Y3paUFF0bXB2MGViUDdwYUxrWjEvYUhWdXJr?=
+ =?utf-8?B?TFBFTGVqQUZFYVlPdHZjM3R2ekU3OFptckVndXVhSTBnbU9lVjhUN2lXdXpL?=
+ =?utf-8?B?UG5pYjRvazBKNnNkUTNIVEMwS0htR2kwQ3BscTFGcFl3UXY2ZHJybUJKYXJH?=
+ =?utf-8?B?VmdYWWM4c0ZTSTk2ZzhiSmVVbVBEaDZNdFl4d01tSzUxRXJmY01wRURlc0No?=
+ =?utf-8?B?UlNWS0hJR3JGdEFZYnlEREtHa1hScUhyc21MdlZmMDhFSGZFOU9BNjYrd1Fx?=
+ =?utf-8?B?VklteFk0ZVJjYUlJcnROdnROajZjTUg0c2pGaWFxT2trWkRaVUcwTExicG9z?=
+ =?utf-8?B?MGRET3VZUWpORGd0NGlSa3YyaVlhRDRaUFJ5Zm4zYndhUFhWTUJnTnRRTHVx?=
+ =?utf-8?B?cHAwaE1Oc2pvdmNrRDJFdXluRVlyaUJIKzFzQ1N0SHR2SHlGWnJMQjJJTlFR?=
+ =?utf-8?B?d1NVMHlNNWtQV0V3SEpXdmM5SmNQTXBCUlljSUlOaGxVcDlDbmRFc3lIdnFk?=
+ =?utf-8?B?a0pHaDd1cmNzR2hOS2FqRVRkNWU5c2hmU1BsMm5ydlQ4Y0VpRUhleGloUDJJ?=
+ =?utf-8?B?SDJLeFZVdkRiYXlMWWxrYmkyRmFwZU9jOEhaYXdsN2dEbWNvQW93K3lxOXNj?=
+ =?utf-8?B?cTV3VkFEUlRsRStqRVhXQWRJZEt2K09iYXIxOGtpL3d1R1J6bU1lcDNpcFhp?=
+ =?utf-8?B?V0x0MS9QZXB1TnRkZWxnV1lnQUlaU1Q2MTUrN0xQeVhZbytsVmY3QWtnVlNx?=
+ =?utf-8?B?UXVtc2lPbEQyaG9qVE05N0dCTEkwSHRkU3M5c1BlVkNiTXd0dS9YRllUVzBk?=
+ =?utf-8?B?RmM2SjFZN3ZOd3VLQkVyNlEyRVB0SW1PLzI0SWl4Q1ROQ3hidEs3M1E4TlY3?=
+ =?utf-8?B?bFE4dm1jTGJDR1FiZUcvbHpGNXlDWjFqdE9WR1hsNHpkdlFkbzk2cjBGZ093?=
+ =?utf-8?B?dHhacnArNkZSeEI2R04yYlJtbWozQWlMdG5oRmVtVWVBUDhwOXc4K21CVWpt?=
+ =?utf-8?B?b1QzOGFpekFWbHdXeDlOcUNCVE9GQjJxYXdYVXlnQW1yRFNubERYQi9LTTBQ?=
+ =?utf-8?B?ck1hWmpnY1h5NGVjZnB0WEdFc2VlSzIyNUs3V2ozVUc3ZEYwUUk2bFB0Nzl5?=
+ =?utf-8?B?SE5aTnZ1RXBITHZPZWsrWndLRlZ4UDgzUGFja3RPUVZkeVBmU0psaGdrcy9H?=
+ =?utf-8?B?ajFrODRwbFNsWjRjc0Z6K3pwenE5bzZVbVFLWklpVW1OWEFXbjI2Y1BBNGU3?=
+ =?utf-8?B?UjRRMmJkaVNWNDhlV3FWY2U3ODBCc2loc1M5V29FR2RpOTlUNEd2aCtlbldr?=
+ =?utf-8?B?YnpJc3pKVUFQRmhwTmI4Zkw2dnJoVzV1UThzb0xNZE9nTnYrN2ZTTzdsRytp?=
+ =?utf-8?B?YWlWaUc4cThRaU5MTVluR0xMUUpCbW5ZZlFEbUZzazlNb1IxUHNGaVRWMG5W?=
+ =?utf-8?B?TGMrSHRja05jTjZMeEIxSzNjdHU3d3hxTDErU0lWeDg5Wk9KbGp4ZzdrMXgx?=
+ =?utf-8?B?V1g5VUdLSTFXQjVaeWhUWUt4aDVoeWN2a0c5RkVrNGlKSEZYLzE2ZURMSGlM?=
+ =?utf-8?B?L2x4SkR6UTY1eG05bklHREdPNEEveHNnQzhNUWpJdmdLTk9JNEJacXZFYm9C?=
+ =?utf-8?B?bGk2VXBWMnphZ3N2dGJhOTVMREZRMTJxVjNmY2NST1hPM2dhV2xKdS8zUjV2?=
+ =?utf-8?B?MktjZEt6UG11dUJKUnFxTkR2djFGdTBJd0I4TzlvbWF6NjJoUm1UNXJEb2JO?=
+ =?utf-8?B?YWl0WHo2M1hBK2xESy9uZTdJaEdsUEN3bFl0NVRkVEowZnVVTjl3TW1La2FY?=
+ =?utf-8?B?eWpuUUhFb0NYU0dpUHFnYnZKT2x0bDU2ZFl3aWo2WExKR0I2aUh3Vnptdzk4?=
+ =?utf-8?B?TVZNcmIzT3hnWEdqNUppcWQzUVpSY0JUY1lBbWtCKy9CL3MvdW9UQWl3bVlD?=
+ =?utf-8?B?OGFuSUhlZjNsMjF4SGkzckVBNnVQUWZqN3dBZ3N4SllqRjJGZXVlalkrcHhI?=
+ =?utf-8?B?aEE9PQ==?=
+X-OriginatorOrg: kontron.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 803cb710-5dba-4635-bcff-08dcd09debe5
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 07:06:26.7832
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mQuLB5gcLtx8+uBk7cOpr/hTfmcXndK4V9eQnxz087xJGEh3K1pQeAa5LtyDblSxB1lhJYv9GPsX7MEgTO9AEgei4gsTsZgeYvYyBUjZFno=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3858
 
-On 06.09.24 05:07, Huang Ying wrote:
-> During developing a kunit test case for region_intersects(), some fake
-> resources need to be inserted into iomem_resource.  To do that, a
-> resource hole needs to be found first in iomem_resource.
+On 09.09.24 5:00 AM, Peng Fan wrote:
+>> Subject: Re: i.MX8MP IMX-LCDIF Underrun Question(s)
+>>
+>> On 06.09.24 3:46 AM, Adam Ford wrote:
+>>> I have been testing various settings on the HDMI out of the i.MX8MP.
+>>>
+>>> I noticed that sometimes my monitor would not sync, but sometimes
+>> it
+>>> would on the same resolution/refresh rate.  Frieder noted the LCDIF
+>>> was sometimes underflowing, so read up on it a little bit.
+>>>
+>>> In the comments of the LCDIF driver, it's noted:
+>>>     Set FIFO Panic watermarks, low 1/3, high 2/3 .
+>>>
+>>> However, in the downstream kernels, NXP changes the threshold to
+>> 1/2
+>>> and 3/4 on the LCDIF that drives the HDMI, while leaving the other
+>>> LCDIF interfaces at the default.
+>>>
+>>> When I increased the threshold to 1/2 and 3/4, it appeared that
+>>> several resolutions that my monitor was struggling to sync started
+>>> working, and it appeared to sync faster.  I don't have an HDMI
+>>> analyzer, so I cannot verify much beyond knowing if my monitor can
+>> or
+>>> cannot sync.
+>>
+>> For me this change doesn't seem to cause any improved behavior. My
+>> monitor still fails to sync every few times I run "modetest -s" .
+>>
+>> Also we have a downstream kernel based on 6.1 with backported
+>> HDMI support and I don't see the issues there. But I need to make
+>> some further tests to make any reliable statements.
+>>
 > 
-> However, alloc_free_mem_region() cannot work for iomem_resource now.
-> Because the start address to check cannot be 0 to detect address
-> wrapping 0 in gfr_continue(), while iomem_resource.start == 0.  To
-> make alloc_free_mem_region() works for iomem_resource, gfr_start() is
-> changed to avoid to return 0 even if base->start == 0.  We don't need
-> to check 0 as start address.
+> Downstream kernel has some NOC settings that not supported
+> in upstream kernel, that maybe the issue.
 > 
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Alison Schofield <alison.schofield@intel.com>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Baoquan He <bhe@redhat.com>
-> ---
->   kernel/resource.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/resource.c b/kernel/resource.c
-> index 235dc77f8add..035ef16c1a66 100644
-> --- a/kernel/resource.c
-> +++ b/kernel/resource.c
-> @@ -1873,7 +1873,7 @@ static resource_size_t gfr_start(struct resource *base, resource_size_t size,
->   		return end - size + 1;
->   	}
->   
-> -	return ALIGN(base->start, align);
+> If you check 6.6 kernel, you could see some noc related settings
+> in imx8mp-blk-ctl.c imx8m-blk-ctl.c and gpcv2.c. You may give a
+> try with those noc settings applied and see whether that would
+> improve.
 
-You should add a comment here. But I do find what you are doing here 
-quite confusing.
-
-Above you write: "We don't need to check 0 as start address." -- why? To 
-make the code extra confusing? :)
-
-/* Never return address 0, because XXX. */
-if (!base->start)
-	retrn align;
-return ALIGN(base->start, align);
-
-
-And i still haven't understood XXX. For whom exactly is address 0 a problem?
-
-> +	return ALIGN(max(base->start, align), align);
->   }
->   
->   static bool gfr_continue(struct resource *base, resource_size_t addr,
-
--- 
-Cheers,
-
-David / dhildenb
-
+With "downstream kernel" I didn't mean linux-imx. I meant our Kontron
+linux-ktn, which is based on mainline. I didn't test linux-imx to see if
+the issue occurs there, but that might be one task for further debugging.
 
