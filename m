@@ -1,133 +1,103 @@
-Return-Path: <linux-kernel+bounces-322140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F669724A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:43:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED9D9724A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A7191C22649
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:43:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C15D61C21F75
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2050518C927;
-	Mon,  9 Sep 2024 21:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A82718C915;
+	Mon,  9 Sep 2024 21:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KDJ7I0g6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GA2n0SOM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B60718C90E;
-	Mon,  9 Sep 2024 21:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DB418030;
+	Mon,  9 Sep 2024 21:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725918173; cv=none; b=GO6HBofG49olgeY+4WlHyCO3QbLMXdi1dXOZKUZdDx3qzt/KYSoPlJtzJ7CcgNykpZrMp+bgu7qqhFjak5G5axF8zEt0brZOQrZOvSzGGvyTNjKXc3uwBskzSqTkeYsnu+m4PyqKoxwjdDv0cowjRbRTT/xRLQxRRnrExsxvjEE=
+	t=1725918234; cv=none; b=IA4KMZv4SKpW/b2g0uCNCsIseHD0t/lMh2rBKnIJIwaVHJfQycxV/ioA3bj4An42CO8K/fgeY6SasXyGavKlvnigy1+5/9fUcGzi3fLu8t2QCJclMSuSQIQBbVWt55oZEyTcyeaBeqz1uOGw1PX3r3DHPvFsaNFqA5Mz8XPpbw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725918173; c=relaxed/simple;
-	bh=uZ+OSYg5bTrQDtQdjQGUwjTCZ7XxikIsQL3P7hK97xk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rb010mQnuM+DH/wftXYmUr5KOVqq42CxBBItVbVPnuUjnhretDTDouuV5Bk83oe3UUooDbOHwOYhe+J/71pQOs4EitaJrDJkrBouL4hdrADHr+PJcru6W9/YJ11tFNtiZN2N75pdocm16DcOC7V9wnj0AfhgJSsl4XuMrHn8wPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KDJ7I0g6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B8B9C4CEC6;
-	Mon,  9 Sep 2024 21:42:53 +0000 (UTC)
+	s=arc-20240116; t=1725918234; c=relaxed/simple;
+	bh=79UI1RgdHCAz7Z4Iqu6nE2LQ79fwcuO4rH0u18JtymA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ly0khxSMUyQ/X3/kAcOZ6GmQzALo3QepCySmqIaBQ+h+msmBhZSOhouqLtT3gRWH3jttD+B8Pss3Ast36sfcAphiNZx2V6Az38NJWUa80GK91Kghxd9mmaGbRsJ7XQxIJBLdh9mO0SQZXS2qiDjh2ed6gDvp0betGPNBKHPSpPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GA2n0SOM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66784C4CEC6;
+	Mon,  9 Sep 2024 21:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725918173;
-	bh=uZ+OSYg5bTrQDtQdjQGUwjTCZ7XxikIsQL3P7hK97xk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KDJ7I0g6o3Mw6MywIb/5vdLUvXOHchg/PTdvk2CxOF1Rq5lFAWomDZoINWtgwGZzY
-	 2MnJbcceBFbueyAFbS6lAeIag1VaLoT6YS8qqMU0Ke7xDexTbMvGbM21iRtPrWYcDN
-	 1N/7rTLRU4DsEeP2ri+Lq9cT0YFrb3/Her68z0rAihRrX3IWAgzU/Tb+C7FEauLrwC
-	 WB5WoeqYmX9Oq84vIbb/kmHhfW2+rnrULP5/fns8bTmL3RxNXefJwiAhrzFB37jWzR
-	 UDlcWMqDwAReSj6UG3L+Xw6xN2DU/noCOpws6y9ibzM/94JnpDk3AxjpyfmBikBdnt
-	 yG6PSEqGBc1Nw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 2/2] perf annotate-data: Add pr_debug_scope()
-Date: Mon,  9 Sep 2024 14:42:51 -0700
-Message-ID: <20240909214251.3033827-2-namhyung@kernel.org>
-X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
-In-Reply-To: <20240909214251.3033827-1-namhyung@kernel.org>
-References: <20240909214251.3033827-1-namhyung@kernel.org>
+	s=k20201202; t=1725918234;
+	bh=79UI1RgdHCAz7Z4Iqu6nE2LQ79fwcuO4rH0u18JtymA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GA2n0SOMH4q2t2GS53UIww9gKKloFkmIgxzq8pzRrLQ/0TNXGVhPtHwh1fi3bTeym
+	 z/6E/Q+VSdIVA4p7ssb/yy5Ol7NrLZi+kjC96z0CCK4/MWdB/837EJ6fpBx4Somj4S
+	 D5T4OXrt4n2c1K+ZAoUVSiQcGllte0JycmWqUBzA4ZflXrf7ZkQHPvUGmXczLd+LJk
+	 oeXb48lYoYmc4s9WHVxVLnvNCu/lFo8VqfAvqeeivd8kTe0nTlBm6rgHawkLMClOC1
+	 Nh57G6zl3Z6tmIVeRVZ9QIqopMYRUSTu+PwDubzNsxt+9cuObjMHkTRwJwePEAYX6d
+	 mRRgZT1DMzSSQ==
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39d47a9ffd5so269045ab.2;
+        Mon, 09 Sep 2024 14:43:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVpTnf/qv2+jl8w+PJFdq+ZohBhR8YND7wPk4ujbMyckrmgLMkErekIyvAFI+yjTbIps6lno87P5X0EphI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPeyRbI9/TkF6bIjkCdqHkanptyJ4Znn9tOInwxQFsGBl/SigF
+	FgVoVaUQYGkj4/T5AhRqhdDdSheQJK0LspAiH3p/+casWgHcy2W864SspHx1NqefzDacp5oOZjg
+	NUWK/E56fvW4jI4eaj1q6Y6euFhs=
+X-Google-Smtp-Source: AGHT+IHVQEP3XJMT3yC7dw9uKpb9nBVj4z60x9CU4JnXOwl2vUMuXJh4xOQ+oRQI5d3wSqa2dW6wrYC4KA8m2xc09Vs=
+X-Received: by 2002:a05:6e02:b43:b0:39a:eb57:dc7 with SMTP id
+ e9e14a558f8ab-3a04f0734a1mr134054315ab.1.1725918233783; Mon, 09 Sep 2024
+ 14:43:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1725334260.git.jpoimboe@kernel.org> <CAPhsuW6V-Scxv0yqyxmGW7e5XHmkSsHuSCdQ2qfKVbHpqu92xg@mail.gmail.com>
+ <20240907064656.bkefak6jqpwxffze@treble> <CAPhsuW4hNABZRWiUrWzA6kbiiU1+LpnsSCaor=Wi8hrCzHwONQ@mail.gmail.com>
+ <20240907201445.pzdgxcmqwusipwzh@treble> <CAPhsuW4TyQSSnAR70cE8FChkkqX-3jFAP=GKS7cuaLSNxz00MA@mail.gmail.com>
+ <20240909211902.3tvzxp6wryqvbbhr@treble>
+In-Reply-To: <20240909211902.3tvzxp6wryqvbbhr@treble>
+From: Song Liu <song@kernel.org>
+Date: Mon, 9 Sep 2024 14:43:42 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7srL16mtEUKTaPPOvhrt1XAHMZGbtYbta1qeyWEmDpiA@mail.gmail.com>
+Message-ID: <CAPhsuW7srL16mtEUKTaPPOvhrt1XAHMZGbtYbta1qeyWEmDpiA@mail.gmail.com>
+Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
+	Joe Lawrence <joe.lawrence@redhat.com>, Jiri Kosina <jikos@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Marcos Paulo de Souza <mpdesouza@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pr_debug_scope() is to print more information about the scope DIE
-during the instruction tracking so that it can help finding relevant
-debug info and the source code like inlined functions more easily.
+On Mon, Sep 9, 2024 at 2:19=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.org>=
+ wrote:
+>
+> On Sat, Sep 07, 2024 at 10:04:25PM -0700, Song Liu wrote:
+> > I think gcc doesn't complain, but clang does:
+> >
+> > $ cat ttt.c
+> > static inline void ret(void)
+> > {
+> >   return;
+> > }
+> >
+> > int main(void)
+> > {
+> >   return 0;
+> > }
+>
+> Ah...  That's probably why the kernel adds "__maybe_unused" to its
+> inline macro (which the tools don't have).
+>
+> Does this fix?
 
-  $ perf --debug type-profile annotate --data-type
-  ...
-  -----------------------------------------------------------
-  find data type for 0(reg0, reg12) at set_task_cpu+0xdd
-  CU for kernel/sched/core.c (die:0x1268dae)
-  frame base: cfa=1 fbreg=7
-  scope: [3/3] (die:12b6d28) [inlined] set_task_rq       <<<--- (here)
-  bb: [9f - dd]
-  var [9f] reg3 type='struct task_struct*' size=0x8 (die:0x126aff0)
-  var [9f] reg6 type='unsigned int' size=0x4 (die:0x1268e0d)
+Yes! It fixes this problem.
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/annotate-data.c | 25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
-index a0ea4e07e57031ff..976abedca09ef547 100644
---- a/tools/perf/util/annotate-data.c
-+++ b/tools/perf/util/annotate-data.c
-@@ -131,6 +131,26 @@ static void pr_debug_location(Dwarf_Die *die, u64 pc, int reg)
- 	}
- }
- 
-+static void pr_debug_scope(Dwarf_Die *scope_die)
-+{
-+	int tag;
-+
-+	if (!debug_type_profile && verbose < 3)
-+		return;
-+
-+	pr_info("(die:%lx) ", (long)dwarf_dieoffset(scope_die));
-+
-+	tag = dwarf_tag(scope_die);
-+	if (tag == DW_TAG_subprogram)
-+		pr_info("[function] %s\n", dwarf_diename(scope_die));
-+	else if (tag == DW_TAG_inlined_subroutine)
-+		pr_info("[inlined] %s\n", dwarf_diename(scope_die));
-+	else if (tag == DW_TAG_lexical_block)
-+		pr_info("[block]\n");
-+	else
-+		pr_info("[unknown] tag=%x\n", tag);
-+}
-+
- bool has_reg_type(struct type_state *state, int reg)
- {
- 	return (unsigned)reg < ARRAY_SIZE(state->regs);
-@@ -1305,8 +1325,9 @@ static enum type_match_result find_data_type_block(struct data_loc_info *dloc,
- 		if (dwarf_ranges(&scopes[i], 0, &base, &start, &end) < 0)
- 			break;
- 
--		pr_debug_dtp("scope: [%d/%d] (die:%lx)\n",
--			     i + 1, nr_scopes, (long)dwarf_dieoffset(&scopes[i]));
-+		pr_debug_dtp("scope: [%d/%d] ", i + 1, nr_scopes);
-+		pr_debug_scope(&scopes[i]);
-+
- 		src_ip = map__objdump_2rip(dloc->ms->map, start);
- 
- again:
--- 
-2.46.0.598.g6f2099f65c-goog
-
+Thanks,
+Song
 
