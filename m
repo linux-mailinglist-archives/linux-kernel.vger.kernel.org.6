@@ -1,1407 +1,324 @@
-Return-Path: <linux-kernel+bounces-321352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54FC497193E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:22:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B95971943
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A72A281E7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:22:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47126282830
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563F11B78FD;
-	Mon,  9 Sep 2024 12:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145EA1B78FF;
+	Mon,  9 Sep 2024 12:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCQrRfmA"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="YmxPd4f4"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2062.outbound.protection.outlook.com [40.107.22.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7319E1B5EC7;
-	Mon,  9 Sep 2024 12:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725884558; cv=none; b=qM3fkIWfjXapKPbgL8WGL0eYs1kHCVUgm1cxUaKVrBuCVXMaCLpStWDK8NtTdJwEEscWv4fRidV1R7QJndCkGHRHvbpgji9CXJMQ+jKDG9lw66rpAhKazT4D3j59wBvTcl/635G/woqQ725xThMORV6v/xDV/Sz9cLAxwxj8OAg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725884558; c=relaxed/simple;
-	bh=M+GJLxy+54U4LjwaImpuavhgzq0mdDOdY/iXkuMFP2Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JbSb3hA6VUm61ueL2kKB6AvhpziTYEqWpuRjBkPsMSd5/zxTjwLtm5E5Ty+qrfAvU5Fq1C3pi9VF2pdp/h0mIMOko9LjM/JIh8+oUpIurkYOUHZcklZozVAo2fIOA23jo3QxdsjTTKZDrBHm3OnuzyFXrr1D7oza46MCwLmBE/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCQrRfmA; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d88ec20283so218163a91.0;
-        Mon, 09 Sep 2024 05:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725884555; x=1726489355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rbIz4K+NwE/tL7Lsd2ooqmDQ0hLXq3yPJjXn62R1sM4=;
-        b=XCQrRfmANWarxm2JnWwXvco3qmVKytSApCmPK6VIGcA0HS5aKJ5XdVjf1tSwGT8u91
-         pS8bBnsCuIbkfeOOxfqfcNODNP821sCP6cx47BGhx7tMRj7/3on351cHHIAf30njlh8Z
-         SKSZrzmVz566MoZAHfEtqeDNB+IZpzsw6wnbeeMboIu6sB481snm2/WvlIUZtac1e+Su
-         w4tElufHxaSPi7uYeiIGx0EO2QEGAaXcmQPeEMVEILDuaMh9wjDdawKYzgVNJFSFcdzy
-         gQAV9uhycDpcukMgc8WJSpujL1Nqq3tPOrR1I27UDjsWvBGb5cx95qcXoARBtEPf/lmQ
-         AgeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725884555; x=1726489355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rbIz4K+NwE/tL7Lsd2ooqmDQ0hLXq3yPJjXn62R1sM4=;
-        b=Qjd5sW1gDCQ/aDxIl8hyXCHw3PPsLhCO6aOo/jMYk5eZ4g3fr/QgwuD7qlP+AjBR5H
-         dGZN7kgrFdzadYzTwjArK4lNCK2/jXOtfUUJj/mCAwyngK5leqGfnKqvXozLXVJst2We
-         Ao0YtjDmuO02xpV3XRbAypaZmRj5uJLISvMa2vcwnQ3BZaIRz5kntk9tpDcF2vJn3kjp
-         llrc+sneKbaZxByd2eeLH6421M0+uBtfVQ64WinCk4f0ANP5prp3oSeN3MyiPq3YJx0G
-         CizIzRUI7ja+mV6CeVHFf7cYDgNSgH1Ktx1Eg7az4Ee+/GbP7auRowAEGLHpjIg9tI8B
-         VVJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1YGgMHMsiaqQ6JKTIpkfC7KYostkmHop4RQYDUeW5v0/+jZxbSuzDH1Nvu4VSlaODxVCEIgrSRYi3@vger.kernel.org, AJvYcCX3MfyXfATbkabHOBiwEiUVyZ2nSw+TKnltwR6Z9v5eMI/cm/kztcwhmN64YfjLeNydakKbEN6vGAaBnAYZ@vger.kernel.org, AJvYcCXY+H8vUfqDvC/UD2pJwra4SeKivJ0NvGhAYhueepuubhOa1tizp0J0rmcyawK2NuNmp9e4/wxrldl1CDKT@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG3o2o8CVRA63UW9D1Sx9kHA9kK5I2O+n/T+TGJcQDS+tKJajJ
-	Pl6YVgvvygASzCfRsD9+17pKF6/2Dka+HUefMCADsY+rPj8a57zHF7wol7jPSn1KqEOpZO26qdt
-	gLgTN9z80RgHdDtfx9Jh/Lv/XOhWbVgEt6sg=
-X-Google-Smtp-Source: AGHT+IGUz3rlz+MQN06hoOZUuPhC5Y8pAj9T12rcHm8tpRuAx2kgpxAdnr2+rmfjkMuZr80EHrzbwx6qxa8zIJf6Sr4=
-X-Received: by 2002:a17:90b:3bc4:b0:2d8:c160:889b with SMTP id
- 98e67ed59e1d1-2dad4bf13d0mr5458658a91.0.1725884554136; Mon, 09 Sep 2024
- 05:22:34 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898CE1B3F1E;
+	Mon,  9 Sep 2024 12:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725884630; cv=fail; b=WssHQFreEaRpDpYyvxdhpo4Qnrx9VSaG9SBTqZzaqtWp9oBGO8vSi2H9TUmpGxGRmlFLBoU4Nh/Uu75kCH0c5kYHMVaqcRf2udUYhOYPsi7V8s0HoYNBetKISSs3PTYUsjokd4h0BNKs0W3P0KEn9+rGWypYSzdh7Q9X1ZlODb0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725884630; c=relaxed/simple;
+	bh=YCPzXqq673F+68aOVrzYcm1u9Kh2nsBJ/DOB5AUzpug=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=C2b4U3kYmjItbBAg4n9NOO9eMqJ71XZGtrhKz/rh/71V6YRqwIquVp11gWv8ispQ5SQKurahODu5FAFn13h32WG6vtz8exmJSNqu3CVWAm+sLi4DOieMa8tMDIsSgVwk+FV/yWPgejhjRC+TTo61y0Y78CLypOBDy38LHd/7Hao=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=YmxPd4f4; arc=fail smtp.client-ip=40.107.22.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YGLMitGfDBm8CyX+WUWu46SZEpDGgO1Xs2Z/Z8J7rejMJEZiVfSUKZ8AIwkBgmiRW8URLcWaNSXbdzvfQXjkd/OgBkc+Cz+tZBuAmXUK38YdarhiELFimnKQwdGvKJUL11HbwbW97kcCkwdAxSz2zF2zcml0ygPwAEH7UD938rmCmnI+IHiBMiVpxrM7DS2ynmQoupeRTyRgCeTcQM7ra/x2Oc1zb1uZGI0JWuHmVpQmmc97r2180kvh9tc62v9i8KQDZ9A0bCQJhjKcl4itAfCKaAW9XlJno7l45Kk/bXM22iHZe7twYhPkuoZnFCNilP+X1PTKClQV90MaeFuqOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3a6uL8VzT5RpspXiZAbAWtM6DrGsk3toQtfuu9NWkl0=;
+ b=U2uUuOZFYDWi3QnJNIu7naiODb3qbRSdRmbZnYiEqk4r3GbgUzfYu0eS23hw4l+CVumtL9GBbtDwkDwNqxNkMzpRSxmW8wW5o2+YA9eBV3xnAsk3k2y0z2Cp2iLAmeDcYxnpodlc22gu0xk5b+yUpDjuByBaMaT0mVse8rdGzuRuw+qEOO4dWtUPtpoxw01hD6G88csu9Lsdnj5QOfRTh+d7YrSpJdcg+rZF4ZUOaZ5Pr1c6+WEk+v1DYs1T0SRxGTI0oNOGeMMGm+u5LqUXpenJRixN57hJuda8u5pgcfMKzZ1utgXIXe0RCL8nX6ScGrG5D75SNKBI6KXoXMxaFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3a6uL8VzT5RpspXiZAbAWtM6DrGsk3toQtfuu9NWkl0=;
+ b=YmxPd4f4YtSesMo8gIs/OCZ+bJkdPrive1iBSvJ18CMZgYeC3ZtPDbVEgjKtwZeIEHRVmYts1miULx1oOB4etHgs5a3fvSdGGfanafHsNMy3CUSJsXi31CJpa5lei7Ibvj0wDEYsBjUbijkH6jpTdLsI5bYP/C55IR+EoQWsv1QU1GMkf3cbDONxTUBNfC7Lws3qUo34CwKV0x766qDtKJUt/GyIawO0qYI8OzUVFEI5x9uy9DqEy26n3tRXQfR4DHjN+Ulvz9G7q8UjGDS16TXsx9U448jijr3IZ8GDelQgGTOCgfaS5VcxTvx4If9bIAV4bEE2axjKbmpKSh130w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by PR3PR10MB3866.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:4c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Mon, 9 Sep
+ 2024 12:23:45 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%3]) with mapi id 15.20.7939.022; Mon, 9 Sep 2024
+ 12:23:45 +0000
+Message-ID: <82047fad-6974-4461-a1a2-c90b171ff299@siemens.com>
+Date: Mon, 9 Sep 2024 14:23:41 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/7] dt-bindings: PCI: ti,am65: Extend for use with PVU
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-pci@vger.kernel.org, Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Bao Cheng Su <baocheng.su@siemens.com>, Hua Qian Li
+ <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Bjorn Helgaas <bhelgaas@google.com>
+References: <cover.1725816753.git.jan.kiszka@siemens.com>
+ <33d08f61fe9bd692da0eceab91209832bf16e804.1725816753.git.jan.kiszka@siemens.com>
+ <n5l36lo6at3yfbexqc5wcxgxop5wwfzldhhm43rwr6qy2epf7a@jq7l6wiyvydc>
+ <0f2c79b5-2aa8-4d4c-b568-e74876fd6ecd@siemens.com>
+ <91f9c0fc-c9bc-43ac-917c-b1aa86f53f97@kernel.org>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+In-Reply-To: <91f9c0fc-c9bc-43ac-917c-b1aa86f53f97@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR0P281CA0192.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ab::11) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905-preemption-a750-t-v3-0-fd947699f7bc@gmail.com>
- <20240905-preemption-a750-t-v3-4-fd947699f7bc@gmail.com> <20240906195444.owz4eralirekr7r7@hu-akhilpo-hyd.qualcomm.com>
-In-Reply-To: <20240906195444.owz4eralirekr7r7@hu-akhilpo-hyd.qualcomm.com>
-From: Connor Abbott <cwabbott0@gmail.com>
-Date: Mon, 9 Sep 2024 13:22:22 +0100
-Message-ID: <CACu1E7Fsu3e-agx8QBZhXd83BuDSrdKCsruPfTSH5OKRuEsRLw@mail.gmail.com>
-Subject: Re: [PATCH v3 04/10] drm/msm/A6xx: Implement preemption for A7XX targets
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Antonino Maniscalco <antomani103@gmail.com>, Rob Clark <robdclark@gmail.com>, 
-	Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Sharat Masetty <smasetty@codeaurora.org>, Neil Armstrong <neil.armstrong@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PR3PR10MB3866:EE_
+X-MS-Office365-Filtering-Correlation-Id: 52833246-76ab-4a95-89f0-08dcd0ca3fb4
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V1BkaC9EZnZXYk0yK2poc204VXZETGkrZEROQmJPYm5lM2w1UEZKRmdxbGZ2?=
+ =?utf-8?B?SEpEUEdjZEs3ZzlNeDdpSmJvOTd3b1ZLM0pPMlhHeno5QnpZRlJIN0V1RHB0?=
+ =?utf-8?B?RUl3MVFZR3JDMlA0WjRrdllKS3dxclpDK2xmOUM2WmhaWVlreXdOekFFdm9m?=
+ =?utf-8?B?ODVYaWNYeTVmSDI2M0E1US9SR09SL0VsdFV6Z3lLVHdQQ2xYcnl4REJXYmpD?=
+ =?utf-8?B?dUJTc3pDdGRUaGFIbVZpVk52NlN5QjhzM3lEcWI4T1FUVkdQUFFqL2I1T3Rh?=
+ =?utf-8?B?ZE9XU3hYS2xNZjZlOVR6VVZzMzNvNjhQbSttemhOWXh3aVFIbk1MaGcvWnpr?=
+ =?utf-8?B?OC9TbEs3SytRY0hEeHVHR1JCNDA3c2JDR1pPaHRaa0tkcG1RRkFFNGpGNk1v?=
+ =?utf-8?B?OWFhUUVQN3FEcTFZNVhHUlJXY3F5bExsVDlMakpIZ3ZnQVBFNXVGUVBrZDIx?=
+ =?utf-8?B?RW84WmgyWjFDOElPdVUxb3c5elM1STludVpCSk5QOG1LbHdaZkk2K0lEUVV3?=
+ =?utf-8?B?VFBHNjBxcTVTdkY5SXdaTjljQVJrc1l0MzJiZkptWC85M3gzY1FBY1R4bjB4?=
+ =?utf-8?B?cXRqNllrWXhIUE5PRWxYUmFQTHB3YUs4V281SmZFcjRZUnArYlFiYlhzWXBJ?=
+ =?utf-8?B?QTc2OW1UMVlSN1RwZElxclZ0eHduZ1ZHcG1vVkRUS1J4dTdzY25xUHlxMFFw?=
+ =?utf-8?B?Tnh3ZGQ2Y2tITGNrUGQ5MTM1T3hFK3BmQmh1Szc0aG15QlVJLytRc3FVZy83?=
+ =?utf-8?B?ZXliV3l5N0diaHJYcEJiR1VxSWJQVldWcStwUFY1VHNrY2dCNFo3QkhMTHdr?=
+ =?utf-8?B?SWF3dDFEeVRiMWlJKzQ1clhUZFJDNkdENG5nenFoK1JFemFrRnBNQnBqZk9s?=
+ =?utf-8?B?Q2h5QUpsMHFkblArb3NCckFLeDdaSkxyeXRMUFJCNWErN3J1MVN1UE5zcmRO?=
+ =?utf-8?B?QjdaT2szbVByMVRVenNjRHo0VytCM0FEalVMbVpzd0JQT2FPbUdxVkZ4enBa?=
+ =?utf-8?B?S2tQQWZyZndVMmFQbFF0Rm4yVFVWaG9hUzI1RVJDUWdVR1RDZGJSeDV2L1BP?=
+ =?utf-8?B?TUpqQ3lFT1pzVDJBSTlRWHROOHJVMzVjdGIvem9vUGhPekVGZmZqRXY3MVFw?=
+ =?utf-8?B?aGJKTXI4akgxOUkvcGM3V1ZJV3ZNZExEWEFoRnByTDFRQ09UYXdKcm03bUls?=
+ =?utf-8?B?OTZLaGxKejVPNVNtaE1CTU5YV2lZSnhDWlVhTnJTUjdicHd6WldFL2tkSzdv?=
+ =?utf-8?B?dW82SW50UlE4dlVsRlBjUExmS1hXdnNQUXFJaitqMndVbUtYS1hxcWMyTTh2?=
+ =?utf-8?B?MXY4Wko3SlBiTU1WMFRBSmw3SkllL2hHVzZDeDIzd3Y5ZW40M1pubHJFZzhS?=
+ =?utf-8?B?VUlDcWpMc3VDU1F4eHNlbjcycnZyNlNqaHVPOWZyUTJBYllpanJMeSt2QUpT?=
+ =?utf-8?B?RGJETGVEYmhvajVMd21Xc2E2YUw3Y3hDU1FQUXZRaFM3R1pDbkFmVUJMYWxi?=
+ =?utf-8?B?TVZwMmZuVEtpaktHS1BVMDc4Y1hLVjlFbmg5U29leHJSRFdHZUJaUGZSSTNV?=
+ =?utf-8?B?bzF4NEgvOUdOTklvNTN2bDdSS25qNmpTZy9XaSt6RGRaMmk5YkRwUGQ1YUE2?=
+ =?utf-8?B?NUtLc2ZRdloyMTlaSFpBMzNuV0tjZERQZDJYWnZpNzJsYkd1alhWR28zd0pa?=
+ =?utf-8?B?YTU5SzMvV3BBL1BNRlRENk5aWW1uTFZ0VzAxR2dIU05vcUxQRll3bWVBK0du?=
+ =?utf-8?Q?zWhkGEDbhf3PCZQP24=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NThrd0xnZHJBQWhBYmI5cUtxNjYxaWQ1VGVvdHJaNHAzZ3hxNmVmSFhydzhw?=
+ =?utf-8?B?SmRFSU1ML2hnSWlUbkI0K1cwREkvSll4Vm8zc1JLZmI2bi9LMUczK3lpdzVH?=
+ =?utf-8?B?YlNXZHBjbjUwUlY2OFZ0NStNK3NuMXJ5b3pzU0o4cEd3aHM3TGNVOHVKNldW?=
+ =?utf-8?B?eGphZjlOVldIaXJWSHQ2MDI2WXI3T1kvTzBTaVFiYmtIUXN1STlvMEUxVnd3?=
+ =?utf-8?B?TENLS1k2TkYvbEhDWWxIdmdjNXZhdHBJTTBUMnMwYnRYc29Md3JCR29xS0pl?=
+ =?utf-8?B?YmVYUGZ3REUreVJLeDJhR2ZjWnV6QmF6amZ2aUdNTWNvYU93WXJTbjVDQm1t?=
+ =?utf-8?B?QlAxZ1Urb2pFOFFNZDhlVk54ZGl4Z0NNN3ZKdXdORFpCbTVCajJCV0trRTl5?=
+ =?utf-8?B?Qm41WDNnTWFwNytRb1RuU1VXVi9pQUpVWEhGSWRINzMzT3JST0NCdXhIQklU?=
+ =?utf-8?B?QzM4S2oxZXRYV1VZWGIxR01RTE8rNUxSOVMycTZnVmRkcG5pb05TdWFKY2xj?=
+ =?utf-8?B?cHlDckc2Ky9ZdGxKNWN4dGYxMC8zK29NYUE4RHgxT2VvSTJqRXZONWROWDJJ?=
+ =?utf-8?B?VEFVRzVSRGNvMTBqYmNndEhHbVlVWE1xQTNRakg4ejVZTE94cmlDaldtaFVn?=
+ =?utf-8?B?USs1MHBGS0kxK044QkVRWFI1UG43dlpKZnl0UUtWbExKUWJUNHlpNmxZVWt0?=
+ =?utf-8?B?RkNzT1ZhVjl0TXRMWkxwa0F6dzNSRFUzNHJMNGp0OUpSV016Z0IzQ2M4WWJV?=
+ =?utf-8?B?MWdaRWhUeGtidnJBU1h0VlNsVVdOZFduTVhnU0VPbnA0RFYwNzNOc0VZYytS?=
+ =?utf-8?B?MGdob3dEaFYzS1pxbzRTYzZ4VVRVMFRPTGlKa3JpVGxqSWVmb0diVWZjR1hP?=
+ =?utf-8?B?YjZRRXl2V2t5ZEpDYUU1akVQNThyVXFsclJacXo5a0VucmlrZEZ3VzdUTU0r?=
+ =?utf-8?B?QzdzUUVhRWlHdFJDck1BaVdXTDh0d3JYNHNudGdGaFBqcGkrRDJtQmZhd0Z4?=
+ =?utf-8?B?bDdCdzRhN1lSdWFGd1NISzM2V2pONXFLdEFXWkhpVEVxWkg3NVZVYUlxMkEy?=
+ =?utf-8?B?UEVDN0V3aGRiRzRkMHlSa21FRmxYeEFiMTkrM2NOL20zNzRVMnB1T1Z5VzZE?=
+ =?utf-8?B?OE1OaTR3dmJCOXd3WlZwSURXc2YxeUljQmwyY3BLeXBpelh5N0JkYTEydUll?=
+ =?utf-8?B?bjRyR0F3L1p4VHN1ci9EdVRDRnFHcGcwLys0OTVTcDdsOGNDSnVZaXcvdGJW?=
+ =?utf-8?B?OWVUNW55QmRuUlovRjBIa214bS9EclpEb0dyNXRHK25zckR1YjZVc0E3dlVz?=
+ =?utf-8?B?UzhmTzFlMzFxTDBhYU05bzdNV2N5d3VyZnJXei9kOGNnSmdzRnJndUFvQVdW?=
+ =?utf-8?B?V3AwL2oyVjVDdVUyeEdDcVplbjZCMCtRV3JJcjVHUitjQ3pXMm9ZTTdtZldH?=
+ =?utf-8?B?NVVNclhqU3A0c3FySXdyN040aE5tSFZMTjBNdUZxZmVhVmV4Sm02dlJyRDlo?=
+ =?utf-8?B?WDdLQlVnbjU5WGh5VnBsa3phRGlTSUVONHFrUzMyejdrUFpWNitGa1pZODZF?=
+ =?utf-8?B?M24rckpLMGhKR2g3K0JlQzJJWWREbnhJbzRVQWI5RjgvSTR2NDdwcGdGanlx?=
+ =?utf-8?B?b29JN1dZUytCRjJRWFhWMHNMUFMxdGJEcTBxdTV4akpSMHVnamJnZXRNNkpm?=
+ =?utf-8?B?R3QvYW16cGFmVFlDcDc3KzVpY1gzMkR6ZFdzS2xyN0p3bDVOTWQyZXovc05t?=
+ =?utf-8?B?TVZMNVVjaHJ6TGViTUllM1k4cEVrQjJJMXpEYjVpTmlHU3B0Qzg0akl6V3d0?=
+ =?utf-8?B?ci8rays1OTFSR2dXaFdGTnNqL05LRUhPaTcyY2Z0QllWL3E2VVVUNzZucjVv?=
+ =?utf-8?B?SEc2bUo2T3hnUCtXNDRQaC94QmMrRE96eDRBSHVCRXJ4R01vQmVrWVR4RjZX?=
+ =?utf-8?B?djZWWGZ4emduRlpQOGF3WXdpWXloWEhqMmFodWhNKzlPY3U3TnpwckJJQmQ5?=
+ =?utf-8?B?SEJqT2NpZDhMNXNGemtHeEpnbXRqMnVBbzZFd013U1lHMDZNVVRkbXdidXBp?=
+ =?utf-8?B?SmpVRlAyQTAvdFliRm9uZWtnSWRMaVNSNG5HMmI2K2xaM2JoeGVYOUcyVkV4?=
+ =?utf-8?B?MElqTkFhVWFpdytmSWYxUmlEYXlRaHlhQzdadlF6RU55clcrUGRlQkZYVWh5?=
+ =?utf-8?B?S3c9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52833246-76ab-4a95-89f0-08dcd0ca3fb4
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 12:23:45.1800
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8Gzf5AdhWVXwfWuRlxkgt6yhKE0+/XTIK8pKcIjFkKgMLqZvYfwYUEDc3uEg84L5AcNgBuHsO8NtADydZFGXlg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR10MB3866
 
-On Fri, Sep 6, 2024 at 9:03=E2=80=AFPM Akhil P Oommen <quic_akhilpo@quicinc=
-.com> wrote:
->
-> On Thu, Sep 05, 2024 at 04:51:22PM +0200, Antonino Maniscalco wrote:
-> > This patch implements preemption feature for A6xx targets, this allows
-> > the GPU to switch to a higher priority ringbuffer if one is ready. A6XX
-> > hardware as such supports multiple levels of preemption granularities,
-> > ranging from coarse grained(ringbuffer level) to a more fine grained
-> > such as draw-call level or a bin boundary level preemption. This patch
-> > enables the basic preemption level, with more fine grained preemption
-> > support to follow.
-> >
-> > Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
-> > Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> > Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
-> > ---
-> >  drivers/gpu/drm/msm/Makefile              |   1 +
-> >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 293 +++++++++++++++++++++-
-> >  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 161 ++++++++++++
-> >  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 391 ++++++++++++++++++++++=
-++++++++
-> >  drivers/gpu/drm/msm/msm_ringbuffer.h      |   7 +
-> >  5 files changed, 844 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefil=
-e
-> > index f5e2838c6a76..32e915109a59 100644
-> > --- a/drivers/gpu/drm/msm/Makefile
-> > +++ b/drivers/gpu/drm/msm/Makefile
-> > @@ -23,6 +23,7 @@ adreno-y :=3D \
-> >       adreno/a6xx_gpu.o \
-> >       adreno/a6xx_gmu.o \
-> >       adreno/a6xx_hfi.o \
-> > +     adreno/a6xx_preempt.o \
-> >
-> >  adreno-$(CONFIG_DEBUG_FS) +=3D adreno/a5xx_debugfs.o \
-> >
-> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/ms=
-m/adreno/a6xx_gpu.c
-> > index 32a4faa93d7f..ed0b138a2d66 100644
-> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> > @@ -16,6 +16,83 @@
-> >
-> >  #define GPU_PAS_ID 13
-> >
-> > +/* IFPC & Preemption static powerup restore list */
-> > +static const uint32_t a7xx_pwrup_reglist[] =3D {
-> > +     REG_A6XX_UCHE_TRAP_BASE,
-> > +     REG_A6XX_UCHE_TRAP_BASE + 1,
-> > +     REG_A6XX_UCHE_WRITE_THRU_BASE,
-> > +     REG_A6XX_UCHE_WRITE_THRU_BASE + 1,
-> > +     REG_A6XX_UCHE_GMEM_RANGE_MIN,
-> > +     REG_A6XX_UCHE_GMEM_RANGE_MIN + 1,
-> > +     REG_A6XX_UCHE_GMEM_RANGE_MAX,
-> > +     REG_A6XX_UCHE_GMEM_RANGE_MAX + 1,
-> > +     REG_A6XX_UCHE_CACHE_WAYS,
-> > +     REG_A6XX_UCHE_MODE_CNTL,
-> > +     REG_A6XX_RB_NC_MODE_CNTL,
-> > +     REG_A6XX_RB_CMP_DBG_ECO_CNTL,
-> > +     REG_A7XX_GRAS_NC_MODE_CNTL,
-> > +     REG_A6XX_RB_CONTEXT_SWITCH_GMEM_SAVE_RESTORE,
-> > +     REG_A6XX_UCHE_GBIF_GX_CONFIG,
-> > +     REG_A6XX_UCHE_CLIENT_PF,
->
-> REG_A6XX_TPL1_DBG_ECO_CNTL1 here. A friendly warning, missing a register
-> in this list (and the below list) will lead to a very frustrating debug.
->
-> > +};
-> > +
-> > +static const uint32_t a7xx_ifpc_pwrup_reglist[] =3D {
-> > +     REG_A6XX_TPL1_NC_MODE_CNTL,
-> > +     REG_A6XX_SP_NC_MODE_CNTL,
-> > +     REG_A6XX_CP_DBG_ECO_CNTL,
-> > +     REG_A6XX_CP_PROTECT_CNTL,
-> > +     REG_A6XX_CP_PROTECT(0),
-> > +     REG_A6XX_CP_PROTECT(1),
-> > +     REG_A6XX_CP_PROTECT(2),
-> > +     REG_A6XX_CP_PROTECT(3),
-> > +     REG_A6XX_CP_PROTECT(4),
-> > +     REG_A6XX_CP_PROTECT(5),
-> > +     REG_A6XX_CP_PROTECT(6),
-> > +     REG_A6XX_CP_PROTECT(7),
-> > +     REG_A6XX_CP_PROTECT(8),
-> > +     REG_A6XX_CP_PROTECT(9),
-> > +     REG_A6XX_CP_PROTECT(10),
-> > +     REG_A6XX_CP_PROTECT(11),
-> > +     REG_A6XX_CP_PROTECT(12),
-> > +     REG_A6XX_CP_PROTECT(13),
-> > +     REG_A6XX_CP_PROTECT(14),
-> > +     REG_A6XX_CP_PROTECT(15),
-> > +     REG_A6XX_CP_PROTECT(16),
-> > +     REG_A6XX_CP_PROTECT(17),
-> > +     REG_A6XX_CP_PROTECT(18),
-> > +     REG_A6XX_CP_PROTECT(19),
-> > +     REG_A6XX_CP_PROTECT(20),
-> > +     REG_A6XX_CP_PROTECT(21),
-> > +     REG_A6XX_CP_PROTECT(22),
-> > +     REG_A6XX_CP_PROTECT(23),
-> > +     REG_A6XX_CP_PROTECT(24),
-> > +     REG_A6XX_CP_PROTECT(25),
-> > +     REG_A6XX_CP_PROTECT(26),
-> > +     REG_A6XX_CP_PROTECT(27),
-> > +     REG_A6XX_CP_PROTECT(28),
-> > +     REG_A6XX_CP_PROTECT(29),
-> > +     REG_A6XX_CP_PROTECT(30),
-> > +     REG_A6XX_CP_PROTECT(31),
-> > +     REG_A6XX_CP_PROTECT(32),
-> > +     REG_A6XX_CP_PROTECT(33),
-> > +     REG_A6XX_CP_PROTECT(34),
-> > +     REG_A6XX_CP_PROTECT(35),
-> > +     REG_A6XX_CP_PROTECT(36),
-> > +     REG_A6XX_CP_PROTECT(37),
-> > +     REG_A6XX_CP_PROTECT(38),
-> > +     REG_A6XX_CP_PROTECT(39),
-> > +     REG_A6XX_CP_PROTECT(40),
-> > +     REG_A6XX_CP_PROTECT(41),
-> > +     REG_A6XX_CP_PROTECT(42),
-> > +     REG_A6XX_CP_PROTECT(43),
-> > +     REG_A6XX_CP_PROTECT(44),
-> > +     REG_A6XX_CP_PROTECT(45),
-> > +     REG_A6XX_CP_PROTECT(46),
-> > +     REG_A6XX_CP_PROTECT(47),
-> > +     REG_A6XX_CP_AHB_CNTL,
-> > +};
-> > +
-> > +
-> >  static inline bool _a6xx_check_idle(struct msm_gpu *gpu)
-> >  {
-> >       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> > @@ -68,6 +145,8 @@ static void update_shadow_rptr(struct msm_gpu *gpu, =
-struct msm_ringbuffer *ring)
-> >
-> >  static void a6xx_flush(struct msm_gpu *gpu, struct msm_ringbuffer *rin=
-g)
-> >  {
-> > +     struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> > +     struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> >       uint32_t wptr;
-> >       unsigned long flags;
-> >
-> > @@ -81,12 +160,26 @@ static void a6xx_flush(struct msm_gpu *gpu, struct=
- msm_ringbuffer *ring)
-> >       /* Make sure to wrap wptr if we need to */
-> >       wptr =3D get_wptr(ring);
-> >
-> > -     spin_unlock_irqrestore(&ring->preempt_lock, flags);
-> > -
-> >       /* Make sure everything is posted before making a decision */
-> >       mb();
->
-> This looks unnecessary.
->
-> >
-> > -     gpu_write(gpu, REG_A6XX_CP_RB_WPTR, wptr);
-> > +     /* Update HW if this is the current ring and we are not in preemp=
-t*/
-> > +     if (!a6xx_in_preempt(a6xx_gpu)) {
-> > +             /*
-> > +              * Order the reads of the preempt state and cur_ring. Thi=
-s
-> > +              * matches the barrier after writing cur_ring.
-> > +              */
-> > +             rmb();
->
-> we can use the lighter smp variant here.
->
-> > +
-> > +             if (a6xx_gpu->cur_ring =3D=3D ring)
-> > +                     gpu_write(gpu, REG_A6XX_CP_RB_WPTR, wptr);
-> > +             else
-> > +                     ring->skip_inline_wptr =3D true;
-> > +     } else {
-> > +             ring->skip_inline_wptr =3D true;
-> > +     }
-> > +
-> > +     spin_unlock_irqrestore(&ring->preempt_lock, flags);
-> >  }
-> >
-> >  static void get_stats_counter(struct msm_ringbuffer *ring, u32 counter=
-,
-> > @@ -138,12 +231,14 @@ static void a6xx_set_pagetable(struct a6xx_gpu *a=
-6xx_gpu,
->
-> set_pagetable checks "cur_ctx_seqno" to see if pt switch is needed or
-> not. This is currently not tracked separately for each ring. Can you
-> please check that?
->
-> I wonder why that didn't cause any gpu errors in testing. Not sure if I
-> am missing something.
->
-> >
-> >       /*
-> >        * Write the new TTBR0 to the memstore. This is good for debuggin=
-g.
-> > +      * Needed for preemption
-> >        */
-> > -     OUT_PKT7(ring, CP_MEM_WRITE, 4);
-> > +     OUT_PKT7(ring, CP_MEM_WRITE, 5);
-> >       OUT_RING(ring, CP_MEM_WRITE_0_ADDR_LO(lower_32_bits(memptr)));
-> >       OUT_RING(ring, CP_MEM_WRITE_1_ADDR_HI(upper_32_bits(memptr)));
-> >       OUT_RING(ring, lower_32_bits(ttbr));
-> > -     OUT_RING(ring, (asid << 16) | upper_32_bits(ttbr));
-> > +     OUT_RING(ring, upper_32_bits(ttbr));
-> > +     OUT_RING(ring, ctx->seqno);
-> >
-> >       /*
-> >        * Sync both threads after switching pagetables and enable BR onl=
-y
-> > @@ -268,6 +363,43 @@ static void a6xx_submit(struct msm_gpu *gpu, struc=
-t msm_gem_submit *submit)
-> >       a6xx_flush(gpu, ring);
-> >  }
-> >
-> > +static void a6xx_emit_set_pseudo_reg(struct msm_ringbuffer *ring,
-> > +             struct a6xx_gpu *a6xx_gpu, struct msm_gpu_submitqueue *qu=
-eue)
-> > +{
-> > +     u64 preempt_offset_priv_secure;
-> > +
-> > +     OUT_PKT7(ring, CP_SET_PSEUDO_REG, 15);
-> > +
-> > +     OUT_RING(ring, SMMU_INFO);
-> > +     /* don't save SMMU, we write the record from the kernel instead *=
-/
-> > +     OUT_RING(ring, 0);
-> > +     OUT_RING(ring, 0);
-> > +
-> > +     /* privileged and non secure buffer save */
-> > +     OUT_RING(ring, NON_SECURE_SAVE_ADDR);
-> > +     OUT_RING(ring, lower_32_bits(
-> > +             a6xx_gpu->preempt_iova[ring->id] + PREEMPT_OFFSET_PRIV_NO=
-N_SECURE));
-> > +     OUT_RING(ring, upper_32_bits(
-> > +             a6xx_gpu->preempt_iova[ring->id] + PREEMPT_OFFSET_PRIV_NO=
-N_SECURE));
-> > +     OUT_RING(ring, SECURE_SAVE_ADDR);
-> > +     preempt_offset_priv_secure =3D
-> > +             PREEMPT_OFFSET_PRIV_SECURE(a6xx_gpu->base.info->preempt_r=
-ecord_size);
-> > +     OUT_RING(ring, lower_32_bits(
-> > +             a6xx_gpu->preempt_iova[ring->id] + preempt_offset_priv_se=
-cure));
-> > +     OUT_RING(ring, upper_32_bits(
-> > +             a6xx_gpu->preempt_iova[ring->id] + preempt_offset_priv_se=
-cure));
-> > +
-> > +     /* user context buffer save, seems to be unnused by fw */
-> > +     OUT_RING(ring, NON_PRIV_SAVE_ADDR);
-> > +     OUT_RING(ring, 0);
-> > +     OUT_RING(ring, 0);
-> > +
-> > +     OUT_RING(ring, COUNTER);
-> > +     /* seems OK to set to 0 to disable it */
-> > +     OUT_RING(ring, 0);
-> > +     OUT_RING(ring, 0);
-> > +}
-> > +
-> >  static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *su=
-bmit)
-> >  {
-> >       unsigned int index =3D submit->seqno % MSM_GPU_SUBMIT_STATS_COUNT=
-;
-> > @@ -283,6 +415,13 @@ static void a7xx_submit(struct msm_gpu *gpu, struc=
-t msm_gem_submit *submit)
-> >       OUT_PKT7(ring, CP_THREAD_CONTROL, 1);
-> >       OUT_RING(ring, CP_THREAD_CONTROL_0_SYNC_THREADS | CP_SET_THREAD_B=
-R);
-> >
-> > +     /*
-> > +      * If preemption is enabled, then set the pseudo register for the=
- save
-> > +      * sequence
-> > +      */
-> > +     if (gpu->nr_rings > 1)
-> > +             a6xx_emit_set_pseudo_reg(ring, a6xx_gpu, submit->queue);
->
-> Can we move this after set_pagetable()?
->
-> > +
-> >       a6xx_set_pagetable(a6xx_gpu, ring, submit->queue->ctx);
-> >
-> >       get_stats_counter(ring, REG_A7XX_RBBM_PERFCTR_CP(0),
-> > @@ -376,6 +515,8 @@ static void a7xx_submit(struct msm_gpu *gpu, struct=
- msm_gem_submit *submit)
-> >       OUT_RING(ring, upper_32_bits(rbmemptr(ring, bv_fence)));
-> >       OUT_RING(ring, submit->seqno);
-> >
-> > +     a6xx_gpu->last_seqno[ring->id] =3D submit->seqno;
-> > +
-> >       /* write the ringbuffer timestamp */
-> >       OUT_PKT7(ring, CP_EVENT_WRITE, 4);
-> >       OUT_RING(ring, CACHE_CLEAN | CP_EVENT_WRITE_0_IRQ | BIT(27));
-> > @@ -389,10 +530,32 @@ static void a7xx_submit(struct msm_gpu *gpu, stru=
-ct msm_gem_submit *submit)
-> >       OUT_PKT7(ring, CP_SET_MARKER, 1);
-> >       OUT_RING(ring, 0x100); /* IFPC enable */
-> >
-> > +     /* If preemption is enabled */
-> > +     if (gpu->nr_rings > 1) {
-> > +             /* Yield the floor on command completion */
-> > +             OUT_PKT7(ring, CP_CONTEXT_SWITCH_YIELD, 4);
-> > +
-> > +             /*
-> > +              * If dword[2:1] are non zero, they specify an address fo=
-r
-> > +              * the CP to write the value of dword[3] to on preemption
-> > +              * complete. Write 0 to skip the write
-> > +              */
-> > +             OUT_RING(ring, 0x00);
-> > +             OUT_RING(ring, 0x00);
-> > +             /* Data value - not used if the address above is 0 */
-> > +             OUT_RING(ring, 0x01);
-> > +             /* generate interrupt on preemption completion */
-> > +             OUT_RING(ring, 0x00);
-> > +     }
-> > +
-> > +
-> >       trace_msm_gpu_submit_flush(submit,
-> >               gpu_read64(gpu, REG_A6XX_CP_ALWAYS_ON_COUNTER));
-> >
-> >       a6xx_flush(gpu, ring);
-> > +
-> > +     /* Check to see if we need to start preemption */
-> > +     a6xx_preempt_trigger(gpu);
-> >  }
-> >
-> >  static void a6xx_set_hwcg(struct msm_gpu *gpu, bool state)
-> > @@ -588,6 +751,89 @@ static void a6xx_set_ubwc_config(struct msm_gpu *g=
-pu)
-> >                 adreno_gpu->ubwc_config.min_acc_len << 23 | hbb_lo << 2=
-1);
-> >  }
-> >
-> > +static void a7xx_patch_pwrup_reglist(struct msm_gpu *gpu)
-> > +{
-> > +     struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> > +     struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> > +     struct adreno_reglist_list reglist[2];
-> > +     void *ptr =3D a6xx_gpu->pwrup_reglist_ptr;
-> > +     struct cpu_gpu_lock *lock =3D ptr;
-> > +     u32 *dest =3D (u32 *)&lock->regs[0];
-> > +     int i, j;
-> > +
-> This sequence is required only once. We can use a flag to check and bail =
-out
-> next time.
->
-> > +     lock->gpu_req =3D lock->cpu_req =3D lock->turn =3D 0;
-> > +     lock->ifpc_list_len =3D ARRAY_SIZE(a7xx_ifpc_pwrup_reglist);
-> > +     lock->preemption_list_len =3D ARRAY_SIZE(a7xx_pwrup_reglist);
-> > +
-> > +     /* Static IFPC-only registers */
-> > +     reglist[0].regs =3D a7xx_ifpc_pwrup_reglist;
-> > +     reglist[0].count =3D ARRAY_SIZE(a7xx_ifpc_pwrup_reglist);
-> > +     lock->ifpc_list_len =3D reglist[0].count;
-> > +
-> > +     /* Static IFPC + preemption registers */
-> > +     reglist[1].regs =3D a7xx_pwrup_reglist;
-> > +     reglist[1].count =3D ARRAY_SIZE(a7xx_pwrup_reglist);
-> > +     lock->preemption_list_len =3D reglist[1].count;
-> > +
-> > +     /*
-> > +      * For each entry in each of the lists, write the offset and the =
-current
-> > +      * register value into the GPU buffer
-> > +      */
-> > +     for (i =3D 0; i < 2; i++) {
-> > +             const u32 *r =3D reglist[i].regs;
-> > +
-> > +             for (j =3D 0; j < reglist[i].count; j++) {
-> > +                     *dest++ =3D r[j];
-> > +                     *dest++ =3D gpu_read(gpu, r[j]);
-> > +             }
-> > +     }
-> > +
-> > +     /*
-> > +      * The overall register list is composed of
-> > +      * 1. Static IFPC-only registers
-> > +      * 2. Static IFPC + preemption registers
-> > +      * 3. Dynamic IFPC + preemption registers (ex: perfcounter select=
-s)
-> > +      *
-> > +      * The first two lists are static. Size of these lists are stored=
- as
-> > +      * number of pairs in ifpc_list_len and preemption_list_len
-> > +      * respectively. With concurrent binning, Some of the perfcounter
-> > +      * registers being virtualized, CP needs to know the pipe id to p=
-rogram
-> > +      * the aperture inorder to restore the same. Thus, third list is =
-a
-> > +      * dynamic list with triplets as
-> > +      * (<aperture, shifted 12 bits> <address> <data>), and the length=
- is
-> > +      * stored as number for triplets in dynamic_list_len.
-> > +      */
-> > +     lock->dynamic_list_len =3D 0;
-> > +}
-> > +
-> > +static int a7xx_preempt_start(struct msm_gpu *gpu)
-> > +{
-> > +     struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> > +     struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> > +     struct msm_ringbuffer *ring =3D gpu->rb[0];
-> > +
-> > +     if (gpu->nr_rings <=3D 1)
-> > +             return 0;
-> > +
-> > +     /* Turn CP protection off */
-> > +     OUT_PKT7(ring, CP_SET_PROTECTED_MODE, 1);
-> > +     OUT_RING(ring, 0);
-> > +
-> > +     a6xx_emit_set_pseudo_reg(ring, a6xx_gpu, NULL);
-> > +
-> > +     /* Yield the floor on command completion */
-> > +     OUT_PKT7(ring, CP_CONTEXT_SWITCH_YIELD, 4);
-> > +     OUT_RING(ring, 0x00);
-> > +     OUT_RING(ring, 0x00);
-> > +     OUT_RING(ring, 0x01);
->
-> Looks like kgsl use 0x00 here. Not sure if that matters!
->
-> > +     /* Generate interrupt on preemption completion */
-> > +     OUT_RING(ring, 0x00);
-> > +
-> > +     a6xx_flush(gpu, ring);
-> > +
-> > +     return a6xx_idle(gpu, ring) ? 0 : -EINVAL;
-> > +}
-> > +
-> >  static int a6xx_cp_init(struct msm_gpu *gpu)
-> >  {
-> >       struct msm_ringbuffer *ring =3D gpu->rb[0];
-> > @@ -619,6 +865,8 @@ static int a6xx_cp_init(struct msm_gpu *gpu)
-> >
-> >  static int a7xx_cp_init(struct msm_gpu *gpu)
-> >  {
-> > +     struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> > +     struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> >       struct msm_ringbuffer *ring =3D gpu->rb[0];
-> >       u32 mask;
-> >
-> > @@ -626,6 +874,8 @@ static int a7xx_cp_init(struct msm_gpu *gpu)
-> >       OUT_PKT7(ring, CP_THREAD_CONTROL, 1);
-> >       OUT_RING(ring, BIT(27));
-> >
-> > +     a7xx_patch_pwrup_reglist(gpu);
-> > +
->
-> Looks out of place. I guess you kept it here to avoid an extra a7x
-> check. At least we should move this before the above pm4 packets.
->
-> >       OUT_PKT7(ring, CP_ME_INIT, 7);
-> >
-> >       /* Use multiple HW contexts */
-> > @@ -656,11 +906,11 @@ static int a7xx_cp_init(struct msm_gpu *gpu)
-> >
-> >       /* *Don't* send a power up reg list for concurrent binning (TODO)=
- */
-> >       /* Lo address */
-> > -     OUT_RING(ring, 0x00000000);
-> > +     OUT_RING(ring, lower_32_bits(a6xx_gpu->pwrup_reglist_iova));
-> >       /* Hi address */
-> > -     OUT_RING(ring, 0x00000000);
-> > +     OUT_RING(ring, upper_32_bits(a6xx_gpu->pwrup_reglist_iova));
-> >       /* BIT(31) set =3D> read the regs from the list */
-> > -     OUT_RING(ring, 0x00000000);
-> > +     OUT_RING(ring, BIT(31));
-> >
-> >       a6xx_flush(gpu, ring);
-> >       return a6xx_idle(gpu, ring) ? 0 : -EINVAL;
-> > @@ -784,6 +1034,16 @@ static int a6xx_ucode_load(struct msm_gpu *gpu)
-> >               msm_gem_object_set_name(a6xx_gpu->shadow_bo, "shadow");
-> >       }
-> >
-> > +     a6xx_gpu->pwrup_reglist_ptr =3D msm_gem_kernel_new(gpu->dev, PAGE=
-_SIZE,
-> > +                                                      MSM_BO_WC  | MSM=
-_BO_MAP_PRIV,
-> > +                                                      gpu->aspace, &a6=
-xx_gpu->pwrup_reglist_bo,
-> > +                                                      &a6xx_gpu->pwrup=
-_reglist_iova);
-> > +
-> > +     if (IS_ERR(a6xx_gpu->pwrup_reglist_ptr))
-> > +             return PTR_ERR(a6xx_gpu->pwrup_reglist_ptr);
-> > +
-> > +     msm_gem_object_set_name(a6xx_gpu->pwrup_reglist_bo, "pwrup_reglis=
-t");
-> > +
-> >       return 0;
-> >  }
-> >
-> > @@ -1127,6 +1387,8 @@ static int hw_init(struct msm_gpu *gpu)
-> >       if (a6xx_gpu->shadow_bo) {
-> >               gpu_write64(gpu, REG_A6XX_CP_RB_RPTR_ADDR,
-> >                       shadowptr(a6xx_gpu, gpu->rb[0]));
-> > +             for (unsigned int i =3D 0; i < gpu->nr_rings; i++)
-> > +                     a6xx_gpu->shadow[i] =3D 0;
-> >       }
-> >
-> >       /* ..which means "always" on A7xx, also for BV shadow */
-> > @@ -1135,6 +1397,8 @@ static int hw_init(struct msm_gpu *gpu)
-> >                           rbmemptr(gpu->rb[0], bv_rptr));
-> >       }
-> >
-> > +     a6xx_preempt_hw_init(gpu);
-> > +
-> >       /* Always come up on rb 0 */
-> >       a6xx_gpu->cur_ring =3D gpu->rb[0];
-> >
-> > @@ -1180,6 +1444,10 @@ static int hw_init(struct msm_gpu *gpu)
-> >  out:
-> >       if (adreno_has_gmu_wrapper(adreno_gpu))
-> >               return ret;
-> > +
-> > +     /* Last step - yield the ringbuffer */
-> > +     a7xx_preempt_start(gpu);
-> > +
-> >       /*
-> >        * Tell the GMU that we are done touching the GPU and it can star=
-t power
-> >        * management
-> > @@ -1557,8 +1825,13 @@ static irqreturn_t a6xx_irq(struct msm_gpu *gpu)
-> >       if (status & A6XX_RBBM_INT_0_MASK_SWFUSEVIOLATION)
-> >               a7xx_sw_fuse_violation_irq(gpu);
-> >
-> > -     if (status & A6XX_RBBM_INT_0_MASK_CP_CACHE_FLUSH_TS)
-> > +     if (status & A6XX_RBBM_INT_0_MASK_CP_CACHE_FLUSH_TS) {
-> >               msm_gpu_retire(gpu);
-> > +             a6xx_preempt_trigger(gpu);
-> > +     }
-> > +
-> > +     if (status & A6XX_RBBM_INT_0_MASK_CP_SW)
-> > +             a6xx_preempt_irq(gpu);
-> >
-> >       return IRQ_HANDLED;
-> >  }
-> > @@ -2331,6 +2604,8 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *=
-dev)
-> >                               a6xx_fault_handler);
-> >
-> >       a6xx_calc_ubwc_config(adreno_gpu);
-> > +     /* Set up the preemption specific bits and pieces for each ringbu=
-ffer */
-> > +     a6xx_preempt_init(gpu);
-> >
-> >       return gpu;
-> >  }
-> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/ms=
-m/adreno/a6xx_gpu.h
-> > index e3e5c53ae8af..da10060e38dc 100644
-> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-> > @@ -12,6 +12,31 @@
-> >
-> >  extern bool hang_debug;
-> >
-> > +struct cpu_gpu_lock {
-> > +     uint32_t gpu_req;
-> > +     uint32_t cpu_req;
-> > +     uint32_t turn;
-> > +     union {
-> > +             struct {
-> > +                     uint16_t list_length;
-> > +                     uint16_t list_offset;
-> > +             };
-> > +             struct {
-> > +                     uint8_t ifpc_list_len;
-> > +                     uint8_t preemption_list_len;
-> > +                     uint16_t dynamic_list_len;
-> > +             };
-> > +     };
-> > +     uint64_t regs[62];
-> > +};
-> > +
-> > +struct adreno_reglist_list {
-> > +     /** @reg: List of register **/
-> > +     const u32 *regs;
-> > +     /** @count: Number of registers in the list **/
-> > +     u32 count;
-> > +};
-> > +
-> >  /**
-> >   * struct a6xx_info - a6xx specific information from device table
-> >   *
-> > @@ -31,6 +56,20 @@ struct a6xx_gpu {
-> >       uint64_t sqe_iova;
-> >
-> >       struct msm_ringbuffer *cur_ring;
-> > +     struct msm_ringbuffer *next_ring;
-> > +
-> > +     struct drm_gem_object *preempt_bo[MSM_GPU_MAX_RINGS];
-> > +     void *preempt[MSM_GPU_MAX_RINGS];
-> > +     uint64_t preempt_iova[MSM_GPU_MAX_RINGS];
-> > +     uint32_t last_seqno[MSM_GPU_MAX_RINGS];
-> > +
-> > +     atomic_t preempt_state;
-> > +     spinlock_t eval_lock;
-> > +     struct timer_list preempt_timer;
-> > +
-> > +     unsigned int preempt_level;
-> > +     bool uses_gmem;
-> > +     bool skip_save_restore;
-> >
-> >       struct a6xx_gmu gmu;
-> >
-> > @@ -38,6 +77,10 @@ struct a6xx_gpu {
-> >       uint64_t shadow_iova;
-> >       uint32_t *shadow;
-> >
-> > +     struct drm_gem_object *pwrup_reglist_bo;
-> > +     void *pwrup_reglist_ptr;
-> > +     uint64_t pwrup_reglist_iova;
-> > +
-> >       bool has_whereami;
-> >
-> >       void __iomem *llc_mmio;
-> > @@ -49,6 +92,105 @@ struct a6xx_gpu {
-> >
-> >  #define to_a6xx_gpu(x) container_of(x, struct a6xx_gpu, base)
-> >
-> > +/*
-> > + * In order to do lockless preemption we use a simple state machine to=
- progress
-> > + * through the process.
-> > + *
-> > + * PREEMPT_NONE - no preemption in progress.  Next state START.
-> > + * PREEMPT_START - The trigger is evaluating if preemption is possible=
-. Next
-> > + * states: TRIGGERED, NONE
-> > + * PREEMPT_FINISH - An intermediate state before moving back to NONE. =
-Next
-> > + * state: NONE.
-> > + * PREEMPT_TRIGGERED: A preemption has been executed on the hardware. =
-Next
-> > + * states: FAULTED, PENDING
-> > + * PREEMPT_FAULTED: A preemption timed out (never completed). This wil=
-l trigger
-> > + * recovery.  Next state: N/A
-> > + * PREEMPT_PENDING: Preemption complete interrupt fired - the callback=
- is
-> > + * checking the success of the operation. Next state: FAULTED, NONE.
-> > + */
-> > +
-> > +enum a6xx_preempt_state {
-> > +     PREEMPT_NONE =3D 0,
-> > +     PREEMPT_START,
-> > +     PREEMPT_FINISH,
-> > +     PREEMPT_TRIGGERED,
-> > +     PREEMPT_FAULTED,
-> > +     PREEMPT_PENDING,
-> > +};
-> > +
-> > +/*
-> > + * struct a6xx_preempt_record is a shared buffer between the microcode=
- and the
-> > + * CPU to store the state for preemption. The record itself is much la=
-rger
-> > + * (2112k) but most of that is used by the CP for storage.
-> > + *
-> > + * There is a preemption record assigned per ringbuffer. When the CPU =
-triggers a
-> > + * preemption, it fills out the record with the useful information (wp=
-tr, ring
-> > + * base, etc) and the microcode uses that information to set up the CP=
- following
-> > + * the preemption.  When a ring is switched out, the CP will save the =
-ringbuffer
-> > + * state back to the record. In this way, once the records are properl=
-y set up
-> > + * the CPU can quickly switch back and forth between ringbuffers by on=
-ly
-> > + * updating a few registers (often only the wptr).
-> > + *
-> > + * These are the CPU aware registers in the record:
-> > + * @magic: Must always be 0xAE399D6EUL
-> > + * @info: Type of the record - written 0 by the CPU, updated by the CP
-> > + * @errno: preemption error record
-> > + * @data: Data field in YIELD and SET_MARKER packets, Written and used=
- by CP
-> > + * @cntl: Value of RB_CNTL written by CPU, save/restored by CP
-> > + * @rptr: Value of RB_RPTR written by CPU, save/restored by CP
-> > + * @wptr: Value of RB_WPTR written by CPU, save/restored by CP
-> > + * @_pad: Reserved/padding
-> > + * @rptr_addr: Value of RB_RPTR_ADDR_LO|HI written by CPU, save/restor=
-ed by CP
-> > + * @rbase: Value of RB_BASE written by CPU, save/restored by CP
-> > + * @counter: GPU address of the storage area for the preemption counte=
-rs
->
-> doc missing for bv_rptr_addr.
->
-> > + */
-> > +struct a6xx_preempt_record {
-> > +     u32 magic;
-> > +     u32 info;
-> > +     u32 errno;
-> > +     u32 data;
-> > +     u32 cntl;
-> > +     u32 rptr;
-> > +     u32 wptr;
-> > +     u32 _pad;
-> > +     u64 rptr_addr;
-> > +     u64 rbase;
-> > +     u64 counter;
-> > +     u64 bv_rptr_addr;
-> > +};
-> > +
-> > +#define A6XX_PREEMPT_RECORD_MAGIC 0xAE399D6EUL
-> > +
-> > +#define PREEMPT_RECORD_SIZE_FALLBACK(size) \
-> > +     ((size) =3D=3D 0 ? 4192 * SZ_1K : (size))
-> > +
-> > +#define PREEMPT_OFFSET_SMMU_INFO 0
-> > +#define PREEMPT_OFFSET_PRIV_NON_SECURE (PREEMPT_OFFSET_SMMU_INFO + 409=
-6)
-> > +#define PREEMPT_OFFSET_PRIV_SECURE(size) \
-> > +     (PREEMPT_OFFSET_PRIV_NON_SECURE + PREEMPT_RECORD_SIZE_FALLBACK(si=
-ze))
-> > +#define PREEMPT_SIZE(size) \
-> > +     (PREEMPT_OFFSET_PRIV_SECURE(size) + PREEMPT_RECORD_SIZE_FALLBACK(=
-size))
-> > +
-> > +/*
-> > + * The preemption counter block is a storage area for the value of the
-> > + * preemption counters that are saved immediately before context switc=
-h. We
-> > + * append it on to the end of the allocation for the preemption record=
-.
-> > + */
-> > +#define A6XX_PREEMPT_COUNTER_SIZE (16 * 4)
-> > +
-> > +#define A6XX_PREEMPT_USER_RECORD_SIZE (192 * 1024)
->
-> Unused.
->
-> > +
-> > +struct a7xx_cp_smmu_info {
-> > +     u32 magic;
-> > +     u32 _pad4;
-> > +     u64 ttbr0;
-> > +     u32 asid;
-> > +     u32 context_idr;
-> > +     u32 context_bank;
-> > +};
-> > +
-> > +#define GEN7_CP_SMMU_INFO_MAGIC 0x241350d5UL
-> > +
-> >  /*
-> >   * Given a register and a count, return a value to program into
-> >   * REG_CP_PROTECT_REG(n) - this will block both reads and writes for
-> > @@ -106,6 +248,25 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struc=
-t device_node *node);
-> >  int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_nod=
-e *node);
-> >  void a6xx_gmu_remove(struct a6xx_gpu *a6xx_gpu);
-> >
-> > +void a6xx_preempt_init(struct msm_gpu *gpu);
-> > +void a6xx_preempt_hw_init(struct msm_gpu *gpu);
-> > +void a6xx_preempt_trigger(struct msm_gpu *gpu);
-> > +void a6xx_preempt_irq(struct msm_gpu *gpu);
-> > +void a6xx_preempt_fini(struct msm_gpu *gpu);
-> > +int a6xx_preempt_submitqueue_setup(struct msm_gpu *gpu,
-> > +             struct msm_gpu_submitqueue *queue);
-> > +void a6xx_preempt_submitqueue_close(struct msm_gpu *gpu,
-> > +             struct msm_gpu_submitqueue *queue);
-> > +
-> > +/* Return true if we are in a preempt state */
-> > +static inline bool a6xx_in_preempt(struct a6xx_gpu *a6xx_gpu)
-> > +{
-> > +     int preempt_state =3D atomic_read(&a6xx_gpu->preempt_state);
->
-> I think we should keep a matching barrier before the 'read' similar to th=
-e one used in the
-> set_preempt_state helper.
+On 09.09.24 09:49, Krzysztof Kozlowski wrote:
+> On 09/09/2024 08:48, Jan Kiszka wrote:
+>> On 09.09.24 08:22, Krzysztof Kozlowski wrote:
+>>> On Sun, Sep 08, 2024 at 07:32:28PM +0200, Jan Kiszka wrote:
+>>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>>>
+>>>> The PVU on the AM65 SoC is capable of restricting DMA from PCIe devices
+>>>> to specific regions of host memory. Add the optional property
+>>>> "memory-regions" to point to such regions of memory when PVU is used.
+>>>>
+>>>> Since the PVU deals with system physical addresses, utilizing the PVU
+>>>> with PCIe devices also requires setting up the VMAP registers to map the
+>>>> Requester ID of the PCIe device to the CBA Virtual ID, which in turn is
+>>>> mapped to the system physical address. Hence, describe the VMAP
+>>>> registers which are optional unless the PVU shall be used for PCIe.
+>>>>
+>>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>>>> ---
+>>>> CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
+>>>> CC: "Krzysztof Wilczyński" <kw@linux.com>
+>>>> CC: Bjorn Helgaas <bhelgaas@google.com>
+>>>> CC: linux-pci@vger.kernel.org
+>>>> ---
+>>>>  .../bindings/pci/ti,am65-pci-host.yaml        | 29 +++++++++++++++++--
+>>>>  1 file changed, 26 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>>> index 0a9d10532cc8..0c297d12173c 100644
+>>>> --- a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>>> +++ b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>>> @@ -20,14 +20,18 @@ properties:
+>>>>        - ti,keystone-pcie
+>>>>  
+>>>>    reg:
+>>>> -    maxItems: 4
+>>>> +    minItems: 4
+>>>> +    maxItems: 6
+>>>>  
+>>>>    reg-names:
+>>>> +    minItems: 4
+>>>>      items:
+>>>>        - const: app
+>>>>        - const: dbics
+>>>>        - const: config
+>>>>        - const: atu
+>>>> +      - const: vmap_lp
+>>>> +      - const: vmap_hp
+>>>>  
+>>>>    interrupts:
+>>>>      maxItems: 1
+>>>> @@ -83,13 +87,30 @@ if:
+>>>>      compatible:
+>>>>        enum:
+>>>>          - ti,am654-pcie-rc
+>>>> +
+>>>>  then:
+>>>> +  properties:
+>>>> +    memory-region:
+>>>
+>>> I think I said it two times already. You must define properties in
+>>> top-level. That's how we expect, that's how dtschema works (even if it
+>>> works fine otherwise, it's not always that case), that's how almost all
+>>> bindings are written.
+>>
+>> Look, if you have such rules, also enhance the checker, or people like
+>> me will continue to work intuitively. Add reasoning along that as well,
+> 
+> That would be ideal, but I also asked to do this twice. It does not
+> matter if dtschema  or me tells you this, if you do not implement it.
+> 
+>> would help further to reduce your review effort. The current situation
+>> with rather fuzzy results from the checker and strange mechanisms inside
+>> (see my maxItems finding) is not very helpful IMHO.
+>>
+>> I this concrete case, I would add this item top-level, just to set
+>> maxItems to 0 for ti,keystone-pcie? Not a pattern I'm finding anywhere.
+>> Or do we have to allow memory-regions for all compatibles now?
+> 
+> Is it really not suitable for all the compatibles? Maybe these are quite
+> different devices in such case?
+> 
+> But if it is not really suitable, then you can disallow it for other
+> variants with :false. This is also explicitly documented in example-schema:
+> https://elixir.bootlin.com/linux/v5.19/source/Documentation/devicetree/bindings/example-schema.yaml#L212
+> 
 
-Good idea, but for the one case we found where it matters (the
-a6xx_flush() vs. updating the ring in a6xx_preempt_irq() race) the
-barrier needs to be after the read. The sequence is something like:
+I will address this via documentation: The property is not hardware
+related but permits swiotlb. It can be applied to devices as well that
+have no hardware enforcement, unlike the am654.
 
-Thread A:
+Jan
 
-a6xx_gpu->cur_ring =3D a6xx_gpu->next_ring;
-a6xx_gpu->preempt_state =3D PREEMPT_FINISH;
+-- 
+Siemens AG, Technology
+Linux Expert Center
 
-Thread B:
-
-read a6xx_gpu->preempt_state;
-read a6xx_gpu->cur_ring;
-
-And if the read to preempt_state returns PREEMPT_FINISH, then we need
-cur_ring to reflect the ring we switched to. (I discovered this the
-hard way from debugging deadlocks...)
-
-So, maybe add a smp_rmb() before and after, then drop the explicit
-barrier in a6xx_flush()?
-
->
-> > +
-> > +     return !(preempt_state =3D=3D PREEMPT_NONE ||
-> > +                     preempt_state =3D=3D PREEMPT_FINISH);
-> > +}
-> > +
-> >  void a6xx_gmu_set_freq(struct msm_gpu *gpu, struct dev_pm_opp *opp,
-> >                      bool suspended);
-> >  unsigned long a6xx_gmu_get_freq(struct msm_gpu *gpu);
-> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c b/drivers/gpu/dr=
-m/msm/adreno/a6xx_preempt.c
-> > new file mode 100644
-> > index 000000000000..1caff76aca6e
-> > --- /dev/null
-> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> > @@ -0,0 +1,391 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
-> > +/* Copyright (c) 2023 Collabora, Ltd. */
-> > +/* Copyright (c) 2024 Valve Corporation */
-> > +
-> > +#include "msm_gem.h"
-> > +#include "a6xx_gpu.h"
-> > +#include "a6xx_gmu.xml.h"
-> > +#include "msm_mmu.h"
-> > +
-> > +/*
-> > + * Try to transition the preemption state from old to new. Return
-> > + * true on success or false if the original state wasn't 'old'
-> > + */
-> > +static inline bool try_preempt_state(struct a6xx_gpu *a6xx_gpu,
-> > +             enum a6xx_preempt_state old, enum a6xx_preempt_state new)
-> > +{
-> > +     enum a6xx_preempt_state cur =3D atomic_cmpxchg(&a6xx_gpu->preempt=
-_state,
-> > +             old, new);
-> > +
-> > +     return (cur =3D=3D old);
-> > +}
-> > +
-> > +/*
-> > + * Force the preemption state to the specified state.  This is used in=
- cases
-> > + * where the current state is known and won't change
-> > + */
-> > +static inline void set_preempt_state(struct a6xx_gpu *gpu,
-> > +             enum a6xx_preempt_state new)
-> > +{
-> > +     /*
-> > +      * preempt_state may be read by other cores trying to trigger a
-> > +      * preemption or in the interrupt handler so barriers are needed
-> > +      * before...
-> > +      */
-> > +     smp_mb__before_atomic();
-> > +     atomic_set(&gpu->preempt_state, new);
-> > +     /* ... and after*/
-> > +     smp_mb__after_atomic();
-> > +}
-> > +
-> > +/* Write the most recent wptr for the given ring into the hardware */
-> > +static inline void update_wptr(struct msm_gpu *gpu, struct msm_ringbuf=
-fer *ring)
-> > +{
-> > +     unsigned long flags;
-> > +     uint32_t wptr;
-> > +
-> > +     if (!ring)
->
-> Is this ever true?
->
-> > +             return;
-> > +
-> > +     spin_lock_irqsave(&ring->preempt_lock, flags);
-> > +
-> > +     if (ring->skip_inline_wptr) {
-> > +             wptr =3D get_wptr(ring);
-> > +
-> > +             gpu_write(gpu, REG_A6XX_CP_RB_WPTR, wptr);
-> > +
-> > +             ring->skip_inline_wptr =3D false;
-> > +     }
-> > +
-> > +     spin_unlock_irqrestore(&ring->preempt_lock, flags);
-> > +}
-> > +
-> > +/* Return the highest priority ringbuffer with something in it */
-> > +static struct msm_ringbuffer *get_next_ring(struct msm_gpu *gpu)
-> > +{
-> > +     struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> > +     struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> > +
-> > +     unsigned long flags;
-> > +     int i;
-> > +
-> > +     for (i =3D 0; i < gpu->nr_rings; i++) {
-> > +             bool empty;
-> > +             struct msm_ringbuffer *ring =3D gpu->rb[i];
-> > +
-> > +             spin_lock_irqsave(&ring->preempt_lock, flags);
-> > +             empty =3D (get_wptr(ring) =3D=3D gpu->funcs->get_rptr(gpu=
-, ring));
-> > +             if (!empty && ring =3D=3D a6xx_gpu->cur_ring)
-> > +                     empty =3D ring->memptrs->fence =3D=3D a6xx_gpu->l=
-ast_seqno[i];
-> > +             spin_unlock_irqrestore(&ring->preempt_lock, flags);
-> > +
-> > +             if (!empty)
-> > +                     return ring;
-> > +     }
-> > +
-> > +     return NULL;
-> > +}
-> > +
-> > +static void a6xx_preempt_timer(struct timer_list *t)
-> > +{
-> > +     struct a6xx_gpu *a6xx_gpu =3D from_timer(a6xx_gpu, t, preempt_tim=
-er);
-> > +     struct msm_gpu *gpu =3D &a6xx_gpu->base.base;
-> > +     struct drm_device *dev =3D gpu->dev;
-> > +
-> > +     if (!try_preempt_state(a6xx_gpu, PREEMPT_TRIGGERED, PREEMPT_FAULT=
-ED))
-> > +             return;
-> > +
-> > +     dev_err(dev->dev, "%s: preemption timed out\n", gpu->name);
-> > +     kthread_queue_work(gpu->worker, &gpu->recover_work);
-> > +}
-> > +
-> > +void a6xx_preempt_irq(struct msm_gpu *gpu)
-> > +{
-> > +     uint32_t status;
-> > +     struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> > +     struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> > +     struct drm_device *dev =3D gpu->dev;
-> > +
-> > +     if (!try_preempt_state(a6xx_gpu, PREEMPT_TRIGGERED, PREEMPT_PENDI=
-NG))
-> > +             return;
-> > +
-> > +     /* Delete the preemption watchdog timer */
-> > +     del_timer(&a6xx_gpu->preempt_timer);
-> > +
-> > +     /*
-> > +      * The hardware should be setting the stop bit of CP_CONTEXT_SWIT=
-CH_CNTL
-> > +      * to zero before firing the interrupt, but there is a non zero c=
-hance
-> > +      * of a hardware condition or a software race that could set it a=
-gain
-> > +      * before we have a chance to finish. If that happens, log and go=
- for
-> > +      * recovery
-> > +      */
-> > +     status =3D gpu_read(gpu, REG_A6XX_CP_CONTEXT_SWITCH_CNTL);
-> > +     if (unlikely(status & A6XX_CP_CONTEXT_SWITCH_CNTL_STOP)) {
-> > +             DRM_DEV_ERROR(&gpu->pdev->dev,
-> > +                                       "!!!!!!!!!!!!!!!! preemption fa=
-ulted !!!!!!!!!!!!!! irq\n");
-> > +             set_preempt_state(a6xx_gpu, PREEMPT_FAULTED);
-> > +             dev_err(dev->dev, "%s: Preemption failed to complete\n",
-> > +                     gpu->name);
-> > +             kthread_queue_work(gpu->worker, &gpu->recover_work);
-> > +             return;
-> > +     }
-> > +
-> > +     a6xx_gpu->cur_ring =3D a6xx_gpu->next_ring;
-> > +     a6xx_gpu->next_ring =3D NULL;
-> > +
-> > +     /* Make sure the write to cur_ring is posted before the change in=
- state */
-> > +     wmb();
->
-> Not needed. set_preempt_state has the necessary barrier.
->
-> > +
-> > +     set_preempt_state(a6xx_gpu, PREEMPT_FINISH);
-> > +
-> > +     update_wptr(gpu, a6xx_gpu->cur_ring);
-> > +
-> > +     set_preempt_state(a6xx_gpu, PREEMPT_NONE);
-> > +
-> > +     /*
-> > +      * Retrigger preemption to avoid a deadlock that might occur when=
- preemption
-> > +      * is skipped due to it being already in flight when requested.
-> > +      */
-> > +     a6xx_preempt_trigger(gpu);
-> > +}
-> > +
-> > +void a6xx_preempt_hw_init(struct msm_gpu *gpu)
-> > +{
-> > +     struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> > +     struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> > +     int i;
-> > +
-> > +     /* No preemption if we only have one ring */
-> > +     if (gpu->nr_rings =3D=3D 1)
-> > +             return;
-> > +
-> > +     for (i =3D 0; i < gpu->nr_rings; i++) {
-> > +             struct a6xx_preempt_record *record_ptr =3D
-> > +                     a6xx_gpu->preempt[i] + PREEMPT_OFFSET_PRIV_NON_SE=
-CURE;
-> > +             record_ptr->wptr =3D 0;
-> > +             record_ptr->rptr =3D 0;
-> > +             record_ptr->rptr_addr =3D shadowptr(a6xx_gpu, gpu->rb[i])=
-;
-> > +             record_ptr->info =3D 0;
-> > +             record_ptr->data =3D 0;
-> > +             record_ptr->rbase =3D gpu->rb[i]->iova;
-> > +     }
-> > +
-> > +     /* Write a 0 to signal that we aren't switching pagetables */
-> > +     gpu_write64(gpu, REG_A6XX_CP_CONTEXT_SWITCH_SMMU_INFO, 0);
-> > +
-> > +     /* Enable the GMEM save/restore feature for preemption */
-> > +     gpu_write(gpu, REG_A6XX_RB_CONTEXT_SWITCH_GMEM_SAVE_RESTORE, 0x1)=
-;
-> > +
-> > +     /* Reset the preemption state */
-> > +     set_preempt_state(a6xx_gpu, PREEMPT_NONE);
-> > +
-> > +     spin_lock_init(&a6xx_gpu->eval_lock);
-> > +
-> > +     /* Always come up on rb 0 */
-> > +     a6xx_gpu->cur_ring =3D gpu->rb[0];
-> > +}
-> > +
-> > +void a6xx_preempt_trigger(struct msm_gpu *gpu)
-> > +{
-> > +     struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> > +     struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> > +     u64 preempt_offset_priv_secure;
-> > +     unsigned long flags;
-> > +     struct msm_ringbuffer *ring;
-> > +     unsigned int cntl;
-> > +
-> > +     if (gpu->nr_rings =3D=3D 1)
-> > +             return;
-> > +
-> > +     /*
-> > +      * Lock to make sure another thread attempting preemption doesn't=
- skip it
-> > +      * while we are still evaluating the next ring. This makes sure t=
-he other
-> > +      * thread does start preemption if we abort it and avoids a soft =
-lock.
-> > +      */
-> > +     spin_lock_irqsave(&a6xx_gpu->eval_lock, flags);
-> > +
-> > +     /*
-> > +      * Try to start preemption by moving from NONE to START. If
-> > +      * unsuccessful, a preemption is already in flight
-> > +      */
-> > +     if (!try_preempt_state(a6xx_gpu, PREEMPT_NONE, PREEMPT_START)) {
-> > +             spin_unlock_irqrestore(&a6xx_gpu->eval_lock, flags);
-> > +             return;
-> > +     }
-> > +
-> > +     cntl =3D A6XX_CP_CONTEXT_SWITCH_CNTL_LEVEL(a6xx_gpu->preempt_leve=
-l);
-> > +
-> > +     if (a6xx_gpu->skip_save_restore)
-> > +             cntl |=3D A6XX_CP_CONTEXT_SWITCH_CNTL_SKIP_SAVE_RESTORE;
-> > +
-> > +     if (a6xx_gpu->uses_gmem)
-> > +             cntl |=3D A6XX_CP_CONTEXT_SWITCH_CNTL_USES_GMEM;
-> > +
-> > +     cntl |=3D A6XX_CP_CONTEXT_SWITCH_CNTL_STOP;
-> > +
-> > +     /* Get the next ring to preempt to */
-> > +     ring =3D get_next_ring(gpu);
-> > +
-> > +     /*
-> > +      * If no ring is populated or the highest priority ring is the cu=
-rrent
-> > +      * one do nothing except to update the wptr to the latest and gre=
-atest
-> > +      */
-> > +     if (!ring || (a6xx_gpu->cur_ring =3D=3D ring)) {
-> > +             set_preempt_state(a6xx_gpu, PREEMPT_FINISH);
-> > +             update_wptr(gpu, a6xx_gpu->cur_ring);
-> > +             set_preempt_state(a6xx_gpu, PREEMPT_NONE);
-> > +             spin_unlock_irqrestore(&a6xx_gpu->eval_lock, flags);
-> > +             return;
-> > +     }
-> > +
-> > +     spin_unlock_irqrestore(&a6xx_gpu->eval_lock, flags);
-> > +
-> > +     spin_lock_irqsave(&ring->preempt_lock, flags);
-> > +
-> > +     struct a7xx_cp_smmu_info *smmu_info_ptr =3D
-> > +             a6xx_gpu->preempt[ring->id] + PREEMPT_OFFSET_SMMU_INFO;
-> > +     struct a6xx_preempt_record *record_ptr =3D
-> > +             a6xx_gpu->preempt[ring->id] + PREEMPT_OFFSET_PRIV_NON_SEC=
-URE;
-> > +     u64 ttbr0 =3D ring->memptrs->ttbr0;
-> > +     u32 context_idr =3D ring->memptrs->context_idr;
-> > +
-> > +     smmu_info_ptr->ttbr0 =3D ttbr0;
-> > +     smmu_info_ptr->context_idr =3D context_idr;
-> > +     record_ptr->wptr =3D get_wptr(ring);
-> > +
-> > +     /*
-> > +      * The GPU will write the wptr we set above when we preempt. Rese=
-t
-> > +      * skip_inline_wptr to make sure that we don't write WPTR to the =
-same
-> > +      * thing twice. It's still possible subsequent submissions will u=
-pdate
-> > +      * wptr again, in which case they will set the flag to true. This=
- has
-> > +      * to be protected by the lock for setting the flag and updating =
-wptr
-> > +      * to be atomic.
-> > +      */
-> > +     ring->skip_inline_wptr =3D false;
-> > +
-> > +     spin_unlock_irqrestore(&ring->preempt_lock, flags);
-> > +
-> > +     gpu_write64(gpu,
-> > +             REG_A6XX_CP_CONTEXT_SWITCH_SMMU_INFO,
-> > +             a6xx_gpu->preempt_iova[ring->id] + PREEMPT_OFFSET_SMMU_IN=
-FO);
-> > +
-> > +     gpu_write64(gpu,
-> > +             REG_A6XX_CP_CONTEXT_SWITCH_PRIV_NON_SECURE_RESTORE_ADDR,
-> > +             a6xx_gpu->preempt_iova[ring->id] + PREEMPT_OFFSET_PRIV_NO=
-N_SECURE);
-> > +
-> > +     preempt_offset_priv_secure =3D
-> > +             PREEMPT_OFFSET_PRIV_SECURE(adreno_gpu->info->preempt_reco=
-rd_size);
-> > +     gpu_write64(gpu,
-> > +             REG_A6XX_CP_CONTEXT_SWITCH_PRIV_SECURE_RESTORE_ADDR,
-> > +             a6xx_gpu->preempt_iova[ring->id] + preempt_offset_priv_se=
-cure);
->
-> Secure buffers are not supported currently, so we can skip this and the
-> context record allocation. Anyway this has to be a separate buffer
-> mapped in secure pagetable which don't currently have. We can skip the
-> same in pseudo register packet too.
->
-> > +
-> > +     a6xx_gpu->next_ring =3D ring;
-> > +
-> > +     /* Start a timer to catch a stuck preemption */
-> > +     mod_timer(&a6xx_gpu->preempt_timer, jiffies + msecs_to_jiffies(10=
-000));
-> > +
-> > +     /* Set the preemption state to triggered */
-> > +     set_preempt_state(a6xx_gpu, PREEMPT_TRIGGERED);
-> > +
-> > +     /* Make sure any previous writes to WPTR are posted */
-> > +     gpu_read(gpu, REG_A6XX_CP_RB_WPTR);
-> > +
-> > +     /* Make sure everything is written before hitting the button */
-> > +     wmb();
->
-> This and the above read back looks unnecessary. All writes to gpu are
-> ordered anyway.
-
-I thought the whole reason for
-https://lore.kernel.org/linux-kernel/20240508-topic-adreno-v1-1-1babd05c119=
-d@linaro.org/
-is that memory-mapped writes to different GPU registers are *not*
-necessarily ordered from the GPU's perspective (even if they are from
-the CPU). That's why I suggested the readback. Or am I missing
-something?
-
->
-> > +
-> > +     /* Trigger the preemption */
-> > +     gpu_write(gpu, REG_A6XX_CP_CONTEXT_SWITCH_CNTL, cntl);
-> > +}
-> > +
-> > +static int preempt_init_ring(struct a6xx_gpu *a6xx_gpu,
-> > +             struct msm_ringbuffer *ring)
-> > +{
-> > +     struct adreno_gpu *adreno_gpu =3D &a6xx_gpu->base;
-> > +     struct msm_gpu *gpu =3D &adreno_gpu->base;
-> > +     struct drm_gem_object *bo =3D NULL;
-> > +     phys_addr_t ttbr;
-> > +     u64 iova =3D 0;
-> > +     void *ptr;
-> > +     int asid;
-> > +
-> > +     ptr =3D msm_gem_kernel_new(gpu->dev,
-> > +             PREEMPT_SIZE(adreno_gpu->info->preempt_record_size),
-> > +             MSM_BO_WC | MSM_BO_MAP_PRIV, gpu->aspace, &bo, &iova);
->
-> set a name?
->
-> > +
-> > +     memset(ptr, 0, PREEMPT_SIZE(adreno_gpu->info->preempt_record_size=
-));
-> > +
-> > +     if (IS_ERR(ptr))
-> > +             return PTR_ERR(ptr);
-> > +
-> > +     a6xx_gpu->preempt_bo[ring->id] =3D bo;
-> > +     a6xx_gpu->preempt_iova[ring->id] =3D iova;
-> > +     a6xx_gpu->preempt[ring->id] =3D ptr;
-> > +
-> > +     struct a7xx_cp_smmu_info *smmu_info_ptr =3D ptr + PREEMPT_OFFSET_=
-SMMU_INFO;
-> > +     struct a6xx_preempt_record *record_ptr =3D ptr + PREEMPT_OFFSET_P=
-RIV_NON_SECURE;
-> > +
-> > +     msm_iommu_pagetable_params(gpu->aspace->mmu, &ttbr, &asid);
-> > +
-> > +     smmu_info_ptr->magic =3D GEN7_CP_SMMU_INFO_MAGIC;
-> > +     smmu_info_ptr->ttbr0 =3D ttbr;
-> > +     smmu_info_ptr->asid =3D 0xdecafbad;
-> > +     smmu_info_ptr->context_idr =3D 0;
-> > +
-> > +     /* Set up the defaults on the preemption record */
-> > +     record_ptr->magic =3D A6XX_PREEMPT_RECORD_MAGIC;
-> > +     record_ptr->info =3D 0;
-> > +     record_ptr->data =3D 0;
-> > +     record_ptr->rptr =3D 0;
-> > +     record_ptr->wptr =3D 0;
-> > +     record_ptr->cntl =3D MSM_GPU_RB_CNTL_DEFAULT;
-> > +     record_ptr->rbase =3D ring->iova;
-> > +     record_ptr->counter =3D 0;
-> > +     record_ptr->bv_rptr_addr =3D rbmemptr(ring, bv_rptr);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +void a6xx_preempt_fini(struct msm_gpu *gpu)
-> > +{
-> > +     struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> > +     struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> > +     int i;
-> > +
-> > +     for (i =3D 0; i < gpu->nr_rings; i++)
-> > +             msm_gem_kernel_put(a6xx_gpu->preempt_bo[i], gpu->aspace);
-> > +}
-> > +
-> > +void a6xx_preempt_init(struct msm_gpu *gpu)
-> > +{
-> > +     struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> > +     struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> > +     int i;
-> > +
-> > +     /* No preemption if we only have one ring */
-> > +     if (gpu->nr_rings <=3D 1)
-> > +             return;
-> > +
-> > +     for (i =3D 0; i < gpu->nr_rings; i++) {
-> > +             if (preempt_init_ring(a6xx_gpu, gpu->rb[i]))
-> > +                     goto fail;
-> > +     }
-> > +
-> > +     /* TODO: make this configurable? */
-> > +     a6xx_gpu->preempt_level =3D 1;
-> > +     a6xx_gpu->uses_gmem =3D 1;
-> > +     a6xx_gpu->skip_save_restore =3D 1;
-> > +
-> > +     timer_setup(&a6xx_gpu->preempt_timer, a6xx_preempt_timer, 0);
-> > +
-> > +     return;
-> > +fail:
->
-> Log an error so that preemption is not disabled silently?
->
-> > +     /*
-> > +      * On any failure our adventure is over. Clean up and
-> > +      * set nr_rings to 1 to force preemption off
-> > +      */
-> > +     a6xx_preempt_fini(gpu);
-> > +     gpu->nr_rings =3D 1;
-> > +
-> > +     return;
-> > +}
-> > diff --git a/drivers/gpu/drm/msm/msm_ringbuffer.h b/drivers/gpu/drm/msm=
-/msm_ringbuffer.h
-> > index 40791b2ade46..7dde6a312511 100644
-> > --- a/drivers/gpu/drm/msm/msm_ringbuffer.h
-> > +++ b/drivers/gpu/drm/msm/msm_ringbuffer.h
-> > @@ -36,6 +36,7 @@ struct msm_rbmemptrs {
-> >
-> >       volatile struct msm_gpu_submit_stats stats[MSM_GPU_SUBMIT_STATS_C=
-OUNT];
-> >       volatile u64 ttbr0;
-> > +     volatile u32 context_idr;
-> >  };
-> >
-> >  struct msm_cp_state {
-> > @@ -100,6 +101,12 @@ struct msm_ringbuffer {
-> >        * preemption.  Can be aquired from irq context.
-> >        */
-> >       spinlock_t preempt_lock;
-> > +
-> > +     /*
-> > +      * Whether we skipped writing wptr and it needs to be updated in =
-the
-> > +      * future when the ring becomes current.
-> > +      */
-> > +     bool skip_inline_wptr;
->
-> nit: does 'restore_wptr' makes more sense? Or something better?  Basicall=
-y, name it based
-> on the future action?
->
-> -Akhil
->
-> >  };
-> >
-> >  struct msm_ringbuffer *msm_ringbuffer_new(struct msm_gpu *gpu, int id,
-> >
-> > --
-> > 2.46.0
-> >
 
