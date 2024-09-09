@@ -1,83 +1,75 @@
-Return-Path: <linux-kernel+bounces-321446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 066D0971A7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:12:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F65971A82
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B04B31F2506B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:12:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D865F287C93
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49FE81BA275;
-	Mon,  9 Sep 2024 13:10:23 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B27D1B9B30;
+	Mon,  9 Sep 2024 13:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ulaXtf1F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB27F1B81DD;
-	Mon,  9 Sep 2024 13:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DA31B86E1;
+	Mon,  9 Sep 2024 13:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725887422; cv=none; b=WZVvlsV/Qkm04o0QwTVk0FOIFpXcrAvI3U0xPHP2m+nXsOJkxrSD5lzC3etQkzQDf/FPYtkmHXdTrUpANlsp6lwo3U8JMpd4XCxcnCPaqZYdpqet01wYrITlVLHgroXMo28PMmaaGz7Td7/q+NSGe+F4cPC2Zhbo7fiZOB7xJ/g=
+	t=1725887498; cv=none; b=XmeqPl6vobbZX0JJCj0kh/PVFFh0MSPGljM/MgpbpbCBbtMqD7qI/aTdhDq28b9kAEMRicIm/TWJuyUzu55jM7s8ftlkPZwyXsQ9BP+3xVT25/nBqSjyB6vUcW3lf5wD2C09egiW3P5vXVlHfByAYDtocvLWceE63oIxaZXAF9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725887422; c=relaxed/simple;
-	bh=nfr9RMJs2vOAJDAOpHKlVzZwA9+bJ41Qrp37yy6udxA=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=tJIkQmIHmHPkdCgK11LZ5v+xLSwDwxPu2i/XvWPU8Cv+Kfjf5klCoIk/XpB9U11A/BBUWajFrXiBPj4DfL6Qnb/7EDoyP94qYS0GNB579vLoiDTRuYzBFg+BLCK19huNe++fUT8A2WU1QSxiMsvbxJRCSw2326rTLupGNpjYCnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4X2Ry36GVqz1SB0y;
-	Mon,  9 Sep 2024 21:09:47 +0800 (CST)
-Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
-	by mail.maildlp.com (Postfix) with ESMTPS id 57F2A14022D;
-	Mon,  9 Sep 2024 21:10:15 +0800 (CST)
-Received: from [10.67.120.108] (10.67.120.108) by
- kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 9 Sep 2024 21:10:14 +0800
-Message-ID: <eef1e927-c9b2-c61d-7f48-92e65d8b0418@huawei.com>
-Date: Mon, 9 Sep 2024 21:10:14 +0800
+	s=arc-20240116; t=1725887498; c=relaxed/simple;
+	bh=PSTM3SwhH/n1iDskZX05rWDPHAZfEWomQUKwWkACvq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UqMmjv+WzQ7YrVv1A7Kq+WVgmc7CAT4ItYSsnQ5xpCvv9RZ/5LTzwWe+u1UbWs+7aGzIHoAhRAx8jGc3fRhKwG8+IIFMEibSYi2us+nHCgifaF8KltlNa05oLBnZaFYu7R1865tfNIxDoFNxz9w9fU4UByULxJr7PXeTIxrHJJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ulaXtf1F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 103F0C4CEC5;
+	Mon,  9 Sep 2024 13:11:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725887498;
+	bh=PSTM3SwhH/n1iDskZX05rWDPHAZfEWomQUKwWkACvq4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ulaXtf1FjtY/KYz2lFfN/MFJLuC+2XSwdZQJvxT5jjTKHyKDj6e0ZaP7IDeBZqGGW
+	 k+2OybT5eU1/FropdZHuuD8OB1vriRX3xGIR9hom0TpMa9Y8dKBh4xzPOBdC9s5dHh
+	 s1DvJikeK4v8N1BtaoyGUoOrwxh2GiOkLEmzfoz0=
+Date: Mon, 9 Sep 2024 09:11:34 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the slab tree
+Message-ID: <20240909-nice-important-mink-2fac60@lemur>
+References: <20240909171220.32e862e3@canb.auug.org.au>
+ <af23f1d3-27de-4591-ab0a-02268ef547a3@suse.cz>
+ <20240909-organismus-sattbekommen-06332e10fcd1@brauner>
+ <5661a983-9875-4cdb-8bdb-fc83e82f0b58@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Content-Language: en-CA
-To: <axboe@kernel.dk>, John Garry <john.g.garry@oracle.com>
-CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, <damien.lemoal@opensource.wdc.com>
-From: yangxingui <yangxingui@huawei.com>
-Subject: [bug report] block: Non-NCQ commands will never be executed while fio
- is continuously running
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepemh200007.china.huawei.com (7.202.181.114) To
- kwepemg100017.china.huawei.com (7.202.181.58)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5661a983-9875-4cdb-8bdb-fc83e82f0b58@suse.cz>
 
-Hello axboe & John,
+On Mon, Sep 09, 2024 at 11:40:25AM GMT, Vlastimil Babka wrote:
+> > Hm, that's very odd that the IDs changed. The only thing that I did was
+> > b4 trailers -u on the branch to quickly check whether I missed an RvBs
+> > or Acks. But there were none so I assumed that the commit ids wouldn't
+> 
+> I guess b4 could be smarter and not perform/rollback the history rewrite if
+> there's nothing to change.
 
-After the driver exposes all HW queues to the block layer, non-NCQ 
-commands will never be executed while fio is continuously running, such 
-as a smartctl command.
+That should be already the case. If there were no updates to commits, then it
+should have been a no-op, so I'm pretty sure something else must have
+happened.
 
-The cause of the problem is that other hctx used by the NCQ command is 
-still active and can continue to issue NCQ commands to the sata disk.
-And the pio command keeps retrying in its corresponding hctx because 
-qc_defer() always returns true.
-
-hctx0: ncq, pio, ncq
-hctx1：ncq, ncq, ...
-...
-hctxn: ncq, ncq, ...
-
-Is there any good solution for this?
-
-Thanks.
-Xingui
+-K
 
