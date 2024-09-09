@@ -1,124 +1,186 @@
-Return-Path: <linux-kernel+bounces-322156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85EC39724F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:09:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68ADA972508
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B69831C2213D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:09:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B3B01C22163
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133C518C939;
-	Mon,  9 Sep 2024 22:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E7B18CC19;
+	Mon,  9 Sep 2024 22:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2nvGm2F"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUaik6H1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF7318A920;
-	Mon,  9 Sep 2024 22:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A5F18C938;
+	Mon,  9 Sep 2024 22:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725919762; cv=none; b=V7ZnSKj6gANL909b/j2uUBVD5OCp6Va1z+LVS1Sn5fgcvLJ7MDfU1B1Fg7Hua4S/blGgS/K8NDfRYS7jym/B8UTKEaB4KSkJI6iOkyMNkWgENts+eDicBfPsI4fYluuzs9BImsft2g2sTJk88niq3F1INEsyxM5UDfpPCakoYWo=
+	t=1725919885; cv=none; b=li/UW1yoRhfK+1vy/jQmk8ZgRjkqJmjgRyBcWp/hmuLd5y9svloYH4aw0/jZNzGpZJzRgM49vx8aOwZatNZSMVLFzFffSAyR78elWQ6VUFE819/7xa9vHjEdQyy/PMdbsSAFxCh5R3EdVlYHDTGwguQ2d0WMEVrF68XTP2YErEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725919762; c=relaxed/simple;
-	bh=xAan0RdLevLXlBWZJIEkjT6XCXYGpk7zDfotdpBDGoM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f/ryrHZCKGm9gw36YpkOEU660gG/PgnePQLZI0Cqu/4BtepeOqLOVIBf7InUgEeDHHC0ZpEJfd6ZOSQRW60RtnGVEM/leg+wJXt+NvBA2tf8a+w4nPAQtgQv6NiGkHdb86Kwhl0BE8iknqW7FraWg6+FZqqWp+/JiFHJqgIuXec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2nvGm2F; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so12809135e9.3;
-        Mon, 09 Sep 2024 15:09:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725919759; x=1726524559; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YsPDqkVnY6G76KUOE5YeGyTOTZj2B3ANCn40xAGj0dQ=;
-        b=D2nvGm2F3gwT90qkc7EyoPf6g+Mb9DjrxStLZXpX2vUWDi4/R00Ml8A6+pbp+OIGyX
-         BAfBVwWreFfDwoVCerBfpYYkfJ7e5SwNnDjZsqN58WK/JniYiBo04CwsUQ5qUOk7y0oG
-         CeLNmiD2YAvKC9RLGkjmVeKLYj5aLsjUJY3oT64QWVcQLBvF3F7aEYYufNCopZmMs/Sj
-         ddUUIKjnlMF58yXUd+pxcSoShrdwzqUSVaXgIt5GUQzLcZXK2QBaCQhgDaiMIbMl4CVI
-         Lr5US3JF08YhTlcCBsxzRaonkCUhKpHyZZA/px98yrfQNVRUkzUsVv9YX8DKsYj1BoZa
-         iLwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725919759; x=1726524559;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YsPDqkVnY6G76KUOE5YeGyTOTZj2B3ANCn40xAGj0dQ=;
-        b=TG9Iv3e1j398mmo3vnELYH2EeL8+xrH2IfdPL9+tXWb0lX+w8oPMPyCde7NKu6nAiZ
-         Q/328LZZSy9d23X84aKhHlqY/rdOGvdKIFCicHtb3Mz0ZlmzVJu0OlkKqWj11fS/eTb8
-         fTQVNscxqow12H80+c8lplfxRrD6EkIr+GHLoqitzZU0M5LwkIIgKVlP6XZEyHZfbCfj
-         JDHHolhaTmQ/tvFypzChdOSYo4//3BKcjAeTLM35iSKv85d+ogO1h7O1NkoRTN3XPJCO
-         5WTdJpiGZyuqctCdqM+uwX0NT8OXjInMjcDnxKzhxicjseS6/4NqmXFXVgKxku51rvA+
-         f0Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnoxAuHz3RoOjWbyCjc+pI2q7bLo1pFhvQqYqRJcs1ZLitRTqAxTmWxumvQNnHux6gBLWcFfPQ6z7TicvIPGk=@vger.kernel.org, AJvYcCXvKP7cWpvtIxODbeZ2uoW1JnTH/gBayRMJtTwNs1oQU1euItE6COoUjTlnDxCC6cumUHRZrBOT2uSi9joS@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGCUJNe/ewSfpqTIT4LMtlvCrNu6jAMIop1qW8oOICMBqwSUZs
-	XPE94SV9wrkPMKbpwx26aly2M4qtcQAxIUG5gM9HRkHr19d6AZV6
-X-Google-Smtp-Source: AGHT+IGTA24UWctI2WhTeyP5yfImnBelxgK80xoDKneqoLWLg+fsK+poqgxMhAw3AklJuPb0kl/NiA==
-X-Received: by 2002:a05:600c:3c94:b0:426:5fbc:f319 with SMTP id 5b1f17b1804b1-42c9f9d7c3dmr91573115e9.33.1725919758150;
-        Mon, 09 Sep 2024 15:09:18 -0700 (PDT)
-Received: from void.void ([141.226.14.150])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb815f4sm90110955e9.30.2024.09.09.15.09.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 15:09:17 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Tony Luck <tony.luck@intel.com>,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>
-Cc: linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] EDAC/sb_edac: Fix typos
-Date: Tue, 10 Sep 2024 01:08:49 +0300
-Message-ID: <20240909220904.11461-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725919885; c=relaxed/simple;
+	bh=8vg3AuHJblhrjLiUGlZqJUh7L/RmFtVibjViGgrID3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xz5udVvfnX/ArwKqhYPO3SI8qWnpC8i8YJXiUbR98tfLs79Jb0XtD1pKAFsqkA/jfLUdOhtsRSMj5jQk3aHhqgWGA+ULV6JZpCuWrvMd/+U4oEG8JVLGR1O+xT4l3OPKihUXhzI6O6FA3GoYZUovLuNGhtMz8RjI2H8hjdnB4Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUaik6H1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ACADC4CEC6;
+	Mon,  9 Sep 2024 22:11:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725919885;
+	bh=8vg3AuHJblhrjLiUGlZqJUh7L/RmFtVibjViGgrID3k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WUaik6H1pAFWMN2k/yGeY+knwPSvuMsOw2ui1tQVsOScmGvrSLoFsFcE7JxmBUdb3
+	 Mzp9Wmrv6o2fL8h+BHqXGGAWSTs/fotu7qJYxfkDT2CHZeaQhdfX7EfMlE5KNnTJ6W
+	 Nwf5hhulrm+aUILRXYLE9eBssfQolW1ZuKEbQ5UGQpzKq+CaBBMkJMKdNCdSAIR6AM
+	 1t5NReNaTLPvF+q7aSBJNOnRNw8tmXPR+MuLXDjLIZS7A8raoBXmmPhAMuq2flnr6V
+	 1tpjfS2AhM0ZeSDPZ0UQ3ZEf3uIo6yH9XTgo/qiLGxMWbgZdSfKWZInB82JF4KBpaW
+	 6iZ24nfS3HLFQ==
+Date: Mon, 9 Sep 2024 19:11:21 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
+	kan.liang@linux.intel.com, namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 8/8] perf trace: Add general tests for augmented
+ syscalls
+Message-ID: <Zt9yiQq-n-W6I274@x1>
+References: <20240824163322.60796-1-howardchu95@gmail.com>
+ <20240824163322.60796-9-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240824163322.60796-9-howardchu95@gmail.com>
 
-Fix typos in comments.
+On Sun, Aug 25, 2024 at 12:33:22AM +0800, Howard Chu wrote:
+> In this test, augmentation for:
+> 
+> * string
+> * buffer
+> * struct
+> 
+> Is tested.
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- drivers/edac/sb_edac.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Please install ShellCheck to test it:
 
-diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
-index d5f12219598a..d47f1240c738 100644
---- a/drivers/edac/sb_edac.c
-+++ b/drivers/edac/sb_edac.c
-@@ -1797,7 +1797,7 @@ static void get_memory_layout(const struct mem_ctl_info *mci)
- 	 * Step 2) Get SAD range and SAD Interleave list
- 	 * TAD registers contain the interleave wayness. However, it
- 	 * seems simpler to just discover it indirectly, with the
--	 * algorithm bellow.
-+	 * algorithm below.
- 	 */
- 	prv = 0;
- 	for (n_sads = 0; n_sads < pvt->info.max_sad; n_sads++) {
-@@ -2055,7 +2055,7 @@ static int get_memory_error_data(struct mem_ctl_info *mci,
+  GEN     perf-archive
+  GEN     perf-iostat
+  TEST    /tmp/build/perf-tools-next/tests/shell/trace_btf_general.sh.shellcheck_log
+  CC      /tmp/build/perf-tools-next/util/header.o
+
+In tests/shell/trace_btf_general.sh line 50:
+	echo "Unexpected signal in ${FUNCNAME[1]}"
+                                   ^------------^ SC3028 (warning): In POSIX sh, FUNCNAME is undefined.
+                                   ^------------^ SC3054 (warning): In POSIX sh, array references are undefined.
+
+For more information:
+  https://www.shellcheck.net/wiki/SC3028 -- In POSIX sh, FUNCNAME is undefined.
+  https://www.shellcheck.net/wiki/SC3054 -- In POSIX sh, array references are...
+make[4]: *** [tests/Build:91: /tmp/build/perf-tools-next/tests/shell/trace_btf_general.sh.shellcheck_log] Error 1
+make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:158: tests] Error 2
+make[2]: *** [Makefile.perf:777: /tmp/build/perf-tools-next/perf-test-in.o] Error 2
+make[2]: *** Waiting for unfinished jobs....
+  LD      /tmp/build/perf-tools-next/util/perf-util-in.o
+  LD      /tmp/build/perf-tools-next/perf-util-in.o
+make[1]: *** [Makefile.perf:292: sub-make] Error 2
+make: *** [Makefile:119: install-bin] Error 2
+make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
+⬢[acme@toolbox perf-tools-next]$
  
- 	/*
- 	 * Step 0) Check if the address is at special memory ranges
--	 * The check bellow is probably enough to fill all cases where
-+	 * The check below is probably enough to fill all cases where
- 	 * the error is not inside a memory, except for the legacy
- 	 * range (e. g. VGA addresses). It is unlikely, however, that the
- 	 * memory controller would generate an error on that range.
--- 
-2.46.0
-
+> Please use this command:
+> 
+> perf test "perf trace general tests"
+> 
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> Suggested-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/tests/shell/trace_btf_general.sh | 67 +++++++++++++++++++++
+>  1 file changed, 67 insertions(+)
+>  create mode 100755 tools/perf/tests/shell/trace_btf_general.sh
+> 
+> diff --git a/tools/perf/tests/shell/trace_btf_general.sh b/tools/perf/tests/shell/trace_btf_general.sh
+> new file mode 100755
+> index 000000000000..0b4ea8462390
+> --- /dev/null
+> +++ b/tools/perf/tests/shell/trace_btf_general.sh
+> @@ -0,0 +1,67 @@
+> +#!/bin/sh
+> +# perf trace general tests
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +err=0
+> +set -e
+> +
+> +. "$(dirname $0)"/lib/probe.sh
+> +skip_if_no_perf_trace || exit 2
+> +
+> +file1=$(mktemp /tmp/file1_XXXXX)
+> +file2=$(echo $file1 | sed 's/file1/file2/g')
+> +
+> +buffer="this is a buffer for testing"
+> +
+> +trap cleanup EXIT TERM INT HUP
+> +
+> +trace_test_string() {
+> +  echo "Testing perf trace's string augmentation"
+> +  if ! perf trace -e renameat* --max-events=1 -- mv ${file1} ${file2} 2>&1 | grep -q -E "renameat[2]*.*oldname: \"${file1}\".*newname: \"${file2}\".*"
+> +  then
+> +    echo "String augmentation test failed"
+> +    err=1
+> +  fi
+> +}
+> +
+> +trace_test_buffer() {
+> +  echo "Testing perf trace's buffer augmentation"
+> +  if ! perf trace -e write --max-events=1 -- echo "${buffer}" 2>&1 | grep -q -E ".*write.*buf: ${buffer}.*"
+> +  then
+> +    echo "Buffer augmentation test failed"
+> +    err=1
+> +  fi
+> +}
+> +
+> +trace_test_struct_btf() {
+> +  echo "Testing perf trace's struct augmentation"
+> +  if ! perf trace -e clock_nanosleep --force-btf --max-events=1 -- sleep 1 2>&1 | grep -q -E ".*clock_nanosleep\(rqtp: \{1,\}, rmtp: \{1,\}\).* = 0"
+> +  then
+> +    echo "BTF struct augmentation test failed"
+> +    err=1
+> +  fi
+> +}
+> +
+> +cleanup() {
+> +	rm -rf ${file1} ${file2}
+> +}
+> +
+> +trap_cleanup() {
+> +	echo "Unexpected signal in ${FUNCNAME[1]}"
+> +	cleanup
+> +	exit 1
+> +}
+> +
+> +trace_test_string
+> +
+> +if [ $err = 0 ]; then
+> +  trace_test_buffer
+> +fi
+> +
+> +if [ $err = 0 ]; then
+> +  trace_test_struct_btf
+> +fi
+> +
+> +cleanup
+> +
+> +exit $err
+> -- 
+> 2.45.2
 
