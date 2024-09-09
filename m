@@ -1,113 +1,129 @@
-Return-Path: <linux-kernel+bounces-321401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A2EE971A05
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:53:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508DC971A0D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A68EC1C21B29
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:53:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8961B2441C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A9D1B86CF;
-	Mon,  9 Sep 2024 12:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A976E1B86DB;
+	Mon,  9 Sep 2024 12:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSio4dXn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ROJBAAHn"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628381B5811;
-	Mon,  9 Sep 2024 12:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1A81B4C4F;
+	Mon,  9 Sep 2024 12:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725886402; cv=none; b=Ny49Yv+bU+URnyz8jUk6pdCV30bqoK29fdSM4NPts7/Z2skQu/KP9cxIJ9TACIoz473a+3rdTVnsPRlipGVUGkpIj1V4lFWYuxcCQJI4xmAIVRFe0sdiDuMGpsI1ATcAWeLDnRwiPeTOjwict1lckXthC5PFBTvUBt0TJlGAGIo=
+	t=1725886471; cv=none; b=bjFYKBkK3QpmjYV/rgq/2vSQsvomwyuot7hoh30xb59vOd3ZLyR+TRfv9WghIXZ90Nm/8mxptqsUQvD+dPe6GxpiwO7jaod8gGPTb8zEjRlEgQfnX0gnJFlKnWnzy/JUEPH03tKkaN482pHX6/XAwhQXWJr67ZeKL36YmLrfdWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725886402; c=relaxed/simple;
-	bh=pDUb1q6JzchBUPz4BgEpFQep9MHv+L4GOI9KmQV3dIU=;
+	s=arc-20240116; t=1725886471; c=relaxed/simple;
+	bh=CU5Gijyy9SeMr8QbvquxivfFb2hzLLScCNZeZXgXiPQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qml+9aoimAbhxNGzSpRCr5QmJ3eNxbHgXVlyPuN/dr33+yX91UZ+cOeTPL4ex0So58fs58HZg7CSNUgyG42jdWzT+AwHDGWpYDfHImzxO+U13d17Cmtb66JeIQYbhRsSDxK56z/WZItSjrkHXVQcsiGT0rhXE1I0f2AyFDAbdpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSio4dXn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EABD9C4CEC5;
-	Mon,  9 Sep 2024 12:53:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725886401;
-	bh=pDUb1q6JzchBUPz4BgEpFQep9MHv+L4GOI9KmQV3dIU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YSio4dXnQO1lqCO1VCgX5k5A6E0mhV3QEepBPzppUCkpKehJy4Y1zyIBG7jGim5KG
-	 5ii/eRDqCB8yBwCj81NHo/V/ACNKlicMhbg0kGq5X9VqgixufE88v6jq5OAJmwYuxu
-	 wagl+aXwcOrN5mL1pfdnr8krgViqUov/XIMm4VDO8gxgQXo6nhNxuJJybBHbnELacj
-	 xICmh9cD+7n69YaQDZbZ7/eHajeLzGddbzvn9il7UYRv1tbc/iorX5kykqeHXCGbc3
-	 W0P3O/NDhqUB+WDIHI+orXmTqrEYa6M9efFzk9hczx48Yl7gl5uxc97dVq0nX5//2F
-	 VQdyIvCZfH/Ag==
-Date: Mon, 9 Sep 2024 14:53:17 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>, 
-	neil.armstrong@linaro.org, konrad.dybcio@linaro.org, andersson@kernel.org, 
-	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, conor+dt@kernel.org, agross@kernel.org, 
-	devicetree@vger.kernel.org, vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org, 
-	Frank.Li@nxp.com, quic_vdadhani@quicinc.com
-Subject: Re: [PATCH v2 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
- between two subsystems
-Message-ID: <fhojgh44bcqhpbdffclop75uq2m32txvkwlht3sipiq2kdfr27@6gv7gpaaybhv>
-References: <20240906191438.4104329-1-quic_msavaliy@quicinc.com>
- <20240906191438.4104329-5-quic_msavaliy@quicinc.com>
- <b3a5dd54-90ba-4d75-9650-efbff12cddeb@linaro.org>
- <3bd27b6d-74b8-4f7b-b3eb-64682442bbda@quicinc.com>
- <3fa58f58-c1d2-41ac-b85b-c86bce5c06b9@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S8AnXbf0R8sF7WBzrvSnECSi/jFHZ8h+5tBj6SHx//ywemhgbBIVmiWeFV7A3yeS92NylV7mXru/wZ6cZog6+eNKrbry1y58rmnL4EwYjVkJdgNNlmhOKBvbtVwk0D4yyxf4li3856sPCuE0TL5LtvCdTPM4LS7J5pMr/0NPh40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ROJBAAHn; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=PKyLSZDe8JiVc1Q0LEh+EYs5+ax6iv61GuSgcN9/Iak=; b=ROJBAAHnhi1iHmJStmbGtAJGIm
+	iALpL9t6gsDGqBYFceoDSxJA9nKMX/mkmzw3IgwKo8z3Pith1S9BrviEE0tyj/rz7RG7P7TIS0FTP
+	TFRYKHr7wfenpcmS918anCU/XoeIM4NkFT0wbSHg24a2AYVGoDdhDaAi3hVpaHOYBzw8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1snduJ-0070NI-DJ; Mon, 09 Sep 2024 14:54:15 +0200
+Date: Mon, 9 Sep 2024 14:54:15 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: vz@mleia.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, alexandre.belloni@bootlin.com,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ethernet: nxp: Fix a possible memory leak in
+ lpc_mii_probe()
+Message-ID: <0a53ab3c-2643-419d-9b5d-71561c3b50b9@lunn.ch>
+References: <20240909092948.1118381-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3fa58f58-c1d2-41ac-b85b-c86bce5c06b9@kernel.org>
+In-Reply-To: <20240909092948.1118381-1-ruanjinjie@huawei.com>
 
-Thank you guys for your reviews,
-
-On Mon, Sep 09, 2024 at 01:37:00PM GMT, Konrad Dybcio wrote:
-> On 9.09.2024 11:18 AM, Mukesh Kumar Savaliya wrote:
-> > Hi Neil,
-> > 
-> > On 9/9/2024 2:24 PM, neil.armstrong@linaro.org wrote:
-> >> Hi,
-> >>
-> >> On 06/09/2024 21:14, Mukesh Kumar Savaliya wrote:
-> >>> Add support to share I2C SE by two Subsystems in a mutually exclusive way.
-> >>> Use  "qcom,shared-se" flag in a particular i2c instance node if the
-> >>> usecase requires i2c controller to be shared.
-> >>>
-> >>> I2C driver just need to mark first_msg and last_msg flag to help indicate
-> >>> GPI driver to  take lock and unlock TRE there by protecting from concurrent
-> >>> access from other EE or Subsystem.
-> >>>
-> >>> gpi_create_i2c_tre() function at gpi.c will take care of adding Lock and
-> >>> Unlock TRE for the respective transfer operations.
-> >>>
-> >>> Since the GPIOs are also shared for the i2c bus between two SS, do not
-> >>> touch GPIO configuration during runtime suspend and only turn off the
-> >>> clocks. This will allow other SS to continue to transfer the data
-> >>> without any disturbance over the IO lines.
-> >>
-> >> This doesn't answer my question about what would be the behavior if one
-> >> use uses, for example, GPI DMA, and the Linux kernel FIFO mode or SE DMA ?
-> >>
-> > Shared usecase is not supported for non GSI mode (FIFO and DMA), it should be static usecase. Dynamic sharing from two clients of two subsystems is only for GSI mode. Hope this helps ?
+On Mon, Sep 09, 2024 at 05:29:48PM +0800, Jinjie Ruan wrote:
+> of_phy_find_device() calls bus_find_device(), which calls get_device()
+> on the returned struct device * to increment the refcount. The current
+> implementation does not decrement the refcount, which causes memory leak.
 > 
-> This should very much be explained in commit message and perhaps in code
-> 
-> And since it can't work with FIFO mode, there should be checks in code
-> to disallow such invalid configurations
+> So add the missing phy_device_free() call to decrement the
+> refcount via put_device() to balance the refcount.
 
-it would be nice if, along with all these open questions and
-clarifications on the commit message, we could add some good
-comments to the code as well.
+Why is a device reference counted?
 
-Thanks,
-Andi
+To stop is disappearing.
+
+> @@ -768,6 +768,9 @@ static int lpc_mii_probe(struct net_device *ndev)
+>  		return -ENODEV;
+>  	}
+>  
+> +	if (pldat->phy_node)
+> +		phy_device_free(phydev);
+> +
+>  	phydev = phy_connect(ndev, phydev_name(phydev),
+>  			     &lpc_handle_link_change,
+>  			     lpc_phy_interface_mode(&pldat->pdev->dev));
+
+Think about this code. We use of_phy_find_device to get the device,
+taking a reference on it. While we hold that reference, we know it
+cannot disappear and we passed it to phy_connect(), passing it into
+the phylib layer. Deep down, phy_attach_direct() is called which does
+a get_device() taking a reference on the device. That is the phylib
+layer saying it is using it, it does not want it to disappear.
+
+Now think about your change. As soon as you new phy_device_free() is
+called, the device can disappear. phylib is then going to use
+something which has gone. Bad things will happen.
+
+So with changes like this, you need to think about lifetimes of things
+being protected by a reference count. When has lpc_mii_probe(), or the
+lpc driver as a whole finished with phydev? There are two obvious
+alternatives i can think of.
+
+1) It wants to keep hold of the reference until the driver remove() is
+called, so you should be releasing the reference in
+lpc_eth_drv_remove().
+
+2) Once the phydev is passed to the phylib layer for it to manage,
+this driver does not need to care about it any more. So it just needs
+to hold the reference until after phy_connect() returns.
+
+Memory leaks are an annoyance, but generally have little effect,
+especially in probe/remove code which gets called once. Accessing
+something which has gone is going to cause an Opps.
+
+So, you need to think about the lifetime of objects you are
+manipulating the reference counts on. You want to state in the commit
+message your understanding of these lifetimes so the reviewer can
+sanity check them.
+
+FYI: Ignore anything you have learned while fixing device tree
+reference counting bugs. Lifetimes of OF objects is probably very
+broken.
+
+	Andrew
+
+---
+pw-bot: cr
 
