@@ -1,96 +1,150 @@
-Return-Path: <linux-kernel+bounces-320566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44909970C03
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:45:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE613970C05
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 04:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041052823D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:45:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD8662822F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 02:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFA418C35D;
-	Mon,  9 Sep 2024 02:45:11 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C914D191F6F;
+	Mon,  9 Sep 2024 02:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jnYtg8VF"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A23188006;
-	Mon,  9 Sep 2024 02:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B59191F93
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 02:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725849911; cv=none; b=PFvqg1ymxPslV1jy/pCBngq78fI6+c8f3QAr4CXe0QrXzHA06QQr8EvM34T54wQ7sVKf1yAWw/Zo/ATyxXbOvaqQy1jvyH8fimgIZO97hU1cvwZQ0iY9nNZjEfehDYUog6iE+nArXEmrJjSTzIUiSfXF2a3ezh9YC52gmebnMJI=
+	t=1725849944; cv=none; b=oqqkcaDtyf48+NgEtwT3dZAB1I2+91zCwI7zT7ZscXTXICeizdlLLuNCe6thSZfIOUYYgHZk9tE0h/SkxoaQncNK5nbvJMVit6li/UdfMkXU0bjWwZatzE/LGXkSkHP25Yl1tl83g3q6MMb0l7v3uWhJK/1Sq9vvkoqPGd4fzhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725849911; c=relaxed/simple;
-	bh=9mCASzXL3SkJGAn4yBZBv8+/ZVpK84u2Ggl+M7JU0bM=;
-	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To; b=mPhnocU5q6k4T3o1gmTn/8+yVwfECMKc0qXqjsaYspREoJ5VsH+x7PgNqqrZJgCLjnel7ZDIflgnOWjz0SJFS5tde/yNFyjqJWIhpZn/CQzCXfBEt+F4T8Dfd6GapO1m46oWuxx0+b0p+kx7IU0sleb+NtTu2g2S2Bm3bmmYnhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 8267631c6e5511efa216b1d71e6e1362-20240909
-X-QC-Scan-Result: 0
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:c335ac5c-dccb-4942-8ec1-d5bbf26db4e0,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:5,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:10
-X-CID-INFO: VERSION:1.1.38,REQID:c335ac5c-dccb-4942-8ec1-d5bbf26db4e0,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:5,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:10
-X-CID-META: VersionHash:82c5f88,CLOUDID:96f4b2e2f89e4a356c29e0e4c4946826,BulkI
-	D:240909104502NXS94GMF,BulkQuantity:0,Recheck:0,SF:66|23|17|19|43|74|102,T
-	C:nil,Content:4|-5,EDM:-3,IP:-2,URL:0,File:2,RT:nil,Bulk:nil,QS:0,BEC:nil,
-	COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-UUID: 8267631c6e5511efa216b1d71e6e1362-20240909
-X-User: zhaomengmeng@kylinos.cn
-Received: from [192.168.109.86] [(123.149.251.227)] by mailgw.kylinos.cn
-	(envelope-from <zhaomengmeng@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
-	with ESMTP id 126920555; Mon, 09 Sep 2024 10:45:01 +0800
-Content-Type: multipart/mixed; boundary="------------4X4PPaDgek81WNTrv40SqJWp"
-Message-ID: <48435cf7-8c2d-4d3e-8b26-f8814f9a6338@kylinos.cn>
-Date: Mon, 9 Sep 2024 10:44:51 +0800
+	s=arc-20240116; t=1725849944; c=relaxed/simple;
+	bh=EKTLMNEi50l4j4FQxR8tby9uBgIDSSWcDTHy3KnbFhQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e21poCewdyqp4zp2obW4WiS8yq1E5sy6n4KO9HYG9QAOpXyj+MX6+vpX3bVFrNJB4/FYktQsr1kukeziogGulw12cqcp413BSO0HW7JYgrZ82ajOnA8IxRYZAX0lx6PuUH918l6pKxMJhRcCR3OlEKRQmmvQgLE6YjP1iPHrdnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jnYtg8VF; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f74e468baeso44242891fa.2
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2024 19:45:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1725849941; x=1726454741; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nMqW2/x+fk7uF1c9DEdkk0ZnLtGrl9rFz+k1/Bb5Q1k=;
+        b=jnYtg8VFTdgeWs0W0PwlM+Di+ACH1ZxBROvjHTAZiN0/NDZe+nOsksEeS44SCm7Tfm
+         9NBH1/+OJU3wc8ZxHqdXL9J/31fpQJa/RNHCtEs3D8PlY6l5HJ6izoeKcioveW/73jV8
+         X9/oKuS/X6yNGNsJqHi2+yanAzWFuCDVImOiE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725849941; x=1726454741;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nMqW2/x+fk7uF1c9DEdkk0ZnLtGrl9rFz+k1/Bb5Q1k=;
+        b=woc2ef6eU4q91y8nQ0iyHZNtaEBMFFrXRQGFLn7MtkrCe44GWdZt3kd2Uj2uNmHnYe
+         5jBIrB4G9EQMwicaMlbUhTLIB/mDBcfaBVV1g4kXVuFjpniaDzaZnVfIcv+6/wdlm3nw
+         gjCliUX2+VK3Bv/BdHWF95MAIgw9h9dJNnaAyNnJv9gnS6nzXIs8/9eBTpBMLTsr57dL
+         IxgPtExgysiejIYxllZCSXs6BkfynPDaw6Otvtrbjd/6yFTkmnMxoSnJwvYtFsq0ZdVm
+         P0CPiMdizbtMsHzZEqmecaiYxvIrhL6oJnsDPPAkDquloe6/zWvkPX8hmrQB4KMEJyp0
+         J/4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXg2ZxsDtg/VOJh2duMxytcjn9ZmWS8LSfVlHITFu7VGUtgZkRSiw6nacnqkYuGoo8VZS8zuJVJxu2g+2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi1+qac5kwEEXm/6UsLhxfW4lnvnXuppVpBvVGddMjG271tdHE
+	iOZY9LDb66EYb1SvGylciLDkPbHjg+z+5QIe9jNWmiWcy7YCowMvsWy9VukxAQTdQo+Zc8x+AMj
+	iONCAEDb7dJ3vQ7N78WShSQVz2tZwDZUrhQYB
+X-Google-Smtp-Source: AGHT+IHKcGbtZMLF5gC+Rr5ltwNIMAF/guOu0Im7D+JgNL7Cng1B+SOmWwSxiNMZsp714FjogNvrNqttyc4V2OI3P10=
+X-Received: by 2002:a05:6512:6c4:b0:533:4620:ebfb with SMTP id
+ 2adb3069b0e04-536587ae621mr6193097e87.21.1725849940576; Sun, 08 Sep 2024
+ 19:45:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: syzbot+17cae3c0a5b0acdc327d@syzkaller.appspotmail.com
-Cc: almaz.alexandrovich@paragon-software.com, davem@davemloft.net,
- haren@us.ibm.com, herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org,
- linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
- syzkaller-bugs@googlegroups.com
-References: <00000000000097e14f0621951335@google.com>
-Subject: Re: [syzbot] [crypto?] [ntfs3?] KMSAN: uninit-value in sw842_compress
-From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
-In-Reply-To: <00000000000097e14f0621951335@google.com>
+References: <20240904090016.2841572-1-wenst@chromium.org> <20240904090016.2841572-7-wenst@chromium.org>
+ <ZthjSK9N9z11YXi2@smile.fi.intel.com>
+In-Reply-To: <ZthjSK9N9z11YXi2@smile.fi.intel.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Mon, 9 Sep 2024 10:45:29 +0800
+Message-ID: <CAGXv+5GrW0EZZw6HVY7ALvm0dBj5Wwrvp02vtTPZYwqxxiZQyg@mail.gmail.com>
+Subject: Re: [PATCH v6 06/12] gpiolib: Add gpio_get_property_name_length()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a multi-part message in MIME format.
---------------4X4PPaDgek81WNTrv40SqJWp
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+On Wed, Sep 4, 2024 at 9:40=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Wed, Sep 04, 2024 at 05:00:08PM +0800, Chen-Yu Tsai wrote:
+> > The I2C device tree component prober needs to get and toggle GPIO lines
+> > for the components it intends to probe. These components may not use th=
+e
+> > same name for their GPIO lines, so the prober must go through the devic=
+e
+> > tree, check each property to see it is a GPIO property, and get the GPI=
+O
+> > line.
+> >
+> > Instead of duplicating the GPIO suffixes, or exporting them to the
+> > prober to do pattern matching, simply add and export a new function tha=
+t
+> > does the pattern matching and returns the length of the GPIO name. The
+> > caller can then use that to copy out the name if it needs to.
+>
+> > Andy suggested a much shorter implementation.
+>
+> No need to have this sentence in the commit message, changelog area is fi=
+ne.
+> But if you wish... :-)
 
-#syz test
---------------4X4PPaDgek81WNTrv40SqJWp
-Content-Type: text/x-patch; charset=UTF-8; name="test.patch"
-Content-Disposition: attachment; filename="test.patch"
-Content-Transfer-Encoding: base64
+It does seem out of place without any context. I'll move it to the
+changelog area. :D
 
-ZGlmZiAtLWdpdCBhL2ZzL250ZnMzL25hbWVpLmMgYi9mcy9udGZzMy9uYW1laS5jCmluZGV4
-IGYxNmQzMThjNDM3Mi4uMzliMTJjZjU4YTU0IDEwMDY0NAotLS0gYS9mcy9udGZzMy9uYW1l
-aS5jCisrKyBiL2ZzL250ZnMzL25hbWVpLmMKQEAgLTI2LDggKzI2LDEyIEBAIGludCBmaWxs
-X25hbWVfZGUoc3RydWN0IG50ZnNfc2JfaW5mbyAqc2JpLCB2b2lkICpidWYsIGNvbnN0IHN0
-cnVjdCBxc3RyICpuYW1lLAogCXN0cnVjdCBBVFRSX0ZJTEVfTkFNRSAqZm5hbWUgPSAoc3Ry
-dWN0IEFUVFJfRklMRV9OQU1FICopKGUgKyAxKTsKIAogI2lmbmRlZiBDT05GSUdfTlRGUzNf
-NjRCSVRfQ0xVU1RFUgotCWUtPnJlZi5oaWdoID0gZm5hbWUtPmhvbWUuaGlnaCA9IDA7CisJ
-Zm5hbWUtPmhvbWUuaGlnaCA9IDA7CiAjZW5kaWYKKwllLT5yZWYubG93ID0gMDsKKwllLT5y
-ZWYuaGlnaCA9IDA7CisJZS0+cmVmLnNlcSA9IDA7CisKIAlpZiAodW5pKSB7CiAjaWZkZWYg
-X19CSUdfRU5ESUFOCiAJCWludCB1bGVuID0gdW5pLT5sZW47Cg==
+> > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+>
+> ...
+>
+> > +/**
+> > + * gpio_get_property_name_length - Returns the GPIO name length from a=
+ property name
+> > + * @propname:        name of the property to check
+> > + *
+> > + * This function checks if the given property name matches the GPIO pr=
+operty
+> > + * patterns, and returns the length of the name of the GPIO. The patte=
+rn is
+> > + * "*-<GPIO suffix>" or just "<GPIO suffix>".
+> > + *
+> > + * Returns:
+> > + * The length of the string before '-<GPIO suffix>' if it matches
+> > + * "*-<GPIO suffix>", or 0 if no name part, just the suffix, or
+> > + * -EINVAL if the string doesn't match the pattern.
+>
+> Should be %-EINVAL as we agreed with Bart when I updated GPIOLIB kernel-d=
+oc.
 
---------------4X4PPaDgek81WNTrv40SqJWp--
+Ack.
+
+In the regulator cleanups I did, I used -%EINVAL instead. But then I
+realized that constants aren't really cross-referenced. I probably
+have to go through all of them to fix those up.
+
+
+ChenYu
 
