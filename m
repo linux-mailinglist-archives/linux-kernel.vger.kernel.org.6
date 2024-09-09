@@ -1,105 +1,85 @@
-Return-Path: <linux-kernel+bounces-321341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E7249718FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:11:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8EB9718FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F12122855B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:11:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A828284FB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360671B6551;
-	Mon,  9 Sep 2024 12:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC091B654D;
+	Mon,  9 Sep 2024 12:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="F8eAawXj"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rycXDLLY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3kpz3Uu2"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FCB1B6541
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53DD172BCE
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 12:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725883912; cv=none; b=jw5USj4KKskSe3m5wQcHBuhiyFo2CfjyekmTaTIUm8pZOnpI7UZqpMHgrZsvZAgYlzJ0DcKN9eI7udPTqSx6gDV6cmirHKFnVq67pUrcXapiBXpvRZricbOnGhfC/0MNPj/TPR4Rkl/mWt2qNWCEtKaxIDQT7D9OVDepL5hOsdQ=
+	t=1725883897; cv=none; b=IN3bU6q0yURk0CtGmrXrEEsPE016Y8Y2XTV/500tDe23LmY6xNWzEJ4ugIl3V/0ssXRUhnX8PXz8keKM8GNAayFtz2z1gL98hnHMJlKW1bzCugsC7ckWJKxSGeYXOiyvISOCCZz0RGdT66mWvhnBeqJL+6nY0+CRaGrpRYOR/lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725883912; c=relaxed/simple;
-	bh=PaZ41nueg92VJgHd8zhu4eNdScyhn/qDQyKFNSPnfAg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oD3sRsHD90YXGDyyDw+ELPRjRwZfub7xa/W5RhOFvqkhy6YfkY74bcrnjsrfkrk+ddUdpVsNIKZa6vbrzFzW/G8Q9P/GiddRPV51yXKrvO94ApYoMoDgwRMpve6YvH4Zmc7YXjQeNiYcjAygGjZSvP0lX3oBQBgzpnvFmkIdQuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=F8eAawXj; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 72AA81BF204;
-	Mon,  9 Sep 2024 12:11:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725883902;
+	s=arc-20240116; t=1725883897; c=relaxed/simple;
+	bh=3I/YkrkQvgYdjJsfIEoCKAECk08H8/S3f6PqAZZGja0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=i6bzdhKl8oAzSIFRTqIfscwD15IodKgt2JEnB9/63C8q/H5T7OU/XGPkkgsBXOxOOn7oECvoZqLSjLN0ADpks33SuCjmhoORNPD+so0dokzZJZWlypLLJQzM9bCTWdDVChcP6lUqEDKTp49flVttqfuNgz9lKtekt2427z6c+qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rycXDLLY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3kpz3Uu2; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725883894;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=afjW2HbfOkKhSUvBb1KpugqYFb+VlNLEMmHfBzTMbUc=;
-	b=F8eAawXjVdvdQglkIS1te66pz6gB4LnLU6IVQ7BflkBY8Sywmw90NfiQrJQsf5x6Apeyfv
-	iP9OPhLI6eB+kS4EwyLIih814oi+98l5SL1XegBNbmzDxCJqxGUzh42Ioi9oPg695+aroL
-	tlr5COqF68sniaFyQDGmzHKHpEbO4sK0U/foqB7ZpP1V9auuBY3Bos/Oif2PTSqBjdFxY8
-	iJr/g7X1xsOOAM3uQqY9iv4Nn0urhotGwsZvcrka8xg9Tz+Q1EZ8myVeytOJbUoD/SrGlM
-	8J9KDv18ChOOZdxBNMBbMbJE8pRUwIN1X7xSVW246FIOwnyldvU+aDLKf0GCwg==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Herve Codina <herve.codina@bootlin.com>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] soc: fsl: cpm1: qmc: Fix unused data compilation warning
-Date: Mon,  9 Sep 2024 14:11:29 +0200
-Message-ID: <20240909121129.57067-1-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.46.0
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3I/YkrkQvgYdjJsfIEoCKAECk08H8/S3f6PqAZZGja0=;
+	b=rycXDLLY8pOWyiUq/AaRuOmnRrhnu8R6HfQ85PV/enqf5+MH+B+IV54ag49p+hl81laNQ9
+	RgpewCJBZJ7KNU1dobPnN/2sRnQKvjOnIQn6edOEaEJr6XQPfXn2iu54XlLdZvWLvpRcPv
+	6QBE3tKAmQaqzs/IPwxuMFFSSNPeYcRV+HM2kqizadDwJftilrAQ0LGaXjKltO5G8w+iz8
+	iOyGZki7RK7x8bAloYHBSUio/o+lY4SN++ELojGqZcW47zib0T3k9p/tfpX2YOh4ve1liQ
+	H9PeSSkM2Geh8Pevun6VbI968LhwP/Bb1vrC4eTjy78ouvG2LwyR1vWA8GxuJQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725883894;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3I/YkrkQvgYdjJsfIEoCKAECk08H8/S3f6PqAZZGja0=;
+	b=3kpz3Uu2WKnMPPmUcSI9RJDnhr8Skave2kXQ+eCUS56+cbkrQGiJzlSbOYCV3QgStFLM93
+	rOzxDUi68nSRPjDg==
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org, Len
+ Brown <len.brown@intel.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH 04/15] timers: Move *sleep*() and timeout functions into
+ a separate file
+In-Reply-To: <87h6ap1c47.fsf@somnus>
+References: <20240904-devel-anna-maria-b4-timers-flseep-v1-0-e98760256370@linutronix.de>
+ <20240904-devel-anna-maria-b4-timers-flseep-v1-4-e98760256370@linutronix.de>
+ <ZtsGwgatGpFRQerw@pavilion.home> <87h6ap1c47.fsf@somnus>
+Date: Mon, 09 Sep 2024 14:11:33 +0200
+Message-ID: <878qw1c9hm.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain
 
-In some configuration, compilation raises warnings related to unused
-data. Indeed, depending on configuration, those data can be unused.
+On Mon, Sep 09 2024 at 10:10, Anna-Maria Behnsen wrote:
+> Frederic Weisbecker <frederic@kernel.org> writes:
+>> I don't mind sometimes having several logical changes within a same
+>> patch if that makes sense but the delay is MAINTAINERS is pretty off-topic
+>> and should move to its own patch.
+>
+> Ack. But, I was too slow to provide a v2. It's already applied in
+> tip. Should we change tip, or is ok for you?
 
-mark those data as __maybe_unused to avoid compilation warnings.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409071707.ou2KFNKO-lkp@intel.com/
-Fixes: eb680d563089 ("soc: fsl: cpm1: qmc: Add support for QUICC Engine (QE) implementation")
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- drivers/soc/fsl/qe/qmc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 3dffebb48b0d..5e38be6530f9 100644
---- a/drivers/soc/fsl/qe/qmc.c
-+++ b/drivers/soc/fsl/qe/qmc.c
-@@ -2056,7 +2056,7 @@ static void qmc_remove(struct platform_device *pdev)
- 	qmc_exit_xcc(qmc);
- }
- 
--static const struct qmc_data qmc_data_cpm1 = {
-+static const struct qmc_data qmc_data_cpm1 __maybe_unused = {
- 	.version = QMC_CPM1,
- 	.tstate = 0x30000000,
- 	.rstate = 0x31000000,
-@@ -2066,7 +2066,7 @@ static const struct qmc_data qmc_data_cpm1 = {
- 	.rpack = 0x00000000,
- };
- 
--static const struct qmc_data qmc_data_qe = {
-+static const struct qmc_data qmc_data_qe __maybe_unused = {
- 	.version = QMC_QE,
- 	.tstate = 0x30000000,
- 	.rstate = 0x30000000,
--- 
-2.46.0
-
+Zapped it already
 
