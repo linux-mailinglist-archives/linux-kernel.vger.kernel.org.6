@@ -1,110 +1,108 @@
-Return-Path: <linux-kernel+bounces-320526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94197970B98
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:57:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 201B5970B87
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 03:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17E84B20BFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:57:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46BA21C218E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 01:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DDE19478;
-	Mon,  9 Sep 2024 01:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PY+IyflN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2019D1862A;
-	Mon,  9 Sep 2024 01:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C3B12E4A;
+	Mon,  9 Sep 2024 01:55:21 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A56D33EA;
+	Mon,  9 Sep 2024 01:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725847056; cv=none; b=nWRSKxMBt0dQ+mg8TgaVZqC1Wd/uFKXFhASMHw7XoR9wh2UzOj8yN7MY5Y/A46TlXQEiu4lIkSJSnhUjyASuw/AiIe7SUcCd6LqHVZewkZXc8Z2N0r5HJWlcLFwEt1UfhFJ53i7+iP2LbjOxUXiuxd2jDC+ybDaHgm/6clg5xNA=
+	t=1725846921; cv=none; b=tz4m9WNAmkDOLmfw5sbvRLk278YHCFfUozHRpLuMnlNCHerha+o9f3Js9xNy6Sro/Coh2puiZbI6SeewWHu/U4eryW16RH9SMK68enHGln+mdqQSUlla6MvRhsEqSl2Z86/jyg8hMkst+gbTMAkhIQaOKd65xd4PMQHVtvNgqD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725847056; c=relaxed/simple;
-	bh=4z/JGb26gAFsABTHxjzGPpN6+ZoAGK8zsDPYw4EPmUM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XoFO8i9e2EOsYkXNdSJXXfEgnKFr1S6uRmCq+i4cJZ82qJhCxs6kSw9tlr3BLAAnYEvnJGUK+NUuZQuh5Ehg9ZjRujNkRsXudNADAqT0Q4ticXE05BHzDfR8/bs2n56oebuEylVmKLSWVhkfvCDfe2RWTrELy+eKOpHZPvYE/EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PY+IyflN; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725847054; x=1757383054;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=4z/JGb26gAFsABTHxjzGPpN6+ZoAGK8zsDPYw4EPmUM=;
-  b=PY+IyflNKo8rnxNU/+ERX26IVSMIev9tc16zRyUdAvdv+6LsBrdBI/VQ
-   wY+nGRVGsSw/z7GAtHDVsl+MmpW09Xv13JKIDTkLxexkqh3jfYJwvCYgc
-   9OQNwGaT/4P1TyFjgkicX5itR21TqIYNdM/e+KaHW7yH+ee8KW4m5wqCl
-   brIzJCJXipwXnEfp5cWCRzZZEWzP3b+NgBFvpSGja69n3xNpcOAPn/IP1
-   lE0vjhGU8T6ISWJKmPqYByA1x40zcsIkeCb/6fGlA97WCbc99k9W0rxjW
-   RyrBNIvAujJgmDoYR6JsA9rJIdARsKd8NwfG2h2bJ0ht4km/KBMRVqZOd
-   w==;
-X-CSE-ConnectionGUID: JPZ8XVo2TgKx/BMrSlrkkQ==
-X-CSE-MsgGUID: a1eChZNpTC6nOzAwMz00Gw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="47043991"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="47043991"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 18:57:34 -0700
-X-CSE-ConnectionGUID: qCDsMIRWTIWzC7S4AJI8iQ==
-X-CSE-MsgGUID: k39BLQAqTP+PIMekHoumgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="66548920"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2024 18:57:32 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>,  Linux Next Mailing List
- <linux-next@vger.kernel.org>,  Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: linux-next: manual merge of the mm tree with Linus' tree
-In-Reply-To: <20240909100043.60668995@canb.auug.org.au> (Stephen Rothwell's
-	message of "Mon, 9 Sep 2024 10:00:43 +1000")
-References: <20240909100043.60668995@canb.auug.org.au>
-Date: Mon, 09 Sep 2024 09:53:59 +0800
-Message-ID: <87cyld1tjc.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1725846921; c=relaxed/simple;
+	bh=Zjvnt6HWMsxC2GyC6zf6bm8M8oO8eTAyrccM4we1/d4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TldkDkajLQpRsIo4MV6+rC2sXyAmoioUyyoAbcHlH80WVr8bRZ0k6aUJYPYb1w+dXD/HCUFzIRRLhps4Qf840d6jYHLIvolIK3YPrc0btn4A5jAbaNa/zOihFPItFNwBnz63pVep8y78uxndq4u4WmZB3//DCD7I+ZfvM0ufWBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8CxSOmDVd5mkF8CAA--.4555S3;
+	Mon, 09 Sep 2024 09:55:15 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowMBxHeSDVd5mLgUCAA--.12375S2;
+	Mon, 09 Sep 2024 09:55:15 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH] LoongArch: Enable ACPI BGRT handling
+Date: Mon,  9 Sep 2024 09:55:14 +0800
+Message-Id: <20240909015514.597253-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxHeSDVd5mLgUCAA--.12375S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Add ACPI BGRT support on LoongArch so it can display image provied by
+acpi table at boot stage and switch to graphical UI smoothly.
 
-> Hi all,
->
-> Today's linux-next merge of the mm tree got a conflict in:
->
->   kernel/resource.c
->
-> between commit:
->
->   ea72ce5da228 ("x86/kaslr: Expose and use the end of the physical memory address space")
->
-> from Linus' tree and commit:
->
->   e2941fe697c8 ("resource, kunit: add test case for region_intersects()")
->
-> from the mm-unstable branch of the mm tree.
->
-> I fixed it up (I just used the former - and see below) and can carry the
-> fix as necessary. This is now fixed as far as linux-next is concerned,
-> but any non trivial conflicts should be mentioned to your upstream
-> maintainer when your tree is submitted for merging.  You may also want
-> to consider cooperating with the maintainer of the conflicting tree to
-> minimise any particularly complex conflicts.
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+---
+ arch/loongarch/kernel/acpi.c | 4 ++++
+ drivers/acpi/Kconfig         | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-The fix looks good to me.  Thanks for your help!
+diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
+index 929a497c987e..f1a74b80f22c 100644
+--- a/arch/loongarch/kernel/acpi.c
++++ b/arch/loongarch/kernel/acpi.c
+@@ -9,6 +9,7 @@
+ 
+ #include <linux/init.h>
+ #include <linux/acpi.h>
++#include <linux/efi-bgrt.h>
+ #include <linux/irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/memblock.h>
+@@ -212,6 +213,9 @@ void __init acpi_boot_table_init(void)
+ 	/* Do not enable ACPI SPCR console by default */
+ 	acpi_parse_spcr(earlycon_acpi_spcr_enable, false);
+ 
++	if (IS_ENABLED(CONFIG_ACPI_BGRT))
++		acpi_table_parse(ACPI_SIG_BGRT, acpi_parse_bgrt);
++
+ 	return;
+ 
+ fdt_earlycon:
+diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+index e3a7c2aedd5f..d67f63d93b2a 100644
+--- a/drivers/acpi/Kconfig
++++ b/drivers/acpi/Kconfig
+@@ -451,7 +451,7 @@ config ACPI_HED
+ 
+ config ACPI_BGRT
+ 	bool "Boottime Graphics Resource Table support"
+-	depends on EFI && (X86 || ARM64)
++	depends on EFI && (X86 || ARM64 || LOONGARCH)
+ 	help
+ 	  This driver adds support for exposing the ACPI Boottime Graphics
+ 	  Resource Table, which allows the operating system to obtain
 
---
-Best Regards,
-Huang, Ying
+base-commit: b31c4492884252a8360f312a0ac2049349ddf603
+-- 
+2.39.3
+
 
