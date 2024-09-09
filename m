@@ -1,143 +1,162 @@
-Return-Path: <linux-kernel+bounces-322101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87206972403
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:54:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F06D972405
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9F5D1C21CA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:54:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00EA52839AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D53218BC31;
-	Mon,  9 Sep 2024 20:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0CF18B469;
+	Mon,  9 Sep 2024 20:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cTywGg9S"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="qzrb3Bc0"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68505189F50
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 20:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EEA18A937;
+	Mon,  9 Sep 2024 20:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725915252; cv=none; b=epFpfjRegBa2YAzw3qzfpBndnI1mpOKJHaU+KWcUDVb8hegE/yjcj7Kl7qtImtQEYWjnAem20KrlPuxMRDOGpD+OyxEwJDeHr2HpMZLcRusG6nV8xTbmtcy6ByHHno8lAbYLVHqodii/fR7vU2CwY2PyS8srm5st+eE2OJoayKU=
+	t=1725915336; cv=none; b=Od6jutp+Uuz1urfpS6DP94p3lb2FH+d9jowgEfXf4NF9rzMEWODAMTcOdH7uE7B1EKyJKViPn93cCd9dxDHBHNCJ0j+aMWDdCymZFNcOxCPbhtVUpvKbikqfxaaCO8hc+/1U3YCZnt9zO3Y0XNo3aUnKJuGfWqfDq7+m7vNB+Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725915252; c=relaxed/simple;
-	bh=vL5o87yw2s4ssE0MHB3dz9K8j1mEOcSyfz7IPB/qipc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=MikFKfzlU+YpddvrhzoX/WbMeEKXTbH4mkeBYVlozb7e3le08uvb9W1JdoA6IzMbZU5YpIvBs2oApViiQEUhu5Nw5mnoFag/x7VpTnFcnjsGKy+5KbvVhYdRyrLC5fh5iJzYLCMP8oYUdgwSE8Vcr/bbszr3teeg9EEVdoUM4Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cTywGg9S; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7d50ac2e42dso2983881a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 13:54:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725915251; x=1726520051; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WeKmC9FnbgEe6fOW87kQOk6OE5+Tj5Hd5JhdaW8htRU=;
-        b=cTywGg9SvIDtTULXV6GeA3oc3us/peYa9Z1lL6mvreRS2belIsc/hnH7v3v+4SHiBx
-         lV4VluK/meddrqan9qAjX7tJMLiXLnRAovnR6yFuvBpe4nQKQc8sx3IaSo1EVKEGWLn3
-         UgReesvMi7AHTlHHvScXjEXHG1fq5VCobQULnqvvB+n2M+TXVXQSr6h2fFg78+40U08I
-         nnLKPVrnFmDAO7z7dy9pgOhr3e4xZrjdLBFjnYFoqqyIScH0K6uB6F7ptQ3cJp79bIns
-         URgKwWJ8hGnMCod1elyR5QSNqhCiaYYXhhYPEQoKdr58pJQKPImSKm7grDQdU/YwN4QB
-         /BAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725915251; x=1726520051;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WeKmC9FnbgEe6fOW87kQOk6OE5+Tj5Hd5JhdaW8htRU=;
-        b=PWSjVgGrWalidEI5U2+Im0qh+PItBklYVY93CYtAm2Ss7gQw/EdGYcf7STY7ji6QpE
-         0Y95K9t3vtd9OM5KxSN08aJKdurq+6TOysb4pMa6YwLqGvOMLKB9hvYqqQWsDjvHexhL
-         nhqUcYNq9torYZ0dsc1wIlR/KOidS/eER2qoTcOG37LuTB71Fj2vJ5cnY/wNYeQXb7W1
-         u5iPy0hvlqnI3H80TX1TfQX+xvkOXFYzjr+mFXNFjs17Mt9wAnNjMZnsY+jE2q6hvcZf
-         fe+s80eM7qtP92V7sSWptoWV/DvqJjbs+hLrIrBtJ8m/SWfWmbvlBwzbrfpp+sPD4Wlt
-         fmVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiQ2+GeoDN3ze9uL6JCXM8oyYWFaOy5GK5tY6w4ajZIpBaH/A4DVnTP8SBAWeXdjTVJtX0C1thXbAijD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvDnZ14d/Rvndb6JhjHFMHCYvDFFFrSY6R23rhFTQWajjmqSs1
-	B3XHT1itZxf0bhc9Jc5ECLgXdLCzwVi4IKUKD/MlswiijUcEqn7T9b1xikjn6W0fe3uiu3B9OzD
-	+iBIDLuzLWBhyCQ==
-X-Google-Smtp-Source: AGHT+IGY0VQuaZZPXhKDdZl8yMzvGLZQlqOz/QGDPNv0228X2E5wWrrJX+Bx4WbRGEMdXUp3Yh52ObY0j4U/Nsc=
-X-Received: from tj-virt.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5683])
- (user=tjmercier job=sendgmr) by 2002:a17:903:18f:b0:205:71f1:853f with SMTP
- id d9443c01a7336-206f051c88cmr8372105ad.5.1725915250444; Mon, 09 Sep 2024
- 13:54:10 -0700 (PDT)
-Date: Mon,  9 Sep 2024 20:53:59 +0000
+	s=arc-20240116; t=1725915336; c=relaxed/simple;
+	bh=VeBte4Hk/bSsPKA+NLFx686zngoHrq/S/DH0gseidn0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=QVcbZ9ettkNTNaw96Qv5lRnyVkBx6JkGSx0PS17Lkm0SaBTR5D/e7d0J6n6R8QTEqsBbUgfdudqWnP5yBMpEfcoQVbEGlDuW35XISa0q9L2B0pTRgqfS53Bb7EMtfJj08XgxYAh0hAiBZFhwaIAge5rb033sgpI4PcKCiSWwsiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=qzrb3Bc0; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from [127.0.0.1] (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 1EFBA1F9CA;
+	Mon,  9 Sep 2024 22:55:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1725915329;
+	bh=ha+UjDZ4cSJCf/e8Vp6EQ5ssSEtu7b+FJNVTZqCXUqM=; h=From:To:Subject;
+	b=qzrb3Bc0qXYqaiFv9IL1EwHsC01fNlIEm/uPBFRxGV+9KrzEDnrcadQDZmPjquvWO
+	 +xTJjzs0Kt7xDCNJtA/EgmiN9jPTZZx6PekGezEaFb6V6M+Q0fBMoGEwWGCOV+jeqg
+	 bw1u2iV64+FjxQzkn5pBzz86RRF6Ir/zUUNrn6aKQRTtDUDpVkrfF/Kv88s+8wuVTI
+	 ZYJTU5mznOvZc4v9hd5NsiU9Fx1iwdI3hyqXi2UFQMkAHjRyO9mah9rE8UOk4LRDf8
+	 3xDd47HJ6lxPA3GGC+BKhbKxQKdoSDzv1k31+Eh/NZv2jpd8N+gq/H+3n/nD7FJycs
+	 44rs4NLSXegrg==
+Date: Mon, 09 Sep 2024 22:55:27 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+CC: Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_11/12=5D_wifi=3A_mwifiex=3A_mov?=
+ =?US-ASCII?Q?e_common_settings_out_of_switch/case?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <Zt9Y1fe-Q9cHY_s5@pengutronix.de>
+References: <20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de> <20240826-mwifiex-cleanup-1-v1-11-56e6f8e056ec@pengutronix.de> <Zt8rv-nOERIac4T9@gaggiata.pivistrello.it> <Zt9Y1fe-Q9cHY_s5@pengutronix.de>
+Message-ID: <A4592F41-FC96-4F0A-B6B3-911683773833@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
-Message-ID: <20240909205400.3498337-1-tjmercier@google.com>
-Subject: [PATCH] drm/syncobj: Fix syncobj leak in drm_syncobj_eventfd_ioctl
-From: "T.J. Mercier" <tjmercier@google.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	"=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>, Simon Ser <contact@emersion.fr>, 
-	Pekka Paalanen <pekka.paalanen@collabora.com>
-Cc: "T.J. Mercier" <tjmercier@google.com>, Xingyu Jin <xingyuj@google.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-A syncobj reference is taken in drm_syncobj_find, but not released if
-eventfd_ctx_fdget or kzalloc fails. Put the reference in these error
-paths.
-
-Reported-by: Xingyu Jin <xingyuj@google.com>
-Fixes: c7a472297169 ("drm/syncobj: add IOCTL to register an eventfd")
-Signed-off-by: T.J. Mercier <tjmercier@google.com>
+Il 9 settembre 2024 22:21:41 CEST, Sascha Hauer <s=2Ehauer@pengutronix=2Ede=
+> ha scritto:
+>On Mon, Sep 09, 2024 at 07:09:19PM +0200, Francesco Dolcini wrote:
+>> On Mon, Aug 26, 2024 at 01:01:32PM +0200, Sascha Hauer wrote:
+>> > In mwifiex_add_virtual_intf() several settings done in a switch/case
+>> > are the same in all cases=2E Move them out of the switch/case to
+>> > deduplicate the code=2E
+>> >=20
+>> > Signed-off-by: Sascha Hauer <s=2Ehauer@pengutronix=2Ede>
+>> > ---
+>> >  drivers/net/wireless/marvell/mwifiex/cfg80211=2Ec | 16 +++++--------=
 ---
- drivers/gpu/drm/drm_syncobj.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+>> >  1 file changed, 5 insertions(+), 11 deletions(-)
+>> >=20
+>> > diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211=2Ec b/driv=
+ers/net/wireless/marvell/mwifiex/cfg80211=2Ec
+>> > index 8746943c17788=2E=2E2ce54a3fc32f8 100644
+>> > --- a/drivers/net/wireless/marvell/mwifiex/cfg80211=2Ec
+>> > +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211=2Ec
+>> > @@ -3005,7 +3005,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(s=
+truct wiphy *wiphy,
+>> >  			return ERR_PTR(-EFAULT);
+>> >  		}
+>> > =20
+>> > -		priv->wdev=2Ewiphy =3D wiphy;
+>> >  		priv->wdev=2Eiftype =3D NL80211_IFTYPE_STATION;
+>> > =20
+>> >  		if (type =3D=3D NL80211_IFTYPE_UNSPECIFIED)
+>> > @@ -3014,8 +3013,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(s=
+truct wiphy *wiphy,
+>> >  			priv->bss_mode =3D type;
+>> > =20
+>> >  		priv->bss_type =3D MWIFIEX_BSS_TYPE_STA;
+>> > -		priv->frame_type =3D MWIFIEX_DATA_FRAME_TYPE_ETH_II;
+>> > -		priv->bss_priority =3D 0;
+>> >  		priv->bss_role =3D MWIFIEX_BSS_ROLE_STA;
+>> > =20
+>> >  		break;
+>> > @@ -3035,14 +3032,10 @@ struct wireless_dev *mwifiex_add_virtual_intf=
+(struct wiphy *wiphy,
+>> >  			return ERR_PTR(-EFAULT);
+>> >  		}
+>> > =20
+>> > -		priv->wdev=2Ewiphy =3D wiphy;
+>> >  		priv->wdev=2Eiftype =3D NL80211_IFTYPE_AP;
+>> > =20
+>> >  		priv->bss_type =3D MWIFIEX_BSS_TYPE_UAP;
+>> > -		priv->frame_type =3D MWIFIEX_DATA_FRAME_TYPE_ETH_II;
+>> > -		priv->bss_priority =3D 0;
+>> >  		priv->bss_role =3D MWIFIEX_BSS_ROLE_UAP;
+>> > -		priv->bss_started =3D 0;
+>> >  		priv->bss_mode =3D type;
+>> > =20
+>> >  		break;
+>> > @@ -3062,7 +3055,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(s=
+truct wiphy *wiphy,
+>> >  			return ERR_PTR(-EFAULT);
+>> >  		}
+>> > =20
+>> > -		priv->wdev=2Ewiphy =3D wiphy;
+>> >  		/* At start-up, wpa_supplicant tries to change the interface
+>> >  		 * to NL80211_IFTYPE_STATION if it is not managed mode=2E
+>> >  		 */
+>> > @@ -3075,10 +3067,7 @@ struct wireless_dev *mwifiex_add_virtual_intf(=
+struct wiphy *wiphy,
+>> >  		 */
+>> >  		priv->bss_type =3D MWIFIEX_BSS_TYPE_P2P;
+>> > =20
+>> > -		priv->frame_type =3D MWIFIEX_DATA_FRAME_TYPE_ETH_II;
+>> > -		priv->bss_priority =3D 0;
+>> >  		priv->bss_role =3D MWIFIEX_BSS_ROLE_STA;
+>> > -		priv->bss_started =3D 0;
+>> > =20
+>> >  		if (mwifiex_cfg80211_init_p2p_client(priv)) {
+>> >  			memset(&priv->wdev, 0, sizeof(priv->wdev));
+>> > @@ -3092,6 +3081,11 @@ struct wireless_dev *mwifiex_add_virtual_intf(=
+struct wiphy *wiphy,
+>> >  		return ERR_PTR(-EINVAL);
+>> >  	}
+>> > =20
+>> > +	priv->wdev=2Ewiphy =3D wiphy;
+>> > +	priv->bss_priority =3D 0;
+>> > +	priv->bss_started =3D 0;
+>>=20
+>> This was not set before in all the 3 cases=2E Irrelevant? Worth checkin=
+g and/or
+>> mentioning in the commit message?
+>
+>bss_started is only used in AP mode, its value is irrelevant in station
+>or adhoc mode=2E I'll add that to the commit message=2E
 
-diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
-index a0e94217b511..4fcfc0b9b386 100644
---- a/drivers/gpu/drm/drm_syncobj.c
-+++ b/drivers/gpu/drm/drm_syncobj.c
-@@ -1464,6 +1464,7 @@ drm_syncobj_eventfd_ioctl(struct drm_device *dev, void *data,
- 	struct drm_syncobj *syncobj;
- 	struct eventfd_ctx *ev_fd_ctx;
- 	struct syncobj_eventfd_entry *entry;
-+	int ret;
- 
- 	if (!drm_core_check_feature(dev, DRIVER_SYNCOBJ_TIMELINE))
- 		return -EOPNOTSUPP;
-@@ -1479,13 +1480,15 @@ drm_syncobj_eventfd_ioctl(struct drm_device *dev, void *data,
- 		return -ENOENT;
- 
- 	ev_fd_ctx = eventfd_ctx_fdget(args->fd);
--	if (IS_ERR(ev_fd_ctx))
--		return PTR_ERR(ev_fd_ctx);
-+	if (IS_ERR(ev_fd_ctx)) {
-+		ret = PTR_ERR(ev_fd_ctx);
-+		goto err_fdget;
-+	}
- 
- 	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
- 	if (!entry) {
--		eventfd_ctx_put(ev_fd_ctx);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto err_kzalloc;
- 	}
- 	entry->syncobj = syncobj;
- 	entry->ev_fd_ctx = ev_fd_ctx;
-@@ -1496,6 +1499,12 @@ drm_syncobj_eventfd_ioctl(struct drm_device *dev, void *data,
- 	drm_syncobj_put(syncobj);
- 
- 	return 0;
-+
-+err_kzalloc:
-+	eventfd_ctx_put(ev_fd_ctx);
-+err_fdget:
-+	drm_syncobj_put(syncobj);
-+	return ret;
- }
- 
- int
--- 
-2.46.0.598.g6f2099f65c-goog
+ack=2E
+
+With this clarified in the commit message adds my reviewed-by
+
 
 
