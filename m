@@ -1,134 +1,207 @@
-Return-Path: <linux-kernel+bounces-321778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26385971F51
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:33:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3604971F52
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF14E1F23B99
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:33:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09A36288579
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A617217624F;
-	Mon,  9 Sep 2024 16:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C1D161326;
+	Mon,  9 Sep 2024 16:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MpjFeQ6t"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGUvtzYL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C718716B75C
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362EF1758F;
+	Mon,  9 Sep 2024 16:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725899551; cv=none; b=m4vQ0E5jX+3jtHr+iuRzriJLNa9nJzQ+Cth6FT7Gr+QA6uT6MaDHc4OX94Y+qim+mX1tVcgoIXz8pUpI4yg3gP0WbhiDeCTJ4WDw5KNs1LnBAhSFd7Mf1rk1XMJkzxp9u6XQMeDtwm2EoTcIipdd8HgraD984IqAzFsBhgpJFX0=
+	t=1725899601; cv=none; b=W0qjLjlbI3sRyldPLaN+QXkBKecLF+M+UdGj3Crt06pc3De3909AI0Ro4HCveXhTr2xmzIDCe5cIc1Wf+OZsqmKH5yhfSXTDhzeYYpNMOCpQpzLpzvhpNQv4OVXRdppMbDaHSozKs+uJ8yEqQW2Pbr1LLm1HkHbHbvjfW9MXVMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725899551; c=relaxed/simple;
-	bh=6q24Sp43zvOQTSTocJSxRysPj4M+BbhTWRuqYELVHXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CwtVJNoh0VaOl1AKw9yR+lGgDU+cxrai0mvZpIGh7nZPBtm7oxb0ZNHLPkRoAqcc74LmXNTEhqCHF/ekb2SkLKXMTidO9aREvnCTf+4McC75whBdnXhPQ1P3DVc2qG9WM5cEkgZ2TI5EFKCz67aFm/jj5t5pY/gq+1bnLV8SkbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MpjFeQ6t; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cba0dc922so6846535e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:32:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725899548; x=1726504348; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DHl5njwEzB57TRyVYxUn9e/V7vkUkmiZqA1k5LmJoXo=;
-        b=MpjFeQ6tRlXW3eQz59/Wu+XipbKWGHlmoKSsMNvcQJrFeuNtPTh44sfQCungAoin26
-         ARlX8wMn3v9nrqOST06wscoWNVc8znIu1kYhOvfIjyohOHIOgUoWqsFYYLx4N51I6Fsb
-         /lDQ1FTe6ObM4jruhdyc3XT/aJRvgaXBYua5NaHRddp9rjpVqZ15sGWfsnWEA64mJbLt
-         64W7Gd4qNJi353cZ7CnI1PhmKCIQ6jQge1FPgOjlQw3b8g4pTRy4nZSJv+6fgKtkdDzp
-         W+B49TAehdcOATFpxUQQRa0mezrO8QJ2dusQ1FEk/5bJOij/WLtKYLIGaMhgtJbJYxGm
-         au/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725899548; x=1726504348;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DHl5njwEzB57TRyVYxUn9e/V7vkUkmiZqA1k5LmJoXo=;
-        b=aHrfqk+9hrQddmd5WxBJA5drqZCZ3b5oze7o38T5IiVpANtidvJqeOTbfqPdXJXJgR
-         cWDa/uFJGOeLi4omrxzw2xfex+d+/qiJY+vn6ga0ccFmIfTq+6Dyfx2mjmK27ZVmzm1D
-         CjvQ2hIfzXMDMJ9xIKrRd+mmnEnku1UwCCXE9ch5W1wHO/Lb0Ca11N81LmvJeExy3UvD
-         gFNrlOZRX6wqHEN1SdL7CvKRpsKF1Y0tMaQPXRL/WvtvSLHb4D3DBr+NR+m/4ZnTbGl7
-         X99Pds7DMQpr1KmIpwdRHV2M3mF/olBTEtUtWF8dYfub0DxxvZhoVGuxPA7Asoj9pTGI
-         ENQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSpQ/DjzARipq9DGo4px7dvMK+RMHkkh61+yKpw3W/Qduxws+k7g0uTwCORTa0kiEDMt7TbG5Whbf71Zw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0lf06m9J6WoXnoVy98VoZXhnh6+cOzUw/xrlVISUYOaU+K7Fi
-	BInQ5zqVzk7epFvegLW104MQ2jnQVzg36mE57OMV2e9VUCr8qSfWAmFNPYS4lRs=
-X-Google-Smtp-Source: AGHT+IH/NtJ7GDbpp/KCJNR64qpb8/rUL9ftAz+gBxAS7bLeKc9E0iYJrQXSaE8AaWMsJe84oBWC9A==
-X-Received: by 2002:a05:600c:314c:b0:42b:a88f:f872 with SMTP id 5b1f17b1804b1-42cadb699b9mr62524805e9.32.1725899547875;
-        Mon, 09 Sep 2024 09:32:27 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a072sm6478606f8f.2.2024.09.09.09.32.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 09:32:27 -0700 (PDT)
-From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
-To: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chen Ridong <chenridong@huawei.com>
-Subject: [PATCH 4/4] cgroup: Do not report unavailable v1 controllers in /proc/cgroups
-Date: Mon,  9 Sep 2024 18:32:23 +0200
-Message-ID: <20240909163223.3693529-5-mkoutny@suse.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240909163223.3693529-1-mkoutny@suse.com>
-References: <20240909163223.3693529-1-mkoutny@suse.com>
+	s=arc-20240116; t=1725899601; c=relaxed/simple;
+	bh=9ADpIw6RxMCzXJM3i+IHKdReWXkmBWSBvzb5YR35yOQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ClrKBNJUT+DhyDrrVnGAC2IK3Qf4PfAgrqOjVlo8fmAZTacvffUkDkhJS7ZtOiCPn6WVHvpwsU1rYOO178s9fN0U3l+BFKVFGpzYCyy/1mFD/1B0+7uJ7uhaypT6jdp4r7vJjmQw3TTsk4F2fSvaQOKGKSz9H3QfIDFj8ChamKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGUvtzYL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6269AC4CEC5;
+	Mon,  9 Sep 2024 16:33:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725899600;
+	bh=9ADpIw6RxMCzXJM3i+IHKdReWXkmBWSBvzb5YR35yOQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hGUvtzYLjH+vawSouE8nPwb74khn+JKdaBXGltYTRJZH0T0ENEticcjZNbgChIhJ8
+	 WCqpb/z9HcXrFMhaGzc0GB1wD5XztHPux0kyiUWEuXg41J8l1ZnYHh/zLbFWb+2sNx
+	 SvAn0ttA9g9YDHhkYqjp02QGcBREOeQsMfvr9G70TFM2Tm+aAuKiZJaPXFj8eqtndX
+	 QbJXc2g5ATxkAuqlLoUkT5trBdlKZb0NRNXgJw9Mg/Ut8Gn+GRIAxkbu56f/tXfek7
+	 Ra/TuP7SwULWSzizLqRX1g8n+uatTP3lE3XknqyD97b1GUBip3gZm6dkTwp+MrNOCh
+	 ADnmF7SLWbFPg==
+Date: Mon, 9 Sep 2024 13:33:17 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
+	kan.liang@linux.intel.com, namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH v3 5/8] perf trace: Pretty print buffer data
+Message-ID: <Zt8jTfzDYgBPvFCd@x1>
+References: <20240824163322.60796-1-howardchu95@gmail.com>
+ <20240824163322.60796-6-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240824163322.60796-6-howardchu95@gmail.com>
 
-This is a followup to CONFIG-urability of cpuset and memory controllers
-for v1 hierarchies. Make the output in /proc/cgroups reflect that
-!CONFIG_CPUSETS_V1 is like !CONFIG_CPUSETS and
-!CONFIG_MEMCG_V1 is like !CONFIG_MEMCG.
+On Sun, Aug 25, 2024 at 12:33:19AM +0800, Howard Chu wrote:
+> Define TRACE_AUG_MAX_BUF in trace_augment.h data, which is the maximum
+> buffer size we can augment. BPF will include this header too.
+> 
+> Print buffer in a way that's different than just printing a string, we
+> print all the control characters in \digits (such as \0 for null, and
+> \10 for newline, LF).
+> 
+> For character that has a bigger value than 127, we print the digits
+> instead of the character itself as well.
+> 
+> Committer notes:
+> 
+> Simplified the buffer scnprintf to avoid using multiple buffers as
+> discussed in the patch review thread.
+> 
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Link: https://lore.kernel.org/r/20240815013626.935097-8-howardchu95@gmail.com
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/perf/builtin-trace.c      | 33 +++++++++++++++++++++++++++++++++
+>  tools/perf/util/trace_augment.h |  6 ++++++
+>  2 files changed, 39 insertions(+)
+>  create mode 100644 tools/perf/util/trace_augment.h
+> 
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 048bcb92624c..470d74e3f875 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -65,6 +65,7 @@
+>  #include "syscalltbl.h"
+>  #include "rb_resort.h"
+>  #include "../perf.h"
+> +#include "trace_augment.h"
+>  
+>  #include <errno.h>
+>  #include <inttypes.h>
+> @@ -852,6 +853,10 @@ static size_t syscall_arg__scnprintf_filename(char *bf, size_t size,
+>  
+>  #define SCA_FILENAME syscall_arg__scnprintf_filename
+>  
+> +static size_t syscall_arg__scnprintf_buf(char *bf, size_t size, struct syscall_arg *arg);
+> +
+> +#define SCA_BUF syscall_arg__scnprintf_buf
+> +
+>  static size_t syscall_arg__scnprintf_pipe_flags(char *bf, size_t size,
+>  						struct syscall_arg *arg)
+>  {
+> @@ -1745,6 +1750,32 @@ static size_t syscall_arg__scnprintf_filename(char *bf, size_t size,
+>  	return 0;
+>  }
+>  
+> +#define MAX_CONTROL_CHAR 31
+> +#define MAX_ASCII 127
+> +
+> +static size_t syscall_arg__scnprintf_buf(char *bf, size_t size, struct syscall_arg *arg)
+> +{
+> +	struct augmented_arg *augmented_arg = arg->augmented.args;
+> +	unsigned char *orig = (unsigned char *)augmented_arg->value;
+> +	size_t printed = 0;
+> +	int consumed;
+> +
+> +	if (augmented_arg == NULL)
+> +		return 0;
+> +
+> +	for (int j = 0; j < augmented_arg->size; ++j) {
+> +		bool control_char = orig[j] <= MAX_CONTROL_CHAR || orig[j] >= MAX_ASCII;
+> +		/* print control characters (0~31 and 127), and non-ascii characters in \(digits) */
+> +		printed += scnprintf(bf + printed, size - printed, control_char ? "\\%d" : "%c", (int)orig[j]);
+> +	}
+> +
+> +	consumed = sizeof(*augmented_arg) + augmented_arg->size;
+> +	arg->augmented.args = ((void *)arg->augmented.args) + consumed;
+> +	arg->augmented.size -= consumed;
+> +
+> +	return printed;
+> +}
+> +
+>  static bool trace__filter_duration(struct trace *trace, double t)
+>  {
+>  	return t < (trace->duration_filter * NSEC_PER_MSEC);
+> @@ -1956,6 +1987,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+>  		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
+>  		     strstr(field->name, "path") != NULL))
+>  			arg->scnprintf = SCA_FILENAME;
+> +		else if (strstr(field->type, "char *") && strstr(field->name, "buf"))
+> +			arg->scnprintf = SCA_BUF;
 
-The intended effect is that hiding the unavailable controllers will hint
-users not to try mounting them on v1.
+You can't really do this for things like 'read' as we would be printing
+whatever is in the buffer when we enter the syscall, right? As we can
+see testing after applying the following patch:
 
-Signed-off-by: Michal Koutný <mkoutny@suse.com>
----
- kernel/cgroup/cgroup-v1.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+root@number:~# perf trace -e read,write cat /etc/passwd > /dev/null
+     0.000 ( 0.004 ms): cat/291442 read(fd: 3, buf: \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0, count: 832) = 832
+     0.231 ( 0.004 ms): cat/291442 read(fd: 3, buf: , count: 131072)                                     = 3224
+     0.236 ( 0.001 ms): cat/291442 write(fd: 1, buf: root:x:0:0:Super User:/root:/bin, count: 3224)      = 3224
+     0.239 ( 0.001 ms): cat/291442 read(fd: 3, buf: root:x:0:0:Super User:/root:/bin, count: 131072)     = 0
+root@number:~#
 
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index 784337694a4be..e28d5f0d20ed0 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -681,11 +681,14 @@ int proc_cgroupstats_show(struct seq_file *m, void *v)
- 	 * cgroup_mutex contention.
- 	 */
+So we can't really do it at this point, we have to do it, for now, by
+doing it on that syscall table initialization, for instance, for the
+'write' syscall:
+
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 5f0877e891c2047d..1bcb45e737d830bf 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -1379,6 +1379,8 @@ static const struct syscall_fmt syscall_fmts[] = {
+ 	  .arg = { [2] = { .scnprintf = SCA_WAITID_OPTIONS, /* options */ }, }, },
+ 	{ .name	    = "waitid",	    .errpid = true,
+ 	  .arg = { [3] = { .scnprintf = SCA_WAITID_OPTIONS, /* options */ }, }, },
++	{ .name	    = "write",	    .errpid = true,
++	  .arg = { [1] = { .scnprintf = SCA_BUF, /* buf */ }, }, },
+ };
  
--	for_each_subsys(ss, i)
-+	for_each_subsys(ss, i) {
-+		if (cgroup1_subsys_absent(ss))
-+			continue;
- 		seq_printf(m, "%s\t%d\t%d\t%d\n",
- 			   ss->legacy_name, ss->root->hierarchy_id,
- 			   atomic_read(&ss->root->nr_cgrps),
- 			   cgroup_ssid_enabled(i));
-+	}
- 
- 	return 0;
- }
--- 
-2.46.0
+ static int syscall_fmt__cmp(const void *name, const void *fmtp)
+@@ -1987,8 +1989,6 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+ 		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
+ 		     strstr(field->name, "path") != NULL))
+ 			arg->scnprintf = SCA_FILENAME;
+-		else if (strstr(field->type, "char *") && strstr(field->name, "buf"))
+-			arg->scnprintf = SCA_BUF;
+ 		else if ((field->flags & TEP_FIELD_IS_POINTER) || strstr(field->name, "addr"))
+ 			arg->scnprintf = SCA_PTR;
+ 		else if (strcmp(field->type, "pid_t") == 0)
 
+With that we get:
+
+root@number:~# perf trace -e read,write cat /etc/passwd > /dev/null
+     0.000 ( 0.005 ms): cat/296870 read(fd: 3, buf: 0x7ffe9cb8df98, count: 832)                          = 832
+     0.268 ( 0.004 ms): cat/296870 read(fd: 3, buf: 0x7fa7d700a000, count: 131072)                       = 3224
+     0.273 ( 0.002 ms): cat/296870 write(fd: 1, buf: root:x:0:0:Super User:/root:/bin, count: 3224)      = 
+     0.276 ( 0.001 ms): cat/296870 read(fd: 3, buf: 0x7fa7d700a000, count: 131072)                       = 0
+root@number:~#
+
+After the following patch is applied.
+
+- Arnaldo
 
