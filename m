@@ -1,166 +1,113 @@
-Return-Path: <linux-kernel+bounces-321060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 388E89713E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:36:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 540B79713E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F23AB2441E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:36:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 805CE1C22C36
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DC01B3F22;
-	Mon,  9 Sep 2024 09:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC2A1B7904;
+	Mon,  9 Sep 2024 09:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fYD5sFBw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jrF/MW2q"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC601B3724;
-	Mon,  9 Sep 2024 09:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF98E1B78FA;
+	Mon,  9 Sep 2024 09:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725874427; cv=none; b=rWdm4N8emGC/Yqf/yBKJEWUp4Zm5W81+OFQFllAihG6SM3tlSjyapzDeKr6aWCwQ7PsO0SfxdxVdJEIWbZ6fR60lUKt1jxGgatHjE8w136sEmSbrYDyNYTPhTEkGRdrWh4Y4YSJhVYDVHojvsPLFZhS9xacy+kUGDLqRFEyT3uQ=
+	t=1725874402; cv=none; b=gthmD/E4zK9iN25OdVPiLc45kzWE6HMm1AnTjYI0RbzQoJF18+4mEzCPGRF30gOYabqWgqs6hUwkXwseOuFSdD8GlOwFR1jcFkEjEjgu01fEyrj6jbqMzKj64811DubWh++b085UV2SLlYT424D2p6PMJux6ocWFoXrzghoxU2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725874427; c=relaxed/simple;
-	bh=DIKNCNiGhIjn9n1V5kMQXTMDbSl+SXirRNtiyKv/cFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UBiNiVoAonKoej3cbAHmEHhCfpsBXMofTX1IELn4pMKIQLWqeVz/+jS7wpUAulQYZnXvaPPgMOPa/Scur7xmv1XJzcbe5JXR4RfBzmf5hyOzm4xPEuFO6ENInkN/cdgH+QEWfkeSfTU0ToOoQjNYhTICYg3LSORa1q57iGBjGxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fYD5sFBw; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725874426; x=1757410426;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DIKNCNiGhIjn9n1V5kMQXTMDbSl+SXirRNtiyKv/cFY=;
-  b=fYD5sFBwzvOI2EgSosdM4UoIXj53S80LDTSOy5fJYosCmuCZeZQvpLZa
-   NEafaTBlvJJHg5XUzjtByDD+P3yVxaTyqrXEs+Y9XLsVOVqEUCj6zahWy
-   +rqd3QPH91mYXbHVX2I44a7pI8b/0LAsBmP1BNtxsWieP6W+VfKv6iMi6
-   ouIpoBwDFXvogceBJEwBCxKD+njNmptk/s3No8JHdYh5jbMhx9UEaIJMa
-   RNX91p96qL6vokewA9BnYDsd/PhguUf0qw1JeMWjGNcUBtJZYR7NCWbnS
-   uKxl/sRTY7AqKptFL2HVh8/vWta7tbSZAT6MypN/pILMHoj9kcZgg68vT
-   w==;
-X-CSE-ConnectionGUID: 90C/ZtjCTaebxikLJpq5bQ==
-X-CSE-MsgGUID: nHA78hL3QYmve3SmWChS9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="24673237"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="24673237"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 02:33:41 -0700
-X-CSE-ConnectionGUID: yYzMhBXASGSePtWNnhhfDw==
-X-CSE-MsgGUID: k9CyDuEmTdGy4ofPkKB7FQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="89892116"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmviesa002.fm.intel.com with SMTP; 09 Sep 2024 02:33:16 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 09 Sep 2024 12:33:14 +0300
-Date: Mon, 9 Sep 2024 12:33:14 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: "Christian A. Ehrhardt" <lk@c--e.de>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Anurag Bijea <icaliberdev@gmail.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jameson Thies <jthies@google.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Subject: Re: [PATCH v4] usb: typec: ucsi: Fix busy loop on ASUS VivoBooks
-Message-ID: <Zt7A2lcW9v3ItKGm@kuha.fi.intel.com>
-References: <20240906065853.637205-1-lk@c--e.de>
+	s=arc-20240116; t=1725874402; c=relaxed/simple;
+	bh=PLDOu0hJeXUrdPFd45o3G1smItDcEQJxKOPJ8j6E0J0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o0NYHfpLQFzZKLRiSq097J3pLucoqgR0w2jjqgNgsZy0ajpQJ1ntC80a87QIbRXaOL0rsO0hBw09tTUBOx4Q+IJQF3snByzrE940uV8kTYV01ypjNPOGfC8iyL+XJEHcGVKwvd8cVb2odjRKwZBl1aPbc63rwEUsQqMuoSb1jNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jrF/MW2q; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725874397;
+	bh=Y3whYM0Hw06COQz5uKBqKXlBUIklvczzXpbwxID6qEs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jrF/MW2qx9wFMIzNy99FTuMz/XdERqIPxOJgQm50Q47Mr4C8CxmNxY7yhV/Xwzg5O
+	 L4nmn4dSuF66ASAVT6sbNl8joUeu9qn/8P2z6bv0YBdPGSdLjx4vcIlJ4nEf33yWO5
+	 y+cN+Mr8M1tHnUTBz9oHczRLkygWuyHzA3wKOx5k/v5OT0nKAJblV+oxtpfRKGD6IV
+	 JGRYVz4yYxBgI/vO5Xs7oVlMU8+tWzF1sNpAVQ5F8eD6KHkCklBVrHMyT+j5xXSPR4
+	 VBMc2ern7SWJE5Lq/K2zI0N2Pg3mJsZRShg571IMXg82Yxs0Ipy/ponqJNA/QJxL87
+	 WRQhDC9gbujKA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X2M8F5lXhz4w2N;
+	Mon,  9 Sep 2024 19:33:17 +1000 (AEST)
+Date: Mon, 9 Sep 2024 19:33:16 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the slab tree
+Message-ID: <20240909193316.007148df@canb.auug.org.au>
+In-Reply-To: <c741cfbb-f209-4466-9d35-aef32dc3424f@suse.cz>
+References: <20240909171220.32e862e3@canb.auug.org.au>
+	<20240909181035.4ffd7434@canb.auug.org.au>
+	<bde596e3-365b-4fdb-8a03-0a4e40a56246@suse.cz>
+	<c741cfbb-f209-4466-9d35-aef32dc3424f@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906065853.637205-1-lk@c--e.de>
+Content-Type: multipart/signed; boundary="Sig_/tRfC9vyh8EsWDiSalMzOJzL";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, Sep 06, 2024 at 08:58:53AM +0200, Christian A. Ehrhardt wrote:
-> If the busy indicator is set, all other fields in CCI should be
-> clear according to the spec. However, some UCSI implementations do
-> not follow this rule and report bogus data in CCI along with the
-> busy indicator. Ignore the contents of CCI if the busy indicator is
-> set.
-> 
-> If a command timeout is hit it is possible that the EVENT_PENDING
-> bit is cleared while connector work is still scheduled which can
-> cause the EVENT_PENDING bit to go out of sync with scheduled connector
-> work. Check and set the EVENT_PENDING bit on entry to
-> ucsi_handle_connector_change() to fix this.
-> 
-> Finally, check UCSI_CCI_BUSY before the return code of ->sync_control.
-> This ensures that the command is cancelled even if ->sync_control
-> returns an error (most likely -ETIMEDOUT).
-> 
-> Reported-by: Anurag Bijea <icaliberdev@gmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219108
-> Bisected-by: Christian Heusel <christian@heusel.eu>
-> Tested-by: Anurag Bijea <icaliberdev@gmail.com>
-> Fixes: de52aca4d9d5 ("usb: typec: ucsi: Never send a lone connector change ack")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
+--Sig_/tRfC9vyh8EsWDiSalMzOJzL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Hi Vlastimil,
 
-> ---
->  drivers/usb/typec/ucsi/ucsi.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> index 4039851551c1..d6d61606bbcf 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.c
-> +++ b/drivers/usb/typec/ucsi/ucsi.c
-> @@ -38,6 +38,10 @@
->  
->  void ucsi_notify_common(struct ucsi *ucsi, u32 cci)
->  {
-> +	/* Ignore bogus data in CCI if busy indicator is set. */
-> +	if (cci & UCSI_CCI_BUSY)
-> +		return;
-> +
->  	if (UCSI_CCI_CONNECTOR(cci))
->  		ucsi_connector_change(ucsi, UCSI_CCI_CONNECTOR(cci));
->  
-> @@ -107,15 +111,13 @@ static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
->  		size = clamp(size, 0, 16);
->  
->  	ret = ucsi->ops->sync_control(ucsi, command);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = ucsi->ops->read_cci(ucsi, cci);
-> -	if (ret)
-> -		return ret;
-> +	if (ucsi->ops->read_cci(ucsi, cci))
-> +		return -EIO;
->  
->  	if (*cci & UCSI_CCI_BUSY)
->  		return -EBUSY;
-> +	if (ret)
-> +		return ret;
->  
->  	if (!(*cci & UCSI_CCI_COMMAND_COMPLETE))
->  		return -EIO;
-> @@ -1249,6 +1251,10 @@ static void ucsi_handle_connector_change(struct work_struct *work)
->  
->  	mutex_lock(&con->lock);
->  
-> +	if (!test_and_set_bit(EVENT_PENDING, &ucsi->flags))
-> +		dev_err_once(ucsi->dev, "%s entered without EVENT_PENDING\n",
-> +			     __func__);
-> +
->  	command = UCSI_GET_CONNECTOR_STATUS | UCSI_CONNECTOR_NUMBER(con->num);
->  
->  	ret = ucsi_send_command_common(ucsi, command, &con->status,
-> -- 
-> 2.43.0
+On Mon, 9 Sep 2024 10:49:45 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
+>
+> ... so it would have to be either slab tree from 20240905 (before it
+> included the vfs commits), or vfs from 20240906 (before the commits on vfs
+> side got different id's).
 
--- 
-heikki
+You need to remember that my time zone is UTC+1000 :-)
+
+> I guess if you rolled back vfs side in -next, then it makes more sense to
+> reset vfs, and if slab side, then slab.
+
+The vfs-brauner tree is merged into linux-next earlyish in the morning.
+the slab tree late in the afternoon.  My preference is to rollback the
+later tree is that works.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/tRfC9vyh8EsWDiSalMzOJzL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbewNwACgkQAVBC80lX
+0GxUIggAkHHpOvWVe9thOJKuweIZkAOov6bcs850brOol5CiAvVmxsc0ckuWll+e
+wEpcj7bHkXW0pVnUQaeFhmvRzKe0BxwE3h4wTENr/RavD/DjtpvtE2B2TQR1CenA
+Sv6AduTcaWbPP5RhUP4KH161sv6bWFXYoZqXGvs2P8z/tT8/j9s79fIlZj3QV6ww
+awd8XxYZz0BIkMGvF7oTs1Sw2/tuLwadx/+UUI0OvU3jryVA1ac4UHqq7Q4nXV/9
+8JxGIaxF37ZoLigxgUbDWYnfDQ1RZ8qQqc2XSYxfcj92AUiWPOMlZ8cXRBiqyr+H
+gB7BOBdnwnmkZccBwGwNQ7wy3cH0Ew==
+=JVU8
+-----END PGP SIGNATURE-----
+
+--Sig_/tRfC9vyh8EsWDiSalMzOJzL--
 
