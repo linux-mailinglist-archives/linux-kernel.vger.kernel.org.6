@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-320862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04ED97118B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:14:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3061597118F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48BD51F22F40
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:14:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC8AB282390
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CD21B4C3B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2A21B4C5E;
 	Mon,  9 Sep 2024 08:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdtembQe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AiQgFJxA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7EA1B1501;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F761B150C;
 	Mon,  9 Sep 2024 08:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725869536; cv=none; b=Y9ygB8bozex2XQUSamWatTQElddO+4S0I0iwBW2Yw1eVoJ7iaeXRcJfD0pH+B591+HcPyYrMM1wG5SjIML/s+CH1co10D7JM81TBpZ7Q4tE8v10zML8Yfb46zg2Kc6QRqV9eD/tfvg3ScWbvf873gFpoAZzDdFhPGnDn2F5kUtk=
+	t=1725869536; cv=none; b=Y87UwZ14B0nsVEHEMgzGlUPVAWo52IL8GOCQOoD5CHEoIOzL6ERvQCpjuvyane+wp6qzk2reXhbDKFTjKLE5XiCjrs2wjWoKV4Jn548zS99PhYNXj5BXJsOl+zNb5Epa/b327tmbYNBXcRIG202cZjVTBDmEzwFVYtSG1ybKA78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725869536; c=relaxed/simple;
-	bh=OCL2OwGmR4U99+vK5ZiqzBF+MvBHnojmd1wpSc1QfaA=;
+	bh=DG6Gyo/AhYeDkc08pgAbNNL+jl66p9ctVC7NLxEKR68=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pXOUdYzTWcM2uLorOI1tnzEYL8YzYlI68slsMgHQSJIgUA9qGjOecY9IL3b3+h8XWKFWxSdTE5et2HQCqapb+cvF9nAp5vYH6TQNFjLNMHJ3yhv4uXrL3jjcxIyREDBOYAQBX3E2EgqbrI2uZ4v1I1yxtn8mRkF9GxQhiOY4p/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdtembQe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0A1ECC4AF14;
+	 In-Reply-To:To:Cc; b=LyggdvgU7Pv2ks22HM80PYbGHhC9Pm4AjvO9wWFzBEsa0uHEtqvGZc9WjhTgVcHXJSGprxzFtmXErh6XvOPAksweniY03P7PBbHh/GYTXYZzeK4FESOtc4y84xU2gTCJkmrmiVVu+XFmLbtpB3F9O4M6Dgm97Y4Ari0pT84YMWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AiQgFJxA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 16A79C4CEEB;
 	Mon,  9 Sep 2024 08:12:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1725869536;
-	bh=OCL2OwGmR4U99+vK5ZiqzBF+MvBHnojmd1wpSc1QfaA=;
+	bh=DG6Gyo/AhYeDkc08pgAbNNL+jl66p9ctVC7NLxEKR68=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=fdtembQe+KLpDr/1mv8uWWYPWXm7+mBfkxMK8oFb43jB0uz3lo41Nym68V1uRDnhA
-	 Dytf0JqS6LBkzXo89bLuSIDS7Y8GKzQIYYQrfeXa1V/LFYiAXHThSk3gRIjCT5z3lI
-	 8Tzq7aPlUNKu4PA5NmwDLdqU4JVK8nJSzn4rIArBjU0uTFYlG6Tn6J53I16cXPwwe4
-	 IYKc6kC/IFdqtkba/UYl+XeRpnzKt4pYxsd5LBo/XIZ8ENB4uFpT1JBvXWclNbItal
-	 F20yOdVOfhcrPvi9zIop/JxfRnJlYx0sRwu75IgmeHuVCXFN51eu6q8kCwsdkQ7Z6v
-	 ErK5vsbqADsxQ==
+	b=AiQgFJxAug3Sy6r0LjlUSqNk0GnYGxM8hV9HaC0jth5Vo7s62o0aOEJ6J2WUDIICb
+	 egWk9bfhnpXWhNfJlOefyn3/R/EdKcLessu3wrbUkxehQorZjt4/ecYTSLYK7DHJqt
+	 3fHOQcUKxsrZjK0kZVdyuXJD/fHr148B931PEQvC3AdLqa1M2+5gsU573h1+SjJ1hZ
+	 86OFI7abmOKmQpIL+EiggBTz4UFZAHk/g6GFrgAD5epo8uDT5LzgYStfD+llmOnNPx
+	 L5qLqiVLWeQbvNhM6iLdF1U2cOk/UukPtFlunW7z6FXcAHWI3uJYfM459QTcXcCheR
+	 sHJI2O/s0YzkA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E7DCD4F4C;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD29ECE57F;
 	Mon,  9 Sep 2024 08:12:16 +0000 (UTC)
 From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Mon, 09 Sep 2024 11:10:38 +0300
-Subject: [PATCH v12 13/38] pwm: ep93xx: add DT support for Cirrus EP93xx
+Date: Mon, 09 Sep 2024 11:10:39 +0300
+Subject: [PATCH v12 14/38] dt-bindings: spi: Add Cirrus EP93xx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,20 +53,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240909-ep93xx-v12-13-e86ab2423d4b@maquefel.me>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240909-ep93xx-v12-14-e86ab2423d4b@maquefel.me>
 References: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
 In-Reply-To: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+ Nikita Shubin <nikita.shubin@maquefel.me>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.13-dev-e3e53
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725869532; l=1236;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725869532; l=2297;
  i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=ct0L8elpTvHj/aUU/OBJY6iv8PSAIzqZyzV/Ce2gcnk=;
- b=/4fdkDuONr927B+O36yJ+BFAl7VhqSwCQlAYGnlC4vEP+7Hv8qt7+NbS3njnWHD22U8vssirdOg8
- 9TGokHrCCdv+7tMQdrFsFblFl8+Kcn+dwJ0Oy4uibMf9/lYJYsrC
+ bh=jJL2qB0kTVm0ECXQdY2vGGR9TsGC8ONTPNp8ZLPMM2E=;
+ b=TLRu4+Bg6JWRqqSa9yZN5XhB7rf3NCSVopk1URawM8NDcXUxHexwsRMJhMs5ZjCbFqStoETRkjTb
+ dWVqMWwICRRHE9palsPIONgXZxqUyTJvH2Y45Ig/XbL791vjkqjN
 X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
  pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
 X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
@@ -76,46 +80,91 @@ Reply-To: nikita.shubin@maquefel.me
 
 From: Nikita Shubin <nikita.shubin@maquefel.me>
 
-Add OF ID match table.
+Add YAML bindings for ep93xx SoC SPI.
 
 Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
-Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/pwm/pwm-ep93xx.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ .../devicetree/bindings/spi/cirrus,ep9301-spi.yaml | 70 ++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-diff --git a/drivers/pwm/pwm-ep93xx.c b/drivers/pwm/pwm-ep93xx.c
-index 666f2954133c..67c3fdbf7ae3 100644
---- a/drivers/pwm/pwm-ep93xx.c
-+++ b/drivers/pwm/pwm-ep93xx.c
-@@ -17,6 +17,7 @@
-  */
- 
- #include <linux/module.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/clk.h>
-@@ -188,9 +189,16 @@ static int ep93xx_pwm_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct of_device_id ep93xx_pwm_of_ids[] = {
-+	{ .compatible = "cirrus,ep9301-pwm" },
-+	{ /* sentinel */}
-+};
-+MODULE_DEVICE_TABLE(of, ep93xx_pwm_of_ids);
+diff --git a/Documentation/devicetree/bindings/spi/cirrus,ep9301-spi.yaml b/Documentation/devicetree/bindings/spi/cirrus,ep9301-spi.yaml
+new file mode 100644
+index 000000000000..73980a27dc00
+--- /dev/null
++++ b/Documentation/devicetree/bindings/spi/cirrus,ep9301-spi.yaml
+@@ -0,0 +1,70 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/spi/cirrus,ep9301-spi.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- static struct platform_driver ep93xx_pwm_driver = {
- 	.driver = {
- 		.name = "ep93xx-pwm",
-+		.of_match_table = ep93xx_pwm_of_ids,
- 	},
- 	.probe = ep93xx_pwm_probe,
- };
++title: EP93xx SoC SPI controller
++
++maintainers:
++  - Alexander Sverdlin <alexander.sverdlin@gmail.com>
++  - Nikita Shubin <nikita.shubin@maquefel.me>
++
++allOf:
++  - $ref: spi-controller.yaml#
++
++properties:
++  compatible:
++    oneOf:
++      - const: cirrus,ep9301-spi
++      - items:
++          - enum:
++              - cirrus,ep9302-spi
++              - cirrus,ep9307-spi
++              - cirrus,ep9312-spi
++              - cirrus,ep9315-spi
++          - const: cirrus,ep9301-spi
++
++  reg:
++    items:
++      - description: SPI registers region
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: SPI Controller reference clock source
++
++  dmas:
++    items:
++      - description: rx DMA channel
++      - description: tx DMA channel
++
++  dma-names:
++    items:
++      - const: rx
++      - const: tx
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/clock/cirrus,ep9301-syscon.h>
++    spi@808a0000 {
++        compatible = "cirrus,ep9301-spi";
++        reg = <0x808a0000 0x18>;
++        interrupt-parent = <&vic1>;
++        interrupts = <21>;
++        clocks = <&syscon EP93XX_CLK_SPI>;
++        dmas = <&dma1 10 2>, <&dma1 10 1>;
++        dma-names = "rx", "tx";
++        cs-gpios = <&gpio5 2 GPIO_ACTIVE_HIGH>;
++    };
 
 -- 
 2.43.2
