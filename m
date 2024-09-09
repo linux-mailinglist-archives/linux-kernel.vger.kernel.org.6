@@ -1,137 +1,123 @@
-Return-Path: <linux-kernel+bounces-321484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D233D971B15
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:31:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B984971B2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6221FB24097
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:31:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BCDC1C23114
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB2F1B86FE;
-	Mon,  9 Sep 2024 13:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FDF1B86FE;
+	Mon,  9 Sep 2024 13:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4WOdN7a"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fnxLKG2E"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1261804F;
-	Mon,  9 Sep 2024 13:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5701B6525
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725888686; cv=none; b=gJyc9KHgyfMcq0g/UqvGv9VZvCdGXsJXlEkk2Ze3QynztEo4dZFOxq3muMdmi/9VWeRNCq+JE6XmKwGV+24R4hxCDDtW1iW5xj8ZkwMiRXWZyXy0Au/Q1BRfoGoWXfLuhayjQ3HWI/FUE28Gdx6lcttdiGSp36fG74AI+IGK1hE=
+	t=1725888984; cv=none; b=pctBbRFKjoRDnKKTtleLogng79+cl5tzT8CU65HINHcsYhBvqfjnMqM+eFq+MGRgjbqCp7Ayu0kGXazLj9/N9X9+ndoGrfnesofD9hAZo1ABzZDcJjT0sVAiodsAxIar9Dl5rv5aHN6bNBmvz5P9OdbmbP8B5SVldYg+CqTIrkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725888686; c=relaxed/simple;
-	bh=U9/6GZgjRgUVPus9DXRmPCbnWZ1XQIE3UYnIYMoBDTM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DyUGwCfZ5aYzjI/YWHA0lD1tIp7ivpo3cfFjOO0SMSM5hr0frhtNMlUOVYlT5D3WVOZ+xmr6ErbVSBh6UTQMwuj9lSxlcPBSBYw1CRdUDkZluxxu7xIvG7NZ7jhzidF7O0dSfG048mCxwLRMo0oWjgGbdvfR0Qvf7SKzDjrsMkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j4WOdN7a; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42c7b5b2d01so50877415e9.3;
-        Mon, 09 Sep 2024 06:31:25 -0700 (PDT)
+	s=arc-20240116; t=1725888984; c=relaxed/simple;
+	bh=BAuxzHPZw2jTXdKOWfhAsjcQsyTJAlXQRtg+AXUUzAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hk3/JXCIlR1n8zdJ1rduOhzKVTgP4bmRvxEZZMvIcT/bqzPmeYl1MoOu0AH7GqVW1C0SFbaUP1vLQI7NyEzpBKMj7kDUOA2XRbvEFDLfQEd5OxEMRWip9HL54QRl5HxMfEmseynX6vyzPKsZ43UvKheltMZ6edhh9SGiekGWQpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fnxLKG2E; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-536562739baso3633410e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 06:36:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725888684; x=1726493484; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qWBnrkC0VHGoKlS5UYwMzz+fd0b7C15beJrEhKUWP6E=;
-        b=j4WOdN7aF8IoiZMv8v/2ZM2cIiLa8XK2Z1za00KN/pCmSXDtF2pny00CKcFtgxW9j+
-         xeVeUiK42Lwpy9Wz4eYzvwpcgz7mFlgf92HpoXG7o7tcNr9BeczJrVj7XpswGbRX15VA
-         vtkO2TgiUW4BuHHYcdV5JBaIxHW4XVlMSDnpC/D0gEce+HGwW6NWJqojnW1X2im7VwIV
-         gHLi0q3FP/8koS/vrNCIbIQBdYPIOESWMT2cC4DJM17V7Q8MjrL6S+3eSIRaRw4HPqvk
-         AZv4u0EHzkcF6aChc5VFS71Yczt12Uu89pd1rYPXaP3D5jsc89+TDAPCPGyRdl1hDX+x
-         BuyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725888684; x=1726493484;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=linaro.org; s=google; t=1725888981; x=1726493781; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=qWBnrkC0VHGoKlS5UYwMzz+fd0b7C15beJrEhKUWP6E=;
-        b=rtKaCm1+i2KXzZFEiEY0p6H0fKe0pyc53gBXtYtQdE7WGsotRf6S4zuuMpuNl4CUox
-         Xz/zn/1opYjVXosPxoFizTcoWYbjg3kqJE5BIw6f+YfpkyFhRmJrbtoUPkEMx1+K3IgH
-         Z14LP57vVCQtUXIESOB5IqTcVkqHTyrZ79UgaUEVffmEMP7YUJlmqaKShH+mxMIv1Bx1
-         V4rEkHLuhHMY7zdnvpR+5AgUlzNb3Tb2GIPi+558vyF2hhfWPKINwHU6lGMw4zOiwZ3y
-         4ydU0fWXT9WW+yWDSZj19XcMJV0hN4hqX7hDqiP3UOtRlYQQorCsp5gAmkiccFRg8uTY
-         GLoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGZhRjiaPHW39LjEtZ+TqX1pJgwapCV0AlbTaFTjDTdDDB326Bv1KQHxuo745xORdf9iJ0uI9vMt7i@vger.kernel.org, AJvYcCWS8T1ccd9yUFEWrpOT70y6g+6ahBSQ0QrnZ3Kpbn9FrpKuydbxXeQJqODl2BA2Rytf3Bt9DYhCpyGnyFbx@vger.kernel.org, AJvYcCX7sDCMiV5CvZgT0XV7QTfadHNmG8BNzSVZbFOXdDqyKfe0KgkUTdxTwsxMGB002XPXbhPLlFosGVxF@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTF4sn4JoW4+rzszgtO3zsRjuR9dcHW3o3o8OJB+YJJ87ZcmcY
-	tnCUC18yMg36dxdq7Neu+LNmJfFX8rhUc31Wba/QPXF0kmUjfmeu
-X-Google-Smtp-Source: AGHT+IGHWJpfx1MPy9b28rSFKNx5bY99OU/mUzZyWqr6JkzPIFC9m3jv5MaaxqGJxrrtc7/mgf3M5Q==
-X-Received: by 2002:adf:fcca:0:b0:374:c90e:990c with SMTP id ffacd0b85a97d-378922b7aefmr6266546f8f.33.1725888683153;
-        Mon, 09 Sep 2024 06:31:23 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d3796sm6041845f8f.80.2024.09.09.06.31.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 06:31:22 -0700 (PDT)
-Message-ID: <345d8b6b1395a0181458e795006bc47748f865b1.camel@gmail.com>
-Subject: Re: [PATCH v2 8/9] iio: dac: ad3552r: add axi platform driver
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-	adureghello@baylibre.com
-Cc: Michael.Hennerich@analog.com, conor+dt@kernel.org, 
- devicetree@vger.kernel.org, dlechner@baylibre.com, jic23@kernel.org, 
- krzk+dt@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, nuno.sa@analog.com,
- olivier.moysan@foss.st.com,  robh@kernel.org
-Date: Mon, 09 Sep 2024 15:35:31 +0200
-In-Reply-To: <a6be8c40-5aa7-455c-8a15-55bda451ea51@wanadoo.fr>
-References: 
-	<20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
-	 <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-8-87d669674c00@baylibre.com>
-	 <a6be8c40-5aa7-455c-8a15-55bda451ea51@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+        bh=/9m2ovgC3tbhBkWQoZgc0XfIdfEqtR0fYQGv/pk+TAE=;
+        b=fnxLKG2E1mqsrWKm+uTY7yGsshcyA+41VdHPc1qv5m9JZbYUo/KDsEWKMaz+/KQDcS
+         /MveOksDIeowZ0MuL838zFmLqVTCwrMXEp+uqcXueaF45UL+I62xSAgGpldlEQmuwCbH
+         smJVMZ5TeOLZEcsK+iEJ9uiYT8snjaNLuTV8vymKn3ndBkOBwDPqhSl4UKDdjXwxGESk
+         f4qvX3lpEeQW/s0gT8bOxET8HYM3izvQuYB9shgPaoW99dKtuIfjwUd3+wXh8heAr5xX
+         +hcemq26z1NCilvhN653SOZs+jVKk+18/r1x/fDpQPuf6WVzNjQM67gBn6d5wnjH0FNH
+         evXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725888981; x=1726493781;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/9m2ovgC3tbhBkWQoZgc0XfIdfEqtR0fYQGv/pk+TAE=;
+        b=jtsh3vd/NNRDD2SwCe/jdeYQBdEee/cJ1wgIscDIowEvioDNzrwyEqHYdISnC+CMOA
+         2aX4vA5CvyBfCJ7XwfUBKlOzEGiToqTmHntdiLmMHYs9y0S+Axu4LSL7Jv2wR96Ck9l+
+         yCVq6vh0uV5L+xA+e0t/kT7wETYwEqkB5WfKXcQspn0rCpmFpF8XO2SJOeMw7sIspeHN
+         OulpcZGuWKwJP/Tb25xvUVBkVc2JG8dV1lWUgguC58r4fqGAzDYfUEbCeDLw5djtxMEP
+         maLk+RzZULYV1gZ8I/JMEiHztqlu+32iNExFp2OvbxNyphrBDlpQTAiedkObikrDA9G7
+         xymA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4Fldlls2s8vNmOvXwxp87ogQofhkFmR93fkkDajb+f8JnuqGKUQR6gkBEcFKwR3bPTTsPiPOPueEen2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb0FFoYCGrgdjnv18H4sHPFf72ETAiW/jDF8yJ7VVBd4HA/ix0
+	AX1J40RUjmoovNzxrSXl7MSDit4bT3CEpvtDYLmV3NiXLRTgn+P6T6t83+lbtgE=
+X-Google-Smtp-Source: AGHT+IEVHV5pBqeCrHCSmVu+sTPke61MAJDc2DDaOV+NkRL25KMFkRrUsziZ3IFr3KZo/n2ZWdXQYA==
+X-Received: by 2002:a05:6512:114f:b0:535:45d2:abf0 with SMTP id 2adb3069b0e04-536587f594amr7912890e87.39.1725888980028;
+        Mon, 09 Sep 2024 06:36:20 -0700 (PDT)
+Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42caeb8b2f4sm77686825e9.45.2024.09.09.06.36.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 06:36:19 -0700 (PDT)
+Message-ID: <c63fd548-4a50-4205-abb8-14f544b2431a@linaro.org>
+Date: Mon, 9 Sep 2024 15:36:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86:intel/pmc: fix build regression with pmtimer
+ turned off
+To: Hans de Goede <hdegoede@redhat.com>, Arnd Bergmann <arnd@kernel.org>,
+ Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
+ David E Box <david.e.box@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Xi Pardee <xi.pardee@linux.intel.com>,
+ Rajvi Jingar <rajvi.jingar@linux.intel.com>,
+ "David E. Box" <david.e.box@linux.intel.com>, Kane Chen
+ <kane.chen@intel.com>, Marek Maslanka <mmaslanka@google.com>,
+ Tony Luck <tony.luck@intel.com>, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240909111644.248756-1-arnd@kernel.org>
+ <43cd3e8e-4c99-4641-b55b-4b54a42b8e53@redhat.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <43cd3e8e-4c99-4641-b55b-4b54a42b8e53@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, 2024-09-08 at 18:28 +0200, Christophe JAILLET wrote:
-> Le 05/09/2024 =C3=A0 17:17, Angelo Dureghello a =C3=A9crit=C2=A0:
-> > From: Angelo Dureghello
-> > <adureghello-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-> >=20
-> > Add support for ad3552r-axi, where ad3552r has to be controlled
-> > by the custom (fpga-based) ad3552r AXI DAC IP.
->=20
-> ...
->=20
-> > +static int ad3552r_axi_buffer_postenable(struct iio_dev *indio_dev)
-> > +{
-> > +	struct ad3552r_axi_state *st =3D iio_priv(indio_dev);
-> > +	struct iio_backend_data_fmt fmt =3D {
-> > +		.type =3D IIO_BACKEND_DATA_UNSIGNED
-> > +	};
-> > +	int loop_len, val, err;
-> > +
-> > +	/* Inform DAC chip to switch into DDR mode */
-> > +	err =3D axi3552r_qspi_update_reg_bits(st->back,
-> > +					=C2=A0=C2=A0=C2=A0
-> > AD3552R_REG_ADDR_INTERFACE_CONFIG_D,
-> > +					=C2=A0=C2=A0=C2=A0 AD3552R_MASK_SPI_CONFIG_DDR,
-> > +					=C2=A0=C2=A0=C2=A0 AD3552R_MASK_SPI_CONFIG_DDR,
-> > 1);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	/* Inform DAC IP to go for DDR mode from now on */
-> > +	err =3D iio_backend_ddr_enable(st->back);
-> > +	if (err)
-> > +		goto exit_err;
->=20
-> I don't know if it can be an issue, but iio_backend_ddr_disable() is=20
-> called if iio_backend_ddr_enable() fails.
->=20
->=20
 
-I don't think it would be an issue but conceptually it does not really make
-sense. Yeah, it should be fixed...
+Hi Hans,
 
-- Nuno S=C3=A1
+
+On 09/09/2024 13:36, Hans de Goede wrote:
+
+[ ... ]
+
+> Thanks, patch looks good to me:
+> 
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> 
+> Daniel, can you pick this one up?
+
+Yes, sure
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
 
