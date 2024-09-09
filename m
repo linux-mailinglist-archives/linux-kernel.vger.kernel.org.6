@@ -1,205 +1,239 @@
-Return-Path: <linux-kernel+bounces-320713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF56A970F6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:16:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E50F9970EC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76F5B282B6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:16:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D1471C21EBF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 07:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76281AE863;
-	Mon,  9 Sep 2024 07:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81E41AD9F1;
+	Mon,  9 Sep 2024 07:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="hKclIISG";
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="Ml18fWZl"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JreNt7ly"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DDF2AD00;
-	Mon,  9 Sep 2024 07:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725866162; cv=pass; b=qmsDd+khYU+f216aWM5d88ffi+3UGayMlPujYhag460mWiGHVNipIVxgdUjO8YVm3c2iMmWvZVO7bGAi12asVkK2MhZy5hYQrhU8EUBd4OZc/Rvz7SpXKIYRIUIA573OoZWQIFhpNP09sLS0GAeDzedDNvfjTe1PlmUFKvA3bYo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725866162; c=relaxed/simple;
-	bh=7G7zBJlExtmydqxCr9mVjW8xZMFrev0MPrda7pC3MxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DHF2vPp3TD/qUBBPhmdmofM4m9AZj3oxNNqZR3XPKFozeZ2aoiF66MephNdIaGe/hUNDzcn4ruUCPNTbuAG0RX3nEhD7SPhkgOoK0nmYkVY7cqtva4DMPla9ujeW2brJXySeTvnX8wwhbnIwCsCT2yFjlFujhFoZpb/AotnBFpA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=hKclIISG; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=Ml18fWZl; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from meesny.iki.fi (meesny.iki.fi [IPv6:2001:67c:2b0:1c1::201])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPS id 4X2HvT4zx2z49Q4M;
-	Mon,  9 Sep 2024 10:07:01 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1725865621;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rB6CLnaMnuoydR8oaepO8QVaIy/l0GNypx3UN3JOWHI=;
-	b=hKclIISGar2WyE0TfCCoCZAe7gmrkWrsjg7DHSh/5yhaMPZsXfkn7M4rmphEAjDF8+fzNW
-	G5aEgIjpKE9226SHkGH/HFYvPdLCCwvPLzKpN6yJEakrNjgAbcg9e2oHcQgu3WUqEc1Fpm
-	ibv40qPgSeReVjkPlozUHx9+6d+Irg9/Je/BLK9K57HqRd1MOdwPpM4XVyCbmFxdqxvgDX
-	p2VDkVyVDeGrftyo4lTzbrmZgd73QLL0JuwHGL4axZ9lB6QjGhwaLinaA6dG3rBkw407Sg
-	DP1L3tgoZM/MiuCwa3k4ypbX8xQvPf0PxLfBDW6rm3/5O1T027hJIr0vwfipEA==
-Received: from hillosipuli.retiisi.eu (80-248-247-191.cust.suomicom.net [80.248.247.191])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4X2HvJ1VfrzySG;
-	Mon,  9 Sep 2024 10:06:52 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1725865612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rB6CLnaMnuoydR8oaepO8QVaIy/l0GNypx3UN3JOWHI=;
-	b=Ml18fWZlQyQeyvEKf8D3uFwF5LqNDFshOuX4CUm8pxbaspmhnk7H+g4K+28mrlHzbV13je
-	plI5X7Lb+Iko2anGDfPdVmTPr6HHaEFk+eqRL1wPXRFPsc1tBqkR7AYHghtVulW3Xh/L1P
-	CAo8loImrDngBTmMpxBTAccTfCZgNHY=
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1725865612; a=rsa-sha256; cv=none;
-	b=PQ9uoecVT25SykmTHog7cP46063bfw3GZlZuq6xAZ0nAJzdiKNU0bfUlJ6YPZurPNahfBk
-	yNYmyK1SBn0k/kGFOho+fIiS9VtYpipbazDKQnkVRxpiFDTBAvhndx8V3JeXosM0FpzbSe
-	07y/DsAJGs9dgdssnqluljhQFvqRvRA=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1725865612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rB6CLnaMnuoydR8oaepO8QVaIy/l0GNypx3UN3JOWHI=;
-	b=G/PpeGwnV6MWp+/48PODiIFYEsbpiDGjhPS12NU+Sp0XJnppj7SMF7Ezn0A/8KeezhVHdw
-	nt8dYj0bCy9N09FFPhSkjKkIq/ORLQi6+O8Nh1GJa5EGre/6rZN28VbfFHdEMTy2ZxBE0Q
-	jtiMEvAf8hQJGhizwyjYJEbgW9yojfM=
-Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 847B5634C94;
-	Mon,  9 Sep 2024 10:06:51 +0300 (EEST)
-Date: Mon, 9 Sep 2024 07:06:51 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Sylvain Petinot <sylvain.petinot@foss.st.com>
-Cc: benjamin.mugnier@foss.st.com, mchehab@kernel.org, robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] media: i2c: Add driver for ST VD56G3 camera sensor
-Message-ID: <Zt6ei2-orFC4Jq1g@valkosipuli.retiisi.eu>
-References: <20240521162950.6987-1-sylvain.petinot@foss.st.com>
- <20240521162950.6987-3-sylvain.petinot@foss.st.com>
- <ZlXEvR3yKe0W8X_q@valkosipuli.retiisi.eu>
- <ecccf332-66e5-43c0-8a48-d49b0aa1e5a9@foss.st.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F701AD9E2
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 07:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725865675; cv=none; b=tUNGkBNw93eWk2CdO37KSQd0Xdi+HxR/pCi2qXHsdxBYmjHeaMMclA7D2csnb14vVQ6i0sgyOrbS453UQPxbRMTyEwzrKq8gMXQncxvqTjDtzaufEN40m5D6mIg8Yqgz8RDNeEu4zrtgBcxXu7hSl4v53qgCaB6iqdFS+uQXilU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725865675; c=relaxed/simple;
+	bh=5HdLRdwgILWy7NijZoXcTvZcLW7MCGW7u1wIqNnq2HY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XUZ5dui6n3iZ2O0APocx7IUyR3ERN46tIXVr/NaIhlIwIFDR1q0BhphPWIhFklAAVH7LNRi5ML5/XVnei1jhhisBh5hlT4pW6EWJik7xJ96Cp1tQ9fVG/U+B86sD3/2U3SNp9oB0S7PhuOFUy6qIYL0wn/hx+CBw20ZKXcpFCEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JreNt7ly; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8d29b7edc2so218849666b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 00:07:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1725865671; x=1726470471; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pO9t18GD+i5fBFY4VXd+D6OTewDWbOLXCFnosdNxa/U=;
+        b=JreNt7lyzxS0F0xzkYhAojq1HAEl5JY5kGxT+3lsH3yItYb+MJ3v8a9fEcTVtJREzl
+         2B6Zau+t47PzUzM7j8E6ISifRPDq3l/sbD17EKaFRuTFqch/k3fIERrYo4C6NR+SNT5p
+         fnRMnpoIF6HdSsRs2zwNRJSvJdVIf23PFKra0ASGl3/9qzZJhO/4DoHRtKr8+xJ0pn57
+         QHdxGSA0rgy3k85PT5sGmPpM9sGlu8V0Tft+oAhVszv9sWRdV5u4jpkFFbJpJTsqc/BX
+         IZkK9gv3tEWw+yqu0c8N0sibPmwjypeo8+FCJkRK4B7jzKeJBvqObELKU1fM3oliVpEl
+         KblA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725865671; x=1726470471;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pO9t18GD+i5fBFY4VXd+D6OTewDWbOLXCFnosdNxa/U=;
+        b=t/dMjQTfDzFkIGeYoBiGRDyYH/a5lLf5UlPbopV3mYJBwbxM3OLzKPnUDesBfNCMgX
+         cKEXAKVF1mPyRnPNtGdICXzMELG0Yh7lTygXtaHv9dczthCFYh/u5di2REj3YTdBHLm7
+         clPAdqdJ5lQUS2s3EF1JJAM6z4ZfoKBqbCpt8CfPiQqGCAFpZoDzQagcP2ToXZHEvmvp
+         iRtXvmUdbvw0sxMfmJkP/nOo/n5wEG6oLBHlOUTlrI27XDjtv4gs6LTuGz8jWiqmM3bl
+         QQqakY9+cl7rNJthyKmvCWmu0Ai02H7tJaq1DABshU4IAJtxUVzV+RVrVte9Jp42ZnRr
+         Q9XQ==
+X-Gm-Message-State: AOJu0Yx68lIQ9XUBApsjIeVC734YA/YxPuJ5uPEFBHVh66w1TwyleWJa
+	hBT0q099KQGjljRry5MAURIivJPbtoqS2oDd+oSSBKS8AMWPY+Yui2o0+qwbOr4=
+X-Google-Smtp-Source: AGHT+IEzFtJpDjpFcpaOK3zi2wC6+pmxuHOiV7xQ9M52ggf8MDENIzb7c111uhTAimm5UAc+Fb65+g==
+X-Received: by 2002:a17:907:7421:b0:a8a:8d81:97a8 with SMTP id a640c23a62f3a-a8a8d81aa63mr707722566b.1.1725865670935;
+        Mon, 09 Sep 2024 00:07:50 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d40064sm297908166b.190.2024.09.09.00.07.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 00:07:50 -0700 (PDT)
+Message-ID: <503ed037-a16c-41b0-bb13-4ea11fcd2362@tuxon.dev>
+Date: Mon, 9 Sep 2024 10:07:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ecccf332-66e5-43c0-8a48-d49b0aa1e5a9@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] phy: renesas: rcar-gen3-usb2: Fix an error handling
+ path in rcar_gen3_phy_usb2_probe()
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>
+References: <4efe2d0419cbe98163e2422ebe0c7896b8a5efed.1725717505.git.christophe.jaillet@wanadoo.fr>
+ <TY3PR01MB113468D1573C1E50AC9F97DCF86982@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <d01bed96-7811-4ace-8b92-1ee9fafac649@wanadoo.fr>
+ <TY3PR01MB113466A2B99EE80E8BB0A94AD86992@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB113466A2B99EE80E8BB0A94AD86992@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Sylwain,
 
-Apologies for the delay...
 
-On Mon, Jun 03, 2024 at 11:59:29AM +0200, Sylvain Petinot wrote:
-> >> +/*
-> >> + * The VD56G3 pixel array is organized as follows:
-> >> + *
-> >> + * +--------------------------------+
-> >> + * |                                | \
-> >> + * |   +------------------------+   |  |
-> >> + * |   |                        |   |  |
-> >> + * |   |                        |   |  |
-> >> + * |   |                        |   |  |
-> >> + * |   |                        |   |  |
-> >> + * |   |                        |   |  |
-> >> + * |   |   Default resolution   |   |  | Native height (1364)
-> > 
-> > What's outside the default resolution? It doesn't appear the driver would
-> > allow capturing pixels out side this area.
+On 09.09.2024 09:00, Biju Das wrote:
+> Hi Christophe JAILLET,
 > 
-> Well both native and default resolutions are supported in the
-> 'vd56g3_supported_modes' below.
-> However this quite exotic resolution (1364 x 1124) isn't well supported
-> by csi receivers, ISPs. That's why the default resolution of the driver
-> is 1120 x 1360 (multiple of 16).
+>> -----Original Message-----
+>> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> Sent: Sunday, September 8, 2024 5:59 PM
+>> Subject: Re: [PATCH v2] phy: renesas: rcar-gen3-usb2: Fix an error handling path in
+>> rcar_gen3_phy_usb2_probe()
+>>
+>> Le 08/09/2024 à 18:39, Biju Das a écrit :
+>>> Hi Christophe JAILLET,
+>>>
+>>> Thanks for the patch.
+>>>
+>>>> -----Original Message-----
+>>>> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>>> Sent: Saturday, September 7, 2024 2:59 PM
+>>>> Subject: [PATCH v2] phy: renesas: rcar-gen3-usb2: Fix an error
+>>>> handling path in
+>>>> rcar_gen3_phy_usb2_probe()
+>>>>
+>>>> If an error occurs after the rcar_gen3_phy_usb2_init_bus(),
+>>>> reset_control_assert() must be called, as already done in the remove function.
+>>>>
+>>>> This is fine to re-use the existing error handling path, because even
+>>>> if "channel->rstc" is still NULL at this point, it is safe to call reset_control_assert(NULL).
+>>>>
+>>>> Fixes: 4eae16375357 ("phy: renesas: rcar-gen3-usb2: Add support to
+>>>> initialize the bus")
+>>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>>> ---
+>>>> Changes in v2:
+>>>>    - Re-use 'error' to simplify the patch   [claudiu beznea]
+>>>>    - Update the commit description to explain why it is safe.
+>>>>
+>>>> v1:
+>>>> https://lore.kernel.org/all/fc9f7b444f0ca645411868992bbe16514aeccfed.
+>>>> 1725652654.git.christophe.jaillet
+>>>> @wanadoo.fr/
+>>>> ---
+>>>>   drivers/phy/renesas/phy-rcar-gen3-usb2.c | 1 +
+>>>>   1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+>>>> b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+>>>> index 58e123305152..ccb0b54b70f7 100644
+>>>> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+>>>> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+>>>> @@ -803,6 +803,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+>>>>   	return 0;
+>>>>
+>>>>   error:
+>>>> +	reset_control_assert(channel->rstc);
+>>>
+>>> This will result in either kernel crash [1] or reset usage count
+>>> imbalance in case of error [2] and [3] in
+>>> rcar_gen3_phy_usb2_init_bus() see [4]. Also reset control API is not
+>>> respected for SoCs other than RZ/G3S. For those SoC's reset assert is
+>>> called without calling a get(). Maybe add a check (phy_data->init_bus)
+>>> for assert api's, that guarantees assert is called after calling a get() as it valid only for
+>> RZ/G3S??
+>>>
+>>> [1]
+>>> channel->rstc = devm_reset_control_array_get_shared(dev);
+>>> 	if (IS_ERR(channel->rstc))
+>>> 		return PTR_ERR(channel->rstc);
+>>>
+>>> [2]
+>>> ret = pm_runtime_resume_and_get(dev);
+>>> 	if (ret)
+>>> 		return ret;
+>>> [3]
+>>> ret = reset_control_deassert(channel->rstc);
+>>> 	if (ret)
+>>> 		goto rpm_put;
 
-Ack.
+Indeed, I missed that. Thank you, Biju, for pointing it out.
 
-I'd still keep the native resolution as the default and allow configuring
-something else if the user space wants to.
-
-The desired resolution really depends on the use case (as well as the ISP).
-
-> >> +		break;
-> >> +	case V4L2_CID_EXPOSURE_AUTO:
-> >> +		is_auto = (ctrl->val == V4L2_EXPOSURE_AUTO);
-> >> +		__v4l2_ctrl_grab(sensor->ae_lock_ctrl, !is_auto);
-> >> +		__v4l2_ctrl_grab(sensor->ae_bias_ctrl, !is_auto);
-> >> +		break;
-> >> +	default:
-> >> +		break;
-> > 
-> > You could omit default here.
+>>>
+>>> [4]
+>>> https://elixir.bootlin.com/linux/v6.11-rc6/source/drivers/reset/core.c
+>>> #L483
+>>
+>> So, if I understand correctly, v1 [5] was correct. :)
 > 
-> I don't really like switch case without default. For sure I can omit,
-> but I prefer making it explicit.
-
-I'm ok with that.
-
-...
-
-> >> +static int vd56g3_power_off(struct vd56g3 *sensor)
-> >> +{
-> >> +	clk_disable_unprepare(sensor->xclk);
-> >> +	gpiod_set_value_cansleep(sensor->reset_gpio, 1);
-> >> +	regulator_bulk_disable(ARRAY_SIZE(sensor->supplies), sensor->supplies);
-> >> +	return 0;
-> > 
-> > You can make the return type void.
-> > 
-> > Do you need two pairs of functions doing the same, or could you call
-> > vd56g3_runtime_resume and vd56g3_runtime_suspend from driver's probe and
-> > remove functions, too?
+> Yes, I agree v1 [5] is correct, if we ignore "reset control API is not respected for SoCs".
 > 
-> "Well, in fact, I tested both options before submitting V2 (I mean the
-> unification of vd56g3_runtime_resume/suspend functions with
-> vd56g3_power_on/off).
+> Another solution could be using action_or_reset() for cleanup for
+> rcar_gen3_phy_usb2_init_bus(), so that it is applicable only for RZ/G3S??
+
+That seems like a cleaner solution to me.
+
+Thank you,
+Claudiu Beznea
+
 > 
-> The unification option has the advantage of simplifying the code and
-> removing two "useless" functions. The only drawback is that I had to
-> call v4l2_i2c_subdev_init() earlier in the probe() function, whereas
-> it's currently called in vd56g3_subdev_init() (currently at the end of
-> the probe()). OK, it's not a big deal, but I find that the resulting
-> code is not as well structured/divided (thus readable).
+> Cheers,
+> Biju
 > 
-> I'm interested to get your feedback to decide wich option to push for V3.
-
-I'd prefer calling v4l2_i2c_subdev_init() earlier, in order to set the
-device context. These are usually among those things that should be done as
-early as possible, in order to avoid invalid pointers where much of the
-driver code expects something else.
-
-Btw. if you're not in too much hurry (I guess so?), we're just about to
-rework the sensor API, to include internal pads and embedded data, for
-better sensor configurability. It'll take a while before we're there
-though, but when this driver is merged, the existing API must continue to
-work.
-
--- 
-Kind regards,
-
-Sakari Ailus
+>>
+>>
+>> I don't think that [1] would crash, because of [6]. It would only WARN_ON. But with v1, it is not
+>> called.
+>>
+>> With v1, reset_control_assert() is not called if
+>> rcar_gen3_phy_usb2_init_bus() fails. So [2] and [3] can't occur.
+>>
+>> I can send a v3, which is the same of v1, or you can pick v1 as-is (if I'm correct... :)) or you can
+>> just ignore it if "reset control API is not respected for SoCs".
+>>
+>>
+>> If of interest, I spotted it with one of my coccinelle script that compares functions called
+>> in .remove function, but not in error handling path of probe.
+>>
+>>
+>> CJ
+>>
+>> [5]:
+>> https://lore.kernel.org/all/fc9f7b444f0ca645411868992bbe16514aeccfed.1725652654.git.christophe.jaillet
+>> @wanadoo.fr/
+>>
+>> [6]:
+>> https://elixir.bootlin.com/linux/v6.11-rc6/source/drivers/reset/core.c#L473
+>>
+>>>
+>>> Cheers,
+>>> Biju
+>>>
+>>>>   	pm_runtime_disable(dev);
+>>>>
+>>>>   	return ret;
+>>>> --
+>>>> 2.46.0
+>>>>
+>>>
+>>>
+>>>
+> 
 
