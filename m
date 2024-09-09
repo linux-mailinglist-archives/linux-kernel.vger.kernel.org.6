@@ -1,119 +1,140 @@
-Return-Path: <linux-kernel+bounces-321591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E57971C88
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:29:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB39F971C8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9AE328593C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:29:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C821D1C22FDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43334146D75;
-	Mon,  9 Sep 2024 14:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AJQGDV5u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE281BA297;
+	Mon,  9 Sep 2024 14:29:53 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998561BA27B;
-	Mon,  9 Sep 2024 14:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F82D1BA28D
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 14:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725892151; cv=none; b=AsWTUECBnA9BQ41+wwuB00fqWPRAuHAz0ULMTdr3vqj8GNTxxKiOv99dVAXN5d8I7QCN8qxNk5oMwR1bNUprySSM8dQofjEiFFO6GM3tPKOGgLJCTlKxpSqW1WzduHSwcQ1rDOYVzBI+EG+WpWtOzU5SnPWrpK/mmPM65JQaKt8=
+	t=1725892192; cv=none; b=dHcfC1KkTHPWzOARY4r1KghzSgUZsKqF6XqMzX/irpcjn8IOl5BtPhKM7KShKqJrUW81sCYhv/oguDTnO7iQIOmPW/m7GZooPTx0DDM50PuvlCO6fZb/Meh4EEuw4/KmSBEOAPi1/Qa6/RQjWGlrFh+WyGSza6KwC0Z6/LIM8Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725892151; c=relaxed/simple;
-	bh=ygupWqgakZDWPAThV+hVt9dHU8i5bT2GtFewIkRe/Xc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eACDzddSC2ociT3HS7YdzBNLoThS6/jOLgMpdlZZWDUHvcNhGhrHnW7a3tyR6vbobqqakenpmfjRAwj/PzqxP0Q6ZEgeDi8AsuOBiRi+7VpNzJSgKzB2m8qJbwrAhSbuSM/C6qS9efqmsaeeSEu4itswyYAkVdVzh+X/SPgHsuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AJQGDV5u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2E36C4CEC5;
-	Mon,  9 Sep 2024 14:29:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725892151;
-	bh=ygupWqgakZDWPAThV+hVt9dHU8i5bT2GtFewIkRe/Xc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AJQGDV5uLFE66Cpvc1fZQiJEbuZJ7+TRFU9q0/E+sHDAQuJzN8p4wXcGy5+VxWo4G
-	 OC0M54HOY8fRSM8GftiIj6mHj+zoqYAbNF1NdNR2YPq8CdkvUVaO3o6ivRrA5V8iHv
-	 K9uCJIAHCmQVWAH/Mz8REnP8/+YV+n2W9E0KdwBQqldpY4EM4q7IfvZR9ayqPQ7Fre
-	 eM7wfg42c7VVdOJygg8ZRYYfh6iuh6wDRCBQ4Txlfxa36IjYINkLBEo3W4HSq5CTqw
-	 Tzm8ygtSzRPaicwjdRBB3YvFIa70THIT5tLJDIHXLIQNk6QhCeJsizXQOYe1mMPSFK
-	 CnIbegu3MHJuw==
-Date: Mon, 9 Sep 2024 09:29:10 -0500
-From: Rob Herring <robh@kernel.org>
-To: Dhruva Gole <d-gole@ti.com>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: opp: operating-points-v2-ti-cpu:
- Describe opp-supported-hw
-Message-ID: <20240909142910.GA4188780-robh@kernel.org>
-References: <20240905-b4-opp-dt-binding-fix-v2-1-1e3d2a06748d@ti.com>
+	s=arc-20240116; t=1725892192; c=relaxed/simple;
+	bh=fnuxskNVBbwCBy3d4j1pvS+K39JeOMdEJlru22mlufM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NHmoyG7YwOyEKdTv/3zMzPeZJRzcNtKy5GnY8uZYgxZQQdnEwn/BFYipVbZL5z2SoyUdCiHPSJUUt57JAXCRrLHuiRgI8AHMFoZ8cMQkakndxZYQ0gQTWOSz+vPSv6OQ0vCqf1pF5yQzCPowT2fEGQK8cDusgbmPILPYjXIHP/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1snfOm-000279-LF
+	for linux-kernel@vger.kernel.org; Mon, 09 Sep 2024 16:29:48 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1snfOm-006g3S-7W
+	for linux-kernel@vger.kernel.org; Mon, 09 Sep 2024 16:29:48 +0200
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id E3E2F336B33
+	for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 14:29:47 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id EB4E8336B0F;
+	Mon, 09 Sep 2024 14:29:44 +0000 (UTC)
+Received: from [172.20.34.65] (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id 8ec233f4;
+	Mon, 9 Sep 2024 14:29:44 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH can v2 0/2] can: m_can: fix struct
+ net_device_ops::{open,stop} callbacks under high bus load
+Date: Mon, 09 Sep 2024 16:29:34 +0200
+Message-Id: <20240909-can-m_can-fix-ifup-v2-0-2b35e624a089@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905-b4-opp-dt-binding-fix-v2-1-1e3d2a06748d@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE8G32YC/1WMTQuCMBzGv0r8z022ubR1ypjehOgaEWPOHLVNp
+ kYgfveWty4P/J63GQYdjB7gsJkh6LcZjHcR6HYDqpPuoZFpIgPFlGGOOVLSIXv/aWs+yLRTj/I
+ cpzhTkkklIQ77oGO2nl4hNuEWzTZ4i8YuaLn+iXp/vhBWn3aUEsGFSIu8oiTFZUUyUlR5WfGSH
+ v9qiZO2Dw1hSR98k/hpfHn/TJS3sCxfPC2qKMoAAAA=
+X-Change-ID: 20240909-can-m_can-fix-ifup-770306ca4aca
+To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Dong Aisheng <b29396@freescale.com>, Fengguang Wu <fengguang.wu@intel.com>, 
+ Varka Bhadram <varkabhadram@gmail.com>
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, 
+ "Hamby, Jake (US)" <Jake.Hamby@Teledyne.com>
+X-Mailer: b4 0.15-dev-7be4f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1295; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=fnuxskNVBbwCBy3d4j1pvS+K39JeOMdEJlru22mlufM=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBm3wZQT6oe7UnBnmkctE95HAGMkQ2uGwT7zqGp0
+ uZM1YLV/YiJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZt8GUAAKCRAoOKI+ei28
+ b+aPB/4+N4ZznWRrDyOiNy44MUGyOXvRza3Yw2S+Ls+S2/uBovO0Eb5z/oB7bLTuMFEnlEVZTSe
+ Zfis4lEm2JTMxG4yfsOm04pUuHP3hc3NEXrzYn8dtKN3ICkR0ZTtGilIIfqvbeyKd1q1COd/zB+
+ Hi6jLOaNA3e5w/VQ5s0eu2NxvNc5UFkeHo2t+nv+okCkKKc8Q1F2ky97gjiUM3lfr/zLK+vIrYX
+ +N+tzNNbXCj74Ou1svJi3JLftlrZPkQ4qJKxv3eb8cNjz25FE9sPN+KMK/BNEhul868M8S6duJC
+ qgby1DRV1JNjk+v4JDaVTLNAbjB7E3NUJwPdDpcoKfWnKbod
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2024 at 10:44:32AM +0530, Dhruva Gole wrote:
-> It seems like we missed migrating the complete information from the old
-> DT binding where we had described what the opp-supported-hw is supposed
-> to describe. Hence, bring back the description from the previous binding
-> to the current one along with a bit more context on what the values are
-> supposed to be.
-> 
-> Fixes: e576a9a8603f ("dt-bindings: cpufreq: Convert ti-cpufreq to json schema")
-> Signed-off-by: Dhruva Gole <d-gole@ti.com>
-> ---
-> Changes in v2:
-> - Drop the patch where I updated Maintainers since it's already picked
->   by Viresh.
-> - Add more details of how to populate the property based on device
->   documents like TRM/ datasheet.
-> - Link to v1: https://lore.kernel.org/r/20240903-b4-opp-dt-binding-fix-v1-0-f7e186456d9f@ti.com
-> ---
->  .../bindings/opp/operating-points-v2-ti-cpu.yaml         | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml b/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
-> index 02d1d2c17129..fd260b20c59c 100644
-> --- a/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
-> +++ b/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
-> @@ -45,7 +45,21 @@ patternProperties:
->        clock-latency-ns: true
->        opp-hz: true
->        opp-microvolt: true
-> -      opp-supported-hw: true
-> +      opp-supported-hw:
-> +        description: |
-> +          Two bitfields indicating:
-> +            1. Which revision of the SoC the OPP is supported by.
-> +            This can be easily obtained from the datasheet of the
-> +            part being ordered/used. For eg. it will be 0x01 for SR1.0
-> +            2. Which eFuse bits indicate this OPP is available.
-> +            The device datasheet has a table talking about Device Speed Grades.
-> +            If one were to sort this table and only retain the unique elements
-> +            of the MAXIMUM OPERATING FREQUENCY starting from the first row
-> +            which tells the lowest OPP, to the highest. The corresponding bits
-> +            need to be set based on N elements of speed grade the device supports.
-> +            So, if there are 3 possible unique MAXIMUM OPERATING FREQUENCY
-> +            in the table, then BIT(0), (1) and (2) will be set, which means
-> +            the value shall be 0x7.
+Under high CAN-bus load the struct net_device_ops::{open,stop}
+callbacks (m_can_open(), m_can_close()) don't properly start and
+shutdown the device.
 
-I still have no clue what the bitfield layout is. Where do 0x1 and 0x7 
-go in the examples from above?
+Fix the problems by re-arranging the order of functions in
+m_can_open() and m_can_close().
 
-How many 32-bit words is not defined by the common 
-schema. You need to define that here (maxItems/minItems).
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+---
+Hello,
 
-Rob
+I've taken Jake's patch and split the timestamp wraparound changes
+into separate patch. For now, I've added a Not-Signed-off-by, until
+Jake gives the S-o-b.
+
+regards,
+Marc
+
+Changes in v2:
+- 1/1 split timestamp wraparound changes into separate patch
+- 1/1 added "Not-Signed-off-by: Hamby, Jake (US) <Jake.Hamby@Teledyne.com>"
+- 2/2 new patch: fix order of clock shutdown
+- Link to v1: https://patch.msgid.link/DM8PR14MB5221D9DD3A7F2130EF161AF7EF9E2@DM8PR14MB5221.namprd14.prod.outlook.com
+
+---
+Hamby, Jake (US) (1):
+      can: m_can: enable NAPI before enabling interrupts
+
+Marc Kleine-Budde (1):
+      can: m_can: m_can_close(): stop clocks after device has been shut down
+
+ drivers/net/can/m_can/m_can.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+---
+base-commit: d759ee240d3c0c4a19f4d984eb21c36da76bc6ce
+change-id: 20240909-can-m_can-fix-ifup-770306ca4aca
+
+Best regards,
+-- 
+Marc Kleine-Budde <mkl@pengutronix.de>
+
+
 
