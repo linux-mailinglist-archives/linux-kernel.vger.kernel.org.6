@@ -1,144 +1,173 @@
-Return-Path: <linux-kernel+bounces-321445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54F82971A79
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:12:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2437C971A7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEE2F1F2508D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:12:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42A501C22757
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4551BA27F;
-	Mon,  9 Sep 2024 13:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4ABF1BA865;
+	Mon,  9 Sep 2024 13:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MUsKGUSJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="iwaqh3Vb";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lVioyOQP"
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311921B86D5
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 13:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C501B9B24;
+	Mon,  9 Sep 2024 13:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725887355; cv=none; b=M1n8ufLWTJblbGj12MduZFQ19AvXCUyNnYQdjKuMgz0VgtNElhd+l9h6Xp88pV9Uu6A1jQRlgQG3YUPoCqY+479NB3h/X1PtuCwMlObzV0X9/Oi5YqH5x+et3xJHqJ8GdnI7RwQQZpq04jG1+4MWm93kq568NgLAkGnFsQiTv9Q=
+	t=1725887428; cv=none; b=lvdHr3qoXsPlW42GtWl4tdwpvOJZ4gK+w37XmGIwKpnJTPmNA1W/jb10L0pUAfAtjR19dkAbX58mu8XJGn+ivgbdwN4LH0at4u6Q/xbHM8HW6EC3vERFziZsFB2fSU9U+BdqOd4euNh5ngeRpZ6seKtjMJgHzFqvpF9HVi34bjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725887355; c=relaxed/simple;
-	bh=2fOjzaDByxMmlko0lODKQbWeVDECGs2xgz8V9K4q3gg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DLFOZH6ImnR8C3/3QybrUagj7AF6JJRdWkSaeBWRH1/VvDnaa0vtfKkNkMWYQl0mUq/7IC8a1wyFD1PTIV0synnll6MTVzfT97uV75ZDZ28XBTi6CsHCkQVfufALJNWoXd5l/MgN3TP7BRKG6HKcIsbkeQVKA+FCRATgBqUQU4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MUsKGUSJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725887353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=lropL0IV79ofEMi+CoS5zuOzHMq1y8F7gBGm+DxRDOQ=;
-	b=MUsKGUSJQj+O7Now6+2xw/cIuJTZpLJ2O8iOzXRDcBwGxmvbdhbqR68e4Um34Gt7ZwkouY
-	dxfcvzApgdBE6ta5eYHigzjH5mlnnbWxmkCWMvtEz+0GnVrBYdDAjrauOj3gWyzu5X0kDy
-	xDLVypRP/tWgHAhHFFl3uV+zmNRoK6U=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-215-YabDR4jGME-K6P6qxYmAlA-1; Mon,
- 09 Sep 2024 09:09:10 -0400
-X-MC-Unique: YabDR4jGME-K6P6qxYmAlA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A63431956077;
-	Mon,  9 Sep 2024 13:09:08 +0000 (UTC)
-Received: from queeg.tpb.lab.eng.brq.redhat.com (unknown [10.43.135.229])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C109C1956048;
-	Mon,  9 Sep 2024 13:09:06 +0000 (UTC)
-From: Miroslav Lichvar <mlichvar@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Miroslav Lichvar <mlichvar@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] ptp: Limit time setting of PTP clocks
-Date: Mon,  9 Sep 2024 15:09:05 +0200
-Message-ID: <20240909130905.962836-1-mlichvar@redhat.com>
+	s=arc-20240116; t=1725887428; c=relaxed/simple;
+	bh=FOb9cDj+LeGDsiMg28ppP3KCfoC0waIPwBP00Op7h7I=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=alhgLLAXlM5i4ME0l0o+yVPOK8eeXjE0/9MRJLI07QISmgWTyGkRqaPqgApo5h5Yrt50e4FwxPqQY6AlfHxqtuVOtz5kSWyo4xfz47QvEEMd5hwge9Yb4WDfI835wyhMqESAgJHY35MZPHZkf0cYw92d3AEjJejZF+fn/OpEF6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=iwaqh3Vb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lVioyOQP; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id AE6311380188;
+	Mon,  9 Sep 2024 09:10:25 -0400 (EDT)
+Received: from phl-imap-13 ([10.202.2.103])
+  by phl-compute-07.internal (MEProxy); Mon, 09 Sep 2024 09:10:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1725887425;
+	 x=1725973825; bh=hZmFB4zZqsK/lqmaZT6pZoo+wceOfyxthIa1HVadf+Y=; b=
+	iwaqh3Vbcq58OuQaQSBvCXnuaPO69yL+rbF6X1Vt6CeonoomrDaAL3Cz+KtOC303
+	glVVO0D2EUj1klePj8h5sQ52SBe7ejzOYBm0mazavBmDxMY3J9VkRPyBDIj2nTwC
+	wS3BMz30Wsw37mvNyUeA6AkQRqGZRvkihcI1XaFU0yN8R0GCCzHYk9oztQHt+RUM
+	w+uprG2zyz0vShXPC5Y5llMhazvo9hpFnmfgQVBKrh4u1RPqqEirq7qMmwZqSyTu
+	750vlH/VNeUkeUdfotfLSWEZ9JobGZYAgUORGlz6OMhwivJFVMKY4reCzQlg4QF0
+	Z4KFxk4DPnm6t/ULlHIH/A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725887425; x=
+	1725973825; bh=hZmFB4zZqsK/lqmaZT6pZoo+wceOfyxthIa1HVadf+Y=; b=l
+	VioyOQP42MXQxqXbCMj7fp3PTTeQ1R7FETY5rdSVPo/jXrC7l2S6zRWwVFpQ5xYS
+	Y+4Qp9PF4Xo4+HgesfwP49RRSkAiyQQkP/204rOBK3cOazwJL1GjXcUZl7XiEtXG
+	XyjCUIs64cCj++lcgH/tJjIvzA+vCN8NbzOXR6E+vrOH7O92DqmADe3dsVE/nveK
+	P8aD6N700Qaf+xu18NNYcGjlZdieRBuB57lwycz3MgP+CtLGceMr7IUREkQFBwSf
+	3abCFNBxOambv9Yecvf5HNA7hJFJVVEnuAqMqnnzL/tQQmmzKQb/VzBwpTY7bzbO
+	HkqvErpZ4kVQ7Nu6290Tg==
+X-ME-Sender: <xms:wfPeZp_KlBfGdgbKnue9xuMPSs6vXzOXPLbsmuhi60qGWLC048-6Sw>
+    <xme:wfPeZts776ysby-xTITgx-Ml3TL9BrCARzwFLxpNmEN5dUlo512Dr6gm2xPOr0Oay
+    hvB-lFaW-0q6dctNYE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeijedggeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedflfgrnhhnvgcuifhruhhnrghufdcuoehjsehjrghnnhgruhdrnhgvth
+    eqnecuggftrfgrthhtvghrnhephfeuuedtteeigeekieffjedvgfetvdelgffhkeettedv
+    veehieegfeffgfeiffetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruhdr
+    nhgvthdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopehtohifihhntghhvghnmhhisehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhirhhi
+    shhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihksehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdr
+    ohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrih
+    hnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrshgrhhhisehlihhsthhsrdhlihhn
+    uhigrdguvghvpdhrtghpthhtoheprghlihhmrdgrkhhhthgrrhesshgrmhhsuhhnghdrtg
+    homhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehlihhnuhigqdhsrghmshhunhhgqdhsohgtsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:wfPeZnCW56APoNKMia-eB44-4XJLrEWwOMaIWZRMQz27II4eFc2pjw>
+    <xmx:wfPeZtcZ56e8XyEKz3_R-gfyk1UfLYKxumZYJ6wemzthZik7aEpTgg>
+    <xmx:wfPeZuPuFJ_L1SCUzdo78KP74XZvuHUnR22OJVkiy6BM1l8dr0y-fw>
+    <xmx:wfPeZvlEtB6d6IhLxLuZgrWlwc0x4WAAv5doPT6GZInS9zMwCFAhSw>
+    <xmx:wfPeZlpeYuIYyn2ApEWOGwT3322zXzYJk7fTAS1UHDvZZ7TY4q_yEuu5>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 5B4241F00083; Mon,  9 Sep 2024 09:10:25 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Date: Mon, 09 Sep 2024 15:10:04 +0200
+From: "Janne Grunau" <j@jannau.net>
+To: "Nick Chan" <towinchenmi@gmail.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux-serial@vger.kernel.org
+Cc: asahi@lists.linux.dev
+Message-Id: <d7c611c3-f2da-40a7-9b47-ebbdf6ddf321@app.fastmail.com>
+In-Reply-To: <20240909084222.3209-1-towinchenmi@gmail.com>
+References: <20240909084222.3209-1-towinchenmi@gmail.com>
+Subject: Re: [PATCH v4 0/3] tty: serial: samsung: Serial fixes for Apple A7-A11 SoCs
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Networking drivers implementing PTP clocks and kernel socket code
-handling hardware timestamps use the 64-bit signed ktime_t type counting
-nanoseconds. When a PTP clock reaches the maximum value in year 2262,
-the timestamps returned to applications will overflow into year 1667.
-The same thing happens when injecting a large offset with
-clock_adjtime(ADJ_SETOFFSET).
+Hej,
 
-The commit 7a8e61f84786 ("timekeeping: Force upper bound for setting
-CLOCK_REALTIME") limited the maximum accepted value setting the system
-clock to 30 years before the maximum representable value (i.e. year
-2232) to avoid the overflow, assuming the system will not run for more
-than 30 years.
+On Mon, Sep 9, 2024, at 10:37, Nick Chan wrote:
+> Hi,
+>
+> This series fixes issues with serial on A7-A11 SoCs. The changes do not
+> seem to affect existing M1 and up users so they can be applied
+> unconditionally.
+>
+> Firstly, these SoCs require 32-bit writes on the serial port. This only
+> manifested in earlycon as reg-io-width in device tree is consulted for
+> normal serial writes.
+>
+> Secondly, A7-A9 SoCs seems to use different bits for RXTO and RXTO
+> enable. Accessing these bits in addition to the original RXTO and RXTO
+> enable bits will allow serial rx to work correctly on those SoCs.
+>
+> Changes in v4:
+>   - Removed fake Reviewed-by tag added by accident... need to stop
+>     making stupid mistakes that wastes everyone's time. The remaining
+>     Reviewed-by is real as far as I am aware.
+>
+> Changes in v3:
+>   - v2 did not declare itself as v2 in subject line... resend as v3.
+>
+> Changes in v2:
+>   - Mention A7-A11 in the comment about changing register accesses to
+>     MMIO32.
+>
+>   - Use BIT() macro for new entries, and change the existing APPLE_S5L_*
+>     entries for consistency.
+>
+> v1: 
+> https://lore.kernel.org/linux-samsung-soc/20240907111431.2970-1-towinchenmi@gmail.com
+> v2: 
+> https://lore.kernel.org/linux-samsung-soc/20240908075904.12133-1-towinchenmi@gmail.com
+> v3: 
+> https://lore.kernel.org/linux-samsung-soc/20240908090939.2745-1-towinchenmi@gmail.com
+>
+> Nick Chan
+> ---
+>
+> Nick Chan (3):
+>   tty: serial: samsung: Use BIT() macro for APPLE_S5L_*
+>   tty: serial: samsung: Fix A7-A11 serial earlycon SError
+>   tty: serial: samsung: Fix serial rx on Apple A7-A9
+>
+>  drivers/tty/serial/samsung_tty.c | 22 ++++++++++++++++------
+>  include/linux/serial_s3c.h       | 24 ++++++++++++++----------
+>  2 files changed, 30 insertions(+), 16 deletions(-)
 
-Enforce the same limit for PTP clocks. Don't allow negative values and
-values closer than 30 years to the maximum value. Drivers may implement
-an even lower limit if the hardware registers cannot represent the whole
-interval between years 1970 and 2262 in the required resolution.
+whole series tested on M1 Max and M2 Pro
 
-Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <jstultz@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
----
- drivers/ptp/ptp_clock.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+Tested-by: Janne Grunau <j@jannau.net>
 
-diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-index c56cd0f63909..bd7c5f534be6 100644
---- a/drivers/ptp/ptp_clock.c
-+++ b/drivers/ptp/ptp_clock.c
-@@ -100,6 +100,9 @@ static int ptp_clock_settime(struct posix_clock *pc, const struct timespec64 *tp
- 		return -EBUSY;
- 	}
- 
-+	if (!timespec64_valid_settod(tp))
-+		return -EINVAL;
-+
- 	return  ptp->info->settime64(ptp->info, tp);
- }
- 
-@@ -129,7 +132,7 @@ static int ptp_clock_adjtime(struct posix_clock *pc, struct __kernel_timex *tx)
- 	ops = ptp->info;
- 
- 	if (tx->modes & ADJ_SETOFFSET) {
--		struct timespec64 ts;
-+		struct timespec64 ts, ts2;
- 		ktime_t kt;
- 		s64 delta;
- 
-@@ -139,7 +142,14 @@ static int ptp_clock_adjtime(struct posix_clock *pc, struct __kernel_timex *tx)
- 		if (!(tx->modes & ADJ_NANO))
- 			ts.tv_nsec *= 1000;
- 
--		if ((unsigned long) ts.tv_nsec >= NSEC_PER_SEC)
-+		/* Make sure the offset is valid */
-+		err = ptp_clock_gettime(pc, &ts2);
-+		if (err)
-+			return err;
-+		ts2 = timespec64_add(ts2, ts);
-+
-+		if ((unsigned long) ts.tv_nsec >= NSEC_PER_SEC ||
-+		    !timespec64_valid_settod(&ts2))
- 			return -EINVAL;
- 
- 		kt = timespec64_to_ktime(ts);
--- 
-2.46.0
-
+best regards
+janne
 
