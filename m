@@ -1,127 +1,165 @@
-Return-Path: <linux-kernel+bounces-321197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFAD59715BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:55:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70D609715C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 408C6284459
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:55:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C683285494
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DFF1B4C51;
-	Mon,  9 Sep 2024 10:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8447F1B5314;
+	Mon,  9 Sep 2024 10:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="AlcHAGvZ"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VieqZ832"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015C11B3F18
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 10:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D6913D53E;
+	Mon,  9 Sep 2024 10:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725879351; cv=none; b=Ik5x/9zozt+IfA3UuQDtt61zihqH4hn9r6PfL64fYUY+H3+aragKgwzZaPTZB3Du2AzQB428651BueVa3b1ilhJ9yQylohVVB5HVtx5IDLIjdfJ3FV7kGatqVSk1nL3B21F+/n74+NDiBFZFn3a29xWreVX/SYDUmNxT0XByhFI=
+	t=1725879414; cv=none; b=YW+1QPQVemoWUKHvcjeZOC3Q6P8ShHunBOKB3Eh6skzvCxt8MScB2NDEFy82e44dKCdvhTcyN1mnQZY7HTv4l3jle4itMWbdVghzkiDqkOJghpubG+qfV4smCLHGvKGcC3VpQ6YXqY6QB80aQHKx/437k9DPyuvfpHgYuI4QxbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725879351; c=relaxed/simple;
-	bh=ttG0Dc2cxHV6jC9XbhBxyS8Gni7TD3M7WalD4kpSCiU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d5pe5b/VB84vRyAdLiRQLf5QW0Mbrys4a+ZG8u95FzPeQY28MkGv814t+tV8t+hDvopsfpQ55DKumLtG9xzoxiwYqiAv/ujxYKvOvRtDbgd2CSglHdXJQ0gKkmPjjp8Kpn0C4NocEQLYSP9y5TLxrm3GPl/zD1yMpZVahl16wzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=AlcHAGvZ; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-82a109bc459so176631639f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 03:55:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1725879349; x=1726484149; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gRenQZpsyYsPRZFrE6Z8exC8VyrPgR2I0N0/8AA/xzs=;
-        b=AlcHAGvZZm4jryZBfXcMXgWJhgJzAXPOB/X7gmRnj9Z67AC8hVFALGsA4LsWCohMVV
-         CLZv9QCrGwLGvwBQN2bprffAUvI4jAKUVzoFDtnAADb2PEQt6U4YrILDvhb3PhtZhy2A
-         bubSoEb5koWfNn9G1web8HBDn0UvBGtYIOdig/K8KS9ovr0ATpimXDowPd35ZT9U2Ob4
-         zDsfOrL/XZjd/jgKf+IIWJMzBkfPlVpCZr1pH7FN/pXF1AjWBoFKTGx4kjDZ6tZI3kK2
-         qMM1OwLRuy+OA5cI1983KpK9f2tJs/jHoBdAIpGrDBtTekFu/68yf3mdJDvCddgonUgt
-         3iiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725879349; x=1726484149;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gRenQZpsyYsPRZFrE6Z8exC8VyrPgR2I0N0/8AA/xzs=;
-        b=IfD6V755L6ZzCL6yxTSnhRzcpJrJZrviDMQtRYn1mugsG4RQLRDmU/Nk0LnivnkMQN
-         k37CReTYMex/2xng+//kfpkOLBJj8VVMynY43KuEMuz7TJ4mVglEJTITMjZXEF7yd+bT
-         xlH+dJXSwrcWCCaMn0Ei/OFxx6MhijUMtx2DqfPXPwAWYxZQo6AokolB7Q01gVPDxflf
-         KP4Z6fZGiih9CNSPT51RBYnVuIo56VvQdUl3fOmOHPgK7DtBj5rWq1eNKCYyLC/OWzmv
-         2rjSJ2b8ydr5mVMvEiBXHSqedyQM1uy3TfzsZmdhfmsCD6vO5rah5ZUxo9fV4vdbv3sw
-         hn7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUet6mOimjVd4t7a7/TV5I3Dvq+PVSMiNhn+hWTDsPDCzqwJedoAV5f6ghxMPEBoG+Kn0pYYWd9oI4J8b8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySRcmCStGg/7uySsUhT1jyDEYinYBsnjAg1WQt4hISVIh4kNXe
-	0MJX7v9rI+rceb/AtT2ieZ+ZuLlk8NU/FsM5LFZkAtBZDsRr+zLDZyT1wi0DGCjVjM8WCziPXz2
-	TYyG5rZfl2yYWF3JTT6tog/IKfQSHp+jbihLdsA==
-X-Google-Smtp-Source: AGHT+IEUDJyXv2vNFFv9EShn4mJ8cnVFxPmnwZrvxExgRhOCxti541uhxlyRmn9HiGjbpDSnGCkrSVIPWa00MTMLvv0=
-X-Received: by 2002:a05:6e02:b49:b0:398:a9b3:d6b1 with SMTP id
- e9e14a558f8ab-3a04ede83d8mr89419445ab.12.1725879348819; Mon, 09 Sep 2024
- 03:55:48 -0700 (PDT)
+	s=arc-20240116; t=1725879414; c=relaxed/simple;
+	bh=SZKP8xg/qyZzQnZu6J7kE/Q1QRLNmUJGqGxHhrxB+wg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ni2pkCzFxR7SshofCNKI16NHWAEVVEDXIItLRQT00fhyhfDbx9n0nv5YhSVtN4/H++gn1ApZKWWgVKxjX8FcKR551SL90tI6Jzd2Wt+akPUc0e7zWDwd8mCcZrUjilBuqksOlsPxJQIvtsBRwti2UXlBBSCLmJgaLvqeqsJ36P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VieqZ832; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4899JpWi029477;
+	Mon, 9 Sep 2024 10:56:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=B74tMf/CUUzR3FTBRoD1ZT
+	xOcnNObTJ8iLOoR7N3lnc=; b=VieqZ832dfbAdjYmo0cOvi2V28Ob0uw2BCQSWO
+	AT3148mJ34iU69ns6bfOKAjAF/SNUZtIOwIMrGvM+3Gia2zo3aYC9NySmdvkuvfB
+	zesbrA0Wo9Z8Tjl3062BQARSCKC4OggsSbnOINDlX9VSZr+XJXxc5BmASVB9mFw0
+	DVA1X60gdiU5flqz1iwnISLJ/l2bCgvqDQJBqPskv2h44dFFhY5aKyiWAbhnhnRp
+	vgObJgUt5Z/2HDqPluUhb8Z89AHIAO2tCCAdldKJhjmg7aHc/vMBIefbO4BVhow2
+	AKoQstXWJ/Dv7+qxBzkFDGbCv6Vq+U+sYRywrL78JANfoZKg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gybpjjdc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 10:56:34 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 489AuXQ4007051
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Sep 2024 10:56:33 GMT
+Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 9 Sep 2024 03:56:25 -0700
+From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Bard Liao
+	<yung-chuan.liao@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>, "Takashi
+ Iwai" <tiwai@suse.com>
+CC: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Sanyog Kale
+	<sanyog.r.kale@intel.com>,
+        <linux-arm-msm@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_rohkumar@quicinc.com>,
+        <kernel@quicinc.com>, <quic_pkumpatl@quicinc.com>,
+        Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Subject: [PATCH v1 0/4] Add static channel mapping between soundwire master and slave
+Date: Mon, 9 Sep 2024 16:25:43 +0530
+Message-ID: <20240909105547.2691015-1-quic_mohs@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909085610.46625-2-ajones@ventanamicro.com>
-In-Reply-To: <20240909085610.46625-2-ajones@ventanamicro.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Mon, 9 Sep 2024 16:25:36 +0530
-Message-ID: <CAAhSdy2dS=97YVLBvKsA-GjPKXZTpoGUhahj0_ocTpuB=UBNKQ@mail.gmail.com>
-Subject: Re: [PATCH] irqchip/riscv-imsic: Fix output text of base address
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	tglx@linutronix.de, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: cHttXC1flPaM2E5vZPuw3jjaJlUBj-fV
+X-Proofpoint-GUID: cHttXC1flPaM2E5vZPuw3jjaJlUBj-fV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 spamscore=0 adultscore=0
+ lowpriorityscore=0 mlxlogscore=999 clxscore=1011 bulkscore=0
+ impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409090087
 
-On Mon, Sep 9, 2024 at 2:26=E2=80=AFPM Andrew Jones <ajones@ventanamicro.co=
-m> wrote:
->
-> The "per-CPU IDs ... at base ..." info log is outputting a physical
-> address, not a PPN.
->
-> Fixes: 027e125acdba ("irqchip/riscv-imsic: Add device MSI domain support =
-for platform devices")
-> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
+Add static channel map support between soundwire master and slave.
+This patch series will resolve channel mask mismatch between master and slave.
 
-LGTM.
+Scenario: wcd937x AMIC2 usecase
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+                          Master                 Slave (wcd937x)
+                     +--------------+           +--------------+
+                     |  +--------+  |           |  +--------+  |
+         AMIC1 ----->|  | PORT1  |  |           |  |   TX1  |  |<-----------AMIC1
+         AMIC2 ----->|  |        |  |           |  |        |  |
+                     |  +--------+  |           |  +--------+  |
+                     |              |           |              |
+         AMIC3 ----->|  +--------+  |           |  +--------+  |
+                     |  |  PORT2 |  |           |  |   TX2  |  |<-----------AMIC2
+                     |  |        |  |           |  |        |  |<-----------AMIC3
+                     |  +--------+  |           |  +--------+  |
+                     |              |           |              |
+                     |  +--------+  |           |  +--------+  |
+ DMIC0...DMIC3------>|  |  PORT3 |  |           |  |   TX3  |  |<-----------DMIC0...DMIC3
+                     |  |        |  |           |  |        |  |<-----------MBHC
+                     |  +--------+  |           |  +--------+  |
+                     |              |           |              |
+                     |  +--------+  |           |  +--------+  |
+ DMIC4...DMIC37----->|  |  PORT4 |  |           |  |   TX4  |  |<-----------DMIC4...DMIC7
+                     |  |        |  |           |  |        |  |
+                     |  +--------+  |           |  +--------+  |
+                     |              |           |              |
+                     +------------- +           +--------------+
 
-Regards,
-Anup
+For AMIC2 usecase, The Slave need to configure TX2 Port with channel mask 1 and
+for Master required PORT1 with channel mask 2,
 
-> ---
->  drivers/irqchip/irq-riscv-imsic-platform.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/irqchip/irq-riscv-imsic-platform.c b/drivers/irqchip=
-/irq-riscv-imsic-platform.c
-> index 11723a763c10..c5ec66e0bfd3 100644
-> --- a/drivers/irqchip/irq-riscv-imsic-platform.c
-> +++ b/drivers/irqchip/irq-riscv-imsic-platform.c
-> @@ -340,7 +340,7 @@ int imsic_irqdomain_init(void)
->                 imsic->fwnode, global->hart_index_bits, global->guest_ind=
-ex_bits);
->         pr_info("%pfwP: group-index-bits: %d, group-index-shift: %d\n",
->                 imsic->fwnode, global->group_index_bits, global->group_in=
-dex_shift);
-> -       pr_info("%pfwP: per-CPU IDs %d at base PPN %pa\n",
-> +       pr_info("%pfwP: per-CPU IDs %d at base address %pa\n",
->                 imsic->fwnode, global->nr_ids, &global->base_addr);
->         pr_info("%pfwP: total %d interrupts available\n",
->                 imsic->fwnode, num_possible_cpus() * (global->nr_ids - 1)=
-);
-> --
-> 2.46.0
->
+In existing design master and slave configured with same channel mask, it will fail
+AMIC2 usecase.
+
+The New design will help to configure channel mapping between master and slave from
+device tree.
+
+Mohammad Rafi Shaik (4):
+  ASoC: dt-bindings: wcd938x-sdw: Add static channel mapping support
+  soundwire: stream: Add set_master_channel_map() to set static channel
+    mapping
+  soundwire: qcom: Add static channel mapping support in soundwire
+    master
+  ASoC: codecs: wcd937x: Add static channel mapping support in
+    wcd937x-sdw
+
+ .../bindings/sound/qcom,wcd937x-sdw.yaml      | 28 ++++++++++
+ drivers/soundwire/qcom.c                      | 18 +++++++
+ drivers/soundwire/stream.c                    | 16 ++++++
+ include/linux/soundwire/sdw.h                 |  5 ++
+ sound/soc/codecs/wcd937x-sdw.c                | 52 ++++++++++++++++---
+ sound/soc/codecs/wcd937x.c                    | 12 ++++-
+ sound/soc/codecs/wcd937x.h                    |  6 ++-
+ 7 files changed, 126 insertions(+), 11 deletions(-)
+
+
+base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
+-- 
+2.25.1
+
 
