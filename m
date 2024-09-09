@@ -1,72 +1,95 @@
-Return-Path: <linux-kernel+bounces-321584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63CF1971C5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:22:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69AD7971C64
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F1C81F2481D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:22:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0081B224A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD341BA294;
-	Mon,  9 Sep 2024 14:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Aoi8HYeZ"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AF81BA28B;
+	Mon,  9 Sep 2024 14:22:38 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FBF176AAD
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 14:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5A1176AAD;
+	Mon,  9 Sep 2024 14:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725891722; cv=none; b=WLNw76xT61vVvHNKug2dPIsrWDrxCgPRq9Y323rvCPX8N966rMWx1PT8chIbLi6yKICISnfB7eRS+OB+dype9eLvDes43n7gho9q1rrvmn9kCa2ZgXUV1l2HXBfaw6SbU3YpXyqG+MqflcUATA8jEcfPG/A73WMhSPDuGjCHRgc=
+	t=1725891757; cv=none; b=plwCVutIfokqY/nbDFzmDUVbEdTWfzaSO7cvmF4bIsd9RlaH6AP3/T1lYPxdGde4VzZnHSf+sIttLUFtQ7911wi1B1P+APzU522Poi0O7AORFv5C5SYXPTwBikQ47iKaTkQXvgGJRRgCsaok4Y05FtQQwSKN6us/9whXcoztK6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725891722; c=relaxed/simple;
-	bh=K0wVAEXdcfvlWgFDMDgwiIxrC78wygJ/jgM3w7laCnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hskFdN/DmNGjblg8hp2+cFBygHq3J556ch9nFq39VfctxFncRtpQrnWwRHBrlu4/1VoQfDeWEp5LSk8Iphu3sFY1h0P/g8teGe37SshOt58vIcVjzqlx+Ay5NMYa4eFWDqUkCpbn2bmIhhIohwobEc6Xdo6TxmVwetKpfKnRD7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Aoi8HYeZ; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 9 Sep 2024 10:21:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725891717;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HJCuLeQ+nMy/9wK/UdBxQr1sgYHskXi6WeRDUBz9VGw=;
-	b=Aoi8HYeZsqXagCVGNWfV3SY41G5hT5hkCbhYujWbZmJPXvflSdA51O6rgAGK+7xGNm9rbi
-	Me7wRVCnBNM/yryzf6Px9F9APk+hUYubZtTGH5WyCkNJfEx72QgrjDRNUDkezzJKtU2tXK
-	CHW7mbk2ltXM1IzZrDyC2k1QoPGpRnM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Yang Li <yang.lee@linux.alibaba.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH -next] bcachefs: Remove duplicated include in
- backpointers.c
-Message-ID: <zp4t644voc3nlm7hlns2ni53qm7ie5fdvomxfgjexii43duagj@rkfl45vxxb7y>
-References: <20240909005802.14125-1-yang.lee@linux.alibaba.com>
+	s=arc-20240116; t=1725891757; c=relaxed/simple;
+	bh=yJ9MEz/PfYNz+AVkadZOxalLAPNx+Fn0gqmau1nLfyE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QFwsmoN7f6rsTn5zyBg+XSC0A07X0xR2pe1YpA149Ww9ODzZ48mnTkrXBI4JrX/HyCUZ/PJj+kAvXfJQquDv4y+dM1U7cJD/JqFuEg/YIWYqQhblVgv0N4jxCzBzGOFxsp+ur8ThbYpXf90+dUqLnJ9XpAQCRLVFV/T/qCVe2yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4X2TYt61ytz9sPd;
+	Mon,  9 Sep 2024 16:22:26 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id DBxw1cb5WhtA; Mon,  9 Sep 2024 16:22:26 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4X2TYt5JYvz9rvV;
+	Mon,  9 Sep 2024 16:22:26 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A64368B770;
+	Mon,  9 Sep 2024 16:22:26 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 4Dyb09wuLbf3; Mon,  9 Sep 2024 16:22:26 +0200 (CEST)
+Received: from [172.25.230.108] (unknown [172.25.230.108])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7C3AB8B76E;
+	Mon,  9 Sep 2024 16:22:26 +0200 (CEST)
+Message-ID: <afa6f06a-8d92-4ac1-b5fe-d5b6ade3f740@csgroup.eu>
+Date: Mon, 9 Sep 2024 16:22:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909005802.14125-1-yang.lee@linux.alibaba.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the powerpc tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Michael Ellerman <mpe@ellerman.id.au>, Masahiro Yamada
+ <masahiroy@kernel.org>, "Rob Herring (Arm)" <robh@kernel.org>
+Cc: PowerPC <linuxppc-dev@lists.ozlabs.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240909200948.70087f49@canb.auug.org.au>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240909200948.70087f49@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 09, 2024 at 08:58:02AM GMT, Yang Li wrote:
-> The header files bbpos.h is included twice in backpointers.c,
-> so one inclusion of each can be removed.
+
+
+Le 09/09/2024 à 12:09, Stephen Rothwell a écrit :
+> Hi all,
 > 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=10783
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> After merging the powerpc tree, today's linux-next build (powerpc
+> ppc44x_defconfig) failed like this:
+> 
+> make[3]: *** No rule to make target 'arch/powerpc/boot/treeImage.ebony', needed by 'arch/powerpc/boot/zImage'.  Stop.
+> make[2]: *** [/home/sfr/next/next/arch/powerpc/Makefile:236: zImage] Error 2
+> make[1]: *** [/home/sfr/next/next/Makefile:224: __sub-make] Error 2
+> make: *** [Makefile:224: __sub-make] Error 2
+> 
+> It is not obvious to me what change caused this, so I have just left
+> the build  broken for today.
+> 
 
-Applied
+Bisected to commit e6abfb536d16 ("kbuild: split device tree build rules 
+into scripts/Makefile.dtbs")
+
+Christophe
 
