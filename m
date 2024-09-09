@@ -1,161 +1,152 @@
-Return-Path: <linux-kernel+bounces-322077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0B99723A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5EF39723B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 863E21F231DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:30:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 800D81F23B22
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D9318A948;
-	Mon,  9 Sep 2024 20:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF7218B48A;
+	Mon,  9 Sep 2024 20:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="py7t7zZy"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yz6uNCpy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA4518A6B7
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 20:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830114428;
+	Mon,  9 Sep 2024 20:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725913804; cv=none; b=c1T89uf9yjtNv5bnJBWwWhgC0yuVGgTn4i6kK6XAaygsDbI0ylNnwQG2/Dd0Rg4vxu2gMt8QqmYQ2Zj87Srq8O4ukYanoveaLoEDDOrYuYcpImPa64UkqN0aI5EuxRkJwnnxgzgiHUedIPj1o2hk+q6L25SSP+1ORVva93SnLsU=
+	t=1725913835; cv=none; b=qPEMwCzuPt5WPrCaI1mLHz1W2hoQi08GI3TRklGooGhw9nvYaK3klPGaKcJPHcSgLMNIb7P+DX8f8V1o1LU0nyS9/pGIM8Knr8nQosixtmO0DjsXuqyDsUNcnEx7Ux2JLlADBY1lEo8ZTagFcnC1jcIBmE4JQvOjMMgYarmDs5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725913804; c=relaxed/simple;
-	bh=68qqOGIZcIVgGIZMz4ZrT0iVCLoiWQqyOW/klR7ZnO0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jwBcW9LwIABVdw8SyS2g+IY1KnWRgFCpX2qDCVebw/wBgIdDpoOdSD6aeXL4UPm0T88zdpwxsT+et7Lxbg5dmgoCEoaSS5h50Dvwlxgju0yHVfVIYjbJhGoc3Nxax7rSQez2Ber2lp0xViPez2o00OM7N8Dum7/ltKoGkgWh/qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=py7t7zZy; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so20770305e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 13:30:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725913801; x=1726518601; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XaeSQCeGfBRdIaHorPwBFNBXhIKm2efh/hZk06eZftc=;
-        b=py7t7zZySWiteqppZDLqe4R7ZOOuVX/gc/iGMlZjKO/3nNUVtw5TYKKr1v7pxbV+Zt
-         Mz7ycAJd12W7RC6xQTc7awWoVYRTDhARs39w0GvUX9faJzR/CJd5uh4GJvDentkWaLs1
-         w70iowSrTIh4fvYD2LAlIPSpAXkCoqllnDQM0hbwDoXXzXawrUYkIXtLMNg1BJIK7/wC
-         eROUFs6Q3L1EmwAj5Do0USf0F+EODamYlf5aTb9g76/fq+h/QfWQdA74ZFl9FHuxrCrQ
-         ejjTVGJPIOsXrf23/egEMDnmhEZtKAI0QTxLktegxQUYuapo6ObLeTaCar002/IRz5eE
-         cv0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725913801; x=1726518601;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XaeSQCeGfBRdIaHorPwBFNBXhIKm2efh/hZk06eZftc=;
-        b=MUKCYQfl1LtvVd666vAX5mP/KPDYFUBovJtojPPu4r3tWQQnsYgz97+Josi27N1OXv
-         iPJXYXHFjU/2kuvogWKPU2TPws4HKGWgfyeCu3/M8hdSolQ9AmfgZ6EQFWN2Be+q4utk
-         06dZAV1klF8gaIS/X8w1YFlfMcLyiyAjtvo1bS/1sHSPD9UD7Kgz463Gd2YVnTLTP+6H
-         ZV8L1sT6zpGVS6f/egpZlwva7bqsU17v/Ov1uuzYKmCygAi3IpU0bkvi3DT3wfsK2FO7
-         jR0X0+QtMRTT0lTUhRazLN7UYaJfQ6IkD2aF8Wm4h8HzFEXVPG/YI9nj19deIbxIy4TZ
-         wB4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVlbj4O5rBerqQWslCAH2/Im2IHGqxZfWkrrp7nxMQtJ6XNH+5xBtZ/vOAo4rZXyufaSK6a40+jEACSWk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyWgQYghUZxxu9Nr7rM8qcQRTrAbBjk4kRZfzvUzpLK+wbSBYc
-	9hJIOMdCE1NAO+P6o5HoBq4dXS7e2/2gAluYT/eFXWJBHez7xeHq2clGbyx7rqn3ytLLjJPaBzT
-	0wyadFxyJOFlN6LSugtkohwWmvPIozHS2xjKX
-X-Google-Smtp-Source: AGHT+IGGDgVrgTdXrGeSeuVyKgWmJPMNqrnV8Gr/pbVAU/1kji99wC4S9pU3ses1bfxjWm712k8Ob7/H1W5GgkPQXfg=
-X-Received: by 2002:a5d:4d4c:0:b0:374:c6af:1658 with SMTP id
- ffacd0b85a97d-3789229bbd1mr7700608f8f.1.1725913800042; Mon, 09 Sep 2024
- 13:30:00 -0700 (PDT)
+	s=arc-20240116; t=1725913835; c=relaxed/simple;
+	bh=e/lXweERor0ETtdzLqqAZlCy9RlOEBK030OaDQWeOhs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bLHVAeUVXvtP5kaZoMfBk71FCBKnaaDWpn7WQ7COhCPDsVd1H2Uh9UOaTuhFpYgOE5pjGhQEsOaKZKaAlEjxrKBMJkvbHHMPNi7hSlTr71c4ghkfzeoygDdoz3Pi5Y7eUsFd0M4T6ha2DII3VTYqCSQjVbmIeRGVGLI5iQ3IJ6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yz6uNCpy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 489DRTrg026720;
+	Mon, 9 Sep 2024 20:29:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1C+dV5dIn4U4sQGXBEilezGsLj0xJ9FofhsWLX08yM0=; b=Yz6uNCpyk2hOa6sn
+	jOi5b3vGjCaNsePo4yzmO0aN9UClUScbNyNvblb3w6qXJAlED4GfrWlufNKupHDJ
+	S5CjgOk++kkx+J/XNElYXWxqZOKD2DrS/c+Oh7XRkf3xFlPeYPKo7w3N+jEDlQkU
+	jjPiyW1riTQ7ToAZEg9Ifw0KQPeyl/TbwvaLsB/QifYID1FwPb7NrOgwmDeXRQVI
+	NXe319XNNSE95I+NLaVfQ1C5sD5/F19syXePY9MgbhiAq8HdF5wN8YPbvvfqLFGb
+	u3j/TLWYEBpZBnvVrYQyQn1HrZFzdM2oP+8q74grZHxWvp5KUjiSjdsnNfbrKhqu
+	haI0wQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6e3x6g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Sep 2024 20:29:42 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 489KTfoQ002368
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Sep 2024 20:29:41 GMT
+Received: from [10.110.76.134] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Sep 2024
+ 13:29:37 -0700
+Message-ID: <d206e315-3324-4814-b98d-027c3af6ebb6@quicinc.com>
+Date: Mon, 9 Sep 2024 13:29:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909202625.1054880-1-arnd@kernel.org>
-In-Reply-To: <20240909202625.1054880-1-arnd@kernel.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 9 Sep 2024 13:29:24 -0700
-Message-ID: <CAJD7tkb9q-_MHFWdM7+KueFS9LJUWsvqHdDmFnpgNahyjv+8+A@mail.gmail.com>
-Subject: Re: [PATCH] mm: z3fold: deprecated ZSWAP_ZPOOL_DEFAULT_Z3FOLD as well
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Chris Down <chris@chrisdown.name>, Arnd Bergmann <arnd@arndb.de>, 
-	David Hildenbrand <david@redhat.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, Peter Xu <peterx@redhat.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Chengming Zhou <zhouchengming@bytedance.com>, Anshuman Khandual <anshuman.khandual@arm.com>, 
-	Vitaly Wool <vitaly.wool@konsulko.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 16/21] dt-bindings: spi: document support for SA8255p
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
+        <tglx@linutronix.de>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <joro@8bytes.org>, <jassisinghbrar@gmail.com>, <lee@kernel.org>,
+        <linus.walleij@linaro.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
+        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, Praveen Talari <quic_ptalari@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-17-quic_nkela@quicinc.com>
+ <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
+ <b369bd73-ce2f-4373-8172-82c0cca53793@quicinc.com>
+ <9a655c1c-97f6-4606-8400-b3ce1ed3c8bf@kernel.org>
+Content-Language: en-US
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <9a655c1c-97f6-4606-8400-b3ce1ed3c8bf@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7fCK6lhX7moA3Z0_YwrAyh39NPgkf4B7
+X-Proofpoint-ORIG-GUID: 7fCK6lhX7moA3Z0_YwrAyh39NPgkf4B7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ bulkscore=0 clxscore=1015 mlxscore=0 lowpriorityscore=0 impostorscore=0
+ mlxlogscore=999 spamscore=0 adultscore=0 priorityscore=1501 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409090161
 
-On Mon, Sep 9, 2024 at 1:26=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wrot=
-e:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> Randconfig builds that use ZSWAP_ZPOOL_DEFAULT_Z3FOLD
-> now cause a harmless warning:
->
-> WARNING: unmet direct dependencies detected for Z3FOLD
->   Depends on [n]: Z3FOLD_DEPRECATED [=3Dn]
->   Selected by [y]:
->   - ZSWAP_ZPOOL_DEFAULT_Z3FOLD [=3Dy] && ZSWAP [=3Dy]
->
-> Avoid the warning by selecting Z3FOLD_DEPRECATED instead,
-> but rename this symbol to ZSWAP_ZPOOL_DEFAULT_Z3FOLD_DEPRECATED
-> in the process so it no longer automatically gets used with
-> old defconfigs while still allowing users to select it
-> manually.
->
-> Fixes: c68c1bed014d ("mm: z3fold: deprecate CONFIG_Z3FOLD")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  mm/Kconfig | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 7c9930bf8a9d..09aebca1cae3 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -146,12 +146,15 @@ config ZSWAP_ZPOOL_DEFAULT_ZBUD
->         help
->           Use the zbud allocator as the default allocator.
->
-> -config ZSWAP_ZPOOL_DEFAULT_Z3FOLD
-> -       bool "z3fold"
-> -       select Z3FOLD
-> +config ZSWAP_ZPOOL_DEFAULT_Z3FOLD_DEPRECATED
-> +       bool "z3foldi (DEPRECATED)"
-> +       select Z3FOLD_DEPRECATED
 
-Thanks for looking into this!
+On 9/4/2024 6:21 AM, Krzysztof Kozlowski wrote:
+> On 04/09/2024 14:48, Nikunj Kela wrote:
+>> On 9/3/2024 11:34 PM, Krzysztof Kozlowski wrote:
+>>> On Tue, Sep 03, 2024 at 03:02:35PM -0700, Nikunj Kela wrote:
+>>>> Add compatible representing spi support on SA8255p.
+>>>>
+>>>> Clocks and interconnects are being configured in firmware VM
+>>>> on SA8255p platform, therefore making them optional.
+>>>>
+>>> Please use standard email subjects, so with the PATCH keyword in the
+>>> title.  helps here to create proper versioned patches.
+>> Where did I miss PATCH keyword in the subject here? It says "[PATCH v2
+>> 16/21] dt-bindings: spi: document support for SA8255p"
+> Oh, wrong template. It was about spi prefix, 
 
-I was going to fix this by changing "select Z3FOLD" to "depends on
-Z3FOLD" instead. It makes the warning go away in my builds. Does this
-work for you?
+These are the latest 4 commits in linux-next for spi:
 
-FYI I will send a new version of "mm: z3fold: deprecate CONFIG_Z3FOLD"
-as a hotfix after v6.12-rc1 is out as there are currently conflicts,
-so I plan to squash the fix into the next version if that's okay with
-you.
+12736adc43b7 dt-bindings: spi: nxp-fspi: add imx8ulp support
+b0cdf9cc0895 spi: dt-bindings: Add rockchip,rk3576-spi compatible
+d6d0af1b9eff dt-bindings: spi: add PIC64GX SPI/QSPI compatibility to
+MPFS SPI/QSPI bindings
+1c4d834e4e81 spi: dt-bindings: convert spi-sc18is602.txt to yaml format
 
->         help
->           Use the z3fold allocator as the default allocator.
+Now I am confused which prefix format shall I use? first spi or first
+dt-bindings?
+
+
+> should be this one:
 >
-> +         Deprecated and scheduled for removal in a few cycles,
-> +         see CONFIG_Z3FOLD_DEPRECATED.
-> +
->  config ZSWAP_ZPOOL_DEFAULT_ZSMALLOC
->         bool "zsmalloc"
->         select ZSMALLOC
-> @@ -163,7 +166,7 @@ config ZSWAP_ZPOOL_DEFAULT
->         string
->         depends on ZSWAP
->         default "zbud" if ZSWAP_ZPOOL_DEFAULT_ZBUD
-> -       default "z3fold" if ZSWAP_ZPOOL_DEFAULT_Z3FOLD
-> +       default "z3fold" if ZSWAP_ZPOOL_DEFAULT_Z3FOLD_DEPRECATED
->         default "zsmalloc" if ZSWAP_ZPOOL_DEFAULT_ZSMALLOC
->         default ""
+> Please use subject prefixes matching the subsystem. You can get them for
+> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+> your patch is touching. For bindings, the preferred subjects are
+> explained here:
+> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 >
-> --
-> 2.39.2
+> Best regards,
+> Krzysztof
 >
 
