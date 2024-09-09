@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-320883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43FF69711A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5F79711A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96904B2273B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:18:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34DA8B2051A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6F01BA299;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7C81BA28E;
 	Mon,  9 Sep 2024 08:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGzP7ulD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOegIA55"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B621C1B2EDC;
-	Mon,  9 Sep 2024 08:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0C41B2EFA
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 08:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725869537; cv=none; b=U4zqUH8XjKmk2gSGQ4cXKEl9EHkHwthUI+qqleYty5NXlosqmMv9YGoYFr4OU5O7xG62smyDUzEp4om2RqaJljATHF1b83h9f1s7Qf8o9isbwt/vxfaps5NDdo+yRDkfZorAkoQwOQ2UlX8pJnm8rF+UKO/FzAdWUUeTTaoxjj0=
+	t=1725869538; cv=none; b=aegsxurxA+nbptCl7k+r/PpCj8SXLagiwgISK+kU9DmmmwQOtCmo0n5s0T1X75VJVdA27FJktWVO8hED3Uh9RZKvDb5+oW7wUFZeyQdDcp2LY5p5s9FvNWuKpM0kawq8et7+KAwhzyztbzB2W2g5OOYxkkrUE9RhpGP7tCkkGWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725869537; c=relaxed/simple;
-	bh=vKYC6D97w/y4jgWpLESdEMTxBxEMonZN1YA8CgWSeKk=;
+	s=arc-20240116; t=1725869538; c=relaxed/simple;
+	bh=FD/OOqH3zJS8nlVwHYANth0Q9YjcU3BgLDcnnwTz1xc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tmpEcdFWaaxjSJyce55x2Cl6J5lhMy2cihrOsrf+GeSL9j8yLpZf4kxJRQmYcLue2z26L0LhKSHqRDhNtnGlGge1j749CVWX24vuH+kPGIkGqlKdBzNKfEVeu5aT7PfCwO6iq0kmZXUZN22WEft0a+nqHySdOigtxCeb0x8/Fvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGzP7ulD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 19876C4CEDC;
+	 In-Reply-To:To:Cc; b=YzKHqNw/H4Qdsrc/1rvH7dtwEzuEcDmWFtR+uhGG+rxqxU2S9smc2b2unzesSZ03m7kPZAI6dTvj+fn3xfLdEQZ5AqNFO+jxxqCdC67oedm9fEbSJ8WvBoLZXboQi6N8GPD68s/u4KILXjN92/EqBMh1jT0yB4u4CF9KhjG2swM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOegIA55; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 25AACC4CEC8;
 	Mon,  9 Sep 2024 08:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1725869537;
-	bh=vKYC6D97w/y4jgWpLESdEMTxBxEMonZN1YA8CgWSeKk=;
+	bh=FD/OOqH3zJS8nlVwHYANth0Q9YjcU3BgLDcnnwTz1xc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=jGzP7ulDYIlO9p6GkR8UFqMgAnANtku7oi/pxznuxLfd9MjcKqSkF5zwdxijF4Gzx
-	 bkltqGFehpi7dzIgUcObDgH4wWXEUs5k8EfEWpEzdNt0VZc1tdy90jHjvyeAKCtlXF
-	 bUPbmq3iBOEdKHt4iDfShQrai1gASwP9q+yPsX9dU04dxuC2pEsFbBwKEsFVxYJTKc
-	 m5p/Z/dnkSZZpJYoAtDJkR7j3rG2gAgGAJ8b50cHaaKjglzQ/bo1TlzWXVxv96VCC9
-	 AWwjn4CtSn2bh3cl6pFJ8ji1YCLdwAMQy4UregL7bhb24Mnl75Q65IPuXyoi08HPJu
-	 r+Mc9rOX8+06g==
+	b=TOegIA55sl7GQUvTPN9E+JKE+LpesczPez36PRFBowFC2fkaLXmX852ozsU97f6MD
+	 zt2Af3yXxw1R02P1yJms4EIbNmnyu/uPD6A+k/10Cd05WBnzd/SXzuyZvzJ2mzE0SU
+	 3mUgRxuoOG09ZsyE/AIEcQaQLnSFhX4+/tsz8NluKhW0GetGsLsDMbwZuGXDeZaXq9
+	 ewbInxnLkdw+uAkaE6Vo2H9fheay5AexW/4K+7dxaaZQdJSi3M6Ru9W5N6d9irbxwK
+	 HH4HEfxbk68c/wsSylj94BKYDFnjFTaFg4BI192uy2ZKiqW0qyXkUUtPALiP1S8P3a
+	 oJO82y6Dr4SHg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13586ECE582;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F38FECE57B;
 	Mon,  9 Sep 2024 08:12:17 +0000 (UTC)
 From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Mon, 09 Sep 2024 11:10:56 +0300
-Subject: [PATCH v12 31/38] ARM: dts: ep93xx: Add EDB9302 DT
+Date: Mon, 09 Sep 2024 11:10:57 +0300
+Subject: [PATCH v12 32/38] ARM: ep93xx: DT for the Cirrus ep93xx SoC
+ platforms
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,20 +55,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240909-ep93xx-v12-31-e86ab2423d4b@maquefel.me>
+Message-Id: <20240909-ep93xx-v12-32-e86ab2423d4b@maquefel.me>
 References: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
 In-Reply-To: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Nikita Shubin <nikita.shubin@maquefel.me>, 
- Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Russell King <linux@armlinux.org.uk>, 
+ Hartley Sweeten <hsweeten@visionengravers.com>, 
+ Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+ Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Masahiro Yamada <masahiroy@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Nikita Shubin <nikita.shubin@maquefel.me>
+Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.13-dev-e3e53
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725869532; l=4426;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725869532; l=3110;
  i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=pj+rxI95A+j8JkHAzAVaFYn5Zmsf24e76lXK30Ms+sQ=;
- b=d4Jwkvi7VwB1HryzJhqbIAgb/QdwA4WLq7zfKpvRBQi53Y4+3AncwgxuVad2WagTdr+bXs1bMjZq
- cG9tZdIIDg5PliyMDr7jFo+u9tu01uvSmIOQ8dNM+eHVgLa65+tc
+ bh=MU0azT5lNnulLeP5AfbO0wMy6289MR0wM0qk0K+/fy8=;
+ b=z7mt8ZsZw1L4VQRwH0UtATvP+b9vQI8XflGSsXma++7DMFAnVqGxlerCCY0NtkJgSlK3rxUrZPoQ
+ MRUyJ/pmDRytliiGdt+VKvTS4V8RiQ5TMuFoW/RJe9g8a/wfyNCZ
 X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
  pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
 X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
@@ -75,215 +84,106 @@ X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
 X-Original-From: Nikita Shubin <nikita.shubin@maquefel.me>
 Reply-To: nikita.shubin@maquefel.me
 
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+From: Nikita Shubin <nikita.shubin@maquefel.me>
 
-Add device tree for Cirrus EDB9302.
+Add compulsory device tree support to the Cirrus ep93xx ARMv4 platform.
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+- select PINCTRL_EP93xx
+- select COMMON_CLK_EP93XX, as clock driver moved out of platform code
+- select ARCH_HAS_RESET_CONTROLLER
+
+Select ARM_ATAG_DTB_COMPAT to update device tree with information
+about memory passed from bootloader.
+
+We have to leave all MACH options as they are used for board checking
+before decomp, to turn off watchdog and ethernet DMA.
+
+Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
 ---
- arch/arm/boot/dts/cirrus/Makefile           |   1 +
- arch/arm/boot/dts/cirrus/ep93xx-edb9302.dts | 181 ++++++++++++++++++++++++++++
- 2 files changed, 182 insertions(+)
+ arch/arm/Makefile             |  1 -
+ arch/arm/mach-ep93xx/Kconfig  | 20 ++++++++++----------
+ arch/arm/mach-ep93xx/Makefile | 11 -----------
+ 3 files changed, 10 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/cirrus/Makefile b/arch/arm/boot/dts/cirrus/Makefile
-index 211a7e2f2115..e6015983e464 100644
---- a/arch/arm/boot/dts/cirrus/Makefile
-+++ b/arch/arm/boot/dts/cirrus/Makefile
-@@ -4,5 +4,6 @@ dtb-$(CONFIG_ARCH_CLPS711X) += \
- dtb-$(CONFIG_ARCH_CLPS711X) += \
- 	ep7211-edb7211.dtb
- dtb-$(CONFIG_ARCH_EP93XX) += \
-+	ep93xx-edb9302.dtb \
- 	ep93xx-bk3.dtb \
- 	ep93xx-ts7250.dtb
-diff --git a/arch/arm/boot/dts/cirrus/ep93xx-edb9302.dts b/arch/arm/boot/dts/cirrus/ep93xx-edb9302.dts
-new file mode 100644
-index 000000000000..312b2be1c638
---- /dev/null
-+++ b/arch/arm/boot/dts/cirrus/ep93xx-edb9302.dts
-@@ -0,0 +1,181 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+/*
-+ * Device Tree file for Cirrus Logic EDB9302 board based on EP9302 SoC
-+ */
-+/dts-v1/;
-+#include "ep93xx.dtsi"
-+
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	compatible = "cirrus,edb9302", "cirrus,ep9301";
-+	model = "cirrus,edb9302";
-+
-+	chosen {
-+	};
-+
-+	memory@0 {
-+		device_type = "memory";
-+		/* should be set from ATAGS */
-+		reg = <0x0000000 0x800000>,
-+		      <0x1000000 0x800000>,
-+		      <0x4000000 0x800000>,
-+		      <0x5000000 0x800000>;
-+	};
-+
-+	sound {
-+		compatible = "audio-graph-card2";
-+		label = "EDB93XX";
-+		links = <&i2s_port>;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		led-0 {
-+			label = "grled";
-+			gpios = <&gpio4 0 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+			function = LED_FUNCTION_HEARTBEAT;
-+		};
-+
-+		led-1 {
-+			label = "rdled";
-+			gpios = <&gpio4 1 GPIO_ACTIVE_HIGH>;
-+			function = LED_FUNCTION_FAULT;
-+		};
-+	};
-+};
-+
-+&adc {
-+	status = "okay";
-+};
-+
-+&ebi {
-+	flash@60000000 {
-+		compatible = "cfi-flash";
-+		reg = <0x60000000 0x1000000>;
-+		bank-width = <2>;
-+	};
-+};
-+
-+&eth0 {
-+	phy-handle = <&phy0>;
-+};
-+
-+&gpio0 {
-+	gpio-ranges = <&syscon 0 153 1>,
-+		      <&syscon 1 152 1>,
-+		      <&syscon 2 151 1>,
-+		      <&syscon 3 148 1>,
-+		      <&syscon 4 147 1>,
-+		      <&syscon 5 146 1>,
-+		      <&syscon 6 145 1>,
-+		      <&syscon 7 144 1>;
-+};
-+
-+&gpio1 {
-+	gpio-ranges = <&syscon 0 143 1>,
-+		      <&syscon 1 142 1>,
-+		      <&syscon 2 141 1>,
-+		      <&syscon 3 140 1>,
-+		      <&syscon 4 165 1>,
-+		      <&syscon 5 164 1>,
-+		      <&syscon 6 163 1>,
-+		      <&syscon 7 160 1>;
-+};
-+
-+&gpio2 {
-+	gpio-ranges = <&syscon 0 115 1>;
-+};
-+
-+/* edb9302 doesn't have GPIO Port D present */
-+&gpio3 {
-+	status = "disabled";
-+};
-+
-+&gpio4 {
-+	gpio-ranges = <&syscon 0 97 2>;
-+};
-+
-+&gpio5 {
-+	gpio-ranges = <&syscon 1 170 1>,
-+		      <&syscon 2 169 1>,
-+		      <&syscon 3 168 1>;
-+};
-+
-+&gpio6 {
-+	gpio-ranges = <&syscon 0 87 2>;
-+};
-+
-+&gpio7 {
-+	gpio-ranges = <&syscon 2 199 4>;
-+};
-+
-+&i2s {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2s_on_ac97_pins>;
-+	status = "okay";
-+	i2s_port: port {
-+		i2s_ep: endpoint {
-+			system-clock-direction-out;
-+			frame-master;
-+			bitclock-master;
-+			mclk-fs = <256>;
-+			dai-format = "i2s";
-+			convert-channels = <2>;
-+			convert-sample-format = "s32_le";
-+			remote-endpoint = <&codec_ep>;
-+		};
-+	};
-+};
-+
-+&mdio0 {
-+	phy0: ethernet-phy@1 {
-+		reg = <1>;
-+		device_type = "ethernet-phy";
-+	};
-+};
-+
-+&spi0 {
-+	cs-gpios = <&gpio0 6 GPIO_ACTIVE_LOW
-+		    &gpio0 7 GPIO_ACTIVE_LOW>;
-+	dmas = <&dma1 10 2>, <&dma1 10 1>;
-+	dma-names = "rx", "tx";
-+	status = "okay";
-+
-+	cs4271: codec@0 {
-+		compatible = "cirrus,cs4271";
-+		reg = <0>;
-+		#sound-dai-cells = <0>;
-+		spi-max-frequency = <6000000>;
-+		spi-cpol;
-+		spi-cpha;
-+		reset-gpios = <&gpio0 1 GPIO_ACTIVE_LOW>;
-+		port {
-+			codec_ep: endpoint {
-+				remote-endpoint = <&i2s_ep>;
-+			};
-+		};
-+	};
-+
-+	at25f1024: eeprom@1 {
-+		compatible = "atmel,at25";
-+		reg = <1>;
-+		address-width = <8>;
-+		size = <0x20000>;
-+		pagesize = <256>;
-+		spi-max-frequency = <20000000>;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	status = "okay";
-+};
-+
-+&usb0 {
-+	status = "okay";
-+};
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 71afdd98ddf2..aafebf145738 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -183,7 +183,6 @@ machine-$(CONFIG_ARCH_CLPS711X)		+= clps711x
+ machine-$(CONFIG_ARCH_DAVINCI)		+= davinci
+ machine-$(CONFIG_ARCH_DIGICOLOR)	+= digicolor
+ machine-$(CONFIG_ARCH_DOVE)		+= dove
+-machine-$(CONFIG_ARCH_EP93XX)		+= ep93xx
+ machine-$(CONFIG_ARCH_EXYNOS)		+= exynos
+ machine-$(CONFIG_ARCH_FOOTBRIDGE)	+= footbridge
+ machine-$(CONFIG_ARCH_GEMINI)		+= gemini
+diff --git a/arch/arm/mach-ep93xx/Kconfig b/arch/arm/mach-ep93xx/Kconfig
+index 703f3d232a60..812b71dcf60e 100644
+--- a/arch/arm/mach-ep93xx/Kconfig
++++ b/arch/arm/mach-ep93xx/Kconfig
+@@ -3,27 +3,27 @@ menuconfig ARCH_EP93XX
+ 	bool "EP93xx-based"
+ 	depends on ATAGS
+ 	depends on ARCH_MULTI_V4T
++	# CONFIG_ARCH_MULTI_V7 is not set
+ 	depends on CPU_LITTLE_ENDIAN
++	select ARCH_HAS_RESET_CONTROLLER
+ 	select ARCH_SPARSEMEM_ENABLE
+ 	select ARM_AMBA
+ 	select ARM_VIC
++	select ARM_APPENDED_DTB # Old Redboot bootloaders deployed
++	select ARM_ATAG_DTB_COMPAT # we need this to update dt memory node
++	select COMMON_CLK_EP93XX
++	select EP93XX_TIMER
+ 	select CLKSRC_MMIO
+ 	select CPU_ARM920T
+ 	select GPIOLIB
++	select PINCTRL
++	select PINCTRL_EP93XX
+ 	help
+ 	  This enables support for the Cirrus EP93xx series of CPUs.
+ 
+ if ARCH_EP93XX
+ 
+-menu "Cirrus EP93xx Implementation Options"
+-
+-config EP93XX_SOC_COMMON
+-	bool
+-	default y
+-	select SOC_BUS
+-	select LEDS_GPIO_REGISTER
+-
+-comment "EP93xx Platforms"
++# menu "EP93xx Platforms"
+ 
+ config MACH_BK3
+ 	bool "Support Liebherr BK3.1"
+@@ -103,6 +103,6 @@ config MACH_VISION_EP9307
+ 	  Say 'Y' here if you want your kernel to support the
+ 	  Vision Engraving Systems EP9307 SoM.
+ 
+-endmenu
++# endmenu
+ 
+ endif
+diff --git a/arch/arm/mach-ep93xx/Makefile b/arch/arm/mach-ep93xx/Makefile
+deleted file mode 100644
+index 62e37403df14..000000000000
+--- a/arch/arm/mach-ep93xx/Makefile
++++ /dev/null
+@@ -1,11 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0
+-#
+-# Makefile for the linux kernel.
+-#
+-obj-y			:= core.o clock.o timer-ep93xx.o
+-
+-obj-$(CONFIG_EP93XX_DMA)	+= dma.o
+-
+-obj-$(CONFIG_MACH_EDB93XX)	+= edb93xx.o
+-obj-$(CONFIG_MACH_TS72XX)	+= ts72xx.o
+-obj-$(CONFIG_MACH_VISION_EP9307)+= vision_ep9307.o
 
 -- 
 2.43.2
