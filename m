@@ -1,120 +1,83 @@
-Return-Path: <linux-kernel+bounces-321189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE5479715A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:53:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1660F9715A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51068B229C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:53:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1E6FB2320C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2BB1B4C4D;
-	Mon,  9 Sep 2024 10:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769761B5303;
+	Mon,  9 Sep 2024 10:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="knyb+Huo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUMz5f6m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C50012B17C;
-	Mon,  9 Sep 2024 10:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C676D191;
+	Mon,  9 Sep 2024 10:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725879215; cv=none; b=SygaLMc9LRHhyLmrEiSIw07PVGuK0dtAJSYQnIAFUyyPWXU7NKxyYaVw/UqgokAxdkSqY9jPpIoNqKC0+By/k7wv2M4SmBnI9CDKPiDJ4Su8yi/r8DTxzU+BCcb2cYq22J1Jb/8zeGxyVcIE9cPc/KW3EMPnd8c2bwjvvvSK5CU=
+	t=1725879228; cv=none; b=AHsUErGzKjE8XJFnrp/Om3g9eqI0UVEJO6vb3iZwYdUgex1DQCLpFnCyOix+mNUYU9/9TQWCL6/Ibwow/CmeVqJKd9sz0Bn3SuDQsZlTb1s8QT+SEtImKpm0crwRoipcp5o7BovCftgtAHP/epbcIFrptCDmkHG8HNbYddjChKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725879215; c=relaxed/simple;
-	bh=L8zTApnftuKIPWF/1of8D45op0E0msf9CkZIUtmNpFs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mnvx6/O0ncf16z0hFb7JT7PAO8Zq8Ye+DMVQ+bjituz2qLaNVdLspZ6ar5AIeHjZ8oqPsvdl+wHAcUp1WO5sDVQuNnYSnCYSOk+eP7l6hRCEDQA3dtNprmaWOlIFECoFV7bmn49Uv96ZkHd4sPyM0A19NDI7JmU/0IxnXAZ6K0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=knyb+Huo; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725879215; x=1757415215;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=L8zTApnftuKIPWF/1of8D45op0E0msf9CkZIUtmNpFs=;
-  b=knyb+Huodiw21UGMwt3KwL+fuBNNJNTNSYWLKyRRRXDAPWW3l6WsdY0z
-   hrGjpt23pLwx42kcombxSKD41SppKFIIGAF6PV2sBYm/itoy7QpPQDNgX
-   eqKd2GT1usZXNoRiNX/rcfQIw5PEHgNVw/T3KBIHyfkXll5aKVHeHdOgH
-   +E/rqD3Ga9iFxjouZHMpg1QjgDheTLhQcXkQZa/bdvEZaNEGkcS/Mmn0P
-   O4/Oz8pZQpsWDCvQ24FxVDJhNJjCJEAB+dSNSSPThL1lv3/PqWW5s1ZZ2
-   hXLQzvnWTjPLHE2AdYgt6W7YEHKU4gUQsOoxEVuVdF/QzbRSdj13iqmOz
-   A==;
-X-CSE-ConnectionGUID: XmwGIDJuSLW+AmVngX+Htw==
-X-CSE-MsgGUID: lEARyM13RL6X7uEOcJKrcg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="24433125"
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="24433125"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 03:53:34 -0700
-X-CSE-ConnectionGUID: Cz/m6/G4QZ2LE+eZo4SCbg==
-X-CSE-MsgGUID: +xWHHtMaR3iJ6nkWb8mwxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
-   d="scan'208";a="70744672"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa003.fm.intel.com with ESMTP; 09 Sep 2024 03:53:30 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3A6AB321; Mon, 09 Sep 2024 13:53:28 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] tracing: Drop unused helper function to fix the build
-Date: Mon,  9 Sep 2024 13:53:14 +0300
-Message-ID: <20240909105314.928302-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1725879228; c=relaxed/simple;
+	bh=OW2ouDZXCkWxy3cxd+kufRqhlyPc+ouqgbHl+qBD/Rk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d/8Juty3qzTmB3LmwoGBJrvvIdgC3yJCKKn8pO0dzewjucSTZuQuloYTXpIOEecNp1777hdixwsNlrlHXkz1YmO6ZZcX5H3tMafEb6dOq6DVKb2VRZDcUOrOSLQDjJl4pnnjVyQFQrewgLu+ckWJXIdn94Yh98MpvnM+rRpfjx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUMz5f6m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 116A6C4CEC5;
+	Mon,  9 Sep 2024 10:53:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725879228;
+	bh=OW2ouDZXCkWxy3cxd+kufRqhlyPc+ouqgbHl+qBD/Rk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TUMz5f6mp2AzwodXIZHJ++0N/zpQArcPdBF0Z+tPgU89Dou2Fkmpf5/my/S0kyFhd
+	 57JAgpezp+WLLJk0BTe2YdUCfND49uQe/vq+JVx2UTtjx4NdWqT98xuZji3y1lQ88f
+	 VLCoLCXRTakmmr3/qPKIxUpEmfmGoZVc7f2mtQyClolgpJAd9SHHz+P5L63bxUuTdb
+	 cw+Ya1NXfoh6bt4zUT0wGLgKqVsRh0nRBsBQUXrvHpL8UbvofFveO9sq31W8UEG6et
+	 KWSzAG1QD4nDTdabUbxW0enZBD4emWuO4xnFPEKhCj/JZfx+ToifXtOmK8YfblKSBz
+	 Ub39eJPwwimDg==
+Message-ID: <cdc1a7ee-e6c0-4cf4-8a52-1fbe6df64150@kernel.org>
+Date: Mon, 9 Sep 2024 12:53:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] arm64: dts: qcom: sdm630: enable GPU SMMU and GPUCC
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240907-sdm660-wifi-v1-0-e316055142f8@linaro.org>
+ <20240907-sdm660-wifi-v1-2-e316055142f8@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240907-sdm660-wifi-v1-2-e316055142f8@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-A helper function defined but not used. This, in particular,
-prevents kernel builds with clang, `make W=1` and CONFIG_WERROR=y:
+On 7.09.2024 8:48 PM, Dmitry Baryshkov wrote:
+> Now as the arm-smmu-qcom driver gained workarounds for the Adreno SMMU,
+> it becomes possible to safely enable GPU on the devices. Enable GPU SMMU
+> and GPU clock controller. GPU should be enabled for target devices that
+> have ZAP shader blob.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-kernel/trace/trace.c:2229:19: error: unused function 'run_tracer_selftest' [-Werror,-Wunused-function]
- 2229 | static inline int run_tracer_selftest(struct tracer *type)
-      |                   ^~~~~~~~~~~~~~~~~~~
+Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
 
-Fix this by dropping unused functions.
-
-See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-inline functions for W=1 build").
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- kernel/trace/trace.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index edf6bc817aa1..c3b2c7dfadef 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2226,10 +2226,6 @@ static __init int init_trace_selftests(void)
- }
- core_initcall(init_trace_selftests);
- #else
--static inline int run_tracer_selftest(struct tracer *type)
--{
--	return 0;
--}
- static inline int do_run_tracer_selftest(struct tracer *type)
- {
- 	return 0;
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+Konrad
 
