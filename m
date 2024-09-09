@@ -1,144 +1,199 @@
-Return-Path: <linux-kernel+bounces-321070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67B0597140C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:43:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9856B971411
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC8F1F23D9F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:43:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBAB3B24A6E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C10D1B2EE8;
-	Mon,  9 Sep 2024 09:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1EC91B3739;
+	Mon,  9 Sep 2024 09:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ecEvKZXu"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZKsWV2Dx"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392F8161916;
-	Mon,  9 Sep 2024 09:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527F01B29DB
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725874986; cv=none; b=s58E5ruLV89B1mPnBmq4qc1ETmzyZvHKZTfybTCKG9TDeT03gA0dCwE5D1GiMGfJC0BMCWal4nR8UNnEKfwJpXb04262IQTJfEJZsYmdzP+r7VmjbvnfKA3E/SWycusvwuu3HVOfwqxPwB5ICAPspF2J3MNit2UPrpupvlKdyl8=
+	t=1725875020; cv=none; b=p+1WAVNxRsMNM8L4H+HRy5EWYoSO4S2KeoI5amY4S4bwPs69Mdqv/v9C9zd635/7Gz+Cec7F5COL+V6Qep3qKiklxnPLCfj0/xitn5liOFF7SCm7UBqoGJAUhBDqEQQBjP7MXiUGwqKTrLa72r9lbpIg9+UzG3jzwHgM3+9Ch3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725874986; c=relaxed/simple;
-	bh=DhIoIebUv4PD3LizG5RpptLQUIEStidCV5UBA3Ms/Ok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d/JVI6vEzKaBQ773a+roYTeveEAuOIURLi1CPHdmRe2+kHhP9pg4V0Vvign8UGQr31Oc8z6eVyRuEhqhnKYgkPfoHEKH7cltqUSYb49so437S0fscE0fCtoZE9I5umEu2Uhz928oy7m4ke0VY4sbCxc2HLakcFdH5Rb4K4QehpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ecEvKZXu; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c26852aff1so4533717a12.3;
-        Mon, 09 Sep 2024 02:43:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725874983; x=1726479783; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ji0IvUtxVUfOYtXesPSGRkrVGhlLL5hSJeqIOnfvC5o=;
-        b=ecEvKZXuj+mWwnAsKVAlFSfuBgum+pqdLLrDXLMCvEUe6UH+vGcrpOXdXMKgxe++Ak
-         GBw0nyvTVmZ0wHAs2ioNMxgBXqiwfriM8laXogJtsWIdb1tqIzdMi9+8r7ztM94Z+SXI
-         BJ9A9r2zzQaDpGgKTdTpK1M7g6dDmh7mvqvOS6JaXEo9FYrRg4148IvNQHB/KsUvtL1w
-         V9BB7Op0M0GCbY3MB+E5SVa1ZFCt634GudSPlKs8Xt7IfgJm3lk/QbTOS7apHuf36jqB
-         YfNnjAgB1K4AwKSvQMYU2XZH6cM+3wWNvELthBeqgHO9doGK4fUfbzQ5phZ7425kBYoa
-         JPYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725874983; x=1726479783;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ji0IvUtxVUfOYtXesPSGRkrVGhlLL5hSJeqIOnfvC5o=;
-        b=fxrOgBP7GJ0Y4CRjMFRHSJgAC1/ZBxT5huy8da/WBC7SwiCyMV+RXj9SNzFo7yS5iM
-         s6KMTesHR9t3W/Su50fU/r9AxoeYiqopz6bgfU75Cn8CzaXoZ/KqeUfSEuyMcvn2y/vk
-         PakvJxqBI+iVYWadnVErgQBTD/H6d5fSg/qX0qyMa4LckV7oJ0Y/Z5ebo6YDw+gUSzwm
-         dkKPr5ktcOScD8Sdch2M2OHropl1wLqAqrdDPSduvR58bVi9dqWFZiv+JU403XMAPo6o
-         usMU9PVmVMhlyD1pOjub0/oxNtZkFd0yftSOvBDj77p2pcvEsJYpoe1F2/j4zYoayHRs
-         w8FA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSV3R4efUnLaBgMLqVMJZJQFzIT9uSFiIo3BUTqh2C0fcE0iaazOA+QnMHyGbEQOLxIvmIs2e1UnbH@vger.kernel.org, AJvYcCWgVulYlezsys/tSe5iPnygXn7hsNZ8gjJ3wAGyRWVzYj8XM10VFLV9fVxCxWE6j0Di/6l7k+TH1udfJGAY@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLUKRRmpvqwDTeTUU6DAMcARdnmlAZdWq1bATaTncGU+5E+VGF
-	a0qSjvKLSn6lgxA8VwQN7XIl8GButkRSwiwQMCgzK2u04QqIthy/
-X-Google-Smtp-Source: AGHT+IHsut9MezX+RTKRlovYO1s+sRZbsf5akjJcSm8/w0bQW6T6B9e2Pa66ERuitPaxaEK8jwSRAA==
-X-Received: by 2002:a05:6402:34d6:b0:5c3:1089:ff3c with SMTP id 4fb4d7f45d1cf-5c3e974d9f6mr3460080a12.35.1725874983126;
-        Mon, 09 Sep 2024 02:43:03 -0700 (PDT)
-Received: from toolbox (31-10-206-125.static.upc.ch. [31.10.206.125])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd4693fsm2812530a12.37.2024.09.09.02.43.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 02:43:02 -0700 (PDT)
-Date: Mon, 9 Sep 2024 11:43:00 +0200
-From: Max Krummenacher <max.oss.09@gmail.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Aradhya Bhatia <a-bhatia1@ti.com>, max.krummenacher@toradex.com,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	DRI Development List <dri-devel@lists.freedesktop.org>,
-	Devicetree List <devicetree@vger.kernel.org>,
-	Linux Kernel List <linux-kernel@vger.kernel.org>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
-	Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
-Subject: Re: [PATCH v3 0/4] drm/tidss: Add OLDI bridge support
-Message-ID: <Zt7DJFM_xxOkhDwX@toolbox>
-References: <20240716084248.1393666-1-a-bhatia1@ti.com>
- <20240906114311.GA32916@francesco-nb>
- <c60d518b-ace4-48a8-87e5-35de13bc426a@ideasonboard.com>
+	s=arc-20240116; t=1725875020; c=relaxed/simple;
+	bh=N33HzbLifjRDnTRY55qJg9InbgItgUl2jl5vUNzrlLg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=Ni5xO6ybcRZj+xUuJVS1ieGAX425OVBWJaP7s2oVotEndBkdiWT8/Hkp8KTD5U6WIc2YoLOsC2/SgZnNyHP9SCNIV90jFAzocYUWTQEJ7EYVbJlueEHdSe6rBNS3XWJy1OJ6/qMaszCm2157pAoqj7c/2SdrEInDAVZGvLupb3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZKsWV2Dx; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240909094329epoutp031f2a41a9307ba31f67c741d52124f433~zii1Xl5gt2905629056epoutp03N
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:43:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240909094329epoutp031f2a41a9307ba31f67c741d52124f433~zii1Xl5gt2905629056epoutp03N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725875009;
+	bh=5Zrr1Rlq5uzIUm8vNeMFejcvqoou7d/aqB91pgh4t4s=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ZKsWV2DxDaOiftVbPf3y4RIERaB6++e2G/uXFkmpgFNdn8hLZR7jfjSWEkmYrUQke
+	 UTyMsqOTObsv7Z7H+s/XgqrGfxJP6HZs/QdMWhpBIt3k2q1zBrDeXDvE2O1bk5Cy+k
+	 aeHgSzUqjufvDPhhdWWNC0V2wX0GPlswjLoWsnpw=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240909094328epcas1p11835a41796b1e2bef4aa5dcbfdf76e70~zii0yooZR1286712867epcas1p1f;
+	Mon,  9 Sep 2024 09:43:28 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.36.144]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4X2MMz4CMrz4x9Q7; Mon,  9 Sep
+	2024 09:43:27 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8B.57.09725.F33CED66; Mon,  9 Sep 2024 18:43:27 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240909094327epcas1p4bd962fc01182a76c07888e9222572917~ziizJ2yQF0942609426epcas1p4R;
+	Mon,  9 Sep 2024 09:43:27 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240909094327epsmtrp2c5b4cb0000806f5027bc470fe4718015~ziizJLwuj0408104081epsmtrp2x;
+	Mon,  9 Sep 2024 09:43:27 +0000 (GMT)
+X-AuditID: b6c32a37-245b8700000025fd-5b-66dec33fe88e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BD.C1.07567.E33CED66; Mon,  9 Sep 2024 18:43:27 +0900 (KST)
+Received: from [10.113.111.204] (unknown [10.113.111.204]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240909094326epsmtip1225d6acf41b5221a9123f91bd049df27~ziiy31slS1655516555epsmtip1k;
+	Mon,  9 Sep 2024 09:43:26 +0000 (GMT)
+Message-ID: <c73a59634ed8eeb099f4d5cb746f3b3e770391f5.camel@samsung.com>
+Subject: Re: [PATCH v4 3/3] tty: serial: samsung: Fix serial rx on Apple
+ A7-A9
+From: Kwanghoon Son <k.son@samsung.com>
+To: Nick Chan <towinchenmi@gmail.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>,  Alim Akhtar <alim.akhtar@samsung.com>, Greg
+	Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+	<jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org
+Cc: asahi@lists.linux.dev
+Date: Mon, 09 Sep 2024 18:43:20 +0900
+In-Reply-To: <20240909084222.3209-4-towinchenmi@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c60d518b-ace4-48a8-87e5-35de13bc426a@ideasonboard.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCJsWRmVeSWpSXmKPExsWy7bCmnq794XtpBnuvy1k8mLeNzeLnVT6L
+	5sXr2SzezZWxOH9+A7vFpsfXWC0u75rDZjHj/D4mizOLe9kt9i/tZXTg8tg56y67x6ZVnWwe
+	++euYffYvKTe48XmmYwefVtWMXp83iQXwB6VbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZg
+	qGtoaWGupJCXmJtqq+TiE6DrlpkDdJySQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAl
+	p8C0QK84Mbe4NC9dLy+1xMrQwMDIFKgwITtjw9eTjAUfhCpWHPzD3sD4g7+LkYNDQsBEYl2n
+	ZhcjF4eQwA5GiTWLPjNDOJ8YJX73XmWEcL4xSkxsPc/axcgJ1jH7+jeoxF5GiQWLTzJBOO8Z
+	JTZMn8oEUsUr4CGx+u0tNhBbWCBA4mDXP7BuNgF1iSVta9lBbBGBm0wSqx/bgNjMApISM6et
+	ZgGxWQRUJfof7WQGsTkFrCRevZvFDFGjLbFs4WswW1RAXqLh4QlmiF2CEidnPmGBuG4mh0Tj
+	UVMI20Vi8e4lbBC2sMSr41vYIWwpic/v9kLFsyWOfoSxSySuz1oE9aWxxP6lk5lAYcQsoCmx
+	fpc+xAl8Eu++9rBCgo5XoqNNCMKUl7jVWQ7RKCpx5ulHqIEeEn93fmKGB9XDy0tZJzDKz0Ly
+	zCwkD8xCWLaAkXkVo1hqQXFuemqxYYExPE6T83M3MYKTp5b5DsZpbz/oHWJk4mA8xCjBwawk
+	wttvdy9NiDclsbIqtSg/vqg0J7X4EKMpMEgnMkuJJucD03deSbyhiaWBiZmRsYmFoZmhkjjv
+	mStlqUIC6YklqdmpqQWpRTB9TBycUg1MTRL687sbG8Ly5sr3XXqypuHhVuOr3JqO8qJbFuy7
+	eDhxQ2dG2fan9xs4A6RuJt+OOHy5sHWmbESZ5QZj9rMCk6bVyoSzvJn9oFakSPPMzFCN85LS
+	ptMrM/Kz5yYlNxyekq+0puSh9LXMLYuOZm46c2kV86d7PrGzb2t+v+1w7Snvyig/30dsZY83
+	eBmem6NpaHde1SxUqPDOadPCGAPJEsemvsM7soX/hhbHi03//MN57zyV9EptR5uJZcG5b3j5
+	Eo5qvLjzbcO11vfdGs90Pjl5rZM/1P9UxUZe06kimC+cY2H+zA3zrX/9YzW7sEt2+ZKbRy1/
+	p/1bJnpT9on7zIj0fNUeC4vp+8506/5WYinOSDTUYi4qTgQAeac/5ScEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMLMWRmVeSWpSXmKPExsWy7bCSnK794XtpBqeWMVo8mLeNzeLnVT6L
+	5sXr2SzezZWxOH9+A7vFpsfXWC0u75rDZjHj/D4mizOLe9kt9i/tZXTg8tg56y67x6ZVnWwe
+	++euYffYvKTe48XmmYwefVtWMXp83iQXwB7FZZOSmpNZllqkb5fAlfHjT37BNKGKz5/OMTUw
+	LuLvYuTkkBAwkZh9/RtjFyMXh5DAbkaJF+8PsEEkRCU6LjcCJTiAbGGJw4eLIWreMkqsftzK
+	DFLDK+AhsfrtLbB6YYEAiYNd/1hBbDYBdYklbWvZQWwRgZtMEk9OeYPYzAKSEjOnrWYBsVkE
+	VCX6H+0Em8MpYCXx6t0sMFtIIEvi7eH9LBD1mhKt23+zQ9jaEssWvgarERWQl2h4eALqBkGJ
+	kzOfsExgFJyFpGUWkpZZSMoWMDKvYpRMLSjOTc9NNiwwzEst1ytOzC0uzUvXS87P3cQIjhct
+	jR2M9+b/0zvEyMTBeIhRgoNZSYS33+5emhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFewxmzU4QE
+	0hNLUrNTUwtSi2CyTBycUg1MxdfWPVXrPHw15MLOF7zXzV9EqJctU9I4nOvNFHU4L6d4wpIl
+	O1r/qMl+/Bk86e0ZGWnt6E+qhpuy5FyFJ8SwrzXa5tr923jOwcrQ/P+b7V9uEcn2uzd78uHt
+	OpF757vfXKP9NmLawiwZzteb9rWe2WNx4faGGPko/03Mza/8c/z8ZdbG+QbdDzFcZytmYXG3
+	yKHzyKHyrzrx/wIW3N1Qcy2qfmWRXQVnvcsNz8WuLWa3t/36qSa7innJBHuP8IW3Vs1w4vXv
+	teNlux0250mrkNaDg0GlzhdvN8149mLhg56Hv7KZmL1T13sqJZxbXpox32S3TcLUwzOsfoh3
+	LHVilvCM0G07dTklidvM9L+AEktxRqKhFnNRcSIA+vnSEAYDAAA=
+X-CMS-MailID: 20240909094327epcas1p4bd962fc01182a76c07888e9222572917
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240909094327epcas1p4bd962fc01182a76c07888e9222572917
+References: <20240909084222.3209-1-towinchenmi@gmail.com>
+	<20240909084222.3209-4-towinchenmi@gmail.com>
+	<CGME20240909094327epcas1p4bd962fc01182a76c07888e9222572917@epcas1p4.samsung.com>
 
-On Mon, Sep 09, 2024 at 11:15:28AM +0300, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 06/09/2024 14:43, Francesco Dolcini wrote:
-> > +Max
-> > 
-> > Hello Aradhya,
-> > 
-> > On Tue, Jul 16, 2024 at 02:12:44PM +0530, Aradhya Bhatia wrote:
-> > > The addition of the 2nd OLDI TX (and a 2nd DSS in AM62Px) creates a need
-> > > for some major changes for a full feature experience.
-> > > 
-> > > 1. The OF graph needs to be updated to accurately show the data flow.
-> > > 2. The tidss and OLDI drivers now need to support the dual-link and the
-> > >     cloned single-link OLDI video signals.
-> > > 3. The drivers also need to support the case where 2 OLDI TXes are
-> > >     connected to 2 different VPs - thereby creating 2 independent streams
-> > >     of single-link OLDI outputs.
-> > 
-> > Have you considered/tested the use case in which only single link is used?
-> > You do not mention it here and to me this is a relevant use case.
-> > 
-> > There is a workaround for this (use option 2, cloned, even if nothing is
-> > connected to the second link), but this seems not correct.
-> > 
-> > We (Max in Cc here) noticed that this specific use case is broken on
-> > your downstream v6.6 TI branch.
-> 
-> What if you set "fw_devlink=off" kernel boot parameter?
+On Mon, 2024-09-09 at 16:37 +0800, Nick Chan wrote:
+> Apple's older A7-A9 SoCs seems to use bit 3 in UTRSTAT as RXTO, which is
+> enabled by bit 11 in UCON.
+>=20
+> Access these bits in addition to the original RXTO and RXTO enable bits,
+> to allow serial rx to function on A7-A9 SoCs. This change does not
+> appear to affect the A10 SoC and up.
+>=20
+> Signed-off-by: Nick Chan <towinchenmi=40gmail.com>
+>=20
 
-Hi Tomi
+=5Bsnip=5D
 
-My overlay specifing a single link which did not work by default
-results in a working panel with "fw_devlink=off" on the cmdline.
+> diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
+> index 1e8686695487..964a4fbf2626 100644
+> --- a/include/linux/serial_s3c.h
+> +++ b/include/linux/serial_s3c.h
+> =40=40 -246,24 +246,28 =40=40
+>  				 S5PV210_UFCON_TXTRIG4 =7C	=5C
+>  				 S5PV210_UFCON_RXTRIG4)
+> =20
+> -=23define APPLE_S5L_UCON_RXTO_ENA		9
+> -=23define APPLE_S5L_UCON_RXTHRESH_ENA	12
+> -=23define APPLE_S5L_UCON_TXTHRESH_ENA	13
+> -=23define APPLE_S5L_UCON_RXTO_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO_ENA)
+> -=23define APPLE_S5L_UCON_RXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_RXTHRESH_EN=
+A)
+> -=23define APPLE_S5L_UCON_TXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_TXTHRESH_EN=
+A)
+> +=23define APPLE_S5L_UCON_RXTO_ENA			9
+> +=23define APPLE_S5L_UCON_RXTO_LEGACY_ENA		11
+> +=23define APPLE_S5L_UCON_RXTHRESH_ENA		12
+> +=23define APPLE_S5L_UCON_TXTHRESH_ENA		13
+> +=23define APPLE_S5L_UCON_RXTO_ENA_MSK		BIT(APPLE_S5L_UCON_RXTO_ENA)
+> +=23define APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO_LEG=
+ACY_ENA)
+> +=23define APPLE_S5L_UCON_RXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_RXTHRESH_E=
+NA)
+> +=23define APPLE_S5L_UCON_TXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_TXTHRESH_E=
+NA)
 
-Max
-> 
->  Tomi
-> 
+Small thing, but other diff is not needed except
+APPLE_S5L_UCON_RXTO_LEGACY_ENA.
+
+Kwang.
+
+> =20
+>  =23define APPLE_S5L_UCON_DEFAULT		(S3C2410_UCON_TXIRQMODE =7C =5C
+>  					 S3C2410_UCON_RXIRQMODE =7C =5C
+>  					 S3C2410_UCON_RXFIFO_TOI)
+>  =23define APPLE_S5L_UCON_MASK		(APPLE_S5L_UCON_RXTO_ENA_MSK =7C =5C
+> +					 APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK =7C =5C
+>  					 APPLE_S5L_UCON_RXTHRESH_ENA_MSK =7C =5C
+>  					 APPLE_S5L_UCON_TXTHRESH_ENA_MSK)
+> =20
+> +=23define APPLE_S5L_UTRSTAT_RXTO_LEGACY	BIT(3)
+>  =23define APPLE_S5L_UTRSTAT_RXTHRESH	BIT(4)
+>  =23define APPLE_S5L_UTRSTAT_TXTHRESH	BIT(5)
+>  =23define APPLE_S5L_UTRSTAT_RXTO		BIT(9)
+> -=23define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f0)
+> +=23define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f8)
+> =20
+>  =23ifndef __ASSEMBLY__
+> =20
+
 
