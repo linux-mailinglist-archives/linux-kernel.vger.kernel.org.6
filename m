@@ -1,81 +1,142 @@
-Return-Path: <linux-kernel+bounces-321085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6C097143F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:47:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF67971449
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF8B91C22ED5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:47:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8494B26682
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEF91B2ED5;
-	Mon,  9 Sep 2024 09:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919A11B3B14;
+	Mon,  9 Sep 2024 09:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bbK5qVmw"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="lBPc6O4v";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bHZrriof"
+Received: from flow8-smtp.messagingengine.com (flow8-smtp.messagingengine.com [103.168.172.143])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274B11B3F1E
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264631B2536;
+	Mon,  9 Sep 2024 09:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725875125; cv=none; b=bIwj5hlKOJHDOkRgQ0hKERdUP30rPNuhVJIXSxOnUAqgXe3ObM5FhDwsOGEL1c0owEBXCqozKbFK1PuIxb/uMMNOKH3z8aZmqMHa/hRv4G+/ksi4bIJ6JPfLIGRJC3rRuS/Sa3+I8wLrp0Pe0UDtQJvoTxNX5enni1L/QFv8tzk=
+	t=1725875231; cv=none; b=c6CwM0GEWzgxO2iwG7AloAj3zgCG6DKmavV7IN9ZpH+2fK0pnhVw9H1DWMWbXWC+LUVsquZtniHdOKYSNHSREatV8ZQ3XQORQpv/RgsetZbwV9exzduXg40Qekh1i1HcKBDutLp6fFJnYCFtG2Mu3i/cmKWdPS+snQQQxY3U8v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725875125; c=relaxed/simple;
-	bh=GnnRCpZVq2X1JDH9jD+/G2ACm1S8JXfbtnAfz+3rWKQ=;
+	s=arc-20240116; t=1725875231; c=relaxed/simple;
+	bh=lNwIR+xwbUxOSrIXTaBwVx4ar9uDyirb5m/6fHAwWXg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j0S26Rmf59aRVzkDSJHHo12QcthopI0VPCtYMhtwnPsPy1W6NET8YqH58T0KgoXhBD3MMB1gpp7VBxDNKrSKbV5BKEexrRqfX/rfS3Wi1SxFrT6ClOwUS0ivFfBM01xRRf74Mx9IgJ9YbLUY4rxFEn1rrajsGLMK3/OxOU9flwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bbK5qVmw; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5333b2fbedaso7596577e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 02:45:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725875122; x=1726479922; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AX+qWUEl4qvHchK9WiUGhJ8YcoviFbmZ6OHD06M6LpY=;
-        b=bbK5qVmw2DAVHd5NwaJ39CKLhapZsPtazhlwJMnUZ+MwE55b4/+ll0y3EkJIfNT5v+
-         BKUKPTpRC6jkU1McZZbZ8T+YXNu0heCgLgb0LJkQiCM6qfuVDKf235tmNYr9r+QQaIGn
-         CBiFwMHnMO8duVexhTtk500RTWpNEm7MHmNDzvb3NoxDjIoNn/wp2j3WkD2ZWrzY9DrL
-         BaxjqgBAQZWz3Lb0po0gb2exmWF1Ku3tj6LK4wqnmbuYFnV8HhVMOKfxj+mDERQEEUg7
-         bmyPZaKr8LS+AC5qlc86Q9s9i9b7j7LyIS/iThCFzeoRpOcEfEG7zWMm7vefTmRBS7em
-         JaPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725875122; x=1726479922;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AX+qWUEl4qvHchK9WiUGhJ8YcoviFbmZ6OHD06M6LpY=;
-        b=HE7G6TgfZyS6bGBoDUWpBv/6vvln3zsUr+zxU1Ml8Bdjy/X53z0Tq6eE5kf+FGOpWU
-         BLggqr5T5pJLX+EE1JESr7tWEaFrkU5IqGa0AEQvF2BU74GiwdiTFN6y3HDxWpFlsRD7
-         Ijin+p9REK8TcKf+Vvte3JSSxC3jOGcijNxM21dSld0w9yIsPmxSg7jk3WBWE/Xfg+7c
-         6eX5Oy1v1Mmj/Ml1zm2CWTugfAaZPL2CZrN0lJBbScVCXgp/JuZNscr/4cFdKVTqRlgq
-         zVVDwWY1UlgveFp5Jv602Zz14j6UbmX/xY5C8wnXzxQvOovnJrDBVApbhnNM0GHa5mDA
-         /d8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWBAY10uZuojjCOoxvgUUOzh88211E9klbcusOpa6lTgl7jeY8c1vwrjmg/+hrOaG7IEvXLZcodGVN+Dpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIEMkwAw7Tfq0eTGDjLafkbRGVdjfAt84jMBpRuZPkkKysfo1G
-	IIhxaGZioTWMQi5Onc69rc/RkxUJyfjpr1gvn3jvy0FOzST9Z23YYN/sey9YnvA=
-X-Google-Smtp-Source: AGHT+IHdf/Swn2REUiirGgiZlsVzxHynFgW8MF5+sSjhKD0Ffob+MA01ZDe6vv0aCi8IkWfLDJz4TQ==
-X-Received: by 2002:a05:6512:3b10:b0:533:4656:d4cd with SMTP id 2adb3069b0e04-536587c641fmr8195958e87.33.1725875121427;
-        Mon, 09 Sep 2024 02:45:21 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f86fff0sm710516e87.82.2024.09.09.02.45.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 02:45:21 -0700 (PDT)
-Date: Mon, 9 Sep 2024 12:45:19 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: broonie@kernel.org, akashast@codeaurora.org, dianders@chromium.org, 
-	vkoul@kernel.org, linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] spi: geni-qcom: Undo runtime PM changes at driver
- exit time
-Message-ID: <pxv36kfon3zdwa2els6d65kgpiyn35ogcylo2z6ay7jrzyb6x2@jblxqzvf6qpu>
-References: <20240909073141.951494-1-ruanjinjie@huawei.com>
- <20240909073141.951494-2-ruanjinjie@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qEu935tA4JqTNIWUtUVHEBBaBmIqMbqWGRisU7t2HW5FJM8JK5sJV+snmQLkb1RWy/zFFOAjKPY7Xco2fUMIwrm6dft3AxPoMMCQBKEBtx1tJZ7Sz+x5zXySbUGES//1c9QCdV79l170snMTW6vaC2ActHRviAJYtHg0TC17ZsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=lBPc6O4v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bHZrriof; arc=none smtp.client-ip=103.168.172.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailflow.phl.internal (Postfix) with ESMTP id EE18E2001DE;
+	Mon,  9 Sep 2024 05:47:07 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Mon, 09 Sep 2024 05:47:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1725875227; x=
+	1725882427; bh=BPa+t0OgPawOKIqR0T18RRhFI6N40wyPm8P4uVOmsYQ=; b=l
+	BPc6O4vkdjuFdPUQx/GWkjNHlfzM1blnQCFwmbYPk3ohfiJXU2katsOTsV/itMcP
+	I0kFE8ETPJ7hYqbwvzxprTbBjV24twDtCgKPsbHt0/ZHZgZkTCtITsYA91OWMeS8
+	5ToMm7yZ59k8mTdDcR+nlGo7XFtpVtWiKkfNQzQcNR2Cwplo4kvqxS3wcvBhIMzq
+	l/H2k3IBsAOTWMbejZoEwAqhKho3zUo2Tzq9tr+gfJoIIaoekqpRpDt3QN8JX7OA
+	E/W1pu07hhdoy+toDNG55B8/dOiDpeuBZgt2ZAU2x0NcUUZvZdVWPyco45pIDl67
+	hdfqVF2AGsJXsfUNyZ8LA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1725875227; x=1725882427; bh=BPa+t0OgPawOKIqR0T18RRhFI6N4
+	0wyPm8P4uVOmsYQ=; b=bHZrriofaN4DC5WZCdXMUPXMz+etATu4nCBewnpqNsaw
+	FVV5NMsyoUF6Jr7J9/iQwdiQiVwufXFxL1xjmZ3ZTXtwAs7Xd47X8IK5kCeLH5Zx
+	gbn/t616nSUZyaLl27+WADgQM/2MzJLc4Dt9sX2YGuJzO5P9+Fe74Y2Sd9Q3QFL+
+	dR5RgCUMgdOfG/W5lQhba6p1V2wWv2l/tjStQSEN1k6fYC7IwDuKE+6kI4GRhDg3
+	Rwju+/48bdXwh3AMr3yD5uJoXxgqonm3AeH6u6SgW6lpschh0v4d93IkcQHj1qUP
+	wuiKGnPJX2TLpvB6TTW/yB3cxzohBLwQqOOJm56rNw==
+X-ME-Sender: <xms:GMTeZkb4ykAOR_EMJb8_tDn0TMOZFONau-MwujjLNHRr-Wkqt2dSUQ>
+    <xme:GMTeZva1-M1im4Jp1LIjaav2rAfFhxsHMXAhODt7T02hM4BuADB0ZzL__nLHdiiBz
+    SSxNINKU_xZ_uRM6kI>
+X-ME-Received: <xmr:GMTeZu_ViDBBY4wFBsBlNsC4hDIPt8FmsrKwqowsMOAkJLYpv49F3w-i-FZSYdAC09X5zA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeijecutefuodetggdotefrodftvfcurf
+    hrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffrtefo
+    kffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsuc
+    dlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhr
+    ohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhesshhhuh
+    htvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepleetudegtdfgheduudfhteel
+    ieeuvddtheeijeejudefjeefgeettedutdeggfdunecuffhomhgrihhnpehkvghrnhgvlh
+    drohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
+    pehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepheejpd
+    hmohguvgepshhmthhpohhuthdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhn
+    tgdrtghomhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtoheprh
+    hitghhrghrugdrhhgvnhguvghrshhonheslhhinhgrrhhordhorhhgpdhrtghpthhtohep
+    ihhnkhesjhhurhgrshhsihgtrdhprghrkhdrmhhsuhdrrhhupdhrtghpthhtohepmhgrth
+    htshhtkeeksehgmhgrihhlrdgtohhmpdhrtghpthhtohepvhhguhhpthgrsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepghhuohhrvghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegthhgv
+    nhhhuhgrtggriheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:GMTeZuo8r1nq-l9Iy1GG6lbrKIDlKAUfTYSJNOcMHx7SoM3_DQR_3Q>
+    <xmx:GMTeZvrvUvANLRDy_9LJ18nIkHenEaJwEIED0prbXl6sE_8pVNQDOQ>
+    <xmx:GMTeZsRlSV4fkIBrTLkTKBp6pnJALT50swFC-8I2Ke2cX1KpAQISKA>
+    <xmx:GMTeZvr9-1ECM5FvQVeumcsYIs50J0UTzC6J0l-CHe5sOz5eneb3pw>
+    <xmx:G8TeZngmbMM6nDA0aBg4nycXlZwqiuUgtwXCgxP4Ok8DOYuuB710QBwh>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 9 Sep 2024 05:46:47 -0400 (EDT)
+Date: Mon, 9 Sep 2024 12:46:42 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ 	Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+ 	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+ 	Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, 	WANG Xuerui <kernel@xen0n.name>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ 	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, 	Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ 	Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>,
+ 	Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ 	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ 	Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ 	Yoshinori Sato <ysato@users.sourceforge.jp>,
+ Rich Felker <dalias@libc.org>,
+ 	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ "David S. Miller" <davem@davemloft.net>,
+ 	Andreas Larsson <andreas@gaisler.com>,
+ Thomas Gleixner <tglx@linutronix.de>, 	Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, 	Andy Lutomirski <luto@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ 	Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ 	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Shuah Khan <shuah@kernel.org>, linux-arch@vger.kernel.org,
+ 	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org,
+ 	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ loongarch@lists.linux.dev, 	linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ 	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, 	linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC v2 0/4] mm: Introduce MAP_BELOW_HINT
+Message-ID: <pbotlphw77fkfacldtpxfjcs2w5nhb2uvxszv5rmlrhjm42akd@4pvcqb7ojq4v>
+References: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
+ <yu7um2tcxg2apoz372rmzpkrfgbb42ndvabvrsp4usb2e3bkrf@huaucjsp5vlj>
+ <Ztnp3OAIRz/daj7s@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,37 +145,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240909073141.951494-2-ruanjinjie@huawei.com>
+In-Reply-To: <Ztnp3OAIRz/daj7s@ghost>
 
-On Mon, Sep 09, 2024 at 03:31:39PM GMT, Jinjie Ruan wrote:
-> It's important to undo pm_runtime_use_autosuspend() with
-> pm_runtime_dont_use_autosuspend() at driver exit time unless driver
-> initially enabled pm_runtime with devm_pm_runtime_enable()
-> (which handles it for you).
-> 
-> Hence, switch to devm_pm_runtime_enable() to fix it, so the
-> pm_runtime_disable() in probe error path and remove function
-> can be removed.
-> 
-> Fixes: cfdab2cd85ec ("spi: spi-geni-qcom: Set an autosuspend delay of 250 ms")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-> v3:
-> - Fix it with devm_pm_runtime_enable() as Dmitry suggested.
-> - Adjust to be the first patch.
-> - Add suggested-by.
-> v2:
-> - Fix it directly instead of use devm_pm_runtime_enable().
-> ---
->  drivers/spi/spi-geni-qcom.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
-> 
+On Thu, Sep 05, 2024 at 10:26:52AM -0700, Charlie Jenkins wrote:
+> On Thu, Sep 05, 2024 at 09:47:47AM +0300, Kirill A. Shutemov wrote:
+> > On Thu, Aug 29, 2024 at 12:15:57AM -0700, Charlie Jenkins wrote:
+> > > Some applications rely on placing data in free bits addresses allocated
+> > > by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
+> > > address returned by mmap to be less than the 48-bit address space,
+> > > unless the hint address uses more than 47 bits (the 48th bit is reserved
+> > > for the kernel address space).
+> > > 
+> > > The riscv architecture needs a way to similarly restrict the virtual
+> > > address space. On the riscv port of OpenJDK an error is thrown if
+> > > attempted to run on the 57-bit address space, called sv57 [1].  golang
+> > > has a comment that sv57 support is not complete, but there are some
+> > > workarounds to get it to mostly work [2].
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+I also saw libmozjs crashing with 57-bit address space on x86.
 
+> > > These applications work on x86 because x86 does an implicit 47-bit
+> > > restriction of mmap() address that contain a hint address that is less
+> > > than 48 bits.
+> > > 
+> > > Instead of implicitly restricting the address space on riscv (or any
+> > > current/future architecture), a flag would allow users to opt-in to this
+> > > behavior rather than opt-out as is done on other architectures. This is
+> > > desirable because it is a small class of applications that do pointer
+> > > masking.
+
+You reiterate the argument about "small class of applications". But it
+makes no sense to me.
+
+With full address space by default, this small class of applications is
+going to *broken* unless they would handle RISC-V case specifically.
+
+On other hand, if you limit VA to 128TiB by default (like many
+architectures do[1]) everything would work without intervention.
+And if an app needs wider address space it would get it with hint opt-in,
+because it is required on x86-64 anyway. Again, no RISC-V-specific code.
+
+I see no upside with your approach. Just worse user experience.
+
+[1] See va_high_addr_switch test case in https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/testing/selftests/mm/Makefile#n115
 
 -- 
-With best wishes
-Dmitry
+  Kiryl Shutsemau / Kirill A. Shutemov
 
