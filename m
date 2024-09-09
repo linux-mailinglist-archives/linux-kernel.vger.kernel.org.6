@@ -1,154 +1,148 @@
-Return-Path: <linux-kernel+bounces-321776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CF84971F4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:33:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F51971F50
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 110CBB22ACB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:32:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D988A1F23B58
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946DE16EB7C;
-	Mon,  9 Sep 2024 16:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35357170A08;
+	Mon,  9 Sep 2024 16:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FskJ6rvq"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dvY0yz5K"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05EF11667F1
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3ECB165F01
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 16:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725899551; cv=none; b=iQHtThLklytegdoZ42WLByDucmkXzacb4GCFZc4AwCrtJaGBpIR53kHhiSeGFOFpUIgLugqFHJlonkuJjBIzE9Wip/1Q03pzgYL9I3Bjwf59UUJFLeU+a/regMhUng445GV185zdq2sxqVW5gDf36OguxXK2qlgwqQ4VUQSRBPY=
+	t=1725899551; cv=none; b=NJO/tdxyEJ41a+y4PGmww4RF0a0VlWlG73b+QzMwEVuWjZrzjOkhYkUv4Ld54I1002s3MvjJ6DSnGA6b9NdAXutuLjUR051T63yD66nJoyaj+D3q3sMXfGuTTIoO63MOKSzJO51tCSRGanhG6i7UGIijNcQxR4F05SIwMQTcmAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725899551; c=relaxed/simple;
-	bh=+jtKQ79qkwGmLZ8LQTtUxHvnXR3dvvYB7R64gvm9pY0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AEEv6+UO8Wk/uufhFjy869D0whRFIvTCajYWbhdrW9evikT0N9yEtb7o3nIf//4+NPOVShn6u2Sci4t7NdLWYfNI7+tEsiBRuVgAyO3JcUsvuxp9NxrmGYVXOIP1fZ0lza5ZUX5gLXsFBRIarMrqjT0odYxFOp7mwiCVCFzkEUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FskJ6rvq; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so39201955e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:32:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725899547; x=1726504347; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3hN1sbdsSr5xjIEEi3K2BOZrBarvDPImrotZrDBVesU=;
-        b=FskJ6rvqV30OtSq5ORuDrKCtWIsRsc0tXF7IEf2hODbR3mflHq2pG7cUyrPIosnYA8
-         2h7Ic1tgRdK+lMUaN6qcSPdM8xL5cnzzGf2nV2FIlKBXdsP6FMx116HOv+b4PYSaAcws
-         Ebvr31DGnXeKLnTolVvFqT/bUE8eCdRmvPO6PW/2VEPD/fS6QUfWaXS2s6LbHBBkTGiL
-         7XhgCyoC1B0oSFq9EWZsXrRR0cXL/c6Iu3YrUBaGdGTAKkWuGu7a9aptd4mWBPVXLW3Q
-         n0vv+EyMbMHdIXXdZgWH/p5JJwV0hsRY0DdnZJwQMkD4L7VXUOIiVxGprAYhrNekxjl1
-         PI/A==
+	bh=Xm3mo0q8uup1oigL/M/eB08VU97LgOZseSRdxRBdzAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGPIq+XOCtYGM+YVuRR0ij1qkIjXSyt0mxitMpCI4DTTLdyJGMeEeqv4DrcILXIu7K3xAlKTZk1TYzSmBYyzHuw/c7MSSXHqRyha4RF0ohviJ/vMAi1Dj2/41+bSgSF/VFeK269aYCerOJoHsUiRsWxhEdMchFRxILeVEb/L1c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dvY0yz5K; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725899548;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HkosBlh+p7Hi7+DVJzadHze29SO4xpYGYG+Iw55eNj4=;
+	b=dvY0yz5KYx7gS8L8PMSl2lIvE1H/XY/4cOXaub02EwJhKdp+bnJKmr3pfRzk41EapFDp4C
+	tj/eX0Ww61THn1gR+XKOq6HLYQwkL7Y+AiS6AhuWJzRmxC0+JUWvHcU6FcofvA/LvigZTr
+	l7l+jswYPZb7bJQyh6gBOz/VHfXo7Us=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-648-zPWBAM3ROGusB5IvMVbPqg-1; Mon, 09 Sep 2024 12:32:27 -0400
+X-MC-Unique: zPWBAM3ROGusB5IvMVbPqg-1
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4582a894843so21370251cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 09:32:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1725899547; x=1726504347;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3hN1sbdsSr5xjIEEi3K2BOZrBarvDPImrotZrDBVesU=;
-        b=nwSPcYsDsLanucLjibCA/o1naDD1bh9Z15YrI/e5A/84bxLlg6QtHdSjs3uIrvvp+F
-         +r6wPylh9BH9oz+TV0JI6+GzpNOGhECcvISshhod4pwUK1eKYGZaHdENOSqhHbjScUl0
-         78JBKJ3vfBZWp6Fl4Zb5FbhkaaPJdz/dG2fTE9o/cXM+8rhaOBSPNLXNN5uh/PEvc2Ja
-         XYJpyeTI0smDWebebbkXDh1ksGyHvXjA9p+ML0itygbhgl/X+uGLHNXrYzdjP7EbW/5H
-         +WJT/UayfihzSOGKr1NlBNc/8+FmcP7sgMQ030hblCGEifGdFNT8nVHxxZTNGvGBcGWY
-         65yw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcy2LZoxZ+2KHMXI/tinPyJUPsaIhDeQBKNrDAvZF+OarAR+m76nE6X+C/Kwo8L9T7iVUwcZO7nWscvoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHhrGWvTsD2IZqDU17JrW3DwyTupQIUO0Bx/qt8wU3mK+7juXd
-	77LzzShi+JsXkBcREL2DHIITeqDwxYbQOA88RIQ1TQAvZCtkZ8PQ/UQDoGdKu74=
-X-Google-Smtp-Source: AGHT+IGxjAbrDtFXLx+iO1e9KJ4se6OA7eld34L5kuJJJmD5mvX5+Dcs4EKLQGfBldRlsEeQGM6bsA==
-X-Received: by 2002:a05:600c:1e02:b0:42c:b949:328e with SMTP id 5b1f17b1804b1-42cb949341dmr21798805e9.31.1725899547259;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HkosBlh+p7Hi7+DVJzadHze29SO4xpYGYG+Iw55eNj4=;
+        b=OChO308H9ddYMeVEt/bc8R8UmReaxQ4BNZAnyDeTmnnTMVFqMu9icO36t2j0GxY5TU
+         jtcLhnvLYZX0CB3vWt5VDf1efcW/wGYLaAEc0j+rAEiERDNCYS93D5hUSIiECc8qkK9f
+         3Z+hlfwmjfYj/MP62wBEKYTlvGobaM/QgDo+s38cXQPpxNsOi+AKS6OSBXkfFU97mN9x
+         hIvgeBPb9LGFzH5nuZbq6jY3Y1QCegjf5uqjoBRlJ/cjEAyFfPE856XF+pVKat9FxGNi
+         fm7/ZH7aYSkhdn9kcAMa2LTjFNpImrzIJ+/8DuTo1sR6hZbT2RLOawLJiTHOdN3IYMJi
+         e0lw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwZX8OgBrs7rLDQPCKtourssgD1lE1T+bPzSr9L6EBq8G2R3cxTJM20UAxrt1MWsOU37AJo31hU8si9Rk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNqCNQfOMDzUfRQVMFEUzTXN2lZF5qujJ7tnhhOI0eMH6lzhlQ
+	WR4bRmA8ERSzacXBjBdmTigSDK+wvyntqQ9/j2SrVx9B42gJQAlqRzDmZlWVp5ngtQrsyB2Rx+g
+	L7APrftWdBEJ+jNK5gyoJSMEPnU3KcSYBQ6Pa1TLEOXjE9EA4fyZEh9Rhhhejqg==
+X-Received: by 2002:ac8:7fcd:0:b0:458:a70:d9c0 with SMTP id d75a77b69052e-4581f4757femr90602221cf.17.1725899547164;
         Mon, 09 Sep 2024 09:32:27 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a072sm6478606f8f.2.2024.09.09.09.32.26
+X-Google-Smtp-Source: AGHT+IGNoX4s/wbHFlzAI36PoDj2wwYYk4d9JXrMdHMyf4+QtcxFOeul3r+MGv/m1E+k6Qi7oR99VQ==
+X-Received: by 2002:ac8:7fcd:0:b0:458:a70:d9c0 with SMTP id d75a77b69052e-4581f4757femr90601891cf.17.1725899546651;
+        Mon, 09 Sep 2024 09:32:26 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::33])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-458320392cbsm9330711cf.61.2024.09.09.09.32.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 09:32:27 -0700 (PDT)
-From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
-To: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chen Ridong <chenridong@huawei.com>
-Subject: [PATCH 3/4] cgroup: Disallow mounting v1 hierarchies without controller implementation
-Date: Mon,  9 Sep 2024 18:32:22 +0200
-Message-ID: <20240909163223.3693529-4-mkoutny@suse.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240909163223.3693529-1-mkoutny@suse.com>
-References: <20240909163223.3693529-1-mkoutny@suse.com>
+        Mon, 09 Sep 2024 09:32:26 -0700 (PDT)
+Date: Mon, 9 Sep 2024 11:32:23 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Keerthy <j-keerthy@ti.com>, Neha Malcom Francis <n-francis@ti.com>, 
+	Eric Chanudet <echanude@redhat.com>, Enric Balletbo <eballetb@redhat.com>, 
+	Udit Kumar <u-kumar1@ti.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC/RFT 0/2] arm64: dts: ti: k3-j784s4: Mark tps659413
+ and children as bootph-all
+Message-ID: <xaxq6c6usxuudnw7ksgatjog76ezx3idbb5u7fcne7bobsd75x@ttlo2wx4rm5t>
+References: <20240906-j784s4-tps6594-bootph-v1-0-c5b58d43bf04@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906-j784s4-tps6594-bootph-v1-0-c5b58d43bf04@redhat.com>
 
-The configs that disable some v1 controllers would still allow mounting
-them but with no controller-specific files. (Making such hierarchies
-equivalent to named v1 hierarchies.) To achieve behavior consistent with
-actual out-compilation of a whole controller, the mounts should treat
-respective controllers as non-existent.
+On Fri, Sep 06, 2024 at 04:21:01PM GMT, Andrew Halaney wrote:
+> This series marks tps659413 and its children as bootph-all in order for
+> the nodes to be accessible during MCU's u-boot SPL.
+> 
+> This in turn is desired since the tps659413 needs its MCU ESM
+> state machine setup in order for the watchdog to reset the board.
+> 
+> This took me a little while to track down, as enabling the ESM, TPS6594,
+> etc in u-boot would result in the below boot failure:
+> 
+>     U-Boot SPL 2024.10-rc4-00007-g44b12cbcd1b3-dirty (Sep 06 2024 - 14:25:52 -0500)
+>     SYSFW ABI: 3.1 (firmware rev 0x0009 '9.2.4--v09.02.04 (Kool Koala)')
+>     Initialized 4 DRAM controllers
+>     SPL initial stack usage: 13408 bytes
+>     ### ERROR ### Please RESET the board ###
+> 
+> Which turns out to actually have failed far earlier in spl_early_init(),
+> due to these nodes not being accessible in u-boot. That's hard to tell
+> though since console isn't setup until later (and for that reason I
+> think spl_early_init()'s return value in j784s4_init.c isn't
+> evaluated since a panic() at that point would leave a user with *no*
+> information at all).
+> 
+> I've tested this in conjunction with a u-boot series which I'll link in
+> a follow-up response on the k3-j784s4-evm. I'd appreciate someone testing
+> on the k3-am69-sk at a minimum, as it should suffer the same fate if things
+> aren't setup appropriately.
+> 
+> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
 
-Wrap implementation into a helper function, leverage legacy_files to
-detect compiled out controllers. The effect is that mounts on v1 would
-fail and produce a message like:
-  [ 1543.999081] cgroup: Unknown subsys name 'memory'
+Better late than never...
 
-Signed-off-by: Michal Koutný <mkoutny@suse.com>
----
- kernel/cgroup/cgroup-v1.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+Link: https://lore.kernel.org/u-boot/20240906-j784s4-esm-enable-v1-0-b83b17d5a744@redhat.com/
 
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index b9dbf6bf2779d..784337694a4be 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -46,6 +46,12 @@ bool cgroup1_ssid_disabled(int ssid)
- 	return cgroup_no_v1_mask & (1 << ssid);
- }
- 
-+static bool cgroup1_subsys_absent(struct cgroup_subsys *ss)
-+{
-+	/* Check also dfl_cftypes for file-less controllers, i.e. perf_event */
-+	return ss->legacy_cftypes == NULL && ss->dfl_cftypes;
-+}
-+
- /**
-  * cgroup_attach_task_all - attach task 'tsk' to all cgroups of task 'from'
-  * @from: attach to all cgroups of a given task
-@@ -932,7 +938,8 @@ int cgroup1_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 		if (ret != -ENOPARAM)
- 			return ret;
- 		for_each_subsys(ss, i) {
--			if (strcmp(param->key, ss->legacy_name))
-+			if (strcmp(param->key, ss->legacy_name) ||
-+			    cgroup1_subsys_absent(ss))
- 				continue;
- 			if (!cgroup_ssid_enabled(i) || cgroup1_ssid_disabled(i))
- 				return invalfc(fc, "Disabled controller '%s'",
-@@ -1024,7 +1031,8 @@ static int check_cgroupfs_options(struct fs_context *fc)
- 	mask = ~((u16)1 << cpuset_cgrp_id);
- #endif
- 	for_each_subsys(ss, i)
--		if (cgroup_ssid_enabled(i) && !cgroup1_ssid_disabled(i))
-+		if (cgroup_ssid_enabled(i) && !cgroup1_ssid_disabled(i) &&
-+		    !cgroup1_subsys_absent(ss))
- 			enabled |= 1 << i;
- 
- 	ctx->subsys_mask &= enabled;
--- 
-2.46.0
+> ---
+> Andrew Halaney (2):
+>       arm64: dts: ti: k3-j784s4-evm: Mark tps659413 and children as bootph-all
+>       arm64: dts: ti: k3-am69-sk: Mark tps659413 and children as bootph-all
+> 
+>  arch/arm64/boot/dts/ti/k3-am69-sk.dts    | 11 +++++++++++
+>  arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 11 +++++++++++
+>  2 files changed, 22 insertions(+)
+> ---
+> base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
+> change-id: 20240906-j784s4-tps6594-bootph-19d3f00fb98a
+> 
+> Best regards,
+> -- 
+> Andrew Halaney <ahalaney@redhat.com>
+> 
 
 
