@@ -1,113 +1,133 @@
-Return-Path: <linux-kernel+bounces-320923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A3E897121C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:31:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135E4971224
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21D2D280478
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:31:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94C38B21A7B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 08:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4691B5EB9;
-	Mon,  9 Sep 2024 08:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HuGgmJsC"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762BA1B2507;
+	Mon,  9 Sep 2024 08:29:51 +0000 (UTC)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AE51B1511;
-	Mon,  9 Sep 2024 08:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F19172BCE;
+	Mon,  9 Sep 2024 08:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725870499; cv=none; b=TuGdtELYWLkazCRNseP8jepiWi4IBwsvE+SXKFi6LzetZSAky1TM62JtQajDgkVbmhcjd6fo5vk3Dpr+ywndi5FKlkfdWJE3FGxNdLju48UGuoZcE0JymKNByKBOzGDDFnFHbz5jSBXE2Ng8dKAyh/+QeRe21hXH8s6dJodKdug=
+	t=1725870591; cv=none; b=tujkwzs6IMpew1Dde7TjmqgnpH5orMcqL3UTaMZuASGu4J74LahzyKgty1+QzPBTjpANdMfpMVHWB6FE9rwp2nB+mk4+Rsuet0UU2gRE7Zxb048aGLM+Q8OKdvwCC9klLhMAy3oqNS1HHAHI2B6l33QQ7lCwtYzXZ2VfGaTvkQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725870499; c=relaxed/simple;
-	bh=clwgzdL+fgwp1BnPiBsjiGqHexHv1ZGDNYI/nwy7qKA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EmYNNcP5da9ZG8XDKRdPG5hTwk9lYGOFreFzrxDW+3riBTdDTCX60fQbbpcstTLwDWYIe2nrC/7drv8zuOuTngaRWDCxzM+PecaphMi0yXY9HKpBvK6BHE3UuSi5SWVQxDuoYFRLYmaDy5Q4gSUJQqsd3Otnr/gZTwGTnopf53w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HuGgmJsC; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1725870591; c=relaxed/simple;
+	bh=9iigcWNH9gaJKI9MZsjycWsvetp15GSPT7FV5IM/MZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hz0l5dQdx4Q4jT4+Y7wNpyKzscvd6zD8DzR86My432KxS6Hn3NMy0e4RZTYbEa8E9fuB6xEkf+xx5lkPMCsJlqWmHd5q2LEn2oqMTDRLghej5rdIOjdGuukyHVGSud1ZJgqdZjiWDnKrF/q78HFWojByxm2ZXpoyomiLKreZf9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c27067b81aso3931998a12.0;
-        Mon, 09 Sep 2024 01:28:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725870496; x=1726475296; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KNhuzaG9zf8RaDT5GzHcA32PByoi2WWlsSGIAPwEOPA=;
-        b=HuGgmJsCzFDs4C4aZhnGc6aAEo7mqgCFY9WzxGrGN0SoLf2GPKBPNgGyZZVvAAw+7x
-         sqiZ7YfHvJ0xmpPouwx6iC7lTVW25kfZ2jhmuNuqx3/l43vuxu5bBi/NCijgcOlL4DvG
-         Tg/rocYCHV83nt5fiqsfsTFKJGY68T6PSOlYkH/Q1r2H7c7ZheNKZgtzgFyMl854hj+s
-         R49UxBH/ThwMnPRKHR44bAtoEepDHmzdEhpXCwGJJme3QfVBU41xooSQip9nmtca8BsR
-         OxVuksU5lfq1KWYP+YBTdZyqihtCdCMB4dHvjyPVT1suXZ7BFhuvYmxpdMqltBKPvlXk
-         IXOw==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f75428b9f8so22621521fa.3;
+        Mon, 09 Sep 2024 01:29:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725870496; x=1726475296;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KNhuzaG9zf8RaDT5GzHcA32PByoi2WWlsSGIAPwEOPA=;
-        b=HhITm0LLm4Xr6X2p/D7+Q+7vrFJ4/dC9tZMMO3Y9m6DM99+XiOtfHarBsju31Nmbbz
-         gjif5qdAeMeXAnb05ugfSYqRHvlPfZ6y78snWJcSMy6xVLPZDZEwocOXRI/0XlCsztAv
-         kkAlhFksmIlTA+HFNe+D1JVYP/26zdkMjobrP2n9+O20c4h4kUf95bq7Dls9v1jOO9Nn
-         ZcaVdBD3rrDYJ24fsn7GWx7yL05evLGGuhzpsz41QtsZZfq29LHV5wF0wg4p8QmIZwDf
-         4ybXmDMu+sWPn4gCkxpZNCI0XDw+BtlB+MzXLqj53BkZ6umqc7TSj+qfirQGc2z+veBi
-         xEkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyN9hqeoW2fF3oHGLw0j3PMIe38HHtJK6IUrznLmKDn7Q4QMGHbBA+JnwxG3opMVybwDXBfo7nFYYjYdI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJAbSsDd6R3eRdZ9LAescIwvOOZn2A8l4dNaU8fXL40lg9R80n
-	zpyZuf6cSBtGlDhS3t+cVZ0J9klfw5hNO9YplMKXb0+Oqq/ixgy9osaXypEcENbIF3EKJPXlfzm
-	cYRaXwDI1GjYFUxV93/Kh/3UCCbBokA==
-X-Google-Smtp-Source: AGHT+IGaxuSPCI0CCYHDH5NVtvvHr2hIZIDbl1qndCFgPccZA6p6+pxsIsCegfFklw96eEx6CcdcUNs6g1e9sinAiG0=
-X-Received: by 2002:a17:907:1c1b:b0:a8d:1970:db07 with SMTP id
- a640c23a62f3a-a8d248a610dmr368489366b.52.1725870496304; Mon, 09 Sep 2024
- 01:28:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725870587; x=1726475387;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=stcyakZ4StpZ9LKESQVGGE1UUqCBnyk68kBRqrRncz0=;
+        b=E76vGke4w3NnX72zW8zGDBOAMXMcA6hz6U6wuKQx+Rt8xdPZ/U+QLVAFGvVMTdohfC
+         nUgdFoTczdz5pAIXU6kuFrDHzyUULMb6J7AFW+helB5gq5J8+tHofOCThzAKqDYNiPPl
+         Iq9XvD4sUuFdVGPu7IqxazJh8xXipWrefP3rW8xZEUFrh07Bd4w0meSqEBaGSOf8bB02
+         CfYaWdkXBFjYkOxk5eRgeH5GX8f489hH2PoZ6naw6I/HJu9CEnBMHCV/7ux0xDW/SBQA
+         sHrlYB2ClvLx5/8rb8UGp2XyygyRbN2XPbXT3C3BsTCSJtOTo+vKcpor0PAgvt6e7zuX
+         vpYw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7l+bCToBOSLMqN9uEeCMNRy+DdUrs4o2s1A8Ona2ZbvdUNumhWBylMh6A4+L4r8/Nui0qWj9T@vger.kernel.org, AJvYcCVmJYuJh3RO7CmfgtpPYS6eLhwh+XBZZyglNYt7r3hUKgzvSApbFRMn2wLLurtIer7PC+wb7D+QEy0QyKzfmggt@vger.kernel.org, AJvYcCVyn036F6Fw5EARw2leCrOyC4ZXV5dZkByt4hEZgXUGJE+F4DxUAhjc/PH4tQQAM2c9n3TFLU04GFLVBdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA6mIkrIT+ZKXGiRnl90HCPGdgFCEzYCZcj5OltncDuqpRfBxH
+	4EuRXZRaR0QjNnlOgl0zx20WtN/gbQ4e3KoT59f3AYM+gBSOwoBB
+X-Google-Smtp-Source: AGHT+IErn9w1GAPNrCT3D/10AYzxY/ljH5DGqmwTeoTRx5ggId14vjDT68YpOY6LfNTH7pX7Uv+GVQ==
+X-Received: by 2002:a05:651c:2126:b0:2f3:e2fd:aae0 with SMTP id 38308e7fff4ca-2f75a96ea93mr65251031fa.6.1725870586452;
+        Mon, 09 Sep 2024 01:29:46 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-113.fbsv.net. [2a03:2880:30ff:71::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ce96d9sm304750066b.157.2024.09.09.01.29.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 01:29:45 -0700 (PDT)
+Date: Mon, 9 Sep 2024 01:29:43 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, Jozsef Kadlecsik <kadlec@netfilter.org>,
+	David Ahern <dsahern@kernel.org>, rbc@meta.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	"open list:NETFILTER" <coreteam@netfilter.org>
+Subject: Re: [PATCH nf-next v4 1/2] netfilter: Make IP6_NF_IPTABLES_LEGACY
+ selectable
+Message-ID: <20240909-aloof-magnetic-bear-ecd5af@devvm32600>
+References: <20240829161656.832208-1-leitao@debian.org>
+ <20240829161656.832208-2-leitao@debian.org>
+ <Zto4WmXldf6KzeQO@calendula>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4d7tq6a7febsoru3wjium4ekttuw2ouocv6jstdkthnacmzr6x@f2zfbe5hs7h5>
-In-Reply-To: <4d7tq6a7febsoru3wjium4ekttuw2ouocv6jstdkthnacmzr6x@f2zfbe5hs7h5>
-From: Stefan Puiu <stefan.puiu@gmail.com>
-Date: Mon, 9 Sep 2024 11:28:04 +0300
-Message-ID: <CACKs7VB_GEt_u463R4JvWveghBBscQeqaWtKrMmxNSQ2mn+-VA@mail.gmail.com>
-Subject: Re: Linux man-pages project maintenance
-To: Alejandro Colomar <alx@kernel.org>
-Cc: linux-man@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	libc-alpha@sourceware.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zto4WmXldf6KzeQO@calendula>
 
-Hi Alex,
+Hello Pablom
 
-On Fri, Sep 6, 2024 at 4:06=E2=80=AFPM Alejandro Colomar <alx@kernel.org> w=
-rote:
->
-> Hi all,
->
-> As you know, I've been maintaining the Linux man-pages project for the
-> last 4 years as a voluntary.  I've been doing it in my free time, and no
-> company has sponsored that work at all.  At the moment, I cannot sustain
-> this work economically any more, and will temporarily and indefinitely
-> stop working on this project.  If any company has interests in the
-> future of the project, I'd welcome an offer to sponsor my work here; if
-> so, please let me know.
+On Fri, Sep 06, 2024 at 01:01:46AM +0200, Pablo Neira Ayuso wrote:
+> On Thu, Aug 29, 2024 at 09:16:54AM -0700, Breno Leitao wrote:
+> > This option makes IP6_NF_IPTABLES_LEGACY user selectable, giving
+> > users the option to configure iptables without enabling any other
+> > config.
+> 
+> IUC this is to allow to compile iptables core built-in while allowing
+> extensions to be compiled as module? What is exactly the combination
+> you are trying to achieve which is not possible with the current
+> toggle?
 
-Thanks for all the work you put in. It's true, oftentimes in the Linux
-world documentation does not get the attention it deserves, so kudos
-to you (and Michael before you) for taking up this underappreciated
-task!
+Correct. iptable core is built-in, and any extension is a module.
 
-Stefan.
+> Florian's motivation to add this knob is to allow to compile kernels
+> without iptables-legacy support.
 
->
-> Have a lovely day!
-> Alex
->
-> --
-> <https://www.alejandro-colomar.es/>
+Correct, and this continue to be an option. This change only introduces
+you the option to set the core as built-in or module, independent of the
+extensions.
+
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > ---
+> >  net/ipv6/netfilter/Kconfig | 8 +++++++-
+> >  1 file changed, 7 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/net/ipv6/netfilter/Kconfig b/net/ipv6/netfilter/Kconfig
+> > index f3c8e2d918e1..cbe88cc5b897 100644
+> > --- a/net/ipv6/netfilter/Kconfig
+> > +++ b/net/ipv6/netfilter/Kconfig
+> > @@ -8,7 +8,13 @@ menu "IPv6: Netfilter Configuration"
+> >  
+> >  # old sockopt interface and eval loop
+> >  config IP6_NF_IPTABLES_LEGACY
+> > -	tristate
+> > +	tristate "Legacy IP6 tables support"
+> > +	depends on INET && IPV6
+> > +	select NETFILTER_XTABLES
+> > +	default n
+> > +	help
+> > +	  ip6tables is a general, extensible packet identification legacy framework.
+> 
+> "packet classification" is generally the more appropriate and widely
+> used term for firewalls.
+> 
+> Maybe simply reword this description to ...
+> 
+> 	  ip6tables is a legacy packet classification.
+
+Sure, I will send an updated version with this change.
+
+Thanks!
 
