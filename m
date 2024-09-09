@@ -1,135 +1,122 @@
-Return-Path: <linux-kernel+bounces-322052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC085972364
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:15:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30199972366
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F26F2855E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:15:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7721F237B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 20:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1562A189F3F;
-	Mon,  9 Sep 2024 20:14:57 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E92189F58;
+	Mon,  9 Sep 2024 20:15:09 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38C6189916
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 20:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B170D152790
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 20:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725912896; cv=none; b=CRQNRmMC23rR6Aw8rm2OAy6poufAUhAndvPPALMPQzUV9Eu3n3gJy4ac0NGMvHOmZyWmgEd0jNNOkRJUBdgILDUMT6pnLurzwiAyrPrNl8mv3rZVAsQ4zFPgINa7vpThSf6T3qOjahn1ZOmsmmEBl1J8wOkW8wQPITSV7yxhsAQ=
+	t=1725912908; cv=none; b=D6XRDhOqJ095byc9w2k1Az42XLXFygkBk9StoVfjnleBmRLV52rjqvRzVCpTDMYKzoEni1h49RCs/gL7eZ7Ne0xMWPIBjXz0SMSUx0otKDJiURiGedVaEl8gyYaw/5Iryh/aqYESJqBe8Pg+Ca0PWf6gNu4oDPpdyuGt4BduCXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725912896; c=relaxed/simple;
-	bh=U9p4r+E9whe3uv37tWAXHD47v4tpNEZt0s8BgBbUemU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FTTYXOcJC9mzru7HxPX5xUelz5DHxa/Mri+wRBkKKQP5cf6uErJJgB6Ux6VH3hanbN5KjPOpDEd3oYY0gm653cx4uPJ2ZFkkhdY7dVCaSp/MFTB6O1+H6AtqZuDwftT3D98q735wa8P2kS/pD1jAN7/wSGEhGfQtvLX/mWjZGsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AF04C4CEC5;
-	Mon,  9 Sep 2024 20:14:55 +0000 (UTC)
-Date: Mon, 9 Sep 2024 16:14:54 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [GIT PULL] tracing: A couple of fixes for 6.11
-Message-ID: <20240909161454.1d79e239@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725912908; c=relaxed/simple;
+	bh=w1ZHnNttzigHIHgU3HoX7VsXdlnd/+MdjNaNiG/viAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dX4gY7RB21y5RpNOaKegOwqAFnwzbKfKJrVnaqEwzsbgEIJQAbsaU+k+8iDmP/+x3J0DNOZiwucrgTeMwc0tHvnMuTgo+umx+cX6J1ApKMKg7yuAsEAMAC3n78cYPfdiWQ/hqEGgSkOtJ/WsUkx84ZDWlzI/MQQ//62CLYGlP+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1snkmn-0004zD-Jb; Mon, 09 Sep 2024 22:14:57 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1snkmm-006jWb-RV; Mon, 09 Sep 2024 22:14:56 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1snkmm-00Fo7L-2Q;
+	Mon, 09 Sep 2024 22:14:56 +0200
+Date: Mon, 9 Sep 2024 22:14:56 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/12] wifi: mwifiex: drop asynchronous init waiting code
+Message-ID: <Zt9XQNnrdgwly0yO@pengutronix.de>
+References: <20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de>
+ <20240826-mwifiex-cleanup-1-v1-12-56e6f8e056ec@pengutronix.de>
+ <Zt8s4xEun6VL-pHW@gaggiata.pivistrello.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt8s4xEun6VL-pHW@gaggiata.pivistrello.it>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+On Mon, Sep 09, 2024 at 07:14:11PM +0200, Francesco Dolcini wrote:
+> On Mon, Aug 26, 2024 at 01:01:33PM +0200, Sascha Hauer wrote:
+> > Historically all commands sent to the mwifiex driver have been
+> > asynchronous. For this reason there is code that waits for the
+> > last initialization command to complete before going on. Nowadays the
+> > commands can be sent synchronously, meaning that they are completed
+> > when the command call returns. This makes all the waiting code
+> > unnecessary. It is removed in this patch.
+> 
+> I am not sure to understand this. Is the code to have asynchronous command gone
+> or it is just not used anymore? In the code here you remove waiting for the
+> firmware init to be complete, but from the patch is not clear why this is not
+> needed anymore.  Maybe a specific commit you can reference in which such
+> support was removed?
 
-Linus,
+Commands can still be sent asynchronously by passing sync=false to
+mwifiex_send_cmd(), but this is no longer done in the initialization
+phase as of:
 
-More tracing fixes for 6.11:
+| commit 7bff9c974e1a70819c30c37d8ec0d84d456f8237
+| Author: Stone Piao <piaoyun@marvell.com>
+| Date:   Tue Sep 25 20:23:39 2012 -0700
+| 
+|     mwifiex: send firmware initialization commands synchronously
+| 
+|     The driver will send some commands to firmware during the
+|     initialization. Currently these commands are sent asynchronously,
+|     which means that we firstly insert all of them to a pre-allocated
+|     command queue, and then start to process them one by one. The
+|     command queue will soon be exhausted if we keep adding new
+|     initialization commands.
+| 
+|     This issue can be resolved by sending initialization commands
+|     synchronously because each command is consumed and the buffer is
+|     recycled before queuing next command.
+| 
+|     Signed-off-by: Stone Piao <piaoyun@marvell.com>
+|     Signed-off-by: Bing Zhao <bzhao@marvell.com>
+|     Signed-off-by: John W. Linville <linville@tuxdriver.com>
 
-- Move declaration of interface_lock outside of CONFIG_TIMERLAT_TRACER
+I'll mention this commit in the commit message next round.
 
-  The fix to some locking races moved the declaration of the
-  interface_lock up in the file, but also moved it into the
-  CONFIG_TIMERLAT_TRACER #ifdef block, breaking the build when
-  that wasn't set. Move it further up and out of that #ifdef block.
+Sascha
 
-- Remove unused function run_tracer_selftest() stub
-
-  When CONFIG_FTRACE_STARTUP_TEST is not set the stub function
-  run_tracer_selftest() is not used and clang is warning about it.
-  Remove the function stub as it is not needed.
-
-Note, I updated my test suite to test the case of OSNOISE tracer enabled
-when the TIMERLAT tracer is not to catch the case that the one config not
-enabled will not break the build again.
-
-
-Please pull the latest trace-v6.11-rc6 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-v6.11-rc6
-
-Tag SHA1: 0dc65da7e7ed16903411c35ccea3a00ffb3f9fac
-Head SHA1: 4e378158e5c15bd237a6ff44b7abb9184d61208c
-
-
-Andy Shevchenko (1):
-      tracing: Drop unused helper function to fix the build
-
-Steven Rostedt (1):
-      tracing/osnoise: Fix build when timerlat is not enabled
-
-----
- kernel/trace/trace.c         |  4 ----
- kernel/trace/trace_osnoise.c | 10 +++++-----
- 2 files changed, 5 insertions(+), 9 deletions(-)
----------------------------
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index edf6bc817aa1..c3b2c7dfadef 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2226,10 +2226,6 @@ static __init int init_trace_selftests(void)
- }
- core_initcall(init_trace_selftests);
- #else
--static inline int run_tracer_selftest(struct tracer *type)
--{
--	return 0;
--}
- static inline int do_run_tracer_selftest(struct tracer *type)
- {
- 	return 0;
-diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
-index bbe47781617e..7e75c1214b36 100644
---- a/kernel/trace/trace_osnoise.c
-+++ b/kernel/trace/trace_osnoise.c
-@@ -228,6 +228,11 @@ static inline struct osnoise_variables *this_cpu_osn_var(void)
- 	return this_cpu_ptr(&per_cpu_osnoise_var);
- }
- 
-+/*
-+ * Protect the interface.
-+ */
-+static struct mutex interface_lock;
-+
- #ifdef CONFIG_TIMERLAT_TRACER
- /*
-  * Runtime information for the timer mode.
-@@ -252,11 +257,6 @@ static inline struct timerlat_variables *this_cpu_tmr_var(void)
- 	return this_cpu_ptr(&per_cpu_timerlat_var);
- }
- 
--/*
-- * Protect the interface.
-- */
--static struct mutex interface_lock;
--
- /*
-  * tlat_var_reset - Reset the values of the given timerlat_variables
-  */
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
