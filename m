@@ -1,57 +1,65 @@
-Return-Path: <linux-kernel+bounces-321403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 508DC971A0D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:54:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41505971A11
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 14:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8961B2441C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:54:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0025028678D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A976E1B86DB;
-	Mon,  9 Sep 2024 12:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2BF1BA26A;
+	Mon,  9 Sep 2024 12:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ROJBAAHn"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="eACSEQnT"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1A81B4C4F;
-	Mon,  9 Sep 2024 12:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22141B9B24;
+	Mon,  9 Sep 2024 12:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725886471; cv=none; b=bjFYKBkK3QpmjYV/rgq/2vSQsvomwyuot7hoh30xb59vOd3ZLyR+TRfv9WghIXZ90Nm/8mxptqsUQvD+dPe6GxpiwO7jaod8gGPTb8zEjRlEgQfnX0gnJFlKnWnzy/JUEPH03tKkaN482pHX6/XAwhQXWJr67ZeKL36YmLrfdWQ=
+	t=1725886477; cv=none; b=rpo2p9pOXAT+6H31X0yP/omogk3YaviPywR0BUWgAVGU2S2vlmIq0fzALUIc6Itl+RKl4snJboJiRl0hhuTSNCbg634BVWP7rZ4v0aXypSy+YvsqsCWpxI/EIrcd5E4S8ail51nMhV1gotIqtOLFKp3Yqw+jnj90/fbABme8II4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725886471; c=relaxed/simple;
-	bh=CU5Gijyy9SeMr8QbvquxivfFb2hzLLScCNZeZXgXiPQ=;
+	s=arc-20240116; t=1725886477; c=relaxed/simple;
+	bh=9w0sSJFSbDZblgKV2bqF1IwJcU9aE1btO0FgCad6Mc4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S8AnXbf0R8sF7WBzrvSnECSi/jFHZ8h+5tBj6SHx//ywemhgbBIVmiWeFV7A3yeS92NylV7mXru/wZ6cZog6+eNKrbry1y58rmnL4EwYjVkJdgNNlmhOKBvbtVwk0D4yyxf4li3856sPCuE0TL5LtvCdTPM4LS7J5pMr/0NPh40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ROJBAAHn; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=PKyLSZDe8JiVc1Q0LEh+EYs5+ax6iv61GuSgcN9/Iak=; b=ROJBAAHnhi1iHmJStmbGtAJGIm
-	iALpL9t6gsDGqBYFceoDSxJA9nKMX/mkmzw3IgwKo8z3Pith1S9BrviEE0tyj/rz7RG7P7TIS0FTP
-	TFRYKHr7wfenpcmS918anCU/XoeIM4NkFT0wbSHg24a2AYVGoDdhDaAi3hVpaHOYBzw8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1snduJ-0070NI-DJ; Mon, 09 Sep 2024 14:54:15 +0200
-Date: Mon, 9 Sep 2024 14:54:15 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: vz@mleia.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, alexandre.belloni@bootlin.com,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: nxp: Fix a possible memory leak in
- lpc_mii_probe()
-Message-ID: <0a53ab3c-2643-419d-9b5d-71561c3b50b9@lunn.ch>
-References: <20240909092948.1118381-1-ruanjinjie@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gG0xfCaknYA5su258R5rRC8IuCYLoLB+KiHf91kZdvsY8ydXnrTae1W81+Og+ct1VJvPQcJEooSscIRNiTV5LSoAffnm2lTEwMlzlCzOaue4NxV7W5qQGxzSL5NhykzZnSdj+YtPGW0eDYmBYZO7vuLo0eRfR7MrZAIC1X1kavM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=eACSEQnT; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 213641FCD1;
+	Mon,  9 Sep 2024 14:54:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1725886464;
+	bh=N+n+sNoWLrte5yaPsNU7QlZO/lCcS8hz3s32YZuFi0U=; h=From:To:Subject;
+	b=eACSEQnTt45lSSQdZN0JawLzeNSnTQkZKSICFVuzeO6IvA9l4wuG12yQlgINGcKyS
+	 2VavSq7wIprqvAsg46uvSbdRHliwhik0WYPhXCPPHz9TYOPK4fak+JU0C2AtoaBfL/
+	 kcQsJMm4u9PQ4CHtGLpThdg8vw4CXAN2oemXuMfqn1/Z+jB3xBE/aaacwx/990zUz1
+	 7ViGthwWIbjE9cQkA9ZA3rPQXOKEktSria73wfaNDTZNN8uImKhRWwqaz8n+cmlCVG
+	 C6M1YDsJ6AkRxTdqXsBTb7pwkw7zE0wdd4a/aus7ieP92Zh52aA9xb2wJF1jbBPVIL
+	 9ywlFJHZAjNnQ==
+Date: Mon, 9 Sep 2024 14:54:19 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Hiago De Franco <hiagofranco@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hiago De Franco <hiago.franco@toradex.com>
+Subject: Re: [PATCH 1/3] ARM: dts: imx6qdl-apalis: Update audio card name
+Message-ID: <20240909125419.GA33114@francesco-nb>
+References: <20240909114902.82380-1-hiagofranco@gmail.com>
+ <20240909114902.82380-2-hiagofranco@gmail.com>
+ <25873dfa-fe70-4ef6-b840-795faaec1f07@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,70 +68,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240909092948.1118381-1-ruanjinjie@huawei.com>
+In-Reply-To: <25873dfa-fe70-4ef6-b840-795faaec1f07@kernel.org>
 
-On Mon, Sep 09, 2024 at 05:29:48PM +0800, Jinjie Ruan wrote:
-> of_phy_find_device() calls bus_find_device(), which calls get_device()
-> on the returned struct device * to increment the refcount. The current
-> implementation does not decrement the refcount, which causes memory leak.
+Hello Krzysztof,
+thanks for the review/feedback.
+
+On Mon, Sep 09, 2024 at 02:09:11PM +0200, Krzysztof Kozlowski wrote:
+> On 09/09/2024 13:49, Hiago De Franco wrote:
+> > diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi
+> > index edf55760a5c1..1c72da417011 100644
+> > --- a/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi
+> > +++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi
+> > @@ -191,7 +191,7 @@ sound {
+> >  			"MIC_IN", "Mic Jack",
+> >  			"Mic Jack", "Mic Bias",
+> >  			"Headphone Jack", "HP_OUT";
+> > -		model = "imx6q-apalis-sgtl5000";
+> > +		model = "apalis-imx6";
 > 
-> So add the missing phy_device_free() call to decrement the
-> refcount via put_device() to balance the refcount.
+> Doesn't this break all the users? E.g. ALSA UCM and whatever
+> user-space-parsing stuff you have?
 
-Why is a device reference counted?
+I am not sure about "all" users, but for sure it's a breaking change.
+There is no ALSA UCM for this board (and also not for the other twos in
+this series), we just worked on it and we thought that if we want to do
+such a change the moment is now.
 
-To stop is disappearing.
+What should we do?
 
-> @@ -768,6 +768,9 @@ static int lpc_mii_probe(struct net_device *ndev)
->  		return -ENODEV;
->  	}
->  
-> +	if (pldat->phy_node)
-> +		phy_device_free(phydev);
-> +
->  	phydev = phy_connect(ndev, phydev_name(phydev),
->  			     &lpc_handle_link_change,
->  			     lpc_phy_interface_mode(&pldat->pdev->dev));
+Francesco
 
-Think about this code. We use of_phy_find_device to get the device,
-taking a reference on it. While we hold that reference, we know it
-cannot disappear and we passed it to phy_connect(), passing it into
-the phylib layer. Deep down, phy_attach_direct() is called which does
-a get_device() taking a reference on the device. That is the phylib
-layer saying it is using it, it does not want it to disappear.
 
-Now think about your change. As soon as you new phy_device_free() is
-called, the device can disappear. phylib is then going to use
-something which has gone. Bad things will happen.
 
-So with changes like this, you need to think about lifetimes of things
-being protected by a reference count. When has lpc_mii_probe(), or the
-lpc driver as a whole finished with phydev? There are two obvious
-alternatives i can think of.
-
-1) It wants to keep hold of the reference until the driver remove() is
-called, so you should be releasing the reference in
-lpc_eth_drv_remove().
-
-2) Once the phydev is passed to the phylib layer for it to manage,
-this driver does not need to care about it any more. So it just needs
-to hold the reference until after phy_connect() returns.
-
-Memory leaks are an annoyance, but generally have little effect,
-especially in probe/remove code which gets called once. Accessing
-something which has gone is going to cause an Opps.
-
-So, you need to think about the lifetime of objects you are
-manipulating the reference counts on. You want to state in the commit
-message your understanding of these lifetimes so the reviewer can
-sanity check them.
-
-FYI: Ignore anything you have learned while fixing device tree
-reference counting bugs. Lifetimes of OF objects is probably very
-broken.
-
-	Andrew
-
----
-pw-bot: cr
 
