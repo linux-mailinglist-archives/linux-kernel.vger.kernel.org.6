@@ -1,254 +1,122 @@
-Return-Path: <linux-kernel+bounces-321222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C99971617
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:03:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEE1097161B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 13:03:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C668B1F26EC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:03:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 158FE1C21DA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B241B9B31;
-	Mon,  9 Sep 2024 11:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A341B5ECD;
+	Mon,  9 Sep 2024 11:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BcmlnMr9"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dm2JnQHZ"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F0B1B86DC;
-	Mon,  9 Sep 2024 11:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4351B5EC4;
+	Mon,  9 Sep 2024 11:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725879667; cv=none; b=dwPhPKcn1D6ixBW0+8w3KcIEsVFbHIQJAP5Map/Eoq1n+/yoiFQFOwjZmRdmLcsZUq9UuKv6MXoOdgiRjDwJk/sEN2RXSwSaIsnH/eJlUbPsXl64cgX310IPNkAS6cNkJ80riTOXR+fyol62412UPzrLE3R2+z+ZXcQvbCEmuOc=
+	t=1725879704; cv=none; b=CRRZ/+/ct6/at/zNUo89HsbUdbsEvfMyHWAto9KPsdtp7a4KMYSdrx68NqnB3G9GZuekeDfkVrdQ0kiZhoPk5FrKgv32jPtGJsL1SnJrLUwFi2rUa9dDQmTGS8OupI4NrgtUueRohO77JAzloB98NM9A1qkgUBiBDACfl+GYPDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725879667; c=relaxed/simple;
-	bh=Z7xGCT06OCZ/m+rGKk5QoYgmcvYZaPJ7LbrMKN+waiw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GZSLlo3IixqWQtHw5Odpo4VE6UbBiUDgAQqkQw0ozlGnSwpNHvJqvGjAfVfYRHt+rc/YNcexg07wbiwygFfnl0bs3XCyrHCRAkp+N+Y7grnNhN5pZxWUv7Ph0jv+OTgYaf2aVRlMjbCVbLOkoDiJ2kS7x9VR/EtLWl4pWH/QJWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BcmlnMr9; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so536480766b.1;
-        Mon, 09 Sep 2024 04:01:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725879664; x=1726484464; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oOIysbZqVm4Kknw5BnD1Y7WRyTq4GEatzBCOcYtP3fM=;
-        b=BcmlnMr9WppSUWmlrsf28k4azbDyCtkAf4WCvOlsNh3+Ukg+LRTfzmLw5M3TkNqGWP
-         i8NmPdMqybDvpQgJo86DIeC4kLy9+82nVJ+6PBqL3kIaev+Lq1w5fEMhU8iL1C8JsFyE
-         qQcaJ74ubHzvRGZHSuhpjB9uu5gnlxG+vikr/sesI1h2D74c67xdAx7Rg7hnC0sPHlkZ
-         IVQgiwjIVM3LMEbBzkW759mbd+r0ZaVasRC41UiASFh0bqlvQuz7dhWiaiknBroUUCk3
-         pcJPFsxipgJIPvkXwH8rO+IR0AMOLlkCmj8yPFlI36A36EE2QtvCPi+zSj5yZLOeFen0
-         jUHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725879664; x=1726484464;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oOIysbZqVm4Kknw5BnD1Y7WRyTq4GEatzBCOcYtP3fM=;
-        b=J6nYDMb+X1Up4kOZDgOfEo1P8xfghQZ4CZlW6KR6wrdt8j/IasRhVpn/JYIzB2Ekai
-         EPWILkaCd0SJF0Lyto2y025abBe85dtPdjmdFWGO5ySwjKS61KzWKaXb/hQCGxu0GwMW
-         1hMU0hEfbtt2WeMW7riT5YXNdqfcvsRKGU9H3Gr6oXu/zQJwvCcpvhEoZcsFGtBfESHb
-         prwRK9AGmAe2xjeGcAQ2hjQyG1XzIgdck8vzcMmAPuNtmHYFTLiEYj++JFx77wBhS5Ih
-         pLHjQAT6Us2flDxyhEW+b2PW2X01pZg3QunzxJa3OSwcrSwh9kdGvcw6pUnchoYwuvpA
-         eZOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOdNCLJDBFwcWxt/nDoayyh2fNLH5PpQ8eXDXkw0DLTvqajGHJ8edfgQT+0gQOyGmHa+W5O7R4NWQxrw==@vger.kernel.org, AJvYcCVr87sfHoN4SiuoNWgg8PfAEikvT6Fxs2ca8JXsgU29zYBiSE6gPT77G4q28ldPEPIok+duWoT66yrvHWYf@vger.kernel.org, AJvYcCXxTeqiiWFozziIpBUJ/sOY+vMA53zdDbtcPgmL0LbzFumf89VvZt9Po7U/Bo6L/lEedMpGVWXSxXee@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMUlWqU7gV++lJuLCcfWoHmFrEE+ap2toPDm7eG4vYgZhjv0/0
-	iSjjDzlQSBD2EVSFSeKVWuT30hc8YRheskqHI+7mxaLXQtQgZHuK
-X-Google-Smtp-Source: AGHT+IERiUM6or4Hqjr/zTyzV0Z99LS3XXqRaeX2fjq5xdwd6VWNywvTTOo39tbB/wWK72tlTayvhg==
-X-Received: by 2002:a17:907:72c4:b0:a8d:2c00:949a with SMTP id a640c23a62f3a-a8d2c009911mr446146166b.9.1725879664492;
-        Mon, 09 Sep 2024 04:01:04 -0700 (PDT)
-Received: from ivaylo-desktop.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d5dc74sm322649666b.208.2024.09.09.04.01.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 04:01:03 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 10/10] arm64: dts: exynos: Add initial support for Samsung Galaxy S8
-Date: Mon,  9 Sep 2024 14:00:17 +0300
-Message-Id: <20240909110017.419960-11-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240909110017.419960-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20240909110017.419960-1-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1725879704; c=relaxed/simple;
+	bh=NBfetU1tuPGF40NFwCRfjXTAnVcsd+jrqT6DGlVV8zY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SuNQp3p4qbQa22/LBFIi7B7N70wM1GJt9oIoS+NSv3PnHKJqyuycJrTbCZGLpzqu0zaJWKvo/wQjlZ3jMyK9C4QJa3dvUf7n3a1V63pHZ6jTX4DleDf88tTIH31DpH1YVkLHZZia2PODasGUIX2AwH7fFrvKE+WIeGFp3xObv1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dm2JnQHZ; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725879702; x=1757415702;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NBfetU1tuPGF40NFwCRfjXTAnVcsd+jrqT6DGlVV8zY=;
+  b=dm2JnQHZmRyewanb4rOQQVLEMfxz/oRPuZ6IbQ3g9vLiDE+okHb8zLDI
+   XYCFjMryHobWHHl/hnAOOVbdxgLz1w+l9q87ofSgzvS9+cyr646RAa4bT
+   f4vcldDNeHAWU0Dr1y5+nX9KRfMTY/Az0FXW8ooDnpOIE0UiTwdzRaCjq
+   WkJP6Fs0VgXrX+STAB8RZJp883DrqlbHnIJWBbHAS7HbdzzCc8FVYxG3+
+   9tfiE1RYKuDYkSLERerQslnnM/56RLT32fG6+cDMUNFkddalaxiBL2iM4
+   KWTpODlba41tzRMhCjchQrMBcLn2gxzbmPz8aerHitZZGjOs3CEibOhdc
+   Q==;
+X-CSE-ConnectionGUID: qk8WIiT/Qs+26UX25OgPcA==
+X-CSE-MsgGUID: UxG/giFbSdKmvRiPoMmIeA==
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="asc'?scan'208";a="31414583"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 04:01:41 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 9 Sep 2024 04:01:28 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Mon, 9 Sep 2024 04:01:26 -0700
+Date: Mon, 9 Sep 2024 12:00:53 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Conor Dooley <conor@kernel.org>, <devicetree@vger.kernel.org>,
+	<cyril.jean@microchip.com>, <valentina.fernandezalanis@microchip.com>,
+	<nitin.deshpande@microchip.com>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [RFC v1] dt-bindings: add IP versioning document for Microchip
+ FPGAs
+Message-ID: <20240909-smock-displease-75d3fc0ff5da@wendy>
+References: <20240830-culinary-cautious-2c2c19902dcb@spud>
+ <4lsua4cxpxlla4i5rn7zmw3tvkbxz664a7as6jqy6qceljlj4x@ssev4fvuqz36>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="W2pgH3A4lbTX5fCP"
+Content-Disposition: inline
+In-Reply-To: <4lsua4cxpxlla4i5rn7zmw3tvkbxz664a7as6jqy6qceljlj4x@ssev4fvuqz36>
 
-Samsung Galaxy S8 (SM-G950F), codenamed dreamlte, is a mobile phone
-from 2017. It features 4GB RAM, 64GB UFS 2.1, Exynos 8895 SoC and a
-1440x2960 Super AMOLED display.
+--W2pgH3A4lbTX5fCP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This initial device tree enables SimpleFB, PSTORE and GPIO keys.
+On Sat, Aug 31, 2024 at 08:45:06AM +0200, Krzysztof Kozlowski wrote:
+> On Fri, Aug 30, 2024 at 05:00:40PM +0100, Conor Dooley wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > This is a pretty rough document I conjured up in 5 minutes, to document
+> > my expectations for compatible strings for both our FPGA IP blocks and
+> > reference designs that we ship, a la the one that exists for SiFive IPs.
+> > There's been some internal conversations lately about this naming etc,
+> > so good to have something written down.
+> >=20
+>=20
+> You can try to make it a schema. Take a peak at:
+> Documentation/devicetree/bindings/arm/qcom-soc.yaml
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- arch/arm64/boot/dts/exynos/Makefile           |   1 +
- .../boot/dts/exynos/exynos8895-dreamlte.dts   | 126 ++++++++++++++++++
- 2 files changed, 127 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
+Sure, I don't mind doing that - however given the breadth of microchip's
+portfolio (and thus naming schemes) there may actually be little by way
+of enforcement gained by making it into a binding. I'll give it a go and
+see how permissive it ends up having to be.
 
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index d7f2191c2..18f5a3eed 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -7,5 +7,6 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos7-espresso.dtb		\
- 	exynos7885-jackpotlte.dtb	\
- 	exynos850-e850-96.dtb		\
-+	exynos8895-dreamlte.dtb		\
- 	exynosautov9-sadk.dtb		\
- 	exynosautov920-sadk.dtb
-diff --git a/arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts b/arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
-new file mode 100644
-index 000000000..3a376ab2b
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
-@@ -0,0 +1,126 @@
-+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-+/*
-+ * Samsung Galaxy S8 (dreamlte/SM-G950F) device tree source
-+ *
-+ * Copyright (c) 2024, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-+ */
-+
-+/dts-v1/;
-+#include "exynos8895.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+/ {
-+	model = "Samsung Galaxy S8 (SM-G950F)";
-+	compatible = "samsung,dreamlte", "samsung,exynos8895";
-+	chassis-type = "handset";
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		framebuffer: framebuffer@cc000000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0 0xcc000000 (1440 * 2960 * 4)>;
-+			width = <1440>;
-+			height = <2960>;
-+			stride = <(1440 * 4)>;
-+			format = "a8r8g8b8";
-+		};
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x3c800000>,
-+		      <0x0 0xc0000000 0x40000000>,
-+		      <0x8 0x80000000 0x80000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		ramoops@92000000 {
-+			compatible = "ramoops";
-+			reg = <0 0x92000000 0x8000>;
-+			record-size = <0x4000>;
-+			console-size = <0x4000>;
-+		};
-+
-+		cont_splash_mem: framebuffer@cc000000 {
-+			reg = <0 0xcc000000 (1440 * 2960 * 4)>;
-+			no-map;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&key_power &key_voldown &key_volup &key_wink>;
-+		pinctrl-names = "default";
-+
-+		power-key {
-+			label = "Power";
-+			linux,code = <KEY_POWER>;
-+			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
-+			wakeup-source;
-+		};
-+
-+		voldown-key {
-+			label = "Volume Down";
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		volup-key {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		/* Typically used for Bixby. Map it as a camera button for now */
-+		wink-key {
-+			label = "Camera";
-+			linux,code = <KEY_CAMERA>;
-+			gpios = <&gpa0 6 GPIO_ACTIVE_LOW>;
-+			wakeup-source;
-+		};
-+	};
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&pinctrl_alive {
-+	key_power: key-power-pins {
-+		samsung,pins = "gpa2-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV1>;
-+	};
-+
-+	key_voldown: key-voldown-pins {
-+		samsung,pins = "gpa0-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV1>;
-+	};
-+
-+	key_volup: key-volup-pins {
-+		samsung,pins = "gpa0-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV1>;
-+	};
-+
-+	key_wink: key-wink-pins {
-+		samsung,pins = "gpa0-6";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV1>;
-+	};
-+};
--- 
-2.34.1
+--W2pgH3A4lbTX5fCP
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZt7VZQAKCRB4tDGHoIJi
+0oy9AQDuvyK7TvTcOXYEM/syqaPEZAQg2cgpALVduaXtN5yS+QD/SJHA/qGm6WLp
+Lu3nUG55BU97sLgdGYRQ/TqZZB92/Ao=
+=EQpM
+-----END PGP SIGNATURE-----
+
+--W2pgH3A4lbTX5fCP--
 
