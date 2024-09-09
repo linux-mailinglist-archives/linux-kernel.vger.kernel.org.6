@@ -1,66 +1,63 @@
-Return-Path: <linux-kernel+bounces-321675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6FD5971DE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:19:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55DED971DE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 17:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D374E1C234F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 814931C23502
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 15:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A80E13B5AE;
-	Mon,  9 Sep 2024 15:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C6725624;
+	Mon,  9 Sep 2024 15:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7YNXVJn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHZeBpzQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92487139CF6;
-	Mon,  9 Sep 2024 15:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B811CD15;
+	Mon,  9 Sep 2024 15:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725895038; cv=none; b=LdB3Nk88p6oYxHrXIveVhEQtpqG6S3A03/Jj7rdC6NWzOLE+35Vau/aO0l7nrnZsIHJ/N9e/SQJDO3hAgJ1hL4Drw4B2uVoGwVrB8yuEw0NTwVDSAQa7F0NEeRugc/nURwUPmgUQjOnvlF27grIaflrwWHm2KHFmVuza7ShqB50=
+	t=1725895188; cv=none; b=WcbmVnCj6sl4/9yrQivmynG+zatYMKR6L1sJehwkz3xCNJWnlR6O3JYaUw7ZCIJKzv9WO28/vVltSfYZH8PbTvKwMxOKiVOmDNY1EeaS3wMiBbpI+VPehgP/zm2TS1xPmyXfsCuTUDHaYCLzkg7ho9ZBLESYC6DgC3KgY0l9Gyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725895038; c=relaxed/simple;
-	bh=4UnHiTSmesifrapU4hY+D7bZkm176mfI1MGT9K3EfJU=;
+	s=arc-20240116; t=1725895188; c=relaxed/simple;
+	bh=0Yabc6xpRJUS12FvNtKkdFAvYIHbRc3U7Ycls1vFNiQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BEUyG5iYKATHC3hAw4U11WKshi30whr0DpGdIRZ2yLmGrClktjGanttb4SjTrEJhKBJI5z6d6ayJZrUf6SLUMVe3pbGeWbbO8qH1uDlDluD0ucfx2qgXVX3PmYuZUyJl4slWlGOYMJdQocWLI9ROibbiaA/qCW+mjJmz/3CuaFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7YNXVJn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC3BC4CEC5;
-	Mon,  9 Sep 2024 15:17:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SghGPQc08NwNExGL+smsNihGcwd8fp9WaWbl0GWm6Bp5RPDlwnzHUpBwrO/1x1505wPmccS3TAqSvJnH483+b0xlY4UKaVSpQn0mKNUo+5QoYp29raVa2roPglB7wBLJd1jBfK0IVBO3OC5Q0d6dIlcOMQMoCf0Hrf+RZvShgyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHZeBpzQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D45A5C4CEC5;
+	Mon,  9 Sep 2024 15:19:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725895038;
-	bh=4UnHiTSmesifrapU4hY+D7bZkm176mfI1MGT9K3EfJU=;
+	s=k20201202; t=1725895188;
+	bh=0Yabc6xpRJUS12FvNtKkdFAvYIHbRc3U7Ycls1vFNiQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i7YNXVJn8mr9u3JIms5lk+k+0EzePN3dufNOrxgBDlOeiNGUgv9H1DPzP/hVyfXz3
-	 8GQPnUs7e7O/fgP9sikPQRa0V4ZunBXutjASuST+9zmflFiqLsb5OfsahR75KyybqP
-	 x8uV+TjA4dwXr19Kxsjl0VvRU8QNJZF2dLGZpUwOHJyE5hq1r/rrCHFbvyZjbW3ysj
-	 m069t3GrumzbDer2HEz31i/caWeK0y5bXNi2tlbSjo4HS350D7cwczQLl4YBkdATxA
-	 1cPvXLTpY++jkiCI5d1RrH0+VYI1ghZT0wNSlghgnuRFRAt7RozHimqJ8thKy2Mavk
-	 plHpgn0RD9iwg==
-Date: Mon, 9 Sep 2024 16:17:12 +0100
-From: Simon Horman <horms@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
-	Felix Huettner <felix.huettner@mail.schwarz>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH net v1 1/1] netfilter: conntrack: Guard possoble unused
- functions
-Message-ID: <20240909151712.GZ2097826@kernel.org>
-References: <20240905203612.333421-1-andriy.shevchenko@linux.intel.com>
- <20240906162938.GH2097826@kernel.org>
- <Zt7B79Q3O7mNqrOl@smile.fi.intel.com>
+	b=fHZeBpzQE/96+ztQSFOswVfcOnpxQftdlKzWiLeWsEmqE60yFstmllM9gMsdYcm9R
+	 kUHC9Lef6JhJ6fE29hz5Q4e0lz9+G69ZwDaFXcJHA36oarnB7hFka6t2E8c6PEuUEO
+	 Az1sPb4y+dtr6bxHI/2xPbdMcvhJasrIQF4HpuuSLNCielo07675i8QVZF7nGYPO4a
+	 GSPQdVTF1MYk/qc8WLycI2Q89Fx1Sks9ZgoodGkG61OLwrgbrZLul/VGB0NsqeQlJV
+	 ezFwtpWWjhJ1j0aDpHWxRutu8yUPau1OIHi/wkEj7tvcVo5+xemqKVRBVn5R+7cF8Y
+	 oWmvopDH4g9vw==
+Date: Mon, 9 Sep 2024 10:19:46 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Michal Simek <michal.simek@amd.com>,
+	Jay Buddhabhatti <jay.buddhabhatti@amd.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Praveen Teja Kundanala <praveen.teja.kundanala@amd.com>,
+	linux-kernel@vger.kernel.org, saikrishna12468@gmail.com,
+	git@amd.com, Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v5 1/3] dt-bindings: pinctrl: Add support for Xilinx
+ Versal platform
+Message-ID: <172589518611.173458.7161248280300898961.robh@kernel.org>
+References: <20240906110113.3154327-1-sai.krishna.potthuri@amd.com>
+ <20240906110113.3154327-2-sai.krishna.potthuri@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,18 +66,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zt7B79Q3O7mNqrOl@smile.fi.intel.com>
+In-Reply-To: <20240906110113.3154327-2-sai.krishna.potthuri@amd.com>
 
-On Mon, Sep 09, 2024 at 12:37:51PM +0300, Andy Shevchenko wrote:
-> On Fri, Sep 06, 2024 at 05:29:38PM +0100, Simon Horman wrote:
-> > On Thu, Sep 05, 2024 at 11:36:12PM +0300, Andy Shevchenko wrote:
-> 
-> > Local testing seems to show that the warning is still emitted
-> > for ctnetlink_label_size if CONFIG_NETFILTER_NETLINK_GLUE_CT is enabled
-> > but CONFIG_NF_CONNTRACK_EVENTS is not.
-> 
-> Can you elaborate on this, please?
-> I can not reproduce.
 
-Sure, let me retest and get back to you.
+On Fri, 06 Sep 2024 16:31:11 +0530, Sai Krishna Potthuri wrote:
+> Add Xilinx Versal compatible string and corresponding groups, function and
+> pins properties to support pin controller features on Versal platform.
+> 
+> Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+> ---
+>  .../bindings/pinctrl/xlnx,versal-pinctrl.yaml | 278 ++++++++++++++++++
+>  1 file changed, 278 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/xlnx,versal-pinctrl.yaml
+> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
