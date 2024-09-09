@@ -1,185 +1,128 @@
-Return-Path: <linux-kernel+bounces-322127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7725397247E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:23:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A219972484
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 23:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3497B2840DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:23:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14934B22604
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 21:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BCC18C35F;
-	Mon,  9 Sep 2024 21:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A9118C35A;
+	Mon,  9 Sep 2024 21:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="msz9c1cY"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEoDwD1k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06734189F2F
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 21:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE25189916;
+	Mon,  9 Sep 2024 21:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725917022; cv=none; b=O/38qY7fHTWCETQKc5Byd0Vx021IZ7+RwAbErV2b4JeIzYpRMU7upgi3M6dvSXC7Pe+TrTSxaxoREHN7AgjlnF19klTUfLQjj5mgGs8lZAPbJ78oigWnlfHWIkSByNqQrU1wHc+VVNvgXznBlbVsv2WtBbGjzidexKbWgAy0LLg=
+	t=1725917146; cv=none; b=PWnN1I1rQagJknTdhWO3m4ugblNXiAGmm8QjK9UJJshacPgUG20k97sGVJxCnLsvAFi3vwGf9/nJuTPr3uslgthhff/KCJTzSqSTd00mK+AQDIId1XKORf/KIRdujN9mC6PMLhDEQmshHP9d5n05wz4Uqy559+RMvpSzi8UYM+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725917022; c=relaxed/simple;
-	bh=mljDDF3bZrXe8OPt/F+z1+NnngcpYJfMTt53T5T2P7U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RqxLzjP3NoHdbqOLpbtEyrmB2sjsYvsgGNX3L0ik2RXInybm5cjXwEObenl7LEGPmHnLfMKgGLAm9TYrXUhZYnkUe9rz1pAbdt4AcS/T6rdO/Xkj0wDnNAHJCONwx5pamHIMoH6tvJuFTIHl/cdbtLABaYORPQL9NaTyUL5+dAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=msz9c1cY; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71813b66919so4055136b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 14:23:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725917020; x=1726521820; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ttDDMvpCe1uTBRkxLuXdyj12J9DRQh699r4t2hOkTYk=;
-        b=msz9c1cYQF50yNo/uOl1gmQvBn8EQZbis6+dwXsOZm2Wd2TKvuFvHMfoMDkkXQY94N
-         Qz1KGND1xCEfJoOpLiCLJ1/Fb0m+nc2NNXajcKg/bP00D06l5rWoQmsxuQ+TnWgWru5J
-         sD+8UfY1c5d9x/E3wVOcZgdKWbbXhlMPkHWhhJ9y8zfpEY8Aj9qy8HUjnM0TSS6UDbya
-         pdG+4FGDXcgwmBrZRlBUMKRN13ef6Zpz5M37RcDBsDp+lZ2NsYQA3Gq8uXqS6WKY2P4n
-         F0Zaa/L7Twzybms6Qr3t5uE6aZsWyfN14Hj/cxVsqSqQw4v61gsjbuIB42zM+MhT4l4a
-         a+4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725917020; x=1726521820;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ttDDMvpCe1uTBRkxLuXdyj12J9DRQh699r4t2hOkTYk=;
-        b=u1uFGUAjZdwZP6kg4ergHqTcdnDottCB9xLhyC4HYO3tmlXtVs7yZEcW0wqa5FVebi
-         krsb9M6QWjYSomn81SgzJ10BfdSe0cEFFE5fOXcS9QW00uGudxGXJxIy/mnPe2lcC+Pv
-         vvu0VXdD9k24IgyY+vtDP6OZRtm6mX0PvKLpNN0iDZZOlYT8NJOZ2yRx5O/lhCjEH2sE
-         vg7Y0yjbQ38rWRXGlHX7HCWOyj49x3h5kX855+BafL2wKHuzRZ30dXsPLMt1JeXD08HQ
-         2d0wn2a6ebcBeUTM9ovv5L5iH9vrTs5w27hRVcplro4tDxrm367SGh5m/WVsv61secLJ
-         tiVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZiux8iMuugOQryRnCfbZJMrKPJ2pBvE+/0EhEZhlNWNvPwBTSvICRfa4dCgaXCbZku2n1cpMbF7UVhMo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzytv9H/qlZuzhe//kjGOmFjeop1xeTDehSRAVQyHkOAs3TztyJ
-	wTO1ZvtPLW4iEdpWLU29AwRt+U+KBQcD9WU232OajDJeOm4UF9n9peCy6UZm0ME5LWATb/NVoqH
-	DBQ==
-X-Google-Smtp-Source: AGHT+IGjpBqwvM+xi0r8Nfsq0VH6VwEMC2N4ITsAAsIiJuo8lZuSHZUZJ7AOGfGx3hT9xfzLjcKqTCVnJzQ=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:8997:b0:718:13bc:913c with SMTP id
- d2e1a72fcca58-718f2e451fbmr13588b3a.0.1725917020107; Mon, 09 Sep 2024
- 14:23:40 -0700 (PDT)
-Date: Mon, 9 Sep 2024 14:23:38 -0700
-In-Reply-To: <Zt9kmVe1nkjVjoEg@google.com>
+	s=arc-20240116; t=1725917146; c=relaxed/simple;
+	bh=/zLbARdaPmZDHdAt/HtrxVUAXzYHVhfPmzor+VTQ0AU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NOl+b5rQ2OtX1X4hQsdH5+bcrPPpVumikJhmwIy7EmCS3y6VQ7zZmZ5oILtvZKqJxkm8lUqsQyJlNoIgg22NcpKd9fOIpZPQGegExfmhDEp0lElEii2mVdCj5bsV+rrJNRRXhu6VsVq1VIoMu11gVO+kQvsQl0E/eri1BlNFzMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEoDwD1k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22111C4CEC5;
+	Mon,  9 Sep 2024 21:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725917146;
+	bh=/zLbARdaPmZDHdAt/HtrxVUAXzYHVhfPmzor+VTQ0AU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GEoDwD1kwaDmk9azedC7KApARFBvQBMsc/MCE2QR3aOA5JUAL33GEWIcCHqEdd00k
+	 DiYW+g3jYhhe2ugEMieUgHbuvh+OGF2VnqUqV3m5ZYbJRZ2C8UCnl2kRXc3pHevFoH
+	 ceB8hz3C4wa6ByKgDpk1Xj3CAuq9Ho2ZFGfgDgH+hUScAAVzyhA7z/z+78CPGedBni
+	 p9ixtbvYXKatfaGBmtfikiXemwYmXWQJpf7EOSKMWsQT8OzN1Q+3Yvh1V3CGGmzACB
+	 PQxxPkAHlHncWIO4Kz5M1IxXav00r6AyQO/yOoBpewSZHM/oAo1R9uS2WqL8I+7Fgc
+	 3N0nq1X4wc2BA==
+Date: Mon, 9 Sep 2024 14:25:44 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@android.com, Song Liu <song@kernel.org>
+Subject: Re: [PATCH] module: Refine kmemleak scanned areas
+Message-ID: <Zt9n2E0otOx5RT5I@bombadil.infradead.org>
+References: <20240906153856.22204-1-vdonnefort@google.com>
+ <ZtxenHsGPyDoYnzY@arm.com>
+ <Zt6mcvkzPI8WNgHl@google.com>
+ <Zt63aV2zmkOkwRc3@arm.com>
+ <Zt7MvByqVqgQ8CSz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-10-rick.p.edgecombe@intel.com> <6449047b-2783-46e1-b2a9-2043d192824c@redhat.com>
- <b012360b4d14c0389bcb77fc8e9e5d739c6cc93d.camel@intel.com> <Zt9kmVe1nkjVjoEg@google.com>
-Message-ID: <Zt9nWjPXBC8r0Xw-@google.com>
-Subject: Re: [PATCH 09/21] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with
- operand SEPT
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	Yan Y Zhao <yan.y.zhao@intel.com>, Yuan Yao <yuan.yao@intel.com>, 
-	"nik.borisov@suse.com" <nik.borisov@suse.com>, "dmatlack@google.com" <dmatlack@google.com>, 
-	Kai Huang <kai.huang@intel.com>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt7MvByqVqgQ8CSz@google.com>
 
-On Mon, Sep 09, 2024, Sean Christopherson wrote:
-> On Mon, Sep 09, 2024, Rick P Edgecombe wrote:
-> > On Mon, 2024-09-09 at 17:25 +0200, Paolo Bonzini wrote:
-> > > On 9/4/24 05:07, Rick Edgecombe wrote:
-> > > > +static inline u64 tdx_seamcall_sept(u64 op, struct tdx_module_args=
- *in)
-> > > > +{
-> > > > +#define SEAMCALL_RETRY_MAX=C2=A0=C2=A0=C2=A0=C2=A0 16
-> > >=20
-> > > How is the 16 determined?=C2=A0 Also, is the lock per-VM or global?
-> >=20
-> > The lock being considered here is per-TD, but TDX_OPERAND_BUSY in gener=
-al can be
-> > for other locks. I'm not sure where the 16 came from, maybe Yuan or Isa=
-ku can
-> > share the history. In any case, there seems to be some problems with th=
-is patch
-> > or justification.
-> >=20
-> > Regarding the zero-step mitigation, the TDX Module has a mitigation for=
- an
-> > attack where a malicious VMM causes repeated private EPT violations for=
- the same
-> > GPA. When this happens TDH.VP.ENTER will fail to enter the guest. Regar=
-dless of
-> > zero-step detection, these SEPT related SEAMCALLs will exit with the ch=
-ecked
-> > error code if they contend the mentioned lock. If there was some other =
-(non-
-> > zero-step related) contention for this lock and KVM tries to re-enter t=
-he TD too
-> > many times without resolving an EPT violation, it might inadvertently t=
-rigger
-> > the zero-step mitigation.=C2=A0I *think* this patch is trying to say no=
-t to worry
-> > about this case, and do a simple retry loop instead to handle the conte=
-ntion.
-> >=20
-> > But why 16 retries would be sufficient, I can't find a reason for. Gett=
-ing this
-> > required retry logic right is important because some failures
-> > (TDH.MEM.RANGE.BLOCK) can lead to KVM_BUG_ON()s.
->=20
-> I (somewhat indirectly) raised this as an issue in v11, and at a (very qu=
-ick)
-> glance, nothing has changed to alleviate my concerns.
+On Mon, Sep 09, 2024 at 11:23:56AM +0100, Vincent Donnefort wrote:
+> On Mon, Sep 09, 2024 at 09:52:57AM +0100, Catalin Marinas wrote:
+> > On Mon, Sep 09, 2024 at 08:40:34AM +0100, Vincent Donnefort wrote:
+> > > On Sat, Sep 07, 2024 at 03:12:13PM +0100, Catalin Marinas wrote:
+> > > > On Fri, Sep 06, 2024 at 04:38:56PM +0100, Vincent Donnefort wrote:
+> > > > > commit ac3b43283923 ("module: replace module_layout with module_memory")
+> > > > > introduced a set of memory regions for the module layout sharing the
+> > > > > same attributes but didn't update the kmemleak scanned areas which
+> > > > > intended to limit kmemleak scan to sections containing writable data.
+> > > > > This means sections such as .text and .rodata are scanned by kmemleak.
+> > > > > 
+> > > > > Refine the scanned areas for modules by limiting it to MOD_TEXT and
+> > > > > MOD_INIT_TEXT mod_mem regions.
+> > > > > 
+> > > > > CC: Song Liu <song@kernel.org>
+> > > > > CC: Catalin Marinas <catalin.marinas@arm.com>
+> > > > > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> > > > > 
+> > > > > diff --git a/kernel/module/debug_kmemleak.c b/kernel/module/debug_kmemleak.c
+> > > > > index 12a569d361e8..b4cc03842d70 100644
+> > > > > --- a/kernel/module/debug_kmemleak.c
+> > > > > +++ b/kernel/module/debug_kmemleak.c
+> > > > > @@ -12,19 +12,9 @@
+> > > > >  void kmemleak_load_module(const struct module *mod,
+> > > > >  			  const struct load_info *info)
+> > > > >  {
+> > > > > -	unsigned int i;
+> > > > > -
+> > > > > -	/* only scan the sections containing data */
+> > > > > -	kmemleak_scan_area(mod, sizeof(struct module), GFP_KERNEL);
+> > > > > -
+> > > > > -	for (i = 1; i < info->hdr->e_shnum; i++) {
+> > > > > -		/* Scan all writable sections that's not executable */
+> > > > > -		if (!(info->sechdrs[i].sh_flags & SHF_ALLOC) ||
+> > > > > -		    !(info->sechdrs[i].sh_flags & SHF_WRITE) ||
+> > > > > -		    (info->sechdrs[i].sh_flags & SHF_EXECINSTR))
+> > > > > -			continue;
+> > > > > -
+> > > > > -		kmemleak_scan_area((void *)info->sechdrs[i].sh_addr,
+> > > > > -				   info->sechdrs[i].sh_size, GFP_KERNEL);
+> > > > > +	/* only scan writable, non-executable sections */
+> > > > > +	for_each_mod_mem_type(type) {
+> > > > > +		if (type != MOD_DATA && type != MOD_INIT_DATA)
+> > > > > +			kmemleak_no_scan(mod->mem[type].base);
+> > > > >  	}
+> > > > >  }
+> > > > 
+> > > > I lost track of how module memory allocation works. Is struct module
+> > > > still scanned after this change?
+> > > 
+> > > That section being RW, it will be part of the MOD_DATA vmalloc and scanned.
+> > 
+> > Ah, makes sense. I'm fine with this patch, it simplifies the code now
+> > that we have mod->mem[type]. I wouldn't say it's a fix, though no
+> > backporting needed.
+> 
+> Agreed, it's "fixing" because it was scanning unecessary regions, but it's not
+> worth any backport.
 
-Gah, went out of my way to find the thread and then forgot to post the link=
-:
+Please send a v2.
 
-https://lore.kernel.org/all/Y8m34OEVBfL7Q4Ns@google.com
-
-> In general, I am _very_ opposed to blindly retrying an SEPT SEAMCALL, eve=
-r.  For
-> its operations, I'm pretty sure the only sane approach is for KVM to ensu=
-re there
-> will be no contention.  And if the TDX module's single-step protection sp=
-uriously
-> kicks in, KVM exits to userspace.  If the TDX module can't/doesn't/won't =
-communicate
-> that it's mitigating single-step, e.g. so that KVM can forward the inform=
-ation
-> to userspace, then that's a TDX module problem to solve.
->=20
-> > Per the docs, in general the VMM is supposed to retry SEAMCALLs that re=
-turn
-> > TDX_OPERAND_BUSY.
->=20
-> IMO, that's terrible advice.  SGX has similar behavior, where the xucode =
-"module"
-> signals #GP if there's a conflict.  #GP is obviously far, far worse as it=
- lacks
-> the precision that would help software understand exactly what went wrong=
-, but I
-> think one of the better decisions we made with the SGX driver was to have=
- a
-> "zero tolerance" policy where the driver would _never_ retry due to a pot=
-ential
-> resource conflict, i.e. that any conflict in the module would be treated =
-as a
-> kernel bug.
->=20
-> > I think we need to revisit the general question of which
-> > SEAMCALLs we should be retrying and how many times/how long. The other
-> > consideration is that KVM already has per-VM locking, that would preven=
-t
-> > contention for some of the locks. So depending on internal details KVM =
-may not
-> > need to do any retries in some cases.
->=20
-> Yes, and if KVM can't avoid conflict/retry, then before we go any further=
-, I want
-> to know exactly why that is the case.
+  Luis
 
