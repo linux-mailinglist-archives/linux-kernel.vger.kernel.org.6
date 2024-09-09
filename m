@@ -1,263 +1,174 @@
-Return-Path: <linux-kernel+bounces-322161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FE7972523
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:15:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4019F972525
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31E5728581C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:15:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FD411C22003
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 22:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DB117D373;
-	Mon,  9 Sep 2024 22:15:11 +0000 (UTC)
-Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF35118CBEF;
+	Mon,  9 Sep 2024 22:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiMCLUSw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B8E54278;
-	Mon,  9 Sep 2024 22:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F4D18030;
+	Mon,  9 Sep 2024 22:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725920111; cv=none; b=gVgKT+ypT2aAUTkLj4o58ezuLG1T56u4EiBlgB9xpaHy+nLGJ5r8ihmoOiuDg6kPWmE1cjPhDPt7lmo6fi2JolZ9gJ5maByd7NXvFw3cCEu25UJXxqkstFriZg1Pax725kytJ/45uEnOqI5CrV9xUdUriFmUN7LSLKCmA8cIfng=
+	t=1725920164; cv=none; b=YepWBC3DXLHUp1eOz0BZLUFSsz+r09h2JXNehNiYZH7tprpYuMOSqMu+q6F2axZCA9iU22J0Xsv8/F0PkLj4JZc7Goi9ePM5Sn8h7PhJK4+EU6U/aJlgFzLrzKtVlBl1ED20VvPCTVgWE7KYiR2i1M6Upk7XCjhGWbT0b8RdEOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725920111; c=relaxed/simple;
-	bh=4YpFMu5mLQq5ecwsKN0zbUgFUfNc0iBFf+YCWyCTUYg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ISHZpqgCdjP5bZmVkUmJCebvXDefhuKleERfT4K3cVMfjscKQsd0hADGhffFsIr9uZPVeRy2HtDCpf7AWNxJ47k4XEu42XCmBDlL2RlADQmsnX/Dj67CnBWuyGlht67OQiBc2PBgLDLnYntH2kOMpF71pQkLdXovYf5P5OZQ+no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
-	by finn.localdomain with esmtp (Exim 4.95)
-	(envelope-from <tharvey@gateworks.com>)
-	id 1snmf1-00FFIg-Mf;
-	Mon, 09 Sep 2024 22:15:03 +0000
-From: Tim Harvey <tharvey@gateworks.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Li Yang <leoyang.li@nxp.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Cc: Tim Harvey <tharvey@gateworks.com>
-Subject: [PATCH] arm64: dts: imx8mm-venice-*: add RTC aliases
-Date: Mon,  9 Sep 2024 15:15:01 -0700
-Message-Id: <20240909221501.806515-1-tharvey@gateworks.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725920164; c=relaxed/simple;
+	bh=X+jgeBAYm9JbACaaekTA0tZUdHG6GFvSeLrPb/xGFvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fY/VPYOUssmHhjTIKXG7Eka0Ly9R2LQuJeCBNH2CMcz/hsCQsRX+EKcAuw3NH3wh0rTJfgXvEySh0GhaazUczTCA0IdTOhLP9tZVsjwZmM0yUurtFoN2zlte0EHYU0O2g4n38qwLgQJmCQ6i3zbtVFZ5GBNroEkzy22Wa7cxdtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiMCLUSw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13AE5C4CEC5;
+	Mon,  9 Sep 2024 22:16:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725920163;
+	bh=X+jgeBAYm9JbACaaekTA0tZUdHG6GFvSeLrPb/xGFvo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CiMCLUSw+0JdYC4hUBMMBvl5/AMQD9PiDrwNvFOYWZFhG2wT1eHiRWv7vcrkNSHq0
+	 hGok2AJN1+/tKH+z/qdBxaL/SjyIKMU7AsuE0yLDtKi1qWKx4N/tunZzyNZhBp6Vmo
+	 DnXJVhDN2vxqMbIIjUAPe6L/sn8tJWmhYJkvd/RJE2OMhxAgrenhZOdVtI85mLiroZ
+	 rrAc+sNGVIoiDTuGvlD3Q/Z+HOHrKtlTTBghUBxBCnJ8rObb/n4evTqgRnX46YtnOh
+	 vi2551vY/b7jogpQwBpWvY+YCFviaZJywID10ougeN9HtvDzHAMjbSrOqJdNDiZh56
+	 ppIz/bYNofhAQ==
+Date: Mon, 9 Sep 2024 15:16:01 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Sam James <sam@gentoo.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] tools: drop nonsensical -O6
+Message-ID: <Zt9zoVFkFaCDwJ36@google.com>
+References: <4f01524fa4ea91c7146a41e26ceaf9dae4c127e4.1725821201.git.sam@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4f01524fa4ea91c7146a41e26ceaf9dae4c127e4.1725821201.git.sam@gentoo.org>
 
-Add aliases for the RTCs on the Gateworks Venice boards and on the imx8m
-SoC. This ensures that the primary RTC is always the one on-board
-provided by the Gateworks System Controller (GSC) which is battery
-backed as opposed to the one in the IMX8M.
+Hello,
 
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
----
- arch/arm64/boot/dts/freescale/imx8mm-venice-gw700x.dtsi | 7 ++++++-
- arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dts  | 4 +++-
- arch/arm64/boot/dts/freescale/imx8mm-venice-gw7902.dts  | 4 +++-
- arch/arm64/boot/dts/freescale/imx8mm-venice-gw7903.dts  | 4 +++-
- arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dts  | 7 ++++++-
- arch/arm64/boot/dts/freescale/imx8mn-venice-gw7902.dts  | 4 +++-
- arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi | 4 +++-
- arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts  | 4 +++-
- 8 files changed, 30 insertions(+), 8 deletions(-)
+On Sun, Sep 08, 2024 at 07:46:41PM +0100, Sam James wrote:
+> -O6 is very much not-a-thing. Really, this should've been dropped
+> entirely in 49b3cd306e60b9d889c775cb2ebb709f80dd8ae9 instead of just
+> passing it for not-Clang.
+> 
+> Just collapse it down to -O3, instead of "-O6 unless Clang, in which case
+> -O3".
+> 
+> GCC interprets > -O3 as -O3. It doesn't even interpret > -O3 as -Ofast,
+> which is a good thing, given -Ofast has specific (non-)requirements for
+> code built using it. So, this does nothing except look a bit daft.
+> 
+> Remove the silliness and also save a few lines in the Makefiles accordingly.
+> 
+> Signed-off-by: Sam James <sam@gentoo.org>
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw700x.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw700x.dtsi
-index 36803b038cd5..5a3b1142ddf4 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw700x.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw700x.dtsi
-@@ -9,6 +9,11 @@
- #include <dt-bindings/net/ti-dp83867.h>
- 
- / {
-+	aliases {
-+		rtc0 = &gsc_rtc;
-+		rtc1 = &snvs_rtc;
-+	};
-+
- 	memory@40000000 {
- 		device_type = "memory";
- 		reg = <0x0 0x40000000 0 0x80000000>;
-@@ -292,7 +297,7 @@ eeprom@53 {
- 		pagesize = <16>;
- 	};
- 
--	rtc@68 {
-+	gsc_rtc: rtc@68 {
- 		compatible = "dallas,ds1672";
- 		reg = <0x68>;
- 	};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dts b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dts
-index 35ae0faa815b..d8b67e12f7d7 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dts
-@@ -22,6 +22,8 @@ aliases {
- 		ethernet2 = &lan2;
- 		ethernet3 = &lan3;
- 		ethernet4 = &lan4;
-+		rtc0 = &gsc_rtc;
-+		rtc1 = &snvs_rtc;
- 		usb0 = &usbotg1;
- 		usb1 = &usbotg2;
- 	};
-@@ -497,7 +499,7 @@ eeprom@53 {
- 		pagesize = <16>;
- 	};
- 
--	rtc@68 {
-+	gsc_rtc: rtc@68 {
- 		compatible = "dallas,ds1672";
- 		reg = <0x68>;
- 	};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7902.dts b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7902.dts
-index c11260c26d0b..46d1ee0a4ee8 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7902.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7902.dts
-@@ -19,6 +19,8 @@ / {
- 
- 	aliases {
- 		ethernet1 = &eth1;
-+		rtc0 = &gsc_rtc;
-+		rtc1 = &snvs_rtc;
- 		usb0 = &usbotg1;
- 		usb1 = &usbotg2;
- 	};
-@@ -564,7 +566,7 @@ eeprom@53 {
- 		pagesize = <16>;
- 	};
- 
--	rtc@68 {
-+	gsc_rtc: rtc@68 {
- 		compatible = "dallas,ds1672";
- 		reg = <0x68>;
- 	};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7903.dts b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7903.dts
-index db1737bf637d..c0aadff4e25b 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7903.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7903.dts
-@@ -18,6 +18,8 @@ / {
- 
- 	aliases {
- 		ethernet0 = &fec1;
-+		rtc0 = &gsc_rtc;
-+		rtc1 = &snvs_rtc;
- 		usb0 = &usbotg1;
- 	};
- 
-@@ -394,7 +396,7 @@ eeprom@53 {
- 		pagesize = <16>;
- 	};
- 
--	rtc@68 {
-+	gsc_rtc: rtc@68 {
- 		compatible = "dallas,ds1672";
- 		reg = <0x68>;
- 	};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dts b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dts
-index 05489a31e7fd..86a610de84fe 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dts
-@@ -16,6 +16,11 @@ / {
- 	model = "Gateworks Venice GW7904 i.MX8MM board";
- 	compatible = "gateworks,imx8mm-gw7904", "fsl,imx8mm";
- 
-+	aliases {
-+		rtc0 = &gsc_rtc;
-+		rtc1 = &snvs_rtc;
-+	};
-+
- 	chosen {
- 		stdout-path = &uart2;
- 	};
-@@ -438,7 +443,7 @@ eeprom@53 {
- 		pagesize = <16>;
- 	};
- 
--	rtc@68 {
-+	gsc_rtc: rtc@68 {
- 		compatible = "dallas,ds1672";
- 		reg = <0x68>;
- 	};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn-venice-gw7902.dts b/arch/arm64/boot/dts/freescale/imx8mn-venice-gw7902.dts
-index 0b1fa04f1d67..30c286b34aa5 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn-venice-gw7902.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mn-venice-gw7902.dts
-@@ -17,6 +17,8 @@ / {
- 	compatible = "gw,imx8mn-gw7902", "fsl,imx8mn";
- 
- 	aliases {
-+		rtc0 = &gsc_rtc;
-+		rtc1 = &snvs_rtc;
- 		usb0 = &usbotg1;
- 	};
- 
-@@ -562,7 +564,7 @@ eeprom@53 {
- 		pagesize = <16>;
- 	};
- 
--	rtc@68 {
-+	gsc_rtc: rtc@68 {
- 		compatible = "dallas,ds1672";
- 		reg = <0x68>;
- 	};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi
-index f0211a96855b..d34701409e88 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi
-@@ -11,6 +11,8 @@
- / {
- 	aliases {
- 		ethernet0 = &eqos;
-+		rtc0 = &gsc_rtc;
-+		rtc1 = &snvs_rtc;
- 	};
- 
- 	memory@40000000 {
-@@ -280,7 +282,7 @@ eeprom@53 {
- 		pagesize = <16>;
- 	};
- 
--	rtc@68 {
-+	gsc_rtc: rtc@68 {
- 		compatible = "dallas,ds1672";
- 		reg = <0x68>;
- 	};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts
-index 8a04b66a4afc..9a515f25e218 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts
-@@ -25,6 +25,8 @@ aliases {
- 		ethernet4 = &lan3;
- 		ethernet5 = &lan4;
- 		ethernet6 = &lan5;
-+		rtc0 = &gsc_rtc;
-+		rtc1 = &snvs_rtc;
- 	};
- 
- 	chosen {
-@@ -481,7 +483,7 @@ eeprom@53 {
- 		pagesize = <16>;
- 	};
- 
--	rtc@68 {
-+	gsc_rtc: rtc@68 {
- 		compatible = "dallas,ds1672";
- 		reg = <0x68>;
- 	};
--- 
-2.25.1
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
+Thanks,
+Namhyung
+
+> ---
+> I promise I'm not completely humourless, but given it's caused
+> actual workarounds to be added for Clang, I don't think this is worth keeping.
+> 
+> Plus it sort of propagates a silly myth that -O6 does anything.
+> 
+>  tools/lib/api/Makefile     | 4 ----
+>  tools/lib/subcmd/Makefile  | 4 +---
+>  tools/lib/symbol/Makefile  | 4 ----
+>  tools/perf/Makefile.config | 6 +-----
+>  4 files changed, 2 insertions(+), 16 deletions(-)
+> 
+> diff --git a/tools/lib/api/Makefile b/tools/lib/api/Makefile
+> index 044860ac1ed1c..7f6396087b467 100644
+> --- a/tools/lib/api/Makefile
+> +++ b/tools/lib/api/Makefile
+> @@ -31,11 +31,7 @@ CFLAGS := $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
+>  CFLAGS += -ggdb3 -Wall -Wextra -std=gnu99 -U_FORTIFY_SOURCE -fPIC
+>  
+>  ifeq ($(DEBUG),0)
+> -ifeq ($(CC_NO_CLANG), 0)
+>    CFLAGS += -O3
+> -else
+> -  CFLAGS += -O6
+> -endif
+>  endif
+>  
+>  ifeq ($(DEBUG),0)
+> diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
+> index b87213263a5e0..6717b82fc5876 100644
+> --- a/tools/lib/subcmd/Makefile
+> +++ b/tools/lib/subcmd/Makefile
+> @@ -38,10 +38,8 @@ endif
+>  
+>  ifeq ($(DEBUG),1)
+>    CFLAGS += -O0
+> -else ifeq ($(CC_NO_CLANG), 0)
+> -  CFLAGS += -O3
+>  else
+> -  CFLAGS += -O6
+> +  CFLAGS += -O3
+>  endif
+>  
+>  # Treat warnings as errors unless directed not to
+> diff --git a/tools/lib/symbol/Makefile b/tools/lib/symbol/Makefile
+> index 13d43c6f92b4a..426b845edfacc 100644
+> --- a/tools/lib/symbol/Makefile
+> +++ b/tools/lib/symbol/Makefile
+> @@ -31,11 +31,7 @@ CFLAGS := $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
+>  CFLAGS += -ggdb3 -Wall -Wextra -std=gnu11 -U_FORTIFY_SOURCE -fPIC
+>  
+>  ifeq ($(DEBUG),0)
+> -ifeq ($(CC_NO_CLANG), 0)
+>    CFLAGS += -O3
+> -else
+> -  CFLAGS += -O6
+> -endif
+>  endif
+>  
+>  ifeq ($(DEBUG),0)
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index fa679db61f622..5d6b08a896150 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -238,11 +238,7 @@ endif
+>  
+>  ifeq ($(DEBUG),0)
+>  CORE_CFLAGS += -DNDEBUG=1
+> -ifeq ($(CC_NO_CLANG), 0)
+> -  CORE_CFLAGS += -O3
+> -else
+> -  CORE_CFLAGS += -O6
+> -endif
+> +CORE_CFLAGS += -O3
+>  else
+>    CORE_CFLAGS += -g
+>    CXXFLAGS += -g
+> -- 
+> 2.46.0
+> 
 
