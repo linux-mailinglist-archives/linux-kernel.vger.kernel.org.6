@@ -1,168 +1,171 @@
-Return-Path: <linux-kernel+bounces-320973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-320975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB92B9712DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:03:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D409712E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F2AEB22674
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:03:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D2F285E56
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D341B29CA;
-	Mon,  9 Sep 2024 09:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253201B29CF;
+	Mon,  9 Sep 2024 09:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jnClp46A"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rEN+7gAN"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEDC13635E;
-	Mon,  9 Sep 2024 09:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5B08F5A
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725872600; cv=none; b=edAvI2v5NhNJv9H/+gFf4ABx0lz+gvcET4zs0BV0D0X7eiaq4u6mtVuA+auDN6igyH5zN4KvnMomAykiWEAnK1iavgZfO7H3PkczIIBaQvF0Nq8+h0n/xPsCCzvChOeQJ+S5QuHjrBNNtLZ2UdD6iYGrVckcRA51mM4FJr+96hI=
+	t=1725872683; cv=none; b=eM4zUl0aL0eXDnyrw1vOmZWTAOirE3QIaBKC5ZoEdSMOb0poTJDS4M38bVWIeZCdB67N87Ydn/h/avlrxj7Q3kDvCDqJifkGDDdFjJkaVjp8dmaZ1Ck0cVZxb3ZgWESfUzOZ2pIZ6+THq+G2UnJzkA859RbmvJAGqfOsvdVOK3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725872600; c=relaxed/simple;
-	bh=8WYAzJl0zYRh1E8R9UP4JEzv76LjRdU1nrYAQz8NicI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=N9tOX2HnVnO+Wb6ZEbUX5ttZCvT/9LBQcklUU4xGTXZdUHAmxN47fTzmnQ6d0J0eVdJbQKfL/XXiLO3FwUIosUMXpD7Hak4RhILjdX26M/h5CE282YEjWObCieqrDRNFviK9ebJttQXGHWiDApNt26gnhxQQlWfaz5PIAXp30iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jnClp46A; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E86F640E0185;
-	Mon,  9 Sep 2024 09:03:16 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 7bh40M_SYptb; Mon,  9 Sep 2024 09:03:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1725872592; bh=eDk+ruS6hx45oNskKYQXXNbRrKJegFNg5kxe7NFyCmo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jnClp46A02FcRBBeAjcUm3XiUnmWSSMkxZiuhm1AWKoYiwnsmyCx2qBPjy7MxvfVL
-	 rrF9dK6AHJQsekaO17YXDGDAY1LypLKnm+W5Uhcvjh0Xq001YJytM0A4y5U0IvGHvP
-	 uT4Xx03z+mAPFKkmpkmMnHtsojFaCqbU5YK2qNdUYO4prAsVny/MaycyFUfNP6mvQE
-	 16kKx4n+8xt46QmhrvYh24ozfITaRkuljmlzFVVBf8kV/izFBiYYiIPOStaLiGhOlR
-	 VJ6iLmaT0LLpv2/rFJ2XkhGnUu5IFwdLsTeQc/OzgN0NMrgIhCMSH8QYgjY9PJYGVw
-	 1NXvRAZ+L/uhz69RQESM5EZP/RX7900Dal+bJwoTKd/t6RE6piHWkWiQK/jKmqhAn0
-	 Gi7dNmHIh7vUYOYRtoKWyp4BCXMYHqfHFnBVBbpb97zdYnot8WTX+2nPOcTsCctSGU
-	 ZbAOkfwcmdejRbx440UUsRGBj5HjUHpEp0hsqoze9uOgHzs8Bys/Dg+L6DSvnG8XLC
-	 j+ODxZ0thsL2IIFKbtsmGoAJP1HsoKV/i4DeyZ2mjdYzBZCSMmV8ubU07sFP5HrTba
-	 4HxRQFi/VcQne2rbnMjSEU4jO1yrkQcbJpWsXzuorKaD1qnnbd5bS0zc4k6w5Ogb8N
-	 RCcropa2BGZlXwz+z/A5yoqk=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3D72540E0263;
-	Mon,  9 Sep 2024 09:03:09 +0000 (UTC)
-Date: Mon, 9 Sep 2024 11:03:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] EDAC updates for v6.12
-Message-ID: <20240909090302.GAZt65xhBpCvrrefhl@fat_crate.local>
+	s=arc-20240116; t=1725872683; c=relaxed/simple;
+	bh=Rewu0rWpeaq9kuSLDUzF3u43GVDwgPHTp7/q499Gegg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KgupVpSPmG1CB2adoYELFtnyBb2EzHy62KOSCUnkV7V+72TGniPNd+tKS6pp0kavfhCNuy+Oabk42RuqZCZK06OqaFdKXsMY7oDZznLA1NsZabl5WwF35464ZNWhHoxSTTG670Xx96lcL7ZuyiIQXCy5w9yDA4F9AGkfZ2+2h5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rEN+7gAN; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso47434285e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 02:04:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725872680; x=1726477480; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/quyWb8vumcbT1XTiobNYayKAU49ZoNqv4TkV+Bl12Y=;
+        b=rEN+7gANEtHwSTDSuZl9cp3h7IAgpEPavIjRYHxK/M9qob1onjQIlMyWw9j4QlYg5t
+         SIUVOT5u9v0yAH/icU9TUBP9mxIJx/Lu52Ndji7TO22gWjQoNo6RtonaYa/s0NJiJ4PJ
+         p9ZVMtR/O4ujpBbfoxkz9/NT/gdbBa3lkTiDxATK8a8Z9Hy2faNCVvXH7EEtP3PcTCjv
+         T2eRkWmlkEf5zOISwwM0xIHt6nVfk+46uF/+HUYJ/KDJIEgMTLtsyncfdXAdLUWBMn6G
+         elDczUbvyy0ubfgNDpGJ+nzauA+BWd6HrdWvoiNoPnlunFaSYGALPvAq1diBpfWGRiJ4
+         OKHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725872680; x=1726477480;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/quyWb8vumcbT1XTiobNYayKAU49ZoNqv4TkV+Bl12Y=;
+        b=mNAo0C35OOb69DjGeDpX61Q265/dnEudi/YMjJJSlNleZYMwecv7YUdz67m9d057l0
+         dMkTk3opEl0KV/+vQkQd2Hg2xY9JlrcCFSfPM8rvoSqVqWpHPRNHiJPgtAE1WAK3HtJ5
+         S7PMd4NzPgrKf3EQ4cofe7D/zxnWGR6002YzEGM+QiYRTXFU6GJUU2S2UE3gdwb16Y/8
+         oSn692xpTCBT2UMbdQGEunOy9+Hctop+JFjy/SuIkJ4jigdQTb0RiBMrGzwW69OCcfS5
+         2bLYpcXoAnf78P3NnStY5H8D7TVCwrq/ovFDpl0KUpKLGe4cZXO35sygOKfVnOTiJnnN
+         o/jg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDtmoyMb/v59H4EKYOx3wLavvltEMoTNsoNn/3ksrH6ZZFW72144ZxWIFHOAQGiP9E8cbzIgvk0KkuvPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUM52T89VwcQL16OOgh3oah8T0KxwhtoVrS3d+um93kG3+K1IC
+	GTRHqwNT+YtYl3ucmDlY8Wd4IgQLPl8NGn13fewqsjVsT3Zw3+oxCjnUYHGGDIM=
+X-Google-Smtp-Source: AGHT+IHPyFzNJJ9CK/CbxvRhF0zXZqmiSax9i+YVPGOKwyfg6lpCSe5AQQrFB9PmBhsPgB8jUkq+yA==
+X-Received: by 2002:a5d:5081:0:b0:374:c9f0:7533 with SMTP id ffacd0b85a97d-3789243fbb9mr5688124f8f.41.1725872679665;
+        Mon, 09 Sep 2024 02:04:39 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:63a3:6883:a358:b850? ([2a01:e0a:982:cbb0:63a3:6883:a358:b850])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895675c40sm5467200f8f.51.2024.09.09.02.04.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 02:04:39 -0700 (PDT)
+Message-ID: <b4ac3e8e-1d0c-4a6e-97de-482a77a3a3aa@linaro.org>
+Date: Mon, 9 Sep 2024 11:04:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 1/5] drm/meson: drop unused staitc dw_hdmi_dwc_write_bits
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jagan Teki <jagan@amarulasolutions.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+References: <20240908-regmap-config-const-v1-0-28f349004811@linaro.org>
+ <20240908-regmap-config-const-v1-1-28f349004811@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240908-regmap-config-const-v1-1-28f349004811@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 08/09/2024 16:21, Krzysztof Kozlowski wrote:
+> static inline dw_hdmi_dwc_write_bits() function is not used at all:
+> 
+>    drivers/gpu/drm/meson/meson_dw_hdmi.c:276:20: error: unused function 'dw_hdmi_dwc_write_bits' [-Werror,-Wunused-function]
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   drivers/gpu/drm/meson/meson_dw_hdmi.c | 14 --------------
+>   1 file changed, 14 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> index 5565f7777529..b75db829b1da 100644
+> --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> @@ -272,20 +272,6 @@ static inline void dw_hdmi_g12a_dwc_write(struct meson_dw_hdmi *dw_hdmi,
+>   	writeb(data, dw_hdmi->hdmitx + addr);
+>   }
+>   
+> -/* Helper to change specific bits in controller registers */
+> -static inline void dw_hdmi_dwc_write_bits(struct meson_dw_hdmi *dw_hdmi,
+> -					  unsigned int addr,
+> -					  unsigned int mask,
+> -					  unsigned int val)
+> -{
+> -	unsigned int data = dw_hdmi->data->dwc_read(dw_hdmi, addr);
+> -
+> -	data &= ~mask;
+> -	data |= val;
+> -
+> -	dw_hdmi->data->dwc_write(dw_hdmi, addr, data);
+> -}
+> -
+>   /* Bridge */
+>   
+>   /* Setup PHY bandwidth modes */
+> 
 
-please pull EDAC updates for v6.12.
-
-Like you said "All the actual work should be done before the
-merge window" and before we bring you the pull requests live, written with
-a pen and paper, lemme send you some now so that there's less stress next
-week.
-
-Thx.
-
----
-
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_updates_for_v6.12
-
-for you to fetch changes up to 92f8358bce13da0b2c37122573a2b2d7de0071df:
-
-  Merge remote-tracking branches 'ras/edac-amd-atl', 'ras/edac-misc' and 'ras/edac-drivers' into edac-updates (2024-09-09 10:51:30 +0200)
-
-----------------------------------------------------------------
-- Drop a now obsolete ppc4xx_edac driver
-
-- Fix conversion to physical memory addresses on Intel's Elkhart Lake and Ice
-  Lake hardware when the system address is above the (Top-Of-Memory) TOM
-  address
-
-- Pay attention to the memory hole on Zynq UltraScale+ MPSoC DDR controllers
-  when injecting errors for testing purposes
-
-- Add support for translating normalized error addresses reported by an AMD
-  memory controller into system physical addresses using an UEFI mechanism
-  called platform runtime mechanism (PRM).
-
-- The usual cleanups and fixes
-
-----------------------------------------------------------------
-Borislav Petkov (AMD) (1):
-      Merge remote-tracking branches 'ras/edac-amd-atl', 'ras/edac-misc' and 'ras/edac-drivers' into edac-updates
-
-John Allen (2):
-      ACPI: PRM: Add PRM handler direct call support
-      RAS/AMD/ATL: Translate normalized to system physical addresses using PRM
-
-Qiuxu Zhuo (4):
-      EDAC/igen6: Fix conversion of system address to physical memory address
-      EDAC/{skx_common,skx,i10nm}: Move the common debug code to skx_common
-      EDAC/{skx_common,i10nm}: Remove the AMAP register for determing DDR5
-      EDAC/sb_edac: Fix the compile warning of large frame size
-
-Rob Herring (Arm) (1):
-      EDAC: Drop obsolete PPC4xx driver
-
-Shubhrajyoti Datta (1):
-      EDAC/synopsys: Fix error injection on Zynq UltraScale+
-
- drivers/acpi/prmt.c            |   24 +
- drivers/edac/Kconfig           |    9 -
- drivers/edac/Makefile          |    1 -
- drivers/edac/i10nm_base.c      |   61 +-
- drivers/edac/igen6_edac.c      |    2 +-
- drivers/edac/ppc4xx_edac.c     | 1425 ----------------------------------------
- drivers/edac/ppc4xx_edac.h     |  167 -----
- drivers/edac/sb_edac.c         |   35 +-
- drivers/edac/skx_base.c        |   52 +-
- drivers/edac/skx_common.c      |   49 +-
- drivers/edac/skx_common.h      |    8 +
- drivers/edac/synopsys_edac.c   |   35 +-
- drivers/ras/amd/atl/Kconfig    |    4 +
- drivers/ras/amd/atl/Makefile   |    2 +
- drivers/ras/amd/atl/internal.h |   10 +
- drivers/ras/amd/atl/prm.c      |   57 ++
- drivers/ras/amd/atl/umc.c      |    5 +
- include/linux/prmt.h           |    5 +
- 18 files changed, 222 insertions(+), 1729 deletions(-)
- delete mode 100644 drivers/edac/ppc4xx_edac.c
- delete mode 100644 drivers/edac/ppc4xx_edac.h
- create mode 100644 drivers/ras/amd/atl/prm.c
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
