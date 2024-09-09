@@ -1,121 +1,86 @@
-Return-Path: <linux-kernel+bounces-321100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B87997147D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:54:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F25839714C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 12:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A2C21C22D12
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:54:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9FF91F21608
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 10:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162541B3B06;
-	Mon,  9 Sep 2024 09:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aDcgu3E3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473D41B3F36;
+	Mon,  9 Sep 2024 10:05:00 +0000 (UTC)
+Received: from muminek.juszkiewicz.com.pl (muminek.juszkiewicz.com.pl [213.251.184.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397E6175D21;
-	Mon,  9 Sep 2024 09:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC281B3748;
+	Mon,  9 Sep 2024 10:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.251.184.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725875646; cv=none; b=bAoOalX1Ynf4rhTv3PMy0w4epSV8RJrG+SdIlRFd72Wj+dTIU81HvHcC+z+wVUbv6LiECbzXbucRwO2f9LeUxAcbDv/uQMtJblx8vbabT/VRdEkkEtI/Bbh30eTVvPtFEY3kd9vcMn/qXUmWOfBssGK100bDMglLvYQg1o5cQ1g=
+	t=1725876299; cv=none; b=gOV2XLeMym8AwCM4VQWy/xmEoChjIB4wJcOSqvs6BiDcrEIZFMUAUeE3bQGGXzbg/H8Bug9u8Najj1fZOJR/pM3HQXvks6kWJxojxDphlsZlZk9wo3vzbRpGNBuBDRlPwGI31RxmIa4MCqVFIdX4CgWaA/BKmadAoiI4h/pXJA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725875646; c=relaxed/simple;
-	bh=nTtt63xtEzL0HIZ3KB72uhdfQ7X6mOcbDEDn3v89uBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hF52dC2TFVL/XZ3G9VGlzbQ4EU4BSVJwaK/xLAXrmGzQ6XcM5eodolgp4S64v1jHTrm2ZDsQf//4gj/2nBT+5LXwv32Gy3gNy/43eLndxylxCXYmTEJwYAOF7w7c4iBkFWERr8CBrM9mLC7HAYDapj6Lp7NFBk6uX4wKIG7H5N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aDcgu3E3; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725875645; x=1757411645;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nTtt63xtEzL0HIZ3KB72uhdfQ7X6mOcbDEDn3v89uBE=;
-  b=aDcgu3E3LgyvK5DJUR0MVO3St2jlowiNfsB1GZ88vgLEInAyeurZdlV4
-   wreQTQHGSUlgneppkQOjgvg8h3px7+7bJwYP1Wxb7QBve9aKFTSuYEanH
-   A9OM5Tik1M/xwjpixIQeyuF0LroSgty6A79m4nBjkMDAkJS0XSaVTSO8P
-   tQIZFiLArfdksCstvqEgFppizaJRNxShwM2E+ZBmXc8w1QaXmF1zCuQHa
-   HZAqBm0y4YsJMkYbBQG8lSmlLo3YEbbAdXjvgZVCOKdNc4s8fbI3H2cQR
-   cglqbA6+ZHtTo/UdQ6zqB+VOJzipt5GchsJjGfy67h5B+v2P1YFidddMZ
-   Q==;
-X-CSE-ConnectionGUID: NcpSzqVVRtGONDRPiT2xug==
-X-CSE-MsgGUID: hAqB5CaNRv6flgi6cAU2xg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="47085008"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="47085008"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 02:54:04 -0700
-X-CSE-ConnectionGUID: lWB3RRrORWybZJeunzPa3Q==
-X-CSE-MsgGUID: qQ5Kuz+8SJ2OtGZIQC5m1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="70730433"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 02:54:00 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1snb5n-00000006k0v-07sM;
-	Mon, 09 Sep 2024 12:53:55 +0300
-Date: Mon, 9 Sep 2024 12:53:54 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH next v1 1/2] serial: 8250: Switch to nbcon console
-Message-ID: <Zt7FstSsthuxtpEz@smile.fi.intel.com>
-References: <87jzfod9f2.fsf@jogness.linutronix.de>
- <8734mbdwrf.ffs@tglx>
+	s=arc-20240116; t=1725876299; c=relaxed/simple;
+	bh=1lOMULwcBauh1sqgHcdJ6uL4LTWImRVViMjKIv46xvg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uKzbXuCJATvexVXXRRXeJGSWXPvGF4ZwSur0hYB3Gu1ifYJeghdt3wrbbJjEEgnq7RmJqmfzYiJDvbVcuhaL18rvhcI2OTTv7PJ0krx5qdOn0svkRJieDI95irKggmA/oPd3hZXn6Ywuwv7ryrScmgwz2eVRaaGfWHIyrlqKDbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org; spf=fail smtp.mailfrom=linaro.org; arc=none smtp.client-ip=213.251.184.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=linaro.org
+Received: from localhost (localhost [127.0.0.1])
+	by muminek.juszkiewicz.com.pl (Postfix) with ESMTP id 8AAC0260984;
+	Mon,  9 Sep 2024 11:55:37 +0200 (CEST)
+X-Virus-Scanned: Debian amavis at juszkiewicz.com.pl
+Received: from muminek.juszkiewicz.com.pl ([127.0.0.1])
+ by localhost (muminek.juszkiewicz.com.pl [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id rkwDbRIG9CqB; Mon,  9 Sep 2024 11:55:35 +0200 (CEST)
+Received: from puchatek.lan (83.11.24.101.ipv4.supernova.orange.pl [83.11.24.101])
+	by muminek.juszkiewicz.com.pl (Postfix) with ESMTPSA id 4E68A2601B2;
+	Mon,  9 Sep 2024 11:55:35 +0200 (CEST)
+From: Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+To: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Subject: [PATCH] cpufreq: use proper units for frequency
+Date: Mon,  9 Sep 2024 11:55:29 +0200
+Message-ID: <20240909095529.2325103-1-marcin.juszkiewicz@linaro.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8734mbdwrf.ffs@tglx>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 07, 2024 at 10:39:00PM +0200, Thomas Gleixner wrote:
-> On Fri, Sep 06 2024 at 18:44, John Ogness wrote:
+When I booted my RK3588 based system I noticed that cpufreq complained
+about system clock:
 
-...
+[  +0.007211] cpufreq: cpufreq_online: CPU0: Running at unlisted initial frequency: 816000 KHz, changing to: 1008000 KHz
 
-> I'm 100% that this is just a problem of blindly sharing this with the
-> regular uart code and not because there is a requirement. See what
-> serial8250_console_setup() does at the end:
-> 
->         if (port->dev)
->                 pm_runtime_get_sync(port->dev);
-> 
-> The corresponding put() is in serial8250_console_exit(). So there is
-> absolutely zero reason for power management in the console write
-> functions. It's the usual voodoo programming which nobody noticed
-> because it did not immediately blow up in their face.
+Then I realized that unit is displayed wrong: "KHz" instead of "kHz".
 
-It might be historical, but yes, the above is for a reason.
-And if somebody needs a kernel console to be shutdown, they should remove
-it from the active consoles.
+Signed-off-by: Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+---
+ drivers/cpufreq/cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 04fc786dd2c0..76da29c2bd3f 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1539,7 +1539,7 @@ static int cpufreq_online(unsigned int cpu)
+ 			 * frequency for longer duration. Hence, a BUG_ON().
+ 			 */
+ 			BUG_ON(ret);
+-			pr_info("%s: CPU%d: Running at unlisted initial frequency: %u KHz, changing to: %u KHz\n",
++			pr_info("%s: CPU%d: Running at unlisted initial frequency: %u kHz, changing to: %u kHz\n",
+ 				__func__, policy->cpu, old_freq, policy->cur);
+ 		}
+ 	}
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.46.0
 
 
