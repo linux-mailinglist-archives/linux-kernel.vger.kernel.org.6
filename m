@@ -1,105 +1,156 @@
-Return-Path: <linux-kernel+bounces-321805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DC2971FAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:56:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26DE8971FB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 18:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FB331F24017
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:56:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4236D1C21D10
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 16:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC44716DEAA;
-	Mon,  9 Sep 2024 16:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D735F16DECB;
+	Mon,  9 Sep 2024 16:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Wg3F5LCf"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GEzNWPKn"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C827494;
-	Mon,  9 Sep 2024 16:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93277494;
+	Mon,  9 Sep 2024 16:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725900979; cv=none; b=e0ECcKXkYzKJgaiQUJ+mkZce3jnjylsvoq7vgK3GvOPoVgFjrFcCXAn8tjXVXeE930fK+/0YKjzE95Eo7AXTJKfl4ld23rm2LG4Wr45BEWFRzTFyEPUXLSDvwxzf00yNzwxD4dluicqBRFl545ktuZo2u2ZH8tZsjPtXZbDUaWY=
+	t=1725901063; cv=none; b=V5qp05bfeEcW/IYaoZwlKzBm5assmXtqlj5Y0aF8h7ejG6h9FuEl+GfjDEmsjsLdrBRHzF55d5GKs6YNDO3u/1MM4kCA4FnHG3wOBYSiyiJ3M9N92RGfobZ6wktc1oIUe2/IsdZHhsMcY3moWwv8UvS3yO1T4mqqVtUKJy2vvg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725900979; c=relaxed/simple;
-	bh=hz+muhNlGzPTTXOmV3AgBKyXhVUGgQu1x3C0Pqi1hE4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=on+P0bgW8qFz0IJLMb2iPrzVl1pi+663yT2xTGj1ucbwnmFBI0jla/7KnR3XQeAoQeyplGx1KziWLRGISFsBn3voMKmC9QwIvKpo/9s1byMNJGRUTxra6hOHHUUFlEUxeX68kfM8wFJ5FMnInlzsEyqYZuRKEEBaNTNRfH0/fVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Wg3F5LCf; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4X2XzH29GczlgTWQ;
-	Mon,  9 Sep 2024 16:56:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1725900969; x=1728492970; bh=uEzk+UVKk3DtYZ3RGwdE5l5N
-	lpjkh/MfDdrJSDrEB2o=; b=Wg3F5LCf6/+JLLss67hdFrwCYpiKYJcvPXWaMPb5
-	0UGd5jPmKNn3jnvfs9p3k8jYt/0lVwzZVbYRa/L0v3ac2kY7pFggydPH8IubdsRB
-	o9cK34OGXusVLu+POcglH8dUKGwfyQOlpy1BgsvYkkDziK7mWE19d7hNXHTiGCMv
-	HaN/oys8ko2XLinPrYyvZDwRMyjcARhEAIOqgylNEfxgeJ/bc1HQeu2+nPV/935c
-	VyeSX3+gJSAevSSKeuB0hgfdWvY4aa0BLqZ8cJMSH1NgTcdljq9++XNbUmTf79xW
-	n1mBav+j0iMDmsgYIm28V4Hxme1muZOnuzi5s1WN7KAi/A==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id ojzRlORkKUAf; Mon,  9 Sep 2024 16:56:09 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4X2XzD1QNjzlgTWP;
-	Mon,  9 Sep 2024 16:56:07 +0000 (UTC)
-Message-ID: <2f13ac77-55e0-408d-96fe-b91d3c860106@acm.org>
-Date: Mon, 9 Sep 2024 09:56:06 -0700
+	s=arc-20240116; t=1725901063; c=relaxed/simple;
+	bh=QCNK9zP8bGz5ckOaJiJWjF8Cds6zTixKftz7aBjGHbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W/ieZzXrLma1zfxDttBHakl2M/XUnv513UuFvg8I0CHZAEwaYUfQ+nRTEP2ws1Q4XdaCGA+t1enoIAqQifXxEazfHJvi1CyzbBZiOn/pzbwkGxDrDclcTLiDGSq7GwMkfEXEEPrpbkiiaX8eu+uvSZuklIbczc9yrXzGeoWbCQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GEzNWPKn; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-718d8d6af8fso2695442b3a.3;
+        Mon, 09 Sep 2024 09:57:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725901061; x=1726505861; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QCNK9zP8bGz5ckOaJiJWjF8Cds6zTixKftz7aBjGHbk=;
+        b=GEzNWPKnhda+7UYcbHt14VTzefK0iV0QT72GIHwiU5no/aD/17joBclnOunHrttXJ/
+         Hj4ZRQo8GlESM9c7dC84EIdaCqx66gfai2YWADQsQlBhTkq8dBPKRZpc31OpLsYcq/R3
+         m7bKZCr1elrW9OWDa4/kV4hWxq/imzbFLFz939GRO+otihrWztibt3+gPNZMQEqMk6GZ
+         qCMSpZ+sysiA69catX9RYCbdIc0pTOB4qrbEsPWGN/uJy0QU9uS9t/TqmvSXI68CzPjR
+         ODZJpsPClDDN9yIo0X5qj3M5HnSH0rD5PQGLcrUF/3ApIDWwUAc2lSo8IDDS3pz0foVZ
+         xh3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725901061; x=1726505861;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QCNK9zP8bGz5ckOaJiJWjF8Cds6zTixKftz7aBjGHbk=;
+        b=XybfCGkGhW0d00DU2vpVPPoJCNY24tI7a8HFaBSgxiSGZezrPwx7YwNVtHARaxelN4
+         mF0QwEJgYBX+EHHdlkKlAPvdJuOgKBsg3cEXYvIfG9zUYOP56yhkJumhkTZUYLaMSthG
+         dGx7pHmW/abou/0iVqyXUEeNDzeFtOELkVC7OsiDcePzM5MWWfyf4FSQ0r5iBl4YuG3p
+         JEj29+svfPh+OhO15FwOvMqPmhmwX6/4D3Zh3JGNZ6KGW56p5a/DxdRUh5gflmYERPgF
+         PaWT3HXQLv8xsgW/5oP8b1TdH/KBacPh9fBavvyTcBrrQ/LXEuGsnp8vu/onL5Nnwy/C
+         /4tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwj+n5HZdOCDEjMSMnzrHWnjm37vUswY3j6XpQTum4L8QrBplhmJmoTEVXs+42Ips6nuzRSpb6cotcoHZT@vger.kernel.org, AJvYcCWC7kaBdrrt/hO4OQK+cqCbhUeNyi69f679axjrEiCVLbMRyA/gRlJUGXqw+QUmB5YV2TA=@vger.kernel.org, AJvYcCWXFQJBUAumX+rAOOKqqswHk8aH4Xs94y4ZUwJ1gzrSx4eG6B+4tYb7KdmyIRM8byraNIAqczsPL1PekTA1+kCbK7nN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHGZRSouHhDlWmTKDeUrbnwrLog3gRHPb60xlztwgHnT09j2pn
+	DxevqwQOxilTR+BciODhC7l/2tATmi37Y7eqpx/hHmG9xo1RJqMnnmyFIzUMuHqW/7xkZiK3vPs
+	1F2xuyI9FRa4mfLfKbACsYeUPDl2SCg==
+X-Google-Smtp-Source: AGHT+IFApPizW7xqNkTHSmiNEWQUS+OJNd1Gro6foYoJ+rcZwtGDgWdsEDvQSdwD9lVR0uoBUsshIirR3/BtJEzYuFs=
+X-Received: by 2002:a05:6a21:3a94:b0:1cf:4ea4:17c with SMTP id
+ adf61e73a8af0-1cf4ea40234mr815722637.15.1725901060848; Mon, 09 Sep 2024
+ 09:57:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] block: fix potential invalid pointer dereference in
- blk_add_partition
-To: Riyan Dhiman <riyandhiman14@gmail.com>, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>
-References: <20240908171036.71874-1-riyandhiman14@gmail.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240908171036.71874-1-riyandhiman14@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240814080356.2639544-1-liaochang1@huawei.com>
+ <Zr3RN4zxF5XPgjEB@J2N7QTR9R3> <f95fc55b-2f17-7333-2eae-52caae46f8b2@huawei.com>
+ <8cc13794-30a7-a30b-2ac9-4d151499d184@huawei.com> <ZtrN4eWwrSWTMGmD@J2N7QTR9R3>
+ <CAEf4BzYn3EkVVk4dnWMBMKa16y_ZFvQp3ZcdM44a2LeS08S6FQ@mail.gmail.com> <Zt7LWaoZ0PTFqVLF@J2N7QTR9R3>
+In-Reply-To: <Zt7LWaoZ0PTFqVLF@J2N7QTR9R3>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 9 Sep 2024 09:57:28 -0700
+Message-ID: <CAEf4BzbWnGiRQm+eZAYSsHzy5+9jbZ87=m0sg5zxAjVDSkPFiA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: insn: Simulate nop and push instruction for better
+ uprobe performance
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: "Liao, Chang" <liaochang1@huawei.com>, catalin.marinas@arm.com, will@kernel.org, 
+	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org, 
+	puranjay@kernel.org, ast@kernel.org, andrii@kernel.org, xukuohai@huawei.com, 
+	revest@chromium.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/8/24 10:10 AM, Riyan Dhiman wrote:
-> The blk_add_partition() function initially used a single if-condition
-> (IS_ERR(part)) to check for errors when adding a partition. This was
-> modified to handle the specific case of -ENXIO separately, allowing the
-> function to proceed without logging the error in this case. However,
-> this change unintentionally left a path where md_autodetect_dev()
-> could be called without confirming that part is a valid pointer.
-> 
-> This commit separates the error handling logic by splitting the
-> initial if-condition, improving code readability and handling specific
-> error scenarios explicitly. The function now distinguishes the general
-> error case from -ENXIO without altering the existing behavior of
-> md_autodetect_dev() calls.
-> 
-> Fixes: b72053072c0b (block: allow partitions on host aware zone devices)
-> 
-> Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+On Mon, Sep 9, 2024 at 3:18=E2=80=AFAM Mark Rutland <mark.rutland@arm.com> =
+wrote:
+>
+> On Fri, Sep 06, 2024 at 10:46:00AM -0700, Andrii Nakryiko wrote:
+> > On Fri, Sep 6, 2024 at 2:39=E2=80=AFAM Mark Rutland <mark.rutland@arm.c=
+om> wrote:
+> > >
+> > > On Tue, Aug 27, 2024 at 07:33:55PM +0800, Liao, Chang wrote:
+> > > > Hi, Mark
+> > > >
+> > > > Would you like to discuss this patch further, or do you still belie=
+ve emulating
+> > > > STP to push FP/LR into the stack in kernel is not a good idea?
+> > >
+> > > I'm happy with the NOP emulation in principle, so please send a new
+> > > version with *just* the NOP emulation, and I can review that.
+> >
+> > Let's definitely start with that, this is important for faster USDT tra=
+cing.
+> >
+> > > Regarding STP emulation, I stand by my earlier comments, and in addit=
+ion
+> > > to those comments, AFAICT it's currently unsafe to use any uaccess
+> > > routine in the uprobe BRK handler anyway, so that's moot. The uprobe =
+BRK
+> > > handler runs with preemption disabled and IRQs (and all other maskabl=
+e
+> > > exceptions) masked, and faults cannot be handled. IIUC
+> > > CONFIG_DEBUG_ATOMIC_SLEEP should scream about that.
+> >
+> > This part I don't really get, and this might be some very
+> > ARM64-specific issue, so I'm sorry ahead of time.
+> >
+> > But in general, at the lowest level uprobes work in two logical steps.
+> > First, there is a breakpoint that user space hits, kernel gets
+> > control, and if VMA which hit breakpoint might contain uprobe, kernel
+> > sets TIF_UPROBE thread flag and exits. This is the only part that's in
+> > hard IRQ context. See uprobe_notify_resume() and comments around it.
+> >
+> > Then uprobe infrastructure gets called in user context on the way back
+> > to user space. This is where we confirm that this is uprobe/uretprobe
+> > hit, and, if supported, perform instruction emulation.
+> >
+> > So I'm wondering if your above comment refers to instruction emulation
+> > within the first part of uprobe handling? If yes, then, no, that's not
+> > where emulation will happen.
+>
+> You're right -- I had misunderstood that the emulation happened during
+> handling of the breakpoint, rather than on the return-to-userspace path.
+> Looking at the arm64 entry code, the way uprobe_notify_resume() is
+> plumbed in is safe as it happens after we've re-enabled preemption and
+> unmasked other exceptions.
+>
+> Sorry about that.
+>
+> For the moment I'd still prefer to get the NOP case out of the way
+> first, so I'll review the NOP-only patch shortly.
+>
 
-No blank line between the Fixes: and Signed-off-by: tags please.
-Additionally, please Cc the author of a patch when posting a fix for a
-patch.
+Yep, one step at a time makes sense, thanks! Regardless, I'm glad we
+clarified the confusion.
 
-Thanks,
-
-Bart.
-
+> Mark.
 
