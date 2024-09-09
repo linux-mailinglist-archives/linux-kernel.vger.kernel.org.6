@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-321103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-321102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A07971486
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:56:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33D7971485
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 11:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 992B71C22F50
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:56:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED62284351
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2024 09:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DFC1B3748;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226B91B3B07;
 	Mon,  9 Sep 2024 09:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RZv4hkae"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aZ7k+wmB"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C591B3726
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603C41B29A5
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2024 09:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725875795; cv=none; b=RaT5VmLW1WRRthaZUPj3brYzl5TXEQ3qnPayzgEBgy7noyY5HU6qCFhtZZg3dYXygn72UVTsLY/0z8BvcLK1UE4Lx36Mw3iL+vQNsMlN/3OtvCsfPPu5DNwpJtP1r6w7bde7Ru3fbAAytrPzsZXPC1zTs0FWgol7iv+CMSBHE4o=
+	t=1725875794; cv=none; b=cfGLw1HAxgKWScHkcS3Sm8hsd400cgtBQb5z7x+5gsjSJjj3A/0TfuJIv7R2PErMveHAqWwCHIB7jvxxRqrBQ1Kh7HNKL6ZbnyTluR2kmqkWFgtZBksZrMiqHRqtqltJoFAqVuu5TaGU2anBSpkQ9+j87VX0jFSr4OJhOsW/Doo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725875795; c=relaxed/simple;
-	bh=ktMvSf/rAMcHD9FjPEJ+kEEbLxU8bi4snVIgxbjpmxo=;
+	s=arc-20240116; t=1725875794; c=relaxed/simple;
+	bh=lZppNWrAVDDYoKJO519QWgaMISzRluAgisfiFGscreI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I0X8b/loown5wE2bmAD3lh5Wa4AnmReAyYwDvWehei9X/PEsYdYBlfgk1kOfS52qAYMtJXnFKBepeHc28lMWs0r4K+XHi+ZNPvLh72Q4tEEdPJUkqhf7BmZ5LEC0ZrP2zZPrgDY3Ua3o8zNh52Ao5ZUfIUwSqRYrP+M5D+EhkCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RZv4hkae; arc=none smtp.client-ip=217.70.183.198
+	 MIME-Version; b=IUYpA3kI7aePXb2q9JwVbUUGaQB4RjNHDkLmYEvl+zaRffpKch8e8K5eeFqJpXTHzTlToSttGVP2iYIPtNqFi7I0T5oEe9cqD4xAFV1AjYk0MObcQ/zHKjLrVWIvgxg5KCYwQro+4yiCmxoZf27P+fMjxv0ADcaR/maXYCWRuj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aZ7k+wmB; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E6BFEC000B;
-	Mon,  9 Sep 2024 09:56:24 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B66251C0009;
+	Mon,  9 Sep 2024 09:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725875785;
+	t=1725875790;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bAeuadKeSyVHr07LY0GUdrdw29DCbIusjiSIYmZBONw=;
-	b=RZv4hkaeubG4UehdbroKzmwajUTVf2HXwEqUnN34DFCVW7tzIao3HjC9Kv80oHBKWIz4/5
-	IGD+mC5UwXLQElpEc8PyoAn3uGxvNV9/lKjcYSEEG/hSfIATAH7J8idYIgVFRgGMxvACUB
-	MrQsKB8KnCsppntk2dKcb7OfYvirQ9bz4/XM9bzE8zYthOaSPijVENuYCPzPTfOC4W9hH0
-	AtlMn9bguNNsG6ko8ltkfxExcnqcpzLCVvmYgJr2cYhK0CyA2GYr3s5NyUVCozZtTFIMQ/
-	+2b7ZdGR4pCELPNSdE2Hs1L8yDBp9IG+qizquHZoZr244D743moipP2+56MlPw==
+	bh=7Y5Q5NHxCQLDcTvXiEXz2NAloD4ZixOFnxmmJTc6rbw=;
+	b=aZ7k+wmBWAn+JPADO4pTvstmnXuh9rXIN1tptlwO3FXWCLlrHPpwwiZ0ZXYbSye/GW0EOA
+	LZ9etEjSzpxKAN861m8BJSkwnKfPqV0u6y1wW/8sbqgCB6jzWQCmRb5Kqd85DzdIDeixG1
+	S6ZJNQWBW9FoDfVzJmdzCgs6qph+OeYByS/DSqq6MeKLv+Ift9sEJAgd+TftAEosFDwbZ9
+	LBJFltBV4rNKtg3x9MvFNFFaRn22c7ktXGaT+fxHPPwUtbzaZEM3c68q4NbhshRzn+QlM1
+	CTfpwh1Hc0CN84UjvfFDKDbCvY4nrX0zgWbonPwJwduzWy03hspsSf53hLQw6g==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
 To: Cheng Ming Lin <linchengming884@gmail.com>,
 	miquel.raynal@bootlin.com,
@@ -54,11 +54,11 @@ Cc: richard@nod.at,
 	alvinzhou@mxic.com.tw,
 	leoyu@mxic.com.tw,
 	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: Re: [PATCH v7 2/2] mtd: spinand: macronix: Flag parts needing explicit plane select
-Date: Mon,  9 Sep 2024 11:56:23 +0200
-Message-ID: <20240909095624.20668-1-miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v7 1/2] mtd: spinand: Add support for setting plane select bits
+Date: Mon,  9 Sep 2024 11:56:28 +0200
+Message-ID: <20240909095629.20698-1-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240909092643.2434479-3-linchengming884@gmail.com>
+In-Reply-To: <20240909092643.2434479-2-linchengming884@gmail.com>
 References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -67,20 +67,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'475aadeba5df687524bd9bc5c77cba44c1736e08'
+X-linux-mtd-patch-commit: b'ca229bdbef29be207c8666f106acc3bf50736c05'
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Mon, 2024-09-09 at 09:26:43 UTC, Cheng Ming Lin wrote:
+On Mon, 2024-09-09 at 09:26:42 UTC, Cheng Ming Lin wrote:
 > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 > 
-> Macronix serial NAND flash with a two-plane structure requires
-> insertion of the Plane Select bit into the column address during
-> the write_to_cache operation.
+> Add two flags for inserting the Plane Select bit into the column
+> address during the write_to_cache and the read_from_cache operation.
 > 
-> Additionally, for MX35{U,F}2G14AC and MX35LF2GE4AB, insertion of
-> the Plane Select bit into the column address is required during
-> the read_from_cache operation.
+> Add the SPINAND_HAS_PROG_PLANE_SELECT_BIT flag for serial NAND flash
+> that require inserting the Plane Select bit into the column address
+> during the write_to_cache operation.
+> 
+> Add the SPINAND_HAS_READ_PLANE_SELECT_BIT flag for serial NAND flash
+> that require inserting the Plane Select bit into the column address
+> during the read_from_cache operation.
 > 
 > Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
