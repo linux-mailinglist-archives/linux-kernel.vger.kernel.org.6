@@ -1,149 +1,134 @@
-Return-Path: <linux-kernel+bounces-323781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44AA797435B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:17:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A2997435F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 772AB1C26C29
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:17:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 283901C25336
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEB91A76C9;
-	Tue, 10 Sep 2024 19:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1361A704B;
+	Tue, 10 Sep 2024 19:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZWNM2C8T"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gyo5VdwZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD0C1AAE2C
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 19:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24996A332;
+	Tue, 10 Sep 2024 19:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725995792; cv=none; b=HTYn/InM8IXd6l4NOOdxJNl1ctiRzXB+8/ILFFXlaXoYGfvVNB1SiVzlliSBZTIgQoDZ9VNeyk4lwCWgQlTl+oGu7R2wKWWGJ4M7Ik9rvEmksT1i6KzAH7rKYRX1QZheYCDqQcogGtDQ3NVtY8kpUcF8l8i/ACkY89vO8UHvGpY=
+	t=1725995957; cv=none; b=HhqDp28LuiqnH9iZwA3TqoP9EEYilEiwZG13OVfb5YQe+uviRTBdFtuPL4foHkBjyYuiKMa619oaZv3lxSjX3fbU47QK1+MeUkLXP6sk96lYEZd9YRoy4QVbdNLOmpyrkm0BlRjpWdthnaGQJbm6Ced78JAl8tUhXs2beQGL72E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725995792; c=relaxed/simple;
-	bh=5AbZneFrwb0hG7IzHsWdJ92AUDYVOma72/NL/xjkm1k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D830xyWc7abmvIVP63Q46V4NmgvUF26ps+CJA68nlN63RHQwGY0uhzJJNgwq75QD8Ox/wu+w9iP+qEk6sXdOak/ZQWYoXlmqqKhplC63VAMXnD22y3QBTk/wpZV+AsIP+usKDj6kKPEZkWch2UNtHK0ZmPC3/js4kFF+9Ch4XoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZWNM2C8T; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725995789;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xMATIjJHQHWxMji5r7WdDXGhstKkdxXCo0yMMstlfH8=;
-	b=ZWNM2C8TqQNfWEiN6cAHxi5RXzN0wAzkFUXVU8r4X1nfww6FCKYaqC3a5klH0YZBmKEMXr
-	oFl+uurE40hGGzoy3U37iQTf/MDnNnmdBlP7hCMU1Kw0Ujg+rF61LMjiXlU67k3ot/RExz
-	NHmqwX1RWVmZIs/CzMkl4EdD2mO385M=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-232-WbUGol_bMq2IBJu7l5Sszw-1; Tue,
- 10 Sep 2024 15:16:26 -0400
-X-MC-Unique: WbUGol_bMq2IBJu7l5Sszw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2C2851955BC1;
-	Tue, 10 Sep 2024 19:16:24 +0000 (UTC)
-Received: from t14s.fritz.box (unknown [10.22.17.222])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DF81B30001A1;
-	Tue, 10 Sep 2024 19:16:17 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linux-s390@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	David Hildenbrand <david@redhat.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Huth <thuth@redhat.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v1 5/5] s390/sparsemem: reduce section size to 128 MiB
-Date: Tue, 10 Sep 2024 21:15:39 +0200
-Message-ID: <20240910191541.2179655-6-david@redhat.com>
-In-Reply-To: <20240910191541.2179655-1-david@redhat.com>
-References: <20240910191541.2179655-1-david@redhat.com>
+	s=arc-20240116; t=1725995957; c=relaxed/simple;
+	bh=gTOHPPESfK8EehXWWqOIXmMiW/UUGlZU3n9Ca2XsILM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CU3asBtCo5od04ATX2x48t/JPm5e13PExmJU07O9RJFPZ4/LCbRkP6yk75c5yr//s3tUf/17AYojP20a5BwvPkEZlyuYbCPang+as3vG574V1pVTkF4G1Qw2pZgKUd1w4EB2wFDG38M10KPtJyiBiDBNc+WFiUNe9XsMYdEALDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gyo5VdwZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CE56C4CEC3;
+	Tue, 10 Sep 2024 19:19:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725995956;
+	bh=gTOHPPESfK8EehXWWqOIXmMiW/UUGlZU3n9Ca2XsILM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gyo5VdwZvk9oMgkB1+aUe5/IGzFSPxZu2CKdBF9GNlp9efwdiGnQ9BZ/04vwG2sjU
+	 fw51PJU4l/PwlRZfGTS0mg3EtwHeMwrAJDFRy3B8g39NYpRIKKuWAbeupvV85roLrF
+	 AmfjLwn6WT22ufVhuURPbIDUAKu4aKQpgB/vp4eKm8N+De9O/7Av2ZUpMA/hFSEaE1
+	 JfZJ47UmtCuM3IQAIv7uLkdmzVH8RLygViPPDFja4jHgDqRrazytc8XQWlNSnvyauo
+	 j7Uo7/7EUB/0pCYWIhapF4jmqFuA8cwlwQtVpFmgxS0IwXr656uO4fR+bdCL27Mr64
+	 hrJ2QL3u54K5Q==
+Message-ID: <0ad933b9-9df5-4acc-aa72-d291aa7d7f4d@kernel.org>
+Date: Tue, 10 Sep 2024 21:19:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regression v6.11 booting cannot mount harddisks (xfs)
+To: Jens Axboe <axboe@kernel.dk>, Damien Le Moal <dlemoal@kernel.org>,
+ Linus Torvalds <torvalds@linuxfoundation.org>,
+ LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>
+Cc: Netdev <netdev@vger.kernel.org>, linux-ide@vger.kernel.org,
+ cassel@kernel.org, handan.babu@oracle.com, djwong@kernel.org,
+ Linux-XFS <linux-xfs@vger.kernel.org>, hdegoede@redhat.com,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ kernel-team <kernel-team@cloudflare.com>
+References: <0a43155c-b56d-4f85-bb46-dce2a4e5af59@kernel.org>
+ <d2c82922-675e-470f-a4d3-d24c4aecf2e8@kernel.org>
+ <ee565fda-b230-4fb3-8122-e0a9248ef1d1@kernel.org>
+ <7fedb8c2-931f-406b-b46e-83bf3f452136@kernel.org>
+ <c9096ee9-0297-4ae3-9d15-5d314cb4f96f@kernel.dk>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <c9096ee9-0297-4ae3-9d15-5d314cb4f96f@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Ever since commit 421c175c4d609 ("[S390] Add support for memory hot-add.")
-we've been using a section size of 256 MiB on s390x and 32 MiB on s390.
-Before that, we were using a section size of 32 MiB on both
-architectures.
 
-Likely the reason was that we'd expect a storage increment size of
-256 MiB under z/VM back then. As we didn't support memory blocks spanning
-multiple memory sections, we would have had to handle having multiple
-memory blocks for a single storage increment, which complicates things.
-Although that issue reappeared with even bigger storage increment sizes
-later, nowadays we have memory blocks that can span multiple memory
-sections and we avoid any such issue completely.
 
-Now that we have a new mechanism to expose additional memory to a VM --
-virtio-mem -- reduce the section size to 128 MiB to allow for more
-flexibility and reduce the metadata overhead when dealing with hot(un)plug
-granularity smaller than 256 MiB.
+On 10/09/2024 20.38, Jens Axboe wrote:
+> On 9/10/24 11:53 AM, Jesper Dangaard Brouer wrote:
+>> Hi Hellwig,
+>>
+>> I bisected my boot problem down to this commit:
+>>
+>> $ git bisect good
+>> af2814149883e2c1851866ea2afcd8eadc040f79 is the first bad commit
+>> commit af2814149883e2c1851866ea2afcd8eadc040f79
+>> Author: Christoph Hellwig <hch@lst.de>
+>> Date:   Mon Jun 17 08:04:38 2024 +0200
+>>
+>>      block: freeze the queue in queue_attr_store
+>>
+>>      queue_attr_store updates attributes used to control generating I/O, and
+>>      can cause malformed bios if changed with I/O in flight.  Freeze the queue
+>>      in common code instead of adding it to almost every attribute.
+>>
+>>      Signed-off-by: Christoph Hellwig <hch@lst.de>
+>>      Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+>>      Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+>>      Reviewed-by: Hannes Reinecke <hare@suse.de>
+>>      Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
+>>      Link: https://lore.kernel.org/r/20240617060532.127975-12-hch@lst.de
+>>      Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>
+>>   block/blk-mq.c    | 5 +++--
+>>   block/blk-sysfs.c | 9 ++-------
+>>   2 files changed, 5 insertions(+), 9 deletions(-)
+>>
+>> git describe --contains af2814149883e2c1851866ea2afcd8eadc040f79
+>> v6.11-rc1~80^2~66^2~15
+> 
+> Curious, does your init scripts attempt to load a modular scheduler
+> for your root drive?
 
-128 MiB has been used by x86-64 since the very beginning. arm64 with 4k
-base pages switched to 128 MiB as well: it's just big enough on these
-architectures to allows for using a huge page (2 MiB) in the vmemmap in
-sane setups with sizeof(struct page) == 64 bytes and a huge page mapping
-in the direct mapping, while still allowing for small hot(un)plug
-granularity.
+I have no idea, this is just a standard Fedora 40.
 
-For s390x, we could even switch to a 64 MiB section size, as our huge page
-size is 1 MiB: but the smaller the section size, the more sections we'll
-have to manage especially on bigger machines. Making it consistent with
-x86-64 and arm64 feels like te right thing for now.
+> 
+> Reference: https://git.kernel.dk/cgit/linux/commit/?h=for-6.12/block&id=3c031b721c0ee1d6237719a6a9d7487ef757487b
 
-Note that the smallest memory hot(un)plug granularity is also limited by
-the memory block size, determined by extracting the memory increment
-size from SCLP. Under QEMU/KVM, implementing virtio-mem, we expose 0;
-therefore, we'll end up with a memory block size of 128 MiB with a
-128 MiB section size.
+The commit doesn't apply cleanly on top of af2814149883e2c185.
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- arch/s390/include/asm/sparsemem.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+$ patch --dry-run -p1 < ../block-jens/block-jens-bootfix.patch
+checking file block/blk-sysfs.c
+Hunk #1 FAILED at 23.
+Hunk #2 succeeded at 469 (offset 56 lines).
+Hunk #3 succeeded at 484 (offset 56 lines).
+Hunk #4 succeeded at 723 with fuzz 1 (offset 45 lines).
+1 out of 4 hunks FAILED
+checking file block/elevator.c
+Hunk #1 FAILED at 698.
+1 out of 1 hunk FAILED
+checking file block/elevator.h
+Hunk #1 FAILED at 148.
+1 out of 1 hunk FAILED
 
-diff --git a/arch/s390/include/asm/sparsemem.h b/arch/s390/include/asm/sparsemem.h
-index c549893602ea..ff628c50afac 100644
---- a/arch/s390/include/asm/sparsemem.h
-+++ b/arch/s390/include/asm/sparsemem.h
-@@ -2,7 +2,7 @@
- #ifndef _ASM_S390_SPARSEMEM_H
- #define _ASM_S390_SPARSEMEM_H
- 
--#define SECTION_SIZE_BITS	28
-+#define SECTION_SIZE_BITS	27
- #define MAX_PHYSMEM_BITS	CONFIG_MAX_PHYSMEM_BITS
- 
- #endif /* _ASM_S390_SPARSEMEM_H */
--- 
-2.46.0
+I will try to apply and adjust manually.
 
+--Jesper
 
