@@ -1,194 +1,89 @@
-Return-Path: <linux-kernel+bounces-322726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2687972CD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:04:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DCF9972CD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:05:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 310401C244E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:04:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AE35B261E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E2018E778;
-	Tue, 10 Sep 2024 09:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aK2/8Tm/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EC018C030;
-	Tue, 10 Sep 2024 09:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79787187FF6;
+	Tue, 10 Sep 2024 09:04:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CFC175568
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725958984; cv=none; b=PKSrpdAp+yLZFWsAQO8QlyyhWPXSBrO4Gogp6i95EtJcOty/O8PL7hHlvYHbSaUKdqKX+SettLZVP3t2eWaeNYio7Xykugj+ivBJxG+xFAScEwds6gOn8V0sm8frBxB6c/EtemIi6gYY9e4MAnWpxGql+UqIeyVnRLkdI5NbflI=
+	t=1725959063; cv=none; b=Rr4kobFfqI+w6LZvVqq41mA0orVcnjzVPFzy63k47kgCY4VvVNxYVDrwJQ4heFGzuLi3zsb2Jzb4nQVKdgaZEINnCZHV53DGwrTgUgQzOTiYFA5T/pOBkRPM8bHbtQDm3OEjecpu8eRcusZcId6opJmHM+2w0UZpkUNF1xNbXIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725958984; c=relaxed/simple;
-	bh=s8PXXMiB50wCVxSWN4FCor+0lXveR5YTRcOXwyboojg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k30uE11llSfJ3C/FYuxEdTyhM7lhKqGed7D0rkL74HU8OofMGD9GZ+lmBKgfMEsmRvp2PK/kdajCeRf6OrLT0DAk9tJlkteCy1KjWYcn7tpS8ocX8PlTsyLkvud7hijWlrABCjs6zbR53JSFuaRnnTBdTAQNl0pHSoteu6RJBkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aK2/8Tm/; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725958983; x=1757494983;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=s8PXXMiB50wCVxSWN4FCor+0lXveR5YTRcOXwyboojg=;
-  b=aK2/8Tm/4wU69zKlvXfS38hyzvvjubIhUmHKh1kp4t8DrDnwH2xqdWCd
-   VYhTxw2yO0pN3uKL4OSbm6+xa6zYegpVjhckcBbuLmOpNVAMPimfoiWt4
-   Q0aFXuur9p9U8g2fPONaiNwgiR90ERuV2hlWgNGJTo4hYN2O/bht8wtM8
-   UK8WgYtqyEMgxTIFxnte6U4rVncJceLwfvxrMwxqOqWuNqXe5o0P8rIQJ
-   r5fd176O6ced6dhH7RrBocNOL8kY9VSyu8i0VBt/Fpj0rSvbzEzAtjUFB
-   +iiH8RpbOACZeiYyECNfHtAnP9jXVakKIGIhGTCmMN9Q1Zh61X4GHKacS
-   Q==;
-X-CSE-ConnectionGUID: Ujr2bvugQUeIDQ7xDvWkVw==
-X-CSE-MsgGUID: 9ytsDAWsTh6GgTctMQdD0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="35264798"
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="35264798"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 02:03:03 -0700
-X-CSE-ConnectionGUID: jGOjqHVPSp2e/HbDdV9saA==
-X-CSE-MsgGUID: DH3wm5BDRga9Sl9ZR82o3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="71365475"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 02:03:00 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1snwm2-000000078Ir-0vTa;
-	Tue, 10 Sep 2024 12:02:58 +0300
-Date: Tue, 10 Sep 2024 12:02:57 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Kimriver Liu <kimriver.liu@siengine.com>
-Cc: jarkko.nikula@linux.intel.com, mika.westerberg@linux.intel.com,
-	jsd@semihalf.com, andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	s=arc-20240116; t=1725959063; c=relaxed/simple;
+	bh=+l8xZJ5Z2gudgi6cWpsuTSOuc0ht2cU5I4VjyI75N1I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HxbGmfcA+BEVU6g2nfYEmDcMfQvoSXLXyG+U0lv1BHe/W8guZ8A/p7gffLj14EIp/m6JFycD2rnkPU7wSSNOXdCY3iKmU/tYk6wBOOc/4zf3/ZxdllNSSbW1lqZrmC+gv50vn/L6tHmFmbKuAIoekLAmgYsKDpXdOJQBn6W+AnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46256113E;
+	Tue, 10 Sep 2024 02:04:48 -0700 (PDT)
+Received: from a077893.arm.com (unknown [10.163.63.106])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8EB473F66E;
+	Tue, 10 Sep 2024 02:04:15 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8] i2c: designware: fix master is holding SCL low while
- ENABLE bit is disabled
-Message-ID: <ZuALQVyTBFugG0Sw@smile.fi.intel.com>
-References: <9d181a45f3edf92364c9e6b729638f0b3f2e7baa.1725946886.git.kimriver.liu@siengine.com>
+Subject: [PATCH] mm: Drop unused set_pte_safe()
+Date: Tue, 10 Sep 2024 14:34:09 +0530
+Message-Id: <20240910090409.374424-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9d181a45f3edf92364c9e6b729638f0b3f2e7baa.1725946886.git.kimriver.liu@siengine.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 10, 2024 at 02:13:09PM +0800, Kimriver Liu wrote:
-> It was observed issuing ABORT bit(IC_ENABLE[1]) will not work when
+All set_pte_safe() usage have been dropped after the commit eccd906484d1
+("x86/mm: Do not use set_{pud, pmd}_safe() when splitting a large page")
+This just drops now unused helper set_pte_safe().
 
-"...observed that issuing..."
-...bit (..."
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+ include/linux/pgtable.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
-
-> IC_ENABLE is already disabled.
-> 
-> Check if ENABLE bit(IC_ENABLE[0]) is disabled when the master is
-
-"...bit (..."
-master --> controller
-
-> holding SCL low. If ENABLE bit is disabled, the software need
-> enable it before trying to issue ABORT bit. otherwise,
-> the controller ignores any write to ABORT bit.
-
-Fixes tag?
-
-...
-
->  	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
->  	if (abort_needed) {
-> +		if (!(enable & DW_IC_ENABLE_ENABLE)) {
-
-> +			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
-
-This call might also need a one line comment.
-
-> +			enable |= DW_IC_ENABLE_ENABLE;
-
-More natural is to put this after the fsleep() call. The rationale is that it
-will be easier to see what exactly is going to be written back to the
-register.
-
-> +			/*
-> +			 * Wait 10 times the signaling period of the highest I2C
-> +			 * transfer supported by the driver (for 400KHz this is
-> +			 * 25us) to ensure the I2C ENABLE bit is already set
-> +			 * as described in the DesignWare I2C databook.
-> +			 */
-> +			fsleep(DIV_ROUND_CLOSEST_ULL(10 * MICRO, t->bus_freq_hz));
-
-...somewhere here...
-
-> +		}
-> +
->  		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
-
-...
-
-> +static bool i2c_dw_is_master_idling(struct dw_i2c_dev *dev)
-
-Sorry if I made a mistake, but again, looking at the usage you have again
-negation here and there...
-
-	i2c_dw_is_controller_active
-
-(note new terminology, dunno if it makes sense start using it in function
- names, as we have more of them following old style)
-
-> +{
-> +	u32 status;
-> +
-> +	regmap_read(dev->map, DW_IC_STATUS, &status);
-> +	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
-> +		return true;
-
-		return false;
-
-.,,
-
-> +	return !regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
-> +			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
-> +			1100, 20000);
-
-...and drop !.
-
-> +}
-
-...
-
-> +	/*
-> +	 * This happens rarely and is hard to reproduce. Debug trace
-
-Rarely how? Perhaps put a ration in the parentheses, like
-
-"...rarely (~1:100)..."
-
-> +	 * showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
-> +	 * if disable IC_ENABLE.ENABLE immediately that can result in
-> +	 * IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low.
-> +	 */
-> +	if (!i2c_dw_is_master_idling(dev))
-
-...and here
-
-	if (i2c_dw_is_controller_active(dev))
-
-But please double check that I haven't made any mistakes in all this logic.
-
-> +		dev_err(dev->dev, "I2C master not idling\n");
-
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index 2a6a3cccfc36..aeabbf0db7c8 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1058,12 +1058,6 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
+  * same value. Otherwise, use the typical "set" helpers and flush the
+  * TLB.
+  */
+-#define set_pte_safe(ptep, pte) \
+-({ \
+-	WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
+-	set_pte(ptep, pte); \
+-})
+-
+ #define set_pmd_safe(pmdp, pmd) \
+ ({ \
+ 	WARN_ON_ONCE(pmd_present(*pmdp) && !pmd_same(*pmdp, pmd)); \
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.30.2
 
 
