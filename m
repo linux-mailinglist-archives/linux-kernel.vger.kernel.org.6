@@ -1,140 +1,119 @@
-Return-Path: <linux-kernel+bounces-323206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A50B497395E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:06:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FEE197395F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D11288830
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:06:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 284921F269B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B971940B9;
-	Tue, 10 Sep 2024 14:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E544193418;
+	Tue, 10 Sep 2024 14:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FZZWJ7By"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XWakvYFs"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91666190692
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF3418FDA5
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725977202; cv=none; b=Z+BKjdxoO+CjUGE/DIfXiLjVkyIFLNiIFt6KqgGZcezbFKnVDOlVo4jgQJLloEBVUm4V3VsNDn2zmCwWoEEOPyziwQO3G5/Uib4QsP1AZlUMmPa3686UQ71D8bMEo1aWAnkWkQDpN5oLxGQ6N65BkvA/iHJkIp5YuSIjYA1wdO4=
+	t=1725977270; cv=none; b=rTyiC64ZCyKAnbRJD7zOzBuNmoYOy0u0XGvrRUKcB8tWzGSKaDnKjY8BpRk2mM5eM+LPbiIVoFmUpB7NidOw8Ll0FBqO5SuwVrHrAed4/NlNvJhS92bdFWtBupPHnFELYPVSb1axPtN0w/GO2UBRi6weAM8jG3DkcvX0ac+UuIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725977202; c=relaxed/simple;
-	bh=U8OTsToaWfVMxFIRMdzr1xo9cfxaKTYwFlNjVCRaQ3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=etYp4jlfJbDZzClVl9c2dMbKkvFWrd1jNr40umRgVPzZ8AzmFeHe4J0WPa5CG7V6LqILI6MH7R+AiNuzrC573nHA7LcdqiOyIHPseTZFR4p5HQA22TVb4METghfMSEO055D7MMaqj0T3g0w4FdUUdWXFDUqqq1UtzV1wMV5Hajo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FZZWJ7By; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb9a0c300so7743955e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725977199; x=1726581999; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r1Z0JUhOsYgTNsTyk5PimUJPDh+yOKaKvqM5P8Qrzh4=;
-        b=FZZWJ7BynjwPAbvrKZqpmWOY0ydbDzp6snnbuSBPNaB4zLknCdhBdZzPqxgUhcJWLA
-         ihqlK/5K+lxNiIvjZAzvocfCmS00O3GJcyrVTU2LVJwOh/JKEEDzmbpuPcn2zmjU8TLK
-         3z+xMKgPOvQZJ2N1ctS56aMfREv9D/JnqDOgEFpMLGIrAYSlvVD8FKYV0r/9KjySAemE
-         s2+thar0TnFzqOKw6bbwc6G5+3B3wpxqjaI9o32bthMcbFgnuXNlEaN2ERScdDClGyqK
-         rb4XcQOgpPJnUkP00RBJl6i/ecX8ojXhDPXTEx2dn+lq7Fhkzuv+i6LuLeUjYSbqTauh
-         OVrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725977199; x=1726581999;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r1Z0JUhOsYgTNsTyk5PimUJPDh+yOKaKvqM5P8Qrzh4=;
-        b=wdWX1YAhhApQTJMhiyJVBs1dvCvPaynBSV9hNubMSwzMhUcwQNmDg+uo0Z67nvQ+b1
-         0SpZ2pVUGOD/JNkMUfWXVJGDNpPVrPar4lx7V6D1J65i6Dz7mQKqW46R/18+QXT2CZOP
-         TxvU3gWJNY4ph03VY3OojMTDL6cgaqTWq6hftWLkT0qg8yPFjlhfAqCAmCow97fRH+Gd
-         kzPdGDPsqYWUrBimHO82aD+lz5ZVH/1MEi3GIfFjTv4D3Vu0W7K2ObMfrRxsWn3Xxw6C
-         q2n+yFY96rVXXCzb7WuE0AtUZyhxfpOZ9Sq9IpFPlpXKu7La4/KNGfZY0IRRwN521PF2
-         0Qbg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0ORIWhBsN86GoX41u8M0MYQlTvqDOUfTbQ4Jw/DK+42tOi08+7uz9uNpqjpxNh35QJA8JJKW5EcpurC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw63C+sJ+BaEC5Wq7ezeRtTEpkEVjqL2ZRMrDMtmY8j2oBvl1LI
-	D5ugMF/3Zm9MtKH2XmGBEJbb5Lm4y0/tf5jXYl6yVGWjqXcKIGIIAZEx3TfpSUY=
-X-Google-Smtp-Source: AGHT+IF+SuIaYUhS9ZzflXfMD7MbhhkHr6SfEY3NmvG6VZJUm6PBixRhQksR8W/YMdbqbZdBl9N98w==
-X-Received: by 2002:a05:600c:5025:b0:42c:bc03:e765 with SMTP id 5b1f17b1804b1-42cbc03ea7cmr32813575e9.16.1725977198215;
-        Tue, 10 Sep 2024 07:06:38 -0700 (PDT)
-Received: from [192.168.1.61] ([84.67.228.188])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb5ba4532sm86596495e9.38.2024.09.10.07.06.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 07:06:37 -0700 (PDT)
-Message-ID: <0900b672-57d2-4e4f-b5be-964da82c7a12@linaro.org>
-Date: Tue, 10 Sep 2024 15:06:47 +0100
+	s=arc-20240116; t=1725977270; c=relaxed/simple;
+	bh=GsP7IoiwUDr9UcK6IbeiWdY7W3PiWVr8OPurOzz8pJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SC5mKhBU+Qh8sHvR7dz+GP6U2F1J5wDJ0y3Dkb1UnzJjjllvJ90Cn5BXEK32wuPn7PWFCBik8Ose7kSaOBhnQMA/YbyBH/lNpYEFaUg/qwSp99lPrTu6cbQj0dZeofG7e9s1xJbIoTDhbhYvlgMPG4xkhr2Rr6bCoS9S3WkM9NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XWakvYFs; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=qKnsH8PJo0Jfvw18PFXsJrHVQClZIwEJEimjaEeFq7E=; b=XWakvYFs3jsaKFbDtQBSpz94Vq
+	3BvXTqpGMGLkVIWPaebl8eAZWxtXaUoKeAy4CvixSF23p+z2OtRl1gkVvQRnVtgrxW+BjEKE+ebil
+	W1Ol9YXt6JTmHCU7fTbbL9CSa3ZuCIOeUc6gVouCNWnuBFUjNpxn2QbfHCYbE8iZ8C08IisEU2dq4
+	qBW76U116xHK6fma6rll86PaGNTw6oquVqyy6n/Gb7+zx45QQFxl9jU1mImhmpSWZOpihkWRUujfO
+	QcIOhgoGU8HXYg6h2NfvuP5kvQo28xImjfEDXHXC/+4QyDstLD/AYcm+HluMxWrOSQMRfMvU70dJz
+	tT6q8PGQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1so1Wt-0000000BdGT-23Qh;
+	Tue, 10 Sep 2024 14:07:39 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2126E30047C; Tue, 10 Sep 2024 16:07:39 +0200 (CEST)
+Date: Tue, 10 Sep 2024 16:07:39 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sven Schnelle <svens@linux.ibm.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
+Subject: Re: [PATCH 00/24] Complete EEVDF
+Message-ID: <20240910140739.GI4723@noisy.programming.kicks-ass.net>
+References: <20240727102732.960974693@infradead.org>
+ <yt9d4j6nenps.fsf@linux.ibm.com>
+ <yt9dzfofd7im.fsf@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/3] perf report: Support LLVM for addr2line()
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
- "Steinar H. Gunderson" <sesse@google.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- irogers@google.com, Arnaldo Carvalho de Melo <acme@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>
-References: <20240719150051.520317-1-sesse@google.com> <ZqlCIJ4khe2_xyp9@x1>
- <ZqlDuIj_nMVXhYou@x1> <ZtRIla5pCqlMIKvN@google.com> <Ztbga0xLyt1eaehi@x1>
- <ZtcWwANOWyXEnGdC@x1> <ZtcaC5WOTj-fh_Px@x1>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <ZtcaC5WOTj-fh_Px@x1>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yt9dzfofd7im.fsf@linux.ibm.com>
 
-
-
-On 9/3/24 15:15, Arnaldo Carvalho de Melo wrote:
-> On Tue, Sep 03, 2024 at 11:01:36AM -0300, Arnaldo Carvalho de Melo wrote:
->> On Tue, Sep 03, 2024 at 07:09:47AM -0300, Arnaldo Carvalho de Melo wrote:
->>>     3: almalinux:9-i386WARNING: image platform (linux/386) does not match the expected platform (linux/amd64)
->>> WARNING: image platform (linux/386) does not match the expected platform (linux/amd64)
->>>      17.58 almalinux:9-i386              : FAIL gcc version 11.4.1 20231218 (Red Hat 11.4.1-3) (GCC)
->>>      util/llvm-c-helpers.cpp: In function ‘char* make_symbol_relative_string(dso*, const char*, u64, u64)’:
->>>      util/llvm-c-helpers.cpp:150:52: error: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 5 has type ‘u64’ {aka ‘long long unsigned int’} [-Werror=format=]
->>>        150 |                 snprintf(buf, sizeof(buf), "%s+0x%lx",
->>>            |                                                  ~~^
->>>            |                                                    |
->>>            |                                                    long unsigned int
->>>            |                                                  %llx
->>>        151 |                          demangled ? demangled : sym_name, addr - base_addr);
->>>            |                                                            ~~~~~~~~~~~~~~~~
->>>            |                                                                 |
->>>            |                                                                 u64 {aka long long unsigned int}
->>>      cc1plus: all warnings being treated as errors
->>>      make[3]: *** [/git/perf-6.11.0-rc3/tools/build/Makefile.build:158: util] Error 2
->>
->> The one above is fixed by the patch at the end, that I already added to
->> the cset where the problem was being introduced.
->>
->> Now there is something a bit more tricky, we'll have to add a feature
->> check to see if the libllvm has what is needed if this appears in some
->> distro we still want to support, since alpine 3.16 has what is needed
->> I'll take the opportunity to drop test building on alpine 3.15.
+On Tue, Sep 10, 2024 at 02:21:05PM +0200, Sven Schnelle wrote:
+> Sven Schnelle <svens@linux.ibm.com> writes:
 > 
-> Or, as I'll do with debian:11, just remove llvm-dev and not build the
-> features it enables:
-> 
->    17    13.79 debian:11                     : FAIL gcc version 10.2.1 20210110 (Debian 10.2.1-6)
->      util/llvm-c-helpers.cpp: In function 'char* llvm_name_for_code(dso*, const char*, u64)':
->      util/llvm-c-helpers.cpp:178:21: error: 'std::remove_reference_t<llvm::DILineInfo>' {aka 'struct llvm::DILineInfo'} has no member named 'StartAddress'
->        178 |   addr, res_or_err->StartAddress ? *res_or_err->StartAddress : 0);
->            |                     ^~~~~~~~~~~~
->      util/llvm-c-helpers.cpp:178:49: error: 'std::remove_reference_t<llvm::DILineInfo>' {aka 'struct llvm::DILineInfo'} has no member named 'StartAddress'
->        178 |   addr, res_or_err->StartAddress ? *res_or_err->StartAddress : 0);
->            |                                                 ^~~~~~~~~~~~
->      make[3]: *** [/git/perf-6.11.0-rc3/tools/build/Makefile.build:158: util] Error 2
-> 
+> > Peter Zijlstra <peterz@infradead.org> writes:
+> >
+> >> Hi all,
+> >>
+> >> So after much delay this is hopefully the final version of the EEVDF patches.
+> >> They've been sitting in my git tree for ever it seems, and people have been
+> >> testing it and sending fixes.
+> >>
+> >> I've spend the last two days testing and fixing cfs-bandwidth, and as far
+> >> as I know that was the very last issue holding it back.
+> >>
+> >> These patches apply on top of queue.git sched/dl-server, which I plan on merging
+> >> in tip/sched/core once -rc1 drops.
+> >>
+> >> I'm hoping to then merge all this (+- the DVFS clock patch) right before -rc2.
+> >>
+> >>
+> >> Aside from a ton of bug fixes -- thanks all! -- new in this version is:
+> >>
+> >>  - split up the huge delay-dequeue patch
+> >>  - tested/fixed cfs-bandwidth
+> >>  - PLACE_REL_DEADLINE -- preserve the relative deadline when migrating
+> >>  - SCHED_BATCH is equivalent to RESPECT_SLICE
+> >>  - propagate min_slice up cgroups
+> >>  - CLOCK_THREAD_DVFS_ID
+> >
+> > I'm seeing crashes/warnings like the following on s390 with linux-next 20240909:
+> >
+> > Sometimes the system doesn't manage to print a oops, this one is the best i got:
+> >
+> > [..]
+> > This happens when running the strace test suite. The system normaly has
+> > 128 CPUs. With this configuration the crash doesn't happen, but when
+> > disabling all but four CPUs and running 'make check -j16' in the strace
+> > test suite the crash is almost always reproducable.
 
-I also hit this issue. I think it makes sense to auto detect the version 
-so I sent a patch. It was quite easy to autodetect and it might not be 
-that obvious to others how to get the build working again given this error.
+I noted: Comm: prctl-sched-cor, which is testing core scheduling, right?
+
+Only today I;ve merged a fix for that:
+
+  c662e2b1e8cf ("sched: Fix sched_delayed vs sched_core")
+
+Could you double check if merging tip/sched/core into your next tree
+helps anything at all?
 
