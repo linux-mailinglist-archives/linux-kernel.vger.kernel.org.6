@@ -1,249 +1,130 @@
-Return-Path: <linux-kernel+bounces-323966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F28974631
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:59:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C33F974636
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D6C61F26F46
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:59:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EC7C1C25270
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496291AC440;
-	Tue, 10 Sep 2024 22:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A361ABEDC;
+	Tue, 10 Sep 2024 23:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="akL3JuPZ"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LG4ThvWQ"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EC81ABEC9;
-	Tue, 10 Sep 2024 22:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D57017B4FE
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726009176; cv=none; b=AnQiNQxVnPuIM1SVT/JkwZ6v+kOceM4+UtLY/vDf0laGVniK6GvL4Nb9c/i24dmMOeK7W2pc3hzYl1N8YvXgl7QSMK9n8L0sBABUy+1rjRC3nIyBN5q2ZgkdaMVP2KKyCTG2zXRSjZg/VkL9TM5pgRYEOlDplwEu7YHI7pbGzFY=
+	t=1726009392; cv=none; b=Ifhnhx1L2Jjq8cjuFkcAEXsR7SZw0Fea/tKX47yyceHtKuRUcn5A58IEJge5Oran0qXnQWBv1pr7MZ3NbCgNy+P1yDnRRMgr23nCPhTb0KgCLhaikFX9mwTrA+Lt8CDlTKW/wXM9TEE9m5WFlYOc5JI3WH1Tl61jaJn8J7HV4jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726009176; c=relaxed/simple;
-	bh=QUzpux5lnYnn+c7pRLdFYUnkVr9E8BaYoOh/q/rf+Jo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AzvaDBSq5cRiQ3GcIRBBWdIPgv4vQbCKO3CZ8Wc/3/ynrcHg2ZnLS1xdMiifCl5+WOJ+udjLsDD0d6n/bPLCPptbb2vi3Pa0D+bNcUCd7qqa6Oz7rhUAOuyScO221jJsq8xu+mU8c53bv4QFJ2yzF9m8DMa16eQ90yQ2692YlRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=akL3JuPZ; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1726009392; c=relaxed/simple;
+	bh=01XXCU8JIt+/LolNj9F9a66tCdxaL1YDcBc+c1mPPQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WdneB3IL6GNv5Tk3eYDwJ93FHR1qsN+B2+DeG3RUv2M61s9cCmyJ0ig7O9FxX+LFvCox6I5/6LLa2JGxEmEdh1V+/fNfEWhwVNXClXb/+DjUrbb/kxXup6NalqCA2FcHT+wG+TtyNbvOX0igR/gNfaQCo8262cLjxJibe1U+JKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LG4ThvWQ; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-82aa3f65864so182676339f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:03:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1726009175; x=1757545175;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=5Dvk8Et4bwnTGxADZlsOQ0cJMTGwPj7/oyjK5hdwxlM=;
-  b=akL3JuPZQgJY8wu67FqG/PKHNpXyXnehOBs2nRQbV1yDXiNFja5PbMuB
-   18Bsya7GRS5anGvT+pnFY6Lf0SkUm/k0vxziGGfSxdaxaInxbaUvoeipg
-   tcjFnH5oBv0ijMEr/csUeVL7XJIkh0uSq1AWe7mYVQxW5JT0IpmW1Mnd2
-   Q=;
-X-IronPort-AV: E=Sophos;i="6.10,218,1719878400"; 
-   d="scan'208";a="432574511"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 22:59:31 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:9226]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.47.156:2525] with esmtp (Farcaster)
- id 551096bc-5391-464a-91f8-4e44af82fe58; Tue, 10 Sep 2024 22:59:30 +0000 (UTC)
-X-Farcaster-Flow-ID: 551096bc-5391-464a-91f8-4e44af82fe58
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 10 Sep 2024 22:59:30 +0000
-Received: from 88665a182662.ant.amazon.com (10.187.171.20) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Tue, 10 Sep 2024 22:59:28 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <rao.shoaib@oracle.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in unix_stream_read_actor (2)
-Date: Tue, 10 Sep 2024 15:59:20 -0700
-Message-ID: <20240910225920.11636-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <d8f99152-e500-4f52-8899-885017bdb362@oracle.com>
-References: <d8f99152-e500-4f52-8899-885017bdb362@oracle.com>
+        d=linuxfoundation.org; s=google; t=1726009389; x=1726614189; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Our0i5FAN8M9eyBuwGhZmOhmd7tZTzv8n7Ma5HUwtUY=;
+        b=LG4ThvWQNQYY/X9wrtutguloE+S1nRz9okNIEg7MTk6b2Dp1F9Nf0PNP5Jhl8Ai3Z6
+         6j4nKn1MYVUBgfqM2GJhmcvkWgoqp8J4uBBO0UsR2EDHaLQQ02oLHCFlZ1nNf7TWOQfU
+         9UFkd57/PRFSOVBHdTcv7/BxMbFdJJSVAZgHU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726009389; x=1726614189;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Our0i5FAN8M9eyBuwGhZmOhmd7tZTzv8n7Ma5HUwtUY=;
+        b=UwH+SQPoDWLUdoxsPp+iffwL5d8trPUzxeqsUwuO/yoxny99kuY9koGouEVOUiaqRZ
+         nnaAzntaDEdywOS6YuwGgvKr/ALW2iQD4yX9Qa2jcvMSYd8Wtgqjq/aHZwlEk44jKxxX
+         CA2AgPV8KYFBtQYzJZpcOT17/aihKvnw3+xU+v8d2UKP4kFbjpO6U0j5FPDed3szAUj9
+         xkQRE5pI+FWkFH+UAyXyzD9fSHPcwZErhiMv6NnUzYtZvPTp/m//ERJmwukoE9ilGQS5
+         YGj9vTmDlAJMILYQCWi+a2a4MD5IARaW6bUdzxjjEpnqQN+n2r8jj61R8CIW0XKFWQMx
+         hPKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJCqP96fYknc+Gl5CosBHNmSknt/Q6gaOWhAYqPlWAdUz16SqxhjxsSLNvp336Ah+zJZrcVjWrNUvRukE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyleI27UdvdEhbfOtU482jW2SF6tj0WqJQD+yThRf4xt0aqa/mq
+	iJ3DO1WVA3PdhM1pwK2rJNejOvUoTQ2zK4hcY3PWfbcW/kw9Qc58SWPW5BKuPBc=
+X-Google-Smtp-Source: AGHT+IHTzytd/BXjhulGOFJeDN5N2Y/iSixDSXEeNyCm+5M2O3H39PajIp3Y22RsVR4SC9HtjYRdKQ==
+X-Received: by 2002:a05:6602:2dc8:b0:82c:ef21:91de with SMTP id ca18e2360f4ac-82cef219385mr890886539f.14.1726009389357;
+        Tue, 10 Sep 2024 16:03:09 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82aa7385633sm228261539f.33.2024.09.10.16.03.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 16:03:07 -0700 (PDT)
+Message-ID: <f2b4e304-2a9a-46ee-a56f-c7669bb891af@linuxfoundation.org>
+Date: Tue, 10 Sep 2024 17:03:06 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4.19 00/96] 4.19.322-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240910092541.383432924@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240910092541.383432924@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D037UWB001.ant.amazon.com (10.13.138.123) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-From: Shoaib Rao <rao.shoaib@oracle.com>
-Date: Tue, 10 Sep 2024 15:30:08 -0700
-> My fellow engineer let's first take a breath and calm down. We both are 
-> trying to do the right thing. Now read my comments below and if I still 
-> don't get it, please be patient, maybe I am not as smart as you are.
+On 9/10/24 03:31, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.322 release.
+> There are 96 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On 9/10/2024 2:53 PM, Kuniyuki Iwashima wrote:
-> > From: Shoaib Rao <rao.shoaib@oracle.com>
-> > Date: Tue, 10 Sep 2024 13:57:04 -0700
-> >> The commit Message:
-> >>
-> >> syzbot reported use-after-free in unix_stream_recv_urg(). [0]
-> >>
-> >> The scenario is
-> >>
-> >>     1. send(MSG_OOB)
-> >>     2. recv(MSG_OOB)
-> >>        -> The consumed OOB remains in recv queue
-> >>     3. send(MSG_OOB)
-> >>     4. recv()
-> >>        -> manage_oob() returns the next skb of the consumed OOB
-> >>        -> This is also OOB, but unix_sk(sk)->oob_skb is not cleared
-> >>     5. recv(MSG_OOB)
-> >>        -> unix_sk(sk)->oob_skb is used but already freed
-> > 
-> > How did you miss this ?
-> > 
-> > Again, please read my patch and mails **carefully**.
-> > 
-> > unix_sk(sk)->oob_sk wasn't cleared properly and illegal access happens
-> > in unix_stream_recv_urg(), where ->oob_skb is dereferenced.
-> > 
-> > Here's _technical_ thing that you want.
+> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
+> Anything received after that time might be too late.
 > 
-> This is exactly what I am trying to point out to you.
-> The skb has proper references and is NOT de-referenced because 
-> __skb_datagram_iter() detects that the length is zero and returns EFAULT.
-
-It's dereferenced as UNIXCB(skb).consumed first in
-unix_stream_read_actor().
-
-Then, 1 byte of data is copied without -EFAULT because
-unix_stream_recv_urg() always passes 1 as chunk (size) to
-recv_actor().
-
-That's why I said KASAN should be working on your setup and suggested
-running the repro with/without KASAN.  If KASAN is turned off, single
-byte garbage is copied from the freed area.
-
-See the last returned values below
-
-Without KASAN:
-
----8<---
-write(1, "executing program\n", 18
-executing program
-)     = 18
-socketpair(AF_UNIX, SOCK_STREAM, 0, [3, 4]) = 0
-sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\333", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_DONTWAIT
-[   15.657345] queued OOB: ff1100000442c700
-) = 1
-recvmsg(3,
-[   15.657793] reading OOB: ff1100000442c700
-{msg_name=NULL, msg_namelen=0, msg_iov=NULL, msg_iovlen=0, msg_controllen=0, msg_flags=MSG_OOB}, MSG_OOB|MSG_WAITFORONE) = 1
-sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\21", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_NOSIGNAL|MSG_MORE
-[   15.659830] queued OOB: ff1100000442c300
-) = 1
-recvfrom(3,
-[   15.660272] free skb: ff1100000442c300
-"\21", 125, MSG_DONTROUTE|MSG_TRUNC, NULL, NULL) = 1
-recvmsg(3,
-[   15.661014] reading OOB: ff1100000442c300
-{msg_namelen=0, MSG_OOB|MSG_ERRQUEUE) = 1
----8<---
-
-
-With KASAN:
-
----8<---
-socketpair(AF_UNIX, SOCK_STREAM, 0, [3, 4]) = 0
-sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\333", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_DONTWAIT
-[  134.735962] queued OOB: ff110000099f0b40
-) = 1
-recvmsg(3,
-[  134.736460] reading OOB: ff110000099f0b40
-{msg_name=NULL, msg_namelen=0, msg_iov=NULL, msg_iovlen=0, msg_controllen=0, msg_flags=MSG_OOB}, MSG_OOB|MSG_WAITFORONE) = 1
-sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\21", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_NOSIGNAL|MSG_MORE
-[  134.738554] queued OOB: ff110000099f0c80
-) = 1
-recvfrom(3,
-[  134.739086] free skb: ff110000099f0c80
-"\21", 125, MSG_DONTROUTE|MSG_TRUNC, NULL, NULL) = 1
-recvmsg(3,
-[  134.739792] reading OOB: ff110000099f0c80
- {msg_namelen=0}, MSG_OOB|MSG_ERRQUEUE) = -1 EFAULT (Bad address)
----8<---
-
-
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.322-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
 > 
-> See more below
-> > 
-> > ---8<---
-> > # ./oob
-> > executing program
-> > [   25.773750] queued OOB: ff1100000947ba40
-> > [   25.774110] reading OOB: ff1100000947ba40
-> > [   25.774401] queued OOB: ff1100000947bb80
-> > [   25.774669] free skb: ff1100000947bb80
-> > [   25.774919] reading OOB: ff1100000947bb80
-> > [   25.775172] ==================================================================
-> > [   25.775654] BUG: KASAN: slab-use-after-free in unix_stream_read_actor+0x86/0xb0
-> > ---8<---
-> > 
-> > ---8<---
-> > diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> > index a1894019ebd5..ccd9c47160a5 100644
-> > --- a/net/unix/af_unix.c
-> > +++ b/net/unix/af_unix.c
-> > @@ -2230,6 +2230,7 @@ static int queue_oob(struct socket *sock, struct msghdr *msg, struct sock *other
-> >   	__skb_queue_tail(&other->sk_receive_queue, skb);
-> >   	spin_unlock(&other->sk_receive_queue.lock);
-> >   
-> > +	printk(KERN_ERR "queued OOB: %px\n", skb);
-> >   	sk_send_sigurg(other);
-> >   	unix_state_unlock(other);
-> >   	other->sk_data_ready(other);
-> > @@ -2637,6 +2638,7 @@ static int unix_stream_recv_urg(struct unix_stream_read_state *state)
-> >   	spin_unlock(&sk->sk_receive_queue.lock);
-> >   	unix_state_unlock(sk);
-> >   
-> > +	printk(KERN_ERR "reading OOB: %px\n", oob_skb);
-> >   	chunk = state->recv_actor(oob_skb, 0, chunk, state);
-> >   
-> >   	if (!(state->flags & MSG_PEEK))
-> > @@ -2915,7 +2917,7 @@ static int unix_stream_read_generic(struct unix_stream_read_state *state,
-> >   
-> >   			skb_unlink(skb, &sk->sk_receive_queue);
-> >   			consume_skb(skb);
-> > -
-> > +			printk(KERN_ERR "free skb: %px\n", skb);
+> thanks,
 > 
-> This printk is wrongly placed
-
-It's not, because this just prints the address of OOB skb just after
-it's illegally consumed without MSG_OOB.  The code is only called
-for the illegal OOB during the repro.
-
-
-> because the skb has been freed above, but 
-> since it is just printing the pointer it should be OK, access to any skb 
-> field will be an issue. You should move this printk to before 
-> unix_stream_read_generic and print the refcnt on the skb and the length 
-> of the data and verify what I am saying, that the skb has one refcnt and 
-> zero length.
-
-Note this is on top of net-next where no additional refcnt is taken
-for OOB, so no need to print skb's refcnt.  Also the length is not
-related because chunk is always 1.
-
-
-> This is the kind of interaction I was looking for. If I have missed 
-> something please be patient and let me know.
+> greg k-h
 > 
-> Regards,
-> 
-> Shoaib
+
+Build failed with on AMD Ryzen 7 4700G with Radeon Graphics
+
+   CC [M]  drivers/gpu/drm/amd/amdgpu/ci_smc.o
+net/bridge/br_fdb.c: In function ‘fdb_create’:
+net/bridge/br_fdb.c:515:20: error: ‘struct net_bridge_fdb_entry’ has no member n
+amed ‘is_sticky’
+   515 |                 fdb->is_sticky = 0;
+       |                    ^~
+make[2]: *** [scripts/Makefile.build:303: net/bridge/br_fdb.o] Error 1
+make[1]: *** [scripts/Makefile.build:544: net/bridge] Error 2
+make: *** [Makefile:1086: net] Error 2
+
+Possible problem commit:
+
+Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+     net: bridge: add support for sticky fdb entries
+
+thanks,
+-- Shuah
 
