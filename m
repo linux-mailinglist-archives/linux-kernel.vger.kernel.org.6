@@ -1,217 +1,243 @@
-Return-Path: <linux-kernel+bounces-323397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7178973CCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:56:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B9C973CCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:57:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8CDC1C22226
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:56:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C6C2B20E15
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F6F1A01AE;
-	Tue, 10 Sep 2024 15:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC96E19E989;
+	Tue, 10 Sep 2024 15:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F4/GvzsM"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rF4sBVsr"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B8C14F12C;
-	Tue, 10 Sep 2024 15:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AC818DF72
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 15:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725983787; cv=none; b=HUkNd1UCXnfoxfSyuKF3r/taUAx+hXwwvuQKUb4NLHWkCr24d5dRuDwiYpBI46Ig+HHNejsjanZKrUh3fppWqjidkQ0J4yWV9M3fxA8D16N/m57GMo9aD3vrUgtA88Ni1mqwstXyJqlM44VuomCB2/evMr5KDyzkJKn5SPjUTWM=
+	t=1725983826; cv=none; b=W8ftwJLRQ+CPadPYLvJdwPoKdR/7MBvBqmYxJHnDq85HnFYfvk9vgKniSLLS/dhJ/Cbe5qakZs7/ZFpF5HoKXSkKj4z/IkA8OP/rsG9v7Papug/JaQMVWhHw8PA5QePTQ9GzbpC9ueRdC+PUdvpnIXCWNzwI/fusbrNmERVkSSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725983787; c=relaxed/simple;
-	bh=RmjvCuPJxR1h7+htFpSDFvemsvqOLZ0jJXC9aMgghLE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WoCI3wYn79dkt6Z4tNQskBLzNgEp1Mx4IZB68/zkY6NCmew1wmzsPBPGTIIuvqSrNsDc54WX25IaEnsN35QwqMM8/g9yuHve3QbXKPsGpPqDp1nTgjMwhO9mbymKrZ+BP3FfuFesnPJXekAEQiP4WHK0SNJbtkpxzzXg4l15lmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F4/GvzsM; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-374c5bab490so4260647f8f.1;
-        Tue, 10 Sep 2024 08:56:25 -0700 (PDT)
+	s=arc-20240116; t=1725983826; c=relaxed/simple;
+	bh=cW14aL2kByVBLDiSFE3bHdvErdW/UecAKHQcX/CiYRU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=c8Vogmz2Xmdef73Iy8z7OqlTprjP+ZqvFHgo+kQiDp7J+Txh1ne37I+q3ynDPgc7a+2d6vibpskHhDHEwUKerNq9jWlCUj50Oxo2ZZshRnVJeRGJy6t7VxdXf2Bk00sh4PHqi3Ayi99A6Yk57KQCIT4BUgbh3G1Tg5Yq7kgjRoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rF4sBVsr; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1159159528so15406988276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:57:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725983784; x=1726588584; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gJaBuk9O8XTeUn+tXdjD8n8fSiu133fBeIfYRY7Bi8E=;
-        b=F4/GvzsMqv16UblS13ZoDMyx3aPb7HogfAe4TXUDnDKRZ51j/vr5Qb+kFAiQkxDlGB
-         R7H5/UmeFvW06k1N9qM2GYtcSXvs3N+wRtduwZufSB7vSrXSULdbHfzgqnjNdJgQnRfp
-         MSUQpXMPvVMtyNcmlb9OqkmN/GMiRlr5Z+ykXGqcc/ysgbraukIZOgjwswfExnrCglhj
-         iaBStooQivzDv8Ga+jf9uV6r2ABx31jswApmvom2gf9kjdeAylFcvZIRXwsGJP7No/e4
-         cPYOvnR66pM8SqZrkIM66pnR4h2UoTfpLVmm6DGCpOwdxd/IFo8mSSarjHxsLQHir2Mh
-         Bfuw==
+        d=google.com; s=20230601; t=1725983823; x=1726588623; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7tzvNQMp3vCXB8Yr+79tCmZju/CJm9McEg1D0ZzYNM4=;
+        b=rF4sBVsrycR9OEWlOQhYoz81rkeWhADCG4GbD6Q8kdd5KNwU0CiK5oUBpKfuDnh7kf
+         vBm/LFAWi+/Xnc761bApaDAv/izLA03kVvnvMT4ffviTzr8dILs3FCrkqHLoQbAb/6dD
+         2v12kZRjTaGDGceDSuLOyLRdSdNco5VQ6v7e1QRCvvb7y8CROwfvStzo8jkxPhzIn1E7
+         ytLRFtK8ornBzkYEivuS9wWhx2tyRjyUgVT8IOLxGig3BOlTrnGOx+PhMbEvUVY/FnsY
+         uuUIyzSXlSSKQ+2tivQpKX75XJC6emxAKxU7hhMU6oZcKnvIIuc4ROSRCHHivaLFmio3
+         NbPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725983784; x=1726588584;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gJaBuk9O8XTeUn+tXdjD8n8fSiu133fBeIfYRY7Bi8E=;
-        b=d4IlM4JlnIbCkJ3qsu5rR4Tn9FMt0Iim8RrZukJscW03u2WnLI+iQlw9RSTmyePX2I
-         nmhtiSAYN3h5HfgByH7sMURL/z35cnyS6au50bUiqC4vTtrJIoTA/D9bekwdoWL0ER82
-         yAw0VbjeEOe06+luazENecAnFQHRvRKhaD7W4KT4TvWqJFvrVwVMb8xSb1geWWWQ3LCt
-         9CewY5w3Wwjy8Or958MBgjwIgvVYJFsWPZFctMsbGatBIDNojDgQcb+w7zz+rZIBYc39
-         R9ACA6PRneAAGba0hyzZRzMUxtB29LNKQHCSxGVwXPa5dVyA8Z8WDaXNBFv2XMUrD1uB
-         e5ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUoOUdrnIOeeqe3acGZjxEsphep6osDikV8tCnOAIkUJl1SFb78MJen4+6CA42tCw+EkHcPMX3wFfFekZq/SLPieak5@vger.kernel.org, AJvYcCV3v0/p8xSVyBR6/G6LwlBDUHF+R96qOaKFPdn8Cp8re3uYjwYoqH2ZirWYNtK2/qW3QwU=@vger.kernel.org, AJvYcCWyh/KlYYYCAc3Ux+e12izPnUH1Di+ftI2CJd8fVKJwE3HoCCjxnRrEA9yT3ucGWZYF9srckEPQW1zityFW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR9XGtta1l8LI9GtnaKnK2JcWYfmQANvPKyWNsxEc01wr0wUXl
-	DVq1ePp2iivNZrTtpeSOCslE2pgnftzCGnofid+GGWwD2br2i7Ab2Flg+iQDPljkULhOdAhZZN/
-	+tSM58LDezNXcxBOyN7X+M0zET8w=
-X-Google-Smtp-Source: AGHT+IE4X4eyk/q1xl+//vS/ZQL+Hjg0B9t+SUyldVyNCcpm+SBgpHzZIZChEdvXKzArZSo8NFhjma/7C1UTyUKoLoQ=
-X-Received: by 2002:a05:6000:1ac7:b0:374:c6b6:c656 with SMTP id
- ffacd0b85a97d-378a8a3de4cmr2838167f8f.21.1725983784086; Tue, 10 Sep 2024
- 08:56:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725983823; x=1726588623;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7tzvNQMp3vCXB8Yr+79tCmZju/CJm9McEg1D0ZzYNM4=;
+        b=tlY6AHr9R1dIdblUzaIGctThkX+Q53p+D0ZPfbxkWvfRqyIszefAgh3TM3zies33EU
+         8KT/U0Ewdu22+DL0hcCi144r/g4aA074C0igsch5/cFRVagYMdbpCN2aP9zJ+Fnexg7W
+         LQPTFIH82jfNomtxxe9dUTwsek7ILJe9tBqVGOLPlYmT2WYfJvsNJqaixNRLuazHwGZM
+         D+AueIkcnfD3jhxWiRLXCQHddWptRsDV4A1nnrNrYNFP9jLS8hGdhN9e+zV6v9l1ZCZo
+         yQ7h7o5tB43a062fXpDF4kzFZItkhMOpcAY5ml0+gojXmPwcfQU2FOpyeufRyH8df7M8
+         6ivQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtkfbCybg+zj0UHpR9/tzlkyt8EFdoNId56jtfjqdGdhFF9CSA3IGbBKtKQFcv55Vz9NtNS9Zz9gVcuXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiUt8rAtTC7LrqCQ4uwGtLKQoRikTCQG9Rzz5pUu+q9eEXQ+D4
+	7l8GJefs0ljN6S2SlnsyEi+twkxYM+dFHryX0WEpmNW/oFVkHlHIUnMB2DSFg49SCFfK6+NPr+4
+	4YA==
+X-Google-Smtp-Source: AGHT+IH4LocodMSDLJCCpxDd2CcB7y06IMVHPbMZyWXohbePH6HffUlwoCeXp11+A2QcZOcjbMisCFflk+8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:b16:b0:e0b:acc7:b1fd with SMTP id
+ 3f1490d57ef6-e1d7a09b1a0mr17840276.4.1725983823594; Tue, 10 Sep 2024 08:57:03
+ -0700 (PDT)
+Date: Tue, 10 Sep 2024 08:57:02 -0700
+In-Reply-To: <CABgObfayLGyWKERXkU+0gjeUg=Sp3r7GEQU=+13sUMpo36weWg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240909224903.3498207-1-andrii@kernel.org> <20240909224903.3498207-2-andrii@kernel.org>
- <CAADnVQLB2b5Uh-qthnCOfJk+v+ty1nQh6LjMDkzjt1BPtGOVZA@mail.gmail.com> <CAEf4Bzap+_fpXjfcnnqz7EH9=bGokpFbnoK==_YDWH855qx7=g@mail.gmail.com>
-In-Reply-To: <CAEf4Bzap+_fpXjfcnnqz7EH9=bGokpFbnoK==_YDWH855qx7=g@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 10 Sep 2024 08:56:13 -0700
-Message-ID: <CAADnVQ+v2PXWurcpt7xGiKf32HqaBWmFiZgjb2TGJg-rJGWjSg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] uprobes: allow put_uprobe() from non-sleepable
- softirq context
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-10-rick.p.edgecombe@intel.com> <6449047b-2783-46e1-b2a9-2043d192824c@redhat.com>
+ <b012360b4d14c0389bcb77fc8e9e5d739c6cc93d.camel@intel.com>
+ <Zt9kmVe1nkjVjoEg@google.com> <1bbe3a78-8746-4db9-a96c-9dc5f1190f16@redhat.com>
+ <ZuBQYvY6Ib4ZYBgx@google.com> <CABgObfayLGyWKERXkU+0gjeUg=Sp3r7GEQU=+13sUMpo36weWg@mail.gmail.com>
+Message-ID: <ZuBsTlbrlD6NHyv1@google.com>
+Subject: Re: [PATCH 09/21] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with
+ operand SEPT
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	Yan Y Zhao <yan.y.zhao@intel.com>, Yuan Yao <yuan.yao@intel.com>, 
+	"nik.borisov@suse.com" <nik.borisov@suse.com>, "dmatlack@google.com" <dmatlack@google.com>, 
+	Kai Huang <kai.huang@intel.com>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 9, 2024 at 10:13=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
+On Tue, Sep 10, 2024, Paolo Bonzini wrote:
+> On Tue, Sep 10, 2024 at 3:58=E2=80=AFPM Sean Christopherson <seanjc@googl=
+e.com> wrote:
+> > On Tue, Sep 10, 2024, Paolo Bonzini wrote:
+> > No, because that defeates the purpose of having mmu_lock be a rwlock.
+>=20
+> But if this part of the TDX module is wrapped in a single big
+> try_lock, there's no difference in spinning around busy seamcalls, or
+> doing spin_lock(&kvm->arch.seamcall_lock). All of them hit contention
+> in the same way.  With respect to FROZEN_SPTE...
 >
-> On Mon, Sep 9, 2024 at 7:52=E2=80=AFPM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
+> > > This way we know that "busy" errors must come from the guest and have=
+ set
+> > > HOST_PRIORITY.
 > >
-> > On Mon, Sep 9, 2024 at 3:49=E2=80=AFPM Andrii Nakryiko <andrii@kernel.o=
-rg> wrote:
-> > >
-> > > Currently put_uprobe() might trigger mutex_lock()/mutex_unlock(), whi=
-ch
-> > > makes it unsuitable to be called from more restricted context like so=
-ftirq.
-> > >
-> > > Let's make put_uprobe() agnostic to the context in which it is called=
-,
-> > > and use work queue to defer the mutex-protected clean up steps.
-> > >
-> > > To avoid unnecessarily increasing the size of struct uprobe, we coloc=
-ate
-> > > work_struct in parallel with rb_node and rcu, both of which are unuse=
-d
-> > > by the time we get to schedule clean up work.
-> > >
-> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > ---
-> > >  kernel/events/uprobes.c | 30 +++++++++++++++++++++++++++---
-> > >  1 file changed, 27 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > > index a2e6a57f79f2..377bd524bc8b 100644
-> > > --- a/kernel/events/uprobes.c
-> > > +++ b/kernel/events/uprobes.c
-> > > @@ -27,6 +27,7 @@
-> > >  #include <linux/shmem_fs.h>
-> > >  #include <linux/khugepaged.h>
-> > >  #include <linux/rcupdate_trace.h>
-> > > +#include <linux/workqueue.h>
-> > >
-> > >  #include <linux/uprobes.h>
-> > >
-> > > @@ -54,14 +55,20 @@ DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem);
-> > >  #define UPROBE_COPY_INSN       0
-> > >
-> > >  struct uprobe {
-> > > -       struct rb_node          rb_node;        /* node in the rb tre=
-e */
-> > > +       union {
-> > > +               struct {
-> > > +                       struct rb_node          rb_node;        /* no=
-de in the rb tree */
-> > > +                       struct rcu_head         rcu;
-> > > +               };
-> > > +               /* work is used only during freeing, rcu and rb_node =
-are unused at that point */
-> > > +               struct work_struct work;
-> > > +       };
-> > >         refcount_t              ref;
-> > >         struct rw_semaphore     register_rwsem;
-> > >         struct rw_semaphore     consumer_rwsem;
-> > >         struct list_head        pending_list;
-> > >         struct list_head        consumers;
-> > >         struct inode            *inode;         /* Also hold a ref to=
- inode */
-> > > -       struct rcu_head         rcu;
-> > >         loff_t                  offset;
-> > >         loff_t                  ref_ctr_offset;
-> > >         unsigned long           flags;
-> > > @@ -620,11 +627,28 @@ static inline bool uprobe_is_active(struct upro=
-be *uprobe)
-> > >         return !RB_EMPTY_NODE(&uprobe->rb_node);
-> > >  }
-> > >
-> > > +static void uprobe_free_deferred(struct work_struct *work)
-> > > +{
-> > > +       struct uprobe *uprobe =3D container_of(work, struct uprobe, w=
-ork);
-> > > +
-> > > +       /*
-> > > +        * If application munmap(exec_vma) before uprobe_unregister()
-> > > +        * gets called, we don't get a chance to remove uprobe from
-> > > +        * delayed_uprobe_list from remove_breakpoint(). Do it here.
-> > > +        */
-> > > +       mutex_lock(&delayed_uprobe_lock);
-> > > +       delayed_uprobe_remove(uprobe, NULL);
-> > > +       mutex_unlock(&delayed_uprobe_lock);
-> > > +
-> > > +       kfree(uprobe);
-> > > +}
-> > > +
-> > >  static void uprobe_free_rcu(struct rcu_head *rcu)
-> > >  {
-> > >         struct uprobe *uprobe =3D container_of(rcu, struct uprobe, rc=
-u);
-> > >
-> > > -       kfree(uprobe);
-> > > +       INIT_WORK(&uprobe->work, uprobe_free_deferred);
-> > > +       schedule_work(&uprobe->work);
-> > >  }
-> > >
-> > >  static void put_uprobe(struct uprobe *uprobe)
+> > We should be able to achieve that without a VM-wide spinlock.  My thoug=
+ht (from
+> > v11?) was to effectively use the FROZEN_SPTE bit as a per-SPTE spinlock=
+, i.e. keep
+> > it set until the SEAMCALL completes.
+>=20
+> Only if the TDX module returns BUSY per-SPTE (as suggested by 18.1.3,
+> which documents that the TDX module returns TDX_OPERAND_BUSY on a
+> CMPXCHG failure). If it returns BUSY per-VM, FROZEN_SPTE is not enough
+> to prevent contention in the TDX module.
+
+Looking at the TDX module code, things like (UN)BLOCK and REMOVE take a per=
+-VM
+lock in write mode, but ADD, AUG, and PROMOTE/DEMOTE take the lock in read =
+mode.
+
+So for the operations that KVM can do in parallel, the locking should effec=
+tively
+be per-entry.  Because KVM will never throw away an entire S-EPT root, zapp=
+ing
+SPTEs will need to be done while holding mmu_lock for write, i.e. KVM shoul=
+dn't
+have problems with host tasks competing for the TDX module's VM-wide lock.
+
+> If we want to be a bit more optimistic, let's do something more
+> sophisticated, like only take the lock after the first busy reply. But
+> the spinlock is the easiest way to completely remove host-induced
+> TDX_OPERAND_BUSY, and only have to deal with guest-induced ones.
+
+I am not convinced that's necessary or a good idea.  I worry that doing so =
+would
+just kick the can down the road, and potentially make the problems harder t=
+o solve,
+e.g. because we'd have to worry about regressing existing setups.
+
+> > > It is still kinda bad that guests can force the VMM to loop, but the =
+VMM can
+> > > always say enough is enough.  In other words, let's assume that a lim=
+it of
+> > > 16 is probably appropriate but we can also increase the limit and cra=
+sh the
+> > > VM if things become ridiculous.
 > >
-> > It seems put_uprobe hunk was lost, since the patch is not doing
-> > what commit log describes.
->
->
-> Hmm, put_uprobe() has:
->
-> call_srcu(&uprobes_srcu, &uprobe->rcu, uprobe_free_rcu);
->
-> at the end (see [0], which added that), so we do schedule_work() in
-> RCU callback, similarly to what we do with bpf_map freeing in the BPF
-> subsystem.
->
-> This patch set is based on the latest tip/perf/core (and also assuming
-> the RCU Tasks Trace patch that mysteriously disappeared is actually
-> there, hopefully it will just as magically be restored).
->
->   [0] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/=
-?h=3Dperf/core&id=3D8617408f7a01e94ce1f73e40a7704530e5dfb25c
+> > 2 :-)
+> >
+> > One try that guarantees no other host task is accessing the S-EPT entry=
+, and a
+> > second try after blasting IPI to kick vCPUs to ensure no guest-side tas=
+k has
+> > locked the S-EPT entry.
+>=20
+> Fair enough. Though in principle it is possible to race and have the
+> vCPU re-run and re-issue a TDG call before KVM re-issues the TDH call.
 
-I'm still not following.
-put_uprobe() did delayed_uprobe_remove() and this patch is doing it again.
+My limit of '2' is predicated on the lock being a "host priority" lock, i.e=
+. that
+kicking vCPUs would ensure the lock has been dropped and can't be re-acquir=
+ed by
+the guest.
 
-The commit log implies that mutex+delayed_uprobe_remove should be removed
-from put_uprobe(), but that's not what the patch is doing.
+> So I would make it 5 or so just to be safe.
+>=20
+> > My concern with an arbitrary retry loop is that we'll essentially propa=
+gate the
+> > TDX module issues to the broader kernel.  Each of those SEAMCALLs is sl=
+ooow, so
+> > retrying even ~20 times could exceed the system's tolerances for schedu=
+ling, RCU,
+> > etc...
+>=20
+> How slow are the failed ones? The number of retries is essentially the
+> cost of successful seamcall / cost of busy seamcall.
+
+I haven't measured, but would be surprised if it's less than 2000 cycles.
+
+> If HOST_PRIORITY works, even a not-small-but-not-huge number of
+> retries would be better than the IPIs. IPIs are not cheap either.
+
+Agreed, but we also need to account for the operations that are conflicting=
+.
+E.g. if KVM is trying to zap a S-EPT that the guest is accessing, then busy=
+ waiting
+for the to-be-zapped S-EPT entry to be available doesn't make much sense.
+
+> > > For zero step detection, my reading is that it's TDH.VP.ENTER that fa=
+ils;
+> > > not any of the MEM seamcalls.  For that one to be resolved, it should=
+ be
+> > > enough to do take and release the mmu_lock back to back, which ensure=
+s that
+> > > all pending critical sections have completed (that is,
+> > > "write_lock(&kvm->mmu_lock); write_unlock(&kvm->mmu_lock);").  And th=
+en
+> > > loop.  Adding a vCPU stat for that one is a good idea, too.
+> >
+> > As above and in my discussion with Rick, I would prefer to kick vCPUs t=
+o force
+> > forward progress, especially for the zero-step case.  If KVM gets to th=
+e point
+> > where it has retried TDH.VP.ENTER on the same fault so many times that =
+zero-step
+> > kicks in, then it's time to kick and wait, not keep retrying blindly.
+>=20
+> Wait, zero-step detection should _not_ affect TDH.MEM latency. Only
+> TDH.VP.ENTER is delayed.
+
+Blocked, not delayed.  Yes, it's TDH.VP.ENTER that "fails", but to get past
+TDH.VP.ENTER, KVM needs to resolve the underlying fault, i.e. needs to guar=
+antee
+forward progress for TDH.MEM (or whatever the operations are called).
+
+Though I wonder, are there any operations guest/host operations that can co=
+nflict
+if the vCPU is faulting?  Maybe this particular scenario is a complete non-=
+issue.
+
+> If it is delayed to the point of failing, we can do write_lock/write_unlo=
+ck()
+> in the vCPU entry path.
+
+I was thinking that KVM could set a flag (another synthetic error code bit?=
+) to
+tell the page fault handler that it needs to kick vCPUs.  But as above, it =
+might
+be unnecessary.
+
+> My issue is that, even if we could make it a bit better by looking at
+> the TDX module source code, we don't have enough information to make a
+> good choice.  For now we should start with something _easy_, even if
+> it may not be the greatest.
+
+I am not opposed to an easy/simple solution, but I am very much opposed to
+implementing a retry loop without understanding _exactly_ when and why it's
+needed.
 
