@@ -1,111 +1,151 @@
-Return-Path: <linux-kernel+bounces-322262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0360972672
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF71972674
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED3B3B23849
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:59:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 330CFB2381E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C9D6F2F4;
-	Tue, 10 Sep 2024 00:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6267B6F307;
+	Tue, 10 Sep 2024 01:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZ1uMomO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJKQwfWr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE411E517;
-	Tue, 10 Sep 2024 00:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB71320F;
+	Tue, 10 Sep 2024 01:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725929947; cv=none; b=q5Q4Ra9l94gkSSzAenWEXjw84dzcCMeQqjpPBWy3hxM5NQ9z+AvjsihrFsyrnJRyvi7xSR4VnbeAkzQ+mbnkGM0/RJjre/tDNiWeka3HHfnOuxk3hO9eH9lZsI7Ob37gkFL3fVpaGSDJ2GkbLqgqndfXAe4DGLNkbwEl/52V+Bs=
+	t=1725930015; cv=none; b=rqe/NKPoNdQJFpMpjaqBN4v/kvGfjy2qct/QJVFkZm++p1m3PXBpR3CZZCVkjb8LMn/S/LPUzq9n6QP7ag0chD8FjeTM4EMuDQNU+dpDBuFIZmDYbsvpEH5sS3wJ/m/RP7ZJiV1/v8iy6uyMzISx3cmPcBmX+rQl/DhppmkyzgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725929947; c=relaxed/simple;
-	bh=sydz+h9nmbxLBTCWxoovArpmy54oWbC1/Aced3zaz/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=EbnNFqQjYG7rfLlEfjDe3Gd7r9kpFQIhcojUJjYrvnIQG4G72SUVMG2ZAeg7+LEyxTKtOluaU5wy+zJMIstlGARUlcQ2l7AfU+l/ZGAqMZAZ51AlcF/fx9W0C5EOmusx/j5nRSVj8gE3Zqy/s/CMNvnlQlzTCKWZnREH+lZcV+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZ1uMomO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FCBBC4CEC5;
-	Tue, 10 Sep 2024 00:59:06 +0000 (UTC)
+	s=arc-20240116; t=1725930015; c=relaxed/simple;
+	bh=SUdXRn9fT8xAK9XCVBGuRHOj94ZKDCFNTwX+df/geuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GlTtnvVKuWveRaukvxWNFiSk5pnneBxCCMGZ9oektiR+z1dhymTfEQHzVw2Jvyhx7cXk627bOFAPtE70eiNcgcRAekF3pHBGK+YMqR9W3nh4w3aDiEQ7ujPrSJhDEzoUIBY1YnkYiO50RfbWvJy9ivAq0tt+fOYoxwG2sXn0rE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJKQwfWr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B558AC4CEC5;
+	Tue, 10 Sep 2024 01:00:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725929946;
-	bh=sydz+h9nmbxLBTCWxoovArpmy54oWbC1/Aced3zaz/g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=NZ1uMomODqD4iDaeU8x59FuywF/1zl7ftdOgYdug2eS2rfaxAChRMozxbzADjiWf0
-	 Fq9mIG9dSEeNE4PFYWd4nOqYdSt5YBJqS0jkWLNUCQSKsKNmehlSq+DZeya8GxfEdh
-	 m68bifgyw/UXvQmFAA9Zspto2bUdsCSej4XZmX2tFsk2cpkwDeK/jhKhQ01+hKPG5p
-	 MIvOKjxYY6okHvmkTWx0/qLRfwm63zLViZhvJfguwQmizSdkop6aO3YVO57pdrgZTW
-	 3VQd4a1fuRpjQAeF85KLJHpU0G8lNoSLq8tg/2XUne4ueWjN0iZFsZOAhCFcEyieeo
-	 U5jru9ZANtUFQ==
-Date: Mon, 9 Sep 2024 19:59:04 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	"Maciej W . Rozycki" <macro@orcam.me.uk>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Duc Dang <ducdang@google.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Stanislav Spassov <stanspas@amazon.com>
-Subject: Re: [RFC PATCH 0/3] PCI: Use Configuration RRS to wait for device
- ready
-Message-ID: <20240910005904.GA561263@bhelgaas>
+	s=k20201202; t=1725930015;
+	bh=SUdXRn9fT8xAK9XCVBGuRHOj94ZKDCFNTwX+df/geuM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TJKQwfWr1s/IiWCJ9IX8tXA55cfO5GmNez7wRtwzDX1v/x/RpQWrpOXSVqM+M5Sho
+	 ewAWblGD9FetgxKsyGEXuoFOlCBMwUjjNiWuwIVzDWhFr2HKuS4WYIPaEXZwATaXKO
+	 SbWIDTK8uFCE9m9RqBjVmq2QRrh3Hj0FxI4aLazPCgxV1mJzuRkruT+BD4Yi5dVZ+S
+	 cKDy3qUqmjknryi2j4DhgdDEktM+fra0o2Qii+QhGXumfwNgpkErZ/4Guvr1KZUwql
+	 tpURNxPTCIjb0dhaekANCUy3YvMCD6xjjHzsSugfAoKmDKvn2Dda3lhShsfRqj49pl
+	 /fnWZZRCVZfTg==
+Date: Mon, 9 Sep 2024 18:00:13 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org, Michal Simek
+ <michal.simek@amd.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Andy Chiu <andy.chiu@sifive.com>, Daniel
+ Borkmann <daniel@iogearbox.net>
+Subject: Re: [PATCH net v2] net: xilinx: axienet: Fix packet counting
+Message-ID: <20240909180013.4e064fd5@kernel.org>
+In-Reply-To: <20240906164227.505984-1-sean.anderson@linux.dev>
+References: <20240906164227.505984-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827234848.4429-1-helgaas@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 27, 2024 at 06:48:45PM -0500, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
+On Fri,  6 Sep 2024 12:42:27 -0400 Sean Anderson wrote:
+> axienet_free_tx_chain returns the number of DMA descriptors it's
+> handled. However, axienet_tx_poll treats the return as the number of
+> packets. When scatter-gather SKBs are enabled, a single packet may use
+> multiple DMA descriptors, which causes incorrect packet counts. Fix this
+> by explicitly keepting track of the number of packets processed as
+> separate from the DMA descriptors.
 > 
-> After a device reset, pci_dev_wait() waits for a device to become
-> completely ready by polling the PCI_COMMAND register.  The spec envisions
-> that software would instead poll for the device to stop responding to
-> config reads with Completions with Request Retry Status (RRS).
-> 
-> Polling PCI_COMMAND leads to hardware retries that are invisible to
-> software and the backoff between software retries doesn't work correctly.
-> 
-> Root Ports are not required to support the Configuration RRS Software
-> Visibility feature that prevents hardware retries and makes the RRS
-> Completions visible to software, so this series only uses it when available
-> and falls back to PCI_COMMAND polling when it's not.
-> 
-> This is completely untested and posted for comments.
-> 
-> Bjorn Helgaas (3):
->   PCI: Wait for device readiness with Configuration RRS
->   PCI: aardvark: Correct Configuration RRS checking
->   PCI: Rename CRS Completion Status to RRS
-> 
->  drivers/bcma/driver_pci_host.c             | 10 ++--
->  drivers/pci/controller/dwc/pcie-tegra194.c | 18 +++---
->  drivers/pci/controller/pci-aardvark.c      | 64 +++++++++++-----------
->  drivers/pci/controller/pci-xgene.c         |  6 +-
->  drivers/pci/controller/pcie-iproc.c        | 18 +++---
->  drivers/pci/pci-bridge-emul.c              |  4 +-
->  drivers/pci/pci.c                          | 41 +++++++++-----
->  drivers/pci/pci.h                          | 11 +++-
->  drivers/pci/probe.c                        | 33 +++++------
->  include/linux/bcma/bcma_driver_pci.h       |  2 +-
->  include/linux/pci.h                        |  1 +
->  include/uapi/linux/pci_regs.h              |  6 +-
->  12 files changed, 117 insertions(+), 97 deletions(-)
+> Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet driver")
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 
-I'd like to merge this unchanged (except for adding credit to
-Stanislav in the [1/3] commit log) for v6.12.  Let me know if you
-test, review, or object.
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> index 9aeb7b9f3ae4..556033849d55 100644
+> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> @@ -670,21 +670,21 @@ static int axienet_device_reset(struct net_device *ndev)
+>   * @force:	Whether to clean descriptors even if not complete
+>   * @sizep:	Pointer to a u32 filled with the total sum of all bytes
+>   *		in all cleaned-up descriptors. Ignored if NULL.
+> - * @budget:	NAPI budget (use 0 when not called from NAPI poll)
+> + * @budget:	NAPI budget (use INT_MAX when not called from NAPI poll)
 
-Bjorn
+use INT_MAX and force=true when ... ?
+To make sure the dependency is clear.
+But actually...
+
+>   *
+>   * Would either be called after a successful transmit operation, or after
+>   * there was an error when setting up the chain.
+> - * Returns the number of descriptors handled.
+> + * Returns the number of packets handled.
+>   */
+>  static int axienet_free_tx_chain(struct axienet_local *lp, u32 first_bd,
+>  				 int nr_bds, bool force, u32 *sizep, int budget)
+>  {
+>  	struct axidma_bd *cur_p;
+>  	unsigned int status;
+> +	int i, packets = 0;
+>  	dma_addr_t phys;
+> -	int i;
+>  
+> -	for (i = 0; i < nr_bds; i++) {
+> +	for (i = 0; i < nr_bds && packets < budget; i++) {
+
+why are you doing this? To make sure drivers doesn't complete more 
+than "budget" Tx skbs? The budget is really for Rx, for Tx you can
+use a reasonable fixed value, independent of what budget core
+passes in, e.g. 128. See:
+https://www.kernel.org/doc/html/next/networking/napi.html#datapath-api
+
+>  		cur_p = &lp->tx_bd_v[(first_bd + i) % lp->tx_bd_num];
+>  		status = cur_p->status;
+>  
+> @@ -701,8 +701,10 @@ static int axienet_free_tx_chain(struct axienet_local *lp, u32 first_bd,
+>  				 (cur_p->cntrl & XAXIDMA_BD_CTRL_LENGTH_MASK),
+>  				 DMA_TO_DEVICE);
+>  
+> -		if (cur_p->skb && (status & XAXIDMA_BD_STS_COMPLETE_MASK))
+> -			napi_consume_skb(cur_p->skb, budget);
+> +		if (cur_p->skb && (status & XAXIDMA_BD_STS_COMPLETE_MASK)) {
+> +			napi_consume_skb(cur_p->skb, force ? 0 : budget);
+> +			packets++;
+> +		}
+>  
+>  		cur_p->app0 = 0;
+>  		cur_p->app1 = 0;
+> @@ -718,7 +720,13 @@ static int axienet_free_tx_chain(struct axienet_local *lp, u32 first_bd,
+>  			*sizep += status & XAXIDMA_BD_STS_ACTUAL_LEN_MASK;
+>  	}
+>  
+> -	return i;
+> +	if (!force) {
+> +		lp->tx_bd_ci += i;
+> +		if (lp->tx_bd_ci >= lp->tx_bd_num)
+> +			lp->tx_bd_ci %= lp->tx_bd_num;
+> +	}
+
+Moving this chunk into axienet_free_tx_chain() is a noop, right?
+Please avoid code cleanups in fixes.
+
+> +	return packets;
+>  }
+>  
+>  /**
+-- 
+pw-bot: cr
 
