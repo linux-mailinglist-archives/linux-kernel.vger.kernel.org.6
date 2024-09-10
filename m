@@ -1,269 +1,125 @@
-Return-Path: <linux-kernel+bounces-322438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13048972903
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:51:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E2D972907
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B0E9283133
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:51:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B89DB23987
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC5A16BE2A;
-	Tue, 10 Sep 2024 05:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E4E16BE0D;
+	Tue, 10 Sep 2024 05:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bt9l083O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEin5f9q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC8A13A885;
-	Tue, 10 Sep 2024 05:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753EDBA42;
+	Tue, 10 Sep 2024 05:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725947453; cv=none; b=KjOhHMrMU6WeVhQvzSqX0+feeDElH0Q6tBV+lYY1vxMhW2IJYKE/be5zNH5FnzO29rVWd9uVP+Phf5PXdWjWBbKFtdebNTw5Da/j9NwLxD3XE00NpLaOWJIXXNxmh4QVAe0MXpZDgpkGzziTcoDeQHRCRR7QLArghFAL4dqEfbg=
+	t=1725947629; cv=none; b=BQRSLgLPXWoQTPWqtSvVwSItlaM40+4uDRMb8pguduJYnQxMQevxIZdXNSi8xGGbkQ4wyPMSvOS6fvy//ABrGEScSiRTqEBid4XCNlPrcW2JwK1+nofVFtzmOoJi2iTdXI6DfeWL+a3pIKT32sIuWu3OzCCUnO8I2G+lQrapqbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725947453; c=relaxed/simple;
-	bh=KaFqVznIit54yg+jLGZTE9bSNfvtxNmjEVeqVMGx0eA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IQTEDK7mXXjr8J9E25fdnLNIgoLAjH6TTxW9sf6RGFP6rKt9ipqkPiEjLZ2Mf2nK6T7aL5t/6ypBccGIed4ht4XV8J67OrsM8cnL1jlWARlOkeRMeznpl3zyOQPUJTQlyUqQHpGhnkZ97TxxYachHHHDe0fzLvH26fKNSf+3O64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bt9l083O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D52BAC4CEC3;
-	Tue, 10 Sep 2024 05:50:51 +0000 (UTC)
+	s=arc-20240116; t=1725947629; c=relaxed/simple;
+	bh=uvUT2li9t6kQrgl7EAisZODqTq1+vnL8VvIBaN8rxvA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GBOo0QorfK2yeZqK4/cX8UcAKfKcfAsC0U6piyGvQYCrmNbO7XliPZ+rszQBiqjxfk/ajUuAYfTEWs0PzmIUkW91JZ/IL/oxFzit96+ikMDJFRPSZLV5aWk3L2JMsGXTPXKHggKSGqxQPgOLYOB0uHeVol7OOdxr7xpR+jho9LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEin5f9q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E9F1CC4CEC3;
+	Tue, 10 Sep 2024 05:53:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725947453;
-	bh=KaFqVznIit54yg+jLGZTE9bSNfvtxNmjEVeqVMGx0eA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bt9l083O3uU93OV6GGcVAL5+Q858mPl7a9YOHFqB46ksWVNLhcxEMr6eyXHrBYxc+
-	 sBCTr7OvxkQdzp88UUtAOxMdJ6YSxfLSVhjl03xx1w2zK/HFx0qnXOKkBmKqBUkOxV
-	 i5dge9K4CxLocCIiD3UflGQPVTkm04RWBd+pD9HpTz0tI3ek6/ko2+twJl0vxMA8H8
-	 GiEp/Y4Y/7zIJOf7CjQyigBNBWj65U13W3gH+i5RuAl9a36CFK5phax5jOSa8tn2T2
-	 z59ohJwGV84CP0Gv4gkQNGiGq/pzXg/9dEUVDIqBpe53MWL8dfkpMoFzLE++mf0dab
-	 LFJOmiEaDXD0g==
-Date: Mon, 9 Sep 2024 22:50:50 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>,
-	Benjamin Gray <bgray@linux.ibm.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>,
-	Sun Haiyong <sunhaiyong@loongson.cn>,
-	Junhao He <hejunhao3@huawei.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 13/15] perf tests: Add tool PMU test
-Message-ID: <Zt_eOhg7I81oGeo2@google.com>
-References: <20240907050830.6752-1-irogers@google.com>
- <20240907050830.6752-14-irogers@google.com>
+	s=k20201202; t=1725947629;
+	bh=uvUT2li9t6kQrgl7EAisZODqTq1+vnL8VvIBaN8rxvA=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=ZEin5f9qdhlcx+McditaTMcWtfE9Zml5qB6LRe5vnkwOVW0zApcnJNleP/RAMck+k
+	 kcTs/FiX7mCaJxqEwJghiwWmeTq1nJP+yl/dh+r6bTQGJAUIr3MguJdJsk2jQpyzMw
+	 hK9gjkizJzPusJ3qpQscEb4+sskmRJpl7KTgl7oFN7y+kMzkNuEasN/Kn5SLdiW/62
+	 gP8NuONJLPFKhJg0h+UUuXo/iOmciLzg5/1rdOBmbfmoy+27nSKh6obNe9m99xJHlJ
+	 gr9YXpfvKWJRpu2/huD9wGjlr5cFZVNuAoaSHom1EYY2eM1J0G6mgomZlF4J6IPLas
+	 FhpqzdDsZDGdg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D83B2ECE582;
+	Tue, 10 Sep 2024 05:53:48 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Tue, 10 Sep 2024 13:53:44 +0800
+Subject: [PATCH] clk: Fix invalid execution of clk_set_rate
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240907050830.6752-14-irogers@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240910-fix_clk-v1-1-111443baaeaa@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIAOfe32YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDS0MD3bTMivjknGxdc8Ok5BQjg6QUY+M0JaDqgqJUoBTYpOjY2loA901
+ 2lVkAAAA=
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725947627; l=1619;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=3tAKqELYhIvRcXnUoRlXXLtvnJsBHNdrLYPkwEE/zJI=;
+ b=MFbnaaVvkM7y7cG1rTenn+RlC/vW4QvIC4DEqGeAHtl2HMKuRduRtutjrLqkpcqhY9gey+F/U
+ sIwGXwnw06jCuqfqCuVdTeyVvBQZwriPntFkUiKwZrH2I11yHy6aOz6
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-On Fri, Sep 06, 2024 at 10:08:28PM -0700, Ian Rogers wrote:
-> Ensure parsing with and without PMU creates events with the expected
-> config values. This ensures the tool.json doesn't get out of sync with
-> tool_pmu_event enum.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/tests/Build          |   1 +
->  tools/perf/tests/builtin-test.c |   1 +
->  tools/perf/tests/tests.h        |   1 +
->  tools/perf/tests/tool_pmu.c     | 111 ++++++++++++++++++++++++++++++++
->  4 files changed, 114 insertions(+)
->  create mode 100644 tools/perf/tests/tool_pmu.c
-> 
-> diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
-> index 5671ee530019..a771e4928247 100644
-> --- a/tools/perf/tests/Build
-> +++ b/tools/perf/tests/Build
-> @@ -67,6 +67,7 @@ perf-test-y += sigtrap.o
->  perf-test-y += event_groups.o
->  perf-test-y += symbols.o
->  perf-test-y += util.o
-> +perf-test-y += tool_pmu.o
->  
->  ifeq ($(SRCARCH),$(filter $(SRCARCH),x86 arm arm64 powerpc))
->  perf-test-$(CONFIG_DWARF_UNWIND) += dwarf-unwind.o
-> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-> index 470a9709427d..3b30f258c395 100644
-> --- a/tools/perf/tests/builtin-test.c
-> +++ b/tools/perf/tests/builtin-test.c
-> @@ -73,6 +73,7 @@ static struct test_suite *generic_tests[] = {
->  	&suite__PERF_RECORD,
->  	&suite__pmu,
->  	&suite__pmu_events,
-> +	&suite__tool_pmu,
->  	&suite__dso_data,
->  	&suite__perf_evsel__roundtrip_name_test,
->  #ifdef HAVE_LIBTRACEEVENT
-> diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-> index 6ea2be86b7bf..1ed76d4156b6 100644
-> --- a/tools/perf/tests/tests.h
-> +++ b/tools/perf/tests/tests.h
-> @@ -83,6 +83,7 @@ DECLARE_SUITE(perf_evsel__tp_sched_test);
->  DECLARE_SUITE(syscall_openat_tp_fields);
->  DECLARE_SUITE(pmu);
->  DECLARE_SUITE(pmu_events);
-> +DECLARE_SUITE(tool_pmu);
->  DECLARE_SUITE(attr);
->  DECLARE_SUITE(dso_data);
->  DECLARE_SUITE(dso_data_cache);
-> diff --git a/tools/perf/tests/tool_pmu.c b/tools/perf/tests/tool_pmu.c
-> new file mode 100644
-> index 000000000000..94d0dd8fd3cb
-> --- /dev/null
-> +++ b/tools/perf/tests/tool_pmu.c
-> @@ -0,0 +1,111 @@
-> +// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-> +#include "debug.h"
-> +#include "evlist.h"
-> +#include "parse-events.h"
-> +#include "tests.h"
-> +#include "tool_pmu.h"
-> +
-> +static int do_test(enum tool_pmu_event ev, bool with_pmu)
-> +{
-> +	struct evlist *evlist = evlist__new();
-> +	struct evsel *evsel;
-> +	struct parse_events_error err;
-> +	int ret;
-> +	char str[128];
-> +	bool found = false;
-> +
-> +	if (!evlist) {
-> +		pr_err("evlist allocation failed\n");
-> +		return TEST_FAIL;
-> +	}
-> +
-> +	if (with_pmu)
-> +		snprintf(str, sizeof(str), "tool/%s/", tool_pmu__event_to_str(ev));
-> +	else
-> +		strncpy(str, tool_pmu__event_to_str(ev), sizeof(str));
-> +
-> +	parse_events_error__init(&err);
-> +	ret = parse_events(evlist, str, &err);
-> +	if (ret) {
-> +		evlist__delete(evlist);
-> +		if (tool_pmu__skip_event(tool_pmu__event_to_str(ev))) {
-> +			ret = TEST_OK;
-> +			goto out;
-> +		}
-> +
-> +		pr_debug("FAILED %s:%d failed to parse event '%s', err %d\n",
-> +			 __FILE__, __LINE__, str, ret);
-> +		parse_events_error__print(&err, str);
-> +		ret = TEST_FAIL;
-> +		goto out;
-> +	}
-> +
-> +	ret = TEST_OK;
-> +	if (with_pmu ? (evlist->core.nr_entries != 1) : (evlist->core.nr_entries < 1)) {
-> +		pr_debug("FAILED %s:%d Unexpected number of events for '%s' of %d\n",
-> +			 __FILE__, __LINE__, str, evlist->core.nr_entries);
-> +		ret = TEST_FAIL;
-> +		goto out;
-> +	}
-> +
-> +	evlist__for_each_entry(evlist, evsel) {
-> +		if (perf_pmu__is_tool(evsel->pmu)) {
-> +			if (evsel->core.attr.config != ev) {
-> +				pr_debug("FAILED %s:%d Unexpected config for '%s', %lld != %d\n",
-> +					__FILE__, __LINE__, str, evsel->core.attr.config, ev);
-> +				ret = TEST_FAIL;
-> +				goto out;
-> +			}
-> +			found = true;
-> +		}
-> +	}
-> +
-> +	if (!found && !tool_pmu__skip_event(tool_pmu__event_to_str(ev))) {
-> +		pr_debug("FAILED %s:%d Didn't find tool event '%s' in parsed evsels\n",
-> +			 __FILE__, __LINE__, str);
-> +		ret = TEST_FAIL;
-> +	}
-> +
-> +out:
-> +	evlist__delete(evlist);
-> +	return ret;
-> +}
-> +
-> +static int test__tool_pmu_without_pmu(struct test_suite *test __maybe_unused,
-> +				      int subtest __maybe_unused)
-> +{
-> +	int i;
-> +
-> +	tool_pmu__for_each_event(i) {
-> +		int ret = do_test(i, /*with_pmu=*/false);
-> +
-> +		if (ret != TEST_OK)
-> +			return ret;
-> +	}
-> +	return TEST_OK;
-> +}
-> +
-> +static int test__tool_pmu_with_pmu(struct test_suite *test __maybe_unused,
-> +				   int subtest __maybe_unused)
-> +{
-> +	int i;
-> +
-> +	tool_pmu__for_each_event(i) {
-> +		int ret = do_test(i, /*with_pmu=*/true);
-> +
-> +		if (ret != TEST_OK)
-> +			return ret;
-> +	}
-> +	return TEST_OK;
-> +}
-> +
-> +static struct test_case tests__tool_pmu[] = {
-> +	TEST_CASE("Parsing without PMU name", tool_pmu_without_pmu),
-> +	TEST_CASE("Parsing with PMU name", tool_pmu_with_pmu),
-> +	{	.name = NULL, }
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-An unusual indentation.
+Some clocks have rates that can be changed elsewhere, so add a flag
+CLK_GET_RATE_NOCACHE(such as scmi_clk) to these clocks to ensure that
+the real-time rate is obtained.
 
-Thanks,
-Namhyung
+When clk_set_rate is called, it is returned if the request to set rate
+is consistent with the current rate. Getting the current rate in
+clk_set_rate returns the rate stored in clk_core. CLK_GET_RATE_NOCACHE
+does not take effect here.
+
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+Some clocks have rates that can be changed elsewhere, so add a flag
+CLK_GET_RATE_NOCACHE(such as scmi_clk) to these clocks to ensure that
+the real-time rate is obtained.
+
+When clk_set_rate is called, it is returned if the request to set rate
+is consistent with the current rate. Getting the current rate in
+clk_set_rate returns the rate stored in clk_core. CLK_GET_RATE_NOCACHE
+does not take effect here.
+---
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 285ed1ad8a37..79b453b82528 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2536,7 +2536,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	rate = clk_core_req_round_rate_nolock(core, req_rate);
+ 
+ 	/* bail early if nothing to do */
+-	if (rate == clk_core_get_rate_nolock(core))
++	if (rate == clk_core_get_rate_recalc(core))
+ 		return 0;
+ 
+ 	/* fail on a direct rate set of a protected provider */
+
+---
+base-commit: 2cd6543d82b9dc7b971b9b64f22ad34a1cae3076
+change-id: 20240910-fix_clk-71bcd20bd33f
+
+Best regards,
+-- 
+Chuan Liu <chuan.liu@amlogic.com>
 
 
-> +};
-> +
-> +struct test_suite suite__tool_pmu = {
-> +	.desc = "Tool PMU",
-> +	.test_cases = tests__tool_pmu,
-> +};
-> -- 
-> 2.46.0.469.g59c65b2a67-goog
-> 
 
