@@ -1,409 +1,179 @@
-Return-Path: <linux-kernel+bounces-323013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E09CB9736A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:00:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2649E973661
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DBE21F265EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:00:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C83381C247D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5C619343B;
-	Tue, 10 Sep 2024 11:59:03 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516C11922DF;
-	Tue, 10 Sep 2024 11:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F7618F2DB;
+	Tue, 10 Sep 2024 11:44:17 +0000 (UTC)
+Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD1F17BEC8;
+	Tue, 10 Sep 2024 11:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725969542; cv=none; b=Olq7jlV/IPZVSUAn44yFVEyI9KW4VpoBu89k7SIyct43DLhE9LW4BdVBnTaxLFURwa/M3MI6+ZHMVYTya1YNwEm04wTyXkvUaGPCBf8jgHwXHXdpXr0ZiX562QPJwd92KCAIbAV7BF9bQcpIyaZvzCsMte8HTUz11J2AXfGrQdc=
+	t=1725968656; cv=none; b=A+y10e1AlhYAUUFRROLn5LBiJAV/HjDzx5JTg/gr0AaC0DwtWaA8kBRXWVCtVhgVX3YcIOq0ndnpahl2Ds8TCNFJtfjN+QlQd+GsEkecwUA+C16ycZnW2MosaHXKxWaBTKphvvHLVm+AFtfCk9NGU0FdndRHl40YZbbyxFvC2zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725969542; c=relaxed/simple;
-	bh=HJ9ieA+6VKL6KBLnORo8lLyLp1DTxA4QN/TCNseTXzw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=vAxiOwJfTvYq8puVsnNPQYdRBAYf58w9tQP1vpcLMCo/9vUNoj5yDppJcxDoGSfBkZF6L6LKcR9GDDENxh55Kx5vRtc8LtlSRmapz4awBXhIoM7fFx5Kgq+DBMQuJScgyATVKeWuNjIqyN5V9yYsniOR8FiLLaSnF/vmGntjSJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.185])
-	by gateway (Coremail) with SMTP id _____8DxTuuANOBm_q0DAA--.9260S3;
-	Tue, 10 Sep 2024 19:58:56 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.185])
-	by front2 (Coremail) with SMTP id qciowMCxSsZwNOBm+GEDAA--.16096S7;
-	Tue, 10 Sep 2024 19:58:54 +0800 (CST)
-From: Xianglai Li <lixianglai@loongson.cn>
-To: linux-kernel@vger.kernel.org
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Xianglai li <lixianglai@loongson.cn>
-Subject: [PATCH V3 05/11] LoongArch: KVM: Add EIOINTC device support
-Date: Tue, 10 Sep 2024 19:40:59 +0800
-Message-Id: <20240910114105.4062286-6-lixianglai@loongson.cn>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20240910114105.4062286-5-lixianglai@loongson.cn>
-References: <20240910114105.4062286-1-lixianglai@loongson.cn>
- <20240910114105.4062286-2-lixianglai@loongson.cn>
- <20240910114105.4062286-3-lixianglai@loongson.cn>
- <20240910114105.4062286-4-lixianglai@loongson.cn>
- <20240910114105.4062286-5-lixianglai@loongson.cn>
+	s=arc-20240116; t=1725968656; c=relaxed/simple;
+	bh=GuXq/yLp2QuT4oyRMkfClvEaL4qgrmeMsiLDacTuEUk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BhcaQTuEvPT3FOfa9nFIl0F+TgGh2YeecEfczEOXUXXT40fmz/RYjsvm3sybwYZdhaSvWsRRtvCICI7aOVkbFOifCtf2y5G5/P42yCYaBC9JpMU7/94cA3zYE6R8Xlwik5TpwjdJwlLstgegNXN3L20vRCXSoePHtprTOZxKxuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
+Received: from dsgsiengine01.siengine.com ([10.8.1.61])
+	by mail03.siengine.com with ESMTPS id 48ABha6Z073103
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 10 Sep 2024 19:43:36 +0800 (+08)
+	(envelope-from kimriver.liu@siengine.com)
+Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
+	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4X32071Bvtz7ZMtl;
+	Tue, 10 Sep 2024 19:43:35 +0800 (CST)
+Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
+ SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Tue, 10 Sep 2024 19:43:34 +0800
+Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
+ SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.9; Tue, 10 Sep 2024 19:43:34 +0800
+Received: from SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe]) by
+ SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe%16]) with mapi id
+ 15.02.1544.011; Tue, 10 Sep 2024 19:43:34 +0800
+From: =?gb2312?B?TGl1IEtpbXJpdmVyL8H1vfC60w==?= <kimriver.liu@siengine.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "jsd@semihalf.com" <jsd@semihalf.com>,
+        "andi.shyti@kernel.org"
+	<andi.shyti@kernel.org>,
+        "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v8] i2c: designware: fix master is holding SCL low while
+ ENABLE bit is disabled
+Thread-Topic: [PATCH v8] i2c: designware: fix master is holding SCL low while
+ ENABLE bit is disabled
+Thread-Index: AQHbA0iDEXTpjDBp/E6xp/M7s9EaBrJQM8eAgACJC/D//5N/AIAAiqkw
+Date: Tue, 10 Sep 2024 11:43:34 +0000
+Message-ID: <36e6d80999cf493f8a866fb013710682@siengine.com>
+References: <9d181a45f3edf92364c9e6b729638f0b3f2e7baa.1725946886.git.kimriver.liu@siengine.com>
+ <ZuALQVyTBFugG0Sw@smile.fi.intel.com>
+ <743187d2fde54a9ebf86d42e29eadfb4@siengine.com>
+ <ZuAjMmr7q4f8VJpA@smile.fi.intel.com>
+In-Reply-To: <ZuAjMmr7q4f8VJpA@smile.fi.intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qciowMCxSsZwNOBm+GEDAA--.16096S7
-X-CM-SenderInfo: 5ol0xt5qjotxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+X-DKIM-Results: [10.8.1.61]; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:mail03.siengine.com 48ABha6Z073103
 
-Added device model for EIOINTC interrupt controller,
-implemented basic create destroy interface,
-and registered device model to kvm device table.
-
-Signed-off-by: Tianrui Zhao <zhaotianrui@loongson.cn>
-Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
----
-Cc: Bibo Mao <maobibo@loongson.cn> 
-Cc: Huacai Chen <chenhuacai@kernel.org> 
-Cc: kvm@vger.kernel.org 
-Cc: loongarch@lists.linux.dev 
-Cc: Paolo Bonzini <pbonzini@redhat.com> 
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn> 
-Cc: WANG Xuerui <kernel@xen0n.name> 
-Cc: Xianglai li <lixianglai@loongson.cn> 
-
- arch/loongarch/include/asm/kvm_eiointc.h |  93 ++++++++++++++++
- arch/loongarch/include/asm/kvm_host.h    |   4 +-
- arch/loongarch/kvm/Makefile              |   1 +
- arch/loongarch/kvm/intc/eiointc.c        | 130 +++++++++++++++++++++++
- arch/loongarch/kvm/main.c                |   6 ++
- include/uapi/linux/kvm.h                 |   2 +
- 6 files changed, 235 insertions(+), 1 deletion(-)
- create mode 100644 arch/loongarch/include/asm/kvm_eiointc.h
- create mode 100644 arch/loongarch/kvm/intc/eiointc.c
-
-diff --git a/arch/loongarch/include/asm/kvm_eiointc.h b/arch/loongarch/include/asm/kvm_eiointc.h
-new file mode 100644
-index 000000000000..abbc4ce6d86b
---- /dev/null
-+++ b/arch/loongarch/include/asm/kvm_eiointc.h
-@@ -0,0 +1,93 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2024 Loongson Technology Corporation Limited
-+ */
-+
-+#ifndef LOONGARCH_EIOINTC_H
-+#define LOONGARCH_EIOINTC_H
-+
-+#include <kvm/iodev.h>
-+
-+#define EIOINTC_IRQS			256
-+#define EIOINTC_ROUTE_MAX_VCPUS		256
-+#define EIOINTC_IRQS_U8_NUMS		(EIOINTC_IRQS / 8)
-+#define EIOINTC_IRQS_U16_NUMS		(EIOINTC_IRQS_U8_NUMS / 2)
-+#define EIOINTC_IRQS_U32_NUMS		(EIOINTC_IRQS_U8_NUMS / 4)
-+#define EIOINTC_IRQS_U64_NUMS		(EIOINTC_IRQS_U8_NUMS / 8)
-+/* map to ipnum per 32 irqs */
-+#define EIOINTC_IRQS_NODETYPE_COUNT	16
-+
-+#define EIOINTC_BASE			0x1400
-+#define EIOINTC_SIZE			0x900
-+
-+#define EIOINTC_VIRT_BASE		(0x40000000)
-+#define EIOINTC_VIRT_SIZE		(0x1000)
-+
-+#define LS3A_IP_NUM			8
-+
-+struct loongarch_eiointc {
-+	spinlock_t lock;
-+	struct kvm *kvm;
-+	struct kvm_io_device device;
-+	struct kvm_io_device device_extern;
-+	uint32_t num_cpu;
-+	uint32_t features;
-+	uint32_t status;
-+
-+	/* hardware state */
-+	union nodetype {
-+		u64 reg_u64[EIOINTC_IRQS_NODETYPE_COUNT / 4];
-+		u32 reg_u32[EIOINTC_IRQS_NODETYPE_COUNT / 2];
-+		u16 reg_u16[EIOINTC_IRQS_NODETYPE_COUNT];
-+		u8 reg_u8[EIOINTC_IRQS_NODETYPE_COUNT * 2];
-+	} nodetype;
-+
-+	/* one bit shows the state of one irq */
-+	union bounce {
-+		u64 reg_u64[EIOINTC_IRQS_U64_NUMS];
-+		u32 reg_u32[EIOINTC_IRQS_U32_NUMS];
-+		u16 reg_u16[EIOINTC_IRQS_U16_NUMS];
-+		u8 reg_u8[EIOINTC_IRQS_U8_NUMS];
-+	} bounce;
-+
-+	union isr {
-+		u64 reg_u64[EIOINTC_IRQS_U64_NUMS];
-+		u32 reg_u32[EIOINTC_IRQS_U32_NUMS];
-+		u16 reg_u16[EIOINTC_IRQS_U16_NUMS];
-+		u8 reg_u8[EIOINTC_IRQS_U8_NUMS];
-+	} isr;
-+	union coreisr {
-+		u64 reg_u64[EIOINTC_ROUTE_MAX_VCPUS][EIOINTC_IRQS_U64_NUMS];
-+		u32 reg_u32[EIOINTC_ROUTE_MAX_VCPUS][EIOINTC_IRQS_U32_NUMS];
-+		u16 reg_u16[EIOINTC_ROUTE_MAX_VCPUS][EIOINTC_IRQS_U16_NUMS];
-+		u8 reg_u8[EIOINTC_ROUTE_MAX_VCPUS][EIOINTC_IRQS_U8_NUMS];
-+	} coreisr;
-+	union enable {
-+		u64 reg_u64[EIOINTC_IRQS_U64_NUMS];
-+		u32 reg_u32[EIOINTC_IRQS_U32_NUMS];
-+		u16 reg_u16[EIOINTC_IRQS_U16_NUMS];
-+		u8 reg_u8[EIOINTC_IRQS_U8_NUMS];
-+	} enable;
-+
-+	/* use one byte to config ipmap for 32 irqs at once */
-+	union ipmap {
-+		u64 reg_u64;
-+		u32 reg_u32[EIOINTC_IRQS_U32_NUMS / 4];
-+		u16 reg_u16[EIOINTC_IRQS_U16_NUMS / 4];
-+		u8 reg_u8[EIOINTC_IRQS_U8_NUMS / 4];
-+	} ipmap;
-+	/* use one byte to config coremap for one irq */
-+	union coremap {
-+		u64 reg_u64[EIOINTC_IRQS / 8];
-+		u32 reg_u32[EIOINTC_IRQS / 4];
-+		u16 reg_u16[EIOINTC_IRQS / 2];
-+		u8 reg_u8[EIOINTC_IRQS];
-+	} coremap;
-+
-+	DECLARE_BITMAP(sw_coreisr[EIOINTC_ROUTE_MAX_VCPUS][LS3A_IP_NUM], EIOINTC_IRQS);
-+	uint8_t  sw_coremap[EIOINTC_IRQS];
-+};
-+
-+void eiointc_set_irq(struct loongarch_eiointc *s, int irq, int level);
-+int kvm_loongarch_register_eiointc_device(void);
-+#endif /* LOONGARCH_EIOINTC_H */
-diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
-index 7c89e26c23c3..e80405bc3f4f 100644
---- a/arch/loongarch/include/asm/kvm_host.h
-+++ b/arch/loongarch/include/asm/kvm_host.h
-@@ -20,6 +20,7 @@
- #include <asm/kvm_mmu.h>
- #include <asm/loongarch.h>
- #include <asm/kvm_ipi.h>
-+#include <asm/kvm_eiointc.h>
- 
- /* Loongarch KVM register ids */
- #define KVM_GET_IOC_CSR_IDX(id)		((id & KVM_CSR_IDX_MASK) >> LOONGARCH_REG_SHIFT)
-@@ -82,7 +83,7 @@ struct kvm_world_switch {
-  *
-  *  For LOONGARCH_CSR_CPUID register, max CPUID size if 512
-  *  For IPI hardware, max destination CPUID size 1024
-- *  For extioi interrupt controller, max destination CPUID size is 256
-+ *  For eiointc interrupt controller, max destination CPUID size is 256
-  *  For msgint interrupt controller, max supported CPUID size is 65536
-  *
-  * Currently max CPUID is defined as 256 for KVM hypervisor, in future
-@@ -114,6 +115,7 @@ struct kvm_arch {
- 	s64 time_offset;
- 	struct kvm_context __percpu *vmcs;
- 	struct loongarch_ipi *ipi;
-+	struct loongarch_eiointc *eiointc;
- };
- 
- #define CSR_MAX_NUMS		0x800
-diff --git a/arch/loongarch/kvm/Makefile b/arch/loongarch/kvm/Makefile
-index 36c3009fe89c..bb50fc799c29 100644
---- a/arch/loongarch/kvm/Makefile
-+++ b/arch/loongarch/kvm/Makefile
-@@ -19,5 +19,6 @@ kvm-y += tlb.o
- kvm-y += vcpu.o
- kvm-y += vm.o
- kvm-y += intc/ipi.o
-+kvm-y += intc/eiointc.o
- 
- CFLAGS_exit.o	+= $(call cc-option,-Wno-override-init,)
-diff --git a/arch/loongarch/kvm/intc/eiointc.c b/arch/loongarch/kvm/intc/eiointc.c
-new file mode 100644
-index 000000000000..3473150a5e90
---- /dev/null
-+++ b/arch/loongarch/kvm/intc/eiointc.c
-@@ -0,0 +1,130 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Loongson Technology Corporation Limited
-+ */
-+
-+#include <asm/kvm_eiointc.h>
-+#include <asm/kvm_vcpu.h>
-+#include <linux/count_zeros.h>
-+
-+static int kvm_eiointc_write(struct kvm_vcpu *vcpu,
-+			struct kvm_io_device *dev,
-+			gpa_t addr, int len, const void *val)
-+{
-+	return 0;
-+}
-+
-+static int kvm_eiointc_read(struct kvm_vcpu *vcpu,
-+			struct kvm_io_device *dev,
-+			gpa_t addr, int len, void *val)
-+{
-+	return 0;
-+}
-+
-+static const struct kvm_io_device_ops kvm_eiointc_ops = {
-+	.read	= kvm_eiointc_read,
-+	.write	= kvm_eiointc_write,
-+};
-+
-+static int kvm_eiointc_virt_read(struct kvm_vcpu *vcpu,
-+				struct kvm_io_device *dev,
-+				gpa_t addr, int len, void *val)
-+{
-+	return 0;
-+}
-+
-+static int kvm_eiointc_virt_write(struct kvm_vcpu *vcpu,
-+				struct kvm_io_device *dev,
-+				gpa_t addr, int len, const void *val)
-+{
-+	return 0;
-+}
-+
-+static const struct kvm_io_device_ops kvm_eiointc_virt_ops = {
-+	.read	= kvm_eiointc_virt_read,
-+	.write	= kvm_eiointc_virt_write,
-+};
-+
-+static int kvm_eiointc_get_attr(struct kvm_device *dev,
-+				struct kvm_device_attr *attr)
-+{
-+	return 0;
-+}
-+
-+static int kvm_eiointc_set_attr(struct kvm_device *dev,
-+				struct kvm_device_attr *attr)
-+{
-+	return 0;
-+}
-+
-+static void kvm_eiointc_destroy(struct kvm_device *dev)
-+{
-+	struct kvm *kvm;
-+	struct loongarch_eiointc *eiointc;
-+
-+	if (!dev || !dev->kvm || !dev->kvm->arch.eiointc)
-+		return;
-+	kvm = dev->kvm;
-+	eiointc = kvm->arch.eiointc;
-+	kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &eiointc->device);
-+	kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &eiointc->device_extern);
-+	kfree(eiointc);
-+}
-+
-+static int kvm_eiointc_create(struct kvm_device *dev, u32 type)
-+{
-+	int ret;
-+	struct loongarch_eiointc *s;
-+	struct kvm_io_device *device, *device1;
-+	struct kvm *kvm = dev->kvm;
-+
-+	/* eiointc has been created */
-+	if (kvm->arch.eiointc)
-+		return -EINVAL;
-+
-+	s = kzalloc(sizeof(struct loongarch_eiointc), GFP_KERNEL);
-+	if (!s)
-+		return -ENOMEM;
-+	spin_lock_init(&s->lock);
-+	s->kvm = kvm;
-+
-+	/*
-+	 * Initialize IOCSR device
-+	 */
-+	device = &s->device;
-+	kvm_iodevice_init(device, &kvm_eiointc_ops);
-+	mutex_lock(&kvm->slots_lock);
-+	ret = kvm_io_bus_register_dev(kvm, KVM_IOCSR_BUS,
-+			EXTIOI_BASE, EXTIOI_SIZE, device);
-+	mutex_unlock(&kvm->slots_lock);
-+	if (ret < 0) {
-+		kfree(s);
-+		return ret;
-+	}
-+
-+	device1 = &s->device_extern;
-+	kvm_iodevice_init(device1, &kvm_eiointc_virt_ops);
-+	ret = kvm_io_bus_register_dev(kvm, KVM_IOCSR_BUS,
-+			EXTIOI_VIRT_BASE, EXTIOI_VIRT_SIZE, device1);
-+	if (ret < 0) {
-+		kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &s->device);
-+		kfree(s);
-+		return ret;
-+	}
-+	kvm->arch.eiointc = s;
-+	return 0;
-+}
-+
-+static struct kvm_device_ops kvm_eiointc_dev_ops = {
-+	.name = "kvm-loongarch-eiointc",
-+	.create = kvm_eiointc_create,
-+	.destroy = kvm_eiointc_destroy,
-+	.set_attr = kvm_eiointc_set_attr,
-+	.get_attr = kvm_eiointc_get_attr,
-+};
-+
-+int kvm_loongarch_register_eiointc_device(void)
-+{
-+	return kvm_register_device_ops(&kvm_eiointc_dev_ops,
-+					KVM_DEV_TYPE_LOONGARCH_EXTIOI);
-+}
-diff --git a/arch/loongarch/kvm/main.c b/arch/loongarch/kvm/main.c
-index a1cec0b1fd7f..bc2d3a1a65b1 100644
---- a/arch/loongarch/kvm/main.c
-+++ b/arch/loongarch/kvm/main.c
-@@ -9,6 +9,7 @@
- #include <asm/cacheflush.h>
- #include <asm/cpufeature.h>
- #include <asm/kvm_csr.h>
-+#include <asm/kvm_eiointc.h>
- #include "trace.h"
- 
- unsigned long vpid_mask;
-@@ -370,6 +371,11 @@ static int kvm_loongarch_env_init(void)
- 
- 	/* Register loongarch ipi interrupt controller interface. */
- 	ret = kvm_loongarch_register_ipi_device();
-+	if (ret)
-+		return ret;
-+
-+	/* Register loongarch eiointc interrupt controller interface. */
-+	ret = kvm_loongarch_register_eiointc_device();
- 	return ret;
- }
- 
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 9fff439c30ea..5a6986fb16e8 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -1160,6 +1160,8 @@ enum kvm_device_type {
- #define KVM_DEV_TYPE_RISCV_AIA		KVM_DEV_TYPE_RISCV_AIA
- 	KVM_DEV_TYPE_LOONGARCH_IPI,
- #define KVM_DEV_TYPE_LOONGARCH_IPI	KVM_DEV_TYPE_LOONGARCH_IPI
-+	KVM_DEV_TYPE_LOONGARCH_EXTIOI,
-+#define KVM_DEV_TYPE_LOONGARCH_EXTIOI	KVM_DEV_TYPE_LOONGARCH_EXTIOI
- 
- 	KVM_DEV_TYPE_MAX,
- 
--- 
-2.39.1
-
+SEksIEFuZHkNCg0KDQo+LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj5Gcm9tOiBBbmR5IFNo
+ZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hlbmtvQGxpbnV4LmludGVsLmNvbT4gDQo+U2VudDogMjAy
+NMTqOdTCMTDI1SAxODo0NQ0KPlRvOiBMaXUgS2ltcml2ZXIvwfW98LrTIDxraW1yaXZlci5saXVA
+c2llbmdpbmUuY29tPg0KPkNjOiBqYXJra28ubmlrdWxhQGxpbnV4LmludGVsLmNvbTsgbWlrYS53
+ZXN0ZXJiZXJnQGxpbnV4LmludGVsLmNvbTsganNkQHNlbWloYWxmLmNvbTsgYW5kaS5zaHl0aUBr
+ZXJuZWwub3JnOyBsaW51eC1pMmNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5r
+ZXJuZWwub3JnDQo+U3ViamVjdDogUmU6IFtQQVRDSCB2OF0gaTJjOiBkZXNpZ253YXJlOiBmaXgg
+bWFzdGVyIGlzIGhvbGRpbmcgU0NMIGxvdyB3aGlsZSBFTkFCTEUgYml0IGlzIGRpc2FibGVkDQoN
+Cj5PbiBUdWUsIFNlcCAxMCwgMjAyNCBhdCAwOTozODo1M0FNICswMDAwLCBMaXUgS2ltcml2ZXIv
+wfW98LrTIHdyb3RlOg0KPj4gPkZyb206IEFuZHkgU2hldmNoZW5rbyA8YW5kcml5LnNoZXZjaGVu
+a29AbGludXguaW50ZWwuY29tPg0KPj4gPlNlbnQ6IDIwMjTE6jnUwjEwyNUgMTc6MDMNCj4+ID5U
+bzogTGl1IEtpbXJpdmVyL8H1vfC60yA8a2ltcml2ZXIubGl1QHNpZW5naW5lLmNvbT4gT24gVHVl
+LCBTZXAgMTAsIDIwMjQgDQo+PiA+YXQgMDI6MTM6MDlQTSArMDgwMCwgS2ltcml2ZXIgTGl1IHdy
+b3RlOg0KDQo+Li4uDQoNCj4+ID5tYXN0ZXIgLS0+IGNvbnRyb2xsZXINCj4+IA0KPj4gIFVwZGF0
+ZSBpdCBpbiBWOQ0KDQo+QWxzbyBpbiB0aGUgU3ViamVjdC4NCiBPSywgdXBkYXRlIGl0IGluIFtQ
+QVRDSCB2OV0NCi4uLg0KDQo+ID4+IGhvbGRpbmcgU0NMIGxvdy4gSWYgRU5BQkxFIGJpdCBpcyBk
+aXNhYmxlZCwgdGhlIHNvZnR3YXJlIG5lZWQgDQo+ID4+IGVuYWJsZSBpdCBiZWZvcmUgdHJ5aW5n
+IHRvIGlzc3VlIEFCT1JUIGJpdC4gb3RoZXJ3aXNlLCB0aGUgDQo+ID4+IGNvbnRyb2xsZXIgaWdu
+b3JlcyBhbnkgd3JpdGUgdG8gQUJPUlQgYml0Lg0KPiANCj4gPkZpeGVzIHRhZz8NCj4+IA0KPj4g
+IFBhdGNoIHJlYmFzZTogIG9uIExpbnV4IHY2LjExLjAtcmM2ICg4OWY1ZTE0ZDA1YikNCg0KPk5v
+LCB0aGlzIG9uZSBpcyBkb25lIGJ5IHVuZGVyc3RhbmRpbmcgd2hlcmUgdGhlIHByb2JsZW0gYXBw
+ZWFyIGZpcnN0Lg0KPldoYXQgeW91IG1lbnRpb25lZCBhYm92ZSBtYXkgYmUgYWNoaWV2ZWQgYnkg
+dXNpbmcgLS1iYXNlIG9wdGlvbiB3aGVuIGZvcm1hdCB0aGUgcGF0Y2guDQoNCiBGaXhlczogMjQw
+OTIwNWFjZDNjICgiaTJjOiBkZXNpZ253YXJlOiBmaXggX19pMmNfZHdfZGlzYWJsZSgpIGluIGNh
+c2UgbWFzdGVyIGlzIGhvbGRpbmcgU0NMIGxvdyIpDQoNCj4uLi4NCg0KPiA+PiArc3RhdGljIGJv
+b2wgaTJjX2R3X2lzX21hc3Rlcl9pZGxpbmcoc3RydWN0IGR3X2kyY19kZXYgKmRldikNCj4+IA0K
+Pj4gPlNvcnJ5IGlmIEkgbWFkZSBhIG1pc3Rha2UsIGJ1dCBhZ2FpbiwgbG9va2luZyBhdCB0aGUg
+dXNhZ2UgeW91IGhhdmUgDQo+PiA+YWdhaW4gbmVnYXRpb24gaGVyZSBhbmQgdGhlcmUuLi4NCj4g
+DQo+PiA+CWkyY19kd19pc19jb250cm9sbGVyX2FjdGl2ZQ0KPj4gDQo+PiA+IChub3RlIG5ldyB0
+ZXJtaW5vbG9neSwgZHVubm8gaWYgaXQgbWFrZXMgc2Vuc2Ugc3RhcnQgdXNpbmcgaXQgaW4gDQo+
+PiA+IGZ1bmN0aW9uIG5hbWVzLCBhcyB3ZSBoYXZlIG1vcmUgb2YgdGhlbSBmb2xsb3dpbmcgb2xk
+IHN0eWxlKQ0KPj4gDQo+PiAgTGFzdCB3ZWVrICwgWW91IHN1Z2dlc3RlZCB0aGF0IEkgdXNlZCB0
+aGlzIA0KPj4gaTJjX2R3X2lzX21hc3Rlcl9pZGxpbmcoZGV2KQ0KDQo+WWVzLCBzb3JyeSBhYm91
+dCB0aGF0LiBJIGRpZCBtYXliZSBub3QgY2xlYXJseSBnZXQgaG93IGl0IGlzIGdvaW5nIHRvIGxv
+b2sgbGlrZS4NCg0KPj4gPj4gK3sNCj4+ID4+ICsJdTMyIHN0YXR1czsNCj4+ID4+ICsNCj4+ID4+
+ICsJcmVnbWFwX3JlYWQoZGV2LT5tYXAsIERXX0lDX1NUQVRVUywgJnN0YXR1cyk7DQo+PiA+PiAr
+CWlmICghKHN0YXR1cyAmIERXX0lDX1NUQVRVU19NQVNURVJfQUNUSVZJVFkpKQ0KPj4gPj4gKwkJ
+cmV0dXJuIHRydWU7DQo+PiANCj4+IAkJcmV0dXJuIGZhbHNlOw0KPj4gDQo+PiA+PiArCXJldHVy
+biAhcmVnbWFwX3JlYWRfcG9sbF90aW1lb3V0KGRldi0+bWFwLCBEV19JQ19TVEFUVVMsIHN0YXR1
+cywNCj4+ID4+ICsJCQkhKHN0YXR1cyAmIERXX0lDX1NUQVRVU19NQVNURVJfQUNUSVZJVFkpLA0K
+Pj4gPj4gKwkJCTExMDAsIDIwMDAwKTsNCj4+IA0KPj4gPi4uLmFuZCBkcm9wICEuDQo+PiANCj4+
+ICBXZSByZXByb2R1Y2UgdGhpcyBpc3N1ZSBpbiBSVEwgc2ltdWxhdGlvbihBYm91dCh+MTo1MDAp
+IGluIG91ciBzb2MpLiANCj4+IEl0IGlzIG5lY2Vzc2FyeSAgdG8gYWRkIHdhaXRpbmcgRFdfSUNf
+U1RBVFVTX01BU1RFUl9BQ1RJVklUWSBpZGxpbmcgDQo+PiBiZWZvcmUgZGlzYWJsaW5nIEkyQyB3
+aGVuICBJMkMgdHJhbnNmZXIgY29tcGxldGVkLiAgYXMgZGVzY3JpYmVkIGluIA0KPj4gdGhlIERl
+c2lnbldhcmUgIEkyQyBkYXRhYm9vayhGbG93Y2hhcnQgZm9yIERXX2FwYl9pMmMgQ29udHJvbGxl
+cikNCg0KPkNvb2wsIGJ1dCBoZXJlIEknbSB0YWxraW5nIHB1cmVseSBhYm91dCBpbnZlcnRpbmcg
+dGhlIGxvZ2ljICh3aXRoIHJlbmFtaW5nKSwgbm90aGluZyBtb3JlLg0KDQogYXMgZGVzY3JpYmVk
+IGluIHRoZSBEZXNpZ25XYXJlIEkyQyBkYXRhYm9vazoNCiBEV19JQ19TVEFUVVNbNV0uTVNUX0FD
+VElWSVRZIERlc2NyaXB0aW9uIGFzIGZvbGxvd3M6DQogQ29udHJvbGxlciBGU00gQWN0aXZpdHkg
+U3RhdHVzLiBXaGVuIHRoZSBDb250cm9sbGVyIEZpbml0ZQ0KIFN0YXRlIE1hY2hpbmUgKEZTTSkg
+aXMgbm90IGluIHRoZSBJRExFIHN0YXRlLCB0aGlzIGJpdCBpcyBzZXQuDQogTm90ZTogSUNfU1RB
+VFVTWzBdLXRoYXQgaXMsIEFDVElWSVRZIGJpdC1pcyB0aGUgT1Igb2YNCiBTTFZfQUNUSVZJVFkg
+YW5kIE1TVF9BQ1RJVklUWSBiaXRzLg0KIFZhbHVlczoNCiCh9iAweDEgKEFDVElWRSk6IENvbnRy
+b2xsZXIgbm90IGlkbGUNCiCh9iAweDAgKElETEUpOiBDb250cm9sbGVyIGlzIGlkbGUNCg0KV2Ug
+bmVlZCB3YWl0aW5nIERXX0lDX1NUQVRVUy5NU1RfQUNUSVZJVFkgaWRsaW5nLA0KSWYgQ29udHJv
+bGxlciBub3QgaWRsZSwgV2FpdCBmb3IgYSB3aGlsZS4NClJldHVybiB2YWx1ZTogDQogIGZhbHNl
+KDApOiBDb250cm9sbGVyIGlzIGlkbGUNCiAgdGltZW91dCgtMTEwKTogQ29udHJvbGxlciBhY3Rp
+dml0eQ0KDQpPaywgY2hhbmdlIHRoZSBmdW5jdGlvbiBuYW1lIGkyY19kd19pc19tYXN0ZXJfaWRs
+aW5nKGRldikgdG8gaTJjX2R3X2lzX2NvbnRyb2xsZXJfYWN0aXZlKGRldikNCml0IHNlZW1zIG1v
+cmUgcmVhc29uYWJsZQ0KDQpzdGF0aWMgaW50IGkyY19kd19pc19jb250cm9sbGVyXyBhY3RpdmUo
+c3RydWN0IGR3X2kyY19kZXYgKmRldikNCnsNCgl1MzIgc3RhdHVzOw0KDQoJcmVnbWFwX3JlYWQo
+ZGV2LT5tYXAsIERXX0lDX1NUQVRVUywgJnN0YXR1cyk7DQoJaWYgKCEoc3RhdHVzICYgRFdfSUNf
+U1RBVFVTX01BU1RFUl9BQ1RJVklUWSkpDQoJCXJldHVybiBmYWxzZTsNCg0KCXJldHVybiByZWdt
+YXBfcmVhZF9wb2xsX3RpbWVvdXQoZGV2LT5tYXAsIERXX0lDX1NUQVRVUywgc3RhdHVzLA0KCQkJ
+IShzdGF0dXMgJiBEV19JQ19TVEFUVVNfTUFTVEVSX0FDVElWSVRZKSwNCgkJCTExMDAsIDIwMDAw
+KTsNCn0NCg0KPj4gPj4gK30NCg0KLi4uDQoNCj4+ID4+ICsJLyoNCj4+ID4+ICsJICogVGhpcyBo
+YXBwZW5zIHJhcmVseSBhbmQgaXMgaGFyZCB0byByZXByb2R1Y2UuIERlYnVnIHRyYWNlDQo+PiAN
+Cj4+ID5SYXJlbHkgaG93PyBQZXJoYXBzIHB1dCBhIHJhdGlvbiBpbiB0aGUgcGFyZW50aGVzZXMs
+IGxpa2UNCj4+IA0KPj4gPiIuLi5yYXJlbHkgKH4xOjEwMCkuLi4iDQo+PiAgQWJvdXQofjE6NTAw
+KSBpbiBvdXIgc29jDQoNCj5ZZXMsIHdoYXQgSSBzaG93ZWQgd2FzIGp1c3QgYW4gZXhhbXBsZSwg
+cHV0IHRoZSByZWFsIG51bWJlcnMgaW50byB0aGUgY29tbWVudC4NCg0KICAqIFRoaXMgaGFwcGVu
+cyByYXJlbHkgKH4xOjUwMCkgYW5kIGlzIGhhcmQgdG8gcmVwcm9kdWNlLiBEZWJ1ZyB0cmFjZQ0K
+DQo+PiA+PiArCSAqIHNob3dlZCB0aGF0IElDX1NUQVRVUyBoYWQgdmFsdWUgb2YgMHgyMyB3aGVu
+IFNUT1BfREVUIG9jY3VycmVkLA0KPj4gPj4gKwkgKiBpZiBkaXNhYmxlIElDX0VOQUJMRS5FTkFC
+TEUgaW1tZWRpYXRlbHkgdGhhdCBjYW4gcmVzdWx0IGluDQo+PiA+PiArCSAqIElDX1JBV19JTlRS
+X1NUQVQuTUFTVEVSX09OX0hPTEQgaG9sZGluZyBTQ0wgbG93Lg0KPj4gPj4gKwkgKi8NCj4+ID4+
+ICsJaWYgKCFpMmNfZHdfaXNfbWFzdGVyX2lkbGluZyhkZXYpKQ0KPj4gDQo+PiA+Li4uYW5kIGhl
+cmUNCj4+IA0KPj4gPglpZiAoaTJjX2R3X2lzX2NvbnRyb2xsZXJfYWN0aXZlKGRldikpDQo+PiAN
+Cj4+ID5CdXQgcGxlYXNlIGRvdWJsZSBjaGVjayB0aGF0IEkgaGF2ZW4ndCBtYWRlIGFueSBtaXN0
+YWtlcyBpbiBhbGwgdGhpcyBsb2dpYy4NCj4+IA0KPj4gIExhc3Qgd2VlayAsIFlvdSBzdWdnZXN0
+ZWQgdGhhdCBJIHVzZWQgdGhpcyANCj4+IGkyY19kd19pc19tYXN0ZXJfaWRsaW5nKGRldikgIGtl
+ZXAgdXNpbmcgaTJjX2R3X2lzX21hc3Rlcl9pZGxpbmcoZGV2KSAsIE9rPw0KDQpTZWUgYWJvdmUu
+DQoNCj4gPj4gKwkJZGV2X2VycihkZXYtPmRldiwgIkkyQyBtYXN0ZXIgbm90IGlkbGluZ1xuIik7
+DQoNCkkgd2lsbCBiZSBvZmYgd29yaywgIElmIHRoZXJlIGFyZSBzdGlsbCBlbWFpbHMgdGhhdCBJ
+IGhhdmUgbm90IGJlZW4gcmVwbGllZCB0bywgDQogSSB3aWxsIHJlcGx5IHRvIHlvdXIgZW1haWwg
+aW1tZWRpYXRlbHkgYWZ0ZXIgZ29pbmcgdG8gd29yayB0b21vcnJvdy4NCiANClRoYW5rcyB5b3Ug
+Zm9yIHlvdXIgc3VnZ2VzdGlvbiENCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tDQpCZXN0IFJlZ2FyZHMNCktpbXJpdmVyIExpdQ0KDQo=
 
