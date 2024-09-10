@@ -1,118 +1,62 @@
-Return-Path: <linux-kernel+bounces-322833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 662C7972FF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:56:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF9C9972F0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89DDE1C242E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:56:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DCB11C24ABF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD28118C000;
-	Tue, 10 Sep 2024 09:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7BE1917C7;
+	Tue, 10 Sep 2024 09:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YH3jbB1d"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IETI+2t3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861D614F12C;
-	Tue, 10 Sep 2024 09:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B0B190684;
+	Tue, 10 Sep 2024 09:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725962176; cv=none; b=g3nuWIWhwvt8ALJSOCRiZN+qxR5aKDU4enM8Ho9IsTJwfY1AJLqW8WD9dYHNiw7M8JflkjPIPY2Mp1dq0X+yUvYjMZR6cQWN5NCKbGMv36yl2NJHi2gufs5CyjgSohQemPWcFBVpQ1VSIM9SOGRoHR6V5VbjWWwTY67Z3MGJpgM=
+	t=1725961672; cv=none; b=gpl3MD3/M24izQfB5OA9sPUmniPnOQcdzvwkuy0MwBbyamkQXDtpfRc/bllhvuYrPx5yGXh6NIQ8T2InaioSGN4G0/MbD4sdvyP0GBR0OXFbAsT4mzYsf+tvYKNEA2Tq0np5aYmmlcry3BY53PQfBxH4K+tkdKzBel8/8uUiOl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725962176; c=relaxed/simple;
-	bh=PUrx8/GHZDMwC+M8a3MvdbNkJtPsdRYr+TPlEkBHbIc=;
+	s=arc-20240116; t=1725961672; c=relaxed/simple;
+	bh=32ZjKnbISZ5HfC13g6akEMY5BzbXnZdxgkLbbXDzTxA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MhmSiSk73CuFpDLY+rEFVkDUwJ9QxXOi6/yHd3kUi+n3W1al4/LNiUbK28RnUHwJJb2rZG0ERjASgga3r3HZpLiIAHkcbtHIKSXSn4R9hPOI6POVkwQWpJ0TqjSP+nmfMdV2i/LX34jKLKGBpRCQedTRO0OxylLw7dUZ5eHhH0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YH3jbB1d; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6c354091616so31617356d6.0;
-        Tue, 10 Sep 2024 02:56:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725962173; x=1726566973; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=roKfj6CBD2UQOUOtyA4gjf+WNvWYxpn/sCg2YOe/DwY=;
-        b=YH3jbB1ddph8tTa46+2JYd9vcppdIiK+R1NT+aILqC2A7RGApbWxp/5NScS7uUmcvL
-         Y01K9XfpN4TYVSzg7yQdvNvpNWlzcWK2cI1onyiv8wE2I9hRB827pyIW57+5FC9yQSQG
-         fysWoUFQFWOCWd1edDCv5C1qGu5vcLt5KSn0jMaaKtwIuFo1r+8Xt0HGxnSGlfQIjX5P
-         bvbcimYplZ1F2eswBjVzeB4MaDby6ec10kJJHtc4ReWJ5Bhs1SexYvSpdzzyKQEoVkZL
-         iO0h44hHp1wl8pIxEDYKOPEfXeE0pnhaE1KGuoFNKIr76F5zOl8lSfI34nPCikoGzBBM
-         yXrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725962173; x=1726566973;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=roKfj6CBD2UQOUOtyA4gjf+WNvWYxpn/sCg2YOe/DwY=;
-        b=Py8GrsPBOKi8Oy6w12Q06CiSZ9SiMd4FENrLcJ2rZ84BbAoyPvaqD4I/+hA9WoDUhz
-         y6igvLZXV/yrUwDB0qtoGtsdE1c82M0m6vkvl+FwK7l+twrg4UPSCqy+LePInFMj+BpO
-         0EIoQFuiki8KYYrL0Gwe5qqKjfqJZNTEg7xci3iM9LVM9HuRUHXsUs65klO9lzO0rSnI
-         tlRRuZL7h5jePgmRtNg85+EY42m17LmB+6pxONIvKaPq+FmoiG3PnGi7jEdxu5aDoMcW
-         7lYmiKFY1dTb5I5lRqNNifvUHRDiKppgYNx1KWSxVytaAqPeVDr76fpfrYWdVFd0x7cn
-         lKpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnSI+MpGt8Mx5kcwQXcXgggGFN1q2IGo5bcB+egrLj3CK2qVNreaj5Mgio871WuKxMIvdHvl2PQUQW@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoDzCg2WXh0G1F431zlyjmbBc9HzN0rWBwBEin+Ant+qS/3IC6
-	uY5ZtEJDN0Mr0NJrTN3j7fiND/+uo00ZiEElE+AaHwFS658gDqOo
-X-Google-Smtp-Source: AGHT+IFbJb3T//+cq9Q4JRnEXAhbI68gYsqv2eUEJLtnL33G5JYViRQraVCJtfsTajEvEYStjv8YWw==
-X-Received: by 2002:a05:6214:3a81:b0:6bf:79e5:b129 with SMTP id 6a1803df08f44-6c52851ba0bmr221983566d6.49.1725962173272;
-        Tue, 10 Sep 2024 02:56:13 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c53477476fsm28732476d6.110.2024.09.10.02.56.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 02:56:12 -0700 (PDT)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id B76C6120006F;
-	Tue, 10 Sep 2024 05:48:30 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Tue, 10 Sep 2024 05:48:30 -0400
-X-ME-Sender: <xms:7hXgZigQE13RCrtin2NzeqsOQYIVHZtxbQagokSiJib7BPK3_VU4hw>
-    <xme:7hXgZjDtd55yaijw3SQySl2MfmxYOl78vaXwlZ_j3dSLYt2uhdKWA_key8V0TU_6I
-    9ifMK0jurP_dntxCw>
-X-ME-Received: <xmr:7hXgZqF1yXdfdec7uS8wVbIIxOn73DrJu7g0Ps_Xoomto1k1SKpeQfR-T9-95g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiledgudelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteeh
-    uddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
-    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
-    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
-    mhgvpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    gsohhtthgrrgifvghsohhmvgeifeefsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhi
-    nhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepph
-    gvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepmhhinhhgohesrhgv
-    ughhrghtrdgtohhmpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehlohhnghhmrghnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhig
-    qdgvgihtgeesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehshiiikhgrlh
-    hlvghrsehgohhoghhlvghgrhhouhhpshdrtghomhdprhgtphhtthhopegsohhquhhnsehf
-    ihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:7hXgZrQnxVOPf-6ZuZRKazpQl5hoIFleQSFNtAxkJOFshO-Uuz9Vqw>
-    <xmx:7hXgZvxj0bqh3tWjD1qoRRxdflikccaelq_15V_dglmBYtxPAiWwmg>
-    <xmx:7hXgZp6WMuD1pBcQS_0TP77lWozgAvgZrsCwh1GoKdZx3ALkGSNBIQ>
-    <xmx:7hXgZsymITmjsd8oifQFFDatboPhBPaX5STNwLZtVfn1gljmrbjZwQ>
-    <xmx:7hXgZrgZ8EM-jxffltuFVI0Xi1iaubMXZnZL9vvHIiss2YMnMzj7oDqL>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 10 Sep 2024 05:48:30 -0400 (EDT)
-Date: Tue, 10 Sep 2024 02:47:26 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Ahmed Ehab <bottaawesome633@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, linux-ext4@vger.kernel.org,
-	syzkaller@googlegroups.com
-Subject: Re: [PATCH v8 2/2] locking/lockdep: Test no new string literal is
- created in lockdep_set_subclass()
-Message-ID: <ZuAVrkMQvk41PNKH@boqun-archlinux>
-References: <20240905011220.356973-1-bottaawesome633@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pklvLEZ63I5URlsnoiVHMej9hApGvBY2JxdZ9woH2YBuGTLmnQLbPoNJNMX/cq4nZawFDsDmutt44hs+CialqBZWb2PUAAdnaUbzutUNyCUjVyLK7ojhhzLlM5JqxXOP1ow0LUVElqRUoMaVesoeyCHDklgePz5cjB78senFUCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IETI+2t3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA79C4CECC;
+	Tue, 10 Sep 2024 09:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725961672;
+	bh=32ZjKnbISZ5HfC13g6akEMY5BzbXnZdxgkLbbXDzTxA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IETI+2t329OYBYsMx1EZRAhMLEl1dL0aBVCOsZTV0f09eGVZ/LJ5bAkZ5dRqAmroq
+	 yOC6nmxEhzLeYSi/DtBVQe4rUKffMUVMRs54tXxw2b99SYx+aEFm9DuvapaNCEAW0L
+	 TkiYIkSse2yxbSDzKajHW4sW3tDGGmqO7PG0Pi+azRA+SCA03dxFmWxnvtfBqGyE2F
+	 uPN2EaXD62V0D1A50pHQaCQOdaf0UBfriIa/qUkUXmTfPkDjoMovh9z99MqkeMH952
+	 CMe00OuUiS8AV3M+KG7VpRBsgly5oa9hqiyONnko9RK4tQ2MTc4cECnAcr10c0XUwh
+	 lSSYvMAMSadGg==
+Date: Tue, 10 Sep 2024 10:47:46 +0100
+From: Will Deacon <will@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Anastasia Belova <abelova@astralinux.ru>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: KVM: define ESR_ELx_EC_* constants as UL
+Message-ID: <20240910094746.GA20813@willie-the-truck>
+References: <865xr5856r.wl-maz@kernel.org>
+ <20240910085016.32120-1-abelova@astralinux.ru>
+ <86v7z37u5a.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -121,100 +65,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240905011220.356973-1-bottaawesome633@gmail.com>
+In-Reply-To: <86v7z37u5a.wl-maz@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi Ahmed,
-
-On Thu, Sep 05, 2024 at 04:12:20AM +0300, Ahmed Ehab wrote:
-> Add a test case to ensure that no new name string literal will be
-> created in lockdep_set_subclass(), otherwise a warning will be triggered
-> in look_up_lock_class(). Add this to catch the problem in the future. 
+On Tue, Sep 10, 2024 at 10:08:49AM +0100, Marc Zyngier wrote:
+> On Tue, 10 Sep 2024 09:50:16 +0100,
+> Anastasia Belova <abelova@astralinux.ru> wrote:
+> > 
+> > Add explicit casting to prevent expantion of 32th bit of
+> > u32 into highest half of u64 in several places.
+> > 
+> > For example, in inject_abt64:
+> > ESR_ELx_EC_DABT_LOW << ESR_ELx_EC_SHIFT = 0x24 << 26.
+> > This operation's result is int with 1 in 32th bit.
+> > While casting this value into u64 (esr is u64) 1
+> > fills 32 highest bits.
+> > 
+> > Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> > 
+> > Fixes: aa8eff9bfbd5 ("arm64: KVM: fault injection into a guest")
+> > Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
 > 
+> nit: the subject line is misleading, as this doesn't only affect KVM,
+> but the whole of the arm64 port (the exception classes form a generic
+> architectural construct).
 
-This overall looks good to me, I'm going to take it and create a PR for
-tip in next release. However, please note a few things:
+Weird, this v2 landed in my spam for some reason.
 
-* Since you only send one of the patch from your original series, you
-  should avoid use "2/2" in the title, because it could be confusing
-  whether there is "1/2" lost in sending. If you want to make sure
-  people aware that this is a continued work of the patch #2 in your
-  original series, you can put some description after the following
-  "---"
-
-* You need also to put changes between patch versions after "---" so
-  that people can know the context, for example, I have no idea why you
-  send a v8 after v7 and what's the delta here. Here is an example of
-  how to document the delta:
-
-  	https://lore.kernel.org/rust-for-linux/20240827-static-mutex-v2-1-17fc32b20332@google.com/
-
-Regards,
-Boqun
-
-> Signed-off-by: Ahmed Ehab <bottaawesome633@gmail.com>
-> ---
->  lib/locking-selftest.c | 40 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
+> This also probably deserve a Cc stable.
 > 
-> diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-> index 6f6a5fc85b42..0783ee97c971 100644
-> --- a/lib/locking-selftest.c
-> +++ b/lib/locking-selftest.c
-> @@ -2710,6 +2710,44 @@ static void local_lock_3B(void)
->  
->  }
->  
-> +#if CONFIG_DEBUG_LOCK_ALLOC
-> +static inline const char *rw_semaphore_lockdep_name(struct rw_semaphore *rwsem)
-> +{
-> +	return rwsem->dep_map.name;
-> +}
-> +#else
-> +static inline const char *rw_semaphore_lockdep_name(struct rw_semaphore *rwsem)
-> +{
-> +	return NULL;
-> +}
-> +#endif
-> +
-> +static void lock_class_subclass_X1(void)
-> +{
-> +	const char *name_before_setting_subclass = rw_semaphore_lockdep_name(&rwsem_X1);
-> +	const char *name_after_setting_subclass;
-> +
-> +	lockdep_set_subclass(&rwsem_X1, 1);
-> +	name_after_setting_subclass = rw_semaphore_lockdep_name(&rwsem_X1);
-> +	DEBUG_LOCKS_WARN_ON(name_before_setting_subclass != name_after_setting_subclass);
-> +}
-> +
-> +/*
-> + * after setting the subclass the lockdep_map.name changes
-> + * if we initialize a new string literal for the subclass
-> + * we will have a new name pointer
-> + */
-> +static void class_subclass_X1_name_test(void)
-> +{
-> +	printk("  --------------------------------------------------------------------------\n");
-> +	printk("  | class and subclass name test|\n");
-> +	printk("  ---------------------\n");
-> +
-> +	print_testname("lock class and subclass same name");
-> +	dotest(lock_class_subclass_X1, SUCCESS, LOCKTYPE_RWSEM);
-> +	pr_cont("\n");
-> +}
-> +
->  static void local_lock_tests(void)
->  {
->  	printk("  --------------------------------------------------------------------------\n");
-> @@ -2920,6 +2958,8 @@ void locking_selftest(void)
->  	dotest(hardirq_deadlock_softirq_not_deadlock, FAILURE, LOCKTYPE_SPECIAL);
->  	pr_cont("\n");
->  
-> +	class_subclass_X1_name_test();
-> +
->  	if (unexpected_testcase_failures) {
->  		printk("-----------------------------------------------------------------\n");
->  		debug_locks = 0;
-> -- 
-> 2.46.0
+> Will, Catalin: I'm happy to queue this in the KVM tree, but if you are
+> taking it directly:
 > 
+> Acked-by: Marc Zyngier <maz@kernel.org>
+
+
+I can take it via arm64. I assume it's ok to land in v6.12 (with the cc:
+stable), or is there an urgency to landing this in v6.11? It looks it
+was found using verification tools, rather than because of an actual
+issue affecting users.
+
+Will
 
