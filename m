@@ -1,114 +1,193 @@
-Return-Path: <linux-kernel+bounces-322891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FF897322B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:19:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3216A973272
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B59C01F26A80
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:19:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56FA41C24109
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FBB199929;
-	Tue, 10 Sep 2024 10:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E638192D8C;
+	Tue, 10 Sep 2024 10:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuEm+DEL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EXVUIXNC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40BD18C03E;
-	Tue, 10 Sep 2024 10:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A6A192D70
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725963260; cv=none; b=CaJpPkWVNoDlSVKvlOVZU5hUzZdrfv28vlaZhhrwoFvMKW4ppJhNvFhxnTdr4YJCgoAGgSRNfy1M/qaRCoDL9s+RQxkE40QbgTWeFa5fkRPfv6tcjeeVBJl0+3ZjAuS8xkiq7Ik45boQjY+wBhElUqlAnp56jHzUkc7n6Vhjiak=
+	t=1725963425; cv=none; b=icQ2tijXCu9iMgyqDBhuKl43SlHqNf2ArgsitE16kgldfd/l8bhLy/hDxogg2NNpRNMvWDYyRcp42h/D6e3pgs/dKf5sv8swhohHb0RtWqXI7GUOFoNVGQZpA9pj2dAKpwMGN4NbBZimWJ+bXq44CTQS3mri5nfDz4q3szscCPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725963260; c=relaxed/simple;
-	bh=a/hFCgDZqsbnUBYLjL3wvxEJ7t4hBd6dwDs0Oy9yB58=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=X9JCT/9wwtSW8sCic8utRIELrwftN7mPqIPuMXHHNtoKF6QR46el5kBZ0mcHlhs0CZkjmvO1wdgcSdChdJpdapOwnumv2ImMTRpMLHVwtGoQuHjW+kXHf2OjzFhiDy+19NqjqS0Dx/Ult1FXL9RkVSgvtexrfJVNoDNe6FprakA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuEm+DEL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8AA0AC4CED1;
-	Tue, 10 Sep 2024 10:14:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725963260;
-	bh=a/hFCgDZqsbnUBYLjL3wvxEJ7t4hBd6dwDs0Oy9yB58=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ZuEm+DELevIWXJ2Zf8m1LccFIPt8g/KDhqEfbaH+OzEr6bqRgsCuTapJhl/oByGpc
-	 QU3QpNcszCVdA0nND8qzfEFYmIMdsL9rbuKNMN0+KmdDJRDTE7En6rVLknMTvmTCEi
-	 Sa7Ef093fWr6xS2hNCaEwmLLu0TSna1E52tSr2oTSNkTIUSLytYtXdMvvuib2Ut7z/
-	 IcOCP1cMqdPqkWVycnExTdgDG/4XXRxOeLKJGiW/4bXza7lhIb6HUf5m5jlJDtqKHn
-	 DAnNz1MVrmeNuPj4PV+3glV/FOl4kHHmh7pXzzc6YQnnMxiEJ4Bp5BcybB9MCDKy4t
-	 iuKHKdJniLeOQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 840F5ECE564;
-	Tue, 10 Sep 2024 10:14:20 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Tue, 10 Sep 2024 18:14:20 +0800
-Subject: [PATCH v3 3/3] MAINTAINERS: Add an entry for Amlogic RTC driver
+	s=arc-20240116; t=1725963425; c=relaxed/simple;
+	bh=KNChsGjb2lH1QCaO4c+WHc3vsV+IaCnT/wqDgxFZC2w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=boC5C/mb7C45MUyQBBkbbrN7mEjBT9xvS+150J5apbDxjQQTi5sf8NPakwYLfuxfwxO9hpwU4eRMVopp849h24CyOTdEaD8RntyqzR/8nhdEPx+9N++EcoyO1rs6jgWZfPlXNC/d7fGSr82wxd4xs8jOY5ymkpQSC8ViQ4hDgCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EXVUIXNC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725963422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jZlCkxgHqgVcOJKGhBbJjTTzPrSj/msY1WbagCrbXA8=;
+	b=EXVUIXNCuQ+FcdDQEspk7Ar7ejv3cQZ+/YJ1A95l0xOiB5xS3qo0dan12QiUxB0DoJSgIq
+	rGzhiFWriGpPd2N+0TNas6JB0s/1SYx3a15nKtmx9C12P8retfXSt3Rp4bnCRGkc1FGQf7
+	ifSGFjQMoem+xguKqWFU2CYkoPMFpWQ=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-193-98-ncDtZMM6NjZEzy1x3HA-1; Tue, 10 Sep 2024 06:17:01 -0400
+X-MC-Unique: 98-ncDtZMM6NjZEzy1x3HA-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-374b9617ab0so2293606f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 03:17:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725963420; x=1726568220;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jZlCkxgHqgVcOJKGhBbJjTTzPrSj/msY1WbagCrbXA8=;
+        b=PduqUnobsU3z38pbxnMe9O5eqOI5oRHAsVFcx9G/svYEC4wkRTXiCjskdw4Z7+kkVV
+         n2ileVlX7OrIyGAbT6OUmL+RfL1phXHHKXdaLy+o9QgN/eUNFoj04CLPybK/33T08njJ
+         5sAxnWUk/C6Tve32aRSHpb13gq70/1vCLufPPZCNsdKXbwdHxYeJ79fXr3Np1E/rthIN
+         6eXOb73cYvJcJr3mNR8/YnfV/qv4UN+Box5mG8YuaZ59sMQF4BLkp3seMvF6JD/PuZXH
+         zd2f80JAjhfOtE+O+Mp24K65i1NReWU3JM0faEg53FKnRMN6Ibh0nrQI6hlz9jKy0tzD
+         1fAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVH+H1m5WxhBUElpGkB53Eoe8QJTt4yGKljl/xjfnTvPRrE8YOGf81vYk8oF+eeGfSJNTlmU0s4+uydark=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZRrVpN6GTxVmTrFOWdt/Al4osB90MW949eZ62opzV0GUaRKNU
+	uVbG+7nB+9NPGRDFznL8fO3Nd5aDssbjzPthiSZb+0eJ9BQ8bA9u00JrgmrTt5P/LvldM/E+NAH
+	39Zle4ucRkAQ8MG00kKFZKggRz/9B+cySCuB2J0syIkt4pLM360jTG3yuOos8uQ==
+X-Received: by 2002:a05:600c:314c:b0:42b:a88f:f872 with SMTP id 5b1f17b1804b1-42cadb699b9mr81196805e9.32.1725963420372;
+        Tue, 10 Sep 2024 03:17:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGAeXGEmEHACVBKTkX/4xRjxYnAdgIyFeR4exeeYt/TzMW/gb7oDzfGPzcJ9AHrR0KmKTIGsQ==
+X-Received: by 2002:a05:600c:314c:b0:42b:a88f:f872 with SMTP id 5b1f17b1804b1-42cadb699b9mr81196475e9.32.1725963419770;
+        Tue, 10 Sep 2024 03:16:59 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42cac8543dbsm116224985e9.42.2024.09.10.03.16.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 03:16:59 -0700 (PDT)
+Message-ID: <9dc3f31d-a7d7-4cf3-a86d-4266a5146622@redhat.com>
+Date: Tue, 10 Sep 2024 12:16:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 19/21] KVM: TDX: Add an ioctl to create initial guest
+ memory
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ kvm@vger.kernel.org
+Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
+ yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-20-rick.p.edgecombe@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0j
+ UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT7CwU0EEwECACMFAlRCcBICGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
+ 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
+ jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
+ VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
+ CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
+ SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
+ AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
+ AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
+ nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
+ bQ4tlFFuVjArBZcapSIe6NV8C4cEiSTOwE0EVEJx7gEIAMeHcVzuv2bp9HlWDp6+RkZe+vtl
+ KwAHplb/WH59j2wyG8V6i33+6MlSSJMOFnYUCCL77bucx9uImI5nX24PIlqT+zasVEEVGSRF
+ m8dgkcJDB7Tps0IkNrUi4yof3B3shR+vMY3i3Ip0e41zKx0CvlAhMOo6otaHmcxr35sWq1Jk
+ tLkbn3wG+fPQCVudJJECvVQ//UAthSSEklA50QtD2sBkmQ14ZryEyTHQ+E42K3j2IUmOLriF
+ dNr9NvE1QGmGyIcbw2NIVEBOK/GWxkS5+dmxM2iD4Jdaf2nSn3jlHjEXoPwpMs0KZsgdU0pP
+ JQzMUMwmB1wM8JxovFlPYrhNT9MAEQEAAcLBMwQYAQIACQUCVEJx7gIbDAAKCRB+FRAMzTZp
+ sadRDqCctLmYICZu4GSnie4lKXl+HqlLanpVMOoFNnWs9oRP47MbE2wv8OaYh5pNR9VVgyhD
+ OG0AU7oidG36OeUlrFDTfnPYYSF/mPCxHttosyt8O5kabxnIPv2URuAxDByz+iVbL+RjKaGM
+ GDph56ZTswlx75nZVtIukqzLAQ5fa8OALSGum0cFi4ptZUOhDNz1onz61klD6z3MODi0sBZN
+ Aj6guB2L/+2ZwElZEeRBERRd/uommlYuToAXfNRdUwrwl9gRMiA0WSyTb190zneRRDfpSK5d
+ usXnM/O+kr3Dm+Ui+UioPf6wgbn3T0o6I5BhVhs4h4hWmIW7iNhPjX1iybXfmb1gAFfjtHfL
+ xRUr64svXpyfJMScIQtBAm0ihWPltXkyITA92ngCmPdHa6M1hMh4RDX+Jf1fiWubzp1voAg0
+ JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
+ dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
+ b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
+In-Reply-To: <20240904030751.117579-20-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240910-rtc-v3-3-1fa077a69a20@amlogic.com>
-References: <20240910-rtc-v3-0-1fa077a69a20@amlogic.com>
-In-Reply-To: <20240910-rtc-v3-0-1fa077a69a20@amlogic.com>
-To: Yiting Deng <yiting.deng@amlogic.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725963258; l=931;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=dltl4Bg5cOWUNAG/8WRhVbXcztZ3rrpVcPR+gcSx/Bg=;
- b=MoifP6YCT9C3dZb9ivv6Aih+92TQ3cZzveLbNoTe8lEriWxZ2A1dOQh8bQFEFlFlAj5pPFVwV
- JabA+WhbHG8AZ2PTY6eI1RzEQcve+obFcYNY4nCd+s5gR5USV5Tdxpy
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
 
-From: Yiting Deng <yiting.deng@amlogic.com>
+On 9/4/24 05:07, Rick Edgecombe wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
+> 
+> Add a new ioctl for the user space VMM to initialize guest memory with the
+> specified memory contents.
+> 
+> Because TDX protects the guest's memory, the creation of the initial guest
+> memory requires a dedicated TDX module API, TDH.MEM.PAGE.ADD(), instead of
+> directly copying the memory contents into the guest's memory in the case of
+> the default VM type.
+> 
+> Define a new subcommand, KVM_TDX_INIT_MEM_REGION, of vCPU-scoped
+> KVM_MEMORY_ENCRYPT_OP.  Check if the GFN is already pre-allocated, assign
+> the guest page in Secure-EPT, copy the initial memory contents into the
+> guest memory, and encrypt the guest memory.  Optionally, extend the memory
+> measurement of the TDX guest.
+> 
+> Discussion history:
 
-Add Amlogic RTC entry to MAINTAINERS to clarify the maintainers.
+While useful for the reviewers, in the end this is the simplest possible 
+userspace API (the one that we started with) and the objections just 
+went away because it reuses the infrastructure that was introduced for 
+pre-faulting memory.
 
-Signed-off-by: Yiting Deng <yiting.deng@amlogic.com>
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+So I'd replace everything with:
+
 ---
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+The ioctl uses the vCPU file descriptor because of the TDX module's 
+requirement that the memory is added to the S-EPT (via TDH.MEM.SEPT.ADD) 
+prior to initialization (TDH.MEM.PAGE.ADD).  Accessing the MMU in turn 
+requires a vCPU file descriptor, just like for KVM_PRE_FAULT_MEMORY.  In 
+fact, the post-populate callback is able to reuse the same logic used by 
+KVM_PRE_FAULT_MEMORY, so that userspace can do everything with a single 
+ioctl.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 42decde38320..f595715eb3e3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1163,6 +1163,14 @@ F:	Documentation/devicetree/bindings/perf/amlogic,g12-ddr-pmu.yaml
- F:	drivers/perf/amlogic/
- F:	include/soc/amlogic/
- 
-+AMLOGIC RTC DRIVER
-+M:	Yiting Deng <yiting.deng@amlogic.com>
-+M:	Xianwei Zhao <xianwei.zhao@amlogic.com>
-+L:	linux-amlogic@lists.infradead.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/rtc/amlogic,a4-rtc.yaml
-+F:	drivers/rtc/rtc-amlogic-a4.c
-+
- AMPHENOL CHIPCAP 2 HUMIDITY-TEMPERATURE IIO DRIVER
- M:	Javier Carrasco <javier.carrasco.cruz@gmail.com>
- L:	linux-hwmon@vger.kernel.org
+Note that this is the only way to invoke TDH.MEM.SEPT.ADD before the TD 
+in finalized, as userspace cannot use KVM_PRE_FAULT_MEMORY at that 
+point.  This ensures that there cannot be pages in the S-EPT awaiting 
+TDH.MEM.PAGE.ADD, which would be treated incorrectly as spurious by 
+tdp_mmu_map_handle_target_level() (KVM would see the SPTE as PRESENT, 
+but the corresponding S-EPT entry will be !PRESENT).
+---
 
--- 
-2.37.1
+Part of the second paragraph comes from your link [4], 
+https://lore.kernel.org/kvm/Ze-TJh0BBOWm9spT@google.com/, but updated 
+for recent changes to KVM_PRE_FAULT_MEMORY.
 
+This drops the historical information that is not particularly relevant 
+for the future, it updates what's relevant to mention changes done for 
+SEV-SNP, and also preserves most of the other information:
+
+* why the vCPU file descriptor
+
+* the desirability of a single ioctl for userspace
+
+* the relationship between KVM_TDX_INIT_MEM_REGION and KVM_PRE_FAULT_MEMORY
+
+Paolo
 
 
