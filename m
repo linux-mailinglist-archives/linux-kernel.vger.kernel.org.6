@@ -1,170 +1,230 @@
-Return-Path: <linux-kernel+bounces-322284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 090279726B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:46:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819789726B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB326282F2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:46:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED31B284A2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4277C13A40C;
-	Tue, 10 Sep 2024 01:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N1b4DH76"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979CF80631;
+	Tue, 10 Sep 2024 01:48:28 +0000 (UTC)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF9C57CBE
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470E41DA4C;
+	Tue, 10 Sep 2024 01:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725932771; cv=none; b=tg+9LV1DOnM8k2YZSOiSFcaERMRfKqGMY1B7CCexC3xKhvNRsMRUWOCUpU5e8Gw/SuVSJWxVAeXDRPHHfzzmecbjyMzqJ/QVutHNHJ4tdYNN+cVabw7Qgq48fXNnE0YVouRB/MD16PZfZiaE3vqpD7WLAvjpimwGDP5+1L/mnSo=
+	t=1725932908; cv=none; b=af3SfVl/+QP8pLYazSFfxl5EQXSl9y/jLpSSCQHz4nizH+xstYoB7Xql5EIsTa0n+ezXMxRIflhYdxYWJAey4b6uCufbt1OMkP3NmbVkKoT5HrVRIIXm23uaNmpOnbCX+c6IE+ILeItp4tDOD6bRsLORjTFGZ6kfQRQUp94a4yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725932771; c=relaxed/simple;
-	bh=+qpnK1raOuYaMboHxtjYJpJSIG+2da+1uWMPuTSJl7E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GRdsl2W9FuGY2rqLx/1yim8Iyz3AQLfodWMZkmKfYblbEsWGbrVb15BSeA9qLjZCaTaL3TL9w4ofVuDLYstrWBPyFCe40OdCxw7zZHXGb9Hf4PGYanDF8XckHHPxT1JeFRV+GZtcet7oQs6i82dE/PYP1lKQdo5zxXjDSGjRUt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N1b4DH76; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2d89dacf002so6094642a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 18:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725932769; x=1726537569; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Yr9sxEZXrJXjhSaDYvUGo+oh8d4JFNbqBOnaKKPd+Ws=;
-        b=N1b4DH76GG4mKoxbOmmyXuj3uLjOncnL6Hig1jeP30dg8HYSIOaqyEFG3BseY75mUk
-         a28sVjgbeGKO757HhrkoPPogKyAGgLOneUvX9numnmyaLniOVgTOHFvc/xMlrpA6uUCG
-         7Ranlp3A9zruQcxfIdw26cLLmiakrBJ6xGibg88LMKkHBIZuTZr3o9C1APhNUmAkIh49
-         9T3wusxWMOeXEzyp8GWN8M/UB3aSNHaDVWDcDbufR7yPxlOtK2UN5PtZOgbsYR/iLgrr
-         HHCicqzyJiJ0RGFcHISx2gFOPK8v6UgURm4Clnl2/XLNP8aASIopB5XjhZOCft09Eneg
-         5CGg==
+	s=arc-20240116; t=1725932908; c=relaxed/simple;
+	bh=ZypM3/zht80i56kW35QLeNJJdC5wB81rwkURzr3u7Ws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VaLkTMVU+Zz4RU0UyWyvhGFlrGe4+WO7S7qLnmyKi2Ir9AHpctekezC91hTWgSAxCKdU3UCYbAqaD0HKsz6UytVe7bDJgRmg1Z7/zSCIaewb58w5rZBXPxOVLY0w4TNrmZN4WN2PCWr+KywpA/RDrX02zXmoLbLRADL4R75F41c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2055136b612so60084215ad.0;
+        Mon, 09 Sep 2024 18:48:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725932769; x=1726537569;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Yr9sxEZXrJXjhSaDYvUGo+oh8d4JFNbqBOnaKKPd+Ws=;
-        b=Iry3VnAUN5ULECanEuaLj8kg3RXMaa1PNRz3/cjYdmD8zKVYIc3P6YRiVxzxEAtBRD
-         LpP3r+KRpSGpUR/MNqZYGnxACFJ0Wv8Gv+2kkXzeUa4ngjDGka8jWIws62kZbKjNgMom
-         IKQOf3e0n64A21wbxWc2/b+OMLVBpDM9jOfGzDoViERdTwzM+x2+Zab3QASsRqE873EJ
-         ip1RrPxWV+rEcR6b8vQ9vqlpRGSCyaZyA53thhopYdURCTcjw218sbqKyPzCR/MVefe7
-         zBL111gOh9F5SCvQ1wbvgED0ohwQe4nFx88q12kFuujPutXL79uqta21ecceBC91CrM9
-         kNQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMR4MSmLiSGiq4BR4JIHNZpWcWMCbM2pJoLLBcvScfCuL1+KPQKzxlv/36jHau3OvAvydtJQFRfp8qP6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2XemSH2pU/9rEGiroG1N7ovUrTuAcd6B8H6UnxjqC89iCDIBQ
-	gWYx3WE8waVNBsdkIAZmTyzqufBBztTvvn6RJ+q4/StJk1JMTqEWw6BZeqo3djm9bz9aJKf9qND
-	RZw==
-X-Google-Smtp-Source: AGHT+IFHED3XV0tIgtNybDwjKcpW59AuhS6hl2FC+pnGgwepVfaU/hpmfyvrW0Cu/KZvaijCIf6Wajq3JXk=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:b013:b0:2d8:9da6:cb50 with SMTP id
- 98e67ed59e1d1-2dad5178e42mr120371a91.8.1725932769379; Mon, 09 Sep 2024
- 18:46:09 -0700 (PDT)
-Date: Mon, 9 Sep 2024 18:46:07 -0700
-In-Reply-To: <639496dd9507b09e83d728de0ee9eccccf951da4.camel@intel.com>
+        d=1e100.net; s=20230601; t=1725932905; x=1726537705;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HODmoCst8rl2FQalNg6i6Q2z8m5IFyVmU0pEjYjJs9s=;
+        b=cy5DFxJEVW+9JjRWLPhkakNUyVnm/WQVzFdcDQ1GSLH3rh19/pip2aTwNvZtR5PCGj
+         lT+nG1fL5cy5U3ymYo35dmVENozVsZcGlRgoZf73q9hMsSzryovlNmGQUmOvTff1B2sF
+         yNrzUnDgWYHtqlrcS/Yy61pcl1j8jOUV5ZgCxTtAIbm5DLnUF3CPm8C33dHwLQ7CQ//M
+         2ml2zTRU0jaHfRB1f7G9kwylM+/VXnC0Xq1UKpuBapWo4x8iph5HdCW3qqqlERvEXm5M
+         ZWV6biK0UNtGQKGjBlHpMJW1Fm6u7ECO/p1AcErujtqfaqF5/bIRfp+MUMuwVhNMfQox
+         z/4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUy7p7qXQY3GEIO8m0AtqEn6CZFfTrgzYi3kZ2ZizgY2EAVQRxICKYYIHRfYzdtPYqZ1LNvSAVOe35JcfqH@vger.kernel.org, AJvYcCXFHfZExh8C0vB7VvnTw5vW8S+jikxGLJYXisAMsO/EKOQ4NptMdlEjRmnnWt6N9E1RT1pZTYWAPHfOUEBSTSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSkd6VhqHn2vZE0QglzKf6nuIQ4RXR/vXSjDMUJzEYkZ0QrrmX
+	6sSLy4b096qeDXrdeDPmS5Kz2HdT8dkNS03ibpxaAOm4AKD97RFcQcLWabcGMrNU8foHnoypffz
+	YS1EEpNLASHYwC/zN4dybWGQ4Yjc1DV3X
+X-Google-Smtp-Source: AGHT+IFbHRPwN5Mp1j3S4DCIh4rMQL3pr/K9GlptHf6PoOIaTwx3taGg+iPWHA1UsUVm2i2/GFdCeZzVJu/U2ma/XZ0=
+X-Received: by 2002:a17:902:ecc2:b0:202:100f:7b99 with SMTP id
+ d9443c01a7336-206f0529ea9mr211295685ad.22.1725932905454; Mon, 09 Sep 2024
+ 18:48:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-10-rick.p.edgecombe@intel.com> <6449047b-2783-46e1-b2a9-2043d192824c@redhat.com>
- <b012360b4d14c0389bcb77fc8e9e5d739c6cc93d.camel@intel.com>
- <Zt9kmVe1nkjVjoEg@google.com> <Zt9nWjPXBC8r0Xw-@google.com>
- <72ef77d580d2f16f0b04cbb03235109f5bde48dd.camel@intel.com>
- <Zt-LmzUSyljHGcMO@google.com> <639496dd9507b09e83d728de0ee9eccccf951da4.camel@intel.com>
-Message-ID: <Zt-k30MHhMTxpFKQ@google.com>
-Subject: Re: [PATCH 09/21] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with
- operand SEPT
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, Yuan Yao <yuan.yao@intel.com>, 
-	Kai Huang <kai.huang@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "dmatlack@google.com" <dmatlack@google.com>, 
-	"nik.borisov@suse.com" <nik.borisov@suse.com>, 
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240909115221.1298010-1-mailhol.vincent@wanadoo.fr> <20d6a62f083d47828b3d5f49000d5e2b@AcuMS.aculab.com>
+In-Reply-To: <20d6a62f083d47828b3d5f49000d5e2b@AcuMS.aculab.com>
+From: Vincent MAILHOL <mailhol.vincent@wanadoo.fr>
+Date: Tue, 10 Sep 2024 10:48:17 +0900
+Message-ID: <CAMZ6RqKaSm3EDCAu=ttmZf+Qb-PjsMjo7OYoLzoaNOq_=XK0-Q@mail.gmail.com>
+Subject: Re: [PATCH] overflow: optimize struct_size() calculation
+To: David Laight <David.Laight@aculab.com>
+Cc: Kees Cook <kees@kernel.org>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024, Rick P Edgecombe wrote:
-> On Mon, 2024-09-09 at 16:58 -0700, Sean Christopherson wrote:
-> > On Mon, Sep 09, 2024, Rick P Edgecombe wrote:
-> > > On Mon, 2024-09-09 at 14:23 -0700, Sean Christopherson wrote:
-> > > > > In general, I am _very_ opposed to blindly retrying an SEPT SEAMC=
-ALL,
-> > > > > ever.=C2=A0 For its operations, I'm pretty sure the only sane app=
-roach is for
-> > > > > KVM to ensure there will be no contention.=C2=A0 And if the TDX m=
-odule's
-> > > > > single-step protection spuriously kicks in, KVM exits to userspac=
-e.=C2=A0 If
-> > > > > the TDX module can't/doesn't/won't communicate that it's mitigati=
-ng
-> > > > > single-step, e.g. so that KVM can forward the information to user=
-space,
-> > > > > then that's a TDX module problem to solve.
-> > > > >=20
-> > > > > > Per the docs, in general the VMM is supposed to retry SEAMCALLs=
- that
-> > > > > > return TDX_OPERAND_BUSY.
-> > > > >=20
-> > > > > IMO, that's terrible advice.=C2=A0 SGX has similar behavior, wher=
-e the xucode
-> > > > > "module" signals #GP if there's a conflict.=C2=A0 #GP is obviousl=
-y far, far
-> > > > > worse as it lacks the precision that would help software understa=
-nd
-> > > > > exactly what went wrong, but I think one of the better decisions =
-we made
-> > > > > with the SGX driver was to have a "zero tolerance" policy where t=
-he
-> > > > > driver would _never_ retry due to a potential resource conflict, =
-i.e.
-> > > > > that any conflict in the module would be treated as a kernel bug.
-> > >=20
-> > > Thanks for the analysis. The direction seems reasonable to me for thi=
-s lock
-> > > in
-> > > particular. We need to do some analysis on how much the existing mmu_=
-lock
-> > > can
-> > > protects us.=20
-> >=20
-> > I would operate under the assumption that it provides SEPT no meaningfu=
-l
-> > protection.
-> > I think I would even go so far as to say that it is a _requirement_ tha=
-t
-> > mmu_lock
-> > does NOT provide the ordering required by SEPT, because I do not want t=
-o take
-> > on
-> > any risk (due to SEPT constraints) that would limit KVM's ability to do=
- things
-> > while holding mmu_lock for read.
->=20
-> Ok. Not sure, but I think you are saying not to add any extra acquisition=
-s of
-> mmu_lock.
+On Tue. 10 Sept. 2024 at 01:19, David Laight <David.Laight@aculab.com> wrot=
+e:
+> From: Vincent Mailhol
+> > Sent: 09 September 2024 12:52
+> >
+> > If the offsetof() of a given flexible array member (fam) is smaller
+> > than the sizeof() of the containing struct, then the struct_size()
+> > macro reports a size which is too big.
+> >
+> > This occurs when the two conditions below are met:
+> >
+> >   - there are padding bytes after the penultimate member (the member
+> >     preceding the fam)
+> >   - the alignment of the fam is less than the penultimate member's
+> >     alignment
+> >
+> > In that case, the fam overlaps with the padding bytes of the
+> > penultimate member. This behaviour is not captured in the current
+> > struct_size() macro, potentially resulting in an overestimated size.
+> >
+> > Below example illustrates the issue:
+> >
+> >   struct s {
+> >       u64 foo;
+> >       u32 count;
+> >       u8 fam[] __counted_by(count);
+> >   };
+> >
+> > Assuming a 64 bits architecture:
+> >
+> >   - there are 4 bytes of padding after s.count (the penultimate
+> >     member)
+> >   - sizeof(struct s) is 16 bytes
+> >   - the offset of s.fam is 12 bytes
+> >   - the alignment of s.fam is 1 byte
+> >
+> > The sizes are as below:
+> >
+> >    s.count    current struct_size()   actual size
+> >   ---------------------------------------------------------------------=
+--
+> >    0          16                      16
+> >    1          17                      16
+> >    2          18                      16
+> >    3          19                      16
+> >    4          20                      16
+> >    5          21                      17
+> >    .          .                       .
+> >    .          .                       .
+> >    .          .                       .
+> >    n          sizeof(struct s) + n    max(sizeof(struct s),
+> >                                           offsetof(struct s, fam) + n)
+>
+> I actually suspect that it matters so infrequently it isn't worth the eff=
+ort.
+> Not only do you need a structure with 'tail padding'
 
-No new write_lock.  If read_lock is truly needed, no worries.  But SEPT nee=
-ding
-a write_lock is likely a hard "no", as the TDP MMU's locking model depends
-heavily on vCPUs being readers.  E.g. the TDP MMU has _much_ coarser granul=
-arity
-than core MM, but it works because almost everything is done while holding
-mmu_lock for read.
+There are a significant number of these. For example, this:
 
-> Until we answer some of the questions (i.e. HOST_PRIORITY exposure), it's=
- hard
-> to say. We need to check some stuff on our end.
+  $ git grep -E "(u8|char).*\[\] __counted_by.*;"
 
-Ya, agreed.
+lists a couple dozen cases (a few of which are false positives, but
+you get the idea). And that simple grep did not catch the full list
+for sure.
+
+Yes, it is not thousands, but in my view this isn't something I will
+qualify as infrequent either.
+
+> but you also need
+> the size to go from one kmalloc() bucket to another.
+
+I think that kmalloc() is only one example. Here, we can also
+consider, for example, the memset() or the memcpy() operations.
+
+This patch is not meant to revolutionise things for sure. It is more
+of a "save the bytes" thing. Is it worth the effort? I would still say
+yes (else I wouldn't have sent the patch), and now that this effort is
+done, it is up to you guys.
+
+> >
+> > Change struct_size() from this pseudo code logic:
+> >
+> >   sizeof(struct s) + sizeof(*s.fam) * s.count
+> >
+> > to that pseudo code logic:
+> >
+> >   max(sizeof(struct s), offsetof(struct s, fam) + sizeof(*s.fam) * s.co=
+unt)
+> >
+> > Here, the lowercase max*() macros can cause struct_size() to return a
+> > non constant integer expression which would break the DEFINE_FLEX()
+> > macro by making it declare a variable length array. Because of that,
+> > use the unsafe MAX() macro only if the expression is constant and use
+> > the safer max_t() otherwise.
+> >
+> > Reference: ISO/IEC 9899:2018 =C2=A76.7.2.1 "Structure and union specifi=
+ers" =C2=B618
+> >
+> > Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> > ---
+> >
+> > I also tried to think of whether the current struct_size() macro could
+> > be a security issue.
+> >
+> > The only example I can think of is if someone manually allocates the
+> > exact size but then use the current struct_size() macro.
+> >
+> > For example (reusing the struct s from above):
+> >
+> >   u32 count =3D 5;
+> >   struct s *s =3D kalloc(offsetof(typeof(*s), fam) + count);
+> >   s->count =3D count;
+> >   memset(s, 0, struct_size(s, fam, count)); /* 4 bytes buffer overflow =
+*/
+> >
+> > If we have concerns that above pattern may actually exist, then this
+> > patch should also go to stable. I personally think that the above is a
+> > bit convoluted and, as such, I only suggest this patch to go to next.
+> > ---
+> >  include/linux/overflow.h | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+> > index 0c7e3dcfe867..1384887f3684 100644
+> > --- a/include/linux/overflow.h
+> > +++ b/include/linux/overflow.h
+> > @@ -5,6 +5,7 @@
+> >  #include <linux/compiler.h>
+> >  #include <linux/limits.h>
+> >  #include <linux/const.h>
+> > +#include <linux/minmax.h>
+> >
+> >  /*
+> >   * We need to compute the minimum and maximum values representable in =
+a given
+> > @@ -369,8 +370,12 @@ static inline size_t __must_check size_sub(size_t =
+minuend, size_t subtrahend)
+> >   */
+> >  #define struct_size(p, member, count)                                 =
+       \
+> >       __builtin_choose_expr(__is_constexpr(count),                    \
+> > -             sizeof(*(p)) + flex_array_size(p, member, count),       \
+> > -             size_add(sizeof(*(p)), flex_array_size(p, member, count))=
+)
+> > +             MAX(sizeof(*(p)),                                       \
+> > +                 offsetof(typeof(*(p)), member) +                    \
+> > +                     flex_array_size(p, member, count)),             \
+> > +             max_t(size_t, sizeof(*(p)),                             \
+> > +                   size_add(offsetof(typeof(*(p)), member),          \
+> > +                            flex_array_size(p, member, count))))
+>
+> I don't think you need max_t() here, a plain max() should suffice.
+
+Ack. I will send a v2 with max() instead of max_t().
+
+
+Yours sincerely,
+Vincent Mailhol
 
