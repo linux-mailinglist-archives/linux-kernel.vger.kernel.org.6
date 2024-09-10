@@ -1,89 +1,111 @@
-Return-Path: <linux-kernel+bounces-323824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0FB9743E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:08:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A18B9743E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97E5E285A36
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:08:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C338BB21B4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A88F1AAE1E;
-	Tue, 10 Sep 2024 20:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA68C1A7051;
+	Tue, 10 Sep 2024 20:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="HoXpBPTp"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CIu6MWa7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B3B1AAE10
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAF0176252;
+	Tue, 10 Sep 2024 20:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725998871; cv=none; b=ASpGWOnHkGtbTblfSdeimZUQH3CYVozxqMnILE0CzH1KVx28l+9BoQwESU1WWXtZGZ73DJYubBcqO9szVGwmksfyoSjPNniNYn39VBEyB1CQ96fVpqdzjGbczJPcwtbhgK8mBRFqNpVoioC0PfoXYGQpckImVvfGdhd6vmbqiac=
+	t=1725999123; cv=none; b=kw+p97EZMxLxFGLSb1MdcEZZqLD62DZAue1WZeMEObmeS9AbFUqfnW8mIEMN+532hkOdd/6QUSU/vVEH2SSAKCTZ6lTP3bYnBHwnbGFsls57MIybdQVvyrpjklnw+9ZII+Mk0TwSI4ozqc6UTrYV/4pdZIBSVE22j+ap6UrL8T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725998871; c=relaxed/simple;
-	bh=vZJjz9fRezr9De4Orho1wkInbjle+j4xVcnskiX3Jyc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vBrkSe7+k8BUfL+ZvRkc/+wRn3Ysdrn1K/gK8hpK1Et5tw2CtR3lnfvYZfoi+waGGbQfG+dHtEcJx06MJvpEIODbr5YFQRVjptW9dq9XATdmcf/DEeVP9Gz3vNwpZfojU9KUL3x/OHvrSzmUXjkXIOCQ/lX50ZvjFQ+JmPz0e0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=HoXpBPTp; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1725998867; x=1726258067;
-	bh=nOd42zcosTE94cbQZZ/IFTYFSJKMt0GHgSbLskRDVkQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=HoXpBPTpjnoP5A5V7R4E1D/6NyxD42pKy0jTf0D/ivgvODM8vKNqPF4994eCu9YcA
-	 yNgEc9AqOBqoQtZ0M7tfwgKKb4Kz+nuU3L0nia9V30Jsl/hDSMvR1OQd0HYOovOBHa
-	 Dc0KpmtQxRMW5wqzzYuAmZnHTZA9aB1VNc9tUW32VLt4/q+D7DtHHyB3sqIvmrc+NC
-	 fEdBOtuxp/nYOBfU6R3WupyZZKi2kUMsWSlXk3Wrv6dY4w4XZ1Wxz0TiM2InXts0sN
-	 gaw+zqp2XjA2X9SSH4gqIlPCJl4uTuMYseJw7QUBTJw0R9F0towfyKkXcLsoWFdVNd
-	 /UsKLtnoW+EAw==
-Date: Tue, 10 Sep 2024 20:07:40 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 13/26] rust: alloc: implement kernel `Vec` type
-Message-ID: <a8c31bce-aac2-4ffe-8fab-2e68c9bab035@proton.me>
-In-Reply-To: <20240816001216.26575-14-dakr@kernel.org>
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-14-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 9747bfca293c10b7ad4bbdb09610026864877931
+	s=arc-20240116; t=1725999123; c=relaxed/simple;
+	bh=9BALyp1uL4b1nN0mypRuLZqJnUYgxTKpzQwRVAx2iVQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dn5NUMHlMwKzuFfpXTtESfoHbUqKSTKsgVjyX3Acqqah7KMVWdbLe9Lt8Mzaf+gHPND0145sqFBZk55GVgLLp1wgMVmSBDyHvSdQwTFGTntI8tJjC5cxisAktZVMoyvHwfic1T5WtFjhaNyFxiDyixwaG4aDg7jfASxlIkO5mJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CIu6MWa7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 895A5C4CEC3;
+	Tue, 10 Sep 2024 20:12:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725999122;
+	bh=9BALyp1uL4b1nN0mypRuLZqJnUYgxTKpzQwRVAx2iVQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CIu6MWa7vltKZskvmW2WNi7V99gCYsiadXXqNgcakt01FdvjCJEnspScUf0C5ezZw
+	 A76LMv9mrnkEyBZC1cwTmGYQhAh80V+XraQTM/V1jF/iI23w/CPPuhG6/xP2ncgKbi
+	 QGhdtXL1vh+D+HHY4aBhAzqae353/wmOpUMXidlvNamEERQ5qD27EJn/QVnYZ4nkPB
+	 DVL4Uu6SeDwb0gEE2/6+5Osa/w6YT6+rJ+fSu11oyvZS6fLHiOl5HS+t/d/AtQjDkO
+	 syiszQq+6ypNeBdgWD+ze+/R4l9NoxWTKVgOvQ7HGDTvDhG09mqsJ+8nudENPgMYpT
+	 v5CkalanqIL3Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1so7DT-00Bs1F-Ob;
+	Tue, 10 Sep 2024 21:11:59 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>,
+	Snehal Koukuntla <snehalreddy@google.com>,
+	Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+Cc: James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3] KVM: arm64: Add memory length checks and remove inline in do_ffa_mem_xfer
+Date: Tue, 10 Sep 2024 21:11:52 +0100
+Message-Id: <172599899804.385892.17266018060492319071.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240909180154.3267939-1-snehalreddy@google.com>
+References: <20240909180154.3267939-1-snehalreddy@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, snehalreddy@google.com, r09922117@csie.ntu.edu.tw, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, sudeep.holla@arm.com, sebastianene@google.com, vdonnefort@google.com, jean-philippe@linaro.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 16.08.24 02:10, Danilo Krummrich wrote:
-> `Vec` provides a contiguous growable array type (such as `Vec`) with
-> contents allocated with the kernel's allocators (e.g. `Kmalloc`,
-> `Vmalloc` or `KVmalloc`).
->=20
-> In contrast to Rust's `Vec` type, the kernel `Vec` type considers the
-> kernel's GFP flags for all appropriate functions, always reports
-> allocation failures through `Result<_, AllocError>` and remains
-> independent from unstable features.
->=20
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/alloc.rs      |   6 +
->  rust/kernel/alloc/kvec.rs | 629 ++++++++++++++++++++++++++++++++++++++
->  rust/kernel/prelude.rs    |   2 +-
->  3 files changed, 636 insertions(+), 1 deletion(-)
->  create mode 100644 rust/kernel/alloc/kvec.rs
+On Mon, 09 Sep 2024 18:01:54 +0000, Snehal Koukuntla wrote:
+> When we share memory through FF-A and the description of the buffers
+> exceeds the size of the mapped buffer, the fragmentation API is used.
+> The fragmentation API allows specifying chunks of descriptors in subsequent
+> FF-A fragment calls and no upper limit has been established for this.
+> The entire memory region transferred is identified by a handle which can be
+> used to reclaim the transferred memory.
+> To be able to reclaim the memory, the description of the buffers has to fit
+> in the ffa_desc_buf.
+> Add a bounds check on the FF-A sharing path to prevent the memory reclaim
+> from failing.
+> 
+> [...]
 
-I noticed that you don't have a `pop` or `remove` function implemented,
-I think it would be weird to have all the other functions but not those.
+Applied to next, with the BUILD_BUG_ON() issue fixed.
 
----
+[1/1] KVM: arm64: Add memory length checks and remove inline in do_ffa_mem_xfer
+      commit: f26a525b77e040d584e967369af1e018d2d59112
+
 Cheers,
-Benno
+
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
+
 
 
