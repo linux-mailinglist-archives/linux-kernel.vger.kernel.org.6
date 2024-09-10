@@ -1,221 +1,161 @@
-Return-Path: <linux-kernel+bounces-323826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 841059743EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:12:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3976D9743EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EBB9285656
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:12:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5244D1C25404
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160BA1A7074;
-	Tue, 10 Sep 2024 20:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381DA1A4F2F;
+	Tue, 10 Sep 2024 20:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="VS81JBGK"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yfuz2oxt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A33176252
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF2E176252
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725999156; cv=none; b=nnyOqXOBLRNaAwYvjVCrvPPHBukedCS7zPe5gAprev2Cad1ITHsCyZvdBV7TYPfzfkD1KYpHxIzTbqXgXmFyj/hMOGWW3WBhvMCa0eH8Gf/6MSB1PuNYz7zboh2Uy1+hdqYeqES+ciVXDXP6+XoZWogLsIvyXDB1f+0BBBa5IkA=
+	t=1725999193; cv=none; b=Qvu4w2v39x9+TzAOvQ2dkKUZ4g/AinfaNo5z4P4655eJ7PV7ZSQKFu2CxG6zEAuzQ6FN5BjuKeyKaeJfu3SZg/ghBxZn60AWT20+8u00Mw7ftWvSQsCFotJiWii8lu5kqem62GHyai0waDAIgdN6+w8b+CXajsrHBlq0cjj3Ea8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725999156; c=relaxed/simple;
-	bh=NRiIFH6x4iZlVLGeeia5n6s/WjhrrQtPi9+1G4jqisI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IOqzUbZIw/qYJjlteDSl2WnftQItQLb4nHZoqZkJxA13+ro/NaxzYGNekT0seikJ6ZAoGcfhEkPqBKwCprUFLs/RO6P79yPJB7aOw+3didSU5Eob6cV3DnPTNw5OmkKigmxje0sCX4zK9rDIk45CFirSYX+AgtaMWGVLpaHtk20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=VS81JBGK; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1725999151; x=1726258351;
-	bh=U7TvNmIC8oYr76NVImDfIu1YBXLZLymi+/XLCAXDtOY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=VS81JBGKA2mN7j8bQElk8fOfzC9fDcZxlStBjbVZYnxsl7TWbk4PN04noUNPcqMX0
-	 FhctSlK3OLOTxPJTb7skC646auw+rjrcD3kPh2+QhTa4O+dkFkxgg6Sy4gnnuSVvMk
-	 vG6InoYUBHGGjp6F9pJuV5RV2+xV9G4PfskxW1EQweXYAhncuIIgxjNFfZbKrzryxD
-	 oky75NVa1vNDmoevRK7YElABRXvj0bbO/FKHPkl0mBA2POy9GtHU7egizmWkJPPegw
-	 yFvI5yiUqgsTi08SaAOAHeMgXYnaG0BWvztDohuk6xtGymJFcTeFi4uoQW4WxNgW1G
-	 squtgGPu7zcEg==
-Date: Tue, 10 Sep 2024 20:12:24 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 15/26] rust: alloc: implement `collect` for `IntoIter`
-Message-ID: <747b8c1c-cb7b-422e-b6a0-ea863cc37f0a@proton.me>
-In-Reply-To: <20240816001216.26575-16-dakr@kernel.org>
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-16-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: db6c5e1305b658d7c7974deb81cc2f1735bd099d
+	s=arc-20240116; t=1725999193; c=relaxed/simple;
+	bh=SmGdKsMeARzok6Efk7DiO3PzMavjkZ1CyBtvfmmY88o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZImKtFxzxNVZHmpYphk/lKiVv+oNQzH198aeNSjuAC1ZYzAN267H2paQZl4hbVMDagBu8eZ4jQAeX7J08tKMIA6itRjF7/k2WOSFh2+b8a1k8mX92AW1hmTBSZ/4mNLDyZerdja9mIV6TuL9vPSLLKygc03w2fcBnewtOHEpfho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yfuz2oxt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725999191;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nDtYyQHUbQoxUf9RtgQfhLfnKwLGRhZtyaZbqqn8Z/0=;
+	b=Yfuz2oxtv0Qoq3sfZB7SDw0hhB9Qs289SXaKKbdzzCtNz7p6xZ/hb2poiy7fuVHstj5yRG
+	vDqD7oCMmWvmko3q+RPaOAnQdQPptiN9gzTTU4dHECFhloc/+VXn8ujF2KJViKt9dJPQ2i
+	z/7yAdC9gFiS5mwUgWS2QWLfKDdHVEQ=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-404-wmnPJ6hHP46y2OzxyIK9yw-1; Tue, 10 Sep 2024 16:13:10 -0400
+X-MC-Unique: wmnPJ6hHP46y2OzxyIK9yw-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7a9af65cf73so458212085a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:13:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725999189; x=1726603989;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nDtYyQHUbQoxUf9RtgQfhLfnKwLGRhZtyaZbqqn8Z/0=;
+        b=S+2J4Qcr3t1h+X2gP1ApoC7N0zix5nZf2+s7tnO42+Hh+YRBf/It4UkYK/nhMJ9BY6
+         dlNl5RIH4/JTCXChb4PsXKgp8SDbNbaS+4PRIrsRjTEvnBNs4JG3s7s5BstAuPZ6myi/
+         h5wUui4M1LD+987O4SAmhCZiQAg6XWhVZGjxQOV9GG1s92+u0ylkRWpnwO51pImlu2hT
+         8p9ENlaCZ3BlZlJVFo4b6vnEjomwqPbK5Tz8CaJ32Ay5IzdxAYaNjONYWLTE+XED1l07
+         uj81wXvj1064bnUxY1/ML4yq3Ay95bDaqIuHABCAWkJwbeia/tFw+gQq0gI50DIKY1jg
+         lR1g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2P8hjyYs8RB3fHkGEdbQ79PjZ1bHNXt6V8PT18bl+hiQJ9IVnAOYR6GVKT69CySMNMoFyKt0PDQnfMMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmEvZYrCj8HGDtGwdQlBuNu/b/ETbmJM9QqTicLH7axGPiCHKM
+	G9n662C7Z8f1vijzdeuyd50P51n+BjTXppo7iBBiAjf9v4Xu4kTA2PqkolJc4cAjVnedm11KE1H
+	PK078noeS5uNfy/JvyyxGOSDl8ytb0V+7Onhse8hfF8JbH2D+e0ECrOpUZOhb5A==
+X-Received: by 2002:a05:6214:4345:b0:6c5:52cb:eb77 with SMTP id 6a1803df08f44-6c552cbed7emr83953216d6.2.1725999189590;
+        Tue, 10 Sep 2024 13:13:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHsa80Vfsj+4PZuSTXsmrgG/jjhTRObLUykG/vdN5JeOTBK1I0ZLARmLG+r7hRF7RzLsA44+g==
+X-Received: by 2002:a05:6214:4345:b0:6c5:52cb:eb77 with SMTP id 6a1803df08f44-6c552cbed7emr83952686d6.2.1725999189045;
+        Tue, 10 Sep 2024 13:13:09 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:760d:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c534774303sm33189216d6.111.2024.09.10.13.13.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 13:13:08 -0700 (PDT)
+Message-ID: <e5218efaceec20920166bd907416d6f88905558d.camel@redhat.com>
+Subject: Re: [PATCH v3 0/4] Allow AVIC's IPI virtualization to be optional
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, Will Deacon <will@kernel.org>, 
+ linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, Ingo Molnar
+ <mingo@redhat.com>,  "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Joerg Roedel <joro@8bytes.org>, Suravee Suthikulpanit
+ <suravee.suthikulpanit@amd.com>,  Robin Murphy <robin.murphy@arm.com>,
+ iommu@lists.linux.dev, Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 10 Sep 2024 16:13:07 -0400
+In-Reply-To: <1d6044e0d71cd95c477e319d7e47819eee61a8fc.camel@redhat.com>
+References: <20231002115723.175344-1-mlevitsk@redhat.com>
+	 <ZRsYNnYEEaY1gMo5@google.com>
+	 <1d6044e0d71cd95c477e319d7e47819eee61a8fc.camel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On 16.08.24 02:10, Danilo Krummrich wrote:
-> Currently, we can't implement `FromIterator`. There are a couple of
-> issues with this trait in the kernel, namely:
->=20
->   - Rust's specialization feature is unstable. This prevents us to
->     optimze for the special case where `I::IntoIter` equals `Vec`'s
->     `IntoIter` type.
->   - We also can't use `I::IntoIter`'s type ID either to work around this,
->     since `FromIterator` doesn't require this type to be `'static`.
->   - `FromIterator::from_iter` does return `Self` instead of
->     `Result<Self, AllocError>`, hence we can't properly handle allocation
->     failures.
->   - Neither `Iterator::collect` nor `FromIterator::from_iter` can handle
->     additional allocation flags.
->=20
-> Instead, provide `IntoIter::collect`, such that we can at least convert
-> `IntoIter` into a `Vec` again.
->=20
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/alloc/kvec.rs | 78 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 78 insertions(+)
->=20
-> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> index 3b79f977b65e..ad96f4c3af9e 100644
-> --- a/rust/kernel/alloc/kvec.rs
-> +++ b/rust/kernel/alloc/kvec.rs
-> @@ -681,6 +681,84 @@ impl<T, A> IntoIter<T, A>
->      fn as_raw_mut_slice(&mut self) -> *mut [T] {
->          ptr::slice_from_raw_parts_mut(self.ptr, self.len)
->      }
-> +
-> +    fn into_raw_parts(self) -> (*mut T, NonNull<T>, usize, usize) {
-> +        let me =3D ManuallyDrop::new(self);
-> +        let ptr =3D me.ptr;
-> +        let buf =3D me.buf;
-> +        let len =3D me.len;
-> +        let cap =3D me.cap;
-> +        (ptr, buf, len, cap)
-> +    }
-> +
-> +    /// Same as `Iterator::collect` but specialized for `Vec`'s `IntoIte=
-r`.
-> +    ///
-> +    /// Currently, we can't implement `FromIterator`. There are a couple=
- of issues with this trait
-> +    /// in the kernel, namely:
-> +    ///
-> +    /// - Rust's specialization feature is unstable. This prevents us to=
- optimze for the special
-> +    ///   case where `I::IntoIter` equals `Vec`'s `IntoIter` type.
-> +    /// - We also can't use `I::IntoIter`'s type ID either to work aroun=
-d this, since `FromIterator`
-> +    ///   doesn't require this type to be `'static`.
-> +    /// - `FromIterator::from_iter` does return `Self` instead of `Resul=
-t<Self, AllocError>`, hence
-> +    ///   we can't properly handle allocation failures.
-> +    /// - Neither `Iterator::collect` nor `FromIterator::from_iter` can =
-handle additional allocation
-> +    ///   flags.
-> +    ///
-> +    /// Instead, provide `IntoIter::collect`, such that we can at least =
-convert a `IntoIter` into a
-> +    /// `Vec` again.
+On Wed, 2023-10-04 at 16:14 +0300, Maxim Levitsky wrote:
+> У пн, 2023-10-02 у 12:21 -0700, Sean Christopherson пише:
+> > On Mon, Oct 02, 2023, Maxim Levitsky wrote:
+> > > Hi!
+> > > 
+> > > This patch allows AVIC's ICR emulation to be optional and thus allows
+> > > to workaround AVIC's errata #1235 by disabling this portion of the feature.
+> > > 
+> > > This is v3 of my patch series 'AVIC bugfixes and workarounds' including
+> > > review feedback.
+> > 
+> > Please respond to my idea[*] instead of sending more patches. 
+> 
+> Hi,
+> 
+> For the v2 of the patch I was already on the fence if to do it this way or to refactor
+> the code, and back when I posted it, I decided still to avoid the refactoring.
+> 
+> However, your idea of rewriting this patch, while it does change less lines of code,
+> is even less obvious and consequently required you to write even longer comment to 
+> justify it which is not a good sign.
+> 
+> In particular I don't want someone to find out later, and in the hard way that sometimes
+> real physid table is accessed, and sometimes a fake copy of it is.
+> 
+> So I decided to fix the root cause by not reading the physid table back,
+> which made the code cleaner, and even with the workaround the code 
+> IMHO is still simpler than it was before.
+> 
+> About the added 'vcpu->loaded' variable, I added it also because it is something that is 
+> long overdue to be added, I remember that in IPIv code there was also a need for this, 
+> and probalby more places in KVM can be refactored to take advantage of it,
+> instead of various hacks.
+> 
+> I did adopt your idea of using 'enable_ipiv', although I am still not 100% sure that this
+> is more readable than 'avic_zen2_workaround'.
 
-I think it's great that you include this in the code, but I don't think
-that it should be visible in the documentation, can you move it under
-the `Examples` section and turn it into normal comments?
+Hi!
 
-> +    ///
-> +    /// Note that `IntoIter::collect` doesn't require `Flags`, since it =
-re-uses the existing backing
-> +    /// buffer. However, this backing buffer may be shrunk to the actual=
- count of elements.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// let v =3D kernel::kvec![1, 2, 3]?;
-> +    /// let mut it =3D v.into_iter();
-> +    ///
-> +    /// assert_eq!(it.next(), Some(1));
-> +    ///
-> +    /// let v =3D it.collect(GFP_KERNEL);
-> +    /// assert_eq!(v, [2, 3]);
-> +    ///
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    pub fn collect(self, flags: Flags) -> Vec<T, A> {
-> +        let (mut ptr, buf, len, mut cap) =3D self.into_raw_parts();
-> +        let has_advanced =3D ptr !=3D buf.as_ptr();
-> +
-> +        if has_advanced {
-> +            // SAFETY: Copy the contents we have advanced to at the begi=
-nning of the buffer.
+Sean, can you take another look at this patch series?
 
-This first sentence should not be part of the SAFETY comment.
+Thanks in advance,
+	Maxim Levitsky
 
-> +            // `ptr` is guaranteed to be between `buf` and `buf.add(cap)=
-` and `ptr.add(len)` is
-> +            // guaranteed to be smaller than `buf.add(cap)`.
+> 
+> Best regards,
+> 	Maxim Levitsky
+> 
+> >  I'm not opposed to
+> > a different approach, but we need to have an actual discussion around the pros and
+> > cons, and hopefully come to an agreement.  This cover letter doesn't even acknowledge
+> > that there is an alternative proposal, let alone justify why the vcpu->loaded
+> > approach was taken.
+> > 
+> > [*] https://lore.kernel.org/all/ZRYxPNeq1rnp-M0f@google.com
+> > 
+> 
+> 
 
-This doesn't justify all the requirements documented in [1].
-
-[1]: https://doc.rust-lang.org/core/ptr/fn.copy.html#safety
-
-> +            unsafe { ptr::copy(ptr, buf.as_ptr(), len) };
-> +            ptr =3D buf.as_ptr();
-> +        }
-> +
-> +        // This can never fail, `len` is guaranteed to be smaller than `=
-cap`.
-> +        let layout =3D core::alloc::Layout::array::<T>(len).unwrap();
-> +
-> +        // SAFETY: `buf` points to the start of the backing buffer and `=
-len` is guaranteed to be
-> +        // smaller than `cap`. Depending on `alloc` this operation may s=
-hrink the buffer or leaves
-> +        // it as it is.
-> +        ptr =3D match unsafe { A::realloc(Some(buf.cast()), layout, flag=
-s) } {
-> +            // If we fail to shrink, which likely can't even happen, con=
-tinue with the existing
-> +            // buffer.
-> +            Err(_) =3D> ptr,
-> +            Ok(ptr) =3D> {
-> +                cap =3D len;
-> +                ptr.as_ptr().cast()
-> +            }
-> +        };
-> +
-> +        // SAFETY: If the iterator has been advanced, the advanced eleme=
-nts have been copied to
-> +        // the beginning of the buffer and `len` has been adjusted accor=
-dingly. `ptr` is guaranteed
-> +        // to point to the start of the backing buffer. `cap` is either =
-the original capacity or,
-> +        // after shrinking the buffer, equal to `len`. `alloc` is guaran=
-teed to be unchanged since
-> +        // `into_iter` has been called on the original `Vec`.
-
-Turn this into bullet points please.
-
----
-Cheers,
-Benno
-
-> +        unsafe { Vec::from_raw_parts(ptr, len, cap) }
-> +    }
->  }
->=20
->  impl<T, A> Iterator for IntoIter<T, A>
-> --
-> 2.46.0
->=20
 
 
