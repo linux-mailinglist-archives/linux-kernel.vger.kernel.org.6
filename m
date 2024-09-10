@@ -1,209 +1,192 @@
-Return-Path: <linux-kernel+bounces-323080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17ABE97376B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:32:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01115973876
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E21F1F24E79
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:32:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 817E91F2364B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE52C19148D;
-	Tue, 10 Sep 2024 12:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCC31922F4;
+	Tue, 10 Sep 2024 13:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p7YDhUZc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WaVY7oGn"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3670C190692
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8415674E;
+	Tue, 10 Sep 2024 13:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725971543; cv=none; b=YsnnxK7ezOBW3pUOP+HS4NsmrOZgiNvFb/eZPc5jfUf9fq6xvooKuA82Of58hZQRcL5zDgnyUsO6MbSaiInGfQeqft3/OuIp9715M5onr2V1GqBO8LUQt0l3wAmX1KtX0AvGE9EjQ6jFkciXEnnU6KY7x/3mXR6KS3mtIYpacKY=
+	t=1725974311; cv=none; b=BNzNHpSGkroe7T5ExwcSeDGIQG1+HBwZlsVdHrYf8u9XoxaDHc31ym+xfAq1FDpnvltySiEmEIJ9rFKipdkj0rIEy3bbmVglET9FdtRYF+2eoV+Lht+bMIINzRuKipCLYT/AVHT38L9kaZsllG3y0sOong50xoSGgkUXUQPQRRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725971543; c=relaxed/simple;
-	bh=pQVPVlPHy7iinR7dLox7bseAwjWlCttKkKjhJEWxs4k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=K+oDV9KlclnM7qYWIaOxjMbd3sW7wQknw08kl4bj3fp9lYX7QptDeIXH80xVlXoKWpjyVYCroxJ0B3wQMd8tayTkPn+TTcclwYmMkvo5aW7VmB0LOFv1tS7RcDy43yw25Rr0FyP49uY8Xz6un8Kry32EqtEx9Az9/NlqXBsNMRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p7YDhUZc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BF4FC4CEC3;
-	Tue, 10 Sep 2024 12:32:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725971542;
-	bh=pQVPVlPHy7iinR7dLox7bseAwjWlCttKkKjhJEWxs4k=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=p7YDhUZcWEkqoyLDj8NSz0yjMF3a8w57aNbD9q6qAjSUF7OtY12C2ku9zciuZ3xv2
-	 39PjrcLMqcpVYZ/Y1Lp3JEdk4cfxtDP3X2Qk7zAt6WxAOZc8JpLiwzfNbnv5RjEeXP
-	 MljZ7mLW8mz65vFJmz2FONTIJm3YXoIHnqgvReCLYf0EEiCAX3eXJxMStWgBOwMoWW
-	 sahpScGUtI7ri9aEqA2urfyX0vqEnD8Py56P++SXWbEEzfNQtOWczFmuzKxZNsUV/4
-	 +m8tH175Z2ljbfVgYz2ktWkNpgpCdqHQSdaz382Z/2Iyr8vRZLNs2bReDssgNCO0qJ
-	 G0ifqR8aWK1kA==
-Message-ID: <ee39e467d23070c00aa39f12895fe346406f527f.camel@kernel.org>
-Subject: Re: [PATCH RFC] timekeeping: don't use seqcount loop in
- ktime_mono_to_any on 64-bit arch
-From: Jeff Layton <jlayton@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, linux-kernel@vger.kernel.org
-Date: Tue, 10 Sep 2024 08:32:21 -0400
-In-Reply-To: <878qvzbtz1.ffs@tglx>
-References: <20240910-mgtime-v1-1-35fb64bd0af5@kernel.org>
-	 <878qvzbtz1.ffs@tglx>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1725974311; c=relaxed/simple;
+	bh=IOI0mwJULIalAjY5tAYle02KG6qoQq1/4/vmstLws20=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=A+Eo/TFu6/nNZTU5+E3bHYHcg5XUD3BE1qvZZQ9w+JchzqMkP7PEjQDgtQ6RCGHbReKtwP4sV1GOdj7iKHUQbS+IvpAccwRRj6dcJVlNZhm/oiHE/a5+iKjfeynUXOZFBP22n7TLpNfwbuP2xyNaBhAaBL44pGAuoM/dSveJnD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WaVY7oGn; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-718d91eef2eso2745787b3a.1;
+        Tue, 10 Sep 2024 06:18:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725974309; x=1726579109; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GZSCd6+9c94uE7g9eY8EW7ZyFVJE0bJLRo9INXMYKaY=;
+        b=WaVY7oGnW6j+PBIDcE1wlhAFjNn74kwUAOC3iyfEoq0CakzNovu1c3v1YIbUTog7/w
+         BT0xTb3jH7/pW3y0DYor/wLqMS8xxBj396A4iyBpAQBRxPqQdSqZgzZeimJ9WobXghDR
+         hK6yqp2DsLK8DHUcKXKeABv/d8WY/80ixB0vAmkVHOimXhjoLPo5RKcq40QJTZIkUMVQ
+         nrmueFN0rqZdf7Cr59FxhFoO+5BcFEVPRw7QmWULN4uNthN1g6SK/EwQp79DyNqhR72W
+         wCvq4JHt9gc8wpn2KwcfCHK3NFFS+Yzt30G5TT3sn4ca6X3BiC2kn0ZOk8OBRi8DEDFC
+         puQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725974309; x=1726579109;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GZSCd6+9c94uE7g9eY8EW7ZyFVJE0bJLRo9INXMYKaY=;
+        b=LQqXF4feJbRWiXqehli3G0dbu6/BlXBZ43E2OG+dhSVm2kc09fq5AVpneukl+WexFT
+         xZU7zGCkWDOSMQtNpJcCAv3sFl9lYqbdvLM5573pOHaMylCPc83tH2nOzcjVR/H4E30k
+         ukN3EdY4h4DDmDT1qsE6jD8NouHs8PSuDN8HaBK5yCL4m66YlpmF50SZRs7IXwQK6mfZ
+         EgZxCNdL+15oZ5FcYiHObBVnV1NwG3TD1CHJLkKAafJYERIx/aFZpvSpcDKAdjwK6k1J
+         aTOEsQh3hulQLwLpxpAVRIkpap5Y8VSnvB9ecAVMWDr6XTp13KsatckyW9NiqNpYmRDx
+         YUWw==
+X-Forwarded-Encrypted: i=1; AJvYcCU79ejSdV9Q96Wz6bfusorLohEiBpCCTm1BC1WIdGwVkvHND98IujRf/YOV+WzQ/eQ1AoUXPtDeNMAi@vger.kernel.org, AJvYcCVSFnDlXvsWJ3+9E0WfAQRNXetvdcmc/P+rGocVZ5Vc7EKYFhsbSUlr4zCysZzTrh6VrzSguQ3eqBudb/N1@vger.kernel.org, AJvYcCVfeFxQ/bOaXHFFMTGnMXmjHoaX20HhBTDsvo712/OtTUmvGJ60EG2CWuoqGv3OJfguVZuEahnsUePN3cCc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP2u/XKvBiwkbLGeZdKLuGriDKdLaSMMDhLqXmXej8TB5E5g3H
+	HUbWGPURuNp6e7JiF1f3R+0LlDmB/cCc7dAHOxhyb7oxPNMbKHSZ
+X-Google-Smtp-Source: AGHT+IFYMIl2DfFThQL0MS1eR55Gv9drM5or7sHiHBvgh5wilqXFLTjSDanBiPTDBZf4mLOZQUJZQw==
+X-Received: by 2002:a05:6a00:66e4:b0:707:fa61:1c6a with SMTP id d2e1a72fcca58-71907f0f6ddmr4484924b3a.10.1725974308849;
+        Tue, 10 Sep 2024 06:18:28 -0700 (PDT)
+Received: from dw-tp ([171.76.84.199])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d8255dc20fsm4784462a12.65.2024.09.10.06.18.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 06:18:28 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Dave Chinner <david@fromorbit.com>, John Garry <john.g.garry@oracle.com>
+Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com, djwong@kernel.org, dchinner@redhat.com, hch@lst.de, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com, martin.petersen@oracle.com
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+In-Reply-To: <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
+Date: Tue, 10 Sep 2024 18:03:12 +0530
+Message-ID: <8734m7henr.fsf@gmail.com>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com> <87frqf2smy.fsf@gmail.com> <ZtjrUI+oqqABJL2j@dread.disaster.area> <877cbq3g9i.fsf@gmail.com> <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
 
-On Tue, 2024-09-10 at 13:58 +0200, Thomas Gleixner wrote:
-> On Tue, Sep 10 2024 at 07:17, Jeff Layton wrote:
->=20
-> Please describe functions with foo() and not foo. Also please refrain
-> from using abbreviations. The 'arch' above is not really useful.
->=20
-> 64-bit systems perhaps?
->=20
+Dave Chinner <david@fromorbit.com> writes:
 
-Thanks, will fix.
+> On Thu, Sep 05, 2024 at 09:26:25AM +0530, Ritesh Harjani wrote:
+>> Dave Chinner <david@fromorbit.com> writes:
+>> > On Wed, Sep 04, 2024 at 11:44:29PM +0530, Ritesh Harjani wrote:
+>> >> 3. It is the FORCEALIGN feature which _mandates_ both allocation
+>> >> (by using extsize hint) and de-allocation to happen _only_ in
+>> >> extsize chunks.
+>> >>
+>> >>    i.e. forcealign mandates -
+>> >>    - the logical and physical start offset should be aligned as
+>> >>    per args->alignment
+>> >>    - extent length be aligned as per args->prod/mod.
+>> >>      If above two cannot be satisfied then return -ENOSPC.
+>> >
+>> > Yes.
+>> >
+>> >> 
+>> >>    - Does the unmapping of extents also only happens in extsize
+>> >>    chunks (with forcealign)?
+>> >
+>> > Yes, via use of xfs_inode_alloc_unitsize() in the high level code
+>> > aligning the fsbno ranges to be unmapped.
+>> >
+>> > Remember, force align requires both logical file offset and
+>> > physical block number to be correctly aligned,
+>> 
+>> This is where I would like to double confirm it again. Even the
+>> extsize hint feature (w/o FORCEALIGN) will try to allocate aligned
+>> physical start and logical start file offset and length right?
+>
+> No.
+>
+>> (Or does extsize hint only restricts alignment to logical start file
+>> offset + length and not the physical start?)
+>
+> Neither.
+>
+> extsize hint by itself (i.e. existing behaviour) has no alignment
+> effect at all. All it affects is -size- of the extent. i.e. once
+> the extent start is chosen, extent size hints will trim the length
+> of the extent to a multiple of the extent size hint. Alignment is
+> not considered at all.
+>
+>> Also it looks like there is no difference with ATOMIC_WRITE AND
+>> FORCEALIGN feature with XFS, correct? (except that ATOMIC_WRITE is
+>> adding additional natural alignment restrictions on pos and len). 
+>
+> Atomic write requires additional hardware support, and it restricts
+> the valid sizes of extent size hints that can be set. Only atomic
+> writes can be done on files marked as configured for atomic writes;
+> force alignment can be done on any file...
+>
+>> So why maintain 2 separate on disk inode flags for FORCEALIGN AND
+>> ATOMIC_WRITE?
+>
+> the atomic write flag indicates that a file has been set up
+> correctly for atomic writes to be able to issues reliably. force
+> alignment doesn't guarantee that - it's just a mechanism that tells
+> the allocator to behave a specific way.
+>
+>> - Do you foresee FORCEALIGN to be also used at other places w/o
+>> ATOMIC_WRITE where feature differentiation between the two on an
+>> inode is required?
+>
+> The already exist. For example, reliably allocating huge page
+> mappings on DAX filesystems requires 2MB forced alignment. 
+>
+>> - Does the same reasoning will hold for XFS_SB_FEAT_RO_COMPAT_FORCEALIGN
+>> & XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES too?
+>
+> Same as above.
+>
+>> - But why ro_compact for ATOMICWRITES? There aren't any on disk metadata
+>> changes within XFS filesystem to support atomic writes, right? 
+>
+> Because if you downgrade the kernel to something that doesn't
+> support atomic writes, then non-atomic sized/aligned data can be
+> written to the file and/or torn writes can occur.
+>
+> Worse, extent size hints that don't match the underlying hardware
+> support could be set up for inodes, and when the kernel is upgraded
+> again then atomic writes will fail on inodes that have atomic write
+> flags set on them....
+>
+>> Is it something to just prevent users from destroying their own data
+>> by not allowing a rw mount from an older kernel where users could do
+>> unaligned writes to files marked for atomic writes?
+>> Or is there any other reasoning to prevent XFS filesystem from becoming
+>> inconsistent if an older kernel does a rw mount here.
+>
+> The older kernel does not know what the unknown inode flag means
+> (i.e. atomic writes) and so, by definition, we cannot allow it to
+> modify metadata or file data because it may not modify it in the
+> correct way for that flag being set on the inode.
+>
+> Kernels that don't understand feature flags need to treat the
+> filesystem as read-only, no matter how trivial the feature addition
+> might seem.
+>
 
-> > ktime_mono_to_any only fetches the offset inside the loop. This is a
-> > single word on 64-bit arch, and seqcount_read_begin implies a full SMP
-> > barrier. While we do want to use the latest offset value available, a
->=20
-> We do nothing.
->=20
+1. Will it require a fresh formatting of filesystem with mkfs.xfs for
+enabling atomic writes (/forcealign) on XFS?
+  a. Is that because reflink is not support with atomic writes
+  (/forcealign) today?
 
-I assume you mean "we do not". Fair enough. I misinterpreted the
-purpose of the seqcount loop then.
+As I understand for setting forcealign attr on any inode it checks for
+whether xfs_has_forcealign(mp). That means forcealign can _only_ be
+enabled during mkfs time and it also needs reflink to be disabled with
+-m reflink=0. Right?
 
-> > full seqcount loop is overkill on 64-bit, where there is no possibility
-> > of torn reads. Just do a READ_ONCE for that and don't bother with the
-> > seqcount.
->=20
-> don't bother is not really a technical term.
->=20
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#change=
-log
->=20
-
-Thanks, fixed.
-
-> > +#if BITS_PER_LONG =3D=3D 64
-> > +ktime_t ktime_mono_to_any(ktime_t tmono, enum tk_offsets offs)
-> > +{
-> > +	ktime_t *offset =3D offsets[offs];
-> > +
-> > +	return ktime_add(tmono, READ_ONCE(*offset));
->=20
-> Where is the corresponing WRITE_ONCE()?
->=20
-
-I'll just make it do a simple fetch without READ_ONCE.
-
-> > +}
-> > +EXPORT_SYMBOL_GPL(ktime_mono_to_any);
-> > +#else /* BITS_PER_LONG =3D=3D 64 */
-> >  EXPORT_SYMBOL_GPL(ktime_mono_to_any);
-> > +#endif /* BITS_PER_LONG =3D=3D 64 */
->=20
-> Why do we need this export twice?
->=20
-
-We don't (obviously). I wasn't sure whether it was preferred to put it
-inside the #ifdef.
-
-Now that I look though, the resulting helper is very simple. Would it
-be better to make this a static inline instead of an exported symbol?
-
-----------------8<----------------
-ktime_t ktime_mono_to_any(ktime_t tmono, enum tk_offsets offs)
-{
-        ktime_t *offset =3D offsets[offs];
-
-        return ktime_add(tmono, *offset);
-}
-----------------8<----------------
-
---=20
-Jeff Layton <jlayton@kernel.org>
+-ritesh
 
