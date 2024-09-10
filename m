@@ -1,115 +1,142 @@
-Return-Path: <linux-kernel+bounces-322528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F3F972A4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:10:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C596E972A51
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12E3DB220CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:10:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F53628625B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A3C17BEAD;
-	Tue, 10 Sep 2024 07:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E17A17BEC5;
+	Tue, 10 Sep 2024 07:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ao5r80kN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="FVmCFbzn"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011EE13A242
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DFE12B143;
+	Tue, 10 Sep 2024 07:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725952243; cv=none; b=WgxHtxTb0EEzeipwXTHKv/i8pYsBHE68XKqh8giWVbpYwxaYgz/WBm3drYV9vjbLG9gZx6G/iDKkmzwCv2YMfGotMN0bRlv2ue8bjyuv0yEuhdRB4jxlU1ridFjpMb8a+HCNR729qA/mAHL5tFTV9LJGXH7IolDRHM4eJvvWQC8=
+	t=1725952256; cv=none; b=Qjk6CjMvgjcbheHq287DoPVHWerCOj0tt1s7sVuySwypRj+t8XmgRKB1AdeqSy9YgKGcRM4OLiwd8l1AGABmOWUAljlJ5IuoIQt0e4h5aaUv2wJhHmI11xBJH1kvhLpSEtB6EsRqm+bdAQ6VhG0QselfSELwQpNngzh94KjEKDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725952243; c=relaxed/simple;
-	bh=MkOtBOQnMs1e06jSuyL968m4mS9FLeaQjXti00ia8mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ujhMS53nNqRIX8t33CnvTN7rZVIv0xNRBUx3QKirpw14jqlCO/mDctmq7sOsLm0VGROojC7HfcOULvot1hD5y6sYAYfmdTSTwnhb9dlsx4XD36XrV16QyDzXw8Et1maOf/qpIFTIeO+b31V0fkMNXvUUAPQFT8JtzHGxFwWy0os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ao5r80kN; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725952242; x=1757488242;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MkOtBOQnMs1e06jSuyL968m4mS9FLeaQjXti00ia8mc=;
-  b=Ao5r80kNTZMtChzKwpn3RANaC4KuaLDIlG0Dq5UvCSxqoVAHhgsdtUCD
-   efXzSCKy17s4mTYybtX8eZZHvCbIY4SnqYFB/E/AdmpBZZq3hahL0Z7TR
-   22a0GEEcOLg6uMa1S1KQt8uuk0QBwr2AQwC/G5pPZW6Olqqn/V4M3rYmr
-   JVtqT1F3J3J+2Wu1j0GGeeLnmnNUCOomJeuIUuBZ1cc07Rya5rJajXhaD
-   7InnsT7vRj8VWKOuzrBblZ+l2+hoocayopctAvkL2cHQqoiGbeBO0HG0V
-   YGaAgGvW6dR1X6Q8u+CpcSIMuGVtSWkwP+HU6TdmvP+HLC0b2xCKkEGRT
-   A==;
-X-CSE-ConnectionGUID: H3Q1dABtQzmzSovlZa2xig==
-X-CSE-MsgGUID: MSUKNIRkRvOv4Q/QWdP50w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="28572351"
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="28572351"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 00:10:40 -0700
-X-CSE-ConnectionGUID: y2e6k847SWixdZsMvmlBag==
-X-CSE-MsgGUID: MXD+wGr2SbeA0OPYWxBb1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="97639144"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.15])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 00:10:38 -0700
-Date: Tue, 10 Sep 2024 10:10:31 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Yu Liao <liaoyu15@huawei.com>, liwei391@huawei.com, rostedt@goodmis.org,
-	john.ogness@linutronix.de, senozhatsky@chromium.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] printk: Export
- match_devname_and_update_preferred_console()
-Message-ID: <Zt_w5x4Z-jSillvr@tlindgre-MOBL1>
-References: <20240909075652.747370-1-liaoyu15@huawei.com>
- <Zt6xFlLyBgLhIlDU@tlindgre-MOBL1>
- <Zt7UXNZC1UR2t1OJ@tlindgre-MOBL1>
- <Zt_qIssr_jukJ4ey@pathway.suse.cz>
+	s=arc-20240116; t=1725952256; c=relaxed/simple;
+	bh=Lj5Sd8urnV5cGR8bCaMgOHsQZWxqX/08qozA/Wp5OfI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WQhxYVkP/KEktgH6xXIW44FnespZ5zSspwAdHjrBHqSeBuLRJ0udo7EeJrLJwCF/Jk83/JqCsWzjbwE3AdXIY5lVlg+VpHeBxwwQX9FQY9kiikztf4BV9bJbmVFrauKdNo/EddkV4juy2x+Vorir9m83KWRhtO6yAd0f0Uc7lVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=FVmCFbzn; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1725952252; x=1726211452;
+	bh=Tvk63EWKIJfcsR9nu+1LRzzHViUVxsD4efOy36kxKd8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=FVmCFbznzGpr7Y6VsJ4XEHMtK7KafwMwU22GdtiSxiZ4xKfo1GYPqBf7guIqQjSlz
+	 xLHzc7RKrhS+WUba9zRPpdcmrK97rz1/ka0pYkCASavn5fW30E5+erV1y9TPR28u3T
+	 3esTtHcVseRda3Jgu0knzSkXDCRMkXKldCfIiBl1v23+DEws5w/y9Go7B/th19VQ/A
+	 GcrkMOrjsj0AT1mp8r5rxRwZZUFFzwAWdGIFw2MZgLWp0WH8hb7VpwqDbSSwSxWHmc
+	 tlaGoKlbXkBcRzYuDQ8Y8j+Kl8nn7l585Q6wawIwjvwInpLtubSFVpd79Q+/zy00zt
+	 0Ot/1lDksIY9w==
+Date: Tue, 10 Sep 2024 07:10:46 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rust: add global lock support
+Message-ID: <3c471d06-d8c4-47a2-b29b-4faa5d61d25d@proton.me>
+In-Reply-To: <CAH5fLgh9kHm4XbcH2X4y6nwZ9VLYuUeu3hNmQBcdZ+Vx1H1L9w@mail.gmail.com>
+References: <20240827-static-mutex-v2-1-17fc32b20332@google.com> <10453342-d269-4b78-8962-821ef53d3cb5@proton.me> <CAH5fLgh-DYvXobXQVaQ9txYS4Rx8QhjyVvfTphk6vvnUOGzPnw@mail.gmail.com> <3b557f61-cead-4568-b2b4-4a56c4cbff52@proton.me> <CAH5fLggE-fWDuZXH_F3ixDSo7sQEFwnUV3cd+9_rpFH+XmnA2Q@mail.gmail.com> <CAH5fLgiZt3uVZiU1xXPcvYNR-Em2V3y+-C9EbsqrNvkScbiAYA@mail.gmail.com> <0030a292-49f4-4575-846f-424b098c7f1a@proton.me> <CAH5fLgh9kHm4XbcH2X4y6nwZ9VLYuUeu3hNmQBcdZ+Vx1H1L9w@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: fff6e56f1003443a7083231ea76ea55439635c5b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zt_qIssr_jukJ4ey@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 08:41:38AM +0200, Petr Mladek wrote:
-> On Mon 2024-09-09 13:56:28, Tony Lindgren wrote:
-> > On Mon, Sep 09, 2024 at 11:25:58AM +0300, Tony Lindgren wrote:
-> > > On Mon, Sep 09, 2024 at 03:56:52PM +0800, Yu Liao wrote:
-> > > > When building serial_base as a module, modpost fails with the following
-> > > > error message:
-> > > > 
-> > > >   ERROR: modpost: "match_devname_and_update_preferred_console"
-> > > >   [drivers/tty/serial/serial_base.ko] undefined!
-> > > > 
-> > > > Export the symbol to allow using it from modules.
-> > > 
-> > > I think the issue is with CONFIG_PRINTK is no set, and serial drivers
-> > > select SERIAL_CORE_CONSOLE? And when serial_base is a module, there is
-> > > no kernel console.
-> > > 
-> > > I replied earlier today to the lkp error report along those lines, but
-> > > please let me know if there is more to the issue than that.
-> > 
-> > Sorry I gave wrong information above. The issue can be hit also with
-> > CONFIG_PRINTK=y and serial_base as a loadable module.
-> 
-> Yes, this is my understanding. The problem has happened when serial_base
-> was built as a module. So exporting the symbol looks like the right fix.
+On 04.09.24 12:32, Alice Ryhl wrote:
+> On Tue, Sep 3, 2024 at 12:17=E2=80=AFAM Benno Lossin <benno.lossin@proton=
+.me> wrote:
+>>
+>> On 02.09.24 13:42, Alice Ryhl wrote:
+>>> On Mon, Sep 2, 2024 at 1:37=E2=80=AFPM Alice Ryhl <aliceryhl@google.com=
+> wrote:
+>>>>
+>>>> On Fri, Aug 30, 2024 at 3:22=E2=80=AFPM Benno Lossin <benno.lossin@pro=
+ton.me> wrote:
+>>>>>
+>>>>> On 30.08.24 07:34, Alice Ryhl wrote:
+>>>>>> On Thu, Aug 29, 2024 at 8:17=E2=80=AFPM Benno Lossin <benno.lossin@p=
+roton.me> wrote:
+>>>>>>>
+>>>>>>> On 27.08.24 10:41, Alice Ryhl wrote:
+>>>>>>>> For architectures that don't use all-zeros for the unlocked case, =
+we
+>>>>>>>> will most likely have to hard-code the correct representation on t=
+he
+>>>>>>>> Rust side.
+>>>>>>>
+>>>>>>> You mean in `unsafe_const_init`?
+>>>>>>
+>>>>>> No, I mean we would have `unsafe_const_new` directly set `state` to
+>>>>>> the right value and let `unsafe_const_init` be a no-op.
+>>>>>
+>>>>> But how do you set the right value of a list_head? The value will be
+>>>>> moved.
+>>>>
+>>>> Right ... we probably can't get around needing a macro. Can statics
+>>>> even reference themselves?
+>>>
+>>> Looks like they can:
+>>>
+>>> use std::ptr::addr_of;
+>>>
+>>> struct MyStruct {
+>>>     ptr: *const MyStruct,
+>>> }
+>>>
+>>> static mut MY_STRUCT: MyStruct =3D MyStruct {
+>>>     ptr: addr_of!(MY_STRUCT),
+>>> };
+>>
+>> That's useful to know...
+>> But I don't see a way to get pinned-init to work with this. I would need
+>> a lot of currently experimental features (const closures, const traits)
+>> and a way to initialize a static without providing a direct value, since
+>> I can't just do
+>>
+>>     static mut MY_STRUCT: MyStruct =3D {
+>>         unsafe { __pinned_init(addr_of_mut!(MY_STRUCT), /* initializer *=
+/) };
+>>         unsafe { addr_of!(MY_STRUCT).read() }
+>>     };
+>>
+>> It (rightfully) complains that I am initializing the static with itself.
+>>
+>> We /might/ be able to do something special for `Mutex`/ other locks, but
+>> I haven't tried yet. So the unsafe approach seems the best at the moment=
+.
+>=20
+> It sounds like we'll just want a macro that generates a global wrapped
+> in a Mutex/SpinLock for now ...
 
-Yes agreed.
+Yeah.
 
-And, Yu, thanks for fixing the issue!
+> If we're going to do that, we could take the extra step and have it
+> generate special Guard and LockedBy types so that you can have a
+> LockedBy that doesn't need to make any runtime checks.
 
-Regards,
+Oh that is a good idea!
 
-Tony
+---
+Cheers,
+Benno
+
 
