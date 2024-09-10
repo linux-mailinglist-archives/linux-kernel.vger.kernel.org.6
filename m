@@ -1,152 +1,209 @@
-Return-Path: <linux-kernel+bounces-323711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08DD97424E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:37:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD3A974254
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE5D1287FEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:37:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1910F1F26855
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EFD1A4F1E;
-	Tue, 10 Sep 2024 18:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4027D1A4F22;
+	Tue, 10 Sep 2024 18:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AYyqhkcN"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWMi8jAM"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336BF19ABAB;
-	Tue, 10 Sep 2024 18:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A7F1A4AB5;
+	Tue, 10 Sep 2024 18:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725993466; cv=none; b=FeOhJB8h9ZvrkM5NRxNhN7RwsFze0sQEpy1UyV28Irj6nFJgSIQCVpUVpzIZrlc60MwuzZGWXmpFAtXoWQgBGDAkcb4eNH0uzm1aw0bcY+oPpsV9r4qKJraHNxh/KHGmskIFm/sgiMwmL4ttEl5EYVFeXLbdwRzesRDR6FPX92M=
+	t=1725993481; cv=none; b=Jx7J8UByQCKAFzM56hMRamdo2zxS/fO6Ywt3osUPM+tDb1eF8H/A7YxISCmUPxRNVLL8LZu4SVNyYsDNkRRwe2iq4pw6PyUIflmx0DkmUS8BglvrPYBkaL6IV+ArBNsBaXyUJk3Ar0jgP20/FhJaQpRcYfgFxuULN1ACb6GkRo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725993466; c=relaxed/simple;
-	bh=wYdQIYfI4tChO77dAPZ+Wv9AkxNHZtPe1eOtNn/KjLI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=leVXqJ/tJAA4Bd4HZYc9OUG7mL8MYLV4fZ5/X5lIiOsVP/dHS2U2iYgfEjrkeNTWcKkB+KF17RypPODeTCI9CsWVN34fnos7myvq6lZPmF5xIH5lpIM/jO9QOGovZurSrSxg+VLuksv/W3OUW+4UPlFqh4hvwqAk/gbkHHZ1gx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AYyqhkcN; arc=none smtp.client-ip=209.85.222.171
+	s=arc-20240116; t=1725993481; c=relaxed/simple;
+	bh=+6erVIx9nJaj7/srcqN07+6DKoKkqA8z4fpFhR72wnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E2WDWLu124oynxyHikPR57WPxd5jIChTC7PzX3/JDsuaJiIg2BXul05VrD3xzVo3YC+aMbpfl0LPoI9VDOltJ7WdK7u+6ZZp+rcILTHgnOWPFp4D+EVfdpgbJxSldqvELLJbZ1zKD3lird1ETetLduWQHeMSK9hyJqfwCtJCfvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWMi8jAM; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a9ab8e5f96so279954885a.1;
-        Tue, 10 Sep 2024 11:37:45 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f74e468baeso72379071fa.2;
+        Tue, 10 Sep 2024 11:37:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725993464; x=1726598264; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=q0EPVXqmklNWAenhVxohDNzwXRtHMz8JIOhQemUQEy0=;
-        b=AYyqhkcN+dC+vJx6ul2uj4jlx3U1CfCyyZd3byndVeH3iIuaY6jWkEE9bhNPU2+XaH
-         eu9IxprNH01Gq0LBxHySWR8/2822EYej8K+FGTznC4PiA2bcvlVw2exnPmE3OJgl0+1w
-         nsSushzKH4oXoKnXYmzfTp7hlpNX8DpqTD7Oog6r3sAHSegQTJ95p9NcdEv/r9QYaxcW
-         gCJuMG3kpjOFStaur87tNHy08EwRynh4e+fqGkOPi4relqYhyTNUhuUTmOYuFmkZa5tK
-         ki31s0W3ZE3GJ90aB+znWStx1M2ENnEjfmIG8/cdpg8OCHkQN4QpqiLx8OixIgDVtheR
-         OwUg==
+        d=gmail.com; s=20230601; t=1725993478; x=1726598278; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MGJTDyPZrPgud+em+SoTe59IhXK+nc1Nr17gxYaoJ8M=;
+        b=VWMi8jAMnfU2vSpbFEx+KOkqiH9COb+TJAxGjjjBcEYMQ4M4pvxrTFgGw5f02y0Rdc
+         e42Si9SiUM2z2KAgoASnvLvzN7F3bHX7ToCnLHYFtXkWJeHiJ4gbkahm0CW/aUXtUVwX
+         Za/GTJCAQJRUNSoICZ4oPtcraokejsATWTVeZQAB/T5sqancHZ1ZaAhINGh67On+gppJ
+         j1e1v0F50db+gtW/b1Hans/AxeJssio8cXl0HI6TKZdiu42ZnXNJq8nZF728dkt2yNnz
+         zfa0m/ZcUW3kGaY9aGuXhB0ntLPZh2OeyKwPJJmUfC3oXR9LkgZIUHdU9t+bBO6oRCyB
+         NRxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725993464; x=1726598264;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1725993478; x=1726598278;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q0EPVXqmklNWAenhVxohDNzwXRtHMz8JIOhQemUQEy0=;
-        b=QmTTm5AeHGl6Yop5XM1cbIP6zN9H8OYwcDBUDwihKo7m9LDlcm5Amau9pvRgEwqsuz
-         8JkgexwAwJ8JD+XajIR1Wm2uXboe4lOGRvxsfZdq5ZFQB5UPaLfuXU5YnAE0k5DtHeq7
-         P7E8vlMoSQOCgk4BNFaz01BBenyrtlBVjrWUs1n0B6uEWvIv5HPwxRSM53PVH7nVt5Vq
-         FVSoQ9jFGxCAM1w9rVQgsVgRFG1Vqt3BFkCu+k9cKVo+WY3KVSHhwa8FEl+R8OaVuTAw
-         nf+ejOW4NhMrFu5mHV/gn4yxmqAdjwiWt9Bm5ZEXB6LXY+CVbMhT1THvXAREmEZMkdS5
-         EeOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6lz1P40b+2yPCI+qYH4ujp9EHbq82MS98VjYxm01VZtCO3T8Me8u6O8OgaYD2ekL2uvo8PZfyHsLsctU=@vger.kernel.org, AJvYcCXHybaapvixDm/An3rqT0EEbvdhq4bWu6NnaVrKxUf+OcTndph+qpjQBnd8N/X0qNyGAntPC3HD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2uMQHhfIOqz9qn3PPQf4hz9uYRu+OmS0avvQHn8ODXUVaQUVs
-	3HsTLr9fPdfRWxwUih0kzhLbgQ6i+cNXmTVdUFG6FRZESheadarZ
-X-Google-Smtp-Source: AGHT+IEVSZE7W4Ndl02B6CWbq3h9Rv4Z9a5XM/2ZNdl+4CpztZ+QbSykYQlWMcYL5cMEZwPSU7cr3Q==
-X-Received: by 2002:a05:620a:4712:b0:7a1:d8df:c0d7 with SMTP id af79cd13be357-7a9a38847afmr1632810685a.23.1725993463977;
-        Tue, 10 Sep 2024 11:37:43 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a7a1d652sm330805785a.123.2024.09.10.11.37.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 11:37:43 -0700 (PDT)
-Message-ID: <c674380e-645b-4961-8986-9bf2ffafd661@gmail.com>
-Date: Tue, 10 Sep 2024 11:37:40 -0700
+        bh=MGJTDyPZrPgud+em+SoTe59IhXK+nc1Nr17gxYaoJ8M=;
+        b=Mmqt8lO9lhRV8gJEKo8lpoighyyQXpFB0kGwTgIUl6MP13mIFlsaXoPv5HDpyKBV87
+         EAPP8JW5NrXnDUGHitp308G6d1U6yVeLu9djGkJ1t0SLKfsTYq5Yrf2nyq+KAsjCm+Cj
+         fvXvt6yLetK4PXyEbR6xwgP0Oom+/ITErwS9zhGtdt5Vr9WxtmTC+Bw8iX4+ZRKNz+t0
+         2jQ6/89CdhLwwRSC71OtONb1ZTaU79UZ6zcXyqakY74v2rovuVoYIX9lshb0SbeUknfF
+         RNTSjdcs042g+qwRxYC7H3m2dtqymgWo2N03XJNaHtlCTadYoA3kwzS2iHFwt9dFQmic
+         q/jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqdqyEP4x+nM4chDDM5ckCh2xqlZJr1ZCkJ/2483OTdxlh0QzPq+MtTG+2hlk579GzIn0=@vger.kernel.org, AJvYcCXFX73YX82HaQQJj+hxkij1xSk8CSkW6xvk2dt2oERndUKs00yTziZuuS3i/pl67gGzWxkhEA7h207KThzi@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYNnKvNaebSQQKxyrHCWMXdu6wzVUc3fVbZGNCl+55VkQ5xg8y
+	Spv1WDgwuSvevN4jLaBTcg+u7g3BtdrXQRWfzQXihfLxi4c9pgpO
+X-Google-Smtp-Source: AGHT+IGJ5N5cpAoAAMGa06fcAXoZykutRUQ7ciz6dqZCopzWKg9EwW64N+1kd17OukpLdCRli+ei0A==
+X-Received: by 2002:a2e:80d2:0:b0:2f7:5759:db45 with SMTP id 38308e7fff4ca-2f75b93079dmr59037311fa.31.1725993476881;
+        Tue, 10 Sep 2024 11:37:56 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75c098e9esm13200291fa.116.2024.09.10.11.37.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 11:37:56 -0700 (PDT)
+Date: Tue, 10 Sep 2024 21:37:52 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: jitendra.vegiraju@broadcom.com
+Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, 
+	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
+	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org, 
+	john.fastabend@gmail.com, rmk+kernel@armlinux.org.uk, ahalaney@redhat.com, 
+	xiaolei.wang@windriver.com, rohan.g.thomas@intel.com, Jianheng.Zhang@synopsys.com, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, andrew@lunn.ch, linux@armlinux.org.uk, 
+	horms@kernel.org, florian.fainelli@broadcom.com
+Subject: Re: [PATCH net-next v5 1/5] net: stmmac: Add HDMA mapping for
+ dw25gmac support
+Message-ID: <7foqi3vdgc3kvyw5rrnqsqsakgfgcrhw5sihnqwza4okdnh5dd@pdsdjn32ya6u>
+References: <20240904054815.1341712-1-jitendra.vegiraju@broadcom.com>
+ <20240904054815.1341712-2-jitendra.vegiraju@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/214] 5.15.167-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240910092558.714365667@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240910092558.714365667@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904054815.1341712-2-jitendra.vegiraju@broadcom.com>
 
-On 9/10/24 02:30, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.167 release.
-> There are 214 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.167-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Jitendra
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+On Tue, Sep 03, 2024 at 10:48:11PM -0700, jitendra.vegiraju@broadcom.com wrote:
+> From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+> 
+> Add hdma configuration support in include/linux/stmmac.h file.
+> The hdma configuration includes mapping of virtual DMAs to physical DMAs.
+> Define a new data structure stmmac_hdma_cfg to provide the mapping.
+> 
+> Introduce new plat_stmmacenet_data::snps_id,snps_dev_id to allow glue
+> drivers to specify synopsys ID and device id respectively.
+> These values take precedence over reading from HW register. This facility
+> provides a mechanism to use setup function from stmmac core module and yet
+> override MAC.VERSION CSR if the glue driver chooses to do so.
+> 
+> Signed-off-by: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+> ---
+>  include/linux/stmmac.h | 48 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+> 
+> diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
+> index 338991c08f00..eb8136680a7b 100644
+> --- a/include/linux/stmmac.h
+> +++ b/include/linux/stmmac.h
+> @@ -89,6 +89,51 @@ struct stmmac_mdio_bus_data {
+>  	bool needs_reset;
+>  };
+>  
+> +/* DW25GMAC Hyper-DMA Overview
+> + * Hyper-DMA allows support for large number of Virtual DMA(VDMA)
+> + * channels using a smaller set of physical DMA channels(PDMA).
+> + * This is supported by the mapping of VDMAs to Traffic Class(TC)
+> + * and PDMA to TC in each traffic direction as shown below.
+> + *
+> + *        VDMAs            Traffic Class      PDMA
+> + *       +--------+          +------+         +-----------+
+> + *       |VDMA0   |--------->| TC0  |-------->|PDMA0/TXQ0 |
+> + *TX     +--------+   |----->+------+         +-----------+
+> + *Host=> +--------+   |      +------+         +-----------+ => MAC
+> + *SW     |VDMA1   |---+      | TC1  |    +--->|PDMA1/TXQ1 |
+> + *       +--------+          +------+    |    +-----------+
+> + *       +--------+          +------+----+    +-----------+
+> + *       |VDMA2   |--------->| TC2  |-------->|PDMA2/TXQ1 |
+> + *       +--------+          +------+         +-----------+
+> + *            .                 .                 .
+> + *       +--------+          +------+         +-----------+
+> + *       |VDMAn-1 |--------->| TCx-1|-------->|PDMAm/TXQm |
+> + *       +--------+          +------+         +-----------+
+> + *
+> + *       +------+          +------+         +------+
+> + *       |PDMA0 |--------->| TC0  |-------->|VDMA0 |
+> + *       +------+   |----->+------+         +------+
+> + *MAC => +------+   |      +------+         +------+
+> + *RXQs   |PDMA1 |---+      | TC1  |    +--->|VDMA1 |  => Host
+> + *       +------+          +------+    |    +------+
+> + *            .                 .                 .
+> + */
+> +
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+> +/* Hyper-DMA mapping configuration
+> + * Traffic Class associated with each VDMA/PDMA mapping
+> + * is stored in corresponding array entry.
+> + */
+> +struct stmmac_hdma_cfg {
+> +	u32 tx_vdmas;	/* TX VDMA count */
+> +	u32 rx_vdmas;	/* RX VDMA count */
+> +	u32 tx_pdmas;	/* TX PDMA count */
+> +	u32 rx_pdmas;	/* RX PDMA count */
+> +	u8 *tvdma_tc;	/* Tx VDMA to TC mapping array */
+> +	u8 *rvdma_tc;	/* Rx VDMA to TC mapping array */
+> +	u8 *tpdma_tc;	/* Tx PDMA to TC mapping array */
+> +	u8 *rpdma_tc;	/* Rx PDMA to TC mapping array */
+> +};
+> +
+>  struct stmmac_dma_cfg {
+>  	int pbl;
+>  	int txpbl;
+> @@ -101,6 +146,7 @@ struct stmmac_dma_cfg {
+>  	bool multi_msi_en;
+>  	bool dche;
+>  	bool atds;
+> +	struct stmmac_hdma_cfg *hdma_cfg;
+
+Based on what you are implementing the _static_ VDMA-TC-PDMA channels
+mapping I really don't see a value of adding all of these data here.
+The whole implementation gets to be needlessly overcomplicated.
+Moreover AFAICS there are some channels left misconfigured in the
+Patch 2 code.  Please see my comments there for more details.
+
+>  };
+>  
+>  #define AXI_BLEN	7
+> @@ -303,5 +349,7 @@ struct plat_stmmacenet_data {
+>  	int msi_tx_base_vec;
+>  	const struct dwmac4_addrs *dwmac4_addrs;
+>  	unsigned int flags;
+
+> +	u32 snps_id;
+> +	u32 snps_dev_id;
+
+Please move these fields to the head of the structure as the kind of
+crucial ones, and convert snps_dev_id to just dev_id.
+
+snps_id field name was selected based on the VERSION.SNPSVER field
+name (see SNPS prefix). Following that logic the VERSION.DEVID field
+should be converted to the dev_id name.
+
+-Serge(y)
+
+>  };
+>  #endif
+> -- 
+> 2.34.1
+> 
 
