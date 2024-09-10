@@ -1,79 +1,99 @@
-Return-Path: <linux-kernel+bounces-323384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0606973C91
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:45:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77814973C9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E7F21C243DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:45:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA11F1C22AC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EFC1946CD;
-	Tue, 10 Sep 2024 15:45:24 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386851A0710;
+	Tue, 10 Sep 2024 15:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="Vz600VjG"
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98A12AE69;
-	Tue, 10 Sep 2024 15:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A57B18EFE2
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 15:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725983123; cv=none; b=JofxbkUuMFL7frJC+0whjwANDnUAc+EvbzCkfr2UuyI+5XNkjHSe8LLu7g+wNQQ8/h98hvGT9Xatszjt+nA0pHffOEkULQ28TJbKAhw+k7ZCOjE2QFUxPY/6Q2D7l9MHrzCzTI17rfkfzY/LDAo1Wb3cXzPioaq17AETIpE9I+M=
+	t=1725983155; cv=none; b=msJMgxT6cxxx2QTEjCQgMsT3XbK8ar+oinBdUsP23gq3p8mf0str5Qt4xHkLO+YLYe8yFCOQitUFZBOyWFHIczvqTmjzNpvIXpOYtqcH6S12i7NgYAjFu6DPRVDjLUvCvLzReUpttyfLzV3pLYoFmgoftf+FxN07qVRRln9oXGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725983123; c=relaxed/simple;
-	bh=wPW5UGXl4ccqRpNCgYnRNiaaJoiYpwD7Np5V/k1Z4tI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kN1NYeSa3WTZwmoBVa2lenFs9P5rGyCDpJrxPpMJKwROH6ez14ABdn7KJGel2UukO6F7SMKrPku9g4bZLe0KMNErv+1uwAXsiAiFFBF60pzINiTAPzJTqcPXM5CwPDor+qAbfhnqgf5AqV2JOzX84f7UxyqsSRUv8WqOPfefUKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A595CC4CECD;
-	Tue, 10 Sep 2024 15:45:22 +0000 (UTC)
-Date: Tue, 10 Sep 2024 11:45:23 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: mhiramat@kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 0/2] ring-buffer/selftest: Meta-page testing
- improvements
-Message-ID: <20240910114523.074ca67b@gandalf.local.home>
-In-Reply-To: <20240910144323.2888480-1-vdonnefort@google.com>
-References: <20240910144323.2888480-1-vdonnefort@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725983155; c=relaxed/simple;
+	bh=ZGIN6oL8ZbhY+JlkI9Ku+beUgqeJ7DREjZJAKrxKUks=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PKG7HuheYU60Q3XqD9jf8xfAO7L/8SqjYiXitKtIBAa0w10cHG2E8MNXDVKw7NIWWsVCQcPpx+9YaXO4e8mQkr++5YKH3wDUvCTKMH8Zx8d4FykeT3SNJ8m2U/gGMpzBwRyNIxpDJSRSmpqpepV4KkvwK9LAjh6pFV16e0ztopM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=Vz600VjG; arc=none smtp.client-ip=185.136.64.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20240910154548b5efe9cdb8fa744e0f
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 10 Sep 2024 17:45:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=felix.moessbauer@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=nThz1Prv8qbxtOruFaTCR2A/NQ2gWru4hgUnv1ATbIE=;
+ b=Vz600VjGeixnbiVq/I5rQLc1cFupil2HtlL0k1mMpot4i3Rb+qiBx2dgC5tEBchf7ZUy8z
+ x4ABdutZ7QxR6c//wEv38Q307qCiczchclKz5CnwEHQTDehJzi5KblaFK2G2rIfMktVsZWwk
+ 0qzKkTjziOqSoqt2Kx04oDTzTRnA2Lke5DI/GkPVJsXuaEp+vRIfsTG2rbO7oFlJhkoxrdvP
+ ObIFpg9Z2wlGGiAfi6S5ihJcKkwgccH104EGM6NcYKVeRy4LhG/m4EIjJf+d6Q0ZZGo4FrM2
+ zpY0v0D2xauEwR6JUMDrNWGoPyCqyKeceqgJREfNaEqEWjdew3FG4hjQ==;
+From: Felix Moessbauer <felix.moessbauer@siemens.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	dqminh@cloudflare.com,
+	longman@redhat.com,
+	adriaan.schmidt@siemens.com,
+	florian.bezdeka@siemens.com,
+	Felix Moessbauer <felix.moessbauer@siemens.com>
+Subject: [PATCH v2 0/2] io_uring/io-wq: respect cgroup cpusets
+Date: Tue, 10 Sep 2024 17:45:33 +0200
+Message-Id: <20240910154535.140587-1-felix.moessbauer@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1321639:519-21489:flowmailer
 
-On Tue, 10 Sep 2024 15:43:21 +0100
-Vincent Donnefort <vdonnefort@google.com> wrote:
+Hi,
 
-> Following the comments on the original patch [1] here's a set of 2 patches to
-> improve the selftest.
-> 
-> [1] https://lore.kernel.org/all/20240628104611.1443542-1-vdonnefort@google.com/
+this series continues the affinity cleanup work started in
+io_uring/sqpoll. It has been successfully tested against the liburing
+testsuite (make runtests), liburing @ caae94903d2e201.
 
-This looks good, but can you resend this and Cc:
+The test wq-aff.t succeeds if at least cpu 0,1 are in
+the set and fails otherwise. This is expected, as the test wants
+to pin on these cpus. I'll send a patch for liburing to skip that test
+in case this pre-condition is not met.
 
-  Shuah Khan <skhan@linuxfoundation.org>
-  linux-kselftest@vger.kernel.org
+Changes since v1:
 
-Thanks,
+- rework commit messages (don't use ambient cpus, wq threads are no
+  pollers)
+- no functional changes
 
--- Steve
+Best regards,
+Felix Moessbauer
+Siemens AG
 
-> 
-> Vincent Donnefort (2):
->   ring-buffer/selftest: Verify the entire meta-page padding
->   ring-buffer/selftest: Handle meta-page bigger than the system
-> 
->  tools/testing/selftests/ring-buffer/map_test.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
-> 
-> 
-> base-commit: 2fcd5aff92aab479a9a89cfce2dbc9c6a9455b4f
+Felix Moessbauer (2):
+  io_uring/io-wq: do not allow pinning outside of cpuset
+  io_uring/io-wq: limit io poller cpuset to ambient one
+
+ io_uring/io-wq.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
+
+-- 
+2.39.2
 
 
