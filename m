@@ -1,82 +1,142 @@
-Return-Path: <linux-kernel+bounces-323853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C197A97443D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:44:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9827C974448
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E0622891E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:44:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C4EB28910F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE851A7AF1;
-	Tue, 10 Sep 2024 20:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210A01A7AF0;
+	Tue, 10 Sep 2024 20:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+maVeZJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="V80WHTY1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EUSSzi1l"
+Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B84F176252
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCD117622D;
+	Tue, 10 Sep 2024 20:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726001072; cv=none; b=RgY6Sc3k09GtGJeryNTnyCLdNJMy4mZIpMX8GlWMzPsC6qh7cJSml672cqcwls+uT2S1J9lnUtWntopMzJu7xgYlWI5M8/LIGm88ryIetJrXfebSJ4dP2xEWHK7f6FI7tx6mIwWy/X+SSR7F+l6TeEXjFeAzMRDbmGE1T5ZLJuc=
+	t=1726001315; cv=none; b=sqxvUcsj1Z9wL2pJnQPvEFCBKyculTSgzO3zxLrR7k4KyrNRlIMgg4p13XgB1EK+8EiLCody+nY55iDSm8SyPXPehsT5rJ7gJdZ0cWvjcC5a7dqGOtf4EHcCcd0sdLNbRQ2yDp/UBlppX2YeuVJggipcuWTLY6kHB9RsCMRWCrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726001072; c=relaxed/simple;
-	bh=9nafgbmiAaXCaMpS2H9g+FM8xMU9jMdbQEiA16D9NQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WDoOOoN7TMyoP91nOWG3wywUUNVu4EM0vT41+3lha6mPmkewwXVHa1sLb9JLfQ3pEcIt1v22qlgPAjLdAy1mEPcYLbbq/5C18Z0kEl8yhaqUEKOgAYsO3kGHlrjRs6le8pzE/NHLajUBc8IsWhrXQl057QlXe8yW/UbtJpLRgIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+maVeZJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E3B1C4CEC3;
-	Tue, 10 Sep 2024 20:44:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726001071;
-	bh=9nafgbmiAaXCaMpS2H9g+FM8xMU9jMdbQEiA16D9NQ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r+maVeZJHlnInfE5cTDrVL/QwEQZLzaptYTU68tCi0XCX6LhrzA0KKx2QHNdAOCxH
-	 NxbKmnB1fntznG07Cob3W1dX27lu7Hv+Vw11C3cOATcso/O9Rkwm0GI1SxF3WGUGqF
-	 mMfIj3x0r8G+/9NfTBBaYrivp4vMFUFiMMnhrDaeI/m3IsknDiVtSMBlMoJGuVpZHR
-	 lDUnBXYoDwzNxY/M4XeHRewb5sQBpCtDZR1hezehHM2JIij8zt3c9amA3LLVNpsVLf
-	 AJs4Nb/hcptwIAbK8k9Ze+BfZFVIJ/POkc4K4yYTm4lypq2HrW1DXx+Q5egNtDIkhQ
-	 jgtft1ivunfqA==
-Date: Tue, 10 Sep 2024 10:44:30 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	hodges.daniel.scott@gmail.com, multics69@gmail.com,
-	andrea.righi@linux.dev, schatzberg.dan@gmail.com
-Subject: Re: [PATCH sched_ext/for-6.12] sched_ext: Don't trigger
- ops.quiescent/runnable() on migrations
-Message-ID: <ZuCvrsK9vf51Acy8@slm.duckdns.org>
-References: <Zt-HfBC0Q-DcUjHm@slm.duckdns.org>
+	s=arc-20240116; t=1726001315; c=relaxed/simple;
+	bh=20i2BlGHksN1/Dhy94tEpQoj1jiq9Zdq3Zo3/6OVMJY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=W6sdmazOqGGQO7timiAmc7Qk9wc+WPrY0emwMhAGIrs6WmoVxrJvi+w/gzz0uZnKjaskXMy3kLkI+LjHfxAJ1aQ+zTjGMPVzMC//WYjr6COB77MJZSTR67OaGMz4vVVB8JhUAW21ydhTQTn6LgpddDOhoJQIFr4vvOSiUlUQNNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=V80WHTY1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EUSSzi1l; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A4C4C114019D;
+	Tue, 10 Sep 2024 16:48:30 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-09.internal (MEProxy); Tue, 10 Sep 2024 16:48:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1726001310;
+	 x=1726087710; bh=YaNm0bZcNn4debMmAvI7bJ5MdsYn7nFEWpGpIsKSWOY=; b=
+	V80WHTY1EEo9pCOyEgYS0nsGJoaGDcqivPbyEQUYpQhH6VF1C6eQXgAzS6F+8ucT
+	TiWNuB9ZOtVGtmrhC9xVY5okEsxH7Hnsz0M+02wScoVQa2ymFYlDg+/edHZD1bpi
+	IYZqH0Ql+WIzK25EQdxTzmfRfcnelIGUKV5zTtU4vLlrm4Q4Gc9p5jt7jlsw3lPv
+	XSgnZZSy7fyay+UXd2rOwF2XR2/avwL3GDtwxoToK31bDCmYGwPeqYEBsDT8MWh1
+	VolPA8Xm5cHkIgJRfOTqfQ0YkSmS31GYXjBgVHYAZy0m8chOvJ9GHjx1q+GQUWYX
+	aJV6ecV9WMqYLK/v2PH3NQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726001310; x=
+	1726087710; bh=YaNm0bZcNn4debMmAvI7bJ5MdsYn7nFEWpGpIsKSWOY=; b=E
+	USSzi1l7A/SnNU+Slls4Lx0kPYBNndr7+QPk0GNxCXKPahNj4mhy28Gmqc5kTGpN
+	aenRe9Grf7OyegmCWKi474y/VjWnAUrjeN7lgIotfU7lFai5nQbmF7i/SGtpGVx8
+	tt9zG5MofpQ+ces1nShSXqy5VZx0mbx/VVQQLBt9/ISUNztynlh/fqoM9toReyXn
+	fVyNWjXHRUP3MqNLXbKKsrERuKucRakRU63n55YQSJweuhYM1+8pQ8qHG0ew1IIj
+	wp+6A1cmMf6/qXQjX/A1r1L+Rd+sWYahJJNo9+U1OmaLaJcl4R6s9E4EQwsBiOGP
+	IrXSTd2DUuYXM0LGS/Yzg==
+X-ME-Sender: <xms:nrDgZkquvb0yXsuQ6EXxIE-1LxXk6ByZG9uEoT3re5CJf3EAwsYs_g>
+    <xme:nrDgZqrNh1Q8HeVDe23HwKa0MHfOmPvTqOSu4qdvBaN2IFm8worWCHEaZ6Cp8NcYH
+    GFYfHqV4z3ZCNSqUWI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiledgudeggecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
+    jeenucfhrhhomhepfdflihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgse
+    hflhihghhorghtrdgtohhmqeenucggtffrrghtthgvrhhnpeejheefuddvtdfggfdvffek
+    teehhfelgfdvvedvkeeuffefkeehheegvefhveetjeenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghho
+    rghtrdgtohhmpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthht
+    ohepfhgrnhgtvghrrdhlrghntggvrhesghhmrghilhdrtghomhdprhgtphhtthhopehprg
+    hulhgsuhhrthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggvvhhitggvthhr
+    vggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrh
+    hnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhi
+    phhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:nrDgZpOlsfye0NaTNDzRbr1kyCnwXk0bqmse2lkkAYItWV9v7h8ZVA>
+    <xmx:nrDgZr79zJT9-_lgffXagPwkaoRbnIvSWvlG03qVZQ2NjiN0TGXC2g>
+    <xmx:nrDgZj6CrHJp_h52tcvdRXKISJm7EtlBxAGbsh9Yl6PU0IoBiGbU8A>
+    <xmx:nrDgZrjEhSZBoGZfnS_g-MLQQmkTLjK3a7UrccK1U-w3kAEcYESctw>
+    <xmx:nrDgZpRijhTpI9kzV6RbJxtrlrHuNC698S4Tdfv28edUqQd9nQBubPcN>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 35CED1C20065; Tue, 10 Sep 2024 16:48:30 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zt-HfBC0Q-DcUjHm@slm.duckdns.org>
+Date: Tue, 10 Sep 2024 21:48:10 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Serge Semin" <fancer.lancer@gmail.com>
+Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "paulburton@kernel.org" <paulburton@kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Message-Id: <b4d57581-bad7-4f6f-8d6f-733f1a5d33ba@app.fastmail.com>
+In-Reply-To: 
+ <7j6cc5i4z4nwg73fowjz756eblnesglqm72jveygqfxngw26mc@sdy6xxomo3qe>
+References: <20240612-cm_probe-v2-0-a5b55440563c@flygoat.com>
+ <20240612-cm_probe-v2-6-a5b55440563c@flygoat.com>
+ <ekvyyq3vzdbyi5suf4irfixyprvtko7rpkffwpc267kiex4ex2@lpu3ctysuviw>
+ <79acb1b1-9c1c-4a58-91a5-5dbb286717ec@app.fastmail.com>
+ <7j6cc5i4z4nwg73fowjz756eblnesglqm72jveygqfxngw26mc@sdy6xxomo3qe>
+Subject: Re: [PATCH v2 6/6] MIPS: cm: Probe GCR address from DeviceTree
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 09, 2024 at 01:40:44PM -1000, Tejun Heo wrote:
-> A task moving across CPUs should not trigger quiescent/runnable task state
-> events as the task is staying runnable the whole time and just stopping and
-> then starting on different CPUs. Suppress quiescent/runnable task state
-> events if task_on_rq_migrating().
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Suggested-by: David Vernet <void@manifault.com>
-> Cc: Daniel Hodges <hodges.daniel.scott@gmail.com>
-> Cc: Changwoo Min <multics69@gmail.com>
-> Cc: Andrea Righi <andrea.righi@linux.dev>
-> Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
 
-Applied to sched_ext/for-6.12.
 
-Thanks.
+=E5=9C=A82024=E5=B9=B49=E6=9C=8810=E6=97=A5=E4=B9=9D=E6=9C=88 =E4=B8=8B=E5=
+=8D=889:07=EF=BC=8CSerge Semin=E5=86=99=E9=81=93=EF=BC=9A
+[...]
+> Both MIPS P5600 and P6600 databooks define the GCR_BASE field as
+> optionally R/W:
+>
+> GCR_BASE 31:15 This field sets the base address of the 32KB          R=
+ or R/W
+>                GCR block of the P5600 MPS.                           (=
+IP Config-
+>                This register has a fixed value after reset if         =
+uration)
+>                configured as Read-Only (an IP Configuration Option).
+>
 
--- 
-tejun
+Thanks for the pointer, I traced code history and it seems like MIPS dec=
+ided
+to not expose this functionality at some point, but documents were not u=
+pdated.
+
+Maybe I should add a read back check here.
+
+Thanks
+--=20
+- Jiaxun
 
