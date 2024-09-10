@@ -1,120 +1,79 @@
-Return-Path: <linux-kernel+bounces-323092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533909737BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:41:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 783F39737C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B5A61F26260
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:41:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3167B289E90
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599E01917E2;
-	Tue, 10 Sep 2024 12:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B716F1917FD;
+	Tue, 10 Sep 2024 12:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="JEJX+UXr"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmrnhr8T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFD9184522;
-	Tue, 10 Sep 2024 12:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1547D191496;
+	Tue, 10 Sep 2024 12:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725972081; cv=none; b=QCL7gxcK8L3dVwVnsVNlqDNPnfbyD1711fvK6z9Py8yD5M5w8YEdFZiVIST69TBV6/9Tb2OMi2fJ5Z2WGQLID8YWWS8L5tl1glDuYZdrIMFHgj8oTdppJjg1hiqZSCymkHKG33VM6FyKKcbjqOpfi5DKBAwAyk42HShOArzdO84=
+	t=1725972093; cv=none; b=pelwX+Vh/aysBRjYC1epC8S/3ud8IwSx7ZdXMh777Wdcs8efAszty1NJTXqoXyeYSJ+/S0ihxWyr8b9Kcs8He9RYSWkwPc364dFwWP7ThT45E34XUUtXeWdq6AQXxnjbjk+uh2Te1aRwyAW9pqcO3lTCIuNgKeSe7WtDHPXxge0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725972081; c=relaxed/simple;
-	bh=m2K/Vf4byjHEn20xns9NDv3uZk9NEGFoUH+n6doRo08=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n+u2WeGWbhIJFWUzG4FYzSZuAhiKTQf0kjDj7bpQyaot2BibE6cuYQyQ6Y18nm+VtS8j2ss4VOqRp2+gwSjIqp/RRPr898sM3i22nbQNm9P4cr74ff+YBs9HUMNp8s2tZv0zrtjssW4xOcbgqCkOyNru3kGU370iQ5db6Dq0j+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=JEJX+UXr; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=Xv6rJk0HG3KR4doXkHSZBn1oVXRmhuKAGldwfUAagCk=;
-	t=1725972079; x=1726404079; b=JEJX+UXrQlfCC8c9i+ue9OhyRvTI3gdcs//2hziUtZRR3+B
-	g4eXbWi5/Pox8aKbrEZIBSaoMqWjmXTwcxX+suT/pOWnqsYwZX4GGwMyiycA8cdoHkk4AR/ocR3sk
-	f+zxObsBsIswwJt534iXCrH1VLx7lxfyjivoRNi3OpvR11E4dmefrey2GklpByTcMtAin1SuZISgs
-	KArLO8SAFg6f20FVE7JB5aVLixgdp9gu3xkwQK9ZUF68nxq/9g++Rg26x6juDMVe1BOtz8NhxYoQ7
-	9wFTiyciIwGKbZXLwBUbuZFPntPy9FzZCBekyiSS1+a1FvFkuEwPMTk7pySSuyzw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1so0BI-0006Jv-Jp; Tue, 10 Sep 2024 14:41:16 +0200
-Message-ID: <1de8359d-f231-452c-bf5c-9fc01f0ec800@leemhuis.info>
-Date: Tue, 10 Sep 2024 14:41:15 +0200
+	s=arc-20240116; t=1725972093; c=relaxed/simple;
+	bh=+6YjHJf3opWEu205zGa4rrPdFmwzUleeuk+5gD46Dxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hson85fczgzC8g1OfCtwbSCrJpHNxKuTnX028UxUlJqv7dZ05ZDEwOssHpqQPpxmHwbft99iGoR3WGpONW+YVxW9IDxLQRvJImxudjrLg+DGrOOGDjp56vTWROA5B5h0z7ij9GKk7PGOTfAFQ5Vc2my3v27FCJ6LqxqEoQUwlII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmrnhr8T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3A7BC4CECD;
+	Tue, 10 Sep 2024 12:41:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725972091;
+	bh=+6YjHJf3opWEu205zGa4rrPdFmwzUleeuk+5gD46Dxg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rmrnhr8TVp7AtPWIlqRWhHd6A+fvSJdtr+IbuYmxNL2Ci3BD28E15WLDouiMCRz8q
+	 rPjt4bxqs67TXqsDpoDaYXzcl80w+siS0FAZWTZzJQr/aGhP+3ohaLalplrnmblY8r
+	 nj5Sb+eje5/4gBTt1gnrYY2uu20IWPiwWOVPdd8vA/rLtBJXLrH8zQv8glh0vOU6Jz
+	 f5FwOEL0mIJV4AcGxEV5clxM1mmY5l8hCFLV3nVkZYImve0zTp8HuXhdxsdHcnpwPZ
+	 6P8sXtvzwMMefK1AxBPmMMFeV+++vdX9+lMa3YlaB218yew+RbuKJQkIaAA5dThjYj
+	 ngOhVjYbpvCpg==
+Date: Tue, 10 Sep 2024 14:41:27 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	asahi@lists.linux.dev
+Subject: Re: [PATCH v4 3/3] tty: serial: samsung: Fix serial rx on Apple A7-A9
+Message-ID: <esj26nonbriko4o2qqut6bsril4x5rwbwmw4qjksrnrtj2cbhl@awjqecif24m2>
+References: <20240909084222.3209-1-towinchenmi@gmail.com>
+ <20240909084222.3209-4-towinchenmi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [regression] significant delays when secureboot is enabled since
- 6.10
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Jarkko Sakkinen <jarkko@kernel.org>
-Cc: keyrings@vger.kernel.org,
- "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Pengyu Ma <mapengyu@gmail.com>,
- Roberto Sassu <roberto.sassu@huaweicloud.com>
-References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
- <db275ab4fb73fc089c66738ffbcab23557e53055.camel@HansenPartnership.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <db275ab4fb73fc089c66738ffbcab23557e53055.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1725972079;333abe14;
-X-HE-SMSGID: 1so0BI-0006Jv-Jp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909084222.3209-4-towinchenmi@gmail.com>
 
-On 10.09.24 14:22, James Bottomley wrote:
-> On Tue, 2024-09-10 at 11:01 +0200, Linux regression tracking (Thorsten
-> Leemhuis) wrote:
->>
->> 6519fea6fd372b ("tpm: add hmac checks to tpm2_pcr_extend()") [v6.10-
->> rc1]
->>
->> https://bugzilla.kernel.org/show_bug.cgi?id=219229 :
->>
->>> When secureboot is enabled,
->>> the kernel boot time is ~20 seconds after 6.10 kernel.
->>> it's ~7 seconds on 6.8 kernel version.
->>>
->>> When secureboot is disabled,
->>> the boot time is ~7 seconds too.
->>>
->>> Reproduced on both AMD and Intel platform on ThinkPad X1 and T14.
-> 
-> We always suspected encryption and hmac would add overheads which is
-> why it's gated by a config option.  The way to fix this is to set
-> 
-> CONFIG_TCG_TPM_HMAC to N
+Hi Nick,
 
-FWIW (mainly for others that later find this thread on lore), I's pretty
-sure James meant CONFIG_TCG_TPM2_HMAC.
+> +#define APPLE_S5L_UTRSTAT_RXTO_LEGACY	BIT(3)
+>  #define APPLE_S5L_UTRSTAT_RXTHRESH	BIT(4)
+>  #define APPLE_S5L_UTRSTAT_TXTHRESH	BIT(5)
+>  #define APPLE_S5L_UTRSTAT_RXTO		BIT(9)
+> -#define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f0)
+> +#define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f8)
 
-> of course, TPM transactions are then insecure, but it's the same state
-> as you were in before.
+As you are here, you could use genmask
 
-Hmmm. But it's on by default on X86_64.
+GENMASK(0xff, 3)
 
-Hmmm. If this would cause serious trouble, I'd say this is a regression
-that must be fixed, as we can't expect people to know that they need to
-turn this off. But delays during boot? Hmmm. Makes me wonder what Linus
-stance would be here. I suspect it might be "why was this enabled by
-default for x86_64 anyway, new features almost always should be off by
-default", but might be wrong there. And given that this was introduced
-in 6.10 I assume a lot of users already have CONFIG_TCG_TPM2_HMAC=Y in
-their .config files already anyway. :-/
-
-Hmmm. :-|
-
-Ciao, Thorsten
+Andi
 
