@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-323676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF2E97419D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:05:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A517A974169
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0556A285A92
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:05:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63752287AEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FFE1A4F1A;
-	Tue, 10 Sep 2024 18:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7C11A4F0A;
+	Tue, 10 Sep 2024 17:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qR7sE07K"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="shMg9m6/"
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60081A0B0D;
-	Tue, 10 Sep 2024 18:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A3C16DED5;
+	Tue, 10 Sep 2024 17:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725991535; cv=none; b=oFQgPUIQ2YHqDnqlbmSZ9qUmLOay/pj0cmfDUaHZ9G3wC8WNuHXUeazVSngTPIkhu4kLFss39aDUK0mgsncTHQC1OuAplhB3i+EWutze3ocwCMcAVjy+WfcnnX5mK3Zn+6TWvtdpIoq1VDHe5REtU2Y1xDNzdfDttq6mMGw8q5c=
+	t=1725991074; cv=none; b=r2rEzVfUdRrMTNOsKG0n1N/HI3/6mSwq48hyli4KvGpQuLwEuIpOrIYZpXrbK65KQ65Cj2uGfVt8OeC14GuC2fBZZm+DgXPWaadsmy+3ylZcysxBIC1ECWqJT9Pou+yEzYgmAg5m1O5t3u0wlrrrGCoJkI6168EV7g+oNGU3UxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725991535; c=relaxed/simple;
-	bh=nYIXU5OMRZPbwJcZmX8U4VoDzIL/uNNlSUscY2JAgo8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pbP1El/dh7YHOwr7u7xeFgdXKsXkyLRe/EsWFnWTiXfEbidjYQpenKb7Cjo5ByL/WDQcYUvCaTM/2UHGxRD7eTtxUvFaNDtXgU7kiaTvWRivoV4VArGFlxhCVQhQ6kVNSo6HzJCzcyoE+VTygzkYtr8IAobLbQEeSfQ6V3PgdcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qR7sE07K; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725991532;
-	bh=nYIXU5OMRZPbwJcZmX8U4VoDzIL/uNNlSUscY2JAgo8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qR7sE07Krxu7zZ6l4JFvuRom0n4KtPs3RlU8SV7QS/rUt1AIxR3XX+8j/FQu458Qo
-	 86mGDvgxPIOWCyYMcogx1lGbzXx8uT4aiznaUbXEhj0SViHasmezKWDqbM15KoC+HO
-	 jil1lkp0F6VtjgemgE3gFosv+gtj2Zlc+hcOPouFTOzuuB3ljTQsnwKKcVQJTgLK+m
-	 hlMpGsbCPiaxBahYOWgyc5IfL/KdRX3nlOgxM3z039HWuc9gAt4YH5kdrsnbNvgI27
-	 1XYygrNTIer6p0LOKo0Va8HAkVDvlCQxcbwFpUXgvdaQVYcfBr3GbbyN0UIWSBpho4
-	 72tznkFzGag4g==
-Received: from jupiter.universe (dyndsl-091-248-215-127.ewe-ip-backbone.de [91.248.215.127])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id D37A617E35FE;
-	Tue, 10 Sep 2024 20:05:31 +0200 (CEST)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id 91E174800F8; Tue, 10 Sep 2024 20:05:31 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Elaine Zhang <zhangqing@rock-chips.com>,
-	=?UTF-8?q?Adri=C3=A1n=20Mart=C3=ADnez=20Larumbe?= <adrian.larumbe@collabora.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	kernel@collabora.com
-Subject: [PATCH v1 4/6] dt-bindings: power: rockchip: add regulator support
-Date: Tue, 10 Sep 2024 19:57:13 +0200
-Message-ID: <20240910180530.47194-5-sebastian.reichel@collabora.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240910180530.47194-1-sebastian.reichel@collabora.com>
-References: <20240910180530.47194-1-sebastian.reichel@collabora.com>
+	s=arc-20240116; t=1725991074; c=relaxed/simple;
+	bh=rdRAE/ICr34khZmo66LD3I/QSBaBHEaIbem+AJltasQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AzYjGjO8+Vf+Bw9B9xM5YG7tz1GYzzSrVJocNY1ScqqukvFQbMVAVzd2Gp2OlV0cs5zjlvhErCe73xxySHzV1q2Q0KyNE3KTfWV6njpf4V1TzVt6mLckAKBCBgNg0E2o/434wIS8NIRJ6+5IBPmk5dyWdhz/q6iSKKan3YBtmDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=shMg9m6/; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1725991072; x=1757527072;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Y29GAMmX7rSiYp8XFiaq/GS0tAhPK0+7Ska+Uh/bulY=;
+  b=shMg9m6/Nu3L/SJE6jCwcCUgOLacmvDbcKOZO9OS851tBkitE44OxqbA
+   hajnUCjhMv6VcwhO+9CIOt1VMr+BeaaP+cucDep5o6sUZ6FmpvsVKtsk6
+   yX49pecSRsKE6DqGe04GrQrRIMzlcQcCnbxRzQus06tSE0z2J7r2s2LSC
+   U=;
+X-IronPort-AV: E=Sophos;i="6.10,217,1719878400"; 
+   d="scan'208";a="124650064"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 17:57:48 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.7.35:62191]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.54.75:2525] with esmtp (Farcaster)
+ id 3fe5cdd4-7827-4c44-aca2-9f2c9349c46b; Tue, 10 Sep 2024 17:57:48 +0000 (UTC)
+X-Farcaster-Flow-ID: 3fe5cdd4-7827-4c44-aca2-9f2c9349c46b
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 10 Sep 2024 17:57:48 +0000
+Received: from 88665a182662.ant.amazon.com (10.187.171.20) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Tue, 10 Sep 2024 17:57:45 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <rao.shoaib@oracle.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in unix_stream_read_actor (2)
+Date: Tue, 10 Sep 2024 10:57:37 -0700
+Message-ID: <20240910175737.78567-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <943f2045-a89e-4d00-958d-e27c22918820@oracle.com>
+References: <943f2045-a89e-4d00-958d-e27c22918820@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,34 +76,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D044UWB003.ant.amazon.com (10.13.139.168) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Add optional support for a voltage supply required to enable a
-power domain. The binding follows the way it is handled by the
-Mediatek binding to keep things consistent.
+From: Shoaib Rao <rao.shoaib@oracle.com>
+Date: Tue, 10 Sep 2024 09:55:03 -0700
+> On 9/9/2024 5:48 PM, Kuniyuki Iwashima wrote:
+> > From: Shoaib Rao <rao.shoaib@oracle.com>
+> > Date: Mon, 9 Sep 2024 17:29:04 -0700
+> >> I have some more time investigating the issue. The sequence of packet
+> >> arrival and consumption definitely points to an issue with OOB handling
+> >> and I will be submitting a patch for that.
+> > 
+> > It seems a bit late.
+> > My patches were applied few minutes before this mail was sent.
+> > https://urldefense.com/v3/__https://lore.kernel.org/netdev/172592764315.3964840.16480083161244716649.git-patchwork-notify@kernel.org/__;!!ACWV5N9M2RV99hQ!M806VrqNEGFgGXEoWG85msKAdFPXup7RzHy9Kt4q_HOfpPWsjNHn75KyFK3a3jWvOb9EEQuFGOjpqgk$
+> > 
+> 
+> That is a subpar fix. I am not sure why the maintainers accepted the fix 
+> when it was clear that I was still looking into the issue.
 
-This will initially be used by the RK3588 GPU power domain, which
-fails to be enabled when the GPU regulator is not enabled.
+Just because it's not a subpar fix and you were slow and wrong,
+clining to triggering the KASAN splat without thinking much.
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- .../devicetree/bindings/power/rockchip,power-controller.yaml   | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power/rockchip,power-controller.yaml b/Documentation/devicetree/bindings/power/rockchip,power-controller.yaml
-index 0d5e999a58f1..0b4c5b174812 100644
---- a/Documentation/devicetree/bindings/power/rockchip,power-controller.yaml
-+++ b/Documentation/devicetree/bindings/power/rockchip,power-controller.yaml
-@@ -131,6 +131,9 @@ $defs:
-           A number of phandles to clocks that need to be enabled
-           while power domain switches state.
- 
-+      domain-supply:
-+        description: domain regulator supply.
-+
-       pm_qos:
-         $ref: /schemas/types.yaml#/definitions/phandle-array
-         items:
--- 
-2.45.2
+> Plus the 
+> claim that it fixes the panic is absolutely wrong.
 
+The _root_ cause of the splat is mishandling of OOB in manage_oob()
+which causes UAF later in another recvmsg().
+
+Honestly your patch is rather a subpar fix to me, few points:
+
+  1. The change conflicts with net-next as we have already removed
+     the additional unnecessary refcnt for OOB skb that has caused
+     so many issue reported by syzkaller
+
+  2. Removing OOB skb in queue_oob() relies on the unneeded refcnt
+     but it's not mentioned; if merge was done wrongly, another UAF
+     will be introduced in recvmsg()
+
+  3. Even the removing logic is completely unnecessary if manage_oob()
+     is changed
+
+  4. The scan_again: label is misplaced; two consecutive empty OOB skbs
+     never exist at the head of recvq
+
+  5. ioctl() is not fixed
+
+  6. No test added
+
+  7. Fixes: tag is bogus
+
+  8. Subject lacks target tree and af_unix prefix
 
