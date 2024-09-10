@@ -1,148 +1,131 @@
-Return-Path: <linux-kernel+bounces-323245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F258F973A00
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:35:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C721973A07
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3185A1C2478E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:35:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC35B1F25455
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE85194C79;
-	Tue, 10 Sep 2024 14:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DFBcdUGt"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55798194C8B;
+	Tue, 10 Sep 2024 14:36:42 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0305183094
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E1418C928;
+	Tue, 10 Sep 2024 14:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725978942; cv=none; b=lzN20iT6F972zorZ3Cx+8ahwHCr859XiLmQlHIy/Uvn4V5E6lgNwVD+kCyik5fwGX5HI4mqUANOJLUHW2+vnOrADwyoFd2votx+uFhWa+M+IovJHws4gFjVhS+uV5xTNToeEx8JRxtp9mkXIsc9Dv5eM8FnDa59MxUxG11dWVRQ=
+	t=1725979002; cv=none; b=pMqb5CodPEpA3JyyqpzGjKYdFbA6jR5sWNbSxPCgVVKwfJ2xefYxBJ41lUU+35z6KgXwo2YExVUgUdGsYDyg/e/ziNOnyuJuSJs4SQKmvLf8xsgQERh/+H/MHn9UIm0a0WrswOTbXxEJpXa09xh2nT40UAiI9uUlfMLw4uoNUoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725978942; c=relaxed/simple;
-	bh=7RCDHK+BTLtJJc3M9GwORWj8tI6RSH+IGiIxcm0cxME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PyLzG2LsWEuyffab+ZR9Ch+3vMYsi/INDRZDJyN+h1qYN4HfgXK4TAWA01jUDfnXLLOUGVlpru3o1j5gkgPFT9wo4FFBhG1pzrWYX1RvCzP5lPElS1qk0n/XzJz34RaJUvF/pU9ZsbCwDdQbYtgkEUx2hOCac/qZQdcfn3jBWUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DFBcdUGt; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-49bd32f6a11so261820137.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725978939; x=1726583739; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WifKBD4WaotF8X+UtX2lfxD1eqAgMkavmDZNd0guNfs=;
-        b=DFBcdUGtlcNfs8DXsRQ2bmFiOpc3pCRTp4d7NQhUL1OOBMvUZix8AsEOi1TqZtzcUq
-         fMjNbb6plPaX0ixcYDcT4eupqn+lfDdctfhMYj+J5gBvp/7x7ny8FcDpoytfcF/1/tXu
-         r58YdKfp8drHXShS0Pg2ak/1WSpNc/S0nJZUgVN3wH4YxTY8342DEqZvxFScNcd4GR6P
-         XrVL7uYEPnUmsvIyIo7PreecZtymLvU92mzRmlVXFd8TtEwwnA/kaMYRlTzmXQ3IxlJf
-         2YCdAO97/7ymI7n6gIceVjxcLyuxfhzNCbK3Y04cUcopCY7ygvfYp6Ua/PnaSR0GoykS
-         gmbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725978939; x=1726583739;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WifKBD4WaotF8X+UtX2lfxD1eqAgMkavmDZNd0guNfs=;
-        b=dJWz2TYKQZr+14LtE7u5gSay9iWfkitpIeN8w+AMbEISJVaMJu/QU1yjqU7+EqXANm
-         9GRD7SbigCNKpqV6G95PK/CvGMaTY5ljLsGKIkaYjRysImrSGk4R9rKQo3FrQMiGN044
-         TR9XgSyGOLFHBNx0H6NjdMzrEBv5MXIw45ocA0TULh9QtZayKu+OQUPF+4OOFdHSr2K2
-         ndhBVRp0GaqsPmpFZWuFCLFoMJPY5+PBV7kam2x0Se3boAYo5sqvv5Ai9r9vZ+wziOQj
-         MxUNFMIkZlwng2BzTMP6H26fIkGdi8vzywAcDT4RvwnXV9ubypnx7GF5vkxM/0S8JY5o
-         n9Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCVPPjlbYchVN6wHmoFeb9PywNHAT92BGw2XKKm00iaGiHP8EAjfwH2Or0i+LKnjWMe+XlYYa4DluSBjmdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOHWD2Thu6SiMjtRGZoEdZUr9kIeOCGUge6MexfTPAC7w7pEs2
-	tHDYn5zJy5IdyQ/ccm2OXq/uv4GDRzO02+CmL8NGaQIR2WXk6+H+o+9wHmspC0i21y+dVGIxaI4
-	WC/v5myHAyDHS3putaKiiQoa5UbHYdPylq99cRA==
-X-Google-Smtp-Source: AGHT+IG56IxeJxMzo//8/ECLyeSetMnxmdoCauE97u7O2Z/LJKU+8CVElNiOE3Mdlcu/xMKPnyg4APMxgLv49j/w4BI=
-X-Received: by 2002:a05:6122:791:b0:4f5:3048:ee20 with SMTP id
- 71dfb90a1353d-502be8cecb7mr8674939e0c.5.1725978938569; Tue, 10 Sep 2024
- 07:35:38 -0700 (PDT)
+	s=arc-20240116; t=1725979002; c=relaxed/simple;
+	bh=wOLpU1b/pM0DovA9W+IpisxUVNxMO82yHVCaODl2umk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BzBDXl5WLUk9IGwdYPP2H+rCB5DF7rEN+tO2Kh53UqlAmivxMSj6WiNJ0U+eoE2xV7aSioXM6RtW+J8Jp6l2vNx0AMAkjzloEs5N7stDMPVNCp7BbduJ3UKAL8heKwpk7z/9ocVb0tgZrHj1OPlJW3UDVvkFhk+MLCtDGaqeCHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4X35Gh1rqnz9v7Jf;
+	Tue, 10 Sep 2024 22:11:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 24186140133;
+	Tue, 10 Sep 2024 22:36:34 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDndy9oWeBmAWqmAA--.53179S2;
+	Tue, 10 Sep 2024 15:36:33 +0100 (CET)
+Message-ID: <a9502b8097841c36ca13871b22149eadd3fde355.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 00/14] KEYS: Add support for PGP keys and signatures
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au, 
+ davem@davemloft.net, linux-kernel@vger.kernel.org,
+ keyrings@vger.kernel.org,  linux-crypto@vger.kernel.org,
+ zohar@linux.ibm.com,  linux-integrity@vger.kernel.org, Roberto Sassu
+ <roberto.sassu@huawei.com>,  adrian@suse.de, ro@suse.de
+Date: Tue, 10 Sep 2024 16:36:21 +0200
+In-Reply-To: <ZsSkTs4TFfx2pK8r@earth.li>
+References: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
+	 <ZsNf1VdfkHqD8R4Q@earth.li>
+	 <f142b1c4e662d4701a2ab67fa5fc839ab7109e5e.camel@huaweicloud.com>
+	 <ZsSkTs4TFfx2pK8r@earth.li>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910092557.876094467@linuxfoundation.org> <CA+G9fYufdd0MGMO1NbXgJwN1+wPHB24_Nrok9TMX=fYKXaxXLA@mail.gmail.com>
-In-Reply-To: <CA+G9fYufdd0MGMO1NbXgJwN1+wPHB24_Nrok9TMX=fYKXaxXLA@mail.gmail.com>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 10 Sep 2024 20:05:27 +0530
-Message-ID: <CA+G9fYv1yHoL9r7PkunHPNyPznLxfB9spSFbWvoFBBSwOYrT3g@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/192] 6.1.110-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org, Linux-sh list <linux-sh@vger.kernel.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Peter Zijlstra <peterz@infradead.org>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-CM-TRANSID:LxC2BwDndy9oWeBmAWqmAA--.53179S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZF1kJFWfWr1DWr17AFyUtrb_yoW8CFW3pa
+	yrWF1ayFWkJw1SkFnav3WUGFWjy39rJF15JwnxXrykCwn0qFya9F1xKa15u3s8WFn3Cw1q
+	vrW3Ja17G398AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgACBGbfq3sLqwACsP
 
-On Tue, 10 Sept 2024 at 18:24, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->
-> On Tue, 10 Sept 2024 at 15:36, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.1.110 release.
-> > There are 192 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.110-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
->
->
-> The SuperH defconfig builds failed due to following build warnings / errors
-> on the stable-rc linux-6.1.y.
->
-> * SuperH, build
->   - gcc-8-defconfig
->   - gcc-11-shx3_defconfig
->   - gcc-11-defconfig
->   - gcc-8-shx3_defconfig
->
-> Build log:
-> --------
-> In file included from  include/linux/mm.h:29,
->                  from  arch/sh/kernel/asm-offsets.c:14:
->  include/linux/pgtable.h: In function 'pmdp_get_lockless':
->  include/linux/pgtable.h:379:20: error: 'pmd_t' has no member named 'pmd_low'
->   379 |                 pmd.pmd_low = pmdp->pmd_low;
->       |                    ^
->  include/linux/pgtable.h:379:35: error: 'pmd_t' has no member named 'pmd_low'
->   379 |                 pmd.pmd_low = pmdp->pmd_low;
->       |                                   ^~
->
+On Tue, 2024-08-20 at 15:12 +0100, Jonathan McDowell wrote:
+> On Mon, Aug 19, 2024 at 05:15:02PM +0200, Roberto Sassu wrote:
+> > On Mon, 2024-08-19 at 16:08 +0100, Jonathan McDowell wrote:
+> > > On Sun, Aug 18, 2024 at 06:57:42PM +0200, Roberto Sassu wrote:
+> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > >=20
+> > > > Support for PGP keys and signatures was proposed by David long time=
+ ago,
+> > > > before the decision of using PKCS#7 for kernel modules signatures
+> > > > verification was made. After that, there has been not enough intere=
+st to
+> > > > support PGP too.
+> > >=20
+> > > You might want to update the RFC/bis references to RFC9580, which was
+> > > published last month and updates things.
+> >=20
+> > Yes, makes sense (but probably isn't too much hassle to support more
+> > things for our purposes?)
+>=20
+> I'm mostly suggesting that the comments/docs point to the latest
+> standard rather than the draft version, not changing to support the new
+> v6 keys.
+>=20
+> > > Also, I see support for v2 + v3 keys, and this doesn't seem like a go=
+od
+> > > idea. There are cryptographic issues with fingerprints etc there and =
+I
+> > > can't think of a good reason you'd want the kernel to support them. T=
+he
+> > > same could probably be said of DSA key support too.
+> >=20
+> > Uhm, if I remember correctly I encountered some old PGP keys used to
+> > verify RPM packages (need to check). DSA keys are not supported, since
+> > the algorithm is not in the kernel.
+>=20
+> I would question the benefit gained from using obsolete key/signature
+> types for verification (I was involved in the process of Debian dropping
+> them back in *2010* which was later than it should have been). Dropping
+> the code for that path means a smaller attack surface/maintenance
+> overhead for something that isn't giving a benefit.
 
-Anders bisected this down to,
-# first bad commit:
-  [4f5373c50a1177e2a195f0ef6a6e5b7f64bf8b6c]
-  mm: Fix pmd_read_atomic()
-    [ Upstream commit 024d232ae4fcd7a7ce8ea239607d6c1246d7adc8 ]
+Removed support for v3 PGP signatures... but that broke openSUSE
+Tumbleweed.
 
-  AFAICT there's no reason to do anything different than what we do for
-  PTEs. Make it so (also affects SH)
+[  295.837602] PGPL: Signature packet with unhandled version 3
 
---
-Linaro LKFT
-https://lkft.linaro.org
+Roberto
+
 
