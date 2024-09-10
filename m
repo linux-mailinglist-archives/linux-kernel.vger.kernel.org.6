@@ -1,47 +1,94 @@
-Return-Path: <linux-kernel+bounces-322546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8180F972A9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:26:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80017972AA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1DCA1C23D3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:26:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16B631F25130
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68B817CA09;
-	Tue, 10 Sep 2024 07:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EE717D358;
+	Tue, 10 Sep 2024 07:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WL1ObNIm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zUWLy9Ov";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="td/M7CLG";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zUWLy9Ov";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="td/M7CLG"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF5D335A7;
-	Tue, 10 Sep 2024 07:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CD317BB3F;
+	Tue, 10 Sep 2024 07:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725953200; cv=none; b=pD5BenN4KrzJYEjE+1zWeZSSk4KWO8hDIv3C2WKRPPCPFeZH9VLnHfU7ynE8PgUKDg4pzP0NKJYEBlfF22TlZsnIks/dlrKDMiDSrm+0Z2b805kssBukwEZSs7mTSYWP15BYCcINpleVB5N2AA/0fEajY50gr0e8ZjuKp0jGNIo=
+	t=1725953213; cv=none; b=gDyUtxlH4oMLPj/3d6LhgW206YeWIY8g67jV+ebCXM1r/5zp7r7Hk4yK1YWq84OeNdP1G6KSjiTvuSmgA/qSr0vjmOS1UgwiSCYeUiP+WemrmrbmX1m4QAIjstAwXrNAum92Q3fn5AXKasHQPA4lA+K7Vh6M/cxNFUkPYTjEVo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725953200; c=relaxed/simple;
-	bh=c7SEPg78L7aXvA8zp/wEXCqRIxwD84K8s9j7Fcayr90=;
+	s=arc-20240116; t=1725953213; c=relaxed/simple;
+	bh=xw60bUIRo7WKTtSnWsEqgbl4rhYeBzdN89V46KJZgqg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=POZLaN2IR0hEwz9IrX2mEYi8RuOifq5OQzB0X5wDFFvcEbNqJg+0Od5YU7ugQ0q7WgW6P88ZvIvOphrXx+bAbajsuWcKLPouN7x8Kz7lZioMOEtnjeV12e6pdT6Mq9sPuZyS/rW9aZm6JlTI1dM4uXGPS37ob7JFkdNVgdU5Ipg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WL1ObNIm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B72BC4CEC3;
-	Tue, 10 Sep 2024 07:26:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725953199;
-	bh=c7SEPg78L7aXvA8zp/wEXCqRIxwD84K8s9j7Fcayr90=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WL1ObNImc6XB/G6SMInxizHHTBX09O1Ae6dE1z6rvaxGYqTdK//1PyRDBj8gbumJd
-	 7s9wh7O8HU8YLfviOdpznKSj2RFypGRyI7WhLvvwfMzYAyh270bj7xKlOD9oDcYeQ1
-	 rzcf0fJM/450VcicxYPzp8ODdQio6Z8MO+JQfRODaHgzA11kLULEbsrAwZtW5Zf+Ss
-	 TW7HhnB2m4a/G7tFUmEjASLeNQI83rY7bhq7zuSY1aLrrwOP5bSSum3DoAK8z9gJTd
-	 oP9ifSN2tIVrV+A2eKRsy3KMosu4Qldf4DM16PZZH9YJu0wVfnugzmhi7JjcTkA7ds
-	 BxZO0xdUwOq9g==
-Message-ID: <469efcd0-148c-4a71-b315-043ac59df838@kernel.org>
-Date: Tue, 10 Sep 2024 09:26:33 +0200
+	 In-Reply-To:Content-Type; b=lpx4QmVA5bI8+Q83m1YO6IPuigrOYLqKXzsE539+JBZkfDZJEjJcJFvY7fkcfKE7+6f8CGcMFh69rYqmF/DvFoZsNxZdwDbX/UUilrEHcIY9LOLd3PhsSco3VhJdNYqb0bHA9xy6VQhVNfVPusWglNBQ+sm6B/F730QewNyZuG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zUWLy9Ov; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=td/M7CLG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zUWLy9Ov; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=td/M7CLG; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BEF00219FB;
+	Tue, 10 Sep 2024 07:26:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725953203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=m7fVBlL4PNu24Is+8HspZt8gB7mcRXk5r+0veAHr0/w=;
+	b=zUWLy9OvAO7XrxoS6/UoJhkJSrj0WB+6fVF6nDh1pZmKtFVCfEXqJNKgFj18SsmLMBmMy5
+	VHyBv1nUd3A0tiOCUZ6C6MsMedok/C/qhTHobr9SPz/p2kTCp2IsTPeCrdejqpqnpHxL1H
+	QrxtOlzVSKrZ2v+uZr2jEgR+e14sHOs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725953203;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=m7fVBlL4PNu24Is+8HspZt8gB7mcRXk5r+0veAHr0/w=;
+	b=td/M7CLG23zworLW4Ao5DjziNtE2XM3TIOp3+791DBeDDuhtff3nXK8o1URUxeLVkjcKBr
+	yepoUyf+F6YU43BA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725953203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=m7fVBlL4PNu24Is+8HspZt8gB7mcRXk5r+0veAHr0/w=;
+	b=zUWLy9OvAO7XrxoS6/UoJhkJSrj0WB+6fVF6nDh1pZmKtFVCfEXqJNKgFj18SsmLMBmMy5
+	VHyBv1nUd3A0tiOCUZ6C6MsMedok/C/qhTHobr9SPz/p2kTCp2IsTPeCrdejqpqnpHxL1H
+	QrxtOlzVSKrZ2v+uZr2jEgR+e14sHOs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725953203;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=m7fVBlL4PNu24Is+8HspZt8gB7mcRXk5r+0veAHr0/w=;
+	b=td/M7CLG23zworLW4Ao5DjziNtE2XM3TIOp3+791DBeDDuhtff3nXK8o1URUxeLVkjcKBr
+	yepoUyf+F6YU43BA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7729713A3A;
+	Tue, 10 Sep 2024 07:26:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id EapyG7P032YTJgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 10 Sep 2024 07:26:43 +0000
+Message-ID: <0cbcaa64-2cbe-4c8e-86a0-e12da60a42ab@suse.de>
+Date: Tue, 10 Sep 2024 09:26:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,155 +96,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: Add Realtek switch
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- tsbogend@alpha.franken.de, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-References: <20240909014707.2003091-1-chris.packham@alliedtelesis.co.nz>
- <20240909014707.2003091-2-chris.packham@alliedtelesis.co.nz>
- <63sbuzij27crjxv6d6qjblv55al5zk4ivsah4ji2kvddhbua57@xo4vt2tqs5cn>
- <01656780-0a90-4c7b-bedf-2e45992cd16c@alliedtelesis.co.nz>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] fbdev/xen-fbfront: Assign fb_info->device
+To: Jason Andryuk <jandryuk@gmail.com>, Helge Deller <deller@gmx.de>,
+ Arnd Bergmann <arnd@arndb.de>, Sam Ravnborg <sam@ravnborg.org>
+Cc: xen-devel@lists.xenproject.org, Jason Andryuk <jason.andryuk@amd.com>,
+ Arthur Borsboom <arthurborsboom@gmail.com>, stable@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20240910020919.5757-1-jandryuk@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <01656780-0a90-4c7b-bedf-2e45992cd16c@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=UTF-8
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20240910020919.5757-1-jandryuk@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-
-On 09/09/2024 22:36, Chris Packham wrote:
-> Hi Krzysztof,
-> 
-> On 9/09/24 18:38, Krzysztof Kozlowski wrote:
->> On Mon, Sep 09, 2024 at 01:47:06PM +1200, Chris Packham wrote:
->>> Add device tree schema for the Realtek switch. Currently the only
->>> supported feature is the syscon-reboot which is needed to be able to
->>> reboot the board.
->>>
->>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->>> ---
->>>   .../bindings/mfd/realtek,switch.yaml          | 50 +++++++++++++++++++
->>>   1 file changed, 50 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/mfd/realtek,switch.yaml
->> Use compatible as filename.
-> 
-> My hope was eventually that this would support multiple Realtek 
-> switches. But sure for now at least I can name it after the one in front 
-> of me.
-
-This might never happen, so unless you document more models now, I
-strongly suggest using compatible as filename.
-
-> 
->>
->>> diff --git a/Documentation/devicetree/bindings/mfd/realtek,switch.yaml b/Documentation/devicetree/bindings/mfd/realtek,switch.yaml
->>> new file mode 100644
->>> index 000000000000..84b57f87bd3a
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/mfd/realtek,switch.yaml
->>> @@ -0,0 +1,50 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://scanmail.trustwave.com/?c=20988&d=55fe5gyquxahZ_dJqiHMxmkDG8M1MWjoNtZN70yrng&u=http%3a%2f%2fdevicetree%2eorg%2fschemas%2fmfd%2frealtek%2cswitch%2eyaml%23
->>> +$schema: http://scanmail.trustwave.com/?c=20988&d=55fe5gyquxahZ_dJqiHMxmkDG8M1MWjoNoNFvkz8nA&u=http%3a%2f%2fdevicetree%2eorg%2fmeta-schemas%2fcore%2eyaml%23
->>> +
->>> +title: Realtek Switch with Internal CPU
->> What sort of Switch? Like network switch? Then this should be placed in
->> respective net (or deeper, e.g. net/dsa/) directory.
-> Yes network switch. But this is one of those all in one chips that has a 
-> CPU, network switch and various peripherals. MFD seemed appropriate.
-
-There is no such device as MFD. MFD is a Linux framework.
-
->>
->> Maintainers go here. See example-schema.
-> 
-> Ack.
-> 
->>> +
->>> +description:
->>> +  The RTL9302 ethernet switch has an internal CPU. The switch is a multi-port
->>> +  networking switch that supports many interfaces. Additionally, the device can
->>> +  support MDIO, SPI and I2C busses.
->> I don't get why syscon node is called switch. This looks incomplete or
->> you used description from some other device.
-> 
-> Yes I did take a lot of inspiration from the mscc,ocelot. I am working 
-> on more support for the switch and some of the other peripherals so I 
-> figured I'd word it towards that end goal. If you prefer I could word 
-> this more towards the one function (reboot) that is supported right now.
-
-Your commit msg is not explaining here much. And "Currently the only
-supported" feels like a driver description. We expect bindings to be
-complete. It's fine to bring partial description of hardware, but this
-should be explained in the commit msg and entire binding should be still
-created to accommodate that full description.
-
-However such complex devices like Ocelot should be described fully so we
-can easily see how you organize entire binding.
-
-> 
->> But if this is DSA, then you miss dsa ref and dsa-related properties.
-> 
-> So far I'm resisting DSA. The usage of the RTL9300 as a SoC+Switch 
-> doesn't really lend itself to the DSA architecture (there is a external 
-> CPU mode that would). I think eventually we'd end up with something like 
-> the mscc,oscelot where both switchdev and DSA usage is supported. There 
-> would be some properties (e.g. port/phy arrangement) that apply to both 
-> uses.
-
-This feels ok, although you really should create complete binding here.
-
-> 
-> I have got a (kind of) working proof of concept switchdev driver which 
-> has some of the support you've mentioned. It's not really ready so I 
-> didn't include the dt-binding for that stuff in this patch.
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,gmx.de,arndb.de,ravnborg.org];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[lists.xenproject.org,amd.com,gmail.com,vger.kernel.org,lists.freedesktop.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
 
-Best regards,
-Krzysztof
+
+Am 10.09.24 um 04:09 schrieb Jason Andryuk:
+> From: Jason Andryuk <jason.andryuk@amd.com>
+>
+> Probing xen-fbfront faults in video_is_primary_device().  The passed-in
+> struct device is NULL since xen-fbfront doesn't assign it and the
+> memory is kzalloc()-ed.  Assign fb_info->device to avoid this.
+>
+> This was exposed by the conversion of fb_is_primary_device() to
+> video_is_primary_device() which dropped a NULL check for struct device.
+>
+> Fixes: f178e96de7f0 ("arch: Remove struct fb_info from video helpers")
+> Reported-by: Arthur Borsboom <arthurborsboom@gmail.com>
+> Closes: https://lore.kernel.org/xen-devel/CALUcmUncX=LkXWeiSiTKsDY-cOe8QksWhFvcCneOKfrKd0ZajA@mail.gmail.com/
+> Tested-by: Arthur Borsboom <arthurborsboom@gmail.com>
+> CC: stable@vger.kernel.org
+> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+Thanks a lot.
+
+> ---
+> The other option would be to re-instate the NULL check in
+> video_is_primary_device()
+> ---
+>   drivers/video/fbdev/xen-fbfront.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/video/fbdev/xen-fbfront.c b/drivers/video/fbdev/xen-fbfront.c
+> index 66d4628a96ae..c90f48ebb15e 100644
+> --- a/drivers/video/fbdev/xen-fbfront.c
+> +++ b/drivers/video/fbdev/xen-fbfront.c
+> @@ -407,6 +407,7 @@ static int xenfb_probe(struct xenbus_device *dev,
+>   	/* complete the abuse: */
+>   	fb_info->pseudo_palette = fb_info->par;
+>   	fb_info->par = info;
+> +	fb_info->device = &dev->dev;
+>   
+>   	fb_info->screen_buffer = info->fb;
+>   
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
