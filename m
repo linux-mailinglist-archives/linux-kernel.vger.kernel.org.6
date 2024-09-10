@@ -1,74 +1,52 @@
-Return-Path: <linux-kernel+bounces-322251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C4F972652
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:48:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44EE1972653
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E0B41F24DE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:48:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F05981F244B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FED59167;
-	Tue, 10 Sep 2024 00:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FB623AB;
+	Tue, 10 Sep 2024 00:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="KyCJpDUO"
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="M5XSzYAU"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD55D23AB;
-	Tue, 10 Sep 2024 00:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B10383A1;
+	Tue, 10 Sep 2024 00:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725929326; cv=none; b=EQF9NlVTAEkXJm/1ZTbesKaE5eFU6DgHiwAyDlFTuUkzRwMLydETiIMPcSFgNverX/J31VAp3KLruuESZlUSVYUqiyZTHKwa2C9ca90s55h+UFMsTHeMVUeg3gf1qzXOkS17JBszJz8w2B5446Ykn5eybtWv5PH1a70+AF8SglU=
+	t=1725929352; cv=none; b=bsXdmYJmweovLkSOb2jDZ5n78tFeonhoEXVCGuTkqtVxX07RT89JiQExr3UZ+8fqNp6Gut30Lk6mC2/O9wFFr7/fs0ruxf8w9YoxqL4HxUqUOOnV4Ribos6czlJgL8Fdj/HTNX290/J28VswCL5mNnRMQ2YDO3vINwPgFBL1ho8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725929326; c=relaxed/simple;
-	bh=48LqUnlveeKws5INMRkRdQ0zAZs9FCjCeB1ES5t8XxI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r19UdTT7FKPttLxf0kBJB3zyRno4k8T9lNVypIZRgJt+XM3FU9St4EQ7mhy11Dq2r8pyItCnOiOZAnifvb3/0jLIXiSJagFz6CpkOBOrAfZw58ENOyHqixlQPT37b0zp1aUriCKtyKjMIMeOKAthlmVBjmRjlXK1gbPoXVw4tEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=KyCJpDUO; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1725929325; x=1757465325;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=8Y/as7NM5A/YC0hwcOIyH/PqCpBCUn17L7+PjNvM+84=;
-  b=KyCJpDUOw8wj4+i/AtuygW62RDMlEj6mPxjU6iyq0ZPRZglCsJndXRRT
-   ndVlkjn687Eh/QAz4+kSTNEsNmPfxn2nJh+YzNB9O3cPM6rVt/ogcx/P9
-   nNMIP3oL40hpTW4SvaOwBQx7PVbISlKgESSzHZvdaTIPrdKBOioTqNMQj
-   o=;
-X-IronPort-AV: E=Sophos;i="6.10,215,1719878400"; 
-   d="scan'208";a="230762294"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 00:48:42 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:64334]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.7.247:2525] with esmtp (Farcaster)
- id 3520f5f3-71f7-4eda-8088-d62542c3ca1b; Tue, 10 Sep 2024 00:48:41 +0000 (UTC)
-X-Farcaster-Flow-ID: 3520f5f3-71f7-4eda-8088-d62542c3ca1b
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 10 Sep 2024 00:48:40 +0000
-Received: from 88665a182662.ant.amazon.com (10.187.170.41) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Tue, 10 Sep 2024 00:48:37 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <rao.shoaib@oracle.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in unix_stream_read_actor (2)
-Date: Mon, 9 Sep 2024 17:48:29 -0700
-Message-ID: <20240910004829.38680-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <2dd7aea9-93a1-4fbb-91a8-b7f3acd02a60@oracle.com>
-References: <2dd7aea9-93a1-4fbb-91a8-b7f3acd02a60@oracle.com>
+	s=arc-20240116; t=1725929352; c=relaxed/simple;
+	bh=0Pq34FGLz5PDpqHXwIu6shwPkRhwzZRLFooS7lU80j0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o7bf1dBpALlttQkwWxD4SPADvF6AI0t6t9VGYAhmispQ8LgesMIXsR+r0qcE0v4tsiv8HJjLM+2sN+myCNprXJHe5mbGWTXheXEz9gqg2YVjeiFU/vkETFe+mtkeXp36Oz2oIXQrKtQAQpH3EH3PU6uy6kDhP8cREbdju8g4ZMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=M5XSzYAU; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725929346; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=ngTG0x9JjXf9xOSVJ5quw1HFve2xFpS9Tn58NkPkKns=;
+	b=M5XSzYAU4Ju7Qni+xmLil0PLgPmKXzY2SVa7mILINVZ/oOnPTVePs9BizzJl2bBkQlIiaIgHq3RMkY1ZISjHR5hnTooFtakc54Va/cJ7eSQK9EzDn2fZ3aTLbDH71JOiyyyo9KEthij1b7ltOd5lw5hISZdccUC0y6+PdKYYaBw=
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0WEhwU3Z_1725929345)
+          by smtp.aliyun-inc.com;
+          Tue, 10 Sep 2024 08:49:05 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] bcachefs: Remove unneeded semicolon
+Date: Tue, 10 Sep 2024 08:49:03 +0800
+Message-Id: <20240910004903.26693-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,66 +54,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D038UWB002.ant.amazon.com (10.13.139.185) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-From: Shoaib Rao <rao.shoaib@oracle.com>
-Date: Mon, 9 Sep 2024 17:29:04 -0700
-> I have some more time investigating the issue. The sequence of packet 
-> arrival and consumption definitely points to an issue with OOB handling 
-> and I will be submitting a patch for that.
+./fs/bcachefs/btree_cache.c:502:13-14: Unneeded semicolon
 
-It seems a bit late.
-My patches were applied few minutes before this mail was sent.
-https://lore.kernel.org/netdev/172592764315.3964840.16480083161244716649.git-patchwork-notify@kernel.org/
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=10821
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ fs/bcachefs/btree_cache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/fs/bcachefs/btree_cache.c b/fs/bcachefs/btree_cache.c
+index 7b951b273306..bfd4cec70744 100644
+--- a/fs/bcachefs/btree_cache.c
++++ b/fs/bcachefs/btree_cache.c
+@@ -499,7 +499,7 @@ static unsigned long bch2_btree_cache_scan(struct shrinker *shrink,
+ 		if (btree_node_accessed(b)) {
+ 			clear_btree_node_accessed(b);
+ 			bc->not_freed[BCH_BTREE_CACHE_NOT_FREED_access_bit]++;
+-			--touched;;
++			--touched;
+ 		} else if (!btree_node_reclaim(c, b, true)) {
+ 			bch2_btree_node_hash_remove(bc, b);
+ 
+-- 
+2.32.0.3.g01195cf9f
 
-> 
-> kasan does not report any issue because there are none. While the 
-> handling is incorrect, at no point freed memory is accessed. EFAULT 
-> error code is returned from __skb_datagram_iter()
-> 
-> /* This is not really a user copy fault, but rather someone 
-> 
->   * gave us a bogus length on the skb.  We should probably 
-> 
->   * print a warning here as it may indicate a kernel bug. 
-> 
->   */ 
-> 
-> 
-> fault: 
-> 
->      iov_iter_revert(to, offset - start_off); 
-> 
->      return -EFAULT;
-> 
-> As the comment says, the issue is that the skb in question has a bogus 
-> length. Due to the bug in handling, the OOB byte has already been read 
-> as a regular byte, but oob pointer is not cleared, So when a read with 
-> OOB flag is issued, the code calls __skb_datagram_iter with the skb 
-> pointer which has a length of zero. The code detects it and returns the 
-> error. Any doubts can be verified by checking the refcnt on the skb.
-> 
-> My conclusion is that the bug report by syzbot is not caused by the 
-> mishandling of OOB,
-
-It _is_ caused by mishandling of OOB as you wrote in your patch.
-
-  ---8<---
-  Send OOB
-  Read OOB
-  Send OOB
-  Read (Without OOB flag)
-
-  The last read returns the OOB byte, which is incorrect.
-  ---8<---
-
-
-> unless there was code added to disregard the skb 
-> length and read a byte.
-> 
-> The error being returned is confusing. The callers should not pass this 
-> error to the application. They should process the error.
 
