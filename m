@@ -1,179 +1,158 @@
-Return-Path: <linux-kernel+bounces-323047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CED9736F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:16:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5C1C9736F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25DDB1F25A99
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:16:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3075CB21464
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764C718F2F0;
-	Tue, 10 Sep 2024 12:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1F318C34D;
+	Tue, 10 Sep 2024 12:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fwmy469Z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="rMwrteU8"
+Received: from pv50p00im-zteg10021401.me.com (pv50p00im-zteg10021401.me.com [17.58.6.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F46184535
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C00184535
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725970579; cv=none; b=mr7HDwyDrILBC0rS5+bAv3JqQMxx+zAYjexKb6dtM7OAwRBsp3tXSJjCcsEkfm6nk5ajl3zFfvrN/7h6/zjv+el9LBaO//Yr+s8Da2WYEfP7stMN39iCU5zRhR5QNNbMqiV0nM4Rfkl3KyxDm8qNH0C35rWZHhcmfXdvFGRcWbY=
+	t=1725970632; cv=none; b=GJl3cTJi45Sq4yCiuA/pwOby9+oB8PELrRLMABVhyJl19/FMnkPsMhvLmX1fKiqFI+OtyhfXaeFjIhmt2Feq4pfFXLmTM56YZbfdMNbNYBaDGwtSwVWAKvLruBtIP+PhNjlOqsaWH2zuYy0Jyt3RV2i3PD2deDHWc4PechDd5Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725970579; c=relaxed/simple;
-	bh=UEfWeuvm0Ydu8ziZV3f9vRnj+VSGpjuHDKnB6BVHGBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ak8xd0l+Uwvi2RITU1Bj1B/xP/F44oC5OW05jEcKPiGdwbQ60BlCjEvBn9JF9qcxj8NfckEpx6iwTg29fwYfrEVMFpFnK+WPyBEug3E/m+KRPJh7er5GdhPVYtxm715fJ/HCEc8sdtoFu1CeIBcmJfTwYc+fRTLMgJkMUQWD4EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fwmy469Z; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725970577;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TqNTsGxo7KShGTs/iiAEuAgoPybBC8iCW7tKXvfqSTE=;
-	b=fwmy469Znubw9uqU/lVnt0prsnNShV5HAWs78pWERWYtfEEVxuafgoAgLZ1Y4rusQD5901
-	fYBJEya6EmzqjsZtBP5CZCZXJ3EWrp6ERrNbNYvMqavXYYr/+CfehbC88NNUN+Hkidpent
-	m7XB5ldAw4ekdpC/N1lyK2+2WXarPNo=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-662-LBenC7umMrqqQHPdot0rsA-1; Tue, 10 Sep 2024 08:16:16 -0400
-X-MC-Unique: LBenC7umMrqqQHPdot0rsA-1
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-457cde3fd7bso13408661cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:16:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725970575; x=1726575375;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TqNTsGxo7KShGTs/iiAEuAgoPybBC8iCW7tKXvfqSTE=;
-        b=OKplVaZdjcmhasXC+dUOXaWaYFqWZQsFpWFdJOROGcW2NdbzYGys+ZnZFBD3laH7tL
-         n8xXVHl8UXJO/lw2ZhK9EnOPxpeUr3FHCaCQ2OsCeTZEVAYlgczNjre83eu/h5CGraIm
-         BBtDXLTNpJr8yaW0y4774aN6YXuIlc0QwdUx8rupMVJ2iSgxuoY9oCut+fQaaO8AQfyY
-         3qqZl+diy8HiStogCdX5YMBvCxRsqwFebeEhw+uKYIfMwhGYSyvbSnnXeo1dAJ9pYkDC
-         Jf4bu9D1KMNeA58xXr0NqafPkQyssTL6GZqgwN0Z1m1K2jyj9EemKMuKudykgHDBirff
-         F7nA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMWZYqR+su1l81l3fErd9jV9weH+Yy+9/oaU3gE1lkwesAX+tl/VTCIXVqxNHHAe6Fv3zahDOT+TEDDXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkCKB6DckhHGOE/oHAQeqogFJlXihpZGYdEa6DE4QD5/krYOgV
-	lMxefop4Wn204/GNuPs1hyVV23QkrcJ7yE9kcOxRcLqpDqssUWFA2GLskxXtkwMIn8zHJkJ+f7R
-	GIO24hwpWBzuJq3I2g3rfz3DI/tHYW0L4/LXUyClvj3pq4nbFjceCCy5RsZOg6Q==
-X-Received: by 2002:ac8:5f47:0:b0:458:1578:56a6 with SMTP id d75a77b69052e-4581f480530mr147993701cf.24.1725970575415;
-        Tue, 10 Sep 2024 05:16:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFFv3wgyd3Hg6lqpOUUjpJkTGHHsYgJs2xr7aDITSvRwlUJdHVQc4gd4/fSmPETPVJLM55vBA==
-X-Received: by 2002:ac8:5f47:0:b0:458:1578:56a6 with SMTP id d75a77b69052e-4581f480530mr147993141cf.24.1725970574851;
-        Tue, 10 Sep 2024 05:16:14 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822eb001bsm29057461cf.54.2024.09.10.05.16.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 05:16:14 -0700 (PDT)
-Date: Tue, 10 Sep 2024 08:16:10 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Gavin Shan <gshan@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
-	Ingo Molnar <mingo@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sean Christopherson <seanjc@google.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
-	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
-	David Hildenbrand <david@redhat.com>, Will Deacon <will@kernel.org>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v2 07/19] mm/fork: Accept huge pfnmap entries
-Message-ID: <ZuA4ivNcz0NwOAh5@x1n>
-References: <20240826204353.2228736-1-peterx@redhat.com>
- <20240826204353.2228736-8-peterx@redhat.com>
- <ZtVwLntpS0eJubFq@yzhao56-desk.sh.intel.com>
- <Ztd-WkEoFJGZ34xj@x1n>
- <20240909152546.4ef47308e560ce120156bc35@linux-foundation.org>
- <Zt96CoGoMsq7icy7@x1n>
- <20240909161539.aa685e3eb44cdc786b8c05d2@linux-foundation.org>
- <Zt-N8MB93XSqFZO_@x1n>
- <Zt+0UTTEkkRQQza0@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1725970632; c=relaxed/simple;
+	bh=n8ccMPdrqjWagb7Gnusd0ZEmZYWOHUlDblW9jJvz3XM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dvhdqCUDWXN9eC//MyEm9Jhk1LTG53VA9z2SKdYIy7rGbxy2VuMepo0w4F2Y8E6FvlI+LPYf76edxftnCgmhyltJDx22+GSKIn5F0zAyYTlshsLyev70qMFArDAWo4kqbzcn+7FhJZlu28C2sKey7b68vjAeV8/7RFtRD6C6o3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=rMwrteU8; arc=none smtp.client-ip=17.58.6.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1725970630;
+	bh=VdbQWCifCXTK345XinwfONjo5u30zhHADcq684HbxNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=rMwrteU8nFvpBMjkRyCGZ4zqtVZDPLtZ1N9MZ7XqAdf3RIaKhu5gOVYMehAAWjXdX
+	 dgdrpImlXHybFpLSYzy8zgLDhjV58mr5dXjHcSFHrLKp/f091bErujHYPQOe05tagm
+	 p+tozQF13vsKachWc9pFTpAszKz8FZxsAfnfzENCnoyQoRkBf9L83AfbZKjgU4yNph
+	 dD3oGpRAWDFs/JfbJ24giUuOM64zY9kX0FPAxjS7bJTjg2X4m1jcTGSLi+JeiqsCWQ
+	 qF2U4hQruYlihzNl90b5aMuo9DhKo7HAxR6nY9TYlDDVYin/Roxp+YjTefuYaoIBNp
+	 u3719KzkJm9LA==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10021401.me.com (Postfix) with ESMTPSA id 1AF548E05E8;
+	Tue, 10 Sep 2024 12:17:05 +0000 (UTC)
+Message-ID: <a4cf15fb-bbaa-4ed0-a1d5-c362b7a5c6e2@icloud.com>
+Date: Tue, 10 Sep 2024 20:17:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zt+0UTTEkkRQQza0@yzhao56-desk.sh.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/3] amba: bus: Move reading periphid operation from
+ amba_match() to amba_probe()
+To: Saravana Kannan <saravanak@google.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Isaac Manjarres <isaacmanjarres@google.com>,
+ Lu Baolu <baolu.lu@linux.intel.com>, linux-kernel@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20240909-fix_amba-v1-0-4658eed26906@quicinc.com>
+ <CAGETcx9X0m3=8PPtVsHp=AAjyCoUZ0-53H5RzVd4HCDtWRS0Fw@mail.gmail.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <CAGETcx9X0m3=8PPtVsHp=AAjyCoUZ0-53H5RzVd4HCDtWRS0Fw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: lwr0WyOi-HHk38bBnKuWCMo9Hvp5I_Fo
+X-Proofpoint-ORIG-GUID: lwr0WyOi-HHk38bBnKuWCMo9Hvp5I_Fo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-10_04,2024-09-09_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
+ suspectscore=0 mlxlogscore=999 phishscore=0 adultscore=0 clxscore=1015
+ bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2409100091
 
-On Tue, Sep 10, 2024 at 10:52:01AM +0800, Yan Zhao wrote:
-> Hi Peter,
-
-Hi, Yan,
-
+On 2024/9/9 15:24, Saravana Kannan wrote:
+> On Sun, Sep 8, 2024 at 4:38 PM Zijun Hu <zijun_hu@icloud.com> wrote:
+>>
+>> This patch series is to make amba_match(), as bus_type @amba_bustype's
+>> match(), also follow below ideal rule:
+>>
+>> bus_type's match() should only return bool type compatible integer 0 or
+>> 1 ideally since its main operations are lookup and comparison normally.
+>>
+>> Which has been followed by match() of all other bus_types in current
+>> kernel tree.
 > 
-> Not sure if I missed anything.
+> The intent or need for this patch series is completely unclear. The
+> code you are moving around was also pretty delicate and hard to get
+> right.
 > 
-> It looks that before this patch, pmd/pud are alawys write protected without
-> checking "is_cow_mapping(vma->vm_flags) && pud_write(pud)". pud_wrprotect()
-> clears dirty bit by moving the dirty value to the software bit.
+> Without a much better description for why we need this, I'd like to
+> give this a NACK.
 > 
-> And I have a question that why previously pmd/pud are always write protected.
+> Also, patch 3/3 is not at all easy to understand and seems to be doing
+> way more than what the commit message is trying to do.
+> 
 
-IIUC this is a separate question - the move of dirty bit in pud_wrprotect()
-is to avoid wrongly creating shadow stack mappings.  In our discussion I
-think that's an extra complexity and can be put aside; the dirty bit will
-get recovered in pud_clear_saveddirty() later, so it's not the same as
-pud_mkclean().
+thanks for your code review.
 
-AFAIU pmd/pud paths don't consider is_cow_mapping() because normally we
-will not duplicate pgtables in fork() for most of shared file mappings
-(!CoW).  Please refer to vma_needs_copy(), and the comment before returning
-false at last.  I think it's not strictly is_cow_mapping(), as we're
-checking anon_vma there, however it's mostly it, just to also cover
-MAP_PRIVATE on file mappings too when there's no CoW happened (as if CoW
-happened then anon_vma will appear already).
+let me explain the issue here firstly to go on with discussion, will
+correct it by next revision.
 
-There're some outliers, e.g. userfault protected, or pfnmaps/mixedmaps.
-Userfault & mixedmap are not involved in this series at all, so let's
-discuss pfnmaps.
+amba_match(), as bus_type @amba_bustype's match(), operate hardware to
+read id, may return -EPROBE_DEFER consequently.
 
-It means, fork() can still copy pgtable for pfnmap vmas, and it's relevant
-to this series, because before this series pfnmap only exists in pte level,
-hence IMO the is_cow_mapping() must exist for pte level as you described,
-because it needs to properly take care of those.  Note that in the pte
-processing it also checks pte_write() to make sure it's a COWed page, not a
-RO page cache / pfnmap / ..., for example.
+this design is not very good and has several disadvantages shown below:
 
-Meanwhile, since pfnmap won't appear in pmd/pud, I think it's fair that
-pmd/pud assumes when seeing a huge mapping it must be MAP_PRIVATE otherwise
-the whole copy_page_range() could be already skipped.  IOW I think they
-only need to process COWed pages here, and those pages require write bit
-removed in both parent and child when fork().
+1) it is not good time to operate hardware in a bus_type's match().
+   hardware is not ready to operate normally in a bus_type's match()
+   as driver_probe_device() shown, there are still many preparations
+   to make hardware to operate after a bus_type's match(), for example,
+   resuming device and its ancestors, ensuring all its suppliers have
+   drivers bound, activating its power domain, ...
 
-After this series, pfnmaps can appear in the form of pmd/pud, then the
-previous assumption will stop holding true, as we'll still copy pfnmaps
-during fork() always. My guessing of the reason is because most of the
-drivers map pfnmap vmas only during mmap(), it means there can normally
-have no fault() handler at all for those pfns.
+2) it should not operate hardware in a bus_type's match().
+   a bus_type's match() will obviously be triggered frequently, and
+hardware operation is slow normally, it will reduce efficiency for
+device attaching driver if operate hardware in a bus_type's match().
 
-In this case, we'll need to also identify whether the page is COWed, using
-the newly added "is_cow_mapping() && pxx_write()" in this series (added
-to pud path, while for pmd path I used a WARN_ON_ONCE instead).
+   a bus_type's match() will become not reentry for a device and driver
+   if operating hardware is failed but can't recover initial hardware state.
 
-If we don't do that, it means e.g. for a VM_SHARED pfnmap vma, after fork()
-we'll wrongly observe write protected entries.  Here the change will make
-sure VM_SHARED can properly persist the write bits on pmds/puds.
+3) for driver_attach(), a bus_type's match() are called without
+   device_lock(dev) firstly, it often causes concurrent issue when
+operate hardware within a bus_type's match(), look at below AMBA related
+fix:
+   Commit: 25af7406df59 ("ARM: 9229/1: amba: Fix use-after-free in
+amba_read_periphid()")
+   which introduce an extra @periphid_lock to fix this issue.
 
-Hope that explains.
+4) it may not be proper for a bus_type's match() to return -EPROBE_DEFER
+which will stop driver API bus_rescan_devices() from scanning other
+remaining devices, that is not expected as discussed by below thread:
 
-Thanks,
+https://lore.kernel.org/all/20240904-bus_match_unlikely-v1-3-122318285261@quicinc.com/
 
--- 
-Peter Xu
+5) amba_match() is the only bus_type's match which breaks below ideal
+rule in current kernel tree:
+   bus_type's match() should only return bool type compatible integer 0
+or 1 ideally since its main operations are lookup and comparison normally.
+
+
+Our purpose is to solve this issue then enforce the ideal rule mentioned
+in 5).
+
+so we send this patch series to start a topic about how to solve this
+issue (^^).
+
+> -Saravana
+> 
+
 
 
