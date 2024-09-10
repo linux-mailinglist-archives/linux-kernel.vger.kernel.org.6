@@ -1,104 +1,170 @@
-Return-Path: <linux-kernel+bounces-323988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E91974680
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:44:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 457A5974692
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95FB71C2597E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:44:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C61741F26F61
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257A01AC440;
-	Tue, 10 Sep 2024 23:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196591B580D;
+	Tue, 10 Sep 2024 23:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0HlY28I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="OIVcS2r1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Inov3oyk"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7797B1AC8B2;
-	Tue, 10 Sep 2024 23:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77B91B29D2;
+	Tue, 10 Sep 2024 23:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726011876; cv=none; b=OOi/3CUjCeFJrA8iNvCoR22nWz/REnKUfV8FzW35I7fFstt5jOO8grlYpt4Dy6gMXw1dUjgiDpMHiHNZ3OmaNGBjU8uzpPrvC3C9fOqsJh4nIVndO+mHR8Wp/Zrjr6YIh/vlSG79piV3Easbv6NfZN/5I21prG2WeP2wlsxhqnU=
+	t=1726011884; cv=none; b=AUjFgVW3jHTuKpFIAyupEUNDty2t3mFBKdSU0rM9yBedoo6HKFlXJ9fLZqtPHWwV0W2mglTnFA0wt4HfRmXjWZimugqRLntQsulkOHRMEaNzCgkptg/kYc85Bml6d7Y6VmXdgk0l5qyn7eLRlhPLyN7ViuXLpVOwpT3FimsRMis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726011876; c=relaxed/simple;
-	bh=GL8lUr8WY3cTgLAHEESls100v4NcVVKKCChvCfDwG+M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EoFoNVGFyUlD/Qbrmv2UqsCWpVjBCmScBMeGCB61FZggQlGs2kCPlyHpqcG48jcKbU2DhIBtHK/Swim75E+KjGph6BH5LcYs9csQlqbr5Pi2rHeD2RslOOBbuVUasaFPHZACmo6FaTePvkij2wDCPN0rKDhIqENE3yuK2dqiSyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0HlY28I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF570C4CECE;
-	Tue, 10 Sep 2024 23:44:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726011876;
-	bh=GL8lUr8WY3cTgLAHEESls100v4NcVVKKCChvCfDwG+M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=T0HlY28IMYXu0m0mmiAmivGiWlvmsBVhHPXYEcpt8OZ+p1yHIQNsz1If6icQF66Ti
-	 wXHoHwUndCdK65cXumoogP9ByoeZjP+NHBjjBYdBJXaTU/4BcNm6cAAB9g4DyiVlxV
-	 mGNogAUBL2BR/bJLqjTuKj8JfDYD/3bpVJSLDoRAUIjrU31gHjQdarU3C1ZpOulUvM
-	 A0tw2ZFs6bN+NdtBCyA11fDAi9q/YuIuKfxkAP+QliDVuJ69PlBjRAiDZYLwoou5f2
-	 0vSHC7XpLlUdH4apw36P9roWS+5qHxJ1b4FgmjzoHlP4liDdbjjJMFLkRuKFY6hYjC
-	 Puhgev/vM04ig==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: rtc: Drop non-trivial duplicate compatibles
-Date: Tue, 10 Sep 2024 18:44:31 -0500
-Message-ID: <20240910234431.1043923-1-robh@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1726011884; c=relaxed/simple;
+	bh=NJRdyDt4ArtkhmucN0ADGasD7WAmAy2gcQoa3OuTEro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XOmH1X4Zo2WJp+UqfL/PnvGJFoTY5QOjNjb84uzqu74fuW1t2kU1q9tCtMkMDfRr9BgRJ3dwrIU8DrHPqE8dCUjpO46gBhEy/hwWgLzw1dK8QFU4RMLI0hOPPnmqZ3+IYS9vi6hI9iizjx7KdDv2etK0LykPw+JyLcfboyMFeX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=OIVcS2r1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Inov3oyk; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id 0F50313801C0;
+	Tue, 10 Sep 2024 19:44:41 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Tue, 10 Sep 2024 19:44:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1726011881;
+	 x=1726098281; bh=7UKGu1SR/PBsryXACn9wUHAYZcr8DaV+dHj6lNuogFw=; b=
+	OIVcS2r1Aud15229JwgZnwxT3mBmneFNGw0BhwEg1/ITv7i3nkj9/kXakxeYGBkC
+	+TFkwXvg46EHuyOMNZHO2tDpa6U9KuO8c0KEkM45J+KDn9+n04cjh/JEW2gO2cHV
+	tNRdrthYmKSFkRc2ODDNH2kx0+PEPHQSQug0cAuVmhbHPI1Vqmgo3yfwM5zHFNKt
+	0o0ShbyyHWTUVZ3fAPhukxfGwy+Gmicov1d3mpl08YEdmJ+A7WgST11I4ktJUA72
+	SFYnbFovXc/d4aUcPcaTcbT9rHhW1ntVQjhlsWAL8TbfvaGqPINuiQrfTWrfFwR+
+	thh+GO784N1Squpemht2yw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726011881; x=
+	1726098281; bh=7UKGu1SR/PBsryXACn9wUHAYZcr8DaV+dHj6lNuogFw=; b=I
+	nov3oykubRyvFUL238D2FQ/tN8Cz70Iq/eN9jHNgzSMMWVnaRTO6sHZJI9TxhKNf
+	il/5Wk/5Er+Of0inHWAFpdBFJAhL0NxKg8CqHuWcRjAYbip0AA6klGnXpvJUdksy
+	vb5P8IUjixWQAYwPabHaLKXgbHNRTyPWUCAWVZowixT/qXhdKfR5UMtgny2Akdrm
+	1ZrQ236v+tnxs5x0NrLp89xaFU67ErIlqC/YWkOQKpYqUQARWaEKFA+T8PxRWrLl
+	Ccjx8DJxrCoE5CBWbOM7jLFzGzC02ur9oQvEjA49CDAX2fdFKpywfSZYlw9sufVH
+	b/UoTGiPBYx5qKu+aHePQ==
+X-ME-Sender: <xms:6NngZvexNvWHH_w3EwaDDjHw_FDhYxNI-3wIYzE8iOJsetfLaxpgEQ>
+    <xme:6NngZlPM1xWKKKhgyAwcfu2DNPqRJAY27abVucXtgKXf8Pdt3S25RdE8KkR9vJaxi
+    IFEay2iD5x-avcAlw>
+X-ME-Received: <xmr:6NngZojpWHyQrkkKZRu4dk2HBBx1p9ZWopb8PZh4EImW4cR3LGIdUqzucaLJ0onHwU0Ya_sSKmxep215SW7UABGhtuVqE7XTUTU36mGzUPN7tQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejtddgvdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdljedtmdenucfjughrpeffhffvvefukfhf
+    gggtugfgjgestheksfdttddtjeenucfhrhhomhepffgrnhhivghlucgiuhcuoegugihuse
+    gugihuuhhurdighiiiqeenucggtffrrghtthgvrhhnpedtgfeuueeukeeikefgieeukeff
+    leetkeekkeeggeffvedtvdejueehueeuleefteenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpegugihusegugihuuhhurdighiiipdhnsggprhgt
+    phhtthhopedvtddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnughrihhird
+    hnrghkrhihihhkohesghhmrghilhdrtghomhdprhgtphhtthhopegrlhgvgigvihdrshht
+    rghrohhvohhithhovhesghhmrghilhdrtghomhdprhgtphhtthhopegvugguhiiikeejse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhope
+    grshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehjohhhnhdrfhgrshhtrggsvghnugesghhmrghilhdrtghomh
+    dprhgtphhtthhopehmrghrthhinhdrlhgruheslhhinhhugidruggvvh
+X-ME-Proxy: <xmx:6NngZg8L71HmBOBoLv1wtNrsHY5RwO7HXkNgYOo5jSZzCxcf1ProMw>
+    <xmx:6NngZrvzzhZi3sYRyo4_ykKOyJiDqdRudCs9NHec39zRWf-mcadWFw>
+    <xmx:6NngZvFkYgBn7Rm9aQExLNG0HO7qsxsBfGPbhu3c38ajtr2FUn_oMA>
+    <xmx:6NngZiMSXw_t2r7Sg_BFpPGXu6vnI83rksuUHcEz-KL0yh8tFXLvsw>
+    <xmx:6dngZkP7UAAdT9-bYkHVmo429bErfwgctEYsJA4oXFvb8R1L2stEdSby>
+Feedback-ID: i6a694271:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 10 Sep 2024 19:44:38 -0400 (EDT)
+Date: Tue, 10 Sep 2024 17:44:36 -0600
+From: Daniel Xu <dxu@dxuuu.xyz>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Mykola Lysenko <mykolal@fb.com>, LKML <linux-kernel@vger.kernel.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Kernel Team <kernel-team@meta.com>
+Subject: Re: [PATCH bpf-next] bpf: ringbuf: Support consuming
+ BPF_MAP_TYPE_RINGBUF from prog
+Message-ID: <rsdwvah5ov3itchsgkwgleihswoycoal5vjbeql2wbqoz5noiz@myk2atnnjaub>
+References: <18a9ddacc99bb95e9802f8ad1e81214433df496c.1725929645.git.dxu@dxuuu.xyz>
+ <CAADnVQKyfZ2-qCvmqG8z919ggdOszEjTs04H=cTGOZTi-zhx7Q@mail.gmail.com>
+ <CAEf4Bza5Fiw2rZ5T7=zRwVk1Ct1Mgm7Gpa8w+NJVPZf8keY_9Q@mail.gmail.com>
+ <vru2zgphyfywjcqikolwotsfun2bgtrnfmwvfls5ra4tznsydr@46w5rq7gqepz>
+ <4ec8e15b-c44b-41d7-b337-32d17306d67b@app.fastmail.com>
+ <CAEf4BzbHqKD87KTSmFUMokXEaAa70xNs96QqfWBHjFbuE5PL=w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzbHqKD87KTSmFUMokXEaAa70xNs96QqfWBHjFbuE5PL=w@mail.gmail.com>
 
-Several compatibles documented in trivial-rtc.yaml are documented
-elsewhere and are not trivial, so drop them.
+On Tue, Sep 10, 2024 at 03:21:04PM GMT, Andrii Nakryiko wrote:
+> On Tue, Sep 10, 2024 at 3:16 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
+> >
+> >
+> >
+> > On Tue, Sep 10, 2024, at 2:07 PM, Daniel Xu wrote:
+> > > On Tue, Sep 10, 2024 at 01:41:41PM GMT, Andrii Nakryiko wrote:
+> > >> On Tue, Sep 10, 2024 at 11:36 AM Alexei Starovoitov
+> > [...]
+> > >
+> > >>
+> > >> Also, Daniel, can you please make sure that dynptr we return for each
+> > >> sample is read-only? We shouldn't let consumer BPF program ability to
+> > >> corrupt ringbuf record headers (accidentally or otherwise).
+> > >
+> > > Sure.
+> >
+> > So the sample is not read-only. But I think prog is prevented from messing
+> > with header regardless.
+> >
+> > __bpf_user_ringbuf_peek() returns sample past the header:
+> >
+> >         *sample = (void *)((uintptr_t)rb->data +
+> >                            (uintptr_t)((cons_pos + BPF_RINGBUF_HDR_SZ) & rb->mask));
+> >
+> > dynptr is initialized with the above ptr:
+> >
+> >         bpf_dynptr_init(&dynptr, sample, BPF_DYNPTR_TYPE_LOCAL, 0, size);
+> >
+> > So I don't think there's a way for the prog to access the header thru the dynptr.
+> >
+> 
+> By "header" I mean 8 bytes that precede each submitted ringbuf record.
+> That header is part of ringbuf data area. Given user space can set
+> consumer_pos to arbitrary value, kernel can return arbitrary part of
+> ringbuf data area, including that 8 byte header. If that data is
+> writable, it's easy to screw up that header and crash another BPF
+> program that reserves/submits a new record. User space can only read
+> data area for BPF ringbuf, and so we rely heavily on a tight control
+> of who can write what into those 8 bytes.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- Documentation/devicetree/bindings/rtc/trivial-rtc.yaml | 7 -------
- 1 file changed, 7 deletions(-)
+Ah, ok. I think I understand.
 
-diff --git a/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml b/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
-index fffd759c603f..9e506543f5bf 100644
---- a/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
-+++ b/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
-@@ -43,7 +43,6 @@ properties:
-       # I2C-BUS INTERFACE REAL TIME CLOCK MODULE
-       - epson,rx8010
-       # I2C-BUS INTERFACE REAL TIME CLOCK MODULE
--      - epson,rx8025
-       - epson,rx8035
-       # I2C-BUS INTERFACE REAL TIME CLOCK MODULE with Battery Backed RAM
-       - epson,rx8111
-@@ -52,10 +51,6 @@ properties:
-       - epson,rx8581
-       # Android Goldfish Real-time Clock
-       - google,goldfish-rtc
--      # Intersil ISL1208 Low Power RTC with Battery Backed SRAM
--      - isil,isl1208
--      # Intersil ISL1218 Low Power RTC with Battery Backed SRAM
--      - isil,isl1218
-       # Mvebu Real-time Clock
-       - marvell,orion-rtc
-       # Maxim DS1742/DS1743 Real-time Clock
-@@ -68,8 +63,6 @@ properties:
-       - microcrystal,rv8523
-       # NXP LPC32xx SoC Real-time Clock
-       - nxp,lpc3220-rtc
--      # Real-time Clock Module
--      - pericom,pt7c4338
-       # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
-       - ricoh,r2025sd
-       # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
--- 
-2.45.2
-
+Given this and your other comments about rb->busy, what about enforcing
+bpf_user_ringbuf_drain() NAND mmap? I think the use cases here are
+different enough where this makes sense.
 
