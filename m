@@ -1,238 +1,215 @@
-Return-Path: <linux-kernel+bounces-322551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49B0972AB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:28:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 437BB972ABC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B5C71F25376
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:28:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2091F223CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C8117CA1A;
-	Tue, 10 Sep 2024 07:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FAF17D366;
+	Tue, 10 Sep 2024 07:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Fl/iJSM2"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2045.outbound.protection.outlook.com [40.107.21.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZHJtm0Sg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iYY32GUH";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZHJtm0Sg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iYY32GUH"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289F51531F8;
-	Tue, 10 Sep 2024 07:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725953315; cv=fail; b=egOTfkg6Ooet/SGrVFlQlYif8FRp/NWAFk+6h3CEtYlMsTsfMMixHvWb7+09JvMU89qrhd6nDwdlnjqc7pbztLQRp+DdM6gI4+PkdE57/lQXzSaVw5WusjKLDXlCnVetdi8PQJnw/J09Uao+py3NACi7uqAU52SkFxvokfK/NEw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725953315; c=relaxed/simple;
-	bh=3huIwUjA2lxMbafdvY4709nlb5+L+Nh9voyUepap2d8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Xi3bohohUMj6lPEMi0Ng89XtzvH8T6Ot8HeJvrQzUE6oNmXzXg63JZ6nVT9VSTsnsUJyeayjRAWC0xGbK2X0DlijMm314g1BvpH+lNnSKZGQdEUmP3Xx7Ar5jjkpibDga5v9dk3IQaUxBSHRvs2H/EC/d3Zyk+kCBP+FqC8G1WU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Fl/iJSM2; arc=fail smtp.client-ip=40.107.21.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hdjJpx3HGYveGUb5P4VRM4xQOhhPvtDFTeWGHz1bSWlI1WM3TLmUacf4Za9l7YJj+S768BtIfyR3OOViQyxMbQwjWBoQIylEd64SVssEn7ykyxEw84F6i5ozi/Yhq7femdIQJNpLSTVagpqSqFnXYYOynIVmdchS0RivnM1+9EDlHbGVxKgl1Tyz6ArD9eZOKAa01RnMuG5d7HWPApeWnq/qWBgFinwpnHUGn2mQRb5MCGtgW4HUa1JTijHArEUFRftn/DjsUwazhqlYv4cD/wR/IlstxZEzauVKTRVT4ISSW4m4x+rwfkBKRllFbiktDaWTvImm5H/ocFmjq7IKdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3huIwUjA2lxMbafdvY4709nlb5+L+Nh9voyUepap2d8=;
- b=lrukGKqKBMlThHSAdDAz50jzgxG871gXpoaYfQIDC8FuME+pJhjARlvN0Txt71MOJqqTe9ESkgGMTz3/5YCw0ZuTz0EGvD8IUFT/jwdOX1aPj04ofD3Wwy9RYO6lTbRDByZY0XuLhNgRlpTkoFlVJUbAPWzUcIWbdYmlenOyW7o9hz2ETjT22wrp6n7Hl3Z4zOh3ba13LCfJjiJN/P+E6JL3DQjnDtozi2snqX7ctECeiTMujsSlFdt7ns/e1STLsEXTJyhEjxhQogNq5jgctjSerYxSsTJ0wBS0ISNKQPoYhCqg3GdjIdBwAvobK/2umE1qh5AheCXtjvDFasPyBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3huIwUjA2lxMbafdvY4709nlb5+L+Nh9voyUepap2d8=;
- b=Fl/iJSM2OvZg3X+W5EdwpD5EXmhPOoQzwehZvCarcq/GtByf59hEmzEmUZU6R82bCy+8Q4MbhKxor0SDjAtUF9gpzGJDuI4DSDzgiK5G26gbtxNrWwk6RluwjfiWc8FFJiUxMl52w9D4E4GVAoLCggh3n9EVNlA2dwXqQr5LfpA3yVvGMlaDjm9sXy/yYYMqA0MUJq108yaY87j3w4KPLl0cuezscT5sq/X1ZhAZlCS5LwbqX8RaRd3IfYZ3PQJbyPbqE/CFeIV9KyXcvdZchVGnjXUJZ0x1EZ0pO5Pc3oWJuwkNyma0c1tREkklUufHgNgS+tstuw8iUSdZVh2VoA==
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
- by PA4PR04MB7918.eurprd04.prod.outlook.com (2603:10a6:102:c7::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Tue, 10 Sep
- 2024 07:28:29 +0000
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257%3]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
- 07:28:29 +0000
-From: David Lin <yu-hao.lin@nxp.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"briannorris@chromium.org" <briannorris@chromium.org>, "kvalo@kernel.org"
-	<kvalo@kernel.org>, "francesco@dolcini.it" <francesco@dolcini.it>, Pete Hsieh
-	<tsung-hsien.hsieh@nxp.com>
-Subject: RE: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
- different channel
-Thread-Topic: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
- different channel
-Thread-Index:
- AQHa/RQwZkxE7S8BN0ebi7x6fu8g/rJEPYCAgAAPeUCAC6fogIAAWbHQgABDcACAAAAqgIAAAvAAgAAC0XCAABIlgIAAATdQ
-Date: Tue, 10 Sep 2024 07:28:29 +0000
-Message-ID:
- <PA4PR04MB9638D57A9623D1B33C802EF9D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
-References: <20240902084311.2607-1-yu-hao.lin@nxp.com>
- <ZtWHhSQlPVMekW1I@pengutronix.de>
- <PA4PR04MB9638EC10C0B656B750D922ADD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt9blTxk88Opujsk@pengutronix.de>
- <PA4PR04MB963813D69B4D87B7147704A5D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt_fZEJyiCyanf7X@pengutronix.de>
- <PA4PR04MB9638C8978D9C6360A9B214E4D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt_h_mW4nFWKu2SI@pengutronix.de>
- <PA4PR04MB96389B2CC16060957878D0D3D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt_zkxGsY2X-8-4z@pengutronix.de>
-In-Reply-To: <Zt_zkxGsY2X-8-4z@pengutronix.de>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|PA4PR04MB7918:EE_
-x-ms-office365-filtering-correlation-id: 57665d6e-0f99-4d0d-41a8-08dcd16a2ae3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?5yegs/Qp1TsnwLb1Xuu5OVrR1NA/Lj+FpkeG47SETb+P7yDzyFn8YJN21sAB?=
- =?us-ascii?Q?e8LGrzNB8cBXaGr9nTJU870owict2Y0u6xI5Vk+1kYPce0dU1kgBcBwWSHoA?=
- =?us-ascii?Q?luc/sGcDm3Y66RW1hcC8hfyy7oIwFGwSBRPN2LG4fdvbPvqt7FY067xXESO/?=
- =?us-ascii?Q?VTaNQ4Az1cjvc3/AoBc80+NCLOWXOxoo416vMOoLW6jV+DUCQFBYGiQ6wXi9?=
- =?us-ascii?Q?KGBN1JbKebjybNBChcxuVPWaSrrO/WeN49BsC/gO+tktkxShU4L95K5hsuSj?=
- =?us-ascii?Q?c92b7vS6BRiKpjuLIvUTp1Aqdmt/5l+5m87Cjp2bCBfvSpYbgY25ajKjYET7?=
- =?us-ascii?Q?WIpKfk5oqaeIP8A+ctRIBH2IFhwsS8DO2aUo7dB6idmBQ5SIsefB6zQhUO+o?=
- =?us-ascii?Q?I3NFgJPRrXs+znD6pT4z8f6iyWX4hAjqemT3hekkMf68FNHGTWFG+VQuiyre?=
- =?us-ascii?Q?rf1dgt6TQUP7NYaKwb0n2ZhMQHhD1h+wVOFCIsQgAdXHnltHSlbysePAuN09?=
- =?us-ascii?Q?j0TgsAs9ss4o5pDguwAo8hiSfrAduHkvFuiH8aY97/lzOLztsLnwF0tWNDi8?=
- =?us-ascii?Q?elEsDCb5S77ftCclyEPArySzooegLr6zKTTRkomczYUuvxCrtiEWgQ2XktyL?=
- =?us-ascii?Q?ZXG8nujzrOrOwK7rjHmucm+vP86sF7Hb5QsFRxyM1YZMVWgVWn47sDPtP5w/?=
- =?us-ascii?Q?n0TEZ2my4MHqWN2DoqZ21oKLmfxT41qB3NXEyYL1kfCJeX/Gtyo50LUYUOHS?=
- =?us-ascii?Q?skOBP/cVx6qx9WPt7xqQyfEWDl4ng1y0r8OM3v8m6gxwxaQ+fQd/EJws4Y/2?=
- =?us-ascii?Q?UxrW4nvS3+xrJ2Hv+mK5y9ojY3xrQ3xghAIjOdPoBHMFvClvDN1zBVD9ha/t?=
- =?us-ascii?Q?Kzy0L5UcvuN9yBR5f/vYFRqw5Xy9+n04yybAYqlrFC56lo58fBF98r7bKHBB?=
- =?us-ascii?Q?ZA/lzrjXOf66G89JwRlMiEFCHf0b0tm++H4IxAlTYLlqxTYjoBelWg4mw1Yl?=
- =?us-ascii?Q?KyabYlQQCs7ubEqaYMqC/z5qe1tx5w3Qb0XyYsgAe5/ch1ppQM715DPg74k+?=
- =?us-ascii?Q?MiMXx7ObqAJApXIyYGNgkBLtE07gUdnzLX+seP3v1f24wgKw+1Sw5L/alMkk?=
- =?us-ascii?Q?C1ZllVQ7wy3fbmEtIwXmgGJ3h3YFYWZ3z8B/EsfQY2p0WFNO8KBadpwlwfu6?=
- =?us-ascii?Q?ypkzh+BT0DNCg3BNIRUHVMm9xkbScH16/TBQo/pbqpcQ1K0PuZNgSLGX30pM?=
- =?us-ascii?Q?15Bdy/00SI2hVE0XzxO5TUK9A+T778R7/aIDH8a2zdTRSeBUhIliCkZGPbP3?=
- =?us-ascii?Q?MPnAHio9BGIGC308bj6gDrMvH0bqrg1Mj476eF/G7EA1GyUfn6QEyTNB9+N0?=
- =?us-ascii?Q?7f9k3jE0rL5qpGe0VZe1qw3RO0eyxyQpQtZoZpIOtpXpfk071w=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?MMNlxtaZF9wcSs/bKU1h1NSBNUNJbY/4wixXOM59HLSL0oxc9TmSGJ+X5bRw?=
- =?us-ascii?Q?nu2lrHXnQhoAmYtkjJwqgLarDd1ddsnMyI53J4ItHpsh8EH8phUHEiOgaRec?=
- =?us-ascii?Q?riuc9dOjNVuvvaZ5V+VbwSagiqGdTPXmRgsaO2m2IV1bPOhSCglMa/HW8xoO?=
- =?us-ascii?Q?zSzpu2buzD2TaczWkEN+AXFW3c7vzW5jodThQRIA8OoSqlq6/5p1wqzFTNpp?=
- =?us-ascii?Q?CVX9EyNVBx6lI4D+2OtYCtOuw7RC1Zo+N4fznp+PYAR3MOsUjsaTOKg1Q2zl?=
- =?us-ascii?Q?72K6j4iU4/qqDqcMDuD0wgVQXcF+vcN+XH0jdoJ3grdSCxVI3X/ZBY3Oykn8?=
- =?us-ascii?Q?+ZkSegCAWq46P4QHwSZ6lIuCIPpv+R1gT0ge2g7zGcL5KFhW7fylTogzaJ8W?=
- =?us-ascii?Q?DxbqBO7HjFNpjjvG/sSSxXUnY3UUaynd0/atTCrS9XvXGmpOUmZP3tjOtLUI?=
- =?us-ascii?Q?asjfUTZjoJY8iYkTcntd7NDAdx2JynBjf/Q44LOLt82dYeze3dOGweknmt1V?=
- =?us-ascii?Q?KbJFeF1vRTq7/83F4dsc2MwqOz+VKwSFm58ilvnDO8XnEKNO1YHCjBRqymhL?=
- =?us-ascii?Q?kfMr3QTJ4Dd40Z6sXGNkIa/9MjYbalPc3XKxEY2/A8QSVHGtBng8I3GgCXlm?=
- =?us-ascii?Q?UVtVfNiglaUVhqs/tp23uQ6d1Xqxo0NFAbl7fokBbmpt+MNgyGnwvEm14RcZ?=
- =?us-ascii?Q?kx0HeaTU9iCruLHo4WWVNI8dW4s2pP2XKcle0nWbtNlaAG3D+oz6wD6SzNvX?=
- =?us-ascii?Q?ZPppwFaOoWlzcMmFfO1fzdJqyAAfbK+zHlpPtHE/rIyOYAiDPI4v7pMyFELA?=
- =?us-ascii?Q?EUBQyIZXWIJfmi5BZQLvBfq6+xzut7W8c7TkcyLPsJWNqD9CISdPFswFTENO?=
- =?us-ascii?Q?xboDl0ManCGnw24oPwPYPl0HFw2+mk1GlvJkbtU4hmtVuGfkX7+VgDy1c2km?=
- =?us-ascii?Q?a4L6TLojIxzJQOlbVUJyPHABGyiQN7E7T/7IU4Q/dPwbLWM3mFWefzAJmlOR?=
- =?us-ascii?Q?IsXuE6o9YgpAxmgD7TCc145syV8gmgHTv0T4acDcJzFVQUF3jRFs2gOpVnUx?=
- =?us-ascii?Q?FkrGovUuhk/w4zR9g7QB1p/yBrV77SsO/6VZ6CMt00xCWO855ExrqybVicKe?=
- =?us-ascii?Q?tJ6wlB9GIc3Th5/PlRLAnJT32lvqG7jTWQ3d6Z7oNLdI0uDD984WLcWNHsKM?=
- =?us-ascii?Q?PgsxEEhEjqn33xc+nuKlnLJQgLYKQXDY10DI+nLkl9Mj+1+zoEC8zSjWnbHm?=
- =?us-ascii?Q?6da30+E5Z57yWWqJoGeHBOuXed+6k/Ddkb1QgIX/whr2n38z2yr3zXsBoHWN?=
- =?us-ascii?Q?WrksSJG1OCHpeoU5tIRM4+oOHom3jaYo44/4xawg3Qivy+pNxNK/1xlvkcaJ?=
- =?us-ascii?Q?TeOYeJCxaWLzfbX3pEPxacRg4m8X4Ewcvo4W29XwIxkhGESB8mVAwPJB5cBV?=
- =?us-ascii?Q?mO7CXsyuxNzHu/W1p+mACamS+bPPfpGRA6qfmh2wkWWozU+qKOyBD4ZmtTD+?=
- =?us-ascii?Q?00cVK/DmgGSOotJGwXdgM0mRtP5Y/wG914B5xJKktfzutwO8Jdx5sWq3epwY?=
- =?us-ascii?Q?npum3sJ8uCpMAEbxs0YcmjRGtoFTbc3XJx5Wp2LZ?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207B81531F8;
+	Tue, 10 Sep 2024 07:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725953374; cv=none; b=SHoM9RRyQ8oWdfoqib5EgPnDIDWMXn3C19VtoVtenbnL9iVt1rZpO/iIQyBezSwx9zJvz/TBkTXonFk2T36ZA7C5Mp0L+8UNIQF5n1woYPsHBCMYi8nsZowd1XOfdsfFKpeOX/NwkZf1tuRc71UygXG3RmQPJ8xiuHwNwbtutdE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725953374; c=relaxed/simple;
+	bh=jlgnBxyZIgIZ5LdYawJQETwr/n1jW0Va7pZEDRoYe2M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GOyeVRH6/p4Jf1JfcE3TKouJDcnS01QDm42RLqeRcLepcLFRwGNOmc7AdI1ZQOG27Z3lwAvs6eEGssd38xeoAi2Eh5k7ld8D0bwWuNlLpVAiH1sJhGsedokjAsCvSfwR7bP8qJ/LmPGYwONyBWfOQ2amMTNO1j6EIes/vbCrEKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZHJtm0Sg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iYY32GUH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZHJtm0Sg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iYY32GUH; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3BFAB219FB;
+	Tue, 10 Sep 2024 07:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725953371; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MiDi2FHA9vw0R48kbGJoZgqTSRc3ZSboY8rVX/ccVPU=;
+	b=ZHJtm0SgubpIDNQVqhNDd4qeu16fDkdq1hs9xlRV+iLvxqrUdWbsxiauuD/ipALIv3AbeJ
+	JAlyn4gECJXQd1NUvCaQwuQ/GmocrLlCb3Kh1E86/L+GNQFKOIkZM1/YMd4Yy+mG4bmDwP
+	klGCXjqhQmC9n+1Tq0FkKCoNzp8sV4g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725953371;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MiDi2FHA9vw0R48kbGJoZgqTSRc3ZSboY8rVX/ccVPU=;
+	b=iYY32GUHw+AubQO8jsoZje/xUgexavsARV3esphtazmJSVfQZMdQPucZcUwTx7jX/Xxxqj
+	+TOJ/XsVC4ngw7CA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725953371; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MiDi2FHA9vw0R48kbGJoZgqTSRc3ZSboY8rVX/ccVPU=;
+	b=ZHJtm0SgubpIDNQVqhNDd4qeu16fDkdq1hs9xlRV+iLvxqrUdWbsxiauuD/ipALIv3AbeJ
+	JAlyn4gECJXQd1NUvCaQwuQ/GmocrLlCb3Kh1E86/L+GNQFKOIkZM1/YMd4Yy+mG4bmDwP
+	klGCXjqhQmC9n+1Tq0FkKCoNzp8sV4g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725953371;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MiDi2FHA9vw0R48kbGJoZgqTSRc3ZSboY8rVX/ccVPU=;
+	b=iYY32GUHw+AubQO8jsoZje/xUgexavsARV3esphtazmJSVfQZMdQPucZcUwTx7jX/Xxxqj
+	+TOJ/XsVC4ngw7CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E133313A3A;
+	Tue, 10 Sep 2024 07:29:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id t5SwNVr132boJgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 10 Sep 2024 07:29:30 +0000
+Message-ID: <ad9e19af-fabd-4ce0-a9ac-741149f9aab3@suse.de>
+Date: Tue, 10 Sep 2024 09:29:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57665d6e-0f99-4d0d-41a8-08dcd16a2ae3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2024 07:28:29.5945
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RNXljujpbBhrdGsIomFDostOf2FSF+gsgouxl2UpfeTMfpizjJ1PK0FjjFcpJf4zfTzpSmvOGi0oUKEt8rZDmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7918
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev/xen-fbfront: Assign fb_info->device
+To: =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
+ Jason Andryuk <jandryuk@gmail.com>
+Cc: Helge Deller <deller@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+ Sam Ravnborg <sam@ravnborg.org>, xen-devel@lists.xenproject.org,
+ Jason Andryuk <jason.andryuk@amd.com>,
+ Arthur Borsboom <arthurborsboom@gmail.com>, stable@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20240910020919.5757-1-jandryuk@gmail.com>
+ <Zt_zvt3VXwim_DwS@macbook.local>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <Zt_zvt3VXwim_DwS@macbook.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_TO(0.00)[citrix.com,gmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmx.de,arndb.de,ravnborg.org,lists.xenproject.org,amd.com,gmail.com,vger.kernel.org,lists.freedesktop.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-> From: Sascha Hauer <s.hauer@pengutronix.de>
-> Sent: Tuesday, September 10, 2024 3:22 PM
-> To: David Lin <yu-hao.lin@nxp.com>
-> Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
-> Hsieh <tsung-hsien.hsieh@nxp.com>
-> Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running=
- on
-> different channel
->=20
-> Caution: This is an external email. Please take care when clicking links =
-or
-> opening attachments. When in doubt, report the message using the 'Report
-> this email' button
->=20
->=20
-> On Tue, Sep 10, 2024 at 06:18:57AM +0000, David Lin wrote:
-> > > > > > > With DRCS support enabled AP and STA actually can run on
-> > > > > > > different channels with the current code. You are breaking
-> > > > > > > this scenario with this
-> > > > > patch.
-> > > > > > >
-> > > > > > > Sascha
-> > > > > > >
-> > > > > >
-> > > > > > DRCS will be checked in the future.
-> > > > >
-> > > > > By future you mean v3 of this patch?
-> > > > >
-> > > > > Sascha
-> > > > >
-> > > >
-> > > > No schedule now.
-> > >
-> > > I am getting confused now. You want us to abandon my patch in favour
-> > > of yours, but you have no plans to update your patch to avoid a
-> > > regression that you introduce with your patch?
-> > >
-> > > Sascha
-> > >
-> >
-> > My patch resolves the same issue as your patch. But your patch can't
-> > let AP and STA run on the same channel if some wiphy parameters are
-> > set.
-> >
-> > I wonder did you test your patch?
->=20
-> I finally see what you mean with "some wiphy parameters are set".
-> I did test my patch and I didn't run into this issue, because I haven't s=
-et
-> anything like rts_threshold in my config.
->=20
-> Nevertheless what I am trying to tell you in this thread is: Your patch
-> introduces a regression and needs an update.
->=20
-> It's not about my patch or your patch, both are currently not suitable fo=
-r
-> inclusion and the question is: will you update your patch?
->=20
-> Sascha
->=20
+Hi
 
-Without DRCS, this patch can avoid firmware crash and this is the current p=
-lan for Mwifiex.
-It won't affect any existing features.
+Am 10.09.24 um 09:22 schrieb Roger Pau Monné:
+> On Mon, Sep 09, 2024 at 10:09:16PM -0400, Jason Andryuk wrote:
+>> From: Jason Andryuk <jason.andryuk@amd.com>
+>>
+>> Probing xen-fbfront faults in video_is_primary_device().  The passed-in
+>> struct device is NULL since xen-fbfront doesn't assign it and the
+>> memory is kzalloc()-ed.  Assign fb_info->device to avoid this.
+>>
+>> This was exposed by the conversion of fb_is_primary_device() to
+>> video_is_primary_device() which dropped a NULL check for struct device.
+>>
+>> Fixes: f178e96de7f0 ("arch: Remove struct fb_info from video helpers")
+>> Reported-by: Arthur Borsboom <arthurborsboom@gmail.com>
+>> Closes: https://lore.kernel.org/xen-devel/CALUcmUncX=LkXWeiSiTKsDY-cOe8QksWhFvcCneOKfrKd0ZajA@mail.gmail.com/
+>> Tested-by: Arthur Borsboom <arthurborsboom@gmail.com>
+>> CC: stable@vger.kernel.org
+>> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
+> Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
+>
+>> ---
+>> The other option would be to re-instate the NULL check in
+>> video_is_primary_device()
+> I do think this is needed, or at least an explanation.  The commit
+> message in f178e96de7f0 doesn't mention anything about
+> video_is_primary_device() not allowing being passed a NULL device
+> (like it was possible with fb_is_primary_device()).
+>
+> Otherwise callers of video_is_primary_device() would need to be
+> adjusted to check for device != NULL.
 
-David
+The helper expects a non-NULL pointer. We might want to document this.
+
+Best regards
+Thomas
+
+>
+> Thanks, Roger.
+>
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
