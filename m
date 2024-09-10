@@ -1,129 +1,215 @@
-Return-Path: <linux-kernel+bounces-323493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B4C973DEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:00:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E1ED973DE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CF8AB25801
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:00:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A0C9B254B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFD41A2C26;
-	Tue, 10 Sep 2024 16:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC51E1A2570;
+	Tue, 10 Sep 2024 16:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Wl4AzHJN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMWgz2BD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9D21A0B16;
-	Tue, 10 Sep 2024 16:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425C4198842;
+	Tue, 10 Sep 2024 16:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725987599; cv=none; b=pub4QGW1DjsVusE7w4pg3j30R3KtrDBh0hGHVsfn5yKyS6wFGaIoXhuUKg8sEIGk0JuU/7FWkd7WUa9QA7EkDtJ3kOpEq0TbthzVa/yvrbvVjS1uWEsR2AmZlWLngtom/4c+Q8Rh3w4lRdw/cgV9W4dWVxKphuDOI7QpbsFWTqY=
+	t=1725987590; cv=none; b=lfx+yA8IxXpNHGDJ78DcBELM1hE1RAjDzdnYXLRpyrl6VFYwztTgRAml5LI6uqZuopEpnK4qeCEnIvk66MO1Fl1qYrK1WHChR7BRm3fIv2DsQ1RFcZ++CtP97K/A42fv7Zqmy7nCmdk34H/w7U9Zr2eEMo1/85vm/q5NOqe0zIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725987599; c=relaxed/simple;
-	bh=G3Hn6EXAAEnqcit3JwtQng5VYPSUx2pPYSgFWdELybw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jMNkTrXBrcm4V4dSZjtNc8+AY/F+0l8v6f/EvCwW5Frm870rfAO6zhXddiOJXXUVJV+Bo3YOh70BLtWNqDD8/wJeXUqEou15FRmEiN84HrO7H3tOxfBOhCX/UpakvyfaJ501tB9vFKJh5MACAVR71DXIln5kIttPGOvYEW1HT7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Wl4AzHJN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48AEwwo8022692;
-	Tue, 10 Sep 2024 16:59:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=l1clwwAhA+PxVigDqdpbpW
-	qSsxdksAzpRNKFaR+Ray4=; b=Wl4AzHJNznaMfFJMU8D9xO8ZtWLddweBK4PVqv
-	JPNsb6QihER/ODTZXNVfORsGv5Xab9EJVGbclK+GBqcESnP8K4fxjWqxsrQZ3YAV
-	hJPQow9RQzbNl6U77uWbC9b1BC1+faYwnb0IJfTBjcKdF8zycWnr08kqTRYVYNqO
-	C8F4a2Oack4/ZhhHNgkg3kT1UWoX5NGQw4Ff6LhptPDtCpkfC7nHC4g9MdafsDCj
-	qqo5c5GJsmk4iC92WBT4gSaSjBOPPL2dYv3ucGKlwyj1W+G+TRRCoPwu/p9kakHj
-	tk7UjEmdnhueOLTtsfFzSOYVgfdBg35aQgwItbHTHw2Huzgw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gybpptmf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 16:59:40 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48AGxeZE013994
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 16:59:40 GMT
-Received: from hu-nkela-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 10 Sep 2024 09:59:37 -0700
-From: Nikunj Kela <quic_nkela@quicinc.com>
-To: <wim@linux-watchdog.org>, <linux@roeck-us.net>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, <quic_psodagud@quicinc.com>,
-        Nikunj Kela
-	<quic_nkela@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4] dt-bindings: watchdog: qcom-wdt: document support on SA8255p
-Date: Tue, 10 Sep 2024 09:59:26 -0700
-Message-ID: <20240910165926.2408630-1-quic_nkela@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725987590; c=relaxed/simple;
+	bh=3wuFIoLr691b/skwnVl1HScAP75KBHcXvy/8/CQt2WQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QFkWcq8r/4TQeXnavWORnBJWusimRGSVKEABFQ8AUQdQKbxjh/4+PO8JDREqEsXwVkKihdEySo+5uqEH2OWTTOG0ultSYz/WxLWYHty3y7zxPLBF6628wqnzP06+hWrElRsG2v6KR12AZ4suTl2s6NR1D+yLknNMU+pKyJIDG1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMWgz2BD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2F4CC4CEC3;
+	Tue, 10 Sep 2024 16:59:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725987589;
+	bh=3wuFIoLr691b/skwnVl1HScAP75KBHcXvy/8/CQt2WQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rMWgz2BD95r+OzSxcnV1ug802GJby0Nl3G+E7GaDhe2myIcFLUMgUAcy83hFvvyYv
+	 49QXK+X0dNKojqKsAVOXx7g58v01C4nXNCmrBpY35i0vjwHH3wsP6NFCg8Cpsvi51c
+	 D5Uc16seSI3iKgV8lQnM49ucEnSRrGjJski63YAkQyHHAhP6pIa+Hx4AIbMvepFKSp
+	 16Nrh3InpnJZOmZ2r4QT8xgM73vpgLVTkGMwrGsaLvVZVmAT8yApx08ybQxDnee0b1
+	 MPfy4psKrzlfc5icIE3WwtvBafdcj5wr8hLULv509j+vP5vbol7oVekK9XFuAbQfoJ
+	 Twt4AQ9CFsDag==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1so4DT-00BoOW-Ag;
+	Tue, 10 Sep 2024 17:59:47 +0100
+Date: Tue, 10 Sep 2024 17:59:46 +0100
+Message-ID: <86seu778cd.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: Sebastian Ene <sebastianene@google.com>,
+	akpm@linux-foundation.org,
+	alexghiti@rivosinc.com,
+	ankita@nvidia.com,
+	ardb@kernel.org,
+	catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu,
+	james.morse@arm.com,
+	vdonnefort@google.com,
+	mark.rutland@arm.com,
+	oliver.upton@linux.dev,
+	rananta@google.com,
+	ryan.roberts@arm.com,
+	shahuang@redhat.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v10 2/5] arm64: ptdump: Expose the attribute parsing functionality
+In-Reply-To: <20240910095718.GB20813@willie-the-truck>
+References: <20240909124721.1672199-1-sebastianene@google.com>
+	<20240909124721.1672199-3-sebastianene@google.com>
+	<20240910095718.GB20813@willie-the-truck>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: I-YMtHjydWTnuv4CPKTiUjjam3E9oBo5
-X-Proofpoint-GUID: I-YMtHjydWTnuv4CPKTiUjjam3E9oBo5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 spamscore=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 clxscore=1015 bulkscore=0
- impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409100126
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: will@kernel.org, sebastianene@google.com, akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com, ardb@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, james.morse@arm.com, vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Add a compatible for the SA8255p platform's KPSS watchdog.
+On Tue, 10 Sep 2024 10:57:18 +0100,
+Will Deacon <will@kernel.org> wrote:
+> 
+> On Mon, Sep 09, 2024 at 12:47:18PM +0000, Sebastian Ene wrote:
+> > Reuse the descriptor parsing functionality to keep the same output format
+> > as the original ptdump code. In order for this to happen, move the state
+> > tracking objects into a common header.
+> > 
+> > Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> > ---
+> >  arch/arm64/include/asm/ptdump.h | 41 +++++++++++++++++++++++-
+> >  arch/arm64/mm/ptdump.c          | 55 +++++++--------------------------
+> >  2 files changed, 51 insertions(+), 45 deletions(-)
+> > 
+> > diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
+> > index 5b1701c76d1c..bd5d3ee3e8dc 100644
+> > --- a/arch/arm64/include/asm/ptdump.h
+> > +++ b/arch/arm64/include/asm/ptdump.h
+> > @@ -9,6 +9,7 @@
+> >  
+> >  #include <linux/mm_types.h>
+> >  #include <linux/seq_file.h>
+> > +#include <linux/ptdump.h>
+> >  
+> >  struct addr_marker {
+> >  	unsigned long start_address;
+> > @@ -21,14 +22,52 @@ struct ptdump_info {
+> >  	unsigned long			base_addr;
+> >  };
+> >  
+> > +struct ptdump_prot_bits {
+> > +	u64		mask;
+> > +	u64		val;
+> > +	const char	*set;
+> > +	const char	*clear;
+> > +};
+> > +
+> > +struct ptdump_pg_level {
+> > +	const struct ptdump_prot_bits *bits;
+> > +	char name[4];
+> > +	int num;
+> > +	u64 mask;
+> > +};
+> > +
+> > +/*
+> > + * The page dumper groups page table entries of the same type into a single
+> > + * description. It uses pg_state to track the range information while
+> > + * iterating over the pte entries. When the continuity is broken it then
+> > + * dumps out a description of the range.
+> > + */
+> > +struct ptdump_pg_state {
+> > +	struct ptdump_state ptdump;
+> > +	struct seq_file *seq;
+> > +	const struct addr_marker *marker;
+> > +	const struct mm_struct *mm;
+> > +	unsigned long start_address;
+> > +	int level;
+> > +	u64 current_prot;
+> > +	bool check_wx;
+> > +	unsigned long wx_pages;
+> > +	unsigned long uxn_pages;
+> > +};
+> > +
+> >  void ptdump_walk(struct seq_file *s, struct ptdump_info *info);
+> > +void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
+> > +	       u64 val);
+> >  #ifdef CONFIG_PTDUMP_DEBUGFS
+> >  #define EFI_RUNTIME_MAP_END	DEFAULT_MAP_WINDOW_64
+> >  void __init ptdump_debugfs_register(struct ptdump_info *info, const char *name);
+> >  #else
+> >  static inline void ptdump_debugfs_register(struct ptdump_info *info,
+> >  					   const char *name) { }
+> > -#endif
+> > +#endif /* CONFIG_PTDUMP_DEBUGFS */
+> > +#else
+> > +static inline void note_page(void *pt_st, unsigned long addr,
+> > +			     int level, u64 val) { }
+> 
+> nit: but why isn't 'pt_st' a pointer to 'struct ptdump_state'?
+> 
+> Perhaps you should #include <linux/ptdump.h> before the #ifdef
+> CONFIG_PTDUMP_CORE ?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
----
+Yup, that seems to do the trick. I'm folding this into the patch:
 
-Changes in v4:
-        - Added Reviewed-by tag
+diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
+index 71a7ed01153a4..6cf4aae052191 100644
+--- a/arch/arm64/include/asm/ptdump.h
++++ b/arch/arm64/include/asm/ptdump.h
+@@ -5,11 +5,12 @@
+ #ifndef __ASM_PTDUMP_H
+ #define __ASM_PTDUMP_H
+ 
++#include <linux/ptdump.h>
++
+ #ifdef CONFIG_PTDUMP_CORE
+ 
+ #include <linux/mm_types.h>
+ #include <linux/seq_file.h>
+-#include <linux/ptdump.h>
+ 
+ struct addr_marker {
+ 	unsigned long start_address;
+@@ -67,7 +68,7 @@ static inline void ptdump_debugfs_register(struct ptdump_info *info,
+ 					   const char *name) { }
+ #endif /* CONFIG_PTDUMP_DEBUGFS */
+ #else
+-static inline void note_page(void *pt_st, unsigned long addr,
++static inline void note_page(struct ptdump_state *pt_st, unsigned long addr,
+ 			     int level, u64 val) { }
+ #endif /* CONFIG_PTDUMP_CORE */
+ 
+> In any case, the meat of the patch is fine:
+> 
+> Acked-by: Will Deacon <will@kernel.org>
 
-Changes in v3:
-        - Removed the patch from original series[1]
+Thanks,
 
-Changes in v2:
-        - Added Reviewed-by tag
+	M.
 
-[1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
----
- Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-index 47587971fb0b..932393f8c649 100644
---- a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-+++ b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-@@ -26,6 +26,7 @@ properties:
-               - qcom,apss-wdt-msm8994
-               - qcom,apss-wdt-qcm2290
-               - qcom,apss-wdt-qcs404
-+              - qcom,apss-wdt-sa8255p
-               - qcom,apss-wdt-sa8775p
-               - qcom,apss-wdt-sc7180
-               - qcom,apss-wdt-sc7280
 -- 
-2.34.1
-
+Without deviation from the norm, progress is not possible.
 
