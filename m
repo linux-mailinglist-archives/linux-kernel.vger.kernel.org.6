@@ -1,207 +1,110 @@
-Return-Path: <linux-kernel+bounces-322431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785FE9728E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:28:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 536849728EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66E0CB227C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:28:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AEC5285B11
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F74816DEA9;
-	Tue, 10 Sep 2024 05:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF863170A18;
+	Tue, 10 Sep 2024 05:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQQ6FZWa"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kke2/a9L"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E241219F3;
-	Tue, 10 Sep 2024 05:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA547167265
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725946108; cv=none; b=e2xlj0aTC+7vDOQoad2uJtA99IIRTRvf5jYKJ7ZM5zY1koVSiXQAOT2Dyi7iE9yqzwkfo8MLwovhmFaCkHPCjAQ/kdq15G3O22X3d3/5qh/b0IEOSa4LAiC6FSgVJ/Xgyp5CsjaEFN78F6IiXq0cN5ZFXfEJ1fIqeT20gf6FCec=
+	t=1725946563; cv=none; b=PBeA36BcYJlUvDUk2kW7Fhd/Ox1eWSgAsuVhTIGNNI+VAu4Y0YblcWxYG+YUWJzX+wUcxklK+hlL+OsOEBipJ85sJcVANvw/WhxUZJce8JSK1nRKr0w0OvkqP4+vV6QNXhwegcVIpWPJKJ3mUVziYUMuYB+CIFxqD11hEdTZVBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725946108; c=relaxed/simple;
-	bh=ktL/zXqluwR3xNUIiQy6A8Sj7fy3cC0Lipvmmp2ANVI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RKBTD0jNqy9q0tsd7zzOspecnQ/ww/DS+z7Wah0VWDjBzLA/O3tQcLXIIl36CFKnqs1jWey6uG6ep/a6RiS50fCYW2AIFhcLZmu/de4+lOpUSQ+59t0Ee8KHlqmoCO7ey8yeE7GXcsg1+wBdDa4wSRu7ZeNY5VwpUj0LTEtVMiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQQ6FZWa; arc=none smtp.client-ip=209.85.210.172
+	s=arc-20240116; t=1725946563; c=relaxed/simple;
+	bh=/qC3d5HW+DGJD/g6O+fEv4NuAihwErpe5X6U3mHLd7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bWNQgvdSywKPJBTAOfAqIV7kuwHuftEmaN2xur3t0+Ke7phf3QHwguzI3z4vclvS31C/Abz/7VQEkqG0bwdw1tGlNFN3XMqCj5l1vb8Za16MPBzXEVvBI7zY3RKeUkFCoIdteEeR2hEtolxbyh8s8dOhHnIhxFO57gZ0wU9Y9NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kke2/a9L; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-717934728adso3718331b3a.2;
-        Mon, 09 Sep 2024 22:28:27 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d100e9ce0so460574566b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 22:36:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725946107; x=1726550907; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZYE1wOTrhsQmso9EDO49bYQfX0h+ApJkIr4QBsuXRhs=;
-        b=DQQ6FZWa6B73iGIjatRSdbX+Zny3Kb9jx6e3I1zHIwe4nnG8LIbH4VWE/s0qc33PW/
-         VsdDMnR5uKFSUHh0YhgrRD1srX6f0oVkWLAeRR49Q92WSgcBwerbephnvwXDwx1jkDnc
-         qSqFWRY8m6E7wDfBfjbodNuuAqyyKf/jbOGglYTez6poaywTRZVlkQDqmf8RmZQbHPz9
-         1QfPV1j8Vz+1MGW2gvjjmgsA2CD8devwylxJL4HnzVOm4OOr9T9P5jpNnP5EOlfDzemv
-         XwGkTd+32AxnfPtOdARQ/TpCJvgMu2zbJWgMdv9LmMkrphQRsPrEhxEAlBxk+K/GbX/q
-         SKwQ==
+        d=gmail.com; s=20230601; t=1725946560; x=1726551360; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rob6GRXtYDNA7DhHsgmiePqlSPWTvJEWrfOPcbfODMo=;
+        b=Kke2/a9LLb0PFUB0EjsqBInoZzXOyectCael/0TRVj2fHkncPPS3HNBcGLf7q5ZJRz
+         Hbonz8u67YkoOvgZrPJCDRwepBeGH9sE9aQrPAl/rP16MKPcmQjCbJ2wpQM9NbvsZXqQ
+         ISpWUZ8KiNRLd1S/tpbF90fS6zvqOQa0Rp1VxpKysK/np4OLNyM77lgNwMs+eEYCr4xp
+         vGJ8r9KelBDeK/pSBm7mrxgoKl0Ord/SqmpjiZhRpJwaEBgZcpiJp1obCc17/Ilea1PQ
+         iYUXrA9dFHHX1sVpHsx1d/QY9HGEtCmrxTvLY+1i4e+usd2ZX4fMfhWp72VQTGV064u2
+         G7yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725946107; x=1726550907;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZYE1wOTrhsQmso9EDO49bYQfX0h+ApJkIr4QBsuXRhs=;
-        b=bEN5L22ZPSM5JbqyNYRs0EnAxwrKV754+l+UkbXy/BeGy6nJGvIMhFLw1lWf/W1384
-         HYkiPZP7ZTDOyhQ7QmXaDKksj+OnfP2fm9tyT+NeG+hMd7ntm8rczt3mfUSMPZ61k/hd
-         ukiNa2WZyUglPcsNy/OHR0TSJpNUySYbgUvMA040c7/jjRDT89jVIofkLHs2qgZdpp1I
-         E/OeU6ZarfqCfH1sonhqHKKB/UxxNhu65H7WEl8uje30QeCtww29BBpcn0UNisGxnUWq
-         ajUBnk0rbNnrmSbZD7ACBLWaJ8swqCZWbtFwZ37Ui3V0MHrWPBR6bbGvRkNiBlTIbIK+
-         k5LA==
-X-Forwarded-Encrypted: i=1; AJvYcCWw9qNnYfhYR+FGp1JZX5cA+AihRW9SCH5IG3QgTpZP2DB7PvP1RgO59vfDGhZvmolcx1B7kQPl@vger.kernel.org, AJvYcCXw5QUwPESDv3o9VMBwnQXVxLezudR1GOUKxIMisucIMuUP8LkIp1G2aPDA3qpampPElgcUGjoZ/wJyfZ57@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8qAk+n1G3Nnor11Femxdlztx1SqwVPR6TLVT5qaMIov7p8blu
-	QxQIEl4gBxdknduQgEXylWk+nULJ1WnBUMq6T3wFWM3Dc5Q9qzU2H9+pObSv9fyWUNtJ4q2eVAN
-	fgfbKeCaN840zaux369uCElPYAxsDThuR
-X-Google-Smtp-Source: AGHT+IHRbCXMg8gaubCG92lOyYR9i+NdeacENJhKZWLfl4jKuGQK/aQEpTjCQOJmLCCCxXeVGddTAIX6sdIEYRGcKG4=
-X-Received: by 2002:a05:6a20:c99a:b0:1cf:4c1e:8b53 with SMTP id
- adf61e73a8af0-1cf4c1e8c45mr3702971637.9.1725946106647; Mon, 09 Sep 2024
- 22:28:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725946560; x=1726551360;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rob6GRXtYDNA7DhHsgmiePqlSPWTvJEWrfOPcbfODMo=;
+        b=RrWkPBBBcSY+YCafRiP0t9SzS+V8bkh+dBaNSYczNE+yFIfi2M5Ypr/wYZ+9Wo9gUO
+         zIDeThHvjW6OuQh4spFolu215kOGE2yKT0E/gFoqzxbqQ3YG7AjTHIQ2g7u2Xf8QFolU
+         8n4OzvMXSAN5LYfwYWiylad1M0PS1uednX4Vc+W/EJyFyr84Xz3Br5uFJHx4GQPWEm3a
+         b5KH14JUsRgI4JNQe81oHk8WiSjNUBfdgrpnJscWSkBHc5EV2FDAbZMRPUFVZ2OUJFg6
+         CIZSeZs3xwTyXllBDKIua3p4cHfT5SuWKopDNKrK4SJb3EnQ9InQ4I7mxPwiqxLU/kP2
+         A2pA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqQLQJLSJbnnDV6z+B/zb5BsjGNtPMGhEisvWpzaxvAgxNljPjVn/O4jPnVOIX01V9y0KgGj0j6QFvw4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjgxMo6G/k8Eo3FlFqcdJ/jy2iS2tKokdRRazeckXE2LYr0D98
+	hfa1X91BMVZCHfmcWk51Eu+nw4V8X9qB1lP+ahZ2Ye2Bb6asuGBg
+X-Google-Smtp-Source: AGHT+IEe9Pz6RHgUxmA7q53brln0aZhwJ16V895i0+mEtPsa6gF0H0ro6Xl/FUkvGVPIUAnf1uGN9g==
+X-Received: by 2002:a17:906:dc8c:b0:a77:d52c:c42d with SMTP id a640c23a62f3a-a8a885bdfccmr1189339166b.13.1725946559741;
+        Mon, 09 Sep 2024 22:35:59 -0700 (PDT)
+Received: from ?IPV6:2003:c7:8f2a:8598:b80c:2d4e:9a81:3f29? (p200300c78f2a8598b80c2d4e9a813f29.dip0.t-ipconnect.de. [2003:c7:8f2a:8598:b80c:2d4e:9a81:3f29])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d5dc97sm430359466b.212.2024.09.09.22.35.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 22:35:59 -0700 (PDT)
+Message-ID: <6e2d4e6f-1587-474c-8730-482e702f1dbe@gmail.com>
+Date: Tue, 10 Sep 2024 07:35:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830082244.156923-1-jingxiangzeng.cas@gmail.com> <CAJD7tkb6320POwiWaSmZFUYRh44_BStwjc2nhL3Wangy1qWYxQ@mail.gmail.com>
-In-Reply-To: <CAJD7tkb6320POwiWaSmZFUYRh44_BStwjc2nhL3Wangy1qWYxQ@mail.gmail.com>
-From: jingxiang zeng <jingxiangzeng.cas@gmail.com>
-Date: Tue, 10 Sep 2024 13:28:15 +0800
-Message-ID: <CAJqJ8ihKy133afN=qTAiYAV3W4ifop+b18PbANVZf3FT-9auzg@mail.gmail.com>
-Subject: Re: [PATCH] mm/memcontrol: add per-memcg pgpgin/pswpin counter
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Jingxiang Zeng <linuszeng@tencent.com>, linux-mm@kvack.org, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/4] staging: rtl8723bs: Fix spelling mistakes
+To: Roshan Khatri <topofeverest8848@gmail.com>, gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <cover.1725933169.git.topofeverest8848@gmail.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <cover.1725933169.git.topofeverest8848@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 10 Sept 2024 at 06:46, Yosry Ahmed <yosryahmed@google.com> wrote:
->
-> On Fri, Aug 30, 2024 at 1:23=E2=80=AFAM Jingxiang Zeng
-> <jingxiangzeng.cas@gmail.com> wrote:
-> >
-> > From: Jingxiang Zeng <linuszeng@tencent.com>
-> >
-> > In proactive memory reclamation scenarios, it is necessary to
-> > estimate the pswpin and pswpout metrics of the cgroup to
-> > determine whether to continue reclaiming anonymous pages in
-> > the current batch. This patch will collect these metrics and
-> > expose them.
->
-> Could you add more details about the use case?
->
-> By "reclaiming anonymous pages", do you mean using memory.reclaim with
-> swappiness=3D200?
+On 9/10/24 06:03, Roshan Khatri wrote:
+> This patch series fixes various spelling mistakes in the
+> rtl8723bs/include/rtw_xmit.h, rtl8723bs/include/rtw_io.h,
+> rtl8723bs/include/rtw_mlme.h and rtl8723bs/core/rtw_xmit.h files.
+> This patch series is created after receiving feedback on
+> individual patches.
+> 
+> Roshan Khatri (4):
+>    staging: rtl8723bs: include: Fix spelling mistake in rtw_xmit.h
+>    staging: rtl8723bs: include: Fix spelling mistake in rtw_io.h
+>    staging: rtl8723bs: include: Fix spelling mistake in rtw_mlme.h
+>    staging: rtl8723bs: core: Fix spelling mistake in rtw_xmit.c
+> 
+>   drivers/staging/rtl8723bs/core/rtw_xmit.c    | 2 +-
+>   drivers/staging/rtl8723bs/include/rtw_io.h   | 2 +-
+>   drivers/staging/rtl8723bs/include/rtw_mlme.h | 2 +-
+>   drivers/staging/rtl8723bs/include/rtw_xmit.h | 2 +-
+>   4 files changed, 4 insertions(+), 4 deletions(-)
+> 
 
-Yes.
->
-> Why not just use PGPGOUT to figure out how many pages were reclaimed?
-> Do you find a significant amount of file pages getting reclaimed with
-> swappiness=3D200?
->
 
-Currently, it's not possible to know the swap out situation of a
-cgroup, and the
-PGPGOUT metric, which includes the reclaim count of file pages and
-anonymous pages, cannot accurately reflect the swap out situation.
-> >
-> > Signed-off-by: Jingxiang Zeng <linuszeng@tencent.com>
-> > ---
-> >  mm/memcontrol-v1.c | 2 ++
-> >  mm/memcontrol.c    | 2 ++
-> >  mm/page_io.c       | 4 ++++
-> >  3 files changed, 8 insertions(+)
-> >
-> > diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-> > index b37c0d870816..44803cbea38a 100644
-> > --- a/mm/memcontrol-v1.c
-> > +++ b/mm/memcontrol-v1.c
-> > @@ -2729,6 +2729,8 @@ static const char *const memcg1_stat_names[] =3D =
-{
-> >  static const unsigned int memcg1_events[] =3D {
-> >         PGPGIN,
-> >         PGPGOUT,
-> > +       PSWPIN,
-> > +       PSWPOUT,
->
-> memory.reclaim is not exposed in cgroup v1, so assuming these are only
-> used for such proactive reclaim, we don't need to add them here.
-
-Your point makes sense. I will remove these fields in the v2 version.
->
-> >         PGFAULT,
-> >         PGMAJFAULT,
-> >  };
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index 087a8cb1a6d8..dde3d026f174 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -418,6 +418,8 @@ static const unsigned int memcg_vm_event_stat[] =3D=
- {
-> >         PGPGIN,
-> >         PGPGOUT,
-> >  #endif
-> > +       PSWPIN,
-> > +       PSWPOUT,
-> >         PGSCAN_KSWAPD,
-> >         PGSCAN_DIRECT,
-> >         PGSCAN_KHUGEPAGED,
-> > diff --git a/mm/page_io.c b/mm/page_io.c
-> > index b6f1519d63b0..4bc77d1c6bfa 100644
-> > --- a/mm/page_io.c
-> > +++ b/mm/page_io.c
-> > @@ -310,6 +310,7 @@ static inline void count_swpout_vm_event(struct fol=
-io *folio)
-> >         }
-> >         count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
-> >  #endif
-> > +       count_memcg_folio_events(folio, PSWPOUT, folio_nr_pages(folio))=
-;
-> >         count_vm_events(PSWPOUT, folio_nr_pages(folio));
-> >  }
-> >
-> > @@ -505,6 +506,7 @@ static void sio_read_complete(struct kiocb *iocb, l=
-ong ret)
-> >                 for (p =3D 0; p < sio->pages; p++) {
-> >                         struct folio *folio =3D page_folio(sio->bvec[p]=
-.bv_page);
-> >
-> > +                       count_memcg_folio_events(folio, PSWPIN, folio_n=
-r_pages(folio));
-> >                         folio_mark_uptodate(folio);
-> >                         folio_unlock(folio);
-> >                 }
-> > @@ -588,6 +590,7 @@ static void swap_read_folio_bdev_sync(struct folio =
-*folio,
-> >          * attempt to access it in the page fault retry time check.
-> >          */
-> >         get_task_struct(current);
-> > +       count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
-> >         count_vm_event(PSWPIN);
-> >         submit_bio_wait(&bio);
-> >         __end_swap_bio_read(&bio);
-> > @@ -603,6 +606,7 @@ static void swap_read_folio_bdev_async(struct folio=
- *folio,
-> >         bio->bi_iter.bi_sector =3D swap_folio_sector(folio);
-> >         bio->bi_end_io =3D end_swap_bio_read;
-> >         bio_add_folio_nofail(bio, folio, folio_size(folio), 0);
-> > +       count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
-> >         count_vm_event(PSWPIN);
-> >         submit_bio(bio);
-> >  }
-> > --
-> > 2.43.5
-> >
-> >
->
+Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 
