@@ -1,116 +1,170 @@
-Return-Path: <linux-kernel+bounces-322670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC0D972C12
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:24:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B606A972C0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88A01283894
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 640032863A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D943C17E010;
-	Tue, 10 Sep 2024 08:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB43E17D35C;
+	Tue, 10 Sep 2024 08:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="X4DHuP09"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Z0+ZSNu+"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BDC14A4C3;
-	Tue, 10 Sep 2024 08:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA8014A4C3;
+	Tue, 10 Sep 2024 08:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725956647; cv=none; b=OpCArBzOHhwSHUBAXSbMakAHG2JKtZAwntFq9y7hnDX22t6IdGDs8PlhD62k4Su7hEswPiEdo/UDXy/7WEE46HW6tV5l3uo6ZM5BAfnZMtAOpLN95KA1TnaId4RcFtbcb0Prpj0i6UIO0wkoE2Z5GLMyruFuRdYWKgN0089eNso=
+	t=1725956552; cv=none; b=bLM23ChUnZMwy1QkDsPS+SO9q8ARWKUOXvGxsH+E9KgKUQrUnuPYDVZaK6TX6ZD5y2b4xSScLJsOtnYJigniEjKyad3Y10xXYbdnULTT7PsQmpHbgT8yz9U8BJre2wjf51s4XnBnsZMrb1X4cklyMSaQw/fr4NXD7x4xT+Ra4p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725956647; c=relaxed/simple;
-	bh=MjTDozSO25dJqutHnvvKIt+CxnDOzKA6MZ7DnQLbgE4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AVQplvDmKuv7p1kiebxfOeT0sSc7AmWPmeCVsI9WXHHXRIldUBGUnj3je5CpG243n9lDJEIoIP/0rnsdPK0f6mv1YFby1qcZ7xG5i+7YqaAR3cRazPJOUjFXK20eaAoO48vdvo2DmOJ5Si+Z4FpkyDZV8nHppEmVBFRDKkw7xc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=X4DHuP09; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725956645; x=1757492645;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=MjTDozSO25dJqutHnvvKIt+CxnDOzKA6MZ7DnQLbgE4=;
-  b=X4DHuP09fUCXl2Xb+AKPhsfIptL2cyzF3wKi77Oc3Z8mE9ffQjSx1dCm
-   4OLq6ur0OsDl0VfOPOoT/x7LLycLcaUnrDiQeOw6Re+JrHX5aP8U35xZa
-   5da/9Ha56IZYzQmQWVOg3+24C8/D5xg1kn9fHXwewOFFY8FqgtadnQhLD
-   ZceUZRVEEL6184FNdbVdgR9KDI2scAOp2oS6newLfy8nWwsn2YtAb6yLr
-   NS6qNgy5+0d6QA7a+ZcbralP2k9v/pvYihAs8qqw5OHH/Ek8/fzwG8q1i
-   E899eUHmHHkW2ueJPb/dS4D7rj8ONa9/2i8esBvQBArZKVvaqDT/jRyUu
-   g==;
-X-CSE-ConnectionGUID: iHNlYK4jRDu9l7omWRWKHQ==
-X-CSE-MsgGUID: TlHYxewcTX+SMSNajrhm9w==
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="32196567"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Sep 2024 01:24:03 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 10 Sep 2024 01:23:49 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 10 Sep 2024 01:23:45 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<nicolas.ferre@microchip.com>, <codrin.ciubotariu@microchip.com>
-CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Andrei Simion
-	<andrei.simion@microchip.com>
-Subject: [PATCH] ASoC: dt-bindings: microchip,sama7g5-spdifrx: Add common DAI reference
-Date: Tue, 10 Sep 2024 11:22:03 +0300
-Message-ID: <20240910082202.45972-1-andrei.simion@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725956552; c=relaxed/simple;
+	bh=brbbBZUTXWY+39+PQXYFm1z/YKNb5IjgjWNxs8n4dzQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IINDwCMqhRNwKP7whKQRvv/XFc6RayS5r16TDX20ZMWOxpRGlOixCcaplfpRgz9HwXdrHZfOwkd/MIMtX2N6Tj6G0m0ZBE/M9JM11Wp4Dy9Yklbo7jA9CnQNGUceRHhBLsCWp46FQ8wbt0mUn7MnXzNNLSmA+1lh/W3zgK33u+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Z0+ZSNu+; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=mLX/DIBoOrfBorbkFkl8rvdIrIaBgzNT/RjG578VqDk=; b=Z0+ZSNu+CH1kpCtu+Ofb0YDimB
+	hiNZN+0yRUXHgourSZWIgvLn5gaa5kepVpkm3pSRA1fpmFgfQeXI18AcVaGO3jLAfYF5IwCmnVv00
+	R/mM8Di9BDh62z3NsPkgB8I9rTKh4MqCZIM/g6ODKkPOXEO7NKRTPfpB/+l1mh/xYUUq/rJwqdedK
+	jn712slwdtBP7WiYJVRTnNrjOnPaElxswEZdyfEhDiiOnY/2p/IeC4ysCgn4dsW7p40dhP83xziua
+	IahisU2HQd/3FRn/mJ8BKycXTPRyDwLeQc24PIj6Biyix5IRdgbc0Tv2OPwlbhJqP535OMW7smks+
+	Sex0uiWw==;
+Received: from i53875a02.versanet.de ([83.135.90.2] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1snw8R-000245-IZ; Tue, 10 Sep 2024 10:22:03 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Damon Ding <damon.ding@rock-chips.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ macromorgan@hotmail.com, jonas@kwiboo.se, tim@feathertop.org,
+ knaerzche@gmail.com, efectn@protonmail.com, andyshrk@163.com,
+ jagan@edgeble.ai, dsimic@manjaro.org, megi@xff.cz,
+ sebastian.reichel@collabora.com, alchark@gmail.com,
+ boris.brezillon@collabora.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Damon Ding <damon.ding@rock-chips.com>
+Subject:
+ Re: [PATCH v1 2/2] arm64: dts: rockchip: Add support for rk3588s evb1 board
+Date: Tue, 10 Sep 2024 10:24:25 +0200
+Message-ID: <1778254.M3retTD8dW@diego>
+In-Reply-To: <20240910030951.3670653-3-damon.ding@rock-chips.com>
+References:
+ <20240910030951.3670653-1-damon.ding@rock-chips.com>
+ <20240910030951.3670653-3-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Update the spdifrx yaml file to reference the dai-common.yaml schema,
-enabling the use of the 'sound-name-prefix' property
+Am Dienstag, 10. September 2024, 05:09:51 CEST schrieb Damon Ding:
+> Specification:
+> - Rockchip RK3588S
+> - RK806-2x2pcs + DiscretePower
+> - eMMC5.1 + SPI Flash
+> - Micro SD Card3.0
+> - 1 x Typec3.0 + 2 x USB2 HOST
+> - 1 x 1Lane PCIE2.0 Connector(RC Mode)
+> - Headphone output
+> - Array Key(MENU/VOL+/VOP-/ESC), Reset, Power on/off Key
+> - 6 x SARADC
+> 
+> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+> ---
 
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
----
- .../devicetree/bindings/sound/microchip,sama7g5-spdifrx.yaml | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+[...]
 
-diff --git a/Documentation/devicetree/bindings/sound/microchip,sama7g5-spdifrx.yaml b/Documentation/devicetree/bindings/sound/microchip,sama7g5-spdifrx.yaml
-index 2f43c684ab88..7fbab5871be4 100644
---- a/Documentation/devicetree/bindings/sound/microchip,sama7g5-spdifrx.yaml
-+++ b/Documentation/devicetree/bindings/sound/microchip,sama7g5-spdifrx.yaml
-@@ -13,6 +13,9 @@ description:
-   The Microchip Sony/Philips Digital Interface Receiver is a serial port
-   compliant with the IEC-60958 standard.
- 
-+allOf:
-+  - $ref: dai-common.yaml#
-+
- properties:
-   "#sound-dai-cells":
-     const: 0
-@@ -53,7 +56,7 @@ required:
-   - dmas
-   - dma-names
- 
--additionalProperties: false
-+unevaluatedProperties: false
- 
- examples:
-   - |
+> +	analog-sound {
+> +		compatible = "simple-audio-card";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&hp_detect>;
+> +		simple-audio-card,name = "RK3588 EVB1 Audio";
+> +		simple-audio-card,aux-devs = <&amp_headphone>, <&amp_speaker>;
+> +		simple-audio-card,bitclock-master = <&masterdai>;
+> +		simple-audio-card,format = "i2s";
+> +		simple-audio-card,frame-master = <&masterdai>;
+> +		simple-audio-card,hp-det-gpio = <&gpio1 RK_PD5 GPIO_ACTIVE_LOW>;
+> +		simple-audio-card,mclk-fs = <256>;
+> +		simple-audio-card,pin-switches = "Headphones", "Speaker";
+> +		simple-audio-card,routing =
+> +			"Speaker Amplifier INL", "LOUT2",
+> +			"Speaker Amplifier INR", "ROUT2",
+> +			"Speaker", "Speaker Amplifier OUTL",
+> +			"Speaker", "Speaker Amplifier OUTR",
+> +			"Headphones Amplifier INL", "LOUT1",
+> +			"Headphones Amplifier INR", "ROUT1",
+> +			"Headphones", "Headphones Amplifier OUTL",
+> +			"Headphones", "Headphones Amplifier OUTR",
+> +			"LINPUT1", "Onboard Microphone",
+> +			"RINPUT1", "Onboard Microphone",
+> +			"LINPUT2", "Microphone Jack",
+> +			"RINPUT2", "Microphone Jack";
+> +		simple-audio-card,widgets =
+> +			"Microphone", "Microphone Jack",
+> +			"Microphone", "Onboard Microphone",
+> +			"Headphone", "Headphones",
+> +			"Speaker", "Speaker";
+> +
+> +		simple-audio-card,cpu {
+> +			sound-dai = <&i2s0_8ch>;
+> +		};
+> +
+> +		masterdai: simple-audio-card,codec {
+> +			sound-dai = <&es8388>;
+> +			system-clock-frequency = <12288000>;
+> +		};
+> +	};
+> +
+> +	amp_headphone: headphone-amplifier {
+> +		compatible = "simple-audio-amplifier";
+> +		enable-gpios = <&gpio4 RK_PA4 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&headphone_amplifier_en>;
+> +		sound-name-prefix = "Headphones Amplifier";
+> +	};
+> +
+> +	amp_speaker: speaker-amplifier {
+> +		compatible = "simple-audio-amplifier";
+> +		enable-gpios = <&gpio4 RK_PA5 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&speaker_amplifier_en>;
+> +		sound-name-prefix = "Speaker Amplifier";
+> +	};
+> +
+> +	backlight: backlight {
 
-base-commit: 6708132e80a2ced620bde9b9c36e426183544a23
--- 
-2.34.1
+please sort nodes by node name ... so "backlight" after "analog-sound"
+
+> +		compatible = "pwm-backlight";
+> +		power-supply = <&vcc3v3_lcd_edp>;
+> +		pwms = <&pwm12 0 25000 0>;
+> +	};
+> +
+> +	combophy_avdd0v85: combophy-avdd0v85-regulator {
+
+generally the naming convention for regulator nodes now is
+regulator-* ... so regulator-combophy-avdd0v85 here
+and similar for others below.
+
+
+Heiko
+
 
 
