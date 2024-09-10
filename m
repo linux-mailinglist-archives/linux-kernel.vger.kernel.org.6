@@ -1,170 +1,133 @@
-Return-Path: <linux-kernel+bounces-322271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82213972687
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:12:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1865B97268B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6FD11C21B28
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:12:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4672F1C236B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FDF770E9;
-	Tue, 10 Sep 2024 01:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E887345B;
+	Tue, 10 Sep 2024 01:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="huz7G9mV"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhlnPAa3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D820D6F307;
-	Tue, 10 Sep 2024 01:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687BB1859
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725930768; cv=none; b=u/sGZiJr0nuHG0nxr+qWM4PEhnvYT3W8HYGF/sO2F2rI86jzL5Oj2R2ozh7h73gFnzOuYJY5jMBVBkuyWsje6i81eSZe11C2Nj2afrHX9+7CrjS2Wd0MnxdCqUdrrc8aFUxiyO+R3lFpaGWN285KXswb57pLJYrxUMIOnMGCgM4=
+	t=1725930987; cv=none; b=DbJYhVJhip8W6z+qSaS6VkRVydyTlcCql2ZjbWKQoZALBxYvtfB+R+YhJHtcP5BUHIrqrLUK57o63KpYzO6aUPkDUXsEzeD/csuvuA/Y2DIkjWEF+R+C38SuZ1/oEhIfZQ2MboG0gAiz0FTt29Azln6Wz4f8xOlhHo8eHWcGzSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725930768; c=relaxed/simple;
-	bh=4hDpP4Lr+SjUubgdvfhA8wUi3pHwhmzJZwS//eqSpHA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uwgoU/VWYJURSwiX1x6cOLNtFDvriANX+PMhHy9gOdOTswdr+WkayD2ZQBEJLrZURBAWAqndAHHQtucrU7JpEPBw2TN715lhFG/2WEytLAZGoon55sQU9y4yADRybDgou/9Jg5kaI+bLnKnU4dQhHAz4wKfEOw9XIlX5JpUdtGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=huz7G9mV; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a80eab3945eso469457066b.1;
-        Mon, 09 Sep 2024 18:12:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725930765; x=1726535565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j3cOEtOvexh0wx5WjRoJORvf1Auxy8+dLP9Bjy/bEyU=;
-        b=huz7G9mVxJ/aQf7ZkTv1Ca44sBRIkpyPzmjweIcyR66r4Z7TgCrnv6up6Uw9chTvbP
-         vPnh+zUjQVImELZ6FEMmSkIodvfZwkFxXRN+gZQdIqQi4acARg3VihcHz0KR7qbQnj+2
-         qqzMqoZLtu8xB32DyC9GZUQU7dOwqJf+70CF9SCywb7toslqiD8D0E0Gq1ELLLwzVk1c
-         OVZHn+IV10sL5hugB3kXOhJMhqW6pY2jC5MIKZgpU/w9a8A6fLKrmUzZlEkDn/MZCsOs
-         YTWhfTtA73POKKEKTEltuPvJD4PilzWb7TL9PARUMWqXeSpqhFPK63koIylZuRdhMj6M
-         Gy+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725930765; x=1726535565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j3cOEtOvexh0wx5WjRoJORvf1Auxy8+dLP9Bjy/bEyU=;
-        b=nRuA1WuOyGbwTGJWhvKN0DYXmdgU0guuVs2rPwvDlJVaNTA6X7M2gd615LAY/M2A9M
-         TNz6NOKCe1GRSMiLq2aBgupykggrQaXC2TGOBW2srq9e1UEe5hPijayHreCz3C4WAurj
-         65pncIkuWcH9jEkFJeQfACMM+OQczac/BP6tIH6dIvkn/6nyiFM4g6g0AwiI52YwCBZy
-         B3WKhhWQtPGUpJfRBAMiWx38+1kiepyY1HR0XPfE3OMtt7RG9WXeV7fWM+pROjxBgh4B
-         mZoBKjG+Cd9oFgMNpbJQNT7aS32SiQPKH1ilm6J0ZKTxHHjE7TC2Mdv17E6u45/zKZLP
-         6AcA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0UNRnH4TepOnWSXGDJU0rgDwp+XMafUV6eTED07X77Ov8cjfK2D3sjal9IOSb24m54/ftCJnDz5rMlsL2@vger.kernel.org, AJvYcCWQqUpTs/T1sFbFi94+OeNR62OzDMDW4oG0ARCi9oVXtqPMVvBzyBgE66cCmnSOntqo76B1lPeZDDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEAlkahse0uDoymnXuqRX8NNn77HgPh38Mi4PbuHzjHk8T2mYc
-	6lJHchD9R2R+zgg2RUQn3SO0ijg7AHFMk7YQyVTHSA4ji5UWRhBY4YNiMHxZlj4cYsfawMhEz0z
-	X+lMVgy9/ZpeSPQyjRpey36seqSqNtBs=
-X-Google-Smtp-Source: AGHT+IHZ7U5FoeeNIb9dCX+fDO0hlFs6276LjKB177SRH9sND3Glorr7LJ/q7yHerwwbgU4TVi/BBZeZ/mGd2OPaHqQ=
-X-Received: by 2002:a17:907:3687:b0:a86:b923:4a04 with SMTP id
- a640c23a62f3a-a8a887fcdbemr997704866b.50.1725930764537; Mon, 09 Sep 2024
- 18:12:44 -0700 (PDT)
+	s=arc-20240116; t=1725930987; c=relaxed/simple;
+	bh=MGe+BNv8B4iO9+CV0hsGc6mktkx0QtjV/qWP+6ZV+L8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fE80RSp05suSPN4filcC90mjfVFCWMqLYsAda3Ykhh2zo9ZoZqLbpZTITduinrbUIGl2Qn8BeXESlmxqvDvJRnPdpWIbBgD6mGH4MwvmHyNUyQ4GqEFELYIDhpfYEHRFn6azjOkKi9VUZFEnyqCsrNcDVqUd9OUT/9GXBZL5iX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhlnPAa3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BDDCC4CEC5;
+	Tue, 10 Sep 2024 01:16:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725930986;
+	bh=MGe+BNv8B4iO9+CV0hsGc6mktkx0QtjV/qWP+6ZV+L8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XhlnPAa3MBcEKdNAPW9QT62dvF2zPiaV2D+9pOvA1ko9fwvJcglmLN97hhxZ2bB81
+	 kbfc4l+egYDTvfHb3dRryEHlFelVA1DR6xW5vC3ENnYdo6Wu6yysdPgGq+TzpQio+D
+	 2E8hwUPwUgUBR37tlQJqQ8A3Pi6Ldcdfau34jxRdj/PDJ/nAfJnlCZRvuUppjalLmC
+	 WLSWhSLZRkarrEHA/w7S3z6mV3FyDEYQitNljkNjTksWohPeGTh56YZ3yL1/Q33+j3
+	 Y6FCWisX4Xpo8CjE1/GL5Ipaiutg70Vuc/RMaP/V5EemOHDXzhae1i0SbE27PwrUO6
+	 RgV4MNlzES/ag==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	syzbot+341e5f32ebafbb46b81c@syzkaller.appspotmail.com
+Subject: [PATCH] f2fs: fix to don't panic system for no free segment fault injection
+Date: Tue, 10 Sep 2024 09:16:19 +0800
+Message-Id: <20240910011619.3582861-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830034640.7049-1-kfting@nuvoton.com> <qr3q7stbuwl3ylcqnfftg43nvnzi5cz2wcrhinlek6kvzb7wyi@uqgq4z5b6ob5>
-In-Reply-To: <qr3q7stbuwl3ylcqnfftg43nvnzi5cz2wcrhinlek6kvzb7wyi@uqgq4z5b6ob5>
-From: Tyrone Ting <warp5tw@gmail.com>
-Date: Tue, 10 Sep 2024 09:12:33 +0800
-Message-ID: <CACD3sJb1OvKqa1WsG-st=zmQsQ+-g=GNT-bRh+sQ8S59hi5kBA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/7] i2c: npcm: Bug fixes read/write operation, checkpatch
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
-	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Andi:
+f2fs: fix to don't panic system for no free segment fault injection
 
-Thank you for your feedback.
+syzbot reports a f2fs bug as below:
 
-Andi Shyti <andi.shyti@kernel.org> =E6=96=BC 2024=E5=B9=B49=E6=9C=889=E6=97=
-=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=889:00=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> Hi,
->
-> On Fri, Aug 30, 2024 at 11:46:33AM GMT, Tyrone Ting wrote:
-> > This patchset includes the following fixes:
-> >
-> > - Restore the npcm_i2caddr array length to fix the smatch warning.
-> > - Enable the target functionality in the interrupt handling routine
-> >   when the i2c transfer is about to finish.
-> > - Correct the read/write operation procedure.
-> > - Introduce a software flag to handle the bus error (BER) condition
-> >   which is not caused by the i2c transfer.
-> > - Modify timeout calculation.
-> > - Assign the client address earlier logically.
-> > - Use an i2c frequency table for the frequency parameters assignment.
-> > - Coding style fix.
-> >
-> > The NPCM I2C driver is tested on NPCM750 and NPCM845 evaluation boards.
->
-> first of all, Thanks Tali for your reviews.
->
-> Second, Tyronne, can we please incorporate Tali's comments into
-> commit messages and improve the code comments so that we don't
-> leave room for more questions?
->
-Understood. They'll be incorporated in next patch set.
+F2FS-fs (loop0): inject no free segment in get_new_segment of __allocate_new_segment+0x1ce/0x940 fs/f2fs/segment.c:3167
+F2FS-fs (loop0): Stopped filesystem due to reason: 7
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/segment.c:2748!
+CPU: 0 UID: 0 PID: 5109 Comm: syz-executor304 Not tainted 6.11.0-rc6-syzkaller-00363-g89f5e14d05b4 #0
+RIP: 0010:get_new_segment fs/f2fs/segment.c:2748 [inline]
+RIP: 0010:new_curseg+0x1f61/0x1f70 fs/f2fs/segment.c:2836
+Call Trace:
+ __allocate_new_segment+0x1ce/0x940 fs/f2fs/segment.c:3167
+ f2fs_allocate_new_section fs/f2fs/segment.c:3181 [inline]
+ f2fs_allocate_pinning_section+0xfa/0x4e0 fs/f2fs/segment.c:3195
+ f2fs_expand_inode_data+0x5d6/0xbb0 fs/f2fs/file.c:1799
+ f2fs_fallocate+0x448/0x960 fs/f2fs/file.c:1903
+ vfs_fallocate+0x553/0x6c0 fs/open.c:334
+ do_vfs_ioctl+0x2592/0x2e50 fs/ioctl.c:886
+ __do_sys_ioctl fs/ioctl.c:905 [inline]
+ __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0010:get_new_segment fs/f2fs/segment.c:2748 [inline]
+RIP: 0010:new_curseg+0x1f61/0x1f70 fs/f2fs/segment.c:2836
 
-> Consider that not everyone knows the device and we need good
-> reasons for accepting the changes.
->
-> Thanks,
-> Andi
->
->
-> > Addressed comments from:
-> > - kernel test robot : https://lore.kernel.org/oe-kbuild-all/
-> >   202408080319.de2B6PgU-lkp@intel.com/
-> > - Dan Carpenter : https://lore.kernel.org/all/202408130818
-> >   .FgDP5uNm-lkp@intel.com/
-> > - Andrew Jeffery : https://lore.kernel.org/lkml/
-> >   20240807100244.16872-7-kfting@nuvoton.com/T/
-> >   #m3ed3351bf59675bfe0de89c75aae1fb26cad5567
-> >
-> > Changes since version 1:
-> > - Restore the npcm_i2caddr array length to fix the smatch warning.
-> > - Remove unused variables.
-> > - Handle the condition where scl_table_cnt reaches to the maximum value=
-.
-> > - Fix the checkpatch warning.
-> >
-> > Charles Boyer (1):
-> >   i2c: npcm: Enable slave in eob interrupt
-> >
-> > Tyrone Ting (6):
-> >   i2c: npcm: restore slave addresses array length
-> >   i2c: npcm: correct the read/write operation procedure
-> >   i2c: npcm: use a software flag to indicate a BER condition
-> >   i2c: npcm: Modify timeout evaluation mechanism
-> >   i2c: npcm: Modify the client address assignment
-> >   i2c: npcm: use i2c frequency table
-> >
-> >  drivers/i2c/busses/i2c-npcm7xx.c | 276 +++++++++++++++++++------------
-> >  1 file changed, 172 insertions(+), 104 deletions(-)
-> >
-> >
-> > base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
-> > --
-> > 2.34.1
-> >
+The root cause is when we inject no free segment fault into f2fs,
+we should not panic system, fix it.
 
-Thank you.
+Fixes: 8b10d3653735 ("f2fs: introduce FAULT_NO_SEGMENT")
+Reported-by: syzbot+341e5f32ebafbb46b81c@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-f2fs-devel/000000000000f0ee5b0621ab694b@google.com
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/segment.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Regards,
-Tyrone
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 112d58d566d4..b7c1ca51ea32 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2730,6 +2730,7 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 								MAIN_SECS(sbi));
+ 		if (secno >= MAIN_SECS(sbi)) {
+ 			ret = -ENOSPC;
++			f2fs_bug_on(sbi, 1);
+ 			goto out_unlock;
+ 		}
+ 	}
+@@ -2740,6 +2741,7 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 							MAIN_SECS(sbi));
+ 		if (secno >= MAIN_SECS(sbi)) {
+ 			ret = -ENOSPC;
++			f2fs_bug_on(sbi, 1);
+ 			goto out_unlock;
+ 		}
+ 	}
+@@ -2781,10 +2783,8 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ out_unlock:
+ 	spin_unlock(&free_i->segmap_lock);
+ 
+-	if (ret == -ENOSPC) {
++	if (ret == -ENOSPC)
+ 		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_NO_SEGMENT);
+-		f2fs_bug_on(sbi, 1);
+-	}
+ 	return ret;
+ }
+ 
+-- 
+2.40.1
+
 
