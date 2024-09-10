@@ -1,224 +1,205 @@
-Return-Path: <linux-kernel+bounces-322423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAEDE9728D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:13:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A569728D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C2F71C23E98
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:13:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70BECB24215
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58912168C3F;
-	Tue, 10 Sep 2024 05:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F111E17DFFD;
+	Tue, 10 Sep 2024 05:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="duYAoF8M"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YL4TdmPg"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A00745F2;
-	Tue, 10 Sep 2024 05:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC47C17D355;
+	Tue, 10 Sep 2024 05:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725945215; cv=none; b=BIk2ZhRZ5N0onMpu7iTCnASc56Bq0c3DlWXUgOP+0I+ikhU+aO37pmmpjimltW9ITsaFz3bj0Mqcj76WSBju4XTSz4g5lKW5EkVpqiIT4wpvyQg9S3UVBMlb6hvOVujQEqq2wVlvT5KteHIIkZACTD++Hbu2wM04bZXZtjIEd3U=
+	t=1725945220; cv=none; b=h0Ed0vcwg0vlx0wHXGHylwuD7q5Jymy5zGBJcC4gdNG1UxSJsfWFHCvieL5vu7zSqurv13PLEEqIbd737mL3Kqygu5vEcrzRRwDmcYwraqRizc/ph2z8SyRFwYW01vKXAa5GjLY4Qit6vtHhOyLoyvHXEp76i2BWKjpgwY1Tvco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725945215; c=relaxed/simple;
-	bh=x8lzG1xg2DPDKAaQNoyJUvlH5EiQ8sXURqDeNwwN7dM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RZwkhbJx3IDR+q+9f1R47aoEF9x3xa+FyHuJOxFvz7nWiQpWVluGSVXfXslWeMsQa05yYWa6qMeNVxiwovi8pqZ9ujH7/ZOBheqpm76beQAKnaxL8f0/ZTreHNENAY1L8PaG0SjGIrS/BCXDKp3uy9HmWe95JcvQgkXikI+pPwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=duYAoF8M; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725945214; x=1757481214;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=x8lzG1xg2DPDKAaQNoyJUvlH5EiQ8sXURqDeNwwN7dM=;
-  b=duYAoF8MQ0X9oxHf7gN322wi5IODfUv5xHP1k7aH0fn3YChjeXv3pgY5
-   pWsFeixd6hRBI1pmfanwkTSq6+pwPL+TtrxHy+YV0XDxwvYjRro/CyHks
-   Gq9SYLCNBcnij8Fg/7kZOvFaW5OPqLG+SKU/v5JPvWN2i8d2iOV3jglS0
-   NNY1J+8ewBKy2Swr2Biw66p7dR1ZI2CG+bAPCgp9K+6Fq18cXClfjK2iY
-   9vQcJN8RumdfagXh9pxkgf7A62kCg5IGFvtv4n8g8lPlopldpGuBIu3vg
-   vm3VBRZPwFuHV49Lj/jHv+zxfbVeAx6j5tqlxxnQpQu+x6/Pcgj63Kafh
-   A==;
-X-CSE-ConnectionGUID: jBzbH/UfRPaRmOphuyu9kw==
-X-CSE-MsgGUID: iRAaWR81RHeRXOjDpu6sYw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="42187700"
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="42187700"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 22:13:33 -0700
-X-CSE-ConnectionGUID: U/Q9vasDTWyGZwDUvBIWoQ==
-X-CSE-MsgGUID: QML0+yufQ2CNXvcimLQrKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="66530313"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 09 Sep 2024 22:13:29 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sntBu-000065-2A;
-	Tue, 10 Sep 2024 05:13:26 +0000
-Date: Tue, 10 Sep 2024 13:12:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz,
-	Carsten =?iso-8859-1?Q?Spie=DF?= <mail@carsten-spiess.de>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v6 3/3] hwmon: (isl28022) support shunt voltage for
- ISL28022 power monitor
-Message-ID: <202409101229.6mTYs5Rf-lkp@intel.com>
-References: <20240906061421.9392-4-Delphine_CC_Chiu@wiwynn.com>
+	s=arc-20240116; t=1725945220; c=relaxed/simple;
+	bh=QaUMIR2jAIriOPWTJeTYRrlgMY/AKXUdAomsZ6SCrTs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ALU6fPWz2nDaGkiFMhCmksgJedRIrugN720SGxHBABy/mYQQHKYxQbO/PK0HLC/nlv9/kuUV9hAWX0IzYzxFbk5muZaM4zvfXPvAVkAJiMogdA7RckgGLACKSLzTlr2lWxGtMu2Ib2/Wi7UEoXXcM5opGC09FyTorlnbIKLkQF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YL4TdmPg; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-205909afad3so4205445ad.2;
+        Mon, 09 Sep 2024 22:13:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725945218; x=1726550018; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PrcFRNmr5hZbZ96slhcvo9eITicm6QaTzwg2eqphYZM=;
+        b=YL4TdmPgdRd+0249puCnAXQZy3bd8WpOgzvqt1c20SeKFtRd+tuFSk2Flm3Gr02HLf
+         2tTww2OG7Kw69ux1E056VtkwwE2de4PJDWPAky2DS4E1mxbnqqKdNqG+sMlaSZrRXewM
+         O0RTIIXhX1p2mqL61SV38KPlWixIKFa5YD1KmC+YO1OqvZyiWOL4Sp4rBABP9JICJwBg
+         zoVDnRPfaKNY9j6okoXMoni7hsEgGe6WhV7OhYAdKZuyUznSNgGjYbQ4Zbc8uC9s5jo4
+         mb5nwawuIhIPyZa/gzrOEsc/srIqtG2fqkV6zZfJeD00KW/Xq4lkaoZagoMzdA++0mxG
+         YucQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725945218; x=1726550018;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PrcFRNmr5hZbZ96slhcvo9eITicm6QaTzwg2eqphYZM=;
+        b=ZWTYySBcilj2G5YVu2xV+zicOgPL/eoXKd6m39PdCyWzZdzE0P6EWSfMpQk3AMGsw+
+         gGrSleWkOSjHfysbtGFccKoO834VnynBwTiO0pI99i0nccOt28IEyZ4W3uH3mBjuELnw
+         NiSDw0TKjZq10HZirVqgeiBTE+V7D0eli6HKOiAFErAKnf6vUfJ7t5e/ZHPpAjUXck1r
+         pC1tKRjg30QA+SyF2rmuRX2vYq+Q8UFJhRD1WCwLcnDO4A3hlJXbwGczg3xYcRizprQN
+         is01X7JwWFiycIUtF/rtR3tjgVkfc9m9dRB22fo37i7xsxFguvdBFTpqS0Idx/UHEtMJ
+         oRkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVB8ky7HJIpD6nnH3IqB5FWcqj5HrwMWCoyam5HR1J0QsG+jBVHINaxeCx3s64qNGC+x+o=@vger.kernel.org, AJvYcCWZmy6PpUyoicMoiaueHyBBNHLozzIPB9+Ax9e3b5OWH5rR1EaXBpL51oeu8Y0SClzJ2AZGn0EwnN50LajCyEPiKXGX@vger.kernel.org, AJvYcCXjvTKTVjSmd4xc/1VRJ1XIadBD1d2yP5qep527p/E11xrAOj70gdC8ID8zvim1QtcKP+2Qfhdnv6pc3uAZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5f8ngGEX8hdlQk9SZUFsoXa6JGVI9vHjiGQ2792IDfbMMVD+b
+	qB3ehIjWLa/9PZbDxnzqSAc62pG3+liBNHwK8gMisf+IFnQVAwlr9uh0xGfEvUjzXcyFF64lNkH
+	KWnNCRWboj4KfQequwcj2MX75vsk=
+X-Google-Smtp-Source: AGHT+IGWSH7k1uV54/0MBpkfCOKW4zDfjkr742eQE81GTLjm0Cxzjn2iYMp2AwESyv1OkN1JTQdZy9tVlGoFiTekoVU=
+X-Received: by 2002:a17:902:d2c1:b0:206:ac4b:8157 with SMTP id
+ d9443c01a7336-2070a554645mr95706965ad.31.1725945217959; Mon, 09 Sep 2024
+ 22:13:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906061421.9392-4-Delphine_CC_Chiu@wiwynn.com>
+References: <20240909224903.3498207-1-andrii@kernel.org> <20240909224903.3498207-2-andrii@kernel.org>
+ <CAADnVQLB2b5Uh-qthnCOfJk+v+ty1nQh6LjMDkzjt1BPtGOVZA@mail.gmail.com>
+In-Reply-To: <CAADnVQLB2b5Uh-qthnCOfJk+v+ty1nQh6LjMDkzjt1BPtGOVZA@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 9 Sep 2024 22:13:25 -0700
+Message-ID: <CAEf4Bzap+_fpXjfcnnqz7EH9=bGokpFbnoK==_YDWH855qx7=g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] uprobes: allow put_uprobe() from non-sleepable
+ softirq context
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Delphine,
+On Mon, Sep 9, 2024 at 7:52=E2=80=AFPM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Mon, Sep 9, 2024 at 3:49=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org=
+> wrote:
+> >
+> > Currently put_uprobe() might trigger mutex_lock()/mutex_unlock(), which
+> > makes it unsuitable to be called from more restricted context like soft=
+irq.
+> >
+> > Let's make put_uprobe() agnostic to the context in which it is called,
+> > and use work queue to defer the mutex-protected clean up steps.
+> >
+> > To avoid unnecessarily increasing the size of struct uprobe, we colocat=
+e
+> > work_struct in parallel with rb_node and rcu, both of which are unused
+> > by the time we get to schedule clean up work.
+> >
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+> >  kernel/events/uprobes.c | 30 +++++++++++++++++++++++++++---
+> >  1 file changed, 27 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > index a2e6a57f79f2..377bd524bc8b 100644
+> > --- a/kernel/events/uprobes.c
+> > +++ b/kernel/events/uprobes.c
+> > @@ -27,6 +27,7 @@
+> >  #include <linux/shmem_fs.h>
+> >  #include <linux/khugepaged.h>
+> >  #include <linux/rcupdate_trace.h>
+> > +#include <linux/workqueue.h>
+> >
+> >  #include <linux/uprobes.h>
+> >
+> > @@ -54,14 +55,20 @@ DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem);
+> >  #define UPROBE_COPY_INSN       0
+> >
+> >  struct uprobe {
+> > -       struct rb_node          rb_node;        /* node in the rb tree =
+*/
+> > +       union {
+> > +               struct {
+> > +                       struct rb_node          rb_node;        /* node=
+ in the rb tree */
+> > +                       struct rcu_head         rcu;
+> > +               };
+> > +               /* work is used only during freeing, rcu and rb_node ar=
+e unused at that point */
+> > +               struct work_struct work;
+> > +       };
+> >         refcount_t              ref;
+> >         struct rw_semaphore     register_rwsem;
+> >         struct rw_semaphore     consumer_rwsem;
+> >         struct list_head        pending_list;
+> >         struct list_head        consumers;
+> >         struct inode            *inode;         /* Also hold a ref to i=
+node */
+> > -       struct rcu_head         rcu;
+> >         loff_t                  offset;
+> >         loff_t                  ref_ctr_offset;
+> >         unsigned long           flags;
+> > @@ -620,11 +627,28 @@ static inline bool uprobe_is_active(struct uprobe=
+ *uprobe)
+> >         return !RB_EMPTY_NODE(&uprobe->rb_node);
+> >  }
+> >
+> > +static void uprobe_free_deferred(struct work_struct *work)
+> > +{
+> > +       struct uprobe *uprobe =3D container_of(work, struct uprobe, wor=
+k);
+> > +
+> > +       /*
+> > +        * If application munmap(exec_vma) before uprobe_unregister()
+> > +        * gets called, we don't get a chance to remove uprobe from
+> > +        * delayed_uprobe_list from remove_breakpoint(). Do it here.
+> > +        */
+> > +       mutex_lock(&delayed_uprobe_lock);
+> > +       delayed_uprobe_remove(uprobe, NULL);
+> > +       mutex_unlock(&delayed_uprobe_lock);
+> > +
+> > +       kfree(uprobe);
+> > +}
+> > +
+> >  static void uprobe_free_rcu(struct rcu_head *rcu)
+> >  {
+> >         struct uprobe *uprobe =3D container_of(rcu, struct uprobe, rcu)=
+;
+> >
+> > -       kfree(uprobe);
+> > +       INIT_WORK(&uprobe->work, uprobe_free_deferred);
+> > +       schedule_work(&uprobe->work);
+> >  }
+> >
+> >  static void put_uprobe(struct uprobe *uprobe)
+>
+> It seems put_uprobe hunk was lost, since the patch is not doing
+> what commit log describes.
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on groeck-staging/hwmon-next]
-[also build test WARNING on linus/master v6.11-rc7 next-20240909]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Hmm, put_uprobe() has:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Delphine-CC-Chiu/hwmon-isl28022-new-driver-for-ISL28022-power-monitor/20240906-141717
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
-patch link:    https://lore.kernel.org/r/20240906061421.9392-4-Delphine_CC_Chiu%40wiwynn.com
-patch subject: [PATCH v6 3/3] hwmon: (isl28022) support shunt voltage for ISL28022 power monitor
-config: microblaze-randconfig-r073-20240909 (https://download.01.org/0day-ci/archive/20240910/202409101229.6mTYs5Rf-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 14.1.0
+call_srcu(&uprobes_srcu, &uprobe->rcu, uprobe_free_rcu);
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409101229.6mTYs5Rf-lkp@intel.com/
+at the end (see [0], which added that), so we do schedule_work() in
+RCU callback, similarly to what we do with bpf_map freeing in the BPF
+subsystem.
 
-smatch warnings:
-drivers/hwmon/isl28022.c:122 isl28022_read() warn: inconsistent indenting
+This patch set is based on the latest tip/perf/core (and also assuming
+the RCU Tasks Trace patch that mysteriously disappeared is actually
+there, hopefully it will just as magically be restored).
 
-vim +122 drivers/hwmon/isl28022.c
-
-    89	
-    90	static int isl28022_read(struct device *dev, enum hwmon_sensor_types type,
-    91				 u32 attr, int channel, long *val)
-    92	{
-    93		struct isl28022_data *data = dev_get_drvdata(dev);
-    94		unsigned int regval;
-    95		int err;
-    96		u16 sign_bit;
-    97	
-    98		switch (type) {
-    99		case hwmon_in:
-   100			switch (channel) {
-   101			case 0:
-   102				switch (attr) {
-   103				case hwmon_in_input:
-   104					err = regmap_read(data->regmap,
-   105							  ISL28022_REG_BUS, &regval);
-   106					if (err < 0)
-   107						return err;
-   108					/* driver supports only 60V mode (BRNG 11) */
-   109					*val = (long)(((u16)regval) & 0xFFFC);
-   110					break;
-   111				default:
-   112					return -EOPNOTSUPP;
-   113				}
-   114				break;
-   115			case 1:
-   116				switch (attr) {
-   117				case hwmon_in_input:
-   118					err = regmap_read(data->regmap,
-   119							  ISL28022_REG_SHUNT, &regval);
-   120					if (err < 0)
-   121						return err;
- > 122				switch (data->gain) {
-   123				case 8:
-   124					sign_bit = (regval >> 15) & 0x01;
-   125					*val = (long)((((u16)regval) & 0x7FFF) -
-   126						   (sign_bit * 32768)) / 100;
-   127					break;
-   128				case 4:
-   129					sign_bit = (regval >> 14) & 0x01;
-   130					*val = (long)((((u16)regval) & 0x3FFF) -
-   131						   (sign_bit * 16384)) / 100;
-   132					break;
-   133				case 2:
-   134					sign_bit = (regval >> 13) & 0x01;
-   135					*val = (long)((((u16)regval) & 0x1FFF) -
-   136						   (sign_bit * 8192)) / 100;
-   137					break;
-   138				case 1:
-   139					sign_bit = (regval >> 12) & 0x01;
-   140					*val = (long)((((u16)regval) & 0x0FFF) -
-   141						   (sign_bit * 4096)) / 100;
-   142					break;
-   143				}
-   144				break;
-   145				default:
-   146					return -EOPNOTSUPP;
-   147				}
-   148				break;
-   149			default:
-   150				return -EOPNOTSUPP;
-   151			}
-   152			break;
-   153		case hwmon_curr:
-   154			switch (attr) {
-   155			case hwmon_curr_input:
-   156				err = regmap_read(data->regmap,
-   157						  ISL28022_REG_CURRENT, &regval);
-   158				if (err < 0)
-   159					return err;
-   160				*val = ((long)regval * 1250L * (long)data->gain) /
-   161					(long)data->shunt;
-   162				break;
-   163			default:
-   164				return -EOPNOTSUPP;
-   165			}
-   166			break;
-   167		case hwmon_power:
-   168			switch (attr) {
-   169			case hwmon_power_input:
-   170				err = regmap_read(data->regmap,
-   171						  ISL28022_REG_POWER, &regval);
-   172				if (err < 0)
-   173					return err;
-   174				*val = ((51200000L * ((long)data->gain)) /
-   175					(long)data->shunt) * (long)regval;
-   176				break;
-   177			default:
-   178				return -EOPNOTSUPP;
-   179			}
-   180			break;
-   181		default:
-   182			return -EOPNOTSUPP;
-   183		}
-   184	
-   185		return 0;
-   186	}
-   187	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+  [0] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=
+=3Dperf/core&id=3D8617408f7a01e94ce1f73e40a7704530e5dfb25c
 
