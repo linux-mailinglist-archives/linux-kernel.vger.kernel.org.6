@@ -1,118 +1,237 @@
-Return-Path: <linux-kernel+bounces-323759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1788797430F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:08:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F04CC974310
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2B591F279C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:08:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 810831F27CE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898471AB53E;
-	Tue, 10 Sep 2024 19:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A66F1ABEB8;
+	Tue, 10 Sep 2024 19:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6gtvCzG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OPwWYrtg"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE27C1A7048;
-	Tue, 10 Sep 2024 19:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FC01AB525
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 19:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725995230; cv=none; b=AgdoRLFKf3YmdyJ9ZUfBzaNuZdG6j+b5zLBzSgrRD0GCXEzsfjI5DpfIR22cTmU3rqhF0fksHpbCojk8Sjf5xUbG7B4ZG3FWLv9N8Tjmb363VdG0KMELxnJAwZnc0QhsZ2bKfJmhAiTijC+iDsYimMVNRm3X9Rd+vedV6Rzjo3I=
+	t=1725995231; cv=none; b=L/hKtmklrfqVzGcq2qgvEVo1uy/FDg06sTHaxtWnlZhkngbO+Z1ucNsXLD27AyWklkPJOmMSceyyKS+d9H5i069PI/0AslbJ22sj1T3igXrT5RQ5y1IWi6SBTk4o7O21RccXqH0/tOETMOihMu48ud9KHoVqYWRwJ3SLI7FAjgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725995230; c=relaxed/simple;
-	bh=AqPu88ul23g8vqXHRoSXpzTMwp8/lrE6zGfqa11fWfg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=khVv3ikrcxqjBtKeDtJ5AITHB+ylyzI7njIkW7TFlywXeCAXzCsUfmP+1FgH30WtltxtCZnFxqeaZ6eDK6nNmYt2XSHjr9vOnPzvKsI/Mojlp0a/SbLiLRgQWgDlTWfliirZ3zctv2JhywGtHkzyPTWKH3+jnN4/DVL5+2ReKB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6gtvCzG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3B7FC4CECD;
-	Tue, 10 Sep 2024 19:07:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725995229;
-	bh=AqPu88ul23g8vqXHRoSXpzTMwp8/lrE6zGfqa11fWfg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=P6gtvCzGxO5Y0e2RnUdHCFSr5LLlSv72Sti7fTWVOcCjiyYu7Z3rE2JkM2BchUWyq
-	 ex0GOtesJtDIJgSqihW9VKI+41CA6Sv9vZ78fcujf5VPx4DOs1PxSbDXrW4iXDRhco
-	 lpjroNSHpdjyrD1Csw0i2ocNXdJ/x/Q4hSnN5RxdXw7zxSrwWl9nGOnrHwCWDqrhSk
-	 zgF6EFpMFIiK747wulc7srIf4RRY6UJIW/LlCt3D+2JWLePWeL/xozEBofhgrVv/tW
-	 YbBSMLLH6VHNdpl/fwN18ZH/KqWMDauqXIsIK6eRV4glLTZ4A31MAAZQSUPucXGVV7
-	 GTZIrAVi42ciA==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Tue, 10 Sep 2024 21:06:38 +0200
-Subject: [PATCH net 3/3] selftests: mptcp: include net_helper.sh file
+	s=arc-20240116; t=1725995231; c=relaxed/simple;
+	bh=/fPvS6tHaPYkd+ieklVpLMDzeZI3SXacgyA3mGQdBfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gsl6qQBCCjKvx21otlyt3ULVCgg9STfWSWzCZAqFDPgslkiGvzJaTFav+bUGf1rfwq4tnjdb9G46TMWfpIPi2R7I6nBJ611Ka88yfOoyveXzjvE/2N4YenQ6Z+oqA4bd7rLoSVUFxzvVR16jE5D37zBLy7XkmANbGFYdv0Buzwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OPwWYrtg; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7163489149eso4817079a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:07:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725995228; x=1726600028; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6lOiIJ4Mc69h2PNQojh4dfRelmJgPkTSzYXUp3tv+n8=;
+        b=OPwWYrtg+pkopth4oI/grimU7EAsxvUP2xE8EmJfklUOTym/7SG5pL/WjcioC2OKwf
+         ZGIrm7V0O0kx2EAoESaD1Bp8zYUILD2eNp8s28XcWcbDM8KiE8pXbcM2XxnaR81IUm3a
+         jFTGpeqA5ES08Yuq5W7cep6VCsWIZOzgXK+CP2VEOtv48K+AdXqd+Tisdtin0L96eXEq
+         K7uY9AvUoN8zCUYgwaXPTBCAGs2uVhO+6i7rQDMQ5OJ1hFrwZJihbvl/Q6fNZiGsV1wg
+         BXSQJq2Q0scUkvKGOmDcofNL/ZUUp7pH77X8BtSejW2gepSqNeiudY5/m99NTi+B2exC
+         zGvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725995228; x=1726600028;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6lOiIJ4Mc69h2PNQojh4dfRelmJgPkTSzYXUp3tv+n8=;
+        b=p3ezD05yGwObNBeI8pQrhC8FAh+rdEaz4/0gyAm2dLXHX719AqEf5BgFstYFTnX8RF
+         92cTOsArTtdwED9gFiaS3Z1tmO0BL04j9SELm4YeJ9834kR48YjpC1iYGUfUYBislS1L
+         wvJXZ5QpaCp7D54K4FR4eRrfHCumrnWo8jNYKGC3Rajds2iD+fRllRTWtzghMoT6zakh
+         9rashrqeNo/1rQbrHXQGcqsMwsYwsdByxuA5VYuWdDTD8FpVaKdpwQaScW6w/reZL1Bx
+         9qJYD9xMQkJW6/wJ8NPD/+s+sxhzeIpmWHjVlLNuZvaRLF528H0Kp6z3y3sQlGrCyYT5
+         wfWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPQiqoxmOlwwWnH+JSAplci+60I08903RgNc4qBEY4eKXuJfcC7e7oHEHM+26oyNm+D6E9cfz7mG0zF94=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy/Oro3TyixMkf9Bb01bV820cPDTuuKDiwSnTdtjjxsQf0mPNk
+	ecVUoQb7C9IDesHr+ePET6f2lh1lX9dU/GyAbK68VlsbBj8NCdV6
+X-Google-Smtp-Source: AGHT+IFh7ypVlg+pkVmteXSfq34hnWWEiP32lthCK2Pt8J4txP0R/BlbvzOq3InKFv3MpF58XUjruQ==
+X-Received: by 2002:a17:902:ec8e:b0:205:4885:235e with SMTP id d9443c01a7336-2074c70dac2mr18657265ad.39.1725995227605;
+        Tue, 10 Sep 2024 12:07:07 -0700 (PDT)
+Received: from debian ([103.57.174.190])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f1e29asm51657045ad.214.2024.09.10.12.07.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 12:07:07 -0700 (PDT)
+Date: Wed, 11 Sep 2024 00:37:01 +0530
+From: Sayyad Abid <sayyad.abid16@gmail.com>
+To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Cc: linux-staging@lists.linux.dev, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, sayyad.abid16@gmail.com
+Subject: Re: [PATCH v2] staging: rtl8723bs: Fix coding style issues in the
+ hal_pwr_seq.h
+Message-ID: <ZuCY1Tuog1sFHLBQ@debian>
+References: <20240910121144.635348-1-sayyad.abid16@gmail.com>
+ <89893a22-5018-4ae0-b4f9-e473a36f09b6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240910-net-selftests-mptcp-fix-install-v1-3-8f124aa9156d@kernel.org>
-References: <20240910-net-selftests-mptcp-fix-install-v1-0-8f124aa9156d@kernel.org>
-In-Reply-To: <20240910-net-selftests-mptcp-fix-install-v1-0-8f124aa9156d@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1211; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=AqPu88ul23g8vqXHRoSXpzTMwp8/lrE6zGfqa11fWfg=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBm4JjRLyUOkbW8YPrnCLArXrvqiNJsK74wn5pqZ
- 22BnQBxbF6JAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZuCY0QAKCRD2t4JPQmmg
- c5MAEACsaR2u56Kl4zwkCtHtRZoVuBNtTlAkyiz8Kd5q5r5VfGquW9QrY1vNnfWh75be7jiCbti
- zK74NRqcGRsd/Jn4Q13EDMx89iO9vN70/zrwyccUh8EkII8b2DaFSoP2t3fVnaPMrkyuzY6n/cc
- 35aOdBLHfLTSH1C9dqDe5ec01TWogsBQhUXVeLzXrOz4KWvlnQl7/AlNaJqxDCfluYzkjRat7Jv
- gGxg3X3BoFIAnis1dmsg22m4KaaCSLyXuxI8mkSkhfkbdTDHXf0/f0bK1NFU2p8ma6FYoztgodG
- bohV9lXpgfadEk/kGY6klDenQg9wNBYDQ80ScknfhZM29PoXtoF6ZO4hszgWyO9+29J7vX7cChY
- 0tuGew0vBbKUz4NMAzY3LGnBIH1bKPAzTXpr2BfCy9R9yFBk151Woi5tNUjaHW1sqGzAYkKM8/P
- u3zf6Eod9daIA1CYeJNAYX0SmmtX3xd59VIpEZ3yXjj9h/o7B52SjWQXf+2dHTsB9ruxvzlM6SU
- rMOkY7GDuxUiU7hltsMyg/AK+shRY7QuRW+9sKvoBQMnEfajS9rrn7P68qI21SHZzJjE9+AW6++
- 299uVSaZB0NTPUNG+KwLokMHaZxGn+vvqQsflLNC3k0C5VtA228hpYMu+N6u7nyabKyGqSjbvhj
- Hf2SKyDyYpVaBcA==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <89893a22-5018-4ae0-b4f9-e473a36f09b6@gmail.com>
 
-Similar to the previous commit, the net_helper.sh file from the parent
-directory is used by the MPTCP selftests and it needs to be present when
-running the tests.
+On Tue, Sep 10, 2024 at 08:47:54PM +0200, Philipp Hortmann wrote:
+> On 9/10/24 14:11, abid-sayyad wrote:
+> > Improving the code readability and coding style compliance of the code.
+> > Running checkpatch.pl on the file raised coding style warnings:
+> > -The comment block needs "*" on all lines of the block
+> > from line 8 to 26
+> > -Use tabs for indent
+> > on line 103 and 115
+> >
+> > Applying the patch fixes these coding style issues and makes the code more
+> > readable/developer friendly.
+> >
+> > Signed-off-by: abid-sayyad <sayyad.abid16@gmail.com>
+> > ---
+>
+> Hi Abid,
+>
+> I cannot apply your patch. Are you using the right git repo?
+>
+> git remote show origin
+> * remote origin
+>   Fetch URL:
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+> ...
+> git branch -a
+> my branch: staging-testing
+>
+>
+> kernel@matrix-ESPRIMO-P710:~/Documents/git/kernels/staging$ mutt
+> Applying: staging: rtl8723bs: Fix coding style issues in the hal_pwr_seq.h
+> error: patch failed: drivers/staging/rtl8723bs/include/hal_pwr_seq.h:101
+> error: drivers/staging/rtl8723bs/include/hal_pwr_seq.h: patch does not apply
+> Patch failed at 0001 staging: rtl8723bs: Fix coding style issues in the
+> hal_pwr_seq.h
+>
+I found the issue, I have been amending these changes on the mainline repo,
+  $ git remote show origin
+* remote origin
+  Fetch URL: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-This file then needs to be listed in the Makefile to be included when
-exporting or installing the tests, e.g. with:
-
-  make -C tools/testing/selftests \
-          TARGETS=net/mptcp \
-          install INSTALL_PATH=$KSFT_INSTALL_PATH
-
-  cd $KSFT_INSTALL_PATH
-  ./run_kselftest.sh -c net/mptcp
-
-Fixes: 1af3bc912eac ("selftests: mptcp: lib: use wait_local_port_listen helper")
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- tools/testing/selftests/net/mptcp/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/net/mptcp/Makefile b/tools/testing/selftests/net/mptcp/Makefile
-index 68924053a1e6..5d796622e730 100644
---- a/tools/testing/selftests/net/mptcp/Makefile
-+++ b/tools/testing/selftests/net/mptcp/Makefile
-@@ -11,7 +11,7 @@ TEST_GEN_FILES = mptcp_connect pm_nl_ctl mptcp_sockopt mptcp_inq
- 
- TEST_FILES := mptcp_lib.sh settings
- 
--TEST_INCLUDES := ../lib.sh
-+TEST_INCLUDES := ../lib.sh ../net_helper.sh
- 
- EXTRA_CLEAN := *.pcap
- 
-
--- 
-2.45.2
-
+  I need to clone the staging branch.
+> Please also change your Description. Concentrate on why this patch makes
+> sense. Do not describe the patch. What is changed can be seen below. Please
+> also use the correct time.
+>
+I did not understand the correct time here. could you please
+elaborate a little on this please.
+> You can find accepted examples in the git repo.
+>
+I'll look into the accepted patches right now. Meanwhile I have this question
+, descriptions addressing only the coding style issue fixes are acceptable or
+it needs to be having somethingelse too? (apologies in advance for
+this illy question)
+> Thanks for your support.
+>
+> Bye Philipp
+>
+Thank Youy for your feedbacks
+>
+>
+> > changes since v1:
+> > v2: Fix the email body, amke it more informative
+> > link to v1:
+> > https://lore.kernel.org/all/ca1908f3-74aa-45e7-a389-3995aba2660c@gmail.com/
+> >   .../staging/rtl8723bs/include/hal_pwr_seq.h   | 46 +++++++++----------
+> >   1 file changed, 23 insertions(+), 23 deletions(-)
+> >
+> > diff --git a/drivers/staging/rtl8723bs/include/hal_pwr_seq.h b/drivers/staging/rtl8723bs/include/hal_pwr_seq.h
+> > index 5e43cc89f535..10fef1b3f393 100644
+> > --- a/drivers/staging/rtl8723bs/include/hal_pwr_seq.h
+> > +++ b/drivers/staging/rtl8723bs/include/hal_pwr_seq.h
+> > @@ -5,26 +5,26 @@
+> >   #include "HalPwrSeqCmd.h"
+> >
+> >   /*
+> > -	Check document WM-20130815-JackieLau-RTL8723B_Power_Architecture v08.vsd
+> > -	There are 6 HW Power States:
+> > -	0: POFF--Power Off
+> > -	1: PDN--Power Down
+> > -	2: CARDEMU--Card Emulation
+> > -	3: ACT--Active Mode
+> > -	4: LPS--Low Power State
+> > -	5: SUS--Suspend
+> > -
+> > -	The transition from different states are defined below
+> > -	TRANS_CARDEMU_TO_ACT
+> > -	TRANS_ACT_TO_CARDEMU
+> > -	TRANS_CARDEMU_TO_SUS
+> > -	TRANS_SUS_TO_CARDEMU
+> > -	TRANS_CARDEMU_TO_PDN
+> > -	TRANS_ACT_TO_LPS
+> > -	TRANS_LPS_TO_ACT
+> > -
+> > -	TRANS_END
+> > -*/
+> > + *	Check document WM-20130815-JackieLau-RTL8723B_Power_Architecture v08.vsd
+> > + *	There are 6 HW Power States:
+> > + *	0: POFF--Power Off
+> > + *	1: PDN--Power Down
+> > + *	2: CARDEMU--Card Emulation
+> > + *	3: ACT--Active Mode
+> > + *	4: LPS--Low Power State
+> > + *	5: SUS--Suspend
+> > + *
+> > + *	The transition from different states are defined below
+> > + *	TRANS_CARDEMU_TO_ACT
+> > + *	TRANS_ACT_TO_CARDEMU
+> > + *	TRANS_CARDEMU_TO_SUS
+> > + *	TRANS_SUS_TO_CARDEMU
+> > + *	TRANS_CARDEMU_TO_PDN
+> > + *	TRANS_ACT_TO_LPS
+> > + *	TRANS_LPS_TO_ACT
+> > + *
+> > + *	TRANS_END
+> > + */
+> >   #define	RTL8723B_TRANS_CARDEMU_TO_ACT_STEPS	26
+> >   #define	RTL8723B_TRANS_ACT_TO_CARDEMU_STEPS	15
+> >   #define	RTL8723B_TRANS_CARDEMU_TO_SUS_STEPS	15
+> > @@ -101,7 +101,7 @@
+> >   	{0x0007, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, 0xFF, 0x20}, /*0x07 = 0x20 , SOP option to disable BG/MB*/	\
+> >   	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK|PWR_INTF_SDIO_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT3|BIT4, BIT3}, /*0x04[12:11] = 2b'01 enable WL suspend*/	\
+> >   	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_PCI_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT2, BIT2}, /*0x04[10] = 1, enable SW LPS*/	\
+> > -        {0x004A, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT0, 1}, /*0x48[16] = 1 to enable GPIO9 as EXT WAKEUP*/   \
+> > +	{0x004A, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT0, 1}, /*0x48[16] = 1 to enable GPIO9 as EXT WAKEUP*/   \
+> >   	{0x0023, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT4, BIT4}, /*0x23[4] = 1b'1 12H LDO enter sleep mode*/   \
+> >   	{0x0086, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_SDIO, PWR_CMD_WRITE, BIT0, BIT0}, /*Set SDIO suspend local register*/	\
+> >   	{0x0086, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_SDIO, PWR_CMD_POLLING, BIT1, 0}, /*wait power state to suspend*/
+> > @@ -112,7 +112,7 @@
+> >   	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT3 | BIT7, 0}, /*clear suspend enable and power down enable*/	\
+> >   	{0x0086, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_SDIO, PWR_CMD_WRITE, BIT0, 0}, /*Set SDIO suspend local register*/	\
+> >   	{0x0086, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_SDIO, PWR_CMD_POLLING, BIT1, BIT1}, /*wait power state to suspend*/\
+> > -        {0x004A, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT0, 0}, /*0x48[16] = 0 to disable GPIO9 as EXT WAKEUP*/   \
+> > +	{0x004A, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT0, 0}, /*0x48[16] = 0 to disable GPIO9 as EXT WAKEUP*/   \
+> >   	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT3|BIT4, 0}, /*0x04[12:11] = 2b'01enable WL suspend*/\
+> >   	{0x0023, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT4, 0}, /*0x23[4] = 1b'0 12H LDO enter normal mode*/   \
+> >   	{0x0301, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_PCI_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, 0xFF, 0},/*PCIe DMA start*/
+> > @@ -209,7 +209,7 @@
+> >   #define RTL8723B_TRANS_END															\
+> >   	/* format */																\
+> >   	/* { offset, cut_msk, fab_msk|interface_msk, base|cmd, msk, value }, comments here*/								\
+> > -	{0xFFFF, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, 0, PWR_CMD_END, 0, 0},
+> > +	{0xFFFF, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, 0, PWR_CMD_END, 0, 0},
+> >
+> >
+> >   extern struct wlan_pwr_cfg rtl8723B_power_on_flow[RTL8723B_TRANS_CARDEMU_TO_ACT_STEPS+RTL8723B_TRANS_END_STEPS];
+> > --
+> > 2.39.2
+> >
+>
 
