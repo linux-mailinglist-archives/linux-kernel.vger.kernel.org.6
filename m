@@ -1,37 +1,64 @@
-Return-Path: <linux-kernel+bounces-322984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC60973642
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:31:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E76973643
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E8B21C246E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:31:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7196285069
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C4A18E77B;
-	Tue, 10 Sep 2024 11:31:16 +0000 (UTC)
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF6B18EFCE;
+	Tue, 10 Sep 2024 11:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GwCjox3O"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909511DFE8;
-	Tue, 10 Sep 2024 11:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCE917CA09;
+	Tue, 10 Sep 2024 11:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725967876; cv=none; b=Yc0GB3XMifHgxEGZ47UHRBtG84MGlQpALhK7dMp+fUk6GOAKhTSdLM3D8jR41ranB+QQn8enLuIeyMmiJpovTSoZCBzs1reqmZSkIyu8GxBeVViprBW5QO4lbBL5liQtsm8538oyt3g8l8FOw2aNJM6n+YpV/MNMz76y7U6KRdE=
+	t=1725967898; cv=none; b=gIDzqmfWEqHbgM7DG/koUfWOTItClD1LVImlM42pfBhTkJ7MfseSJxMjVWrpc5/eLIxYj3id+wQNf+4Y+0+v5+ZkHAkJUd1pHQCRY6A+9J2BxSLrDPDqOwcbf0G94x7rALtors+WA5cT/0qaER09mg4cbeopc+3mGSY87psqTmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725967876; c=relaxed/simple;
-	bh=umTf7L04+EULSCtHP+OsTzwZGys+FKvlYJE6T9XSSWU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JA9uaJjX3Ltr3AyhPVUIpe4j346/Xm8qkoQwQQhkEvCtmLPq6PBCYA4k8ZbkT7M/UAslKcAOl0LSfvGwJFauH2qvUpFNeD2SFCV2UicyaU99wJUXBY4br+bU6wHljB0VW9bFbr291rbOac2RLUPO8ZuqwmsLUtOUqj8iWG6KMqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1FC604000B;
-	Tue, 10 Sep 2024 11:31:04 +0000 (UTC)
-Message-ID: <364e0e33-68ad-4f0c-86f1-f6a95def9a30@ghiti.fr>
-Date: Tue, 10 Sep 2024 13:31:04 +0200
+	s=arc-20240116; t=1725967898; c=relaxed/simple;
+	bh=tX2gTWhwl0ENhxTWOYQoj+JYJkAmmIO5ZLnbHKom64I=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=YCicL7gC2yh2DmxBCfn+HWjPVwg1HLmoUujFlYjgyjnqcOhAPoey6FkT8zcnPB0OnwGp7UDO62Fn412nBv7fvnGf0l9GwNjnQiOiFCy8StsjzHUDkgXYq6px28314HIGA7u7O3sUBZyiOeNwlT0FITQr7Bqx9p6gxzeEl2Ki0R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GwCjox3O; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725967897; x=1757503897;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=tX2gTWhwl0ENhxTWOYQoj+JYJkAmmIO5ZLnbHKom64I=;
+  b=GwCjox3O+1xhdSAuihX6036MlXiUPhwEc1qM/7BQogjJ1eCuzT4Bx1bA
+   dSPBUFM4vOJVQApIIPlaHXRoypAVtW6tySds1KfzX+sqU64PW2m2cFaMT
+   fE56ivVIXsadXdj+kcnGcMuUvydZEWShcQQL6Q1LSz3Nn8WuAGyMvHCTk
+   MPUUFOE4vENTBEbMqA8xXq/ThS0Q/ckewjy2vuA4Bet7B2+ssF5ojh5LI
+   m3NFgYRDzEfb6tUua6sy7Tswv5zMDwW4hFLqDtq22+G7pKEm/qZklomtH
+   FO+tstdldDwVdhwdO6HwLR8eJyRxhBmgW6gZJHpzZ5W9J7pLjkfN/uxTt
+   Q==;
+X-CSE-ConnectionGUID: 2W/joI/YTKia8TBukSTZTA==
+X-CSE-MsgGUID: 9WUQLhcNRJeHlsMSI1KTzA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="35846133"
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="35846133"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 04:31:36 -0700
+X-CSE-ConnectionGUID: 0Qo2BjzgTTmBx1bjul6YVQ==
+X-CSE-MsgGUID: N7z+pVYAQTqYJeaGX/yqCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="67007526"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 04:31:33 -0700
+Message-ID: <ddaebed0-beeb-4403-ba53-8f07cbe0e235@intel.com>
+Date: Tue, 10 Sep 2024 14:31:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,82 +66,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6] membarrier: riscv: Add full memory barrier in
- switch_mm()
+Subject: Re: [PATCH 20/21] KVM: TDX: Finalize VM initialization
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ kvm@vger.kernel.org
+Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
+ yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-21-rick.p.edgecombe@intel.com>
+ <58a801d7-72e2-4a6d-8d0b-6d7f37adaf88@intel.com>
+ <5b2fa2b3-ca77-4d6e-a474-75c196b8fefc@redhat.com>
+ <e58349f3-fa36-4635-9b2b-9ff8f2d88038@intel.com>
 Content-Language: en-US
-To: Greg KH <gregkh@linuxfoundation.org>, WangYuli <wangyuli@uniontech.com>
-Cc: stable@vger.kernel.org, sashal@kernel.org, parri.andrea@gmail.com,
- mathieu.desnoyers@efficios.com, palmer@rivosinc.com,
- linux-kernel@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, nathan@kernel.org, ndesaulniers@google.com,
- trix@redhat.com, linux-riscv@lists.infradead.org, llvm@lists.linux.dev,
- paulmck@kernel.org, mingo@redhat.com, peterz@infradead.org,
- juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- bristot@redhat.com, vschneid@redhat.com, brauner@kernel.org, arnd@arndb.de
-References: <10F34E3A3BFBC534+20240909025701.1101397-1-wangyuli@uniontech.com>
- <2024091002-caution-tinderbox-a847@gregkh>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <2024091002-caution-tinderbox-a847@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <e58349f3-fa36-4635-9b2b-9ff8f2d88038@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Greg,
-
-On 10/09/2024 09:32, Greg KH wrote:
-> On Mon, Sep 09, 2024 at 10:57:01AM +0800, WangYuli wrote:
->> From: Andrea Parri <parri.andrea@gmail.com>
+On 10/09/24 14:15, Adrian Hunter wrote:
+> On 10/09/24 13:33, Paolo Bonzini wrote:
+>> On 9/4/24 17:37, Adrian Hunter wrote:
+>>> Isaku was going to lock the mmu.  Seems like the change got lost.
+>>> To protect against racing with KVM_PRE_FAULT_MEMORY,
+>>> KVM_TDX_INIT_MEM_REGION, tdx_sept_set_private_spte() etc
+>>> e.g. Rename tdx_td_finalizemr to __tdx_td_finalizemr and add:
+>>>
+>>> static int tdx_td_finalizemr(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
+>>> {
+>>>     int ret;
+>>>
+>>>     write_lock(&kvm->mmu_lock);
+>>>     ret = __tdx_td_finalizemr(kvm, cmd);
+>>>     write_unlock(&kvm->mmu_lock);
+>>>
+>>>     return ret;
+>>> }
 >>
->> [ Upstream commit d6cfd1770f20392d7009ae1fdb04733794514fa9 ]
+>> kvm->slots_lock is better.  In tdx_vcpu_init_mem_region() you can take it before the is_td_finalized() so that there is a lock that is clearly protecting kvm_tdx->finalized between the two.  (I also suggest switching to guard() in tdx_vcpu_init_mem_region()).
+> 
+> Doesn't KVM_PRE_FAULT_MEMORY also need to be protected?
+
+Ah, but not if pre_fault_allowed is false.
+
+> 
 >>
->> The membarrier system call requires a full memory barrier after storing
->> to rq->curr, before going back to user-space.  The barrier is only
->> needed when switching between processes: the barrier is implied by
->> mmdrop() when switching from kernel to userspace, and it's not needed
->> when switching from userspace to kernel.
->>
->> Rely on the feature/mechanism ARCH_HAS_MEMBARRIER_CALLBACKS and on the
->> primitive membarrier_arch_switch_mm(), already adopted by the PowerPC
->> architecture, to insert the required barrier.
->>
->> Fixes: fab957c11efe2f ("RISC-V: Atomic and Locking Code")
->> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
->> Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> Link: https://lore.kernel.org/r/20240131144936.29190-2-parri.andrea@gmail.com
->> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
->> Signed-off-by: WangYuli <wangyuli@uniontech.com>
->> ---
->>   MAINTAINERS                         |  2 +-
->>   arch/riscv/Kconfig                  |  1 +
->>   arch/riscv/include/asm/membarrier.h | 31 +++++++++++++++++++++++++++++
->>   arch/riscv/mm/context.c             |  2 ++
->>   kernel/sched/core.c                 |  5 +++--
->>   5 files changed, 38 insertions(+), 3 deletions(-)
->>   create mode 100644 arch/riscv/include/asm/membarrier.h
-> Now queued up, thanks.
+>> Also, I think that in patch 16 (whether merged or not) nr_premapped should not be incremented, once kvm_tdx->finalized has been set?
+> 
+> tdx_sept_set_private_spte() checks is_td_finalized() to decide
+> whether to call tdx_mem_page_aug() or tdx_mem_page_record_premap_cnt()
+> Refer patch 14 "KVM: TDX: Implement hooks to propagate changes
+> of TDP MMU mirror page table" for the addition of
+> tdx_sept_set_private_spte()
+> 
+> 
 
-
-The original patch was merged in 6.9 and the Fixes tag points to a 
-commit introduced in v4.15. So IIUC, this patch should have been 
-backported "automatically" to the releases < 6.9 right? As stated in the 
-documentation (process/stable-kernel-rules.html):
-
-"Note, such tagging is unnecessary if the stable team can derive the 
-appropriate versions from Fixes: tags."
-
-Or did we miss something?
-
-Thanks,
-
-Alex
-
-
->
-> greg k-h
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
