@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-323277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10511973A88
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:50:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0C9973A8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83AC9B2415C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:50:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1FE61C24E7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080ED199926;
-	Tue, 10 Sep 2024 14:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BF3196D9D;
+	Tue, 10 Sep 2024 14:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GsWm2kUh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjBNvC/n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F99189BBA;
-	Tue, 10 Sep 2024 14:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC9C136E2E;
+	Tue, 10 Sep 2024 14:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725979781; cv=none; b=QMLmZx7MS9WGe8d0dD60eP2zG2EIjlVaMgDXJY8ANwgalzRvDCrTyeDu1OpjJRf5gBUuAgRG1jJtG0V9yWvL1vyOgVnSczc11tVnLC97lw0NgI7wMDMF5rqeOd0BpGkZGYXG5IJPMtIBJHzoIiIXpgmVwfd6UkgRRH+lnGbeBL0=
+	t=1725979812; cv=none; b=rIazh6YiqxubImCoqwWOEmDTi5mhoYAaryJgu1vxBQ5nAUIpyQq1hhq4k6BUexoQxg8bSdMBgYAi3BkBeOvYPqPfCTUv1qsIGZkCGQhRI2Ie76V6+DXx/04T2M8XgSCQJHUqQT7/ROWLi/AUOkBDB7qjBgPwswhb6B6Ec93nz2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725979781; c=relaxed/simple;
-	bh=cn5Vt4PhzbHhk1eYT0hhNWaKEelECJKhDWEuZoTksso=;
+	s=arc-20240116; t=1725979812; c=relaxed/simple;
+	bh=pkQXUEWeHR9vW2l3JN7yFeIl2jLgAIAgmoQiMK44X7s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kaOiZGGtyQ+x6euf8IpBtNTIpgZzqDOP32uEcfoLzKXR3v4fMQ1CuyJg2fl5HrCkCxxA132JA2Yug+Tu1TpjGrVXnk0SCezRraUlfH64q/8gvopGv9UEs8i1tb7+bYxnjd/PiDt7UTzOJRHMZ4tBHZAqWHrqOpV9Nl8KKWIcmww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GsWm2kUh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67E07C4CEC3;
-	Tue, 10 Sep 2024 14:49:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KMHAwP64AoyY2do4tpmdY31ZwLpMIv43lStWVQp1AwvzvoI30fk0UNN8RnN2gWjR5CrPfi6H9oc/1iMMe22KrYA5d/U6Ceo82Ng9iFC88PMuhkQeCCy3OqoCvMeP6xJCpuQGqEst8nET3U9sF1e57O8mOgzwdUC83d1MJItEad0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SjBNvC/n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2071C4CEC3;
+	Tue, 10 Sep 2024 14:50:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725979780;
-	bh=cn5Vt4PhzbHhk1eYT0hhNWaKEelECJKhDWEuZoTksso=;
+	s=k20201202; t=1725979811;
+	bh=pkQXUEWeHR9vW2l3JN7yFeIl2jLgAIAgmoQiMK44X7s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GsWm2kUh6t4J/13juA85VpnFx9aFMqQ6SUL+CJMG390TCJ6Sb3pQ0117way9X58Ye
-	 b1RviskB1gceY1Wjk8oEXsO1KROr0ZFaS48Pt6iO08jCirYS0wJ0XStqkggImatwWc
-	 iy4FxKAAg/S/gNYTCTdqu3IC6a0RoAnRa0CKwVCge8l0a67im7vljTBFE5OUyzordP
-	 JwpPYU7x0rHznaj0BvhJaJGOfLgkiQYdXsFi+BalOB1hfYtutmUAxE1zIyHQmTI33E
-	 iNs7lNYdCSCqfJIcSKhAI5xoGQpnxbzabboWE4tWf6oRd4/Ab4H3+oXR2Q9i9Zk2bj
-	 KQ/jlIps7VCyA==
-Date: Tue, 10 Sep 2024 11:49:37 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 1/2] perf annotate: Treat 'call' instruction as stack
- operation
-Message-ID: <ZuBcgRi8ERab0WNG@x1>
-References: <20240909214251.3033827-1-namhyung@kernel.org>
+	b=SjBNvC/nbUUnS4l+lLivYhQmVTE2OU3gyKSXPUfltk8veQkrXLsjZiNE99Qq/oOE1
+	 kdKlKVMrOp+OY1sfv8QGGuy/NfI0lNOYMoGShOE8mtXLcoQGfjV9SkaZA9uaB/Asue
+	 hOUgIZYDhadZVQZ3ePkqqTKUXX+MLAWbKz7zWnsBIbcc9rlAnRbwOHVrAcRaHfj2y4
+	 dw9ELzupdklmfyP3t4jX3Ae/vRHNIThLbQITCxIzYcAHcu1wG/rgZZ1hBUyitnVQY5
+	 T8SantBX9r2lPBw87BDTcbv1CWoAteh2Y3nSs5tIMgaq9ORzS8p77qfHhuGYjpJ0D6
+	 bvTXfRZ609ZcQ==
+Date: Tue, 10 Sep 2024 15:50:06 +0100
+From: Simon Horman <horms@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, Matthew Wood <thepacketgeek@gmail.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	davej@codemonkey.org.uk, vlad.wing@gmail.com, max@kutsevol.com
+Subject: Re: [PATCH net-next v3 10/10] net: netconsole: fix wrong warning
+Message-ID: <20240910145006.GE572255@kernel.org>
+References: <20240910100410.2690012-1-leitao@debian.org>
+ <20240910100410.2690012-11-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,35 +59,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240909214251.3033827-1-namhyung@kernel.org>
+In-Reply-To: <20240910100410.2690012-11-leitao@debian.org>
 
-On Mon, Sep 09, 2024 at 02:42:50PM -0700, Namhyung Kim wrote:
-> I found some portion of mem-store events sampled on CALL instruction
-> which has no memory access.  But it actually saves a return address
-> into stack.  It should be considered as a stack operation like RET
-> instruction.
-
-Thanks, applied to perf-tools-next,
-
-- Arnaldo
- 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/util/annotate.c | 1 +
->  1 file changed, 1 insertion(+)
+On Tue, Sep 10, 2024 at 03:04:05AM -0700, Breno Leitao wrote:
+> A warning is triggered when there is insufficient space in the buffer
+> for userdata. However, this is not an issue since userdata will be sent
+> in the next iteration.
 > 
-> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> index 4990c70b1794d7a9..1a347a711dcf5c62 100644
-> --- a/tools/perf/util/annotate.c
-> +++ b/tools/perf/util/annotate.c
-> @@ -2474,6 +2474,7 @@ static bool is_stack_operation(struct arch *arch, struct disasm_line *dl)
->  	if (arch__is(arch, "x86")) {
->  		if (!strncmp(dl->ins.name, "push", 4) ||
->  		    !strncmp(dl->ins.name, "pop", 3) ||
-> +		    !strncmp(dl->ins.name, "call", 4) ||
->  		    !strncmp(dl->ins.name, "ret", 3))
->  			return true;
->  	}
-> -- 
-> 2.46.0.598.g6f2099f65c-goog
+> Current warning message:
+> 
+>     ------------[ cut here ]------------
+>      WARNING: CPU: 13 PID: 3013042 at drivers/net/netconsole.c:1122 write_ext_msg+0x3b6/0x3d0
+>       ? write_ext_msg+0x3b6/0x3d0
+>       console_flush_all+0x1e9/0x330
+> 
+> The code incorrectly issues a warning when this_chunk is zero, which is
+> a valid scenario. The warning should only be triggered when this_chunk
+> is negative.
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Fixes: 1ec9daf95093 ("net: netconsole: append userdata to fragmented netconsole messages")
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
 
