@@ -1,198 +1,138 @@
-Return-Path: <linux-kernel+bounces-322608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5977B972B70
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:03:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9590972B71
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C4D8283418
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:03:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB2931C2193B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA03566A;
-	Tue, 10 Sep 2024 08:02:43 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8CB184535;
+	Tue, 10 Sep 2024 08:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ZEyx6jcI"
+Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1CF174EFC;
-	Tue, 10 Sep 2024 08:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB2F183CD9
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725955363; cv=none; b=uSNvHt7BQbjC5S0BUfGyjUJkjTYa1bq6/dCc6bfTXCGRwDP5u9OnpIytAaDbzGx8wX8bEotiIBXnnnWtilA//DQx6uITs7lpv71/UeEATU0FXTrjihGZYA3DNDR2IQ8GVVbGnuFVgX9dAbgg+MgFLUlEpQW9amW+f3wKdWm2Cmc=
+	t=1725955426; cv=none; b=Mwm5HoJu3ch75P5nJgyoaNg6VD5BpDbttX8Y9XchS+VTBvrrerq+EMAd5e2kmm6dw6ke6L34t0w5jgfsipwM6Ca7dPJaMO1p19q9bZ7ubikzdi9o0OpC/flDAIw5UwkS2KIkmCUtY35uMp5GpJ6SSyLvjor3m0f11Ik1SFYVMYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725955363; c=relaxed/simple;
-	bh=bZQ56TI9jacC06ucCOzxlRB8MZhqw4u3oVbjFPOEG04=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OhohNAwFjzeYZPwm6uvID8OYbZPCVysGghyfko6ZAyzHqL1XnFt8MXnhwLsi3CSCLkyjnjD50+HRlACJTRbRA1/NwCMDJgvqGRcCt1Ff4Mr8CpFTkS6vODY6LBmhHzAx6/tozjtuKu4qVgPmvBFwnWfQzRea+uLQOTbycbSa0TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6b6b9867f81so2801497b3.1;
-        Tue, 10 Sep 2024 01:02:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725955358; x=1726560158;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fzRdJw3jGdTpaaxC4oTRsBtst8mfyJSId4rDFBKOHV0=;
-        b=hf/5DvQXc07ReeqJOh/x7w7aAifKsvC+Cdnd9Vr04mivTQCwXxg7QaHx0Dif6dvIYc
-         LGgsuhkAhSpOhpqh/aQevJ5D+AfHqdNZVyHkErX612V9q0P4btxSZHX6gVpy6aSd8UF6
-         nP+g553BD0iahWe7YGE6xY7wa8m3du/x1hu3GyHmp3bmEeFtvQS3Vl4ixTSWTfqQvCa7
-         dFy7y5iBIkvWZjDQvGFMqRkOZOh0xJl+lgxCAI1woEsDYtIUHtPe8vCyaEnVLZW8rylT
-         du1metny8dI9UDXW4XhgPTg6g/dgoK8vtfT0lAsZUecLtL7NihvvTBG436RoRQTSTwKr
-         iMdA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOyNIeWSeKkHGVQzhTDNO2brNBi+Et8GUEiS4SLEqVPaSRiN79tCywtrTl9NHRhtfdYPEu8LWC0PMx505s64p1v2s=@vger.kernel.org, AJvYcCX+dPA3oZ2Pn8158a51PHSXdHzIlKdXtu09Xa8al0Ho02AL/nHlzY1JJbYp60rsXanZCYoZGGdQnBHs9IqI@vger.kernel.org, AJvYcCX/+ZcBEOcubMzYUh32DZw/oafIKJJ+lLZORGDr2f4XV8N8fd8p2kdjgW5UhG0iFCx6/T4NDp9a5iYn@vger.kernel.org, AJvYcCXod0PX0RBMUS32LY2LT4HyPu6jvbxcFRnVNJDvEj6mkfIpfwdvUlZwm0YlNCO+yipTHIYjO+m8C5Y/@vger.kernel.org, AJvYcCXqiMs1rEYsm1nBlJIj9A3+jU5cXD94zJo/w0G5/pHGmT8rVkLl9Z2pc4R4BLnZX/9bMpfj6p7YT1Am@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzehQ3ga3o16Hyvn7mkuxXvqR0QqTj5bdQxV0AKK5YpGiLSTY2
-	qdWugiMRgn7subZUHxEwsnAdWAHMe6YKFpnf6VJHlzP0sPW0gadtQjbIF0Bi
-X-Google-Smtp-Source: AGHT+IEDzeFJg++83VtrB6IWJnIkEpcY+S8zu/4dF6JnBPmVZ02H8azk96uClHp01u5ASpF5vIUQ+g==
-X-Received: by 2002:a05:690c:dc5:b0:65f:d27d:3f6a with SMTP id 00721157ae682-6db44d61d1dmr158085997b3.7.1725955358109;
-        Tue, 10 Sep 2024 01:02:38 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6db9648d551sm2189837b3.63.2024.09.10.01.02.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 01:02:37 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6b6b9867f81so2801127b3.1;
-        Tue, 10 Sep 2024 01:02:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV8EYR7jgyebhDZo2pAtd6e2eyhG3O2VUVw36sfXiUMPUnKbZN+yPb5CSD9j3fWUmbBK5n/yWP9Y454@vger.kernel.org, AJvYcCVO7uZSVziTLVhbZa/jj0dMctzRtiUoRktz1ONYwhUdH5vLilM5XIW7UCRHLFwr+lFASGdr/52VebTy@vger.kernel.org, AJvYcCWWFJS1hxlG1k45ou7p/89Y8U83wb8ut4tP7weBIgj6DL5lpnPEugFTN9S5zKCbnCl50w0waXmC7enBJxeAofesENU=@vger.kernel.org, AJvYcCXelkVbxMta2r+SPTIgeNe2QU/E4uMe/Gr9jy3t1Ej6LjV35xRzGw2QqGAR21vgHmVrB9hoBGzFH0omN2wm@vger.kernel.org, AJvYcCXzkTYygK8Xt7wG684wXki9BGuOsZF82qRMlOxUQLHHX1/UnC6q/wgvx9uJNbqlPIomwrsC9kcvZc9h@vger.kernel.org
-X-Received: by 2002:a05:690c:d18:b0:6af:eaaf:2527 with SMTP id
- 00721157ae682-6db44dfed1amr147937807b3.18.1725955356625; Tue, 10 Sep 2024
- 01:02:36 -0700 (PDT)
+	s=arc-20240116; t=1725955426; c=relaxed/simple;
+	bh=HqbW8dy/+rSyl/ZkQAICdVZPytPBjlz234TbreiqZck=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=aJwQzJOqxgfsxAVf+LdXae+Rdw2aBYagy/+M20dFGJHiPA23GHPN1eituQ/98P2L6GpH5pEDYF8repOuTUHfxlM0H8TekaLocDEW+NSgxZ03GGuuWL8Z7g5ccmEB4DFpKns7TfnnbtMHCd1XGxLq0HK4vxUsP3WGKfsu6VuBMTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ZEyx6jcI; arc=none smtp.client-ip=203.205.221.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725955411; bh=Ke6llP5aTC6wJl5ezxb6Oyg4/JgEY6h24W6FPOQpXfE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ZEyx6jcIVtDFt6JPsZbnHnlRfa6pknNXR7T+QFUIX18+3y6hTFBNoeHmMY9EYBm5D
+	 tRz9lMcsB1zQMH5qdP7BE4cfBVxMkZxX9JSPQPgRIGjHSHtJ4hacwcgZz+kGkHLnsE
+	 C2Jto0FQ9Ok9Yb4o0a+yNGRr2YRls7CVvOBFHXxk=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id DD8BCC2; Tue, 10 Sep 2024 16:03:29 +0800
+X-QQ-mid: xmsmtpt1725955409t53nwapj4
+Message-ID: <tencent_C01BE84B281BB025FFBA45BB0733AC9EC408@qq.com>
+X-QQ-XMAILINFO: MTEKjEyAppcsxn4ZJ/5W+R7JrDrz8yLAn3588Xgbw7Zz51yaOlVahETQaaR17B
+	 BSxB3Ojz+SYxJKz++jMtx35i9GAcmZm1zD6pwwq9lLLJGSEswKM7s7YG/gfffqcNU69nQPbwKDoZ
+	 Xa0W/NoPTuJ03O7jdTS/AZz/xrUoohmqjc0ur1F8vD8bUO30ByvA5HiBK64Ja0ItcWdE3fpdN3WP
+	 WlCAmucNZc4YgnHudtQtTw6ZqIqEj+TpUNOcz2gQgXzeMkfGYj5prVbz6zv92Ux9JxIiHxGCGLfB
+	 1WXzbOvPPAzD6L5aQH9iNT7o7XT2H4lLLLOZNUcaUpeKamyFtuysR50lNo425TZwWvod3lWosRSs
+	 h05mV8Sn7vTnaPxAgFUnQwzmGl1K3ybb5gz2pXUZwzku0wagU3FdmtJK8ppv5EVln9IRIwDQnX0q
+	 AQ+ANZol4k8xgJc9z/dlfw6NMa5eA/ZIdHmb5XU4DpIKFEXsuznnZCFL+N7AT2wxJlU2i6ihzvu2
+	 afMmg1V4VmNRvZy4iyNXDV4Ne1Xd3DL3n7T523u0zUn3YhR9ipcG1u11KQT2KkW6Gv4i/uLrhCdO
+	 5cOhxaSJlSELsFNt3qIYTSltOd82UH2waK+k08s+lJYXhj6pEngOAgczDPUAjxirEmD064dUBaEt
+	 RzCN5jxv/dNzAeKweRPQQav8wqsfRjO/YydLQvapIsMIOrC/8N35szCpNXZvHFUwHFkmUT9jfJz9
+	 aluhxVB7gOp10Q9hiWqAzSrDqttJvwTNROjbAKNurrCdgMw9Xesp81SP5CYpWhuNivifz0Py+ae/
+	 ja0JmfWWNHIT9NSaZU5pIxEIkRitprKGTbmVJCJ2RNGzEPDUUqHQj2JUq15R2fV2CWu38sVCo0Oh
+	 0KKDdjZ+0ajfYkW7OJc2/5WgjqGeqnlDBlHG7zGvQTRRu0NMJIT53uafWxOH0NvV6rQbqmmRu8sz
+	 BJHulgNAdAt1qlKdS+iG5CdnNUcJuYh+W6xk3VQEU=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [syzbot] [mptcp?] KASAN: slab-use-after-free Read in __timer_delete_sync
+Date: Tue, 10 Sep 2024 16:03:30 +0800
+X-OQ-MSGID: <20240910080329.2515966-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <000000000000b341bb062136d2d9@google.com>
+References: <000000000000b341bb062136d2d9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
- <83fac884d749bda0cf0b346e4e869bc8.sboyd@kernel.org> <d8303146-89e0-4229-a3fe-9f3c42434045@tuxon.dev>
- <c744cf7a70a3f97722146215a7620cfb.sboyd@kernel.org> <CAMuHMdX40ROk2vZe9VHoiPDJCvtrjto+swkicv29LFyQ7zoVng@mail.gmail.com>
- <951b5c09c3ca2de3f0a28a078084f7dd.sboyd@kernel.org> <CAMuHMdWBT6AaH2_5qj+j4s8JeeO3qrhYUTCVG=s_J13nSzYPsQ@mail.gmail.com>
- <8fa43530daa941b059b2de1e15dd7773.sboyd@kernel.org>
-In-Reply-To: <8fa43530daa941b059b2de1e15dd7773.sboyd@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Sep 2024 10:02:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW12EO=U2b93C=hkL3Z-ncf85X0-9KB4Ds9d5+b5MhLMw@mail.gmail.com>
-Message-ID: <CAMuHMdW12EO=U2b93C=hkL3Z-ncf85X0-9KB4Ds9d5+b5MhLMw@mail.gmail.com>
-Subject: Re: [PATCH v3 07/12] arm64: dts: renesas: r9a08g045: Add VBATTB node
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: alexandre.belloni@bootlin.com, claudiu beznea <claudiu.beznea@tuxon.dev>, 
-	conor+dt@kernel.org, krzk+dt@kernel.org, magnus.damm@gmail.com, 
-	mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Stephen,
+entry need to be protected by pm.lock.
 
-On Mon, Sep 9, 2024 at 11:18=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wro=
-te:
-> Quoting Geert Uytterhoeven (2024-09-09 05:11:03)
-> > On Sat, Sep 7, 2024 at 1:01=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> =
-wrote:
-> > > Quoting Geert Uytterhoeven (2024-09-06 00:28:38)
-> > > >
-> > > > My main objections are that (1) this approach is different than the=
- one used
-> > > > for all other external clock inputs on Renesas SoCs, and (2) this r=
-equires
-> > > > duplicating part of the clocks property in all board DTS files.
-> > >
-> > > Can 'clock-ranges' be used here? Leave the cell as null in the SoC dt=
-si
-> > > file and then fill it in with clocks property at the parent node. I
-> > > think you'd have to use clock-names for this though.
-> >
-> > "clock-ranges" does not seem to be well-documented...
->
-> Yeah, I wasn't aware of it for years!
->
-> > IUIC, your suggestion is to:
-> >   1. Add "clock-ranges" to the /soc subnode,
-> >   2. Completely leave out the "rtx" clock from the clocks property
-> >      of the vbattb@1005c000 node,
-> >   3. Add the following to the board DTS:
-> >
-> >         &soc {
-> >                 clocks =3D <&vbattb_xtal>;
-> >                 clock-names =3D "rtx";
-> >         };
-> >
-> > Then, when resolving "rtx" for the vbattb@1005c000 node,
-> > of_parse_clkspec() would iterate up and find the proper vbattb_xtal.
-> > Is that correct? And probably that should be done for other external
-> > clock inputs as well?
->
-> Sounds about right.
->
-> > Still, it looks a bit complicated and un-intuitive. And what about
-> > e.g. carrier boards with a SoM, where some clocks are provided by
-> > the SoM, and some by the carrier? In that case you still have to
-> > override the clock and clock-names properties in the carrier .dts,
-> > thus duplicating all clocks provided by the SoM.
->
-> This is the same case as the board wanting to override the soc node?
+#syz test
 
-Yes, but more complicated,
+diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
+index 3e4ad801786f..b09268fc7fc9 100644
+--- a/net/mptcp/pm_netlink.c
++++ b/net/mptcp/pm_netlink.c
+@@ -329,17 +329,28 @@ struct mptcp_pm_add_entry *
+ mptcp_pm_del_add_timer(struct mptcp_sock *msk,
+ 		       const struct mptcp_addr_info *addr, bool check_id)
+ {
+-	struct mptcp_pm_add_entry *entry;
+ 	struct sock *sk = (struct sock *)msk;
++	struct timer_list *add_timer = NULL;
++	struct mptcp_pm_add_entry *entry;
+ 
+ 	spin_lock_bh(&msk->pm.lock);
+ 	entry = mptcp_lookup_anno_list_by_saddr(msk, addr);
+-	if (entry && (!check_id || entry->addr.id == addr->id))
++	if (entry && (!check_id || entry->addr.id == addr->id)) {
+ 		entry->retrans_times = ADD_ADDR_RETRANS_MAX;
++		add_timer = &entry->add_timer;
++	}
+ 	spin_unlock_bh(&msk->pm.lock);
+ 
+-	if (entry && (!check_id || entry->addr.id == addr->id))
+-		sk_stop_timer_sync(sk, &entry->add_timer);
++	/* no lock, because sk_stop_timer_sync() is calling del_timer_sync() */
++	if (add_timer)
++		sk_stop_timer_sync(sk, add_timer);
++
++	spin_lock_bh(&msk->pm.lock);
++	if (!check_id && entry) {
++		list_del(&entry->list);
++		kfree(entry);
++	}
++	spin_unlock_bh(&msk->pm.lock);
+ 
+ 	return entry;
+ }
+@@ -1426,16 +1437,7 @@ int mptcp_pm_nl_get_flags_and_ifindex_by_id(struct mptcp_sock *msk, unsigned int
+ static bool remove_anno_list_by_saddr(struct mptcp_sock *msk,
+ 				      const struct mptcp_addr_info *addr)
+ {
+-	struct mptcp_pm_add_entry *entry;
+-
+-	entry = mptcp_pm_del_add_timer(msk, addr, false);
+-	if (entry) {
+-		list_del(&entry->list);
+-		kfree(entry);
+-		return true;
+-	}
+-
+-	return false;
++	return mptcp_pm_del_add_timer(msk, addr, false) != NULL;
+ }
+ 
+ static bool mptcp_pm_remove_anno_addr(struct mptcp_sock *msk,
+-- 
+2.43.0
 
-> When it's a SoM is there a node for the SoM? Is the clock on the SoM?
-> Does this case exist? Hopefully this isn't a straw man.
-
-E.g. the White Hawk CPU board[1] contains extal_clk, extalr_clk, and
-scif_clk, so it would need something like:
-
-    &soc {
-            clocks =3D <&extal_clk>, <&extalr_clk>, <&scif_clk>;
-            clocks-names =3D "extal", "extalr", "scif";
-    };
-
-The White Hawk Break-Out board[2] contains can_clk, so it would
-need to append that, by overriding (duplicate + append):
-
-    &soc {
-            clocks =3D <&extal_clk>, <&extalr_clk>, <&scif_clk>, <&can_clk>=
-;
-            clocks-names =3D "extal", "extalr", "scif", "can";
-    };
-
-Currently, [1] does:
-
-    &extal_clk {
-            clock-frequency =3D <16666666>;
-    };
-
-    &extalr_clk {
-            clock-frequency =3D <32768>;
-    };
-
-    &scif_clk {
-            clock-frequency =3D <24000000>;
-    };
-
-And [2] does:
-
-    &can_clk {
-            clock-frequency =3D <40000000>;
-    };
-
-[1] arch/arm64/boot/dts/renesas/white-hawk-cpu-common.dtsi:
-[2] arch/arm64/boot/dts/renesas/white-hawk-common.dtsi
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
