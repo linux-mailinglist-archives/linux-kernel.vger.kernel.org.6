@@ -1,81 +1,137 @@
-Return-Path: <linux-kernel+bounces-322591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5970972B49
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:56:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47714972B4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54124283534
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:56:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A1DC1C23F1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FD1181317;
-	Tue, 10 Sep 2024 07:56:08 +0000 (UTC)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A763183CA2;
+	Tue, 10 Sep 2024 07:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AAOwIAcS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09AE142911
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE0C566A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725954968; cv=none; b=XDVag/JuthHfqTizPCQwLLjZ7ZObES0pl+EFQ5PnRMxE78sq9R8oAUrsV/CB+sfmVadrNtYNXkeBY1nNL/7pHftMWH1W1pojhmUTRXYnJt+ezy7+fB6fn4nmT54Ua7fquhKPidPhvFWiv3CQ8p530q8L0KllqwYzQ+VKtSwXlM8=
+	t=1725955166; cv=none; b=YrJnpMBJw9bWAdiq/TfDy7hjf+9cJG5IbVzO+eexAZFrFrxx9KheaAkd67fPi2pDl4iVfVWMiGnyweeCyzFBZjMlRy6TiJpmjny6ozhfo4C0BTlSIT7+vdbO1xxv4GDZvjqwsHsI65dtRZeJK5J3F8iA7cs3dUBx9+c3XKjOSBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725954968; c=relaxed/simple;
-	bh=la2z/wjfMXM2WYkkigYM27fYHEw+QKZ7VYl07D5xlhg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HQfde+zb+P1ZBYW4jHLpOZD9VfLedFfo3mDNS86Irj7nH9WDsBF3A+dsWdSquiI20Skwxo5attWQovnLkOJ2gRHW1iVDd/+a2rzKqhegFVTxZTiJnGQ8OhaUucaoNPZs9eZUUCQHrRTTLNBVpLcK11Vt5dtED8jQxtxY/wQs0ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb806623eso3837125e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:56:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725954965; x=1726559765;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=la2z/wjfMXM2WYkkigYM27fYHEw+QKZ7VYl07D5xlhg=;
-        b=r5RO1VQxVFQtFUytAR76zXlakkLvGHSBSvLKZeFXYJrU4SLvBBnMqNgXi1YGbEVME3
-         mF2+AjyQim1oHVlYDWYTTaCnyTMaXSFLwchbQ21H0KJYWYaNGbRCYOHL5rNEmtyv/NoN
-         3fDlVpXx+hNtzO/HaX3ES4K/HhoQVPFK3DMUg/4BHEu62oxPv2W82wpwQdfPt1CRbMX0
-         8P4AAEg/jpZwcD0ynsP3MSNijzEg6OBFOs3KEiTifxNOiyD8+m15l7TJXQSQBMqstDhd
-         WvR06FLomhHry6pipVaM/rC+X6fTM0N/HKlilO7UI0A81mgH0tY4zBMOnUvWZePMHf/A
-         qzdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlIcipiDIUu2IvTwrc8vloJ2BYdZtaZrLcQQ1NJHY7hlNCiYvFQkub0bvWamSbtrhwuOSZHBCS5cwRTt0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvGU0AKMn0hZCKmfLHrfzIB/OXfH16Rt42DHpvTdwRYNeHvsTa
-	NoRKPTMtBnrEGPu3uEQb6bfSkMQt+pGYKFe2ypFY9gejwmDprsE8
-X-Google-Smtp-Source: AGHT+IHbEmNZzv0aLRT0PXSHoj9J6ezBLXmNy4Jtz1i5tAWzTzynS4g1nhl6g4KPQ96hnqe0DHGL0A==
-X-Received: by 2002:a05:600c:1c8f:b0:42c:b309:8d18 with SMTP id 5b1f17b1804b1-42cb3098ee0mr51445405e9.19.1725954964324;
-        Tue, 10 Sep 2024 00:56:04 -0700 (PDT)
-Received: from [10.50.4.202] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb32678sm101881705e9.16.2024.09.10.00.56.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 00:56:03 -0700 (PDT)
-Message-ID: <ca3ec565-4967-4e1e-929b-db4219e3e98c@grimberg.me>
-Date: Tue, 10 Sep 2024 10:56:01 +0300
+	s=arc-20240116; t=1725955166; c=relaxed/simple;
+	bh=WH9+LUWQGwbF7qXyOYXuIsxibYiSaDowp6tGXvP3BRc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mlFBfJr8Jy8yZH+YkPyrU3/95IQeHxdjLh4TR1qVpUJxLmgd6n/Yn3+eWGnQBILoWAUZ8NL9x+rYQ/GVht7D9KvWe2HF/ohiZYRiEHSfBD3LHrkQ0VLau9fYChZlQDTXOr2U5h3N6bXaoYkFR4g9xrBlRjOcHKBl7TzbMOWAB4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AAOwIAcS; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725955165; x=1757491165;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=WH9+LUWQGwbF7qXyOYXuIsxibYiSaDowp6tGXvP3BRc=;
+  b=AAOwIAcSfvJ/FzJSWMMWw8dIHFjgDdGvJ/tL1Ilj0XqMB6qIBBEKgGhv
+   7TIokh7qo8CeqBTTcH7iYSVouqo/CNa1XI/5wyXe4OqNgopA5WA76I4Dx
+   BkIr6aYK7dRlaR+n6JBzs8jCgOOb8oy/71RU6S2ScGV2EQ3nRgOJQodVp
+   bE8E5kPIiupPBX7movOoTuNylMGh3F5T4xT/DT4PaK9hRmIW2U1ik/tSw
+   CpzVplIB3JRKqHlreUpO76N0aCac80khH+zpWmWHg1pFWNPgI9BppRCw/
+   aLMgtufMNZhuqYNgD/EZMVn2dVgXt8rptUIOTpWfLIsor18bkaT7S1XEa
+   A==;
+X-CSE-ConnectionGUID: LGmwQec/Qk2oBNaSKwcb+w==
+X-CSE-MsgGUID: CKHE9NUOQB23tZA1y/3Q2A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="36033541"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="36033541"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 00:59:24 -0700
+X-CSE-ConnectionGUID: Go0LbjtVQdCEhjq5I/VLpg==
+X-CSE-MsgGUID: Oalwbrp6QC+YS4nj9UR9Jg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="90237917"
+Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.43])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 00:59:20 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Tejas Vipin <tejasvipin76@gmail.com>, Laurent.pinchart@ideasonboard.com,
+ patrik.r.jakobsson@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+ daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Tejas
+ Vipin <tejasvipin76@gmail.com>
+Subject: Re: [PATCH] drm/gma500: replace drm_detect_hdmi_monitor() with
+ drm_display_info.is_hdmi
+In-Reply-To: <20240910051856.700210-1-tejasvipin76@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240910051856.700210-1-tejasvipin76@gmail.com>
+Date: Tue, 10 Sep 2024 10:59:17 +0300
+Message-ID: <87ed5skkh6.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme-tcp: fix link failure for TCP auth
-To: Arnd Bergmann <arnd@kernel.org>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
- Hannes Reinecke <hare@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kanchan Joshi <joshi.k@samsung.com>,
- Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240909202118.811697-1-arnd@kernel.org>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20240909202118.811697-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Looks good to me,
+On Tue, 10 Sep 2024, Tejas Vipin <tejasvipin76@gmail.com> wrote:
+> Replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi since
+> monitor HDMI information is available after EDID is parsed. Additionally
+> rewrite the code the code to have fewer indentation levels.
+>
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> ---
+>  drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+> index 2d95e0471291..cfbf3137e144 100644
+> --- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+> +++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+> @@ -135,16 +135,16 @@ static enum drm_connector_status cdv_hdmi_detect(
+>  
+>  	hdmi_priv->has_hdmi_sink = false;
+>  	hdmi_priv->has_hdmi_audio = false;
+> -	if (edid) {
+> -		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
+> -			status = connector_status_connected;
+> -			hdmi_priv->has_hdmi_sink =
+> -						drm_detect_hdmi_monitor(edid);
+> -			hdmi_priv->has_hdmi_audio =
+> -						drm_detect_monitor_audio(edid);
+> -		}
+> -		kfree(edid);
+> +	if (!edid)
+> +		return status;
+> +
+> +	if (edid->input & DRM_EDID_INPUT_DIGITAL) {
+> +		status = connector_status_connected;
+> +		hdmi_priv->has_hdmi_sink = connector->display_info.is_hdmi;
+> +		hdmi_priv->has_hdmi_audio = drm_detect_monitor_audio(edid);
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+display_info.has_audio
+
+>  	}
+> +	kfree(edid);
+> +
+
+Please switch the code to use struct drm_edid and the related functions
+drm_edid_read(), drm_edid_connector_update() and
+drm_edid_connector_add_modes() while you're at it. See git log
+--grep=drm_edid for a number of examples.
+
+BR,
+Jani.
+
+
+>  	return status;
+>  }
+
+-- 
+Jani Nikula, Intel
 
