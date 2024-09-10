@@ -1,120 +1,97 @@
-Return-Path: <linux-kernel+bounces-323920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E126C974545
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:00:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B531974551
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:02:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E20F0B21FD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:00:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 631BD284536
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652F91AB539;
-	Tue, 10 Sep 2024 22:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1301AB512;
+	Tue, 10 Sep 2024 22:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q2QmSAoQ"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sidQ5dAh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438D918E36E;
-	Tue, 10 Sep 2024 22:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EF1BA45;
+	Tue, 10 Sep 2024 22:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726005640; cv=none; b=IgHqwJiDuD3wgFsRP1xer8fg+24wC4kkBycKxKqLy5EmcrJxQZ6QOV5g34ePnY4AaudkckKO4BvtYjmNkKr6rMb6FPg+TlVYpLAr0JLBTefBlpfasOX3bGldasIr0V9aRluVySosWMs5PCS0pMTJLlzRUenM983cUODleN4gGbo=
+	t=1726005733; cv=none; b=pK89tQC1pgaMemobblpOrrEO2vfG7PROBUls13T80fPelzH2S9DWEHT7DrrJ8WW2I+tLlVuaU1OszmSKaCvKjyBzN/Y7sM9J4UzGzenS+UJTlLa2hWlM+1VTVs+TgyA4Ustn/S850Ah4RRM+VveiSbvPRIsYE75XW+V2N7p1OPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726005640; c=relaxed/simple;
-	bh=VsTjWNADfLdStC2suvhv8Rq350roC915QLeW/CXDE5U=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rR0WQ+YJkMMlTMnfyYeMdHw89J++rSshFi7nnP6Jfr6VkN1LsI+Hlsy363cH37bgwj3AG1gwogZVNJendQLIE6pztN4EQmohHkeRQvN5XuBdIZlLK4+kZR1pc6X+F49j3mgBxi/7Eevi7hLJNU/0c2zfOt2fMLwNMvcEn9WpqLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q2QmSAoQ; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53660856a21so3762097e87.2;
-        Tue, 10 Sep 2024 15:00:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726005637; x=1726610437; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5jMtl0prKSdJz//ECC13RAziEQ8EPeFlB0bmZxnmxps=;
-        b=Q2QmSAoQpp0YUcU8nyAZkCoUICwm1TbW/+57/QdWi3AvD1ibYlihM91Y2tjtpN8990
-         4/O9L/qsERVKLmUsX/ftt0HM85I5bYN9LdO2MeYpQhXrFnH5Ta02R+VcYbUfKtx4pBf6
-         IMqDEBZtacD9cL1cGzS2O9mUbnNihVdvmCb+wPudiDIPIcckM3YGiYbZ+yqiGEaN+UYH
-         re9QXGzwJzLXx7lVN4QRQNLEm7VGNYd70yxYw6MQjvS0h/WzIqX9CFNhq29uLU5vN5ig
-         IRY4TtyIBJFwflTBiYq9YRve4cB0F1IhXOmt9u+VxJkWPMDQC0NzEbFKB6LZxoohWZbp
-         fw0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726005637; x=1726610437;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5jMtl0prKSdJz//ECC13RAziEQ8EPeFlB0bmZxnmxps=;
-        b=I8+MJ8lm6YcVDcMNQh76fzkkfxmH5tJpuoJSvsCSqmtaiUNwRX+MIH32k9L7yeGPLD
-         ymZdLpVQgKFN4n008t00JMLkWkOTEv4n4OnXWRZR7ynDGZF/uuhJa+5YrL64zLB1Qogp
-         040hoQkK2MT0KSL9QfEC1grYXTcFfVOg3kcY+Msat4BjOSimD4fGWeLK2aJHU6PqHEkb
-         xSkPbUBiF9O+urn7fddLYRYk7xn2qJxQpxBtLHQzIbWHp8e+cNFJcyLPro/F4c5i1rTv
-         Zdk+bMQ4FWZ08ugJ3JynQHkJwHuG77Z/TCdKiIAvHd+fTh7lql2CsbgGkfBXB87fwf+Z
-         Zu4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUyvdJ1jeA+MwXNvvnb/+Z44yxx1VNrmxsxOceav8gx6hB76My/xB26t44FEkSVc54k1LKbCZSuWC8k@vger.kernel.org, AJvYcCWK3Iqn/71LsUJR/bsyAy+6Llx6QZTL+A1IIpnkzSJmCl9YCHgIyRKbmRw7jl3/LcXn04NAD6fUUexIDlT7@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE8WmOa8f5Bpy4xdvkYUIgJnh5t60dIRg1GHAFtP7ZSqJuxeCI
-	Pl+uQqjPO7dMPOzD/P0SXksF+zkx3LdH8HM5CDyPLJoBbaPsBhVJ
-X-Google-Smtp-Source: AGHT+IFO+tbp/diwqj/gYjQo79A6AcJtxm5yl6bKrbc7+otBgsQycMyX/JIKwQEk3yN1l5KZra/hSA==
-X-Received: by 2002:a05:6512:220c:b0:535:66ff:c681 with SMTP id 2adb3069b0e04-5365881042emr8174927e87.48.1726005636662;
-        Tue, 10 Sep 2024 15:00:36 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:5d47:19e4:3e71:414c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd424dasm4733467a12.9.2024.09.10.15.00.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 15:00:36 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Wed, 11 Sep 2024 00:00:34 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vasileios Amoiridis <vassilisamir@gmail.com>, robh@kernel.org,
-	saravanak@google.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] of/irq: Use helper to define resources
-Message-ID: <20240910220034.GC12725@vamoiridPC>
-References: <20240904160239.121301-1-vassilisamir@gmail.com>
- <20240904160239.121301-3-vassilisamir@gmail.com>
- <ZtltLjZkFBWSbl2s@smile.fi.intel.com>
- <w4mq5nareqaf3fpwf3hr4oywgxlnjy33va5ftspw5rmdxuflms@x3lw3pj64tig>
+	s=arc-20240116; t=1726005733; c=relaxed/simple;
+	bh=rH7JKM6xlZlJRPrghli2tq76D2vI+Y3vI2C7dbiwE6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rs09ZU1yJad3mDKkWcMQVdPcnjdhGyWQH/TRnrJpKEibPfc40a5SUOks9fEwXYG+Meh52ra5a1U92FTpJ78BYV9JEsRrrviId6eZKZxu3JNoatFrf6XMXQc53eOMuj+5S3ILNPMQM7yZXtlQTYkWD2Ux/Alw2LUHj1YQsxITrAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sidQ5dAh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE3EC4CEC3;
+	Tue, 10 Sep 2024 22:02:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726005732;
+	bh=rH7JKM6xlZlJRPrghli2tq76D2vI+Y3vI2C7dbiwE6w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sidQ5dAhTElsycMmjXxbmmxdp74qvR85LTSJhKLiudpFKT91J0uC3Lu2qI08SwZUR
+	 89pWDtXEFV4xyLpXIANiwIYPLtwL7nV4+oWD+eYiws27sWtp9jYgio43Py6tNL6sMu
+	 7OoM9laAY0I9yv2CDKT1g4SL9oNrwBiPezICb8Fh5LcOhSjkovC8B2ovDeKoAGs514
+	 mwpk8ehljDBslqDfoZe0wuz9b/N9D32q6GUHUOvxi8Ex5ayxOTcZOfONtDOB0hTHe4
+	 LlC9q4dlo9LFE7wu905HE/Rvo8JdQ8nWE1c4o2i8w6Q/wPEGrkxC1gXQBFrCCHXl4X
+	 kkq4czf+JUUpQ==
+Date: Tue, 10 Sep 2024 23:02:06 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.10 000/375] 6.10.10-rc1 review
+Message-ID: <41255668-4247-4fdc-ab06-2a5f93b794ba@sirena.org.uk>
+References: <20240910092622.245959861@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="MKYOXEFr2kRTGknM"
+Content-Disposition: inline
+In-Reply-To: <20240910092622.245959861@linuxfoundation.org>
+X-Cookie: You're not Dave.  Who are you?
+
+
+--MKYOXEFr2kRTGknM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <w4mq5nareqaf3fpwf3hr4oywgxlnjy33va5ftspw5rmdxuflms@x3lw3pj64tig>
 
-On Sun, Sep 08, 2024 at 10:44:15AM +0200, Krzysztof Kozlowski wrote:
-> On Thu, Sep 05, 2024 at 11:34:54AM +0300, Andy Shevchenko wrote:
-> > On Wed, Sep 04, 2024 at 06:02:38PM +0200, Vasileios Amoiridis wrote:
-> > > Resources definition can become simpler and more organised by using the
-> > > dedicated helpers.
-> > 
-> > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > 
-> > ...
-> > 
-> > > +		*r = DEFINE_RES_IRQ_NAMED(irq, name ? name : of_node_full_name(dev))
-> > 
-> > Just use Elvis to make this shorten.
-> > Btw, have you ever compiled this?
-> 
-> It wasn't ever built... and if not built, probably not tested, either.
-> 
-> Best regards,
-> Krzysztof
-> 
+On Tue, Sep 10, 2024 at 11:26:37AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.10 release.
+> There are 375 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Hi Andy, Krzysztof,
+Tested-by: Mark Brown <broonie@kernel.org>
 
-That is a stupid mistake. I was sending around quite some patches and
-lost concentration a bit. Will fix that.
+--MKYOXEFr2kRTGknM
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers,
-Vasilis
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbgwd0ACgkQJNaLcl1U
+h9CUVQf4m0kF83o1shzi0Kvqb6PhkFycVcKmzkbt9fbRaGfalb6meu/bAWsbnbV1
+WNwUFIYo9dJW1AqsOBonOz+/7lRsEZTyD2Pw1CTcI5DsKjOb8ARGJbHVz3BIk58Y
+7LbheR6whzic6szk3zGZS1pEgarjq4zZ4DC3ixHTdyM3NT8Nb632B0SGld7b7C5L
+oRv36ZRcj4BPXOeAqQK6ObER/z5ILG96tAgX/TF58abc++SqpyqsavcvCzeMDFDq
+pOMS2DqxbCRJe06g5rileAQ+x0AWu8EUq5npEBwan8VP2paV0zzLX8YSYLvsPWlL
+E+bVnAvOcdN+M25JxnqlbTZXZrlI
+=QQ3D
+-----END PGP SIGNATURE-----
+
+--MKYOXEFr2kRTGknM--
 
