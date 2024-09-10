@@ -1,51 +1,47 @@
-Return-Path: <linux-kernel+bounces-322532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23815972A59
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:15:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688FE972A66
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 518551C2413E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:15:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 190F31F25909
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F0317C7BE;
-	Tue, 10 Sep 2024 07:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CBA17CA16;
+	Tue, 10 Sep 2024 07:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T2k9wACp"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFhd5Qpq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4914555884;
-	Tue, 10 Sep 2024 07:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2ADD17C7CC;
+	Tue, 10 Sep 2024 07:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725952533; cv=none; b=rwBIroHNkufdbV1p9lu3PAFAsMk1qXSrtCds/a3f7k2huW2hGqXYbUcxIIAtuKaVJqimrz5zO99sC8Xrt9vsb0z8p2v6uSSUIofj2+mEw69M5DzVQKP0jyMr45DLi7GctwBcv7q4Yw6iYKVTibct0Yr/9p2stdGpRY/kHhEsmsA=
+	t=1725952636; cv=none; b=ZLwvb1E01UJEiAWKskB7cO19Ybxvw8xpttUWQBWGpSDOFTfnFJYw9hGgtLQ7G8PR8xTFVwQ2YlH9Rj5GwvCTHmuDHgxsmE0sDEquQuBP1k7k10dKjbyyrfxmfaBnIu+scavOOvLj/dFHyi9WcGgTY9OP2GKOUQ/dpVM+3umt14Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725952533; c=relaxed/simple;
-	bh=LVH6SKkK3cR6F01hpn7fuEDkydoETs1y5yzB1IbWltg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LqX61u4ZKJZXeyxjhsjLliD/iwCNQnuYXf6z5FSmsJMsv9JrZTFinelPL1irQ7XYTwMdxUkABgU9afSNrTtRVMUXgARQgw786DvS9AtLN7BOIKDzOEnLwuD1UZK0wcB4cZKKaL6mrYsC0Ptnbtntue0gddOd1PpKl3FQLchP/ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T2k9wACp; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DCAD160002;
-	Tue, 10 Sep 2024 07:15:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725952528;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rQ60DBGOv0B3Rr4ZO4jWbLjG2NSGTwvc1sph6GoxX64=;
-	b=T2k9wACpNqFS6Y/LfZX/9lL19y7XpkmY0D8tW4yduHEuaZ3YAJjb54VlFkNWF5h8NqCKk5
-	oCDMJEO+gwOWuU8n0VllVqzrkZvV6DDVAUvIwKlq06W/wJqpPPliXIM4fXHWhyeeQQDq/U
-	LzcCH/h7rTaOsw4+H6hWkSD0UEawycl4dC2YbLvoA0P85Q3r0ZXU07DImr9EFrTiXjSLtK
-	xq0TpVOylr0h8eg9dCjktJ6bBOxFq7gI4QRRltNDefDeVnoMLf10ZRD1DGESjNZ3wGICqm
-	HWhFpE8UvoOozxGsCVGsRS+qtX+tj+5z6lUwjJOFybc5ANvFCbCZaKsoPgURSQ==
-Message-ID: <b5814f3f-d262-4577-834c-a48bbcc8d005@bootlin.com>
-Date: Tue, 10 Sep 2024 09:15:26 +0200
+	s=arc-20240116; t=1725952636; c=relaxed/simple;
+	bh=8/RT5ao2Rj3jfocZ0k8UtnhxLNqZkXtdUUVZZK1tl7s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mG2QBaYd03uyOU3XjMWlIWlqDikW3B90cqVvzu13Yny7yVCSIZZK91EmD4q5R8A4AnDLFvcRiaTnODXcfBgWhN+2wfuOU+HYGfkqmHwfYo0unllNi0Rp1NnMGKj3pAtZZscjlrzsnQzmPigXeUzaY6iucnYaXsggCmcjtGLx0iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kFhd5Qpq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3CFDC4CEC3;
+	Tue, 10 Sep 2024 07:17:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725952635;
+	bh=8/RT5ao2Rj3jfocZ0k8UtnhxLNqZkXtdUUVZZK1tl7s=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=kFhd5QpqHZn+sKWHT9GLnHza8v0tZFJaZ4Od2s3Bw3wBNdFDTuuILQVGw/sKiv+Ux
+	 hwohoqBk9efe8H66K04rNLLgL/yPNO/zvCQV/3+i35ADZtlJ9D4iT+ttmpxi9wVk2p
+	 VnVENOEhUbxzQJih6xee9lQuEIuFV0RfHmnAO1mhoHFqSqYgXTv0+afqlLM2Ro+sEj
+	 h/7etLhUIEx14eY8gyQCA2o2QaTiDFJJH/zb6rmbrypcuOUI1aND/VlKDVzvZ6ynBB
+	 LcA5tm1ta67Gx84LiUcD8+QFFV3cg6Vy9RAHM+9CngcqIHFNoVktT5zqFW/pLYR1nJ
+	 aG1ksCsubQ84g==
+Message-ID: <c2178d70-2acd-4e74-976d-6ac6350a7b2d@kernel.org>
+Date: Tue, 10 Sep 2024 09:17:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,82 +49,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next] selftests/bpf: convert test_xdp_features.sh to
- test_progs
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
- Lorenzo Bianconi <lorenzo@kernel.org>, ebpf@linuxfoundation.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, netdev@vger.kernel.org
-References: <20240909-convert_xdp_tests-v1-1-925be5fbee3c@bootlin.com>
- <20240909231800.72b6b328@fedora.home>
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Subject: Re: [PATCH 2/2] ASoC: dt-bindings: microchip,sama7g5-i2smcc: Add
+ 'sound-name-prefix' property
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andrei Simion <andrei.simion@microchip.com>, claudiu.beznea@tuxon.dev,
+ lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
+Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+References: <20240909083530.14695-1-andrei.simion@microchip.com>
+ <20240909083530.14695-3-andrei.simion@microchip.com>
+ <2bb15a72-82ef-4bc4-b01e-e4768687bab6@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20240909231800.72b6b328@fedora.home>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <2bb15a72-82ef-4bc4-b01e-e4768687bab6@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexis.lothore@bootlin.com
+Content-Transfer-Encoding: 7bit
 
-Hey Maxime,
+On 09/09/2024 10:38, Krzysztof Kozlowski wrote:
+> On 09/09/2024 10:35, Andrei Simion wrote:
+>> From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>>
+>> Add 'sound-name-prefix' property to differentiate between interfaces in
+>> DPCM use-cases. Property is optional.
+>>
+>> [andrei.simion@microchip.com: Adjust the commit title and message.
+>> Reword the description for 'sound-name-prefix'.]
+>>
+>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+>> ---
+>>  .../bindings/sound/microchip,sama7g5-i2smcc.yaml           | 7 +++++++
+>>  1 file changed, 7 insertions(+)
 
-On 9/9/24 23:18, Maxime Chevallier wrote:
-> Hi Alexis,
-> 
-> On Mon, 09 Sep 2024 22:02:07 +0200
-> Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com> wrote:
+One more point for future (I missed this before) - be sure you CC
+necessary lists. Use get_maintainers or b4 for this. Skipping DT list
+means skipping automation, so this would be a NAK anyway.
 
-[...]
-
->> +static void *run_dut_echo_thread(void *arg)
->> +{
->> +	struct test_data *t = (struct test_data *)arg;
->> +	__u32 magic;
->> +
->> +	while (!t->quit_dut_echo_thread) {
->> +		struct sockaddr_storage addr;
->> +		socklen_t addrlen;
->> +		size_t n;
->> +
->> +		n = recvfrom(t->echo_server_sock, &magic, sizeof(magic),
->> +			     MSG_WAITALL, (struct sockaddr *)&addr, &addrlen);
->> +		if (n != sizeof(magic)) {
->> +			usleep(LOOP_DELAY_US);
->> +			continue;
->> +		}
->> +
->> +		if (htonl(magic) != CMD_ECHO)
->> +			continue;
-> 
-> Shouldn't it be ntohl here ? The former code used the ntohs helper for
-> that command, and you're sending the magic in send_echo_msg with a
-> htonl() so I guess here you might want to convert the value back to
-> host endianness.
-
-You are right, silly mistake from me here :) That will be fixed in v2. I'll
-delay a bit before sending it to allow others to take a look at v1 too.
-
-Thanks,
-
-Alexis
-> 
-> Thanks,
-> 
-> Maxime
-> 
-
--- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Best regards,
+Krzysztof
 
 
