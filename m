@@ -1,136 +1,241 @@
-Return-Path: <linux-kernel+bounces-322824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B02972F54
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:50:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12CE5972F5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA6D5B26523
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:50:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21AF1F222A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60B018C002;
-	Tue, 10 Sep 2024 09:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C52918C002;
+	Tue, 10 Sep 2024 09:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dg+Eh4+q"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HSb2h/AV";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="i9VsMEaQ"
+Received: from a7-29.smtp-out.eu-west-1.amazonses.com (a7-29.smtp-out.eu-west-1.amazonses.com [54.240.7.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033E646444
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54361188CAD;
+	Tue, 10 Sep 2024 09:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725961816; cv=none; b=OOQQBpBgO2CK0a9k+E0bvTURU1BfqN/8eQS/K4CLzFLPLC3U5M/6LHIv5tA/Tdq2GFFyBC9A+Hb/WYJRf2lObqWrhJCM+rgxZu6qZ49UrPUADSCdcdizyqRSd2IhkpRMWH2cC/MjLhxCdINykDrPgj7BDDagnqQhiDSrhO+8F44=
+	t=1725961843; cv=none; b=oelsD6qKDVpXMrC1tr+clnYwOKDmyl+VHs4nmb2rALcIfzGdF7PneaLghAoLLgAwgBslj34zuMufRBq8eVNKDEdI+G0y4BrD8xPNrGOq3+2O2iWE4SXR8NQA4O6td71XtR6W9/KBgAiXfxTbaiOiFy4r9OUgonc8iwqDvkbfa8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725961816; c=relaxed/simple;
-	bh=6ibsCnnRsJh4fCYwYKcxiPsewwgIOHrtxRq2aJJZucY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rNRi7JKORZ8OSA8WWiTCPMcFRO/a4oI7n2xzexEvV2kVAZAteQi0IzHpBMlsFn8igig9VG6w5dtSPyNdptEoeME3xldrkw1VtzFtYujBIq+MbhCG6z5H3VI0jDJZNkdK+c1lnJA5o+XIjuiPytFyKRFWpTwKtpElQn+GPfRtTsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dg+Eh4+q; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-718e25d8b67so699026b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725961814; x=1726566614; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YrN4LtIu/GTIDIR2JFgXWyv3VXGQnruCjrp87i9urmM=;
-        b=dg+Eh4+qEmbHB0byCWmmI0KvxUCxoVsg48D/fUa9xPJkv1n72XPUxX+jin4GWAEJpH
-         8vcbMdvQfzmYQnLT4ecLzey4ZfeQVabRaIEX4UN3sAO4aQukceCasfeFg1Cl4IUj3QSq
-         CUvjZLB6+9MnLW3XxNpxpvv/250alsC+arGijluQst04bVPrXVZQZvmVfLHd0eL9pvpq
-         E8vBcejTZXKELoSEBJeMpyxM9Q4tgEl49Cf7r1QF2clwDVf2ixS/7vEnKSsv4HkzZkgD
-         M0Ce2QZ4XKiMWMcpIYghl8xnSyc7zTp3JVPZvXX+ZnYLiH+/3wn/vQpA2UuSZ8usATGJ
-         G+bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725961814; x=1726566614;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YrN4LtIu/GTIDIR2JFgXWyv3VXGQnruCjrp87i9urmM=;
-        b=BYhRLgg5UlveInuii7re+4Sp9w3i4+az+1Br1iShe1gt5iNuV9IJkt7BgvzZsZP7fI
-         xx2zmGA32L2XJUqGQOezepzOrA0+dc8R01uWeF+S7T84OBsLQQ/2KqRXmX1MbGuyCyW8
-         W5XwGrSaMjuanbIleTDC0iTjaycQOWOZ+OefLpUosmvNa5N9hJvHL5/dLcBXrXCOH2sW
-         hN3WmxhfwjI1d4frenP5Ewzv65jjfK24m57Msi5sbin385LT3cSAue+zZQCIyvwFmrEJ
-         G6ipxPR68jk1MbkGyf/1tnd3wEVgXOpsRp2PSm8F8kAjJHR7iIKzWjWXfs/2pVhcRxKc
-         RV5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUuMKfGwD2+phkmNi3AfywNl/sqr/WNQIlzYyGIPr7LG1TVyBd311Fs42HZdxw1C88aHyJZXtIfj0ePHic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEUdHSzIgBdDEs2CgLpOxK7+RaUX605tL6nrRWpEXcc9AjT4lV
-	bpKVYHMr3yZrwmSwuZ7ol+O70LGDBkrVs8q1C+70yntiWotMD9up
-X-Google-Smtp-Source: AGHT+IET6iNyaS77CBTpY8dfIkYZhLZp4/Fzf239I6gPNbNi4M059RZ2fGZfWvtN9xONI3XosJW/mQ==
-X-Received: by 2002:a05:6a00:b87:b0:710:51e4:51f0 with SMTP id d2e1a72fcca58-718d5f5e710mr7460171b3a.4.1725961813980;
-        Tue, 10 Sep 2024 02:50:13 -0700 (PDT)
-Received: from localhost ([1.202.249.90])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-71908fe2636sm1034308b3a.60.2024.09.10.02.50.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 02:50:13 -0700 (PDT)
-From: Yihan Xin <xyh1996@gmail.com>
-To: Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>
-Cc: Yihan Xin <xyh1996@gmail.com>,
-	linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nvme: Force ns info updates on validation if NID is bogus
-Date: Tue, 10 Sep 2024 17:50:06 +0800
-Message-ID: <20240910095006.41027-1-xyh1996@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725961843; c=relaxed/simple;
+	bh=0IVPpNyAsgXKj+Ov1MV+Lz4gLR4qqxyGnN+wU1Hih9E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EsPAWdJTyHsF2POcTAGPT0WI0kVPYuSLH/mBKEB+aoRrIgZyMXyIIU3yyrrYLBQyXAXsCpLoCXOgktsTghJxVQsR205Crj5UUwdIYykPHYEiPkSS2UYxO3Ssuo5FQ8TZkZ0oxRcHSzbUVpwLp1vOK6v8kDy0lobtdqF90mYbKIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HSb2h/AV; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=i9VsMEaQ; arc=none smtp.client-ip=54.240.7.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1725961839;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=0IVPpNyAsgXKj+Ov1MV+Lz4gLR4qqxyGnN+wU1Hih9E=;
+	b=HSb2h/AVHeQAcHmJm4OK62xZYmZJZChE2aYmlF6G/GWKwT0gDioOifMvuULsVaU/
+	fO5Kdkpa5CXJJaIkDkLPjasjtPaK848Ohm+Td9tsDwdm4mT3DsgOHKpArLAHMv3Ki+L
+	McI2e+sYx8FdDvLuy8vw5k52mqEqNGE30y/XYmbzhsmf5/PD/OrzMz8Y8ZGSCX8uHns
+	2okTJQaj5AZzV2YHDh3fgdd7/G9gQHyuNnuAJlwaZVUT2oe0gnAH2vatURNNV+rNvj4
+	jjr9QdhNv0/4+AlGFD1GQqotiGnnsiXc9yDxcbnx0e5nIx5rCleGjHhKlB2b6hfRFdr
+	RgRM/DeWcw==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1725961839;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=0IVPpNyAsgXKj+Ov1MV+Lz4gLR4qqxyGnN+wU1Hih9E=;
+	b=i9VsMEaQ23fk8Q2EUnzb3AmX3KwSemtRQDqxJS1cTRSgS60L2mwhLUNBjko8Jfoq
+	qAmPnA9AHCQvO8q3xwUo/EaGHUM04bGEZFiyFEKxqpPTRkhbRBHLcUMe31lLP0qgCHD
+	1WkwhHpdval2O8ZQiveExfkxCgY4SQLY+4Jij564=
+Message-ID: <01020191db57a3d1-2c076978-c7c0-4685-9621-10ecdc3c5e99-000000@eu-west-1.amazonses.com>
+Date: Tue, 10 Sep 2024 09:50:39 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 0/3] drm/mediatek: Add support for OF graphs
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: chunkuang.hu@kernel.org, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, matthias.bgg@gmail.com, shawn.sung@mediatek.com, 
+	yu-chang.lee@mediatek.com, ck.hu@mediatek.com, 
+	jitao.shi@mediatek.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com, 
+	sui.jingfeng@linux.dev, michael@walle.cc, sjoerd@collabora.com
+References: <01020191db2ac439-4e2dc95a-6323-4f0f-b9fc-c482948018a8-000000@eu-west-1.amazonses.com>
+ <CAGXv+5Ff4+HS5_DSTX2U7SaCnZhWMWTN44wr+4_vYNrQQm_mDA@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAGXv+5Ff4+HS5_DSTX2U7SaCnZhWMWTN44wr+4_vYNrQQm_mDA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.10-54.240.7.29
 
-When validating a namespace, nvme_update_ns_info()
-would be skipped if nsid changed. However, this
-happens everytime the in-use controller is
-reattached if NID is bogus, causing nsid not being
-restored to the previous one, eg /dev/nvme0n2 ->
-/dev/nvme0n1.
+Il 10/09/24 11:39, Chen-Yu Tsai ha scritto:
+> On Tue, Sep 10, 2024 at 5:01 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> Changes in v9:
+>>   - Rebased on next-20240910
+>>   - Removed redundant assignment and changed a print to dev_err()
+>>   - Dropped if branch to switch conversion as requested; this will
+>>     be sent as a separate commit out of this series.
+>>
+>> Changes in v8:
+>>   - Rebased on next-20240617
+>>   - Changed to allow probing a VDO with no available display outputs
+>>
+>> Changes in v7:
+>>   - Fix typo in patch 3/3
+>>
+>> Changes in v6:
+>>   - Added EPROBE_DEFER check to fix dsi/dpi false positive DT fallback case
+>>   - Dropped refcount of ep_out in mtk_drm_of_get_ddp_ep_cid()
+>>   - Fixed double refcount drop during path building
+>>   - Removed failure upon finding a DT-disabled path as requested
+>>   - Tested again on MT8195, MT8395 boards
+>>
+>> Changes in v5:
+>>   - Fixed commit [2/3], changed allOf -> anyOf to get the
+>>     intended allowance in the binding
+>>
+>> Changes in v4:
+>>   - Fixed a typo that caused pure OF graphs pipelines multiple
+>>     concurrent outputs to not get correctly parsed (port->id);
+>>   - Added OVL_ADAPTOR support for OF graph specified pipelines;
+>>   - Now tested with fully OF Graph specified pipelines on MT8195
+>>     Chromebooks and MT8395 boards;
+>>   - Rebased on next-20240516
+>>
+>> Changes in v3:
+>>   - Rebased on next-20240502 because of renames in mediatek-drm
+>>
+>> Changes in v2:
+>>   - Fixed wrong `required` block indentation in commit [2/3]
+>>
+>>
+>> The display IPs in MediaTek SoCs are *VERY* flexible and those support
+>> being interconnected with different instances of DDP IPs (for example,
+>> merge0 or merge1) and/or with different DDP IPs (for example, rdma can
+>> be connected with either color, dpi, dsi, merge, etc), forming a full
+>> Display Data Path that ends with an actual display.
+>>
+>> This series was born because of an issue that I've found while enabling
+>> support for MT8195/MT8395 boards with DSI output as main display: the
+>> current mtk_drm_route variations would not work as currently, the driver
+>> hardcodes a display path for Chromebooks, which have a DisplayPort panel
+>> with DSC support, instead of a DSI panel without DSC support.
+>>
+>> There are other reasons for which I wrote this series, and I find that
+>> hardcoding those paths - when a HW path is clearly board-specific - is
+>> highly suboptimal. Also, let's not forget about keeping this driver from
+>> becoming a huge list of paths for each combination of SoC->board->disp
+>> and... this and that.
+>>
+>> For more information, please look at the commit description for each of
+>> the commits included in this series.
+>>
+>> This series is essential to enable support for the MT8195/MT8395 EVK,
+>> Kontron i1200, Radxa NIO-12L and, mainly, for non-Chromebook boards
+>> and Chromebooks to co-exist without conflicts.
+>>
+>> Besides, this is also a valid option for MT8188 Chromebooks which might
+>> have different DSI-or-eDP displays depending on the model (as far as I
+>> can see from the mtk_drm_route attempt for this SoC that is already
+>> present in this driver).
+>>
+>> This series was tested on MT8195 Cherry Tomato and on MT8395 Radxa
+>> NIO-12L with both hardcoded paths, OF graph support and partially
+>> hardcoded paths, and pure OF graph support including pipelines that
+>> require OVL_ADAPTOR support.
+>>
+>> AngeloGioacchino Del Regno (3):
+>>    dt-bindings: display: mediatek: Add OF graph support for board path
+>>    dt-bindings: arm: mediatek: mmsys: Add OF graph support for board path
+>>    drm/mediatek: Implement OF graphs support for display paths
+>>
+>>   .../bindings/arm/mediatek/mediatek,mmsys.yaml |  28 ++
+>>   .../arm/mediatek/mediatek,mmsys.yaml.orig     | 140 ++++++++++
+>>   .../display/mediatek/mediatek,aal.yaml        |  40 +++
+>>   .../display/mediatek/mediatek,aal.yaml.orig   |  93 +++++++
+>>   .../display/mediatek/mediatek,ccorr.yaml      |  21 ++
+>>   .../display/mediatek/mediatek,ccorr.yaml.orig |  88 ++++++
+>>   .../display/mediatek/mediatek,color.yaml      |  22 ++
+>>   .../display/mediatek/mediatek,color.yaml.orig |  96 +++++++
+>>   .../display/mediatek/mediatek,dither.yaml     |  22 ++
+>>   .../mediatek/mediatek,dither.yaml.orig        |  87 ++++++
+>>   .../display/mediatek/mediatek,dpi.yaml        |  25 +-
+>>   .../display/mediatek/mediatek,dpi.yaml.orig   | 122 +++++++++
+>>   .../display/mediatek/mediatek,dsc.yaml        |  24 ++
+>>   .../display/mediatek/mediatek,dsi.yaml        |  27 +-
+>>   .../display/mediatek/mediatek,dsi.yaml.orig   | 126 +++++++++
+>>   .../display/mediatek/mediatek,ethdr.yaml      |  22 ++
+>>   .../display/mediatek/mediatek,gamma.yaml      |  19 ++
+>>   .../display/mediatek/mediatek,gamma.yaml.orig |  96 +++++++
+>>   .../display/mediatek/mediatek,merge.yaml      |  23 ++
+>>   .../display/mediatek/mediatek,merge.yaml.orig | 110 ++++++++
+>>   .../display/mediatek/mediatek,od.yaml         |  22 ++
+>>   .../display/mediatek/mediatek,ovl-2l.yaml     |  22 ++
+>>   .../mediatek/mediatek,ovl-2l.yaml.orig        |  78 ++++++
+>>   .../display/mediatek/mediatek,ovl.yaml        |  22 ++
+>>   .../display/mediatek/mediatek,ovl.yaml.orig   | 109 ++++++++
+>>   .../display/mediatek/mediatek,postmask.yaml   |  21 ++
+>>   .../display/mediatek/mediatek,rdma.yaml       |  22 ++
+>>   .../display/mediatek/mediatek,rdma.yaml.orig  | 122 +++++++++
+>>   .../display/mediatek/mediatek,ufoe.yaml       |  21 ++
+>>   .../display/mediatek/mediatek,wdma.yaml.orig  |  76 ++++++
+>>   .../bindings/gpu/arm,mali-bifrost.yaml.orig   | 250 +++++++++++++++++
+>>   .../bindings/leds/leds-mt6323.txt.orig        |  60 +++++
+>>   .../bindings/ufs/mediatek,ufs.yaml.orig       |  71 +++++
+>>   drivers/gpu/drm/mediatek/mtk_disp_drv.h       |   1 +
+>>   .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  40 ++-
+>>   drivers/gpu/drm/mediatek/mtk_dpi.c            |  21 +-
+>>   drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 253 +++++++++++++++++-
+>>   drivers/gpu/drm/mediatek/mtk_drm_drv.h        |   2 +-
+>>   drivers/gpu/drm/mediatek/mtk_dsi.c            |  14 +-
+>>   39 files changed, 2433 insertions(+), 25 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,aal.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,ccorr.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,color.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,dither.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,dsi.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,gamma.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,merge.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,ovl-2l.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,ovl.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,rdma.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,wdma.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml.orig
+>>   create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6323.txt.orig
+>>   create mode 100644 Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml.orig
+> 
+> It looks like you accidentally imported a bunch of files from Git.
+> 
 
-Don't skip ns info updates on this circumstance.
+Ouch. Yeah, looks like I did.
 
-Signed-off-by: Yihan Xin <xyh1996@gmail.com>
----
- drivers/nvme/host/core.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+Will send a v10 soon, I apparently need some coffee :-P
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 1236e3aa00ed..c0875fb93b8d 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -3979,11 +3979,24 @@ static void nvme_validate_ns(struct nvme_ns *ns, struct nvme_ns_info *info)
- 	int ret = NVME_SC_INVALID_NS | NVME_STATUS_DNR;
- 
- 	if (!nvme_ns_ids_equal(&ns->head->ids, &info->ids)) {
--		dev_err(ns->ctrl->device,
--			"identifiers changed for nsid %d\n", ns->head->ns_id);
--		goto out;
-+		/*
-+		 * Don't skip ns info updates if the NID is bogus as it
-+		 * changes everytime the in-use controller is reattached
-+		 * to the bus and thus the namespace is recognized as
-+		 * another one.
-+		 */
-+		if (ns->ctrl->quirks & NVME_QUIRK_BOGUS_NID) {
-+			dev_info(ns->ctrl->device,
-+				 "Ignoring nsid change for bogus ns\n");
-+		} else {
-+			dev_err(ns->ctrl->device,
-+				"identifiers changed for nsid %d\n",
-+				ns->head->ns_id);
-+			goto out;
-+		}
- 	}
- 
-+
- 	ret = nvme_update_ns_info(ns, info);
- out:
- 	/*
--- 
-2.46.0
+Thanks,
+Angelo
+
+> ChenYu
+> 
+>>
+>> --
+>> 2.46.0
+>>
+
 
 
