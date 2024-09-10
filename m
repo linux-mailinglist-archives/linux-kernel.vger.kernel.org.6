@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-322641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58638972BCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:14:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E76D972BCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 199EE287083
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:14:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE486B25A93
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E35419415E;
-	Tue, 10 Sep 2024 08:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E821953BD;
+	Tue, 10 Sep 2024 08:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DqPaqm3M";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R2TxQMKK"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lQ61tk8T";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FhLgjEUL"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC52192B96;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B3E192D6D;
 	Tue, 10 Sep 2024 08:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725955774; cv=none; b=QyVhs4QkyUBkH6lMMV4HsFji/SqbvCn7BiF5zwCmj/6iYksiYSQh8Pof7LKSBlPl+E4EwL59CSvemAQ0XU5hPe8AQi522OXowcRgbYRYi2OHbF/oq/8Dqexvban8HgDvQ0IsI4tNmfH0NJjj0obANX1E7o8FX0aaKHlnzg4i6hA=
+	t=1725955775; cv=none; b=K1r/s65C00ZnC2XnZ2akSpzxvWK6GYWEW5ZvCIhB0LdPN/eW7EZnHX+E9DLTeTd83mC48rXjpI2hfXaIx6C4wqFBdRwFtTxoIzblUEkhBbB5nlL3hEdr/yjT6SxVnkYUDwV+sBpSKlXGgg29exaHPs5Jsp0Rl/tOaNrWzPSVCY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725955774; c=relaxed/simple;
-	bh=0D/ORG2e3vfbsp/PpdgojntmUrpLubh0yKustIXqU9U=;
+	s=arc-20240116; t=1725955775; c=relaxed/simple;
+	bh=L/SGRmpeJNk4BOB+Z0bGtVtuh76i7wwNPSXerCPYv0E=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=RqQ5YvPKfHNwzUGsf/4acu+K5emH8XRsMOtrM3l3TrOY/QdpuBi86yNxDUs+SUISyOi/cflYTZmstgYjJWbH+5FgMmcf2qzukez4Thy4hlM7A+knoCGWccSa93zq904MADDUxQekYuh+IDQPeTvBHmZb+rz4ZbNTX4amj1mnlKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DqPaqm3M; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R2TxQMKK; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=n8b8cL9i9mcoDJOVpwJQGO5d+NfvalM33jZqCRsoxXnVQ3rST9WfSt4BL0aR61dBRR8Az5NHcIN7tuCvogA7B9hT6L6iJcp9nnjBa1gdcErQJKHXGrh9o0NDZVAOeY0eZTj/eW4O5TA9SXiJdcaZghTEX6uGeJ1gJk+xKoeewT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lQ61tk8T; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FhLgjEUL; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 10 Sep 2024 08:09:23 -0000
+Date: Tue, 10 Sep 2024 08:09:24 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1725955764;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oUKmCcRho6mAOvLtRZubkErav2GqH18hLOvRGgdsPJM=;
-	b=DqPaqm3MVaF3wveP42tSHrvzxQolFbGehfkLBKO95O77dPccF54+R+JsfiW7Kgv9elKYUh
-	+CedBnk+/E/CgVJLqYJv/h7LmLBb6J4Q6o7WgjQH6xZoJUv6t7CVc2qwq6EselH5bWbwyZ
-	glvvcykIYsifkAg8ODNeDorMKiuysGF7NB7ZAgAKS7Ou4QDYHMuB2gOw3pTOi/qlB5PBF6
-	iW/2DkK1vhflIR+q2EaGac/IAG+hTGfwhk4WQFIrPD7n0ECP/m7M2++amPpvUPEjlPx+gZ
-	xZtQk6s9IOO9fR+uro3bFiSfh0E4IsUS8owfwuZYB3puMbJy+6gu8qp7+XG0hA==
+	bh=MIZ49JXL1v4k6wjblfYIxoL0ac4eNLaNvBin0IP8G7Q=;
+	b=lQ61tk8T9ANg9ZQBImsGNV7obToFCiBwZ/C/xbDhgdvOD0W+cBxqhTHStLO2/9RdFcYg4x
+	G6qa3q2swASNcS2a1k4yQ7xKHbxTgfZ3TeBE33ncxmsTBb9rFBvQeex9Z8vTju8cKt/LlI
+	H18jI/DeSovayKHVCN5OxCozp+KfhMdwf2sSA4ycZTBCuWERl44D/QZQ7t0P8RRPdNhzZJ
+	jJXHI4wTZjPUJuZaVCuVxzILvXAOA5qen1AKVAAIuk94TI7Q7oKlQxDVzXimkda4JvS/pL
+	OsK0OrKQSNUNipLX5yxEvAOsNey5qTUtf0Jo/qc5nxZhi4otl6Qi/WKR9/9nTg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1725955764;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,27 +52,28 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oUKmCcRho6mAOvLtRZubkErav2GqH18hLOvRGgdsPJM=;
-	b=R2TxQMKK2SooEC4QdiJyRz5YSZU4BCopMpKhcV4MZMGF6OuDhHf808Qs9nx/AgZtg827uE
-	rA07bGP2BjfKPbBw==
-From: "tip-bot2 for Dietmar Eggemann" <tip-bot2@linutronix.de>
+	bh=MIZ49JXL1v4k6wjblfYIxoL0ac4eNLaNvBin0IP8G7Q=;
+	b=FhLgjEUL+SHMJP8UX1MaKagHnKRHn0oE2ksbeVwTq43P/ai3TaI96bIimKeNjKMa8nZ51Y
+	eBMtF2STJCbm6cDA==
+From: "tip-bot2 for Chen Yu" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: sched/core] kernel/sched: Fix util_est accounting for DELAY_DEQUEUE
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+Subject: [tip: sched/core] sched/pelt: Use rq_clock_task() for hw_pressure
+Cc: Chen Yu <yu.c.chen@intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Hongyan Xia <hongyan.xia2@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <c49ef5fe-a909-43f1-b02f-a765ab9cedbf@arm.com>
-References: <c49ef5fe-a909-43f1-b02f-a765ab9cedbf@arm.com>
+In-Reply-To: <20240827112607.181206-1-yu.c.chen@intel.com>
+References: <20240827112607.181206-1-yu.c.chen@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172595576353.2215.13332974093385124273.tip-bot2@tip-bot2>
+Message-ID: <172595576427.2215.5709980474741967775.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,65 +83,54 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     729288bc68560b4d5b094cb7a6f794c752ef22a2
-Gitweb:        https://git.kernel.org/tip/729288bc68560b4d5b094cb7a6f794c752ef22a2
-Author:        Dietmar Eggemann <dietmar.eggemann@arm.com>
-AuthorDate:    Thu, 05 Sep 2024 00:05:23 +02:00
+Commit-ID:     84d265281d6cea65353fc24146280e0d86ac50cb
+Gitweb:        https://git.kernel.org/tip/84d265281d6cea65353fc24146280e0d86ac50cb
+Author:        Chen Yu <yu.c.chen@intel.com>
+AuthorDate:    Tue, 27 Aug 2024 19:26:07 +08:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 10 Sep 2024 09:51:15 +02:00
+CommitterDate: Tue, 10 Sep 2024 09:51:14 +02:00
 
-kernel/sched: Fix util_est accounting for DELAY_DEQUEUE
+sched/pelt: Use rq_clock_task() for hw_pressure
 
-Remove delayed tasks from util_est even they are runnable.
+commit 97450eb90965 ("sched/pelt: Remove shift of thermal clock")
+removed the decay_shift for hw_pressure. This commit uses the
+sched_clock_task() in sched_tick() while it replaces the
+sched_clock_task() with rq_clock_pelt() in __update_blocked_others().
+This could bring inconsistence. One possible scenario I can think of
+is in ___update_load_sum():
 
-Exclude delayed task which are (a) migrating between rq's or (b) in a
-SAVE/RESTORE dequeue/enqueue.
+  u64 delta = now - sa->last_update_time
 
-Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+'now' could be calculated by rq_clock_pelt() from
+__update_blocked_others(), and last_update_time was calculated by
+rq_clock_task() previously from sched_tick(). Usually the former
+chases after the latter, it cause a very large 'delta' and brings
+unexpected behavior.
+
+Fixes: 97450eb90965 ("sched/pelt: Remove shift of thermal clock")
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/c49ef5fe-a909-43f1-b02f-a765ab9cedbf@arm.com
+Reviewed-by: Hongyan Xia <hongyan.xia2@arm.com>
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+Link: https://lkml.kernel.org/r/20240827112607.181206-1-yu.c.chen@intel.com
 ---
- kernel/sched/fair.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ kernel/sched/fair.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e946ca0..922d690 100644
+index 9e19009..e946ca0 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -6948,18 +6948,19 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	int rq_h_nr_running = rq->cfs.h_nr_running;
- 	u64 slice = 0;
+@@ -9719,9 +9719,10 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
  
--	if (flags & ENQUEUE_DELAYED) {
--		requeue_delayed_entity(se);
--		return;
--	}
--
- 	/*
- 	 * The code below (indirectly) updates schedutil which looks at
- 	 * the cfs_rq utilization to select a frequency.
- 	 * Let's add the task's estimated utilization to the cfs_rq's
- 	 * estimated utilization, before we update schedutil.
- 	 */
--	util_est_enqueue(&rq->cfs, p);
-+	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE))))
-+		util_est_enqueue(&rq->cfs, p);
-+
-+	if (flags & ENQUEUE_DELAYED) {
-+		requeue_delayed_entity(se);
-+		return;
-+	}
+ 	hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
  
- 	/*
- 	 * If in_iowait is set, the code below may not trigger any cpufreq
-@@ -7177,7 +7178,8 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
-  */
- static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- {
--	util_est_dequeue(&rq->cfs, p);
-+	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE))))
-+		util_est_dequeue(&rq->cfs, p);
++	/* hw_pressure doesn't care about invariance */
+ 	decayed = update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
+ 		  update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
+-		  update_hw_load_avg(now, rq, hw_pressure) |
++		  update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure) |
+ 		  update_irq_load_avg(rq, 0);
  
- 	if (dequeue_entities(rq, &p->se, flags) < 0) {
- 		util_est_update(&rq->cfs, p, DEQUEUE_SLEEP);
+ 	if (others_have_blocked(rq))
 
