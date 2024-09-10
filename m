@@ -1,129 +1,143 @@
-Return-Path: <linux-kernel+bounces-323360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8995973BFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:31:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73CCC973C02
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9458D1F28B7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:31:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A22071C24935
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE671990C3;
-	Tue, 10 Sep 2024 15:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A0F19D09F;
+	Tue, 10 Sep 2024 15:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="u2xgjajk"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rpLyggcg"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A64D4204D;
-	Tue, 10 Sep 2024 15:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDA7191F97
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 15:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725982310; cv=none; b=Jhli+WRl770G/9aJLg3elCU/yXIi0gw2hNeYkixb4AcEHSRT5YWHNUTLclII24gJK/6g/NMlD2svO25xOEnHSsLEGWCEjB2NK3pK/m6EmpMcibou5XLMGw7zRaBxDb1fLDGCO0qmafmM7pQME4ndf9SZGKb+XX0faA8vdJa0YW0=
+	t=1725982318; cv=none; b=vFySjYDyJVhXNdiTxZMDFGu/VsJffOnYrIju4DG79VaFA/w4nmpx49OLeqGgDByXeuvYmx7J4SmIoBtPD9rCNnYcLQRmEXrrtLu/0zya1bjcherVtd6imd++9q3YCVc8fVw8pnpQsBUsdAOkS96sBejieHq5B7yTyNEN7dhA6Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725982310; c=relaxed/simple;
-	bh=pLIEbrYrcLDT/O2v0VYy1QVsK+tGpm+ISFA4E2afx4k=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=FsF8+vPH2tCDwDxsVkSZ83p541oh9P/LWgdmQmqeg9PPggav4bbjjpAwVzV7R7qIpWNq0DFjdhHlGpiH69a4Aotbw/w7K3Pntv7bcta4xZylnbLliAGGmRX8D72pocS7/Eje6pA6vwZhLJ8xzu362OCPBk1cx5TiZzu7PrdoyKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=u2xgjajk; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1725982255; x=1726587055; i=markus.elfring@web.de;
-	bh=eJC+kqRjyZcpC2/bebvTq1qfNAeGTMeo7J5yG0OUZXM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=u2xgjajknzGDhf+ssonbDZB7xsBJCSJgAqG+CIO7QQuQIzPrjPyLuHsXJTPy18SY
-	 ge5uMGdogVvVBYXdr9GaaQTY7yKyIqHywriI6PxPa5bNEGpkcFjv0UuB2844hs8+q
-	 bLJvyqaSfoe3DHVdPSJ/laj0Ga5aVqH16GJCwROUZAdPZmE5wP9pnmchrqg0T6KQZ
-	 a1wlo9b8JVJUIzVkL2mT4eIXVgWkhfgRYYhiln8e9uwZqVi2Pdx9MKxgiotKc9bAn
-	 6zCSEnHP1osIhjfltjnamJR9Ji52Ubn1tWgiFksUgtjBP9L3IaJVPKcWMiySg2bCZ
-	 AB718kmO++yVWpRADw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N1u6n-1rqy5G2q4n-00w0J0; Tue, 10
- Sep 2024 17:30:55 +0200
-Message-ID: <34e1ae43-0b81-46bd-8fa8-a5fcf48def3e@web.de>
-Date: Tue, 10 Sep 2024 17:30:30 +0200
+	s=arc-20240116; t=1725982318; c=relaxed/simple;
+	bh=58vwLif2w0LcCxt3l9m+/yn4hsdJcrUKi4MUhjWQVNQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QeF7TWOdMbo+jzLFkCa8MC04gXU+0OxjfdlFhv3KSqU0qXSRNNJsIoudFF7cKZeJmyyYkeZtz/Sqwl2M+54skys/E4bf8+GwZYdXON7hAM6G2ISkb7s822feLedY870uCY8rEvPdO+45W9DtV6MPqs892PGqsaCGmd7h9xGFs+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rpLyggcg; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5356a2460ceso26779e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:31:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725982315; x=1726587115; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=11EJWGDdB3TRpoNJTX71d90zkEuZ3hMNes9yKkfvSyM=;
+        b=rpLyggcglEoHYE2ZNtA8BzhU9mu6JmUzf3ioNcJLsNTuSenuz4522PpT2odQv9nRIV
+         MTmgGT9K8KtuPBvXSH2CemZLOVyDXJubGPhnCgQ6M815DI3OtP1gxbZPUpC0uq4nL/pZ
+         nA7b/iy68gmg+4FNPUCFH3j0n3B29zgCMoEgiovNLDIeeoyIbwseOvz5db0dUbUwBzKx
+         Ca7IPMRhxyu2lrGcHFtufSJK0Uc6au11lcuP3DKMFfSd1v7AJZue5R0SWoTjNRKCT38J
+         IHzfuGNHSUNgFO+uxuA173MPhY9vA0SVlRGP1bd463jE3DJ5Jk/ULHYWCYdfXNoTXRBN
+         gdag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725982315; x=1726587115;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=11EJWGDdB3TRpoNJTX71d90zkEuZ3hMNes9yKkfvSyM=;
+        b=gZS9dhTCWVn85jBOfqJ07XCqWdofbC742cuGvC8twX3qC9aXnJCCCgjgRZNAQeQNLb
+         adyrayEB30FYtStrs1Kk4xy4JAWYbG7gbWPqmC9g9KERaY7IQP8BTQflgOzjZfHI7GdS
+         Ng2d+arHgZQ3R7XmYqm57IDHmXtZMEYisrUy4NS8FtM5Q05PGB3bLzyKzwbktW1bdapV
+         IsGEiZU7lAM6VB9uOLA/KC6aoRiEmLR5LenujbHH8LOaXtacfdGdCiy7Wwd8LFr/py/L
+         qit4R5z5g2bPv4IRIMp3EPT+o6d+qKwPeUeWe/ktmDZMl0SBWI26jsKkQ+GgE1KFEZ6e
+         v0oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6sEHfkIULJegOwGwMbAuUDFfrknVTPAInrQ/nXXumzXKCYrfHbAFf/BmofXXgTVXA8IgQkyJTxzTjaPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt30LOBpqgIfCRDjDJgZzShV9vcXYilP6P6LoNXQ1QXUSWYVlX
+	T4DL4ScBgPrCigxTLEwiKnamedM019fZ0qYBHoyBQ3yJF4iuEi+sSKKJSpFLzAswmbNR3QVZFBC
+	2154/A+TTQDYEKHKLc77j79P8IaEpP0/Hpp+1
+X-Google-Smtp-Source: AGHT+IF7llpzPIrM5lV//xsMPBS037RtCLtLhRWp5fDTFuzae3HG0GApRNkf/Tgi/uVU1gb2WlLVcCtp5hQEeg5tgCQ=
+X-Received: by 2002:a05:6512:1154:b0:52c:dd42:cf57 with SMTP id
+ 2adb3069b0e04-5366ca457ebmr607822e87.0.1725982315020; Tue, 10 Sep 2024
+ 08:31:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Mark Brown <broonie@kernel.org>, Maxime Ripard <mripard@kernel.org>,
- Michal Simek <michal.simek@amd.com>, Rob Herring <robh+dt@kernel.org>,
- Takashi Iwai <tiwai@suse.com>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
- =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>,
- Vishal Sagar <vishal.sagar@amd.com>
-References: <20240910-xilinx-dp-audio-v3-3-75560793f4d0@ideasonboard.com>
-Subject: Re: [PATCH v3 3/3] drm: xlnx: zynqmp_dpsub: Add DP audio support
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240910-xilinx-dp-audio-v3-3-75560793f4d0@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240906051205.530219-1-andrii@kernel.org> <20240906051205.530219-2-andrii@kernel.org>
+ <CAG48ez2hAQBj-VnimJBd3M-ioANVTk+ZQXYWD+j9G+ip2K_nfw@mail.gmail.com> <CAJuCfpFAvsMsBTBMaK5sHFkLQPrfE0nb401gEb2hmN2rbjza6g@mail.gmail.com>
+In-Reply-To: <CAJuCfpFAvsMsBTBMaK5sHFkLQPrfE0nb401gEb2hmN2rbjza6g@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 10 Sep 2024 17:31:16 +0200
+Message-ID: <CAG48ez3MNkhCpwST1HH9tzZWusqk+YZaWHZ2v=sZnzMo1jk7Dw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: introduce mmap_lock_speculation_{start|end}
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, 
+	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com, 
+	brauner@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:bySk54JGcMbhmtuQtab+ZIYd90iRLYDy4cyGodf0+0SKBhIHF4X
- 2c7nU4+iyl0rHOUT//1JBqHbCk+M06V38dZH//XMeF1Bncayi0GhGAYdftI7S2SdALYfK+O
- iPfdacH6mUu0KaFaCvx/I/33rvvWyXaXi5dmiDfyd+PgZu1P0Q9R+O5skjy+AcQcbF1qiwy
- AQkwSv5n1sOz6PTCilFYA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3ui97cDDXso=;dRaVWEMbGIXm9DghmuVlbauQK/2
- HqZexSToc1soV3sjJdCYw36x6MAjZ4WJjn0dbJWLOfh2iZ8xg5S6Siy3oJ6peT+27MYe4pC2x
- Fn0TdmOrP6yNueX1SeFa3tg2pDVMIdK1TMwUyfuMa14fQ2VBrh6ht7CqNXGdZS6AZst5y2CoB
- ImLYSDNNhE/j1nDMKcG9M5H+K2Yg7XYXqkNSZWDilWCJjGspmz2La181oN32+fVFYY0iFfgqw
- pg5v5wfX5i9Odk4mdKIRBqOx5XBE67/YHfa1KvKkyJ0ezCFyIC+s0klkwmlOxEJWkznhHmpoy
- V7WS7ZQ8RawDzL81Pb2crJDMDqtDLk5obpgR+6aaMs+/XwFU5pxC66jwjpXL5O59yAZ17mCfn
- gszaguKZ0DKWQA1t45KHCIudGHx8uho31+jij3Ir8ERuH2sErcGlnFmES6fUuSV20OWipZPA3
- 9GD3WFh14/s/Xhx+pjqc2g8WBXVZltXUIfIg1CpbL/LkTYc3uZQDqxQfem0Jlr5QErO3bwybB
- vKgfriC0OAaFH+0XAe52zOWCodOuH0g1PsputHTVRK9pseUbtD/BPriY/1848w8ag6ef0L7pM
- dVUsNuO402D00FFrnJA8FTrEWBreQCsixpve3DW4bPCQ0BWVniOc/uSp47mHKSiTSIrTeLTHL
- Rd6A+/FMeCi/pVJ4+zLwK87YuT1+VK8suZUzGAGg+9RVW7OMi3FVot/BKJp4q2Hzc5HgyBE61
- wIpTNv1VzG8uP6sFSuhXRZ09HmnI1MQetRUuRaQGaFG5UYxn/2LbuBuICuJG3KV4Uc/R0tjdZ
- +3jpV8MW+5dFr2rpAtoaG4pA==
 
-=E2=80=A6
-> +++ b/drivers/gpu/drm/xlnx/zynqmp_dp_audio.c
-> @@ -0,0 +1,461 @@
-=E2=80=A6
-> +static int dp_dai_hw_free(struct snd_pcm_substream *substream,
-> +			  struct snd_soc_dai *socdai)
-> +{
-=E2=80=A6
-> +	struct zynqmp_dpsub_audio *audio =3D dpsub->audio;
-> +
-> +	mutex_lock(&audio->enable_lock);
-=E2=80=A6
-> +	audio->enabled_streams--;
-> +
-> +	mutex_unlock(&audio->enable_lock);
-> +
-> +	return 0;
-> +}
-=E2=80=A6
+On Tue, Sep 10, 2024 at 4:09=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+> On Mon, Sep 9, 2024 at 5:35=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
+:
+> > On Fri, Sep 6, 2024 at 7:12=E2=80=AFAM Andrii Nakryiko <andrii@kernel.o=
+rg> wrote:
+> > >  static inline void mmap_write_lock(struct mm_struct *mm)
+> > >  {
+> > >         __mmap_lock_trace_start_locking(mm, true);
+> > >         down_write(&mm->mmap_lock);
+> > > +       inc_mm_lock_seq(mm);
+> > >         __mmap_lock_trace_acquire_returned(mm, true, true);
+> > >  }
+> >
+> > Similarly, inc_mm_lock_seq(), which does a store-release, can only
+> > provide "release lock" semantics, not "take lock" semantics, because
+> > the CPU can reorder it with later stores; for example, this code:
+> >
+> > inc_mm_lock_seq()
+> > [locked stuff goes here]
+> > inc_mm_lock_seq()
+> >
+> > can be reordered into this:
+> >
+> > [locked stuff goes here]
+> > inc_mm_lock_seq()
+> > inc_mm_lock_seq()
+> >
+> > so the lock is broken.
+>
+> Ugh, yes. We do need smp_wmb() AFTER the inc_mm_lock_seq(). Whenever
+> we use inc_mm_lock_seq() for "take lock" semantics, it's preceded by a
+> down_write(&mm->mmap_lock) with implied ACQUIRE ordering. So I thought
+> we can use it but I realize now that this reordering is still
+> possible:
+> CPU1                        CPU2
+>                                  mmap_write_lock()
+>                                        down_write(&mm->mmap_lock);
+>                                        vma->vm_file =3D ...;
+>
+> mmap_lock_speculation_start() // seq =3D mm->mm_lock_seq
+> <speculate>
+> mmap_lock_speculation_end() // return (mm->mm_lock_seq =3D=3D seq)
+>
+>                                        inc_mm_lock_seq(mm);
+>                                  mmap_write_unlock() // inc_mm_lock_seq(m=
+m)
+>
+> Is that what you were describing?
 
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(mutex)(&audio->enable_lock);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.11-rc7/source/include/linux/mutex.h#L1=
-96
-
-Regards,
-Markus
+Yeah, that's the scenario I was thinking of (though I did not spend
+the time to look at the surroundings to see if there are other implied
+barriers that happen to stop this).
 
