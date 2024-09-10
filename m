@@ -1,132 +1,172 @@
-Return-Path: <linux-kernel+bounces-322428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F179728DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:20:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE37D9728E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBBB91F23D3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:20:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35A91C23E42
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761EC14D6EF;
-	Tue, 10 Sep 2024 05:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378C216DEA9;
+	Tue, 10 Sep 2024 05:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eOseYrST"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FarY4f4g"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9391531E9
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B44219F3;
+	Tue, 10 Sep 2024 05:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725945628; cv=none; b=ITJPPKdz0IbkDvF/ag1T3Q5J3gYwcYhP41Lzakyr9epuTqbxyIOPtqowf0MxLVOJJDxzl735HpjWKWZuN0Ez1T68vuRLFq8JSTwar58VHG5cYSQE9xWbzlmJdhys/C6UmjC/7LEuWC45SE66rnB3e4MN3LmyfF7BP7WWqFzEvvo=
+	t=1725945814; cv=none; b=srMImru+wWQu5Ijgo85YTKgdqN7k6zhsXn00NhbrQ6BxQSmHGAF4xkTgzKRE9+S2Y+k4fwuuUZ96vdgV1EFlAii3MoE/kmqAwQfa98XqlKdIiieN0OSEaJ5iOC42Syl40jlgbt39OrGlniNZrGb59dPmsTpxQ6K37bj5TLa2phM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725945628; c=relaxed/simple;
-	bh=7b0Rr88eNSzpQLh5K3UFKt4jOcdnPD5O2wg7rMP6sNg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CCZhnZ4Sbsm/ThnACP6wKSJ2VWd1jkZ9XbMCc6jx9vHVhp4wOexy0i5xGWMUh+Kq+tPIESFDvHppFsotyXWoTbtlsqSU8CSjupRWWkWpGKHVudxhiHBT0jzpkUD+sCqu+Ye15N0z4nF9mqpwwDiQqkltQw1ztGLlfxWXQkdQ310=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eOseYrST; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2057c6c57b5so27961755ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 22:20:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725945627; x=1726550427; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=38ixz8H0ArhjT/fAPUPjglJ0fnVIDwgldPg04iXAj68=;
-        b=eOseYrSTRjpKrvOg1Ptic0llBJx6JE3tOaboPsTNlKf0XWhtnraE0tR9cwA9a1Licz
-         R307ZQFHkpykT6boyVFj5EC+FV08945E04TsC42Ge0qW4FLsQQ4jEByClH0q/aU10yac
-         dbzyCWxeBAw+klyFeBPzkCaYENSQfAkmgUwPUrM7UF2gIVsQKa9LbbiThmsJulrxr3Rq
-         +bR/coxIjRrK0Oj1nuaAAkwyLnrjUYlgo0TYmKA3WfsVyp0qBWYJXyGS28HDgc2UQW69
-         AGkJ4wR6LwGHTC5+RELpGLwaC+azwM7RV4B8CBqzq4qMj4g6nHhEXJzSiKaAWyYNamWf
-         9VZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725945627; x=1726550427;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=38ixz8H0ArhjT/fAPUPjglJ0fnVIDwgldPg04iXAj68=;
-        b=ZFr+TbBxzNYEUcEohhc48bkaOfrwbPuIVnwQ4hGZ74DNfHigEweQotW0f0QlxYKh9a
-         c2r38IiWdjD2SRq5AWLvH09PCO++fk+jVfJbvpjOd5ToRQ5TQ3YsB1nrrR942p0s/hEd
-         FeAdfyx8pP4+GFyRalU3xi0K9SEB8bbhOxebjFVIF4Ai0u/YzpaApe5jUsocJdAC9gzJ
-         paSHmn8pOz2T8UqJRdY7CAQC5wuroprf928qR5QnmxfKon4sbXt1Hmx6CWulEFhv6cwo
-         RHayrawg5UdT55s2xZ0dk5BwB/jE8OkQRXijWM1lyUirpvKjwvG7xz2ZULnCmthEIozE
-         1FVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCS/HFbbsbPssXV5Rt6WBgulxi+qFpelWJScaODZlcUH08OgeKeN/3PBgHjxhgbkiONZVBEqpeUaYrG48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVSdsi96qldXcOlSHyO4H4GGSHqjR4H1sbz7JDieI69e8YHuYF
-	kxlmYa64yJojZaCYAkQSdCHiJ40gpaMHaxosjTkedouBfEJjkEIM
-X-Google-Smtp-Source: AGHT+IGu3Y1CcJmRFdUpSbd0OW2QBX0fNyuk7bD9zsfOdokX/bim2pYUB/hyYkbt4ewLxgurBIZ5Sg==
-X-Received: by 2002:a17:903:a88:b0:207:2093:99bc with SMTP id d9443c01a7336-20743a2150emr28751155ad.14.1725945626627;
-        Mon, 09 Sep 2024 22:20:26 -0700 (PDT)
-Received: from distilledx.srmu.edu.in ([59.152.80.69])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f1e93bsm41288535ad.199.2024.09.09.22.20.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 22:20:26 -0700 (PDT)
-From: Tejas Vipin <tejasvipin76@gmail.com>
-To: Laurent.pinchart@ideasonboard.com,
-	patrik.r.jakobsson@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH] drm/gma500: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi
-Date: Tue, 10 Sep 2024 10:48:56 +0530
-Message-ID: <20240910051856.700210-1-tejasvipin76@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725945814; c=relaxed/simple;
+	bh=a1hzRtjTM8om8Av4XmwcgCWu/d6ky3yRduDmqUZhR/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qnJ7tUNwGHmPXqw5VlA7y9tvu4gNBbzDhA4tDNXlMr3rN9Ju4hJoRRoyvf6/3y+C6AyhxzdPZ0867FfTgmv2NLr5Be5KQ5RVfl1nwtqgyTsR5U7HuzhVSO3VCAwF0GTLQ+WIV6liMXsZEMyqrBZ2RB/vdroYl1Bn16I4H2FtEY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FarY4f4g; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725945813; x=1757481813;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=a1hzRtjTM8om8Av4XmwcgCWu/d6ky3yRduDmqUZhR/w=;
+  b=FarY4f4gzXJicStT/hSxIqXnjv3JPWVlZTMYs75sX33xMhvup3Q++R3o
+   QdxhAi49dkUXn8boVoT6nbThtMEt/UhA/3OmYDAm8NRrZDN7A+jv0tcvz
+   g2O0LsqHr0ZUsJzyBvnKeoXiz1wkFvYR0myLySe4MhFmj2C9ETanDqaMW
+   eqHQsswwomf5VcQNeySQhb6C0fmW1LYHE/s26FI7hWmluY3pxMmaRjltZ
+   5OMBUEacNVCkvboztaoD3qpeseaxm2gA5FbgnMnd5vzEiyz4kRvrai3dd
+   tMT/7pnT0DnSj2CMQEmzmTNNiNCYXNOu5eYEe8Bkh9DUrloB77Vmo80qj
+   g==;
+X-CSE-ConnectionGUID: DjiHLvIfQ2Kjm6ozqiqfrg==
+X-CSE-MsgGUID: TK+fPIwzQ1SB+XKS81wMbA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24823092"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="24823092"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 22:23:32 -0700
+X-CSE-ConnectionGUID: KrswjazATYmJ5BvEBMCQEA==
+X-CSE-MsgGUID: twkkzW7bRV2l8dsTZyfdlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="66609298"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 09 Sep 2024 22:23:29 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sntLb-00006Y-0e;
+	Tue, 10 Sep 2024 05:23:27 +0000
+Date: Tue, 10 Sep 2024 13:23:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org,
+	cgroups@vger.kernel.org, yosryahmed@google.com,
+	shakeel.butt@linux.dev
+Cc: oe-kbuild-all@lists.linux.dev, Jesper Dangaard Brouer <hawk@kernel.org>,
+	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com,
+	kernel-team@cloudflare.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing
+ root flush
+Message-ID: <202409101356.VXPFCu6l-lkp@intel.com>
+References: <172547884995.206112.808619042206173396.stgit@firesoul>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172547884995.206112.808619042206173396.stgit@firesoul>
 
-Replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi since
-monitor HDMI information is available after EDID is parsed. Additionally
-rewrite the code the code to have fewer indentation levels.
+Hi Jesper,
 
-Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
----
- drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
-index 2d95e0471291..cfbf3137e144 100644
---- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
-+++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
-@@ -135,16 +135,16 @@ static enum drm_connector_status cdv_hdmi_detect(
- 
- 	hdmi_priv->has_hdmi_sink = false;
- 	hdmi_priv->has_hdmi_audio = false;
--	if (edid) {
--		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
--			status = connector_status_connected;
--			hdmi_priv->has_hdmi_sink =
--						drm_detect_hdmi_monitor(edid);
--			hdmi_priv->has_hdmi_audio =
--						drm_detect_monitor_audio(edid);
--		}
--		kfree(edid);
-+	if (!edid)
-+		return status;
-+
-+	if (edid->input & DRM_EDID_INPUT_DIGITAL) {
-+		status = connector_status_connected;
-+		hdmi_priv->has_hdmi_sink = connector->display_info.is_hdmi;
-+		hdmi_priv->has_hdmi_audio = drm_detect_monitor_audio(edid);
- 	}
-+	kfree(edid);
-+
- 	return status;
- }
- 
+[auto build test WARNING on tj-cgroup/for-next]
+[also build test WARNING on axboe-block/for-next akpm-mm/mm-everything linus/master v6.11-rc7 next-20240909]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jesper-Dangaard-Brouer/cgroup-rstat-Avoid-flushing-if-there-is-an-ongoing-root-flush/20240905-034221
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
+patch link:    https://lore.kernel.org/r/172547884995.206112.808619042206173396.stgit%40firesoul
+patch subject: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing root flush
+config: hexagon-randconfig-r121-20240910 (https://download.01.org/0day-ci/archive/20240910/202409101356.VXPFCu6l-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce: (https://download.01.org/0day-ci/archive/20240910/202409101356.VXPFCu6l-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409101356.VXPFCu6l-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> kernel/cgroup/rstat.c:339:23: sparse: sparse: Using plain integer as NULL pointer
+   kernel/cgroup/rstat.c:87:18: sparse: sparse: context imbalance in 'cgroup_rstat_updated' - different lock contexts for basic block
+   kernel/cgroup/rstat.c:75:9: sparse: sparse: context imbalance in 'cgroup_rstat_updated_list' - wrong count at exit
+   kernel/cgroup/rstat.c:320:13: sparse: sparse: context imbalance in 'cgroup_rstat_trylock_flusher' - wrong count at exit
+   kernel/cgroup/rstat.c:300:34: sparse: sparse: context imbalance in 'cgroup_rstat_unlock_flusher' - unexpected unlock
+   kernel/cgroup/rstat.c:373:9: sparse: sparse: context imbalance in 'cgroup_rstat_flush_locked' - different lock contexts for basic block
+   kernel/cgroup/rstat.c:447:9: sparse: sparse: context imbalance in 'cgroup_rstat_flush_hold' - wrong count at exit
+   kernel/cgroup/rstat.c:457:6: sparse: sparse: context imbalance in 'cgroup_rstat_flush_release' - wrong count at exit
+
+vim +339 kernel/cgroup/rstat.c
+
+   308	
+   309	/**
+   310	 * cgroup_rstat_trylock_flusher - Trylock that checks for on ongoing flusher
+   311	 * @cgrp: target cgroup
+   312	 *
+   313	 * Function return value follow trylock semantics. Returning true when lock is
+   314	 * obtained. Returning false when not locked and it detected flushing can be
+   315	 * skipped as another ongoing flusher is taking care of the flush.
+   316	 *
+   317	 * For callers that depend on flush completing before returning a strict option
+   318	 * is provided.
+   319	 */
+   320	static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp, bool strict)
+   321	{
+   322		struct cgroup *ongoing;
+   323	
+   324		if (strict)
+   325			goto lock;
+   326	
+   327		/*
+   328		 * Check if ongoing flusher is already taking care of this.  Descendant
+   329		 * check is necessary due to cgroup v1 supporting multiple root's.
+   330		 */
+   331		ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
+   332		if (ongoing && cgroup_is_descendant(cgrp, ongoing))
+   333			return false;
+   334	
+   335		/* Grab right to be ongoing flusher */
+   336		if (!ongoing && cgroup_is_root(cgrp)) {
+   337			struct cgroup *old;
+   338	
+ > 339			old = cmpxchg(&cgrp_rstat_ongoing_flusher, NULL, cgrp);
+   340			if (old) {
+   341				/* Lost race for being ongoing flusher */
+   342				if (cgroup_is_descendant(cgrp, old))
+   343					return false;
+   344			}
+   345			/* Due to lock yield combined with strict mode record ID */
+   346			WRITE_ONCE(cgrp_rstat_ongoing_flusher_ID, current);
+   347		}
+   348	lock:
+   349		__cgroup_rstat_lock(cgrp, -1);
+   350	
+   351		return true;
+   352	}
+   353	
+
 -- 
-2.46.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
