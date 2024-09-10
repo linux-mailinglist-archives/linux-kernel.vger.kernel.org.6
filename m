@@ -1,125 +1,152 @@
-Return-Path: <linux-kernel+bounces-322439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E2D972907
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02BE9972909
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B89DB23987
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:53:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4761DB23998
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E4E16BE0D;
-	Tue, 10 Sep 2024 05:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451E916DC12;
+	Tue, 10 Sep 2024 05:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEin5f9q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N1s00zJF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753EDBA42;
-	Tue, 10 Sep 2024 05:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5219BA42;
+	Tue, 10 Sep 2024 05:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725947629; cv=none; b=BQRSLgLPXWoQTPWqtSvVwSItlaM40+4uDRMb8pguduJYnQxMQevxIZdXNSi8xGGbkQ4wyPMSvOS6fvy//ABrGEScSiRTqEBid4XCNlPrcW2JwK1+nofVFtzmOoJi2iTdXI6DfeWL+a3pIKT32sIuWu3OzCCUnO8I2G+lQrapqbI=
+	t=1725947681; cv=none; b=MUaEeQgzvqnEABLKmFG6pskpWRJga/+R0Yil/STGoC3L9U97WQ5GPZuLjcKZ5rP8Y/Fgk6LQ+VO1WNT+UR1OQ4IbrJR2ktwFMLNSHG2aJrpCI0ptsADQlBspQWhJ5NOt1ukQh0cXnh3L6uS1WlSgYydJBPGlTAKRqErWJ+6/i+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725947629; c=relaxed/simple;
-	bh=uvUT2li9t6kQrgl7EAisZODqTq1+vnL8VvIBaN8rxvA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GBOo0QorfK2yeZqK4/cX8UcAKfKcfAsC0U6piyGvQYCrmNbO7XliPZ+rszQBiqjxfk/ajUuAYfTEWs0PzmIUkW91JZ/IL/oxFzit96+ikMDJFRPSZLV5aWk3L2JMsGXTPXKHggKSGqxQPgOLYOB0uHeVol7OOdxr7xpR+jho9LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEin5f9q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E9F1CC4CEC3;
-	Tue, 10 Sep 2024 05:53:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725947629;
-	bh=uvUT2li9t6kQrgl7EAisZODqTq1+vnL8VvIBaN8rxvA=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=ZEin5f9qdhlcx+McditaTMcWtfE9Zml5qB6LRe5vnkwOVW0zApcnJNleP/RAMck+k
-	 kcTs/FiX7mCaJxqEwJghiwWmeTq1nJP+yl/dh+r6bTQGJAUIr3MguJdJsk2jQpyzMw
-	 hK9gjkizJzPusJ3qpQscEb4+sskmRJpl7KTgl7oFN7y+kMzkNuEasN/Kn5SLdiW/62
-	 gP8NuONJLPFKhJg0h+UUuXo/iOmciLzg5/1rdOBmbfmoy+27nSKh6obNe9m99xJHlJ
-	 gr9YXpfvKWJRpu2/huD9wGjlr5cFZVNuAoaSHom1EYY2eM1J0G6mgomZlF4J6IPLas
-	 FhpqzdDsZDGdg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D83B2ECE582;
-	Tue, 10 Sep 2024 05:53:48 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Tue, 10 Sep 2024 13:53:44 +0800
-Subject: [PATCH] clk: Fix invalid execution of clk_set_rate
+	s=arc-20240116; t=1725947681; c=relaxed/simple;
+	bh=YoWqmzklplwSJWfbQ1gZFmNrdFr9caEIlCjWuwlnYpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i5x4hHmfPeVc0TmUoGk+sO2FMHpLx18ATtPMaZyrAy2VNQElWqqFZRkavY1kDkYDjLVCqNFBLDtTm53JnUj+tWyT7FfaUYbcA8qNIRdXcLfwY9+wLAzpKJqb6zGjicWVySVKc6dhfqx/dURefepqPPyh1sjlH1mAv18KorZbR4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N1s00zJF; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725947680; x=1757483680;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YoWqmzklplwSJWfbQ1gZFmNrdFr9caEIlCjWuwlnYpI=;
+  b=N1s00zJFQK8lDGH7MzYX+W0dU/4Xs6V2DVxjmP5+ak7W7F26GO8Ykpez
+   pJAOtddbLn6Scbt7zkRq1f8yy/5cFh0cj6zvH6947CWrlNA0OkwdgskY5
+   GNCCbuQ4uTskfUDyeirVxWAU7UmmIRUSfRx1+J1rrYk1xW33msxeKxqq7
+   JrY3dRFI/0fLcIad8zP/86VP5VhEVL+qXsUWlhWSzgpDbpym4Al1nDjay
+   0vq/oGMbWTGcA+uIgOWn1fXRU9urtSmpMVEWb8ERq8fc5oY+WolZsmN3Z
+   DQc2iiDSxbII8A+4exYfcWJHgE+RasQ+1d8tvyYgjMkFh+YTcMQ36QKWH
+   w==;
+X-CSE-ConnectionGUID: 24e6EJTHSNWTaGdlgOkeiw==
+X-CSE-MsgGUID: yYXYcAzjTw2918j6n7lNfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="42150631"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="42150631"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 22:54:39 -0700
+X-CSE-ConnectionGUID: vq6qM2ePRbiXkXBhz1gCTA==
+X-CSE-MsgGUID: tpT0AFC9QVeomvw0K2O93w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="71036413"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 09 Sep 2024 22:54:36 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sntph-00008I-2A;
+	Tue, 10 Sep 2024 05:54:33 +0000
+Date: Tue, 10 Sep 2024 13:53:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, CobeChen@zhaoxin.com, TimGuo@zhaoxin.com,
+	LeoLiu-oc@zhaoxin.com, Lyle Li <LyleLi@zhaoxin.com>
+Subject: Re: [PATCH v1 3/3] x86/mce: Add CMCI storm switching support for
+ Zhaoxin
+Message-ID: <202409101353.K4jjCjRN-lkp@intel.com>
+References: <20240909104349.3349-4-TonyWWang-oc@zhaoxin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240910-fix_clk-v1-1-111443baaeaa@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAOfe32YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDS0MD3bTMivjknGxdc8Ok5BQjg6QUY+M0JaDqgqJUoBTYpOjY2loA901
- 2lVkAAAA=
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725947627; l=1619;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=3tAKqELYhIvRcXnUoRlXXLtvnJsBHNdrLYPkwEE/zJI=;
- b=MFbnaaVvkM7y7cG1rTenn+RlC/vW4QvIC4DEqGeAHtl2HMKuRduRtutjrLqkpcqhY9gey+F/U
- sIwGXwnw06jCuqfqCuVdTeyVvBQZwriPntFkUiKwZrH2I11yHy6aOz6
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909104349.3349-4-TonyWWang-oc@zhaoxin.com>
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+Hi Tony,
 
-Some clocks have rates that can be changed elsewhere, so add a flag
-CLK_GET_RATE_NOCACHE(such as scmi_clk) to these clocks to ensure that
-the real-time rate is obtained.
+kernel test robot noticed the following build errors:
 
-When clk_set_rate is called, it is returned if the request to set rate
-is consistent with the current rate. Getting the current rate in
-clk_set_rate returns the rate stored in clk_core. CLK_GET_RATE_NOCACHE
-does not take effect here.
+[auto build test ERROR on tip/x86/core]
+[also build test ERROR on tip/master linus/master v6.11-rc7 next-20240909]
+[cannot apply to tip/auto-latest]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
----
-Some clocks have rates that can be changed elsewhere, so add a flag
-CLK_GET_RATE_NOCACHE(such as scmi_clk) to these clocks to ensure that
-the real-time rate is obtained.
+url:    https://github.com/intel-lab-lkp/linux/commits/Tony-W-Wang-oc/x86-mce-Add-centaur-vendor-to-support-Zhaoxin-MCA/20240909-192507
+base:   tip/x86/core
+patch link:    https://lore.kernel.org/r/20240909104349.3349-4-TonyWWang-oc%40zhaoxin.com
+patch subject: [PATCH v1 3/3] x86/mce: Add CMCI storm switching support for Zhaoxin
+config: x86_64-buildonly-randconfig-001-20240910 (https://download.01.org/0day-ci/archive/20240910/202409101353.K4jjCjRN-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240910/202409101353.K4jjCjRN-lkp@intel.com/reproduce)
 
-When clk_set_rate is called, it is returned if the request to set rate
-is consistent with the current rate. Getting the current rate in
-clk_set_rate returns the rate stored in clk_core. CLK_GET_RATE_NOCACHE
-does not take effect here.
----
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409101353.K4jjCjRN-lkp@intel.com/
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 285ed1ad8a37..79b453b82528 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2536,7 +2536,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 	rate = clk_core_req_round_rate_nolock(core, req_rate);
- 
- 	/* bail early if nothing to do */
--	if (rate == clk_core_get_rate_nolock(core))
-+	if (rate == clk_core_get_rate_recalc(core))
- 		return 0;
- 
- 	/* fail on a direct rate set of a protected provider */
+All errors (new ones prefixed by >>):
 
----
-base-commit: 2cd6543d82b9dc7b971b9b64f22ad34a1cae3076
-change-id: 20240910-fix_clk-71bcd20bd33f
+   ld: arch/x86/kernel/cpu/mce/severity.o: in function `mce_zhaoxin_feature_init':
+   severity.c:(.text+0x2c0): multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1950): first defined here
+   ld: arch/x86/kernel/cpu/mce/severity.o: in function `mce_zhaoxin_feature_clear':
+   severity.c:(.text+0x2f0): multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1980): first defined here
+   ld: arch/x86/kernel/cpu/mce/severity.o: in function `mce_zhaoxin_handle_storm':
+>> severity.c:(.text+0x320): multiple definition of `mce_zhaoxin_handle_storm'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x19b0): first defined here
+   ld: arch/x86/kernel/cpu/mce/genpool.o: in function `mce_zhaoxin_feature_init':
+   genpool.c:(.text+0x10): multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1950): first defined here
+   ld: arch/x86/kernel/cpu/mce/genpool.o: in function `mce_zhaoxin_feature_clear':
+   genpool.c:(.text+0x40): multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1980): first defined here
+   ld: arch/x86/kernel/cpu/mce/genpool.o: in function `mce_zhaoxin_handle_storm':
+   genpool.c:(.text+0x70): multiple definition of `mce_zhaoxin_handle_storm'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x19b0): first defined here
+   ld: arch/x86/kernel/cpu/mce/amd.o: in function `mce_zhaoxin_feature_init':
+   amd.c:(.text+0x1730): multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1950): first defined here
+   ld: arch/x86/kernel/cpu/mce/amd.o: in function `mce_zhaoxin_feature_clear':
+   amd.c:(.text+0x1760): multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1980): first defined here
+   ld: arch/x86/kernel/cpu/mce/amd.o: in function `mce_zhaoxin_handle_storm':
+   amd.c:(.text+0x1790): multiple definition of `mce_zhaoxin_handle_storm'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x19b0): first defined here
+   ld: arch/x86/kernel/cpu/mce/threshold.o: in function `mce_zhaoxin_feature_init':
+   threshold.c:(.text+0x70): multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1950): first defined here
+   ld: arch/x86/kernel/cpu/mce/threshold.o: in function `mce_zhaoxin_feature_clear':
+   threshold.c:(.text+0xa0): multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1980): first defined here
+   ld: arch/x86/kernel/cpu/mce/threshold.o: in function `mce_zhaoxin_handle_storm':
+   threshold.c:(.text+0xd0): multiple definition of `mce_zhaoxin_handle_storm'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x19b0): first defined here
+   ld: arch/x86/kernel/cpu/mce/inject.o: in function `mce_zhaoxin_feature_init':
+   inject.c:(.text+0xd80): multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1950): first defined here
+   ld: arch/x86/kernel/cpu/mce/inject.o: in function `mce_zhaoxin_feature_clear':
+   inject.c:(.text+0xdb0): multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1980): first defined here
+   ld: arch/x86/kernel/cpu/mce/inject.o: in function `mce_zhaoxin_handle_storm':
+   inject.c:(.text+0xde0): multiple definition of `mce_zhaoxin_handle_storm'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x19b0): first defined here
+   ld: arch/x86/kernel/cpu/mce/apei.o: in function `mce_zhaoxin_feature_init':
+   apei.c:(.text+0xf0): multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1950): first defined here
+   ld: arch/x86/kernel/cpu/mce/apei.o: in function `mce_zhaoxin_feature_clear':
+   apei.c:(.text+0x120): multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1980): first defined here
+   ld: arch/x86/kernel/cpu/mce/apei.o: in function `mce_zhaoxin_handle_storm':
+   apei.c:(.text+0x150): multiple definition of `mce_zhaoxin_handle_storm'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x19b0): first defined here
 
-Best regards,
 -- 
-Chuan Liu <chuan.liu@amlogic.com>
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
