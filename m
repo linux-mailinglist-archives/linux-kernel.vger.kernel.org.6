@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-322946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9FAE97357B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:50:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095D997357D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189B31C250FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:50:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3682A1C25053
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462EE187325;
-	Tue, 10 Sep 2024 10:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B1D17C220;
+	Tue, 10 Sep 2024 10:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TzqaPsiL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="gUnACpx1"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAB123A6
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9594F14B06C
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725965403; cv=none; b=BY0VhjLADkObLjbppocCdG5lLOUyzHKW/u5MWynNRsGV1FhunshJdUGbwhlkKuImNKXdWTIQjAnZIBYfTLyY5IgpJA/eqNSp2TNZn9GXuwKC+7SiGkWJRsCVwTr20qSkeF1pJl7aQJ02RvVXFmJKDPnaNT3PhoKktYC7V6sfDUs=
+	t=1725965422; cv=none; b=bO/ThUI9G1rjDRkwkMTLF0c6w/B9zRrtUvhsWCat+U6/WuJKjx0/nh/usg5j2NLQOzH3fuNM6+g01TjPRg9k/y9Xlfwe0awALY/DQA73Kh862ddMqlKRpj+RsjY6oleYzooVxykgkK2r3taOn1Sfz7QA3row2dE795CPXpYTB2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725965403; c=relaxed/simple;
-	bh=tjRIYlNK9oEPZidwMLKbN36DkLeUA/Mt/bor3mAYdzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fm5P5BUvaSDz1YkmmUB1maHNci7PkZMTXf5wz06IHz1UJS/MXUO+2xrPZInLWnSGiDknegyUiaED8fvkNSFbKJAP+hnT1cNttrBv5Ljp8wKmTMvUOyrTjWZr1tDT5oiko0XmP7RVRzdRGD2myGKTaQ9lXy7LPcejgpVrzvHNgCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TzqaPsiL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725965401;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YZgcuspLqcfqCSPDpXA3njSxo7eX4xp8bIeZdoi4VBY=;
-	b=TzqaPsiLsZh7E+OQuLA7/IYRCjuc/S8hYYfWRYZe4bYUMS+iWq7mBTUW+/lYAQvKz5rrBT
-	R/i5ZEbRxujoWduoYTX2FC/1aJLwhdbLtOEN5GQcN3krdr/tJ6Bm9IuU6jtEnu9Kl7o/gA
-	RN9mgDkT4urqpLX6qzFMNzSTCOUrs54=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-199-iGTAO14eOdC-kAtyuE9GqQ-1; Tue,
- 10 Sep 2024 06:49:55 -0400
-X-MC-Unique: iGTAO14eOdC-kAtyuE9GqQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 08EAE19560B2;
-	Tue, 10 Sep 2024 10:49:54 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.32.72])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 009A219560AA;
-	Tue, 10 Sep 2024 10:49:51 +0000 (UTC)
-Date: Tue, 10 Sep 2024 06:49:49 -0400
-From: Phil Auld <pauld@redhat.com>
-To: Liu Song <liusong@linux.alibaba.com>
-Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] sched, cgroup: cgroup1 can also take the
- non-RUNTIME_INF min
-Message-ID: <20240910104949.GA318990@pauld.westford.csb>
-References: <20240910074832.62536-1-liusong@linux.alibaba.com>
+	s=arc-20240116; t=1725965422; c=relaxed/simple;
+	bh=j660FIt2LkNBUOlAD8fG6i3s65RXTVA5vEPHfgPW6AY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pYC7V9lYw6+unl+Zzka0g1XhEL/QTPAD5KLrZxjlk4KD94lGIIzv1eGSDVIuBJiUyETuhVeEqhkXKhlWMPY7Eph3iVV5N8rlFkLjKX8sG5PL/oW+F6p9NlYGcjVkalvBHHCGrGSWMuR0R3b0ICyrTjWM1qRU+6SUl47snX2JP+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=gUnACpx1; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cb3c6c353so3634575e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 03:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1725965419; x=1726570219; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kTCp9nY7FQEM3AmaK7gIs2eZ38YLpBmTnUOj1/n38Xo=;
+        b=gUnACpx1upy7ki8K8G0dcz8z5s3wfzO/u5YA+s+0rF0xjiVa3KmGC6tiNIsKsCjrpe
+         V98AVVp1r9mmdCX7fP3RqhUGcJBKZ0wZ8tchVWJd+Q/2glcBqRGpxqBVRsc9t6gsdSdC
+         2aHPNHnY4OBdJU/u67gbDrs5VijJcuAXP7fc2m6z/yoROhTFJwYNNTAmPpYOXQ5mkJ1s
+         edwMpnayapQa3d9B7zrWxAgRmCWSKMeKmwLf6LcUI1CIfroCfDLZf7rCEBkeF1R/QbM4
+         06qvpK4SX4Hh5k2cy81ObcgfYrUukMNpVBpNwXxUDZ3e7aIZNM9b3d5bWWlzU4PgHemq
+         uvhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725965419; x=1726570219;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kTCp9nY7FQEM3AmaK7gIs2eZ38YLpBmTnUOj1/n38Xo=;
+        b=s2bYMChSxls+io52FNGfBklgqgb+NGFYlnHrP6AiA9iRIWKulNhOVHfByP67AkDxzB
+         bZUv5yFBWFTA1r1I7aau2h+R8OYxnN0xvV4MPC2c5jPM9Vi4XKUboWOMvKD1u9f9Hv4w
+         QtYGAvkZ0mMgkL0jzvPuKqctXB2Cv+PRDPUR2TiztbTTCqDIl4NBTS/PV0+Zw41xQMcg
+         nTd6zGG5B4Cc1xHJdBUfvHUnSQRYBKn4MufWIJ6mL3r7CDu09l5Oc0N7xxKSfnPDl59X
+         MvyR+J3FtLoZ6jRyNDqh5LyqwuoZxU2taRsR3Zc2SK3Sagqb4jDfclaOZIFd2SeNFLPr
+         8rmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUw4TsHKtk9yayDGhNVOlEVfYer4A3HUoIXwBSQ2wufYD18a0buSqXj1EZwvmvcwDQq2l0PndAa8ggL2fc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfShKvQc9rbV8Srs78KYTPOFWhztOZ1bjWcp4nHJVmZ3Kzz5CN
+	ycJYeMZ43PRZDiTEONolNYNXKOtChWuA0zmIBA32B/xXRGkiqEBTN94zsw/dnvU=
+X-Google-Smtp-Source: AGHT+IEWUdW0zk8adQ4t2k43BCT3ytMYT82ahbXEVJ7Mir9v+q7r+D14fxbNeEjwHcI8FM7pRrG09Q==
+X-Received: by 2002:a5d:5f87:0:b0:376:8378:2a60 with SMTP id ffacd0b85a97d-378895c5ab1mr4746018f8f.1.1725965418704;
+        Tue, 10 Sep 2024 03:50:18 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-91.dynamic.mnet-online.de. [62.216.208.91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895676117sm8509673f8f.60.2024.09.10.03.50.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 03:50:18 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>,
+	Hongbo Li <lihongbo22@huawei.com>
+Subject: [RESEND PATCH] bcachefs: Remove duplicate included headers
+Date: Tue, 10 Sep 2024 12:50:08 +0200
+Message-ID: <20240910105007.4882-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910074832.62536-1-liusong@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
 
+The header files dirent_format.h and disk_groups_format.h are included
+twice. Remove the redundant includes and the following warnings reported
+by make includecheck:
 
-Hi,
+  disk_groups_format.h is included more than once
+  dirent_format.h is included more than once
 
-On Tue, Sep 10, 2024 at 03:48:32PM +0800 Liu Song wrote:
-> For the handling logic of child_quota, there is no need to distinguish
-> between cgroup1 and cgroup2, so unify the handling logic here.
-> 
-> Signed-off-by: Liu Song <liusong@linux.alibaba.com>
-> ---
->  kernel/sched/core.c | 21 +++++----------------
->  1 file changed, 5 insertions(+), 16 deletions(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index e752146e59a4..8418c67faa69 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -9501,23 +9501,12 @@ static int tg_cfs_schedulable_down(struct task_group *tg, void *data)
->  		parent_quota = parent_b->hierarchical_quota;
->  
->  		/*
-> -		 * Ensure max(child_quota) <= parent_quota.  On cgroup2,
-> -		 * always take the non-RUNTIME_INF min.  On cgroup1, only
-> -		 * inherit when no limit is set. In both cases this is used
-> -		 * by the scheduler to determine if a given CFS task has a
-> -		 * bandwidth constraint at some higher level.
+Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ fs/bcachefs/bcachefs_format.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-This comment is here for a reason. Please don't remove it. 
-
-> +		 * Ensure max(child_quota) <= parent_quota.
->  		 */
-> -		if (cgroup_subsys_on_dfl(cpu_cgrp_subsys)) {
-> -			if (quota == RUNTIME_INF)
-> -				quota = parent_quota;
-> -			else if (parent_quota != RUNTIME_INF)
-> -				quota = min(quota, parent_quota);
-> -		} else {
-> -			if (quota == RUNTIME_INF)
-> -				quota = parent_quota;
-> -			else if (parent_quota != RUNTIME_INF && quota > parent_quota)
-> -				return -EINVAL;
-> -		}
-> +		if (quota == RUNTIME_INF)
-> +			quota = parent_quota;
-> +		else if (parent_quota != RUNTIME_INF)
-> +			quota = min(quota, parent_quota);
->  	}
->  	cfs_b->hierarchical_quota = quota;
->
-
-I don't think there is a need to optimize this slow path
-to allow setting invalid values which have to be handled in
-fast paths.   And this will change expected behavior.
-
-So NAK.
-
-Cheers,
-Phil
-
+diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
+index 14ce726bf5a3..b97fd0f75831 100644
+--- a/fs/bcachefs/bcachefs_format.h
++++ b/fs/bcachefs/bcachefs_format.h
+@@ -499,8 +499,6 @@ struct bch_sb_field {
+ #include "disk_groups_format.h"
+ #include "extents_format.h"
+ #include "ec_format.h"
+-#include "dirent_format.h"
+-#include "disk_groups_format.h"
+ #include "inode_format.h"
+ #include "journal_seq_blacklist_format.h"
+ #include "logged_ops_format.h"
 -- 
+2.46.0
 
 
