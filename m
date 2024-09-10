@@ -1,105 +1,106 @@
-Return-Path: <linux-kernel+bounces-323411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DDFC973CF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:07:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBEE1973CF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C259EB253E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:07:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65B9E1F25934
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A3A1A0710;
-	Tue, 10 Sep 2024 16:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA29819F470;
+	Tue, 10 Sep 2024 16:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2oscGzwR"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="3GvOCpBv"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD0419F470
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DF419EEB7
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725984414; cv=none; b=DGau9FnLT2YIDgYiIZpbvr9yngdd5Pb4NEDAY9iHY2O4biDqdIEA3jB64+LrP+vGKeXrxP+30jLhcMPFFO6G4fPFIg8Jors+K7vhmjWpkc2v5/PZRkjnrmbrsozFE3VZUFZDDQYVf+AQfLHCS7uiIjYKNhAWBDqz453EF3V+2j4=
+	t=1725984381; cv=none; b=oVRbsAnX1KslXx3M/iLG7LcOpTM1bjIFkVtp0qmtJ7HGnLOaed5DmZ+EH6xXN+hk35OwNX7jNAD+jFkBuDS9MWBzoPe3pukj6NgQy+IiibseV4+13ya5bxOVBhy+QDD4ad8nFH7tjSxAwcn9vjF7DGxP/86yhpSUBdrthbgbXIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725984414; c=relaxed/simple;
-	bh=9Rp+ZaWePBqTv+7CDLYdQhLyxwC0Y6Goq+cudkph1u8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VYk069Rz67DiXCElnEKMqJzeLOPcyzq2geffUGB4UX13GzYsR/et1TE+haU/qox+ne2ok7yFVBiqzkpaRvCt3Jc+4RMMHa+JCKCiQVG6KYsWU1yVhQIuxnpcpqW9HsvMOdkz4J7VZPQ1ccmv7Bmq0DJgO+b01ftFOmVZCqsbYqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2oscGzwR; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c2460e885dso23450a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:06:53 -0700 (PDT)
+	s=arc-20240116; t=1725984381; c=relaxed/simple;
+	bh=nWxhKnjkJZTFdW4bOUswy11ck0je6HBAn64rjghcv9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E7aRXLCu0xgR6eo+dDRlxo5PR/87u+BH/IpYTRf0hNqRsgGm+xVb5isbF0Epl+lrzvIDcpmHhL2g4MCbNtPx/CaNiTjLm+ZcuQuQn1OvK3BTkvMplpLOwKuwf0TBSW/7ZNUrJ6KdVU0Ve+BVXEMr6IujzehVAn2QPXuvONJYqkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=3GvOCpBv; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-39f51934f61so23259615ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:06:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725984412; x=1726589212; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Rp+ZaWePBqTv+7CDLYdQhLyxwC0Y6Goq+cudkph1u8=;
-        b=2oscGzwR4onXmHbtOk7T7sHnwdGHNxaTaPXyKSYKb+/w/iPXbn2//jfK1OoPvhAAWQ
-         kbT3m3utsrQfKXjVDv+BE3OXjkp3RVkS1bZlvWP4HLztW/Z7S9YCJfW298ag4QEb0gWA
-         jRCcNY0lx9HiRUIktMboyEGdBsyfkLskNjNMs0RQyThW5rzNk9L6oXV5P+BIBB+UbQYo
-         cgxsfV4Kr/kvrLzqoCGkYUmxHwYKHjvMOLJjQybOyf0T5LV7MO75rYZIz2PgyjJntZGt
-         TtqphhEmEj2bwoSGVgtkKxWn9+8xUA2oz7QqkWjRoSNGMx/ZMNtQZYQ2pPcya4t1ptVm
-         eraQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725984379; x=1726589179; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bvqx2vUM4wd2hXHXQjB5hyTmP0TgEc86Le9MQ8ED+GE=;
+        b=3GvOCpBvNSixz2oivkKV8UQUxbeQLklaq5Xokw7Nkjw2uiXYNYWsRf8iTpitzZginM
+         GJ8YiknMOTessUI6LP+P+RuvptXj3/lz/uDso08U0OKByk4QGFs5J8sW99ODVAgLxxnQ
+         hMidSTQ2QcEv/B0KUKJgD6WM+WUpdcR6JeqSdvBDIPL9hcdjCDAmDZHybj6rm6rEE7bw
+         AIZO8dCbks6AsW5UYR4NgxTB8OtW0lCuTuLf9M+q0p1seR4287bGxna3xqP6lXv/hZAg
+         9q7dP34jdPaIceKZTM5SVx3IhxJf+KXXOpRiXkSQIRkiciYWfgc3RRtXKcTukDBoF2kx
+         Tc5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725984412; x=1726589212;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9Rp+ZaWePBqTv+7CDLYdQhLyxwC0Y6Goq+cudkph1u8=;
-        b=Pcdm+TcbjJPu71QE46Pm2g6mcg83rbxZHIvPWdL4VhRCfcKYol5GWQSKZdFC7L944A
-         T3gzSfs2eSjB4JoUCGPr9Sq3ebhWgLosyCJIfbbAlGT6ti423FylC2DOKyWAJjf50YFX
-         doB7P6azWPiQx4IIixSKBsgHMv1zupgyEeKuMxekwf/HSRiqTld77rzPkEoqFEtaE2Dg
-         T8DzCYeyh2nPOkMdSPKw9vO47N7Wb1SqTLapvlOiWbIQZFuIVJE2CAw2UZr8wS94jgUw
-         ba0tTkXUwhUByLnv5YvqllVRSwCorL1fEVPfi6wPQzi0QNVv8u6tPyrh5cP0o480tAyj
-         cWyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUroSrRoMvtcH4e2Lvyu3d5yQgTFWdh/1An2Fppu64BSf7Gxua5+/XRbos8rj2EkekGN/bnYNEkJy69RIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4307cW2QS6q16TFdsxb/pvTrQBB5YLLb0z1l6EQpWUEQEu+Cu
-	A6+Y3wXEItRyYudwwey+ThJxNEc6Hpt4QyXsyrOjZoenGSx811r7Tuqd7Y5hRs8Y5x2nuWkR0iz
-	D7ZdknPlHH9CeEP6cgvy7g5KaNRYqe4hBfUoz
-X-Google-Smtp-Source: AGHT+IHx0FXXNOSwDc/a2GkEEO0nN6J5e6WRL/WX5poMnRTVWbyacane/wtmnLr+FEV9BbUT65Gm5/vLnAoiz2/SvOA=
-X-Received: by 2002:a05:6402:1ec4:b0:59f:9f59:9b07 with SMTP id
- 4fb4d7f45d1cf-5c4029ef54amr299933a12.4.1725984410772; Tue, 10 Sep 2024
- 09:06:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725984379; x=1726589179;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bvqx2vUM4wd2hXHXQjB5hyTmP0TgEc86Le9MQ8ED+GE=;
+        b=Bx/OLppkBy84989xOBubwUktAjzbSZjdrGfLO49tBwv/QXhlWUgr6v7/kOnwUxW3o1
+         ADgtA9DQzFuhUAOgIqVMYFzX1p0le7xs6RRnbJW8mxi2eu3mTGjFNqFpagJH+vHBzeeA
+         8ZCfUN3YTfkGO9DavHLUwFjEv+hL2SGI3iQZ491K53kS+LB6pqWGCcr/UCxKYS80bL46
+         eXu6RycbRjSsl7nEfArefQGLL4rq4hlZpFGQN48qJgoYno13i3Odp7nTKop0Yb/M5wL6
+         Hwa/s9YfSAkwHpbWfzI322OzT7YneJ85MFZEsvB6iNZgx15PnVYIyISfDcUfxpdq+x24
+         zUfA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgdyhq0kGqZw374NUAMfu1Fi+ZWW0RjigLEROW1kXhun3G+rAARfrJnuougCTPu/1tkPk0ajKCLFr+f0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWaCjPXiLT0/Mj4wQ3pRpyPDcTAWitU9hwAUfpuJO5GukwboZr
+	CYTSYKIiAHlNXL+02uCLRQXH3HoPHY8WoxLpjC7Uuu4YXYMKxzniWmr6MkUohEA=
+X-Google-Smtp-Source: AGHT+IHX75F0Eqmzt177RZxt2H/sYXCSIl0I7Lx9d0azKek8qgV+BEFrXeK1FHTUf13yUcErwKBz9g==
+X-Received: by 2002:a05:6e02:148c:b0:397:75a:39b9 with SMTP id e9e14a558f8ab-3a04f0ce20fmr183706515ab.16.1725984378868;
+        Tue, 10 Sep 2024 09:06:18 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a05900e618sm20608515ab.55.2024.09.10.09.06.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 09:06:18 -0700 (PDT)
+Message-ID: <4c854271-3c5e-4549-81e6-dfa0a69bf9b6@kernel.dk>
+Date: Tue, 10 Sep 2024 10:06:17 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906051205.530219-1-andrii@kernel.org>
-In-Reply-To: <20240906051205.530219-1-andrii@kernel.org>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 10 Sep 2024 18:06:12 +0200
-Message-ID: <CAG48ez1+Y+ifc3HfG=E5j+g=RwtzH2TiE4mAC2TZxS52idkRZg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] uprobes,mm: speculative lockless VMA-to-uprobe lookup
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com, 
-	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
-	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, mjguzik@gmail.com, brauner@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] io_uring/io-wq: limit io poller cpuset to ambient
+ one
+To: Felix Moessbauer <felix.moessbauer@siemens.com>
+Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org, cgroups@vger.kernel.org, dqminh@cloudflare.com,
+ longman@redhat.com, adriaan.schmidt@siemens.com, florian.bezdeka@siemens.com
+References: <20240910154535.140587-1-felix.moessbauer@siemens.com>
+ <20240910154535.140587-3-felix.moessbauer@siemens.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240910154535.140587-3-felix.moessbauer@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 6, 2024 at 7:12=E2=80=AFAM Andrii Nakryiko <andrii@kernel.org> =
-wrote:
-> Implement speculative (lockless) resolution of VMA to inode to uprobe,
-> bypassing the need to take mmap_lock for reads, if possible. Patch #1 by =
-Suren
-> adds mm_struct helpers that help detect whether mm_struct were changed, w=
-hich
-> is used by uprobe logic to validate that speculative results can be trust=
-ed
-> after all the lookup logic results in a valid uprobe instance.
+On 9/10/24 9:45 AM, Felix Moessbauer wrote:
+> The io worker threads are userland threads that just never exit to the
+> userland. By that, they are also assigned to a cgroup (the group of the
+> creating task).
+> 
+> When creating a new io worker, this worker should inherit the cpuset
+> of the cgroup.
 
-Random thought: It would be nice if you could skip the MM stuff
-entirely and instead go through the GUP-fast path, but I guess going
-from a uprobe-created anon page to the corresponding uprobe is hard...
-but maybe if you used the anon_vma pointer as a lookup key to find the
-uprobe, it could work? Though then you'd need hooks in the anon_vma
-code... maybe not such a great idea.
+This still has that same ambient usage in the title which I just
+cannot make sense of?
+
+-- 
+Jens Axboe
+
 
