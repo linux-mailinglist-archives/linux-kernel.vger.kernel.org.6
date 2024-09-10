@@ -1,239 +1,182 @@
-Return-Path: <linux-kernel+bounces-322235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6DDF97261A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:18:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C74897261B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3283284A1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:18:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5FF2284CC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2AB182AE;
-	Tue, 10 Sep 2024 00:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCC5AD31;
+	Tue, 10 Sep 2024 00:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ai5JERTa"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2066.outbound.protection.outlook.com [40.107.22.66])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HbmVZlYj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECF2AD31
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725927480; cv=fail; b=qzFh9WrKkHYD1R2VyNcMlczrDQAyxipasLvl5UAALtqmNMqsCFgQToZ/4l1FeLaVwzazNKEmzh87aoIfknN82zpEukzEugOcO6DpIWrlhUxP/+jXuBwJObXRFC5VdPw5bzsxd0PONcTRg4vLrpA0pvtv6svDGroIYSg+BMED/cc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725927480; c=relaxed/simple;
-	bh=x6H4p6S8kLE1Y8pKG0Cw7w+/i3YOm1xr3qcouHBGoPs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Rd/p+QmMaO3OMjqMhbcRcpN6aZuwS84iI3weJCnxG1m1jTnsXWaGLG57lRw5Iba70pzyxFLzZVZoSXS64xHqevK3PUkwL8UtcJhgdygkbp4U0n017fW4A7AQ7Vs4gUHUQCqGhAfAyEsmGL7S7cWt8A6zNdgoCi4QGitwtF/qC98=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ai5JERTa; arc=fail smtp.client-ip=40.107.22.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cJVGO7DxB6zKEbl3ZY2XX3jl1cKFUzfgZBYmV2TpuziSUEKC3yU95KRrFF/KYGWy0i6C0Pi/qhN1gcpHzwPhnKPsvBNs/90sRDL7Ub2yTbPq4akN7oUIHRWKNuD2Tq2e/QIoVDK2Gxt0LvLlz0XxEcn/uCrpDN/YOuqz3Zpl173J0oAoXIZ8C7en9tndtbglhBS5zhVaQ99O96a7fMxRqgrlb8dAUVhxmtV/By35QwTD7iAVroFL3rXJljFyoqrZNyO2DRBtbo9EL0IeaqEUZRM8FSSuDc8WP2UvQsNxb8iuHHRuczKgvhKpUDJL5UNlX7Q4PWh0pPuuaZQgtfhxlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6+0IRFbSnDxB0AjD+tcOGOUvKKvkRnLvC3XG/ulWL8M=;
- b=Dskg1+OnTTVC+j8OS3uj+L2uLNOJJiJyu8/FUvE3ukei2xZLp3MafhAeZkKCJcE4BppNAzbSbiA2PBDQ9jn2JJy9oJaYESys7GB9uATvccHsUgGO4KPzJwStkfrcAdGLQ8wXlSI6lBZS3jWyw1ZhlrJawD0+Z9Dxklq1QBu/ZT20pz+z5g9J5BKgz+fQ9WCxfINdpgP7Az9QvlX/yns9gFUh25hR5FPUSDnjl21LlEJlMqUJsirTmi0C7QhI6io0wiSLotv/gkNFHyEZaYhJjQj+D5Rt+GcLOlKKDoPKlWvsxHI9HK14h+JIycx3pdKe4W8xbpHMuib5CXQ36oyWVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6+0IRFbSnDxB0AjD+tcOGOUvKKvkRnLvC3XG/ulWL8M=;
- b=Ai5JERTajhZ4DhEBg82oGVdDezsiApYq8gctrmtU6htkQb/TT2B9Z9iDrHvnA+bsRwt6g4504n83L4kcKzNAfY2Qo5HS3uiDnmWXZjImCkk4rhQdxbIzbE47CPcLRrU9L4rplBOjdIXXVOwLkIkRtvxVcZup64fU5JjgRoUvCXD4zUaJe6G/LmbOVleqwd1lxpmf/Fm4YSlOsH4BlnqYMRveXoegnBgKUCVn+jCfdHHxknTtXep21mWGXLgT2/aQ9YCqFH9YCmR1ZZ1ajjknAlyIfMerqIja8Nu0Rx2iYsP6R8z4N6pbh/MNbkpBzpEkk6RMe20bsqeAYwSzKrEBAQ==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AS8PR04MB9142.eurprd04.prod.outlook.com (2603:10a6:20b:449::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Tue, 10 Sep
- 2024 00:17:55 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
- 00:17:55 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Arnd Bergmann <arnd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Sudeep Holla <sudeep.holla@arm.com>, Cristian
- Marussi <cristian.marussi@arm.com>
-CC: "soc@kernel.org" <soc@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] firmware: imx: remove duplicate scmi_imx_misc_ctrl_get()
-Thread-Topic: [PATCH] firmware: imx: remove duplicate scmi_imx_misc_ctrl_get()
-Thread-Index: AQHbAvcdavEX91qRcEqWPKT0Exd0LbJQJtUA
-Date: Tue, 10 Sep 2024 00:17:55 +0000
-Message-ID:
- <PAXPR04MB84598499F93BD1708804B2C4889A2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20240909203023.1275232-1-arnd@kernel.org>
-In-Reply-To: <20240909203023.1275232-1-arnd@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AS8PR04MB9142:EE_
-x-ms-office365-filtering-correlation-id: df6347be-4976-4cbb-0f33-08dcd12e0459
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?8KOuQvIiVaW7PpBYTtQ4qg55c8K8aoCyhM5h0krRvihrckORRzNBgaN9Uau4?=
- =?us-ascii?Q?l0BvjQPox+1hypSGGZ2o1MxcU+9eUAryRkXLo0dVtFHt27ANnWc8EX2OZ7lF?=
- =?us-ascii?Q?gssbHUPtaO0ehiql07/veez3EgcIoe8SYSw2MSXNhBHAs2FvBObXWpLZSJAZ?=
- =?us-ascii?Q?FWXeBVbySK+zcK9aNBdzI+ruguj5EGabZcFvmHMg9Aj5HiGz4lNqw/GDwnOC?=
- =?us-ascii?Q?VNE0LEa5c+0BRFEMpEj4bux+L0HRYvUWgRSL9Qy2CLMrkH7z0Na1fKRoQ+VP?=
- =?us-ascii?Q?dIq2phL2FuKaHZDb1wFL51E+GbB/y9ZCBUyHGbiMq8EswANwgsvZtm16V6VS?=
- =?us-ascii?Q?TzH0up5BoEaOwgFqD5R2Gn5jtb5LUEtDkkjOb8g+Y83BMp1LaOIIAIHL6KN+?=
- =?us-ascii?Q?CQwrl++wTnSYtAXJAU2FWdmZkW632/lut4e5nMcaRi3K+Db4bSaupH5rg9Tl?=
- =?us-ascii?Q?9sV/d8snD2QdGIv2QBAI+HoUA9TZoRZwAHjs6K7kXQjjv8R2i+KdYqaOx1vu?=
- =?us-ascii?Q?7sXGAb50pYiOBwbXE9pc94tOiDKzZNpR5SynhVRtZI0+gLVNFtwDhdmeICWT?=
- =?us-ascii?Q?D6rT5XQJ+l+6xJ1xWVq6YF9z/ktV2zr6m6H0SIme+m2gtqmwIZYBDQpDeoeg?=
- =?us-ascii?Q?7ul7FZsr2YwDfZyIjKRddziSMmfa06WrCfEDjO5Mua8w3SdOLDw9ag86NC9G?=
- =?us-ascii?Q?h4YQFvrfwGS1Df0Ka/FdYnQJuaLoUgEB65iy95VTbV/OBlOaUxnTA+Eaghrq?=
- =?us-ascii?Q?cZXVUhLoXFEG+YzSaTMWOVlmYDvZyl35lj6VRKVm2xdO8lpmHT1tFjWcWEgI?=
- =?us-ascii?Q?gw3IG7H3qjlLsO3KUS28AVsTBSEPBY5Bh6jJVAvWA2dhDPV2yVKwsMADc0iG?=
- =?us-ascii?Q?DE8Bhn+i89IENrIuzEEpLsHPz/9BkiTwvOY9CrhZQpEa6ba3mB1nNSZP7OFM?=
- =?us-ascii?Q?C7oxWi/Pg8e0SaoHJljtti4Rda6dK3xR4etpiJDlw1Nerg0QSZvSBXfTI4Wd?=
- =?us-ascii?Q?FQV+sUWkWO4ZY+j9MUvQqVA3jBbf6IRntV/on2Rmpi9svad2UmoFB4HINcq7?=
- =?us-ascii?Q?eldI0+8k9HqSInEXaEwj0fgFuTZq99lN7DaVwYtM6jxKKkpWwekkFZYKUWtw?=
- =?us-ascii?Q?BVpAtXE3rUPFGh1HCNvNYdcAwYPn7iJMt9OKqWxEL4x2rXYtLi7QnRE/lx5z?=
- =?us-ascii?Q?H5hkGHYaMdFgshhaf3mKnQsKhhNLi2IHFY03DsGlZPCjM91PWdiRtlQ9jIpQ?=
- =?us-ascii?Q?erF0+2GIYipGp+fMyN/r5JTeteXJ/JVKRWkq+id+vXfxnbzC6ocKk+K8WOyz?=
- =?us-ascii?Q?Dugw47tgXTI5k5Sgjy+yCjKz2e0a+udYQd08MXsYxwSa8efRPA5lo92lIZLc?=
- =?us-ascii?Q?pxsmgrg69tyNyllM0+05bYWVjVk552fJaYQ+NEFMuWNMPwqjXw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?PRHMA5nUPQaPbXRt7NCiIo2ni2NpLBAv8G/0YS4mcyKslRxUEWp68CFHJjSg?=
- =?us-ascii?Q?vlmvkAQkndIWDIwzVNZ5pYyOe1tNi4c7PJqIB5igrmfLBddmQsQA1L1OZHA1?=
- =?us-ascii?Q?xMgJol0wtJOHrd5k7GbxEUh8c9PK2ze6JrNB/JiIlqxeR7iNwCf0btHnvJO0?=
- =?us-ascii?Q?Eh4XYTa0bcilOmdKADmtwk0e6RK5/zeA+D1xUcPFXL42IU1/bhwz1t3J46Wz?=
- =?us-ascii?Q?7A17KnTPivHLIDqwm8Rr8ftzH1yf5qgn8YG2dSIEpxX4EWSwLE0Ki1xPUltK?=
- =?us-ascii?Q?M0PpYqEJPgJYWTMW7f7HBMbmWfvej901H46tU/5673IIt3K+z9bVIlELWzyV?=
- =?us-ascii?Q?+k7sINaBA7UCRbn4PtOmppxmP3I4ERkyujzK3azDvuoYG2G8J3ctzwYLjv0b?=
- =?us-ascii?Q?Mk0ar/JHENEdrXdIq7mmQFzZXYPqIpjjOuYzEHr2LLdAGxjhIXX6lnEaeA6i?=
- =?us-ascii?Q?vh83dLtpaVVEIe5VlzcriXeEuvXpJqlKfNsEesyqgoeQPd8uUGZs+S3YvESG?=
- =?us-ascii?Q?IUcrO3QvBrTRNPeXdoPcV55/zrg7dcCV01Ea9PZp3Kig19diebkEzLy48wdx?=
- =?us-ascii?Q?2bCW4IYQ9zBUMrOI+tbZRu5M+mUvOcjE1GWUIMwST5vWYdTQMyUlnGb5YFJl?=
- =?us-ascii?Q?u6045arXXRXA1rL1m16whrNzzRidftTIJb4tKibyv64oVtLBN5Ib60MMsF7r?=
- =?us-ascii?Q?7V9XuHUPLev+J5ZBBeF97eReC21Ra9JSNrMdZmNqi14lEsivOLpcIgPWve2h?=
- =?us-ascii?Q?coAsl6uGqa+u07+/9Tw5nKKDnP715qGPFykOoDvacy3NydBy02X33RTMWkSz?=
- =?us-ascii?Q?4As87Fvg2euplFNUzHyOx0LGGFtCQXG2DBG8xcCl+otkZKciGRnyC8F8w7qJ?=
- =?us-ascii?Q?sH6go5zAGNV1knzdyjEF7tS2TuLN97FVixuI+DCoAuh8uoA+sr9R58DgVM6f?=
- =?us-ascii?Q?+dYK+duJp79A4HWG+dVZjsjrHotp1gqs6QMUUOHED42JGf33HrGR9PYaVAnE?=
- =?us-ascii?Q?QBb33PXN8csJ1ow7+tZ4weokqxlujeU0dtoO6zv7J9gdbHq0ZQICyNULaZaY?=
- =?us-ascii?Q?2QyQxhesOBLj5psqrSML1DjTb5j3btgju+ZOybZpD179SiMng5wcgjPYSXVr?=
- =?us-ascii?Q?yCxXn6CxuWJqrQbZpNuAfuTlNh9Hf74Usp8ZZ04J6u1ArrRNYtDvK86H6fjE?=
- =?us-ascii?Q?1MFyQ6+bwuhBPlBIjmIpJEMhGe1SFn7AqmgNsoFw8aS5QKT70zpZ3XU/7OSF?=
- =?us-ascii?Q?9xne/lxXwsSABpfyuhYAACPy4SRihEx1WwixDo+tWGJuQeCS1cyj9VhcQUFz?=
- =?us-ascii?Q?hKO8gNhQc+ipE9PEo7wMXHH7QRl4mNzQyRB9rVB5po1TSr8f1bz23N4YJTLk?=
- =?us-ascii?Q?u+V84DLnrBYoSLH8Zhm8hPVp7m37QJIvhZXhKmOjfl94151lZAXRSfJVMtsm?=
- =?us-ascii?Q?cT+JRMicyBsk248/l7rLyoIHZE9LtJMiFg8eFO9lYG0Z32kR+nTcFKa5UVmc?=
- =?us-ascii?Q?Avs3u3E37K1aYmwnjEqhERLoRTX4hiQdHrFhWGVbvF0scIM+pCliqoEoJYgc?=
- =?us-ascii?Q?CMrNg3megcHmpb8JpfE=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578A679D2
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725927527; cv=none; b=dbXEMU2bCcRmEUI7m8b5FPLGJEmYO+wGsCuY6cdPH9+HR31iIqUD5uR+TL662gjx5iD1gYoOT3SgtYVT+Ow8G11wb7w7SP5PG/V6EMpPA2/iQ8tqvSdnSSPiW9VDjvHjB0xPCgy3uIqVfWE00nBdFcekC14sAdqltWleA7z0iT0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725927527; c=relaxed/simple;
+	bh=L3a2g1E/6DmPzoCid4NmrExadsFZujU2lIAaLeWmoB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dh35lFWshYzvSBwJhi5zxlbYbdaWLCZ9cjfSuSkfEYl0woG2o2Jh7b7Zea3FAi1bXZeTkQOOc2dWnYcAedeA4GrSpGFhRb3MS0MVov3tZbAu6DDDT2v1zSMbhrvqh6xxZeUe+AgIHm8DL9puhnO8uTpUWnId738gkGhsgVLDz34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HbmVZlYj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725927524;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3qDUKZkW1qm/U7nIsNHl6u/vxYb3LmdiiRvhpMXyqBg=;
+	b=HbmVZlYjLV/FzAiTvJ1wpeLM0praOaMuYBvMoCTmBOxgx//L9lIekaNW1MtwSS9YMa36wR
+	YO4FzqoECpn25MrUzNn+R66D6nK1iqQG89ZzbXVJV3Di3/y/lnH1f04kP3zz+q8C+e+KMO
+	KpKOnNZEVFMOt+mKT54IJ3Mq+aUi6nk=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-659-nsOucS-CMvykULshrDLCKw-1; Mon, 09 Sep 2024 20:18:43 -0400
+X-MC-Unique: nsOucS-CMvykULshrDLCKw-1
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-718e82769aeso373549b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 17:18:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725927522; x=1726532322;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3qDUKZkW1qm/U7nIsNHl6u/vxYb3LmdiiRvhpMXyqBg=;
+        b=V8gSMMnaw/PVV2U+mAOkn7EFpGFjatW3EjDvJCpCrJ/uWtzKZq2U205uCxfiwf/h6E
+         KeenqJr47D2U7TpQIOBxUzs+CvM2JZy0oo2VGfe150iAfGYW2sRkAZE/SxOQKFIDHzyF
+         WaPVb0vZvztXvSyBxs4Jgq74Lv2KT5fS4wkaTqdUjHr8HVRIpS4pt6jIt68CA+ncuxS+
+         OKittXaOzk/2JjEj8qsQofkTN2PQfKjKW6Vg6L/YB/l21WIF0JSNwkaxCR+KmmKdHjSo
+         hTR4JKeLTbXr3JASxhZ0CNIEU+XSYV/J9XixHLHzF8SHNJkQWxYDU5qy8Z65rIrEP5CN
+         0/AA==
+X-Forwarded-Encrypted: i=1; AJvYcCXw8jVz3jkAOI8MnhP8WX0GXQhes3WxKbVokp5m0CSsBuH2xndh3ujyrgLUlz85JQJa0y3NQEHP9OTIwqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8bPoar1e4pl+yPS7nfaQ0a+t/UkgRlIjEwsjX0kxpwqheYdPt
+	6qTf0l2IXAxUH3plfitVtFPYQzUyyvkr4oGl5DNH1NmiWbtjj21XgSWQfIAVZBUyZnfLO9tX3u/
+	nell9+dGxwcdqSKtvobtkOVjj2th/z2aUsqS5hqK+uR16HqW1koVEIJwgsXIuiQ==
+X-Received: by 2002:a05:6a00:3cc4:b0:718:d7de:3be2 with SMTP id d2e1a72fcca58-718e33a0050mr14892327b3a.14.1725927521933;
+        Mon, 09 Sep 2024 17:18:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHyd0cypr7QA7LSQQ0FAqADYQZb+J27E549rmhRMytoKbFbGfFE8ni5SsRVpLPAZanhv86dsg==
+X-Received: by 2002:a05:6a00:3cc4:b0:718:d7de:3be2 with SMTP id d2e1a72fcca58-718e33a0050mr14892272b3a.14.1725927521353;
+        Mon, 09 Sep 2024 17:18:41 -0700 (PDT)
+Received: from [192.168.68.54] ([103.210.27.31])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7190909222bsm284268b3a.115.2024.09.09.17.18.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 17:18:40 -0700 (PDT)
+Message-ID: <b5eab951-c2bd-4d4f-84c7-9617cc8d29cd@redhat.com>
+Date: Tue, 10 Sep 2024 10:18:31 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: df6347be-4976-4cbb-0f33-08dcd12e0459
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2024 00:17:55.1273
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 97OFtxkpNBlQMKftPwarLAbBk6Z5oYcbVg/SCQTbzOeG6GqZ1zIREA/RiiF6tZmwTS89UlYOY1vmU8ZNMmFlqQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9142
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 06/19] arm64: realm: Query IPA size from the RMM
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun <alpergun@google.com>
+References: <20240819131924.372366-1-steven.price@arm.com>
+ <20240819131924.372366-7-steven.price@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20240819131924.372366-7-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Arnd,
-
-> Subject: [PATCH] firmware: imx: remove duplicate
-> scmi_imx_misc_ctrl_get()
->=20
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> These two functions have a stub definition when
-> CONFIG_IMX_SCMI_MISC_EXT is not set, which conflict with the global
-> definition:
->=20
-> In file included from drivers/firmware/imx/sm-misc.c:6:
-> include/linux/firmware/imx/sm.h:30:1: error: expected identifier or '('
-> before '{' token
->    30 | {
->       | ^
-> drivers/firmware/imx/sm-misc.c:26:5: error: redefinition of
-> 'scmi_imx_misc_ctrl_get'
->    26 | int scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32 *val)
->       |     ^~~~~~~~~~~~~~~~~~~~~~
-> include/linux/firmware/imx/sm.h:24:19: note: previous definition of
-> 'scmi_imx_misc_ctrl_get' with type 'int(u32,  u32 *, u32 *)' {aka
-> 'int(unsigned int,  unsigned int *, unsigned int *)'}
->    24 | static inline int scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32
-> *val)
->       |                   ^~~~~~~~~~~~~~~~~~~~~~
->=20
-> There is no real need for the #ifdef, and removing this avoids the build
-> failure.
->=20
-> Fixes: 0b4f8a68b292 ("firmware: imx: Add i.MX95 MISC driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On 8/19/24 11:19 PM, Steven Price wrote:
+> The top bit of the configured IPA size is used as an attribute to
+> control whether the address is protected or shared. Query the
+> configuration from the RMM to assertain which bit this is.
+> 
+> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
 > ---
->  include/linux/firmware/imx/sm.h | 11 -----------
->  1 file changed, 11 deletions(-)
->=20
-> diff --git a/include/linux/firmware/imx/sm.h
-> b/include/linux/firmware/imx/sm.h index
-> 62a2690e2abd..9b85a3f028d1 100644
-> --- a/include/linux/firmware/imx/sm.h
-> +++ b/include/linux/firmware/imx/sm.h
-> @@ -17,18 +17,7 @@
->  #define SCMI_IMX_CTRL_SAI4_MCLK		4	/* WAKE
-> SAI4 MCLK */
->  #define SCMI_IMX_CTRL_SAI5_MCLK		5	/* WAKE
-> SAI5 MCLK */
->=20
-> -#if IS_ENABLED(CONFIG_IMX_SCMI_MISC_EXT)
+> Changes since v4:
+>   * Make PROT_NS_SHARED check is_realm_world() to reduce impact on
+>     non-CCA systems.
+> Changes since v2:
+>   * Drop unneeded extra brackets from PROT_NS_SHARED.
+>   * Drop the explicit alignment from 'config' as struct realm_config now
+>     specifies the alignment.
+> ---
+>   arch/arm64/include/asm/pgtable-prot.h | 4 ++++
+>   arch/arm64/kernel/rsi.c               | 8 ++++++++
+>   2 files changed, 12 insertions(+)
+> 
 
-Thanks for spotting this. But I think this macro
-should be replaced with CONFIG_IMX_SCMI_MISC_DRV.
+One nit below.
 
-CONFIG_IMX_SCMI_MISC_DRV is the macro to guard the driver.
-CONFIG_IMX_SCMI_MISC_EXT is the macro to guard the
-scmi protocol.=20
+Reviewed-by: Gavin Shan <gshan@redhat.com>
 
-So just need to use CONFIG_IMX_SCMI_MISC_DRV here should
-be ok.
+> diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
+> index b11cfb9fdd37..5e578274a3b7 100644
+> --- a/arch/arm64/include/asm/pgtable-prot.h
+> +++ b/arch/arm64/include/asm/pgtable-prot.h
+> @@ -68,8 +68,12 @@
+>   
+>   #include <asm/cpufeature.h>
+>   #include <asm/pgtable-types.h>
+> +#include <asm/rsi.h>
+>   
+>   extern bool arm64_use_ng_mappings;
+> +extern unsigned long prot_ns_shared;
+> +
+> +#define PROT_NS_SHARED		(is_realm_world() ? prot_ns_shared : 0)
+>   
+>   #define PTE_MAYBE_NG		(arm64_use_ng_mappings ? PTE_NG : 0)
+>   #define PMD_MAYBE_NG		(arm64_use_ng_mappings ? PMD_SECT_NG : 0)
+> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
+> index 128a9a05a96b..e968a5c9929e 100644
+> --- a/arch/arm64/kernel/rsi.c
+> +++ b/arch/arm64/kernel/rsi.c
+> @@ -8,6 +8,11 @@
+>   #include <linux/psci.h>
+>   #include <asm/rsi.h>
+>   
+> +struct realm_config config;
+> +
+> +unsigned long prot_ns_shared;
+> +EXPORT_SYMBOL(prot_ns_shared);
+> +
+>   DEFINE_STATIC_KEY_FALSE_RO(rsi_present);
+>   EXPORT_SYMBOL(rsi_present);
+>   
+> @@ -72,6 +77,9 @@ void __init arm64_rsi_init(void)
+>   		return;
+>   	if (!rsi_version_matches())
+>   		return;
+> +	if (rsi_get_realm_config(&config))
+> +		return;
+> +	prot_ns_shared = BIT(config.ipa_bits - 1);
+>   
+>   	static_branch_enable(&rsi_present);
+>   }
+
+Nit: It's probably worthy to warn on errors returned from rsi_get_realm_config(),
+It's hard to debug and follow if it fails silently.
 
 Thanks,
-Peng.
-
->  int scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32 *val);  int
-> scmi_imx_misc_ctrl_set(u32 id, u32 val); -#else -static inline int
-> scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32 *val) -{
-> -	return -EOPNOTSUPP;
-> -}
->=20
-> -static inline int scmi_imx_misc_ctrl_set(u32 id, u32 val); -{
-> -	return -EOPNOTSUPP;
-> -}
-> -#endif
->  #endif
-> --
-> 2.39.2
+Gavin
 
 
