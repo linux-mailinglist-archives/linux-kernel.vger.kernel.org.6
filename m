@@ -1,215 +1,180 @@
-Return-Path: <linux-kernel+bounces-322309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D67ED972714
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:22:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E645E972716
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E2451C23156
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:22:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21834B22EB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFE0143875;
-	Tue, 10 Sep 2024 02:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2971494CD;
+	Tue, 10 Sep 2024 02:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c1nOSnKR"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="uq/y+jfi"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2043.outbound.protection.outlook.com [40.107.255.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3F91420A8
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725934920; cv=none; b=Nawjbo1SJy3OJw8N2Osg7kTV7+ikbesStMCOs8Ms6QeUFzEr14hDidIhhOC97Dm7aFqYGy8/vu7l1nw/x71ozxJ+A+IHnmYAhvnEzE5HSpCQ0muSVy3Cls47fn35owMjLK+CCttbiVojgim9+57Kn7SkgOiB/FVyL1x3KyXWgxw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725934920; c=relaxed/simple;
-	bh=wMv/5mkSpSB8nny/LLg6Vv3YXpQBvQ1wfYGfTWtG4ho=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=sCoyr5WdfiCJmfwFANPsRGRA1cXwl3muReoOWtgjpCZ4EkaJOgBRHjTlG5IoQmJD+mqysrwC6RDx1hS9/YJPnz/luYeNx3iQPz/YHQEKjSJPjZzMkH1JGMX51KXHVs2r2jQHtzSwsLI4d/tWonLSf/OBswvMePUKBCj0dvFYVsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c1nOSnKR; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-206fee0a3d7so90555ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 19:21:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725934918; x=1726539718; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GNKqm1Gou4dxqPlWF393GfU9Nyen2m4ocGQhCKlYTaA=;
-        b=c1nOSnKRS6xaCoWkSMg6jbQd5/JDhrRAFzC9m1e/tx5ov++rFr898sPPRlpp/YBCcv
-         l4n/Jt5ENpl+Tf2jch05EfcXdzkabAPg5ZhKcyu0t+/sjyN95mJ0gMz09lUInCMZWlkg
-         p/FzARw4QBuKQ57ALI7ZLBV/p5S9DQeiwvBdQm18D4HQhV+L9daLtoj5+8yi47/FJi83
-         l//hpmebHpiEiw7YGXO0/fgOkhCFlts1SLQGPg9F19t5QRAhqzN0LSEYolejGbIExQek
-         9EF2xf7Nx+88trfJQqxesa1aZ8iPSkYcX7l3m9XxlWSUDaakcj4rMUN3adVA0OHY00gu
-         eSRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725934918; x=1726539718;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GNKqm1Gou4dxqPlWF393GfU9Nyen2m4ocGQhCKlYTaA=;
-        b=dSTm/iPnVh38G+prOTsN5H6gc6Licr+lKrvIzdy3YUeyPT6PERM8+xZ3jgs3kwBSV6
-         MrhB25/jg8gUUjoBUMLdE3CX1nVZRsWqXLe1cfiByXF1TSKx3jHZRMX/8ErD6Vvlxjgn
-         UnRiGN+Zo4oJBJYx2ysgnRHdoxcDsfDZPrf6kSrps1wDnI5S9VyPdOT6xoI1Wi/bQvv4
-         VA5uEI8YzGXaNeqFsrrE6YIn0kMm3YY8HNpjd3AfBigqyazLeaKxZJ1iJgIJB91OrthG
-         oMCPAzpYpI7+B9qU/wBkdT9GuWQBlGdgFPW1UvBxSxcA0U4oF0r+2Z1qwuYwQNzL24Uu
-         L1Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCWksIre7VqkTk3yqf+0xhORtZ1l04J3zEaoPsoVFf1idNOgQYQSy0RImjAQkkGchI3DBub1hQYbmf98rpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa7/23A8/A1fHofJARDV8Xh7Gd6//vOfUrO3BZHPywrMo6jvYN
-	0Oyzw+KAtJCx0mKf0Zm+XxnUaMCqp1q0EsxXsvIJ2e3cxjwJ7yo5Ut0/CwlSpC1T3j0kOXehVmD
-	HVz347Kr04AkTFGkoBl9WeoH2oCPeSbjUp32n
-X-Google-Smtp-Source: AGHT+IHRCrtegyhxPtfWTbGZtTaDy4cnaHw17KvJmkcetjyy+cs48cAi0j6Wr0XZKTiZR11YdECEtiIqBtNdOKQR3So=
-X-Received: by 2002:a17:902:e84f:b0:205:753e:b49d with SMTP id
- d9443c01a7336-2074499a58fmr1488945ad.0.1725934917371; Mon, 09 Sep 2024
- 19:21:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7181EB5B;
+	Tue, 10 Sep 2024 02:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725934967; cv=fail; b=IP17S1Y3m0xnMlMp+4Sd4CBfHLViXiYb37d2HTq04ta1x5R1Xo3+tIfT5Y6NQHsseZ1ACjEhwDiLVA+TEGyxrnzesK63migBmifBQL/i23hlfZ6UaltToYG1LRBeOM+H5kNuCqVx1AyLr12yqmQQVDueEsk6Neke4zzPkYorwrM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725934967; c=relaxed/simple;
+	bh=YHbbkwVsVT9tG19+IMXnaeyAZO/k+WHXZVQO5Ln7C9Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=M+bo05m4znkqdZqsTPd+QGOEBeFRpTybwF2mGdcgJwyEQ9+Sp7HFSNOTgev0txEYvE9fipzjYLOCRBqVnGMRshJyyJEkQHRk7bxiPCBfM1I7IT5z+epRJwHQew3W17XfvWYJbEgUrM/Ahk41xsoFqWVkFzDZMVvzj+XmmGETz+g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=uq/y+jfi; arc=fail smtp.client-ip=40.107.255.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ThhgeFfVeIHpLV4P8KuenkyCJNtZp3rImRwYjHDYj8CYlRhFxvSeHXB31vGt5nUgnsXIK+BwAsII2PWoEIe+kyiebbQrY4HE218qMHHB0LjDhmaEDGdja1xhXLv2biDKjdhc8q5w/kdXSMWhVRr9wpNVzgfMtUww4LK0oo8Utd9P91wOExfDrWSX2Yi1h+mj0iU4tEhWCWcH6CEOIWugWppyoA46KMBys8DNLIyOXdo7OG3FgmymrKsA+ZXKOk6QbLiEEx8OshzcP+5uSqgMp4mjA5A0YkSbM/cRCucNI3tfJyluBkHOP31oYaQo8bnIRQDY1raMEEJaQuUL3RQgQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4SNZFdiDJ6UWUP0Ebv25obxa6HFLGTGPyNGvWVcvhqg=;
+ b=yAoH2Yu0dG8brWPjJnpc1qieKr1XBnwVbzFX7rn9B39HCzjJ35Zo+z/CyjcN/LIF8/ekMgbZAKYsKp+vv6sYQSPxzdxg78LaUd+2N48zDkZC+0u4kf9+NuT04skWNc9LwkCe8sLHRHG6QwBMnUelinnTC+VbXIlR8niyZUa79pnkTac+0PuPNZdA0AcJWk5DLrlvIzmL7gnSN0peCu3jAs9KJUEOVuO+Nsl+Qk3sVBye+yAH9vWbrm4kTsHHFI8AS9JjM/2FKH8EK1AdUK2+8MPFdCqD6QrG27Pgnf/wJpW2LDXgqySOsipjaTRZWbGISSFYyYrVtwhI48D8SqVKgA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
+ (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4SNZFdiDJ6UWUP0Ebv25obxa6HFLGTGPyNGvWVcvhqg=;
+ b=uq/y+jfi5A7EzOyPyZHoNbTSHdCvTui51LZInOwcJOcI8qoOG1b7JBHwqqEjkMu7UgXaJJEftxg4VnYjWpsnSEAk0kqt3fYnnAJQEZ2N1zdgmhaB7Y2dF0BRs2L/mp5Q0HWPzS1zA6DP6Tr9mQRb6nR9XiPWyGpj/UuVrpiXMAZnFDqS/8mjJy+zdSnWYfTJJvFOQMx3J146lhwO1iv9NFy5YkyEXtIP1f/RfyBi8R2b1jesb/IpULL2JtA7TbqOwg7X/nhpPbpQxpCXTvkGwTacW5OkD2XAXzJE6yPf47sDNg2QNDFtg3E3AqP0XyqTmyURqX8Tk8fddT8giBRL0Q==
+Received: from SG2P153CA0051.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::20) by
+ TY0PR04MB6375.apcprd04.prod.outlook.com (2603:1096:400:328::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Tue, 10 Sep
+ 2024 02:22:39 +0000
+Received: from HK2PEPF00006FB4.apcprd02.prod.outlook.com
+ (2603:1096:4:c6:cafe::2a) by SG2P153CA0051.outlook.office365.com
+ (2603:1096:4:c6::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.5 via Frontend
+ Transport; Tue, 10 Sep 2024 02:22:39 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
+ smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
+Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
+ designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
+ client-ip=211.20.1.79; helo=localhost.localdomain;
+Received: from localhost.localdomain (211.20.1.79) by
+ HK2PEPF00006FB4.mail.protection.outlook.com (10.167.8.10) with Microsoft SMTP
+ Server id 15.20.7918.13 via Frontend Transport; Tue, 10 Sep 2024 02:22:38
+ +0000
+From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+To: patrick@stwcx.xyz,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] ARM: dts: aspeed: yosemite4: Enable adc15
+Date: Tue, 10 Sep 2024 10:22:36 +0800
+Message-Id: <20240910022236.1564291-1-Delphine_CC_Chiu@wiwynn.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240907050830.6752-1-irogers@google.com>
-In-Reply-To: <20240907050830.6752-1-irogers@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 9 Sep 2024 19:21:36 -0700
-Message-ID: <CAP-5=fXihU0VH5T=59dZAUo4Qe=c5UAURUnFTuvfai+qs4XSCg@mail.gmail.com>
-Subject: Re: [PATCH v1 00/15] Tool and hwmon PMUs
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Benjamin Gray <bgray@linux.ibm.com>, 
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, Howard Chu <howardchu95@gmail.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Yang Jihong <yangjihong@bytedance.com>, 
-	Colin Ian King <colin.i.king@gmail.com>, Veronika Molnarova <vmolnaro@redhat.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>, 
-	Andi Kleen <ak@linux.intel.com>, =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
-	Sun Haiyong <sunhaiyong@loongson.cn>, Junhao He <hejunhao3@huawei.com>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Yicong Yang <yangyicong@hisilicon.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB4:EE_|TY0PR04MB6375:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 9efe5c7b-3eac-40f0-d3ab-08dcd13f709f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2IJvcr92O+AQ5xmAMMZf7u7kpIIrm8q52GiG7v6FlE3+HJv8jGZIqwK3fhR5?=
+ =?us-ascii?Q?OfPEEvQ3Sbnlhwp/amKI7yZSfOJC8TXP1M6gVRevhXZVZQuurjVlLglNsHM7?=
+ =?us-ascii?Q?dRiQi1Rp+TxQFJhllt1xiPFqXI98KeuKG/EJtRSs08eR1H6//dY0JYLydFCP?=
+ =?us-ascii?Q?G0z5XuMQsEAhVIObUHbja1FvIvGJFMtjv2+Cr4r7h1rQRLmyASTwNErei0mT?=
+ =?us-ascii?Q?tcn6h536SQIxJoCAJB7+0RIBTWw0jgFOFbjwHF4BfrSRoNTSuwyqyglgFsls?=
+ =?us-ascii?Q?ms3gj9/uM2Nom08bAvIVrTQPZ6QsCJNcvJUs8fmye2isgFsISLCi4m9blupr?=
+ =?us-ascii?Q?KCSiojWPKm51Ejh07pDuQv6zpQAFQvbcOCkZNwPFSYU75m7+O4CqAin0Zrrj?=
+ =?us-ascii?Q?+2KHWT2behF0hGq70PE/3E6lN11jS3B+clipRRu/0lipNxG/Jrx8yjuGmiy5?=
+ =?us-ascii?Q?gyqi5tfbi9+vJfHduwQUqM6BFBh5QybWA5rSR1ZOWM9PPSrnDAbmjgTxA8Uo?=
+ =?us-ascii?Q?AvYj8B58WhzU4TB/WS3R2R7N2vEbCfQUzJElEIXR0X9Z7bfl3d/skNgfH8ul?=
+ =?us-ascii?Q?zgaUHr6mJ4hGGS8rQUB/QE9M+Fj0uZRquOoyZ9bBLfu9XxgBV42h2c/fzn6L?=
+ =?us-ascii?Q?QX8L7CGvrqmOQAw8WBwOKB9brfBvgMO/55iHlmAkiWsdQ6FO8UtoBJ0CzeAO?=
+ =?us-ascii?Q?ZtVGb83YXu9MTkmFzy7AX//L5tG4P41IE3BSGGry1CP14hp8l3Z7f0P9MrZu?=
+ =?us-ascii?Q?sAS6ISemOzL7sAFvqNDrOT00f95RKAzRH1fgYgE0BOIQVjkY+qAMvEJ9WkrZ?=
+ =?us-ascii?Q?ugMutnHqkQ3F5BEX4vcfH1oCFWYrJEnl/urKv82yO6hHUeZHDBDohYWtjMLt?=
+ =?us-ascii?Q?N6FFVgJwb2oRAmy4iRL+Caxl4R2UhZIdAOKeRu6SXhUJczDkD5MqTvEYYZJZ?=
+ =?us-ascii?Q?PRUt9833GSC6o5Y2DEc9zeA1gQs7bqG371HxkYKk9Kcpo13ce9NKP5tSM399?=
+ =?us-ascii?Q?8Eb3BW9zF2xdM0A0WclnMJSdRPv35elBc4LauBI+syQOQCrRy5Tbgvp7KXWm?=
+ =?us-ascii?Q?VpMgGi7SLt3ARIjDw/NgmPrv+j4LQBqVCxYIcCz60Aj+XS0UBtmTuHoXP998?=
+ =?us-ascii?Q?P5ntXJJNzkCOA8dldU/yHh9AQghlVfHU/toPGEkCN0s8x2RRqCpdOyNfbYQY?=
+ =?us-ascii?Q?tN3KU3tPiO5WL88RqZAKK9XfmJcWqoC/H0YaQssn2R4Cr7GJfMUJnn8k20t6?=
+ =?us-ascii?Q?CNzd3tU9eSOBP0RokpusWl41cP+YOJPgxRq1nF0yEGMJf7Z9LILGW+0LLWfk?=
+ =?us-ascii?Q?QPwndTAm/MDtbsp8RTH0SPaqRDVtPDffgI8CIWtyt2ww2efTWsM3G7Cbre5o?=
+ =?us-ascii?Q?oxqDvaYOxozq/kcYu6lDEm+QhBNdDmvtidhwC0xWPveL5yT4piaBUcV3ow3T?=
+ =?us-ascii?Q?tr/o7jh/c6Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: wiwynn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 02:22:38.0091
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9efe5c7b-3eac-40f0-d3ab-08dcd13f709f
+X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK2PEPF00006FB4.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR04MB6375
 
-On Fri, Sep 6, 2024 at 10:08=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> Rather than have fake and tool PMUs being special flags in an evsel,
-> create special PMUs. This allows, for example, duration_time to also
-> be tool/duration_time/. Once adding events to the tools PMU is just
-> adding to an array, add events for nearly all the expr literals like
-> num_cpus_online. Rather than create custom logic for finding and
-> describing the tool events use json and add a notion of common json
-> for the tool events.
->
-> Following the convention of the tool PMU, create a hwmon PMU that
-> exposes hwmon data for reading. For example, the following shows
-> reading the CPU temperature and 2 fan speeds alongside the uncore
-> frequency:
-> ```
-> $ perf stat -e temp_cpu,fan1,hwmon_thinkpad/fan2/,tool/num_cpus_online/ -=
-M UNCORE_FREQ -I 1000
->      1.001153138              52.00 'C   temp_cpu
->      1.001153138              2,588 rpm  fan1
->      1.001153138              2,482 rpm  hwmon_thinkpad/fan2/
->      1.001153138                  8      tool/num_cpus_online/
->      1.001153138      1,077,101,397      UNC_CLOCK.SOCKET                =
- #     1.08 UNCORE_FREQ
->      1.001153138      1,012,773,595      duration_time
-> ...
-> ```
+From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
 
-+linux-hwmon@vger.kernel.org as a heads up.
+Enable Yosemite4 adc15 config for monitoring P3V_BAT_SCALED.
 
-Thanks,
-Ian
+Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+---
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> Additional data on the hwmon events is in perf list:
-> ```
-> $ perf list
-> ...
-> hwmon:
-> ...
->   temp_core_0 OR temp2
->        [Temperature in unit coretemp named Core 0. crit=3D100'C,max=3D100=
-'C crit_alarm=3D0'C. Unit:
->         hwmon_coretemp]
-> ...
-> ```
->
-> Ian Rogers (15):
->   perf list: Avoid potential out of bounds memory read
->   perf pmus: Fake PMU clean up
->   perf evsel: Add accessor for tool_event
->   perf pmu: To info add event_type_desc
->   perf pmu: Allow hardcoded terms to be applied to attributes
->   perf parse-events: Expose/rename config_term_name
->   perf tool_pmu: Factor tool events into their own PMU
->   perf tool_pmu: Rename enum perf_tool_event to tool_pmu_event
->   perf tool_pmu: Rename perf_tool_event__* to tool_pmu__*
->   perf tool_pmu: Move expr literals to tool_pmu
->   perf jevents: Add tool event json under a common architecture
->   perf tool_pmu: Switch to standard pmu functions and json descriptions
->   perf tests: Add tool PMU test
->   perf hwmon_pmu: Add a tool PMU exposing events from hwmon in sysfs
->   perf docs: Document tool and hwmon events
->
->  tools/perf/Documentation/perf-list.txt        |  15 +
->  tools/perf/arch/arm64/util/pmu.c              |   5 +-
->  tools/perf/arch/x86/util/intel-pt.c           |   3 +-
->  tools/perf/arch/x86/util/tsc.c                |  16 +-
->  tools/perf/builtin-list.c                     |  15 +-
->  tools/perf/builtin-stat.c                     |   7 +-
->  .../pmu-events/arch/common/common/tool.json   |  74 ++
->  tools/perf/pmu-events/empty-pmu-events.c      | 208 +++--
->  tools/perf/pmu-events/jevents.py              |  16 +-
->  tools/perf/tests/Build                        |   1 +
->  tools/perf/tests/builtin-test.c               |   1 +
->  tools/perf/tests/parse-events.c               |   4 +-
->  tools/perf/tests/pmu-events.c                 |  12 +-
->  tools/perf/tests/pmu.c                        |   3 +-
->  tools/perf/tests/tests.h                      |   1 +
->  tools/perf/tests/tool_pmu.c                   | 111 +++
->  tools/perf/util/Build                         |   2 +
->  tools/perf/util/evsel.c                       | 287 +-----
->  tools/perf/util/evsel.h                       |  23 +-
->  tools/perf/util/expr.c                        |  93 +-
->  tools/perf/util/hwmon_pmu.c                   | 879 ++++++++++++++++++
->  tools/perf/util/hwmon_pmu.h                   |  30 +
->  tools/perf/util/metricgroup.c                 |  45 +-
->  tools/perf/util/parse-events.c                |  92 +-
->  tools/perf/util/parse-events.h                |  13 +-
->  tools/perf/util/parse-events.l                |  11 -
->  tools/perf/util/parse-events.y                |  16 -
->  tools/perf/util/pmu.c                         | 108 ++-
->  tools/perf/util/pmu.h                         |  17 +-
->  tools/perf/util/pmus.c                        |  25 +-
->  tools/perf/util/pmus.h                        |   1 +
->  tools/perf/util/print-events.c                |  36 +-
->  tools/perf/util/print-events.h                |   1 -
->  tools/perf/util/stat-display.c                |  14 +-
->  tools/perf/util/stat-shadow.c                 |  24 +-
->  tools/perf/util/tool_pmu.c                    | 508 ++++++++++
->  tools/perf/util/tool_pmu.h                    |  56 ++
->  tools/perf/util/tsc.h                         |   2 +-
->  38 files changed, 2116 insertions(+), 659 deletions(-)
->  create mode 100644 tools/perf/pmu-events/arch/common/common/tool.json
->  create mode 100644 tools/perf/tests/tool_pmu.c
->  create mode 100644 tools/perf/util/hwmon_pmu.c
->  create mode 100644 tools/perf/util/hwmon_pmu.h
->  create mode 100644 tools/perf/util/tool_pmu.c
->  create mode 100644 tools/perf/util/tool_pmu.h
->
-> --
-> 2.46.0.469.g59c65b2a67-goog
->
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+index 98477792aa00..2d46f7d40ed1 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+@@ -32,7 +32,7 @@ iio-hwmon {
+ 		compatible = "iio-hwmon";
+ 		io-channels = <&adc0 0>, <&adc0 1>, <&adc0 2>, <&adc0 3>,
+ 				<&adc0 4>, <&adc0 5>, <&adc0 6>, <&adc0 7>,
+-				<&adc1 0>, <&adc1 1>;
++				<&adc1 0>, <&adc1 1>, <&adc1 7>;
+ 	};
+ };
+ 
+@@ -612,10 +612,10 @@ &pinctrl_adc4_default &pinctrl_adc5_default
+ 
+ &adc1 {
+ 	status = "okay";
+-	pinctrl-0 = <&pinctrl_adc8_default &pinctrl_adc9_default>;
++	pinctrl-0 = <&pinctrl_adc8_default &pinctrl_adc9_default
++			&pinctrl_adc15_default>;
+ };
+ 
+-
+ &ehci0 {
+ 	status = "okay";
+ };
+-- 
+2.25.1
+
 
