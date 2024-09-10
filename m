@@ -1,101 +1,117 @@
-Return-Path: <linux-kernel+bounces-323972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F72974646
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:15:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87AC97464F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 075E91C24E7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:15:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 149281C24C84
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F22E1AC434;
-	Tue, 10 Sep 2024 23:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6511ABEDB;
+	Tue, 10 Sep 2024 23:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N69il8PN"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="I9C5SE9g"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454C01AC885;
-	Tue, 10 Sep 2024 23:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA581AAE0D
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726010107; cv=none; b=D07GtCjKDRvxavMYmSzRYbAacFeABzD8xD97yzpo6C+SiHjmg4LKV4fyDkeaSxcDMEaFfXkfPyoUtAbmFCrrabKd93q6oB4w7geTwXXyxqq9oewmUy2RBMiFrh3f0bHF0+KVGg7U8NHsS732lBM/IDjiZY/ZLCkk9W7dxqLfOWA=
+	t=1726010457; cv=none; b=BFHDdt50y+QjOyFQldi17S44WXz26Ca5Z5sR6fP/6EZxYf5E+lJX9RpmlcBLgvS6s+dvdPJ7wzx6vuHRY9ZBCvTXZ3OO+b4vlaKwZRfO5XclmclEiVXLuL4UyWt0w0FhzTd2NdoTSrK64I7cQy30VHwnbaBms8UHlzu4gtJzxWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726010107; c=relaxed/simple;
-	bh=Xz17c8ZNkLG3GzfZKVYYn9Zn/gMfAbV5LfJKpPdbJm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zs3keP0e98JcNrocnG3RVk07o3p98whL/9hQcPuy4214u6QgdFb79b2QWPoC6wxcP1HrL6YRygbzSvBOQwdEb2G/+Quzzxq0S79f7BIWDfxz6nTqcvgDvPxH/VpHMPYpCmAkDB4nLIyIR+smT8wIH7bqTKb76gtVeeehjIRvqso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N69il8PN; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-718da0821cbso3834909b3a.0;
-        Tue, 10 Sep 2024 16:15:06 -0700 (PDT)
+	s=arc-20240116; t=1726010457; c=relaxed/simple;
+	bh=U4EAbY9M58DyLBeT3V4uWlg+wEurSR1JCXjx/kPTLJ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YKXGGDKG7v8RoBuMs/auDEyqJl9i0kaQnKs35NDJHw76N4iYzg1RcrQ9RKCqrDHOiYVwXZf+VMoc+824ruxpigKptaU1u2PkDJpJezhbiJltLTlQL7TQPnzAVRme58LzyZXyIBh1QuT7meSI4kBXbYQJcaM5+uTalLWHjWAKAqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=I9C5SE9g; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-82aac438539so182370639f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:20:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726010105; x=1726614905; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WXRzRZgIvpwyMg3sjBSFT+kmdwWGEUsQ1CH+K9qKY5g=;
-        b=N69il8PNFyCGmJbICSrAQxi9TV125EgAja0UJsC1VGS/n1ndEuGGOVG9s8tp1GAAiH
-         5J6OA6E8NH4kU7J779oJI0RHtlm59S5T1v1mg/89ps7EbnN/2iL9+YVgXmHG/YLGNKUm
-         UZhH8kFugO1ycKGRCRPhmDTCZTf1S+8xYq8w3us6Ql9CG7a75tJ/kx+4+44MCGWUnS0G
-         D0mP3/sYJV/tCqDMBElhgGv3Y/l4q2sWroYFT7xKe+B9UbkZpLK2CmOKWK/PFN4n0Eh4
-         TQMRjHtThxV+u+CQ+Ig0IDZ59NohLe0Cg5EGv5RD4aukUJVaVAX1xbW5LOZZ4EHKTPJt
-         7XlA==
+        d=linuxfoundation.org; s=google; t=1726010455; x=1726615255; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nP+F6KQXB41yOMLPUcFAdK1CUArMESt6YLkIllFzb3s=;
+        b=I9C5SE9gsGlmT50I6mPMlObeq+7asPc0Yh2uwjB3lzDPoi2EBzX/aj3kqTzaBxxka+
+         ftN/saHeT+Bo9y4bWKUxEEA3tfnI4W5paPFgOc/lkALV+nG+EclhMdrFQVz+R3abjRA9
+         QoetKqSMEpuEY3n0EInGTlmtdOzyyEKo0Ugv8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726010105; x=1726614905;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WXRzRZgIvpwyMg3sjBSFT+kmdwWGEUsQ1CH+K9qKY5g=;
-        b=NcH5yWWcm1MM/D7VRaCfdVYeSX4syzqvAvYoNQjcbJ/9RrB0vLXTkgR2wGRUSdJt0K
-         YwhKjAnm2Rssb0s7fG5P6N0u83USa4DfbjmA9AW0o+Z7xyovzO5orb75d+OnMaKZRNSw
-         LmGG7tYxngeR41zEUstzCtOoFrUFX2v1ZRGigBfjeMDIrctLiR29ppJJOFPo+7fHmfnK
-         KGkq0dbyNw6mKsCFyv0A61eVGcOZibx8v6/ebf18DnKncQWSch7yMtoGF7csodFxHmbf
-         Wbccz+9K7tGWzXNAM9hV6hbM+Q+2lr3jmJBRIO5uwESfRRSbCSCBitBO2FFADsJooTz6
-         IWAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjIZYNfNndjr0wA+vZ11t5LiiP6cYqsWrxS6QhE9+afN/VC/3cE0TaKV+/zwjIxOc/qOh/mO1FmN4z95I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFgR9PBo/azMUYPC699tgR7yCmcVTmXOjCF954eGOyatzObBQ6
-	7xnfg/eL2y6tcP2qRibwGhxHt1XsuRAmMQTf9xtxD/GhhTOk4ZXVSMTQ6g==
-X-Google-Smtp-Source: AGHT+IGhHvbYEcU+7D3tMQEZzYey8xjtw4xz062I7hRCrsigAz8j6ZoYTvTVjxhjjxNpfm56tIXdsg==
-X-Received: by 2002:a05:6a21:e8e:b0:1cf:2d2f:34fa with SMTP id adf61e73a8af0-1cf5e114c82mr3204273637.25.1726010105126;
-        Tue, 10 Sep 2024 16:15:05 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:7109:d564:e676:61bf])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d823cf3a2esm5277242a12.24.2024.09.10.16.15.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 16:15:04 -0700 (PDT)
-Date: Tue, 10 Sep 2024 16:15:02 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: ims-pcu - fix calling interruptible mutex
-Message-ID: <ZuDS9tfekWgHnFsp@google.com>
-References: <20240910-input-misc-ims-pcu-fix-mutex-intr-v1-1-bdd983685c43@baylibre.com>
+        d=1e100.net; s=20230601; t=1726010455; x=1726615255;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nP+F6KQXB41yOMLPUcFAdK1CUArMESt6YLkIllFzb3s=;
+        b=W4RmC08/78V7V5ypZzgtYeviWj5vFhvcvwlIzAkr/uHzgWiOkMuBPp80885pFnuLSl
+         vYMrl+eMUV+9ABwWf3tueSfgnvp455nkjYH6o84F0u/aGGK4ZXWi6XBNrTchQFSpn6v2
+         XMTYPtokEzJo8/SmpqqR8OEDi7ITcNknyREJKnNgFSYJqYBm+JpPPR8fJfdVZt0wB4Fw
+         33uhxvMELSIDmH5C1B8Q9QSwBnC49mS00jT5yD8lFMBAEuggrXKLcuutjgErt1TohS72
+         kxntavbHbB7OLjnMcg3x1H4ffeSyIkppZJjytEdWWyriyp+zbg58y4vpeIbzDrvuKBw4
+         V/vA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjostvvMkhHatHtTdPVAoZJZd0avWLpBLO2+XID2bMIKhhX2f1MvLAMdtyWrmtpUlvoSqF6JeBntJQ9+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb1miGKtkIIXoo1CYZrg4Qg6qGodEEbXOHxp/emhgiLQzHaxQK
+	o4yAUVhlZbSf+1Ji55h6yANjAQ5X+PCaJ4I+5jy59Rg1EbyaMqj7tnymqWdI8kg=
+X-Google-Smtp-Source: AGHT+IGc1C+Rskz8tPoGBdLeCU3gP07CCcQMmJVw6yyFBK3nzwjbHotz3iB3nLtNKvPCfRADwwHUfA==
+X-Received: by 2002:a92:ca4c:0:b0:39b:2133:8ed4 with SMTP id e9e14a558f8ab-3a04f0aa8e8mr189561925ab.14.1726010455190;
+        Tue, 10 Sep 2024 16:20:55 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a058fe55d8sm22621145ab.45.2024.09.10.16.20.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 16:20:54 -0700 (PDT)
+Message-ID: <48690583-7fe9-4edf-860f-7372983924b8@linuxfoundation.org>
+Date: Tue, 10 Sep 2024 17:20:53 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910-input-misc-ims-pcu-fix-mutex-intr-v1-1-bdd983685c43@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/269] 6.6.51-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240910092608.225137854@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240910092608.225137854@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 10, 2024 at 04:58:47PM -0500, David Lechner wrote:
-> Fix calling scoped_cond_guard() with mutex instead of mutex_intr.
+On 9/10/24 03:29, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.51 release.
+> There are 269 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> scoped_cond_guard(mutex, ...) will call mutex_lock() instead of
-> mutex_lock_interruptible().
+> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
+> Anything received after that time might be too late.
 > 
-> Fixes: 703f12672e1f ("Input: ims-pcu - switch to using cleanup functions")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.51-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Applied, thank you.
+Compiled and booted on my test system. No dmesg regressions.
 
-Too bad it does not warn when incorrect type of guard object is being
-used with scoped_cond_guard()...
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
--- 
-Dmitry
+thanks,
+-- Shuah
 
