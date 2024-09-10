@@ -1,184 +1,243 @@
-Return-Path: <linux-kernel+bounces-322307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D342C97270F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:18:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2868A972712
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C53141C22535
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:18:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78C96B23635
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5030F1442F4;
-	Tue, 10 Sep 2024 02:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00865143880;
+	Tue, 10 Sep 2024 02:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="njptXeO8"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="foO7si0Y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0DC1420A8
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725934720; cv=none; b=kVC2SVxoK5LUncp0dxkTFA/s6iKfAvfZJYEVNsRNmWgGD7dtlxs+gNNYnvglfnHmcP5/e8H2x+s2mMPLxrKcpQLBH1MB5wUIq145GvrMlAT8PtOShVZXZtgIeZ86pSejh2PmJEKsXr8GBcK4uFtCPL1QJZLXGFENxqPumWThpyI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725934720; c=relaxed/simple;
-	bh=4/IPSbBj42XzxW4HV97Eva2XL0zbu4XfXXs2AwAsnwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Osq6czuuJejkLuXC4C78Af1Wzo6m/P5UhCZwzlPXK/dmcJC0WGPTuhSETil5VBvWDPuZXMiRshn8dnCCea7Em3dc+Dg11/RATiRggHMLjN4sN4lcKHystgRxRP96cqahpbnHAh6OecnF4v8DCWf/TNxb6a5Nr4YpVMJwMceTnIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=njptXeO8; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725934708; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=7sI9KaaYX52g6DOUH55ov1m3JrSic7QKcsNmJRT+LYY=;
-	b=njptXeO8rJKOtq2DC6qI7JW54tlYUChiCjjX7x3rRxLNayQDFu21HVYWLIr2qh6ANOGvCY6e3OiLsHYz3sxLyoxiVTI7AHFqPFxIvoffsqQusldQZk/b0i6gIvlI4HSWpKg8utqYg1XRCIwojdmXOS/KUFncxjkrLav/nGuRW/c=
-Received: from 30.244.152.37(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WEiHvd8_1725934706)
-          by smtp.aliyun-inc.com;
-          Tue, 10 Sep 2024 10:18:28 +0800
-Message-ID: <e137404e-16cd-4d81-9047-2973afb4690b@linux.alibaba.com>
-Date: Tue, 10 Sep 2024 10:18:25 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A7E1EB5B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725934827; cv=fail; b=M8deUaHMIOlChLcQWliVQJsoxA8lUnYpN9xJNGXFVkmLKJZLcXiuURP6VqiUlTRITh9jEwxHhMZCrCnGBUkg+U+LsgSp8BgKL+PtPST3/etYWub9G/CZGHtny9Hg2sVq5DG7rQ+iPkl5BZhr+P3HEYNWWK13bJtxTJW0xC3IJ70=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725934827; c=relaxed/simple;
+	bh=2Cy1vNhsa0BHfM9+XGPpJxtfedhOcvwYH8tIFIOErF4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=b2/NBtT0f+ZUvk2mNWiYhMFBb3neuJsaQAGhXb6253tK5lPy4Gg5AD3ZkgCgRqNqb6MZUvdA6IckMRXD6tQ2Ch/mThgycKvwybUCvIq175Zsp4eappOIvmkGBTlgvys/hj2QzKRq6gT0mQusApgJaRO+3yNJ93BNyZ/afZIcstY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=foO7si0Y; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725934826; x=1757470826;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=2Cy1vNhsa0BHfM9+XGPpJxtfedhOcvwYH8tIFIOErF4=;
+  b=foO7si0YSXxkHlinhfhhkd2KWF0qWxKAMy16Jx9eixiMRJ8oKt8+lZB/
+   HdpIzDemez957cA+q/P225yzSIaJzXsAId+GoPsFofLOTP//V3cZpQH+0
+   hGGF3I5HYPpDLZwSxm7W9R3wVf29ae1WisnKyjcqxGdgE9+3DWbbIj0od
+   Ki8Jdy4DnjIs/HsEaROvUef79Kzlb+Xq16IPrHLrf+HbBLGDjrMdEkZWj
+   WuyEWfw+sFJHlhpb1qha8FIC53FosIdIEQWgmp3c1tG7me3YFKPjeZiBl
+   WP+2l1ZbDq0t339+SoPvHaSA7qkzCLv/+5pK9AD9q8CEIWVSWfj4gmOE6
+   A==;
+X-CSE-ConnectionGUID: smV6PgTTRhSa6aK041FSHQ==
+X-CSE-MsgGUID: tfP7W3vDShK5l7HSrEhGMA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="35327233"
+X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
+   d="scan'208";a="35327233"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 19:20:24 -0700
+X-CSE-ConnectionGUID: 6l/uB7ICQu2ciNKAZsoaFA==
+X-CSE-MsgGUID: spaOKUCdTy+eIja84VGD/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
+   d="scan'208";a="71837569"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Sep 2024 19:20:24 -0700
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 9 Sep 2024 19:20:23 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 9 Sep 2024 19:20:23 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.172)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 9 Sep 2024 19:20:22 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T4acKEh0+asrtOf5iINE1Vl5XnnhobfyZ14Yn8M+aQQPGBntoQNSU6+O7pbh/7L8X3UyhEAsBfYWEgNRf7lNRiLjg8RUnq3Qcfg9Sw1VnCgR1RTOLjPQjH38W6cHq7guL5tM4B2NdFYYwjQQp6g7HvuP/Stt2RSIcpt6/J9GGwdZSdj4qh0xy6yKA4Acgwmb1EdsMk1+e9l+0yOCS51j0Z1D+VNko/l4FlkvBgWeOEC6vdjUlnw/PeduXfelkbI6M9WKyJ7/cTwyefK779Py2v6Zqvwpwr5d7QhI22DshZ8kFXDhCOI2otemknE3kqj9lqvhOotpTveMi3O2uhyKPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ybNxLYB6lun2oidHqYglPQBpDDUEjVegsqL9Ua9iXeI=;
+ b=n8DJor2I/dDA3t9O4xAROFfA8lnzApMLzZAv3fXIqkvK+ysDPWXdSFP3v+aTM97jV1OU1eTIZMBnFwKv6Jdm3sFCwYjsu1+JGU/s0ez3YpIw0uXF9uWhpiW4q+WD6d3dToi+FWRdiNpul9O9WMzY4kx0pGpE+tw6Z3pE2Mp6EIju7ljc98l0K7wWpP9JKf8GZ7c01dwzwS1R8dyvvx1p7mW5/UaXN4MvBcS4jxRIoByCit1qvb1aCV7+AzGs2Q/C9ovnk1rLaqU1I7rSzPil4+E7NhTQls4UGn3TLUyU70TVBHxZ+xT9zFIxKqjdVSyx5lYPG2GH9V593JIVm+TZFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN0PR11MB6304.namprd11.prod.outlook.com (2603:10b6:208:3c0::7)
+ by DS0PR11MB6397.namprd11.prod.outlook.com (2603:10b6:8:ca::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Tue, 10 Sep
+ 2024 02:20:21 +0000
+Received: from MN0PR11MB6304.namprd11.prod.outlook.com
+ ([fe80::7f88:f3b1:22ec:f508]) by MN0PR11MB6304.namprd11.prod.outlook.com
+ ([fe80::7f88:f3b1:22ec:f508%5]) with mapi id 15.20.7939.017; Tue, 10 Sep 2024
+ 02:20:21 +0000
+Date: Tue, 10 Sep 2024 10:20:08 +0800
+From: Feng Tang <feng.tang@intel.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+CC: Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter
+	<cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes
+	<rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Roman Gushchin
+	<roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, "Andrey
+ Konovalov" <andreyknvl@gmail.com>, Marco Elver <elver@google.com>, Shuah Khan
+	<skhan@linuxfoundation.org>, David Gow <davidgow@google.com>, "Danilo
+ Krummrich" <dakr@kernel.org>, <linux-mm@kvack.org>,
+	<kasan-dev@googlegroups.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/5] mm/slub: Improve data handling of krealloc() when
+ orig_size is enabled
+Message-ID: <Zt+s2J87hZ7CZjl9@feng-clx.sh.intel.com>
+References: <20240909012958.913438-1-feng.tang@intel.com>
+ <edd4e139-363b-4a8a-a4bb-b5625acac33f@suse.cz>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <edd4e139-363b-4a8a-a4bb-b5625acac33f@suse.cz>
+X-ClientProxiedBy: SI2PR01CA0032.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::18) To MN0PR11MB6304.namprd11.prod.outlook.com
+ (2603:10b6:208:3c0::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] erofs: fix incorrect symlink detection in fast symlink
-To: Colin Walters <walters@verbum.org>, linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240909022811.1105052-1-hsiangkao@linux.alibaba.com>
- <20240909031911.1174718-1-hsiangkao@linux.alibaba.com>
- <bb2dd430-7de0-47da-ae5b-82ab2dd4d945@app.fastmail.com>
- <25f0356d-d949-483c-8e59-ddc9cace61f6@linux.alibaba.com>
- <21ddadb7-407d-48b6-9c1b-845ead2eefb4@app.fastmail.com>
- <df09821e-d7ca-4bfb-8f57-2046c072af62@linux.alibaba.com>
- <91310d4c-98d5-4a8b-b3db-2043d4a3d533@app.fastmail.com>
- <f8a965ed-e962-40a8-8287-943e872d238c@linux.alibaba.com>
- <7bbda10d-cf22-4a5f-be2d-6c100cf0c5ae@app.fastmail.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <7bbda10d-cf22-4a5f-be2d-6c100cf0c5ae@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR11MB6304:EE_|DS0PR11MB6397:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8c5d8396-c7dd-4497-b7f0-08dcd13f1ec5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?uMzPxlrvrRYKSOs+YrFPNX6kn3JFtcHRuR1lY4/d32MUKhjJhbdGJ1S3YBG1?=
+ =?us-ascii?Q?RWiEcYJom6airg/4hqn34X8yOEw1c2jxkRCzUTBLWx5dLF4J22AuQlCl4AX+?=
+ =?us-ascii?Q?3PTMDQ9FcyRbBbF7b2H2AoOONnkpSZhkJal05CxOM2/kyCRSLaoDXkMY3NND?=
+ =?us-ascii?Q?bZ/Ri3yG71Glw7K/LGGLdVVxsYTFYiRlGLu6HUnInufsRTSmNOCkIP1ZpUzR?=
+ =?us-ascii?Q?CHvyyYO1pBHSjyBbsqovgYnyPZ3lp14k/PwOYK0wObjkJdyeG2zNl0NGv3t6?=
+ =?us-ascii?Q?mHg2qMw1kimiYv+/SsKgTCAygVjcokQqelHX2UzABz+zjJhp9Lc54drN+khx?=
+ =?us-ascii?Q?nQifsO28Jl6vIob9+F/HDsRcAYDolInreSZj8eElJKfJ8x+rHg0/LhiOUQ0l?=
+ =?us-ascii?Q?x67aJqT+jXACgLuInw9FDohze9vnna23cHUTIA9u4RtAXvQVieqdPk6VK3BD?=
+ =?us-ascii?Q?sW4hEfU+pUOpA2fWSHPiEyBP3FsXg4BnbQ4eaivdz2uF5FdzTLI96i2tNmBI?=
+ =?us-ascii?Q?HUVJzqgqpMvNyGDO+2HIIuYKluGB1pwCYtpxjLeSQRThYGl1QCt5LGwmH7j+?=
+ =?us-ascii?Q?Vzo366LZGH2Pt5W6f5DMIgr26NrXiPJHBFeyusm1vRtamZqrhqGq1vzhPeC4?=
+ =?us-ascii?Q?0yXFoYyACNonmbibNlFS6vKZ+2V8KtcqlmyIsFvQOLbNp6DaS0R2+yKVWBre?=
+ =?us-ascii?Q?vk/CwFNvrahPM/P2W19I+8XZ6ra/AhgVWaCOywIMXXlaX2oeyTOHI+xBoyy2?=
+ =?us-ascii?Q?3/y+IacxoHNBPCAuJw2ta4JgXKTS+z32TUVBfON17lGP6FRrKp/0SeFEDZVZ?=
+ =?us-ascii?Q?C6oAVoNLj+T3jHT5TwmZNvi5ygWEH+mJ8PsqT7Z0Q154AY0/jMKPOiO51tjw?=
+ =?us-ascii?Q?0C536fXPNGtejQmFFbTECdXAVtZr0pGyZEpIiviREHPoukqcWc6HULTZJH0p?=
+ =?us-ascii?Q?xLXm8IIJZgaIZOqtVxAtMymxJYyg+0LiaCRf7hjcDSNDlzrFkgj9DrST+wRu?=
+ =?us-ascii?Q?RIeAbLfx1xWLF0j8bglDj1CGEsA8b1WlHsy9Ryrzm4BYq3XjFv0spzw3Ebkl?=
+ =?us-ascii?Q?K7TmRjBsGv8nvR+6iq01hiLWjscPxyOkgWxwru7g6DO3aXv3pNpdXfkpXq8u?=
+ =?us-ascii?Q?yEHqvbPKmnlHT4aoSidWgBP29RgRmIGkKJrxgEbwRHC42eQECC2MBiKa7YIR?=
+ =?us-ascii?Q?rcpgtQihZsjqc9sSOx4YLoopYYeFwVRXZIjgQniIRTuZqb6iJeAI2Gz2n39/?=
+ =?us-ascii?Q?ljt7Y0JPnGQiPNl3PbBZpXmM8Rr2sX5++sBbdqSYTayVHdzFvpxktepFXNQc?=
+ =?us-ascii?Q?F9B0exMgcTdtxHfQ8AuKFBUTyUZeCq7hLea4ueN7FmNG0g=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6304.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?zWG+ErP+WGjFpXNGtb9z7WEwB7sKeDUoaqXkqSkya/MVqwWQycF9E24yIphf?=
+ =?us-ascii?Q?vBqq7CEaw2imylx/zAu0VGLfBujXiJCAhjBp3i+mNhcPZ9IyBW0iW/sUDX4N?=
+ =?us-ascii?Q?JKPmtvIWwva6dLJ17PC5Ezdbq5YhdtwTliOhQ2QLVuG3Vc1+baxeextw3gPB?=
+ =?us-ascii?Q?Ubi01UYAKDraikyGxepegrfKxGEFAf7OK8iQw6zE/ZqOKvVrx2hR5q7TWNfi?=
+ =?us-ascii?Q?2TVB1mFJ+fQVFriZqWrxKd+0mMgoHyKbKiaoPY9U08hTJUmXuPbEBC5YItGr?=
+ =?us-ascii?Q?lR792GOTljkhIiMyB2dCC/TEOdy6u/cy10udeyNr3DPJNY2ITEjAqAH2mko/?=
+ =?us-ascii?Q?DAMPZUZhPFRDyx9dCadTgWyAkt6ZR/l2RY9rQnH1rbqC29R88fOr8SU/Dutl?=
+ =?us-ascii?Q?WT8a58eFyKkXKeg10pjqjZLssOXkRpySOeAlgZqmYIVLsDzXZT3qe8rJXon5?=
+ =?us-ascii?Q?dsePEOfMX8B9cnwmKDoU07VzK5WOxaoi4I87XlokK2hHvDEmjNInChfLz/9N?=
+ =?us-ascii?Q?iSix0gHbdXWt0mMYEYijrueWq5i5b7KU1R1x305bDZkJufnDMNwNrtKfEEur?=
+ =?us-ascii?Q?HpgdDiC2wV3EjfaxgPjYZa+HgibjSOiH/LPeuauhTWtsp2DRTOoMp+O/EhGy?=
+ =?us-ascii?Q?dMNX2HA2sUCG3eeQK6EK8qVWxmkmcii7FmZx9NMZld4cj4h4e4w09sKL8TB2?=
+ =?us-ascii?Q?WQ9tdRCA2eMRDw+N3+S/cNYVgZbtpF0QO77edoTwkls1FwGXMz++AUu1v+/2?=
+ =?us-ascii?Q?579eq2jfDin/4U+UPsoI3L+b4BE+kDvI96b7b0+rvIuwSE7g42ZIiRMqv+/R?=
+ =?us-ascii?Q?qhLWM425jgjfDcSQBBiTiU4rZ0hXVhZ6f1gzOeUeu2g+kL3DOfaM0ozPPRYU?=
+ =?us-ascii?Q?R+RC7iZ887MI6IEfbJ1YXXvrrAoYGLlJJD9I50XOEvfyyt3tUlkdqLf/0SSk?=
+ =?us-ascii?Q?rQrizDd7wvxJ618XKmlQTnQ5R3TJcGQf2vUFPhWoH8uXsfILjds+FnXPsMH7?=
+ =?us-ascii?Q?M7Sa8yw8jZG+rLi+dLYGGFD81EtlLoH2bp8ZqfCTrupCnZKlChZNMIRHeX3+?=
+ =?us-ascii?Q?28p8mL9AO8bduysZ73IzeeeBFlVAkuCoe4WJczzTjgvK1SZxrcYvgKUcRCvL?=
+ =?us-ascii?Q?9n8x/mFNl5fyQ1kt7+3Bxii63/yoL15EoAHE1CtwiQRshnPyPFOqiPTx8zIT?=
+ =?us-ascii?Q?V+mLY47cIqQxWS7REN52foEQoZ+XXuh1x0dHXjnYGd27j+ZI35SRcC5focro?=
+ =?us-ascii?Q?Tkzw4/rcHrofj8k9fqNxMbDt5WIJCzQEB0T9bufLHiPnLSZ6h3hm5lV6keUM?=
+ =?us-ascii?Q?4QiXMf+6+LMOPS+8Tj4yCQS2oGAM8PxW087FcM29RZykw4+Sa26jKgQiQ9ei?=
+ =?us-ascii?Q?IzPLzMkpfdBxLwrXoM9IHYr+5HvSU/1mD68/scapvf6ensR/8ywkCvOhqK2h?=
+ =?us-ascii?Q?LhXknHyw1GRAtDqKyB1rmCImir4AJp2ac4wMT/ZKCSt8hbD90cM5bgqsQa6Q?=
+ =?us-ascii?Q?qciYE5S6Z1qfF2bJoOGJBAt9zTNo+2ole20Nv3VBFLcLr5lPt50sIgONG1DZ?=
+ =?us-ascii?Q?qEfvbKN7XbDphfXkrDXcl3LQeYZRDHW1rznXDVON?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c5d8396-c7dd-4497-b7f0-08dcd13f1ec5
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6304.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 02:20:21.0343
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VrkGVWnRBLwR9qW8I0kPLZ4BPszaQdujEq4jlj33kBNVwSX7lAwh+CkHrPthA8p65kgx+IrPdyfuS5CydoS2Qw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6397
+X-OriginatorOrg: intel.com
 
-
-
-On 2024/9/10 08:12, Colin Walters wrote:
+On Mon, Sep 09, 2024 at 07:12:31PM +0200, Vlastimil Babka wrote:
+> On 9/9/24 03:29, Feng Tang wrote:
+> > Danilo Krummrich's patch [1] raised one problem about krealloc() that
+> > its caller doesn't know what's the actual request size, say the object
+> > is 64 bytes kmalloc one, but the original caller may only requested 48
+> > bytes. And when krealloc() shrinks or grows in the same object, or
+> > allocate a new bigger object, it lacks this 'original size' information
+> > to do accurate data preserving or zeroing (when __GFP_ZERO is set).
+> > 
+> > And when some slub debug option is enabled, kmalloc caches do have this
+> > 'orig_size' feature. As suggested by Vlastimil, utilize it to do more
+> > accurate data handling, as well as enforce the kmalloc-redzone sanity check.
+> > 
+> > To make the 'orig_size' accurate, we adjust some kasan/slub meta data
+> > handling. Also add a slub kunit test case for krealloc().
+> > 
+> > This patchset has dependency over patches in both -mm tree and -slab
+> > trees, so it is written based on linux-next tree '20240905' version.
 > 
+> Thanks, given the timing with merge window opening soon, I would take this
+> into the slab tree after the merge window, when the current -next becomes
+> 6.12-rc1.
+ 
+Sounds good to me. Thanks for the review!
+
+- Feng
+
+> > 
+> > [1]. https://lore.kernel.org/lkml/20240812223707.32049-1-dakr@kernel.org/
+> > 
+> > Thanks,
+> > Feng
+> > 
+> > Feng Tang (5):
+> >   mm/kasan: Don't store metadata inside kmalloc object when
+> >     slub_debug_orig_size is on
+> >   mm/slub: Consider kfence case for get_orig_size()
+> >   mm/slub: Improve redzone check and zeroing for krealloc()
+> >   kunit: kfence: Make KFENCE_TEST_REQUIRES macro available for all kunit
+> >     case
+> >   mm/slub, kunit: Add testcase for krealloc redzone and zeroing
+> > 
+> >  include/kunit/test.h    |   6 ++
+> >  lib/slub_kunit.c        |  46 +++++++++++++++
+> >  mm/kasan/generic.c      |   5 +-
+> >  mm/kfence/kfence_test.c |   9 +--
+> >  mm/slab.h               |   6 ++
+> >  mm/slab_common.c        |  84 ---------------------------
+> >  mm/slub.c               | 125 ++++++++++++++++++++++++++++++++++------
+> >  7 files changed, 171 insertions(+), 110 deletions(-)
+> > 
 > 
-> On Mon, Sep 9, 2024, at 11:40 AM, Gao Xiang wrote:
->>
->> Just my personal opinion, my understanding of rubustness
->> is stability and security.
->>
->> But whether to check or not check this, it doesn't crash
->> the kernel or deadlock or livelock, so IMHO, it's already
->> rubustness.
-> 
-> OK, if you're telling me this is already checked elsewhere then I think we can call this end of thread.
-
-I know you ask for an explicit check on symlink i_size, but
-I've explained the current kernel behavior:
-   - For symlink i_size < PAGE_SIZE (always >= 4096 on Linux),
-     it behaves normally for EROFS Linux implementation;
-
-   - For symlink i_size >= PAGE_SIZE, EROFS Linux
-     implementation will mark '\0' at PAGE_SIZE - 1 in
-     page_get_link() -> nd_terminate_link() so the behavior is also
-     deterministic and not harmful to the system stability and security;
-
-In order to verify this, you could also check the EROFS image
-(encoded in gzip+base64) with a 16000-byte symlink file below:
-
-H4sICPqj32YCA3Rlc3QuZXJvZnMA7dsvSwNhHMDx350IBotgt0wMwsnegDCYb8FiVbu4LAom
-kygbgwURfR1Wm12Lf5JFTIpY9B58GCK2BYV9vvDhee64226sXPlFSBrXHu5f7k4u+isT9X46
-GlHm8+9nt5tpHaxOxeS364+Wjh8PXtvP3bn9/nXvpjvq96fPfmpFLObjj7q07lzOxnq9Hubn
-eLvaapa/3N8YruVwP59+Rb54IYqoqqqzsd3xZ0uSJGnsSy/GAAAAAAAAAAAAAADA/5bmb89P
-I3aXv+YBiuzn/O3azF6zMD8AAADAHzHBP1qf7k2HRABQAAA=
-
-Here the symlink is already recorded in the image (let's not think if
-the symlink is reasonable or not for now), but Linux implementation will
-just truncate it as a 4095-byte link path, that is the current release
-behavior and it has no security issue inside.
-
-In other words, currently i_size >= PAGE_SIZE is an undefined behavior
-but Linux just truncates the link path.
-
-So I understand that what you propose here is to check the size
-explicitly, which means we need to introduce a formal on-disk hard
-limitation, for example:
-
-   - Introduce EROFS_SYMLINK_MAXLEN as 4095;
-
-   - For symlink i_size < EROFS_SYMLINK_MAXLEN, it behaves normally;
-
-   - For symlink i_size >= EROFS_SYMLINK_MAXLEN, it just return
-     -EFSCORRUPTED to refuse such inodes;
-
-So that is an added limitation (just like a "don't care" bit into
-a "meaningful" bit).
-
-For this case, to be clear I'm totally fine with the limitation,
-but I need to decide whether I should make "EROFS_SYMLINK_MAXLEN"
-as 4095 or "EROFS_SYMLINK_MAXLEN" as 4096 but also accepts
-`link[4095] == '\0'`.
-
-No matter which is finalled selected, it's a new hard on-disk
-limitation, which means we cannot change the limitation anymore
-(-EFSCORRUPTED) unless some strong reason as a bugfix.
-
-> 
->> Actually, I think EROFS for i_size > PAGE_SIZE, it's an
->> undefined or reserved behavior for now (just like CPU
->> reserved bits or don't care bits), just Linux
->> implementation treats it with PAGE_SIZE-1 trailing '\0',
->> but using erofs dump tool you could still dump large
->> symlinks.
->>
->> Since PATH_MAX is a system-defined constant too, currently
->> Linux PATH_MAX is 4096, but how about other OSes? I've
->> seen some `PATH_MAX 8192` reference but I'm not sure which
->> OS uses this setting.
-> 
-> Famously GNU Hurd tried to avoid having a PATH_MAX at all:
-> https://www.gnu.org/software/hurd/community/gsoc/project_ideas/maxpath.html
-> 
-> But I am pretty confident in saying that Linux isn't going to try to or really be able to meaningfully change its PATH_MAX in the forseeable future.
-> 
-> Now we're firmly off into the weeds but since it's kind of an interesting debate: Honestly: who would *want* to ever interact with such long file paths? And I think a much better evolutionary direction is already in flight - operate in terms of directory fds with openat() etc. While it'd be logistically complicated one could imagine a variant of a Unix filesystem which hard required using openat() to access sub-domains where the paths in that sub-domain are limited to the existing PATH_MAX. I guess that kind of already exists in subvolumes/snapshots, and we're effectively enabling this with composefs too.
-
-Yes, but that is just off-topic.  I just need to confirm
-that `PATH_MAX >= 4096 is absolutely nonsense for all OSes
-on earth`.
-
-If there is a path larger than 4096 in some OS, we maybe
-(just maybe) run into an awkward situation:  EROFS can have
-some limitation to be used as an _archive format_ on this
-OS.
-
-Similar to EXT4->XFS, if XFS is used as an _archive format_
-there could be a possiability that a EXT4 symlink cannot be
-represented correctly according to its on-disk format.  So
-as an _archive format_, XFS is more limited now (Please
-don't misunderstand, I'm not saying XFS is not a great
-filesystem. I like XFS.)
-
-Thanks,
-Gao Xiang
-
-> 
->> But I think it's a filesystem on-disk limitation, but if
->> i_size exceeds that, we return -EOPNOTSUPP or -EFSCORRUPTED?
->> For this symlink case, I tend to return -EFSCORRUPTED but
->> for other similar but complex cases, it could be hard to
->> decide.
-> 
-> -EFSCORRUPTED is what XFS does at least (in xfs_inactive_symlink()).
-
-
-
-
 
