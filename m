@@ -1,119 +1,96 @@
-Return-Path: <linux-kernel+bounces-322975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1AD973621
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:20:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5F3973625
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D96831F24692
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:20:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F211C24576
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0FD318EFF8;
-	Tue, 10 Sep 2024 11:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OhGevTi5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BAC18E021;
+	Tue, 10 Sep 2024 11:23:46 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3126018E76B;
-	Tue, 10 Sep 2024 11:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E29F171671;
+	Tue, 10 Sep 2024 11:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725967212; cv=none; b=SQlQDJm+K9I+77DsfPM+QYC/9d/ka0paaahbIj3iBKyShFJGAfETsZwid51OzSfhux1UQdQCudoeojnoemTUGp504MIrDKPjU+TZNQne9J5BnS7BQotXci3elaUnb00JgtzYX+JD3F2L/OWYLCsHoB7H02Mil5fI6YhzXVkPqZk=
+	t=1725967426; cv=none; b=Lp6DH4/2zfvX7/zJqj6jSV9gFPqHCPJ7ByGFslXmwdhNBueDX7BJgW3vE60phndpkRcWWXq/3bkNgu99GuitwS8a1RtweAaeXrdqlYOI8lzzw1WpywVTn0ct+OEimUVro2zmPDbmiwfMAMb7cLLxhZhPVxyOhqGOVh0KRFH9BRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725967212; c=relaxed/simple;
-	bh=rjSAcUspmC1erC075y4kkh9aADQDozFpK3nh4qi12uA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QlXwFBoI9vM+BOFAa+UPC3J6iEX5zzW3Z2tqYp2REuYJoHinG/PpQt7LgfqkZ71NRU0ZG89YvV5JpXMYIBXhNvwPqBXkR0DBveBrGmfIfCmUtbvXzV6m1nbySdwrhMtn5IwLzXrOjc7kmvypUNeFWNTAuV6CkBpWfwp5jWvfKEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OhGevTi5; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725967210; x=1757503210;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=rjSAcUspmC1erC075y4kkh9aADQDozFpK3nh4qi12uA=;
-  b=OhGevTi5AkW0N+M01WVtdMLexcO5NPbgF1hAdoNpy5Pxkvs4ktHgGwBn
-   oic+Ei+oSuf7FMH+ILWEihf4W3bOMmVs/tY5T0cbwRwvbe3G7LL5VzA9r
-   /GH13O/7jJi81qIFFXq/1+vfABQ6ThO3w2WNPY9zvAGG7XprkA10Dg3eq
-   gUQ4kK6PhFCKmWguuq7uMiV97/jUrUnAjxSAlshiXkblzXR4I8lE0wgpj
-   7M7OakiMDQ6ma7tJZfzISggJr71XG63HVCK/v76HwjSta1K1PkJ/gVLqV
-   1K3f3fVLqX3m1Ei2opJmRrhc3buWXPEfq7uJKeqCYRtmOAlLqLxkarh3/
-   g==;
-X-CSE-ConnectionGUID: PDB4GJoPR4SH9ioWWoa62g==
-X-CSE-MsgGUID: Vv5P7XqJShWVK19Kx629nQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24901165"
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="24901165"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 04:20:09 -0700
-X-CSE-ConnectionGUID: RcDe75R8QkSddEGNeSS98Q==
-X-CSE-MsgGUID: iXnIP94LTLOWfiLrhxTI2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="71118578"
-Received: from mylly.fi.intel.com (HELO [10.237.72.57]) ([10.237.72.57])
-  by fmviesa003.fm.intel.com with ESMTP; 10 Sep 2024 04:20:07 -0700
-Message-ID: <a2de8e23-d2a0-4585-8b51-2144801eeff8@linux.intel.com>
-Date: Tue, 10 Sep 2024 14:20:06 +0300
+	s=arc-20240116; t=1725967426; c=relaxed/simple;
+	bh=ZylxWksczSgEUECsADaiv61AwUrhoBUJsUxtli1fYTQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gYSvZ2FDNjN8yNyQZ8tS97xVP8msIPqLedMGH75vCLZNoyRDoRH1SCu6mvgxj3jhGaaNcAkhh9p/VSPT3a6TNjCpdFwH7cO2rFIsJbE20u4/HMuNI8wQg8exy+d8adRrvJDXiTBgH5XYoFTKI4iTgd1i3lp1N0oRQ7tuDecfWDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4X31Wv3BP4z13wB7;
+	Tue, 10 Sep 2024 19:22:35 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id B9E2A180AE6;
+	Tue, 10 Sep 2024 19:23:40 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 10 Sep 2024 19:23:39 +0800
+Message-ID: <f2c219c8-0765-6942-8495-b5acf3756fb1@huawei.com>
+Date: Tue, 10 Sep 2024 19:23:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] i2c: designware: fix master is holding SCL low while
- ENABLE bit is disabled
-To: =?UTF-8?B?TGl1IEtpbXJpdmVyL+WImOmHkeaysw==?= <kimriver.liu@siengine.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
- "jsd@semihalf.com" <jsd@semihalf.com>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <9d181a45f3edf92364c9e6b729638f0b3f2e7baa.1725946886.git.kimriver.liu@siengine.com>
- <ZuALQVyTBFugG0Sw@smile.fi.intel.com>
- <743187d2fde54a9ebf86d42e29eadfb4@siengine.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next v3 1/2] posix-timers: Check timespec64 before call
+ clock_set()
 Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <743187d2fde54a9ebf86d42e29eadfb4@siengine.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Richard Cochran <richardcochran@gmail.com>
+CC: <bryan.whitehead@microchip.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<anna-maria@linutronix.de>, <frederic@kernel.org>, <tglx@linutronix.de>,
+	<UNGLinuxDriver@microchip.com>, <mbenes@suse.cz>, <jstultz@google.com>,
+	<andrew@lunn.ch>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240909074124.964907-1-ruanjinjie@huawei.com>
+ <20240909074124.964907-2-ruanjinjie@huawei.com>
+ <Zt8SFUpFp7JDkNbM@hoboy.vegasvil.org>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <Zt8SFUpFp7JDkNbM@hoboy.vegasvil.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On 9/10/24 12:38 PM, Liu Kimriver/刘金河 wrote:
-> Hi Andy,
-> 
->> -----Original Message-----
->> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> Sent: 2024年9月10日 17:03
->> To: Liu Kimriver/刘金河 <kimriver.liu@siengine.com>
->> Cc: jarkko.nikula@linux.intel.com; mika.westerberg@linux.intel.com; jsd@semihalf.com; andi.shyti@kernel.org; linux-i2c@vger.kernel.org; linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH v8] i2c: designware: fix master is holding SCL low while ENABLE bit is disabled
-> 
->> On Tue, Sep 10, 2024 at 02:13:09PM +0800, Kimriver Liu wrote:
->>> It was observed issuing ABORT bit(IC_ENABLE[1]) will not work when
->>
->> "...observed that issuing..."
->> ...bit (..."
-> 
-> 
->>> IC_ENABLE is already disabled.
->>>
->>> Check if ENABLE bit(IC_ENABLE[0]) is disabled when the master is
-> 
->> "...bit (..."
->> master --> controller
-> 
->   Update it in V9
-> 
-Please add back also kernel errors that are shown when the issue occurs. 
-I saw those mentioned in the commit log in some earlier version of the 
-patch.
 
-Those may help googling the solution (i.e. this patch) if somebody sees 
-similar error on their HW.
+
+On 2024/9/9 23:19, Richard Cochran wrote:
+> On Mon, Sep 09, 2024 at 03:41:23PM +0800, Jinjie Ruan wrote:
+>> diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+>> index 1cc830ef93a7..34deec619e17 100644
+>> --- a/kernel/time/posix-timers.c
+>> +++ b/kernel/time/posix-timers.c
+>> @@ -1137,6 +1137,9 @@ SYSCALL_DEFINE2(clock_settime, const clockid_t, which_clock,
+>>  	if (get_timespec64(&new_tp, tp))
+>>  		return -EFAULT;
+>>  
+>> +	if (!timespec64_valid(&new_tp))
+>> +		return -ERANGE;
+> 
+> Why not use timespec64_valid_settod()?
+
+It seems more limited and is only used in timekeeping or
+do_sys_settimeofday64().
+
+And the timespec64_valid() is looser and wider used, which I think is
+more appropriate here.
+
+> 
+> Thanks,
+> Richard
 
