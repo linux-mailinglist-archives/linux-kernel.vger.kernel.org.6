@@ -1,126 +1,145 @@
-Return-Path: <linux-kernel+bounces-323553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82460973F3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:24:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B23F3973F45
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B59301C2550C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:24:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74D7228B5E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF891A3BBA;
-	Tue, 10 Sep 2024 17:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6DA1A4F32;
+	Tue, 10 Sep 2024 17:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKlsUtqj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lUKkbX3r"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EAA1A2875;
-	Tue, 10 Sep 2024 17:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284AF1A38DE;
+	Tue, 10 Sep 2024 17:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725988804; cv=none; b=TPheUsBDprncCzpsohrnKkc8tSW6GJY2pGc9AwGJg7MNo73xbuFRreE/av7qO2/A3NZBqjaLXZRJViCoIXYuDcoaK1L72qZ5edzMPat3ZYg6qeJxuujh7zm65a21iIoxdppafP6mGQkC7pCypVt0TZn9QMTfp/sXIk8t4IKOunQ=
+	t=1725988829; cv=none; b=tWTcOoxgOyNnzHrAqyvALfswedPWvh6qLxj5XlYWnls63JQ19yNbzD8xbKg1UPHcZRn9d1PbPo3vBqy22uvAVgkeQykPxvbmJ86ghCIPzZQrLMV5n6m93xYIXWg6JNdPn+9nEsp/TxW5XGUGgR2AaFcdWsJDr9iNtwS/v+XDs1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725988804; c=relaxed/simple;
-	bh=TvaB6J4SPaO1w4vDtpj2zNE8JWO+8r1xf8HiEUcu1xM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YUANcE93nofGveDODO+D2iCQk4Y4rFaf9zijBdtoJV7zLX5k6+WoaMdT6o4rNnecxFMXmaPULymn7FiicmA5dFKBDi9AEU5EJBptu+0HpZrfOVSSlRqxJy6DGre1xtSdvZ3ntw3TgYIETPdh55LjZXLs0jHRiF+kh4YCJ4BAEYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKlsUtqj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45769C4CEC3;
-	Tue, 10 Sep 2024 17:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725988803;
-	bh=TvaB6J4SPaO1w4vDtpj2zNE8JWO+8r1xf8HiEUcu1xM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oKlsUtqjBxe9ewO+kBetG3hSNfCwXfigGim7srXmxu3ikqBMLUeL07dcBc+H13ZWr
-	 hyqLMpeBDI3h1zXJQliHtZeT3Rj3iTse2jtsU5BUaMooI6UBu1vHtqwiP3AKMWtg6Y
-	 xgPyys2WP3y7oSPbyq+pzBr3EEvEJ5p633EtOWqCUF/dZ8QCRqgxsmUUMPj8QEoVOU
-	 +epCFf2DMuKroLqg0rPFXbuApZZ2XTgnEJ8NhBsr7G/fl92Kkk0YlSGZAxSJifpmAm
-	 IvKM5fc4EuIWCnxJXZsUhvaggesPsBq1yqfnDApzX375T+/FfCdT/fNvxM00pSAUlF
-	 iOh3JGEQALfnA==
-Date: Tue, 10 Sep 2024 10:20:01 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
-	dm-devel@lists.linux.dev
-Subject: Re: drivers/md/dm-integrity.c:521 sb_mac() error: __builtin_memcmp()
- 'actual_mac' too small (64 vs 448)
-Message-ID: <20240910172001.GD2642@sol.localdomain>
-References: <e8c80d61-2c74-4b50-ab50-2cf1291df9bc@stanley.mountain>
+	s=arc-20240116; t=1725988829; c=relaxed/simple;
+	bh=vcyFLnkvkzznCnm5LV7YtX/JXny9Ysa/px35H5yc/ik=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s5dabkpzgDD5ar69w+FB52/KFOBq7DnDeKcZjYuoshZSiHc6ctt/LYemSCxLfDVGhtPJbOC0CxrdteuuXbp+21q4JOuHX4tbwOQmbx2FaMmxVopV+stWHqFjQIWbiMt2GZgRtQDVr85MOidKzY4xRtvldIlVnjL6m6mWt9THG20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lUKkbX3r; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 58A31C0006;
+	Tue, 10 Sep 2024 17:20:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725988824;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0Ch6z1tjobzI++fJXbYA525eKQI+H40wH6oOlBG7IOc=;
+	b=lUKkbX3rbHq1e4tO1l0fOwoRZXIt/PkRz0pR5KPautsjwVgzUwmxgKIhykoNZVTg4GCGkf
+	uvBZZ/E2vfQNih9denOi5GN3XL/bHcdUjK9k5QVUscTl/t3G7IyrT++rvxZh092ZsYAaa+
+	SVnjd/MynHtbdqNhXn9IXRWfM/zNuLg2vOWpipNXKT23Pfy32l4by+xIyYCI4GLncHhVkR
+	rjrR5LwOBUsTJ7iq/nCOCRMkby3uVUQVITJ7zCdpYeP/r6X6o92aciYBzOClvnoNFuiwJm
+	zDmy4WZ7nw9NSI/sx9m5TuAlvJJvVx7lcdKQ8XC8aVuLJyvhO/v7o8yOGaN5Mg==
+Date: Tue, 10 Sep 2024 19:20:20 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
+ <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
+ <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
+ <atenart@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, Dan Carpenter
+ <dan.carpenter@linaro.org>, Romain Gantois <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next v18 07/13] net: ethtool: Introduce a command to
+ list PHYs on an interface
+Message-ID: <20240910192020.5ab9cd16@fedora.home>
+In-Reply-To: <CANn89iLQYsyADrdW04PpuxEdAEhBkVQm+uVV8=CDmX_Fswdvrw@mail.gmail.com>
+References: <20240821151009.1681151-1-maxime.chevallier@bootlin.com>
+	<20240821151009.1681151-8-maxime.chevallier@bootlin.com>
+	<CANn89iLQYsyADrdW04PpuxEdAEhBkVQm+uVV8=CDmX_Fswdvrw@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8c80d61-2c74-4b50-ab50-2cf1291df9bc@stanley.mountain>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-[+Cc dm-devel@lists.linux.dev]
+Hello Eric,
 
-On Tue, Sep 10, 2024 at 10:31:56AM +0300, Dan Carpenter wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   b831f83e40a24f07c8dcba5be408d93beedc820f
-> commit: 070bb43ab01e891db1b742d4ddd7291c7f8d7022 dm integrity: use crypto_shash_digest() in sb_mac()
+On Tue, 10 Sep 2024 18:41:03 +0200
+Eric Dumazet <edumazet@google.com> wrote:
 
-This commit seems unrelated, as the alleged issue existed in the code before
-that commit too (maybe smatch just didn't notice it yet).
-
-> date:   10 months ago
-> config: i386-randconfig-141-20240906 (https://download.01.org/0day-ci/archive/20240906/202409061401.44rtN1bh-lkp@intel.com/config)
-> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+> > +int ethnl_phy_doit(struct sk_buff *skb, struct genl_info *info)
+> > +{
+> > +       struct phy_req_info req_info = {};
+> > +       struct nlattr **tb = info->attrs;
+> > +       struct sk_buff *rskb;
+> > +       void *reply_payload;
+> > +       int reply_len;
+> > +       int ret;
+> > +
+> > +       ret = ethnl_parse_header_dev_get(&req_info.base,
+> > +                                        tb[ETHTOOL_A_PHY_HEADER],
+> > +                                        genl_info_net(info), info->extack,
+> > +                                        true);
+> > +       if (ret < 0)
+> > +               return ret;
+> > +
+> > +       rtnl_lock();
+> > +
+> > +       ret = ethnl_phy_parse_request(&req_info.base, tb, info->extack);
+> > +       if (ret < 0)
+> > +               goto err_unlock_rtnl;
+> > +
+> > +       /* No PHY, return early */  
 > 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202409061401.44rtN1bh-lkp@intel.com/
+> I got a syzbot report here.
+
+I seem to have missed the report, sorry about that.
+
 > 
-> smatch warnings:
-> drivers/md/dm-integrity.c:521 sb_mac() error: __builtin_memcmp() 'actual_mac' too small (64 vs 448)
+> Should we fix this with :
 > 
-> vim +/actual_mac +521 drivers/md/dm-integrity.c
+> diff --git a/net/ethtool/phy.c b/net/ethtool/phy.c
+> index 560dd039c6625ac0925a0f28c14ce77cf768b6a5..4ef7c6e32d1087dc71acb467f9cd2ab8faf4dc39
+> 100644
+> --- a/net/ethtool/phy.c
+> +++ b/net/ethtool/phy.c
+> @@ -164,7 +164,7 @@ int ethnl_phy_doit(struct sk_buff *skb, struct
+> genl_info *info)
+>                 goto err_unlock_rtnl;
 > 
-> 09d85f8d8909ec Mikulas Patocka   2021-01-21  492  static int sb_mac(struct dm_integrity_c *ic, bool wr)
-> 09d85f8d8909ec Mikulas Patocka   2021-01-21  493  {
-> 09d85f8d8909ec Mikulas Patocka   2021-01-21  494  	SHASH_DESC_ON_STACK(desc, ic->journal_mac);
-> 09d85f8d8909ec Mikulas Patocka   2021-01-21  495  	int r;
-> 070bb43ab01e89 Eric Biggers      2023-10-28  496  	unsigned int mac_size = crypto_shash_digestsize(ic->journal_mac);
-> 070bb43ab01e89 Eric Biggers      2023-10-28  497  	__u8 *sb = (__u8 *)ic->sb;
-> 070bb43ab01e89 Eric Biggers      2023-10-28  498  	__u8 *mac = sb + (1 << SECTOR_SHIFT) - mac_size;
-> 09d85f8d8909ec Mikulas Patocka   2021-01-21  499  
-> 070bb43ab01e89 Eric Biggers      2023-10-28  500  	if (sizeof(struct superblock) + mac_size > 1 << SECTOR_SHIFT) {
+>         /* No PHY, return early */
+> -       if (!req_info.pdn->phy)
+> +       if (!req_info.pdn)
+>                 goto err_unlock_rtnl;
 > 
-> This is paired with the line before and prevents the subtraction from going
-> negative.  It limits the mac_size to 0-448.  Is it reasonable to have a mac_size
-> which is > HASH_MAX_DIGESTSIZE (64)?
+>         ret = ethnl_phy_reply_size(&req_info.base, info->extack);
+> 
+> 
 
-crypto_shash_digestsize() cannot return a value greater than HASH_MAX_DIGESTSIZE
-because the crypto API doesn't allow registering any hash algorithms with
-digests larger than that.  That's the whole point of HASH_MAX_DIGESTSIZE.
+Indeed that's the correct fix. Should I send it ? ( including
+suggested-by/reported-by )
 
-> This buffer is only 64 bytes.
+Thanks,
 
-Yes.
-
-> 0ef0b4717aa684 Heinz Mauelshagen 2023-02-01  515  
-> 070bb43ab01e89 Eric Biggers      2023-10-28  516  		r = crypto_shash_digest(desc, sb, mac - sb, actual_mac);
-> 09d85f8d8909ec Mikulas Patocka   2021-01-21  517  		if (unlikely(r < 0)) {
-> 070bb43ab01e89 Eric Biggers      2023-10-28  518  			dm_integrity_io_error(ic, "crypto_shash_digest", r);
-> 09d85f8d8909ec Mikulas Patocka   2021-01-21  519  			return r;
-> 09d85f8d8909ec Mikulas Patocka   2021-01-21  520  		}
-> 070bb43ab01e89 Eric Biggers      2023-10-28 @521  		if (memcmp(mac, actual_mac, mac_size)) {
->                                                                                 ^^^^^^^^^^
-> Read overflow.
-
-No, because mac_size <= 64.
-
-We might as well explicitly check that in the code to suppress the static
-analysis warning (I'll send a patch), but it's not fixing an actual bug.
-
-- Eric
+Maxime
 
