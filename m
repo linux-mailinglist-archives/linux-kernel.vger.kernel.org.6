@@ -1,180 +1,162 @@
-Return-Path: <linux-kernel+bounces-322813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9CFF972E9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:45:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100DB972EA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47FA51F25554
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:45:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14A4B1C24A1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C7F190666;
-	Tue, 10 Sep 2024 09:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9020A18DF9C;
+	Tue, 10 Sep 2024 09:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="UMFN3vB1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fO06+uFg"
-Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0JpD3e7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A997187325;
-	Tue, 10 Sep 2024 09:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E5E18A6B9;
+	Tue, 10 Sep 2024 09:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725961429; cv=none; b=jnqQZqwAurxLw1jGCBifzgpjbdoI3tr0rjKlizbYESZhuBzddo64gWsJj/opI02IGLJsmjiiFBMe1FVSPvfQCAU+3+qpUNSCw7NeYM/EtzYMYg3/SyBpNL2dwOatv5BLKEwe0/LakgOkjAB0nl7lOu5NpKG3ahUEGgqRenBp/qg=
+	t=1725961455; cv=none; b=gIFAGXIOPF0NVQGkd31vSElNXJHorOSDUoUvbEwUr5moa1qDNqxRKa+HEJIDZOj9nY2lRKoR8TA3zumsxXiDg4FRH5nKFIsgrJGqqkMVOk/y9OzWiYBmWh4dv4KT+ZIyupd4lt3HDca5DPAeaGfn3xJWexRQlBH4TAGq+6n8zsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725961429; c=relaxed/simple;
-	bh=ui5wGhZUCRW5coT6WzLnjYhzoLrsRPWbFebz2dyA0FQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=aNh34MVkhKB45xiAijh1nStKkQ73qQSWdTB1Im+bRJZhiqcRfsPSpoP55DmI0+FCQxP6NTlFBzhNDr/HxYVdMMEk1p9WBdJ34ccB0Ot34JomspmHF4Tvg3RzkQxKwzHd0FPx7TmElHaOnNh+FC0E65vBNvzzGfKLCLP7HSKPz2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=UMFN3vB1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fO06+uFg; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 2D7B31140308;
-	Tue, 10 Sep 2024 05:43:46 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-09.internal (MEProxy); Tue, 10 Sep 2024 05:43:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1725961426;
-	 x=1726047826; bh=RC2tu5Bk5p0RtLEbaxphGTYXY7K+igsvyvD5mhKmwX4=; b=
-	UMFN3vB1AQgxsh0w6VCKvqeKUzD8vaVVANYxejW+Zkg6/LhB1LvVR4EbNvmneNSV
-	t1StvkhfHeR4G6+CVIodF2hxjsc0gpI94j+yNiC8P+LMBKkfkRfiPDcYmWO/KZOf
-	HJSp4H8QymPIf5ahNRSiRO200y6xDYj2rcFPNdW3s+fUhobslprCO0Kul6RflsVY
-	Fv/TaAgPP/YyBk+EFOsB6ZAZO1ue3LDmotfJDk2F0+X+9guxWdPtZ1L3cm8+Ze3z
-	iFBezWhxYyZNRZcfDufen9agrKXQhppH5zu63tR2Y2lBRM/6i5qwuglpifm5RoGX
-	MDUS0AojiSl332ktQEs2IA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725961426; x=
-	1726047826; bh=RC2tu5Bk5p0RtLEbaxphGTYXY7K+igsvyvD5mhKmwX4=; b=f
-	O06+uFgJcNn994vqXf0joOlqM3mpq1FLsm0AEbABgKhiXjMd6/S6ViavexP0lAQ5
-	ITSL+MIqV+/yFkM2zyJGkPB1GdAmgU8W2b2nGG8f/QdgOg7DxJ0YaWjdVvhyYfZr
-	BXmxN1uYeckml1yrgUBKbJsa1Jmf1FDp8dSDcVWNEafhIpMuwSk71hh9Imkhw1rG
-	7Z8169MVIRYv5SM7jSvRU65XVYzpjVX4RGxVuhyWdGsme47l059e9XSTHAqe8WQL
-	pwBxd9EcXh6i1GLYcw68CukctT0dhQcJ3yzv/ZZQkphNN1Gjj9FiMwT5HNOHLU2/
-	Exh9Lv8z9HD+k9m8J9zEw==
-X-ME-Sender: <xms:0RTgZsNMtsu55CVV8aFbrOSxAh3lHJcroREJDMKEJDIaBHtFmeCTvw>
-    <xme:0RTgZi_9T6tv56AP2PAiyHG1Y4bQPy5TT6VoKzDMsofb0153q7R_AEm35_8XT1fkf
-    VXFR_p6xpaFGlx3gMM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiledgudekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepffekveettdeuveefhfekhfdu
-    gfegteejffejudeuheeujefgleduveekuddtueehnecuffhomhgrihhnpehkvghrnhgvlh
-    drohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphhtthhope
-    egpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtshgsohhgvghnugesrghlphhh
-    rgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepmhgrtghrohesohhrtggrmhdrmhgvrd
-    hukhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnhgvlhdroh
-    hrgh
-X-ME-Proxy: <xmx:0hTgZjRfO--eqHjLJBMkkOEhPYv4-rOi_wJC6h78f3MXrDPzfEMmhA>
-    <xmx:0hTgZkuto1SqVjj9TSmlBTauR7KFK703kUTOi6fOJhHfku7JSU55rQ>
-    <xmx:0hTgZkfvyR7NMljYQAmOC3ib6vHnD5C7MIgC4wpmgEaBJT1byGTSNA>
-    <xmx:0hTgZo1HTzFBi6cMlZoEusiLPKrH4g8tMPGcwT5Rb2WW51ZmRUOJbw>
-    <xmx:0hTgZs4xsmiBfQ_ZjR_lGt0eluSnh3vUTY2T3OEgEiuzUnJqIeH82H9h>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id DF0CB1C20065; Tue, 10 Sep 2024 05:43:45 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725961455; c=relaxed/simple;
+	bh=D3N04FmIzvqggt9C4bVYVfpcu/iBmJ0tG8QKUZ/Wex4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y21Cv+LYEVxByj7AUUO8O5g2rY3H42Y2c46mEPXLNyKgwQlorWpGWa/MbE0xWNtaTmKks37kVlNL+m8eP8tGxLoBPLVf+FdJD61WanquqjJp5WVAA4DMvm6JD6a9MOK5JKzjzOTTXDV6gVKVhhSHQdafTE7bZ9jjiK4JauwXDX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0JpD3e7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4C6FC4CECC;
+	Tue, 10 Sep 2024 09:44:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725961454;
+	bh=D3N04FmIzvqggt9C4bVYVfpcu/iBmJ0tG8QKUZ/Wex4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=V0JpD3e7sKruPeep6Cxyq2dpx6qjdL0MIrRHp5Yy29lynGweoxEznoPIH4IkTuXjZ
+	 p6YtutpNth7tSupJtqjbJ5I55XrfUiAn+/Ou6IAaYynWlmub14PpBZynEnOQ4VpSrU
+	 8x7WrCqIIRZIsecKpg5WILTWBtyowS6vulX3djzTkkF7KMCY0qqytTGQHwIGioYbAY
+	 ZnQ0tjEcEQYZm7eYeXkrTtSIhmLiOiukzLA+ou9YHVkOJBQEewhhJLw9C2LhqojNxY
+	 ttiZW1TvZZVf7EvQIbAHAYhvhZ3ySIZdPfcQ4XrlGYyPyr8OwcGMiS0Fuk+GdHx3p+
+	 lQdhAqe53HHMg==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f6580c2bbfso53433041fa.1;
+        Tue, 10 Sep 2024 02:44:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU5Rae+h2LeHvTrk+v9CnT6V/3ie3Rr3WJz2muI+qHWOs+jbUPWUQhnOVvoEknzDFkIv4Yg0k74rntoMozK@vger.kernel.org, AJvYcCVcbpzoDp0lAZY5sjtL8rzLn/b7NvQ+XuAXof956CNdIzcnsOZg0AQkt03m/+6VNwn1O3J2yq7D3fdz+aOv6sI=@vger.kernel.org, AJvYcCW9Yk0ySK7ovmbKmwAs5m/idN+nYXmBV06i3rrGyfpdEM5PIREmJVuO8ym6iFl0Zaws7HQcIO+kQNxkxsKvYg==@vger.kernel.org, AJvYcCWvEsBojM/dkcf5n9643/4MI/PxL7lU8Yp32JaYJ9JkW9kZ22M8oJzSmlhDrkpqmpsAxMkgV9I0M7YH5jk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ2fHgzMYSCSBSgfnthvjgKfI/MWXTuIsjrzGMsvL//3EZur07
+	aVcuWriWRN0LGIhrAiycWil5awupod5AOIvhfz8nsfTRJtQGGCF1ywRWCy/pI0YMY3QQM1ogJyX
+	yVhNY47fV0qlDfBfzSqy7gRfka6I=
+X-Google-Smtp-Source: AGHT+IHdShnxBBjUPptQ41/ldZfk223s5R8ozEYJtzbMZjFzw1UM2NBN4Nfeh9oGsEZBQBVytVHnTCzwafdOaAGxUc8=
+X-Received: by 2002:a2e:bea5:0:b0:2f7:54fb:e68c with SMTP id
+ 38308e7fff4ca-2f772603a20mr9852201fa.4.1725961453356; Tue, 10 Sep 2024
+ 02:44:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 10 Sep 2024 10:43:23 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Message-Id: <b4833f82-9e7e-4667-994b-c444ef935a9f@app.fastmail.com>
-In-Reply-To: <alpine.DEB.2.21.2409092259110.60835@angie.orcam.me.uk>
-References: <20240908-mips-chore-v1-0-9239c783f233@flygoat.com>
- <20240908-mips-chore-v1-2-9239c783f233@flygoat.com>
- <alpine.DEB.2.21.2409092259110.60835@angie.orcam.me.uk>
-Subject: Re: [PATCH 2/2] MIPS: kprobes: Massage previous delay slot detection
-Content-Type: text/plain; charset=utf-8
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-22-samitolvanen@google.com> <CAK7LNAQdutCiBkWtA6MbVLpfhB-MQXnszQm8eEiBZpeX++5eLA@mail.gmail.com>
+ <CABCJKucott2g8mZyJ0uaG+PdPTMsniR7eNCR9GwHpT_kQ+GFvg@mail.gmail.com>
+In-Reply-To: <CABCJKucott2g8mZyJ0uaG+PdPTMsniR7eNCR9GwHpT_kQ+GFvg@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 10 Sep 2024 18:43:37 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATyv+zfSwyykKQrSjxR84ST0xTyEarnAudF2VuLPVxqnQ@mail.gmail.com>
+Message-ID: <CAK7LNATyv+zfSwyykKQrSjxR84ST0xTyEarnAudF2VuLPVxqnQ@mail.gmail.com>
+Subject: Re: [PATCH v2 01/19] tools: Add gendwarfksyms
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-
-
-=E5=9C=A82024=E5=B9=B49=E6=9C=889=E6=97=A5=E4=B9=9D=E6=9C=88 =E4=B8=8B=E5=
-=8D=8811:02=EF=BC=8CMaciej W. Rozycki=E5=86=99=E9=81=93=EF=BC=9A
-> On Sun, 8 Sep 2024, Jiaxun Yang wrote:
+On Fri, Sep 6, 2024 at 5:53=E2=80=AFAM Sami Tolvanen <samitolvanen@google.c=
+om> wrote:
 >
->> Expand the if condition into cascaded ifs to make code
->> readable.
+> Hi,
 >
->  Apart from broken formatting what's making original code unreadable?
-
-For me it's confusing because wired layout, cascaded ifs are clearly
-easier to format and has clear intention.
-
+> On Thu, Sep 5, 2024 at 2:30=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.=
+org> wrote:
+> >
+> > On Fri, Aug 16, 2024 at 2:39=E2=80=AFAM Sami Tolvanen <samitolvanen@goo=
+gle.com> wrote:
+> > >
+> > > +++ b/scripts/gendwarfksyms/gendwarfksyms.h
+> > > @@ -0,0 +1,78 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> > > +/*
+> > > + * Copyright (C) 2024 Google LLC
+> > > + */
+> > > +
+> > > +#include <dwarf.h>
+> > > +#include <elfutils/libdw.h>
+> > > +#include <elfutils/libdwfl.h>
+> > > +#include <linux/hashtable.h>
+> > > +#include <inttypes.h>
+> > > +#include <stdlib.h>
+> > > +#include <stdio.h>
+> >
+> >
+> > Could you include external headers first,
+> > then in-tree headers?
+> > (and one blank line in-between).
 >
->> Also use sizeof(union mips_instruction) instead of
->> sizeof(mips_instruction) to match the code context.
+> Sure, I'll reorder this.
 >
->  That has to be a separate change.
-
-Given that it's a tiny style change as well, it makes sense to combine
-into same patch.
-
+> > Also, please consider using scripts/include/hashtable.h
+> >
+> >
+> >
+> > How about this?
+> >
+> >
+> > #include <dwarf.h>
+> > #include <elfutils/libdw.h>
+> > #include <elfutils/libdwfl.h>
+> > #include <inttypes.h>
+> > #include <stdlib.h>
+> > #include <stdio.h>
+> >
+> > #include <hashtable.h>
+> >
+> >
+> >
+> >
+> >
+> >
+> > If necessary, you can use this patch too:
+> > https://lore.kernel.org/linux-kbuild/20240904235500.700432-1-masahiroy@=
+kernel.org/T/#u
 >
->> diff --git a/arch/mips/kernel/kprobes.c b/arch/mips/kernel/kprobes.c
->> index dc39f5b3fb83..96139adefad2 100644
->> --- a/arch/mips/kernel/kprobes.c
->> +++ b/arch/mips/kernel/kprobes.c
->> @@ -89,12 +89,12 @@ int arch_prepare_kprobe(struct kprobe *p)
->>  		goto out;
->>  	}
->> =20
->> -	if (copy_from_kernel_nofault(&prev_insn, p->addr - 1,
->> -			sizeof(mips_instruction)) =3D=3D 0 &&
->> -	    insn_has_delayslot(prev_insn)) {
->> -		pr_notice("Kprobes for branch delayslot are not supported\n");
->> -		ret =3D -EINVAL;
->> -		goto out;
->> +	if (!copy_from_kernel_nofault(&prev_insn, p->addr - 1, sizeof(union=
- mips_instruction))) {
->
->  Overlong line.
-
-Nowadays, check-patch.pl is happy with 100 column line.
-
-I used 100 column line in many subsystems and never receive any complain=
-t.
-
->
->> +		if (insn_has_delayslot(prev_insn)) {
->> +			pr_notice("Kprobes for branch delayslot are not supported\n");
->
->  This now overruns 80 columns making code *less* readable.
-
-I don't really agree, we are not in VGA display era any more, see Linus's
-arguments on removal of 80 columns [1] and why long line are more readab=
-le [2].
+> Thanks for the patch! I think this would otherwise work, but I also
+> need jhash (or a similar hash function), and I can't combine the
+> tools/include version with this, because it ends up pulling in a
+> duplicate definition of struct list_head. Would you consider adding a
+> hash function as well?
 
 
-[1]: https://lore.kernel.org/lkml/CAHk-=3Dwj3iGQqjpvc+gf6+C29Jo4COj6OQQF=
-zdY0h5qvYKTdCow@mail.gmail.com/
-[2]: https://lore.kernel.org/lkml/CAHk-=3DwjR0H3+2ba0UUWwoYzYBH0GX9yTf5d=
-j2MZyo0xvyzvJnA@mail.gmail.com/
+I did it as a part of my kconfig works.
 
-Thanks
->
->   Maciej
+Check scripts/include/hash.h added by the following patches.
+
+https://lore.kernel.org/linux-kbuild/20240908124352.1828890-1-masahiroy@ker=
+nel.org/T/#mea41ff4c5b6c77aaaae1ed9dac6723bc2f705107
+https://lore.kernel.org/linux-kbuild/20240908124352.1828890-1-masahiroy@ker=
+nel.org/T/#m9050a270fedb7df9a54e843674bc9ad8fd068f57
+
+
+I think simple helpers are enough for name_hash and addr_hash,
+but please let me know if you encounter a problem.
+
+
 
 --=20
-- Jiaxun
+Best Regards
+Masahiro Yamada
 
