@@ -1,229 +1,151 @@
-Return-Path: <linux-kernel+bounces-323843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF2E974423
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:38:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E3C974426
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B292B2453F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:37:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C097E1C215B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B574F1AB51E;
-	Tue, 10 Sep 2024 20:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288D11A7AF6;
+	Tue, 10 Sep 2024 20:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YqzedgHw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O5TT0uFA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7CB1A76CB
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81B8197A6B;
+	Tue, 10 Sep 2024 20:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726000642; cv=none; b=M0VtQ0Jjvqc/nR6ubkH0/Z+DP14e/m5Ox6RJVRBmZjZGIW+Z+z1eaFhzu68jkqSJ/U3/Em3fSl4O/TzSnqfZk231+HLlc6eqOwkecOXwI6bzLeUMiA2NCRHbH7M063Rn9BLqklqzIwBPqwiJzc3WzvFUz8Oe0eDW6pMFTKnbWYE=
+	t=1726000816; cv=none; b=tf10kQKoX4ZPHuKvhQX34CGD/Vg+fyQZKP86HFS3bL3aV7n/nazrdB1XEctMpJbQBSzoqO5kXqjGm+wkaikXzMgjLamL0iMBG+6LCQUJpzr335jNSoJcKT5MJbOTsI8wmvqczGs2+kEscR9FPplIlIlRkTXa6Fp5TI3yn5qja/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726000642; c=relaxed/simple;
-	bh=j8BLNPTIlp97YukBiFjqGPOR450ctjl+wiZlePlvtvs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sve6oHr193DJRTA/uQk+9kQhIuannsC2yIe6pf3580r2WtafPimHrpbmy80ofLa9DFMvyk0T3XbKNiNLiidW756KG10WvkoSs7I2VkUhkTlmMxYrBjNO/62AUv8aHUSU6AYM9VtC6Dgr5i3iA2ENJGJhPycpuf6aIXQzLRVbKSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YqzedgHw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726000639;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VzZyBKVvrar3lKddj2cXKWYgMoZUq2MZKrtP2P65xVI=;
-	b=YqzedgHwmGcIu09F4grk4Ofv2A6ntbkoiuqF6ih5Q3IlKr4jbQ/+AvM8M0kCW1wifI5R3a
-	Te4mwKymQoOJjb5hYaA2njkBHXuxnN7oTlkTwiD5aSlMiDdYgAWQuMQ4IO2y5PZI5t+Fss
-	x9jJquLZRwVisivL7W+69ZQOxjlYq6g=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-686-1TKDTUY_MeS5xIcdAZudsg-1; Tue, 10 Sep 2024 16:37:18 -0400
-X-MC-Unique: 1TKDTUY_MeS5xIcdAZudsg-1
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7a7fa083271so888937085a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:37:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726000637; x=1726605437;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VzZyBKVvrar3lKddj2cXKWYgMoZUq2MZKrtP2P65xVI=;
-        b=B4xmWWYfUJvzi1aXMAVW5hFvHLMTi4Sz9vtlkVrhfKA6JDS6PowGBY6d3E8uNvYjzb
-         y1kzwLNMzjA4X1IwngRvbRlYHXV+/chLAyBrB0shSQJ95hW1kxp/nNnxrImOn5fTMn8A
-         bu8Jkq5Yd4xXd5gDIsooqw5SR9VRlaw6MOQA0qQCbIFjZ7TITSqqmUvLiSLefD9BPcxv
-         6xDSK0jcTgId8OFEOzbH/QfRMLRhGEftnFFYMONiXTqxDuhM3RMEvi+/L+sas7s+3xjD
-         qZhPbhWxcfA5AcNqwgMVlcAAFAox3HBSl3YNtWLL9lbRh/vpg8fZjLJA4WOWEi8IHyhD
-         9teQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWPPNPyioopa/fnt9zOn6drqxWJGW9+9ROugqH2cHrFI247H8hlAfV/7vOK1p4YqjySpTHQkvlvHymhs4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxsu+8UPTCPrtBc+KPcmC12bwRoQLPZGFBDyRqyK7ZQ6WF6bwIt
-	tLjYOQnx2ugTZttvqp3AMBVuV5mjfedOCNCKyUXIwSbGl8InRPwr9ulJuLbOihjHC0XbIVvHv17
-	qWTIu0iu0rBjyhAOPgkI2mp9hdpPzW1RLf5cUaJX/AIo/C8gJSwbMVv62xVHadsHXH/35tDQp
-X-Received: by 2002:a05:620a:1a87:b0:7a9:ad18:11e9 with SMTP id af79cd13be357-7a9ad181880mr1993991885a.59.1726000637202;
-        Tue, 10 Sep 2024 13:37:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBUfi5upaepXZJmyiNEy6MLGXGKi+4wEzyspuA/wVMEBrgXmQJrGBqUJpCCXlyyqkoL2UTHQ==
-X-Received: by 2002:a05:620a:1a87:b0:7a9:ad18:11e9 with SMTP id af79cd13be357-7a9ad181880mr1993986985a.59.1726000636745;
-        Tue, 10 Sep 2024 13:37:16 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:760d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a7a1ff6bsm338873285a.122.2024.09.10.13.37.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 13:37:16 -0700 (PDT)
-Message-ID: <3563e64b38664bf64c5d66baa7507324e3fb694c.camel@redhat.com>
-Subject: Re: [PATCH v2 24/49] KVM: x86: #undef SPEC_CTRL_SSBD in cpuid.c to
- avoid macro collisions
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
- <vkuznets@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
- Oliver Upton <oliver.upton@linux.dev>, Binbin Wu
- <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>,
- Robert Hoo <robert.hoo.linux@gmail.com>, Borislav Petkov <bp@alien8.de>
-Date: Tue, 10 Sep 2024 16:37:15 -0400
-In-Reply-To: <ZrFFua_7kWKBESbe@google.com>
-References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-25-seanjc@google.com>
-	 <20d3017a8dd54b345104bf2e5cb888a22a1e0a53.camel@redhat.com>
-	 <ZoxaOqvXzTH6O64D@google.com>
-	 <31cf77d34fc49735e6dff57344a0e532e028a975.camel@redhat.com>
-	 <ZqQybtNkhSVZDOTu@google.com>
-	 <ffa76b1b62c5cd2001f5f313009376e131bc2817.camel@redhat.com>
-	 <ZrFFua_7kWKBESbe@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	s=arc-20240116; t=1726000816; c=relaxed/simple;
+	bh=zen7WDNeO31dhz4+IfbTkr5Qw+vuV26ucn//PvOQFAM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=aajvbEoVrtvJX5fhSInzmSReZ52lLt/iobsK5lCrj/yNQ4jKeKCZQp9S8fEisa1FHcg+N7mwYt++Fa2jEEQqRNOUrAmHJtZQ31Gk2E5cfNnxq0EGXSAyn7r3RBUA9QRkHU4Jn4lE7VoYO57OhxDNSPDQAMh7LA3/DQ1hDAUSq6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O5TT0uFA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48AF3Ngk023787;
+	Tue, 10 Sep 2024 20:40:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=V6DJ9sOOSOXMHDWh431m9C
+	ToIoOW32pG61L9XfIH8uo=; b=O5TT0uFAUd8dw11S7GoB27AeEviYVeBamyy4hp
+	3jwcRNG3D7EIgugAx/ogBIvh87vbySazebIQC0mFd61+MPRh7Q3QQO9m1f5D3SMv
+	nGhep1tATOILB0XLcjLnXutJrM/plnTMdzIPgbX/0QYbtox98rkM8TaLNIIKDMQw
+	kawGMiBP+CbCFPhhtgQlWLIf0rWvN6TnFR+VRAKFVFO6Hk+jFZTVWPt5MX+pTsJJ
+	QbgLqi9O6Eg7DLpUKyntSgIZFA2cq8BReJzXwUcQ6iVQtol+vlYuCszbE4PrUcoC
+	bFTJsgOxFsbjPhdB/v9Y+wwCoxz5k2GhGHWup3cLLZOQHhSg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6p79mr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 20:40:04 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48AKe49s011038
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 20:40:04 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Sep
+ 2024 13:40:03 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 10 Sep 2024 13:40:03 -0700
+Subject: [PATCH] wifi: mac80211: constify
+ ieee80211_ie_build_{he,eht}_oper() chandef
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240910-wireless-utils-constify-v1-1-e59947bcb3c3@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAKKu4GYC/4WOQQ6CMBBFr2K6dkyLNFpX3sOwoGWQSaBopyCEc
+ HcLC7cu3+K9/xfBGAhZ3A6LCDgSU+8TqONBuKb0TwSqEotMZrk0SsKHArbIDEOklsH1niPVMyg
+ 0lbZSn1HXItmvgDVNe/lRJLYlI9hQetdsvV/G4xShK8lvUkMc+zDvb0a1qf+HRwUKrMlMpvVFy
+ /x6fw/kyLuT6ztRrOv6BQfZwx7lAAAA
+To: Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+CC: <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: O9tBipnOqVpIAtBmE6ZGkrF1ma29V1EK
+X-Proofpoint-GUID: O9tBipnOqVpIAtBmE6ZGkrF1ma29V1EK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ bulkscore=0 lowpriorityscore=0 mlxlogscore=989 spamscore=0 phishscore=0
+ impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409100153
 
-On Mon, 2024-08-05 at 14:35 -0700, Sean Christopherson wrote:
-> +Boris
-> 
-> On Mon, Aug 05, 2024, mlevitsk@redhat.com wrote:
-> > У пт, 2024-07-26 у 16:34 -0700, Sean Christopherson пише:
-> > > > On Wed, Jul 24, 2024, Maxim Levitsky wrote:
-> > > > > > On Mon, 2024-07-08 at 14:29 -0700, Sean Christopherson wrote:
-> > > > > > > > On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> > > > > > > > > > Maybe we should instead rename the SPEC_CTRL_SSBD to
-> > > > > > > > > > 'MSR_IA32_SPEC_CTRL_SSBD' and together with it, other fields of this msr.  It
-> > > > > > > > > > seems that at least some msrs in this file do this.
-> > > > > > > > 
-> > > > > > > > Yeah, the #undef hack is quite ugly.  But I didn't (and still don't) want to
-> > > > > > > > introduce all the renaming churn in the middle of this already too-big series,
-> > > > > > > > especially since it would require touching quite a bit of code outside of KVM.
-> > > > > > > > I'm also not sure that's the right thing to do; I kinda feel like KVM is the one
-> > > > > > > > that's being silly here.
-> > > > > > 
-> > > > > > I don't think that KVM is silly here. I think that hardware definitions like
-> > > > > > MSRs, register names, register bit fields, etc, *must* come with a unique
-> > > > > > prefix, it's not an issue of breaking some deeply nested macro, but rather an
-> > > > > > issue of readability.
-> > > > 
-> > > > For the MSR names themselves, yes, I agree 100%.  But for the bits and mask, I
-> > > > disagree.  It's simply too verbose, especially given that in the vast majority
-> > > > of cases simply looking at the surrounding code will provide enough context to
-> > > > glean an understanding of what's going on.
-> > 
-> > I am not that sure about this, especially if someone by mistake uses a flag
-> > that belong to one MSR, in some unrelated place. Verbose code is rarely a bad thing.
-> > 
-> > 
-> > > >   E.g. even for SPEC_CTRL_SSBD, where
-> > > > there's an absurd amount of magic and layering, looking at the #define makes
-> > > > it fairly obvious that it belongs to MSR_IA32_SPEC_CTRL.
-> > > > 
-> > > > And for us x86 folks, who obviously look at this code far more often than non-x86
-> > > > folks, I find it valuable to know that a bit/mask is exactly that, and _not_ an
-> > > > MSR index.  E.g. VMX_BASIC_TRUE_CTLS is a good example, where renaming that to
-> > > > MSR_VMX_BASIC_TRUE_CTLS would make it look too much like MSR_IA32_VMX_TRUE_ENTRY_CTLS
-> > > > and all the other "true" VMX MSRs.
-> > > > 
-> > > > > > SPEC_CTRL_SSBD for example won't mean much to someone who only knows ARM, while
-> > > > > > MSR_SPEC_CTRL_SSBD, or even better IA32_MSR_SPEC_CTRL_SSBD, lets you instantly know
-> > > > > > that this is a MSR, and anyone with even a bit of x86 knowledge should at least have
-> > > > > > heard about what a MSR is.
-> > > > > > 
-> > > > > > In regard to X86_FEATURE_INTEL_SSBD, I don't oppose this idea, because we have
-> > > > > > X86_FEATURE_AMD_SSBD, but in general I do oppose the idea of adding 'INTEL' prefix,
-> > > > 
-> > > > Ya, those are my feelings exactly.  And in this case, since we already have an
-> > > > AMD variant, I think it's actually a net positive to add an INTEL variant so that
-> > > > it's clear that Intel and AMD ended up defining separate CPUID to enumerate the
-> > > > same basic info.
-> > > > 
-> > > > > > because it sets a not that good precedent, because most of the features on x86
-> > > > > > are first done by Intel, but then are also implemented by AMD, and thus an intel-only
-> > > > > > feature name can stick after it becomes a general x86 feature.
-> > > > > > 
-> > > > > > IN case of X86_FEATURE_INTEL_SSBD, we already have sadly different CPUID bits for
-> > > > > > each vendor (although I wonder if AMD also sets the X86_FEATURE_INTEL_SSBD).
-> > > > > > 
-> > > > > > I vote to rename 'SPEC_CTRL_SSBD', it can be done as a standalone patch, and can
-> > > > > > be accepted right now, even before this patch series is accepted.
-> > > > 
-> > > > If we go that route, then we also need to rename nearly ever bit/mask definition
-> > > > in msr-index.h, otherwise SPEC_CTRL_* will be the odd ones out.  And as above, I
-> > > > don't think this is the right direction.
-> > 
-> > Honestly not really. If you look carefully at the file, many bits are already defined
-> > in the way I suggest, for example:
-> > 
-> > MSR_PLATFORM_INFO_CPUID_FAULT_BIT
-> > MSR_IA32_POWER_CTL_BIT_EE
-> > MSR_INTEGRITY_CAPS_ARRAY_BIST_BIT
-> > MSR_AMD64_DE_CFG_LFENCE_SERIALIZE_BIT
-> 
-> Heh, I know there are some bits that have an "MSR" prefix, hence "nearly every".
-> 
-> > This file has all kind of names for both msrs and flags. There is not much
-> > order, so renaming the bit definitions of IA32_SPEC_CTRL won't increase the
-> > level of disorder in this file IMHO.
-> 
-> It depends on what direction msr-index.h is headed.  If the long-term preference
-> is to have bits/masks namespaced with only their associated MSR name, i.e. no
-> explicit MSR_, then renaming the bits is counter-productive.
-> 
-> I added Boris, who I believe was the most opinionated about the MSR bit names,
-> i.e. who can most likely give us the closest thing to an authoritative answer as
-> to the preferred style.
-> 
-> Boris, we're debating about the best way to solve a weird collision between:
-> 
->   #define SPEC_CTRL_SSBD
-> 
-> and
-> 
->   #define X86_FEATURE_SPEC_CTRL_SSBD
-> 
-> KVM wants to use its CPUID macros to essentially do:
-> 
->   #define F(name) (X86_FEATURE_##name)
-> 
-> as a shorthand for X86_FEATURE_SPEC_CTRL_SSBD, but that can cause build failures
-> depending on how KVM's macros are layered.  E.g. SPEC_CTRL_SSBD can get resolved
-> to its value prior to token concatentation and result in KVM effectively generating
-> X86_FEATURE_BIT(SPEC_CTRL_SSBD_SHIFT).
-> 
-> One of the proposed solutions is to rename all of the SPEC_CTRL_* bit definitions
-> to add a MSR_ prefix, e.g. to generate MSR_SPEC_CTRL_SSBD and avoid the conflict.
-> My recollection from the IA32_FEATURE_CONTROL rework a few years back is that you
-> wanted to prioritize shorter names over having everything namespaced with MSR_,
-> i.e. that this approach is a non-starter.
-> 
+The chandef parameter passed to ieee80211_ie_build_he_oper() and
+ieee80211_ie_build_eht_oper is read-only. Since it is never modified,
+add the const qualifier to this parameter. This makes these consistent
+with ieee80211_ie_build_ht_oper() and ieee80211_ie_build_vht_oper().
 
-Hi,
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ net/mac80211/ieee80211_i.h | 4 ++--
+ net/mac80211/util.c        | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Any update on this?
+diff --git a/net/mac80211/ieee80211_i.h b/net/mac80211/ieee80211_i.h
+index 4f0390918b60..3f4d2773b828 100644
+--- a/net/mac80211/ieee80211_i.h
++++ b/net/mac80211/ieee80211_i.h
+@@ -2545,8 +2545,8 @@ u8 *ieee80211_ie_build_vht_cap(u8 *pos, struct ieee80211_sta_vht_cap *vht_cap,
+ u8 *ieee80211_ie_build_vht_oper(u8 *pos, struct ieee80211_sta_vht_cap *vht_cap,
+ 				const struct cfg80211_chan_def *chandef);
+ u8 ieee80211_ie_len_he_cap(struct ieee80211_sub_if_data *sdata);
+-u8 *ieee80211_ie_build_he_oper(u8 *pos, struct cfg80211_chan_def *chandef);
+-u8 *ieee80211_ie_build_eht_oper(u8 *pos, struct cfg80211_chan_def *chandef,
++u8 *ieee80211_ie_build_he_oper(u8 *pos, const struct cfg80211_chan_def *chandef);
++u8 *ieee80211_ie_build_eht_oper(u8 *pos, const struct cfg80211_chan_def *chandef,
+ 				const struct ieee80211_sta_eht_cap *eht_cap);
+ int ieee80211_parse_bitrates(enum nl80211_chan_width width,
+ 			     const struct ieee80211_supported_band *sband,
+diff --git a/net/mac80211/util.c b/net/mac80211/util.c
+index f94faa86ba8a..f0db60878321 100644
+--- a/net/mac80211/util.c
++++ b/net/mac80211/util.c
+@@ -2752,7 +2752,7 @@ u8 *ieee80211_ie_build_vht_oper(u8 *pos, struct ieee80211_sta_vht_cap *vht_cap,
+ 	return pos + sizeof(struct ieee80211_vht_operation);
+ }
+ 
+-u8 *ieee80211_ie_build_he_oper(u8 *pos, struct cfg80211_chan_def *chandef)
++u8 *ieee80211_ie_build_he_oper(u8 *pos, const struct cfg80211_chan_def *chandef)
+ {
+ 	struct ieee80211_he_operation *he_oper;
+ 	struct ieee80211_he_6ghz_oper *he_6ghz_op;
+@@ -2844,7 +2844,7 @@ u8 *ieee80211_ie_build_he_oper(u8 *pos, struct cfg80211_chan_def *chandef)
+ 	return pos;
+ }
+ 
+-u8 *ieee80211_ie_build_eht_oper(u8 *pos, struct cfg80211_chan_def *chandef,
++u8 *ieee80211_ie_build_eht_oper(u8 *pos, const struct cfg80211_chan_def *chandef,
+ 				const struct ieee80211_sta_eht_cap *eht_cap)
+ 
+ {
 
-Best regards,
-	Maxim Levitsky
-
+---
+base-commit: fe57beb026ef5f9614adfa23ee6f3c21faede2cf
+change-id: 20240910-wireless-utils-constify-1e9d5b053e5f
 
 
