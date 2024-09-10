@@ -1,105 +1,103 @@
-Return-Path: <linux-kernel+bounces-323272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F3DB973A78
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:48:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F25973A7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5217DB25401
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:48:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F00FB23B0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3EA198840;
-	Tue, 10 Sep 2024 14:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB13199FC6;
+	Tue, 10 Sep 2024 14:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="uyImq1Pg"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m9cba+8P"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BD6142E70;
-	Tue, 10 Sep 2024 14:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F337F194C8B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725979522; cv=none; b=ByVCFyfME0ExQdTgwhWs8YIVM97VcHEy++4ECX1ctla2y6/YvHwMer9FqaqQRgKWpHhhyXojjO4ftBG9yLoHKKYe+WPdD8xYwO7yHZ/QeoWV5woGDL0ajFbNUQ8czBnBCaqKCf/etKKHBpuFW/PH2usmaUdSaQx5npjKs0tBToQ=
+	t=1725979585; cv=none; b=s4k00cLSmmQC0+6vmRDuBuVTu1VmyWCSyaPW2PBzkWT5uvsAp9p5yTBMzaW7KwZamZhlIbISL06kHKm1wG5abx4RRPZGQPpoE4GfY2xbf9M7ZhmBdxZMamntvDYV2Je44xF6IHnAgPwBr2HiXn8HsuY9UX0DeKaXM9ovLEeMWAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725979522; c=relaxed/simple;
-	bh=SoHs5W4jG0QBsJpEf2UuyNkEsNYUVtdflTM9GeeY0No=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Or0AuXG+MVpBPEYjvPPeHmYLBrxNnaHnPCtinXH8PQjzFPZxYEJJhgQLuXdPaZNdVu7NXDVSAV9TP9oEjKpKZ5eOybnXyslVYRV9r9Di5b5W2C9X88mMsdxRevj5aVgveGtvScw+3KYiagP4t2LGnda34GBJnqlCcBE//gTr9IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=uyImq1Pg; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=0+0XKm74x/FnmbMOW0GDYbTw+dPuzExiHBKxi0oQE+o=; b=uyImq1PgKS+XW6+G1OFdZIUSaT
-	b1htsbU4p/gljy5HGIs03JfccItGL8frXjjdlFtNUPvSKZRvB4Blwc3J9TNHTtMd21VqQ/lVbYr6H
-	tpLnl1x/TR+ezICSe5nMgXnuRoILme9XnlG7xJaNgPVQwQ0uzu2t7fLZjuoU+Hm0khGw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1so26y-0077Gq-Ah; Tue, 10 Sep 2024 16:44:56 +0200
-Date: Tue, 10 Sep 2024 16:44:56 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: yoshihiro.shimoda.uh@renesas.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, wojciech.drewek@intel.com,
-	niklas.soderlund+renesas@ragnatech.se, netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: rswitch: Fix a possible memory leak in
- rswitch_phy_device_init()
-Message-ID: <b1f33b6e-1054-476d-8cd4-6a0d1e02d31b@lunn.ch>
-References: <20240909092825.1117058-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1725979585; c=relaxed/simple;
+	bh=eZA0INVIaxysifRtQ/js+f8NGdZZ6GaHJWhtEVUb9e0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SCueRMVuCbOONeOYD4D8OMGdZv8awt5G/Gb3+sHjpDaMcOhJ2H08ubS3q1EMUDRYDLL46JyXw7csMDy1d9IazFyycxheLMp9KDaVUusQvHwHqpzb2RdtZVXmWwe25/XMFDZYXO8Ptid2PiPQIvc3eu/4AwZ+Ijbwekb5Z9pjWwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m9cba+8P; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-371941bbfb0so3464020f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:46:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725979582; x=1726584382; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ie2tWWuG2E+Q7aPM8G4eDhGSZkXYMPi5r/t8cU74EXs=;
+        b=m9cba+8PBk0B5PSgFI9bBe8fTaDXYqzTC4B9vcNx7zEI8AchBIVlgYFFdsM4cwltqj
+         2/H652FUjwWEPHYnq9t8CESZF16scWTevaA64v5ZHnkxPmOUkc8kZWL9HYShUqspVyvP
+         uRIK1JBZzwAYL2tK8nvZF4mXoXXo4jo346uVwA1UV8pWYafOtTNg/U5g9HiMVHiWyPVW
+         2lWBRH1z07G8QGC+XLwj+HfqCKGoTSd+kU8RC6FM6SqhwA/87lHWOT7LlIESludoE31+
+         S8mNWtMKXjHWWD0idlFZOZzsyLVBbFxCpW18/bpDJz5BsDneCiBetTcO+nVWwmyqTfuG
+         V9XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725979582; x=1726584382;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ie2tWWuG2E+Q7aPM8G4eDhGSZkXYMPi5r/t8cU74EXs=;
+        b=T7kXiL/qKy+L73WZ0iEq5wtcx/eTAixipfKrJy+cGooI6YNu+fQZz5bes/mJUm5XPr
+         6N5xDYJYuSgTDYPCZh1jR0PNLEzLxudDe/Bqfr7ErIRad11pLVx9zwAh6TQuTwo/4x09
+         86X/pLl43N1v9xROdMb00npeHb84QGXTTNJHfBD+pfjD2lkuIKVznmGNQ6IYrI/VmxQl
+         9CqUm9FMbzS/kiL3OWmG/YxGXtPVds65W9ddfAgZJVT9qp7C0qrsh85Tb14pC4VJd20R
+         WYHDHWSi4NMWEqnZtCj0+ne3Al7C1oj1Bq93knCoJN+6O1gjs2gyQjdiWKakloosz4zL
+         Q16A==
+X-Forwarded-Encrypted: i=1; AJvYcCXEbDNU8UVHHYE9tj9mJ1xBu26zeo2CQAIH2NG6/D4Y+bSgRXrgxzI52TRG5NYrlZN79ZBxqQzS+CbNG1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj7Gd0WcoqOt832fnTYALYmGNYdsPmSgnvs8yLyok9mm08ZN77
+	xFY3TByNt4Wxm2jnPh60SO3/GQyP6FKPbOxt5TkMdWKbSbfNltw7SGWUyXm0vCJ05sAwWOBSxIp
+	/fehIXTpP0F32MP7mcKTouf5P616o940vg6uZ
+X-Google-Smtp-Source: AGHT+IFDo0mvgDytpH5FIgETsS5NS0VkC0LwE1ceohat1+4L8zu+UXVBY7Bz+bza4xIrhxdf5+XOjHx5ZC12LMqc5VE=
+X-Received: by 2002:adf:f64f:0:b0:374:c977:363 with SMTP id
+ ffacd0b85a97d-3789268f0a6mr6431494f8f.24.1725979581832; Tue, 10 Sep 2024
+ 07:46:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909092825.1117058-1-ruanjinjie@huawei.com>
+References: <20240910143144.1439910-1-sean.anderson@linux.dev>
+In-Reply-To: <20240910143144.1439910-1-sean.anderson@linux.dev>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 10 Sep 2024 16:46:09 +0200
+Message-ID: <CANn89iJoA5XNOGr6-esswau8VymFHrrpT62+CT=nf4KLuDU-Ag@mail.gmail.com>
+Subject: Re: [PATCH net v2] net: dpaa: Pad packets to ETH_ZLEN
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Madalin Bucur <madalin.bucur@nxp.com>, netdev@vger.kernel.org, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, 
+	"David S . Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 09, 2024 at 05:28:25PM +0800, Jinjie Ruan wrote:
-> of_phy_find_device() calls bus_find_device(), which calls get_device()
-> on the returned struct device * to increment the refcount. The current
-> implementation does not decrement the refcount, which causes memory leak.
-> 
-> So add the missing phy_device_free() call to decrement the
-> refcount via put_device() to balance the refcount.
-> 
-> Fixes: 0df024d0f1d3 ("net: renesas: rswitch: Add host_interfaces setting")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  drivers/net/ethernet/renesas/rswitch.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-> index ff50e20856ec..69a67bd75f33 100644
-> --- a/drivers/net/ethernet/renesas/rswitch.c
-> +++ b/drivers/net/ethernet/renesas/rswitch.c
-> @@ -1404,6 +1404,7 @@ static int rswitch_phy_device_init(struct rswitch_device *rdev)
->  		goto out;
->  	__set_bit(rdev->etha->phy_interface, phydev->host_interfaces);
->  	phydev->mac_managed_pm = true;
-> +	phy_device_free(phydev);
->  
->  	phydev = of_phy_connect(rdev->ndev, phy, rswitch_adjust_link, 0,
->  				rdev->etha->phy_interface);
+On Tue, Sep 10, 2024 at 4:32=E2=80=AFPM Sean Anderson <sean.anderson@linux.=
+dev> wrote:
+>
+> When sending packets under 60 bytes, up to three bytes of the buffer
+> following the data may be leaked. Avoid this by extending all packets to
+> ETH_ZLEN, ensuring nothing is leaked in the padding. This bug can be
+> reproduced by running
+>
+>         $ ping -s 11 destination
+>
+> Fixes: 9ad1a3749333 ("dpaa_eth: add support for DPAA Ethernet")
+> Suggested-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 
-This has the same problem as discussed in
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
-net: ethernet: nxp: Fix a possible memory leak in lpc_mii_probe()
-
-I've not looked to see if there are more of these 'fixes'. If there
-are, it would be good to self NACK them so they don't get accidentally
-merged.
-
-    Andrew
-
----
-pw-bot: cr
+Thanks !
 
