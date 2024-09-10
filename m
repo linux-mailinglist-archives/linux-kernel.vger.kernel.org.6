@@ -1,147 +1,112 @@
-Return-Path: <linux-kernel+bounces-322666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3AE972C08
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:21:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04785972C04
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D977287FE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:21:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B37EF287BB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D60717BEAE;
-	Tue, 10 Sep 2024 08:20:58 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CF017BEBF;
+	Tue, 10 Sep 2024 08:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gingQRL7"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2FC14F9D4
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704E4210F8
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725956457; cv=none; b=O3gMIVP0yzqtATT8qjmQchRx+tGSc3dOadUr0WmZwcU8ulTmY6/lQy2mMTuQERgKHSeANCdfhpi8eHN9tsy4oSXCFT7RGZvG1EOydJM6ZAsKCHSdISJbm9LR5WuhK62COPNFHq15xvn4+XLR1TAC60mNcfHCD3HJEmHV/ieSiVA=
+	t=1725956452; cv=none; b=W6gKkhh3hYDA4iKa3zlKjLSGs4AmRa1mGpKDJEAxtyZFzz7a28x6doPpcYUwEA7yThpQmSns4wiOMuAssSSQO+qptddErm5hBJ7dWGs6zSpw0kSjgm2upl9HddZXQ1MZrTyuPwCfe5aB116nWsfEPIgqAKhGh5Grj66vgp6mDt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725956457; c=relaxed/simple;
-	bh=UJ2pcOHuKDDqRC0DWUDoeqFHlPldK8XY4w5VdCUuqCw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pxM95fY/O9r7F1cKEwulKo5o2yugKGB0zFPuNyw9pfE72+GDbZRKEZHeL1G2SczOdyoDpCAZ1DDYMmXkbGNpPh6DEM280QPi3YMnft7Avm2XIUGtWN1filVQjdrA3IDAJq08YMQEBibgfM6lykLuoaoMUqmE44MA3ipeZEYWJQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1snw7C-00044f-3W; Tue, 10 Sep 2024 10:20:46 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1snw7A-006qsq-WA; Tue, 10 Sep 2024 10:20:45 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1snw7A-0001qu-32;
-	Tue, 10 Sep 2024 10:20:44 +0200
-Message-ID: <86eebdd7435ec1dc09765f4c4f8cb5ba8d20d785.camel@pengutronix.de>
-Subject: Re: [PATCH v4 1/9] reset: amlogic: convert driver to regmap
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>, Jiucheng Xu
- <jiucheng.xu@amlogic.com>, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Tue, 10 Sep 2024 10:20:44 +0200
-In-Reply-To: <1jfrqcrgab.fsf@starbuckisacylon.baylibre.com>
-References: <20240906-meson-rst-aux-v4-0-08824c3d108b@baylibre.com>
-	 <20240906-meson-rst-aux-v4-1-08824c3d108b@baylibre.com>
-	 <984d928a37b3db11ae53c07da672ccae0d79734f.camel@pengutronix.de>
-	 <1jfrqcrgab.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1725956452; c=relaxed/simple;
+	bh=scNmR43cohIjixk7NGBKImQPntBVBGHcCuZp9CMrkyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u7QSaLTGv6baNKKC95hfWNmM2Gyg/KC8nZS07zCS3bDCJBXxks9r4BKQ9nNPS3BCYuicpdwFLhvOIifjMqqfYAdbpJLd7Hc5Z7Oz/5CaoMLU9oT2KPUzOLaaxCBaeVhue8hr07IWA2cXM66VhxtRcqAsJ9ONUFWb9+upTs1DSsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gingQRL7; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so16575245e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725956449; x=1726561249; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YKooIVF6/9vRLildhU5E5+Y4BDwHX7mmS0y9s2Ui9OI=;
+        b=gingQRL75QL3rtGr2ZuF94H5jWghDhYL/tiy6pMRE0RRHul8o3VodWzxEJ86HRPNL9
+         OrpR0a/GYZFUxeW1fbETR92Kz6mpKcFUk3BeC/0E0iASjKkNcZWyPb5oIvelZea8pWLM
+         xrF9aRZo+eP/ER3DSlU3ihF54fiYCTlKHI7/STyYMABQ7EP68mnm00x2Zfzg6PioZjKS
+         4pwYXfG/mfdXu1LVQ9i9dTqpyZaAhastXqNB6+Z20EOH6edcl+sOj46/+Bt51fapSSSw
+         7k9Cq23GRNM6XGfz890lYEogUSnfTThak1XDXZIZcpLXin+AlDRTcuaAXJyeVeTcIssa
+         zoiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725956449; x=1726561249;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YKooIVF6/9vRLildhU5E5+Y4BDwHX7mmS0y9s2Ui9OI=;
+        b=ozNyASpQktKAj09j/rNF+6SSYEJthINByPcedmSeDlbt+F09F6t/R5jGncm78AakeK
+         GYhS2oZYPx+5rBYT64Ue7FE0AsEGTzdq9IR9d3f0AXCsAeGE+xOshWa9AwU4ZC0Nz42a
+         Dyjl/9W/sF+0XjEKWL8p55BBsAt+gVzueHtR+OdISyBKB2HsWmS9o3pTpRADPG3e9BqL
+         elWWVcNVz0Qwo/Taqi/d5DJVPTur4EXnWxao49yXxHdoJbnsaWlYIoUtAxLe+kUH//2V
+         PbFO4dGsh122egdDfeIBPMKywGAi+dSGneilQvOxQ8/fzFsKIk6O+p3z6pMYrkiyN/l9
+         AQ8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXezH5SRFhpwvq8JQb2btH1cXx7Cfs+6Wrm5c2SSlkq1L6bP+rQ/6bO+sao1Q5z+TtRrV6q8FCnTPxfAMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/ElaTUDW5V5KfwbZxbmjwoS87r4EcqNYNVgVVP9yOMBWfj5Ew
+	jzaco64VzoE5eRE/oAgOtLQ2e6flKVLqb7pVwsC5U4lcSdBww+aNWlI3AnoSkv0=
+X-Google-Smtp-Source: AGHT+IEEmKubpCyw4PBhdc5wLZ8W0FL/s2J4w/3zB7kYhrMfFGAyKv3HgWu+pbO82pQHurjGivtqqA==
+X-Received: by 2002:a05:600c:4798:b0:42c:a574:6364 with SMTP id 5b1f17b1804b1-42ca574664amr85544735e9.12.1725956448531;
+        Tue, 10 Sep 2024 01:20:48 -0700 (PDT)
+Received: from localhost (109-81-83-158.rct.o2.cz. [109.81.83.158])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb449aesm102347055e9.25.2024.09.10.01.20.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 01:20:48 -0700 (PDT)
+Date: Tue, 10 Sep 2024 10:20:47 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Hailong Liu <hailong.liu@oppo.com>, Barry Song <21cnbao@gmail.com>,
+	Lokesh Gidra <lokeshgidra@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Nicolas Geoffray <ngeoffray@google.com>, gaoxu <gaoxu2@honor.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Shaohua Li <shli@fb.com>, yipengxiang <yipengxiang@honor.com>,
+	fengbaopeng <fengbaopeng@honor.com>,
+	Kalesh Singh <kaleshsingh@google.com>
+Subject: Re: [PATCH v2] mm: add lazyfree folio to lru tail
+Message-ID: <ZuABX8ohRClBagqp@tiehlicka>
+References: <f29f64e29c08427b95e3df30a5770056@honor.com>
+ <ZsXho27uAbQ5rEgS@tiehlicka>
+ <CAGsJ_4zgQ0MBV-yucc0-7BcDgjMMdCUDWK330mrd7SS4ej6Q8Q@mail.gmail.com>
+ <CAJuCfpE7qsbFPseGzcBp27uNDhwtKLypKiPnqebE5=T8WDTyEQ@mail.gmail.com>
+ <CA+EESO7BuywqjM9pk3KbgdfsYJerpU1-5d9AN20mBjA6e_97UQ@mail.gmail.com>
+ <20240827021351.iq6i7zkwm32xili3@oppo.com>
+ <CAGsJ_4wUrm1Q7Oxb5BHC2ypyf4wAH+UO9KYhCUwsEbhkcc7QGg@mail.gmail.com>
+ <20240827022911.bcje3ofucegg6vjl@oppo.com>
+ <20240909152215.31e85028c4d09681f09e7509@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909152215.31e85028c4d09681f09e7509@linux-foundation.org>
 
-On Fr, 2024-09-06 at 16:46 +0200, Jerome Brunet wrote:
-> On Fri 06 Sep 2024 at 16:19, Philipp Zabel <p.zabel@pengutronix.de> wrote=
-:
-> > On Fr, 2024-09-06 at 15:34 +0200, Jerome Brunet wrote:
+On Mon 09-09-24 15:22:15, Andrew Morton wrote:
 [...]
-> > > +static void meson_reset_offset_and_bit(struct meson_reset *data,
-> > > +				       unsigned long id,
-> > > +				       unsigned int *offset,
-> > > +				       unsigned int *bit)
-> > > +{
-> > > +	unsigned int stride =3D regmap_get_reg_stride(data->map);
-> >=20
-> > You know this is always 4. Having a #define for this (that is also used
-> > to initialize regmap_config.reg_stride, and for now nr_resets, below)
-> > instead of going through an exported function would allow the compiler
-> > to optimize this all away:
->=20
-> Yes, for now. However, with the auxiliary you may get a regmap with
-> different value. I've seen example with stride =3D 1.=20
->=20
-> I'll admit is very unlikely but I does not really worth it considering
-> how often we'll get through this and how difficult it will be to debug
-> if stride ever get different.
+> I'm not seeing much clarity on whether we should merge this change.  I
+> think I'll drop this version - let's please revisit after -rc1.
 
-Oh right, the aux regmap being passed in from the outside in a later
-patch invalidates my point.
-
-[...]
-> > > @@ -48,25 +55,13 @@ static int meson_reset_level(struct reset_control=
-ler_dev *rcdev,
-> > >  {
-> > >  	struct meson_reset *data =3D
-> > >  		container_of(rcdev, struct meson_reset, rcdev);
-> > > -	unsigned int bank =3D id / BITS_PER_REG;
-> > > -	unsigned int offset =3D id % BITS_PER_REG;
-> > > -	void __iomem *reg_addr;
-> > > -	unsigned long flags;
-> > > -	u32 reg;
-> > > +	unsigned int offset, bit;
-> > > =20
-> > > -	reg_addr =3D data->reg_base + data->param->level_offset + (bank << =
-2);
-> > > +	meson_reset_offset_and_bit(data, id, &offset, &bit);
-> > > +	offset +=3D data->param->level_offset;
-> > > =20
-> > > -	spin_lock_irqsave(&data->lock, flags);
-> > > -
-> > > -	reg =3D readl(reg_addr);
-> > > -	if (assert)
-> > > -		writel(reg & ~BIT(offset), reg_addr);
-> > > -	else
-> > > -		writel(reg | BIT(offset), reg_addr);
-> > > -
-> > > -	spin_unlock_irqrestore(&data->lock, flags);
-> > > -
-> > > -	return 0;
-> > > +	return regmap_update_bits(data->map, offset,
-> > > +				  BIT(bit), assert ? 0 : BIT(bit));
-> >=20
-> > Matter of taste, perhaps, but the BIT() could be moved into
-> > meson_reset_offset_and_bit().
->=20
-> It's not really related to this particular patch which is about moving
-> to regmap.
->=20
-> I can add it to another patch if you want
-
-Either way is fine.
-
-
-regards
-Philipp
-
+I think the biggest thing to focus on is the change of the behavior and
+whether LIFO aging strategy for MADV_FREE pages is really desirable. It
+is a noticeable LRU antipattern.
+-- 
+Michal Hocko
+SUSE Labs
 
