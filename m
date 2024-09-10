@@ -1,290 +1,307 @@
-Return-Path: <linux-kernel+bounces-323680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E5309741AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:07:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4D79741AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFD9A1F26E3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:07:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94B7F286EBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0818A1AAE13;
-	Tue, 10 Sep 2024 18:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEC01A4E69;
+	Tue, 10 Sep 2024 18:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AW5Fxs4u"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9dZLp32"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFEC1A705E;
-	Tue, 10 Sep 2024 18:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85F918EFCE;
+	Tue, 10 Sep 2024 18:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725991539; cv=none; b=UDWlPJFz9+mHVKl9JrG5Q0X+RxUlBkxy1LkXlgefj6LiYejMMfTt8fnR266AXm5MeKcbrvdFX97K1ZUJc0aAZamXt7af3eRcM1ZEKod+FnRDYhELA1E8wKuKO13NFwDKVrkCoWBac6OEauNgUj3uER2omzHnvqnHPcYbUR1QWCI=
+	t=1725991623; cv=none; b=hhvqfr+4fcwBUrQdXv2RvwL3zOfm6k2x7MjR3BUgZQT/OGdYzfPkPhz+LFvZBJx/mYI826PUriGgDLlztnKBd/Hfpncd5sJmEavCmIUIN+6b5A/D5ebm3IO11C19eOgHDTL8qoIWYN47It+1VhiRlGcHVAWDptyCqMuBy+FHkxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725991539; c=relaxed/simple;
-	bh=ADkmbRVpIY00UisgINGVNgoWHpF0AnIURwNOls8C/mk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CyQ/hYkeprCuoNPwbwufvEYBGqXY8Wjq1gcrALMnirYJntCIXEvMTP3/WDLujJcF7/OMWqXjAB4ecG3JaViTzZmaO4Uq+lOxinVkKaZyfTOvMxXyt2rA1YQmhWmFIZuVS/NiQua1S+omkoMcQ0rTQzOfl5mqgA5fA1gKrSdusMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AW5Fxs4u; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725991532;
-	bh=ADkmbRVpIY00UisgINGVNgoWHpF0AnIURwNOls8C/mk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AW5Fxs4uP+sIE+WtEwpI49CG6b5Epwhxd81moGufWQmlLu5bc2xLbj8VKm6D63VGe
-	 +E9C3W+vuHtUKtVSqg5GbthXboNHwvbdCpOA8iqOYOveLUwoMZA8a216QGH97ML310
-	 +ctyqjPSEJ2oYZEXlef2XuKHVlCxWx+kBvO1GnrjzymrHBBrTa2X+YJ4vjDV/nN+CI
-	 6038vH6vuf9tjqP2sVX2/x99pFlqnkGMXy7k488kq4AmdHLpnVF/ukCMZBrpjLA8PW
-	 R6R2dmMNDoXgrDx48j8XItw1pcKfF6FNVsp9hCW1UUpRO4pOdBlnxnrqZVTPnYZkVG
-	 CFWzy2Lr1Qp1A==
-Received: from jupiter.universe (dyndsl-091-248-215-127.ewe-ip-backbone.de [91.248.215.127])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 17F9C17E3601;
-	Tue, 10 Sep 2024 20:05:32 +0200 (CEST)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id 95C76480100; Tue, 10 Sep 2024 20:05:31 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Elaine Zhang <zhangqing@rock-chips.com>,
-	=?UTF-8?q?Adri=C3=A1n=20Mart=C3=ADnez=20Larumbe?= <adrian.larumbe@collabora.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	kernel@collabora.com
-Subject: [PATCH v1 6/6] arm64: dts: rockchip: Add GPU power domain regulator dependency for RK3588
-Date: Tue, 10 Sep 2024 19:57:15 +0200
-Message-ID: <20240910180530.47194-7-sebastian.reichel@collabora.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240910180530.47194-1-sebastian.reichel@collabora.com>
-References: <20240910180530.47194-1-sebastian.reichel@collabora.com>
+	s=arc-20240116; t=1725991623; c=relaxed/simple;
+	bh=g+7JkC4CRVghTH6sL1bv1fXlc1BljLGS2SQOIu0IopE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uRLvlNpZSz5+2ge3/AKNIf9WNyatAZJwRO2Y/F8JsifHUbqc6YkySrYFULZX9wX3PvM/e9G6E50RCEdjcY+X+QKu2cTWD3xKKoloAW/PkglErtoKX6dnsNGrzq+4XMVZppxYmx76dLfNx+68j68td2CBU4k0EKL3Zyi/HZU/9Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9dZLp32; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1130C4CEC3;
+	Tue, 10 Sep 2024 18:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725991623;
+	bh=g+7JkC4CRVghTH6sL1bv1fXlc1BljLGS2SQOIu0IopE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a9dZLp32sud/1YRFjiTB3mlhs9hxTgBRJ80V5GzagyHanEZlk3fJdcB7+kWIcvVZy
+	 ZmUZrs72mcvye9RoF58YnDCmn9+K2AzbzxslrzUuRtcjm9kbechbS9XTI8RMEQRxGo
+	 jpDvHYSbs5klRL7yQ7Bca1Iv5C7xIKGU6atusLTjJHwgZO43hG5K8MpKB6G76+D0KM
+	 OVkxJUEC/8mLolCHeEs8TIV/tbiOt/d8X8b4xFYg9VdMsiKryaWTLT1yGu/UBWJxjs
+	 dlUbA0d3yoSdEXT9yLS+hyBtOuWZobXA8ds2ngbBv1r93ZKPm09R7XMqgXuLUtVehl
+	 i3MdnjtSNsDuQ==
+Message-ID: <6ef4b928-a46c-4462-bfec-7d5d463d3bea@kernel.org>
+Date: Tue, 10 Sep 2024 21:06:56 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 4/5] net: ti: icssg-prueth: Enable HSR Tx
+ duplication, Tx Tag and Rx Tag offload
+To: "Anwar, Md Danish" <a0501179@ti.com>, MD Danish Anwar
+ <danishanwar@ti.com>, robh@kernel.org, jan.kiszka@siemens.com,
+ dan.carpenter@linaro.org, saikrishnag@marvell.com, andrew@lunn.ch,
+ javier.carrasco.cruz@gmail.com, jacob.e.keller@intel.com,
+ diogo.ivo@siemens.com, horms@kernel.org, richardcochran@gmail.com,
+ pabeni@redhat.com, kuba@kernel.org, edumazet@google.com, davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com,
+ Vignesh Raghavendra <vigneshr@ti.com>,
+ Ravi Gunasekaran <r-gunasekaran@ti.com>
+References: <20240906111538.1259418-1-danishanwar@ti.com>
+ <20240906111538.1259418-5-danishanwar@ti.com>
+ <7df37a43-e2d6-4775-859d-1ca05f456e21@kernel.org>
+ <e2379571-09ab-4061-8428-37707de32bc5@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <e2379571-09ab-4061-8428-37707de32bc5@ti.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Enabling the GPU power domain requires that the GPU regulator is
-enabled. The regulator is enabled at boot time, but automatically
-gets disabled when there are no users.
 
-If the GPU driver is not probed at boot time or rebound while
-the system is running the system will try to enable the power
-domain before the regulator is enabled resulting in a failure
-hanging the whole system. Avoid this by adding an explicit
-dependency.
 
-Reported-by: Adrián Martínez Larumbe <adrian.larumbe@collabora.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts         | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi                | 2 +-
- arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi          | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts               | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts             | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts           | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts              | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi               | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts           | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts        | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts          | 4 ++++
- 12 files changed, 45 insertions(+), 1 deletion(-)
+On 10/09/2024 20:52, Anwar, Md Danish wrote:
+> Hi Roger,
+> 
+> On 9/10/2024 11:08 PM, Roger Quadros wrote:
+>>
+>>
+>> On 06/09/2024 14:15, MD Danish Anwar wrote:
+>>> From: Ravi Gunasekaran <r-gunasekaran@ti.com>
+>>>
+>>> The HSR stack allows to offload its Tx packet duplication functionality to
+>>> the hardware. Enable this offloading feature for ICSSG driver. Add support
+>>> to offload HSR Tx Tag Insertion and Rx Tag Removal and duplicate discard.
+>>>
+>>> Inorder to enable hsr-tag-ins-offload, hsr-dup-offload must also be enabled
+>>
+>> "In order"
+>>
+>>> as these are tightly coupled in the firmware implementation.
+>>>
+>>> Duplicate discard is done as part of RX tag removal and it is
+>>> done by the firmware. When driver sends the r30 command
+>>> ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE, firmware does RX tag removal as well as
+>>> duplicate discard.
+>>>
+>>> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
+>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>> ---
+>>>  drivers/net/ethernet/ti/icssg/icssg_common.c | 18 ++++++++++---
+>>>  drivers/net/ethernet/ti/icssg/icssg_config.c |  4 ++-
+>>>  drivers/net/ethernet/ti/icssg/icssg_config.h |  2 ++
+>>>  drivers/net/ethernet/ti/icssg/icssg_prueth.c | 28 +++++++++++++++++++-
+>>>  drivers/net/ethernet/ti/icssg/icssg_prueth.h |  3 +++
+>>>  5 files changed, 50 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
+>>> index b9d8a93d1680..fdebeb2f84e0 100644
+>>> --- a/drivers/net/ethernet/ti/icssg/icssg_common.c
+>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
+>>> @@ -660,14 +660,15 @@ enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev
+>>>  {
+>>>  	struct cppi5_host_desc_t *first_desc, *next_desc, *cur_desc;
+>>>  	struct prueth_emac *emac = netdev_priv(ndev);
+>>> +	struct prueth *prueth = emac->prueth;
+>>>  	struct netdev_queue *netif_txq;
+>>>  	struct prueth_tx_chn *tx_chn;
+>>>  	dma_addr_t desc_dma, buf_dma;
+>>> +	u32 pkt_len, dst_tag_id;
+>>>  	int i, ret = 0, q_idx;
+>>>  	bool in_tx_ts = 0;
+>>>  	int tx_ts_cookie;
+>>>  	void **swdata;
+>>> -	u32 pkt_len;
+>>>  	u32 *epib;
+>>>  
+>>>  	pkt_len = skb_headlen(skb);
+>>> @@ -712,9 +713,20 @@ enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev
+>>>  
+>>>  	/* set dst tag to indicate internal qid at the firmware which is at
+>>>  	 * bit8..bit15. bit0..bit7 indicates port num for directed
+>>> -	 * packets in case of switch mode operation
+>>> +	 * packets in case of switch mode operation and port num 0
+>>> +	 * for undirected packets in case of HSR offload mode
+>>>  	 */
+>>> -	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, (emac->port_id | (q_idx << 8)));
+>>> +	dst_tag_id = emac->port_id | (q_idx << 8);
+>>> +
+>>> +	if (prueth->is_hsr_offload_mode &&
+>>> +	    (ndev->features & NETIF_F_HW_HSR_DUP))
+>>> +		dst_tag_id = PRUETH_UNDIRECTED_PKT_DST_TAG;
+>>> +
+>>> +	if (prueth->is_hsr_offload_mode &&
+>>> +	    (ndev->features & NETIF_F_HW_HSR_TAG_INS))
+>>> +		epib[1] |= PRUETH_UNDIRECTED_PKT_TAG_INS;
+>>> +
+>>> +	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, dst_tag_id);
+>>>  	k3_udma_glue_tx_dma_to_cppi5_addr(tx_chn->tx_chn, &buf_dma);
+>>>  	cppi5_hdesc_attach_buf(first_desc, buf_dma, pkt_len, buf_dma, pkt_len);
+>>>  	swdata = cppi5_hdesc_get_swdata(first_desc);
+>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
+>>> index 7b2e6c192ff3..72ace151d8e9 100644
+>>> --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
+>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
+>>> @@ -531,7 +531,9 @@ static const struct icssg_r30_cmd emac_r32_bitmask[] = {
+>>>  	{{EMAC_NONE,  0xffff4000, EMAC_NONE, EMAC_NONE}},	/* Preemption on Tx ENABLE*/
+>>>  	{{EMAC_NONE,  0xbfff0000, EMAC_NONE, EMAC_NONE}},	/* Preemption on Tx DISABLE*/
+>>>  	{{0xffff0010,  EMAC_NONE, 0xffff0010, EMAC_NONE}},	/* VLAN AWARE*/
+>>> -	{{0xffef0000,  EMAC_NONE, 0xffef0000, EMAC_NONE}}	/* VLAN UNWARE*/
+>>> +	{{0xffef0000,  EMAC_NONE, 0xffef0000, EMAC_NONE}},	/* VLAN UNWARE*/
+>>> +	{{0xffff2000, EMAC_NONE, EMAC_NONE, EMAC_NONE}},	/* HSR_RX_OFFLOAD_ENABLE */
+>>> +	{{0xdfff0000, EMAC_NONE, EMAC_NONE, EMAC_NONE}}		/* HSR_RX_OFFLOAD_DISABLE */
+>>>  };
+>>>  
+>>>  int icssg_set_port_state(struct prueth_emac *emac,
+>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
+>>> index 1ac60283923b..92c2deaa3068 100644
+>>> --- a/drivers/net/ethernet/ti/icssg/icssg_config.h
+>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.h
+>>> @@ -80,6 +80,8 @@ enum icssg_port_state_cmd {
+>>>  	ICSSG_EMAC_PORT_PREMPT_TX_DISABLE,
+>>>  	ICSSG_EMAC_PORT_VLAN_AWARE_ENABLE,
+>>>  	ICSSG_EMAC_PORT_VLAN_AWARE_DISABLE,
+>>> +	ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE,
+>>> +	ICSSG_EMAC_HSR_RX_OFFLOAD_DISABLE,
+>>>  	ICSSG_EMAC_PORT_MAX_COMMANDS
+>>>  };
+>>>  
+>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>>> index 676168d6fded..9af06454ba64 100644
+>>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>>> @@ -41,7 +41,10 @@
+>>>  #define DEFAULT_PORT_MASK	1
+>>>  #define DEFAULT_UNTAG_MASK	1
+>>>  
+>>> -#define NETIF_PRUETH_HSR_OFFLOAD_FEATURES	NETIF_F_HW_HSR_FWD
+>>> +#define NETIF_PRUETH_HSR_OFFLOAD_FEATURES	(NETIF_F_HW_HSR_FWD | \
+>>> +						 NETIF_F_HW_HSR_DUP | \
+>>> +						 NETIF_F_HW_HSR_TAG_INS | \
+>>> +						 NETIF_F_HW_HSR_TAG_RM)
+>>>  
+>>>  /* CTRLMMR_ICSSG_RGMII_CTRL register bits */
+>>>  #define ICSSG_CTRL_RGMII_ID_MODE                BIT(24)
+>>> @@ -758,6 +761,21 @@ static void emac_change_hsr_feature(struct net_device *ndev,
+>>>  	}
+>>>  }
+>>>  
+>>> +static netdev_features_t emac_ndo_fix_features(struct net_device *ndev,
+>>> +					       netdev_features_t features)
+>>> +{
+>>> +	/* In order to enable hsr tag insertion offload, hsr dup offload must
+>>> +	 * also be enabled as these two are tightly coupled in firmware
+>>> +	 * implementation.
+>>> +	 */
+>>> +	if (features & NETIF_F_HW_HSR_TAG_INS)
+>>> +		features |= NETIF_F_HW_HSR_DUP;
+>>
+>> What if only NETIF_F_HW_HSR_DUP was set? Don't you have to set NETIF_F_HW_HSR_TAG_INS as well?
+>>
+>>> +	else
+>>> +		features &= ~NETIF_F_HW_HSR_DUP;
+>>
+>> what if NETIF_F_HW_HSR_DUP was still set?
+>>
+>> I think you need to write a logic like follows.
+>> 	if both are already cleared in ndev->features and any one is set in features you set both in features.
+>> 	if both are already set in ndev->features and any one is cleared in features you clear both in features.
+>>
+>> is this reasonable?
+>>
+> 
+> Yes that does sound reasonable,
+> How does below code look to you.
+> 
+> 	if (!(ndev->features & NETIF_F_HW_HSR_DUP) &&
+> 	    !(ndev->features & NETIF_F_HW_HSR_TAG_INS))
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts b/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts
-index c667704ba985..00a1cd96781d 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts
-@@ -286,6 +286,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	hym8563 {
- 		hym8563_int: hym8563-int {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-index d23c610dda02..214955a78a01 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-@@ -861,7 +861,7 @@ power-domain@RK3588_PD_NPU2 {
- 				};
- 			};
- 			/* These power domains are grouped by VD_GPU */
--			power-domain@RK3588_PD_GPU {
-+			pd_gpu: power-domain@RK3588_PD_GPU {
- 				reg = <RK3588_PD_GPU>;
- 				clocks = <&cru CLK_GPU>,
- 					 <&cru CLK_GPU_COREGROUP>,
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi
-index fde8b228f2c7..cf9d75159ba6 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi
-@@ -277,6 +277,10 @@ &pcie2x1l2 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	hym8563 {
- 		hym8563_int: hym8563-int {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi
-index e3a9598b99fc..1af0a30866f6 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi
-@@ -256,6 +256,10 @@ &pcie2x1l2 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	gpio-leds {
- 		led_sys_pin: led-sys-pin {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-index 31d2f8994f85..3cefaf830229 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
-@@ -403,6 +403,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	emmc {
- 		emmc_reset: emmc-reset {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts b/arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts
-index c2a08bdf09e8..a9c1fed929fd 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts
-@@ -312,6 +312,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	pcie2 {
- 		pcie2_0_rst: pcie2-0-rst {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-index d0b922b8d67e..0eadf4fb4ba4 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-@@ -530,6 +530,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	hym8563 {
- 		rtc_int: rtc-int {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-index 8f7a59918db7..717504383d46 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-@@ -465,6 +465,10 @@ &pcie3x4 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	hdmirx {
- 		hdmirx_hpd: hdmirx-5v-detection {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi
-index 615094bb8ba3..1b5c4a7fd5c6 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi
-@@ -317,6 +317,10 @@ &pcie3x4 {
- 	reset-gpios = <&gpio3 RK_PB6 GPIO_ACTIVE_HIGH>;
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	emmc {
- 		emmc_reset: emmc-reset {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-index 074c316a9a69..d938db0e2239 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-@@ -329,6 +329,10 @@ &pcie2x1l2 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	hym8563 {
- 		hym8563_int: hym8563-int {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-index dbddfc3bb464..d29d404417ee 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-@@ -233,6 +233,10 @@ hym8563: rtc@51 {
- 	};
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	vdd_sd {
- 		vdd_sd_en: vdd-sd-en {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-index feea6b20a6bf..ef3a721d1fc7 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-@@ -297,6 +297,10 @@ &pcie2x1l2 {
- 	status = "okay";
- };
- 
-+&pd_gpu {
-+	domain-supply = <&vdd_gpu_s0>;
-+};
-+
- &pinctrl {
- 	gpio-func {
- 		leds_gpio: leds-gpio {
+While this is OK. it could also be
+	if (!(ndev->features & (NETIF_F_HW_HSR_DUP | NETIF_F_HW_HSR_TAG_INS)))
+Your choice.
+
+> 		if ((features & NETIF_F_HW_HSR_DUP) ||
+> 		    (features & NETIF_F_HW_HSR_TAG_INS)) {
+> 			features |= NETIF_F_HW_HSR_DUP;
+> 			features |= NETIF_F_HW_HSR_TAG_INS;
+how about one line?
+			features |= NETIF_F_HW_HSR_DUP | NETIF_F_HW_HSR_TAG_INS;
+> 		}
+
+then you can get rid of the braces.
+
+> 
+> 	if ((ndev->features & NETIF_F_HW_HSR_DUP) &&
+> 	    (ndev->features & NETIF_F_HW_HSR_TAG_INS))
+> 		if (!(features & NETIF_F_HW_HSR_DUP) ||
+> 		    !(features & NETIF_F_HW_HSR_TAG_INS)) {
+> 			features &= ~NETIF_F_HW_HSR_DUP;
+> 			features &= ~NETIF_F_HW_HSR_TAG_INS;
+
+			features &= ~(NETIF_F_HW_HSR_DUP | NETIF_F_HW_HSR_TAG_INS);
+
+> 		}
+> 
+>>> +
+>>> +	return features;
+>>> +}
+>>> +
+>>>  static int emac_ndo_set_features(struct net_device *ndev,
+>>>  				 netdev_features_t features)
+>>>  {
+>>> @@ -780,6 +798,7 @@ static const struct net_device_ops emac_netdev_ops = {
+>>>  	.ndo_eth_ioctl = icssg_ndo_ioctl,
+>>>  	.ndo_get_stats64 = icssg_ndo_get_stats64,
+>>>  	.ndo_get_phys_port_name = icssg_ndo_get_phys_port_name,
+>>> +	.ndo_fix_features = emac_ndo_fix_features,
+>>>  	.ndo_set_features = emac_ndo_set_features,
+>>>  };
+>>>  
+>>> @@ -1007,6 +1026,13 @@ static void icssg_change_mode(struct prueth *prueth)
+>>>  
+>>>  	for (mac = PRUETH_MAC0; mac < PRUETH_NUM_MACS; mac++) {
+>>>  		emac = prueth->emac[mac];
+>>> +		if (prueth->is_hsr_offload_mode) {
+>>> +			if (emac->ndev->features & NETIF_F_HW_HSR_TAG_RM)
+>>> +				icssg_set_port_state(emac, ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE);
+>>> +			else
+>>> +				icssg_set_port_state(emac, ICSSG_EMAC_HSR_RX_OFFLOAD_DISABLE);
+>>> +		}
+>>> +
+>>>  		if (netif_running(emac->ndev)) {
+>>>  			icssg_fdb_add_del(emac, eth_stp_addr, prueth->default_vlan,
+>>>  					  ICSSG_FDB_ENTRY_P0_MEMBERSHIP |
+>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>>> index a4b025fae797..bba6da2e6bd8 100644
+>>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>>> @@ -59,6 +59,9 @@
+>>>  
+>>>  #define IEP_DEFAULT_CYCLE_TIME_NS	1000000	/* 1 ms */
+>>>  
+>>> +#define PRUETH_UNDIRECTED_PKT_DST_TAG	0
+>>> +#define PRUETH_UNDIRECTED_PKT_TAG_INS	BIT(30)
+>>> +
+>>>  /* Firmware status codes */
+>>>  #define ICSS_HS_FW_READY 0x55555555
+>>>  #define ICSS_HS_FW_DEAD 0xDEAD0000	/* lower 16 bits contain error code */
+>>
+> 
+
 -- 
-2.45.2
-
+cheers,
+-roger
 
