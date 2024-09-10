@@ -1,114 +1,115 @@
-Return-Path: <linux-kernel+bounces-322395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5CC5972886
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:45:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C97C97288B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1089B22F2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274231F24B8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3570B1514E4;
-	Tue, 10 Sep 2024 04:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB001531E5;
+	Tue, 10 Sep 2024 04:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBjYzdfB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="o/Ap0gf/"
+Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDA4C156;
-	Tue, 10 Sep 2024 04:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1357E224D2;
+	Tue, 10 Sep 2024 04:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725943545; cv=none; b=MwNJg/c7BXZnRFjIgWzQxnVp3gC9jS1adAYLjH/WKZV9ZmzuTO3Xm72DnqWXgbkS+ZQrdsw8TrFf3K6D2HS/6PvEFuZiWGRLSVkH3PEexMBXSe9n1G63AdFGlRloGmDgh0ulyD3acZNbcZuFk1K8yqGQynp0jKg7tVkGE+5CE4w=
+	t=1725943667; cv=none; b=XGowVT2HnRM3uFoGjLEqtn7DC9VvmZ/rZH6UzDF2ukYHqOoGlDGtGXVay+T28FslxJ/HuvOx45zQ10NfUJpf+on+27xhyZCCql5i3wFrbXyY78tBZX3o6RhAj1XpcGNvtC+mNf/O1j8V2i5Knu1MHmBR00aeB/WFxerOiB9SqbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725943545; c=relaxed/simple;
-	bh=DpO4SfTNR7cQazmETA0EG7veH6h4k339DJdZUuW/Chk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FlUkL2zZfHkJACHKNElUKphk9TYhkhiOVgJc9J3vBoCps7rHFTY4u9kjT+0ewwCxJVrP7IvneSIznbWJ7u0nPL5Kh7pq6zFRXbbENo4pTpLlg07KxYFnkCQJ8KMtVIGhYUIrIsmo2M3i6NMZ7Ccu69sLSjUhCmLYmAUT5orhPoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBjYzdfB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AE20C4CEC3;
-	Tue, 10 Sep 2024 04:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725943545;
-	bh=DpO4SfTNR7cQazmETA0EG7veH6h4k339DJdZUuW/Chk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lBjYzdfBZtL6pngUjaJ6z6MVf0Xs6MXzik1nHnDbqgSkyaLJ5PEkbpDt6mIEk3i8p
-	 9114mWKtmNP+UgeBRm1b46lcWqRc+0bPFRYo4RIzCRkC7TDMHz+nrrRRU8d0gGqOFt
-	 Wpmc9G/kGJsRhLc4drADC54QZBnDU6RIR3O9WTs8oon/f5e2uUhf4Y873AOnj8rsi8
-	 Yk5ac3KbJR0sh8yCDVnZrhsfSynZ+lI6bACpY6xGNMnkQIG6HLZpXvRu6OkpOY/lQz
-	 MJ6YkpdIItvijRuyRVfm0O1BBCHxk4280BU9kRz6ogEejIctsPnF+E78ByYuJzTKcx
-	 YzfXYU4Oq7b9g==
-Message-ID: <5b4a15be-1cb2-4477-8f17-b808612d10d5@kernel.org>
-Date: Tue, 10 Sep 2024 13:45:43 +0900
+	s=arc-20240116; t=1725943667; c=relaxed/simple;
+	bh=3MYYxEigIIINVZRxEIuA2JyCRof2AI/wOpPHCQvchBo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t/+x8769ZzcB0Phj//dWhOnRmad47zjj+JG+axWf5nqtCb1/FGYjqKTLsyQIGhbMGEGhho4ItNRHlv+x/P9PuI2pYI41zdZdlT9bAx3lwCN/uKQUilOe7NwXnaPE/frv0VHAGF5tXmpwDPcKnN6tiGUOjYs49Kv6LYDBSkHWqPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=o/Ap0gf/; arc=none smtp.client-ip=216.71.153.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1725943665; x=1757479665;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3MYYxEigIIINVZRxEIuA2JyCRof2AI/wOpPHCQvchBo=;
+  b=o/Ap0gf/lxHDyJm6zlyQH2Au6kdAYFUCcaJUEFRPnu6wfxnicLzzXaAP
+   nlNwd9MMp9CnoiF57fzRO6HRNBi8XjmobYEDEWo26WSWXZV1eHw4idDh3
+   GQ1GA6SZYIv/MFSgKs/x7IlPs8EwCplTk+uy+YUvlM7eGh0U5IHLuaDdT
+   hrhfUTM2MSRJ940TrtB73H6VgXy465daDoOEDK3QdgU60lUHU7w7sxUuW
+   uKhizRRZLiA1SIZ6k0xliJr5Nc9IzbjXbtuKglxr4yCBMoJrnP+dvQdNY
+   okKnPNMbzw4ONiA13LZ/FtTZF+kX9U6RaCX7kQKYwF9Sh/PavuHXXQ2dJ
+   A==;
+X-CSE-ConnectionGUID: tBoeNfnSRw+2QtNGWf8kUA==
+X-CSE-MsgGUID: qCqvyR2KRSCEN0EqyH5jHw==
+X-IronPort-AV: E=Sophos;i="6.10,216,1719849600"; 
+   d="scan'208";a="27323046"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Sep 2024 12:47:37 +0800
+IronPort-SDR: 66dfc28c_tXdo7fRQzBUJqUx19pQ9dmCbaKrAsZTiiNcXPdGptbWXQ9d
+ B7OtLE3KPg9bcN0Ux5JqKNSOy5FshpwTOZA3G/Q==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 20:52:44 -0700
+WDCIronportException: Internal
+Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 21:47:36 -0700
+From: Avri Altman <avri.altman@wdc.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>,
+	Avri Altman <avri.altman@wdc.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] scsi: ufs: Use pre-calculated offsets in ufshcd_init_lrb
+Date: Tue, 10 Sep 2024 07:45:43 +0300
+Message-Id: <20240910044543.3812642-1-avri.altman@wdc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [bug report] block: Non-NCQ commands will never be executed while
- fio is continuously running
-To: yangxingui <yangxingui@huawei.com>, axboe@kernel.dk,
- John Garry <john.g.garry@oracle.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- James.Bottomley@HansenPartnership.com,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- damien.lemoal@opensource.wdc.com
-References: <eef1e927-c9b2-c61d-7f48-92e65d8b0418@huawei.com>
- <922e3d52-9567-4371-9a43-6d51f716a370@kernel.org>
- <129e1e4b-426f-3d5b-b95c-d386c90cfe06@huawei.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <129e1e4b-426f-3d5b-b95c-d386c90cfe06@huawei.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 9/10/24 10:09 AM, yangxingui wrote:
-> 
-> 
-> On 2024/9/9 21:21, Damien Le Moal wrote:
->> On 9/9/24 22:10, yangxingui wrote:
->>> Hello axboe & John,
->>>
->>> After the driver exposes all HW queues to the block layer, non-NCQ
->>> commands will never be executed while fio is continuously running, such
->>> as a smartctl command.
->>>
->>> The cause of the problem is that other hctx used by the NCQ command is
->>> still active and can continue to issue NCQ commands to the sata disk.
->>> And the pio command keeps retrying in its corresponding hctx because
->>> qc_defer() always returns true.
->>>
->>> hctx0: ncq, pio, ncq
->>> hctx1：ncq, ncq, ...
->>> ...
->>> hctxn: ncq, ncq, ...
->>>
->>> Is there any good solution for this?
->>
->> SATA devices are single queue so how can you have multiple queues ?
->> What adapter are you using ?
-> 
-> In the following patch, we expose the host's 16 hardware queues to the block
-> layer. And when connecting to a sata disk, 16 hctx are used.
-> 
-> 8d98416a55eb ("scsi: hisi_sas: Switch v3 hw to MQ")
+Replace manual offset calculations for response_upiu and prd_table in
+ufshcd_init_lrb() with pre-calculated offsets already stored in the
+utp_transfer_req_desc structure. The pre-calculated offsets are set
+differently in ufshcd_host_memory_configure() based on the
+UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk, ensuring correct alignment and
+access.
 
-OK, so the HBA is a hisi one, using libsas...
-What is the device ? An SSD ? and HDD ?
+Fixes: 26f968d7de82 ("scsi: ufs: Introduce UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk")
+Cc: stable@vger.kernel.org
+Signed-off-by: Avri Altman <avri.altman@wdc.com>
 
-Do you set a block I/O scheduler for the drive, e.g. mq-deadline. If not, does
-setting a scheduler resolve the issue ?
+---
+Changes in v2:
+ - add Fixes: and Cc: stable tags
+ - fix kernel test robot warning about type mismatch by using le16_to_cpu
+---
+ drivers/ufs/core/ufshcd.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-I do not have any hisi HBA. I use a lot of mpt3sas and mpi3mr HBAs which also
-have multiple queues with a shared tagset. Never seen the issue you are
-reporting though using HDDs with mq-deadline or bfq as the scheduler.
-
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 8ea5a82503a9..85251c176ef7 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -2919,9 +2919,8 @@ static void ufshcd_init_lrb(struct ufs_hba *hba, struct ufshcd_lrb *lrb, int i)
+ 	struct utp_transfer_req_desc *utrdlp = hba->utrdl_base_addr;
+ 	dma_addr_t cmd_desc_element_addr = hba->ucdl_dma_addr +
+ 		i * ufshcd_get_ucd_size(hba);
+-	u16 response_offset = offsetof(struct utp_transfer_cmd_desc,
+-				       response_upiu);
+-	u16 prdt_offset = offsetof(struct utp_transfer_cmd_desc, prd_table);
++	u16 response_offset = le16_to_cpu(utrdlp[i].response_upiu_offset);
++	u16 prdt_offset = le16_to_cpu(utrdlp[i].prd_table_offset);
+ 
+ 	lrb->utr_descriptor_ptr = utrdlp + i;
+ 	lrb->utrd_dma_addr = hba->utrdl_dma_addr +
 -- 
-Damien Le Moal
-Western Digital Research
+2.25.1
+
 
