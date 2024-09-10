@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-323987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E83897467C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E91974680
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A02631C258D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:44:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95FB71C2597E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0DB1AC893;
-	Tue, 10 Sep 2024 23:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257A01AC440;
+	Tue, 10 Sep 2024 23:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+hYP9V8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0HlY28I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417B21AB534;
-	Tue, 10 Sep 2024 23:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7797B1AC8B2;
+	Tue, 10 Sep 2024 23:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726011868; cv=none; b=FMfpr88eXbZ1R8VnXXAsxT2iArF8iD3hQTHCzlzrWH3QaGjO80/LAEY5NQHm7RO7pQE6PO3SW7cIUZtthNWV87KPT/+I6HqSGUbeNPQM3xBI0Izj1chyO3IYyoRj30eLcM1kV3BYf4ar4HzaMYWW++/JgC07sFScA03f1NEQ2Is=
+	t=1726011876; cv=none; b=OOi/3CUjCeFJrA8iNvCoR22nWz/REnKUfV8FzW35I7fFstt5jOO8grlYpt4Dy6gMXw1dUjgiDpMHiHNZ3OmaNGBjU8uzpPrvC3C9fOqsJh4nIVndO+mHR8Wp/Zrjr6YIh/vlSG79piV3Easbv6NfZN/5I21prG2WeP2wlsxhqnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726011868; c=relaxed/simple;
-	bh=K0LaUYF1SwsKZiGP09g/LWGz/cecN4xLr1fBYM3V/gw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I7ZP0VdI98hMjgzT+KdH0iVOUvTvLmY7m7LlnkIrmOCk4YsshtkC214XDfCUit3p3soP3qpH9GUfwN/IWF2qJVFzdsg6PGYUER2ScQIbkDT2+aGp1QlOMDHsRBtKplTaCf1Ovw56x70h44wO7BADPROdFRNYDzJ02qft+ijht00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+hYP9V8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01273C4CEC3;
-	Tue, 10 Sep 2024 23:44:27 +0000 (UTC)
+	s=arc-20240116; t=1726011876; c=relaxed/simple;
+	bh=GL8lUr8WY3cTgLAHEESls100v4NcVVKKCChvCfDwG+M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EoFoNVGFyUlD/Qbrmv2UqsCWpVjBCmScBMeGCB61FZggQlGs2kCPlyHpqcG48jcKbU2DhIBtHK/Swim75E+KjGph6BH5LcYs9csQlqbr5Pi2rHeD2RslOOBbuVUasaFPHZACmo6FaTePvkij2wDCPN0rKDhIqENE3yuK2dqiSyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0HlY28I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF570C4CECE;
+	Tue, 10 Sep 2024 23:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726011868;
-	bh=K0LaUYF1SwsKZiGP09g/LWGz/cecN4xLr1fBYM3V/gw=;
+	s=k20201202; t=1726011876;
+	bh=GL8lUr8WY3cTgLAHEESls100v4NcVVKKCChvCfDwG+M=;
 	h=From:To:Cc:Subject:Date:From;
-	b=K+hYP9V8+vDjNgJhT/PXAOeQQVXJIiklCRJMx30tfeR+R2319+N+PY58oZfsKEbNT
-	 UNUXstjvCCs8aZRQojyT9rN1qW1/UOa9bK7UP7QmBlFP+mXVcfamX4UFZvrB9+L/is
-	 W/Iz9YK0cjl6A2wg13cqtwSIA4E2cCkp3xFXj2/6E82t2Uj/DPzNf490ki0fhksQ63
-	 qCRPepKmoh4QLoq52PhbBw+89poB6dIVRsyojo2NASibwhHZc1z5ZipzG2ZaD70f3Z
-	 Zg0LReolWj9M0xNYsxyF9O7HzRtmHdWcHCp0f+OIEisBAci3g/e5XAbe0Cv0lVf9EN
-	 EWivpwuVgtxjw==
+	b=T0HlY28IMYXu0m0mmiAmivGiWlvmsBVhHPXYEcpt8OZ+p1yHIQNsz1If6icQF66Ti
+	 wXHoHwUndCdK65cXumoogP9ByoeZjP+NHBjjBYdBJXaTU/4BcNm6cAAB9g4DyiVlxV
+	 mGNogAUBL2BR/bJLqjTuKj8JfDYD/3bpVJSLDoRAUIjrU31gHjQdarU3C1ZpOulUvM
+	 A0tw2ZFs6bN+NdtBCyA11fDAi9q/YuIuKfxkAP+QliDVuJ69PlBjRAiDZYLwoou5f2
+	 0vSHC7XpLlUdH4apw36P9roWS+5qHxJ1b4FgmjzoHlP4liDdbjjJMFLkRuKFY6hYjC
+	 Puhgev/vM04ig==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: cpu: Drop duplicate nvidia,tegra186-ccplex-cluster.yaml
-Date: Tue, 10 Sep 2024 18:44:21 -0500
-Message-ID: <20240910234422.1042486-1-robh@kernel.org>
+Subject: [PATCH] dt-bindings: rtc: Drop non-trivial duplicate compatibles
+Date: Tue, 10 Sep 2024 18:44:31 -0500
+Message-ID: <20240910234431.1043923-1-robh@kernel.org>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,59 +58,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-"nvidia,tegra186-ccplex-cluster" is also documented in
-arm/tegra/nvidia,tegra-ccplex-cluster.yaml. As it covers Tegra234 as
-well, drop nvidia,tegra186-ccplex-cluster.yaml.
+Several compatibles documented in trivial-rtc.yaml are documented
+elsewhere and are not trivial, so drop them.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../cpu/nvidia,tegra186-ccplex-cluster.yaml   | 37 -------------------
- 1 file changed, 37 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/cpu/nvidia,tegra186-ccplex-cluster.yaml
+ Documentation/devicetree/bindings/rtc/trivial-rtc.yaml | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/cpu/nvidia,tegra186-ccplex-cluster.yaml b/Documentation/devicetree/bindings/cpu/nvidia,tegra186-ccplex-cluster.yaml
-deleted file mode 100644
-index 16a448974561..000000000000
---- a/Documentation/devicetree/bindings/cpu/nvidia,tegra186-ccplex-cluster.yaml
-+++ /dev/null
-@@ -1,37 +0,0 @@
--# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
--%YAML 1.2
-----
--$id: http://devicetree.org/schemas/cpu/nvidia,tegra186-ccplex-cluster.yaml#
--$schema: http://devicetree.org/meta-schemas/core.yaml#
--
--title: NVIDIA Tegra186 CCPLEX Cluster
--
--maintainers:
--  - Thierry Reding <thierry.reding@gmail.com>
--  - Jon Hunter <jonathanh@nvidia.com>
--
--properties:
--  compatible:
--    const: nvidia,tegra186-ccplex-cluster
--
--  reg:
--    maxItems: 1
--
--  nvidia,bpmp:
--    description: phandle to the BPMP used to query CPU frequency tables
--    $ref: /schemas/types.yaml#/definitions/phandle
--
--additionalProperties: false
--
--required:
--  - compatible
--  - reg
--  - nvidia,bpmp
--
--examples:
--  - |
--    ccplex@e000000 {
--        compatible = "nvidia,tegra186-ccplex-cluster";
--        reg = <0x0e000000 0x400000>;
--        nvidia,bpmp = <&bpmp>;
--    };
+diff --git a/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml b/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
+index fffd759c603f..9e506543f5bf 100644
+--- a/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
++++ b/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
+@@ -43,7 +43,6 @@ properties:
+       # I2C-BUS INTERFACE REAL TIME CLOCK MODULE
+       - epson,rx8010
+       # I2C-BUS INTERFACE REAL TIME CLOCK MODULE
+-      - epson,rx8025
+       - epson,rx8035
+       # I2C-BUS INTERFACE REAL TIME CLOCK MODULE with Battery Backed RAM
+       - epson,rx8111
+@@ -52,10 +51,6 @@ properties:
+       - epson,rx8581
+       # Android Goldfish Real-time Clock
+       - google,goldfish-rtc
+-      # Intersil ISL1208 Low Power RTC with Battery Backed SRAM
+-      - isil,isl1208
+-      # Intersil ISL1218 Low Power RTC with Battery Backed SRAM
+-      - isil,isl1218
+       # Mvebu Real-time Clock
+       - marvell,orion-rtc
+       # Maxim DS1742/DS1743 Real-time Clock
+@@ -68,8 +63,6 @@ properties:
+       - microcrystal,rv8523
+       # NXP LPC32xx SoC Real-time Clock
+       - nxp,lpc3220-rtc
+-      # Real-time Clock Module
+-      - pericom,pt7c4338
+       # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
+       - ricoh,r2025sd
+       # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
 -- 
 2.45.2
 
