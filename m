@@ -1,101 +1,130 @@
-Return-Path: <linux-kernel+bounces-323367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3027D973C51
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:38:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E793973C5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 631C01C263EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:38:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1B671C2580C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA9B19D09E;
-	Tue, 10 Sep 2024 15:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A7519EEC9;
+	Tue, 10 Sep 2024 15:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGJBkS2p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GrXvSgil"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564106A022;
-	Tue, 10 Sep 2024 15:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EE919D084
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 15:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725982691; cv=none; b=WqcsZJGDEsROZOLI8Fa7iDHzLm9RO1wM2kjOs1S2SdbvS46GB0VYI5AcRXyvzfLZGTlLQFheF09xEWVq86tldbOOhlvQqCABsiTPMuQzkNEveOoRtoQTrnb2I088N+MvGoLfeWufDeNkkc3t/qfKNt2QtwqvuX7GmK+nOMeBByU=
+	t=1725982739; cv=none; b=ZJyiZjacI73Nz4zWQ8+rdh7JJ+bBFozR7hSFs2jt+2MG7sxRk6o8GaZP5wNH0j+aHPI/1i/7EHUgfcVbANkzENUtt0X2/oWncTM4cHZua8808zzE1+P9zh/WfF45HsIOw4UY3V6IZ4VO8M5WOSnzZDI7hzFiCCzmPFnn89tp4ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725982691; c=relaxed/simple;
-	bh=4KYQfc/lUaYXWGTKHMBMFjP420wLye9XhA0h6HENhTA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GDrVw/MvdzxYBQSfzDLUjiUYP+JLp1usNwUcHTzHC9Sjg10hNu+V2VYJrgK+Q0gZoOWXnyRypiw6nklVDx1YCbnNKIw6cs8OpKPB09G2RtGLjETWf5NphLrjcbBGoiX9ptiVCALTJX0S7B8jnfIBgOFvnDNxBp86N6Lg9+UlRZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGJBkS2p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB7EC4CEC3;
-	Tue, 10 Sep 2024 15:38:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725982691;
-	bh=4KYQfc/lUaYXWGTKHMBMFjP420wLye9XhA0h6HENhTA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=gGJBkS2pS8EpPYfyXb6tUaGNXyRFGHCn/zFczKP7yGdUVvLCNCebDcYrM2uQd2dA3
-	 b2FGjWNieFWgvurx0lyxJfKA6CC1aRdqhNrXzSK6X+o60eg/JaoXOBBxF1HmgbJF+j
-	 IMWr9FVZ5COX/0116j8Q/uEHq9iROx5QGPw00XA9uV1YAyvWZXiPeN8IhyCqabQ+x1
-	 O5+oiSWbX/CofTlkogSu86GYsB22NOPHBVrwj+/AfnnJwUF1vijPxWjjywxoJCxP7V
-	 3EWS6o5qZK3D2iWBgsntFUOdTWBMzUdtygs6lMDvm9ZrVDpeLv1o3WT7A4/sMuQBRG
-	 9lAXKhcxP7E2w==
-From: Mark Brown <broonie@kernel.org>
-To: Support Opensource <support.opensource@diasemi.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Yu Jiaoliang <yujiaoliang@vivo.com>
-Cc: opensource.kernel@vivo.com
-In-Reply-To: <20240910064631.3223441-1-yujiaoliang@vivo.com>
-References: <20240910064631.3223441-1-yujiaoliang@vivo.com>
-Subject: Re: [PATCH v1] regulator: Fix typos in the comment
-Message-Id: <172598268926.399549.6801883913988962206.b4-ty@kernel.org>
-Date: Tue, 10 Sep 2024 16:38:09 +0100
+	s=arc-20240116; t=1725982739; c=relaxed/simple;
+	bh=oCjdkvGBXYk951UuNZ8GUxFDU3TLEafF/eKU6VJhJjI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kOcZMJpFC+HCbxCbEVCLLd2XFuBHaIXRh862abWTZhYix06Phg4KQ/MiCN/BDw+lVNBgP9/zAU+ub5gKNaKWaB/gK75krbn3I3RnYlLwqbJbgBowO1mIBV+1LLx1ZhXx7BTPRHEpNV4QmcXLoEbdruCcC08rzoonV5YxtT1gSKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GrXvSgil; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4582b71df40so284111cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:38:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725982736; x=1726587536; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3gszVQrHTml2s4rQX/N3KISfWtIKCjIZkEmtrFN+rLM=;
+        b=GrXvSgilpWPDTzYZ9WABiQnJcvcxeBR4bm9wsuD4lVoyCFmn4tA8tyIqlbn3NDhtnn
+         Fb+3yNQxZ9V5xDPLtYREJm0lw4h7K0Rb6SyRAXHhMNvDEZP2U1aSz2X28F6hzxZbfqHv
+         icxm2c7yOJTBZ72I32Oc7hKkV6kVfNgUmgjNa94lEo1R0sGHmyrsGpCQdgbWdcirjeAB
+         Psog1zEKxDmlyl1nf/Qmx7p5/lT15i6QKlnbX6Yk0Y4u1y0vmH5c60tEwsY3GV/f5e16
+         AV+0L13zNQiReNL+oSFisUKmIYwvYFa4DTs73zRv2+f3St49KEhoPnaEMo1FVb0vovyC
+         nAMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725982736; x=1726587536;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3gszVQrHTml2s4rQX/N3KISfWtIKCjIZkEmtrFN+rLM=;
+        b=I1H/eNI2YI0fmgM3KoZgGSlPpGUTc/2olY7eDl3fINzM2ULieaGVt78oxy4ABARRUn
+         AIpIFA2aV/c3k5PzfkfrOYpioI7Biy/b8xuvgPNwBTx8UzvpAma4I+8eXwLSbuBM1uta
+         pvJmC4Yh32t/abbNAy1GDz8lTXyDhEta9mHlJhYGDez1aHEKPne5SDRgfhSFT+bJAeUc
+         AeTcpSfEuIl4lV7KaxlQpoN7EkLfdeEx4P5CgvJi2AbsQq30eOiTt6GWwFBvzpE99OsM
+         T/N4sIlMZkrCV0LqpG2J+pQDyA9VIs63ugJmF9xTbCbTqELlr4I2lglcRPbjmHVVqCeq
+         B7OA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTlk28gKY8HY2XqeyyE9PaH1t/9cFd2AgoIlWWpHE8ElmSW5F5mRD/7kAvnQotGGN6SA2pMNIpZntxa8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNz7uia3bNaakMjkUW9lLJElvUJ/cvQRP06+c8bfp34xr/MMfs
+	x6pqUd9ZYSnZtDQDXPogMPdDnI+52GtFTUbwFkni8IHSGPzCNL4nUDUNC3pGGTlPb2BCXXe0WCj
+	t6o26lmy6YflGwftsMZJK435mFLB0VfsF+dp/
+X-Google-Smtp-Source: AGHT+IEK6weRhBb+6I+yqObyHVaZqmcs2wOCh/JwTg5EmvszzOI8s/itZSBxrrNFolb48wNjfmGjViIMiDzaN91ZR8I=
+X-Received: by 2002:a05:622a:13ca:b0:447:e0e1:2a7b with SMTP id
+ d75a77b69052e-4583f0063b0mr2792721cf.23.1725982736186; Tue, 10 Sep 2024
+ 08:38:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+References: <20240909054318.1809580-1-almasrymina@google.com> <20240910080237.2372cfa6@kernel.org>
+In-Reply-To: <20240910080237.2372cfa6@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Tue, 10 Sep 2024 08:38:42 -0700
+Message-ID: <CAHS8izP4EO3t=7-n2Ok5pgKe+JjJV+T3EH1PaTW=YU234kEpGw@mail.gmail.com>
+Subject: Re: [PATCH net-next v25 00/13] Device Memory TCP
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
+	Magnus Karlsson <magnus.karlsson@intel.com>, 
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
+	Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 10 Sep 2024 14:46:30 +0800, Yu Jiaoliang wrote:
-> Fixed some confusing typographical errors:
-> comptabile->compatible,
-> asignment->assignment,
-> Verison->Version,
-> meansurement->measurement,
-> offets->offsets.
-> 
-> [...]
+On Tue, Sep 10, 2024 at 8:02=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Mon,  9 Sep 2024 05:43:05 +0000 Mina Almasry wrote:
+> > Device memory TCP (devmem TCP) is a proposal for transferring data to a=
+nd/or
+> > from device memory efficiently, without bouncing the data to a host mem=
+ory
+> > buffer.
+>
+> Mina, if you'd like to see this in v6.12 -- please fix the nits and
+> repost ASAP.
 
-Applied to
+Running my presubmits now and will repost in the next 2 hours or so.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] regulator: Fix typos in the comment
-      commit: 886fee35251107e169128723215b1f779a668be5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
+--
 Thanks,
-Mark
-
+Mina
 
