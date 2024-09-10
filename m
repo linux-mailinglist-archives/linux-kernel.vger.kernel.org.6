@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-322838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D90C973046
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:59:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDCA7973048
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A400A1F2277E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:59:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED7941C24314
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F8E18C32E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EFB18C90E;
 	Tue, 10 Sep 2024 09:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CiAjd1/m";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8PibRn7d"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u6c/TDjb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BNP5TUE6"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A01189F3B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479B917BEAE;
 	Tue, 10 Sep 2024 09:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725962346; cv=none; b=HUk28s115cBG+oPT//jSRQ2ZuvROxVz7R82NPxREPbKVeV1sAVciw23tglKQ4paFwQt/NwdztmxkiU2LYq3NY8NswSaAx8fYGmjYWHRTgl+LJw86i1IkTzlltlFEU4ZzxJoMoDQbantojoqSATW5yrZwgurt0oeH1Jr5X74REcg=
+	t=1725962346; cv=none; b=V8B13Acs1iLOeVYH8vXqFFHE27W/UcgfOtYxegrx6MBBcKgy1ExkMcj1UgqJ6yiLdkjyNQHUDhczJmhWS6rw24WQzHU7+XJN0xheUrfHui+WI0Uvc6W6GvcleaW4z8pJxv2BF2lTRzwoLqB2n4qRtoMr3wS5GBKuAPFZBCFgrsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725962346; c=relaxed/simple;
-	bh=LiH3D9j0J1D1EBxJOA0bfAFTDIYk7hTHSvpag/NdCp4=;
+	bh=xeJ1eTJ07WTeuckC3GHjcRHlRtFPKhCjuNuJfZW/qWE=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=NxwH0GR0+jAnx/o4ERAj/rLgDzGUB4z5+mPFfPPsbgwB+2zLNVKyJ3K7751InvO3VxqZ1qaP3zw+mhGhvLbiFb7DSsP33f0Gvw3iKVQpYT7Lq3wlRdycljy0KqC2SBxHjPG7MuchRcTTb4OrCArOgzHmG9wnMC4vilCxy8tHYu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CiAjd1/m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8PibRn7d; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=lHuFFgjVN+5ucIaXIn6nZvxYqJOG5Y9cQmB//uzJLdDq3Y6ixtJKHbBqWMuiWvPhc0Hpav5GnBAd2fRbGqEkmUEc43f34q+76mlJgHnB5nxUDCGIzILaDtglfwcFmtjyIRtrMNopQ4Ujhukp4/tLsdFRNQcEfk/gJ+EmG5EQEg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u6c/TDjb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BNP5TUE6; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 10 Sep 2024 09:59:01 -0000
+Date: Tue, 10 Sep 2024 09:59:02 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1725962342;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=grD5In4bGPaA+nhqFqj8epzcpTP1SHG7xTFJKKmUVzo=;
-	b=CiAjd1/mVBw9tbxw5BIiGcJgP/Vlfqne70HZ9Uazkw9C3Xu7WE7lpgDnefzt7ZnT19+Dgq
-	Lz6Gm/r32cnbVqz8roxJxcSCKQcCcYMuynP3srNVLePH6ePi1dkWji2FIHy6USEUf+csnQ
-	UU0tHluObTkUgOfXbx+G+QcaUjrVHCLAkwlU+vL0N/EN8JKVnNTDn1eNC+TBAhw9VbTkrp
-	0U+1eYqcc7P6mriqVLwEKGLr3SJRzkY/u66ZknNs7lnY1QmAqaIXIZG73fGZiZCc5U/VDI
-	hzvZO+kjzz5ItQtv954hSbXLjLv6kaGSxvSUTkPzT7VXFJ7Mk1csD/8zwUAGLg==
+	bh=YAQ5JvRg9jZpf7TDLrdlriRz1zqLxlecpjFUA2kd4bM=;
+	b=u6c/TDjbhmOQx/RNCfSiTqUltlJtDltvXCFf/67fUKpRC1Y9NEJw5CDn0/IMv5CJOeoiPd
+	l1LeYpSjfMdSJW0kv/4fIS5WCDJ15TaGlVztzxeTu1jShe+400HuS5XZLG0L/fUEXmaUSq
+	nY7dadDZsdFsL0qBT10ohsK/ueupt/tc35HHwm5ojil99SJ1ui94SqTOrLc+V7dWlLmIUc
+	sScD4ahRXKd3ZuUTGroLaoyA7f0RpKvnnrGU4/Na7CS0B6Eovv/PolC9ugF1B6Wi+qhht8
+	m77oMUzQ3o2iKjgH8q94kxwKxhmGmBQfUsaS+9lbn4XlmrCBeEGh8sM5kDwqjA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1725962342;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,26 +52,27 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=grD5In4bGPaA+nhqFqj8epzcpTP1SHG7xTFJKKmUVzo=;
-	b=8PibRn7dXM3dPADsXj6zR5IsXAAX49qWxDhnNWp5jcgn57cnMYTMhx7wnszn7mhfeOlGQR
-	WPpm5Y/JGuoF4/AA==
+	bh=YAQ5JvRg9jZpf7TDLrdlriRz1zqLxlecpjFUA2kd4bM=;
+	b=BNP5TUE6qeWSr8KiAYs+MZRiD1+nls/hnTd0wwSInYK+S7BNhFPMDbd8S3LhWF3gKVvzE6
+	zqKAjJkYOImBpEAw==
 From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/x86/rapl: Clean up cpumask and hotplug
+Subject:
+ [tip: perf/core] perf/x86/rapl: Move the pmu allocation out of CPU hotplug
 Cc: Kan Liang <kan.liang@linux.intel.com>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240802151643.1691631-8-kan.liang@linux.intel.com>
-References: <20240802151643.1691631-8-kan.liang@linux.intel.com>
+In-Reply-To: <20240802151643.1691631-7-kan.liang@linux.intel.com>
+References: <20240802151643.1691631-7-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172596234170.2215.10591822479645117410.tip-bot2@tip-bot2>
+Message-ID: <172596234238.2215.12982461380721483989.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,192 +82,95 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     fa90a7dad75b47302f6d35f6c6a36d0c87450187
-Gitweb:        https://git.kernel.org/tip/fa90a7dad75b47302f6d35f6c6a36d0c87450187
+Commit-ID:     351e6ba39e5c851b00d83716ffb4d19b807ecc3d
+Gitweb:        https://git.kernel.org/tip/351e6ba39e5c851b00d83716ffb4d19b807ecc3d
 Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Fri, 02 Aug 2024 08:16:43 -07:00
+AuthorDate:    Fri, 02 Aug 2024 08:16:42 -07:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Tue, 10 Sep 2024 11:44:14 +02:00
 
-perf/x86/rapl: Clean up cpumask and hotplug
+perf/x86/rapl: Move the pmu allocation out of CPU hotplug
 
-The rapl pmu is die scope, which is supported by the generic perf_event
-subsystem now.
+The rapl pmu just needs to be allocated once. It doesn't matter to be
+allocated at each CPU hotplug, or the global init_rapl_pmus().
 
-Set the scope for the rapl PMU and remove all the cpumask and hotplug
-codes.
+Move the pmu allocation to the init_rapl_pmus(). So the generic hotplug
+supports can be applied.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20240802151643.1691631-8-kan.liang@linux.intel.com
+Link: https://lore.kernel.org/r/20240802151643.1691631-7-kan.liang@linux.intel.com
 ---
- arch/x86/events/rapl.c     | 80 +-------------------------------------
- include/linux/cpuhotplug.h |  1 +-
- 2 files changed, 2 insertions(+), 79 deletions(-)
+ arch/x86/events/rapl.c | 44 ++++++++++++++++++++++++++++-------------
+ 1 file changed, 31 insertions(+), 13 deletions(-)
 
 diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-index d12f3a6..0f8f4eb 100644
+index b985ca7..d12f3a6 100644
 --- a/arch/x86/events/rapl.c
 +++ b/arch/x86/events/rapl.c
-@@ -135,7 +135,6 @@ struct rapl_model {
-  /* 1/2^hw_unit Joule */
- static int rapl_hw_unit[NR_RAPL_DOMAINS] __read_mostly;
- static struct rapl_pmus *rapl_pmus;
--static cpumask_t rapl_cpu_mask;
- static unsigned int rapl_cntr_mask;
- static u64 rapl_timer_ms;
- static struct perf_msr *rapl_msrs;
-@@ -340,8 +339,6 @@ static int rapl_pmu_event_init(struct perf_event *event)
- 	if (event->cpu < 0)
- 		return -EINVAL;
+@@ -568,19 +568,8 @@ static int rapl_cpu_online(unsigned int cpu)
+ 	struct rapl_pmu *pmu = cpu_to_rapl_pmu(cpu);
+ 	int target;
  
--	event->event_caps |= PERF_EV_CAP_READ_ACTIVE_PKG;
+-	if (!pmu) {
+-		pmu = kzalloc_node(sizeof(*pmu), GFP_KERNEL, cpu_to_node(cpu));
+-		if (!pmu)
+-			return -ENOMEM;
 -
- 	if (!cfg || cfg >= NR_RAPL_DOMAINS + 1)
- 		return -EINVAL;
- 
-@@ -360,7 +357,6 @@ static int rapl_pmu_event_init(struct perf_event *event)
- 	pmu = cpu_to_rapl_pmu(event->cpu);
- 	if (!pmu)
- 		return -EINVAL;
--	event->cpu = pmu->cpu;
- 	event->pmu_private = pmu;
- 	event->hw.event_base = rapl_msrs[bit].msr;
- 	event->hw.config = cfg;
-@@ -374,23 +370,6 @@ static void rapl_pmu_event_read(struct perf_event *event)
- 	rapl_event_update(event);
- }
- 
--static ssize_t rapl_get_attr_cpumask(struct device *dev,
--				struct device_attribute *attr, char *buf)
--{
--	return cpumap_print_to_pagebuf(true, buf, &rapl_cpu_mask);
--}
+-		raw_spin_lock_init(&pmu->lock);
+-		INIT_LIST_HEAD(&pmu->active_list);
+-		pmu->pmu = &rapl_pmus->pmu;
+-		pmu->timer_interval = ms_to_ktime(rapl_timer_ms);
+-		rapl_hrtimer_init(pmu);
 -
--static DEVICE_ATTR(cpumask, S_IRUGO, rapl_get_attr_cpumask, NULL);
--
--static struct attribute *rapl_pmu_attrs[] = {
--	&dev_attr_cpumask.attr,
--	NULL,
--};
--
--static struct attribute_group rapl_pmu_attr_group = {
--	.attrs = rapl_pmu_attrs,
--};
--
- RAPL_EVENT_ATTR_STR(energy-cores, rapl_cores, "event=0x01");
- RAPL_EVENT_ATTR_STR(energy-pkg  ,   rapl_pkg, "event=0x02");
- RAPL_EVENT_ATTR_STR(energy-ram  ,   rapl_ram, "event=0x03");
-@@ -438,7 +417,6 @@ static struct attribute_group rapl_pmu_format_group = {
- };
- 
- static const struct attribute_group *rapl_attr_groups[] = {
--	&rapl_pmu_attr_group,
- 	&rapl_pmu_format_group,
- 	&rapl_pmu_events_group,
- 	NULL,
-@@ -541,49 +519,6 @@ static struct perf_msr amd_rapl_msrs[] = {
- 	[PERF_RAPL_PSYS] = { 0, &rapl_events_psys_group,  NULL, false, 0 },
- };
- 
--static int rapl_cpu_offline(unsigned int cpu)
--{
--	struct rapl_pmu *pmu = cpu_to_rapl_pmu(cpu);
--	int target;
--
--	/* Check if exiting cpu is used for collecting rapl events */
--	if (!cpumask_test_and_clear_cpu(cpu, &rapl_cpu_mask))
--		return 0;
--
--	pmu->cpu = -1;
--	/* Find a new cpu to collect rapl events */
--	target = cpumask_any_but(topology_die_cpumask(cpu), cpu);
--
--	/* Migrate rapl events to the new target */
--	if (target < nr_cpu_ids) {
--		cpumask_set_cpu(target, &rapl_cpu_mask);
--		pmu->cpu = target;
--		perf_pmu_migrate_context(pmu->pmu, cpu, target);
+-		rapl_pmus->pmus[topology_logical_die_id(cpu)] = pmu;
 -	}
--	return 0;
--}
--
--static int rapl_cpu_online(unsigned int cpu)
--{
--	struct rapl_pmu *pmu = cpu_to_rapl_pmu(cpu);
--	int target;
--
--	if (!pmu)
--		return -ENOMEM;
--
--	/*
--	 * Check if there is an online cpu in the package which collects rapl
--	 * events already.
--	 */
--	target = cpumask_any_and(&rapl_cpu_mask, topology_die_cpumask(cpu));
--	if (target < nr_cpu_ids)
--		return 0;
--
--	cpumask_set_cpu(cpu, &rapl_cpu_mask);
--	pmu->cpu = cpu;
--	return 0;
--}
--
- static int rapl_check_hw_unit(struct rapl_model *rm)
++	if (!pmu)
++		return -ENOMEM;
+ 
+ 	/*
+ 	 * Check if there is an online cpu in the package which collects rapl
+@@ -673,6 +662,32 @@ static const struct attribute_group *rapl_attr_update[] = {
+ 	NULL,
+ };
+ 
++static void __init init_rapl_pmu(void)
++{
++	struct rapl_pmu *pmu;
++	int cpu;
++
++	cpus_read_lock();
++
++	for_each_cpu(cpu, cpu_online_mask) {
++		pmu = cpu_to_rapl_pmu(cpu);
++		if (pmu)
++			continue;
++		pmu = kzalloc_node(sizeof(*pmu), GFP_KERNEL, cpu_to_node(cpu));
++		if (!pmu)
++			continue;
++		raw_spin_lock_init(&pmu->lock);
++		INIT_LIST_HEAD(&pmu->active_list);
++		pmu->pmu = &rapl_pmus->pmu;
++		pmu->timer_interval = ms_to_ktime(rapl_timer_ms);
++		rapl_hrtimer_init(pmu);
++
++		rapl_pmus->pmus[topology_logical_die_id(cpu)] = pmu;
++	}
++
++	cpus_read_unlock();
++}
++
+ static int __init init_rapl_pmus(void)
  {
- 	u64 msr_rapl_power_unit_bits;
-@@ -707,6 +642,7 @@ static int __init init_rapl_pmus(void)
- 	rapl_pmus->pmu.stop		= rapl_pmu_event_stop;
+ 	int nr_rapl_pmu = topology_max_packages() * topology_max_dies_per_package();
+@@ -693,6 +708,9 @@ static int __init init_rapl_pmus(void)
  	rapl_pmus->pmu.read		= rapl_pmu_event_read;
  	rapl_pmus->pmu.module		= THIS_MODULE;
-+	rapl_pmus->pmu.scope		= PERF_PMU_SCOPE_DIE;
  	rapl_pmus->pmu.capabilities	= PERF_PMU_CAP_NO_EXCLUDE;
- 
- 	init_rapl_pmu();
-@@ -857,24 +793,13 @@ static int __init rapl_pmu_init(void)
- 	if (ret)
- 		return ret;
- 
--	/*
--	 * Install callbacks. Core will call them for each online cpu.
--	 */
--	ret = cpuhp_setup_state(CPUHP_AP_PERF_X86_RAPL_ONLINE,
--				"perf/x86/rapl:online",
--				rapl_cpu_online, rapl_cpu_offline);
--	if (ret)
--		goto out;
--
- 	ret = perf_pmu_register(&rapl_pmus->pmu, "power", -1);
- 	if (ret)
--		goto out1;
-+		goto out;
- 
- 	rapl_advertise();
++
++	init_rapl_pmu();
++
  	return 0;
- 
--out1:
--	cpuhp_remove_state(CPUHP_AP_PERF_X86_RAPL_ONLINE);
- out:
- 	pr_warn("Initialization failed (%d), disabled\n", ret);
- 	cleanup_rapl_pmus();
-@@ -884,7 +809,6 @@ module_init(rapl_pmu_init);
- 
- static void __exit intel_rapl_exit(void)
- {
--	cpuhp_remove_state_nocalls(CPUHP_AP_PERF_X86_RAPL_ONLINE);
- 	perf_pmu_unregister(&rapl_pmus->pmu);
- 	cleanup_rapl_pmus();
  }
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index 2101ae2..801053c 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -207,7 +207,6 @@ enum cpuhp_state {
- 	CPUHP_AP_PERF_X86_UNCORE_ONLINE,
- 	CPUHP_AP_PERF_X86_AMD_UNCORE_ONLINE,
- 	CPUHP_AP_PERF_X86_AMD_POWER_ONLINE,
--	CPUHP_AP_PERF_X86_RAPL_ONLINE,
- 	CPUHP_AP_PERF_S390_CF_ONLINE,
- 	CPUHP_AP_PERF_S390_SF_ONLINE,
- 	CPUHP_AP_PERF_ARM_CCI_ONLINE,
+ 
 
