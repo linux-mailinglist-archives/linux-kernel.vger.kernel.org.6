@@ -1,187 +1,303 @@
-Return-Path: <linux-kernel+bounces-323108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121AF973802
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:52:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED3DD9737F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6234286A34
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:52:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 348FEB264CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90684194C89;
-	Tue, 10 Sep 2024 12:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E43192B9F;
+	Tue, 10 Sep 2024 12:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="igdDk91h"
-Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Vowxteqe"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB9B194151;
-	Tue, 10 Sep 2024 12:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2370D191F9E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725972692; cv=none; b=MYARW+/arwob3tDmVsXOkOv0DGubblnW8iwerix+8YRRggHPb46I4n5Abj2ipLENChHAYdv7nMMdyMNDbi8/oO2jy2VmDxK12deJPNN4Bc4ItCCX8/NTmGNj+hi+nqV588mh7l1T3XJpMXXynYb+ZcZN7VPhGKoh+KPxrEL4F80=
+	t=1725972686; cv=none; b=bun0e9anXyJOk3Rt13LXKswY19NMR8fojod9f9KhBA0W1W4qLOskjBGya1+Y/5z12hRqbMUqdcaUdfVlOy4bCF4gNoQ5L6ZHTjciJJPyd1QhMgzzMrdvgPlXNvU2bdaimbuv/r0zVRlthdOQo4o0tVA2tzGSOEcsJoc+MvZ6B7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725972692; c=relaxed/simple;
-	bh=KOEEs/y0FGCkb+klP+KV9yU4iwr2GAi37Ho3J9O83lo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Wayw5PzdHqZfbiGA/ogIg/jJInyiOftsA4QJ63mqcoSdYzDokySg1LYpZZaVqq9L6xMXrHrEf8E2SVp/s1HNIrpAtpx+YaWHdjnSeAQ7aEc0kbHLDNEktyg3MhOM1cl5WPMVlIM5xGgNAvaxozUiBjU7hEZyBygnxVD2DG5+mLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=igdDk91h; arc=none smtp.client-ip=209.85.216.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-2d87f34a650so3775966a91.1;
-        Tue, 10 Sep 2024 05:51:31 -0700 (PDT)
+	s=arc-20240116; t=1725972686; c=relaxed/simple;
+	bh=RAeMCKmWvza43Nu71cBoTtzP6tH/bCv86C2jKctL7U8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LFCVyo2aVds0tTj0JusyWFbNT9kUeAUzA35d+uYPplywceMLHlWJplSk6L/VTVpDjPV5Xg3uLjIH+0Ywm1WNECd5Wye0ikHYhlrLgpvUckrqFGJgeYdZorx8frXOeyH0SrpwUGMX1sgnc3QEMo8G13sLmSTD2B5YMx3Ya60wtEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Vowxteqe; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cb58d810eso13428055e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:51:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725972691; x=1726577491; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UwvRv3wJIDozdKt4626HoR6j934EORaOhOiizGhVlEQ=;
-        b=igdDk91hty9Ab+0Xo8EvOIEHwZehcXBVPNeneiXAt2uEe1dkJN8XjXfwrM5p7udGCk
-         vlQ3dY1wKpD+PYrioHMgQC3d3uU2ajwj2V7xloDsW28iJAduBA+z2IRNVPQN17VMkKUg
-         nevaGYVMlZzxn32EQD8/gSlMfEoAjCPEoaQsMofnz+aXrrPDyXiCc/F0WnS9Zj7WZULt
-         8iwDRAm3WbYYZubRA/RRbGVAyfIV0ST3kvCWzHfQbsOZ7Z6RI0LSIheNA5eJdgUZ+IL6
-         ssqBpV52qRxbnVMf5L/qNXBnyeErokkC/qw36CQiFW+qEhCM+SE6geRaCZ15D/UNYvQS
-         jOcg==
+        d=suse.com; s=google; t=1725972682; x=1726577482; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RAeMCKmWvza43Nu71cBoTtzP6tH/bCv86C2jKctL7U8=;
+        b=VowxteqeM6ux9q1duzJWhYbDjjOtbm3tQe7Ogs8eI77OkvD/GxvY06+n03CAaG3MGT
+         t7D399seSQmWSjV9wIrORacTbSBz6LumkIOn4EhW4/Q+SJesniJs4P3C8UrBFujQxFcB
+         T/c9bJUYXZZMy9DgWG8hLIO3CqV/6rfCegTfkJQVa1LIGBNw5nHpRB3rbCPSqLng3E4g
+         RSaxzVMGBM5Jl6YDnWxOfSptISLdvhIWGlGc+5qJPY1OB5jGudRM8y/zps/0OkrhaqMd
+         EDX6vuZ/XMrD7gaaU1szFfKudrAmBlNkouJ2inhKcHCPmLdeAekwkzlJUl15CVNA1EH/
+         YxzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725972691; x=1726577491;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UwvRv3wJIDozdKt4626HoR6j934EORaOhOiizGhVlEQ=;
-        b=qmtuX7gIORaz4qMe7idDxwtjst7dXUtY/nQ/nK6f3aOaD+ePzKuclQBNUmj4WiOh+6
-         6mKEQdsnOwodJlrAPFUeKDg00hmiPxviW8CPH88wxUqOrGiOc8AXgVXHoz6LrD3keSsp
-         ufnJuZgSwhjJpZk68tb+JKZTFdvNKG2nQzQT8bpRAr5YhxCZeni3dWw7Zp+oCUqqYVaJ
-         1dedChjgdUmSEAiOcsABJBYRrIRM7vA0MjFSp5v3GugD0ZVWQB6Wjyim6DXAUIcHBfVy
-         mFYo1nlyQH4GFqKOQ+tyn4LIgVeDhBy54ilHTwyB38GA7VVbaGf74EG00tF/taNg+o3x
-         iZLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFrhxL5TbxVxtYcda0E9X/kwwOLc7uAyNQQUTMvzJz+JYOw+bB/q6U3c4JqRKm5UsbR4l5GjqjqL0=@vger.kernel.org, AJvYcCVLPOWlmrG7/p/byXZilJm3h+NxdhORLD0Ys06a+lDKlVUbPvqEusXW8P0FxWMZPhHeEMGgCgOOPV+X44g=@vger.kernel.org, AJvYcCX1ZUpPOp81AlO8v8xNrrZwvCy9yaEbPNMf3lZQkAxuP/UPt4BTWXv62N4Fzs1v7oKdyhQzWTg1CxXj5aA=@vger.kernel.org, AJvYcCX83EYqqJmdKNMqBqvnCRSEff9NwOV1GIr0KeZ24u3CsZamqUZRIYymU8W86C1i0g2toQpqv1m9jMH6nQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsjZ6QlJHbPxC8Kjz/EEYmwbN7p8nkI5wD4mXZCJ0UoiS0gD9P
-	q9cTAlt08eK9inq30IhpBVAmqcnEQR1YuoV9NShSADoKYhY7YQr8
-X-Google-Smtp-Source: AGHT+IGroNxXPo2q0iinhOTGCE7e5d5prqrWOJ0qJja22FenNOZ6SsoWGZUouzQvScBqrLr4XaHpcw==
-X-Received: by 2002:a17:90a:9e4:b0:2c9:7343:71f1 with SMTP id 98e67ed59e1d1-2db671d9d58mr4299989a91.14.1725972690657;
-        Tue, 10 Sep 2024 05:51:30 -0700 (PDT)
-Received: from localhost ([212.107.28.55])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db044f37dasm6265325a91.34.2024.09.10.05.51.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 05:51:30 -0700 (PDT)
-From: Celeste Liu <coelacanthushex@gmail.com>
-X-Google-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
-Date: Tue, 10 Sep 2024 20:51:10 +0800
-Subject: [PATCH v3 4/4] arm: defconfig: drop RT_GROUP_SCHED=y from
- bcm2835/tegra/omap2plus
+        d=1e100.net; s=20230601; t=1725972682; x=1726577482;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RAeMCKmWvza43Nu71cBoTtzP6tH/bCv86C2jKctL7U8=;
+        b=fzJnxqG8NAev8W6vjuIiukH7goNLK9v3CY2k4GCUtz50RnFcQCYSxVYVbDMzmizW3z
+         WLvj9Xrp8lthLFJi6k/IYoUAd0B7LMbfDn7WPNwUgZycGiCANkCvyn2wdj2D5KPb5Vct
+         62ILk7mq+qEHQeImsWcAzqCy8H1N7BD+hoOdFgnXs3deLi9wzuhV6Kke7TpMeFEPMQVK
+         C5XQax5xciwY+SJjID37ZsNaZNDqT6xsljk3FYX6+r+vzNXwNbvHphs+6PJhfM+S5eFZ
+         CtiohwkVi9CkfbJs7b7REpWLq9rHynh0mKSco99OF5cNTlAT3dRXTo/bNV1Oiaaa8Id0
+         1gXg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9VNMPt7XcfhTQ9uQFM4dOK0ODbONAC3vwnpUSKdxCPbgbeCLSfK21gh3rv9SFXzrTNzPUKVCha1GCVkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqGkvIfjmB8Jtifldx7Pqi10KR+LkdzD3hbZfXUdP0CwqYNRLQ
+	eMQySzAEWsGx4ANcr3wQVwkBzMLFMOBae5BzKAnlT5fQdHkHDEfKisLxG23qyDo=
+X-Google-Smtp-Source: AGHT+IE2bu1PEM3oINJPnUVRif7L3mk3Ym1xRASor35sxzraH/Vf6vcgza0+vyhGIw9CdV6get3sUA==
+X-Received: by 2002:a05:600c:1caa:b0:426:64c1:8388 with SMTP id 5b1f17b1804b1-42cbde09a29mr19714235e9.17.1725972681420;
+        Tue, 10 Sep 2024 05:51:21 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8741:4a00:60e5:7bee:fc48:e85c? (p200300e587414a0060e57beefc48e85c.dip0.t-ipconnect.de. [2003:e5:8741:4a00:60e5:7bee:fc48:e85c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb8120asm110481945e9.37.2024.09.10.05.51.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 05:51:21 -0700 (PDT)
+Message-ID: <7ce2eaaf-27a7-47a6-bf33-87176cd9cb26@suse.com>
+Date: Tue, 10 Sep 2024 14:51:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240910-fix-riscv-rt_group_sched-v3-4-486e75e5ae6d@gmail.com>
-References: <20240910-fix-riscv-rt_group_sched-v3-0-486e75e5ae6d@gmail.com>
-In-Reply-To: <20240910-fix-riscv-rt_group_sched-v3-0-486e75e5ae6d@gmail.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Guo Ren <guoren@kernel.org>, Anup Patel <anup@brainfault.org>, 
- Heinrich Schuchardt <heinrich.schuchardt@canonical.com>, 
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- Russell King <linux@armlinux.org.uk>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Tony Lindgren <tony@atomide.com>, Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
- linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
- linux-tegra@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Celeste Liu <CoelacanthusHex@gmail.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2991;
- i=CoelacanthusHex@gmail.com; h=from:subject:message-id;
- bh=KOEEs/y0FGCkb+klP+KV9yU4iwr2GAi37Ho3J9O83lo=;
- b=owJ4nJvAy8zAJfY4pvNJRPo6U8bTakkMaQ8cjir6+kzR+lXemlktLKMwjd0/+nsN053LZ/95b
- tR0LFP2z+0oZWEQ42KQFVNkEdv59PWy0kcflvGazICZw8oEMoSBi1MAJrKZg5HhTsqW+5GH5+f+
- PfjZ/6VgcMRh1595TKq7D4cys8gH9mkpMTKsn7GpjoXF8dtcKaszT4L+POBuC/yTIPtRKmja47U
- cUz7zAQA0aEnq
-X-Developer-Key: i=CoelacanthusHex@gmail.com; a=openpgp;
- fpr=892EBC7DC392DFF9C9C03F1D15F4180E73787863
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/7] xen: add capability to remap non-RAM pages to
+ different PFNs
+To: Jan Beulich <jbeulich@suse.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, xen-devel@lists.xenproject.org,
+ linux-kernel@vger.kernel.org, x86@kernel.org
+References: <20240910103932.7634-1-jgross@suse.com>
+ <20240910103932.7634-6-jgross@suse.com>
+ <0c4f3e87-b138-407b-a271-7f86fef255f6@suse.com>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <0c4f3e87-b138-407b-a271-7f86fef255f6@suse.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------ZokzG9C9TZobncaej7XamCWz"
 
-Commit 673ce00c5d6c ("ARM: omap2plus_defconfig: Add support for distros
-with systemd") said it's because of recommendation from systemd. But
-systemd changed their recommendation later.[1]
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------ZokzG9C9TZobncaej7XamCWz
+Content-Type: multipart/mixed; boundary="------------0iyyNybbmClI80Z25k0YA0hR";
+ protected-headers="v1"
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+To: Jan Beulich <jbeulich@suse.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, xen-devel@lists.xenproject.org,
+ linux-kernel@vger.kernel.org, x86@kernel.org
+Message-ID: <7ce2eaaf-27a7-47a6-bf33-87176cd9cb26@suse.com>
+Subject: Re: [PATCH v3 5/7] xen: add capability to remap non-RAM pages to
+ different PFNs
+References: <20240910103932.7634-1-jgross@suse.com>
+ <20240910103932.7634-6-jgross@suse.com>
+ <0c4f3e87-b138-407b-a271-7f86fef255f6@suse.com>
+In-Reply-To: <0c4f3e87-b138-407b-a271-7f86fef255f6@suse.com>
+Autocrypt-Gossip: addr=jbeulich@suse.com; keydata=
+ xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
+ hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
+ 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
+ /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
+ O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
+ MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
+ nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
+ 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
+ Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJ3BBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
+ AwECHgECF4AAIQkQoDSui/t3IH4WIQQ+pJkfkcoLMCa4X6CgNK6L+3cgfgn7AJ9DmMd0SMJE
+ ePbc7/m22D2v04iu7ACffXTdZQhNl557tJuDXZSBxDmW/tLOwU0EWTecRBAIAIK5OMKMU5R2
+ Lk2bbjgX7vyQuCFFyKf9rC/4itNwhYWFSlKzVj3WJBDsoi2KvPm7AI+XB6NIkNAkshL5C0kd
+ pcNd5Xo0jRR5/WE/bT7LyrJ0OJWS/qUit5eNNvsO+SxGAk28KRa1ieVLeZi9D03NL0+HIAtZ
+ tecfqwgl3Y72UpLUyt+r7LQhcI/XR5IUUaD4C/chB4Vq2QkDKO7Q8+2HJOrFIjiVli4lU+Sf
+ OBp64m//Y1xys++Z4ODoKh7tkh5DxiO3QBHG7bHK0CSQsJ6XUvPVYubAuy1XfSDzSeSBl//C
+ v78Fclb+gi9GWidSTG/4hsEzd1fY5XwCZG/XJJY9M/sAAwUH/09Ar9W2U1Qm+DwZeP2ii3Ou
+ 14Z9VlVVPhcEmR/AFykL9dw/OV2O/7cdi52+l00reUu6Nd4Dl8s4f5n8b1YFzmkVVIyhwjvU
+ jxtPyUgDOt6DRa+RaDlXZZmxQyWcMv2anAgYWGVszeB8Myzsw8y7xhBEVV1S+1KloCzw4V8Z
+ DSJrcsZlyMDoiTb7FyqxwQnM0f6qHxWbmOOnbzJmBqpNpFuDcz/4xNsymJylm6oXiucHQBAP
+ Xb/cE1YNHpuaH4SRhIxwQilCYEznWowQphNAbJtEKOmcocY7EbSt8VjXTzmYENkIfkrHRyXQ
+ dUm5AoL51XZljkCqNwrADGkTvkwsWSvCSQQYEQIACQUCWTecRAIbDAAKCRCgNK6L+3cgfuef
+ AJ9wlZQNQUp0KwEf8Tl37RmcxCL4bQCcC5alCSMzUBJ5DBIcR4BY+CyQFAs=
 
-For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
-needs an RT budget assigned, otherwise the processes in it will not be able to
-get RT at all. The problem with RT group scheduling is that it requires the
-budget assigned but there's no way we could assign a default budget, since the
-values to assign are both upper and lower time limits, are absolute, and need to
-be sum up to < 1 for each individal cgroup. That means we cannot really come up
-with values that would work by default in the general case.[2]
+--------------0iyyNybbmClI80Z25k0YA0hR
+Content-Type: multipart/mixed; boundary="------------NABlShubVjh8h9p4iADsy1lm"
 
-For cgroup v2, it's almost unusable as well. If it turned on, the cpu controller
-can only be enabled when all RT processes are in the root cgroup. But it will
-lose the benefits of cgroup v2 if all RT process were placed in the same cgroup.
+--------------NABlShubVjh8h9p4iADsy1lm
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn't
-support it.
+T24gMTAuMDkuMjQgMTQ6MjYsIEphbiBCZXVsaWNoIHdyb3RlOg0KPiBPbiAxMC4wOS4yMDI0
+IDEyOjM5LCBKdWVyZ2VuIEdyb3NzIHdyb3RlOg0KPj4gV2hlbiBydW5uaW5nIGFzIGEgWGVu
+IFBWIGRvbTAgaXQgY2FuIGhhcHBlbiB0aGF0IHRoZSBrZXJuZWwgaXMgYmVpbmcNCj4+IGxv
+YWRlZCB0byBhIGd1ZXN0IHBoeXNpY2FsIGFkZHJlc3MgY29uZmxpY3Rpbmcgd2l0aCB0aGUg
+aG9zdCBtZW1vcnkNCj4+IG1hcC4NCj4+DQo+PiBJbiBvcmRlciB0byBiZSBhYmxlIHRvIHJl
+c29sdmUgdGhpcyBjb25mbGljdCwgYWRkIHRoZSBjYXBhYmlsaXR5IHRvDQo+PiByZW1hcCBu
+b24tUkFNIGFyZWFzIHRvIGRpZmZlcmVudCBndWVzdCBQRk5zLiBBIGZ1bmN0aW9uIHRvIHVz
+ZSB0aGlzDQo+PiByZW1hcHBpbmcgaW5mb3JtYXRpb24gZm9yIG90aGVyIHB1cnBvc2VzIHRo
+YW4gZG9pbmcgdGhlIHJlbWFwIHdpbGwgYmUNCj4+IGFkZGVkIHdoZW4gbmVlZGVkLg0KPj4N
+Cj4+IEFzIHRoZSBudW1iZXIgb2YgY29uZmxpY3RzIHNob3VsZCBiZSByYXRoZXIgbG93IChj
+dXJyZW50bHkgb25seQ0KPj4gbWFjaGluZXMgd2l0aCBtYXguIDEgY29uZmxpY3QgYXJlIGtu
+b3duKSwgc2F2ZSB0aGUgcmVtYXAgZGF0YSBpbiBhDQo+PiBzbWFsbCBzdGF0aWNhbGx5IGFs
+bG9jYXRlZCBhcnJheS4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBKdWVyZ2VuIEdyb3NzIDxq
+Z3Jvc3NAc3VzZS5jb20+DQo+IA0KPiBSZXZpZXdlZC1ieTogSmFuIEJldWxpY2ggPGpiZXVs
+aWNoQHN1c2UuY29tPg0KPiB3aXRoIHR3byBjb3NtZXRpYyByZW1hcmtzOg0KPiANCj4+IEBA
+IC03OTIsNiArNzkzLDcwIEBAIGludCBjbGVhcl9mb3JlaWduX3AybV9tYXBwaW5nKHN0cnVj
+dCBnbnR0YWJfdW5tYXBfZ3JhbnRfcmVmICp1bm1hcF9vcHMsDQo+PiAgIAlyZXR1cm4gcmV0
+Ow0KPj4gICB9DQo+PiAgIA0KPj4gKy8qIFJlbWFwcGVkIG5vbi1SQU0gYXJlYXMgKi8NCj4+
+ICsjZGVmaW5lIE5SX05PTlJBTV9SRU1BUCA0DQo+PiArc3RhdGljIHN0cnVjdCBub25yYW1f
+cmVtYXAgew0KPj4gKwlwaHlzX2FkZHJfdCBtYWRkcjsNCj4+ICsJcGh5c19hZGRyX3QgcGFk
+ZHI7DQo+PiArCXNpemVfdCBzaXplOw0KPj4gK30geGVuX25vbnJhbV9yZW1hcFtOUl9OT05S
+QU1fUkVNQVBdIF9fcm9fYWZ0ZXJfaW5pdDsNCj4+ICtzdGF0aWMgdW5zaWduZWQgaW50IG5y
+X25vbnJhbV9yZW1hcCBfX3JvX2FmdGVyX2luaXQ7DQo+IA0KPiBJIHRha2UgaXQgdGhpcyBp
+cyB0aGUgY2Fub25pY2FsIHBsYWNlbWVudCBvZiBzZWN0aW9uIGF0dHJpYnV0ZXMgaW4gdGhl
+DQo+IGtlcm5lbD8gKEluIFhlbiBJJ2QgYXNrIGZvciB0aGUgYXR0cmlidXRlcyB0byBiZSBt
+b3ZlZCBhaGVhZCBvZiB0aGUNCj4gaWRlbnRpZmllcnMgYmVpbmcgZGVjbGFyZWQuKQ0KDQpJ
+IGRpZG4ndCBmaW5kIGFuIGV4cGxpY2l0IG1lbnRpb25pbmcgaW4gdGhlIGNvZGluZyBzdHls
+ZSwgYnV0IG1vc3QNCmV4YW1wbGVzIEkndmUgZm91bmQgcGxhY2UgdGhlIHNlY3Rpb24gYXR0
+cmlidXRlIGFmdGVyIHRoZSBuYW1lIG9mIHRoZQ0KdmFyaWFibGUuDQoNCj4gDQo+PiArLyoN
+Cj4+ICsgKiBEbyB0aGUgcmVhbCByZW1hcHBpbmcgb2Ygbm9uLVJBTSByZWdpb25zIGFzIHNw
+ZWNpZmllZCBpbiB0aGUNCj4+ICsgKiB4ZW5fbm9ucmFtX3JlbWFwW10gYXJyYXkuDQo+PiAr
+ICogSW4gY2FzZSBvZiBhbiBlcnJvciBqdXN0IGNyYXNoIHRoZSBzeXN0ZW0uDQo+PiArICov
+DQo+PiArdm9pZCBfX2luaXQgeGVuX2RvX3JlbWFwX25vbnJhbSh2b2lkKQ0KPj4gK3sNCj4+
+ICsJdW5zaWduZWQgaW50IGk7DQo+PiArCXVuc2lnbmVkIGludCByZW1hcHBlZCA9IDA7DQo+
+PiArCWNvbnN0IHN0cnVjdCBub25yYW1fcmVtYXAgKnJlbWFwID0geGVuX25vbnJhbV9yZW1h
+cDsNCj4+ICsJdW5zaWduZWQgbG9uZyBwZm4sIG1mbiwgZW5kX3BmbjsNCj4+ICsNCj4+ICsJ
+Zm9yIChpID0gMDsgaSA8IG5yX25vbnJhbV9yZW1hcDsgaSsrKSB7DQo+PiArCQllbmRfcGZu
+ID0gUEZOX1VQKHJlbWFwLT5wYWRkciArIHJlbWFwLT5zaXplKTsNCj4+ICsJCXBmbiA9IFBG
+Tl9ET1dOKHJlbWFwLT5wYWRkcik7DQo+PiArCQltZm4gPSBQRk5fRE9XTihyZW1hcC0+bWFk
+ZHIpOw0KPj4gKwkJd2hpbGUgKHBmbiA8IGVuZF9wZm4pIHsNCj4+ICsJCQlpZiAoIXNldF9w
+aHlzX3RvX21hY2hpbmUocGZuLCBtZm4pKSB7DQo+PiArCQkJCXByX2VycigiRmFpbGVkIHRv
+IHNldCBwMm0gbWFwcGluZyBmb3IgcGZuPSVseCBtZm49JWx4XG4iLA0KPj4gKwkJCQkgICAg
+ICAgcGZuLCBtZm4pOw0KPj4gKwkJCQlCVUcoKTsNCj4gDQo+IFdvdWxkbid0IHBhbmljKCkg
+Z2V0IHlvdSBib3RoIGluIG9uZSBvcGVyYXRpb24/IE9yIGRvIHlvdSBleHBlY3QgdGhlIGNh
+bGwNCj4gdHJhY2UgLyByZWdpc3RlciBzdGF0ZSB0byBiZSBvZiBpbW1lZGlhdGUgcmVsZXZh
+bmNlIGZvciBhbmFseXNpcz8NCg0KWW91IGFyZSByaWdodCwgaW4gdGhpcyBjYXNlIHBhbmlj
+KCkgaXMgYSBiZXR0ZXIgb3B0aW9uLg0KDQoNCkp1ZXJnZW4NCg0K
+--------------NABlShubVjh8h9p4iADsy1lm
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-[1]: https://github.com/systemd/systemd/commit/f4e74be1856b3ac058acbf1be321c31d5299f69f
-[2]: https://bugzilla.redhat.com/show_bug.cgi?id=1229700
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-Tested-by: Stefan Wahren <wahrenst@gmx.net>
-Acked-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
----
- arch/arm/configs/bcm2835_defconfig   | 1 -
- arch/arm/configs/omap2plus_defconfig | 1 -
- arch/arm/configs/tegra_defconfig     | 1 -
- 3 files changed, 3 deletions(-)
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-diff --git a/arch/arm/configs/bcm2835_defconfig b/arch/arm/configs/bcm2835_defconfig
-index b5f0bd8dd536990a0726e73a6855d25c1286a768..27dc3bf6b124c2012b7a1a768f2f900f49903cd1 100644
---- a/arch/arm/configs/bcm2835_defconfig
-+++ b/arch/arm/configs/bcm2835_defconfig
-@@ -7,7 +7,6 @@ CONFIG_BSD_PROCESS_ACCT=y
- CONFIG_BSD_PROCESS_ACCT_V3=y
- CONFIG_LOG_BUF_SHIFT=18
- CONFIG_CFS_BANDWIDTH=y
--CONFIG_RT_GROUP_SCHED=y
- CONFIG_CGROUP_FREEZER=y
- CONFIG_CPUSETS=y
- CONFIG_CGROUP_DEVICE=y
-diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
-index 3a166c2f02bd80634fee3bd8c4579fdbad84ccfa..9cb265c8d4144ea9a41f02640dbc8a06b710323b 100644
---- a/arch/arm/configs/omap2plus_defconfig
-+++ b/arch/arm/configs/omap2plus_defconfig
-@@ -13,7 +13,6 @@ CONFIG_MEMCG=y
- CONFIG_BLK_CGROUP=y
- CONFIG_CGROUP_SCHED=y
- CONFIG_CFS_BANDWIDTH=y
--CONFIG_RT_GROUP_SCHED=y
- CONFIG_CGROUP_FREEZER=y
- CONFIG_CPUSETS=y
- CONFIG_CGROUP_DEVICE=y
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index d2a094ad360cefefbc3bd35226c5d23eadce42c1..3a9bda2bf422b14085c60b39a2c3df86fe0994bb 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -6,7 +6,6 @@ CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
- CONFIG_CGROUPS=y
- CONFIG_CGROUP_SCHED=y
--CONFIG_RT_GROUP_SCHED=y
- CONFIG_CGROUP_FREEZER=y
- CONFIG_CGROUP_CPUACCT=y
- CONFIG_CGROUP_DEBUG=y
+--------------NABlShubVjh8h9p4iADsy1lm--
 
--- 
-2.46.0
+--------------0iyyNybbmClI80Z25k0YA0hR--
 
+--------------ZokzG9C9TZobncaej7XamCWz
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmbgQMgFAwAAAAAACgkQsN6d1ii/Ey88
+SQf/XuVSJ3h8eaS9lG4QOl0mBxECsL/Su7aPf9Eq/Bqtxp+hzkl33voFyRTAZp4Lb1PXgW65rAPq
+zZtMq5gwzi6H+nChWhcNfu66UtO8biYmGY2ydp3Pn1AYXiQcuPrHhYLmo1vzBKyiQtaJQ6P/chal
+JuEizGEBhZ4Vu3qlKhMXM4FacbJI6zs+YrzvuSvA/OoPDQL01jBAfAD2s3YfJQmJ0DuaUxGx7KBm
+Lm32wMy8fdRYefvrufiYgzpECI9N4JxOlBo07VNJI0VAu5AzGj2fQp2aSRP8tjg7G7DSjRNTy6bf
+zrIR7IJz/ZW7eX+lyWcZ8rOPsiphANew2LBdmfoJWw==
+=CirT
+-----END PGP SIGNATURE-----
+
+--------------ZokzG9C9TZobncaej7XamCWz--
 
