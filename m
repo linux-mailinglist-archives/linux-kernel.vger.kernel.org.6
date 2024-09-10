@@ -1,190 +1,684 @@
-Return-Path: <linux-kernel+bounces-323466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51598973D7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:40:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FBA2973D84
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C78921F27C6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:40:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18AC281F2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB961A38DE;
-	Tue, 10 Sep 2024 16:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978C81A2550;
+	Tue, 10 Sep 2024 16:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Xo9nJXF7"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tZLss05C"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DFB1A2557;
-	Tue, 10 Sep 2024 16:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012F7181B87
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725986277; cv=none; b=jNZg39oswFjj5NCjwiKGTD99/dAxJV4PlLwk8jBLm9KYbmeWSn7hftxbeeZbw2ZLm8G93H6Hd+KfPFCEah3QqhGZbscnjepsl/zAzBenPXCfdxYDGZIATG9rjeHXj95lsPVxUcMh/r4PZGsV+LqoDCbDJMtQZ+J+xCDJGuffGE8=
+	t=1725986481; cv=none; b=RRsVFvEsI4BNcVsIqdO9ursCReFp+ntGJDDX7UzE8LCsRjEKs2gkVdrkiFPqW7gdxF/n4YvELrK4Y7lzACCnLPc3PcsPOXs039nXpSNZRq9bn6MXC0taTYCyWm9/PvjrG8ccetk6p7O+zXF0YJ/Im+q08k69nflOQnJOX3kvYBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725986277; c=relaxed/simple;
-	bh=6leur/mzs3s3WJIlP8d5cy4uPS0xfRucHIBEihhS4FA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=saP4mRhyjCWmN099hjUuLoivLczv7HuXtVN6xxwtRIgoFQKZRCs75kuxkmcIz7IuhHoch4swpavJrZUiHcugoxx30pQu8MhsIEdDYcJ5+wD2BV0ZtfR96h0qtHv1BTvz62/rDEI41R45xbMrGf4M0Zf7mAf8z4H7WIM+tW9tCRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Xo9nJXF7; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=yUa3TLnRUIgVIBOiAVf2d1Rp6JcumIEXWfBSjgDQ8Oo=; b=Xo9nJXF74V8gMBzUmSZ96XzpCK
-	V0luRgiAHN4MhSDj3P4e1VklMl3LrZbtIMcu9GaUgOTfoAPWDwM6qi1drgoaGCHQ4cA+J8+k5laru
-	x9YzXc4fUUgUxklnMScdN8rOnwpO71QhSLcVmJFN1abK/+s1J3P07CmnCPOonerecZmgp2F8DnHrs
-	7hxEKSbGdolTzLgxa3tIva67RUfXrKNEMv1g00kvM/rWbIw1VbVpES0GYLcMnBkj7zykPD7Dgo7F3
-	QHwzx9Nn/bb3N7LMdoqin1ExRbaWTCvISmQ78ddHn3zgiIs9HsQzzdbsCxJhITo86Xq78ZaIRjb9c
-	gpRUd6zA==;
-Received: from i53875a02.versanet.de ([83.135.90.2] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1so3rr-0006Fs-F9; Tue, 10 Sep 2024 18:37:27 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, kernel@collabora.com,
- Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
- Algea Cao <algea.cao@rock-chips.com>
-Subject: Re: [PATCH v6 3/3] drm/rockchip: Add basic RK3588 HDMI output support
-Date: Tue, 10 Sep 2024 18:39:54 +0200
-Message-ID: <1796743.esFFXGZ24q@diego>
-In-Reply-To: <324b12ea-805a-499c-909d-3723f0bca7cb@collabora.com>
-References:
- <20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com>
- <1899262.u6TykanW85@diego>
- <324b12ea-805a-499c-909d-3723f0bca7cb@collabora.com>
+	s=arc-20240116; t=1725986481; c=relaxed/simple;
+	bh=+MS6ncxt0cHJtyoorOgsH3LbEwEYBX9qMhqvmTXjx0s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gh0IT2CIn/1kebgWS3BoyJarDrGtkS74YC0tmuKExGcnQQ1pprlFLsOQGbzyI2CZBb1TWrPazyA2K9VZ4UMQ1v9bbqlAYZtjTYX/WX3YJWyJEbBqKQoU44Ga0wuCGl3Y4qiRBi6+3P2X9B8cisdN6W3MTcz3BosESyKZan/dUkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tZLss05C; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3770320574aso3586749f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:41:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725986477; x=1726591277; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zE2be6BQD0lfHhEXL8FfLhHCYji8KerjxVH0W5gvkhQ=;
+        b=tZLss05CmvFdE8nT/CRzlnPxdR61+EU+nJezSB+Nq8MpMl0FRF8BaMaTeWiNgn+AP6
+         3Yt3QbE/TwqXc43/DNP0Guf2V5NEVw3PvzmbuOPNxIyluKmfA5WnpKcO517qWo3jjrT8
+         ZuWLwtybca4F/U0dZksfMXeJ/b1Un4vPXwFWy2Zbq7fwBnX4PXJjfy+mXcLqaU14oqbt
+         9FZXj7Z9pYvaxsP43jB0LZXoJwUc/c/EEP2E0Tl95s/ar5r4oszD51r4HWniLHXGzOyA
+         QondXS4faUhKD4SRzrojcO2ivwatF7DooyXPa2OdqyAtRSKGVxIC7P9cp0pJkP8CMu6b
+         Z5AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725986477; x=1726591277;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zE2be6BQD0lfHhEXL8FfLhHCYji8KerjxVH0W5gvkhQ=;
+        b=VKZL0UdtmU/b8u7e0lhGkcZMXi8jXcWor1Os8VQc3HEz6p1/PBTCU8B2RK5oTDlhjS
+         zTDlf33wm57yZIy7ltmXhc+GsSfQ3fAzmZB+OhIpdmC9Y3t8lNhERh6AjkTku6o2ekTg
+         6e0pExiOaTXxHQMfaSqGXJ/FfOSZpbqX7ifJ55fJArcSQI9f5WYklUornmEwsoVtJSJS
+         6jURGS03bNyAFmF0oXYzZ7PB52SKI8qor3scJPACTQvvA436+598NSb+WulGRUoDMcIS
+         48W7wPlWthDgCJswOc/5xOwITwbFFU7I7KkYUgQX0WcpOuGU7yM/xnIOkprVQqTP7QP8
+         78jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdQiYjtX9tGaAv7BI6OkPPeyeCp981qLZjIKRy89AQ26S/SJqN2VcpuovL/30mSQSZrm4o1WGFf/xr4AM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIwciBRT6J0sl8jY5dbzn1Sq1UCg3hdnPy3grkCXVtvUHY5EwV
+	N8aDYyjazU1raSSF6ckAQ2Kuf2U7xBH9QInJHY61rNQfOMcJfu2nVAXhO6OlfrdFszOw3plBJSv
+	h40ZUoLJ8JOM9BmSZaUMwLL8J9dmcAzVD8f0L
+X-Google-Smtp-Source: AGHT+IF25XKyZvPc0D10ndKd+ZNubD7YkjXpOcwTJtvwENAl5iYURvYdof5Ebt0adOxlZ1Wb9qySIN7DY3X7pfzDN20=
+X-Received: by 2002:a5d:54ca:0:b0:376:5234:403f with SMTP id
+ ffacd0b85a97d-3788954e720mr9577783f8f.0.1725986476380; Tue, 10 Sep 2024
+ 09:41:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240821151009.1681151-1-maxime.chevallier@bootlin.com> <20240821151009.1681151-8-maxime.chevallier@bootlin.com>
+In-Reply-To: <20240821151009.1681151-8-maxime.chevallier@bootlin.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 10 Sep 2024 18:41:03 +0200
+Message-ID: <CANn89iLQYsyADrdW04PpuxEdAEhBkVQm+uVV8=CDmX_Fswdvrw@mail.gmail.com>
+Subject: Re: [PATCH net-next v18 07/13] net: ethtool: Introduce a command to
+ list PHYs on an interface
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>, 
+	Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Vladimir Oltean <vladimir.oltean@nxp.com>, =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>, 
+	Jesse Brandeburg <jesse.brandeburg@intel.com>, =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>, Oleksij Rempel <o.rempel@pengutronix.de>, 
+	=?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>, 
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org, 
+	Nathan Chancellor <nathan@kernel.org>, Antoine Tenart <atenart@kernel.org>, 
+	Marc Kleine-Budde <mkl@pengutronix.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Romain Gantois <romain.gantois@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
 
-Am Dienstag, 10. September 2024, 17:41:42 CEST schrieb Cristian Ciocaltea:
-> On 9/10/24 6:21 PM, Heiko St=FCbner wrote:
-> > Am Dienstag, 10. September 2024, 17:07:57 CEST schrieb Heiko St=FCbner:
-> >> Am Freitag, 6. September 2024, 03:17:42 CEST schrieb Cristian Ciocalte=
-a:
-> >>> The RK3588 SoC family integrates the newer Synopsys DesignWare HDMI 2=
-=2E1
-> >>> Quad-Pixel (QP) TX controller IP and a HDMI/eDP TX Combo PHY based on=
- a
-> >>> Samsung IP block.
-> >>>
-> >>> Add just the basic support for now, i.e. RGB output up to 4K@60Hz,
-> >>> without audio, CEC or any of the HDMI 2.1 specific features.
-> >>>
-> >>> Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
-> >>> Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
-> >>> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> >>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> >>
-> >> I had switched from the v3 to this v6 in my playground-kernel today,
-> >> with v3 I've never seen those, but now with v6 I have gotten multiple
-> >> times:
-> >>
-> >> [  805.730608] Internal error: synchronous external abort: 00000000960=
-00010 [#1] PREEMPT SMP
-> >> [  805.739764] Modules linked in: snd_soc_simple_card crct10dif_ce snd=
-_soc_simple_card_utils panthor drm_gpuvm drm_exec fuse
-> >> [  805.752031] CPU: 3 UID: 0 PID: 775 Comm: Xorg Not tainted 6.11.0-rc=
-7-00099-g459302f1f908-dirty #934
-> >> [  805.762143] Hardware name: Theobroma Systems RK3588-Q7 SoM on Haiko=
-u devkit (DT)
-> >> [  805.770407] pstate: 204000c9 (nzCv daIF +PAN -UAO -TCO -DIT -SSBS B=
-TYPE=3D--)
-> >> [  805.778186] pc : regmap_mmio_read32le+0x8/0x20
-> >> [  805.783155] lr : regmap_mmio_read+0x44/0x70
-> >> [  805.787828] sp : ffff80008293b830
-> >> [  805.791516] x29: ffff80008293b830 x28: ffff80008293bce8 x27: ffff00=
-01f20ab080
-> >> [  805.799495] x26: ffff800081139500 x25: 0000000000000000 x24: 000000=
-0000000010
-> >> [  805.807472] x23: 0000000000000000 x22: ffff0001f5a4b400 x21: ffff80=
-008293b8c4
-> >> [  805.815450] x20: 0000000000000968 x19: ffff0001f5a27a80 x18: 000000=
-0000000070
-> >> [  805.823428] x17: 0002441400000005 x16: 000004650441043c x15: 043800=
-0008980804
-> >> [  805.831406] x14: 07d8089807800780 x13: 0438000008980804 x12: ffff80=
-0081133630
-> >> [  805.839384] x11: 0002441400000005 x10: 000004650441043c x9 : ffff80=
-0081a59000
-> >> [  805.847361] x8 : 07d8089807800780 x7 : 0000000000000000 x6 : ffff00=
-01f5b453c0
-> >> [  805.855339] x5 : ffff800080750dc0 x4 : 0000000000000968 x3 : 000000=
-0000000968
-> >> [  805.863316] x2 : ffff800080751520 x1 : 0000000000000968 x0 : ffff80=
-0083b20968
-> >> [  805.871294] Call trace:
-> >> [  805.874012]  regmap_mmio_read32le+0x8/0x20
-> >> [  805.878588]  _regmap_bus_reg_read+0x6c/0xac
-> >> [  805.883262]  _regmap_read+0x60/0xd8
-> >> [  805.887159]  _regmap_update_bits+0xf4/0x140
-> >> [  805.891832]  regmap_update_bits_base+0x64/0xa0
-> >> [  805.896797]  dw_hdmi_qp_bridge_atomic_enable+0x134/0x220
-> >> [  805.902734]  drm_atomic_bridge_chain_enable+0x54/0xc8
-> >> [  805.908380]  drm_atomic_helper_commit_modeset_enables+0x194/0x280
-> >> [  805.915190]  drm_atomic_helper_commit_tail_rpm+0x50/0xa0
-> >> [  805.921125]  commit_tail+0xa0/0x1a0
-> >> [  805.925021]  drm_atomic_helper_commit+0x17c/0x1b0
-> >> [  805.930276]  drm_atomic_commit+0xb8/0x100
-> >> [  805.934754]  drm_atomic_connector_commit_dpms+0xe0/0x110
-> >> [  805.940690]  drm_mode_obj_set_property_ioctl+0x1c0/0x420
-> >> [  805.946626]  drm_connector_property_set_ioctl+0x3c/0x68
-> >> [  805.952465]  drm_ioctl_kernel+0xc0/0x130
-> >> [  805.956846]  drm_ioctl+0x214/0x4a0
-> >> [  805.960643]  __arm64_sys_ioctl+0xac/0xf8
-> >> [  805.965025]  invoke_syscall+0x48/0x104
-> >> [  805.969214]  el0_svc_common.constprop.0+0x40/0xe0
-> >> [  805.974470]  do_el0_svc+0x1c/0x28
-> >> [  805.978171]  el0_svc+0x34/0xe0
-> >> [  805.981582]  el0t_64_sync_handler+0x120/0x12c
-> >> [  805.986449]  el0t_64_sync+0x190/0x194
-> >> [  805.990540] Code: d503201f d503201f f9400000 8b214000 (b9400000)
-> >>
-> >> I guess that might be some clocking issue?
-> >=20
-> > Forgot to add, this happens when the display has blanked and then is
-> > supposed to unblank again.
->=20
-> Hmm, I've never encountered this while testing with my v6.11-rc1 based
-> tree.  What is your current kernel base?  Did you change it while
-> switching from v3 to v6?
->=20
-> I'll rebase my tree onto latest linux-next and see if I can reproduce.
+On Wed, Aug 21, 2024 at 5:10=E2=80=AFPM Maxime Chevallier
+<maxime.chevallier@bootlin.com> wrote:
+>
+> As we have the ability to track the PHYs connected to a net_device
+> through the link_topology, we can expose this list to userspace. This
+> allows userspace to use these identifiers for phy-specific commands and
+> take the decision of which PHY to target by knowing the link topology.
+>
+> Add PHY_GET and PHY_DUMP, which can be a filtered DUMP operation to list
+> devices on only one interface.
+>
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Tested-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> ---
+>  Documentation/networking/ethtool-netlink.rst |  41 +++
+>  include/uapi/linux/ethtool_netlink.h         |  19 ++
+>  net/ethtool/Makefile                         |   3 +-
+>  net/ethtool/netlink.c                        |   9 +
+>  net/ethtool/netlink.h                        |   5 +
+>  net/ethtool/phy.c                            | 308 +++++++++++++++++++
+>  6 files changed, 384 insertions(+), 1 deletion(-)
+>  create mode 100644 net/ethtool/phy.c
+>
+> diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation=
+/networking/ethtool-netlink.rst
+> index 2d14b8551348..8c152871c23c 100644
+> --- a/Documentation/networking/ethtool-netlink.rst
+> +++ b/Documentation/networking/ethtool-netlink.rst
+> @@ -2191,6 +2191,46 @@ string.
+>  The ``ETHTOOL_A_MODULE_FW_FLASH_DONE`` and ``ETHTOOL_A_MODULE_FW_FLASH_T=
+OTAL``
+>  attributes encode the completed and total amount of work, respectively.
+>
+> +PHY_GET
+> +=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Retrieve information about a given Ethernet PHY sitting on the link. The=
+ DO
+> +operation returns all available information about dev->phydev. User can =
+also
+> +specify a PHY_INDEX, in which case the DO request returns information ab=
+out that
+> +specific PHY.
+> +As there can be more than one PHY, the DUMP operation can be used to lis=
+t the PHYs
+> +present on a given interface, by passing an interface index or name in
+> +the dump request.
+> +
+> +Request contents:
+> +
+> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +  ``ETHTOOL_A_PHY_HEADER``              nested  request header
+> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Kernel response contents:
+> +
+> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+> +  ``ETHTOOL_A_PHY_HEADER``              nested  request header
+> +  ``ETHTOOL_A_PHY_INDEX``               u32     the phy's unique index, =
+that can
+> +                                                be used for phy-specific
+> +                                                requests
+> +  ``ETHTOOL_A_PHY_DRVNAME``             string  the phy driver name
+> +  ``ETHTOOL_A_PHY_NAME``                string  the phy device name
+> +  ``ETHTOOL_A_PHY_UPSTREAM_TYPE``       u32     the type of device this =
+phy is
+> +                                                connected to
+> +  ``ETHTOOL_A_PHY_UPSTREAM_INDEX``      u32     the PHY index of the ups=
+tream
+> +                                                PHY
+> +  ``ETHTOOL_A_PHY_UPSTREAM_SFP_NAME``   string  if this PHY is connected=
+ to
+> +                                                its parent PHY through a=
+n SFP
+> +                                                bus, the name of this sf=
+p bus
+> +  ``ETHTOOL_A_PHY_DOWNSTREAM_SFP_NAME`` string  if the phy controls an s=
+fp bus,
+> +                                                the name of the sfp bus
+> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+> +
+> +When ``ETHTOOL_A_PHY_UPSTREAM_TYPE`` is PHY_UPSTREAM_PHY, the PHY's pare=
+nt is
+> +another PHY.
+> +
+>  Request translation
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> @@ -2298,4 +2338,5 @@ are netlink only.
+>    n/a                                 ``ETHTOOL_MSG_MM_GET``
+>    n/a                                 ``ETHTOOL_MSG_MM_SET``
+>    n/a                                 ``ETHTOOL_MSG_MODULE_FW_FLASH_ACT`=
+`
+> +  n/a                                 ``ETHTOOL_MSG_PHY_GET``
+>    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> diff --git a/include/uapi/linux/ethtool_netlink.h b/include/uapi/linux/et=
+htool_netlink.h
+> index 49d1f9220fde..45d8bcdea056 100644
+> --- a/include/uapi/linux/ethtool_netlink.h
+> +++ b/include/uapi/linux/ethtool_netlink.h
+> @@ -58,6 +58,7 @@ enum {
+>         ETHTOOL_MSG_MM_GET,
+>         ETHTOOL_MSG_MM_SET,
+>         ETHTOOL_MSG_MODULE_FW_FLASH_ACT,
+> +       ETHTOOL_MSG_PHY_GET,
+>
+>         /* add new constants above here */
+>         __ETHTOOL_MSG_USER_CNT,
+> @@ -111,6 +112,8 @@ enum {
+>         ETHTOOL_MSG_MM_GET_REPLY,
+>         ETHTOOL_MSG_MM_NTF,
+>         ETHTOOL_MSG_MODULE_FW_FLASH_NTF,
+> +       ETHTOOL_MSG_PHY_GET_REPLY,
+> +       ETHTOOL_MSG_PHY_NTF,
+>
+>         /* add new constants above here */
+>         __ETHTOOL_MSG_KERNEL_CNT,
+> @@ -1055,6 +1058,22 @@ enum {
+>         ETHTOOL_A_MODULE_FW_FLASH_MAX =3D (__ETHTOOL_A_MODULE_FW_FLASH_CN=
+T - 1)
+>  };
+>
+> +enum {
+> +       ETHTOOL_A_PHY_UNSPEC,
+> +       ETHTOOL_A_PHY_HEADER,                   /* nest - _A_HEADER_* */
+> +       ETHTOOL_A_PHY_INDEX,                    /* u32 */
+> +       ETHTOOL_A_PHY_DRVNAME,                  /* string */
+> +       ETHTOOL_A_PHY_NAME,                     /* string */
+> +       ETHTOOL_A_PHY_UPSTREAM_TYPE,            /* u32 */
+> +       ETHTOOL_A_PHY_UPSTREAM_INDEX,           /* u32 */
+> +       ETHTOOL_A_PHY_UPSTREAM_SFP_NAME,        /* string */
+> +       ETHTOOL_A_PHY_DOWNSTREAM_SFP_NAME,      /* string */
+> +
+> +       /* add new constants above here */
+> +       __ETHTOOL_A_PHY_CNT,
+> +       ETHTOOL_A_PHY_MAX =3D (__ETHTOOL_A_PHY_CNT - 1)
+> +};
+> +
+>  /* generic netlink info */
+>  #define ETHTOOL_GENL_NAME "ethtool"
+>  #define ETHTOOL_GENL_VERSION 1
+> diff --git a/net/ethtool/Makefile b/net/ethtool/Makefile
+> index 9a190635fe95..9b540644ba31 100644
+> --- a/net/ethtool/Makefile
+> +++ b/net/ethtool/Makefile
+> @@ -8,4 +8,5 @@ ethtool_nl-y    :=3D netlink.o bitset.o strset.o linkinfo=
+.o linkmodes.o rss.o \
+>                    linkstate.o debug.o wol.o features.o privflags.o rings=
+.o \
+>                    channels.o coalesce.o pause.o eee.o tsinfo.o cabletest=
+.o \
+>                    tunnels.o fec.o eeprom.o stats.o phc_vclocks.o mm.o \
+> -                  module.o cmis_fw_update.o cmis_cdb.o pse-pd.o plca.o m=
+m.o
+> +                  module.o cmis_fw_update.o cmis_cdb.o pse-pd.o plca.o m=
+m.o \
+> +                  phy.o
+> diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
+> index b00061924e80..e3f0ef6b851b 100644
+> --- a/net/ethtool/netlink.c
+> +++ b/net/ethtool/netlink.c
+> @@ -1234,6 +1234,15 @@ static const struct genl_ops ethtool_genl_ops[] =
+=3D {
+>                 .policy =3D ethnl_module_fw_flash_act_policy,
+>                 .maxattr =3D ARRAY_SIZE(ethnl_module_fw_flash_act_policy)=
+ - 1,
+>         },
+> +       {
+> +               .cmd    =3D ETHTOOL_MSG_PHY_GET,
+> +               .doit   =3D ethnl_phy_doit,
+> +               .start  =3D ethnl_phy_start,
+> +               .dumpit =3D ethnl_phy_dumpit,
+> +               .done   =3D ethnl_phy_done,
+> +               .policy =3D ethnl_phy_get_policy,
+> +               .maxattr =3D ARRAY_SIZE(ethnl_phy_get_policy) - 1,
+> +       },
+>  };
+>
+>  static const struct genl_multicast_group ethtool_nl_mcgrps[] =3D {
+> diff --git a/net/ethtool/netlink.h b/net/ethtool/netlink.h
+> index e326699405be..203b08eb6c6f 100644
+> --- a/net/ethtool/netlink.h
+> +++ b/net/ethtool/netlink.h
+> @@ -484,6 +484,7 @@ extern const struct nla_policy ethnl_plca_get_status_=
+policy[ETHTOOL_A_PLCA_HEADE
+>  extern const struct nla_policy ethnl_mm_get_policy[ETHTOOL_A_MM_HEADER +=
+ 1];
+>  extern const struct nla_policy ethnl_mm_set_policy[ETHTOOL_A_MM_MAX + 1]=
+;
+>  extern const struct nla_policy ethnl_module_fw_flash_act_policy[ETHTOOL_=
+A_MODULE_FW_FLASH_PASSWORD + 1];
+> +extern const struct nla_policy ethnl_phy_get_policy[ETHTOOL_A_PHY_HEADER=
+ + 1];
+>
+>  int ethnl_set_features(struct sk_buff *skb, struct genl_info *info);
+>  int ethnl_act_cable_test(struct sk_buff *skb, struct genl_info *info);
+> @@ -494,6 +495,10 @@ int ethnl_tunnel_info_dumpit(struct sk_buff *skb, st=
+ruct netlink_callback *cb);
+>  int ethnl_act_module_fw_flash(struct sk_buff *skb, struct genl_info *inf=
+o);
+>  int ethnl_rss_dump_start(struct netlink_callback *cb);
+>  int ethnl_rss_dumpit(struct sk_buff *skb, struct netlink_callback *cb);
+> +int ethnl_phy_start(struct netlink_callback *cb);
+> +int ethnl_phy_doit(struct sk_buff *skb, struct genl_info *info);
+> +int ethnl_phy_dumpit(struct sk_buff *skb, struct netlink_callback *cb);
+> +int ethnl_phy_done(struct netlink_callback *cb);
+>
+>  extern const char stats_std_names[__ETHTOOL_STATS_CNT][ETH_GSTRING_LEN];
+>  extern const char stats_eth_phy_names[__ETHTOOL_A_STATS_ETH_PHY_CNT][ETH=
+_GSTRING_LEN];
+> diff --git a/net/ethtool/phy.c b/net/ethtool/phy.c
+> new file mode 100644
+> index 000000000000..560dd039c662
+> --- /dev/null
+> +++ b/net/ethtool/phy.c
+> @@ -0,0 +1,308 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright 2023 Bootlin
+> + *
+> + */
+> +#include "common.h"
+> +#include "netlink.h"
+> +
+> +#include <linux/phy.h>
+> +#include <linux/phy_link_topology.h>
+> +#include <linux/sfp.h>
+> +
+> +struct phy_req_info {
+> +       struct ethnl_req_info           base;
+> +       struct phy_device_node          *pdn;
+> +};
+> +
+> +#define PHY_REQINFO(__req_base) \
+> +       container_of(__req_base, struct phy_req_info, base)
+> +
+> +const struct nla_policy ethnl_phy_get_policy[ETHTOOL_A_PHY_HEADER + 1] =
+=3D {
+> +       [ETHTOOL_A_PHY_HEADER] =3D NLA_POLICY_NESTED(ethnl_header_policy)=
+,
+> +};
+> +
+> +/* Caller holds rtnl */
+> +static ssize_t
+> +ethnl_phy_reply_size(const struct ethnl_req_info *req_base,
+> +                    struct netlink_ext_ack *extack)
+> +{
+> +       struct phy_req_info *req_info =3D PHY_REQINFO(req_base);
+> +       struct phy_device_node *pdn =3D req_info->pdn;
+> +       struct phy_device *phydev =3D pdn->phy;
+> +       size_t size =3D 0;
+> +
+> +       ASSERT_RTNL();
+> +
+> +       /* ETHTOOL_A_PHY_INDEX */
+> +       size +=3D nla_total_size(sizeof(u32));
+> +
+> +       /* ETHTOOL_A_DRVNAME */
+> +       if (phydev->drv)
+> +               size +=3D nla_total_size(strlen(phydev->drv->name) + 1);
+> +
+> +       /* ETHTOOL_A_NAME */
+> +       size +=3D nla_total_size(strlen(dev_name(&phydev->mdio.dev)) + 1)=
+;
+> +
+> +       /* ETHTOOL_A_PHY_UPSTREAM_TYPE */
+> +       size +=3D nla_total_size(sizeof(u32));
+> +
+> +       if (phy_on_sfp(phydev)) {
+> +               const char *upstream_sfp_name =3D sfp_get_name(pdn->paren=
+t_sfp_bus);
+> +
+> +               /* ETHTOOL_A_PHY_UPSTREAM_SFP_NAME */
+> +               if (upstream_sfp_name)
+> +                       size +=3D nla_total_size(strlen(upstream_sfp_name=
+) + 1);
+> +
+> +               /* ETHTOOL_A_PHY_UPSTREAM_INDEX */
+> +               size +=3D nla_total_size(sizeof(u32));
+> +       }
+> +
+> +       /* ETHTOOL_A_PHY_DOWNSTREAM_SFP_NAME */
+> +       if (phydev->sfp_bus) {
+> +               const char *sfp_name =3D sfp_get_name(phydev->sfp_bus);
+> +
+> +               if (sfp_name)
+> +                       size +=3D nla_total_size(strlen(sfp_name) + 1);
+> +       }
+> +
+> +       return size;
+> +}
+> +
+> +static int
+> +ethnl_phy_fill_reply(const struct ethnl_req_info *req_base, struct sk_bu=
+ff *skb)
+> +{
+> +       struct phy_req_info *req_info =3D PHY_REQINFO(req_base);
+> +       struct phy_device_node *pdn =3D req_info->pdn;
+> +       struct phy_device *phydev =3D pdn->phy;
+> +       enum phy_upstream ptype;
+> +
+> +       ptype =3D pdn->upstream_type;
+> +
+> +       if (nla_put_u32(skb, ETHTOOL_A_PHY_INDEX, phydev->phyindex) ||
+> +           nla_put_string(skb, ETHTOOL_A_PHY_NAME, dev_name(&phydev->mdi=
+o.dev)) ||
+> +           nla_put_u32(skb, ETHTOOL_A_PHY_UPSTREAM_TYPE, ptype))
+> +               return -EMSGSIZE;
+> +
+> +       if (phydev->drv &&
+> +           nla_put_string(skb, ETHTOOL_A_PHY_DRVNAME, phydev->drv->name)=
+)
+> +               return -EMSGSIZE;
+> +
+> +       if (ptype =3D=3D PHY_UPSTREAM_PHY) {
+> +               struct phy_device *upstream =3D pdn->upstream.phydev;
+> +               const char *sfp_upstream_name;
+> +
+> +               /* Parent index */
+> +               if (nla_put_u32(skb, ETHTOOL_A_PHY_UPSTREAM_INDEX, upstre=
+am->phyindex))
+> +                       return -EMSGSIZE;
+> +
+> +               if (pdn->parent_sfp_bus) {
+> +                       sfp_upstream_name =3D sfp_get_name(pdn->parent_sf=
+p_bus);
+> +                       if (sfp_upstream_name &&
+> +                           nla_put_string(skb, ETHTOOL_A_PHY_UPSTREAM_SF=
+P_NAME,
+> +                                          sfp_upstream_name))
+> +                               return -EMSGSIZE;
+> +               }
+> +       }
+> +
+> +       if (phydev->sfp_bus) {
+> +               const char *sfp_name =3D sfp_get_name(phydev->sfp_bus);
+> +
+> +               if (sfp_name &&
+> +                   nla_put_string(skb, ETHTOOL_A_PHY_DOWNSTREAM_SFP_NAME=
+,
+> +                                  sfp_name))
+> +                       return -EMSGSIZE;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int ethnl_phy_parse_request(struct ethnl_req_info *req_base,
+> +                                  struct nlattr **tb,
+> +                                  struct netlink_ext_ack *extack)
+> +{
+> +       struct phy_link_topology *topo =3D req_base->dev->link_topo;
+> +       struct phy_req_info *req_info =3D PHY_REQINFO(req_base);
+> +       struct phy_device *phydev;
+> +
+> +       phydev =3D ethnl_req_get_phydev(req_base, tb[ETHTOOL_A_PHY_HEADER=
+],
+> +                                     extack);
+> +       if (!phydev)
+> +               return 0;
+> +
+> +       if (IS_ERR(phydev))
+> +               return PTR_ERR(phydev);
+> +
+> +       if (!topo)
+> +               return 0;
+> +
+> +       req_info->pdn =3D xa_load(&topo->phys, phydev->phyindex);
+> +
+> +       return 0;
+> +}
+> +
+> +int ethnl_phy_doit(struct sk_buff *skb, struct genl_info *info)
+> +{
+> +       struct phy_req_info req_info =3D {};
+> +       struct nlattr **tb =3D info->attrs;
+> +       struct sk_buff *rskb;
+> +       void *reply_payload;
+> +       int reply_len;
+> +       int ret;
+> +
+> +       ret =3D ethnl_parse_header_dev_get(&req_info.base,
+> +                                        tb[ETHTOOL_A_PHY_HEADER],
+> +                                        genl_info_net(info), info->extac=
+k,
+> +                                        true);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       rtnl_lock();
+> +
+> +       ret =3D ethnl_phy_parse_request(&req_info.base, tb, info->extack)=
+;
+> +       if (ret < 0)
+> +               goto err_unlock_rtnl;
+> +
+> +       /* No PHY, return early */
 
-The setup is 6.11-rc7 with your hdmi series + my wip dsi + X11 running
-on top.
+I got a syzbot report here.
 
-At some point after being idle a while this blanks the display, which will
-probably turn off clocks and such. After moving the mouse or just
-doing anything else that unblanks the display, that splat happens.
+Should we fix this with :
 
-Apart from updating mesa from 24.2.0 to 24.2.2 I haven't changed
-anything in my test-setup so far.
+diff --git a/net/ethtool/phy.c b/net/ethtool/phy.c
+index 560dd039c6625ac0925a0f28c14ce77cf768b6a5..4ef7c6e32d1087dc71acb467f9c=
+d2ab8faf4dc39
+100644
+--- a/net/ethtool/phy.c
++++ b/net/ethtool/phy.c
+@@ -164,7 +164,7 @@ int ethnl_phy_doit(struct sk_buff *skb, struct
+genl_info *info)
+                goto err_unlock_rtnl;
+
+        /* No PHY, return early */
+-       if (!req_info.pdn->phy)
++       if (!req_info.pdn)
+                goto err_unlock_rtnl;
+
+        ret =3D ethnl_phy_reply_size(&req_info.base, info->extack);
 
 
+> +       if (!req_info.pdn->phy)
+> +               goto err_unlock_rtnl;
+> +
+> +       ret =3D ethnl_phy_reply_size(&req_info.base, info->extack);
+> +       if (ret < 0)
+> +               goto err_unlock_rtnl;
+> +       reply_len =3D ret + ethnl_reply_header_size();
+> +
+> +       rskb =3D ethnl_reply_init(reply_len, req_info.base.dev,
+> +                               ETHTOOL_MSG_PHY_GET_REPLY,
+> +                               ETHTOOL_A_PHY_HEADER,
+> +                               info, &reply_payload);
+> +       if (!rskb) {
+> +               ret =3D -ENOMEM;
+> +               goto err_unlock_rtnl;
+> +       }
+> +
+> +       ret =3D ethnl_phy_fill_reply(&req_info.base, rskb);
+> +       if (ret)
+> +               goto err_free_msg;
+> +
+> +       rtnl_unlock();
+> +       ethnl_parse_header_dev_put(&req_info.base);
+> +       genlmsg_end(rskb, reply_payload);
+> +
+> +       return genlmsg_reply(rskb, info);
+> +
+> +err_free_msg:
+> +       nlmsg_free(rskb);
+> +err_unlock_rtnl:
+> +       rtnl_unlock();
+> +       ethnl_parse_header_dev_put(&req_info.base);
+> +       return ret;
+> +}
+> +
+> +struct ethnl_phy_dump_ctx {
+> +       struct phy_req_info     *phy_req_info;
+> +       unsigned long ifindex;
+> +       unsigned long phy_index;
+> +};
+> +
+> +int ethnl_phy_start(struct netlink_callback *cb)
+> +{
+> +       const struct genl_info *info =3D genl_info_dump(cb);
+> +       struct ethnl_phy_dump_ctx *ctx =3D (void *)cb->ctx;
+> +       int ret;
+> +
+> +       BUILD_BUG_ON(sizeof(*ctx) > sizeof(cb->ctx));
+> +
+> +       ctx->phy_req_info =3D kzalloc(sizeof(*ctx->phy_req_info), GFP_KER=
+NEL);
+> +       if (!ctx->phy_req_info)
+> +               return -ENOMEM;
+> +
+> +       ret =3D ethnl_parse_header_dev_get(&ctx->phy_req_info->base,
+> +                                        info->attrs[ETHTOOL_A_PHY_HEADER=
+],
+> +                                        sock_net(cb->skb->sk), cb->extac=
+k,
+> +                                        false);
+> +       ctx->ifindex =3D 0;
+> +       ctx->phy_index =3D 0;
+> +
+> +       if (ret)
+> +               kfree(ctx->phy_req_info);
+> +
+> +       return ret;
+> +}
+> +
+> +int ethnl_phy_done(struct netlink_callback *cb)
+> +{
+> +       struct ethnl_phy_dump_ctx *ctx =3D (void *)cb->ctx;
+> +
+> +       if (ctx->phy_req_info->base.dev)
+> +               ethnl_parse_header_dev_put(&ctx->phy_req_info->base);
+> +
+> +       kfree(ctx->phy_req_info);
+> +
+> +       return 0;
+> +}
+> +
+> +static int ethnl_phy_dump_one_dev(struct sk_buff *skb, struct net_device=
+ *dev,
+> +                                 struct netlink_callback *cb)
+> +{
+> +       struct ethnl_phy_dump_ctx *ctx =3D (void *)cb->ctx;
+> +       struct phy_req_info *pri =3D ctx->phy_req_info;
+> +       struct phy_device_node *pdn;
+> +       int ret =3D 0;
+> +       void *ehdr;
+> +
+> +       pri->base.dev =3D dev;
+> +
+> +       if (!dev->link_topo)
+> +               return 0;
+> +
+> +       xa_for_each_start(&dev->link_topo->phys, ctx->phy_index, pdn, ctx=
+->phy_index) {
+> +               ehdr =3D ethnl_dump_put(skb, cb, ETHTOOL_MSG_PHY_GET_REPL=
+Y);
+> +               if (!ehdr) {
+> +                       ret =3D -EMSGSIZE;
+> +                       break;
+> +               }
+> +
+> +               ret =3D ethnl_fill_reply_header(skb, dev, ETHTOOL_A_PHY_H=
+EADER);
+> +               if (ret < 0) {
+> +                       genlmsg_cancel(skb, ehdr);
+> +                       break;
+> +               }
+> +
+> +               pri->pdn =3D pdn;
+> +               ret =3D ethnl_phy_fill_reply(&pri->base, skb);
+> +               if (ret < 0) {
+> +                       genlmsg_cancel(skb, ehdr);
+> +                       break;
+> +               }
+> +
+> +               genlmsg_end(skb, ehdr);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +int ethnl_phy_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
+> +{
+> +       struct ethnl_phy_dump_ctx *ctx =3D (void *)cb->ctx;
+> +       struct net *net =3D sock_net(skb->sk);
+> +       struct net_device *dev;
+> +       int ret =3D 0;
+> +
+> +       rtnl_lock();
+> +
+> +       if (ctx->phy_req_info->base.dev) {
+> +               ret =3D ethnl_phy_dump_one_dev(skb, ctx->phy_req_info->ba=
+se.dev, cb);
+> +       } else {
+> +               for_each_netdev_dump(net, dev, ctx->ifindex) {
+> +                       ret =3D ethnl_phy_dump_one_dev(skb, dev, cb);
+> +                       if (ret)
+> +                               break;
+> +
+> +                       ctx->phy_index =3D 0;
+> +               }
+> +       }
+> +       rtnl_unlock();
+> +
+> +       return ret;
+> +}
+> --
+> 2.45.2
+>
 
