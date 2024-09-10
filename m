@@ -1,249 +1,305 @@
-Return-Path: <linux-kernel+bounces-322274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 945DB97269C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:32:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB10097269E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F67DB22B57
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:32:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8C5285BAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F698139D1A;
-	Tue, 10 Sep 2024 01:31:53 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463E513A40C;
+	Tue, 10 Sep 2024 01:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TfUIVb+B"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2084.outbound.protection.outlook.com [40.107.93.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D2A5695;
-	Tue, 10 Sep 2024 01:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725931912; cv=none; b=rqvBoXL/fJw0TEoLjLK1gKdycYFxFN2I+H+WMKsT7U2WH1FY/6Wa6UW13awJsSEhvTsUkzE9wHEQnBou/oCsgetgaSZgjVWx1V4K3fNcbEYZd2HPTuguyIVn8iIfRKFr8z3TtXoDwgmq4FN+1L46H/BaDinmeRt3bRBCO8unJO0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725931912; c=relaxed/simple;
-	bh=S7Z1cGFHh5sWS+TsBJHRcmpg3hVPKg/xmER13R9dUE0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=toISx8iRFRcQq+7kOMXZZ1da7k8DAzU6nYRpy/+eAspuIFrJ82hhcpXgTwQRgY8r+YzJpSRHBiFEJ/3xkpzw6MLm6WyIRXF389pg9dPN9tovpsSHD/dXRsDTYFXyFe8CGX6vSMkiwtmIGaupQpx2tO8893nYhhikWWncMdOdKq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X2mPs0kTwz4f3kvh;
-	Tue, 10 Sep 2024 09:31:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 4061F1A07B6;
-	Tue, 10 Sep 2024 09:31:45 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP4 (Coremail) with SMTP id gCh0CgCXzMh9od9mInePAw--.1036S2;
-	Tue, 10 Sep 2024 09:31:43 +0800 (CST)
-Message-ID: <07501c67-3b18-48e3-8929-e773d8d6920f@huaweicloud.com>
-Date: Tue, 10 Sep 2024 09:31:41 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B612737165;
+	Tue, 10 Sep 2024 01:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725931949; cv=fail; b=R4XiXpT46D3RtjXb/u4ed7WwnTpFDjS8+TNXGAww1lMhpO7pzw01sDbotq2/8QKBBqMC27yNfPIiJYwJontif+It5umiHZLqslCfv9yVKnZ8FbvEKNDkTMrmOjJFI+aYMHQzcYyt96L8ypK7ATJAfu0a1LN24kUjv0vMLDE7EQA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725931949; c=relaxed/simple;
+	bh=Vv2jDaWEUhIzPqKoI81CyQ9iwpgLkqwggKqiTAtuNrA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=e189woo/gWlJKoiazGdwySD1uOQ2WwbgBU1gps3hMLCH3zxUC4YCeb6emDug1Qx5iLajKohLalj+t3sMOK6reO+X27gUAZzybBNjLCrPyaYi6K5v8Mhq9OenSUeHiUe3/0wZIKxpmi2WiCg3PDY+P0e7Qt5NQODeKx32vuxRvK4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TfUIVb+B; arc=fail smtp.client-ip=40.107.93.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T+3/3P2Rx0iKXaHR7uma4j2imZcWd2Xq0jiVoSHWZuFOicwfQ2mwUWThpLM7qyhleDZdayggGjXziQPXLYg+ntNLVer7bbyD2Je6y1AjC9ic0bMAHdZBOznHmGf6WxhiBxTCyD0gigxxaCFmNKYXAFDVYtDN2qd0VY4DJpJBtpvI/BgRTY96myUCEJiveJiTWSfiNIa0aSsaRSkOxVGqEH/jKWQKMe1AksS+Qr+qWn1E3sZVQfSoNh+G/yOs1zcbSqWgcz6DUBqyMQgRQ0pJA1lPyRiRN/hkB8tm7O7jgM6CaBJ12D7e8IiA7iXHV1KFYrMrj/Oix9xAP6Z7ce4Czw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kIC49C6T+Coc1tuQOqiUQ0zwHk0pzeErEdLCgBqrxsk=;
+ b=dbSXCYGXklGdAIq4NJusAEb0tktONPN/yC2NRpOHEoEisbMIUGlH6aNd96M8h99D0xZ0F29khku/t61RvVZVWRgKNgW8h5i6tLuspgT9ZYdSYlhczL7U+wc6QtoWOEn3GlZi2VSCyjFKOtqUM+sES5UIR41/NHrg//1J61fy4OUAbyHmmakFUOjTTkQmZVy+7SrGnB+MEzHRmdZyIaJr2FyNLS18x8yGxJwFo5gFTZQmnjPCf0mv9dJris1uUs82wq4h6OiVjR/8UZxaLrPXsnvVWM8KSsnAiVtQzfNWz8ffrmFA86sHNqt8FKab3h6pa5G03HXzwI0GdYv32BqcdQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kIC49C6T+Coc1tuQOqiUQ0zwHk0pzeErEdLCgBqrxsk=;
+ b=TfUIVb+Bo67gMnAj5B2oSuv4Cm+8XzBsJqVPEnZf5tSxaT0Tzo09gPt8snJ9/Uo1QiUmDuHOTDk3Y1QA2TwMP4p0WUS0pH92hk5HYHs/Iq2wGCg/jKuJweHglXWuaWdF+Iip/fl91vUTRwOV4d6cMq7AJkgn6Sw9fGo1+kjq1to=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6583.namprd12.prod.outlook.com (2603:10b6:8:d1::12) by
+ SN7PR12MB8147.namprd12.prod.outlook.com (2603:10b6:806:32e::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.25; Tue, 10 Sep 2024 01:32:24 +0000
+Received: from DS0PR12MB6583.namprd12.prod.outlook.com
+ ([fe80::c8a9:4b0d:e1c7:aecb]) by DS0PR12MB6583.namprd12.prod.outlook.com
+ ([fe80::c8a9:4b0d:e1c7:aecb%6]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
+ 01:32:24 +0000
+Message-ID: <491180c3-680d-41cf-a799-d1099542882c@amd.com>
+Date: Mon, 9 Sep 2024 18:32:21 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH net-next v2 3/6] net: xilinx: axienet: Combine CR
+ calculation
+Content-Language: en-US
+To: Sean Anderson <sean.anderson@linux.dev>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, netdev@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Michal Simek
+ <michal.simek@amd.com>, linux-kernel@vger.kernel.org
+References: <20240909235208.1331065-1-sean.anderson@linux.dev>
+ <20240909235208.1331065-4-sean.anderson@linux.dev>
+From: "Nelson, Shannon" <shannon.nelson@amd.com>
+In-Reply-To: <20240909235208.1331065-4-sean.anderson@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY3PR05CA0007.namprd05.prod.outlook.com
+ (2603:10b6:a03:254::12) To DS0PR12MB6583.namprd12.prod.outlook.com
+ (2603:10b6:8:d1::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] cgroup: fix deadlock caused by cgroup_mutex and
- cpu_hotplug_lock
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Chen Ridong <chenridong@huawei.com>
-Cc: martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@google.com, haoluo@google.com, jolsa@kernel.org, tj@kernel.org,
- lizefan.x@bytedance.com, hannes@cmpxchg.org, roman.gushchin@linux.dev,
- bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240817093334.6062-1-chenridong@huawei.com>
- <20240817093334.6062-2-chenridong@huawei.com>
- <kz6e3oadkmrl7elk6z765t2hgbcqbd2fxvb2673vbjflbjxqck@suy4p2mm7dvw>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <kz6e3oadkmrl7elk6z765t2hgbcqbd2fxvb2673vbjflbjxqck@suy4p2mm7dvw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXzMh9od9mInePAw--.1036S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jw4UtFWUJw1rGF45uF1fCrg_yoWxGF17pr
-	s0vw1UKF48Wr1v9ayvgayaqFWFkw4vgF47JFZ5Jw1jyrW3Xr12vr129r4YvFZ7Gr93Zrn0
-	vay3Zr90gas8trJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6583:EE_|SN7PR12MB8147:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59427ccb-74f9-49d5-a8d7-08dcd1386c1e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Qm5QRlpPSWVqeFV6SXVSSzFMRmwrd3VuZTNYWHdZOHJBM3NsZ3NCV0pUMjVq?=
+ =?utf-8?B?cU5rdkxJVU9xZ1dzblNrUzlQRHkxVnRqWitXK3pOczRuQWdRYzVGeDFOZXlt?=
+ =?utf-8?B?eUE3bFc2OWpyQ0kybWU0N1FhVS9SZGlYS21SeDNjKzJaQ2hCT010VGVXQWpV?=
+ =?utf-8?B?OWNVb2hhYlBZcHcxL1crKzJ4THhzQms5M0IyNU9obFVYeHRwYXVUVVRlMndo?=
+ =?utf-8?B?NWhYMStQVFFTSUloLy9ldnlXQWNicU1KMW1JZXdNQUhGbWl1ZXR5Y1hGMVl2?=
+ =?utf-8?B?MSthMWtYOTJPTGt3UnFWaUR0S3EyL1BKT0JVM2JoVlhKYnFZV0VjVkR3SW1h?=
+ =?utf-8?B?MDVZTkE4Z2JRZzkraVdkcUpiNUVqMW9VV3AyVUt4d2toMTVzMDhrNldIcnVG?=
+ =?utf-8?B?NkZ5ZG1NRzQwT2FZYi8wZmkyQUNtMnZIaXNNZ2owOU5FZXE1TU9VdTNON0xI?=
+ =?utf-8?B?dllQZ2tvTFIwMGFJZ29lZHR5ejhzdjZJYkpSR3RzZUhjT1Q2R3VURGQzbEM0?=
+ =?utf-8?B?VXV4anNwS2tVakZ4Tm1NK0FQYTNDcllpYW5ib1hZZnRiSFpoczd5Z2U4SUdj?=
+ =?utf-8?B?OHJsOUtTN1ZuSlo0RW1nYTZOOU5kWXZ6TW82V1FlNmllM1llcmRBZEtxTjEy?=
+ =?utf-8?B?NEJXRE9XcTBmZXNpNnBqUU5kdWdrd3F4elp6akRKZEtpZFJadEpybkNHcHdE?=
+ =?utf-8?B?TVZrbFFvejBSMElDZ2pWUk5MTEpncXFUSTN6MjhTempQSnlqbE1ybThmZHF2?=
+ =?utf-8?B?UHl3YlVqOTIrL0hOS2pqMDhGREw4UVpKQ0J4OUVJTll2NmlNb05jWCtmWnlQ?=
+ =?utf-8?B?Mis0SWJPcG5JQzEySXg4TmNYRy9kSGMvL1NuMmx6N0RQTU41RmE1bU9SZkdq?=
+ =?utf-8?B?cmdvc05sM0MvL1ZVdGRIVlc3RXlIeWhkZW1rYmlFYlAzdUtXZ0Y3d08wbWdr?=
+ =?utf-8?B?YWpRUjFXVlA0aC9RTmZlUWNNdEFOUmgvZHl4NUxIMnNQME9pOFJmdlRLZ0ZS?=
+ =?utf-8?B?TEpOcmR3R2IyQWpRbXUwTG43dUg2cE5OU1c5cHBYc0NHb2VpWXlUMUYwRzhs?=
+ =?utf-8?B?NGR0ZkZ5VmROcWxrMUFPRllqQVhBNkVubVVMeWszZUc3Q0pFQnJyc3E5Y0dR?=
+ =?utf-8?B?dzRjWE9OSi9LWEFPQW9oNlZDRnhqR3YvUVBxTS82dUozMFIyWFBTN0VEczgr?=
+ =?utf-8?B?RHVObWMxMHdIaDhBK3lZTklDU3FDakU3R213WXZjQWMzRllLVGRoamZWSmdM?=
+ =?utf-8?B?TlZrWGcxZTc4UDVGL3N6dzd3Y0xqZjQzb3lQMktTQTBMOHlVMmM3Wk01UUN1?=
+ =?utf-8?B?RG8wLy8zdXVvYjBNdEFCd2trMmtLQVNEZHhKM0wzUDc5VE41V3R4MGEvTFE5?=
+ =?utf-8?B?M2haMjEvcURGT1BHWDZWNWJUWEhyc0Y3engwa1RxTDRHUW1haHFXWVhjcjQy?=
+ =?utf-8?B?YkFzU2l4REZMK0RJeFFTRHZ3S1FRQ0VQVDh6Z0dNSXFmSWlBbkM2MkVpUmxu?=
+ =?utf-8?B?WWlTL0czVHBLNFdDTG5EalExOFNPaWtic3U1NFhOYzJOV1RTQ2t2Mk5IcWJI?=
+ =?utf-8?B?aGxEb1VUQWNhLy9DRGFJVDhIbCtWZkw1eStzdjZRYnEwbEhBdzMwT04yV1R1?=
+ =?utf-8?B?OG5LMG9KOVE2NmZDcEFQUEw0ekZiYnB4bzlYdjVUdW1OV0ZXaVVndVk1eGhk?=
+ =?utf-8?B?UkpYdm9rajNPNGJQM0VnK3A3RFpRam02RCs4ZXh3TURxMFNPRnl1MDhMMFdt?=
+ =?utf-8?B?UlArUE0wbjM1a2w2cEJ1cEJOek1SdGVzNy9SdldtZDJBMHpWb2tQS0doY2ZS?=
+ =?utf-8?B?ZjRkUjVTUGEzVWs4MlJ2Zz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6583.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TlFZWHhCaTRPRlRtS0ZQWFhMZzNNOTRKdVB0cHJnbDhvYzhUNWVJRGFXTk1J?=
+ =?utf-8?B?b2pGcU81WkVncnNxVDdvVjRRQ3B2RHFUSE91Tjd2YjZvTlFEcUZYLzRSSGJQ?=
+ =?utf-8?B?ZU5YTEU0MTlQM0lGajJkR3VCL0VrNWVmTVc2Zy81S2JLak81WnFSS1VjcUty?=
+ =?utf-8?B?L3JQcGVlODJjbm02UUVJdERBSzV4NmNsWnJKNkF2aExqR3F5QXFkWk10QzNY?=
+ =?utf-8?B?NnFmcHE2SGZMY0N2K1piRXhuWEwwR1p1eDM2VTZtRE1OWW1heFJzTFd5SGRF?=
+ =?utf-8?B?YWxoWXM2ODR5OEhrM1pGZ0NIVUg5SGJldERJSnYybmwxLy9RQXloRGRpTWRW?=
+ =?utf-8?B?amRIN0E5MkYwaW5SK1hNaG9OT0h0em5jU0RzODk4aEZwRFlBRVd0OVlqRm5C?=
+ =?utf-8?B?ak0vWlRvWnc3L1lyWlBzSkVUUXlCbDBnNjIwL0lnTDNuRGkyWFZOd3M4a3hX?=
+ =?utf-8?B?MTBKWEk0K3lvR0hpSkt0MnE2Y3R6Nnp2dXRLd3pLaWxXVnExYmFURWd4anFV?=
+ =?utf-8?B?Y09jUWNkd3duM1VaZ0s4V1FLMG1xcGZqbDRMeUVHZldxUUJUSE1FSXZGUXRP?=
+ =?utf-8?B?YytPTWUyRGpwUUpjc3hHNlM5ZzdIM0pkc3lJR0J2U3V1Um9QWmhqeGpOMFRY?=
+ =?utf-8?B?K015RWhqMFpxWEF6TS9jekNpaHQ0QnFuMnZTV3FIY1doUUdMcERsbXZtSkVN?=
+ =?utf-8?B?Nk9kVHo5UUFLbURwUWpYS2M5Y05hbXg2TlR3ZCtnZklpNzMzZ3lBanltL2di?=
+ =?utf-8?B?bjlDOUNJdk00SGVLbWZidnMyYXB3Q28vR3l3amgrRWY1NTZmZGc0WmhNcVhD?=
+ =?utf-8?B?V29FNTJhN1ROTkhaZUQ3dXVBMWJoazhOaDExdy8wUkFsaXZVR3NlVjYvdE9t?=
+ =?utf-8?B?T3JId1k4T2I5WWQzMWFqM1lQV1N2Smg3OU5ndExwU2VqSjNVYTNiNVUzNDAw?=
+ =?utf-8?B?eTFocHdDZnhtd3RBR2RFRi9VbVhXSTgyYmlZU3Y2ODVIcEd2YU1qdHBPSGZm?=
+ =?utf-8?B?VUdQdWRWSi9JK0VONjliVm5xNG9YTFI5NFJkZExwbFBEMEJ6YWdtRDE3VkZu?=
+ =?utf-8?B?eFIwUmpIdVRNWjV6MVU4a0pQZ1JsN3pZRlBybHc3eWJOTXcwZ2hyd0lNYnI3?=
+ =?utf-8?B?M2xmemxkSWJwMnNxSnkxcmx6UVdmNGw4a1pZbUowazU4VEI1Yit1cDY1d09H?=
+ =?utf-8?B?THNRUFF6enp4dXdGNFpxcXY1WkJ5ci9BclQ0YnNTcEl6eUNQMFNiOXlGL2pl?=
+ =?utf-8?B?OGs5cUlwS2oyV1QwZml2d3c3ZlRQVnovWmZjVDUyTTROeGNZbXVuYzBOZjFk?=
+ =?utf-8?B?SnN2Z2grLzVEaFloNjY1R1h2b1lsdXdPOHNiZk40NmN3RU5pcnNiM2RNcnBV?=
+ =?utf-8?B?TDh5cWIzYXlCOUpaWkdKVE1LNmtXUXJnUU9xQmVESkM4eFI3MDYrU2ZJOCt4?=
+ =?utf-8?B?Nit1ZVJVWUM3bE9xQjJ2TnhLQ0trOW5HNmdzREJNclk0YXVHMUlldHU3OG8w?=
+ =?utf-8?B?ZFdsb3lNZlRDUXZHRkhXQ3dkazlkazVFcXFJRXppWnlqcWxtR1hRNGpqSmtB?=
+ =?utf-8?B?ZlUyTVJRbGlTSUQ3RHJ3N2o5cXNaZlkzVEs1dUtaNEFjazUvVTM5aWVWYnVO?=
+ =?utf-8?B?VmJjZmhOQWJQOVQ0K0lMOEhDYm5ncm9hN1BxTFpqckpPZFBVaG1Rbm42VlN4?=
+ =?utf-8?B?bTBMUnN4WUNTSmhxeTRlakZHelJWTGxyMHJkVGpIeDhPclhQQVE0MG8wbHJt?=
+ =?utf-8?B?cEVDREl5TWg0ZngrZTRWRGU4UEx0MDRISWsyb1ZCeitFeFBxazVoK1pVQjN0?=
+ =?utf-8?B?NFFUNUVRKzdVMGNkT1MyeWxrS2lXWVROTGtZQXcrazdERW1RTnZHZVkwU0tE?=
+ =?utf-8?B?Uk5iYUJLR3NJYmF6dk5WWlVMZmpkTktJRGdMU1pXOFJMdlpRc1YzTWNZVEY5?=
+ =?utf-8?B?WXZvNlIzUHdaekhmeitjTGswTjBCNzNYa2hLek1qWVM5S25WM1FQQis4M0h3?=
+ =?utf-8?B?a2tyZDViZlM3dVR3bGg3Qy8vTFBhSzBaMHc2OGd4SWNBRjJTZXNFeHNBc3Ix?=
+ =?utf-8?B?dE5QNFk0d0E2a2NVN0dSeEJjeS9GQkppMXBBOUdtMklzWXAvRkppUitSakY4?=
+ =?utf-8?Q?ZCMqUflZ17C9ZTnj5Sw3GU/jY?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59427ccb-74f9-49d5-a8d7-08dcd1386c1e
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6583.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 01:32:24.3108
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l97DTRNRraDn+rC9s+LUL3HIW3WcdqfAUL+AFv8xp2KD3MHZh3+O3T4mrjw+Uzc3zRMiDniDX4euT/SRs3DNLw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8147
 
+On 9/9/2024 4:52 PM, Sean Anderson wrote:
+> 
+> Combine the common parts of the CR calculations for better code reuse.
+> While we're at it, simplify the code a bit.
+> 
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> ---
+> 
+> Changes in v2:
+> - Split off from runtime coalesce modification support
+> 
+>   drivers/net/ethernet/xilinx/xilinx_axienet.h  |  2 -
+>   .../net/ethernet/xilinx/xilinx_axienet_main.c | 69 ++++++++++---------
+>   2 files changed, 35 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h b/drivers/net/ethernet/xilinx/xilinx_axienet.h
+> index 5c0a21ef96a4..c43ce8f7590c 100644
+> --- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
+> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
+> @@ -112,8 +112,6 @@
+>   #define XAXIDMA_DELAY_MASK             ((u32)0xFF000000) /* Delay timeout counter */
+>   #define XAXIDMA_COALESCE_MASK          ((u32)0x00FF0000) /* Coalesce counter */
+> 
+> -#define XAXIDMA_DELAY_SHIFT            24
+> -
+>   #define XAXIDMA_IRQ_IOC_MASK           0x00001000 /* Completion intr */
+>   #define XAXIDMA_IRQ_DELAY_MASK         0x00002000 /* Delay interrupt */
+>   #define XAXIDMA_IRQ_ERROR_MASK         0x00004000 /* Error interrupt */
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> index bc987f7ca1ea..bff94d378b9f 100644
+> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> @@ -224,22 +224,41 @@ static void axienet_dma_bd_release(struct net_device *ndev)
+>   }
+> 
+>   /**
+> - * axienet_usec_to_timer - Calculate IRQ delay timer value
+> - * @lp:                Pointer to the axienet_local structure
+> - * @coalesce_usec: Microseconds to convert into timer value
+> + * axienet_calc_cr() - Calculate control register value
+> + * @lp: Device private data
+> + * @coalesce_count: Number of completions before an interrupt
+> + * @coalesce_usec: Microseconds after the last completion before an interrupt
 
+nit: The comments should match the actual parameter names
+sln
 
-On 2024/9/9 22:19, Michal Koutný wrote:
-> On Sat, Aug 17, 2024 at 09:33:34AM GMT, Chen Ridong <chenridong@huawei.com> wrote:
->> The reason for this issue is cgroup_mutex and cpu_hotplug_lock are
->> acquired in different tasks, which may lead to deadlock.
->> It can lead to a deadlock through the following steps:
->> 1. A large number of cpusets are deleted asynchronously, which puts a
->>     large number of cgroup_bpf_release works into system_wq. The max_active
->>     of system_wq is WQ_DFL_ACTIVE(256). Consequently, all active works are
->>     cgroup_bpf_release works, and many cgroup_bpf_release works will be put
->>     into inactive queue. As illustrated in the diagram, there are 256 (in
->>     the acvtive queue) + n (in the inactive queue) works.
->> 2. Setting watchdog_thresh will hold cpu_hotplug_lock.read and put
->>     smp_call_on_cpu work into system_wq. However step 1 has already filled
->>     system_wq, 'sscs.work' is put into inactive queue. 'sscs.work' has
->>     to wait until the works that were put into the inacvtive queue earlier
->>     have executed (n cgroup_bpf_release), so it will be blocked for a while.
->> 3. Cpu offline requires cpu_hotplug_lock.write, which is blocked by step 2.
->> 4. Cpusets that were deleted at step 1 put cgroup_release works into
->>     cgroup_destroy_wq. They are competing to get cgroup_mutex all the time.
->>     When cgroup_metux is acqured by work at css_killed_work_fn, it will
->>     call cpuset_css_offline, which needs to acqure cpu_hotplug_lock.read.
->>     However, cpuset_css_offline will be blocked for step 3.
->> 5. At this moment, there are 256 works in active queue that are
->>     cgroup_bpf_release, they are attempting to acquire cgroup_mutex, and as
->>     a result, all of them are blocked. Consequently, sscs.work can not be
->>     executed. Ultimately, this situation leads to four processes being
->>     blocked, forming a deadlock.
->>
->> system_wq(step1)		WatchDog(step2)			cpu offline(step3)	cgroup_destroy_wq(step4)
->> ...
->> 2000+ cgroups deleted asyn
->> 256 actives + n inactives
->> 				__lockup_detector_reconfigure
->> 				P(cpu_hotplug_lock.read)
->> 				put sscs.work into system_wq
->> 256 + n + 1(sscs.work)
->> sscs.work wait to be executed
->> 				warting sscs.work finish
->> 								percpu_down_write
->> 								P(cpu_hotplug_lock.write)
->> 								...blocking...
->> 											css_killed_work_fn
->> 											P(cgroup_mutex)
->> 											cpuset_css_offline
->> 											P(cpu_hotplug_lock.read)
->> 											...blocking...
->> 256 cgroup_bpf_release
->> mutex_lock(&cgroup_mutex);
->> ..blocking...
+> + *
+> + * Calculate a control register value based on the coalescing settings. The
+> + * run/stop bit is not set.
+>    */
+> -static u32 axienet_usec_to_timer(struct axienet_local *lp, u32 coalesce_usec)
+> +static u32 axienet_calc_cr(struct axienet_local *lp, u32 count, u32 usec)
+>   {
+> -       u32 result;
+> -       u64 clk_rate = 125000000; /* arbitrary guess if no clock rate set */
+> +       u32 cr;
 > 
-> Thanks, Ridong, for laying this out.
-> Let me try to extract the core of the deps above.
+> -       if (lp->axi_clk)
+> -               clk_rate = clk_get_rate(lp->axi_clk);
+> +       count = min(count, FIELD_MAX(XAXIDMA_COALESCE_MASK));
+> +       cr = FIELD_PREP(XAXIDMA_COALESCE_MASK, count) | XAXIDMA_IRQ_IOC_MASK |
+> +            XAXIDMA_IRQ_ERROR_MASK;
+> +       /* Only set interrupt delay timer if not generating an interrupt on
+> +        * the first packet. Otherwise leave at 0 to disable delay interrupt.
+> +        */
+> +       if (count > 1) {
+> +               u64 clk_rate = 125000000; /* arbitrary guess if no clock rate set */
+> +               u32 timer;
 > 
-> The correct lock ordering is: cgroup_mutex then cpu_hotplug_lock.
-> However, the smp_call_on_cpu() under cpus_read_lock may lead to
-> a deadlock (ABBA over those two locks).
+> -       /* 1 Timeout Interval = 125 * (clock period of SG clock) */
+> -       result = DIV64_U64_ROUND_CLOSEST((u64)coalesce_usec * clk_rate,
+> -                                        XAXIDMA_DELAY_SCALE);
+> -       return min(result, FIELD_MAX(XAXIDMA_DELAY_MASK));
+> +               if (lp->axi_clk)
+> +                       clk_rate = clk_get_rate(lp->axi_clk);
+> +
+> +               /* 1 Timeout Interval = 125 * (clock period of SG clock) */
+> +               timer = DIV64_U64_ROUND_CLOSEST((u64)usec * clk_rate,
+> +                                               XAXIDMA_DELAY_SCALE);
+> +
+> +               timer = min(timer, FIELD_MAX(XAXIDMA_DELAY_MASK));
+> +               cr |= FIELD_PREP(XAXIDMA_DELAY_MASK, timer) |
+> +                     XAXIDMA_IRQ_DELAY_MASK;
+> +       }
+> +
+> +       return cr;
+>   }
 > 
-
-That's right.
-
-> This is OK
-> 	thread T					system_wq worker
-> 	
-> 	  						lock(cgroup_mutex) (II)
-> 							...
-> 							unlock(cgroup_mutex)
-> 	down(cpu_hotplug_lock.read)
-> 	smp_call_on_cpu
-> 	  queue_work_on(cpu, system_wq, scss) (I)
-> 							scss.func
-> 	  wait_for_completion(scss)
-> 	up(cpu_hotplug_lock.read)
+>   /**
+> @@ -249,31 +268,13 @@ static u32 axienet_usec_to_timer(struct axienet_local *lp, u32 coalesce_usec)
+>   static void axienet_dma_start(struct axienet_local *lp)
+>   {
+>          /* Start updating the Rx channel control register */
+> -       lp->rx_dma_cr = FIELD_PREP(XAXIDMA_COALESCE_MASK,
+> -                                  min(lp->coalesce_count_rx,
+> -                                      FIELD_MAX(XAXIDMA_COALESCE_MASK))) |
+> -                       XAXIDMA_IRQ_IOC_MASK | XAXIDMA_IRQ_ERROR_MASK;
+> -       /* Only set interrupt delay timer if not generating an interrupt on
+> -        * the first RX packet. Otherwise leave at 0 to disable delay interrupt.
+> -        */
+> -       if (lp->coalesce_count_rx > 1)
+> -               lp->rx_dma_cr |= (axienet_usec_to_timer(lp, lp->coalesce_usec_rx)
+> -                                       << XAXIDMA_DELAY_SHIFT) |
+> -                                XAXIDMA_IRQ_DELAY_MASK;
+> +       lp->rx_dma_cr = axienet_calc_cr(lp, lp->coalesce_count_rx,
+> +                                       lp->coalesce_usec_rx);
+>          axienet_dma_out32(lp, XAXIDMA_RX_CR_OFFSET, lp->rx_dma_cr);
 > 
-> However, there is no ordering between (I) and (II) so they can also happen
-> in opposite
+>          /* Start updating the Tx channel control register */
+> -       lp->tx_dma_cr = FIELD_PREP(XAXIDMA_COALESCE_MASK,
+> -                                  min(lp->coalesce_count_tx,
+> -                                      FIELD_MAX(XAXIDMA_COALESCE_MASK))) |
+> -                       XAXIDMA_IRQ_IOC_MASK | XAXIDMA_IRQ_ERROR_MASK;
+> -       /* Only set interrupt delay timer if not generating an interrupt on
+> -        * the first TX packet. Otherwise leave at 0 to disable delay interrupt.
+> -        */
+> -       if (lp->coalesce_count_tx > 1)
+> -               lp->tx_dma_cr |= (axienet_usec_to_timer(lp, lp->coalesce_usec_tx)
+> -                                       << XAXIDMA_DELAY_SHIFT) |
+> -                                XAXIDMA_IRQ_DELAY_MASK;
+> +       lp->tx_dma_cr = axienet_calc_cr(lp, lp->coalesce_count_tx,
+> +                                       lp->coalesce_usec_tx);
+>          axienet_dma_out32(lp, XAXIDMA_TX_CR_OFFSET, lp->tx_dma_cr);
 > 
-> 	thread T					system_wq worker
-> 	
-> 	down(cpu_hotplug_lock.read)
-> 	smp_call_on_cpu
-> 	  queue_work_on(cpu, system_wq, scss) (I)
-> 	  						lock(cgroup_mutex)  (II)
-> 							...
-> 							unlock(cgroup_mutex)
-> 							scss.func
-> 	  wait_for_completion(scss)
-> 	up(cpu_hotplug_lock.read)
-> 
-> And here the thread T + system_wq worker effectively call
-> cpu_hotplug_lock and cgroup_mutex in the wrong order. (And since they're
-> two threads, it won't be caught by lockdep.)
-> 
-> By that reasoning any holder of cgroup_mutex on system_wq makes system
-> susceptible to a deadlock (in presence of cpu_hotplug_lock waiting
-> writers + cpuset operations). And the two work items must meet in same
-> worker's processing hence probability is low (zero?) with less than
-> WQ_DFL_ACTIVE items.
-> 
-> (And more generally, any lock that is ordered before cpu_hotplug_lock
-> should not be taken in system_wq work functions. Or at least such works
-> items should not saturate WQ_DFL_ACTIVE workers.)
-> 
-> Wrt other uses of cgroup_mutex, I only see
->    bpf_map_free_in_work
->      queue_work(system_unbound_wq)
->        bpf_map_free_deferred
->          ops->map_free == cgroup_storage_map_free
->            cgroup_lock()
-> which is safe since it uses a different workqueue than system_wq.
-> 
->> To fix the problem, place cgroup_bpf_release works on cgroup_destroy_wq,
->> which can break the loop and solve the problem.
-> 
-> Yes, it moves the problematic cgroup_mutex holder away from system_wq
-> and cgroup_destroy_wq could not cause similar problems because there are
-> no explicit waiter for particular work items or its flushing.
+>          /* Populate the tail pointer and bring the Rx Axi DMA engine out of
+> --
+> 2.35.1.1320.gc452695387.dirty
 > 
 > 
->> System wqs are for misc things which shouldn't create a large number
->> of concurrent work items.  If something is going to generate
->>> WQ_DFL_ACTIVE(256) concurrent work
->> items, it should use its own dedicated workqueue.
-> 
-> Actually, I'm not sure (because I lack workqueue knowledge) if producing
-> less than WQ_DFL_ACTIVE work items completely eliminates the chance of
-> two offending work items producing the wrong lock ordering.
-> 
-
-If producing less than WQ_DFL_ACTIVE work items, it won't lead to a 
-deadlock. Because scss.func can be executed and doesn't have to wait for 
-work that holds cgroup_mutex to be completed. Therefore, the probability 
-is low and this issue can only be reproduced under pressure test.
-
-> 
->> Fixes: 4bfc0bb2c60e ("bpf: decouple the lifetime of cgroup_bpf from cgroup itself")
-> 
-> I'm now indifferent whether this is needed (perhaps in the sense it is
-> the _latest_ of multiple changes that contributed to possibility of this
-> deadlock scenario).
-> 
-> 
->> Link: https://lore.kernel.org/cgroups/e90c32d2-2a85-4f28-9154-09c7d320cb60@huawei.com/T/#t
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/bpf/cgroup.c             | 2 +-
->>   kernel/cgroup/cgroup-internal.h | 1 +
->>   kernel/cgroup/cgroup.c          | 2 +-
->>   3 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> I have convinved myself now that you can put
-> 
-> Reviewed-by: Michal Koutný <mkoutny@suse.com>
-> 
-> Regards,
-> Michal
-
-Thank you very much.
-
-Best Regards,
-Ridong
-
 
