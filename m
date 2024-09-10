@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-323169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411259738D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:42:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A049738E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F9DC284477
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:42:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0140B1C25034
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9F3192D7B;
-	Tue, 10 Sep 2024 13:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E882B192B96;
+	Tue, 10 Sep 2024 13:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ql4vqC8b"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNfNon9v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1178114F12C;
-	Tue, 10 Sep 2024 13:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5340614F12C;
+	Tue, 10 Sep 2024 13:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725975727; cv=none; b=VHhwkZCj+LcR+927F0xs69yt9kNVr6EQFKjzzCKJWTtgeC1uFw8raFSlQdReTya5lHvztIMuQ8Ck1ZGvTu6QvRYwWwGo0OZ1KDizrUctnc8eAnqCtc1xzb3vwGRWOjwK1m2WpJg1EeF1HptQe++T5Hrw/YLr0u/lA4Vufdrn/00=
+	t=1725975744; cv=none; b=Ij4bZKvbJGEro5Iwnk7ajb6nFxHR0Z9DdQrO1AL+DhH/hQzxhYiGiShVhlb9ye+FofeNPCqldtIe/qXfXfwT9qVtxL5dKA1es27Oht+HlLg+brzWD8hx+9K/XzsdvOgXwpfNS8HoEkMhcbmRxgi0qOCDCVJETVzd4YXTzcLh3TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725975727; c=relaxed/simple;
-	bh=T1DrTVHH1sfUlag/CA8DuPaKKivrIip5vD+w1SHJCO8=;
+	s=arc-20240116; t=1725975744; c=relaxed/simple;
+	bh=KK93TPLgHWuCzd2HybK4gg/j5sV+HKCgA/rwL5omCo8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZQiCPiZs9ylcmzwcIVTktQHbIp7kVqInKEnoyewN/UXfLcp5j6qbcKvR5osSF141YyZN//8HiQwuLy7LvlVHl38sB+a0mZ0SKvL8l+dnAyQh3ISchFaog05N0yoiVIOy7tKokZFhJqbKw0YXTqXBR6Gzb+O907yEA8XfyYgk4S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ql4vqC8b; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wxzBgx3kqKVoI3jlEN02U0lcelhmIv1peZoDYksnKQE=; b=Ql4vqC8boH+fZrAUoC8Aa6Psgt
-	RErCIrXi9ls6VySEg6mIvd5hNzYoDFZSKEE6w4Arli+Aomfx2k3AURv9IZ3Kq1epkDAwAQjQKn9/i
-	bdIHlb6dv6AcFIp5giL3Z44FyGQFNieKtbiAFfOFmYChI7TokimX33nB17CcKexqNaagFgQnuYSUe
-	lW6RaJtU/ATEI1WyTW2IeJ6aPH9c/nH6dQWFaPAnTTAVoVCgam2fDn62Bq8/zTH+MXWY717GziaJv
-	iT+Smj0GKJzb/HC8YKyB5p9m9J/58ZrBG/Mh9dmVp4oeUm7NI6VzeLt0ZcigAvPv6y+dUCpJf672/
-	cPFt8iiQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1so17l-0000000BLwy-1gHR;
-	Tue, 10 Sep 2024 13:41:41 +0000
-Date: Tue, 10 Sep 2024 14:41:41 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: dan.j.williams@intel.com, linux-mm@kvack.org, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
-	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
-	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
-	dave.hansen@linux.intel.com, ira.weiny@intel.com, djwong@kernel.org,
-	tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com,
-	peterx@redhat.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-	jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH 04/12] mm: Allow compound zone device pages
-Message-ID: <ZuBMlUK-v24-9m3G@casper.infradead.org>
-References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
- <c7026449473790e2844bb82012216c57047c7639.1725941415.git-series.apopple@nvidia.com>
- <Zt_PbIADa4baLEBw@casper.infradead.org>
- <87v7z4gfi7.fsf@nvdebian.thelocal>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzcxEGAhwuCFibZ05sJA0K7FFag8SsCYJKGpE+j5tNFyZY2hLbWYaznx/uMmQGM3dA3+WCTUhcuJXr1Byb10qUbfOlt9DD17v+zyebJx5C4tecEhVG92LhAMH5y7c/Lwrrtoccgk5eUcaGkZmPWYtOE+865IFqM0hEnj61CQl7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rNfNon9v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 118C9C4CEC3;
+	Tue, 10 Sep 2024 13:42:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725975743;
+	bh=KK93TPLgHWuCzd2HybK4gg/j5sV+HKCgA/rwL5omCo8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rNfNon9vS9QvMtQaNOFsKFidBq1QWJ7FKlVyc3qU5fWYa9GPylD3YPshV1Xlb/8pQ
+	 WV2nboQtLn83Osw7lvLitBZ8iiwADVbExdmBuU5tlFxPqs4K7u/VMG+jTBc75hONXU
+	 THZnzImA2c/152ywbXsxQrZLZLHKG80EJrWyptW+4oQin7w4++hAxjvdaBpKH0vvuJ
+	 dTXFE0Ml81YQ/deEAzs7/vew/v4usat2pNYR8PuEHGb+luex/7fmBuoplxsWejwpfI
+	 9a9wsO7uv3wVEdGgSNDiDX95QKmKsqhiU2ElCuvF8ocstF/3fR1fqQ/euRw5eg0HM8
+	 SCQAmpBjQSQNA==
+Date: Tue, 10 Sep 2024 15:42:16 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>, Gary Guo <gary@garyguo.net>,
+	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, akpm@linux-foundation.org,
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com, lina@asahilina.net,
+	mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
+	lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 26/26] MAINTAINERS: add entry for the Rust `alloc`
+ module
+Message-ID: <ZuBMuHk-_DmGRQad@cassiopeiae>
+References: <20240816001216.26575-1-dakr@kernel.org>
+ <20240816001216.26575-27-dakr@kernel.org>
+ <20240831135712.0d7366b6.gary@garyguo.net>
+ <Ztb6_XW3ccnHQDmw@pollux>
+ <CAH5fLgjbnGstjzsudjavzt5+UwK_r8n8X3LPdw29QSkBzaygxQ@mail.gmail.com>
+ <f99d8d3a-5b56-4555-a1fc-bd7685dcea40@proton.me>
+ <CANiq72=MD8jmWb9EGA8yW6eMT6Prj8fYEiJM81-HTq3p4dKmGg@mail.gmail.com>
+ <05abcf53-4997-4bdc-953b-30bbb5118639@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87v7z4gfi7.fsf@nvdebian.thelocal>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <05abcf53-4997-4bdc-953b-30bbb5118639@proton.me>
 
-On Tue, Sep 10, 2024 at 04:57:41PM +1000, Alistair Popple wrote:
+On Tue, Sep 10, 2024 at 01:26:34PM +0000, Benno Lossin wrote:
+> On 04.09.24 14:57, Miguel Ojeda wrote:
+> > On Wed, Sep 4, 2024 at 2:51 PM Benno Lossin <benno.lossin@proton.me> wrote:
+> >>
+> >> I forgot the reason for not using it, does anyone remember?
+> > 
+> > One of the reasons argued was that `mod.rs` is the same name
+> > everywhere, and thus it is hard to notice the difference in some
+> > editors and may be harder to "jump into" in history/tabs/etc.
 > 
-> Matthew Wilcox <willy@infradead.org> writes:
-> 
-> > On Tue, Sep 10, 2024 at 02:14:29PM +1000, Alistair Popple wrote:
-> >> @@ -337,6 +341,7 @@ struct folio {
-> >>  	/* private: */
-> >>  				};
-> >>  	/* public: */
-> >> +			struct dev_pagemap *pgmap;
-> >
-> > Shouldn't that be indented by one more tab stop?
-> >
-> > And for ease of reading, perhaps it should be placed either immediately
-> > before or after 'struct list_head lru;'?
-> >
-> >> +++ b/include/linux/mmzone.h
-> >> @@ -1134,6 +1134,12 @@ static inline bool is_zone_device_page(const struct page *page)
-> >>  	return page_zonenum(page) == ZONE_DEVICE;
-> >>  }
-> >>  
-> >> +static inline struct dev_pagemap *page_dev_pagemap(const struct page *page)
-> >> +{
-> >> +	WARN_ON(!is_zone_device_page(page));
-> >> +	return page_folio(page)->pgmap;
-> >> +}
-> >
-> > I haven't read to the end yet, but presumably we'll eventually want:
-> >
-> > static inline struct dev_pagemap *folio_dev_pagemap(const struct folio *folio)
-> > {
-> > 	WARN_ON(!folio_is_zone_device(folio))
-> > 	return folio->pgmap;
-> > }
-> >
-> > and since we'll want it eventually, maybe now is the time to add it,
-> > and make page_dev_pagemap() simply call it?
-> 
-> Sounds reasonable. I had open-coded folio->pgmap where it's needed
-> because at those points it's "obviously" a ZONE_DEVICE folio. Will add
-> it.
+> I don't usually open more than 2-4 files anyways, so it's not an issue
+> for me. But of course people's workflow is different, does anyone have a
+> problem with switching to `mod.rs`?
 
-Oh, if it's obvious then just do the dereference.
+I'm also not against it. I'd appreciate if a potential change doesn't interfere
+with this series too much though. :-)
+
+> 
+> I have another reason that it might be nicer, when I want to edit eg
+> `init.rs` and I decide to directly open it with the editor from my
+> shell, not using my fuzzy finder, then I need to press tab to select
+> between `rust/kernel/init` and `rust/kernel/init.rs`.
+> 
+> ---
+> Cheers,
+> Benno
+> 
 
