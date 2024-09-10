@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-322629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEDCC972BA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:11:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1CD972BAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C90C1C21121
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:11:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 121EBB2480F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3571922DC;
-	Tue, 10 Sep 2024 08:07:51 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710B018C030;
+	Tue, 10 Sep 2024 08:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2Q3cko72"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1047A187FE2
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2F318A950;
+	Tue, 10 Sep 2024 08:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725955670; cv=none; b=tcvlAhPbV6M6A5aIduTEmIe5hhcG6U7HBiN1oiZUjCVEmkSJ1BB6uSG/5upzf6Tk82tVV175Lz3hBAqghn6B6Lvp+k4e3NlXfWhpCmQMEN/UHbvcsoBRHcZ43PpXgGtWFnzELxcNy0BKO2yz8XkQaaAFjFLctoQA/UIKzPLHw5U=
+	t=1725955688; cv=none; b=boFrY+c9D32PQ3sfFoghExm9iC+/O20tSfMBkj8buQkFBPD6wjU03mI5jMTD6e2JOWiMpjf8sSQ/UXltzgIGsCccmV3daXteb3agJWC09lsdWntYNURp5If2PaMe8ct1Ll8k4jhM1rFosztuKgRUkgAsZyA5Y9cfmD1+WWaSpLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725955670; c=relaxed/simple;
-	bh=BKkT3RJmcj3E+Mdk3g6XAbSxZHyYge7jhjGkMX7RO/Q=;
+	s=arc-20240116; t=1725955688; c=relaxed/simple;
+	bh=n6lTvb8ctWCZJg7gGSkM6ri3wmxA4Fyo9i0OlOu3t7w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNsARuyaLk33vmMU778MN7s/fiU6/rDI9DBXGCGsLkmiosx18ze3EUBs5/Yzy/T3Y/dSrgR9jRgI6aZe4yDB5eeVbsYwjk7zcLvonbacdF6O0OfxOsV/5vQ6EfOWhOI7Sw0/sH917PYlUGL6klCZ7S+duMbEcQBnQhq1JCByZBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1snvud-0006vM-Be; Tue, 10 Sep 2024 10:07:47 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1snvuc-006qbo-Ga; Tue, 10 Sep 2024 10:07:46 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1snvuc-00HXnH-1K;
-	Tue, 10 Sep 2024 10:07:46 +0200
-Date: Tue, 10 Sep 2024 10:07:46 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"briannorris@chromium.org" <briannorris@chromium.org>,
-	"kvalo@kernel.org" <kvalo@kernel.org>,
-	"francesco@dolcini.it" <francesco@dolcini.it>,
-	Pete Hsieh <tsung-hsien.hsieh@nxp.com>
-Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
- different channel
-Message-ID: <Zt_-Uo7AyMmrnXnJ@pengutronix.de>
-References: <ZtWHhSQlPVMekW1I@pengutronix.de>
- <PA4PR04MB9638EC10C0B656B750D922ADD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt9blTxk88Opujsk@pengutronix.de>
- <PA4PR04MB963813D69B4D87B7147704A5D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt_fZEJyiCyanf7X@pengutronix.de>
- <PA4PR04MB9638C8978D9C6360A9B214E4D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt_h_mW4nFWKu2SI@pengutronix.de>
- <PA4PR04MB96389B2CC16060957878D0D3D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt_zkxGsY2X-8-4z@pengutronix.de>
- <PA4PR04MB9638D57A9623D1B33C802EF9D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dRBKNxZfDDtuIQk/HfDhxXPROKn3GsZKPR3pJXkiWOajqnyvRqcW+irMvbipzqQG9xtLKur7p836mHNerJ1joqFlARqMd7Xrknd4n7We+RmDJTN+5DWLydS2Iv/yD0o2GNafGg4jvz8UoxnB0LJf/FHMho1vZC02RWnMeUgudj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2Q3cko72; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=n6lTvb8ctWCZJg7gGSkM6ri3wmxA4Fyo9i0OlOu3t7w=; b=2Q3cko72j3efTKvD2h+8Ne3oJl
+	BBrDCu7AxT6FkWdOFwvtTtLR06kZD+YI0nshld5bVvvaWn0mfImvlE2WUm05eARxPV0arY6N035Qr
+	7cLedc1xieNpn6y30NPETJOaxyv5gaUaMZjiNjUw80saw8aNomExLmi0jVUqX3hAQi2zGydjkVH82
+	eu9Cm6r7qnjxBRztrDlCrivIZOgNpOkrzXJfdylDqKY4wOrmhtnMf7JuxzeosSglQgwXXeyTu06Lc
+	EvVpPv/q6mBsXi+IdDOGNcHstoXil4ZfdAeWM4PmM3DIpWzqK1/bVgZ9luBZhyKOAY3VL8ozTg0Tt
+	0T8te3ng==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1snvuu-00000004jrO-3JCU;
+	Tue, 10 Sep 2024 08:08:04 +0000
+Date: Tue, 10 Sep 2024 01:08:04 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Arnd Bergmann <arnd@kernel.org>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Anthony Iliopoulos <ailiop@suse.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Kees Cook <kees@kernel.org>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Amir Goldstein <amir73il@gmail.com>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xfs: add CONFIG_MMU dependency
+Message-ID: <Zt_-ZOG6SWvGgHtb@infradead.org>
+References: <20240909111922.249159-1-arnd@kernel.org>
+ <20240909134219.xkz37p5biid22u6k@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,96 +72,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PA4PR04MB9638D57A9623D1B33C802EF9D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20240909134219.xkz37p5biid22u6k@quack3>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Sep 10, 2024 at 07:28:29AM +0000, David Lin wrote:
-> > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > Sent: Tuesday, September 10, 2024 3:22 PM
-> > To: David Lin <yu-hao.lin@nxp.com>
-> > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
-> > Hsieh <tsung-hsien.hsieh@nxp.com>
-> > Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
-> > different channel
-> > 
-> > Caution: This is an external email. Please take care when clicking links or
-> > opening attachments. When in doubt, report the message using the 'Report
-> > this email' button
-> > 
-> > 
-> > On Tue, Sep 10, 2024 at 06:18:57AM +0000, David Lin wrote:
-> > > > > > > > With DRCS support enabled AP and STA actually can run on
-> > > > > > > > different channels with the current code. You are breaking
-> > > > > > > > this scenario with this
-> > > > > > patch.
-> > > > > > > >
-> > > > > > > > Sascha
-> > > > > > > >
-> > > > > > >
-> > > > > > > DRCS will be checked in the future.
-> > > > > >
-> > > > > > By future you mean v3 of this patch?
-> > > > > >
-> > > > > > Sascha
-> > > > > >
-> > > > >
-> > > > > No schedule now.
-> > > >
-> > > > I am getting confused now. You want us to abandon my patch in favour
-> > > > of yours, but you have no plans to update your patch to avoid a
-> > > > regression that you introduce with your patch?
-> > > >
-> > > > Sascha
-> > > >
-> > >
-> > > My patch resolves the same issue as your patch. But your patch can't
-> > > let AP and STA run on the same channel if some wiphy parameters are
-> > > set.
-> > >
-> > > I wonder did you test your patch?
-> > 
-> > I finally see what you mean with "some wiphy parameters are set".
-> > I did test my patch and I didn't run into this issue, because I haven't set
-> > anything like rts_threshold in my config.
-> > 
-> > Nevertheless what I am trying to tell you in this thread is: Your patch
-> > introduces a regression and needs an update.
-> > 
-> > It's not about my patch or your patch, both are currently not suitable for
-> > inclusion and the question is: will you update your patch?
-> > 
-> > Sascha
-> > 
-> 
-> Without DRCS, this patch can avoid firmware crash and this is the
-> current plan for Mwifiex.  It won't affect any existing features.
+On Mon, Sep 09, 2024 at 03:42:19PM +0200, Jan Kara wrote:
+> Thanks! I've noticed the error from 0-day over the weekend as well. At this
+> point I'd rather handle this in a similar way as e.g. filemap_fault() is
+> handled in NOMMU case. I agree users of XFS (or bcachefs for that matter)
+> with !CONFIG_MMU are unlikely but fsnotify_filemap_fault() can grow more
+> users over time and providing the stub is easy enough. I'll push out fixed
+> version of the patch.
 
-What I am trying to tell you: Your patch fixes one thing and breaks
-another.
+Yes, the stub is the right fix for this.
 
-The current mwifiex driver *does* support DRCS when enabled with the
-drcs=1 module parameter. With DRCS enabled the current driver *can*
-successfully run an Accesspoint on one channel and a station on another
-channel. You are breaking this with your patch.
-
-Your mwifiex_is_channel_setting_allowable() needs this:
-
-        if (adapter->drcs_enabled)
-		return true;
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
