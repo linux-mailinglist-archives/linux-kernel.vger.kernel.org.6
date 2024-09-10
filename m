@@ -1,228 +1,126 @@
-Return-Path: <linux-kernel+bounces-323641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 456E59740FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:47:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6E59740FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B86E91F21E7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:47:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D0071C2543C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC081A3BA0;
-	Tue, 10 Sep 2024 17:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsaUMZZq"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5BC1A257F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34981A0B0D;
 	Tue, 10 Sep 2024 17:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GRdtsHyj"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9715517A584;
+	Tue, 10 Sep 2024 17:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725990408; cv=none; b=a1lbbuZ+2Xw0SH9w7EczPJWPft1PkhDgpnwBLkg7rgCAtSDuCLM2oxuQVMl5jDwad7iPAe6NrIJriDd0QPogErRoxZp8g9b5uSObo/6WQi9UXhETf3fdXTcf1QAFEq4lxZaAfsfFuZ1SHe2xKPrBhDQzXOS8hiJwVShaLAzJxSc=
+	t=1725990406; cv=none; b=PSMI3Hf0lUgK/sTykrU4FheVLiLvTmL6MJO+Ttv0f+Fn8Gdd+FPUdPSFU8nMQ2eRJ7YypNmVuyGihcLRE2LRGG+Sdpe0LI1qQX2n4LB3Awr3+TRWY3FKcRWlM2ItJFDoWAJl+qPV7NDydnWOuR4Fms8xPgrXr2NdQKimVr1wcQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725990408; c=relaxed/simple;
-	bh=oq3TwfeUsbj6XfnpSy530AJBNf5yy04dJqQRICtmE2Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RO+vzgNXeScxAJ5aNGYUtlf2sXyc/58fUUspxFjS6q78CbZBMDZL6nmxHjRotMcqojXKp9Gj2a3SDxtJOjrnFtRo1j1OC3/wGxOEyolBWuGnqAtQ9mTBtMHtcynCQr4gubnbAxbzq9EDt92BwgJ2gsSROlNJiQ0pnA1f9aC+Tfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dsaUMZZq; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d877e9054eso3919203a91.3;
-        Tue, 10 Sep 2024 10:46:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725990406; x=1726595206; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OrPZRqYD8vb0U0kbpXhCgO6QKzZ/J8dZQO1DZCPG1pA=;
-        b=dsaUMZZq6HRa5ih8+OpSwAUG4+jySCmZ4Ck7/LkfHv3pg9jMD1Pi5dFceyy5m4X+Ut
-         LpdSpqGmAw4aXrSwPE3ydRFTOgS6sKbkug0Z1NpCftpHcUMFrnpTOe7zn+LYMfADkxS1
-         +ZiyPp/oPrFwly0/JxX8cyV9pDg8ks9+9VTTzvt0ojmnRijHI2s35oTYO5i8p17AcwSX
-         RM+LeTgRX2kfxsFcIAE6gMQK0oTihn/ZYRc+2Nnm4W2eWxXIOpTi+PMfncmT1NeWSK8r
-         adE91HldnHOX+OzsKrKF9n/u0/AG2lcwO2NoLRbAdPb96g/Lzy9kPbOG8NjA4AyXmQ6a
-         2iaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725990406; x=1726595206;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OrPZRqYD8vb0U0kbpXhCgO6QKzZ/J8dZQO1DZCPG1pA=;
-        b=YWiQMBSjCjriOFRyc7hmnXIBfir0GjwHqG3iggGMHXFbxyqTwXNe/u1Atdr6F6p6iu
-         EZvYxD7DGJ7j9cfeCgF7apo5Suys/1ljB8p23DOWcvRN7S20E7TzsNyiiml02vBIX+oB
-         gEfB449s4skZLgOzp1xJ3vIwb4eUgPu6YmurguBOELogO5dN+JZHzF0ejNxhSLUGHSEx
-         bq6GTJGiWQL6zD8qvUMAWXbOpAckUqNCtp5+XPEX4IuF+05ggnhaz1iuBH7ZJ8Ur3tfJ
-         1Dj6EkoWbLc7+f87JB1kHdq1UcRsmiD3l8ZUl33nVDJaIMxBMz0NQ6LHVQcQhUNF1z5D
-         dqyg==
-X-Forwarded-Encrypted: i=1; AJvYcCW6UyoRD238UsEV9vn+LgQrb3S8R5xwuRk/4Vt8OPRjiFVoy6YOcqKNJnceUu83449XF0c=@vger.kernel.org, AJvYcCWCjxGoUK1fqVXILPt4qJrADuzzhwDL/BkZiHVCRuHlU4d5fkM7vgaMlgGD1BFhr4kSDv7bqaCNfHEDdNZg@vger.kernel.org, AJvYcCX1vSs9/hkk1uOzsUDdwTN890OBC4UgdHuwWsnkL18ci5t7e6FQmPLWHnKcMle5s5Uz/QEda/6ItxI2o54UIzCG/D1t@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQAWHwag9pGmNEP2cX+23vLIQEWmETk8ZrcuEIXPxaryrlXT5m
-	hvMkOgJ5PZ8AzeOQayRrmPSmMl9QnY9kuHud/0JeEk93fhXsj8DvUuxwjzkwsyeY2T2jTXNcXJD
-	68c8xnssNHWTP8PiEYokW9LTsmms=
-X-Google-Smtp-Source: AGHT+IFhJZTLetK1QTl58MXbvwDrRJGeYVXNM1W1WJjxhKO2fUTbXCSXOV85rpbYX2WdAvv6jpBsZw58z+WnX+FY8eo=
-X-Received: by 2002:a17:90b:380b:b0:2d8:94d6:3499 with SMTP id
- 98e67ed59e1d1-2daffe28fefmr14877509a91.37.1725990406094; Tue, 10 Sep 2024
- 10:46:46 -0700 (PDT)
+	s=arc-20240116; t=1725990406; c=relaxed/simple;
+	bh=5L170aaHaiQNUXme2FCcDwY0Y4/sk8V/9v31nUfkAig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iuLrk6G9/7rU+8ItAk0zHZ9YkKCVOOt/JmtbLjO7kEKs7+PyQukdKq+yX5PloMOvBr0JQX89uDHr9rIrDaeU6s6out5wWyiNtYHUB8JsNv9tFJ2Q2U7ZQYqmXILB5cCvzsMZw3N8pu7djKFGDnE/AtuXN8rPhRhH6eLdvKKRU2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GRdtsHyj; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1C636240002;
+	Tue, 10 Sep 2024 17:46:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725990401;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8sAeKFMvf+x+ARyRCKEDkQ7ZaGz+Oq5cUgRnc95/j5A=;
+	b=GRdtsHyjEH3bI0d3aPr59ZEiQiSxkTJYM+0ImIKIB/7ijfXJ3B8SP6dhQOIV/iup1+oIPO
+	zsomKahS3syUfvJC9/X+zWIct9rItKyTddzT2qm59GRselbaRRJBQyI1xQVl48fMYTWurQ
+	CmpgTqrbagiPakeFD0shlymmJOOW3hAydAbIYaVIhVnPAVem3C//+02x5apohDUA88lJFb
+	qifDxM6JDf+uMBnmqrSZ2uf+Zu47BpUDWkd2qThAPo9bv1DIprGlupq7YbrQtdTOMPp7d8
+	DetljiY/dm8BlHTdyx0qYAOaPgUIrQ6IF7m3XRjWRVHxuEqdVU3706qQPblc4Q==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?UTF-8?q?Nicol=C3=B2=20Veronese?= <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	mwojtas@chromium.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: [PATCH net-next] net: ethtool: phy: Check the req_info.pdn field for GET commands
+Date: Tue, 10 Sep 2024 19:46:35 +0200
+Message-ID: <20240910174636.857352-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909224903.3498207-1-andrii@kernel.org> <20240909224903.3498207-2-andrii@kernel.org>
- <CAADnVQLB2b5Uh-qthnCOfJk+v+ty1nQh6LjMDkzjt1BPtGOVZA@mail.gmail.com>
- <CAEf4Bzap+_fpXjfcnnqz7EH9=bGokpFbnoK==_YDWH855qx7=g@mail.gmail.com> <CAADnVQ+v2PXWurcpt7xGiKf32HqaBWmFiZgjb2TGJg-rJGWjSg@mail.gmail.com>
-In-Reply-To: <CAADnVQ+v2PXWurcpt7xGiKf32HqaBWmFiZgjb2TGJg-rJGWjSg@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 10 Sep 2024 10:46:33 -0700
-Message-ID: <CAEf4BzbZOs4mRw5hHcOgc7zKrDNjd-HLHOp25KjDyy2fsfJcBw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] uprobes: allow put_uprobe() from non-sleepable
- softirq context
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Tue, Sep 10, 2024 at 8:56=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Mon, Sep 9, 2024 at 10:13=E2=80=AFPM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Mon, Sep 9, 2024 at 7:52=E2=80=AFPM Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> > >
-> > > On Mon, Sep 9, 2024 at 3:49=E2=80=AFPM Andrii Nakryiko <andrii@kernel=
-.org> wrote:
-> > > >
-> > > > Currently put_uprobe() might trigger mutex_lock()/mutex_unlock(), w=
-hich
-> > > > makes it unsuitable to be called from more restricted context like =
-softirq.
-> > > >
-> > > > Let's make put_uprobe() agnostic to the context in which it is call=
-ed,
-> > > > and use work queue to defer the mutex-protected clean up steps.
-> > > >
-> > > > To avoid unnecessarily increasing the size of struct uprobe, we col=
-ocate
-> > > > work_struct in parallel with rb_node and rcu, both of which are unu=
-sed
-> > > > by the time we get to schedule clean up work.
-> > > >
-> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > > ---
-> > > >  kernel/events/uprobes.c | 30 +++++++++++++++++++++++++++---
-> > > >  1 file changed, 27 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > > > index a2e6a57f79f2..377bd524bc8b 100644
-> > > > --- a/kernel/events/uprobes.c
-> > > > +++ b/kernel/events/uprobes.c
-> > > > @@ -27,6 +27,7 @@
-> > > >  #include <linux/shmem_fs.h>
-> > > >  #include <linux/khugepaged.h>
-> > > >  #include <linux/rcupdate_trace.h>
-> > > > +#include <linux/workqueue.h>
-> > > >
-> > > >  #include <linux/uprobes.h>
-> > > >
-> > > > @@ -54,14 +55,20 @@ DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem);
-> > > >  #define UPROBE_COPY_INSN       0
-> > > >
-> > > >  struct uprobe {
-> > > > -       struct rb_node          rb_node;        /* node in the rb t=
-ree */
-> > > > +       union {
-> > > > +               struct {
-> > > > +                       struct rb_node          rb_node;        /* =
-node in the rb tree */
-> > > > +                       struct rcu_head         rcu;
-> > > > +               };
-> > > > +               /* work is used only during freeing, rcu and rb_nod=
-e are unused at that point */
-> > > > +               struct work_struct work;
-> > > > +       };
-> > > >         refcount_t              ref;
-> > > >         struct rw_semaphore     register_rwsem;
-> > > >         struct rw_semaphore     consumer_rwsem;
-> > > >         struct list_head        pending_list;
-> > > >         struct list_head        consumers;
-> > > >         struct inode            *inode;         /* Also hold a ref =
-to inode */
-> > > > -       struct rcu_head         rcu;
-> > > >         loff_t                  offset;
-> > > >         loff_t                  ref_ctr_offset;
-> > > >         unsigned long           flags;
-> > > > @@ -620,11 +627,28 @@ static inline bool uprobe_is_active(struct up=
-robe *uprobe)
-> > > >         return !RB_EMPTY_NODE(&uprobe->rb_node);
-> > > >  }
-> > > >
-> > > > +static void uprobe_free_deferred(struct work_struct *work)
-> > > > +{
-> > > > +       struct uprobe *uprobe =3D container_of(work, struct uprobe,=
- work);
-> > > > +
-> > > > +       /*
-> > > > +        * If application munmap(exec_vma) before uprobe_unregister=
-()
-> > > > +        * gets called, we don't get a chance to remove uprobe from
-> > > > +        * delayed_uprobe_list from remove_breakpoint(). Do it here=
-.
-> > > > +        */
-> > > > +       mutex_lock(&delayed_uprobe_lock);
-> > > > +       delayed_uprobe_remove(uprobe, NULL);
-> > > > +       mutex_unlock(&delayed_uprobe_lock);
-> > > > +
-> > > > +       kfree(uprobe);
-> > > > +}
-> > > > +
-> > > >  static void uprobe_free_rcu(struct rcu_head *rcu)
-> > > >  {
-> > > >         struct uprobe *uprobe =3D container_of(rcu, struct uprobe, =
-rcu);
-> > > >
-> > > > -       kfree(uprobe);
-> > > > +       INIT_WORK(&uprobe->work, uprobe_free_deferred);
-> > > > +       schedule_work(&uprobe->work);
-> > > >  }
-> > > >
-> > > >  static void put_uprobe(struct uprobe *uprobe)
-> > >
-> > > It seems put_uprobe hunk was lost, since the patch is not doing
-> > > what commit log describes.
-> >
-> >
-> > Hmm, put_uprobe() has:
-> >
-> > call_srcu(&uprobes_srcu, &uprobe->rcu, uprobe_free_rcu);
-> >
-> > at the end (see [0], which added that), so we do schedule_work() in
-> > RCU callback, similarly to what we do with bpf_map freeing in the BPF
-> > subsystem.
-> >
-> > This patch set is based on the latest tip/perf/core (and also assuming
-> > the RCU Tasks Trace patch that mysteriously disappeared is actually
-> > there, hopefully it will just as magically be restored).
-> >
-> >   [0] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commi=
-t/?h=3Dperf/core&id=3D8617408f7a01e94ce1f73e40a7704530e5dfb25c
->
-> I'm still not following.
-> put_uprobe() did delayed_uprobe_remove() and this patch is doing it again=
-.
->
-> The commit log implies that mutex+delayed_uprobe_remove should be removed
-> from put_uprobe(), but that's not what the patch is doing.
+When processing the netlink GET requests to get PHY info, the req_info.pdn
+pointer is NULL when no PHY matches the requested parameters, such as when
+the phy_index is invalid, or there's simply no PHY attached to the
+interface.
 
-Ah, that part. You are right, it's my bad. I copied that lock to a
-work queue callback, but didn't remove it from the put_uprobe(). Will
-fix it in v2, thanks for catching!
+Therefore, check the req_info.pdn pointer for NULL instead of
+dereferencing it.
+
+Suggested-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Eric Dumazet <edumazet@google.com>
+Closes: https://lore.kernel.org/netdev/CANn89iKRW0WpGAh1tKqY345D8WkYCPm3Y9ym--Si42JZrQAu1g@mail.gmail.com/T/#mfced87d607d18ea32b3b4934dfa18d7b36669285
+Fixes: 17194be4c8e1 ("net: ethtool: Introduce a command to list PHYs on an interface")
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+Hi,
+
+I'm targetting net-next as the commit this patch fixes is still in
+net-next.
+
+ net/ethtool/phy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ethtool/phy.c b/net/ethtool/phy.c
+index 560dd039c662..4ef7c6e32d10 100644
+--- a/net/ethtool/phy.c
++++ b/net/ethtool/phy.c
+@@ -164,7 +164,7 @@ int ethnl_phy_doit(struct sk_buff *skb, struct genl_info *info)
+ 		goto err_unlock_rtnl;
+ 
+ 	/* No PHY, return early */
+-	if (!req_info.pdn->phy)
++	if (!req_info.pdn)
+ 		goto err_unlock_rtnl;
+ 
+ 	ret = ethnl_phy_reply_size(&req_info.base, info->extack);
+-- 
+2.46.0
+
 
