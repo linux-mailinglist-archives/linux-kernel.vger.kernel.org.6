@@ -1,198 +1,148 @@
-Return-Path: <linux-kernel+bounces-323849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78643974434
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:42:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 551A6974435
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C7491C215B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:42:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F30C61F27531
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCBF1AAE3B;
-	Tue, 10 Sep 2024 20:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE641AB512;
+	Tue, 10 Sep 2024 20:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fwr4Lyay"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T3Q5nrco"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283571AAE20;
-	Tue, 10 Sep 2024 20:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FBE1AB519
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726000918; cv=none; b=jZOXcYo/0Ezjnbi770Z5mOj82H5/x+8bLIaiAhF8WCTvxO123NK2v/8IOjZuuEQ8TfebdsD12qTyyuPg85dgO+8Th9UVGn/vm5sX9eGj5rZoUggz8wlKrnHJd/UxXoQMbEC+p6E+cgMGbO6gw1wMM9hirGQGXCN+YIHhsruyjEE=
+	t=1726000923; cv=none; b=aAEaO1UDfrJtfLaf/MfKRnGZATF5T1/xNri0b68R5Ru/QpSgvpBfKDf8oAKnxBhFuz3DtRu8aRsrK8TIMCx0TKHnUpx7pg5MAODaDIgQQm3mUb8voxvOM3DSNpzN0Kw37TwslhUBQOGXTtuXCCHU51K6Iui6z4+PMZt5QSztMEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726000918; c=relaxed/simple;
-	bh=tPFUvXEr4a8sFcl5Hbk+e1WdoaCv9UY6H2M6UNXz3dI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GU/ZctBunkzEnVwwo36VqALks/99WlBdbdDdngXVq60rSWL42fLsw1W0tgVMmjncKL+gQPeLDiuFjW10s+leD5lYnlKRTjn5aaS3l7uxtz7LSGUXlCC+RYYHYuLGOoqUR/J7WbdLvG7yIzaxY77RKmep2gFtLwq8XBgJ3sVWa+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fwr4Lyay; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-70b2421471aso3991972a12.0;
-        Tue, 10 Sep 2024 13:41:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726000916; x=1726605716; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZFOb87C5H/oGKVNSdsgwbM5DcJSf5yVJvXgC2bcG+Ac=;
-        b=Fwr4Lyayfzf2VC0Z4iZAMEYH1eoKGtcdiXhMcHKq43/CH9yR5eNlqA30ZrDEj+DfRH
-         0G9XaGP9RKyzQwzLJ76D0c+vMum/441EREMqjG9zvvC8A/1aYgX+pxbKv5U8gKFdU3Rg
-         kmd2Dg2JQwVpNQIFrNPITuFMdgZ7IgcGDMpY22cQEAIaTnftl9zKwwjlG91LMtJOeMAK
-         gLfhLYMJ/DYdel2q6qNgMxN2oXg8BHWgk8ZGGD1+JU4WFHAIsyp5hGwdsM6dVr2stICS
-         SiQCf3w/c7sY6YH4G99584PX96MqdtE83ueZhyZsXbl63hSdb8enZbuaXDk8+lnhUZHy
-         E8Ng==
+	s=arc-20240116; t=1726000923; c=relaxed/simple;
+	bh=/B6ktjls9e8sahrf4f9YjYTnkS2AyJU2YCdJDde3Pcw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Rq+iwAq9qw/hHSj8I1SWHID9sGZRIgjKNHfraDP5DxwvzQ+k3VbV5uxcjntKd/ahoue6EqURcqqZQVt87DBXg6vFGINYaA50Gj1R6LzX9wcroNZ70f690KXSP9QXoGX4tNl5mJ66a0DTkUAfAJ/vxtSk0jDrDsvEPuDWaS+a+Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T3Q5nrco; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726000921;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DXWc8YwViA5zWo54WjIEfGW+8+5CIqabuJJ/r7VO3GE=;
+	b=T3Q5nrcooMM1ZL+n0wtIUqQLFNVhcGZrKQhR4gXScw7d58K8w9dkGwM/Z6d9lU42aKfVWv
+	FtVlLjGINfA35YGdAlVCffvjVDR5jJpij2a+wx4p4p7X/W31kgtt/bI31FMg/KwA/glFy9
+	UPtHiiXfO+KGTapMH8vfCeWhgEugMes=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-164-q8orGefQPUaeSCUIOLGVoA-1; Tue, 10 Sep 2024 16:42:00 -0400
+X-MC-Unique: q8orGefQPUaeSCUIOLGVoA-1
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4582e9502bbso30530941cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:42:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726000916; x=1726605716;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZFOb87C5H/oGKVNSdsgwbM5DcJSf5yVJvXgC2bcG+Ac=;
-        b=VfroqPd3snPosNvyZeey9v6WFR5p2avP/3DkWypq3PYge6xvEo+I0Oayoqdwo91lnr
-         QGvbn6Zr4fIjvNMxQjm4lRtEWk3zn5MBQSUcFLk7aq6G3F1N4rOuJY7LY1x5ge3JEjfJ
-         dYbcZITOTPFUUElGPwnyn21TL0Bn3/UzCh0++JBD6Ng20+12r4VseuXTTSahXZffGCY2
-         szyDKIpICMXEaQB7LqPjalpMkzZFBqyKf8ZchvvMMcOHzV26WiQZ1+b5nCk624N6xd2p
-         KEP7XFWhYAnNqWoBvHRCkPXjY31bfpm2hfmiV0pvGgMVK/SpLzRmBUVsoYP7FRnalJaO
-         dGsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDcdyrSCGl2JE+FCL940BDS6fYUHvP0Ukr5a00lPUO5PsMkhjsptJm+CfNk/FbmlnQIfwFaBRtFg4amONO@vger.kernel.org, AJvYcCW7laN3izLbvqr5qgJZ1pAti/lZL3dcfKFq2jxHspZDl8+EcwIFINRwTQE19oDmtcxTC3s=@vger.kernel.org, AJvYcCWaXAc9x5IREN+Nlo08mboXGm2LUYb3KI6b4GjsBlAobrXWaV4PTn7gmIpMtYpNDKrb28XXWSbk2M+34RCpghL4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkXl5hF0lH8Z/nzXYEIAqk5L+4ScNIoMOxkgTBxBwyYwaaIO6x
-	IjgYsQjbP9hI8B5CIisWRYZHV7U9xx9hIlbyGfRmbkVd1BgLgiMxIV19KxjxlCRzHYlCr+IL5e2
-	SbdmIIxidL8wsb8baLreKPT0Wf07y6g==
-X-Google-Smtp-Source: AGHT+IGW9uVkefg8yACg9x9N30/Cr1tq1hV6jWPbHGGjUEg003GoDm9nF+bOKw6FBfAIXrLj3LoVJuFRWlf4OcgeSQE=
-X-Received: by 2002:a17:90b:4a4e:b0:2d8:cd04:c8f0 with SMTP id
- 98e67ed59e1d1-2dad5136fa5mr14049568a91.39.1726000916345; Tue, 10 Sep 2024
- 13:41:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726000919; x=1726605719;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DXWc8YwViA5zWo54WjIEfGW+8+5CIqabuJJ/r7VO3GE=;
+        b=UxrjibsmN2xjFg72TVrQg2D9fGxC5Kiv49dZfGYiuza6E5V9KJLurBMtFMfXq5oeFx
+         gcehC1dDgpcRf4oLOJjIdOMN+7vFE3LNojXyzSFsKV3gxNcFhqgq3W1/77r+08G1zvvp
+         XzK7b9rmGKA1V+e163vruCG1MM3FojCUOPQsWNWHAzke2d3k8NV4BAzrz+Do8wYLGys4
+         hWdTTykxAoVKBbcgfIa6zfxunepRkNkqduV6rkbUYttWgQLeors9jGkB1fO58ojewGbK
+         XmfFv4OjecpPCyf623Mt/VRTDyOmoZj5qqvdan92QoGjo3I/FznILlo61EoCvYcfyZ0G
+         unlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCpn2xqFhy7QmARV/4G623CFOC6Un+EFWbgbiYyfj/Eo134dlA79SvaW9mj/sj+Ph7enpfYLRhc3AjssE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+BCP+Lg6s0o/yZx3XobdZFx9Qr6HZz47ZrTGR4dDVsE50WM/7
+	obJYoG64gM7U7hzKtpFuTrjTVqcEw+fmzpK1UH9X0Iaqad2qLGkSyddqyqcjlsEQLTDAbLYCLgy
+	eT7wYplAR8m3IbFelu74kOsBLuTEoryzPmXxyTvuSF4MFT8WvtBMUSM+0bjDgjm8ZqE5oCOTF
+X-Received: by 2002:a05:622a:18a2:b0:458:2c40:e08b with SMTP id d75a77b69052e-4584e90021bmr10728081cf.30.1726000919655;
+        Tue, 10 Sep 2024 13:41:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6g4A4JvYd5H/gkbWbjJoXbDr6NCaKNFVqZ4P3NxyUw79k0kFE23eV1CPcOhxAh3JabLXj7g==
+X-Received: by 2002:a05:622a:18a2:b0:458:2c40:e08b with SMTP id d75a77b69052e-4584e90021bmr10727791cf.30.1726000919292;
+        Tue, 10 Sep 2024 13:41:59 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:760d:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4583636e38esm17482701cf.33.2024.09.10.13.41.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 13:41:58 -0700 (PDT)
+Message-ID: <b9cf0083783b32fd92edb4805a20a843a09af6fc.camel@redhat.com>
+Subject: Re: [PATCH v2 44/49] KVM: x86: Update guest cpu_caps at runtime for
+ dynamic CPUID-based features
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
+ <vkuznets@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Binbin Wu
+ <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>,
+ Robert Hoo <robert.hoo.linux@gmail.com>
+Date: Tue, 10 Sep 2024 16:41:57 -0400
+In-Reply-To: <ZoyDTJ3nb_MQ38nW@google.com>
+References: <20240517173926.965351-1-seanjc@google.com>
+	 <20240517173926.965351-45-seanjc@google.com>
+	 <2d554577722d30605ecd0f920f4777129fff3951.camel@redhat.com>
+	 <ZoyDTJ3nb_MQ38nW@google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <18a9ddacc99bb95e9802f8ad1e81214433df496c.1725929645.git.dxu@dxuuu.xyz>
- <CAADnVQKyfZ2-qCvmqG8z919ggdOszEjTs04H=cTGOZTi-zhx7Q@mail.gmail.com>
-In-Reply-To: <CAADnVQKyfZ2-qCvmqG8z919ggdOszEjTs04H=cTGOZTi-zhx7Q@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 10 Sep 2024 13:41:41 -0700
-Message-ID: <CAEf4Bza5Fiw2rZ5T7=zRwVk1Ct1Mgm7Gpa8w+NJVPZf8keY_9Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: ringbuf: Support consuming
- BPF_MAP_TYPE_RINGBUF from prog
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Daniel Xu <dxu@dxuuu.xyz>, Eddy Z <eddyz87@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Alexei Starovoitov <ast@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Mykola Lysenko <mykolal@fb.com>, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Kernel Team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 10, 2024 at 11:36=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Mon, Sep 9, 2024 at 5:55=E2=80=AFPM Daniel Xu <dxu@dxuuu.xyz> wrote:
-> >
-> > Right now there exists prog produce / userspace consume and userspace
-> > produce / prog consume support. But it is also useful to have prog
-> > produce / prog consume.
-> >
-> > For example, we want to track the latency overhead of cpumap in
-> > production. Since we need to store enqueue timestamps somewhere and
-> > cpumap is MPSC, we need an MPSC data structure to shadow cpumap. BPF
-> > ringbuf is such a data structure. Rather than reimplement (possibly
-> > poorly) a custom ringbuffer in BPF, extend the existing interface to
-> > allow the final quadrant of ringbuf usecases to be filled. Note we
-> > ignore userspace to userspace use case - there is no need to involve
-> > kernel for that.
-> >
-> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> > ---
-> >  kernel/bpf/verifier.c                         |  6 +-
-> >  tools/testing/selftests/bpf/Makefile          |  3 +-
-> >  .../selftests/bpf/prog_tests/ringbuf.c        | 50 +++++++++++++++
-> >  .../bpf/progs/test_ringbuf_bpf_to_bpf.c       | 64 +++++++++++++++++++
-> >  4 files changed, 120 insertions(+), 3 deletions(-)
-> >  create mode 100644 tools/testing/selftests/bpf/progs/test_ringbuf_bpf_=
-to_bpf.c
-> >
-> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > index 53d0556fbbf3..56bfe559f228 100644
-> > --- a/kernel/bpf/verifier.c
-> > +++ b/kernel/bpf/verifier.c
-> > @@ -9142,7 +9142,8 @@ static int check_map_func_compatibility(struct bp=
-f_verifier_env *env,
-> >                     func_id !=3D BPF_FUNC_ringbuf_query &&
-> >                     func_id !=3D BPF_FUNC_ringbuf_reserve_dynptr &&
-> >                     func_id !=3D BPF_FUNC_ringbuf_submit_dynptr &&
-> > -                   func_id !=3D BPF_FUNC_ringbuf_discard_dynptr)
-> > +                   func_id !=3D BPF_FUNC_ringbuf_discard_dynptr &&
-> > +                   func_id !=3D BPF_FUNC_user_ringbuf_drain)
-> >                         goto error;
-> >                 break;
-> >         case BPF_MAP_TYPE_USER_RINGBUF:
-> > @@ -9276,7 +9277,8 @@ static int check_map_func_compatibility(struct bp=
-f_verifier_env *env,
-> >                         goto error;
-> >                 break;
-> >         case BPF_FUNC_user_ringbuf_drain:
-> > -               if (map->map_type !=3D BPF_MAP_TYPE_USER_RINGBUF)
-> > +               if (map->map_type !=3D BPF_MAP_TYPE_USER_RINGBUF &&
-> > +                   map->map_type !=3D BPF_MAP_TYPE_RINGBUF)
-> >                         goto error;
->
-> I think it should work.
->
-> Andrii,
->
-> do you see any issues with such use?
->
+On Mon, 2024-07-08 at 17:24 -0700, Sean Christopherson wrote:
+> On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> > On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
+> > > -		cpuid_entry_change(best, X86_FEATURE_OSPKE,
+> > > -				   kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE));
+> > > +		kvm_update_feature_runtime(vcpu, best, X86_FEATURE_OSPKE,
+> > > +					   kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE));
+> > > +
+> > >  
+> > >  	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 0);
+> > >  	if (best)
+> > 
+> > I am not 100% sure that we need to do this.
+> > 
+> > Runtime cpuid changes are a hack that Intel did back then, due to various
+> > reasons, These changes don't really change the feature set that CPU supports,
+> > but merly as you like to say 'massage' the output of the CPUID instruction to
+> > make the unmodified OS happy usually.
+> > 
+> > Thus it feels to me that CPU caps should not include the dynamic features,
+> > and neither KVM should use the value of these as a source for truth, but
+> > rather the underlying source of the truth (e.g CR4).
+> > 
+> > But if you insist, I don't really have a very strong reason to object this.
+> 
+> FWIW, I think I agree that CR4 should be the source of truth, but it's largely a
+> moot point because KVM doesn't actually check OSXSAVE or OSPKE, as KVM never
+> emulates the relevant instructions.  So for those, it's indeed not strictly
+> necessary.
+> 
+> Unfortunately, KVM has established ABI for checking X86_FEATURE_MWAIT when
+> "emulating" MONITOR and MWAIT, i.e. KVM can't use vcpu->arch.ia32_misc_enable_msr
+> as the source of truth.
 
-Not from a quick glance. Both ringbufs have the same memory layout, so
-user_ringbuf_drain() should probably work fine for normal BPF ringbuf
-(and either way bpf_user_ringbuf_drain() has to protect from malicious
-user space, so its code is pretty unassuming).
-
-We should make it very explicit, though, that the user is responsible
-for making sure that bpf_user_ringbuf_drain() will not be called
-simultaneously in two threads, kernel or user space.
-
-Also, Daniel, can you please make sure that dynptr we return for each
-sample is read-only? We shouldn't let consumer BPF program ability to
-corrupt ringbuf record headers (accidentally or otherwise).
-
-And as a thought exercise. I wonder what would it take to have an
-open-coded iterator returning these read-only dynptrs for each
-consumed record? Maybe we already have all the pieces together. So
-consider looking into that as well.
-
-P.S. And yeah "user_" part in helper name is kind of unfortunate given
-it will work for both ringbufs. Can/should we add some sort of alias
-for this helper so it can be used with both bpf_user_ringbuf_drain()
-and bpf_ringbuf_drain() names?
+Can you elaborate on this? Can you give me an example of the ABI?
 
 
-> >                 break;
-> >         case BPF_FUNC_get_stackid:
-> > diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selft=
-ests/bpf/Makefile
-> > index 9905e3739dd0..233109843d4d 100644
-> > --- a/tools/testing/selftests/bpf/Makefile
-> > +++ b/tools/testing/selftests/bpf/Makefile
-> > @@ -503,7 +503,8 @@ LINKED_SKELS :=3D test_static_linked.skel.h linked_=
-funcs.skel.h               \
-> >  LSKELS :=3D fentry_test.c fexit_test.c fexit_sleep.c atomics.c        =
-   \
-> >         trace_printk.c trace_vprintk.c map_ptr_kern.c                  =
- \
-> >         core_kern.c core_kern_overflow.c test_ringbuf.c                =
- \
-> > -       test_ringbuf_n.c test_ringbuf_map_key.c test_ringbuf_write.c
-> > +       test_ringbuf_n.c test_ringbuf_map_key.c test_ringbuf_write.c   =
- \
-> > +       test_ringbuf_bpf_to_bpf.c
+>   So for MWAIT, KVM does need to update CPU caps (or carry
+> even more awful MWAIT code), at which point extending the behavior to the CR4
+> features (and to X86_FEATURE_APIC) is practically free.
+> 
 
-[...]
+
+Best regards,
+	Maxim Levitsky
+
 
