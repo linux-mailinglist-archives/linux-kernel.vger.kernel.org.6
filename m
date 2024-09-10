@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-323927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D45974564
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:09:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 259ED974566
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F0B4B21790
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:09:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 588331C255A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7371ABEA2;
-	Tue, 10 Sep 2024 22:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC091ABED6;
+	Tue, 10 Sep 2024 22:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ET9KAz/n"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wjdt+G3R"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8760817A924;
-	Tue, 10 Sep 2024 22:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2E51A38EE;
+	Tue, 10 Sep 2024 22:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726006157; cv=none; b=MMEaAb0H/q0ny3WFDtQn8PljCjAVyMcoX3ufcpcIvCqGhhRka3Kzqtqi0h5xEf7/FV4lsGQ7T9IVKQLyfKFBgvnMRIn2V56fmuAYc8ZzxjpgFfMr5X5p0PU0z8PGjE/K1+psx7iu0sQDiish8moXIhqhiRzAhd0QbB4+T1Bq//4=
+	t=1726006158; cv=none; b=JCVN9Ko18BjAtyE7IWmIDMQxqeLyLMSoUIDnUmS04rqArQ5d9Y3CED5vtok/crjJIeumknGjp6NxR1yRXLYjGUPa2Lu1bbmOw2LWokoCd9vVGCiSBeDfmIuLVPPKLE5pf1NTmcESA9/ZNBtMy1/8EEM9lp5ruL7GRaQZL45JnD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726006157; c=relaxed/simple;
-	bh=THfCkVjJW9VCRbiInylPfB9Z6qvnDL50FgYhdIz+MKo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OJsbCrgrI39UjZEa0Ae9coT3WoxHI7sKvUGr/98X5D8zPwTwLkMb/mYyjc3I9l20R7JGHmoy837HC1NvmYAZ3sBzUMZatlxku4REYkLTtHGugrdQyTDFu+tWE1beHh4EvC36VxOfJ9RRKzBJBz2wcOZ5eUBP82GaFTfPYSO3Nmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ET9KAz/n; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1726006158; c=relaxed/simple;
+	bh=UC492TViKow3sU0MNcqyylalwJUa6SkDtCaqKQQko50=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jnjkskIt3MnaMrIhkMC2j155gaCnDtai14B4vnSRYPEebPplx99qUlrLW1lbAyNIvG5P9n3vqeocoSscb8XQ5APuOaNpjUywk8A9rHBS7pzH2f6Z03uSOMW9W7E9kUhDWtpb6VldUBkboHWX9hK/pBvn6CQRMzwpYHNmCM83T1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wjdt+G3R; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c24c92f699so6609671a12.2;
-        Tue, 10 Sep 2024 15:09:15 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-206aee40676so50457935ad.0;
+        Tue, 10 Sep 2024 15:09:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726006154; x=1726610954; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8m6bnlMnlzD0BX4BUZPfd8GP2Hrc2VovL7bSABmNRQ0=;
-        b=ET9KAz/nxs2b9WKUiq9ZO8+9IzRohUSw8TIh/OZaqvbPZzNOYWg9FyywZRp/3B8cIe
-         cnC9g9juSV6mjyZ3VjJmWKBoZrqKdEDUSmBOtW6wVz5zMOxdJWebK6Bhc9iJ1APpRcVU
-         BwMu2iabKI9hKTWIWsKfFBGwm5zmmutZqpL+XhBV/oI2RAsxYc4cbUxqwgv9mX1eqbAG
-         gJTF56ltWn+1rFmYtJ9hrk88+FZJdEDvAZVfn6IjoOElccvPBAojRGarA0avwZiVSXKk
-         yTHAhOUi7N0KAJl4d5S/2D5x8BFpgdhVhNsxbfmny9u5F0P51bswXfG4vNXvYlbfNVRi
-         jBIA==
+        d=gmail.com; s=20230601; t=1726006156; x=1726610956; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4773Rvu09r0h6PHXGaI6AMnY7/hdXotFStOCXJRY+po=;
+        b=Wjdt+G3RPd22S+ps1oCdw8JrxrsnXvIYGwZ7sEfIQyMPyzt+gMBBJrEfI+2QkKF1Qt
+         BXL8SOg1RRWbqI0EpdC3+IJorXrMkIjJNMmrIC8dKpxu5LrcBsMCSprWdcs09fMwkGHj
+         LFqNxzTGgd5WQuymoM39BeVYU5bxY67x9Uh5QpYMVKmoJu2hQQrJAs2gAXXDB9r3nene
+         UULqm96b6Z7Ei+LDV4uzUxf7QAQswk5faqlfXUiQS2cnnk+ra6FoWRmNflUHLoNEqSV/
+         BIUDQZMSHG6cg/+vwdSdj2RUl9MhPpm2NNOs/c5HGhBsYt5HMsG1tXA1PHm7Uo5y+fdo
+         QawA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726006154; x=1726610954;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8m6bnlMnlzD0BX4BUZPfd8GP2Hrc2VovL7bSABmNRQ0=;
-        b=mKIJHeTB9q3Bv1WUP5UeVnS1btwqSbaDFe7jaFwH0oLVbBGJ10SOzMQMq/fWGoq7X2
-         KXsAHfbFJhjSDAmimgKqNS4ujBmimQaMnFQwPyxKKgD6xurjg7tggrlHeLSawuWjGFeK
-         HeCQH166Sq60wwGkRjTOg8ccH0suCZHKJfoa/F6GQTcNtGyu8zeExwHXEz7HcOmzJ6j+
-         h3I52ZfFowNxADdh3Xoc5UF394KciKTEfoCN60R6QGEzgSxow2dNEtXv+kIKZsgx8Emx
-         SjPDzWhMwf67SLTXBNdY0YL976HyUNcitp6aHceB+6D/rcU0mpURPinwIkQmm2T0QDSq
-         PJjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHRBspezBp4g71iLJtDRoCQMRK0j49+7KDfYX3Ux7TRneFzUibISVYsUq/C9NQV6FS8e2YWn55FzO4xxYp@vger.kernel.org, AJvYcCUhg1TDsmnahuWi50iS3CQAUnH22uX691Ke0qyKgnT1N+bfuKei5D7W3fORg6S2D5RFj1TPCLdaYiJf@vger.kernel.org, AJvYcCUs8ZZI4upuuizFvenF+w/7i+DTTLoz/fiWhqDO5iJvOe/IhoIPRRfFWYvG7TikDhAd6oGbrI9+xo0S@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhh2O2augmeKP5ZmHwnFHztfBkuVzBTrWOEtOtoi9Yy40YOzNK
-	sFT/NMuUFZYDPlaNHFWHHtWfySxLUa5ubAs05sfYEwDfa4Nx9lQxMU12/GFNynY=
-X-Google-Smtp-Source: AGHT+IExLnZkW4n6uQ3v1XshfECw4H8j9s1Y2UUYFGwAoO73BhinW48PmUl2XGGDcGj1LWWxbUbpMw==
-X-Received: by 2002:a05:6402:5409:b0:5c3:3f6a:9767 with SMTP id 4fb4d7f45d1cf-5c3dc7904d8mr13333574a12.9.1726006152945;
-        Tue, 10 Sep 2024 15:09:12 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:5d47:19e4:3e71:414c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd8cdf7sm4697681a12.92.2024.09.10.15.09.11
+        d=1e100.net; s=20230601; t=1726006156; x=1726610956;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4773Rvu09r0h6PHXGaI6AMnY7/hdXotFStOCXJRY+po=;
+        b=X0FzaAipSI2J2UUm/DEhxzruW/Zse4MnPtWi4Qe/tSABjn3miWp4mljksrgFVQsFOM
+         q+HQp4sekfl1v+S67KDANAYqwdvygqeV2XatCAIomt+Pwf66UtEpp9GqtJktetj//X6m
+         GWROwkwhmt3ZMvHZRS94FLblNEkEjw2E9OmFK3X1IITkmeQwA2K1vdpm8NbTSYLZZsp9
+         ByljRMW+/VEm9IlpOrKElpzOqUlfVT0YtCJR3dqqYazoghuhb5/+/hL5n7virQS3a1Jg
+         sNOAlG17UbrcyHdCVO3dvCbgRHMaHiuSV/PCkjijmBSUJDHAUiffk6A1kYWSgZgb5pTF
+         Q6vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwNskuY85FOwa9O98zNG8xiZOVu97iV5P/qvhfdXN8bL7hs45qj7R6Mm8WRdDGP08jmwfms6C+pqUtbi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLizD3wQsVkLHA4Psx1VoElITIxM41MkB9S0q7fT1zBk0Vk9Jp
+	Lyt0cPZ8tvfbjO7mR60MfT+toGo6XjMgc/TEY0/DogTQonWE9HlOjybh9w7P
+X-Google-Smtp-Source: AGHT+IGsAMFMKE8Go/IHg15W8t4bWEhonD919grXqat/P6VH98GgrcZV2ysBDWdzrPJpOUTev+amFQ==
+X-Received: by 2002:a17:902:c408:b0:205:951b:563f with SMTP id d9443c01a7336-2074c6fe6b6mr24778705ad.49.1726006155844;
+        Tue, 10 Sep 2024 15:09:15 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f38218sm52946525ad.292.2024.09.10.15.09.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 15:09:12 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Wed, 11 Sep 2024 00:09:10 +0200
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v5 0/7] pressure: bmp280: Minor cleanup and interrupt
- support
-Message-ID: <20240910220910.GA13457@vamoiridPC>
-References: <20240902184222.24874-1-vassilisamir@gmail.com>
- <ZtcfCVcV_1hCVp7N@smile.fi.intel.com>
- <20240904102955.GD44250@vamoiridPC>
- <20240907173537.632e8484@jic23-huawei>
+        Tue, 10 Sep 2024 15:09:15 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	jacob.e.keller@intel.com,
+	horms@kernel.org,
+	sd@queasysnail.net,
+	chunkeey@gmail.com
+Subject: [PATCHv2 net-next] net: gianfar: fix NVMEM mac address
+Date: Tue, 10 Sep 2024 15:09:13 -0700
+Message-ID: <20240910220913.14101-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240907173537.632e8484@jic23-huawei>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 07, 2024 at 05:35:37PM +0100, Jonathan Cameron wrote:
-> On Wed, 4 Sep 2024 12:29:55 +0200
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > On Tue, Sep 03, 2024 at 05:36:57PM +0300, Andy Shevchenko wrote:
-> > > On Mon, Sep 02, 2024 at 08:42:15PM +0200, Vasileios Amoiridis wrote:  
-> > > > Depends on this: https://lore.kernel.org/linux-iio/20240823172017.9028-1-vassilisamir@gmail.com  
-> > > 
-> > > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > 
-> > > for the patches 1,2, and 3.
-> > > 
-> > > -- 
-> > > With Best Regards,
-> > > Andy Shevchenko
-> > > 
-> > >   
-> > 
-> > Thank you very much for the reviews Andy.
-> 
-> Too many patches floating around at the moment (not yours!) so I'm going
-> to reduce that number where I can just to make it easier to keep track
-> of what needs more focus.
-> 
-> So picked up patches 1-3 on the togreg branch of iio.git and pushed
-> out as testing. Note these are probably 6.13 material now.
-> 
-> Jonathan
-> 
-> > 
-> > Cheers,
-> > Vasilis
-> 
+If nvmem loads after the ethernet driver, mac address assignments will
+not take effect. of_get_ethdev_address returns EPROBE_DEFER in such a
+case so we need to handle that to avoid eth_hw_addr_random.
 
-Hi Jonathan,
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+ v2: use goto instead of return
+---
+ drivers/net/ethernet/freescale/gianfar.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thank you very much for the continuous effort!
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+index 2baef59f741d..ecb1703ea150 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -754,6 +754,8 @@ static int gfar_of_init(struct platform_device *ofdev, struct net_device **pdev)
+ 		priv->device_flags |= FSL_GIANFAR_DEV_HAS_BUF_STASHING;
+ 
+ 	err = of_get_ethdev_address(np, dev);
++	if (err == -EPROBE_DEFER)
++		goto err_grp_init;
+ 	if (err) {
+ 		eth_hw_addr_random(dev);
+ 		dev_info(&ofdev->dev, "Using random MAC address: %pM\n", dev->dev_addr);
+-- 
+2.46.0
 
-Cheers,
-Vasilis
 
