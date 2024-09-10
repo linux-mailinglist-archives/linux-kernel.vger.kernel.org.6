@@ -1,185 +1,128 @@
-Return-Path: <linux-kernel+bounces-322302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1E5972703
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:09:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514BC972706
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E239EB22EA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:09:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B768CB22CED
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCD11DFE8;
-	Tue, 10 Sep 2024 02:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEBC143879;
+	Tue, 10 Sep 2024 02:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V/OocnOb"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hs19t8ta"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F74B6A022
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FF71DFD1;
+	Tue, 10 Sep 2024 02:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725934172; cv=none; b=muM+iUxglWOburC5Q21eLt242+euTDGIzLIPavu2G0DC4MsoqqkuifpUk7i+HAfcKBiZxBbWb/f82Yn9y8QuA282ryZ/CaMJjEL1Tc3KYBG+BpsQZjro7hQ03jp+whAhpeeUTkWXA9vKrgya8DqpqkulpaOsE7iqIZWqINEk0BE=
+	t=1725934210; cv=none; b=pGQTi/4v3ZjQTKSTGGS8YQTj2xfaVJ/UYZTUiN69lYETddyQ/7cYsgIu2mEqVQ4kmcQJUnDevGJA4A9CI+WswLw/7tqhxCtHtf+RJa3loLbczDLUFDdgYP2NQOzO9EOVt/NmpqB5Reyh6nKT7f29fMnqiZFsaDTWuAPUyXIMD6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725934172; c=relaxed/simple;
-	bh=4QJVMCIR33jQXFT3WVOFZtJfYYiJkb86XBp+aRFY/ZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ItSUDMVp1ZTZjXlYyMsuvyx5uqtvOMYxSexX0scLcPBrSmlNMP/AoTi+zmtAb+/qMiFAgitJOzw0tIwzONV3yl9w5IDNK3bsvt5VLs/d6RxI+185G1M47JI1Wu0jt2XNN1m5josP98Au4bPIZG0Wia4rAcbG0ra1zZlw7Bmn5xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V/OocnOb; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-39d3ad05f8eso75895ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 19:09:30 -0700 (PDT)
+	s=arc-20240116; t=1725934210; c=relaxed/simple;
+	bh=2RuHSTo8UTZTwr+IP/0p9+lQ/zEI0R5deN5YL9deaWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PsJq9+3llLZr3+xah6OHP3tO2psLUPcTKtkuV7jNP7ld9hE0weSRB1qznxGv6cIUdy8b2E/qTgiabdm+1LuFhXJ2XJWcNSl66On9n9BI7kfbWHT+0bcQcaH0pu3SQ91K28cFq37dB5bCjZFROCkUkCpPDkmEjL7xlvriqanywJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hs19t8ta; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-45765a0811aso30235861cf.2;
+        Mon, 09 Sep 2024 19:10:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725934170; x=1726538970; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+DsQQhszRT2ef6P8hGH8RSEvant5C9m/wASSqO7/oIY=;
-        b=V/OocnObVLe0gNU5HrQo8QrA6QbcHoEUr8hAT6+gDF6SWFz8WAskvkS8PKT8bV7hA/
-         fPM6dpXvq///KYIMCrtrffGGI9Lq/hU0L1kwly+cZ2DAygi3N3hxkf5GP9L9U/vC58ry
-         WdTdJBeWEKuIkjZGtT7ijkRaO+Aa8ev6QV71MLQ6HiciyAalOhlgcdoyDCUTMiGoOCag
-         NyPgKoIU/bzaa68D/eCIJ7NpTvbq2wP3teLxNZtuWqNr4VnSMV4sbPQHs9mdozUup/M9
-         443qr8VNyeTE3jTGRas4bjCzR8ZJULCWeuadvn4jVcuqV3RB06krz1LWAVj+rQ9ZS+0c
-         6Hag==
+        d=gmail.com; s=20230601; t=1725934207; x=1726539007; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dUxVq/uYkeEKFMBzDLEyObgx5MyTJN7izveNlmy8shU=;
+        b=hs19t8tatA8RfXiUfFwhACZX4E6lqJYfmvopOCllCRAaxysYKHLF/CTbocDSJZ7XUy
+         MDU/e6/M2aSA0FK5W12QS3rHytqLwq2C8yY1fTjae+10oC2kxY5kyncr5ueqmk4BNZJf
+         i+ZxpJkOIZ7UdLyZWczF5zBW5euuCDmT6diFMlRHlHYNEyOqgVG44HgqYuuPc5bBERL1
+         e2LTw8MqHhJGlCeLhEiAsb2mqKbmd5IAKKR3YC+B+1cnw39uDpQfVFuGgIdUUcWeQ7Gk
+         1+MGWlTIi8g/1iQDOeYs9jDMOAHdQsBPzos9wn7DiEjZTPrLYxI0qLbxGpWVPDsxa/Nv
+         TT1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725934170; x=1726538970;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+DsQQhszRT2ef6P8hGH8RSEvant5C9m/wASSqO7/oIY=;
-        b=S75DpbyTUrOAg3ts2gaFOYw67ajVnGwxVxA1UqzCBYl6npj0q0cni36HoR4XXIZ4y7
-         /lMJZDU5NQYoc/+VXJFjJGDiQklTX4B7WT6TnguzEBtpY6aCzQygKKL0u2DRgrrX4ol1
-         4HGrizC+s75Y2lGXGBJyXC7QqePqB1/L/ClleozqJCb9oQiClRRvQnFDDK7S0s+a0W70
-         gv7nr5ZkjVovR7xM6wmCUIOr4WVT1Hps3S7PpYJLGHx1x/yXH03RBzQlPWg3BgjAyb87
-         V5cdNTNTIgRoHAUbP3dlA+5oyYtK+BTOeORUx0cMe3WHUbF6oxuLXShVtmnFkKi/hANi
-         5BjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXz0ku2rMg3Lg7oN5lsMmfUjrJmx96h7v6U2ecHJFQE3A9M1qO5w7dZNZ2XDcSDRwt+/jQvLr2yELGEQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOEUfwbtxdKVdz1jUebIpo7x7LDDh13Qq8r540455jPrbmQQDU
-	skivk3MCL/ilZbUYawexlNyhSIXFVfFurDuSd1ktF16pI+vbEkVI3ln4i7IOfGAYHYbS/mjQgk7
-	KmF1Iu8nbgTq1lWq+FvHF0xm4ncr3h9yZX4Y/
-X-Google-Smtp-Source: AGHT+IGXDcSXioesg5+maD/YfxW9DxpNZWUOGcMd1XOPIFq3h8PpbcDkNkfD0lh+z2VUtMYBl1WO+LDOgNGnRPwmiRg=
-X-Received: by 2002:a05:6e02:1c45:b0:377:14ab:42ea with SMTP id
- e9e14a558f8ab-3a06bae3ad1mr1954975ab.16.1725934169925; Mon, 09 Sep 2024
- 19:09:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725934207; x=1726539007;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dUxVq/uYkeEKFMBzDLEyObgx5MyTJN7izveNlmy8shU=;
+        b=nzFQg6StECWFQk8a3846vZLpz7LpYmqT4fc0vgKGyinMBNqEz24eLre/gRPbqK3O5G
+         xuYi4pKvGGvBup5OLkVjqlzTJDYGWCApJCSatxnsyldo2wRt95RmDtw+uJX2Hxn+btVB
+         7I9EErAZT1/J985PgHZ+vDVCF4lzL7W4iuBd6fQpNDdwdz2c8KeuPiYVT4JX5u7qL4gA
+         iKqY6av4g90zMeyoKax+TOc+7T0VYtbm+j/U7+ZJdmt7KEKgtqUa8/IITcqTydG2anC3
+         F+z+Ozeg9jiRh7fb/iENIdXPDkieNHnmapAbJ6Xk4A57GeRCOss/OlR3gHuI0Nr+7lDs
+         Z1QA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVTHiAcMpmM8rG1V/+nqoiVnqZWx7yhdTOIH1rA0l7LDX/Vkkz2wlJsVpLC4I2FnJwf2tZ4K63@vger.kernel.org, AJvYcCV8w0gJDurTU+ML2umBDg/nGQHAQWmVaXIPH889t49nob/d0U3zXfKHMZMbmHvogWByKEXSHlXXOY+9G0B9@vger.kernel.org, AJvYcCWNktQ+phAOFGeIVCl54Y9JV0jEXWjs8/tAzEmUqJcu9+BslKUE0qjX/cYA/QzAfp3kxfsJzROZkd0akQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoemLbOZrnGj5fKPl/VqwUv+paNa5kn1Ep1pniEqQwU1QGYLI+
+	zXMg9kv1TXyBhMCCw74VxjCC/JJYtMagiOd9d7KnMieMOeB5a1Mk
+X-Google-Smtp-Source: AGHT+IGmeDSS1xPUmyjEW8yUJFMAPO/V2CCsh6Yw95JK0OmbyicAdVkM/O8FfObtrVcamHw/ybV/0Q==
+X-Received: by 2002:a05:622a:144c:b0:457:c776:e350 with SMTP id d75a77b69052e-4580c75a11dmr124180981cf.46.1725934207271;
+        Mon, 09 Sep 2024 19:10:07 -0700 (PDT)
+Received: from shine.lan (216-15-0-36.s8994.c3-0.slvr-cbr1.lnh-slvr.md.cable.rcncustomer.com. [216.15.0.36])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822f6097fsm25377241cf.63.2024.09.09.19.10.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 19:10:06 -0700 (PDT)
+From: Jason Andryuk <jandryuk@gmail.com>
+To: Helge Deller <deller@gmx.de>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Sam Ravnborg <sam@ravnborg.org>
+Cc: xen-devel@lists.xenproject.org,
+	Jason Andryuk <jason.andryuk@amd.com>,
+	Arthur Borsboom <arthurborsboom@gmail.com>,
+	stable@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fbdev/xen-fbfront: Assign fb_info->device
+Date: Mon,  9 Sep 2024 22:09:16 -0400
+Message-ID: <20240910020919.5757-1-jandryuk@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906051205.530219-1-andrii@kernel.org> <20240906051205.530219-2-andrii@kernel.org>
- <CAG48ez2hAQBj-VnimJBd3M-ioANVTk+ZQXYWD+j9G+ip2K_nfw@mail.gmail.com>
-In-Reply-To: <CAG48ez2hAQBj-VnimJBd3M-ioANVTk+ZQXYWD+j9G+ip2K_nfw@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 9 Sep 2024 19:09:15 -0700
-Message-ID: <CAJuCfpFAvsMsBTBMaK5sHFkLQPrfE0nb401gEb2hmN2rbjza6g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mm: introduce mmap_lock_speculation_{start|end}
-To: Jann Horn <jannh@google.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, 
-	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com, 
-	brauner@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 9, 2024 at 5:35=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
->
-> On Fri, Sep 6, 2024 at 7:12=E2=80=AFAM Andrii Nakryiko <andrii@kernel.org=
-> wrote:
-> > +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, int=
- seq)
-> > +{
-> > +       /* Pairs with RELEASE semantics in inc_mm_lock_seq(). */
-> > +       return seq =3D=3D smp_load_acquire(&mm->mm_lock_seq);
-> > +}
->
-> A load-acquire can't provide "end of locked section" semantics - a
-> load-acquire is a one-way barrier, you can basically use it for
-> "acquire lock" semantics but not for "release lock" semantics, because
-> the CPU will prevent reordering the load with *later* loads but not
-> with *earlier* loads. So if you do:
->
-> mmap_lock_speculation_start()
-> [locked reads go here]
-> mmap_lock_speculation_end()
->
-> then the CPU is allowed to reorder your instructions like this:
->
-> mmap_lock_speculation_start()
-> mmap_lock_speculation_end()
-> [locked reads go here]
->
-> so the lock is broken.
+From: Jason Andryuk <jason.andryuk@amd.com>
 
-Hi Jann,
-Thanks for the review!
-Yeah, you are right, we do need an smp_rmb() before we compare
-mm->mm_lock_seq with the stored seq.
+Probing xen-fbfront faults in video_is_primary_device().  The passed-in
+struct device is NULL since xen-fbfront doesn't assign it and the
+memory is kzalloc()-ed.  Assign fb_info->device to avoid this.
 
-Otherwise reads might get reordered this way:
+This was exposed by the conversion of fb_is_primary_device() to
+video_is_primary_device() which dropped a NULL check for struct device.
 
-CPU1                        CPU2
-mmap_lock_speculation_start() // seq =3D mm->mm_lock_seq
-reloaded_seq =3D mm->mm_lock_seq; // reordered read
-                                 mmap_write_lock() // inc_mm_lock_seq(mm)
-                                 vma->vm_file =3D ...;
-                                 mmap_write_unlock() // inc_mm_lock_seq(mm)
-<speculate>
-mmap_lock_speculation_end() // return (reloaded_seq =3D=3D seq)
+Fixes: f178e96de7f0 ("arch: Remove struct fb_info from video helpers")
+Reported-by: Arthur Borsboom <arthurborsboom@gmail.com>
+Closes: https://lore.kernel.org/xen-devel/CALUcmUncX=LkXWeiSiTKsDY-cOe8QksWhFvcCneOKfrKd0ZajA@mail.gmail.com/
+Tested-by: Arthur Borsboom <arthurborsboom@gmail.com>
+CC: stable@vger.kernel.org
+Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
+---
+The other option would be to re-instate the NULL check in
+video_is_primary_device()
+---
+ drivers/video/fbdev/xen-fbfront.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->
-> >  static inline void mmap_write_lock(struct mm_struct *mm)
-> >  {
-> >         __mmap_lock_trace_start_locking(mm, true);
-> >         down_write(&mm->mmap_lock);
-> > +       inc_mm_lock_seq(mm);
-> >         __mmap_lock_trace_acquire_returned(mm, true, true);
-> >  }
->
-> Similarly, inc_mm_lock_seq(), which does a store-release, can only
-> provide "release lock" semantics, not "take lock" semantics, because
-> the CPU can reorder it with later stores; for example, this code:
->
-> inc_mm_lock_seq()
-> [locked stuff goes here]
-> inc_mm_lock_seq()
->
-> can be reordered into this:
->
-> [locked stuff goes here]
-> inc_mm_lock_seq()
-> inc_mm_lock_seq()
->
-> so the lock is broken.
+diff --git a/drivers/video/fbdev/xen-fbfront.c b/drivers/video/fbdev/xen-fbfront.c
+index 66d4628a96ae..c90f48ebb15e 100644
+--- a/drivers/video/fbdev/xen-fbfront.c
++++ b/drivers/video/fbdev/xen-fbfront.c
+@@ -407,6 +407,7 @@ static int xenfb_probe(struct xenbus_device *dev,
+ 	/* complete the abuse: */
+ 	fb_info->pseudo_palette = fb_info->par;
+ 	fb_info->par = info;
++	fb_info->device = &dev->dev;
+ 
+ 	fb_info->screen_buffer = info->fb;
+ 
+-- 
+2.43.0
 
-Ugh, yes. We do need smp_wmb() AFTER the inc_mm_lock_seq(). Whenever
-we use inc_mm_lock_seq() for "take lock" semantics, it's preceded by a
-down_write(&mm->mmap_lock) with implied ACQUIRE ordering. So I thought
-we can use it but I realize now that this reordering is still
-possible:
-CPU1                        CPU2
-                                 mmap_write_lock()
-                                       down_write(&mm->mmap_lock);
-                                       vma->vm_file =3D ...;
-
-mmap_lock_speculation_start() // seq =3D mm->mm_lock_seq
-<speculate>
-mmap_lock_speculation_end() // return (mm->mm_lock_seq =3D=3D seq)
-
-                                       inc_mm_lock_seq(mm);
-                                 mmap_write_unlock() // inc_mm_lock_seq(mm)
-
-Is that what you were describing?
-Thanks,
-Suren.
-
->
-> For "taking a lock" with a memory store, or "dropping a lock" with a
-> memory load, you need heavier memory barriers, see
-> Documentation/memory-barriers.txt.
 
