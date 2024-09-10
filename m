@@ -1,172 +1,124 @@
-Return-Path: <linux-kernel+bounces-322429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE37D9728E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:23:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D250C9728E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35A91C23E42
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:23:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E812F1C23C5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378C216DEA9;
-	Tue, 10 Sep 2024 05:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF1516B38E;
+	Tue, 10 Sep 2024 05:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FarY4f4g"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2KWtZxV"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B44219F3;
-	Tue, 10 Sep 2024 05:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D35219F3;
+	Tue, 10 Sep 2024 05:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725945814; cv=none; b=srMImru+wWQu5Ijgo85YTKgdqN7k6zhsXn00NhbrQ6BxQSmHGAF4xkTgzKRE9+S2Y+k4fwuuUZ96vdgV1EFlAii3MoE/kmqAwQfa98XqlKdIiieN0OSEaJ5iOC42Syl40jlgbt39OrGlniNZrGb59dPmsTpxQ6K37bj5TLa2phM=
+	t=1725946066; cv=none; b=OJYF2fX4+CsQ0i22jBiOgW2/VwcIkC8gLGlxFMYqrzFj5/FXWnvmvgTsKclKxj+f7jiJjFwPDDYoOgiwvj92HNxyiubbFCNnlSMBHSjVSsxUvKoDzOuEhpZdnch+w/ZfEun7dvJZmMdqtIox6d/eMJoUbHM7fcNPx7bxnIRl1sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725945814; c=relaxed/simple;
-	bh=a1hzRtjTM8om8Av4XmwcgCWu/d6ky3yRduDmqUZhR/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qnJ7tUNwGHmPXqw5VlA7y9tvu4gNBbzDhA4tDNXlMr3rN9Ju4hJoRRoyvf6/3y+C6AyhxzdPZ0867FfTgmv2NLr5Be5KQ5RVfl1nwtqgyTsR5U7HuzhVSO3VCAwF0GTLQ+WIV6liMXsZEMyqrBZ2RB/vdroYl1Bn16I4H2FtEY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FarY4f4g; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725945813; x=1757481813;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=a1hzRtjTM8om8Av4XmwcgCWu/d6ky3yRduDmqUZhR/w=;
-  b=FarY4f4gzXJicStT/hSxIqXnjv3JPWVlZTMYs75sX33xMhvup3Q++R3o
-   QdxhAi49dkUXn8boVoT6nbThtMEt/UhA/3OmYDAm8NRrZDN7A+jv0tcvz
-   g2O0LsqHr0ZUsJzyBvnKeoXiz1wkFvYR0myLySe4MhFmj2C9ETanDqaMW
-   eqHQsswwomf5VcQNeySQhb6C0fmW1LYHE/s26FI7hWmluY3pxMmaRjltZ
-   5OMBUEacNVCkvboztaoD3qpeseaxm2gA5FbgnMnd5vzEiyz4kRvrai3dd
-   tMT/7pnT0DnSj2CMQEmzmTNNiNCYXNOu5eYEe8Bkh9DUrloB77Vmo80qj
-   g==;
-X-CSE-ConnectionGUID: DjiHLvIfQ2Kjm6ozqiqfrg==
-X-CSE-MsgGUID: TK+fPIwzQ1SB+XKS81wMbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24823092"
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="24823092"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 22:23:32 -0700
-X-CSE-ConnectionGUID: KrswjazATYmJ5BvEBMCQEA==
-X-CSE-MsgGUID: twkkzW7bRV2l8dsTZyfdlQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="66609298"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 09 Sep 2024 22:23:29 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sntLb-00006Y-0e;
-	Tue, 10 Sep 2024 05:23:27 +0000
-Date: Tue, 10 Sep 2024 13:23:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org,
-	cgroups@vger.kernel.org, yosryahmed@google.com,
-	shakeel.butt@linux.dev
-Cc: oe-kbuild-all@lists.linux.dev, Jesper Dangaard Brouer <hawk@kernel.org>,
-	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com,
-	kernel-team@cloudflare.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing
- root flush
-Message-ID: <202409101356.VXPFCu6l-lkp@intel.com>
-References: <172547884995.206112.808619042206173396.stgit@firesoul>
+	s=arc-20240116; t=1725946066; c=relaxed/simple;
+	bh=K+L3YKQtKJPMhXItz+Fyuiy6bYYwpvmXXEepUtmyerk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XQyYDGMAChKNsWtWtsELSffvQaysL56SCGuTz8xEsGrBG0oct8XdefhRZF/DlZ+gBJRxKPRNeEb/JXy+2NBVgOO5OqoTZv+BjAp2SgtcK3fSe4ZoiHsa4DrqflyDF+KtxgGKrQ3jj+p3Q5zkuVQBnEfFV4Io1zbBAYPC4+ZqAV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B2KWtZxV; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71798a15ce5so3249515b3a.0;
+        Mon, 09 Sep 2024 22:27:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725946064; x=1726550864; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eEtfoMqDRx+yDDIa9tn7IxDCt4FsjnmGHJMKKhjALz4=;
+        b=B2KWtZxViCeCXnLAXOuh51tv9xGfyufe3DD61zpy0DmaLRW8UP2INSyLYD8pnNdpFy
+         2XgtDODpEeI6YFnVJG6PpTPcgu0TtgJQEtGA68Ts2FXyBomrq1s0Rvoh7qFK0g4byJSQ
+         ele37/tuqb7tjp8h0RY/Kn9YT10DpHxNeNXmNSZP1AWKYPiMwCk2hZOWFD56e2ZT036i
+         TeeEkJgbLEmam3KTMNNbDmyCkmsBZLM2KqMZFTeyrADpvYKPJMdLiIzZLOGHqzu1oS5W
+         B+C+C0SkPcBvXtiO6Tl9Ri8ExcLn/7iHyHqsIbCL7g3FlB7BmEOZlwhUUY/72/c4ev//
+         jQsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725946064; x=1726550864;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eEtfoMqDRx+yDDIa9tn7IxDCt4FsjnmGHJMKKhjALz4=;
+        b=cZwUk4aIr5/KgpSTCxjhTOeYjBE+T1Ne2cn2tkPT2zMnGAVi8GrAIlKOIgctqZpNGn
+         5ciSY1o3Dw+xiyZVMYdFznRjQCzQZAAn1ZVwzntqKALDt2NtJz0cINq/uXna6FZ8fS9S
+         EwX7MxDYDg1KNLSV+d2l/yTlrhP8oZWEuQg27jh20K21FIU2T2fVFpQeEhGcp/lOVMIR
+         VR58Kap+T9M+7y/Ps5Wk9eaKjrMpB99IdGQ4LyQUdroXtaFHLm5W9g2G01QrdD0tQ35p
+         gp3clTb8xn0zadoD9IJnmTlKhaNjV+3kKdth3el9osKOkjbELTXNkb5IbzgvFkmzb44n
+         XV8g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2bOXa+g2k3uE876Smk6cJW4OI9CnaqghvZ7LHzuyJfkB25Z9R3V+K9EHRjxLK8ev563RRUi1cMQQ=@vger.kernel.org, AJvYcCVt42aLvjG4gfAVv4PscDXLojFPTlCVgXBCYqXZveD5kT4GuEfl8cbeUXllZrH3PEYCmRxHDmvf10YLhVT5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy22VqqHsO6+NH76O08iLetC5lWjhfiGdLLFRNoKyJzrbtLaXom
+	/bbecj0eLPX0K4CDx7IWuQzqu56fPMzCHPbk51982kediNuFuZhk
+X-Google-Smtp-Source: AGHT+IHnOgN8l4AA2DGC3JHppwEd1vudzhyzl9cORSWuEhDk9LrdIjuJa7Dgan1uo3vrshJ1GaJafA==
+X-Received: by 2002:a05:6a21:385:b0:1cf:38cf:dfb6 with SMTP id adf61e73a8af0-1cf500c188bmr2675343637.20.1725946064047;
+        Mon, 09 Sep 2024 22:27:44 -0700 (PDT)
+Received: from Kuchus.. ([27.7.2.211])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71908fe244esm590594b3a.55.2024.09.09.22.27.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 22:27:43 -0700 (PDT)
+From: Shivam Chaudhary <cvam0000@gmail.com>
+To: kbusch@kernel.org,
+	axboe@kernel.dk
+Cc: hch@lst.de,
+	sagi@grimberg.me,
+	corbet@lwn.net,
+	linux-nvme@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cvam <cvam0000@gmail.com>
+Subject: [PATCH v2] Remove duplicate "and" in 'Linux NVMe docs.
+Date: Tue, 10 Sep 2024 10:57:37 +0530
+Message-Id: <20240910052737.30579-1-cvam0000@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <8734m8h9ce.fsf@trenco.lwn.net>
+References: <8734m8h9ce.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172547884995.206112.808619042206173396.stgit@firesoul>
+Content-Transfer-Encoding: 8bit
 
-Hi Jesper,
+From: cvam <cvam0000@gmail.com>
 
-kernel test robot noticed the following build warnings:
+Remove duplicate occurrence of 'and' in
+'Linux NVMe Feature and Quirk Policy' title heading.
 
-[auto build test WARNING on tj-cgroup/for-next]
-[also build test WARNING on axboe-block/for-next akpm-mm/mm-everything linus/master v6.11-rc7 next-20240909]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+tested: Not breaking anything.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jesper-Dangaard-Brouer/cgroup-rstat-Avoid-flushing-if-there-is-an-ongoing-root-flush/20240905-034221
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
-patch link:    https://lore.kernel.org/r/172547884995.206112.808619042206173396.stgit%40firesoul
-patch subject: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing root flush
-config: hexagon-randconfig-r121-20240910 (https://download.01.org/0day-ci/archive/20240910/202409101356.VXPFCu6l-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce: (https://download.01.org/0day-ci/archive/20240910/202409101356.VXPFCu6l-lkp@intel.com/reproduce)
+Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
+---
+ Documentation/nvme/feature-and-quirk-policy.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409101356.VXPFCu6l-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> kernel/cgroup/rstat.c:339:23: sparse: sparse: Using plain integer as NULL pointer
-   kernel/cgroup/rstat.c:87:18: sparse: sparse: context imbalance in 'cgroup_rstat_updated' - different lock contexts for basic block
-   kernel/cgroup/rstat.c:75:9: sparse: sparse: context imbalance in 'cgroup_rstat_updated_list' - wrong count at exit
-   kernel/cgroup/rstat.c:320:13: sparse: sparse: context imbalance in 'cgroup_rstat_trylock_flusher' - wrong count at exit
-   kernel/cgroup/rstat.c:300:34: sparse: sparse: context imbalance in 'cgroup_rstat_unlock_flusher' - unexpected unlock
-   kernel/cgroup/rstat.c:373:9: sparse: sparse: context imbalance in 'cgroup_rstat_flush_locked' - different lock contexts for basic block
-   kernel/cgroup/rstat.c:447:9: sparse: sparse: context imbalance in 'cgroup_rstat_flush_hold' - wrong count at exit
-   kernel/cgroup/rstat.c:457:6: sparse: sparse: context imbalance in 'cgroup_rstat_flush_release' - wrong count at exit
-
-vim +339 kernel/cgroup/rstat.c
-
-   308	
-   309	/**
-   310	 * cgroup_rstat_trylock_flusher - Trylock that checks for on ongoing flusher
-   311	 * @cgrp: target cgroup
-   312	 *
-   313	 * Function return value follow trylock semantics. Returning true when lock is
-   314	 * obtained. Returning false when not locked and it detected flushing can be
-   315	 * skipped as another ongoing flusher is taking care of the flush.
-   316	 *
-   317	 * For callers that depend on flush completing before returning a strict option
-   318	 * is provided.
-   319	 */
-   320	static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp, bool strict)
-   321	{
-   322		struct cgroup *ongoing;
-   323	
-   324		if (strict)
-   325			goto lock;
-   326	
-   327		/*
-   328		 * Check if ongoing flusher is already taking care of this.  Descendant
-   329		 * check is necessary due to cgroup v1 supporting multiple root's.
-   330		 */
-   331		ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
-   332		if (ongoing && cgroup_is_descendant(cgrp, ongoing))
-   333			return false;
-   334	
-   335		/* Grab right to be ongoing flusher */
-   336		if (!ongoing && cgroup_is_root(cgrp)) {
-   337			struct cgroup *old;
-   338	
- > 339			old = cmpxchg(&cgrp_rstat_ongoing_flusher, NULL, cgrp);
-   340			if (old) {
-   341				/* Lost race for being ongoing flusher */
-   342				if (cgroup_is_descendant(cgrp, old))
-   343					return false;
-   344			}
-   345			/* Due to lock yield combined with strict mode record ID */
-   346			WRITE_ONCE(cgrp_rstat_ongoing_flusher_ID, current);
-   347		}
-   348	lock:
-   349		__cgroup_rstat_lock(cgrp, -1);
-   350	
-   351		return true;
-   352	}
-   353	
-
+diff --git a/Documentation/nvme/feature-and-quirk-policy.rst b/Documentation/nvme/feature-and-quirk-policy.rst
+index c01d836d8e41..e21966bf20a8 100644
+--- a/Documentation/nvme/feature-and-quirk-policy.rst
++++ b/Documentation/nvme/feature-and-quirk-policy.rst
+@@ -1,8 +1,8 @@
+ .. SPDX-License-Identifier: GPL-2.0
+ 
+-=======================================
+-Linux NVMe feature and and quirk policy
+-=======================================
++===================================
++Linux NVMe feature and quirk policy
++===================================
+ 
+ This file explains the policy used to decide what is supported by the
+ Linux NVMe driver and what is not.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
