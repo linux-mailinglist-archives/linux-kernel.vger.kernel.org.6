@@ -1,170 +1,172 @@
-Return-Path: <linux-kernel+bounces-323994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 457A5974692
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:46:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD07E97469B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C61741F26F61
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:46:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A4BB1C24537
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196591B580D;
-	Tue, 10 Sep 2024 23:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA501B9B5E;
+	Tue, 10 Sep 2024 23:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="OIVcS2r1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Inov3oyk"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SW2SCJzQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77B91B29D2;
-	Tue, 10 Sep 2024 23:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A379F1B791A;
+	Tue, 10 Sep 2024 23:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726011884; cv=none; b=AUjFgVW3jHTuKpFIAyupEUNDty2t3mFBKdSU0rM9yBedoo6HKFlXJ9fLZqtPHWwV0W2mglTnFA0wt4HfRmXjWZimugqRLntQsulkOHRMEaNzCgkptg/kYc85Bml6d7Y6VmXdgk0l5qyn7eLRlhPLyN7ViuXLpVOwpT3FimsRMis=
+	t=1726011886; cv=none; b=K5oj3p+vAX09zAB2hlyuLyb6QcF7pJm2zIptgSyjctPbZ3oBKZfEF6pTPRc9c3PIazWzlorScjwEW+xvweg1TvZ/sFMjscFlUi2zsDb0jjLOrv6J0OdElfkQv/oGzbNHMkg3g4TWt8vAE1UPHjsbuGoF1wHkVfL58Cpokcq4O1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726011884; c=relaxed/simple;
-	bh=NJRdyDt4ArtkhmucN0ADGasD7WAmAy2gcQoa3OuTEro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XOmH1X4Zo2WJp+UqfL/PnvGJFoTY5QOjNjb84uzqu74fuW1t2kU1q9tCtMkMDfRr9BgRJ3dwrIU8DrHPqE8dCUjpO46gBhEy/hwWgLzw1dK8QFU4RMLI0hOPPnmqZ3+IYS9vi6hI9iizjx7KdDv2etK0LykPw+JyLcfboyMFeX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=OIVcS2r1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Inov3oyk; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id 0F50313801C0;
-	Tue, 10 Sep 2024 19:44:41 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Tue, 10 Sep 2024 19:44:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1726011881;
-	 x=1726098281; bh=7UKGu1SR/PBsryXACn9wUHAYZcr8DaV+dHj6lNuogFw=; b=
-	OIVcS2r1Aud15229JwgZnwxT3mBmneFNGw0BhwEg1/ITv7i3nkj9/kXakxeYGBkC
-	+TFkwXvg46EHuyOMNZHO2tDpa6U9KuO8c0KEkM45J+KDn9+n04cjh/JEW2gO2cHV
-	tNRdrthYmKSFkRc2ODDNH2kx0+PEPHQSQug0cAuVmhbHPI1Vqmgo3yfwM5zHFNKt
-	0o0ShbyyHWTUVZ3fAPhukxfGwy+Gmicov1d3mpl08YEdmJ+A7WgST11I4ktJUA72
-	SFYnbFovXc/d4aUcPcaTcbT9rHhW1ntVQjhlsWAL8TbfvaGqPINuiQrfTWrfFwR+
-	thh+GO784N1Squpemht2yw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726011881; x=
-	1726098281; bh=7UKGu1SR/PBsryXACn9wUHAYZcr8DaV+dHj6lNuogFw=; b=I
-	nov3oykubRyvFUL238D2FQ/tN8Cz70Iq/eN9jHNgzSMMWVnaRTO6sHZJI9TxhKNf
-	il/5Wk/5Er+Of0inHWAFpdBFJAhL0NxKg8CqHuWcRjAYbip0AA6klGnXpvJUdksy
-	vb5P8IUjixWQAYwPabHaLKXgbHNRTyPWUCAWVZowixT/qXhdKfR5UMtgny2Akdrm
-	1ZrQ236v+tnxs5x0NrLp89xaFU67ErIlqC/YWkOQKpYqUQARWaEKFA+T8PxRWrLl
-	Ccjx8DJxrCoE5CBWbOM7jLFzGzC02ur9oQvEjA49CDAX2fdFKpywfSZYlw9sufVH
-	b/UoTGiPBYx5qKu+aHePQ==
-X-ME-Sender: <xms:6NngZvexNvWHH_w3EwaDDjHw_FDhYxNI-3wIYzE8iOJsetfLaxpgEQ>
-    <xme:6NngZlPM1xWKKKhgyAwcfu2DNPqRJAY27abVucXtgKXf8Pdt3S25RdE8KkR9vJaxi
-    IFEay2iD5x-avcAlw>
-X-ME-Received: <xmr:6NngZojpWHyQrkkKZRu4dk2HBBx1p9ZWopb8PZh4EImW4cR3LGIdUqzucaLJ0onHwU0Ya_sSKmxep215SW7UABGhtuVqE7XTUTU36mGzUPN7tQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejtddgvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegfrhhlucfvnfffucdljedtmdenucfjughrpeffhffvvefukfhf
-    gggtugfgjgestheksfdttddtjeenucfhrhhomhepffgrnhhivghlucgiuhcuoegugihuse
-    gugihuuhhurdighiiiqeenucggtffrrghtthgvrhhnpedtgfeuueeukeeikefgieeukeff
-    leetkeekkeeggeffvedtvdejueehueeuleefteenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpegugihusegugihuuhhurdighiiipdhnsggprhgt
-    phhtthhopedvtddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnughrihhird
-    hnrghkrhihihhkohesghhmrghilhdrtghomhdprhgtphhtthhopegrlhgvgigvihdrshht
-    rghrohhvohhithhovhesghhmrghilhdrtghomhdprhgtphhtthhopegvugguhiiikeejse
-    hgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhope
-    grshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehjohhhnhdrfhgrshhtrggsvghnugesghhmrghilhdrtghomh
-    dprhgtphhtthhopehmrghrthhinhdrlhgruheslhhinhhugidruggvvh
-X-ME-Proxy: <xmx:6NngZg8L71HmBOBoLv1wtNrsHY5RwO7HXkNgYOo5jSZzCxcf1ProMw>
-    <xmx:6NngZrvzzhZi3sYRyo4_ykKOyJiDqdRudCs9NHec39zRWf-mcadWFw>
-    <xmx:6NngZvFkYgBn7Rm9aQExLNG0HO7qsxsBfGPbhu3c38ajtr2FUn_oMA>
-    <xmx:6NngZiMSXw_t2r7Sg_BFpPGXu6vnI83rksuUHcEz-KL0yh8tFXLvsw>
-    <xmx:6dngZkP7UAAdT9-bYkHVmo429bErfwgctEYsJA4oXFvb8R1L2stEdSby>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 10 Sep 2024 19:44:38 -0400 (EDT)
-Date: Tue, 10 Sep 2024 17:44:36 -0600
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Mykola Lysenko <mykolal@fb.com>, LKML <linux-kernel@vger.kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Kernel Team <kernel-team@meta.com>
-Subject: Re: [PATCH bpf-next] bpf: ringbuf: Support consuming
- BPF_MAP_TYPE_RINGBUF from prog
-Message-ID: <rsdwvah5ov3itchsgkwgleihswoycoal5vjbeql2wbqoz5noiz@myk2atnnjaub>
-References: <18a9ddacc99bb95e9802f8ad1e81214433df496c.1725929645.git.dxu@dxuuu.xyz>
- <CAADnVQKyfZ2-qCvmqG8z919ggdOszEjTs04H=cTGOZTi-zhx7Q@mail.gmail.com>
- <CAEf4Bza5Fiw2rZ5T7=zRwVk1Ct1Mgm7Gpa8w+NJVPZf8keY_9Q@mail.gmail.com>
- <vru2zgphyfywjcqikolwotsfun2bgtrnfmwvfls5ra4tznsydr@46w5rq7gqepz>
- <4ec8e15b-c44b-41d7-b337-32d17306d67b@app.fastmail.com>
- <CAEf4BzbHqKD87KTSmFUMokXEaAa70xNs96QqfWBHjFbuE5PL=w@mail.gmail.com>
+	s=arc-20240116; t=1726011886; c=relaxed/simple;
+	bh=s6DRljvjzpmcG+YQ94B0VJq9e8xKed/uTGHw63/egMU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fDMw5RTltQA8Vi58N/vyoRofc9un43xcEzUf3+1EJkBFjb+Cztaxyzx2fXQ+xAP2aZlbJfR5QI5+l8r8asLdwSr1UtPXcYSwspsUbrk75o8GEfBK6bAdszGlLHKyDUyJeVRipKe9WHlNXA8kLjAmVwfL4vqWT2Slnk7mySfLkIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SW2SCJzQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50413C4AF09;
+	Tue, 10 Sep 2024 23:44:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726011886;
+	bh=s6DRljvjzpmcG+YQ94B0VJq9e8xKed/uTGHw63/egMU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SW2SCJzQjoZlj4PwplsrMwhU20et/Y9P0xizvenw25vLaA6oUP+HBj3VV5YMxuL0w
+	 qfPqEarx05kzu/CqT/PZI9ZVq1aQZxf5cg5SdFP32/YQRPVShqdX+plgcN29oMgrYa
+	 tnDFtpPG/kYmCi0WKVIG0Oa5rj6yJ43LY51Yln0ajDuxwzIXEqydEBGSmZZWV42aX3
+	 zeKSs4YfX544xrfN1GDRWPT5U1Zik4KZl8ZnV4r/Q4J49eTdaRFdF25iuNEfFJsHB0
+	 wIJ9CMxaWOquWJQtUQqN6ow6LElTDrhUMKWLyhthcPJuvfVrzCBYSvVaDmbGJ4IlA6
+	 BJfho+K6uVDnQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Auchter <michael.auchter@ni.com>
+Cc: Michael Hennerich <michael.hennerich@analog.com>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: iio: dac: adi,ad56xx: Fix duplicate compatible strings
+Date: Tue, 10 Sep 2024 18:44:39 -0500
+Message-ID: <20240910234440.1045098-1-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzbHqKD87KTSmFUMokXEaAa70xNs96QqfWBHjFbuE5PL=w@mail.gmail.com>
 
-On Tue, Sep 10, 2024 at 03:21:04PM GMT, Andrii Nakryiko wrote:
-> On Tue, Sep 10, 2024 at 3:16 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
-> >
-> >
-> >
-> > On Tue, Sep 10, 2024, at 2:07 PM, Daniel Xu wrote:
-> > > On Tue, Sep 10, 2024 at 01:41:41PM GMT, Andrii Nakryiko wrote:
-> > >> On Tue, Sep 10, 2024 at 11:36 AM Alexei Starovoitov
-> > [...]
-> > >
-> > >>
-> > >> Also, Daniel, can you please make sure that dynptr we return for each
-> > >> sample is read-only? We shouldn't let consumer BPF program ability to
-> > >> corrupt ringbuf record headers (accidentally or otherwise).
-> > >
-> > > Sure.
-> >
-> > So the sample is not read-only. But I think prog is prevented from messing
-> > with header regardless.
-> >
-> > __bpf_user_ringbuf_peek() returns sample past the header:
-> >
-> >         *sample = (void *)((uintptr_t)rb->data +
-> >                            (uintptr_t)((cons_pos + BPF_RINGBUF_HDR_SZ) & rb->mask));
-> >
-> > dynptr is initialized with the above ptr:
-> >
-> >         bpf_dynptr_init(&dynptr, sample, BPF_DYNPTR_TYPE_LOCAL, 0, size);
-> >
-> > So I don't think there's a way for the prog to access the header thru the dynptr.
-> >
-> 
-> By "header" I mean 8 bytes that precede each submitted ringbuf record.
-> That header is part of ringbuf data area. Given user space can set
-> consumer_pos to arbitrary value, kernel can return arbitrary part of
-> ringbuf data area, including that 8 byte header. If that data is
-> writable, it's easy to screw up that header and crash another BPF
-> program that reserves/submits a new record. User space can only read
-> data area for BPF ringbuf, and so we rely heavily on a tight control
-> of who can write what into those 8 bytes.
+adi,ad5686.yaml and adi,ad5696.yaml duplicate all the I2C device
+compatible strings with the exception of "adi,ad5337r". Since
+adi,ad5686.yaml references spi-peripheral-props.yaml, drop the I2C
+devices from it making it only SPI devices. Update the titles to make
+the distinction clear.
 
-Ah, ok. I think I understand.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/iio/dac/adi,ad5686.yaml          | 53 ++++++-------------
+ .../bindings/iio/dac/adi,ad5696.yaml          |  3 +-
+ 2 files changed, 19 insertions(+), 37 deletions(-)
 
-Given this and your other comments about rb->busy, what about enforcing
-bpf_user_ringbuf_drain() NAND mmap? I think the use cases here are
-different enough where this makes sense.
+diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5686.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad5686.yaml
+index b4400c52bec3..713f535bb33a 100644
+--- a/Documentation/devicetree/bindings/iio/dac/adi,ad5686.yaml
++++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5686.yaml
+@@ -4,7 +4,7 @@
+ $id: http://devicetree.org/schemas/iio/dac/adi,ad5686.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Analog Devices AD5360 and similar DACs
++title: Analog Devices AD5360 and similar SPI DACs
+ 
+ maintainers:
+   - Michael Hennerich <michael.hennerich@analog.com>
+@@ -12,41 +12,22 @@ maintainers:
+ 
+ properties:
+   compatible:
+-    oneOf:
+-      - description: SPI devices
+-        enum:
+-          - adi,ad5310r
+-          - adi,ad5672r
+-          - adi,ad5674r
+-          - adi,ad5676
+-          - adi,ad5676r
+-          - adi,ad5679r
+-          - adi,ad5681r
+-          - adi,ad5682r
+-          - adi,ad5683
+-          - adi,ad5683r
+-          - adi,ad5684
+-          - adi,ad5684r
+-          - adi,ad5685r
+-          - adi,ad5686
+-          - adi,ad5686r
+-      - description: I2C devices
+-        enum:
+-          - adi,ad5311r
+-          - adi,ad5337r
+-          - adi,ad5338r
+-          - adi,ad5671r
+-          - adi,ad5675r
+-          - adi,ad5691r
+-          - adi,ad5692r
+-          - adi,ad5693
+-          - adi,ad5693r
+-          - adi,ad5694
+-          - adi,ad5694r
+-          - adi,ad5695r
+-          - adi,ad5696
+-          - adi,ad5696r
+-
++    enum:
++      - adi,ad5310r
++      - adi,ad5672r
++      - adi,ad5674r
++      - adi,ad5676
++      - adi,ad5676r
++      - adi,ad5679r
++      - adi,ad5681r
++      - adi,ad5682r
++      - adi,ad5683
++      - adi,ad5683r
++      - adi,ad5684
++      - adi,ad5684r
++      - adi,ad5685r
++      - adi,ad5686
++      - adi,ad5686r
+ 
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5696.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad5696.yaml
+index 56b0cda0f30a..b5a88b03dc2f 100644
+--- a/Documentation/devicetree/bindings/iio/dac/adi,ad5696.yaml
++++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5696.yaml
+@@ -4,7 +4,7 @@
+ $id: http://devicetree.org/schemas/iio/dac/adi,ad5696.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Analog Devices AD5696 and similar multi-channel DACs
++title: Analog Devices AD5696 and similar I2C multi-channel DACs
+ 
+ maintainers:
+   - Michael Auchter <michael.auchter@ni.com>
+@@ -16,6 +16,7 @@ properties:
+   compatible:
+     enum:
+       - adi,ad5311r
++      - adi,ad5337r
+       - adi,ad5338r
+       - adi,ad5671r
+       - adi,ad5675r
+-- 
+2.45.2
+
 
