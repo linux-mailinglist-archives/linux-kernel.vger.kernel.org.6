@@ -1,132 +1,153 @@
-Return-Path: <linux-kernel+bounces-322791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0503E972E0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:39:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C88972E2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3E991F2577B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:39:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96EB528296E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807541891A5;
-	Tue, 10 Sep 2024 09:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UnZDZxpm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB1118B46D;
+	Tue, 10 Sep 2024 09:39:57 +0000 (UTC)
+Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB45E1885A6
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8978118A6B9;
+	Tue, 10 Sep 2024 09:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725961142; cv=none; b=JRkMQEWctwt467iMa/ERLK3ezxekKatiTc14MHqX1VLd7P8D58Y/3VFSB02sJ11tDM3+YZaZ50Ye2aZWyBAuRtSioKW1K94P/Yr8l4+hrB9QlOMqTNVruWYHUuGvJ8jelF/anODKD6thN3cRF4vzCZJ4AVmLcZcJLcQxq31bM/Y=
+	t=1725961197; cv=none; b=B8TeGPURPYTQQ1PkGFwxxRXy/ylxwAb+wkw4PRRDxd8BDQm/+oWlMp5jzGgzZjVH52OTzlyhDVytHtzq7VT/CJCg0K+L68Kc1wTHAjxmPtXh1tzfmrKH5Ig+yGvRmGsvdRBeoUhXwviMCIWK5VGlBVL49wQtZyYvN4EFgPtb/Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725961142; c=relaxed/simple;
-	bh=mhu/u1HMMstptnhA0enUqMKgUpzMKA7vjix+p5byYmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UQ1Nf4EKvhW9AUpitBQPFII4D0ywzKr43MzeP7nNu0IkNrYw5abPGEoi3tFiMhFoVxztj2XKKAU0949BRdovaPmVyEak9rNOnVrIEB6B3nqFgMETgR6BfU/7QD4du4MKkIRp7WkggrCwZkUiyNsKfdjjjJpJeRIz3pJAuFABDKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UnZDZxpm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725961138;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jg80v2sHYr9jxVuH+ZibnLi+74iJM1iXUQ8iFd11kAo=;
-	b=UnZDZxpm86wc/MiN7N4pAjCLvac0d6iidLkmzajVdgMnawJ3rg3HvZqyr6pJi4RSa1QY2x
-	9AY4GI3w/vl4j/eWIQDxjuWj/vt8g4cT3OgT5KSAdjVbugjvcQCg3J4xd0YMLZiIizV5JH
-	66View48aPLFk86I/mQXfPLmspg7SDA=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-146-2G_Q7nXqOuOwOzjcoc0RYQ-1; Tue,
- 10 Sep 2024 05:38:55 -0400
-X-MC-Unique: 2G_Q7nXqOuOwOzjcoc0RYQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9359919560BF;
-	Tue, 10 Sep 2024 09:38:53 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.58])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 351951955D44;
-	Tue, 10 Sep 2024 09:38:51 +0000 (UTC)
-Date: Tue, 10 Sep 2024 17:38:47 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH] mm/vmalloc.c: Use "high-order" in description non
- 0-order pages
-Message-ID: <ZuATpy6mPwX1C0/K@MiWiFi-R3L-srv>
-References: <20240906095049.3486-1-urezki@gmail.com>
- <Zt5j+c/SUNvCMY/+@MiWiFi-R3L-srv>
- <Zt815f8dHOKdAeiY@pc636>
- <Zt+ViveH9q1F+ShB@MiWiFi-R3L-srv>
- <ZuAJ3lHh7XCC4M3w@pc636>
+	s=arc-20240116; t=1725961197; c=relaxed/simple;
+	bh=tuSR+pOdWEh9XLPcbqeRivV9c2oMf65AW91OEBJyZNk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=byOrgbmBNEXf3xO8NA+W8HsXGecN8laWo9o/OtlW/r3F8fICUlQ4ruHbqQbATWiJKzFkJ/lEGhLkLJ+YLL1mgPnRoiWWSMVvh6VqeIDOKokSAxUSuQ4FFtaun1HeAjDHG0kZobco8hLrsinFE40ORdRPZGKZSq544DLnrGWV8es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
+Received: from dsgsiengine01.siengine.com ([10.8.1.61])
+	by mail03.siengine.com with ESMTPS id 48A9csGc058224
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 10 Sep 2024 17:38:54 +0800 (+08)
+	(envelope-from kimriver.liu@siengine.com)
+Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
+	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4X2zDF6SDnz7ZMt3;
+	Tue, 10 Sep 2024 17:38:53 +0800 (CST)
+Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
+ SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Tue, 10 Sep 2024 17:38:53 +0800
+Received: from SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe]) by
+ SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe%16]) with mapi id
+ 15.02.1544.011; Tue, 10 Sep 2024 17:38:53 +0800
+From: =?gb2312?B?TGl1IEtpbXJpdmVyL8H1vfC60w==?= <kimriver.liu@siengine.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "jsd@semihalf.com" <jsd@semihalf.com>,
+        "andi.shyti@kernel.org"
+	<andi.shyti@kernel.org>,
+        "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v8] i2c: designware: fix master is holding SCL low while
+ ENABLE bit is disabled
+Thread-Topic: [PATCH v8] i2c: designware: fix master is holding SCL low while
+ ENABLE bit is disabled
+Thread-Index: AQHbA0iDEXTpjDBp/E6xp/M7s9EaBrJQM8eAgACJC/A=
+Date: Tue, 10 Sep 2024 09:38:53 +0000
+Message-ID: <743187d2fde54a9ebf86d42e29eadfb4@siengine.com>
+References: <9d181a45f3edf92364c9e6b729638f0b3f2e7baa.1725946886.git.kimriver.liu@siengine.com>
+ <ZuALQVyTBFugG0Sw@smile.fi.intel.com>
+In-Reply-To: <ZuALQVyTBFugG0Sw@smile.fi.intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZuAJ3lHh7XCC4M3w@pc636>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-DKIM-Results: [10.8.1.61]; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:mail03.siengine.com 48A9csGc058224
 
-On 09/10/24 at 10:57am, Uladzislau Rezki wrote:
-> On Tue, Sep 10, 2024 at 08:40:42AM +0800, Baoquan He wrote:
-> > On 09/09/24 at 07:52pm, Uladzislau Rezki wrote:
-> > > On Mon, Sep 09, 2024 at 10:56:57AM +0800, Baoquan He wrote:
-> > > > On 09/06/24 at 11:50am, Uladzislau Rezki (Sony) wrote:
-> > > > > In many places, in the comments, we use both "higher-order" and
-> > > > > "high-order" to describe the non 0-order pages. That is confusing,
-> > > > > because a "higher-order" statement does not reflect what it is
-> > > > > compared with.
-> > > > > 
-> > > > > Suggested-by: Baoquan He <bhe@redhat.com>
-> > > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > > > ---
-> > > > >  mm/vmalloc.c | 4 ++--
-> > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > 
-> > > > This looks good to me, thanks.
-> > > > 
-> > > > Reviewed-by: Baoquan He <bhe@redhat.com>
-> > > > 
-> > > > By the way, do you plan to clean up the rest of them in other places?
-> > > > 
-> > > urezki@pc638:~/data/raid0/coding/linux-next.git$ grep -rni higher include/linux/vmalloc.h 
-> > > urezki@pc638:~/data/raid0/coding/linux-next.git$ grep -rni higher mm/vmalloc.c
-> > > 493:     * nr is a running index into the array which helps higher level
-> > > urezki@pc638:~/data/raid0/coding/linux-next.git$
-> > > 
-> > > What am i missing? Didn't i do it?
-> > 
-> > Sorry, I didn't make it clear. I meant those places other than vmalloc
-> > related files, e.g mm/page_alloc.c, there are a lot of [Hhigh]er-order
-> > mixed with high-order. I can continue the cleaning sometime if it's not
-> > in your TO-DO list.
-> > 
-> > mm/page_alloc.c:551: * Higher-order pages are called "compound pages".  They are structured thusly:
-> > mm/page_alloc.c:716: * of the next-higher order is free. If it is, it's possible
-> > mm/page_alloc.c:720: * as a 2-level higher order page
-> > mm/page_alloc.c:735:    return find_buddy_page_pfn(higher_page, higher_page_pfn, order + 1,
-> > mm/page_alloc.c:2750: * split_page takes a non-compound higher-order page, and splits it into
-> > mm/page_alloc.c:3587:   /* The OOM killer will not help higher order allocs */
-> > mm/page_alloc.c:4811: *  within a 0 or higher order page.  Multiple fragments within that page
-> > mm/page_alloc.c:6516:    * page allocator holds, ie. they can be part of higher order
-> > mm/page_alloc.c:6790: * Break down a higher-order page in sub-pages, and keep our target out of
-> > 
-> I see. I appreciate if you go ahead and improve it further.
-
-Ok, will do later.
-
+SGkgQW5keSwNCg0KPi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogQW5keSBTaGV2
+Y2hlbmtvIDxhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+IA0KPlNlbnQ6IDIwMjTE
+6jnUwjEwyNUgMTc6MDMNCj5UbzogTGl1IEtpbXJpdmVyL8H1vfC60yA8a2ltcml2ZXIubGl1QHNp
+ZW5naW5lLmNvbT4NCj5DYzogamFya2tvLm5pa3VsYUBsaW51eC5pbnRlbC5jb207IG1pa2Eud2Vz
+dGVyYmVyZ0BsaW51eC5pbnRlbC5jb207IGpzZEBzZW1paGFsZi5jb207IGFuZGkuc2h5dGlAa2Vy
+bmVsLm9yZzsgbGludXgtaTJjQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZw0KPlN1YmplY3Q6IFJlOiBbUEFUQ0ggdjhdIGkyYzogZGVzaWdud2FyZTogZml4IG1h
+c3RlciBpcyBob2xkaW5nIFNDTCBsb3cgd2hpbGUgRU5BQkxFIGJpdCBpcyBkaXNhYmxlZA0KDQo+
+T24gVHVlLCBTZXAgMTAsIDIwMjQgYXQgMDI6MTM6MDlQTSArMDgwMCwgS2ltcml2ZXIgTGl1IHdy
+b3RlOg0KPj4gSXQgd2FzIG9ic2VydmVkIGlzc3VpbmcgQUJPUlQgYml0KElDX0VOQUJMRVsxXSkg
+d2lsbCBub3Qgd29yayB3aGVuDQo+DQo+Ii4uLm9ic2VydmVkIHRoYXQgaXNzdWluZy4uLiINCj4u
+Li5iaXQgKC4uLiINCg0KDQo+PiBJQ19FTkFCTEUgaXMgYWxyZWFkeSBkaXNhYmxlZC4NCj4+IA0K
+Pj4gQ2hlY2sgaWYgRU5BQkxFIGJpdChJQ19FTkFCTEVbMF0pIGlzIGRpc2FibGVkIHdoZW4gdGhl
+IG1hc3RlciBpcw0KDQo+Ii4uLmJpdCAoLi4uIg0KPm1hc3RlciAtLT4gY29udHJvbGxlcg0KDQog
+VXBkYXRlIGl0IGluIFY5DQoNCj4+IGhvbGRpbmcgU0NMIGxvdy4gSWYgRU5BQkxFIGJpdCBpcyBk
+aXNhYmxlZCwgdGhlIHNvZnR3YXJlIG5lZWQNCj4+IGVuYWJsZSBpdCBiZWZvcmUgdHJ5aW5nIHRv
+IGlzc3VlIEFCT1JUIGJpdC4gb3RoZXJ3aXNlLA0KPj4gdGhlIGNvbnRyb2xsZXIgaWdub3JlcyBh
+bnkgd3JpdGUgdG8gQUJPUlQgYml0Lg0KDQo+Rml4ZXMgdGFnPw0KDQogUGF0Y2ggcmViYXNlOiAg
+b24gTGludXggdjYuMTEuMC1yYzYgKDg5ZjVlMTRkMDViKQ0KDQo+Li4uDQoNCj4+ICAJYWJvcnRf
+bmVlZGVkID0gcmF3X2ludHJfc3RhdHMgJiBEV19JQ19JTlRSX01TVF9PTl9IT0xEOw0KPj4gIAlp
+ZiAoYWJvcnRfbmVlZGVkKSB7DQo+PiArCQlpZiAoIShlbmFibGUgJiBEV19JQ19FTkFCTEVfRU5B
+QkxFKSkgew0KPg0KPj4gKwkJCXJlZ21hcF93cml0ZShkZXYtPm1hcCwgRFdfSUNfRU5BQkxFLCBE
+V19JQ19FTkFCTEVfRU5BQkxFKTsNCj4NCj5UaGlzIGNhbGwgbWlnaHQgYWxzbyBuZWVkIGEgb25l
+IGxpbmUgY29tbWVudC4NCiAgTGFzdCBXZWRuZXNkYXkNCj4+ICsJCQllbmFibGUgfD0gRFdfSUNf
+RU5BQkxFX0VOQUJMRTsNCg0KPk1vcmUgbmF0dXJhbCBpcyB0byBwdXQgdGhpcyBhZnRlciB0aGUg
+ZnNsZWVwKCkgY2FsbC4gVGhlIHJhdGlvbmFsZSBpcyB0aGF0IGl0DQo+d2lsbCBiZSBlYXNpZXIg
+dG8gc2VlIHdoYXQgZXhhY3RseSBpcyBnb2luZyB0byBiZSB3cml0dGVuIGJhY2sgdG8gdGhlDQo+
+cmVnaXN0ZXIuDQogT2sgDQoNCj4+ICsJCQkvKg0KPj4gKwkJCSAqIFdhaXQgMTAgdGltZXMgdGhl
+IHNpZ25hbGluZyBwZXJpb2Qgb2YgdGhlIGhpZ2hlc3QgSTJDDQo+ID4rCQkJICogdHJhbnNmZXIg
+c3VwcG9ydGVkIGJ5IHRoZSBkcml2ZXIgKGZvciA0MDBLSHogdGhpcyBpcw0KPiA+KwkJCSAqIDI1
+dXMpIHRvIGVuc3VyZSB0aGUgSTJDIEVOQUJMRSBiaXQgaXMgYWxyZWFkeSBzZXQNCj4+ICsJCQkg
+KiBhcyBkZXNjcmliZWQgaW4gdGhlIERlc2lnbldhcmUgSTJDIGRhdGFib29rLg0KPj4gKwkJCSAq
+Lw0KPiA+KwkJCWZzbGVlcChESVZfUk9VTkRfQ0xPU0VTVF9VTEwoMTAgKiBNSUNSTywgdC0+YnVz
+X2ZyZXFfaHopKTsNCj4NCj4uLi5zb21ld2hlcmUgaGVyZS4uLg0KPg0KCU9rDQo+PiArCQl9DQo+
+ICsNCj4+ICAJCXJlZ21hcF93cml0ZShkZXYtPm1hcCwgRFdfSUNfRU5BQkxFLCBlbmFibGUgfCBE
+V19JQ19FTkFCTEVfQUJPUlQpOw0KDQouLi4NCg0KPj4gK3N0YXRpYyBib29sIGkyY19kd19pc19t
+YXN0ZXJfaWRsaW5nKHN0cnVjdCBkd19pMmNfZGV2ICpkZXYpDQoNCj5Tb3JyeSBpZiBJIG1hZGUg
+YSBtaXN0YWtlLCBidXQgYWdhaW4sIGxvb2tpbmcgYXQgdGhlIHVzYWdlIHlvdSBoYXZlIGFnYWlu
+DQo+bmVnYXRpb24gaGVyZSBhbmQgdGhlcmUuLi4NCg0KPglpMmNfZHdfaXNfY29udHJvbGxlcl9h
+Y3RpdmUNCg0KPiAobm90ZSBuZXcgdGVybWlub2xvZ3ksIGR1bm5vIGlmIGl0IG1ha2VzIHNlbnNl
+IHN0YXJ0IHVzaW5nIGl0IGluIGZ1bmN0aW9uDQo+IG5hbWVzLCBhcyB3ZSBoYXZlIG1vcmUgb2Yg
+dGhlbSBmb2xsb3dpbmcgb2xkIHN0eWxlKQ0KDQogTGFzdCB3ZWVrICwgWW91IHN1Z2dlc3RlZCB0
+aGF0IEkgdXNlZCB0aGlzIGkyY19kd19pc19tYXN0ZXJfaWRsaW5nKGRldikNCg0KPj4gK3sNCj4+
+ICsJdTMyIHN0YXR1czsNCj4+ICsNCj4+ICsJcmVnbWFwX3JlYWQoZGV2LT5tYXAsIERXX0lDX1NU
+QVRVUywgJnN0YXR1cyk7DQo+PiArCWlmICghKHN0YXR1cyAmIERXX0lDX1NUQVRVU19NQVNURVJf
+QUNUSVZJVFkpKQ0KPj4gKwkJcmV0dXJuIHRydWU7DQoNCgkJcmV0dXJuIGZhbHNlOw0KDQouLCwN
+Cg0KPj4gKwlyZXR1cm4gIXJlZ21hcF9yZWFkX3BvbGxfdGltZW91dChkZXYtPm1hcCwgRFdfSUNf
+U1RBVFVTLCBzdGF0dXMsDQo+PiArCQkJIShzdGF0dXMgJiBEV19JQ19TVEFUVVNfTUFTVEVSX0FD
+VElWSVRZKSwNCj4+ICsJCQkxMTAwLCAyMDAwMCk7DQoNCj4uLi5hbmQgZHJvcCAhLg0KDQoNCiBX
+ZSByZXByb2R1Y2UgdGhpcyBpc3N1ZSBpbiBSVEwgc2ltdWxhdGlvbihBYm91dCh+MTo1MDApIGlu
+IG91ciBzb2MpLiBJdCBpcyBuZWNlc3NhcnkNCiB0byBhZGQgd2FpdGluZyBEV19JQ19TVEFUVVNf
+TUFTVEVSX0FDVElWSVRZIGlkbGluZyBiZWZvcmUgZGlzYWJsaW5nIEkyQyB3aGVuIA0KIEkyQyB0
+cmFuc2ZlciBjb21wbGV0ZWQuICBhcyBkZXNjcmliZWQgaW4gdGhlIERlc2lnbldhcmUNCiBJMkMg
+ZGF0YWJvb2soRmxvd2NoYXJ0IGZvciBEV19hcGJfaTJjIENvbnRyb2xsZXIpDQoNCj4+ICt9DQoN
+Ci4uLg0KDQo+PiArCS8qDQo+PiArCSAqIFRoaXMgaGFwcGVucyByYXJlbHkgYW5kIGlzIGhhcmQg
+dG8gcmVwcm9kdWNlLiBEZWJ1ZyB0cmFjZQ0KDQo+UmFyZWx5IGhvdz8gUGVyaGFwcyBwdXQgYSBy
+YXRpb24gaW4gdGhlIHBhcmVudGhlc2VzLCBsaWtlDQoNCj4iLi4ucmFyZWx5ICh+MToxMDApLi4u
+Ig0KIEFib3V0KH4xOjUwMCkgaW4gb3VyIHNvYw0KDQo+PiArCSAqIHNob3dlZCB0aGF0IElDX1NU
+QVRVUyBoYWQgdmFsdWUgb2YgMHgyMyB3aGVuIFNUT1BfREVUIG9jY3VycmVkLA0KPj4gKwkgKiBp
+ZiBkaXNhYmxlIElDX0VOQUJMRS5FTkFCTEUgaW1tZWRpYXRlbHkgdGhhdCBjYW4gcmVzdWx0IGlu
+DQo+PiArCSAqIElDX1JBV19JTlRSX1NUQVQuTUFTVEVSX09OX0hPTEQgaG9sZGluZyBTQ0wgbG93
+Lg0KPj4gKwkgKi8NCj4+ICsJaWYgKCFpMmNfZHdfaXNfbWFzdGVyX2lkbGluZyhkZXYpKQ0KDQo+
+Li4uYW5kIGhlcmUNCg0KPglpZiAoaTJjX2R3X2lzX2NvbnRyb2xsZXJfYWN0aXZlKGRldikpDQoN
+Cj5CdXQgcGxlYXNlIGRvdWJsZSBjaGVjayB0aGF0IEkgaGF2ZW4ndCBtYWRlIGFueSBtaXN0YWtl
+cyBpbiBhbGwgdGhpcyBsb2dpYy4NCg0KIExhc3Qgd2VlayAsIFlvdSBzdWdnZXN0ZWQgdGhhdCBJ
+IHVzZWQgdGhpcyBpMmNfZHdfaXNfbWFzdGVyX2lkbGluZyhkZXYpDQoga2VlcCB1c2luZyBpMmNf
+ZHdfaXNfbWFzdGVyX2lkbGluZyhkZXYpICwgT2s/DQoNCj4+ICsJCWRldl9lcnIoZGV2LT5kZXYs
+ICJJMkMgbWFzdGVyIG5vdCBpZGxpbmdcbiIpOw0KDQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLQ0KQmVzdCBSZWdhcmRzDQpLaW1yaXZlciBMaXUNCg==
 
