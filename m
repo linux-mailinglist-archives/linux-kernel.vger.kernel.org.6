@@ -1,99 +1,133 @@
-Return-Path: <linux-kernel+bounces-323486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF974973DD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:55:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DEFE973E0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E1FA1C2534F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:55:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 755CBB26576
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFBF1A2871;
-	Tue, 10 Sep 2024 16:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF291A2C1A;
+	Tue, 10 Sep 2024 17:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjkB9ZE6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="s+FYJdZo"
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6E9198842;
-	Tue, 10 Sep 2024 16:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211A41A01CC;
+	Tue, 10 Sep 2024 17:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725987345; cv=none; b=YC2r/YeXMf0v5VY/nEv4kob/UORFYBDdix68ygiN4m5odTQZ4cR/qpATnCxmQgeo2TKAiPfTk7okxZMlfggB2SKAaqJ//w+nibXZwvfb5Yu8lXSLO9TuP/3x43jNPLV/PJ7rMdpUJx4SNNUpFjFdqKFz2Lxcz6kqfu5tioSiaew=
+	t=1725987917; cv=none; b=tlKmh8qOM4cKAuCRqBi5ZQ7XiqXGOOJreWBdLwfvQEyxh4wYewrtgM54Xpv/9faJCtjjUAYBxRLw/65+/ocrVarXUtFFILg9haiE1lR5BdM05RHP6UrEfLXSh1E5fVcku29yBOKCSJarx294Jnxib+Uh3hBVU2oo+4m1XQCUrjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725987345; c=relaxed/simple;
-	bh=JScXB/yDn/yMAalsJJVsnq7kUH4Esc0s3LoE68Z1fOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i9hT+LHGUQSIAuW/G0JGUlCFvF059vvpAKrAuP8oBmj6lRP2Z7lTD3dF1ZxFcH3WYB+hhKXNrK7SRwb3U69E3tPBCwy7orzqrJhKPMjtdt4r4EBfj8twe1ERBRnvEUN8oYxycTP/PgvQanVJBJgT5T4HtSyYkA4C1x4aHusBP6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EjkB9ZE6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA44DC4CEC3;
-	Tue, 10 Sep 2024 16:55:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725987344;
-	bh=JScXB/yDn/yMAalsJJVsnq7kUH4Esc0s3LoE68Z1fOE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EjkB9ZE6VOjrqBUcRfRB/IGW/03aiRntCIPbyiZBeqvHxaI5jKv9MwDaEG8DDCVms
-	 WBhJcAiQ4Cq9+12kFHqyGjbeONBmBIgn0n72KfpVQYgC8Cyl9UroP9T+nGG3iddOaY
-	 zmVEODx+AgQcJsB+zhOqAoZB7x3hKqjF50j3BlxAU9gjugH8ptsITaLY+Elxlr7MZi
-	 CpuAiqBlceiAqOg8kIcTrYvnqA9Bp0rCsSxI84V/pvG0URubh74hfOPnisgrrcm4Vb
-	 x73mUjdHWviA8aqphwPn8GbvnM48SNF3nyS6Gs/iX7VRUUVMeRdWM4apgyyiY+yvcF
-	 habjts3Llgr0g==
-Date: Tue, 10 Sep 2024 09:55:42 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, linux-crypto@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-fscrypt@vger.kernel.org, linux-scsi@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	"Theodore Y. Ts'o" <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH RESEND v2 07/19] fscrypt: Include <linux/once.h> in
- fs/crypto/keyring.c
-Message-ID: <20240910165542.GA2642@sol.localdomain>
-References: <20240909075641.258968-1-ubizjak@gmail.com>
- <20240909075641.258968-8-ubizjak@gmail.com>
+	s=arc-20240116; t=1725987917; c=relaxed/simple;
+	bh=x2vpo566IpKINGvRxE112gh8KoGHeHf3zP1Nk6w3PW8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uj8IFjQopmrrYfihWqjmYoNtZQlaSTSBdoSWL6NCi3ehYUIPCKajWUbOeaaIBp5YXw16VRfal2/WPaY8n0sD72iOcRgNrKCYNhXtDHJeNLZM/Ra7Bmd5nw8drF1fFvQhpUoZObaH+u35zwGC6REgl8bHMIejHCdvkHEP7+lpOto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=s+FYJdZo; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id o49vszwl60aTdo49vs80n2; Tue, 10 Sep 2024 18:56:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725987369;
+	bh=6IVX0uCQNd9zCee3e9vv63knqK4j3qT0VDnonUeshHE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=s+FYJdZo7Fumol7rX0Ymlqbbwkx7JkbOSf7MvZGvdLkUGi9YDB4CQx7TvynwWZsa/
+	 3MDYEZXqwtAHW6b9Ev58Jxg0vyZGZ4US9argXgqJv7/JFYKo37FGaft1GxLmBzMLJR
+	 VcqJ0O5XGr2R42Do6dRdl3iEgAisZdjG6B0iNczqu91Jbd96BcFvUwpz2HAJTZkFqg
+	 0ZYldeTY25CepXoM0G3XR/sjk7FdN01VAwzwQC8M89sUwJCu0a0NsJgI+/s8zC3hwj
+	 xQaPr2cXug26WADIv7yXLuMFBPekVlxOyPDR35leKVoiaV8UASjysLKRApW+1OZxNe
+	 z7QEi++N8KGrg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 10 Sep 2024 18:56:09 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <be4bcfa9-6445-4e8a-a510-0777341026b0@wanadoo.fr>
+Date: Tue, 10 Sep 2024 18:56:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909075641.258968-8-ubizjak@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] remoteproc: k3-dsp: Fix an error handling path in
+ k3_dsp_rproc_probe()
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Bjorn Andersson <andersson@kernel.org>, Beleswar Padhi <b-padhi@ti.com>,
+ Andrew Davis <afd@ti.com>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <9485e427a9041cc76cfd3dbcc34874af495e160a.1725653543.git.christophe.jaillet@wanadoo.fr>
+ <ZuBlvhf5AszNHV1e@p14s>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ZuBlvhf5AszNHV1e@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 09, 2024 at 09:53:50AM +0200, Uros Bizjak wrote:
-> Include <linux/once.h> header to allow the removal of legacy
-> inclusion of <linux/prandom.h> from <linux/random.h>.
+Le 10/09/2024 à 17:29, Mathieu Poirier a écrit :
+
+>> +static void k3_dsp_free_channel(void *data)
+>> +{
+>> +	struct k3_dsp_rproc *kproc = data;
 > 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Eric Biggers <ebiggers@kernel.org>
-> Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
-> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
-> v2: Include <linux/once.h> instead of <linux/prandom.h>
-> ---
->  fs/crypto/keyring.c | 1 +
->  1 file changed, 1 insertion(+)
+> How did the struct rproc from devm_add_action_or_reset() got turned into a
+> struct k3_dsp_rproc?
 > 
-> diff --git a/fs/crypto/keyring.c b/fs/crypto/keyring.c
-> index 6681a71625f0..82fcc5683649 100644
-> --- a/fs/crypto/keyring.c
-> +++ b/fs/crypto/keyring.c
-> @@ -22,6 +22,7 @@
->  #include <crypto/skcipher.h>
->  #include <linux/key-type.h>
->  #include <linux/random.h>
-> +#include <linux/once.h>
->  #include <linux/seq_file.h>
->  
->  #include "fscrypt_private.h"
 
-Acked-by: Eric Biggers <ebiggers@google.com>
+Well, Linux is a wonderful system, that is able to make wonderful thinks!
 
-- Eric
+In this particular case, if it is not the correct explanation, it is 
+likely an unfortunate typo :(
+Sorry about that, and thanks for the careful review.
+I'll send a v3.
+
+
+But, looking at it, and trying to see if similar issues may exist, the 
+following naive script spots 2 similar issues. 1 of them looks valid.
+
+
+I'll try to improve it (Julia in copy, if she wants to give it a look 
+as-well :))
+
+CJ
+
+
+
+@devm@
+expression RET, DEV;
+identifier FCT, VAR;
+type T;
+@@
+	T VAR;
+	...
+(
+	RET = devm_add_action_or_reset(DEV, FCT, VAR);
+|
+	devm_add_action_or_reset(DEV, FCT, VAR);
+)
+
+@depends on devm@
+identifier FCT = devm.FCT, x, VAR;
+type T1 = devm.T, T2;
+@@
+void FCT(void *x)
+{
+	...
+(
+	T1 VAR = x;
+|
+*	T2 VAR = x;
+)
+	...
+}
+
+
+
 
