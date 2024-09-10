@@ -1,291 +1,132 @@
-Return-Path: <linux-kernel+bounces-323130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CFE9973851
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:11:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50465973852
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CCEF1C24595
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:11:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66E91F25C07
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECEC192581;
-	Tue, 10 Sep 2024 13:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBB0191F9F;
+	Tue, 10 Sep 2024 13:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="cX2nj/pu"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="M+Rt/5Ob"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C3A524B4;
-	Tue, 10 Sep 2024 13:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E93524B4
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725973905; cv=none; b=SP/5xzVfpW/tlr/74VU4j8RqRrD2chaBEV4MEMlNCReHX1lZ+zBEwboXcQEpvHDDeE9yXRu1uhFUJuX+AA/7yW2QwZTu1gsIhOsNB6CweXfgpPhHLZTk/FuqIIoBBbUa+mrg/99HLZs+S262kgYWQgkpTIz+GSg5MhZ5ZUhIHKc=
+	t=1725973913; cv=none; b=uwmlAmFG3eDSAaTBhM2ntyh9VI8CsAB96xezv8+On1Vivcc8zJVAWOAf6t9he4Y0n4GAbgmjOUkOuUty9volyPUQdn0i6EavchKK0latfWuBlBF2jcdQYb8TebGKwDARRWcE1q87q5JD/XT/U3EFSeFOeof5LDicXJCrIEiWnEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725973905; c=relaxed/simple;
-	bh=eZJMTwDZsZ3u3Vnwo7L3iDJIRTPqmoQL/gw+hqmv7xE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ngeWA4XAhUd/RTGf7PcBerX1+dhgG0dwiLbhK76YQbZ/vFvPrDN/Zw/TuD0S01jDr7zxgOCqJbq2V7KX6Vj8bKdgQyP9ldf9KgI702zw/GB9UYJP8njjhR/Jmxz4D991wHQQsrRf/t29No6j8PJUcpGlmbV6O7EQeniLHVHgnRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=cX2nj/pu; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1725973900; x=1726233100;
-	bh=mnlXkr0yAHPxzB8SG1XOTQ0pcrTuw/ZPfcKb1TqAiGk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=cX2nj/pueP9K15+l0RJYaOfFC64SNnLtLF8Vuxyy/b1Q20lJaMdbyIWkRIXbzNz4l
-	 4XI2LwE+sACpZxutYZyo/ZkhFFGjRYANSZeiRE+5ENY+/0CJPGAdotl4husv8SfY5z
-	 DLyTRSXE4jdlCK+kvJY8VoIc8GzYfYH3/aH6eXa6mGwZREFEXVYOT3QBtFNv71AfsJ
-	 tN9clvoFG37LxJV00IhT7zZ4hrtQ8jbtj1TM3h2/DfsXoveKuUS1sJMadnNG7mWOW6
-	 VSFH0rBoTPQgKdgDyTPr/kUGzuXohgmHzynqlI3AKprgW4MQYvjRCSiHINvL4Fmemn
-	 rohs+/yThc71Q==
-Date: Tue, 10 Sep 2024 13:11:35 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 04/26] rust: alloc: implement `Allocator` for `Kmalloc`
-Message-ID: <c1b5a3bf-b11c-4c33-9519-c93649860a9a@proton.me>
-In-Reply-To: <Ztb3eOoiHs2rLCoH@pollux>
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-5-dakr@kernel.org> <2dd02834-b2b6-4ff6-9e29-43c9d77b69e2@proton.me> <ZtDwduKjIEZ3RQtk@pollux.localdomain> <962b7014-4f8b-4abe-8774-636b612a051c@proton.me> <Ztb3eOoiHs2rLCoH@pollux>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: b4bfd8865feffd4b98a695d5f1227dd907e18a2d
+	s=arc-20240116; t=1725973913; c=relaxed/simple;
+	bh=gM3Hwgf+iyc/opcq9ZURQiJqwlto3na+R6r0teon/aE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNplV9d2gs36W6yEpEHEBNe5+uKyTP3m5EvJk/7kUTUQufoC7XjSHAPQmtcG1EWh1syZFp81ZhmTQAHXs6gWf/B4wCH6RkGLCMd4X2ZTk7FoxgUmJGIhyhIpF0iHvrEf2WIsBZUlZ2l46DMgEn+ZS6CoSSnjXC4Y2ROfb0du2ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=M+Rt/5Ob; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso415927866b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:11:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725973910; x=1726578710; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NYLGuUqLXvNFmO9RMwkBqcY2ifrPq2xUkW3RgIhyR1Y=;
+        b=M+Rt/5ObxXvKy3ox4P4KPn6IPbSJYX0KZCRkEJozfCmDQKIS2MxRXEnw33qiLNEM6Q
+         3caiDI0FvidsIGRGnzogEAMvyDAxeujtxpgXB5hA0vQWcQh8bRgi09N2TIJUnKxwcIDY
+         noSoMRnmdzkqUdnMu1tSkunbouU3gOSy2dUzTbPbw3b3ZhKSjBNzH8aBXCt5yZ3teag5
+         NldkTVCCQoVYPAxMe5OTouZwik3ZCdNUn/wE2ZroWwPKGxQAvIjaIiaYAkC2MrdndY79
+         /S/I0DHjvED46HTX6acHBAQR7Cbb3klufu3T1JPu5V+iyg9KSOwE6hrDuPoIJRRk5VdO
+         O/DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725973910; x=1726578710;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NYLGuUqLXvNFmO9RMwkBqcY2ifrPq2xUkW3RgIhyR1Y=;
+        b=muYMkw9VePDpIWNz6nBjOA6Z833BOIQxoQoGUWQ9tkdKSutavCHRnh1WoFdw5y0SS3
+         xo+jP6zUlZ/qHPdE9n8NDUq/4gPz+DLZvFo+0ZqRKtimIlwM1Na0nnB3M2IFAq1hGHik
+         gyLfERgsRjf/+SAHEAT33rQt/e7Vovxa8+5a4lAbsBiZwQGeZ2hSzfiLfTu4n4EW0/bR
+         DXnzta4ZFcf2SFPy7vKJ8PRoICFtaSB7pOsvWxwVfV0twP40Kqu/zcz6OXYweUfmyN67
+         Tt/jil5B9rm1uD3g4aJg/LCpZsuAFjMjdzQuU91dJyq12f9KTeZ+cBBIhrW2jTstSK0j
+         Yzug==
+X-Forwarded-Encrypted: i=1; AJvYcCXSS9NLzS9e8NSMScPEcjK/rjMRcKuQD+S0lqz9HLxxroTxuypXF4HXV4bLeS8AUfR7SHrDfA2EdTP6pGU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+luNFneJgp0jr2x5TjM8Nw52sEWY/1cup+KzHi9/HRP0e71N/
+	8IyEpFDEJhASHvRIw3i4F0yRVYhEEaRClb1lTUpWXMN/8/g3APxyjMd5Y8kO+uyK+FDi7c0okGY
+	u
+X-Google-Smtp-Source: AGHT+IFXrATdAT88+l4QzvkyDDT/6nttmbp4hM1rL8MS4dFDMtEjL9ycfhrxDuZvI3NhDDygil5Rfg==
+X-Received: by 2002:a17:907:2681:b0:a86:b46b:860a with SMTP id a640c23a62f3a-a8ffae1e8e5mr73428166b.54.1725973909737;
+        Tue, 10 Sep 2024 06:11:49 -0700 (PDT)
+Received: from localhost (109-81-83-158.rct.o2.cz. [109.81.83.158])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25cea395sm484818766b.144.2024.09.10.06.11.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 06:11:49 -0700 (PDT)
+Date: Tue, 10 Sep 2024 15:11:48 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: mawupeng <mawupeng1@huawei.com>
+Cc: ying.huang@intel.com, akpm@linux-foundation.org,
+	mgorman@techsingularity.net, dmaluka@chromium.org,
+	liushixin2@huawei.com, wangkefeng.wang@huawei.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm, proc: collect percpu free pages into the free pages
+Message-ID: <ZuBFlMgyqfXEph2g@tiehlicka>
+References: <20240830014453.3070909-1-mawupeng1@huawei.com>
+ <87a5guh2fb.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <2ee7cb17-9003-482c-9741-f1f51f61ab4b@huawei.com>
+ <871q22hmga.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <193da117-30b8-425a-b095-6fd8aca1c987@huawei.com>
+ <ZtbERGm8CJsOwx73@tiehlicka>
+ <ed533d8b-40b7-447f-8453-e03b291340fa@huawei.com>
+ <ZtgMHFQ4NwdvL7_e@tiehlicka>
+ <26e53efe-7a54-499a-8d3f-345d29d90348@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26e53efe-7a54-499a-8d3f-345d29d90348@huawei.com>
 
-On 03.09.24 13:48, Danilo Krummrich wrote:
-> On Fri, Aug 30, 2024 at 02:45:35PM +0000, Benno Lossin wrote:
->> On 30.08.24 00:04, Danilo Krummrich wrote:
->>> On Thu, Aug 29, 2024 at 06:32:42PM +0000, Benno Lossin wrote:
->>>> On 16.08.24 02:10, Danilo Krummrich wrote:
->>>>> +///
->>>>> +/// For more details see [self].
->>>>> +pub struct Kmalloc;
->>>>>
->>>>>  /// Returns a proper size to alloc a new object aligned to `new_layo=
-ut`'s alignment.
->>>>>  fn aligned_size(new_layout: Layout) -> usize {
->>>>> @@ -36,6 +52,60 @@ pub(crate) unsafe fn krealloc_aligned(ptr: *mut u8=
-, new_layout: Layout, flags: F
->>>>>      unsafe { bindings::krealloc(ptr as *const core::ffi::c_void, siz=
-e, flags.0) as *mut u8 }
->>>>>  }
->>>>>
->>>>> +/// # Invariants
->>>>> +///
->>>>> +/// One of the following `krealloc`, `vrealloc`, `kvrealloc`.
->>>>> +struct ReallocFunc(
->>>>> +    unsafe extern "C" fn(*const core::ffi::c_void, usize, u32) -> *m=
-ut core::ffi::c_void,
->>>>> +);
->>>>> +
->>>>> +impl ReallocFunc {
->>>>> +    // INVARIANT: `krealloc` satisfies the type invariants.
->>>>> +    const KREALLOC: Self =3D Self(bindings::krealloc);
->>>>> +
->>>>> +    /// # Safety
->>>>> +    ///
->>>>> +    /// This method has the same safety requirements as [`Allocator:=
-:realloc`].
->>>>> +    unsafe fn call(
->>>>> +        &self,
->>>>> +        ptr: Option<NonNull<u8>>,
->>>>> +        layout: Layout,
->>>>> +        flags: Flags,
->>>>> +    ) -> Result<NonNull<[u8]>, AllocError> {
->>>>> +        let size =3D aligned_size(layout);
->>>>> +        let ptr =3D match ptr {
->>>>> +            Some(ptr) =3D> ptr.as_ptr(),
->>>>> +            None =3D> ptr::null(),
->>>>> +        };
->>>>> +
->>>>> +        // SAFETY: `ptr` is either NULL or valid by the safety requi=
-rements of this function.
->>>>
->>>> You need some justification as to why calling the three allowed
->>>> functions here.
->>>
->>> What kind of justification do I need? Can you please share some more de=
-tails on
->>> what you think is missing here?
->>
->> So, you are calling a function pointer to an `unsafe` function. This
->> means that through some invariant you have to know what the safety
->> requirements are (otherwise how can you guarantee that this is OK?). You
->> have the invariant that the pointer points at one of the three functions
->> mentioned above. What are the safety requirements of those functions? I
->> would assume that the only one is that `ptr` is valid. So you can use:
->>
->>     // SAFETY:
->>     // - `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc` and thus=
- only requires that `ptr` is
->>     //   NULL or valid.
->=20
-> I'm fine adding it, but I'd like to understand why you think it's require=
-d in
-> the safety comment here? Isn't this implicit by being the type invariant?
+On Tue 10-09-24 20:11:36, mawupeng wrote:
+> 
+> 
+> On 2024/9/4 15:28, Michal Hocko wrote:
+> > On Wed 04-09-24 14:49:20, mawupeng wrote:
+[...]
+> >> Current the problem is amount the pcp, which can increase to 4.6%(24644M)
+> >> of the total 512G memory.
+> > 
+> > Why is that a problem? 
+> 
+> MemAvailable
+>               An estimate of how much memory is available for starting new
+>               applications, without swapping. Calculated from MemFree,
+>               SReclaimable, the size of the file LRU lists, and the low
+>               watermarks in each zone.
+> 
+> The PCP memory is essentially available memory and will be reclaimed before OOM.
+> In essence, it is not fundamentally different from reclaiming file pages, as both
+> are reclaimed within __alloc_pages_direct_reclaim.
 
-You are calling a function pointer to an `unsafe` function that takes a
-raw pointer. Without this comment it is not clear what the function
-pointer's safety requirements are for the raw pointer parameter.
+It is not _fundamentally_ different but the reclaim trigger bar is
+different (much higher). You might get into swapping while still keeping
+pcp cache available for example.
 
->>     // - `ptr` is either NULL or valid by the safety requirements of thi=
-s function.
->=20
-> This is the part I already have.
-
-I kept it to ensure that you also keep it.
-
->>>>> +        let raw_ptr =3D unsafe {
->>>>> +            // If `size =3D=3D 0` and `ptr !=3D NULL` the memory beh=
-ind the pointer is freed.
->>>>> +            self.0(ptr.cast(), size, flags.0).cast()
->>>>> +        };
->>>>> +
->>>>> +        let ptr =3D if size =3D=3D 0 {
->>>>> +            NonNull::dangling()
->>>>> +        } else {
->>>>> +            NonNull::new(raw_ptr).ok_or(AllocError)?
->>>>> +        };
->>>>> +
->>>>> +        Ok(NonNull::slice_from_raw_parts(ptr, size))
->>>>> +    }
->>>>> +}
->>>>> +
->>>>> +unsafe impl Allocator for Kmalloc {
->>>>
->>>> Missing SAFETY comment.
->>>
->>> Yeah, I think we came across this in an earlier version of the series. =
-I asked
->>> you about the content and usefulness of a comment here, since I'd just =
-end up
->>> re-iterating what the `Allocator` trait documentation says.
->>>
->>> IIRC, you replied that you want to think of something that'd make sense=
- to add
->>> here.
->>
->> Oh yeah, sorry I forgot about that.
->>
->>> What do you think should be written here?
->>
->> I think the best way to do it, would be to push this question down into
->> `ReallocFunc::call`. So we would put this on the trait:
->>
->>     // SAFETY: `realloc` delegates to `ReallocFunc::call`, which guarant=
-ees that
->>     // - memory remains valid until it is explicitly freed,
->>     // - passing a pointer to a vaild memory allocation is OK,
->>     // - `realloc` satisfies the guarantees, since `ReallocFunc::call` h=
-as the same.
->=20
-> So, we'd also need the same for:
->   - `unsafe impl Allocator for Vmalloc`
->   - `unsafe impl Allocator for KVmalloc`
-
-Yes.
-
->> We then need to put this on `ReallocFunc::call`:
->>
->>     /// # Guarantees
->>     ///
->>     /// This method has the same guarantees as `Allocator::realloc`. Add=
-itionally
->>     /// - it accepts any pointer to a valid memory allocation allocated =
-by this function.
->=20
-> You propose this, since for `Allocator::realloc` memory allocated with
-> `Allocator::alloc` would be fine too I guess.
->=20
-> But if e.g. `Kmalloc` wouldn't use the default `Allocator::alloc`, this w=
-ould be
-> valid too.
-
-So if `Kmalloc` were to implement `alloc` by not calling
-`ReallocFun::call`, then we couldn't use this comment. Do you think that
-such a change might be required at some point?
-
-> We could instead write something like:
->=20
-> "it accepts any pointer to a valid memory allocation allocated with the s=
-ame
-> kernel allocator."
-
-It would be better, if we can keep it simpler (ie only `realloc` is
-implemented).
-
->>     /// - memory allocated by this function remains valid until it is pa=
-ssed to this function.
->=20
-> Same here, `Kmalloc` could implement its own `Allocator::free`.
->=20
-> Maybe just "...until it is explicitly freed.".
-
-I don't really like that, since by that any other function could be
-meant. Do you need to override the `free` function? If not then it would
-be better.
-
-> Anyway, I'm fine with both, since non of the kernel allocators uses anyth=
-ing
-> else than `ReallocFunc::call` to allocate and free memory.
->=20
->>
->> Finally, we need a `GUARANTEE` comment (just above the return [^1]
->> value) that establishes these guarantees:
->>
->>     // GUARANTEE: Since we called `self.0` with `size` above and by the =
-type invariants of `Self`,
->>     // `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc`. Those fun=
-ctions provide the guarantees of
->>     // this function.
->>
->> I am not really happy with the last sentence, but I also don't think
->> that there is value in listing out all the guarantees, only to then say
->> "all of this is guaranteed by us calling one of these three functions.
->>
->>
->> [^1]: I am not sure that there is the right place. If you have any
->>       suggestions, feel free to share them.
->=20
-> Either way, I'm fine with this proposal.
->=20
->>
->>
->>>>> +    #[inline]
->>>>> +    unsafe fn realloc(
->>>>> +        ptr: Option<NonNull<u8>>,
->>>>> +        layout: Layout,
->>>>> +        flags: Flags,
->>>>> +    ) -> Result<NonNull<[u8]>, AllocError> {
->>>>> +        // SAFETY: `ReallocFunc::call` has the same safety requireme=
-nts as `Allocator::realloc`.
->>>>> +        unsafe { ReallocFunc::KREALLOC.call(ptr, layout, flags) }
->>>>> +    }
->>>>> +}
->>
->> Oh one more thing, I know that you already have a lot of patches in this
->> series, but could you split this one into two? So the first one should
->> introduce `ReallocFunc` and the second one add the impl for `Kmalloc`?
->> I managed to confuse me twice because of that :)
->=20
-> Generally, I'm fine with that, but I'm not sure if I can avoid an interme=
-diate
-> compiler warning about unused code doing that.
-
-You can just use `#[expect(dead_code)]` for that in the intermediate
-patches.
-
----
-Cheers,
-Benno
-
+MemAvailable has been an estimate. Time has proven not a great one as
+it is hard to set expectations around that. You are focusing on pcp
+caches but there others that might are not covered (e.g. networking
+stack can do a lot of caching on its own). MemAvailable will never be
+perfect and if you are hitting limits of its usefulness I would
+recommend finding a different way to achieve your goals (which are still
+not really clear to me TBH). 
+-- 
+Michal Hocko
+SUSE Labs
 
