@@ -1,376 +1,273 @@
-Return-Path: <linux-kernel+bounces-323629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A649740E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:43:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 409E49740E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 623111F22BF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:43:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B63721F22DF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FF91A7AD0;
-	Tue, 10 Sep 2024 17:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738A91A2C38;
+	Tue, 10 Sep 2024 17:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJpvi9On"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XP/8b/gd"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C328F1A38D4;
-	Tue, 10 Sep 2024 17:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB31A192D98
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725990053; cv=none; b=LwBdUv+0DHnJuoiPKL7v3gFfzjcOCfZVDFz82zgDPjQA3muvLjP9keq3kSwECCGjxqJtaWA/1X5Egkv8yuMgJxjJWpPZF3mC+ZE7/Aem3LLwQY3/N3VEo0SqCong64IF5SzGXxK2wPzl6V7syNWuMB8DtcrwKa4XlG59oeFmvvA=
+	t=1725990096; cv=none; b=C3Lm6JJriSwTPDbyqzQecAPmu5HURQ6cC5/xQr2/6MQMHMzEuVyh6uaEgsLv6xaH90a31xCtuNW6z+pvpCc6y6GyfsDNdiS8SnRWzfeBV4qqwARmnGe1oP13RUXaBRRGg7IGC8bGuMwwVGxQjSxE7IdLtBWspvis6pumpw5/aU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725990053; c=relaxed/simple;
-	bh=sMaXYdfbLEdc5LCVMNz0SSbctxSq28mn5Ng5vutS7JY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RHtdS0/MJCPd7FaSyIXEGVorYg2NKMWzldK4edUyhZrhJ5GIVXyuASGgU4hITt91X+SoR8w0z4NhqgQIlfqooGcUqrNJN20qLwL1++w+0oAsz+bMFePT8+5t9ncfBVaYc9LoC9jbAeQnwISEbkh12qx8qCwUuH1jE4uJefTBVkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJpvi9On; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8338BC4CECC;
-	Tue, 10 Sep 2024 17:40:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725990053;
-	bh=sMaXYdfbLEdc5LCVMNz0SSbctxSq28mn5Ng5vutS7JY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UJpvi9OnRBgXfwxDXjYXMxDeXhGTfNaQYfGeoQHfQZj5gPQa20Yxoo04D9gQDMSym
-	 B1AJavkFZDFmYMZLzEQhOiJMnjAYqvlCQBqjZ91mydn84SJ9OY/YNsPdzamo7YY6cE
-	 YCH7HHcDXrcr9AW40s3EPCS421gjZEM2Vbt93BGfnqUz164miq0zv46UI0ESjkqY1f
-	 ilPucW/cuVTKFHqB3VYJ4wSTelHOH3Brt+WXJXSsYDEGJd8uLKtZvtVHLxHc6g+dm9
-	 5ZS+bP9UIbOHptxEJ3iuO0Fi7KlpcvkclBXqYlQYerYpZLZnE+7DLgxx4BE0vWSkQm
-	 plGjsUXByXDrA==
-Date: Tue, 10 Sep 2024 19:40:45 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 09/26] rust: alloc: implement kernel `Box`
-Message-ID: <ZuCEneJeXcRo5qs8@pollux>
-References: <20240816001216.26575-1-dakr@kernel.org>
- <20240816001216.26575-10-dakr@kernel.org>
- <0146cb78-5a35-4d6b-bc75-fed1fc0c270c@proton.me>
+	s=arc-20240116; t=1725990096; c=relaxed/simple;
+	bh=dEHostxgrUQTfxhASbmMT98RPp6Eme+25p7K7TP/C9M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oFA5MeSytry94ohuA88i8Pg7jY3Q1bLe2l2EaUR5yvGYFxDcuf8JlfgE4/HXLnyI98n8G4/l0+FaV/E0KxfGDOXn8ROw3Phrn1iXjEz11SWXAYmBnToXaqb2Wc52BDtazicJcHivCKV/eoGQcGowTuiyBHMh0eBPTFnr42Xgz3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XP/8b/gd; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53661d95508so30367e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:41:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725990093; x=1726594893; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qRvd6+FNEyRgwBjwqh7XCajCi24Jftv3RTG3UBcZB0o=;
+        b=XP/8b/gdr9qyo119ZJd7yZQOxAJT1E6z9FItz4twBeIUGLqO68bMMc21dL3ASCpeVy
+         WkZyVoFABON0GfrgU1ZI9rNq72Pb/Cn/Rm511gPQQhPbHnhCyNYfocwJfJU3SvNsn13C
+         sGprounW+ls1TeBXa5pWi41oB+9zpGpKdASGaaQ14R6b2IW27gulGVlMJCuKb4JGqLxA
+         pvRfCEpa4B48Bx9ctEmPk6TMnpmfTrnmzE2MwPtCCb0Y+aPmhRWnRodDJrnmnfasK6Jl
+         Mwt5ytXYNGtPQ5HNKwRqgKdkN/8YdF4w9JWivzrc73xnjtYRYFjQv++rrgvp/wyqZONA
+         WwQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725990093; x=1726594893;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qRvd6+FNEyRgwBjwqh7XCajCi24Jftv3RTG3UBcZB0o=;
+        b=n+5jpkfLw6oQP4Gijmd1p+Cun3Dj988FZMgVhjnvU7GD+illRyvYdY+Tsb15KXnpZy
+         aKmmYFrFybjNwA7/cQiFHCPIleVrycW6V7FVMgE9iDs+fZtkugn/yZupDoQbdpyecvBK
+         48PHdA4u5maXgSS+k83YfBwGVrMv5hay1kzvz2e1eoSUb0CovwVAuuY2O9njPAZiAjxZ
+         oJ9CmxHMgYtjnFNnDar3n7DI+4J2DMU21SkjZjGv7ehIb8cV55Zri3YUhLxE30hdzMN3
+         O+RL15NoYtvtXYibaMQ5T/OEMal0iIZ+qlG6BtsC5EfyTY9IUP8MT4XVjk2K8W/F/k97
+         kVAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVm2W6cT6eJW42o+vZnhe4zHN7uozrJ40s1V9OJHd4GK3sqwFWbaWGV+0PVKOyer2pQB+EnZc1+1kJtz74=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+Dg2EOELOQ+ItH1NSgNmF0AZvaxyLRkmm2MzXQoO0aLw0fhFw
+	fjRTvUS59FT2DSjzcqasLvR/JBbLGVrOkstk+DCmBF7BF983C4T41Zqi6P/sHO+I3R0aLJDaFkA
+	Ig7BW8ITlRqE3m2MEi3BaoUXxWTgDlzvEPPGY
+X-Google-Smtp-Source: AGHT+IGmqjEsD+ZSK7Kq99lDy9iP1P9BexIFvYcppz62nH2Sql+mSbRPQjG2dYpHE6+f8ABvXv/fJnLDamZfLogRKw8=
+X-Received: by 2002:a05:6512:b85:b0:535:68b2:9589 with SMTP id
+ 2adb3069b0e04-5367431fdeemr16812e87.2.1725990092431; Tue, 10 Sep 2024
+ 10:41:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0146cb78-5a35-4d6b-bc75-fed1fc0c270c@proton.me>
+References: <20240828181011.1591242-1-namangulati@google.com>
+ <ZtBQLqqMrpCLBMw1@LQ3V64L9R2> <CAMP57yW99Y+CS+h_bayj_hBfoGQE+bdfVHuwfHZ3q+KueTS+iw@mail.gmail.com>
+ <30ddb66a-aeea-480d-bf79-38fc06ea45b0@uwaterloo.ca>
+In-Reply-To: <30ddb66a-aeea-480d-bf79-38fc06ea45b0@uwaterloo.ca>
+From: Naman Gulati <namangulati@google.com>
+Date: Tue, 10 Sep 2024 10:41:21 -0700
+Message-ID: <CAMP57yWQGKnHcn3gkPvz1bvPO=+VTvyMJ5OHZpp=WYX=CBhZvA@mail.gmail.com>
+Subject: Re: [PATCH] Add provision to busyloop for events in ep_poll.
+To: Martin Karsten <mkarsten@uwaterloo.ca>
+Cc: Joe Damato <jdamato@fastly.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org, 
+	Stanislav Fomichev <sdf@fomichev.me>, linux-kernel@vger.kernel.org, skhawaja@google.com, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 31, 2024 at 05:39:07AM +0000, Benno Lossin wrote:
-> On 16.08.24 02:10, Danilo Krummrich wrote:
-> > diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
-> > new file mode 100644
-> > index 000000000000..93b1ab9de6e8
-> > --- /dev/null
-> > +++ b/rust/kernel/alloc/kbox.rs
-> > @@ -0,0 +1,480 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +//! Implementation of [`Box`].
-> > +
-> > +#[allow(unused_imports)] // Used in doc comments.
-> > +use super::allocator::{KVmalloc, Kmalloc, Vmalloc};
-> > +use super::{AllocError, Allocator, Flags};
-> > +use core::fmt;
-> > +use core::marker::PhantomData;
-> > +use core::mem::ManuallyDrop;
-> > +use core::mem::MaybeUninit;
-> > +use core::ops::{Deref, DerefMut};
-> > +use core::pin::Pin;
-> > +use core::ptr::NonNull;
-> > +use core::result::Result;
-> > +
-> > +use crate::init::{InPlaceInit, InPlaceWrite, Init, PinInit};
-> > +use crate::types::ForeignOwnable;
-> > +
-> > +/// The kernel's [`Box`] type - a heap allocation for a single value of type `T`.
-> 
-> A single `-` doesn't really render nicely in markdown, instead use a
-> double or triple dash (`--` or `---`).
-> 
-> > +///
-> > +/// This is the kernel's version of the Rust stdlib's `Box`. There are several of differences,
-> > +/// for example no `noalias` attribute is emitted and partially moving out of a `Box` is not
-> > +/// supported. There are also several API differences, e.g. `Box` always requires an [`Allocator`]
-> > +/// implementation to be passed as generic, page [`Flags`] when allocating memory and all functions
-> > +/// that may allocate memory are failable.
-> 
-> Do you mean fallible?
-> 
-> > +///
-> > +/// `Box` works with any of the kernel's allocators, e.g. [`Kmalloc`], [`Vmalloc`] or [`KVmalloc`].
-> > +/// There are aliases for `Box` with these allocators ([`KBox`], [`VBox`], [`KVBox`]).
-> > +///
-> > +/// When dropping a [`Box`], the value is also dropped and the heap memory is automatically freed.
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// let b = KBox::<u64>::new(24_u64, GFP_KERNEL)?;
-> > +///
-> > +/// assert_eq!(*b, 24_u64);
-> > +/// # Ok::<(), Error>(())
-> > +/// ```
-> > +///
-> > +/// ```
-> > +/// # use kernel::bindings;
-> > +/// const SIZE: usize = bindings::KMALLOC_MAX_SIZE as usize + 1;
-> > +/// struct Huge([u8; SIZE]);
-> > +///
-> > +/// assert!(KBox::<Huge>::new_uninit(GFP_KERNEL | __GFP_NOWARN).is_err());
-> > +/// ```
-> 
-> It would be nice if you could add something like "KBox can't handle big
-> allocations:" above this example, so that people aren't confused why
-> this example expects an error.
+On Wed, Sep 4, 2024 at 5:46=E2=80=AFAM Martin Karsten <mkarsten@uwaterloo.c=
+a> wrote:
+>
+> On 2024-09-04 01:52, Naman Gulati wrote:
+> > Thanks all for the comments and apologies for the delay in replying.
+> > Stan and Joe I=E2=80=99ve addressed some of the common concerns below.
+> >
+> > On Thu, Aug 29, 2024 at 3:40=E2=80=AFAM Joe Damato <jdamato@fastly.com>=
+ wrote:
+> >>
+> >> On Wed, Aug 28, 2024 at 06:10:11PM +0000, Naman Gulati wrote:
+> >>> NAPI busypolling in ep_busy_loop loops on napi_poll and checks for ne=
+w
+> >>> epoll events after every napi poll. Checking just for epoll events in=
+ a
+> >>> tight loop in the kernel context delivers latency gains to applicatio=
+ns
+> >>> that are not interested in napi busypolling with epoll.
+> >>>
+> >>> This patch adds an option to loop just for new events inside
+> >>> ep_busy_loop, guarded by the EPIOCSPARAMS ioctl that controls epoll n=
+api
+> >>> busypolling.
+> >>
+> >> This makes an API change, so I think that linux-api@vger.kernel.org
+> >> needs to be CC'd ?
+> >>
+> >>> A comparison with neper tcp_rr shows that busylooping for events in
+> >>> epoll_wait boosted throughput by ~3-7% and reduced median latency by
+> >>> ~10%.
+> >>>
+> >>> To demonstrate the latency and throughput improvements, a comparison =
+was
+> >>> made of neper tcp_rr running with:
+> >>>      1. (baseline) No busylooping
+> >>
+> >> Is there NAPI-based steering to threads via SO_INCOMING_NAPI_ID in
+> >> this case? More details, please, on locality. If there is no
+> >> NAPI-based flow steering in this case, perhaps the improvements you
+> >> are seeing are a result of both syscall overhead avoidance and data
+> >> locality?
+> >>
+> >
+> > The benchmarks were run with no NAPI steering.
+> >
+> > Regarding syscall overhead, I reproduced the above experiment with
+> > mitigations=3Doff
+> > and found similar results as above. Pointing to the fact that the
+> > above gains are
+> > materialized from more than just avoiding syscall overhead.
+>
+> I suppose the natural follow-up questions are:
+>
+> 1) Where do the gains come from? and
+>
+> 2) Would they materialize with a realistic application?
+>
+> System calls have some overhead even with mitigations=3Doff. In fact I
+> understand on modern CPUs security mitigations are not that expensive to
+> begin with? In a micro-benchmark that does nothing else but bouncing
+> packets back and forth, this overhead might look more significant than
+> in a realistic application?
+>
+> It seems your change does not eliminate any processing from each
+> packet's path, but instead eliminates processing in between packet
+> arrivals? This might lead to a small latency improvement, which might
+> turn into a small throughput improvement in these micro-benchmarks, but
+> that might quickly evaporate when an application has actual work to do
+> in between packet arrivals.
 
-I don't think that's needed, it's implied by
-`SIZE == bindings::KMALLOC_MAX_SIZE + 1`.
+This is a good point, and I was able to confirm this. I profiled the
+changes in the
+patch by fixing the number of threads and flows but scaling message sizes w=
+ith
+tcp_rr, using the notion that creating and processing large messages in tcp=
+_rr
+would take more time. As the message size increases from 1 B to MSS (4KB
+in my setup), I found that the difference in latency and throughput diminis=
+hes
+between looping inside epoll vs looping on nonblocking epoll_wait in usersp=
+ace.
 
-Surely, we could add it nevertheless, but it's not very precise to just say "big
-allocations". And I think this isn't the place for lengthy explanations of
-`Kmalloc` behavior.
+Understandably, as the message sizes increase the application becomes the
+bottleneck and the syscall overhead becomes marginal to the whole cost of t=
+he
+operation.
 
-> 
-> > +///
-> > +/// ```
-> > +/// # use kernel::bindings;
-> > +/// const SIZE: usize = bindings::KMALLOC_MAX_SIZE as usize + 1;
-> > +/// struct Huge([u8; SIZE]);
-> > +///
-> > +/// assert!(KVBox::<Huge>::new_uninit(GFP_KERNEL).is_ok());
-> > +/// ```
-> 
-> Similarly, you could then say above this one "Instead use either `VBox`
-> or `KVBox`:"
-> 
-> > +///
-> > +/// # Invariants
-> > +///
-> > +/// The [`Box`]' pointer is always properly aligned and either points to memory allocated with `A`
-> 
-> Please use `self.0` instead of "[`Box`]'".
-> 
-> > +/// or, for zero-sized types, is a dangling pointer.
-> 
-> Probably "dangling, well aligned pointer.".
+I also found that looping inside epoll yields latency and throughput
+improvements again when message sizes increase past MSS. I believe this can
+be rationalized as the cost of processing the packet in the application is =
+then
+amortized over the multiple transmitted segments and the system call overhe=
+ad
+becomes more prominent again.
 
-Does this add any value? For ZSTs everything is "well aligned", isn't it?
+This is some rough data showing the above
+Setup: 5 threads on both client and server, 30 flows, mitigations=3Doff,
+both server
+and client using the same request/response size
 
-> 
-> > +#[repr(transparent)]
-> > +pub struct Box<T: ?Sized, A: Allocator>(NonNull<T>, PhantomData<A>);
-> > +
-> > +/// Type alias for `Box` with a [`Kmalloc`] allocator.
-> 
-> Can you make these `Box` references links?
-> 
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// let b = KBox::new(24_u64, GFP_KERNEL)?;
-> > +///
-> > +/// assert_eq!(*b, 24_u64);
-> > +/// # Ok::<(), Error>(())
-> > +/// ```
-> > +pub type KBox<T> = Box<T, super::allocator::Kmalloc>;
-> > +
-> > +/// Type alias for `Box` with a [`Vmalloc`] allocator.
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// let b = VBox::new(24_u64, GFP_KERNEL)?;
-> > +///
-> > +/// assert_eq!(*b, 24_u64);
-> > +/// # Ok::<(), Error>(())
-> > +/// ```
-> > +pub type VBox<T> = Box<T, super::allocator::Vmalloc>;
-> > +
-> > +/// Type alias for `Box` with a [`KVmalloc`] allocator.
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// let b = KVBox::new(24_u64, GFP_KERNEL)?;
-> > +///
-> > +/// assert_eq!(*b, 24_u64);
-> > +/// # Ok::<(), Error>(())
-> > +/// ```
-> > +pub type KVBox<T> = Box<T, super::allocator::KVmalloc>;
-> > +
-> > +// SAFETY: `Box` is `Send` if `T` is `Send` because the `Box` owns a `T`.
-> > +unsafe impl<T, A> Send for Box<T, A>
-> > +where
-> > +    T: Send + ?Sized,
-> > +    A: Allocator,
-> > +{
-> > +}
-> > +
-> > +// SAFETY: `Box` is `Sync` if `T` is `Sync` because the `Box` owns a `T`.
-> > +unsafe impl<T, A> Sync for Box<T, A>
-> > +where
-> > +    T: Sync + ?Sized,
-> > +    A: Allocator,
-> > +{
-> > +}
-> > +
-> > +impl<T, A> Box<T, A>
-> > +where
-> > +    T: ?Sized,
-> > +    A: Allocator,
-> > +{
-> > +    /// Creates a new `Box<T, A>` from a raw pointer.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// For non-ZSTs, `raw` must point at an allocation allocated with `A`that is sufficiently
-> > +    /// aligned for and holds a valid `T`. The caller passes ownership of the allocation to the
-> > +    /// `Box`.
-> 
-> You don't say what must happen for ZSTs.
+Looping inside epoll:
+Message Size  Throughput  Latency P50  Latency P90  Latency P99  Latency P9=
+9.9
+ 1 B                   543971         57                 76
+      93                  106
+ 250 B               501245         60                 77
+    97                  109
+ 500 B               494467         60                 77
+    93                  111
+ 1 KB                 486412         60                 77
+     97                  114
+ 2 KB                 385125         77                 96
+     114                123
+ 4 KB                 378612         78                 97
+     119                129
+ 8 KB                 349214         83                109
+    125                137
+ 16 KB               379276         156               202
+  243                274
+Looping in userspace:
+Message Size  Throughput  Latency P50  Latency P90  Latency P99  Latency P9=
+9.9
+ 1 B                   496296         59                 76
+      95                   109
+ 250 B               468840         67                 77
+    97                   111
+ 500 B               476804         61                 78
+    97                   110
+ 1 KB                 464273         65                 79
+    100                  115
+ 2 KB                 388334         76                 97
+    114                  122
+ 4 KB                 377851         79                 98
+    118                  124
+ 8 KB                 333718         91                115
+   128                  141
+ 16 KB               354708         157               253
+ 307                  343
 
-Because we don't require anything for a ZST, do we?
+I also examined the perf traces for both looping setups and compared the
+overhead delta between the invocation of epoll_wait in glibc and the invoca=
+tion
+of do_epoll_wait in the kernel to measure just the overhead of calling the
+system call. With 1 B messages, looping in userspace had a higher overhead
+in CPU cycles for invoking the syscall compared to looping inside epoll, ho=
+wever
+the overhead gap also shrinks as the message sizes increase and the syscall
+overhead becomes increasingly marginal.
 
-> 
-> > +    #[inline]
-> > +    pub const unsafe fn from_raw(raw: *mut T) -> Self {
-> > +        // INVARIANT: Validity of `raw` is guaranteed by the safety preconditions of this function.
-> > +        // SAFETY: By the safety preconditions of this function, `raw` is not a NULL pointer.
-> > +        Self(unsafe { NonNull::new_unchecked(raw) }, PhantomData::<A>)
-> > +    }
-> > +
-> > +    /// Consumes the `Box<T, A>` and returns a raw pointer.
-> > +    ///
-> > +    /// This will not run the destructor of `T` and for non-ZSTs the allocation will stay alive
-> > +    /// indefinitely. Use [`Box::from_raw`] to recover the [`Box`], drop the value and free the
-> > +    /// allocation, if any.
-> > +    ///
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let x = KBox::new(24, GFP_KERNEL)?;
-> > +    /// let ptr = KBox::into_raw(x);
-> > +    /// let x = unsafe { KBox::from_raw(ptr) };
-> > +    ///
-> > +    /// assert_eq!(*x, 24);
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    #[inline]
-> > +    pub fn into_raw(b: Self) -> *mut T {
-> > +        let b = ManuallyDrop::new(b);
-> > +
-> > +        b.0.as_ptr()
-> > +    }
-> > +
-> > +    /// Consumes and leaks the `Box<T, A>` and returns a mutable reference.
-> > +    ///
-> > +    /// See [Box::into_raw] for more details.
-> > +    #[inline]
-> > +    pub fn leak<'a>(b: Self) -> &'a mut T {
-> > +        // SAFETY: `Box::into_raw` always returns a properly aligned and dereferenceable pointer
-> > +        // which points to an initialized instance of `T`.
-> > +        unsafe { &mut *Box::into_raw(b) }
-> > +    }
-> > +}
-> > +
-> > +impl<T, A> Box<MaybeUninit<T>, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    /// Converts a `Box<MaybeUninit<T>, A>` to a `Box<T, A>`.
-> > +    ///
-> > +    /// It is undefined behavior to call this function while the value inside of `b` is not yet
-> > +    /// fully initialized.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// Callers must ensure that the value inside of `b` is in an initialized state.
-> > +    pub unsafe fn assume_init(b: Self) -> Box<T, A> {
-> > +        let raw = Self::into_raw(b);
-> > +
-> > +        // SAFETY: `raw` comes from a previous call to `Box::into_raw`. By the safety requirements
-> > +        // of this function, the value inside the `Box` is in an initialized state. Hence, it is
-> > +        // safe to reconstruct the `Box` as `Box<T, A>`.
-> > +        unsafe { Box::from_raw(raw as *mut T) }
-> 
-> You should be able to use `.cast()` instead.
-> 
-> > +    }
-> > +
-> > +    /// Writes the value and converts to `Box<T, A>`.
-> > +    pub fn write(mut b: Self, value: T) -> Box<T, A> {
-> > +        (*b).write(value);
-> > +        // SAFETY: We've just initialized `boxed`'s value.
-> 
-> The variable is called `b`.
-> 
-> > +        unsafe { Self::assume_init(b) }
-> > +    }
-> > +}
-> 
-> [...]
-> 
-> > +impl<T, A> Drop for Box<T, A>
-> > +where
-> > +    T: ?Sized,
-> > +    A: Allocator,
-> > +{
-> > +    fn drop(&mut self) {
-> > +        let size = core::mem::size_of_val::<T>(self);
-> > +
-> > +        // SAFETY: We need to drop `self.0` in place, before we free the backing memory.
-> 
-> This is the reason you are calling this function, not the justification
-> why it is OK to do so. (the pointer is valid)
-> 
-> > +        unsafe { core::ptr::drop_in_place(self.0.as_ptr()) };
-> 
-> Instead of using the raw pointer directly, you can also just use
-> `deref_mut`.
-> 
-> > +
-> > +        if size != 0 {
-> > +            // SAFETY: `ptr` was previously allocated with `A`.
-> 
-> There is no variable `ptr`, this is guaranteed by the type invariant of
-> `Self`.
-> 
-> ---
-> Cheers,
-> Benno
-> 
-> > +            unsafe { A::free(self.0.cast()) };
-> > +        }
-> > +    }
-> > +}
-> > diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-> > index 4571daec0961..a9210634a8c3 100644
-> > --- a/rust/kernel/prelude.rs
-> > +++ b/rust/kernel/prelude.rs
-> > @@ -14,7 +14,7 @@
-> >  #[doc(no_inline)]
-> >  pub use core::pin::Pin;
-> > 
-> > -pub use crate::alloc::{box_ext::BoxExt, flags::*, vec_ext::VecExt};
-> > +pub use crate::alloc::{box_ext::BoxExt, flags::*, vec_ext::VecExt, KBox, KVBox, VBox};
-> > 
-> >  #[doc(no_inline)]
-> >  pub use alloc::{boxed::Box, vec::Vec};
-> > --
-> > 2.46.0
-> > 
-> 
+I believe testing with a benchmark like memcached and using napi steering
+would confirm the same results, and I recognize now that most regular workl=
+oads
+won=E2=80=99t benefit from this patch.
+
+>
+> It would be good to know a little more about your experiments. You are
+> referring to 5 threads, but does that mean 5 cores were busy on both
+> client and server during the experiment? Which of client or server is
+> the bottleneck? In your baseline experiment, are all 5 server cores
+> busy? How many RX queues are in play and how is interrupt routing
+> configured?
+
+Apologies, should have been clearer in the description. The server and clie=
+nt
+were both using 5 threads to handle the connections without any CPU pinning=
+.
+I did however confirm that all threads used distinct cores from
+scheduling traces
+and there was no contention.
+Both hosts had 32 queues with a napi instance per queue.
+
+>
+> Thanks,
+> Martin
+>
+>
+
+Given the above analysis it doesn=E2=80=99t make sense adding the extra kno=
+bs to the
+epoll interface for an optimization that's not widely applicable, therefore=
+ this
+patch can be considered as not needed.
+Nonetheless, appreciate the feedback Joe and Martin.
 
