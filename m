@@ -1,113 +1,199 @@
-Return-Path: <linux-kernel+bounces-323012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F5F597369E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:00:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A299736A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC1FF1F2668B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:00:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7A771C24AEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1650619309C;
-	Tue, 10 Sep 2024 11:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C461219049B;
+	Tue, 10 Sep 2024 11:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KmO2Ftk0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5rCjD7Cz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="meqtgCd8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4FF1925AC
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 11:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8815619007F;
+	Tue, 10 Sep 2024 11:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725969542; cv=none; b=RWPe4KFR5ZlfbK/G/gMAw2MlFB8IZbHRfLcmhob2LSiKSwwXoYyb/1J70gfyu+JAZ1ocCaEGtnfnSqRay/TMhUuxGF0mxrT4di07CQiGOq6a2FyoMX6t1mUNiiVJGyC8vwvSTyNaNpoFyhhebSAvax+xdus/S3/QH2XmMigoTqM=
+	t=1725969556; cv=none; b=g0pj//Equmm233EfZTvqvjI7o+sZ9bDMbFdJ5H6NLhuq31dbW3dRXxhxKnSMOCBlzUjK4+Ibc/i6F18QzPTNwK9JTAfpS8b4Mw+h5ug7sXeqWK6wccxt3euP7mRAgLiJKxhuUb21AcUT74gN/2tQ/GzbXCZcdXWIiYcab6vbHCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725969542; c=relaxed/simple;
-	bh=dV8YL0PDeFQD0l4KO4/Cvf2dYJxa1rOfjCFZoPH16KI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bcRUUJ9nw0/P197c+eL1LTSuJGbMGxoDLWw+0sjWVsiFnZnym5wtgpnqsJLWYLI6+2WyL9ZqlD/b9kjzsFYaydNR9IzhsZZzxa2FQ/E+nLOP711HJufnXlaNGr+5v3Nl70Q634xv5rSrm6VArFX1fba8ebuGRGxEkObt7fTvSA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KmO2Ftk0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5rCjD7Cz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725969538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZO5KdUh0cJs44TGMoULWjclaSe4RKodSz84OoZEGSHk=;
-	b=KmO2Ftk0/ulbxQwCzm1ryBhsczS047+ap09MCUd8ygbxQFsOf36fwmYvOkmrlTakj5IrKI
-	Q8O1iVmuTMEyVTcsIwzeVmm/wusUJDnpqeprYT8xILg+DPi+wsNJgw4/eRhZkOCZ3gOYPN
-	fCQWkA6Gn1h4XzhobFoWuOFLrOsQdELw+THdVg14VQYT1d8dH2TrQXIosvOdHD5qaMJfq9
-	eVejvLMOtAijU7JjCw6c/efVR0AGhsMV3cOf8ahiuSNT6HR7OeN15EbnCy/FJfzP3tEpnF
-	2zSH9PpF9JgernmBi0pocnZInGaRtA/v4lidcwIkO0k++SD9j9j4jGiYXZPIZg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725969538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZO5KdUh0cJs44TGMoULWjclaSe4RKodSz84OoZEGSHk=;
-	b=5rCjD7Cz81ccSUsKXFbfwlZDAOix13oFo5e18EJ1nJpW+CLiTVMScpaXfmNXQSJ1QhvSN9
-	BxS4oAcD/QJshqDw==
-To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH RFC] timekeeping: don't use seqcount loop in
- ktime_mono_to_any on 64-bit arch
-In-Reply-To: <20240910-mgtime-v1-1-35fb64bd0af5@kernel.org>
-References: <20240910-mgtime-v1-1-35fb64bd0af5@kernel.org>
-Date: Tue, 10 Sep 2024 13:58:58 +0200
-Message-ID: <878qvzbtz1.ffs@tglx>
+	s=arc-20240116; t=1725969556; c=relaxed/simple;
+	bh=h4ChVf/sIAKwdyEF+eNO9Uwa4wM3FfIPgFRZrrTl8J4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GCieoy9TxiGaUteO4rJUSJdMAwQkUOw0MF0Skb4FtFPeZdZ+xt11YMr32yi7gUIIs1hcrQcEj02n4bl8xLRUqmWhLfooarqfH0PGvgQqVDup5ml+QZ+FN+G92MejrgiSOsmyeb0mlZaioDMk7jDfiOkuo2pQ901E/Vm2JXxTpe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=meqtgCd8; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725969555; x=1757505555;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=h4ChVf/sIAKwdyEF+eNO9Uwa4wM3FfIPgFRZrrTl8J4=;
+  b=meqtgCd89blcS79lKa+B8wbTwz5h//AvTNgk210bfZ0scxVFkPfYa9GZ
+   ZlhuQxluu0cnjhsUGwXrHJ5yo4SpD+96ghYVhrHCAKRULrz30DnC/cPnW
+   q7j6zTXm9vaTFzRvqrREO4n+0NHlvi/8+Wdf0D38fEfvH1jJRol5fLZMv
+   U0JPUgHN4jW0NPZxjnh7KTWSTb4tvtnpJk8CXkrZWS4VNlD4xnhf/DaLJ
+   1MSbqzdbHL+15TLVNhzq54bCqXdH9wASV1eFfdkznmIxmVunZfBKXfSQc
+   dWhIZMjPvSTByt1pHLvee9GoNUzCIfzZmOzT4DZjKyeKl8o4bzu1QQMAY
+   Q==;
+X-CSE-ConnectionGUID: YhhLmhOLQcGIDtcBf5ET1w==
+X-CSE-MsgGUID: 2pV/xoGrSTez8A4RIrf5AQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24853797"
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="24853797"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 04:59:14 -0700
+X-CSE-ConnectionGUID: s55Ld9X/So6BSlosQS6LZA==
+X-CSE-MsgGUID: l3h2D2F8RpeilQjq28C/WA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="71783276"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 04:59:11 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1snzWW-00000007BYR-45g2;
+	Tue, 10 Sep 2024 14:59:08 +0300
+Date: Tue, 10 Sep 2024 14:59:08 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Liu =?utf-8?B?S2ltcml2ZXIv5YiY6YeR5rKz?= <kimriver.liu@siengine.com>
+Cc: "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
+	"mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+	"jsd@semihalf.com" <jsd@semihalf.com>,
+	"andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8] i2c: designware: fix master is holding SCL low while
+ ENABLE bit is disabled
+Message-ID: <ZuA0jMCfGdyPR-T5@smile.fi.intel.com>
+References: <9d181a45f3edf92364c9e6b729638f0b3f2e7baa.1725946886.git.kimriver.liu@siengine.com>
+ <ZuALQVyTBFugG0Sw@smile.fi.intel.com>
+ <743187d2fde54a9ebf86d42e29eadfb4@siengine.com>
+ <ZuAjMmr7q4f8VJpA@smile.fi.intel.com>
+ <36e6d80999cf493f8a866fb013710682@siengine.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <36e6d80999cf493f8a866fb013710682@siengine.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Sep 10 2024 at 07:17, Jeff Layton wrote:
+On Tue, Sep 10, 2024 at 11:43:34AM +0000, Liu Kimriver/刘金河 wrote:
+> >-----Original Message-----
+> >From: Andy Shevchenko <andriy.shevchenko@linux.intel.com> 
+> >Sent: 2024年9月10日 18:45
+> >On Tue, Sep 10, 2024 at 09:38:53AM +0000, Liu Kimriver/刘金河 wrote:
+> >> >From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> >> >Sent: 2024年9月10日 17:03
+> >> >at 02:13:09PM +0800, Kimriver Liu wrote:
 
-Please describe functions with foo() and not foo. Also please refrain
-from using abbreviations. The 'arch' above is not really useful.
+...
 
-64-bit systems perhaps?
+> > >> +static bool i2c_dw_is_master_idling(struct dw_i2c_dev *dev)
+> >> 
+> >> >Sorry if I made a mistake, but again, looking at the usage you have 
+> >> >again negation here and there...
+> > 
+> >> >	i2c_dw_is_controller_active
+> >> 
+> >> > (note new terminology, dunno if it makes sense start using it in 
+> >> > function names, as we have more of them following old style)
+> >> 
+> >>  Last week , You suggested that I used this 
+> >> i2c_dw_is_master_idling(dev)
+> 
+> >Yes, sorry about that. I did maybe not clearly get how it is going to look like.
+> 
+> >> >> +{
+> >> >> +	u32 status;
+> >> >> +
+> >> >> +	regmap_read(dev->map, DW_IC_STATUS, &status);
+> >> >> +	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
+> >> >> +		return true;
+> >> 
+> >> 		return false;
+> >> 
+> >> >> +	return !regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
+> >> >> +			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
+> >> >> +			1100, 20000);
+> >> 
+> >> >...and drop !.
+> >> 
+> >>  We reproduce this issue in RTL simulation(About(~1:500) in our soc). 
+> >> It is necessary  to add waiting DW_IC_STATUS_MASTER_ACTIVITY idling 
+> >> before disabling I2C when  I2C transfer completed.  as described in 
+> >> the DesignWare  I2C databook(Flowchart for DW_apb_i2c Controller)
+> 
+> >Cool, but here I'm talking purely about inverting the logic (with renaming), nothing more.
+> 
+>  as described in the DesignWare I2C databook:
+>  DW_IC_STATUS[5].MST_ACTIVITY Description as follows:
+>  Controller FSM Activity Status. When the Controller Finite
+>  State Machine (FSM) is not in the IDLE state, this bit is set.
+>  Note: IC_STATUS[0]-that is, ACTIVITY bit-is the OR of
+>  SLV_ACTIVITY and MST_ACTIVITY bits.
+>  Values:
+>  ■ 0x1 (ACTIVE): Controller not idle
+>  ■ 0x0 (IDLE): Controller is idle
+> 
+> We need waiting DW_IC_STATUS.MST_ACTIVITY idling,
+> If Controller not idle, Wait for a while.
+> Return value: 
+>   false(0): Controller is idle
+>   timeout(-110): Controller activity
+> 
+> Ok, change the function name i2c_dw_is_master_idling(dev) to i2c_dw_is_controller_active(dev)
+> it seems more reasonable
+> 
+> static int i2c_dw_is_controller_ active(struct dw_i2c_dev *dev)
+> {
+> 	u32 status;
+> 
+> 	regmap_read(dev->map, DW_IC_STATUS, &status);
+> 	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
+> 		return false;
+> 
+> 	return regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
+> 			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
+> 			1100, 20000);
+> }
 
-> ktime_mono_to_any only fetches the offset inside the loop. This is a
-> single word on 64-bit arch, and seqcount_read_begin implies a full SMP
-> barrier. While we do want to use the latest offset value available, a
+Yes, thank you. This is pure readability wise, you may actually leave the above
+text as a comment on top of that helper. It will add a value of understanding
+what's behind the scenes.
 
-We do nothing.
+> >> >> +}
 
-> full seqcount loop is overkill on 64-bit, where there is no possibility
-> of torn reads. Just do a READ_ONCE for that and don't bother with the
-> seqcount.
+...
 
-don't bother is not really a technical term.
+> I will be off work, If there are still emails that I have not been replied
+> to, I will reply to your email immediately after going to work tomorrow.
 
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
+No problem. Just keep your time, proof-read and test the v9 before sending and
+I believe it will be the last iteration. Thank you for your patience and energy
+to push this change forward!
 
-> +#if BITS_PER_LONG == 64
-> +ktime_t ktime_mono_to_any(ktime_t tmono, enum tk_offsets offs)
-> +{
-> +	ktime_t *offset = offsets[offs];
-> +
-> +	return ktime_add(tmono, READ_ONCE(*offset));
+...
 
-Where is the corresponing WRITE_ONCE()?
+> Thanks you for your suggestion!
 
-> +}
-> +EXPORT_SYMBOL_GPL(ktime_mono_to_any);
-> +#else /* BITS_PER_LONG == 64 */
->  EXPORT_SYMBOL_GPL(ktime_mono_to_any);
-> +#endif /* BITS_PER_LONG == 64 */
+You are welcome!
 
-Why do we need this export twice?
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks,
 
-        tglx
 
