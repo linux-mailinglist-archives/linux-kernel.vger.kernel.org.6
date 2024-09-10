@@ -1,118 +1,111 @@
-Return-Path: <linux-kernel+bounces-323891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D635C9744B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:19:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EE19744B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D701C2161D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:19:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47BA1B25642
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499C31AB50D;
-	Tue, 10 Sep 2024 21:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BD31AB51A;
+	Tue, 10 Sep 2024 21:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMKQ4ivp"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J81oXUlp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8481A7AF1;
-	Tue, 10 Sep 2024 21:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26A823774;
+	Tue, 10 Sep 2024 21:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726003185; cv=none; b=KaHijv9ymeEUBJzf6iqfO7thHuYTwn8oqDvE2O9rFWZfwV8BjoVk6yu9y3rnP9gwTyh7/FeQYmeB6tOAN3vYT3YLZB13+JsNXUMocRyBmajFFTEkifVxKBHMwXZizxsngPhmSYJEcu0bkno1V5MYtJ7N3S3iVDjIFjRV7IyxdsY=
+	t=1726003159; cv=none; b=Lm+9Tad8aVIUBz1TrrWFSxPVitVmtzo3QTX7ZO3byWLj6kchtQ9pBtGWuuE9ewsMEp+WytyhUG7VRHNqgf1ASTKDQfEy9n6Elh18XG7bTnf9zUQIEzOzsH9nOeYy7LB34L9wvsaJCfbl4biGU5lpDLomhWTesNgP5rUdW7xu908=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726003185; c=relaxed/simple;
-	bh=E+xdl0TthoZACrhXIPsd5jvQdHV9M4f37aX3XmmA+3A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=suPofsG8hGbgVUC/K2wPHlggwmGeD5s3BWq+PzPTxkDHWSECeJnarFl50Hl15L976XFwVYiwP9DpvHYm5Mdf8YLrhgWaV5Jot/4aoVf0B7lXQjR+IZpOgvXoH8AqO4A+CKUCtLga/dt74VteWqSPivmUVzN3UmECKewyAXIIxHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mMKQ4ivp; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-717849c0dcaso5563994b3a.3;
-        Tue, 10 Sep 2024 14:19:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726003183; x=1726607983; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZrHbrbavD4EX4WQfLkuORJ8Fd32mNBv/SCJAPE1O1J0=;
-        b=mMKQ4ivpoDo0G/EPkJnYSdFJHAJCi9Px24gPi3ryiNCfELmseq3646OQJ0hcbW+oMb
-         9Jy7E7x/HU5HzXW/Z9Q6xf3ndgyzjWVhO/LwtOXLcendA9/gGOiUfw6wo1CnSS2DPA50
-         3+J60eBLbEFimrUuJI7RlQh9Bdl6bvG7J66QC5fAYw3SUX+AJiMXTbDrMN+WhULvozUc
-         vhDalSGUjvVSS874Xxc1/MtWu6qJi1yG0G1C9YSJsH4bbRj53UB0Q6o8mQqRI2H69DTB
-         eZpGWnZXWXP3Gc1sA7MNHre2ifSncYYXWuAkfsnWAY9RKuhnEizv9meqmcGWcrZupYaX
-         2M5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726003183; x=1726607983;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZrHbrbavD4EX4WQfLkuORJ8Fd32mNBv/SCJAPE1O1J0=;
-        b=DmpL1+GEOwl5AvLFbwvMjT3x3v2Wfb0y3nV4XJwjFodt+3eJWKo2RWvGT4O6783OHQ
-         MJEgD5aAH9R22YWJhhwyES/bw6POqCt7/xHfHv7QFDB6Ww/72OGtQXAjBE9gJMhGNzfS
-         aMw2bctMuAKpL8M092Rl4tMTgQ3tiOf8FWD+pOKYiL9wtYcjtlIZJJCU3BDZc2TCYPmk
-         ASg8fbFjIOOOUQrhFDUFbLVMV8hukXHWwKY+RECyjdU/HZgyS3UeGLvxrMOko2wYNGqg
-         mJKz8SjSLSHmJs2VYdH9Kst+7lqIXjxRsNkFoaswp1GKHDolxBt1iZD/47qEzXOZYA06
-         xIvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJpG1fptvyViXT3rFQTGmhWxUGVO8z+HGwy7xexwcsKPyK5qBCQz1qmRzMnAtK5pQK+f9SHMm4R0d/gydX@vger.kernel.org, AJvYcCX3YXAChrDEwPj0VNym+B89Fd0Jx4C2+Dh8Y3VeGJcMGlifB2FVm+4d1wTos/Moz+JTEsxFEsi5fG//I2J0gg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YybwoL1j6YIczFH7k0MSm7NCp9Qvd14qOhrgCfdBuFbJGYz0oFn
-	PpYRRNtGHSX9s1y6s/Da92ctovhnCtD5aKdgXKZpOVb28q1fGVQO
-X-Google-Smtp-Source: AGHT+IFuWqS6MHNrO9qAdx2DtxmyoU8z+Ui8i42PVeM5z86pkhLPu48dpbgS281r9Om+G0v3dy0qsg==
-X-Received: by 2002:a05:6a00:3e1a:b0:717:e01d:312f with SMTP id d2e1a72fcca58-718d5f67bf4mr14839114b3a.27.1726003183240;
-        Tue, 10 Sep 2024 14:19:43 -0700 (PDT)
-Received: from diogo-jahchan-ASUS-TUF-Gaming-A15-FA507RM-FA507RM.. ([200.4.98.1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090cbca6sm1774431b3a.197.2024.09.10.14.19.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 14:19:42 -0700 (PDT)
-From: Diogo Jahchan Koike <djahchankoike@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Diogo Jahchan Koike <djahchankoike@gmail.com>,
-	syzbot+1cecc37d87c4286e5543@syzkaller.appspotmail.com,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] bcachefs: return err ptr instead of null in read sb clean
-Date: Tue, 10 Sep 2024 18:18:34 -0300
-Message-ID: <20240910211912.96356-1-djahchankoike@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726003159; c=relaxed/simple;
+	bh=MPDj1SGwwOCMCVLZEATJhLlQx2eSypRL742ONHdEA9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tNu7qYB/GAZtr2G10taMxuiu2DQhHNqMU2g51/57tI57bPPz8jJF0Ybld1R7y2uHA4wMtYWJPx8bwLKa/Ad9VyVLLFzFYvyUM+EPx0nz5p/5PJreosHAglhJF9T/MsBhNvARYQS8ATp/WnMyTXGCkFTH9G3/j1tw93+hQb+rhPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J81oXUlp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CC8EC4CEC3;
+	Tue, 10 Sep 2024 21:19:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726003159;
+	bh=MPDj1SGwwOCMCVLZEATJhLlQx2eSypRL742ONHdEA9w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J81oXUlp4rb/gPRGW4izOxRdjVlQp3bOHkB3dcKqNO957k9Z3BCDe/Yh6x3c8roXh
+	 5wZnDE8UnoMDhlXxVgJUYWXCDKsOewChcLFzcjNbSKiLDATGLK33Z4zSTzfC1FFmRW
+	 K+EWsGyoOP6dqJbajljQSyelKKGlP9Xuwmoz/AE6R6cJnQQ8oLD8at1U6Us24sGrDO
+	 XC1NxKaRyUFis84fUDk7ylXlnzjTBlzizvQ6caS0Mqimw6pXoXjl8yW0Ed1mJ2ZrAV
+	 Pec5oJ9Dymsedw3pPwrmMhL2I2jxXapLVCGG+cpVHsuoajJJGSEVtZk6ZtBVQsLoiY
+	 dINUPvBxtge+Q==
+Date: Tue, 10 Sep 2024 11:19:18 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: josef@toxicpanda.com, axboe@kernel.dk, cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH for-6.12 2/2] blk-throttle: support prioritized
+ processing of metadata
+Message-ID: <ZuC31sqB6qUd_Gut@slm.duckdns.org>
+References: <20240903135149.271857-1-yukuai1@huaweicloud.com>
+ <20240903135149.271857-3-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903135149.271857-3-yukuai1@huaweicloud.com>
 
-syzbot reported a null-ptr-deref in bch2_fs_start. [0]
+On Tue, Sep 03, 2024 at 09:51:49PM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Currently, blk-throttle handle all IO fifo, hence if data IO is
+> throttled and then meta IO is dispatched, the meta IO will have to wait
+> for the data IO, causing priority inversion problems.
+> 
+> This patch support to handle metadata first and then pay debt while
+> throttling data.
+> 
+> Test script: use cgroup v1 to throttle root cgroup, then create new
+> dir and file while write back is throttled
+> 
+> test() {
+>   mkdir /mnt/test/xxx
+>   touch /mnt/test/xxx/1
+>   sync /mnt/test/xxx
+>   sync /mnt/test/xxx
+> }
+> 
+> mkfs.ext4 -F /dev/nvme0n1 -E lazy_itable_init=0,lazy_journal_init=0
+> mount /dev/nvme0n1 /mnt/test
+> 
+> echo "259:0 $((1024*1024))" > /sys/fs/cgroup/blkio/blkio.throttle.write_bps_device
+> dd if=/dev/zero of=/mnt/test/foo1 bs=16M count=1 conv=fdatasync status=none &
+> sleep 4
+> 
+> time test
+> echo "259:0 0" > /sys/fs/cgroup/blkio/blkio.throttle.write_bps_device
+> 
+> sleep 1
+> umount /dev/nvme0n1
+> 
+> Test result: time cost for creating new dir and file
+> before this patch:  14s
+> after this patch:   0.1s
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-When a sb is marked clear but doesn't have a clean section
-bch2_read_superblock_clean returns NULL which PTR_ERR_OR_ZERO
-lets through, eventually leading to a null ptr dereference down
-the line. Adjust read sb clean to return an ERR_PTR indicating the
-invalid clean section.
+This is a lot simpler than I expected. Great.
 
-[0] https://syzkaller.appspot.com/bug?extid=1cecc37d87c4286e5543
+ Acked-by: Tejun Heo <tj@kernel.org>
 
-Reported-by: syzbot+1cecc37d87c4286e5543@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=1cecc37d87c4286e5543
-Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
----
- fs/bcachefs/sb-clean.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks.
 
-diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
-index c57d42bb8d1b..025848a9c4c0 100644
---- a/fs/bcachefs/sb-clean.c
-+++ b/fs/bcachefs/sb-clean.c
-@@ -155,7 +155,7 @@ struct bch_sb_field_clean *bch2_read_superblock_clean(struct bch_fs *c)
- 		SET_BCH_SB_CLEAN(c->disk_sb.sb, false);
- 		c->sb.clean = false;
- 		mutex_unlock(&c->sb_lock);
--		return NULL;
-+		return ERR_PTR(-BCH_ERR_invalid_sb_clean);
- 	}
- 
- 	clean = kmemdup(sb_clean, vstruct_bytes(&sb_clean->field),
 -- 
-2.43.0
-
+tejun
 
