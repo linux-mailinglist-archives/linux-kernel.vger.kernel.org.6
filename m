@@ -1,262 +1,139 @@
-Return-Path: <linux-kernel+bounces-322478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2DD972969
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B4CE97296D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F8C01C23E45
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:19:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4D061C23CE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDD3176AD0;
-	Tue, 10 Sep 2024 06:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2291D17622D;
+	Tue, 10 Sep 2024 06:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LTAOzdw/"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FLXHgQnQ"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3674176AAD
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372B716F27E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725949184; cv=none; b=Bwi58QllCbwJyNHrSLZAlpHklFcNl3D4Wg6zKMLznfaruhqrUKkj+QW1n6AYWOsLOyWA96eW4+sL+SV8lgmbUskmlUEgoE4QCxotyxb04DBuud/Ur9PpdXd49Eodc+YLvUDskhYUaUVKD02vWaH16Cn7Z2ZzFxWLV8C/GD2yJjA=
+	t=1725949261; cv=none; b=VXOrmi/9tkZvVMXsDaL8LK6AEAH5b6CBoD10w2B4mTtr90WA9NUMJr2s6kbvm065kPL6fX+UkI3cjKqgkLS9NBgT0ZU4yA3SW38DrWdmA2J45WPEOlgZxhC98kvYMcZ9hAMD1cKIWaPlFoY7UjtgYFdKsdkdJ+sGXoasAA/ZKlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725949184; c=relaxed/simple;
-	bh=lY4/p7K6RZOBmF20Gd+RKKXipb1S0uZcwkiYx4rQhVs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c9WtoObKU4q5ce4/WelcaqbvEPpS4AkIHb3ueZjlsBWyMtNcQpNnnzAMwXpBok13vhameV1+wF2iWGypkSKb0Rmb6wIaDiXvq+0A0SGelyN2WHj4qClufBI5cFGVJItjvBxvYmRf+aJSauXqiwGdmU1eEU/mvwImKEVPCwBxQbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LTAOzdw/; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8ce5db8668so564919466b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 23:19:42 -0700 (PDT)
+	s=arc-20240116; t=1725949261; c=relaxed/simple;
+	bh=hFD+h+g3Qn5O1IluP2Jlz3i4TTvagOIPayb1NIcvVfY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IMEe0RnAXLVo61LkX7Q4hW+MQNAmKOE3p56kQpVHa/6mPxHSO/XVox0BdDoOQoiiUIIX59A+qVGqevgAKM5S9Ccx7fSta/+k6g4UwIyftt4b+rH7CMWdZx2gyuL6hvir46BMuYux/TLc5/89Jlp30hehMa7BAwXADWXqLa6Db3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FLXHgQnQ; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-6e7b121be30so3311423a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 23:20:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725949181; x=1726553981; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oUAeyIds51JtPFXcdK1ittCx1+8Jcad8Ely1vSAfpKs=;
-        b=LTAOzdw/WBZ+R6/zT5NGR6VvxDNx//Yx966ag0fb2xK7tq4nayyzesrTmpYdnu8F1N
-         PIcUgqmgm+oH++Cd8YRgAMZVrySLW5eYtuqScLdd1TZW8mwozoZvg/6IkC652vSUxkhh
-         0vLf6woXbqkvzgr1mwAOPPB7+1doDzeIYn8Q1ffDvZAlDOS5xs8itMoW9wuATbaqstJV
-         e5odWlXzNSH+otTpez/qrmxqJaPfu8ZVaycO5zNUp+NLZR8bdsarpL91cvi9oKMFT/Hh
-         Qm50/msQG6sSywE2pBOmOoGxb/Qok0vF9N+oq9zgIWqWPzNNJq2NlrBIgrDxaAtqrSWD
-         qgOg==
+        d=chromium.org; s=google; t=1725949259; x=1726554059; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9NAqLSzfiTKu9/ujNb6PjoEVWXdaDlFqYoM8Sol5284=;
+        b=FLXHgQnQ2uxLU6zrU32LP9vKQLwytBFZKxW2UDpnnngF6lU0qDdTtdHQQiHdMl1ps2
+         aystXOe3pu88NpMqpIH0+U0QUiK+Cw6Kq5oT+N6MK8xg4MSy4KpBJroK4+2QL6tQ7ESI
+         MpNVQKC8ceM0oxPMnG5ronvYj/tox4rU3P5OU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725949181; x=1726553981;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oUAeyIds51JtPFXcdK1ittCx1+8Jcad8Ely1vSAfpKs=;
-        b=KZHqKd0T+FmAXG8yJUVPC0VAs9VK4upKCY1a3ZK0AbGGDKHCUirUWIYPcTncnoYdix
-         fKWQ16lMgQfe/zHk+l9Rrh8guOWseq8T6HKJhKRs4kfriFs427P0jdCFbQ0pWQ3DlbEV
-         HA/toaP8T4kn+r2B49I5f6jWd1DBIV+M+WmkrO5dVE8dpNtbpa2xBMF29DnhEjgLFiCQ
-         miXl4rl6pYasVp9fzuCiQrLAgc34yJomuKq2NN9oK/N17HJLl0mnlNV9Nc6Xk/m302Zu
-         qF3Y6DCB51QBfz7eFeVLBqBRe1J9p3Gaeb10I4ZJnIjBzjTH35JAUlMlX75Ourj0KSye
-         68Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCXr7emL186PlbElCSpbhYTqu0orTICZk7OhoTTlN04wLr78vzu/Qm/koplmeICZ8yAgpgOg5D9klmkx2OI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3ePYPIBaLzrkjvo+BMpQg0iRt1blRu+i/hhkpmWw9t2OUvfaB
-	FQX9KVE12sfzK3Shu5Lvf7RFy2QBRIBZD653kSCWBAojdnc/i4jzS7AdfVStZVd3MJSJUxI5NM6
-	xGUNKjFx8lRsoe4zsPmB0Eo7hWaBMX53PtR6X
-X-Google-Smtp-Source: AGHT+IFz3wKuYcS0dbn0eQ1fNcqoiYJmBXkiZT1ExZr/j09DUL3xyimhmzyT/sJgCFOvtY6lwLx9zp7ZDlAt7wpJZLI=
-X-Received: by 2002:a17:907:961e:b0:a86:a6ee:7dad with SMTP id
- a640c23a62f3a-a8d1c73d9a6mr913996366b.52.1725949180257; Mon, 09 Sep 2024
- 23:19:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725949259; x=1726554059;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9NAqLSzfiTKu9/ujNb6PjoEVWXdaDlFqYoM8Sol5284=;
+        b=KWrTjUHSgUhhXZWQhL+b2GuZBF61GeMgQPwFVItNB9Tp78WsdJ2UJtNg/mGWElJaGa
+         dq/FLmylPY7jM26aCyQY/OoZl3xYuhJYQ03ClOoP8MmUjJn3aRVz1fpihq7Z/LoWsO2v
+         vHqFuX8oQO9waq5Ket2ynKYpGZMFPaDW9mkzdc22wquFRae1eI0F9u3Vx7LYFQKCX28E
+         lf0kZuQ02C75VYvpIWIBXCXvTEsny+g8VOrt2gaImoTOBSknwH9Ry1Gsqtj5pWZYmPJO
+         Xun4iQyAhvLcnyNHBb6DMkMV6ROFGaf3IrSE+DfzeJXJRpKzeADKjy0KbV9nNZoXToUI
+         Wudg==
+X-Forwarded-Encrypted: i=1; AJvYcCVl96azg708ttK7m1Ve0KmtzuhxYJFAe3aLWQVBiV4mCMdC4arpwRP5gW3rDGNkZyuHsF9kc94Ic63X3GQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAw5iRLc/RoniH8zkpMjZp/eE0lbE0O928UoN3QaW7BjqJnz66
+	aJtaoNYR1ADxgFSM/yq4SJL66hLdB6vLzhane7/jpSqa+lSXoM/ONeszgm+0IA==
+X-Google-Smtp-Source: AGHT+IEbJWi/XiTXkjvEqBmFZgc8Mp05CZ7p6lurFZhANudU33VAWtc+4cYuapG1rcW6R1YeF9lrEg==
+X-Received: by 2002:a05:6a20:6f08:b0:1c4:9ef6:499b with SMTP id adf61e73a8af0-1cf1d13337amr13713739637.29.1725949259296;
+        Mon, 09 Sep 2024 23:20:59 -0700 (PDT)
+Received: from yuanhsinte.c.googlers.com (30.191.80.34.bc.googleusercontent.com. [34.80.191.30])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090b0397sm675188b3a.154.2024.09.09.23.20.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 23:20:58 -0700 (PDT)
+From: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Date: Tue, 10 Sep 2024 06:20:55 +0000
+Subject: [PATCH] arm64: dts: mt8183: Add encoder node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANn89iLmOgH6RdRc_XGhawM03UEOkUK3QB0wK_Ci_YBVNwhUHQ@mail.gmail.com>
- <03C87C05-301E-4C34-82FF-6517316A11C2@gmail.com>
-In-Reply-To: <03C87C05-301E-4C34-82FF-6517316A11C2@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 10 Sep 2024 08:19:29 +0200
-Message-ID: <CANn89iLYUjfsaXrtV19_DF9nUSaLSwmWnd7tzh8+v9OoUesBHg@mail.gmail.com>
-Subject: Re: [PATCH net] net: prevent NULL pointer dereference in
- rt_fibinfo_free() and rt_fibinfo_free_cpus()
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, 
-	pabeni@redhat.com, kafai@fb.com, weiwan@google.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240910-venc-v1-1-d17dfd931dc8@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAEbl32YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDSwNL3bLUvGRdE3MD02TztLQ00xQzJaDSgqLUtMwKsDHRsbW1AAWLZWl
+ WAAAA
+X-Change-ID: 20240909-venc-4705c7fff5d6
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+X-Mailer: b4 0.15-dev-7be4f
 
-On Tue, Sep 10, 2024 at 5:23=E2=80=AFAM Jeongjun Park <aha310510@gmail.com>=
- wrote:
->
->
-> > Eric Dumazet <edumazet@google.com> wrote:
-> > =EF=BB=BFOn Mon, Sep 9, 2024 at 8:48=E2=80=AFPM Jeongjun Park <aha31051=
-0@gmail.com> wrote:
-> >>
-> >> rt_fibinfo_free() and rt_fibinfo_free_cpus() only check for rt and do =
-not
-> >> verify rt->dst and use it, which will result in NULL pointer dereferen=
-ce.
-> >>
-> >> Therefore, to prevent this, we need to add a check for rt->dst.
-> >>
-> >> Fixes: 0830106c5390 ("ipv4: take dst->__refcnt when caching dst in fib=
-")
-> >> Fixes: c5038a8327b9 ("ipv4: Cache routes in nexthop exception entries.=
-")
-> >> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> >> ---
-> >
-> > As far as I can tell, your patch is a NOP, and these Fixes: tags seem
-> > random to me.
->
-> I somewhat agree with the opinion that the fixes tag is random.
-> However, I think it is absolutely necessary to add a check for
-> &rt->dst , because the existence of rt does not guarantee that
-> &rt->dst will not be NULL.
->
-> >
-> > Also, I am guessing this is based on a syzbot report ?
->
-> Yes, but it's not a bug reported to syzbot, it's a bug that
-> I accidentally found in my syzkaller fuzzer. The report is too long
-> to be included in the patch notes, so I'll attach it to this email.
+Add encoder node.
 
-syzbot has a similar report in its queue, I put it on hold because
-this is some unrelated memory corruption.
+Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+---
+According to
+https://lore.kernel.org/all/184d895c-239e-3f23-970e-6a9563235cd9@gmail.com/,
+the encoder node of MT8183 should be added only after its dependency has
+been accepted. Add the encoder node in this patch.
+---
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-rt (R14 in your case) is 0x1 at this point, which is not a valid memory poi=
-nter.
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index fbf145639b8c90b2c69da1cb4bac4f61ca7a1c9e..d24c89e4e13b0c74f549e638e97e0729052909a7 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -1965,6 +1965,24 @@ larb4: larb@17010000 {
+ 			power-domains = <&spm MT8183_POWER_DOMAIN_VENC>;
+ 		};
+ 
++		vcodec_enc: vcodec@17020000 {
++			compatible = "mediatek,mt8183-vcodec-enc";
++			reg = <0 0x17020000 0 0x1000>,
++			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_LOW>;
++			mediatek,larb = <&larb4>;
++			iommus = <&iommu M4U_PORT_VENC_REC>,
++				 <&iommu M4U_PORT_VENC_BSDMA>,
++				 <&iommu M4U_PORT_VENC_RD_COMV>,
++				 <&iommu M4U_PORT_VENC_CUR_LUMA>,
++				 <&iommu M4U_PORT_VENC_CUR_CHROMA>,
++				 <&iommu M4U_PORT_VENC_REF_LUMA>,
++				 <&iommu M4U_PORT_VENC_REF_CHROMA>;
++			mediatek,scp = <&scp>;
++			power-domains = <&spm MT8183_POWER_DOMAIN_VENC>;
++			clocks = <&vencsys CLK_VENC_VENC>;
++			clock-names = "MT_CG_VENC";
++		};
++
+ 		venc_jpg: jpeg-encoder@17030000 {
+ 			compatible = "mediatek,mt8183-jpgenc", "mediatek,mtk-jpgenc";
+ 			reg = <0 0x17030000 0 0x1000>;
 
-So I am definitely saying no to your patch.
+---
+base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
+change-id: 20240909-venc-4705c7fff5d6
 
->
-> Report:
->
-> Oops: general protection fault, probably for non-canonical address 0xdfff=
-fc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> CPU: 0 UID: 0 PID: 4694 Comm: systemd-udevd Not tainted 6.11.0-rc6-00326-=
-gd1f2d51b711a #16
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/0=
-1/2014
-> RIP: 0010:dst_dev_put+0x26/0x330 net/core/dst.c:149
-> Code: 90 90 90 90 f3 0f 1e fa 41 57 41 56 49 89 fe 41 55 41 54 55 e8 0b 9=
-0 af f8 4c 89 f2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 8=
-5 da 02 00 00 49 8d 7e 3a 4d 8b 26 48 b8 00 00 00
-> RSP: 0018:ffffc90000007d68 EFLAGS: 00010246
-> RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffffffff8976519a
-> RDX: 0000000000000000 RSI: ffffffff88d97a95 RDI: 0000000000000001
-> RBP: dffffc0000000000 R08: 0000000000000001 R09: ffffed100c8020c3
-> R10: 0000000000000000 R11: 0000000000000000 R12: fffffbfff1ab5a81
-> R13: 0000607f8106c5c8 R14: 0000000000000001 R15: 0000000000000000
-> FS:  00007f235c5fd8c0(0000) GS:ffff88802c400000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f39c90e5168 CR3: 0000000019688000 CR4: 0000000000750ef0
-> PKRU: 55555554
-> Call Trace:
->  <IRQ>
->  rt_fibinfo_free_cpus.part.0+0xf4/0x1d0 net/ipv4/fib_semantics.c:206
->  rt_fibinfo_free_cpus net/ipv4/fib_semantics.c:198 [inline]
->  fib_nh_common_release+0x121/0x360 net/ipv4/fib_semantics.c:217
->  fib_nh_release net/ipv4/fib_semantics.c:229 [inline]
->  free_fib_info_rcu+0x18f/0x4b0 net/ipv4/fib_semantics.c:241
->  rcu_do_batch kernel/rcu/tree.c:2569 [inline]
->  rcu_core+0x826/0x16d0 kernel/rcu/tree.c:2843
->  handle_softirqs+0x1d4/0x870 kernel/softirq.c:554
->  __do_softirq kernel/softirq.c:588 [inline]
->  invoke_softirq kernel/softirq.c:428 [inline]
->  __irq_exit_rcu kernel/softirq.c:637 [inline]
->  irq_exit_rcu+0xbb/0x120 kernel/softirq.c:649
->  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inli=
-ne]
->  sysvec_apic_timer_interrupt+0x99/0xb0 arch/x86/kernel/apic/apic.c:1043
->  </IRQ>
->  <TASK>
->  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.=
-h:702
-> RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:1=
-52 [inline]
-> RIP: 0010:_raw_spin_unlock_irqrestore+0x3c/0x70 kernel/locking/spinlock.c=
-:194
-> Code: 74 24 10 e8 d6 03 6f f6 48 89 ef e8 8e 77 6f f6 81 e3 00 02 00 00 7=
-5 29 9c 58 f6 c4 02 75 35 48 85 db 74 01 fb bf 01 00 00 00 e8 bf 24 61 f6 6=
-5 8b 05 c0 79 0b 75 85 c0 74 0e 5b 5d c3 cc cc cc
-> RSP: 0018:ffffc90001f978f8 EFLAGS: 00000206
-> RAX: 0000000000000006 RBX: 0000000000000200 RCX: 1ffffffff1fe4be9
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000001
-> RBP: ffffffff8dbc0ac0 R08: 0000000000000001 R09: 0000000000000001
-> R10: ffffffff8ff2a39f R11: ffffffff815d29ca R12: 0000000000000246
-> R13: ffff88801e866100 R14: 0000000000000200 R15: 0000000000000000
->  rcu_read_unlock_special kernel/rcu/tree_plugin.h:691 [inline]
->  __rcu_read_unlock+0x2d9/0x580 kernel/rcu/tree_plugin.h:436
->  __netlink_sendskb net/netlink/af_netlink.c:1278 [inline]
->  netlink_broadcast_deliver net/netlink/af_netlink.c:1408 [inline]
->  do_one_broadcast net/netlink/af_netlink.c:1495 [inline]
->  netlink_broadcast_filtered+0x8ec/0xe00 net/netlink/af_netlink.c:1540
->  netlink_broadcast net/netlink/af_netlink.c:1564 [inline]
->  netlink_sendmsg+0x9ee/0xd80 net/netlink/af_netlink.c:1899
->  sock_sendmsg_nosec net/socket.c:730 [inline]
->  __sock_sendmsg net/socket.c:745 [inline]
->  ____sys_sendmsg+0xabe/0xc80 net/socket.c:2597
->  ___sys_sendmsg+0x11d/0x1c0 net/socket.c:2651
->  __sys_sendmsg+0xfe/0x1d0 net/socket.c:2680
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcb/0x250 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f235c8b0e13
-> Code: 8b 15 b9 a1 00 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b8 0f 1f 0=
-0 64 8b 04 25 18 00 00 00 85 c0 75 14 b8 2e 00 00 00 0f 05 48 3d 00 f0 ff f=
-f 77 55 c3 0f 1f 40 00 48 83 ec 28 89 54 24 1c 48
-> RSP: 002b:00007ffe93910d38 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 0000556a6858ba60 RCX: 00007f235c8b0e13
-> RDX: 0000000000000000 RSI: 00007ffe93910d60 RDI: 000000000000000e
-> RBP: 0000556a6858bdc0 R08: 00000000ffffffff R09: 0000556a685488e0
-> R10: 0000556a6858be38 R11: 0000000000000246 R12: 0000000000008010
-> R13: 0000556a6856fc30 R14: 0000000000000000 R15: 00007ffe93910df0
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:dst_dev_put+0x26/0x330 net/core/dst.c:149
-> Code: 90 90 90 90 f3 0f 1e fa 41 57 41 56 49 89 fe 41 55 41 54 55 e8 0b 9=
-0 af f8 4c 89 f2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 8=
-5 da 02 00 00 49 8d 7e 3a 4d 8b 26 48 b8 00 00 00
-> RSP: 0018:ffffc90000007d68 EFLAGS: 00010246
-> RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffffffff8976519a
-> RDX: 0000000000000000 RSI: ffffffff88d97a95 RDI: 0000000000000001
-> RBP: dffffc0000000000 R08: 0000000000000001 R09: ffffed100c8020c3
-> R10: 0000000000000000 R11: 0000000000000000 R12: fffffbfff1ab5a81
-> R13: 0000607f8106c5c8 R14: 0000000000000001 R15: 0000000000000000
-> FS:  00007f235c5fd8c0(0000) GS:ffff88802c400000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f39c90e5168 CR3: 0000000019688000 CR4: 0000000000750ef0
-> PKRU: 55555554
-> ----------------
-> Code disassembly (best guess):
->    0:   90                      nop
->    1:   90                      nop
->    2:   90                      nop
->    3:   90                      nop
->    4:   f3 0f 1e fa             endbr64
->    8:   41 57                   push   %r15
->    a:   41 56                   push   %r14
->    c:   49 89 fe                mov    %rdi,%r14
->    f:   41 55                   push   %r13
->   11:   41 54                   push   %r12
->   13:   55                      push   %rbp
->   14:   e8 0b 90 af f8          call   0xf8af9024
->   19:   4c 89 f2                mov    %r14,%rdx
->   1c:   48 b8 00 00 00 00 00    movabs $0xdffffc0000000000,%rax
->   23:   fc ff df
->   26:   48 c1 ea 03             shr    $0x3,%rdx
-> * 2a:   80 3c 02 00             cmpb   $0x0,(%rdx,%rax,1) <-- trapping in=
-struction
->   2e:   0f 85 da 02 00 00       jne    0x30e
->   34:   49 8d 7e 3a             lea    0x3a(%r14),%rdi
->   38:   4d 8b 26                mov    (%r14),%r12
->   3b:   48                      rex.W
->   3c:   b8                      .byte 0xb8
->   3d:   00 00                   add    %al,(%rax)
+Best regards,
+-- 
+Hsin-Te Yuan <yuanhsinte@chromium.org>
+
 
