@@ -1,52 +1,61 @@
-Return-Path: <linux-kernel+bounces-322474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F24D597295A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:14:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91981972958
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:14:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FAC51F2379C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:14:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D4022866B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6F8176AAF;
-	Tue, 10 Sep 2024 06:14:11 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D17B17A5A4;
+	Tue, 10 Sep 2024 06:14:01 +0000 (UTC)
+Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72728175D4F;
-	Tue, 10 Sep 2024 06:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C23174EDB;
+	Tue, 10 Sep 2024 06:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725948851; cv=none; b=hZN61Ea3pxcfUIUsCwIAr/PpYq1wLeG+nY2lGsR7O65YI4LeA7AihxM8a4OuiEkU7RG9QrVLrURA0oQzCPxN1bEgyhtiw6TDxWTSAarR8R5q4rI9IK+Oy7IoO5Eu0MzLsyjgKV3q2kIID1Hrw/K0F7Ix9WjAlFpSB88nguLgzNI=
+	t=1725948841; cv=none; b=olngmGJWmDfNXP4vyb9g88mMz5U2h66m1qvff9JarMvzCNf4FC++VNOKGbIEApwCF9o5ms3Msk7r6HOQBeafPtqbMJq9F2Bgh19A+1X3Krb2iLw2/Bx8cl++rzT+ZHO8FcdTLj68/QEj/szWNZmRLkmOulyu1w4VHJqYsKk6QvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725948851; c=relaxed/simple;
-	bh=kXpO2upk/7WHPX5Mr2KsdooYOPiEhp+y3e2QCnIJIl8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o2jKgOlFPcCEOlF5Eb3ZfjZP+0hpZOtBH3xoxGD+CAhi4bCA1fw61fLS/MT4wHWhyDBDRzWNitGZ4uCdfH2eX8ujaW0BoFSXtPZHPhSPBDAx/mgHfE+mZYgEi8rloxo0+L+VMK2cKokuXeE+QURxcichoHqkrTg2JBgHd+KP5+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4X2tfg4v43z1P9HV;
-	Tue, 10 Sep 2024 14:12:59 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id AE438180AE7;
-	Tue, 10 Sep 2024 14:14:04 +0800 (CST)
-Received: from huawei.com (10.67.174.28) by kwepemd200013.china.huawei.com
- (7.221.188.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 10 Sep
- 2024 14:14:03 +0800
-From: Liao Chang <liaochang1@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <mhiramat@kernel.org>,
-	<oleg@redhat.com>, <peterz@infradead.org>, <ast@kernel.org>,
-	<puranjay@kernel.org>, <liaochang1@huawei.com>, <andrii@kernel.org>,
-	<andrii.nakryiko@gmail.com>, <mark.rutland@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
-Subject: [PATCH] arm64: uprobes: Simulate STP for pushing fp/lr into user stack
-Date: Tue, 10 Sep 2024 06:04:07 +0000
-Message-ID: <20240910060407.1427716-1-liaochang1@huawei.com>
+	s=arc-20240116; t=1725948841; c=relaxed/simple;
+	bh=VVyuSYwcQjPqDmfwABc0FqZX2TZU9Scqu5CiLmwmd8g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DZ4J44JBBhL8gaRmK5y7ArRyX8FEOq0+99ZkdQkZI2jlSeze6lf/YYNOFiciXsTaLiTuT9FUr6mQRqZlBTUqAzwZBazMu6sp2dkzrqpw1Q7yJrQ6/0S9BFuHnFcahi/icWbEjkqKLGQxtV+FAxKjiMYoAVKyAH95YnhvEVasuFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
+Received: from dsgsiengine01.siengine.com ([10.8.1.61])
+	by mail03.siengine.com with ESMTPS id 48A6DD1q027077
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 10 Sep 2024 14:13:13 +0800 (+08)
+	(envelope-from hongchi.peng@siengine.com)
+Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
+	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4X2tfw0RHnz7ZMhG;
+	Tue, 10 Sep 2024 14:13:12 +0800 (CST)
+Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
+ SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Tue, 10 Sep 2024 14:13:11 +0800
+Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
+ SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.9; Tue, 10 Sep 2024 14:13:11 +0800
+Received: from localhost (10.12.10.38) by SEEXMB03-2019.siengine.com
+ (10.8.1.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.2.1544.11 via Frontend
+ Transport; Tue, 10 Sep 2024 14:13:11 +0800
+From: Kimriver Liu <kimriver.liu@siengine.com>
+To: <jarkko.nikula@linux.intel.com>
+CC: <andriy.shevchenko@linux.intel.com>, <mika.westerberg@linux.intel.com>,
+        <jsd@semihalf.com>, <andi.shyti@kernel.org>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kimriver.liu@siengine.com>
+Subject: [PATCH v8] i2c: designware: fix master is holding SCL low while ENABLE bit is disabled
+Date: Tue, 10 Sep 2024 14:13:09 +0800
+Message-ID: <9d181a45f3edf92364c9e6b729638f0b3f2e7baa.1725946886.git.kimriver.liu@siengine.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,318 +63,136 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+Content-Type: text/plain
+X-DKIM-Results: [10.8.1.61]; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:mail03.siengine.com 48A6DD1q027077
 
-This patch is the second part of a series to improve the selftest bench
-of uprobe/uretprobe [0]. The lack of simulating 'stp fp, lr, [sp, #imm]'
-significantly impact uprobe/uretprobe performance at function entry in
-most user cases. Profiling results below reveals the STP that executes
-in the xol slot and trap back to kernel, reduce redis RPS and increase
-the time of string grep obviously.
+It was observed issuing ABORT bit(IC_ENABLE[1]) will not work when
+IC_ENABLE is already disabled.
 
-On Kunpeng916 (Hi1616), 4 NUMA nodes, 64 Arm64 cores@2.4GHz.
+Check if ENABLE bit(IC_ENABLE[0]) is disabled when the master is
+holding SCL low. If ENABLE bit is disabled, the software need
+enable it before trying to issue ABORT bit. otherwise,
+the controller ignores any write to ABORT bit.
 
-Redis GET (higher is better)
-----------------------------
-No uprobe: 49149.71 RPS
-Single-stepped STP: 46750.82 RPS
-Emulated STP: 48981.19 RPS
+Signed-off-by: Kimriver Liu <kimriver.liu@siengine.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Redis SET (larger is better)
-----------------------------
-No uprobe: 49761.14 RPS
-Single-stepped STP: 45255.01 RPS
-Emulated stp: 48619.21 RPS
-
-Grep (lower is better)
-----------------------
-No uprobe: 2.165s
-Single-stepped STP: 15.314s
-Emualted STP: 2.216s
-
-Additionally, a profiling of the entry instruction for all leaf and
-non-leaf function, the ratio of 'stp fp, lr, [sp, #imm]' is larger than
-50%. So simulting the STP on the function entry is a more viable option
-for uprobe.
-
-In the first version [1], it used a uaccess routine to simulate the STP
-that push fp/lr into stack, which use double STTR instructions for
-memory store. But as Mark pointed out, this approach can't simulate the
-correct single-atomicity and ordering properties of STP, especiallly
-when it interacts with MTE, POE, etc. So this patch uses a more complex
-and inefficient approach that acquires user stack pages, maps them to
-kernel address space, and allows kernel to use STP directly push fp/lr
-into the stack pages.
-
-xol-stp
--------
-uprobe-nop      ( 1 cpus):    1.566 ± 0.006M/s  (  1.566M/s/cpu)
-uprobe-push     ( 1 cpus):    0.868 ± 0.001M/s  (  0.868M/s/cpu)
-uprobe-ret      ( 1 cpus):    1.629 ± 0.001M/s  (  1.629M/s/cpu)
-uretprobe-nop   ( 1 cpus):    0.871 ± 0.001M/s  (  0.871M/s/cpu)
-uretprobe-push  ( 1 cpus):    0.616 ± 0.001M/s  (  0.616M/s/cpu)
-uretprobe-ret   ( 1 cpus):    0.878 ± 0.002M/s  (  0.878M/s/cpu)
-
-simulated-stp
--------------
-uprobe-nop      ( 1 cpus):    1.544 ± 0.001M/s  (  1.544M/s/cpu)
-uprobe-push     ( 1 cpus):    1.128 ± 0.002M/s  (  1.128M/s/cpu)
-uprobe-ret      ( 1 cpus):    1.550 ± 0.005M/s  (  1.550M/s/cpu)
-uretprobe-nop   ( 1 cpus):    0.872 ± 0.004M/s  (  0.872M/s/cpu)
-uretprobe-push  ( 1 cpus):    0.714 ± 0.001M/s  (  0.714M/s/cpu)
-uretprobe-ret   ( 1 cpus):    0.896 ± 0.001M/s  (  0.896M/s/cpu)
-
-The profiling results based on the upstream kernel with spinlock
-optimization patches [2] reveals the simulation of STP increase the
-uprobe-push throughput by 29.3% (from 0.868M/s/cpu to 1.1238M/s/cpu) and
-uretprobe-push by 15.9% (from 0.616M/s/cpu to 0.714M/s/cpu).
-
-[0] https://lore.kernel.org/all/CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com/
-[1] https://lore.kernel.org/all/Zr3RN4zxF5XPgjEB@J2N7QTR9R3/
-[2] https://lore.kernel.org/all/20240815014629.2685155-1-liaochang1@huawei.com/
-
-Signed-off-by: Liao Chang <liaochang1@huawei.com>
 ---
- arch/arm64/include/asm/insn.h            |  1 +
- arch/arm64/kernel/probes/decode-insn.c   | 16 +++++
- arch/arm64/kernel/probes/decode-insn.h   |  1 +
- arch/arm64/kernel/probes/simulate-insn.c | 89 ++++++++++++++++++++++++
- arch/arm64/kernel/probes/simulate-insn.h |  1 +
- arch/arm64/kernel/probes/uprobes.c       | 21 ++++++
- arch/arm64/lib/insn.c                    |  5 ++
- 7 files changed, 134 insertions(+)
+V7->V8:
+	1.calculate this delay based on the actual speed in use
+	  fsleep(DIV_ROUND_CLOSEST_ULL(10 * MICRO, t->bus_freq_hz))
+	2. add Reviewed-by: Mika Westerberg<mika.westerberg@linux.intel.com>
+V6->V7:
+	1. add Subject versioning [PATCH v7]
+	2. change fsleep(25) to usleep_range(25, 250)
+	3. Add macro definition DW_iC_ENABLE_ENABLE to fix compile errors
+	  | Reported-by: kernel test robot <lkp@intel.com>
+	  | Closes:https://lore.kernel.org/oe-kbuild-all/202409082011.9JF6aYsk-lkp@intel.com/
+	4. base: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=master
+V5->V6: restore i2c_dw_is_master_idling() function checking
+V4->V5: delete master idling checking
+V3->V4:
+	1. update commit messages and add patch version and changelog
+	2. move print the error message in i2c_dw_xfer
+V2->V3: change (!enable) to (!(enable & DW_IC_ENABLE_ENABLE))
+V1->V2: used standard words in function names and addressed review comments
 
-diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
-index dd530d5c3d67..74e25debfa75 100644
---- a/arch/arm64/include/asm/insn.h
-+++ b/arch/arm64/include/asm/insn.h
-@@ -561,6 +561,7 @@ u32 aarch64_insn_encode_immediate(enum aarch64_insn_imm_type type,
- 				  u32 insn, u64 imm);
- u32 aarch64_insn_decode_register(enum aarch64_insn_register_type type,
- 					 u32 insn);
-+u32 aarch64_insn_decode_ldst_size(u32 insn);
- u32 aarch64_insn_gen_branch_imm(unsigned long pc, unsigned long addr,
- 				enum aarch64_insn_branch_type type);
- u32 aarch64_insn_gen_comp_branch_imm(unsigned long pc, unsigned long addr,
-diff --git a/arch/arm64/kernel/probes/decode-insn.c b/arch/arm64/kernel/probes/decode-insn.c
-index be54539e309e..847a7a61ff6d 100644
---- a/arch/arm64/kernel/probes/decode-insn.c
-+++ b/arch/arm64/kernel/probes/decode-insn.c
-@@ -67,6 +67,22 @@ static bool __kprobes aarch64_insn_is_steppable(u32 insn)
- 	return true;
- }
+link to V1:
+https://lore.kernel.org/lkml/20240904064224.2394-1-kimriver.liu@siengine.com/
+---
+ drivers/i2c/busses/i2c-designware-common.c | 13 +++++++++++++
+ drivers/i2c/busses/i2c-designware-core.h   |  1 +
+ drivers/i2c/busses/i2c-designware-master.c | 22 ++++++++++++++++++++++
+ 3 files changed, 36 insertions(+)
+
+diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
+index e8a688d04aee..3ff50ec942e9 100644
+--- a/drivers/i2c/busses/i2c-designware-common.c
++++ b/drivers/i2c/busses/i2c-designware-common.c
+@@ -441,6 +441,7 @@ int i2c_dw_set_sda_hold(struct dw_i2c_dev *dev)
  
-+bool aarch64_insn_is_stp_fp_lr_sp_64b(probe_opcode_t insn)
-+{
-+	/*
-+	 * The 1st instruction on function entry often follows the
-+	 * patten 'stp x29, x30, [sp, #imm]!' that pushing fp and lr
-+	 * into stack.
-+	 */
-+	u32 opc = aarch64_insn_decode_ldst_size(insn);
-+	u32 rt2 = aarch64_insn_decode_register(AARCH64_INSN_REGTYPE_RT2, insn);
-+	u32 rn = aarch64_insn_decode_register(AARCH64_INSN_REGTYPE_RN, insn);
-+	u32 rt = aarch64_insn_decode_register(AARCH64_INSN_REGTYPE_RT, insn);
-+
-+	return aarch64_insn_is_stp_pre(insn) &&
-+	       (opc == 2) && (rt2 == 30) && (rn == 31) && (rt == 29);
-+}
-+
- /* Return:
-  *   INSN_REJECTED     If instruction is one not allowed to kprobe,
-  *   INSN_GOOD         If instruction is supported and uses instruction slot,
-diff --git a/arch/arm64/kernel/probes/decode-insn.h b/arch/arm64/kernel/probes/decode-insn.h
-index 8b758c5a2062..033ccab73da6 100644
---- a/arch/arm64/kernel/probes/decode-insn.h
-+++ b/arch/arm64/kernel/probes/decode-insn.h
-@@ -29,5 +29,6 @@ arm_kprobe_decode_insn(kprobe_opcode_t *addr, struct arch_specific_insn *asi);
- #endif
- enum probe_insn __kprobes
- arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *asi);
-+bool aarch64_insn_is_stp_fp_lr_sp_64b(probe_opcode_t insn);
- 
- #endif /* _ARM_KERNEL_KPROBES_ARM64_H */
-diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
-index 5e4f887a074c..3906851c07b2 100644
---- a/arch/arm64/kernel/probes/simulate-insn.c
-+++ b/arch/arm64/kernel/probes/simulate-insn.c
-@@ -8,6 +8,9 @@
- #include <linux/bitops.h>
- #include <linux/kernel.h>
- #include <linux/kprobes.h>
-+#include <linux/highmem.h>
-+#include <linux/vmalloc.h>
-+#include <linux/mm.h>
- 
- #include <asm/ptrace.h>
- #include <asm/traps.h>
-@@ -211,3 +214,89 @@ simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
- 	 */
- 	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
- }
-+
-+static inline
-+bool stack_align_check(unsigned long sp)
-+{
-+	return (IS_ALIGNED(sp, 16) ||
-+		!(read_sysreg(sctlr_el1) & SCTLR_EL1_SA0_MASK));
-+}
-+
-+static inline
-+void put_user_stack_pages(struct page **pages, int nr_pages)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr_pages; i++)
-+		put_page(pages[i]);
-+}
-+
-+static inline
-+int get_user_stack_pages(long start, long end, struct page **pages)
-+{
-+	int ret;
-+	int nr_pages = (end >> PAGE_SHIFT) - (start >> PAGE_SHIFT) + 1;
-+
-+	ret = get_user_pages_fast(start, nr_pages,
-+				  FOLL_WRITE | FOLL_FORCE, pages);
-+	if (unlikely(ret != nr_pages)) {
-+		if (ret > 0)
-+			put_user_stack_pages(pages, ret);
-+		return 0;
-+	}
-+
-+	return nr_pages;
-+}
-+
-+static inline
-+void *map_user_stack_pages(struct page **pages, int nr_pages)
-+{
-+	if (likely(nr_pages == 1))
-+		return kmap_local_page(pages[0]);
-+	else
-+		return vmap(pages, nr_pages, VM_MAP, PAGE_KERNEL);
-+}
-+
-+static inline
-+void unmap_user_stack_pages(void *kaddr, int nr_pages)
-+{
-+	if (likely(nr_pages == 1))
-+		kunmap_local(kaddr);
-+	else
-+		vunmap(kaddr);
-+}
-+
-+void __kprobes
-+simulate_stp_fp_lr_sp_64b(u32 opcode, long addr, struct pt_regs *regs)
-+{
-+	long imm7;
-+	long new_sp;
-+	int nr_pages;
-+	void *kaddr, *dst;
-+	struct page *pages[2] = { NULL };
-+
-+	imm7 = aarch64_insn_decode_immediate(AARCH64_INSN_IMM_7, opcode);
-+	new_sp = regs->sp + (sign_extend64(imm7, 6) << 3);
-+	if (!stack_align_check(new_sp)) {
-+		force_sig(SIGSEGV);
-+		goto done;
-+	}
-+
-+	nr_pages = get_user_stack_pages(new_sp, regs->sp, pages);
-+	if (!nr_pages) {
-+		force_sig(SIGSEGV);
-+		goto done;
-+	}
-+
-+	kaddr = map_user_stack_pages(pages, nr_pages);
-+	dst = kaddr + (new_sp & ~PAGE_MASK);
-+	asm volatile("stp %0, %1, [%2]"
-+		     : : "r"(regs->regs[29]), "r"(regs->regs[30]), "r"(dst));
-+
-+	unmap_user_stack_pages(kaddr, nr_pages);
-+	put_user_stack_pages(pages, nr_pages);
-+
-+done:
-+	regs->sp = new_sp;
-+	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
-+}
-diff --git a/arch/arm64/kernel/probes/simulate-insn.h b/arch/arm64/kernel/probes/simulate-insn.h
-index efb2803ec943..733a47ffa2e5 100644
---- a/arch/arm64/kernel/probes/simulate-insn.h
-+++ b/arch/arm64/kernel/probes/simulate-insn.h
-@@ -17,5 +17,6 @@ void simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs);
- void simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *regs);
- void simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs);
- void simulate_nop(u32 opcode, long addr, struct pt_regs *regs);
-+void simulate_stp_fp_lr_sp_64b(u32 opcode, long addr, struct pt_regs *regs);
- 
- #endif /* _ARM_KERNEL_KPROBES_SIMULATE_INSN_H */
-diff --git a/arch/arm64/kernel/probes/uprobes.c b/arch/arm64/kernel/probes/uprobes.c
-index d49aef2657cd..c70862314fde 100644
---- a/arch/arm64/kernel/probes/uprobes.c
-+++ b/arch/arm64/kernel/probes/uprobes.c
-@@ -8,6 +8,7 @@
- #include <asm/cacheflush.h>
- 
- #include "decode-insn.h"
-+#include "simulate-insn.h"
- 
- #define UPROBE_INV_FAULT_CODE	UINT_MAX
- 
-@@ -31,6 +32,21 @@ unsigned long uprobe_get_swbp_addr(struct pt_regs *regs)
- 	return instruction_pointer(regs);
- }
- 
-+static enum probe_insn
-+arm_uprobe_decode_special_insn(probe_opcode_t insn, struct arch_probe_insn *api)
-+{
-+	/*
-+	 * When uprobe interact with VMSA features, such as MTE, POE, etc, it
-+	 * give up the simulation of memory access related instructions.
-+	 */
-+	if (!system_supports_mte() && aarch64_insn_is_stp_fp_lr_sp_64b(insn)) {
-+		api->handler = simulate_stp_fp_lr_sp_64b;
-+		return INSN_GOOD_NO_SLOT;
-+	}
-+
-+	return INSN_REJECTED;
-+}
-+
- int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 		unsigned long addr)
+ void __i2c_dw_disable(struct dw_i2c_dev *dev)
  {
-@@ -44,6 +60,11 @@ int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe, struct mm_struct *mm,
++	struct i2c_timings *t = &dev->timings;
+ 	unsigned int raw_intr_stats;
+ 	unsigned int enable;
+ 	int timeout = 100;
+@@ -453,6 +454,18 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
  
- 	insn = *(probe_opcode_t *)(&auprobe->insn[0]);
- 
-+	if (arm_uprobe_decode_special_insn(insn, &auprobe->api)) {
-+		auprobe->simulate = true;
-+		return 0;
-+	}
+ 	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
+ 	if (abort_needed) {
++		if (!(enable & DW_IC_ENABLE_ENABLE)) {
++			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
++			enable |= DW_IC_ENABLE_ENABLE;
++			/*
++			 * Wait 10 times the signaling period of the highest I2C
++			 * transfer supported by the driver (for 400KHz this is
++			 * 25us) to ensure the I2C ENABLE bit is already set
++			 * as described in the DesignWare I2C databook.
++			 */
++			fsleep(DIV_ROUND_CLOSEST_ULL(10 * MICRO, t->bus_freq_hz));
++		}
 +
- 	switch (arm_probe_decode_insn(insn, &auprobe->api)) {
- 	case INSN_REJECTED:
- 		return -EINVAL;
-diff --git a/arch/arm64/lib/insn.c b/arch/arm64/lib/insn.c
-index b008a9b46a7f..0635219d2196 100644
---- a/arch/arm64/lib/insn.c
-+++ b/arch/arm64/lib/insn.c
-@@ -238,6 +238,11 @@ static u32 aarch64_insn_encode_ldst_size(enum aarch64_insn_size_type type,
- 	return insn;
+ 		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
+ 		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
+ 					       !(enable & DW_IC_ENABLE_ABORT), 10,
+diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
+index e9606c00b8d1..e45daedad967 100644
+--- a/drivers/i2c/busses/i2c-designware-core.h
++++ b/drivers/i2c/busses/i2c-designware-core.h
+@@ -109,6 +109,7 @@
+ 						 DW_IC_INTR_RX_UNDER | \
+ 						 DW_IC_INTR_RD_REQ)
+ 
++#define DW_IC_ENABLE_ENABLE			BIT(0)
+ #define DW_IC_ENABLE_ABORT			BIT(1)
+ 
+ #define DW_IC_STATUS_ACTIVITY			BIT(0)
+diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
+index c7e56002809a..132b7237c004 100644
+--- a/drivers/i2c/busses/i2c-designware-master.c
++++ b/drivers/i2c/busses/i2c-designware-master.c
+@@ -253,6 +253,19 @@ static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
+ 	__i2c_dw_write_intr_mask(dev, DW_IC_INTR_MASTER_MASK);
  }
  
-+u32 aarch64_insn_decode_ldst_size(u32 insn)
++static bool i2c_dw_is_master_idling(struct dw_i2c_dev *dev)
 +{
-+	return (insn & GENMASK(31, 30)) >> 30;
++	u32 status;
++
++	regmap_read(dev->map, DW_IC_STATUS, &status);
++	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
++		return true;
++
++	return !regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
++			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
++			1100, 20000);
 +}
 +
- static inline long label_imm_common(unsigned long pc, unsigned long addr,
- 				     long range)
+ static int i2c_dw_check_stopbit(struct dw_i2c_dev *dev)
  {
+ 	u32 val;
+@@ -788,6 +801,15 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+ 		goto done;
+ 	}
+ 
++	/*
++	 * This happens rarely and is hard to reproduce. Debug trace
++	 * showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
++	 * if disable IC_ENABLE.ENABLE immediately that can result in
++	 * IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low.
++	 */
++	if (!i2c_dw_is_master_idling(dev))
++		dev_err(dev->dev, "I2C master not idling\n");
++
+ 	/*
+ 	 * We must disable the adapter before returning and signaling the end
+ 	 * of the current transfer. Otherwise the hardware might continue
 -- 
-2.34.1
+2.17.1
 
 
