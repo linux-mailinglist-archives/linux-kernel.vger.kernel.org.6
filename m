@@ -1,300 +1,132 @@
-Return-Path: <linux-kernel+bounces-323975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F352974655
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:22:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64DE5974656
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D3E71F271B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:22:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CF131C256FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0171AC89C;
-	Tue, 10 Sep 2024 23:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407A61ABEDB;
+	Tue, 10 Sep 2024 23:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oC8Voj3B"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="lFOdaQHy"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E271AAE0D;
-	Tue, 10 Sep 2024 23:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0515E17E8EA
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726010550; cv=none; b=HAT5zSC8aDAdNcML8bwoJbabmJCjJkMeDwXYK2dPZ722/LZ1BPE42hLWJqBetJIAph7av6EUzWyT1LBQ+t/jI8aW6/tXEzTXrB0SgLjsVXuWhQRnFzfq7dD8RisiavAE4TP7BgAs+ZhpgR6EmXhNAIVZdCaU8nLayvj6Ejm8tQ0=
+	t=1726010605; cv=none; b=VWe6AgfKCxyHfwdJQ7ZmblXNEbbLydxxTbTD3UJxe8eH16Y9yNxPbfQi9R2kw2oKY7rxgKGomnw1jPNNQ8g7vMia4eldWJQsWP5YXQDi3a5q2qGL+I5tub7791vXvl2DvQVK6r1AN+w/HZsAdCp8DHDIFtC15ezy0Tcecdv7UVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726010550; c=relaxed/simple;
-	bh=HEA+s30WUUlivN9vVASRW71UL6lRVxHrAeYlYDtMsTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QQyFOBtuE9z3jRh4M6PKtKP4h9c8T0EEWNbmBcYGTiBcdkLJz0zhZo1tEP6x5ixB7lOF1sBaU9tA6DnbVexWOQpOsVffdz9TZAdu+S7gLz5iWRW6Fy/Qua9wt8UjKyu5trkFvudfHYyZ8IJRxfDLjdtOLozR1yfehHUCiNJPd6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oC8Voj3B; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48ANMM2T041201;
-	Tue, 10 Sep 2024 18:22:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726010542;
-	bh=5qk97iBIhLEre/lgdZmwVuweJj61PMEKYVD/mxl1Us8=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=oC8Voj3BCR04tHveNnSaXhyy+KQib4eVaJHCY7xZQ45IKrQIlilbEFqGcd9TIzyo9
-	 mUjGlZGDyGyo+cvpmEasHgwxRMt1X9yMFSGYXxPGL734a+2PbbxIXtndWfNKAX4qLR
-	 fA4/3NCIqi50fE4y7k1GpEJc1B5ca9EgoM9QsehI=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48ANMMb7018231
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 10 Sep 2024 18:22:22 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 10
- Sep 2024 18:22:21 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 10 Sep 2024 18:22:21 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48ANMLDA073331;
-	Tue, 10 Sep 2024 18:22:21 -0500
-Message-ID: <091d7920-e197-4e14-af0c-8932af92a9dd@ti.com>
-Date: Tue, 10 Sep 2024 18:22:21 -0500
+	s=arc-20240116; t=1726010605; c=relaxed/simple;
+	bh=KSvBi2d6vm/0KYuogrQllNQnrPvwHkhq7i8d/l/hgyo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tDt3fKktmsCMlJcN4QotdkKHfBptrQX/NmHn//YJ7u0cFcWtMGJe2GitxMG6+KUQUOCrEWZxm+vYANMtluCSPB/GNO0Uy3Vl0VabqgJY3STlPEMK2eumt4VL1uBFxIKxMZSLzFmOjKG6SIrqh9GQYqGEk/e4skjlZYGIbImGZkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=lFOdaQHy; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so37756615e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:23:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1726010602; x=1726615402; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hpXFBylcGnxCC+S0MaQQ7GUPPJbSvGD7+pph+6eGm8w=;
+        b=lFOdaQHyt9fv+KCahyFFLj+mhzoZIOFwHrDRcYCACbfRmqexwyHgQIQFHVZippcE8V
+         lQlFul6rfhY6aEkmZ/q1Vl1X2uexSibLJ50m5dhKwrAYavcnWN1aXzrdsuPHAuXlURRS
+         wYRE8xhhJhQ4bsG5125nMyZqX11Ag+jeENbi4tKOEeWTMZwpusoQslU2KZTReIdY0CKS
+         ZjbbSHCTG6WqmoRBDEjAuy/BrMGhxdDkE2pvCxVD3+sI95T50vmx+2yDIv6Sm5Lh0uWj
+         ZpY1E/N/vxR03kSGGN5goi/GOglVb5trcjFJAr5yt7MHcKgYIEyOGNPZ3h4a/r9EVAHy
+         9fCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726010602; x=1726615402;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hpXFBylcGnxCC+S0MaQQ7GUPPJbSvGD7+pph+6eGm8w=;
+        b=UZjAeJVI5K4T4WGcgkgWAz4qljuRL/AfWxs9+jvRwEENdFwsi0SFxL9QdsBBICmlVI
+         tPzvI2ds2N+bLR9HPpNRKOcxjv3c/uVwMygP+VkAgN2hg3AR2hFc9tbaPPNWtXqQ8eF2
+         6KXXlUDNFlxCgKuIW1QpKhyB6MUZ7WSQoxll6ONDYQhe7+cGIangp7ZrfHVGCE/LbuzC
+         oyL7OdJ2OjZMJNCyHRNUmOwD0l6qjzm6vTrkyPeEuubHIf5WmoczjI1d19R9cAZW37HF
+         a+39tzJZx+8ueX77nJrTRmNYqAwc03N9oOvNj9CIRIeZQevud/zrgmXI8VzPC17T4g5S
+         6QsA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/k/6HRt7OXN3KLHa5bAfaRI45pSuI2TaPUBYCXd24x3fozUGSpZ8DhawGxYo6DMqLP7xLBG6kfJvkGIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyosjMmoZHU4VN8kN6vC9w630Q0otsik7bnTeY6NC8cGLY5SAr
+	CLoytwOX/SH0gsz0ARq7MMtQxGiAov02wgW7wzob8lhNWQr9UraaIEDS12YrDvBA0sRwg6gBNu2
+	F5AjgGHHjlbOuxwdCl2IPXoubf80NVZdnqesAnQ==
+X-Google-Smtp-Source: AGHT+IHXpAVVFLfb9vXmEQ3pJZZbBxrBQe5whIjxyrQJYKOrv4F86wvqJo/JtPonJoceq/102Dvf8ecry9Xh5xn2lJM=
+X-Received: by 2002:a05:600c:1d23:b0:42c:b905:2bf9 with SMTP id
+ 5b1f17b1804b1-42cb9052dc8mr61959925e9.16.1726010602117; Tue, 10 Sep 2024
+ 16:23:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mmc: sdhci_am654: Add
- sdhci_am654_start_signal_voltage_switch
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240906175032.1580281-1-jm@ti.com>
- <068093ed-1ab5-40d6-b709-cd6810825ba3@intel.com>
- <cce6ec2f-3293-4f08-a965-76dece0ddfab@ti.com>
- <b154b9b3-cb74-4a51-953c-d4328f992898@intel.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <b154b9b3-cb74-4a51-953c-d4328f992898@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240910092608.225137854@linuxfoundation.org>
+In-Reply-To: <20240910092608.225137854@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Wed, 11 Sep 2024 08:23:11 +0900
+Message-ID: <CAKL4bV4s3tAR1LSASwybirMmYvvTSSCNtjrD60SfkPPW9B0ypw@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/269] 6.6.51-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Adrian,
+Hi Greg
 
-On 9/10/24 12:10 PM, Adrian Hunter wrote:
-> On 10/09/24 17:30, Judith Mendez wrote:
->> Hi Adrian,
->>
->> On 9/9/24 1:26 AM, Adrian Hunter wrote:
->>> On 6/09/24 20:50, Judith Mendez wrote:
->>>> The sdhci_start_signal_voltage_switch function sets
->>>> V1P8_SIGNAL_ENA by default after switching to 1v8 signaling.
->>>> V1P8_SIGNAL_ENA determines whether to launch cmd/data on neg
->>>> edge or pos edge of clock.
->>>>
->>>> Due to some eMMC and SD failures seen across am62x platform,
->>>> do not set V1P8_SIGNAL_ENA by default, only enable the bit
->>>> for devices that require this bit in order to switch to 1v8
->>>> voltage for uhs modes.
->>>>
->>>> Signed-off-by: Judith Mendez <jm@ti.com>
->>>> ---
->>>>    drivers/mmc/host/sdhci_am654.c | 86 ++++++++++++++++++++++++++++++++++
->>>>    1 file changed, 86 insertions(+)
->>>>
->>>> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
->>>> index 0aa3c40ea6ed8..fb6232e56606b 100644
->>>> --- a/drivers/mmc/host/sdhci_am654.c
->>>> +++ b/drivers/mmc/host/sdhci_am654.c
->>>> @@ -155,6 +155,7 @@ struct sdhci_am654_data {
->>>>        u32 tuning_loop;
->>>>      #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
->>>> +#define SDHCI_AM654_QUIRK_SET_V1P8_ENA BIT(1)
->>>
->>> It would be better for the quirk to represent the deviation
->>> from normal i.e.
->>>
->>> #define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
->>>
->>>>    };
->>>>      struct window {
->>>> @@ -356,6 +357,79 @@ static void sdhci_j721e_4bit_set_clock(struct sdhci_host *host,
->>>>        sdhci_set_clock(host, clock);
->>>>    }
->>>>    +int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
->>>> +                        struct mmc_ios *ios)
->>>
->>> Simpler to call sdhci_start_signal_voltage_switch() for the normal
->>> case e.g.
->>
->> This is simpler, so sure will use thanks.
->>
->>>
->>> static int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc, struct mmc_ios *ios)
->>> {
->>>      struct sdhci_host *host = mmc_priv(mmc);
->>>      struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->>>      struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
->>>
->>>
->>>      if ((sdhci_am654->quirks & SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) &&
->>>          ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
->>>          ret = mmc_regulator_set_vqmmc(mmc, ios);
->>>          if (ret < 0) {
->>>              pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
->>>                  mmc_hostname(mmc));
->>>              return -EIO;
->>>          }
->>>          return 0;
->>>      }
->>>
->>>      return sdhci_start_signal_voltage_switch(mmc, ios);
->>> }
->>>
->>>> +{
->>>> +    struct sdhci_host *host = mmc_priv(mmc);
->>>> +    struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->>>> +    struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
->>>> +    u16 ctrl;
->>>> +    int ret;
->>>> +
->>>> +    if (host->version < SDHCI_SPEC_300)
->>>> +        return 0;
->>>> +
->>>> +    switch (ios->signal_voltage) {
->>>> +    case MMC_SIGNAL_VOLTAGE_330:
->>>> +        if (!(host->flags & SDHCI_SIGNALING_330))
->>>> +            return -EINVAL;
->>>> +
->>>> +        ctrl &= ~SDHCI_CTRL_VDD_180;
->>>> +        sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
->>>> +
->>>> +        if (!IS_ERR(mmc->supply.vqmmc)) {
->>>> +            ret = mmc_regulator_set_vqmmc(mmc, ios);
->>>> +            if (ret < 0) {
->>>> +                pr_warn("%s: Switching to 3.3V signalling voltage failed\n",
->>>> +                    mmc_hostname(mmc));
->>>> +                return -EIO;
->>>> +            }
->>>> +        }
->>>> +
->>>> +        usleep_range(5000, 5500);
->>>> +
->>>> +        ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
->>>> +        if (!(ctrl & SDHCI_CTRL_VDD_180))
->>>> +            return 0;
->>>> +
->>>> +        pr_warn("%s: 3.3V regulator output did not become stable\n",
->>>> +            mmc_hostname(mmc));
->>>> +
->>>> +        return -EAGAIN;
->>>> +
->>>> +    case MMC_SIGNAL_VOLTAGE_180:
->>>> +        if (!(host->flags & SDHCI_SIGNALING_180))
->>>> +            return -EINVAL;
->>>> +
->>>> +        if (!IS_ERR(mmc->supply.vqmmc)) {
->>>> +            ret = mmc_regulator_set_vqmmc(mmc, ios);
->>>> +            if (ret < 0) {
->>>> +                pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
->>>> +                    mmc_hostname(mmc));
->>>> +                return -EIO;
->>>> +            }
->>>> +        }
->>>> +
->>>> +        if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_SET_V1P8_ENA) {
->>>> +            ctrl |= SDHCI_CTRL_VDD_180;
->>>> +            sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
->>>> +
->>>> +            ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
->>>> +            if (ctrl & SDHCI_CTRL_VDD_180)
->>>> +                return 0;
->>>> +
->>>> +            pr_warn("%s: 1.8V regulator output did not become stable\n",
->>>> +                mmc_hostname(mmc));
->>>> +
->>>> +            return -EAGAIN;
->>>> +        }
->>>> +        return 0;
->>>> +
->>>> +    default:
->>>> +        return 0;
->>>> +    }
->>>> +}
->>>> +
->>>>    static u8 sdhci_am654_write_power_on(struct sdhci_host *host, u8 val, int reg)
->>>>    {
->>>>        writeb(val, host->ioaddr + reg);
->>>> @@ -801,6 +875,8 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
->>>>                        struct sdhci_am654_data *sdhci_am654)
->>>>    {
->>>>        struct device *dev = &pdev->dev;
->>>> +    struct device_node *np = dev->of_node;
->>>> +    struct device_node *node;
->>>>        int drv_strength;
->>>>        int ret;
->>>>    @@ -844,6 +920,15 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
->>>>        if (device_property_read_bool(dev, "ti,fails-without-test-cd"))
->>>>            sdhci_am654->quirks |= SDHCI_AM654_QUIRK_FORCE_CDTEST;
->>>>    +    node = of_parse_phandle(np, "vmmc-supply", 0);
->>>> +
->>>> +    if (node) {
->>>> +        node = of_parse_phandle(np, "vqmmc-supply", 0);
->>>> +
->>>> +        if (!node)
->>>> +            sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SET_V1P8_ENA;
->>>> +    }
->>>
->>> It would be simpler without 'np' and 'node'.  Not sure
->>> what the rule is meant to be, but it could be something like:
->>>
->>>      if (of_parse_phandle(dev->of_node, "vmmc-supply", 0) &&
->>>          of_parse_phandle(dev->of_node, "vqmmc-supply", 0)
->>>          sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA;
->>
->> My issue with this is that I also need the quirk (SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) for eMMC. DT node for eMMC does
->> not include vmmc and vqmmc supplies. That is why I had the quirk logic
->> inverted.
-> 
-> Ideally there would be a more direct way to distinguish eMMC, but
-> otherwise, having both supplies or neither would be:
-> 
-> 	if (!!of_parse_phandle(dev->of_node, "vmmc-supply", 0) ==
-> 	    !!of_parse_phandle(dev->of_node, "vqmmc-supply", 0))
-> 		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA;
+On Tue, Sep 10, 2024 at 7:30=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.51 release.
+> There are 269 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.51-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
+6.6.51-rc1 tested.
 
-Not sure I love the double NOT, but ok, I can use this, will fix for v2.
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
 
-Thanks for your suggestion!
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
 
-~ Judith
+[    0.000000] Linux version 6.6.51-rc1rv
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240910, GNU ld (GNU
+Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Wed Sep 11 07:37:37 JST 2024
 
-> 
-> 
->>
->> This patch fixes timing issues with both eMMC and SD. (:
->>
->> ~ Judith
->>
->>
->>>
->>>> +
->>>>        sdhci_get_of_property(pdev);
->>>>          return 0;
->>>> @@ -940,6 +1025,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
->>>>            goto err_pltfm_free;
->>>>        }
->>>>    +    host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
->>>>        host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
->>>>          pm_runtime_get_noresume(dev);
->>>>
->>>> base-commit: cf6444ba528f043398b112ac36e041a4d8685cb1
->>>
->>>
->>
-> 
+Thanks
 
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
