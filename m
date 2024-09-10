@@ -1,159 +1,265 @@
-Return-Path: <linux-kernel+bounces-323037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 245799736D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:08:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 476E79736DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DED21F27A60
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:08:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C84F81F262A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3363118E77F;
-	Tue, 10 Sep 2024 12:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F48C18FC93;
+	Tue, 10 Sep 2024 12:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mVkGBIdI"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="HkF10VhP"
+Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020111.outbound.protection.outlook.com [52.101.195.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213B613E02D
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725970106; cv=none; b=u0ub4ubUfc5VeMmeD8DWtwyHuljJAzdeH3Fls33TiLvymgrrHd3QTaGI8D56CFUfmJ3r5afIsBYPyF+BBFpUiibBNKhVQnisgPgX0sfH6EjOq+x3eGFpXcYmpegkIAynONO/dCQXG/mTbJS4/JK0+zMJNxcdJNPMVr898OK9weI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725970106; c=relaxed/simple;
-	bh=t+WeGmpmfUC1iHYFNyU4I8lqZvOG7A4ZbvY10Nw7F2I=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=G3wPEH19O+eIH+nrtNJCYqeXBU/klWrv70t4YSHNMsj1mKY1Czknut+wsX4lG308pEfaXAfTkOi8IJx8vpJYcfWHJCHpEwxv7QKQMjplN8DipP/mn0UDY4lWFX2ZvW1zm3QQ0KZV46MsF5nUxdEisUuUZHcqg9C3Jx/kfJSKwPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mVkGBIdI; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240910120820euoutp01b725d0ce3a39eb993ddce9042b8da2af~z4Kl-nibf1654916549euoutp01m
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:08:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240910120820euoutp01b725d0ce3a39eb993ddce9042b8da2af~z4Kl-nibf1654916549euoutp01m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725970100;
-	bh=pyaoVhs/4U8W+zYxoeTwH0/3CWGjP6XdFRI7IuTH0BA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=mVkGBIdIA4XmiYVRcTWRrJ4CwuHb6TdDks52CX9LQI52BlfP8dJcGLXadqT7Xc23F
-	 QA+WvjO9t+Y6k4j1tLZavJgZlNAgtKoMBjrozSUuH32CE8QkGyGMVB/uVLUY5crbzP
-	 Su29FWCcAnZZY7IT5JL2jhuF8EZDjpOVviG8Qkkw=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240910120820eucas1p1cb22099eb498d527babe17b21ec6b775~z4Kl1F8kn2580925809eucas1p1t;
-	Tue, 10 Sep 2024 12:08:20 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 75.8C.09624.4B630E66; Tue, 10
-	Sep 2024 13:08:20 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240910120820eucas1p2f477a72fc9b02e7038487cea82b8fc28~z4KlVpASb0745507455eucas1p2i;
-	Tue, 10 Sep 2024 12:08:20 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240910120820eusmtrp1fa13b8608e9d68d9ed02d386fb4fd2bc~z4KlVAXwv0384103841eusmtrp1Y;
-	Tue, 10 Sep 2024 12:08:20 +0000 (GMT)
-X-AuditID: cbfec7f2-bfbff70000002598-1f-66e036b4f6f5
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id CD.38.19096.3B630E66; Tue, 10
-	Sep 2024 13:08:19 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240910120819eusmtip2fd65d761c5c2b01054fd8e8d4c632ef2~z4KlHadKc2614426144eusmtip2M;
-	Tue, 10 Sep 2024 12:08:19 +0000 (GMT)
-Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Tue, 10 Sep 2024 13:08:19 +0100
-Date: Tue, 10 Sep 2024 13:52:31 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Wen Yang <wen.yang@linux.dev>
-CC: "Eric W . Biederman" <ebiederm@xmission.com>, Luis Chamberlain
-	<mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, Christian Brauner
-	<brauner@kernel.org>, Dave Young <dyoung@redhat.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND PATCH v3] sysctl: simplify the min/max boundary check
-Message-ID: <20240910115231.xnjgwyiwfvdvqgud@joelS2.panther.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0382D18DF97;
+	Tue, 10 Sep 2024 12:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.111
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725970156; cv=fail; b=L7z61FPoEX37dEkYKxDYV77m3M3PfDL89NYBvxvIVQ7turWe7E7EMN62emC2ssHCxB6ORRQ2Jgbqy5SSfFJIXRPTModSWslWV8OSXPu8bNraTSwcN+TD+XUQSOPiA9AWTnDbFKSE0OOZv39kWx3psq+C6GQi5OOWSdH2bQlDcZA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725970156; c=relaxed/simple;
+	bh=RJTbUEQrpEi7JL9JV242l5a1M0uvUgQtoZeGFUoGfa8=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=rau/Jb6qO9NaWERcDps1n02hWJi/aCoc1Ivnx8+26o7WFoF22ZrdTA+z/dy4hv2CIObHQ5ryxqzY94p+jYFk6TIsWWRflb/liAsEQr6rcsO1AErLnVrBMc25/hZjXJv7okQlJy8yhPue0AVQ3ohCHI3hEmNgDdQEPEzyOz4dMnA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=HkF10VhP; arc=fail smtp.client-ip=52.101.195.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qu872HUJplKd7hXtuM5taHJ5GZue6pQ8vPA10vBSmBqZJCW+6UrIwfJK0Uxnhnu2CtHb3HqPhyOlrcQdrrnabEsnaUtKSOQ6Odx7mqlKXvCaEUuiGlGFE70NrUitT3Y5sT40O3jQr4A3Jaj1IWj9bHa5coGunNSwJbPZCzeUowtjriAU2NeoRB4ryE/3nVV/9AUi2XNiO4W0je8Owb7tu/IPuKrTzlVoasc0vq3IZ7nP4BArDhQS7S2uTmwLqK3+lSXE0T8EQkOjfr3IRx0Rzk8G0PU22SlxsnhssiF8o0wHUl9h5Xhf3Csj4edEM4Uo8i/om3uEnFrs0hrBPRA/wQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r8U+ltVPTcbgcHAhNrq4yoooAF4W0f3Q9A3RyQ+YZxk=;
+ b=ImYjIWYQhynmOIHl8qso9JeSTPCoYo3uTRSQVHeuB5W0xCHxamq07oFFTRECR5lhO3A7vP+au4syJ+IIRFxLTZDMhD7Ao3DTsuKQTjiVuAw0uLkjsqSFkiaW5WeRzuCrjsmK4sryLgOzI+dPqTxRmpqDRUPeVif75gKA35Je/MmO9oYnsC+i9sre5Tr1+RJ6eMy0UVvQa00Gwl9eWbiMBcAENEVjicadychLBtuv0uXBZK0XeO7iqji7NCONG+JeYyiHjQWfuHYadhRVyccVrQbRNUnSpzHxDSfr0QjCJ63fjNAHv45oPRk6pdQl16fbythxfGaoAhxG1lPDuldlEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r8U+ltVPTcbgcHAhNrq4yoooAF4W0f3Q9A3RyQ+YZxk=;
+ b=HkF10VhPTNEu/0hPu3pRIrqmN7U1UzbjNcA3Gsjn3fhHSv87+2tde2kS4gttOM3VndrqU0DeIHHIP1v2+RLWKPmT6TevaI8rPJcS4q7SBadsOt/+W+j9vCi+RA3Lu2OPNjK6S9PemBZ1ba3s7rYl55xZ8uDOqA8V7bAMYrLk5Dw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO6P265MB6826.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:326::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Tue, 10 Sep
+ 2024 12:09:08 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%4]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
+ 12:09:08 +0000
+From: Gary Guo <gary@garyguo.net>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Danilo Krummrich <dakr@redhat.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+	Alex Mantel <alexmantel93@mailbox.org>
+Cc: Adrian Taylor <ade@hohum.me.uk>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Subject: [PATCH] rust: enable arbitrary_self_types and remove `Receiver`
+Date: Tue, 10 Sep 2024 13:07:01 +0100
+Message-ID: <20240910120721.107877-1-gary@garyguo.net>
+X-Mailer: git-send-email 2.44.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PA7P264CA0363.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:37c::21) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240905134818.4104-1-wen.yang@linux.dev>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKKsWRmVeSWpSXmKPExsWy7djPc7pbzB6kGZyeJmfx+vAnRouGiQ0s
-	Fv+3tbBbnOnOtbi8aw6bxY0JTxkt3q+5z+rA7jG74SKLx6ZVnWweCxumMnu833eVzePzJjmP
-	KYfaWQLYorhsUlJzMstSi/TtErgyPj5TL7jMWfH+6U3WBsZ+ji5GTg4JAROJIxNfsnUxcnEI
-	CaxglLh+9jGU84VRovPNAxaQKiGBz4wSRy8KwHScPHqPFaJoOaPEyyczoDqAit5cvgflbGaU
-	ePH1E3MXIwcHi4CqxLklFSDdbAI6Euff3GEGsUUEFCXm7l3EBFLPLPCcUeLtto2MIPXCAl4S
-	B79XgdTwCjhIdK89xAxhC0qcnPkE7CJmoDkLdn9iAylnFpCWWP4P7B1OAXOJ9T0fmSAOVZT4
-	uvgeC4RdK3Fqyy2wVRICLzgk7i36AlXkInHi21qoImGJV8e3sEPYMhKnJ/ewQDRMZpTY/+8D
-	O4SzmlFiWeNXqG5riZYrT6A6HCWu9RxmB7lIQoBP4sZbQYhD+SQmbZvODBHmlehoE4KoVpNY
-	fe8NywRG5VlIXpuF5LVZCK8tYGRexSieWlqcm55abJiXWq5XnJhbXJqXrpecn7uJEZhyTv87
-	/mkH49xXH/UOMTJxMB5ilOBgVhLh7be7lybEm5JYWZValB9fVJqTWnyIUZqDRUmcVzVFPlVI
-	ID2xJDU7NbUgtQgmy8TBKdXAZJ1t/JK7Y28i+4XP/1bb3FO3ulx34IzdnpO3u2YlTurj3NDw
-	8Lz+ZoGXM7/brf9gUjhhSVCPRufuDYxPbYUilP55/3jdUPNE8PSl9ZHbHA/f/Vt4al7SOY0c
-	tQenPCVffDVKLBTi7piw4UJLhq/eGg+x2EkW9mE9x78stRIq6XaIWzR1rn6/BcPjTUwv5Eur
-	rzQXGWYZ7vs6+YXe1KMCZoyFd7I8/VvlBHzdI08on99+h81jS4pLcIf6EfN0ltvzDkXzLvDQ
-	95TP2szeIjGzo3JRyxrFxvhz4eeciizO8c6/zf6vRGqZMY/40pmite1xMifXfS7qX/Ug+W38
-	A3FD1iAe7Q5JBQ7/41+ONdxWYinOSDTUYi4qTgQAyXoGCagDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsVy+t/xe7qbzR6kGXx4ZGPx+vAnRouGiQ0s
-	Fv+3tbBbnOnOtbi8aw6bxY0JTxkt3q+5z+rA7jG74SKLx6ZVnWweCxumMnu833eVzePzJjmP
-	KYfaWQLYovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/Tt
-	EvQyPj5TL7jMWfH+6U3WBsZ+ji5GTg4JAROJk0fvsXYxcnEICSxllPi4vpUZIiEjsfHLVVYI
-	W1jiz7UuNoiij4wSDd3vmSGczUDO670sXYwcHCwCqhLnllSANLAJ6Eicf3MHbJCIgKLE3L2L
-	mEDqmQWeM0q83baREaReWMBL4uD3KpAaXgEHie61h6BmdjFKfNq5iBkiIShxcuYTFhCbGWjo
-	gt2f2EB6mQWkJZb/A/uAU8BcYn3PRyaIQxUlvi6+xwJh10p8/vuMcQKj8Cwkk2YhmTQLYdIC
-	RuZVjCKppcW56bnFRnrFibnFpXnpesn5uZsYgZG37djPLTsYV776qHeIkYmD8RCjBAezkghv
-	v929NCHelMTKqtSi/Pii0pzU4kOMpsCQmMgsJZqcD4z9vJJ4QzMDU0MTM0sDU0szYyVxXrYr
-	59OEBNITS1KzU1MLUotg+pg4OKUamHRz3hUdu7Jkh6nl3SMLa2PC9vfutZ8tUs1YvfNjzpyk
-	tDpZvbggMdWkjVycbhYcqZurhbbL/n/ZsrX8SN2Zei0+k3lmwTw7bp6tsbM5qcdWwrA3nSVq
-	0n77jUFXFnbnHC/8/+vMhDfChtu2NJ+3i7z01eOev0yHI8OpObNf3nh//Z3YmshXx+YpnHCp
-	sNzz9e+1vsVLdrcw/FqWpCDl4xn9eU2WxoQZAgoMfJrvXxabnd1ltKJ3u0hXzJHimPMidUtE
-	2aRmsO7Yx5zBGlHZlMpnwfT4+Vs2DtNfO1rO69WuOlF13vclO//6nWW/Ned+/CVe4FE6odhx
-	1+m5XJZsEUI36w5oHXHeFdnqqmKZr8RSnJFoqMVcVJwIAOaQTVpFAwAA
-X-CMS-MailID: 20240910120820eucas1p2f477a72fc9b02e7038487cea82b8fc28
-X-Msg-Generator: CA
-X-RootMTR: 20240905134850eucas1p1bf3a6a630f795a6a708db302afa1a3ee
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240905134850eucas1p1bf3a6a630f795a6a708db302afa1a3ee
-References: <CGME20240905134850eucas1p1bf3a6a630f795a6a708db302afa1a3ee@eucas1p1.samsung.com>
-	<20240905134818.4104-1-wen.yang@linux.dev>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO6P265MB6826:EE_
+X-MS-Office365-Filtering-Correlation-Id: 55c45351-b94f-47aa-c8da-08dcd1915f6d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RnxxJ1D+76GficdtK7pKmF1WFOgvmTh+VJUtlhV+MqlZeQld8kbgQBPHQZ/K?=
+ =?us-ascii?Q?LGaVaF7niIG5orIoly8OIaJ98ly2IqubTIoqH66Lz8KCMxMEJvH+Ea/oMMvH?=
+ =?us-ascii?Q?cZLQOb/8y2qxdlsC0ws/lQmJft8AXbED5VY0DqDyCLzrVipKsh6fLqFVSXWz?=
+ =?us-ascii?Q?RiP2Ox/Cm+ZhOmsY7SsoHt/pUwUVo/eEXcxTsrJadRp0mYxVAJj/b1KW0P5k?=
+ =?us-ascii?Q?lDpLnzbubvFg4miPa53gWNy/Jt+uTrexMztDoeMSe/6WH9Yk0PCZNXJrIfh8?=
+ =?us-ascii?Q?aSql6Xyexe4IEKhZ7FWr2F/AxAK5vm2n7xWAgqnBQ+IWXc+tEpSLROXVRqAh?=
+ =?us-ascii?Q?UWuP8A9cvi9EzuMvr6zGoq0gaMAuB6Wx4RsbXSKt6f+/Iu0fc7Wz5s1NmxTg?=
+ =?us-ascii?Q?XPWbynv/a3qEucumjchaa7HlAwS2/4GiDKEso8/XncvPjKvOmmBwazXnWjGo?=
+ =?us-ascii?Q?CUpxAVLOL2vd2h7hKETVYDtycUKTtC3QS01IWF1NcZKPCX2mEXd4iqqExIQQ?=
+ =?us-ascii?Q?vt6FIM0q53rgm7Z/nVjJhkRPEDExFzr6DCcO+44DSrTxTY+1Wgc+GVE8UPwF?=
+ =?us-ascii?Q?UakxEQpgrwccjB3iYtps5FBM0VxVoU2f88K57SBmaskc6chMUOhj56U1lbCq?=
+ =?us-ascii?Q?DFwmGWRovNY09JUP1nKwpJWx2rdyVrpKLvfOooMPmgtf7wGNHYbT3U4+COdV?=
+ =?us-ascii?Q?v9iaxH9G+ehc7p91HB4PcynnjnyTfjeeKavmyjJ2BgKtrNpDR48srzZOwKmt?=
+ =?us-ascii?Q?o9YMOfFdnjRgtV0pPqEWBT1gNydiEHeuw3m/IRGfELzaB+0PyVpLG6ivYpe4?=
+ =?us-ascii?Q?w0KhFiwNP2vzDSUsrLGKKn1oX5WSaPcPhMsHiFjqriOw+ZTFDsQkwxNgvmTZ?=
+ =?us-ascii?Q?FVRyb9WxSpIjZM8sdCvbvMllfzOShn6BIkLAY9bzrugZlPR5Eidg7hytbmxN?=
+ =?us-ascii?Q?puz77hlFS0YMNWMVRxqP7BV1pBMwAxSkwNOOCRBb42qp3/1+pnqz95cNfX7b?=
+ =?us-ascii?Q?J4aTS+L3waXXRBEkROCQf+VmDX36bCU79Dt0MBv77t96XY/2bYIudffa0gO3?=
+ =?us-ascii?Q?b/EMYL/lG1h4upWVicol7guUIp7XY9LNWzGGoYIP9ptMerRJiNOwqep+lWHZ?=
+ =?us-ascii?Q?qx3j2VoNoWYPk4LtcKbK3fzDp+U3OjrbTMcrxmND4Id2qGlwAT1DhYz3SFy8?=
+ =?us-ascii?Q?Xauu0Icm6q9kNvbQUO4v0m0NAa17N0uCSQcEBsfQ1fVwzv78fgikga2SGNez?=
+ =?us-ascii?Q?tj1DQCGBrh2oZXCpFjNb3cqFwBh1M4UJe+IuTJE7KBZ4EB4vEyjAIVEOJFg9?=
+ =?us-ascii?Q?HoHqOoQXcO18YPpZV1gXXUB5NJJn7d4onB+t6yLmLZBroC7oSEHfumzxq8H8?=
+ =?us-ascii?Q?vX7uXPij85TVx6tuoYpBeUOVuYRPZUUT85aagQDviejuZwHVbw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hjserKxlUjhmJKLmKDe7Jl76rcTUzGwA51gnYuLlO84Av2L+ERqGYiITipg/?=
+ =?us-ascii?Q?zTK0/UpjVAcFt1Jf+8OQ3VitoNXWyAfHriChbhWf7p+iiyTpMcJXUxg12h9c?=
+ =?us-ascii?Q?fuYHoPgYxEAq0hmR/2T//02WvsG4zkLzH6A9j55RVzUNbfa8X2MkjUdNxZdT?=
+ =?us-ascii?Q?c3JF7abfXlSrE2mSwEtPNv2opQYWgvri2cD8ov4oyJOBrWKe2OUTZaSiwzHo?=
+ =?us-ascii?Q?EtVTr8lqBrJjhMdSjoo0xpNOAP0zR1tbF+lKtWkOQQ12I96CDDhSMpe1Zy5S?=
+ =?us-ascii?Q?349QlcEMNjvV6wpwyp3UNFXxT1wCsLQsEWP7siS8HQtzJnv/l92yDsK8ioMn?=
+ =?us-ascii?Q?Hk6BycpPuclJUXYPVO/pJJ9mWKHTgPSAKDDoFUcdmza23fg2mswPoxLbCNsB?=
+ =?us-ascii?Q?99lKZ6/1iU9PlYQ1fUXtSzggLT1U5IQKABwQfqY8IZW+NlIGLEKl/aFZaZQf?=
+ =?us-ascii?Q?qLJqYUee8GEEBzF/jHo6oro8IL1XTCT3OyF0uYS1CXZHotNYM4fTCF21e0Ao?=
+ =?us-ascii?Q?+pJRztQBomhTVVqxl1zvh2vBZaGQJycXuCUfyQ6fF7rhWiJD3aJL0DREN1gz?=
+ =?us-ascii?Q?M+t/LBFQro+6eiYJUhgOHICoS3pkDBkgD292CsxTLBLdHc+Wu0IKxu/ZUndw?=
+ =?us-ascii?Q?S3nO/QftnzKhykX7/1+uC3q0ZsopO12QbGj8H8k/yhmVCY9Y0bKdb5HI/FE3?=
+ =?us-ascii?Q?XfjEX/Khv/WtvHGQOZWtRsDGxDOuE7a2OpX6QP70zDduOABpU6hqAA/pVAcK?=
+ =?us-ascii?Q?y3KTX7UAkvjueYrWLc3eDQ1xp8yOm9KS840PIOcSrdAvqfw742KpLRU3yppY?=
+ =?us-ascii?Q?b/wlkMvr/M+8BeMDOsDcc9p6vGYCzhDpn+WXjauAKPgHHBzMHpldzCfw9oAL?=
+ =?us-ascii?Q?4Tp39/ObWKaGwLwbakTnOTzTJ9eGv7TXKZHbJBadyeammD0yc6lWIIBUg3Xd?=
+ =?us-ascii?Q?5+d69pGE2Bx0OAUxg1duynVpuXanxKdPFuC2bZWWXllXAeU74zYmL78fEOj9?=
+ =?us-ascii?Q?y5IcBi2/1mcLuj/Zn6k3rGIsO1bvUNP9KpkNEBHcCmnxQ2vRLljdeUU7t/fS?=
+ =?us-ascii?Q?p1lpEtfSq0ghWY77aorsUWzawzmuiUd5B8OpktZUMVK8e/EDlole83lK/Rxf?=
+ =?us-ascii?Q?S8HLWBfrbWh7kLTZITwVjMu45pQcP+fXYQJpUylnoSRITQIb4VWELUSO5M/P?=
+ =?us-ascii?Q?XIkql7Ch9pdAu/ImmyniYIsx1bCVtAbtfwsleJB5Uh6zyyk7TrC6GQ+RhWCP?=
+ =?us-ascii?Q?8Ro40608PaGqusGPnRj6+EqWITd834S03scce8dG0V+GWuJjAdHNBHiRL3oo?=
+ =?us-ascii?Q?GC4/OMpbySfclre4CZ8DpgRB6iCW/qTSUqv+NwjWeaMiQfxrHlcPSLXJZD0G?=
+ =?us-ascii?Q?g4irICDgvhimZR3fuQtNKf7O0THSf6Sw3lfe9/rA3dLgxDWOyXAoczGFRJ0q?=
+ =?us-ascii?Q?T9reesh0qbbBGo7ZkhdDlwSZP5I7wWNaS23inqjghCag9Gx3+MG8j4/mjvNT?=
+ =?us-ascii?Q?c2GBYV1cNKQ1o0Qq1XISdppdI/oy/3KJph/NGg7OjlOOne6aAjJ4G1TNK47C?=
+ =?us-ascii?Q?NNY84Ou0ofzejA/oHwCP+E/NC6IJObU8/tKcvKWn?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55c45351-b94f-47aa-c8da-08dcd1915f6d
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 12:09:08.3054
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xaavHlCCf3Vbkl9yGatdXXIXUrqLf+JD8/uWNQsCp8PI3MGCLVB3lx0Z/+GjTPKak7OohAGJscCibezY5QcenA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO6P265MB6826
 
-On Thu, Sep 05, 2024 at 09:48:18PM +0800, Wen Yang wrote:
-> The do_proc_dointvec_minmax_conv_param structure provides the minimum and
-> maximum values for doing range checking for the proc_dointvec_minmax()
-> handler, while the do_proc_douintvec_minmax_conv_param structure also
-> provides these min/max values for doing range checking for the
-> proc_douintvec_minmax()/proc_dou8vec_minmax() handlers.
-> 
-> To avoid duplicate code, a new proc_minmax_conv_param structure has been
-> introduced to replace both do_proc_dointvec_minmax_conv_param and
-> do_proc_douintvec_minmax_conv_param mentioned above.
-> 
-> This also prepares for the removal of sysctl_vals and sysctl_long_vals.
-> 
-> Signed-off-by: Wen Yang <wen.yang@linux.dev>
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Joel Granados <j.granados@samsung.com>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Dave Young <dyoung@redhat.com>
-> Cc: linux-kernel@vger.kernel.org
-Thx for the remind. Its a bit to late to include this for 6.12. Will put it in
-sysctl-testing setting it up for 6.13 (or whatever the next version will be).
+The `arbitrary_self_types` RFC [1] is accepted and the feature is being
+worked on [2]. As part of the RFC, a new `Receiver` trait is to be added,
+and it will be automatically implemented for all types that have `Deref`
+implementation. This is different from the existing `Receiver` trait
+that we use, which is a custom implementation that opts-in a type into
+being used as receiver.
 
-Best
+To prepare us for the change, remove the `Receiver` implementation and
+the associated feature. To still allow `Arc` and others to be used as
+method receivers, turn on `arbitrary_self_types` feature instead.
 
+Cc: Adrian Taylor <ade@hohum.me.uk>
+Link: https://github.com/rust-lang/rfcs/pull/3519 [1]
+Link: https://github.com/rust-lang/rust/issues/44874 [2]
+Signed-off-by: Gary Guo <gary@garyguo.net>
+---
+ rust/kernel/lib.rs      | 2 +-
+ rust/kernel/list/arc.rs | 3 ---
+ rust/kernel/sync/arc.rs | 6 ------
+ scripts/Makefile.build  | 2 +-
+ 4 files changed, 2 insertions(+), 11 deletions(-)
+
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index f10b06a78b9d5..35a65a085bce5 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -12,10 +12,10 @@
+ //! do so first instead of bypassing this crate.
+ 
+ #![no_std]
++#![feature(arbitrary_self_types)]
+ #![feature(coerce_unsized)]
+ #![feature(dispatch_from_dyn)]
+ #![feature(new_uninit)]
+-#![feature(receiver_trait)]
+ #![feature(unsize)]
+ 
+ // Ensure conditional compilation based on the kernel configuration works;
+diff --git a/rust/kernel/list/arc.rs b/rust/kernel/list/arc.rs
+index d801b9dc6291d..3483d8c232c4f 100644
+--- a/rust/kernel/list/arc.rs
++++ b/rust/kernel/list/arc.rs
+@@ -441,9 +441,6 @@ fn as_ref(&self) -> &Arc<T> {
+     }
+ }
+ 
+-// This is to allow [`ListArc`] (and variants) to be used as the type of `self`.
+-impl<T, const ID: u64> core::ops::Receiver for ListArc<T, ID> where T: ListArcSafe<ID> + ?Sized {}
+-
+ // This is to allow coercion from `ListArc<T>` to `ListArc<U>` if `T` can be converted to the
+ // dynamically-sized type (DST) `U`.
+ impl<T, U, const ID: u64> core::ops::CoerceUnsized<ListArc<U, ID>> for ListArc<T, ID>
+diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+index 3021f30fd822f..28743a7c74a84 100644
+--- a/rust/kernel/sync/arc.rs
++++ b/rust/kernel/sync/arc.rs
+@@ -171,9 +171,6 @@ unsafe fn container_of(ptr: *const T) -> NonNull<ArcInner<T>> {
+     }
+ }
+ 
+-// This is to allow [`Arc`] (and variants) to be used as the type of `self`.
+-impl<T: ?Sized> core::ops::Receiver for Arc<T> {}
+-
+ // This is to allow coercion from `Arc<T>` to `Arc<U>` if `T` can be converted to the
+ // dynamically-sized type (DST) `U`.
+ impl<T: ?Sized + Unsize<U>, U: ?Sized> core::ops::CoerceUnsized<Arc<U>> for Arc<T> {}
+@@ -480,9 +477,6 @@ pub struct ArcBorrow<'a, T: ?Sized + 'a> {
+     _p: PhantomData<&'a ()>,
+ }
+ 
+-// This is to allow [`ArcBorrow`] (and variants) to be used as the type of `self`.
+-impl<T: ?Sized> core::ops::Receiver for ArcBorrow<'_, T> {}
+-
+ // This is to allow `ArcBorrow<U>` to be dispatched on when `ArcBorrow<T>` can be coerced into
+ // `ArcBorrow<U>`.
+ impl<T: ?Sized + Unsize<U>, U: ?Sized> core::ops::DispatchFromDyn<ArcBorrow<'_, U>>
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 72b1232b1f7d9..56b8c72687255 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -263,7 +263,7 @@ $(obj)/%.lst: $(obj)/%.c FORCE
+ # Compile Rust sources (.rs)
+ # ---------------------------------------------------------------------------
+ 
+-rust_allowed_features := new_uninit
++rust_allowed_features := arbitrary_self_types,new_uninit
+ 
+ # `--out-dir` is required to avoid temporaries being created by `rustc` in the
+ # current working directory, which may be not accessible in the out-of-tree
+
+base-commit: 93dc3be19450447a3a7090bd1dfb9f3daac3e8d2
 -- 
+2.44.1
 
-Joel Granados
 
