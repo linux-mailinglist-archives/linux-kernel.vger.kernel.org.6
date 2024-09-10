@@ -1,73 +1,58 @@
-Return-Path: <linux-kernel+bounces-323942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF7A9745CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:21:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8E39745D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06B081F23838
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:21:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E7981C213E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286361AC8A0;
-	Tue, 10 Sep 2024 22:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DC11ACDF9;
+	Tue, 10 Sep 2024 22:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bXvC/AMd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="6KHVgFr3"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1C41AC441;
-	Tue, 10 Sep 2024 22:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1B71ABEA9;
+	Tue, 10 Sep 2024 22:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726006809; cv=none; b=WGr+SDJ7nEAuDMb5/1rxGhU1HWwqszL/XcTfg2wVlTRJxfbcCjlfRQ64K8VASt2UofKhaoTeiDOwu+Q7IDmHMaJp7TD4dKvnfTIHkd2Lla5Ze5gyJI6FVqdH99d8MbrEtxOn44UlKJpaDg+LT5ki8FXN3EUrSo4VMYPC6ENJTJY=
+	t=1726006835; cv=none; b=qh3RchjpzSqTZVLUJjGE7PnyDL1e1lIG89ES/9dVVLkxD/tv+MvGXCtaJA70kHcxCCQXPypkf7FRVAD1EmvgSgTEd/FJRBeuRJlYTFn/nSiLwK4y2S62y2Nw/zxJIm8WvJaiL1t7UoFpgTNodr0AASWIVvzUqARsq+QgREixgHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726006809; c=relaxed/simple;
-	bh=48YI4pbgmYlCiPT43kBVwkkPa58PT2DK2GN26WL06Zs=;
+	s=arc-20240116; t=1726006835; c=relaxed/simple;
+	bh=RTPNZzLRDQadj/kll/i0qJCSbLBYvrWqTxiWmE2xxDw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W5J6Fxxy6VkoR4QujUyqUBtynYNfaL/N5k3jFm5J3aS8/07jaA3LJo16JyJoFHAJgjGONwzV5OGJEkT1MV+VHPW2jneUy1/fBaCvqplPhmbiK8dADnl8QPvhb9orcCvlW+gFKIUjH+BV92+iMJS0+wLhD9SbGNlFK0+sfTC+/VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bXvC/AMd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA255C4CEC3;
-	Tue, 10 Sep 2024 22:20:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726006808;
-	bh=48YI4pbgmYlCiPT43kBVwkkPa58PT2DK2GN26WL06Zs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bXvC/AMdALgzeciEYcNb3c7MPlwl1Ldpk8m3EmiuiaLfyLLWLC4BnWS4SIe+MdZa6
-	 6mZMlroCrRgIPDG8EyJyzVb39LE+5OAes1gED325p1M9hGm7e8hNTrWk1oAxCuxmy9
-	 iEVZo/7+4ouPBj6jySGz6RzsogWcFaGmQrpjVQchYuIJoCEY5cSdDgGO/udItb1/3t
-	 MqPWOsC7+j7ZUEm8A9BmF0Es+nKRaVpzowcRgRqJMhsA0rYSK6BUJoTclK4mXQN8iV
-	 dPdtSGzTqhto6BkXQMoVkYE3eQs122rcEq6o1b5I1D5+KbbY3Ry5QIsFY3f/9nVqAJ
-	 /zH+eyi3rKtdA==
-Date: Tue, 10 Sep 2024 17:20:07 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Li Zetao <lizetao1@huawei.com>, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Yangtao Li <frank.li@vivo.com>, alsa-devel@alsa-project.org,
-	Andi Shyti <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=CzpSWaGzO1p0R8g4EJ+ZK0SuET5XYrwnvdKG4hmayvL2awZGBbTU8Nxat/PKldKDP8VJW4kuLDKBQ+ycWzmiXScjQ9FoTOlwn7q8CMxIIgI62Qiahvtcy8GS52JBo2UWjFFhXqyqWV4DcpWNo9qSYmax3DbK7qD0iqWa4K9D60g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=6KHVgFr3; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=adrGJApwc/ds/la2vhWptTl82lgjp3gICkNWHjbmAL0=; b=6KHVgFr3Zajgx5ZUXSsn0Mk8zQ
+	N6z4heTogb4kSChlUhysQ8129cRW8tBS7mla8rPgh+Ir52osu8yyF21SaVAiuTgJuZHZjqHDWIfY0
+	3cXKussYru/T3K0/lbz4kMUSCUd41/E8VngcIFRfUErctktCVHYNzlLyBV7Qeoguwpow=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1so9Dm-0079Iu-IW; Wed, 11 Sep 2024 00:20:26 +0200
+Date: Wed, 11 Sep 2024 00:20:26 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Chancel Liu <chancel.liu@nxp.com>,
-	Russell King <linux@armlinux.org.uk>, linux-sound@vger.kernel.org,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Corentin Labbe <clabbe@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	"J.M.B. Downing" <jonathan.downing@nautel.com>,
-	Takashi Iwai <tiwai@suse.com>, devicetree@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Richard Weinberger <richard@nod.at>, Arnd Bergmann <arnd@arndb.de>,
-	Vinod Koul <vkoul@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [Patch v5 02/12] dt-bindings: dma: Add lpc32xx DMA mux binding
-Message-ID: <172600677256.860315.3249804427139743181.robh@kernel.org>
-References: <20240627150046.258795-1-piotr.wojtaszczyk@timesys.com>
- <20240627150046.258795-3-piotr.wojtaszczyk@timesys.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: marvell: kirkwood: Fix at24 EEPROM node name
+Message-ID: <b8f6aa8b-0d02-4f74-ade1-4c544eae5360@lunn.ch>
+References: <20240910215914.823546-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,30 +61,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240627150046.258795-3-piotr.wojtaszczyk@timesys.com>
+In-Reply-To: <20240910215914.823546-1-robh@kernel.org>
 
-On Thu, 27 Jun 2024 17:00:20 +0200, Piotr Wojtaszczyk wrote:
-> LPC32XX SoCs use pl080 dma controller which have few request signals
-> multiplexed between peripherals. This binding describes how devices can
-> use the multiplexed request signals.
+On Tue, Sep 10, 2024 at 04:59:13PM -0500, Rob Herring (Arm) wrote:
+> at24.yaml defines the node name for at24 EEPROMs as 'eeprom'.
 > 
-> Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-> ---
-> Changes for v5:
-> - Corrected property order
-> - Added maxItems to properties
-> - Fixed example
-> - Removed "N:: from the MAINTAINERS entry
-> - Added Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com> to LPC32XX maintainers
-> 
-> Changes for v4:
-> - This patch is new in v4
-> 
->  .../bindings/dma/nxp,lpc3220-dmamux.yaml      | 49 +++++++++++++++++++
->  MAINTAINERS                                   |  9 ++++
->  2 files changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/dma/nxp,lpc3220-dmamux.yaml
-> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Applied, thanks!
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
