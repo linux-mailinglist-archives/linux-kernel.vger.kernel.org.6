@@ -1,192 +1,170 @@
-Return-Path: <linux-kernel+bounces-323115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9BC973821
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:58:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A31097381B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECFCA1F26372
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:58:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6EF71F25592
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBDB1922F5;
-	Tue, 10 Sep 2024 12:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D226191F97;
+	Tue, 10 Sep 2024 12:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMn0L+UI"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="vqrlV9G/";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="B1OwzTKa"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F5218F2DB;
-	Tue, 10 Sep 2024 12:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF3B1EB2F;
+	Tue, 10 Sep 2024 12:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725973082; cv=none; b=GMAkidfOxbR4rSRv66mp4Ip0KSK6Ot3+9CGkVd5NRql7gb0n6vHJo2F9JTWva54hBi4HFaZ6EroQxQN6I+8ZijLoKQ63Nt5OCJRPh6V0ZzEKCvyrvFGJ0g25ucu+KMpkiWZP1lXxuHqrzCFIr4K+rgP1dd3uvLRzu8ixXye3qGU=
+	t=1725973065; cv=none; b=jQydNh5vKbjFtj20Z+3a9qjiDjxWP+JrqpM2FyFgxii07l0Pp8AOX6VzdiVP5BvuhSaje5yHQLKfjxiFCI5hBEmRuKPm/6o2SVg2C94Ci/kqE2DxRYRvVdzcCWaxwp5JLtRprqGR4LuG1Qk+qa1qe/Y2Qx86Pxe22ZHJ2bNEN74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725973082; c=relaxed/simple;
-	bh=MsNLxlVpQKT2DOWHrlifclyuixuA5bd8tUg2MRcn+Is=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SvDOdrCo7SmcKKk+8bHkscR9MoMi+6FMdz11kXMRMd3a4tHOdZEe800qdZCiYS5rjmTpFRQtILPO1b/SBMFmHyfg8ECSDIO3uf2xOI8GJHsEViJ0RjK+Sg62RBcYAK8aD0PH6VBRgrnHRxFNlC83WT43cr6Bt6D2KjKqycUrlTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZMn0L+UI; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-20688fbaeafso55575255ad.0;
-        Tue, 10 Sep 2024 05:58:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725973080; x=1726577880; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JUS8mhUC58UDTChTn2sVU5TFkIV/hDV8RxXUMtAqKrM=;
-        b=ZMn0L+UI+wcab9svt3FihuAyVzSv/sEb7zSNVcgpsQw3IQWsu8hMBaoBJPEbMrSpKa
-         AOwdxGWv8zfm6gcjUzn0+REjlJY4LMSZzZYNcDcMojxRbiNbX9FuCtLr4kUNHG8DizeS
-         RX4l1rhVAUpH4qhE4by4M2RTEk/dnF54sStTu34tsYZIlecnrYHBCkfNNwMP4PEj4A9F
-         WgUGkcG/ZlsBvvrnygFYjxYECoDn5hvBc8INMwjYU1JnbKDEsBHPxSbzMBGREYSjVYCC
-         FyAaNihG69M6250Dc7Xvd0epYOpZt9Rkz802EeUczJtnbZjqEg1kfXEqetTW8JljjbC8
-         DygA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725973080; x=1726577880;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JUS8mhUC58UDTChTn2sVU5TFkIV/hDV8RxXUMtAqKrM=;
-        b=XdVdAh6TPVxlNQUZIkJZH/yp/vBIE9HbS5Gk6uGhYpAKUZuA7Q4m5yy8Tz0kRy7hYT
-         QebcpAZ082x4tpf83gKt9PtzyoM0OfYXSD9rJqhlwBzDheCYMclQETXYyYHie81qo+bn
-         rOww2lFWDuZGhZFn60QGCoiMEwvyPRCEuP5OAuyoaVvVSdg673DcGjLLc2btbvqiU/91
-         YZw0HZOZOEhsyiW61KknK9iuwVuTR5cdr7WRP1OtJ00e9nlNWigdSeNWbLnCeH4pBBjQ
-         nf+nxdIWPebxezKvrSnK4V9LLE79wtc+5red8bRfyXw5zaUaPuTphjaXGANpzqnW6eDJ
-         lqDA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Bfk5Zt5EXBYiVHOXbBi8xjYNud6O5VpGnaV9sgofoK+AqZHWxbBUcjy8n1siMi9QvhMHOjlsGmS5ijE=@vger.kernel.org, AJvYcCUnVD+jwy2nAaN38POJmwoVE2cEcz6TKuY0gDG3Na43x8doMZFu4MCIkii8N9BwXRJAlfgTl7Y65VpFP+E=@vger.kernel.org, AJvYcCWhZqvI3XNnPyS1Wl5zWoIRCvY1VBrR6b3U8h+2Tcy/KJq7asx7+t9g4n+XEwuTZ8PX8nI8h6G+lbjAbg==@vger.kernel.org, AJvYcCXdgW0OGmtJ7JYRUODYFfDusoh4oLDB3DdMTFPpP9/ho/TY3wMwRFGUheIUsh0sE6eDnRWhKl39r9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydaCB8h62bGSPF8B1JVi7+Ghbr/HjrNZyqqAzxJ3SmZn2SDg24
-	xPL1dHw8HnDEuJimJxsIUnT48W8b8cn7TiyN6I3q+Jd2lrvJKpdr52hGquQYKDE=
-X-Google-Smtp-Source: AGHT+IFGOZoCTNJB6c6BA89kFJoOYl1hzlJ0q3P1FoFkG4+ZNZX+8ts0DZlupnsG6oCf2CltnXPNZQ==
-X-Received: by 2002:a17:903:11d0:b0:205:5eaf:99e7 with SMTP id d9443c01a7336-2074c70eaa1mr8420315ad.38.1725973080350;
-        Tue, 10 Sep 2024 05:58:00 -0700 (PDT)
-Received: from localhost ([212.107.28.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e10ee4sm48347315ad.12.2024.09.10.05.57.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 05:57:59 -0700 (PDT)
-From: Celeste Liu <coelacanthushex@gmail.com>
-X-Google-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
-To: conor.dooley@microchip.com
-Cc: anup@brainfault.org,
-	aou@eecs.berkeley.edu,
-	bcm-kernel-feedback-list@broadcom.com,
-	chenhuacai@kernel.org,
-	coelacanthushex@gmail.com,
-	dalias@libc.org,
-	florian.fainelli@broadcom.com,
-	glaubitz@physik.fu-berlin.de,
-	guoren@kernel.org,
-	heinrich.schuchardt@canonical.com,
-	jonathanh@nvidia.com,
-	kernel@xen0n.name,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-sh@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux@armlinux.org.uk,
-	loongarch@lists.linux.dev,
-	palmer@dabbelt.com,
-	palmer@rivosinc.com,
-	paul.walmsley@sifive.com,
-	rjui@broadcom.com,
-	sbranden@broadcom.com,
-	thierry.reding@gmail.com,
-	tony@atomide.com,
-	ysato@users.sourceforge.jp,
-	Celeste Liu <CoelacanthusHex@gmail.com>
-Subject: Re: [PATCH v2 1/4] riscv: defconfig: drop RT_GROUP_SCHED=y
-Date: Tue, 10 Sep 2024 20:57:30 +0800
-Message-ID: <20240910125729.480594-2-CoelacanthusHex@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240909-arguable-detection-02445bd1cc89@wendy>
-References: <20240909-arguable-detection-02445bd1cc89@wendy>
+	s=arc-20240116; t=1725973065; c=relaxed/simple;
+	bh=rDSX+r3NYKNXUOnNJDEw12reW1bY7cdGqinLXrl1VjI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tDeW3M7T3aNUQESIVBlxs4TnNCJeGf8F+79CQ/UoC4eifvas4YlraeuvSkV6+9gyN9mxl4XQxVSB0uc2VgPctefy+/2ajQy+vuOPAJ87kJ5X2lk0Rnyl+5wflf9n6YoE3fjvSYBmjiozJBXZL0ZRuZgj4xpzIyG2YxF+PDKgEB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=vqrlV9G/; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=B1OwzTKa; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1725973062;
+	bh=rDSX+r3NYKNXUOnNJDEw12reW1bY7cdGqinLXrl1VjI=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=vqrlV9G/Q4NxT2/El31foM0e/c4L+lEJSoH/thjKHoXX/tMUOTeqzy6xevvoTVy7L
+	 MFn1LVotJ8EzZsWVDk2uehuJ5vgngt1rONBq0FUEuFc6igw7iEvaYaee19+qZ5ZQzf
+	 OZ0rs5UiusM5jx+xIHuOH5PAA1rJbwx6f3/MsUTE=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 3DF55128635D;
+	Tue, 10 Sep 2024 08:57:42 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id WQpE-h6sQKbI; Tue, 10 Sep 2024 08:57:42 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1725973061;
+	bh=rDSX+r3NYKNXUOnNJDEw12reW1bY7cdGqinLXrl1VjI=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=B1OwzTKaFwrWklkvOIEvNiQjMJgtcF1L5QsTKbGLkY/CZctOVr1GLRwRO6MFmu0d0
+	 qbi6R3EC6EJQ+D9/Jxg4vW8ucFFCnCz47xsnqazJbumt1EgfKFoZxgYZMVeEyIycZ4
+	 KQ8hMG1LMTyE/7/+z8eAvbDGGh4pMEYrOWX5WCqE=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 02A0612817C5;
+	Tue, 10 Sep 2024 08:57:40 -0400 (EDT)
+Message-ID: <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
+Subject: Re: [regression] significant delays when secureboot is enabled
+ since 6.10
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Roberto Sassu
+	 <roberto.sassu@huaweicloud.com>, Linux regressions mailing list
+	 <regressions@lists.linux.dev>
+Cc: keyrings@vger.kernel.org, "linux-integrity@vger.kernel.org"
+	 <linux-integrity@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Pengyu Ma <mapengyu@gmail.com>
+Date: Tue, 10 Sep 2024 08:57:36 -0400
+In-Reply-To: <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
+References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
+	 <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
+	 <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
+	 <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2887; i=CoelacanthusHex@gmail.com; h=from:subject; bh=6nGHo0lCtESeld3ret04gh/vnDvSoID5OBGgjnB5oXg=; b=owJ4nJvAy8zAJfY4pvNJRPo6U8bTakkMaQ+cLLeU3+q4sXJjayZnHpd9X/KFC6qHNZ0WLPp3p vaYSqSFeVhHKQuDGBeDrJgii9jOp6+XlT76sIzXZAbMHFYmkCEMXJwCMBGpo4wMCzdbR819rrNh F0PLsqgLuV+EkvbEW2QueDjP0ZO7L/PWcUaGJvErL110T2cvKbabdudw3cITiU0XTzhYze07spC xyuEoLwAho0yn
-X-Developer-Key: i=CoelacanthusHex@gmail.com; a=openpgp; fpr=892EBC7DC392DFF9C9C03F1D15F4180E73787863
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On 2024-09-09 20:16, Conor Dooley wrote:=0D
-> On Mon, Sep 09, 2024 at 08:14:16PM +0800, Celeste Liu wrote:=0D
-> > On 2024-09-09 19:53, Conor Dooley wrote:=0D
-> > =0D
-> > > On Fri, Aug 23, 2024 at 01:43:26AM +0800, Celeste Liu wrote:=0D
-> > >> Commit ba6cfef057e1 ("riscv: enable Docker requirements in defconfig=
-")=0D
-> > >> introduced it because of Docker, but Docker has removed this require=
-ment=0D
-> > >> since [1] (2023-04-19).=0D
-> > >>=0D
-> > >> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hie=
-rarchy it=0D
-> > >> needs an RT budget assigned, otherwise the processes in it will not =
-be able to=0D
-> > >> get RT at all. The problem with RT group scheduling is that it requi=
-res the=0D
-> > >> budget assigned but there's no way we could assign a default budget,=
- since the=0D
-> > >> values to assign are both upper and lower time limits, are absolute,=
- and need to=0D
-> > >> be sum up to < 1 for each individal cgroup. That means we cannot rea=
-lly come up=0D
-> > >> with values that would work by default in the general case.[2]=0D
-> > >>=0D
-> > >> For cgroup v2, it's almost unusable as well. If it turned on, the cp=
-u controller=0D
-> > >> can only be enabled when all RT processes are in the root cgroup. Bu=
-t it will=0D
-> > >> lose the benefits of cgroup v2 if all RT process were placed in the =
-same cgroup.=0D
-> > >>=0D
-> > >> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also =
-doesn't=0D
-> > >> support it.[3]=0D
-> > >>=0D
-> > >> [1]: https://github.com/moby/moby/commit/005150ed69c540fb0b5323e0f22=
-08608c1204536=0D
-> > >> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=3D1229700=0D
-> > >> [3]: https://github.com/systemd/systemd/issues/13781#issuecomment-54=
-9164383=0D
-> > >>=0D
-> > >> Fixes: ba6cfef057e1 ("riscv: enable Docker requirements in defconfig=
-")=0D
-> > > =0D
-> > > I don't think this fixes tag is suitable, the commit you cite in=0D
-> > > moby/docker is a year younger than the one in the fixes tag, so it wa=
-s=0D
-> > > correct at the time it was written. I think the fixes tag should just=
- be=0D
-> > > removed, since that commit was not wrong. Or am I missing something?=
-=0D
-> > =0D
-> > The Docker commit I cited introduce the fix, not the bug. So it should =
-be later=0D
-> > than commit in fixes tag, otherwise Heinrich Schuchardt won't pick the =
-wrong=0D
-> > config from upstream.=0D
-> > =0D
-> > Timeline is:=0D
-> > 1) 2015-06-19 Qiang Huang introduce RT_GROUP_SCHED check in Docker.[1]=
-=0D
-> > 2) 2022-06-08 Heinrich Schuchardt pick this to defconfig in commit=0D
-> >               in fixes tag.=0D
-> > 3) 2023-04-19 Florian Schmaus remove this requirement from Docker in=0D
-> >               commit I cited.=0D
-> =0D
-> Yes, this is the way I understood things to be. IOW, when Heinrich wrote=
-=0D
-> ba6cfef057e1 ("riscv: enable Docker requirements in defconfig"), it was=0D
-> a requirement for docker. The requirement later being removed doesn't=0D
-> make his patch incorrect, which is why I don't think this is a fix.=0D
-=0D
-v3 has been sent.=0D
+On Tue, 2024-09-10 at 15:48 +0300, Jarkko Sakkinen wrote:
+> On Tue Sep 10, 2024 at 3:39 PM EEST, Jarkko Sakkinen wrote:
+> > On Tue Sep 10, 2024 at 12:05 PM EEST, Roberto Sassu wrote:
+> > > On Tue, 2024-09-10 at 11:01 +0200, Linux regression tracking
+> > > (Thorsten
+> > > Leemhuis) wrote:
+> > > > Hi, Thorsten here, the Linux kernel's regression tracker.
+> > > > 
+> > > > James, Jarkoo, I noticed a report about a regression in
+> > > > bugzilla.kernel.org that appears to be caused by this change of
+> > > > yours:
+> > > > 
+> > > > 6519fea6fd372b ("tpm: add hmac checks to tpm2_pcr_extend()")
+> > > > [v6.10-rc1]
+> > > > 
+> > > > As many (most?) kernel developers don't keep an eye on the bug
+> > > > tracker,
+> > > > I decided to forward it by mail. To quote from
+> > > > https://bugzilla.kernel.org/show_bug.cgi?id=219229 :
+> > > > 
+> > > > > When secureboot is enabled,
+> > > > > the kernel boot time is ~20 seconds after 6.10 kernel.
+> > > > > it's ~7 seconds on 6.8 kernel version.
+> > > > > 
+> > > > > When secureboot is disabled,
+> > > > > the boot time is ~7 seconds too.
+> > > > > 
+> > > > > Reproduced on both AMD and Intel platform on ThinkPad X1 and
+> > > > > T14.
+> > > > > 
+> > > > > It probably caused autologin failure and micmute led not
+> > > > > loaded on AMD platform.
+> > > > 
+> > > > It was later bisected to the change mentioned above. See the
+> > > > ticket for
+> > > > more details.
+> > > 
+> > > Hi
+> > > 
+> > > I suspect I encountered the same problem:
+> > > 
+> > > https://lore.kernel.org/linux-integrity/b8a7b3566e6014ba102ab98e10ede0d574d8930e.camel@huaweicloud.com/
+> > > 
+> > > Going to provide more info there.
+> > 
+> > I suppose you are going try to acquire the tracing data I asked?
+> > That would be awesome, thanks for taking the troube.  Let's look
+> > at the data and draw conclusions based on that.
+> > 
+> > Workaround is pretty simple: CONFIG_TCG_TPM2_HMAC=n to the kernel
+> > configuration disables the feature.
+> > 
+> > For making decisions what to do with the  we are talking about ~2
+> > week window estimated, given the Vienna conference slows things
+> > down, so I hope my workaround is good enough before that.
+> 
+> I can enumerate three most likely ways to address the issue:
+> 
+> 1. Strongest: drop from defconfig.
+> 2. Medium: leave to defconfig but add an opt-in kernel command-line
+>    parameter.
+> 3. Lightest: if we can based on tracing data nail the regression in
+>    sustainable schedule, fix it.
+
+Actually, there's a fourth: not use sessions for the PCR extend (if
+we'd got the timings when I asked, this was going to be my suggestion
+if they came back problematic).  This seems only to be a problem for
+IMA measured boot (because it does lots of extends).  If necessary this
+could even be wrapped in a separate config or boot option that only
+disables HMAC on extend if IMA (so we still get security for things
+like sd-boot)
+
+The down side of doing this is that an interposer can drop any extend
+it wants without being immediately detected, but as long as they don't
+have control of the kernel they can't change the log entry, so the
+mismatch would be detected on check (which has to be done by the remote
+verifier).  The unavoidable increased threat is that if you get tricked
+into booting a malicious kernel (so the attacker has control of the
+log) and the interposer substitutes the boot measurements, it can
+actually fake out a remote verification system into thinking you're
+actually a good node.
+
+James
+
 
