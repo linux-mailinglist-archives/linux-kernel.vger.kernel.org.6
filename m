@@ -1,83 +1,80 @@
-Return-Path: <linux-kernel+bounces-322364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C129727CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:05:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3616E9727CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61EB285AE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:05:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6077C1F2441F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC1D15C156;
-	Tue, 10 Sep 2024 04:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBBF166307;
+	Tue, 10 Sep 2024 04:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zxm11Dx6"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BDUNmDkj"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36D714037D
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 04:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BA01CF8B;
+	Tue, 10 Sep 2024 04:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725941136; cv=none; b=cLI/0QRvVrKYRHDcqmVCOsUEQ67vtjlftwIquTcjf97QI2m8b/KRUuT69EgYFS7M9dGTaWr/86OJDXo2KmkJ/A2E1PXbtedbOj7MBdV0h+3py/Z3UM/zTvVTjHQhMGXhF+sjVCNgseekxCoJK8IM+ZHwpiwYDRjAlnYwZQMFUB4=
+	t=1725941306; cv=none; b=NtDmxWnauggjVaUtmsKOQl9tC1ijEGXTaSLBu7CaSYR90RjNx9sxrHu3/7R8l/lFLDxGb1RNtAUha031/3ALufpBz4gvaT7vFII8iikvI9fdOxdpIRBvfKwl5QhDlvF18cPmhLWNG63CTO95+00TIneFonYv1CGySOCZyBFA17M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725941136; c=relaxed/simple;
-	bh=1ziOisrsaKx9mcLmEMAB+eShXK3KN3vwItbdAjnlqNA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=levP0VkQVFR8Q46HfOVsPX0ityo+Mf/ntNvsKdX9edH/xYmmzN4b4jFjiOEWEemftCqBAquOczcBfPM3O5o6XuGXONgdgKy1b738uHLhWbf+kBg3TJ/hLTv0UvhT7sCiTPQoPSEIjfuzjdj52KJ3bWiTjH4J7FoR3g2E5fPV+Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zxm11Dx6; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1725941306; c=relaxed/simple;
+	bh=FqANpbOT5Um4r8iPM6kxTnJJW/x8nceJ1wqhFAytDW4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YQD0+N5ln9aRVMTxmObl02y35GAVxQB2WgwiTvsmUZZ+R0i1SuY2kGK8X7krVZm7X25PGNYit8K9yx259hOZuTLGKJTWTVzD2FVCYwqGgeSBDcLaNhmX5mP7BVTgKcmjSyYO8CIwuJ4fcGktOybXL0RL1u0NZHnOtYakyd48ccY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BDUNmDkj; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-718e25d8b67so640742b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 21:05:34 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2068bee21d8so49889665ad.2;
+        Mon, 09 Sep 2024 21:08:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725941134; x=1726545934; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=57j6dC4h677FMz51Re5oWsR6lG/2ScumpzqstrCEmAI=;
-        b=Zxm11Dx6P/1YHiLYpsCgw6Z1qFZQ2uGsYpEO95rDUPuy+F3Qnhtk8Ki8OvaAlGfDj2
-         /d7UsHk1kPkqzbTcwSSwFZ/S1C2mK3e9Wr0YrS952kT+H+mPq5henVOsjs3xddZrpuWd
-         pNaE0F7alKFnbapFN92l8vgkQlNpbVPZtdfthEJ+A6dpg65dWqEQU1fhGq4C5RWaHszu
-         gKg6ajSECOAlYvHfpDFJNoewEWUV1AIXi+RUDdnKG1WK11UFp/Ltn1tJL0nNUfCcr1zO
-         Sw8D3KatWNY2g0KVrtp1SZr3xPpbCkyL6ZhO2B5g27WAg79SvUWeEpahiqVmhvFCq5q5
-         Js7Q==
+        d=gmail.com; s=20230601; t=1725941304; x=1726546104; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vSUYVBZ9f218+RRN/cLDTQz2eMi/kbUHaX+3xxn5Xyw=;
+        b=BDUNmDkjpNkswJV+PIaKWu+q+5FSw5GHomgn5pYr3g5hHvpvodAxvDo2QN6WVHOddF
+         ddf1TSiEjCpu8VJ4QxjJymql5xa9I0ZlQuU1upHB4jLUdNh5vsaewto78Nc2jHYdsXmv
+         rHPvDEkCR+tzWLBexMpF+mRiN+5HqYUtkxKvroMD+0Y9KU0NbtY9vB7JtgUsKBzCG+qe
+         cymcxdMz1hEkCY2OkHABJgOf9SBw/yCIgNSEkCdsYrcjlFT3o6GVy8nQQHEhXyQoFVN3
+         8OB/TUGNLsNQLdqyFlBlQDPHPNZKyL8fwJUqVv6Hzo40hm7NSxwnSKbubbaRB+d0WGra
+         4tRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725941134; x=1726545934;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=57j6dC4h677FMz51Re5oWsR6lG/2ScumpzqstrCEmAI=;
-        b=GEWWzuJBhAzH2dEzl4Aj4S+EBVfwJM/XOl4pkJ4rPIgt1QtJea7UtLTrcybj4dVUOc
-         l9gzxgLsTTcZ3ff1WJJeXIZ7aqE3hAl4aBnbrtfPF6A9V5iKPLsQ4lbSTXZY1YXtPxzV
-         O0LSd30FbN46usIB1YyE54OSMLhUKcC4BTK8bWZBh1KhVTyI0es8nye3qGo4DlIBGb0U
-         viFMhCvFE3MfqtEi6v4bvaqaBWFPVoJ41iVT8vGEAHlv/Ju4WhMCir8inDEMOOgbKVDR
-         az5zeudeHVn/HKIs4LPzOmDeo2Y83pu36oRqs3Fc2OznDk+Qod/og/tQBM9l865+fCcx
-         e/tg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvy7obbKSNNoSky/lKVStjyfAPhFFnXTFu9OPLCd1kIjSz0eFF4LypVKSktMj23GjfxcLAJ5WwfhjxdYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpybgKa+2r9LGDcfUvDNvsmNBtqULkudWYOoxmlaHGk49+81F0
-	8CaLQHLANaLx2s2fP4uMmqvo3RbVr6my+vsfWUFWMaws5g25Hcqa
-X-Google-Smtp-Source: AGHT+IFuCKt+97i4M+2mrhF3+ODNKOXG9EUEen87AEDnk1K9pGTHYhWqhp++DOhd92pCS/rNrpFuew==
-X-Received: by 2002:a17:903:1d1:b0:202:2af7:b50b with SMTP id d9443c01a7336-206f054055cmr69842275ad.5.1725941134116;
-        Mon, 09 Sep 2024 21:05:34 -0700 (PDT)
-Received: from ubuntukernelserver.. ([49.236.212.182])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f5245bsm40610785ad.303.2024.09.09.21.05.31
+        d=1e100.net; s=20230601; t=1725941304; x=1726546104;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vSUYVBZ9f218+RRN/cLDTQz2eMi/kbUHaX+3xxn5Xyw=;
+        b=MP2+TtuZnbVR74Hpjx8dqSUHpj5DQUuDh2DZKoPtVAhPXWKK4Ih0iXTuA9AfY7SbCW
+         xAY3z9ByvMwaB9x/yJWF3PCiTvR6AHMttxSQ9bM/8lGrnzUBanbmvudnZ00C3J9NlcnR
+         JSspLGlIKMTizVfn+QyvnhdTWgY9VcWC60ve0RFMIMgtUxzXmpaNpc1VO3FDbRU/LqaK
+         43rEJ3Gc+5qOH0j2jF23vkHLIp1zltUTizvBQzYsfvODGRCUNIUkLARo60sgck9e8yF4
+         +DONli+xN5RY8kp6Qml+7Zb/OWSAQLVQps8+tEXw0wZlMB8q7Eo+PqG1G8+cItFXddlN
+         E+DA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyEha2QSQjiVj+9kP5sQwTf7R8u5gUkmACqzqu4HfgGXZ9NlGfCdmvqNoLjehPl9bDTqtjlIjWjQYjx5rHNCsA@vger.kernel.org, AJvYcCWIfTNsrDjJF308EHYwEMX9csSHXGFKPC3y5Gw8s50w1ZkcQQ8rraOXDzK2J5um5W6MSTr3e0mcv+VNl0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz9GG7uO7Tx8S/OnvmUPFKYYzR1fuZx5Wz+eCRysM1zQ8deo4W
+	n5tGPZ/d8aCKc0DwJyQqa6m/fB6/A6f1/sQnPWjyjmsHeaBoUZ1b
+X-Google-Smtp-Source: AGHT+IEO341rIgLrziIr2ocfxQbGpgKw40Kn6XGk5M964DpX3kykdw64ac/zx47iY7lKuu30f7lt7Q==
+X-Received: by 2002:a17:902:d491:b0:206:ca91:1df8 with SMTP id d9443c01a7336-2070c1c7184mr120939625ad.53.1725941304154;
+        Mon, 09 Sep 2024 21:08:24 -0700 (PDT)
+Received: from vaxr-BM6660-BM6360.. ([2001:288:7001:2703:8527:dba1:3ddd:e486])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f3195dsm40644585ad.263.2024.09.09.21.08.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 21:05:33 -0700 (PDT)
-From: Roshan Khatri <topofeverest8848@gmail.com>
-To: gregkh@linuxfoundation.org,
-	philipp.g.hortmann@gmail.com
-Cc: Roshan Khatri <topofeverest8848@gmail.com>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/4] staging: rtl8723bs: core: Fix spelling mistake in rtw_xmit.c
-Date: Tue, 10 Sep 2024 09:50:24 +0545
-Message-Id: <90f26f7bce03d80848e3c0fc166c5ab584b83446.1725933169.git.topofeverest8848@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1725933169.git.topofeverest8848@gmail.com>
-References: <cover.1725933169.git.topofeverest8848@gmail.com>
+        Mon, 09 Sep 2024 21:08:23 -0700 (PDT)
+From: I Hsin Cheng <richard120310@gmail.com>
+To: davidgow@google.com
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	I Hsin Cheng <richard120310@gmail.com>
+Subject: [PATCH] list: test: Increasing coverage of list_test_list_replace*()
+Date: Tue, 10 Sep 2024 12:08:18 +0800
+Message-ID: <20240910040818.65723-1-richard120310@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,34 +83,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch fixes spelling mistake to increase code readability
-and searching.
+Increase the test coverage of list_test_list_replace*() by adding the
+checks to compare the pointer of "a_new.next" and "a_new.prev" to make
+sure a perfect circular doubly linked list is formed after the
+replacement.
 
-Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
+Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
 ---
-v3: Created patch series with cover letter as suggested in the feeback
-v2:
- - Created patch series as suggested in the feedback
- - https://lore.kernel.org/all/20240909041549.2449-1-topofeverest8848@gmail.com/
-v1: https://lore.kernel.org/all/20240906141157.10167-1-topofeverest8848@gmail.com/
+ lib/list-test.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- drivers/staging/rtl8723bs/core/rtw_xmit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-index b1965ec0181f..755c1bc86a74 100644
---- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-@@ -45,7 +45,7 @@ s32 _rtw_init_xmit_priv(struct xmit_priv *pxmitpriv, struct adapter *padapter)
- 	init_completion(&pxmitpriv->terminate_xmitthread_comp);
+diff --git a/lib/list-test.c b/lib/list-test.c
+index 37cbc33e9fdb..e207c4c98d70 100644
+--- a/lib/list-test.c
++++ b/lib/list-test.c
+@@ -102,6 +102,8 @@ static void list_test_list_replace(struct kunit *test)
+ 	/* now: [list] -> a_new -> b */
+ 	KUNIT_EXPECT_PTR_EQ(test, list.next, &a_new);
+ 	KUNIT_EXPECT_PTR_EQ(test, b.prev, &a_new);
++	KUNIT_EXPECT_PTR_EQ(test, a_new.next, &b);
++	KUNIT_EXPECT_PTR_EQ(test, a_new.prev, &list);
+ }
  
- 	/*
--	 * Please insert all the queue initializaiton using _rtw_init_queue below
-+	 * Please insert all the queue initialization using _rtw_init_queue below
- 	 */
+ static void list_test_list_replace_init(struct kunit *test)
+@@ -118,6 +120,8 @@ static void list_test_list_replace_init(struct kunit *test)
+ 	/* now: [list] -> a_new -> b */
+ 	KUNIT_EXPECT_PTR_EQ(test, list.next, &a_new);
+ 	KUNIT_EXPECT_PTR_EQ(test, b.prev, &a_new);
++	KUNIT_EXPECT_PTR_EQ(test, a_new.next, &b);
++	KUNIT_EXPECT_PTR_EQ(test, a_new.prev, &list);
  
- 	pxmitpriv->adapter = padapter;
+ 	/* check a_old is empty (initialized) */
+ 	KUNIT_EXPECT_TRUE(test, list_empty_careful(&a_old));
 -- 
-2.34.1
+2.43.0
 
 
