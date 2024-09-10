@@ -1,117 +1,174 @@
-Return-Path: <linux-kernel+bounces-323690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0FE89741DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:17:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B8E79741E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B6D4B25FAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:17:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE7A51C259EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448A71A2C0F;
-	Tue, 10 Sep 2024 18:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71F01A4B9A;
+	Tue, 10 Sep 2024 18:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kt/PJ30/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eMBNfTv8"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37DF19ABCE;
-	Tue, 10 Sep 2024 18:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084B2167DB7
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 18:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725992234; cv=none; b=iT/8cmQaPf7bcPhqwxUpMK0AbD9z5/v18NCnpsuaFGdLBurV/jE2KPKGzg38AYjkmlHsJSaTUviYtXfLievtMZSeqssBhjokMG7OkG6tXZ+IlNABj1IMKv4G4vcL0ClLQIMnSNtOW2QohnEDi3Xmdy50wz75ZT1PXQUnAZwuAno=
+	t=1725992332; cv=none; b=OD5vWaF4rrvZP1z0JiLNc0OZ21JsL4OrNyirOshxAffu/DKOCHrgAqB0STibKrxxh9lk4CZ83dfd82gnyyBLCGB+KLSkbX2ekxZc6+AYqLqpAlmj9ZmsMgSysfy9h2BDieyzmwU0x0o0tPFhLKOwCpW7TiMf2DWPgEoecbsvBaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725992234; c=relaxed/simple;
-	bh=Av47JBqIMel8pnzyd1psadtkEZ7h2mHZiNrDkpnn9sA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VXVTd0+eh9kdUzK8ADi+IlrSvjRjX0ykRsNslRBlfht3VEGj8ClMVDr6CSX1EA8h9X4EYC1xNZhrAlnK94EjM87xyfYHwOYB/TYF1HZ4Dl688kaILYvSat8A8n92WmVCK4Bs5kcg2judK618xgkFpj8D8ngyYax1CKX4AWfXWy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kt/PJ30/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55618C4AF0B;
-	Tue, 10 Sep 2024 18:17:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725992234;
-	bh=Av47JBqIMel8pnzyd1psadtkEZ7h2mHZiNrDkpnn9sA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kt/PJ30/Cxb4wFw7QznVS74EjFfwbVUk2YHxS+GcO8oEaRYicdYZ9r5FP+bqW/lQL
-	 sCs9D8JpC3UEWkx/xDZz1V2mO7Cz/P9AZs0n1s7l9X4SV3Mqwx0LR2zgfgiXKJ3A5X
-	 yksgfPsE91I0l1ytuVk4W4mH4ANlo7CdVpMBbTjDWH7aj+/7inAAK/MAdv9u0RJ0CE
-	 yTlN771EaMWOklCnMguLsF5ppaDjczFRmBBbu8EcivVCa5coNNvF37E7tF1FpX/Zb9
-	 9pbRGV7Pgb2Bi6yRIpz1xutVNUl5CqpZyzZ7OCMHB1YTzzZMjklwjM+CylRapsomXQ
-	 cuIqs8LPdsRWQ==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-277dd761926so3800349fac.2;
-        Tue, 10 Sep 2024 11:17:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4RgbeZ2bqBnLUVoAhNk/qA7LL4D30WtYci6XyHoGSD8aJ1QwAf3i95IPXKeDIOQRKg6xAdu0wzvg=@vger.kernel.org, AJvYcCVRAEE4TJmuC8zJiqLx54XBrQA+4AR5aZdlEyy71bKH1gXF0lPw+Vwos9eRXgE3gzlWVleXrAOlBp+k16E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWHYt6FDi5PGnmG6k1HLGIJZZ1BLl3081l4xJSjTKfcYcW69uF
-	zn67n/T+OuT9jjsA6x7g98uXPc3LdUZCEuPP2nmUhglZ18DDnX3nWrfk4xJqFK3+eVVv7FFK3sA
-	TtFcyvzQgncfD2ePXtjohUm3jAS8=
-X-Google-Smtp-Source: AGHT+IEeYO5s/ZCYXb5YyAbzRWMGjfGy+I6cPKvTnJtvulEDvKApH3QfL4YtfaNvr/Apn/u013u2kVuzuBXTVe2H6bA=
-X-Received: by 2002:a05:6871:7512:b0:268:9d81:24b7 with SMTP id
- 586e51a60fabf-27b82fc714fmr15257645fac.29.1725992233687; Tue, 10 Sep 2024
- 11:17:13 -0700 (PDT)
+	s=arc-20240116; t=1725992332; c=relaxed/simple;
+	bh=cX8E7Kd7KJjcUM/fS5ucxgvF6aBOoZSTP6rRvIrRuvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=orkiuTDYWljVjsAQAWXoqUXISEreYKkSq1J9FrI7+M94tqjPw87lMl0PJbAHaCOgpSAh48Iv65dcHNmxBSMMtTEv/T5U0HukPxBCXxJFehR7BknZHVZoSvTun/ti3iQ97DxrbdUvR/46Vyeb1F3/TlnKq1E4/l8InUSm49jaahU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eMBNfTv8; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 10 Sep 2024 18:18:41 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725992327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LpLtxrldAJA6kgdh8lUC/02V3THaPKjHYDTFam1Jz4g=;
+	b=eMBNfTv8PX2paFmyRCbblRB9zsv/mmCbzE2Fpg7oXKcoAvgF0kEr5/rtrEq5Tw9ARFOpX/
+	NfHgL2yakpaA63qSOBtnU7DMECvFPmaE/ReI2KldPTPxwFN42Mbr9hLaELfAAsJ+X3HZRi
+	xbN8pKnfxwfNtEgmgbdN62+vVZo0Hcc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+Cc: Snehal Koukuntla <snehalreddy@google.com>,
+	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3] KVM: arm64: Add memory length checks and remove
+ inline in do_ffa_mem_xfer
+Message-ID: <ZuCNge74gVpJi2Sf@linux.dev>
+References: <20240909180154.3267939-1-snehalreddy@google.com>
+ <rm2pihr27elmdf4zcgrv5khs7qluhn77tkivkr6xkvqcybtl4m@7hesctcacm4h>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905184848.318978-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20240905184848.318978-1-andriy.shevchenko@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 10 Sep 2024 20:17:02 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jkV4xcuKpLkGUzDc6PMfjBuS67hDr1MxMybus+d_cUrw@mail.gmail.com>
-Message-ID: <CAJZ5v0jkV4xcuKpLkGUzDc6PMfjBuS67hDr1MxMybus+d_cUrw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] PM: hibernate: Remove unused stub for saveable_highmem_page()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <rm2pihr27elmdf4zcgrv5khs7qluhn77tkivkr6xkvqcybtl4m@7hesctcacm4h>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Sep 5, 2024 at 8:48=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> When saveable_highmem_page() is unused, it prevents kernel builds
-> with clang, `make W=3D1` and CONFIG_WERROR=3Dy:
->
-> kernel/power/snapshot.c:1369:21: error: unused function 'saveable_highmem=
-_page' [-Werror,-Wunused-function]
->  1369 | static inline void *saveable_highmem_page(struct zone *z, unsigne=
-d long p)
->       |                     ^~~~~~~~~~~~~~~~~~~~~
->
-> Fix this by removing unused stub.
->
-> See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-> inline functions for W=3D1 build").
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  kernel/power/snapshot.c | 5 -----
->  1 file changed, 5 deletions(-)
->
-> diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-> index 405eddbda4fc..30894d8f0a78 100644
-> --- a/kernel/power/snapshot.c
-> +++ b/kernel/power/snapshot.c
-> @@ -1365,11 +1365,6 @@ static unsigned int count_highmem_pages(void)
->         }
->         return n;
->  }
-> -#else
-> -static inline void *saveable_highmem_page(struct zone *z, unsigned long =
-p)
-> -{
-> -       return NULL;
-> -}
->  #endif /* CONFIG_HIGHMEM */
->
->  /**
-> --
+On Wed, Sep 11, 2024 at 12:32:29AM +0800, Wei-Lin Chang wrote:
+> Hi everyone,
+> 
+> On Mon, Sep 09, 2024 at 06:01:54PM GMT, Snehal Koukuntla wrote:
+> > When we share memory through FF-A and the description of the buffers
+> > exceeds the size of the mapped buffer, the fragmentation API is used.
+> > The fragmentation API allows specifying chunks of descriptors in subsequent
+> > FF-A fragment calls and no upper limit has been established for this.
+> > The entire memory region transferred is identified by a handle which can be
+> > used to reclaim the transferred memory.
+> > To be able to reclaim the memory, the description of the buffers has to fit
+> > in the ffa_desc_buf.
+> > Add a bounds check on the FF-A sharing path to prevent the memory reclaim
+> > from failing.
+> > 
+> > Also do_ffa_mem_xfer() does not need __always_inline
+> > 
+> > Fixes: 634d90cf0ac65 ("KVM: arm64: Handle FFA_MEM_LEND calls from the host")
+> > Cc: stable@vger.kernel.org
+> > Reviewed-by: Sebastian Ene <sebastianene@google.com>
+> > Signed-off-by: Snehal Koukuntla <snehalreddy@google.com>
+> > ---
+> >  arch/arm64/kvm/hyp/nvhe/ffa.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > index e715c157c2c4..637425f63fd1 100644
+> > --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > @@ -426,7 +426,7 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_res *res,
+> >  	return;
+> >  }
+> >  
+> > -static __always_inline void do_ffa_mem_xfer(const u64 func_id,
+> > +static void do_ffa_mem_xfer(const u64 func_id,
+> 
+> I am seeing a compilation error because of this.
 
-Applied as 6.12 material, thanks!
+Thanks for reporting this. Looks like the __always_inline was slightly
+more load bearing...
+
+Marc, can you put something like this on top?
+
+
+From c2712eaa94989ae6457baad3ec459cf363ec5119 Mon Sep 17 00:00:00 2001
+From: Oliver Upton <oliver.upton@linux.dev>
+Date: Tue, 10 Sep 2024 16:45:30 +0000
+Subject: [PATCH] KVM: arm64: Drop BUILD_BUG_ON() from do_ffa_mem_xfer()
+
+__always_inline was recently discarded from do_ffa_mem_xfer() since it
+appeared to be unnecessary. Of course, this was ~immediately proven
+wrong, as the compile-time check against @func_id depends on inlining
+for the value to be known.
+
+Just downgrade to a WARN_ON() instead of putting the old mess back in
+place. Fix the wrapping/indentation of the function parameters while at
+it.
+
+Fixes: 39dacbeeee70 ("KVM: arm64: Add memory length checks and remove inline in do_ffa_mem_xfer")
+Reported-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
+---
+ arch/arm64/kvm/hyp/nvhe/ffa.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+index 637425f63fd1..316d269341f3 100644
+--- a/arch/arm64/kvm/hyp/nvhe/ffa.c
++++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+@@ -426,9 +426,8 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_res *res,
+ 	return;
+ }
+ 
+-static void do_ffa_mem_xfer(const u64 func_id,
+-					    struct arm_smccc_res *res,
+-					    struct kvm_cpu_context *ctxt)
++static void do_ffa_mem_xfer(const u64 func_id, struct arm_smccc_res *res,
++			    struct kvm_cpu_context *ctxt)
+ {
+ 	DECLARE_REG(u32, len, ctxt, 1);
+ 	DECLARE_REG(u32, fraglen, ctxt, 2);
+@@ -440,8 +439,10 @@ static void do_ffa_mem_xfer(const u64 func_id,
+ 	u32 offset, nr_ranges;
+ 	int ret = 0;
+ 
+-	BUILD_BUG_ON(func_id != FFA_FN64_MEM_SHARE &&
+-		     func_id != FFA_FN64_MEM_LEND);
++	if (WARN_ON(func_id != FFA_FN64_MEM_SHARE && func_id != FFA_FN64_MEM_LEND)) {
++		ret = SMCCC_RET_NOT_SUPPORTED;
++		goto out;
++	}
+ 
+ 	if (addr_mbz || npages_mbz || fraglen > len ||
+ 	    fraglen > KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE) {
+-- 
+2.46.0.598.g6f2099f65c-goog
+
+
+-- 
+Thanks,
+Oliver
 
