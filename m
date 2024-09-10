@@ -1,123 +1,123 @@
-Return-Path: <linux-kernel+bounces-323060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB62097371C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:22:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 305AD973720
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A5E01C241B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:22:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62C7A1C23D53
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0808719004B;
-	Tue, 10 Sep 2024 12:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B625190666;
+	Tue, 10 Sep 2024 12:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="U1xPKDnU";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="U1xPKDnU"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ho7QoLTV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72AD18FC93;
-	Tue, 10 Sep 2024 12:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F76C18D637;
+	Tue, 10 Sep 2024 12:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725970926; cv=none; b=Ae4aKT1jKk0ApT2gpXuS+3SDWVpsVbeSXaLl2hAMAbce0PT8hyd74ug9wMb0CVrZStgPR09G4F8R2l0IE/SmxA31a3oK8VBbDebxeOjsevcJgYR3Fke/zvami8PM4Q1o0HLa6Tw9GkV+Ze30l6MRugRUcahkM9sdgaW/jEwvx9s=
+	t=1725970945; cv=none; b=td8vHd4/9egXejgu5utBUSj4wlu5c8bN45DSs6FHcH2xHbXr+u2rE8is9zsJdeD55oBc27FyqtVgNzA6uqEIJVivysJRrjgqEYwb0K/j9XisPw0AlIOegz/sQqFIRoEKLcsslc9BSAydznx7Z/b4lPx/Xdxj/x0eIkaMuya+Z4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725970926; c=relaxed/simple;
-	bh=t8W/jmPNnZNV0/iZgLBsYsClFsS4Tymq4Z557UQtzxQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=o0h3xop7Iyy4D5FqOg/XZWfturefmeDAo1GY7RPDwGz1yO6PxwgogGwEcw0Rhy7va4p/K7C9mGczxuNSJCMW7LROcKpICOXM8WZBJxMxPhbFyVTBIfYmipB0a7Ke6xYJWmEfWi9hFVoTzPvv4z1JpqHmkvvUEv35gMYb0Z5PXtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=U1xPKDnU; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=U1xPKDnU; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1725970923;
-	bh=t8W/jmPNnZNV0/iZgLBsYsClFsS4Tymq4Z557UQtzxQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=U1xPKDnUlTfuns15BHiTbf+jieehV24DELi68PDG7aNklsA06iZsJVtkqSE7z78xR
-	 ixpyokwfzWzLBbjaEWAMFowV984kwChWG7kRTe5tqkpdg7B//lp4FBGt3hIW7x8qZF
-	 pJMD0Rv7CuFvs858mX6LtwdrccXwaW0nQU7RE1aI=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id CE32C128739B;
-	Tue, 10 Sep 2024 08:22:03 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id hQhBGdRparfz; Tue, 10 Sep 2024 08:22:03 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1725970923;
-	bh=t8W/jmPNnZNV0/iZgLBsYsClFsS4Tymq4Z557UQtzxQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=U1xPKDnUlTfuns15BHiTbf+jieehV24DELi68PDG7aNklsA06iZsJVtkqSE7z78xR
-	 ixpyokwfzWzLBbjaEWAMFowV984kwChWG7kRTe5tqkpdg7B//lp4FBGt3hIW7x8qZF
-	 pJMD0Rv7CuFvs858mX6LtwdrccXwaW0nQU7RE1aI=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 0F1CF128627B;
-	Tue, 10 Sep 2024 08:22:02 -0400 (EDT)
-Message-ID: <db275ab4fb73fc089c66738ffbcab23557e53055.camel@HansenPartnership.com>
-Subject: Re: [regression] significant delays when secureboot is enabled
- since 6.10
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Linux regressions mailing list <regressions@lists.linux.dev>, Jarkko
-	Sakkinen <jarkko@kernel.org>
-Cc: keyrings@vger.kernel.org, "linux-integrity@vger.kernel.org"
-	 <linux-integrity@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Pengyu Ma <mapengyu@gmail.com>
-Date: Tue, 10 Sep 2024 08:22:00 -0400
-In-Reply-To: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
-References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1725970945; c=relaxed/simple;
+	bh=XVncRhu89smgyxRthRwxom9MMRDicc/wypTi2pGKFH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uztvirV9+ZPlblc84bOpwYu9hVbLg9rOjgEoNsJkpAtP1DzIrOTXYpJZ+TtO3hnvHYCR6NW/bRE1xr6f+NtrXkGs96UaN3l+PBAOKvNz3ZeHf94z4HJ1JmmQVRtM2jaQhTveNwLh6jah+LrRa+n23rPhqE219IQX+L4cMIGhuOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ho7QoLTV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59B11C4CEC3;
+	Tue, 10 Sep 2024 12:22:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725970944;
+	bh=XVncRhu89smgyxRthRwxom9MMRDicc/wypTi2pGKFH4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ho7QoLTV3yETAd/Nsv9paRApm1AWvZXf+ghWeUIbG8D6YK3pgY5mxlwr8DdFw83rG
+	 2Y+/CjtQlRSE36XaF+r8QUxeRbefedF32kTyAMXiWGoCEdaQh5uiGs3G+WhH+I+4+E
+	 8sfMpkwYQDAbbXvG5ykX4x3TKrxAF1QW0DxQNypg=
+Date: Tue, 10 Sep 2024 14:22:21 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Arthur Borsboom <arthurborsboom@gmail.com>
+Cc: Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jason Andryuk <jandryuk@gmail.com>, Helge Deller <deller@gmx.de>,
+	Arnd Bergmann <arnd@arndb.de>, Sam Ravnborg <sam@ravnborg.org>,
+	xen-devel@lists.xenproject.org,
+	Jason Andryuk <jason.andryuk@amd.com>, stable@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fbdev/xen-fbfront: Assign fb_info->device
+Message-ID: <2024091004-destitute-excusably-1eb5@gregkh>
+References: <20240910020919.5757-1-jandryuk@gmail.com>
+ <Zt_zvt3VXwim_DwS@macbook.local>
+ <ad9e19af-fabd-4ce0-a9ac-741149f9aab3@suse.de>
+ <Zt__jTESjI7P7Vkj@macbook.local>
+ <2024091033-copilot-autistic-926a@gregkh>
+ <CALUcmUn30tPxjToysLBVBmibMaQUWW=GqFoqduP-W5QwQ-VriQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALUcmUn30tPxjToysLBVBmibMaQUWW=GqFoqduP-W5QwQ-VriQ@mail.gmail.com>
 
-On Tue, 2024-09-10 at 11:01 +0200, Linux regression tracking (Thorsten
-Leemhuis) wrote:
-> Hi, Thorsten here, the Linux kernel's regression tracker.
+On Tue, Sep 10, 2024 at 02:18:35PM +0200, Arthur Borsboom wrote:
+> On Tue, 10 Sept 2024 at 10:33, Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Tue, Sep 10, 2024 at 10:13:01AM +0200, Roger Pau Monné wrote:
+> > > On Tue, Sep 10, 2024 at 09:29:30AM +0200, Thomas Zimmermann wrote:
+> > > > Hi
+> > > >
+> > > > Am 10.09.24 um 09:22 schrieb Roger Pau Monné:
+> > > > > On Mon, Sep 09, 2024 at 10:09:16PM -0400, Jason Andryuk wrote:
+> > > > > > From: Jason Andryuk <jason.andryuk@amd.com>
+> > > > > >
+> > > > > > Probing xen-fbfront faults in video_is_primary_device().  The passed-in
+> > > > > > struct device is NULL since xen-fbfront doesn't assign it and the
+> > > > > > memory is kzalloc()-ed.  Assign fb_info->device to avoid this.
+> > > > > >
+> > > > > > This was exposed by the conversion of fb_is_primary_device() to
+> > > > > > video_is_primary_device() which dropped a NULL check for struct device.
+> > > > > >
+> > > > > > Fixes: f178e96de7f0 ("arch: Remove struct fb_info from video helpers")
+> > > > > > Reported-by: Arthur Borsboom <arthurborsboom@gmail.com>
+> > > > > > Closes: https://lore.kernel.org/xen-devel/CALUcmUncX=LkXWeiSiTKsDY-cOe8QksWhFvcCneOKfrKd0ZajA@mail.gmail.com/
+> > > > > > Tested-by: Arthur Borsboom <arthurborsboom@gmail.com>
+> > > > > > CC: stable@vger.kernel.org
+> > > > > > Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
+> > > > > Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
+> > > > >
+> > > > > > ---
+> > > > > > The other option would be to re-instate the NULL check in
+> > > > > > video_is_primary_device()
+> > > > > I do think this is needed, or at least an explanation.  The commit
+> > > > > message in f178e96de7f0 doesn't mention anything about
+> > > > > video_is_primary_device() not allowing being passed a NULL device
+> > > > > (like it was possible with fb_is_primary_device()).
+> > > > >
+> > > > > Otherwise callers of video_is_primary_device() would need to be
+> > > > > adjusted to check for device != NULL.
+> > > >
+> > > > The helper expects a non-NULL pointer. We might want to document this.
+> > >
+> > > A BUG_ON(!dev); might be enough documentation that the function
+> > > expected a non-NULL dev IMO.
+> >
+> > No need for that, don't check for things that will never happen.
 > 
-> James, Jarkoo, I noticed a report about a regression in
-> bugzilla.kernel.org that appears to be caused by this change of
-> yours:
+> And yet, here we are, me reporting a kernel/VM crash due to a thing
+> that will never happen, see 'Closes' above.
 > 
-> 6519fea6fd372b ("tpm: add hmac checks to tpm2_pcr_extend()") [v6.10-
-> rc1]
-> 
-> As many (most?) kernel developers don't keep an eye on the bug
-> tracker, I decided to forward it by mail. To quote from
-> https://bugzilla.kernel.org/show_bug.cgi?id=219229Â :
-> 
-> > When secureboot is enabled,
-> > the kernel boot time is ~20 seconds after 6.10 kernel.
-> > it's ~7 seconds on 6.8 kernel version.
-> > 
-> > When secureboot is disabled,
-> > the boot time is ~7 seconds too.
-> > 
-> > Reproduced on both AMD and Intel platform on ThinkPad X1 and T14.
-> > 
-> > It probably caused autologin failure and micmute led not loaded on
-> > AMD platform.
-> 
-> It was later bisected to the change mentioned above. See the ticket
-> for more details.
+> I don't want to suggest BUG_ON is the right approach; I have no idea.
+> I just want to mention that (!dev) did happen. :-)
 
-We always suspected encryption and hmac would add overheads which is
-why it's gated by a config option.  The way to fix this is to set
+A BUG_ON() will cause the same crash, so I don't see your point, sorry.
 
-CONFIG_TCG_TPM_HMAC to N
-
-of course, TPM transactions are then insecure, but it's the same state
-as you were in before.
-
-James
-
-
+greg k-h
 
