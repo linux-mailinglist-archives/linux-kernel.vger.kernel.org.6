@@ -1,113 +1,157 @@
-Return-Path: <linux-kernel+bounces-322961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F199735EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:07:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D279B9735EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8048C1F265D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:07:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0254D1C242D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB8714D431;
-	Tue, 10 Sep 2024 11:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DED18C327;
+	Tue, 10 Sep 2024 11:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="h1euPbz/"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Flu6vzaT"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D03318C324
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 11:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB1E18C324
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 11:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725966432; cv=none; b=S+vZev6XsWutasYSxmdrvjCwZ/d32ERH6LcpefWHs3Xrxzs7eZa+sVWWWZeoX8xrL46Bv83v9HbRb63qZDNi0JuigJpOTB0kBAG9qniAzKJsyJCd8rdi8NcoY5TEn5NR4eg6gzJvHkjL0/JcOfi2/wdk58N9nTIIe3qIXtDZC6Q=
+	t=1725966445; cv=none; b=HZYCz6sSVyusoBkALdwPcWU+GxqbGfPggahbMp2a/ZzOxwf1QLlPHrWdgidCk2ocpVCddF+A+70bPxEuHaIyMmJqr/vK4XIHzsxrvosDD6gED1oHb5YCh0dYUPe2mRQRbCImeZapKdaezAmlVVExMbDEX7ykNup+iAjuP9AqIBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725966432; c=relaxed/simple;
-	bh=4j88YUU+NzRUvqlo7ArzeVxf988a3WA/7mwo5NDAFLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hud+wY1aw8fjR/brE0h+rN8IEwj2qoPlLzRf07gdXV7iaKKwvIRHKmSwJv6MMqXWA45A2tAoeccBhtHDU7E7PqUzxIr8P2Ot7u1K7b91upDlEPdlGiImlu5JRXqQK/o8lowKZd08GEIZ0/XtvlBSrxnaKEf2/2EFivnsY3SgLL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=h1euPbz/; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8128C40E0285;
-	Tue, 10 Sep 2024 11:07:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id qrGWVqrTr6ZO; Tue, 10 Sep 2024 11:07:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1725966422; bh=q7/7i/hleCHmeIelV+J/jkKAUyMAdVAI7TwF0D/iof4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h1euPbz/eINJg26bo1VdAuCGL3YtT4WXke/s/QTbdUBNuaw4tN4CZ2Tmwg7p4jGrx
-	 XOrZ1Xbpw3qhbn77G5Igcv5fYT+S+6uiE5sTP8nx+qOoSK22Y9s1QGQhszVhQTlqvZ
-	 XeWOGIsqIMyMmgKYujxQO/9aerou17O6fY6rmGm6fQEm81kDLJ8ub8rUWE/lR8tYiu
-	 qsuFZQ4h4iVZKFTgoPnTnYfPQQajXawwBusQNj+z9DEprwXor4oNiT5trlmEzjVqXO
-	 AJfJQu5usxw27FxDDFy2XRTRQSfguyIOC3VK+g1jkrGnKkvo3mud8NlPuLkkutJ6yN
-	 H183fcPIn54bti3UYfOsqDvQXv21LJsuvhtySTvjhXO/vCc6T9ypjtTf79gjYbvea4
-	 WN41/pCIA+Sutaigak2gTF7//QjGVuP8D35AuD2TyJ83/la7RGt1MhawAV7paR2f6Z
-	 wlYaCF8+xUWqsXEKTcJ6+e9Dxae+rMN79LkY17PpWBCZG9TjqdXa5LeRLsLqobHXYQ
-	 S/DZjwPJsC/1cLTT9SQ3CGgqs45SE7Gd/c4KKJhibWXGjCd4MJL17ovU5O0pj6nzs1
-	 GXilzgnSdSObcBPWsf2F5ugfx+owoNuu6uxoj8iQfRgKyEU1rdJHfArG4Y1zDxFeJQ
-	 rllAmw1rHXWh9frbC1OqTDQo=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C421740E0081;
-	Tue, 10 Sep 2024 11:06:47 +0000 (UTC)
-Date: Tue, 10 Sep 2024 13:06:42 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-Cc: linux-stm32@st-md-mailman.stormreply.com,
-	Yannick Fertre <yannick.fertre@foss.st.com>,
-	Philippe Cornu <philippe.cornu@foss.st.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: dw_mipi_dsi-stm.c:(.text+0x8db9a3): undefined reference to
- `clk_hw_unregister'
-Message-ID: <20240910110642.GAZuAoQnZqcr98x5en@fat_crate.local>
-References: <20240905081902.GAZtlpdlQp5XOm5XtO@fat_crate.local>
- <544a633e-de53-493d-9c29-de8ff52630da@foss.st.com>
- <20240909084506.GBZt61kqqGVUTqjKc4@fat_crate.local>
- <0e9018d0-c49f-4dac-aa0f-b05504f9c6f6@foss.st.com>
+	s=arc-20240116; t=1725966445; c=relaxed/simple;
+	bh=eK4uMeRBoxgv1rnMmJ+cfL9Tu7lz3Cz/AV8ulzpHM8U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RSLNId1qbONItZNX6xDY/h55sYUBCA33zA0qlHw3dL8G8nD4stILNhARV7Dx4mVMyTsGXJWNbY7mFGolBEbHfqHT66RsKA3zBFbMGJZkfoLaX7PUzy2epZOF1Juma49DqqhPcpzt6X+jwDQVJqDNj5jBkoM1fGpmpnfvKfRAJJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Flu6vzaT; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-277f35c01f5so2493364fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 04:07:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1725966442; x=1726571242; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W9FpI4bl+ZGfp9SIboAslOt3vHYJy01BUP4KB+ndZUo=;
+        b=Flu6vzaTaCSheOOpMFHFOPQBnUrcyhbxxLLCXEjjBUyqBScy83w3qBCY4hO4xhjLRb
+         uu+cepq4VtlreTQRFOcHtpbreOPJ7EJEhzNl9tCIze19tkT1NYi32BhHm5azeROHrhO6
+         Mu2s8FVkHH3qdx+vxJcUDSlLCbWwYiC54CGr4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725966442; x=1726571242;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W9FpI4bl+ZGfp9SIboAslOt3vHYJy01BUP4KB+ndZUo=;
+        b=oYNcH8NfTBtSFxdqyTJRHnEvXemmeC8KmIzVMYcTuqao4AElZtMbm0ZqWJR1QD4hvh
+         osw7oZDd4I41TYEpPnaMfm3P1vGxxuTjn+vUA8GWNKcosKwttfqeM5OheNXGrvNMBqKJ
+         /LWa3ghql0KLVYmKnw3ZtMZ8QLwXp7vepMslAsH7EVwUn2nCCg+NfD+RaaxmjV00LYjS
+         wgJlPB/T7r0LOxK6A0+IuYAolHn/gaqbD+LFcMZzFTfI/nSkl8r0/a70mtLD3fDRTHil
+         jcQ7CG7xKT0oLbST8OEFcx9grb7AgsPKUExR8jSjfsiQyWN5oTCW6SS9I81o2iWzMfjd
+         7Bow==
+X-Forwarded-Encrypted: i=1; AJvYcCUj2IWD/KaUMpDns5u9UdF4wYBI1ZSHORG+SIyT1wV+Qu8UxbY5AwTxNwbF/g5cK7avS4jsY6doRZLyACk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQmE2j67wImODtRjMuRZftyXMU3q2VCBclftjFPIC5ROu4yjsx
+	PEmrN/WY0tWOdd0argELnHZsmqc3RlF0yN8+gVjabORaphpo3ac+VOiiZyMN9LH/tIMeX5A++7N
+	wEA==
+X-Google-Smtp-Source: AGHT+IEqr9lUQcH2qY1xD/Q6iRV/7+9czdV3LpSOa7q2Jw2Z9RUZsCmhOXxOM3pv8Zn53dZhaY/2/A==
+X-Received: by 2002:a05:6870:170f:b0:25e:1ca6:6d09 with SMTP id 586e51a60fabf-27b9d922589mr6845903fac.8.1725966442024;
+        Tue, 10 Sep 2024 04:07:22 -0700 (PDT)
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com. [209.85.167.177])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-27ba3ea0684sm1990321fac.13.2024.09.10.04.07.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 04:07:20 -0700 (PDT)
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3e05a5f21afso163326b6e.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 04:07:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWIi5+DUpJMX8HmTlfB8XvDmjs3Yp0FH9FfBd/KTOrAwjkzUQ7WK4DRcu0G3p0K1+qjbQVgO/q0XauVI6M=@vger.kernel.org
+X-Received: by 2002:a05:6808:2dce:b0:3e0:3ead:2480 with SMTP id
+ 5614622812f47-3e03ead28efmr7407710b6e.12.1725966440393; Tue, 10 Sep 2024
+ 04:07:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0e9018d0-c49f-4dac-aa0f-b05504f9c6f6@foss.st.com>
+References: <20240909111535.528624-1-fshao@chromium.org> <20240909111535.528624-7-fshao@chromium.org>
+ <11bc2522-bc10-4dcf-8142-708b57d181cf@kernel.org> <CAC=S1nhiJ=7yAucJsaYKUUBrwrxOVBMB2CF=bFwyLa2o-5RmWw@mail.gmail.com>
+ <64cc35c8-30df-4882-a933-f42119270f48@kernel.org>
+In-Reply-To: <64cc35c8-30df-4882-a933-f42119270f48@kernel.org>
+From: Fei Shao <fshao@chromium.org>
+Date: Tue, 10 Sep 2024 19:06:43 +0800
+X-Gmail-Original-Message-ID: <CAC=S1ni+pJJZhbjvVqhba5u1JqGv=dZTv8+KH4xburea2AG4Qg@mail.gmail.com>
+Message-ID: <CAC=S1ni+pJJZhbjvVqhba5u1JqGv=dZTv8+KH4xburea2AG4Qg@mail.gmail.com>
+Subject: Re: [PATCH 06/13] arm64: dts: mediatek: mt8188: Update VPPSYS node
+ name and compatible
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 12:48:49PM +0200, Raphael Gallais-Pou wrote:
-> Unless I am mistaken, the link you provided refers to a PowerPC linker error:
+On Tue, Sep 10, 2024 at 3:19=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 10/09/2024 07:12, Fei Shao wrote:
+> > On Mon, Sep 9, 2024 at 7:41=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel=
+.org> wrote:
+> >>
+> >> On 09/09/2024 13:14, Fei Shao wrote:
+> >>> Use and add "syscon" in VPPSYS node names and compatible to fix error=
+s
+> >>> from `make CHECK_DTBS=3Dy mediatek/mt8188-evb.dtb`.
+> >>>
+> >>> Signed-off-by: Fei Shao <fshao@chromium.org>
+> >>> ---
+> >>>
+> >>>  arch/arm64/boot/dts/mediatek/mt8188.dtsi | 8 ++++----
+> >>>  1 file changed, 4 insertions(+), 4 deletions(-)
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/bo=
+ot/dts/mediatek/mt8188.dtsi
+> >>> index 2900d78b7ceb..14e51a11f688 100644
+> >>> --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
+> >>> +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
+> >>> @@ -1799,8 +1799,8 @@ mfgcfg: clock-controller@13fbf000 {
+> >>>                       #clock-cells =3D <1>;
+> >>>               };
+> >>>
+> >>> -             vppsys0: clock-controller@14000000 {
+> >>> -                     compatible =3D "mediatek,mt8188-vppsys0";
+> >>> +             vppsys0: syscon@14000000 {
+> >>> +                     compatible =3D "mediatek,mt8188-vppsys0", "sysc=
+on";
+> >>
+> >> If this was working before, it looks like this is not a syscon and
+> >> bindings need to be fixed.
+> >
+> > I guess it's because the binding was later updated in commit
+> > 26bcd8a53098 ("dt-bindings: arm: mediatek: mmsys: Add VPPSYS
+> > compatible for MT8188"), and the corresponding DT update was unnoticed
+> > at the time.
+> > If that makes sense then this should be a valid fix.
+>
+> Not necessarily. Why not fixing bindings? Prove that bindings are
+> correct, not DTS, first.
 
-Ah, the kernel test robot is doing other architectures now too, sorry about
-that. In any case, I am triggering it on x86 too.
+MediaTek's mmsys doesn't merely control clocks, it also provides
+display pipeline routing control and other misc control registers, so
+it's appropriate to categorize it as a system controller over a clock
+controller.
+As for vdosys and vppsys, they are likely variants or aliases of mmsys
+introduced in their newer SoCs.
 
-> What do you mean by 'sending it to Linus' ? If you meant to do a pull request,
-> then no. This patch is already in the drm-misc tree, which means it will keep
-> its usual pace of merging with the rest of the drm-misc tree.
+That description was updated in commit 1a680aa888d6 ("dt-bindings:
+mediatek: Update mmsys binding to reflect it is a system controller"),
+so I just assumed it's correct without thinking much...
 
-That's ok - I'll simply disable CONFIG_DRM_STM from building in my randconfigs
-for the time being.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Regards,
+Fei
 
