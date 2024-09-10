@@ -1,142 +1,181 @@
-Return-Path: <linux-kernel+bounces-322325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7484972758
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:51:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9FD797275A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 157F51C214DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:51:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85177285A06
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D2814D719;
-	Tue, 10 Sep 2024 02:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC8014F12C;
+	Tue, 10 Sep 2024 02:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="e5qjOxaZ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mxMb8dV9"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E204D8B7;
-	Tue, 10 Sep 2024 02:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EAD13B28D;
+	Tue, 10 Sep 2024 02:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725936671; cv=none; b=g67j01xi1QCKdtWm8mvo4qqr6mDIBNrZtG4xNDPUZvvgjFjmxf7tMKTqYc/wb/1SfsXxTU4oLdrAthw5MODDVc5TXYcxBLsh1c2ZcrCy3ehOzGpOSLIFLS3TsHbnUU+BAjtDz0hq3zglh/aBnnM1Kft16dQPn/N/vOfDwIih6N8=
+	t=1725936728; cv=none; b=hv4jT7b68Cu0IFgouFXWAj3WGXGr5DomskXJUHFd9hE8AFtysPwl9vtQ2YzzYrfWnY0nTe9lbJiD5UaYm30ACbpL36nQvZoVKkSbdpmvAVmk/BY2lNMbw0VjeD0b/va1XRw1DMMJWGXYJ2OjlZ3ZPWNezy2OuyHuHJdhdxPk+Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725936671; c=relaxed/simple;
-	bh=gvLncmditIpK3W9r0yMaIgEbbTOZ1PiL7Ur115zxZ9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MJFTew12QVWVZ/ZbusqGLDH6GSXIkBtaA1kOIIdLCis04jTBs/+7fm5JvIImcrReB2bBEFfy9PyOrrnKyWvhRANZvKk8s7MxCp5kPZ6gDaVHNItQpjzDivQCCNN+RgsXItOl0zqhk7w3k9pQaN6tMaiMgBr3PZm6jqT/ElIemIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=e5qjOxaZ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725936663;
-	bh=IscIEgspsB3jf10GurHepsJMCT3GuysT+pZDGM2xNlQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=e5qjOxaZqrWTHIPmZGVuQ0TJyd87kAFNGsYSg6/V3e3P6vncBmSYkPrsWYBEmo1Av
-	 64G3+4MW6MUbtIfmrHHOhZda9z9lRMhK0z3YRFzg8zPsmIjvxGFe/imoWzOEcEv76m
-	 UX9g+WDDBcKqXvxLQg+s5yrrG2EDMHDKCuZLzYmISSCWIrvUpbcpvsHeflFqw48lsZ
-	 k7iN1WlrrG0zlpBEdkg5r9L2NdsJ+VlrtJFXz6SDhaaIyIe1WjRqD8qwyRrxyyNjhF
-	 /9fXF0o5sThe4tFMbRsYyT9jXikgDlX4JNhpdcGHEkzpFWpI0nFLVyTDhikybsrXsN
-	 cnpW+i6wEmCWA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X2p9f2Sgcz4wbr;
-	Tue, 10 Sep 2024 12:51:02 +1000 (AEST)
-Date: Tue, 10 Sep 2024 12:51:01 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Lee Jones <lee@kernel.org>
-Cc: Andre Przywara <andre.przywara@arm.com>, Chris Morgan
- <macromorgan@hotmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the regulator tree with the mfd tree
-Message-ID: <20240910125101.4057d8f7@canb.auug.org.au>
+	s=arc-20240116; t=1725936728; c=relaxed/simple;
+	bh=WpMA1kEs9Y7I7e4gxgXkW3C671npPx44YdItCYUBqJ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l6ReZYDC14cbZDClGyRJrnubSvTZASLVcKwB9+7KhJQl23vdMxJ5qPeDkTrEcZm3Fy3bXF6E0EugvcXmYwnVwTL7kCdVLW+w1MSI7XEbPYydbRW3gKrbMNp0ROODO8md8GDxa7DCjeUVHm8nH12qHhqHkpxyTtYnCHgK5lGK9tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mxMb8dV9; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374c4d4f219so135856f8f.1;
+        Mon, 09 Sep 2024 19:52:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725936725; x=1726541525; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eQttAVB45yzTKj++0cYWkihAYzlOnNEiTmI1J5Prwyg=;
+        b=mxMb8dV9oRH1Ex8ix81NRV8dorTy5q++qsAy6xIsnn2VK7N1lXj7dijK9LeFZTQbuI
+         1skGncGteRDBk+h+JbcOEtUi6YbmmI+c+bKcHwYfDfrTfnu13GqbI6hdxcgnLrfgo81o
+         AaF0zZFyNBw00gtLzHEJk7bRTe6E27NHf3yrDuuk31VsS3XGENsoUqP3311IlPxr8v3q
+         bst/gxbexgFcIbk+Dtb+n7I6Yk6QiPtcvey3a3sLR4yGrM1T3KzlQWAesu8JX6BNQzbN
+         idEa83OLv1lG7z41SVgsvKkos4i8ufG42/Ni111kKDgompv80tud0uDx/8s51UCz2Ywm
+         D5xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725936725; x=1726541525;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eQttAVB45yzTKj++0cYWkihAYzlOnNEiTmI1J5Prwyg=;
+        b=Sby+iZ+fPplgX9SsyFVcJs6eG1mPeROi0FtRo303kqlucetyV1yZvsyFqUZNwZ/3TS
+         L592nAaH9lZBoer6wVESEr5PG0p0nVFLMAIshLOpKPf3ADldisn6Jpxfril2L2V3eoOa
+         JCx8ze6fEXZ+8rVDuSScpdY9+U1+jhA51A2E35ED1/nB8+hh0fDefVs8ZeVD7F7Y3+hA
+         cHsVK9y77X06RuzZ8g7dD8q85OkZK4f07Omybm9A9axYCHPTYqR/bFGDK0/czHcHTEQG
+         LAxw54KyGMSWPnaz5oZDNTTB2pw+OeyLsR7jareHHCtCTC2B/6+YR+BQKbAzZZcHIQoC
+         9kJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5juLvRE9DALUoWH7/AdTFBuQ7oekzAVe0nR44knMqYOI5CFY9OcxxK2nNNr0Vx57LDUdjW88qwJMqJxjH@vger.kernel.org, AJvYcCXOZUIvsg5WUmg/A77PmmbVEKmzaoFxoi/rDLgdcAVu7dt44ibn2KDTBBYp15fkzixJ5OY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2mz0ZnQTFD8teK1BjxMZOjz70Z1MCoM7HGBLTVQ4efj4jBVLV
+	tZmrO7YV/qldZ+lF53f+CxuuYg/FRTHClnpaV1tccjCqzljQPtUBkQWXmXZhHaecTzHOnLWJzz5
+	G0ISyx4RKwKNlh5M0OkoQzbOgGOw=
+X-Google-Smtp-Source: AGHT+IEPh9ScgrXAKldrieTgqRzsP4QbioBjV/CKb84XXP+ccZWvtBKZhTSspJrQZLTBQWY5KwWzVjo4FgDdHs6ZTf4=
+X-Received: by 2002:adf:f792:0:b0:378:7de9:3716 with SMTP id
+ ffacd0b85a97d-378895c4aa9mr7523902f8f.8.1725936724600; Mon, 09 Sep 2024
+ 19:52:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/dwD.PpaGPIHu.SQfcUfXOKY";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/dwD.PpaGPIHu.SQfcUfXOKY
-Content-Type: text/plain; charset=US-ASCII
+References: <20240909224903.3498207-1-andrii@kernel.org> <20240909224903.3498207-2-andrii@kernel.org>
+In-Reply-To: <20240909224903.3498207-2-andrii@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 9 Sep 2024 19:51:53 -0700
+Message-ID: <CAADnVQLB2b5Uh-qthnCOfJk+v+ty1nQh6LjMDkzjt1BPtGOVZA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] uprobes: allow put_uprobe() from non-sleepable
+ softirq context
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, Sep 9, 2024 at 3:49=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org> =
+wrote:
+>
+> Currently put_uprobe() might trigger mutex_lock()/mutex_unlock(), which
+> makes it unsuitable to be called from more restricted context like softir=
+q.
+>
+> Let's make put_uprobe() agnostic to the context in which it is called,
+> and use work queue to defer the mutex-protected clean up steps.
+>
+> To avoid unnecessarily increasing the size of struct uprobe, we colocate
+> work_struct in parallel with rb_node and rcu, both of which are unused
+> by the time we get to schedule clean up work.
+>
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  kernel/events/uprobes.c | 30 +++++++++++++++++++++++++++---
+>  1 file changed, 27 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index a2e6a57f79f2..377bd524bc8b 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/shmem_fs.h>
+>  #include <linux/khugepaged.h>
+>  #include <linux/rcupdate_trace.h>
+> +#include <linux/workqueue.h>
+>
+>  #include <linux/uprobes.h>
+>
+> @@ -54,14 +55,20 @@ DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem);
+>  #define UPROBE_COPY_INSN       0
+>
+>  struct uprobe {
+> -       struct rb_node          rb_node;        /* node in the rb tree */
+> +       union {
+> +               struct {
+> +                       struct rb_node          rb_node;        /* node i=
+n the rb tree */
+> +                       struct rcu_head         rcu;
+> +               };
+> +               /* work is used only during freeing, rcu and rb_node are =
+unused at that point */
+> +               struct work_struct work;
+> +       };
+>         refcount_t              ref;
+>         struct rw_semaphore     register_rwsem;
+>         struct rw_semaphore     consumer_rwsem;
+>         struct list_head        pending_list;
+>         struct list_head        consumers;
+>         struct inode            *inode;         /* Also hold a ref to ino=
+de */
+> -       struct rcu_head         rcu;
+>         loff_t                  offset;
+>         loff_t                  ref_ctr_offset;
+>         unsigned long           flags;
+> @@ -620,11 +627,28 @@ static inline bool uprobe_is_active(struct uprobe *=
+uprobe)
+>         return !RB_EMPTY_NODE(&uprobe->rb_node);
+>  }
+>
+> +static void uprobe_free_deferred(struct work_struct *work)
+> +{
+> +       struct uprobe *uprobe =3D container_of(work, struct uprobe, work)=
+;
+> +
+> +       /*
+> +        * If application munmap(exec_vma) before uprobe_unregister()
+> +        * gets called, we don't get a chance to remove uprobe from
+> +        * delayed_uprobe_list from remove_breakpoint(). Do it here.
+> +        */
+> +       mutex_lock(&delayed_uprobe_lock);
+> +       delayed_uprobe_remove(uprobe, NULL);
+> +       mutex_unlock(&delayed_uprobe_lock);
+> +
+> +       kfree(uprobe);
+> +}
+> +
+>  static void uprobe_free_rcu(struct rcu_head *rcu)
+>  {
+>         struct uprobe *uprobe =3D container_of(rcu, struct uprobe, rcu);
+>
+> -       kfree(uprobe);
+> +       INIT_WORK(&uprobe->work, uprobe_free_deferred);
+> +       schedule_work(&uprobe->work);
+>  }
+>
+>  static void put_uprobe(struct uprobe *uprobe)
 
-Today's linux-next merge of the regulator tree got conflicts in:
-
-  drivers/mfd/axp20x.c
-  include/linux/mfd/axp20x.h
-
-between commit:
-
-  2e1a57d5b0ad ("mfd: axp20x: Add ADC, BAT, and USB cells for AXP717")
-
-from the mfd tree and commit:
-
-  bb2ac59f8205 ("mfd: axp20x: AXP717: Add support for boost regulator")
-
-from the regulator tree.
-
-The latter change to  include/linux/mfd/axp20x.h is a subset of the
-former change.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/mfd/axp20x.c
-index 4051551757f2,16950c3206d7..000000000000
---- a/drivers/mfd/axp20x.c
-+++ b/drivers/mfd/axp20x.c
-@@@ -209,15 -209,11 +209,17 @@@ static const struct regmap_access_tabl
-  };
- =20
-  static const struct regmap_range axp717_writeable_ranges[] =3D {
- +	regmap_reg_range(AXP717_PMU_FAULT, AXP717_MODULE_EN_CONTROL_1),
- +	regmap_reg_range(AXP717_MIN_SYS_V_CONTROL, AXP717_BOOST_CONTROL),
-+ 	regmap_reg_range(AXP717_MODULE_EN_CONTROL_2, AXP717_MODULE_EN_CONTROL_2),
-+ 	regmap_reg_range(AXP717_BOOST_CONTROL, AXP717_BOOST_CONTROL),
- +	regmap_reg_range(AXP717_VSYS_V_POWEROFF, AXP717_VSYS_V_POWEROFF),
-  	regmap_reg_range(AXP717_IRQ0_EN, AXP717_IRQ4_EN),
-  	regmap_reg_range(AXP717_IRQ0_STATE, AXP717_IRQ4_STATE),
- +	regmap_reg_range(AXP717_ICC_CHG_SET, AXP717_CV_CHG_SET),
-  	regmap_reg_range(AXP717_DCDC_OUTPUT_CONTROL, AXP717_CPUSLDO_CONTROL),
- +	regmap_reg_range(AXP717_ADC_CH_EN_CONTROL, AXP717_ADC_CH_EN_CONTROL),
- +	regmap_reg_range(AXP717_ADC_DATA_SEL, AXP717_ADC_DATA_SEL),
-  };
- =20
-  static const struct regmap_range axp717_volatile_ranges[] =3D {
-
---Sig_/dwD.PpaGPIHu.SQfcUfXOKY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbftBUACgkQAVBC80lX
-0Gxx0gf/SlBy++bsbAhD0HL8Azlfyz4pCRWkbj5t5pl9xqTk8punyuHYrOEfCfDn
-liO9wbts0csciXq7mU1hdXTU1xfY3rvNBNbh2KeQV3eQj9cWS/mRIbFBR5Wh6rJc
-c+dvatZI7JuWg4I8sOx1XYTi98TKjAtrJsCeHYte5cM7RJCTzgLAROChm9Klw0Q5
-5zp0FN29Q8ohUtWzcgwk8Q3qMcRWts4RMqKPh+FjxEO35cj/e6FjWD3VIzL9nKcx
-o41K1NP/j7JHYsV3dveOi3ySgRkH/BkJdLU1Uzl0zJsmkVrNfWFANM9cB9n34w5a
-QJgza1AjhHCnCcQcEmP5fv5AL73MmQ==
-=Ij6+
------END PGP SIGNATURE-----
-
---Sig_/dwD.PpaGPIHu.SQfcUfXOKY--
+It seems put_uprobe hunk was lost, since the patch is not doing
+what commit log describes.
 
