@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-322884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83916973207
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:18:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62EE59731F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87FF3B27547
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:16:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 950FD1C2483F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689EB193078;
-	Tue, 10 Sep 2024 10:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B58819FA80;
+	Tue, 10 Sep 2024 10:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DUMJCp6G";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sTC9Mk9a"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XHwC8iIn"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7527B18A6D2
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61251192D82;
+	Tue, 10 Sep 2024 10:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725963133; cv=none; b=V6j0QaPFk+wQBCz0Iu7dMxK+JJYyZ32zjqlTwtHneDbD9IcKSpoQXrr31oMUl2zqzlf22TKcrJCL2Ym1Zjl5q34OLBqDbos7i5zbilGhilGuikeRKWHUTuOkG7T4udp/yIkYF44NG08oMXQT5ZUXH4dJqMWlwdgAtvqQvLiDHB8=
+	t=1725963134; cv=none; b=BlTBaThKV6vgmX+7F6SmLr3WdjMCUNa+ejr4d+thle9RSaMv+VCKvMWz4O+gpFQT3ifkFLn2VaI8gxgCpcMu0eY4U9T5kH4BZmfyV79PQaT+uzHrKb2GK60eFOoIzbiuCmVKrppVimU55oFyB5qV/y7TOUrPN19t7bZnEGmOCM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725963133; c=relaxed/simple;
-	bh=CPeEQPomon0NN9hvYJGJq0EYPts0p9GT5vjukg23S/E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hdBqn7i5jWb3a84OIwAKb49oqNQIh4pNijN/z2rtCtSsVOzV9lJt7+Td+dFFOPehw483bJD6owZWvrtdsoszbB9W6XE0CWfVXKcbU/GtNQ6xjN7RD5Q9r3ka3cLaOps7j6XruZ2cJciTmlhJnrhi+vlL98Xy4+FIZNHsrYQ4g8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DUMJCp6G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sTC9Mk9a; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725963130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b8g6RfBCA+wrHgvUyJpXjlSeY1WblZvtq0QubmmLmGE=;
-	b=DUMJCp6GuJqMeuEgOoMS/uXiZ8i9y+Vwy0Vf8y6OQUZg3Z03wUgdbvkzaan3S/NcLciCiZ
-	GFaac2r6ey5LKPqSj5NAkQI7nqGQypQd81aX2RqsUFW/X27hWolKAeGgZ8bpt+ReqYJGR2
-	9PBzKtdDiHcuSXWOKq9RFQKD6PkpK0LkxPp8a9da5CEQC+1HmfaYt+RxjQcOEuf9WMNE0+
-	AeyCC2vbPojWOhXtFJVNJlUOrYAO2r0UKDNLsjbr3I3RzbKesiFTlP5CV29JQyvD/tuEzO
-	H7qiXJgetoatGPKz4qglIlPsw/EduznrZpzxbfjHmAZqwp/orFPOaiFDGxXKog==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725963130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b8g6RfBCA+wrHgvUyJpXjlSeY1WblZvtq0QubmmLmGE=;
-	b=sTC9Mk9aV3zglGwb7YyFbRPPOeOq0+O4vFdendmV63xsimF0jFa93Z0fx9yQQW7CsK0IYa
-	tPCJQihsSf5tWVDQ==
-Date: Tue, 10 Sep 2024 12:11:36 +0200
-Subject: [PATCH 2/2] x86: vdso: Remove redundant ifdeffery around
- in_ia32_syscall()
+	s=arc-20240116; t=1725963134; c=relaxed/simple;
+	bh=jHkdQsU3ps+hikIKdb68XuvJ/yFL2ruqKEOCQTmU4+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tm7vKUfhXbTVl9SXQXm+YlF0Tu3wrw8bMElg26Ql8b8k9bRL+R4zIBw/D0maY8BzgzitBeN0Ns0QhWzS4U/l1xEKYhw83Zr3gqQWO9fbRUBMlk/LTu09HsjBHXW9XySvA+YnmoPLFAvuuiNqeokmrYqzG3NZkkenE4jbPRflWvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XHwC8iIn; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (213-229-8-243.static.upcbusiness.at [213.229.8.243])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BCE023EA;
+	Tue, 10 Sep 2024 12:10:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1725963054;
+	bh=jHkdQsU3ps+hikIKdb68XuvJ/yFL2ruqKEOCQTmU4+Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XHwC8iIn9ZU8OrxR9AMtSFmU2IG/v4n73gF2U4p2VU7sjWnl7UcvS6bI9OUe9BT6i
+	 K7ehaZ+YSdJV6gJuEc16gfkiqNEtqEhpcSuw0MtwDK2ve/zVNU9DTABlyLH/Yne7S7
+	 fgLrX6v3JjwYc2YUC3f9zfdEN5UuhAQNgqzcz3qM=
+Date: Tue, 10 Sep 2024 13:11:37 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Naushir Patuck <naush@raspberrypi.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v4 3/4] media: raspberrypi: Add support for RP1-CFE
+Message-ID: <20240910101137.GD6996@pendragon.ideasonboard.com>
+References: <20240905111120.GK16183@pendragon.ideasonboard.com>
+ <40cc1e95-b9fc-4c27-9428-1698d0bf9d25@ideasonboard.com>
+ <763b3147-d7cb-44a7-b73b-8f7f4fd622ab@ideasonboard.com>
+ <yib2r4wisxvk3kgogbjqawrpmfq6lcezfk4xjmftj44jzkbclc@icapodv2ffzk>
+ <d5188c0a-4a52-4378-89b1-48f606e448cc@ideasonboard.com>
+ <ggtlreq5gyhzfdv6yzeuia46y7fxpuyvg236prig52t43xsl2a@crlqks2nhfpe>
+ <20240909134516.GA9448@pendragon.ideasonboard.com>
+ <Zt8ZysTT5DIZr-J7@kekkonen.localdomain>
+ <jdtjdspf4qyrgn6jmyxeab5ueo53wjd5vuhvlpin3pdiyifwht@dndfcqnmv7sd>
+ <49e375a3-d8e4-4b58-9456-1e6395b02a07@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240910-x86-vdso-ifdef-v1-2-877c9df9b081@linutronix.de>
-References: <20240910-x86-vdso-ifdef-v1-0-877c9df9b081@linutronix.de>
-In-Reply-To: <20240910-x86-vdso-ifdef-v1-0-877c9df9b081@linutronix.de>
-To: Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725963129; l=1673;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=CPeEQPomon0NN9hvYJGJq0EYPts0p9GT5vjukg23S/E=;
- b=6fIxdpbyKGs151uLINYPcvYcZRrBnUjDTlUtPTWMZXB3yrTogS7CNFivTzA+rsqsxIYTDUal+
- kxO0LL0o9ZpDPswGKcoyBX8tJ0Mg6n1aao+VymNwEg3uQRNNKUq77t4
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <49e375a3-d8e4-4b58-9456-1e6395b02a07@ideasonboard.com>
 
-The ifdefs only guard code that is also guarded by in_ia32_syscall(),
-which already contains the same ifdefs itself.
+On Tue, Sep 10, 2024 at 12:56:38PM +0300, Tomi Valkeinen wrote:
+> On 10/09/2024 12:19, Jacopo Mondi wrote:
+> 
+> > However, I think this current patch is correct (assuming the above
+> > reasoning on i2c sensor drivers is correct) and doesn't require
+> > CONFIG_PM, so I would be tempted to keep this version.
+> 
+> I think the existence of this discussion alone proves my point that we 
+> should only support PM-case, unless !PM is a requirement =).
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- arch/x86/entry/vdso/vma.c | 4 ----
- 1 file changed, 4 deletions(-)
+For me it proves there's a dire need to document the runtime PM API in a
+way that a human could understand :-)
 
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index 9059b9d96393..ab2b011471e0 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -75,7 +75,6 @@ static vm_fault_t vdso_fault(const struct vm_special_mapping *sm,
- static void vdso_fix_landing(const struct vdso_image *image,
- 		struct vm_area_struct *new_vma)
- {
--#if defined CONFIG_X86_32 || defined CONFIG_IA32_EMULATION
- 	if (in_ia32_syscall() && image == &vdso_image_32) {
- 		struct pt_regs *regs = current_pt_regs();
- 		unsigned long vdso_land = image->sym_int80_landing_pad;
-@@ -86,7 +85,6 @@ static void vdso_fix_landing(const struct vdso_image *image,
- 		if (regs->ip == old_land_addr)
- 			regs->ip = new_vma->vm_start + vdso_land;
- 	}
--#endif
- }
- 
- static int vdso_mremap(const struct vm_special_mapping *sm,
-@@ -339,7 +337,6 @@ int compat_arch_setup_additional_pages(struct linux_binprm *bprm,
- 
- bool arch_syscall_is_vdso_sigreturn(struct pt_regs *regs)
- {
--#if defined(CONFIG_X86_32) || defined(CONFIG_IA32_EMULATION)
- 	const struct vdso_image *image = current->mm->context.vdso_image;
- 	unsigned long vdso = (unsigned long) current->mm->context.vdso;
- 
-@@ -348,7 +345,6 @@ bool arch_syscall_is_vdso_sigreturn(struct pt_regs *regs)
- 		    regs->ip == vdso + image->sym_vdso32_rt_sigreturn_landing_pad)
- 			return true;
- 	}
--#endif
- 	return false;
- }
- 
+> But if you do want to keep !PM:
+> 
+> Is there a reason why not mark the device as active with 
+> pm_runtime_set_active() after calling pispbe_runtime_resume and before 
+> accessing the device? That feels like the most logical way to use the 
+> function, and it would be right regardless whether the core will enable 
+> the parents before probe() or not.
+
+Does pm_runtime_set_active() resume the parent ?
+
+> And not related to the BE or CFE drivers, but it strikes me odd that to 
+> support PM and !PM we need to play with these tricks. I think the core 
+> should just do the right thing if the driver does pm_runtime_get_sync() 
+> even with !PM (although maybe the time has passed to be able to do that).
+
+The runtime PM concepts are nice, but the API is wrong in my opinion.
+Instead of being designed to expose the internals of runtime PM, it
+should focus on usability from a driver point of view first.
 
 -- 
-2.46.0
+Regards,
 
+Laurent Pinchart
 
