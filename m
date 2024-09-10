@@ -1,157 +1,87 @@
-Return-Path: <linux-kernel+bounces-323254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92CE8973A2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:42:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD29E973A2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FBC1B2356C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:41:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9801B2823CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7DA199929;
-	Tue, 10 Sep 2024 14:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEFD19580F;
+	Tue, 10 Sep 2024 14:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hRY11dDC"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQFCrKww"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5411991A0;
-	Tue, 10 Sep 2024 14:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C310C1922DC
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725979285; cv=none; b=Mnu7DFqOB1Zm6R784jK9QlMcxil+ASgxXrp1eDgkhD7Qo5O74qEcth1pUMOk16FCsz9bFyI7ARfhDUrVLwiwJKt/3jJ/5BakZeqSzmZIkTjjBvNVa2bkqjArEshM+O9MrufQjmLFLvi0YXqcfIm5QvT1PW6hvbexkLkJGodGyU4=
+	t=1725979389; cv=none; b=rcmPcPzQhAzSaI6Lhq2eKQLzoBHQ0itzTZ4piDTGwnxUn7VxSaFkbqYNdJdV1RJ1g2o6EB6u9qyaQYKe7O//hDpSebJbYGXiWZ48OgaUPoPtFE4DP/gooPH4cEV3wxWjgHk0roLFYMv3LaQytBnimOnu0/UsYVz4NZM1G4vYeNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725979285; c=relaxed/simple;
-	bh=2imfAZ0QXn5XVKjATXkFWcOVKNkAng8p1ZNwuhhJ5RQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=U93qMk2XMRSc+kI6Q4vazrwN4n8IslVGgCNw0LE4M5HPrufqD9c3rfwRV/7jfLw13TBmyawjQKvjGpQYwSbiz13UPC11VBsbn1zsZ3AhRRpGymPoGJabILhcpKSpDes3ekTpPIPih0O+AiQHAxcp1A82Oi1HsFcCVfWlH8WbNlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hRY11dDC; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-717934728adso4073206b3a.2;
-        Tue, 10 Sep 2024 07:41:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725979283; x=1726584083; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0P+s93nCaJEgoUjxEO3WaqLlG5SGgxS9Bl7qShFJrxc=;
-        b=hRY11dDCZytttS1PmHFH+n8Yf6P/Nq9TAXjwB+tqytOfIFvoGh0Gd4nDrffyUoNKRV
-         T187o6kUX7Tv5hepKL6hht0oN0HSaTAPLCSYSJJzpoqMkv0bpOf9cSlXhhphDHbenXPQ
-         jiSWKiTKoAvMOx/CJOC1oF3+Tduuqh9RsFi3dLoc27T7neaOZSu/Hyi6AhLKkFxLEpy9
-         ZYKgnNLfPQqeDlWox4AZTY5dJYPWvt3Zh/u43mMlK325Qy0CkSjp93BvU1fmLCqGQCsN
-         9QoCOk/WHFlnDxRBOKDfyB7q2a7wISBZbqEtQHFGUCGLJgztH/PsfDEGrj2ICuEmkNU7
-         tM4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725979283; x=1726584083;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0P+s93nCaJEgoUjxEO3WaqLlG5SGgxS9Bl7qShFJrxc=;
-        b=iQ+Q/cKW+NUbxkgb3kqlpNYSvbQjOLJ/AxRmPXtKqXa/fiNtc6+3XwgW5mP1vhAOrl
-         94tGitNB/IRr5cQB+toe/cxJbtFBVvBnJHCG1Lv1YkL1qIP+xNfgUPc/lYYuZmug5wZ/
-         ML4L2KIBRfon78lks5UbVt466LaHLRN4RGMkMdnI/Cb1WvqWjrtWyJO7uYNcC/92iSJW
-         7yWB53G4YZjXk4/G7fpOPoiJqfjw4aFaNUqezydBTv3gOdSHPfNvVQ9WpUhbTnKb3n/o
-         T+lAIjjBtQg5pHAQIsYLIeBGM1dPmFPsDhoAh2bpzOkHGSsTeDeLc+XPHoXxIO1eTgzD
-         nC0A==
-X-Forwarded-Encrypted: i=1; AJvYcCU5DrruMJi4ZeNjcP65KeXPaw85sGXlbQH1LOC9pu/wfIcPir3BrKXKAfXcsopHErN38O+Pj8m1ToTJJR3c@vger.kernel.org, AJvYcCVC3BkHwhdyo+Ym0Lnk5scSLwYDVVGLTVRb7XI7HYsHQCoe0ZHJNmMUdYq+ZKXB0I/e3Qs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJdvzjITw4QIKJ55VG5wXJmQGCw5KnZZ/8e6n14Xhv0b4T8Mhj
-	geSaeXSdFi+xLpVJuDLyF2nixuER7jAVDQGquT9NBK09/RYUyyWF
-X-Google-Smtp-Source: AGHT+IGz14YyT8T0TWHsj6wiz9mNiGZ3jnjO6YQU3sMSB41tAV5tMRU3SV/SAfqFfhX8RQNuwNCTFg==
-X-Received: by 2002:a05:6a00:1893:b0:718:e062:bd7e with SMTP id d2e1a72fcca58-718e404b746mr16792040b3a.24.1725979283082;
-        Tue, 10 Sep 2024 07:41:23 -0700 (PDT)
-Received: from localhost ([116.198.225.81])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090c9b15sm1435842b3a.202.2024.09.10.07.41.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 07:41:22 -0700 (PDT)
-From: Tao Chen <chen.dylane@gmail.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Hou Tao <houtao1@huawei.com>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>
-Cc: Tao Chen <chen.dylane@gmail.com>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jinke Han <jinkehan@didiglobal.com>
-Subject: [v3 PATCH bpf-next 2/2] bpf/selftests: Check errno when percpu map value size exceeds
-Date: Tue, 10 Sep 2024 22:41:11 +0800
-Message-Id: <20240910144111.1464912-3-chen.dylane@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240910144111.1464912-1-chen.dylane@gmail.com>
-References: <20240910144111.1464912-1-chen.dylane@gmail.com>
+	s=arc-20240116; t=1725979389; c=relaxed/simple;
+	bh=VlJEdr9QYYpPIyU5cbd/1O5G+ppN4AVPoZzjKFByU3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LR0O9n+CxYGTQxqa9JuG5Um+EhQimGPfrVEEqZ66MZDLV1YnFZFh5LLaHv4vmuyG8s5qv141cyCbBPaPLa0iokB7ddcmckR7MWOPOCRz+Xmo6K4DWAALg88xrGfy6pweF0PVmtECcbg/ee4cRewWqYgtGoFf2wYPYPNflHTjHhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQFCrKww; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C8AEC4CEC3;
+	Tue, 10 Sep 2024 14:43:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725979389;
+	bh=VlJEdr9QYYpPIyU5cbd/1O5G+ppN4AVPoZzjKFByU3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TQFCrKwwilRlkyw/wFXCL4rvB78DwNqGTBkq7sGC0eGSi82I9KPF7UKbZS4hSbW5a
+	 z2FdLX6AfjcOS24KTu5m/VRJkslQ1qAIX5jW3/w428JCnSuDxn9L7p81qiaOFbTLgS
+	 mxufpKvUQo+jCzgfQ9FvAxpAbB1jvaMPE22VZQ7qTOAHdHcLOZwtcl/qQImWG1TuuT
+	 WElkoTMNjp9l8LYWFWk2iSYBPQHM4c+fxWDDFBLit/voM9zPlOc+EmHpZ1SwUyZIKO
+	 wpz9tHUQM6cElcdfn3X+0Haw51SWVkggwcaO/bHQ3VbHTTycKXLrBxKCAQ/LX77Aid
+	 ACK4jZoR0IztQ==
+Date: Tue, 10 Sep 2024 08:43:06 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, Hannes Reinecke <hare@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Kanchan Joshi <joshi.k@samsung.com>,
+	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme-tcp: fix link failure for TCP auth
+Message-ID: <ZuBa-nuGAPs7aHK_@kbusch-mbp>
+References: <20240909202118.811697-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909202118.811697-1-arnd@kernel.org>
 
-This test case checks the errno message when percpu map value size
-exceeds PCPU_MIN_UNIT_SIZE.
+On Mon, Sep 09, 2024 at 08:21:09PM +0000, Arnd Bergmann wrote:
+> The nvme fabric driver calls the nvme_tls_key_lookup() function from
+> nvmf_parse_key() when the keyring is enabled, but this is broken in a
+> configuration with CONFIG_NVME_FABRICS=y and CONFIG_NVME_TCP=m because
+> this leads to the function definition being in a loadable module:
+> 
+> x86_64-linux-ld: vmlinux.o: in function `nvmf_parse_key':
+> fabrics.c:(.text+0xb1bdec): undefined reference to `nvme_tls_key_lookup'
+> 
+> Move the 'select' up to CONFIG_NVME_FABRICS itself to force this
+> part to be built-in as well if needed.
 
-root@debian:~# ./test_maps
-...
-test_map_percpu_stats_hash_of_maps:PASS
-test_map_percpu_stats_map_value_size:PASS
-test_sk_storage_map:PASS
+Thanks, applied to nvme-6.12.
 
-Signed-off-by: Tao Chen <chen.dylane@gmail.com>
-Signed-off-by: Jinke Han <jinkehan@didiglobal.com>
----
- .../selftests/bpf/map_tests/map_percpu_stats.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/tools/testing/selftests/bpf/map_tests/map_percpu_stats.c b/tools/testing/selftests/bpf/map_tests/map_percpu_stats.c
-index 2ea36408816b..1c7c04288eff 100644
---- a/tools/testing/selftests/bpf/map_tests/map_percpu_stats.c
-+++ b/tools/testing/selftests/bpf/map_tests/map_percpu_stats.c
-@@ -17,6 +17,7 @@
- #define MAX_ENTRIES_HASH_OF_MAPS	64
- #define N_THREADS			8
- #define MAX_MAP_KEY_SIZE		4
-+#define PCPU_MIN_UNIT_SIZE		32768
+I even try to test for these odd module vs built-in scenarios, but I
+missed this one. :(
  
- static void map_info(int map_fd, struct bpf_map_info *info)
- {
-@@ -456,6 +457,22 @@ static void map_percpu_stats_hash_of_maps(void)
- 	printf("test_%s:PASS\n", __func__);
- }
- 
-+static void map_percpu_stats_map_value_size(void)
-+{
-+	int fd;
-+	int value_sz = PCPU_MIN_UNIT_SIZE + 1;
-+	struct bpf_map_create_opts opts = { .sz = sizeof(opts) };
-+	enum bpf_map_type map_types[] = { BPF_MAP_TYPE_PERCPU_ARRAY,
-+					  BPF_MAP_TYPE_PERCPU_HASH,
-+					  BPF_MAP_TYPE_LRU_PERCPU_HASH };
-+	for (int i = 0; i < ARRAY_SIZE(map_types); i++) {
-+		fd = bpf_map_create(map_types[i], NULL, sizeof(__u32), value_sz, 1, &opts);
-+		CHECK(fd < 0 && errno != E2BIG, "percpu map value size",
-+			"error: %s\n", strerror(errno));
-+	}
-+	printf("test_%s:PASS\n", __func__);
-+}
-+
- void test_map_percpu_stats(void)
- {
- 	map_percpu_stats_hash();
-@@ -467,4 +484,5 @@ void test_map_percpu_stats(void)
- 	map_percpu_stats_percpu_lru_hash();
- 	map_percpu_stats_percpu_lru_hash_no_common();
- 	map_percpu_stats_hash_of_maps();
-+	map_percpu_stats_map_value_size();
- }
--- 
-2.43.0
+> It may alternatively be possible to rework the code so the
+> keyring is only referenced when CONFIG_NVME_HOST_AUTH is also
+> set, but this version is simpler and leaves the code unchanged.
 
+That sounds like a cleaner solution longer term, but I agree your patch
+is the simpler way to handle the breakage.
 
