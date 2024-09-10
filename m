@@ -1,121 +1,228 @@
-Return-Path: <linux-kernel+bounces-323879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFDA6974499
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:10:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD67974496
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E08028714A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:10:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6FD6B250F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD141AB51B;
-	Tue, 10 Sep 2024 21:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699161AB52B;
+	Tue, 10 Sep 2024 21:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IMhGDA9P"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="PNGBIXQm"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53A41AAE2C
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 21:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F5A1AAE2C;
+	Tue, 10 Sep 2024 21:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726002641; cv=none; b=lKM6v8bnKIyXeQd28GMdoVQ/eoxcdTLD29N4oaKZcK/mFQVfLYxB5QbO9vKjNto4IfKsKqNwCzvRd8zUsdIZeUmK2ScaSs2o/63NzLqayPtNEThZeNxidUduRp8qJbEqpvXvek/s+VHjSEPp/NmTV9KIOKcHMT2B4I7DVIz8T58=
+	t=1726002623; cv=none; b=P4h69BYDtOeDQtSsZNs4RJReuc7y7cT/nD5Rb2pOcQHSagz1GLmtmjpBaR38tD3kQ2IIyB0/OKF2uxSGxvKbzAq8G7kXwnR3k7YNY6NUIpusnfX7+7LYKFhxLIQ3hqG6w251shbV2RKaqdqY8zWXiuCE/JWxcm8uetDdqmRjHd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726002641; c=relaxed/simple;
-	bh=XE4+e/G/h/a5BwWjufqCbsxsDHKt/oX1Y9qt8d3awZg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jBkhpHHyRGr6GOGU/HWLY5TEzUYMfPVqGQ1DxZ2Z+5EM5fSkftyalbA/JWRULAeYFapHnvYlEAkq00sd3Q0xwjEq7kwThcm849hhIr9N2j9ubEYMvxXxmm44NYlPPgAJpGXuQbe1zEU8EQTAhAZZ12Eyt9tI0jspoRwHl5Vo9kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IMhGDA9P; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53661d95508so36991e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:10:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726002638; x=1726607438; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XE4+e/G/h/a5BwWjufqCbsxsDHKt/oX1Y9qt8d3awZg=;
-        b=IMhGDA9PtnhJuDgWhIt+osY3utDErZQrpGxHQX1cZem8XR0WPXUblvyuMwCTQJ3LAk
-         ahZZKFHV1qNYkYDe5Leg0qzlS9pghc9TOwrV8mQtndbl/yH7+YoEZ8FQNnDoFmEk+k9o
-         nozManjiVRkA6fsjKSbk8d4W1GV3RvH/a62Q6SHHfFQygos0MNzXua6r7NOwAl/Z7oxd
-         aRq4dNhX9jImXn/M3fjh3iIlh87Punokkgk6plc6zWnCO1CaaWFCtm3zhrsxMIDLVF6M
-         RLluowyvXNv9EQbPygBLYbD8AVqYi04W3q6QJmfHKE+aQEFZP7iequE5UNCH5DB0RH+m
-         A8NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726002638; x=1726607438;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XE4+e/G/h/a5BwWjufqCbsxsDHKt/oX1Y9qt8d3awZg=;
-        b=QMndOz30WMeM9A/5mkIkQXJblR0D0sRuhuzvC7acYseJOhkCJOlhqzm+HaxO4nDXsF
-         /u2RP7PNOOxYqK0nDpKzCzgLhguiags+JZlsyMgD4ziHeDEgz5MpWqc1pJdpMh+l5X0J
-         /HR+T3lCFSeayEA013dizzvALSHVRRiCDXgA/WJEpJBthR4Wg2H/cR7FOIg8kvELF+SX
-         uQ13ppvS8jHoSV+g1yBXkJFXw3Vr/hxiBMbU12uukYJQ+VD+naWSfp0nccfSP7UH4Qzs
-         GtrMW5c1J6P6SjPYRqvEhV7BrZpsBgyNat1N2rVJszs2Uk1YI6tnNIftVOduWUTrWV8h
-         5J5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXE4cZj4BGu9idlNDaYjW5pf4cKenM+CqyB2++qPzqGeDoe9cHQR0JXxmnXh4uVk58bRPcWDP7gEVEuwic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCu0kPOnGfcbxV+o0CDk5W2XL/rjIblxA37em2CTcVmqqTL+Zb
-	YSBF8acHIvmQkHXzByvLD9OoXNHUBdhpJSS9J56m9UMb6ncATHrn+8DnGbzAZJbD0ZcGLugTTdE
-	e9cR3/aFWy0pDLWR98SRcTa7JDgqWzFpkEvU9
-X-Google-Smtp-Source: AGHT+IHIo/1g0cKAyt8QSBLpZEYQTEjztdB1IERh1UKFzCf1Ts3Mvd2qv8bZQ+qVA3GI1MbRVcan2+yf5xHv8XmvNuo=
-X-Received: by 2002:a05:6512:3f14:b0:52e:934c:1cc0 with SMTP id
- 2adb3069b0e04-53674bbe0demr32143e87.7.1726002637398; Tue, 10 Sep 2024
- 14:10:37 -0700 (PDT)
+	s=arc-20240116; t=1726002623; c=relaxed/simple;
+	bh=+Z0/tjc/jkM+RNWY8w7dsalQvykoR7afGhcZ6SwUawA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mIs5WUqwOkSfF4+gr7u2xONYmEJ0b9SzweVzLiPdkvE9fmCbCjXhu3sG0D3Nz/P1t0Rbg/HsdmyDlsyyn4qSt4O9Crr//A2GeNE8aopZ0CZ7oZLhM9ojr9QtwpGwV4G5y4c+UO1SrvWumruVaPsDumJRLSI87vaetDKwfjqgtys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=PNGBIXQm; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726002608; x=1726607408; i=spasswolf@web.de;
+	bh=Ms5DrLqZ2VNDZmH9AmQ6MHdPZ4yJsE8dvXy8GLF3lZs=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=PNGBIXQmS1O1QRgRRX8enpmp3qSrKJ+/7BMnlBnyt5e1Hw7364nf4ur66wkTxY2+
+	 g3nzi8iXvORRK2rRojiO6WuU+NsVhL/KT2s1Ry64QEZt+O8rBSNu7zzsrsNHro6Uh
+	 hD/MdP+t7r0dVoBXZc2xKmhrUxfvCcZE8yR80B4MakuqnRlVXx2X9aylA+Cj8RMVE
+	 aNKkxsBzn1ztUhTEXnCyNQMSqCjG1oXyUYjPldDeLhN9iwSNBD1186DZRKCG/j2yL
+	 8JbN4yeU6TSY10PIMq2uzUXazDqutykOahbe31uQXtq6qOt3+LKkCeHc3aOZB/JLw
+	 tZI7f7vRRtzVAqZz5A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MC0LJ-1sisG52VJd-0066XX; Tue, 10
+ Sep 2024 23:10:08 +0200
+Message-ID: <7d9df9c96529841caa9fbdfa37850bc36e5160fe.camel@web.de>
+Subject: Re: commit de752774f38bb causes fatal error on boot
+From: Bert Karwatzki <spasswolf@web.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Thomas
+ Gleixner	 <tglx@linutronix.de>, "Darrick J . Wong" <djwong@kernel.org>,
+ x86@kernel.org, 	chandanbabu@kernel.org, willy@infradead.org,
+ spasswolf@web.de
+Date: Tue, 10 Sep 2024 23:10:08 +0200
+In-Reply-To: <20240910135658.GG4723@noisy.programming.kicks-ass.net>
+References: <20240910111111.2591-1-spasswolf@web.de>
+	 <20240910135658.GG4723@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.53.3-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-22-samitolvanen@google.com> <CAK7LNAQdutCiBkWtA6MbVLpfhB-MQXnszQm8eEiBZpeX++5eLA@mail.gmail.com>
- <CABCJKucott2g8mZyJ0uaG+PdPTMsniR7eNCR9GwHpT_kQ+GFvg@mail.gmail.com> <CAK7LNATyv+zfSwyykKQrSjxR84ST0xTyEarnAudF2VuLPVxqnQ@mail.gmail.com>
-In-Reply-To: <CAK7LNATyv+zfSwyykKQrSjxR84ST0xTyEarnAudF2VuLPVxqnQ@mail.gmail.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Tue, 10 Sep 2024 14:09:58 -0700
-Message-ID: <CABCJKueSe0TT7HnoJULVZfz6t8x0WjkWksZ1hzBY7SZQm6iYgw@mail.gmail.com>
-Subject: Re: [PATCH v2 01/19] tools: Add gendwarfksyms
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
-	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ehf3vA/Y2XVtylLD4q+ZLCpiw1j9yTVTQuXwYtfi2CAkf4DkAFh
+ 7VYWUlRfNbU5WHeZo28mqdoZXoIzTSzeZEFWz0QW8ijuSma6597GosqweJ6xrhg/DEi7Z6q
+ wDZHMQAdewtE4UykmE0ceXV0JPuoJgLz2SV0cwTSGi7hAZlck69gb4LUk9mC/grkC9UaNcB
+ lIUVs5NmeDVqUX0+BC5cQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:GBGXn1xQnWc=;pS1umjDTnGWwW4SL520lfe39RVS
+ 0Yh1CH5Vk26AObvGXm2Y3S4DqYzb3QGTob1L6WGxt/NTLF5sCaiO0pLljGQEUNoKheBmVoxnW
+ DfcpL4xk8Cgnv05T6b613ZYKKusudRfoZYSvLqfwsUKO6nPlGRXw5CGzWWXRO+ybuCEOmU0WV
+ 2adc3zLcjAZFU3lnxhysIRk2JUwSxe/kNU6bYkg7Dw6Nv5nhipcoadYQYpt61LHzInBazeBZL
+ kAnkq/1IivVkekSdq5SB2tIRVMajnKoUdnFX144kxpaIhphUfF1OUchDra0ojPXxWhDxwqpLJ
+ EE+1tNUo5qOQk28wQhLmoi9pQnVvLtaNQOnWEtQDpzyBoyPJBnGFJ/qTc4JnSikV/xhdhttee
+ 4JhyCADvgJBL3JL2wlJ2T0CQqI0MUWl5Khp76dCz0Ckm6JkpKv7xeUbvDNGVNlDrz9Fs9506b
+ gjkrw6pwNFpMOlI2nwecA+X4RwU5Nuguz2JnKFOe2D/pgPZgzn8Cg5ro2zlOfkcGz0fx50tYO
+ 3qOFpK4Qx4RkyUZ+I8hJqLCC0DxfoL+LYEVocIwOzsESRaCtb+r8hFGK0xcSVcqg0Dr+tPYDp
+ V5rhtvygnY7cZ7YlHpLjWBa6o9Z6CrSIFqR75lE/ReDMsUUL2T7GZpkoc9HOTL9RNSLT/nc9f
+ QnO/573AFk0MBnjts92shk43GDXSl4eM893CAQG8Qmgc8Wdr7fdJRsKJVn1NDVLUdtVJsvawc
+ inFfogT79LQMoxRMySw09nq04uD2LoUd+0o6I/T2/U/3N5/UG+iWbf4pPHMAkXRf/ucsMInw5
+ kkCwEnblju7E+I9v40ehil9Q==
 
-On Tue, Sep 10, 2024 at 2:44=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
+Am Dienstag, dem 10.09.2024 um 15:56 +0200 schrieb Peter Zijlstra:
+> On Tue, Sep 10, 2024 at 01:11:09PM +0200, Bert Karwatzki wrote:
+> > When booting linux-next-20240910 on my MSI alpha 15 Laptop running deb=
+ian sid (amd64),
+> > I get dropped to a shell and get the folllowing error in dmesg. I bise=
+cted this to
+> > commit de752774f38bb ("jump_label: Fix static_key_slow_dec() yet again=
+").
 >
-> On Fri, Sep 6, 2024 at 5:53=E2=80=AFAM Sami Tolvanen <samitolvanen@google=
-.com> wrote:
-> >
-> > Thanks for the patch! I think this would otherwise work, but I also
-> > need jhash (or a similar hash function), and I can't combine the
-> > tools/include version with this, because it ends up pulling in a
-> > duplicate definition of struct list_head. Would you consider adding a
-> > hash function as well?
+> I've just replaced that commit with the below -- which should be in
+> tomorrows tree:
 >
+> ---
+> commit 1d7f856c2ca449f04a22d876e36b464b7a9d28b6
+> Author: Peter Zijlstra <peterz@infradead.org>
+> Date:   Mon Sep 9 12:50:09 2024 +0200
 >
-> I did it as a part of my kconfig works.
+>     jump_label: Fix static_key_slow_dec() yet again
 >
-> Check scripts/include/hash.h added by the following patches.
+>     While commit 83ab38ef0a0b ("jump_label: Fix concurrency issues in
+>     static_key_slow_dec()") fixed one problem, it created yet another,
+>     notably the following is now possible:
 >
-> https://lore.kernel.org/linux-kbuild/20240908124352.1828890-1-masahiroy@k=
-ernel.org/T/#mea41ff4c5b6c77aaaae1ed9dac6723bc2f705107
-> https://lore.kernel.org/linux-kbuild/20240908124352.1828890-1-masahiroy@k=
-ernel.org/T/#m9050a270fedb7df9a54e843674bc9ad8fd068f57
+>       slow_dec
+>         if (try_dec) // dec_not_one-ish, false
+>         // enabled =3D=3D 1
+>                                     slow_inc
+>                                       if (inc_not_disabled) // inc_not_z=
+ero-ish
+>                                       // enabled =3D=3D 2
+>                                         return
 >
+>         guard((mutex)(&jump_label_mutex);
+>         if (atomic_cmpxchg(1,0)=3D=3D1) // false, we're 2
 >
-> I think simple helpers are enough for name_hash and addr_hash,
-> but please let me know if you encounter a problem.
+>                                     slow_dec
+>                                       if (try-dec) // dec_not_one, true
+>                                       // enabled =3D=3D 1
+>                                         return
+>         else
+>           try_dec() // dec_not_one, false
+>           WARN
+>
+>     Use dec_and_test instead of cmpxchg(), like it was prior to
+>     83ab38ef0a0b. Add a few WARNs for the paranoid.
+>
+>     Fixes: 83ab38ef0a0b ("jump_label: Fix concurrency issues in static_k=
+ey_slow_dec()")
+>     Reported-by: "Darrick J. Wong" <djwong@kernel.org>
+>     Tested-by: Klara Modin <klarasmodin@gmail.com>
+>     Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>
+> diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+> index 6dc76b590703..93a822d3c468 100644
+> --- a/kernel/jump_label.c
+> +++ b/kernel/jump_label.c
+> @@ -168,7 +168,7 @@ bool static_key_slow_inc_cpuslocked(struct static_ke=
+y *key)
+>  		jump_label_update(key);
+>  		/*
+>  		 * Ensure that when static_key_fast_inc_not_disabled() or
+> -		 * static_key_slow_try_dec() observe the positive value,
+> +		 * static_key_dec_not_one() observe the positive value,
+>  		 * they must also observe all the text changes.
+>  		 */
+>  		atomic_set_release(&key->enabled, 1);
+> @@ -250,7 +250,7 @@ void static_key_disable(struct static_key *key)
+>  }
+>  EXPORT_SYMBOL_GPL(static_key_disable);
+>
+> -static bool static_key_slow_try_dec(struct static_key *key)
+> +static bool static_key_dec_not_one(struct static_key *key)
+>  {
+>  	int v;
+>
+> @@ -274,6 +274,14 @@ static bool static_key_slow_try_dec(struct static_k=
+ey *key)
+>  		 * enabled. This suggests an ordering problem on the user side.
+>  		 */
+>  		WARN_ON_ONCE(v < 0);
+> +
+> +		/*
+> +		 * Warn about underflow, and lie about success in an attempt to
+> +		 * not make things worse.
+> +		 */
+> +		if (WARN_ON_ONCE(v =3D=3D 0))
+> +			return true;
+> +
+>  		if (v <=3D 1)
+>  			return false;
+>  	} while (!likely(atomic_try_cmpxchg(&key->enabled, &v, v - 1)));
+> @@ -284,15 +292,27 @@ static bool static_key_slow_try_dec(struct static_=
+key *key)
+>  static void __static_key_slow_dec_cpuslocked(struct static_key *key)
+>  {
+>  	lockdep_assert_cpus_held();
+> +	int val;
+>
+> -	if (static_key_slow_try_dec(key))
+> +	if (static_key_dec_not_one(key))
+>  		return;
+>
+>  	guard(mutex)(&jump_label_mutex);
+> -	if (atomic_cmpxchg(&key->enabled, 1, 0) =3D=3D 1)
+> +	val =3D atomic_read(&key->enabled);
+> +	/*
+> +	 * It should be impossible to observe -1 with jump_label_mutex held,
+> +	 * see static_key_slow_inc_cpuslocked().
+> +	 */
+> +	if (WARN_ON_ONCE(val =3D=3D -1))
+> +		return;
+> +	/*
+> +	 * Cannot already be 0, something went sideways.
+> +	 */
+> +	if (WARN_ON_ONCE(val =3D=3D 0))
+> +		return;
+> +
+> +	if (atomic_dec_and_test(&key->enabled))
+>  		jump_label_update(key);
+> -	else
+> -		WARN_ON_ONCE(!static_key_slow_try_dec(key));
+>  }
+>
+>  static void __static_key_slow_dec(struct static_key *key)
+> @@ -329,7 +349,7 @@ void __static_key_slow_dec_deferred(struct static_ke=
+y *key,
+>  {
+>  	STATIC_KEY_CHECK_USE(key);
+>
+> -	if (static_key_slow_try_dec(key))
+> +	if (static_key_dec_not_one(key))
+>  		return;
+>
+>  	schedule_delayed_work(work, timeout);
 
-Great, thanks! Looks like this should have everything I need.
+Just tested the new version, no error here.
 
-Sami
+Bert karwatzki
 
