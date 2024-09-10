@@ -1,330 +1,318 @@
-Return-Path: <linux-kernel+bounces-322652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3FE972BEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:17:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E3D972BEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1FD4B22551
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:17:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8986F1C24A43
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7555E210F8;
-	Tue, 10 Sep 2024 08:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE9218C913;
+	Tue, 10 Sep 2024 08:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="boifW1tx"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="fTS/563F";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="fTS/563F"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D008617BEBF;
-	Tue, 10 Sep 2024 08:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C9817BEBF;
+	Tue, 10 Sep 2024 08:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725956124; cv=none; b=brblv0iYyt7y/116MZHtKdf26EmFiDL6/oP07G/sr29fcjWdqB4S2fDOWrnZqhgG/VFK68yHncM/OtXxBJxtYmH7DwM1CPLCRLYjduleS1Goj/V6WzD8PSYEM9kqjHcYklQzfQv2+j50qPnt1TTBb2GB3DyDcgpkQUGygMZyK9U=
+	t=1725956139; cv=none; b=aCrJzoai8C/muTMN9V+3hmbum6kksr1C36sk4IWcDDwHD2mFQJxRLdojqOqoz1LDw6NfQAcsE81TaImFJkCR44R6r41ljTteOuyANgVeYIzvQ3e0K/eYaCUUM7L8tKDdiLmcIrNR1c41flCwp1zIOxI1rQFVhvxv6I1VZfp65KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725956124; c=relaxed/simple;
-	bh=et3dYxQgsfg5PySGS6DCig0jQ0gmUdydE5KkYVWjHsw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pp1wYw806Wg0GvRpa/j7TgaXeJW346jH/4MTd5gmpr0s+FyZU1k/xJ/u6U721/yyZ3Gsx0fqSZXcgRD2l2Zf1/iEMcvPckx6lyb+lDDfRb6GodvLZNzpSId5UaUpodbUoBqXNL9Q7y8lNsjKg3TLQFDNW0IlmWYU1SBpIGhoogE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=boifW1tx; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4581d15c3e3so22607171cf.0;
-        Tue, 10 Sep 2024 01:15:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725956122; x=1726560922; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EPH3kBIxJYHEyTOz3p0DMAY4Ngb5KzT9ROJM3lAS0nI=;
-        b=boifW1txVaVmvCxbJqN6rwL2jzSDq4ZpwneTKa4XBEGr3WsFRTrlF3gQ30gFpQrfpT
-         zM2rBKFgJfB+D98/99/3Um4a76cU+DBgH/I/KHuPZEBH/dj76QR/X3fnEJMGBXbPKM7A
-         NzKqFfFS+ID1gqVPt1bchkVWIbNOl8D9G7nFsndI7p3pn9/bybMVOKwHorEvSobVl8ym
-         EZLjuOvNLG7+q83WRPARrPj75rHtmP8RILg7kJIOmXCQtXcQDqoYczrGCPMto2ktwj8L
-         /IzJR50fJbgtFL/RJXvNEyWn49c8dQP2KypTPu3NbypES4trEzyk3W6UfmxbZGQHZAVc
-         sSQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725956122; x=1726560922;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EPH3kBIxJYHEyTOz3p0DMAY4Ngb5KzT9ROJM3lAS0nI=;
-        b=Bc8Kn2UAOCfv/WFVeJVPSiFCjoVQ1BBGhinf+g6yG7/b0btYvl99DvaXPgYgQ4Bhqf
-         6hf0BIgazioLvXmA8loKnmrpt1TT6inE6f9nCoqwqFfT50gyvz8P5Lsa2hC5v6nVa3on
-         EOtAdPPrIpvL2sTtQPnojTDHzKRUd/WHu64zHaLZKgIEktlU/c5rLXY1Vn2TQJRQC6qD
-         z/jq/BD9pq5A4NKsAV8LFMHbOmGHHVjOgs4ne1WSz0SYN2cs+zsBPodHsso+nzEaWxw9
-         bdFVI8CjJiA+Ri6yqrfbxO2rowBIqx1ZqoyOtjX0j+N6VvXbmKwogUtyFajVLseNWKWm
-         o39g==
-X-Forwarded-Encrypted: i=1; AJvYcCWMkaDciVjUiITX/iPEOzUveIVN1AUrxUUYiJ1SQfVkFyLSKMa4fP2MKfVtYM/iXAqywMrNXMRKAOhFdBWY@vger.kernel.org, AJvYcCX9hN0WZztfawvZ4/fZ96ZcQiAWGdEzJdLeOyUrw/8lurTAL3FZJWi0Sv7IAC7/NLzL8wLwSC9wffFQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVnKFWRMT0TOmDItux19ygVGsZQINsVXlmrdjlXd7H4CSrjrJu
-	oryLVZDi3j7YrKO3nK72PVAcwdDIWd0U2iuqFoDkjU4bZZtJD8AjLRUQX/4Gq//jwoEOgf/kC28
-	yfENqWBiMRnAQwE47HuB/CKvG58M=
-X-Google-Smtp-Source: AGHT+IGG8v+t1ox84vNDpIPMpKr7+kqzhm0kEvCpg1x+AuL9rGZb8R/FC6FEGlWADEqUViGH0udX1S86tKQmCZ752hM=
-X-Received: by 2002:ac8:7f88:0:b0:457:d461:73ed with SMTP id
- d75a77b69052e-4580c6dcfffmr188194671cf.32.1725956121527; Tue, 10 Sep 2024
- 01:15:21 -0700 (PDT)
+	s=arc-20240116; t=1725956139; c=relaxed/simple;
+	bh=Kg35Jxhzlot8Y+GAiDtS901/Vkw+YaePavzX1TcgZrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z5thi6QtxPAghjRNYHpKwiN9WAkPa5CoXKN6AAIPXkZ45r4RuY3Z0omyzXjREj0FIKtZ3QrqcF8Nil9wCDNzhai2J4NHqYy14MtiCDQxIkPQtxzP7nx545J4Xm+OeAxWcT2hw0zn5Sr2UYDLItEsa5vPmRndueKbyYFI2WjD6SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=fTS/563F; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=fTS/563F; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 383601F454;
+	Tue, 10 Sep 2024 08:15:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1725956135; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Kg35Jxhzlot8Y+GAiDtS901/Vkw+YaePavzX1TcgZrY=;
+	b=fTS/563F9LVbM09/01DW//DZ6qkbxFi79rCezgfQ5mGYNpBTqiTnAIn2pWYd3h2Q8wF/rU
+	VYAOEC6Ihb9BuPnZswyWVNz/bXiGpl2khsGDaMyuAZ5XfkY23IIMEv5gVzzsVQeMvpVzA0
+	M5kJGl9ZRyzb07DJC0ublWwI8fxbDTE=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1725956135; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Kg35Jxhzlot8Y+GAiDtS901/Vkw+YaePavzX1TcgZrY=;
+	b=fTS/563F9LVbM09/01DW//DZ6qkbxFi79rCezgfQ5mGYNpBTqiTnAIn2pWYd3h2Q8wF/rU
+	VYAOEC6Ihb9BuPnZswyWVNz/bXiGpl2khsGDaMyuAZ5XfkY23IIMEv5gVzzsVQeMvpVzA0
+	M5kJGl9ZRyzb07DJC0ublWwI8fxbDTE=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C4BDB132CB;
+	Tue, 10 Sep 2024 08:15:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id He2LLiYA4GazNQAAD6G6ig
+	(envelope-from <jgross@suse.com>); Tue, 10 Sep 2024 08:15:34 +0000
+Message-ID: <b6bb45ab-23bb-458d-a8db-9619f594e8c7@suse.com>
+Date: Tue, 10 Sep 2024 10:15:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910030951.3670653-1-damon.ding@rock-chips.com> <20240910030951.3670653-3-damon.ding@rock-chips.com>
-In-Reply-To: <20240910030951.3670653-3-damon.ding@rock-chips.com>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Tue, 10 Sep 2024 12:15:10 +0400
-Message-ID: <CABjd4YwEGR-bdT6VSJYcC_WcesCrPq1=maKmdP7=Y_fesc3oow@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] arm64: dts: rockchip: Add support for rk3588s evb1 board
-To: Damon Ding <damon.ding@rock-chips.com>
-Cc: heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	macromorgan@hotmail.com, jonas@kwiboo.se, tim@feathertop.org, 
-	knaerzche@gmail.com, efectn@protonmail.com, andyshrk@163.com, 
-	jagan@edgeble.ai, dsimic@manjaro.org, megi@xff.cz, 
-	sebastian.reichel@collabora.com, boris.brezillon@collabora.com, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/7] xen: allow mapping ACPI data using a different
+ physical address
+To: Jan Beulich <jbeulich@suse.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-acpi@vger.kernel.org
+References: <20240820082012.31316-1-jgross@suse.com>
+ <20240820082012.31316-7-jgross@suse.com>
+ <607602c3-5199-4326-8676-d28a8b42b4b5@suse.com>
+Content-Language: en-US
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <607602c3-5199-4326-8676-d28a8b42b4b5@suse.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------X2tBXwJJQ7URBhPPEYI3057i"
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.19 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SIGNED_PGP(-2.00)[];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	NEURAL_HAM_LONG(-0.99)[-0.991];
+	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_BASE64_TEXT(0.10)[];
+	MIME_UNKNOWN(0.10)[application/pgp-keys];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	HAS_ATTACHMENT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid]
+X-Spam-Score: -5.19
+X-Spam-Flag: NO
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------X2tBXwJJQ7URBhPPEYI3057i
+Content-Type: multipart/mixed; boundary="------------6YVa1chSCwOeY5jwVx9Pxq9k";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: Jan Beulich <jbeulich@suse.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-acpi@vger.kernel.org
+Message-ID: <b6bb45ab-23bb-458d-a8db-9619f594e8c7@suse.com>
+Subject: Re: [PATCH v2 6/7] xen: allow mapping ACPI data using a different
+ physical address
+References: <20240820082012.31316-1-jgross@suse.com>
+ <20240820082012.31316-7-jgross@suse.com>
+ <607602c3-5199-4326-8676-d28a8b42b4b5@suse.com>
+In-Reply-To: <607602c3-5199-4326-8676-d28a8b42b4b5@suse.com>
+Autocrypt-Gossip: addr=jbeulich@suse.com; keydata=
+ xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
+ hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
+ 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
+ /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
+ O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
+ MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
+ nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
+ 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
+ Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJ3BBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
+ AwECHgECF4AAIQkQoDSui/t3IH4WIQQ+pJkfkcoLMCa4X6CgNK6L+3cgfgn7AJ9DmMd0SMJE
+ ePbc7/m22D2v04iu7ACffXTdZQhNl557tJuDXZSBxDmW/tLOwU0EWTecRBAIAIK5OMKMU5R2
+ Lk2bbjgX7vyQuCFFyKf9rC/4itNwhYWFSlKzVj3WJBDsoi2KvPm7AI+XB6NIkNAkshL5C0kd
+ pcNd5Xo0jRR5/WE/bT7LyrJ0OJWS/qUit5eNNvsO+SxGAk28KRa1ieVLeZi9D03NL0+HIAtZ
+ tecfqwgl3Y72UpLUyt+r7LQhcI/XR5IUUaD4C/chB4Vq2QkDKO7Q8+2HJOrFIjiVli4lU+Sf
+ OBp64m//Y1xys++Z4ODoKh7tkh5DxiO3QBHG7bHK0CSQsJ6XUvPVYubAuy1XfSDzSeSBl//C
+ v78Fclb+gi9GWidSTG/4hsEzd1fY5XwCZG/XJJY9M/sAAwUH/09Ar9W2U1Qm+DwZeP2ii3Ou
+ 14Z9VlVVPhcEmR/AFykL9dw/OV2O/7cdi52+l00reUu6Nd4Dl8s4f5n8b1YFzmkVVIyhwjvU
+ jxtPyUgDOt6DRa+RaDlXZZmxQyWcMv2anAgYWGVszeB8Myzsw8y7xhBEVV1S+1KloCzw4V8Z
+ DSJrcsZlyMDoiTb7FyqxwQnM0f6qHxWbmOOnbzJmBqpNpFuDcz/4xNsymJylm6oXiucHQBAP
+ Xb/cE1YNHpuaH4SRhIxwQilCYEznWowQphNAbJtEKOmcocY7EbSt8VjXTzmYENkIfkrHRyXQ
+ dUm5AoL51XZljkCqNwrADGkTvkwsWSvCSQQYEQIACQUCWTecRAIbDAAKCRCgNK6L+3cgfuef
+ AJ9wlZQNQUp0KwEf8Tl37RmcxCL4bQCcC5alCSMzUBJ5DBIcR4BY+CyQFAs=
+
+--------------6YVa1chSCwOeY5jwVx9Pxq9k
+Content-Type: multipart/mixed; boundary="------------06OUwrU5hpjk2ccnTfNzqkbJ"
+
+--------------06OUwrU5hpjk2ccnTfNzqkbJ
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+
+T24gMjAuMDguMjQgMTE6NTYsIEphbiBCZXVsaWNoIHdyb3RlOg0KPiBPbiAyMC4wOC4yMDI0
+IDEwOjIwLCBKdWVyZ2VuIEdyb3NzIHdyb3RlOg0KPj4gQEAgLTgzOCw2ICs4MzksMzEgQEAg
+dm9pZCBfX2luaXQgeGVuX2RvX3JlbWFwX25vbnJhbSh2b2lkKQ0KPj4gICAJcHJfaW5mbygi
+UmVtYXBwZWQgJXUgbm9uLVJBTSBwYWdlKHMpXG4iLCByZW1hcHBlZCk7DQo+PiAgIH0NCj4+
+ICAgDQo+PiArLyoNCj4+ICsgKiBYZW4gdmFyaWFudCBvZiBhY3BpX29zX2lvcmVtYXAoKSB0
+YWtpbmcgcG90ZW50aWFsbHkgcmVtYXBwZWQgbm9uLVJBTQ0KPj4gKyAqIHJlZ2lvbnMgaW50
+byBhY291bnQuDQo+PiArICogQW55IGF0dGVtcHQgdG8gbWFwIGFuIGFyZWEgY3Jvc3Npbmcg
+YSByZW1hcCBib3VuZGFyeSB3aWxsIHByb2R1Y2UgYQ0KPj4gKyAqIFdBUk4oKSBzcGxhdC4N
+Cj4+ICsgKi8NCj4+ICtzdGF0aWMgdm9pZCBfX2lvbWVtICp4ZW5fYWNwaV9vc19pb3JlbWFw
+KGFjcGlfcGh5c2ljYWxfYWRkcmVzcyBwaHlzLA0KPj4gKwkJCQkJIGFjcGlfc2l6ZSBzaXpl
+KQ0KPj4gK3sNCj4+ICsJdW5zaWduZWQgaW50IGk7DQo+PiArCXN0cnVjdCBub25yYW1fcmVt
+YXAgKnJlbWFwID0geGVuX25vbnJhbV9yZW1hcDsNCj4gDQo+IGNvbnN0IChhbHNvIGluIG9u
+ZSBvZiB0aGUgZnVuY3Rpb25zIGluIHBhdGNoIDUpPw0KDQpZZXMuDQoNCj4gDQo+PiArCWZv
+ciAoaSA9IDA7IGkgPCBucl9ub25yYW1fcmVtYXA7IGkrKykgew0KPj4gKwkJaWYgKHBoeXMg
+KyBzaXplID4gcmVtYXAtPm1hZGRyICYmDQo+PiArCQkgICAgcGh5cyA8IHJlbWFwLT5tYWRk
+ciArIHJlbWFwLT5zaXplKSB7DQo+PiArCQkJV0FSTl9PTihwaHlzIDwgcmVtYXAtPm1hZGRy
+IHx8DQo+PiArCQkJCXBoeXMgKyBzaXplID4gcmVtYXAtPm1hZGRyICsgcmVtYXAtPnNpemUp
+Ow0KPj4gKwkJCXBoeXMgPSByZW1hcC0+cGFkZHIgKyBwaHlzIC0gcmVtYXAtPm1hZGRyOw0K
+Pj4gKwkJCWJyZWFrOw0KPj4gKwkJfQ0KPj4gKwl9DQo+PiArDQo+PiArCXJldHVybiB4ODZf
+YWNwaV9vc19pb3JlbWFwKHBoeXMsIHNpemUpOw0KPj4gK30NCj4gDQo+IEF0IGxlYXN0IHRo
+aXMsIHBlcmhhcHMgYWxzbyB3aGF0IHBhdGNoIDUgYWRkcywgbGlrZWx5IHdhbnRzIHRvIGJl
+IGxpbWl0ZWQNCj4gdG8gdGhlIFhFTl9ET00wIGNhc2U/IE9yIGVsc2UgSSB3b25kZXIgd2hl
+dGhlciAuLi4NCj4gDQo+PiBAQCAtODUwLDYgKzg3NiwxMCBAQCB2b2lkIF9faW5pdCB4ZW5f
+YWRkX3JlbWFwX25vbnJhbShwaHlzX2FkZHJfdCBtYWRkciwgcGh5c19hZGRyX3QgcGFkZHIs
+DQo+PiAgIAkJQlVHKCk7DQo+PiAgIAl9DQo+PiAgIA0KPj4gKwkvKiBTd2l0Y2ggdG8gdGhl
+IFhlbiBhY3BpX29zX2lvcmVtYXAoKSB2YXJpYW50LiAqLw0KPj4gKwlpZiAobnJfbm9ucmFt
+X3JlbWFwID09IDApDQo+PiArCQlhY3BpX29zX2lvcmVtYXAgPSB4ZW5fYWNwaV9vc19pb3Jl
+bWFwOw0KPiANCj4gLi4uIHRoaXMgd291bGQgYWN0dWFsbHkgYnVpbGQgd2hlbiBYRU5fRE9N
+MD1uLg0KPiANCj4gSSdtIGFjdHVhbGx5IHN1cnByaXNlZCB0aGVyZSdzIG5vIERvbTAtb25s
+eSBjb2RlIHNlY3Rpb24gaW4gdGhpcyBmaWxlLA0KPiB3aGVyZSB0aGUgbmV3IGNvZGUgY291
+bGQgdGhlbiBzaW1wbHkgYmUgaW5zZXJ0ZWQuDQoNCkknZCByYXRoZXIgbWFrZSB0aGlzIGNv
+bmRpdGlvbmFsIG9uIENPTkZJR19BQ1BJLg0KDQpEZXBlbmRpbmcgb24gaG93IFhlbiB0b29s
+cyB3aWxsIGhhbmRsZSBhIFBWLWRvbWFpbiB3aXRoICJlODIwX2hvc3Q9MSIgdGhpcw0KY29k
+ZSBtaWdodCBiZSBpbXBvcnRhbnQgZm9yIGRvbVVzLCB0b28uDQoNCg0KSnVlcmdlbg0K
+--------------06OUwrU5hpjk2ccnTfNzqkbJ
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
 Content-Transfer-Encoding: quoted-printable
 
-Hi Damon,
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-On Tue, Sep 10, 2024 at 7:11=E2=80=AFAM Damon Ding <damon.ding@rock-chips.c=
-om> wrote:
->
-> Specification:
-> - Rockchip RK3588S
-> - RK806-2x2pcs + DiscretePower
-> - eMMC5.1 + SPI Flash
-> - Micro SD Card3.0
-> - 1 x Typec3.0 + 2 x USB2 HOST
-> - 1 x 1Lane PCIE2.0 Connector(RC Mode)
-> - Headphone output
-> - Array Key(MENU/VOL+/VOP-/ESC), Reset, Power on/off Key
-> - 6 x SARADC
->
-> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> ---
->  arch/arm64/boot/dts/rockchip/Makefile         |    1 +
->  .../boot/dts/rockchip/rk3588s-evb1-v10.dts    | 1120 +++++++++++++++++
->  2 files changed, 1121 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
->
-> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/=
-rockchip/Makefile
-> index fda1b980eb4b..f2992da01ada 100644
-> --- a/arch/arm64/boot/dts/rockchip/Makefile
-> +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> @@ -139,6 +139,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588-tiger-haikou.=
-dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588-toybrick-x0.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588-turing-rk1.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588s-coolpi-4b.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588s-evb1-v10.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588s-indiedroid-nova.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588s-khadas-edge2.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588s-nanopi-r6s.dtb
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts b/arch/arm=
-64/boot/dts/rockchip/rk3588s-evb1-v10.dts
-> new file mode 100644
-> index 000000000000..83128d2d8cdd
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
-> @@ -0,0 +1,1120 @@
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-<...>
+--------------06OUwrU5hpjk2ccnTfNzqkbJ--
 
-> +       pmic@1 {
-> +               compatible =3D "rockchip,rk806";
-> +               reg =3D <0x01>;
-> +               #gpio-cells =3D <2>;
-> +               gpio-controller;
-> +               interrupt-parent =3D <&gpio0>;
-> +               interrupts =3D <7 IRQ_TYPE_LEVEL_LOW>;
-> +               pinctrl-0 =3D <&rk806_slave_dvs1_null>, <&rk806_slave_dvs=
-2_null>,
-> +                           <&rk806_slave_dvs3_null>;
-> +               pinctrl-names =3D "default";
-> +               spi-max-frequency =3D <1000000>;
-> +
-> +               vcc1-supply =3D <&vcc5v0_sys>;
-> +               vcc2-supply =3D <&vcc5v0_sys>;
-> +               vcc3-supply =3D <&vcc5v0_sys>;
-> +               vcc4-supply =3D <&vcc5v0_sys>;
-> +               vcc5-supply =3D <&vcc5v0_sys>;
-> +               vcc6-supply =3D <&vcc5v0_sys>;
-> +               vcc7-supply =3D <&vcc5v0_sys>;
-> +               vcc8-supply =3D <&vcc5v0_sys>;
-> +               vcc9-supply =3D <&vcc5v0_sys>;
-> +               vcc10-supply =3D <&vcc5v0_sys>;
-> +               vcc11-supply =3D <&vcc_2v0_pldo_s3>;
-> +               vcc12-supply =3D <&vcc5v0_sys>;
-> +               vcc13-supply =3D <&vcc_1v1_nldo_s3>;
-> +               vcc14-supply =3D <&vcc_2v0_pldo_s3>;
-> +               vcca-supply =3D <&vcc5v0_sys>;
-> +
-> +               rk806_slave_dvs1_null: dvs1-null-pins {
-> +                       pins =3D "gpio_pwrctrl1";
-> +                       function =3D "pin_fun0";
-> +               };
-> +
-> +               rk806_slave_dvs2_null: dvs2-null-pins {
-> +                       pins =3D "gpio_pwrctrl2";
-> +                       function =3D "pin_fun0";
-> +               };
-> +
-> +               rk806_slave_dvs3_null: dvs3-null-pins {
-> +                       pins =3D "gpio_pwrctrl3";
-> +                       function =3D "pin_fun0";
-> +               };
-> +
-> +               regulators {
-> +                       vdd_cpu_big1_s0: dcdc-reg1 {
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
+--------------6YVa1chSCwOeY5jwVx9Pxq9k--
 
-You may want to introduce regulator coupling between CPU supplies and
-their respective SRAM supplies, as they are driven by separate
-physical regulators and will go out of sync when cpufreq tries to
-adjust frequency and voltage of the CPU cluster under load. See [1].
-So perhaps:
+--------------X2tBXwJJQ7URBhPPEYI3057i
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-+                               regulator-coupled-with =3D <&vdd_cpu_big1_m=
-em_s0>;
-+                               regulator-coupled-max-spread =3D <10000>;
+-----BEGIN PGP SIGNATURE-----
 
-> +                               regulator-init-microvolt =3D <800000>;
-> +                               regulator-min-microvolt =3D <550000>;
-> +                               regulator-max-microvolt =3D <1050000>;
-> +                               regulator-ramp-delay =3D <12500>;
-> +                               regulator-name =3D "vdd_cpu_big1_s0";
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
-> +                       };
-> +
-> +                       vdd_cpu_big0_s0: dcdc-reg2 {
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmbgACYFAwAAAAAACgkQsN6d1ii/Ey8E
+KwgAgiWnIRVgRVkQccRuxTBrqf6nD2kpLeVmHtigMnPYOgTPOMZkl2EXfkmdexD/tisnDPYqMge2
+hQqI4hgn3MjZzJAvJY82VYfiGfAMAfkQf0z+WgddwoRItyB/q451sSdCDyuKTIH+Ii1oBCwujhH4
+FFfadMbbrfBJKzt9SxBwlyv+fEHdDwQHw+qD+crsH+VL4cY12bUJ7Cb61Mcs3HSsxGsut2r9Z89J
+eUwGRL/Y3cW8zFeVZnywenL1vZuk4OOLbeAzOhH/IJbXP4K5juQeZXb8jCpLUKHXPGeuhcumJDr2
+7f570xNdb7kE1shWARbLMCQD7vWi9VwQ8eyjB31DBQ==
+=lv+S
+-----END PGP SIGNATURE-----
 
-+                               regulator-coupled-with =3D <&vdd_cpu_big0_m=
-em_s0>;
-+                               regulator-coupled-max-spread =3D <10000>;
-
-> +                               regulator-init-microvolt =3D <800000>;
-> +                               regulator-min-microvolt =3D <550000>;
-> +                               regulator-max-microvolt =3D <1050000>;
-> +                               regulator-ramp-delay =3D <12500>;
-> +                               regulator-name =3D "vdd_cpu_big0_s0";
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
-> +                       };
-> +
-> +                       vdd_cpu_lit_s0: dcdc-reg3 {
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-
-+                               regulator-coupled-with =3D <&vdd_cpu_lit_me=
-m_s0>;
-+                               regulator-coupled-max-spread =3D <10000>;
-
-> +                               regulator-init-microvolt =3D <800000>;
-> +                               regulator-min-microvolt =3D <550000>;
-> +                               regulator-max-microvolt =3D <950000>;
-> +                               regulator-ramp-delay =3D <12500>;
-> +                               regulator-name =3D "vdd_cpu_lit_s0";
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
-> +                       };
-> +
-> +                       vcc_3v3_s3: dcdc-reg4 {
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-> +                               regulator-min-microvolt =3D <3300000>;
-> +                               regulator-max-microvolt =3D <3300000>;
-> +                               regulator-ramp-delay =3D <12500>;
-> +                               regulator-name =3D "vcc_3v3_s3";
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                                       regulator-suspend-microvolt =3D <=
-3300000>;
-> +                               };
-> +                       };
-> +
-> +                       vdd_cpu_big1_mem_s0: dcdc-reg5 {
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-
-+                               regulator-coupled-with =3D <&vdd_cpu_big1_s=
-0>;
-+                               regulator-coupled-max-spread =3D <10000>;
-
-> +                               regulator-init-microvolt =3D <800000>;
-> +                               regulator-min-microvolt =3D <675000>;
-> +                               regulator-max-microvolt =3D <1050000>;
-> +                               regulator-ramp-delay =3D <12500>;
-> +                               regulator-name =3D "vdd_cpu_big1_mem_s0";
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
-> +                       };
-> +
-> +
-> +                       vdd_cpu_big0_mem_s0: dcdc-reg6 {
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-
-+                               regulator-coupled-with =3D <&vdd_cpu_big0_s=
-0>;
-+                               regulator-coupled-max-spread =3D <10000>;
-
-> +                               regulator-init-microvolt =3D <800000>;
-> +                               regulator-min-microvolt =3D <675000>;
-> +                               regulator-max-microvolt =3D <1050000>;
-> +                               regulator-ramp-delay =3D <12500>;
-> +                               regulator-name =3D "vdd_cpu_big0_mem_s0";
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
-> +                       };
-> +
-> +                       vcc_1v8_s0: dcdc-reg7 {
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-> +                               regulator-min-microvolt =3D <1800000>;
-> +                               regulator-max-microvolt =3D <1800000>;
-> +                               regulator-ramp-delay =3D <12500>;
-> +                               regulator-name =3D "vcc_1v8_s0";
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
-> +                       };
-> +
-> +                       vdd_cpu_lit_mem_s0: dcdc-reg8 {
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-
-+                               regulator-coupled-with =3D <&vdd_cpu_lit_s0=
->;
-+                               regulator-coupled-max-spread =3D <10000>;
-
-> +                               regulator-init-microvolt =3D <800000>;
-> +                               regulator-min-microvolt =3D <675000>;
-> +                               regulator-max-microvolt =3D <950000>;
-> +                               regulator-ramp-delay =3D <12500>;
-> +                               regulator-name =3D "vdd_cpu_lit_mem_s0";
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
-> +                       };
-
-<...>
-
-[1] https://github.com/torvalds/linux/commit/0ba0560982bc8d0c3fb3ca209fd0ed=
-29f81402ac
-
-Best regards,
-Alexey
+--------------X2tBXwJJQ7URBhPPEYI3057i--
 
