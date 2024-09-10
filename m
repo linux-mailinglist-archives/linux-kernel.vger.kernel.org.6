@@ -1,180 +1,131 @@
-Return-Path: <linux-kernel+bounces-323627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810159740D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:42:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5D79740D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C35F1F21E91
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:42:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7911C25289
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235D11A4F3B;
-	Tue, 10 Sep 2024 17:38:42 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BB41A2C3C;
+	Tue, 10 Sep 2024 17:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F1/WsbYn"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9064D1A3BCA;
-	Tue, 10 Sep 2024 17:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B23418EFCE;
+	Tue, 10 Sep 2024 17:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725989921; cv=none; b=gQm+hjcC30jIgq7PvfR5RzX4RDXqrEPKnmghHUENz8ij1R88ZCRicxESBUnzLawjB6yPw4X8fbFF0MiGEWauIthzo+nqcYzPaVgALkX+b3BNPnB6uWT4TgrcPzf3fC+rCJ0OLR7JFwqlMOobVsWIrN7RL7TfPwEAkFAnowb6+UI=
+	t=1725990007; cv=none; b=Rnz5T4KEHTO3/xUnF2BvhRIdonoouZOqWcVx9N8HVbEcpG3zyEqOuVWDtbzVlXKphEJbCSBSgaL66a+YHO/7im+WdxFIumcTrx2wvN3izqh9wskvz335vUi8t2jotBo3Hjcgw4GZ4jHunXMUTlpChYfogRKTMti+fg2T9V979qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725989921; c=relaxed/simple;
-	bh=5dohZWBS/7W3nObqx7vNRfXJnQ+q1SPUZ+exJOqVwpQ=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=pP/OcLsLEUN2u5T1Unoj9AA3x1WUDe6xlwQNirg/RhjHvACc0H9G/Y61KEHoruvdQndTbRfbuI/j1yDgesWuKfNV4ihQ2yC8HW3POOcAwyC9C7Ev8YWXxyvIY86v1Fcrx+KZ5FSxeHLm3YayU/ZQnI8xZPLHn9VHzJ7iN0Raguw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.106] (178.176.76.166) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 10 Sep
- 2024 20:38:32 +0300
-Subject: Re: [PATCH v2] KEYS: prevent NULL pointer dereference in
- find_asymmetric_key()
-To: Jarkko Sakkinen <jarkko@kernel.org>, Roman Smirnov <r.smirnov@omp.ru>,
-	David Howells <dhowells@redhat.com>, Herbert Xu
-	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
-	Andrew Zaborowski <andrew.zaborowski@intel.com>
-CC: <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-References: <20240910111806.65945-1-r.smirnov@omp.ru>
- <D42N9ASJJSUD.EG094MFWZA4Q@kernel.org>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <84d6b0fa-4948-fe58-c766-17f87c2a2dba@omp.ru>
-Date: Tue, 10 Sep 2024 20:38:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1725990007; c=relaxed/simple;
+	bh=fAdgRQqpGF7RrnEDWmOd1mWZuXS+ow/1DruDV+THMfE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SZKfIGDtFTM7RquHA0vD41GMIKFqdC9T5NsZpEVA5J9N9kxX/svxYLGG+kEBycaIKt7BNahyy6htKMH9ZOiu6bNaq29fsrc4y+LDzzJjMumax5IBehSVXHAlgkjelVeJl4B2MPYlgzqkEPDuEPMjkBbdnCp00kxIPyXXU8U6pD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F1/WsbYn; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d8abac30ddso788390a91.0;
+        Tue, 10 Sep 2024 10:40:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725990006; x=1726594806; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6MGMSWaKWiTq5sp3rVspTPEpv9ZUFzlH0jxiAqGXIZA=;
+        b=F1/WsbYnXVj7p+rR44oIzkynACN07XQWQl0xxZpGg+Zt70F2vDY+YrPOnieK7LR8sr
+         aYLXZmlngqq1EayDFLqyC6mpYSPwDYfYw2+L9QmwkYm/FJrl3ONxZ8JIVuYRIzmykC6Y
+         D1LY0t4NNYv0W0ysDk2KiZ+NASM0HneqqiJKbrGCDL7+FqLyZkp3ynlp0Ey+IJleDQMw
+         zSyWs9VBXI7Hr1C86adIpaYYv+oqGpHRdmF+67Xca4UPjTxKZY5s7b+nE5babZaeXOdL
+         82IrvC0DN2xjSD9nxExI8l0wpMj///FcPCkjPHGw1cYb5i1dGs2seP6rjbOFbOdxWgIV
+         LfUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725990006; x=1726594806;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6MGMSWaKWiTq5sp3rVspTPEpv9ZUFzlH0jxiAqGXIZA=;
+        b=Xi+guyFcoJqiCf1X9nJuU3uXJHoUCehZSZbJf020kY7+T/26kMVH2DHuCA/ff+4IJg
+         36t+SxrjFhOY6pRp8hGbTM64Lfr5mta0F0YsDGTAf2kmE6TrisuuNTXkzlCQjCZpeL9D
+         MCrf26FsyxHstdBpTKiqW5jIUrDq2L+5kgkZ+y83PXxVniMbTxtsVlHTO7ecznN6jOtP
+         iBhMt7Ul1kPcH4KDLfTwtQQ9dxMeW8kO4QcAs8Y5/WclZmMBAst2389tT7wXir3JvWaG
+         hajAubZrXv19rEJrXiDoIFuyyVVfq90OlegRaSy6Mpot6OfwHZZeC7TUBXntXVI9o5he
+         MuMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ4A/KP8n+tD8ruogqNf0MOjZv6gJ9q3FrephD9a+FP1gpFoaTmTbGmreMLqe7JyIeacVW77ysXOQYPguT@vger.kernel.org, AJvYcCVAjK/CXJShrg/v4XPaC7PZVWSS4qqMIWERQ+WM1kkAf2wVxqK0cPt1ha4yqozaDqMEp2QDUZaIkOzCFmKXmcGtKQI=@vger.kernel.org, AJvYcCW/+cz1IzCDxyixCHHaPv3rLrXxlsI9jLUGwBNbUYonLwvD+IphfngiqiBETV5oCdv/0uw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3PYzcqt2cx5TyH9JhWfbIJN7lMe/UxqsOQY74UhnEyz3rfMlB
+	8EQmhIPVdnPD857ksBoT8mK9OFf4qXvbaBS0XZf+sQVw0k+PJhfXT0uoBEADHRIIp6Nj+CX0xjd
+	GHVXj3F8Pw/7WONwoqj73FUxxbKwUXg==
+X-Google-Smtp-Source: AGHT+IFwC9/bCAtbu3BnylH0CaBZ+SRVRLEkQ5XJ/W+s4bXXcz8vdJqdDoPjvCD04EyRJE9iF2bP4Zao7wQxr2ZufXs=
+X-Received: by 2002:a17:90a:66c6:b0:2d8:8252:f675 with SMTP id
+ 98e67ed59e1d1-2db83087f69mr355236a91.39.1725990005526; Tue, 10 Sep 2024
+ 10:40:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <D42N9ASJJSUD.EG094MFWZA4Q@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/10/2024 17:22:53
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 187670 [Sep 10 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.1.5
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 32 0.3.32
- 766319f57b3d5e49f2c79a76e7d7087b621090df
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info:
-	127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.76.166
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/10/2024 17:27:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/10/2024 3:10:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+References: <20240903174603.3554182-9-andrii@kernel.org> <172554860322.2215.10385397228202759078.tip-bot2@tip-bot2>
+ <CAEf4BzbytuSpro9wT7cZY2Qf98zpDz+V0hTwwKP3ZDa866s1tA@mail.gmail.com> <ZuAhUHqAA-ejpN3X@gmail.com>
+In-Reply-To: <ZuAhUHqAA-ejpN3X@gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 10 Sep 2024 10:39:53 -0700
+Message-ID: <CAEf4BzZihPPiReE3anhrVOzjoZW5v4vFVouK_Arm8vJexCTT4g@mail.gmail.com>
+Subject: Re: [tip: perf/core] uprobes: switch to RCU Tasks Trace flavor for
+ better performance
+To: Ingo Molnar <mingo@kernel.org>
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, linux-tip-commits@vger.kernel.org, 
+	Andrii Nakryiko <andrii@kernel.org>, Oleg Nesterov <oleg@redhat.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, "Paul E . McKenney" <paulmck@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/10/24 4:38 PM, Jarkko Sakkinen wrote:
-[...]
+On Tue, Sep 10, 2024 at 3:37=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wrot=
+e:
+>
+>
+> * Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+>
+> > On Thu, Sep 5, 2024 at 8:03=E2=80=AFAM tip-bot2 for Andrii Nakryiko
+> > <tip-bot2@linutronix.de> wrote:
+> > >
+> > > The following commit has been merged into the perf/core branch of tip=
+:
+> > >
+> > > Commit-ID:     c4d4569c41f9cda745cfd1d8089ea3d3526bafe5
+> > > Gitweb:        https://git.kernel.org/tip/c4d4569c41f9cda745cfd1d8089=
+ea3d3526bafe5
+> > > Author:        Andrii Nakryiko <andrii@kernel.org>
+> > > AuthorDate:    Tue, 03 Sep 2024 10:46:03 -07:00
+> > > Committer:     Peter Zijlstra <peterz@infradead.org>
+> > > CommitterDate: Thu, 05 Sep 2024 16:56:15 +02:00
+> > >
+> >
+> > Hm... This commit landed in perf/core, but is gone now (the rest of
+> > patches is still there). Any idea what happened?
+>
+> Yeah, I'm getting this build failure:
+>
+>      kernel/events/uprobes.c:1158:9: error: implicit declaration of funct=
+ion =E2=80=98synchronize_rcu_tasks_trace=E2=80=99; did you mean =E2=80=98sy=
+nchronize_rcu_tasks=E2=80=99? [-Werror=3Dimplicit-function-declaration]
+>
+> on x86-64 defconfig, when applied to today's perf/core.
+>
 
->> In find_asymmetric_key(), if all NULLs are passed in id_{0,1,2} parameters
->> the kernel will first emit WARN and then have an oops because id_2 gets
->> dereferenced anyway.
->>
->> Found by Linux Verification Center (linuxtesting.org) with Svace static
->> analysis tool.
-> 
-> Weird, I recall that I've either sent a patch to address the same site
-> OR have commented a patch with similar reasoning. Well, it does not
-> matter, I think it this makes sense to me.
-> 
-> You could further add to the motivation that given the panic_on_warn
-> kernel command-line parameter, it is for the best limit the scope and
-> use of the WARN-macro.
+I see, I need to add `select TASKS_TRACE_RCU` to UPROBES kconfig, I'll
+fix it up and send this patch separately.
 
-   I don't understand what you mean -- this version of the patch keeps
-the WARN_ON() call, it just moves that call, so that the duplicate id_{0,1,2}
-checks are avoided...
+Next time please let me know ASAP about issues with my patches so I
+can fix stuff like this quickly.
 
->> Fixes: 7d30198ee24f ("keys: X.509 public key issuer lookup without AKID")
-> 
-> I would still call this an improvement. It overuses warn but I don't
-> think this a bug. 
-
-   I think warning about passing all NULL ptrs but then causing a NULL ptr
-deref anyway wasn't really intended -- seems like a bug to me...
- 
->> Suggested-by: Sergey Shtylyov <s.shtylyov@omp.ru>
->> Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
->> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
->> ---
-
-   I forgot to tell Roman to place the changelog here when doing an internal
-review. Anyway, here is some from me:
-
-Changed in v2:
-- kept the WARN_ON() call, just moved it to avoid extra prr checks, updated
-  the patch description accordingly;
-- reworded the patch description according to feedback.
-
-[...]
-
->> diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
->> index a5da8ccd353e..43af5fa510c0 100644
->> --- a/crypto/asymmetric_keys/asymmetric_type.c
->> +++ b/crypto/asymmetric_keys/asymmetric_type.c
->> @@ -60,17 +60,18 @@ struct key *find_asymmetric_key(struct key *keyring,
->>  	char *req, *p;
->>  	int len;
->>  
->> -	WARN_ON(!id_0 && !id_1 && !id_2);
->> -
->>  	if (id_0) {
->>  		lookup = id_0->data;
->>  		len = id_0->len;
->>  	} else if (id_1) {
->>  		lookup = id_1->data;
->>  		len = id_1->len;
->> -	} else {
->> +	} else if (id_2) {
->>  		lookup = id_2->data;
->>  		len = id_2->len;
->> +	} else {
->> +		WARN_ON(1);
-> 
-> This is totally fine. It is an improvement to the current situation.
-
-   That update also fixes a kernel oops...
-
->> +		return ERR_PTR(-EINVAL);
->>  	}
->>  
->>  	/* Construct an identifier "id:<keyid>". */
-> 
-> Can be applied as an improvement and with the added bits about
-> panic_on_warn to the commit message.
-
-   We no longer care about panic_on_warn...
-
-> BR, Jarkko
-
-MBR, Sergey
+> Thanks,
+>
+>         Ingo
 
