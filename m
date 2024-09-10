@@ -1,322 +1,517 @@
-Return-Path: <linux-kernel+bounces-322663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D134972C02
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:20:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE472972C07
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1C0E1C23A23
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:20:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC5F11C24090
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D9E186284;
-	Tue, 10 Sep 2024 08:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57056186289;
+	Tue, 10 Sep 2024 08:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="UpEHlR+0"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010026.outbound.protection.outlook.com [52.101.69.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="S0gPJlGH"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7A8183CB0;
-	Tue, 10 Sep 2024 08:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725956406; cv=fail; b=KnyJvN+3ilLzpqFuUlqz7inzX3RMTezUEHZPYCnV9MBmDtHdCbpIgmfaRuKXvZ4R+KFzsSy12xPCJbXZep45U5FT/6EalaR+e9rvTBXTtrqDE8bu03wC1AzaYddwXPOYx7HdZvfdK2nKo9N95//lnDV7vf3dJkGphhYou027ES4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725956406; c=relaxed/simple;
-	bh=3Rs8nnO5yeJvesogPi+cI5GlmsW/hRQIZB7KKwWC2v4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Rdy0LwtjqCCir+GgGWfxJCXUts8bG5k0glhTWaWzBE8Hxc2Gmv+ST8tEtHNbcXmKxlV82BpFj1bQVuSK3wYK1IczcljlFAUS878W1DKUlgOyez8yC1ohADnRhkIEvO4giBqAyzwVyOpns8pGgHyHYsDC1dVDyIaKyfYWHtR/rb4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=UpEHlR+0; arc=fail smtp.client-ip=52.101.69.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xdOxJ80KPVPJ+zHm/+/CzWUaJf+O2OtVjJ6APhsCJ/erfukxpxY0B9f+MP3rXbIQhVAEcDr0MYrr0iTij4hpbutFQC2DNkUn4gH8FZFDY73WM48lxsmy/KytDqj0XITMn2rkPPm/vj3Z3PEU5dZY9Vg7KtyyoJm68U6L3vlSkMuVgCiFufb/j0Ct5QfrqMISitMpSo1XvbjRUi66HcyTqG6V2XUx9eoOgDdPKs+EhtSkMvBPARtL78MlaeaDvvbVw+a57n9t0ZBKJUKg5rrOJ6xBxlJJDDFODNhiBA438SGd1Xh+vZHSpsXokMyokGbvRBUCtdrVo5D3G/kF6f0SyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y7odrYRAG6hV4ex1s3wpxNS09vtLsDBRU+KbxUk76TU=;
- b=LZBs93yG64fF0DCKWwqd77nzxe06hpbIm48jqVs/uToDqdUKgQIiJinPe0iyty6aAIdmYdmEa1AlY7h+y8A+qyyOeW9+4ZzGVbAoU+3be70Q25AR5UjZ6CktBCJ/lmbBuNNR6FTiY52UgHoNpw4jOiv71DIekmo3PhMp82uI2lekaTNmLrhnTcIhX6yBZvMSzdlfizy3h0TEfQvGglOTUn4bALY2w42QaM1hZD2dfmXdxYqBO19nJT4SUZRnVTtd/BICKGhePaQkFcdlndUlbWovEXAk1F/Gph49zX5Iqn2rDSSHYb7evUFU7UiPkhUGrHHUaZ9McuMsKMeV35omog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y7odrYRAG6hV4ex1s3wpxNS09vtLsDBRU+KbxUk76TU=;
- b=UpEHlR+0AzcArFDw1BSxbT12c9WE2NEeSYgsp77SsVAYLJk5ZlodbFj32F71uKfzPjAUbQskwjcszEa9YZ/4HValYjXFqaAt5sYjk8ABrVmGasjYd+20h5iqWPpi3C9l7KDd/szPaw/PmPi+Eys8UOaYn6Exzr6ZRW2QdxDlusxGREZ1+WeX1PygJLjUb/OO2vewtrCar492S40t4ieJqvTqNFAn52E3qm8KlGtCuQBOqHj6jr0mgEMUiTbzmA5PUS3cdVwBcSDrRg1NQIfl/du/8eFHJnbtH09mL3Kh4J4SYAIMQT69hI8zkG5r6t2KPrY4Kat3tdqnwkN8PpgdZg==
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
- by GVXPR04MB11018.eurprd04.prod.outlook.com (2603:10a6:150:224::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Tue, 10 Sep
- 2024 08:19:59 +0000
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257%3]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
- 08:19:59 +0000
-From: David Lin <yu-hao.lin@nxp.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"briannorris@chromium.org" <briannorris@chromium.org>, "kvalo@kernel.org"
-	<kvalo@kernel.org>, "francesco@dolcini.it" <francesco@dolcini.it>, Pete Hsieh
-	<tsung-hsien.hsieh@nxp.com>
-Subject: RE: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
- different channel
-Thread-Topic: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
- different channel
-Thread-Index: AQHa/RQwZkxE7S8BN0ebi7x6fu8g/rJP/dMAgABP2xCAAGcLgIAABVmg
-Date: Tue, 10 Sep 2024 08:19:59 +0000
-Message-ID:
- <PA4PR04MB963850587C41FF78F4244E3AD19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
-References: <20240902084311.2607-1-yu-hao.lin@nxp.com>
- <Zt9jFpyptX_ftH-p@pengutronix.de>
- <PA4PR04MB9638EA984DB5F2FDAEA3B873D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt_8gwj6GnV_yZ1Z@pengutronix.de>
-In-Reply-To: <Zt_8gwj6GnV_yZ1Z@pengutronix.de>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|GVXPR04MB11018:EE_
-x-ms-office365-filtering-correlation-id: 5b1ddcb5-266b-4f74-3833-08dcd1715cb7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?3dgvA775U9CfTIAlsxjKc3EnMhqcIWSdJlu5ad84NCS5xuUXemQ/POL+sRfF?=
- =?us-ascii?Q?C/h56NfvBfMgVgyr4yIWJ/l4eNpkIM/AedIv3ZquRDk0LnDZX4TSVBG+D7Bw?=
- =?us-ascii?Q?z1NPS1+86ByVX49sXONHAFLenXqn65DTEY82XVs0dbVyrRRkxJnjOs3/bXWu?=
- =?us-ascii?Q?+QSQ8NQuGXtZmofA5Nioylju2m4AuIHsgV528KpuWAwdWKfbpMxMbi//bhQ+?=
- =?us-ascii?Q?J+a3q9i0KG9tlV5cFdLIM3WuqQwTOgy93bRKZAXsOKMd9EXB4fKS9Vzf5rUY?=
- =?us-ascii?Q?NuyIm50wekz1l0eZPchrF8SvkCEReioW/uNKmKBkoYxFSnEi+XdVIvyORKfJ?=
- =?us-ascii?Q?/WJIdqEXtzL7pDye+nAw3XbDLlV17+ddh4EUtQZjZmFMiGgJnVWX+21xjZAN?=
- =?us-ascii?Q?op0vgpz0qymcN036nFx4rIVYFSbxXYpxzHhCcWpB748ytovoIQ5XMDO1wSRD?=
- =?us-ascii?Q?J7ghJFV1gHgQg5W71XZRFKSGDpSb01KPKWVWpVKzXyaR9JCQesPMXl/fwDhb?=
- =?us-ascii?Q?Ym/uYYJOv4cKzKbMruwCs7yArXtUpq6MGgqYiPsTHAFRjxFsNaT0gr4pUsVK?=
- =?us-ascii?Q?ba3z+0Hpi1+CWPqe3mwbGgzGT4uzBZHmvzARoTCkNb2V5F88enEDTAf3rzIW?=
- =?us-ascii?Q?GiaJ68DdSJ3EzKmBsCYWCi1IAoZy2yUbkgZDX2aMt1l3JGo+RcKV1JCXi6YG?=
- =?us-ascii?Q?U8lU4jXX3ThLjar1X/BVEos2jo21v8gT/i3Q78msSgU+v7gTWoEFcaoKTwRg?=
- =?us-ascii?Q?rEOcaojinhtQhAtbDTI4w9kMVqG1R8PcMvIALZD9QE2UHwMkiQGjmUvQogVs?=
- =?us-ascii?Q?mIVA7LPxQf+Kr7J9V/NyMZHVLPdj8GlNqEeklK8uCyGe+6rK7y0ZDXTxPP4P?=
- =?us-ascii?Q?ZwXBIOGlGjaGu1txTOalUl8XCk+YqUmYyFU/AgWtz16k3GuSWM7s+0uiM3NN?=
- =?us-ascii?Q?6E7C0ZQulKSaOJmfYdMSWRmNdnO6OcxQ52JYZsUTiEqZpjcDOTEmlAZV3qJG?=
- =?us-ascii?Q?2XKEDLTcAWj9FGUnOMVCwGwPOd33lCXiTMjoTYi7YTLLjMhcUstVnawRU/RS?=
- =?us-ascii?Q?n72bDJF6sLjG0u7kIFK4HUxn2/QlNHSah9BIPh68a/8tJ5QHZ/E/6vSDCzAf?=
- =?us-ascii?Q?EgyqmHdhMTNUfGZzPRtyuJZ7zMCNdjZjEP7gSvVKOLIZcor45UxDsAP9Iv7B?=
- =?us-ascii?Q?eR1u9RfINwZ9bGBmMte8k8SLDtU8+2s9bOVIzfa4XOD5rrDgDXtI9fdWjMb4?=
- =?us-ascii?Q?FU5rqLW7oKjELbp7m87v+2tTUSjazPFd38TL5HM/0/2rAL2cI57cGLsfrgoe?=
- =?us-ascii?Q?y+krOwGBSJIA3h39VVcOGvMEecabfLS7QgaU1Wui5zgWKUkzZPIwegQuDVRY?=
- =?us-ascii?Q?HCE1LA2HWIWPcjYaxqnjMi/+Uf9byARVyMPHtNBOSSubAJi7CA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?bORrDyye7KE5jjJWwD1TbLM3uKqmiEDCMcZJjq59uwP5tP15dDdmbTf6QCOP?=
- =?us-ascii?Q?Z4X4CNeog1Env3ncLHAkGA/AufqDoW/z/srJft+7wazqYadcQJ93Mr1zvCo8?=
- =?us-ascii?Q?SsX4XGa8ZOAHZBIi3f5ONWvwgXSy9KoNp2IZ1+llpl3Qdo6z9M1KkifAGKbF?=
- =?us-ascii?Q?uzIhvyPe0NpsJVtI+MzGxkSH4fmn2Ekmj8xRW6NqWDO5NWIXOyN7X/ssHRxR?=
- =?us-ascii?Q?8o84qjSfVGRm4TOiyuIg4DYSUqwSNc23XVCuVg3PmdY4SABzKA3/PPWA7USn?=
- =?us-ascii?Q?TG9zoYRS1eMpExpKYKya0xTvAGmzywxSzQBzFohBCHj0HNn7cQtP1CKuq9ol?=
- =?us-ascii?Q?lx+2GMuCpQQvRkBuxBZ8mTCj2vsgQKhMSgvBsXih1d4gjELYd6nEGxdYmkXI?=
- =?us-ascii?Q?Q0tsCrDSau9Q4leHGsGIZM5eBAyDM6DozPb2QVKU+zt7Z5v2wkn+NmDph8mZ?=
- =?us-ascii?Q?UOsYWMtLLTYBTFen7rfC2XhtFMSwLG+NuY1nQWAHM5kkoCORkK3sISHRjbc7?=
- =?us-ascii?Q?qISWX1sEtc+WfAZbWt22vQ39WM5TX5dj/vJFqSajoGimckF43pxtQtoN6cOA?=
- =?us-ascii?Q?w5QUvucB76wA2gcK0IgmyHKevXPXw2kXFI2m97W/RzakpbpgTjYpYVedhjt2?=
- =?us-ascii?Q?Y3fl+cPaDMaTULjO1QGyxpH+cB0Gaa5ejx7XxYbL+vjqEXsTylJvQumsFurB?=
- =?us-ascii?Q?tR6SwYkYMHd5718FXVwyyRKUkFYm2h8aj7INx+/9L8Sk1IeZOL8WXEhu22iN?=
- =?us-ascii?Q?NmUCRKYdzVxD+vDMB5/IRTLIP1DRywrmhIdo5HONoHWlpmSkTRsORJfd5PAo?=
- =?us-ascii?Q?cpihKqdUdBg4KeBlS+N+5dn6/7T/jx6yp8IgjdwMVe5ekKuEdb1jp29Nwxw8?=
- =?us-ascii?Q?imEgcTcHGOS5tTDjGL9RLmfunxccOeBP6XsR2ly6LKkXHIiqzqt00fsj5kAv?=
- =?us-ascii?Q?He53kDbz8ow7eEn/ms+nqfP3PE89ElquTM4gJIUyk1akbVewHnKRC6022bEl?=
- =?us-ascii?Q?PDV9AKgKIjptcJM65kB4NFVsPlA9i2L1KZkf2CoAf3MTL+Al9f2do4ZP2N4A?=
- =?us-ascii?Q?p2GlulR52XU9lNzP/qBfx5PNaFUirDMpCjapqs8cJgmXcRUj0VyiG/lYu0hW?=
- =?us-ascii?Q?quuIBDDhqjEg14+R+oqjwdsoUnBhY3SMlkF/j4/XbtBeoEVyNdCOmC4RxY2v?=
- =?us-ascii?Q?WS7ugIefzbepKrJliWS1DlAJ+2XfxTLsgxZyt6rFHa1JxOz1ygzvYYD+zq3/?=
- =?us-ascii?Q?YPYpsucIdQBHXISFF2+FU/NKwQ5pkUZb69VrFlRkZrB1zKI4KpJN/2J/Fm92?=
- =?us-ascii?Q?i3d+yhUqHz7j78ZOoRKefTOdrHeweulmFCZrNjV4IBkxuw8ivYjWbdVYdY1M?=
- =?us-ascii?Q?HxmArsAkWZ5VaBvu1KGgZA8zslhuFCtSOBpMfRGTmpLztQ7KpjSIF4f2YPKR?=
- =?us-ascii?Q?8+ehsBeM4rRn5WctCH/pAY+J9ELi/x8SQgRu9QLJL617d5VILupdkJ/oN00h?=
- =?us-ascii?Q?U/louM918NrxkC9wyDAczyx/zPvcvx6TI7tmu4wWSbqdxHH35/R6k5t3MlXU?=
- =?us-ascii?Q?QVbBqsUnWCoCUFmRrbc0xd3muJJGfiuyN3KSP3s1?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E241014A4C3
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725956454; cv=none; b=dnukyYTPn9leaakjavhypcKqkWMkooZTw0CAx4ksM0/MdnIMIsfEY2S7dxOZYHNco/zvm4IuRfmj4WPR7BAmASzwDMYnJPfUizhCgEPQebj31xJ2j+hL5C/8Pn8pZCShZguZGAN5vKHzUOsI4GyueRhPJs7k6TipNHw/zSaO4GU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725956454; c=relaxed/simple;
+	bh=nO/ml1oBB4y7Uo9i25/xinVGUrBp4TcUfjvRjepPnQE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fTDerbKARTcDOuE8R1L2N4B44T2lsugZRuQNbBSgHmcVugEpMu4fLoZsh9XwSkjPd/oeZASP3BXvzmPJJ2Jm+9sZA4XG5aH2oSdKkvG61p6YbL7C5NqDFIWgjZlaV0ae0ph1ik+CQCUlnV37aGwLbntzXOCmOkaddHGAoUk80To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=S0gPJlGH; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5365cf5de24so3703287e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1725956450; x=1726561250; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JVxakjYmZ67wm0lQpzS7qHQW6LnbroHeoyzATym4PhM=;
+        b=S0gPJlGHtcut87U/T1i0axm9lCbhQc5x9xTCU2bBfY7M7+keRk0/W9VuSmbw9oYqHZ
+         GsSyIyw3oPpw6t2By1BOOV8QjopWHvryvbRNWo/bzX7/UaiDbr60JvWJlHh6VMyJ+mxX
+         r/6adCR6qolN0EGD5hxELTxjM3wMrGs4MCh+s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725956450; x=1726561250;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JVxakjYmZ67wm0lQpzS7qHQW6LnbroHeoyzATym4PhM=;
+        b=pYgfDKdxx1dq5S2qPuzFYPoiALS+5XIYkFP74ARrNqPf1Is0yH8RmBT2rrEtayFTYl
+         tVoBebAqMJO7cNunFaff525BrxRfYfxgvZmjCcAioL8ynAn9ioeCA9oROSF4rP+xjLt3
+         okKLl9a6EwshhMwUFFUDfxdSsvKhIG2Zi3/R/dRWB/ZViW1vzyaMCyxopcwlO9yE9cX0
+         cO9gL/37Qz/Qqs/h4+d1KqCirKe2NfSvbtK59P+sDRvIGXB2BURwAn8iwptJyIbBwJ4n
+         /h4zlXuyxLvWqm9mysh5YNpSlHbCl7s8CLabRyG5UIl7f8JxKLedotlCVoMCaye3W95x
+         fJQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxj4wGG+26Rx7qM/TECMhxysYGYp9uv0La+/JITOTOEEwQiEtqttqL7AFc/4WEZSsu3dwRDeXcB8NJufE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5stOuLWhOR64r6XzlBBVNLmAB4xF11aI9HeYT7r9HgVmhJTMy
+	QJX68LG8vWeNbDoVgA8e71oOchtbMpgoVoZtU4SajzGIptSxMvOOcQGrv+I8LQ6gxKuryS+y6lO
+	PXhf2YVNOta9GCGj5NLcfHUOS0dY1A2bEi/kb
+X-Google-Smtp-Source: AGHT+IHzUJEsJR/Hzu2YpA/yazwCJSI2GcA1XZM8BIK9yNrF5gv59afppn6SlrrC0cK+JghP0kGxXzX5RknughfZELw=
+X-Received: by 2002:a05:6512:3ba5:b0:533:4785:82a0 with SMTP id
+ 2adb3069b0e04-536587a42eemr7909798e87.2.1725956449176; Tue, 10 Sep 2024
+ 01:20:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b1ddcb5-266b-4f74-3833-08dcd1715cb7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2024 08:19:59.6411
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zkrkTOV9RtDpYgp2tAOr8yPZ+2p5994fdAEgtoBikEdDlMJca3tSp8iNuqP48ugZhry1ELN4Dx2vn2C5w/sFFg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB11018
+References: <20240910075942.1270054-1-shaojijie@huawei.com> <20240910075942.1270054-6-shaojijie@huawei.com>
+In-Reply-To: <20240910075942.1270054-6-shaojijie@huawei.com>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Tue, 10 Sep 2024 13:50:36 +0530
+Message-ID: <CAH-L+nMPOyhkjt530-L9EvAAQ87nBJ7RdShgHJ+VOC4fpvLXoA@mail.gmail.com>
+Subject: Re: [PATCH V9 net-next 05/11] net: hibmcge: Implement some .ndo functions
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, shenjian15@huawei.com, wangpeiyang1@huawei.com, 
+	liuyonglong@huawei.com, chenhao418@huawei.com, sudongming1@huawei.com, 
+	xujunsheng@huawei.com, shiyongbang@huawei.com, libaihan@huawei.com, 
+	andrew@lunn.ch, jdamato@fastly.com, horms@kernel.org, 
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com, 
+	salil.mehta@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000214ce60621bf8d6a"
 
-> From: Sascha Hauer <s.hauer@pengutronix.de>
-> Sent: Tuesday, September 10, 2024 4:00 PM
-> To: David Lin <yu-hao.lin@nxp.com>
-> Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
-> Hsieh <tsung-hsien.hsieh@nxp.com>
-> Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running=
- on
-> different channel
->=20
-> Caution: This is an external email. Please take care when clicking links =
-or
-> opening attachments. When in doubt, report the message using the 'Report
-> this email' button
->=20
->=20
-> On Tue, Sep 10, 2024 at 01:52:02AM +0000, David Lin wrote:
-> > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > Sent: Tuesday, September 10, 2024 5:05 AM
-> > > To: David Lin <yu-hao.lin@nxp.com>
-> > > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it;
-> > > Pete Hsieh <tsung-hsien.hsieh@nxp.com>
-> > > Subject: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA
-> > > running on different channel
-> > >
-> > > Caution: This is an external email. Please take care when clicking
-> > > links or opening attachments. When in doubt, report the message
-> > > using the 'Report this email' button
-> > >
-> > >
-> > > On Mon, Sep 02, 2024 at 04:43:11PM +0800, David Lin wrote:
-> > > > Current firmware doesn't support AP and STA running on different
-> > > > channels simultaneously.
-> > > > FW crash would occur in such case.
-> > > > This patch avoids the issue by disabling AP and STA to run on
-> > > > different channels.
-> > > >
-> > > > Signed-off-by: David Lin <yu-hao.lin@nxp.com>
-> > > > ---
-> > > >
-> > > > v2:
-> > > >    - clean up code.
-> > > >
-> > > > ---
-> > > >  .../net/wireless/marvell/mwifiex/cfg80211.c   | 17 ++++---
-> > > >  drivers/net/wireless/marvell/mwifiex/util.c   | 44
-> +++++++++++++++++++
-> > > >  drivers/net/wireless/marvell/mwifiex/util.h   | 13 ++++++
-> > > >  3 files changed, 69 insertions(+), 5 deletions(-)
-> > > >
-> > > > diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> > > > b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> > > > index 722ead51e912..3dbcab463445 100644
-> > > > --- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> > > > +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> > > > @@ -781,11 +781,9 @@ mwifiex_cfg80211_set_wiphy_params(struct
-> > > > wiphy
-> > > *wiphy, u32 changed)
-> > > >               break;
-> > > >
-> > > >       case MWIFIEX_BSS_ROLE_STA:
-> > > > -             if (priv->media_connected) {
-> > > > -                     mwifiex_dbg(adapter, ERROR,
-> > > > -                                 "cannot change wiphy params
-> > > when connected");
-> > > > -                     return -EINVAL;
-> > > > -             }
-> > > > +             if (priv->media_connected)
-> > > > +                     break;
-> > >
-> > > This hunk seems unrelated to this patch. If this is needed then it
-> > > deserves an extra patch along with an explanation why this is necessa=
-ry.
-> > >
-> > > Sascha
-> > >
-> >
-> > Without this hunk, AP and STA can't run on the same channel if some
-> > wiphy parameters are setting.
->=20
-> Ok, I now see where you are aiming at. Here's the problematic function:
->=20
-> > static int
-> > mwifiex_cfg80211_set_wiphy_params(struct wiphy *wiphy, u32 changed) {
-> >       ...
-> >
-> >       priv =3D mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY);
-> >
-> >       switch (priv->bss_role) {
-> >       case MWIFIEX_BSS_ROLE_UAP:
-> >               if (priv->bss_started) {
-> >                       mwifiex_dbg(adapter, ERROR,
-> >                                   "cannot change wiphy params
-> when bss started");
-> >                       return -EINVAL;
-> >               }
-> >
-> >               ...
-> >               mwifiex_send_cmd(priv,
-> HostCmd_CMD_UAP_SYS_CONFIG, ...);
-> >
-> >               break;
-> >       case MWIFIEX_BSS_ROLE_STA:
-> >               if (priv->media_connected) {
-> >                       mwifiex_dbg(adapter, ERROR,
-> >                                   "cannot change wiphy params
-> when connected");
-> >                       return -EINVAL;
-> >               }
-> >
-> >               ...
-> >               mwifiex_send_cmd(priv,
-> HostCmd_CMD_802_11_SNMP_MIB,
-> > ...);
-> >
-> >               break;
-> >       }
-> >
-> >       return 0;
-> > }
->=20
-> This function is for setting wiphy params like rts_threshold and others.
->=20
-> mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY) returns the first priv
-> which by default is in station mode. Now if you start priv0 in station mo=
-de,
-> then afterwards start priv1 in AP mode *and* have rts_threshold =3D xy in=
- your
-> config, then you run into the "cannot change wiphy params when connected"
-> case.
->=20
-> I really wonder if the settings done in this function are per priv or per=
- adapter.
-> Is there one rts_threshold setting in a mwifiex chip or are there multipl=
-e (per
-> vif/priv)?
->=20
-> If it's a global setting, then why are we interested in the media_connect=
-ed
-> state of one specific priv? Shouldn't we check all privs?
->=20
-> If it's a setting per priv, then why do we choose the same priv everytime=
- in this
-> function?
->=20
-> Either way, this function looks fishy and changing it should be done with=
- an
-> explanation, just dropping the error message and returning success is not
-> enough.
->=20
-> Sascha
->=20
+--000000000000214ce60621bf8d6a
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Thank you Jijie for taking care of the comments. One comment in line
+though it is not directly related to your changes.
+
+On Tue, Sep 10, 2024 at 1:36=E2=80=AFPM Jijie Shao <shaojijie@huawei.com> w=
+rote:
+>
+> Implement the .ndo_open() .ndo_stop() .ndo_set_mac_address()
+> .ndo_change_mtu functions() and ndo.get_stats64()
+> And .ndo_validate_addr calls the eth_validate_addr function directly
+>
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+> ---
+> ChangeLog:
+> v8 -> v9:
+>   - Remove HBG_NIC_STATE_OPEN in ndo.open() and ndo.stop(),
+>     suggested by Kalesh and Andrew.
+>   - Use netif_running() instead of hbg_nic_is_open() in ndo.change_mtu(),
+>     suggested by Kalesh and Andrew
+>   v8: https://lore.kernel.org/all/20240909023141.3234567-1-shaojijie@huaw=
+ei.com/
+> v6 -> v7:
+>   - Add implement ndo.get_stats64(), suggested by Paolo.
+>   v6: https://lore.kernel.org/all/20240830121604.2250904-6-shaojijie@huaw=
+ei.com/
+> v5 -> v6:
+>   - Delete netif_carrier_off() in .ndo_open() and .ndo_stop(),
+>     suggested by Jakub and Andrew.
+>  v5: https://lore.kernel.org/all/20240827131455.2919051-1-shaojijie@huawe=
+i.com/
+> v3 -> v4:
+>   - Delete INITED_STATE in priv, suggested by Andrew.
+>   - Delete unnecessary defensive code in hbg_phy_start()
+>     and hbg_phy_stop(), suggested by Andrew.
+>   v3: https://lore.kernel.org/all/20240822093334.1687011-1-shaojijie@huaw=
+ei.com/
+> RFC v1 -> RFC v2:
+>   - Delete validation for mtu in hbg_net_change_mtu(), suggested by Andre=
+w.
+>   - Delete validation for mac address in hbg_net_set_mac_address(),
+>     suggested by Andrew.
+>   - Add a patch to add is_valid_ether_addr check in dev_set_mac_address,
+>     suggested by Andrew.
+>   RFC v1: https://lore.kernel.org/all/20240731094245.1967834-1-shaojijie@=
+huawei.com/
+> ---
+>  .../net/ethernet/hisilicon/hibmcge/hbg_hw.c   | 39 ++++++++
+>  .../net/ethernet/hisilicon/hibmcge/hbg_hw.h   |  3 +
+>  .../net/ethernet/hisilicon/hibmcge/hbg_main.c | 97 +++++++++++++++++++
+>  .../net/ethernet/hisilicon/hibmcge/hbg_reg.h  | 11 ++-
+>  4 files changed, 149 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c b/drivers/ne=
+t/ethernet/hisilicon/hibmcge/hbg_hw.c
+> index 8e971e9f62a0..97fee714155a 100644
+> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
+> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
+> @@ -15,6 +15,7 @@
+>   * ctrl means packet description, data means skb packet data
+>   */
+>  #define HBG_ENDIAN_CTRL_LE_DATA_BE     0x0
+> +#define HBG_PCU_FRAME_LEN_PLUS 4
+>
+>  static bool hbg_hw_spec_is_valid(struct hbg_priv *priv)
+>  {
+> @@ -129,6 +130,44 @@ void hbg_hw_irq_enable(struct hbg_priv *priv, u32 ma=
+sk, bool enable)
+>         hbg_reg_write(priv, HBG_REG_CF_INTRPT_MSK_ADDR, value);
+>  }
+>
+> +void hbg_hw_set_uc_addr(struct hbg_priv *priv, u64 mac_addr)
+> +{
+> +       hbg_reg_write64(priv, HBG_REG_STATION_ADDR_LOW_2_ADDR, mac_addr);
+> +}
+> +
+> +static void hbg_hw_set_pcu_max_frame_len(struct hbg_priv *priv,
+> +                                        u16 max_frame_len)
+> +{
+> +       max_frame_len =3D max_t(u32, max_frame_len, HBG_DEFAULT_MTU_SIZE)=
+;
+> +
+> +       /* lower two bits of value must be set to 0. Otherwise, the value=
+ is ignored */
+> +       max_frame_len =3D round_up(max_frame_len, HBG_PCU_FRAME_LEN_PLUS)=
+;
+> +
+> +       hbg_reg_write_field(priv, HBG_REG_MAX_FRAME_LEN_ADDR,
+> +                           HBG_REG_MAX_FRAME_LEN_M, max_frame_len);
+> +}
+> +
+> +static void hbg_hw_set_mac_max_frame_len(struct hbg_priv *priv,
+> +                                        u16 max_frame_size)
+> +{
+> +       hbg_reg_write_field(priv, HBG_REG_MAX_FRAME_SIZE_ADDR,
+> +                           HBG_REG_MAX_FRAME_LEN_M, max_frame_size);
+> +}
+> +
+> +void hbg_hw_set_mtu(struct hbg_priv *priv, u16 mtu)
+> +{
+> +       hbg_hw_set_pcu_max_frame_len(priv, mtu);
+> +       hbg_hw_set_mac_max_frame_len(priv, mtu);
+> +}
+> +
+> +void hbg_hw_mac_enable(struct hbg_priv *priv, u32 enable)
+> +{
+> +       hbg_reg_write_field(priv, HBG_REG_PORT_ENABLE_ADDR,
+> +                           HBG_REG_PORT_ENABLE_TX_B, enable);
+> +       hbg_reg_write_field(priv, HBG_REG_PORT_ENABLE_ADDR,
+> +                           HBG_REG_PORT_ENABLE_RX_B, enable);
+> +}
+> +
+>  void hbg_hw_adjust_link(struct hbg_priv *priv, u32 speed, u32 duplex)
+>  {
+>         hbg_reg_write_field(priv, HBG_REG_PORT_MODE_ADDR,
+> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h b/drivers/ne=
+t/ethernet/hisilicon/hibmcge/hbg_hw.h
+> index 4d09bdd41c76..0ce500e907b3 100644
+> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h
+> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h
+> @@ -49,5 +49,8 @@ u32 hbg_hw_get_irq_status(struct hbg_priv *priv);
+>  void hbg_hw_irq_clear(struct hbg_priv *priv, u32 mask);
+>  bool hbg_hw_irq_is_enabled(struct hbg_priv *priv, u32 mask);
+>  void hbg_hw_irq_enable(struct hbg_priv *priv, u32 mask, bool enable);
+> +void hbg_hw_set_mtu(struct hbg_priv *priv, u16 mtu);
+> +void hbg_hw_mac_enable(struct hbg_priv *priv, u32 enable);
+> +void hbg_hw_set_uc_addr(struct hbg_priv *priv, u64 mac_addr);
+>
+>  #endif
+> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c b/drivers/=
+net/ethernet/hisilicon/hibmcge/hbg_main.c
+> index 29e0513fa836..d882a7822299 100644
+> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+> @@ -2,6 +2,7 @@
+>  // Copyright (c) 2024 Hisilicon Limited.
+>
+>  #include <linux/etherdevice.h>
+> +#include <linux/if_vlan.h>
+>  #include <linux/netdevice.h>
+>  #include <linux/pci.h>
+>  #include "hbg_common.h"
+> @@ -9,6 +10,97 @@
+>  #include "hbg_irq.h"
+>  #include "hbg_mdio.h"
+>
+> +static void hbg_all_irq_enable(struct hbg_priv *priv, bool enabled)
+> +{
+> +       struct hbg_irq_info *info;
+> +       u32 i;
+> +
+> +       for (i =3D 0; i < priv->vectors.info_array_len; i++) {
+> +               info =3D &priv->vectors.info_array[i];
+> +               hbg_hw_irq_enable(priv, info->mask, enabled);
+> +       }
+> +}
+> +
+> +static int hbg_net_open(struct net_device *netdev)
+> +{
+> +       struct hbg_priv *priv =3D netdev_priv(netdev);
+> +
+> +       hbg_all_irq_enable(priv, true);
+> +       hbg_hw_mac_enable(priv, HBG_STATUS_ENABLE);
+> +       netif_start_queue(netdev);
+> +       hbg_phy_start(priv);
+> +
+> +       return 0;
+> +}
+> +
+> +static int hbg_net_stop(struct net_device *netdev)
+> +{
+> +       struct hbg_priv *priv =3D netdev_priv(netdev);
+> +
+> +       hbg_phy_stop(priv);
+> +       netif_stop_queue(netdev);
+> +       hbg_hw_mac_enable(priv, HBG_STATUS_DISABLE);
+> +       hbg_all_irq_enable(priv, false);
+> +
+> +       return 0;
+> +}
+> +
+> +static int hbg_net_set_mac_address(struct net_device *netdev, void *addr=
+)
+> +{
+> +       struct hbg_priv *priv =3D netdev_priv(netdev);
+> +       u8 *mac_addr;
+> +
+> +       mac_addr =3D ((struct sockaddr *)addr)->sa_data;
+> +
+> +       hbg_hw_set_uc_addr(priv, ether_addr_to_u64(mac_addr));
+> +       dev_addr_set(netdev, mac_addr);
+> +
+> +       return 0;
+> +}
+> +
+> +static void hbg_change_mtu(struct hbg_priv *priv, int new_mtu)
+> +{
+> +       u32 frame_len;
+> +
+> +       frame_len =3D new_mtu + VLAN_HLEN * priv->dev_specs.vlan_layers +
+> +                   ETH_HLEN + ETH_FCS_LEN;
+> +       hbg_hw_set_mtu(priv, frame_len);
+> +}
+> +
+> +static int hbg_net_change_mtu(struct net_device *netdev, int new_mtu)
+> +{
+> +       struct hbg_priv *priv =3D netdev_priv(netdev);
+> +       bool is_running =3D netif_running(netdev);
+> +
+> +       if (is_running)
+> +               hbg_net_stop(netdev);
+> +
+> +       hbg_change_mtu(priv, new_mtu);
+> +       WRITE_ONCE(netdev->mtu, new_mtu);
+[Kalesh] IMO the setting of "netdev->mtu" should be moved to the core
+layer so that not all drivers have to do this.
+__dev_set_mtu() can be modified to incorporate this. Just a thought.
+> +
+> +       dev_dbg(&priv->pdev->dev,
+> +               "change mtu from %u to %u\n", netdev->mtu, new_mtu);
+> +       if (is_running)
+> +               hbg_net_open(netdev);
+> +       return 0;
+> +}
+> +
+> +static void hbg_net_get_stats64(struct net_device *netdev,
+> +                               struct rtnl_link_stats64 *stats)
+> +{
+> +       netdev_stats_to_stats64(stats, &netdev->stats);
+> +       dev_fetch_sw_netstats(stats, netdev->tstats);
+> +}
+> +
+> +static const struct net_device_ops hbg_netdev_ops =3D {
+> +       .ndo_open               =3D hbg_net_open,
+> +       .ndo_stop               =3D hbg_net_stop,
+> +       .ndo_validate_addr      =3D eth_validate_addr,
+> +       .ndo_set_mac_address    =3D hbg_net_set_mac_address,
+> +       .ndo_change_mtu         =3D hbg_net_change_mtu,
+> +       .ndo_get_stats64        =3D hbg_net_get_stats64,
+> +};
+> +
+>  static int hbg_init(struct hbg_priv *priv)
+>  {
+>         int ret;
+> @@ -73,6 +165,7 @@ static int hbg_probe(struct pci_dev *pdev, const struc=
+t pci_device_id *ent)
+>         priv =3D netdev_priv(netdev);
+>         priv->netdev =3D netdev;
+>         priv->pdev =3D pdev;
+> +       netdev->netdev_ops =3D &hbg_netdev_ops;
+>
+>         netdev->tstats =3D devm_netdev_alloc_pcpu_stats(&pdev->dev,
+>                                                       struct pcpu_sw_nets=
+tats);
+> @@ -88,6 +181,10 @@ static int hbg_probe(struct pci_dev *pdev, const stru=
+ct pci_device_id *ent)
+>         if (ret)
+>                 return ret;
+>
+> +       netdev->max_mtu =3D priv->dev_specs.max_mtu;
+> +       netdev->min_mtu =3D priv->dev_specs.min_mtu;
+> +       hbg_change_mtu(priv, HBG_DEFAULT_MTU_SIZE);
+> +       hbg_net_set_mac_address(priv->netdev, &priv->dev_specs.mac_addr);
+>         ret =3D devm_register_netdev(dev, netdev);
+>         if (ret)
+>                 return dev_err_probe(dev, ret, "failed to register netdev=
+\n");
+> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h b/drivers/n=
+et/ethernet/hisilicon/hibmcge/hbg_reg.h
+> index b0991063ccba..63bb1bead8c0 100644
+> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
+> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
+> @@ -37,18 +37,24 @@
+>  #define HBG_REG_SGMII_BASE                     0x10000
+>  #define HBG_REG_DUPLEX_TYPE_ADDR               (HBG_REG_SGMII_BASE + 0x0=
+008)
+>  #define HBG_REG_DUPLEX_B                       BIT(0)
+> +#define HBG_REG_MAX_FRAME_SIZE_ADDR            (HBG_REG_SGMII_BASE + 0x0=
+03C)
+>  #define HBG_REG_PORT_MODE_ADDR                 (HBG_REG_SGMII_BASE + 0x0=
+040)
+>  #define HBG_REG_PORT_MODE_M                    GENMASK(3, 0)
+> +#define HBG_REG_PORT_ENABLE_ADDR               (HBG_REG_SGMII_BASE + 0x0=
+044)
+> +#define HBG_REG_PORT_ENABLE_RX_B               BIT(1)
+> +#define HBG_REG_PORT_ENABLE_TX_B               BIT(2)
+>  #define HBG_REG_TRANSMIT_CONTROL_ADDR          (HBG_REG_SGMII_BASE + 0x0=
+060)
+>  #define HBG_REG_TRANSMIT_CONTROL_PAD_EN_B      BIT(7)
+>  #define HBG_REG_TRANSMIT_CONTROL_CRC_ADD_B     BIT(6)
+>  #define HBG_REG_TRANSMIT_CONTROL_AN_EN_B       BIT(5)
+>  #define HBG_REG_CF_CRC_STRIP_ADDR              (HBG_REG_SGMII_BASE + 0x0=
+1B0)
+> -#define HBG_REG_CF_CRC_STRIP_B                 BIT(0)
+> +#define HBG_REG_CF_CRC_STRIP_B                 BIT(1)
+>  #define HBG_REG_MODE_CHANGE_EN_ADDR            (HBG_REG_SGMII_BASE + 0x0=
+1B4)
+>  #define HBG_REG_MODE_CHANGE_EN_B               BIT(0)
+>  #define HBG_REG_RECV_CONTROL_ADDR              (HBG_REG_SGMII_BASE + 0x0=
+1E0)
+>  #define HBG_REG_RECV_CONTROL_STRIP_PAD_EN_B    BIT(3)
+> +#define HBG_REG_STATION_ADDR_LOW_2_ADDR                (HBG_REG_SGMII_BA=
+SE + 0x0210)
+> +#define HBG_REG_STATION_ADDR_HIGH_2_ADDR       (HBG_REG_SGMII_BASE + 0x0=
+214)
+>
+>  /* PCU */
+>  #define HBG_REG_CF_INTRPT_MSK_ADDR             (HBG_REG_SGMII_BASE + 0x0=
+42C)
+> @@ -72,6 +78,8 @@
+>  #define HBG_INT_MSK_RX_B                       BIT(0) /* just used in dr=
+iver */
+>  #define HBG_REG_CF_INTRPT_STAT_ADDR            (HBG_REG_SGMII_BASE + 0x0=
+434)
+>  #define HBG_REG_CF_INTRPT_CLR_ADDR             (HBG_REG_SGMII_BASE + 0x0=
+438)
+> +#define HBG_REG_MAX_FRAME_LEN_ADDR             (HBG_REG_SGMII_BASE + 0x0=
+444)
+> +#define HBG_REG_MAX_FRAME_LEN_M                        GENMASK(15, 0)
+>  #define HBG_REG_RX_BUF_SIZE_ADDR               (HBG_REG_SGMII_BASE + 0x0=
+4E4)
+>  #define HBG_REG_RX_BUF_SIZE_M                  GENMASK(15, 0)
+>  #define HBG_REG_BUS_CTRL_ADDR                  (HBG_REG_SGMII_BASE + 0x0=
+4E8)
+> @@ -86,6 +94,7 @@
+>  #define HBG_REG_RX_PKT_MODE_ADDR               (HBG_REG_SGMII_BASE + 0x0=
+4F4)
+>  #define HBG_REG_RX_PKT_MODE_PARSE_MODE_M       GENMASK(22, 21)
+>  #define HBG_REG_CF_IND_TXINT_MSK_ADDR          (HBG_REG_SGMII_BASE + 0x0=
+694)
+> +#define HBG_REG_IND_INTR_MASK_B                        BIT(0)
+>  #define HBG_REG_CF_IND_TXINT_STAT_ADDR         (HBG_REG_SGMII_BASE + 0x0=
+698)
+>  #define HBG_REG_CF_IND_TXINT_CLR_ADDR          (HBG_REG_SGMII_BASE + 0x0=
+69C)
+>  #define HBG_REG_CF_IND_RXINT_MSK_ADDR          (HBG_REG_SGMII_BASE + 0x0=
+6a0)
 > --
+> 2.33.0
+>
 
-O.K. I will add comment in patch v3.
 
-David
+--=20
+Regards,
+Kalesh A P
+
+--000000000000214ce60621bf8d6a
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
+AQkEMSIEIMGynqshO0tKLuMF2B17lfCu80It6r98BwfxWKbgFXBBMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDkxMDA4MjA1MFowaQYJKoZIhvcNAQkPMVwwWjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAcneuM/QFi
+7hBMYwfzid7Ua0qL6QxH5eJOUcFBrziMDaDiuhZ5VuW7o/4n4GmSedHchWSB+tEHqObIAmiyOg05
+8QHHFGZ4RKqkm+cE0xXmDyLUT5iybR9O7t3aZsoiUOMkyFaKl/e7eNuTCbhokgw+7oAxB2u+lZbx
++pbNl1TyxKm9/j0xI7EPz1dR6Gusa8sUmW4gSVmwuHvEPUccDHXZDiaFyzIpAQ04lZBRUhQ0PbiD
+fp+cx4IUr7wpQpkMoJHYV5t6u5ilVvq1q1j2SyWUarxyNJJs065DmYkYI7t03osPG9ooY33qutqA
+SgVGiI4MOlDj8smDoOHzRNR9tHjm
+--000000000000214ce60621bf8d6a--
 
