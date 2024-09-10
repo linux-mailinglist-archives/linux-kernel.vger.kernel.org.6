@@ -1,123 +1,181 @@
-Return-Path: <linux-kernel+bounces-322460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1A1972931
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:00:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA70797292E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66C2228765D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:00:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842151F25D56
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F631741FA;
-	Tue, 10 Sep 2024 06:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7862117624F;
+	Tue, 10 Sep 2024 06:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FzAx5J9i"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G78PQbOR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4250E172773
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AFB1CD1F;
+	Tue, 10 Sep 2024 06:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725948040; cv=none; b=iS9B+3zBzfUhsqR3k2YPsfj487PUqjmx6tXC8DGJpPTqAElWPgOuXuaNVi1wkGPjl7noiEQaSxWor884jmjsm1hVbn/QeZknAAaRCSTaVzXnkge9CoO4hOA4jmEP/VW9Lzokj4MbysCK3Szg1a7kZ6DGjhClRkm+fXmsF+bLrAo=
+	t=1725948010; cv=none; b=cgqUiqAMKGMpci3Qo1DW60b1gHx4dKNnmGnQNYptBdLeAq1YIfJ3AapkjOY55pB2wr+7m7ay8Zjtf3kWQh7q7SoV7fFzuWFVv+AO2aA5N5ekzHbL8LW1YF2eHpoxkTJgRWUIwH95GSUcJz3yg8m/aoh/WcF4cHlIVt4vWlEHr7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725948040; c=relaxed/simple;
-	bh=EFiwHJNSpOkCVGiETs6qdxo9BYVO4HaOqN/EuI8xr6Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YQ+o3mHCWN0uUV0ifh3nPjOzLHjvYbSgdiW78MYWCX0RHsAKdGhfP7RUPx9oLOItarzsZQZLV31h+UHN7rBKbjAHeeTz825BUCG07Mj4syB0Okt4IEaR0UpwiRAggnYmEcZ3j8WR2Rtkgnd9eQikrhf9MB8RpBLGhGT6w8X2IMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FzAx5J9i; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5365aa568ceso4744299e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 23:00:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725948037; x=1726552837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EFiwHJNSpOkCVGiETs6qdxo9BYVO4HaOqN/EuI8xr6Q=;
-        b=FzAx5J9ibRHQh76AYRjJUyeLdFWcHx3ZNxe4HqMitzIjvi0Ll3wk2rRfrE/hOWo4xz
-         PagLprEb1PnmafH+VsmTsNemiSDh7vCHbMMo4plL0bUg3BWbdgFAH/zU3iPDkHta2++x
-         PF/moXy7EvN0gpG9d7bnQGJJE0yosgyF8O3eCU1dCT2dFeA4XCQ/kNELW83nNGqUVrA+
-         uOcRcqYc5TlHGOvRlGU4fU/uHvOhO/KxNiSn+p+5zmgGuKHzLTFuLqdvJcYFtYIK55B3
-         x72k5dbEXlnBOt5a2KzTfK3U3hXrG6VYTQAyxxf+30Awvsw9Q8Mfi/MH2KnzeApq+d1e
-         WFvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725948037; x=1726552837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EFiwHJNSpOkCVGiETs6qdxo9BYVO4HaOqN/EuI8xr6Q=;
-        b=D4dOr0xSNpEIWFd0HnxVwU+MIRBXx2cWBxzCVh03EJiw2QKGBj4HodyJDYBpvSPK+L
-         w2hEK7ZzIhaJeWwBemuRkU0Dl2bAt2Nuupw3T2T2fjmp8R70qzKRQ4i34Ns/gjyRMzkt
-         +J2oeW62/ooI0rzQzyGDN1SgWcJ7d6z2SXP++y+99f0lhS/YzynKmdihd43ujbyhzhyt
-         Eqb1FoDTObx4c0HL1hcset9ly5GYXtAB+xfC/ThvOSNRWrUyvLLW1v5nmqAaBA9vVFqn
-         F0LV8kfFWj/0KZCxtrr2GZl4VAwMUbRugjDTbZ42Rh5RtyOEpcem0ZS/o/OOPgiWhaam
-         5RIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMdiYPoc5lxEXTQzvTEldF2OFdpXj9a1s0kg8pjJH+tyzJmcaiv+igbPWpX2TubN3y40EnzwyLPqmGFco=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywglu+/GFWp3UCvWfHbI0MJ5WsRfrghfoexaNCgf/tt0844NHIg
-	WKjL9tLr6YU/hzswlkSmjKSbuPaQ2OYFkauDSvcqGYpX9vsVlh4tpoVwH2RLz3OEw+B1mQlWtzz
-	QEoYiJn+ILVueNnsI+CEdM3aZvYgM4YKugM0J
-X-Google-Smtp-Source: AGHT+IGKBHtciuLyS9iz/VM0PUIGYeyeDxcKP22ePmimkHEtVYiNQTMQGBCDu9UVctX9gF8Is7XAfEenW8FH4jf84Z0=
-X-Received: by 2002:a05:6512:3d17:b0:52c:9877:71b7 with SMTP id
- 2adb3069b0e04-53658818bf9mr9481551e87.59.1725948036354; Mon, 09 Sep 2024
- 23:00:36 -0700 (PDT)
+	s=arc-20240116; t=1725948010; c=relaxed/simple;
+	bh=YKlFgKmNBL+UvTbDp6vo7VzFbHN0vj4I0Lmh1OIQjck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ss0VyhTAj6d4UX58Nh7bjBV+5Uaxf4bNmSdKsaTFhZqLVWof3SROF6xYOBXuAZwrCiDftDlCgTmaMFc+21ULsREzus3bMWvpdPKbLP1MQKNa6GQyzLgAiBLn886a/TMnF4O1m0F0mJjaphXm+qCwMR/vaqr6+sn8B4uVcBLhYPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G78PQbOR; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725948009; x=1757484009;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=YKlFgKmNBL+UvTbDp6vo7VzFbHN0vj4I0Lmh1OIQjck=;
+  b=G78PQbORDUnXdqNj8nbJ/yWasNjBizLa2DTQAEnSLut1ooOsGDHCd/Ij
+   5BSGhbEM8tdck2SciqeOkBvfpVtD8elKA3DOMxKimbuwq+cYLqoFcH6VE
+   MQQKOaMjcW2kCEwqqnKEJik5G6eYiGiK6PAF55b2z8mS1oXVjo8VuO97R
+   8XjmGKvKNvN6AyQpbzj4Fc64APIF9T8UxNcYxGfsqo/DGuY5WRy87JblO
+   jRcfMncBHpC2AVoQj7K0menMUUdHX7/Jl7WWbSxo9t8TgvMBY6Kxb+W9r
+   4IYLP8PQFQBieXjgVcF/3tRv3tH0pstFeniS7rJzIRz+OW7YX9DCIF2QK
+   g==;
+X-CSE-ConnectionGUID: Gx3ScJpIQG2vZeABnWn+Uw==
+X-CSE-MsgGUID: NoJc+xReS1+Btu8DqZOnng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24553392"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="asc'?scan'208";a="24553392"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 23:00:08 -0700
+X-CSE-ConnectionGUID: cVZNg4DfS0CKoDo3SzGu4w==
+X-CSE-MsgGUID: P+pOe+qSRKqfhQlgP2iybA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="asc'?scan'208";a="66967552"
+Received: from debian-skl.sh.intel.com (HELO debian-skl) ([10.239.160.45])
+  by fmviesa008.fm.intel.com with ESMTP; 09 Sep 2024 23:00:03 -0700
+Date: Tue, 10 Sep 2024 14:02:28 +0800
+From: Zhenyu Wang <zhenyuw@linux.intel.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Zhenyu Wang <zhenyuw@linux.intel.com>, kvm@vger.kernel.org,
+	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	H Peter Anvin <hpa@zytor.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Mingwei Zhang <mizhang@google.com>
+Subject: Re: [PATCH 0/3] KVM: x86: Fix Intel PT Host/Guest mode when host
+ tracing also
+Message-ID: <Zt/g9Cpix06Ccg4z@debian-scheme>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <20240906130026.10705-1-adrian.hunter@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANn89iLmOgH6RdRc_XGhawM03UEOkUK3QB0wK_Ci_YBVNwhUHQ@mail.gmail.com>
- <03C87C05-301E-4C34-82FF-6517316A11C2@gmail.com>
-In-Reply-To: <03C87C05-301E-4C34-82FF-6517316A11C2@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 10 Sep 2024 08:00:23 +0200
-Message-ID: <CANn89iJhX4ny3Se1mz74M5NbiG9NTSbUagTYG0chk-33F_HNvA@mail.gmail.com>
-Subject: Re: [PATCH net] net: prevent NULL pointer dereference in
- rt_fibinfo_free() and rt_fibinfo_free_cpus()
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, 
-	pabeni@redhat.com, kafai@fb.com, weiwan@google.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="l5QniXQFWRwHsHV7"
+Content-Disposition: inline
+In-Reply-To: <20240906130026.10705-1-adrian.hunter@intel.com>
+
+
+--l5QniXQFWRwHsHV7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 5:23=E2=80=AFAM Jeongjun Park <aha310510@gmail.com>=
- wrote:
->
->
-> > Eric Dumazet <edumazet@google.com> wrote:
-> > =EF=BB=BFOn Mon, Sep 9, 2024 at 8:48=E2=80=AFPM Jeongjun Park <aha31051=
-0@gmail.com> wrote:
-> >>
-> >> rt_fibinfo_free() and rt_fibinfo_free_cpus() only check for rt and do =
-not
-> >> verify rt->dst and use it, which will result in NULL pointer dereferen=
-ce.
-> >>
-> >> Therefore, to prevent this, we need to add a check for rt->dst.
-> >>
-> >> Fixes: 0830106c5390 ("ipv4: take dst->__refcnt when caching dst in fib=
-")
-> >> Fixes: c5038a8327b9 ("ipv4: Cache routes in nexthop exception entries.=
-")
-> >> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> >> ---
-> >
-> > As far as I can tell, your patch is a NOP, and these Fixes: tags seem
-> > random to me.
->
-> I somewhat agree with the opinion that the fixes tag is random.
-> However, I think it is absolutely necessary to add a check for
-> &rt->dst , because the existence of rt does not guarantee that
-> &rt->dst will not be NULL.
 
-dst is the first field of 'struct rtable'.
+Add Mingwei.
 
-Always has been.
+On 2024.09.06 16:00:23 +0300, Adrian Hunter wrote:
+> Hi
+>=20
+> There is a long-standing problem whereby running Intel PT on host and gue=
+st
+> in Host/Guest mode, causes VM-Entry failure.
+>=20
+> The motivation for this patch set is to provide a fix for stable kernels
+> prior to the advent of the "Mediated Passthrough vPMU" patch set:
+>=20
+> 	https://lore.kernel.org/kvm/20240801045907.4010984-1-mizhang@google.com/
+>=20
+> which would render a large part of the fix unnecessary but likely not be
+> suitable for backport to stable due to its size and complexity.
+>=20
+> Ideally, this patch set would be applied before "Mediated Passthrough vPM=
+U"
+>=20
+> Note that the fix does not conflict with "Mediated Passthrough vPMU", it
+> is just that "Mediated Passthrough vPMU" will make the code to stop and
+> restart Intel PT unnecessary.
+>
 
-Unless your compiler is buggy, (void *)rt =3D=3D (void *)&rt->dst
+With mediated passthrough vPMU, we could enable PT pmu's PERF_PMU_CAP_PASST=
+HROUGH_VPMU
+capability like core pmu, then perf guest helper could handle any host PT e=
+vents
+during VM entry/exit as well like core perf events. The benefit is general =
+perf interface
+to handle like others. But it would be sure to depend on passthrough vPMU b=
+e enabled,
+not as this to fix in case w/o that.
+
+I have local patches to work against passthrough vPMU, but like passthrough=
+ vPMU
+to be settled down first. With Adrian's change, it could be also possible t=
+o decouple
+the dependency, so may support in both cases with or w/o passthrough vPMU e=
+nabled.=20
+
+>=20
+> Adrian Hunter (3):
+>       KVM: x86: Fix Intel PT IA32_RTIT_CTL MSR validation
+>       KVM: x86: Fix Intel PT Host/Guest mode when host tracing also
+>       KVM: selftests: Add guest Intel PT test
+>=20
+>  arch/x86/events/intel/pt.c                         | 131 ++++++-
+>  arch/x86/events/intel/pt.h                         |  10 +
+>  arch/x86/include/asm/intel_pt.h                    |   4 +
+>  arch/x86/kvm/vmx/vmx.c                             |  26 +-
+>  arch/x86/kvm/vmx/vmx.h                             |   1 -
+>  tools/testing/selftests/kvm/Makefile               |   1 +
+>  .../selftests/kvm/include/x86_64/processor.h       |   1 +
+>  tools/testing/selftests/kvm/x86_64/intel_pt.c      | 381 +++++++++++++++=
+++++++
+>  8 files changed, 532 insertions(+), 23 deletions(-)
+>  create mode 100644 tools/testing/selftests/kvm/x86_64/intel_pt.c
+>=20
+> base-commit: d45aab436cf06544abeeffc607110f559a3af3b4
+>=20
+>=20
+> Regards
+> Adrian
+>=20
+
+--l5QniXQFWRwHsHV7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCZt/g7wAKCRCxBBozTXgY
+J4FmAJ4l1Cil0SD6XxGOygTov/Nm/zTkBQCcDgsjqp1rTxgyohF44JMESE88C7o=
+=/KK1
+-----END PGP SIGNATURE-----
+
+--l5QniXQFWRwHsHV7--
 
