@@ -1,116 +1,197 @@
-Return-Path: <linux-kernel+bounces-322471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1CEF972953
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:13:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E0C972956
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3F521C20F46
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:13:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BD702867A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFED172773;
-	Tue, 10 Sep 2024 06:13:47 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C2917624C;
+	Tue, 10 Sep 2024 06:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="RB3/N3tk"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9730170A15
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB981741E8
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725948827; cv=none; b=PGSVP2+ACKbAkBgz3Q/MQIYi1XgNfhIkxkqFq5Rzg7iSks6cBAJ2Gi2ZMw0oL8x8q89gGx9FJUK7SPx9/DWdi8XhPbc9Cu/QuPPY89mNN/EqFloymsLA6Driwh8AenewdEk1BcGFhkCXdXHVQuPc9rAzy2KyqyzkZNk3Nub0Z2o=
+	t=1725948838; cv=none; b=PDZFM5lHQgUjLcOI6YqDtng7FPGZxJ2ysFP1QvV15d9WwWN6gUkP5eTgLa73jomi+iiiLsFuD+SYlqpG8HjxqrLFYLwd1kjXxUHOh/29rp2talhDEPjs4OM3XdHLLLeiSCWV+FLT6G9Z22mUlFTquZI4ueo8lvNe4nAFdeELlVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725948827; c=relaxed/simple;
-	bh=YfAHwumSZldbqrMyckqoVZpv4fbP7RwrMiUlejXY+hU=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=LCMuunv1veXlS1csCkPPm1mBLAxU/vvNpExwRij4QC18O0Jd0Keok2Z5MWcNwTvMomvS7G4tzpyAkrJRVJzycrEpm7iLyt+T4L7lSvsC03xMeUPuRHamcFXNTRGJwPRRsbqFL+tgaiwnrLelXKsrQPnr0wEHlRzxlktykhZ/6fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4X2tf66GWYz1P9M9;
-	Tue, 10 Sep 2024 14:12:30 +0800 (CST)
-Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
-	by mail.maildlp.com (Postfix) with ESMTPS id E366B180AE7;
-	Tue, 10 Sep 2024 14:13:35 +0800 (CST)
-Received: from [10.174.178.55] (10.174.178.55) by
- dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 10 Sep 2024 14:13:35 +0800
-Subject: Re: [PATCH v2 4/6] debugobjects: Don't start fill if there are
- remaining nodes locally
-To: Thomas Gleixner <tglx@linutronix.de>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
-References: <20240904133944.2124-1-thunder.leizhen@huawei.com>
- <20240904133944.2124-5-thunder.leizhen@huawei.com>
- <336109d9-2eea-4d67-ee22-ed218b9504c3@huawei.com>
- <7613ce35-0c65-341f-c6ed-412de79890e6@huawei.com> <87ed5tchc6.ffs@tglx>
- <87bk0xc9iy.ffs@tglx> <32bd93ec-747f-b5a1-917f-f885b87600a5@huawei.com>
- <87wmjkc2te.ffs@tglx>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <8ab2df64-9d78-f60d-e4f1-a13b4065b01a@huawei.com>
-Date: Tue, 10 Sep 2024 14:13:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+	s=arc-20240116; t=1725948838; c=relaxed/simple;
+	bh=ZSKYFvREQ6G7ojYDniUR+vXtHepNfTW2jfP6yl9Qxq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kUOjHFH1CYk86tJMOHQfX5wN7HY734YDhiwU9/srLRb2CqzTpH2wAVACyseev/R3AZ96YkfoyZMdklnoKVSYxQXUtCOzA76jDdi2lsx/wYys0v/TackeuwHt6FH1uYckYUdM9BJ/VJp7THDTMSj1ITt44vwO5iTIUiQpff+lQFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=RB3/N3tk; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c26311c6f0so6283276a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 23:13:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1725948835; x=1726553635; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lOSfkKWiqdI3BWtcPK6He/p+XcWPyTmAhMgvF4mKHJs=;
+        b=RB3/N3tkM8780eNrH0DBo1sdkPoMHYSQK6n9TdphxuWvrZSvf2Vy94kWhkYUHO1jBw
+         1y2CO+zgerBCPqCrFYAXVwbxcxMQL1TnB+4aZ/QUKMlNYovp6j8csg3te0UcWAEoEP85
+         1RviARVKWnEcmeXdsEl57pgnZF23q3CBRL2a8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725948835; x=1726553635;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lOSfkKWiqdI3BWtcPK6He/p+XcWPyTmAhMgvF4mKHJs=;
+        b=GnDx57GIPdV/3hCfFSKoeesQ9DJZ13yQdJQTHOLvXkBRxzP96D90Z/tjZq2p11C5eY
+         b57RLYlysSFNf4Z20yoP7+W9swfKUdk0DI/B0ItD0kpUcpfS3vHfw2t2c0M1uPRSzqtE
+         y4XKRx+xDWsEAIBJjDEVex7GxSK3qDzPGhngK1wkm2klyF1WaAgZxGwLAd/S1NfnpkQz
+         8RNEJTAEXPrtvKXcg3s14TnFHlq0SxcYgwjahMiFBWjGRRO+xkq90qCnRPBS5Z2emLIO
+         QavAlxmAMXnZ/84YrIV/ngSnV4JVntl39UaqGn3CX+4FD6houGkNMFthy7dUSPEgecup
+         Eljg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhLH6ThYKdIZnzxhg/1+IMLHUVxDnhvmpJmTG7o2hMwiCum2W1Dk7BaPaaeSI14tjE/pAbtA6V3uwdsmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrfDTCIF30daPELGU4e8Y7nUceiwepURzUDIhTIRZdxD88C5ln
+	93swA6OdbprYdmqdcAoVoMM9/th62VLeFYKb9eoztsfWn756K22U9S9/OAuP/UY=
+X-Google-Smtp-Source: AGHT+IEr+VRs334AZ3Iv8vggty1pVNOhhQUDeIaT1NlT8PjIYTlORJ/kJNdgCibNtSImpIhUkfVzYA==
+X-Received: by 2002:a05:6402:2787:b0:5c0:ad76:f6d5 with SMTP id 4fb4d7f45d1cf-5c3dc7804ddmr8780737a12.5.1725948833811;
+        Mon, 09 Sep 2024 23:13:53 -0700 (PDT)
+Received: from LQ3V64L9R2.homenet.telecomitalia.it (host-79-23-194-51.retail.telecomitalia.it. [79.23.194.51])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd8ce50sm3825553a12.84.2024.09.09.23.13.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 23:13:53 -0700 (PDT)
+Date: Tue, 10 Sep 2024 08:13:51 +0200
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next v2 1/9] net: napi: Add napi_storage
+Message-ID: <Zt_jn5RQAndpKjoE@LQ3V64L9R2.homenet.telecomitalia.it>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
+	bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240908160702.56618-1-jdamato@fastly.com>
+ <20240908160702.56618-2-jdamato@fastly.com>
+ <20240909164039.501dd626@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87wmjkc2te.ffs@tglx>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf100006.china.huawei.com (7.185.36.228)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909164039.501dd626@kernel.org>
 
-
-
-On 2024/9/9 22:35, Thomas Gleixner wrote:
-> On Mon, Sep 09 2024 at 21:51, Leizhen wrote:
->> On 2024/9/9 20:10, Thomas Gleixner wrote:
->>> So something like the uncompiled below should reduce lock contention
->>> significantly with a reasonable safety net.
->>
->> It looks very good. Especially flexible use of 'state' and 'cpus_allocating'.
->> In this way, there is almost no conflict of lock 'pool_lock', and the more
->> cores, the less possible conflict.
->>
->> Hi Thomas Gleixner:
->>   Do you plan to post this patch? But this patch will conflict with my patch 5/6.
->> If you're going to merge my patch 5/6, hopefully yours will be applied
->> after mine.
+On Mon, Sep 09, 2024 at 04:40:39PM -0700, Jakub Kicinski wrote:
+> On Sun,  8 Sep 2024 16:06:35 +0000 Joe Damato wrote:
+> > Add a persistent NAPI storage area for NAPI configuration to the core.
+> > Drivers opt-in to setting the storage for a NAPI by passing an index
+> > when calling netif_napi_add_storage.
+> > 
+> > napi_storage is allocated in alloc_netdev_mqs, freed in free_netdev
+> > (after the NAPIs are deleted), and set to 0 when napi_enable is called.
 > 
-> I'm short of cycles, so the best way is when you pick it up and
-> integrate it instead of 4/6 and post a v3.
+> >  enum {
+> > @@ -2009,6 +2019,9 @@ enum netdev_reg_state {
+> >   *	@dpll_pin: Pointer to the SyncE source pin of a DPLL subsystem,
+> >   *		   where the clock is recovered.
+> >   *
+> > + *	@napi_storage: An array of napi_storage structures containing per-NAPI
+> > + *		       settings.
+> 
+> FWIW you can use inline kdoc, with the size of the struct it's easier
+> to find it. Also this doesn't need to be accessed from fastpath so you
+> can move it down.
 
-OK
+OK. I figured since it was being deref'd in napi_complete_done
+(where we previously read napi_defer_hard_irqs and
+gro_flush_timeout) it needed to be in the fast path.
 
-> 
->>   By the way, Do you have time to review the patches in the link below?
->>   https://lkml.org/lkml/2024/9/4/1094
-> 
-> Please use lore.kernel.org links. I've seen it but did not come around
+I'll move it down for the next RFC.
 
-OK
+> > +/**
+> > + * netif_napi_add_storage - initialize a NAPI context and set storage area
+> > + * @dev: network device
+> > + * @napi: NAPI context
+> > + * @poll: polling function
+> > + * @weight: the poll weight of this NAPI
+> > + * @index: the NAPI index
+> > + */
+> > +static inline void
+> > +netif_napi_add_storage(struct net_device *dev, struct napi_struct *napi,
+> > +		       int (*poll)(struct napi_struct *, int), int weight,
+> > +		       int index)
+> > +{
+> > +	napi->index = index;
+> > +	napi->napi_storage = &dev->napi_storage[index];
+> > +	netif_napi_add_weight(dev, napi, poll, weight);
+> 
+> You can drop the weight param, just pass NAPI_POLL_WEIGHT.
 
-> to it yet because I was staring at this one. I'm single threaded :)
+OK will do.
 
-Mostly you big shot are too busy.
+> Then -- change netif_napi_add_weight() to prevent if from
+> calling napi_hash_add() if it has index >= 0
 
-> 
-> Thanks,
-> 
->         tglx
-> 
-> 
-> 
-> .
-> 
+OK.
 
--- 
-Regards,
-  Zhen Lei
+> > diff --git a/net/core/dev.c b/net/core/dev.c
+> > index 22c3f14d9287..ca90e8cab121 100644
+> > --- a/net/core/dev.c
+> > +++ b/net/core/dev.c
+> > @@ -6719,6 +6719,9 @@ void napi_enable(struct napi_struct *n)
+> >  		if (n->dev->threaded && n->thread)
+> >  			new |= NAPIF_STATE_THREADED;
+> >  	} while (!try_cmpxchg(&n->state, &val, new));
+> > +
+> > +	if (n->napi_storage)
+> > +		memset(n->napi_storage, 0, sizeof(*n->napi_storage));
+
+OK, your comments below will probably make more sense to me after I
+try implementing it, but I'll definitely have some questions.
+
+> And here inherit the settings and the NAPI ID from storage, then call
+> napi_hash_add(). napi_hash_add() will need a minor diff to use the
+> existing ID if already assigned.
+
+I don't think I realized we settled on the NAPI ID being persistent.
+I'm not opposed to that, I just think I missed that part in the
+previous conversation.
+
+I'll give it a shot and see what the next RFC looks like.
+
+> And the inverse of that has to happen in napi_disable() (unhash, save
+> settings to storage), and __netif_napi_del() (don't unhash if it has
+> index).
+> 
+> I think that should work?
+
+Only one way to find out ;)
+
+Separately: your comment about documenting rings to NAPIs... I am
+not following that bit.
+
+Is that a thing you meant should be documented for driver writers to
+follow to reduce churn ?
 
