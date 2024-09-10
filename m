@@ -1,162 +1,137 @@
-Return-Path: <linux-kernel+bounces-322899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD9779732B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:25:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D67973366
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 424641F224B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:25:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B16FB2D644
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B5419994B;
-	Tue, 10 Sep 2024 10:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714CF19ABAA;
+	Tue, 10 Sep 2024 10:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qFPjlhpL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NmB4QdfZ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qFPjlhpL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NmB4QdfZ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GmnD8tzD"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC3A199920
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C87818E778;
+	Tue, 10 Sep 2024 10:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725963589; cv=none; b=oryX9LYls+goN5l/7O+RY9fh8VNLL+qWI2uI/4GzRXWNM82ZysvbcmI8guJXMmTL9CAEJGTyMHEEyRrrJjAXCb9TJUwTxkTbcVrtDT3rNPRZ1aGpIaSAyXokwe7eVO4vDFaAu0T72Knj0bC0bqgTrzI9Qmw2gcnbyZx5TZgaEWk=
+	t=1725964008; cv=none; b=E4GT6k8f/xdm1tWFRPuOHk+QAzr7HdRWdk82c99Mrvnu58eAKs5XOI5qgE8ivSDAgKgfRRKXfpWfDvscObDmF4KkJS2VwkWjyQMrwCYF3ds0ppz6uSxtB34/XLf06trW2hYFN+CcsQt2su2o9kFp+pnjSWzYdZ4KHFujDi3otcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725963589; c=relaxed/simple;
-	bh=LEwgT1CUdMGxMTx2CBj6jmHHPJejQp1TnXVmhR6DgX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WAj6nfaPX14GP+8ahFGcdOPg/norkhBaE1aBjQgKbnyDdZJ5SvJtuaaCs1ZEVCLPNeOYGKITfGMYgM6oVc2f1n+uEztgXnwCJcCJFSaLDDHVz4IyUf2xvU+fpBJOGu1LWISpP25aDYjJ3B/dSMvOEr+/rlHpnwSZxWUVtIZAwCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qFPjlhpL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NmB4QdfZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qFPjlhpL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NmB4QdfZ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9829421A2A;
-	Tue, 10 Sep 2024 10:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725963585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RsSIwaqc0VB7URYBD4dQqIcMT8+sfQC9FPAWs4P+03A=;
-	b=qFPjlhpLpAmdzqW1Vt/FFYP7HvMm5q554lNQTOTdByCf7d0wPXb3gp6wSdPS3BMQBFbGdb
-	YPjyMY5scX42C1ubj8ykHLyH0EwoGdHYWTUavsHE3y0Mw+I6O83WRXRhLm2vpq1WyxPWYz
-	GUkndQoe4J+ZKFyxhSR0HJqfl5Zb7Zg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725963585;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RsSIwaqc0VB7URYBD4dQqIcMT8+sfQC9FPAWs4P+03A=;
-	b=NmB4QdfZe40w7/v78v15mXtDZYcWuiWoKjfcwBGP8IIDK+eTnrAWWnf38wKBavrc5W6wDj
-	l2a9d8k3Fwyi7mAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qFPjlhpL;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=NmB4QdfZ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725963585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RsSIwaqc0VB7URYBD4dQqIcMT8+sfQC9FPAWs4P+03A=;
-	b=qFPjlhpLpAmdzqW1Vt/FFYP7HvMm5q554lNQTOTdByCf7d0wPXb3gp6wSdPS3BMQBFbGdb
-	YPjyMY5scX42C1ubj8ykHLyH0EwoGdHYWTUavsHE3y0Mw+I6O83WRXRhLm2vpq1WyxPWYz
-	GUkndQoe4J+ZKFyxhSR0HJqfl5Zb7Zg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725963585;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RsSIwaqc0VB7URYBD4dQqIcMT8+sfQC9FPAWs4P+03A=;
-	b=NmB4QdfZe40w7/v78v15mXtDZYcWuiWoKjfcwBGP8IIDK+eTnrAWWnf38wKBavrc5W6wDj
-	l2a9d8k3Fwyi7mAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7F8C9132CB;
-	Tue, 10 Sep 2024 10:19:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8r7eHEEd4Ga2XQAAD6G6ig
-	(envelope-from <iivanov@suse.de>); Tue, 10 Sep 2024 10:19:45 +0000
-Date: Tue, 10 Sep 2024 13:25:31 +0300
-From: "Ivan T. Ivanov" <iivanov@suse.de>
-To: Corey Minyard <corey@minyard.net>
-Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ipmi:ssif: Improve detecting during probing
-Message-ID: <20240910102531.grjtn2rdmagcgphb@localhost.localdomain>
-References: <20240816065458.117986-1-iivanov@suse.de>
- <ZsU9SRlQgzQn8bDs@mail.minyard.net>
+	s=arc-20240116; t=1725964008; c=relaxed/simple;
+	bh=A+3OLdpimudkms3tByzvzHCppYe6z/Si3Ti0qCO/73Q=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=hUiyzU0+5ych8ZMAUQAkEL5ZdkV1W4ryxkwiL7/lcgpegeuuSiPmcNJKuDZxQj9qP9YfcL4NV/ve1OaBtVfyFvvkpH0B0C+EteCxX7YaOj6vm3/E1wEhEOBnZsT+d5pbpBj+S6LjTmuBR6YRejRZ34YszWKr8x7Fcq47HDirdKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GmnD8tzD; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A3K2g1023785;
+	Tue, 10 Sep 2024 10:26:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=XMcNMOa7T3YiCgYS23Em1q
+	KtvEpsX9ZqsjtO4s457gk=; b=GmnD8tzDmbQFqyVTGp1BdQ1dSVJGX4glZ98cvX
+	PMvVbr8bYeAEDIUM/YDZk6/NmBTGhF9NBGYz5fMznN3AJDLuMkc9LPlasFPfCxLE
+	aw9nm120DRVDN+STePOGEECVXpM9vTdmaKuF4GJUXHRMKbnkDaeeCPKWjSPGE6GL
+	PWpFSTKiL2MU0PgI28fBs65AMDm7RCyB7f4RoSd0Of7uOIMQvCWfdT1Nm3OkufJj
+	rgKJPL02CWu4juDs7BqkiNUUxSP1RNBW5xPGwyhdygET8iR+3toGJVhdzxMh9Nbg
+	sHCIPRKMlIWum8Tu7ra974r4NnSgLnc6unQDjKEkh3JDbJ2A==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6p5h5s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 10:26:44 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48AAQhG8005712
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 10:26:43 GMT
+Received: from lijuang2-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 10 Sep 2024 03:26:37 -0700
+From: Lijuan Gao <quic_lijuang@quicinc.com>
+Subject: [PATCH 0/2] dt-bindings: pinctrl: describe qcs615-tlmm
+Date: Tue, 10 Sep 2024 18:26:13 +0800
+Message-ID: <20240910-add_qcs615_pinctrl_driver-v1-0-36f4c0d527d8@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsU9SRlQgzQn8bDs@mail.minyard.net>
-X-Rspamd-Queue-Id: 9829421A2A
-X-Spam-Score: -6.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-6.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMUe4GYC/43OTW4CMQwF4KugrBtkJ5lp01XvUaFRfpxiqZ2Bh
+ EZUaO7eDKgLVAlYPsv+/E6iUGYq4nV1EpkqF57GFvBpJcLWjR8kObYsFCgDFnrpYhz2ofTYDTs
+ ewyF/DjFzpSzJW3TWeOV7FO1+lynx8Wy/b1recjlM+ef8quIy/VPtDbWiBGkiBkwvoSMd3vbfH
+ NrOOkxfy5uLgXDXgEA6JtdZMFfG0q2qh/uoZqHWmAzGSAj/Lf2wpZde1j07rz0k3V9b8zz/Arc
+ aFQqgAQAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Lijuan Gao
+	<quic_lijuang@quicinc.com>, <kernel@quicinc.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725963997; l=1162;
+ i=quic_lijuang@quicinc.com; s=20240827; h=from:subject:message-id;
+ bh=A+3OLdpimudkms3tByzvzHCppYe6z/Si3Ti0qCO/73Q=;
+ b=EB13IPRKg0cFCajqfG4jwBGzDe6tRJRzQgUCQl+MmTQkcLx7PxfL2MmJbvHItDGW65DTdqe1U
+ NJCHkF5KxBRCbB/4a0BJaNN+a5MXSAYo2c+EzuwNoLmnQ30M0LHWcjL
+X-Developer-Key: i=quic_lijuang@quicinc.com; a=ed25519;
+ pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: eLD9BiGoqUZwwxNb7tEXkXQz5r890xwy
+X-Proofpoint-GUID: eLD9BiGoqUZwwxNb7tEXkXQz5r890xwy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ bulkscore=0 lowpriorityscore=0 mlxlogscore=895 spamscore=0 phishscore=0
+ impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409100078
 
-Hi Corey,
+Introduce Top Level Mode Multiplexer dt-binding and driver for Qualcomm
+QCS615 SoC.
 
-On 08-20 20:05, Corey Minyard wrote:
-> 
-> If an IPMI SSIF device is probed and there is something there, but
-> probably not an actual BMC, the code would just issue a lot of errors
-> before it failed.  We kind of need these errors to help with certain
-> issues, and some of the failure reports are non-fatal.
-> 
-> However, a get device id command should alway work.  If that fails,
-> nothing else is going to work and it's a pretty good indication that
-> there's no valid BMC there.  So issue and check that command and bail
-> if it fails.
-> 
-> Reported-by: Ivan T. Ivanov <iivanov@suse.de>
-> Signed-off-by: Corey Minyard <corey@minyard.net>
-> ---
->  drivers/char/ipmi/ipmi_ssif.c | 24 +++++++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
+Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+---
+patch made the following modifications and verifications:
+ - Successfully ran dt_binding_check for the current binding file.
+ - Sorted enums, function names, and groups alphabetically.
+ - Specified each tile in DeviceTree referenced with pinctrl-sm8150.c.
+ - Consolidated duplicate functions.
+ - Verified functional with UART function on QCS615 ride board.
 
-Do you plan to merge this fix?
+---
+Lijuan Gao (2):
+      dt-bindings: pinctrl: document the QCS615 Top Level Mode Multiplexer
+      pinctrl: qcom: add the tlmm driver for QCS615 platform
 
-Regards,
-Ivan
+ .../bindings/pinctrl/qcom,qcs615-tlmm.yaml         |  123 +++
+ drivers/pinctrl/qcom/Kconfig.msm                   |    7 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-qcs615.c              | 1107 ++++++++++++++++++++
+ 4 files changed, 1238 insertions(+)
+---
+base-commit: fdadd93817f124fd0ea6ef251d4a1068b7feceba
+change-id: 20240906-add_qcs615_pinctrl_driver-eb91a94b2b61
+
+Best regards,
+-- 
+Lijuan Gao <quic_lijuang@quicinc.com>
 
 
