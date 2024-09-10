@@ -1,53 +1,55 @@
-Return-Path: <linux-kernel+bounces-323852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE7197443C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:44:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C197A97443D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93CEE1F24196
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:44:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E0622891E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30B7183CC7;
-	Tue, 10 Sep 2024 20:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE851A7AF1;
+	Tue, 10 Sep 2024 20:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bj137+Hj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+maVeZJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E977183CB8;
-	Tue, 10 Sep 2024 20:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B84F176252
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726001067; cv=none; b=r2A0z09u/Xl2/mXy8IMdxubWgk0eZqfjN/hBU7T4agYaaMwcDq7MPtlJBi0hqqIVPD9ysTEGbY88cdvaNwnRZ0IhdjpYhcj5V6K/vYA/cF/zreR99dSYic0wKZ7ZKQEj2ZdRZPi+uzR4EbN2ozt4f6Qxz0U4JcDClNY9mqkLLfs=
+	t=1726001072; cv=none; b=RgY6Sc3k09GtGJeryNTnyCLdNJMy4mZIpMX8GlWMzPsC6qh7cJSml672cqcwls+uT2S1J9lnUtWntopMzJu7xgYlWI5M8/LIGm88ryIetJrXfebSJ4dP2xEWHK7f6FI7tx6mIwWy/X+SSR7F+l6TeEXjFeAzMRDbmGE1T5ZLJuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726001067; c=relaxed/simple;
-	bh=5iGvupN4Fv6ShBnl19IBb12j7KDyopKR9KZCk7Rfeyg=;
+	s=arc-20240116; t=1726001072; c=relaxed/simple;
+	bh=9nafgbmiAaXCaMpS2H9g+FM8xMU9jMdbQEiA16D9NQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JCDNLukwvCJ1qxNy8hbeouYSh2VEd5YWIIlYjRUnB+EWc98vR+KLB78P4SYwbUeUI98q24qrPid/3yltbaxO1I9NGDPH1hl8OmAOjui3yi2lplvC112BrbWZA0fdwtgiR4OBvECT7tk8cC4BDW62BNMTVjGQrOD4NIwNFDU27jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bj137+Hj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF7B9C4CEC3;
-	Tue, 10 Sep 2024 20:44:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WDoOOoN7TMyoP91nOWG3wywUUNVu4EM0vT41+3lha6mPmkewwXVHa1sLb9JLfQ3pEcIt1v22qlgPAjLdAy1mEPcYLbbq/5C18Z0kEl8yhaqUEKOgAYsO3kGHlrjRs6le8pzE/NHLajUBc8IsWhrXQl057QlXe8yW/UbtJpLRgIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+maVeZJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E3B1C4CEC3;
+	Tue, 10 Sep 2024 20:44:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726001067;
-	bh=5iGvupN4Fv6ShBnl19IBb12j7KDyopKR9KZCk7Rfeyg=;
+	s=k20201202; t=1726001071;
+	bh=9nafgbmiAaXCaMpS2H9g+FM8xMU9jMdbQEiA16D9NQ0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bj137+HjIWCMqWIHRKBZ1KmMTzNB0Qo4+vCp3pLxOq193C4VGEDLTRPfMGxR38ZGH
-	 fZoiCHU8olVbyrNM8bG9WX2EWDnkxd/YjBX5EWByyOU/qvjvknt+0Efu4p1ObN7jIe
-	 cvKZKkKLG0C5p4cdsAd43Em97kf4mhCdKMDkRmdcyduJF420FHmmwHSQQOOHYsqjbE
-	 QHynkViO+sXzJWYifduscKpirT3WAQDXn9Ea/uzxv4Wk8FCpkvsDjnR/PVk19pxnIb
-	 3eCZblCfU3XRIRRqJ2dsCtSwiXcuUkMgja0ZwXlXri8VG7TXPnQhjGtQmP3gkofsfO
-	 g97E3Wbwgn7DA==
-Date: Tue, 10 Sep 2024 15:44:25 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] dt-bindings: trivial-devices: Clean-ups
-Message-ID: <20240910204425.GA713411-robh@kernel.org>
-References: <20240903-dt-trivial-devices-v1-0-ad684c754b9c@kernel.org>
+	b=r+maVeZJHlnInfE5cTDrVL/QwEQZLzaptYTU68tCi0XCX6LhrzA0KKx2QHNdAOCxH
+	 NxbKmnB1fntznG07Cob3W1dX27lu7Hv+Vw11C3cOATcso/O9Rkwm0GI1SxF3WGUGqF
+	 mMfIj3x0r8G+/9NfTBBaYrivp4vMFUFiMMnhrDaeI/m3IsknDiVtSMBlMoJGuVpZHR
+	 lDUnBXYoDwzNxY/M4XeHRewb5sQBpCtDZR1hezehHM2JIij8zt3c9amA3LLVNpsVLf
+	 AJs4Nb/hcptwIAbK8k9Ze+BfZFVIJ/POkc4K4yYTm4lypq2HrW1DXx+Q5egNtDIkhQ
+	 jgtft1ivunfqA==
+Date: Tue, 10 Sep 2024 10:44:30 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	hodges.daniel.scott@gmail.com, multics69@gmail.com,
+	andrea.righi@linux.dev, schatzberg.dan@gmail.com
+Subject: Re: [PATCH sched_ext/for-6.12] sched_ext: Don't trigger
+ ops.quiescent/runnable() on migrations
+Message-ID: <ZuCvrsK9vf51Acy8@slm.duckdns.org>
+References: <Zt-HfBC0Q-DcUjHm@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,22 +58,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240903-dt-trivial-devices-v1-0-ad684c754b9c@kernel.org>
+In-Reply-To: <Zt-HfBC0Q-DcUjHm@slm.duckdns.org>
 
-On Tue, Sep 03, 2024 at 04:52:04PM -0500, Rob Herring (Arm) wrote:
-> This small series drops some duplicate compatibles and fixes an 
-> incorrect vendor prefix.
+On Mon, Sep 09, 2024 at 01:40:44PM -1000, Tejun Heo wrote:
+> A task moving across CPUs should not trigger quiescent/runnable task state
+> events as the task is staying runnable the whole time and just stopping and
+> then starting on different CPUs. Suppress quiescent/runnable task state
+> events if task_on_rq_migrating().
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> Rob Herring (Arm) (4):
->       dt-bindings: trivial-devices: Drop incorrect and duplicate at24 compatibles
->       dt-bindings: trivial-devices: Deprecate "ad,ad7414"
->       dt-bindings: trivial-devices: Drop duplicate LM75 compatible devices
->       dt-bindings: trivial-devices: Drop duplicate "maxim,max1237"
-> 
->  Documentation/devicetree/bindings/trivial-devices.yaml | 15 ++-------------
->  1 file changed, 2 insertions(+), 13 deletions(-)
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Suggested-by: David Vernet <void@manifault.com>
+> Cc: Daniel Hodges <hodges.daniel.scott@gmail.com>
+> Cc: Changwoo Min <multics69@gmail.com>
+> Cc: Andrea Righi <andrea.righi@linux.dev>
+> Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
 
-Applied.
+Applied to sched_ext/for-6.12.
+
+Thanks.
+
+-- 
+tejun
 
