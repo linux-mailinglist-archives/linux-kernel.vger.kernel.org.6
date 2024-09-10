@@ -1,83 +1,57 @@
-Return-Path: <linux-kernel+bounces-323823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64509743E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:07:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0FB9743E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F270AB21D4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:07:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97E5E285A36
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DC71A76C7;
-	Tue, 10 Sep 2024 20:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A88F1AAE1E;
+	Tue, 10 Sep 2024 20:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EhFFQJQS"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="HoXpBPTp"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE97B176252;
-	Tue, 10 Sep 2024 20:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B3B1AAE10
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725998865; cv=none; b=LfN5qmJeajTwTJ+dYUVmciRrHbJyy1NzUjIP/Xk712wauQWdnu0jpWAESoF2IWA825rGq1qzGMKtOm8lcOt35Rh77gxBByiahIlcjXwSelUO6mGnDYDw/HOpu/axWiGQskExY3A7R3dZY0347ykeKXvGuTc2lZBxtdENyPdGFEo=
+	t=1725998871; cv=none; b=ASpGWOnHkGtbTblfSdeimZUQH3CYVozxqMnILE0CzH1KVx28l+9BoQwESU1WWXtZGZ73DJYubBcqO9szVGwmksfyoSjPNniNYn39VBEyB1CQ96fVpqdzjGbczJPcwtbhgK8mBRFqNpVoioC0PfoXYGQpckImVvfGdhd6vmbqiac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725998865; c=relaxed/simple;
-	bh=b+THmAwcAom/Qv4imatSq2nSA9VS+JPd6/u3vlwm+/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RfT8OBZoZ8JjpvPpqj8Ojq8GEEGigLB4pEW+RndiHHyS/IBPxsux9vCDluMxhW/mipwJvEtuHfJ6WXl/u1D0+sJsu0flHnF32jDd5p7FwDU+gSxUZHKMV2cFXspSdiOqW9DOHJhbLysiFNZnEm2ZzUzTTvtgm7KrDOd19MjoGc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EhFFQJQS; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f762de00e5so38812881fa.3;
-        Tue, 10 Sep 2024 13:07:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725998861; x=1726603661; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LyVrAiITGfV7pYArU+Q+t8KwJ+D0u4APPVYawY8r7+Q=;
-        b=EhFFQJQSU6832dHtvmmINLg1JMDD4Rqc9nY5WAW6fUMzxdk9EOoRLI7X3y6/pHyGVL
-         5NJwfClGF6FDUOIh2a3airOpIQw52FFEldL2iTLTG8eCAkJkY4saNPs2jmMNUfQtO6rj
-         CVt07wcbF57p5I4gS2GNoOvSan6zojNyhfi6DIYUNby95eoF26M6zRKJvH+qfBM0qe/H
-         ezx3RTjEIieaE9La+bMO8VHs/cSeWNAVDg6ZP7J13SwDHDe9YNtBVQSwd58ON6De/bPw
-         5Z92YJJ1/LttDN5RkokaG/1YXe+M/eGTqgiuu8np3OTkxK20RkvOfVP3SZ2amP+TBgY5
-         +WKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725998861; x=1726603661;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LyVrAiITGfV7pYArU+Q+t8KwJ+D0u4APPVYawY8r7+Q=;
-        b=qX3cV9lvDqaj3bbHqMjh61vhqkahol+sOotQ/x3fS1G4G8GULIlRLqFNdDIZSzr8MD
-         1A5M0LdHhOxzL/D689cVD8tLVFZz3k2ZR3pAWQId1gSLIHi7P02KQmzPFP9IWioYHf1j
-         pyedgKgzDraQSEDDc4j2LPmF7wHViCkyo7RFVX8kIisCmIBbQDVwBTwWGwApFKdwk2aA
-         u0HS5z89RyLekgnvjRhhIDlZBgXFvMz7O3AGds/cI2jK6PzLL5VuM1GgjoeppOQ43LgS
-         ClJVJz1xZGg/K5fvt7mjkKA+6ZjlEHMrwur6LivPTqWBDLAjvltmjNCS7HC9Dr67txCQ
-         Q1lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/DU3Dnsl2PQpaShem864k70DAcfVWb1TYR65HvSEMhUJJ1pSe56agQwI+fSc8SonLYYPetPNXMdN5@vger.kernel.org, AJvYcCUlGTrrUhF01e2ghognJ9QksJWPzRY5Fax+GEfG2NvXU96/SegOTx80xVgM8/zTaMW/g5cA4y05EKsRfA==@vger.kernel.org, AJvYcCUmseWNvmcUQ0VrOzdcDw2gTBief5WcOX/L/h9cOl3eAwiv2b+7pOwmkwAw7FazelQ6UpQeMMCJl+gqZhJ9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdeXJGx4Z8YbdOVcYC1PTrAVi8qpRhGzemNWya8gCf0p7WDdnl
-	ifL+ygRdocBLKexk1XVXn9ybazoc0K450ZC2GevzvWLutkCekJP4
-X-Google-Smtp-Source: AGHT+IFl0skS8bBYnEazfcnNMfaQP0989xihv8X3HDPU2apuy0G0hLs0tfMf6983l9Jzl//58Y2rNw==
-X-Received: by 2002:a05:651c:1507:b0:2f7:6664:f295 with SMTP id 38308e7fff4ca-2f76664f61dmr68652641fa.27.1725998861091;
-        Tue, 10 Sep 2024 13:07:41 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75c098b77sm12512371fa.105.2024.09.10.13.07.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 13:07:40 -0700 (PDT)
-Date: Tue, 10 Sep 2024 23:07:37 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"paulburton@kernel.org" <paulburton@kernel.org>, "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] MIPS: cm: Probe GCR address from DeviceTree
-Message-ID: <7j6cc5i4z4nwg73fowjz756eblnesglqm72jveygqfxngw26mc@sdy6xxomo3qe>
-References: <20240612-cm_probe-v2-0-a5b55440563c@flygoat.com>
- <20240612-cm_probe-v2-6-a5b55440563c@flygoat.com>
- <ekvyyq3vzdbyi5suf4irfixyprvtko7rpkffwpc267kiex4ex2@lpu3ctysuviw>
- <79acb1b1-9c1c-4a58-91a5-5dbb286717ec@app.fastmail.com>
+	s=arc-20240116; t=1725998871; c=relaxed/simple;
+	bh=vZJjz9fRezr9De4Orho1wkInbjle+j4xVcnskiX3Jyc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vBrkSe7+k8BUfL+ZvRkc/+wRn3Ysdrn1K/gK8hpK1Et5tw2CtR3lnfvYZfoi+waGGbQfG+dHtEcJx06MJvpEIODbr5YFQRVjptW9dq9XATdmcf/DEeVP9Gz3vNwpZfojU9KUL3x/OHvrSzmUXjkXIOCQ/lX50ZvjFQ+JmPz0e0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=HoXpBPTp; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1725998867; x=1726258067;
+	bh=nOd42zcosTE94cbQZZ/IFTYFSJKMt0GHgSbLskRDVkQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=HoXpBPTpjnoP5A5V7R4E1D/6NyxD42pKy0jTf0D/ivgvODM8vKNqPF4994eCu9YcA
+	 yNgEc9AqOBqoQtZ0M7tfwgKKb4Kz+nuU3L0nia9V30Jsl/hDSMvR1OQd0HYOovOBHa
+	 Dc0KpmtQxRMW5wqzzYuAmZnHTZA9aB1VNc9tUW32VLt4/q+D7DtHHyB3sqIvmrc+NC
+	 fEdBOtuxp/nYOBfU6R3WupyZZKi2kUMsWSlXk3Wrv6dY4w4XZ1Wxz0TiM2InXts0sN
+	 gaw+zqp2XjA2X9SSH4gqIlPCJl4uTuMYseJw7QUBTJw0R9F0towfyKkXcLsoWFdVNd
+	 /UsKLtnoW+EAw==
+Date: Tue, 10 Sep 2024 20:07:40 +0000
+To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 13/26] rust: alloc: implement kernel `Vec` type
+Message-ID: <a8c31bce-aac2-4ffe-8fab-2e68c9bab035@proton.me>
+In-Reply-To: <20240816001216.26575-14-dakr@kernel.org>
+References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-14-dakr@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 9747bfca293c10b7ad4bbdb09610026864877931
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,78 +59,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <79acb1b1-9c1c-4a58-91a5-5dbb286717ec@app.fastmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 08:23:25PM +0100, Jiaxun Yang wrote:
-> 
-> 
-> 在2024年9月10日九月 下午1:36，Serge Semin写道：
-> [...]
-> >
-> > This causes the kernel boot-up procedure to crash/hang-up because the
-> > CM GCR base address is supposed to be redefined by means of the
-> > already mapped CM GCR address space by accessing the
-> > CM_GCR_BASE_GCRBASE register:
-> > change_gcr_base()
-> > +-> read_gcr_base()
-> >     +-> addr_gcr_base()
-> >         +-> return mips_gcr_base + CM_GCR_BASE_GCRBASE
-> >
-> > By the time of the change_gcr_base() call in mips_cm_phys_base(), the
-> > mips_gcr_base variable hasn't been defined. So the IO operations
-> > performed in the change_gcr_base() method would be accessing the
-> > NULL-based memory space. That's why the kernel crash/hanging-up.
-> 
-> Thanks for the analysis!
-> This path was not taken on my audience hardware, so I didn't catch this,
-> will fix in next version.
-> 
-> >
-> > In order to fix this we have to first map the CM GCR block at the
-> > default base-address, then update the CM GCR-base CSR and after that
-> > remap the CM GCR-space.
-> >
-> > Please also note, the GCR_BASE field might be RO. It depends on the
-> > IP-core configuration. So it's possible that the CM_GCR_BASE_GCRBASE
-> > field update won't work. Although that will be detected a bit later in
-> > the mips_cm_probe() method by comparing the address returned from
-> > mips_cm_phys_base() and retrieved from the CM GCR-base CSR.
-> 
+On 16.08.24 02:10, Danilo Krummrich wrote:
+> `Vec` provides a contiguous growable array type (such as `Vec`) with
+> contents allocated with the kernel's allocators (e.g. `Kmalloc`,
+> `Vmalloc` or `KVmalloc`).
+>=20
+> In contrast to Rust's `Vec` type, the kernel `Vec` type considers the
+> kernel's GFP flags for all appropriate functions, always reports
+> allocation failures through `Result<_, AllocError>` and remains
+> independent from unstable features.
+>=20
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  rust/kernel/alloc.rs      |   6 +
+>  rust/kernel/alloc/kvec.rs | 629 ++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/prelude.rs    |   2 +-
+>  3 files changed, 636 insertions(+), 1 deletion(-)
+>  create mode 100644 rust/kernel/alloc/kvec.rs
 
-> Hmm, I just checked RTL and RDL for CM2 and CM3 and I didn't see it as a
-> configurable option. It's possible to change hardware reset value but not make it RO.
+I noticed that you don't have a `pop` or `remove` function implemented,
+I think it would be weird to have all the other functions but not those.
 
-Both MIPS P5600 and P6600 databooks define the GCR_BASE field as
-optionally R/W:
+---
+Cheers,
+Benno
 
-GCR_BASE 31:15 This field sets the base address of the 32KB          R or R/W
-               GCR block of the P5600 MPS.                           (IP Config-
-               This register has a fixed value after reset if         uration)
-               configured as Read-Only (an IP Configuration Option).
-
-> 
-> Maybe it was possible on earlier IP release,
-
-I found the text above in the latest MIPS Warrior P-class software
-manuals downloaded from the ImagTech site. Not sure why your RTL code
-doesn't have such configs.
-
-> in this case it's always
-> user's responsibility to write correct address in DeviceTree :-)
-
-Right. The system just won't work if the CM GCR base address couldn't
-be updated.
-
--Serge(y)
-
-> 
-> Thanks
-> 
-> >
-> > -Serge(y)
-> 
-> -- 
-> - Jiaxun
 
