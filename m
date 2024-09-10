@@ -1,192 +1,184 @@
-Return-Path: <linux-kernel+bounces-323313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14BD0973B40
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:16:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851BC973B43
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96C971F2546A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:16:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98CE1C21442
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451AF190684;
-	Tue, 10 Sep 2024 15:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245531957F4;
+	Tue, 10 Sep 2024 15:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FSkSmBKb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tFbGW4jY"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19ACD6F307
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 15:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8768187FFF
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 15:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725981391; cv=none; b=CnYwj8bkODm7d0q+CXV9o2rmSUjxPeEvjUexKIoe+RbiuUdavUoxabNZhX2Aph9HOgs8OjaMnUi1H/FOPA91/g8sn6ewpSpMWFtkeUYRCNK1AGTw1kk+lvuhcc2jvOEnP/Ru0044WvKM44jsa2Xlxyg753Wlb8WYUl0bR1UCwXo=
+	t=1725981419; cv=none; b=pvRyzQm/r+S+hGlygvXrZFsLsychDKttMMZNoef+valKe6CMQ0oa5cjejj258ZO8UIvq9dZkwcHRe28SAED8aMTRh/Xocyt72n/sDCo1xah6N9xghEwXWK6GrWKnNaEdU3d9YOhu4Jvvd9g/chgoVaaJjs5tPRtwDeJQPKTbpuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725981391; c=relaxed/simple;
-	bh=wF4vyctgMM9SgS/++eIxgGDt7759BR/w2WtM6AANn9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jrwmYE9PXIyRql2Hcrweas9lkrHBEZoo8EoIdWYEK02d12m1URCMyyOE3vptDzRZPv2MIIvGMKeWf/1l+Sdas0nWb0MJNzqi3KVSg4KFvlzQ3iqG4hNK3oyHf+qZjr9vYG0pc/AhppN9FIdlaP50IxbmzxyCdqHPioqc9SKExfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FSkSmBKb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725981389;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mklp9pGql4hBvPJCZKxHS9qvQI+U2JzUn2xs9sIn9F8=;
-	b=FSkSmBKbczjV3Cxm2Wh9Tq4Ta8r9P2Ilcgw3Ye6pfWX9Opw7uk62hHh6vQKaJe9nW2NLNo
-	4E8C8kNQn+P15fYnYLMwKzFmtnU7isB4uoAAWLWGz/14WUU8Ewt6nSeBh70tvW2+su7/tD
-	4jAIzJMy76QHlVOKwZ7chwVFfRS3HTg=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-312--14nONgCOUmHrDMHakSVLQ-1; Tue, 10 Sep 2024 11:16:28 -0400
-X-MC-Unique: -14nONgCOUmHrDMHakSVLQ-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-374c434b952so2664668f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:16:27 -0700 (PDT)
+	s=arc-20240116; t=1725981419; c=relaxed/simple;
+	bh=0Il9gUilvXVA/dk9Es4AP9g8H1fSbRkbEK30g8KcdAw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Nm2LQqABhzt9DiYR50gFjIgg5ZFsJTxQpV+W9p+ZDePAIkl+6vyVyDtinIKC/A4G+LRkNV5PUXQzsAt6Z5f9gPUUvuyroAfKV/15qPMYSxa44TQDvbhlILmym/FMQy1x1NlcANl6f3iDynk060OI028+GXZuWUTCDFfxOOKlzzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tFbGW4jY; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374c8cef906so3856022f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:16:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725981416; x=1726586216; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=r5MBPcCy+Qj+9t27opnhlV5dPMrZLWwOE2W/OYIME0E=;
+        b=tFbGW4jYY350Wibep8IAu1ko6r1c/EHexGiNE1K8B7/bjX0T0dh4cEJeaf/SMZbGiZ
+         2CeeTDz9Cxli63utnvBaX+ya6sN+0xr76OvQVfKyYss5DhvOAfIFkvGxoVM/+114Rdvm
+         Rj9N6w8EDlhvsX8SzKA89Lxb97GV0OhKUKfr4KG3s4tidmJiroQMTiuYNIVuRJ3G3/nC
+         OcqDEmDn9FsD31ThdyTAKP5VmJmPdRLdhJ8hY9QF+K4/HeCMSINanRWT+5370MV5JVkp
+         fNACAIhK3qYiH7TM1sTJTP8Wjc0yPIiyN0FMTJx2ap3pR0vER2nDlb1+bplrsGF3J4Li
+         KA4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725981387; x=1726586187;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mklp9pGql4hBvPJCZKxHS9qvQI+U2JzUn2xs9sIn9F8=;
-        b=lV1ruY4S5rrNS+L3CXjYqeXqFa52Pr3mXchocmI28j5YNaK5I3s42dFG6yL9/gQE2D
-         6g8REiqNg03iLDpC1a3+tu0HOdjirt1VO+caTBa6td59d0C+vDug1bznAyRzHEWi4l2b
-         KAMqQepHo9yMkb9W/ZGMe3BAOt6MtJfT+c4HnpTyqPIgFYK9/OMeaOJO0cBrT6ibla4Y
-         /EHmwATGp4l1/OBVSD+obOBIdbuR8eNlW2LrdDxCUCLLO6sQ/ZUBOgn19m6Z2OYoH/J9
-         BHZvtBnq0jkG9OKfwNIbz9zRF3rOwRL+hfmAdL9QdWVwCFYxzN1vatXtSekj062UlwUt
-         1Fkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxlVt2kV+dWWp4k+9rIwEemCraEN/HBHokJ3QJa+JyLGrTf8SEKkr2rYY2/66tZkXJ/aLYteVluEFekpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvuskbpYazUs05z3o1rhT/+lN42gnWMTWxOWwAmZ/oKSw0Dq4t
-	unKx/KXdu9OnitmXp33FEX5ltYN/IslFj47WAUCeqTmjDuKLH+hJuRNPGdqq31BWS73rK12zDKe
-	e5VTLk8JrMt+Bb9Ds8XC9ePVQSgqKqWj/DnK44NHN9dfD36c031bdI1cCAWItlPfij/is/spSTQ
-	vDVY1sHCbUddfnEi9WtASI7Ouxl9bbC+6VgYOV
-X-Received: by 2002:a05:6000:25a:b0:371:9360:c4a8 with SMTP id ffacd0b85a97d-378895b7966mr7280898f8f.6.1725981386630;
-        Tue, 10 Sep 2024 08:16:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGsSzLiEhAelNJyVR1wTIGazM0zcD0n/USsPoj/yAvsiXdOzgl8RO4389o43ivD4GAxxvJLiTxbyTWw8eZg/sc=
-X-Received: by 2002:a05:6000:25a:b0:371:9360:c4a8 with SMTP id
- ffacd0b85a97d-378895b7966mr7280877f8f.6.1725981386122; Tue, 10 Sep 2024
- 08:16:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725981416; x=1726586216;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r5MBPcCy+Qj+9t27opnhlV5dPMrZLWwOE2W/OYIME0E=;
+        b=YHjSBsKLD5K+aVtHvwfoukWa+rlW7eWdyKf7UBJme7iMd07gPE7uglGgQubwekNyAc
+         apsOqNhDVLgdJur48xylS9Egd7tGnIqsUtTEjOw3A3E3AlrHPvmRAqJi7m2XAHzop/lA
+         BsKuMMwTu10rdwyCcQDA+Vu8vbJcW0mGFmbXFIe/mM77QUDHgUzOLU6z7FZ3d8EW0/rA
+         GNc6HIudeib3sdDh6PeinBPnYqb8NdOiR/3m2knra0f5rBFiJL1Y0Zq4Ma4PHrsLpGB0
+         AJ+NDtNAT78YwKm/uFmNHFmRwGr7PzVAAIJMcgVmgPamtsAhfmITiVlLo6Imo2dHdC38
+         alyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVv5uFDvw3HYkyF9F2L61mdztyRl2L0p76GY4mKL9xtS/zDnTlWMoMhy9SSuqW9tfRbaSliIWrKWbVvoiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/dYRhXkLey+Zroe/T/BczMu+4QFNkIenwbtIUKFg7PwHiSUd+
+	Fk3WrAK0rU8u06lWB0wqnungbkzKzaeK0MiC5ydqwMYjhxfY5gAN5StHrQfuNf4=
+X-Google-Smtp-Source: AGHT+IHKeSKSBm0+rpl/r1FpX1mbk5kM2fP44EaDZRom8BtEbAvMR91fjnKbqy07zPqIhDsFvWdBFg==
+X-Received: by 2002:adf:e60c:0:b0:376:27b7:da7d with SMTP id ffacd0b85a97d-378895de69emr9023296f8f.32.1725981415510;
+        Tue, 10 Sep 2024 08:16:55 -0700 (PDT)
+Received: from localhost.localdomain ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895665517sm9440844f8f.36.2024.09.10.08.16.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 08:16:55 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+To: irogers@google.com,
+	linux-perf-users@vger.kernel.org,
+	kan.liang@linux.intel.com,
+	ak@linux.intel.com,
+	namhyung@kernel.org
+Cc: James Clark <james.clark@linaro.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Ze Gao <zegao2021@gmail.com>,
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Sun Haiyong <sunhaiyong@loongson.cn>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/7] Event parsing fixes
+Date: Tue, 10 Sep 2024 16:16:18 +0100
+Message-Id: <20240910151640.907359-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-10-rick.p.edgecombe@intel.com> <6449047b-2783-46e1-b2a9-2043d192824c@redhat.com>
- <b012360b4d14c0389bcb77fc8e9e5d739c6cc93d.camel@intel.com>
- <Zt9kmVe1nkjVjoEg@google.com> <1bbe3a78-8746-4db9-a96c-9dc5f1190f16@redhat.com>
- <ZuBQYvY6Ib4ZYBgx@google.com>
-In-Reply-To: <ZuBQYvY6Ib4ZYBgx@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Tue, 10 Sep 2024 17:16:13 +0200
-Message-ID: <CABgObfayLGyWKERXkU+0gjeUg=Sp3r7GEQU=+13sUMpo36weWg@mail.gmail.com>
-Subject: Re: [PATCH 09/21] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with
- operand SEPT
-To: Sean Christopherson <seanjc@google.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	Yan Y Zhao <yan.y.zhao@intel.com>, Yuan Yao <yuan.yao@intel.com>, 
-	"nik.borisov@suse.com" <nik.borisov@suse.com>, "dmatlack@google.com" <dmatlack@google.com>, 
-	Kai Huang <kai.huang@intel.com>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 10, 2024 at 3:58=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
-> On Tue, Sep 10, 2024, Paolo Bonzini wrote:
-> No, because that defeates the purpose of having mmu_lock be a rwlock.
+I rebased this one and made some other fixes so that I could test it,
+so I thought I'd repost it here in case it's helpful. I also added a
+new test.
 
-But if this part of the TDX module is wrapped in a single big
-try_lock, there's no difference in spinning around busy seamcalls, or
-doing spin_lock(&kvm->arch.seamcall_lock). All of them hit contention
-in the same way.  With respect to FROZEN_SPTE...
+But for the testing it all looks ok.
 
-> > This way we know that "busy" errors must come from the guest and have s=
-et
-> > HOST_PRIORITY.
->
-> We should be able to achieve that without a VM-wide spinlock.  My thought=
- (from
-> v11?) was to effectively use the FROZEN_SPTE bit as a per-SPTE spinlock, =
-i.e. keep
-> it set until the SEAMCALL completes.
+There is one small difference where it now hides _all_ default
+<not supported> events, when previously it would only hide some
+selected subset of events like "stalled-cycles-frontend". I think
+this is now more consistent across platforms because, for example,
+Apple M only has cycles and instructions, and the rest of the
+default events would always show as <not supported> there.
 
-Only if the TDX module returns BUSY per-SPTE (as suggested by 18.1.3,
-which documents that the TDX module returns TDX_OPERAND_BUSY on a
-CMPXCHG failure). If it returns BUSY per-VM, FROZEN_SPTE is not enough
-to prevent contention in the TDX module.
+Tested on Raptor Lake, Kaby Lake, Juno, N1, Ampere (with the DSU
+cycles PMU) and I also faked an Apple M on Juno. 
 
-If we want to be a bit more optimistic, let's do something more
-sophisticated, like only take the lock after the first busy reply. But
-the spinlock is the easiest way to completely remove host-induced
-TDX_OPERAND_BUSY, and only have to deal with guest-induced ones.
+Changes since v6:
+  * Fix empty PMU name in perf report
+  * Rebase onto perf-tools-next 003265bb6f02
 
-> > It is still kinda bad that guests can force the VMM to loop, but the VM=
-M can
-> > always say enough is enough.  In other words, let's assume that a limit=
- of
-> > 16 is probably appropriate but we can also increase the limit and crash=
- the
-> > VM if things become ridiculous.
->
-> 2 :-)
->
-> One try that guarantees no other host task is accessing the S-EPT entry, =
-and a
-> second try after blasting IPI to kick vCPUs to ensure no guest-side task =
-has
-> locked the S-EPT entry.
+Changes since v5:
+  * Test on x86 non hybrid
+  * Assume 1 PMU in the test when no PMUs expose /cpus file
 
-Fair enough. Though in principle it is possible to race and have the
-vCPU re-run and re-issue a TDG call before KVM re-issues the TDH call.
-So I would make it 5 or so just to be safe.
+Changes since v4:
 
-> My concern with an arbitrary retry loop is that we'll essentially propaga=
-te the
-> TDX module issues to the broader kernel.  Each of those SEAMCALLs is sloo=
-ow, so
-> retrying even ~20 times could exceed the system's tolerances for scheduli=
-ng, RCU,
-> etc...
+  * Hide all <not supported> default events when not verbose
+  * Remove previous note about <not supported> behavior from the cover
+    letter and replace it with a new note about the new behavior
+ 
+Changes since v3:
 
-How slow are the failed ones? The number of retries is essentially the
-cost of successful seamcall / cost of busy seamcall.
+  * Rebase onto perf-tools-next 6236ebe07
+  * Fix Intel TPEBS counting mode test
+  * Fix arm-spe build
+  * Add support for DT devices in stat test
+  * Add a new test for hybrid perf stat default arguments
 
-If HOST_PRIORITY works, even a not-small-but-not-huge number of
-retries would be better than the IPIs. IPIs are not cheap either.
+Ian Rogers (5):
+  perf evsel: Add alternate_hw_config and use in evsel__match
+  perf stat: Uniquify event name improvements
+  perf stat: Remove evlist__add_default_attrs use strings
+  perf evsel x86: Make evsel__has_perf_metrics work for legacy events
+  perf evsel: Remove pmu_name
 
-> > For zero step detection, my reading is that it's TDH.VP.ENTER that fail=
-s;
-> > not any of the MEM seamcalls.  For that one to be resolved, it should b=
-e
-> > enough to do take and release the mmu_lock back to back, which ensures =
-that
-> > all pending critical sections have completed (that is,
-> > "write_lock(&kvm->mmu_lock); write_unlock(&kvm->mmu_lock);").  And then
-> > loop.  Adding a vCPU stat for that one is a good idea, too.
->
-> As above and in my discussion with Rick, I would prefer to kick vCPUs to =
-force
-> forward progress, especially for the zero-step case.  If KVM gets to the =
-point
-> where it has retried TDH.VP.ENTER on the same fault so many times that ze=
-ro-step
-> kicks in, then it's time to kick and wait, not keep retrying blindly.
+James Clark (2):
+  perf test: Make stat test work on DT devices
+  perf test: Add a test for default perf stat command
 
-Wait, zero-step detection should _not_ affect TDH.MEM latency. Only
-TDH.VP.ENTER is delayed. If it is delayed to the point of failing, we
-can do write_lock/write_unlock() in the vCPU entry path.
+ tools/perf/arch/arm64/util/arm-spe.c          |   4 +-
+ tools/perf/arch/x86/util/evlist.c             |  74 +----
+ tools/perf/arch/x86/util/evsel.c              |  35 ++-
+ tools/perf/builtin-diff.c                     |   6 +-
+ tools/perf/builtin-stat.c                     | 291 +++++++-----------
+ tools/perf/tests/parse-events.c               |   2 +-
+ tools/perf/tests/shell/stat.sh                |  37 ++-
+ .../perf/tests/shell/test_stat_intel_tpebs.sh |  11 +-
+ tools/perf/util/evlist.c                      |  46 +--
+ tools/perf/util/evlist.h                      |  12 -
+ tools/perf/util/evsel.c                       |  28 +-
+ tools/perf/util/evsel.h                       |  22 +-
+ tools/perf/util/metricgroup.c                 |   4 +-
+ tools/perf/util/parse-events.c                |  57 ++--
+ tools/perf/util/parse-events.h                |   8 +-
+ tools/perf/util/parse-events.y                |   2 +-
+ tools/perf/util/pmu.c                         |   6 +-
+ tools/perf/util/pmu.h                         |   2 +-
+ tools/perf/util/stat-display.c                | 109 +++++--
+ tools/perf/util/stat-shadow.c                 |  14 +-
+ tools/perf/util/stat.c                        |   2 +-
+ 21 files changed, 359 insertions(+), 413 deletions(-)
 
-My issue is that, even if we could make it a bit better by looking at
-the TDX module source code, we don't have enough information to make a
-good choice.  For now we should start with something _easy_, even if
-it may not be the greatest.
-
-Paolo
+-- 
+2.34.1
 
 
