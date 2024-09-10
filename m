@@ -1,75 +1,80 @@
-Return-Path: <linux-kernel+bounces-323422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 128C9973D20
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:23:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390D5973D21
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE9742877DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:23:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBB5928779D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978C51A256A;
-	Tue, 10 Sep 2024 16:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F089F1A0AFB;
+	Tue, 10 Sep 2024 16:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hesH5Srn"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IB3g/WQm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EA31A0B07;
-	Tue, 10 Sep 2024 16:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D428B1A08C4
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725985364; cv=none; b=N+IngZzjGBdn+6oj0mOP7ZwV20b1WEZ0iL91jxFtA3kcE4eNJqhNm0WxFMU2xA9fjH6jZryNfhJ4sAs0TU6qT7Htj8pqYIT6IMaPssc5OXI/WD1EwYm0S0MUQ2jIb5hHQM7nN6RuOQElsc5V8TCOg88gNwqEznmPYLb6lQsiR8s=
+	t=1725985380; cv=none; b=rtgf8ZgXB5oK3lILGbFqJtIn+hHaHuyag0G6w0oZbHj3bml2AX5fdcgGr0pNKhHtthbjgZGle7zUaDUoq1tszRfuw+X/8aV7tq0ibD+ynCorfoxuRS1xH3Kg1MbgKmq/0mQhhuQYTCVP+86xSVrvhijDEcVKegahjr7xUyWu4mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725985364; c=relaxed/simple;
-	bh=Cu0tHFi2z1xFrlj3fMLlfd/9LD0kAEWE0FfE41xTXO8=;
+	s=arc-20240116; t=1725985380; c=relaxed/simple;
+	bh=VyhzGV1sQaHyOjQ2G9n2qIE79UdyyC4r/EAK5SpwpRM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=doJ3W1Z0+qkHqR6fo4w/3+5y3vDGLlB3KZhhvImcc1CtJvEm1TYbMGFEWHYYaFsNjlr6UXLcA9E2BHWtGf53uis/mDeaFVK994ox99moBvQ6Fu+k1beoDKZmKB9o8I0xTPB2P0xv+O7fsrD4cX/+l3JuQ8oGbVg9DcLGsji/Nxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hesH5Srn; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-205909afad3so11694815ad.2;
-        Tue, 10 Sep 2024 09:22:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725985362; x=1726590162; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=55ZQ0zMk8pubb4P7cpXj0dotZqmGCpuGi3knOaeuJhY=;
-        b=hesH5SrnqeSnCbmApHODdpv9BeyWSpxVoAmbcPx/Yi9b4XQ7nqhTaQPuYYCF6Vni6/
-         lvnq97qsm1VlAWkZoJDQjdUtnjjPuZy+8JGC6MrN3OjmU6fIXsnfH3xyA3anzusP0iev
-         r8vczFqFVd7UoiFEsXARmAPi6PMa4ErJ5XL6KoAf8xUWstDl0n5/0AIzHXrkOyO0ftoK
-         dydOB9Yu38yK+keNhiAh9lJnU76D8mbIQ68YjyxbwUpl2jnXtTVDSiiYz74bV3+i8r6s
-         ysIprCD1dgncZgiECucp6QXBSE0SYbDK6vDEkENmDlomyM/tqFFsanahwTCquQcY5DhW
-         oBHA==
+	 In-Reply-To:Content-Type; b=sqnngqNtGgBBaf6bve2w1H6goV+dUB0KBjlMATcrQXSvuW3WK46oGWMNEgz9ctz8B9pCEMmunb8RD7cSiQQoSF1dnFB+b1TTBOJv7H7yhbpILwYC7WlAR7ZKhpjYCDeNz+5jX8EL6E509Ar6TixA4YUUbhvWma4E96dzAgmOl6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IB3g/WQm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725985377;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VyhzGV1sQaHyOjQ2G9n2qIE79UdyyC4r/EAK5SpwpRM=;
+	b=IB3g/WQme2+s4E80sbBinf7hzZK+Q2sbS3Dan29tjdswRIA4RyV7xJaJ46K6bYKDv7T6cc
+	iz4uXcZ74v8smRSjABPQT06sB2TmWV13BYGUQsHDkzsg13qc18DmTe9mmzewvF3yZF1o/e
+	KCZVdCkzyBMhLhEQ4DuiNwNBA3xVzgs=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-572-YQS_JVY4Nu2_P6oTF_z7vA-1; Tue, 10 Sep 2024 12:22:56 -0400
+X-MC-Unique: YQS_JVY4Nu2_P6oTF_z7vA-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a8d13a9cc2cso256592866b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:22:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725985362; x=1726590162;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=55ZQ0zMk8pubb4P7cpXj0dotZqmGCpuGi3knOaeuJhY=;
-        b=tG40r/uDBoiMVSwXmutx2pObiYoz3lY/nSYH4gC7Qt7ITVNwfrRxv41W3nra2cb33I
-         vcKI3baAqJjHyP7awtC7BihKCdGe5RtSy6lhdkPCACBE3BSdqCy3ubNn5lhxBCiMe/8p
-         7fVx6I7ta5bp/1jWfHnEH0WwUMRv5UxdsG4emjj6epFTBXNtil7JQoJiKpINqgiuuj5+
-         gaQ6PumHj2+zgGFGrD/fEnaEx6f6JaZkvtI1NBD2zsozEpDnwZNMs+sVzAoBHAjzDuVP
-         uFjHDa0oZZoWlem6ukJY851sA3yn4paP6rRVC+Avpj7/Czw26cAiEtrKo19HWrXv8mF+
-         2Tew==
-X-Forwarded-Encrypted: i=1; AJvYcCUowQsU4tsDH08v0KUn/UFfw+chZ+01Qo6nKAZydLK7KV6d1S2SaYiSfoNyzK7fTlj4xIlgeeQefp2v@vger.kernel.org, AJvYcCVWn67AdqiH0912cXDbEUx+FKQij89q/cWM7jIdHZo/kzmuefNs9Lj9tNqLXGWOuZwZ5UG/r6sGlrJJ@vger.kernel.org, AJvYcCVaaoSRNxzx/TRgfI+dnvQ2qZXNEbADqsS42FRARNvXwrIDOcq2VYM+ZzB+mkrqwP/5i1KtR3ycJ/+sJZXR@vger.kernel.org, AJvYcCW9VYnge4KXY7nDxGkJH22zBL5iGYsJpCQTzkck/fDgyNuzpIgrGTkkvXgF2+K37u65/o9QSV4iWWHF6qg=@vger.kernel.org, AJvYcCWuBcye8SNMf01V3sXI0aofkaTXmF2jacNh+KJj0+6v5BsRJb5nenBR8nP9lsJOFaHZHJkhKJ8u7S3y@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhD+lRu9c4Dniw1SKX9rscEnhV98zx1lGNU+l0ahvnH260Jx9K
-	QWGHvCUrAyDqNRw4NnIxCqLrayYI2QDPIkcnX/B/zNJSwKl75fFB
-X-Google-Smtp-Source: AGHT+IH1Ib7JxgEc1eSGZtFyWf2tTYGgcf74Lsyr61lZXegk54IuRLnhDyMaRxbklMZRhejOXvkwBQ==
-X-Received: by 2002:a17:902:dac9:b0:205:968b:31ab with SMTP id d9443c01a7336-207521f92famr1523725ad.58.1725985361875;
-        Tue, 10 Sep 2024 09:22:41 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f20c4esm50616715ad.237.2024.09.10.09.22.39
+        d=1e100.net; s=20230601; t=1725985375; x=1726590175;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VyhzGV1sQaHyOjQ2G9n2qIE79UdyyC4r/EAK5SpwpRM=;
+        b=HT5Dl1fQ8cC/UltirfqPezm4gi/qBHhtt4Rcvwm4jNinS4GtSTjk7jx5UGOMxOpsy5
+         BqYHsDCeV9dJcUCOAl3qP73TCUd79ACsTN9q3JvvQtVsQT2tL9LCbMI6fgdq9jNZmamk
+         Otvm5DPi0Uw03zrby+Q/QyZ6m75spUEcK8KnCP82YC+uFaO4qEf3PI3u59lVLvbABbfq
+         1vnDGz0lDj0UMOH5MgfAsAD5FT4TbI99PQ/LaiAoz2Hu2zmyIufKitjfg5vbSu16f/7q
+         hUajA1nSJnj5PX1HbaQeZp0bYSBDqho8XZmYVsXd3eeGxXy84dklfUU2Ce/t8YxR6zFI
+         xTbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSsTo9UL03/O/ycjjFjy4d0PrFsD8HNnvFDYrhjJXQYyDVxD5ikqu8Xi6Qg7WdllX+NB8rNt1Z6CIWlyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiujrpdbNI+vj44Ppgk5QTmD6UwHm/cY98nzC9WNibXq36bqMp
+	rrMP+sR4mR7flZXp72TIvcFK+CLb0+6M6b7fEd+tsXRcImNgBbouADPNHtKxgbMdfV8BiJRBkTZ
+	RU4mYtCviaUFPCwZba+izwSZIoE+rov+OGvCLrrKCP3xnhRQHCjJKk5Qxoc30vSLoDsJZGCoj
+X-Received: by 2002:a17:906:c149:b0:a8a:6e20:761e with SMTP id a640c23a62f3a-a8ffad9da07mr112601866b.48.1725985375268;
+        Tue, 10 Sep 2024 09:22:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHh9V1jXDlEA0qwiOHbYbfwl85y4fon/92AWyHTy1jPDAqssMBmnygb8vMNloILF3asBRWpFw==
+X-Received: by 2002:a17:906:c149:b0:a8a:6e20:761e with SMTP id a640c23a62f3a-a8ffad9da07mr112599566b.48.1725985374729;
+        Tue, 10 Sep 2024 09:22:54 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a8d25951020sm500923266b.66.2024.09.10.09.22.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 09:22:40 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <fb35a523-4f8c-4fee-a17a-d2b332fc2f77@roeck-us.net>
-Date: Tue, 10 Sep 2024 09:22:38 -0700
+        Tue, 10 Sep 2024 09:22:54 -0700 (PDT)
+Message-ID: <80a3a5a1-59cb-4ca9-8107-b7552fa35b6b@redhat.com>
+Date: Tue, 10 Sep 2024 18:22:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,204 +82,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] hwmon: (pmbus/core) add POWER_GOOD signal limits
- support
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>, linux-hwmon@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20240909-tps25990-v1-0-39b37e43e795@baylibre.com>
- <20240909-tps25990-v1-2-39b37e43e795@baylibre.com>
- <d76290e0-f5e7-4192-92b8-94f260270fe3@roeck-us.net>
- <1j8qw0t3ej.fsf@starbuckisacylon.baylibre.com>
- <08b6d9af-51b7-4eda-a4f6-62b688665fd9@roeck-us.net>
- <1jr09rsgda.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH 03/25] KVM: TDX: Add TDX "architectural" error codes
+To: Tony Lindgren <tony.lindgren@linux.intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ kvm@vger.kernel.org, kai.huang@intel.com, isaku.yamahata@gmail.com,
+ xiaoyao.li@intel.com, linux-kernel@vger.kernel.org,
+ Sean Christopherson <sean.j.christopherson@intel.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>, Yuan Yao <yuan.yao@intel.com>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-4-rick.p.edgecombe@intel.com>
+ <45cecaa1-d118-4465-98ae-8f63eb166c84@linux.intel.com>
+ <ZtAGCSslkH3XhM7a@tlindgre-MOBL1> <ZtFeO3hq6dpnXvmf@tlindgre-MOBL1>
+From: Paolo Bonzini <pbonzini@redhat.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <1jr09rsgda.fsf@starbuckisacylon.baylibre.com>
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <ZtFeO3hq6dpnXvmf@tlindgre-MOBL1>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 9/10/24 08:00, Jerome Brunet wrote:
-> On Tue 10 Sep 2024 at 07:37, Guenter Roeck <linux@roeck-us.net> wrote:
-> 
->> On 9/9/24 23:43, Jerome Brunet wrote:
->>> On Mon 09 Sep 2024 at 11:16, Guenter Roeck <linux@roeck-us.net> wrote:
->>>
->>>> On 9/9/24 08:39, Jerome Brunet wrote:
->>>>> Add support for POWER_GOOD_ON and POWER_GOOD_OFF standard PMBus commands.
->>>>> For PMBus devices that offer a POWER_GOOD signal, these commands are used
->>>>> for setting the output voltage at which a power good signal should be
->>>>> asserted and negated.
->>>>> Power Good signals are device and manufacturer specific. Many factors
->>>>> other
->>>>> than output voltage may be used to determine whether or not the POWER_GOOD
->>>>> signal is to be asserted. PMBus device users are instructed to consult the
->>>>> device manufacturer’s product literature for the specifics of the device
->>>>> they are using.
->>>>> Note that depending on the choice of the device manufacturer that a
->>>>> device
->>>>> may drive a POWER_GOOD signal high or low to indicate that the signal is
->>>>> asserted.
->>>>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->>>>> ---
->>>>>     drivers/hwmon/pmbus/pmbus.h      | 3 +++
->>>>>     drivers/hwmon/pmbus/pmbus_core.c | 6 ++++++
->>>>>     2 files changed, 9 insertions(+)
->>>>> diff --git a/drivers/hwmon/pmbus/pmbus.h b/drivers/hwmon/pmbus/pmbus.h
->>>>> index 5d5dc774187b..e322d2dd9fb7 100644
->>>>> --- a/drivers/hwmon/pmbus/pmbus.h
->>>>> +++ b/drivers/hwmon/pmbus/pmbus.h
->>>>> @@ -78,6 +78,9 @@ enum pmbus_regs {
->>>>>     	PMBUS_IIN_OC_FAULT_LIMIT	= 0x5B,
->>>>>     	PMBUS_IIN_OC_WARN_LIMIT		= 0x5D,
->>>>>     +	PMBUS_POWER_GOOD_ON		= 0x5E,
->>>>> +	PMBUS_POWER_GOOD_OFF		= 0x5F,
->>>>> +
->>>>>     	PMBUS_POUT_OP_FAULT_LIMIT	= 0x68,
->>>>>     	PMBUS_POUT_OP_WARN_LIMIT	= 0x6A,
->>>>>     	PMBUS_PIN_OP_WARN_LIMIT		= 0x6B,
->>>>> diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
->>>>> index 0ea6fe7eb17c..94ddf0166770 100644
->>>>> --- a/drivers/hwmon/pmbus/pmbus_core.c
->>>>> +++ b/drivers/hwmon/pmbus/pmbus_core.c
->>>>> @@ -1768,6 +1768,12 @@ static const struct pmbus_limit_attr vout_limit_attrs[] = {
->>>>>     		.attr = "crit",
->>>>>     		.alarm = "crit_alarm",
->>>>>     		.sbit = PB_VOLTAGE_OV_FAULT,
->>>>> +	}, {
->>>>> +		.reg = PMBUS_POWER_GOOD_ON,
->>>>> +		.attr = "good_on",
->>>>> +	}, {
->>>>> +		.reg = PMBUS_POWER_GOOD_OFF,
->>>>> +		.attr = "good_off",
->>>>>     	}, {
->>>>>     		.reg = PMBUS_VIRT_READ_VOUT_AVG,
->>>>>     		.update = true,
->>>>>
->>>>
->>>> Those attributes are not hardware monitoring attributes and therefore not
->>>> acceptable. In general I am not sure if they should be configurable in the
->>>> first place, but definitely not from the hardware monitoring subsystem.
->>>> Maybe the regulator subsystem callbacks set_over_voltage_protection and
->>>> set_under_voltage_protection would be appropriate (with severity
->>>> REGULATOR_SEVERITY_PROT), but that should be discussed with regulator
->>>> subsystem maintainers.
->>> According to PMBUS spec, there is no protection associated with that
->>> command. It just tells when the output voltage is considered good, when
->>> it is not. What it does after that really depends the device, it may
->>> drive a pin for example (or an LED indicator in my case).
->>>
->>
->> It is much more likely that it connects to the reset signal on the board,
->> or it enables/disables power to parts of the board.
-> 
-> That's not what PMBus spec says about it:
-> 
-> """
-> 15.32. POWER_GOOD Signal Limits
-> For PMBus devices that offer a POWER_GOOD signal, these commands are used for
-> setting the output voltage at which a power good signal should be asserted and negated.
-> Power Good signals will be device and manufacturer specific. Many factors other than
-> output voltage may be used to determine whether or not the POWER_GOOD signal is to
-> be asserted. PMBus device users are instructed to consult the device manufacturer’s
-> product literature for the specifics of the device they are using.
-> """
-> 
-> It's only supposed to have an effect on the power_good signal, not the
-> reset. I guess someone could wire that signal to a reset. Same could be
-> done with the alert or the fault one, I suppose
-> 
+On 8/30/24 07:52, Tony Lindgren wrote:
+>>> +#define TDVMCALL_STATUS_SUCCESS 0x0000000000000000ULL
+>>> -#define TDVMCALL_STATUS_RETRY                  1
+>>> +#define TDVMCALL_STATUS_RETRY 0x0000000000000001ULL
+>>> +#define TDVMCALL_STATUS_INVALID_OPERAND 0x8000000000000000ULL
+>> Makes sense as they are the hardware status codes.
+> I'll do a patch against the CoCo queue for the TDVMCALL_STATUS prefix FYI.
 
-It doesn't say anything about the _use_ of that signal. The PMBus specification
-says "Power Good signals will be device and manufacturer specific", and that
-is exactly what it is. TPS25990 specifically states that the signal indicates
-that it is ok for downstream chips to draw power, which is a very typical use.
-The ability to connect it it to an LED does not reflect its core use.
+Just squash it in the next version of this series.
 
->>
->>> It is very similar to 'crit' or other limits in that sense,
->>> I think. I don't really get why such property is not OK in hwmon then
->>> and why it should not be configurable, if the other limits are ?
->>>
->>
->> Its use is for hardware control, not monitoring, even if it may be connected
->> to a status LED. MAX15301, for example, groups the command under "Voltage
->> Sequencing Commands".
->>
->> On top of that, the voltages are value/hysteresis values. The "off" voltage
->> is lower than the "on" voltage.
->>
->> TPS25990 doesn't even support the command according to its datasheet, so I am
->> at loss about your use case in the context of this patch series (the PGOOD pin
->> on this chip signals to the downstream load that it is ok to draw
->> power).
-> 
-> It does support GOOD_OFF, althought TI renamed the register to
-> VOUT_PGTH (Section 8.3.14.7.1.52, p87):
-> 
-> """
-> VOUT_PGTH is a standard PMBus® command for setting or reading an 8-bit
-> output voltage threshold at which Power Good (PGOOD) is be de-asserted.
-> """
-> 
-Ah yes, typical for PMBus chips :-(. Why use standard register/command names
-if one can rename them. It actually also states that pgood is asserted first
-when the voltage reaches VOUT_PGTH + 250mV, so even with this chip it is
-really a hysteresis.
-
-> Same as the PMBus spec. Changing the value through this command does
-> affect the signal as intented. How the signal is depends on the
-> implementation. It just drives an LED on the EVM.
-> 
-Yes, but that doesn't make it a hardware _monitoring_ attribute.
-
-Guenter
+Paolo
 
 
