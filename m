@@ -1,152 +1,189 @@
-Return-Path: <linux-kernel+bounces-323859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30A6974457
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:53:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10B5D97445C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 823E2282328
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:53:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F7171F21061
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8951A7AF5;
-	Tue, 10 Sep 2024 20:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B591AAE13;
+	Tue, 10 Sep 2024 20:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eMSnZ3u8"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a8oRt6JA"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5844193431;
-	Tue, 10 Sep 2024 20:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345F91A7076;
+	Tue, 10 Sep 2024 20:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726001585; cv=none; b=FEkvO2YnaYtp/H7SqHoavQdDi6nVrsBonmZ4dxfnBxS6HVwtu0ClbewnAa4lACCugG4IS6y3qgbC3hHbtEt/p3kLZXzjBS0FxciMCzH9XlcXJ57O75q/Q2RADothI39jqn1JWJwejzvVWZ+aMfC6zERFDsO47fVFaDvH8G1KkZE=
+	t=1726001656; cv=none; b=Whk7RqMJjukO1NGPcTYUSIq9o8um92g9IVKCNYPxuR6mu47jmRLt4dzGVuVx14DtF5YCoNW2iEpbDcM/MQw7B9KSD1B2XhxsiLBXQLZNdnjfiSvCTTo/hHanjc3xThFbMOitkQfQEPmIiNWQgfJ/JTR05Hd9Ksb0+qV0hij/uW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726001585; c=relaxed/simple;
-	bh=Gz0J2oKcrrOwbVnDnRRRKTuHcT7stnucE8MkZZFUI/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VP6XOPsROdK5TpX2piGqrYBtpS/GtTu3grS279AJtrUdLsbqhoHb69oialz5MfSkOk3a5FkQwgJbst9iPiqqjgfTBiiI0IC6I8p6elWa1EIhqN4tVRmpVqQzvCDa22FXTI3hzGEWlN1gwgG9nmgu09SEXFL4k5LgQ6I9ptQatEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eMSnZ3u8; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1726001656; c=relaxed/simple;
+	bh=FoE0BbGu9jYnpxKVV1kYsj9vzLeA9lwXBxv/oR3XHmY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XSDAGDFglI77UPwTOyeYLhOpYkWWdwAl1EmYk6FoPPhWvUtsJw7HyT9QffxOZJhzmJ1AgSA8dbKBLVKj0VVS+TVal/Zd3IXgGIBJJWa8eVcgz1pfJN2QjiCApYt9LnhG/a+/QaypHiOM0ls/WF2WyoG7GQ1hHYUo5Lry9HzkiIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a8oRt6JA; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20570b42f24so13768925ad.1;
-        Tue, 10 Sep 2024 13:53:02 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d87196ec9fso3865519a91.1;
+        Tue, 10 Sep 2024 13:54:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726001582; x=1726606382; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=oFZE8B84NCG8R2Rb97veAUAx7ztKu2xJVnUB1RyE8Uw=;
-        b=eMSnZ3u8TnF7RShE2+860lwIkMXTWwzzKoSxvfcmTibxfasnQGbz44NhLKNlFxIsTK
-         rwNFjbrRNRrRPChcIGNWmc+BgHgbviwEnG+PxZxurg01jG3SJGeRExm7Cykx7SgD0ClL
-         CNR8Wcw/wwODraPrGbCIs3xI+wiwQPuQ41aS97hxT729Gcdnh/oJg/52K5wOecvvXrF2
-         K2WxBuc9BlpShGD/PcdQT7i1RaowLUy/U7kTdXquGGWbENBS5aIdUE+FFKMV0a9+uDWx
-         A48C3j9P0ipYSYpLN972VxuJYRvBf/aQfsy0mAQiMgr9YerYhREu7wujqAMLSYDp7fHk
-         V6eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726001582; x=1726606382;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1726001654; x=1726606454; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oFZE8B84NCG8R2Rb97veAUAx7ztKu2xJVnUB1RyE8Uw=;
-        b=kXwv0r3zKqByStP4bzKcxHta/a1tLxFvVRMbk7So9RrnaEEQQfBObNvr9JgQhUliNx
-         Tdud2/i+EOCw60lyuP97yyvzt1lQrYc9r3RQZSbKoxrkryPHY2OfkI1Dc0wME9D5aQTw
-         MO6N3aiEJPQknHVq1caSwuVgU5QW8oEYU3+5LHPGQil4hGQwfI0Wstzp7WxnWeBcat/L
-         Uwsqrk2O1camyTY5AI6SQy3qvlM7K04ylAs716LjOG1IdfcDjrfqYOSZ9fxmYc0KGo2c
-         hXP1/JE2OoLanjVYhoQ959sNtwDcsrR3WXDTQMUWm8ont/xfi+160s4/mpE5292YB1Iz
-         Ccpw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnfSplNqRn02qIuQLZIe6oOEFOPKMCZNJW9x5OqqvIkCS+IxHINKmPvGKJScuhNrQLp8i7X0ptPD7e0XQ=@vger.kernel.org, AJvYcCV4Kt1wjh8i2o6viXZtx+ZBsxHfYIJXWM/WPhbLd7U2yqDVrKs7T05IMUV5Ql8w6AONz+1bis9S@vger.kernel.org
-X-Gm-Message-State: AOJu0YyySQoNF8RobI4SJmFmN2Fd4drSEyfwsjSKYI9c3Bimy5O7BpZv
-	TyHzOsHPeAhM51xc6L4h6FHl0uPeU17kidrLoJrySpp5IWsRxu0R
-X-Google-Smtp-Source: AGHT+IGyrN9PM6BeKO8wh3Apenn/yEwLZ+nhdmAil/QDu66nodh8C2vHB03pnw46TCOONTWuh7+ggw==
-X-Received: by 2002:a17:903:18f:b0:205:2d09:9a30 with SMTP id d9443c01a7336-207521aa9cdmr9397015ad.13.1726001581941;
-        Tue, 10 Sep 2024 13:53:01 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710eeaa8fsm52531515ad.142.2024.09.10.13.52.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 13:53:01 -0700 (PDT)
-Message-ID: <d1f014f1-5148-4dc5-97f5-02a94c08f690@gmail.com>
-Date: Tue, 10 Sep 2024 13:52:49 -0700
+        bh=CR6TleHbOsdTsdP/ABsy/+JWZtjaatWU+1TzUIHX4ro=;
+        b=a8oRt6JA06bt2In2+NNIVz9ugZsP6eyUeiAu8jAZgrf1GQSCCt1b2Id8IsSASW4HLd
+         ozo+BFRW6tgFsIIp5kHvUGAuzVCmTojc6FMRhzed79pHcqAwPdEzfZ2U+oW1+z7Nv2KR
+         mKshg5mcr3Ry3s4W49aLvKEqb3REmter34TSV5gnxUtXq9dOYXxsXN83M1aHl4Hl6vJq
+         lhkGPkvcJRinD6Zz5UddYBYobYWg3Kethm3VDxzR/1QGsv5PaHCP4gy8frQkVwe0XrC7
+         KGDIW9Mfzo5maiK8QF/HB/aB6fTnfAn+krxKpQNcz5pd92+E/RaCM9VnImMS2ymozgyf
+         oTSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726001654; x=1726606454;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CR6TleHbOsdTsdP/ABsy/+JWZtjaatWU+1TzUIHX4ro=;
+        b=DO+pgreb5HGYWTCUFlZzeCz69oVTfyFT5OJ6nCS/ETRLpopmtLyPDUz1IpUOLcSGqu
+         CuwRgnLuhF59TfQeTr9Ty4qlH3NWS9w/1DAhniLQl++3TvBd0UvyJFYQwy0jfdxMR0bL
+         mqQ+AAkuSZMnXpgwE6fDIHkB5+8NWqzXVjzOQUrncM9xkjsKNgVxoMjIXVDFynKI7jRC
+         UTo0jTxSdoyWwS7CKSW0i2PNq9TPnrQ3W8H52lnfqCy8ylLFMDT4J/5xZYEhlDv1mydN
+         wOwpQ5VoeMdXnK3T/RYklYKPd9mcYSzl3UTZyjRR1VIzODJQb68ycBMxUf9jvj8M4Igr
+         4iJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnfloYK4+e6QfpFu74rWZVHcm5D7/Ba4KlSwmmRkjPXJg9fIapkS4QfBojxRpc962pML0=@vger.kernel.org, AJvYcCUrGL37hjENeMTQZtMka2vZM+kYI0Mtdpo2jI/Bv75YQkVe7Isra5IiifYC+1xrzMN10lV+MUG70yvwTol3@vger.kernel.org, AJvYcCXiKqIUwN82B148+CDUnzODaY1W1GbLds1ZqynxniEXiEY2IsHE0wrhXXtPJ7xgTG6O4v8L5XRH8903XgLTwhiitBua@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx44rnM0B8vZWbCeka/7tAc1YJ9m/oPprwbC9Je8C0tiC/ZG8Q8
+	SeHiwG9hVX29tZiUjHYud+NyRan6NWqcB71nKT/+C+R8P8PJHu0fC6NN0KhWwMEh7ai4E8cZ0UE
+	kTzJwyMjaJNpR4nj26khMx1u8I84=
+X-Google-Smtp-Source: AGHT+IHekojY/Q8DdJSguWn/mqLAZjMjbi8qqdv/HgY6+tPFr7cVSIoGgLTZraZmameLouJc1Aw+jO7IXlbRLvu0gxo=
+X-Received: by 2002:a17:90a:db93:b0:2d8:8ce3:1e9d with SMTP id
+ 98e67ed59e1d1-2dad4de4cbdmr13592925a91.3.1726001654477; Tue, 10 Sep 2024
+ 13:54:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 000/375] 6.10.10-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240910092622.245959861@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240910092622.245959861@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240910060407.1427716-1-liaochang1@huawei.com>
+In-Reply-To: <20240910060407.1427716-1-liaochang1@huawei.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 10 Sep 2024 13:54:00 -0700
+Message-ID: <CAEf4BzZ3trjMWjvWX4Zy1GzW5RN1ihXZSnLZax7V-mCzAUg2cg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: uprobes: Simulate STP for pushing fp/lr into user stack
+To: Liao Chang <liaochang1@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, mhiramat@kernel.org, 
+	oleg@redhat.com, peterz@infradead.org, ast@kernel.org, puranjay@kernel.org, 
+	andrii@kernel.org, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/10/24 02:26, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.10 release.
-> There are 375 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.10-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Mon, Sep 9, 2024 at 11:14=E2=80=AFPM Liao Chang <liaochang1@huawei.com> =
+wrote:
+>
+> This patch is the second part of a series to improve the selftest bench
+> of uprobe/uretprobe [0]. The lack of simulating 'stp fp, lr, [sp, #imm]'
+> significantly impact uprobe/uretprobe performance at function entry in
+> most user cases. Profiling results below reveals the STP that executes
+> in the xol slot and trap back to kernel, reduce redis RPS and increase
+> the time of string grep obviously.
+>
+> On Kunpeng916 (Hi1616), 4 NUMA nodes, 64 Arm64 cores@2.4GHz.
+>
+> Redis GET (higher is better)
+> ----------------------------
+> No uprobe: 49149.71 RPS
+> Single-stepped STP: 46750.82 RPS
+> Emulated STP: 48981.19 RPS
+>
+> Redis SET (larger is better)
+> ----------------------------
+> No uprobe: 49761.14 RPS
+> Single-stepped STP: 45255.01 RPS
+> Emulated stp: 48619.21 RPS
+>
+> Grep (lower is better)
+> ----------------------
+> No uprobe: 2.165s
+> Single-stepped STP: 15.314s
+> Emualted STP: 2.216s
+>
+> Additionally, a profiling of the entry instruction for all leaf and
+> non-leaf function, the ratio of 'stp fp, lr, [sp, #imm]' is larger than
+> 50%. So simulting the STP on the function entry is a more viable option
+> for uprobe.
+>
+> In the first version [1], it used a uaccess routine to simulate the STP
+> that push fp/lr into stack, which use double STTR instructions for
+> memory store. But as Mark pointed out, this approach can't simulate the
+> correct single-atomicity and ordering properties of STP, especiallly
+> when it interacts with MTE, POE, etc. So this patch uses a more complex
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Does all those effects matter if the thread is stopped after
+breakpoint? This is pushing to stack, right? Other threads are not
+supposed to access that memory anyways (not the well-defined ones, at
+least, I suppose). Do we really need all these complications for
+uprobes? We use a similar approach in x86-64, see emulate_push_stack()
+in arch/x86/kernel/uprobes.c and it works great in practice (and has
+been for years by now). Would be nice to keep things simple knowing
+that this is specifically for this rather well-defined and restricted
+uprobe/uretprobe use case.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Sorry, I can't help reviewing this, but I have a hunch that we might
+be over-killing it with this approach, no?
+
+
+> and inefficient approach that acquires user stack pages, maps them to
+> kernel address space, and allows kernel to use STP directly push fp/lr
+> into the stack pages.
+>
+> xol-stp
+> -------
+> uprobe-nop      ( 1 cpus):    1.566 =C2=B1 0.006M/s  (  1.566M/s/cpu)
+> uprobe-push     ( 1 cpus):    0.868 =C2=B1 0.001M/s  (  0.868M/s/cpu)
+> uprobe-ret      ( 1 cpus):    1.629 =C2=B1 0.001M/s  (  1.629M/s/cpu)
+> uretprobe-nop   ( 1 cpus):    0.871 =C2=B1 0.001M/s  (  0.871M/s/cpu)
+> uretprobe-push  ( 1 cpus):    0.616 =C2=B1 0.001M/s  (  0.616M/s/cpu)
+> uretprobe-ret   ( 1 cpus):    0.878 =C2=B1 0.002M/s  (  0.878M/s/cpu)
+>
+> simulated-stp
+> -------------
+> uprobe-nop      ( 1 cpus):    1.544 =C2=B1 0.001M/s  (  1.544M/s/cpu)
+> uprobe-push     ( 1 cpus):    1.128 =C2=B1 0.002M/s  (  1.128M/s/cpu)
+> uprobe-ret      ( 1 cpus):    1.550 =C2=B1 0.005M/s  (  1.550M/s/cpu)
+> uretprobe-nop   ( 1 cpus):    0.872 =C2=B1 0.004M/s  (  0.872M/s/cpu)
+> uretprobe-push  ( 1 cpus):    0.714 =C2=B1 0.001M/s  (  0.714M/s/cpu)
+> uretprobe-ret   ( 1 cpus):    0.896 =C2=B1 0.001M/s  (  0.896M/s/cpu)
+>
+> The profiling results based on the upstream kernel with spinlock
+> optimization patches [2] reveals the simulation of STP increase the
+> uprobe-push throughput by 29.3% (from 0.868M/s/cpu to 1.1238M/s/cpu) and
+> uretprobe-push by 15.9% (from 0.616M/s/cpu to 0.714M/s/cpu).
+>
+> [0] https://lore.kernel.org/all/CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02e=
+zZ5YruVuQw@mail.gmail.com/
+> [1] https://lore.kernel.org/all/Zr3RN4zxF5XPgjEB@J2N7QTR9R3/
+> [2] https://lore.kernel.org/all/20240815014629.2685155-1-liaochang1@huawe=
+i.com/
+>
+> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+> ---
+>  arch/arm64/include/asm/insn.h            |  1 +
+>  arch/arm64/kernel/probes/decode-insn.c   | 16 +++++
+>  arch/arm64/kernel/probes/decode-insn.h   |  1 +
+>  arch/arm64/kernel/probes/simulate-insn.c | 89 ++++++++++++++++++++++++
+>  arch/arm64/kernel/probes/simulate-insn.h |  1 +
+>  arch/arm64/kernel/probes/uprobes.c       | 21 ++++++
+>  arch/arm64/lib/insn.c                    |  5 ++
+>  7 files changed, 134 insertions(+)
+>
+
+[...]
 
