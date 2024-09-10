@@ -1,195 +1,187 @@
-Return-Path: <linux-kernel+bounces-323451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C071D973D63
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:36:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083C9973D67
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4281C1F26D2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:36:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16AAC1C24570
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE24D1AAE25;
-	Tue, 10 Sep 2024 16:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22E01A2564;
+	Tue, 10 Sep 2024 16:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b="QeyiS+5A"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MpW76hMd"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36441A0B10
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4222F16C684
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725985960; cv=none; b=sM1uG56Qy+zAmGvRLo8Buz9yBiHQXFyOh236618hgjqvRBI5tfFa1r7taWdokyDhYEAETE7LMj1o2YtGTfjlknj4TXc6liUD+YEJrrl+r+B3AFH99tDjPTeRLa2ZzRduduiVgzgCxUIBLQkU/HVbqQKFfYEQA53BcFivlnxArmg=
+	t=1725985987; cv=none; b=oO1WXVcDae6Hopk06Wp5XHJ4iikC+hYt+/0arb0+Jj6NYPE7l9ITRQy/W47GYpUxzmsx/aXjKXyqZnxTe9g+m3BnRMZJDtlcwTKzyzmRmG541Hw33cunY6L1QGghZMs0le8BmkhqgVQcMq7Q4vdry/o6aoV4n3ajFtDLLOxzA/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725985960; c=relaxed/simple;
-	bh=4iPN/fsCe14wfGYSYCjynyR282sYt9ED2Ow9xIF9vkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fTeyRpax5ME9soRdGcGpVbQ5jTEV3J5zf1SvM/nWmH1ExmjFYfSv5frK95ApkiIkUeIqgzv6N5TAf4kL+DFZyvCZxyvEAC3j4XTbgENiX6thfJ9hD2ajDksW1u5p+PXnTkuMJKBsjqfGhgo2dC0Yv9RfnvlPIiQlRQIO4EJhWxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw; spf=pass smtp.mailfrom=csie.ntu.edu.tw; dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b=QeyiS+5A; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csie.ntu.edu.tw
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso4739350a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:32:36 -0700 (PDT)
+	s=arc-20240116; t=1725985987; c=relaxed/simple;
+	bh=pDGy9FTtIgMzLOt/7iSJ+WMuYgXATN9TotjMM+SoczQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZOXYlhJM+PI88bps9LAh+lxD6CfifrM4DOgnl+BEJ4VbrYZ889jqc946HkKEUgFvfyd+lZloT8/yeU3+l0DhoW5zpK1cxtqkZCpzKmXvyF4BRE93pBJgojByGnATzS6x0rlTephlvdqx97OAS66gIlqk51rXpKBcWS2TMnmnTIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MpW76hMd; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cbe624c59so9925865e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:33:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=csie.ntu.edu.tw; s=google; t=1725985956; x=1726590756; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ELTwotHVw2kePUAUYWtO4H0shRoEHF3K5HxUF2BgZ5g=;
-        b=QeyiS+5ACmGi+c4mTvU9kta+d+9EcD2aNX72XkVinadbAVJWQS2idKdhIFUtxYaTDn
-         oNLrYRcYpdx2DWOrK8StpFlO5FLuI3J8mrReP/g5MK0HPU/bEPAsy5Kuq1QcS/d0uw/p
-         NZVmYt/1Z/hF3S+3mI77HxuL8bQ7Ud2C8YnXZy0gE2U4zTg9ufiijimmmFtqpnywQ1Ud
-         9dp+Nf37eYlbU63UYkipmttPpHigJKpJjB3SIqEE/y4rkhNq3cOZd6w7l/eeL2LP8atG
-         NkplvAsSe5sjg6JUNeQfC65dLcUfv/UWa2UmY64dA9WZzsBqNc+gfSgxcf7CNU6tuPhy
-         /2Ow==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725985982; x=1726590782; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1rF4WxN3Aj+tIaFqCtKKzlber4t4h2cbw8FO6Wko2I8=;
+        b=MpW76hMdI57nxPL1VCzntJfjf7ZcOaXdWLg0EPh+/f4oI2lsWB8cAHOyMmmTR/jR2C
+         kAnfod8tXqfH8mgUIWO1/eGMU7TSU1HCfBB8pHY37oo5iNjtFSrb71j0WBHB+Lf30Z9J
+         hpulCUV4DWeqrWxi58dKGaWhWT8C9MCKMoY6e4U3IJpKk34Edj997ICB9jwjS+aaHbUj
+         WEdBOo9cYW/N1THwZUktpP1x5ASvUxCC5W1RUuD3Q8RSUcPEnlKuDzFj7ySW1qbbNUIT
+         2W3sy3S96wHvmL48cmXBl/HM1Is/fRRBFPb06//45PlWg19yZ/7kb/ct3+vaL9hBqdi/
+         LRFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725985956; x=1726590756;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ELTwotHVw2kePUAUYWtO4H0shRoEHF3K5HxUF2BgZ5g=;
-        b=iJ9xeo5XVQ8V0M8NN/LjaarK20OZUOkRm4f/bKzLU1kz+vo+Lcb/tppzXM2rjnkKQ4
-         YYLQ/EWWOgSHrjmDTA5XHIJl0YXd/oGEO5U0dtuUrgBE6bP6EbgwhAQycXI887MZZ4I4
-         bim5MWJeoEaaRytlPuzeSn1ENVSQGzy0LlqKzGu3oRKaRPKfPU5pZAHcOMx/tLJDqf42
-         mg9p6X12oeluH2cU2cid1z/Ic+AO3QpTjiatIllmxYdRiCqygm1yXayBQ5Zq7/p9RaSA
-         1eokS8UzZvLIOnvW1xJV08DKBKpoISUYGLElQYiBxtEdk9YHdRqnR5GfWrqeMR0D0WSq
-         CRHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJPnmzjFvd2UNV3cy9uq7P9s9iJuFuMj0tx5Hb9ol4cxH3NN8B7XGDuQACBzpqkM6og4jIl98UpQY8KlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDGu4hRgRw/Y1gtR+9TYGiOjrlDpjrMciYhc3P6I1U+RiLBGEy
-	As768kth+whpMgToGTMzXzxCNML8zDNhXuGNQDnht63Xg6lV0nhCX+Pj+CM3yZlG0ztxVAm75en
-	ThPzfriRf2AfKtJYD9vsrDoqfME+n1T/oSD918G9+WYcT8UCey0dMXz8=
-X-Google-Smtp-Source: AGHT+IGsiPCMyX4DWKfV2C1n/j0UcYNxDwTcJHn00avqUPc5NDXLo/1FuFWLrpMOciYip064UpmfsA==
-X-Received: by 2002:a17:90a:ee8f:b0:2d3:c892:9607 with SMTP id 98e67ed59e1d1-2dad4ef4a6amr16294517a91.12.1725985955738;
-        Tue, 10 Sep 2024 09:32:35 -0700 (PDT)
-Received: from zenbook (2001-b011-3808-5e10-d66e-1c97-ed92-266b.dynamic-ip6.hinet.net. [2001:b011:3808:5e10:d66e:1c97:ed92:266b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db04966b6asm6636022a91.39.2024.09.10.09.32.31
+        d=1e100.net; s=20230601; t=1725985982; x=1726590782;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1rF4WxN3Aj+tIaFqCtKKzlber4t4h2cbw8FO6Wko2I8=;
+        b=idK0m9W+rAjPLD2A74U2PgZrwCmsmydIkt9OsYBj7jNUKD67X++SS2o8vOIVv5mrq0
+         tzqG5LnpGN2+WGzOJY3LWui1nQutWqNdRC5MphUREc+1NknHt+v/JX1zMFyNIBxsWbU4
+         Ei/8qu7CRApqKq5yp9qqU5keDxVrxsO3UipsTDKt4mDK3CgefTicfpoHzeHYQfXcgqNO
+         Mhcd0yNWAxV+iORpvjHwfm5WirHs8Nj6RYqr42G6tU7HyawInVCb3fFQRYNNXdzTyAXv
+         pB0+UPVSE7ma6U45Z3JJQdPKE/Q2sATnsPQ5nhs+r4TyDSGBFJ/ZtxU7FhnUiItXNNKo
+         nDwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDJRFnnXtNtkECpXp/Y3pkauVtQIWLLsnhHyfFhRiqIo7iy2Qo0c9ge2AaTRx4If9BCK3Rtm/jYhzr9kg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymSEXWVjE8nspvek/MW+SEIx1NEodEM8VNmpcaGAHf1XQGFvKF
+	VI/aXTtB/wd/ZuoeI0VwTnk/FM4dcrO0VoRk9EvH9nVbwlQSsPplvnVBrRdlYIY=
+X-Google-Smtp-Source: AGHT+IHA4mhUQ8IpGyrkqlJwG0IpNcAqkgqpxSzPNFkQXfsP6ffvp11Br7N7eiwP2ee1qbWlfvpNAw==
+X-Received: by 2002:a05:600c:1d98:b0:42c:b995:20c8 with SMTP id 5b1f17b1804b1-42cb9952455mr51372865e9.24.1725985982016;
+        Tue, 10 Sep 2024 09:33:02 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:8ba7:bfe4:fea9:65b])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42cc1375189sm25076025e9.1.2024.09.10.09.33.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 09:32:35 -0700 (PDT)
-Date: Wed, 11 Sep 2024 00:32:29 +0800
-From: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
-To: Snehal Koukuntla <snehalreddy@google.com>, 
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-Cc: James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Sebastian Ene <sebastianene@google.com>, 
-	Vincent Donnefort <vdonnefort@google.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, r09922117@csie.ntu.edu.tw
-Subject: Re: [PATCH v3] KVM: arm64: Add memory length checks and remove
- inline in do_ffa_mem_xfer
-Message-ID: <rm2pihr27elmdf4zcgrv5khs7qluhn77tkivkr6xkvqcybtl4m@7hesctcacm4h>
-References: <20240909180154.3267939-1-snehalreddy@google.com>
+        Tue, 10 Sep 2024 09:33:01 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH v5 0/9] reset: amlogic: move audio reset drivers out of CCF
+Date: Tue, 10 Sep 2024 18:32:42 +0200
+Message-Id: <20240910-meson-rst-aux-v5-0-60be62635d3e@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909180154.3267939-1-snehalreddy@google.com>
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKp04GYC/3XOOw7CMBBF0a0g1wwaGwOGin2gFP4MxIjEaJxEi
+ aLsHUODKChv8Y7eLDJxpCxOq1kwDTHH1JbYrVfC17a9EcRQWihUGo+4h4ZyaoFzB7YfwR6UCx6
+ lC5JE2TyZrnH8eJeq9JVTA13NZL+KQSNRHbTaFHF3RA0S7o77lrqzs9MjOqaNT83bq2PuEk+fe
+ 4N+q/+eDBoQ0Bil/TZINO7XqpZleQHTgucD7QAAAA==
+To: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jiucheng Xu <jiucheng.xu@amlogic.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3472; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=pDGy9FTtIgMzLOt/7iSJ+WMuYgXATN9TotjMM+SoczQ=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBm4HS0l+uBsef6GERcGgsGTiooyNalHzzeKeU1U
+ VUTeD6RExuJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZuB0tAAKCRDm/A8cN/La
+ hcgQD/0ZFct4s24VVIibOhf9mve52LEKUN0GKdDsj+wh58sMXsuxU5tWPbvzigeRVfaFvrcK2ne
+ UlFjKluD0T88NknnfW2Af9rO+qdDldt4lwJNJUBePQtyVJc/Qsg7iOqRfTH+SCwUNb8vpak+Dhv
+ fgE4BNi4EDEYlWSvgtAFTgzTm0RAd7DFl0uFNCHXEw1/8qqGbpk096+2GLPPsuo+xKcTgL6kScz
+ xbGiP+enom6O9WvkBLiYXOdxag+YWaM2/wIoYqqXKHVPlKsxmlif6MdGGHtTVr7mYnTFcfQ2fFd
+ 9klTTaGBl7RNq4YVHqE8vDnYPBAQ9fxBkkkSPLvyLkLI3DW/HidUEinXhjVg60MthFzEFvsal1d
+ nAyE5sNxjxLgpciZCPMFxsbcxhESBplrqh/dKWu/S7S2TrkX/sYR9qJlVMwy95HIv/UoV1xfdAb
+ KrwK8VV9O9Ov5neBb4JRbWwMQqbSs0gOFXn2TTBaU382dvU3tIR8iZF6zIHw36CYBMsvnfxhNsM
+ 0YdLjNeAolanAayxyYIGSMlTgvQwM2PoPmBxkhRWiJWV752URGJuckEqPpuV0H3RUIeSwBceinp
+ OChgzUyCTK2LtBMnn1ZeRDdzPvTXcm7T4WHv14Jja4YIZf6+y7XvmC6bhIE3N09OyoTrJKE97Q/
+ jHg5RqjMdDXpWlQ==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Hi everyone,
+This patchset follows the discussion about having reset driver in the
+clock tree [1]. Ideally those should reside in the reset part of tree.
 
-On Mon, Sep 09, 2024 at 06:01:54PM GMT, Snehal Koukuntla wrote:
-> When we share memory through FF-A and the description of the buffers
-> exceeds the size of the mapped buffer, the fragmentation API is used.
-> The fragmentation API allows specifying chunks of descriptors in subsequent
-> FF-A fragment calls and no upper limit has been established for this.
-> The entire memory region transferred is identified by a handle which can be
-> used to reclaim the transferred memory.
-> To be able to reclaim the memory, the description of the buffers has to fit
-> in the ffa_desc_buf.
-> Add a bounds check on the FF-A sharing path to prevent the memory reclaim
-> from failing.
-> 
-> Also do_ffa_mem_xfer() does not need __always_inline
-> 
-> Fixes: 634d90cf0ac65 ("KVM: arm64: Handle FFA_MEM_LEND calls from the host")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Sebastian Ene <sebastianene@google.com>
-> Signed-off-by: Snehal Koukuntla <snehalreddy@google.com>
-> ---
->  arch/arm64/kvm/hyp/nvhe/ffa.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> index e715c157c2c4..637425f63fd1 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> @@ -426,7 +426,7 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_res *res,
->  	return;
->  }
->  
-> -static __always_inline void do_ffa_mem_xfer(const u64 func_id,
-> +static void do_ffa_mem_xfer(const u64 func_id,
+Also the code of the amlogic reset driver is very similar between the 2
+trees and could use the same driver code.
 
-I am seeing a compilation error because of this.
+This patcheset alignes the reset drivers present in the reset and clock
+then adds support for the reset driver of audio clock controller found in
+the g12 and sm1 SoC family to the reset tree, using the auxiliary bus.
 
------ LOG START -----
-$ clang --version 
-clang version 18.1.8
-Target: x86_64-pc-linux-gnu
-Thread model: posix
-InstalledDir: /usr/bin
-$ make LLVM=1 ARCH=arm64 defconfig
-$ make LLVM=1 ARCH=arm64 Image
-...
-arch/arm64/kvm/hyp/nvhe/ffa.c:443:2: error: call to '__compiletime_assert_776' declared with 'error' attribute: BUILD_BUG_ON failed: func_id != FFA_FN64_MEM_SHARE && func_id != FFA_FN64_MEM_LEND
-  443 |         BUILD_BUG_ON(func_id != FFA_FN64_MEM_SHARE &&
-      |         ^
-./include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
-   50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-      |         ^
-./include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
-   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-      |                                     ^
-././include/linux/compiler_types.h:510:2: note: expanded from macro 'compiletime_assert'
-  510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-      |         ^
-././include/linux/compiler_types.h:498:2: note: expanded from macro '_compiletime_assert'
-  498 |         __compiletime_assert(condition, msg, prefix, suffix)
-      |         ^
-././include/linux/compiler_types.h:491:4: note: expanded from macro '__compiletime_assert'
-  491 |                         prefix ## suffix();                             \
-      |                         ^
-<scratch space>:66:1: note: expanded from here
-   66 | __compiletime_assert_776
-      | ^
-1 error generated.
-make[6]: *** [arch/arm64/kvm/hyp/nvhe/Makefile:46: arch/arm64/kvm/hyp/nvhe/ffa.nvhe.o] Error 1
-make[5]: *** [scripts/Makefile.build:485: arch/arm64/kvm/hyp/nvhe] Error 2
-make[4]: *** [scripts/Makefile.build:485: arch/arm64/kvm/hyp] Error 2
-make[3]: *** [scripts/Makefile.build:485: arch/arm64/kvm] Error 2
-make[3]: *** Waiting for unfinished jobs....
------ LOG END -----
+The infrastructure put in place is meant to be generic enough so we may
+eventually also move the reset drivers in the meson8b and aoclk clock
+controllers.
 
-Is this expected? Because when I add back the __always_inline, or change the
-BUILD_BUG_ON to BUG_ON, it compiles successfully.
+This was tested on sm1 vim3l and gxl aml-s905x-cc.
 
-Thanks,
-Wei-Lin Chang
+Changes since v4 [6]:
+ * Fix Kconfig depends and select as reported by Philipp and
+   and 0-day robot.
 
->  					    struct arm_smccc_res *res,
->  					    struct kvm_cpu_context *ctxt)
->  {
-> @@ -461,6 +461,11 @@ static __always_inline void do_ffa_mem_xfer(const u64 func_id,
->  		goto out_unlock;
->  	}
->  
-> +	if (len > ffa_desc_buf.len) {
-> +		ret = FFA_RET_NO_MEMORY;
-> +		goto out_unlock;
-> +	}
-> +
->  	buf = hyp_buffers.tx;
->  	memcpy(buf, host_buffers.tx, fraglen);
->  
-> -- 
-> 2.46.0.598.g6f2099f65c-goog
-> 
+Changes since v3 [5]:
+ * Drop pltf/platform as suggested
+
+Changes since v2 [4]:
+ * Fix undefined read access of the reset register
+ * Fix Kconfig symbol description
+
+Changes since v1 [3]:
+ * Fixes formatting errors reported by Stephen.
+ * Changed parameters type to unsigned
+ * Fix usage of ops passed as parameters, previously ignored.
+ * Return 0 instead of an error if reset support is absent
+   to properly decouple from the clock and have a weak
+   dependency
+ * Split the platform and auxiliary modules in 2 distinct modules
+   to fix the COMPILE_TEST error reported by ktest robot.
+
+Change since RFC [2]:
+ * Move the aux registration helper out of clock too.
+
+[1] https://lore.kernel.org/linux-clk/e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org
+[2] https://lore.kernel.org/linux-clk/20240516150842.705844-1-jbrunet@baylibre.com
+[3] https://lore.kernel.org/linux-clk/20240710162526.2341399-1-jbrunet@baylibre.com
+[4] https://lore.kernel.org/linux-clk/20240718095755.3511992-1-jbrunet@baylibre.com
+[5] https://lore.kernel.org/linux-clk/20240808102742.4095904-1-jbrunet@baylibre.com
+[6] https://lore.kernel.org/r/20240906-meson-rst-aux-v4-0-08824c3d108b@baylibre.com
+
+---
+Jerome Brunet (9):
+      reset: amlogic: convert driver to regmap
+      reset: amlogic: use generic data matching function
+      reset: amlogic: make parameters unsigned
+      reset: amlogic: add driver parameters
+      reset: amlogic: use reset number instead of register count
+      reset: amlogic: add reset status support
+      reset: amlogic: move drivers to a dedicated directory
+      reset: amlogic: split the device core and platform probe
+      reset: amlogic: add auxiliary reset driver support
+
+ drivers/reset/Kconfig                              |  15 +-
+ drivers/reset/Makefile                             |   3 +-
+ drivers/reset/amlogic/Kconfig                      |  27 ++++
+ drivers/reset/amlogic/Makefile                     |   4 +
+ .../reset/{ => amlogic}/reset-meson-audio-arb.c    |   0
+ drivers/reset/amlogic/reset-meson-aux.c            | 136 ++++++++++++++++++
+ drivers/reset/amlogic/reset-meson-common.c         | 142 ++++++++++++++++++
+ drivers/reset/amlogic/reset-meson.c                | 105 ++++++++++++++
+ drivers/reset/amlogic/reset-meson.h                |  28 ++++
+ drivers/reset/reset-meson.c                        | 159 ---------------------
+ include/soc/amlogic/reset-meson-aux.h              |  23 +++
+ 11 files changed, 467 insertions(+), 175 deletions(-)
+---
+base-commit: 487b1b32e317b85c2948eb4013f3e089a0433d49
+change-id: 20240906-meson-rst-aux-a72bdc01bd1e
+
+Best regards,
+-- 
+Jerome
+
 
