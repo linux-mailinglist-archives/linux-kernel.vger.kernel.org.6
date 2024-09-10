@@ -1,258 +1,280 @@
-Return-Path: <linux-kernel+bounces-323004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70914973688
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:56:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8AF297368A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 950D61C248FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:56:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E9F71F25C61
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C7718FDA5;
-	Tue, 10 Sep 2024 11:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="boeysJr6"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178AA18C003;
-	Tue, 10 Sep 2024 11:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041BB18F2DB;
+	Tue, 10 Sep 2024 11:58:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A06189BA4
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 11:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725969359; cv=none; b=ugngp9S+E+LDvzOzbVo5A4AmXHASAKrXhqda4HlHYzYEJ6xSuZwn7DI9lgqUPdp7YZrTVM9PR9A7fsfY0eJfTQt0fFG5D18/2jyn78FtB869ao4tRn5CGyyskiqDLOazz3mnVznv4zst3ypW2wXNXIIe6ismLrkVxccITKDXWzg=
+	t=1725969483; cv=none; b=m7Nej1O9V1MGVOgb6UKKBXLclC/d8GtHjoU6GXjCfg+IHBMZxmA4RyDeDxmShuMjZc8SldONWfDny5x5/KsV1Kv6DujLZvtibO2EM9MYUz4u+lPqOQkArcPePgk+nSri9WvFsJ6IcXLrXohzMORgJuF2xoa0pdUtjndua4i0NiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725969359; c=relaxed/simple;
-	bh=2zfT1IDor+33cVbNh16LYHatwPrz2WSCTCVdO4KX4F4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QrnwmWVlj8ExLO4TB2oK0y9EMwvCtQAqOx/CoUO0GaXHnwcd+czG7MuuC+EBdZyfFIdBB0gASYoaXOq2Fo/bXZTIf4ipPJmJbcVMQRcMS5Rec3d4Pifrdkx8BFLSpF3nXd0epzjJTw+wjrlfi8ZnATvKo4MwkvPunKJi1kbTOA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=boeysJr6; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f761cfa5e6so33255411fa.0;
-        Tue, 10 Sep 2024 04:55:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725969356; x=1726574156; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8hfri4dXyAKITBGdpULlHOZ/Wp/1oYlpuTWiNxs1aXQ=;
-        b=boeysJr6C0RlCrg3p1l6fIdwFbWNSMkGAbKlmdVh6YTJaCSb/c2wpXarYcEXLTZLgy
-         gJurjro+PPDiUoFAw7BOZllcuRNMCYp2JbJsr3+3+dni94M3mVMVj3Bf62W0TQ0y3hOO
-         Rsk2KlLpzarYaanZG8f/Veehua9svg+An2nB7ZYoEclFDXChz3SFr84CSlbsXVDSxIu6
-         0vlPsMkLsjXUpK4E/jurYh3ncDyT700M2anK5HjE/RQp7+PAL6Nb7gmmcxtap3+UHhLu
-         sdMpwPXjSzmu5+A9zXi6/q0H2n0pvRwu7i/VQI+GWwXXavctyy1krMuODOIAHEYqHSks
-         fjBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725969356; x=1726574156;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8hfri4dXyAKITBGdpULlHOZ/Wp/1oYlpuTWiNxs1aXQ=;
-        b=pOUoCNF+oaEwGYRF16OT9dBNWZsWn2Ettdh/mjWgJUoGrNqPq/KXy1Oew/1J7zwZCV
-         49PcT6Ksk/zhQf1AloIzg/8GuAdq+fVOwJk31cd8fZt11Pgj81z8RzWCTDNeem1nQuEH
-         mIJxB0Vr9Clf7YhDoi0S4zC2KaV7AafoZM2lyFT6clztZ4pW0dDCV5pLlx8GLgsilC5m
-         OJlzCDxjpnlZRlj4r88Z5mkVLlP2nEfaLqudHgbAaGPQ+gSh5jRgaCmTJWgXga2h95ga
-         7SZqvKM2rNDyVsvAdvVjolOyLhwL5pAu+zWFQMrWSqs/OCPrKAqPRCJopY+57piVPFBw
-         YeDA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2BIm9AAF5Xo5/8fLIrHwNCatcz+yLS5UhGgox0XHSuIEu0zuzEV3EV4JlJcCeSaVgatwwg4Fv9RbOkvIx@vger.kernel.org, AJvYcCUgzKSQ9PTfA/o73OFzak5211fyUZSCttI4icr8opwRQYRfSgf7gqEXcI0Jp9qJTYoC7eM=@vger.kernel.org, AJvYcCXsRkvc87qGYTGDdS9DWIVT92Ws3udKybNUYsdv+uNzrloTxfPYqCPOdOlIsv4ex6ZV6Hoe3vr9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKWCCJXFDb6yj1tpvzgCBkltgezPfYwPuOd7mksVffJkK8V7zI
-	mohip2Pvt8PtNiEDfLrzYPoYy78bliV6BC0RElUh8GX2AQped97u
-X-Google-Smtp-Source: AGHT+IESmABC/JGjw8+J2iYKtAy7FAr+qsgBYKgilqZukCBJGhpkkaPjbLmHJ2QPX4ajpLltD2eClg==
-X-Received: by 2002:a2e:b88a:0:b0:2f3:fd7f:d048 with SMTP id 38308e7fff4ca-2f75b94234amr69763251fa.39.1725969355087;
-        Tue, 10 Sep 2024 04:55:55 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75bfe830csm11861191fa.2.2024.09.10.04.55.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 04:55:54 -0700 (PDT)
-Date: Tue, 10 Sep 2024 14:55:51 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, mcoquelin.stm32@gmail.com, 
-	bcm-kernel-feedback-list@broadcom.com, richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	hawk@kernel.org, john.fastabend@gmail.com, rmk+kernel@armlinux.org.uk, 
-	ahalaney@redhat.com, xiaolei.wang@windriver.com, rohan.g.thomas@intel.com, 
-	Jianheng.Zhang@synopsys.com, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, 
-	andrew@lunn.ch, linux@armlinux.org.uk, horms@kernel.org, 
-	florian.fainelli@broadcom.com, jitendra.vegiraju@broadcom.com, netdev@vger.kernel.org
-Subject: Re: [net-next v5 0/5] net: stmmac: Add PCI driver support for
- BCM8958x
-Message-ID: <auqco7g64aej7mauw6etpqhauynowktlbise6qo6k7rczz4oao@46miqzgcp7ky>
-References: <20240904054815.1341712-1-jitendra.vegiraju@broadcom.com>
- <56c4fccd-787f-4936-9f4b-a1b9ebae6d03@redhat.com>
+	s=arc-20240116; t=1725969483; c=relaxed/simple;
+	bh=7/XSPNXotBzs7z666cnvZUX4kelMfqYm55CRFQlNM+s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LsjALztMpJJEmLEpOlWYVn6Sxtb9LFFT2G5CyVXC/FDRhYqiAmxzU2bvfaWvDngavIx0ZOYdut8et8TB2LVcM9sXUcw9lFlUoc614bu+z7T+J7bxx8Y5RLFsDxXz5UL9Tdr3S+X/jbyJZkdwawvsqRZjovX+y6Ie2QzjTtuBgWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4D6A113E;
+	Tue, 10 Sep 2024 04:58:28 -0700 (PDT)
+Received: from a077893.arm.com (unknown [10.163.63.106])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C47F93F64C;
+	Tue, 10 Sep 2024 04:57:56 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mm/debug_vm_pgtable: Use pxdp_get() for accessing page table entries
+Date: Tue, 10 Sep 2024 17:27:46 +0530
+Message-Id: <20240910115746.514454-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <56c4fccd-787f-4936-9f4b-a1b9ebae6d03@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Paolo
+This replaces all the existing READ_ONCE() based page table accesses with
+respective pxdp_get() helpers. Although these helpers might also fallback
+to READ_ONCE() as default, but they do provide an opportunity for various
+platforms to override when required. This change is a step in direction to
+replace all page table entry accesses with respective pxdp_get() helpers.
 
-On Tue, Sep 10, 2024 at 01:29:34PM +0200, Paolo Abeni wrote:
-> On 9/4/24 07:48, jitendra.vegiraju@broadcom.com wrote:
-> > From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-> > 
-> > This patchset adds basic PCI ethernet device driver support for Broadcom
-> > BCM8958x Automotive Ethernet switch SoC devices.
-> > 
-> > This SoC device has PCIe ethernet MAC attached to an integrated ethernet
-> > switch using XGMII interface. The PCIe ethernet controller is presented to
-> > the Linux host as PCI network device.
-> > 
-> > The following block diagram gives an overview of the application.
-> >               +=================================+
-> >               |       Host CPU/Linux            |
-> >               +=================================+
-> >                          || PCIe
-> >                          ||
-> >          +==========================================+
-> >          |           +--------------+               |
-> >          |           | PCIE Endpoint|               |
-> >          |           | Ethernet     |               |
-> >          |           | Controller   |               |
-> >          |           |   DMA        |               |
-> >          |           +--------------+               |
-> >          |           |   MAC        |   BCM8958X    |
-> >          |           +--------------+   SoC         |
-> >          |               || XGMII                   |
-> >          |               ||                         |
-> >          |           +--------------+               |
-> >          |           | Ethernet     |               |
-> >          |           | switch       |               |
-> >          |           +--------------+               |
-> >          |             || || || ||                  |
-> >          +==========================================+
-> >                        || || || || More external interfaces
-> > 
-> > The MAC block on BCM8958x is based on Synopsis XGMAC 4.00a core. This
-> > MAC IP introduces new DMA architecture called Hyper-DMA for virtualization
-> > scalability.
-> > 
-> > Driver functionality specific to new MAC (DW25GMAC) is implemented in
-> > new file dw25gmac.c.
-> > 
-> > Management of integrated ethernet switch on this SoC is not handled by
-> > the PCIe interface.
-> > This SoC device has PCIe ethernet MAC directly attached to an integrated
-> > ethernet switch using XGMII interface.
-> > 
-> > v4->v5:
-> >     Summary of changes in this patch series:
-> >     As suggested by Serge Semin, defined common setup function for dw25gmac.
-> >     To accommodate early adopter DW25GMAC used in BCM8958x device, provide
-> >     a mechanism to override snps_id and snps_dev_id used for driver entry
-> >     matching in hwif.c
-> > 
-> >     Patch1:
-> >       Added plat_stmmacenet_data::snps_id,snps_dev_id fields - Serge Semin
-> >     Patch2:
-> >       Define common setup function for dw25gmac_setup() - Serge Semin
-> >       Support DW25GMAC IPs with varying VDMA/PDMA count - Abhishek Chauhan
-> >       Allocate and initialize hdma mapping configuration data dynamically
-> >       based on device's VDMA/PDMA feature capabilities in dw25gmac_setup().
-> >       Spelling errors in commit log, lower case 0x for hex -Amit Singh Tomar
-> >     Patch3:
-> >       Glue support in hwif.c for DW25GMAC in hwif.c - Serge Semin
-> >       Provide an option to override snps_id and snps_dev_id when the device
-> >       reports version info not conformant with driver's expectations as is
-> >       the case with BCM8958x device. - Serge Semin
-> >     Patch4:
-> >       Remove setup function in the glue driver - Serge Semin
-> >       Remove unnecessary calls pci_enable_device() and pci_set_master()
-> >       in dwxgmac_brcm_pci_resume() - Jakub Kicinski
-> >       Merge variable definitions to single line - Amit Singh Tomar
-> > 
-> > v3->v4:
-> >     Based on Serge's questions, received a confirmation from Synopsys that
-> >     the MAC IP is indeed the new 25GMAC design.
-> >     Renamed all references of XGMAC4 to 25GMAC.
-> >     The patch series is rearranged slightly as follows.
-> >     Patch1 (new): Define HDMA mapping data structure in kernel's stmmac.h
-> >     Patch2 (v3 Patch1): Adds dma_ops for dw25gmac in stmmac core
-> >         Renamed new files dwxgmac4.* to dw25gmac.* - Serge Semin
-> >         Defined new Synopsis version and device id macros for DW25GMAC.
-> >         Converted bit operations to FIELD_PREP macros - Russell King
-> >         Moved hwif.h to this patch, Sparse flagged warning - Simon Horman
-> >         Defined macros for hardcoded values TDPS etc - Serge Semin
-> >         Read number of PDMAs/VDMAs from hardware - Serge Semin
-> >     Patch3 (v3 Patch2): Hooks in hardware interface handling for dw25gmac
-> >         Resolved user_version quirks questions - Serge, Russell, Andrew
-> >         Added new stmmac_hw entry for DW25GMAC. - Serge
-> >         Added logic to override synopsis_dev_id by glue driver.
-> >     Patch4 (v3 Patch3): Adds PCI driver for BCM8958x device
-> >         Define bitmmap macros for hardcoded values - Andrew Lunn
-> >         Added per device software node - Andrew Lunn
-> >     Patch5(new/split): Adds BCM8958x driver to build system
-> >     https://lore.kernel.org/netdev/20240814221818.2612484-1-jitendra.vegiraju@broadcom.com/
-> > 
-> > v2->v3:
-> >     Addressed v2 comments from Andrew, Jakub, Russel and Simon.
-> >     Based on suggestion by Russel and Andrew, added software node to create
-> >     phylink in fixed-link mode.
-> >     Moved dwxgmac4 specific functions to new files dwxgmac4.c and dwxgmac4.h
-> >     in stmmac core module.
-> >     Reorganized the code to use the existing glue logic support for xgmac in
-> >     hwif.c and override ops functions for dwxgmac4 specific functions.
-> >     The patch is split into three parts.
-> >       Patch#1 Adds dma_ops for dwxgmac4 in stmmac core
-> >       Patch#2 Hooks in the hardware interface handling for dwxgmac4
-> >       Patch#3 Adds PCI driver for BCM8958x device
-> >     https://lore.kernel.org/netdev/20240802031822.1862030-1-jitendra.vegiraju@broadcom.com/
-> > 
-> > v1->v2:
-> >     Minor fixes to address coding style issues.
-> >     Sent v2 too soon by mistake, without waiting for review comments.
-> >     Received feedback on this version.
-> >     https://lore.kernel.org/netdev/20240511015924.41457-1-jitendra.vegiraju@broadcom.com/
-> > 
-> > v1:
-> >     https://lore.kernel.org/netdev/20240510000331.154486-1-jitendra.vegiraju@broadcom.com/
-> > 
-> > Jitendra Vegiraju (5):
-> >    Add HDMA mapping for dw25gmac support
-> >    Add basic dw25gmac support in stmmac core
-> >    Integrate dw25gmac into stmmac hwif handling
-> >    Add PCI driver support for BCM8958x
-> >    Add BCM8958x driver to build system
-> > 
-> >   MAINTAINERS                                   |   8 +
-> >   drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
-> >   drivers/net/ethernet/stmicro/stmmac/Makefile  |   3 +-
-> >   drivers/net/ethernet/stmicro/stmmac/common.h  |   4 +
-> >   .../net/ethernet/stmicro/stmmac/dw25gmac.c    | 224 ++++++++
-> >   .../net/ethernet/stmicro/stmmac/dw25gmac.h    |  92 ++++
-> >   .../net/ethernet/stmicro/stmmac/dwmac-brcm.c  | 507 ++++++++++++++++++
-> >   .../net/ethernet/stmicro/stmmac/dwxgmac2.h    |   1 +
-> >   .../ethernet/stmicro/stmmac/dwxgmac2_core.c   |  43 ++
-> >   .../ethernet/stmicro/stmmac/dwxgmac2_dma.c    |  31 ++
-> >   drivers/net/ethernet/stmicro/stmmac/hwif.c    |  26 +-
-> >   drivers/net/ethernet/stmicro/stmmac/hwif.h    |   1 +
-> >   include/linux/stmmac.h                        |  48 ++
-> >   13 files changed, 997 insertions(+), 2 deletions(-)
-> >   create mode 100644 drivers/net/ethernet/stmicro/stmmac/dw25gmac.c
-> >   create mode 100644 drivers/net/ethernet/stmicro/stmmac/dw25gmac.h
-> >   create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-brcm.c
-> 
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+ mm/debug_vm_pgtable.c | 50 +++++++++++++++++++++----------------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
-> Hi Serge, to you think you will have time to review this series soon?
-> 
-> We are sort in a rush to flush the net-next material before the upcoming
-> merge window.
+diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+index e4969fb54da3..bc748f700a9e 100644
+--- a/mm/debug_vm_pgtable.c
++++ b/mm/debug_vm_pgtable.c
+@@ -231,10 +231,10 @@ static void __init pmd_advanced_tests(struct pgtable_debug_args *args)
+ 	set_pmd_at(args->mm, vaddr, args->pmdp, pmd);
+ 	flush_dcache_page(page);
+ 	pmdp_set_wrprotect(args->mm, vaddr, args->pmdp);
+-	pmd = READ_ONCE(*args->pmdp);
++	pmd = pmdp_get(args->pmdp);
+ 	WARN_ON(pmd_write(pmd));
+ 	pmdp_huge_get_and_clear(args->mm, vaddr, args->pmdp);
+-	pmd = READ_ONCE(*args->pmdp);
++	pmd = pmdp_get(args->pmdp);
+ 	WARN_ON(!pmd_none(pmd));
+ 
+ 	pmd = pfn_pmd(args->pmd_pfn, args->page_prot);
+@@ -245,10 +245,10 @@ static void __init pmd_advanced_tests(struct pgtable_debug_args *args)
+ 	pmd = pmd_mkwrite(pmd, args->vma);
+ 	pmd = pmd_mkdirty(pmd);
+ 	pmdp_set_access_flags(args->vma, vaddr, args->pmdp, pmd, 1);
+-	pmd = READ_ONCE(*args->pmdp);
++	pmd = pmdp_get(args->pmdp);
+ 	WARN_ON(!(pmd_write(pmd) && pmd_dirty(pmd)));
+ 	pmdp_huge_get_and_clear_full(args->vma, vaddr, args->pmdp, 1);
+-	pmd = READ_ONCE(*args->pmdp);
++	pmd = pmdp_get(args->pmdp);
+ 	WARN_ON(!pmd_none(pmd));
+ 
+ 	pmd = pmd_mkhuge(pfn_pmd(args->pmd_pfn, args->page_prot));
+@@ -256,7 +256,7 @@ static void __init pmd_advanced_tests(struct pgtable_debug_args *args)
+ 	set_pmd_at(args->mm, vaddr, args->pmdp, pmd);
+ 	flush_dcache_page(page);
+ 	pmdp_test_and_clear_young(args->vma, vaddr, args->pmdp);
+-	pmd = READ_ONCE(*args->pmdp);
++	pmd = pmdp_get(args->pmdp);
+ 	WARN_ON(pmd_young(pmd));
+ 
+ 	/*  Clear the pte entries  */
+@@ -357,12 +357,12 @@ static void __init pud_advanced_tests(struct pgtable_debug_args *args)
+ 	set_pud_at(args->mm, vaddr, args->pudp, pud);
+ 	flush_dcache_page(page);
+ 	pudp_set_wrprotect(args->mm, vaddr, args->pudp);
+-	pud = READ_ONCE(*args->pudp);
++	pud = pudp_get(args->pudp);
+ 	WARN_ON(pud_write(pud));
+ 
+ #ifndef __PAGETABLE_PMD_FOLDED
+ 	pudp_huge_get_and_clear(args->mm, vaddr, args->pudp);
+-	pud = READ_ONCE(*args->pudp);
++	pud = pudp_get(args->pudp);
+ 	WARN_ON(!pud_none(pud));
+ #endif /* __PAGETABLE_PMD_FOLDED */
+ 	pud = pfn_pud(args->pud_pfn, args->page_prot);
+@@ -374,12 +374,12 @@ static void __init pud_advanced_tests(struct pgtable_debug_args *args)
+ 	pud = pud_mkwrite(pud);
+ 	pud = pud_mkdirty(pud);
+ 	pudp_set_access_flags(args->vma, vaddr, args->pudp, pud, 1);
+-	pud = READ_ONCE(*args->pudp);
++	pud = pudp_get(args->pudp);
+ 	WARN_ON(!(pud_write(pud) && pud_dirty(pud)));
+ 
+ #ifndef __PAGETABLE_PMD_FOLDED
+ 	pudp_huge_get_and_clear_full(args->vma, vaddr, args->pudp, 1);
+-	pud = READ_ONCE(*args->pudp);
++	pud = pudp_get(args->pudp);
+ 	WARN_ON(!pud_none(pud));
+ #endif /* __PAGETABLE_PMD_FOLDED */
+ 
+@@ -389,7 +389,7 @@ static void __init pud_advanced_tests(struct pgtable_debug_args *args)
+ 	set_pud_at(args->mm, vaddr, args->pudp, pud);
+ 	flush_dcache_page(page);
+ 	pudp_test_and_clear_young(args->vma, vaddr, args->pudp);
+-	pud = READ_ONCE(*args->pudp);
++	pud = pudp_get(args->pudp);
+ 	WARN_ON(pud_young(pud));
+ 
+ 	pudp_huge_get_and_clear(args->mm, vaddr, args->pudp);
+@@ -441,7 +441,7 @@ static void __init pmd_huge_tests(struct pgtable_debug_args *args)
+ 	WRITE_ONCE(*args->pmdp, __pmd(0));
+ 	WARN_ON(!pmd_set_huge(args->pmdp, __pfn_to_phys(args->fixed_pmd_pfn), args->page_prot));
+ 	WARN_ON(!pmd_clear_huge(args->pmdp));
+-	pmd = READ_ONCE(*args->pmdp);
++	pmd = pmdp_get(args->pmdp);
+ 	WARN_ON(!pmd_none(pmd));
+ }
+ 
+@@ -461,7 +461,7 @@ static void __init pud_huge_tests(struct pgtable_debug_args *args)
+ 	WRITE_ONCE(*args->pudp, __pud(0));
+ 	WARN_ON(!pud_set_huge(args->pudp, __pfn_to_phys(args->fixed_pud_pfn), args->page_prot));
+ 	WARN_ON(!pud_clear_huge(args->pudp));
+-	pud = READ_ONCE(*args->pudp);
++	pud = pudp_get(args->pudp);
+ 	WARN_ON(!pud_none(pud));
+ }
+ #else /* !CONFIG_HAVE_ARCH_HUGE_VMAP */
+@@ -490,7 +490,7 @@ static void __init pgd_basic_tests(struct pgtable_debug_args *args)
+ #ifndef __PAGETABLE_PUD_FOLDED
+ static void __init pud_clear_tests(struct pgtable_debug_args *args)
+ {
+-	pud_t pud = READ_ONCE(*args->pudp);
++	pud_t pud = pudp_get(args->pudp);
+ 
+ 	if (mm_pmd_folded(args->mm))
+ 		return;
+@@ -498,7 +498,7 @@ static void __init pud_clear_tests(struct pgtable_debug_args *args)
+ 	pr_debug("Validating PUD clear\n");
+ 	WARN_ON(pud_none(pud));
+ 	pud_clear(args->pudp);
+-	pud = READ_ONCE(*args->pudp);
++	pud = pudp_get(args->pudp);
+ 	WARN_ON(!pud_none(pud));
+ }
+ 
+@@ -515,7 +515,7 @@ static void __init pud_populate_tests(struct pgtable_debug_args *args)
+ 	 * Hence this must not qualify as pud_bad().
+ 	 */
+ 	pud_populate(args->mm, args->pudp, args->start_pmdp);
+-	pud = READ_ONCE(*args->pudp);
++	pud = pudp_get(args->pudp);
+ 	WARN_ON(pud_bad(pud));
+ }
+ #else  /* !__PAGETABLE_PUD_FOLDED */
+@@ -526,7 +526,7 @@ static void __init pud_populate_tests(struct pgtable_debug_args *args) { }
+ #ifndef __PAGETABLE_P4D_FOLDED
+ static void __init p4d_clear_tests(struct pgtable_debug_args *args)
+ {
+-	p4d_t p4d = READ_ONCE(*args->p4dp);
++	p4d_t p4d = p4dp_get(args->p4dp);
+ 
+ 	if (mm_pud_folded(args->mm))
+ 		return;
+@@ -534,7 +534,7 @@ static void __init p4d_clear_tests(struct pgtable_debug_args *args)
+ 	pr_debug("Validating P4D clear\n");
+ 	WARN_ON(p4d_none(p4d));
+ 	p4d_clear(args->p4dp);
+-	p4d = READ_ONCE(*args->p4dp);
++	p4d = p4dp_get(args->p4dp);
+ 	WARN_ON(!p4d_none(p4d));
+ }
+ 
+@@ -553,13 +553,13 @@ static void __init p4d_populate_tests(struct pgtable_debug_args *args)
+ 	pud_clear(args->pudp);
+ 	p4d_clear(args->p4dp);
+ 	p4d_populate(args->mm, args->p4dp, args->start_pudp);
+-	p4d = READ_ONCE(*args->p4dp);
++	p4d = p4dp_get(args->p4dp);
+ 	WARN_ON(p4d_bad(p4d));
+ }
+ 
+ static void __init pgd_clear_tests(struct pgtable_debug_args *args)
+ {
+-	pgd_t pgd = READ_ONCE(*(args->pgdp));
++	pgd_t pgd = pgdp_get(args->pgdp);
+ 
+ 	if (mm_p4d_folded(args->mm))
+ 		return;
+@@ -567,7 +567,7 @@ static void __init pgd_clear_tests(struct pgtable_debug_args *args)
+ 	pr_debug("Validating PGD clear\n");
+ 	WARN_ON(pgd_none(pgd));
+ 	pgd_clear(args->pgdp);
+-	pgd = READ_ONCE(*args->pgdp);
++	pgd = pgdp_get(args->pgdp);
+ 	WARN_ON(!pgd_none(pgd));
+ }
+ 
+@@ -586,7 +586,7 @@ static void __init pgd_populate_tests(struct pgtable_debug_args *args)
+ 	p4d_clear(args->p4dp);
+ 	pgd_clear(args->pgdp);
+ 	pgd_populate(args->mm, args->pgdp, args->start_p4dp);
+-	pgd = READ_ONCE(*args->pgdp);
++	pgd = pgdp_get(args->pgdp);
+ 	WARN_ON(pgd_bad(pgd));
+ }
+ #else  /* !__PAGETABLE_P4D_FOLDED */
+@@ -627,12 +627,12 @@ static void __init pte_clear_tests(struct pgtable_debug_args *args)
+ 
+ static void __init pmd_clear_tests(struct pgtable_debug_args *args)
+ {
+-	pmd_t pmd = READ_ONCE(*args->pmdp);
++	pmd_t pmd = pmdp_get(args->pmdp);
+ 
+ 	pr_debug("Validating PMD clear\n");
+ 	WARN_ON(pmd_none(pmd));
+ 	pmd_clear(args->pmdp);
+-	pmd = READ_ONCE(*args->pmdp);
++	pmd = pmdp_get(args->pmdp);
+ 	WARN_ON(!pmd_none(pmd));
+ }
+ 
+@@ -646,7 +646,7 @@ static void __init pmd_populate_tests(struct pgtable_debug_args *args)
+ 	 * Hence this must not qualify as pmd_bad().
+ 	 */
+ 	pmd_populate(args->mm, args->pmdp, args->start_ptep);
+-	pmd = READ_ONCE(*args->pmdp);
++	pmd = pmdp_get(args->pmdp);
+ 	WARN_ON(pmd_bad(pmd));
+ }
+ 
+@@ -1251,7 +1251,7 @@ static int __init init_args(struct pgtable_debug_args *args)
+ 		ret = -ENOMEM;
+ 		goto error;
+ 	}
+-	args->start_ptep = pmd_pgtable(READ_ONCE(*args->pmdp));
++	args->start_ptep = pmd_pgtable(pmdp_get(args->pmdp));
+ 	WARN_ON(!args->start_ptep);
+ 
+ 	init_fixed_pfns(args);
+-- 
+2.30.2
 
-I'll get back to reviewing the series today. Sorry for the
-inconvenience.
-
--Serge(y)
-
-> 
-> Thanks,
-> 
-> Paolo
-> 
 
