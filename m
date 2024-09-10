@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-323224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E6569739B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:19:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E15D9739BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA8791F22524
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:19:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 907951C24896
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A3A19413F;
-	Tue, 10 Sep 2024 14:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F39194151;
+	Tue, 10 Sep 2024 14:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTkS7gM5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aNtgNXN2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A24618FDDF;
-	Tue, 10 Sep 2024 14:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF01B18FDBD;
+	Tue, 10 Sep 2024 14:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725977966; cv=none; b=qEOdP3MAtSXqq4L65xXPeR777R7finEL/bRmcPeyzTjkzUGFjHBGRE3wk6jmLAyDYTYCgksiOQcsL9dpB1h6Yb3BzMkR407vLr51NUUz2n53kaqohhnGxqXoXwubnLv3v9OH5AhsQERGBx6Rd/OB9x6WogxxvvSAhz0B5Gthvkc=
+	t=1725978032; cv=none; b=VT/AOjdajHTMHMePw76ldfzgFXDM+wDmy/e+QAQjP5NUO8LCHF4vJLE8bMKcMNb5T5aWZLo0O19fz4U2dEFc/c8IYhXlTzFHDREXZbzuExJrXMbNive63BMY7fHFRPb5puamBj76rCbRtjbwuYWHcIOAF7PLIXXiM+lPmdTwClY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725977966; c=relaxed/simple;
-	bh=ZES5LO9BASmSUM5s+UjAld5zKXpcF8iy4zrbeykzqts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nzfLwFpmUaJK6k9cybEZ/XvGg8nlAPOG7Z7dN0dziYP7VoTgD2yDd8d3E/GPYL7kj4ivf+n+ooT92dX3iMIwgPbVXz8vNxzRUweXIocOM0MJaCoCwesgheMLGD2WTsc9rq4Sdel8P7G4lcNs+eawxjzBHXiiE8CiyNT8BEcDj20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTkS7gM5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F175C4CEC3;
-	Tue, 10 Sep 2024 14:19:23 +0000 (UTC)
+	s=arc-20240116; t=1725978032; c=relaxed/simple;
+	bh=4KDF1e8TVKxPgvhlss3fyOwBw5vqSdkC+rz2EjSllDs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CjVnD96TMyXaCoFTFdhItLL7YY5q4h9+9hECO7c20bVzirHmBoDWkemjG1PV9/rnLYAb5RwQndgZucNyoXeqkA3xDMoWjRgxyBMQg9fq5vr0w1EfVj9Zu80v5ilWjBDEM0+jY+MabWP+TCUTp3ltiD+KGhtR8N2BPS06mg2L/mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aNtgNXN2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DAB7C4CED7;
+	Tue, 10 Sep 2024 14:20:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725977965;
-	bh=ZES5LO9BASmSUM5s+UjAld5zKXpcF8iy4zrbeykzqts=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZTkS7gM5vhmA/K1h0i2dTchicnTU/Bcv9AoxDvAndUQhdMg83lL8q4tMnVujlmMvu
-	 tfWQEaTc2FfyOJhB+ZMBBtTi4WHGdzSadvumPjf4TtQfnVVSiITDOP+HkZT1byuxCC
-	 1sHA7PMfkfjaOKzcxZyW/KEhtwws39/VXP+ix32r1fRtimxYuGkm0qXOJn1j9eVnny
-	 ZfOvJ2nve4pfQOJnFfAaKuqVIuM9nTLmAgJe5t4pVn49vDsfk3L17ZrlweFGc520+4
-	 XGWmzTf3XmGJUC820G5XoG1Ss/UuMbWV7xbscxm51RLePXvR3EskkSSMfzKzyDu98N
-	 +nnKuXBgDH3dg==
-Date: Tue, 10 Sep 2024 15:19:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Fuad Tabba <tabba@google.com>
-Cc: Dave Martin <Dave.Martin@arm.com>, Marc Zyngier <maz@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 0/4] KVM: arm64: Fix underallocation of storage for
- SVE state
-Message-ID: <0d18dda8-347a-4cd5-b17f-40c646fc3fab@sirena.org.uk>
-References: <20240704-kvm-arm64-fix-pkvm-sve-vl-v4-0-b6898ab23dc4@kernel.org>
- <86a5iw3ri2.wl-maz@kernel.org>
- <fec60c7f-0cc3-44e2-8be1-09c120e8523e@sirena.org.uk>
- <ZowGFl/1AEuevh96@e133380.arm.com>
- <a3f2f13e-be22-4a09-a8a6-5faef818defe@sirena.org.uk>
- <CA+EHjTyCvG2KL=LPhbAf+Wo66QoC_EMk1xn+R9X-yKunHQ-JhA@mail.gmail.com>
- <Ztspjf0SHx7nz2lV@finisterre.sirena.org.uk>
- <CA+EHjTyjVMw5CtEiLoZzvnnano94UGx_URhFBd7BRYm89K+XmQ@mail.gmail.com>
- <ZttDmNTX0vuddRrZ@finisterre.sirena.org.uk>
- <CA+EHjTww9OjB3OH85x_2Hs_yiaFxQwYXLZKn7o5MqUALkFyKMg@mail.gmail.com>
+	s=k20201202; t=1725978032;
+	bh=4KDF1e8TVKxPgvhlss3fyOwBw5vqSdkC+rz2EjSllDs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aNtgNXN2M0+bC9YBAM4MoB3fsY0CFKsVYezVrX1QptCfBsjHU4Txb1bR7p7eIY8wj
+	 JrxjCsu93ObAPCngSiJOEDp9fTaV8GvcFIxtvOm/A6X6vK85U1UtyIvcC5soVAZLIX
+	 VQ6gKYIAwUCprXwzY7hFPSn8VUtQKzLl9FBfe6Hf8k3Xba9aHWNyOXl0wdSDkJK3S6
+	 xRNpDG6H5h6933g7rUEjs86uMWqfuH33vvg5Tq/fN6crdX+IJZSSwNjcaiXBDgVA72
+	 rBTiHV+4yXdG2BJhAQlnm4qWXgpuRwUe7VcFoi4SNZUKIAt/hmsRxe5CKjjIMLGHYj
+	 HVVH3DmOsl2FQ==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5366fd6fdf1so973655e87.0;
+        Tue, 10 Sep 2024 07:20:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWr0ZlHy9V3EaduKU+2hCZKgv1z4Gf8zZGgvN5G5qeTOqDxTREkP2Wd9jXuQklpi7S3SxQLFvqXvhYu@vger.kernel.org, AJvYcCWxUqq0OVmOUr6uzu5djUDX3UthAVH+Mee1gqVrsPF4e1J2vuqlCuSX4TtxtrHV3f2wWNGuMnCPDTQN/eRc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqPBWdv6SSJ/7l+tHLny2UXOmKTd2Qfx3PCrEuv9WY0+RR70bm
+	qsBYm2YErwi7EnacEzPE5VLcNHM0D6hRmgRzsdt2GwGitZLcpvFXDYYcYof4WXt63q3LnEBZqz3
+	l/PNXZoX2Z6Cs8cQy99UUK8X+vQ==
+X-Google-Smtp-Source: AGHT+IFRvPc0UNJ2YwfVBz4VuqnSdznayKEw+oCjGom392hIonmpBTgsOkxTdF2NiiPAiOAo97MJcTXUNCSpMShrVB4=
+X-Received: by 2002:a05:6512:ac8:b0:52e:f9f1:c13a with SMTP id
+ 2adb3069b0e04-536587a5831mr9910684e87.12.1725978030716; Tue, 10 Sep 2024
+ 07:20:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dI15yW6hBRPlcadE"
-Content-Disposition: inline
-In-Reply-To: <CA+EHjTww9OjB3OH85x_2Hs_yiaFxQwYXLZKn7o5MqUALkFyKMg@mail.gmail.com>
-X-Cookie: You're not Dave.  Who are you?
+References: <20240910102326.927544-1-lukma@denx.de>
+In-Reply-To: <20240910102326.927544-1-lukma@denx.de>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 10 Sep 2024 09:20:17 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKDo662kF2QDFOQZoGg+ox3=N1vWZOAiB=R+FBY2gTFKg@mail.gmail.com>
+Message-ID: <CAL_JsqKDo662kF2QDFOQZoGg+ox3=N1vWZOAiB=R+FBY2gTFKg@mail.gmail.com>
+Subject: Re: [PATCH v5] dts: nxp: mxs: Add descriptions for imx287 based
+ btt3-[012] devices
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 10, 2024 at 5:23=E2=80=AFAM Lukasz Majewski <lukma@denx.de> wro=
+te:
+>
+> The btt3 device' HW revisions from 0 to 2 use imx287 SoC and are to
+> some extend similar to already upstreamed XEA devices, hence are
+> using common imx28-lwe.dtsi file.
+>
+> New, imx28-btt3.dtsi file has been added to embrace common DTS
+> properties for different HW revisions for this device.
+>
+> As a result - changes introduced in imx28-btt3-[012].dts are
+> minimal.
+>
+> This patch also adds entry to fsl.yaml for btt3 board.
+>
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+>
+> ---
+> Changes for v2:
+> - Rename dts file from btt3-[012] to imx28-btt3-[012] to match current
+>   linux kernel naming convention
+> - Remove 'wlf,wm8974' from compatible for codec@1a
+>
+> Changes for v3:
+> - Keep alphabethical order for Makefile entries
+>
+> Changes for v4:
+> - Change compatible for btt3 board (to 'lwn,imx28-btt3')
+>
+> Changes for v5:
+> - Combine patch, which adds btt3-[012] with one adding board entry to
+>   fsl.yaml
+> ---
+>  .../devicetree/bindings/arm/fsl.yaml          |   1 +
 
---dI15yW6hBRPlcadE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I said 1 series, not 1 patch. checkpatch.pl will also tell you
+bindings should be a separate patch.
 
-On Tue, Sep 10, 2024 at 01:49:37PM +0100, Fuad Tabba wrote:
-> On Fri, 6 Sept 2024 at 19:03, Mark Brown <broonie@kernel.org> wrote:
-
-> > My general feeling is that it would have been perfectly fine for pKVM to
-> > enforce what the host kernel wants to do anyway, if we ever do add
-> > support for using asymmetric VLs and care about doing so on a system
-> > running pKVM then dealing with pKVM imposed limits at that time seems
-> > more than reasonable.  It probably wouldn't be the largest part of the
-> > work.  Equally we now have the code so we may as well use it?  It's not
-> > imposing huge overheads.
-
-> From pKVM, this would work and other than the potential for future
-> support for using asymmetric VLs, I don't really see a problem. Much
-> of the complexity was an attempt not to make pKVM more restrictive
-> than other modes.
-
-Right, so it's just a question of if we want to use the code that
-doesn't impose the limit given that we have it already.  I'm throwing a
-patch that limits the host VL into CI, should be out today.
-
---dI15yW6hBRPlcadE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbgVWcACgkQJNaLcl1U
-h9ARqAf+M1h9wtjrbe8SCruTA7Y9+imhZLonUGVJXlWQ+UOgZqt6jc7PffvFMz1z
-rgYnYSvf1Au9n95OMLOPor0FFMEGX3mBhauC3jxpT4Pur0j+QuDiIlgRZqEE54jA
-mRWugKbt/KqVah9QOTTuiLPzFCMga3u910cfAt7v6CGBqXsa7DmW64ue3YRV5/Ja
-V3TWjTWJ0VnTBBi+8O4TK/B5QzjJgK260OaIltJPbuY7x5GHwgXLY9UqFl+aeWRy
-++MZCRUvYIGbAZ9TMX+lVu/hmJDczSDqcMfc7QirfTkRlPQuLvrmw5i0XAtBEhNc
-Acm13DwSaVDZoLmJ2ykrOKHGEiYKfA==
-=Yand
------END PGP SIGNATURE-----
-
---dI15yW6hBRPlcadE--
+>  arch/arm/boot/dts/nxp/mxs/Makefile            |   3 +
+>  arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts    |  12 +
+>  arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts    |   8 +
+>  arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts    |  12 +
+>  arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi     | 320 ++++++++++++++++++
+>  6 files changed, 356 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi
 
