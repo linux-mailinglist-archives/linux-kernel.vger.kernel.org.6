@@ -1,247 +1,144 @@
-Return-Path: <linux-kernel+bounces-322851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873469730A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:03:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D63B9730D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B35DD1C23A16
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:03:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F367F288D9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3890C1917C7;
-	Tue, 10 Sep 2024 10:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF45D1922EF;
+	Tue, 10 Sep 2024 10:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o9FLaqzs"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EL6LuTtp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E56170A01;
-	Tue, 10 Sep 2024 10:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E4C18C325
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725962513; cv=none; b=pLGeD5k89qCunxAFSQHDD9ARro9K9Z1bfhaHvHkkrIVWakv/603lC9YTyT8w1m7mlXts2+sO8K9QXqWohI+Ijwob7sw5ETEVO/5v6gNGs/pjDUuCIsXJnC9C7tmF+V6UbkgLoRkl3By1DKW6XXmkoOxRv/FIBBOai2hfEII0HaY=
+	t=1725962561; cv=none; b=Q2qpib55562kYQI08FHx6xZtfTDO3Um9cpfjV5iEm9QO/2SiWW+FBDq3upZcU30PDaQCL2AldORcYjL4No5nKZM+MMVdNazFVxumdmwGmUa6vMBFiUTX1i+GwtvPHvHyWiwIAPFAS1UinYbCaZS+zhQ+rf6juY0lbZ9q9yHD/c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725962513; c=relaxed/simple;
-	bh=DwPT90akjSTs4s6oqdyjDPcFRFMAZXbpI+hn/syX8c4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rYf8QpyLUzbQSvfIl/kZo6PW5knErkUoUQF0dd3rMoZqsHlWESVuUDRC53ERmU0hPoRSqO7ZOagL8Gi2KR9N8b7pO6kD39hp7n+ETpNxjIwc/qGiWEHe07konM0pzLImTyiFDjr2CXwmKXTlNLW9rD/qfyEaH1WdKmUYTj6SevI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o9FLaqzs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A3UUnJ023787;
-	Tue, 10 Sep 2024 10:01:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JTb2IA1fMEiOChrbQgrJAH7QFCFefPBGjfe8rbzylCM=; b=o9FLaqzsWZjID/SL
-	wwOL4eNjVJ7yKe6nOCq5WYFrZuBMT9FxDXKq9R+e4gV5UKOWAf8aUJ3eZsJjL6Lk
-	K3XhO51cLMCIy9HtAw/e7ZSNYf8pKWFWTOMzbbYOoszb7uptI2BnfZl7EQWpZ3up
-	pPref9gw8rdIgAMkGAwaS0Ax2anzODkBVs8IlodKSzdTTKb5oL1IkiED1BdvL/Gg
-	JGJyh9Yai1+6oEKbRDQo14r1QFSV1zltIDDSfoB8OYZMrudsgxZ9W/RtxLdsFVlm
-	YD2fH1xBOKxLI/krqfdfSldwgFHVvkqvWq+9uEbwYHfOVwKsiwzF4/NRepeBxIKz
-	qpIldw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6p5f37-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 10:01:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48AA1eMc001352
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 10:01:40 GMT
-Received: from hu-jinlmao-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 10 Sep 2024 03:01:39 -0700
-From: Mao Jinlong <quic_jinlmao@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Mao Jinlong <quic_jinlmao@quicinc.com>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: [PATCH v4 RESEND 3/3] coresight: dummy: Add static trace id support for dummy source
-Date: Tue, 10 Sep 2024 03:01:25 -0700
-Message-ID: <20240910100127.8948-4-quic_jinlmao@quicinc.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240910100127.8948-1-quic_jinlmao@quicinc.com>
-References: <20240910100127.8948-1-quic_jinlmao@quicinc.com>
+	s=arc-20240116; t=1725962561; c=relaxed/simple;
+	bh=doj1p/tghLbwexq1ea6LnyQFPNXLGlk3z9W7gDs1ylA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c+d7OWZgozklnDCet6tpNSSDtcPhLDh1pKhIb2jOb28BQCHWGA0pfDTsLgDUO2tw2VhLBIszL0bDASTnq2cvybdR1Mg44stqKJ5pGos45ctj5zqwLL1e9g6M7VsWYNiPoxcVA7KA4HTgVXtpSvX5fTvrS3VTVVTouRQlcTn6K0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EL6LuTtp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725962558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PNfpEt6KnVBwNQm3M1C9GzjGk+0WLePFqbzXbBy1GT4=;
+	b=EL6LuTtp0Qu+X8IzyaR+Nn3LfiDZkOqBpyKcqZOjgpVJguLZYHE1XolQ1hUiQ/KZAW2cnB
+	vM8xbbNHxfe39kVAwZ5yGjFgQaIF+Mi679VyzcCEUodYqmzjXJFPqWnoGxXzRLVg/GRIGd
+	ojMcZopQAwXhPVj+LbUgA266DEXwO1k=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-407-26n_2mx1N0mfmdoO5mOA8A-1; Tue, 10 Sep 2024 06:02:35 -0400
+X-MC-Unique: 26n_2mx1N0mfmdoO5mOA8A-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb857fc7dso14628955e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 03:02:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725962554; x=1726567354;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PNfpEt6KnVBwNQm3M1C9GzjGk+0WLePFqbzXbBy1GT4=;
+        b=cJF2lbAWhl+vsIYJHoW599zlilutFxnSOWyCSwOzJ3L/HOW3V4CLR7M5jkh7PiSM3E
+         U3gvtwZn4JAO4yT9oJDeaspyO2SAi6LCJnVQ3TMvuAtFeoDII7P4Lmxf6GxhlSS72F0I
+         AE62dEuIDpCphfC9tALXc3Jp1qK+rUVjYUlZdj304pXhPwc7Q08QRj6YrIS3cIlGu2xg
+         VBQNwP3Ye0RclpGWG/aLLjZ3cHHWUZcw8sX05f55es5R3dxrv08MKKjhpY7CR4o9fXjj
+         702NeWtWrUT73Y2sArbvcZXtsmNaNAieWC+FDLfSBgG5Hn3X9T3sCzTZdfKbXzVwCZmU
+         DLkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuCSJgjxLbh52zkQ+5gF33SQUu22AOwAZzJJjzDVWQC1ITUBqWORhJHea52zoLyk5DgnnwcrFiAk5c2ko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWGv9YZEnu9YbXwiS3EnV1URTgPyK4ipEQb9TZfPzqpnmtVd3W
+	Kn5fi2H/CZd4WypB2ZXCDi7Nuy1PB3DLtXz7Ac+iK0R2jLoCZdz+2fD4jV17qTP0YBkXZpHocvo
+	J6JHgDoYj+JKcDURCVkJGb3nldDMuo5lCZZxcdJKIpEMhDs3FulQqtN2j8tgmYQ==
+X-Received: by 2002:adf:f6c1:0:b0:368:71bc:2b0c with SMTP id ffacd0b85a97d-378895c27a0mr8191874f8f.10.1725962553930;
+        Tue, 10 Sep 2024 03:02:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGgTK7nvRrUqbaD17hZpyrRXvwhUMGqSDL+EvmvKNDNa0xf9X4RSSObFH8AcmvlnfXdbRAG4w==
+X-Received: by 2002:adf:f6c1:0:b0:368:71bc:2b0c with SMTP id ffacd0b85a97d-378895c27a0mr8191848f8f.10.1725962553373;
+        Tue, 10 Sep 2024 03:02:33 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-378956652e8sm8556288f8f.30.2024.09.10.03.02.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 03:02:32 -0700 (PDT)
+Message-ID: <e625ce93-4bb9-4771-817b-b95973003895@redhat.com>
+Date: Tue, 10 Sep 2024 12:02:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: xAu96wHFsSeiEdpZ06YflN63pWU38Sek
-X-Proofpoint-GUID: xAu96wHFsSeiEdpZ06YflN63pWU38Sek
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- bulkscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0 phishscore=0
- impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409100075
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/21] KVM: x86/mmu: Export kvm_tdp_map_page()
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ kvm@vger.kernel.org
+Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
+ yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-19-rick.p.edgecombe@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20240904030751.117579-19-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Some dummy source has static trace id configured in HW and it cannot
-be changed via software programming. Configure the trace id in device
-tree and reserve the id when device probe.
+On 9/4/24 05:07, Rick Edgecombe wrote:
+> In future changes coco specific code will need to call kvm_tdp_map_page()
+> from within their respective gmem_post_populate() callbacks. Export it
+> so this can be done from vendor specific code. Since kvm_mmu_reload()
+> will be needed for this operation, export it as well.
 
-Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
----
- .../sysfs-bus-coresight-devices-dummy-source  | 15 +++++
- drivers/hwtracing/coresight/coresight-dummy.c | 59 +++++++++++++++++--
- 2 files changed, 70 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
+You can just squash this into patch 19; if you don't, s/it/its callee 
+kvm_mmu_load()/ in the last line.
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source b/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
-new file mode 100644
-index 000000000000..db770bc972d9
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
-@@ -0,0 +1,15 @@
-+What:		/sys/bus/coresight/devices/dummy_source<N>/enable_source
-+Date:		July 2024
-+KernelVersion:	6.9
-+Contact:	Mao Jinlong <quic_jinlmao@quicinc.com>
-+Description:	(RW) Enable/disable tracing of dummy source. A sink should be activated
-+		before enabling the source. The path of coresight components linking
-+		the source to the sink is configured and managed automatically by the
-+		coresight framework.
-+
-+What:		/sys/bus/coresight/devices/dummy_source<N>/traceid
-+Date:		July 2024
-+KernelVersion:	6.9
-+Contact:	Mao Jinlong <quic_jinlmao@quicinc.com>
-+Description:	(R) Show the trace ID that will appear in the trace stream
-+		coming from this trace entity.
-diff --git a/drivers/hwtracing/coresight/coresight-dummy.c b/drivers/hwtracing/coresight/coresight-dummy.c
-index ac70c0b491be..3bf5437cbfb1 100644
---- a/drivers/hwtracing/coresight/coresight-dummy.c
-+++ b/drivers/hwtracing/coresight/coresight-dummy.c
-@@ -11,10 +11,12 @@
- #include <linux/pm_runtime.h>
- 
- #include "coresight-priv.h"
-+#include "coresight-trace-id.h"
- 
- struct dummy_drvdata {
- 	struct device			*dev;
- 	struct coresight_device		*csdev;
-+	u8				traceid;
- };
- 
- DEFINE_CORESIGHT_DEVLIST(source_devs, "dummy_source");
-@@ -67,6 +69,32 @@ static const struct coresight_ops dummy_sink_cs_ops = {
- 	.sink_ops = &dummy_sink_ops,
- };
- 
-+/* User can get the trace id of dummy source from this node. */
-+static ssize_t traceid_show(struct device *dev,
-+			    struct device_attribute *attr, char *buf)
-+{
-+	unsigned long val;
-+	struct dummy_drvdata *drvdata = dev_get_drvdata(dev->parent);
-+
-+	val = drvdata->traceid;
-+	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
-+}
-+static DEVICE_ATTR_RO(traceid);
-+
-+static struct attribute *coresight_dummy_attrs[] = {
-+	&dev_attr_traceid.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group coresight_dummy_group = {
-+	.attrs = coresight_dummy_attrs,
-+};
-+
-+static const struct attribute_group *coresight_dummy_groups[] = {
-+	&coresight_dummy_group,
-+	NULL,
-+};
-+
- static int dummy_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -74,6 +102,11 @@ static int dummy_probe(struct platform_device *pdev)
- 	struct coresight_platform_data *pdata;
- 	struct dummy_drvdata *drvdata;
- 	struct coresight_desc desc = { 0 };
-+	int ret, trace_id;
-+
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (!drvdata)
-+		return -ENOMEM;
- 
- 	if (of_device_is_compatible(node, "arm,coresight-dummy-source")) {
- 
-@@ -85,6 +118,25 @@ static int dummy_probe(struct platform_device *pdev)
- 		desc.subtype.source_subtype =
- 					CORESIGHT_DEV_SUBTYPE_SOURCE_OTHERS;
- 		desc.ops = &dummy_source_cs_ops;
-+		desc.groups = coresight_dummy_groups;
-+
-+		ret = coresight_get_static_trace_id(dev, &trace_id);
-+		if (!ret) {
-+			/* Get the static id if id is set in device tree. */
-+			ret = coresight_trace_id_get_static_system_id(trace_id);
-+			if (ret < 0)
-+				return ret;
-+
-+		} else {
-+			/* Get next available id if id is not set in device tree. */
-+			trace_id = coresight_trace_id_get_system_id();
-+			if (trace_id < 0) {
-+				ret = trace_id;
-+				return ret;
-+			}
-+		}
-+		drvdata->traceid = (u8)trace_id;
-+
- 	} else if (of_device_is_compatible(node, "arm,coresight-dummy-sink")) {
- 		desc.name = coresight_alloc_device_name(&sink_devs, dev);
- 		if (!desc.name)
-@@ -103,10 +155,6 @@ static int dummy_probe(struct platform_device *pdev)
- 		return PTR_ERR(pdata);
- 	pdev->dev.platform_data = pdata;
- 
--	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
--
- 	drvdata->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, drvdata);
- 
-@@ -126,7 +174,10 @@ static void dummy_remove(struct platform_device *pdev)
- {
- 	struct dummy_drvdata *drvdata = platform_get_drvdata(pdev);
- 	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->of_node;
- 
-+	if (of_device_is_compatible(node, "arm,coresight-dummy-source"))
-+		coresight_trace_id_put_system_id(drvdata->traceid);
- 	pm_runtime_disable(dev);
- 	coresight_unregister(drvdata->csdev);
- }
--- 
-2.46.0
+Paolo
 
 
