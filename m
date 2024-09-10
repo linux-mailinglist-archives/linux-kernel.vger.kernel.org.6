@@ -1,307 +1,200 @@
-Return-Path: <linux-kernel+bounces-323402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC1A6973CD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:00:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96246973CD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CB44B22317
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:00:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B913D1C21741
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4FB1A0706;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCFB19EEB4;
 	Tue, 10 Sep 2024 16:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iB38T1TY"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hfqJcOfc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C63188CB1
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205616F2FD
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725984036; cv=none; b=rKC4rzCyBMjUiYGiveFPCn2HYI2HBBu1w2+Y74fnQrQQr21Cqj9glwkaPGKgqaa0dbsBbVu5at5b9mYcduRIiZmAG9jWjRdx76QGTt3epEVJfMm1zdfWcu3eAdsbwNXFRZN243ID5SaxEcZarn4OuepXU/EefuUbYd5VYtZReA4=
+	t=1725984035; cv=none; b=Nuvo52Y6sDyri/bn39BHADHFAXjBXLn2Pzbx1nEEYptYaY4UKVgj88JWfD+QHHCd+WCC3SpgOdUw6nLlogHYIBJRDWDz4OD9ZzJFy8DMRGsbv3Dee92+Smt89WQDRpagLe8fHs2yF3JJaWs05PxEQ8oXhKI92QDWT6t7PAUecmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725984036; c=relaxed/simple;
-	bh=V99WNH5dOmvSNnSF/BmHZyT/GRd0NVPuBJ1LTz6DTms=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lAJ9amV1Lh8tOILuoNX3jxPURmEjD+8N2TBApj9SERYY6VO319OzhZlXY6sGoDRQl8XPm7IrUBma/9cVzQOalC4MDSPpyGhBNSZSFOlTe0gPH7GIEpyqyjt51sqm3vSbKr8d//MhOExan0S9ZdZbPibB+Uu/v8ZSp9WWRERJNPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iB38T1TY; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-207349fa3d7so188545ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:00:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725984034; x=1726588834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I/pQ6A+pcYJ6D1seY7AqA3NxJXg0QF/AHpSLfCgBJF0=;
-        b=iB38T1TYqgSWr6yPZbTHp1uMfqdb+RbnRVotO3uPu65twBEa3px6fHZIWoypyBDJZS
-         pOFK5se+dbAri7jd9QszZ5zmVlVchURdUIg420tEEj8+sN9SVGxEkAKKMg8O1hz+ZMaP
-         xNxTIPw3spDdWB3aPR/leUhcZATYr9m9f/y3W1Vg2t6W3m5aple7BmVDRfKa8H/WCFD/
-         05l74fAo43Kdh3soP4zkvE7MP3V1kUL8dd7RqDosrjqReKmrQ6nYWRs2zsWqTdBdaOHa
-         2+e/GFysYGpWuCoOsQeZ/1HGSLXpuPWS5RaExm2cDEfb/347Rk0VOPCE6IEJj3XGjK8u
-         UdkA==
+	s=arc-20240116; t=1725984035; c=relaxed/simple;
+	bh=JWVM4otOQv+jJECOz+CBNEA9+udXOfIUbaqPpk6TaU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O/oo6g/YXT/1Pa7Uwlsm2s0lXFuS++h8XwQ6c8eoePbCGTeSNDFIv3qddu2mYmkNfog2+2nIGrp4ef9AdJAPvajXy2mN27DtptbF04+wsla5QoM79KK514TALiI7Yti8XC5Vj+rXSFeDo5z41EIUubxxJjjOHHu1GYJWgpT21sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hfqJcOfc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725984033;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0fzvPsoHOWoNs9nSW3FtSoniFPK0US8xYTqjU6a+Y3A=;
+	b=hfqJcOfcLa5TZ078QgTTMOOae5LO37dBM6weVKPgmT+4p1POZgHP2l2bZsKBLaVUgqzo96
+	ow4x2/If2k5QrQ8Qe812G/Z8/mPAAoVis/vC+HOZX2BlkSkTGeKQW8Un5Ux1Eiy5k6RlMg
+	yAPQypMyGu7SlAxmr8NcOPkkblA5AK8=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-6-U15rG-IpNA-INmlOy0IA-Q-1; Tue, 10 Sep 2024 12:00:31 -0400
+X-MC-Unique: U15rG-IpNA-INmlOy0IA-Q-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb080ab53so22238625e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:00:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725984034; x=1726588834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I/pQ6A+pcYJ6D1seY7AqA3NxJXg0QF/AHpSLfCgBJF0=;
-        b=MNuiNRbSOSOg0w/a6Xx6eyzNKv1XQ9+Qyvo8tG0Fw3gjOpCYiMLDkXch1o9nlWM0Y0
-         KGIXpMmHFNJhFGn0BUKFALhb0+JFUqFIc7BfPc4v37cfPjTVZU4es5+t3I6SoXA3GuFf
-         1ttXODaJFmJbOp0gPkzsRxqPQsJ7Fleb2jHgqo1p9LbJ0LudAIVTBx59SYNg3JsZwsCl
-         e7Wq72roKMeEv3Z5J9BvBhnjWpl4ofebW6GSiEPnBLq6Xte+v+T/besyrxJUkAB+Gg/C
-         JYOIPgnhgzPWpYqEinkyxASJJmXRiYHQwC99KRFJB08Tz2sx7TItB+fucECyMgg8BLeO
-         7Y6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXXCxJv+f2ScWDFEBjFkklx9a0UJvuzOi9dCWxCyZuAWLMzIzTNwKQKjB0QA1NNmLAQRp80Nd2pyswXV6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkJbFRLAIKiOgkcuY6NDEmj3IUIx134K5Enqt+48tXYxfh9E8Z
-	5R14qtyGb3GjMcxCc1i/YHKvQjGZDvPgrNbIIB7T72uJWTMRpjB8B+BKVsRByCIzNW97dVAzGju
-	xvdQP3x0D83WiET/fleVMmV2jjMdpDCa+7eeG
-X-Google-Smtp-Source: AGHT+IHRCPEz5/BbFDmFo23Gi8jP7WaCaP46OvR/6hySAeelq879cijbQ/h4qP+7bgQO4s0dbhmIgkTf4d+zhILMM0I=
-X-Received: by 2002:a17:902:fa10:b0:205:6c5f:e3ac with SMTP id
- d9443c01a7336-2074c646bc1mr1059585ad.19.1725983975114; Tue, 10 Sep 2024
- 08:59:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725984030; x=1726588830;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0fzvPsoHOWoNs9nSW3FtSoniFPK0US8xYTqjU6a+Y3A=;
+        b=GtKLzOuLd9YE/l/mktYUeV5p14aQApUSARJkN8mo6wnsYBtM6K1nl9owZbn0CNyHnG
+         ka2O4jN+VWv4r/gPOPFMbLe4o3imvTt2de0qu0mknRBnUZlnCOWNLTLYc1F5PNThZyC7
+         FhcC/41Q4j/iU3nazMH7yzAMmRmYqivlC9UENJIZh+G28bBkvh8ySoxrMzyyFt6o47Ci
+         XnioumBMMmSK+dvSde1onD8oIbtjOxz7NZiQ/AGtA1/f6mKuyiN0Y+5UxIxVji0pR0DR
+         PrqnCwO/6Bz2kL95tBkrrjkY0t3cj12NnHBB/w+xmJTHsxHqM+qWd+DSUxWRokPkYDcR
+         BXyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpNyetgN632nh8QjRNBnlONj+RpXeTAUtGgoOi9clhpNC1sAWLMSyfnHFE7A4zEv4F84/Xa+pSO3VuEzk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi8gcw9hQTTvtUOQACu79HkB3tiCo/wAdVDua8cFV8DsZMcSXP
+	EasDbioPMUYKIEsk+j4DDG2XO8rP3LZFTHZeGDgtAmcV/VSAk76TRUqh1mVlkBNIgqRRBu57bwy
+	I1gb1ZtagKcCFX5Qct3aPZ+wuCLjmw2W1jl/Y4Z3GOinYjfPkosVfAMaj+uY6Gw==
+X-Received: by 2002:a05:600c:1f09:b0:42c:b8cc:205a with SMTP id 5b1f17b1804b1-42cb8cc232emr51348485e9.32.1725984029892;
+        Tue, 10 Sep 2024 09:00:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFL3Y3rYT7nowu89mnGE6HKg6HDefzJ9gLIqcT2MASsILGiC5/JIgRFgYGOK8zXXpEda6OGbw==
+X-Received: by 2002:a05:600c:1f09:b0:42c:b8cc:205a with SMTP id 5b1f17b1804b1-42cb8cc232emr51348215e9.32.1725984029292;
+        Tue, 10 Sep 2024 09:00:29 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-378956d35dasm9268133f8f.67.2024.09.10.09.00.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 09:00:28 -0700 (PDT)
+Message-ID: <89657f96-0ed1-4543-9074-f13f62cc4694@redhat.com>
+Date: Tue, 10 Sep 2024 18:00:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240907050830.6752-1-irogers@google.com> <20240907050830.6752-14-irogers@google.com>
- <Zt_eOhg7I81oGeo2@google.com>
-In-Reply-To: <Zt_eOhg7I81oGeo2@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 10 Sep 2024 08:59:23 -0700
-Message-ID: <CAP-5=fXRY=ATVqnCpkyBJjgrQsb03jFwU6Knje2easrWb7j0bQ@mail.gmail.com>
-Subject: Re: [PATCH v1 13/15] perf tests: Add tool PMU test
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, Ravi Bangoria <ravi.bangoria@amd.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Jing Zhang <renyu.zj@linux.alibaba.com>, 
-	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Benjamin Gray <bgray@linux.ibm.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
-	Howard Chu <howardchu95@gmail.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Yang Jihong <yangjihong@bytedance.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	Veronika Molnarova <vmolnaro@redhat.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Changbin Du <changbin.du@huawei.com>, 
-	Ze Gao <zegao2021@gmail.com>, Andi Kleen <ak@linux.intel.com>, 
-	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
-	Sun Haiyong <sunhaiyong@loongson.cn>, Junhao He <hejunhao3@huawei.com>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Yicong Yang <yangyicong@hisilicon.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/25] KVM: TDX: Add placeholders for TDX VM/vCPU
+ structures
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ kvm@vger.kernel.org
+Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
+ tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
+ linux-kernel@vger.kernel.org, Isaku Yamahata <isaku.yamahata@intel.com>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-2-rick.p.edgecombe@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0j
+ UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT7CwU0EEwECACMFAlRCcBICGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
+ 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
+ jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
+ VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
+ CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
+ SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
+ AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
+ AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
+ nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
+ bQ4tlFFuVjArBZcapSIe6NV8C4cEiSTOwE0EVEJx7gEIAMeHcVzuv2bp9HlWDp6+RkZe+vtl
+ KwAHplb/WH59j2wyG8V6i33+6MlSSJMOFnYUCCL77bucx9uImI5nX24PIlqT+zasVEEVGSRF
+ m8dgkcJDB7Tps0IkNrUi4yof3B3shR+vMY3i3Ip0e41zKx0CvlAhMOo6otaHmcxr35sWq1Jk
+ tLkbn3wG+fPQCVudJJECvVQ//UAthSSEklA50QtD2sBkmQ14ZryEyTHQ+E42K3j2IUmOLriF
+ dNr9NvE1QGmGyIcbw2NIVEBOK/GWxkS5+dmxM2iD4Jdaf2nSn3jlHjEXoPwpMs0KZsgdU0pP
+ JQzMUMwmB1wM8JxovFlPYrhNT9MAEQEAAcLBMwQYAQIACQUCVEJx7gIbDAAKCRB+FRAMzTZp
+ sadRDqCctLmYICZu4GSnie4lKXl+HqlLanpVMOoFNnWs9oRP47MbE2wv8OaYh5pNR9VVgyhD
+ OG0AU7oidG36OeUlrFDTfnPYYSF/mPCxHttosyt8O5kabxnIPv2URuAxDByz+iVbL+RjKaGM
+ GDph56ZTswlx75nZVtIukqzLAQ5fa8OALSGum0cFi4ptZUOhDNz1onz61klD6z3MODi0sBZN
+ Aj6guB2L/+2ZwElZEeRBERRd/uommlYuToAXfNRdUwrwl9gRMiA0WSyTb190zneRRDfpSK5d
+ usXnM/O+kr3Dm+Ui+UioPf6wgbn3T0o6I5BhVhs4h4hWmIW7iNhPjX1iybXfmb1gAFfjtHfL
+ xRUr64svXpyfJMScIQtBAm0ihWPltXkyITA92ngCmPdHa6M1hMh4RDX+Jf1fiWubzp1voAg0
+ JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
+ dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
+ b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
+In-Reply-To: <20240812224820.34826-2-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 9, 2024 at 10:50=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Fri, Sep 06, 2024 at 10:08:28PM -0700, Ian Rogers wrote:
-> > Ensure parsing with and without PMU creates events with the expected
-> > config values. This ensures the tool.json doesn't get out of sync with
-> > tool_pmu_event enum.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/tests/Build          |   1 +
-> >  tools/perf/tests/builtin-test.c |   1 +
-> >  tools/perf/tests/tests.h        |   1 +
-> >  tools/perf/tests/tool_pmu.c     | 111 ++++++++++++++++++++++++++++++++
-> >  4 files changed, 114 insertions(+)
-> >  create mode 100644 tools/perf/tests/tool_pmu.c
-> >
-> > diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
-> > index 5671ee530019..a771e4928247 100644
-> > --- a/tools/perf/tests/Build
-> > +++ b/tools/perf/tests/Build
-> > @@ -67,6 +67,7 @@ perf-test-y +=3D sigtrap.o
-> >  perf-test-y +=3D event_groups.o
-> >  perf-test-y +=3D symbols.o
-> >  perf-test-y +=3D util.o
-> > +perf-test-y +=3D tool_pmu.o
-> >
-> >  ifeq ($(SRCARCH),$(filter $(SRCARCH),x86 arm arm64 powerpc))
-> >  perf-test-$(CONFIG_DWARF_UNWIND) +=3D dwarf-unwind.o
-> > diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin=
--test.c
-> > index 470a9709427d..3b30f258c395 100644
-> > --- a/tools/perf/tests/builtin-test.c
-> > +++ b/tools/perf/tests/builtin-test.c
-> > @@ -73,6 +73,7 @@ static struct test_suite *generic_tests[] =3D {
-> >       &suite__PERF_RECORD,
-> >       &suite__pmu,
-> >       &suite__pmu_events,
-> > +     &suite__tool_pmu,
-> >       &suite__dso_data,
-> >       &suite__perf_evsel__roundtrip_name_test,
-> >  #ifdef HAVE_LIBTRACEEVENT
-> > diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-> > index 6ea2be86b7bf..1ed76d4156b6 100644
-> > --- a/tools/perf/tests/tests.h
-> > +++ b/tools/perf/tests/tests.h
-> > @@ -83,6 +83,7 @@ DECLARE_SUITE(perf_evsel__tp_sched_test);
-> >  DECLARE_SUITE(syscall_openat_tp_fields);
-> >  DECLARE_SUITE(pmu);
-> >  DECLARE_SUITE(pmu_events);
-> > +DECLARE_SUITE(tool_pmu);
-> >  DECLARE_SUITE(attr);
-> >  DECLARE_SUITE(dso_data);
-> >  DECLARE_SUITE(dso_data_cache);
-> > diff --git a/tools/perf/tests/tool_pmu.c b/tools/perf/tests/tool_pmu.c
-> > new file mode 100644
-> > index 000000000000..94d0dd8fd3cb
-> > --- /dev/null
-> > +++ b/tools/perf/tests/tool_pmu.c
-> > @@ -0,0 +1,111 @@
-> > +// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-> > +#include "debug.h"
-> > +#include "evlist.h"
-> > +#include "parse-events.h"
-> > +#include "tests.h"
-> > +#include "tool_pmu.h"
-> > +
-> > +static int do_test(enum tool_pmu_event ev, bool with_pmu)
-> > +{
-> > +     struct evlist *evlist =3D evlist__new();
-> > +     struct evsel *evsel;
-> > +     struct parse_events_error err;
-> > +     int ret;
-> > +     char str[128];
-> > +     bool found =3D false;
-> > +
-> > +     if (!evlist) {
-> > +             pr_err("evlist allocation failed\n");
-> > +             return TEST_FAIL;
-> > +     }
-> > +
-> > +     if (with_pmu)
-> > +             snprintf(str, sizeof(str), "tool/%s/", tool_pmu__event_to=
-_str(ev));
-> > +     else
-> > +             strncpy(str, tool_pmu__event_to_str(ev), sizeof(str));
-> > +
-> > +     parse_events_error__init(&err);
-> > +     ret =3D parse_events(evlist, str, &err);
-> > +     if (ret) {
-> > +             evlist__delete(evlist);
-> > +             if (tool_pmu__skip_event(tool_pmu__event_to_str(ev))) {
-> > +                     ret =3D TEST_OK;
-> > +                     goto out;
-> > +             }
-> > +
-> > +             pr_debug("FAILED %s:%d failed to parse event '%s', err %d=
-\n",
-> > +                      __FILE__, __LINE__, str, ret);
-> > +             parse_events_error__print(&err, str);
-> > +             ret =3D TEST_FAIL;
-> > +             goto out;
-> > +     }
-> > +
-> > +     ret =3D TEST_OK;
-> > +     if (with_pmu ? (evlist->core.nr_entries !=3D 1) : (evlist->core.n=
-r_entries < 1)) {
-> > +             pr_debug("FAILED %s:%d Unexpected number of events for '%=
-s' of %d\n",
-> > +                      __FILE__, __LINE__, str, evlist->core.nr_entries=
-);
-> > +             ret =3D TEST_FAIL;
-> > +             goto out;
-> > +     }
-> > +
-> > +     evlist__for_each_entry(evlist, evsel) {
-> > +             if (perf_pmu__is_tool(evsel->pmu)) {
-> > +                     if (evsel->core.attr.config !=3D ev) {
-> > +                             pr_debug("FAILED %s:%d Unexpected config =
-for '%s', %lld !=3D %d\n",
-> > +                                     __FILE__, __LINE__, str, evsel->c=
-ore.attr.config, ev);
-> > +                             ret =3D TEST_FAIL;
-> > +                             goto out;
-> > +                     }
-> > +                     found =3D true;
-> > +             }
-> > +     }
-> > +
-> > +     if (!found && !tool_pmu__skip_event(tool_pmu__event_to_str(ev))) =
-{
-> > +             pr_debug("FAILED %s:%d Didn't find tool event '%s' in par=
-sed evsels\n",
-> > +                      __FILE__, __LINE__, str);
-> > +             ret =3D TEST_FAIL;
-> > +     }
-> > +
-> > +out:
-> > +     evlist__delete(evlist);
-> > +     return ret;
-> > +}
-> > +
-> > +static int test__tool_pmu_without_pmu(struct test_suite *test __maybe_=
-unused,
-> > +                                   int subtest __maybe_unused)
-> > +{
-> > +     int i;
-> > +
-> > +     tool_pmu__for_each_event(i) {
-> > +             int ret =3D do_test(i, /*with_pmu=3D*/false);
-> > +
-> > +             if (ret !=3D TEST_OK)
-> > +                     return ret;
-> > +     }
-> > +     return TEST_OK;
-> > +}
-> > +
-> > +static int test__tool_pmu_with_pmu(struct test_suite *test __maybe_unu=
-sed,
-> > +                                int subtest __maybe_unused)
-> > +{
-> > +     int i;
-> > +
-> > +     tool_pmu__for_each_event(i) {
-> > +             int ret =3D do_test(i, /*with_pmu=3D*/true);
-> > +
-> > +             if (ret !=3D TEST_OK)
-> > +                     return ret;
-> > +     }
-> > +     return TEST_OK;
-> > +}
-> > +
-> > +static struct test_case tests__tool_pmu[] =3D {
-> > +     TEST_CASE("Parsing without PMU name", tool_pmu_without_pmu),
-> > +     TEST_CASE("Parsing with PMU name", tool_pmu_with_pmu),
-> > +     {       .name =3D NULL, }
->
-> An unusual indentation.
+On 8/13/24 00:47, Rick Edgecombe wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
+> 
+> Add TDX's own VM and vCPU structures as placeholder to manage and run
+> TDX guests.  Also add helper functions to check whether a VM/vCPU is
+> TDX or normal VMX one, and add helpers to convert between TDX VM/vCPU
+> and KVM VM/vCPU.
+> 
+> TDX protects guest VMs from malicious host.  Unlike VMX guests, TDX
+> guests are crypto-protected.  KVM cannot access TDX guests' memory and
+> vCPU states directly.  Instead, TDX requires KVM to use a set of TDX
+> architecture-defined firmware APIs (a.k.a TDX module SEAMCALLs) to
+> manage and run TDX guests.
+> 
+> In fact, the way to manage and run TDX guests and normal VMX guests are
+> quite different.  Because of that, the current structures
+> ('struct kvm_vmx' and 'struct vcpu_vmx') to manage VMX guests are not
+> quite suitable for TDX guests.  E.g., the majority of the members of
+> 'struct vcpu_vmx' don't apply to TDX guests.
+> 
+> Introduce TDX's own VM and vCPU structures ('struct kvm_tdx' and 'struct
+> vcpu_tdx' respectively) for KVM to manage and run TDX guests.  And
+> instead of building TDX's VM and vCPU structures based on VMX's, build
+> them directly based on 'struct kvm'.
+> 
+> As a result, TDX and VMX guests will have different VM size and vCPU
+> size/alignment.
+> 
+> Currently, kvm_arch_alloc_vm() uses 'kvm_x86_ops::vm_size' to allocate
+> enough space for the VM structure when creating guest.  With TDX guests,
+> ideally, KVM should allocate the VM structure based on the VM type so
+> that the precise size can be allocated for VMX and TDX guests.  But this
+> requires more extensive code change.  For now, simply choose the maximum
+> size of 'struct kvm_tdx' and 'struct kvm_vmx' for VM structure
+> allocation for both VMX and TDX guests.  This would result in small
+> memory waste for each VM which has smaller VM structure size but this is
+> acceptable.
+> 
+> For simplicity, use the same way for vCPU allocation too.  Otherwise KVM
+> would need to maintain a separate 'kvm_vcpu_cache' for each VM type.
+> 
+> Note, updating the 'vt_x86_ops::vm_size' needs to be done before calling
+> kvm_ops_update(), which copies vt_x86_ops to kvm_x86_ops.  However this
+> happens before TDX module initialization.  Therefore theoretically it is
+> possible that 'kvm_x86_ops::vm_size' is set to size of 'struct kvm_tdx'
+> (when it's larger) but TDX actually fails to initialize at a later time.
+> 
+> Again the worst case of this is wasting couple of bytes memory for each
+> VM.  KVM could choose to update 'kvm_x86_ops::vm_size' at a later time
+> depending on TDX's status but that would require base KVM module to
+> export either kvm_x86_ops or kvm_ops_update().
+> 
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 
-Agreed. It matches the other tests though:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/tests/mmap-basic.c?h=3Dperf-tools-next#n303
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/tests/pmu.c?h=3Dperf-tools-next#n539
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/tests/parse-events.c?h=3Dperf-tools-next#n2876
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 
-Thanks,
-Ian
+The ugly part here is the type-unsafety of to_vmx/to_tdx.  We probably 
+should add some "#pragma poison" of to_vmx/to_tdx: for example both can 
+be poisoned in pmu_intel.c after the definition of 
+vcpu_to_lbr_records(), while one of them can be poisoned in 
+sgx.c/posted_intr.c/vmx.c/tdx.c.  Not a strict requirement though.
 
-> Thanks,
-> Namhyung
->
->
-> > +};
-> > +
-> > +struct test_suite suite__tool_pmu =3D {
-> > +     .desc =3D "Tool PMU",
-> > +     .test_cases =3D tests__tool_pmu,
-> > +};
-> > --
-> > 2.46.0.469.g59c65b2a67-goog
-> >
+Paolo
+
 
