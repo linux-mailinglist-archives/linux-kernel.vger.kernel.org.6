@@ -1,255 +1,304 @@
-Return-Path: <linux-kernel+bounces-322256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B67697265F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:51:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3705A97266A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FD8F1C23A72
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:51:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0BD1C2353A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9716E2AE;
-	Tue, 10 Sep 2024 00:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DB7770E9;
+	Tue, 10 Sep 2024 00:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YOhofLNf"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2077.outbound.protection.outlook.com [40.107.244.77])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ehxsuuz1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5B555E58;
-	Tue, 10 Sep 2024 00:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725929478; cv=fail; b=MCfxCEZr4NOJ4DghKpxhtMXrzSA82ouTIrbyLgBAgKtBGNz7WwZX5iYEsi3+BHiLGfjrrOP9BZ1N1/BUe3ve06R+xORBVl6iIYvsbS89HefD89cGAp4Trfjwlqk2yMz3p1uX9mw3kKDDtRMiYhLZckO8zyy+348fCDIgNIfqYeQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725929478; c=relaxed/simple;
-	bh=PZrWmGO6Bh5XRe2IvFOY82+6MJyS8jf+5FhLnFWbqhc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=qvtoqORyUr/UwE7pS6F+7z1eoZYNzyRZdPiOVef3hHPZE897ZKBA0TjYU00kAKdqxR62GIAirNMqSqy8D3NhyX7HXZOfemxePaPJqFlVHhhxkcuxN2cSya0kYsWi3x9+/mSsNRuLVRMOQkk+CvuJ8uXHZUlhdPo6uyl0I+wBPqc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YOhofLNf; arc=fail smtp.client-ip=40.107.244.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PaNA8c0dwOtHzQkAFWoN4w/YiPBHr5wMj9bSxYwjAyGL+Cu4UY0u3VyuW1rYgIU2+8NROVnuaOaBOIRxQvFDXpQMw9wNSINxTldP8ezpfJrw1hWT1gmCrPAnZQKKhhLL1psUrIhGPKVwQY0d4ga9HEtrUT9Mql9wU8ym76iGm7TbVboBojUHUJcf72os8SGOTH8dq60XCceZGKHFREfZLGieCW4ZeJANQgPx/dDUgAf5l7F+1mUpH1gf6s7aysnsKUXPxRgwOKh2FuEONYlHNl+bleDIT22MZhdUTaqBIcDarZZUrf21x8iq1NXsOAMFUIp1gBbnKGihjBiMw+bGWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dLIrpysRuj3lYB0eTMPaAT2wCCET5TVKlOORqn1MpLE=;
- b=LlIUWUfzBMBiYr4/Bk5bKShmldXheMMGoN0BmL9lwoFv0mBd1SHiuDS2LNKWSS1q07ySN4lf1sa9ZfToxzaso83J63YWOJIlZ/IVbsLYRHpn1wnKGecjtQtofIFKUPAF0gCIfG9050PjZKAxxVcqm2fJgq5aHmwVfdHcIaKT+GXKH+kvCkpIPlrnU81XYbQKKJHd4H2sc+1KE247M7zZoWynqwP7jWdFx487D4mQeLPgM4ESb0XQRYly7asTfozUFS5OpFtEUc5RUKgUZnCNZNK+51wbX9uo8+/izUHG60VW9T5nwFO7tJQ1A61MG95uA/YnIN0SR4ue9Cp8XABMHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dLIrpysRuj3lYB0eTMPaAT2wCCET5TVKlOORqn1MpLE=;
- b=YOhofLNfzbyrVUNUEwZeHGscORgTuKRwIDXCk0LzGke1mrm5so7aDUOL1WBeouiCxQP/StxgPKuy6TrpXVpcs2HYfNJkIcDVg8b3OzObqmVEGvIh12zn4z1UATHwfVPui45vycSFf04LJaojiyFsq4g7dWZ1l4PcWXdMQQXmntc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6583.namprd12.prod.outlook.com (2603:10b6:8:d1::12) by
- CH3PR12MB8657.namprd12.prod.outlook.com (2603:10b6:610:172::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.23; Tue, 10 Sep 2024 00:51:12 +0000
-Received: from DS0PR12MB6583.namprd12.prod.outlook.com
- ([fe80::c8a9:4b0d:e1c7:aecb]) by DS0PR12MB6583.namprd12.prod.outlook.com
- ([fe80::c8a9:4b0d:e1c7:aecb%6]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
- 00:51:12 +0000
-Message-ID: <4f33691d-4997-4145-9cfe-f8e5a187e4ac@amd.com>
-Date: Mon, 9 Sep 2024 17:51:07 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] net: xilinx: axienet: Fix IRQ coalescing packet
- count overflow
-To: Sean Anderson <sean.anderson@linux.dev>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc: Andy Chiu <andy.chiu@sifive.com>, linux-kernel@vger.kernel.org,
- Simon Horman <horms@kernel.org>, Ariane Keller
- <ariane.keller@tik.ee.ethz.ch>, Daniel Borkmann <daniel@iogearbox.net>,
- linux-arm-kernel@lists.infradead.org, Michal Simek <michal.simek@amd.com>
-References: <20240909230908.1319982-1-sean.anderson@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456696CDC8;
+	Tue, 10 Sep 2024 00:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725929510; cv=none; b=jJuSeK1w0jyJAdkU9N8TGF/8C+W9LiaTHNu79MSVmhW9dmy2v4xCgA3xI2rsKAa32DfCZV3GW6ReLOwmw8rm9m4EtbA02qPRGcHwWjAhnnh9vgOyKR1jhFdJdm7vD9QyDII+eoyEQKk2tMglYzgZ4fdpIRbEiQDr/sMieLPq5Ls=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725929510; c=relaxed/simple;
+	bh=Csud0RlnT8anqQHc+ZyO/EriLFaA42PrHHzw0yHBLTE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GONtSH0YG2CwszQwm3u9+PvnG8M1fhE4BGEBxmBygpYDrIjY7WYgatq+O3LsB9LX99ok5hiAurN3nxAg7gelqluz9ByYlTEnVuTb/RhwY89vBUk1wvOFaRnGJXDNOpu+9rfUmqN3rRCjYUiEXHNW47h4ocimRaZusiMiypYuV1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ehxsuuz1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 489DRRc4020315;
+	Tue, 10 Sep 2024 00:51:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4oKJPKyj6ZvcvxK2qU5p0TjHabQ19gP7gUp081B6C18=; b=ehxsuuz1bDpMQpPF
+	zRBpvPc8/fYHOhEz2iEXiboyDzIOmSfCRQe265TkDmzZ458PjP0T8p4KJzSIzZ5e
+	Pt+X+CwKhskaGHVs7TUCZvsepOW7HNvpegUJjORRI7xlx8QYX2Zz3RPnZ4cbcQdW
+	qAfW3yEaSJ2rUPc7Dg6s1lx3MMm7XOSiniWUt/Pf79LMY6btPTM2cI/2q1AKlt1d
+	tepVi0hjlgsdFMRXDlC4HnrgHOUYFvBsNPu4rt1isv+wvyLh+ve6wxbmKv8RTHrP
+	CqCi8wTqU+WFPwoqtCnq8g9A+7YdWZd2LkYjNFa5anstKG541NYP71MUMrsS3Xhn
+	xlAXXg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41he5duhdb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 00:51:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48A0pJGp011420
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 00:51:19 GMT
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 9 Sep 2024 17:51:19 -0700
+Received: from nalasex01a.na.qualcomm.com ([fe80::d989:a8e3:9d0f:9869]) by
+ nalasex01a.na.qualcomm.com ([fe80::d989:a8e3:9d0f:9869%4]) with mapi id
+ 15.02.1544.009; Mon, 9 Sep 2024 17:51:19 -0700
+From: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>
+To: "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
+        "Neil
+ Armstrong" <neil.armstrong@linaro.org>
+CC: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+        "Mike
+ Snitzer" <snitzer@kernel.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        "Adrian
+ Hunter" <adrian.hunter@intel.com>,
+        Asutosh Das <quic_asutoshd@quicinc.com>,
+        Ritesh Harjani <ritesh.list@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "James E.J. Bottomley"
+	<James.Bottomley@hansenpartnership.com>,
+        "Martin K. Petersen"
+	<martin.petersen@oracle.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Theodore
+ Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Alexander Viro
+	<viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        "manivannan.sadhasivam@linaro.org"
+	<manivannan.sadhasivam@linaro.org>,
+        "Gaurav Kashyap (QUIC)"
+	<quic_gaurkash@quicinc.com>,
+        "linux-block@vger.kernel.org"
+	<linux-block@vger.kernel.org>,
+        "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "dm-devel@lists.linux.dev"
+	<dm-devel@lists.linux.dev>,
+        "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>,
+        "linux-fscrypt@vger.kernel.org"
+	<linux-fscrypt@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>,
+        "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>,
+        bartosz.golaszewski
+	<bartosz.golaszewski@linaro.org>
+Subject: RE: [PATCH v6 09/17] soc: qcom: ice: add HWKM support to the ICE
+ driver
+Thread-Topic: [PATCH v6 09/17] soc: qcom: ice: add HWKM support to the ICE
+ driver
+Thread-Index: AQHbAIeyLfp38xTz0EaUtiNODewOx7JLxo0AgAPangCAAAy4AIAA/Xzw
+Date: Tue, 10 Sep 2024 00:51:18 +0000
+Message-ID: <98cc8d71d5d9476297a54774c382030d@quicinc.com>
+References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
+ <20240906-wrapped-keys-v6-9-d59e61bc0cb4@linaro.org>
+ <7uoq72bpiqmo2olwpnudpv3gtcowpnd6jrifff34ubmfpijgc6@k6rmnalu5z4o>
+ <66953e65-2468-43b8-9ccf-54671613c4ab@linaro.org>
+ <ivibs6qqxhbikaevys3iga7s73xq6dzq3u43gwjri3lozkrblx@jxlmwe5wiq7e>
+In-Reply-To: <ivibs6qqxhbikaevys3iga7s73xq6dzq3u43gwjri3lozkrblx@jxlmwe5wiq7e>
+Accept-Language: en-US
 Content-Language: en-US
-From: "Nelson, Shannon" <shannon.nelson@amd.com>
-In-Reply-To: <20240909230908.1319982-1-sean.anderson@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL0PR02CA0050.namprd02.prod.outlook.com
- (2603:10b6:207:3d::27) To DS0PR12MB6583.namprd12.prod.outlook.com
- (2603:10b6:8:d1::12)
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6583:EE_|CH3PR12MB8657:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b6cb96d-4ce7-464e-622c-08dcd132aaae
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OGtBL0UxV2JxUUdncEIzQTMrZlYwOEN0aWlnU3k4K0hHUFpvNEplRC91OUJt?=
- =?utf-8?B?aTFOMGlmdHFmbERUNGs0U0JuMHExQWQ5YjVPRnArcjhrNkt2VTlSNWQxb2hw?=
- =?utf-8?B?YS9FcmR4NkhMWHVjZXhaSmsrN0dhREdVeEIxZC9oOWVlVXl6MzUzendtam1J?=
- =?utf-8?B?SEdmMUJBVVNhK2hNemFHU1V1elRBMFpPcEVHUWZGZTg0dUlVQ0JCdkg1bDB2?=
- =?utf-8?B?VUozcFFkajJWTDFneTZlYUxKZjc0bnVQdUovWTdGV3FTbjlBd2o1UGphM0dU?=
- =?utf-8?B?QmNEYjZOWGgzL2J4YktHMGc3dytRTEVieTFtbnB0RnQyQy9GckVpMVdrS3JQ?=
- =?utf-8?B?dEJSZDY1cnhUQm0yK3N5QnFHdncvRVRrR2QwTG9wcGhQbTZaalZNZ2orZXpG?=
- =?utf-8?B?cXVRVTNnNjdiSk1EMlZpYlF6ZkdoZ0MyRm9kZ0dTYTRZZkRhMU81SkQycjF0?=
- =?utf-8?B?Qk11bUJhRUp6M1lUbWFXNWxmdU1aaDFKeEsyRytXZTBCNDZPdmkrM0hObHBB?=
- =?utf-8?B?eUZKbFowaGRseWJwS3JMVEZlemJaRnc5MElILzZxemJQSU5TQjkrZzlJTGk1?=
- =?utf-8?B?eDhtMk12c2wrVG5SRGVraExUa3hWc0VtM25xMlRBOHFWUy9aVFFvb2RVek04?=
- =?utf-8?B?YmVnK3EyMUdDekU0UkZMazBjNmRUV0dYOWFYVGtuVUpVMkpyMml4VFZxeUp4?=
- =?utf-8?B?OWN3bW9RcVlBQnZlZDJrcVpHelZlYjVnUnZ4SmhVU1htYnVXZTdlUkhGT3Av?=
- =?utf-8?B?L2czenhXbGQvNkd6RUdOZE8yNGY3ZnZlRzM2NEdZZHgyWHFCYi9xVkN2dVpa?=
- =?utf-8?B?bW9mcGZCQm9GOFNNRSttNlRIT0ZhNUtoY2MwRjIzZExUSVN0SE8vaExsMmkx?=
- =?utf-8?B?VVU3RWJxYVoxR0gySkZ0UmpkR3pMVENJVC9halJVWWdENHJSNStWbGx0WFVk?=
- =?utf-8?B?aEhhRkJ2YjdEaTJidndyOUl1c1o0aHZzN1lkUDUydnpqS2V0a0xLblVrYjBD?=
- =?utf-8?B?eFp1TVRSZVFVaW5idTFtSHJFME42Wm9MSFRvdGg2bTcvUW9ycUovMFV6VDNv?=
- =?utf-8?B?L2lDSHZaSG4rYmxXYzZ0OWZ3bWZuUzFBSFFZNjJEWFJIcUVsTlU5WGxmdWp2?=
- =?utf-8?B?eTBIelh6bjdCVzhhbUNPT3BIdGZSUDhYbW85WEFzQUh0bWRaa0dYU1ZXUVAy?=
- =?utf-8?B?M2VPZFdwd0FCZzY1aHVscXExTmFBZkc3V1hyZVhvV3NTd1gzTFc0bW0wZmpm?=
- =?utf-8?B?NFprb1IxQkZjbnRGdk05U29FNlI3Q0J0bE1TcTVzVjZWQTZaR3ZkZTlEUFpE?=
- =?utf-8?B?ZmEybDZBeStzNGF4eUJ4S0hUdURDRTZzY2h2cmk2YStBRTRwekozQzI5Mmsr?=
- =?utf-8?B?b1kzODUwMzRkZnBpeTdsWWhwc3hzOWFUWmh0bm82WW1sN2xiemtPK3N0TDNi?=
- =?utf-8?B?YUl5N2VIcmZTNWZSNVMyUGZCY3c5Tnk0QTBwWFVyWmUxKzBXekF6SHB5MzlD?=
- =?utf-8?B?OWJDR2JiZnlYT0lMbUNNOWp4eEdnVUIzOFFhNFR5U3dDTjVQaDJRcWtrYWk3?=
- =?utf-8?B?TDBkSVBqMDRrdzBsWU4yUVBneSsvYVF4SnFNL1NaZXh0eTdIMkQ3SDNsY0di?=
- =?utf-8?B?QnppeTVmR0lQVFluZFA3UmtIZkhBOVY3VGxmcFE5WlJlSnV2cWJyVjVraTNh?=
- =?utf-8?B?QU9YVXpkM2VBSWxINWJ1SFpGWlJ5KzBJOHdWYUxPR3RhVEZMQTZJVkcveTR6?=
- =?utf-8?B?bHQwc3ZlMitYRFk0WllkS2YyV0xWSlpEU1ZwOEMxSjd3RFY4RGJtRTdma25p?=
- =?utf-8?B?U3Qwam84b21abjRsd3BCQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6583.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZERYSktXMkk4cVBzbSt0cGJ2ZE9ZVE9wcCtOUGZHTjZhVXd5Z1NPMGhPQWh1?=
- =?utf-8?B?OEpxSXNoNXVaR0g5V2pKeVA0U3lXNCtQMDBQTXhWRnpURnJ5UUxYdE5acm51?=
- =?utf-8?B?VVlJK0hOcUJGTkprM0poeGhkakVncVdyQXdWN1RJLzIxS0NZTkxBdG5xQ3hY?=
- =?utf-8?B?elREdVE2QVU2Y3ZBekVFNGdPaFBNTjIxRitzL1hIZzRicEJnbllwZ3QwN0s2?=
- =?utf-8?B?bWhoZVVXOEROQVNrQm03Qlp0cVFjcE40WitoTzJNVXVqMVBZTnZSVVcwSitH?=
- =?utf-8?B?azBQeUVVMnptVkN6aHFxRFlOS3FLRGhiTWlvTUNjMTVnNEhTaTRqVktQMUNk?=
- =?utf-8?B?VHJBNENKWjE0cy8vVE1HTnJsdjNkcGdVK1R0NS9GaGpqdkNjRXVZOVYzV2xX?=
- =?utf-8?B?cXAwOW8xUkZRYUJNU3dLT2MyNnRpWVpSVFVRNXdzZnlvY09WTFFOY1BObk1i?=
- =?utf-8?B?cm0rbjA4cU1vYWgrMWgvWUdBTG41Sy80ZjdFZEZIWlhVUW12RFFCZEF6Y2NZ?=
- =?utf-8?B?VlljOVlMdTFjVS9jR2hBM1JuS2lMWWMySW5zQnNNYkNqOHRlRGZ0QlJ6Skxo?=
- =?utf-8?B?ZmhhQ3N6emt6SmV3UkNkTVVNWnhrVE9FaW1FTDhka2o2ZXlEZDJBWGJBa0xo?=
- =?utf-8?B?NkJCcmxNci8rNjQrTWM2dGx5ckNqTEhSa29iMWE5QkV4RzVxWDIwODg2cmZy?=
- =?utf-8?B?c0UzK0l6cWFOdyt1d056QmNvbWt2Q2ZDazdWRjBOTlRLc2VVQkNYN2VUMzdr?=
- =?utf-8?B?M2JRKys3cWcyNzltZmV6c2xlNEVrVUNqYjNFMTJPN3RwVkxwSldmdnR0TUEw?=
- =?utf-8?B?NVdlTjJ5WWZGQmxUUUlaSEdiVDB3aVdNNWVzNG1IRTVWbG1ROC9YZVRDbXFq?=
- =?utf-8?B?QWNST1kwTlEwN1RPSDhqS09DZ3U5R0Z5cHFLdTJaS1hMUFlUT3RldEcyUlJr?=
- =?utf-8?B?ZUJRcGNZMTg2NXM0cGZjell4K3dBa2JuWE5IRE9YZ1RYc05PYzBBS0NWSnN0?=
- =?utf-8?B?anJqNEg4dmdrNmdCUXFUL2NXemVIUW9PN0w2TEtsSmRIUUZxaExuSWJyNEVh?=
- =?utf-8?B?bGdNbVZxbFAyZ2pqRVdmL3hGbUpUelBZVlprYWhpY0ZwSmdvUWtQKytTN1hQ?=
- =?utf-8?B?UStOaFRKaWNPWis0V25xUDU2SVVXTFFpS0w0bW1Bb2l0aXNtMnRkVVNhdmNP?=
- =?utf-8?B?WFNDVlBvcmE1dGkvcnJxTXI0UGVtNzRTS245WmJGTG42MDAvTUZYTkxtWFB2?=
- =?utf-8?B?cDB4RXNWbnRwaWlkMlF4OXRSeFZYelI3YTJMRjlYbDlWUkE1d0pCZnNsNGlh?=
- =?utf-8?B?bkhoTDJ5UDFNTy95MXh1Y3RtT1pqdUZ2TjgxZkNvMHNydmZOSzA1bHBoTmdY?=
- =?utf-8?B?WUYvMDI0LzY4cytPMUdNSHg2MmJuTmZkcWJMWFNKWEpuT3NOVmJJU3FEVmZV?=
- =?utf-8?B?U3VldVd0Y1c0UW1wWUc5NGFsSTYyZzhzWVdyNk52WXZ4bVplcHZWM0FqRWlN?=
- =?utf-8?B?ZUtid2Z2aFBPc0VudVhEQTJEbGlhUU5wTDNIWDd4RllmR0pHRkFPWTJQUXR4?=
- =?utf-8?B?U2x4VW9wanVFNVQ1cDZUaXJzalp2WjRGa1Fmc2ZnaXp3K2l1NjV1Mzk4Qi80?=
- =?utf-8?B?UzJKb1ZERUlJZ2VjSGRoMEpCN2FzWWF0ak1xQWZjamJ1Y1dUSnE1ZnIvdTdk?=
- =?utf-8?B?ZWVHWHdkQjcyNWM0U2dpRWlRQURXQjZhMjcrK09JY0F0UDllZ3AvQTRyRThh?=
- =?utf-8?B?MDZsc0JQcjEvbzJpQ1dISmJleE51Yk1GRVRZSHcrZkVsc3VCTEcxOExVeE1H?=
- =?utf-8?B?R0o2U3lSYjlSVm1RQ2dRcFhkcmJFcmdEU1NYZVBZN1BQRDlUNlB5RHpWaXNB?=
- =?utf-8?B?SW9vWlc1dG55dFZsdGllN25KRnJ5d2I5NDQzemllNzVKUndzUEpyUFA2MmVI?=
- =?utf-8?B?VXdVcXNJcjY3NXRuTHlXZGpiMTNyZllxN3p5UWdNRkJLOWVZbU43N0hzQ3dh?=
- =?utf-8?B?aTd6YUxJaExUMUpVcnV5czBHUTZYZGpHb2t1RWZVZi8wOFQwU2hyTjZPeE5W?=
- =?utf-8?B?c1hvM3ZBays5cGo5cFJUMGlDbjAzSXExclFnL2RtWStpZnk5TWlrbDdWK1Bn?=
- =?utf-8?Q?5goj57DkOO8gtqWp0GwtvR8Re?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b6cb96d-4ce7-464e-622c-08dcd132aaae
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6583.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 00:51:12.3286
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hKLN2xtwqSJmqTE/dzfW6eXJ17NQVd2CiGA8vp+k0ptCvVA/5CE7JyJdtJcEzi+JBchCpO4f0jRfwXqSjoGl8w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8657
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: QH7Gmo-QPx85xU5L5kGW3w4npqSQk_1K
+X-Proofpoint-GUID: QH7Gmo-QPx85xU5L5kGW3w4npqSQk_1K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ priorityscore=1501 suspectscore=0 lowpriorityscore=0 impostorscore=0
+ malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0 adultscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409100004
 
-On 9/9/2024 4:09 PM, Sean Anderson wrote:
-> 
-> If coalece_count is greater than 255 it will not fit in the register and
+Hello Dmitry and Neil
 
-s/coalece_count/coalesce_count/
+On Monday, September 9, 2024 2:44 AM PDT, Dmitry Baryshkov wrote:
+> On Mon, Sep 09, 2024 at 10:58:30AM GMT, Neil Armstrong wrote:
+> > On 07/09/2024 00:07, Dmitry Baryshkov wrote:
+> > > On Fri, Sep 06, 2024 at 08:07:12PM GMT, Bartosz Golaszewski wrote:
+> > > > From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> > > >
+> > > > Qualcomm's ICE (Inline Crypto Engine) contains a proprietary key
+> > > > management hardware called Hardware Key Manager (HWKM). Add
+> HWKM
+> > > > support to the ICE driver if it is available on the platform. HWKM
+> > > > primarily provides hardware wrapped key support where the ICE
+> > > > (storage) keys are not available in software and instead protected =
+in
+> hardware.
+> > > >
+> > > > When HWKM software support is not fully available (from
+> > > > Trustzone), there can be a scenario where the ICE hardware
+> > > > supports HWKM, but it cannot be used for wrapped keys. In this
+> > > > case, raw keys have to be used without using the HWKM. We query
+> > > > the TZ at run-time to find out whether wrapped keys support is
+> available.
+> > > >
+> > > > Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > > > Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> > > > Signed-off-by: Bartosz Golaszewski
+> > > > <bartosz.golaszewski@linaro.org>
+> > > > ---
+> > > >   drivers/soc/qcom/ice.c | 152
+> +++++++++++++++++++++++++++++++++++++++++++++++--
+> > > >   include/soc/qcom/ice.h |   1 +
+> > > >   2 files changed, 149 insertions(+), 4 deletions(-)
+> > > >
+> > > >   int qcom_ice_enable(struct qcom_ice *ice)
+> > > >   {
+> > > > + int err;
+> > > > +
+> > > >           qcom_ice_low_power_mode_enable(ice);
+> > > >           qcom_ice_optimization_enable(ice);
+> > > > - return qcom_ice_wait_bist_status(ice);
+> > > > + if (ice->use_hwkm)
+> > > > +         qcom_ice_enable_standard_mode(ice);
+> > > > +
+> > > > + err =3D qcom_ice_wait_bist_status(ice); if (err)
+> > > > +         return err;
+> > > > +
+> > > > + if (ice->use_hwkm)
+> > > > +         qcom_ice_hwkm_init(ice);
+> > > > +
+> > > > + return err;
+> > > >   }
+> > > >   EXPORT_SYMBOL_GPL(qcom_ice_enable);
+> > > > @@ -150,6 +282,10 @@ int qcom_ice_resume(struct qcom_ice *ice)
+> > > >                   return err;
+> > > >           }
+> > > > + if (ice->use_hwkm) {
+> > > > +         qcom_ice_enable_standard_mode(ice);
+> > > > +         qcom_ice_hwkm_init(ice); }
+> > > >           return qcom_ice_wait_bist_status(ice);
+> > > >   }
+> > > >   EXPORT_SYMBOL_GPL(qcom_ice_resume);
+> > > > @@ -157,6 +293,7 @@ EXPORT_SYMBOL_GPL(qcom_ice_resume);
+> > > >   int qcom_ice_suspend(struct qcom_ice *ice)
+> > > >   {
+> > > >           clk_disable_unprepare(ice->core_clk);
+> > > > + ice->hwkm_init_complete =3D false;
+> > > >           return 0;
+> > > >   }
+> > > > @@ -206,6 +343,12 @@ int qcom_ice_evict_key(struct qcom_ice *ice,
+> int slot)
+> > > >   }
+> > > >   EXPORT_SYMBOL_GPL(qcom_ice_evict_key);
+> > > > +bool qcom_ice_hwkm_supported(struct qcom_ice *ice) {  return
+> > > > +ice->use_hwkm; }
+> EXPORT_SYMBOL_GPL(qcom_ice_hwkm_supported);
+> > > > +
+> > > >   static struct qcom_ice *qcom_ice_create(struct device *dev,
+> > > >                                           void __iomem *base)
+> > > >   {
+> > > > @@ -240,6 +383,7 @@ static struct qcom_ice *qcom_ice_create(struct
+> device *dev,
+> > > >                   engine->core_clk =3D devm_clk_get_enabled(dev, NU=
+LL);
+> > > >           if (IS_ERR(engine->core_clk))
+> > > >                   return ERR_CAST(engine->core_clk);
+> > > > + engine->use_hwkm =3D qcom_scm_has_wrapped_key_support();
+> > >
+> > > This still makes the decision on whether to use HW-wrapped keys on
+> > > behalf of a user. I suppose this is incorrect. The user must be able
+> > > to use raw keys even if HW-wrapped keys are available on the
+> > > platform. One of the examples for such use-cases is if a user
+> > > prefers to be able to recover stored information in case of a device
+> > > failure (such recovery will be impossible if SoC is damaged and HW-
+> wrapped keys are used).
+> >
+> > Isn't that already the case ? the BLK_CRYPTO_KEY_TYPE_HW_WRAPPED
+> size
+> > is here to select HW-wrapped key, otherwise the ol' raw key is passed.
+> > Just look the next patch.
+> >
+> > Or did I miss something ?
+>=20
+> That's a good question. If use_hwkm is set, ICE gets programmed to use
+> hwkm (see qcom_ice_hwkm_init() call above). I'm not sure if it is expecte=
+d
+> to work properly if after such a call we pass raw key.
+>=20
 
-Otherwise
+Once ICE has moved to a HWKM mode, the firmware key programming currently d=
+oes not support raw keys.
+This support is being added for the next Qualcomm chipset in Trustzone to s=
+upport both at he same time, but that will take another year or two to hit =
+the market.
+Until that time, due to TZ (firmware) limitations , the driver can only sup=
+port one or the other.
 
-Reviewed-by: Shannon Nelson <shannon.nelson@amd.com>
+We also cannot keep moving ICE modes, due to the HWKM enablement being a on=
+e-time configurable value at boot.
 
-
-> will overflow. This can be reproduced by running
-> 
->      # ethtool -C ethX rx-frames 256
-> 
-> which will result in a timeout of 0us instead. Fix this by clamping the
-> counts to the maximum value.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet driver")
-> ---
-> 
-> Changes in v2:
-> - Use FIELD_MAX to extract the max value from the mask
-> - Expand the commit message with an example on how to reproduce this
->    issue
-> 
->   drivers/net/ethernet/xilinx/xilinx_axienet.h      | 5 ++---
->   drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 8 ++++++--
->   2 files changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> index 1223fcc1a8da..54db69893565 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> @@ -109,11 +109,10 @@
->   #define XAXIDMA_BD_CTRL_TXEOF_MASK     0x04000000 /* Last tx packet */
->   #define XAXIDMA_BD_CTRL_ALL_MASK       0x0C000000 /* All control bits */
-> 
-> -#define XAXIDMA_DELAY_MASK             0xFF000000 /* Delay timeout counter */
-> -#define XAXIDMA_COALESCE_MASK          0x00FF0000 /* Coalesce counter */
-> +#define XAXIDMA_DELAY_MASK             ((u32)0xFF000000) /* Delay timeout counter */
-> +#define XAXIDMA_COALESCE_MASK          ((u32)0x00FF0000) /* Coalesce counter */
-> 
->   #define XAXIDMA_DELAY_SHIFT            24
-> -#define XAXIDMA_COALESCE_SHIFT         16
-> 
->   #define XAXIDMA_IRQ_IOC_MASK           0x00001000 /* Completion intr */
->   #define XAXIDMA_IRQ_DELAY_MASK         0x00002000 /* Delay interrupt */
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> index 9eb300fc3590..89b63695293d 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> @@ -252,7 +252,9 @@ static u32 axienet_usec_to_timer(struct axienet_local *lp, u32 coalesce_usec)
->   static void axienet_dma_start(struct axienet_local *lp)
->   {
->          /* Start updating the Rx channel control register */
-> -       lp->rx_dma_cr = (lp->coalesce_count_rx << XAXIDMA_COALESCE_SHIFT) |
-> +       lp->rx_dma_cr = FIELD_PREP(XAXIDMA_COALESCE_MASK,
-> +                                  min(lp->coalesce_count_rx,
-> +                                      FIELD_MAX(XAXIDMA_COALESCE_MASK))) |
->                          XAXIDMA_IRQ_IOC_MASK | XAXIDMA_IRQ_ERROR_MASK;
->          /* Only set interrupt delay timer if not generating an interrupt on
->           * the first RX packet. Otherwise leave at 0 to disable delay interrupt.
-> @@ -264,7 +266,9 @@ static void axienet_dma_start(struct axienet_local *lp)
->          axienet_dma_out32(lp, XAXIDMA_RX_CR_OFFSET, lp->rx_dma_cr);
-> 
->          /* Start updating the Tx channel control register */
-> -       lp->tx_dma_cr = (lp->coalesce_count_tx << XAXIDMA_COALESCE_SHIFT) |
-> +       lp->tx_dma_cr = FIELD_PREP(XAXIDMA_COALESCE_MASK,
-> +                                  min(lp->coalesce_count_tx,
-> +                                      FIELD_MAX(XAXIDMA_COALESCE_MASK))) |
->                          XAXIDMA_IRQ_IOC_MASK | XAXIDMA_IRQ_ERROR_MASK;
->          /* Only set interrupt delay timer if not generating an interrupt on
->           * the first TX packet. Otherwise leave at 0 to disable delay interrupt.
+> >
+> > Neil
+> >
+> > >
+> > > >           if (!qcom_ice_check_supported(engine))
+> > > >                   return ERR_PTR(-EOPNOTSUPP); diff --git
+> > > > a/include/soc/qcom/ice.h b/include/soc/qcom/ice.h index
+> > > > 9dd835dba2a7..1f52e82e3e1c 100644
+> > > > --- a/include/soc/qcom/ice.h
+> > > > +++ b/include/soc/qcom/ice.h
+> > > > @@ -34,5 +34,6 @@ int qcom_ice_program_key(struct qcom_ice *ice,
+> > > >                            const struct blk_crypto_key *bkey,
+> > > >                            u8 data_unit_size, int slot);
+> > > >   int qcom_ice_evict_key(struct qcom_ice *ice, int slot);
+> > > > +bool qcom_ice_hwkm_supported(struct qcom_ice *ice);
+> > > >   struct qcom_ice *of_qcom_ice_get(struct device *dev);
+> > > >   #endif /* __QCOM_ICE_H__ */
+> > > >
+> > > > --
+> > > > 2.43.0
+> > > >
+> > >
+> >
+>=20
 > --
-> 2.35.1.1320.gc452695387.dirty
-> 
-> 
+> With best wishes
+> Dmitry
+
+Regards,
+Gaurav
 
