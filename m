@@ -1,304 +1,325 @@
-Return-Path: <linux-kernel+bounces-322258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3705A97266A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:52:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A934C97266D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0BD1C2353A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:52:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62BEB285E03
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DB7770E9;
-	Tue, 10 Sep 2024 00:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F776F2EA;
+	Tue, 10 Sep 2024 00:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ehxsuuz1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="BPIPk2sg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="idH1ovM8"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456696CDC8;
-	Tue, 10 Sep 2024 00:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C304823AB;
+	Tue, 10 Sep 2024 00:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725929510; cv=none; b=jJuSeK1w0jyJAdkU9N8TGF/8C+W9LiaTHNu79MSVmhW9dmy2v4xCgA3xI2rsKAa32DfCZV3GW6ReLOwmw8rm9m4EtbA02qPRGcHwWjAhnnh9vgOyKR1jhFdJdm7vD9QyDII+eoyEQKk2tMglYzgZ4fdpIRbEiQDr/sMieLPq5Ls=
+	t=1725929710; cv=none; b=dTyjb7DAnm50jR65l074eaabZ3SNiNDqtdiI+u5us1iF2eQ/grrYBpyc7i9saSMG/KxYqcj1p20fkUYZVw+BzI8QBRlr1hrNmDcWWInU7krlUyN6x/PZduF3IFcwV/EM7ymZADByMIH+p7thInbXGDr17lcpRWG2UrDoc8/z4cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725929510; c=relaxed/simple;
-	bh=Csud0RlnT8anqQHc+ZyO/EriLFaA42PrHHzw0yHBLTE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GONtSH0YG2CwszQwm3u9+PvnG8M1fhE4BGEBxmBygpYDrIjY7WYgatq+O3LsB9LX99ok5hiAurN3nxAg7gelqluz9ByYlTEnVuTb/RhwY89vBUk1wvOFaRnGJXDNOpu+9rfUmqN3rRCjYUiEXHNW47h4ocimRaZusiMiypYuV1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ehxsuuz1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 489DRRc4020315;
-	Tue, 10 Sep 2024 00:51:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4oKJPKyj6ZvcvxK2qU5p0TjHabQ19gP7gUp081B6C18=; b=ehxsuuz1bDpMQpPF
-	zRBpvPc8/fYHOhEz2iEXiboyDzIOmSfCRQe265TkDmzZ458PjP0T8p4KJzSIzZ5e
-	Pt+X+CwKhskaGHVs7TUCZvsepOW7HNvpegUJjORRI7xlx8QYX2Zz3RPnZ4cbcQdW
-	qAfW3yEaSJ2rUPc7Dg6s1lx3MMm7XOSiniWUt/Pf79LMY6btPTM2cI/2q1AKlt1d
-	tepVi0hjlgsdFMRXDlC4HnrgHOUYFvBsNPu4rt1isv+wvyLh+ve6wxbmKv8RTHrP
-	CqCi8wTqU+WFPwoqtCnq8g9A+7YdWZd2LkYjNFa5anstKG541NYP71MUMrsS3Xhn
-	xlAXXg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41he5duhdb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 00:51:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48A0pJGp011420
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 00:51:19 GMT
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 9 Sep 2024 17:51:19 -0700
-Received: from nalasex01a.na.qualcomm.com ([fe80::d989:a8e3:9d0f:9869]) by
- nalasex01a.na.qualcomm.com ([fe80::d989:a8e3:9d0f:9869%4]) with mapi id
- 15.02.1544.009; Mon, 9 Sep 2024 17:51:19 -0700
-From: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>
-To: "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
-        "Neil
- Armstrong" <neil.armstrong@linaro.org>
-CC: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
-        "Mike
- Snitzer" <snitzer@kernel.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        "Adrian
- Hunter" <adrian.hunter@intel.com>,
-        Asutosh Das <quic_asutoshd@quicinc.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "James E.J. Bottomley"
-	<James.Bottomley@hansenpartnership.com>,
-        "Martin K. Petersen"
-	<martin.petersen@oracle.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Theodore
- Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Alexander Viro
-	<viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        "manivannan.sadhasivam@linaro.org"
-	<manivannan.sadhasivam@linaro.org>,
-        "Gaurav Kashyap (QUIC)"
-	<quic_gaurkash@quicinc.com>,
-        "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>,
-        "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "dm-devel@lists.linux.dev"
-	<dm-devel@lists.linux.dev>,
-        "linux-mmc@vger.kernel.org"
-	<linux-mmc@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org"
-	<linux-scsi@vger.kernel.org>,
-        "linux-fscrypt@vger.kernel.org"
-	<linux-fscrypt@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        "linux-arm-msm@vger.kernel.org"
-	<linux-arm-msm@vger.kernel.org>,
-        bartosz.golaszewski
-	<bartosz.golaszewski@linaro.org>
-Subject: RE: [PATCH v6 09/17] soc: qcom: ice: add HWKM support to the ICE
- driver
-Thread-Topic: [PATCH v6 09/17] soc: qcom: ice: add HWKM support to the ICE
- driver
-Thread-Index: AQHbAIeyLfp38xTz0EaUtiNODewOx7JLxo0AgAPangCAAAy4AIAA/Xzw
-Date: Tue, 10 Sep 2024 00:51:18 +0000
-Message-ID: <98cc8d71d5d9476297a54774c382030d@quicinc.com>
-References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
- <20240906-wrapped-keys-v6-9-d59e61bc0cb4@linaro.org>
- <7uoq72bpiqmo2olwpnudpv3gtcowpnd6jrifff34ubmfpijgc6@k6rmnalu5z4o>
- <66953e65-2468-43b8-9ccf-54671613c4ab@linaro.org>
- <ivibs6qqxhbikaevys3iga7s73xq6dzq3u43gwjri3lozkrblx@jxlmwe5wiq7e>
-In-Reply-To: <ivibs6qqxhbikaevys3iga7s73xq6dzq3u43gwjri3lozkrblx@jxlmwe5wiq7e>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1725929710; c=relaxed/simple;
+	bh=7TAk0PYd+/kgFJ65jdPi3CyfGRtcJdBhAoMcPCN9Nbc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bZQluf3MzvA5XM2g+h/Yvesov+2PYJVWNlAyxvi++D4/gH7rZzk1pbfmz338XyZjlQ4K61Eyz6sRNIxAmUBSz2ovMoqSpYpc78ADIDU8yD2kEm5JqTEQZ0wShG+NflDjIwxlggatsUSLtJU0qbpGHoZe/QbewGnThzA32ZwEtss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=BPIPk2sg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=idH1ovM8; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id DA2461380299;
+	Mon,  9 Sep 2024 20:55:06 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Mon, 09 Sep 2024 20:55:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm3; t=1725929706; x=1726016106; bh=Wg5xZP0V6We1FuxhlwgQo
+	yCPN1ooTx+DvSYkmNc5izo=; b=BPIPk2sg8gCwXp+awGOBaJZlKFa6HBdKP0IOc
+	F7WuA5LQLGuu2snXonOqL7M8SZ/UkxIPszXdk/mrkxHs64DiNR4h+S5vv/NSsfCP
+	JWKeknWzb8815HOniOQniiaegIEnRmAFSDuNHjoTCJfeDor/ERR/LGbbFv9vBkhE
+	/N539rCcqSGKZHak7m2KfTDTz+G2T7rBJb1yIxmvCCNbXbBe1o70AjzLFVVWATxa
+	crzdHmk2Eq/0XqXCC0fv5x3ax4C4MgANUsy4HTm4q5vFBD8hKZaoxNax7lIK63JB
+	R1G3qLqOwoy+lSI96sCReZ1dDDuhdFz3YbdRDftPqNUKPy4qg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1725929706; x=1726016106; bh=Wg5xZP0V6We1FuxhlwgQoyCPN1oo
+	Tx+DvSYkmNc5izo=; b=idH1ovM8yob87nUah3Dg6reRoa7yOWDBBlg3pcZa+b7S
+	JC23H4acBr6aF8gqN2L5z+PIDQgj0XSqrA7mrI5/++YI+S8q4X71HqByGBN5dDwe
+	hmfV8AjOIQNUJcz53/wBKNEyLJrLEvF3uFVs+yDycNZOqPTZAmK9INLlVWaSfFbs
+	zYDTzIpuhHe9ZA+eIEOo02vl6YT5PliKRbEuEk2qJeTvxnJmTW5S2o63W/gilcCG
+	hX9PFUiuOapeFJTPNDuKv65tNmLh4xehIuyljToANgKr8sPlmU1dBbieuWBmzrS4
+	/oSSPwD2Lc00uD7WTFfViGEofCvCK5JSy1yYc0uO/A==
+X-ME-Sender: <xms:6pjfZsSQws83NLU758ztaSEOYWs7x8hL4JVHgVzoTJs016zaqVJhhw>
+    <xme:6pjfZpzXjfg2iBBBdMrvAYnHANhX02-PzQM6StOc2kS6srrZPLdfLW6jrrEdIbzbj
+    DTqwL8PxRfg9gEDUw>
+X-ME-Received: <xmr:6pjfZp1NS0cGvVfkzr5utGkXp7jht16OtT8lCa5LD2gfoYVLPgqkddYCaGHIacF3pfh6Nqv9Vyldwr2o6HioV4HCE1wmLcaWEa77jWx-7jPgfogQcXOv>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeikedggeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucgfrhhlucfvnfffucdlje
+    dtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeffrghn
+    ihgvlhcuighuuceougiguhesugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnhepff
+    eiteeuffetffefieefgeejheejgfevudffhffgleejtefghfevvddvkeejhfdunecuffho
+    mhgrihhnpehrihhnghgsuhhfrdhmrghpnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepugiguhesugiguhhuuhdrgiihiidpnhgspghrtghpthht
+    ohepudekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegvugguhiiikeejsehgmh
+    grihhlrdgtohhmpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegrsh
+    htsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehjohhhnhdrfhgrshhtrggsvghnugesghhmrghilhdrtghomhdprh
+    gtphhtthhopehmrghrthhinhdrlhgruheslhhinhhugidruggvvhdprhgtphhtthhopehs
+    ohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihonhhghhhonhhgrdhsohhngh
+    eslhhinhhugidruggvvh
+X-ME-Proxy: <xmx:6pjfZgCGavqUtgMquzh7Ngi6U4a79hwvKqf4xvwhjl4r2LTvFKyw3A>
+    <xmx:6pjfZljSAhjlsuSelaGXWsIgGmfAp1UscmXT2C83fpIywimD-57VzQ>
+    <xmx:6pjfZso7NXxxj0LsM2uzKzwK09MoG2_CIbaOvd54SGvuAASXGATcmA>
+    <xmx:6pjfZoiCN3MPID3SQ1Z732EdQuB6faVPZEn7BJo9SD4rV4S23QRj0g>
+    <xmx:6pjfZuYKuP_i-Yafyy58pZKz_BnvCof9S-xept3OZEalBERROn5neJi3>
+Feedback-ID: i6a694271:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 9 Sep 2024 20:55:03 -0400 (EDT)
+From: Daniel Xu <dxu@dxuuu.xyz>
+To: eddyz87@gmail.com,
+	andrii@kernel.org,
+	daniel@iogearbox.net,
+	ast@kernel.org,
+	shuah@kernel.org
+Cc: john.fastabend@gmail.com,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mykolal@fb.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	kernel-team@meta.com
+Subject: [PATCH bpf-next] bpf: ringbuf: Support consuming BPF_MAP_TYPE_RINGBUF from prog
+Date: Mon,  9 Sep 2024 18:54:52 -0600
+Message-ID: <18a9ddacc99bb95e9802f8ad1e81214433df496c.1725929645.git.dxu@dxuuu.xyz>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: QH7Gmo-QPx85xU5L5kGW3w4npqSQk_1K
-X-Proofpoint-GUID: QH7Gmo-QPx85xU5L5kGW3w4npqSQk_1K
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 impostorscore=0
- malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0 adultscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409100004
+Content-Transfer-Encoding: 8bit
 
-Hello Dmitry and Neil
+Right now there exists prog produce / userspace consume and userspace
+produce / prog consume support. But it is also useful to have prog
+produce / prog consume.
 
-On Monday, September 9, 2024 2:44 AM PDT, Dmitry Baryshkov wrote:
-> On Mon, Sep 09, 2024 at 10:58:30AM GMT, Neil Armstrong wrote:
-> > On 07/09/2024 00:07, Dmitry Baryshkov wrote:
-> > > On Fri, Sep 06, 2024 at 08:07:12PM GMT, Bartosz Golaszewski wrote:
-> > > > From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> > > >
-> > > > Qualcomm's ICE (Inline Crypto Engine) contains a proprietary key
-> > > > management hardware called Hardware Key Manager (HWKM). Add
-> HWKM
-> > > > support to the ICE driver if it is available on the platform. HWKM
-> > > > primarily provides hardware wrapped key support where the ICE
-> > > > (storage) keys are not available in software and instead protected =
-in
-> hardware.
-> > > >
-> > > > When HWKM software support is not fully available (from
-> > > > Trustzone), there can be a scenario where the ICE hardware
-> > > > supports HWKM, but it cannot be used for wrapped keys. In this
-> > > > case, raw keys have to be used without using the HWKM. We query
-> > > > the TZ at run-time to find out whether wrapped keys support is
-> available.
-> > > >
-> > > > Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > > > Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> > > > Signed-off-by: Bartosz Golaszewski
-> > > > <bartosz.golaszewski@linaro.org>
-> > > > ---
-> > > >   drivers/soc/qcom/ice.c | 152
-> +++++++++++++++++++++++++++++++++++++++++++++++--
-> > > >   include/soc/qcom/ice.h |   1 +
-> > > >   2 files changed, 149 insertions(+), 4 deletions(-)
-> > > >
-> > > >   int qcom_ice_enable(struct qcom_ice *ice)
-> > > >   {
-> > > > + int err;
-> > > > +
-> > > >           qcom_ice_low_power_mode_enable(ice);
-> > > >           qcom_ice_optimization_enable(ice);
-> > > > - return qcom_ice_wait_bist_status(ice);
-> > > > + if (ice->use_hwkm)
-> > > > +         qcom_ice_enable_standard_mode(ice);
-> > > > +
-> > > > + err =3D qcom_ice_wait_bist_status(ice); if (err)
-> > > > +         return err;
-> > > > +
-> > > > + if (ice->use_hwkm)
-> > > > +         qcom_ice_hwkm_init(ice);
-> > > > +
-> > > > + return err;
-> > > >   }
-> > > >   EXPORT_SYMBOL_GPL(qcom_ice_enable);
-> > > > @@ -150,6 +282,10 @@ int qcom_ice_resume(struct qcom_ice *ice)
-> > > >                   return err;
-> > > >           }
-> > > > + if (ice->use_hwkm) {
-> > > > +         qcom_ice_enable_standard_mode(ice);
-> > > > +         qcom_ice_hwkm_init(ice); }
-> > > >           return qcom_ice_wait_bist_status(ice);
-> > > >   }
-> > > >   EXPORT_SYMBOL_GPL(qcom_ice_resume);
-> > > > @@ -157,6 +293,7 @@ EXPORT_SYMBOL_GPL(qcom_ice_resume);
-> > > >   int qcom_ice_suspend(struct qcom_ice *ice)
-> > > >   {
-> > > >           clk_disable_unprepare(ice->core_clk);
-> > > > + ice->hwkm_init_complete =3D false;
-> > > >           return 0;
-> > > >   }
-> > > > @@ -206,6 +343,12 @@ int qcom_ice_evict_key(struct qcom_ice *ice,
-> int slot)
-> > > >   }
-> > > >   EXPORT_SYMBOL_GPL(qcom_ice_evict_key);
-> > > > +bool qcom_ice_hwkm_supported(struct qcom_ice *ice) {  return
-> > > > +ice->use_hwkm; }
-> EXPORT_SYMBOL_GPL(qcom_ice_hwkm_supported);
-> > > > +
-> > > >   static struct qcom_ice *qcom_ice_create(struct device *dev,
-> > > >                                           void __iomem *base)
-> > > >   {
-> > > > @@ -240,6 +383,7 @@ static struct qcom_ice *qcom_ice_create(struct
-> device *dev,
-> > > >                   engine->core_clk =3D devm_clk_get_enabled(dev, NU=
-LL);
-> > > >           if (IS_ERR(engine->core_clk))
-> > > >                   return ERR_CAST(engine->core_clk);
-> > > > + engine->use_hwkm =3D qcom_scm_has_wrapped_key_support();
-> > >
-> > > This still makes the decision on whether to use HW-wrapped keys on
-> > > behalf of a user. I suppose this is incorrect. The user must be able
-> > > to use raw keys even if HW-wrapped keys are available on the
-> > > platform. One of the examples for such use-cases is if a user
-> > > prefers to be able to recover stored information in case of a device
-> > > failure (such recovery will be impossible if SoC is damaged and HW-
-> wrapped keys are used).
-> >
-> > Isn't that already the case ? the BLK_CRYPTO_KEY_TYPE_HW_WRAPPED
-> size
-> > is here to select HW-wrapped key, otherwise the ol' raw key is passed.
-> > Just look the next patch.
-> >
-> > Or did I miss something ?
->=20
-> That's a good question. If use_hwkm is set, ICE gets programmed to use
-> hwkm (see qcom_ice_hwkm_init() call above). I'm not sure if it is expecte=
-d
-> to work properly if after such a call we pass raw key.
->=20
+For example, we want to track the latency overhead of cpumap in
+production. Since we need to store enqueue timestamps somewhere and
+cpumap is MPSC, we need an MPSC data structure to shadow cpumap. BPF
+ringbuf is such a data structure. Rather than reimplement (possibly
+poorly) a custom ringbuffer in BPF, extend the existing interface to
+allow the final quadrant of ringbuf usecases to be filled. Note we
+ignore userspace to userspace use case - there is no need to involve
+kernel for that.
 
-Once ICE has moved to a HWKM mode, the firmware key programming currently d=
-oes not support raw keys.
-This support is being added for the next Qualcomm chipset in Trustzone to s=
-upport both at he same time, but that will take another year or two to hit =
-the market.
-Until that time, due to TZ (firmware) limitations , the driver can only sup=
-port one or the other.
+Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+---
+ kernel/bpf/verifier.c                         |  6 +-
+ tools/testing/selftests/bpf/Makefile          |  3 +-
+ .../selftests/bpf/prog_tests/ringbuf.c        | 50 +++++++++++++++
+ .../bpf/progs/test_ringbuf_bpf_to_bpf.c       | 64 +++++++++++++++++++
+ 4 files changed, 120 insertions(+), 3 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/test_ringbuf_bpf_to_bpf.c
 
-We also cannot keep moving ICE modes, due to the HWKM enablement being a on=
-e-time configurable value at boot.
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 53d0556fbbf3..56bfe559f228 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -9142,7 +9142,8 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
+ 		    func_id != BPF_FUNC_ringbuf_query &&
+ 		    func_id != BPF_FUNC_ringbuf_reserve_dynptr &&
+ 		    func_id != BPF_FUNC_ringbuf_submit_dynptr &&
+-		    func_id != BPF_FUNC_ringbuf_discard_dynptr)
++		    func_id != BPF_FUNC_ringbuf_discard_dynptr &&
++		    func_id != BPF_FUNC_user_ringbuf_drain)
+ 			goto error;
+ 		break;
+ 	case BPF_MAP_TYPE_USER_RINGBUF:
+@@ -9276,7 +9277,8 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
+ 			goto error;
+ 		break;
+ 	case BPF_FUNC_user_ringbuf_drain:
+-		if (map->map_type != BPF_MAP_TYPE_USER_RINGBUF)
++		if (map->map_type != BPF_MAP_TYPE_USER_RINGBUF &&
++		    map->map_type != BPF_MAP_TYPE_RINGBUF)
+ 			goto error;
+ 		break;
+ 	case BPF_FUNC_get_stackid:
+diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+index 9905e3739dd0..233109843d4d 100644
+--- a/tools/testing/selftests/bpf/Makefile
++++ b/tools/testing/selftests/bpf/Makefile
+@@ -503,7 +503,8 @@ LINKED_SKELS := test_static_linked.skel.h linked_funcs.skel.h		\
+ LSKELS := fentry_test.c fexit_test.c fexit_sleep.c atomics.c 		\
+ 	trace_printk.c trace_vprintk.c map_ptr_kern.c 			\
+ 	core_kern.c core_kern_overflow.c test_ringbuf.c			\
+-	test_ringbuf_n.c test_ringbuf_map_key.c test_ringbuf_write.c
++	test_ringbuf_n.c test_ringbuf_map_key.c test_ringbuf_write.c    \
++	test_ringbuf_bpf_to_bpf.c
+ 
+ # Generate both light skeleton and libbpf skeleton for these
+ LSKELS_EXTRA := test_ksyms_module.c test_ksyms_weak.c kfunc_call_test.c \
+diff --git a/tools/testing/selftests/bpf/prog_tests/ringbuf.c b/tools/testing/selftests/bpf/prog_tests/ringbuf.c
+index da430df45aa4..3e7955573ac5 100644
+--- a/tools/testing/selftests/bpf/prog_tests/ringbuf.c
++++ b/tools/testing/selftests/bpf/prog_tests/ringbuf.c
+@@ -17,6 +17,7 @@
+ #include "test_ringbuf_n.lskel.h"
+ #include "test_ringbuf_map_key.lskel.h"
+ #include "test_ringbuf_write.lskel.h"
++#include "test_ringbuf_bpf_to_bpf.lskel.h"
+ 
+ #define EDONE 7777
+ 
+@@ -497,6 +498,53 @@ static void ringbuf_map_key_subtest(void)
+ 	test_ringbuf_map_key_lskel__destroy(skel_map_key);
+ }
+ 
++static void ringbuf_bpf_to_bpf_subtest(void)
++{
++	struct test_ringbuf_bpf_to_bpf_lskel *skel;
++	int err, i;
++
++	skel = test_ringbuf_bpf_to_bpf_lskel__open();
++	if (!ASSERT_OK_PTR(skel, "test_ringbuf_bpf_to_bpf_lskel__open"))
++		return;
++
++	skel->maps.ringbuf.max_entries = getpagesize();
++	skel->bss->pid = getpid();
++
++	err = test_ringbuf_bpf_to_bpf_lskel__load(skel);
++	if (!ASSERT_OK(err, "test_ringbuf_bpf_to_bpf_lskel__load"))
++		goto cleanup;
++
++	ringbuf = ring_buffer__new(skel->maps.ringbuf.map_fd, NULL, NULL, NULL);
++	if (!ASSERT_OK_PTR(ringbuf, "ring_buffer__new"))
++		goto cleanup;
++
++	err = test_ringbuf_bpf_to_bpf_lskel__attach(skel);
++	if (!ASSERT_OK(err, "test_ringbuf_bpf_to_bpf_lskel__attach"))
++		goto cleanup_ringbuf;
++
++	/* Produce N_SAMPLES samples in the ring buffer by calling getpid() */
++	skel->bss->value = SAMPLE_VALUE;
++	for (i = 0; i < N_SAMPLES; i++)
++		syscall(__NR_getpgid);
++
++	/* Trigger bpf-side consumption */
++	syscall(__NR_prctl);
++
++	/* Check correct number samples were consumed */
++	if (!ASSERT_EQ(skel->bss->round_tripped, N_SAMPLES, "round_tripped"))
++		goto cleanup_ringbuf;
++
++	/* Check all samples were consumed */
++	err = ring_buffer__consume(ringbuf);
++	if (!ASSERT_EQ(err, 0, "rb_consume"))
++		goto cleanup_ringbuf;
++
++cleanup_ringbuf:
++	ring_buffer__free(ringbuf);
++cleanup:
++	test_ringbuf_bpf_to_bpf_lskel__destroy(skel);
++}
++
+ void test_ringbuf(void)
+ {
+ 	if (test__start_subtest("ringbuf"))
+@@ -507,4 +555,6 @@ void test_ringbuf(void)
+ 		ringbuf_map_key_subtest();
+ 	if (test__start_subtest("ringbuf_write"))
+ 		ringbuf_write_subtest();
++	if (test__start_subtest("ringbuf_bpf_to_bpf"))
++		ringbuf_bpf_to_bpf_subtest();
+ }
+diff --git a/tools/testing/selftests/bpf/progs/test_ringbuf_bpf_to_bpf.c b/tools/testing/selftests/bpf/progs/test_ringbuf_bpf_to_bpf.c
+new file mode 100644
+index 000000000000..378154922024
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/test_ringbuf_bpf_to_bpf.c
+@@ -0,0 +1,64 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/bpf.h>
++#include <unistd.h>
++#include <bpf/bpf_helpers.h>
++#include "bpf_misc.h"
++
++struct sample {
++	long value;
++};
++
++struct {
++	__uint(type, BPF_MAP_TYPE_RINGBUF);
++} ringbuf SEC(".maps");
++
++int pid = 0;
++long value = 0;
++int round_tripped = 0;
++
++SEC("fentry/" SYS_PREFIX "sys_getpgid")
++int test_ringbuf_bpf_to_bpf_produce(void *ctx)
++{
++	int cur_pid = bpf_get_current_pid_tgid() >> 32;
++	struct sample *sample;
++
++	if (cur_pid != pid)
++		return 0;
++
++	sample = bpf_ringbuf_reserve(&ringbuf, sizeof(*sample), 0);
++	if (!sample)
++		return 0;
++	sample->value = value;
++
++	bpf_ringbuf_submit(sample, 0);
++	return 0;
++}
++
++static long consume_cb(struct bpf_dynptr *dynptr, void *context)
++{
++	struct sample *sample = NULL;
++
++	sample = bpf_dynptr_data(dynptr, 0, sizeof(*sample));
++	if (!sample)
++		return 0;
++
++	if (sample->value == value)
++		round_tripped++;
++
++	return 0;
++}
++
++SEC("fentry/" SYS_PREFIX "sys_prctl")
++int test_ringbuf_bpf_to_bpf_consume(void *ctx)
++{
++	int cur_pid = bpf_get_current_pid_tgid() >> 32;
++
++	if (cur_pid != pid)
++		return 0;
++
++	bpf_user_ringbuf_drain(&ringbuf, consume_cb, NULL, 0);
++	return 0;
++}
++
++char _license[] SEC("license") = "GPL";
+-- 
+2.46.0
 
-> >
-> > Neil
-> >
-> > >
-> > > >           if (!qcom_ice_check_supported(engine))
-> > > >                   return ERR_PTR(-EOPNOTSUPP); diff --git
-> > > > a/include/soc/qcom/ice.h b/include/soc/qcom/ice.h index
-> > > > 9dd835dba2a7..1f52e82e3e1c 100644
-> > > > --- a/include/soc/qcom/ice.h
-> > > > +++ b/include/soc/qcom/ice.h
-> > > > @@ -34,5 +34,6 @@ int qcom_ice_program_key(struct qcom_ice *ice,
-> > > >                            const struct blk_crypto_key *bkey,
-> > > >                            u8 data_unit_size, int slot);
-> > > >   int qcom_ice_evict_key(struct qcom_ice *ice, int slot);
-> > > > +bool qcom_ice_hwkm_supported(struct qcom_ice *ice);
-> > > >   struct qcom_ice *of_qcom_ice_get(struct device *dev);
-> > > >   #endif /* __QCOM_ICE_H__ */
-> > > >
-> > > > --
-> > > > 2.43.0
-> > > >
-> > >
-> >
->=20
-> --
-> With best wishes
-> Dmitry
-
-Regards,
-Gaurav
 
